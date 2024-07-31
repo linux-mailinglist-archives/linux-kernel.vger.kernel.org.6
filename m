@@ -1,249 +1,213 @@
-Return-Path: <linux-kernel+bounces-268820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBED79429DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D889429E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:03:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEACC1C21BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCBD4282CA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E609B1A8C1A;
-	Wed, 31 Jul 2024 09:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="i4SncwO2"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2086.outbound.protection.outlook.com [40.107.215.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD791CF93;
-	Wed, 31 Jul 2024 09:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722416574; cv=fail; b=BJudVpank4mnTUK68TL4SF0vXBcapqyVTbREqLqPuq492QTcAIulwHDplUdK/psiZvltjING7ALUMp7KjAsPHaDIWwaE4oaZH5muYBbrZeS7hedfr5hRbRzrtKvMHcO+rMXHgNy5lib1ZuxGSpdpdslE3EeXywg4f8/2qzN0kQs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722416574; c=relaxed/simple;
-	bh=BjdyK/sz5gEkEg7fImNeX7lKO3p1NfDSawwj+nib05A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VzEFo6FVhVhcTa58N5XBJE/MlZySvxipZsiuGodSFrQQUanlvNBkOJpiIh2fxPspJrrfwIwNcLAULgnk0Lsgx2qhFNlGjqoAs5T6mgkJSr5emPctiqfcAp7B2sqPr/um3HApdQLp22/HRTIPUQYvtUAwqockeToMdozuoOW+dO4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=i4SncwO2; arc=fail smtp.client-ip=40.107.215.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RD+I1+ebJ93/Ea0CceJgc3Eyc2Y4D8E6ZfnmxQtJqpiotAwYBcvzwweOo8tyr3lE1tIx24/tqnXE7RIY1amW1MSGEy3ThJ94SkYR61UEu8bYN1yA7/h0eWjmu9NM2EfEviXYCEURb9k5thuy9iohCz3sRbnjEpKMn/xRWfafLUsajKWRWahvOq/B2QuXpoMHjXEqN3CVv+Lm6veuA1k+4GzrrkWybiaAmKaXPnu+wHJ59MAKR/uLz0jEUkSS8Yeyf1d1xeOtdQMj1ceQ1KbhMqf7gClgLKxH3wxfyUIEWzCAsGWz7Ija41eBhDNftdn3ywjFw7DY5E8lvtkrZh69hA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rh6mMFBK64P5wZb+ppyB0dcKV5TjJKuBEtiJnIYiZwg=;
- b=F2e8sbXoam2w4QSAxEqQw+7WPAibiONsYdsjF2RFlibiuQ/5juoI6l5rO1PHBQSb9ijQ2Gs5fxQlVAXhOFtcs39R0P3HeNZy9859ui3UmqRyRLBclXwlqxkO6cdb0rITU4/1szGV8tSe5SjImVCp09zo93cRn3WxXSCE60xO9HErKlDYFee/AQ2VG4hlaFCOiLv8qPB+TEeHb2Bl+0KpxGEL7XS/yjrnz+aAc+vIVj8dT0XWU7XbVUtvbAIr+zgTeCmxH5shqD1+jEr1ZDJTuIwehouDq+WA1YQyU8zPbgaZ9YjM4nwdY4StslTJgYfnk1jJ5gWjlT3Fwx8tdUVfbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rh6mMFBK64P5wZb+ppyB0dcKV5TjJKuBEtiJnIYiZwg=;
- b=i4SncwO2w6IeBvbOznB5aociyshFbEhiWlnoLrcNJxTF2pgIL9Kj84z++Fjhq30Eyv62Awu2YfNHlMAxnLalS55AmxPAoXd5rNy0NGAlns5rRWMEHmD0YDYzayXet7+MEix0llOtFBdAsCQsbm0tUc1Yt1on6arBJxLmPvoV4WnYZAuLHjbugiBHQ7IDHFxc3gZw4K5LFytN17c81TKRwmumljOSH+0pQqzczpGHs2hgPUTlXSZmM4ZUjotAwcdwDMYYcTEkmTuGVCvPsVVbRoejgLxTm0Oxkagx8v0DviXvwcKX3ib2SGUI8qM63Tx1O+2g0UvvsYiSuhEljxYs/w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SEYPR06MB7027.apcprd06.prod.outlook.com (2603:1096:101:1e3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.33; Wed, 31 Jul
- 2024 09:02:47 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 09:02:47 +0000
-From: Huan Yang <link@vivo.com>
-To: Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: [PATCH 2/2] udmabuf: make udmabuf folios and offsets set more readable
-Date: Wed, 31 Jul 2024 17:02:33 +0800
-Message-ID: <20240731090233.1343559-2-link@vivo.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240731090233.1343559-1-link@vivo.com>
-References: <20240731090233.1343559-1-link@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR01CA0035.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::13) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BF41AAE2B;
+	Wed, 31 Jul 2024 09:03:20 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B481A8C19;
+	Wed, 31 Jul 2024 09:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722416599; cv=none; b=S5792ea5U6Caou0lwZOXL8y5PA0UvHXKBxZTvjx7DNEpGC1RKZU/QyOaOcbgIYilfthTD3kJ1NRuLPvuC/VPgf3L17QSJ8ulEzAVn8AgrEcvwYMAAVn1BPeRUYC/1EiyGY7xP8Br3ZLdSLsjP+7Zky4EUqaXF0WBIzgro/OYNNw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722416599; c=relaxed/simple;
+	bh=L4DRVaflXM78NURF1PSq70OfloJDJuv4xDuaFsKoiF4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bI41AWnIgLbWLVjJLBQioldE1SZkzwE7PWU4bd1YJ647OWFQv0Yd4MWLaWlTKZ7pA3Y8suz8xSkQDgK2zRiFi7w68UtdkiLCT9/v8d4IZdZE5M2AW/fabig01HFphkG1fuzG8WCSG9Zhi8mPOQl0G1FR1Erdb98XlY0L3e07ONg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DDAF1007;
+	Wed, 31 Jul 2024 02:03:36 -0700 (PDT)
+Received: from [10.57.94.83] (unknown [10.57.94.83])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94C093F5A1;
+	Wed, 31 Jul 2024 02:03:08 -0700 (PDT)
+Message-ID: <6b7db3ba-5556-4aae-961c-4ecf31efda5d@arm.com>
+Date: Wed, 31 Jul 2024 10:03:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEYPR06MB7027:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c10943a-cf4a-4452-c13e-08dcb13f8c1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?lHQCp9t2YyrcqD4kPKk49qgMEHLFvgAlxq120pTPBAaczC+NRMnwum/VBJcp?=
- =?us-ascii?Q?M3qXVaJZMn/iMkSpegyF3DAAT/xj7a0Qt3tj4zJN18BQ7wBMY/hBPePedvel?=
- =?us-ascii?Q?LOphFH8xgoDkXHr4iLMK2yz0gRgzTB3qXe2BSdzQXzMBUgcl0ROjp13i+Qz7?=
- =?us-ascii?Q?mKhrYRZULc4qVJBryT6l9HZiqDIKKxVHzsK87TF8AF+Kxzj7/AgmmaDgkRrl?=
- =?us-ascii?Q?j6Lht6p3pYVWxnLZgRLixT+/cR/6l3Dx409lTcfavuSnKsxKPSLNyuqImo/3?=
- =?us-ascii?Q?M5zZPD0tIomXeaN9vshuItiN0o2DH+WRlOoXMuLhRlfbAYTdtqFSX4+etPwu?=
- =?us-ascii?Q?UXMjdQ9BjpH7idWD32z4TLs92gmjkVL6KfuChKQet+Rsaxskb1+Nnw5BTZhg?=
- =?us-ascii?Q?cMrVdv1UQKnz7TOl8GFf2gCZYVjmlpWYUdUXm550vzOm3wEuGqTtNLWGPM+S?=
- =?us-ascii?Q?bfMWXeV2X3lYNKLeRsWsDmfRwstQGiFvPmlpEDcRSL0RcvLWYhSroLFdcPWS?=
- =?us-ascii?Q?64wJNpyzJg5ev36BfSyWuqRnWE57x1ViY+OT2dF0yqWAf98lofNpDF8AbECM?=
- =?us-ascii?Q?s+wuR5ohk3BTEpm7vyc8JC1GAdzNwhKJVdSjMB0qF7NqkCt6CiuyLo+izJsO?=
- =?us-ascii?Q?s5//Qkwsxn2r9voEjpcZiWpqBy/S4fUy1vLqs2jWHBzseaNGNMQptyNT/YzP?=
- =?us-ascii?Q?n4+cIDNZUfe/loc/auKa6Lu1eZ2MsrX86oO0hQls0+0D3rxLAw5VkqF/lkwX?=
- =?us-ascii?Q?2prcHMyvh9f4muatOALg7p/pw6WL9hrHWBBJbSRO+Jic6W2I42xikiJecZuJ?=
- =?us-ascii?Q?E8sBN1vXA2GHH6AijwLqIy7LAeUKtt4mBRjl2XIA1/G4cbhg/hyZ5Eze4f3j?=
- =?us-ascii?Q?XOsOPpBalCv25xnaSHuqiX7ol84vIstlVfDb6URvziwuN/ZR9uxPS9G1XZCh?=
- =?us-ascii?Q?uTxYRjDd/qQ4e0cZPeiGA7OSE/RDaQlwi7aOwWqr5Mi0Oce7Hn2eeMIAdXr5?=
- =?us-ascii?Q?2ptPftjLwuaQ+Eva/Ib/WDGYxMGP6u/Yj+aEna0oxMUs3skuHZx8QLxzakmk?=
- =?us-ascii?Q?6aA7w7KptXysN3ro77bJbvB1k/oQd4S8CuXBGreCDvKIopnPsUlEpzUifagG?=
- =?us-ascii?Q?aUrTqQ3n8XZtylmgjLTqBA7H4K17ps1LsncfttbqG+EqhxT5URmfh0rZVQ1f?=
- =?us-ascii?Q?GsOz7yGe6Cuv8D/gHwLrBj+pL9+UoXZSd5+PMQjRjLfUkJsN4bLX0NNvEoGS?=
- =?us-ascii?Q?3EG6N9mFIzYQlvvHjEdAw5sD06utjijW7Nj4rN2rS60XA0j8/KuuzuRIeBEv?=
- =?us-ascii?Q?AxsvLMGHd2Lv6KiSfvTKIwYT1RQvuNkFLGOi/U8k9isftM/zc6SX8cRL13/I?=
- =?us-ascii?Q?/yZDgMWk3z8Ils4osIFF1tobJtyoTuIkyuatucd0tlBV41z1bQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?lQ02AiDFhOE6uoaxFqHPB795rw8PpaESQzi/1bHUxYFkr5dnUBVEkUE7v4eD?=
- =?us-ascii?Q?TIZYMQuNNm9VNhBEzDLOY7u8fFnYyyRg9DjPPvTS8+C6Q+6onF1t5Dy999n9?=
- =?us-ascii?Q?znIri4oKAdo9jTcWzpdEH91updM8BLfcPYeZGXz56UGTunSQj9qit8msAkj6?=
- =?us-ascii?Q?OJMnI8kg3yZN50lUZxQmPHz314v/rBJ+u/bkjmeP0o0+NgyF8zS+PtTSsH4p?=
- =?us-ascii?Q?0rDLFjg2C72zBqdfZGr1WKXLR+CAOxmGZRClMD9hqWb87eLI0c+znHi9hakz?=
- =?us-ascii?Q?lfAGIgxkZ/iCbOXIO5A57iLuqAd/mA1D35T3zgho5jYQ0jNSFm/la2eaVCWw?=
- =?us-ascii?Q?hcqBshz33j+rqqdyeGkHj14oSn0ErIVPvM5qDfLK4/hl8sXra+wxbyCNFzpM?=
- =?us-ascii?Q?zq8FwQcRPoR+3nJAeI/iHxqFvObkU0fVdeRwAHhp6BvDNPMbpYmdiT0k0yH3?=
- =?us-ascii?Q?BUX9aLE9D73Qs7EKm7H/LqoxV9N6fCAoxr6bcoHDmtcwYodX1XwfKZqMmj6s?=
- =?us-ascii?Q?tpMpcRmgCmi7nonUpG4EDRq7Hdfrt8CcJx2E1ttO97yyccyjqbDt1CWUbiAQ?=
- =?us-ascii?Q?Pe6p3AaJgd+iyF3ufOw41vK5nssTWWj3/uoZa4ZXUwK9HUcOmFlp4R14vKvG?=
- =?us-ascii?Q?8by6guogqZQphgGvIOm+Twv0FwwBK2JqjY45RFbbpPPwgZ0n6g4E1Wa4CzF/?=
- =?us-ascii?Q?VWlPE3Y1C44AXPLc5IQ+3d0Ro0qws5DWUe+qDavxS70crQiN0Tbyub/lz8dx?=
- =?us-ascii?Q?tMxOd4MK8d55V9TkOU8L4sx69Bq85DLXOzSWQxzsggF8/NdARiO80qqRmwBw?=
- =?us-ascii?Q?PmhQGgHMzYEC8Dl6yLMxHAnFdDCzCb3hnYfFMQBR3NJesp3J5paN1I1M0TrB?=
- =?us-ascii?Q?U52863CIKcIUaewfoOQrHAiWZTx8e/77isIi2KYQ7XLg7gIxxeATkasvbPJZ?=
- =?us-ascii?Q?i7CQDtI0TkFgiUEx2xvm6auZfeh23X8s9KWj1hxwDxJxRgak+GQcU0XXlpZg?=
- =?us-ascii?Q?FmudWjPSiEhVhPwdGL2LXQZD/LzPInjZxrFarVhJmqcPZAE2njlOCDORN/V/?=
- =?us-ascii?Q?Uk44GLeJT00MJl7Tb/plSewacL6aZJv8l/3NLHYy4jQiTdsy19ZNW7LSEwe5?=
- =?us-ascii?Q?dFMUDDZKyIu7TEIJSTcF4DLCYkk7Zdmr+tjmRChhol/EjSQ7Euhj/ZFKukwG?=
- =?us-ascii?Q?1CyaD+2+wWNAqpYVKqmK4Smk3ntvpmSetzUY19cdCkn+p7NrtXGggk7XoyEH?=
- =?us-ascii?Q?Zql0bcyIvur5qfRL32Q7FQgmQvn7xM/FDEc0/jxioqf7psVoW1xUH1Tr6r7U?=
- =?us-ascii?Q?9f9ihS3JD/Q4zWqIywn2k6ruD7UH0AeoNRXJqeT0dDmoxWL+9cm+P0iPrLm1?=
- =?us-ascii?Q?txS6vNjlkRyqtHGIymXXJY6fz44V2/+mhNncR/xfwH3I1GwqSodpZWz+RE6M?=
- =?us-ascii?Q?J2IBIl98Z/6+/cMf9VhT3O+twnFbBr4qeK2AodjqCU7/9Ha4vxmy7g2ZunQj?=
- =?us-ascii?Q?KKp2bLQVn1zi+vJUG0XGSYlrljHOeVzj03HpIDOevHw6NSqPUhplsvqJ5Ma6?=
- =?us-ascii?Q?zbxFzZwJpjjBc8cJG19eQINbEq/A5eeh90Bt4FcO?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c10943a-cf4a-4452-c13e-08dcb13f8c1a
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 09:02:47.2708
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zqZ8EUSKMSj5uuje2ME9i8oo+xM+JpttON2kqXir4SDtqmRIllSvVNFLpy95XOj9b7WcWy1eQ+MZJTVHQ6kh3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB7027
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/15] arm64: Mark all I/O as non-secure shared
+Content-Language: en-GB
+To: Gavin Shan <gshan@redhat.com>, Steven Price <steven.price@arm.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-6-steven.price@arm.com>
+ <b20b7e5b-95aa-4fdb-88a7-72f8aa3da8db@redhat.com>
+ <e05d2363-d3e4-4a23-9347-723454d603c9@arm.com>
+ <68acf6c9-4ab8-4ed5-bddc-f3fc5313597e@redhat.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <68acf6c9-4ab8-4ed5-bddc-f3fc5313597e@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The current code for setting folios and offsets is not very readable.
+On 31/07/2024 07:36, Gavin Shan wrote:
+> Hi Suzuki,
+> 
+> On 7/30/24 8:36 PM, Suzuki K Poulose wrote:
+>> On 30/07/2024 02:36, Gavin Shan wrote:
+>>> On 7/1/24 7:54 PM, Steven Price wrote:
+>>> I'm unable to understand this. Steven, could you please explain a bit 
+>>> how
+>>> PROT_NS_SHARED is turned to a shared (non-secure) mapping to hardware?
+>>> According to tf-rmm's implementation in 
+>>> tf-rmm/lib/s2tt/src/s2tt_pvt_defs.h,
+>>> a shared (non-secure) mapping is is identified by NS bit (bit#55). I 
+>>> find
+>>> difficulties how the NS bit is correlate with PROT_NS_SHARED. For 
+>>> example,
+>>> how the NS bit is set based on PROT_NS_SHARED.
+>>
+>>
+>> There are two things at play here :
+>>
+>> 1. Stage1 mapping controlled by the Realm (Linux in this case, as above).
+>> 2. Stage2 mapping controlled by the RMM (with RMI commands from NS Host).
+>>
+>> Also :
+>> The Realm's IPA space is divided into two halves (decided by the IPA 
+>> Width of the Realm, not the NSbit #55), protected (Lower half) and
+>> Unprotected (Upper half). All stage2 mappings of the "Unprotected IPA"
+>> will have the NS bit (#55) set by the RMM. By design, any MMIO access
+>> to an unprotected half is sent to the NS Host by RMM and any page
+>> the Realm wants to share with the Host must be in the Upper half
+>> of the IPA.
+>>
+>> What we do above is controlling the "Stage1" used by the Linux. i.e,
+>> for a given VA, we flip the Guest "PA" (in reality IPA) to the
+>> "Unprotected" alias.
+>>
+>> e.g., DTB describes a UART at address 0x10_0000 to Realm (with an IPA 
+>> width of 40, like in the normal VM case), emulated by the host. Realm is
+>> trying to map this I/O address into Stage1 at VA. So we apply the
+>> BIT(39) as PROT_NS_SHARED while creating the Stage1 mapping.
+>>
+>> ie., VA == stage1 ==> BIT(39) | 0x10_0000 =(IPA)== > 0x80_10_0000
+>>
+>                                                       0x8000_10_0000
 
-In fact, udmabuf->folios represents the head page of each folio, while
-the offset indicates the PAGE_SIZE offset within the folio for the
-corresponding pgcnt. And folios only add head page(the folio) into unpin
-list.
+Yep, my bad.
 
-This patch changes the loop condition to use folios as the outer loop
-and sets the subpages of the folio in the inner loop, making it easier
-to understand the relationship between unpin and folios/offset.
+> 
+>> Now, the Stage2 mapping won't be present for this IPA if it is emulated
+>> and thus an access to "VA" causes a Stage2 Abort to the Host, which the
+>> RMM allows the host to emulate. Otherwise a shared page would have been
+>> mapped by the Host (and NS bit set at Stage2 by RMM), allowing the
+>> data to be shared with the host.
+>>
+> 
+> Thank you for the explanation and details. It really helps to understand
+> how the access fault to the unprotected space (upper half) is routed to NS
+> host, and then VMM (QEMU) for emulation. If the commit log can be improved
+> with those information, it will make reader easier to understand the code.
+> 
+> I had the following call trace and it seems the address 0x8000_10_1000 is
+> converted to 0x10_0000 in [1], based on current code base (branch: 
+> cca-full/v3).
+> At [1], the GPA is masked with kvm_gpa_stolen_bits() so that BIT#39 is 
+> removed
+> in this particular case.
+> 
+>    kvm_vcpu_ioctl(KVM_RUN)                         // non-secured host
+>    kvm_arch_vcpu_ioctl_run
+>    kvm_rec_enter
+>    rmi_rec_enter                                   // -> SMC_RMI_REC_ENTER
+>      :
+>    rmm_handler                                     // tf-rmm
+>    handle_ns_smc
+>    smc_rec_enter
+>    rec_run_loop
+>    run_realm
+>      :
+>    el2_vectors
+>    el2_sync_lel
+>    realm_exit
+>      :
+>    handle_realm_exit
+>    handle_exception_sync
+>    handle_data_abort
+>      :
+>    handle_rme_exit                                 // non-secured host
+>    rec_exit_sync_dabt
+>    kvm_handle_guest_abort                          // -> [1]
 
-The loop conditions for j and k are actually only used in the head loop,
-so they can be turned into loop variables.
+Correct. KVM deals with "GFN" and as such masks the "protection" bit,
+as the IPA is split.
 
-Signed-off-by: Huan Yang <link@vivo.com>
----
- drivers/dma-buf/udmabuf.c | 40 ++++++++++++++++++++-------------------
- 1 file changed, 21 insertions(+), 19 deletions(-)
+>    gfn_to_memslot
+>    io_mem_abort
+>    kvm_io_bus_write                                // -> 
+> run->exit_reason = KVM_EXIT_MMIO
+> 
+> Another question is how the Granule Protection Check (GPC) table is 
+> updated so
+> that the corresponding granule (0x8000_10_1000) to is accessible by NS 
+> host? I
+> mean how the BIT#39 is synchronized to GPC table and translated to the 
+> property
+> "granule is accessible by NS host".
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 6604d91e7072..0285194e6b51 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -301,7 +301,7 @@ static long udmabuf_create(struct miscdevice *device,
- 	struct file *memfd = NULL;
- 	struct folio **folios;
- 	struct udmabuf *ubuf;
--	u32 i, j, k, flags;
-+	u32 i, flags;
- 	loff_t end;
- 
- 	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
-@@ -338,6 +338,7 @@ static long udmabuf_create(struct miscdevice *device,
- 
- 	pgbuf = 0;
- 	for (i = 0; i < head->count; i++) {
-+		u32 j, k;
- 		memfd = fget(list[i].memfd);
- 		ret = check_memfd_seals(memfd);
- 		if (ret < 0)
-@@ -360,26 +361,27 @@ static long udmabuf_create(struct miscdevice *device,
- 			goto err;
- 		}
- 
--		nr_folios = ret;
--		pgoff >>= PAGE_SHIFT;
--		for (j = 0, k = 0; j < pgcnt; j++) {
--			ubuf->folios[pgbuf] = folios[k];
--			ubuf->offsets[pgbuf] = pgoff << PAGE_SHIFT;
--
--			if (j == 0 || ubuf->folios[pgbuf-1] != folios[k]) {
--				ret = add_to_unpin_list(&ubuf->unpin_list,
--							folios[k]);
--				if (ret < 0) {
--					kfree(folios);
--					goto err;
--				}
-+		/**
-+		 * Iter each folios we got from pin, add each folio into unpin
-+		 * list and setup each folio and page offset into folio into
-+		 * corrent page count position.
-+		 * So that we can iter any offset in size and get correctly
-+		 * page.
-+		 */
-+		for (j = 0, pgoff >>= PAGE_SHIFT, nr_folios = ret;
-+		     j < nr_folios; ++j, pgoff = 0) {
-+			long nr_pages;
-+
-+			ret = add_to_unpin_list(&ubuf->unpin_list, folios[j]);
-+			if (ret < 0) {
-+				kfree(folios);
-+				goto err;
- 			}
- 
--			pgbuf++;
--			if (++pgoff == folio_nr_pages(folios[k])) {
--				pgoff = 0;
--				if (++k == nr_folios)
--					break;
-+			for (k = 0, nr_pages = folio_nr_pages(folios[j]);
-+			     k < nr_pages; ++k, ++pgoff, ++pgbuf) {
-+				ubuf->folios[pgbuf] = folios[j];
-+				ubuf->offsets[pgbuf] = pgoff << PAGE_SHIFT;
- 			}
- 		}
- 
--- 
-2.45.2
+Good question. GPC is only applicable for memory accesses that are 
+actually "made" (think of this as Stage3).
+In this case, the Stage2 walk causes an abort and as such the address is
+never "accessed" (like in the normal VM) and host handles it.
+In case of a "shared" memory page, the "stage2" mapping created *could*
+(RMM doesn't guarantee what gets mapped on the Unprotected alias) be
+mapped to a Granule in the NS PAS (normal world page), via 
+RMI_RTT_MAP_UNPROTECTED. RMM only guarantees that the output of the
+Stage2 translation is "NS" PAS (the actual PAS of the Granule may not
+be NS, e.g. if we have a malicious host).
+
+Now, converting a "protected IPA" to "shared" (even though we don't
+share the same Physical page for the aliases with guest_mem, but
+CCA doesn't prevent this) would take the following route :
+
+Realm: IPA_STATE_SET(ipa, RIPAS_EMPTY)-> REC Exit ->
+        Host Reclaims the "PA" backing "IPA" via RMI_DATA_DESTROY ->
+        Change PAS to Realm (RMI_GRANULE_UNDELEGATE)
+
+Realm: Access the BIT(39)|ipa => Stage2 Fault ->
+        Host maps "BIT(39)|ipa" vai RMI_RTT_MAP_UNPROTECTED.
+
+The important things to remember:
+
+1) "NS_PROT" is just a way to access the "Aliased IPA" in the 
+UNPROTECTED half and is only a "Stage1" change.
+2) It doesn't *change the PAS* of the backing PA implicitly
+3) It doesn't change the PAS of the resulting "Translation" at Stage2, 
+instead it targets a "different IPA"->PA translation and the resulting
+*access* is guaranteed to be NS PAS.
+
+Suzuki
+
+> Thanks,
+> Gavin
+> 
+> 
+> 
+> 
+> 
 
 
