@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-269974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0627594397F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:48:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97E37943989
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00221F216C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:48:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C0E1C2177A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508D316D9D8;
-	Wed, 31 Jul 2024 23:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4176816DEBA;
+	Wed, 31 Jul 2024 23:52:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="q6RWam+/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7osGmom"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3731114B097
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712A014B097;
+	Wed, 31 Jul 2024 23:52:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722469705; cv=none; b=bBhaG4byaFnvkOpYWFixFX2FwSKAjFy9xHKjyhtkfusOZV2bvxHpFp0WqtuBSKXN0DE744GrhaTd9z2dXdeVVugEXS208gug72m06VzaKTe3BXRYTAfJl+7U4lrrtUgcICv0+f2gSSHjAQCBFlchzGhZpfDOHihzq6kvI5cklcw=
+	t=1722469975; cv=none; b=L7D+HSlhZ0vzsAVpFH4bhPIKllSBz06S9AHtFZaHiCVmkb+0RxwON+OIliZ+0xj6pbvkXeUwMS2JkrOYG8hLaQKdg/cffeWxrTAw6wdp4/9lStjcidBvPid45v6bw7tCDDm3M0ysZvLmrl+aRwPFh9hkhnTh7AnH+JYuDAIfasY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722469705; c=relaxed/simple;
-	bh=/IIaZdmYNOt4xk2a7EyuaHC4cDYJRlszzg+xMZxGdpw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CysGLRpglHCewbeziBeGZgpQgDCbZA6R75djidjXnIqJvAvmN++7d1SfoTxta8LNZPl7sjVq5OeU2G+HwLvr9D+MGAcOB1u7RH3ruQaLVbhYOvhLjNyYS2Szeady+LzEehgdadb9x7/yGKR2mK+Yv6WxbOvQpawUNKJbC8dsLXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=q6RWam+/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76133C116B1;
-	Wed, 31 Jul 2024 23:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1722469704;
-	bh=/IIaZdmYNOt4xk2a7EyuaHC4cDYJRlszzg+xMZxGdpw=;
+	s=arc-20240116; t=1722469975; c=relaxed/simple;
+	bh=lm3j1xdzYpcpoFEdtpSi/NhrcwFeBNmRdzqD+wEVuI0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YOxuinHhuDGpAadQt4Eua++ko+Q2PZp38kgbecjFH1WpxPtLuE/T1AV0/V3awHaWbifCXScP8dW5xXD+ZmI9TNnIUaDHPqyL2eo9mYcFvIQdMPL04oTLhIC5q7OM74YC8cqLInYJQ6SC2/Sx5l/ArKzbcAoE6YQwbRQ4TYGfn9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7osGmom; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75140C116B1;
+	Wed, 31 Jul 2024 23:52:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722469975;
+	bh=lm3j1xdzYpcpoFEdtpSi/NhrcwFeBNmRdzqD+wEVuI0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q6RWam+/TIoT+yhWHSD4A7t9yMd/ceP7lTrzPzAUy+DJC9L3/UsUqAKkQfhz6VyZT
-	 RopuopQ7N1o0+WyoLTeWh0D2lmyTGclYl9+WlZbdpczR03a9iYY/QjNW6Jh52bAOCO
-	 iTav0yOEdQjyg+r1kP67nYY2wG17RkSf9dMiPt1M=
-Date: Wed, 31 Jul 2024 16:48:23 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Carlos Llamas <cmllamas@google.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, "J. R. Okajima"
- <hooanon05g@gmail.com>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2] lockdep: upper limit LOCKDEP_CHAINS_BITS
-Message-Id: <20240731164823.c8ac96ab0f8968ce8213c02d@linux-foundation.org>
-In-Reply-To: <20240723164018.2489615-1-cmllamas@google.com>
-References: <11faf952-c0f8-6e1d-3560-12d77847a8ac@i-love.sakura.ne.jp>
-	<20240723164018.2489615-1-cmllamas@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	b=P7osGmom/a484+ejw0mw+VTijyJ1qBvZOE00p4wOUNcTO7/Ap3tXxnLoAajxa0f8m
+	 5lX3xcM0AFw3wqi/nmZ4eJgrRFXt5O0JB4cRaGiST76rIl/TNDghvLSbmJmhoaAG6b
+	 G+mH1CAfvPRuwdEBNBYYVkPk97Wu9UkZxDY2EFQUlrqOjChx9ONsHdB7NNsoUXNrve
+	 yiR9hxyHIC7UJtN/2lQkc/EsS+8neoHY5F65JchlBVNivWHIQGh5HyZq9ufc2It4M4
+	 f476cPG0hdIUcQW+0uVHLZD8BBngkwES7Y7Fb8INXdTSaJqkdEyT3FRIK3zIqAITXp
+	 d4948A/JOyvHw==
+Date: Wed, 31 Jul 2024 16:52:53 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: "Song, Yoong Siang" <yoong.siang.song@intel.com>, "Neftin, Sasha"
+ <sasha.neftin@intel.com>, Brett Creeley <brett.creeley@amd.com>,
+ "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, Alexei Starovoitov
+ <ast@kernel.org>, "Eric Dumazet" <edumazet@google.com>, "Nguyen, Anthony L"
+ <anthony.l.nguyen@intel.com>, "Blanco Alcaine, Hector"
+ <hector.blanco.alcaine@intel.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jonathan Corbet <corbet@lwn.net>, "Gomes, Vinicius"
+ <vinicius.gomes@intel.com>, "Kitszel, Przemyslaw"
+ <przemyslaw.kitszel@intel.com>, John Fastabend <john.fastabend@gmail.com>,
+ Shinas Rasheed <srasheed@marvell.com>, "intel-wired-lan@lists.osuosl.org"
+ <intel-wired-lan@lists.osuosl.org>, Paolo Abeni <pabeni@redhat.com>, "Tian,
+ Kevin" <kevin.tian@intel.com>, Jesper Dangaard Brouer <hawk@kernel.org>,
+ Richard Cochran <richardcochran@gmail.com>, "netdev@vger.kernel.org"
+ <netdev@vger.kernel.org>, "Hay, Joshua A" <joshua.a.hay@intel.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "David S . Miller"
+ <davem@davemloft.net>
+Subject: Re: [Intel-wired-lan] [PATCH iwl-next, v1 0/3] Add Default Rx Queue
+ Setting for igc driver
+Message-ID: <20240731165253.2571b254@kernel.org>
+In-Reply-To: <d805bea3-cb2f-4e2c-a07a-27b8b4c5f294@intel.com>
+References: <20240730012212.775814-1-yoong.siang.song@intel.com>
+	<20240730075507.7cf8741f@kernel.org>
+	<PH0PR11MB5830E21A96A862B194D4A4A5D8B12@PH0PR11MB5830.namprd11.prod.outlook.com>
+	<20240731074351.13676228@kernel.org>
+	<d805bea3-cb2f-4e2c-a07a-27b8b4c5f294@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 23 Jul 2024 16:40:17 +0000 Carlos Llamas <cmllamas@google.com> wrote:
+On Wed, 31 Jul 2024 09:41:16 -0700 Jacob Keller wrote:
+> In this case, (I haven't dug into the actual patches or code), I suspect
+> the driver will need to validate the location values when adding rules
+> to ensure that all rules which don't use the default queue have higher
+> priority than the wild card rule. The request to add a filter should
+> reject the rule in the case where a default queue rule was added with a
+> higher priority location.
 
-> From: "J. R. Okajima" <hooanon05g@gmail.com>
-> 
-> CONFIG_LOCKDEP_CHAINS_BITS value decides the size of chain_hlocks[] in
-> kernel/locking/lockdep.c, and it is checked by add_chain_cache() with
->     BUILD_BUG_ON((1UL << 24) <= ARRAY_SIZE(chain_hlocks));
-> This patch is just to silence BUILD_BUG_ON().
-> 
-> ...
->
-> --- a/lib/Kconfig.debug
-> +++ b/lib/Kconfig.debug
-> @@ -1515,7 +1515,7 @@ config LOCKDEP_BITS
->  config LOCKDEP_CHAINS_BITS
->  	int "Bitsize for MAX_LOCKDEP_CHAINS"
->  	depends on LOCKDEP && !LOCKDEP_SMALL
-> -	range 10 30
-> +	range 10 21
->  	default 16
->  	help
->  	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_CHAINS too low!" message.
-
-checking your homework...
-
-With LOCKDEP_CHAINS_BITS == 21:
-
-	#define MAX_LOCKDEP_CHAINS_BITS CONFIG_LOCKDEP_CHAINS_BITS
-
-		gives MAX_LOCKDEP_CHAINS_BITS == 21
-
-	#define MAX_LOCKDEP_CHAINS      (1UL << MAX_LOCKDEP_CHAINS_BITS)
-
-		gives MAX_LOCKDEP_CHAINS == (1UL << 21)
-
-	#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
-
-		gives MAX_LOCKDEP_CHAIN_HLOCKS = 5 * (1UL << 21)
-
-	static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
-
-		gives ARRAY_SIZE(chain_hlocks) == 5 * (1UL << 21)
-
-so
-
-	BUILD_BUG_ON((1UL << 24) <= ARRAY_SIZE(chain_hlocks));
-	ie, BUILD_BUG_ON((1UL << 24) <= 5 * (1UL << 21));
-
-is OK, whereas
-
-	BUILD_BUG_ON((1UL << 24) <= 5 * (1UL << 22));
-
-will bug out.  So LGTM, I'll add it to mm.git.
-
-
-btw, the help text "Bitsize for MAX_LOCKDEP_CHAINS" is odd.  What's a
-bitsize?  Maybe "bit shift count for..." or such.
-
-
+Maybe I shouldn't say it aloud but picking a "known" location for such
+a wildcard rule wouldn't be the worst thing. Obviously better if the
+driver just understand ordering!
 
