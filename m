@@ -1,210 +1,125 @@
-Return-Path: <linux-kernel+bounces-269528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84889433DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:07:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D41C9433DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E8CB2675F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:07:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B19286299
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92431BC073;
-	Wed, 31 Jul 2024 16:07:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A503A1BBBE1;
+	Wed, 31 Jul 2024 16:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8XGssue"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TkzUFwov"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54501CAA9;
-	Wed, 31 Jul 2024 16:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286E31CAA9
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722442056; cv=none; b=agi57KcF/AKNgnceIsSwVit8GQ9ZPZxnrX73BDU3HzyIdKxQmgByHhJ68HIB+ao2KPkeQL6rVp3nZcTDKvvA3FitQp60valTq+jqZnPDt4ikKnfd+SafyPGXEGyXkbc2zJlkzAXhN/Cw1tY/b+vi6oM9xi/MlAbLa18DQwfpFYc=
+	t=1722442089; cv=none; b=VBq+I4qT6FOu4SJ/ZUhaIIi3pB/jGwelocaRqtSXTmreupQaiMM7T20wqyVkZc/p1CHbuLUYZEL80LxgjP0eTbjrUAbOB+5oLcz8kCqAvr4TBjT890b67skWTN+t+fYgisX4KKF9BAduvzZiO66s4ieS67TkLdU4u0pjtWu1uW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722442056; c=relaxed/simple;
-	bh=/T0PogkqnHRsWRuK6VPDBhO66ZfmSpD7WOcpsonFMyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MySnYNLM4AP4VRm6zeUGEpt2Jw3zjbJkZFso8H1hkeF953G3QoUIX5EblDmJGB0CO4nPpxBPkmGVuN/nUFxh26YQPqlbAKbiNskdJIapscKlSYC8mysynE2OXiChP+8sYnVf0SqLKYos8Yiy+iGPt53uX6rNkLVZc54ELQmr4h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8XGssue; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35271C116B1;
-	Wed, 31 Jul 2024 16:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722442055;
-	bh=/T0PogkqnHRsWRuK6VPDBhO66ZfmSpD7WOcpsonFMyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J8XGssue9wCJ45qJ+K7j0xyUuLBxiStj7SL269jGPapUY/W0wpXOk+VPiwLEpXbkM
-	 WSEXi05v2UArn12Qmz9/yiJRjEVJL/bZNVVvA2+jZZhW4soP8vly0H4EW9N9yY+4v8
-	 QddQaXtYCgW4vfYi6+9auScAkfZ8QlpXj1lcVoDJ3xCcxSgV7LNtB72uG/OXDZSfRl
-	 wqRmSJpJO1xMnuWns5OqH9sqyZ8SdAPTqpbDqrPcn8D61STthHfVbQ9madruVtdF3R
-	 1Ms2HDe5dwBtfKSxwQTL/Z3mMrhEj0nROIrSyFIRVWNK7OCzNp2R912nTWqM6jeJYm
-	 hqfVBA1QxRCyA==
-Date: Wed, 31 Jul 2024 18:07:32 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang1211@gmail.com>
-Subject: Re: [PATCH v3 13/25] context_tracking, rcu: Rename
- rcu_dynticks_task*() into rcu_task*()
-Message-ID: <ZqphRBrI4mlSdER4@localhost.localdomain>
-References: <20240724144325.3307148-1-vschneid@redhat.com>
- <20240724144325.3307148-14-vschneid@redhat.com>
+	s=arc-20240116; t=1722442089; c=relaxed/simple;
+	bh=FdjzrVjIqCQJBuKBk/cVhXfnfcfrFsX2HJ7cLjXPNcg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rnUKHzvQjP70mChnwaIPylWdgxkS3Oe6basOomGKiRPSUPdX3gM741/ZBqr3hQw0WemKdsPvaEZZvF0+jLVktrdbe3nCWPOiRDXZ6aAob+AlMD8kVqvmJmCH5QvF9/nXcypVEgOPEtkEzRnzeufP6S52P0+SU+nUlsHQlEA8Ef8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TkzUFwov; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722442087;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=GoBWNItCy+5p/s715HtqO2A6k5AaBk19nlaEIZQ3fA8=;
+	b=TkzUFwov5of/MvnKg/r40swoQ0NA1MdhHIA7LNzTpt9HvRobLyJA590Rma8qAd6JgMOQh2
+	+LK4SyRmwKp/MGuiRqR/FWQtgsAY2nMYjJQ6J4BDDBfgNEVQQnamUKRSMCNpQiaonIMfvf
+	oJ4RupFDALOcglJmQ9Plx7JTbh9X/gk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-621-UW0f7oMtOV6TwNVlqTZEhg-1; Wed,
+ 31 Jul 2024 12:08:04 -0400
+X-MC-Unique: UW0f7oMtOV6TwNVlqTZEhg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BE4E21955D45;
+	Wed, 31 Jul 2024 16:08:02 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.39.194.228])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 400311955D42;
+	Wed, 31 Jul 2024 16:08:00 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v1] mm: clarify folio_likely_mapped_shared() documentation for KSM folios
+Date: Wed, 31 Jul 2024 18:07:58 +0200
+Message-ID: <20240731160758.808925-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240724144325.3307148-14-vschneid@redhat.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
-> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
-> RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
-> meaning.
-> 
-> While at it, flip the suffixes of these helpers. We are not telling
-> that we are entering dynticks mode from an RCU-task perspective anymore; we
-> are telling that we are exiting RCU-tasks because we are in eqs mode.
-> 
-> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
-> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> ---
->  kernel/context_tracking.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
-> index 8262f57a43636..1c16a7336360f 100644
-> --- a/kernel/context_tracking.c
-> +++ b/kernel/context_tracking.c
-> @@ -38,24 +38,24 @@ EXPORT_SYMBOL_GPL(context_tracking);
->  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
->  #define TPS(x)  tracepoint_string(x)
->  
-> -/* Record the current task on dyntick-idle entry. */
-> -static __always_inline void rcu_dynticks_task_enter(void)
-> +/* Record the current task on exiting RCU-tasks (dyntick-idle entry). */
-> +static __always_inline void rcu_task_exit(void)
+For KSM folios, the function actually does what it is supposed to do:
+even having multiple mappings inside the same MM is considered
+"sharing", as there is no real relationship between these KSM page
+mappings -- in contrast to mapping the same file range twice and having the
+same pagecache page mapped twice.
 
-So this makes sense.
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+ include/linux/mm.h | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
->  {
->  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
->  	WRITE_ONCE(current->rcu_tasks_idle_cpu, smp_processor_id());
->  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
->  }
->  
-> -/* Record no current task on dyntick-idle exit. */
-> -static __always_inline void rcu_dynticks_task_exit(void)
-> +/* Record no current task on entering RCU-tasks (dyntick-idle exit). */
-> +static __always_inline void rcu_task_enter(void)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a890a1731c14..58ca060f5dce 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2132,14 +2132,19 @@ static inline size_t folio_size(const struct folio *folio)
+  * MM ("mapped shared"), or if the folio is only mapped into a single MM
+  * ("mapped exclusively").
+  *
++ * For KSM folios, this function also returns "mapped shared" when a folio is
++ * mapped multiple times into the same MM, because the individual page mappings
++ * are independent.
++ *
+  * As precise information is not easily available for all folios, this function
+  * estimates the number of MMs ("sharers") that are currently mapping a folio
+  * using the number of times the first page of the folio is currently mapped
+  * into page tables.
+  *
+- * For small anonymous folios (except KSM folios) and anonymous hugetlb folios,
+- * the return value will be exactly correct, because they can only be mapped
+- * at most once into an MM, and they cannot be partially mapped.
++ * For small anonymous folios and anonymous hugetlb folios, the return
++ * value will be exactly correct: non-KSM folios can only be mapped at most once
++ * into an MM, and they cannot be partially mapped. KSM folios are
++ * considered shared even if mapped multiple times into the same MM.
+  *
+  * For other folios, the result can be fuzzy:
+  *    #. For partially-mappable large folios (THP), the return value can wrongly
+@@ -2148,9 +2153,6 @@ static inline size_t folio_size(const struct folio *folio)
+  *    #. For pagecache folios (including hugetlb), the return value can wrongly
+  *       indicate "mapped shared" (false positive) when two VMAs in the same MM
+  *       cover the same file range.
+- *    #. For (small) KSM folios, the return value can wrongly indicate "mapped
+- *       shared" (false positive), when the folio is mapped multiple times into
+- *       the same MM.
+  *
+  * Further, this function only considers current page table mappings that
+  * are tracked using the folio mapcount(s).
+-- 
+2.45.2
 
-That too.
-
->  {
->  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
->  	WRITE_ONCE(current->rcu_tasks_idle_cpu, -1);
->  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
->  }
->  
-> -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
-> -static __always_inline void rcu_dynticks_task_trace_enter(void)
-> +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
-> +static __always_inline void rcu_task_trace_exit(void)
-
-But that eventually doesn't, because it's not about not wathing anymore from
-an RCU-TASKS-TRACE perspective. It's actually about adding more heavyweight
-ordering to track down RCU-TASKS-TRACE read side while traditional RCU is not
-watching. Sorry for understanding it that late.
-
-Oh well. So a more accurate name here would be rcu_task_trace_heavyweight_enter().
-
->  {
->  #ifdef CONFIG_TASKS_TRACE_RCU
->  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
-> @@ -63,8 +63,8 @@ static __always_inline void rcu_dynticks_task_trace_enter(void)
->  #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
->  }
->  
-> -/* Turn off heavyweight RCU tasks trace readers on idle/user exit. */
-> -static __always_inline void rcu_dynticks_task_trace_exit(void)
-> +/* Turn off heavyweight RCU tasks trace readers on kernel entry. */
-> +static __always_inline void rcu_task_trace_enter(void)
-
-And rcu_task_trace_heavyweight_exit().
-
-Thanks!
-
->  {
->  #ifdef CONFIG_TASKS_TRACE_RCU
->  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
-> @@ -87,7 +87,7 @@ static noinstr void ct_kernel_exit_state(int offset)
->  	 * critical sections, and we also must force ordering with the
->  	 * next idle sojourn.
->  	 */
-> -	rcu_dynticks_task_trace_enter();  // Before ->dynticks update!
-> +	rcu_task_trace_exit();  // Before CT state update!
->  	seq = ct_state_inc(offset);
->  	// RCU is no longer watching.  Better be in extended quiescent state!
->  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && (seq & CT_RCU_WATCHING));
-> @@ -109,7 +109,7 @@ static noinstr void ct_kernel_enter_state(int offset)
->  	 */
->  	seq = ct_state_inc(offset);
->  	// RCU is now watching.  Better not be in an extended quiescent state!
-> -	rcu_dynticks_task_trace_exit();  // After ->dynticks update!
-> +	rcu_task_trace_enter();  // After CT state update!
->  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !(seq & CT_RCU_WATCHING));
->  }
->  
-> @@ -149,7 +149,7 @@ static void noinstr ct_kernel_exit(bool user, int offset)
->  	// RCU is watching here ...
->  	ct_kernel_exit_state(offset);
->  	// ... but is no longer watching here.
-> -	rcu_dynticks_task_enter();
-> +	rcu_task_exit();
->  }
->  
->  /*
-> @@ -173,7 +173,7 @@ static void noinstr ct_kernel_enter(bool user, int offset)
->  		ct->nesting++;
->  		return;
->  	}
-> -	rcu_dynticks_task_exit();
-> +	rcu_task_enter();
->  	// RCU is not watching here ...
->  	ct_kernel_enter_state(offset);
->  	// ... but is watching here.
-> @@ -240,7 +240,7 @@ void noinstr ct_nmi_exit(void)
->  	// ... but is no longer watching here.
->  
->  	if (!in_nmi())
-> -		rcu_dynticks_task_enter();
-> +		rcu_task_exit();
->  }
->  
->  /**
-> @@ -274,7 +274,7 @@ void noinstr ct_nmi_enter(void)
->  	if (rcu_dynticks_curr_cpu_in_eqs()) {
->  
->  		if (!in_nmi())
-> -			rcu_dynticks_task_exit();
-> +			rcu_task_enter();
->  
->  		// RCU is not watching here ...
->  		ct_kernel_enter_state(CT_RCU_WATCHING);
-> -- 
-> 2.43.0
-> 
 
