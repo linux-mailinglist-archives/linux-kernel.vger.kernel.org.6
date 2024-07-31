@@ -1,145 +1,98 @@
-Return-Path: <linux-kernel+bounces-269099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCEC942D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:57:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18260942D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:57:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB83C1F24920
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D452856A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7224A1A8BF4;
-	Wed, 31 Jul 2024 11:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lWPQFkdf"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533481AED23;
+	Wed, 31 Jul 2024 11:57:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AFCB8BFF
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790C11AE868
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427020; cv=none; b=YG4/+j5usb+IjRhrB6rneukCI3vZkzweiLd7sytT1Q0S0Moq8UqGhexW8sc1H8rW1AGYmxHxhqEGPRr1VDVcIE9myGrt7AV7uOUVQR3GUN1XKLg1URm8hJEpWkh0MqEPf08Cz811pmWDY2iZphO2CuGOAHgM3vA3WYAQrjhgBgU=
+	t=1722427024; cv=none; b=P7UFEDvC1iua0VTt0lh2uwLTh5vjGITFQ1bGMBov6h4fTQWttU3TedizOK5WgJyvdv97+4NLJd//GYpi3LSoRmll/llUrM4WLIOCg5c2zyYpk2+wuhjA5T4AobiB4F2lKenFTAIxm8gL36KUp4l98xnMECNBxQqps2hrdX1vh+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722427020; c=relaxed/simple;
-	bh=Qs32DugEbUtTid4Jfkr2SBkGin2nQ+Ig2mACeMrdLsk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HTUVhMOZu54Ao9FzBgP9R4Tj5+EgfW8xoRsfXMyKzMSXiAbejVIUij5qiG6m+L6usirDKCv/CzfnvsjtMXnpRFhXfh2L97MNMF5XMhYiLzhHljTBpOY0oBC/n4338b14Qz81l1uu/k7vNm7HZizGAxwhjIy3+iNH7tq9Mf77s2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lWPQFkdf; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d199fb3dfso4768119b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:56:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722427019; x=1723031819; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dD4/LuujpP9SBy4N2qvay9vEiTkzSElUnCkU/leHG9k=;
-        b=lWPQFkdf9c7jLlc9wXJajA313Z9eNZS0pe8XclqGwLKtKBv4PI8R7Dg0C4CJb0QTee
-         V/UBujtGagddvNkHARRrQ7s8d751dintxQmW/tGeYsSvkspLocMiLB3AhzgrwDXlCQsq
-         qCWz8K9+A/vSbK0Zd3XtTdHFiliT8aeDdhf8x+bx31/mpp2eBrl4aF6UNbgmFlDVd6ag
-         9YNbbthBeDqphGferHqV2vkNx1iIXhjlONJ5gTwoLS389iQrSyObVSq9gLh1bTy97WAh
-         SQzc07395jE+PegeAo8wvX8DIHa43lb/d16ve4RjPXC0KrA5bq37z2ODLlOCZUye4anI
-         k/FA==
+	s=arc-20240116; t=1722427024; c=relaxed/simple;
+	bh=hQUoUT6P370vSdku525I9ZyIqVpjyDqZTAwNNZoSxuo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ronZmex5t1svpYx6xQHyvQycMRwQW60A0+bhDti2c7fqWmM44mp1pqj3hlvNCPYiDgYOFplPM34zXDs+vYt5US8136Qj58hm6P0ehOjqPDgHFfCBlAQq4ikSaLDqjj9qQ7FLm3TULPVM2+A18MKdjA4NPkA+9BB/gDkyITOQTxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-396a820a8a3so13130255ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:57:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722427019; x=1723031819;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dD4/LuujpP9SBy4N2qvay9vEiTkzSElUnCkU/leHG9k=;
-        b=bTWpN7AbCf5OXF3Rw8w+ZslI6lVR/pgXt7nLlr4NDcTGZg4CAJkYJy6Q8oXgC5N6KC
-         6hIYz1Rrwr/5IVQEBRv8tv0/N0yyzZi9gHfe6K8WpkhUOnijPd544SQNR18hu0EQ11eA
-         NMB1zTPr/X2piHUd4UC9lgF+qij7doVkP/8fzNiZGDqVk9vnS7DsHttWnFRP9bnTu63g
-         LuPnW74mUVFIqJgkE6NPPYbGtdp002Emj5nCiVi3BOaZaotiL19hQNAg0Up/roXMrBtj
-         DJJ2fDH5+M8SnulZHCc0ypDE1nIhWxKhmoafIpi3045xRYV4VuUrImrzwIblrIa1VA0S
-         /CRA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA3Df0zAKszAUUbjsY5SulCYGsmZcPVQ25A8Rd5TYRHQrVQ5Jnr4Jdg+nI9seKjJrMW5g8dQdeH+B1zoXIip8A5jIuAMgxgGmAVMYM
-X-Gm-Message-State: AOJu0YyMkba5KqUxeGh5Lw8PqirhXp0dtXECB4OcK9L/qZtV86uz9G9Q
-	L/U217PRt3esiU/TzxDjbhvd8dXXJQhl+7WH/Fl24IU25Zfgmlv2BnxoK5ZKcA==
-X-Google-Smtp-Source: AGHT+IHhzrMk8ZPLRuUWHt897/wD7XphiJN5ikAlVgi5bi29bcgDtMwJdyVOk9U+AKsWzI3Hh3MYYg==
-X-Received: by 2002:a05:6a20:6a98:b0:1c4:23f0:9665 with SMTP id adf61e73a8af0-1c4a1321bd5mr12592532637.29.1722427018525;
-        Wed, 31 Jul 2024 04:56:58 -0700 (PDT)
-Received: from localhost.localdomain ([120.60.134.159])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4a94c4sm1138242a91.42.2024.07.31.04.56.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 04:56:58 -0700 (PDT)
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: vkoul@kernel.org
-Cc: kishon@kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2] phy: qcom: qmp: Add debug prints for register writes
-Date: Wed, 31 Jul 2024 17:26:37 +0530
-Message-Id: <20240731115637.90351-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1722427022; x=1723031822;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xSrgeN+yuzirQre8G4sG5Sw6kVPo4mH3hIOR53sJbwQ=;
+        b=oSSPyfTwskJL7F7XUTE6G/+8Nk+71u/WEkJJjJXw8JdK/23tetK6sEDgLsCJtMEvyh
+         tBDbUR/wY/4i5R1q47ZdZVfUEm8ePGvp+KGNWs5lt93mUiNLiM+S+VtaL+JGqasaStyU
+         Fe6+db4l+0KPFKYKutGLCzZBpbSfmmtEE1B7P/EhTmMYSaSYLwDzhu8+WMPgbJemFUQY
+         LERHzgehMKb00mFjiB2543BGYJdMaE51AI25QbQfVnv90DA6Mu7ZX/F/Z9LOd80awAm1
+         rY4tyS4b99A5WGcTxEUs+IG/3E6FxqGmrCwTyKSal0EuiMCCyXDpHE0vqhWIhachDOhm
+         /yfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUUCly2sl/kATU4pSkr036pPu0PrinZ2dAbxYwb9OXmWKfrTDhHth3GA4jvGeICo9qQPjHNgeaZGEJSd1j8t6B5tuz0/irvOyEmvVRs
+X-Gm-Message-State: AOJu0Yx4TQhE+M5YQZySiPhMMGBXZ3X2Y9sfCn5Qkbt3M4nnFqxP70eX
+	pDaFryIClour9UBnBPHbLRYqnznz4MjqkBqc1p0l0f9QSPhjvZKYOhnlQiIX2QIW6UiVNqsMQiC
+	jmInbfs+b7WBxnwcdLT6tJIWz1n6FhLRSso7WeHf6sdGQ5nRrAEP8TUg=
+X-Google-Smtp-Source: AGHT+IG6yJHm71PfnjSzpzV2tajfrhXIQF3DZ9LmFmTF0gSF9zc7EprT5Loy3CMpp2Oq1hqsKdRV7a+B3kc8FcJHdRu9wenzlL2s
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1aa2:b0:381:37d6:e590 with SMTP id
+ e9e14a558f8ab-39b06af47damr3064295ab.2.1722427022641; Wed, 31 Jul 2024
+ 04:57:02 -0700 (PDT)
+Date: Wed, 31 Jul 2024 04:57:02 -0700
+In-Reply-To: <00000000000022a23c061604edb3@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d61bb8061e89caa5@google.com>
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in __run_timer_base
+From: syzbot <syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, brauner@kernel.org, davem@davemloft.net, 
+	dvyukov@google.com, elver@google.com, glider@google.com, 
+	gregkh@linuxfoundation.org, hdanton@sina.com, jhs@mojatatu.com, 
+	kasan-dev@googlegroups.com, keescook@chromium.org, kuba@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-usb@vger.kernel.org, luyun@kylinos.cn, 
+	netdev@vger.kernel.org, pctammela@mojatatu.com, rafael@kernel.org, 
+	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com, 
+	victor@mojatatu.com, vinicius.gomes@intel.com, viro@zeniv.linux.org.uk, 
+	vladimir.oltean@nxp.com
+Content-Type: text/plain; charset="UTF-8"
 
-These register prints are useful to validate the init sequence against the
-Qcom internal documentation and also to share with the Qcom hw engineers to
-debug issues related to PHY.
+syzbot suspects this issue was fixed by commit:
 
-Sample debug prints:
+commit 22f00812862564b314784167a89f27b444f82a46
+Author: Alan Stern <stern@rowland.harvard.edu>
+Date:   Fri Jun 14 01:30:43 2024 +0000
 
-QMP PHY: Writing Reg: QSERDES_V5_COM_SYSCLK_EN_SEL Offset: 0x0094 Val: 0xd9
-QMP PHY: Writing Reg: QSERDES_V5_COM_HSCLK_SEL Offset: 0x0158 Val: 0x11
+    USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14f906bd980000
+start commit:   89be4025b0db Merge tag '6.10-rc1-smb3-client-fixes' of git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
+dashboard link: https://syzkaller.appspot.com/bug?extid=1acbadd9f48eeeacda29
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145ed3fc980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c1541c980000
 
-Changes in v2:
+If the result looks correct, please mark the issue as fixed by replying with:
 
-* Modifed the debug print to include reg offset
+#syz fix: USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
 
- drivers/phy/qualcomm/phy-qcom-qmp-common.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-common.h b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-index 799384210509..40beb413328f 100644
---- a/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-+++ b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-@@ -9,6 +9,7 @@
- struct qmp_phy_init_tbl {
- 	unsigned int offset;
- 	unsigned int val;
-+	char *name;
- 	/*
- 	 * mask of lanes for which this register is written
- 	 * for cases when second lane needs different values
-@@ -20,6 +21,7 @@ struct qmp_phy_init_tbl {
- 	{				\
- 		.offset = o,		\
- 		.val = v,		\
-+		.name = #o,		\
- 		.lane_mask = 0xff,	\
- 	}
- 
-@@ -27,6 +29,7 @@ struct qmp_phy_init_tbl {
- 	{				\
- 		.offset = o,		\
- 		.val = v,		\
-+		.name = #o,		\
- 		.lane_mask = l,		\
- 	}
- 
-@@ -45,6 +48,8 @@ static inline void qmp_configure_lane(void __iomem *base,
- 		if (!(t->lane_mask & lane_mask))
- 			continue;
- 
-+		pr_debug("QMP PHY: Writing Reg: %s Offset: 0x%04x Val: 0x%02x\n",
-+			t->name, t->offset, t->val);
- 		writel(t->val, base + t->offset);
- 	}
- }
--- 
-2.25.1
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
