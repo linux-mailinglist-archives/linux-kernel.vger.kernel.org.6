@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-268598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87579426A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:28:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7A79426AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D23E2874EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE3A61F260F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0182D16D322;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C462716D32E;
 	Wed, 31 Jul 2024 06:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VdltX8n+"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="d+etlb/B"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1BE16B390
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA8F16C69B
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407207; cv=none; b=L0/0G/1dqTN5Su58vbXqcTOuD+UIqxUkTj/iqsifYA9BQ77PWwztJ+tAi4ZY0CJs+LuyZM4v+Fq1JgX4Yl1GZusdkU3Zl7GipFaMbhUSSM/wM38l9/txNsoAISHy6/7+KrGdLYz4rdmWhxHTRhCI4pqqQ5S3/HbRnc05duZIu2o=
+	t=1722407208; cv=none; b=ttKTCBLiHqfDlKdC3juegefx6prjJ+FIIu/aYfDlewyeh1N3KIfncs+pTaXrNGSsOp3prQiB0/koZX9aUfGOW6Vly6YWqN/Dk+IVhy/DziwwrL0eSCyIkk36phFEpTiZY2M8xh09qHGT74edn2V+OX0WHBD7FLLOj0MYqWPnXjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407207; c=relaxed/simple;
-	bh=h0fIp+XS9AlrgawNnSL2DIZh3dkYyqYAax5swD6djqA=;
+	s=arc-20240116; t=1722407208; c=relaxed/simple;
+	bh=gN+pByoqcvM3L5Qti+k0iekH32RjU9EFODfZ4olPsFI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DMToleZ5reukulrppEcOF9N+/O4kpX3TQEpWwh5ZBd5REABjXckGyEeNZEr1/XDnpvBZPxQgYldH8KFaMbFFLu6Ovu5X1ZXeUQM0IA09lgsa/lk65CDeECM6aIfd6X1Ji4REut42z7XaeQAH7uAe7eBz8wX6JJMSQaO6CXGLbHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VdltX8n+; arc=none smtp.client-ip=209.85.167.176
+	 In-Reply-To:To:Cc; b=ctOhy0vYg+e2zRPLVCTxQ5ORZMnYqujjrmGmS6mcExogsjzDXV+p814UVpjFfPxhQnE6OEKSSrl1iKezNKeFiR/LLfkEnXXNRpaURqiGxqa5H+osA5K/Ggw6v7lxHk5WYfnsrO/0B4XSNgYO0ow380M5v90IZhczoj8g/77XeYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=d+etlb/B; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3db12a2f530so3383037b6e.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:26:43 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso3783304b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722407203; x=1723012003; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1722407205; x=1723012005; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GodjSzZjglvIcZivuCk4eEiWLuu6d/Fu0dSIBqFwyU0=;
-        b=VdltX8n++10R4ZXrQzCoq9wMexbpR6SajA72ibXAWNWIfvMtJlqSBSk2TjbUdoyRdx
-         zVkS15vWsLV0mZlmDu36dM1widX8QN07Mel4KHACS4RsecNApFJAs5pAVGAIQBl64HZa
-         0aL1ndXIGjQMW0iKbobwREmk+PUKPlSG1Q0NM=
+        bh=6mTCTozL1kMNiDQohIkyeCe1qQLXGcgts2Oa5sMWeIQ=;
+        b=d+etlb/Bk11p16l6WHTkVHcjAe7dKQZiwLjprVAkMQyxgUYuFpI32k7acSrFaULeqZ
+         RzF7XERdr1Y32X59sbY6tsRPqp2LEsCq9qBIMd/OlIq21H83uNoLaUHK6eRRjjr4KWB4
+         Au9XZ6kNVn4vZoWWmhb/F5KNg73PJUQ3N2K40=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722407203; x=1723012003;
+        d=1e100.net; s=20230601; t=1722407205; x=1723012005;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GodjSzZjglvIcZivuCk4eEiWLuu6d/Fu0dSIBqFwyU0=;
-        b=Ny+hbyUW2y8lj8mC8Gn/We21vvE/Zit7tB7wt1gyoyVsvehjdyNTAAV0gTEzbl78wd
-         OiwtCzZ2GgJFv/huhLbQxwpvlMVRGq5G5J1PreHXOL9obdfBLNEalqpHnztw0Qapt6K5
-         BYZqXMQ+WPjwQPdYgweZwAy2G2bRYJPUHAipkOPywPca4LAD4/JQIwvetLtrn96jLSUs
-         hJK9Zk/v5Z9DHFC/2mhZ8woDaURpWBT2PBangaM3RmRfFm154SMPjDvuc0kPBwTeWHoS
-         YPnsDAjoK2o+UOWjS62zHr9kM75DU6s/yHAXiZVCEJ6yfdvIjCh0gBrbfhY+/k+KPIJZ
-         cOcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVJ1yAQi5X/MKRg87zj3CyzYT7xj/qagFZ0IhJ/D3PwIAJJuA53ihA1QCaZAt6aZTLbQ3SNSJUWXb6rxx4Li0HjCsr1hDmUnjqjVSo
-X-Gm-Message-State: AOJu0YxixQzU9wapR1Jl110Qa/n8GyzThUWk8dtGGGv6ePKnvMEvSL92
-	503Va06jQghoOmTNZAOlxeg5sz0vGOk13GR/58LUlROxiuXXwk2Ge1d3hqF4xw==
-X-Google-Smtp-Source: AGHT+IE5cO6elkp+RbpkElRPUZQpfS6+qxtX7GtiU4GBwza51W+DWB1Oh82y74IN1jB769y+tJoF5g==
-X-Received: by 2002:a05:6870:440d:b0:261:1177:6a62 with SMTP id 586e51a60fabf-267d4f41835mr15988146fac.49.1722407202879;
-        Tue, 30 Jul 2024 23:26:42 -0700 (PDT)
+        bh=6mTCTozL1kMNiDQohIkyeCe1qQLXGcgts2Oa5sMWeIQ=;
+        b=a+GzFj2vG5kgTwVPXcPP14mRY5Qs7f+jPtu92ZYMFG54swEb6o/zAso955f8I5SlKS
+         ja3OUJfzVjoWQfyaHTA4b4uSpdXbBwRVYMcCwRbhxKZ2TnMdpBR+1CioQInzr3SNn7O1
+         zjyOZCdigedgAwp4H8CyObbT5W3Fz3seomwUhte+Cflrc4eTQqYrdL/rLNuGRhbspBC+
+         REIy0o9nu34+uPyCnnN+GF82p8/sAf8C50yVbH8s2yR4+1Ptm4XAoenNbH60Z0hwb3hk
+         TkWSRM+Y3mc/+tmviTxBNmmG1y4wtJGS9K1bTskoPrzd8qPCQawb1zErBBjpDTDZqNa5
+         pkdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXs3iYTGmBP79TSCO+Qv6+xEi5psRcoynR8Dt2j6OPxAtvIyNTL01bQqVPRFaOaetd507kZYrus7vGbZXPHdY84RsFAZ+fWmercSong
+X-Gm-Message-State: AOJu0YyxsWiZQadDZmJZ05+n6o/heaod8M9lZpN0wUU/IeZN84sFgFr0
+	v4QwSdXqlKlEf1H5MB2hEZGW53J0E9E5orsq0WUTTfvW5CRxRrWG90xJGUalrA==
+X-Google-Smtp-Source: AGHT+IFmp3+Q0xJ6154cwrPQLay9JBsUxdGaxHPITgVws1imP/cPhOraXxHtZKMmmYBhj+WRwQV++g==
+X-Received: by 2002:a05:6a00:391e:b0:70d:3420:931e with SMTP id d2e1a72fcca58-70ecea2eea9mr11327502b3a.15.1722407205065;
+        Tue, 30 Jul 2024 23:26:45 -0700 (PDT)
 Received: from yuanhsinte.c.googlers.com (46.165.189.35.bc.googleusercontent.com. [35.189.165.46])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e1084sm9322308b3a.25.2024.07.30.23.26.40
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e1084sm9322308b3a.25.2024.07.30.23.26.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 23:26:42 -0700 (PDT)
+        Tue, 30 Jul 2024 23:26:44 -0700 (PDT)
 From: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Date: Wed, 31 Jul 2024 06:26:35 +0000
-Subject: [PATCH v2 1/2] arm64: dts: mt8183: Add kukui-jacuzzi-cerise series
- boards
+Date: Wed, 31 Jul 2024 06:26:36 +0000
+Subject: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
+ kukui-jacuzzi-cerise board
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,7 +75,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-jacuzzi_dt-v2-1-4995335daa30@chromium.org>
+Message-Id: <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
 References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
 In-Reply-To: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -95,197 +95,34 @@ clamshell device without touchscreen and Stern is a convertible device.
 
 Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 ---
- arch/arm64/boot/dts/mediatek/Makefile              |  4 +++
- .../mediatek/mt8183-kukui-jacuzzi-cerise-rev3.dts  | 26 +++++++++++++++++++
- .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts   | 26 +++++++++++++++++++
- .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi  | 21 ++++++++++++++++
- .../mediatek/mt8183-kukui-jacuzzi-stern-rev3.dts   | 29 ++++++++++++++++++++++
- .../dts/mediatek/mt8183-kukui-jacuzzi-stern.dts    | 29 ++++++++++++++++++++++
- 6 files changed, 135 insertions(+)
+ Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 8fd7b2bb7a15..17fbe495e4ee 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -28,6 +28,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-elm-hana-rev7.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8173-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-burnet.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-cerise.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-cerise-rev3.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-cozmo.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-damu.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-fennel-sku1.dtb
-@@ -42,6 +44,8 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-makomo-sku0.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-makomo-sku1.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-pico.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-pico6.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-stern.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-stern-rev3.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-willow-sku0.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-jacuzzi-willow-sku1.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt8183-kukui-kakadu.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise-rev3.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise-rev3.dts
-new file mode 100644
-index 000000000000..c511dd1cc171
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise-rev3.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2021 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8183-kukui-jacuzzi-cerise.dtsi"
-+#include "mt8183-kukui-audio-ts3a227e-rt1015p.dtsi"
-+
-+/ {
-+	model = "Google cerise board";
-+	chassis-type = "laptop";
-+	compatible = "google,cerise-rev3-sku0", "google,cerise", "mediatek,mt8183";
-+};
-+
-+&mt6358codec {
-+	mediatek,dmic-mode = <1>; /* one-wire */
-+};
-+
-+&touchscreen {
-+	status = "disabled";
-+};
-+
-+&qca_wifi {
-+	qcom,ath10k-calibration-variant = "GO_CERISE";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts
-new file mode 100644
-index 000000000000..12b97dcaa74a
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2021 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8183-kukui-jacuzzi-cerise.dtsi"
-+#include "mt8183-kukui-audio-da7219-rt1015p.dtsi"
-+
-+/ {
-+	model = "Google cerise board";
-+	chassis-type = "laptop";
-+	compatible = "google,cerise-sku0", "google,cerise", "mediatek,mt8183";
-+};
-+
-+&mt6358codec {
-+	mediatek,dmic-mode = <1>; /* one-wire */
-+};
-+
-+&touchscreen {
-+	status = "disabled";
-+};
-+
-+&qca_wifi {
-+	qcom,ath10k-calibration-variant = "GO_CERISE";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi
-new file mode 100644
-index 000000000000..087a0ef33e13
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2021 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8183-kukui-jacuzzi.dtsi"
-+
-+&cpu_thermal {
-+	sustainable-power = <4500>; /* milliwatts */
-+};
-+
-+&mmc1_pins_uhs {
-+	pins-clk {
-+		drive-strength = <MTK_DRIVE_6mA>;
-+	};
-+};
-+
-+&i2c2 {
-+	i2c-scl-internal-delay-ns = <13200>;
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern-rev3.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern-rev3.dts
-new file mode 100644
-index 000000000000..19e09da1d166
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern-rev3.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2021 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8183-kukui-jacuzzi-cerise.dtsi"
-+#include "mt8183-kukui-audio-ts3a227e-rt1015p.dtsi"
-+
-+/ {
-+	model = "Google stern board";
-+	chassis-type = "convertible";
-+	compatible = "google,cerise-rev3-sku1", "google,cerise", "mediatek,mt8183";
-+};
-+
-+&mt6358codec {
-+	mediatek,dmic-mode = <0>; /* two-wire */
-+};
-+
-+&touchscreen {
-+	compatible = "hid-over-i2c";
-+
-+	post-power-on-delay-ms = <10>;
-+	hid-descr-addr = <0x0001>;
-+};
-+
-+&qca_wifi {
-+	qcom,ath10k-calibration-variant = "GO_STERN";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern.dts b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern.dts
-new file mode 100644
-index 000000000000..72de05ffea86
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-stern.dts
-@@ -0,0 +1,29 @@
-+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-+/*
-+ * Copyright 2021 Google LLC
-+ */
-+
-+/dts-v1/;
-+#include "mt8183-kukui-jacuzzi-cerise.dtsi"
-+#include "mt8183-kukui-audio-da7219-rt1015p.dtsi"
-+
-+/ {
-+	model = "Google stern board";
-+	chassis-type = "convertible";
-+	compatible = "google,cerise-sku1", "google,cerise", "mediatek,mt8183";
-+};
-+
-+&mt6358codec {
-+	mediatek,dmic-mode = <0>; /* two-wire */
-+};
-+
-+&touchscreen {
-+	compatible = "hid-over-i2c";
-+
-+	post-power-on-delay-ms = <10>;
-+	hid-descr-addr = <0x0001>;
-+};
-+
-+&qca_wifi {
-+	qcom,ath10k-calibration-variant = "GO_STERN";
-+};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index 1d4bb50fcd8d..087773a43673 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -146,6 +146,20 @@ properties:
+         items:
+           - const: google,burnet
+           - const: mediatek,mt8183
++      - description: Google Cerise (ASUS Chromebook CZ1)
++        items:
++          - enum:
++              - google,cerise-sku0
++              - google,cerise-rev3-sku0
++          - const: google,cerise
++          - const: mediatek,mt8183
++      - description: Google Stern (ASUS Chromebook Flip CZ1)
++        items:
++          - enum:
++              - google,cerise-sku1
++              - google,cerise-rev3-sku1
++          - const: google,cerise
++          - const: mediatek,mt8183
+       - description: Google Cozmo (Acer Chromebook 314)
+         items:
+           - const: google,cozmo
 
 -- 
 2.46.0.rc1.232.g9752f9e123-goog
