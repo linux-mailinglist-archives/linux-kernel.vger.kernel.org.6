@@ -1,144 +1,216 @@
-Return-Path: <linux-kernel+bounces-269557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9EF094343A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:38:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36CFB94343C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880AC283E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B851C1F22BFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669231BBBF3;
-	Wed, 31 Jul 2024 16:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1331BC066;
+	Wed, 31 Jul 2024 16:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="X1juhscx"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ru429+M+"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 874EF1BC066
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90FBC1B14E8;
+	Wed, 31 Jul 2024 16:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722443917; cv=none; b=bGr9DABOGbftQSiw1sZ77Z3K81jTun5ZsHIrUnhZmOvRJqL7UDFaCrLTbVQcki7E010+8aQySpZ2iMoP+KTXhmyntghCkUycLjTmEULsucDRZ/XK9LTtg+jM2ECFMXyRejRb7zUhS9TT7f02dSzGxzu1FiRN9oz5/PnWDI4bhFg=
+	t=1722443927; cv=none; b=AHKE7G0M5nqRqZWen6skVPjufAZi1r8Y/s9xhJfPJv9BT1Xn0eTlZYUHg59YpJ1esej6xlv7U1M7N45Ip6BesUMdQ4qVA/gWy/f97E6PfJQrpnaRF1iufIiU1cEGm/i8SbwMkmohoHFEaubxSCpQeKnpdA0Zaem9GQSBn/uiXT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722443917; c=relaxed/simple;
-	bh=0XEbFP7IGFOfJ5Kbdiqalhj71LZNi9oqpzUisjiGZ9c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZwbnnvGLxKFw4urgZ2OB9tQDuXRsml9udCHe0UNI5x2D8AjsimYdfSTpWPyidxkoS/rdV6mCageAoRojg4ONqJ055j4Zu5+d2rIZAa1Kc2GCsl8uVfTTT8ZCoMUfgOPDV2gJczdxcLqvcN349u8o5MwdTKBMIW/D58TUgh8rz98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=X1juhscx; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso6402261a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:38:35 -0700 (PDT)
+	s=arc-20240116; t=1722443927; c=relaxed/simple;
+	bh=Ax2M8eZolJ5AqIl+ZFAh4EOOJ/giVQYBxYUBY3D/57w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QBZs4Xfw7WzQPbrqd2l9Yx5J8/vk60TU67PH7OAn6nTkCIyjClWQRUBDOLBHEp6vbx1VKDHCpb9O1YcPVMbtCoXt5SY2jR5E9zSWxkiqoEDzRXSppkMXhrazsXRkSvNaVMCS4XaX1mKtS2wnHLrFgqT9cSsgG4X8zeIX0ehjnpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ru429+M+; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7163489149eso4257480a12.1;
+        Wed, 31 Jul 2024 09:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722443914; x=1723048714; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aF3T8yqwH4k4oPYgTWrygjhwSwvFjJnxrqJoDBC6mcM=;
-        b=X1juhscxb4amPxZ7g2RDiOzD6yyHNyHgVqKdBVFQsjNXYX4NuDpSxU1e0zRecfsLIc
-         U+teT0kXZil2wuPW3gErbd3VvE7taOPscyU1wp6nSuDtsKToJkQ/kpLDfacoliP/j+dz
-         SDnwREk1prSHRspQmBzK/Smten0CGWmSAaUGs=
+        d=gmail.com; s=20230601; t=1722443925; x=1723048725; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=btG52vS5eF8c6WYn6xfMUyCfzZayQfXXcyfEYjYJiBI=;
+        b=Ru429+M+WKuv99vc54Zcdzlapzpo+rVQyvNbT6d4pMZSLqx79HPBTbRxikDWswiQwA
+         zSUZM4000MjQ2Ji5xUXpVmTjR61GlpeDOjnJHfnrW7QlB1eZHXMJrwZe3lPqtiDLBT9q
+         VBdtV35lvZ42Q25PF5M5hVbXIrxLDg0Vkx3W2bC3IhA6KTrTt6gFdkDhcCXBj+Mm0Uod
+         POErufkel6fQA0kRqxL0uBnvKDnpmTwFb7yXrMRQ8Bl+FwJYZQ2AJDYaTZIN8kiWrRh3
+         7z5Y7/cfaoyHxCTmz9R4oJKwcOW+TEw7TiTrg9YrR8lwbEjN2kJTA44XJtcm4ZTQv84n
+         1GDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722443914; x=1723048714;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aF3T8yqwH4k4oPYgTWrygjhwSwvFjJnxrqJoDBC6mcM=;
-        b=MGmu4MNxggogstU35gUjFZ5Hqsw0F/IjmZRg5B3b661gS6bwNgYDyLV0eb+z+MvsP/
-         Cmzur5R5RWt7hU0EHsjvpy7OjeXsoo+qGVwFhjZlLdo+K9EZdNYbL6uGSDu5xZMoz7Ga
-         hxF8BMgnAajVD+GH7q5XW4UOy89tpW+RM7GWF9uT3zluP5kLpc1Ef6P/HHk4ujNbkiCq
-         IsI24vz1X+H/E8nD0k8HuouimWGh5G4pYgKQCsXaCsMGiQcejlg3HA6K44i9sSvfOrVO
-         Lx4DRYawMLkwsZ7X9+hEUHlYwuTrqT6HByULFnWOBM2h2BlkMitPEqEQEkS38oXM2B9/
-         BVNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnPAjlzRTBC/yFlEfjkI9bJc7twZ9RscQgJfNLOZS6cDE3FxLqfqv18W9evS4pVot1CIxVNC86WHt2175qSXuWaImQ2svHFLt7ZpvY
-X-Gm-Message-State: AOJu0Yx48lrMY1S6jA3Mf5NaqfYuUOrvVPSjiwmq/6kXrvFk+5nIGjdq
-	ZpZ527SGfT+iCkdc0cRnLoNqBaxCFhHNmK6ltrHjoqER9cKWQxzjx768zpMLH+xK91NAMN1HL2h
-	JJ5B+vA==
-X-Google-Smtp-Source: AGHT+IF9qphNZkfa0e0vflSTQ1DcrvzOAefMQNbHmVgoJ47/TwP+fJOuhc9Rz23PfF06Av748xM2mA==
-X-Received: by 2002:a50:d7d5:0:b0:572:9962:7f0 with SMTP id 4fb4d7f45d1cf-5b0221f0b07mr8198034a12.34.1722443913661;
-        Wed, 31 Jul 2024 09:38:33 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6358fa5esm8869999a12.32.2024.07.31.09.38.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 09:38:32 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5af6a1afa7bso6402194a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:38:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMItrmDi7WVKycnL4WpHYFuLXKDQnPcmmQVz/74iajVGQQ/xbgEp/sMW/y8/0PqWEFzbOvXTM81bNKtJP9qHHnhdHJH69p6FwuhFAJ
-X-Received: by 2002:a05:6402:524a:b0:5a2:1693:1a2e with SMTP id
- 4fb4d7f45d1cf-5b020ba5d4cmr11776986a12.18.1722443912032; Wed, 31 Jul 2024
- 09:38:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722443925; x=1723048725;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=btG52vS5eF8c6WYn6xfMUyCfzZayQfXXcyfEYjYJiBI=;
+        b=D0WGaOZwDWdRZG9sM1N/FXqUeLTGa9fiQ4NciwVcOHsFd/PQPBz5OgqZyKkG/RkHiQ
+         ua4SElDQQNRn8JEbsE3MvbTYSu1M+QoSkuBfH3bT45aEqafxTUPTrR1T08lW4XL4YKKU
+         vTfz8lqr8LDKuPt+KpaPG2LlGcRfXVeuSFGzYxSELhmv+V3P+dpdN8Hl9ii8uzVR5nax
+         oAXMvWMLnI/Q0keaKIdDzKqyWd1co2nXFYzpegSy8nfL8LBCF4Do8YWw36Qs99WmAPrk
+         RiP/YtiQo5xfeOFKiCla+I9yywK5wnW4tJq89B9XmAKBkpaHCHDmeIP/zXV5ClaRA3D4
+         QuPg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+wbaJAlxgGS18CqlLGG2mcNsux6hPqQiryQpRHOMWO0dRDHzCh4KUoO5XwNWxIK/hCmwHE1GnCQDwXRNPEkO5ddYAEF5hacVAmA==
+X-Gm-Message-State: AOJu0YwlOj0ArNaeSJUd9CUNg+TGmqT5p6oxnuDuAP5oKQUVTScmvezn
+	mv894If/PBxlTKpeGZTOt1cElLbqWqwVACFST1EiysIuAUQLYUer
+X-Google-Smtp-Source: AGHT+IEs+4Dn4uNxpriOCfxp/I79l74lDnaM1jv97vbGKORPOSXyawgVXyMyYPwdErDOvzrmZeAJwA==
+X-Received: by 2002:a17:90b:b12:b0:2cd:40ef:4763 with SMTP id 98e67ed59e1d1-2cf7e1d4e55mr15791173a91.15.1722443924643;
+        Wed, 31 Jul 2024 09:38:44 -0700 (PDT)
+Received: from localhost ([216.228.127.128])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4513ecsm1585679a91.20.2024.07.31.09.38.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 09:38:44 -0700 (PDT)
+Date: Wed, 31 Jul 2024 09:38:41 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH V2 1/2] uapi: Define GENMASK_U128
+Message-ID: <ZqpokVWg75iROgKH@yury-ThinkPad>
+References: <20240725054808.286708-1-anshuman.khandual@arm.com>
+ <20240725054808.286708-2-anshuman.khandual@arm.com>
+ <Zqkt3byHNZQvCZiB@yury-ThinkPad>
+ <b1dd907d-d45b-4602-964e-70654094a315@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731073031.4045579-1-davidgow@google.com> <CAHk-=wjx1qBON_8+N2Mte8=EtpVRHNa+JCxbBnJXGs3=wF0c0g@mail.gmail.com>
-In-Reply-To: <CAHk-=wjx1qBON_8+N2Mte8=EtpVRHNa+JCxbBnJXGs3=wF0c0g@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 31 Jul 2024 09:38:15 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgPD+=Wi8T0A59muq46LxquhsWQSyPV6KM5xa8V1UPK=Q@mail.gmail.com>
-Message-ID: <CAHk-=wgPD+=Wi8T0A59muq46LxquhsWQSyPV6KM5xa8V1UPK=Q@mail.gmail.com>
-Subject: Re: [PATCH] x86/uaccess: Zero the 8-byte get_range case on failure
-To: David Gow <davidgow@google.com>
-Cc: Kees Cook <kees@kernel.org>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="00000000000085f35e061e8db9a8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b1dd907d-d45b-4602-964e-70654094a315@arm.com>
 
---00000000000085f35e061e8db9a8
-Content-Type: text/plain; charset="UTF-8"
+On Wed, Jul 31, 2024 at 09:14:54AM +0530, Anshuman Khandual wrote:
+> 
+> 
+> On 7/30/24 23:45, Yury Norov wrote:
+> > On Thu, Jul 25, 2024 at 11:18:07AM +0530, Anshuman Khandual wrote:
+> >> This adds GENMASK_U128() and __GENMASK_U128() macros using __BITS_PER_U128
+> >> and __int128 data types. These macros will be used in providing support for
+> >> generating 128 bit masks.
+> >>
+> >> Cc: Yury Norov <yury.norov@gmail.com>
+> >> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>>
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: linux-arch@vger.kernel.org
+> >> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> >> ---
+> >>  include/linux/bits.h                   | 2 ++
+> >>  include/uapi/asm-generic/bitsperlong.h | 2 ++
+> >>  include/uapi/linux/bits.h              | 3 +++
+> >>  include/uapi/linux/const.h             | 1 +
+> >>  4 files changed, 8 insertions(+)
+> >>
+> >> diff --git a/include/linux/bits.h b/include/linux/bits.h
+> >> index 0eb24d21aac2..0a174cce09d2 100644
+> >> --- a/include/linux/bits.h
+> >> +++ b/include/linux/bits.h
+> >> @@ -35,5 +35,7 @@
+> >>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
+> >>  #define GENMASK_ULL(h, l) \
+> >>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+> >> +#define GENMASK_U128(h, l) \
+> >> +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+> >>  
+> >>  #endif	/* __LINUX_BITS_H */
+> >> diff --git a/include/uapi/asm-generic/bitsperlong.h b/include/uapi/asm-generic/bitsperlong.h
+> >> index fadb3f857f28..6275367b17bb 100644
+> >> --- a/include/uapi/asm-generic/bitsperlong.h
+> >> +++ b/include/uapi/asm-generic/bitsperlong.h
+> >> @@ -28,4 +28,6 @@
+> >>  #define __BITS_PER_LONG_LONG 64
+> >>  #endif
+> >>  
+> >> +#define __BITS_PER_U128 128
+> > 
+> > Do we need such a macro for a fixed-width type? Even if we do, I'm not
+> > sure that a header named bitsperlong.h is a good place to host it.
+> 
+> __BITS_PER_U128 is being used anymore, will drop it.
+> 
+> > 
+> >> +
+> >>  #endif /* _UAPI__ASM_GENERIC_BITS_PER_LONG */
+> >> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
+> >> index 3c2a101986a3..4d4b7b08003c 100644
+> >> --- a/include/uapi/linux/bits.h
+> >> +++ b/include/uapi/linux/bits.h
+> >> @@ -12,4 +12,7 @@
+> >>          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+> >>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+> >>  
+> >> +#define __GENMASK_U128(h, l) \
+> >> +	((_BIT128((h) + 1)) - (_BIT128(l)))
+> >> +
+> >>  #endif /* _UAPI_LINUX_BITS_H */
+> >> diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
+> >> index a429381e7ca5..a0211136dfd8 100644
+> >> --- a/include/uapi/linux/const.h
+> >> +++ b/include/uapi/linux/const.h
+> >> @@ -27,6 +27,7 @@
+> >>  
+> >>  #define _BITUL(x)	(_UL(1) << (x))
+> >>  #define _BITULL(x)	(_ULL(1) << (x))
+> >> +#define _BIT128(x)	((unsigned __int128)(1) << (x))
+> > 
+> > GENMASK() macros may be used in assembly code. This is not the case
+> > for GENMASK_128 at this time, of course, but I think we'd introduce 
+> > assembly glue at this point to simplify things in future. Can you
+> > check the include/uapi/linux/const.h and add something like _U128()
+> > in there?
+> 
+> 
+> https://lore.kernel.org/lkml/20240724103142.165693-1-anshuman.khandual@arm.com/
+> 
+> We had _U128() in the previous version V1 but as Arnd explained earlier
+> gcc silently truncates the constant passed into that helper. So _U128()
+> cannot take a real large 128 bit constant as the input.
+> 
+> --- a/include/uapi/linux/const.h
+> +++ b/include/uapi/linux/const.h
+> @@ -16,14 +16,17 @@
+>  #ifdef __ASSEMBLY__
+>  #define _AC(X,Y)	X
+>  #define _AT(T,X)	X
+> +#define _AC128(X)	X
+>  #else
+>  #define __AC(X,Y)	(X##Y)
+>  #define _AC(X,Y)	__AC(X,Y)
+>  #define _AT(T,X)	((T)(X))
+> +#define _AC128(X)	((unsigned __int128)(X))
+>  #endif
+>  
+>  #define _UL(x)		(_AC(x, UL))
+>  #define _ULL(x)		(_AC(x, ULL))
+> +#define _U128(x)	(_AC128(x))
+>  
+>  #define _BITUL(x)	(_UL(1) << (x))
+>  #define _BITULL(x)	(_ULL(1) << (x))
+> 
+> AFAICS unsigned __int128 based constants can only be formed via shifting
+> and merging operations involving two distinct user provided 64 bit parts.
+> Probably something like the following
+> 
+> #define _AC128(h, l)	(((unsigned __int128)h << 64) | (unsigned __int128)l)
+> #define _U128(h, l)	(_AC128(h, l))
+> 
+> But then carving out h and l components for the required 128 bit constant
+> needs to be done manually and for assembly the shifting operations has to
+> be platform specific. Hence just wondering if it is worth adding the macro
+> _U128().
 
-On Wed, 31 Jul 2024 at 09:24, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> My bad. My mental model these days is the 64-bit case, where the whole
-> 'check_range' thing is about address masking tricks, not the actual
-> conditional. So I didn't think of the "access_ok fails" case at all.
+OK then, I see. So, is that a GCC bug or intentional behavior? Anyways,
+can you put a comment on top of GENMASK_U128 and BIT128 that they wouldn't
+work in asm code and why?
 
-Actually, now that I said that out loud, it made me go "why aren't we
-doing that on 32-bit too?"
-
-IOW, an alternative would be to just unify things more. Something like this?
-
-*ENTIRELY UNTESTED*.
-
-And no, this is not a NAK of David's patch. Last time I said "let's
-unify things", it caused this bug.
-
-I'm claiming that finishing that unification will fix the bug again,
-and I *think* we leave that top address unmapped on 32-bit x86 too,
-but this whole trick does very much depend on that "access to all-one
-address is guaranteed to fail".
-
-So this is the "maybe cleaner, but somebody really needs to
-double-check me" patch.
-
-             Linus
-
---00000000000085f35e061e8db9a8
-Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
-Content-Disposition: attachment; filename="patch.diff"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lza2lb220>
-X-Attachment-Id: f_lza2lb220
-
-IGFyY2gveDg2L2xpYi9nZXR1c2VyLlMgfCA1ICsrLS0tCiAxIGZpbGUgY2hhbmdlZCwgMiBpbnNl
-cnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2FyY2gveDg2L2xpYi9nZXR1
-c2VyLlMgYi9hcmNoL3g4Ni9saWIvZ2V0dXNlci5TCmluZGV4IGEzMTQ2MjJhYTA5My4uM2VlODBi
-OWM0Zjc4IDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9saWIvZ2V0dXNlci5TCisrKyBiL2FyY2gveDg2
-L2xpYi9nZXR1c2VyLlMKQEAgLTQ0LDkgKzQ0LDkgQEAKIAlvciAlcmR4LCAlcmF4CiAuZWxzZQog
-CWNtcCAkVEFTS19TSVpFX01BWC1cc2l6ZSsxLCAlZWF4Ci0JamFlIC5MYmFkX2dldF91c2VyCiAJ
-c2JiICVlZHgsICVlZHgJCS8qIGFycmF5X2luZGV4X21hc2tfbm9zcGVjKCkgKi8KLQlhbmQgJWVk
-eCwgJWVheAorCW5vdCAlZWR4CisJb3IgJWVkeCwgJWVheAogLmVuZGlmCiAuZW5kbQogCkBAIC0x
-NTMsNyArMTUzLDYgQEAgRVhQT1JUX1NZTUJPTChfX2dldF91c2VyX25vY2hlY2tfOCkKIAogU1lN
-X0NPREVfU1RBUlRfTE9DQUwoX19nZXRfdXNlcl9oYW5kbGVfZXhjZXB0aW9uKQogCUFTTV9DTEFD
-Ci0uTGJhZF9nZXRfdXNlcjoKIAl4b3IgJWVkeCwlZWR4CiAJbW92ICQoLUVGQVVMVCksJV9BU01f
-QVgKIAlSRVQK
---00000000000085f35e061e8db9a8--
+Thanks,
+Yury
 
