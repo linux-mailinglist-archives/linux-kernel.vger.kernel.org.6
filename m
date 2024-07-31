@@ -1,238 +1,129 @@
-Return-Path: <linux-kernel+bounces-268475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE3B94251B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:35:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F47F94251A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:35:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8FE1F240D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFCD1C2154F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:35:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEB61B95B;
-	Wed, 31 Jul 2024 03:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8D5199B8;
+	Wed, 31 Jul 2024 03:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cYiq1Hiw"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2049.outbound.protection.outlook.com [40.107.117.49])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YwKQr8tB"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC68A10A3E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C413125D6;
 	Wed, 31 Jul 2024 03:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722396920; cv=fail; b=PQVH3lXWfn80AqukWqLIU0I2qV+yl9hzlu5UburqeYZ1ps4K+mOAsVLS43zJGcT92QqGLCsE76kj53n5vzwsTFxEygB5KC/wuoOKwztjeMhxDPUA4FSTuyBZQqNxuGt2Mqg4yHqV7n6g237tr8CN8BQmiOBiWQjqo5Ggb+Fuqco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722396920; cv=none; b=lyWo+BPne/nWbSgEguQXxRXFoGQedZd5SiTmmTuwglevnL0/2aBmWDUgviw9LhqBZBGQ7iXlIvyvpzqmswcuk11yQC+JQWfSQ7sb4a/ivW2p9siyib1W+HBhorm63oD4fRez0Oo8uGSTeZgNAovGuGqPi3KfhGmz8dDDpY9tfRY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722396920; c=relaxed/simple;
-	bh=9uFZmWGaXj9p2bdu0I+H8JAbLo/5scHOoE+bPxYwAHk=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=fqMioULwpI0U87qUk2oF5QkJI17jHgNs2dKNEzDu16hHVVE42N5T3qkJncd6J8v33V98uaRTBwM73fhUAc4/VxPx0WZoEOS/OpL/srou8dWXATSuEsN55YT5ZJhJk6dOwJzDbQQvAQAuN7DVUdMyQNewVcRRhMu37lwxOAAUFFg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cYiq1Hiw; arc=fail smtp.client-ip=40.107.117.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I5cG3OBXObiY6kDF4IQgziHIOEMjqVWVEQFZeaxLb+CFrV9IbHHpMRTiHSOGWhUGo7GGkbW2Jvlu0HHV9w9TlYVimTbWJ/QNj4+/fk36acjEqknvX6S1ysBWgufyGOlSj0U00mhH1rhaFn6Czym6WjsRFnd9oUbk1OGMAsd9l8pHupZwo5wnPibfQaXn+3yRlKX6MI82tjPG7p73kGzTagr7BRcfemUeQaOKLYQT/2+bbjzNH48cZ0q6Sd4zunUxq8IpWMyOY1GSgjxfyjR4tToyWqjydKKxbjR7a3ENjKu+rpyqpcyrmBYT8AKqKnPQnAJrvMb2nyLXsjbhdmHCRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z5vatior3QIBxnjTsWnWYzvzzd+xpPly3AJ4sehktgk=;
- b=v/fLCOUvDL9qN4bRjow0v74I4ngRuL+1B3ob6wUziFGhxZLg2vX9g2//DziArp+9QkMFsMTr6QKoZajYnuduFysMeKsBDDrQ5X3FbIiD6mynHWdT2Oze9JenC6JXtKs4pLBMrSUbeuaC6UVzWGO/DAp6Gs0cLpGqBeiBdiwQQcx0qB9n1j7MjoY/hbU5chgwggj16Wt4hdOwUm2migXxR6ltywR9z/ks3puTgeEBD8UYiX06vcNa2WWghkSaPouHuDOPNjOtf2+oMXfcN1pibHRkD8rGw3QFzRCE79zon57mTXGpM0yuYrhY5dT2II8+uelHoAfKV51Lka7HtMVvmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z5vatior3QIBxnjTsWnWYzvzzd+xpPly3AJ4sehktgk=;
- b=cYiq1HiweRqY3ySnx8aTHa7zOebKkr7cwvksLv+l+JCrwGgNhI/D13NwqfValX2N7kzsYdPYN1bOr2LYwejg7FhnU4FIcDJXr9xIGf6qjL8CHKvqUvH7WTxkrpfKY6PJLRWYSTDS5juvuw9a6qReOIdpXgxbkEfLKuYeEjE6FOinsgw5IWIsw4wpZVGYLLPeQ3wJ3RMoFiuTx+AfL1IbWDPpaWHZMaE3R9s80wgj3t+bS8AcxHdczlHiwDx/B1KbVbKkUphAkPQn6ZNDYgnGbMhsGjWgh5W72/IqIKLXdnOOAk07o1wgzpWSHT/zNDBGWOW3x6JbiJJ85hGzpOHpog==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by TYZPR06MB6953.apcprd06.prod.outlook.com (2603:1096:405:3f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
- 2024 03:35:13 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 03:35:13 +0000
-From: Huan Yang <link@vivo.com>
-To: Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: [PATCH] udmabuf: use kmem_cache to alloc udmabuf folio
-Date: Wed, 31 Jul 2024 11:34:49 +0800
-Message-ID: <20240731033449.1016195-1-link@vivo.com>
-X-Mailer: git-send-email 2.45.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2P153CA0052.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::21)
- To PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+	bh=AryltjAf6AGkg7qjk0xdwvpOG3hQp506KMvJGysEHmg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kcq9CJ4rzCqVTNCxq0wta0lfCrkyJOnDQKm/92J0AO3wYYvpOM1JXqiFToGL1gDOfAFVwVQ4VOJQYUj7MkbVfKQeElu39kPR8gpHSFLAOK+9hQattEJhIL/QerjqgAw6hP6ikURDWk1y/R9Mv/RG3dQt3AdhQIpv8UTf0t8QnDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YwKQr8tB; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722396918; x=1753932918;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=AryltjAf6AGkg7qjk0xdwvpOG3hQp506KMvJGysEHmg=;
+  b=YwKQr8tBXBtseikbzjx/S+otCMsiMP3oriukruMdZSCeUkBSCc3q/Yrj
+   3Ccbrmba+Wz/HwiBrFjTeWK2jeTjaJNazZ6qzhFrbF1RqN16RBrjFyOgV
+   tN14zVjVk6vs67HNIabUWqKpJc7NWoDcZ2IAuZMZPFkqC3Wne+/Uco/e4
+   /WvXm3HpoVXpt4aFkmm2aGgkiKu3NVbOrNBGauMvgPd1cmLDy6I5LJTPl
+   L4Lk3rpK3Y2TC30/6MllQ+aQ51AmV6izKDLrctJaRiEgg3nE93DqaA3pU
+   JxO4i8Rp19OOqOdWpSr/m6y1MQLsFk39JMzdNMvLwBHxwecaUKKgLNMPp
+   w==;
+X-CSE-ConnectionGUID: aispFCZaTqOovRDsQSTi/Q==
+X-CSE-MsgGUID: yV1zb7o8RCOU03UgBUJUeQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="24119544"
+X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
+   d="scan'208";a="24119544"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 20:35:17 -0700
+X-CSE-ConnectionGUID: TYyhdOYMRgyXjyH984EsNQ==
+X-CSE-MsgGUID: xnU9NzGRQ1+M9L8pQNfsBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
+   d="scan'208";a="54588641"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 30 Jul 2024 20:35:13 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sZ07K-000thk-04;
+	Wed, 31 Jul 2024 03:35:10 +0000
+Date: Wed, 31 Jul 2024 11:34:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Duje =?utf-8?Q?Mihanovi=C4=87?= via B4 Relay <devnull+duje.mihanovic.skole.hr@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Haojian Zhuang <haojian.zhuang@linaro.org>,
+	Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	Lubomir Rintel <lkundrak@v3.sk>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, phone-devel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v11 10/12] arm64: Kconfig.platforms: Add config for
+ Marvell PXA1908 platform
+Message-ID: <202407311123.I2HGcXOK-lkp@intel.com>
+References: <20240730-pxa1908-lkml-v11-10-21dbb3e28793@skole.hr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|TYZPR06MB6953:EE_
-X-MS-Office365-Filtering-Correlation-Id: 881bd12e-ac79-482d-2636-08dcb111c984
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O7FqwNa3K3q5ZGMv7jJoXyetSvQs5lorhLy87FlZ8kp9glTbzZBpcPyyLdNr?=
- =?us-ascii?Q?nINZgRT+RzkBnb3twGb6XwX15CBXq/rR4Gb7/JmabS7q244B7ldxjDlVcwHN?=
- =?us-ascii?Q?3vOdEIZf/FW2RYwyxkmIC5Rk2YFrBsfSMKZ7nhsclROEXlr+Y0jlRseYJ1LN?=
- =?us-ascii?Q?8WvkVRrQwfwaRCO5cc8n/ZuB7jipGVL3GtgQKUPLTyCGOV9v0RSWYYbk6Doi?=
- =?us-ascii?Q?BXevVpb/fioufWdMCWp0angv3jRKqN4ThayQlH5CEpe8WjV8B5D0s4JGjwQC?=
- =?us-ascii?Q?IFFJ59s6foPfIvH0N3YFkqIV6w9dC8qsN9oJiVcDhfLdp4+apUjpME8ZLp9C?=
- =?us-ascii?Q?1u1X9xGzTQOlCuPVdepdjU4LLFiSPk1nUgP1WydA2V3EZdWBMddH4jGy0KIK?=
- =?us-ascii?Q?LtSwZ8HTtgNZRzBvgl0pBRaTvKp7OXF9qDW8UQaByfAdB4AGcrexCLzFrxwd?=
- =?us-ascii?Q?tEvV0w3n7AAm8cmHHHZfvQGlv/dS8g3M0wyd+QVpMZKDpc0qFJACpLtwogjf?=
- =?us-ascii?Q?5PIoScKVh/cMkZDGR2zeMwLgF+8K+12nqMebzIFfMfhqyPhQe9QHS7rsJ331?=
- =?us-ascii?Q?VrLp3DHLNOD2Tu/sZmI4APTULcbt4O090THjF81VWjpt0zMEdRp0cPgcUHP1?=
- =?us-ascii?Q?yBdNPiDhDPGLja3+zXh6Zt5IyBtnulA/X4PpUvkfWrpp6CwfMyz6BLUkM7jp?=
- =?us-ascii?Q?44RB2hSClvGnqs7BZqMIXVNsMcbuWR+1lo8RPfLO8Gycop0G2aRm2t2zImJM?=
- =?us-ascii?Q?j8HO19/r39XMm+pXd3SAQ8caJSIJsooLWYNaWPztWALe0C0Dle5CUIB1y09h?=
- =?us-ascii?Q?lm3Ewg8lPP398ii0M23Q5Z8ysm7pecJD7YW4za5P7YbwxXCoJixQfQf+3w21?=
- =?us-ascii?Q?qvv3bOWi1AOpcPLgBj0HHraSsT+9gTaNBxk/LYEI4/1VAfkjtWg4Ev9N12Lu?=
- =?us-ascii?Q?2ULm+H9WIZvpG8XQozsnQr76VJEQFUOCzwqs6KvSkb2C1nY0PpuBZcJZe7OW?=
- =?us-ascii?Q?d+Y/smg2GQIWwywIqXxA4K0ssEnKiqNb5PE4SyCpoH2n75t+CN2Ndufj4X3V?=
- =?us-ascii?Q?TYGwhaU/ci73QaIxrndYvgnDxaMyAD4CBTbp28j8O/dNzY2m9kV1sOVe5Cek?=
- =?us-ascii?Q?DdRucfdXHqFHZKctMFMXzAthG+C2NpJ+qctaR7h6uVcKoUAdDK64USb6Zz0z?=
- =?us-ascii?Q?AnkRZRFj0+5vn/QJ28wOlu6xaWd9E53i6vxgSBAT8TTd/BT+yU26CiMsHrUS?=
- =?us-ascii?Q?9fGvtx2TAsIHc/kckl+w7KNv4W70zDXeM0dyJKk8HXqp7hHKTISBSPAPJIIb?=
- =?us-ascii?Q?B/BVfhx5HU0JoVhGGA+fpYOlGEybf+H0Nf1MjTm/iZPEwDXNPEFUQigYBRXW?=
- =?us-ascii?Q?8HwsfcHYaZZycqN1QRMKYelk6fxI6Z5ToPx8OuUIPlnMqT3RnA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?AQR1yh7CgQ1RhtEkBA0wCFKgduj3wfNjaWrOBp6NFUgf7QZqK3R1uxVuGm2/?=
- =?us-ascii?Q?+nORE7YYpl/49MG7mRYGB8DkyNN/LfB8qTKeP/S0RAnCWOiTMHbWISli5WYt?=
- =?us-ascii?Q?j9XgH7PxovWx0SR8c1K1EkEtORSmchvBs9Xe/M9xZ/rWwpKnUITjf+zPpWFR?=
- =?us-ascii?Q?4Gj76Xa01uLJNssnBHWBpW//fonI4oG3zy0JdgmteI8Zu3Q4Lj3DXA9/vhJQ?=
- =?us-ascii?Q?Ll2VtAbnFIbLT3VPDqD2fLX/o7BOuxf92H4oqCIC8lFN6XCdaTGOh7XAOkzb?=
- =?us-ascii?Q?xFVISxhSb6PCnXQi4ZHI8wkgOfLRxn3quj4yQAKEO2HpqmiE6P2+GghQOlmF?=
- =?us-ascii?Q?3WAul4WYd8lznSBvjAguTd2fp/IDiJ2e6jUW/6gnuUz1+X+pli25IrcD6MTK?=
- =?us-ascii?Q?jyRW5iTy2J9I/zplxenb3w5Lsr520IL3oeyGH9tra/0o6ly2JVEHMg1cVsKj?=
- =?us-ascii?Q?b4awv/AUopqHDNr90e9GtpdzGHm9cGBiDl1AldLAUBQTJ3yhKpr8BS54JSFT?=
- =?us-ascii?Q?gAbBX03ucQzNS9ys6ZlDkLeSFvxZSPvxhu+HWT9HHHSu6VsGxh+MNtZGpnle?=
- =?us-ascii?Q?gfqOK4lBZO5eryif2pigK8+UwAVt0gqdfPTs72FhX1Wm2qklLdYPvQh334Sj?=
- =?us-ascii?Q?nfLKZOD80H5Gyicvbun+7TIGXWVRVafZFwWIvR9ebhu/Y5zGL0x4k2ev7GBK?=
- =?us-ascii?Q?HTBnkLVXdewJrgSQynjz9qDjz71L4QH8kqeKj+lzep2rau65OV/HL/OJO/3c?=
- =?us-ascii?Q?5xZOOpBEQrrisUbqt3Q+cZqCIyMJjVXuZMxtA5Afqdyj46cILChmM5yL5OoR?=
- =?us-ascii?Q?89G+ABwpVoT9rQ1ZyKAr6nnevsCerwmlyw0Xmc6zXKANaQpqzcO1t6V0WXBe?=
- =?us-ascii?Q?UKqD1LpFYigOHTl8dLg6R0YgjPO3VBDKXBkNkIeYSJFSk25rcAbq6YpKXzna?=
- =?us-ascii?Q?6eNzt2CLHxyCiESQutUpiIj/aFuDFU3+nPNm0S8Q/CP2uyehTychTs3XrooH?=
- =?us-ascii?Q?FtOyp/NIaeU0zsuw5UOcLwpqROBJBchPKKh3oKVMb937QiYh+a6GLZW5tHRR?=
- =?us-ascii?Q?AnJp0JZH6SmnrMSFpmWnRTfItGC3jqnDsjISCz4yU9ZLPptl5rdoLSAUn4sM?=
- =?us-ascii?Q?y97kY1L5tfuqXNuisDE6OUEXPVZTLMNcm16VBVrnLuOd8wGPPKE5OaVZk9ch?=
- =?us-ascii?Q?PyTLLteePBdPGEiKWlWAYLyhzZEVfPGuLjk5riGQD9s1jpl/1nYG+l+Kz70U?=
- =?us-ascii?Q?J7OMywEl4iX1gZl6Zhsw53Zz+KkS5JE0GhncxGbBajUI4Aw6aEL+LBdwJXyG?=
- =?us-ascii?Q?9JUVl8U4l7kU7b5zs7zGhrlpvPENbZbzwk9mu6ke44YtXK9OlGImmhAAD7PY?=
- =?us-ascii?Q?88/Ey4+kJ7cbm2phEwKht1bGO8FH3XiZWwRV0i9CLxoaodEWM7Avx9OdgHgO?=
- =?us-ascii?Q?nlmAh4DuJQNVALvr1phBq4Jc4ShqJOfm7P5ZWgbbRQM91RgaH9YyiYXhC3cv?=
- =?us-ascii?Q?BI0qsY0dTtIWK9+RJWlf/1qcYV90+d1pIjYSZ5Oxsb6mQ3OEE+h9ntB9M1S8?=
- =?us-ascii?Q?MI5iXG62epiPX9kSc4TEmftOTEAu+wgUZBwmTimq?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 881bd12e-ac79-482d-2636-08dcb111c984
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 03:35:13.5156
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Q31jzX3iBbRZM1QrvMSxxr7BF0Q90+H+CCm2yyNF/dVl9TzEzWH9H2huWMBflGGazR11tZaHvaC/sStfSFedKA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6953
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730-pxa1908-lkml-v11-10-21dbb3e28793@skole.hr>
 
-The current udmabuf_folio contains a list_head and the corresponding
-folio pointer, with a size of 24 bytes. udmabuf_folio uses kmalloc to
-allocate memory.
+Hi Duje,
 
-However, kmalloc is a public pool, starting from 64 bytes. This means
-that each udmabuf_folio allocation will waste 40 bytes.
+kernel test robot noticed the following build warnings:
 
-Considering that each udmabuf creates a folio corresponding to a
-udmabuf_folio, the wasted memory can be significant in the case of
-memory fragmentation.
+[auto build test WARNING on 8400291e289ee6b2bf9779ff1c83a291501f017b]
 
-Furthermore, if udmabuf is frequently used, the allocation and
-deallocation of udmabuf_folio will also be frequent.
+url:    https://github.com/intel-lab-lkp/linux/commits/Duje-Mihanovi-via-B4-Relay/clk-mmp-Switch-to-use-struct-u32_fract-instead-of-custom-one/20240730-204129
+base:   8400291e289ee6b2bf9779ff1c83a291501f017b
+patch link:    https://lore.kernel.org/r/20240730-pxa1908-lkml-v11-10-21dbb3e28793%40skole.hr
+patch subject: [PATCH v11 10/12] arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+config: arm64-kismet-CONFIG_I2C_GPIO-CONFIG_VIDEO_MMP_CAMERA-0-0 (https://download.01.org/0day-ci/archive/20240731/202407311123.I2HGcXOK-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20240731/202407311123.I2HGcXOK-lkp@intel.com/reproduce)
 
-Therefore, this patch adds a kmem_cache dedicated to the allocation and
-deallocation of udmabuf_folio.This is expected to improve the
-performance of allocation and deallocation within the expected range,
-while also avoiding memory waste.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407311123.I2HGcXOK-lkp@intel.com/
 
-Signed-off-by: Huan Yang <link@vivo.com>
----
- drivers/dma-buf/udmabuf.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for I2C_GPIO when selected by VIDEO_MMP_CAMERA
+   WARNING: unmet direct dependencies detected for I2C_GPIO
+     Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (GPIOLIB [=n] || COMPILE_TEST [=n])
+     Selected by [y]:
+     - VIDEO_MMP_CAMERA [=y] && MEDIA_SUPPORT [=y] && MEDIA_PLATFORM_SUPPORT [=y] && MEDIA_PLATFORM_DRIVERS [=y] && V4L_PLATFORM_DRIVERS [=y] && I2C [=y] && VIDEO_DEV [=y] && (ARCH_MMP [=y] || COMPILE_TEST [=n]) && COMMON_CLK [=y]
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 047c3cd2ceff..db4de8c745ce 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -24,6 +24,8 @@ static int size_limit_mb = 64;
- module_param(size_limit_mb, int, 0644);
- MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes. Default is 64.");
- 
-+static struct kmem_cache *udmabuf_folio_cachep;
-+
- struct udmabuf {
- 	pgoff_t pagecount;
- 	struct folio **folios;
-@@ -169,7 +171,7 @@ static void unpin_all_folios(struct list_head *unpin_list)
- 		unpin_folio(ubuf_folio->folio);
- 
- 		list_del(&ubuf_folio->list);
--		kfree(ubuf_folio);
-+		kmem_cache_free(udmabuf_folio_cachep, ubuf_folio);
- 	}
- }
- 
-@@ -178,7 +180,7 @@ static int add_to_unpin_list(struct list_head *unpin_list,
- {
- 	struct udmabuf_folio *ubuf_folio;
- 
--	ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
-+	ubuf_folio = kmem_cache_alloc(udmabuf_folio_cachep, GFP_KERNEL);
- 	if (!ubuf_folio)
- 		return -ENOMEM;
- 
-@@ -492,10 +494,20 @@ static int __init udmabuf_dev_init(void)
- 	if (ret < 0) {
- 		pr_err("Could not setup DMA mask for udmabuf device\n");
- 		misc_deregister(&udmabuf_misc);
--		return ret;
-+		goto err;
-+	}
-+
-+	udmabuf_folio_cachep = KMEM_CACHE(udmabuf_folio, 0);
-+	if (unlikely(!udmabuf_folio_cachep)) {
-+		ret = -ENOMEM;
-+		goto err;
- 	}
- 
- 	return 0;
-+
-+err:
-+	misc_deregister(&udmabuf_misc);
-+	return ret;
- }
- 
- static void __exit udmabuf_dev_exit(void)
-
-base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
