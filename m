@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-269690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296209435D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:51:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24F29435DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8EABB21ED0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:51:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201981C21CEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953344962E;
-	Wed, 31 Jul 2024 18:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADDA482DD;
+	Wed, 31 Jul 2024 18:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKJQGjGe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b="DQ2Dvjgr"
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0E84778E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:51:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483E54084E
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:52:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722451873; cv=none; b=V65W2kH0Zci3bIKG0NWXOREWrd8a4dgLdLHdBVS7EhyLygvFbdXQMivvXhrnLYfZFpnamfs+nHN0luvxwGLjo/sRb9x+omeaYsXmLwuFXNQbS1yDgCeST3c8woyQs07AVRyEh0Ksr+4Tk9gD7mCL8CP0qhYRz1FirPz8QQUjxFQ=
+	t=1722451968; cv=none; b=AKXb47KZBOZSEJUtf3uh9hQ92XFqwZqtnzklfgXG182f2UASfKuKwWN+Jv1tc/U8BmQ5t0OXIjeiAi6gaGblSZJ8u81izU9bWS/4jAhb0xI+rwC8xJ+6AQXzH4YrbIZs2MJ3W7XEvEjvbN8078HrnR6t5NNXFSG8hUIYHChd3ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722451873; c=relaxed/simple;
-	bh=b3hljwi1hleI4R5yYJ0QfHYB1fl44dT9f3B67aXaXN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joD/m68ki8+hFbAjGfhqj9IcEmZdmR9asurrtXS9UAC/uFkyCwEbwCLrnfedusui6byPZHbM22N1skdlJJwWoydlHA2uCBuidkQS1kmdykv/uVvVOdUAzab/rbvguCirUNp77DekG4BT9Wnkh6ou638Gmq8VNxZQfBQl/3SNTS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKJQGjGe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D31C9C116B1;
-	Wed, 31 Jul 2024 18:51:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722451873;
-	bh=b3hljwi1hleI4R5yYJ0QfHYB1fl44dT9f3B67aXaXN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YKJQGjGe/FGBv2aFFYSKJVw+4X29v7l6KkAVCgOWmvnVlL1vPhMz+2Uxs/5fyEaKO
-	 GVoavXsL08o7J3iYJ9XbcR5Gx/F5RmHo3O9gFPoj6hIsz0N9MRor6MkzB87hHJ41EG
-	 sG3JYEAeGxeU4SveDfUq85dLkKW6+araaDsc+pL8sUxKDIMujDCZTKufLV+c8DLfm5
-	 MVwqYaLJFICHr/gPXb2a1l/bryRTMMvtMKITyFKwJKOtqKVqn/wFszOzTjA4gS0yGs
-	 LrGvHUu0rUOkhRitrPZWSg+U/atDlnEz8/Kb5LzumimGGxwESkGR4Rz+Z2AUY+i6FJ
-	 NmK4/nghKPvRg==
-Date: Wed, 31 Jul 2024 15:51:10 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Song Liu <song@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf bpf: Move BPF disassembly routines to separate
- file to avoid clash with capstone bpf headers
-Message-ID: <ZqqHnlgG0YS4DRAt@x1>
-References: <ZqpUSKPxMwaQKORr@x1>
- <CAM9d7cgTrDEdAn=dv9ciRZfpMdYwdmDrAAvsYEYE=GssPS_aWw@mail.gmail.com>
+	s=arc-20240116; t=1722451968; c=relaxed/simple;
+	bh=j/5XcbIq07wd41SYVofw1c/EmPcr+Uvp2VwHqgGr8jo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cqe27tNho8sPBgrU6gdbB2D2BLmfKdh5B8GBVWZCXyNpY9s3EyF6J+VWrTf5ikP21GtPWd/c7EWW5Fa6QHlOkxVx8eyxEBJjcLoAzueBt3GAOTmUSz0uJyVzqzvd9JgYYBbAzihjdOZAfboLHTK3QwI+AOF/w3yaEiPC/crNNl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr; spf=pass smtp.mailfrom=emersion.fr; dkim=pass (2048-bit key) header.d=emersion.fr header.i=@emersion.fr header.b=DQ2Dvjgr; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emersion.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emersion.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=emersion.fr;
+	s=protonmail; t=1722451948; x=1722711148;
+	bh=j/5XcbIq07wd41SYVofw1c/EmPcr+Uvp2VwHqgGr8jo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=DQ2DvjgrMj87kjzwf8jblERsqNIWu2raUVL/kDFfCLOELB9bVICBbEMJfihsimCil
+	 rKAncQ4152NlLnpthTTbs+Nkampkv3Ee9wZU675TwYTuW6tqPemIvsDEhWUBr4/912
+	 ShPRrPqTqazB53/11Ge8rWZobXdQbRc9v/8S4vm1PUrrNIKZ55arxQxuLd1W+UUBX4
+	 WI+OHuUwVRyFzM9ejuDG8JJQda0SqQpMtFmC4E4gp4LyPD2J0/bMPKG4VpxvtwkYtL
+	 4KpuRCro8iCfgLERO8R58av0ddAwYBJyqrH8AYJUN9GOKRurNc+MHFBbh4Sb11RZaz
+	 fyKlYcSzPZxSQ==
+Date: Wed, 31 Jul 2024 18:52:21 +0000
+To: =?utf-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+From: Simon Ser <contact@emersion.fr>
+Cc: dri-devel@lists.freedesktop.org, amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-dev@igalia.com, alexander.deucher@amd.com, christian.koenig@amd.com, Pekka Paalanen <ppaalanen@gmail.com>, daniel@ffwll.ch, Daniel Stone <daniel@fooishbar.org>, =?utf-8?Q?=27Marek_Ol=C5=A1=C3=A1k=27?= <maraeo@gmail.com>, Dave Airlie <airlied@gmail.com>, ville.syrjala@linux.intel.com, Xaver Hugl <xaver.hugl@gmail.com>, Joshua Ashton <joshua@froggi.es>, =?utf-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v2 2/2] drm/atomic: Allow userspace to use damage clips with async flips
+Message-ID: <OI4kMMLEzKSiSFR7TdYmIUAnUicSI0lW14YSJb_ylxwRrHGMCiNLnqFIe73K_s87v0z5nzRYASZD68SqgQAR08GCdLRMRCPWrWdA0hS86xI=@emersion.fr>
+In-Reply-To: <Y7XXNRZbyuqt9XZPtxVFRJgywsSTpsDwdWZjhxWnYH3lPSwa0-hVV1kgXzb0q8BAMRvH8eEMdPHOvgAn2KI5HcaWazmQvRyfI7NvQBAU4Z0=@emersion.fr>
+References: <20240702212215.109696-1-andrealmeid@igalia.com> <20240702212215.109696-2-andrealmeid@igalia.com> <Y7XXNRZbyuqt9XZPtxVFRJgywsSTpsDwdWZjhxWnYH3lPSwa0-hVV1kgXzb0q8BAMRvH8eEMdPHOvgAn2KI5HcaWazmQvRyfI7NvQBAU4Z0=@emersion.fr>
+Feedback-ID: 1358184:user:proton
+X-Pm-Message-ID: 3cc181851783a7a624f055a95095882c63f6a6fb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,64 +59,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAM9d7cgTrDEdAn=dv9ciRZfpMdYwdmDrAAvsYEYE=GssPS_aWw@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 10:07:50AM -0700, Namhyung Kim wrote:
-> On Wed, Jul 31, 2024 at 8:12 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > There is a clash of the libbpf and capstone libraries, that ends up
-> > with:
-> >
-> >   In file included from /usr/include/capstone/capstone.h:325,
-> >                    from util/disasm.c:1513:
-> >   /usr/include/capstone/bpf.h:94:14: error: ‘bpf_insn’ defined as wrong kind of tag
-> >      94 | typedef enum bpf_insn {
-> >
-> > So far we're just trying to avoid this by not having both headers
-> > included in the same .c or .h file, do it one more time by moving the
-> > BPF diassembly routines from util/disasm.c to util/disasm_bpf.c.
-> >
-> > This is only being hit when building with BUILD_NONDISTRO=1, i.e.
-> > building with binutils-devel, that isn't the in the default build due to
-> > a licencing clash. We need to reimplement what is now isolated in
-> > util/disasm_bpf.c using some other library to have BPF annotation
-> > feature that now only is available with BUILD_NONDISTRO=1.
-> >
-> > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > Cc: Ian Rogers <irogers@google.com>
-> > Cc: Jiri Olsa <jolsa@kernel.org>
-> > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Song Liu <song@kernel.org>
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> >  tools/perf/util/Build        |   1 +
-> >  tools/perf/util/disasm.c     | 187 +--------------------------------
-> >  tools/perf/util/disasm_bpf.c | 193 +++++++++++++++++++++++++++++++++++
-> >  tools/perf/util/disasm_bpf.h |  12 +++
-> >  4 files changed, 207 insertions(+), 186 deletions(-)
-> >  create mode 100644 tools/perf/util/disasm_bpf.c
-> >  create mode 100644 tools/perf/util/disasm_bpf.h
-> >
-> > +++ b/tools/perf/util/Build
-> > @@ -13,6 +13,7 @@ perf-util-y += copyfile.o
-> >  perf-util-y += ctype.o
-> >  perf-util-y += db-export.o
-> >  perf-util-y += disasm.o
-> > +perf-util-y += disasm_bpf.o
-> 
-> I think this can be gated by LIBBFD and LIBBPF config, but not sure
-> it can express the both requirements easily.
+I've pushed both patches to drm-misc-fixes, thanks!
 
-It is possible, but as discussed with Ian in another message, the
-cheapest way to do it was, I think, like I did, in the end it is just a
-stub returning an error when those libraries are not linked with perf.
+I've added a Fixes trailer accordingly.
 
-When we manage to implement the disassembly of BPF using something other
-than libbfd we can spend more time in this area, I think.
-
-- Arnaldo
+I'll rebase my patch on top of these two.
 
