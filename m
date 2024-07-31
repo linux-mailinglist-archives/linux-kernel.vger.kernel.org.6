@@ -1,120 +1,111 @@
-Return-Path: <linux-kernel+bounces-269552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB52694342B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:32:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3925294342E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C4E284689
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:32:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C29D1C221EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33C81BC066;
-	Wed, 31 Jul 2024 16:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A6E1BBBF3;
+	Wed, 31 Jul 2024 16:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+j02xlg"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LRecKFH3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hqlAcB+G"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6099B15E96;
-	Wed, 31 Jul 2024 16:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A36A1773A;
+	Wed, 31 Jul 2024 16:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722443567; cv=none; b=nVMh41aYC/Ec6ybD6LIQ/5Pi8LwhfGuG5Pv6kh0Rz3ybHKYqv6a0Sn7pa7CWPjkJSBz6Bhu48LoYMbf/+v8fHk6eTYUuKiLUEzap2CHv5ThrLoIqg8Ur7tqbfJmjLA6jyQIG+kPnQbgv4PtPlvI/XMfiJ4nnjzD5icc1NsNTc0U=
+	t=1722443614; cv=none; b=uo0LEUca+3QiyYDnlqAR6JVOA7BS4Ytkxt3KkZpmed0dhSiiiEz6Lzv6iL1r7WbZ7SL778prdBBFgNDwAsP2R6QXYzAGnsdGOhGCNeeIt88qJmWrBZPFFcvTMinYyxVW+Jj4yZcTUghJx5ZS+EMJZAb8NKp84TMzxaFhhtdsPFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722443567; c=relaxed/simple;
-	bh=aFIDWBq4Nmy0FWXw+JYhaJRwtgoDGGvlMCLfC7m1N+M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oim7+89YHWzPFucsG97aSuP83AJgq3WFNJyKqIA2flnekcafB1Dc6M8XnK1V953DigdQFsybKtxkneOob6rMcMonbqGL5dgHgknhFTU/dNQok6x4Txouj4JAbv7dxX50ChmOuUZ2GQcS+fuF/+1ZdKFncepCQz5BClE90CuOyT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+j02xlg; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef7fef3ccfso71150561fa.3;
-        Wed, 31 Jul 2024 09:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722443563; x=1723048363; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bIefGprQjQzzRl+XymqNxAaIt5Yc30PGPqqfK1kTf5o=;
-        b=g+j02xlgMjojwGlz9vDhFa2rf/qLOpvmXHkIwS1mUB6hBAQRcJrARYSiirvXkNLOKU
-         +Ma0u1Fx/RTgIY0XCTXESWzeRbkNvZoxoeqP+Nvm/ZA7eP1cVPLuBSiXOzK4M9dNXRjc
-         ewkTY5X3qM1RaS+w8HGk9SRnJEJ6YAkgikRLmZsVZYSc9hP2RijeEAJGOAAiMGd17Blq
-         0u4ha0bKjWTJsmuQm6vG6iEbiVP6xfVMMe44FjBJyq7d2ciaVjmMyLNdpA7Si+beTe0s
-         HGX5hcEBIOiq+Qh5Voy03yZbGv+Okq0qsPd868Wgui2GPWfkdHl6EZeyz2Zihnzk7UEz
-         pYLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722443563; x=1723048363;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bIefGprQjQzzRl+XymqNxAaIt5Yc30PGPqqfK1kTf5o=;
-        b=Q2SdP8rNymOcUXXfxzbj6JnYbiQK8jkS4drVr31r4bQwuudlBxipxeYb7fnbGCJDAH
-         3Cto+c7wCXUwby2UkeGJIIA6hqtbpN0cKaOVcGw8TwtlQae4yoICMMJ2m5mVttLPvw3Y
-         lahiv+67jaqGfudqfu5nt57Zm4Fb8u5JYpCqfXl74bnvEQS4nOTa+r4VzU2xVFdmSOWR
-         uuobtLsB33yuO1+BMCg/OpHQBJaAdMCu59OjAwtQc/mzqutnGp386uh/Eyp9Kc1M8jDz
-         VDUTCddt6HMqpcVVVYsMo4L8aFJYmRpBurTFxFTdtKvnyv9p7cntXEoHDVttJZmPzuqk
-         ICaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBW2608Wsz5G64j1Hw1uXjq1XAIJkGJKuT/kVk28yg/9ZVZ7FDuZKX2J8Zj7iPABf2y7dwTYESLxaxEpcZKtWHoFACQvVBcqKNcHg7PcDRQGWn8b+n3lcT9oTRASVuKSL6UhR4P8s4SAmXRntV
-X-Gm-Message-State: AOJu0YybcYhfCNo4997mXI3ApLLQy7D7858cNDcRshzgnIwqzISRY0cY
-	Ya5pDKGGwsDB92hLsIviirRhtW0/uy61YmhXJevk56c+OXmqzflhpjDCRthLmYPVjETAaKoyRJN
-	JzhJTBWHeglawG/7uqkaNL/tCKz4=
-X-Google-Smtp-Source: AGHT+IFc9t3k6Dm47Ha58j7yx2K2/CRo4wNoeikNws55HD+Vm14k5JDII7jSv6PofGp4s0NZed1po0DtWbnoaMvuxjo=
-X-Received: by 2002:a2e:740d:0:b0:2ef:2203:5dbf with SMTP id
- 38308e7fff4ca-2f12ee1992amr91540701fa.27.1722443563178; Wed, 31 Jul 2024
- 09:32:43 -0700 (PDT)
+	s=arc-20240116; t=1722443614; c=relaxed/simple;
+	bh=o57cNR5ti4i4fzmDZpGvXRr0ZLTnwEv3gVMCdguFiog=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=V24AHvRKbyZVWtIwRn8Hm1R27NQ5oZB+Zl3rIhbDTzbKfDDqiCUWwivbBhq9y0tUW4caw5LokLZ71kZdlsjsFnXOG/VGzHEH9u1yCznVzFuBMrS9FAWKLJ2QoYT1wwED+Av1yhfJv58/wIFvVMItaRfsjfP8EcWHS8TRszvoh8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LRecKFH3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hqlAcB+G; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722443611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RlAFzh33b9VSrJ2A7ge/uqdPM4bNaaWEd8D1hoHNneM=;
+	b=LRecKFH3frU1Y8UxKX4QHH7B3N9DK4xDQGTtmqlwGekzL/sYnSed/21YFM4Vjcq0KGIugs
+	MT4Vafvv2oJrZwX0RjVtPVgVM3SuoxW/UzkJ/7UIhyYUhZalZ68D529av1uxc3uOfl4VuX
+	1dfcpLjzvjWrMqNN5znjUyI0O/Vz4S/jVpIqdyqcN+6tJq3QOf3lkCs+9f85Ue1C4aQhrr
+	0cNo0GVM30lqVUMx4l7opHQ5O099TW8erVX/KgyaDtnql+9FBlL1mPJ8ROz4rGUpLLxQf7
+	0C6kBT1p9NH2E5gGno7pZuNZUxxuj6y3kEgRRZWFxVE9CVZqSLqErVbc5WrJOA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722443611;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RlAFzh33b9VSrJ2A7ge/uqdPM4bNaaWEd8D1hoHNneM=;
+	b=hqlAcB+GZY5+dICvjphzMwNgNJl9WN5bxwbSIeKi2x0zKb4DKBiRFeK/dH0iE6HLwm22M+
+	lQoawFmvBDI0TBBw==
+To: Marek =?utf-8?Q?Ma=C5=9Blanka?= <mmaslanka@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Rajneesh Bhardwaj
+ <irenic.rajneesh@gmail.com>, David E Box <david.e.box@intel.com>, Hans de
+ Goede <hdegoede@redhat.com>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, John Stultz <jstultz@google.com>, Stephen
+ Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v3] platform/x86:intel/pmc: Enable the ACPI PM Timer to
+ be turned off when suspended
+In-Reply-To: <CAGcaFA1HJBYacvDAkZAO9HNhT2dZO7OdgcBYb59p7OJkVqQ6Fw@mail.gmail.com>
+References: <CAGcaFA2sQNRo9UThN-C1NOLtGUJ3sKzc=pEC9wdDWMi501iLsA@mail.gmail.com>
+ <20240730120546.1042515-1-mmaslanka@google.com> <87cymu7tgq.ffs@tglx>
+ <CAGcaFA1HJBYacvDAkZAO9HNhT2dZO7OdgcBYb59p7OJkVqQ6Fw@mail.gmail.com>
+Date: Wed, 31 Jul 2024 18:33:30 +0200
+Message-ID: <87h6c55xnp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
-In-Reply-To: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Wed, 31 Jul 2024 12:32:31 -0400
-Message-ID: <CABBYNZ+dvLGos9oLi6euFkmiU9OReJ5F3qsA6WrhW29yeZ-jWQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Bluetooth: hci_qca: fix post merge window regressions
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Wren Turkal <wt@penguintechs.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi Wren,
+Marek!
 
-On Wed, Jul 31, 2024 at 11:21=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
-> wrote:
->
-> Here are the fixes for regressions reported by Wren and Dmitry. I could
-> reproduce the crash on db820c and so I was able to test it but patch 2/3
-> could use a Tested-by from Wren on QCA6390.
+On Wed, Jul 31 2024 at 16:44, Marek Ma=C5=9Blanka wrote:
+> On Tue, Jul 30, 2024 at 6:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>> On Tue, Jul 30 2024 at 12:05, Marek Maslanka wrote:
+>> +static void acpi_pm_disable(struct clocksource *cs)
+>> +{
+>> +       acpi_pm_enabled =3D false;
+>> +       if (enable_callback)
+>> +               enable_callback(false);
+>> +}
+>> +
+>>  static struct clocksource clocksource_acpi_pm =3D {
+>>         .name           =3D "acpi_pm",
+>>         .rating         =3D 200,
+>>         .read           =3D acpi_pm_read,
+>>         .mask           =3D (u64)ACPI_PM_MASK,
+>>         .flags          =3D CLOCK_SOURCE_IS_CONTINUOUS,
+>> +       .enable         =3D acpi_pm_enable,
+>> +       .disable        =3D acpi_pm_disable,
+>>  };
+>>
+> Thanks. I'll try do this in that way. But I need to disable/enable
+> ACPI PM timer only on suspend/resume, so I'll use suspend/resume
+> callbacks.
 
-Can you give this set a try and report back?
+Why? What's the point of keeping it running when nothing uses it?
 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Bartosz Golaszewski (3):
->       Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
->       Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
->       Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
->
->  drivers/bluetooth/hci_qca.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
-> ---
-> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
-> change-id: 20240731-hci_qca_fixes-8e7a8ed3ad83
->
-> Best regards,
-> --
-> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
+Thanks,
 
-
---=20
-Luiz Augusto von Dentz
+        tglx
 
