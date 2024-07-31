@@ -1,151 +1,120 @@
-Return-Path: <linux-kernel+bounces-269396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65241943261
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:45:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE37C943265
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20CC2287CE9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:45:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDCE287553
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FFC1BC07D;
-	Wed, 31 Jul 2024 14:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869801B3746;
+	Wed, 31 Jul 2024 14:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fqBfQaqq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TBsn/Eul"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAEF1BBBC7;
-	Wed, 31 Jul 2024 14:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF6C9186E4F;
+	Wed, 31 Jul 2024 14:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722437088; cv=none; b=ZZLXafc1jgyMONk13cz76gickQbKBhx6NdZItrDv5LjPKUUoJFPnkTOpMQXbsvGF6Df/N7iGWjEn/aDWSRYkDLowTMmlWZsDPdfR7/Fq7sRxo/bJC5TDy2gluo9K8MpZehitp/1Z/z5didttmXHu69u6m5V4S7WN+x8vYJbbD/w=
+	t=1722437206; cv=none; b=f2hiKw5IzEnw+LMP4dxzyrbbNoWGccl9oCoK9uMPLQM+mzJIjh4dqGGRnzeGFrrlGHy/jF1ufVomF72EC167YmpLzOkHcuFh3ZmUPybdnUAFHwsp6p1TT9UEvPFtbW+X7WKJqyjOHgiplHPpLyx3aQ7Z9VSi2Nb+6ZzJnqhohBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722437088; c=relaxed/simple;
-	bh=0i7+5bg5UJif9MuAVh7inaS5qO0L8EjfbCHmxXjjGzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvSHSjQMQCYl5cPW1qiIx7mWImNdWpiW5rSF7HNaFAzdEmb0krdfFhFXHyVHRUYwXAn440Xl8dAKpn+Zr/at4VF4P4kkaie8de7kpu0qIbJLUMRfqCwtzH06nIb497UCGSCy4+A/pIVg26QRiLKM+2GwL372cq+8qnB0CX5OBXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fqBfQaqq; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722437088; x=1753973088;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0i7+5bg5UJif9MuAVh7inaS5qO0L8EjfbCHmxXjjGzw=;
-  b=fqBfQaqq9xWwh8X490eTdZFRl5iCHIQsObQgYhSvfW9ZFZrevdkjyxCN
-   ihmdFF9tAzi4dj4othR3zaKiPuRPKJEyyeWtJC6Al24gk2g7NAHdY0hQC
-   WtO1hshfsLCzfJUUlGJJLFRoRGxqkBFdndizPNp62xERCfzWPKLvUphXU
-   S01ocsXvm6Ln3kwwmv5sDHJyAAt/tKOqJdUab+jbY/CYvyod1FXJwC1nm
-   95SkvjvmGa8Aj1jOQp4gTPblH+5bkoxFw0tzTb7DNi92dOFID6fQ0H2la
-   ShIrBy88MLHnsoDihF7WdcCGp1FWzicgOdXoMRgEjmxk6nZ3VsCBv+Qt2
-   Q==;
-X-CSE-ConnectionGUID: TKDYervtTfu2BhcOM/n2mQ==
-X-CSE-MsgGUID: 9IISaaXgRE+QWORqT9b29w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="24113205"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="24113205"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 07:44:47 -0700
-X-CSE-ConnectionGUID: hHDcSOkuRsy4to6rLrrfkw==
-X-CSE-MsgGUID: LgsJcSNcR1GywUDW+A2Zqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="77975585"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 31 Jul 2024 07:44:43 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZAZF-000uTe-07;
-	Wed, 31 Jul 2024 14:44:41 +0000
-Date: Wed, 31 Jul 2024 22:44:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: Re: [PATCH v2 3/5] dma-buf: heaps: support alloc async read file
-Message-ID: <202407312202.LhLTLEhX-lkp@intel.com>
-References: <20240730075755.10941-4-link@vivo.com>
+	s=arc-20240116; t=1722437206; c=relaxed/simple;
+	bh=XYTGwxefE7IJiw1vgYl48iiTnE2rbcE4C6iZxp4paSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LnSTWjn93Invkm4QW0+/oYDZysl039BpUKuBdR4mVMszoJ6ZAlQMfrAAbobTuPj+4zD0BqZY8zyHjkU48PR5++Wk+em02Efcs+Urhg9mcM2tV8EeC8PVd/AZxmO9j5PTqbirY71QDZpBQzhji/TbXco2G+CJGJ5T+8xkFHHsogY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=TBsn/Eul; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VEkau0069781;
+	Wed, 31 Jul 2024 09:46:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722437196;
+	bh=4l40MDd6rjvVR6vMWH2LvbD2nRR9R+2ADS7N2/1ea7U=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=TBsn/EulsatUUAU3LV8R/lurWekHmBh+VAMkH4rlGtcgzVmgCv1IP416kLfGFRWZ+
+	 AFcmYHwLGm/jbmK+7Yy4Jbgey/AiP536er/NfW29lMk/YvBq7r5eMULRMR4nUhW7/E
+	 SLabdsraj0sX6Ja1PGvqgK0Zy9zeGz82FxBkCn9w=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VEkaeq029048
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 31 Jul 2024 09:46:36 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
+ Jul 2024 09:46:35 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 31 Jul 2024 09:46:35 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VEkZnH079606;
+	Wed, 31 Jul 2024 09:46:35 -0500
+Message-ID: <973c244e-77e6-4c60-ac17-b7a4ffe85488@ti.com>
+Date: Wed, 31 Jul 2024 09:46:35 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730075755.10941-4-link@vivo.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] arm64: dts: ti: Add support for J742S2 EVM board
+To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
+        Neha Malcom
+ Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>
+References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
+ <20240730-b4-upstream-j742s2-v2-3-6aedf892156c@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240730-b4-upstream-j742s2-v2-3-6aedf892156c@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi Huan,
+On 7/30/24 2:13 AM, Manorit Chawdhry wrote:
+> J742S2 EVM board is designed for TI J742S2 SoC. It supports the following
+> interfaces:
+> * 16 GB DDR4 RAM
+> * x2 Gigabit Ethernet interfaces capable of working in Switch and MAC mode
+> * x1 Input Audio Jack, x1 Output Audio Jack
+> * x1 USB2.0 Hub with two Type A host and x1 USB 3.1 Type-C Port
+> * x1 4L PCIe connector
+> * x1 UHS-1 capable micro-SD card slot
+> * 512 Mbit OSPI flash, 1 Gbit Octal NAND flash, 512 Mbit QSPI flash,
+>    UFS flash.
+> * x6 UART through UART-USB bridge
+> * XDS110 for onboard JTAG debug using USB
+> * Temperature sensors, user push buttons and LEDs
+> * x1 GESI expander, x2 Display connector
+> * x1 15-pin CSI header
+> * x6 MCAN instances
+> 
+> Link: https://www.ti.com/lit/ug/sprujd8/sprujd8.pdf (EVM user guide)
+> Link: https://www.ti.com/lit/zip/SPAC001 (Schematics)
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/Makefile                  |    3 +
+>   arch/arm64/boot/dts/ti/k3-j742s2-evm.dts         |   26 +
+>   arch/arm64/boot/dts/ti/k3-j784s4-evm-common.dtsi | 1436 +++++++++++++++++++++
 
-kernel test robot noticed the following build warnings:
+Seems git is not seeing that this is a copy.
+When you do format-patch try using "-C".
 
-[auto build test WARNING on 931a3b3bccc96e7708c82b30b2b5fa82dfd04890]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Yang/dma-buf-heaps-Introduce-DMA_HEAP_ALLOC_AND_READ_FILE-heap-flag/20240730-170340
-base:   931a3b3bccc96e7708c82b30b2b5fa82dfd04890
-patch link:    https://lore.kernel.org/r/20240730075755.10941-4-link%40vivo.com
-patch subject: [PATCH v2 3/5] dma-buf: heaps: support alloc async read file
-config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240731/202407312202.LhLTLEhX-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240731/202407312202.LhLTLEhX-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407312202.LhLTLEhX-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/dma-buf/dma-heap.c:45: warning: Function parameter or struct member 'priv' not described in 'dma_heap'
-   drivers/dma-buf/dma-heap.c:45: warning: Function parameter or struct member 'heap_devt' not described in 'dma_heap'
-   drivers/dma-buf/dma-heap.c:45: warning: Function parameter or struct member 'list' not described in 'dma_heap'
-   drivers/dma-buf/dma-heap.c:45: warning: Function parameter or struct member 'heap_cdev' not described in 'dma_heap'
->> drivers/dma-buf/dma-heap.c:158: warning: Function parameter or struct member 'lock' not described in 'dma_heap_file_control'
-   drivers/dma-buf/dma-heap.c:482: warning: expecting prototype for Trigger sync file read, read into dma(). Prototype was for dma_heap_read_file_sync() instead
-
-
-vim +158 drivers/dma-buf/dma-heap.c
-
-   133	
-   134	/**
-   135	 * struct dma_heap_file_control - global control of dma_heap file read.
-   136	 * @works:		@dma_heap_file_work's list head.
-   137	 *
-   138	 * @threadwq:		wait queue for @work_thread, if commit work, @work_thread
-   139	 *			wakeup and read this work's file contains.
-   140	 *
-   141	 * @workwq:		used for main thread wait for file read end, if allocation
-   142	 *			end before file read. @dma_heap_file_task ref effect this.
-   143	 *
-   144	 * @work_thread:	file read kthread. the dma_heap_file_task work's consumer.
-   145	 *
-   146	 * @heap_fwork_cachep:	@dma_heap_file_work's cachep, it's alloc/free frequently.
-   147	 *
-   148	 * @nr_work:		global number of how many work committed.
-   149	 */
-   150	struct dma_heap_file_control {
-   151		struct list_head works;
-   152		spinlock_t lock; // only lock for @works.
-   153		wait_queue_head_t threadwq;
-   154		wait_queue_head_t workwq;
-   155		struct task_struct *work_thread;
-   156		struct kmem_cache *heap_fwork_cachep;
-   157		atomic_t nr_work;
- > 158	};
-   159	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Andrew
 
