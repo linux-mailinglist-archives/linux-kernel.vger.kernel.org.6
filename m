@@ -1,163 +1,118 @@
-Return-Path: <linux-kernel+bounces-268446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6B39424B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:03:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B14879424B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9281C21601
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:03:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A11285FB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F78ED53F;
-	Wed, 31 Jul 2024 03:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0B617BA2;
+	Wed, 31 Jul 2024 03:04:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JuL0nWb3"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8EB18638
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="h8pHKCOO"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63898DDBE
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722394982; cv=none; b=FwjAW8zwWd0D2zvoZEJIE9vaMcQhyuUzmKSvqBQZx7oEhXpS1GFEpPYnh/WXI/ZxZhlF1osfQ0adO6XKApDoK8whatYmxRo4LSUrcPoSD5xvtC6/DPQhQuCoXcEwKCGBdgk6mGsg2Dm360+6Nf2HD0sltKZUud8K/D/JpahcI6o=
+	t=1722395043; cv=none; b=bsaZS5/5P86buflnHP2CDGdjw9+I95n9aBeOBINsiR+Xp26bS9UQn4GIJsIp3IqHfV7ygrUaQIu8imN4N/Lt5U5TO9JeKdRBvrG6HMkdlAsQ+R/6g8yx457R5i4clZ2g+wax+YRZRitIscY3mnQtJuDPeRKWHnzF6RB4veN/GvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722394982; c=relaxed/simple;
-	bh=5JSXHJAUu46lj6snCC04DzSX38aU2k16Nzif4AapOqQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P9rdBjsj9n5AT5DfzLK4OuX8+3nOKDumOrtiExpEhgcgTZ2irNH/pm0W0JmPY8O0yvFx6o8Xvxu/HTOSwaKfY5w4tChMGxqU6ltvliGtgEWjD0TnX2EzZlffIay2XIsYSmqlBFHoHgb8Z1r2b4EZxMEdtostrd8M7FMO5vGSyfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JuL0nWb3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V2xnIa008747;
-	Wed, 31 Jul 2024 03:02:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=pp1; bh=vW5lsyIFWSZkq
-	9+WtC/JLBFyEtR2dLFJCqUMsgFyCqs=; b=JuL0nWb3qfVTsoJ38UVaATPGNvF0H
-	85aFLB6cHMpd/Lwl66YIQ5fju+XuS1EMG/s405b/2mllmw6k0ODyUNutfKlYxj7y
-	6/qUSZP8P6DOc6ZdKOjBsT/WAkGXZIyYpLoSQK6elkxXCh9EShdR9LWx3HVqktuw
-	LLdf2d9hGejGMQNG2kbV4IOINig7PW5p/hpyCQ+A/5lc7zEu1GH+uyvd5nUAfr00
-	qvdRaisNdhVpkDPH6iFZ/MvUNC6EwprYALlyMI66JULPPwBOapwlUjfBVH+JCqwN
-	258Zk+iG/1LsLMCataySujItXYBVWJDe5owxR0+NweW5GyAo4Xe9oMCFA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qcy180e3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 03:02:40 +0000 (GMT)
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 46V32deg013582;
-	Wed, 31 Jul 2024 03:02:39 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qcy180e0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 03:02:39 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46UNnJsO009211;
-	Wed, 31 Jul 2024 03:02:38 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40ndx30kpa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 03:02:38 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46V32XLB57344362
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 31 Jul 2024 03:02:35 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F146C20040;
-	Wed, 31 Jul 2024 03:02:32 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 175372004E;
-	Wed, 31 Jul 2024 03:02:27 +0000 (GMT)
-Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.ibm.com.com (unknown [9.43.68.49])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 31 Jul 2024 03:02:26 +0000 (GMT)
-From: "Nysal Jan K.A." <nysal@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc: Tyrel Datwyler <tyreld@linux.ibm.com>, Michal Suchanek <msuchanek@suse.de>,
-        "Nysal Jan K.A" <nysal@linux.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Eric DeVolder <eric.devolder@oracle.com>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Laurent Dufour <ldufour@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2 2/2] powerpc/topology: Check if a core is online
-Date: Wed, 31 Jul 2024 08:31:13 +0530
-Message-ID: <20240731030126.956210-3-nysal@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240731030126.956210-1-nysal@linux.ibm.com>
-References: <20240731030126.956210-1-nysal@linux.ibm.com>
+	s=arc-20240116; t=1722395043; c=relaxed/simple;
+	bh=v4AKbAZqAgYlfpxd7ASi7mp0L8JfpygJzos+PafB7fc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=gVOAegz8YcvLd/+CQs8Ff8HmoGG+H7DsdA8QeV1nFWIui3+O1UKl10jBfraj2wEgrsHH50bbS/YvdGFcp358YqPnvP5uVPW9QxBVNSDmllLpLZonqnvFJxwfcBzKF5PbpR2mp/0UaLZfKtwFGcbEUV0LjoVcA5+oVidP16feiXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=h8pHKCOO reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=9/e2p8SnoyZjuBD5kDyZ4Hsc5IvMzC5slAQsPek7aRA=; b=h
+	8pHKCOOVohNKcKFZXFhcRMyTYG9iDXiOzBHHscKmMx7BlmB4QVPEk5qCavMMFwy7
+	rfdA6qICWfPikWwGbQuIjSd36WN9PEKLXA/hJEqq/+HtcBUjDRYmQHORRfN4uivz
+	yZHsrCBgc7okugqdRT61YRXxwK9ho4vl5E0p2bxAcw=
+Received: from xavier_qy$163.com ( [59.82.45.99] ) by
+ ajax-webmail-wmsvr-40-120 (Coremail) ; Wed, 31 Jul 2024 11:02:05 +0800
+ (CST)
+Date: Wed, 31 Jul 2024 11:02:05 +0800 (CST)
+From: Xavier  <xavier_qy@163.com>
+To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, 
+	bristot@redhat.com, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, tj@kernel.org
+Subject: Re:Re: [PATCH-RT sched v1 0/2] Optimize the RT group scheduling
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <acq6wg6r63nhbxsl5xci3gsow2lwmrongn57l5642h4gnreiol@jz6a3jdiviov>
+References: <20240627172156.235421-1-xavier_qy@163.com>
+ <acq6wg6r63nhbxsl5xci3gsow2lwmrongn57l5642h4gnreiol@jz6a3jdiviov>
+X-CM-CTRLMSGS: c/SAlnBsdXM9MTcyMjM5NDkyNzExMl8xMmFmOTA1MGY2MjY2YjQ5M2U0Mjk1Z
+ WI2MmRhNjdmMw==
+X-NTES-SC: AL_Qu2ZAP+Su0Ep4yeeY+kfmk4aj+k+XsG0vfUj34FWOp9wjDLp5CY5ZEdOLVzo08ijNCyxixWaTTlNxv9mdqpiZq0M9q3liHUJmTPH7tjGYC4O1w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Xvqq_yAgqupzlMV1tTs1McA_6OFRaHzD
-X-Proofpoint-ORIG-GUID: sdX2CuWGvOx2jdehsGJ6JxRRU7oJB6td
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_21,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- lowpriorityscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
- priorityscore=1501 bulkscore=0 adultscore=0 suspectscore=0 clxscore=1011
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310019
+Message-ID: <74ebebc0.2f18.19106bcdacb.Coremail.xavier_qy@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3PxAtqalm3KxYAA--.21884W
+X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiwhYsEGWXv7P9OwAGsW
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-From: "Nysal Jan K.A" <nysal@linux.ibm.com>
-
-topology_is_core_online() checks if the core a CPU belongs to
-is online. The core is online if at least one of the sibling
-CPUs is online. The first CPU of an online core is also online
-in the common case, so this should be fairly quick.
-
-Signed-off-by: Nysal Jan K.A <nysal@linux.ibm.com>
----
- arch/powerpc/include/asm/topology.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
-index f4e6f2dd04b7..16bacfe8c7a2 100644
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -145,6 +145,7 @@ static inline int cpu_to_coregroup_id(int cpu)
- 
- #ifdef CONFIG_HOTPLUG_SMT
- #include <linux/cpu_smt.h>
-+#include <linux/cpumask.h>
- #include <asm/cputhreads.h>
- 
- static inline bool topology_is_primary_thread(unsigned int cpu)
-@@ -156,6 +157,18 @@ static inline bool topology_smt_thread_allowed(unsigned int cpu)
- {
- 	return cpu_thread_in_core(cpu) < cpu_smt_num_threads;
- }
-+
-+#define topology_is_core_online topology_is_core_online
-+static inline bool topology_is_core_online(unsigned int cpu)
-+{
-+	int i, first_cpu = cpu_first_thread_sibling(cpu);
-+
-+	for (i = first_cpu; i < first_cpu + threads_per_core; ++i) {
-+		if (cpu_online(i))
-+			return true;
-+	}
-+	return false;
-+}
- #endif
- 
- #endif /* __KERNEL__ */
--- 
-2.35.3
-
+SGkgTWljaGFsLAoKWW91ciBxdWVzdGlvbiBpcyBnb29kLiBob3dldmVyLCBJIGN1cnJlbnRseSBk
+b24ndCBoYXZlIGEgc3RhYmxlIGhhcmR3YXJlCmVudmlyb25tZW50IHRvIGV4ZWN1dGUgdGhpcyB0
+ZXN0IGNhc2UuIFJ1bm5pbmcgaXQgb24gUUVNVSBpbmRlZWQgc3ViamVjdHMKaXQgdG8gc2lnbmlm
+aWNhbnQgcmFuZG9tIGludGVyZmVyZW5jZS4gSSBhdHRlbXB0ZWQgdG8gbWFrZSB0aGUgdGVzdCBj
+YXNlcyBydW4KZm9yIGxvbmdlciBwZXJpb2RzLCBidXQgSSBmb3VuZCB0aGF0IHRoZSByZXN1bHRz
+IHZhcmllZCBzaWduaWZpY2FudGx5IGVhY2ggdGltZS4KU28gdGhlIHByZXZpb3VzIHRlc3QgZGF0
+YSB3YXMgb2J0YWluZWQgYnkgcnVubmluZyB0d28gUUVNVSBpbnN0YW5jZXMKc2ltdWx0YW5lb3Vz
+bHksIG9uZSBydW5uaW5nIHRoZSB1bm9wdGltaXplZCBrZXJuZWwgYW5kIHRoZSBvdGhlciBydW5u
+aW5nCnRoZSBvcHRpbWl6ZWQga2VybmVsLCB0aGlzIG1ha2VzIHRoZSByZXN1bHRzIG1vcmUgY29u
+dmluY2luZy4KCk5ldmVydGhlbGVzcywgZnJvbSB0aGUgY29kZSBsb2dpYywgaXQgaXMgZXZpZGVu
+dCB0aGF0IHRoZSBvcHRpbWl6YXRpb25zIGhhdmUKaW5kZWVkIHJlc3VsdGVkIGluIGZld2VyIHNl
+IGluc2VydCBhbmQgZGVsZXRlIG9wZXJhdGlvbnMsIHdoaWNoIHRoZW9yZXRpY2FsbHkKc2hvdWxk
+IGltcHJvdmUgZWZmaWNpZW5jeS4KClRoYW5rcy4KCi0tCkJlc3QgUmVnYXJkcywKWGF2aWVyCgoK
+CgpBdCAyMDI0LTA3LTI5IDE3OjMyOjM3LCAiTWljaGFsIEtvdXRuw70iIDxta291dG55QHN1c2Uu
+Y29tPiB3cm90ZToKPk9uIEZyaSwgSnVuIDI4LCAyMDI0IGF0IDAxOjIxOjU0QU0gR01ULCBYYXZp
+ZXIgPHhhdmllcl9xeUAxNjMuY29tPiB3cm90ZToKPj4gVGhlIGZpcnN0IHBhdGNoIG9wdGltaXpl
+cyB0aGUgZW5xdWV1ZSBhbmQgZGVxdWV1ZSBvZiBydF9zZSwgdGhlIHN0cmF0ZWd5Cj4+IGVtcGxv
+eXMgYSBib3R0b20tdXAgcmVtb3ZhbCBhcHByb2FjaC4KPgo+SSBoYXZlbid0IHJlYWQgdGhlIHBh
+dGNoZXMsIEkgb25seSBoYXZlIGEgcmVtYXJrIHRvIHRoZSBudW1iZXJzLgo+Cj4+IFRoZSBzZWNv
+bmQgcGF0Y2ggcHJvdmlkZXMgdmFsaWRhdGlvbiBmb3IgdGhlIGVmZmljaWVuY3kgaW1wcm92ZW1l
+bnRzIG1hZGUKPj4gYnkgcGF0Y2ggMS4gVGhlIHRlc3QgY2FzZSBjb3VudCB0aGUgbnVtYmVyIG9m
+IGluZmluaXRlIGxvb3AgZXhlY3V0aW9ucyBmb3IKPj4gYWxsIHRocmVhZHMuCj4+IAo+PiAJCW9y
+aWdpb24gICAgICAgICAgb3B0aW1pemVkCj4+IAo+PiAJICAgMTAyNDI3OTQxMzQJCTEwNjU5NTEy
+Nzg0Cj4+IAkgICAxMzY1MDIxMDc5OAkJMTM1NTU5MjQ2OTUKPj4gCSAgIDEyOTUzMTU5MjU0CQkx
+MzczMzYwOTY0Ngo+PiAJICAgMTE4ODg5NzM0MjgJCTExNzQyNjU2OTI1Cj4+IAkgICAxMjc5MTc5
+NzYzMwkJMTM0NDc1OTgwMTUKPj4gCSAgIDExNDUxMjcwMjA1CQkxMTcwNDg0NzQ4MAo+PiAJICAg
+MTMzMzUzMjAzNDYJCTEzODU4MTU1NjQyCj4+IAkgICAxMDY4MjkwNzMyOAkJMTA1MTM1NjU3NDkK
+Pj4gCSAgIDEwMTczMjQ5NzA0CQkxMDI1NDIyNDY5Nwo+PiAJICAgIDgzMDkyNTk3OTMJCSA4ODkz
+NjY4NjUzCj4KPl5eXiBUaGlzIGlzIGZpbmUsIHRoYXQncyB3aGF0IHlvdSBtZWFzdXJlZC4KPgo+
+PiBhdmcgICAgICAxMTU0Nzg5NDI2MiAgICAgICAgICAxMTgzNjM3NjQyOQo+Cj5CdXQgcHJvdmlk
+aW5nIGF2ZXJhZ2VzIHdpdGggdGhhdCBtYW55IHNpZ25pZmljYW50IGRpZ2l0IGlzIG5vbnNlbnNp
+Y2FsCj4obW9zdCBvZiB0aGVtIGFyZSBub2lzZSkuCj4KPklmIEkgcHV0IHlvdXIgY29sdW1ucyBp
+bnRvIEQgKE9jdGF2ZSkgYW5kIGVzdGltYXRlIHNvbWUgZXJyb3JzOgo+Cj4oc3RkKEQpL3NxcnQo
+MTApKSAuLyBtZWFuKEQpCj5hbnMgPQo+Cj4gICAwLjA0NjYyNiAgIDAuMDQ2NzU1Cj4KPnRoZSBl
+cnJvciBpdHNlbGYgd291bGQgYmUgcm91bmRlZCB0byB+NSUsIHNvIHRoZSBhdmVyYWdlcyBtZWFz
+dXJlZAo+c2hvdWxkIGJlIHJvdW5kZWQgYWNjb3JkaW5nbHkgCj4KPiBhdmcgICAgMTE1MDAwMDAw
+MDAgICAgICAxMTgwMDAwMDAwMAo+Cj5vciBldmVuIG1vcmUgY29uc2VydmF0aXZlbHkKPgo+IGF2
+ZyAgICAxMjAwMDAwMDAwMCAgICAgIDEyMDAwMDAwMDAwCj4KPj4gUnVuIHR3byBRRU1VIGVtdWxh
+dG9ycyBzaW11bHRhbmVvdXNseSwgb25lIHJ1bm5pbmcgdGhlIG9yaWdpbmFsIGtlcm5lbCBhbmQg
+dGhlCj4+IG90aGVyIHJ1bm5pbmcgdGhlIG9wdGltaXplZCBrZXJuZWwsIGFuZCBjb21wYXJlIHRo
+ZSBhdmVyYWdlIG9mIHRoZSByZXN1bHRzIG92ZXIKPj4gMTAgcnVucy4gQWZ0ZXIgb3B0aW1pemlu
+ZywgdGhlIG51bWJlciBvZiBpdGVyYXRpb25zIGluIHRoZSBpbmZpbml0ZSBsb29wIGluY3JlYXNl
+ZAo+PiBieSBhcHByb3hpbWF0ZWx5IDIuNSUuCj4KPk5vdGljZSB0aGF0IHRoZSBtZWFzdXJlIGNo
+YW5nZWQgaXMgb24gcGFyIHdpdGggbm9pc2UgaW4gdGhlIGRhdGEgKGkuZS4KPml0IG1heSBiZSBh
+Y2NpZGVudGFsKS4gWW91IG1heSBuZWVkIG1vcmUgaXRlcmF0aW9ucyB0byBnZXQgY2xlYW5lcgo+
+cmVzdWx0IChtb3JlIGNvbnZpbmNpbmcgZGF0YSkuCj4KPkhUSCwKPk1pY2hhbAo=
 
