@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-269565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA1A94345F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:49:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B78D943464
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B12FB227BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:49:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E9A6B230DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1988F1BD035;
-	Wed, 31 Jul 2024 16:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D6F11BD02F;
+	Wed, 31 Jul 2024 16:49:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JDQX3qN5"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQhUvlL4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A1D1AD3FD;
-	Wed, 31 Jul 2024 16:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944291BC072;
+	Wed, 31 Jul 2024 16:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722444564; cv=none; b=mNkwDsKRXwlJTtYGzOmzqNWJJ24Q08v0z2Q3unR+sJf1U9DKkUyvom2rbPJ2wqYlekErjNy8DPnIU9TfRr3AL6IXd5gfe8D1p87I1+y09s2ehkAJlVTjVWecoq3jgk6Ow8BStOYEM+EtxuC2CXax9wwP6QYEkQ9IO27efZCgNuY=
+	t=1722444584; cv=none; b=AiQvQreIST5KyDLmcpQQTPLYR1OH1NTsCGFJw/deTybWQ4Fl8ZzKvD+cXGrOZ0332kWyW4boRo86k/DI0XcvYAoHtEQso5DUipkqP8ZPlIXeGwfHRO/j3dFTIAl5OL4zgqW13kk8swhovY4mmEyYOXifuSFLhwnHZag1qr+qOno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722444564; c=relaxed/simple;
-	bh=kYhuRlBIHE2C2BGNHl65saGX5jug6Fvgp8uENCU/95A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B/fw79Dglm7O7MgD4Mq2OfyxRLhFzIgF+71oDe+KfvPx9k6dsteglRBFkURTYsn+zCa9MMIbV4rk/pqx73iHa+i6ym5gjMxdk8CFA69nF+AxYGD3fTrTjQryvYlopjhcnmHCCr+Ajxx0ovgUTZg48BZeot21QcLNX15PIElxEJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=JDQX3qN5; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42809d6e719so39758665e9.3;
-        Wed, 31 Jul 2024 09:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1722444561; x=1723049361; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CqywH6oDZ0Pg2uThezn14v8tEMSUBnXkuuYXTy0OHaE=;
-        b=JDQX3qN5Xemt0Gsb7L+n1Sl/UrpNgAznGGmFvD04wIlp3ySPryDoQwvILNlay02qXl
-         BR2XKYUhR8MoZ/YpWRNAmQNQ9wDAfiCabUE0oVALL+LIDbEkPKUKgnWkY5bL8RAL3Gxz
-         P6vySsjPseoDmtSBXKhYJYfF+buv4QAVU47uW7XBJMKzFNEC0dYWieIvsrZV8g3WIwEW
-         fil0BMAscZ7VTHv3YP0uWr92/w9UFIqcWxYkCMlPVU7OL4ZLLnj+Hw+DEInn3xYImXI5
-         vZPcglHzMDK7IARlprp/mqqAuAkMq/EZVlZWYMzhK7heLfHblVqA/SOgXcRDeFawn5d0
-         UYcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722444561; x=1723049361;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CqywH6oDZ0Pg2uThezn14v8tEMSUBnXkuuYXTy0OHaE=;
-        b=L7Qq1qPgxh/ROQs868tJ1sRAnAqdrLBS9uyqe6pK5oBbiAi9qA436Bd/QehtRZ40eV
-         58Co/Zg7mJ0zbTzSd2nrszeH4c19tUY6083rgZtjZk7VEjKMhmO+11pas8tVODazr4xS
-         OwowgukWsMMcYb+y2NINKoXcVLt4smYZfWqwWFKWFIDrETUxAGjHamRdS65zoYolD8mk
-         XwYWZlCfCXflJcOnAd8/xP+nh69TxRONvOjeJ2ajdcwRAkgAgEBYVqjzQt1MQ3rdKLaF
-         DqEkbmJ4QbXeOYG15IR6oYvBhtJ01wE+9F0VdHAFWwd5NmHsJdfE3wDGaRNos3nO+LDJ
-         kNCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9+zLztK/0tseEU75uUKALVufS9b/cmYshugDqDoTZ2fpbiGvDXHnw+Dah0yW8OsD1Bpcv3sVF7msHW2XjDdCzIBI0htzUr1L1HgT72YKDf4CE81BUdsF0SX0yMV7t1auVSZ8M
-X-Gm-Message-State: AOJu0Yx9yZvbwcUk5GYNQfSsq20ISjxQ360ijAIpxYyXIQ8Og+sAWgAO
-	Cy/0w0DEZmJzNd/PzWqyiaNohixqDaMLuAyvm5dIuBxFA/TA8jI=
-X-Google-Smtp-Source: AGHT+IGuJWa8xAruiaapYBX7B7MdSHSVFVm+KasuIfU5vMNaKG6ayFpUc7LtLI2Bd5DFGhcv/r1RfQ==
-X-Received: by 2002:a05:600c:1f92:b0:426:5f8f:51a4 with SMTP id 5b1f17b1804b1-428a9bdb7demr213775e9.12.1722444560767;
-        Wed, 31 Jul 2024 09:49:20 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057724.dip0.t-ipconnect.de. [91.5.119.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367e515fsm17505284f8f.45.2024.07.31.09.49.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 09:49:20 -0700 (PDT)
-Message-ID: <87ae754e-44f7-47bd-9b9a-6072d23ad165@googlemail.com>
-Date: Wed, 31 Jul 2024 18:49:18 +0200
+	s=arc-20240116; t=1722444584; c=relaxed/simple;
+	bh=GoGpfDsJGUlLUHeMRPIkNHxSgCdvJq6sAO0/AHmn9kc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qAGoYo5Rik23kicUV86+bg3PU7tD7HnzUgp1SyVdlzvP5HgDg7Nfwa5GTWxVokQ/9LH0Hdq5Xssa01lrQ05asrEfrmWjU2cvdFn7kzrsAcSKdV/61z8Ncp88s/wv5pDsU2br9PqmNZu0EhqXxGEuygDXxL8gGTieI1RpvungdcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQhUvlL4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CC70C4AF0B;
+	Wed, 31 Jul 2024 16:49:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722444584;
+	bh=GoGpfDsJGUlLUHeMRPIkNHxSgCdvJq6sAO0/AHmn9kc=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=DQhUvlL4lyKEOyf7PSa65UIn9YtO73CaiIY8uAs+7T8zGVjsjk3L14LeklnKlDwsz
+	 MsZXsUXVOKQmOnKtoyMBajTQ2Lq2qqgAjaxaQEAQ4lL1W5e9TarX9XUMLOsRPwJ7vY
+	 Tqa00LO384iHUPg8CKwhC8i/z7mS5PJoRxkGur8tWrdZ8PX/7bHXj4dE5I1r2n8zPt
+	 gVre/6LdJ/i/O4x02eh580/sHzCN6f+L2FKAqwlW6YQj1RUqEXnsnjq441pL5X+l6y
+	 4eRTek8JnpDrnEHkbsvRmvXChpn+53tULNC4Z8Ia+76+9CXEV5aiONJAewGviuUkrl
+	 ewafshKjc3Bgw==
+Message-ID: <42335d10-50a4-439b-b112-ca27c48aca6d@kernel.org>
+Date: Wed, 31 Jul 2024 18:49:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc3 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240731100057.990016666@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240731100057.990016666@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Support multiple reserved
+ memory regions
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?UTF-8?B?U2h1bi1ZaSBXYW5nICjnjovpoIblhIQp?= <Shun-Yi.Wang@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
+ "andersson@kernel.org" <andersson@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ =?UTF-8?B?SmFzb24tY2ggQ2hlbiAo6Zmz5bu66LGqKQ==?=
+ <Jason-ch.Chen@mediatek.com>, =?UTF-8?B?WWF5YSBDaGFuZyAo5by16ZuF5riFKQ==?=
+ <Yaya.Chang@mediatek.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ =?UTF-8?B?VGVkZHkgQ2hlbiAo6Zmz5Lm+5YWDKQ==?= <Teddy.Chen@mediatek.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "angelogioacchino.delregno@collabora.com"
+ <angelogioacchino.delregno@collabora.com>,
+ =?UTF-8?B?VGluZ0hhbiBTaGVuICjmsojlu7fnv7Ap?= <TingHan.Shen@mediatek.com>
+References: <20240731121730.1196-1-shun-yi.wang@mediatek.com>
+ <20240731121730.1196-2-shun-yi.wang@mediatek.com>
+ <daadc099-4c07-4dda-9caa-662583629cde@kernel.org>
+ <6163500e4457715e04d520b7287517acf2ab1dc7.camel@mediatek.com>
+ <428063ec-44a8-4dca-8891-4a35e6d29056@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <428063ec-44a8-4dca-8891-4a35e6d29056@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Am 31.07.2024 um 12:02 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.103 release.
-> There are 440 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 31/07/2024 15:54, Krzysztof Kozlowski wrote:
+> On 31/07/2024 15:41, Shun-Yi Wang (王順億) wrote:
+>> Hi Krzysztof,
+>>
+>> Thanks for the reviews.
+>>
+>> On Wed, 2024-07-31 at 14:40 +0200, Krzysztof Kozlowski wrote:
+>>>  	 
+>>> External email : Please do not click links or open attachments until
+>>> you have verified the sender or the content.
+>>>  On 31/07/2024 14:17, Shun-yi Wang wrote:
+>>>> From: "shun-yi.wang" <shun-yi.wang@mediatek.com>
+>>>>
+>>>> Remove the maximum number of 1 for memory regions.
+>>>
+>>> Why?
+>>>
+>>
+>> For future applications, MTK SCP will reserve multiple regions for
+>> specific hardware use.
+> 
+> That's not a reason to drop constrain on an entry.
 
-Now -rc3 finally builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. 
-No dmesg oddities or regressions found. I'm building 6.6.44-rc1 with it at the moment...
+Maybe I was not that clear, so to explain more - entries must be
+constrained, so provide widest constraints in top-level properties place
+and narrow the constrains per variant in allOf:if:then: like:
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+https://elixir.bootlin.com/linux/v6.8/source/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml#L132
 
-Beste Grüße,
-Peter Schneider
+Best regards,
+Krzysztof
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
