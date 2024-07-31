@@ -1,214 +1,160 @@
-Return-Path: <linux-kernel+bounces-269837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6701943758
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:46:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F16B943759
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BB152840D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964B02844E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A7F16C872;
-	Wed, 31 Jul 2024 20:46:25 +0000 (UTC)
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A87C16CD2F;
+	Wed, 31 Jul 2024 20:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gUK3KgDr"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F2116C437;
-	Wed, 31 Jul 2024 20:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D9B16CD16
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722458784; cv=none; b=J3eeY+kHRnDpPn8oeic4IF4DzNnvJdXN97lZBBMVJ3Ahl9oNgiu+qzBUnTH0QTKl2UUmDj9WWA5yrpxkQgTCYj+5pLY787tHj9Luc0dQlXe9yIgXSv5kaSzSYJ2gKRiWl7kqsmF4T6KMX2KuF/6uwq/L26brPU27E9GwLFtsQuM=
+	t=1722458788; cv=none; b=RjBiJnwq7HSdctIkPbYqnbINyJKp63+PmqonkJ+njk3RfHrUcVtGtI3PMywlxXvYLH6ZI1wmvHx+gElNXk+lVZvIY7vKYh0L42n79UCVtkl+ZQxpJi5twGohV6KP4DqHFqTA2nQdL+LU6f88HVWtB/NSgjKzkFCk1YdzRN3PRQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722458784; c=relaxed/simple;
-	bh=AeVukmohV3Ul5Z/K/N7ywFHY6KRlSp5fj3lgsbIeS84=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X+XSax6Md5uAqF+9xXebnuGzvoqrP7E/N3Q/Ey4xQ3vlO/j8JwzzRTzi9f7xoANoSeX9Pt6u+a2Ogg5CZDZngyBLgQwpdleKr6LBhAM83Ex1C+dgt+/Ea+HeKeasSSXB1mnrLe9PfF/O2s7NIIxSZpIeVG+JK+vGMkt1EiMm1Fs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-44fe9aa3bfaso36606111cf.0;
-        Wed, 31 Jul 2024 13:46:22 -0700 (PDT)
+	s=arc-20240116; t=1722458788; c=relaxed/simple;
+	bh=txmpJQycIV5QPKrTWpGC8PUo9tKcejxgqsvRbMC+V8c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ccpoFpPSg+hvdKtGUBD2FFE+JnfLsGDGYDlFqx411aV7OxW9M7WSjFw5a536UQLI2Ju+xxn4yBv3DIgqXyg9bh+RPjBtTMU6wJCK8/8FpO22cDLtCthHxB3smbk3/5A1z/hxhWTk51BDvpICbSmsMR9QSe3wLZK2rTZv5tDtrM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=gUK3KgDr; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ef642fbso5982265e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1722458785; x=1723063585; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxpiuYMhfG8wroCEpsj+T0XsF8n6WcrGB7EkeYVEIFg=;
+        b=gUK3KgDrIf3SDfrPly7lL/g4COmy1oDeJqy2LlzveAKKZ2lhHpArQwwY//wPF+Z4MH
+         EWWUC2PECSxsdzGJAS/t4mD0HOm3ogStf7cHvddWiaL61YSCf4l+ukri3lcTU/IdZWiS
+         i0CqkDeMpDe2e/yAfjZ86Qw7u3b0XimrmpWYQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722458781; x=1723063581;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t/EX/MdkSUl5MjV12TxYf7t+yruPrf+xB5I7T7z+p84=;
-        b=myoZw0WcpKgZQiQb9weOCoLzq7mbYJTH4sIoMpyQeVEDotc4W5xOqp9weVIcwcclb2
-         6mhlh4/kg3RvcnnwFhJ9j/opjH0HxZZemwydxfT9pHJhgzbBM67YpfRDvDCmP2vy9zbU
-         HGPDmnaC9cVO5fpEN9YJKrDupsCjad8dCPZuGJQ32NOWhZVhe2y5PUWzaZ5P1Q9DPTCX
-         uE3Z+2wH5xc1UWXzFOCKrcyFqSlYLZZQhFb63R4Ng3WvGc4TBjrWviNZnb9CbcAdf4gR
-         cVoHD0koikV8EnEzxu0m6w4mZYnFfUyeqWBxcWoQXVrFJlGueVeXcpoPhzWXowobhXMO
-         QJIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHjnAjThn+yI2ZXAahR/eurNJLCZ9HvCf1k0oED7mjUYp9ArjI+i29gNPzzEoqJ8/U8x3VTyspPSQX/hw03iby2epbOrLrKMZyluJVV4ktgU3noF+oCr6pVA9WHtSbtZUWHIR0unGwhlTvml0yLw9Vn0ZJCq86hS/apqRYx9ejce3KQ6IlHSJi6n3nGFipnbJuKbHZXdKhlemxEaGXI+yMAFYnhwZdM68i
-X-Gm-Message-State: AOJu0YxVAcuvvp+byDGQYIdHNp+k2g6Jse8KveD7/yWaer71CAZ+lVby
-	yW+AtPCte+QvW1nR8JmWXR/Uqdson7c6lpMSICLMv4avf1WTRoQe
-X-Google-Smtp-Source: AGHT+IEhWj/vQ8WTQj+u43hJfEmFz+FLsoDhgrSx+TsivhnOhOZQAV5+0NUOqpY72YTh3UQU3fOyMA==
-X-Received: by 2002:ac8:5d55:0:b0:446:5aac:ca7f with SMTP id d75a77b69052e-451567a382dmr6959181cf.22.1722458781529;
-        Wed, 31 Jul 2024 13:46:21 -0700 (PDT)
-Received: from skuld-framework.localnet ([32.221.37.233])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe812350bsm63120971cf.9.2024.07.31.13.46.20
+        d=1e100.net; s=20230601; t=1722458785; x=1723063585;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZxpiuYMhfG8wroCEpsj+T0XsF8n6WcrGB7EkeYVEIFg=;
+        b=YAu6SFjygzzuyZXa0miRwgQOR+lddpOtHQQYZpxv1Vw/jxjw99ZCkYm32e21lM0Ao9
+         28Al3UnndPfxIaA3JCVa3yA/lyM3+VYHlS72gGs0xB9Hf06DfW2rDQLk0B5NrK8sr2qS
+         KfiyDJ7oPJxnxsRKYIvawvADC0cXOdkwbp+MetBWy5pqvZl5AdPCBlLswzCYs53hcO48
+         sQYbH8MJKNRuFQJVWhmaG5sxL8QxCdcuKfQFbdB9ZCioM3wk3tqxeGgbhYAaOcvJIIiL
+         JEmvip4l4AAcrHO+ybBpxDUYqQSbhG6J8Aszw5hscCpAYvshRaFOqmOTmbakB1wznqo3
+         dsag==
+X-Forwarded-Encrypted: i=1; AJvYcCXT1r0dad7GxJc11JVOCJUVmyuu/r9exXAOSub22dx2m6tZOfY3Kf5/CPWu8o3X/6TOr8dcS12Ez80QE2Agvn0ftELkGgJygsFhu/5/
+X-Gm-Message-State: AOJu0YycaIcyvmxrIaf9u7zcwv2V5c2JdXeBDpushi2w71/4tWPJPj7r
+	mssrysMv3p5CtSgSjITiGHem/ShHDnqV9dL0xoOySRdv0LtuF5zmUsybWIZ4Iak=
+X-Google-Smtp-Source: AGHT+IEOfnwTGBUJMCvgdzsVYm/9gkwgL+/zq/em2Ac2MZaEU7lsjUilDMlqzOjNzanNWiAy/HCT3A==
+X-Received: by 2002:a05:600c:458e:b0:426:6358:7c5d with SMTP id 5b1f17b1804b1-428b4ae9a29mr2485615e9.4.1722458785050;
+        Wed, 31 Jul 2024 13:46:25 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8a246asm33360225e9.3.2024.07.31.13.46.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 13:46:20 -0700 (PDT)
-From: Neal Gompa <neal@gompa.dev>
-To: Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>, Matthew Maurer <mmaurer@google.com>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Asahi Linux <asahi@lists.linux.dev>, Hector Martin <marcan@marcan.st>,
- Janne Grunau <j@jannau.net>
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-Date: Wed, 31 Jul 2024 16:46:18 -0400
-Message-ID: <8578805.OV4Wx5bFTl@skuld-framework>
-In-Reply-To:
- <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
-References:
- <20240617175818.58219-17-samitolvanen@google.com>
- <00714a65-953f-4885-9229-1990543c4154@suse.com>
- <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
+        Wed, 31 Jul 2024 13:46:24 -0700 (PDT)
+Date: Wed, 31 Jul 2024 22:46:22 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Huan Yang <link@vivo.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
+Message-ID: <Zqqing7M2notp6Ou@phenom.ffwll.local>
+Mail-Followup-To: Huan Yang <link@vivo.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Brian Starkey <Brian.Starkey@arm.com>,
+	John Stultz <jstultz@google.com>,
+	"T.J. Mercier" <tjmercier@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com
+References: <20240730075755.10941-1-link@vivo.com>
+ <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
+ <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
+ <37b07e69-df85-45fc-888d-54cb7c4be97a@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <37b07e69-df85-45fc-888d-54cb7c4be97a@vivo.com>
+X-Operating-System: Linux phenom 6.9.10-amd64 
 
-On Friday, July 26, 2024 5:05:22=E2=80=AFPM EDT Sami Tolvanen wrote:
-> Hi Petr,
->=20
-> On Mon, Jul 22, 2024 at 8:20=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> =
-wrote:
-> > From my perspective, I'm okay if gendwarfksyms doesn't provide
-> > functionality to compare a new object file with its reference symtypes
-> > file.
-> >=20
-> > As mentioned, genksyms has this functionality but I actually think the
-> > way it works is not ideal. Its design is to operate on one compilation
-> > unit at the time. This has the advantage that a comparison of each file
-> > is performed in parallel during the build, simply because of the make
-> > job system. On the other hand, it has two problems.
-> >=20
-> > The first one is that genksyms doesn't provide a comparison of the
-> > kernel as a whole. This means that the tool gives rather scattered and
-> > duplicated output about changed structs in the build log. Ideally, one
-> > would like to see a single compact report about what changed at the end
-> > of the build.
->=20
-> Sure, that makes sense. Android uses STG for this, which might be
-> useful to other folks too:
->=20
-> https://android.googlesource.com/platform/external/stg/
-> https://android.googlesource.com/platform/external/stg/+/refs/heads/main/=
-doc
-> /stgdiff.md#output-formats
-> > A few months ago, I also started working on a tool inspired by this
-> > script. The goal is to have similar functionality but hopefully with
-> > a much faster implementation. Hence, this tool is written in a compiled
-> > language (Rust at the moment) and should also become multi-threaded. I'm
-> > hoping to find some time to make progress on it and make the code
-> > public. It could later be added to the upstream kernel to replace the
-> > comparison functionality implemented by genksyms, if there is interest.
-> >=20
-> > So as mentioned, I'm fine if gendwarfksyms doesn't have this
-> > functionality. However, for distributions that rely on the symtypes
-> > format, I'd be interested in having gendwarfksyms output its dump data
-> > in this format as well.
->=20
-> We can definitely tweak the output format, but I'm not sure if making
-> it fully compatible with the genksyms symtypes format is feasible,
-> especially for Rust code. I also intentionally decided to use DWARF
-> tag names in the output instead of shorthands like s# etc. to make it
-> a bit more readable.
->=20
-> > For example, instead of producing:
-> >=20
-> > gendwarfksyms: process_exported_symbols: _some_mangled_func_name (@ XYZ)
-> > subprogram(
-> >=20
-> >    [formal parameters...]
-> >=20
-> > )
-> > -> structure_type core::result::Result<(), core::fmt::Error> {
-> >=20
-> >    [a description of the structure...]
-> >=20
-> > };
-> >=20
-> > .. the output could be something like this:
-> >=20
-> > S#'core::result::Result<(), core::fmt::Error>' structure_type
-> > core::result::Result<(), core::fmt::Error> { [a description of the
-> > structure...] } _some_mangled_func_name subprogram
-> > _some_mangled_func_name ( [formal parameters...] ) ->
-> > S#'core::result::Result<(), core::fmt::Error>'
-> This wouldn't be enough to make the output format compatible with
-> symtypes though. genksyms basically produces a simple key-value pair
-> database while gendwarfksyms currently outputs the fully expanded type
-> string for each symbol. If you need the tool to produce a type
-> database, it might also be worth discussing if we should use a bit
-> less ad hoc format in that case.
->=20
-> One more thing to note about the current --debug output is that it
-> directly correlates with the debugging information and thus may not
-> contain all aliases. For example, the Rust compiler deduplicates
-> identical function implementations (e.g. Deref::deref and
-> DerefMut::deref_mut etc.), but only one of the symbol names appears in
-> DWARF. We use symbol addresses to print out #SYMVERs also for the
-> aliases, but they don't show up in the debugging output right now.
->=20
-> > > If using unions here is acceptable to everyone, a simple solution
-> > > would be to use a known name prefix for the reserved members and teach
-> > > gendwarfksyms to only print out the original type for the replaced
-> > > ones. For example:
-> > >=20
-> > > The initial placeholder:
-> > >     u8 __kabi_reserved_1[8];
-> > >=20
-> > > After replacement:
-> > >     union {
-> > >    =20
-> > >             u64 new_member;
-> > >             struct {
-> > >            =20
-> > >                     u8 __kabi_reserved_1[8];
-> > >            =20
-> > >             };
-> > >    =20
-> > >     }
-> > >=20
-> > > Here gendwarfksyms would see the __kabi_reserved prefix and only use
-> > > u8 [8] for the CRC calculation. Does this sound reasonable?
-> >=20
-> > I like this idea. I think it's good that the necessary kABI information
-> > about an updated member can be expressed at the source code level in
-> > place of the actual change, and it isn't needed to feed additional input
-> > to the tool.
->=20
-> OK, cool. I agree that being able to specify these details in source
-> code is much cleaner. I'll add an implementation for this, and for the
-> definition visibility issue Greg mentioned in v2.
->=20
+On Tue, Jul 30, 2024 at 08:04:04PM +0800, Huan Yang wrote:
+> 
+> 在 2024/7/30 17:05, Huan Yang 写道:
+> > 
+> > 在 2024/7/30 16:56, Daniel Vetter 写道:
+> > > [????????? daniel.vetter@ffwll.ch ?????????
+> > > https://aka.ms/LearnAboutSenderIdentification?????????????]
+> > > 
+> > > On Tue, Jul 30, 2024 at 03:57:44PM +0800, Huan Yang wrote:
+> > > > UDMA-BUF step:
+> > > >    1. memfd_create
+> > > >    2. open file(buffer/direct)
+> > > >    3. udmabuf create
+> > > >    4. mmap memfd
+> > > >    5. read file into memfd vaddr
+> > > Yeah this is really slow and the worst way to do it. You absolutely want
+> > > to start _all_ the io before you start creating the dma-buf, ideally
+> > > with
+> > > everything running in parallel. But just starting the direct I/O with
+> > > async and then creating the umdabuf should be a lot faster and avoid
+> > That's greate,  Let me rephrase that, and please correct me if I'm wrong.
+> > 
+> > UDMA-BUF step:
+> >   1. memfd_create
+> >   2. mmap memfd
+> >   3. open file(buffer/direct)
+> >   4. start thread to async read
+> >   3. udmabuf create
+> > 
+> > With this, can improve
+> 
+> I just test with it. Step is:
+> 
+> UDMA-BUF step:
+>   1. memfd_create
+>   2. mmap memfd
+>   3. open file(buffer/direct)
+>   4. start thread to async read
+>   5. udmabuf create
+> 
+>   6 . join wait
+> 
+> 3G file read all step cost 1,527,103,431ns, it's greate.
 
-Could you please add myself, Hector, and Janne (along with the Asahi Linux=
-=20
-mailing list) to the recipients when you send the v2 patch set? We're also=
-=20
-interested in this. :)
-
-Thanks in advance!
-
-
-=2D-=20
-=E7=9C=9F=E5=AE=9F=E3=81=AF=E3=81=84=E3=81=A4=E3=82=82=E4=B8=80=E3=81=A4=EF=
-=BC=81/ Always, there's only one truth!
-
-
+Ok that's almost the throughput of your patch set, which I think is close
+enough. The remaining difference is probably just the mmap overhead, not
+sure whether/how we can do direct i/o to an fd directly ... in principle
+it's possible for any file that uses the standard pagecache.
+-Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
