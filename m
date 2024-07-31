@@ -1,108 +1,162 @@
-Return-Path: <linux-kernel+bounces-269689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549709435D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:49:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D509435E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:53:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86C821C22113
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:49:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 653062834C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:53:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B52D48CFC;
-	Wed, 31 Jul 2024 18:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AD713D53A;
+	Wed, 31 Jul 2024 18:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LMLrtFQF"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="zyjOkoSr"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E2045014;
-	Wed, 31 Jul 2024 18:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC5F12AAE2
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722451765; cv=none; b=JZhlz3JafkxP1wc5MP7uszJDVfXHTuKtqiHO6toN4s8TurW1W2ECHdYOd790hz4LOQqJqbfUOWWEuUj2Jr3qasflK4OIPodQE0l7KiLRx9oh+oH3iHvXLFICRHWeMcJ//etR5tFVrgGRrlNEZ9BSQgaLJCF3LNbm6Ibh8SH5hgw=
+	t=1722451993; cv=none; b=ONpMxgD2VD0ZGQIjvE2jmWuU9m8jB7Ab7xbZKKSBPTQR66gFvgnqrMQLXyl596m0ueopjbD5DhGuj+qFDfkjpY1Dl6gkpnzqVk5CrSuVd2gfbFZ6SFU6eVf5TSvonMFg/jjYiqDeI9+XyehflWjLPyKlvl6vN5o89xwugz26ZWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722451765; c=relaxed/simple;
-	bh=Dtx7g06KGw4ZzL67oJxaUspiLVmOUtjZe55hVdB41Jw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LnsA38xj2qfUbZ2UX1AUYGDS15uXOEuK1ZAmg9a0CzG1pz7H+SXCf3LtxQQENrmxed/9/36hc7Z10s+hCztq4l/5oG5zyDiNKZn2iLwg1LH60aqMnOAtU9aqP6CsT5KMoLSKlScfYx3Wstr0evqpb8U0rSKQYEJYhHATNsaJ7rQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LMLrtFQF; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc4fccdd78so43564925ad.2;
-        Wed, 31 Jul 2024 11:49:24 -0700 (PDT)
+	s=arc-20240116; t=1722451993; c=relaxed/simple;
+	bh=KMCuH83HN8KlHmBA/0LgLY6pB6mLwm5fk9j8iVVPqmY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Dv+tFGfk+0L4B4tJeykhskxRPtFn8kC/PYY6/4rxih+D34VNX4ngrTcXX2kbPeQAypMWndDP483XXHI4sIQnQXWGLqkW9GhnIYWz9ZzJtns3TTL5PnZtw3A7XZRCs74DPl+mbB4WCv+NH1Na2EyzshvEggUPwtAwAEcL9GyD/uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=zyjOkoSr; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fc4c33e746so2376945ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:53:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722451764; x=1723056564; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vzqokK/MSvpqd2Z5tCS/Bbfkt721yl1/ZbEZL2SUus0=;
-        b=LMLrtFQFNd9BcfR1XAxtxNAuuSbLA89M62eFTUKdMMRQyhKgBQEFkJkeS/GhLb1ew1
-         nbGgC1VDUwGYs082QpHLyJ1lBaC819qnV+/fgf9gtd+hSwy26536ZUNmxGfBhlyODXcf
-         PjGKEYH3pLRPF5gAJ8ZrhhzrAX3tDg1XgwnGxVLlwJuNC28FY2i59cLAk/WzA999OTfk
-         xUEt58+u1TSsj2Ek9K96ai+qYIncBbwUbfkMNvCvFXtXJ8aa5Y3p9tHfOSswHQmnWRbr
-         ixWlJ+QjusCnuCkd2K63swZeMHh22qOga6kN7C8ZIKXrp5HlVdIw32KItgg/RYexMP61
-         ZTyA==
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1722451990; x=1723056790; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VEfk5ncIt83x7m+YjdXKWTAuZRXipE5lQH8P1TgSxxk=;
+        b=zyjOkoSr9Ylv2HJZ2QNumyzdC8vHQTLfvffR51Tt+iP+B7pXyV7/bH9a7qaXcxM2YH
+         ROdKDHCume7tVRNpdGr5+feurOzeLrfVi//9MmgU8tlII6/5googZSfVFHmN80LtSt1F
+         XvrnCdAMN+Vt4/enYROOONHV5BOpwdlNTtuIntuXwhe1vRbFx+Xbe7iYyKSCBendPF8Z
+         fn0BP4hZi/xWxSpbAnfD3hyLz1drz65mNdcE1zrFp2pGiImxIoXkTqnQW/IUhZiafVkU
+         FgjVxmDP1IbQt0Wj9JIS7n2hHsSBw8yXf8Xkh66aKdIQhdEMUnOGZjlfycF8FvzHEZXW
+         djrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722451764; x=1723056564;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vzqokK/MSvpqd2Z5tCS/Bbfkt721yl1/ZbEZL2SUus0=;
-        b=gqYs3TA8OR6+465SQR44QlnXhPU1XukQ2xcua0CgZ4zgnFvTbWFCcvzkbA5oePxWyi
-         9Dxn6jfYNRP0MY/n99s1IydbIHl5lP++AhXhe1c/RZ/nCYi8vWYOW6ZasK7gxD+3HPMe
-         9VsePQoPISpFabHE3KUvyO8yUstnryw6nOJatWOwM39MTr7Q2/kclgwaX68Vk+StV+M0
-         hyPo++aj9vB4pdpL3DIy+6GWWeV7eQ6BDiQsUUYdJ5698AjO1EKGaPP7XT3+VQtqnQvz
-         YmA/nhWLiTR8loJhoVpliMjPYxMIL0Xqb3kFEmsHiVKA7XlePT0BC7mOuCzE0f9WuAnh
-         2rDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPP/u9rmZRoYlg/kAZFaBuug3MQmFMnlGmfo7lVuOSRZ/pU+Sy4FNX4/1Eg5EdZJ9S8cofd0OpKTA7tgPF68GHdSLGE3OyCCOI482EclERmCzbqFmClWH0Z954JFRqs7WagCg/zW6G
-X-Gm-Message-State: AOJu0YwsS+1u7DV1DmH0GLXSR2m/DR6fSx8SyVj9Vr442W8FXW4gYt1D
-	bcxuhJgciBl/mXaJjInJKpDYHlQsZFmJE/H0j5CpjaxU/jfw3qMO
-X-Google-Smtp-Source: AGHT+IG4UzO+6IWPRJxTdfG4IBjB7u/5lSwpkMB/BqHjVegBsG6sIt9GSv0noEnoqE6l7H41eRKyGQ==
-X-Received: by 2002:a17:902:fb0c:b0:1ff:3b0f:d5e2 with SMTP id d9443c01a7336-1ff4cfec9ecmr2173775ad.32.1722451763771;
-        Wed, 31 Jul 2024 11:49:23 -0700 (PDT)
-Received: from Emma ([2401:4900:1c21:dad1:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee3f68sm123698785ad.171.2024.07.31.11.49.22
+        d=1e100.net; s=20230601; t=1722451990; x=1723056790;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VEfk5ncIt83x7m+YjdXKWTAuZRXipE5lQH8P1TgSxxk=;
+        b=OFBzowjdxpel3vuwXTcCsjDPa+47vl+8V27UbxDfP6N/nJciPMCVOrjeNeirf+HqGq
+         rXZoWr588MgitAziL6d/40ke/Cn8NB83fTxe4fm9sLxF675OThorJC3lUCLM11bYpI9j
+         NMt8COLLZM//Qctxh9TR0npcKRbxdR5sfXwwLJmC8ov3EXY4MMorbDmjm0vOyvVM2uaB
+         ERXOWmUgUcAVGcBdTAs0KRX9TGYToot587pCo1aDQblA9uNAgYB9UrLp6cnw55iE2oPV
+         LotBux7woAqs/aNUX0gZFlUL9Qv9Z7Y3KiZTWULutyqm3ydqMeoIomlf07RcfASeKIlu
+         Y8SA==
+X-Forwarded-Encrypted: i=1; AJvYcCX69Vmbk5OlfPc5BsgE0cUABKIYLmeQlKxX2Hc46rB6LzJ+BLtzRR2Su7DHC5kUXwiFkuz7ynZ1bkQlI6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ+nIhzSNFf6qMou3+DUiO5Pbv49rM8Ir/ov1+coFeWbDt+f5M
+	vVohQZiuIbcpbc6W75ugaoHPVPkeRQHjt3Xfw8yDVJu4ZWNUO/NVNNmda6V0JE10Yh0nc5tQqPU
+	=
+X-Google-Smtp-Source: AGHT+IEd+Xm0W4rzAj9Ge+Z6pqWDl86lXrzFgFPRiCGmSEioNJ82NKUarMvpuVJei24NUE3crSe5NA==
+X-Received: by 2002:a17:903:22c9:b0:1fc:4377:d946 with SMTP id d9443c01a7336-1ff4d2715e7mr1565605ad.7.1722451989787;
+        Wed, 31 Jul 2024 11:53:09 -0700 (PDT)
+Received: from [172.16.118.4] ([103.15.228.94])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ff3d64sm123182825ad.299.2024.07.31.11.53.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 11:49:23 -0700 (PDT)
-Date: Wed, 31 Jul 2024 18:49:20 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Karan Sanghavi <karansanghvi98@gmail.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Karan Sanghavi <karansanghvi98@gmail.com>
-Subject: [PATCH] Documentation: core-api: Fixed Typo error
-Message-ID: <ZqqHMIKdcNRVgAFd@Emma>
+        Wed, 31 Jul 2024 11:53:09 -0700 (PDT)
+From: Ayush Singh <ayush@beagleboard.org>
+Subject: [PATCH v2 0/3] Add Firmware Upload support for beagleplay cc1352
+Date: Thu, 01 Aug 2024 00:21:04 +0530
+Message-Id: <20240801-beagleplay_fw_upgrade-v2-0-e36928b792db@beagleboard.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJiHqmYC/x3M2wqEIBRG4VeJfZ3g2AnmVSLE9M82RInSiejdR
+ +byu1jroYTISPQtHoo4OPG2ZqiyIDub1UOwyyYlVS27TyNGGL8gLObW06n34KNxEHWF1lqM0lW
+ OchsiJr7+33543x+DqvWwZwAAAA==
+To: lorforlinux@beagleboard.org, jkridner@beagleboard.org, 
+ robertcnelson@beagleboard.org, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: greybus-dev@lists.linaro.org, netdev@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, Ayush Singh <ayush@beagleboard.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2062; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=KMCuH83HN8KlHmBA/0LgLY6pB6mLwm5fk9j8iVVPqmY=;
+ b=owEBbQKS/ZANAwAIAQXO9ceJ5Vp0AcsmYgBmqogPi0vwzJBN8N67/Uo/+Auvt6abDVkOuhzE9
+ sWnqSJIZnaJAjMEAAEIAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCZqqIDwAKCRAFzvXHieVa
+ dFhYD/4n6dksvaVAzW8JNYa3TZa9J6e/KJlomwxI2vZ+cHEleryRg4eHJWbVwYmT3wUuOjen1rS
+ dSUKVQNkNO4Y6rnuyzcgvDKibNcmt+92wfMbzv6d5Z8bEn57FFH8menncGCzQ6L38NrTkc6TSID
+ jeO9z14XniNECUluww6/xP46PgLmX+L0+ofZSkgqTi+rSJXOQH2CS3tfm8IKD/OwEzwGkF6LKeI
+ 1RGhIz/ouzeb+jR0+l6Vb5zDlwpc1mnjAKcE6sw85BgAGWa+4ZkuJGzdwiE0KzuYWE8Q6uOBO99
+ kGoeKkWzZe+ungbu/psrCgVMiuyUXjMRsS+WCI1otwbhIynu8qdomoijTKpUwxYCEQtmlI+wMTL
+ Bh2mVBGFe5wqpHw8VFlPIKTr/JTIpB94ONzjx17ACLheHE9EVZgiHwwMejOn0nQM7bDJot29Rk8
+ MShJBN5VlbXNC9TUGvsWIZfCTR1mywoqdJTUG0talE7h06cHzKTml7y1fchuxWUllzkCNHB01ny
+ EM/GWiiS0dsLm4yZE4CVA+Rg3LAXdNs9ohJtwgaP7a0iinKrffC3jFOvXV7TKN9FqQu464zXPaT
+ HcLQBY3DZ+roJDxxpbFK7XuCrXNntH6uzdRn7pt54oie9uiak5fp8hZ2yk1EPR494ceGypvqa7W
+ fqZBwz+jBHy4QGQ==
+X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
+ fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-Corrected the typographical of the word "instrumentation"
-in the below mentioned sentence.
+Adds support for beagleplay cc1352 co-processor firmware upgrade using
+kernel Firmware Upload API. Uses ROM based bootloader present in
+cc13x2x7 and cc26x2x7 platforms for flashing over UART.
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+Communication with the bootloader can be moved out of gb-beagleplay
+driver if required, but I am keeping it here since there are no
+immediate plans to use the on-board cc1352p7 for anything other than
+greybus (BeagleConnect Technology). Additionally, there do not seem to
+any other devices using cc1352p7 or it's cousins as a co-processor.
+
+Bootloader backdoor and Reset GPIOs are used to enable cc1352p7 bootloader
+backdoor for flashing. Flashing is skipped in case we are trying to flash
+the same image as the one that is currently present. This is determined by
+CRC32 calculation of the supplied firmware and Flash data.
+
+We also do a CRC32 check after flashing to ensure that the firmware was
+flashed properly.
+
+Link: https://www.ti.com/lit/ug/swcu192/swcu192.pdf Ti CC1352p7 Tecnical Specification
+Link:
+https://lore.kernel.org/all/20240719-beagleplay_fw_upgrade-v1-0-8664d4513252@beagleboard.org/
+Patch v1
+
+Changes in v2:
+- Spelling fixes
+- Rename boot-gpios to bootloader-backdoor-gpios
+- Add doc comments
+- Add check to ensure firmware size is 704 KB
+
+Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 ---
- Documentation/core-api/entry.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ayush Singh (3):
+      dt-bindings: net: ti,cc1352p7: Add bootloader-backdoor-gpios
+      arm64: dts: ti: k3-am625-beagleplay: Add bootloader-backdoor-gpios to cc1352p7
+      greybus: gb-beagleplay: Add firmware upload API
 
-diff --git a/Documentation/core-api/entry.rst b/Documentation/core-api/entry.rst
-index e12f22ab3..a15f9b176 100644
---- a/Documentation/core-api/entry.rst
-+++ b/Documentation/core-api/entry.rst
-@@ -18,7 +18,7 @@ exceptions`_, `NMI and NMI-like exceptions`_.
- Non-instrumentable code - noinstr
- ---------------------------------
- 
--Most instrumentation facilities depend on RCU, so intrumentation is prohibited
-+Most instrumentation facilities depend on RCU, so instrumentation is prohibited
- for entry code before RCU starts watching and exit code after RCU stops
- watching. In addition, many architectures must save and restore register state,
- which means that (for example) a breakpoint in the breakpoint entry code would
+ .../devicetree/bindings/net/ti,cc1352p7.yaml       |   7 +
+ arch/arm64/boot/dts/ti/k3-am625-beagleplay.dts     |   3 +-
+ drivers/greybus/Kconfig                            |   1 +
+ drivers/greybus/gb-beagleplay.c                    | 658 ++++++++++++++++++++-
+ 4 files changed, 655 insertions(+), 14 deletions(-)
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240715-beagleplay_fw_upgrade-43e6cceb0d3d
+
+Best regards,
 -- 
-2.43.0
+Ayush Singh <ayush@beagleboard.org>
 
 
