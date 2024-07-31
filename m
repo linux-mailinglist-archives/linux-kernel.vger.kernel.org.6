@@ -1,174 +1,138 @@
-Return-Path: <linux-kernel+bounces-268359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073D69423A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:00:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BB1A9423A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B41C5285591
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:00:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99347B21462
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A8725757;
-	Wed, 31 Jul 2024 00:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D2A1FB4;
+	Wed, 31 Jul 2024 00:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ewGzNSiD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJL15IV3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CB21AA3E3
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3A138C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722384042; cv=none; b=UvE2C1bC/lmsSG7KTFcEST7wX6GAjcyUQRzV0dR359tQo+wyZjabF9EcitG4zRr5Njzyf1+3TDCHNICKSVOwDW+wSOcH/YeFzTGulSAy7Eju27waA0mt753oaFKsAZh7Q9QZ9g34XNkAnTfKs41FzMHrpLAsuiaCBswli9RK8L0=
+	t=1722384163; cv=none; b=N6VxbAtN9UGtVix+fmCoKTkSjzKx5qbUHWdnQQv4bccfe6IPtMbYS1ctJBHB0ZIXw3Ym1WJnup4jsaGVlWC1dwL2Z1ppEL11Bcmy5w485qOG2BEXZvhPJt8++GEmqQdpvEyyYqtSxfVJkdn+llBh+OVMlNeFnhKeN+kZqVF/JaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722384042; c=relaxed/simple;
-	bh=dPtgxEF39y7tufQdF+g0puYtqRlVBHzeN+kaxzB5Bdg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eYtUexznlaiAOcp0jbpdQCd5NzmR/Hjc2kCQNysP9FZjRaEDfx2gCDtPQc5Pe3p0mxbwXLyC8ZaKxOt8kaeCNuUzYMTi1B454AM8rFlZhHVTCDhrco4SqN/LGl8OcXhnZbKgqAhouKOyGnKxLYiExlIUbSFcM0xxiclvr6X1Qy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ewGzNSiD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722384038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqY5AwvBWg4EHFX8v7m/gB2IpLCYEyw1Y9QmtLSSf7M=;
-	b=ewGzNSiDTjohqvqgpu94+K8LjDrEYUfqxc3cKkCjlhf7dYu3NP4xtG+tnhSyzpgKhwYkMR
-	YX8SdEHZWsC9TOVnfFcXgsFtQHRIXW62N89ys5JCoa9SrhFE5W8HEga1VnxIsKjUyeLr+Q
-	aRdAxaBa3VIpsDzjVv18mNSqDtuPbEI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-352-x-8CEpv0MEuYKfg9aXRM7w-1; Tue,
- 30 Jul 2024 20:00:34 -0400
-X-MC-Unique: x-8CEpv0MEuYKfg9aXRM7w-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1E4841955D48;
-	Wed, 31 Jul 2024 00:00:28 +0000 (UTC)
-Received: from [10.22.16.52] (unknown [10.22.16.52])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 80331300018D;
-	Wed, 31 Jul 2024 00:00:25 +0000 (UTC)
-Message-ID: <5ea8f4f4-14f7-4df2-b0a2-cae5d6697dc6@redhat.com>
-Date: Tue, 30 Jul 2024 20:00:24 -0400
+	s=arc-20240116; t=1722384163; c=relaxed/simple;
+	bh=MZ84WBMb67FnZkuouahXmXGFPZ8pi0oJbpj2ztROqaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BlHNRObBjjHT5/Xu4UW01EvORm9+J1RKIBuzCl6Qb+aIcuQTuA+wN8YH8l3I+jZZprLYhnXnbygFDxN/MiHeJInAO5tvki8BJSn1HPthckFWoH7jBQzx7F7XWv7vDQm8Ozoz3Y1aJNB+46bhSc5ROZigKOwuQXCwvSObMbBTo9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJL15IV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 492CDC32782;
+	Wed, 31 Jul 2024 00:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722384163;
+	bh=MZ84WBMb67FnZkuouahXmXGFPZ8pi0oJbpj2ztROqaU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fJL15IV3A2dLzdPyRzR5y4VCQeSSN+1p787hRsswNZ8EVKwUs+DqjQdV7hgYcr+gb
+	 6OOwlGbYrHIhtYbFL6Xy55WCXEwj+OqIBqikxd4O/ekYFNhK4k22qgv/QLf/yHCxaS
+	 83R41+ByGeihfOfAaQ7xfq/VSU6+nt86wFVBVtBqSbQvpJ0I7nTMulXF+IruZbn3se
+	 DzsoqzTq2ObuiZADby0JYnDOEfi2yqfV0cTTjNot+vVvlzaWrtpipPLpgvMopipxKY
+	 OpYqfcMJttTIUbGo2/1KtGlwZ5mnM5IKMVboWV4AHUdwMpiypK/T37wKt71Sdrg9NS
+	 2DnG9nbKn+SCA==
+Date: Wed, 31 Jul 2024 02:02:39 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: cl@linux.com, penberg@kernel.org, rientjes@google.com,
+	iamjoonsoo.kim@lge.com, vbabka@suse.cz, roman.gushchin@linux.dev,
+	42.hyeyoo@gmail.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 2/2] mm: krealloc: clarify valid usage of __GFP_ZERO
+Message-ID: <Zql_H4g9wJxmJkQJ@pollux.localdomain>
+References: <20240730194214.31483-1-dakr@kernel.org>
+ <20240730194214.31483-2-dakr@kernel.org>
+ <20240730133540.66e215082a513509c0d8649c@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH-cgroup v7] cgroup: Show # of subsystem CSSes in
- cgroup.stat
-To: Tejun Heo <tj@kernel.org>
-Cc: Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Kamalesh Babulal <kamalesh.babulal@oracle.com>
-References: <20240715150034.2583772-1-longman@redhat.com>
- <ZpVcxlx1VR3FaoYI@google.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <ZpVcxlx1VR3FaoYI@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730133540.66e215082a513509c0d8649c@linux-foundation.org>
 
+On Tue, Jul 30, 2024 at 01:35:40PM -0700, Andrew Morton wrote:
+> On Tue, 30 Jul 2024 21:42:06 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
+> 
+> > Properly document that if __GFP_ZERO logic is requested, callers must
+> > ensure that, starting with the initial memory allocation, every
+> > subsequent call to this API for the same memory allocation is flagged
+> > with __GFP_ZERO. Otherwise, it is possible that __GFP_ZERO is not fully
+> > honored by this API.
+> > 
+> > ...
+> >
+> > --- a/include/linux/slab.h
+> > +++ b/include/linux/slab.h
+> > @@ -733,6 +733,14 @@ static inline __alloc_size(1, 2) void *kmalloc_array_noprof(size_t n, size_t siz
+> >   * @new_n: new number of elements to alloc
+> >   * @new_size: new size of a single member of the array
+> >   * @flags: the type of memory to allocate (see kmalloc)
+> > + *
+> > + * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+> > + * initial memory allocation, every subsequent call to this API for the same
+> > + * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
+> > + * __GFP_ZERO is not fully honored by this API.
+> > + *
+> > + * In any case, the contents of the object pointed to are preserved up to the
+> > + * lesser of the new and old sizes.
+> >   */
+> >  static inline __realloc_size(2, 3) void * __must_check krealloc_array_noprof(void *p,
+> >  								       size_t new_n,
+> > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > index cff602cedf8e..faa13f42b111 100644
+> > --- a/mm/slab_common.c
+> > +++ b/mm/slab_common.c
+> > @@ -1301,11 +1301,17 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+> >   * @new_size: how many bytes of memory are required.
+> >   * @flags: the type of memory to allocate.
+> >   *
+> > - * The contents of the object pointed to are preserved up to the
+> > - * lesser of the new and old sizes (__GFP_ZERO flag is effectively ignored).
+> >   * If @p is %NULL, krealloc() behaves exactly like kmalloc().  If @new_size
+> >   * is 0 and @p is not a %NULL pointer, the object pointed to is freed.
+> >   *
+> > + * If __GFP_ZERO logic is requested, callers must ensure that, starting with the
+> > + * initial memory allocation, every subsequent call to this API for the same
+> > + * memory allocation is flagged with __GFP_ZERO. Otherwise, it is possible that
+> > + * __GFP_ZERO is not fully honored by this API.
+> > + *
+> > + * In any case, the contents of the object pointed to are preserved up to the
+> > + * lesser of the new and old sizes.
+> > + *
+> >   * Return: pointer to the allocated memory or %NULL in case of error
+> >   */
+> >  void *krealloc_noprof(const void *p, size_t new_size, gfp_t flags)
+> 
+> In both cases, we're saying "callers should do X".  I think it would be
+> better to say "this implementation does A, hence callers should do X". 
+> Tell people what's going on.
 
-On 7/15/24 13:30, Roman Gushchin wrote:
-> On Mon, Jul 15, 2024 at 11:00:34AM -0400, Waiman Long wrote:
->> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
->> help manage different structures in various cgroup subsystems by being
->> an embedded element inside a larger structure like cpuset or mem_cgroup.
->>
->> The /proc/cgroups file shows the number of cgroups for each of the
->> subsystems.  With cgroup v1, the number of CSSes is the same as the
->> number of cgroups.  That is not the case anymore with cgroup v2. The
->> /proc/cgroups file cannot show the actual number of CSSes for the
->> subsystems that are bound to cgroup v2.
->>
->> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
->> we can't tell by looking at /proc/cgroups which cgroup subsystems may
->> be responsible.
->>
->> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
->> cgroup.stat file is now being extended to show the number of live and
->> dying CSSes associated with all the non-inhibited cgroup subsystems that
->> have been bound to cgroup v2. The number includes CSSes in the current
->> cgroup as well as in all the descendants underneath it.  This will help
->> us pinpoint which subsystems are responsible for the increasing number
->> of dying (nr_dying_descendants) cgroups.
->>
->> The CSSes dying counts are stored in the cgroup structure itself
->> instead of inside the CSS as suggested by Johannes. This will allow
->> us to accurately track dying counts of cgroup subsystems that have
->> recently been disabled in a cgroup. It is now possible that a zero
->> subsystem number is coupled with a non-zero dying subsystem number.
->>
->> The cgroup-v2.rst file is updated to discuss this new behavior.
->>
->> With this patch applied, a sample output from root cgroup.stat file
->> was shown below.
->>
->> 	nr_descendants 56
->> 	nr_subsys_cpuset 1
->> 	nr_subsys_cpu 43
->> 	nr_subsys_io 43
->> 	nr_subsys_memory 56
->> 	nr_subsys_perf_event 57
->> 	nr_subsys_hugetlb 1
->> 	nr_subsys_pids 56
->> 	nr_subsys_rdma 1
->> 	nr_subsys_misc 1
->> 	nr_dying_descendants 30
->> 	nr_dying_subsys_cpuset 0
->> 	nr_dying_subsys_cpu 0
->> 	nr_dying_subsys_io 0
->> 	nr_dying_subsys_memory 30
->> 	nr_dying_subsys_perf_event 0
->> 	nr_dying_subsys_hugetlb 0
->> 	nr_dying_subsys_pids 0
->> 	nr_dying_subsys_rdma 0
->> 	nr_dying_subsys_misc 0
->>
->> Another sample output from system.slice/cgroup.stat was:
->>
->> 	nr_descendants 34
->> 	nr_subsys_cpuset 0
->> 	nr_subsys_cpu 32
->> 	nr_subsys_io 32
->> 	nr_subsys_memory 34
->> 	nr_subsys_perf_event 35
->> 	nr_subsys_hugetlb 0
->> 	nr_subsys_pids 34
->> 	nr_subsys_rdma 0
->> 	nr_subsys_misc 0
->> 	nr_dying_descendants 30
->> 	nr_dying_subsys_cpuset 0
->> 	nr_dying_subsys_cpu 0
->> 	nr_dying_subsys_io 0
->> 	nr_dying_subsys_memory 30
->> 	nr_dying_subsys_perf_event 0
->> 	nr_dying_subsys_hugetlb 0
->> 	nr_dying_subsys_pids 0
->> 	nr_dying_subsys_rdma 0
->> 	nr_dying_subsys_misc 0
->>
->> Signed-off-by: Waiman Long <longman@redhat.com>
-> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Sounds reasonable, I'll add an explanation here and in the fixup series for
+vrealloc() / kvrealloc().
 
-Tejun, is this patch ready to be merged or do you have other suggestion 
-you have in mind?
+> 
+> eg, "if krealloc is expanding an existing allocation, the newly-added
+> memory will be uninitialized unless the caller used __GFP_ZERO".  Or
+> something like that.
+> 
+> I assume that if the caller actually touches the uninitialized memory,
+> KASAN will warn?
 
-Thanks,
-Longman
+For the case that is fixed in patch 1 of this series, no. KASAN can't detect
+this.
 
+As you say, the memory is just uninitialized (not poisoned), where it should
+have been zeroed instead.
 
