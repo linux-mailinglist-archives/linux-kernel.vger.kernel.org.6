@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-269286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD44943100
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:35:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5C2943105
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5103A1C21FC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:35:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 157EAB257BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473601B372F;
-	Wed, 31 Jul 2024 13:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8F11B0125;
+	Wed, 31 Jul 2024 13:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="feYdBoJa"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnHFNj3V"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9B61B29C4
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E801B1503
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722432857; cv=none; b=HtkHMMOgvpRcWlpf35wDHQt/Lxhj9L+H8JUxzj3EBn9KkIFbKpQuMz+OM7tzwrsEMNZo3A4ri4IpipdhWS2GleAqbKXilEeRAODhoBmQSlGTAqpMX0F0UyvXTZooUtZRu7+NDu08urdE3diFkAIiWvFHqbhSZXVKiB7KIiHPEhk=
+	t=1722432870; cv=none; b=Xc3/My++u1gyV5uMEdZw+cG/GQUuvBW/f31PpJY7xjHOOeFfDiXlAzVCwkOB/VNtbm/Ilvc+1bDGGYdViqjrNKeqgrt7tEDQfnCMMxlbEO5AHt0QGmwGTN59XR1tgwaH9MjA5YU7dGZQVktcRN5N5nZUvL+oC6OFXR0+9YMsLYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722432857; c=relaxed/simple;
-	bh=SFkAoG5oqEqyzX4sh7iPN9DJsVPXhLOrDwgLDueS+8Q=;
+	s=arc-20240116; t=1722432870; c=relaxed/simple;
+	bh=A+80YZ1JEr//DzbbfCPYd8sgD69akjqIYMI4pV9hTXo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2Uj/ZG5Ot6V0g77hu1biAhqYGTkD/+JoNbqmudNayTWbRE94j5wcHBLR3P5gmCXAfBoK3WUbrUtj19ycEPzhqvJyIsGRuuW6mzGwSM9jSECSHei0Q1r1vCl3GPtWyyiDttzhlPntxj2uL/egSzh2xlvAftjZz3fT3xpD1hE9Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=feYdBoJa; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5b214865fecso4200417a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:34:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722432853; x=1723037653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PKzhOvv4Abaz8jSctlqaD1OdNMDkG+LKvEGdcxBnLFs=;
-        b=feYdBoJaa5aHdcVxPztz6nquEyU0VnYWqxhot5hyc9QX8aFyCLBjz3Dh6MBCyrmzNq
-         Cg+EsmiRnkw4UeItCfdpvFwppBn0Ic79cwKPaJDhEiRjuL+foQKJPVi9cdr09nMLVy6j
-         z4NQa7rE/O4W7l19jpC6mvaAHQldLQ/zSYV1zuors926AjNuB9z5Oo3o6lP6ybMCxaHl
-         DYTBaW8E6OAk05vkuiMEGdvaFHrT8rjibR7f/D816u3Ulh3XSE85IEkQyE8hIuBTLEVq
-         KDEMd5jlf9GZwCFg39KpvaLNABvAP9TTKaZ0rENktH/qGVlzaKlYf3lyC98gvoC1hNg3
-         YRcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722432853; x=1723037653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PKzhOvv4Abaz8jSctlqaD1OdNMDkG+LKvEGdcxBnLFs=;
-        b=GqFbbCYsF8trQSTfW26dO+yK+Rxj+VyIT8LCCq4R+qionrKT0TTPiYFrYzl7Sh9twK
-         kTF+7HaryJLAqJ49Ged5R3d8AKdYoC6Zn/lTOAI4HULa9FTieDHVRvyOlQ+5kng/vhD5
-         qXi6N7xdPklE0iNgNy4AvqifelFi37Mmae9BSdWGG7KQVk+PXtGenYP99y2aMWniUQlO
-         R+FS/lk8ljBFv6338sXtL/eLL4XhwTt0mrJYzd6oiHk34FIs49azN4r3o9fWTGm5RzU/
-         bQh/X2SbSMbCydaYptoIm8Gsb/CQbBb+pcRc5LYGFi/THaoj1aNV1fiDQlDmc72LuLzl
-         LZrg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5qCgq8HT01V2gpkeWZp7jRcQ3zSUidVD0zCRn6J3tu+0whulf2d1TxFvisyio6YC68sPHcFMH9RMXFktLKK0Us53uVNLIZPhG8PLv
-X-Gm-Message-State: AOJu0YyQmitMjgou7JueUloQA08NJjPDCYvf3H8fYxR4R4npzUepy0mi
-	ENF1ZBDmxQkQED+SYyZqwXxE3kGyYkfURAGZ5TbnPfKppmwkilU/B/J0HemqEVEWEr7C81BDREW
-	HweIU4p0dA59AipSSRqj0A+1nrlSZ//266gtFYg==
-X-Google-Smtp-Source: AGHT+IFHvxPdbTDsZZkkxlis80B3oC61RFhzRsWcsCjpR0wdyqzatcOGn114x/eJAhMWwICdWqSTklgUbqDvFUAd6CU=
-X-Received: by 2002:a17:906:c10f:b0:a7a:bae8:f292 with SMTP id
- a640c23a62f3a-a7d40101a57mr1007576866b.41.1722432852685; Wed, 31 Jul 2024
- 06:34:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=MKHFv09TCgmj67w5U2DE4Xiu3CC8APobVNzyceFh5+xK0KnqIQ3VnJI6lDKLtX1AhLguYDLia/GGjvcLYPlwjyGL/5DqZ4xunmzXLVtNIXlgJJ1l+LP/Ho7iyNedyhX8QZPcS0Xq2rQgLP1ZOCu/ZkvWbRJylTNQu31QKFB3Mis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnHFNj3V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA19C4AF13
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722432869;
+	bh=A+80YZ1JEr//DzbbfCPYd8sgD69akjqIYMI4pV9hTXo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZnHFNj3VxhaEY5RPZEthUUpJti6CuGvrzLT5UiOZjIqeBX6sW8OshcUR3VfVPpdkA
+	 SQmCMXJlsQDYqdmtoJ1/cpwhOimBiBUalB+KOO45moiDx2mPC+3zINLaWJnGND6N/B
+	 AYVlpy+hyWUiZqxGXR5hP/nDn5yq/Bhs/BPtLplu1QhNPBMbFj/jUF2eTfMSPWMsdl
+	 t6nRWKjSTASv/54p/b53VsXUxdgwJqonT4gv9PvBxNBw28tAdUivjVe456TuyLJqZz
+	 LX4x0RgYav53nNo7zRnTd/TqWiqEwFRCQuJmQWh3zuT8ZQIOvo/CcXFPBz/hrTZgBP
+	 pW/QmB7x/TbIw==
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d399da0b5so5011006b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:34:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7PnsBZy+KgmVQ6cUqrQ6r6SFkf7Tbo+HzMucrh4LAtcxI/tXs/xOjzXKPiGibq2YzpwsrFL7KRrt5ccqrn5MnWf5Z8ieP9YucCN+v
+X-Gm-Message-State: AOJu0YxAREQ+vkVDCF/jb3FYcGABGJLYS75qxGG1hlGL7MOBjlTSPlVY
+	Sa7OXpIqCJZez6flLkdB27VNQA2sCKz5JT+t0m+z550ZeWG5LBeFmh84Gbiewjzq/NVDUfQLm60
+	LdsNaBVZc40FvBh3ZefH5LBLxdg==
+X-Google-Smtp-Source: AGHT+IFcXLX+kvOqT2wFnw1+ymXM2RCkqARP0iez8K/CuS6OcnyEGO/v4tJGIFKipqmPugj8auqSb13TYf9e2F5nJRc=
+X-Received: by 2002:a05:6a21:328e:b0:1c4:6be3:f571 with SMTP id
+ adf61e73a8af0-1c4a13a375fmr17120024637.39.1722432868814; Wed, 31 Jul 2024
+ 06:34:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
- <20240729-add-mtk-isp-3-0-support-v6-3-c374c9e0c672@baylibre.com> <20240730132931.GM1552@pendragon.ideasonboard.com>
-In-Reply-To: <20240730132931.GM1552@pendragon.ideasonboard.com>
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Wed, 31 Jul 2024 15:33:59 +0200
-Message-ID: <CAEHHSvaiwBWnV+kmjNG=RzPk3W9Y25saNQv5-KiU8EtampUbZQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/5] media: platform: mediatek: isp_30: add mediatek
- ISP3.0 sensor interface
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Andy Hsieh <andy.hsieh@mediatek.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+References: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
+In-Reply-To: <20240717-alpha-blending-v4-0-4b1c806c0749@mediatek.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Wed, 31 Jul 2024 21:34:39 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_8ThuusfHk9Gd5pFP8VhJkG2seuJmkFiruK1rPQFZGBzg@mail.gmail.com>
+Message-ID: <CAAOTY_8ThuusfHk9Gd5pFP8VhJkG2seuJmkFiruK1rPQFZGBzg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/5] Support alpha blending in MTK display driver
+To: shawn.sung@mediatek.com
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
 	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-media@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Louis Kuo <louis.kuo@mediatek.com>, Florian Sylvestre <fsylvestre@baylibre.com>
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.com>, CK Hu <ck.hu@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le mar. 30 juil. 2024 =C3=A0 15:29, Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> a =C3=A9crit :
-[...]
-> > +             mtk_seninf_update(priv, SENINF_TOP_PHY_SENINF_CTL_CSI0, D=
-PHY_MODE, 0 /* 4D1C*/);
->
-> As this is a V4L2 driver, I'm pretty sure someone will ask for
->
->                 mtk_seninf_update(priv, SENINF_TOP_PHY_SENINF_CTL_CSI0,
->                                   DPHY_MODE, 0 /* 4D1C*/);
->
-> I wouldn't care too much about going slightly over 80 characters, but
-> getting close to 100 where lines could be wrapped without hindering
-> readability will likely upset some people. Same in other places where
-> applicable.
->
+Hi, Shawn:
 
-Hi Laurent,
-
-On an early version of this series, Angelo asked me to un-wrap lines
-that can fit into 100 chars...
-Both are fine for me, we just need to agree on something here ....
-
-[...]
-> > +     /* Configure timestamp */
-> > +     writel(SENINF_TIMESTAMP_STEP, input->base + SENINF_TG1_TM_STP);
+Hsiao Chien Sung via B4 Relay
+<devnull+shawn.sung.mediatek.com@kernel.org> =E6=96=BC 2024=E5=B9=B47=E6=9C=
+=8817=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=881:24=E5=AF=AB=E9=81=93=
+=EF=BC=9A
 >
-> Can we have a mtk_seninf_input_write(), the same way we have
-> mtk_seninf_mux_write() ? Same for writes to priv->base below, with a
-> mtk_seninf_write() inline function.
+> Support "Pre-multiplied" and "None" blend mode on MediaTek's chips by
+> adding correct blend mode property when the planes init.
+> Before this patch, only the "Coverage" mode (default) is supported.
+
+For the whole series, applied to mediatek-drm-next [1], thanks.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
+
+Regards,
+Chun-Kuang.
+
 >
-
-... and here :) In an early review Angelo also  asked me to remove
-these accessors.
-
-I can add them back and reduce line chars if needed.
-
-Cheers
-Julien
+> Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.corp-partner.google.=
+com>
+> ---
+> Changes in v4:
+> - Add more information to the commit message
+> - Link to v3: https://lore.kernel.org/r/20240710-alpha-blending-v3-0-289c=
+187f9c6f@mediatek.com
+>
+> Changes in v3:
+> - Remove the Change-Id
+> - Link to v2: https://lore.kernel.org/r/20240710-alpha-blending-v2-0-d4b5=
+05e6980a@mediatek.com
+>
+> Changes in v2:
+> - Remove unnecessary codes
+> - Add more information to the commit message
+> - Link to v1: https://lore.kernel.org/r/20240620-blend-v1-0-72670072ca20@=
+mediatek.com
+>
+> ---
+> Hsiao Chien Sung (5):
+>       drm/mediatek: Support "None" blending in OVL
+>       drm/mediatek: Support "None" blending in Mixer
+>       drm/mediatek: Support "Pre-multiplied" blending in OVL
+>       drm/mediatek: Support "Pre-multiplied" blending in Mixer
+>       drm/mediatek: Support alpha blending in display driver
+>
+>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 36 +++++++++++++++++++++++++--=
+------
+>  drivers/gpu/drm/mediatek/mtk_ethdr.c    | 13 +++++++++---
+>  drivers/gpu/drm/mediatek/mtk_plane.c    | 11 ++++++++++
+>  3 files changed, 49 insertions(+), 11 deletions(-)
+> ---
+> base-commit: 8ad49a92cff4bab13eb2f2725243f5f31eff3f3b
+> change-id: 20240710-alpha-blending-067295570863
+>
+> Best regards,
+> --
+> Hsiao Chien Sung <shawn.sung@mediatek.com>
+>
+>
 
