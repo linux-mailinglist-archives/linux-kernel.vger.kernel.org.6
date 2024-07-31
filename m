@@ -1,128 +1,205 @@
-Return-Path: <linux-kernel+bounces-269520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3799433BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:57:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 497599433C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35A11C243E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:57:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E87071F25D27
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:59:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAECF1BBBE1;
-	Wed, 31 Jul 2024 15:57:01 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23ADA1BBBF4;
+	Wed, 31 Jul 2024 15:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fahv2gaa"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CE0C1799F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8C41773A
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441421; cv=none; b=j5BDtBwPAWcVwRCoPxtY2exxee9RWuXJTOtUy2/eZm7D0EYQxsKzOVWuG65RfD3ZFFaaK6Cqy/eOmFei+W+68S4D8mJRu83E6c8jK3bga31FoPTwz3aDqhtXEjhJjVq+UhkyiWFYYqiJKbeJAuFPUH0cVh2RUUgjk3Zo9rYcDag=
+	t=1722441537; cv=none; b=WrqLj9XfI8e2bHeeqVI9e93mZpLxvINf2lmYImc/uQmtu0YsRbytgNiXAfsrN79uCSi4DC+MeXC40QTpLzxEgKasLPGBziUjEX3qSDODXElOpR0Y+PbOJ+nxENzXQ0f995lc5gs3X4AODyPCQBUf+A4I2I7ZgVMqK5Kv4ccMutU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441421; c=relaxed/simple;
-	bh=jjFUvWKuOM2iF3uyF+5xmTwgqm8OWHiXn3t1DxgNq6Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=DtvKROjkEaZPAXH+qc6lOIotE6sZ/JD06z6TAXWrhD4GHYD0IQWsda2lG6cM7SBbhdH4oDSo7bUx0QhdZZfjK2wCJ4KLknwybF6VKCUjTnWSzFi0xBtYBg78W2czdGTgxUuQhMC954h7+7/6RPuAYN0HULDAfkY1gmcxrSi75Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-232-y2AfI9EuPCilBFg4_mYNkQ-1; Wed, 31 Jul 2024 16:56:56 +0100
-X-MC-Unique: y2AfI9EuPCilBFg4_mYNkQ-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 31 Jul
- 2024 16:56:15 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 31 Jul 2024 16:56:15 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
-CC: Arnd Bergmann <arnd@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Matthew Wilcox
-	<willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik
-	<mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Lorenzo
- Stoakes" <lorenzo.stoakes@oracle.com>
-Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqgAGQsLzQABAMbUAACpmiTABKeZ/AADgjwAAACU/gQ
-Date: Wed, 31 Jul 2024 15:56:15 +0000
-Message-ID: <fbdf2df07e7140dbb96dcda48d4da270@AcuMS.aculab.com>
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
- <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
- <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
- <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
- <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
- <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
- <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com>
- <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
- <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
- <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com>
- <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
- <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
- <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
- <73d65e2553e543069f9969ccec4ea9b3@AcuMS.aculab.com>
- <CAHk-=wgP+Fm=O2tYtS=3fDB7Vh+=rSYCC1mjqxcTQ=024G0qYw@mail.gmail.com>
- <CAHk-=whNTuPVeOSB6bG7YRXeYym9anS2QawRHEKRJe2MQuOPPA@mail.gmail.com>
- <0549691a6a3d4f7a9e77003b70fcf6fe@AcuMS.aculab.com>
- <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
-In-Reply-To: <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1722441537; c=relaxed/simple;
+	bh=HMYEQltRZ8Tw+WKokvRCPrxZb0HKX0yrf0ddXvi96Lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ir3cOCXINxjeQutqsG/7r5idnSGvDnK7x9Pcz45qk3yzUZW0hAH7Aci2dNSCr+Vx+ayXyx40XSzO4cOy0L+EG34tXCAbimVHfQnYUoR8DhscXebyUoyZAJbpf+58iikdFVRDYJ3IY2CBgzBfzT/Ny1tegAAYZ5ZCZwVgoTSyZf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fahv2gaa; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd7509397bso203325ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:58:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722441535; x=1723046335; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZAhdp5zpySe0+FB5jDx9UjZEWAHh/7EBv/tXoOqBR90=;
+        b=Fahv2gaaNSqNOzJfF0+Fl8SJQFS0sWpNlYUU+euX8+BlPidPVPRcRxUb0VuN2Tll9K
+         3g0N7Pm9Scqd6O25E9dDXNWw+z7SR61+sBCkua43S0XYu1odwcnMpc+5oUB3QGfUj1Li
+         CB6dYAE5Ji4c/7Fegv5BnZV1IOZ6xu496vS/6IZ7KiFaNlVCxvcT2K1C5RjlGenbpF1H
+         hGdWTKvY53h3m1JERktMNc4TxRubF9H8Qklx1hrKK5c2KN3lTbFijzvytZ6vm5zjuIad
+         78vUTd5LiS25FF9QS3YAKckQDQr1tyL/PHdE7rfpsr6QTeVGALE0BLE7yVUhaMjrblBK
+         txoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722441535; x=1723046335;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZAhdp5zpySe0+FB5jDx9UjZEWAHh/7EBv/tXoOqBR90=;
+        b=nfASerxhpeD/Zh0EcQlYpE7x18TUsE6P9xGXFIM0mes2mAA0uL3a4cC/QW30t+Kix2
+         UGTc22tCbXBdXU+qMAU/nDZ+8q45p3mlABHnXCQ16iA1VZ/lEZUDvPOis7mk3vnRpqdF
+         N40wth8bheAVr9tXyaZP2KNN4is22TfhUi7QRxKOryJfjkcQwBoe0ZJp5IF5B2Ib5Fq0
+         6AsChDbihumzjwvRjuYna4IFloyLluJhIyZcQxEjlnyI/Tih4TJ2DeztGsVzq9KFNYj/
+         bwVjUe+IWDJIBhAQmwsmBE/Uw0cRinP6qObuZBozKuHU0o/9WwztfQZgjlZQwVo40lPA
+         tj/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXeIOkL2txjRrvqXkugcS8lRHm4t8YPLJr27bdMay1kKHV5F9zuzSj0gg8GgPuRKqtZsvQ6rmnAvdp0fES05K07osxZpQsaz+vkMjaq
+X-Gm-Message-State: AOJu0YyI2qLI8WegH0hoMsnJdj80BMqWQDRWmydoVDpicMZ6UGBMWKXl
+	bqvHt+QsAfJhUKNMEnCYOcD59CHzl6TTMyuBn9AMQ41do/fjA/EWixM6XEQmxvH8E3pFoPEHRuP
+	gIJMPzAoru8vBJgDdsIk2xEchQcq83u4iuR4/
+X-Google-Smtp-Source: AGHT+IGMppatA2gCc9t440JBtXjRkJbktHUaH/U7LYdlrJiclQaIDtvsOz+rN1EUSUYMsorHuenPRwk2uXi43KbY4ts=
+X-Received: by 2002:a17:903:120d:b0:1f7:1c96:d2e8 with SMTP id
+ d9443c01a7336-1ff417d4905mr3381625ad.10.1722441534719; Wed, 31 Jul 2024
+ 08:58:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <20240730191744.3097329-1-irogers@google.com> <20240730191744.3097329-3-irogers@google.com>
+ <Zqo5vVdrkhL5NHJK@x1> <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
+ <ZqpZWywTe2j3U9Pl@x1> <ZqpcRIzzBb5KC6Zb@x1>
+In-Reply-To: <ZqpcRIzzBb5KC6Zb@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 31 Jul 2024 08:58:43 -0700
+Message-ID: <CAP-5=fVm5FkLDOLk4cbD9K6VPZ088f3Yk3bG8LT79E_OLLN4Lw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Sandipan Das <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, philip.li@intel.com, oliver.sang@intel.com, 
+	Weilin Wang <weilin.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMzEgSnVseSAyMDI0IDE2OjM4DQo+IE9uIFdl
-ZCwgMzEgSnVsIDIwMjQgYXQgMDE6MTAsIERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0QGFjdWxh
-Yi5jb20+IHdyb3RlOg0KPiA+DQo+ID4gVGhlIF9fVU5JUVVFX0lEXygpIGRlZmluZSBqdXN0IHNl
-ZW1lZCBleGNlc3NpdmUgLSBlc3BlY2lhbGx5DQo+ID4gc2luY2UgYWxsIGNvbXBpbGVyIHZlcnNp
-b25zIHN1cHBvcnQgX19DT1VOVEVSX18uDQo+IA0KPiBZZXMsIHdlIGNvdWxkIHByb2JhYmx5IGp1
-c3Qgc2ltcGxpZnkgaXQuDQouLi4NCj4gU28gdGhhdCAicHJlZml4IiBsaXRlcmFsbHkgZXhpc3Rz
-IGJlY2F1c2UgaXQgbGl0ZXJhbGx5IHdhc24ndCB1bmlxdWUNCj4gZW5vdWdoIHdpdGhvdXQgaXQu
-DQoNCkkgZG9uJ3QgcmVtZW1iZXIgdGhhdCBmYXIgYmFjayA6LSkNCg0KPiBBbmQgdGhlICJfX1VO
-SVFVRV9JRF8iIHRoaW5nIGlzIHByb2JhYmx5IGJlY2F1c2UgdGhhdCB3YXkgaXQgd2FzDQo+IGNs
-ZWFyZXIgd2hhdCB3YXMgZ29pbmcgb24gd2hlbiBzb21ldGhpbmcgd2VudCB3cm9uZy4NCj4gDQo+
-IEJ1dCB0b2dldGhlciB0aGV5IHJlYWxseSBlbmQgdXAgYmVpbmcgYSBzb21ld2hhdCB1bnJlYWRh
-YmxlIG1lc3MuDQo+IA0KPiBUaGF0IHNhaWQsIEkgZGlkIGVuZCB1cCBsaWtpbmcgdGhlICJwcmVm
-aXgiIHBhcnQgd2hlbiBsb29raW5nIGF0DQo+IGV4cGFuc2lvbnMsIGJlY2F1c2UgaXQgaGVscHMg
-c2hvdyAid2hpY2giIGV4cGFuc2lvbiBpdCBpcyAoaWUgInhfMTIzIg0KPiBhbmQgInlfMTI0IiB3
-ZXJlIGNsZWFyZXIgdGhhbiBqdXN0IHNvbWUgcHVyZSBjb3VudGVyIHZhbHVlIHRoYXQNCj4gZG9l
-c24ndCBoYXZlIGFueSByZWxhdGlvbnNoaXAgdG8gdGhlIG9yaWdpbiBhdCBhbGwgaW4gdGhlIG5h
-bWUpLg0KDQpJIGd1ZXNzIHRoYXQgb25jZSB0aGUgY2FsbGVyLXN1cHBsaWVkIHByZWZpeCB3YXMg
-YWRkZWQgdGhlIGZpeGVkDQpfX1VOSVFVRV9JRF8gYml0IGNvdWxkIGp1c3QgaGF2ZSBiZWVuIHJl
-bW92ZWQuDQoNCj4gQnV0IEkgZGlkIGNoYW5nZSBpdCB0byAieF8iIGZyb20gIl9feCIsIGJlY2F1
-c2UgdGhhdCB3YXkgaXQgd2FzDQo+IG1pbmltYWwsIHlldCBjbGVhcmx5IHNlcGFyYXRlIGZyb20g
-dGhlIGNvdW50ZXIgbnVtYmVyIChpZSAieF8xMjMiIHdhcw0KPiBiZXR0ZXIgdGhhbiAiX194MTIz
-IikuDQoNCkluZGVlZC4uLg0KDQpJIGdvdCBhbm5veWVkIGJlY2F1c2UgdGhlIHVuaXF1ZSAneCcg
-YW5kICd5JyBmb3IgbWluKCkgZW5kIHVwDQpoYXZpbmcgZGlmZmVyIG51bWJlcnMgLSB3aGljaCBj
-YW4gbWFrZSBpdCBoYXJkZXIgc2VlIHdoYXQgaXMgZ29pbmcNCm9uIHdpdGggbmVzdGVkIGV4cGFu
-c2lvbnMuDQpJIG1pZ2h0IGV2ZW4gaGF2ZSBkb25lIGEgZ2xvYmFsIHJlcGxhY2UgdG8gZ2V0IHJp
-ZCBvZiB0aGUgX19VTklRVUVfSURfDQp0ZXh0IGluIGFuIGF0dGVtcHQgdG8gbWFrZSB0aGUgZXhw
-YW5zaW9ucyByZWFkYWJsZS4NCg0KUGVyaGFwcyBzb21ldGhpbmcgbGlrZToNCiNkZWZpbmUgZG9f
-Zm9vKHgsIHVuaXEpICh7IFwNCglfX2F1dG9fdHlwZSBfeF8jI3VuaXEgPSB6OyBcDQoJLi4NCg0K
-I2RlZmluZSBmb29fcmVsYXkoeCwgY291bnRlcikgZG9fZm9vKHgsIGNvdW50ZXIpDQojZGVmaW5l
-IGZvbyh4KSBmb29fcmVsYXkoeCwgX19DT1VOVEVSX18pDQppcyB0aGUgd2F5IHRvIG9yZ2FuaXNl
-IGl0Lg0KU2luY2UgeW91IGRvbid0IGdldCBhIHVuaXF1ZSBudW1iZXIgdW50aWwgX19DT1VOVEVS
-X18gaXMgZXhwYW5kZWQNCmluc2lkZSBmb29fcmVsYXkoKS4NCg0KCURhdmlkDQoNCi0NClJlZ2lz
-dGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24g
-S2V5bmVzLCBNSzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+On Wed, Jul 31, 2024 at 8:46=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
+> > > On Wed, Jul 31, 2024 at 6:18=E2=80=AFAM Arnaldo Carvalho de Melo
+> > > <acme@kernel.org> wrote:
+> > > >
+> > > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
+> > > > > empty-pmu-events.c exists so that builds may occur without python
+> > > > > being installed on a system. Manually updating empty-pmu-events.c=
+ to
+> > > > > be in sync with jevents.py is a pain, let's use jevents.py to gen=
+erate
+> > > > > empty-pmu-events.c.
+> > > >
+> > > > What am I missing here?
+> > > >
+> > > > If it exists so that we can build on a system without python how ca=
+n we
+> > > > use python to generate it?
+> > > >
+> > > > Now having python in the system is a requirement and thus we don't =
+need
+> > > > empty-pmu-events.c anymore?
+> > > >
+> > > > Can you guys please clarify that?
+> > >
+> > > The requirement for python hasn't changed.
+> > >
+> > > Case 1: no python or NO_JEVENTS=3D1
+> > > Build happens using empty-pmu-events.c that is checked in, no python
+> > > is required.
+> > >
+> > > Case 2: python
+> > > pmu-events.c is created by jevents.py (requiring python) and then bui=
+lt.
+> > > This change adds a step where the empty-pmu-events.c is created using
+> > > jevents.py and that file is diffed against the checked in version.
+> > > This stops the checked in empty-pmu-events.c diverging if changes are
+> > > made to jevents.py. If the diff causes the build to fail then you jus=
+t
+> > > copy the diff empty-pmu-events.c over the checked in one.
+> >
+> > I'll try and add your explanation to the log message, thanks for
+> > clarifying it!
+>
+> So, with it in place I'm now noticing:
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PW=
+D)/ ; mkdir -p /tmp/build/$(basename $PWD)/
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ alias m=3D'rm -rf ~/libexec/perf=
+-core/ ; make -k CORESIGHT=3D1 O=3D/tmp/build/$(basename $PWD)/ -C tools/pe=
+rf install-bin && perf test python'
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ m
+> <SNIP>
+>   GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
+>   MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
+>   CC      /tmp/build/perf-tools-next/util/annotate.o
+>   CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
+>   CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
+>   CC      /tmp/build/perf-tools-next/util/block-info.o
+>   CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test.o
+>   CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
+>   MKDIR   /tmp/build/perf-tools-next/ui/browsers/
+>   CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
+>   CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
+>   CC      /tmp/build/perf-tools-next/util/block-range.o
+>   TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log
+> --- pmu-events/empty-pmu-events.c       2024-07-31 12:44:14.355042296 -03=
+00
+> +++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c       2=
+024-07-31 12:45:35.048682785 -0300
+> @@ -380,7 +380,7 @@
+>                          continue;
+>
+>                  ret =3D pmu_events_table__for_each_event_pmu(table, tabl=
+e_pmu, fn, data);
+> -                if (pmu || ret)
+> +                if (ret)
 
+Right, you need to copy:
+ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
+to
+tools/perf/pmu-events/empty-pmu-events.c
+to fix this.
+
+This change has happened as you are testing with:
+https://lore.kernel.org/lkml/20240716132951.1748662-1-kan.liang@linux.intel=
+.com/
+which isn't in the git repo yet (therefore, I can't make a patch set
+on it). The change is WAI as it is telling you empty-pmu-events.c has
+become stale and needs Kan's fix applying to it.
+
+Thanks,
+Ian
+
+
+>                          return ret;
+>          }
+>          return 0;
+>   CC      /tmp/build/perf-tools-next/tests/openat-syscall.o
+> make[3]: *** [pmu-events/Build:42: /tmp/build/perf-tools-next/pmu-events/=
+empty-pmu-events.log] Error 1
+> make[3]: *** Deleting file '/tmp/build/perf-tools-next/pmu-events/empty-p=
+mu-events.log'
+> make[2]: *** [Makefile.perf:763: /tmp/build/perf-tools-next/pmu-events/pm=
+u-events-in.o] Error 2
+> make[2]: *** Waiting for unfinished jobs....
+>   CC      /tmp/build/perf-tools-next/arch/x86/util/kvm-stat.o
+> <SNIP>
 
