@@ -1,50 +1,52 @@
-Return-Path: <linux-kernel+bounces-269802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2B6943701
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:17:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6832C943703
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:18:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2BA2B220BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:17:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0122285E70
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:18:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9EE16C865;
-	Wed, 31 Jul 2024 20:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041D916CD1C;
+	Wed, 31 Jul 2024 20:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M8F3QVi2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugq/t2kA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712921607B9
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:16:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFB616C87B;
+	Wed, 31 Jul 2024 20:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456972; cv=none; b=so6MgSfFDwgAyKxko1BB7pY8t9eFo3dkUI5ZxyI0mPJ1SD1y/fC/LeQmYYlv9OP8uuysfi6k/imUV7LXXqVw1bCaIi5zVw2MVU2lomiAlg+mkG7+yGIb+XJID4DyEkfln5ZvRrljSDXjo+DB2dqKbanx3xGNucWPOicu6z6ywYY=
+	t=1722456979; cv=none; b=Lkgr2uqEzZbIhef5n4gcM4EiVADpqfffdgYcYAaYrHCtrLp3MfdsCS1iNgFLjPOxPWcVEwRrZLuwdCTQFkGI9iDkulRV6oB2JoUxr+mZTliK/o7t/G2vQYRDWOuO9oaAlEp/AJS8UXkDvQqRvyrvOBjMY81/YIPziAHhA0JkK34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456972; c=relaxed/simple;
-	bh=SjrMsNC52JDqtIOjtEo7o0X17BNCRDDWDiRUJgX1U1Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nGEbzPgS2/hnYA7BJBK7AKzxTFZqmpdzk4noIw5dBgTG3vO0x7xbAbwv8mqT+nqvYwrMIMBHmhOVq0y5V4bdH+Y5AneEIutc1xImkl2F2srfb1W7/48T4g6MQmtv6awsJoCIqL8XEahKWg5Xz1iKHioeXJQ3C7s3b375URz40fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M8F3QVi2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA63FC116B1;
-	Wed, 31 Jul 2024 20:16:11 +0000 (UTC)
+	s=arc-20240116; t=1722456979; c=relaxed/simple;
+	bh=DiyhX8yumavlCwzOlf34nZDby+Y3G8PuxaAMdIsspjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eFSgg41CmRroFFtSNbkpd60yyrBSpTZY5WW34Eqbp4Xny6M0liwQFCKeByXTT55q4zocr/ptqUX7OaGIoiu0WrrS85PSFRLokemT9aBUowCfwq/uq1xJh1wLzUbl4FeXC9KXNn4raLa63LiMNvEAP82gZQ5442medCBh8LBDOnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugq/t2kA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011E9C116B1;
+	Wed, 31 Jul 2024 20:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456972;
-	bh=SjrMsNC52JDqtIOjtEo7o0X17BNCRDDWDiRUJgX1U1Y=;
+	s=k20201202; t=1722456979;
+	bh=DiyhX8yumavlCwzOlf34nZDby+Y3G8PuxaAMdIsspjE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=M8F3QVi2GEx8xd0Z5m4sbf0mxz/jxzLbLHScHpdGIWCjr3G3AbrYedmsX0GYVoOdJ
-	 6dd/HAmBhneoT2QmwQCPY+N5XltRbvHoyLhBoMEzez1FXqto2oUCOxjEwm/wQjimYa
-	 x9StmLcGp8ptk7R6VFyjUffMzTzWn5IAU6TN7A8XlT2OL90gTUZdn1t9S2z9KrNuYM
-	 ixCdvQ6Eon5U4/gU021Xqx5eE5ljN+7B8+D5KUwbwNr5vIP/o1m5XTArsK6eNoFNk6
-	 qxi1nmYuZEZbXp/BQZUB8Q1lRjhNkEPpYPnx6tccULcCAg1QIxSQt6EB/zWBZJT74U
-	 EyjZGo7eGRudA==
+	b=Ugq/t2kAWfxRBMZCvicvH2hfM+YVi5YqCm/G+wijpunQAXl0CTCR9yX+if28hSZlb
+	 o6Fn+1Gnc1lokd1g+yOh4ksqUoUdwyt1y+/k771nT5BaOi091AyjBAX/mrVYo2EnOo
+	 Tn5Ypsn+pLySrlzE2g4DsWZOR8BdO4n7A1Ci2HAgr0KwbK6zE1mkmlZVORvZIM+Ov1
+	 AR/Ug24320NQSVAxLCBK+yjmhki4vCO9ZUBPxGH1TyWxqNnZ4AFRv3ZPSTf9fK4Kl7
+	 Sbl5zUwEwhJTUdbgDPB2WlfaHgv1HFZwwxHylNpyK/voxFRaY3Fby0ViKfSqB8miVH
+	 eOAqAJNxQsxZA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] mailbox: Use of_property_match_string() instead of open-coding
-Date: Wed, 31 Jul 2024 14:16:08 -0600
-Message-ID: <20240731201608.1840977-1-robh@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: spear: Use of_property_for_each_u32() instead of open coding
+Date: Wed, 31 Jul 2024 14:16:15 -0600
+Message-ID: <20240731201615.1841145-1-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,60 +56,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use of_property_match_string() instead of open-coding the search. With
-this, of_get_property() can be removed as there is no need to check for
-"mbox-names" presence first.
+Use of_property_count_u32_elems() and of_property_for_each_u32() instead
+of of_find_property() and open coding the property parsing.
 
-This is part of a larger effort to remove callers of of_get_property()
-and similar functions. of_get_property() leaks the DT property data
-pointer which is a problem for dynamically allocated nodes which may
-be freed.
+This is part of a larger effort to remove callers of of_find_property()
+and similar functions. of_find_property() leaks the DT struct property
+and data pointers which is a problem for dynamically allocated nodes
+which may be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/mailbox/mailbox.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ drivers/cpufreq/spear-cpufreq.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
-index ebff3baf3045..d3d26a2c9895 100644
---- a/drivers/mailbox/mailbox.c
-+++ b/drivers/mailbox/mailbox.c
-@@ -450,30 +450,20 @@ struct mbox_chan *mbox_request_channel_byname(struct mbox_client *cl,
- 					      const char *name)
+diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
+index 78b875db6b66..4d28147c23f1 100644
+--- a/drivers/cpufreq/spear-cpufreq.c
++++ b/drivers/cpufreq/spear-cpufreq.c
+@@ -171,9 +171,8 @@ static struct cpufreq_driver spear_cpufreq_driver = {
+ static int spear_cpufreq_probe(struct platform_device *pdev)
  {
- 	struct device_node *np = cl->dev->of_node;
--	struct property *prop;
--	const char *mbox_name;
--	int index = 0;
-+	int index;
+ 	struct device_node *np;
+-	const struct property *prop;
+ 	struct cpufreq_frequency_table *freq_tbl;
+-	const __be32 *val;
++	u32 val;
+ 	int cnt, i, ret;
  
- 	if (!np) {
- 		dev_err(cl->dev, "%s() currently only supports DT\n", __func__);
- 		return ERR_PTR(-EINVAL);
+ 	np = of_cpu_device_node_get(0);
+@@ -186,26 +185,23 @@ static int spear_cpufreq_probe(struct platform_device *pdev)
+ 				&spear_cpufreq.transition_latency))
+ 		spear_cpufreq.transition_latency = CPUFREQ_ETERNAL;
+ 
+-	prop = of_find_property(np, "cpufreq_tbl", NULL);
+-	if (!prop || !prop->value) {
++	cnt = of_property_count_u32_elems(np, "cpufreq_tbl");
++	if (cnt <= 0) {
+ 		pr_err("Invalid cpufreq_tbl\n");
+ 		ret = -ENODEV;
+ 		goto out_put_node;
  	}
  
--	if (!of_get_property(np, "mbox-names", NULL)) {
--		dev_err(cl->dev,
--			"%s() requires an \"mbox-names\" property\n", __func__);
-+	index = of_property_match_string(np, "mbox-names", name);
-+	if (index < 0) {
-+		dev_err(cl->dev, "%s() could not locate channel named \"%s\"\n",
-+			__func__, name);
- 		return ERR_PTR(-EINVAL);
+-	cnt = prop->length / sizeof(u32);
+-	val = prop->value;
+-
+ 	freq_tbl = kcalloc(cnt + 1, sizeof(*freq_tbl), GFP_KERNEL);
+ 	if (!freq_tbl) {
+ 		ret = -ENOMEM;
+ 		goto out_put_node;
  	}
--
--	of_property_for_each_string(np, "mbox-names", prop, mbox_name) {
--		if (!strncmp(name, mbox_name, strlen(name)))
--			return mbox_request_channel(cl, index);
--		index++;
--	}
--
--	dev_err(cl->dev, "%s() could not locate channel named \"%s\"\n",
--		__func__, name);
--	return ERR_PTR(-EINVAL);
-+	return mbox_request_channel(cl, index);
- }
- EXPORT_SYMBOL_GPL(mbox_request_channel_byname);
+ 
+-	for (i = 0; i < cnt; i++)
+-		freq_tbl[i].frequency = be32_to_cpup(val++);
++	of_property_for_each_u32(np, "cpufreq_tbl", &val)
++		freq_tbl[i].frequency = val;
+ 
+-	freq_tbl[i].frequency = CPUFREQ_TABLE_END;
++	freq_tbl[cnt].frequency = CPUFREQ_TABLE_END;
+ 
+ 	spear_cpufreq.freq_tbl = freq_tbl;
  
 -- 
 2.43.0
