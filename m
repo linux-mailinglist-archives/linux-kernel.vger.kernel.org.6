@@ -1,197 +1,150 @@
-Return-Path: <linux-kernel+bounces-269413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EC0943296
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:00:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACF0094329A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6804A284A64
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:00:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2031F21309
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60251773A;
-	Wed, 31 Jul 2024 15:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019661642B;
+	Wed, 31 Jul 2024 15:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YFsKuwFS"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2079.outbound.protection.outlook.com [40.107.93.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3xRRTUT9"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD922F37;
-	Wed, 31 Jul 2024 15:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438022; cv=fail; b=p0IzutptNZRZFB1qxDITXT1xIIThRzQ32ui5b74AlVG2DyfuiKRN0ALZ250IcEP3cqmJ5JbQBncafOJzf6u8+0JOno66GoKvqlsyxS4nDN+r7IvPx19HoaxUbTXXgdiAWlMMDAvrfv5RmmngenuJQ3QMXVDajxcvJReQztLPkJU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438022; c=relaxed/simple;
-	bh=/eVdjDu/kI+cDzANhSQt9wkD1T31rrZaCtojxtOGlys=;
-	h=From:To:CC:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID:Date; b=GbYty/6TGEU3+RwkrVA0+lTlWYvNE5CSJd2WVbjdZPvwY6Yy4mT1GQga5d+HF3kaMmOkXrN0l+szH1Iy33DMpVTae1GOuM0JqzjbNrwMCFgCBMjSO2rQg205a0B2bNlpzaoqV+9F24r+mo8qKR7p5bjDW8TIBH7sWDMJr9HS6QY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YFsKuwFS; arc=fail smtp.client-ip=40.107.93.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RlZ270zL3nUYGKzEQ6Qzqtf4favoQ2xKwbqVuhO7sY+hbyVvuhZ22ndaGCanYmdzSTY0vHnVDm0g515caz5ovJB/8SbUZ5qdaZ44tB+UT9u03FyDTnjZa888YYLGzLl0OXXwB9WADR4tt+VkEqnzK1KyzF1JfFyl+Z5RKRPtf9elD4cgWFc2xEpl8kx2/WKmnguZ2T6ocweE8B0Zn/qH20pgGQ/QvpZOKJHUbd/SEGf3ZGdgEJA7bZkyJwnrGSZ3rxzUNLeanb5ACVlKJscNGFaQdza8+GPDtItDWfdRXtqlLlerjX9nJI98IPDchwrTp90WZpgvqmlWmne9rCq/qA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+HD9xEUIZSugshG8JTfkZzkVhL7aGVBdkdhR347ZyXQ=;
- b=SvSEFiqRlu3h+Mn8DcLNEipSOojZFwAHGe1RehZWEKNLdrzPOCmPG+7dvyfG3oQmxHe2CdFxNCNDIv1+rdtYqI1psfqmufU8UBut6+Yif9zfGA39Td5dJSMxUjxBf0uENwADmTdxDh/NnCSUgizMjbBrQTXBxE8AZOdYaHkY5fQrfUKqo2nxZqGclLlqPQD5BiCyb+Ec46YGuWX7yaD8m/Xf2AgHLQgjONFOut8dShr7hzOuZ6Kmd3tpJFZiwKIxciPEzpjURXrdMEg0I9m1Go/a7opJnzDQ/kks+xdbAVpxatmzKY0AfaVcUwLNqgxKRcXnRH+Dp1RPvppBA3zYng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=linuxfoundation.org
- smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
- header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+HD9xEUIZSugshG8JTfkZzkVhL7aGVBdkdhR347ZyXQ=;
- b=YFsKuwFSAWA1HWaL7x/XVjR7Xx/bWo3Yol3wUxQVmOMsQ6UB72XtjBBURO41/iOdg5OHi/6kyQgTO59sGX8bXEivbWRnc49/GgClXKH5HNDsKqJAF1v0MyyveucAxWIRLijHRG63l+OfbJ4HkPWnVUA1A3cmOstf7KrEhu1fetXCHycMU73S/sH9pUyeXoRatS9oH2Nv/TNMFcjvoXCzyY8olvoEdwgpMdXK1ROFtmhPpQzJ7aarbaqQ6gZ957XmjAHW8BawbxsXzTCZKuJAkSXVmJt3DQ51Z7etMKyw0VGEbmnOxu8cfWxjfOs0oN7G4C78iZAHSOluZBHjPVl6Ug==
-Received: from PH7P220CA0042.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32b::25)
- by PH0PR12MB8773.namprd12.prod.outlook.com (2603:10b6:510:28d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Wed, 31 Jul
- 2024 15:00:11 +0000
-Received: from SN1PEPF00036F43.namprd05.prod.outlook.com
- (2603:10b6:510:32b:cafe::e4) by PH7P220CA0042.outlook.office365.com
- (2603:10b6:510:32b::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29 via Frontend
- Transport; Wed, 31 Jul 2024 14:59:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SN1PEPF00036F43.mail.protection.outlook.com (10.167.248.27) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 15:00:10 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
- 2024 07:59:57 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
- 2024 07:59:57 -0700
-Received: from jonathanh-vm-01.nvidia.com (10.127.8.9) by mail.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Wed, 31 Jul 2024 07:59:56 -0700
-From: Jon Hunter <jonathanh@nvidia.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	<patches@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
-	<linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
-	<lkft-triage@lists.linaro.org>, <pavel@denx.de>, <jonathanh@nvidia.com>,
-	<f.fainelli@gmail.com>, <sudipm.mukherjee@gmail.com>, <srw@sladewatkins.net>,
-	<rwarsow@gmx.de>, <conor@kernel.org>, <allen.lkml@gmail.com>,
-	<broonie@kernel.org>, <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc3 review
-In-Reply-To: <20240731100057.990016666@linuxfoundation.org>
-References: <20240731100057.990016666@linuxfoundation.org>
-X-NVConfidentiality: public
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B0B3232
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722438084; cv=none; b=Ut7Wm6uZxrT+6AVQfr193Z9ZT5Z1SW7V8iUzcMqZpcdC4tUdW2z+U7W3yJjQfJlquTnt5F/3tC0UzCngJjhyeb1buTgsQOm9FWIwpEHztRGzc1gTjHqUe+SW92ne5jUI+Ufqz61YiAR/5AyNCAhBcDmXxnesLoBU69vqe8z3tVI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722438084; c=relaxed/simple;
+	bh=wUHLhFS9SdXHmqa3PQC6xsI/T85uU0FHGAHHTqH7qew=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=WJC0szHoCwRkw5VaChPpqNsLubY3Ny32kQMWilEpS4TFgXlXXe9sjabumrxrIKhPEqD3EXzkDIg4GEgnHQqsHdi7QVEifK4KJerKgtG1PNHCayb6wDyLLsht6j+XqND0y9/zZaa0ap/yIFhZ+HhQVFC3uC7C0Fde1XyOvmCa2t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3xRRTUT9; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7acb08471b1so3068155a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:01:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722438082; x=1723042882; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gNJBybQopQ2ZrxRweqcaE48I1KQGrUoMT3Gla2tgL0c=;
+        b=3xRRTUT9Lxg9Pt5q3mX3veCC3CBSxjoRg7JuyFreN2guenAh34q6Fc70OF9yvqJI+y
+         XM8lD8DrxJ6iuqxcBQfFRcWfjJORSI5Z6fNfQYCfP1ngzsvjNWmQUTd7dm3RzZ9un0Vp
+         kkQoucLYdWUrjKJ4y1BqNeNf5PlXYGaZvDM4QW6KNjM3KliPDu9Qkr8qjnnnWfEGfIvb
+         lI/smDcZErgunOcJUXj7e44VovwKpgS4pzcFL8pBzQ6uB9K4W8DrcfSzTDaq/3956KHb
+         +BygWzRsIp9eBHsVw9I7Szrcq4RaYLgZmsHHadx5zpv4yUK6W7zVRzK8DeNZS8vUe8QB
+         dKOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722438082; x=1723042882;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gNJBybQopQ2ZrxRweqcaE48I1KQGrUoMT3Gla2tgL0c=;
+        b=YX5CpXIqIfS8505/5DVMrMtM/NJo5ZghkApPbQhVZIpH4RT4PowddcMGQBF5D6F7xe
+         2CMSOVNPNhfPixJiOlgBs/pmWKt48xt2a/1rm7y1fYjE4V57nAgWB4yB2wrgC/G8BE4w
+         rZz0V40xBElJqKL8ICd7IDweizaqAYt6FsS/w/89U6fLW/we633/U0syRuF+jDbKODkc
+         463tSeZQ2rWHLkg6fINRDbC8vUSc0fEIhkedph20kezt4LKxYoqbfuUiP+JgUradGLb1
+         MNoY6y8Op++x4KkJVpRSEJeUcAZUjL9Pe5kB7RcmpuDGrKSRfwG6ZKaZi+xgIcXDLqg/
+         9hAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwkVBmffR89JAXpBum142gJxfbo45PyLYBtXBOa63W3PX7LgH6aDwZM2A0iue3W2epCbOvgvPQ1IjoLE4BHTdDVj1UKuWfe3h3vhxG
+X-Gm-Message-State: AOJu0YzfRtiVspdE5CZSrBXhKvbSjUCHdM6b5NwaCrNY0ML5ooJLwqUW
+	IrqDUQhPkz3QPHvWg6UocZ7z+Yf+4p4wMp2+eKoeixir2cnCIJVKc6gknktpc4uWoUXvOkZ227K
+	W8g==
+X-Google-Smtp-Source: AGHT+IGcAn8E6dkVWW8sE36BP9jCnCmxK5HfcNcn6NYUeDPjrXiDSAMLJMNmKjWnCHzC8DBP855Q/NibcH4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a02:610:b0:7a1:6633:6a07 with SMTP id
+ 41be03b00d2f7-7ac8dcbb142mr75473a12.2.1722438081874; Wed, 31 Jul 2024
+ 08:01:21 -0700 (PDT)
+Date: Wed, 31 Jul 2024 08:01:20 -0700
+In-Reply-To: <87cymtdc0t.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <736afb78-92e0-4167-844d-47d4905d8851@rnnvmail204.nvidia.com>
-Date: Wed, 31 Jul 2024 07:59:56 -0700
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF00036F43:EE_|PH0PR12MB8773:EE_
-X-MS-Office365-Filtering-Correlation-Id: 331681aa-8fa0-4cab-838d-08dcb17179c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QlB4UTZ6YXl6N212QXJGT1BCaWJZWUpyYXkxSjdhZ0RWczBucmNveHhySVp3?=
- =?utf-8?B?cGVmVjE1RWo1Q210V3ZUQkZZRWxRamFJMGdFVzVsZ0Y5elg2MG5rb1Q3b3FI?=
- =?utf-8?B?Tzg4OUZiM0pnQStjVy84TUNRTm9lYUJudTFsTnpBN3dkZFNvYUtaK1N0ZVpK?=
- =?utf-8?B?MGFnRWcwWDVHUXFybmcyaGlNOGd0UUdUUXpuZFk4THRaVW44ZGs1ZlJ1Um5F?=
- =?utf-8?B?bnFQcnlVamdQYkIrS05BZnJpWUtTU2FVeXdIS3BtcFl1bVNCY0RRSER5b2NF?=
- =?utf-8?B?Nk9kdnpTVmVYbWZmUU9BTkc0R1pZQWJNRE4zNXRUZnJxeTlnRFBXSG5pYk5F?=
- =?utf-8?B?QzRXcFBCM1JrVnIwZnlNaHJTVXUzNktwZ2pwMWhxYjMrcHg2bW1GYk5sbnYv?=
- =?utf-8?B?ZEFQaHVIM0RKTTVNWStMQ2ZqRC9wdml6Wkc4SzIwUVRYRyt2dlhsL1NncVJU?=
- =?utf-8?B?ck1IY0c0bTJyc1BTU2o5WUxTdU0rSktnOUtYUUM4UkhvejVrVUcyOW5LdVVv?=
- =?utf-8?B?TzdIdVVLU0J6a3M1alZ1MjNGU0JkdHIrbW9EWGVWcW11bHNQVFJHRndvNzI2?=
- =?utf-8?B?SExFSUsrMjZCaWFUK3QzdVNMSUN4OXk1UUhUVUFKcTFxL2ZzQzM4Vk96dHpF?=
- =?utf-8?B?Uk4wYXFzWlh6UmM1cVNuNmV4cmxsRjhReEI3ZVRQSHRDSmVraFI1SkhXVmRn?=
- =?utf-8?B?UDlIZjRUZ1dnYzlZSHJNUGJVNTUrZWQ2SmV3aWIvRVlVYjlWdGEwY3pHRmkx?=
- =?utf-8?B?Wkg4dmU4REtIVEY0S2tYclUvT3NmRVV2U0YvL3Q5cTFPQ0pQT3FjUlA0bUJW?=
- =?utf-8?B?M2VkSmpjakw3SGZUeUhPLzlZdTlsRHR6YmdROVRYM2NXdDRJSDNEQnlOVjVR?=
- =?utf-8?B?NHA3a0VjdDY5elFBNzNLRUV0ZVgrN0ExT1pVeTdhdzJwNTZMR24rSi9kNDlt?=
- =?utf-8?B?eERqdEZ0cXY0Q3hhMGg1VzdSclpTdkVrM1pTT1dEN3R3ZnBCazF0U1JLSzRB?=
- =?utf-8?B?UTBXRVMycXBkdjdNQTVCRHE2SDAxQVFMT2dRcFlTRmt2YmJzZW9TbGpaZld2?=
- =?utf-8?B?dUFRTjlNTkZEQzN5am9GeGN4TDYwdTBGVkZpTTBKQ3l5b1FudmVqVHQrRVY5?=
- =?utf-8?B?WXppSnB5RWFqdEtqbUg2bVpvRGNBUTYrQUJKZ0xwNWVSdStyVFB4MmRkNUJ6?=
- =?utf-8?B?U2N1SVBpTk9uMnRYMTg4akh6dEl2VEd0SzVUNHRZWEV6RCtBR1g0M3NoS2lB?=
- =?utf-8?B?VWVNWkFiVWozLzVoaHMxQUNyMFQ5eTFQaExiM09JQitwSlZXeXJmbkRoUjFQ?=
- =?utf-8?B?M2llSG8xSmdmaWs0TTdOcDB4L3A1amE5SkhCUWdibnFHdm9VOU8reWQyZ2xq?=
- =?utf-8?B?eEUrbG56cFVuQkpSWms5TEM0UW1jWVRWekJKQkhaaUpsY04rV3VNRUNSWFBR?=
- =?utf-8?B?L1c1U08wbmRvK1h3QnQ3bHNiL1RiZzRSTWxkVG92aGh2NlYzdHBuNWRyL1Jo?=
- =?utf-8?B?YTZFeURXc2dUVlduamxyYzFQR29DUis1Z0hxK0VqNUUxdTdFVExqMkhvSlE1?=
- =?utf-8?B?Zy93cGlQK200V2xGWVpDYUFFNTZsazRtaGx0UldSWW9DNjN0cFlRbTZyNlZx?=
- =?utf-8?B?aDZlbmorblN2aXQyaW8yelI5MHBvcTdIbkRBYmZPT1BVTEJwSmdIK2NxRXls?=
- =?utf-8?B?bm10QUNKZDJEZHU5K0h4c01qczRDYUp2UFpSSlo4OE12aUt3TitnckFtcmM5?=
- =?utf-8?B?SkY0RGUxRWI3Y24xc3F2Y1BTNmFQMkF3eWMybjJMai9DQ1ovVGFzdkpoM0lw?=
- =?utf-8?B?V25FcUp4MG52Q3hiV3pEbGZJU1cwM2tQdEtyWEkweGx6bEhrVWpzNEYzSmdU?=
- =?utf-8?B?ZS9ZTVZaWVpvQjk2cUxtWjgzRVljL2tuaE5vZzNWc0NZV0M5TkRWenNSc3M1?=
- =?utf-8?Q?/ufX1AaUapeVarCn5FKz0EyESC1uFKcq?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:00:10.9832
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 331681aa-8fa0-4cab-838d-08dcb17179c5
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF00036F43.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB8773
+Mime-Version: 1.0
+References: <20240229025759.1187910-1-stevensd@google.com> <ZnXHQid_N1w4kLoC@google.com>
+ <87cymtdc0t.fsf@draig.linaro.org>
+Message-ID: <ZqpRwCKxVkDmmDB3@google.com>
+Subject: Re: [PATCH v11 0/8] KVM: allow mapping non-refcounted pages
+From: Sean Christopherson <seanjc@google.com>
+To: "Alex =?utf-8?Q?Benn=C3=A9e?=" <alex.bennee@linaro.org>
+Cc: David Stevens <stevensd@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Yu Zhang <yu.c.zhang@linux.intel.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
+	Zhi Wang <zhi.wang.linux@gmail.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 31 Jul 2024 12:02:57 +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.103 release.
-> There are 440 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 02 Aug 2024 09:59:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Jul 31, 2024, Alex Benn=C3=A9e wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+>=20
+> > On Thu, Feb 29, 2024, David Stevens wrote:
+> >> From: David Stevens <stevensd@chromium.org>
+> >>=20
+> >> This patch series adds support for mapping VM_IO and VM_PFNMAP memory
+> >> that is backed by struct pages that aren't currently being refcounted
+> >> (e.g. tail pages of non-compound higher order allocations) into the
+> >> guest.
+> >>=20
+> >> Our use case is virtio-gpu blob resources [1], which directly map host
+> >> graphics buffers into the guest as "vram" for the virtio-gpu device.
+> >> This feature currently does not work on systems using the amdgpu drive=
+r,
+> >> as that driver allocates non-compound higher order pages via
+> >> ttm_pool_alloc_page().
+> >>=20
+> >> First, this series replaces the gfn_to_pfn_memslot() API with a more
+> >> extensible kvm_follow_pfn() API. The updated API rearranges
+> >> gfn_to_pfn_memslot()'s args into a struct and where possible packs the
+> >> bool arguments into a FOLL_ flags argument. The refactoring changes do
+> >> not change any behavior.
+> >>=20
+> >> From there, this series extends the kvm_follow_pfn() API so that
+> >> non-refconuted pages can be safely handled. This invloves adding an
+> >> input parameter to indicate whether the caller can safely use
+> >> non-refcounted pfns and an output parameter to tell the caller whether
+> >> or not the returned page is refcounted. This change includes a breakin=
+g
+> >> change, by disallowing non-refcounted pfn mappings by default, as such
+> >> mappings are unsafe. To allow such systems to continue to function, an
+> >> opt-in module parameter is added to allow the unsafe behavior.
+> >>=20
+> >> This series only adds support for non-refcounted pages to x86. Other
+> >> MMUs can likely be updated without too much difficulty, but it is not
+> >> needed at this point. Updating other parts of KVM (e.g. pfncache) is n=
+ot
+> >> straightforward [2].
+> >
+> > FYI, on the off chance that someone else is eyeballing this, I am worki=
+ng on
+> > revamping this series.  It's still a ways out, but I'm optimistic that =
+we'll be
+> > able to address the concerns raised by Christoph and Christian, and may=
+be even
+> > get KVM out of the weeds straightaway (PPC looks thorny :-/).
+>=20
+> I've applied this series to the latest 6.9.x while attempting to
+> diagnose some of the virtio-gpu problems it may or may not address.
+> However launching KVM guests keeps triggering a bunch of BUGs that
+> eventually leave a hung guest:
 
-All tests passing for Tegra ...
+Can you give v12 (which is comically large) a spin?  I still need to do mor=
+e
+testing, but if it too is buggy, I definitely want to know sooner than late=
+r.
 
-Test results for stable-v6.1:
-    10 builds:	10 pass, 0 fail
-    26 boots:	26 pass, 0 fail
-    116 tests:	116 pass, 0 fail
+Thanks!
 
-Linux version:	6.1.103-rc3-gdbbffaaee188
-Boards tested:	tegra124-jetson-tk1, tegra186-p2771-0000,
-                tegra194-p2972-0000, tegra194-p3509-0000+p3668-0000,
-                tegra20-ventana, tegra210-p2371-2180,
-                tegra210-p3450-0000, tegra30-cardhu-a04
-
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Jon
+https://lore.kernel.org/all/20240726235234.228822-1-seanjc@google.com
 
