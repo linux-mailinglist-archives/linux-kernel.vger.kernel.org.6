@@ -1,159 +1,139 @@
-Return-Path: <linux-kernel+bounces-269745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39409943659
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:20:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7214794365F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE1D1C2203A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:20:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0562B20DDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BAE1805E;
-	Wed, 31 Jul 2024 19:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A2C14A0AE;
+	Wed, 31 Jul 2024 19:24:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OhtFmPsQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vFQWGtr3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qptgQ/oR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B371E4AEF2;
-	Wed, 31 Jul 2024 19:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E49C219FF;
+	Wed, 31 Jul 2024 19:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453652; cv=none; b=mW+k7lBothHAWPSLFeukNWHdY2NnjGWTV6qyDN+qTP72Loe6u76+Gyrp/EeubyCQf3TfDA2LbbM5bYHwDUYCouWoiPQaw+0vEYkl7uPzbB7mdi4TA92JwtcdgCh5yRxbGi64O0KL5SiHIVNB6/cX6Wm0Hg9SPiLOVe7RRgwl94k=
+	t=1722453880; cv=none; b=hbPVedevfmgrgEFyskoE0Nznc6x7154QDluc+ukJXb+SDTsJ0V/ObkICoHiGJUU+12gG/CLS44ggZZMJIMM3IE7+qxeovX1Vpj0CYFczH9tUrq8wA363vh5vBPJJCMQvd5nxeOyRNFnwl2pspBWH89v+EuD4ib7jxOSU9K+lRRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453652; c=relaxed/simple;
-	bh=3vlZh7oIEQknitawqvcIdP4Ha/MTmQlIDb2iz8qWHAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=r161cuwEplTmWtDsk+JRPi2yO4EgoBLflOQa5xrA0eu7/iRx+1kDj1uLw4WX5MjczSpDN6BZdjy3V1fgSscC7082+3eeFCWzj6zTxJaXeBzK+bK47gtuLE0MUfGEWqi4PnY+BPduz61UTNpBjZxvezliTX414YYFn4HGVv6DflE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OhtFmPsQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vFQWGtr3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722453648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBWp6z1FDSPauVV3TyzMDnpYP6fyDl5cR9HjFp5gCAs=;
-	b=OhtFmPsQNktXTwVYmbBT9ux2YeS5nW2Tmi4JiRotAIRzkU/4KbTsEWfpCSCssXQxU6bQxE
-	sgCbu3oz//LEOWUz+TZ99iWlfe5S6NIFEfvgaFpWGXXB7XFA6qjiiBz+a9x7rIfTdDXgc2
-	YXWrwQ9WT5fatXqiS9wgzDitPToUilpDagWFV22zGcGzuCRkQndgf35zDnsdpSqteqRxl0
-	jX3L+zNkKjqgT8bd6YqlQV/rH98Vnk646ucFuAoyKDbJ0MnGTFhwh06hClj5vJN0NVMjq7
-	9RBrnM9rsVVaL8ecxH3c62EMcML/xqDYzQQ3r6STlqFklpiOBFOElYAVD923gw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722453648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zBWp6z1FDSPauVV3TyzMDnpYP6fyDl5cR9HjFp5gCAs=;
-	b=vFQWGtr3ZY7DGMXxdVvzdpi/awXKj4weTGpq61AzG4wvXVzFM1eYfuf64VLCUNSEanoAb6
-	xnxacPjei41zP3Cw==
-To: Li Huafei <lihuafei1@huawei.com>, peterz@infradead.org, mingo@redhat.com
-Cc: acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- lihuafei1@huawei.com
-Subject: Re: [PATCH] perf/x86/intel: Restrict period on Haswell
-In-Reply-To: <20240729223328.327835-1-lihuafei1@huawei.com>
-References: <20240729223328.327835-1-lihuafei1@huawei.com>
-Date: Wed, 31 Jul 2024 21:20:48 +0200
-Message-ID: <875xsl5pwv.ffs@tglx>
+	s=arc-20240116; t=1722453880; c=relaxed/simple;
+	bh=xJcYHFAV6fd0/f7i19pUzRNKY45o0cGNlETGkISQBdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=UzU82R9+jIqdim3k59p7KXBqVGwoiFQ0fy/YStu58/rKvsh/N1qTHGhSwHkMJQfcAnSe2LDp0eI3izd1tgvTWzGuPELIrzvxJ4TSqv34z4VlxMgElmyK5FvosIzgQkkDOq+APcU0jb4qEsoqHOpjmOeYebgM5ohtzxxsu5HGAfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qptgQ/oR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8753DC116B1;
+	Wed, 31 Jul 2024 19:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722453879;
+	bh=xJcYHFAV6fd0/f7i19pUzRNKY45o0cGNlETGkISQBdw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=qptgQ/oRY3DOV92eDsBfXPhe7VkWMxBBglAeqdsS9k8s5Qp3rofN9NttRIztmVQRY
+	 aErHHAgWEQ/BlqS+JeDi55hcMYR9+JBcaz/v1DiMkOOCbvzdNuMgNlmmR4NbU6CWaL
+	 yQfTq8+hj353uKoX4/+gkl+h16E5TN71GKQJ2Rzr3pgIVyrO+aanm5ncasi7628LWo
+	 7QZ9SodTGk8zmSRyGuA86JlEAcNZ428LlPXu7HU9hGAfL6XX9JhKJ8xk/4riv000s/
+	 FnaZxdp96T2yZdYnmIFB88sweOWaA8UbJPln2Lo6AyIMGpPUL5UzS7XDEmumddAl4V
+	 j6gdmYpM499ng==
+Date: Wed, 31 Jul 2024 14:24:36 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Joseph Jang <jjang@nvidia.com>
+Cc: shuah@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/1] selftest: drivers: Add support its msi hwirq checking
+Message-ID: <20240731192436.GA76176@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240530012727.324611-2-jjang@nvidia.com>
 
-On Tue, Jul 30 2024 at 06:33, Li Huafei wrote:
-> On my Haswell machine, running the ltp test cve-2015-3290 concurrently
-> reports the following warnings:
->
->   perfevents: irq loop stuck!
->   WARNING: CPU: 31 PID: 32438 at arch/x86/events/intel/core.c:3174 intel_pmu_handle_irq+0x285/0x370
->   CPU: 31 UID: 0 PID: 32438 Comm: cve-2015-3290 Kdump: loaded Tainted: G S      W          6.11.0-rc1+ #3
->   ...
->   Call Trace:
->    <NMI>
->    ? __warn+0xa4/0x220
->    ? intel_pmu_handle_irq+0x285/0x370
->    ? __report_bug+0x123/0x130
->    ? intel_pmu_handle_irq+0x285/0x370
->    ? __report_bug+0x123/0x130
->    ? intel_pmu_handle_irq+0x285/0x370
->    ? report_bug+0x3e/0xa0
->    ? handle_bug+0x3c/0x70
->    ? exc_invalid_op+0x18/0x50
->    ? asm_exc_invalid_op+0x1a/0x20
->    ? irq_work_claim+0x1e/0x40
->    ? intel_pmu_handle_irq+0x285/0x370
->    perf_event_nmi_handler+0x3d/0x60
->    nmi_handle+0x104/0x330
->    ? ___ratelimit+0xe4/0x1b0
->    default_do_nmi+0x40/0x100
->    exc_nmi+0x104/0x180
->    end_repeat_nmi+0xf/0x53
->    ...
->    ? intel_pmu_lbr_enable_all+0x2a/0x90
->    ? __intel_pmu_enable_all.constprop.0+0x16d/0x1b0
->    ? __intel_pmu_enable_all.constprop.0+0x16d/0x1b0
->    perf_ctx_enable+0x8e/0xc0
->    __perf_install_in_context+0x146/0x3e0
->    ? __pfx___perf_install_in_context+0x10/0x10
->    remote_function+0x7c/0xa0
->    ? __pfx_remote_function+0x10/0x10
->    generic_exec_single+0xf8/0x150
->    smp_call_function_single+0x1dc/0x230
->    ? __pfx_remote_function+0x10/0x10
->    ? __pfx_smp_call_function_single+0x10/0x10
->    ? __pfx_remote_function+0x10/0x10
->    ? lock_is_held_type+0x9e/0x120
->    ? exclusive_event_installable+0x4f/0x140
->    perf_install_in_context+0x197/0x330
->    ? __pfx_perf_install_in_context+0x10/0x10
->    ? __pfx___perf_install_in_context+0x10/0x10
->    __do_sys_perf_event_open+0xb80/0x1100
->    ? __pfx___do_sys_perf_event_open+0x10/0x10
->    ? __pfx___lock_release+0x10/0x10
->    ? lockdep_hardirqs_on_prepare+0x135/0x200
->    ? ktime_get_coarse_real_ts64+0xee/0x100
->    ? ktime_get_coarse_real_ts64+0x92/0x100
->    do_syscall_64+0x70/0x180
->    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->    ...
+[+cc Thomas]
 
-Please trim the backtrace to something useful:
+On Wed, May 29, 2024 at 06:27:27PM -0700, Joseph Jang wrote:
+> Validate there are no duplicate ITS-MSI hwirqs from the
+> /sys/kernel/irq/*/hwirq.
+> 
+> One example log show 2 duplicated MSI entries in the /proc/interrupts.
+> 
+> 150: 0 ... ITS-MSI 3355443200 Edge      pciehp
+> 152: 0 ... ITS-MSI 3355443200 Edge      pciehp
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#backtraces
+I don't know how ITS-MSI works, so I don't know whether it's an error
+that both entries mention 3355443200.
 
-> My machine has 32 physical cores, each with two logical cores. During
-> testing, it executes the CVE-2015-3290 test case 100 times concurrently.
->
-> This warning was already present in [1] and a patch was given there to
-> limit period to 128 on Haswell, but that patch was not merged into the
-> mainline.  In [2] the period on Nehalem was limited to 32. I tested 16
-> and 32 period on my machine and found that the problem could be
-> reproduced with a limit of 16, but the problem did not reproduce when
-> set to 32. It looks like we can limit the cycles to 32 on Haswell as
-> well.
+3355443200 == 0xc8000000, which looks like it could be an address or
+address/data pair or something, and it does make sense to me that if
+two devices write the same MSI address/data, it should result in the
+same IRQ.
 
-It looks like? Either it works or not.
+It seems like maybe this is a generic issue, i.e., if this is a
+problem, maybe it would affect *other* kinds of MSI too, not just
+ITS-MSI?
 
->  
-> +static void hsw_limit_period(struct perf_event *event, s64 *left)
-> +{
-> +	*left = max(*left, 32LL);
-> +}
+> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
+> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
+> 
+> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
+> Signed-off-by: Joseph Jang <jjang@nvidia.com>
+> ---
+>  tools/testing/selftests/drivers/irq/Makefile  |  5 +++++
+>  .../selftests/drivers/irq/its-msi-irq-test.sh | 20 +++++++++++++++++++
+>  2 files changed, 25 insertions(+)
+>  create mode 100644 tools/testing/selftests/drivers/irq/Makefile
+>  create mode 100755 tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
+> 
+> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
+> new file mode 100644
+> index 000000000000..569df5de22ee
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/Makefile
+> @@ -0,0 +1,5 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +TEST_PROGS := its-msi-irq-test.sh
+> +
+> +include ../../lib.mk
+> diff --git a/tools/testing/selftests/drivers/irq/its-msi-irq-test.sh b/tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
+> new file mode 100755
+> index 000000000000..87c88674903f
+> --- /dev/null
+> +++ b/tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
+> @@ -0,0 +1,20 @@
+> +#!/bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +if [ -z "$(grep "ITS-MSI" /proc/interrupts)" ]; then
+> +	echo "SKIP: no ITS-MSI irq."
+> +	exit 4
+> +fi
+> +
+> +# Get ITS-MSI hwirq list from /sys/kernel/irq/*/hwirq.
+> +its_msi_irq_list=$(grep "ITS-MSI" /sys/kernel/irq/*/chip_name |
 
-And why do we need a copy of nhm_limit_period() ?
+Is there a limit on the size of the "*" expansion here?
 
-Thanks,
-
-        tglx
+> +				   awk -F ':' '{print $1}' |
+> +				   xargs -I {} sh -c 'cat $(dirname {})/hwirq' | sort -V)
+> +
+> +# Check whether could find duplicated its-msi hwirq or not.
+> +if [ -n "$(echo "$its_msi_irq_list" | uniq -cd)" ]; then
+> +	echo "ERROR: find duplicated its-msi hwirq."
+> +	exit 1
+> +fi
+> +
+> +exit 0
+> -- 
+> 2.34.1
+> 
 
