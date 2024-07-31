@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-269330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C69431A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:04:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E606E9431A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFC92836DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:04:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 168F21C217F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0881B29CF;
-	Wed, 31 Jul 2024 14:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F267D1B14FF;
+	Wed, 31 Jul 2024 14:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="QzII+EPz"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NO92i3ba"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCB71EB56
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10F39539A
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722434679; cv=none; b=V60rmVvHDi+vSygckuRy9ZF1BoW5FeeW2yRMQusityolnKLX9yz6FVBuMQOXkyNI41UK7OtM7kDd3unhPKjHHdmOajSk13wuSY9QAHEkXgZMdT//lKl6dBObtXgoAwFurpygRJIPFpJNiy0pfq+yzyF/AuzjXFz2lYxTo/VNSUg=
+	t=1722434813; cv=none; b=lA4Gj7lmEnw0ca47TpD+FBjjVsLV53XMvG5zzru0HpX7M/WKiihdbGL2/DUWwlqTDcWwFhBd+7AUKHKohmBqfzTuYUHY82qbUcqO5zgRapi99y996cs+K0x4cUj6EidY6TgP3YnUBAgO2MCB91LJ6YCSzWvSO97l1PEeXxAy8yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722434679; c=relaxed/simple;
-	bh=oLh2PxgOYmR7+7wdleZ5fx2VuAWo/Sel6Gx9WfF2ndM=;
+	s=arc-20240116; t=1722434813; c=relaxed/simple;
+	bh=q8JDhzw1q14rcU2eDiP5P4zsSAZiF0l7N+t/47LwLJk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X+oKTPZVa6PfHYFV0Mvle/F8IWYCXdmUCTy2a9Da56uAffAzf/YiPB/EE4tFB5y6J7rwfIwICF3MjvBrw/8Ls0dAqigkPSTPMs0267Skv1jeTo9XB/FWM2W6SH/eQBP4U88JUTBlQgMuhf27ydLQ3a0ExsaAqdKtkmr2vH39JJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=QzII+EPz; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-79f19f19059so352795185a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:04:37 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0wTROxZhuOpqslnZRWEQeLEomRCAUZ6dapCeO8MoA3laBIyT1E4218vX/lNZk/DHo5HFM+eSmchIwl0Vo6VKaHtD9TNV8ufOSZF4ezsShK6JpjK5MZFKqESrEOxLjYpK2c0oTl08f2SmEpqmY1vnuerhB7Z+VCeSCqJf37xtq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NO92i3ba; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so793653766b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:06:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1722434677; x=1723039477; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1722434808; x=1723039608; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a33CO1uHADQ6sgXZQtQE5aEWMq1kTwgBEoJ/8BHTMSw=;
-        b=QzII+EPz+AeFudTuY5beEx0D520OPezVkRv61O6qXkLQ77Ff3MNsRsre3F7cjSGyV/
-         +kCO+lbXZrA86yryJnN9QCLfP9QGqeRQWnUzdV7tVKvs+ivYGORBpOok7Easx7uqFyfA
-         OOPWSXwm5UB4dBMN6OUwsAd2Tzrz6nJ8KpUn/fU8RG1T2FFDoM9ox/4QyB/BMHHBcgtH
-         KV+wjbcgc7y9IjmXp+LfOMD5fTgaJ+pGAtUiiR5iWNDCNYTsigwVzyilM6v5COnQIFuy
-         +BgudmFKJinUZuT4ePH3BMbKNxy740NO3/sPwat3NM89hUQrCVMb6te0fQdmQs8hIJf9
-         Lzfg==
+        bh=iiCWmhfzk6S/TaIu1raeuLKKW+Pt/lXO0Cdo8S2lGSw=;
+        b=NO92i3baxC6ix8aHSr66Tj2EyW+gOOqGIPIux6DLbbIfGgZ1iy/DiaM2Ssqkc1UqMR
+         ZipNMQ6O5u7/IQh33w0Wncv9ZLmEV3HInHjD3YiCOJSBs/uW93CVGK0Y8DKIFSPmwKOh
+         0Z3bJSnCP6SmxvSf6aPWhGQcEsLU4AWgZLFGqZK1DUkhLjsOAFC3pHrDf+N19WL2WrsE
+         LupZ7iI97pYv977uyM0kuPrpuBAjksfSu6Vqz7/keTsv7+zZTKc76DCSNpxsLNvcuVCl
+         oiEZzwaYllBmf4I5s9hthzNkxJtGkfnuQZYYVJXXL5nMlKTPGS2of5lrOSOfRzXRyG9W
+         Gf1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722434677; x=1723039477;
+        d=1e100.net; s=20230601; t=1722434808; x=1723039608;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a33CO1uHADQ6sgXZQtQE5aEWMq1kTwgBEoJ/8BHTMSw=;
-        b=r6hZHBPVE865ToOX1sFQv2ePcJT6PhyktSMDF6XTHi6Bo5AjF7SfD3ovcU4Cqp9EK3
-         gmsH3tn80A6V7eesX5Bxd8tmrGzVjaUdBPHgB90q+x2z43mx+vR3ClVqYA8/HRTPQTln
-         EarhU0shrUTsLkBv2kIC56t2CUBYKo1exdxhUXkRPo6Ym+ThKb6sUsfs+xAOP6MRYf50
-         rL4JqrlJhuxoug8iekEcj1Yo1kn+dbsqKaSZv9T2F5E5aM81hkGhuDyLzare4Ewf/e/o
-         xYNa6GPHfZHo3Y/YARpFC80urPW5Cpwzezq+cnx3g3eGSp8QV3t9hamCO6bCdpuwibUQ
-         6lRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOWQCWbto79JJuHhR888soqHMeniRbN1+A2sjoO7oyCgLG2rs5kmLqQ/JW5sZEAmFjC0FT0yMV9wdA2bKe/G7IOrUnz1zddmvNxDr6
-X-Gm-Message-State: AOJu0YycTToRXwDj6P/CMdfFRgo3enaKbmx3JImu8wrOaHMqJPKd+xWz
-	4Bh3bP1uLjpOzWgMxjZb2+pNgT5pHMcjEDjtafmyoTGvDM6iQ88nXTnDS72g31Ledu1AlMJ87tM
-	=
-X-Google-Smtp-Source: AGHT+IHuaIxXiz9/F7tFd8xWAfJBmkTsfbtztGBLPFY0TGFZMDZboiTLKwe6io78Jn8mrFkjnOLl9g==
-X-Received: by 2002:a05:620a:8016:b0:79d:9102:554a with SMTP id af79cd13be357-7a1e5223dddmr1848014585a.14.1722434676796;
-        Wed, 31 Jul 2024 07:04:36 -0700 (PDT)
-Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1ddea0c2asm645807185a.27.2024.07.31.07.04.36
+        bh=iiCWmhfzk6S/TaIu1raeuLKKW+Pt/lXO0Cdo8S2lGSw=;
+        b=E83jYgpS2uSjE4AVGDuUAInxtS0AouUuC/teC05R67hJ96NkKlIBKGrtV2pvgrYaT1
+         i8wPHz6ZYk3etW/tGgpb/+YslrJMMdglY9X9VyeX4Q9cdOM5z+BxU/bmBsf7em89Nhcx
+         ZU1yjg7bJbkfdwMlKuoY87slN9AtbH3MK8M8L2EFCNs2nSg9AL4+k5erg1daVFfiPwzm
+         r1Y4eSK1QjzTEg04Nt2IwNOwuzGuRMROMazAB64HKLd1QFLkQcmrkuY0BerWm0mIKbZr
+         WkHpzVMjGI/iiHFhMX9u4AmxpMbz3Z3lfxtEg3IFqE+87tUl3EtBPTkkIrdf26FzqCux
+         48gQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdRsti/iuxxj+8nC1PbPJgh7gEYkXsgdR1boomBcinwBmr550GfD+QSwYytLRdDKRgamM/RcjNBBBT6Rqg+hrorUkhBXQvenz/P8mN
+X-Gm-Message-State: AOJu0Yy0ug19OpWvHTfgxdSU8ydq9PELl7TbXIp5/T0/z0IZixuDyEHA
+	z0N5MaixfhOFhUJIGW67BMTL67eZsUiJTkdisY0p6KZx6N4I9EJG9Lty/BHW9nRSPqfP4jS7p7L
+	P
+X-Google-Smtp-Source: AGHT+IHn//8PA3qWG5PYwATGweOXZKyZpymiXCsWnIlYuDT0RkCRBCSPXp+VM1B4/pN4RLLM2/G+xw==
+X-Received: by 2002:a17:907:3e1a:b0:a7a:c083:857b with SMTP id a640c23a62f3a-a7d4016427dmr972818666b.42.1722434808210;
+        Wed, 31 Jul 2024 07:06:48 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23d56sm772952866b.38.2024.07.31.07.06.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 07:04:36 -0700 (PDT)
-Date: Wed, 31 Jul 2024 10:04:33 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Oliver Neukum <oneukum@suse.com>
-Cc: Abhishek Tamboli <abhishektamboli9@gmail.com>,
-	gregkh@linuxfoundation.org, usb-storage@lists.one-eyed-alien.net,
-	linux-usb@vger.kernel.org, skhan@linuxfoundation.org,
-	dan.carpenter@linaro.org, rbmarliere@gmail.com,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
-Message-ID: <804a6d40-73a4-4af6-944b-95e9324d7429@rowland.harvard.edu>
-References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
- <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
- <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
- <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
+        Wed, 31 Jul 2024 07:06:47 -0700 (PDT)
+Date: Wed, 31 Jul 2024 16:06:46 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 11/19] printk: nbcon: Rely on kthreads for
+ normal operation
+Message-ID: <ZqpE9urpKZxv4Ks3@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-12-john.ogness@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,52 +85,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
+In-Reply-To: <20240722171939.3349410-12-john.ogness@linutronix.de>
 
-On Wed, Jul 31, 2024 at 11:15:28AM +0200, 'Oliver Neukum' via USB Mass Storage on Linux wrote:
-> Hi,
+On Mon 2024-07-22 19:25:31, John Ogness wrote:
+> Once the kthread is running and available
+> (i.e. @printk_kthreads_running is set), the kthread becomes
+> responsible for flushing any pending messages which are added
+> in NBCON_PRIO_NORMAL context. Namely the legacy
+> console_flush_all() and device_release() no longer flush the
+> console. And nbcon_atomic_flush_pending() used by
+> nbcon_cpu_emergency_exit() no longer flushes messages added
+> after the emergency messages.
 > 
-> On 30.07.24 19:56, Abhishek Tamboli wrote:
-> > On Tue, Jul 30, 2024 at 09:09:05AM +0200, Oliver Neukum wrote:
+> The console context is safe when used by the kthread only when
+> one of the following conditions are true:
 > 
-> > > 1. use a constant, where a constant is used
-> > I think you are suggesting that I should replace hard-coded values like the
-> > buffer size with named constants. For example:
-> > 
-> > #define BUF_SIZE 8
-> > unsigned char buf[BUF_SIZE];
+>   1. Other caller acquires the console context with
+>      NBCON_PRIO_NORMAL with preemption disabled. It will
+>      release the context before rescheduling.
 > 
-> Yes, but the constant we need to look at here is bl_len.
-> This is a variable needlessly.
+>   2. Other caller acquires the console context with
+>      NBCON_PRIO_NORMAL under the device_lock.
+> 
+>   3. The kthread is the only context which acquires the console
+>      with NBCON_PRIO_NORMAL.
+> 
+> This is satisfied for all atomic printing call sites:
+> 
+> nbcon_legacy_emit_next_record() (#1)
+> 
+> nbcon_atomic_flush_pending_con() (#1)
+> 
+> nbcon_device_release() (#2)
+> 
+> It is even double guaranteed when @printk_kthreads_running
+> is set because then _only_ the kthread will print for
+> NBCON_PRIO_NORMAL. (#3)
+> 
+> --- a/kernel/printk/printk.c
+> +++ b/kernel/printk/printk.c
+> @@ -4102,8 +4139,10 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+>  			 * that they make forward progress, so only increment
+>  			 * @diff for usable consoles.
+>  			 */
+> -			if (!console_is_usable(c, flags, true))
+> +			if (!console_is_usable(c, flags, true) &&
+> +			    !console_is_usable(c, flags, false)) {
 
-The code in ms_scsi_read_capacity() is written that way to be consistent 
-with the sd_scsi_read_capacity() routine.  Or maybe it was just 
-copied-and-pasted, and then the variable's type was changed for no good 
-reason.
+This looks weird. nbcon console can't make progress when
+"write_atomic" is not implemented and the kthreads are not
+running.
 
-Replacing the variable with a constant won't make much difference.  The 
-compiler will realize that bl_len has a constant value and will generate 
-appropriate code anyway.  I think just changing the type is a fine fix.
+I should be:
 
-> > > 2. use the macros for converting endianness
-> > Can I use macros like cpu_to_le32 for converting the bl_num and bl_len values.
-> > Should I replace all instances of manual bitwise shifts with these macros?
-> 
-> Yes.
-> 
-> > For example:
-> > 
-> >      u32 bl_len = 0x200;
-> >      buf[0] = cpu_to_le32(bl_num) >> 24;
-> >      buf[4] = cpu_to_le32(bl_len) >> 24;
-> > 
-> > Is using cpu_to_le32 appropriate for the data format required by this
-> > device?
-> 
-> Well, the format is big endian. So, cpu_to_be32() will be required.
+			if (!((console_is_usable(c, flags, true)) ||
+			      (console_is_usable(c, flags, false) && printk_kthreads_running))) {
 
-Better yet, use put_unaligned_be32().  However, there's nothing really 
-wrong with the code as it stands.  It doesn't need to be changed now.
+That said. Do we really want to support nbcon consoles without
+@write_atomic() callback?
 
-Alan Stern
+It would make things easier when both callbacks are mandatory.
+
+>  				continue;
+> +			}
+>  
+>  			if (flags & CON_NBCON) {
+>  				printk_seq = nbcon_seq_read(c);
+
+Best Regards,
+Petr
 
