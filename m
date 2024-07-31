@@ -1,248 +1,127 @@
-Return-Path: <linux-kernel+bounces-269608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 264189434CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:12:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DD09434BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:10:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8922AB22289
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B079288C42
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 756B51BF308;
-	Wed, 31 Jul 2024 17:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE8F1BD4F0;
+	Wed, 31 Jul 2024 17:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m4qbGVlX"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9GytN5n"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A06B1BD504;
-	Wed, 31 Jul 2024 17:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC9A1A76A1
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 17:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722445865; cv=none; b=cU1IG/LrKrDlC5K3oKoJEpGjaG+OqJ3tmhN7ffmVq9TVClp/J5hy/CL5sUtUv+YQ+o+FAHD7nJcviEfOCLrNeB4VXXUbOI3xrm+PDBg2Hx6av6vARgAMfW1dq9yKahS61lSzguz0rNmbiBEX+oHqr6m/8LpuUzNPs5qj4Mx2+7Q=
+	t=1722445846; cv=none; b=p8wSYdWkm6lqxArbfd1ZvSQCISYsgcmkdTZeEU3bu7pfmnZjQjkLFtsVODmGtnUhjX/AoWWbAOkCGUsNeIeGP8xsLYq7HwfYD6LMtB2zOp+JucZ+ESgs58f78RSAfggNGDqCPNvjkKGN2YF/dizZVk2tIguahYKzoA1MO1bEckU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722445865; c=relaxed/simple;
-	bh=Dp1xqNmWjeEfyr8ivz3G2b03eCcQ102npwLXFy/YWnY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=o9U9+CkWe5YV0Vd1A07TMOgTWjjoVtPUPPKJcY4KT5KNRW1Ky6iDuCswH8/mDBAJISzz6YHx0Mmvpa6TOkMXg92ZDOTetsieBR52TGG/ypom+pWVX0QS5QUDPLwKOQex4KqYKeTB7Yg3v9+EhqvC/sT+ZL8xpeO1KxtlPlfxwqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m4qbGVlX; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VHAwKd090501;
-	Wed, 31 Jul 2024 12:10:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722445858;
-	bh=S0EVF2J3bxH4Rux65iS8ruAQxaG26bK/wUdfuAFiVo4=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=m4qbGVlXXQY965jCLoT3MZ1/YvKFkavB1VbWwULyiBc1hcytgZ7IIxTiGFvPRloh8
-	 vQnSpAVHkrEe3nACDgg5ToGqg1gw8xWNYrHAbEo9vsGDOl21QQqcHHgu/u2CCsHpeU
-	 oaqWOCkxUjLN7LZn+PkacgA66GCYEVjBJrHehLwU=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VHAwWW109094
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 12:10:58 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 12:10:58 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 12:10:58 -0500
-Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VHAVgT036362;
-	Wed, 31 Jul 2024 12:10:54 -0500
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-Date: Wed, 31 Jul 2024 22:40:32 +0530
-Subject: [PATCH v3 6/9] arm64: dts: ti: Split
- k3-j784s4-j742s2-evm-common.dtsi
+	s=arc-20240116; t=1722445846; c=relaxed/simple;
+	bh=DG9Dsrk5EbbKUqbUuC/SLfjiErZu07ODQyjNbdBQFKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LpXTpuwmwiTetxG5SiiSLSg4VXN98Ht30QqfnW6Va2NyntA3PCJCrFr+1NFfH9imwnlDYDyfGUOItIzK4o3HKE9qyh1/4cx3zuvB+kdApdQqq2DI+/aK5TLmzjBp0jGp3t/CO7EbqRojatNL6QGvihOWro3ILthz+bPux9Ra5YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9GytN5n; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64b417e1511so47899687b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:10:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722445844; x=1723050644; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DG9Dsrk5EbbKUqbUuC/SLfjiErZu07ODQyjNbdBQFKM=;
+        b=h9GytN5nwBTYfLXPQS/7MfFx/Cisp2sMrLJQJHORcLHLB3LaWRGe8atIvjIb2BG4Od
+         S+k1zVVAH4auKS8k7XHNNZgjih1qWtIe7u3DhPzSsI9/WSZ/lOj1Kab516vOqPokh71P
+         8hFxOS7Ll/qZf+N7NTIa3uinkuq7kdXLNc850HPZa7yz0AiWMk9zpF2mVdc2P4YM5skg
+         IVaH0X/YNKrcMA/JQiF2FKUgjpoMCr+dC2aQVHcFbM0K+tdZxPQGfYiLjmAbDDpqdHpx
+         jlL54W9gDSJvebhlOzhU77UrbQsDOqEjoIqUVRptdv7EW/9IF6LAhaG+Yad4Vj8jd70d
+         TE7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722445844; x=1723050644;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DG9Dsrk5EbbKUqbUuC/SLfjiErZu07ODQyjNbdBQFKM=;
+        b=p/9TZ7DdR/O6U9fqFIkQ+6v2NuVyywDkuS1O+Wydwcaak29CKUB+WtTsELoMQR0MI9
+         xO9bzMLbLi0WZcfvrE7j478qC5B/kPFDUoQBVKMuGYDP0W5mCHUIdeF43xaCU/tOkSw5
+         78U6HsHXtAWwDmeuc1Cd4mYNPpoLaZeEQEkyX3vythTIgnQL9oVfKs9sFo41s/1/fVf3
+         4O4/lg2pm4G/eR9QuZVDdpGKZwerzxmRy/Je4gCDdg5xBShwE09Kzc+A6b1nFKBHPead
+         lI0ZUNIMnZ4I3VTxJ6zJtH3fc9xx4x/gbX/ibIqsr/TWFh+Pouro3Qg4H/ti0Bs4VpUY
+         k60Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVS88syK/W02fo1xkvGXsxdpTbAf+G2Pm5kjxvJhGjjMHbjiAbwRsoQD9iwBPYQKmdmJ5JgV2RG4S1Ayzg7d2np5R00pOzLOJXBtDgJ
+X-Gm-Message-State: AOJu0YzJiPmAE08r+NMElYkczGYC1ZD9Ba7QfQox9XC6Xq8rKclbuom2
+	QAVElnfM+Vtz/b9PmU6bBofIYF7S+lgxNLYoBzvQT3qzErc5t8meoSONmVAbWdtGHtMMAY7p9Ci
+	oyFA1bthEvZ/5YoFNltBM46RBnnA=
+X-Google-Smtp-Source: AGHT+IFCW0KBtutTT9yo+ccyb6xdU+bDoCL8vXjw62S5YbYqpKMe64BaRn6jyq9lgwFDPjqYD3SPVCD48sQtrx7IcUk=
+X-Received: by 2002:a81:8805:0:b0:64b:44b4:e1a with SMTP id
+ 00721157ae682-67a0769c813mr157755737b3.26.1722445844349; Wed, 31 Jul 2024
+ 10:10:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240731-b4-upstream-j742s2-v3-6-da7fe3aa9e90@ti.com>
-References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
-In-Reply-To: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Manorit Chawdhry
-	<m-chawdhry@ti.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722445831; l=3971;
- i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
- bh=Dp1xqNmWjeEfyr8ivz3G2b03eCcQ102npwLXFy/YWnY=;
- b=zqkjf/ntxkB2RWXxq2+tCnvBJZBixmFo5VYVDX995HSltebQsEfm4f1xXpGcOFCVAfNigi+Dx
- iKJuhr509S6BUcoxcc9Qn8l/PHc9xOi2Ux/ilyY5qw6fmSFoyKYRGZK
-X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
- pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240726185825.142733-1-computersforpeace@gmail.com>
+ <D32OADQF733D.3CVS3ZRPEBL2O@kernel.org> <454deacb-88cc-4ab0-80b4-006d863a56d2@linaro.org>
+ <CAN8TOE8-9=P7p8Tkc+5kG5Sqan+RAWAc7k2VH-p5W9hR-bb_Xg@mail.gmail.com> <0685ef1b-b0e1-4c53-94dc-4d5de5be8e94@linaro.org>
+In-Reply-To: <0685ef1b-b0e1-4c53-94dc-4d5de5be8e94@linaro.org>
+From: Brian Norris <computersforpeace@gmail.com>
+Date: Wed, 31 Jul 2024 10:10:32 -0700
+Message-ID: <CAN8TOE-YGSRxjrMNqHWfP7RYKUnPs-V=d_FFJfZtquPedEe+dA@mail.gmail.com>
+Subject: Re: [PATCH] mtd: spi-nor: micron-st: Add n25q064a WP support
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Michael Walle <mwalle@kernel.org>, linux-mtd@lists.infradead.org, 
+	Miquel Raynal <miquel.raynal@bootlin.com>, Pratyush Yadav <pratyush@kernel.org>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-k3-j784s4-j742s2-evm-common.dtsi will be included in k3-j742s2-evm.dts
-at a later point so move j784s4 related stuff to k3-j784s4-evm.dts
+Hi Tudor,
 
-Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j784s4-evm.dts           | 49 ++++++++++++++++++++++
- .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   | 42 -------------------
- 2 files changed, 49 insertions(+), 42 deletions(-)
+On Wed, Jul 31, 2024 at 1:51=E2=80=AFAM Tudor Ambarus <tudor.ambarus@linaro=
+.org> wrote:
+> A shasum on the SFDP dump would be good to have some sort of integrity
+> assurance, e.g.:
+> sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-index e3730b2bca92..2543983b7fe7 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-@@ -5,4 +5,53 @@
-  * EVM Board Schematics: https://www.ti.com/lit/zip/sprr458
-  */
- 
-+/dts-v1/;
-+
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "k3-j784s4.dtsi"
- #include "k3-j784s4-j742s2-evm-common.dtsi"
-+
-+/ {
-+	compatible = "ti,j784s4-evm", "ti,j784s4";
-+	model = "Texas Instruments J784S4 EVM";
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		bootph-all;
-+		/* 32G RAM */
-+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
-+		      <0x00000008 0x80000000 0x00000007 0x80000000>;
-+	};
-+
-+	reserved_memory: reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+
-+		c71_3_dma_memory_region: c71-dma-memory@ab000000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xab000000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		c71_3_memory_region: c71-memory@ab100000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0xab100000 0x00 0xf00000>;
-+			no-map;
-+		};
-+	};
-+};
-+
-+&mailbox0_cluster5 {
-+	mbox_c71_3: mbox-c71-3 {
-+		ti,mbox-rx = <2 0 0>;
-+		ti,mbox-tx = <3 0 0>;
-+	};
-+};
-+
-+&c71_3 {
-+	status = "okay";
-+	mboxes = <&mailbox0_cluster5 &mbox_c71_3>;
-+	memory-region = <&c71_3_dma_memory_region>,
-+			<&c71_3_memory_region>;
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index ffa38f41679d..068ceed4ea15 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -4,17 +4,7 @@
-  *
-  * EVM Board Schematics: https://www.ti.com/lit/zip/sprr458
-  */
--
--/dts-v1/;
--
--#include <dt-bindings/net/ti-dp83867.h>
--#include <dt-bindings/gpio/gpio.h>
--#include "k3-j784s4.dtsi"
--
- / {
--	compatible = "ti,j784s4-evm", "ti,j784s4";
--	model = "Texas Instruments J784S4 EVM";
--
- 	chosen {
- 		stdout-path = "serial2:115200n8";
- 	};
-@@ -31,14 +21,6 @@ aliases {
- 		ethernet1 = &main_cpsw1_port1;
- 	};
- 
--	memory@80000000 {
--		device_type = "memory";
--		bootph-all;
--		/* 32G RAM */
--		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
--		      <0x00000008 0x80000000 0x00000007 0x80000000>;
--	};
--
- 	reserved_memory: reserved-memory {
- 		#address-cells = <2>;
- 		#size-cells = <2>;
-@@ -180,18 +162,6 @@ c71_2_memory_region: c71-memory@aa100000 {
- 			reg = <0x00 0xaa100000 0x00 0xf00000>;
- 			no-map;
- 		};
--
--		c71_3_dma_memory_region: c71-dma-memory@ab000000 {
--			compatible = "shared-dma-pool";
--			reg = <0x00 0xab000000 0x00 0x100000>;
--			no-map;
--		};
--
--		c71_3_memory_region: c71-memory@ab100000 {
--			compatible = "shared-dma-pool";
--			reg = <0x00 0xab100000 0x00 0xf00000>;
--			no-map;
--		};
- 	};
- 
- 	evm_12v0: regulator-evm12v0 {
-@@ -1133,11 +1103,6 @@ mbox_c71_2: mbox-c71-2 {
- 		ti,mbox-rx = <0 0 0>;
- 		ti,mbox-tx = <1 0 0>;
- 	};
--
--	mbox_c71_3: mbox-c71-3 {
--		ti,mbox-rx = <2 0 0>;
--		ti,mbox-tx = <3 0 0>;
--	};
- };
- 
- &mcu_r5fss0_core0 {
-@@ -1217,13 +1182,6 @@ &c71_2 {
- 			<&c71_2_memory_region>;
- };
- 
--&c71_3 {
--	status = "okay";
--	mboxes = <&mailbox0_cluster5 &mbox_c71_3>;
--	memory-region = <&c71_3_dma_memory_region>,
--			<&c71_3_memory_region>;
--};
--
- &tscadc0 {
- 	pinctrl-0 = <&mcu_adc0_pins_default>;
- 	pinctrl-names = "default";
+# sha256sum /sys/bus/spi/devices/spi0.0/spi-nor/sfdp
+2030d04758164491e414e1d55e16b04803f5653fb591fda50991c728c49c1c37
+/sys/bus/spi/devices/spi0.0/spi-nor/sfdp
 
--- 
-2.45.1
+> Some test in mtd-utils would be good indeed, but narrative shall be also
+> ok for now. What I fear is that people just use just a flash lock/unlock
+> all sectors test, which is not ideal. We shall also test locking on some
+> sectors from the top and bottom, to verify the correctness of the TB
+> bit, check if BP3 is working by locking some sectors in that area.
+> Haven't looked at the BP area in a while, but you get my point, I feel
+> testing is not ideal and a guideline would help.
+>
+> If you ever feel that you can spend some time on this, help is appreciate=
+d.
 
+OK. It's possible, but no guarantees. I think in the distant past
+(when I was still maintaining some of this area), I actually started
+to write such a mtd-utils test, but I never cleaned it up and
+submitted it. For one, a proper exhaustive test would be rather slow,
+as we'd want to test all the possible protection ranges, and then
+erase/write/read the whole thing. Some rough measurement on my system
+shows about a minute for erasing the whole chip, 25 seconds for
+writing, and 7 seconds for reading -- which means with 5 bits of
+protection range (4 bits, plus top/bottom bit) we have 32 combinations
+* ~1.5 minutes test =3D 48 minutes. That's ... doable I guess, and it
+could probably be optimized a bit to reduce the number of erase
+cycles. But it's not great.
+
+Anyway, maybe I'll play with it.
+
+Brian
 
