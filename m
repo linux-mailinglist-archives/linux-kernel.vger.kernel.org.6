@@ -1,115 +1,159 @@
-Return-Path: <linux-kernel+bounces-268541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4744B9425F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:47:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE1C9425FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:48:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C661F24EF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:47:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC703B24746
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B17D54FB5;
-	Wed, 31 Jul 2024 05:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398D04965B;
+	Wed, 31 Jul 2024 05:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Coa763Pn"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="VGPVHHaR"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2AD946F;
-	Wed, 31 Jul 2024 05:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677819478;
+	Wed, 31 Jul 2024 05:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722404827; cv=none; b=dySvlG+kjSbkHMhlq/bcBSotBrsiQAm5ozWsWIgR4Fekhnlj+E48o2p2dKiVMocktpDqNU35K8NGuP9W3sL3iohivkfvdQKsSALzXxgEty0pUhrDf93lkyK+trqhHdpY6LfEoLR2SSYyCn7UJZrecYXZ1wvwxanYj9FuOBX1BNo=
+	t=1722404899; cv=none; b=dRUP6VJDsBv/Gf1MZpIfwRnBeQtBVQAKwY2IbDuHUZVwAFrIbSCFJdnEqspqQ2uI+V9bBst963pMf6krpxU542qPU2q/2vKrZPMJZjhRUfruB7gK2OH2HkD2qgLOHfMbpjpxgv1fZ7EQIF8iOFz+xS5AuaPm+uCefMPrE6kXKGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722404827; c=relaxed/simple;
-	bh=Kwxp/YTQ0HmCswgUSlLDLxSYZxOvCISDnJ6zLcutNPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FrYKVhYZUvMBzu0NK9Tt1KQvLgcjzGUlnBpMVk1XgwKE9CGPoD9OiYXpyNUYdQn4u9TLuuZuDWBlGelV0G1oPF4LyokszSZFRoaHPLRPQcLvnnTeiWCU0u7uXgbjSbpFAuLothfaxaxxEOgvVbLN9C2eegqtQjbe5WwG8GcK3X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Coa763Pn; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3CC661C0005;
-	Wed, 31 Jul 2024 05:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722404822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6LtOVFsotfqSyGMean6WbQS7hiGP/orLvSJEUh7UOIA=;
-	b=Coa763PnFeZECscuoZYH2LLSSrXkyOsCLNnGt6P/mqmS2vFo3JoyR3v6ZFjXpiGXAiQ7XQ
-	A0dTUs8Oy+HoshPcFK+e1xm5Rp218cPhwAxVDty9ztQxE5G2NlFpTjBV9miFjjesAFrO7y
-	mfgo/8i18C4O8i5MdQ43LC/B2+ByDOAObd6gFwAgXBMuhBIgjtePxfqIYqHy/t3hAidA5z
-	rtBVP8CoAzJbFwRuz+OFP7RpA9fu6lOa2HqAnxWeXeIa3vuR6x16ZFBn7RRgcwAJooYcGy
-	AJa4wAfA/LZ9DKxXPBgZ5URHYEafdodNyCvHFdVjXfBJ3EVXujlUKSkb26JKRQ==
-Message-ID: <91d18e79-b8fd-4ad1-95eb-dab888f58a2f@bootlin.com>
-Date: Wed, 31 Jul 2024 07:47:00 +0200
+	s=arc-20240116; t=1722404899; c=relaxed/simple;
+	bh=5i1diTmBKjYyCLnQOf+ri6jmBCWXGwxZ5KYGgt/oFI8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iafFKG9Uu4yrd3NKTuxYM7xyFauNoj9lY5Xp9f3RP7cEnBDPVpuf8lfaoNjp+bSLlNnpYaRvxAGZscpy9hiVpcA3nc8xm9NFmapmUpiq7+9vhsLilX9oWHfBJoSR3h8Fz1x2Re3yL/SYQQRyNMaG0HU4fM7TuqIgoa06L9x+VBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=VGPVHHaR; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id C0A891F9CA;
+	Wed, 31 Jul 2024 07:48:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1722404888;
+	bh=8J1RbUtAvYpjqNj4JPt8vwUV1t4mknX4y89IaxZ4hSo=; h=From:To:Subject;
+	b=VGPVHHaRR6OmcuxcXvBpidOJXPFNc6Fqq4MSxtwHCjxQJcXoGQ9gVpGefQKyfW/YL
+	 c28ObH8ZGyNCiUDa35dr1z73gYUzg2ONulNI5br2YsfTkaDfrzeXM0LCrbXXzqbHPQ
+	 /3yAyV2f9d1GfOYsga6RR6k5ONwUGZGdcRBzkb+GKn8YF2J5vm05vFBqPi6OcyQag0
+	 7RNWS8FZZwnR57xMv5cuLtXhcdJYX8SzIydlAA9w04TcmM7Qy7DNV31OMv9VbJc3e7
+	 /lUSfrjdb8JffbMtNS0iz8BMaltvdfN3xX1+5dCxLjBaMoNZIw2wCPKfvg17qy7bvZ
+	 fBsiTqGjURWng==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH v1] arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regulator on
+Date: Wed, 31 Jul 2024 07:48:04 +0200
+Message-Id: <20240731054804.6061-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next v3 2/3] selftests/bpf: convert test_dev_cgroup to
- test_progs
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>, ebpf@linuxfoundation.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Alan Maguire <alan.maguire@oracle.com>, bpf@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240730-convert_dev_cgroup-v3-0-93e573b74357@bootlin.com>
- <20240730-convert_dev_cgroup-v3-2-93e573b74357@bootlin.com>
- <06f7a546-aec8-4804-8f80-1b7000229120@linux.dev>
-Content-Language: en-US
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
-In-Reply-To: <06f7a546-aec8-4804-8f80-1b7000229120@linux.dev>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
 
-Hello Martin,
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-On 7/31/24 02:34, Martin KaFai Lau wrote:
-> On 7/30/24 4:59 AM, Alexis Lothoré (eBPF Foundation) wrote:
->> +static void test_read(const char *path, char *buf, int buf_size,
->> +              int expected_ret)
->> +{
->> +    int ret, fd;
->> +
->> +    fd = open(path, O_RDONLY);
->> +
->> +    /* A bare open on unauthorized device should fail */
->> +    if (expected_ret < 0) {
->> +        ASSERT_EQ(fd, expected_ret, "open file for read");
-> 
-> One nit. expected_ret is actually expected_errno. It just happens -EPERM is -1,
-> so testing fd against expected_errno works here but is confusing to read. How
-> about separating the fd and errno test in the access rejected case. First test
-> for fd == -1 and then test for errno == expected_errno.
+This reverts commit 3935fbc87ddebea5439f3ab6a78b1e83e976bf88.
 
-Ah you are right, I mixed up things here, I'll fix it.
+CTRL_SLEEP_MOCI# is a signal that is defined for all the SoM
+implementing the Verdin family specification, this signal is supposed to
+control the power enable in the carrier board when the system is in deep
+sleep mode. However this is not possible with Texas Instruments AM62
+SoC, IOs output buffer is disabled in deep sleep and IOs are in
+tri-state mode.
 
-> Please also carry Stanislav's Ack in patch 1 and 3 in the next respin.
+Given that we cannot properly control this pin, force it to be always
+high to minimize potential issues.
 
-Sure, will do.
+Fixes: 3935fbc87dde ("arm64: dts: ti: k3-am62-verdin-dahlia: support sleep-moci")
+Cc: <stable@vger.kernel.org>
+Link: https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1361669/am625-gpio-output-state-in-deep-sleep/5244802
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+ .../boot/dts/ti/k3-am62-verdin-dahlia.dtsi    | 22 -------------------
+ arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi    |  6 -----
+ 2 files changed, 28 deletions(-)
 
-Thanks,
-
-Alexis
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
+index e8f4d136e5df..9202181fbd65 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
+@@ -43,15 +43,6 @@ simple-audio-card,cpu {
+ 			sound-dai = <&mcasp0>;
+ 		};
+ 	};
+-
+-	reg_usb_hub: regulator-usb-hub {
+-		compatible = "regulator-fixed";
+-		enable-active-high;
+-		/* Verdin CTRL_SLEEP_MOCI# (SODIMM 256) */
+-		gpio = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
+-		regulator-boot-on;
+-		regulator-name = "HUB_PWR_EN";
+-	};
+ };
+ 
+ /* Verdin ETHs */
+@@ -193,11 +184,6 @@ &ospi0 {
+ 	status = "okay";
+ };
+ 
+-/* Do not force CTRL_SLEEP_MOCI# always enabled */
+-&reg_force_sleep_moci {
+-	status = "disabled";
+-};
+-
+ /* Verdin SD_1 */
+ &sdhci1 {
+ 	status = "okay";
+@@ -218,15 +204,7 @@ &usbss1 {
+ };
+ 
+ &usb1 {
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+ 	status = "okay";
+-
+-	usb-hub@1 {
+-		compatible = "usb424,2744";
+-		reg = <1>;
+-		vdd-supply = <&reg_usb_hub>;
+-	};
+ };
+ 
+ /* Verdin CTRL_WAKE1_MICO# */
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+index 359f53f3e019..5bef31b8577b 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+@@ -138,12 +138,6 @@ reg_1v8_eth: regulator-1v8-eth {
+ 		vin-supply = <&reg_1v8>;
+ 	};
+ 
+-	/*
+-	 * By default we enable CTRL_SLEEP_MOCI#, this is required to have
+-	 * peripherals on the carrier board powered.
+-	 * If more granularity or power saving is required this can be disabled
+-	 * in the carrier board device tree files.
+-	 */
+ 	reg_force_sleep_moci: regulator-force-sleep-moci {
+ 		compatible = "regulator-fixed";
+ 		enable-active-high;
 -- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.39.2
 
 
