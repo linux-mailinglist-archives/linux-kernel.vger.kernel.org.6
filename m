@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-269353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8465C9431E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4099431E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D2BD287215
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4C21C24345
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64601B29AF;
-	Wed, 31 Jul 2024 14:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56096193079;
+	Wed, 31 Jul 2024 14:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMTMrE3F"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mc8UuMdW"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C749A193079;
-	Wed, 31 Jul 2024 14:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C991B1406
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722435625; cv=none; b=CCtoHwLhIky/rZYe4wJdOOWWZRlVaw0s2tnEFEuWZWsVwUPSPpNEkuGqyj1qymkGgJlixYp/s7iShUCYekDEGqsGJdPPr7NI1AirOxtG02Ba+Svf4Yc9KU64L4WnxVgBD1eutq8/l5tNgqPOawZb6LqcZjr/7suBB1z8iUL6SQk=
+	t=1722435660; cv=none; b=jAH7Lb7KGUC7MfapT/EizwSSzcQSYjdB/j47/pbGNgfaLHMAWLPfGVrip3Vsj0u8b1dhyax7y1l81D0k6i23uNCniGUMMG+mOzRQBzJqZHN1snTguq1btTYw01+5uPiHe9wVBa6LWurKl+tPkD1JBWFum/ywZj3M98XkqYkZLFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722435625; c=relaxed/simple;
-	bh=FgBETMnfB48dT/wLYRZDMPpRX1/Ps+MPcaDACxaPp/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mn47K9KO+/h/jGhLqIW9gmvFae2UxFQi8VFy2vi7zW85nrFze1y3+I3W9GuBsdUbxFf2teO52chNnavie6O81cFRtOw9EvDmdVDY07Px+cLvN5RFpes+KcDYM9u/gWuUppE7xLZ9yHyqR0CgyoTf7TXrusXlT/ydx6tz5LhzQMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMTMrE3F; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc4fccdd78so40661445ad.2;
-        Wed, 31 Jul 2024 07:20:23 -0700 (PDT)
+	s=arc-20240116; t=1722435660; c=relaxed/simple;
+	bh=ytvkCSgLKlKnXnV2Hzh3Ns/9Jy05DqiloCwaHB1hxzI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tJUzNLxOudvqcGYyQWYRng0CgR1yE/I7Bo80zvOlGqF5hTVWJhSaCjztWRt7NNsm6Ljl/dFmNzq+t0GdAN3jfHilBN8cZHdUSWndXlYqsmrZ111WDFt8McDIOjt0y5YtRa48YUuAbG0ZaUTmqEAL0m4W4/Y03V5IbUqbtR68O7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mc8UuMdW; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-36887ca3da2so2701536f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722435623; x=1723040423; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uw1THOXbTOFDexNRb9fnp+dVI7+0XGtcfzpjBj/YxcY=;
-        b=PMTMrE3FHeEItK+mtEaF6TMvC+P4md+G5T8O9BiZ/Jn8TJMjKTMWHyNgE0qz9ayUHT
-         uxZSxLL1xC0BJccCoAkpTfBk4ryCyxHoRJgT+AKhLhGkAUdtL6FxZEF+YQGloNMrbJI1
-         Sx6UFz+T7ENPXnzSM9AXPA67UjmVlC8km5ogTUwUtv7+ahunnIWpIV7vJ1wmhmaPothJ
-         DeEBwwvdn3sHx6HAvHPS9YOIhbaZFKCDtWej//iuFcT4oQryIHHzHq+fsNegfwdHHWK1
-         BUcxfKKDVSko+c4sU32dSG00B4A6O+Mw7Jsq87h0B0lweRrJa6eAY3sph7F1Dpe6/1dE
-         g+9g==
+        d=linaro.org; s=google; t=1722435657; x=1723040457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gSqOaofEO5POC+mJL3PUsgfCrvCN5J6u6ZevBKAvHRU=;
+        b=Mc8UuMdWXpeCBj8ossOCq4MFPvTwTLnDaOpM+OFH16yUN/iPVDln12fg1w+E/8ittV
+         f34384WqFIgYZqUq6a1csuMGq5Djz8AZP0l9GgPZQVE818v6qVg3fT+uraKXbr/l6lH0
+         tnOyoC946e37iCNa25sFqsXAIhjyuHWiPk6UHTGTHk8ehAjXXcj45Vg+si4fLYNIZ9s9
+         2b1lcQ6zBjk3Zfyf9WpSRD/H8HFkK/ftaACUmB3d0xmQSgTgUh3CcwS+UD57hWBkKvwM
+         2sP+G/qQw6s1K/CQP4/oeYFAcBTOeQTvOqXzmf9/Uua/82DeGbe6zKYjdmFRwSK3xge5
+         eW4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722435623; x=1723040423;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uw1THOXbTOFDexNRb9fnp+dVI7+0XGtcfzpjBj/YxcY=;
-        b=bcjhE64e/hRpiEITkEBIJHMdVfX52It8i9gj0bLc+9oFG0ElbB4e5jf7hMZrRIcT97
-         i6ChmRzKmYAqSLh+2K9yTsPX7wovgzRmwcTv6OLmwCLHYGe2HM2goatTuCrWqVCWnmau
-         FZLHqU/nwS5qV3T7j2LCsC5MnQbhupatVWkxQgzWmArKB++WAZQPR3q5bkNzR+T6knsY
-         Yck1yQqGIWyx0cq8/Hds9nQnO8d3vt9xKYScLzF1go/sifNi43fdBNlipa8SkC/AxVP0
-         5YVj8okPdMTdh+dBi9yRkhxN5s3G4CaPbCfnJN4cAo+SrmBKh7ELq89sTixhBZFWrDlz
-         07oQ==
-X-Forwarded-Encrypted: i=1; AJvYcCViZDWUmmdpYja81CGix+L6xM+mdz01M9nQiC2VXil/qZMZFVAkYTLFuyV07EY+t6NhxbhmbuLi5WHIum5Dqa4NGLSkbnM6fbybXC84Qm4O7j6SYxio4oATmAB+ohfVaILltJmCE8M+
-X-Gm-Message-State: AOJu0YyScpsaoxkFbVHmCfip1g+QxCQ4R2tgE3SWrGHitAQRDE28jYXi
-	E88Ho/7+3o1ZorjOQLDNgr6Ajs/r5XbH2ok6dwHknKMJCLLRkr5m
-X-Google-Smtp-Source: AGHT+IGVkeS1mYhhDeBXqjn+i0znnj8l7EMNV4/oVTC292vIFcl3BLHy6ZJObUPfDmjC5rlb5sSJjg==
-X-Received: by 2002:a17:902:ecc7:b0:1fb:8a0e:76f9 with SMTP id d9443c01a7336-1ff04868db9mr129107295ad.39.1722435622643;
-        Wed, 31 Jul 2024 07:20:22 -0700 (PDT)
-Received: from joaog-nb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fc5e81sm120867425ad.278.2024.07.31.07.20.19
+        d=1e100.net; s=20230601; t=1722435657; x=1723040457;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gSqOaofEO5POC+mJL3PUsgfCrvCN5J6u6ZevBKAvHRU=;
+        b=rKNMxz2xiH5Ed1FG9V62eggF2TBluCcvyPH756HUOiBV3+bE+anSTLos4nBSN81znK
+         GZJJqsJ7zkecGLaG9l6qAx7xmo6W5Bdyc7eu4aJnRNfL5fbWnBELLNtO9FTelTW5wBVX
+         chFN46AsZBOFgbZspSrHU5wnbIaLjb06cWttucgUL/jsQ6FWmFpPmuTXbOFNAxKxjvwB
+         D+yaLuTGLUb33ax9wheOvFWEzcsTILpoI5SaszfSdXmNqQsvbbsG0dHfJ/VPqbP1II0d
+         4YdI+/3NGengbXyBOTjrpkI5GQFj9XBHzvxeB4tBD5R8g/+IzmgMD4s9I+Z1fgKn5X/y
+         yg4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVa1Aznla9PXHfGTSScB0P3qbCIixpfRg5/s5+VEKsD6sS1XS/1AgCvVMYZTTEvBZn6o/757Qmil61PVn5isrD8s1COCeKtuRUFb5+w
+X-Gm-Message-State: AOJu0Yz3vLBcvegiyAM3WLmUWfLoCSotFv6J4rT8JA7RHiMT62y+FskY
+	niIrwFZOEfQiJXWUd7/DzKnG1vcFOH0Zc/a5yxvEBtSzBT4CzS1sD6sZIMXDOz8=
+X-Google-Smtp-Source: AGHT+IF8cZAUIzwi2BdvTEoaAp7Ev+Xb+P31buCoG7nk0jYrnENn135x7PpsFSsL2dKIwhDwVzjNAw==
+X-Received: by 2002:adf:e30d:0:b0:368:87ca:3d85 with SMTP id ffacd0b85a97d-36b5cf00512mr8502223f8f.29.1722435657126;
+        Wed, 31 Jul 2024 07:20:57 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c02b1sm17292561f8f.9.2024.07.31.07.20.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 07:20:22 -0700 (PDT)
-Date: Wed, 31 Jul 2024 11:20:16 -0300
-From: =?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] iio: adc: ads1119: Fix IRQ flags
-Message-ID: <20240731142016.6immldd7i4y7v2iw@joaog-nb>
-References: <20240731140657.88265-1-francesco@dolcini.it>
+        Wed, 31 Jul 2024 07:20:56 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Mateusz Majewski <m.majewski2@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20240723163311.28654-1-semen.protsenko@linaro.org>
+References: <20240723163311.28654-1-semen.protsenko@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
+Message-Id: <172243565547.42492.1072397968108986657.b4-ty@linaro.org>
+Date: Wed, 31 Jul 2024 16:20:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731140657.88265-1-francesco@dolcini.it>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Wed, Jul 31, 2024 at 04:06:57PM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
-> 
-> Remove IRQF_TRIGGER_FALLING flag from irq request, this should come from
-> the platform firmware and should not be hard-coded into the driver.
-> 
-> Add IRQF_ONESHOT flag to the irq request, the interrupt should not be
-> re-activated in interrupt context, it should be done only after the
-> device irq handler run.
->
 
-Reviwed-by: João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com>
+On Tue, 23 Jul 2024 11:33:10 -0500, Sam Protsenko wrote:
+> Add a constant for TMU PCLK clock. It acts simultaneously as an
+> interface clock (to access TMU registers) and an operating clock which
+> makes TMU IP-core functional.
+> 
+> 
+
+Applied, thanks!
+
+[1/2] dt-bindings: clock: exynos850: Add TMU clock
+      https://git.kernel.org/krzk/linux/c/01ce1bf22adc0d09d906319787091ce784cb9914
+[2/2] clk: samsung: exynos850: Add TMU clock
+      https://git.kernel.org/krzk/linux/c/79b918aa997acd5066c7962502b1daaae76b6911
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
