@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-269145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91817942E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF307942E28
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F2F28748F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:23:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766B7287531
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DAF1B1506;
-	Wed, 31 Jul 2024 12:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E801B1B012E;
+	Wed, 31 Jul 2024 12:21:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="X5VS8V5P"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rzfkowe2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116CA1B0111;
-	Wed, 31 Jul 2024 12:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3831F1AD9F8
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722428541; cv=none; b=Oxh3JU4eCK7xhlFURcnmhZMzlOC+cZDOH50wbAyiXGxl/b91l5ACK8X7zqZM/0P5MZzlFNcICeYHMDFzuaPLInejP6uHLsovhJg8dMKEIrClTh3fsFSxN4iRZTC8mgz1R9o0cfvOsxQa4NtkrY1TMSzwU3AwZNzENBtD83HYuJ4=
+	t=1722428476; cv=none; b=QXPsJmgP+dKKwueVe7622pAecAW1X3bzu+uyDOhKj1u2eH7mLpjr2psho5UuOGpLMyBHZ2ZNaGHxJsFcLJrkPTO00py56NgyFhM45WsV9+uN6sNODlk4lreqW5HVgq/CBXoeMbOoWB+LlrjzZeq+XMQULNE6e8i5y3kjtxhN//8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722428541; c=relaxed/simple;
-	bh=zYXPutPkojh64QN6h2f7s9rj66jDFKJuMW5LLhTwP58=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Dzp1meOd2Cc1fa9XwjWNY0D9Lu6DFa413x/47qi3/0k1dK9kUpLSGRjmg/qZ9PdrxCXH8wr7Nt8x6VpiAwOdxYSgD4D+sZh8YvP/3GXYygs0YNixTNmOa+KTdLGljF0wh1vQYP2OKbrpm1hQ5gBM39tRERdYTe/I+5DPYUWdMxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=X5VS8V5P; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1722428539; x=1753964539;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zYXPutPkojh64QN6h2f7s9rj66jDFKJuMW5LLhTwP58=;
-  b=X5VS8V5P6qavfLmg99pw1rjs0205kx+CelKUAZ5CA2mHh+jt1Iqi2edA
-   RC5FYaeqG3iR6/s6hHoj0nGNteMZVjdEtz7f+z4Xc/vaZrINssnHYdCOO
-   aUzETRbpYbPhC+4vSuAhuU+VG9yJlZ3AQy39FjmtZlej+aC0HgrZGWbyR
-   GLthIRx9e37VQ7zjAGkYoALJ6uVOZ9JeMwTCvSAaotrcreIZmhVqiggaU
-   V1aM0n+p3/jcy3qyx9DgLQbItUsh1rE02aVw/bzcYLAw3N7/mWERIsceA
-   g71/LrCYoQS2w/yFtALGT+NXwv/+qUr04tE9UlR75Xxzf0tapVIASLLaj
-   A==;
-X-CSE-ConnectionGUID: AIleQELqRp26Glt8PxcTqg==
-X-CSE-MsgGUID: NfBj7p3pQyidZ8enO5Juaw==
-X-IronPort-AV: E=Sophos;i="6.09,251,1716220800"; 
-   d="scan'208";a="24150851"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 31 Jul 2024 20:22:17 +0800
-IronPort-SDR: 66aa1e88_F1cIb0N4fD8OkZPcfzH2lfg/gWf928bQi5lMMrw8UU26Dm4
- xdlGWVdUOORFJy1c31RS9lPsxYsX942Nct0F0GQ==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Jul 2024 04:22:48 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Jul 2024 05:22:16 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH 2/2] scsi: ufs: Add HCI capabilities sysfs group
-Date: Wed, 31 Jul 2024 15:20:51 +0300
-Message-Id: <20240731122051.2058406-3-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240731122051.2058406-1-avri.altman@wdc.com>
-References: <20240731122051.2058406-1-avri.altman@wdc.com>
+	s=arc-20240116; t=1722428476; c=relaxed/simple;
+	bh=l1LspisWQQdp97UiLG2RIp87QcdG17vt7kG5xRkEdjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3EZNuMp6QbokL6dieYyV3rkveOdQEvuL/o1CGpUjPNlT6mxuy3J7MPazgi7nWQuZgMBLALtp5HuF4vRKb4mnCIt+ESbzmRQveaczvYQgL/+uBD7/X4eE/xqZxV/OjHE+aGhqseSiw6fxWWlNpvxA48lIy6+89J/fe5wAusxFs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rzfkowe2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722428473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4v7hdRCoEPujGr8jK0JqsH11PIwi+iIoAMYv6jnJbDo=;
+	b=Rzfkowe2dpfdncQGsUEHEEsu0F9QD48gqzUWmYUiNXBnfiPPjFIrp1K/aeSUh2EtIE/mMx
+	rchPUUhJdBVf7TrBFQQvI6eVF+LjM2UgeenKRAd4Q0/FpWqdmp5J5eJUV5ItwZCDkLBuuC
+	5m1SqZzPS3+GjxgnUi5faMVa9AHuIF0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-452-QNNGEfMfNBWqurKlxIlLVw-1; Wed,
+ 31 Jul 2024 08:21:10 -0400
+X-MC-Unique: QNNGEfMfNBWqurKlxIlLVw-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C18E1954226;
+	Wed, 31 Jul 2024 12:21:08 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.39.194.74])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A868C1955D42;
+	Wed, 31 Jul 2024 12:21:04 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	James Houghton <jthoughton@google.com>,
+	stable@vger.kernel.org,
+	Peter Xu <peterx@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Muchun Song <muchun.song@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+Date: Wed, 31 Jul 2024 14:21:03 +0200
+Message-ID: <20240731122103.382509-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,131 +73,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-The standard register map of UFSHCI is comprised of several groups.  The
-first group (starting from offset 0x00), is the host capabilities group.
-It contains some interesting information, that otherwise is not
-available, e.g. the UFS version of the platform etc.
+We recently made GUP's common page table walking code to also walk hugetlb
+VMAs without most hugetlb special-casing, preparing for the future of
+having less hugetlb-specific page table walking code in the codebase.
+Turns out that we missed one page table locking detail: page table locking
+for hugetlb folios that are not mapped using a single PMD/PUD.
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
+Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
+hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
+page tables, will perform a pte_offset_map_lock() to grab the PTE table
+lock.
+
+However, hugetlb that concurrently modifies these page tables would
+actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
+locks would differ. Something similar can happen right now with hugetlb
+folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
+
+This issue can be reproduced [1], for example triggering:
+
+[ 3105.936100] ------------[ cut here ]------------
+[ 3105.939323] WARNING: CPU: 31 PID: 2732 at mm/gup.c:142 try_grab_folio+0x11c/0x188
+[ 3105.944634] Modules linked in: [...]
+[ 3105.974841] CPU: 31 PID: 2732 Comm: reproducer Not tainted 6.10.0-64.eln141.aarch64 #1
+[ 3105.980406] Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-4.fc40 05/24/2024
+[ 3105.986185] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 3105.991108] pc : try_grab_folio+0x11c/0x188
+[ 3105.994013] lr : follow_page_pte+0xd8/0x430
+[ 3105.996986] sp : ffff80008eafb8f0
+[ 3105.999346] x29: ffff80008eafb900 x28: ffffffe8d481f380 x27: 00f80001207cff43
+[ 3106.004414] x26: 0000000000000001 x25: 0000000000000000 x24: ffff80008eafba48
+[ 3106.009520] x23: 0000ffff9372f000 x22: ffff7a54459e2000 x21: ffff7a546c1aa978
+[ 3106.014529] x20: ffffffe8d481f3c0 x19: 0000000000610041 x18: 0000000000000001
+[ 3106.019506] x17: 0000000000000001 x16: ffffffffffffffff x15: 0000000000000000
+[ 3106.024494] x14: ffffb85477fdfe08 x13: 0000ffff9372ffff x12: 0000000000000000
+[ 3106.029469] x11: 1fffef4a88a96be1 x10: ffff7a54454b5f0c x9 : ffffb854771b12f0
+[ 3106.034324] x8 : 0008000000000000 x7 : ffff7a546c1aa980 x6 : 0008000000000080
+[ 3106.038902] x5 : 00000000001207cf x4 : 0000ffff9372f000 x3 : ffffffe8d481f000
+[ 3106.043420] x2 : 0000000000610041 x1 : 0000000000000001 x0 : 0000000000000000
+[ 3106.047957] Call trace:
+[ 3106.049522]  try_grab_folio+0x11c/0x188
+[ 3106.051996]  follow_pmd_mask.constprop.0.isra.0+0x150/0x2e0
+[ 3106.055527]  follow_page_mask+0x1a0/0x2b8
+[ 3106.058118]  __get_user_pages+0xf0/0x348
+[ 3106.060647]  faultin_page_range+0xb0/0x360
+[ 3106.063651]  do_madvise+0x340/0x598
+
+Let's make huge_pte_lockptr() effectively use the same PT locks as any
+core-mm page table walker would. Add ptep_lockptr() to obtain the PTE
+page table lock using a pte pointer -- unfortunately we cannot convert
+pte_lockptr() because virt_to_page() doesn't work with kmap'ed page
+tables we can have with CONFIG_HIGHPTE.
+
+Take care of PTE tables possibly spanning multiple pages, and take care of
+CONFIG_PGTABLE_LEVELS complexity when e.g., PMD_SIZE == PUD_SIZE. For
+example, with CONFIG_PGTABLE_LEVELS == 2, core-mm would detect
+with hugepagesize==PMD_SIZE pmd_leaf() and use the pmd_lockptr(), which
+would end up just mapping to the per-MM PT lock.
+
+There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
+folio being mapped using two PTE page tables.  While hugetlb wants to take
+the PMD table lock, core-mm would grab the PTE table lock of one of both
+PTE page tables.  In such corner cases, we have to make sure that both
+locks match, which is (fortunately!) currently guaranteed for 8xx as it
+does not support SMP and consequently doesn't use split PT locks.
+
+[1] https://lore.kernel.org/all/1bbfcc7f-f222-45a5-ac44-c5a1381c596d@redhat.com/
+
+Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic follow_page_mask code")
+Reviewed-by: James Houghton <jthoughton@google.com>
+Cc: <stable@vger.kernel.org>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/ufs/core/ufs-sysfs.c | 95 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
 
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index 7a264f8ef140..9ec3fc2f3af4 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -525,6 +525,100 @@ static const struct attribute_group ufs_sysfs_capabilities_group = {
- 	.attrs = ufs_sysfs_capabilities_attrs,
- };
- 
-+static ssize_t capabilities_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->capabilities);
-+}
-+
-+static ssize_t mcq_cap_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	if (hba->ufs_version < ufshci_version(4, 0))
-+		return -EOPNOTSUPP;
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->mcq_capabilities);
-+}
-+
-+static ssize_t version_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->ufs_version);
-+}
-+
-+static ssize_t ext_capabilities_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	if (hba->ufs_version < ufshci_version(4, 0))
-+		return -EOPNOTSUPP;
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_EXT_CONTROLLER_CAPABILITIES);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static ssize_t product_id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_PID);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static ssize_t man_id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_MID);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static DEVICE_ATTR_RO(capabilities);
-+static DEVICE_ATTR_RO(mcq_cap);
-+static DEVICE_ATTR_RO(version);
-+static DEVICE_ATTR_RO(ext_capabilities);
-+static DEVICE_ATTR_RO(product_id);
-+static DEVICE_ATTR_RO(man_id);
-+
-+static struct attribute *ufs_sysfs_ufshci_cap_attrs[] = {
-+	&dev_attr_capabilities.attr,
-+	&dev_attr_mcq_cap.attr,
-+	&dev_attr_version.attr,
-+	&dev_attr_ext_capabilities.attr,
-+	&dev_attr_product_id.attr,
-+	&dev_attr_man_id.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ufs_sysfs_ufshci_group = {
-+	.name = "ufshci_capabilities",
-+	.attrs = ufs_sysfs_ufshci_cap_attrs,
-+};
-+
- static ssize_t monitor_enable_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
+Third time is the charm?
+
+Retested on arm64 and x86-64. Cross-compiled on a bunch of others.
+
+v2 -> v3:
+* Handle CONFIG_PGTABLE_LEVELS oddities as good as possible. It's a mess.
+  Remove the size >= P4D_SIZE check and simply default to the
+  &mm->page_table_lock.
+* Align the PTE pointer to the start of the page table to handle PTE page
+  tables bigger than a single page (unclear if this could currently trigger).
+* Extend patch description
+
+v1 -> 2:
+* Extend patch description
+* Drop "mm: let pte_lockptr() consume a pte_t pointer"
+* Introduce ptep_lockptr() in this patch
+
+---
+ include/linux/hugetlb.h | 27 +++++++++++++++++++++++++--
+ include/linux/mm.h      | 22 ++++++++++++++++++++++
+ 2 files changed, 47 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index c9bf68c239a01..e6437a06e2346 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -944,9 +944,32 @@ static inline bool htlb_allow_alloc_fallback(int reason)
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+ 					   struct mm_struct *mm, pte_t *pte)
  {
-@@ -1508,6 +1602,7 @@ static const struct attribute_group ufs_sysfs_attributes_group = {
- static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_default_group,
- 	&ufs_sysfs_capabilities_group,
-+	&ufs_sysfs_ufshci_group,
- 	&ufs_sysfs_monitor_group,
- 	&ufs_sysfs_power_info_group,
- 	&ufs_sysfs_device_descriptor_group,
+-	if (huge_page_size(h) == PMD_SIZE)
++	unsigned long size = huge_page_size(h);
++
++	VM_WARN_ON(size == PAGE_SIZE);
++
++	/*
++	 * hugetlb must use the exact same PT locks as core-mm page table
++	 * walkers would. When modifying a PTE table, hugetlb must take the
++	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
++	 * PT lock etc.
++	 *
++	 * The expectation is that any hugetlb folio smaller than a PMD is
++	 * always mapped into a single PTE table and that any hugetlb folio
++	 * smaller than a PUD (but at least as big as a PMD) is always mapped
++	 * into a single PMD table.
++	 *
++	 * If that does not hold for an architecture, then that architecture
++	 * must disable split PT locks such that all *_lockptr() functions
++	 * will give us the same result: the per-MM PT lock.
++	 */
++	if (size < PMD_SIZE && !IS_ENABLED(CONFIG_HIGHPTE))
++		/* pte_alloc_huge() only applies with !CONFIG_HIGHPTE */
++		return ptep_lockptr(mm, pte);
++	else if (size < PUD_SIZE || CONFIG_PGTABLE_LEVELS == 2)
+ 		return pmd_lockptr(mm, (pmd_t *) pte);
+-	VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
++	else if (size < P4D_SIZE || CONFIG_PGTABLE_LEVELS == 3)
++		return pud_lockptr(mm, (pud_t *) pte);
+ 	return &mm->page_table_lock;
+ }
+ 
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index b100df8cb5857..f6c7fe8f5746f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2926,6 +2926,24 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+ 	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+ }
+ 
++static inline struct page *ptep_pgtable_page(pte_t *pte)
++{
++	unsigned long mask = ~(PTRS_PER_PTE * sizeof(pte_t) - 1);
++
++	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
++	return virt_to_page((void *)((unsigned long)pte & mask));
++}
++
++static inline struct ptdesc *ptep_ptdesc(pte_t *pte)
++{
++	return page_ptdesc(ptep_pgtable_page(pte));
++}
++
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++	return ptlock_ptr(ptep_ptdesc(pte));
++}
++
+ static inline bool ptlock_init(struct ptdesc *ptdesc)
+ {
+ 	/*
+@@ -2950,6 +2968,10 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+ {
+ 	return &mm->page_table_lock;
+ }
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++	return &mm->page_table_lock;
++}
+ static inline void ptlock_cache_init(void) {}
+ static inline bool ptlock_init(struct ptdesc *ptdesc) { return true; }
+ static inline void ptlock_free(struct ptdesc *ptdesc) {}
 -- 
-2.25.1
+2.45.2
 
 
