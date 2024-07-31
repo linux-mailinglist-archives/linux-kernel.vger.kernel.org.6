@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-268950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E58942B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98F9942B6D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB5F71C20B4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB6431C20B53
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD5F1AE841;
-	Wed, 31 Jul 2024 10:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3CA1AC432;
+	Wed, 31 Jul 2024 10:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="0/D5h1JS"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="hq4ReaKp"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2E51AD9FE;
-	Wed, 31 Jul 2024 10:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465271AB500
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722420125; cv=none; b=ud9F70cgb9mgaflHVtmhUOamKiUaxryO8t2fNJhsifF0cIvQVaUSgLPY/knWdRHBjCEZdr6B6uitgpIsnWAatL9O0+oHgOKNTSdkmrS/NHnF/jCg0LFxbWZMhOw0MD5AsFQrOESzOjyzrorgLIsQZr9vTHSB0H1zvFAO4ZfWn2M=
+	t=1722420115; cv=none; b=eJOBAThpIwn7t5Gucbt0+DjUuD3PguR+GqYUqe//3Tnpa4UqL6LxS3q7d875EWDoo2pSnyLhl9jAZqRiEt6xCFBhwFPzqG/4LIe0KG4uvUNxfm0wRvA1bXh/ZtcPQKN7BVdUi8xFUhRZTvSEs4tv74gbK4BL6hlMEQXZGDGBjwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722420125; c=relaxed/simple;
-	bh=mAWtuOtGuJESjzvI0NFmi3RwM42Z3P+0llBnuHalf3c=;
+	s=arc-20240116; t=1722420115; c=relaxed/simple;
+	bh=YtKGjVmznTaP+uG+xNnwv2w/Omxd9HhwCtFydYbreGI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CyQtNxuWyCCZ/jkK+qx6GvqHcN66MxMdjRgoapsMk93cWiaf4uBD1Imi1NWtpXTm7BWAqbKwSEozjP5VyMNqmo+ekFF4cRsiONqqcp7LudTZkzVjBgNJWxMCd9JQu7wFTJhZMOevp4o2XhY/vC1EPd/yBa4MXw22cxsQPepzGlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=0/D5h1JS; arc=none smtp.client-ip=185.226.149.37
+	 In-Reply-To:To:Cc; b=tW5y9WQ2nigKWdrE4ghYFN4AIn3saHOd1S9Pn0WI9ljMpZ8q6rtqHVh2biyJwbT/K7cuGQYzJl6olKxf2Svmf9so43yo0tMf8wfnx5OCOzYt/R/bQ8o1NxuFA8OvjoNATUOVGkOtHY5Tj7PMxYiW3OoK3ALWVvG0RTSYxZYHwHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=hq4ReaKp; arc=none smtp.client-ip=185.226.149.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
 Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 	(Exim 4.93)
 	(envelope-from <mhal@rbox.co>)
-	id 1sZ69T-009FBt-JG; Wed, 31 Jul 2024 12:01:47 +0200
+	id 1sZ69S-007DCX-Iq; Wed, 31 Jul 2024 12:01:46 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
 	s=selector1; h=Cc:To:In-Reply-To:References:Message-Id:
 	Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:Date:From;
-	bh=dUGV8QTuF9AS0RTuH4OvphKPP6WrA30a06ChdR64otk=; b=0/D5h1JSEg5eRuOWaToCRu+5dD
-	6oZbf1wp2s3gWT5ySDpKgMJaGoTcecLFLC4FN1eI3Hsyym6v+1FAyd/GzMotHVBRhH2Er0J/Ui9dv
-	22eouyRuh1DKNM190AS2wCsXEK0IwEqCXx1cz2JsbdCKs6hXDE6m23jp4OgvLzrAryyPjxtnJmB+T
-	A5+Bc2hO4Fq7Jnff4qeGmilOZzvKAY7Y0QeYYB4LX3Wnu/iQ4XtgSMRfumJOhLwGuktdEhHifzo11
-	Usz68JPIbJ6IYHshvnFGhrFe53g2tQb2VBopBuT+4htTUcn6tv3UFiTRdamjVarFW+1u/HyKX658z
-	gkhFrSvw==;
+	bh=li0JujrPpPpO/xAc8QiZ65BoP8NJpRd+3obwcRQIRXc=; b=hq4ReaKpol8TfZMlYO2sx0as2T
+	4/HM+rolpTYA0hM5S+Omf8YK59fi5SKD4Au51wAVINCKsUNeBDZe9IDC/H2cTgxJQYx8wXBT/ndnR
+	1kkqe94684FVC62clYfi58QhlnxT3HYbUyNDKYR5ufktz0pETW9xxHhYa/rCUyVQNgPH2+u36R0Up
+	VPLalKu48r5UtHWk1QmxNWjNa5Y+dT8b4QWITHAHv8hNWEPexraY4Gwdu0dr3xW9H3vL6hzR957ER
+	JVMaw4oAJWtyzmg05KQR5b2Egy3dF/qz/vBnlMLwOHAPZdQQUzV9LIywwuvVBd8RWuVLYv8w4evRB
+	BnEDcL7Q==;
 Received: from [10.9.9.73] (helo=submission02.runbox)
 	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
 	(envelope-from <mhal@rbox.co>)
-	id 1sZ69S-000213-WD; Wed, 31 Jul 2024 12:01:47 +0200
+	id 1sZ69R-00020n-OL; Wed, 31 Jul 2024 12:01:46 +0200
 Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
 	(Exim 4.93)
-	id 1sZ69H-006dO6-5w; Wed, 31 Jul 2024 12:01:35 +0200
+	id 1sZ69H-006dO6-W6; Wed, 31 Jul 2024 12:01:36 +0200
 From: Michal Luczaj <mhal@rbox.co>
-Date: Wed, 31 Jul 2024 12:01:28 +0200
-Subject: [PATCH bpf-next v2 3/6] selftests/bpf: Simplify inet_socketpair()
- and vsock_socketpair_connectible()
+Date: Wed, 31 Jul 2024 12:01:29 +0200
+Subject: [PATCH bpf-next v2 4/6] selftests/bpf: Honour the sotype of
+ af_unix redir tests
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-selftest-sockmap-fixes-v2-3-08a0c73abed2@rbox.co>
+Message-Id: <20240731-selftest-sockmap-fixes-v2-4-08a0c73abed2@rbox.co>
 References: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
 In-Reply-To: <20240731-selftest-sockmap-fixes-v2-0-08a0c73abed2@rbox.co>
 To: Andrii Nakryiko <andrii@kernel.org>, 
@@ -79,114 +79,44 @@ Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
  linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>
 X-Mailer: b4 0.14.1
 
-Replace implementation with a call to a generic function.
+Do actually test the sotype as specified by the caller.
 
+This picks up after commit 75e0e27db6cf ("selftest/bpf: Change udp to inet
+in some function names").
+
+Suggested-by: Jakub Sitnicki <jakub@cloudflare.com>
 Signed-off-by: Michal Luczaj <mhal@rbox.co>
 ---
- .../selftests/bpf/prog_tests/sockmap_listen.c      | 83 +---------------------
- 1 file changed, 2 insertions(+), 81 deletions(-)
+ tools/testing/selftests/bpf/prog_tests/sockmap_listen.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
-index bfbc217637d1..ea2faacd146d 100644
+index ea2faacd146d..7ed223df5f12 100644
 --- a/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
 +++ b/tools/testing/selftests/bpf/prog_tests/sockmap_listen.c
-@@ -1490,49 +1490,7 @@ static void test_unix_redir(struct test_sockmap_listen *skel, struct bpf_map *ma
- /* Returns two connected loopback vsock sockets */
- static int vsock_socketpair_connectible(int sotype, int *v0, int *v1)
- {
--	struct sockaddr_storage addr;
--	socklen_t len = sizeof(addr);
--	int s, p, c;
--
--	s = socket_loopback(AF_VSOCK, sotype);
--	if (s < 0)
--		return -1;
--
--	c = xsocket(AF_VSOCK, sotype | SOCK_NONBLOCK, 0);
--	if (c == -1)
--		goto close_srv;
--
--	if (getsockname(s, sockaddr(&addr), &len) < 0)
--		goto close_cli;
--
--	if (connect(c, sockaddr(&addr), len) < 0 && errno != EINPROGRESS) {
--		FAIL_ERRNO("connect");
--		goto close_cli;
--	}
--
--	len = sizeof(addr);
--	p = accept_timeout(s, sockaddr(&addr), &len, IO_TIMEOUT_SEC);
--	if (p < 0)
--		goto close_cli;
--
--	if (poll_connect(c, IO_TIMEOUT_SEC) < 0) {
--		FAIL_ERRNO("poll_connect");
--		goto close_acc;
--	}
--
--	*v0 = p;
--	*v1 = c;
--
--	return 0;
--
--close_acc:
--	close(p);
--close_cli:
--	close(c);
--close_srv:
--	close(s);
--
--	return -1;
-+	return create_pair(AF_VSOCK, sotype | SOCK_NONBLOCK, v0, v1);
- }
+@@ -1706,11 +1706,11 @@ static void inet_unix_redir_to_connected(int family, int type, int sock_mapfd,
+ 	int sfd[2];
+ 	int err;
  
- static void vsock_unix_redir_connectible(int sock_mapfd, int verd_mapfd,
-@@ -1681,44 +1639,7 @@ static void test_reuseport(struct test_sockmap_listen *skel,
+-	if (socketpair(AF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK, 0, sfd))
++	if (socketpair(AF_UNIX, type | SOCK_NONBLOCK, 0, sfd))
+ 		return;
+ 	c0 = sfd[0], p0 = sfd[1];
  
- static int inet_socketpair(int family, int type, int *s, int *c)
- {
--	struct sockaddr_storage addr;
--	socklen_t len;
--	int p0, c0;
--	int err;
--
--	p0 = socket_loopback(family, type | SOCK_NONBLOCK);
--	if (p0 < 0)
--		return p0;
--
--	len = sizeof(addr);
--	err = xgetsockname(p0, sockaddr(&addr), &len);
--	if (err)
--		goto close_peer0;
--
--	c0 = xsocket(family, type | SOCK_NONBLOCK, 0);
--	if (c0 < 0) {
--		err = c0;
--		goto close_peer0;
--	}
--	err = xconnect(c0, sockaddr(&addr), len);
--	if (err)
--		goto close_cli0;
--	err = xgetsockname(c0, sockaddr(&addr), &len);
--	if (err)
--		goto close_cli0;
--	err = xconnect(p0, sockaddr(&addr), len);
--	if (err)
--		goto close_cli0;
--
--	*s = p0;
--	*c = c0;
--	return 0;
--
--close_cli0:
--	xclose(c0);
--close_peer0:
--	xclose(p0);
--	return err;
-+	return create_pair(family, type | SOCK_NONBLOCK, s, c);
- }
+-	err = inet_socketpair(family, SOCK_DGRAM, &p1, &c1);
++	err = inet_socketpair(family, type, &p1, &c1);
+ 	if (err)
+ 		goto close;
  
- static void udp_redir_to_connected(int family, int sock_mapfd, int verd_mapfd,
+@@ -1758,7 +1758,7 @@ static void unix_inet_redir_to_connected(int family, int type, int sock_mapfd,
+ 	int sfd[2];
+ 	int err;
+ 
+-	err = inet_socketpair(family, SOCK_DGRAM, &p0, &c0);
++	err = inet_socketpair(family, type, &p0, &c0);
+ 	if (err)
+ 		return;
+ 
 
 -- 
 2.45.2
