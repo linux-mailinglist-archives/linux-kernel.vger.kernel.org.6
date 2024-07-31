@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-269797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCBE9436F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A839436FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4421AB210BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CCA7B23CC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C94616D4DE;
-	Wed, 31 Jul 2024 20:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C71C16D9C6;
+	Wed, 31 Jul 2024 20:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XoWhjMA3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJGPZkGk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5183316D4CC;
-	Wed, 31 Jul 2024 20:14:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEC516D9AD;
+	Wed, 31 Jul 2024 20:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456887; cv=none; b=A6E6S0qWpnaB94Yl1/R8UVpXrjCm+WF6MIBujNIXWO1NXsZGwHG6nkb4XPKyWIKcuE/NRIVysBbWq1X/1OvyFXE+L9hT5ZgoRg/ElQgG1R5+UrdP6bJf1RNpdEYH4dEH89Riw/HrENnn7eLT7QqwYLhpAEk0j7hinWBaVfqdVHk=
+	t=1722456889; cv=none; b=CFSMkcDEmFtOHscZkpCeFdHUJ7C6NeFEA7e3PqA4jN9lFTBBe8swhba87c9NxzwR2ebqj8/kUw8fuDQgo52UL0TfXhZNrIYvbGeqh7W4Azla++Vd+DH14CJ827iFavKuutrQ5hhnn1ntUZenDHFIxgJMpSftAXIPddQia3lCi4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456887; c=relaxed/simple;
-	bh=AEdwWlvteHHQecBlSLo/JPooQPgXPrKgh0jWglAl+7c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G/X8SQe+brAm8TWG8/U5h+V8aQAu2zMjdLwk2u85tLSzd4UuVb3CWbIAJUCfHEhZb06vdRwisSg+Y/CmN2L3lYDC4KKZuwXqCOsphEUJmpV1VNujaq4Ofwgx4UUDyU32KVOdSO8YqmQvrn31QK/36y2E9OmBu/LQNrE4e4WykzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XoWhjMA3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D114C4AF0C;
-	Wed, 31 Jul 2024 20:14:46 +0000 (UTC)
+	s=arc-20240116; t=1722456889; c=relaxed/simple;
+	bh=t2kc0K9l76IswGytJY3ieedKBdixh8jI9A2JOmFIaZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JxVhsCoWwxtm6ARpwbpDiPcoFWNEnlt4jDz4TlSzPtUmwlsqjRcC/RG/wSaMrMkWtcqosteWibT2EdQdprKyleMRWJ+lF3/G+aqX17sv3xLPFZ1SjCzg5JmsRpUqwlSmXpUWgOnfFqZzlomF1dWNPOwdHnEzwzpIRNCicJLOcJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJGPZkGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5768C4AF0F;
+	Wed, 31 Jul 2024 20:14:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456887;
-	bh=AEdwWlvteHHQecBlSLo/JPooQPgXPrKgh0jWglAl+7c=;
+	s=k20201202; t=1722456889;
+	bh=t2kc0K9l76IswGytJY3ieedKBdixh8jI9A2JOmFIaZY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=XoWhjMA3qcCZuHCCkJZIbmo9tsIAT28PDG9n4bad6KGSp9E78RTjf2vnNkorh1cJJ
-	 YWhO1xwXnstRnh3ba61TT7WYLyM6e3xlkVR/sEmf3NhqMCpA60eyLIFr0MHKk0+rSa
-	 EHRcBHtmATsQyuSUCF86WKjZu6T/ZXaZX4efNBkL0qKm/OTMvZIHbjr8+SeBFcL/aR
-	 DwpY9bO7jXWfsnFprNmnLSblPD1gIoHOLyJDivwDs2Oh5qag/SwIXlZNXXtlXqysKp
-	 L+sDMy0gv1m4V890DWSCxLE9TL8nreI1Hgj54H/+FDN5cNi9cK8lBsvqEwSZmV/74B
-	 faW+HZ/uqiU7A==
+	b=cJGPZkGkEOYC6YLYEDGdlNOqTy6HcIVA8grNWYVHOI79b7606HAFCXUVDrIDdzzbh
+	 QzCdQz+EtMuW1vfLcfe/Ct9trEkhizmmpxC0BLVbaJMKJ21z808pO3MsReloSZSNbX
+	 vP5TxvqB9IXEFISbAJ1rzK+ZuXHfQj8Lh4ACkUzkOLfxqFbJMumsbayeoEBj2iQV+j
+	 VzzhhVs/iJ3LjCHRiBfGBkupj+6ZgYz5W1TvXzVd3IxN1qodiKR0j8Vv9Is8/jBqU/
+	 N/1k6zKyrJ5cZ+nt5A7Gbblzy5/SSofsz6Qa7ByO9VyJepvOZ1YC490XzfbfdbuRLG
+	 YakehlzoL8Iog==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: linux-pwm@vger.kernel.org,
+To: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] pwm: lp3943: Use of_property_count_u32_elems() to get property length
-Date: Wed, 31 Jul 2024 14:14:03 -0600
-Message-ID: <20240731201407.1838385-8-robh@kernel.org>
+Subject: [PATCH] ufs: ufshcd: Use of_property_count_u32_elems() to get property length
+Date: Wed, 31 Jul 2024 14:14:04 -0600
+Message-ID: <20240731201407.1838385-9-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -65,36 +66,39 @@ be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/pwm/pwm-lp3943.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/ufs/host/ufshcd-pltfrm.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
-index 61189cea1046..f0e94c9e5956 100644
---- a/drivers/pwm/pwm-lp3943.c
-+++ b/drivers/pwm/pwm-lp3943.c
-@@ -218,7 +218,7 @@ static int lp3943_pwm_parse_dt(struct device *dev,
- 	struct lp3943_platform_data *pdata;
- 	struct lp3943_pwm_map *pwm_map;
- 	enum lp3943_pwm_output *output;
--	int i, err, proplen, count = 0;
-+	int i, err, count = 0;
- 	u32 num_outputs;
+diff --git a/drivers/ufs/host/ufshcd-pltfrm.c b/drivers/ufs/host/ufshcd-pltfrm.c
+index 2e1eb898a27c..0c9b303ccfa0 100644
+--- a/drivers/ufs/host/ufshcd-pltfrm.c
++++ b/drivers/ufs/host/ufshcd-pltfrm.c
+@@ -31,7 +31,6 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+ 	const char *name;
+ 	u32 *clkfreq = NULL;
+ 	struct ufs_clk_info *clki;
+-	int len = 0;
+ 	size_t sz = 0;
  
- 	if (!node)
-@@ -234,11 +234,8 @@ static int lp3943_pwm_parse_dt(struct device *dev,
- 	 */
+ 	if (!np)
+@@ -50,15 +49,12 @@ static int ufshcd_parse_clock_info(struct ufs_hba *hba)
+ 	if (cnt <= 0)
+ 		goto out;
  
- 	for (i = 0; i < LP3943_NUM_PWMS; i++) {
--		if (!of_get_property(node, name[i], &proplen))
--			continue;
+-	if (!of_get_property(np, "freq-table-hz", &len)) {
++	sz = of_property_count_u32_elems(np, "freq-table-hz");
++	if (sz <= 0) {
+ 		dev_info(dev, "freq-table-hz property not specified\n");
+ 		goto out;
+ 	}
+ 
+-	if (len <= 0)
+-		goto out;
 -
--		num_outputs = proplen / sizeof(u32);
--		if (num_outputs == 0)
-+		num_outputs = of_property_count_u32_elems(node, name[i]);
-+		if (num_outputs <= 0)
- 			continue;
- 
- 		output = devm_kcalloc(dev, num_outputs, sizeof(*output),
+-	sz = len / sizeof(*clkfreq);
+ 	if (sz != 2 * cnt) {
+ 		dev_err(dev, "%s len mismatch\n", "freq-table-hz");
+ 		ret = -EINVAL;
 -- 
 2.43.0
 
