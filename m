@@ -1,119 +1,78 @@
-Return-Path: <linux-kernel+bounces-269326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4056943193
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:59:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0BA943196
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:01:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B34B1F22465
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:59:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5713B285E8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ACF1B29AB;
-	Wed, 31 Jul 2024 13:59:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YE/byaHt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DBFB1AC444;
+	Wed, 31 Jul 2024 14:00:55 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973A71B29CF;
-	Wed, 31 Jul 2024 13:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA086539A
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722434369; cv=none; b=n0lyk09iIxlxeTjhr75H7fK/AzUDv7ENrfbnnQZf6PQoP832gil9Yr93XpwGuNaKyalaB2K7bD+mijvECkR9/d2PoV8Y8ZXgUvTqoqi+98R7e1/ibDIkglDnewnHUHJsSIfpXCKsF5ggMWDE/MlclY7WezurS9jArwb0dIDLRZY=
+	t=1722434455; cv=none; b=pveVRxUJUrZl41mFRBFhrTcdkkUrgPejMgQFqDhC/LkIWfUHGaZ9G3JDLrhSrquDpUUuE5dLTHE8P2Wv5dFtKMcCOeXBBZ99yqhSU2Ylx1QQtCIXWN7K2hywM8GlrZpkg5EDYZbFs2GWmyoV4NnO+GLvo9UsOoIu5KVznCSkJuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722434369; c=relaxed/simple;
-	bh=38eH4sewTUypD+7B7wn9cp51XdNEcMKdka19KqwuSX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTcRIjfrxcl6RHke6IrqzEkmdvsnv9LVBklSOxx+uMcZQuTgVbQk+fWAC3dStl3mgR10+5dZhOr35epoFFNJ2Mm8fq3IVwlJFkFFli8W7gNUBhO5Hp1U+LroQHAf0cWXBrX77jPoVe25UkJgbS1mmMXXyYyC7fGcDx3NEYhmFkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YE/byaHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2880CC32786;
-	Wed, 31 Jul 2024 13:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722434369;
-	bh=38eH4sewTUypD+7B7wn9cp51XdNEcMKdka19KqwuSX8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YE/byaHtVOKy2HgZn8cwiNqoRtxr6z7qxmf7n2w3goj5s0dUMQDXKhjWXdvt+BI/m
-	 luUuW37VIeEPnrDhKZ360tV8FCupFf87MWZfolO8ZkVcA1Qd6pSuzgSGmJqQ9Zi+i9
-	 NU4i84WTH9dZN29zR0Fznb5ghselgGQrKAV4DaaTV1PykAC+xNeR3jEHR9y6v//ars
-	 47TVHNysEuLpd0SPkDslvUjwlcuuaIxY6pyLMbgypJ89zamUuxemmnIZfg1pWL5nHJ
-	 6yExgUrmFeXxCYiFhvwl/MY/SxMiv+8vYEBgXOmacTSEQLU3OJq1h9koiBkD7lAqGJ
-	 Kw6uaJ5sBPpqA==
-Date: Wed, 31 Jul 2024 15:59:21 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/4] HID: treat fixed up report as const
-Message-ID: <2kfmgwlmliwmn6olmnaab2mdn4ywquqputk3hcdqqkyqc6bfvd@jtlmixoar7qu>
-References: <20240730-hid-const-fixup-v1-0-f667f9a653ba@weissschuh.net>
- <20240730-hid-const-fixup-v1-1-f667f9a653ba@weissschuh.net>
+	s=arc-20240116; t=1722434455; c=relaxed/simple;
+	bh=eZCMowm6c7mmHswkSmEDYF5JIjJXeT70V7J/z2xj4JM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=FY8YVFlBF1mQDlkZCEp3NTWIV+CZbQ+QMzg1dnGBehQ7u4QdjT2NFhsCjPhYsGTqQQAlVLtUWjPL/jC7kiPEN+AWE2Q6j8fbKJPO7pjHs1HVcKHCrCylMGlLP31Zj/08iIYxS7b36bsRN5qQPReevw5ueajECdNx5i1roD1w8Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f897b8b56so123205139f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:00:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722434453; x=1723039253;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eZCMowm6c7mmHswkSmEDYF5JIjJXeT70V7J/z2xj4JM=;
+        b=Kik0/axUXsRfQwjb+dELvpnL1lrQNWRtuF5BvuGPgJoZGQcMlXcy8c/v7r1eWEQuv6
+         zn9gO0uW2fAh0Ac52SudcvsJevJ2pSkwCZxCDzw2uO1rckMDr5a3KS7bFU5DWrYCnX+4
+         mQ1C2zIJiPyEgjcy/VU7m/v3FBqBTKwE/c1rt/UraicUqEJQ2L+opV8ibJRZ0MpMdgmw
+         6Iy+pWOCSZgSlRPbAivlDi2TU+AypfcGexku3crsqZUjWTarmcV52s6yfwL0Vwj4y50n
+         6Gnn/obvxXoyYteMIVMH+m6GmRG1MWar/9qgaM137pbn9YEl5SLLZ6F6ZITnqzUfHHfb
+         0Qlw==
+X-Gm-Message-State: AOJu0YzYaU38Lhl3kSZE4l7SAt0bNGl7Jv+2stsLMp5fvBrW1KilwP87
+	hvp9Klxo7HxxTSrwIAeRL7ed8QuaIxp23tvhnmXRqTGP42BzrIOxyUcu3Q6GfOyPjSvilX/wxJy
+	98mvsw568b/O8u1V5fjyyWUZuc4pafCSt/6iL6UM/f85PpHsaixHZhpE=
+X-Google-Smtp-Source: AGHT+IGrSYtz/fpaGWPBF4ZimFKhyBhcSi1bO+RlogBXdMyOMw4DnYL6iBc8jbUGrEO0n8Ybz2bm56RuxNQ/dp8g074XH/HppDFv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240730-hid-const-fixup-v1-1-f667f9a653ba@weissschuh.net>
+X-Received: by 2002:a05:6638:1353:b0:4b9:ad94:2074 with SMTP id
+ 8926c6da1cb9f-4c8acbefe6amr157808173.3.1722434448822; Wed, 31 Jul 2024
+ 07:00:48 -0700 (PDT)
+Date: Wed, 31 Jul 2024 07:00:48 -0700
+In-Reply-To: <0000000000004bfcc9061cd39752@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000078a294061e8b852f@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [bpf?] [net?] stack segment fault in cpu_map_redirect
+From: syzbot <syzbot+6fc359860535c8a466fa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Jul 30 2024, Thomas Weiﬂschuh wrote:
-> Prepare the HID core for the ->report_fixup() callback to return const
-> data. This will then allow the HID drivers to store their static reports
-> in read-only memory.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> ---
->  drivers/hid/hid-core.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-> index 988d0acbdf04..dc233599ae56 100644
-> --- a/drivers/hid/hid-core.c
-> +++ b/drivers/hid/hid-core.c
-> @@ -1203,6 +1203,7 @@ int hid_open_report(struct hid_device *device)
->  {
->  	struct hid_parser *parser;
->  	struct hid_item item;
-> +	const __u8 *fixed_up;
->  	unsigned int size;
->  	__u8 *start;
->  	__u8 *buf;
-> @@ -1232,11 +1233,11 @@ int hid_open_report(struct hid_device *device)
->  		return -ENOMEM;
->  
->  	if (device->driver->report_fixup)
-> -		start = device->driver->report_fixup(device, buf, &size);
-> +		fixed_up = device->driver->report_fixup(device, buf, &size);
->  	else
-> -		start = buf;
-> +		fixed_up = buf;
->  
-> -	start = kmemdup(start, size, GFP_KERNEL);
-> +	start = kmemdup(fixed_up, size, GFP_KERNEL);
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-I think that kmemdup makes all of your efforts pointless because from
-now, there is no guarantees that the report descriptor is a const.
+***
 
-How about you also change the struct hid_device to have both .dev_rdesc
-and .rdesc as const u8 *, and then also amend the function here so that
-start and end are properly handled?
+Subject: Re: [syzbot] [bpf?] [net?] stack segment fault in cpu_map_redirect
+Author: bigeasy@linutronix.de
 
-This will make a slightly bigger patch but at least the compiler should
-then shout at us if we try to change the content of those buffers
-outside of the authorized entry points.
+#syz fix: tun: Assign missing bpf_net_context.
 
-Cheers,
-Benjamin
-
->  	kfree(buf);
->  	if (start == NULL)
->  		return -ENOMEM;
-> 
-> -- 
-> 2.45.2
-> 
+Sebastian
 
