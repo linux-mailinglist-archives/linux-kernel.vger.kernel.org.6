@@ -1,100 +1,124 @@
-Return-Path: <linux-kernel+bounces-268377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB169423E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:39:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9BB9423E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F4F1F23859
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:39:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CEE01C211C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D384C83;
-	Wed, 31 Jul 2024 00:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1FF48462;
+	Wed, 31 Jul 2024 00:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POt+FxEs"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jZDZjJYO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2700B4431
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778624C8E;
+	Wed, 31 Jul 2024 00:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722386355; cv=none; b=MhT6qxCEzOEinKryLJw3gw4M2PVYppY0q9ye+MPyhu/k5RlPBht3E3r4aTdxxAtCazxRsa+Car+PilfmnkHqBGRZu0usnwPJKpyfvrs74ipgRcRz3KwNvDgtUoZUkYAUztuoLc3474AhTBaAnfgAmgubrH4LsFaeGT/2ouWqJH0=
+	t=1722386531; cv=none; b=OXmSdx1X5lv6H9J2SVE4wjMa84vg7KW17xUdysEHEnZZ+4j71vu8TCSKbctECg0MYMxtFRBOgtUAZ9aoHMglLWKxQxjl1abppQHM9ir9CNqbtLXOuexTcmJnb3yYXYa3rdX/hPhlnwFedQTSCa5OVICEd1n7w1CwilEqoZdTLKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722386355; c=relaxed/simple;
-	bh=G78J1xazOqAfpXn0/qpj2FC1yrY6QemILkcM54iNNJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i4/0mn9zNA3+Y+ABv+LrPdicQV0hTGhvUmjXZOkx4ag3IvTolL5myJWGu7OZPj3Ot6nCDWN+NbATkK32smqTxt9D+dSQQFHVGSwhgGuZ6Q1RGy7lSdpEwaBN08Li4X5+MbRfLOG/c9Bp5GrmUrjarUHcxP6zIkjgmnPny6mTO6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POt+FxEs; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f149845d81so13591041fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:39:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722386352; x=1722991152; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G78J1xazOqAfpXn0/qpj2FC1yrY6QemILkcM54iNNJQ=;
-        b=POt+FxEsq0xci85WWzYVlGXhx+XBrkySX8BqdFIWEy7Nso8vvV3a+K6iA7qTT1kvPb
-         zmZHsCSHiPtMm1PAYTc3smbU08Yos+83umT3ff45wdnTbuzxqSfM4wcSb5cJ7Sk+nE7a
-         01y8HvH9FCfzyC/JuuF1HdJXs2fT5afBP5CKOIDZ/wryL2cU7P0jMjlCdX5m2fSiXLTt
-         BISdvdtwXi9o0Q/qUARD+akzIlrVYtfakvhQt+IiIgFl+crA02PginQQW43hlVO61evM
-         GAUQTAf8SjfOm9dA7RnOBVoMSFUG+wp1FO/uyYmqnZfJrO62uvvP2VODZEntQ9YlJmnG
-         xkfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722386352; x=1722991152;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G78J1xazOqAfpXn0/qpj2FC1yrY6QemILkcM54iNNJQ=;
-        b=pQEDfPJ+TfhXSlZ+fMZukBHvwLzFHIZstZ4mfS6h/zGSw3nuZymG6Ba8jSXBPYoB1u
-         CGJog7n1NxLcWyDqtsLiKILI5xl/Ubk7OIqgA6T7y8hgPO3j7LhlBYiRteWiDEsLyuMm
-         Gynhf+6Zn+XI+9Opxt/g+NKRYtveUiCnxP+fS6HkoQlOiIEjauq6hFCx/rgc4Y+R1itT
-         3M+Moiu7OT+MTZSfyVTIsxQY/Peb59sbLrG7CmisrDmQBGiXU8kf48s6GBqQri/dhECh
-         dfxYIzvcpV4xhyDwRUv3RAqG0xdv5b5pk8TcdtYUNiAm4aODZzKrIZxkNUC79BQudau3
-         rktA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkWRbtfvsz4ly3Ajv2m7hJMLDcBf6GPtzkurPzbShHG5C+3WxQGkarxtqd9Sw03vZnPyyHtvUhRgNHE/L3hNJecOnOfkXKmF329ZKn
-X-Gm-Message-State: AOJu0YyHJLz0w1evaHVBOPiuBClnoyQ8lKgX0ckOF+JYZg1ELPlt1v5D
-	hPFWPbRWjDSrpFCxrx60dQTSLR7gslI3ciR3ZAzOsCWA5j2PVxKowqkPlMLjO1DGA7WyHm+HofL
-	XtPoCKXUktjZDFNu07CHdfvEoZ/8=
-X-Google-Smtp-Source: AGHT+IF3QdcyfsTf73ofgzOHHFXCnAc6jKy9oxJ8bWdQTI0xNaDz45AIw6tugYREKf7IH9fo6GqtqCrB8RErPRzM3dw=
-X-Received: by 2002:a2e:b711:0:b0:2ef:2e6b:4102 with SMTP id
- 38308e7fff4ca-2f12ee626aemr82767921fa.43.1722386351769; Tue, 30 Jul 2024
- 17:39:11 -0700 (PDT)
+	s=arc-20240116; t=1722386531; c=relaxed/simple;
+	bh=O4xKrZS0mD61y2mmy9XSZokqEuXtHHJywllfTfjU1Qs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgbrG5TFjBGI2amjUs15xpYTlgdTIuqMPo1bnn5MHaGRH56mGX/69gK0buSDVVViHSCSHUC/GVU8NTWcJycH4ZXjokJvS68WWBsletiS2Bk++oUTQ1DJ6NSmxwjDGxUnbs9JC1+ToBDUbmUqnnmN6Q5lMMYt6Z7YhqOZLyv+OeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jZDZjJYO; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722386529; x=1753922529;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=O4xKrZS0mD61y2mmy9XSZokqEuXtHHJywllfTfjU1Qs=;
+  b=jZDZjJYO2oLmO67QIZdvbjYxnDP4hDWYpMnxIXjSbYa4VcmW2w2R/xwU
+   CEOv52epRCfaq5M28THNVoNWQwxFhYczKTfxfDV/vKPnldrymeDVe8Or3
+   rxOSZiQO2DnRPUZ9CJFoLQxT9mRihK9q4M9NEHgXCKxcRULjNfALfN688
+   aMSRrt98T4efWgbgmVt9hs30adXs0WAPN2JtdWFM6LAHJX/xzAcy8WL0N
+   2s+X3bO7v7bWz8RiiWEn2r0c4llEJ4W+7dB47eRZKVNVfeXQ2ezUWsNqC
+   0L4BBjPv9Ze4NRTwnzpSZ0lcQ2TPu2/4BuhOgNyu/qYfLM+cGDrHvwDgN
+   Q==;
+X-CSE-ConnectionGUID: OXpa/bGQSpeJGWhUcJf1Fg==
+X-CSE-MsgGUID: mY1oA04qRRaNr6AFGdrY6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20366628"
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="20366628"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 17:42:09 -0700
+X-CSE-ConnectionGUID: bnJBAGRGRsuyS6UmKTgdCA==
+X-CSE-MsgGUID: Oi3+YHQ+RA2GPR1+qmLOoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,248,1716274800"; 
+   d="scan'208";a="54205829"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 30 Jul 2024 17:42:08 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sYxPo-000tXp-0g;
+	Wed, 31 Jul 2024 00:42:04 +0000
+Date: Wed, 31 Jul 2024 08:41:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bibo Mao <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, WANG Xuerui <kernel@xen0n.name>,
+	kvm@vger.kernel.org, loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	x86@kernel.org, Song Gao <gaosong@loongson.cn>
+Subject: Re: [PATCH v4 1/3] LoongArch: KVM: Enable paravirt feature control
+ from VMM
+Message-ID: <202407310823.RbRdbUkV-lkp@intel.com>
+References: <20240730075344.1215681-2-maobibo@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zqd9AsI5tWH7AukU@pc636> <20240730093630.5603-1-ahuang12@lenovo.com>
- <ZqjQp8NrTYM_ORN1@pc636> <CAHKZfL3c2Y91yP6X5+GUDCsN6QAa9L46czzJh+iQ6LhGJcAeqw@mail.gmail.com>
- <ZqkX3mYBPuUf0Gi5@pc636>
-In-Reply-To: <ZqkX3mYBPuUf0Gi5@pc636>
-From: Huang Adrian <adrianhuang0701@gmail.com>
-Date: Wed, 31 Jul 2024 08:39:00 +0800
-Message-ID: <CAHKZfL1i3D7wgbdLWz3xiK7KkAXAxrsyQjFmFarrM94tJPYh3Q@mail.gmail.com>
-Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of KASAN
- shadow virtual address into one operation
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: ahuang12@lenovo.com, akpm@linux-foundation.org, andreyknvl@gmail.com, 
-	bhe@redhat.com, dvyukov@google.com, glider@google.com, hch@infradead.org, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	ryabinin.a.a@gmail.com, sunjw10@lenovo.com, vincenzo.frascino@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730075344.1215681-2-maobibo@loongson.cn>
 
-On Wed, Jul 31, 2024 at 12:42=E2=80=AFAM Uladzislau Rezki <urezki@gmail.com=
-> wrote:
-> Thank you for posting this! So tasklist_lock is not a problem.
-> I assume you have a full output of lock_stat. Could you please
-> paste it for v6.11-rc1 + KASAN?
+Hi Bibo,
 
-Full output: https://gist.github.com/AdrianHuang/2c2c97f533ba467ff327815902=
-79ccc9
+kernel test robot noticed the following build errors:
 
--- Adrian
+[auto build test ERROR on 8400291e289ee6b2bf9779ff1c83a291501f017b]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-KVM-Enable-paravirt-feature-control-from-VMM/20240730-155814
+base:   8400291e289ee6b2bf9779ff1c83a291501f017b
+patch link:    https://lore.kernel.org/r/20240730075344.1215681-2-maobibo%40loongson.cn
+patch subject: [PATCH v4 1/3] LoongArch: KVM: Enable paravirt feature control from VMM
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20240731/202407310823.RbRdbUkV-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240731/202407310823.RbRdbUkV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407310823.RbRdbUkV-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   scripts/genksyms/parse.y: warning: 9 shift/reduce conflicts [-Wconflicts-sr]
+   scripts/genksyms/parse.y: warning: 5 reduce/reduce conflicts [-Wconflicts-rr]
+   scripts/genksyms/parse.y: note: rerun with option '-Wcounterexamples' to generate conflict counterexamples
+>> error: arch/loongarch/include/uapi/asm/kvm_para.h: missing "WITH Linux-syscall-note" for SPDX-License-Identifier
+   make[3]: *** [scripts/Makefile.headersinst:63: usr/include/asm/kvm_para.h] Error 1
+   make[3]: Target '__headers' not remade because of errors.
+   make[2]: *** [Makefile:1290: headers] Error 2
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:224: __sub-make] Error 2
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:224: __sub-make] Error 2
+   make: Target 'prepare' not remade because of errors.
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
