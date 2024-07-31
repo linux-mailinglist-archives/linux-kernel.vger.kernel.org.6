@@ -1,87 +1,118 @@
-Return-Path: <linux-kernel+bounces-269295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3C2943125
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:41:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A1594312A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE57AB2593E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:41:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C16721C210E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27271B372E;
-	Wed, 31 Jul 2024 13:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5C71B1512;
+	Wed, 31 Jul 2024 13:42:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vp+f08jB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kHy4e4AX"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1698A16C86F;
-	Wed, 31 Jul 2024 13:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCDF16D4CB;
+	Wed, 31 Jul 2024 13:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722433274; cv=none; b=p9A/kWzJdVpVLbDZKI0QzJ4YAQjqlnWaf1Xyawgy9hLM93q67mSRIjYtW1RF9A1jpftotBA8IYrT3PTREAFt7IbSqQHrSJ10B/ByjIR+FyPa5H5eSh9ktdNDdUVAW1+p9RN3KCTeB+yOYQLpQlSUzZlm0I65GE3CyWuSf8Jnt2E=
+	t=1722433343; cv=none; b=c8tniKIcDObltzgmRaxs7wCUxixMDeDf4px9F6myAcaOPhaNO7C0jTs2Eftpwapzv1bhz1G0zJNov6JWp6DvtpuhOl3yx2pSR7lK8hKKMoBrAxzfN0kWJMCvgpwO2ftaxLniAiXk3BaZuvS4hQKVLvgNyq7R8eC3y6do5Wl7bdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722433274; c=relaxed/simple;
-	bh=GccO9ruMcGXH/+lOhGMqHF37FBLyuNfwZ0zMFHVIwJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ie05EIzqWaafo+0QKnpI8ukKRyzJxt43gWcas7P9Of6BmlBuc0h09AeR0xapHilOrHVRynWZflJbrHPQXRcIu52moc7pRkPNsOONa5LC1g6mUwX/JihC7SYLZun/SOibWRKJMi6p4RJJEaZBTyJhuNdELwK5VHqokIPH+kYyKGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vp+f08jB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AEEFC116B1;
-	Wed, 31 Jul 2024 13:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722433273;
-	bh=GccO9ruMcGXH/+lOhGMqHF37FBLyuNfwZ0zMFHVIwJg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Vp+f08jBljVX9b0/aTwsRPfMNrSKMRkm73ZIAhrJ692PpzDi+Z3TXM2Jkycx8QHJb
-	 rWp+ZhiyKrXcvcB1ocU8Tw4TPnRM5dJY8LxpCZn1zn+2zKFchsaWe3hxDDfGwa1ESE
-	 ef2/qRb6PeaINtwtRbYFUuZ7BrzZAGJu8SLBf3kMt/eKXWPTiIaSSuFq9lDmSEh9Yf
-	 j5gl42lxA2qNUh3czh3HhRK5gSY/Ha6UMziYOPvkge+9kZQPg/A5wH/mFnLsmLzKFQ
-	 YLkkHdrS+SglrYhn8CKdoGCcbAyIWfSIBCp1kBHKbZGq+6MlpJolBX1DPsE9eanVJj
-	 v4geCKM3u1mlA==
-Date: Wed, 31 Jul 2024 06:41:12 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Youwan Wang <youwan@nfschina.com>
-Cc: linux@armlinux.org.uk, andrew@lunn.ch, davem@davemloft.net,
- edumazet@google.com, hkallweit1@gmail.com, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pabeni@redhat.com, Russell King
- <rmk+kernel@armlinux.org.uk>, Wojciech Drewek <wojciech.drewek@intel.com>
-Subject: Re: [net-next,v4] net: phy: phy_device: fix PHY WOL enabled, PM
- failed to suspend
-Message-ID: <20240731064112.040252ac@kernel.org>
-In-Reply-To: <20240731091537.771391-1-youwan@nfschina.com>
-References: <ZqdM1rwbmIED/0WC@shell.armlinux.org.uk>
-	<20240731091537.771391-1-youwan@nfschina.com>
+	s=arc-20240116; t=1722433343; c=relaxed/simple;
+	bh=jSR1gVsPfCs6z1loLKx23Qx82QXJrkbCyr8DQBQs6ns=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Q8nnoe/w90qq/kigavtOrQLRG+UaXHhmLaR3UmyA9sjmreS38JBnqTuIws5qK/dtHCRHW98HsGjNgmmiW3vrv9qpQiPAllXgjyXFnV3ofcMl2SUda8FlCwvN2fAdOpX9LKEmvDvuno7GXHcEnZ08hj5GEvEqDK5/xtntVpZNqWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kHy4e4AX; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722433340;
+	bh=jSR1gVsPfCs6z1loLKx23Qx82QXJrkbCyr8DQBQs6ns=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=kHy4e4AXDhoDHro/7d5eh2JSzAGvjxLkSbCd65/WBdPvdlOag7Uz2lfT30wL+G5yp
+	 8TWyHm0PDskSSPyGefhUt54aXJbMYGY7XyfUC8qjJca0nHJx7bZo27miV/doGUIEco
+	 mLXP6qFYJ0kUmVxznQui5wIIItDWc66tRWKjqZXRCposicVGltPaglrr3xrAN/ZIUj
+	 E7Z1Wpyzy4O5t05m+mqNyv8Cm6Vxlfi2L+0HlhOkEdXsSd7vKNMQpvjTPOhdemegDC
+	 A/ursKlU/2HClhQBDx6ETKuLhiPvqmbC7GgP/QAd0QMhv1MxTkZCb/O5NTQjPM68vf
+	 9JEfwpaGs8Y0w==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A24A937800DE;
+	Wed, 31 Jul 2024 13:42:18 +0000 (UTC)
+Message-ID: <47ea7423-3aae-4bb3-a41f-1fcb5c07e74b@collabora.com>
+Date: Wed, 31 Jul 2024 18:42:10 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: tpm2: redirect python unittest logs to stdout
+To: Shuah Khan <shuah@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>
+References: <20240710081539.1741132-1-usama.anjum@collabora.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240710081539.1741132-1-usama.anjum@collabora.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Wed, 31 Jul 2024 17:15:37 +0800 Youwan Wang wrote:
-> If the PHY of the mido bus is enabled with Wake-on-LAN (WOL),
-> we cannot suspend the PHY. Although the WOL status has been
-> checked in phy_suspend(), returning -EBUSY(-16) would cause
-> the Power Management (PM) to fail to suspend. Since
-> phy_suspend() is an exported symbol (EXPORT_SYMBOL),
-> timely error reporting is needed. Therefore, an additional
-> check is performed here. If the PHY of the mido bus is enabled
-> with WOL, we skip calling phy_suspend() to avoid PM failure.
+Reminder
+
+On 7/10/24 1:15 PM, Muhammad Usama Anjum wrote:
+> The python unittest module writes all its output to stderr, even when
+> the run is clean. Redirect its output logs to stdout.
 > 
-> From the following logs, it has been observed that the phydev->attached_dev
-> is NULL, phydev is "stmmac-0:01", it not attached, but it will affect suspend
-> and resume.The actually attached "stmmac-0:00" will not dpm_run_callback():
-> mdio_bus_phy_suspend().
+> Cc: Jarkko Sakkinen <jarkko@kernel.org>
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+>  tools/testing/selftests/tpm2/test_async.sh | 2 +-
+>  tools/testing/selftests/tpm2/test_smoke.sh | 2 +-
+>  tools/testing/selftests/tpm2/test_space.sh | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/tpm2/test_async.sh b/tools/testing/selftests/tpm2/test_async.sh
+> index 43bf5bd772fd4..cf5a9c826097b 100755
+> --- a/tools/testing/selftests/tpm2/test_async.sh
+> +++ b/tools/testing/selftests/tpm2/test_async.sh
+> @@ -7,4 +7,4 @@ ksft_skip=4
+>  [ -e /dev/tpm0 ] || exit $ksft_skip
+>  [ -e /dev/tpmrm0 ] || exit $ksft_skip
+>  
+> -python3 -m unittest -v tpm2_tests.AsyncTest
+> +python3 -m unittest -v tpm2_tests.AsyncTest 2>&1
+> diff --git a/tools/testing/selftests/tpm2/test_smoke.sh b/tools/testing/selftests/tpm2/test_smoke.sh
+> index 58af963e5b55a..20fa70f970a9a 100755
+> --- a/tools/testing/selftests/tpm2/test_smoke.sh
+> +++ b/tools/testing/selftests/tpm2/test_smoke.sh
+> @@ -6,4 +6,4 @@ ksft_skip=4
+>  
+>  [ -e /dev/tpm0 ] || exit $ksft_skip
+>  
+> -python3 -m unittest -v tpm2_tests.SmokeTest
+> +python3 -m unittest -v tpm2_tests.SmokeTest 2>&1
+> diff --git a/tools/testing/selftests/tpm2/test_space.sh b/tools/testing/selftests/tpm2/test_space.sh
+> index 04c47b13fe8ac..93894cbc89a80 100755
+> --- a/tools/testing/selftests/tpm2/test_space.sh
+> +++ b/tools/testing/selftests/tpm2/test_space.sh
+> @@ -6,4 +6,4 @@ ksft_skip=4
+>  
+>  [ -e /dev/tpmrm0 ] || exit $ksft_skip
+>  
+> -python3 -m unittest -v tpm2_tests.SpaceTest
+> +python3 -m unittest -v tpm2_tests.SpaceTest 2>&1
 
-Are you just reposting this to add a review tag? You don't have to do
-that. Please let me know if you're doing so based on some documentation,
-if such documentation exists I'll go and update it..
-
-Please include a changelog in the future.
-
-And also please don't post new versions in-reply-to an existing thread.
+-- 
+BR,
+Muhammad Usama Anjum
 
