@@ -1,142 +1,98 @@
-Return-Path: <linux-kernel+bounces-269703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD359435FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:58:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E439435FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:59:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D70285D00
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:58:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97FF81C22B3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F4D87316E;
-	Wed, 31 Jul 2024 18:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0291768FC;
+	Wed, 31 Jul 2024 18:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="b1nTHKn2"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcwZZh1X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF5112EBD7;
-	Wed, 31 Jul 2024 18:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AD5E1396;
+	Wed, 31 Jul 2024 18:59:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722452319; cv=none; b=knbq8FUcDuEz3cuIfRQIhM13xZ/Pz2qRNz2B8l3AJTCUXl/iFIPBZIRZKlo08t1fU7LXBBQ72oyCzbVurK4/R3fUThNCI/kNOytupZ2D8a1uCq9BRj4V9FCjjg9cjBP3O21dBCM11mz9/yqsJHFIZSUfMqQOHigCMpi1uEPnKRw=
+	t=1722452358; cv=none; b=PDtlivMRGGJsFIRoZ3JAo7gpxwse3Re6k/1EiMYpfOUp7UZAWPnZo6K3A/O+Aqi0BTdjXNiAXLaLjEa0i9D7w2QWA0TAWEFFtWuMweMKdzK8nfAglfV8NODveT2QvlOTRuwxS56v81Z8uOPCdcZskNJLGzIcG4Fcewvl9BAGUkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722452319; c=relaxed/simple;
-	bh=Os8qowKsxDSRcPHPF/e1AaWARnryjEqWztOmIrjOGZI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lM/tfIkPJTWxP9Z8QB+bGPBGHkxxEbfLj8c8xJ2dnCsTuTARr0wmSCFIi1pycm7mvn1P2sXFsc13Zvt9+/A4Is3i4vYH9lyPw+R5byWEMVw3Kpa+Wwk/ZM9ucPbrTXJETSk8NLHJZAnDpD0Ukjowdm+kYqB3P90EfiRvjwOOfnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=b1nTHKn2; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722452314; x=1722711514;
-	bh=Ok2jcwhhpJcH2GHlECFhqT7lAO056VLfnNsP0CYcDJg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=b1nTHKn2T1dmR8vteP/M2sWrDZnltmVMV+WeJpQaWHdshFgouh8mtm6NWkSOyvsxv
-	 zbvWJCt5CARyolCYp8jYPTiMMC2/kamd6t1bN+hVlgjMjCiCQAFbJEnz1IMoa3ET7b
-	 dv/+gkT8NoDZWbongMdRmVuvEm5gxl2UjI9LZZyU/hVmY7z8FZclgaMloojKNlSXGl
-	 3JDlf6u0EO7lKkTxR5KncuBvKc2QYLLC9GUUqnUn8OIok9sbIj5OjDnyv1rHUrCrft
-	 30wBI2Y8WrNCEUZoxCwk/KYw5Ic9fuzfIcT71pq+GI6qDGIg08sGLP7pGBPC44S4xU
-	 28vEKBj2xRsUw==
-Date: Wed, 31 Jul 2024 18:58:28 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)" <peterz@infradaed.org>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, linux-arm-kernel@lists.infradead.org, Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti
-	<alexghiti@rivosinc.com>, Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Subject: Re: [PATCH v4 2/2] rust: add tracepoint support
-Message-ID: <b675e620-6a20-496a-8d23-8e184d7bde6b@proton.me>
-In-Reply-To: <20240628-tracepoint-v4-2-353d523a9c15@google.com>
-References: <20240628-tracepoint-v4-0-353d523a9c15@google.com> <20240628-tracepoint-v4-2-353d523a9c15@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 8ba1730ad398f749464698fd1f1be0f27b26c0d0
+	s=arc-20240116; t=1722452358; c=relaxed/simple;
+	bh=IIxkJ+LLHYSF5s/zfFF1eKcKu6RdZFrjQL0BFWoTo/o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=P0m1UmqhaC+lf5STWgU9LNzo2HZB4OWi0ncw8qgPhvsZ3Br0VvaRx+/EgURxSO1Hh86phksFPPzjINkHoHlFQsD7DSc+73YDVpAcaztV4sZo9WwhZDEKW1H2dyptC4Djh+/0do4h18qI6Kvm0E7eZrorGqniquFITlTOtPQlr6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcwZZh1X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6017C116B1;
+	Wed, 31 Jul 2024 18:59:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722452357;
+	bh=IIxkJ+LLHYSF5s/zfFF1eKcKu6RdZFrjQL0BFWoTo/o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jcwZZh1XgVTFtdiGExPIP7jFzmY0PpPU30sHhUcK8L/S2Yg4ijFU5xbGYm3S3kyYV
+	 FeJgvkBIwiWrRA8FonjBsmw+9n9xgiZhbDeJUcy1E+26/B1ZUe180QwPOxd91AjdYG
+	 W7bdefqPLDXoD+Fnd+YfAK6bwYFzXGKW6lJ6MJe4y4hn8GT/imKOPAg8yo6EFgsDCp
+	 VuKPWz3eM622QWeEXv2FoLjipBvhqs/KlYd5sirwlyw4aY6rKGtP9fuTMA+DWRYbri
+	 pUA6ccbktEaCVw/88FJKUtYdCklDeDs3M/JtT3HreH5HY/w552Kkh8IBS1L96BWMZ8
+	 dkKjmR0jJNrMg==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/2] KVM: arm64: Fine grained traps documentation
+ clarification
+Date: Wed, 31 Jul 2024 19:58:36 +0100
+Message-Id: <20240731-kvm-arm64-fgt-doc-v1-0-abb364f8fe57@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAF2JqmYC/x3MTQqAIBBA4avErBuwsjG6SrSQHGuIftCIILx70
+ vJbvPdC5CAcoS9eCHxLlGPPqMoCpsXuM6O4bKhVrZVpFK73hjZspNHPF7pjQkuku5a8NY4gd2d
+ gL8//HMaUPtlErV1jAAAA
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ James Morse <james.morse@arm.com>, 
+ Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Fuad Tabba <tabba@google.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=openpgp-sha256; l=691; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=IIxkJ+LLHYSF5s/zfFF1eKcKu6RdZFrjQL0BFWoTo/o=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmqomBCLHIbVaYACy/dLCOdZqN+VAb+rwmgXoapvB7
+ oU+PVwSJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZqqJgQAKCRAk1otyXVSH0A5EB/
+ 0QurbYEG/u2OyMRbdKZa6f1yyjuNQh0ZsYGWibl2UJ63RPg23h1L8aeo/IyC20qYw2adus+iyEhtXk
+ c8BUxBwAFP8jJv8ov/BjizHGutauGR779w2ylyPuhTKNpzHjqHCAvM+F28wvhYANyVtn0wWmHtfnT3
+ HdrtO2afgS31K73HoHK+WEGb6wYBXJDD+2LIbRwOGQ08Lgy+1mp/uLqnjRrDyYm889lkr5F/ylcFPF
+ U05Szpkv1sPMRujAj0uTMhx/l/3Phy9a1LqPhV6H7Vq0fFPsJRZQ5Da1JNqQSKUe2Cm5mCZ2qCJgOe
+ d5bfBxQaxZaye7kGvh+mWLOtcJXcxN
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 28.06.24 15:23, Alice Ryhl wrote:
-> diff --git a/rust/kernel/tracepoint.rs b/rust/kernel/tracepoint.rs
-> new file mode 100644
-> index 000000000000..1005f09e0330
-> --- /dev/null
-> +++ b/rust/kernel/tracepoint.rs
-> @@ -0,0 +1,47 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! Logic for tracepoints.
-> +
-> +/// Declare the Rust entry point for a tracepoint.
-> +#[macro_export]
-> +macro_rules! declare_trace {
-> +    ($($(#[$attr:meta])* $pub:vis fn $name:ident($($argname:ident : $arg=
-typ:ty),* $(,)?);)*) =3D> {$(
-> +        $( #[$attr] )*
-> +        #[inline(always)]
-> +        $pub unsafe fn $name($($argname : $argtyp),*) {
-> +            #[cfg(CONFIG_TRACEPOINTS)]
-> +            {
-> +                use $crate::bindings::*;
+When looking at the code for management of fine grained traps I noticed
+that some comments were out of date, and that there's some potentially
+suprising usage which could usefully be clarified.
 
-Why is this needed, can't you put this into the invocation of `paste!`?
-ie `[< $crate::bindings::__tracepoint_ $name >]`?
-
-> +
-> +                // SAFETY: It's always okay to query the static key for =
-a tracepoint.
-> +                let should_trace =3D unsafe {
-> +                    $crate::macros::paste! {
-> +                        $crate::static_key::static_key_false!(
-> +                            [< __tracepoint_ $name >],
-> +                            $crate::bindings::tracepoint,
-> +                            key
-> +                        )
-> +                    }
-> +                };
-> +
-> +                if should_trace {
-> +                    $crate::macros::paste! {
-> +                        // SAFETY: The caller guarantees that it is okay=
- to call this tracepoint.
-
-Can you add this on the docs of `$name`? ie add a Safety section.
-The docs should still appear when creating them/when LSPs show them to
-you.
-
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Cheers,
-Benno
+Mark Brown (2):
+      KVM: arm64: Fix outdated comment about incomplete FGT bitmask definitions
+      KVM: arm64: Clarify meaning of _MASK and _nMASK for FGT registers
 
-> +                        unsafe { [< rust_do_trace_ $name >]($($argname),=
-*) };
-> +                    }
-> +                }
-> +            }
-> +
-> +            #[cfg(not(CONFIG_TRACEPOINTS))]
-> +            {
-> +                // If tracepoints are disabled, insert a trivial use of =
-each argument
-> +                // to avoid unused argument warnings.
-> +                $( let _unused =3D $argname; )*
-> +            }
-> +        }
-> +    )*}
-> +}
-> +
-> +pub use declare_trace;
->=20
-> --
-> 2.45.2.803.g4e1b14247a-goog
->=20
+ arch/arm64/include/asm/kvm_arm.h | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240730-kvm-arm64-fgt-doc-a664856fa7d6
+
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
