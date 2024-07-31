@@ -1,106 +1,166 @@
-Return-Path: <linux-kernel+bounces-269677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB859435AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:32:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D849435B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2545E1F274FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:32:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0902853E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6129B49627;
-	Wed, 31 Jul 2024 18:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7DC46447;
+	Wed, 31 Jul 2024 18:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="TWm8mFOb"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSLzsjGc"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 668AC39FC1;
-	Wed, 31 Jul 2024 18:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB0333CFC
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450758; cv=none; b=ASOfKtrdlXw6kbwcRatuOMyHt3gWt5fU8qhK7rYzt7D18rBbmxGlMx9iqMFQEs6AmrmTRJASF0t7sT3FJwjJnHNZQzEjpLV/aHu/vWgtTl5u3EaMuWw9DDMfY+ljRrSeo0hUVjonUUinjJdUIb3RHGDJ8YVb9g0VgSap4dERVEE=
+	t=1722450916; cv=none; b=PnVTNVBOd0P6d0uNFay4fkyb9loVTnq/iA55ZezEsBOX9e9fCEG8VMQruQAZgDx4hBB4NVUkxS46yYGN6w52yUL8WF8iommf+QyVyk9om5jt3xnCuQidzOhhmXz1CmXKDbadZdjMSfRshIVwQVix+4HdLA4mPjcupYqtHU8hePg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450758; c=relaxed/simple;
-	bh=hhma+iAZyJ0RGsjQ1P0DMANEGea+kZjZQTE/CVE9L5E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=F7xuj/N4OfswYjkph7z9umXExqYTHW+ztvl3jEffFmlXbRub5dvhYbyb7nq0CdABJ46eFnZPon9sbqsdMoHumR1tKVGSzlCVNsMDD5CZQbr4XEu9LPIjSYeGeHf4DWwGhBHUFtY8lXv+9r9opa94krsmzauKe7X2J33CfNkJvhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=TWm8mFOb; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1722450753;
-	bh=hhma+iAZyJ0RGsjQ1P0DMANEGea+kZjZQTE/CVE9L5E=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=TWm8mFObpG0c4uYZgP4QSKRzwyPtZasQS1cVwbPzcYRx++gTyX8DxdZXc0ujEYZM3
-	 C0RrNrnZIQ05TYteQLfk+SXlAtJnwuZQgU3TzvZZenSJJfLR30rJ5NfYKdrOLfxP3w
-	 mv9wQu2xO9gVcph4DbOp8Xzp9JjAox0sAB+XCRUs=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Wed, 31 Jul 2024 20:32:08 +0200
-Subject: [PATCH 2/2] Revert "selftests: kselftest: Fix build failure with
- NOLIBC"
+	s=arc-20240116; t=1722450916; c=relaxed/simple;
+	bh=CCfOUEXMCM+KSbathTfwlyJ9gH6wMECiPb7OeXkFWf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JAO3zxBwEVZ70Gff4aSbFTeXrWr8hmKqPElvr/rR8OGSWGvVCn/5qSwNkAKBQwQXcp6pmpiUt38WkTbsuiO/7Bv9MIbxaqfwuhTtdmp9DmlICHJaUtVLzEAtg27c9iuqx3na/a833I88eXO3mHRriidbiXKox/J1OOAgWa6C0Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nSLzsjGc; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6b7acf213a3so31776026d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:35:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722450914; x=1723055714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FdDEDhBatiVQbzaYWZvpRwACycHKBzrY1H/vlaLquHE=;
+        b=nSLzsjGcU+3RzKdtYWH0sh3zLwiT/HCo4/j9k7Ax/OdGByPFSye+Z4r074X6AigREP
+         wwUahywVFJYKhdtcEnCHPgPb3XMLSsBZ4ynCFd50KJu0yRq4PJ0bXS6b7bSFtw+ZY10O
+         rfHGDsGRmwR5HNeqSXcazjxFiBsvfebkMXj55W80NCBD14JybyVoPF+Wt+YB6RQrOGSI
+         p7RQed0V3rkTBmItC29t+LKKfMzUyCTbivH6OsZLTw0BtG4zTXFfzNyxbVGKC0PFkqHj
+         Uu98hTgTip8bZLGH9FXwlgYvKPTa0F+XH6acIIyi0z8F2O08TNBeLZrtnNx/qKNzRmwW
+         D4Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722450914; x=1723055714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FdDEDhBatiVQbzaYWZvpRwACycHKBzrY1H/vlaLquHE=;
+        b=G97cfIYm6H/9ASuLUbL24DWxmh83ztwl7TWDS6PFxI9Bx6q10LWm8ljSZEH3PzAvkl
+         7syJyUP5+ViXZiY9gHEg88oKhvF4lp1srvbjWQM/wzaG7+AS+uBlHk7JQasPPjya+H/P
+         YzvqMM81PVicGc+LGczJ5CwXE0IWB7OhozCqUtD4q90o3qzk+kAzoc3cnPWC/QHQQ/mw
+         SH/3Z2DSDxoe/Qb1zzxhnO1Nq8DBKNVdl5hCk2JvK4F3XYvJSkga2e7ixmCvJp7OtCiV
+         +NykB8QjcebTUUoE+DHuOoyzhcNyQPXTmB7cagXNqvHl4bymzdL7/I6LEmOqZptCgNbK
+         muVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXV52prPa3Q26RkXB51+8kJUdm8G9GKdCajyuVGXBSWVpboR0IueSmThAc6vuOVWPMzFkWFSSZx4gikl0t6iqlpY8B5gv+lKY5KjD35
+X-Gm-Message-State: AOJu0YwbpkKEajfPaCjOt3GD8tlkUx8zuStKPK/vg9SwxA89bYzxvfw5
+	DeIeiFDiw+C/BIscyVoTzau8AM4tYfy4+/kEhyy1247XXxzjdk37zryjUxCbDPHmwr/aiT6JDDH
+	4m0k4j8w9Gb511JffDsAGDiQf1xg=
+X-Google-Smtp-Source: AGHT+IEuHFrKuYdYR9bW9QDOJ52WoNSCF9km2bgNw9D7wyjddAIiBhakhZRyh6QJApWCr8yi7bCaOjAczID+rNj7ymQ=
+X-Received: by 2002:a05:6214:3109:b0:6ae:ba6:2136 with SMTP id
+ 6a1803df08f44-6bb8d79a1admr821976d6.36.1722450913709; Wed, 31 Jul 2024
+ 11:35:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240731-nolibc-scanf-v1-2-f71bcc4abb9e@weissschuh.net>
-References: <20240731-nolibc-scanf-v1-0-f71bcc4abb9e@weissschuh.net>
-In-Reply-To: <20240731-nolibc-scanf-v1-0-f71bcc4abb9e@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722450752; l=1271;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=hhma+iAZyJ0RGsjQ1P0DMANEGea+kZjZQTE/CVE9L5E=;
- b=v2MyLloAP1yn+Koe9/hLnFmkAkonAkIjcu7OK6IUcxZ/BmDgp7wjgx+9aheaWosKHWY8t/PvO
- XYRUlLt3u6nAmFjjA0CDur3Ti9gMalAt9t8pzU0f8jq+EGbmIUJXkWF
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-5-21cnbao@gmail.com>
+ <ZqcR_oZmVpi2TrHO@casper.infradead.org> <Zqe_Nab-Df1CN7iW@infradead.org>
+ <CAGsJ_4wfWYGZVouK4JTj9DBDNPKTX_zrfU45iivaUy-Nq-P1bA@mail.gmail.com>
+ <ZqkVMpbl5pH35uOq@infradead.org> <CAKEwX=PETirC4P3CXW1uvoHW4H-ozEYpXUGCoi-LnN=jAzMKLQ@mail.gmail.com>
+ <CAGsJ_4z1koYbroafQEUm0Sbm3QM2Ag11huUMKA6REQM_bWgRng@mail.gmail.com>
+In-Reply-To: <CAGsJ_4z1koYbroafQEUm0Sbm3QM2Ag11huUMKA6REQM_bWgRng@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 31 Jul 2024 11:35:02 -0700
+Message-ID: <CAKEwX=N1S6Btd1Bb=FnMHwXnM_74O+8_WkN97hfqgdV-2k-t-A@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
+To: Barry Song <21cnbao@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, ying.huang@intel.com, baolin.wang@linux.alibaba.com, 
+	chrisl@kernel.org, david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	mhocko@suse.com, minchan@kernel.org, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
+	yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This reverts commit 16767502aa990cca2cb7d1372b31d328c4c85b40.
+On Tue, Jul 30, 2024 at 2:06=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> > I'd be happy to collaborate/compare notes :)
+>
+> I appreciate that you have a good plan, and I welcome the improvements in=
+ zswap.
+> However, we need to face reality. Having a good plan doesn't mean we shou=
+ld
+> wait for you to proceed.
+>
+> In my experience, I've never heard of anyone using zswap in an embedded
+> system, especially among the billions of Android devices.(Correct me if y=
+ou
+> know one.) How soon do you expect embedded systems and Android to adopt
+> zswap? In one year, two years, five years, or ten years? Have you asked i=
+f
+> Google plans to use zswap in Android?
 
-Nolibc gained support for uname(2) and sscanf(3) which are the
-dependencies of ksft_min_kernel_version().
+Well, no one uses zswap in an embedded environment precisely because
+of the aforementioned issues, which we are working to resolve :)
 
-So re-enable support for ksft_min_kernel_version() under nolibc.
+>
+> Currently, zswap does not support large folios, which is why Yosry has
+> introduced
+> an API like zswap_never_enabled() to allow others to explore parallel
+> options like
+> mTHP swap. Meanwhile, If zswap encounters large folios, it will trigger a=
+ SIGBUS
+> error.  I believe you were involved in those discussions:
+>
+> mm: zswap: add zswap_never_enabled()
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3D2d4d2b1cfb85cc07f6
+> mm: zswap: handle incorrect attempts to load large folios
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Dc63f210d4891f5b1
+>
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/testing/selftests/kselftest.h | 5 -----
- 1 file changed, 5 deletions(-)
+I am, and for the record I reviewed and/or ack-ed all of these
+patches, and provided my inputs on how to move forward with zswap's
+support for large folios. I do not want zswap to prevent the
+development of the rest of the swap ecosystem.
 
-diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-index b8967b6e29d5..f0c4f62e2949 100644
---- a/tools/testing/selftests/kselftest.h
-+++ b/tools/testing/selftests/kselftest.h
-@@ -426,10 +426,6 @@ static inline __noreturn __printf(1, 2) void ksft_exit_skip(const char *msg, ...
- static inline int ksft_min_kernel_version(unsigned int min_major,
- 					  unsigned int min_minor)
- {
--#ifdef NOLIBC
--	ksft_print_msg("NOLIBC: Can't check kernel version: Function not implemented\n");
--	return 0;
--#else
- 	unsigned int major, minor;
- 	struct utsname info;
- 
-@@ -437,7 +433,6 @@ static inline int ksft_min_kernel_version(unsigned int min_major,
- 		ksft_exit_fail_msg("Can't parse kernel version\n");
- 
- 	return major > min_major || (major == min_major && minor >= min_minor);
--#endif
- }
- 
- #endif /* __KSELFTEST_H */
+> Should everyone around the world hold off on working on mTHP swap until
+> zswap has addressed the issue to support large folios? Not to mention whe=
+ther
+> people are ready and happy to switch to zswap.
+>
 
--- 
-2.46.0
+I think you misunderstood my intention. For the record, I'm not trying
+to stop you from improving zram, and I'm not proposing that we kill
+zram right away. Well, at least not until zswap reaches feature parity
+with zram, which, as you point out, will take awhile. Both support for
+large folios and swap/zswap decoupling are on our agenda, and you're
+welcome to participate in the discussion - for what it's worth, your
+attempt with zram (+zstd) is the basis/proof-of-concept for our future
+efforts :)
 
+That said, I believe that there is a fundamental redundancy here,
+which we (zram and zswap developers) should resolve at some point by
+unifying the two memory compression systems. The sooner we can unify
+these two, the less effort we will have to spend on developing and
+maintaining two separate mechanisms for the same (or very similar)
+purpose. For instance, large folio support has to be done twice. Same
+goes with writeback/offloading to backend storage, etc. And I
+(admittedly with a bias), agree with Christoph that zswap is the way
+to go moving forwards.
+
+I will not address the rest - seems like there isn't something to
+disagree or discuss down there :)
 
