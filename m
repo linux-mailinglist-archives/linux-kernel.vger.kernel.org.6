@@ -1,165 +1,97 @@
-Return-Path: <linux-kernel+bounces-269692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF4F9435DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38169435E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0231F2302F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9992850DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576EE4EB5E;
-	Wed, 31 Jul 2024 18:53:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2163B14F124;
+	Wed, 31 Jul 2024 18:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="St/1xIZQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nj/a2JY7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CfJ06FYr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3454084E;
-	Wed, 31 Jul 2024 18:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BD613B2BB
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722451988; cv=none; b=rS+LXw9p4OCDV35QMYw39cJBlV37qRe1rTyguhxFk+xLr9KGDGesA+TmT3tF2ZoqFxzDKE4TY2blhVFhbSM6T54x08gf1T/eC/pClbDoT2stracTC25H1X0ewxxr50OlhCauKjeM7onjIyOCExgqfmSpD1Wwc6sqaduXRfJPGlk=
+	t=1722451995; cv=none; b=elhmG+Dvu4ytogeBTxhuVWj/7pk8aqWkX98T39JetQqB6k1ZOJ/Qcu+Zmz91SUCGFXgI7g6cZtT5gGBrIhFoB9aIwU50bfxIW3j04FZmJQTZ1YmnQdudOMi1K+H6Dc4l6iqY6YXx0bOdDXV5+pjHEdpg1WmhGLJsOGakPrspwiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722451988; c=relaxed/simple;
-	bh=/JSVcS6VVmFsrriJSGRG8BZoUd070lPD2Oa5aSzbwdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CxKEg2U17rQn+YXaW/0ppuifkTQwzfU2KZ4F8wWuaY27O1VqxBvHY7Q9kTVmfGk+udZ+grAttPkGNS4wCNV2aHKY0EPCtuPz84lLIauBfn/36J9L5IIrWfn+cO6y7S9Ne49bRt9J4pidLKddJSv4HFya6d4SALBt+tOFmxi43dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=St/1xIZQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BDADC116B1;
-	Wed, 31 Jul 2024 18:53:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722451988;
-	bh=/JSVcS6VVmFsrriJSGRG8BZoUd070lPD2Oa5aSzbwdM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=St/1xIZQ++s81ewttk/TPXmmrPUKW2vWF7XgjLyq1QK6oY0OAZ59J03V0Zwt3wbIW
-	 LFQrV0rPhKDT+yNGoh/xtBTr4dldE8CKaY1PS8vv1t0OodboAA9PU4JNSBaiHLz33l
-	 sv7zaXc4z/AeiubhVdbaTlw+Eq361scHp4LcnFUc0i4I6em4EdTrGdTQxWmxtid+r5
-	 SEWtuI2LhA5jK8d/7PTivvGzpqz42kcteFOmlasy0SBB2esnIcW4N6wlK6jzBoyAVQ
-	 7tPmt4Z4c0dZkgiV5vUC6H7VrKni+eAjhXXv7S0zBmPrkgyuGO4oH4U4cxDqq9lB1q
-	 3SxOHloQGNSDA==
-Date: Wed, 31 Jul 2024 15:53:05 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	philip.li@intel.com, oliver.sang@intel.com,
-	Weilin Wang <weilin.wang@intel.com>
-Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
-Message-ID: <ZqqIEckIXQEAd9xr@x1>
-References: <20240730191744.3097329-1-irogers@google.com>
- <20240730191744.3097329-3-irogers@google.com>
- <Zqo5vVdrkhL5NHJK@x1>
- <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
- <ZqpZWywTe2j3U9Pl@x1>
- <ZqpcRIzzBb5KC6Zb@x1>
- <CAP-5=fVm5FkLDOLk4cbD9K6VPZ088f3Yk3bG8LT79E_OLLN4Lw@mail.gmail.com>
+	s=arc-20240116; t=1722451995; c=relaxed/simple;
+	bh=UUi5/J2ap4WNpFaqtmfkjaBR6xBlhFPX1Fgv6gjnn7E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JwYrY4Cnj8qLaOGxTArQ45o+lR56nl8jxoP11VUFhX0Ixy6soDc1xsjdiZGVMcY2nJf2Ba827Qwt20hhlvnWHiV9pFM2001eOFfaNf//AiJzKxvZ4E4OMU4MdmlQoCrQVoj0Plizd1MY1PJpSU1MTkGdf8OUu9FgUV7pk1X0g9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nj/a2JY7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CfJ06FYr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722451991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/3aMem7ZER8M4kJsRCB2muNUJiSoszp3BgGAcEL0vVY=;
+	b=nj/a2JY7znXXhTX8mRM4yHNVeNi50SwafccRZlHINGCLHFY7wu5FE9zL3nwIRNLm2BpNHs
+	8z5NmJOaRBrzuF/ITE9OYAMv6SlYeDYhN48RW9l1Tin/X1N5d83bWehXz6j95e2WS/IRi9
+	m+UydU8rodVeCT71wAo6pMDADZiCLXGND8xfBF5hoYTPxycTO7DABWxZjzWwv5d+Bc2BjW
+	zJef3gblC9DcmJ0bIyO5h2w5yjUBikzKUJorgMOPvbi73BVy8B2UR808FtMqscEGdsG8uq
+	uoEIyJjVvFqqinbr08giYSOnlIc5CJ2pwjrgsKWlBBpZ3/r4OuPkBesiFW3a2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722451991;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/3aMem7ZER8M4kJsRCB2muNUJiSoszp3BgGAcEL0vVY=;
+	b=CfJ06FYrJoMT7+EKbU1Xmp6RiaTFuKy9J/rFjH4dN5HziiZDQCFAh5axgx4JQ6DW6wWJf/
+	uX4SbG/SPawEJwBw==
+To: Feng Tang <feng.tang@intel.com>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>, "H .
+ Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ x86@kernel.org, paulmck@kernel.org, rui.zhang@intel.com, Waiman Long
+ <longman@redhat.com>, linux-kernel@vger.kernel.org
+Cc: Feng Tang <feng.tang@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v4] x86/tsc: Use topology_max_packages() to get package
+ number
+In-Reply-To: <20240729021202.180955-1-feng.tang@intel.com>
+References: <20240729021202.180955-1-feng.tang@intel.com>
+Date: Wed, 31 Jul 2024 20:53:11 +0200
+Message-ID: <878qxh5r6w.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVm5FkLDOLk4cbD9K6VPZ088f3Yk3bG8LT79E_OLLN4Lw@mail.gmail.com>
+Content-Type: text/plain
 
-On Wed, Jul 31, 2024 at 08:58:43AM -0700, Ian Rogers wrote:
-> On Wed, Jul 31, 2024 at 8:46 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
-> > > > On Wed, Jul 31, 2024 at 6:18 AM Arnaldo Carvalho de Melo
-> > > > <acme@kernel.org> wrote:
-> > > > >
-> > > > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
-> > > > > > empty-pmu-events.c exists so that builds may occur without python
-> > > > > > being installed on a system. Manually updating empty-pmu-events.c to
-> > > > > > be in sync with jevents.py is a pain, let's use jevents.py to generate
-> > > > > > empty-pmu-events.c.
-> > > > >
-> > > > > What am I missing here?
-> > > > >
-> > > > > If it exists so that we can build on a system without python how can we
-> > > > > use python to generate it?
-> > > > >
-> > > > > Now having python in the system is a requirement and thus we don't need
-> > > > > empty-pmu-events.c anymore?
-> > > > >
-> > > > > Can you guys please clarify that?
-> > > >
-> > > > The requirement for python hasn't changed.
-> > > >
-> > > > Case 1: no python or NO_JEVENTS=1
-> > > > Build happens using empty-pmu-events.c that is checked in, no python
-> > > > is required.
-> > > >
-> > > > Case 2: python
-> > > > pmu-events.c is created by jevents.py (requiring python) and then built.
-> > > > This change adds a step where the empty-pmu-events.c is created using
-> > > > jevents.py and that file is diffed against the checked in version.
-> > > > This stops the checked in empty-pmu-events.c diverging if changes are
-> > > > made to jevents.py. If the diff causes the build to fail then you just
-> > > > copy the diff empty-pmu-events.c over the checked in one.
-> > >
-> > > I'll try and add your explanation to the log message, thanks for
-> > > clarifying it!
-> >
-> > So, with it in place I'm now noticing:
-> >
-> > ⬢[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
-> > ⬢[acme@toolbox perf-tools-next]$ alias m='rm -rf ~/libexec/perf-core/ ; make -k CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python'
-> > ⬢[acme@toolbox perf-tools-next]$ m
-> > <SNIP>
-> >   GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
-> >   MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
-> >   CC      /tmp/build/perf-tools-next/util/annotate.o
-> >   CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
-> >   CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
-> >   CC      /tmp/build/perf-tools-next/util/block-info.o
-> >   CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test.o
-> >   CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
-> >   MKDIR   /tmp/build/perf-tools-next/ui/browsers/
-> >   CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
-> >   CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
-> >   CC      /tmp/build/perf-tools-next/util/block-range.o
-> >   TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log
-> > --- pmu-events/empty-pmu-events.c       2024-07-31 12:44:14.355042296 -0300
-> > +++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c       2024-07-31 12:45:35.048682785 -0300
-> > @@ -380,7 +380,7 @@
-> >                          continue;
-> >
-> >                  ret = pmu_events_table__for_each_event_pmu(table, table_pmu, fn, data);
-> > -                if (pmu || ret)
-> > +                if (ret)
-> 
-> Right, you need to copy:
->  /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
-> to
-> tools/perf/pmu-events/empty-pmu-events.c
-> to fix this.
-> 
-> This change has happened as you are testing with:
-> https://lore.kernel.org/lkml/20240716132951.1748662-1-kan.liang@linux.intel.com/
-> which isn't in the git repo yet (therefore, I can't make a patch set
-> on it). The change is WAI as it is telling you empty-pmu-events.c has
-> become stale and needs Kan's fix applying to it.
+On Mon, Jul 29 2024 at 10:12, Feng Tang wrote:
+>  	pr_info("Allowing %u present CPUs plus %u hotplug CPUs\n", assigned, disabled);
+> -	if (topo_info.nr_rejected_cpus)
+> +	if (topo_info.nr_rejected_cpus) {
+>  		pr_info("Rejected CPUs %u\n", topo_info.nr_rejected_cpus);
+> +		if (__max_logical_packages <= 4)
+> +			pr_info("TSC might be buggered due to the rejected CPUs\n");
 
-ok, I'll remove Kan's patch, publish perf-tools-next and wait for the
-now normal flow of patches.
+I'm not really convinced of the value of this message.
 
-- Arnaldo
+People who limit their CPUs on the command line or at compile time
+really should know what they are doing. The kernel already tells that
+there are rejected CPUs and that extra TSC info is just annoying and
+confusing noise for people who run that and have a perfectly working TSC
+on a single/dual/quad socket machine.
+
+I just drop that noise.
+
+Thanks,
+
+        tglx
+
+
 
