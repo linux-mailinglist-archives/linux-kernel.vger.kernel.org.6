@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-268400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD22942433
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:38:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D657942442
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4B51C22C3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:38:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5359F1F245AB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DB49D2FF;
-	Wed, 31 Jul 2024 01:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D5CC8FE;
+	Wed, 31 Jul 2024 01:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGKQQPBQ"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="YXVnhwlm"
+Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6EA8846F;
-	Wed, 31 Jul 2024 01:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34055611E
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722389873; cv=none; b=K63aD+jWEe47k9nk5RZDUglP9eqg1Cw5aqDJz6q1TDT4wvd5o3jUqddSMXFZsqcoAt93v0PX480R4Xi9nEyVhrYBARgS5nBhv67mTaDWb12Y1z/AJTv9AHBxi1rwsF7tq8XKAC7Eef4oTwLK3WgDh5d3b9pZ7RiK8wuSRFGLSZ4=
+	t=1722390392; cv=none; b=FnZEohBje8pQqckt0N7qd1p8uA6CEy+7ykH2alcz/iGQhBrcEgIF7hoNBi/ejKkvAVAH+WD+Wd1PgdEG6m3ZO1dUSNzKanJbSoY1d9DuTDd69LJnnVKT9uS7eERlnc10GqZ0RywzcjUSgTFHlxT51/sp0tI0HosES0A4+DbIIfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722389873; c=relaxed/simple;
-	bh=3s0CDbIpLDG4BAy5fizhb4Q65VE4rFxJZAkAwZXu9jc=;
-	h=Content-Type:From:Mime-Version:Subject:Date:Message-Id:References:
-	 Cc:In-Reply-To:To; b=iqPj3swSpWlhYZbuqNLaWLEqY9749rsZqFAV2BRR7BO99mgN2Xm5A9FUOJg3yXAgJ2Jhz7+uKgOYIYzD/guFobXT7X0L1WXRznZev1BNR8s51zy6ewZacGaOajo5X71A50IYQ8cWCNKN3hjfFDNcfyRF4/fmyfFW6DK+8PyLcnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGKQQPBQ; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3db18c4927bso2745205b6e.1;
-        Tue, 30 Jul 2024 18:37:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722389871; x=1722994671; darn=vger.kernel.org;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3s0CDbIpLDG4BAy5fizhb4Q65VE4rFxJZAkAwZXu9jc=;
-        b=MGKQQPBQbZfWxTNuoagRoWg2gO4kV7mvNLpKOcKXroteUR2mwMX8+d4jJv47tsb5vX
-         Awejn6PSbb0RUo9AJhytUjVYPA8OkTnf5YKiQlK6/znA7HzmtPpkQW6avfaS/04VaH91
-         bh2AqTuHW6J6fRsrO2M3/atOk8y3slbrcZUKntwikLYBgrWcNr4cvS5jW0lDeaZ+F83L
-         CdIDnaw0PsGNWy8HhAWUbbJOL3yLyALSUTbMOB2y3pReHWFqlLVin/jjUh1I5GPlwYKP
-         a6klrOHoimyMONTO4y9pBp6I7hGLM+8gfB2+i9qAJXyMpi1yLyWGB74hf6FGkS1rLHx3
-         yCYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722389871; x=1722994671;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3s0CDbIpLDG4BAy5fizhb4Q65VE4rFxJZAkAwZXu9jc=;
-        b=ajCcDV+DttHFvyJqPGZ+hV3Fyg+++0YFcepcxrS0OaVnOMRFcwxoc6KkgFdlf1WfZx
-         SDiXfJlsBYv3G0BW206r2EZ6fTc3uh9/9sOmL/Jvil6j/IXteewT7vAjVxXb4h8cF3gn
-         IarYuzZtw298InlbjfDC6I0CDciyPvZHpXCULzEqJ+QWggwemSTz4dXXS6399+p4Idl1
-         4s1th9fsw9BunZdw3aaol+mE80HL23W7N/F3EAPtNAURYoK8KWQR2RuKDiSdMCeoIBTU
-         BEIFd9gOIpTokqSgquz/7M0CA+7vGiPFxuQxDRBMIbqdJvoiBXYp3Ve6OGhhwG7Ytedi
-         jSSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ZDj4uhL60tpcbwjIEWnBDmvLx1Urql46CtS1jJBvoH6p9lRm5j0fuQ6Vh67GY/LUFKGumPPTSd6xijhPctEYQeMBJSb6isIF1TkApO+UYFPuOMUdmHp3tOrgoy6dbJvGV707
-X-Gm-Message-State: AOJu0Yyvoi0JT7UORdIOJQJrZZVm7cL5hnZqTP2FAX2Cm210gEqyJCvw
-	vDcavrmr2FP9kC3pRa+wFv2Z8IGBhDhrupA1FV/BfDXzG00tr+JSxIurcBdNeRs=
-X-Google-Smtp-Source: AGHT+IGG8esjWomK5mbChu4uZWWVHOB+o3iv9TIzDgiJnmPmdh2TLYKXYS7xlGDHjnJLM7oEZsKHnA==
-X-Received: by 2002:a05:6808:1507:b0:3da:ab89:a806 with SMTP id 5614622812f47-3db238b74fdmr13765287b6e.25.1722389870629;
-        Tue, 30 Jul 2024 18:37:50 -0700 (PDT)
-Received: from smtpclient.apple ([2001:e60:a884:2749:91b7:fcbd:cbf2:f90d])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa6987dasm8171632a12.86.2024.07.30.18.37.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 18:37:50 -0700 (PDT)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From: Jeongjun Park <aha310510@gmail.com>
+	s=arc-20240116; t=1722390392; c=relaxed/simple;
+	bh=0/SMHsQ5GFP1SYelao3d4uBDo1h/f3V/0+rr2srgbz8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=YDidzMtbidSyTS0aUBtsne4ONLF+G2Gpv+MqCmwnW2KIQ15fmh8j4NkkJrJzlB1U+8dAFZg34hQSQbHDRveoi7NqXo9wo4yuvNbKdt6Zy5kXqF4cuah0Efq8rE60QKbctfg4bBsooElCAI0dSLs8NJetSSnQKBhdwKHBbjJAqnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=YXVnhwlm; arc=none smtp.client-ip=43.163.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722390079; bh=0YnGlQQErURyORVXhFMswhQ2w8rLKaqeuF6cRmjL07w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=YXVnhwlmC4Cg0yC//4JMe4mgSD+eiSy2eIO7c1NGFfsz1jLvaHc1tf/ebM/2Bzpuj
+	 uX7/tN6eG6vNJz8fZw7r4y29+crruasTO5+YSpsjJ64xLRC40VTFjYI9pNI3KKx/D6
+	 r60nh14a7+j2eGM79v6H4ArmuD9esmYI59ef2wic=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id A5222229; Wed, 31 Jul 2024 09:41:18 +0800
+X-QQ-mid: xmsmtpt1722390078te6iojzd8
+Message-ID: <tencent_8D66803C29363A97EC36024BCE7451774309@qq.com>
+X-QQ-XMAILINFO: NMGzQWUSIfvTbeuRV4gZUOlQZy+w9WVl6Tb8f+fgk9qMRkb0FFiZLkNW7jGmCT
+	 oUolzXzddpm3nglWB17QtZLULy6qTwiZ8DGPvbadUVxauo+VY93mmlQpM0P3En5ZDUcdjEIxiFyl
+	 bGlDy1wlnrR5U6AMYR+8tn4mwVcBQ9Ngs6AAP7758aWP2i43H56WMeifhImxLxpjsziZGA5Y/tVf
+	 rz+WGWZ0nzNDidj+O5TV4zqzzwyQDaCh0H49zL2yRxpuqQx9SfbQ95MYMDpUOKLNIKPbK1X+wgbm
+	 JZJNjbOuHC+wtgpflTTjV15T3BVHFaaq3njCMkRK0ODap3aowoha5kpmCa7TcpxJrWF06QBK4+yz
+	 ov1NmiN7CNVYqh1iZp1mLny5WuAebidB+TFQRpYzF5jPabFoDAnTzwDiMbzPg/GUsJuIsoJvZcJw
+	 FqdlkXgfYUeiPxm89avzTMLEzBi1fIt2JXvt/v6voybreOl2SG/Sw1EdV4vlFKOalZOHdmFmVWl8
+	 IiPR5mgJ9bWamdbw2Ff67LdM/FO5nRclBlqKqh4RpfCF9Rq4cf0JwIRy4+LK2T/CzCNa5OJ86GqX
+	 bGs73Uj0Cdk+lE3fphA7JAA+90k9s0A2eq44ZmHO24AkIxKogDLge8uxI8sRs3MWruaLb4sHP29X
+	 /2z7cT/A/gkVTNiB3IdSf5b20aMGF0TLcl9IA3P3Scvs0EeFawAl9mhWV3O0XErNa4Y+s0KbHFWR
+	 M1QWZipRQh2PPOnAo8hHNC946YRQl7bQX956zdyD5OA1/uvCOcDdtDeTOQ8SA2ZbM/W8u4VwpsL5
+	 K0MQ7WdIB4G9JD+ia3Xt0S6AWyHFCxzeD+O4/3DV31qrnOB2UHSvPiZwnm/9x4eObSW40lZffac+
+	 eceKwW6+IJ1JCEdgDTwMCv0RINl5uWMukg8CgFVZmW9vAmOj00iTMPg0GpEAgAPw==
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in journal_entry_dev_usage_to_text
+Date: Wed, 31 Jul 2024 09:41:18 +0800
+X-OQ-MSGID: <20240731014117.47582-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000b2c0fc061e6cb26b@google.com>
+References: <000000000000b2c0fc061e6cb26b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH net] rtnetlink: fix possible deadlock in team_port_change_check
-Date: Wed, 31 Jul 2024 10:37:38 +0900
-Message-Id: <AB56B530-B67F-4A41-99E7-1FDA14604D5F@gmail.com>
-References: <20240730165912.67600510@kernel.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- idosch@nvidia.com, jiri@resnulli.us, amcohen@nvidia.com, liuhangbin@gmail.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-In-Reply-To: <20240730165912.67600510@kernel.org>
-To: Jakub Kicinski <kuba@kernel.org>
-X-Mailer: iPhone Mail (21F90)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+entry data bytes too small 
 
+#syz test: upstream 1722389b0d86
 
-> 2024. 7. 31. =EC=98=A4=EC=A0=84 8:59, Jakub Kicinski <kuba@kernel.org> =EC=
-=9E=91=EC=84=B1:
->=20
-> =EF=BB=BFOn Wed, 31 Jul 2024 00:22:10 +0900 Jeongjun Park wrote:
->> do_setlink() changes the flag of the device and then enslaves it. However=
-,
->> in this case, if the IFF_UP flag is set, the enslavement process calls
->> team_add_slave() to acquire 'team->lock', but when dev_open() opens the
->> newly enslaved device, the NETDEV_UP event occurs, and as a result,
->> a deadlock occurs when team_port_change_check() tries to acquire
->> 'team->lock' again.
->=20
-> You can't change behavior like this, see ec4ffd100ffb396ec
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index e3b1bde489c3..d536da101e89 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -1252,6 +1252,11 @@ struct jset_entry_dev_usage {
+ 
+ static inline unsigned jset_entry_dev_usage_nr_types(struct jset_entry_dev_usage *u)
+ {
++	if (vstruct_bytes(&u->entry) < sizeof(struct jset_entry_dev_usage)) {
++		pr_info("entry data bytes %u is too small", vstruct_bytes(&u->entry));
++		return 0;
++	}
++
+ 	return (vstruct_bytes(&u->entry) - sizeof(struct jset_entry_dev_usage)) /
+ 		sizeof(struct jset_entry_dev_usage_type);
+ }
+-- 
+2.43.0
 
-Okay. In that case, I'll write a patch that modifies the code of the team dr=
-iver and send
-it back to you.
-
-Regards,
-Jeongjun Park=
 
