@@ -1,171 +1,117 @@
-Return-Path: <linux-kernel+bounces-269809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E8C794370F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:23:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF4CB943711
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA3F1C21A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972EC28257A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E094816087B;
-	Wed, 31 Jul 2024 20:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0728E17579;
+	Wed, 31 Jul 2024 20:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWAtc2tf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="a8h4doNa"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26605182D8;
-	Wed, 31 Jul 2024 20:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9231E3D97F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722457421; cv=none; b=D80mPbRHWAiUkPGO0ymKp22epQvuLiwR8tk083PI9mNK8rRzO31YRRWpAU5aujJiZi0gN4UYUpYB2uyhaPKQ25zzQEw0j2N1oeRY38G5xgLpy6Y2Ps9WKb4+wyM1FTb1L3GEYC11KP7vbMtWjQ/sAUXJblebsyN3vL6gd+5kzL4=
+	t=1722457505; cv=none; b=KW3zSeAVQ2riwRqOjMsSFJXZCNE7oHvZBln6tUwtHYIPuCq8x1rUruVAvAPZIPAi/Tj13xD2cG9Jgkl4TZcNKAw3+x1z+ZhnbrMp2YFPj0d5Xa0Zy/tJHa/BN8Un7gmEz44sswz0lXmWiSQ735fC1aMZlUZ12au/iHNPTH3kybA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722457421; c=relaxed/simple;
-	bh=AY5BnWdQ2yo2WR6h0ILx9cGNB0P+qWgeQPBR2YUHwvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=ty+OpNk/mzU3FtRXcgyc7DdDy0oCrAIBIeW6/IipfmMT/Jd71LvyiHHOe20EOVPymQucYjfgq1B9FD9sisz1hWuoEYgxUzibAdsVwFV1XZ8Y2nHQLaX9vLTnr9KqoT0++VQAsVkCF3iAGqXr+J9cRFywx+evWXUmvtl+Hx01A0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWAtc2tf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D6FC116B1;
-	Wed, 31 Jul 2024 20:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722457420;
-	bh=AY5BnWdQ2yo2WR6h0ILx9cGNB0P+qWgeQPBR2YUHwvo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mWAtc2tfrspROl+zbHWZYl09LpX6URPVKntcxAbob7gPhpjZIerjxdwBfttMrXKu9
-	 MBZK5Bi1Ynl8UcdoMe0xNoUapMEzotKDii6M9r8ej82LINNVKENFATnIZhht6VR0fm
-	 8hgx6QLrj+NgFwRpixgXx2jSgNSQfZmPpOddURJSB7gWRluvJxG9sOWlHZrhs9QbAB
-	 iggB8gYwbL3hAiEBZ4a6N1gYgpfLdialV8foX5KcuaPXrKwWvgSprGiWBxkJSw1kMy
-	 qnfaSxzMSKIUnb+74rwPSWLnQIPwNdBomwYuCGBf1U4I6QmSRwy32a1xS35LUc+hYG
-	 a4l6/nmRF8Teg==
-Date: Wed, 31 Jul 2024 15:23:38 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: matthew.gerlach@linux.intel.com
-Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	dinguyen@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"D M, Sharath Kumar" <sharath.kumar.d.m@intel.com>,
-	D@bhelgaas.smtp.subspace.kernel.org,
-	M@bhelgaas.smtp.subspace.kernel.org
-Subject: Re: [PATCH 7/7] pci: controller: pcie-altera: Add support for Agilex
-Message-ID: <20240731202338.GA78770@bhelgaas>
+	s=arc-20240116; t=1722457505; c=relaxed/simple;
+	bh=5iljddl6Dy1+iqapnBBDqeHgVvb6+kC9EnooWBoaZ+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U3giq8sqjiLyJs24BUUctg7jyIA6njcFixBmFOoMaZ/gceTD4ecTRgInNgrjCoFfjib8kV8/yhuT9jMtVLWxojbc22vk7dEdHznaLevvyj4kCG2SytZHBA2eh+if/LdkiuMoD71xdwA69QiaRFkxJomMDoZPF8/IrGqM+W/B7Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=a8h4doNa; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-81f8add99b6so29495439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:25:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722457502; x=1723062302; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qNpsP02VSjKsYtcASUUA6qMfypdvykuyxCt7zWGiFLk=;
+        b=a8h4doNatuWmRmGXwjWRvKVJ/3qjjMfFJKweCwHIGVMI/QIC1ccOBfAP6/y7pIRK16
+         u5kyTnJkx5sPO414swIiDpbwKtDes2xjH9BGMmQLUfA9CYMQbSk3pW9K4qeoH1OyCRQQ
+         k3UiVeqo4ZIkBEgrJLwJozoGwEzmsZ1Oqy4EM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722457502; x=1723062302;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qNpsP02VSjKsYtcASUUA6qMfypdvykuyxCt7zWGiFLk=;
+        b=o+uKbdVt93jWD6w5dmQI7G+0xrt6jNr8g2nj6/7eyCPn0cBg1gmwDiQHb27ddFHfA3
+         3gytZXzishli1ywbkXYuaEmI05XqZCS6RUoxMMqNBsTTDHoE6LxFpwu6Cjwdp1+jvifl
+         Z1t+3vn9RR9ysI8XPVeTy2EPghM0Vyg45FeaR0ZEgcUB1ssOdDMkoFgmnNbRTSjtUb8m
+         Nikjn6S4eMRVIKQp44RZcs8mDhH4M/j/0hKB0zVrzbF1OPlzOCFF7qG/wi3hBqLpdQv4
+         1e7s5JhliaVJdy6joGLjPNXhZt5ehiFfDHVeTi2pZ7xUWUu50SZ0R1o/6n8vZYIam2eM
+         t28g==
+X-Forwarded-Encrypted: i=1; AJvYcCUfCAIt7KV8NKFiLU/1kvbFxj1sNDWw9KgFerC+n8ASGFCKk+vaCnEWrEhO/RpYzm6pZWNkdDRhwKbiTgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBumOK8s+aZTmJDM1CWeo3QpukXKYe4olrTPROq0vPoQRlxQFo
+	hXYJYO/rgWWRmLK9OSOoGcfhJTWr2PTjm/9xH2C9/K9I0Opx65zLvcQfQnOHP44=
+X-Google-Smtp-Source: AGHT+IHizPAHD4S5ZiqFk080B6OLpCMsmkSB9xS6xlQxHULKrSv9bR+UjdoWxv8uUQ1IXUjy0JVfbQ==
+X-Received: by 2002:a6b:4f0a:0:b0:81f:8295:fec5 with SMTP id ca18e2360f4ac-81fcc1c1b19mr28919539f.1.1722457502455;
+        Wed, 31 Jul 2024 13:25:02 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fbd9a7asm3352896173.96.2024.07.31.13.25.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 13:25:02 -0700 (PDT)
+Message-ID: <d9fea67f-4871-4b26-8a69-f9a8fca8fb13@linuxfoundation.org>
+Date: Wed, 31 Jul 2024 14:25:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731143946.3478057-8-matthew.gerlach@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240731095022.970699670@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In subject:
+On 7/31/24 04:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.3-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-  PCI: altera: Add Agilex support
+Compiled and booted on my test system. No dmesg regressions.
 
-to match style of history.
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
->  #define TLP_CFG_DW1(pcie, tag, be)	\
-> -	(((TLP_REQ_ID(pcie->root_bus_nr,  RP_DEVFN)) << 16) | (tag << 8) | (be))
-> +	(((TLP_REQ_ID((pcie)->root_bus_nr,  RP_DEVFN)) << 16) | ((tag) << 8) | (be))
-
-Seems OK, but unrelated to adding Agilex support, so it should be a
-separate patch.
-
-> +#define AGLX_RP_CFG_ADDR(pcie, reg)	\
-> +	(((pcie)->hip_base) + (reg))
-
-Fits on one line.
-
-> +#define AGLX_BDF_REG 0x00002004
-> +#define AGLX_ROOT_PORT_IRQ_STATUS 0x14c
-> +#define AGLX_ROOT_PORT_IRQ_ENABLE 0x150
-> +#define CFG_AER                   BIT(4)
-
-Indent values to match #defines above.
-
->  static bool altera_pcie_hide_rc_bar(struct pci_bus *bus, unsigned int  devfn,
->  				    int offset)
->  {
-> -	if (pci_is_root_bus(bus) && (devfn == 0) &&
-> -	    (offset == PCI_BASE_ADDRESS_0))
-> +	if (pci_is_root_bus(bus) && devfn == 0 && offset == PCI_BASE_ADDRESS_0)
->  		return true;
-
-OK, but again unrelated to Agilex.
-
-> @@ -373,7 +422,7 @@ static int tlp_cfg_dword_write(struct altera_pcie *pcie, u8 bus, u32 devfn,
->  	 * Monitor changes to PCI_PRIMARY_BUS register on root port
->  	 * and update local copy of root bus number accordingly.
->  	 */
-> -	if ((bus == pcie->root_bus_nr) && (where == PCI_PRIMARY_BUS))
-> +	if (bus == pcie->root_bus_nr && where == PCI_PRIMARY_BUS)
-
-Ditto.
-
-> @@ -577,7 +731,7 @@ static void altera_wait_link_retrain(struct altera_pcie *pcie)
->  			dev_err(dev, "link retrain timeout\n");
->  			break;
->  		}
-> -		udelay(100);
-> +		usleep_range(50, 150);
-
-Where do these values come from?  Needs a comment, ideally with a spec
-citation.
-
-How do we know a 50us delay is enough when we previously waited at
-least 100us?
-
-> @@ -590,7 +744,7 @@ static void altera_wait_link_retrain(struct altera_pcie *pcie)
->  			dev_err(dev, "link up timeout\n");
->  			break;
->  		}
-> -		udelay(100);
-> +		usleep_range(50, 150);
-
-Ditto.
-
-> +static void aglx_isr(struct irq_desc *desc)
-> +{
-> +	struct irq_chip *chip = irq_desc_get_chip(desc);
-> +	struct altera_pcie *pcie;
-> +	struct device *dev;
-> +	u32 status;
-> +	int ret;
-> +
-> +	chained_irq_enter(chip, desc);
-> +	pcie = irq_desc_get_handler_data(desc);
-> +	dev = &pcie->pdev->dev;
->  
-> +	status = readl(pcie->hip_base + pcie->pcie_data->port_conf_offset +
-> +		       pcie->pcie_data->port_irq_status_offset);
-> +	if (status & CFG_AER) {
-> +		ret = generic_handle_domain_irq(pcie->irq_domain, 0);
-> +		if (ret)
-> +			dev_err_ratelimited(dev, "unexpected IRQ,\n");
-
-Was there supposed to be more data here, e.g., an IRQ %d or something?
-Or is it just a spurious "," at the end of the line?
-
->  	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
-> -					&intx_domain_ops, pcie);
-> +						 &intx_domain_ops, pcie);
-
-Cleanup that should be in a separate patch.  *This* patch should have
-the absolute minimum required to enable Agilex to make it easier to
-review/backport/revert/etc.
-
-> +static const struct altera_pcie_data altera_pcie_3_0_f_tile_data = {
-> +	.ops = &altera_pcie_ops_3_0,
-> +	.version = ALTERA_PCIE_V3,
-> +	.cap_offset = 0x70,
-
-It looks like this is where the PCIe Capability is?  There's no way to
-discover this offset, e.g., by following the capability list like
-pci_find_capability() does?
-
-Bjorn
+thanks,
+-- Shuah
 
