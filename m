@@ -1,56 +1,52 @@
-Return-Path: <linux-kernel+bounces-269728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5A9943635
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:17:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17AB1943638
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B9141C20946
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:17:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C07DD1F23694
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7A914B097;
-	Wed, 31 Jul 2024 19:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D988914B96C;
+	Wed, 31 Jul 2024 19:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1CIpg6u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4M3MWER"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6C716DC3B;
-	Wed, 31 Jul 2024 19:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FF116DEC7;
+	Wed, 31 Jul 2024 19:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453244; cv=none; b=hAzzgvVX0+EhNBZ6LfUdNV5KGlZVlx1qPAk0Df90BYYvh7UKKXC9qSjIcN7Sgr6aO5rrJkRx5lxAjyTBqVS+r8wloPeMyxHXAm3KZD+JpsKV7yQ0xiCsuwtqGiWwi7Mg8A1ek27C0ei9H8R4iDqYiwRYU20gQovqS2VlCn8ck/k=
+	t=1722453246; cv=none; b=Rj/HokR1J/ewu0jHCJ0OKizHFPlhf7gnK/Pk6N6Maz12xsDZyY2WF2zdruKFw0OfgGl/CxM+aIAn9zmWgIPkPaLFYtkI7wVsKVG64vNxo73mGRb37hdz4L4Ay0+OM7ZJoOIdvmjiGOyr5NxS5xqGSq4Dsp5DOSZlmK6Rpfo19Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453244; c=relaxed/simple;
-	bh=1c8G2pZa29Ew7kwVpnYpj8oBYtzfUhHAnb6RGT6xepI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F/gsJI5LTR7IZAQ+lWKINyZegTRISEp862eazkayvUU98gFe9eIXRw8f0gzLXcj2iJeVOd4fb1uc2u/bu1Mty2iBr167tKQn0onzJBiUv5P/nIFgr7wgsqNcQTbMu+16y7YJdn0W2fMfd2L88blfBrCVn1iYozZUslOGhMUK1O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1CIpg6u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96322C4AF0C;
-	Wed, 31 Jul 2024 19:14:03 +0000 (UTC)
+	s=arc-20240116; t=1722453246; c=relaxed/simple;
+	bh=b7SvptSMOHNJYamugBMBGO1kci3QMT70Txvg+hEaukY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dHjhXui6eFRbLQc8WSmfrbvwHk5wy0HVtJ1BPnZuIDYQBq6wCc7w6fnXe1803om22E2ZiLXRGbQ+Ow76+9m6avSiU19mWElf7HzpX0B6uBD3KBLtHlk9TQ75CVYvtmXXSWYMasOSUGcGlOu0le4detj7dYMKAXwAuuMJa6wziNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4M3MWER; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8961C116B1;
+	Wed, 31 Jul 2024 19:14:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453243;
-	bh=1c8G2pZa29Ew7kwVpnYpj8oBYtzfUhHAnb6RGT6xepI=;
+	s=k20201202; t=1722453246;
+	bh=b7SvptSMOHNJYamugBMBGO1kci3QMT70Txvg+hEaukY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=n1CIpg6ug7GHwMQY90/n8p498muCtyLRnJpWeX+6l3bP8+L2LOKRi962Zl6N4BYo3
-	 2E6eHHteDrhcW2yZJx8oVAjfCT78IWt6iid9qFuc/E4XQBxZU0QLyxIEyW6ymm/lpN
-	 dn/vO913nj28ytrmWvOG+1RX18M3FX2W/jYph/a74ZqIACylt+Vti8sTOOqNTKsvzi
-	 0Aec2w8KUuSoAZ6yjQncf/6xPY0yywnsT7oE6iwBSa2gklg4jsl45sbHzE98y7kYwG
-	 0PKOzOloSgq16Ls+Wtzzp9cOQHnluOOQ+EQOG5jewNxnUZNDB3Wl9y+ww3NJmriRD5
-	 kUvu9pJw1Jilw==
+	b=W4M3MWERZp2LfWHc96outvV0T4lg2qLuMBbPmRb6Bnx+IAc6Pov2BJDQd1lbB41xh
+	 Unv3DNDX/p6VIFjRE943r6BaWiIny9C7tSKtLTq49XACROKqme8L9UMuOFOT8KIvsA
+	 Ks8RnD90oZ+Ocrh2FvSWjbpMXGb2e9gHtpybeVYxVH0gH54dqZpmkbhzrJ2bHG5+OF
+	 lccmom1spWCgvcpLVmpVaplxFfCwd0dOx7YW0HFArMdtjoNrhgFzhQBYjmMU30pZcf
+	 drgJaereX3TrPDu+8MyuB6bUcO2+yWP20iRlFU46R7lIP9R7AVLZLZSzVOZWu9ac1Q
+	 WGu1sdGYDZSTw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: linux-serial@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] pinctrl: samsung: Use of_property_present()
-Date: Wed, 31 Jul 2024 13:12:54 -0600
-Message-ID: <20240731191312.1710417-16-robh@kernel.org>
+Subject: [PATCH] serdev: Use of_property_present()
+Date: Wed, 31 Jul 2024 13:12:55 -0600
+Message-ID: <20240731191312.1710417-17-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,41 +57,29 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use of_property_present() to test for property presence rather than
-of_find_property(). This is part of a larger effort to remove callers
-of of_find_property() and similar functions. of_find_property() leaks
-the DT struct property and data pointers which is a problem for
-dynamically allocated nodes which may be freed.
+of_get_property(). This is part of a larger effort to remove callers
+of of_get_property() and similar functions. of_get_property() leaks
+the DT property data pointer which is a problem for dynamically
+allocated nodes which may be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/pinctrl/samsung/pinctrl-samsung.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/tty/serdev/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 623df65a5d6f..855d6d99a253 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -823,16 +823,16 @@ static struct samsung_pmx_func *samsung_pinctrl_create_functions(
- 		struct device_node *func_np;
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index 8913cdd675f6..ebf0bbc2cff2 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -529,7 +529,7 @@ static int of_serdev_register_devices(struct serdev_controller *ctrl)
+ 	bool found = false;
  
- 		if (!of_get_child_count(cfg_np)) {
--			if (!of_find_property(cfg_np,
--			    "samsung,pin-function", NULL))
-+			if (!of_property_present(cfg_np,
-+			    "samsung,pin-function"))
- 				continue;
- 			++func_cnt;
+ 	for_each_available_child_of_node(ctrl->dev.of_node, node) {
+-		if (!of_get_property(node, "compatible", NULL))
++		if (!of_property_present(node, "compatible"))
  			continue;
- 		}
  
- 		for_each_child_of_node(cfg_np, func_np) {
--			if (!of_find_property(func_np,
--			    "samsung,pin-function", NULL))
-+			if (!of_property_present(func_np,
-+			    "samsung,pin-function"))
- 				continue;
- 			++func_cnt;
- 		}
+ 		dev_dbg(&ctrl->dev, "adding child %pOF\n", node);
 -- 
 2.43.0
 
