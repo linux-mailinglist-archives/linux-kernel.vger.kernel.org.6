@@ -1,111 +1,161 @@
-Return-Path: <linux-kernel+bounces-268418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6FD942478
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:16:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C393294247D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:19:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17F031F24C9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:16:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73D74285B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C251210A0C;
-	Wed, 31 Jul 2024 02:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473A412B73;
+	Wed, 31 Jul 2024 02:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VLZueX09"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjFk1R4j"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE17C2FD
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 02:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DA412B63;
+	Wed, 31 Jul 2024 02:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722392187; cv=none; b=BjMJb9KZMe1sIhF4rPklkX8cVNAugRzQHKXUHTVHCRe3swi/htMWhKV9xIk0XnztTbKGAm6R1tIFYXjzKnDEAikvlGXmE4l7FNAe3uXbXUaZvfSsTDJNuGldlTPs9XXGZ9j7bn6bzhcLzRr/+dSoJpHFPB3IN/yZxkIGGBzEyqY=
+	t=1722392345; cv=none; b=C+OGW1fVd2MxfYcUZ09OCndcxuUvNYz5A38V4n9nEfXwvTEjLlQnd92gchCvkVeOVHcTj/fU6lEVv9USg0GrxoCFWatIVyPqeQbC73eWcopC7Z6ylFAxHMyGc/5h+iGNizBpQPqQYJ1jHdk27lNlibrcyUPuScB24u81yf4eoIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722392187; c=relaxed/simple;
-	bh=DMG3rbkS3kfAD+T5PEJSjY/gTvAmj5VUgDnq4/nSGsY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYwr3r48ZKPAdA6IRCwCEVIZ3b8djRrqXVN67kCV3qwVgiiZzA1S9KajxyO6MX1hzWpMy0B0QY5wSWaR8LVFFyuZNpFsLsl33KFfeL3Fdejr4OaSRgQXlkR4bnVBDA+ZrTF6rRWiDOtEa0/gMAUKHlEEun8JbRsOWS531diKrAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VLZueX09; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70ef732ff95so1841004b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:16:25 -0700 (PDT)
+	s=arc-20240116; t=1722392345; c=relaxed/simple;
+	bh=psVZlw9PpG9cw5fogbCKd62dVx/dheAvsRci2ZwK2Vc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tnrwlVS/BrrngHu6ofNCYcndvNsIPj67y3+BDQZyjS+h5WzjZS5443N5nX1Hk/s38UiLQoq2EzxUyH+co5wzLUz0GiJHHbbw9i/ZSiT1kskdvI5yWezjnDvFDPZKGTVibQowvr1SR5b18BNVHWpGneoQx9FHEA0eF81ZJpzIzA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjFk1R4j; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-81ff6a80cbbso1499310241.1;
+        Tue, 30 Jul 2024 19:19:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722392185; x=1722996985; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pm24eBOf5RouWLkBrgSLmesZOwTzNnb44rrW9Pz95Ps=;
-        b=VLZueX09U2lUbS2XCQQOYSWnRME7jD1A+6M/SVvR8INeQAs3rP6AEYkkoAUn1mDYs7
-         iwE9ijHHGCsQvOsr4kqf9IAEyDD01HC8NHHpy8mJ5S8FpMzvyLjt4WokECuuP5Kqkl5J
-         BWyhQRScLauRiyP1xzJA7fS8IPQO+RDRy1+hU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722392185; x=1722996985;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722392343; x=1722997143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pm24eBOf5RouWLkBrgSLmesZOwTzNnb44rrW9Pz95Ps=;
-        b=DNNhyrQXw4sv5Yvfz1O/gFYnIAIHXtbnuuNAObrpgGTs5bi1H9Y4zjH7sp/XJpb18Q
-         rxse6MNjTCVxGNisJLwImkADBjDMHIEYW+Y+S+YFujQenYtlCzq2edzRCSjbR+LcCNNb
-         khYQUbkbkKNGLuZ2bJdBYiQ97648ywugiPOoAB8e+3TK0ygOBvImOJ2fn9jyDxcw64hO
-         4kwwuhDUOhKHn8gHIpsjHdHl+7nO1gNo/TKAAkA1PJeBBfalUSk0HQQ152hDKyzSyHl9
-         MEDt0S4G0F8H9fdiovtnDeTnLdfQ/P1CfTGn8bFOx/J4CTtqfhcjPggsPwdbVpHpU5co
-         meKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCH6pasiqWW4uxUZ99FOvi8BjEumXfLIE1c4KXlM/1krag3JQeqlbXrCNW5IcYiipxrAjOIwRGNXkT2c/s/thZ+dE0eGGvrzuvlJrq
-X-Gm-Message-State: AOJu0Yw+390NE+zioS4Hl/fKVWSEo4hHllHJC0ncAG0pcvNXI/Ucpupc
-	YG+89KV4CICQFUiupqMMETyGJDXq+5P1LMMVzI/gbCzKFL45qYmi2sXaHaXHXg==
-X-Google-Smtp-Source: AGHT+IHvRHiupRzDSjcjS5k2okMhnlosHol4XJ/6pHV7OZKZTQwMTSSIaRFUYw18t2u9L3IpHM3MjQ==
-X-Received: by 2002:a05:6a00:4fd2:b0:70b:3175:1f4f with SMTP id d2e1a72fcca58-70ecea40e8amr11579240b3a.16.1722392184908;
-        Tue, 30 Jul 2024 19:16:24 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:a51d:b844:f0ff:3c91])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead874619sm9051234b3a.164.2024.07.30.19.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 19:16:24 -0700 (PDT)
-Date: Wed, 31 Jul 2024 11:16:19 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Alex Shi <seakeel@gmail.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, alexs@kernel.org,
-	Vitaly Wool <vitaly.wool@konsulko.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	minchan@kernel.org, willy@infradead.org, david@redhat.com,
-	42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>,
-	nphamcs@gmail.com
-Subject: Re: [PATCH v4 22/22] mm/zsmalloc: update comments for page->zpdesc
- changes
-Message-ID: <20240731021619.GD16599@google.com>
-References: <20240729112534.3416707-1-alexs@kernel.org>
- <20240729112534.3416707-23-alexs@kernel.org>
- <20240730093726.GB16599@google.com>
- <8fc7939b-416a-4328-9df2-488f17783543@gmail.com>
+        bh=EuTTBgp92FvKs6e3kX5RBQcJaA1lmI6qmSNZuE7MUYw=;
+        b=CjFk1R4jn9AEVIy1N9rLXWX4iHxnhB1+gtWwvWage1NfdyXWoDxTc3+MCzOaOmQkmZ
+         IgTf+Yrqsnsqso/4qXJAuAvp37NpreBxb/Sh2aG/PTLBEFfwlQaDAfKJWCfvjck+aPh5
+         qmHTK5koE/WXWXMe82/7i1eWJrFltCc/SageOqYoBDwqQd1JVeVyWT7obDGq+fFhgiCc
+         YkGSyXiP3Uho9YgXDPHgX0aNhgtSWYEgKgsM6/nxpCiK4lMeG5SKKH7W09HAj7q0Hsyo
+         oVryHp/T3ynYxuxAMaZRdPfmDCqEnKWof6aIFUvAPhWYeagvfb7/BebGGtbmaO7VCSMN
+         SQ3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722392343; x=1722997143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EuTTBgp92FvKs6e3kX5RBQcJaA1lmI6qmSNZuE7MUYw=;
+        b=NV7jWltCXQGH4Ug20CJbDAcrm8A9C+DChYpVvbnqI3r3paFfNQPwYPc2nW7zcJSF63
+         qi6FtBmgsfWdiKQMA47f6cRuNigig75ANZnqFIjbr7OcctDEuU73pT2PrmdL9Kc6SP5i
+         OCTaBy+eIvESF34lI/hDCqZdyS7tXLV0/OOF2hkEBmlbn5ngaWG5E+4c6NdDcCco31Fx
+         JQs4agu1868FNORjzznDRcQKiJlZW4a9YMGOlbSHIKqwyixBdTDNUUutfOhoA+IFAkGf
+         erh9zs3eOdCPAZpI74WD5ATmKJ4zZgqVUaVEXtnKI7dUYr86wZ9TwN3ZUp25ZhcGvdr8
+         EOPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUu72AB14VsDsFsnlbXXWswEoo3wepEaX4nYWQXCDKKWC6K3LSoCkkEF74NtqrqXUHyypQQJVRBHfgRsu1tiq/n4I7aTTCNmJaAeAsXz3Hyi6uE+rddTKNQhkLrcRKlB7odhhG8+AlFGdOPbyC5U2XhdfkrVHm9DuCpwhj1juHt5YI=
+X-Gm-Message-State: AOJu0Yx9hTsBtALlSa2XQRrDY/z2iqjhTWkXtXS65arxgjUnOdDWgFk/
+	GPEEgWkQv1zy6h9F6sZnIHlsqWJwxp01AV8it51DJoVFRYWz4rppQrPKn8EcD+3ruL53pmxcN2J
+	70ZmmE92lGbJwS6Vct/t/0GSiXf8=
+X-Google-Smtp-Source: AGHT+IET32HsRUmh5QkmUwiju7XuwyuRfEv3IIhJFoZqlfnE3LGBqWMtNG5FTioR1NG2RfcEAUn/nvMGw2OZ8dW8FGQ=
+X-Received: by 2002:a05:6102:2909:b0:493:badb:74ef with SMTP id
+ ada2fe7eead31-493fad48fdcmr13920389137.26.1722392342815; Tue, 30 Jul 2024
+ 19:19:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8fc7939b-416a-4328-9df2-488f17783543@gmail.com>
+References: <20240730114426.511-1-justinjiang@vivo.com>
+In-Reply-To: <20240730114426.511-1-justinjiang@vivo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Wed, 31 Jul 2024 10:18:49 +0800
+Message-ID: <CAGsJ_4xdnQjQyJVMfN7ZSW3OMvJhFRErjwMGSCDZACQOVWeesw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mm: tlb swap entries batch async release
+To: Zhiguo Jiang <justinjiang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin <npiggin@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org, cgroups@vger.kernel.org, 
+	opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (24/07/30 19:45), Alex Shi wrote:
-> On 7/30/24 5:37 PM, Sergey Senozhatsky wrote:
-> > On (24/07/29 19:25), alexs@kernel.org wrote:
-> >>
-> >> From: Alex Shi <alexs@kernel.org>
-> >>
-> > 
-> > Usually some simple commit message is still expected.
-> 
-> Uh, my fault. Just forgive this part, is the following log fine?
-> 
->     After the page to zpdesc conversion, there still left few comments or
->     function named with page not zpdesc, let's update the comments and
->     rename function create_page_chain() as create_zpdesc_chain().
+On Tue, Jul 30, 2024 at 7:44=E2=80=AFPM Zhiguo Jiang <justinjiang@vivo.com>=
+ wrote:
+>
+> The main reasons for the prolonged exit of a background process is the
+> time-consuming release of its swap entries. The proportion of swap memory
+> occupied by the background process increases with its duration in the
+> background, and after a period of time, this value can reach 60% or more.
 
-A bit of a different thing, still documentation related tho: do
-we want to do something about comments that mention page_lock in
-zsmalloc.c?
+Do you know the reason? Could they be contending for a cluster lock or
+something?
+Is there any perf data or flamegraph available here?
+
+> Additionally, the relatively lengthy path for releasing swap entries
+> further contributes to the longer time required for the background proces=
+s
+> to release its swap entries.
+>
+> In the multiple background applications scenario, when launching a large
+> memory application such as a camera, system may enter a low memory state,
+> which will triggers the killing of multiple background processes at the
+> same time. Due to multiple exiting processes occupying multiple CPUs for
+> concurrent execution, the current foreground application's CPU resources
+> are tight and may cause issues such as lagging.
+>
+> To solve this problem, we have introduced the multiple exiting process
+> asynchronous swap memory release mechanism, which isolates and caches
+> swap entries occupied by multiple exit processes, and hands them over
+> to an asynchronous kworker to complete the release. This allows the
+> exiting processes to complete quickly and release CPU resources. We have
+> validated this modification on the products and achieved the expected
+> benefits.
+>
+> It offers several benefits:
+> 1. Alleviate the high system cpu load caused by multiple exiting
+>    processes running simultaneously.
+> 2. Reduce lock competition in swap entry free path by an asynchronous
+
+ Do you have data on which lock is affected? Could it be a cluster lock?
+
+>    kworker instead of multiple exiting processes parallel execution.
+> 3. Release memory occupied by exiting processes more efficiently.
+>
+> Zhiguo Jiang (2):
+>   mm: move task_is_dying to h headfile
+>   mm: tlb: multiple exiting processes's swap entries async release
+>
+>  include/asm-generic/tlb.h |  50 +++++++
+>  include/linux/mm_types.h  |  58 ++++++++
+>  include/linux/oom.h       |   6 +
+>  mm/memcontrol.c           |   6 -
+>  mm/memory.c               |   3 +-
+>  mm/mmu_gather.c           | 297 ++++++++++++++++++++++++++++++++++++++
+>  6 files changed, 413 insertions(+), 7 deletions(-)
+>  mode change 100644 =3D> 100755 include/asm-generic/tlb.h
+>  mode change 100644 =3D> 100755 include/linux/mm_types.h
+>  mode change 100644 =3D> 100755 include/linux/oom.h
+>  mode change 100644 =3D> 100755 mm/memcontrol.c
+>  mode change 100644 =3D> 100755 mm/memory.c
+>  mode change 100644 =3D> 100755 mm/mmu_gather.c
+
+Can you check your local filesystem to determine why you're running
+the chmod command?
+
+>
+> --
+> 2.39.0
+>
+
+Thanks
+Barry
 
