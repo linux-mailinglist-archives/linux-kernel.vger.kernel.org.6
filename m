@@ -1,239 +1,389 @@
-Return-Path: <linux-kernel+bounces-268751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BC7A9428DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B9399428F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:14:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505DD1C20F16
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F60B1C21DFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432E51A7206;
-	Wed, 31 Jul 2024 08:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1081A7F7E;
+	Wed, 31 Jul 2024 08:14:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrzXhxbi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QG9fpHzH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B640E450E2
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBB81A7F69
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413428; cv=none; b=NKdErF8C5Iq3eRVBl1cj4omIyf6ir/GXEioobI7AAlHitue9MbMEmaNasyTuzekxPD80Q4DgGZKqAya9sEzkIBRevsdWOaZfSX6KSncLvx5KOSs0lDx1+z7afe7vpJvwLK7SkIgnM6btvFQjC9YB5GMBnHrltWrndBulbG8lXKg=
+	t=1722413665; cv=none; b=GFxQcrG2VMkOI321plYoC/GPZTcEpPxaOBKzeaS1ikoC9QvtdNFRFqV/ovTYZppAJiwTxAj2wvwgi9bjJmVhyc2a/Xe82Z2STESJk2IPxLM+9gRSGPfJzBFTGZbdpc7Al4d1ID4g7ztdV0YioTMBJztJGfzoKmq7PZ8Pg5sLlG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413428; c=relaxed/simple;
-	bh=glgPFwmR31L8rIn/sadIkIZtyqWXy2j8TAYzrwb2cC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PO6qzfEQ63U14L6rjxm6rA++5BQNBas+IVTQfw2qgf3lxcqKkWDd9pph4WwBZ08TnyvuW2pN+KxFgyeduLnCF3S12upibH+38PW93gNuLDxkjQ3PdQ7Uy/eNgF8a8qbgBJnogARVbkhycrRWrLn5JDvPlRGDoNpiyPWQJ6M6XLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrzXhxbi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722413425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6QtFFxRVfRNy+RE/1vwcURKkg2d+dBiPjiEmg9auM+0=;
-	b=KrzXhxbiu23nZVARwXSgL2+QESDWd21pi61pJguRPO2ZMrpQaCcBGRqVapoZihaZq6pVb9
-	UbjAhnIxl5mkVPrDKmvhRqZtu/eve9ydqTCwhB38DUs9b0sA7QD6ktS73aeUc9X7NH1Yq4
-	6ouQGUpVr869ESAhZd1rheC/a/NWIBU=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-dkkBZ4oXOTaftdMxBYuApQ-1; Wed,
- 31 Jul 2024 04:10:18 -0400
-X-MC-Unique: dkkBZ4oXOTaftdMxBYuApQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BCAB119560BF;
-	Wed, 31 Jul 2024 08:10:16 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.143])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C199B19560AA;
-	Wed, 31 Jul 2024 08:10:13 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 31 Jul 2024 10:10:16 +0200 (CEST)
-Date: Wed, 31 Jul 2024 10:10:12 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
-Cc: jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v3 4/5] uprobes: kill uprobe_register_refctr()
-Message-ID: <20240731081012.GA13690@redhat.com>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134530.GA12318@redhat.com>
+	s=arc-20240116; t=1722413665; c=relaxed/simple;
+	bh=UCCKngBTuDNcbUeBWfP8clKPoH+ZkSZAq71DcbxlTpI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PZmO0SMsZewY7lCrxDum+BKILmXc4Xbmdvu2PYNxW4p22tKnYipoBHM1Pe0Brlqe1n7srJteC3OOce/P86MEBN2O1ijGPVOyA97/7pfrCdyeCMd6Kig5SHhS1AeSmqWs0Ahq4mVOT/hnJGI6NTthtFnlTTMl5D4jzfKjyx2CIXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QG9fpHzH; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722413663; x=1753949663;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=UCCKngBTuDNcbUeBWfP8clKPoH+ZkSZAq71DcbxlTpI=;
+  b=QG9fpHzHOi1VMtn3VjXuVh97EmHF68kSWCkXhonyXdnBNVZk/Zvv9Roh
+   NuJzbdbf1RyVKN8ChyS5mZ9qX300jiwfvS4G1lt79X1F1B4PYLVEXjcOU
+   VPAoPNQ7bzUNU3O+bnk363Z0tjRMxaEG2fLdDVBFr9y6SEPQ5+roBJN1M
+   JdSF5oAw83pdaBq3tHQVuhcc9C0N/JFfFynSxdVEhAHwl32qkIZY+vIz1
+   LKR7ZjKgvmp008IKIcoG86b6IRPjfIBOo/m6wkQmrt6yBtM1hADMcw3JD
+   Jdb85/49W0FXf+kTMCGT53hDyQcFzY2pBnhD3ppd56tduayVQCOJRQ63e
+   Q==;
+X-CSE-ConnectionGUID: B2xt7ZbETICucmWEnUkucw==
+X-CSE-MsgGUID: jcrhq9S9TEODJsqjRY6Hfw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20159358"
+X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
+   d="scan'208";a="20159358"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 01:14:22 -0700
+X-CSE-ConnectionGUID: EJW/ZoMfSR+H0S8TjpvUSg==
+X-CSE-MsgGUID: 37rCRItNQkS6foiIdfkg0w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
+   d="scan'208";a="54297820"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 01:14:18 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
+  baolin.wang@linux.alibaba.com,  chrisl@kernel.org,  david@redhat.com,
+  hannes@cmpxchg.org,  hughd@google.com,  kaleshsingh@google.com,
+  kasong@tencent.com,  linux-kernel@vger.kernel.org,  mhocko@suse.com,
+  minchan@kernel.org,  nphamcs@gmail.com,  ryan.roberts@arm.com,
+  senozhatsky@chromium.org,  shakeel.butt@linux.dev,  shy828301@gmail.com,
+  surenb@google.com,  v-songbaohua@oppo.com,  willy@infradead.org,
+  xiang@kernel.org,  yosryahmed@google.com
+Subject: Re: [PATCH 1/1] mm: swap: add nr argument in swapcache_prepare and
+ swapcache_clear to support large folios
+In-Reply-To: <20240730071339.107447-2-21cnbao@gmail.com> (Barry Song's message
+	of "Tue, 30 Jul 2024 19:13:39 +1200")
+References: <20240730071339.107447-1-21cnbao@gmail.com>
+	<20240730071339.107447-2-21cnbao@gmail.com>
+Date: Wed, 31 Jul 2024 16:10:44 +0800
+Message-ID: <874j86oubf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729134530.GA12318@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=ascii
 
-It doesn't make any sense to have 2 versions of _register(). Note that
-trace_uprobe_enable(), the only user of uprobe_register(), doesn't need
-to check tu->ref_ctr_offset to decide which one should be used, it could
-safely pass ref_ctr_offset == 0 to uprobe_register_refctr().
+Hi, Barry,
 
-Add this argument to uprobe_register(), update the callers, and kill
-uprobe_register_refctr().
+Barry Song <21cnbao@gmail.com> writes:
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
----
- include/linux/uprobes.h                       |  9 ++-----
- kernel/events/uprobes.c                       | 24 +++++--------------
- kernel/trace/bpf_trace.c                      |  8 +++----
- kernel/trace/trace_uprobe.c                   |  7 +-----
- .../selftests/bpf/bpf_testmod/bpf_testmod.c   |  4 ++--
- 5 files changed, 15 insertions(+), 37 deletions(-)
+> From: Barry Song <v-songbaohua@oppo.com>
+>
+> Right now, swapcache_prepare() and swapcache_clear() supports one entry
+> only, to support large folios, we need to handle multiple swap entries.
+>
+> To optimize stack usage, we iterate twice in __swap_duplicate(): the
+> first time to verify that all entries are valid, and the second time
+> to apply the modifications to the entries.
+>
+> Currently, we're using nr=1 for the existing users.
+>
+> Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+> ---
+>  include/linux/swap.h |   4 +-
+>  mm/memory.c          |   6 +--
+>  mm/swap.h            |   5 ++-
+>  mm/swap_state.c      |   2 +-
+>  mm/swapfile.c        | 101 +++++++++++++++++++++++++------------------
+>  5 files changed, 68 insertions(+), 50 deletions(-)
+>
+> diff --git a/include/linux/swap.h b/include/linux/swap.h
+> index ba7ea95d1c57..5b920fa2315b 100644
+> --- a/include/linux/swap.h
+> +++ b/include/linux/swap.h
+> @@ -480,7 +480,7 @@ extern int get_swap_pages(int n, swp_entry_t swp_entries[], int order);
+>  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+>  extern void swap_shmem_alloc(swp_entry_t);
+>  extern int swap_duplicate(swp_entry_t);
+> -extern int swapcache_prepare(swp_entry_t);
+> +extern int swapcache_prepare(swp_entry_t entry, int nr);
+>  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
+>  extern void swapcache_free_entries(swp_entry_t *entries, int n);
+>  extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
+> @@ -554,7 +554,7 @@ static inline int swap_duplicate(swp_entry_t swp)
+>  	return 0;
+>  }
+>  
+> -static inline int swapcache_prepare(swp_entry_t swp)
+> +static inline int swapcache_prepare(swp_entry_t swp, int nr)
+>  {
+>  	return 0;
+>  }
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 833d2cad6eb2..b8675617a5e3 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4081,7 +4081,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  			 * reusing the same entry. It's undetectable as
+>  			 * pte_same() returns true due to entry reuse.
+>  			 */
+> -			if (swapcache_prepare(entry)) {
+> +			if (swapcache_prepare(entry, 1)) {
+>  				/* Relax a bit to prevent rapid repeated page faults */
+>  				schedule_timeout_uninterruptible(1);
+>  				goto out;
+> @@ -4387,7 +4387,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  out:
+>  	/* Clear the swap cache pin for direct swapin after PTL unlock */
+>  	if (need_clear_cache)
+> -		swapcache_clear(si, entry);
+> +		swapcache_clear(si, entry, 1);
+>  	if (si)
+>  		put_swap_device(si);
+>  	return ret;
+> @@ -4403,7 +4403,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>  		folio_put(swapcache);
+>  	}
+>  	if (need_clear_cache)
+> -		swapcache_clear(si, entry);
+> +		swapcache_clear(si, entry, 1);
+>  	if (si)
+>  		put_swap_device(si);
+>  	return ret;
+> diff --git a/mm/swap.h b/mm/swap.h
+> index baa1fa946b34..7c6330561d84 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -59,7 +59,7 @@ void __delete_from_swap_cache(struct folio *folio,
+>  void delete_from_swap_cache(struct folio *folio);
+>  void clear_shadow_from_swap_cache(int type, unsigned long begin,
+>  				  unsigned long end);
+> -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry);
+> +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr);
+>  struct folio *swap_cache_get_folio(swp_entry_t entry,
+>  		struct vm_area_struct *vma, unsigned long addr);
+>  struct folio *filemap_get_incore_folio(struct address_space *mapping,
+> @@ -120,7 +120,7 @@ static inline int swap_writepage(struct page *p, struct writeback_control *wbc)
+>  	return 0;
+>  }
+>  
+> -static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
+> +static inline void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
+>  {
+>  }
+>  
+> @@ -172,4 +172,5 @@ static inline unsigned int folio_swap_flags(struct folio *folio)
+>  	return 0;
+>  }
+>  #endif /* CONFIG_SWAP */
+> +
 
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index b503fafb7fb3..440316fbf3c6 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -110,8 +110,7 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
- extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
- extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
- extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
--extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
--extern int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
-+extern int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
- extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
- extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
- extern int uprobe_mmap(struct vm_area_struct *vma);
-@@ -152,11 +151,7 @@ static inline void uprobes_init(void)
- #define uprobe_get_trap_addr(regs)	instruction_pointer(regs)
- 
- static inline int
--uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
--{
--	return -ENOSYS;
--}
--static inline int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
-+uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
- {
- 	return -ENOSYS;
- }
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index dfe6306a63b1..b7f40bad8abc 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1121,25 +1121,26 @@ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consume
- EXPORT_SYMBOL_GPL(uprobe_unregister);
- 
- /*
-- * __uprobe_register - register a probe
-+ * uprobe_register - register a probe
-  * @inode: the file in which the probe has to be placed.
-  * @offset: offset from the start of the file.
-+ * @ref_ctr_offset: offset of SDT marker / reference counter
-  * @uc: information on howto handle the probe..
-  *
-- * Apart from the access refcount, __uprobe_register() takes a creation
-+ * Apart from the access refcount, uprobe_register() takes a creation
-  * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
-  * inserted into the rbtree (i.e first consumer for a @inode:@offset
-  * tuple).  Creation refcount stops uprobe_unregister from freeing the
-  * @uprobe even before the register operation is complete. Creation
-  * refcount is released when the last @uc for the @uprobe
-- * unregisters. Caller of __uprobe_register() is required to keep @inode
-+ * unregisters. Caller of uprobe_register() is required to keep @inode
-  * (and the containing mount) referenced.
-  *
-  * Return errno if it cannot successully install probes
-  * else return 0 (success)
-  */
--static int __uprobe_register(struct inode *inode, loff_t offset,
--			     loff_t ref_ctr_offset, struct uprobe_consumer *uc)
-+int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
-+		    struct uprobe_consumer *uc)
- {
- 	struct uprobe *uprobe;
- 	int ret;
-@@ -1189,21 +1190,8 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
- 		goto retry;
- 	return ret;
- }
--
--int uprobe_register(struct inode *inode, loff_t offset,
--		    struct uprobe_consumer *uc)
--{
--	return __uprobe_register(inode, offset, 0, uc);
--}
- EXPORT_SYMBOL_GPL(uprobe_register);
- 
--int uprobe_register_refctr(struct inode *inode, loff_t offset,
--			   loff_t ref_ctr_offset, struct uprobe_consumer *uc)
--{
--	return __uprobe_register(inode, offset, ref_ctr_offset, uc);
--}
--EXPORT_SYMBOL_GPL(uprobe_register_refctr);
--
- /*
-  * uprobe_apply - unregister an already registered probe.
-  * @inode: the file in which the probe has to be removed.
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index cd098846e251..afa909e17824 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3480,10 +3480,10 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 		      &bpf_uprobe_multi_link_lops, prog);
- 
- 	for (i = 0; i < cnt; i++) {
--		err = uprobe_register_refctr(d_real_inode(link->path.dentry),
--					     uprobes[i].offset,
--					     uprobes[i].ref_ctr_offset,
--					     &uprobes[i].consumer);
-+		err = uprobe_register(d_real_inode(link->path.dentry),
-+				      uprobes[i].offset,
-+				      uprobes[i].ref_ctr_offset,
-+				      &uprobes[i].consumer);
- 		if (err) {
- 			bpf_uprobe_unregister(&path, uprobes, i);
- 			goto error_free;
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index c98e3b3386ba..1f590f989c1e 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -1089,12 +1089,7 @@ static int trace_uprobe_enable(struct trace_uprobe *tu, filter_func_t filter)
- 	tu->consumer.filter = filter;
- 	tu->inode = d_real_inode(tu->path.dentry);
- 
--	if (tu->ref_ctr_offset)
--		ret = uprobe_register_refctr(tu->inode, tu->offset,
--				tu->ref_ctr_offset, &tu->consumer);
--	else
--		ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
--
-+	ret = uprobe_register(tu->inode, tu->offset, tu->ref_ctr_offset, &tu->consumer);
- 	if (ret)
- 		tu->inode = NULL;
- 
-diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-index fd28c1157bd3..86babdd6f850 100644
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-@@ -458,8 +458,8 @@ static int testmod_register_uprobe(loff_t offset)
- 	if (err)
- 		goto out;
- 
--	err = uprobe_register_refctr(d_real_inode(uprobe.path.dentry),
--				     offset, 0, &uprobe.consumer);
-+	err = uprobe_register(d_real_inode(uprobe.path.dentry),
-+			      offset, 0, &uprobe.consumer);
- 	if (err)
- 		path_put(&uprobe.path);
- 	else
--- 
-2.25.1.362.g51ebf55
+NITPICK: Is it necessary to add a blank line here?  But I don't think a
+new version is necessary if this is the only change needed.
 
+>  #endif /* _MM_SWAP_H */
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index a1726e49a5eb..b06f2a054f5a 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -477,7 +477,7 @@ struct folio *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
+>  		/*
+>  		 * Swap entry may have been freed since our caller observed it.
+>  		 */
+> -		err = swapcache_prepare(entry);
+> +		err = swapcache_prepare(entry, 1);
+>  		if (!err)
+>  			break;
+>  
+> diff --git a/mm/swapfile.c b/mm/swapfile.c
+> index 5f73a8553371..757d38a86f56 100644
+> --- a/mm/swapfile.c
+> +++ b/mm/swapfile.c
+> @@ -3363,7 +3363,7 @@ void si_swapinfo(struct sysinfo *val)
+>  }
+>  
+>  /*
+> - * Verify that a swap entry is valid and increment its swap map count.
+> + * Verify that nr swap entries are valid and increment their swap map counts.
+>   *
+>   * Returns error code in following case.
+>   * - success -> 0
+> @@ -3373,60 +3373,77 @@ void si_swapinfo(struct sysinfo *val)
+>   * - swap-cache reference is requested but the entry is not used. -> ENOENT
+>   * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
+>   */
+> -static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+> +static int __swap_duplicate(swp_entry_t entry, unsigned char usage, int nr)
+>  {
+>  	struct swap_info_struct *p;
+>  	struct swap_cluster_info *ci;
+>  	unsigned long offset;
+>  	unsigned char count;
+>  	unsigned char has_cache;
+> -	int err;
+> +	int err, i;
+>  
+>  	p = swp_swap_info(entry);
+>  
+>  	offset = swp_offset(entry);
+> +	VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+>  	ci = lock_cluster_or_swap_info(p, offset);
+>  
+> -	count = p->swap_map[offset];
+> +	err = 0;
+> +	for (i = 0; i < nr; i++) {
+> +		count = p->swap_map[offset + i];
+>  
+> -	/*
+> -	 * swapin_readahead() doesn't check if a swap entry is valid, so the
+> -	 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
+> -	 */
+> -	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
+> -		err = -ENOENT;
+> -		goto unlock_out;
+> -	}
+> +		/*
+> +		 * swapin_readahead() doesn't check if a swap entry is valid, so the
+> +		 * swap entry could be SWAP_MAP_BAD. Check here with lock held.
+> +		 */
+> +		if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
+> +			err = -ENOENT;
+> +			goto unlock_out;
+> +		}
+>  
+> -	has_cache = count & SWAP_HAS_CACHE;
+> -	count &= ~SWAP_HAS_CACHE;
+> -	err = 0;
+> +		has_cache = count & SWAP_HAS_CACHE;
+> +		count &= ~SWAP_HAS_CACHE;
+>  
+> -	if (usage == SWAP_HAS_CACHE) {
+> +		if (usage == SWAP_HAS_CACHE) {
+> +			/* set SWAP_HAS_CACHE if there is no cache and entry is used */
+> +			if (!has_cache && count)
+> +				continue;
+> +			else if (has_cache)		/* someone else added cache */
+> +				err = -EEXIST;
+> +			else				/* no users remaining */
+> +				err = -ENOENT;
+>  
+> -		/* set SWAP_HAS_CACHE if there is no cache and entry is used */
+> -		if (!has_cache && count)
+> -			has_cache = SWAP_HAS_CACHE;
+> -		else if (has_cache)		/* someone else added cache */
+> -			err = -EEXIST;
+> -		else				/* no users remaining */
+> -			err = -ENOENT;
+> +		} else if (count || has_cache) {
+>  
+> -	} else if (count || has_cache) {
+> +			if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+> +				continue;
+> +			else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
+> +				err = -EINVAL;
+> +			else if (swap_count_continued(p, offset + i, count))
+> +				continue;
 
+IIUC, this will make the change to swap map directly instead of
+verification.  If the verification failed for some entry later, the
+count will be wrong?  Or I missed something?
+
+> +			else
+> +				err = -ENOMEM;
+> +		} else
+> +			err = -ENOENT;			/* unused swap entry */
+>  
+> -		if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+> +		if (err)
+> +			goto unlock_out;
+> +	}
+> +
+> +	for (i = 0; i < nr; i++) {
+> +		count = p->swap_map[offset + i];
+> +		has_cache = count & SWAP_HAS_CACHE;
+> +		count &= ~SWAP_HAS_CACHE;
+> +
+> +		if (usage == SWAP_HAS_CACHE)
+> +			has_cache = SWAP_HAS_CACHE;
+> +		else if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+>  			count += usage;
+> -		else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
+> -			err = -EINVAL;
+> -		else if (swap_count_continued(p, offset, count))
+> -			count = COUNT_CONTINUED;
+>  		else
+> -			err = -ENOMEM;
+> -	} else
+> -		err = -ENOENT;			/* unused swap entry */
+> +			count = COUNT_CONTINUED;
+>  
+> -	if (!err)
+> -		WRITE_ONCE(p->swap_map[offset], count | has_cache);
+> +		WRITE_ONCE(p->swap_map[offset + i], count | has_cache);
+> +	}
+>  
+>  unlock_out:
+>  	unlock_cluster_or_swap_info(p, ci);
+> @@ -3439,7 +3456,7 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+>   */
+>  void swap_shmem_alloc(swp_entry_t entry)
+>  {
+> -	__swap_duplicate(entry, SWAP_MAP_SHMEM);
+> +	__swap_duplicate(entry, SWAP_MAP_SHMEM, 1);
+>  }
+>  
+>  /*
+> @@ -3453,29 +3470,29 @@ int swap_duplicate(swp_entry_t entry)
+>  {
+>  	int err = 0;
+>  
+> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
+> +	while (!err && __swap_duplicate(entry, 1, 1) == -ENOMEM)
+>  		err = add_swap_count_continuation(entry, GFP_ATOMIC);
+>  	return err;
+>  }
+>  
+>  /*
+> - * @entry: swap entry for which we allocate swap cache.
+> + * @entry: first swap entry from which we allocate nr swap cache.
+>   *
+> - * Called when allocating swap cache for existing swap entry,
+> + * Called when allocating swap cache for existing swap entries,
+>   * This can return error codes. Returns 0 at success.
+>   * -EEXIST means there is a swap cache.
+>   * Note: return code is different from swap_duplicate().
+>   */
+> -int swapcache_prepare(swp_entry_t entry)
+> +int swapcache_prepare(swp_entry_t entry, int nr)
+>  {
+> -	return __swap_duplicate(entry, SWAP_HAS_CACHE);
+> +	return __swap_duplicate(entry, SWAP_HAS_CACHE, nr);
+>  }
+>  
+> -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
+> +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, int nr)
+>  {
+>  	unsigned long offset = swp_offset(entry);
+>  
+> -	cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
+> +	cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
+>  }
+>  
+>  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+
+--
+Best Regards,
+Huang, Ying
 
