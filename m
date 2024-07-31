@@ -1,286 +1,330 @@
-Return-Path: <linux-kernel+bounces-269537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D5819433FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:16:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE98C943402
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:17:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9646FB22DC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:16:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55A14B2699B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2311B14FD;
-	Wed, 31 Jul 2024 16:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886D01BC090;
+	Wed, 31 Jul 2024 16:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PwJjqdLy";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pNmBu+/p"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epy2dB4o"
+Received: from mail-lf1-f66.google.com (mail-lf1-f66.google.com [209.85.167.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F49217BA0
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722442576; cv=fail; b=TIRzJHdR4NKEOYGPYd1Uziv1d01cq6CgCc96U0CYyUfKEIYJ1tqqw3je/0NFqEP58zCtF4kPgaObvpN7WhqLQp/iOjcZ9man9h8V34Ls0ZbTgKCLC9HUo5wgr1PfSD2qJrvpPLPG5fKcl+7o59g4gGiwinsNPhhTQD2Jh+i77mg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722442576; c=relaxed/simple;
-	bh=2EV0hVavNlFgYLZvOkumUPOF7aDA9KnrxzEGZ0PGZ4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=KVJxEOx0LAkyTqC2JvZdJ5sUPiQcANejDiHitjt8Lsv0++y4KpfWZLiFTAfcWjaIzQPTJpEj5JuzbhdlptX74zE2xgQfueU28Ov1cIJH0r5B8Iw8LBdJu0LKxaWP/3pCl1eYZGpgpraAyvsul0eiZmfZfFzOVWvIMmDh1qFalFE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=PwJjqdLy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pNmBu+/p; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VFPp0D024230;
-	Wed, 31 Jul 2024 16:15:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	date:from:to:cc:subject:message-id:references:content-type
-	:in-reply-to:mime-version; s=corp-2023-11-20; bh=SfiNTV63oLIMmDC
-	vJe/r6BdWn1vSiFZpLVPNwfQLNUA=; b=PwJjqdLy4w6kIChjp8R2v/y1hPQW4Wy
-	VrjZemrULSvsz9X/s4gcCB56Ovtg+kCbG/72d7ldJ5yixMOz08stOstNpZPEZMsX
-	F0qDjdDw9rFoephZUzMpJTNXpeJD07a7+OhSFL+DYpaOFAMjrbLK3OPOUN+iyArU
-	dhh24/W8FPlJ3+ABqaFt+nYqPI9NcO/2pV/MJU+6oWC+jm6cIkFuu+tgwmYF92dU
-	Rjx1S/yBEtIv2R/fUXaTOVL1SEwzY1neOAJ1wVFOSQmrhEXAMoWORRVUEMP99/Xs
-	YCk7Pi2EonFsx59tZkEjXgvSaV4wMHqisSGhBzDJO22ohjdTHBDZjLQ==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40mrs8qp3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 31 Jul 2024 16:15:49 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 46VFF9AA000850;
-	Wed, 31 Jul 2024 16:15:49 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40pm84tj9y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 31 Jul 2024 16:15:48 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=s5EJg6gnp3rKE9UwbGZIsH3XQLOqnsJNL7HyE/PSQqR1q6eVL7SUEbuosYLHfKDTypYBfm0nH3cQczDape5BL8JQEUMFQBZ+YCXrLW+jV8CEn0l8w9/r3nLZsrLcuzIzx1sai9YWZIsjxAEYqM/deMjNPXwXz4EmgrhHNesSFzthnTDT2Ey1mdRAhbN+D6Cw4wQTSTlH2lRdZpqZSdDuDZFUTvzv7wVgydqJeZjv6iOPVx7aSK7prrJr9kCPC1DKI3P6W8VC7pbHL3edIdU6IKV81RFti4a9giqagigOYlyyjmzsA5S0Db4C6pPA2PBM/iht+PsFINWp391wFo8AOA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SfiNTV63oLIMmDCvJe/r6BdWn1vSiFZpLVPNwfQLNUA=;
- b=LSpQaRfJ1anoZfgwOotY1vmBuIKWCscoM6IzJSF36jHpYZ17ZOQtISjUOT3ZN5fFznlhmy2C4xxFf+oE6ItxlQYFJYJLfxCL6aPPoEpPbXaoT/YvvG18cbVlFZnUrz5hRwI5JO0XvvuADhSbul9MGuoi2EsvWGxWII30YkETelcmp3KmWYae+kihWVixrlchLjUM6AWG+j8mBxCT9MnimgSw2r6c5jSMeLSU75PtgQbkoQvgIPBSQ7pPoJq6dwtXdlRwh0ow0ZXZmMbXJcr49ZDEN7+a+pQQRl6akomrxFiYwpA/azOBN++0HBkLKQso2mKzCx0Q+ekvSkpYL1uCCg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD6217BA0;
+	Wed, 31 Jul 2024 16:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722442613; cv=none; b=WuDotAtsQ3yOggb9x6q5Nni5ub9d/Pa95zLb/TvzxYtiEJ9iOIW5BPrd5IAVk8p1kPIrIdnMucOkK0ehG3OdayokTZXLqZ3dYeg7ZAjhubzMR20OQsEE2Brlckt1maMtmMi333EmmAjWuGmIJWWtOjbZ6p0g5I6es70CesiIB1E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722442613; c=relaxed/simple;
+	bh=IR/YNpr68KziMcdRBY+HsG260wQgKcdN3jPXrQjiE9o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jcwHUPOU3Io7RYMDI825ZZGjS6WUHosb5k04XCCbzR/WZKyfZ0GEr6OhKqVEgvTE6FhsNUlL8dX/wqt1MrkVmDySQFF2KAEbN+BOP1Eqoy20Np8hPVNzaTqylNRcXRTkoHlJsrG7m5vQPn+tnhPecCf5REifBHXw3FoYjK15WbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epy2dB4o; arc=none smtp.client-ip=209.85.167.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f66.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso2376253e87.3;
+        Wed, 31 Jul 2024 09:16:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SfiNTV63oLIMmDCvJe/r6BdWn1vSiFZpLVPNwfQLNUA=;
- b=pNmBu+/pVx3rpXeB7+mP6FQPuI8Mak+nonJhJkFyNq2+TIneml6KzCVkJNWrkoxfwyZIw7Eq5h0iqy9r65kRtyWFMWKuUXhtcZR9zMduyP7OVI5WE6gaWTT27jf2ybanHHnopkWusw1kZbIVLYwCcxLJAq+H7Fq8ob6i1qQPAnc=
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com (2603:10b6:a03:3d0::5)
- by CH3PR10MB7930.namprd10.prod.outlook.com (2603:10b6:610:1c5::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.20; Wed, 31 Jul
- 2024 16:15:45 +0000
-Received: from SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e]) by SJ0PR10MB5613.namprd10.prod.outlook.com
- ([fe80::4239:cf6f:9caa:940e%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 16:15:45 +0000
-Date: Wed, 31 Jul 2024 17:15:41 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Oscar Salvador <osalvador@suse.de>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
-        Muchun Song <muchun.song@linux.dev>,
-        David Hildenbrand <david@redhat.com>,
-        Donet Tom <donettom@linux.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2 6/9] mm: Make hugetlb mappings go through
- mm_get_unmapped_area_vmflags
-Message-ID: <47de87e4-47df-4024-a313-03cc14b8e248@lucifer.local>
-References: <20240729091018.2152-1-osalvador@suse.de>
- <20240729091018.2152-7-osalvador@suse.de>
- <8a57e184-4994-4642-959d-44dc7efbceca@lucifer.local>
- <ZqpTaKHdrYt61HYy@localhost.localdomain>
- <354e4db4-e257-48a4-9e05-7f0595728ec6@lucifer.local>
- <ZqpgdBk-3Bcl3Mvr@localhost.localdomain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqpgdBk-3Bcl3Mvr@localhost.localdomain>
-X-ClientProxiedBy: LO2P265CA0472.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a2::28) To SJ0PR10MB5613.namprd10.prod.outlook.com
- (2603:10b6:a03:3d0::5)
+        d=gmail.com; s=20230601; t=1722442609; x=1723047409; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bLPlwYJBWZ1/QGdua3E+Mxqj1bUxHbPJr0Utwwaid6k=;
+        b=epy2dB4oGzLQcHja4bjiCWEWzDKx4W7mArqouf0zCq4PF2hCrXNPwPnuk96l+jFSN4
+         cSDFK7fsLvp2OF+J4obv7v+MA4+In2immJyo+/h9Alrr3f3KLgrzE3Bx/io1tN0yH2i4
+         +d4p+MKNV+kj0D4IbxTp1rGmpj3BdPpMaTIX6pbeKFedtEgRVSOVHElN2AA/J8G5fZDH
+         tdEmnJEzLFqcKDOlNZeWNDqWXUvBRxm75DBhi2xav5WUPSJAuYi2Bxce96B1Lsg0ajKx
+         j501/Je22yuK/3e9RK7Ajbb2OcvvEnxBCa4UpRjaIKYoi5usCN0/J+qFONLIl0VpSNl6
+         f6kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722442609; x=1723047409;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bLPlwYJBWZ1/QGdua3E+Mxqj1bUxHbPJr0Utwwaid6k=;
+        b=ii+XJk/qlP9zF4EWOGGWdeyhnraZFf4jB7GvdIneHy7q37eO7nMUKmi+Q/LSFR+iZ0
+         eNsmvUvV3rbKejJJwZhMalnyo7GcgHgrKOWr5B+I4tIr/IIFUBFWCHu0wBb0eUJa1QW1
+         hXy2I0fyYEc0UWObk0lwIpMOLbYLKaCX0rbtbPLR1qpYdNcvA4fH5dEeLoTVGu7uarV7
+         hZZgyiVOgx9pV3fNr7M/VgEjaNKX/B31R6UpiUevPkX1nJ1ksGpswCMxPqSMS/3c9LFn
+         5vdXxidugEYrMGYW9APoPEdh9eRJ10xc2yrNijX/uAu1DCfIuy0C1V+BWTtnDn8wXHrg
+         r+Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMP/VzXomifRlO1zE7spH6bqQToafEkksxi3Wjv/s1jCUkDbNLXhjCLvKwyBztCmk3JaD0G8BgqwBYAEcTAP/UbUPIjjv9MlW6xEYIV3nC7cYxh85bJaVw/jHeT8leOKXxMtw5D+C1Zj1KTJprUcvE5ZoyiNwc3LE+
+X-Gm-Message-State: AOJu0YxMVlo5sypD0UXAy0m2clrsX2x0w7eOu4yb9BY2aW0YZ8OM9sAk
+	lomsc/hHbD8FFeze77POt5BuOrmh1KUYujfFE47DGDMbra+edeuG7vpeC9fEhbonHQ99XWH/hQi
+	jL3nJIZDWMT1hcNYGwLpWiz/6uIQ=
+X-Google-Smtp-Source: AGHT+IF0od7jelwpBygbVjydtPTZGw/Iri+jqBFo5aPrcfsO1kpf+FRSsCin+ENYMYJRVBr4EYxMQwECeBW7JANhhrE=
+X-Received: by 2002:a05:6512:40a:b0:52e:9f1b:517 with SMTP id
+ 2adb3069b0e04-5309b2811aamr12244347e87.25.1722442609088; Wed, 31 Jul 2024
+ 09:16:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR10MB5613:EE_|CH3PR10MB7930:EE_
-X-MS-Office365-Filtering-Correlation-Id: d359c35d-1e14-479e-8075-08dcb17c087c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2mf5gEphXKXJELbuwK+356EvGIAucBhNpmd16TFQz7bK9mFS+R5uK/4FB8tz?=
- =?us-ascii?Q?ygg0zs4td8zrqlCH82FYK+F1uSrsaOAHAx7QBUIfKvD26D8wwnoib///NPJA?=
- =?us-ascii?Q?WTxg2l9/I8eIRTsHIDOWaauAfxgJ047YeqCoI1wduAtIF87MNQdGbjE8nhwD?=
- =?us-ascii?Q?jDXdUh6oYjSYjG+TzbXSQreZMOJ26u7espsRLlu0bycV3qmmzi4rkMX8TeF4?=
- =?us-ascii?Q?XulhlcUB/WqAfuFwwlJfhrA7QjGzuBDVpwo9rap2EUlG5207seuKtacT9cSM?=
- =?us-ascii?Q?UCEVNoMARORYJfB8nPLa+RaHBp9+HZiyVEm35WBfSVn+5z+RWkg5N6CZhuyl?=
- =?us-ascii?Q?Y1xsjov3ETP/QW84sS07qJGSVawX0wszqLDs6OJBQYeuk9W9AQQduBoX1qeS?=
- =?us-ascii?Q?V8m31fobY3JMdKuwmqx3Tu4xDmeLTVD5tuM8v1AX+e937v5l/t/oPcA+qF0R?=
- =?us-ascii?Q?JSo6oP2sbA8rFM1tOUPLvc3TtUSZP8KZ43iHxfxnHgSG0tLuUAwmSHNAdjPs?=
- =?us-ascii?Q?TvqQrj9p1f9Mjc6wafA051YP4ZXVF8HnR2CjQFiZBpY0gRWgYoBVD+XNXNLi?=
- =?us-ascii?Q?+9BFKwn2EOUdq01YnBtyHn4TTK3fwAaeBxZBZvCke/tKipZT6/ahmLbEfhe7?=
- =?us-ascii?Q?XHFzBhJHgyUTTvdyY1SrfkWAEXdS09v21d2zfjORyh6e2Sks0tRztF9I8pTm?=
- =?us-ascii?Q?RPWoZCy7skonGD2Iojakxh/YQKRYGVCJfYRhAh6siRlDGi+oeydCTnRLtbED?=
- =?us-ascii?Q?gD+3C0ejrsiprQEEF5JbFC+aWzQdk+MYgXVAbckFJEA1uDpUGWyGrEWfjFle?=
- =?us-ascii?Q?4jq7u1lsiC/yJDRHf2HxfXcavbFiwcw8PiXW2mNlBRtOFfR6GlAGjuYLXYhI?=
- =?us-ascii?Q?CE3GH47PYfqM1Lj9ulq89R63BtLaGWnXU4f412OjXM49JsCgNsoIwzlmQTyn?=
- =?us-ascii?Q?skeZlenVwERHqPcNdxObyoFJsDhfr5m6qN1uDrXOy30ejWBLmzTBtr+cMPcA?=
- =?us-ascii?Q?M7KSWEhGhKEXsAX8egSGw5UPAKrvWpCb/8VazpLAGFAuwt538K762guJFsMy?=
- =?us-ascii?Q?hwFZwXgd/dD/zWHgyfjPHBw7l5KeH2WpDBCeXhO8PvwtxSOf9vrgIQitTktO?=
- =?us-ascii?Q?YIduqNSakhdHH/O7r+cgmgafL6BKp1MRGTah55WbMgi2kgB9Rn8wXTv1faxh?=
- =?us-ascii?Q?ZHDE4/VS7VuPsdM17zPjQpE/wOj8ZfpjzctaPJpXcwB+9NFyaa1sbPhpoahU?=
- =?us-ascii?Q?sFtuJlTzoUWtg8kYKPR+ivvM79hoNuw6QYcUGYykfKApIlRnlrWpOlZqyEnz?=
- =?us-ascii?Q?PE7IZRrPEmL3hh4wzMKUGNjDnwzE5Uag4WE10OyFiS/zNg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR10MB5613.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?aB41ZotftWPkHv89P12SNEGyhZQzXKIEQcprY2U+N0vvrqn1+On4tSOxBgkI?=
- =?us-ascii?Q?mTGnLWBP5oIRaVRAJBYU5EKJlJdXcInLl4z5+exRqKzi6WuVcZDbBo1Jqk79?=
- =?us-ascii?Q?xwpFICzAGeDHcxW22APaBEB+xBXMA7wz8ua+K17X/tGhb2NwLri8EJRK/Q/O?=
- =?us-ascii?Q?bXkPVXFXOiWiB4dtWCyo3IFdIZGFyunhrTP3nvHCAOYoV8SJAxEZuyk/+sxS?=
- =?us-ascii?Q?od4vWgvyPrfTWiRfOQ4oZSMwCx8PzxrcUwBpPx77j36TZ+ZmLiw2ls4BOq9z?=
- =?us-ascii?Q?+8F9+pvpKXKO3ddZmL+KYsOq5LyE0FuLUYZ47nbsPjWjJgIVT3NbxzPekh+g?=
- =?us-ascii?Q?syr14eV79Fj42EhBIOs6lFdKm5rDfGJz8xsqgWJ43KNwucXfj4DfceR/rZw4?=
- =?us-ascii?Q?472mdgq9xc1H6cZZ0AGCOL8Q0PyK+3g49CfTA2/hZOkuFm0dQrciVZp1kIb/?=
- =?us-ascii?Q?9uOHz5OKB3N6WnQ6BTw4bx0bPhAeiR3lSF4wigF+w8LbL7xs1kjWrgmLxOl8?=
- =?us-ascii?Q?kafO4vfwSU34fZPkkdFIK32zhyz0Cbn9sgDRAmvSHBnZjR7LgL8S/9J+ziNU?=
- =?us-ascii?Q?9kz0nWu7l6911IXPBwCAmRv+I324gdOTtyFL6wUzq54KrV3LemDjuLGaSVMD?=
- =?us-ascii?Q?WpPkhxyFpTh0iZ7WX6qK5oMo36PC1sf/5DkONw41HFOJ+ilryN97A/bYl5s3?=
- =?us-ascii?Q?m1CGY2mlWA6ltcZI1I25tJufZTsymyYELG63l7bPCYmGmmoVLZ3hx58jfc85?=
- =?us-ascii?Q?j9uEsgaRrIfSUM+mA3ogu8F5EyGvEq2pqBPfceRIhCfqhoUxZCsGBAux5Yao?=
- =?us-ascii?Q?uQRya/2nw1QOijOy+jL7k0cjBx1WccoEGkxCJ0nIRs9SRRjmDeqvi1vmXfyp?=
- =?us-ascii?Q?TR/0MTTHynC2Wz+a5cZMtSnDAyGwvPB5q03LDzjr+f0D0n9J3xo4hnpooYO/?=
- =?us-ascii?Q?A8iUKcqEfAIhvTHo7dYCMg1UE7CzYhso6fhei7K7PIw444KwuezKi+vJrLP9?=
- =?us-ascii?Q?WXmQmGLhqV5nm68qxXl6gr+J8bvzT38I4DrAxqs8MGeMBcQ2/sKquUsKJ0LZ?=
- =?us-ascii?Q?aBF8uJayeORni7Aazr/l6IZwL/LoFTeGShXVDrMHikGXrO0GRu+rFzIp+hsP?=
- =?us-ascii?Q?tWkFGUMrLzeU6DJ7YmaPZZekcdfZZ31gKG+oKzO4XtEDFPPkFJDXkn6hy2sY?=
- =?us-ascii?Q?XY1lKk5QxWsh1sEHCDosn2TAgQVXfSgBniArlkA6WWEqSlPCT+ABv2ACWWRM?=
- =?us-ascii?Q?M7Fqawj2mOsD5fOdJaVwqFbkZmy6h+O3qFCQP+soYaaYI67dCczWti4ebhXl?=
- =?us-ascii?Q?DQDbWflsF29haTjJ65nvP+LhwDSXTSuf+f1d4LaDdjwjUbMCrzBmqO3e+2y0?=
- =?us-ascii?Q?vSN+fXUQf4eOj4OarO26SWyfGN6QhJ3jUkhQXYP0MnPEXpdBuO39raBGfPNr?=
- =?us-ascii?Q?plyu+b93Y1QMPuPPAJEYiBcW6RMjdaUxFfJ4gMlBErzPIGfgQM/lNGRKv6Ja?=
- =?us-ascii?Q?DkL0eqxH4mfKPFrbSOnDYBOFEwlvB+UyjhwAr/5RPilxketzoxQCixvavvA4?=
- =?us-ascii?Q?dvoUaATgPq9J+OXZaW2XxaVU2SOg55+uAvufRmJFd+PRm5LkzD70ih/XPjvP?=
- =?us-ascii?Q?Mhy1IVDe7F2+oX0HScgtEX0w6KuGbHWQrlk1SmTirlCuYf4YCy93iDDqrvV6?=
- =?us-ascii?Q?mSzAPg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	eBumKwcKZ7EbVJRkQgM56thlBkiLMTgZblRbE2ugqrXAtvu5790jdsEa24k2Y8/1zXOnK6tkfZJIPQXc+ssHFuX7DJZpxcsPj9Jtqjji/oCXtmBxKx62TlQcfsDMkUWQsYOvthAD4iOuiGE6UDNBGSC5gJggJmtK8tfYRMku5zso3h3wXFlCnQuEHqxB7JTF2j7n3B61WNtMJAdKyar8SzQooOH3hlyP58bG/tz4Usl307Ta+ylxRySNEzx2ZVMtET7wGtUFZe2oGOZkNOQaEuYKxj2qOC9+nDtRwL776B9uXfzW1C5Jr85Mb5Wodg3jDeHri/ml5FdYKpgb82aZxPaWlgCJwxWu9TJFwRCiUuiEZ8znynO1+0d5KNmbfIwmpeHrGc87Wn2LyEdcAhgMS+fs/8A6dO5HSn9QGlt+mk0kwOMUfQ8BMbxfHFabh6NY3SvMX4+LtSOvrsKTUnRtoRtYx4S9816S+x+XspuUDOYbaa0ltTfd7sbZOCfPM+wqJOohBrIBYyLMEt8IJbwxuHLCS9qnkGR42z+Rgvh1QZkNmrUpdJ3pwtMYKK/8JuOZdGCpLt5yh7G5io/IHAbiBIICkWlbBOHcbaFQuwTpO2w=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d359c35d-1e14-479e-8075-08dcb17c087c
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR10MB5613.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 16:15:45.7074
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: shRxnrXk73CCIfLTYiSJafrVPxsWtNpD4gYvTrm7YtX9YhBQs+RoY+4fflORb6cvTqvsOazO5Hh5zW2FDRuNkSkqVjI2ZBtcV/xUCU1zAEc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7930
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0 mlxscore=0
- suspectscore=0 phishscore=0 bulkscore=0 malwarescore=0 mlxlogscore=758
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2407310114
-X-Proofpoint-GUID: 2H8G5QjiKYcIghm2L_Jrt9Gx5J5S9Btr
-X-Proofpoint-ORIG-GUID: 2H8G5QjiKYcIghm2L_Jrt9Gx5J5S9Btr
+References: <AM6PR03MB58488045E4D0FA6AEDC8BDE099A52@AM6PR03MB5848.eurprd03.prod.outlook.com>
+ <etzm4h5qm2jhgi6d4pevooy2sebrvgb3lsa67ym4x7zbh5bgnj@feoli4hj22so> <AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com>
+In-Reply-To: <AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Wed, 31 Jul 2024 18:16:12 +0200
+Message-ID: <CAP01T75na=fz7EhrP4Aw0WZ33R7jTbZ4BcmY56S1xTWczxHXWw@mail.gmail.com>
+Subject: Re: [RFC PATCH bpf-next RESEND 00/16] bpf: Checkpoint/Restore In eBPF (CRIB)
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, ast@kernel.org, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, martin.lau@linux.dev, eddyz87@gmail.com, 
+	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, andrii@kernel.org, avagin@gmail.com, 
+	snorcht@gmail.com, bpf@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 31, 2024 at 06:04:04PM GMT, Oscar Salvador wrote:
-> On Wed, Jul 31, 2024 at 04:19:09PM +0100, Lorenzo Stoakes wrote:
-> > Yeah this is at commit aee8efc95fc2 ("mm: make hugetlb mappings go through
-> > mm_get_unmapped_area_vmflags").
+On Wed, 31 Jul 2024 at 15:10, Juntong Deng <juntong.deng@outlook.com> wrote:
+>
+> On 2024/7/23 00:47, Alexei Starovoitov wrote:
+> > On Thu, Jul 11, 2024 at 12:10:17PM +0100, Juntong Deng wrote:
+> >>
+> >> In restore_udp_socket I had to add a struct bpf_crib_skb_info for
+> >> restoring packets, this is because there is currently no BPF_CORE_WRITE.
+> >>
+> >> I am not sure what the current attitude of the kernel community
+> >> towards BPF_CORE_WRITE is, personally I think it is well worth adding,
+> >> as we need a portable way to change the value in the kernel.
+> >>
+> >> This not only allows more complexity in the CRIB restoring part to
+> >> be transferred from CRIB kfuncs to CRIB ebpf programs, but also allows
+> >> ebpf to unlock more possible application scenarios.
 > >
-> > If you:
+> > There are lots of interesting ideas in this patch set, but it seems they are
+> > doing the 'C-checkpoint' part of CRIx and something like BPF_CORE_WRITE
+> > is necessary for 'R-restore'.
+> > I'm afraid BPF_CORE_WRITE cannot be introduced without breaking all safety nets.
+> > It will make bpf just as unsafe as any kernel module if bpf progs can start
+> > writing into arbitrary kernel data structures. So it's a show stopper.
+> > If you think there is a value in adding all these iterators for 'checkpoint'
+> > part alone we can discuss and generalize individual patches.
 > >
-> > git checkout aee8efc95fc2
-> > git grep hugetlb_get_unmapped_area
+>
+> Thanks for your review!
+>
+> I agree, BPF_CORE_WRITE will compromise the safety of ebpf programs,
+> which may be a Pandora's box.
+>
+> But without BPF_CORE_WRITE, CRIB cannot achieve portable restoration,
+> so the restoration part is put on hold for now.
+
+I think then you should rethink how to do restoration in CRIB.
+It is better to anticipate some solution, even if you don't implement
+it right away.
+It will be necessary for an end-to-end solution.
+
+I think BPF_CORE_WRITE will be a non-starter.
+The best that can be done is teaching the kernel specific fields which
+are writable, but that doesn't scale.
+
+The conventional method with CRIU was to replicate the same steps that
+led to a certain state for a kernel object.
+The way you propose is more akin to direct serialization/deserialization.
+
+It's better to rely on restoration helpers if it's necessary.
+
+>
+> In the next version of the patch set, I will focus on implementing
+> checkpointing (dumping) via CRIB for better dumping performance and more
+> extensibility (which still has a lot of benefits).
+>
+> > High level feedback:
 > >
-> > You'll see it.
+> > - no need for BPF_PROG_TYPE_CRIB program type. Existing syscall type should fit.
 > >
-> > I'm guessing you remove this in future commits, but the kernel must be able
-> > to build at every revision so we can bisect (I found this issue through a
-> > bisect and had to fix this up to check).
+>
+> - If we use BPF_PROG_TYPE_SYSCALL for CRIB programs, will it cause
+> confusion in the functionality of bpf program types?
+> (BPF_PROG_TYPE_SYSCALL was originally designed to execute syscalls)
+>
+> - Is it good to expose all kfuncs needed for checkpointing to
+> BPF_PROG_TYPE_SYSCALL? (Maybe we need a separate ebpf program type to
+> restrict the kfuncs that can be used)
+>
+
+I think it's become a more generic program type to invoke kfuncs from
+task context.
+E.g. the upcoming sched-ext uses it to invoke kfuncs to gracefully
+exit a scheduler etc.
+We didn't have a separate BPF_PROG_TYPE_SCX_TASK_CTX.
+
+Also, you should not think about the kfuncs as being specific to
+checkpointing or CRIB.
+Try to keep them generic so they could be useful beyond use cases that
+you have thought of right now.
+Place reasonable constraints that are limited to enforcing safe use
+from BPF programs.
+Just as an illustration, all of the existing BPF infra/iterators you
+used to implement CRIB were never designed with checkpointing in mind.
+
+> - Maybe CRIB needs more specific ebpf program running restrictions?
+> (for example, not allowed to modify the context, dumped data can only
+> be returned via ringbuf, context is only used to identify the process
+> that needs to dump and the part of the data that needs to be dumped)
+>
+
+Why would you want to do that?
+Maybe someone needs a different way or comes up with a better way of
+communicating with userspace?
+
+There are different ways of doing checkpointing.
+Some checkpointing systems propose ideas of keeping histories of a
+process's state.
+This allows possibly reverting process state to some point in the past
+(as a way to rollback execution).
+There, when you checkpoint stuff, you would store all state as part of
+your BPF program in maps or arenas, and may not even send it to user
+space.
+Then it can be finally dumped when necessary to a user space agent, or
+discarded.
+
+> The above three points were my considerations when I originally added
+> BPF_PROG_TYPE_CRIB, maybe we can have more discussion?
+>
+
+I think it feels unnecessary. So far I don't see a strong reason.
+Adding a new program type means remembering everywhere in the verifier
+how it needs to be handled.
+Or whether it requires a special consideration for some check (esp.
+since you want to restrict a lot of stuff).
+It's better to decompose CRIB into individual useful parts that are
+useful beyond checkpointing.
+It's better to think in terms of providing useful basic building
+blocks, how people use them shouldn't strongly be dictated by us.
+
+> > - proposed file/socket iterators are somewhat unnecessary in this open coded form.
+> >    there is already file/socket iterator. From the selftests it looks like it
+> >    can be used to do 'checkpoint' part already.
 > >
-> > A trivial fix is just to provide the prototype immediately prior to the
-> > function decl, however the more correct solution is probably to do the
-> > removals at the same time.
 >
-> Yeah, I just squashed the removal commit and this one.
+> If you mean iterators like iter/task_file, iter/tcp, etc., then I think
+> that is not flexible enough for checkpointing.
 >
-> > This bit is just a bit of a slightly nitty cleanup to make sure things
-> > build at every commit, the first issue is the really key one, just needs
-> > some tweaking to deal with the frankly bloody horrible SHM stuff... Do not
-> > blame you for missing that one!
+> This is because the context of bpf iterators is fixed and bpf iterators
+> cannot be nested. This means that a bpf iterator program can only
+> complete a specific small iterative dump task, and cannot dump
+> multi-level data.
 >
-> I did not check closely yet, but are blowing up in:
+> An example, when we need to dump all the sockets of a process, we need
+> to iterate over all the files (sockets) of the process, and iterate over
+> the all packets in the queue of each socket, and iterate over all data
+> in each packet.
 >
->  if (shmem_huge != SHMEM_HUGE_FORCE) {
->          ...
-> 	 if (file) {
-> 		 VM_BUG_ON(file->f_op != &shmem_file_operations)
+> If we use bpf iterator, since the iterator can not be nested, we need to
+> use socket iterator program to get all the basic information of all
+> sockets (pass pid as filter), and then use packet iterator program to
+> get the basic information of all packets of a specific socket (pass pid,
+> fd as filter), and then use packet data iterator program to get all the
+> data of a specific packet (pass pid, fd, packet index as filter).
 >
->  ?
+> This would be complicated and require a lot of (each iteration)
+> bpf program startup and exit (leading to poor performance).
+>
+> By comparison, open coded iterator is much more flexible, we can iterate
+> in any context, at any time, and iteration can be nested, so we can
+> achieve more flexible and more elegant dumping through open coded
+> iterators.
+>
+> With open coded iterators, all of the above can be done in a single
+> bpf program, and with nested iterators, everything becomes compact
+> and simple.
 
-I've not got the vm debug on in my build, so it's blowing up here for me:
-
-static unsigned long shm_get_unmapped_area(struct file *file,
-	unsigned long addr, unsigned long len, unsigned long pgoff,
-	unsigned long flags)
-{
-	struct shm_file_data *sfd = shm_file_data(file);
-
-	return sfd->file->f_op->get_unmapped_area(sfd->file, addr, len,
-						pgoff, flags);
-}
-
-Notice that that doesn't check whether sfd->file->f_op->get_unmapped_area
-is NULL.
-
-So since you remove this from the f_ops, it causes a NULL pointer deref.
-
-In __get_unmapped_area() you have:
-
-	if (file) {
-		if (file->f_op->get_unmapped_area)
-			get_area = file->f_op->get_unmapped_area;
-
-...
-
-	if (get_area) {
-		addr = get_area(file, addr, len, pgoff, flags);
-
-Now since you are dealing with a shm file that has shm_file_operations
-
-static const struct file_operations shm_file_operations = {
-..
-	.get_unmapped_area	= shm_get_unmapped_area,
-...
-};
-
-Then this get_area() is invoked, which calls shm_get_unmapped_area(), which
-calls f_op->get_unmapped_area() on your hugetlbfs_file_operations object
-which you just deleted and it's NULL.
-
-This is why you have to be super careful here, there's clearly stuff out
-there that assumes that this can't happen, which you need to track down.
-
-A quick grep however _suggests_ this might be the one landmine place. But
-you need to find a smart way to deal with this.
+This does make sense to me, but I'd still try to limit what you
+introduce to only what you need initially, for the next version, and
+let's go from there.
 
 >
+> Also, bpf iterators transmit data to user space through seq_file,
+> which involves a lot of open (bpf_iter_create), read, close syscalls,
+> context switching, memory copying, and cannot achieve the performance
+> of using ringbuf.
 >
-> --
-> Oscar Salvador
-> SUSE Labs
+> The bpf iterator is more like an advanced procfs, but still not CRIB.
+>
+> > - KF_ITER_GETTER is a good addition, but we should be able to do it without these flags.
+> >    kfunc-s should be able to accept iterator as an argument. Some __suffix annotation
+> >    may be necessary to help verifier if BTF type alone of the argument won't be enough.
+> >
+>
+> I agree, kfuncs can accept iterators as arguments and we can
+> use __suffix.
+>
+> But here is a question, should we consider these kfuncs as iter kfuncs?
+>
+> That is, should we impose specific constraints on these functions?
+> For example, specific naming patterns (bpf_iter_<type>_ prefix),
+> GETTER methods cannot take extra arguments (like next methods), etc.
+>
+> Currently the verifier applies these constraints based on flags.
+>
+> > - KF_OBTAIN looks like a broken hammer to bypass safety. Like:
+> >
+> >    > Currently we cannot pass the pointer returned by the iterator next
+> >    > method as argument to the KF_TRUSTED_ARGS kfuncs, because the pointer
+> >    > returned by the iterator next method is not "valid".
+> >
+> >    It's true, but should be fixable directly. Make return pointer of iter_next() to be trusted.
+> >
+>
+> I agree that KF_OBTAIN currently is not a good solution.
+>
+> For case 1, I tried the ref_obj_id method mentioned by Kumar and
+> it worked, solving the ownership and lifetime problems. I will include
+> it in the next version of the patch.
+>
+> For case 2, Kumar mentioned that it had been fixed by Matt, but I found
+> there are still some problems.
+>
+> More details can be found in my reply to Kumar (in the same email thread)
+>
+> For iter_next(), I currently have an idea to add new flags to allow
+> iter_next() to decide whether the return value is trusted or not,
+> such as KF_RET_TRUSTED.
+>
+> What do you think?
+
+Why shouldn't the return value always be trusted?
+We eventually want to switch over to trusted by default everywhere.
+It would be nice not to go further in the opposite direction (i.e.
+having to manually annotate trusted) if we can avoid it.
+
+>
+> Also, for these improvements to the chain of trust, do you think I
+> should send them out as separate patches? (rather than as part of
+> the CRIB patch set)
+>
+> > - iterators for skb data don't feel right. bpf_dynptr_from_skb() should do the trick already.
+> >
+>
+> I agree that using bpf_dynptr would be better, but probably would
+> not change much...
+>
+> This is because, we cannot guarantee that the user provided a large
+> enough buffer, the buffer provided by the user may not be able to hold
+> all the data of the packet (but we need to dump the whole packet, the
+> packet may be very large, which is different from the case of reading
+> only a fixed size protocol header for filtering), which means we need to
+> read the data in batches (iteratively), so we still need an iterator.
+>
+> (Back to the BPF_PROG_TYPE_CRIB discussion, BPF_PROG_TYPE_SYSCALL cannot
+> use bpf_dynptr_from_skb, but should we expose bpf_dynptr_from_skb to
+> BPF_PROG_TYPE_SYSCALL? Maybe we need a separate program type...)
+
+It can be exposed, we'd just have to ensure syscall programs get
+access to an skb that can be passed into the kfunc that is
+well-formed.
+Someone who wants to call that kfunc on an skb will instead use
+prog_type_crib from user space, if we separate them. So it adds no
+value.
 
