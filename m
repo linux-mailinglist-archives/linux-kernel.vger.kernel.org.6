@@ -1,243 +1,145 @@
-Return-Path: <linux-kernel+bounces-269509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B8A9433A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:47:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442189433A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C928E1F28578
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:47:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB2B24049
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062B11BBBE4;
-	Wed, 31 Jul 2024 15:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA21D1B581F;
+	Wed, 31 Jul 2024 15:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ma6/qjhs"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2065.outbound.protection.outlook.com [40.107.220.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7a6ngC2"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611501AB52E;
-	Wed, 31 Jul 2024 15:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722440842; cv=fail; b=jNSYXatgF2vB8/on1GCHe53NX7z0qkGkE1WFFWVtaFQdHjCRgXiva4XbOxQNKP12dvofJzniI2L9DVT/kDMWs20WPw4UMi/6IKxToI/SzyjFQLf1mETFRzque4W0iDryiE7AsSn0Sk4E7oiD8RbBfup1dPbb9lfbxKVe55mJyws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722440842; c=relaxed/simple;
-	bh=leMkWV8C99dpFggX/H1ZRVvhLyqsQm1on3MI3VlPkh0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=k/SxFqlAGgy7SR1Ebkpq8Xz4mdAYpeAvfNhRO3o/xci/Ql6g9dzQeB9PAQlKsklbVEKLlnc7YsozNI/f79MGhBfsZt1kalbzGfyrgONZ4K/b+J8IlDfUPxh/oOq3FAHQJAe9W4BJj+/Dul3qbJU+tWyc5aZ116nlEljMgsGXl5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ma6/qjhs; arc=fail smtp.client-ip=40.107.220.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r/Gh+kQ/9/r69Xza8lCKm1z3FYBZ3symy3HA/h1ef/FqIIC2J57Q13RQJDzh9sNnVdQXsIGMwos3dTv108EuVIvFFF8pNBNFeZOKf4n/DG69Zbw8avD22ylTSIk5+hGnj97DH6n9JuZ0SPTI4XwdN2BQeHrspKxFt440KSqkxVzI28FyBFHn+gwo2bqkyhwNSlSxnC+0z+Fgodn9JH7T/0ecpgHeL/IAhEVa8zC44CUtxn8bjUzbTcSgGhE5KveAqZlR0SK2SuqSs3lk/fqJiIvou0xi0ZxIVeqpEPGVop2OZZm+bwiNQ3BOz/PAdNZreSUQMbDjwoB8BZ008rPjTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hidgHfzOagfkMWU7p9qQd/09W8sBJSpH0RBO2wg6YSA=;
- b=MUTqY0LcoGd98Ol8BiRF5Xe9FMy/GVjGg5DbXrj3lZLaek2COV8kN0m/x56XwVyGAtFIqnw8NwHYQv1cgB0wmDFbXIfQQgVB/vTXqJaya2NOTtrRSvyKyLSHiNRQwiu0GYTTSU+iQMGSfe1PDsXYldKf0wxfiWNVCpTTW6nldXWJ6ay17s6ZS6HhOXjudW3Ft0ipDEkpkglaxk0Na+BFv6wKmt8MNHc0cmMp0QWqV9jBrh/GBmOOmnAUtXXzRz8mxLM9nzweysfTBCw+SbzvjzfzhN+etTUsE8OTeyCrbS7Mlb7SSXdA+ErpgeOPbYIeJlsCXcaQ8qqI9xZwxISXKg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hidgHfzOagfkMWU7p9qQd/09W8sBJSpH0RBO2wg6YSA=;
- b=ma6/qjhsyXSHD6VTow8uQg5tqEv3IzBzAXUllIS0mynPAOxS/sXYO/u2OnMQyXDJmWmf+Ks1J4Vr7YgfL88gnmOSmsPeolhfqvT0h6eqKLghta9SZjd1cpfWQ9bwtLnFAT+uD6JbpC+DyP15HnC6h5WTrGH2pyn+UHsW3hzgl1s=
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com (2603:10b6:208:37c::15)
- by IA1PR12MB6188.namprd12.prod.outlook.com (2603:10b6:208:3e4::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
- 2024 15:47:17 +0000
-Received: from MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c]) by MN0PR12MB5953.namprd12.prod.outlook.com
- ([fe80::6798:13c6:d7ba:e01c%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 15:47:17 +0000
-From: "Pandey, Radhey Shyam" <radhey.shyam.pandey@amd.com>
-To: Andrew Lunn <andrew@lunn.ch>, "Gupta, Suraj" <Suraj.Gupta2@amd.com>
-CC: "davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "Simek, Michal"
-	<michal.simek@amd.com>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>, "Katakam,
- Harini" <harini.katakam@amd.com>
-Subject: RE: [LINUX PATCH] net: axienet: Fix axiethernet register description
-Thread-Topic: [LINUX PATCH] net: axienet: Fix axiethernet register description
-Thread-Index: AQHa1ScUem7dLrFOVUC5KiTo3PoE67H0vtkAgAUGLCCAF1F6IA==
-Date: Wed, 31 Jul 2024 15:47:17 +0000
-Message-ID:
- <MN0PR12MB5953F9C2550317D9DF17237DB7B12@MN0PR12MB5953.namprd12.prod.outlook.com>
-References: <20240713131807.418723-1-suraj.gupta2@amd.com>
- <cbd29d03-c9bc-4714-b008-ceef9380c46c@lunn.ch>
- <MN0PR12MB59535D1EFDEB3C2668CA2109B7A22@MN0PR12MB5953.namprd12.prod.outlook.com>
-In-Reply-To:
- <MN0PR12MB59535D1EFDEB3C2668CA2109B7A22@MN0PR12MB5953.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR12MB5953:EE_|IA1PR12MB6188:EE_
-x-ms-office365-filtering-correlation-id: e77544a4-29d0-468a-5e4f-08dcb1780e59
-x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?IQ3W2Pk/qGnTa1JlwrHzu7Z8EuCX7ResHmZhH6zqi76ySchFFQN+sp2nb+u4?=
- =?us-ascii?Q?4U9YuovBDm79kLlO8NzBHNhh4Yk+LL0fzAcQHCZSQdUmaKN+bWjXRDG/EzD8?=
- =?us-ascii?Q?cLvjUmWlHni8JhnkAxA2aMlhlcEEmVWZLZPr0JdpStKa+9WXnM5be4JLioNg?=
- =?us-ascii?Q?/LKH33e/H0WvDbt8Y8LhW8F9D77yhtc+RvUzKrwM7XCbhSLlZ8z93fEKXh2R?=
- =?us-ascii?Q?ksF9BJCvZ1QiXM3dBfOsiGy0mn+7A/5hK31hrTlaA+dlGDw4ejSxDgOSlGPT?=
- =?us-ascii?Q?ViPHCmmXgPKljtzr4yAfP7iDmJKuIQ/VozjTwS9yn4tNT9b9gZBxyDk1Wb/J?=
- =?us-ascii?Q?LwcinM1+lRLTqXPBBKigD4KDhRrhvHKdRVDCaTTbxo+Dea2wGaU7qZxq2XSw?=
- =?us-ascii?Q?G9LwPUS6+Fc6JPjGbepeXSAGIxeJo44TVu3RDs3oJYNVijYe1siCzmxyiR26?=
- =?us-ascii?Q?3E8oHNqwM+3aKy3X0uF1eb3aDU1EIsKoblN/ESdc4moNeJfBmq+J6B87GpRR?=
- =?us-ascii?Q?4/fvedzbbqTfRSXmv+X6yEZslY+fFIzidjv0DdN94Y117lexcMmi8wBtVfCD?=
- =?us-ascii?Q?GcKGCc2EP7x6dtGqTwfGqeelfshkq7WvMZgE8X0LUW5xW9KEBuWFngq4Np5V?=
- =?us-ascii?Q?dnjqMI0QwS5uopj2jX+pW8Q9V4GjGou8Y+AipG2OrKGS1zumhh+eEIhXTskN?=
- =?us-ascii?Q?D5Fz8Wlp5QXQaCEgNi1P9LIvo2hm7nhgP63dpUJcNnhV9Q5AQ989r/ep7TjD?=
- =?us-ascii?Q?FtWjr7KDy8y42uyafuF2/EOuPZ0lQjyo7s6kBVrfcqLPf757ael0WZERzHco?=
- =?us-ascii?Q?gCydNFgKHUGCkjTw0N+EkFbk8lPSyqbN+UJDaFM/qEsGiufRfbRd76MKSVcM?=
- =?us-ascii?Q?ItR0YCNSuTOGx8dNZ9TT1sKshKFU58k3o6HsmHlq3a5YR+BSNHdh68bDvT6u?=
- =?us-ascii?Q?UphiEqburzNXT6N9lqmKzCoTqeL+SW23wop1TAVjR0iSZTffEpF/VaBxXfvV?=
- =?us-ascii?Q?y81ntA2s1FzXBXrnks4HHlCsZKWfiK7eDKyQSshaLiFtanmBPfx8zTvJ0x+y?=
- =?us-ascii?Q?frM7aFgDfw7FUMHrqEC0lJsmWv8o0tbpEhe9k8QW6tKtYCH87aYz0PSivmix?=
- =?us-ascii?Q?XGIxcDDrPa/iNJTUN+Zu5LIwuQw7L5cVScmazPzvx7/dwV2tNC1cVPacaQvj?=
- =?us-ascii?Q?R+gw4Lh6lVktW1bgggTkPGrO2XmQJR+Nxu+uDKwqp80qsi/5papVt2RPjKIl?=
- =?us-ascii?Q?x/rKjU/n1dvt2yLv95qzi+U8rBAYSOUW3meataxP5ROh0uP3+48O/ZZXjJOr?=
- =?us-ascii?Q?ZA0pQUxaew7B9dnFDWNHRm/vU0bvhkmsPyOmoSSI3bl2gy+TOaTHrQJcKOa7?=
- =?us-ascii?Q?NerYKyF86Cv/di3NgqiASffHr0Y8XQMASbNx5PXnx9Qg81+u2Q=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB5953.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?/nP0JTxRoRLjGOZLFQKb294NbQKpqJxkDDaXEBMWa8bQFB8o2sy4QjlebCF/?=
- =?us-ascii?Q?9WZbrJuvuhnrLQ47O67UxGbjeBOAzWddHZpD1wji9HjA+GTYi7sxjGbkkEUP?=
- =?us-ascii?Q?xgJAKlfrlMyIBbjynGsBD4skt5KJ3629NaZ0ycEvGf7SdI+kOejsQeOerzth?=
- =?us-ascii?Q?hVyQQjNxzl6iOKF01C9705Fufyqt/JU+wvcZouCeQiH6jixVStmdFdS5QvwU?=
- =?us-ascii?Q?px/XFs4mR+CsxmGTJkQnUYNNFcejZqzGeijkJ8ZswjYKxXCepenxT8CL3T04?=
- =?us-ascii?Q?tTaxQj1gj3tYvmXNDZZgTQLZr8im2kTDTmk1Eo7y24jxvC5LehQdyRHblhfu?=
- =?us-ascii?Q?xDvM9wf7eDVcgZSX3eSErHuPAd19LW3IE7nv2UxD+NriLMNTHyBDhxEK4no4?=
- =?us-ascii?Q?0H7RJPwKvn6rhy6nyn+Do7JEIsEGWOAXIWqql4flx6zg9XiyDepIlVG8V+5T?=
- =?us-ascii?Q?PfiOiiO2JyHE0KmEkQzL9qt8xv6kXSu2hrnnGURhgJXbbqZjJPnTHtFygm+E?=
- =?us-ascii?Q?DZNQIOkHxbRuNkOoQWazT4+wG+zwVeEW7pN67s4JmtMqX2wJvhrFv2tGCzpp?=
- =?us-ascii?Q?qzD0268Z4NfbBkHKHQ8xqxhIiM4aRh6UJgkleqZelvvLNw6b4U61oXu8zlFb?=
- =?us-ascii?Q?+lCLFHX/uUqxyYnZZSDnuKUxdzOxmI8H9XH89uWFcvIkLxh9rq3ysqUIw+wq?=
- =?us-ascii?Q?hR4QY+gKCIiROg2R519dOJUR4PSuQDwbq3C1d9cPbuzpnanSuLTy9y4V5Kd9?=
- =?us-ascii?Q?otnU7fJkiblKoXSNIyNK0qZyn/CRWxDMiIdQ5lwvCc5vytxHaR4DG1RLye87?=
- =?us-ascii?Q?caJTGgUSTxEtuU3kbBFe47uoMN1B00Jf3HDHWMCLfHz83G4U+CbkOv847iBf?=
- =?us-ascii?Q?Nx2aWV07p6r9grf5dlSi6fiJkWIo59AYLUgxrLHHgU11G2dNACUyADsEiCJR?=
- =?us-ascii?Q?KCdgOw4pwXj4yycimUziS4m5JO+PfB1UnCrGu9fw21N2Yzvfa1A3H7fxcGK2?=
- =?us-ascii?Q?AFny6QRQSyKrtbacHYLkx5DsIzI62rJipe7Afy5+2aB2ihWRuzLEdbVHjb/k?=
- =?us-ascii?Q?lKbSZGd9b+6XEHmKqZQEuGG/Y9OWHlT+SBGKeQdQetBSIgAc9JIu3/OYOLv1?=
- =?us-ascii?Q?eZVuUq0qnNAyDxR0UYrvMLSFLpT994X5tJJNXOdja+MX5oiUCZh1DYNbOu1h?=
- =?us-ascii?Q?4vcTy35DtmztP/zqK4rc+pcWpzS3HFd8gdBayEKOGyVE/i9QAAVeMJoeZHgb?=
- =?us-ascii?Q?i/ISEtFIdUbw2cppIc01loGdlDmFQm8XCvpLkgjslQKZ0gQnI4/6fa3ZCQkn?=
- =?us-ascii?Q?97/ZsFxw2zdRvZD6gpc38Ul5d3MFV1doOdtQwTw00CqUzotU6C1FKVMtntBj?=
- =?us-ascii?Q?jk3ujllyDkAwSiKkdWa+rt+94lQZEaqnnJ6iEL1910Q/Jj4fAOykom++l9GA?=
- =?us-ascii?Q?WP1O6gKN9rWoQ3U17H4lSEK7s8uQaYx0hZ2bEIfLJK9xGQTPRWrJeNYY4W97?=
- =?us-ascii?Q?V938lxdZi4wXavFSu7tTY0vd+c2ZjhRlgO+Yg2v34MOoqeV8RGu291huBJE2?=
- =?us-ascii?Q?aQHcSxApUrMmcrMgWaA=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B2C1CF83;
+	Wed, 31 Jul 2024 15:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722440866; cv=none; b=LbVVlNPUuAqL+sJJkYz1d2FylMWu2L9ldS288unRNiY2dOD5BF7NZNUVBQs8H8BVfPn2CpY1EdY+SJvz/ZakVSzS3bL7zbewArZp5gGxhlg6IPhks3JCuF2ljmoQjNGAglAWllHIEvf5ckelFFmao9Dl4HcxP5YX6wtATJXKSpw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722440866; c=relaxed/simple;
+	bh=4u97t/RaLcuFx19cl6/FF+3nhsfsuomYYTTtLurA7Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHpg+2OiULnIFDYoWPXiJMM3R0fUTmFxYHxlahZ1kWHqw9LPvpblKi9Jl1GZWiK2Zvd89V1FxH7imEqMInInC/USIYkCnQlTjHZDYwjp4w+06d1iidDK5RBadfrOaroz2Vw0OaeeHFPbpozGDw9h5UB5FaHdI/+fplsTNXIqXIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7a6ngC2; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fee6435a34so39628325ad.0;
+        Wed, 31 Jul 2024 08:47:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722440864; x=1723045664; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7oFTJ+3+Ld1Sad4Yjzou2SbBkqLkLd+A5kfPRLxBvso=;
+        b=g7a6ngC2+O2lyfc6YgrtjGPw2UGIqCoGh/xGpbEfXzYl4aBdnVMcTTGQXJnDuIhIRC
+         qYonMC7E0r/kgF+qjxKZ1Pcyf2uBXfuy86GpfzT1DfyWK1XdFVG+rNtqVAKKWHnlzW30
+         D2NvkeAJh/ouYk5tIHPGX1xlVXdQNcDwQCvRnV+s8p83M8NlRgcboyuZOlj6hfrwIe5Z
+         u/7es38j8wS2rgEHyauow3HpXNyMii87q1FvSwsGjcjRVfh8FrcNsMb6GpWDQ6iOI6CT
+         LHl1iNFDxO9NNS5tn+1kHg52pSKPQOpNys53buy2ZLV0Mhvtwd9pSzBP4gEz0bdWgRhV
+         wreg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722440864; x=1723045664;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7oFTJ+3+Ld1Sad4Yjzou2SbBkqLkLd+A5kfPRLxBvso=;
+        b=HAkk+JWHa++kKkwZUARPx1DrI04BMSpuKqyp+8aeZALTU4v6BtqPXsdXVQxVidoF92
+         un2CHfDj8jyR0fKgPWo3FzJsJYYQZiU/3m2tSH8yoTUMjL3llbLggk6mLfJ21tXN++/D
+         hb19JMx3QJ+E/XO6LFiV0rMV/hMzduxnoS49Ca5QI2j+bI7rxncrI2lPe1Kj99TSQ86d
+         GXjxLOv7cQfd4wOcnslyI8dJSGh5MK5boSgdJTaykQqsxK20HN9Yvc9kDSg1rrKBjT6k
+         0MG1AUe8t8srRm7qZPcDyepSnBsqS/4U/YfZK7vzpIc+hAWcfdpHqoiFrOALM/GaIV5B
+         kjtg==
+X-Forwarded-Encrypted: i=1; AJvYcCX25rOt7DKPlP4VelhmuNRNJq1P5enoMflJS4xN4KqCkLNRmLJqI/4wWbMV/QtuZHGfG+JS2iUjvuvDpBaa+PMOAx8M1U5UMEiadaNLqIXJoLaMyz0ePWCsayk9VzSV5hXbPTBc9jiRtHM=
+X-Gm-Message-State: AOJu0YzFBdpaAIWzSUN5Cw1HIBSd9Cx/R8dtrsVj3c6A7f0tT5teZfyM
+	vW0uRqgFMDEAz7ZdEOvt+qjP9I6S2WCI3mJyh4rGFOdwdyo9df2t
+X-Google-Smtp-Source: AGHT+IF/u4j2lKXiTEY0Vxrj+c3pKIEnk6/2LcyHMMUQH2XF79eFPMqC4ykikjay8jVijHF5XpvvTw==
+X-Received: by 2002:a17:902:d4c9:b0:1fb:29e8:5400 with SMTP id d9443c01a7336-1ff0493127fmr137562745ad.56.1722440863799;
+        Wed, 31 Jul 2024 08:47:43 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fb04sm122097525ad.43.2024.07.31.08.47.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 08:47:43 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 31 Jul 2024 08:47:42 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>,
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+	Matt Turner <mattst88@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Baoquan He <bhe@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Breno Leitao <leitao@debian.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] alpha: fix ioread64be()/iowrite64be() helpers
+Message-ID: <6bd73068-4474-4129-857b-39150a31f224@roeck-us.net>
+References: <20240730152744.2813600-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB5953.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e77544a4-29d0-468a-5e4f-08dcb1780e59
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 15:47:17.4119
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QpPt8R14HpFvu5Jq5QNBeg/buzp5R00VYlmu0+gzbmfBShTZQSUNcaa03wPYvx06
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6188
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730152744.2813600-1-arnd@kernel.org>
 
-> -----Original Message-----
-> From: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>
-> Sent: Wednesday, July 17, 2024 1:11 AM
-> To: Andrew Lunn <andrew@lunn.ch>; Gupta, Suraj
-> <Suraj.Gupta2@amd.com>
-> Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> pabeni@redhat.com; Simek, Michal <michal.simek@amd.com>;
-> netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
-> <harini.katakam@amd.com>
-> Subject: RE: [LINUX PATCH] net: axienet: Fix axiethernet register descrip=
-tion
->=20
-> > -----Original Message-----
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > Sent: Saturday, July 13, 2024 8:25 PM
-> > To: Gupta, Suraj <Suraj.Gupta2@amd.com>
-> > Cc: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>;
-> > davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> > pabeni@redhat.com; Simek, Michal <michal.simek@amd.com>;
-> > netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> > kernel@vger.kernel.org; git (AMD-Xilinx) <git@amd.com>; Katakam, Harini
-> > <harini.katakam@amd.com>
-> > Subject: Re: [LINUX PATCH] net: axienet: Fix axiethernet register descr=
-iption
-> >
-> > On Sat, Jul 13, 2024 at 06:48:07PM +0530, Suraj Gupta wrote:
-> > > Rename axiethernet register description to be inline with product gui=
-de
-> > > register names. It also removes obsolete registers and bitmasks. Ther=
-e is
-> > > no functional impact since the modified offsets are only renamed.
-> > >
-> > > Rename XAE_PHYC_OFFSET->XAE_RMFC_OFFSET (Only used in ethtool
-> > get_regs)
-> > > XAE_MDIO_* : update documentation comment.
-> > > Remove unused Bit masks for Axi Ethernet PHYC register.
-> > > Remove bit masks for MDIO interface MIS, MIP, MIE, MIC registers.
-> > > Rename XAE_FMI -> XAE_FMC.
-> >
-> > Might be too way out there, but why not modify the documentation to
-> > fit Linux? This driver is likely to get bug fixes, and renames like
->=20
-> The problem is documentation is common for other software stacks as well
-> like baremetal/RTOS.
->=20
-> Considering this i feel better to correct the names and align with IP reg=
-ister
-> description else someone reading code may think this reg is related to
-> some other configurations.
->=20
-> Example: XAE_PHYC_OFFSET is corrected/renamed to XAE_RMFC_OFFSET.
-> RX Max Frame Configuration 0x00000414 R/W
-> XAE_RMFC_OFFSET is only used in ethtool get_regs.
->=20
+On Tue, Jul 30, 2024 at 05:27:25PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Compile-testing the crypto/caam driver on alpha showed a pre-existing
+> problem on alpha with iowrite64be() missing:
+> 
+> ERROR: modpost: "iowrite64be" [drivers/crypto/caam/caam_jr.ko] undefined!
+> 
+> The prototypes were added a while ago when we started using asm-generic/io.h,
+> but the implementation was still missing. At some point the ioread64/iowrite64
+> helpers were added, but the big-endian versions are still missing, and
+> the generic version (using readq/writeq) is would not work here.
+> 
+> Change it to wrap ioread64()/iowrite64() instead.
+> 
+> Fixes: beba3771d9e0 ("crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST")
+> Fixes: e19d4ebc536d ("alpha: add full ioread64/iowrite64 implementation")
+> Fixes: 7e772dad9913 ("alpha: Use generic <asm-generic/io.h>")
+> Closes: https://lore.kernel.org/all/CAHk-=wgEyzSxTs467NDOVfBSzWvUS6ztcwhiy=M3xog==KBmTw@mail.gmail.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Andrew: I am thinking to split this patch into two and send out v2.
-1) Fix axiethernet register description (XAE_PHYC_OFFSET->XAE_RMFC_OFFSET,
-XAE_FMI -> XAE_FMC)
+Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-2) Remove unused bitmasks , register offsets.
+> ---
+> I've queued this in the asm-generic tree now, will send a pull request
+> in the next few days to fix alpha allmodconfig.
+> 
+>  arch/alpha/include/asm/io.h | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
+> index 2bb8cbeedf91..52212e47e917 100644
+> --- a/arch/alpha/include/asm/io.h
+> +++ b/arch/alpha/include/asm/io.h
+> @@ -534,8 +534,11 @@ extern inline void writeq(u64 b, volatile void __iomem *addr)
+>  
+>  #define ioread16be(p) swab16(ioread16(p))
+>  #define ioread32be(p) swab32(ioread32(p))
+> +#define ioread64be(p) swab64(ioread64(p))
+>  #define iowrite16be(v,p) iowrite16(swab16(v), (p))
+>  #define iowrite32be(v,p) iowrite32(swab32(v), (p))
+> +#define iowrite64be(v,p) iowrite64(swab64(v), (p))
+> +
+>  
 
-Please let me know if you have any other thoughts.
+FWIW: Unnecessary extra blank line
 
-> Other changes are removing unused bits masks (Remove unused Bit masks
-> for
-> Axi Ethernet PHYC register,  Remove bit masks for MDIO interface MIS, MIP=
-,
-> MIE, MIC registers) so should be fine to remove the dead code.
->=20
-> Thanks.
-> > this make it harder to backport those fixes. Documentation on the
-> > other hand just tends to get erratas, either in a separate document,
-> > or appended to the beginning/end. There is no applying patches to
-> > documentation.
-> >
-> > 	Andrew
+Thanks,
+Guenter
 
