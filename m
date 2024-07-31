@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-269755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9188943689
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:37:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748F994368B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:37:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB8E61C21CB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A7931F21EC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448DE1465A8;
-	Wed, 31 Jul 2024 19:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8C713BC1E;
+	Wed, 31 Jul 2024 19:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="edSl81qa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YLzgzcqS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bXPHct8W"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E7A1401B;
-	Wed, 31 Jul 2024 19:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921483AC2B;
+	Wed, 31 Jul 2024 19:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722454615; cv=none; b=O5iLGGvrvHGq0lxIRAYhV2GWWMYaHMysnjQOk4Cqk417Uvm+6HPiSl7s0tSb4//AgGFRfT7MNnDUx3lrDtxD+yJGkkn8p8D2ugAmEpcJCCpHFi8MaK81tGRLX126Y+ZGSwMtN2vYweMN8X7NUfI+MGWcY9AtQMT9bJGwlmuDN5o=
+	t=1722454636; cv=none; b=FUN9Gxe82YRqnbXjz7DZqFqFJRjvRoiYT0R4atu550D0Vvo1OJ/fCKwfft1O4v1Jab71SjIdkSjZS63/XX2vbrSOFPhGt8eQa3ARTWl0Zv8b9k+YmOcIW2mKHD0rFsy0k2tWwTnkbPAGKIVnn/bC9Z2QGpqvqXb2ClWF0UyUX14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722454615; c=relaxed/simple;
-	bh=A2ypCx6OZqmFdxZX0053g+WM3m1cHSSLnZjJyfcI9h8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=gM4EyoC28ruP8sOhxui0ablPseTxTF48siRodu+pb8jeT5JKMte3nRsw1kCbjIuASY3gxreBfG87BAmMGQV0R2HIOd+zqJ+qWhuCjQmdSBSXDBrQ6bGPuMs4tDfXmY2E3BaBLnfUlSK1M1eBnBz2+tk1rLH0lxdWNt8fqgpX6XE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=edSl81qa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YLzgzcqS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722454612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A2ypCx6OZqmFdxZX0053g+WM3m1cHSSLnZjJyfcI9h8=;
-	b=edSl81qatmGTFb/6oc7NeZ6Mj7hxD+ajA1ALcOdBOM6mqSSvJZjraJNLqYEtSyfKu4BYy1
-	ofyZmW1IjBqFa1yE1XRCi5caUOw6EP6uBXQ5DenQGcPApIyC/2Fhg3B/XGd2Rl7Z7Ia6gm
-	xef6trlPr2eZGn7tYISjoKO9wHUBWtrSHNK49+tvCJ/0nZsxHXeGnnL3S+qLRH13zNvkuq
-	Q3cQTU53RWQgGA52a3IXz1JsO7Bs5L9nOzIp2DX+XA7Z2zlt8zIKkNT8Jo9L8z3C//9yq4
-	FMjhBvITcnu4DgMLqYwT8FbSxdQR9Xnzx0+5jujT8hab67sWOlebopQOriXsTw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722454612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A2ypCx6OZqmFdxZX0053g+WM3m1cHSSLnZjJyfcI9h8=;
-	b=YLzgzcqSpn7alTguPQ8xYRTxP5K4NFJPxGvcW+GABc7bFSzvA1rMpbF9Fjq0JDQ3DN2V4N
-	8cMxX2J6Fp3hYDAQ==
-To: Jann Horn <jannh@google.com>, Arnd Bergmann <arnd@arndb.de>, Linus
- Torvalds <torvalds@linux-foundation.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik
- <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, Christian
- Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle
- <svens@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- linux-arch@vger.kernel.org, Jann Horn <jannh@google.com>
-Subject: Re: [PATCH] runtime constants: move list of constants to vmlinux.lds.h
-In-Reply-To: <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
-References: <20240730-runtime-constants-refactor-v1-1-90c2c884c3f8@google.com>
-Date: Wed, 31 Jul 2024 21:36:52 +0200
-Message-ID: <8734np5p63.ffs@tglx>
+	s=arc-20240116; t=1722454636; c=relaxed/simple;
+	bh=8sQV8hQZlJcBrfuhPlpF/4AyA4M3+E20KMn/oRn5rnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C2YExh4z0FMeeb8GdzLPWF3KzNpMFC+BozKYMMB3XWYYD0vg9mCN2dQqJcnRJPnmuerFiJL0wvLxTvWfHf99tZ1/7XnrnS3v5hFttNxkY/bnx8txoUQCjfBkbdKI717sGmeR5qaoa4fhsRkgWUdvzACEiNTw1Gz+YGkNcIT2YvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bXPHct8W; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-70d2ae44790so4361314b3a.2;
+        Wed, 31 Jul 2024 12:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722454634; x=1723059434; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ig46mG1vCNzw0Uopgd/HaUZWxx4bHwU4G8lr9HaEMgg=;
+        b=bXPHct8WLGMQ/a0i49ZajIg1HlD/qQghGv425y3a9+ubxMHoTSZnMsQgZkYvYZM0v6
+         KJds/PrOtnCK7qEmwFw4UY8m9rQpGVMvZdhjezJ6kuvlxO0LA7pItG60y3xUUiXkcdro
+         vnQPGpJ7ROkq4rZXmTe/e69hFH3D6eE0N+9tj2yHkIAdbRHgGmbLehdxZ3NZKxNDSkoo
+         LyuP8vS9omlfLL45EbC/xvF7wMbUJ+DxQhiXmIGnFEnGR1lrEXiXVMDaf0FCwgPrOmej
+         76b7rTXyIZPzDqb8jGEbLI97OryTO7zIBRjOwy08Trh1+quFD+Q3r1ErJSilqi6FIxKc
+         Guog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722454634; x=1723059434;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ig46mG1vCNzw0Uopgd/HaUZWxx4bHwU4G8lr9HaEMgg=;
+        b=XP9iaOdp09VRY8B7yCtDPKwfqgoHYWWXQsC6IqJCDOcVbVtHcRAbHDC2eRT2PSUw3u
+         gEyLWsIOv45KaycbmssnDdnW39wvel2ahReymfJ982ekhm97gBMlhuYfrfYhb0D/jupZ
+         1s3GiO/2U53VESOj3QGU11nRmUhKKPW+d39ktkhxXrkK/zj8FefcQLWAewJsuCsS14iH
+         NX+0qy5QQ+s6GmHXiYGRuA3YIfzOnV4PJOHbz9XpITwPwUOC9wp8ejvmr494day8AXX0
+         M1OnZYCdm/H39+G+Gz/74hPDhvohcMex/GHGRMXkvFiqI+OOuY+OEZCrvXTJsT/06jMW
+         Em9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWNADy/bKvfrnA5tAdZfLrvacXGJ1r49SiCixnqe63NtYMZ4OC6KN1MU0JuGCTqxlOQXitNxxjsPEoqZQsiwQHhxzNT/HvKegd1JIzH
+X-Gm-Message-State: AOJu0YzN7CpcsBVe5rY07zjIvjS1fqMX4nKTbw7p/7eVIZt4/gzxtzaw
+	fDjm4Q6xTNhLWczAnYopxotNGUe6H36am0Aj/k3b+T74UkTq6uKk
+X-Google-Smtp-Source: AGHT+IFGDwKffMcpar/FeabXR8gZELHNi2qNyhGyCnh8A5/E3bcawMFEDWsYDUEX8ldycRd81qZHJQ==
+X-Received: by 2002:a05:6a00:39a5:b0:70d:26f3:e5c5 with SMTP id d2e1a72fcca58-7105d72d3a5mr367786b3a.17.1722454633736;
+        Wed, 31 Jul 2024 12:37:13 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1da7:72de:e91f:aa85])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e0ff0sm10324933b3a.35.2024.07.31.12.37.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 12:37:13 -0700 (PDT)
+Date: Wed, 31 Jul 2024 12:37:11 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input: tc3589x: Use of_property_present()
+Message-ID: <ZqqSZ3ZBwnO21VKH@google.com>
+References: <20240731191312.1710417-14-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731191312.1710417-14-robh@kernel.org>
 
-On Tue, Jul 30 2024 at 22:15, Jann Horn wrote:
-> Refactor the list of constant variables into a macro.
-> This should make it easier to add more constants in the future.
->
-> Signed-off-by: Jann Horn <jannh@google.com>
+On Wed, Jul 31, 2024 at 01:12:52PM -0600, Rob Herring (Arm) wrote:
+> Use of_property_present() to test for property presence rather than
+> of_get_property(). This is part of a larger effort to remove callers
+> of of_get_property() and similar functions. of_get_property() leaks
+> the DT property data pointer which is a problem for dynamically
+> allocated nodes which may be freed.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Applied, thank you.
+
+-- 
+Dmitry
 
