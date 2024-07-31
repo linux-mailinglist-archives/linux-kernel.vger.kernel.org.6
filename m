@@ -1,253 +1,124 @@
-Return-Path: <linux-kernel+bounces-268401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CA72942439
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:42:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4885694243B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BFF52840B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:42:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 498691F243DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DBAD2FF;
-	Wed, 31 Jul 2024 01:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3044AC8FF;
+	Wed, 31 Jul 2024 01:43:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pSayiJhL"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHxnza5p"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367AA846F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 01:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAA0C2ED;
+	Wed, 31 Jul 2024 01:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722390118; cv=none; b=uaIR6nbsiWKgZzVnhtf09CWNSsuUCCX5ifu+EIsk/n68S1xlBnn2Rqd+0QI8HK+1xfKBSZ83XEXBm+XHiXwxkMxSMZh72U49BBC9z+5MeiLTZruSjKFMG27mIkNqazaoFb6yWRBA8+OawlxMeBB46WBjcVrgLchF/jR0OxuduSU=
+	t=1722390199; cv=none; b=HfI2DRK4gfmR/BRUzVDppMYs2Et49eHLkAPEDZ0Ok6I4YQeLO3UptOzx8Ta7OOx9NVgfscIyIdkbi41H/T/NAvhQ7ueDq8XTgsGv7Mj8IADpQ5cukorQSBJMpehblTsV2mcei53N7CNWSBqHte3iQ1e4+oqjWCdTXh+vuizo1PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722390118; c=relaxed/simple;
-	bh=G7+0ateunFtPHfcpxVeQ58WaJvtGFPv/yXSH1YHGW6U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JXWHerYz7AUnbkC07ZaSsFC6fpYhn4briDJd1LnVikMrnCQz55YP6nviNUiBDYjqGYrPs7TTXqKN8msDKqu+R0ie5lA+LiPk/wKEG+ka7tKok25bdKeOBpEEpZ98VDWWqUL7m7lgQWllatYsnJAj0lFIgjE7sSN8ZbZs1GaVDoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pSayiJhL; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-661369ff30aso38134877b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 18:41:57 -0700 (PDT)
+	s=arc-20240116; t=1722390199; c=relaxed/simple;
+	bh=fQjwx58jaL9QFBkaY8Y8Fn/SF8GLxru5rT4IZJSzmLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PbMThj2QNsUsAH+/GUViqiLu5YUWjcIilyu67iQKYqJyNTcWJ6TnKuVwZmvCAv8G6hB+zJaDlawuBG1KdOCV4/HtfNPzqDyA6cUD4z5Dk0EnHp0+koDC4Y+W/IBD1YUDiTk5ykUE4Yn9OnsA6Duz93U/pGr0K7pSmSCCRvxlrhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AHxnza5p; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70d18112b60so384109b3a.1;
+        Tue, 30 Jul 2024 18:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722390116; x=1722994916; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=00FmJFigEX6BpvRoQue3/paG9/7bbsRDEOyg4Q2sftQ=;
-        b=pSayiJhLbO8lnzpi4y5ysqz8zz/oW5H326CzE90eMJ26nLTLxnmZx5KNwMbPki5f2d
-         MKNKhlM8rG/PZGYIu4KVbTq4NUAZTs8GMSDNzA3VtK4oMslBiYoLwNOCgAhs6uM0IxLR
-         zAEXKjTI7zuKdrwwZ3CqtBId5d0uBN829Rz7OYWFppUVpuCUFWoioeHfSGEAfhrXIazn
-         X/PA7Qyo91RY37v+90Y8g3yD4XtyWVtrpUT2g7h808N9V0oiV4OWTnprpx9VjoJvkqBI
-         esJjfP82wchXq7w+1oDGiADEal3QxbZn83dZQcUMkUvJrNmkp/e9sm8/vRJ/bz8cERue
-         xtTA==
+        d=gmail.com; s=20230601; t=1722390197; x=1722994997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/en+lkIxC1dsuLuhNmN5BGywFgSuVRz1KCq0xfBNjdg=;
+        b=AHxnza5pn0AyoYV7Kw/i3LGV8mPOdcgipy9DAC1ZAb+uLWJLr+Cd14oI7sGIFohVlO
+         B0vgWHBSsRa5qsM2pueFdPeKCQ58+YQR65wRHXTRXYCjqvF9aN6z7o87+F5zVvQVDJyl
+         fsj0S8z4nTEwOjydN8fqj9njcs6xDHRsWY2nL70Bc+Lqj5R/ac0uot/T+OLiId/R1yyH
+         78SiIXeYUuUZm7Zvpbkv/iaCDX+CFO4pkYaHo5+BNyeGZtljfzxnSmbqpuMmlcWeo1No
+         KQwSwRLfioHB3af8qHA5Ml03q6U3TgsMMcFY10LjL8cL+mZH2DdTlaGl8jyoZmkYFt+J
+         p4IQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722390116; x=1722994916;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722390197; x=1722994997;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=00FmJFigEX6BpvRoQue3/paG9/7bbsRDEOyg4Q2sftQ=;
-        b=oyN9RvTY21BM0mLXh+4waxqelsnEaqT0Ct6KnAfgfd+6I3+9+pjitEA0JRNUAeNxMT
-         YuqmCAcS+rrXVydUGv7rhztZ7LwKG4aGJuMqSHkT8sa9THGE/KmrjQwQ9Vmce7Kt+cJv
-         4XdLH/MqCr3K8k51jHWk7aUZ5OGyYR97zRSnK32don/H5uUu60/TI13knhsdvYf95CXg
-         jHnyFuUM+QqK4sJ5wurbnAlbHBkpZJmPgkWTgGBJioHXoSgXbbYB22aP6tb/rbDFGBFB
-         q9ijsEZZTUQuGG3T8SN5ihmdIDXS+HpcNJV/9xMVn92PkReVkpP9o2NTtNqlihCMfJNJ
-         SI8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVPro7dOR2Jlqw52oO1urt92IHryYOYivaz2QyWCiArTxRXVo2NcTNRCIGXcjSPyJD2zdfQA9ai72qcWPWV9BJiaOW1H/dED+N+UQ/n
-X-Gm-Message-State: AOJu0YwBifIqXE5OiCuTf6uATgJ7Jis5ObZjN6FQVS/WZMDQ15+FqcsJ
-	6zhJWSbHEf06YJO+Aia0DNNGwv+zjYUu0KyupUizr18YtJQt8T8ISRq6AvyUPSNhyakeA7nCZ2h
-	4iKyjsoJAOQMUYAkHUV7PgK8HlI00rY37bYU4nw==
-X-Google-Smtp-Source: AGHT+IE6WdDRrp6XzpGnNuqVp4MFHRWVcGoigBh0z5Dq1XoUIQ2RKx0gyFCE4wAFVQo5XjeFNUG91C6c93B8oAe5IOk=
-X-Received: by 2002:a0d:d007:0:b0:673:1ac6:4be0 with SMTP id
- 00721157ae682-67a0a3231d1mr139674917b3.44.1722390116092; Tue, 30 Jul 2024
- 18:41:56 -0700 (PDT)
+        bh=/en+lkIxC1dsuLuhNmN5BGywFgSuVRz1KCq0xfBNjdg=;
+        b=GrorWgHFSF0rIR8VPjUWxXW5yuv0nMwBmm82H19x8oiQ7hZ6bRyvxf0E/2yGfu5rYb
+         geaK2P9bGiTFFN1Ti6bvPCJzDBwYl0pIRZ2dH8M2n77g360UDwYcc+TEdIth+K3k8D18
+         sI+m07AH6xrjbXh0xzu8TvN0z4HGO8jEAyx6gzFteavH+scUxJgpooWyhCX1FXIJSh3l
+         rNsLTyEWtAYcy2xkIrxULVLsD1ClraOJPRFWqAyrG/dWqzAs6/eRZ63dsRjoOaoYvUsh
+         hlupwKIryNfIFD9BwOMzkXSOLAz71z40TUQxFH3nMwSTuugVZy58qrUb1zLheooLihxY
+         p46w==
+X-Forwarded-Encrypted: i=1; AJvYcCUtpU+XVJfLKtTwe3pGBYu2w01UFF2J4oiEgaVFsNABSGfPrZTnBpWkvr+5eeR/8yjelJCrAIAk6PBjIliHvwiK/UsBxGP34IG8tVBO21X7ZWnAkdRpX8QRDcjv2ChV+A2/qS+3x0sJXg==
+X-Gm-Message-State: AOJu0YynKcgy2+dLYF17xtzMmicOT3DLs3KBdn4s451rKTSr++BEi3//
+	S80ngQeuF4RWjFp6awiZUuplP0qpVKYfifskU70CrOAYLjDnY752
+X-Google-Smtp-Source: AGHT+IEO9+FJ9UEbKhXdX40ya/ca18BX8ZeAK/q6Tyj7eDOB0qtDQ/hVhInszN2CuvNXMCa3Xlc+Gg==
+X-Received: by 2002:a05:6a20:8424:b0:1c0:e1a5:9588 with SMTP id adf61e73a8af0-1c4e473c57cmr6425606637.2.1722390197351;
+        Tue, 30 Jul 2024 18:43:17 -0700 (PDT)
+Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a48aasm9003534b3a.196.2024.07.30.18.43.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 18:43:17 -0700 (PDT)
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: [PATCH v2 0/2] Add support for nuvoton ma35 usb2 phy
+Date: Wed, 31 Jul 2024 01:43:11 +0000
+Message-Id: <20240731014313.113417-1-hpchen0nvt@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240708-x1e80100-pd-mapper-v1-0-854386af4cf5@linaro.org>
- <20240708-x1e80100-pd-mapper-v1-1-854386af4cf5@linaro.org>
- <Zqet8iInnDhnxkT9@hovoldconsulting.com> <ZqiyLvP0gkBnuekL@hovoldconsulting.com>
- <oj4qv5wdxymsgpuy4col2w5gabn6k5blybf2fmrckydjo6sftd@eppcqaqwjn5b> <60aa6833-7e08-4986-93e7-4790a8eb8568@quicinc.com>
-In-Reply-To: <60aa6833-7e08-4986-93e7-4790a8eb8568@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 31 Jul 2024 04:41:45 +0300
-Message-ID: <CAA8EJpopAYp3Y6cW8B+2cVM=_oAnWeOqS6zygc4o7b+r9Lj1ZQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] soc: qcom: pd_mapper: Add X1E80100
-To: Chris Lew <quic_clew@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Abel Vesa <abel.vesa@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 31 Jul 2024 at 02:50, Chris Lew <quic_clew@quicinc.com> wrote:
->
->
->
-> On 7/30/2024 4:06 AM, Dmitry Baryshkov wrote:
-> > On Tue, Jul 30, 2024 at 11:28:14AM GMT, Johan Hovold wrote:
-> >> On Mon, Jul 29, 2024 at 04:57:54PM +0200, Johan Hovold wrote:
-> >>> On Mon, Jul 08, 2024 at 06:22:09PM +0200, Stephan Gerhold wrote:
-> >>>> X1E80100 has the same protection domains as SM8550, except that MPSS is
-> >>>> missing. Add it to the in-kernel pd-mapper to avoid having to run the
-> >>>> daemon in userspace for charging and audio functionality.
-> >>>
-> >>> I'm seeing a bunch of new errors when running with this patch applied on
-> >>> top of 6.11-rc1. I'm assuming it is due to changes in timing that are
-> >>> either exposing existing bugs or there is a general problem with the
-> >>> in-kernel pd-mapper implementation.
-> >>>
-> >>> In any case, this does does not seem to be specific to x1e80100 even if
-> >>> I'm not seeing as many issues on sc8280xp (there is one new error there
-> >>> too however).
-> >>>
-> >>> It doesn't happen on every boot, but with the in-kernel pd-mapper I
-> >>> often (every 3-4 boots) see the following errors on the x1e80100 CRD
-> >>> during boot:
-> >>>
-> >>>     [    9.799719] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-> >>>          [    9.812446] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
-> >>>          [    9.831796] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
-> >>>
-> >>>     [    9.269230] qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
-> >>>
-> >>> I've also seen the following, which may also be related:
-> >>>
-> >>>     [   14.565059] PDR: avs/audio get domain list txn wait failed: -110
-> >>>          [   14.571943] PDR: service lookup for avs/audio failed: -110
-> >>>
-> >>> I haven't seen the -ECANCELED (-125) errors in 30 reboots with the patch
-> >>> reverted again.
-> >>
-> >> Here's another bug, a NULL deref in the battery driver, that is
-> >> apparently exposed by the in-kernel pd-mapper. This is also on the
-> >> x1e80100 CRD with a couple of added printks to indicate when the
-> >> pd-mapper probes and when the pmic glink services are up:
-> >
-> > The backtrace looks like an issue in the battmgr / pmic_glink core. Yes,
-> > maybe pd-mapper exposes that. But most likely nobody have seen those
-> > because userspace pd-mapper usually starts much later (thanks udevadm
-> > trigger for triggering all the drivers).
-> >
-> > The pd-mapper server is fine to be started early. Even the userspace
-> > one.  I think we went over these discussions during reviews of earlier
-> > series. The net result was that it is fine, provided that the response
-> > don't change later on (e.g.  some of the firmware might save the state
-> > and won't re-query it later on if servreg restarts).
-> >
-> >> [    8.933775] remoteproc remoteproc1: powering up 32300000.remoteproc
-> >> [    8.934623] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fd5000.phy
-> >> [    8.945244] remoteproc remoteproc1: Booting fw image qcom/x1e80100/cdsp.mbn, size 3027368
-> >> [    8.965537] remoteproc remoteproc0: powering up 30000000.remoteproc
-> >> [    8.971075] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fda000.phy
-> >> [    8.974299] remoteproc remoteproc0: Booting fw image qcom/x1e80100/adsp.mbn, size 21424472
-> >> [    8.999726] msm-mdss ae00000.display-subsystem: Adding to iommu group 4
-> >> [    9.007697] qcom_pmic_glink pmic-glink: Failed to create device link (0x180) with fdf000.phy
-> >> [    9.101196] remoteproc remoteproc1: remote processor 32300000.remoteproc is now up
-> >> [    9.103860] qcom_pd_mapper.qcom-pdm-mapper qcom_common.pd-mapper.1: qcom_pdm_probe
-> >> [    9.105989] qcom_pd_mapper.qcom-pdm-mapper qcom_common.pd-mapper.0: qcom_pdm_probe
-> >>
-> >>   - pd-mapper probing
-> >>
-> >> [    9.112983] qcom-snps-eusb2-hsphy fd3000.phy: Registered Qcom-eUSB2 phy
-> >> [    9.296879] remoteproc remoteproc0: remote processor 30000000.remoteproc is now up
-> >>
-> >>   - adsp is up
-> >>
-> >> [    9.300086] qcom_pmic_glink pmic-glink: pmic_glink_pdr_callback - state = 7fffffff
-> >>
-> >>   - SERVREG_SERVICE_STATE_UNINIT
-> >>
-> >> [    9.301878] qcom-snps-eusb2-hsphy fd9000.phy: Registered Qcom-eUSB2 phy
-> >> [    9.306985] qcom,fastrpc 30000000.remoteproc:glink-edge.fastrpcglink-apps-dsp.-1.-1: no reserved DMA memory for FAST
-> >> RPC
-> >> [    9.309924] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@3: Adding to iommu group 5
-> >> [    9.311367] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@4: Adding to iommu group 6
-> >> [    9.318330] PDR: Indication received from msm/adsp/charger_pd, state: 0x1fffffff, trans-id: 1
-> >>
-> >>   - This looks suspicious
-> >>
-> >> [    9.323924] qcom-snps-eusb2-hsphy fde000.phy: Registered Qcom-eUSB2 phy
-> >> [    9.325275] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@5: Adding to iommu group 7
-> >> [    9.326008] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@6: Adding to iommu group 8
-> >> [    9.326733] qcom,fastrpc-cb 30000000.remoteproc:glink-edge:fastrpc:compute-cb@7: Adding to iommu group 9
-> >> [    9.336582] qcom_pmic_glink pmic-glink: pmic_glink_pdr_callback - state = 1fffffff
-> >>
-> >>   - SERVREG_SERVICE_STATE_UP
-> >>
-> >> [    9.345544] dwc3 a000000.usb: Adding to iommu group 10
-> >> [    9.361410] qcom,apr 30000000.remoteproc:glink-edge.adsp_apps.-1.-1: Adding APR/GPR dev: gprsvc:service:2:1
-> >> [    9.362803] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
-> >> [    9.362882] pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
-> >>
-> >>   - -ECANCELED errors I reported earlier
-> >
-> >
-> > The qcom_glink_request_intent() looks like the only place which can
-> > return ECANCELED here. Not sure why GLINK_CMD_RX_INTENT_REQ_ACK() would
-> > return failure here.
-> >
-> > It might be that the ADSP has been running the preliminary firmware,
-> > then it is shut down and then restarted with the proper firmware (and
-> > Linux fails to track that). But in this case the same error can happen
-> > if the pd-mapper has been running before starting the ADSP.
-> >
->
-> The default behavior for a GLINK channel on the firmware is to reject
-> intent requests. The PMIC glink channel on the firmware may not have
-> implemented an intent request handler so any intent requests would be
-> rejected and result in an ECANCELED. When the firmware implements the
-> glink channel this way, the linux driver has to wait until the firmware
-> queues the intents for linux to use.
+This patch series adds the usb2 phy driver for the nuvoton ma35 ARMv8 SoC.
+It includes DT binding documentation and the ma35 usb2 phy driver.
 
-Could you please describe the actual code path that would result in
--ECANCELED? Is that qcom_glink_handle_intent_req_ack(granted = 0) ?
-My theory about unregistration is based upon a call path that leads to
-qcom_glink_intent_req_abort(). But if I'm not mistaken, it only
-happens on the subdev stop event.
+v2:
+  - Update nuvoton,ma35d1-usb2-phy.yaml
+    - Update the 'nuvoton,ma35-usb2-phy' to 'nuvoton,ma35d1-usb2-phy'.
+    - Remove unnecessary descriptions. 
+    - Add explanations related to SYS.
+  - Update ma35d1 usb2 phy driver
+    - Update the 'nuvoton,ma35-usb2-phy' to 'nuvoton,ma35d1-usb2-phy'.
+    - Use readl_poll_timeout() to make the system more efficient and the 
+      code more streamlined.
+    - Use the same variable name. Update the 'p_phy->dev' to 'pdev->dev'.
 
-Johan, Stephan, could you please trace, what leads to the ECANCELED?
 
-Also could you please be more specific whether the described behaviour
-is tied to X1E80100 platform or it is common to some / all other
-platforms?
+Hui-Ping Chen (2):
+  dt-bindings: phy: nuvoton,ma35-usb2-phy: add new bindings
+  phy: nuvoton: add new driver for the Nuvoton MA35 SoC USB 2.0 PHY
 
-> I guess with userspace pd-mapper, by the time the pd state is
-> broadcasted to the pmic glink driver, the firmware glink channel has
-> already queued intents for pmic_glink driver to use.
->
-> >>
-> >> [    9.364298] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
-> >> ...
-> >> [    9.364339] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> >> [    9.364395] CPU: 6 UID: 0 PID: 111 Comm: kworker/6:4 Not tainted 6.11.0-rc1 #70
-> >> [    9.364397] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-> >> [    9.364398] Workqueue: events qcom_battmgr_enable_worker [qcom_battmgr]
-> >> [    9.364401] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> >> [    9.364403] pc : pmic_glink_send+0xc/0x24 [pmic_glink]
-> >> [    9.364405] lr : qcom_battmgr_enable_worker+0x60/0xbc [qcom_battmgr]
-> >> ...
-> >> [    9.364427] Call trace:
-> >> [    9.364428]  pmic_glink_send+0xc/0x24 [pmic_glink]
-> >
-> > It looks like pmic_glink_send might need to hold pg->state_lock.
-> >
-> >> [    9.364429]  qcom_battmgr_enable_worker+0x60/0xbc [qcom_battmgr]
-> >> [    9.364430]  process_one_work+0x210/0x614
-> >> [    9.364435]  worker_thread+0x244/0x388
-> >> [    9.364436]  kthread+0x124/0x128
-> >> [    9.364437]  ret_from_fork+0x10/0x20
-> >> [    9.364439] Code: 17fffff7 d503233f a9bf7bfd 910003fd (f9400800)
-> >> [    9.364441] ---[ end trace 0000000000000000 ]---
-> >>
-> >> [    9.365205] ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+ .../bindings/phy/nuvoton,ma35d1-usb2-phy.yaml |  47 ++++++
+ drivers/phy/Kconfig                           |   1 +
+ drivers/phy/Makefile                          |   1 +
+ drivers/phy/nuvoton/Kconfig                   |  13 ++
+ drivers/phy/nuvoton/Makefile                  |   3 +
+ drivers/phy/nuvoton/phy-ma35d1-usb2.c         | 146 ++++++++++++++++++
+ 6 files changed, 211 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
+ create mode 100644 drivers/phy/nuvoton/Kconfig
+ create mode 100644 drivers/phy/nuvoton/Makefile
+ create mode 100644 drivers/phy/nuvoton/phy-ma35d1-usb2.c
 
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
