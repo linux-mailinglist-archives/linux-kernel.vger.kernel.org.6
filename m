@@ -1,145 +1,130 @@
-Return-Path: <linux-kernel+bounces-269511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442189433A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:48:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA909433A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DCB2B24049
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752F8281C24
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA21D1B581F;
-	Wed, 31 Jul 2024 15:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7C51BBBE1;
+	Wed, 31 Jul 2024 15:49:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7a6ngC2"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="a3OQejXc"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B2C1CF83;
-	Wed, 31 Jul 2024 15:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEB31AB502
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722440866; cv=none; b=LbVVlNPUuAqL+sJJkYz1d2FylMWu2L9ldS288unRNiY2dOD5BF7NZNUVBQs8H8BVfPn2CpY1EdY+SJvz/ZakVSzS3bL7zbewArZp5gGxhlg6IPhks3JCuF2ljmoQjNGAglAWllHIEvf5ckelFFmao9Dl4HcxP5YX6wtATJXKSpw=
+	t=1722440968; cv=none; b=ULCOmo3syCXZB4+826+Jlkh4ojZzZ3FJbavggI5wATx4SunQzJzLyWtGybkiKjsLwHYBoyirxxg/Q/EITOxrIGI9abv92Oo1IIN/CY+93Pn0jyk8p49Naf5Fn2WkcH6amCLVPR25uVNJQLAmMw766oT0WhZuk4/BlVWC3INU/cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722440866; c=relaxed/simple;
-	bh=4u97t/RaLcuFx19cl6/FF+3nhsfsuomYYTTtLurA7Zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JHpg+2OiULnIFDYoWPXiJMM3R0fUTmFxYHxlahZ1kWHqw9LPvpblKi9Jl1GZWiK2Zvd89V1FxH7imEqMInInC/USIYkCnQlTjHZDYwjp4w+06d1iidDK5RBadfrOaroz2Vw0OaeeHFPbpozGDw9h5UB5FaHdI/+fplsTNXIqXIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g7a6ngC2; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fee6435a34so39628325ad.0;
-        Wed, 31 Jul 2024 08:47:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722440864; x=1723045664; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7oFTJ+3+Ld1Sad4Yjzou2SbBkqLkLd+A5kfPRLxBvso=;
-        b=g7a6ngC2+O2lyfc6YgrtjGPw2UGIqCoGh/xGpbEfXzYl4aBdnVMcTTGQXJnDuIhIRC
-         qYonMC7E0r/kgF+qjxKZ1Pcyf2uBXfuy86GpfzT1DfyWK1XdFVG+rNtqVAKKWHnlzW30
-         D2NvkeAJh/ouYk5tIHPGX1xlVXdQNcDwQCvRnV+s8p83M8NlRgcboyuZOlj6hfrwIe5Z
-         u/7es38j8wS2rgEHyauow3HpXNyMii87q1FvSwsGjcjRVfh8FrcNsMb6GpWDQ6iOI6CT
-         LHl1iNFDxO9NNS5tn+1kHg52pSKPQOpNys53buy2ZLV0Mhvtwd9pSzBP4gEz0bdWgRhV
-         wreg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722440864; x=1723045664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7oFTJ+3+Ld1Sad4Yjzou2SbBkqLkLd+A5kfPRLxBvso=;
-        b=HAkk+JWHa++kKkwZUARPx1DrI04BMSpuKqyp+8aeZALTU4v6BtqPXsdXVQxVidoF92
-         un2CHfDj8jyR0fKgPWo3FzJsJYYQZiU/3m2tSH8yoTUMjL3llbLggk6mLfJ21tXN++/D
-         hb19JMx3QJ+E/XO6LFiV0rMV/hMzduxnoS49Ca5QI2j+bI7rxncrI2lPe1Kj99TSQ86d
-         GXjxLOv7cQfd4wOcnslyI8dJSGh5MK5boSgdJTaykQqsxK20HN9Yvc9kDSg1rrKBjT6k
-         0MG1AUe8t8srRm7qZPcDyepSnBsqS/4U/YfZK7vzpIc+hAWcfdpHqoiFrOALM/GaIV5B
-         kjtg==
-X-Forwarded-Encrypted: i=1; AJvYcCX25rOt7DKPlP4VelhmuNRNJq1P5enoMflJS4xN4KqCkLNRmLJqI/4wWbMV/QtuZHGfG+JS2iUjvuvDpBaa+PMOAx8M1U5UMEiadaNLqIXJoLaMyz0ePWCsayk9VzSV5hXbPTBc9jiRtHM=
-X-Gm-Message-State: AOJu0YzFBdpaAIWzSUN5Cw1HIBSd9Cx/R8dtrsVj3c6A7f0tT5teZfyM
-	vW0uRqgFMDEAz7ZdEOvt+qjP9I6S2WCI3mJyh4rGFOdwdyo9df2t
-X-Google-Smtp-Source: AGHT+IF/u4j2lKXiTEY0Vxrj+c3pKIEnk6/2LcyHMMUQH2XF79eFPMqC4ykikjay8jVijHF5XpvvTw==
-X-Received: by 2002:a17:902:d4c9:b0:1fb:29e8:5400 with SMTP id d9443c01a7336-1ff0493127fmr137562745ad.56.1722440863799;
-        Wed, 31 Jul 2024 08:47:43 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fb04sm122097525ad.43.2024.07.31.08.47.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 08:47:43 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 31 Jul 2024 08:47:42 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Richard Henderson <richard.henderson@linaro.org>,
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-	Matt Turner <mattst88@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Baoquan He <bhe@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] alpha: fix ioread64be()/iowrite64be() helpers
-Message-ID: <6bd73068-4474-4129-857b-39150a31f224@roeck-us.net>
-References: <20240730152744.2813600-1-arnd@kernel.org>
+	s=arc-20240116; t=1722440968; c=relaxed/simple;
+	bh=dML7zIR/iIrrvce3R5fLZkpzcyFaCTlB1LwYBvCdmxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=B6rz2rSvvmiv2rLmqdU0mje9VEQq4OH0ZswpNOzwc9Ep5J87lAg67l59vGQOqjvJvDccjoivuCpsWwFoJ6X+kIBgGz0vFCZEtUA2sRgpe3PXAjhRcvcazXhpFQwgFG7uIh4Kpg0Aj/vEACEKeOcLnqWyw57cHLFINZwqWmP6E8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=a3OQejXc; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit02.runbox ([10.9.9.162] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1sZBZk-007tUj-Ni; Wed, 31 Jul 2024 17:49:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=LDF8SRpiYX+WkqTCMqtuLenSjw3Fxaj9kZobz5wYA/E=; b=a3OQejXc1E2KOBOirp7mnSi60+
+	VDSxuwnV/1kmKtK9qqoZi4S2qWHyzWKA9i34fHKsN1NZWHoEfiGd6PpfNm0WV3prcGv4GMw+lWq2h
+	3b6DuAekT0mXBdPaLXCowMECPfR/QaPyZVGrufj7I8JvLTzreRJkUbNjPrW+pM3UJ8eUrG/27kYrk
+	UerL//yZbDrX3bDglRxve5a0bRLnfQTaz7tg4P6hXnZjYzIgpnlnXO62YY2gH1bzpJkCvJXxLQROc
+	gqsIWvhYs8oLCDz8t+s5J4fJGbLaZ1zzTjPspWDzA3RZ1PKfbvfok/yxRw0ZzMVdcwZLFUX6m6yUt
+	ViGQsSYw==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit02.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1sZBZk-0007OP-81; Wed, 31 Jul 2024 17:49:16 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1sZBZX-004Gdh-W4; Wed, 31 Jul 2024 17:49:04 +0200
+Message-ID: <3e5f7422-43ce-44d4-bff7-cc02165f08c0@rbox.co>
+Date: Wed, 31 Jul 2024 17:49:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730152744.2813600-1-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
+ xa_store() failure
+To: Will Deacon <will@kernel.org>, Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>, Alexander Potapenko
+ <glider@google.com>, Marc Zyngier <maz@kernel.org>
+References: <20240730155646.1687-1-will@kernel.org>
+ <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co> <Zql3vMnR86mMvX2w@google.com>
+ <20240731133118.GA2946@willie-the-truck>
+Content-Language: pl-PL, en-GB
+From: Michal Luczaj <mhal@rbox.co>
+In-Reply-To: <20240731133118.GA2946@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 05:27:25PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 7/31/24 15:31, Will Deacon wrote:
+> On Tue, Jul 30, 2024 at 04:31:08PM -0700, Sean Christopherson wrote:
+>> On Tue, Jul 30, 2024, Michal Luczaj wrote:
+>>> On 7/30/24 17:56, Will Deacon wrote:
+>>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>>>> index d0788d0a72cc..b80dd8cead8c 100644
+>>>> --- a/virt/kvm/kvm_main.c
+>>>> +++ b/virt/kvm/kvm_main.c
+>>>> @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+>>>>  
+>>>>  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+>>>>  		r = -EINVAL;
+>>>> -		goto kvm_put_xa_release;
+>>>> +		goto err_xa_release;
+>>>>  	}
+>>>>  
+>>>>  	/*
+>>>> @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+>>>>  
+>>>>  kvm_put_xa_release:
+>>>>  	kvm_put_kvm_no_destroy(kvm);
+>>>> +err_xa_release:
+>>>>  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+>>>>  unlock_vcpu_destroy:
+>>>>  	mutex_unlock(&kvm->lock);
+>>>
+>>> My bad for neglecting the "impossible" path. Thanks for the fix.
+>>>
+>>> I wonder if it's complete. If we really want to consider the possibility of
+>>> this xa_store() failing, then keeping vCPU fd installed and calling
+>>> kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
+>>
+>> Yeah, the vCPU is exposed to userspace, freeing its assets will just cause
+>> different problems.  KVM_BUG_ON() will prevent _new_ vCPU ioctl() calls (and kick
+>> running vCPUs out of the guest), but it doesn't interrupt other CPUs, e.g. if
+>> userspace is being sneaking and has already invoked a vCPU ioctl(), KVM will hit
+>> a use-after-free (several of them).
 > 
-> Compile-testing the crypto/caam driver on alpha showed a pre-existing
-> problem on alpha with iowrite64be() missing:
+> Damn, yes. Just because we haven't returned the fd yet, doesn't mean
+> userspace can't make use of it.
+>
+>> As Michal alluded to, it should be impossible for xa_store() to fail since KVM
+>> pre-allocates/reserves memory.  Given that, deliberately leaking the vCPU seems
+>> like the least awful "solution".
 > 
-> ERROR: modpost: "iowrite64be" [drivers/crypto/caam/caam_jr.ko] undefined!
-> 
-> The prototypes were added a while ago when we started using asm-generic/io.h,
-> but the implementation was still missing. At some point the ioread64/iowrite64
-> helpers were added, but the big-endian versions are still missing, and
-> the generic version (using readq/writeq) is would not work here.
-> 
-> Change it to wrap ioread64()/iowrite64() instead.
-> 
-> Fixes: beba3771d9e0 ("crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST")
-> Fixes: e19d4ebc536d ("alpha: add full ioread64/iowrite64 implementation")
-> Fixes: 7e772dad9913 ("alpha: Use generic <asm-generic/io.h>")
-> Closes: https://lore.kernel.org/all/CAHk-=wgEyzSxTs467NDOVfBSzWvUS6ztcwhiy=M3xog==KBmTw@mail.gmail.com/
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Could we actually just move the xa_store() before the fd creation? I
+> can't immediately see any issues with that...
 
-Tested-by: Guenter Roeck <linux@roeck-us.net>
+Hah, please see commit afb2acb2e3a3 :) Long story short: create_vcpu_fd()
+can legally fail, which must be handled gracefully, which would involve
+destruction of an already xa_store()ed vCPU, which is racy.
 
-> ---
-> I've queued this in the asm-generic tree now, will send a pull request
-> in the next few days to fix alpha allmodconfig.
-> 
->  arch/alpha/include/asm/io.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
-> index 2bb8cbeedf91..52212e47e917 100644
-> --- a/arch/alpha/include/asm/io.h
-> +++ b/arch/alpha/include/asm/io.h
-> @@ -534,8 +534,11 @@ extern inline void writeq(u64 b, volatile void __iomem *addr)
->  
->  #define ioread16be(p) swab16(ioread16(p))
->  #define ioread32be(p) swab32(ioread32(p))
-> +#define ioread64be(p) swab64(ioread64(p))
->  #define iowrite16be(v,p) iowrite16(swab16(v), (p))
->  #define iowrite32be(v,p) iowrite32(swab32(v), (p))
-> +#define iowrite64be(v,p) iowrite64(swab64(v), (p))
-> +
->  
-
-FWIW: Unnecessary extra blank line
-
-Thanks,
-Guenter
 
