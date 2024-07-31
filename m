@@ -1,147 +1,108 @@
-Return-Path: <linux-kernel+bounces-268464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C7EB9424FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A8B94250B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 488421F24C9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99A8284745
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CE045008;
-	Wed, 31 Jul 2024 03:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpOe5B8F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB2A1862F;
+	Wed, 31 Jul 2024 03:24:55 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E5A3FB9F;
-	Wed, 31 Jul 2024 03:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBDF1B7E4;
+	Wed, 31 Jul 2024 03:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722396024; cv=none; b=IoXLYXZ4pBB+oPBnYA2w9t3bKApfWeILnMSipryhCxT1EKr5OxV7SlLrYti5dO+EgyxxvW2kl5HvT7bWpbHxGCOB1MCprt+9orkrbRzMGPZOzypriW8p7rJBtDjLfjfoun6kle+QKx9AbZu5WG/quB9WnO35NZ3wfOQDL2NJOR8=
+	t=1722396294; cv=none; b=G2cskZn5z+d1ccnw+xSwZr1uN7RrSGDs/CrpyIW8fRIn2iWvWvJxcaHNnfVbgxgUrRWxdNr/O1eWSKcDt1aNziXvHhI6OQ4LLyHWyfLYoCWLeMH29gMNsL4SqCg0WdhUWPv9ifeY8WOUw6Wvm4jG2bE9gWF4t7Z8B7S3kK13h60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722396024; c=relaxed/simple;
-	bh=8AVA6DduvcCJqMNU1iE+LembWD4Pr6ogfnghClfwP/M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=me5BMANIEWOWAUZFNRkT7oWHBSxek1HPhn/NePO789dxKHxKinKtBe4ll8acCS5gHRXvKpuSotyVTdJSRWsWMWrYte+7o1I2L5dxwYj0rGy+BrAuVuLZ1NtXk7F/AS3nXhtdctztt+PKr3xsoSohA74uMtNE6l5qhovw6duzc30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpOe5B8F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3AFC4AF0F;
-	Wed, 31 Jul 2024 03:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722396024;
-	bh=8AVA6DduvcCJqMNU1iE+LembWD4Pr6ogfnghClfwP/M=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XpOe5B8FKGmVLFP1ftEjOCQzThZ4aBDXC+FvSZq7uef3kPf7gnVnV5e+2EvqwNNlZ
-	 gu5JiytBV/J7mbcED8dEd8htb5Xj2LfhElldczLFWao88uuXRyqyX3yAY6gLvdNxXP
-	 2hND+V3tQaaDk8b4mFAIcl9xa0HK4LpUx+mAwmV7aFmeCau1sFEct+BHV1OWqcg1BZ
-	 QpNPAF6OgWfiLMkPK7Zv62pI06zq0dZ3QZlyllpujg8eJ1NjiGBfDeky07wbjuyEpI
-	 tdGRWqTH7+Nmz3d9TGYY/tTUr+2bdNOJwEFBHZMAW5huYpRDnwLtzJRu6fahmWm+f2
-	 UFqvsL9WF9hEQ==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Tue, 30 Jul 2024 20:24:44 -0700
-Subject: [PATCH v2 7/7] arm64: dts: qcom: sc8180x-lenovo-flex-5g: Enable
- USB multiport controller
+	s=arc-20240116; t=1722396294; c=relaxed/simple;
+	bh=se5qPHX+45kqLYveaN/QeV4JLjgf9rYwG1qdS38SNDw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=mb9nvEzBuPZfzORiNee9vqyLAbmIXfEqYLnYRv2bCeAP7sR/i0nsmr4ng3G7F3dcaT83BsOIMjvrYYhGCPE1HQOjo6p5J/ko+bZHSgLcC3KWah0XGeCZhcq45UMATnB5nm5ZSYelly+sQW4a4ogaFl4vpycrSEdRITm2wai35PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYcsN08qGz4f3jM1;
+	Wed, 31 Jul 2024 11:24:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A7C421A1621;
+	Wed, 31 Jul 2024 11:24:48 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHL4V+rqlmMIxcAQ--.41185S3;
+	Wed, 31 Jul 2024 11:24:48 +0800 (CST)
+Subject: Re: [PATCH 1/7] jbd2: correctly compare tids with tid_geq function in
+ jbd2_fc_begin_commit
+To: Kemeng Shi <shikemeng@huaweicloud.com>, tytso@mit.edu, jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+ <20240730113335.2365290-2-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <2209e7b1-999f-ce69-6d9f-4b825fa6f7d9@huaweicloud.com>
+Date: Wed, 31 Jul 2024 11:24:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20240730113335.2365290-2-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240730-sc8180x-usb-mp-v2-7-a7dc4265b553@quicinc.com>
-References: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
-In-Reply-To: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bjorn Andersson <quic_bjorande@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1455;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=m9uoF6Qua65QfQVZTBm40gaW8k9GuaykuaC3tvQLyiY=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmqa6H0HwvZV9M/fEjWVV7kRXbxdLjTGJa1o9Sg
- qyLUzKW2DmJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZqmuhxUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcVEeBAAmwsDsuUaqU36eOQSvxpYKBcve8GEj98lcYHjT0e
- zjZgFT7Ijgpz1gmtAQihcMu1ep7NRl3Ur5/jLbVQEXchSFEt9h+Sp8YuSVnwdeHrS8J82PB54Sn
- hm25m4e1/1SjApYcWu/MqrWBb7ZzunsvHk3YSmR6Hqx85Gj8thKRMqWXpb7WyG139+Xg96WW1QM
- VGUPvxtNxHexWPsd6+cdrA2chIts0bYVRLZmxKxpobsrWt21hZSm3fW5IpQLNa4DCRSbuh0S6iF
- hXxqQ6i2A4VXEWNdQ8UYskTG/7nz5V4ppjeMDy0wT+j+PSZMx98+14IX0/szeh++sN1ZgqExGew
- bnStR5C5i77Wuyz2DvXAInqR4yMAA6FXwoZJ0XkkcJlEPPVEA/HdpvNtk3eqvHTFwLW0zcuaFGm
- Nf7XD2MFKh8CFbiJ8unJDguvlVJ8diKL0Xs8uYLufFI02Cx0L8zBcT4H90W41vWPQHH3YGEDzVI
- JuCbeiHpa7pzO+MRRD6+9NCFUlGJe8ryP6e508la62LoIn3RyvSM1SXSZkvKMQqU1Dlaq6guJAt
- 9kTjLr8PawN23hBulb4T1LgRPabSadhLCwMvfspHlhngpS09tvA3xxTbzWt0NQGSqBhcvKT3QrG
- AD3qK1v0MiLVE2ne9rl8vjrXRgQcADYqllNY+gLwlses=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+X-CM-TRANSID:gCh0CgAHL4V+rqlmMIxcAQ--.41185S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1DWF43WFyrJFy3WF1fCrg_yoW3CrX_XF
+	1SyrnrXrZIgrs5Aw18Cay8urnagrs7ur1rG3Wxtw1akw45GF1rtFnrJas8Kr1DWFWktrW5
+	Aa92vw40qF9xXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
+	UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+On 2024/7/30 19:33, Kemeng Shi wrote:
+> Use tid_geq to compare tids to work over sequence number wraps.
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-The Lenovo Flex 5G has a camera attached to the multiport USB
-controller, enable the controller and the four phys to enable this.
+Looks good to me.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
- .../arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts b/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
-index 5b226577f9d8..575a1a5ae20f 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
-@@ -557,6 +557,40 @@ &ufs_mem_phy {
- 	status = "okay";
- };
- 
-+&usb_mp {
-+	status = "okay";
-+};
-+
-+&usb_mp_hsphy0 {
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+	vdda18-supply = <&vreg_l12a_1p8>;
-+	vdda33-supply = <&vreg_l16e_3p0>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_hsphy1 {
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+	vdda18-supply = <&vreg_l12a_1p8>;
-+	vdda33-supply = <&vreg_l16e_3p0>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_qmpphy0 {
-+	vdda-phy-supply = <&vreg_l3c_1p2>;
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp_qmpphy1 {
-+	vdda-phy-supply = <&vreg_l3c_1p2>;
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+
-+	status = "okay";
-+};
-+
- &usb_prim_hsphy {
- 	vdda-pll-supply = <&vreg_l5e_0p88>;
- 	vdda18-supply = <&vreg_l12a_1p8>;
-
--- 
-2.45.2
+> ---
+>  fs/jbd2/journal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 1ebf2393bfb7..da5a56d700f1 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -710,7 +710,7 @@ int jbd2_fc_begin_commit(journal_t *journal, tid_t tid)
+>  		return -EINVAL;
+>  
+>  	write_lock(&journal->j_state_lock);
+> -	if (tid <= journal->j_commit_sequence) {
+> +	if (tid_geq(journal->j_commit_sequence, tid)) {
+>  		write_unlock(&journal->j_state_lock);
+>  		return -EALREADY;
+>  	}
+> 
 
 
