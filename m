@@ -1,140 +1,131 @@
-Return-Path: <linux-kernel+bounces-269055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0CC942CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:09:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BB6942CCF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A8328A1E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:09:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BDE1C21B6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CF61B3725;
-	Wed, 31 Jul 2024 11:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C2C1AD9D0;
+	Wed, 31 Jul 2024 11:06:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkTlhcE8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n2svMXA2"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32DF1B29B5;
-	Wed, 31 Jul 2024 11:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57EB1AD9CC;
+	Wed, 31 Jul 2024 11:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423995; cv=none; b=dEjSyXNjYd69nYSqM4DCdsvW6P5cVGqnbzf9rr99V+ByFXezKIYTEu9PcTGN75rsvN0iVprKuvX23BVHB/layRYwIn3kPcnVpl06/aAF7FM79LFAl9vqQOipEZ7yrlK8eMWLQWCcPZ69+AgFIwOYiL4VLULDdyT271tya9ZiifQ=
+	t=1722423990; cv=none; b=Dkr+7M6AEW5zihsTWrGSzWzOG+P2hCGYvr1pP/dWQgbd1CYrVyiQL79mHxSRHhhMpBnMTm/HBbJhRX7q8JtOldbHyWB7zxUKEe3Db17gnIQXXb8FcgPnNWZwW8E7GoAJakAem4TCjrdt/xQlDXNwnbR1QNg48Ifox+f+QmrVQGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423995; c=relaxed/simple;
-	bh=857ubTu1shYtmLjo2dTYUYNkByMNASD2Yszupp1zLtI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OWN3qfmThDHMvEP06vlcKaD8o7/x50JQifBA2NHfE91LOcGywm0X3l8Aph908wkSupqc3UvgtiErLKYvKgznPSZsUf3VYreytZI/qqDhfAoVPB/nUWUhVfbir9YXReoga30pu8hyme0wXqFoTdmeVEETQI81930uc/lKar1bNMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkTlhcE8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFDE1C4AF10;
-	Wed, 31 Jul 2024 11:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722423995;
-	bh=857ubTu1shYtmLjo2dTYUYNkByMNASD2Yszupp1zLtI=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SkTlhcE8fKoAOLEqqIdu/AH9Gkw1KFIPo2QV3RrFyoBrwiVztTtIF6kkF/UlGw+vk
-	 K7yYw4C7N7x38HPi2/xliQnLCyNb1f2lXJiCJfIXTGc34LwlGSgn005O/v1EdbEzQ5
-	 Hnoch1dpcfRXE9sbQwcU7rQv5JicFOzhugNCuWqCYV/lMRESnRmh6AnRgsacAj/gfx
-	 S82tdH+cYpROSOinIoIIEmESsMwIz7LY4163WhecPaYd8VBDQjgM9JZ+m1106AH48J
-	 jUNYmB9stmE/q1svzoVssRrs/L7i99yvVip0t1iRLuafS/G7r2oVmgDQYZeHQNM2+B
-	 uy4KcAdw5pazg==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Wed, 31 Jul 2024 13:05:59 +0200
-Subject: [PATCH net 7/7] selftests: mptcp: join: test both signal & subflow
+	s=arc-20240116; t=1722423990; c=relaxed/simple;
+	bh=qqW9ROasfxzULXDNJwyTDYNkw7xA3mV3jd708Uieyzw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cM4XNtplseCLOU9FlfnIxUknKAbrKBluAQk9Tb1U+lYtGUwMnCRQQITUqMkUQjD4UlwDELxT/UAmvXXi6LMWGtmmkrmFAAOvt7bv/stlJ2PO2kdHi0quoH9vKELbalMrEAGYRaxZnpq0xDKkn7ccIEhc9MqmII3iBVvlK++ooK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n2svMXA2; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VB68qC003152;
+	Wed, 31 Jul 2024 06:06:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722423968;
+	bh=sD6Gjm9intqNxvtkmvWoqH3mQKI1C0bFkBqLXlQoiwU=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=n2svMXA2ZKvooYScysFjujLAigj8+Fj2SdKJ0tpMReUL98UZF3LjKtzNGA+Qv0hIK
+	 UKU9J0X36JZGfFAntWTLNAMTGYK+MavG+gMYu0gCoFB7OxItV1xNT4/ybB6A36KCmq
+	 /aHfFefvYDflhGxQPAnH9JfPZxphtsRDq7kI3YE0=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VB68es020021
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 31 Jul 2024 06:06:08 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
+ Jul 2024 06:06:07 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 31 Jul 2024 06:06:07 -0500
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VB67Uk115008;
+	Wed, 31 Jul 2024 06:06:07 -0500
+Date: Wed, 31 Jul 2024 06:06:07 -0500
+From: Nishanth Menon <nm@ti.com>
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye
+	<a-limaye@ti.com>
+Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
+Message-ID: <20240731110607.7fb42mgcsf2apodv@unshaven>
+References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
+ <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
+ <20240730123343.mqafgpj4zcnd5vs4@plaything>
+ <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-upstream-net-20240731-mptcp-endp-subflow-signal-v1-7-c8a9b036493b@kernel.org>
-References: <20240731-upstream-net-20240731-mptcp-endp-subflow-signal-v1-0-c8a9b036493b@kernel.org>
-In-Reply-To: <20240731-upstream-net-20240731-mptcp-endp-subflow-signal-v1-0-c8a9b036493b@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2447; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=857ubTu1shYtmLjo2dTYUYNkByMNASD2Yszupp1zLtI=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmqhqixPXnJibSbhI8FfcWQqKkInBror+Nt4EPo
- SmDkR4qqw+JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZqoaogAKCRD2t4JPQmmg
- c8D9D/0ZDdboR90bcV5gh2Otr9rWdMbBX45B3y8vyw4qj3jTX7PhgRlw7nsuPHfN7gh1J0oRoGH
- EqMV2vFKkD9KKfRMspQnVvngda9O3CQHLMT9auMgRDc46bN+m1ZFjudj78glhUgAzlCMhRdCMC0
- May+5GnrhsWwDZDOUhuuDnVrxu31//yQNJ7OfNQtKZvbm8CO3hSV6/CT0ZD/xZ2StiWPS1jK41k
- V4dBqTycQdh06UtUJydzXQSztfigAeblzhElpCtIrslahTrQfWCvMpeU9HodZQOcVsp+aexb+iZ
- /BTgAOrlKwCibf3labEwnXzuW1EynNrCsYTN+wSWN0EXiXAdTj/eue4IE7NNrilxYn1c5CoLDXF
- pOvMSuADvo1gb+yBj+AQ1DiG48DjWW86I7fUygOi11HOMz+exc8MISKQvwk7xmacYpeS4jGy5uL
- YMk+bFuigKSe1Jj4I1/bbVJQqVOIUtMRSw7TP5Jy5qJ/ixJ+0Q1UjTQdpQtDw9sdtjch277xC1b
- XtK/5UsZCeuIriq/zBWnLqP0anPERG0a/0ltQlGmULkXSPsrCvhRxybqdfBKM9g3Vv5buJOXRHK
- pcYO2+MJrQgVdu6lkyq2B7fDPeQUKHkwHKJ/GNq/5cCZjx8guzSXeIreDVq2EpdEI1zz0m9gIXI
- 8Y/wgkHLfXyi41g==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-It should be quite uncommon to set both the subflow and the signal
-flags: the initiator of the connection is typically the one creating new
-subflows, not the other peer, then no need to announce additional local
-addresses, and use it to create subflows.
+On 09:49-20240731, Manorit Chawdhry wrote:
+> > > + */
+> > > +
+> > > +#include "k3-j784s4.dtsi"
+> > > +
+> > > +/ {
+> > > +	model = "Texas Instruments K3 J742S2 SoC";
+> > > +	compatible = "ti,j742s2";
+> > > +
+> > > +	cpus {
+> > > +		cpu-map {
+> > > +			/delete-node/ cluster1;
+> > > +		};
+> > > +	};
+> > > +
+> > > +	/delete-node/ cpu4;
+> > > +	/delete-node/ cpu5;
+> > > +	/delete-node/ cpu6;
+> > > +	/delete-node/ cpu7;
+> > 
+> > I suggest refactoring by renaming the dtsi files as common and split out
+> > j784s4 similar to j722s/am62p rather than using /delete-node/
+> > 
+> 
+> I don't mind the suggestion Nishanth if there is a reason behind it.
+> Could you tell why we should not be using /delete-node/? 
+> 
 
-But some people might be confused about the flags, and set both "just to
-be sure at least the right one is set". To verify the previous fix, and
-avoid future regressions, this specific case is now validated: the
-client announces a new address, and initiates a new subflow from the
-same address.
+Maintenance, readability and sustenance are the reasons. This is a
+optimized die. It will end up having it's own changes in property
+and integration details. While reuse is necessary, modifying the
+properties with overrides and /delete-nodes/ creates maintenance
+challenges down the road. We already went down this road with am62p
+reuse with j722s, and eventually determined split and reuse is the
+best option. See [1] for additional guidance.
 
-While working on this, another bug has been noticed, where the client
-reset the new subflow because an ADD_ADDR echo got received as the 3rd
-ACK: this new test also explicitly checks that no RST have been sent by
-the client and server.
 
-The 'Fixes' tag here below is the same as the one from the previous
-commit: this patch here is not fixing anything wrong in the selftests,
-but it validates the previous fix for an issue introduced by this commit
-ID.
-
-Fixes: 86e39e04482b ("mptcp: keep track of local endpoint still available for each msk")
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/mptcp/mptcp_join.sh | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/tools/testing/selftests/net/mptcp/mptcp_join.sh b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-index 52a25ac43d10..9ea6d698e9d3 100755
---- a/tools/testing/selftests/net/mptcp/mptcp_join.sh
-+++ b/tools/testing/selftests/net/mptcp/mptcp_join.sh
-@@ -1989,6 +1989,21 @@ signal_address_tests()
- 		chk_add_nr 1 1
- 	fi
- 
-+	# uncommon: subflow and signal flags on the same endpoint
-+	# or because the user wrongly picked both, but still expects the client
-+	# to create additional subflows
-+	if reset "subflow and signal together"; then
-+		pm_nl_set_limits $ns1 0 2
-+		pm_nl_set_limits $ns2 0 2
-+		pm_nl_add_endpoint $ns2 10.0.3.2 flags signal,subflow
-+		run_tests $ns1 $ns2 10.0.1.1
-+		chk_join_nr 1 1 1
-+		chk_add_nr 1 1 0 invert  # only initiated by ns2
-+		chk_add_nr 0 0 0         # none initiated by ns1
-+		chk_rst_nr 0 0 invert    # no RST sent by the client
-+		chk_rst_nr 0 0           # no RST sent by the server
-+	fi
-+
- 	# accept and use add_addr with additional subflows
- 	if reset "multiple subflows and signal"; then
- 		pm_nl_set_limits $ns1 0 3
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n189
 
 -- 
-2.45.2
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
