@@ -1,125 +1,131 @@
-Return-Path: <linux-kernel+bounces-269116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9D4942DD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:11:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A11D942DDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B734B24903
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AF2E1F24A80
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:13:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78521AE86D;
-	Wed, 31 Jul 2024 12:11:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68A018DF93;
-	Wed, 31 Jul 2024 12:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B38721AE877;
+	Wed, 31 Jul 2024 12:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="qgB8yK7A"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF681AE843;
+	Wed, 31 Jul 2024 12:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427889; cv=none; b=PyMtvgHGzCo4+rEhgTDr9WBOWLpQg6UR8f703sqqWKixm79w6TSvPMOTujtLf+lC/HM/a9uCjqBzYPn7p0O6+yN4F+AdZ+KpCf2QyL5pQGEFrnz0uY4d+TAzj05HCCQZTbdZLUMbb2/TXthBlROd1CbSya17huggfTeV5yiYo7o=
+	t=1722428027; cv=none; b=JmH5yqAppQmTO/+wmNWLBvCv6F7OgrsieP7wTiarfglrqIZkF4bY8lcB5KsqU7gw8isgT49ox5dTgrv+JMog6zi5cQ8AqkiD0l3il5VV6nNPAzuyYN5DOyJ2B/spIfKSi6qVMdunzBz42/5oC79yh8fs0QcFnYhhSppEBf0vRJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722427889; c=relaxed/simple;
-	bh=WlgnGed378ue9yJeU5OO/zRV3kgWkMscSgxM0Fqwq5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dSiJ7e9PhMfWw031KDL8Q14s+WXI1fquTng7BT7RXUWyY6nCVylxUme5UBgQCenuEDEXpxlXPg4bTvJj0oxxZps0rRKclIyXr56cgBnNJ0XILKb8Tn4bE2Zy/hJaixWGBeMd8vU3xawtcAau7hCetTCFQQedGqtXAgmkosfpomE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49BC41007;
-	Wed, 31 Jul 2024 05:11:51 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB2513F766;
-	Wed, 31 Jul 2024 05:11:24 -0700 (PDT)
-Date: Wed, 31 Jul 2024 13:11:22 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Luke Parkin <luke.parkin@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, cristian.marussi@arm.com
-Subject: Re: [PATCH v4 4/5] firmware: arm_scmi: Create debugfs files for
- counts
-Message-ID: <Zqop6qq0jibefw0g@bogus>
-References: <20240730093342.3558162-1-luke.parkin@arm.com>
- <20240730093342.3558162-5-luke.parkin@arm.com>
+	s=arc-20240116; t=1722428027; c=relaxed/simple;
+	bh=jGkBI30G0B+giaI7hR4dVxBdDG0FEXKy59HSJu3yLFI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l0RRjRWSI6dI10ELAR+t3IlEUaG0azKyk2/YpqNmuZ94uWycVsbJtwrAFqE4TRlpDYxwStorlECboKFyvsrY0ApdotyfxXl7Hvbcf1jU0P87KRH3kSl2VfSwau5lY7TEKq10cetY5RM4/o6VViq5CPY0UBdod+skKv90IMtMVmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=qgB8yK7A; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 46VCDJDz82338218, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1722427999; bh=jGkBI30G0B+giaI7hR4dVxBdDG0FEXKy59HSJu3yLFI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:
+	 Content-Transfer-Encoding:Content-Type;
+	b=qgB8yK7AeslvUPRxQLLbRP+DCGci0Islp2zyr9M35F4fNlUp02eW3aZhrpcipeYNL
+	 D8BMnjMFSKbTv7mgAQnzSEEyx0i0vxZ0rpdrl2TXs+HAoGZ1uE5l928pn7cZrTvyz/
+	 uB1e15C0civ8EZ+EVr80drRqXOnC+zL5Hl7GL+oc6RTXX3IG/4hr3dw2GfdiN0LRKP
+	 GdRvqRy2tbruJ79H5OWwqvnlER5WaA/U2Vx5sUxqlUsyUERrg7wCPfv5AjlYh6DszR
+	 HOhiP/ipqwX/OQ5uEAyn8RuOgG7O5ACfoAckfkFwhosh+y+R9cvSVDBUxymtmUvpv7
+	 zE4gEwPKPjHRA==
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 46VCDJDz82338218
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 31 Jul 2024 20:13:19 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 31 Jul 2024 20:13:20 +0800
+Received: from localhost.localhost (172.21.132.53) by RTEXMBS04.realtek.com.tw
+ (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Wed, 31 Jul
+ 2024 20:13:18 +0800
+From: Hilda Wu <hildawu@realtek.com>
+To: <marcel@holtmann.org>
+CC: <luiz.dentz@gmail.com>, <linux-bluetooth@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <alex_lu@realsil.com.cn>,
+        <max.chou@realtek.com>, <kidman@realtek.com>
+Subject: [PATCH] Bluetooth: btusb: Add RTL8852BE device 0489:e123 to device tables
+Date: Wed, 31 Jul 2024 20:13:14 +0800
+Message-ID: <20240731121314.3738700-1-hildawu@realtek.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730093342.3558162-5-luke.parkin@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
+ RTEXMBS04.realtek.com.tw (172.21.6.97)
 
-On Tue, Jul 30, 2024 at 10:33:41AM +0100, Luke Parkin wrote:
-> Create debugfs files for the metrics in the debug_counters array
-> 
-> Signed-off-by: Luke Parkin <luke.parkin@arm.com>
-> ---
-> v3->v4
-> Use new locations for debug array
-> Use counter instead of stats
-> v2->v3
-> Add extra statistics also added in v3
-> v1->v2
-> Only create stats pointer if stats are enabled
-> Move stats debugfs creation into a seperate helper function
-> ---
->  drivers/firmware/arm_scmi/driver.c | 38 ++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
-> 
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 5acd3d324def..ec6434692d1a 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -2847,6 +2847,41 @@ static int scmi_device_request_notifier(struct notifier_block *nb,
->  	return NOTIFY_OK;
->  }
->  
-> +static void scmi_debugfs_counters_setup(struct scmi_debug_info *dbg,
-> +					struct dentry *trans)
-> +{
-> +	struct dentry *counters;
-> +
-> +	counters = debugfs_create_dir("counters", trans);
-> +
-> +	debugfs_create_atomic_t("sent_ok", 0400, counters,
-> +				&dbg->counters[SENT_OK]);
-> +	debugfs_create_atomic_t("sent_fail", 0400, counters,
-> +				&dbg->counters[SENT_FAIL]);
-> +	debugfs_create_atomic_t("sent_fail_polling_unsupported", 0400, counters,
-> +				&dbg->counters[SENT_FAIL_POLLING_UNSUPPORTED]);
-> +	debugfs_create_atomic_t("sent_fail_channel_not_found", 0400, counters,
-> +				&dbg->counters[SENT_FAIL_CHANNEL_NOT_FOUND]);
-> +	debugfs_create_atomic_t("response_ok", 0400, counters,
-> +				&dbg->counters[RESPONSE_OK]);
-> +	debugfs_create_atomic_t("notif_ok", 0400, counters,
-> +				&dbg->counters[NOTIF_OK]);
-> +	debugfs_create_atomic_t("dlyd_resp_ok", 0400, counters,
-> +				&dbg->counters[DLYD_RESPONSE_OK]);
-> +	debugfs_create_atomic_t("xfers_resp_timeout", 0400, counters,
-> +				&dbg->counters[XFERS_RESPONSE_TIMEOUT]);
-> +	debugfs_create_atomic_t("response_polled_ok", 0400, counters,
-> +				&dbg->counters[RESPONSE_POLLED_OK]);
-> +	debugfs_create_atomic_t("err_msg_unexpected", 0400, counters,
-> +				&dbg->counters[ERR_MSG_UNEXPECTED]);
-> +	debugfs_create_atomic_t("err_msg_invalid", 0400, counters,
-> +				&dbg->counters[ERR_MSG_INVALID]);
-> +	debugfs_create_atomic_t("err_msg_nomem", 0400, counters,
-> +				&dbg->counters[ERR_MSG_NOMEM]);
-> +	debugfs_create_atomic_t("err_protocol", 0400, counters,
-> +				&dbg->counters[ERR_PROTOCOL]);
+Add the support ID 0489:e123 to usb_device_id table for
+Realtek RTL8852B chip.
 
-Just curious and wonder if we can keep all these read-only and have another
-debugfs file which is write only to just reset the counters ?
+The device info from /sys/kernel/debug/usb/devices as below.
 
-Cristian,
+T:  Bus=01 Lev=01 Prnt=01 Port=07 Cnt=04 Dev#=  7 Spd=12   MxCh= 0
+D:  Ver= 1.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0489 ProdID=e123 Rev= 0.00
+S:  Manufacturer=Realtek
+S:  Product=Bluetooth Radio
+S:  SerialNumber=00e04c000001
+C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=500mA
+I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=81(I) Atr=03(Int.) MxPS=  16 Ivl=1ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
+I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
+I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
+I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
+I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
+E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
+E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
 
-Thoughts ? Or am I missing somthing ?
+Signed-off-by: Hilda Wu <hildawu@realtek.com>
+---
+ drivers/bluetooth/btusb.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index acdba5d77694..074cfd790291 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -558,6 +558,8 @@ static const struct usb_device_id quirks_table[] = {
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x13d3, 0x3591), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
++	{ USB_DEVICE(0x0489, 0xe123), .driver_info = BTUSB_REALTEK |
++						     BTUSB_WIDEBAND_SPEECH },
+ 	{ USB_DEVICE(0x0489, 0xe125), .driver_info = BTUSB_REALTEK |
+ 						     BTUSB_WIDEBAND_SPEECH },
+ 
 -- 
-Regards,
-Sudeep
+2.34.1
+
 
