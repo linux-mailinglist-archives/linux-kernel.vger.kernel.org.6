@@ -1,104 +1,169 @@
-Return-Path: <linux-kernel+bounces-269230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE73B942F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1675942F7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7505B2852AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EAAE1F2D988
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EEE1B1505;
-	Wed, 31 Jul 2024 12:57:23 +0000 (UTC)
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE23B1B5805;
+	Wed, 31 Jul 2024 12:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vjaTU0fW"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619701B1423;
-	Wed, 31 Jul 2024 12:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D6D1AC43E;
+	Wed, 31 Jul 2024 12:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430642; cv=none; b=UE6WhsP6rJ6T5pHFQXtQudWp7hdIXk3MtOkA/gsPe1FuneIGdP6/XR3SEZ3RqDzqcoGbwMDjZwtlvXjzEFWbMXRF3g80thVNHES3A4B4JmpYE16k6WEX5TevFz8Kd8zvrrnNC5p7szdcmRXTb8s4RbDoykv2057oCxJxiNC7ONU=
+	t=1722430509; cv=none; b=PV4Zjb/fzcHMGrgI95X9Vmr5GWmbfpqVF/Fe0R/adq9SL4cDaWWPTDm5TYfFakw1Ms739/VJTbW+7qqpy/4vw5wRPYkyYILBl4+rWT31CMAfb/n559JvbxEiCPig5O/Zqkx6Ww5tWCuM3AiwqA4KAB5nDniw9H5i25bTXVlTotc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430642; c=relaxed/simple;
-	bh=+Ich+i88Ajk8gWGCEI+UfMM4Lpr1h3Awv2tyu/m29+Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFwqwcONKLLy2pcTs173axX8z8gWT6bOl89Ehv8JraAPdmw6OpQiQiSRjcUUdSHzyBn1H6CiGuXjaMfV4q2t1KbFU8eVMRvsQn9jdZh3DWO2Tnj7CWftmKdqZcB6W5W4jB0oVoZr3w5SrCXMC/+2wlh59fvHYtCG81J/nCXXAA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gompa.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b7a3b75133so40785196d6.2;
-        Wed, 31 Jul 2024 05:57:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722430640; x=1723035440;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HH60pPIigszmi5NT6xUYpEZJEnXe5I5RDClaVzxrNOk=;
-        b=oJmkVIOXJniAhDlBINoAXyN4itvBp7g3QXqCqCtfTR6K8jNdpWWzgTQx/Fj6PZYPhM
-         Q3hCd+o/CmE2fj0WoDWBfdNWSbYb7KATgB3oXI/Sja8KG+kIX08uHas+zoX8x/oZO5hX
-         MvdC5+ttaUkc7v92KKLnu1fKTNuhTUoKAtqsV7mJuBW4B+FJcJZc06q7MnPPeMMk+vUC
-         PWQfzV+zwwmUIWYSCQpYVnyQHDUmgL1/4rq23M4i65vE8gp/KjkxCwEVnjF8vieAnGyd
-         fm0slE8mDCP/wqNrbgSbY/CcV+UyZC7qLbcQw3aXeoo5Wf7VeNZiaP3d2CW0si5tAfgU
-         oueA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7IE1AKSP8BIxd4/iuurs00WKX90sZDYY+mnbvadIlivQNRmyUGkXrI8r8+oCtwtc/w4cwK9+hfvBHWRAVmxMu8VyxUd5tIbqhzU1q
-X-Gm-Message-State: AOJu0YzPk7J8CPf6Nm7SM+i1yZuAQ+GwzJqiLREx3UOzl+AhOirucMj9
-	AjKAumWWGTeumYEgQgeOwSusgHYT7TtBVloHsKNryi9F+3BUMtdanOlTXpfy0vM=
-X-Google-Smtp-Source: AGHT+IFY63PsDshIgYxQeoWEgGzy3bTrB04am7xVVHGqHOwT0MgQryeOj1gZ9kiV80HxtDTFEM/8mg==
-X-Received: by 2002:a05:6214:ac3:b0:6b5:238:2e42 with SMTP id 6a1803df08f44-6bb55a83bcbmr226653276d6.40.1722430639815;
-        Wed, 31 Jul 2024 05:57:19 -0700 (PDT)
-Received: from Skuld-Framework.tail03774.ts.net ([32.221.37.233])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3faf8f0csm73492276d6.132.2024.07.31.05.57.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 05:57:19 -0700 (PDT)
-From: Neal Gompa <neal@gompa.dev>
-To: rust-for-linux@vger.kernel.org
-Cc: asahi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Hector Martin <marcan@marcan.st>,
-	Janne Grunau <j@jannau.net>,
-	Asahi Lina <lina@asahilina.net>,
-	Neal Gompa <neal@gompa.dev>
-Subject: [PATCH v2] init/Kconfig: Only block on RANDSTRUCT for RUST
-Date: Wed, 31 Jul 2024 08:54:28 -0400
-Message-ID: <20240731125615.3368813-1-neal@gompa.dev>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722430509; c=relaxed/simple;
+	bh=lTq7S21kjmzc4xVHxfjpvVAF+NSW7/VHXNsHCO59Kgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIYKbsGdVL8VGYSQEhVQtZKBugSov13rE1e6JVIdsZ/BVQ2z+E+3MwjmFlZFIQlPOCP7PQE7iIO3EaIULG7QRVuJtErJ7hy4zA3fg+Md8fCjsurm9dApEpvwUK2Oyl1LXjcJDVsjaJb5tKlzRnqLF1xY/8LKvpn1fOCZXkuZKIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vjaTU0fW; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93DB9268;
+	Wed, 31 Jul 2024 14:54:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722430457;
+	bh=lTq7S21kjmzc4xVHxfjpvVAF+NSW7/VHXNsHCO59Kgw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vjaTU0fWRpOtDnaS28JyH8m7hqg3wnahs+Iap3znqY/IwAbRqlNrF9TzfoUElmC3F
+	 5dnsJurORTIIjbNtM7hWz+buP+bfwIFQHyyrGWtLPzsErp/33G1L7z+KPt3tThfP1H
+	 cgH4quPhaZmlEBp7jIrpB3z7VRAro1YHGSlcofv4=
+Date: Wed, 31 Jul 2024 15:54:44 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: gregkh@linuxfoundation.org, dan.scally@ideasonboard.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org, opensource.kernel@vivo.com
+Subject: Re: [PATCH v2] usb: gadget: uvc: Fixes the abnormal enumeration
+ problem of mobile phone as UVC camera.
+Message-ID: <20240731125444.GX8146@pendragon.ideasonboard.com>
+References: <TYUPR06MB62175899DECC7A9B0DA0DF01D2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
+ <20240731122351.GU8146@pendragon.ideasonboard.com>
+ <TYUPR06MB6217EF08BA3F758EB20C833DD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYUPR06MB6217EF08BA3F758EB20C833DD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
 
-When enabling Rust in the kernel, we only need to block on the
-RANDSTRUCT feature and GCC plugin. The rest of the GCC plugins
-are reasonably safe to enable.
+Hello 胡,
 
-Signed-off-by: Neal Gompa <neal@gompa.dev>
----
-Changes in v2
-- Drop changing !RANDSTRUCT to RANDSTRUCT_NONE 
-  (they're equivalent anyway)
----
- init/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+When replying, please don't drop the CC list unless you need to discuss
+confidential topics. Your question, and the answers you will get, can
+help other people facing the same problem, so it's important to keep
+them on public mailing lists.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index a465ea9525bd..0939486938cc 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1900,7 +1900,7 @@ config RUST
- 	depends on RUST_IS_AVAILABLE
- 	depends on !CFI_CLANG
- 	depends on !MODVERSIONS
--	depends on !GCC_PLUGINS
-+	depends on !GCC_PLUGIN_RANDSTRUCT
- 	depends on !RANDSTRUCT
- 	depends on !DEBUG_INFO_BTF || PAHOLE_HAS_LANG_EXCLUDE
- 	help
+On Wed, Jul 31, 2024 at 12:46:27PM +0000, 胡连勤 wrote:
+> Hello linux community expert:
+> 
+> Which kernel interface does the user space program call to modify bind_deactivated to false?
+> I traced the kernel code and have not found where to modify this value.
+
+In this very specific case, the function is activated by a call to
+usb_function_activate() in uvc_function_connect(), itself called from
+uvc_v4l2_subscribe_event() in response to the application calling the
+VIDIOC_SUBSCRIBE_EVENT ioctl on the video device to subscribe to the
+UVC_EVENT_SETUP event.
+
+You can find a sample userspace application meant to work with this
+driver at https://gitlab.freedesktop.org/camera/uvc-gadget. Note that I
+haven't used it personally for a few years, so I may not be able to
+easily provide detailed technical support.
+
+> -----邮件原件-----
+> 发件人: Laurent Pinchart <laurent.pinchart@ideasonboard.com> 
+> 发送时间: 2024年7月31日 20:24
+> 收件人: 胡连勤 <hulianqin@vivo.com>
+> 抄送: gregkh@linuxfoundation.org; dan.scally@ideasonboard.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org; akpm@linux-foundation.org; opensource.kernel <opensource.kernel@vivo.com>
+> 主题: Re: 答复: [PATCH v2] usb: gadget: uvc: Fixes the abnormal enumeration problem of mobile phone as UVC camera.
+> 
+> On Wed, Jul 31, 2024 at 11:49:11AM +0000, 胡连勤 wrote:
+> > When the phone is connected to the computer to use the webcam 
+> > function, the phone needs to be enumerated as a uvc camera function.
+> > 
+> > Because uvc->func.bind_deactivated is configured as true in the f_uvc 
+> > driver uvc_alloc function, the usb_gadget_deactivate function is 
+> > called during the execution of the configfs_composite_bind function to 
+> > set gadget->deactivated to true, which in turn causes the 
+> > usb_gadget_connect_locked function to fail to call the corresponding 
+> > controller pullup operation (such as: dwc3_gadget_pullup, 
+> > mtu3_gadget_pullup), and the USB cannot be enumerated normally under 
+> > the uvc function combination.
+> > 
+> > After applying this patch, we measured that under the uvc function, 
+> > the dwc3 controller and the mtu3 controller can be enumerated 
+> > normally, and the webcam function is normal.
+> > 
+> > Fixes this by removing the setting of uvc->func.bind_deactivated to true.
+> > 
+> > Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
+> > ---
+> > v2:
+> >   - Add "Fixes:" tag on the commit
+> >   - Modify description information.
+> > ---
+> >  drivers/usb/gadget/function/f_uvc.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> > 
+> > diff --git a/drivers/usb/gadget/function/f_uvc.c 
+> > b/drivers/usb/gadget/function/f_uvc.c
+> > index 40187b7112e7..6d63bea14211 100644
+> > --- a/drivers/usb/gadget/function/f_uvc.c
+> > +++ b/drivers/usb/gadget/function/f_uvc.c
+> > @@ -1107,7 +1107,6 @@ static struct usb_function *uvc_alloc(struct usb_function_instance *fi)
+> >  	uvc->func.disable = uvc_function_disable;
+> >  	uvc->func.setup = uvc_function_setup;
+> >  	uvc->func.free_func = uvc_free;
+> > -	uvc->func.bind_deactivated = true;
+> 
+> This is done on purpose. The UVC function requires a userspace control
+> application, so the function is deactivated by default at bind time,
+> and gets activated when the application is ready.
+> 
+> This patch isn't right.
+> 
+> >  	return &uvc->func;
+> >  
+> > -----邮件原件-----
+> > 发件人: gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>
+> > 发送时间: 2024年7月31日 19:13
+> > 收件人: 胡连勤 <hulianqin@vivo.com>
+> > 抄送: akpm@linux-foundation.org; linux-kernel@vger.kernel.org; 
+> > opensource.kernel <opensource.kernel@vivo.com>
+> > 主题: Re: [PATCH v1] usb: gadget: uvc: Fixed the abnormal enumeration problem of mobile phone as UVC camera.
+> > 
+> > On Wed, Jul 31, 2024 at 08:45:31AM +0000, 胡连勤 wrote:
+> > > When the phone is connected to the computer to use the webcam 
+> > > function, the phone needs to be enumerated as a uvc camera function.
+> > 
+> > <snip>
+> > 
+> > Note, why aren't you using scripts/get_maintainer.pl to find the
+> > proper mailing list and developers for this change?  Please do so.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+
 -- 
-2.45.2
+Regards,
 
+Laurent Pinchart
 
