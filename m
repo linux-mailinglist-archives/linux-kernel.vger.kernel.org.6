@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-269551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84708943429
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:31:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB52694342B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:32:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2DE1F2291C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:31:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C4E284689
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D651B29D3;
-	Wed, 31 Jul 2024 16:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33C81BC066;
+	Wed, 31 Jul 2024 16:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iAtxGUxb"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+j02xlg"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E4012E4D
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6099B15E96;
+	Wed, 31 Jul 2024 16:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722443471; cv=none; b=o0tmiSoejbz8qv6+gSxZgDw9HzmgnIFpnaWWEAedOINXXq1/5GdKtQD4LgrkIa4gTQCH0z0ESn3Bna+wTKtNN5TpiBptgSwp+MXT1vDalzy9x3dMIjEw2Lr8lg04AMyLYJZdPp0nEIPn+7nPhrzUyw9v0nOVqIDBUre6YsXG20o=
+	t=1722443567; cv=none; b=nVMh41aYC/Ec6ybD6LIQ/5Pi8LwhfGuG5Pv6kh0Rz3ybHKYqv6a0Sn7pa7CWPjkJSBz6Bhu48LoYMbf/+v8fHk6eTYUuKiLUEzap2CHv5ThrLoIqg8Ur7tqbfJmjLA6jyQIG+kPnQbgv4PtPlvI/XMfiJ4nnjzD5icc1NsNTc0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722443471; c=relaxed/simple;
-	bh=i6lbpbvRoLrQ3TtcRBtQnBF8eR9Em8zrZ+vk5wulf2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fpEpwNG4XH/uK5ozmyCLSKp3FjA+ZwJ0EWsk5VKAV0K1alFo2iMMTEwPJ3FGm/qfqhOgy+/uMik1+1n1iyOPS0lNqSMtuqcgW+HAbCFO8r3TpPWmDH9StsKI3DrVm42Gzf+O/SS7HJgiqYRDdIz4ouIcViJUPJ+p/jVPTGTZbo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iAtxGUxb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=jh6eGH3wnwRYpBMUc9b82uLGc8Q0MdL/UipWVU49jS0=; b=iAtxGUxb+0Rht7jBcTy1NrYcdp
-	Di2SJH11HKYfcSHJeyhVCYbQk+jCYKAjlSem3vvVdMZoSSP5QeJJnuDXcOQlJJrARm8TcoITpK/ap
-	cxBHyZkAs0aJNeFnx2oih1HboRfYe96YdGrOeYKhE064E5iq0fs89trMm2KaAk3f7QEvlpcukJIin
-	NnhgJCo4YIR228HanuuBJKpxozK/+i1xKsytTrM1+fsAJJUc3qgqvTiC9Lwk6mAvSUHArVp6rzIQK
-	wJ/XXAagalnVfV1IB285fm3vq8X/WWdK+BLOLRhyAR6FEm+9HZS4bZabBbvctAo4VoQnRzxHEHdZG
-	3Opa9zTw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZCEE-0000000GKro-05de;
-	Wed, 31 Jul 2024 16:31:06 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 41C35300820; Wed, 31 Jul 2024 18:31:05 +0200 (CEST)
-Date: Wed, 31 Jul 2024 18:31:05 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@kernel.dk>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Anvin <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: Linux 6.11-rc1
-Message-ID: <20240731163105.GG33588@noisy.programming.kicks-ass.net>
-References: <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
- <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
- <20240730192237.GR33588@noisy.programming.kicks-ass.net>
- <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
- <20240730193841.GS33588@noisy.programming.kicks-ass.net>
- <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
- <20240731122002.GE33588@noisy.programming.kicks-ass.net>
- <87mslx67dm.ffs@tglx>
- <20240731155551.GF33588@noisy.programming.kicks-ass.net>
- <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+	s=arc-20240116; t=1722443567; c=relaxed/simple;
+	bh=aFIDWBq4Nmy0FWXw+JYhaJRwtgoDGGvlMCLfC7m1N+M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oim7+89YHWzPFucsG97aSuP83AJgq3WFNJyKqIA2flnekcafB1Dc6M8XnK1V953DigdQFsybKtxkneOob6rMcMonbqGL5dgHgknhFTU/dNQok6x4Txouj4JAbv7dxX50ChmOuUZ2GQcS+fuF/+1ZdKFncepCQz5BClE90CuOyT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+j02xlg; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef7fef3ccfso71150561fa.3;
+        Wed, 31 Jul 2024 09:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722443563; x=1723048363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bIefGprQjQzzRl+XymqNxAaIt5Yc30PGPqqfK1kTf5o=;
+        b=g+j02xlgMjojwGlz9vDhFa2rf/qLOpvmXHkIwS1mUB6hBAQRcJrARYSiirvXkNLOKU
+         +Ma0u1Fx/RTgIY0XCTXESWzeRbkNvZoxoeqP+Nvm/ZA7eP1cVPLuBSiXOzK4M9dNXRjc
+         ewkTY5X3qM1RaS+w8HGk9SRnJEJ6YAkgikRLmZsVZYSc9hP2RijeEAJGOAAiMGd17Blq
+         0u4ha0bKjWTJsmuQm6vG6iEbiVP6xfVMMe44FjBJyq7d2ciaVjmMyLNdpA7Si+beTe0s
+         HGX5hcEBIOiq+Qh5Voy03yZbGv+Okq0qsPd868Wgui2GPWfkdHl6EZeyz2Zihnzk7UEz
+         pYLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722443563; x=1723048363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bIefGprQjQzzRl+XymqNxAaIt5Yc30PGPqqfK1kTf5o=;
+        b=Q2SdP8rNymOcUXXfxzbj6JnYbiQK8jkS4drVr31r4bQwuudlBxipxeYb7fnbGCJDAH
+         3Cto+c7wCXUwby2UkeGJIIA6hqtbpN0cKaOVcGw8TwtlQae4yoICMMJ2m5mVttLPvw3Y
+         lahiv+67jaqGfudqfu5nt57Zm4Fb8u5JYpCqfXl74bnvEQS4nOTa+r4VzU2xVFdmSOWR
+         uuobtLsB33yuO1+BMCg/OpHQBJaAdMCu59OjAwtQc/mzqutnGp386uh/Eyp9Kc1M8jDz
+         VDUTCddt6HMqpcVVVYsMo4L8aFJYmRpBurTFxFTdtKvnyv9p7cntXEoHDVttJZmPzuqk
+         ICaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBW2608Wsz5G64j1Hw1uXjq1XAIJkGJKuT/kVk28yg/9ZVZ7FDuZKX2J8Zj7iPABf2y7dwTYESLxaxEpcZKtWHoFACQvVBcqKNcHg7PcDRQGWn8b+n3lcT9oTRASVuKSL6UhR4P8s4SAmXRntV
+X-Gm-Message-State: AOJu0YybcYhfCNo4997mXI3ApLLQy7D7858cNDcRshzgnIwqzISRY0cY
+	Ya5pDKGGwsDB92hLsIviirRhtW0/uy61YmhXJevk56c+OXmqzflhpjDCRthLmYPVjETAaKoyRJN
+	JzhJTBWHeglawG/7uqkaNL/tCKz4=
+X-Google-Smtp-Source: AGHT+IFc9t3k6Dm47Ha58j7yx2K2/CRo4wNoeikNws55HD+Vm14k5JDII7jSv6PofGp4s0NZed1po0DtWbnoaMvuxjo=
+X-Received: by 2002:a2e:740d:0:b0:2ef:2203:5dbf with SMTP id
+ 38308e7fff4ca-2f12ee1992amr91540701fa.27.1722443563178; Wed, 31 Jul 2024
+ 09:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
+In-Reply-To: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Wed, 31 Jul 2024 12:32:31 -0400
+Message-ID: <CABBYNZ+dvLGos9oLi6euFkmiU9OReJ5F3qsA6WrhW29yeZ-jWQ@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Bluetooth: hci_qca: fix post merge window regressions
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Wren Turkal <wt@penguintechs.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 09:17:44AM -0700, Linus Torvalds wrote:
-> On Wed, 31 Jul 2024 at 08:55, Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Right, so Thomas found that i386-pti fails to map the entire entry text.
-> > Specifically pti_clone_pgtable() hard relies -- and does not verify --
-> > that the start address is aligned to the given granularity.
-> >
-> > Now, i386 does not align __entry_text_start, and so the termination
-> > condition goes sideways and pte_clone_entry() does not always work right
-> > and it becomes a games of code layout roulette.
-> 
-> Lovely.
+Hi Wren,
 
-:-)
+On Wed, Jul 31, 2024 at 11:21=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl=
+> wrote:
+>
+> Here are the fixes for regressions reported by Wren and Dmitry. I could
+> reproduce the crash on db820c and so I was able to test it but patch 2/3
+> could use a Tested-by from Wren on QCA6390.
 
-This fixes the alignment assumptions and makes it all go again.
+Can you give this set a try and report back?
 
-diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 2e69abf4f852..bfdf5f45b137 100644
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -374,14 +374,14 @@ pti_clone_pgtable(unsigned long start, unsigned long end,
- 			 */
- 			*target_pmd = *pmd;
- 
--			addr += PMD_SIZE;
-+			addr = round_up(addr + 1, PMD_SIZE);
- 
- 		} else if (level == PTI_CLONE_PTE) {
- 
- 			/* Walk the page-table down to the pte level */
- 			pte = pte_offset_kernel(pmd, addr);
- 			if (pte_none(*pte)) {
--				addr += PAGE_SIZE;
-+				addr = round_up(addr + 1, PAGE_SIZE);
- 				continue;
- 			}
- 
-@@ -401,7 +401,7 @@ pti_clone_pgtable(unsigned long start, unsigned long end,
- 			/* Clone the PTE */
- 			*target_pte = *pte;
- 
--			addr += PAGE_SIZE;
-+			addr = round_up(addr + 1, PAGE_SIZE);
- 
- 		} else {
- 			BUG();
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+> Bartosz Golaszewski (3):
+>       Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
+>       Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
+>       Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
+>
+>  drivers/bluetooth/hci_qca.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
+> ---
+> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
+> change-id: 20240731-hci_qca_fixes-8e7a8ed3ad83
+>
+> Best regards,
+> --
+> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
