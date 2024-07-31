@@ -1,52 +1,61 @@
-Return-Path: <linux-kernel+bounces-269792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 647AC9436ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:15:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 188F29436EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:15:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF6E4B213BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:15:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C39C61F22248
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2412E16C437;
-	Wed, 31 Jul 2024 20:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2655316C84D;
+	Wed, 31 Jul 2024 20:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWWXQTvV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdP9yCjo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A9116A39E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC3E16C6B5
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456878; cv=none; b=Fz8Nui365ELasDUs11Uf3eG0L754nIGXrUjopf0nqXzIZJSKnNOHxTE8Wn4N044HGGKWWvNax09kbDuUp4UHoTaK45LMC8TJpeTc2QzkZZIDr/6ln3FvFsep+6iCuEWgsKhNskwG1UDzHp9/lRJehz5wf/XQYmp5s2c3Lx02kss=
+	t=1722456880; cv=none; b=Kv8CYvi6ftWbu//HcgpcYyTMQ0iN0Jd+hUInLCGGRUMZAJp/wm2a5HlWpu/Z9aCToEG0m8bZkzQUfGUdihBGHEx20HYpOh+W+euTYfGFhW3+Cgtkj9lEh8iu6mlerI5G3kevXFsc4/RnKL892iYbkRSY9nXo2vLCZ2LNArL84c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456878; c=relaxed/simple;
-	bh=rs9OKvs3MRnvwNaZmqBZdZEDA/cG0O5dn7GKWEKIHpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hJ7yY9b8mHleeliCOCdBL64paXN+YyPczooXxsIK18FhZE8Z2IsEny2AT4HCkwiN55qQ/XMa+ohA4nTgYIxQjV5D4IDxlUpafHdm0Cq6rwGEFl5UQfkQHiloZrNiro4M5p1CIDhm+zGnbE8+/teR89jXyMPUj5WqnCKBnWVpgkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWWXQTvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCBABC4AF0C;
-	Wed, 31 Jul 2024 20:14:37 +0000 (UTC)
+	s=arc-20240116; t=1722456880; c=relaxed/simple;
+	bh=+JRx7YZVVmat6vfPo2gFiywJDPLdH779FTMjtYnw98k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JHi51gvwJY1McnfkzOBqHRxlFkAvpFkVa9Ps9iyTza/v60ZcyvoRQMkd7OVEvgto1H9KxQITvJI8/fZ45sZM6kH2JqnWxKQaXnJtxPd+qf3IyYALIK3V7dShm8mUuQO+GRDbD4XyKZuoImQiRRbxAxiDR4FgsumgdlYPZnTLccs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdP9yCjo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8606C116B1;
+	Wed, 31 Jul 2024 20:14:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456878;
-	bh=rs9OKvs3MRnvwNaZmqBZdZEDA/cG0O5dn7GKWEKIHpk=;
+	s=k20201202; t=1722456880;
+	bh=+JRx7YZVVmat6vfPo2gFiywJDPLdH779FTMjtYnw98k=;
 	h=From:To:Cc:Subject:Date:From;
-	b=VWWXQTvVkuh0fARMRE9rCRbAybQnMtOqEsT5g5U2N5tIKHLlJgmsDV3sxFO7ZydRT
-	 w/bgoWOU51yXntaFiVjSJD0blXEgOEC1Us9eY3gAuzbwy9ujFME1wA9vf8NyF3aVfA
-	 VXuZyjpMs69KgZxIJeW6tV81RybpPKfNvaP/GU8TTx3T+lSV+voXdwQcD7rYeKPT6C
-	 AO9lg5zwbvnL4UQki1upXsya1H4m3Qc1sq9aKW4xnWCqwU8mJObEHqNXH+OUcIXY+s
-	 P5wPP1Zdlk7hr7U/WXqE/f9x+UJeV+8jfIH6UmFhJP+sn8zctTBy95F3f3MFvC66ke
-	 /zFWbndvLuHEQ==
+	b=PdP9yCjoLHeWQmDDclv8rVkTxnbNwPeLTuJAoqytzWqQtzob1vH5akCSnbuC5dbmU
+	 AjHzucZDOw0LD05kvg8kA3Vq+8RM7z7/lNgi8mP/VS/Vl+kmWjS+94Lt3h2mWEdL8H
+	 7P67K+ByRgplB7CQ/dpP/lk+tI+yzack0Eqtf1COWqe6BWlQZa1tkM87Oq1ApK2Z29
+	 Gjc+mXeuY99SDeWuGbqYJjcUYRZa+JjUtYhXrAQKbSRgGt8iLjd6QOTN0zInS72CLC
+	 ToHLXhotuMYepBiHPpudfVrQgGG8CyWzn0FSFva5RDTBqgd6SA4ZxkkLwvrmjXCPCO
+	 fDURP5oCkqVtg==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Nishanth Menon <nm@ti.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] soc: ti: knav: Use of_property_read_variable_u32_array()
-Date: Wed, 31 Jul 2024 14:13:58 -0600
-Message-ID: <20240731201407.1838385-3-robh@kernel.org>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: bridge: anx7625: Use of_property_read_variable_u8_array()
+Date: Wed, 31 Jul 2024 14:13:59 -0600
+Message-ID: <20240731201407.1838385-4-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,62 +66,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 There's no need to get the length of an DT array property before
-parsing the array. of_property_read_variable_u32_array() takes a minimum
+parsing the array. of_property_read_variable_u8_array() takes a minimum
 and maximum length and returns the actual length (or error code).
 
-This is part of a larger effort to remove callers of of_find_property()
-and similar functions. of_find_property() leaks the DT struct property
-and data pointers which is a problem for dynamically allocated nodes
-which may be freed.
+This is part of a larger effort to remove callers of of_get_property()
+and similar functions. of_get_property() leaks the DT property data
+pointer which is a problem for dynamically allocated nodes which may
+be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/soc/ti/knav_dma.c | 22 +++++-----------------
- 1 file changed, 5 insertions(+), 17 deletions(-)
+ drivers/gpu/drm/bridge/analogix/anx7625.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index 6023006685fc..fb0746d8caad 100644
---- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -602,7 +602,7 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
- 	unsigned max_tx_chan, max_rx_chan, max_rx_flow, max_tx_sched;
- 	struct device_node *node = dma_node;
- 	struct knav_dma_device *dma;
--	int ret, len, num_chan = 0;
-+	int ret, num_chan = 0;
- 	resource_size_t size;
- 	u32 timeout;
- 	u32 i;
-@@ -615,25 +615,13 @@ static int dma_init(struct device_node *cloud, struct device_node *dma_node)
- 	INIT_LIST_HEAD(&dma->list);
- 	INIT_LIST_HEAD(&dma->chan_list);
+diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
+index 88e4aa5830f3..a2e9bb485c36 100644
+--- a/drivers/gpu/drm/bridge/analogix/anx7625.c
++++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
+@@ -1647,25 +1647,15 @@ static int anx7625_get_swing_setting(struct device *dev,
+ {
+ 	int num_regs;
  
--	if (!of_find_property(cloud, "ti,navigator-cloud-address", &len)) {
--		dev_err(kdev->dev, "unspecified navigator cloud addresses\n");
--		return -ENODEV;
+-	if (of_get_property(dev->of_node,
+-			    "analogix,lane0-swing", &num_regs)) {
+-		if (num_regs > DP_TX_SWING_REG_CNT)
+-			num_regs = DP_TX_SWING_REG_CNT;
+-
++	num_regs = of_property_read_variable_u8_array(dev->of_node, "analogix,lane0-swing",
++						      pdata->lane0_reg_data, 1, DP_TX_SWING_REG_CNT);
++	if (num_regs > 0)
+ 		pdata->dp_lane0_swing_reg_cnt = num_regs;
+-		of_property_read_u8_array(dev->of_node, "analogix,lane0-swing",
+-					  pdata->lane0_reg_data, num_regs);
 -	}
 -
--	dma->logical_queue_managers = len / sizeof(u32);
--	if (dma->logical_queue_managers > DMA_MAX_QMS) {
--		dev_warn(kdev->dev, "too many queue mgrs(>%d) rest ignored\n",
--			 dma->logical_queue_managers);
--		dma->logical_queue_managers = DMA_MAX_QMS;
--	}
--
--	ret = of_property_read_u32_array(cloud, "ti,navigator-cloud-address",
--					dma->qm_base_address,
--					dma->logical_queue_managers);
--	if (ret) {
-+	ret = of_property_read_variable_u32_array(cloud, "ti,navigator-cloud-address",
-+						  dma->qm_base_address, 1, DMA_MAX_QMS);
-+	if (ret < 0) {
- 		dev_err(kdev->dev, "invalid navigator cloud addresses\n");
- 		return -ENODEV;
- 	}
-+	dma->logical_queue_managers = ret;
+-	if (of_get_property(dev->of_node,
+-			    "analogix,lane1-swing", &num_regs)) {
+-		if (num_regs > DP_TX_SWING_REG_CNT)
+-			num_regs = DP_TX_SWING_REG_CNT;
  
- 	dma->reg_global	 = pktdma_get_regs(dma, node, 0, &size);
- 	if (IS_ERR(dma->reg_global))
++	num_regs = of_property_read_variable_u8_array(dev->of_node, "analogix,lane1-swing",
++						      pdata->lane1_reg_data, 1, DP_TX_SWING_REG_CNT);
++	if (num_regs > 0)
+ 		pdata->dp_lane1_swing_reg_cnt = num_regs;
+-		of_property_read_u8_array(dev->of_node, "analogix,lane1-swing",
+-					  pdata->lane1_reg_data, num_regs);
+-	}
+ 
+ 	return 0;
+ }
 -- 
 2.43.0
 
