@@ -1,223 +1,119 @@
-Return-Path: <linux-kernel+bounces-269659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30BA2943577
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:13:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59159943575
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:13:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81B97B2302F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01BB21F22169
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60083BBF2;
-	Wed, 31 Jul 2024 18:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F171F3EA69;
+	Wed, 31 Jul 2024 18:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="nTOWT+uO"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2071.outbound.protection.outlook.com [40.107.94.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LKJgh6Vq"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F334EB5E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722449611; cv=fail; b=teHLsclPwXg3AquDl0fYz9FmaJG6y99qjjR0JMPlJi3bhgs83p+rhusZyevfcWRqXGqwnQWV10mmoemm1IMDa11keuLEZ+CmnlkvIdSkOEfM4n21NTP9zOVOpsQ1enVDZ3VcU0PTieTphakHJoWyxirM9rFQ5URe+s2Z2vF9OUY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722449611; c=relaxed/simple;
-	bh=0Qp0ZQsAhs36cB0/3zAlCUn+3H5fbfMcX/X8LzQFe3k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FHBVxXkzYCEXDiLOioG2+ABJEnyJb0pIEfO8I4apYaL2oYP6c2jyX4BBb4m0s4xzXcESR5gg4fsSoN+1t33WKse7/kopEeaV7gG2MctcnWYfjAn481OoG/mVofIVd7xrIIBcgtQE0s18F9CowLxIUIHrT7ZUf5Pp/5uGpRXvve4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=nTOWT+uO; arc=fail smtp.client-ip=40.107.94.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uKB3EsZ9+5vSl1SRK8nxpa3GxUmKgwj5gYCnxaS/y91/PcEWd7Nu3W0Rv1aKeI5B9z7I36DTaYhKfJ4/ZWJXeoJWDU19e1cE1sfEVaAwyObE1pgCIb1yRPZ7sdkwBYPKvFVnzRhP9pqp1zictbTDpoyLCOWzm35t53kXh+3iuYdtlokcN8ozfkoB52Gn5Zlj3iIOmhNeCiHqMVNcHYwFdLae3hRorxE+NRg0X3tKPB6LpNXOpdbkztzbnNj2U0Y/2nd3LaAn3tyCev841NUces/raP5YUODyXZGf/QMYfhdXmgxGJT3yBxbF/c1G3iH0ptC1P2p78uTJIXk2W5I9FQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6kjUUjTsXcX8K1uZ6LQ3uI8B882gDH2I2c+EbBAmcc0=;
- b=Vhkh0iJu1kE1DWo7kq0Qu2IweKYiXnf6jmgX9VVmlN4oMHQNEKITeqDDBaUVXoWFDWx1FCj95okSw3wOS0/+Kqy8iHvuOX3IhVpnqCmLe4oyCytUX4AppyCfWTF3mgIAt8EiP2U0/U3p3CfW0y+twSQNT6GZrHQshKVNKAu9bIkW87JFlzPeG9f2I0IIEBmyQuGRWSAnM81s3xyrGvPFu1UgKuL8IPxLPdmSZteqlRw8csIgD7mAMKmP3GputwdxCjR9uKScSf50/GTN4iN0KIrekhgIgD0u8KctKSp33/6qEL8mmRaOYzZOXRJqr+4F+dD1tdWT5/23uICWve6fmA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6kjUUjTsXcX8K1uZ6LQ3uI8B882gDH2I2c+EbBAmcc0=;
- b=nTOWT+uOpErlNXizWCIZ5SPkBd8L9vZrAKnLUkkrMNrM+cwlBPS6bAFJz3pr8bQUFBd0Ydxou+dG2hMgxbPKiuhoagxzDalzzt+F7+hEkRsKR3opr4G7v4v1w8S7tVaRO7tSAW0KjFwPrDYv7eV6wI0vkQpAITATtvbofPGAKAYACUkAT/qcbuwmbjPpvqa2bOvBIsqpDsE150IKL1I92hTOV0vxUClmvBghqVLUx+6oKGSahMJA4f7w76pdzPcPLyc2W/unQpXaSXaIMH15kIRzXuU92GbV32lGMJIuCwGolIneN2Q7qzK5AL1uJq6+GkPbIVlCVJiSB2PtlsRLuQ==
-Received: from BN9PR03CA0152.namprd03.prod.outlook.com (2603:10b6:408:f4::7)
- by DM6PR12MB4203.namprd12.prod.outlook.com (2603:10b6:5:21f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
- 2024 18:13:26 +0000
-Received: from BL6PEPF0001AB52.namprd02.prod.outlook.com
- (2603:10b6:408:f4:cafe::90) by BN9PR03CA0152.outlook.office365.com
- (2603:10b6:408:f4::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21 via Frontend
- Transport; Wed, 31 Jul 2024 18:13:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- BL6PEPF0001AB52.mail.protection.outlook.com (10.167.241.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 18:13:26 +0000
-Received: from drhqmail202.nvidia.com (10.126.190.181) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
- 2024 11:13:08 -0700
-Received: from drhqmail202.nvidia.com (10.126.190.181) by
- drhqmail202.nvidia.com (10.126.190.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 31 Jul 2024 11:13:08 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.181)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Wed, 31 Jul 2024 11:13:07 -0700
-Date: Wed, 31 Jul 2024 11:13:06 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "jgg@nvidia.com" <jgg@nvidia.com>, "Tian, Kevin" <kevin.tian@intel.com>
-CC: "Liu, Yi L" <yi.l.liu@intel.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
- allocation
-Message-ID: <Zqp+sssdo80B7MaB@Asurada-Nvidia>
-References: <20240728235106.2435208-1-nicolinc@nvidia.com>
- <BN9PR11MB5276497781C96415272E6FED8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31E138FA6
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722449595; cv=none; b=exWogRoc7rMrK0tgFwKdHHou0IGjKCA68nALFFInm5RnW/oRAgpAJteiIHhV3cqL8jWgB9uFjVKqmYFzHzH6ABbLssIRipMbnJG8Z9WhIFA3xqaNTZuTuI2y2i9jPdbnBWk3iJ8Bb9t9FpCA2yvTWA1ehPC7dr5DDnWPMqRwFtQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722449595; c=relaxed/simple;
+	bh=uQwOrxQmn4UWuOdYTz/ZFVXWCNeQRZ3Mc8Mz/PrYA1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e5GhvW91Z/dJBh6wNxtwNFRBL0h3e6vb6o+eDUnAMtIMRCVOlNCPHYCA/mX1tBeGTOZ1f968/UJFV8U19Smyqh4hjzsloCoWQpAkFPKZHaeB1ZNhMa2LGVfJJkxHynKpnlC6BGlaZKWo+Of+BE7p80LT5n63NnFcU4oUGK+rJi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LKJgh6Vq; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-812796ac793so31140039f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:13:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722449593; x=1723054393; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9U9Aeo88raKDsbH9TG7H5YN1vzWt4rRDmAinflLvkZ4=;
+        b=LKJgh6Vq8t2oIct4QSI7B7b0sjNqG9lQ5K41NH0USiieBt2LcX/oFy40qw5t8CAue0
+         UkxRL1HxzeDpMxBWDm5WTV3lhaDAQDscwLKKY7gVPTEC25kpyxAwzGQuF24QT8C7kdzQ
+         Y1c1l/rzJS6a9Y4l7J0QBqAzN9rnPOOFtxMhQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722449593; x=1723054393;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9U9Aeo88raKDsbH9TG7H5YN1vzWt4rRDmAinflLvkZ4=;
+        b=ivH2G+ndsY1HIeNejmvpcHByzlZm/hh+xK45jCxXwPquKEKbPF8hPox2m9A/B2YXuS
+         I8kVL2QOnRpbjqFWmoM/kypt0kLuxaVG1G16Wnr8DkMR2LGz5rQTrkkQSpjsj/k0PsWP
+         UKQAPs5E+JqICJJki21cNDDFOHifKwa6TgnL0wSUp2wWi9ZsXOZeEtAhQGhgU2Whymze
+         gyvSJCvps8hx30SzkenVvQ6dlYDNKea64OiwL8EsabXDiUCp53mDCockMQwVB2R7sFPw
+         Y2AcEfnhg6Gc+8Asih83npMce+amjLUbJaQLlG1FqRUO8Zro+i3og7Wyshy4dmLBIjcI
+         8aAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg90OESsiWgf18Sag9nMYuIYdUZnsbnKJZblQDjeyh9p2ApziQw3Cl1q7uGnCVXYfgf5g8zOhLot7y7iw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVTVbWen9mkkRAyI1ed+JjzOKcaCb962EoDae80Fj+qYOJAwNc
+	oTeC22yJ+DhV3D+y2305dKZlOdaiHEkyuC8QA4YFK7JI4Q1sHDIB5ezEIDeyeXY=
+X-Google-Smtp-Source: AGHT+IEHDc/6KXUE+4h4v4FSTmQPsunt90tpxasZpI82+oz/OgCHb5Aq6q70sUiWXESPFmm2+pk1Tw==
+X-Received: by 2002:a6b:ea0d:0:b0:81f:8f3a:5689 with SMTP id ca18e2360f4ac-81fcc13167emr9584739f.0.1722449592803;
+        Wed, 31 Jul 2024 11:13:12 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-81f88597d83sm390466939f.6.2024.07.31.11.13.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 11:13:12 -0700 (PDT)
+Message-ID: <2fb7e346-f49c-4a4a-812b-2b6d3c0edd25@linuxfoundation.org>
+Date: Wed, 31 Jul 2024 12:13:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB5276497781C96415272E6FED8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB52:EE_|DM6PR12MB4203:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e2c156b-6243-4a79-0bc9-08dcb18c7902
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4o8/gnBhP66TIfWDFy+LOOGPhBHU84ZHB0JOucyx5EWTA+4l1eLc2src+zi3?=
- =?us-ascii?Q?o0Qg306Yy7B00juVn0BJp7RZ1WkKWxGpjowxayGkv8TT0XgcUQeWarbfr9oj?=
- =?us-ascii?Q?CEoAQLD0owZVq3WskukyvAarh5V+uMuR7ptARWYVNPRp2ZgHOnTVdAYqqsB+?=
- =?us-ascii?Q?nfKrOSrMvzjxKdI8uXX0L8Ctzxz55seHfGWKCMEWRLc9h1T304zWSiSYe0SA?=
- =?us-ascii?Q?rGe0Ua9m2qWzT5bLbgl0UESXI1E1ms7ZPwhC5FTLnj3MvTQQxwPeQ5sXlEj5?=
- =?us-ascii?Q?Od7zayudR9lUDrifSyyLj5H6scpcS2GUMUitGuB8PWj07m/uec6e8OG8QSdB?=
- =?us-ascii?Q?h9xcRCA6M8ZyKpp/XNp04D1YZSgB+X1Fcg2FDagv9D/nlzNcwkh+i7epF/7V?=
- =?us-ascii?Q?XSjlPsBhGsh32+CQd3mC6f+6QsxMHLCSRZpW1VGvNvUleTWpfIP3EMzk3B26?=
- =?us-ascii?Q?BokXQHbm9Nk4iEXyP2sndNTxkKkMa35fYZX8KkzuQB7RxmLDvqqRqUJ0m/UB?=
- =?us-ascii?Q?ED/IJF8+DrhlMUKMjd/VSybQQIUYWXfXK00Uiy7LzVFi2uZqsLasXJmqoGyL?=
- =?us-ascii?Q?tOMksM0XGHp8uDbIRcl5YOawVlnLjIy+1AJW0yhGBCM8E+xATGkLV/sI0MnW?=
- =?us-ascii?Q?57JdjMtHY12/OwHSoLiIrdOr4wyX/1fpjeeqAuw0ILV8uHk1c8XADPsrL568?=
- =?us-ascii?Q?lvHSauPDu7oqqEZ9Sit83vaeiHS/sFCpkcae593nRfjW1BfxvF/ItFIncvXr?=
- =?us-ascii?Q?Q3WOgyYzRGah02lVSADqd0T/PyVXGaGfP5ErnyPvlsVOvSjREKjOJmMXTOO0?=
- =?us-ascii?Q?888W9WCYFRC/ukUDcTIqq6SJ1M4DEnH7LwlLF2RhZOnoewEvE8QvzpMgrdso?=
- =?us-ascii?Q?IQ6J+XCc4d8Y8aGqClXf+0otm6+ikRbj/dCerHZx8G+2pof+W0/9ihude7O/?=
- =?us-ascii?Q?lUb5jkjOZGrtu+oRpboHm7YhH1h+cDMhMyv4hKMKxcj2z1DGmSPz3g2l4k7+?=
- =?us-ascii?Q?dv0UnRYbOE93JrOGjGpXjy10acIgO1lqAT8B1tx4bow9iZS3/yWpqXoO8Epi?=
- =?us-ascii?Q?jsk+ksxxsyIHsVrqX0sERRLZddhC9TsCXcMnktTdXFqgWc4LvV8+omNpjKy8?=
- =?us-ascii?Q?dFrDVAagLBjXpMqyqFIXHiZiCV4T2EukclWVoLAHzJFnXpZYmIYU6EWH//i4?=
- =?us-ascii?Q?Manf5s7JYlC9aId2ur19orQBs3ZQy71i3BVWzaX99yPx4x7rBnbJi+yhRK0j?=
- =?us-ascii?Q?UNj12sigWkASOhbieEdI/BC9PWNVDJ42GBv8rffGpRrYngzlrYxnGjYFija1?=
- =?us-ascii?Q?doROePcYF9Wf2T7gnrQWm2zmjcg4hrq24L0htgLDOwBfCGc/XdwQKM+4e3iw?=
- =?us-ascii?Q?k5Z3ucxm4yLVGyV4ech75cGsURUft2wp1QXXhj5CZvfFJPmiqIK3qQEfD+sj?=
- =?us-ascii?Q?J+M1cBfZ0m3qPFLlrnitiNuDozMhsv+k?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 18:13:26.2232
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e2c156b-6243-4a79-0bc9-08dcb18c7902
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB52.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4203
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: lib: remove strscpy test
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Kees Cook <kees@kernel.org>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240725121212.808206-1-usama.anjum@collabora.com>
+ <9d5c0793-e90a-4549-92b1-41ad06b85de6@linuxfoundation.org>
+ <d26b317b-edda-4bb8-a022-912cd1f76b3a@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <d26b317b-edda-4bb8-a022-912cd1f76b3a@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 07:45:46AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Monday, July 29, 2024 7:51 AM
-> >
-> > IOMMU_RESV_SW_MSI is a unique region defined by an IOMMU driver.
-> > Though it
-> > is eventually used by a device for address translation to an MSI location
-> > (including nested cases), practically it is a universal region across all
-> > domains allocated for the IOMMU that defines it.
-> >
-> > Currently IOMMUFD core fetches and reserves the region during an attach to
-> > an hwpt_paging. It works with a hwpt_paging-only case, but might not work
-> > with a nested case where a device could directly attach to a hwpt_nested,
-> > bypassing the hwpt_paging attachment.
+On 7/31/24 02:32, Muhammad Usama Anjum wrote:
+> On 7/31/24 3:37 AM, Shuah Khan wrote:
+>> On 7/25/24 06:11, Muhammad Usama Anjum wrote:
+>>> The strscpy test loads test_strscpy module for testing. But test_strscpy
+>>> was converted to Kunit (see fixes). Hence remove strscpy.
+>>>
+>>> Fixes: 41eefc46a3a4 ("string: Convert strscpy() self-test to KUnit")
+>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>> ---
+>>> Changes since v1:
+>>> - Remove from Makefile and config file as well
+>>> ---
+>>
+>> As mentioned in other threads on this conversion to kunit and removal
+>> of kselfttest - NACK on this patch.
+>>
+>> Please don't send me any more of these conversion and removal patches.
+> This patch is removing a dead kselftest as its corresponding test module
+> was moved years ago (in 2022). This test has been failing since then. It
+> seems like misunderstanding that I'm removing something.
 > 
-> This probably needs a bit more context. IIUC it's the ARM-side choice
-> that instead of letting VMM emulate a vITS for S1 and then map it to
-> physical ITS range in S2 it relies on the kernel to continue the msi
-> cookie reservation in S2 and then expects the guest to identity map
-> it in S1.
-> 
-> With that context if a device is directly attached to a hwpt_nested,
-> hwpt_paging attachment is bypassed including the msi doorbell
-> setup on the parent S2 then it's broken.
 
-Yes. That's exactly the issue. My bad that made it simplified.
 
-> > @@ -364,7 +305,8 @@ int iommufd_hw_pagetable_attach(struct
-> > iommufd_hw_pagetable *hwpt,
-> >       }
-> >
-> >       if (hwpt_is_paging(hwpt)) {
-> > -             rc = iommufd_hwpt_paging_attach(to_hwpt_paging(hwpt),
-> > idev);
-> > +             rc = iopt_table_enforce_dev_resv_regions(
-> > +                             &to_hwpt_paging(hwpt)->ioas->iopt, idev-
-> > >dev);
-> 
-> Is it simpler to extend the original operation to the parent S2 when
-> it's hwpt_nested?
+Thank you for the clarification
 
-Likely. I recall that was what one of our WIP versions did.
+Applied linux-kselftest for Linux 6.12-rc1
 
-> The name iommufd_hwpt_paging_attach() is a bit misleading. The
-> actual work there is all about reservations. It doesn't change any
-> tracking structure about attachment between device and hwpt.
-
-How about iommufd_hwpt_enforce/remove_rr() taking hwpt v.s.
-hwpt_paging.
-
-> The only downside is unnecessarily reserved regions of dev1
-> (attached to hwpt_nested) added to S2 which might be directly
-> attached only by dev2 so the available ranges for dev2 are
-> unnecessarily shrunk.
-> 
-> but I'm not sure that would be a real problem in practice, given
-> 1) there is no usage using up closely the entire IOVA space yet,
-> 2) guest may change the viommu mode to switch between nested
->    and paging then VMM has to take all devices' reserved regions
->    into consideration anyway, when composing the GPA space.
-
-That sounds reasonable to me.
-
-> With that I think continuing this per-device reservation scheme is
-> easier than adding specific reservation for SW_MSI at hwpt creation
-> time and then further requiring check at attach time to verify
-> the attached device is allocated with the same address as the one
-> during allocation.
-
-Jason, do you agree?
-
-Thanks
-Nic
+thanks,
+-- Shuah
 
