@@ -1,72 +1,56 @@
-Return-Path: <linux-kernel+bounces-269863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C01D9437BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:20:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE2C9437B9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:20:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9911C225D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843C2284E7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780D716C6A9;
-	Wed, 31 Jul 2024 21:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E67F161B43;
+	Wed, 31 Jul 2024 21:20:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NZggZsor"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s9yVd2lX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD2516087B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB29516087B;
+	Wed, 31 Jul 2024 21:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722460819; cv=none; b=c4MvotE/OibhCBtEtBGQDNwzrWJgeY2uJ/gYFrjCOCCre5nltbRaKRioahqYX795q0xsElQjm+ymMLpsknf6haTJD6djH1Vm/o7XgpdklDm73IbBJBwY4hYgMRKXohw0LlWFOvJcLLiPOt0vHg/u8Oh7u157SBTbfv+oc/+OYrQ=
+	t=1722460812; cv=none; b=SpicDaHrsGjDb2tm+E2eY6awjkOeSljN11XDe3E8vxx3SB8ImSpPVDnObpm2zkapu8cK/H8BjwHKrdwrHOAqmoKJ/PBH13F3zt0Mje0+EhOLrvXQO10Nl57SbiZf0M5KU31HyC/EQvxOjEgt6CV7gqT/Cd3Xxdzm+PoY/vp/RBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722460819; c=relaxed/simple;
-	bh=1bp15DNfSTpRNqiLCsSX0hzcJSvTv3PoYFAeXRAtMSI=;
+	s=arc-20240116; t=1722460812; c=relaxed/simple;
+	bh=5Fj1Q/lUDhBXjkp75CAf4AT/JrWwYEZL9sY+S+Ln4H8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IbaaaVtfGDvD6ESdvP2DAjX55V0Vafwj+gC5goe9obwT3tu4Meclndpq0MvHcpsGkJT+KOZPKx7DoN8FVncB0sgzpTXzYb8hJETlUr6VmNxrlDvVPxMtmDKPLi6b5g38tgoXmBRssM2PIAS1UFzTlONoXfQWDbgFnjbiOPHsMlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NZggZsor; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=99NOhiHSZH1mHlS99o2GcHjFtFtJkhO9crLjbw6VoOk=; b=NZggZsora5e/55H95gvBGrXXzf
-	mR9NMcMUNRR65B/wT+Q6XUlN9NNzI1JSN8Xw3oQy4PREMV1S2ybiZFwOxajHj72yj7ErUaRWFp00U
-	dUeSUjAWE+NHkZkAUJz3FLHcxBjIRy+sXZ2fSYGVlR9J1v7SjigArKExgvhoVC8QH0gs4n5HLbSwm
-	d7EaayX5XMj710Vv+HARwHQtGrwMul0F34VdPjsi8jMsVz2El6zIbOxVuakI27XzvO/GSN/+mjH9K
-	0QcMmUS9Pr/x9AU9CuGqZzVebxsF3a+scVOzmA+ZlB7Kcy8d4acz0/rnQtL3LZNnmXgAFdx/D8veO
-	anlmUx4A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZGjw-00000005INI-46l6;
-	Wed, 31 Jul 2024 21:20:09 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CB669300820; Wed, 31 Jul 2024 23:20:07 +0200 (CEST)
-Date: Wed, 31 Jul 2024 23:20:07 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@kernel.dk>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Anvin <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: Linux 6.11-rc1
-Message-ID: <20240731212007.GW26599@noisy.programming.kicks-ass.net>
-References: <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
- <20240730193841.GS33588@noisy.programming.kicks-ass.net>
- <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
- <20240731122002.GE33588@noisy.programming.kicks-ass.net>
- <87mslx67dm.ffs@tglx>
- <20240731155551.GF33588@noisy.programming.kicks-ass.net>
- <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
- <20240731163105.GG33588@noisy.programming.kicks-ass.net>
- <20240731165108.GH33588@noisy.programming.kicks-ass.net>
- <87bk2d5v83.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDsV3LNo5s84ix252GYK7GCP4/1krMOU8mDkA7O8oNPPsGkXy/VLfy2foiVCc+ljOVz1XDOPkX4N12pd4YeHG7KukxhmpQItGoD4k2z7wKRX+YA/8uZGpCBFN9pn9qhEN//0u57O8VyvfJ4hZ70FQYwYWgvYdkSl27qRnIe6Oks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s9yVd2lX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB5F3C116B1;
+	Wed, 31 Jul 2024 21:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722460812;
+	bh=5Fj1Q/lUDhBXjkp75CAf4AT/JrWwYEZL9sY+S+Ln4H8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s9yVd2lXbkzILnqi9yLyP/0rumTwOpKdrwEGjipJji17psciiK7ak469kCJhYOZLR
+	 uiYU3C9cIWIBq3JJwhN/OIQpBxAQ2ydaiSR78/XbcOt8wIDs3KkuPgtsVudU/EoAma
+	 HV/BoMPKY8ERxWDf/lpAnXY6FPtHCUHSpO3dDnZXwYv0DEBdsdsh5fKwFJqtVGDSgD
+	 DBRNerbRJYhwuHBRuyMham5jD8yvlTWMSJuB43wOvqGiTHlu67dW6ZyM9cE63pnzxH
+	 wy/JruOuhf4wRaDHZ6MezB7ltIUbsbKLjLR6tlJhr5CzZy4S4CY1Fc4xqTS+2Me9m1
+	 GoKow52eZrq5w==
+Date: Wed, 31 Jul 2024 15:20:10 -0600
+From: Rob Herring <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: alexandre.belloni@bootlin.com, christophe.leroy@csgroup.eu,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
+Message-ID: <20240731212010.GA1918811-robh@kernel.org>
+References: <20240731150420.2217925-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,159 +59,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87bk2d5v83.ffs@tglx>
+In-Reply-To: <20240731150420.2217925-1-Frank.Li@nxp.com>
 
-On Wed, Jul 31, 2024 at 07:26:04PM +0200, Thomas Gleixner wrote:
-> On Wed, Jul 31 2024 at 18:51, Peter Zijlstra wrote:
-> > On Wed, Jul 31, 2024 at 06:31:05PM +0200, Peter Zijlstra wrote:
-> > Thomas, this all still relies on the full text section being PMD mapped,
-> > and since we don't have ALIGN_ENTRY_TEXT_END and _etext has PAGE_SIZE
-> > alignment, can't have a PAGE mapped tail which then doesn't get cloned?
-> >
-> > Do we want to make pto_clone_entry_text() use PTI_LEVEL_KERNEL_IMAGE
-> > such that it will clone whatever it has?
+On Wed, Jul 31, 2024 at 11:04:20AM -0400, Frank Li wrote:
+> Convert dt-binding rcpm from txt to yaml format.
+> Add fsl,ls1028a-rcpm compatible string.
 > 
-> Yes, I think so.
+> Additional changes:
+> - Add missed compatible string fsl,<chip>-rcpm.
+> - Remove map fsl,<chip>-rcpm to fsl,qoriq-rcpm-<version>.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - add missed compatible string
+> - Remove compatible string map table
+> - use oneof Item to align compatible string map table
+> - Fix typo 1045a
+> ---
+>  .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |   2 +-
+>  .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 101 ++++++++++++++++++
+>  .../devicetree/bindings/soc/fsl/rcpm.txt      |  69 ------------
+>  3 files changed, 102 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> index 388102ae30cd8..3ec111f2fdc40 100644
+> --- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> @@ -42,7 +42,7 @@ properties:
+>          minItems: 1
+>      description:
+>        phandle to rcpm node, Please refer
+> -      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> +      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+>  
+>    big-endian:
+>      $ref: /schemas/types.yaml#/definitions/flag
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+> new file mode 100644
+> index 0000000000000..762316ef4d150
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+> @@ -0,0 +1,101 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Run Control and Power Management
+> +
+> +description:
+> +  The RCPM performs all device-level tasks associated with device run control
+> +  and power management.
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,ls1012a-rcpm
+> +              - fsl,ls1021a-rcpm
+> +              - fsl,ls1028a-rcpm
+> +              - fsl,ls1043a-rcpm
+> +              - fsl,ls1045a-rcpm
+> +          - enum:
 
-The alternative is ripping that level thing out entirely, and simply
-duplicate anything we find in the page-tables.
+"const" for the fallbacks.
 
-We could add something like:
+> +              - fsl,qoriq-rcpm-2.1+
 
-	WARN_ON_ONCE(IS_ENABLED(CONFIG_X86_64));
 
-in the PTE path, but do we really care?
+> +        minItems: 1
 
----
---- a/arch/x86/mm/pti.c
-+++ b/arch/x86/mm/pti.c
-@@ -47,16 +47,6 @@
- #define __GFP_NOTRACK	0
- #endif
- 
--/*
-- * Define the page-table levels we clone for user-space on 32
-- * and 64 bit.
-- */
--#ifdef CONFIG_X86_64
--#define	PTI_LEVEL_KERNEL_IMAGE	PTI_CLONE_PMD
--#else
--#define	PTI_LEVEL_KERNEL_IMAGE	PTI_CLONE_PTE
--#endif
--
- static void __init pti_print_if_insecure(const char *reason)
- {
- 	if (boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
-@@ -294,14 +284,7 @@ static void __init pti_setup_vsyscall(vo
- static void __init pti_setup_vsyscall(void) { }
- #endif
- 
--enum pti_clone_level {
--	PTI_CLONE_PMD,
--	PTI_CLONE_PTE,
--};
--
--static void
--pti_clone_pgtable(unsigned long start, unsigned long end,
--		  enum pti_clone_level level)
-+static void pti_clone_pgtable(unsigned long start, unsigned long end)
- {
- 	unsigned long addr;
- 
-@@ -341,7 +324,7 @@ pti_clone_pgtable(unsigned long start, u
- 			continue;
- 		}
- 
--		if (pmd_leaf(*pmd) || level == PTI_CLONE_PMD) {
-+		if (pmd_leaf(*pmd)) {
- 			target_pmd = pti_user_pagetable_walk_pmd(addr);
- 			if (WARN_ON(!target_pmd))
- 				return;
-@@ -375,37 +358,33 @@ pti_clone_pgtable(unsigned long start, u
- 			*target_pmd = *pmd;
- 
- 			addr = round_up(addr + 1, PMD_SIZE);
-+			continue;
-+		}
- 
--		} else if (level == PTI_CLONE_PTE) {
--
--			/* Walk the page-table down to the pte level */
--			pte = pte_offset_kernel(pmd, addr);
--			if (pte_none(*pte)) {
--				addr = round_up(addr + 1, PAGE_SIZE);
--				continue;
--			}
--
--			/* Only clone present PTEs */
--			if (WARN_ON(!(pte_flags(*pte) & _PAGE_PRESENT)))
--				return;
-+		/* Walk the page-table down to the pte level */
-+		pte = pte_offset_kernel(pmd, addr);
-+		if (pte_none(*pte)) {
-+			addr = round_up(addr + 1, PAGE_SIZE);
-+			continue;
-+		}
- 
--			/* Allocate PTE in the user page-table */
--			target_pte = pti_user_pagetable_walk_pte(addr);
--			if (WARN_ON(!target_pte))
--				return;
-+		/* Only clone present PTEs */
-+		if (WARN_ON(!(pte_flags(*pte) & _PAGE_PRESENT)))
-+			return;
- 
--			/* Set GLOBAL bit in both PTEs */
--			if (boot_cpu_has(X86_FEATURE_PGE))
--				*pte = pte_set_flags(*pte, _PAGE_GLOBAL);
-+		/* Allocate PTE in the user page-table */
-+		target_pte = pti_user_pagetable_walk_pte(addr);
-+		if (WARN_ON(!target_pte))
-+			return;
- 
--			/* Clone the PTE */
--			*target_pte = *pte;
-+		/* Set GLOBAL bit in both PTEs */
-+		if (boot_cpu_has(X86_FEATURE_PGE))
-+			*pte = pte_set_flags(*pte, _PAGE_GLOBAL);
- 
--			addr = round_up(addr + 1, PAGE_SIZE);
-+		/* Clone the PTE */
-+		*target_pte = *pte;
- 
--		} else {
--			BUG();
--		}
-+		addr = round_up(addr + 1, PAGE_SIZE);
- 	}
- }
- 
-@@ -475,7 +454,7 @@ static void __init pti_clone_user_shared
- 	start = CPU_ENTRY_AREA_BASE;
- 	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
- 
--	pti_clone_pgtable(start, end, PTI_CLONE_PMD);
-+	pti_clone_pgtable(start, end);
- }
- #endif /* CONFIG_X86_64 */
- 
-@@ -495,8 +474,7 @@ static void __init pti_setup_espfix64(vo
- static void pti_clone_entry_text(void)
- {
- 	pti_clone_pgtable((unsigned long) __entry_text_start,
--			  (unsigned long) __entry_text_end,
--			  PTI_CLONE_PMD);
-+			  (unsigned long) __entry_text_end);
- }
- 
- /*
-@@ -571,7 +549,7 @@ static void pti_clone_kernel_text(void)
- 	 * pti_set_kernel_image_nonglobal() did to clear the
- 	 * global bit.
- 	 */
--	pti_clone_pgtable(start, end_clone, PTI_LEVEL_KERNEL_IMAGE);
-+	pti_clone_pgtable(start, end_clone);
- 
- 	/*
- 	 * pti_clone_pgtable() will set the global bit in any PMDs
+Why? I don't see any .dts files without the fallback.
+
+> +      - items:
+> +          - enum:
+> +              - fsl,p2041-rcpm
+> +              - fsl,p3041-rcpm
+> +              - fsl,p4080-rcpm
+> +              - fsl,p5020-rcpm
+> +              - fsl,p5040-rcpm
+> +          - enum:
+> +              - fsl,qoriq-rcpm-1.0
+> +        minItems: 1
+> +      - items:
+> +          - enum:
+> +              - fsl,b4420-rcpm
+> +              - fsl,b4860-rcpm
+> +              - fsl,t4240-rcpm
+> +          - enum:
+> +              - fsl,qoriq-rcpm-2.0
+> +        minItems: 1
+> +      - items:
+> +          - enum:
+> +              - fsl,t1040-rcpm
+> +          - enum:
+> +              - fsl,qoriq-rcpm-2.1
+> +        minItems: 1
 
