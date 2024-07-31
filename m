@@ -1,171 +1,147 @@
-Return-Path: <linux-kernel+bounces-268912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B5CA942B12
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:45:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BEA942B13
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7CF1F21F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:45:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810DD1F236F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB161A8C12;
-	Wed, 31 Jul 2024 09:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6201A4B47;
+	Wed, 31 Jul 2024 09:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4OuVXCX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ke/9Txiz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C731AAE13;
-	Wed, 31 Jul 2024 09:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B9A18CC18
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722419083; cv=none; b=eAUUuhezlNxqRGW4WZ04u5rPHVw2DI7LRIMGvLLWMh4jTcVBejOnw/hZelDm22VJCx9HmaRC1BetwaQYf82zqM3Hn0pQ01kPNbo9ge6BW3YZTRYFfRJ+Egk7gV777D+8BO7r5KeeOHrnKGctbWi0j0Ms7wcFTQ8G118r76Jdb/0=
+	t=1722419134; cv=none; b=tHZWQA3yPONoGrpI/mPbdmVDLCtDTQyPyP7/AVkJZSZrK+JNZxI3eyF95dehjsp4WzQdnfRR0kEE3dxKHK8SrAiOOaF+W0Yrxw9/CdMdAgVoT6q0usDpsGBuklzjQJtqw+EANWGfVwRiwBNxKStIHyUy3rPTjX/qW0BD7LTvlDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722419083; c=relaxed/simple;
-	bh=crVqC2Bga0UvBn87o71gcZy+LewySJ3ybRAxogOcgDM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AaeqvAFTjXMFCx/VSyv529zyKKGMmzpLFZruqeXe6oP074vDJcJOe6kQRqgSdZv2k0f/Crcp6B41BPfAMNwjXTgB/D8+GxvHXWAYlafwOcjS18e1dKk7w4scTAEBUbxNHdwzWqP1qhLawTuA5HNnR/xOOttEcxTWuM4boTd7gi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4OuVXCX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191E5C116B1;
-	Wed, 31 Jul 2024 09:44:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722419082;
-	bh=crVqC2Bga0UvBn87o71gcZy+LewySJ3ybRAxogOcgDM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d4OuVXCXBt6SvEkK5KyLLZeXT55qi7n4KwEKDICztpk3l0P0ZMUUzMJTguI9PgMty
-	 T9quXSv9q06HAaD/fBdER7Jpyk3eaEsJ6mIS6jWLTFr8ZKLQZlPAPGFzOJtQvpTcX+
-	 7aPktrSyHCAjaOo6cvR1Bd8ps8F/5i05ZQO3KU2RFbYHHzN6PaZhVfDdR5J3ufcT66
-	 r0zeeE4u5p62K/LnflaW4Z/Xdx4LCN2cUNt92MSCfyNj7hqy56Fc08lwTgR6/uRQG3
-	 qLCbm/dVXnl5eWV1QJtQq1qNcBTr/k6rd5fSydppTo4kB4l7lb03Ukz4x9PGbY5ITY
-	 INB0ZIqlHcRAw==
-Message-ID: <178bf399-2a13-4331-bb0d-341fe47ab112@kernel.org>
-Date: Wed, 31 Jul 2024 11:44:36 +0200
+	s=arc-20240116; t=1722419134; c=relaxed/simple;
+	bh=N9cpiHwPH6B/BQy0IXPvykEu79bonXwgSf3iSkoHJ0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eCHtbhAR4iq00N4Kbx2yeHZ3MC0Drkl5LSytFhsjSIfK66NxMXVa1FET5yGotfsUGFQfSLHnq+8oGGDSxWntzEjiNna+VKWZEXGJ4LGPj3cR1Pf79cClzdXwVG+e83h37rr3NDsuIpSe8jAfTokZD3AMVGsIByYGzFuLdepM3UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ke/9Txiz; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722419133; x=1753955133;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=N9cpiHwPH6B/BQy0IXPvykEu79bonXwgSf3iSkoHJ0U=;
+  b=ke/9TxizL9S6DbRGEywMHFUrvnJuf/5mzJfGVKKgbDOfOFOcSTK0+2pF
+   xs4M4wRW0pL1Bc10+3amSZ5zE6DS6nK5kygC7/ll2QyA9xKXBFSYQUoxy
+   Pc58FNOn3E/0bU9wszqd66CHMDgBcVlyCY7ZcG7oMSHoX+IKdohv8ITvd
+   EsSlDgI38F+BAnH+yc2dtrD+JIBfhXEFx5xsX/C4uZfeFURCz0AE1nckj
+   4+B7HPlW/6td9puDH7+ETvOCL/76vOn3J19mvwEWt4H5ivhmgLHb2mDhe
+   2cN/imHxlEQv5aEoV/VOlq4ZntUDzH53G3SZ/i3zVAtV3kmjvZd22sHhO
+   w==;
+X-CSE-ConnectionGUID: pwC2qTzxQqqJ2DNwHyaXtQ==
+X-CSE-MsgGUID: ckQDChbFRT+ODmLS+t6k9Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20234423"
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="20234423"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 02:45:32 -0700
+X-CSE-ConnectionGUID: xhgO8kKTSgius7anbTgDBQ==
+X-CSE-MsgGUID: QbGZUC3DRdiJZCXLjnseTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="85264680"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 31 Jul 2024 02:45:30 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sZ5tf-000u6S-1i;
+	Wed, 31 Jul 2024 09:45:27 +0000
+Date: Wed, 31 Jul 2024 17:44:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Subject: drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:122:16: sparse: sparse:
+ incorrect type in argument 1 (different address spaces)
+Message-ID: <202407311737.VsJ0Sr1w-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
- kukui-jacuzzi-cerise board
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
- <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
- <bb696e60-642f-43f1-9ccf-972e1d839bcd@kernel.org>
- <909d4058-e3e9-4b59-b476-8f78e668c73b@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <909d4058-e3e9-4b59-b476-8f78e668c73b@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 31/07/2024 10:47, AngeloGioacchino Del Regno wrote:
-> Il 31/07/24 10:16, Krzysztof Kozlowski ha scritto:
->> On 31/07/2024 08:26, Hsin-Te Yuan wrote:
->>> Cerise is known as ASUS Chromebook CZ1.
->>> Stern is known as ASUS Chromebook Flip CZ1.
->>>
->>> They are almost identical. The only difference is that Cerise is a
->>> clamshell device without touchscreen and Stern is a convertible device.
->>>
->>> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
->>> ---
->>>   Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
->>>   1 file changed, 14 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
->>> index 1d4bb50fcd8d..087773a43673 100644
->>> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
->>> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
->>> @@ -146,6 +146,20 @@ properties:
->>>           items:
->>>             - const: google,burnet
->>>             - const: mediatek,mt8183
->>> +      - description: Google Cerise (ASUS Chromebook CZ1)
->>> +        items:
->>> +          - enum:
->>> +              - google,cerise-sku0
->>> +              - google,cerise-rev3-sku0
->>> +          - const: google,cerise
->>> +          - const: mediatek,mt8183
->>> +      - description: Google Stern (ASUS Chromebook Flip CZ1)
->>> +        items:
->>> +          - enum:
->>> +              - google,cerise-sku1
->>> +              - google,cerise-rev3-sku1
->>> +          - const: google,cerise
->>
->> Why not google,stern? If this is not compatible with cerise and has
->> different name, I think logical would be to have different compatible -
->> either here or the first one.
->>
-> 
-> They're both compatible, but the commercial names are different because one
-> is convertible, one is not... and the bootloader still checks for cerise
-> even on stern - that's how I read it, and it's not the first time...
-> 
-> ...but it doesn't hurt to have a "google,stern" compatible added to the mix,
-> it's just one more const to add... and I don't have any strong opinion about
-> that, so, Hsin-Te, it's your call. :-)
+Hi Ville,
 
-OK. Such explanations - including that bootloader expect exactly these
-strings - should be in commit msg.
+First bad commit (maybe != root cause):
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e4fc196f5ba36eb7b9758cf2c73df49a44199895
+commit: dc6fcaaba5a5411237d042a26c4d46689f3346bb drm/omap: Allow build with COMPILE_TEST=y
+date:   3 months ago
+config: sh-randconfig-r112-20240731 (https://download.01.org/0day-ci/archive/20240731/202407311737.VsJ0Sr1w-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240731/202407311737.VsJ0Sr1w-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407311737.VsJ0Sr1w-lkp@intel.com/
 
-Best regards,
-Krzysztof
+sparse warnings: (new ones prefixed by >>)
+>> drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:122:16: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int [usertype] *wa_dma_data @@
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:122:16: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:122:16: sparse:     got unsigned int [usertype] *wa_dma_data
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:130:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int [usertype] *wa_dma_data @@
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:130:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:130:9: sparse:     got unsigned int [usertype] *wa_dma_data
+>> drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:414:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *ptr @@     got unsigned int * @@
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:414:9: sparse:     expected void const volatile [noderef] __iomem *ptr
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c:414:9: sparse:     got unsigned int *
+   drivers/gpu/drm/omapdrm/omap_dmm_tiler.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:241:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:241:46: sparse: sparse: self-comparison always evaluates to false
 
+vim +122 drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  101  
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  102  static u32 dmm_read_wa(struct dmm *dmm, u32 reg)
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  103  {
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  104  	dma_addr_t src, dst;
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  105  	int r;
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  106  
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  107  	src = dmm->phys_base + reg;
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  108  	dst = dmm->wa_dma_handle;
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  109  
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  110  	r = dmm_dma_copy(dmm, src, dst);
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  111  	if (r) {
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  112  		dev_err(dmm->dev, "sDMA read transfer timeout\n");
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  113  		return readl(dmm->base + reg);
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  114  	}
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  115  
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  116  	/*
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  117  	 * As per i878 workaround, the DMA is used to access the DMM registers.
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  118  	 * Make sure that the readl is not moved by the compiler or the CPU
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  119  	 * earlier than the DMA finished writing the value to memory.
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  120  	 */
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  121  	rmb();
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26 @122  	return readl(dmm->wa_dma_data);
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  123  }
+f5b9930b85dc63 Tomi Valkeinen 2018-09-26  124  
+
+:::::: The code at line 122 was first introduced by commit
+:::::: f5b9930b85dc6319fd6bcc259e447eff62fc691c drm/omap: partial workaround for DRA7xx DMM errata i878
+
+:::::: TO: Tomi Valkeinen <tomi.valkeinen@ti.com>
+:::::: CC: Tomi Valkeinen <tomi.valkeinen@ti.com>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
