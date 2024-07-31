@@ -1,354 +1,103 @@
-Return-Path: <linux-kernel+bounces-268854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA58942A45
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:21:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0922942A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A53CB24337
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:21:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF2C284B1C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2171AAE2F;
-	Wed, 31 Jul 2024 09:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981211552FE;
+	Wed, 31 Jul 2024 09:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b="rMxo0eVQ"
-Received: from relay-us1.mymailcheap.com (relay-us1.mymailcheap.com [51.81.35.219])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JoYvkrUK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZubrFjMK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E631A76D1;
-	Wed, 31 Jul 2024 09:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.35.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 639871A4B47;
+	Wed, 31 Jul 2024 09:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722417667; cv=none; b=FSrEp5R6hm4/pY6CBx/Qy9dN/ilGH7X76cJaAbaoNohN0tiUZD2m/xAKv77FTUmaEb3I0oAUei2Rj7kLgyb2B1AlV01F8/pXcxtOFGHa9YYb0pSAKImBPAf5IvzRZp8pi60RbqjmRHTfmrqmJghznOPzQ0DKzkmJrpYl3bGH/c8=
+	t=1722417309; cv=none; b=oEHMOmJRI2FhQrkPUfYzvgYhb1kV2xWfSRxjBl4xtbgljZwrK3rxd7i5SqRtPUFwT5Ml3HSptN98Cy8CxbUmsdsHBXNOtfWUMXfzvjK0MEo4B7TAEbYUet+v1DVqjhqO8hNJGL5oHaLmly8W1fzBpZ31J6IMHbZ6nsbxEG9mA6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722417667; c=relaxed/simple;
-	bh=3+vM12SWlc1ny4Y/bpC01kRYAc71CKZmegr4wNVXjg0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=lUYRpqxxnyoy+WMSVzg/q5T8vOofejILeNZFp+NCUCjMYmjuHlJypgx9k5+GuZK1UZl8NSHQoY5tpoiZL+8q31f4q0kLin2QqIBeWmApM9JMC2PrwViggH3vRHp9sVkDbHvDo3rmpEmhMAquBx0QgdiNEjUaehrtVi1zB1gdTak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io; spf=pass smtp.mailfrom=aosc.io; dkim=pass (1024-bit key) header.d=aosc.io header.i=@aosc.io header.b=rMxo0eVQ; arc=none smtp.client-ip=51.81.35.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aosc.io
-Received: from relay5.mymailcheap.com (relay5.mymailcheap.com [159.100.241.64])
-	by relay-us1.mymailcheap.com (Postfix) with ESMTPS id A45D520A2F;
-	Wed, 31 Jul 2024 09:15:06 +0000 (UTC)
-Received: from relay1.mymailcheap.com (relay1.mymailcheap.com [149.56.97.132])
-	by relay5.mymailcheap.com (Postfix) with ESMTPS id AAEA020C63;
-	Wed, 31 Jul 2024 09:14:57 +0000 (UTC)
-Received: from nf2.mymailcheap.com (nf2.mymailcheap.com [54.39.180.165])
-	by relay1.mymailcheap.com (Postfix) with ESMTPS id A0FBD3E84A;
-	Wed, 31 Jul 2024 09:14:50 +0000 (UTC)
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	by nf2.mymailcheap.com (Postfix) with ESMTPSA id 1D980400AD;
-	Wed, 31 Jul 2024 09:14:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aosc.io; s=default;
-	t=1722417288; bh=3+vM12SWlc1ny4Y/bpC01kRYAc71CKZmegr4wNVXjg0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rMxo0eVQJLHcGAh9yqrjtbwHghplROA18UuOhMlkgnTJgNAeHpzt+9Kd948RlOaYY
-	 i9J1hLJnibW6x45Q8lwY+WC8id1ryHe5waJbke4FLSkJEXkma/+Si/Vz+YeOzjiH37
-	 9+mc+qvw9hWA7dKgthq+AWrTy3vA+61Ec0dfidQ8=
-Received: from mail20.mymailcheap.com (mail20.mymailcheap.com [51.83.111.147])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail20.mymailcheap.com (Postfix) with ESMTPSA id 4A13840A78;
-	Wed, 31 Jul 2024 09:14:48 +0000 (UTC)
+	s=arc-20240116; t=1722417309; c=relaxed/simple;
+	bh=gFTnTwR+J8LI8I4tt5wK4A63nLdZhz9S4T6KkipPYX4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Zno9x8z3LpC9hCiarlGxTtI6cY0nXiYHHgSCKzULtu3BzViK8Q1LJvrXmtOCaPfGfObehkMfrsQ0Dt3RS6YESOTfPhaYVWRMqd8e7+hweax3WSfB3AYgtl4+jKLHmRvQSe0x6HePnbBlJ0PaKs7q+N/S7U/Kq2bqwD97cLva3Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JoYvkrUK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZubrFjMK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722417306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hNGWZZ5ZQKrAynm2JoLziPZQiNLOegDYK5Oz85U3bzA=;
+	b=JoYvkrUK9bl9Xry93jw39ahjcIcjSiolR/z+Ozgo8290m1rW2k0RCFDbe96k8y2Zwq5bNR
+	gCYXVNk5odCTEoj6xoo7u43vvrIm6UsPOOk0BKBO7owCgnCYowKVhiYIkwLR00RSOxQsy8
+	2OCy7IkrBKne7NDoFrGWE3jZCgzn7xc9AZQ85Sj4lDBsN/v8hcRgR4ogw/9XjYSq23sD3y
+	KOwsJ9kjc9wDFKpW0PEPcB0QWP7/paC1wFUCC95sgriKRFh68IpQsUHKnHfOphyYboNNS6
+	RtrhDpJ7sp/K20t95xH6K0zrmxnpOCAkfJ5EfLWMLgbsz0HUzYEDUmHLh0vYJw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722417306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hNGWZZ5ZQKrAynm2JoLziPZQiNLOegDYK5Oz85U3bzA=;
+	b=ZubrFjMKtjGonD/DvEWn82TfhmSaYYOKHVTimUeiK5D34/6+X0iIX1mYj2P+hSTUHWi9fk
+	uhRUIC+l5vrr5/BQ==
+To: 20240621164406.256314-1-kirill.shutemov@linux.intel.com,
+ kirill.shutemov@linux.intel.com
+Cc: ardb@kernel.org, bp@alien8.de, brijesh.singh@amd.com, corbet@lwn.net,
+ dave.hansen@linux.intel.com, hpa@zytor.com, jan.kiszka@siemens.com,
+ jgross@suse.com, kbingham@kernel.org, linux-doc@vger.kernel.org,
+ linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, luto@kernel.org, michael.roth@amd.com,
+ mingo@redhat.com, peterz@infradead.org, rick.p.edgecombe@intel.com,
+ sandipan.das@amd.com, thomas.lendacky@amd.com, x86@kernel.org
+Subject: Re: [PATCH 0/3] x86: Make 5-level paging support unconditional for
+ x86-64
+In-Reply-To: <80734605-1926-4ac7-9c63-006fe3ea6b6a@amd.com>
+References: <80734605-1926-4ac7-9c63-006fe3ea6b6a@amd.com>
+Date: Wed, 31 Jul 2024 11:15:05 +0200
+Message-ID: <87wml16hye.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 31 Jul 2024 17:14:47 +0800
-From: Mingcong Bai <jeffbai@aosc.io>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: pbonzini@redhat.com, corbet@lwn.net, zhaotianrui@loongson.cn,
- maobibo@loongson.cn, chenhuacai@kernel.org, kernel@xen0n.name,
- kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, guanwentao@uniontech.com, Xianglai Li
- <lixianglai@loongson.cn>
-Subject: Re: [PATCH] Loongarch: KVM: Add KVM hypercalls documentation for
- LoongArch
-In-Reply-To: <04DAF94279B88A3F+20240731055755.84082-1-wangyuli@uniontech.com>
-References: <04DAF94279B88A3F+20240731055755.84082-1-wangyuli@uniontech.com>
-Message-ID: <5c338084b1bcccc1d57dce9ddb1e7081@aosc.io>
-X-Sender: jeffbai@aosc.io
-Organization: Anthon Open Source Community
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: nf2.mymailcheap.com
-X-Spamd-Result: default: False [-0.10 / 10.00];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	ASN(0.00)[asn:16276, ipnet:51.83.0.0/16, country:FR];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_ONE(0.00)[1];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	HAS_ORG_HEADER(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 1D980400AD
+Content-Type: text/plain
 
-Hi Yuli,
+On Wed, Jul 31 2024 at 14:27, Shivank Garg wrote:
+> lmbench:lat_pagefault: Metric- page-fault time (us) - Lower is better
+>                 4-Level PT              5-Level PT		% Change
+> THP-never       Mean:0.4068             Mean:0.4294		5.56
+>                 95% CI:0.4057-0.4078    95% CI:0.4287-0.4302
+>
+> THP-Always      Mean: 0.4061            Mean: 0.4288		% Change
+>                 95% CI: 0.4051-0.4071   95% CI: 0.4281-0.4295	5.59
+>
+> Inference:
+> 5-level page table shows increase in page-fault latency but it does
+> not significantly impact other benchmarks.
 
-Thanks for submitting this documentation. I have just a couple 
-suggestions on prose and grammar. Please see below.
+5% regression on lmbench is a NONO.
 
-在 2024-07-31 13:57，WangYuli 写道：
-> From: Bibo Mao <maobibo@loongson.cn>
-> 
-> Add documentation topic for using pv_virt when running as a guest
-> on KVM hypervisor.
-> 
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> Signed-off-by: Xianglai Li <lixianglai@loongson.cn>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  Documentation/virt/kvm/index.rst              |  1 +
->  .../virt/kvm/loongarch/hypercalls.rst         | 79 +++++++++++++++++++
->  Documentation/virt/kvm/loongarch/index.rst    | 10 +++
->  MAINTAINERS                                   |  1 +
->  4 files changed, 91 insertions(+)
->  create mode 100644 Documentation/virt/kvm/loongarch/hypercalls.rst
->  create mode 100644 Documentation/virt/kvm/loongarch/index.rst
-> 
-> diff --git a/Documentation/virt/kvm/index.rst 
-> b/Documentation/virt/kvm/index.rst
-> index ad13ec55ddfe..9ca5a45c2140 100644
-> --- a/Documentation/virt/kvm/index.rst
-> +++ b/Documentation/virt/kvm/index.rst
-> @@ -14,6 +14,7 @@ KVM
->     s390/index
->     ppc-pv
->     x86/index
-> +   loongarch/index
-> 
->     locking
->     vcpu-requests
-> diff --git a/Documentation/virt/kvm/loongarch/hypercalls.rst 
-> b/Documentation/virt/kvm/loongarch/hypercalls.rst
-> new file mode 100644
-> index 000000000000..1679e48d67d2
-> --- /dev/null
-> +++ b/Documentation/virt/kvm/loongarch/hypercalls.rst
-> @@ -0,0 +1,79 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===================================
-> +The LoongArch paravirtual interface
-> +===================================
-> +
-> +KVM hypercalls use the HVCL instruction with code 0x100, and the 
-> hypercall
-> +number is put in a0 and up to five arguments may be placed in a1-a5, 
-> the
-> +return value is placed in v0 (alias with a0).
+5-level page tables add a cost in every hardware page table walk. That's
+a matter of fact and there is absolutely no reason to inflict this cost
+on everyone.
 
-The original paragraph can be split into a few sentences for better 
-readability:
+The solution to this to make the 5-level mechanics smarter by evaluating
+whether the machine has enough memory to require 5-level tables and
+select the depth at boot time.
 
-"KVM hypercalls use the HVCL instruction with code 0x100 and the 
-hypercall number is put in a0. Up to five arguments may be placed in 
-registers a1 - a5. The return value is placed in v0 (an alias of a0)."
+Thanks,
 
-Not sure if "HVCL instruction with code 0x100" is a proper expression, 
-so I have left it alone (I'm a little suspicious). Others are welcome to 
-comment on this.
-
-> +
-> +The code for that interface can be found in arch/loongarch/kvm/*
-
-It would seem that this sentence (or rather the components and 
-structures of this whole documentation?) was borrowed from 
-Documentation/virt/kvm/ppc-pv.rst. But nevertheless:
-
-"Source code for this interface can be found in arch/loongarch/kvm*."
-
-> +
-> +Querying for existence
-> +======================
-> +
-> +To find out if we're running on KVM or not, cpucfg can be used with 
-> index
-> +CPUCFG_KVM_BASE (0x40000000), cpucfg range between 0x40000000 - 
-> 0x400000FF
-> +is marked as a specially reserved range. All existing and future 
-> processors
-> +will not implement any features in this range.
-
-Again, please consider splitting up the sentences:
-
-"We can use cpucfg() at index CPUCFG_KVM_BASE (0x40000000) to query 
-whether the host is running on KVM. The CPUCPU_KVM_BASE range between 
-0x40000000 - 0x400000FF is marked as reserved - all existing and future 
-processors will not implement any features in this range."
-
-> +
-> +When Linux is running on KVM, cpucfg with index CPUCFG_KVM_BASE 
-> (0x40000000)
-> +returns magic string "KVM\0"
-
-When the Linux host is running on KVM, a read on cpucfg() at index 
-CPUCFG_KVM_BASE (0x40000000) returns a magic string "KVM\0".
-
-> +
-> +Once you determined you're running under a PV capable KVM, you can now 
-> use
-> +hypercalls as described below.
-
-Once you have determined that your host is running on a 
-paravirtualization-capable KVM, you may now use hypercalls as described 
-below.
-
-> +
-> +KVM hypercall ABI
-> +=================
-> +
-> +Hypercall ABI on KVM is simple, only one scratch register a0 (v0) and 
-> at most
-> +five generic registers used as input parameter. FP register and vector 
-> register
-> +is not used for input register and should not be modified during 
-> hypercall.
-> +Hypercall function can be inlined since there is only one scratch 
-> register.
-
-"The KVM hypercall ABI is simple, with one scratch register a0 (v0) and 
-at most five generic registers (a1 - a5) used as input parameters. The 
-FP and vector registers are not used as input registers and should not 
-be modified in a hypercall. Hypercall functions can be inlined, as there 
-is only one scratch register."
-
-It is recommended to define what the "The FP and vector registers" are 
-with parentheses.
-
-> +
-> +The parameters are as follows:
-> +
-> +        ========	================	================
-> +	Register	IN			OUT
-> +        ========	================	================
-> +	a0		function number		Return code
-
-Function index?
-
-> +	a1		1st parameter		-
-> +	a2		2nd parameter		-
-> +	a3		3rd parameter		-
-> +	a4		4th parameter		-
-> +	a5		5th parameter		-
-> +        ========	================	================
-> +
-> +Return codes can be as follows:
-
-The return codes may be one of the following:
-
-> +
-> +	====		=========================
-> +	Code		Meaning
-> +	====		=========================
-> +	0		Success
-> +	-1		Hypercall not implemented
-> +	-2		Hypercall parameter error
-
-Bad hypercall parameter
-
-> +	====		=========================
-> +
-> +KVM Hypercalls Documentation
-> +============================
-> +
-> +The template for each hypercall is:
-
-"The template for each hypercall is as follows:"
-
-Also, please consider adding a blank line here (though it probably 
-doesn't matter once rendered, but it would make the plain text more 
-readable).
-
-> +1. Hypercall name
-> +2. Purpose
-> +
-> +1. KVM_HCALL_FUNC_PV_IPI
-> +------------------------
-> +
-> +:Purpose: Send IPIs to multiple vCPUs.
-> +
-> +- a0: KVM_HCALL_FUNC_PV_IPI
-> +- a1: lower part of the bitmap of destination physical CPUIDs
-
-Lower part of the bitmap for destination physical CPUIDs.
-
-> +- a2: higher part of the bitmap of destination physical CPUIDs
-
-Ditto, please capitalize the first letter after ":" and use "for" before 
-"destination physical CPUIDs".
-
-> +- a3: the lowest physical CPUID in bitmap
-
-The lowest physical CPUID in the bitmap.
-
-> +
-> +The hypercall lets a guest send multicast IPIs, with at most 128
-> +destinations per hypercall.  The destinations are represented by a 
-> bitmap
-> +contained in the first two arguments (a1 and a2). Bit 0 of a1 
-> corresponds
-> +to the physical CPUID in the third argument (a3), bit 1 corresponds to 
-> the
-> +physical ID a3+1, and so on.
-
-Cleaning up sentences and dropping inconsistent expressions (such as 
-"argument registers", which was never brought up before). I would 
-recommend making them all consistent throughout by classifying a0 and a1 
-- a5.
-
-The hypercall lets a guest send multiple IPIs (Inter-Process Interrupts) 
-with at most 128 destinations per hypercall. The destinations are 
-represented in a bitmap contained in the first two input registers (a1 
-and a2). Bit 0 of a1 corresponds to the physical CPUID in the third 
-input register (a3) and bit 1 corresponds to the physical CPUID in a3+1 
-(a4), and so on.
-
-> diff --git a/Documentation/virt/kvm/loongarch/index.rst 
-> b/Documentation/virt/kvm/loongarch/index.rst
-> new file mode 100644
-> index 000000000000..83387b4c5345
-> --- /dev/null
-> +++ b/Documentation/virt/kvm/loongarch/index.rst
-> @@ -0,0 +1,10 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=========================
-> +KVM for LoongArch systems
-> +=========================
-> +
-> +.. toctree::
-> +   :maxdepth: 2
-> +
-> +   hypercalls.rst
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 958e935449e5..8aa5d92b12ee 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12073,6 +12073,7 @@ L:	kvm@vger.kernel.org
->  L:	loongarch@lists.linux.dev
->  S:	Maintained
->  T:	git git://git.kernel.org/pub/scm/virt/kvm/kvm.git
-> +F:	Documentation/virt/kvm/loongarch/
->  F:	arch/loongarch/include/asm/kvm*
->  F:	arch/loongarch/include/uapi/asm/kvm*
->  F:	arch/loongarch/kvm/
-
-Best Regards,
-Mingcong Bai
+        tglx
 
