@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-269587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E82394348B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:57:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C94F0943493
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:59:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A650285196
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC34286403
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:59:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9D51BD4E4;
-	Wed, 31 Jul 2024 16:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317F51BD038;
+	Wed, 31 Jul 2024 16:58:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQCYv/UR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFmpArsf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D99E1BD028;
-	Wed, 31 Jul 2024 16:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AB612B93;
+	Wed, 31 Jul 2024 16:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722445052; cv=none; b=m2ONnnB5Kz+Ka0EcBWlXoJbKZ8wzEctZwPkr+u/iK7KByVm1TpgVW7OQQO07yc0vlXmhEo/bpwISUpdzV+sEmEHt5tEWKdWXTqEix8RvgcpreyqfAG+82B+ufYyAvrWddy2WKyds5N5lxH6VkdFKyg25brZ8J8r75JwRZjdkW7w=
+	t=1722445132; cv=none; b=p4wpp0gl9uGb7ZtSCdX2SpXkSq3St2ZFet01dzdFwlbNI6DniiOu72qZj6PogQy8woj7s3eJQ1wzfmcUoUwtcvKtOdizIcsrHZ6r+NuuXt7Yr5yQOtgXZuGfooj62Jqx3pBQrQfy5yEby+4pOtuORj3T2ysEa/6KbU0ePDUjiR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722445052; c=relaxed/simple;
-	bh=4JVBq4IUjQWBxC57gsXSdirCzZujW6Prh3HsrVDqnDg=;
+	s=arc-20240116; t=1722445132; c=relaxed/simple;
+	bh=fV2uUlnN5HtdGjeA+Eg6mzoArO5TgeZybB976lohHLU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=idgUfgap61oM/Dxqx7miENKypaEfHGPn4DaF5m76TMh9h2zdNoiKSWKhZ1pSWSQwvFJ4QsR3tWdMiLOKojyQ1tqaIGW9Urn0Om7VzrTHGnjAFs5bRDKETy9ftdkSQFjweBsxwCnwoU6rjTEka3clZjerPt4BNGjp3yUW3SxS0rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQCYv/UR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9595CC4AF09;
-	Wed, 31 Jul 2024 16:57:29 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=J1FwC5BLCgo8L5uURNB7qng3vujj45GBA0i/64GMxGFfSlUPv874weHvPrQtDRBbvB+qofeCtUSTe8loYv4Yn4M9qriDzpk3x8gEbN7WR1NELkVQnGorBRfLqatnuKva2cGizrUjrofUaBB49vcIB8OhTQC8XI+OZJyswF5VUA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFmpArsf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A715C116B1;
+	Wed, 31 Jul 2024 16:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722445052;
-	bh=4JVBq4IUjQWBxC57gsXSdirCzZujW6Prh3HsrVDqnDg=;
+	s=k20201202; t=1722445132;
+	bh=fV2uUlnN5HtdGjeA+Eg6mzoArO5TgeZybB976lohHLU=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dQCYv/UR9h2ihREXVp5qom4r5BCP8S1RW6MYZCzHEPSiqUgHp21oFv9Ml7DyHT2ts
-	 Ewo0wM4nyFrKXgLnY08912FnuMwsE+Kc4NA/xcsA5S/DoVM2OAitq7gya8qTHaaCiH
-	 aajsvHWZ9a+Wvs6KpTBjPB2Ht6M8UrESYIaX6FrSco0N+Q9gRx1ffjVJ7XoIxbQsJK
-	 8eT/Ah/rJmqS6Vi3gKxS7JySozjmZR6RoCTvBWi0Vy5T3AhhmG2rM3L8ME4kUMillK
-	 iD3pWXR4X5nh/UyL+Q7bTb05QotFajNk6kY3slgMxj79P3fktt2h0UAuwOObEpxCwh
-	 ajhpUvlGCUWRA==
-Message-ID: <f032dd83-8e5d-4062-b8a7-ef98924ac9b4@kernel.org>
-Date: Wed, 31 Jul 2024 18:57:27 +0200
+	b=nFmpArsfu10ex2Mh/08kg4RPfnlRHkcrlWy112BzLMf83mUeLAnrE85gGevMGdfCh
+	 HwFdx+cARnLs+8CTRfx5DL73CrLvCnOqsQw2xwp/6qQ5frB05hjqFsljJYPK5assod
+	 zur5jJroZ8M79Gr4FtBfdo+TmTE0VCkJPz/cPCx7M4vJuynlhMCRqIaLKJkjp3X6+C
+	 w/sAYTvpCeRpA7dkiRGJIcil+9G+QTBg3Hy2Gufv1K4YMV7WbHoJGsaDoPrp8s1Gw2
+	 kiIto1JJ4UJAUBLPThzex9kI7KmhQl7wIrzeNWXdovF9DCRNqxMRfaqaOemEXrhA3L
+	 +1vEeYQSua5OQ==
+Message-ID: <186bc509-c0eb-4c60-a65f-99e773c151fb@kernel.org>
+Date: Wed, 31 Jul 2024 18:58:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 36/37] kvx: dts: DeviceTree for qemu emulated
- Coolidge SoC
-To: Yann Sionneau <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Jonathan Borne <jborne@kalrayinc.com>,
- Julian Vetter <jvetter@kalrayinc.com>, devicetree@vger.kernel.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-37-ysionneau@kalrayinc.com>
- <d93f93fa-bbc8-4b89-9abc-767486bc443c@kernel.org>
- <434c5199-613e-4765-af44-d7404a4554dc@kalrayinc.com>
+Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
+To: Trevor Gamblin <tgamblin@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Lechner <dlechner@baylibre.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
+ <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
+ <387b4028-7f8a-46df-a7f1-168d1700074d@kernel.org>
+ <996e975f-89ad-413e-b051-b55899d4f20f@baylibre.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,196 +110,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <434c5199-613e-4765-af44-d7404a4554dc@kalrayinc.com>
+In-Reply-To: <996e975f-89ad-413e-b051-b55899d4f20f@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/07/2024 17:38, Yann Sionneau wrote:
-
->>
->>> +	#size-cells = <0x02>;
->>> +
->>> +	chosen {
->>> +		stdout-path = "/axi/serial@20210000";
->> No, use phandle/label.
-> Ack, I will fix this. However can you point me to where this is documented? In https://www.kernel.org/doc/Documentation/devicetree/bindings/chosen.txt I can see a path is used as example and not a phandle/label.
-
-That's just sanity and common (maybe except Tegra) style... Almost every
-source uses this, because it gives you code which is independent of node
-ordering, node names and unit addresses.
-
-What if I change in next patch axi->soc, how usually we code it?
-
-Override by label/phandle was mentioned many times on mailing lists as
-preferred.
-
->>
->>> +	};
->>> +
->>> +	memory@100000000 {
->>> +		phandle = <0x40>;
->>> +		reg = <0x01 0x00 0x00 0x8000000>;
->>> +		device_type = "memory";
->>> +	};
->>> +
->>> +	axi {
->>> +		compatible = "simple-bus";
->>> +		#address-cells = <0x02>;
->> Same problem.
-> Ack.
->>
->>
->>> +		#size-cells = <0x02>;
->>> +		ranges;
->>> +
->>> +		virtio-mmio@30003c00 {
->> Node names should be generic. See also an explanation and list of
->> examples (not exhaustive) in DT specification:
->> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+On 31/07/2024 17:22, Trevor Gamblin wrote:
 > 
-> I fail to understand what I should put even after reading the link above. This node is kind of "generic" and could be used either for a virtio-block device or a virtio-net device.
-> 
-> Could you elaborate on this please?
+> On 2024-07-31 10:11 a.m., Krzysztof Kozlowski wrote:
+>> On 31/07/2024 15:48, Trevor Gamblin wrote:
+>>> This adds a binding specification for the Analog Devices Inc. AD7625,
+>>> AD7626, AD7960, and AD7961 ADCs.
+>> Please do not use "This commit/patch/change", but imperative mood. See
+>> longer explanation here:
+>> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+> Will do.
+>>
+>> Why this is not ready, but RFC? What exactly needs to be commented here?
+> There's one outstanding question about whether or not there should be a 
+> DT property for specifying whether DCO+/- lines are connected (mentioned 
+> in the cover letter but not here). I guess it doesn't need to be an RFC 
+> just for that.
 
-Just go with virtio.
-
-> 
->>
->>
->>> +			compatible = "virtio,mmio";
->>> +			reg = <0x00 0x30003c00 0x00 0x200>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			interrupts = <0x9e 0x04>;
->>> +		};
->>> +
->>> +		virtio-mmio@30003e00 {
->>> +			compatible = "virtio,mmio";
->>> +			reg = <0x00 0x30003e00 0x00 0x200>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			interrupts = <0x9f 0x04>;
->>> +		};
->>> +
->>> +		itgen0: itgen_soc_periph0@27000000 {
->> Please follow DTS coding style.
-> Oops, ack, I will fix this and replace "_" with "-" in node/property names.
->>
->>> +			compatible = "kalray,coolidge-itgen";
->>> +			reg = <0x00 0x27000000 0x00 0x1104>;
->>> +			msi-parent = <&apic_mailbox>;
->>> +			#interrupt-cells = <0x02>;
->>> +			interrupt-controller;
->>> +		};
->>> +
->>> +		serial@20210000 {
->>> +			reg-shift = <0x02>;
->>> +			reg-io-width = <0x04>;
->> Sorry, but width and shift are rarely hex values. Make your code
->> readable. Adhere to existing coding style.
-> Ack, I will fix this.
->>
->>
->>> +			clocks = <&ref_clk>;
->>> +			interrupts = <0x29 0x04>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			reg = <0x00 0x20210000 0x00 0x100>;
->>> +			compatible = "snps,dw-apb-uart";
->> Follow DTS coding style - order the properties correctly.
-> Oops, ack, I will fix this.
->>
->>
->>> +		};
->>> +
->>> +		serial@20211000 {
->>> +			reg-shift = <0x02>;
->>> +			reg-io-width = <0x04>;
->>> +			phandle = <0x3c>;
->>> +			clocks = <&ref_clk>;
->>> +			interrupts = <0x2a 0x04>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			reg = <0x00 0x20211000 0x00 0x100>;
->>> +			compatible = "snps,dw-apb-uart";
->>> +		};
->>> +
->>> +		serial@20212000 {
->>> +			reg-shift = <0x02>;
->>> +			reg-io-width = <0x04>;
->>> +			phandle = <0x3b>;
->>> +			clocks = <&ref_clk>;
->>> +			interrupts = <0x2b 0x04>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			reg = <0x00 0x20212000 0x00 0x100>;
->>> +			compatible = "snps,dw-apb-uart";
->>> +		};
->>> +
->>> +		serial@20213000 {
->>> +			reg-shift = <0x02>;
->>> +			reg-io-width = <0x04>;
->>> +			phandle = <0x3a>;
->>> +			clocks = <&ref_clk>;
->>> +			interrupts = <0x2c 0x04>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			reg = <0x00 0x20213000 0x00 0x100>;
->>> +			compatible = "snps,dw-apb-uart";
->>> +		};
->>> +
->>> +		serial@20214000 {
->>> +			reg-shift = <0x02>;
->>> +			reg-io-width = <0x04>;
->>> +			phandle = <0x39>;
->>> +			clocks = <&ref_clk>;
->>> +			interrupts = <0x2d 0x04>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			reg = <0x00 0x20214000 0x00 0x100>;
->>> +			compatible = "snps,dw-apb-uart";
->>> +		};
->>> +
->>> +		serial@20215000 {
->>> +			reg-shift = <0x02>;
->>> +			reg-io-width = <0x04>;
->>> +			phandle = <0x38>;
->>> +			clocks = <&ref_clk>;
->>> +			interrupts = <0x2e 0x04>;
->>> +			interrupt-parent = <&itgen0>;
->>> +			reg = <0x00 0x20215000 0x00 0x100>;
->>> +			compatible = "snps,dw-apb-uart";
->>> +		};
->>> +	};
->>> +
->>> +	memory@0 {
->> Why memory is in multiple places?
-> I should put all memory nodes one after another? Ok I will do this.
->>
->>> +		device_type = "memory";
->>> +		reg = <0x00 0x00 0x00 0x400000>;
->>> +	};
->>> +
->>> +	apic_mailbox: apic_mailbox@a00000 {
->> Why this is outside of SoC? Where is the SoC anyway?
-> 
-> Oops, I didn't know it was mandatory to put a soc { } in the DT, I've browsed the DT spec and the "soc" node is not formally described as something special. Maybe this needs to be documented somewhere?
-> 
-> I reckon it's a nice way to separate what's on the board (PCB) and what's in the SoC.
-> 
-> I'll add a `soc { [...] };` in the next patch iteration that will contain what's in the SoC.
-
-Coding style, emails, all new DTS since some years or talks on numerous
-conferences... All this code looks like you took some vendor downstream
-code and sent it. That's not how it works. You take recent, reviewed DTS
-and use it as template. Qualcomm sm8650 or x1e8010 are good examples.
-
-> 
->>
->>> +		compatible = "kalray,coolidge-apic-mailbox";
->> Your compatibles are confusing. What is the soc name? In other binding
->> you entirely omitted coolidge. See writing bindings (or any other recent
->> DTS which passed review) - it has rationale behind it.
-> 
-> SoC name is "Coolidge" and the "APIC Mailbox" hw is in the SoC, it is memory mapped.
-> 
-> But I guess this point is now already more clear since my last emails answering the "core intc" reviews.
-> 
->>
-
+RFC means patch is not ready for review and you just ask for some
+comments. Some maintainers even ignore RFC and wait till you send
+something ready.
 
 Best regards,
 Krzysztof
