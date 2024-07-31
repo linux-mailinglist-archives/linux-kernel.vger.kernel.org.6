@@ -1,90 +1,120 @@
-Return-Path: <linux-kernel+bounces-269778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBBE39436C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:57:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C4A9436CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:59:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D131C2151A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:57:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0AC8284B56
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9429E14F125;
-	Wed, 31 Jul 2024 19:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DB0160860;
+	Wed, 31 Jul 2024 19:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vFeHM6hQ"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ViktmJ9O"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5B5DF53
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224E0446DC;
+	Wed, 31 Jul 2024 19:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722455831; cv=none; b=QGji6dWoF7qMESrlrzAGspdNsW6UydSGg7OJAXH3R4dyZV0B8s/M+Eqe9qUsJbDnSqWbkPcGe/0DdA1FaOTIdI1sHFLfuIFET0zVCOcc67PWcD9t/w7s7odw+QVrBu8WNuPomivRntDrSQKldyB/9YVb1w5/sVqgPWiwlxFZcbk=
+	t=1722455941; cv=none; b=q00Z1GPG3eMIM2Jlst4ryHBneAyl/+kY08OBLdIrHP2Bo7/j2Ju/BaCHT6CcamV/j2iNS9OIWR/t1hdu1hlf9Oma1k8otPAhU8aVHh9xLWQ7kUGe7c2YPoeFbtCIeuobvFEp5pAAazzTVhMMGMu3tXmW9ZD241J2qJOjuJl241c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722455831; c=relaxed/simple;
-	bh=xqFUR2hlr0Rt/DfOJxtN0G0ZmV0JHjUDEpB0WWaRTpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pAhcpXfgLuPAKylTyBTtmIK9Q0qiZPF/vKTEwyaCsL3XTAdzZP5cJXxh0nMbsIYFFKpcPfBqdY7PWQSBIYbDbY/v5rlbyNVpwQuU4eQjAVw+E0FzGHXRdBG+vYK4oGUP5h+fC6pQa9ZdCkdK/WznBRoGhbyD0Pqv73fp2nJnRgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vFeHM6hQ; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso22640a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722455829; x=1723060629; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xqFUR2hlr0Rt/DfOJxtN0G0ZmV0JHjUDEpB0WWaRTpU=;
-        b=vFeHM6hQczrfAeMQS3+qb0OBRPk1rRfixNSDpMzw5fCHI+3u5oOR+pJ4I1742g4lJi
-         MkMu7fbW9og+nRbdBAhNIgzat/lADaQYUw/qkiXpM1N5gT33f6jJto+QCqyYj5i/qvZ4
-         177z8GMTAQMj2uhP8ErcXDzxPgxnDaF0zAP9EcqoIQxs9NV3KUboQsv5YZzFiDQK1xuJ
-         Wb7N/d9ArToxAZSCS1QN0kj+InpJHY4DNhFVN+ny7ruOPJfb/377zc9zVXQm+YGOOcIN
-         6LRbQbl34zzSOg7kwKhB+1AToYmL+tKhc9IYmvW4PIIK4CFAYq7/HHucKPfG3pK4ZsfY
-         tzFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722455829; x=1723060629;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xqFUR2hlr0Rt/DfOJxtN0G0ZmV0JHjUDEpB0WWaRTpU=;
-        b=YPhuyG95YMLF9Xct6cYB2E2Hz1xVLCUaOnGajkOBU+R0we3SlNyOQPmpp78jzkGy9r
-         ciXRyJ9QuEetlLO9yZLSUz/ziiQ1M/a9koitWSOnlBh6eGyQxQyKQfyaNQOHWL6Zf1m2
-         GAySZTmqgqIcglpmmF1hsQp+uRGO7l8IJLlKXAAv8786nlVRR6mf6SY8SLKk505H722O
-         dh4Ppo1eqQ11Fx9yt5FPBxMinxJnYBH08oi0Nm1ypiAiNzXLXIHVwad9EdoZYJjhx1N9
-         2FUY41s2Rmsu0LsYkgOpF/+v81ANBHaDprIqbrP1l6tRUC9b/2Fb5cJrUhAeiDygOsuG
-         GUCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVposlekiw+5XBY7JnZmyCB9MbOj1LOFMSULW7NL+GAQ6+7WBrf+xqpKGORjlaNYvpBV3k5ZUG0WKzQF3/9JNkGf3c6KpQ40y2jPoFw
-X-Gm-Message-State: AOJu0Yz5tOq8Dqj0BIme0yuP2Qs8ArteJlIp9nMTKegy9ij6d6UNUalJ
-	OsECSRlor9hpQZ6bcOupWpL7Zp/8s/3FL05KfnKAiqlTG0Nk5itQNMbmXqF5pjHGF6yMYyo0VC7
-	w6CDSk7pMlbrc4LBM+y6dQ9MtmWorDChEIQKq
-X-Google-Smtp-Source: AGHT+IER+3B4Ti8SQlTJcNqSe6BmypSDKd6BurFI61graRZCCNQKJz0ONwaqFvJaP237gN8FbfwlFtAgMMKK02J9Hw4=
-X-Received: by 2002:a05:6402:27cd:b0:57c:c3a7:dab6 with SMTP id
- 4fb4d7f45d1cf-5b5b4a6a671mr196924a12.3.1722455827367; Wed, 31 Jul 2024
- 12:57:07 -0700 (PDT)
+	s=arc-20240116; t=1722455941; c=relaxed/simple;
+	bh=KyQI+sweQMt5785Uw0yRrolEVdjCSVNq4NEAr1ITaFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jlrk5Ohu8gd2po0ymK379QivJXqCNefSMIZREuEAPE0Kb/S2d4iSj+Jp7ILwQ7wDcSCTRjNkSZrWUGbhSEzIDMGgpKvs66Tsj5xmIMBoQvhW60/7dmDtgiI6T43HHrsyBAFReL20PcTrg0F5yjNY52KBYh0ZmfHFqEfA2VMzyr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ViktmJ9O; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VAZahg028742;
+	Wed, 31 Jul 2024 19:58:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2NDo4XKsdJgp0/vprHSd5f7d52rSBjEnKwcp9vYBjX0=; b=ViktmJ9OXaAQLmtz
+	rW8UqfRFcm9UoiAOCwaKg04bC1Z50aWfPC3AgZdv+GxCFoAwEsenbmdumCZHuk2I
+	oYxWRtPloaSDwyEhpfKk2j0qu3RhyxpO3Z1M63lVGkhn9J0pn5p53wk+ssQR8sU+
+	xCXROrP04rYsmNIDsZCVCrxDuH+htkVTmdkv/0m5/VNn1uAiFKfhd7pe74zt/Tu5
+	2B8cHVjt/hZBCuNtPabk7hOn+ck19wQGNlF1I23oR7MtSvr0dxy+GgfbhKEbDOUo
+	2PfxPqI5Ai4BeqTJLk4sIO7X+LX5jrhDQ5Db0i2Hd4d1pRnmmZ5TYuPBa/MS7pyc
+	heClKQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40q232vprd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 19:58:55 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46VJwsxD002431
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 19:58:54 GMT
+Received: from [10.110.68.245] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
+ 2024 12:58:53 -0700
+Message-ID: <2a17eaca-54af-d1fa-304d-c7e0afd85b33@quicinc.com>
+Date: Wed, 31 Jul 2024 12:58:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731034112.6060-1-zehuixu@whu.edu.cn> <CANiq72n48BvaSNvghkEMn796u4K3_1owZqD9Gjmyk7h3R9GT+A@mail.gmail.com>
-In-Reply-To: <CANiq72n48BvaSNvghkEMn796u4K3_1owZqD9Gjmyk7h3R9GT+A@mail.gmail.com>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Wed, 31 Jul 2024 12:56:55 -0700
-Message-ID: <CAGSQo01oq+nmPFCB3bRnjcXn9fvtu8tcvjsUh55tZnyJSz6ZDg@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: Kbuild: Skip -fmin-function-alignment in bindgen flags
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Zehui Xu <zehuixu@whu.edu.cn>, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	aliceryhl@google.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 0/8] Enable EUD on Qualcomm sm8450 SoC
+Content-Language: en-US
+To: Caleb Connolly <caleb.connolly@linaro.org>,
+        Elson Roy Serrao
+	<quic_eserrao@quicinc.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <023d4ea8-635d-435f-bae2-87284f70123b@linaro.org>
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <023d4ea8-635d-435f-bae2-87284f70123b@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2rhD_10awpfiG3nfYMiTmoKOY28lUfIJ
+X-Proofpoint-ORIG-GUID: 2rhD_10awpfiG3nfYMiTmoKOY28lUfIJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 spamscore=0 adultscore=0
+ mlxscore=0 mlxlogscore=432 clxscore=1011 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407310140
 
-> Does it change the ABI or could change `bindgen`'s output in a way we care?
->
-This should not change the calling ABI in a way bindgen would care about;
-Those flags only control how functions are defined, not how they're used.
+On 7/31/2024 4:13 AM, Caleb Connolly wrote:
+>>     
+>> 2.) Proper routing of USB role switch notifications: EUD hub is physically
+>>      present in between the USB connector and the USB controller. So the
+>>      usb role switch notifications originating from the connector should
+>>      route through EUD. EUD also relies on role switch notifications to
+>>      communicate with the USB, regarding EUD attach/detach events.
+>>
+>> This series aims at implementing the above aspects to enable EUD on
+>> Qualcomm sm8450 SoC.
+> 
+> Are there any plans to make this feature available for folks outside of Qualcomm / an NDA?
+> 
+> There is an openOCD fork on CodeLinaro but it still requires some proprietary library which is only available to folks with a quicinc email as I understand it.
+> 
+
+Which codelinaro link are you referring here? 
+
+
+-- 
+---Trilok Soni
+
 
