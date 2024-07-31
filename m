@@ -1,182 +1,172 @@
-Return-Path: <linux-kernel+bounces-269363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 401CC943209
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:31:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABEF94320E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:32:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52C5E1C21E9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5421F2604E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4BF51BB6AC;
-	Wed, 31 Jul 2024 14:31:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFE11BBBD6;
+	Wed, 31 Jul 2024 14:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="EZ/Rlhwy";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="h2PTl+GR"
-Received: from smtpout145.security-mail.net (smtpout145.security-mail.net [85.31.212.145])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fcU1/CDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C118826AE4
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.145
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436314; cv=fail; b=XfeMWtHYEAiJjJR/lQjvD7OVV3hD8rEbGNK9Aj7YeDtliDRyOgLOvssfM3tjO/iLgQe8XZRcpa74Nyli7xKQnoiGUOYu1tERgjYFy0ypd9BCNM1WbbUnTkqeSXV+kWkg6HZ+rPxHb8tYtVLJuQbT/Il70Mmd5uE06aaIw0f4kxI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436314; c=relaxed/simple;
-	bh=KCOB4bAyoglZAUBsKGZPxyrEWsrckFOjlHpT2xvHqTo=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Gt3UEPNCNLwFTMlVuKVmp2bwwr16M+a8hPB9RLVYLN7tcUqN1oWO9otLSxtkwmSPNgbd6gC9JdliAwGuH9dkDCEk6vAgu31HzRg8DVXO6sx3oY6cyOFfdCM8FZmWcEFJ2Wlr4iwSQlUGXs61EBlczX6ytvyWfh/CGbalP605L7s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=EZ/Rlhwy; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=h2PTl+GR reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
-Received: from localhost (fx405.security-mail.net [127.0.0.1])
-	by fx405.security-mail.net (Postfix) with ESMTP id 82E80336230
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:31:40 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
-	s=sec-sig-email; t=1722436300;
-	bh=KCOB4bAyoglZAUBsKGZPxyrEWsrckFOjlHpT2xvHqTo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=EZ/RlhwyIn1VJfrdXnexP3TQZrfllp6py06PPL+u4+BuoqZ2holUuVk4c+ew5OUk2
-	 fjFTfSykacWGJU26je4+XzBz8d8mmudLtLDqA9yhQ7N0FObo0jx90yRarrN0wizGWD
-	 jpfNFEFHjza1U/Tzl9dMB8mcQh867ot2jjJ9L7Dg=
-Received: from fx405 (fx405.security-mail.net [127.0.0.1]) by
- fx405.security-mail.net (Postfix) with ESMTP id 28C7A336227; Wed, 31 Jul
- 2024 16:31:40 +0200 (CEST)
-Received: from PAUP264CU001.outbound.protection.outlook.com
- (mail-francecentralazlp17011024.outbound.protection.outlook.com
- [40.93.76.24]) by fx405.security-mail.net (Postfix) with ESMTPS id
- 61702336225; Wed, 31 Jul 2024 16:31:39 +0200 (CEST)
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
- by PASP264MB5490.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:43b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
- 2024 14:31:37 +0000
-Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7828.016; Wed, 31 Jul
- 2024 14:31:37 +0000
-X-Secumail-id: <3adf.66aa4acb.5c94f.0>
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yfDiOCm31wwRcLHXu3qXE3ami3FnO58di9rQA2SWEyYBmCpILUyC1cRD3rHcecKR8swQHqkgjF3QA/Bhe6m0L17NPN7HZ1BBkRaN8ESPrwIeCc26JGVq75USFeY5TzY5UVJPk1H0F3h2N/zJ1qUHgijoMsLdMxM/+BZD/VdSstim7HYOMqMR+o+ujLI28Y8E+PRr/jW2DyogrvcMA5qH/fn1lmqDZaJ5+WX0Lf0I67T6y3e2ZNu2jB2PXrM1YZ3vXgd1X3fsEfC1//GY5qoKAM+2ARBV2f2uc4CNtMBkAJt+Zq+ALbjAYboDTw1gTaEM9tyvXHV2Cxyo217Xv+yE6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microsoft.com; s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m9wKLku2+dBb913TVRzIOs8cC+jAvoc6RMB1XyyCeWE=;
- b=UgRLSe+juPhTL7jVrMG3cAkr8l/GM30k5r4GLp0Gct9fw3aBwQzWSM/UdE1YL4aokvy+ZywzdgjJNrIGvNciorPiM0ml4GIZJPzJ83jjzfOLyNmQLN/FRekTf4hljBRQqS+NKTOO5HYgO8tbaR+481pfJAgMjZ2i+WXQs3ozIPRK4iCM7LgfjfhZxHsefcaVwKwGgvh4jMH1xo9XpLpJuyJAj+C+GtQii7j8kKGVESQCsTjyQIEKc3omc7TqzwogGom4ooi4F3T4M0eZ71rJrybXyoP958bkxKtqWCPt5zMqa7fzsM17kQERIRCcOzM0F2jf44iywb8oce8zwfiI0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
- header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m9wKLku2+dBb913TVRzIOs8cC+jAvoc6RMB1XyyCeWE=;
- b=h2PTl+GRxEtLaOUEPkNoaTuze10hcNKzBO/qzzx+oKyGp5BKFlePAAMiS8Lxs0xkFPdnx8qiTec5GiDNikwQzHyqRudm5trQR9kR6ONB6TdMVq7fPfOd4P/jY+1erYH0mZ9Bo5XB15qLDSa23mKOwu86tUVCbOTsg6OHd3aDRYbr/ygm4vVddUElIhZBWRGeUQuVA3GA/lQ72k1AWPudLHwTM5glKP/v3fzBZk+IJvjcQE/VxBc0Ugd8NLVJtD8LahMzSOrSB1yvrIGuwaRPESfeIaVl0J8N3U5jpDv7sm75Vi/IC/P06jRKveP07sLKvy2juv3GHUW3jdA6f8bFZg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kalrayinc.com;
-Message-ID: <37f5b278-921a-4ccb-8f70-e8bbcbad6576@kalrayinc.com>
-Date: Wed, 31 Jul 2024 16:31:35 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 02/37] dt-bindings: soc: kvx: Add binding for
- kalray,coolidge-pwr-ctrl
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Jonathan Borne <jborne@kalrayinc.com>, Julian
- Vetter <jvetter@kalrayinc.com>
-Cc: devicetree@vger.kernel.org
-References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
- <20240722094226.21602-3-ysionneau@kalrayinc.com>
- <2f95cda2-c061-4b0e-9f7a-3dc48421281c@kernel.org>
-Content-Language: en-us, fr
-From: Yann Sionneau <ysionneau@kalrayinc.com>
-In-Reply-To: <2f95cda2-c061-4b0e-9f7a-3dc48421281c@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PR1P264CA0012.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:19e::17) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
- (2603:10a6:102:14b::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E571BBBC1;
+	Wed, 31 Jul 2024 14:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722436342; cv=none; b=ViODdupOZPA+MCXkolcHFa0/jpwmQk2ArdaFa+IFEQY/nywj/w76bBaYlF1Upt56eb1At5ik+0VhXH2Y+m6Xqkrd+OWi2C10E4/r2L4g7ruwJ2lZW1V4myBv+Jas2JbRmyhOLG4tJkpD9Bryrd6zUZ/iOyGc+hT/Z/8L1yoLYIM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722436342; c=relaxed/simple;
+	bh=KgJyeoelKhXsq6qgvciyvzOwPuIVE24oAsXBYIEN8NY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hPrCYNn99HW+XXHl0fR98hvZ2F9y2aerY2jJKZuZg9OsfD1zFGZIRHTFzB17N2e7XFwbR2Dps+1qIPk7TRMlBQOPjJ9Sy9mA4Hqk/qpFJMCF3nQ/0n6tuGAx+c9OZG/JaESCzx7UXUwqgeaYzRaNL8jW89J+FZfLRa1j60QRYrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fcU1/CDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CE08C116B1;
+	Wed, 31 Jul 2024 14:32:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722436342;
+	bh=KgJyeoelKhXsq6qgvciyvzOwPuIVE24oAsXBYIEN8NY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fcU1/CDCm+CKPqKOSkNtK5LtgyNUVHjwmVRWYky5MoQ7wkvXbVgwwLAcmDDmWKvrE
+	 Kdy9NNIG0cRYwAY37Pwhxp6KvUPxZlCtwV+hPZNn5TpFacn8nQV11S4hVOvDtPSRIq
+	 8hBhHdQQ/3UVk9r6XWpjkT+5sJSiHAsE/GhA/Ynhdjt9W3ODgdA/v1OoA5BY1q3woN
+	 3Z8zv5tlH+Gu4OMelvsWJz4xiP2GOePgaZizE/nmmyzDdNdHMG5b0AIaw04h+PUPPJ
+	 mIULf4KuwJJx+HLv52sIOAuxD4vWQefb2i00s0Ol/pj/WZoSnevjLz1BgqZWe7+8kD
+	 C6N8PpoQvCyMg==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5bafd2c42so468589eaf.2;
+        Wed, 31 Jul 2024 07:32:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1hs8TM8Zd8XVfT//jAaTAZlrIDSlZVXEMMmuycFqBbSM+/x0y8qlvrGbFqzcA+7rmgo67Vgh0umOmn19n45oVZ1HMa8S4i0fWyH0DIbVWIQvwWb79vhYOQhzSZaOOxdgGRqLQxUmDbwFQkfak7h+kyZ22aTqPkwPpylON59kLd4Dftvj3fszZkWgYwvAuT6wFlsrydkvWaa4h
+X-Gm-Message-State: AOJu0Yx48kA+z0cibBZ7JVjCPW8jIaPBlKy+VzO2aFlHMfsmZh0uA/G/
+	IpvJYmWfhCrTxbGmMWqQvf8tJNt/NOoSy0iNMh1AywBV8ke2yb8+WUiRoP4ElNyuHClWpM29EB0
+	l1jTNVmaWKIS1bycULg3G+cXOhGE=
+X-Google-Smtp-Source: AGHT+IGC79vQI8gKkKMLbf5Z2nk0fsL4RPtGcqnkOCJHg3r38IP5gYjvd0iMmESMbIzUUvEYjYDElbTrm8FgZCsWIMY=
+X-Received: by 2002:a05:687c:2c19:b0:259:f03c:4e90 with SMTP id
+ 586e51a60fabf-264a35d1c79mr12193987fac.4.1722436341440; Wed, 31 Jul 2024
+ 07:32:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PASP264MB5490:EE_
-X-MS-Office365-Filtering-Correlation-Id: 69a2dcf1-97e6-4173-82c0-08dcb16d7c42
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: XzjPgWc6QrUaWcNQcMc1EWWkYDpVJOjAyordQOgg0wvKY4mxgwG4IMzyROlxcNOGuXeIbADbYQsWa0nLoJD4+EXUP7NInFxX9OxFbvyBbXYx8WwF9sC4ROBug1U6285H+PVoKSI38XrWQWOt3xVOHVUpbgzkIMXYYsPvOs9RoxnyUQPgfA9BhwViv1EjmSTNwZwrP5BkMCt6zN8HNr5bDrgPTwf5/7O1YN6jDR+K9ngJ3urLSClTDfOm/W3q6fXPQtu6cpGaR4BjdGFMmDlCSsBbm8F48u6BHLaWDEFwJ1X8xOieyB4ppM/ZgbQDd6toAb6hoxtUhDSTV+0XrrcD1eyTlp0dGcFQmnuBYOxrjzpCvZGQPcu/wf7ew/X1ZgjQpYKlmGEYGaDe9SONbyKKI8m7uLgT82xW2FmHO5glN6sBQU7DS0zKUCdOP7/apnmllzo1hm57M6tFQeZIZTGd9DNN8nHXuoRvkKNS/+R88kPQf8AeA2xXhGD3VodhBdaZDucSvKuizpql/jJM1n77IycIUw9XKaEGE0I9dgbGon3WQ1+oxqUR4sTV6nRPOj7CGI+oKwl7j7GrB6YBWKjA13Mu+2DmbM1YXOVA+VqJOoa+P7PurBuuH7P7UgwvXxMCDU1HFsmBa3qQ6paaKxSR6tJ2QU3Wnh4/b3I5ad7fVPrMJ8KRRtfuNAuJ2vkHYeqy2LeG0VTRu3NfsttCv9BdNyUK7R0c2LAA7w3DUbhPK9A5G7v7C2DS0m3W0oACn1K/oAFRNXJGe+TQQiemazSE+s8pV5IuHOvnEiTbm9pui4BdkZ2N7g/TcMT/aUx5v7XzfQezHLnr/k6X5Dl1KmUyZk6SqpcsIkvSMKpth4KM8i0RlQ0ua8Nh9+9MJh9G0/VKeYMPwBIAXKVluYxgTSjd9z5GcUuUVM/FxxM0MYcO4Yl1MTG6oE9nEmGIPFseP3ODx6P
- h0Ap6eNcVzMHsoPvI2/7xKEY+13j0Zp6hoDdMw/0iI36MvP/sPiNqg48/iVVGNd5+olCxhC/wFOiyI1ERPl/e1wJSyAiM6Bj8Fju3a8Im2//103yFIjd9FN5icjYJGP2RADCrEPxJ6dDyvDYkyRWs5hOkGtOD80V2xwta2BiHpSHYwhmn+e9Ev0SeijriSRQPVhv+tAiax9fECMHQKGT7z/sDelBz0jlOJoD8TeBZnUWIgAfR14OpQEpAwzyPbMXzxriGaQ2eRNmkb6sBzxvUTju67WuHl90LXAdbrms7QKtZxRUCJXg1WbM6xP9nisnhX3klTSkHw5RSj9WGaz5VLGbOrldiDRy2tg6+pYc=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: Fnp9UMgQDBT1yWrzF6UnZn1wQWc1GKOBq5QDHYHEPDNcdacqxrfdg2vPkGUlied1uEwOYSWgd22qMTFj0fYFME7KQTiGi8hql3Wcj/Y1yZfDno1PI+EskqRfGDWOySuyOsSCWTmeAmGos1B45UIFe4MXyJuYLfbXtZrCuy1z8iViPzjO+Z4108W3Re2EyaWGpFKJhuNnpgLm0QC4wtwFkj3ITjHOfuQ9ICFqx0dFvr8R+vLCi21LYymV4TgKxgWbrpm/ObyeVQjHC7eOFrI/LdukWiDH0BRTgigcBU0x8Urn9sTJTkzynncHa/5sUVy57Q6Gl8RUw1C0Xie3+AavB/g/ZACX5k0mUWYb0rskkQe/CKdGyieCOLi1csjaT36iJPiJ4OPXQqpM06ZN8GcdNAwplrQ54C76QLzeYGAfMge3QGnV/8m1Nx5it8HdMzyHi2F2RWeyCmzUjs2Y2uie6lU0RjNYGsU2I1X6jIQ0BLpBlGGJRltu6e9ETwKz+xw6OR9eSPXtNv9BHrzPvUykMFdAFl2kkcD2P3EXsBro5zbPeVJQUCC+iRruvKelFoxvel+MSLFjRNE0NaojxreuzqtkKvhHvgCKZvtpR5KibXLuTdezdB9c3PTfFCaKPJPwSXRykQwW7n8DxONMmBTD8xsXbJQurEQ/qSjuQS+OVjd0HuF6VVyOOMIzO7stMfeTibFsJthC5CvVngAsaGq6xJhcTHCYfIqT2AkeSg5P8AB6YcPifEFDQhEbGYnNpHS3FMLlYeGev8in3AwNjohfAxYAS/JyOhda9B8cbprpXhyygtB6JNfj0LIsktifG/pebfFRF4wh8u++ojbc4puqHFdX/eMn9TpyUkUPUqmuu5l0x248rP2XNNwywu+Z0yvazeJqxGIdIOaDUzDMX7nD7p/Ijdc5rIPbGqILvZmpswNIHkNZZVVl86RNV4hf2xyf
- e4Z8vhJuJbh3qCQ9EgeY7fAemmgIafGoSYP7Kk5J/v6XqoJ+hi4qCCwJloBjkcBtATNCY7thFo9oyIpx04tP77s3VY5ktRQGTTvWSFoZ1yonEERSN42cGn9khq3cS1yHRKw9918xSL7DkxezY1Z7D02lLVLk7lm59DVSapPedVRSXdJiAzseAsaxKQKz7hizxP8vDEDg65iIEJ7bl11vtxADGpvhIDXZjHp+elUaUecNHmWtiRl8p0BAjAT3NZMDTj5R03gldFR88h6EEzeH+Dy7ZjWo1t7L876+yw/hFMO490GkWmFUjsexqETZPzUgk9710W3RtUYEasv46h6ZswTg2lJUBivce6y8T9T54uOsyzTfCuU7uMmcmxRZa3OklIZL/HKyulJ4rItUxNeEPpmvJ8i57q5Ph/lpZdZWEvmMF4edSWmD/jQ7ou6k6oq4an06sTupfrCJ+4PaUDb8TrLdZHj3lbNw165LT7pw2j/IdCui0XWiNDVcqHRnT8QF5t4WkVpgXfiSN59g10C4oLx5dHkv36koQb+XFC32I3HnMqCopFgfCpURMZVjzPrHEUiik79PhL52q0hA3EejRezZvtWwCHb260PvmCvE++xHTby/tCG5MG/vN/Ryzi/GOx3smjz9siTLIlLH8YwB5agNZDocyqw57xy7qj452rncf7Uk+4q695kW0N59U91SAFqL0L+UIJNFzgK3DZw09Q==
-X-OriginatorOrg: kalrayinc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 69a2dcf1-97e6-4173-82c0-08dcb16d7c42
-X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 14:31:37.5914
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MYeXPO0m+GSC9By6Nln53RejW4XRDutdN+tbxTh6ijXXMifRkemiSmrS1cvv2fOqgOO/YNpiLRMWVmddbtYI4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB5490
-X-ALTERMIMEV2_out: done
+References: <1922131.tdWV9SEqCh@rjwysocki.net> <9002154.VV5PYv0bhD@rjwysocki.net>
+ <ZqoxXdQRxhfr5cHY@shredder.mtl.com> <CAJZ5v0h7T27fcL5-Wp5cjxi7mqKVh3_jk-8KwXPGWRbO31sm7Q@mail.gmail.com>
+In-Reply-To: <CAJZ5v0h7T27fcL5-Wp5cjxi7mqKVh3_jk-8KwXPGWRbO31sm7Q@mail.gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 31 Jul 2024 16:32:10 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hX+HyNB5Xqwr6Q44rgAThNLqp5PUQXN-uTC+cDqdjpqA@mail.gmail.com>
+Message-ID: <CAJZ5v0hX+HyNB5Xqwr6Q44rgAThNLqp5PUQXN-uTC+cDqdjpqA@mail.gmail.com>
+Subject: Re: [PATCH v1 13/17] mlxsw: core_thermal: Use the .should_bind()
+ thermal zone callback
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>, Petr Machata <petrm@nvidia.com>, netdev@vger.kernel.org
+Content-Type: multipart/mixed; boundary="00000000000047dd61061e8bf630"
 
-Hello Krzysztof,
+--00000000000047dd61061e8bf630
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 22/07/2024 11:47, Krzysztof Kozlowski wrote:
-> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
->> From: Yann Sionneau <ysionneau@kalrayinc.com>
->>
->> Add binding for Kalray Coolidge SoC cluster power controller.
->>
->> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
->> ---
->>
->> Notes:
->>
->> V2 -> V3: New patch
->> ---
->>  .../soc/kvx/kalray,coolidge-pwr-ctrl.yaml     | 37 +++++++++++++++++++
->>  1 file changed, 37 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml b/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
->> new file mode 100644
->> index 0000000000000..e0363a080ac11
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/kvx/kalray,coolidge-pwr-ctrl.yaml
->> @@ -0,0 +1,37 @@
->> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/kalray/kalray,coolidge-pwr-ctrl.yaml#
-> It does not look like you tested the bindings, at least after quick
-> look. Please run `make dt_binding_check` (see
-> Documentation/devicetree/bindings/writing-schema.rst for instructions).
-> Maybe you need to update your dtschema and yamllint.
+On Wed, Jul 31, 2024 at 3:01=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
+g> wrote:
+>
+> On Wed, Jul 31, 2024 at 2:43=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> =
+wrote:
+> >
+> > On Tue, Jul 30, 2024 at 08:34:45PM +0200, Rafael J. Wysocki wrote:
+> > > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > >
+> > > Make the mlxsw core_thermal driver use the .should_bind() thermal zon=
+e
+> > > callback to provide the thermal core with the information on whether =
+or
+> > > not to bind the given cooling device to the given trip point in the
+> > > given thermal zone.  If it returns 'true', the thermal core will bind
+> > > the cooling device to the trip and the corresponding unbinding will b=
+e
+> > > taken care of automatically by the core on the removal of the involve=
+d
+> > > thermal zone or cooling device.
+> > >
+> > > It replaces the .bind() and .unbind() thermal zone callbacks (in 3
+> > > places) which assumed the same trip points ordering in the driver
+> > > and in the thermal core (that may not be true any more in the
+> > > future).  The .bind() callbacks used loops over trip point indices
+> > > to call thermal_zone_bind_cooling_device() for the same cdev (once
+> > > it had been verified) and all of the trip points, but they passed
+> > > different 'upper' and 'lower' values to it for each trip.
+> > >
+> > > To retain the original functionality, the .should_bind() callbacks
+> > > need to use the same 'upper' and 'lower' values that would be used
+> > > by the corresponding .bind() callbacks when they are about about to
+> >
+> > Nit: s/about about/about/
+>
+> Yes, thanks!
+>
+> > > return 'true'.  To that end, the 'priv' field of each trip is set
+> > > during the thermal zone initialization to point to the corresponding
+> > > 'state' object containing the maximum and minimum cooling states of
+> > > the cooling device.
+> > >
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Please see more comments below, but this patch is going to conflict wit=
+h
+> > the series at [1] which is currently under review. How do you want to
+> > handle that?
+> >
+> > https://lore.kernel.org/netdev/cover.1722345311.git.petrm@nvidia.com/
+>
+> I may be missing something, but I don't see conflicts between this
+> patch and the series above that would be hard to resolve at merge
+> time.
+>
+> Anyway, I'll try to apply the above series locally and merge it with
+> this patch, thanks for the heads up!
 
-You are entirely correct, I *did* test the bindings at some point, but then in my last rounds of modifications I only ran make dtbs and make dtbs_check and completely forgot to re-run the `make dt_binding_check`.
+So there is only one merge conflict that's straightforward to resolve
+(as far as I'm concerned).  My resolution of it is attached, FWIW.
 
-Sorry about that.
+In my view the changes in the series above and this patch are mostly
+independent of each other.
 
-We'll work on those again.
+Thanks!
 
-Regards,
+--00000000000047dd61061e8bf630
+Content-Type: text/x-patch; charset="US-ASCII"; name="merge.patch"
+Content-Disposition: attachment; filename="merge.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lz9y1cmo0>
+X-Attachment-Id: f_lz9y1cmo0
 
-PS: my dtschema and yamllint are up to date though.
-
--- 
-
-Yann
-
-
-
-
-
+ZGlmZiAtLWNjIGRyaXZlcnMvbmV0L2V0aGVybmV0L21lbGxhbm94L21seHN3L2NvcmVfdGhlcm1h
+bC5jCmluZGV4IDMwM2QyY2U0ZGMxZSwwYzUwYTBjYzMxNmQuLmU3NDZjZDljNjhlZAotLS0gYS9k
+cml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHhzdy9jb3JlX3RoZXJtYWwuYworKysgYi9k
+cml2ZXJzL25ldC9ldGhlcm5ldC9tZWxsYW5veC9tbHhzdy9jb3JlX3RoZXJtYWwuYwpAQEAgLTQ1
+MCw4IC0zODksMTIgKzM4OCw5IEBAQCBtbHhzd190aGVybWFsX21vZHVsZV9pbml0KHN0cnVjdCBt
+bHhzd18KICAJCQkgIHN0cnVjdCBtbHhzd190aGVybWFsX2FyZWEgKmFyZWEsIHU4IG1vZHVsZSkK
+ICB7CiAgCXN0cnVjdCBtbHhzd190aGVybWFsX21vZHVsZSAqbW9kdWxlX3R6OworIAlpbnQgaTsK
+ICAKICAJbW9kdWxlX3R6ID0gJmFyZWEtPnR6X21vZHVsZV9hcnJbbW9kdWxlXTsKIC0JLyogU2tp
+cCBpZiBwYXJlbnQgaXMgYWxyZWFkeSBzZXQgKGNhc2Ugb2YgcG9ydCBzcGxpdCkuICovCiAtCWlm
+IChtb2R1bGVfdHotPnBhcmVudCkKIC0JCXJldHVybjsKICAJbW9kdWxlX3R6LT5tb2R1bGUgPSBt
+b2R1bGU7CiAgCW1vZHVsZV90ei0+c2xvdF9pbmRleCA9IGFyZWEtPnNsb3RfaW5kZXg7CiAgCW1v
+ZHVsZV90ei0+cGFyZW50ID0gdGhlcm1hbDsKQEBAIC00NjEsOCAtNDA0LDggKzQwMCwxMCBAQEAK
+ICAJICAgICAgIHNpemVvZih0aGVybWFsLT50cmlwcykpOwogIAltZW1jcHkobW9kdWxlX3R6LT5j
+b29saW5nX3N0YXRlcywgZGVmYXVsdF9jb29saW5nX3N0YXRlcywKICAJICAgICAgIHNpemVvZih0
+aGVybWFsLT5jb29saW5nX3N0YXRlcykpOworIAlmb3IgKGkgPSAwOyBpIDwgTUxYU1dfVEhFUk1B
+TF9OVU1fVFJJUFM7IGkrKykKKyAJCW1vZHVsZV90ei0+dHJpcHNbaV0ucHJpdiA9ICZtb2R1bGVf
+dHotPmNvb2xpbmdfc3RhdGVzW2ldOwogKwogKwlyZXR1cm4gbWx4c3dfdGhlcm1hbF9tb2R1bGVf
+dHpfaW5pdChtb2R1bGVfdHopOwogIH0KICAKICBzdGF0aWMgdm9pZCBtbHhzd190aGVybWFsX21v
+ZHVsZV9maW5pKHN0cnVjdCBtbHhzd190aGVybWFsX21vZHVsZSAqbW9kdWxlX3R6KQo=
+--00000000000047dd61061e8bf630--
 
