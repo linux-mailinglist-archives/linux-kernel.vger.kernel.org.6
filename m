@@ -1,367 +1,232 @@
-Return-Path: <linux-kernel+bounces-269936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CFA4943908
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8C19438C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF77EB25D51
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:36:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7C2AB22B3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C976F16D9C4;
-	Wed, 31 Jul 2024 22:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BED16D4FA;
+	Wed, 31 Jul 2024 22:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b="FA3YRJav";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=juniper.net header.i=@juniper.net header.b="YRnS9tRK"
-Received: from mx0a-00273201.pphosted.com (mx0a-00273201.pphosted.com [208.84.65.16])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lLiGyYxH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D86116C86D;
-	Wed, 31 Jul 2024 22:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=208.84.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722465359; cv=fail; b=BqbhRVYko+GCChqndplqctRWLmCDR0lvBf1O7aqPRrHGJd2IO1Av0EnJYK3lQgtiCnqgNgsWHijywuADFr1M35bHmX1v5D3vjgasZe6Bosx1q++u3LUU+KyMNIPQ72pIEZ/VM2KpkJ+xOLwDmtxfCJCd2m51dAUXnUGTklzXggk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722465359; c=relaxed/simple;
-	bh=ma1ebKw1c7G5LLa8DR7fD8peTxkvxIASwEiE/Bt+JPU=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=frWiR4P332ZsiEnverJtLqObBXAoOksOxe96Kt0U+taNgl7resvHWoOKHXnzx8cU/jrwungpw00/LUIizjy5WKReVcofBZXInOWixpiA6jIOU1mjfCku9rBAfkP05Cs31U+HRrDwIRoSTEO+qFTnr0LnUzohHIycT4ozvSvMUxc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net; spf=pass smtp.mailfrom=juniper.net; dkim=pass (2048-bit key) header.d=juniper.net header.i=@juniper.net header.b=FA3YRJav; dkim=fail (0-bit key) header.d=juniper.net header.i=@juniper.net header.b=YRnS9tRK reason="key not found in DNS"; arc=fail smtp.client-ip=208.84.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=juniper.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=juniper.net
-Received: from pps.filterd (m0108159.ppops.net [127.0.0.1])
-	by mx0a-00273201.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VE9d93016978;
-	Wed, 31 Jul 2024 15:14:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net; h=
-	content-id:content-transfer-encoding:content-type:date:from
-	:message-id:mime-version:subject:to; s=PPS1017; bh=YflLRIY8DI4aO
-	nDtpKIdHMlIeX9xbOo9BxY47Q3hTZc=; b=FA3YRJavQesdmoJjqmh/qOSleM+7z
-	ZUXKYDAVheHNps1OPbz7caIwzjroKUpvftByLuIQkZZXtZ6EBqPy1+4ESephvHDO
-	7PzwQqRwOR8mLYLCPl5gVcXScmWgBbeCTkcjegtyhJ3WlHQh8I7UXK+rik9FdC0s
-	SpOsCvSPBfjkGYVFQA7NU3WkNvZGIIu0if5JmpbNjXzvXfLYtaPB6yOKcG2qeOJJ
-	Wmu/U/4ipZ2yX6enLNNpd1lHChsnadSGk4G3id+/5Nx9qXDhgXIOqo2UhyMaDx41
-	UIPdEMw3E5WiNZlRJxFISr+dJog7epwjts/sIipAv7AwCLfhaQSafqgsg==
-Received: from cy4pr05cu001.outbound.protection.outlook.com (mail-westcentralusazlp17010007.outbound.protection.outlook.com [40.93.6.7])
-	by mx0a-00273201.pphosted.com (PPS) with ESMTPS id 40mxussq3d-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF9114B097;
+	Wed, 31 Jul 2024 22:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722464540; cv=none; b=jzilGAp62LFFk0dbQ9AfqeQzgt1PvzsZ0OiAQ4OtaVVcVR5tmWxisF4UrWjKNWAXaEgZ0eO6mU+58LeSD6lasCbjgiXld00jTFjVDPEgW2yVggcK42QhY/kLVYbTpEzqoIJN22V8msjRpMUsskcbGJLAVoHr/u2E1lBOViBjB5M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722464540; c=relaxed/simple;
+	bh=3X7f/hW80XyZc/FI4+gk68GjQ/vH3hQbTVI2mw7iPSw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwFhmDe9p5p9rGWJBgyN3Dw+2rqwgblxrp4XyGiJcSKRKUEKTGihgo316FWcSjYzKtDOQ4j9OPQ1BAkyr3bpazbuAnqmcvPz4G9nz6izeyMKip0QDTBfTYTS1aWKSUjAAa3ZUf+yPY7SYapZ8WqV5zSGkiianAYY2x0GdC4j+bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lLiGyYxH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VCUhJw010022;
+	Wed, 31 Jul 2024 22:21:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=PkS1pxyTMdqdnnXPAyaaYeM/
+	WEVnTjm0ZKicIg64RXU=; b=lLiGyYxHehouvl1UqcMAWVkvaq9JNGwuc7yqF4H3
+	qT9Dx4aAWEUV09yH/M/3gppkk6/++E3DREgr9NW1RvV/hm5PwLCR55Erm6CAmHx2
+	lV44WrTyI/ZCs209FfyLng72CxW4i0k+Zc8UBRcsXud/kcEDrM3Pk35tPMDaxyRl
+	uY94O3tmGuWJJzC2MaSMHOEc9eVvshVMnMgJUspPsg2cv8C+eWSv+ATUdr5rU4e5
+	HcpAt8Xi/DeVY8ACpwxm0VEi5ymiE0OvPUnPz45HBEujHPEy75l11W+tYSEo5nf0
+	KEKkZuCNUpMweIFrqZJdeURK+I3LMdpnET7TkKWOJEA0Xw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qnba9k50-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 15:14:17 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=unmyrvE//DFsr5AiOdskbe6iiBzx6aa1aPC8BlHwgWxgyNXpHaJV40JUoKNuzVtUtQV096Kx/Vqm1gDQ4PECFxPFv0Ahc7EXtOFIV3ewVk9ntcn1vQp8OVXB2KIfI9FeSFD8bpzRHanyRQ4371D6f6jHOid8/wv4WNb27kXpBdyWkFBTO+Shk0mi9DSxB9m/GAUlkVM2X9HTskLgidkpQK+y44mFx2zJr1fv+Fomuitzi7oUIpd9SLolIjMZVKbksTOqQX/9ricjItBIHBKOJipluOXT6vTxuQxeAKFpjfBoA53CdQrDF9qp/Rb6iYy+R2fez3R2Glb3cIy7aVbccA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YflLRIY8DI4aOnDtpKIdHMlIeX9xbOo9BxY47Q3hTZc=;
- b=vzxDdKe8l72cICbyDOwwbbJP/ATjkKcxMT9eXwLB1QpwP7Pbpzu18dlQjkLhxuqjpQDRKHjtgzOwUtpNvhmTWb7JgbXTvkt1cR12/jx1CtR7Pqr7tFAnkcV0DEP+dBnOD/Pf4lE9vmAMoID/DnD5rZUFaxypJADu69hZJbU44D7VXsMmlSYqnQtW1F9sdbchIbS9UUJm8OU+zOV7VuQXOwCtTmOYBxcCibWcdWCBSHb8KSv1BB/RVKDiXGRAxF2PQBA7MgAXJR3RLswzTnERfg8jDwxih4QEeju8c/mGM2/XDg7+klNZpEap1lEPweMG1+ctDoCdwZstOahVzkbuoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=juniper.net; dmarc=pass action=none header.from=juniper.net;
- dkim=pass header.d=juniper.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=juniper.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YflLRIY8DI4aOnDtpKIdHMlIeX9xbOo9BxY47Q3hTZc=;
- b=YRnS9tRKV0sgOI+A968lcWoQmRu2BLsnhcgaZmI1hKHXf36PFlEsZAusGhMZJhBMzctocdGqjQP00LO6835FePNM7nEt26sNJT+SBkc5zOeQcGdVF25lTIkhAzllNeXvziNiWv0jJcmkyWBe+wK/vSd93Igd7R8YyVgBT8NWBL8=
-Received: from BYAPR05MB6743.namprd05.prod.outlook.com (2603:10b6:a03:78::26)
- by SJ2PR05MB10356.namprd05.prod.outlook.com (2603:10b6:a03:557::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Wed, 31 Jul
- 2024 22:14:15 +0000
-Received: from BYAPR05MB6743.namprd05.prod.outlook.com
- ([fe80::12f7:2690:537b:bacf]) by BYAPR05MB6743.namprd05.prod.outlook.com
- ([fe80::12f7:2690:537b:bacf%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 22:14:15 +0000
-From: Brian Mak <makb@juniper.net>
-To: Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner
-	<brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Eric Biederman
-	<ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
-Thread-Topic: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
-Thread-Index: AQHa45b6H7qt2DxWIUm3KHixJZvP5w==
-Date: Wed, 31 Jul 2024 22:14:15 +0000
-Message-ID: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BYAPR05MB6743:EE_|SJ2PR05MB10356:EE_
-x-ms-office365-filtering-correlation-id: eca11b77-1aa5-464d-410f-08dcb1ae1d23
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?E6NRzAH+Vop0fauMNDXWcjP1VFJrg63VZ0WFLq2j3dvs9ue5IxnoSMeESvwK?=
- =?us-ascii?Q?kgzgyoTByHPmoevnyNPZ4RQOADFdP1XEwZ8TIAdHzEVChO0FgE6qHCAnTniF?=
- =?us-ascii?Q?QLpYE8JWcbIbOjvOxjKqoFAgQiusDl+ZT9tMlNYJtRcyixG5/lCvWET4YZ+2?=
- =?us-ascii?Q?iIeePylDm3xLu//qcvvpY6owe/04q9FDRVgBHD60vhfU7AEtYPO2KhafJoNU?=
- =?us-ascii?Q?0/d766ipFSwv5zaBHeoxBXSb9F3SirQH/h2ib+3ndscgHazE6kVh7nHMTroj?=
- =?us-ascii?Q?U4/C/SAUwkT8fA8Onldf/WFOzcOdPeIwFmgXWYCS4cA0s0NbAEKZQxTHBgt/?=
- =?us-ascii?Q?920afxzbMPcXNHPIopeTd3jnC/K3vWvims9dCynP3WmQmTAOvp4PaJlQ9SNm?=
- =?us-ascii?Q?rplRXFHplazc5JAyultq/M5UYy1UMSG2thsjPA8aw6x7brZAlKOD5UpxDzcl?=
- =?us-ascii?Q?611Jg0nVzt7znVxWPHBI560ZeXrw/HlJigqJaQfdlzYltsMOHWtMUHl3fTD+?=
- =?us-ascii?Q?sliCTnD3raw00hxxmK4gOMwipK7G76CHKsb0SQDn7hab+S4YjogSC9gWzjJm?=
- =?us-ascii?Q?PttF6Ven3u4W52gikuyzlYx6YQTFNlPl1QiKZk1JC7rsURuThELINCawbPEI?=
- =?us-ascii?Q?PQJILDrhlrPCeFSzIWHTwB/Q2+c89hnolG78mAdV2vbzDGnl+4/ULZxEPvqs?=
- =?us-ascii?Q?evhgJfYD/hVNAofecUMGoTiLNe7ySQomkwE8/pDGF4QSdSi/Mlu008m8ydOa?=
- =?us-ascii?Q?fgiFoCdV6tHSOGrR1ObRfVSMk65qEjmzH7aIQkfdxxXhJm8/of0E9prJ7tXp?=
- =?us-ascii?Q?o5HpE++FofG+3bGonoIvb6hHtRiY8liSN5mng8nz/isWjf//g5Qs6pgiYzZ7?=
- =?us-ascii?Q?iKWCkickQdgWWHnq+HE4BFYE+m15Bq8HgclaUFyF+k1/NyN0NEFpkXyIDeAf?=
- =?us-ascii?Q?E+q2s2cT1p5wZupNTALRk4k/x8CgX1S3zZ9vSnzl09Hb8bSSTKPRiGbR8qsu?=
- =?us-ascii?Q?mN0ImhNdGYB4+G3ousl48d59jxCxrTkPtbtrLj/jLuoyXwVZzmafN0/v2YOI?=
- =?us-ascii?Q?AbHNb8J5hDBw6ieFpS/gIDCwrtZM/sQHgCHKu0KiB5AA2T2sp4V5Nc/0yGD4?=
- =?us-ascii?Q?3hwMoZVp+t662B8JIhtQUmL3MfwLYyEXQjTIDuRpCxXhLtKFkQm1ofltWqiz?=
- =?us-ascii?Q?c5k8fEyA/Z9WB79BOsoMQlgQvec5/uzzmTnoPdfzf2E5iJqYqJdHK5bot/fB?=
- =?us-ascii?Q?WoeLU7hCI3P+c2pjdC6SNICZjbzxbJ5NSVh4M2rideGG5B04QMpI41Q0zaIb?=
- =?us-ascii?Q?Kz5kgllmOGloLooeTkQBkRozzXAxE9Z/OnGHHKJQ5MpQiEkUlNvX4OD9KIk1?=
- =?us-ascii?Q?H1JdOGX8uDLhFlx4GhP6y4wnvaeF9BPBoXwIqBg1gHG+sHanOA=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR05MB6743.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?adEd+BMlz+TJvP1HvXUcOCMc7qh8qM4qXRQUOX+myLis3BBZQ9bRlKSQO7Mn?=
- =?us-ascii?Q?vK3YnbgBK0dUznfxuhpxB1tzdghXqO8s4N48YlJ20z6/r9hlC8UEGHzonIoy?=
- =?us-ascii?Q?DeG5R+YCnysa0SM8rvE0cTD9TYsRCZ8Ui6BLdskqWxucv6KzH+ByoABuJIm9?=
- =?us-ascii?Q?Yb6vm+EofcxnlqutFuzj6fDoF3kQiGHHM5pV479M/PUbzrJjPlsrJl0hK/8e?=
- =?us-ascii?Q?4eBpHpugvfyh4S/WDYnVTe7qOgucU6Nl/Y35wSk3RW2rlzlzg5PTHzBYmoxS?=
- =?us-ascii?Q?FIKiWVf64fiKhhzY6BRDbLAEgSlSf5F5Xd2h/AQksjIn0sntbXrdhFv49wVW?=
- =?us-ascii?Q?wlXC7elJQmg6OTCz4bH3p4786oLPweitWMNC1xFrB8OqgJxXMR5sr4isFIxq?=
- =?us-ascii?Q?4qBe0Yw6u9IHOeKOQmtSF1af0gIuk6yGP9KRCg0lqVb4e6LYWLFcRtix1tfX?=
- =?us-ascii?Q?tq68SFsWaSO3ARE2grhFPiM0s000U0UOf0yKFgTvVUg7wv+OyYgTj8K8EOCs?=
- =?us-ascii?Q?AJ/+3G8O2Vax136MAzha9GaveQACZcyDQaWQ52UFnxvumpw7speLJm0NbJfO?=
- =?us-ascii?Q?632ZSICEBrkBytjRsSE4oblPSqp3TKhq2APxOgMjXjde58UP/VpG6pl/gsY3?=
- =?us-ascii?Q?zzBFDg5utSoBKFssLXxZjMNUaZr15Q2ij8mkxV7/08ArYtCfifYX8PnPKaT5?=
- =?us-ascii?Q?cOdG3mzrWVMyx4VYXDE7w4mmQSfFsZtCF5ooXqpg3jNOnv/mp0o6EalzYoPU?=
- =?us-ascii?Q?ju2eGiGKYlJ0mzbcmYBZoiNCKKPvQv12Rvj4MMqahEVXNVi3dyE+nG/7heq4?=
- =?us-ascii?Q?LXXBZG+yuJHYje5zCBSk+RzioXDk08TkZnFhlmUrDBporh5h2MTohxu/pF21?=
- =?us-ascii?Q?jIj5XBfboE4pE4Dsfse/ahh1yw+KZjbVHB5U06ViLfjcEKpvcI4SMlic7I9H?=
- =?us-ascii?Q?gRFbSbpPlPnz3/5PB3LDZrSbw7ngXlz0nozlOSVdIZdxGVllPkEloZzxgNwt?=
- =?us-ascii?Q?9bNmVchAYF993RwUmsSg5Zni/zoONZ3V16oBtY2HLm1vcXGsjljjMcUnD/Rk?=
- =?us-ascii?Q?VLY6SP376QfkrbMWAWR4H2B9fMpmWevbHcsMJEnI+Q13cz2fNFR2wQGkw62/?=
- =?us-ascii?Q?DqReerBBm8A3J2BlCJVGKsuvqz2ZkpTTu6LnicMLICNcsaAEC8TNW7w1x47L?=
- =?us-ascii?Q?mYqdKzgeWcxymWqsAiWfgkA/TD4v52bHwqZjdl5yxlC9RNwWT4YTmPpXZw6G?=
- =?us-ascii?Q?LaMP/GOfvR7jhxunS6OujGkVxSQgvHMShjk5zanhAN5c+xS6Wa9qmb3/l6d7?=
- =?us-ascii?Q?UfCGjEpwiTYLkhG/a4+sGQZANMOBkNcnZXqikuYUehW3uFrBScMEklq2+xf5?=
- =?us-ascii?Q?zI/Xf7+jrGjx5hz1UZg4OPToHEvNEz9VvFqRMkEMBCnZi7tDQhY+a99K5GBD?=
- =?us-ascii?Q?CqQGvpt27uilWZC8RH6miWiqTCwOqBMcZbunAQVaB1DPPEW7u6MFJYb+fvHy?=
- =?us-ascii?Q?2YUQ8ZP7zn5xeMLyj8IW5H92bnU9t4nH1Fjw5/z9aoLoQTi5MA4DKVMh2+qI?=
- =?us-ascii?Q?B5e00S1B34VIhB/8Z84iXUFnvNjM9XcXC8y7Ty4X?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3C62EEFADFD9394895817721668CD1B3@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+	Wed, 31 Jul 2024 22:21:55 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46VMLsqj014520
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 22:21:54 GMT
+Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 31 Jul 2024 15:21:53 -0700
+Date: Wed, 31 Jul 2024 15:21:53 -0700
+From: Elliot Berman <quic_eberman@quicinc.com>
+To: David Hildenbrand <david@redhat.com>,
+        Christoph Hellwig
+	<hch@infradead.org>, Will Deacon <will@kernel.org>,
+        Quentin Perret
+	<qperret@google.com>,
+        Chris Goldsworthy <quic_cgoldswo@quicinc.com>,
+        "Android
+ KVM" <android-kvm@google.com>,
+        Patrick Daly <quic_pdaly@quicinc.com>,
+        "Alex
+ Elder" <elder@linaro.org>,
+        Srinivas Kandagatla
+	<srinivas.kandagatla@linaro.org>,
+        Murali Nalajal <quic_mnalajal@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        Srivatsa Vaddagiri
+	<quic_svaddagi@quicinc.com>,
+        Carl van Schaik <quic_cvanscha@quicinc.com>,
+        Philip Derrin <quic_pderrin@quicinc.com>,
+        Prakruthi Deepak Heragu
+	<quic_pheragu@quicinc.com>,
+        Jonathan Corbet <corbet@lwn.net>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Fuad Tabba <tabba@google.com>,
+        "Sean Christopherson" <seanjc@google.com>,
+        Andrew Morton
+	<akpm@linux-foundation.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>
+Subject: Re: [PATCH v17 19/35] arch/mm: Export direct {un,}map functions
+Message-ID: <20240731140323693-0700.eberman@hu-eberman-lv.qualcomm.com>
+References: <20240222-gunyah-v17-0-1e9da6763d38@quicinc.com>
+ <20240222-gunyah-v17-19-1e9da6763d38@quicinc.com>
+ <ZdhEtH7xzbzdhS2j@infradead.org>
+ <20240223071006483-0800.eberman@hu-eberman-lv.qualcomm.com>
+ <Zdxwo0abvklfam-Z@infradead.org>
+ <2f4c44ad-b309-4baa-ac21-2ae19efd31fb@redhat.com>
+ <20240226092020370-0800.eberman@hu-eberman-lv.qualcomm.com>
+ <49d14780-56f4-478d-9f5f-0857e788c667@redhat.com>
+ <20240229170329275-0800.eberman@hu-eberman-lv.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: juniper.net
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR05MB6743.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eca11b77-1aa5-464d-410f-08dcb1ae1d23
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 22:14:15.0865
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: bea78b3c-4cdb-4130-854a-1d193232e5f4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: WjHPvamN6l8U2OKkYXHYju5A8UluCyD/ofQh3GA2r6d5ejCQ0+3GmqdRVk3oJGoJe/ISJ0OJScfQGTWzxUk54Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR05MB10356
-X-Proofpoint-ORIG-GUID: vYo-ZZqU-OVkY9aLgfGgBKuVvcMJlDV6
-X-Proofpoint-GUID: vYo-ZZqU-OVkY9aLgfGgBKuVvcMJlDV6
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240229170329275-0800.eberman@hu-eberman-lv.qualcomm.com>
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: j4I54y4kCbHW5wCFqcXe9qcnZqg6h32C
+X-Proofpoint-GUID: j4I54y4kCbHW5wCFqcXe9qcnZqg6h32C
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_spam_notspam policy=outbound_spam score=0 spamscore=0
- suspectscore=0 clxscore=1011 impostorscore=0 lowpriorityscore=0
- bulkscore=0 malwarescore=0 mlxlogscore=745 mlxscore=0 phishscore=0
- priorityscore=1501 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2407310156
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
+ impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407310157
 
-Large cores may be truncated in some scenarios, such as daemons with stop
-timeouts that are not large enough or lack of disk space. This impacts
-debuggability with large core dumps since critical information necessary to
-form a usable backtrace, such as stacks and shared library information, are
-omitted. We can mitigate the impact of core dump truncation by dumping
-smaller VMAs first, which may be more likely to contain memory for stacks
-and shared library information, thus allowing a usable backtrace to be
-formed.
+I wanted to revive this thread based on the mm alignment discussion for
+guest_memfd.
 
-We implement this by sorting the VMAs by dump size and dumping in that
-order.
+Gunyah's guest_memfd allocates memory via filemap_alloc_folio, identical
+to KVM's guest_memfd. There's a possiblity of a stage-2 fault when
+memory is donated to guest VM and Linux incidentally tries to access the
+donated memory with an unaligned access. This access will cause kernel
+to panic as it expects to be able to access all memory which has been
+mapped in stage 1. We don't want to disallow unaligned access simply
+because Gunyah drivers are enabled.
 
-Signed-off-by: Brian Mak <makb@juniper.net>
----
+There are two options I see to prevent the stage-2 fault from crashing
+the kernel: we can fix up the stage-2 fault or ensure that Linux has a
+S1 table consistent with S2.
 
-Hi all,
+To do the latter, the obvious solution seemed to be using the
+set_direct_map functions, but you and Christoph have valid concerns
+about exporting this to modules since it's a low-level API. One way to
+avoid exporting the symbols is to make Gunyah a built-in, but I'd like
+to find a better solution.
 
-My initial testing with a program that spawns several threads and allocates=
- heap
-memory shows that this patch does indeed prioritize information such as sta=
-cks,
-which is crucial to forming a backtrace and debugging core dumps.
-
-Requesting for comments on the following:
-
-Are there cases where this might not necessarily prioritize dumping VMAs
-needed to obtain a usable backtrace?
+One way I can think of is to create a "guest_memfd library" that both
+KVM and Gunyah can use. It abstracts the common bits between the 2 into
+a built-in module and can be the one to call the set_direct_map
+functions. I also think the abstraction will also help keep KVM
+guest_memfd cleaner once we start supporting huge folios (and splitting
+them). Do KVM and mm folks also see value to using a library-fied
+guest_memfd?
 
 Thanks,
-Brian Mak
+Elliot
 
- fs/binfmt_elf.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 62 insertions(+), 2 deletions(-)
-
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 19fa49cd9907..d45240b0748d 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/fs.h>
-+#include <linux/debugfs.h>
- #include <linux/log2.h>
- #include <linux/mm.h>
- #include <linux/mman.h>
-@@ -37,6 +38,7 @@
- #include <linux/elf-randomize.h>
- #include <linux/utsname.h>
- #include <linux/coredump.h>
-+#include <linux/sort.h>
- #include <linux/sched.h>
- #include <linux/sched/coredump.h>
- #include <linux/sched/task_stack.h>
-@@ -1990,6 +1992,22 @@ static void fill_extnum_info(struct elfhdr *elf, str=
-uct elf_shdr *shdr4extnum,
- 	shdr4extnum->sh_info =3D segs;
- }
-=20
-+static int cmp_vma_size(const void *vma_meta_lhs_ptr, const void *vma_meta=
-_rhs_ptr)
-+{
-+	const struct core_vma_metadata *vma_meta_lhs =3D *(const struct core_vma_=
-metadata **)
-+		vma_meta_lhs_ptr;
-+	const struct core_vma_metadata *vma_meta_rhs =3D *(const struct core_vma_=
-metadata **)
-+		vma_meta_rhs_ptr;
-+
-+	if (vma_meta_lhs->dump_size < vma_meta_rhs->dump_size)
-+		return -1;
-+	if (vma_meta_lhs->dump_size > vma_meta_rhs->dump_size)
-+		return 1;
-+	return 0;
-+}
-+
-+static bool sort_elf_core_vmas =3D true;
-+
- /*
-  * Actual dumper
-  *
-@@ -2008,6 +2026,7 @@ static int elf_core_dump(struct coredump_params *cprm=
-)
- 	struct elf_shdr *shdr4extnum =3D NULL;
- 	Elf_Half e_phnum;
- 	elf_addr_t e_shoff;
-+	struct core_vma_metadata **sorted_vmas =3D NULL;
-=20
- 	/*
- 	 * The number of segs are recored into ELF header as 16bit value.
-@@ -2071,11 +2090,27 @@ static int elf_core_dump(struct coredump_params *cp=
-rm)
- 	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
- 		goto end_coredump;
-=20
-+	/* Allocate memory to sort VMAs and sort if needed. */
-+	if (sort_elf_core_vmas)
-+		sorted_vmas =3D kvmalloc_array(cprm->vma_count, sizeof(*sorted_vmas), GF=
-P_KERNEL);
-+
-+	if (!ZERO_OR_NULL_PTR(sorted_vmas)) {
-+		for (i =3D 0; i < cprm->vma_count; i++)
-+			sorted_vmas[i] =3D cprm->vma_meta + i;
-+
-+		sort(sorted_vmas, cprm->vma_count, sizeof(*sorted_vmas), cmp_vma_size, N=
-ULL);
-+	}
-+
- 	/* Write program headers for segments dump */
- 	for (i =3D 0; i < cprm->vma_count; i++) {
--		struct core_vma_metadata *meta =3D cprm->vma_meta + i;
-+		struct core_vma_metadata *meta;
- 		struct elf_phdr phdr;
-=20
-+		if (ZERO_OR_NULL_PTR(sorted_vmas))
-+			meta =3D cprm->vma_meta + i;
-+		else
-+			meta =3D sorted_vmas[i];
-+
- 		phdr.p_type =3D PT_LOAD;
- 		phdr.p_offset =3D offset;
- 		phdr.p_vaddr =3D meta->start;
-@@ -2111,7 +2146,12 @@ static int elf_core_dump(struct coredump_params *cpr=
-m)
- 	dump_skip_to(cprm, dataoff);
-=20
- 	for (i =3D 0; i < cprm->vma_count; i++) {
--		struct core_vma_metadata *meta =3D cprm->vma_meta + i;
-+		struct core_vma_metadata *meta;
-+
-+		if (ZERO_OR_NULL_PTR(sorted_vmas))
-+			meta =3D cprm->vma_meta + i;
-+		else
-+			meta =3D sorted_vmas[i];
-=20
- 		if (!dump_user_range(cprm, meta->start, meta->dump_size))
- 			goto end_coredump;
-@@ -2128,10 +2168,26 @@ static int elf_core_dump(struct coredump_params *cp=
-rm)
- end_coredump:
- 	free_note_info(&info);
- 	kfree(shdr4extnum);
-+	kvfree(sorted_vmas);
- 	kfree(phdr4note);
- 	return has_dumped;
- }
-=20
-+#ifdef CONFIG_DEBUG_FS
-+
-+static struct dentry *elf_core_debugfs;
-+
-+static int __init init_elf_core_debugfs(void)
-+{
-+	elf_core_debugfs =3D debugfs_create_dir("elf_core", NULL);
-+	debugfs_create_bool("sort_elf_core_vmas", 0644, elf_core_debugfs, &sort_e=
-lf_core_vmas);
-+	return 0;
-+}
-+
-+fs_initcall(init_elf_core_debugfs);
-+
-+#endif		/* CONFIG_DEBUG_FS */
-+
- #endif		/* CONFIG_ELF_CORE */
-=20
- static int __init init_elf_binfmt(void)
-@@ -2144,6 +2200,10 @@ static void __exit exit_elf_binfmt(void)
- {
- 	/* Remove the COFF and ELF loaders. */
- 	unregister_binfmt(&elf_format);
-+
-+#if defined(CONFIG_ELF_CORE) && defined(CONFIG_DEBUG_FS)
-+	debugfs_remove(elf_core_debugfs);
-+#endif
- }
-=20
- core_initcall(init_elf_binfmt);
-
-base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
---=20
-2.25.1
-
+On Thu, Feb 29, 2024 at 05:35:45PM -0800, Elliot Berman wrote:
+> On Tue, Feb 27, 2024 at 10:49:32AM +0100, David Hildenbrand wrote:
+> > On 26.02.24 18:27, Elliot Berman wrote:
+> > > On Mon, Feb 26, 2024 at 12:53:48PM +0100, David Hildenbrand wrote:
+> > > > On 26.02.24 12:06, Christoph Hellwig wrote:
+> > > > > The point is that we can't we just allow modules to unmap data from
+> > > > > the kernel mapping, no matter how noble your intentions are.
+> > > > 
+> > > > I absolutely agree.
+> > > > 
+> > > 
+> > > Hi David and Chirstoph,
+> > > 
+> > > Are your preferences that we should make Gunyah builtin only or should add
+> > > fixing up S2 PTW errors (or something else)?
+> > 
+> > Having that built into the kernel certainly does sound better than exposing
+> > that functionality to arbitrary OOT modules. But still, this feels like it
+> > is using a "too-low-level" interface.
+> > 
+> 
+> What are your thoughts about fixing up the stage-2 fault instead? I
+> think this gives mmu-based isolation a slight speed boost because we
+> avoid modifying kernel mapping. The hypervisor driver (KVM or Gunyah)
+> knows that the page isn't mapped. Whether we get S2 or S1 fault, the
+> kernel is likely going to crash, except in the rare case where we want
+> to fix the exception. In that case, we can modify the S2 fault handler
+> to call fixup_exception() when appropriate.
+> 
+> > > 
+> > > Also, do you extend that preference to modifying S2 mappings? This would
+> > > require any hypervisor driver that supports confidential compute
+> > > usecases to only ever be builtin.
+> > > 
+> > > Is your concern about unmapping data from kernel mapping, then module
+> > > being unloaded, and then having no way to recover the mapping? Would a
+> > > permanent module be better? The primary reason we were wanting to have
+> > > it as module was to avoid having driver in memory if you're not a Gunyah
+> > > guest.
+> > 
+> > What I didn't grasp from this patch description: is the area where a driver
+> > would unmap/remap that memory somehow known ahead of time and limited?
+> > 
+> > How would the driver obtain that memory it would try to unmap/remap the
+> > direct map of? Simply allocate some pages and then unmap the direct map?
+> 
+> That's correct.
+> 
+> > 
+> > For example, we do have mm/secretmem.c, where we unmap the directmap on
+> > allocation and remap when freeing a page. A nice abstraction on alloc/free,
+> > so one cannot really do a lot of harm.
+> > 
+> > Further, we enlightened the remainder of the system about secretmem, such
+> > that we can detect that the directmap is no longer there. As one example,
+> > see the secretmem_active() check in kernel/power/hibernate.c.
+> > 
+> 
+> I'll take a look at this. guest_memfd might be able to use PM notifiers here
+> instead, but I'll dig in the archives to see why secretmem isn't using that.
+> 
+> > A similar abstraction would make sense (I remember a discussion about having
+> > secretmem functionality in guest_memfd, would that help?), but the question
+> > is "which" memory you want to unmap the direct map of, and how the driver
+> > became "owner" of that memory such that it would really be allowed to mess
+> > with the directmap.
+> 
 
