@@ -1,253 +1,250 @@
-Return-Path: <linux-kernel+bounces-269235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E68B9942F98
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:02:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F75C942F9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 222DEB24092
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:02:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E66E2B25B52
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3FE1B0113;
-	Wed, 31 Jul 2024 13:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 006D31B14EE;
+	Wed, 31 Jul 2024 13:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="kf2J2QeO";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="kf2J2QeO"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2084.outbound.protection.outlook.com [40.107.247.84])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzcDc3U0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EAE1A76C1;
-	Wed, 31 Jul 2024 13:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.84
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430827; cv=fail; b=MJlciObanBn113nWfvs8rOcgzkYeJoDTjYFPT+ixshi6Mmui9Xz6878At9OgD+aRAfwYxvIdz7gz1oiq/UgjcBgUtONoj9KHkeIdcT/eZVT6uez7YFLb9uUKe3+vWQd+zas96M5brP3IItV6ntmvxt1Ht4wY92vHPHnPI0+xx80=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430827; c=relaxed/simple;
-	bh=5ghhgmyRY0Yxq8wAcW7ynOHT/oXNxwpglETnC4T4pB4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hnugqQ+25GO6lPTMaeBh71WDC0OwZONVFUlVI2fNsyQT4D9C781FQfFb3gqklDNMlDMDVLZwkS3z2D6yFVT9wI26WvX6yRRgnmeekhhRiikFb+/QbpbQ9gOc2RyuWJuUuWLNb1+RTbumdVXURSFMcfgKhX6IsAiJ/ohcWlzpFWA=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=kf2J2QeO; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=kf2J2QeO; arc=fail smtp.client-ip=40.107.247.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=G/J45hcu/KgdHImZqmlBZyITmXHDvHIlu2qbt158HzQK0KA0l770PNPXFfqWzejagixJN+rHGA+tj9l6MS7L1p11tqE50XcHdeBVbhX30vqkcxpnLa9xYpZW/6lTsdc4KtD191FOkVQ61lFI8c8OaXlOISBdf1ScQb/oJFrRgAFXwBPB4+5EhSRB8Cj6i8EdnoKDj1mrmtMBridxIILYivpsYFEqUpNTrMW2kKGoOwJHXdt/magerOuY3L2LyNWfa/Kww5wMiVDQuBngXKh1TtL+FwWki/AaEFabDpZAlF1vVg3VmVqsPt2m5Pxu/PvgWB0bLx6gc74+lFC5O4cnVw==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5ghhgmyRY0Yxq8wAcW7ynOHT/oXNxwpglETnC4T4pB4=;
- b=CyM4hNDQD6/PPADkaoLYIKyNU9uUoFIxustsQ0m9Pw4pwD/vFkFILgH1fw/XySQhPqkExWGHYEzweoeHRbl3jdWeY6Ldpg8Of8DMCc4q9DOB7ZTKDyU+anAJ9llG0Tbur6lrwhqzrJeIEgGQgLA66u08yiDKBDpl1FRGh0auYoZ13j2dB9YTE5W81f3amoXEnnrdvnjvtpeg+6NpMWu+ZxavvUAVKILvfl7AYmx88cHUZVDxVKffR5NVThQg6nx3FiDsODb2gpxPZ1wm/Qhts8OZH5+fydbsxXvizvn4Ho3j0kLDi8Tb9UWGeDoHryypTJkaBPPn1qI4kMS3pEFYpA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5ghhgmyRY0Yxq8wAcW7ynOHT/oXNxwpglETnC4T4pB4=;
- b=kf2J2QeO1AKwGdTmajx5f0Jpc+VI5zWoOR8U6Ke9JsvIpR246wlzPIbU27XtjtAZAjcBiDERzu5uVBP3kFCwUtv/oP/FqMYQAxIpWtbWmEIWsKWz2V9kRnbu82zpbqol9QaMRpOB5d0X4Zz1gpKC20r0IOM7YPCEiIAw3GglHm4=
-Received: from DU7P191CA0019.EURP191.PROD.OUTLOOK.COM (2603:10a6:10:54e::33)
- by AS2PR08MB9987.eurprd08.prod.outlook.com (2603:10a6:20b:645::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
- 2024 13:00:21 +0000
-Received: from DU6PEPF0000B61E.eurprd02.prod.outlook.com
- (2603:10a6:10:54e:cafe::53) by DU7P191CA0019.outlook.office365.com
- (2603:10a6:10:54e::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.35 via Frontend
- Transport; Wed, 31 Jul 2024 13:00:21 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DU6PEPF0000B61E.mail.protection.outlook.com (10.167.8.133) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7828.19
- via Frontend Transport; Wed, 31 Jul 2024 13:00:21 +0000
-Received: ("Tessian outbound a1d019a80d57:v365"); Wed, 31 Jul 2024 13:00:21 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: d8b7cfd8e4b47311
-X-CR-MTA-TID: 64aa7808
-Received: from Lb079388d31c9.2
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id E8B53CD6-662E-4F84-8FAC-837E79DB8F14.1;
-	Wed, 31 Jul 2024 13:00:15 +0000
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Lb079388d31c9.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Wed, 31 Jul 2024 13:00:15 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wmb5DbqzVMdrqOKei2EtwUPkj8QORuOyysRkBT+6AWrNOQj6ptSjUbXgcfvYy5qkbRV6jAlR23bq2e2qbYJkjDMmXVnW5FDXljqvCdteHTHbaSsCKETwQB7+CIr4aHaG88tpSui0ScJCenGuznmXL4G1U8KcYunKTxGWxS8gtX8VE3L3dYg/SRJYYw2N0e1UJv42iPJ/vUxh2Qc3WtHSMNtXvLBZgeiDk9OdOFbE+BXZcMjJMgCFVjkzHiHgFdQ6+Ahm948NP6Md7kJ/W8e7sKzks+/XFW7Hyjp9g4kCxgFIE08QS6Rk7bSYaxN4yyQ1wFJW63Qx1gP1UWLYCtDtGg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5ghhgmyRY0Yxq8wAcW7ynOHT/oXNxwpglETnC4T4pB4=;
- b=UXUMOhJU5296nV/qJ+5NOzsb9/mvffeYl1YbH8EVHQfF4pcNg75VqQTjwDu1ubYV7DseuEghv5F7Bp4mQtgHueQYFYbPed3S7l7ErEYZLHlemGZhqg+qkf1QeT2/1R2bs9KUYhUf8bi5IjfK5PHiOBG8IGFnYBtDmPB3ik7viTRbG9Xx0o/NLBo+YigE0PODtjUP2dNFpcfOdLyiPVjgfIdGaenzYFAN1ULvhr+G/Y9kibqVTirydbPdwkXIZ2G+81qSCU1eCWnB1YtHuYWEulvLHV8oHK4473P56weM6YvWlTNG1BeednwFV/cagc9cplzmt7PEdFWkrg3EJYiFgQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5ghhgmyRY0Yxq8wAcW7ynOHT/oXNxwpglETnC4T4pB4=;
- b=kf2J2QeO1AKwGdTmajx5f0Jpc+VI5zWoOR8U6Ke9JsvIpR246wlzPIbU27XtjtAZAjcBiDERzu5uVBP3kFCwUtv/oP/FqMYQAxIpWtbWmEIWsKWz2V9kRnbu82zpbqol9QaMRpOB5d0X4Zz1gpKC20r0IOM7YPCEiIAw3GglHm4=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from DU0PR08MB8639.eurprd08.prod.outlook.com (2603:10a6:10:401::11)
- by AM0PR08MB5441.eurprd08.prod.outlook.com (2603:10a6:208:17d::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Wed, 31 Jul
- 2024 13:00:12 +0000
-Received: from DU0PR08MB8639.eurprd08.prod.outlook.com
- ([fe80::253c:bc53:f4b8:3c7a]) by DU0PR08MB8639.eurprd08.prod.outlook.com
- ([fe80::253c:bc53:f4b8:3c7a%4]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 13:00:12 +0000
-Message-ID: <6e1b70a1-6cd7-4a20-90e9-aa8446c74e91@arm.com>
-Date: Wed, 31 Jul 2024 14:00:10 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/5] firmware: arm_scmi: Create debugfs files for
- counts
-Content-Language: en-GB
-To: Cristian Marussi <cristian.marussi@arm.com>,
- Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- arm-scmi@vger.kernel.org
-References: <20240730093342.3558162-1-luke.parkin@arm.com>
- <20240730093342.3558162-5-luke.parkin@arm.com> <Zqop6qq0jibefw0g@bogus>
- <ZqouwIJUYDJB64xP@pluto> <Zqow0WOz0eVf6fwv@bogus> <Zqo0IWvrdUUNIAGL@pluto>
-From: Luke Parkin <luke.parkin@arm.com>
-In-Reply-To: <Zqo0IWvrdUUNIAGL@pluto>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LNXP265CA0071.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5d::35) To DU0PR08MB8639.eurprd08.prod.outlook.com
- (2603:10a6:10:401::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B7D1AC43E;
+	Wed, 31 Jul 2024 13:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722430887; cv=none; b=g/d1VJ6zC0wAcfEJSOUb92M7yAj3RIzd69q+Rwc82aCFMND75fTL/Mq/ai0NG5S935dl9ZfrY9VRGDukS2PSqAip0b+N32t9FNj6gwBnNcnw9TLFRvrE1IcxwSKxFM9SBcwdGMrB6mHtuPfWgA3G0cc62rxv0GIX009pFkH+pzo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722430887; c=relaxed/simple;
+	bh=FOc4xL6cnBZKwU0x9lOVB7wH6Wc39+KLGPTn8baEj/g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F8+FlIxpkMoQH5zYrnTetoyAEn7HcBCOqFsOk0jnnxNc3nBM4PGT6FBKgdYX8VNPEwroE7F4T8u2eAtStNQfrJXWreH+AwO6v/ioXKlOaqLZPMQxPZHg8ErZnC3GjhPea1fE8HcQkhLStsJ4DqjWos+5SdBm8KrRbbLTLlTI8t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzcDc3U0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC24C4AF0C;
+	Wed, 31 Jul 2024 13:01:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722430886;
+	bh=FOc4xL6cnBZKwU0x9lOVB7wH6Wc39+KLGPTn8baEj/g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OzcDc3U09RWMQOUwMgxccj1jmTf8CVPmpN6QlzMqPndDDuzOT+V00yOwRv/8VCC+C
+	 xwWFOs+ytJ9CWmc6Mp30fEzzBdPTAYQDPBZtltVy0l1tLMu7TzMbkCgbliN+zuQCIs
+	 7jXvFyO+RipEZgx7g9UPH84Z7xh/MCjFUJh1JQIYM2nw4D9vjHIfjf0BegNbwXEyuB
+	 jliJBcnqnL23sfjuDtEZXu0onWDAScTwvYqQw2V3Lm2ygpVTKYAk/G/sMKlJa9q7Cv
+	 Cm+zT4sTqa2Rf0+H30xqwRUO+O+MqUeuDfyfS42GFkorx0xOZ9tOOPFbEDnRvRIMx3
+	 jawUBB+7KeaFw==
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70937ddca68so369972a34.1;
+        Wed, 31 Jul 2024 06:01:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXk1TOH8y+K7HTb62R1f9cAXYK+DX+0YF//Twdupnb9VaR6uLa+W9OZRqtqeP1zHAJaOMoqcUa/5Ji/M4knz6nKpyfuPXGKTZBNxvtBnf15bBT32z5TBdZLMNiUkezKhvk5OzxCLyfwgwVsQ0gt/6OSlaTm+KAcOG5qyKCIhzxn3PKr1fPkvjY/G6qFa5oFPE5wDRRuupjphON1
+X-Gm-Message-State: AOJu0YyaI6mwQW0jx3t/Djjpldr9QQd/BoO+WAV0L7/OvYPtbfCln1Ch
+	Gy86PMQp95hMARnEdIwPW/PNJrt73uDNO2vfxXyPjrDKYPBoVkzyvZ6lUIHWlv5m+22le0mUOug
+	BS6lWlQhWv1WIzT0AehdyeEkE1jw=
+X-Google-Smtp-Source: AGHT+IHR7XEcFHPLksjQmwAtEeWHPpKDjYfRSPpiwZBjHMhkVK9+8QlLG6b+zqiWDqo4DwOtnaRCEolaJ1S/c+wwanM=
+X-Received: by 2002:a05:6871:e2d0:b0:261:934:873d with SMTP id
+ 586e51a60fabf-264be1e0f03mr11838413fac.5.1722430885754; Wed, 31 Jul 2024
+ 06:01:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	DU0PR08MB8639:EE_|AM0PR08MB5441:EE_|DU6PEPF0000B61E:EE_|AS2PR08MB9987:EE_
-X-MS-Office365-Filtering-Correlation-Id: d138bf04-8e51-4a87-1660-08dcb160bc68
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?UlpRZkpzUlBVbVB0bTRZbEdvcnAyQm80eFp5d056Qm5iclM5WGQxZzZkVFBG?=
- =?utf-8?B?TWpSbVJYdlBEcjFoMFVpUUJoRnRPN29RejdxcUIzSCs0SnYrMmQvdjBJYk5E?=
- =?utf-8?B?TzIvK2M3bE43RHRRZmRhbUFuYS9rRWJOZEM0cnlJdGpDbmtwQ0RqM2gvKzFF?=
- =?utf-8?B?dnk2SmlGOU9idkhobmhxOUhEeXM1YVVUOWk2SkxSWnkrT25BaFhpZjVKWDVC?=
- =?utf-8?B?bzZSRDU1QkdKc2NxOE1paG1Hc2dINTNDZU9tZ1FTMU1mNnk1UnFYMFYwRDlr?=
- =?utf-8?B?YUY5RjhYY3Z3RUdnVVA2SHNrdmVrTTZjT0pmK2tEcG1CSjlrNHRaYWVMcFNW?=
- =?utf-8?B?ZUdMSUxNUjJCTGU3Y1czUnFORVVqRUtWbXU2RE9tRjFMTFhpcnpMWTQ3cFJa?=
- =?utf-8?B?dDdWcDgybUZJbk5JTlc0aTAydVhjWWkwRXZrM2JsOVJMeTFQZW9BYnpmOXpp?=
- =?utf-8?B?RGxTa3ZzOWgvaEhrRlBSR29rRkU2Q3VDTDV1V05oWk1HNDE2RXZFOG1pdFY0?=
- =?utf-8?B?dzg4b0VXOTRVZDUzYjYxYmVDaXRER3BZc2liVzQ3WnBUY01ZY2xTZnc1Ziti?=
- =?utf-8?B?M0krUmdoUlRWeXpUanU5YzM2OVJzZDVxa0pDcVJXcWdYbDVmRFRkdXpGOFhF?=
- =?utf-8?B?SE14Mm91WTV5ek5LRnpWVUM3YnIrcnVkdUFwTEtNK2VVRklKODI3RVc0Uk9u?=
- =?utf-8?B?Yjdac3F1MXY1b1V6NkRKSHJDbUk2VXJlOG5UMkNOT0MrdmJsa2pxRThVTld6?=
- =?utf-8?B?WVZDd2w4MjRqUmpKTmtvNG15S0ZzUGl2RkxZZUpXMkhCeEIxN0lrNUlmaXc3?=
- =?utf-8?B?M3RMS1FtVC9LYWlmUmxmOGJsWXRvSXQwMUNVdFN2WkNydytHeW1tYjR6VEN5?=
- =?utf-8?B?Ti9LdWxGcFNjcFVFekJRcUM2SHZBRUhra05QTnZ4WFN4K1kwYzNKQ1psVUN0?=
- =?utf-8?B?cEtMMVgwRCsvbUpSTjRtK0hpZnNpaXllcy8rMUFiQ3JjUHpWdXoxNlhDQmll?=
- =?utf-8?B?MVlTbm1SbTNkWHF4LzBTUEkwMjlleHRNNlVhUzdxSWlLTjZvUE4wdGd4MmF5?=
- =?utf-8?B?TWlrQjMxblQ2aEhNV29oblBxdmFmWWtPem5wMjhCSkNrN1ZOMjZWdkpLNXpZ?=
- =?utf-8?B?blJxSnYvS2Q5aGY0cjJWNUMzbHBlSTRMUGhWSlo3ZGwvbnhHRmdwcDAwSEtw?=
- =?utf-8?B?MUEwNlAxMC8zdlZDWWE5WXIyb1ZEWGUxbDdOR3ZEVmpaYW5NVFZwRGxpeDNh?=
- =?utf-8?B?MVdaZWNsbXA2STVYaFFvZkVxQkx3NlNDSzd5cEhXbDlCeVlXaDNFaWlsNzJk?=
- =?utf-8?B?UmdtWmE0WFArTTI5QisvS2p1Qm5MQzNCSWN0Tnk1YmtoNUtMM1RHdk41VVpu?=
- =?utf-8?B?Z1lPL2Zxek1MRm4wa3oyenFSZTBFUGZjT0NkckVjb1R5cUlVRW84VS8yT09H?=
- =?utf-8?B?UnRZRTFVQjlRTXVwN3JoRytKZFo1QWFiQ09iRFhGck5OUjBBUUNWUHJZUUMz?=
- =?utf-8?B?K05MZEpTU0RyTVNINDAvZVZCUUxzMmxSUURCS3RQV3NWUWt1VmFxUFdpYitQ?=
- =?utf-8?B?WDRuV3RXSEVtZFhibGFISC9vMFloTGFhWHI1c1ZERXE5N3VTSXdPOENoOGZC?=
- =?utf-8?B?eXVaUktDWm1Uc3RwMzVoMUEzRC9rcGg5dUNDWWFNUXhWQUJUejBrclRoSXVS?=
- =?utf-8?B?WGczalpzblM3eU5kalZvUlJoMld5SCtZTUtYWVRWM2hsajlyRHBnWDZtaEla?=
- =?utf-8?B?MmpPUFVhTTc4aXBKT00vMWZpdTc0dEY5VHN6V09tSTlDamlQNW1yV1Bkd2tu?=
- =?utf-8?B?OE40U1BCQlVBbTZ5anNWdz09?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB8639.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB5441
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:10:401::11];domain=DU0PR08MB8639.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU6PEPF0000B61E.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	34d6ba1f-7bd2-4016-948d-08dcb160b69e
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|35042699022|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Zm1MbTEzVnJVTFhSWElCRkMySDBEWjEwQStDTEtSZHVna2FnMHltR1V2MmpS?=
- =?utf-8?B?QjRNb2dwaDhVekxXdC9WR09oZWZpc1NCU2ZjMEk1SVJtZzVUTzNGRW12L3hH?=
- =?utf-8?B?S3JWNk9reEtFbkZ1SXdlM2s4TVdZd2huQ2dLcThQd3NlNFZOQ2VWNmh3SnBj?=
- =?utf-8?B?VXlVckpLZUFiMkpNcUhCeFdpdS81KzA0alBCVzBaSHpFSlVzSUZ2K3EzVWdI?=
- =?utf-8?B?TlZlYms1TFd0M2pnRnJiM2JBR2pxYk8wTXJOU0hrMjJrSkFhSGtDQXZRL3Nq?=
- =?utf-8?B?cTVkdSs4Y09taDNBZGp6eHQ4WEpxcjE2cDRoRlZGQ3pOd3EweEN2UktWMktW?=
- =?utf-8?B?WTJyMDBwRi9GYVBmMHkxakNTZE1vcEtsdUxobXYxYzZYTXZnTmVMdzY0T3Vs?=
- =?utf-8?B?SzZNMHF3N1hPemtJM0lCZmhyNWpSSS9wa25GSXhueHJhUmwvR0N0WFQydk9D?=
- =?utf-8?B?cWdseEZjblVHbHB1TlZmbytqNmpMNEVmUkdGaUVTajVKcFRWUnFWM2pDWnk1?=
- =?utf-8?B?SVFSZHlOaTBHOFV1aytONUp0OWxmTjArUU55K0V4V0d5TktXamZBeHJxbmZr?=
- =?utf-8?B?bFdheERFTFU2UVdtbEV5ZUpNZ3FocTZzM2VCVjFHcFpTZnhNN1J3ZlhQalh5?=
- =?utf-8?B?SkxyaUxwelJsd1ZiVEM2VVhvTUtpYmF0RTFvZjJrYndKL2VxYXJySXZaVkZJ?=
- =?utf-8?B?eloydnFmeXJSZGkwLy9zbklxYWRXeGRTTUtkUUYvM04ra29GaVFFM3RqRnl5?=
- =?utf-8?B?V3NTZDRsWGM0aWNXVE9zYmUvalo2bjJoZnRSdWF0WnMyUFpoa1g5WGVKcU5X?=
- =?utf-8?B?MGYxbnIxc290ZWFVeFExenorUWpqWmVQWkdxTVhMNjRDYkhxZWRzQ1hRYlhN?=
- =?utf-8?B?VFFvSzdJR1RFWGRSU25McUpRUWUvQXNKSk9MZU9ZM1VKeHdnVDZ6ampNZ3hq?=
- =?utf-8?B?Y3hqY3hSbkUrNVppOE40L3AwS0dsSW1SM1I2Qzg2SDVyRjN2RG95enVicDQr?=
- =?utf-8?B?UWtBTElwUlBwL2R2YkZ5dFozWmxGdXZOQ1VPaUxkU1pUTFZTSzV6dFRMVlg5?=
- =?utf-8?B?Y2RnVjd4UWp5MWpFR0x6b3lNVHJFaTNJNmpIZzZNcjBtSUZveUJvdmxTcUdH?=
- =?utf-8?B?UmErL0VZbW1qZVBiRjNTSTdyMTVJZTNtS2pzUkRDMkJDT1lFQWRrV0lQNVZZ?=
- =?utf-8?B?QU1GeGw5ZUx0TG9UaG9Ia1hZTmNkaXh5NHNSWFd1SlJacUxHdVNmRWJvazNI?=
- =?utf-8?B?NzVENVNDbWx4VVdJbThjdVhmM3FGZHgrSUdHSWsxSnA2aDZWTnljZzN3WklN?=
- =?utf-8?B?YTVYMHRZTXl6UTRUdGtJSUFmWFZhWlluaHZJbmVrNzRROFhDYVZUOHAydyt0?=
- =?utf-8?B?YTg4SkwrV0hQdFRGVW5hOVh5dWdkL1VOaCs0ZE10TFZyNHh3ZWNaaStBVTAy?=
- =?utf-8?B?M0NQUXRrMVpDTWtDWExJWGllcm5tcHBYbGVoSmZpZU1oTG41T0lJL3JyWG5x?=
- =?utf-8?B?MVBDMnN5dDd5Q1Z2dFJyYXpoMHZaNDlqbG8vWlhQZUpEVWFhSGFPL3NoOTBX?=
- =?utf-8?B?b2N0a1ZiUHlndytTODdER2ltTXNFTlFXSEN4WDE5Ujg4bG1TRXEvVzdDd3lq?=
- =?utf-8?B?N01xRXlpM0ZoQko4SGxJVG9WTkFYeWZUWmFEejZ4MkFVcC9IS0R3TEFGNjRW?=
- =?utf-8?B?N3dSSUlkNzUyMW1VVlNIVWxBaHVpczA5ZURPN2dJRjVpMlkvQ0xGbjlyL1Yz?=
- =?utf-8?B?MUcrRWx3STdTUVFoa1gxMkRkN0Q5SWhiY09Bbk85UzM2Mm1lZXJ0bzFZYlRW?=
- =?utf-8?B?T1M3dndNM0wxaWVEYmY5V3pqR2RzU3h3MWJrd2c5WXJSZEhoVEtCWVU1MkVy?=
- =?utf-8?B?NnR5eHNVRmdXNEwxOGhDZjd1MXdQNjJlM3dIbXhKcmc2Slh3UXQwV29DSDlN?=
- =?utf-8?Q?Y/JEffQ7+i992Nkh2mHKpiIzZPyjUOnK?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(35042699022)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 13:00:21.5526
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d138bf04-8e51-4a87-1660-08dcb160bc68
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B61E.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB9987
+References: <1922131.tdWV9SEqCh@rjwysocki.net> <9002154.VV5PYv0bhD@rjwysocki.net>
+ <ZqoxXdQRxhfr5cHY@shredder.mtl.com>
+In-Reply-To: <ZqoxXdQRxhfr5cHY@shredder.mtl.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 31 Jul 2024 15:01:14 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0h7T27fcL5-Wp5cjxi7mqKVh3_jk-8KwXPGWRbO31sm7Q@mail.gmail.com>
+Message-ID: <CAJZ5v0h7T27fcL5-Wp5cjxi7mqKVh3_jk-8KwXPGWRbO31sm7Q@mail.gmail.com>
+Subject: Re: [PATCH v1 13/17] mlxsw: core_thermal: Use the .should_bind()
+ thermal zone callback
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>, Petr Machata <petrm@nvidia.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->> Indeed, I hadn't seen it carefully. Do we really need per counter reset ?
->> For me one global reset all with all files read-only should suffice.
->> Let me know if and why you think otherwise.
+On Wed, Jul 31, 2024 at 2:43=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> wr=
+ote:
 >
-> Well we don't need strictly anything since it is a debug/devel feat, it
-> just seemed handy to have a way to just reset one of the counters you are
-> actively working on, if you think about a testing or live devel
-> scenario...but it is not really needed and I have no strong opinion
-> about this...it was just a nice to have I asked Luke to add last minute...
+> On Tue, Jul 30, 2024 at 08:34:45PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Make the mlxsw core_thermal driver use the .should_bind() thermal zone
+> > callback to provide the thermal core with the information on whether or
+> > not to bind the given cooling device to the given trip point in the
+> > given thermal zone.  If it returns 'true', the thermal core will bind
+> > the cooling device to the trip and the corresponding unbinding will be
+> > taken care of automatically by the core on the removal of the involved
+> > thermal zone or cooling device.
+> >
+> > It replaces the .bind() and .unbind() thermal zone callbacks (in 3
+> > places) which assumed the same trip points ordering in the driver
+> > and in the thermal core (that may not be true any more in the
+> > future).  The .bind() callbacks used loops over trip point indices
+> > to call thermal_zone_bind_cooling_device() for the same cdev (once
+> > it had been verified) and all of the trip points, but they passed
+> > different 'upper' and 'lower' values to it for each trip.
+> >
+> > To retain the original functionality, the .should_bind() callbacks
+> > need to use the same 'upper' and 'lower' values that would be used
+> > by the corresponding .bind() callbacks when they are about about to
 >
-From my perspective, there isn't really any drawbacks to allowing writes to the
-per counter reset? It's just a nice-to-have without much drawback, unless I'm
-missing something.
+> Nit: s/about about/about/
 
-Thanks,
-Luke
+Yes, thanks!
+
+> > return 'true'.  To that end, the 'priv' field of each trip is set
+> > during the thermal zone initialization to point to the corresponding
+> > 'state' object containing the maximum and minimum cooling states of
+> > the cooling device.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Please see more comments below, but this patch is going to conflict with
+> the series at [1] which is currently under review. How do you want to
+> handle that?
+>
+> https://lore.kernel.org/netdev/cover.1722345311.git.petrm@nvidia.com/
+
+I may be missing something, but I don't see conflicts between this
+patch and the series above that would be hard to resolve at merge
+time.
+
+Anyway, I'll try to apply the above series locally and merge it with
+this patch, thanks for the heads up!
+
+> > ---
+> >
+> > This patch only depends on patch [09/17].
+> >
+> > ---
+> >  drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  121 +++++-------=
+---------
+> >  1 file changed, 34 insertions(+), 87 deletions(-)
+> >
+> > Index: linux-pm/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > --- linux-pm.orig/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+> > +++ linux-pm/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+> > @@ -165,52 +165,22 @@ static int mlxsw_get_cooling_device_idx(
+> >       return -ENODEV;
+> >  }
+> >
+> > -static int mlxsw_thermal_bind(struct thermal_zone_device *tzdev,
+> > -                           struct thermal_cooling_device *cdev)
+> > +static bool mlxsw_thermal_should_bind(struct thermal_zone_device *tzde=
+v,
+> > +                                   const struct thermal_trip *trip,
+> > +                                   struct thermal_cooling_device *cdev=
+,
+> > +                                   struct cooling_spec *c)
+> >  {
+> >       struct mlxsw_thermal *thermal =3D thermal_zone_device_priv(tzdev)=
+;
+> > -     struct device *dev =3D thermal->bus_info->dev;
+> > -     int i, err;
+> > +     const struct mlxsw_cooling_states *state =3D trip->priv;
+> >
+> >       /* If the cooling device is one of ours bind it */
+> >       if (mlxsw_get_cooling_device_idx(thermal, cdev) < 0)
+> > -             return 0;
+> > +             return false;
+> >
+> > -     for (i =3D 0; i < MLXSW_THERMAL_NUM_TRIPS; i++) {
+> > -             const struct mlxsw_cooling_states *state =3D &thermal->co=
+oling_states[i];
+> > +     c->upper =3D state->max_state;
+> > +     c->lower =3D state->min_state;
+> >
+> > -             err =3D thermal_zone_bind_cooling_device(tzdev, i, cdev,
+> > -                                                    state->max_state,
+> > -                                                    state->min_state,
+> > -                                                    THERMAL_WEIGHT_DEF=
+AULT);
+> > -             if (err < 0) {
+> > -                     dev_err(dev, "Failed to bind cooling device to tr=
+ip %d\n", i);
+> > -                     return err;
+> > -             }
+> > -     }
+> > -     return 0;
+> > -}
+> > -
+> > -static int mlxsw_thermal_unbind(struct thermal_zone_device *tzdev,
+> > -                             struct thermal_cooling_device *cdev)
+> > -{
+> > -     struct mlxsw_thermal *thermal =3D thermal_zone_device_priv(tzdev)=
+;
+> > -     struct device *dev =3D thermal->bus_info->dev;
+> > -     int i;
+> > -     int err;
+> > -
+> > -     /* If the cooling device is our one unbind it */
+> > -     if (mlxsw_get_cooling_device_idx(thermal, cdev) < 0)
+> > -             return 0;
+> > -
+> > -     for (i =3D 0; i < MLXSW_THERMAL_NUM_TRIPS; i++) {
+> > -             err =3D thermal_zone_unbind_cooling_device(tzdev, i, cdev=
+);
+> > -             if (err < 0) {
+> > -                     dev_err(dev, "Failed to unbind cooling device\n")=
+;
+> > -                     return err;
+> > -             }
+> > -     }
+> > -     return 0;
+> > +     return true;
+> >  }
+> >
+> >  static int mlxsw_thermal_get_temp(struct thermal_zone_device *tzdev,
+> > @@ -239,59 +209,29 @@ static struct thermal_zone_params mlxsw_
+> >       .no_hwmon =3D true,
+> >  };
+> >
+> > -static struct thermal_zone_device_ops mlxsw_thermal_ops =3D {
+> > -     .bind =3D mlxsw_thermal_bind,
+> > -     .unbind =3D mlxsw_thermal_unbind,
+> > -     .get_temp =3D mlxsw_thermal_get_temp,
+> > -};
+>
+> Is there a reason to move 'mlxsw_thermal_ops' below?
+
+Not really, it can stay here.
+
+> > -
+> > -static int mlxsw_thermal_module_bind(struct thermal_zone_device *tzdev=
+,
+> > -                                  struct thermal_cooling_device *cdev)
+> > +static bool mlxsw_thermal_module_should_bind(struct thermal_zone_devic=
+e *tzdev,
+> > +                                          const struct thermal_trip *t=
+rip,
+> > +                                          struct thermal_cooling_devic=
+e *cdev,
+> > +                                          struct cooling_spec *c)
+> >  {
+> >       struct mlxsw_thermal_module *tz =3D thermal_zone_device_priv(tzde=
+v);
+> >       struct mlxsw_thermal *thermal =3D tz->parent;
+> > -     int i, j, err;
+> > +     const struct mlxsw_cooling_states *state =3D trip->priv;
+>
+> Please place it between 'tz' and 'thermal'. Networking code tries to
+> maintain reverse xmas tree ordering for local variables.
+
+I will.
+
+Thanks for the comments!
 
