@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-269380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4E5B943234
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:41:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3EF943235
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2E8284D8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46F1C1C23CB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9861B1BBBD9;
-	Wed, 31 Jul 2024 14:41:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB951BBBD1;
+	Wed, 31 Jul 2024 14:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amDNhx/D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lJc+bV3A"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8A61DDC9;
-	Wed, 31 Jul 2024 14:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB7C1BBBC5
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436861; cv=none; b=hakB3NgFo5TCizcfMfdrTuKvWgqKivO+JGYpO3AanSannn27+rqIgzhUMADZnk9FNUz7KBkANSoB5PkbNK+yKQLmyZ0XWuPGE8znoI0TDZvNuMa93ddcsR0zTPgY+XD1t+nO2QXkxejh5jzm/epY8UC+4igjucKn8WmCM7nPSk0=
+	t=1722436891; cv=none; b=Vh0nwHW9hZcd+FTlunJ0rpVgM072w8H60RjgJihmySeSeZKmfs7vBjgltIRgfa3DSq6ht69iauF3e+Ra/lPxQbqAQMM8EIkLjAWScJP9Zx6j/51gpYt0ZfZL15e04jfyv9vS0aJDQCEPja2KbZUsqcLUBslyiKbDnTY9fssKfFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436861; c=relaxed/simple;
-	bh=bnW6xuwZRXMhJrERIAI3wU1Z7HMnXzuTTSgYcobJcNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=okTHcMOMiRNG37p08piEEM+WxyDARTuNZgAz38qXqyWOnR/oAEKS3YWHqSXvC8y2LIlY+/UinPMunBfcbUQYwhLfBV1Q+jN8MN7ALT8hibB6bj8Xbo4Y6MGIcJCFWV6SWfoc7JgM6gxV84gODmTBEbGPRle242y9k83TWVL/Vhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amDNhx/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE70BC4AF0B;
-	Wed, 31 Jul 2024 14:40:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722436861;
-	bh=bnW6xuwZRXMhJrERIAI3wU1Z7HMnXzuTTSgYcobJcNA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=amDNhx/D9q3Te2VaVhD7jTIzAn6vhUMsTpFFXj/sbot7JZIo24T3EyYxqVD2450a9
-	 rOk9dmf4/Viw/ibNSVrYZqjNIQrcndTSe8H1Nat3tkBXW9iIAxr6upd9Dn4JM63lD+
-	 3O1Le2Wvn02sLYrmGGfVlU59ykSFdSMRvpXyazO7pjoixeX3BO7vr939kNIe49OTiL
-	 7n8Hbwut99cxMna36XlGHd6Z6flRLHbix3cfZTNh+bzl9fEsPygXCQXnY9rfgykH81
-	 p3yqWzLNhNjwRg3GkaJ8LKcOnBVCaAf7d9j/b+YHVgtWcyUpdZgmKc7CAKjijCON1G
-	 d+zd0DDFltTeg==
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] netfs: clean up after renaming FSCACHE_DEBUG config
-Date: Wed, 31 Jul 2024 16:40:50 +0200
-Message-ID: <20240731-denken-marzipan-d7c2a89e8375@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240731073902.69262-1-lukas.bulwahn@redhat.com>
-References: <20240731073902.69262-1-lukas.bulwahn@redhat.com>
+	s=arc-20240116; t=1722436891; c=relaxed/simple;
+	bh=E6KgNnYzbt91dEC1MO1HJTuDpyeBTNgliEJaGbzyBoc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HdS+kH1boj32LBF5519D3XLzayHiG+9ZhTNvLllIzSGYuuorSEH8h7t9jH5hKeyCn4xAun6vVjhK7j4ZcPPvzVMCEIqUJHhcprFQKoy5r1dQ6+yoLDVaFVITB8t3xt930RPN+A7iMdl0XFfA3sNSzf6cFAUskHGOV0r+KpyoG1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lJc+bV3A; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1722436890; x=1753972890;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=E6KgNnYzbt91dEC1MO1HJTuDpyeBTNgliEJaGbzyBoc=;
+  b=lJc+bV3AFQMhF2AUTqpsu/F3z0zvW0bPVharWeIItq4uwC2fU53TdW6E
+   4rx+/aIVbx8o4+/haJP9JE/MNSNTHIYIUFcqGlkWSfOtorsmLvH8b24Wu
+   Y+RBCVNR19/dKT223k7flaKCBqMffbUH5DDgRkzSjf6kwBZavHFKfBwDx
+   jzuiYNi4cQa3MrKHEq4iErjVuCJL8FAzj5EjaePmxFXqJsXHT0cBUF6ww
+   /Ea8kL3tEXMhKa9KjvjGPmb84hjCB0AdxtJK7uzhay9/Vws1B2J9mDj20
+   +RZqTSmwLls297R4KJv1AqMX/ITu4I+dbAcGanlHi8tYIq9fhxHVMGO+o
+   w==;
+X-CSE-ConnectionGUID: XfuieRZyT9252deHyk6jNA==
+X-CSE-MsgGUID: ITh+0UB7QUuZq+okRPsyvg==
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="29926944"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Jul 2024 07:41:24 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 31 Jul 2024 07:41:01 -0700
+Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 31 Jul 2024 07:40:59 -0700
+From: Andrei Simion <andrei.simion@microchip.com>
+To: <claudiu.beznea@tuxon.dev>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <cristian.birsan@microchip.com>
+CC: <linux-kernel@vger.kernel.org>, Andrei Simion
+	<andrei.simion@microchip.com>, Conor Dooley <conor@kernel.org>
+Subject: [PATCH] MAINTAINERS: Update DTS path for ARM/Microchip (AT91) SoC
+Date: Wed, 31 Jul 2024 17:41:00 +0300
+Message-ID: <20240731144100.182221-1-andrei.simion@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1215; i=brauner@kernel.org; h=from:subject:message-id; bh=bnW6xuwZRXMhJrERIAI3wU1Z7HMnXzuTTSgYcobJcNA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSt8vkmc/DXYsfL6x+HRv66+uG/Ie+c8LgGz/LnJ4od+ SMmM7EGdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEVIiR4dqk3i47bxmlZ6eO 8nyQYE6Zu3Kv3NbD5vybr7S+enY0/CsjwzTWe/qpWZM3lyz52uB43dB+1w3OXQvOz7Q8bHGT10P sChsA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Wed, 31 Jul 2024 09:39:02 +0200, Lukas Bulwahn wrote:
-> Commit fcad93360df4 ("netfs: Rename CONFIG_FSCACHE_DEBUG to
-> CONFIG_NETFS_DEBUG") renames the config, but introduces two issues: First,
-> NETFS_DEBUG mistakenly depends on the non-existing config NETFS, whereas
-> the actual intended config is called NETFS_SUPPORT. Second, the config
-> renaming misses to adjust the documentation of the functionality of this
-> config.
-> 
-> [...]
+Update the path to the supported DTS files for ARM/Microchip (AT91)
+SoC to ensure that the output of the get_maintainer.pl script includes
+the email addresses of the maintainers for all files located in
+arch/arm/boot/dts/microchip.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Suggested-by: Conor Dooley <conor@kernel.org>
+Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+---
+Based on discussion:
+https://lore.kernel.org/lkml/20240709-education-unfreeze-a719c6927d73@spud/
+---
+ MAINTAINERS | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 36d66b141352..c9f320ba8bc9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2542,8 +2542,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Supported
+ W:	http://www.linux4sam.org
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git
+-F:	arch/arm/boot/dts/microchip/at91*
+-F:	arch/arm/boot/dts/microchip/sama*
++F:	arch/arm/boot/dts/microchip/
+ F:	arch/arm/include/debug/at91.S
+ F:	arch/arm/mach-at91/
+ F:	drivers/memory/atmel*
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
+-- 
+2.34.1
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] netfs: clean up after renaming FSCACHE_DEBUG config
-      https://git.kernel.org/vfs/vfs/c/c9bffce5f3f5
 
