@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-269053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E1B8942CD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:08:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D359A942CDC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:08:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBA01F23E41
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:08:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B771C21B7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD7C1B1510;
-	Wed, 31 Jul 2024 11:06:34 +0000 (UTC)
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64141B29C3;
+	Wed, 31 Jul 2024 11:06:35 +0000 (UTC)
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D481B140B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8DC1B1426
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423994; cv=none; b=IpZscPryP57NOw3uBDBq9POmj3euHriFqTtnjpo2aRFLNHVJFs2XBZs7twVJbkL0xnbjIXFRyF9MvTKwVJfSC4ilZyhjftNONGoYf3jqn+Yx/xgaNV1yf5xnBN822yieGPE7yOZIKTgg3yGZ9dbLXbHS7+Tux1lH12rfWGeKb5U=
+	t=1722423995; cv=none; b=UOlyFUM5d6eZqtofKT9gvQWiSeSqCXTvxxlV5QP/Q4Epk3CdSeZGuUuqkH3IkCY3qTL++D8L5n6MqTS5GIUKWFyDFw0NzM4dL2dKHVx1mu0oPYTi0JJUa3lCverKPfGhotsCbkg7U0rtkOEtPwgEjhMJFFxDMtHshlFYk6q4GF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423994; c=relaxed/simple;
-	bh=RNhLk+oW8//0HtE+NRoFCgOOk7dQDAhxy4qB4T3bUhA=;
+	s=arc-20240116; t=1722423995; c=relaxed/simple;
+	bh=x2LrKK5tcGR0WVNSKSNm+lRjBT558gT2pvQ5vmXD+Cc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Sg9gDcCk3jE8EDKmCdaiOCB2aegaPt23xhPkgVPMkDON/0uNigkxvJJcLXczOLOHeVqWkgrbsuF2J1d01DzkkzpVLtStRJZNZQHCNAwSpsQLlmiFTHie/HEoL2RYnVkma5KOScwMNWeGVchNb10oPtmSpJVDU6jvbLnsnaRBFWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=185.125.25.10
+	 In-Reply-To:To:Cc; b=nQ3CPNH1lCNM2T4cXl9vEoYTDqSFRaIOSMHtCwEYDEmI3OM/xAw8h8JX3RQHSoeaxOwpoGQM4vqEKc725rjc/eOvMa0rvzeyQzlqvRB/G35hwloqPHiIUQl0M5VroBq7MPguVD+4DF9KJnFxsY8JYRctCbjaInhlnADVlH6ciwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=83.166.143.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
 Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WYq680kh6zZf4;
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WYq686GwNzVx2;
 	Wed, 31 Jul 2024 13:06:24 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WYq6725w9zQwk;
-	Wed, 31 Jul 2024 13:06:23 +0200 (CEST)
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WYq680w8hzTBq;
+	Wed, 31 Jul 2024 13:06:24 +0200 (CEST)
 From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Wed, 31 Jul 2024 13:05:28 +0200
-Subject: [PATCH 1/2] arm64: dts: rockchip: fix eMMC/SPI corruption when
- audio has been used on RK3399 Puma
+Date: Wed, 31 Jul 2024 13:05:29 +0200
+Subject: [PATCH 2/2] arm64: dts: rockchip: override BIOS_DISABLE signal via
+ GPIO hog on RK3399 Puma
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -45,7 +45,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-puma-emmc-6-v1-1-4e28eadf32d0@cherry.de>
+Message-Id: <20240731-puma-emmc-6-v1-2-4e28eadf32d0@cherry.de>
 References: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
 In-Reply-To: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -61,69 +61,66 @@ X-Infomaniak-Routing: alpha
 
 From: Quentin Schulz <quentin.schulz@cherry.de>
 
-In commit 91419ae0420f ("arm64: dts: rockchip: use BCLK to GPIO switch
-on rk3399"), an additional pinctrl state was added whose default pinmux
-is for 8ch i2s0. However, Puma only has 2ch i2s0. It's been overriding
-the pinctrl-0 property but the second property override was missed in
-the aforementioned commit.
+The Qseven BIOS_DISABLE signal on the RK3399-Q7 keeps the on-module eMMC
+and SPI flash powered-down initially (in fact it keeps the reset signal
+asserted). BIOS_DISABLE_OVERRIDE pin allows to override that signal so
+that eMMC and SPI can be used regardless of the state of the signal.
 
-On Puma, a hardware slider called "BIOS Disable/Normal Boot" can disable
-eMMC and SPI to force booting from SD card. Another software-controlled
-GPIO is then configured to override this behavior to make eMMC and SPI
-available without human intervention. This is currently done in U-Boot
-and it was enough until the aforementioned commit.
+Let's make this GPIO a hog so that it's reserved and locked in the
+proper state.
 
-Indeed, because of this additional not-yet-overridden property, this
-software-controlled GPIO is now muxed in a state that does not override
-this hardware slider anymore, rendering SPI and eMMC flashes unusable.
+At the same time, make sure the pin is reserved for the hog and cannot
+be requested by another node.
 
-Let's override the property with the 2ch pinmux to fix this.
-
-Fixes: 91419ae0420f ("arm64: dts: rockchip: use BCLK to GPIO switch on rk3399")
 Cc: stable@vger.kernel.org
 Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
 ---
- arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-index ccbe3a7a1d2c2..a782e614d9bba 100644
+index a782e614d9bba..d24444cdf54af 100644
 --- a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
 +++ b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-@@ -409,6 +409,7 @@ vdd_cpu_b: regulator@60 {
- 
- &i2s0 {
- 	pinctrl-0 = <&i2s0_2ch_bus>;
-+	pinctrl-1 = <&i2s0_2ch_bus_bclk_off>;
- 	rockchip,playback-channels = <2>;
- 	rockchip,capture-channels = <2>;
- 	status = "okay";
-@@ -417,8 +418,8 @@ &i2s0 {
- /*
-  * As Q7 does not specify neither a global nor a RX clock for I2S these
-  * signals are not used. Furthermore I2S0_LRCK_RX is used as GPIO.
-- * Therefore we have to redefine the i2s0_2ch_bus definition to prevent
-- * conflicts.
-+ * Therefore we have to redefine the i2s0_2ch_bus and i2s0_2ch_bus_bclk_off
-+ * definitions to prevent conflicts.
-  */
- &i2s0_2ch_bus {
- 	rockchip,pins =
-@@ -428,6 +429,14 @@ &i2s0_2ch_bus {
- 		<3 RK_PD7 1 &pcfg_pull_none>;
+@@ -154,6 +154,22 @@ bios-disable-hog {
+ 	};
  };
  
-+&i2s0_2ch_bus_bclk_off {
-+	rockchip,pins =
-+		<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>,
-+		<3 RK_PD2 1 &pcfg_pull_none>,
-+		<3 RK_PD3 1 &pcfg_pull_none>,
-+		<3 RK_PD7 1 &pcfg_pull_none>;
++&gpio3 {
++	/*
++	 * The Qseven BIOS_DISABLE signal on the RK3399-Q7 keeps the on-module
++	 * eMMC and SPI flash powered-down initially (in fact it keeps the
++	 * reset signal asserted). BIOS_DISABLE_OVERRIDE pin allows to override
++	 * that signal so that eMMC and SPI can be used regardless of the state
++	 * of the signal.
++	 */
++	bios-disable-override-hog {
++		gpios = <RK_PD5 GPIO_ACTIVE_LOW>;
++		gpio-hog;
++		line-name = "bios_disable_override";
++		output-high;
++	};
 +};
 +
- &io_domains {
- 	status = "okay";
- 	bt656-supply = <&vcc_1v8>;
+ &gmac {
+ 	assigned-clocks = <&cru SCLK_RMII_SRC>;
+ 	assigned-clock-parents = <&clkin_gmac>;
+@@ -458,9 +474,14 @@ &pcie_clkreqn_cpm {
+ 
+ &pinctrl {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&q7_thermal_pin>;
++	pinctrl-0 = <&q7_thermal_pin &bios_disable_override_hog_pin>;
+ 
+ 	gpios {
++		bios_disable_override_hog_pin: bios-disable-override-hog-pin {
++			rockchip,pins =
++				<3 RK_PD5 RK_FUNC_GPIO &pcfg_pull_down>;
++		};
++
+ 		q7_thermal_pin: q7-thermal-pin {
+ 			rockchip,pins =
+ 				<0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
 
 -- 
 2.45.2
