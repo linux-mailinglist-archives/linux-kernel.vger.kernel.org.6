@@ -1,99 +1,133 @@
-Return-Path: <linux-kernel+bounces-269977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F86E94399D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:55:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84C1394399E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:55:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26A571F22550
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:55:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60946B21FEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5765D16DEA5;
-	Wed, 31 Jul 2024 23:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8969416DEC2;
+	Wed, 31 Jul 2024 23:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qVrbybmw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l9HjWwAN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5C514B097;
-	Wed, 31 Jul 2024 23:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DFA16DC07;
+	Wed, 31 Jul 2024 23:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722470094; cv=none; b=fsvbSI6vZ1tO5BuR/iEz7om8oQACQWr7xyU7jqyNTN5YW+at7x+hCJf8hIcJc94CsA2n1Tc7eXpNIm5Yg+cxUzRuJsG4Y8Pb0ArDQGp/ZjDtrQYtzs4MR50HiuMvC+fHJsgG+/JfwSw1quyAcTEXZoPO0EL1aYtXoTtMn4IFdTI=
+	t=1722470106; cv=none; b=k0/lpCAGx8qqtZgC1OJP17cy+LM5jra6NvutPDofRetT2mjBx7AagDXrdnhlTy8AAbZgGvyb0uooogkQz9nLR8okeO/nUAnFUjZaflgCCnOHYtsGTRA94tyBmqTVb7DAgiLy9AENB/soZPFx+KoW2U8KE6CMRc1+Jn7edksB1/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722470094; c=relaxed/simple;
-	bh=D5A4l/z0IJtiXBANE1q/jtCtlvDYZpAPhQhMXmaOKlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=iZMLMOFhR41f47uVeC/jHbJHRSu7ELa/TiGoSKRBRZup6tixTJQYIOsYKCOGVLYsgggWdOjYhf/Q2T+g/qRZ8AzVsBuCjW0P+bk2jWerbw1c4hlE7qagmTJEM0lRTlWfnV6SNkq0ltO4RIIgeUPEEt8d5V76BLQtk4HEOTpmNmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qVrbybmw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722470090;
-	bh=SW9tsrojs50C+SvQiTdSDzv2ncL1nOVYxGTnyvOhkvY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qVrbybmwtV+G/0MiLsqMB82muw0cU1GP6/5vslcKWJSnq1CVIu4sn+w02ZxENU4Hs
-	 FKZD8zL+laJOpIppsMTCnSpLkk2Jz2p67+JirJpQ1J/yTUhpixuUjc95rOtkTcThJq
-	 A+HZ7SfmkKBd5oW4oLLq892ct7cLZa+M1P3p+xUPAIh1C7bQ9QbxlxMwej0Ri+eTrs
-	 xRz+m9pnuCCwhDJK2CPt5Rl7vGwGPXl7IR8V33eFMwvt+thfCxB47I1lPpR+dUtU0J
-	 CzDRdyytsqVVSnI8d2z9/+3Tw2FTmt5Hrc2ddPnqNnIq1jMDdjPXIBqaCCtpLZkPQX
-	 CgoAyOxN9/lhA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZ88p0sJQz4wc1;
-	Thu,  1 Aug 2024 09:54:50 +1000 (AEST)
-Date: Thu, 1 Aug 2024 09:54:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patches in the vfs-brauner tree
-Message-ID: <20240801095449.6370eead@canb.auug.org.au>
+	s=arc-20240116; t=1722470106; c=relaxed/simple;
+	bh=35QfRKQoUhGdr9YthZIDsh1LPwHY2NuVSvspUJp1CAU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KqQVzPcWmmeqSae9tiuip3tbs8HgjZCvfEzntHVgJ4XC43wraw7SAdLWYtVLeAy2VCadhWA2E5FXez5or03zFSqLvU1aoPSGVMvTOv4QrJdFSRshgzSSAVFqx6M3DmGl746ZMAGv6JAsxCC+j18LySDKL/3H7f8gCvVKQYYFco4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l9HjWwAN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12ACC116B1;
+	Wed, 31 Jul 2024 23:55:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722470106;
+	bh=35QfRKQoUhGdr9YthZIDsh1LPwHY2NuVSvspUJp1CAU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l9HjWwANTHbJqX7CKiOMzVB2Qmv5w5tn7x9ibme+W9Ej45C6QWG5Rp8XPCGId7/QC
+	 OH7OyCe+Ndcu9bMtV1/Mw+8yNW4SngaiPI1VS1FH/OdOMBQr3Od+7p0Lfg4WO7Q93/
+	 hRZATbhRPFo+c8inosoPvqSFgNuN5MmuiweVCx5odEF+VacNV3rG9hRHI+SwpVqCMb
+	 7/X4hyarxiZo8NVYNA0zoI3PKP+giUiQpplR3mB3WoiJaa10LF7Iq4Y6Kbzu+BE+3d
+	 YgxGZYI6iEYuBdq35R3jRquSDqHX0bl/osD6MfAXbx2RMuJpA3AYk1+1g3Ra78s1FQ
+	 zioZ91xW+3nCg==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: [PATCHSET 0/6] perf mem: Basic support for data type profiling (v1)
+Date: Wed, 31 Jul 2024 16:54:59 -0700
+Message-ID: <20240731235505.710436-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wqUM0KziLIFUdsrT4WgM0zs";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/wqUM0KziLIFUdsrT4WgM0zs
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Hi all,
+As we added data type profiling, 'perf mem report' should support that
+as well.  This patches just added a couple of convenient options.
 
-The following commits are also in the vfs-brauner-fixes tree as different
-commits (but the same patches):
+  $ perf mem report -T -s mem
+  # To display the perf.data header info, please use --header/--header-only options.
+  #
+  #
+  # Total Lost Samples: 0
+  #
+  # Samples: 131  of event 'cpu/mem-loads,ldlat=30/P'
+  # Total weight : 18561
+  # Sort order   : mem,type
+  #
+  # Overhead       Samples  Memory access                            Data Type
+  # ........  ............  .......................................  .........
+  #
+      14.84%            22  L1 hit                                   (unknown)
+      12.02%             8  RAM hit                                  (unknown)
+       7.68%             8  LFB/MAB hit                              (unknown)
+       6.29%            12  L1 hit                                   (stack operation)
+       3.97%             5  LFB/MAB hit                              struct psi_group_cpu
+       3.69%             3  L1 hit                                   struct   
+       3.18%             3  LFB/MAB hit                              (stack operation)
+       2.89%             5  L3 hit                                   (unknown)
+       2.58%             3  L1 hit                                   unsigned int
+       2.31%             2  L1 hit                                   struct psi_group_cpu
+       2.21%             2  LFB/MAB hit                              struct cfs_rq
+       2.19%             2  RAM hit                                  struct sched_entity
+       2.16%             1  L1 hit                                   struct task_struct
+       1.85%             3  L1 hit                                   struct pcpu_hot
+       1.78%             1  RAM hit                                  struct tss_struct
+       1.72%             1  LFB/MAB hit                              struct mm_struct
+       1.62%             2  L1 hit                                   struct psi_group
+       ...
 
-  965a561e4026 ("fs/netfs/fscache_cookie: add missing "n_accesses" check")
-  9f337b5daac1 ("netfs: Fault in smaller chunks for non-large folio mapping=
-s")
-  af1e6ab8c0e5 ("filelock: fix name of file_lease slab cache")
 
---=20
-Cheers,
-Stephen Rothwell
+The code is also available at 'perf/mem-type-v1' branch in
+git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
 
---Sig_/wqUM0KziLIFUdsrT4WgM0zs
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Thanks,
+Namhyung
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaqzskACgkQAVBC80lX
-0Gwr2gf/TweqE0zlKP5KKVhwaUkHEhXfxEyDrmBkTeGUts8ZBJtwkJ6F5IgmD2n+
-MLQBHWfzhYSRAWkE/mtty0ZDM4j2cm+9psJr1vdBs4WE6LAUI4ttEMYcLbtr1GPU
-zAdwjB6btqEhtv4BDlYUPPr9wR4EWh84l6WCWW8RlRGikeccoqj/0HAl+jurkpBi
-liypeF1SqMPsACiLjXeKOXTnsNl/HxslzarTK7g7gBmPZ+OpDuueDddjmfwHCTM8
-JRb91A12LrBS9WenkUylNqJP4ONHlFHKxylQTQAQKH0ZQn56Z21JjBNLx/z/jzNO
-TmMlP69u1Khn/YpXq5XEJOiNwqsVCQ==
-=C3vK
------END PGP SIGNATURE-----
+Namhyung Kim (6):
+  perf hist: Correct hist_entry->mem_info refcounts
+  perf mem: Free the allocated sort string
+  perf mem: Rework command option handling
+  perf tools: Add mode argument to sort_help()
+  perf mem: Add -s/--sort option
+  perf mem: Add -T/--data-type option to report subcommand
 
---Sig_/wqUM0KziLIFUdsrT4WgM0zs--
+ tools/perf/builtin-mem.c     | 100 ++++++++++++++++++++++-------------
+ tools/perf/builtin-report.c  |   4 +-
+ tools/perf/util/hist.c       |  14 ++---
+ tools/perf/util/map_symbol.c |  18 +++++++
+ tools/perf/util/map_symbol.h |   3 ++
+ tools/perf/util/mem-info.c   |  13 +++++
+ tools/perf/util/mem-info.h   |   1 +
+ tools/perf/util/sort.c       |  12 +++--
+ tools/perf/util/sort.h       |   2 +-
+ 9 files changed, 116 insertions(+), 51 deletions(-)
+
+-- 
+2.46.0.rc1.232.g9752f9e123-goog
+
 
