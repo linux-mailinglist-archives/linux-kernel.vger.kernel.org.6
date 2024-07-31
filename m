@@ -1,191 +1,118 @@
-Return-Path: <linux-kernel+bounces-269825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFB9943737
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 743D094373C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAE4A282ACD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:42:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E650283741
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719C316C847;
-	Wed, 31 Jul 2024 20:41:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C8416C6BE;
+	Wed, 31 Jul 2024 20:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+7y3zl0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OuWycBef"
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9028916B38E;
-	Wed, 31 Jul 2024 20:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F591684AD;
+	Wed, 31 Jul 2024 20:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722458505; cv=none; b=VyepJs9VBHZhXvCMn/L3MIBZOyoILoZH5242Sgum7jnNMEO9H+9b4bKV0NrB/+70kgyWuHj7e2zfreYoBsWKA3RIt1QZo8RAK+TpcOKoj3uj6HaAiSWYE0cLVd0BdsTi7PHK2xFi6+TLyWGeoaLH73qJ4EMQjD+kE4f1eEpqoig=
+	t=1722458521; cv=none; b=kvHAbncK3o4N0vbkdaiqPSiPRFqxmEORrntUXxe977Qu348SaflT5anksWhmghyjkGQQdpReZLvsyhGV644datHkcaluFtRYJkTd65BiV76lSkopjBdMrCX/IajGaBmP/tjeDrgby0sZJaQUjMv6aQZPSu64lsAkVwqXvOPo1VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722458505; c=relaxed/simple;
-	bh=UN9v9eJEgRZCrEmjj4CE+FqAgCERCa3r12KbNidZR70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6c+HxL0cthF6eSeMfubIXqw3/VaGAZ6RmmX0T5uThOi3WxGN2hARi6sXWhUdFU4p0wLzGRnPEEfhFBlz0K2MhrScwtsm5zj87/CDtmYDtHHSo88lJXXgmxqcMCBFLCPtls+9EXj8ydiCwxuWbLnU9Q1ZB7rKIKkOf+bXWfbe04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+7y3zl0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0B6C116B1;
-	Wed, 31 Jul 2024 20:41:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722458505;
-	bh=UN9v9eJEgRZCrEmjj4CE+FqAgCERCa3r12KbNidZR70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F+7y3zl0ImDrfonabjG6rVdviAbaAeVoITg4VKqNQfJ275XMxizC4BNhIVw4AimdG
-	 jjHjMj1YMMXL6N3xPiTyAVjor24ACR3TgKJ/C0HPR2pufDbCvL/JfqIjvgtmWc9Nhk
-	 KC6Qe9O5uxKFEjh+GwopnU+9wpJMai6fsoA/RWQQoEoLNgUHYeg54aWbQhCo/j9tbO
-	 Mj7B9cBTobuR3VlmhU8QT9xBaNdWJxTEdRPMtKZoY9JzojZf/8tZPKlRz7DoSB1CkR
-	 Z8bKvtDIXwW+chOIUUaeJDKrv/yk33/xg70TT8CdMGtpQG5DaaRYaMI3qWqGlzmzJj
-	 5KtUJ1CIGmYfg==
-Date: Wed, 31 Jul 2024 17:41:42 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	philip.li@intel.com, oliver.sang@intel.com,
-	Weilin Wang <weilin.wang@intel.com>
-Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
-Message-ID: <ZqqhhsJtBJgfXWV4@x1>
-References: <20240730191744.3097329-1-irogers@google.com>
- <20240730191744.3097329-3-irogers@google.com>
- <Zqo5vVdrkhL5NHJK@x1>
- <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
- <ZqpZWywTe2j3U9Pl@x1>
- <ZqpcRIzzBb5KC6Zb@x1>
- <CAP-5=fVm5FkLDOLk4cbD9K6VPZ088f3Yk3bG8LT79E_OLLN4Lw@mail.gmail.com>
- <ZqqIEckIXQEAd9xr@x1>
- <CAP-5=fV8S0z=Fn+aoq4SxatBeeJ5MEUL02km_6+enqWaaW2qQA@mail.gmail.com>
+	s=arc-20240116; t=1722458521; c=relaxed/simple;
+	bh=7xwx8ld0J2l90yhVopRDkNzKh/x4y6JBekiHZ1M3hKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SF3fvQ5+iGBxps1wfxWkLWpH/N6DsD3RBvKQzQQd24s0I47C2ypgKd/QwfJdYUdzrD1bnRyEkLaUu9F9HfVqLtmIS+PAjYRZQWFWptoxUwGSKgQH4ToDaBNM8/GCw1DEUCcC5Rfww2s5jWlaXJ2qLLB+z3FaL4JRP6w44TGR+hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OuWycBef; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-492a8333cb1so1552107137.3;
+        Wed, 31 Jul 2024 13:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722458519; x=1723063319; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7xwx8ld0J2l90yhVopRDkNzKh/x4y6JBekiHZ1M3hKA=;
+        b=OuWycBefdD58vEFVw3omcfxjLnj7RmxnFk2RPGM+gOj1SfFSbM74+TTlFTIyLfx6xH
+         SRCq2eD54uFWiNjirZGK8e1Mn/XtRZMSKQmO1cYRl98D3wj0Is0kMsVN92sBE3ez2XXU
+         ZBAz7IPFNJyEy08qGe+zklRcHWto7DgJpcawCdnmGVH8kBZPQvgi2huwulFialjF5P3r
+         c/c23jsZVsSQGt+Oe7jdjFGIwOCL35E0lRkONS2qoFYohXrOY2BK17JwukASHArhnzUe
+         AxRZeDRMG4kabYs+0vlbWgfNzjAMgDpWmN7dlRNn3YwXzbgVWNGAGjdJATQ+m8u/z/vY
+         5VcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722458519; x=1723063319;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7xwx8ld0J2l90yhVopRDkNzKh/x4y6JBekiHZ1M3hKA=;
+        b=m49JDXjEvgBiq2v95R16H186ieHlFjnnry480P9Fh2wHG0/gX13vUwzTpn1Jy8g+ir
+         Pu4ZAlvKjiKtUfE7RHk0WJT+fSDOndc7Jdlm/lAweO0aew9YWvrXqMPdxCLxv8ged+Lx
+         oSJLJIEKI/iW8drG2hzoyA6iXpIJDxUmaqJv/4pGO9+PijcMxI/puhdYc75tU4TeZdQb
+         uwDJsXa7hLy+gSVg3lyLldJ26RMrkfn628IyBL51arf9J+UJRkaiwwVHUziSXotprn0c
+         79c36fgfEZ9z7jGmwbvNWWH293J6huUn//OCcTsaAKrphyT+7Sp+ftbzlizFcUXt1Bpa
+         tJgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWiDIRC8gVD+eZcCN1WCNttWGGaIYrNmoLFHgQdjW15VD5acDyGssUJz1FTrwxQyL1QxHuHXPC4eChqD6iC2SGEakeG/has/TqruxjmDCWaf4fNM8IUAm9m6GPJH+qhe7GOD+1ktU/esVEjgLyTgxLfCW4/2/zYdD97sgsA+z7jkQ==
+X-Gm-Message-State: AOJu0YzeYjHIC19/CqdGVQpWsCWwvbrcDwp8vA5AwF1+qidbmM2BMiGb
+	DBixDqOt0pEry6DGSkSe9UfzvVlPjy/X4Q6zSFagNRNmm1MFbbugP5ijkPeOTDnmx+sa/qbC/vN
+	fMrB3ZJ1aqt2sTq5ZVz9ivZxwcgs=
+X-Google-Smtp-Source: AGHT+IHcApjBJ2q3BO5jPAxXBWewi8ikoH38BgaDeBX6L4YnH1UAFvGCthljFOnpSQiyZZ3jQgewHemNEnBx38+vh5A=
+X-Received: by 2002:a05:6102:304c:b0:48f:95aa:ae2b with SMTP id
+ ada2fe7eead31-4945099d090mr667462137.28.1722458518682; Wed, 31 Jul 2024
+ 13:41:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fV8S0z=Fn+aoq4SxatBeeJ5MEUL02km_6+enqWaaW2qQA@mail.gmail.com>
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+ <20240730183403.4176544-15-allen.lkml@gmail.com> <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
+In-Reply-To: <fbb19744-cc77-4541-90b5-0760e0eeae22@lunn.ch>
+From: Allen <allen.lkml@gmail.com>
+Date: Wed, 31 Jul 2024 13:41:47 -0700
+Message-ID: <CAOMdWS+b0nqK4vuU5+VhZES5EabQzj5P7vtejSy5HNnQt8xeww@mail.gmail.com>
+Subject: Re: [net-next v3 14/15] net: marvell: Convert tasklet API to new
+ bottom half workqueue mechanism
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: kuba@kernel.org, Marcin Wojtas <marcin.s.wojtas@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Mirko Lindner <mlindner@marvell.com>, Stephen Hemminger <stephen@networkplumber.org>, 
+	jes@trained-monkey.org, kda@linux-powerpc.org, cai.huoqing@linux.dev, 
+	dougmill@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+	aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, 
+	tlfalcon@linux.ibm.com, cooldavid@cooldavid.org, nbd@nbd.name, 
+	sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, 
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+	borisp@nvidia.com, bryan.whitehead@microchip.com, 
+	UNGLinuxDriver@microchip.com, louis.peens@corigine.com, 
+	richardcochran@gmail.com, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acenic@sunsite.dk, 
+	linux-net-drivers@amd.com, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 31, 2024 at 01:20:06PM -0700, Ian Rogers wrote:
-> On Wed, Jul 31, 2024 at 11:53 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Wed, Jul 31, 2024 at 08:58:43AM -0700, Ian Rogers wrote:
-> > > On Wed, Jul 31, 2024 at 8:46 AM Arnaldo Carvalho de Melo
-> > > <acme@kernel.org> wrote:
-> > > >
-> > > > On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > > On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
-> > > > > > On Wed, Jul 31, 2024 at 6:18 AM Arnaldo Carvalho de Melo
-> > > > > > <acme@kernel.org> wrote:
-> > > > > > >
-> > > > > > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
-> > > > > > > > empty-pmu-events.c exists so that builds may occur without python
-> > > > > > > > being installed on a system. Manually updating empty-pmu-events.c to
-> > > > > > > > be in sync with jevents.py is a pain, let's use jevents.py to generate
-> > > > > > > > empty-pmu-events.c.
-> > > > > > >
-> > > > > > > What am I missing here?
-> > > > > > >
-> > > > > > > If it exists so that we can build on a system without python how can we
-> > > > > > > use python to generate it?
-> > > > > > >
-> > > > > > > Now having python in the system is a requirement and thus we don't need
-> > > > > > > empty-pmu-events.c anymore?
-> > > > > > >
-> > > > > > > Can you guys please clarify that?
-> > > > > >
-> > > > > > The requirement for python hasn't changed.
-> > > > > >
-> > > > > > Case 1: no python or NO_JEVENTS=1
-> > > > > > Build happens using empty-pmu-events.c that is checked in, no python
-> > > > > > is required.
-> > > > > >
-> > > > > > Case 2: python
-> > > > > > pmu-events.c is created by jevents.py (requiring python) and then built.
-> > > > > > This change adds a step where the empty-pmu-events.c is created using
-> > > > > > jevents.py and that file is diffed against the checked in version.
-> > > > > > This stops the checked in empty-pmu-events.c diverging if changes are
-> > > > > > made to jevents.py. If the diff causes the build to fail then you just
-> > > > > > copy the diff empty-pmu-events.c over the checked in one.
-> > > > >
-> > > > > I'll try and add your explanation to the log message, thanks for
-> > > > > clarifying it!
-> > > >
-> > > > So, with it in place I'm now noticing:
-> > > >
-> > > > ⬢[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
-> > > > ⬢[acme@toolbox perf-tools-next]$ alias m='rm -rf ~/libexec/perf-core/ ; make -k CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python'
-> > > > ⬢[acme@toolbox perf-tools-next]$ m
-> > > > <SNIP>
-> > > >   GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
-> > > >   MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
-> > > >   CC      /tmp/build/perf-tools-next/util/annotate.o
-> > > >   CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
-> > > >   CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
-> > > >   CC      /tmp/build/perf-tools-next/util/block-info.o
-> > > >   CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test.o
-> > > >   CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
-> > > >   MKDIR   /tmp/build/perf-tools-next/ui/browsers/
-> > > >   CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
-> > > >   CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
-> > > >   CC      /tmp/build/perf-tools-next/util/block-range.o
-> > > >   TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log
-> > > > --- pmu-events/empty-pmu-events.c       2024-07-31 12:44:14.355042296 -0300
-> > > > +++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c       2024-07-31 12:45:35.048682785 -0300
-> > > > @@ -380,7 +380,7 @@
-> > > >                          continue;
-> > > >
-> > > >                  ret = pmu_events_table__for_each_event_pmu(table, table_pmu, fn, data);
-> > > > -                if (pmu || ret)
-> > > > +                if (ret)
-> > >
-> > > Right, you need to copy:
-> > >  /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
-> > > to
-> > > tools/perf/pmu-events/empty-pmu-events.c
-> > > to fix this.
-> > >
-> > > This change has happened as you are testing with:
-> > > https://lore.kernel.org/lkml/20240716132951.1748662-1-kan.liang@linux.intel.com/
-> > > which isn't in the git repo yet (therefore, I can't make a patch set
-> > > on it). The change is WAI as it is telling you empty-pmu-events.c has
-> > > become stale and needs Kan's fix applying to it.
-> >
-> > ok, I'll remove Kan's patch, publish perf-tools-next and wait for the
-> > now normal flow of patches.
-> 
-> I can resend Kan's patch with the empty-pmu-events.c fix applied. I
-> don't see the changes in tmp.perf-tools-next so I can do it with
-> cherry picks.
+> > - * Called only from mvpp2_txq_done(), called from mvpp2_tx()
+> > - * (migration disabled) and from the TX completion tasklet (migration
+> > - * disabled) so using smp_processor_id() is OK.
+> > + * Called only from mvpp2_txq_done().
+> > + *
+> > + * Historically, this function was invoked directly from mvpp2_tx()
+> > + * (with migration disabled) and from the bottom half workqueue.
+> > + * Verify that the use of smp_processor_id() is still appropriate
+> > + * considering the current bottom half workqueue implementation.
+>
+> What does this mean? You want somebody else to verify this? You are
+> potentially breaking this driver?
+>
 
-Just force pushed one more time. After a while should be there, there
-are still some issues here and there, notably:
+Thanks for providing the review. Apologies for not having worded
+this correctly. Russel did ask me to leave it as it was when I first sent out
+the series. Perhaps I should do so. Kindly advice.
 
-
-root@x1:~# perf test 105 106 118
-105: perf all metricgroups test                                      : FAILED!
-106: perf all metrics test                                           : FAILED!
-118: Miscellaneous Intel PT testing                                  : FAILED!
-root@x1:~# perf test 110
-110: perf stat --bpf-counters --for-each-cgroup test                 : FAILED!
-root@x1:~#
-
-I'm running out of time today, so I'll probably just push what I have to
-perf-tools-next so that we can start getting testing from linux-next and
-we can then go on fixing up stuff from there.
-
-- Arnaldo
+Thanks,
+Allen
 
