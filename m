@@ -1,100 +1,120 @@
-Return-Path: <linux-kernel+bounces-269243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37026942FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:05:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2933942FAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF4E1282640
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C9C1F28432
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E6B61AED4B;
-	Wed, 31 Jul 2024 13:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02EDE1AED5B;
+	Wed, 31 Jul 2024 13:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6h12J2q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5Qnhtyzd"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC21819412E;
-	Wed, 31 Jul 2024 13:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6632209F;
+	Wed, 31 Jul 2024 13:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722431109; cv=none; b=DeGJKRbsHm036xhfX7WPeQK9FGk8i3HB7JjolZhtKza5M1a8695ABLDTPfmTDNIhNyl4bucAOaY9vxCLQQuf38Fd4F63k1LhoDP3YxidNEhgtTogtflIpGS2MG7WCIk/A2FZAPL8SVyKlfOri6Y7FM36EUq2rW+xwc372k3UzlI=
+	t=1722431181; cv=none; b=aIpVSQR82P4W6TLp3ivuoE8buOhhnobZGzFjk22LQQIqrhtXtPkl4bqC5wICsaL1Fyj2spMMBPAAUDT7mlt80nXxH6b8ZdGgyLRXUH3ql6EBqZ9Zj0pxP75f7vTOH0jjrYh0DLkSOlXeW6i46HDNxeW4ZJdmwCjugE0o5pboT0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722431109; c=relaxed/simple;
-	bh=Bb5kar3EPq92Yio8XCLGLpM1QcIGYB4KLVpPWavh//I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CwCFKYcSqAcTVCICXvgMUuDzc+HxD/bwY8DH+cgAUFsBVy/O1C9R6OOiJHSEo12cfbNlznmoeyxaKu5Mh7oLl3c087GLFFQQcbuZxX7Uyr42eTU1aLvAgv6xH2tBL7GOkFTjLwLPWtYDtTNIj2pFVyn0F41wr6Z6PJSjzOcvMRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6h12J2q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 092E7C116B1;
-	Wed, 31 Jul 2024 13:05:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722431108;
-	bh=Bb5kar3EPq92Yio8XCLGLpM1QcIGYB4KLVpPWavh//I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M6h12J2q8d8EH1hi4OpXZfF2MrRe3hQmeu8uHByJpF63KBi+VHzs/8YrYL7ANFxcg
-	 qC7jEU4yVSG6rOklHusaC3WDL4R7MYoAT1HT/ywM3JyEwtcpUojCsC9vh8TaYCdC/C
-	 4IowJIuBPNY7S2BjY1wXZQWr83l95jrmJXZJu/Pob9fMixX6R4D+Dsm4MVEUgjlVx0
-	 hVWSgl1Qu/14JTYicEY3y+0Jv6cf7zn2Y8APff6GkI1tl9KmvlBOIKieqKh1pzu0yV
-	 vjvyJ6p1tc2t8KA4gmwWkDF81H9LfV1r9L1ed2mThKU9R8t5xCDiKVSw9A+CTQ29iT
-	 4fTtuk7AKawkQ==
-Date: Wed, 31 Jul 2024 10:05:05 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	philip.li@intel.com, oliver.sang@intel.com,
-	Weilin Wang <weilin.wang@intel.com>
-Subject: Re: [PATCH v3 0/2] perf jevents: Autogenerate empty-pmu-events.c
-Message-ID: <Zqo2gfaQ96WkrZMH@x1>
-References: <20240730191744.3097329-1-irogers@google.com>
+	s=arc-20240116; t=1722431181; c=relaxed/simple;
+	bh=djprR2ffVYeD64/tVCu1QY7TpFV7KI+qDuH5F9ZLODc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CXIPbh9YPBvJKYvt2hK/4Cwe+HrqI/mWrCkYpVOv771Lcphjn4OE5phMTX+sL+uBTYI5xen/4H9/GtU1q583+59gzKbX1oVUNU1Qj4hZGghdzoES2DMfDpbsknfip0mrj2JSjCn6tMAx03hBt5Ewlv3488li2IoTJdQ7dkYqcOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5Qnhtyzd; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722431177;
+	bh=djprR2ffVYeD64/tVCu1QY7TpFV7KI+qDuH5F9ZLODc=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=5QnhtyzdmB/PKkNkqPYemFXAzasXeEIPTfGV3qskNDNZY0xpNZx8LmTSL+EBHXh4K
+	 MWWIcXvwSDjAe0wxGVRC2WYEnA7ZoJhxGvkleWIiN1xcRGmvjtCQO+YSsSINAB1cG2
+	 VoCZ8g/SDL3VC+uPxiLRGJmhqppznazbJ7r8TZrkSYZKIr3Ufi6w70+0e+rK33N2nt
+	 ss0InPje2ILYQS5dwr6dRljElXpAw+Am2qvU94sA0iv+c6Hx/csJAc/1GcCmMWlBWQ
+	 M59gTyow+G23bLb9J56BG+u0eaicd8dRNuTks950QyJShQ//Ocw/AfWq4pW8M58tn8
+	 og43kgtHxVwjw==
+Received: from [10.193.1.1] (broslavsky.collaboradmins.com [68.183.210.73])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: usama.anjum)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E8B113782137;
+	Wed, 31 Jul 2024 13:06:09 +0000 (UTC)
+Message-ID: <ffea6ae8-a5e3-47f9-8d01-efe5e58ab2c8@collabora.com>
+Date: Wed, 31 Jul 2024 18:05:53 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730191744.3097329-1-irogers@google.com>
+User-Agent: Mozilla Thunderbird
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ gregkh@linuxfoundation.org, nfraprado@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel@collabora.com
+Subject: Re: [PATCH v2] selftests: ksft: Fix finished() helper exit code on
+ skipped tests
+To: Laura Nao <laura.nao@collabora.com>, shuah@kernel.org
+References: <20240730102928.33182-1-laura.nao@collabora.com>
+Content-Language: en-US
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <20240730102928.33182-1-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 12:17:42PM -0700, Ian Rogers wrote:
-> Rebase of v2 patch set on tmp.perf-tools-next.
-> https://lore.kernel.org/lkml/20240525013021.436430-1-irogers@google.com/
+On 7/30/24 3:29 PM, Laura Nao wrote:
+> The Python finished() helper currently exits with KSFT_FAIL when there
+> are only passed and skipped tests. Fix the logic to exit with KSFT_PASS
+> instead, making it consistent with its C and bash counterparts
+> (ksft_finished() and ktap_finished() respectively).
 > 
-> Review was delayed because of an Intel automatic testing issue,
-> confirmed not an issue here:
-> https://lore.kernel.org/lkml/ZqhGNm+WDcsNx05e@xsang-OptiPlex-9020/
+> Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> Fixes: dacf1d7a78bf ("kselftest: Add test to verify probe of devices from discoverable buses")
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+Reviewed-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Thanks, applied to tmp.perf-tools-next,
+> ---
+> This is a revised version of the patch initially submitted as "[PATCH]
+> selftests: ksft: Track skipped tests when finishing the test suite":
+> https://lore.kernel.org/all/20240722154319.619944-1-laura.nao@collabora.com/
+> 
+> Depends on "[PATCH v2 2/3] kselftest: Move ksft helper module to common
+> directory":
+> https://lore.kernel.org/all/20240705-dev-err-log-selftest-v2-2-163b9cd7b3c1@collabora.com/
+> (picked through the usb tree, queued for 6.11-rc1)
+> 
+> Changes in v2:
+> - Reworded the commit title and message to more accurately describe the
+> incorrect behavior of the finished() helper addressed by the patch.
+> ---
+>  tools/testing/selftests/kselftest/ksft.py | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/kselftest/ksft.py b/tools/testing/selftests/kselftest/ksft.py
+> index cd89fb2bc10e..bf215790a89d 100644
+> --- a/tools/testing/selftests/kselftest/ksft.py
+> +++ b/tools/testing/selftests/kselftest/ksft.py
+> @@ -70,7 +70,7 @@ def test_result(condition, description=""):
+>  
+>  
+>  def finished():
+> -    if ksft_cnt["pass"] == ksft_num_tests:
+> +    if ksft_cnt["pass"] + ksft_cnt["skip"] == ksft_num_tests:
+LGTM
 
-- Arnaldo
- 
-> v3: Rebase and add John Garry's reviewed-by tag.
-> v2: Add not found constant.
- 
-> Ian Rogers (2):
->   perf jevents: Use name for special find value
->   perf jevents: Autogenerate empty-pmu-events.c
-> 
->  tools/perf/Makefile.perf                 |   2 +
->  tools/perf/pmu-events/Build              |  12 +-
->  tools/perf/pmu-events/empty-pmu-events.c | 894 ++++++++++++++---------
->  tools/perf/pmu-events/jevents.py         |  12 +-
->  tools/perf/pmu-events/pmu-events.h       |   9 +
->  5 files changed, 574 insertions(+), 355 deletions(-)
-> 
-> -- 
-> 2.46.0.rc2.264.g509ed76dc8-goog
+>          exit_code = KSFT_PASS
+>      else:
+>          exit_code = KSFT_FAIL
+
+-- 
+BR,
+Muhammad Usama Anjum
 
