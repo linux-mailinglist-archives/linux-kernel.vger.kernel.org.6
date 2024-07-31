@@ -1,85 +1,152 @@
-Return-Path: <linux-kernel+bounces-269504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEAB943398
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:45:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C56494339E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46EC1F270F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1841C21F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44FEF1BC06F;
-	Wed, 31 Jul 2024 15:45:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1421B3724;
+	Wed, 31 Jul 2024 15:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQkEbo50"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWGtcRW7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8091BBBD3
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878C3747F;
+	Wed, 31 Jul 2024 15:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722440707; cv=none; b=P71moIT/+cO9tWRnKdy8oXh0AInou+fiB7i75LZpsGJRgvUx9E3x2IZyRMOI3ojcH83bubr9JxKFymJKyVRnWQBf4WwGIMz5+jWORz1h4BrhCqZT+xkWzgxQ+ivMT6H/eHq5IGpS+eUKbowr510ZF+0QbG1J2acMUrnu96AfTxQ=
+	t=1722440781; cv=none; b=PQBvijqLF5z8hTuKkCHnEwKa6CoD0klpMWl6xV/RTPS/gek+ivyXY75If2wUStFg6PFx7pp0NSGNmghGt0Q/cuLoxsRR4mnNy/KBiJVQr1Xr5oh8m9lq0TlqmR0jJDTSdx/gjl5EHXcCkpDc7RPySdjPaQDtgg10au2H3wlcM40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722440707; c=relaxed/simple;
-	bh=NmitiGPMipFuWRllnzeaQLIndK4WAJkGQNjENc0ekiA=;
+	s=arc-20240116; t=1722440781; c=relaxed/simple;
+	bh=JSqrGcPdxzdCkjvNhdbWF6uWfXTLDQGpsCJBheDjKec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uc8T5JV0S3G7BB8tZxaKHOawb/bwyz/Dnl57aw6l3V/VdYJkTuY+VZhSMiVqzZMBcm9Mnx+uL3LjdqdGQD9e/iQOrI+hshgYswk3ieSY2yGmlpKnlbw0RTMlZ6E3TNtrmpt2Da2IN4ZNaHguIg2y+X+anihRRkHuPTYm+wQVTbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQkEbo50; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B38C116B1;
-	Wed, 31 Jul 2024 15:45:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxcCApiPT/CMRuk33kKZmkHpyB88Va3nZ7tP4Uvi1nrpCTTCQ2QHULKRW0fH6gKIqLvwdQcv2N3XYYU1qZtx17BJY1jnN0m0IqZlDDHEzc3C2a7IdjCodxqxeAQBD6Lrz+sc46v9GknT42DpskcRY+gSlSWyuWvtYERFWPcx4HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWGtcRW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6519AC116B1;
+	Wed, 31 Jul 2024 15:46:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722440707;
-	bh=NmitiGPMipFuWRllnzeaQLIndK4WAJkGQNjENc0ekiA=;
+	s=k20201202; t=1722440780;
+	bh=JSqrGcPdxzdCkjvNhdbWF6uWfXTLDQGpsCJBheDjKec=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GQkEbo50vfpnFg39DPCCCVu8nBkMqa9VM/8zapr2mIeOaEtNZkoa08Ba9H0N+A5cQ
-	 rZ7uBZ6ZA2TliCvWTeA3FaQD4stUPboUOTW3WqOqTv46WN2r6tMe6UNkQxdsTSoxKV
-	 AmT/b1/wkUZpVJte+r8GGQ07SupmI5+7ByFCnQsTTg/7cS/Y0f/jMq09SKjW9I37gA
-	 7DqrUyIFu/qKHFgurumt7BpAy5HJx9jTGj/tQa95vXnjnCUciOzAZncoTZXU52xion
-	 +7lxa6RNL2pMkDXydELNYhAxaO6IYe0FQEv1t37Z08hsr8NtH4aTxZp+B0k5loZcrJ
-	 hCYrQJ9vtAqZw==
-Date: Wed, 31 Jul 2024 12:45:04 -0300
+	b=mWGtcRW7JTz9AhW73D1JKdDg1kHMKRaMmla1MWLto+INP4Y79/i/yrILqpqhHnl14
+	 ymI4Wt8UDTBdROJ3m2GVc+AmTUlwTDNRK1OJ23m9COaXD0zKMKkUc5MuvxcrMifplD
+	 dttABrsBdutLR3gIS118enLq0jgSLF4HMMNcVjpidcm7/vpQIJ/2eoC5D8rZUxbVEU
+	 Pk+P4/YzDjbQt/ERLrDRESGGi5v/lcFGW3c5088o+NM5elb+UbGHHAQGRsilPytCGH
+	 e4JwkwecbZW3RxRCXwSffJzaOaGpD/naFrFlCFAdBRyJquwDUttmbtvWbjopPqpiGH
+	 p9LDCZ8h7VtZg==
+Date: Wed, 31 Jul 2024 12:46:12 -0300
 From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+To: Ian Rogers <irogers@google.com>
+Cc: John Garry <john.g.garry@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
 	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf bpf: Move BPF disassembly routines to separate
- file to avoid clash with capstone bpf headers
-Message-ID: <ZqpcAN_-UhXJkM94@x1>
-References: <ZqpUSKPxMwaQKORr@x1>
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	philip.li@intel.com, oliver.sang@intel.com,
+	Weilin Wang <weilin.wang@intel.com>
+Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
+Message-ID: <ZqpcRIzzBb5KC6Zb@x1>
+References: <20240730191744.3097329-1-irogers@google.com>
+ <20240730191744.3097329-3-irogers@google.com>
+ <Zqo5vVdrkhL5NHJK@x1>
+ <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
+ <ZqpZWywTe2j3U9Pl@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZqpUSKPxMwaQKORr@x1>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqpZWywTe2j3U9Pl@x1>
 
-On Wed, Jul 31, 2024 at 12:12:10PM -0300, Arnaldo Carvalho de Melo wrote:
-> There is a clash of the libbpf and capstone libraries, that ends up
-> with:
+On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
+> > On Wed, Jul 31, 2024 at 6:18 AM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
+> > > > empty-pmu-events.c exists so that builds may occur without python
+> > > > being installed on a system. Manually updating empty-pmu-events.c to
+> > > > be in sync with jevents.py is a pain, let's use jevents.py to generate
+> > > > empty-pmu-events.c.
+> > >
+> > > What am I missing here?
+> > >
+> > > If it exists so that we can build on a system without python how can we
+> > > use python to generate it?
+> > >
+> > > Now having python in the system is a requirement and thus we don't need
+> > > empty-pmu-events.c anymore?
+> > >
+> > > Can you guys please clarify that?
+> > 
+> > The requirement for python hasn't changed.
+> > 
+> > Case 1: no python or NO_JEVENTS=1
+> > Build happens using empty-pmu-events.c that is checked in, no python
+> > is required.
+> > 
+> > Case 2: python
+> > pmu-events.c is created by jevents.py (requiring python) and then built.
+> > This change adds a step where the empty-pmu-events.c is created using
+> > jevents.py and that file is diffed against the checked in version.
+> > This stops the checked in empty-pmu-events.c diverging if changes are
+> > made to jevents.py. If the diff causes the build to fail then you just
+> > copy the diff empty-pmu-events.c over the checked in one.
+> 
+> I'll try and add your explanation to the log message, thanks for
+> clarifying it!
 
-So this is needed for building without BUILD_NONDISTRO=1, sry.
+So, with it in place I'm now noticing:
 
-
-diff --git a/tools/perf/util/disasm_bpf.c b/tools/perf/util/disasm_bpf.c
-index 14994515beb341ce..1fee71c79b624cc8 100644
---- a/tools/perf/util/disasm_bpf.c
-+++ b/tools/perf/util/disasm_bpf.c
-@@ -3,6 +3,8 @@
- #include "util/annotate.h"
- #include "util/disasm_bpf.h"
- #include "util/symbol.h"
-+#include <linux/zalloc.h>
-+#include <string.h>
+⬢[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
+⬢[acme@toolbox perf-tools-next]$ alias m='rm -rf ~/libexec/perf-core/ ; make -k CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python'
+⬢[acme@toolbox perf-tools-next]$ m
+<SNIP>
+  GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
+  MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
+  CC      /tmp/build/perf-tools-next/util/annotate.o
+  CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
+  CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
+  CC      /tmp/build/perf-tools-next/util/block-info.o
+  CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test.o
+  CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
+  MKDIR   /tmp/build/perf-tools-next/ui/browsers/
+  CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
+  CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
+  CC      /tmp/build/perf-tools-next/util/block-range.o
+  TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log
+--- pmu-events/empty-pmu-events.c	2024-07-31 12:44:14.355042296 -0300
++++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c	2024-07-31 12:45:35.048682785 -0300
+@@ -380,7 +380,7 @@
+                         continue;
  
- #if defined(HAVE_LIBBFD_SUPPORT) && defined(HAVE_LIBBPF_SUPPORT)
- #define PACKAGE "perf"
+                 ret = pmu_events_table__for_each_event_pmu(table, table_pmu, fn, data);
+-                if (pmu || ret)
++                if (ret)
+                         return ret;
+         }
+         return 0;
+  CC      /tmp/build/perf-tools-next/tests/openat-syscall.o
+make[3]: *** [pmu-events/Build:42: /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log] Error 1
+make[3]: *** Deleting file '/tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log'
+make[2]: *** [Makefile.perf:763: /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o] Error 2
+make[2]: *** Waiting for unfinished jobs....
+  CC      /tmp/build/perf-tools-next/arch/x86/util/kvm-stat.o
+<SNIP>
 
