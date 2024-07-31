@@ -1,181 +1,184 @@
-Return-Path: <linux-kernel+bounces-269177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A94942ED1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:41:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257B5942ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06CAA1F291E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:41:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A44791F293C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:42:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C515A1B013A;
-	Wed, 31 Jul 2024 12:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6A61B0125;
+	Wed, 31 Jul 2024 12:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaR84pAJ"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="SKk6NUS0"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02olkn2089.outbound.protection.outlook.com [40.92.43.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3678A1B0136;
-	Wed, 31 Jul 2024 12:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722429679; cv=none; b=TJHWQ5Ht3boXQuo6BHJsAvZPJRFgnLNAZna5Fb5CY/gIy7BGux2DArK0OoE4rmASlZKVW7awpmwpICxHPQbAbynNxpesvQZ3CVlcNS1+8bKnBaCiJps4ffKTGLuNbALdQbSn+7JquLqtQC93rcd1rVQjSF0IsNcINUf5BAGEFGE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722429679; c=relaxed/simple;
-	bh=hWzgiXWVrjpTN1nVuyODYR9+OxLdhgMRH76UuMtK06A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=liyZuKhPxQYehGpOHftJq2d5j54jorD0uCjWnWK99gcs2TmROq/T4a/vsc0Bncp/tkuv4KZTsSjqm6MVvdESZKqEHjlg9/2xUSJ7wQK0BYCFMSQ7PJil8JOrtmt+Bqt7WuRWeBRRC5CraCiJ/9BJ/oQ6bu1zJlzVvJIAQjLGMZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EaR84pAJ; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a15c2dc569so4948712a12.3;
-        Wed, 31 Jul 2024 05:41:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722429676; x=1723034476; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Q2l7kPRbHfPSAmXr8/i+HQUpkMV0CfBoozBQvEj2VM=;
-        b=EaR84pAJg5DRWkyDdcKFNR5Cob0cUS6MwUrIcKjfohzB4s0FyeExBRMrIGH5W9W25L
-         uFe9uD+C9kuVZU0QPljWA9C7y+X9fHEdQJjhtN5UorSyYmS8rxrXEz8Ywe9nN+JmYKZP
-         Gb4n8URbNmW5DhS1zi33jxb+QY3fLV4hAsfA+tI2nLX51A0SGc+lw17U3s6qbOqE319W
-         AYc7E1WdNVozp6R6ZGZszcGW1vrLILwQVfc57Nsga/kkimnIVVG3FzGhxkF5ni1x3pLO
-         ZXCyZu9b/PsJ70AmcDerVEMiA42YuP81rH40ttVkO3p2x42wJwKkFjqS240dDb0HnghC
-         dJIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722429676; x=1723034476;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/Q2l7kPRbHfPSAmXr8/i+HQUpkMV0CfBoozBQvEj2VM=;
-        b=TrYxjXiEUiy87haG4hpVHfuxdh5MIpez2mHGKld+HUW872NkqJlXIEBe/Qv8H7HGGA
-         g/txP6sWPih+/VHeJHo9wpAs6kf09h3Im5DbiXl3G48fIcj1eY8GEOEK7St7P91YkfNi
-         k3yCIsEEIDDWIGNUUNAB5S2FEUm2VTq8JnkuRG8gr6VFOHR6is6xOXTOX11sxjS3KJSK
-         3503nlIC4G6xiH60CQE+uwQ/O8NWr2AnerTplQUpm7Bg59wiCLWGMBIVG5qhYnsKikx3
-         QbFEgPendAp66S1LEbJ+NTRSIj1nDud69gBiIFRjlpDE2DcNwuvXyX++DB7aNCy+9UfA
-         KD+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWSa8MHW9ex/6X5a6vGHhWnHFvlNZ9mgU8X1vlayaqX7iVlt8IrjZEXnfOlw4v9YfJAEVcTShjnxpL6O2hrL+ddwFno6xyrtZvboI3uRB939+Z7v+/gjRjvD+L8Snu8izll0bNi2ja/lwBV0rNQPOGrRkL1/gN5rzqJb95nOzrlxBi5xQn9L3wHEI+9S/wBBjynI+eaptwqCDGH5Ffqbqp5kedT
-X-Gm-Message-State: AOJu0Yx5YVRw3G8dxI4ehw53c7X9De0BL3oCJ4fDwZKPykTWI5vRqe4k
-	YUfazOPHe5OYrHr06/JWVUgCph1+j6s+9xv2GLxcDyx+g/YdZGpoxGZiDnsM
-X-Google-Smtp-Source: AGHT+IH12mfwgxzN+nLyjdSXs3/FhfTaWeWx6KdoyfAElTnn/87OsFBoXHWcj137YDoCOE8gXgpMKg==
-X-Received: by 2002:a50:f68d:0:b0:5a2:8f7d:aff4 with SMTP id 4fb4d7f45d1cf-5b021f0dd2amr11840822a12.20.1722429676231;
-        Wed, 31 Jul 2024 05:41:16 -0700 (PDT)
-Received: from [147.251.42.107] (laomedon.fi.muni.cz. [147.251.42.107])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b52ab8f09dsm1604442a12.26.2024.07.31.05.41.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 05:41:15 -0700 (PDT)
-Message-ID: <c897b521-0520-429e-9e94-ba7da74a921f@gmail.com>
-Date: Wed, 31 Jul 2024 14:41:13 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C25A1B0116;
+	Wed, 31 Jul 2024 12:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.43.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722429712; cv=fail; b=UnRorNK1ifTLNkwolBdGklBeaSnE02Npnxyu9iw/3WhrDviLRNl3AgViHm0zhlyH5zLJfkbauie/lv2XaUT6NOw+qwP4g5HN2gYmuGSlF7n8uaxtoBa5VHjcb5v2iG0GUaJq1MkVwqtj7+ffrlAY5/YZXyCWTXCmEQxebM6/CCw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722429712; c=relaxed/simple;
+	bh=BhTl5Xl6UMBxaqO357EDsNoFxHi++2iBX/bRFkGT2Mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=uJWRM7QorYUJwSt3u9+Hb2s2B0Q+vsPeSbvEvw3nhRRyy/wPC7/S4bwpWBbz4Eoev068XvSTSvfLHFHQpBBuiVCf0QyFY7A0vcIenOi3QgyGB1zrBh/EBiuP12TJpt9t6rae7QnRdfvr1zo4xwFX8M4cc2b3QxJLsmbouXXPeqo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=SKk6NUS0; arc=fail smtp.client-ip=40.92.43.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vRUVbAgqr/A9Av5uc+U4S4yoMMdLGa8o54uhBhgIibzPJpUbESqgp9mF5XWLVjEFnL/WLIprWZm3XNNvnJQ4jEI145+X1aW2P7UXgBaDufAYlfF7qK8x2aw7pRS4jok79cXwXx9pyMVRBWz6qAOJ8JPujbMjhGxWysJgXVvMe1fsYuoTbQCqLXj5hFWY58Up4ntgzRSCkOpLklhQxd2eHLFSudSHKJBsRhiLQvw59PUviqJnHvprA3XZ0bsFrRp2HmoLoTSJkKB+ClDnniIbittcDqZdvX1CI7/KAqPlIWdBK/BM9IfHXKoVmwxr6eqWDE8zThMQma2HMDqKYA7QEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jvAHz4yQAL4uahyHS2xJojklvKG1O9ltEKPyNhuvyus=;
+ b=IIHlh7ZN68gBwVdRqudv9WJdaBCMTxmDSSKaKRVX82xDQVX7RaKo7kKtlqP5pacWgonmmY1kFOry0GP3mivXCGrKhDjKdXbnNYycxvbwUAacDnOTsMst3VkKEDWOgxLwj7YsXLq67Ikemf3R61ERODk5IodbdUtExiXsHRTghosggyEqD6TCHSLGUqnJ/HpMkM9I4ZhenMInJoKFZbV6mAO/LbyAtFD1O3s6Two04o4VMMzmsjo0pk2ag2h7S2E94iL5F941MTLKqN3J9d2pZWFodudZb3s6z0PETpCCAiGJ8S/EUpX7VjvLabk08bJ83qPjgCFuFdgncUKOhEja2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jvAHz4yQAL4uahyHS2xJojklvKG1O9ltEKPyNhuvyus=;
+ b=SKk6NUS0o1Qd1awIM7JuslDyjU7M96InRt1m4lDbDxS4OuIMooJ+Rfx/FY59+DQkE+Csiik56g4BkI0mUcBFIGsykwvDwY4QuZh6UR4xf7/U/frMxQFmkozKbfxQjCi+0xKT27ZFUgeErQk7RIPOHD0Y4HdiuufzGkjb8ViMdbyTGRg2b3vI5WZIWtKZcpn/oXHwhWttEc9B/9MYn6e+yFJoKR+N8bgxWx0KANfmFfrCO0FHV1skS571Xp7pmBIMGzZmvaf+/7oPyXhVG3X+ivZtGCd4hB0jdl4fE1qtTIK81yMNnd1lk3+WVp6tHzUNRpjFjly1eadb91ttVdkNcQ==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by IA1PR20MB5075.namprd20.prod.outlook.com (2603:10b6:208:3a4::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Wed, 31 Jul
+ 2024 12:41:48 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 12:41:48 +0000
+Date: Wed, 31 Jul 2024 20:41:16 +0800
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	=?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
+ Add Sophgo SARADC binding documentation
+Message-ID:
+ <IA1PR20MB495346557FA84CC694D184A0BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <20240731-sg2002-adc-v3-0-5ac40a518c0a@bootlin.com>
+ <20240731-sg2002-adc-v3-1-5ac40a518c0a@bootlin.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731-sg2002-adc-v3-1-5ac40a518c0a@bootlin.com>
+X-TMN: [O8KHsFodLQH44roKyqQXHZHp3CaipKc2f0C+yFNzIe8=]
+X-ClientProxiedBy: SGXP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::23)
+ To IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <c2damdamehfyjniarkoozv3stf3hqmnpezlexufpz2pwtybvyq@nrsje5mdntw5>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] md: dm-crypt: Set cc->iv_size to 4 bytes
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, agk@redhat.com,
- snitzer@kernel.org, mpatocka@redhat.com, adrian.hunter@intel.com,
- quic_asutoshd@quicinc.com, ritesh.list@gmail.com, ulf.hansson@linaro.org,
- andersson@kernel.org, konrad.dybcio@linaro.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_viswanat@quicinc.com, quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20240730115838.3507302-1-quic_mdalam@quicinc.com>
- <20240730115838.3507302-3-quic_mdalam@quicinc.com>
-Content-Language: en-US
-From: Milan Broz <gmazyland@gmail.com>
-Autocrypt: addr=gmazyland@gmail.com; keydata=
- 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
-In-Reply-To: <20240730115838.3507302-3-quic_mdalam@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|IA1PR20MB5075:EE_
+X-MS-Office365-Filtering-Correlation-Id: 443afc85-63dc-440d-32b5-08dcb15e2458
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|5072599009|19110799003|8060799006|4302099013|3412199025|440099028|1602099012|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	O3lyaCQeQH4z1XiBggPxMYv8mlc4ueWsV4fW9rbpWo1IP0vuiDouN+Q0qMVxKTEZfphExbnN72P8iZ1NCFOXKbg2sgCMFrTxc2gAbU3MzFZGsaR3BOU1HMcA47xqTCN/P8Dx0pl7ssfat84IIi5hPRONFo8Mk6dcAAEhD17njkixokIY+/tw2ido7hjHt9FIVLwEL4K6GgORamIyQhy8GeMqLnewqA4RZMyH6aliNWmv4SzLSIZNH6iIxoXdAkClMBcdeuZA2T7hLXR/cQJnIXsdzzEDoDi9prDP4eDJid6vibmAuUmPsBUaNKBjsRXX/D00s37+DYD7QnWLkOIRBSn0lJNTvDAkp0xYZnuGFUrJDaaYTqLilYkYRlgZJF3hTkLL8mU8BLWJ9Nau8a3NzMtOdmZvzl70g+G0auFKYf+ntPqcWUYEum75uQUPrevVk6NMIdo1TEyLgGmOCgVW525SF/RrqrbrkPjIxOmWWkiCLPbLrgIvNHIX8xsS9VflRBQInej78kNsuX+OHiEQVRc1F0mwhHxiPNxOGRNLfenaf4GWl+KNnpHignOH/2ewE7EvJSkZtZg5XbLaRXe3Pl6M4waMjJj7sOVOSfPQP9+8SwfSHS7Sqxkl2AV/EUe6A2Z53NN7N6gnlglkBjX6frb4ZZDlVqF1TNOLq6ZX69gcKkWu8Q0zlV4KNtlgzB0ADra7lA0YdKhKfXXsz+9ZVklnnbeVaXoKsXmnhkDQV39+JesFQBMU+swK45g/q7kcOAcJ28wZmZiwYnYDmnPOiPHmzzlXp98EPqyctz/hgXWG82KrM7rUPtZvHwla+6GVSB5dM0Xuh9N6RrqB9iTTTA==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?GxKNvLDoQLiSzoOlDcFxRSjdkg64XnYBxRwVazbUzef/IsqI6KbsbajYFuEx?=
+ =?us-ascii?Q?g7QMSriK41ewpqy1V2/aLdIhuM04pDYr1wU2jqstVa8oMAvSGBY+pixeMCZ3?=
+ =?us-ascii?Q?LgMWi75i+qYpxXOVxP0IxJGDNPn/IiFH5IQuuPKUdcGn2vPaNI0qduhTZoh6?=
+ =?us-ascii?Q?S7C63Tv92/CyLRkt4MnM2x8qb2QoRItorD5rV/1nNECie0B14PBt7nzjDzPg?=
+ =?us-ascii?Q?ya5Cvm3tKiJyZ332dMmeSZUbiCXOgLvIBAuIpoxz97aNUlFmn5vthgULP3Se?=
+ =?us-ascii?Q?LVQa0MJ4B6/tifr3TGyvcNvXb67apciQ8ZVmN/3fZxfPVTRAlbThcijHORUH?=
+ =?us-ascii?Q?ctWpZYEVpD6mFGqAceAMbcrvAPni8KvZ1ppNv5ldvCOgNfg42AkbS+1gCK5Z?=
+ =?us-ascii?Q?8NVk69XEgemDNiI9luyEF64Il8dRVs6tRA8zZqp4+tzme2K+D7roNnIcfG1d?=
+ =?us-ascii?Q?D0ml63g+5OsmHVvYnaR7X70OC+d+i5P292wJsg0dMEFS8JAzKdx4An1zlT+I?=
+ =?us-ascii?Q?GEKNjRC9EdrzZYrerna2aw/rJiMkGJpjG9La1pUA0WD4mm6T7BXSJRTZbkrc?=
+ =?us-ascii?Q?np1FrBb0rlvt4M6PPD6283NXYPCEwwQ8WT+h5e3TXmJm1JgKvYMUUbTvA4R8?=
+ =?us-ascii?Q?OJvTWILV871b7bU/QGKRXpkWLqhqOehvwGkGu+65ewHelk+1ZKJb3ikmv91n?=
+ =?us-ascii?Q?Z4zUxFF4JPHIQ0r3tmnLkx0rYlzJt7HtTni1rrcPse0bBUoypVqcqKGT3+nv?=
+ =?us-ascii?Q?eZBIuAgW8Umt17l+sLoxWfo78sPDDh/guKiXhQ0rH4wyaWA7lLi5wPnXN4wQ?=
+ =?us-ascii?Q?1KQG3k6g50vtdAJpzoomK3F2kwnxV+TFcuyH0y7HPCgWZTuAV2RGl/vf2n8/?=
+ =?us-ascii?Q?y+5OM7+Eznm2fNyM6St0Ukyh5WQr9zXt/W1aL4WDWHfXEFxiiqqARgveZW+C?=
+ =?us-ascii?Q?ycobQy646dUAhXhod7f74EnaHdhE+m/MH6cXSg5o9c5jZYbW4dl0QgcYNGpH?=
+ =?us-ascii?Q?ldFebpEGf6B5aqVSylWmci5zsB+Mtx7urjvNQYx1iq0x7Sx2g4nf38Y+Btpb?=
+ =?us-ascii?Q?eW35psLqBi2WChyaCOpai+1MjfNLUbaCKwyV/SrxiVh6N265baHjrxY/oMgv?=
+ =?us-ascii?Q?uOrWdcs6iB1EKqeeQUWrWfZ9gryTsqtdGSe3r3xGpQCu01aKwKEsn1FsIVMA?=
+ =?us-ascii?Q?1hZZl83DLlFoXCFVn4VIYu4bJcPuTR4Vw+PJfnk6xe94jGQ6CSrMfuOoo8at?=
+ =?us-ascii?Q?ZNYBXYmv2Z7as2ajeBqf?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 443afc85-63dc-440d-32b5-08dcb15e2458
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 12:41:47.7235
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR20MB5075
 
-On 7/30/24 1:58 PM, Md Sadre Alam wrote:
-> Set cc->iv_size to 4 bytes instead of 8 bytes, since
-> this cc->iv_size is passing as data unit bytes to
-> blk_crypto_init_key(). Since CQHCI driver having
-> limitation for data unit bytes to 32-bit only.
-
-In dm-crypt, plain64 IV is defined as "little-endian 64bit IV"
-and was introduced to fix security problem when 32bit "plain" IV
-overflows and IV is reused.
-
-In that case you can move ciphertext sector between places with
-the same IV (but different offsets) and these will be still
-correctly decrypted.
-
-If I understand it correctly, this reintroduces the same problem here.
-If you have 32bit only, just use "plain" and do not support plain64 here.
-
-(In general, I do not understand why you are sending patches
-for dm-crypt code that is clearly not upstream.
-I hope this code will never be accepted.)
-
-Milan
-
+On Wed, Jul 31, 2024 at 02:24:14PM GMT, Thomas Bonnefille wrote:
+> The Sophgo SARADC is a Successive Approximation ADC that can be found in
+> the Sophgo SoC.
 > 
-> Signed-off-by: Md Sadre Alam <quic_mdalam@quicinc.com>
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
 > ---
->   drivers/md/dm-crypt.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 48 ++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
 > 
-> diff --git a/drivers/md/dm-crypt.c b/drivers/md/dm-crypt.c
-> index 37add222b169..c0257d961968 100644
-> --- a/drivers/md/dm-crypt.c
-> +++ b/drivers/md/dm-crypt.c
-> @@ -2490,7 +2490,7 @@ static int crypt_select_inline_crypt_mode(struct dm_target *ti, char *cipher,
->   	}
->   
->   	if (ivmode == NULL || (strcmp(ivmode, "plain64") == 0)) {
-> -		cc->iv_size = 8;
-> +		cc->iv_size = 4;
->   	} else {
->   		ti->error = "Invalid IV mode for inline_crypt";
->   		return -EINVAL;
+> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+> new file mode 100644
+> index 000000000000..79d8cb52279f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+> @@ -0,0 +1,48 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title:
+> +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analog to
+> +  Digital Converters
+> +
+> +maintainers:
+> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> +
+> +description:
+> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: sophgo,cv1800b-saradc
 
+There is no need to use "oneOF" and "items"
+
+Suggestions: add a compatible like "cv1800-saradc" as fallback
+and add use "sophgo,cv1800b-saradc" as specific compatible.
+Use the "cv1800-saradc" in the cv18xx.dtsi and override the
+compatible with specific one if necessary.
+
+For example:
+- items:
+    - enum:
+        - sophgo,cv1800b-saradc
+    - const: sophgo,cv1800-saradc
+- const: sophgo,cv1800b-saradc
+
+Regards,
+Inochi
 
