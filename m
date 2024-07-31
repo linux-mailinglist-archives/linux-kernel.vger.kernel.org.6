@@ -1,97 +1,199 @@
-Return-Path: <linux-kernel+bounces-268624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17198942716
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:40:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1F29426F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B801C217DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:40:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DC7283800
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A54616DEAC;
-	Wed, 31 Jul 2024 06:39:23 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7A716CD24;
+	Wed, 31 Jul 2024 06:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Agl1ePpN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B25C16D4C4;
-	Wed, 31 Jul 2024 06:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CC1946F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407962; cv=none; b=VpEXVvVDIukKsVBu85wYpDTGPEoE1UuF/cufOsxx06ZN/HAguQfl+oeNCZz8nXukWcDCAWDMtT3kG4RnqSZYUSmcomMnrMNUeyRPYIstceSawnV88nwEOatZ8Rm3eTxyVlqLWPr5PrBnqDkm2jCbZcaOqQRIeNpyHFH6ATNjpnY=
+	t=1722407825; cv=none; b=m8n3e1z9oGaTDCOebnmFytuSUg++G0oaoqtU3dBEGAqrktsdjB97xD7FCgCQQK89xbt3R0aiJaKDNti5HYCYly6/bMZIju2eTm9tS1amTcMmKX42n56ONJcAiuvLo34YRLm2LRtSrJGT7k1tlrSRXQV1TuRzhS+XO6tykiViX5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407962; c=relaxed/simple;
-	bh=O2TU5Lra5iP+A/fH09rSiPhd9mRWNVAj4C9RgaiD3Vc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r1f77tLZZ79qSC5NM5ppI5xTW3zzyOAvCirm/mMLoXoZ/LUR1gQX6REW+1OSwLGPedkmK1vldnJVDInOIt+F5mPV2ruc5a1P3fPhETjOsVUBJFo1CnQhCbLpEV6EvAPze7/y0NcGWGZpJiIoi/T4acCcw9Sl/u1AWyL6N+DH+1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WYj7h5J7KzgYT1;
-	Wed, 31 Jul 2024 14:37:20 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2CFCD18005F;
-	Wed, 31 Jul 2024 14:39:11 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 31 Jul
- 2024 14:39:10 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <allison.henderson@oracle.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<yuehaibing@huawei.com>
-CC: <netdev@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-	<rds-devel@oss.oracle.com>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next] RDS: IB: Remove unused declarations
-Date: Wed, 31 Jul 2024 14:36:30 +0800
-Message-ID: <20240731063630.3592046-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722407825; c=relaxed/simple;
+	bh=T5xtq2+T4SGA+SuVDFG7nCUZboCIDjJHRn/Bzy4RjSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EgARh3KMMLgVXo3f7ZkdCyJM26BM7wwEMIlda8nxsWy1q2Ox5rkEAzNkpNz9gO2kW2lOZRXTHmjyIp/h7B53+yIQedzpBa6bJUMuwvrMJZZpWgvRgHXcXsTKes2WgXwOXruUNDc6x3L8KzaYQ9lSLY7SrtUmi3/9s+SJNQEx2go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Agl1ePpN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722407822;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2f5yai2p+2ixByjx7pWktU2JtLhPUEw7G/kkgGPzfME=;
+	b=Agl1ePpN3fN9ZO/Al2xGq351ASohUb3D9vwP4FjFzQlkE/Se4drMmS5DWAC1WqSSPG44ao
+	oqrtq82rE0IODBK7dBC7g0+f2lmF7FKCZWzl519CTp0SK1FmMUr29tKhMezlMfHPlVomoF
+	bsKOkyu4NNEBVvB2c1IVoLuXPR6Ymk8=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-168-jvWeRHXrMjuwctG2lQwICg-1; Wed, 31 Jul 2024 02:37:00 -0400
+X-MC-Unique: jvWeRHXrMjuwctG2lQwICg-1
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1ff3dfaa090so9793685ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:37:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722407819; x=1723012619;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2f5yai2p+2ixByjx7pWktU2JtLhPUEw7G/kkgGPzfME=;
+        b=g5wuxky4cHYpkAJpP8dAsAfNYPXhZDaIhUJ9/vohAfQJHQUBp08DnGAFQhPw/od9Mg
+         MIcyQfWyaywdb7GIk9t3MUAwVgRqp+Fxb21IxdhB8OjVsXelP4MXR255qGnHKP3h7bKF
+         +8x2c8LtATMfYu/aCYSWVfSkkBoFOO2W7oWoMOZW36PhnNL3GVmgWRIfLy3muRFHXia3
+         ibpvf/RJobnGq1qvhJc3jwz154ZvxVfNqoehj6XhSllc3vbB8WAUAaMBxsLpb1eOvWPy
+         3AAGkj7NXNBoGvlIYed7M6kxe+ZN4keqfaEFL6DSMsB9SUSsJXqkvCmq4J/iDfUnnMul
+         BuJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKBMPXThDTvHZr94OZFX1UF4hXcU1qH+2ILYj6zusnKJG5jczVaqYMr9poYnIZit3iQ3p7ekajtbfq0GfTE/45kR+BwyAWaZimLABa
+X-Gm-Message-State: AOJu0YykPgzU/qy37PrAscE80IVDy8j6G8RZnIvjxMvi1YWd5NZ3n4I/
+	VINuHOhcFzofNiqesz8c5FKX+/0PtorLl+pvybFaXo25QWL0IxDv7y7S7d2Q+Rw8IYgsy3od4Xv
+	79S6oD5s8Tfb0MJKAplbcrKSfA//4IOwL8JT9VWNINd3rGD55aMjuNaTSVxHorg==
+X-Received: by 2002:a17:902:e810:b0:1f7:1655:825c with SMTP id d9443c01a7336-1ff04860a59mr127749495ad.36.1722407819474;
+        Tue, 30 Jul 2024 23:36:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHmcfjVds5cuNEcd1txMPa+VApIJaSskNZFLiX3i8Sit0Q2n9g9r0lcLijWVpFQdhLCW8zJaA==
+X-Received: by 2002:a17:902:e810:b0:1f7:1655:825c with SMTP id d9443c01a7336-1ff04860a59mr127749205ad.36.1722407819034;
+        Tue, 30 Jul 2024 23:36:59 -0700 (PDT)
+Received: from [192.168.68.54] ([43.252.112.134])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee1477sm113129505ad.169.2024.07.30.23.36.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 23:36:58 -0700 (PDT)
+Message-ID: <68acf6c9-4ab8-4ed5-bddc-f3fc5313597e@redhat.com>
+Date: Wed, 31 Jul 2024 16:36:49 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/15] arm64: Mark all I/O as non-secure shared
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+References: <20240701095505.165383-1-steven.price@arm.com>
+ <20240701095505.165383-6-steven.price@arm.com>
+ <b20b7e5b-95aa-4fdb-88a7-72f8aa3da8db@redhat.com>
+ <e05d2363-d3e4-4a23-9347-723454d603c9@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <e05d2363-d3e4-4a23-9347-723454d603c9@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Commit f4f943c958a2 ("RDS: IB: ack more receive completions to improve performance")
-removed rds_ib_recv_tasklet_fn() implementation but not the declaration.
-And commit ec16227e1414 ("RDS/IB: Infiniband transport") declared but never implemented
-other functions.
+Hi Suzuki,
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- net/rds/ib.h | 4 ----
- 1 file changed, 4 deletions(-)
+On 7/30/24 8:36 PM, Suzuki K Poulose wrote:
+> On 30/07/2024 02:36, Gavin Shan wrote:
+>> On 7/1/24 7:54 PM, Steven Price wrote:
+>> I'm unable to understand this. Steven, could you please explain a bit how
+>> PROT_NS_SHARED is turned to a shared (non-secure) mapping to hardware?
+>> According to tf-rmm's implementation in tf-rmm/lib/s2tt/src/s2tt_pvt_defs.h,
+>> a shared (non-secure) mapping is is identified by NS bit (bit#55). I find
+>> difficulties how the NS bit is correlate with PROT_NS_SHARED. For example,
+>> how the NS bit is set based on PROT_NS_SHARED.
+> 
+> 
+> There are two things at play here :
+> 
+> 1. Stage1 mapping controlled by the Realm (Linux in this case, as above).
+> 2. Stage2 mapping controlled by the RMM (with RMI commands from NS Host).
+> 
+> Also :
+> The Realm's IPA space is divided into two halves (decided by the IPA Width of the Realm, not the NSbit #55), protected (Lower half) and
+> Unprotected (Upper half). All stage2 mappings of the "Unprotected IPA"
+> will have the NS bit (#55) set by the RMM. By design, any MMIO access
+> to an unprotected half is sent to the NS Host by RMM and any page
+> the Realm wants to share with the Host must be in the Upper half
+> of the IPA.
+> 
+> What we do above is controlling the "Stage1" used by the Linux. i.e,
+> for a given VA, we flip the Guest "PA" (in reality IPA) to the
+> "Unprotected" alias.
+> 
+> e.g., DTB describes a UART at address 0x10_0000 to Realm (with an IPA width of 40, like in the normal VM case), emulated by the host. Realm is
+> trying to map this I/O address into Stage1 at VA. So we apply the
+> BIT(39) as PROT_NS_SHARED while creating the Stage1 mapping.
+> 
+> ie., VA == stage1 ==> BIT(39) | 0x10_0000 =(IPA)== > 0x80_10_0000
+> 
+                                                      0x8000_10_0000
 
-diff --git a/net/rds/ib.h b/net/rds/ib.h
-index 2ba71102b1f1..8ef3178ed4d6 100644
---- a/net/rds/ib.h
-+++ b/net/rds/ib.h
-@@ -369,9 +369,6 @@ int rds_ib_conn_alloc(struct rds_connection *conn, gfp_t gfp);
- void rds_ib_conn_free(void *arg);
- int rds_ib_conn_path_connect(struct rds_conn_path *cp);
- void rds_ib_conn_path_shutdown(struct rds_conn_path *cp);
--void rds_ib_state_change(struct sock *sk);
--int rds_ib_listen_init(void);
--void rds_ib_listen_stop(void);
- __printf(2, 3)
- void __rds_ib_conn_error(struct rds_connection *conn, const char *, ...);
- int rds_ib_cm_handle_connect(struct rdma_cm_id *cm_id,
-@@ -402,7 +399,6 @@ void rds_ib_inc_free(struct rds_incoming *inc);
- int rds_ib_inc_copy_to_user(struct rds_incoming *inc, struct iov_iter *to);
- void rds_ib_recv_cqe_handler(struct rds_ib_connection *ic, struct ib_wc *wc,
- 			     struct rds_ib_ack_state *state);
--void rds_ib_recv_tasklet_fn(unsigned long data);
- void rds_ib_recv_init_ring(struct rds_ib_connection *ic);
- void rds_ib_recv_clear_ring(struct rds_ib_connection *ic);
- void rds_ib_recv_init_ack(struct rds_ib_connection *ic);
--- 
-2.34.1
+> Now, the Stage2 mapping won't be present for this IPA if it is emulated
+> and thus an access to "VA" causes a Stage2 Abort to the Host, which the
+> RMM allows the host to emulate. Otherwise a shared page would have been
+> mapped by the Host (and NS bit set at Stage2 by RMM), allowing the
+> data to be shared with the host.
+> 
+
+Thank you for the explanation and details. It really helps to understand
+how the access fault to the unprotected space (upper half) is routed to NS
+host, and then VMM (QEMU) for emulation. If the commit log can be improved
+with those information, it will make reader easier to understand the code.
+
+I had the following call trace and it seems the address 0x8000_10_1000 is
+converted to 0x10_0000 in [1], based on current code base (branch: cca-full/v3).
+At [1], the GPA is masked with kvm_gpa_stolen_bits() so that BIT#39 is removed
+in this particular case.
+
+   kvm_vcpu_ioctl(KVM_RUN)                         // non-secured host
+   kvm_arch_vcpu_ioctl_run
+   kvm_rec_enter
+   rmi_rec_enter                                   // -> SMC_RMI_REC_ENTER
+     :
+   rmm_handler                                     // tf-rmm
+   handle_ns_smc
+   smc_rec_enter
+   rec_run_loop
+   run_realm
+     :
+   el2_vectors
+   el2_sync_lel
+   realm_exit
+     :
+   handle_realm_exit
+   handle_exception_sync
+   handle_data_abort
+     :
+   handle_rme_exit                                 // non-secured host
+   rec_exit_sync_dabt
+   kvm_handle_guest_abort                          // -> [1]
+   gfn_to_memslot
+   io_mem_abort
+   kvm_io_bus_write                                // -> run->exit_reason = KVM_EXIT_MMIO
+
+Another question is how the Granule Protection Check (GPC) table is updated so
+that the corresponding granule (0x8000_10_1000) to is accessible by NS host? I
+mean how the BIT#39 is synchronized to GPC table and translated to the property
+"granule is accessible by NS host".
+     
+Thanks,
+Gavin
+
+
+
+
 
 
