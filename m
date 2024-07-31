@@ -1,140 +1,86 @@
-Return-Path: <linux-kernel+bounces-268965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81BB2942BB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4805F942BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36ED5281761
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02BDF2812DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5F71AD402;
-	Wed, 31 Jul 2024 10:10:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBF61AAE17;
+	Wed, 31 Jul 2024 10:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gaeC24Gt"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gG4CkjtF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9C61AAE1F;
-	Wed, 31 Jul 2024 10:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EB5208A4
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722420641; cv=none; b=n2lVarZZwpj68/QGqot3otDTtJ0ITNzDeRAx1OzibD3XMWQZVYnSRUBbdBi0urd6EhjlkiIo2D6qhBd3OdF9DtLMG4FPTadn6SIm8RBaUNUnbwyPu3UdQnbu3xI8JUTHy8yyTKx2OWIiiMgmLHQgf70wNrCpExabfw4i1pJ5giQ=
+	t=1722420625; cv=none; b=Rk24062Z3MUZdsTvBxUU12DIdRh7EsNYZojB0A+BI6GTMpNcWWCi4iASg9P9JI0vnUPBxuTybTlSqpBcQsHnRCmy++sQiB3xo9OV2ir8I8TQdS9sHMn80OJpReNpRM35VnaMQ+yKLPCHDk2QJDcSl5IEYfpPTpLkSvRagKtI/GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722420641; c=relaxed/simple;
-	bh=mcoK9LmrP202DQiIDF28yqP/Wm3eTVzX8tzTOTUmoAY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rTYvG4pew7BtsLvdfaKUEyxWJujjnL7vAZfDw7dPivBj0soGzGYFZxqeGmx3qQRermKe0a2ENEQnratChjOj3llgvZOsi9zO7TZPbE6vplEatWA7UzZc1TNTk7jWcrvq1IEBT2RXg9fummm32+ohoxAxzIthZbWIYJ31ndNHF1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gaeC24Gt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA592C4AF0C;
-	Wed, 31 Jul 2024 10:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722420640;
-	bh=mcoK9LmrP202DQiIDF28yqP/Wm3eTVzX8tzTOTUmoAY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gaeC24GtLZmFaiiW6aeo7wP7A6N+qxppCwVG83UKh8Rr4zdkhY4uPiMYBEHUFLZ6k
-	 KOwijVh/QE1jdLB5YXys5gWaBe6HdtS+75FRU0kQ1ILb0kLofVxsO6MnX3z3bn28pL
-	 56lhn2fkDS+cfMOWsQYtKbl9l9XFkm2wrW82mhg/ldF7RWCJ44JHRDqWrjbgtDgCsQ
-	 GjCl//Ssq2JmguQBbYUcHQPY7n2hGg0vsyR/Pseqdekernxs1fKT0Qc/CxDgHHW3Em
-	 fzRdqVoT+rHvwHL0GRPU93YiTD0EdmB5UzcI8nh7zhhmSKgPcXIRwJ1lnOn0+9lWq1
-	 LyPfSrFMvOEHQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Wed, 31 Jul 2024 12:10:15 +0200
-Subject: [PATCH net 2/2] mptcp: fix duplicate data handling
+	s=arc-20240116; t=1722420625; c=relaxed/simple;
+	bh=s4b8FXMKIENOpUiprH6jG5cJVVw9kqOTmdW46Lh/AY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCi1D9XlOd0cIAcuF0+Nu+H3esikPJMoHSvxTIFuGHBeBdmsHW8DyCzYJKWq6+Lr89iUSv7/yUNn7SJIlNumfL+U4MZF+uhvQNSCgRNKAXERbrsJfZ/2HglZFn67YHUVOhAxP19KSlMeCzghdyi/gQUkXHNMv3w5cyjHVaJRPGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gG4CkjtF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB975C116B1;
+	Wed, 31 Jul 2024 10:10:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722420624;
+	bh=s4b8FXMKIENOpUiprH6jG5cJVVw9kqOTmdW46Lh/AY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gG4CkjtFXqbs2KLCQ+Z/6FqtTWJ1oJkkRXkyUHQ27d7/6rUwxUQXpMyoY8+EWoOen
+	 +gGDbJ7Q5NxHr5/0OudkMTaci09XTV8Ua7OJTqYWpjSdeyD30jp+JfdVqD62+hpVmk
+	 Q6fjXdODTm2xewgweIQfhBm9PHlE5U6gu6O8b908=
+Date: Wed, 31 Jul 2024 12:10:21 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlA==?=
+ =?utf-8?B?5aSNOiBbUEFUQ0ggdjJdIHVzYjogZ2FkZ2V0OiB1dmM6IEZpeGVzIHRo?=
+ =?utf-8?Q?e?= abnormal enumeration problem of mobile phone as UVC camera.
+Message-ID: <2024073148-carport-drivable-5bf2@gregkh>
+References: <TYUPR06MB621792398C6E5CF084D4586DD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-upstream-net-20240731-mptcp-dup-data-v1-2-bde833fa628a@kernel.org>
-References: <20240731-upstream-net-20240731-mptcp-dup-data-v1-0-bde833fa628a@kernel.org>
-In-Reply-To: <20240731-upstream-net-20240731-mptcp-dup-data-v1-0-bde833fa628a@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2111; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=JqfstQqq0JRT5Fp57RkyUDj9RgOgTzdxW2LL9v2v+s8=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmqg2YV5OWiY+8t9DVjxlTKa83MnV9kq+4PFviI
- t0agQiGkHOJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZqoNmAAKCRD2t4JPQmmg
- cyXWEADhwq48kgatRefVmpcR3KOOixaGnWRGkEgu6ShLL6BMyOxwfJDz936aqPDmP3JpZa8lf4l
- H/ZfHIYe1By2iPkmdsRxhZPxkzDtPnwzh7NV7ul+NVsapn2zAOmXTceoQzIUY59y0wT00fFua/n
- y05le07oeC/teIIs/UXCHbLhdbMxsMTpX6yMHO9EzFxjbQtzpR4guridn3uMDGKFYPn6J/R8vkF
- DsFOtcaK3W+PxI9BGZs2OEsaPxzdoEUjp+yFfNM4PyZRZCI8feiYEfsMDF/vrc6qil1T1+NGA+W
- GEWNOW+wT0SSrZQmM+qyS8qKOZ2VROmTTbY7wocgK27mJsQNZvAfndsp2psf6kU93LMddlg5tfH
- GtzHqN27vXEWYdc86gdWSWeTu1YNmn0r7UP/ZnaDx8bnmTSUU6k5M1VjBQRFpBf+icGHJ0BNWPh
- pAcpJ/nxJg6J8x43GRd6rD81rXmXSHC1AUXIitwQAvxmZjhWm9airIan2krBMVW02S6JLMpy2TP
- oK/PGtcIEhpSO0FgHAs02we/SEPlKcKcMQxNMDhUW33QiBoy2tpveuHs0AyZ0ej08yLMgYsfjVR
- 9DDHpyzbL0jj+y1bAfceQuscebPMAD8f/AKabhiyfzhyFzsGMqzJz2QYxPe48BB9Wk4dxrCVwd+
- zoriRgz0kLCD5zg==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <TYUPR06MB621792398C6E5CF084D4586DD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
 
-From: Paolo Abeni <pabeni@redhat.com>
+A: http://en.wikipedia.org/wiki/Top_post
+Q: Were do I find info about this thing called top-posting?
+A: Because it messes up the order in which people normally read text.
+Q: Why is top-posting such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing in e-mail?
 
-When a subflow receives and discards duplicate data, the mptcp
-stack assumes that the consumed offset inside the current skb is
-zero.
+A: No.
+Q: Should I include quotations after my reply?
 
-With multiple subflows receiving data simultaneously such assertion
-does not held true. As a result the subflow-level copied_seq will
-be incorrectly increased and later on the same subflow will observe
-a bad mapping, leading to subflow reset.
+http://daringfireball.net/2007/07/on_top
 
-Address the issue taking into account the skb consumed offset in
-mptcp_subflow_discard_data().
+On Wed, Jul 31, 2024 at 10:01:45AM +0000, 胡连勤 wrote:
+> Hello linux community expert:
+> 
+> I see no "Fixes:" tag here :(
+>  ----- Modify the email title Fixed -> Fixes
 
-Fixes: 04e4cd4f7ca4 ("mptcp: cleanup mptcp_subflow_discard_data()")
-Cc: stable@vger.kernel.org
-Link: https://github.com/multipath-tcp/mptcp_net-next/issues/501
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-Reviewed-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/subflow.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+Please read the kernel documentation for how to mark something with a
+Fixes tag correctly.
 
-diff --git a/net/mptcp/subflow.c b/net/mptcp/subflow.c
-index 0e4b5bfbeaa1..a21c712350c3 100644
---- a/net/mptcp/subflow.c
-+++ b/net/mptcp/subflow.c
-@@ -1230,14 +1230,22 @@ static void mptcp_subflow_discard_data(struct sock *ssk, struct sk_buff *skb,
- {
- 	struct mptcp_subflow_context *subflow = mptcp_subflow_ctx(ssk);
- 	bool fin = TCP_SKB_CB(skb)->tcp_flags & TCPHDR_FIN;
--	u32 incr;
-+	struct tcp_sock *tp = tcp_sk(ssk);
-+	u32 offset, incr, avail_len;
- 
--	incr = limit >= skb->len ? skb->len + fin : limit;
-+	offset = tp->copied_seq - TCP_SKB_CB(skb)->seq;
-+	if (WARN_ON_ONCE(offset > skb->len))
-+		goto out;
- 
--	pr_debug("discarding=%d len=%d seq=%d", incr, skb->len,
--		 subflow->map_subflow_seq);
-+	avail_len = skb->len - offset;
-+	incr = limit >= avail_len ? avail_len + fin : limit;
-+
-+	pr_debug("discarding=%d len=%d offset=%d seq=%d", incr, skb->len,
-+		 offset, subflow->map_subflow_seq);
- 	MPTCP_INC_STATS(sock_net(ssk), MPTCP_MIB_DUPDATA);
- 	tcp_sk(ssk)->copied_seq += incr;
-+
-+out:
- 	if (!before(tcp_sk(ssk)->copied_seq, TCP_SKB_CB(skb)->end_seq))
- 		sk_eat_skb(ssk, skb);
- 	if (mptcp_subflow_get_map_offset(subflow) >= subflow->map_data_len)
+thanks,
 
--- 
-2.45.2
-
+greg k-h
 
