@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-269239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36AD942FA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:03:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32FCE942FA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4B021C213EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5EA028BC24
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EA91B0113;
-	Wed, 31 Jul 2024 13:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388E51B1437;
+	Wed, 31 Jul 2024 13:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RHfq1sSf"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FlI7bfj2"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59211AC44A
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC961AED5B
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430946; cv=none; b=pA1u6Dd7DsPHdQ5ctuRY/eBfMVNTFJuxEwQ4Cl0rtJMActlNeri3/al9xrT6ARBj1mpRaPaB53o+c711nsA7n5SECdf12KCyMurxB1mc7jj9PvPJWp7SrZ35GWlvfDtUHrSEdl6AxGVX+X5yvAH+BFCoDxCq1ztlhA7j6dk3z7Y=
+	t=1722431022; cv=none; b=QwmbvRhJM85V+fGy4f+olddzuUXZO2tI1mjV18aByjakk+vdgNvw8MlcJSSDfL7wBr4vPst3VLUc5kFmDMjIlPCGj1h47egJolPfUI1f63fkIAdvc713qwYVXfN3f63PTF49KSMkn7R3/H0tDnQvMu/X+OJNm9qimm0AM2Z85Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430946; c=relaxed/simple;
-	bh=Oc/Jyw/3l7deURsx6ObtrQRzh4lRxYVwTUMPci4xYCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UI3EpKFpvwNyUNrhVSV5SQEyI/mnJVRowxNeYvhzPlwFYWFXKKRcjdEW/Oq/QHQH/6yafqoeUQ2Yc5/I780VP0qaTIvJUk9Md1ZgzsKphBJOhxm4yzBpzER/57C5htj9xEysiKhWMHDak+JkxTgzRDg5TvwQdcJtNgyvOgywRJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RHfq1sSf; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so237952766b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:02:24 -0700 (PDT)
+	s=arc-20240116; t=1722431022; c=relaxed/simple;
+	bh=QjAAO/FIRCsI79vVa0nGyyZSqRs/40H62xX39f2xrgs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WlXvLAg9WepQyzj8MYJlgLjP/GJZva97Q22aBVgkp2un58HRSF8ub/QI+JRnxj+LIO/1LEq9wRhGBR0zeeEbSSgLAJJUVsQthXJW07xe1NmNB01HGmsilzRYWDO85/t5IfjzHkPd/ISGMOL+zFsVGdUvT8wo8w3JTCyIkjBMWiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FlI7bfj2; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42816ca782dso35467515e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:03:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722430943; x=1723035743; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F4BG3zNMbEJddgXJUjT4WgeflBAopL+8wuEX/aqqwoo=;
-        b=RHfq1sSfn5gzOiu/LAufCcf2eUf9jPYGgwLQxpKbVS+MleAC+zAoGmciFO7yitdtuS
-         8SiH0rs4qsnYBS5wrZHrKivlb1zYgceeniEpcs4IBOum7XAmwvhanOGYCUV7lWYLqzLn
-         CzRAt8jcNOSm9NUn8uc8f3m9TUNY6b4oR+nQ3gC0QpRPSzBUuDJyQw3ekxA9ZLbuzJfm
-         NLmtVB2zeOIVH34cgRbRQJ86jyZJ50BmkYD728MeCO8+TQ/BeqWiD0VT7KGtggNawkX4
-         Czrr5pkrU2tde9ih9naGZ09Mr6m41svjiIPYwglCvb3ezlQoL11VWyhXdnzRsDXLrY85
-         bOUw==
+        d=google.com; s=20230601; t=1722431019; x=1723035819; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=acDkdWfVikvUG5KIhJSwDrwQHKyOzy88X5OuufZnBu8=;
+        b=FlI7bfj2h36F//M3biBkGksVUP6lIHMjg/VMBs/cOxqkO8M9wEE9Sg3EPZDhgaIg4M
+         Equ9XjLZopk+zSieO4cRyxY6tiNmb/06R4fWK5WN+FYlHNqdDNbIYXmeJuzDxZ4HuyDz
+         bLPXFS4De/nJ8Lz11hxM2Rxzy/4JQT9k4MWuCJh4nLFIPTAt3Dc7bVcFRvTXvuvZEP8D
+         rszktMtFIUB/NvrA+U20Hs2EvN1UcFEhllLN9DMvnxL1LV4N/KOTM7tqV8Q4JIvi/egW
+         JCGLF1dM4GLI78EOVcj8NR5AWdA8f6PicGyOuvQhom29SERo6Lp4ASBe9Rxy8vYK1O8q
+         /X1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722430943; x=1723035743;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4BG3zNMbEJddgXJUjT4WgeflBAopL+8wuEX/aqqwoo=;
-        b=idk8RxgKkhtPXRrEBbcOucw5Qh+pmFh0mGJsaXSR3Mc7iie55L0iJg/PdMMoXzffVE
-         YwVM8FVLEbVwLSLA9ndLuQ1ew4+8AwZ8mhK2hknHPmsajdUeY6kOaUcn4D4VZgafzGmi
-         EwWIdJ4tH/Uw0FEpc6OuLhOL2kNl0J29syFgb1s7p11BbudnvD0o+mv3atDhk5DTgTYt
-         96OtAteFDsMwm1+4+utvXIbH7Ly5I8TeCwCBGMHJD+qWGsduLdo9E0Z6XUiwG0iFVc+q
-         0uaWohcgGTm/kyjdx49MeXL2DlR0irL5qOiejnIHlT4A3ctGahwq3S0aiZXIXjZ9PQAX
-         pXeA==
-X-Gm-Message-State: AOJu0YxvKDBFnO7K6w2F8gmQuZwQF6RZeXKJauCu9kFxF9qlkhWotyMK
-	VcBNdiDE+QuOAoctDOBZMusuihPhIOaZ/3y0gHyfc18GNQWDUUfgE/Izp/5UF3g=
-X-Google-Smtp-Source: AGHT+IF0fgoz2Gx9ngVoTxdE7ITgBxCT7yFBbjFXW4blK/j6htLAn+5mcOYFNvkvjg/C1yVczMqIZA==
-X-Received: by 2002:a17:907:3f1e:b0:a7a:bb54:c852 with SMTP id a640c23a62f3a-a7d401863e0mr1018612766b.61.1722430942870;
-        Wed, 31 Jul 2024 06:02:22 -0700 (PDT)
-Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.186])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab236eesm763733666b.22.2024.07.31.06.02.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 06:02:22 -0700 (PDT)
-Message-ID: <5f3b4573-daa3-47b4-a7d5-b3e05fc5b79e@suse.com>
-Date: Wed, 31 Jul 2024 16:02:20 +0300
+        d=1e100.net; s=20230601; t=1722431019; x=1723035819;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=acDkdWfVikvUG5KIhJSwDrwQHKyOzy88X5OuufZnBu8=;
+        b=RSl8kTWTSz1dJiFyFinThvAZRTzf5VC1Ak+blRut92kzeT59s5d9WfwUiE6Jf4mZKX
+         iRK+i6TW4Hc3JSGWEjMArZc0Bwfnz2I1CqXgyu8QSeDUytTzv6bEMXER53FvDMFCSTFP
+         Xlzal5FJtn03RacMn7PcSY1d7bK8sEJVYa0DDrFRbD+f8YOCuDbxDrHEQUKJGpjBNrhQ
+         v8CsdJjf087x+7NmT2zP7Ene2Jq4xGWowuprg02ypJxVDRsqXiZsSZkvsTedD4yVu1xt
+         aEli4XNuKoqPLWsFe7kwWhwXEU2baEAA6xPg5UKDtyXrGJd5b5fYPkqzBnRCXjdVBQ6R
+         jp2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkyGdtdFfGtQiQLakkyOV29rwmFIBw/Y7JWwXgs6Nn8OWQgifLu1Ld8+dJlrnDE1SgMxyGAO9C2HSLiM/BcQIZVuASriF25YtMMJtd
+X-Gm-Message-State: AOJu0Yzac+LR91dlS4IeWQP8kVLGXK28a0P8Ccag/UopgbdCgIcqStaO
+	dExGB4bdSF6WMsdQ6xiksj62dH2mlDGHN6ntBeutIt+kreXfbcC0Te79S4rbsCAolg5RtxlO3GP
+	QSsMS7vV2VWVkJbl0sMuxaPXvpbV9U1ayN1YO
+X-Google-Smtp-Source: AGHT+IG7fagQeuv9MysJufo7I4WX+exkZHcDTKFLG87ES3MG0TZVHdX0um8RINT1N6epAZ5vXGD+HN2U6R/oKFQ7yN4=
+X-Received: by 2002:adf:cd84:0:b0:368:74c0:6721 with SMTP id
+ ffacd0b85a97d-36b5d0bc9e3mr8585993f8f.38.1722431018977; Wed, 31 Jul 2024
+ 06:03:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/3] Rework mce_setup()
-To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
- avadhut.naik@amd.com, john.allen@amd.com
-References: <20240730182958.4117158-1-yazen.ghannam@amd.com>
-Content-Language: en-US
-From: Nikolay Borisov <nik.borisov@suse.com>
-In-Reply-To: <20240730182958.4117158-1-yazen.ghannam@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-5-89db92c7dbf4@google.com>
+In-Reply-To: <20240723-linked-list-v3-5-89db92c7dbf4@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 31 Jul 2024 15:03:26 +0200
+Message-ID: <CAH5fLgg_6o5HTtLc7ngyRsa5gLM2Gtqm=QaBT+oaFjhdZg=O6A@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] rust: list: add macro for implementing ListItem
+To: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, 
+	Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 23, 2024 at 10:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> +#[macro_export]
+> +macro_rules! impl_list_item {
+> +    (
+> +        impl$({$($generics:tt)*})? ListItem<$num:tt> for $t:ty {
+> +            using ListLinks;
+> +        } $($rest:tt)*
 
+This uses $($rest:tt)* but does not call itself at the end. This means
+that trying to use this macro with several impl blocks results in
+additional impl blocks being silently swallowed. The macro should use
+repetition properly here.
 
-On 30.07.24 г. 21:29 ч., Yazen Ghannam wrote:
-> Hi all,
-> 
-> This revision drops the topology export idea from v2. It seemed to add
-> more complexity than just doing a local search.
-> 
-> Thanks,
-> Yazen
-> 
-> Link:
-> https://lkml.kernel.org/r/20240624212008.663832-1-yazen.ghannam@amd.com
-> 
-> Yazen Ghannam (3):
->    x86/mce: Rename mce_setup() to mce_prep_record()
->    x86/mce: Define mce_prep_record() helpers for common and per-CPU
->      fields
->    x86/mce: Use mce_prep_record() helpers for
->      apei_smca_report_x86_error()
-> 
->   arch/x86/include/asm/mce.h         |  2 +-
->   arch/x86/kernel/cpu/mce/amd.c      |  2 +-
->   arch/x86/kernel/cpu/mce/apei.c     | 18 +++++++-------
->   arch/x86/kernel/cpu/mce/core.c     | 38 ++++++++++++++++++++----------
->   arch/x86/kernel/cpu/mce/internal.h |  2 ++
->   5 files changed, 38 insertions(+), 24 deletions(-)
-> 
-> 
-> base-commit: 1cd27e88888d54de5fefbeb0b44c26194ffa83ce
-
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Alice
 
