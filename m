@@ -1,54 +1,46 @@
-Return-Path: <linux-kernel+bounces-268808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27393942983
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C871894298D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:49:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60961F22E76
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:48:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 720FD1F23026
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 429991A8BF8;
-	Wed, 31 Jul 2024 08:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A701A8C14;
+	Wed, 31 Jul 2024 08:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eHF1CUo9"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4BF43169;
-	Wed, 31 Jul 2024 08:47:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="MZPw1gAC"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391A718CBED;
+	Wed, 31 Jul 2024 08:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722415679; cv=none; b=Y+80HfGaalQ9ytAF/+GxJ8bVcK2bYq4XL+Ptn4C7K4Td1tOvwClpwfzgP8emN38xfXrieVvGgVAtEFEp4capJGi+MV/CYUzLKJ7zVmHggrKwxNWyKZeN/J5qjpiML2VzbCvg2VixXGYR4XOg2LyDVh4UCakL0TINViGk5J1lIGs=
+	t=1722415785; cv=none; b=NElvX5v5hMXc9wdOQJ3+VE0RV7dNG5baSGZJHwuEzhz4IBdBjngUuyCrodv7AipXpeqClc8lri8NiVQZif6eym6/1UHbe/4TI64bHRL58dT73IP6C/W6AwMIaJhbeAgD0z7SyUm7G6IcLdMzyA3meQvivnc+8rIrmVcBgKi/vYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722415679; c=relaxed/simple;
-	bh=J1sOSME0u6roc/a+qPwtB9E24QMzJiJjbIjiPdJuLEI=;
+	s=arc-20240116; t=1722415785; c=relaxed/simple;
+	bh=zcTY/GqUfYE3yguTn78cETVE64YCw8EsY/LDEWceEGU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hwjKFY3Eruz0F9+bKZl3ypEDUovMmiIajePjF+SPTGTpggr/z/oqXNefmvT4qu0gVmIofdz3zkgbotpiv/b8R5FBUKRm/0ZZxuGrMjdjjGoO/JfT09TyXHgB78CqjOkALkXwpSkFcb6CCn4bhotadV9rclQtZSSK7Q1iQFzfegY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eHF1CUo9; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722415676;
-	bh=J1sOSME0u6roc/a+qPwtB9E24QMzJiJjbIjiPdJuLEI=;
+	 In-Reply-To:Content-Type; b=oaZ6ISh2ll32x5F9aF4NAqb1ArWQQX4Mktk53f95QQNDpo4eGAcl98/P8cM+OLpKdP6HoLC+Zmh3ylKvN5To+qM19H18kafvw1OoxxeD0J6GmvAV9aSEW+jRHzb9jELuiVsWFbRDcYIHVWRHJTfrEtcn6z/WClctNZdkUEDo/+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=MZPw1gAC; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.192.202] (unknown [4.194.122.170])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A9A4C20B7165;
+	Wed, 31 Jul 2024 01:49:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A9A4C20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722415781;
+	bh=RDk+WVHxBeUm3xVFN39EW1/JZAEiQ71Gmv+Q/rbsnL4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eHF1CUo9Tpz2SIqoHSYcs7456H81OBUsVZLx6BNkBU5BriLDzbv62GM84XOQ1dzGl
-	 Y30xAP/z+AyVTY4DWsdsWAIGJy9OlnfBQU2O303CXN3N4GynXCTPoaeuwTjGRF4i9T
-	 kZ/LgLmap5rPeNHh6WESYaaAKkEzujwmVF22odyF7324oQ30NS4XpXGkVkIGAFv5eM
-	 5uJvvujNubK9V/svOMfHnt3ZAfkLba3xI3kuihe+4f1Cq5hgQqSDqcGRfyThYtUgtC
-	 bmCnmoj29+HsxDRfZ+hnYk3Mx8yAQLMP/zGV6WqYt7W4AEk/BH/llZw3hxI/wypzNL
-	 r+Jr1JNEIiDrg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 6E9F8378000B;
-	Wed, 31 Jul 2024 08:47:55 +0000 (UTC)
-Message-ID: <909d4058-e3e9-4b59-b476-8f78e668c73b@collabora.com>
-Date: Wed, 31 Jul 2024 10:47:54 +0200
+	b=MZPw1gACS8IkH89ctCMI5myecTJmMMcsK4MTAYUmAysGgVORi25CgqwXS45wxqvuS
+	 hfNy9DrWgSCIz2Wdh3uEMS80Foo6phzbkBrL4fP3qs6T4CA83aLFUyzweEZfaLq5iV
+	 pms0fjhLBpZT7waSSOnPZJ+muOhaE6PuPwX/hZIE=
+Message-ID: <f9dfaf0e-2f72-4917-be75-78856fb27712@linux.microsoft.com>
+Date: Wed, 31 Jul 2024 14:19:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,73 +48,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
- kukui-jacuzzi-cerise board
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
- <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
- <bb696e60-642f-43f1-9ccf-972e1d839bcd@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v2] net: mana: Implement
+ get_ringparam/set_ringparam for mana
+To: Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Long Li <longli@microsoft.com>,
+ Ajay Sharma <sharmaajay@microsoft.com>, Simon Horman <horms@kernel.org>,
+ Konstantin Taranov <kotaranov@microsoft.com>,
+ Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+ Erick Archer <erick.archer@outlook.com>,
+ Pavan Chebbi <pavan.chebbi@broadcom.com>, Ahmed Zaki <ahmed.zaki@intel.com>,
+ Colin Ian King <colin.i.king@gmail.com>
+References: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
 Content-Language: en-US
-In-Reply-To: <bb696e60-642f-43f1-9ccf-972e1d839bcd@kernel.org>
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <1722358895-13430-1-git-send-email-shradhagupta@linux.microsoft.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 31/07/24 10:16, Krzysztof Kozlowski ha scritto:
-> On 31/07/2024 08:26, Hsin-Te Yuan wrote:
->> Cerise is known as ASUS Chromebook CZ1.
->> Stern is known as ASUS Chromebook Flip CZ1.
->>
->> They are almost identical. The only difference is that Cerise is a
->> clamshell device without touchscreen and Stern is a convertible device.
->>
->> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
->> ---
->>   Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
->> index 1d4bb50fcd8d..087773a43673 100644
->> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
->> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
->> @@ -146,6 +146,20 @@ properties:
->>           items:
->>             - const: google,burnet
->>             - const: mediatek,mt8183
->> +      - description: Google Cerise (ASUS Chromebook CZ1)
->> +        items:
->> +          - enum:
->> +              - google,cerise-sku0
->> +              - google,cerise-rev3-sku0
->> +          - const: google,cerise
->> +          - const: mediatek,mt8183
->> +      - description: Google Stern (ASUS Chromebook Flip CZ1)
->> +        items:
->> +          - enum:
->> +              - google,cerise-sku1
->> +              - google,cerise-rev3-sku1
->> +          - const: google,cerise
+
+
+On 7/30/2024 10:31 PM, Shradha Gupta wrote:
+> Currently the values of WQs for RX and TX queues for MANA devices
+> are hardcoded to default sizes.
+> Allow configuring these values for MANA devices as ringparam
+> configuration(get/set) through ethtool_ops.
 > 
-> Why not google,stern? If this is not compatible with cerise and has
-> different name, I think logical would be to have different compatible -
-> either here or the first one.
+> Signed-off-by: Shradha Gupta <shradhagupta@linux.microsoft.com>
+> Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+> Reviewed-by: Long Li <longli@microsoft.com>
+> ---
+>   Changes in v2:
+>   * Removed unnecessary validations in mana_set_ringparam()
+>   * Fixed codespell error
+>   * Improved error message to indicate issue with the parameter
+> ---
+>   drivers/net/ethernet/microsoft/mana/mana_en.c | 20 +++---
+>   .../ethernet/microsoft/mana/mana_ethtool.c    | 66 +++++++++++++++++++
+>   include/net/mana/mana.h                       | 21 +++++-
+>   3 files changed, 96 insertions(+), 11 deletions(-)
 > 
 
-They're both compatible, but the commercial names are different because one
-is convertible, one is not... and the bootloader still checks for cerise
-even on stern - that's how I read it, and it's not the first time...
+ From what I understand, we are adding support for "ethtool -G --set-
+ring"  command.
+Please correct me if I am wrong.
 
-...but it doesn't hurt to have a "google,stern" compatible added to the mix,
-it's just one more const to add... and I don't have any strong opinion about
-that, so, Hsin-Te, it's your call. :-)
-
-Cheers,
-Angelo
+Maybe it would be good to capture the benefit/purpose of this patch in
+the commit msg, as in which use-cases/scenarios we are now trying to
+support that previously were not supported. The "why?" part basically.
 
 
+
+Regards,
+Naman Jain
 
