@@ -1,165 +1,146 @@
-Return-Path: <linux-kernel+bounces-269815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A8F94371D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:29:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC5494371E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770932837A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:29:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B18C1C211CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C427161B43;
-	Wed, 31 Jul 2024 20:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3744A16087B;
+	Wed, 31 Jul 2024 20:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Dy+5Q9Mu"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H7HsdI36"
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 626C5148FF3
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FF6148FF3
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722457769; cv=none; b=OqZWLjRoMtjqyziy5Ij1s93Za+MyeIa5k4h2ZvrYdmyS7/JAAlqXpb1LzQHMPJHHg2mDeehvLPkIuYwF1SsxW6gDsY0eAOTnH9UIUpc7iNwE5/UayZ82GQ4v7kBsXaY6lNecoL8fgwRyETdTI/C3hkvXx/Ms7deeg/dqqIo9sNU=
+	t=1722457785; cv=none; b=i6muu+jb02AvDgj4sTMuuVBeRxxMBkcEQnzH37rejZ1JVmWY/hCOadrg3oQBphhLdndqfXKAOnoiBRm0Bz0CMyfMcviQYK1OLTFY2aXzhvnwnBtoYOihEEfHXWITXNqV6IDPEBIih0MGDwWWWk7xVdH7jde+O7LShu8mFkJ9eEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722457769; c=relaxed/simple;
-	bh=55Y2FiMTrimrMXILYu++IX6+eHQpPUGeTFOVYaQNTmM=;
+	s=arc-20240116; t=1722457785; c=relaxed/simple;
+	bh=FqYVA6k1iLJ0poKNCNzTySZxGfnEvNDdUMDGkm/7lBo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pgkH9N4BQIf9WtARy1WKKgUudYNXMr4lhjWhqSL5ow0J1IPg+qpwtUAdSNnrDc72KoZFR+Hj+I0gtF4iyXB443zUBCBqlIEQpPooUziQzmzvVkYEH4DqHLajQ4FSvxErTjydsyolskPRcd7nZ7E3phA9wVC3qyRjYNAml6WzhfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Dy+5Q9Mu; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e087264e297so5134832276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:29:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=Y38MsW7PWxukPgGrn0Zcp2w70aP3DrIxEXAGiV69RxLn1GFRSw/DGr04y4dKVHviYFBi+fnVPmo1FLucss1E94GU8yDOx0PUog632DZTZ+cF+6vHvDKcwwEcZNJhHJO147HCMW3JVRx6RxKI/iIMNPX2HKiheQdTlz1Z7iNcK2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=H7HsdI36; arc=none smtp.client-ip=209.85.210.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-709339c91f9so2579848a34.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:29:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722457767; x=1723062567; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1722457782; x=1723062582; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TSX1c8Ru/j8yxo/auh47ofyUjGotjeSFELYrAnjtnVo=;
-        b=Dy+5Q9Mux2ZsOfD1GqlkaSzT/PqVOBeeKfhR1reRfMuPCSW2uUIcTgHX+gfKkZfeyS
-         p68xfw5+GU61gSQw9LlgVjmsFnNfy/yzq8rjr8XF5N4sK9GLgJREhv3OmteOn29PSwnZ
-         WUDOXtPFwvhk6RKtaqMJtW0MMDYvO3ROxg4YhBqxu7QqhGgDPHPZCrsiE3x3nvlOH3SB
-         UEZ7w6P63cTy3fmuBZgbROAZA5EJdLH8lN2NAOD2PD6R50AzxyihNh1Bm53nuafY8aNr
-         7uLSVR7FKuPpvhGZALj8AD11rLZm/hpCzUAAV4ELQy+cC1Lpj8zNWvrZjI9c+gRTXzdB
-         PYCw==
+        bh=6SZR84pufxEJHH9akehyEVjbbV4hh1UfXsmtqulpwvc=;
+        b=H7HsdI3655HKZWKn26fhQ2CLdgGdE05XP2gb5MdKoDKXlZjvcfxDk0OoI+RbxhkLRB
+         8msU5x/5c0vnJJjl5YY9L29ih7GQHQi3jko7uvlGrmrKghCMBbON+7BJPJ61P1xme1Rh
+         JWQ7auhFVEKCJqSxzS2/gUz3riu/TZHQ/7YJo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722457767; x=1723062567;
+        d=1e100.net; s=20230601; t=1722457782; x=1723062582;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TSX1c8Ru/j8yxo/auh47ofyUjGotjeSFELYrAnjtnVo=;
-        b=sZ5NJEnOycWlHp+AYRY/ysWSipIkBFaPJT+Rz5y1vgaciY/gEd+C0gkT/iwyQVH7P6
-         w0gVAcDoqxWTs9DUvjJOvg9mjgaC+binRR5Jn9sHdsV7GbJPwwM8pVr4UrKJyU2r0KR+
-         hV82Okx227jYRBbiP3XcqRDEHpkrV63r13nQs/xNNgFyK/f8k4VnkgumJdnUw5IpPt+f
-         YHhSa+x7MJA3izTLJna2/gQgK+xw2Kg9PuBG/LVDZnH4vCPz72rW3kANo/pGoxXcQ6Bj
-         NeKvh631stm4NO9qxtWdZ1f1xRI0NqLikbkPEpv2rSHpFW9glx9+hf1hZsa3JF6aBOdE
-         AoHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXuTi7BKhMMlMersmZZLjVp4UsiXRAqdLksBQ2DuVo2CxRjoA6g2uF0gEvIMfuT8Cy1HuZITalzF09y6BtA6vITplCH9MtmfyQvx1wj
-X-Gm-Message-State: AOJu0Yzr3M14ghtUec0mS0fh/6a//kH/0ncrCzDLX3aAKSnJsF9PY3vu
-	sVxLCjVUeXfZJ9z/vg8YvA9n5gJFnYMsQMPG3k7vMDP+PYJ9DByv1v3rJCly0prr0a/FwBBfVtl
-	5tidWSDYveNReeC3o3+hngkmGvTYvOWCDsg0T
-X-Google-Smtp-Source: AGHT+IFx10AYMBAygpAsRMReCo80r71LTCsmoGAG8m/NF9tKd5CFmX1RfasNmH6AK1pKP7GjMtINChhEtHlz600Jia4=
-X-Received: by 2002:a05:6902:210f:b0:e08:655c:af14 with SMTP id
- 3f1490d57ef6-e0bcd3fdbb9mr165982276.36.1722457767336; Wed, 31 Jul 2024
- 13:29:27 -0700 (PDT)
+        bh=6SZR84pufxEJHH9akehyEVjbbV4hh1UfXsmtqulpwvc=;
+        b=HdsEXYreziGVHZNNTIxnGfF1axjv5Dk1ZLUn9YMMu/ajACfoK6K3kx2nPjBgiD2Bl9
+         Ss551o2Dc2KX6KKGeBQpqyJq2UbxF6jvGC6IHo6gNuN/D8mQcPSk1kdk4FXanHR7o+YD
+         sCe3EGo18U/4aQqj1PT1hLI5Odo4dKPmKfmiK5TXPj+tRFcLUMDYmELIQ0wWKqxgJfBc
+         Fnhytbqu8WuVj5i0ksV779mH/ALY2nBNBJfVbH3c0IpJBPxsW+SqKj7xyJOpEy6mG7vk
+         1mlaY623ZiKZPlpCa9fZeVAuGaQgB4MEGS5Q67+6KSHPLGGYR7rzsaUP4jDe7bc1pRvz
+         /oCw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgfXyWlpsSL4QSjMcv2YgjlzH8l77uQN8+39Xmy23I2+tM9w2pnjRJ6gjzfyHMFrBt0o5Bp4+9cyDA1VKCzr/48odFQn/LvM9PqzFs
+X-Gm-Message-State: AOJu0YzIAkfEBRAdvUtaMxjnMhafwtvyg8OeU8dXnhjUox6i9zEn4O49
+	izxtXyzxUi+P0AzHQSqwuG+BNu/2f1Bb2YxL/3xOMPS85dTPMdJNxYjNexRZunspazvPwd8vipk
+	=
+X-Google-Smtp-Source: AGHT+IHxjsXlefdLdKx4RDFuQw+yKUiuv6CNcsXlDq0psso3Z06IeXNqv43DbSJ2csPSmWgjqTux5A==
+X-Received: by 2002:a05:6830:3919:b0:703:6989:5b04 with SMTP id 46e09a7af769-7096b869262mr258658a34.31.1722457781752;
+        Wed, 31 Jul 2024 13:29:41 -0700 (PDT)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe82012bcsm62909701cf.66.2024.07.31.13.29.40
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 13:29:40 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44fee2bfd28so484421cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:29:40 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUWkpt7VjtVeNhRKP+unMFgvOlynyYGl7U5XBrrYiD7d46U8qNddSH1+wsBaNUu1ohA871DwebqQr/qJoBTlBKHdwqoNqqh+x7hVXpc
+X-Received: by 2002:a05:622a:13c7:b0:447:f914:8719 with SMTP id
+ d75a77b69052e-4504199ef23mr5362921cf.2.1722457779975; Wed, 31 Jul 2024
+ 13:29:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net> <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
- <20240729.rayi3Chi9aef@digikod.net> <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
- <20240729.roSo6soogho8@digikod.net>
-In-Reply-To: <20240729.roSo6soogho8@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 31 Jul 2024 16:29:16 -0400
-Message-ID: <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Jann Horn <jannh@google.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, keyrings@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20240517170246.1.Ia769fe5fbeaa6aca2edfb01b82eb7df0c6955459@changeid>
+ <CAD=FV=Wd4UdjGdFODGCa4acviQG2V_YuM9J8oxi8A--ZmseNUA@mail.gmail.com>
+In-Reply-To: <CAD=FV=Wd4UdjGdFODGCa4acviQG2V_YuM9J8oxi8A--ZmseNUA@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 31 Jul 2024 13:29:23 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WqyEo9mWgYyRQjLmhh1pNTNTFM1zwbi2g0n9FMseUtHg@mail.gmail.com>
+Message-ID: <CAD=FV=WqyEo9mWgYyRQjLmhh1pNTNTFM1zwbi2g0n9FMseUtHg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: qca: If memdump doesn't work, re-enable IBS
+To: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Stephen Boyd <swboyd@chromium.org>, Guenter Roeck <groeck@chromium.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+	Sai Teja Aluvala <quic_saluvala@quicinc.com>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 11:17=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
-> > On Mon, Jul 29, 2024 at 5:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
-> > > > On Mon, Jul 29, 2024 at 4:09=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
-> > > > > > On Mon, Jul 29, 2024 at 2:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BC=
-n <mic@digikod.net> wrote:
-> > > > > > > A process can modify its parent's credentials with
-> > > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the sam=
-e.  This
-> > > > > > > doesn't take into account all possible access controls.
-> > > > > > >
-> > > > > > > Enforce the same access checks as for impersonating a process=
-.
-> > > > > > >
-> > > > > > > The current credentials checks are untouch because they check=
- against
-> > > > > > > EUID and EGID, whereas ptrace_may_access() checks against UID=
- and GID.
-> > > > > >
-> > > > > > FWIW, my understanding is that the intended usecase of
-> > > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyc=
-tl
-> > > > > > new_session" and "e4crypt new_session") want to be able to chan=
-ge the
-> > > > > > keyring of the parent process that spawned them (which I think =
-is
-> > > > > > usually a shell?); and Yama LSM, which I think is fairly widely=
- used
-> > > > > > at this point, by default prevents a child process from using
-> > > > > > PTRACE_MODE_ATTACH on its parent.
-> > > > >
-> > > > > About Yama, the patched keyctl_session_to_parent() function alrea=
-dy
-> > > > > check if the current's and the parent's credentials are the same =
-before
-> > > > > this new ptrace_may_access() check.
-> > > >
-> > > > prepare_exec_creds() in execve() always creates new credentials whi=
-ch
-> > > > are stored in bprm->cred and then later committed in begin_new_exec=
-().
-> > > > Also, fork() always copies the credentials in copy_creds().
-> > > > So the "mycred =3D=3D pcred" condition in keyctl_session_to_parent(=
-)
-> > > > basically never applies, I think.
-> > > > Also: When that condition is true, the whole operation is a no-op,
-> > > > since if the credentials are the same, then the session keyring tha=
-t
-> > > > the credentials point to must also be the same.
-> > >
-> > > Correct, it's not a content comparison.  We could compare the
-> > > credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
-> > > guess this should not be performance sensitive.
-> >
-> > Yeah, though I guess keyctl_session_to_parent() is already kind of
-> > doing that for the UID information; and for LSMs that would mean
-> > adding an extra LSM hook?
+Hi,
+
+On Mon, Jun 10, 2024 at 4:52=E2=80=AFPM Doug Anderson <dianders@chromium.or=
+g> wrote:
 >
-> I'm wondering why security_key_session_to_parent() was never used: see
-> commit 3011a344cdcd ("security: remove dead hook key_session_to_parent")
+> Hi,
+>
+> On Fri, May 17, 2024 at 5:03=E2=80=AFPM Douglas Anderson <dianders@chromi=
+um.org> wrote:
+> >
+> > On systems in the field, we are seeing this sometimes in the kernel log=
+s:
+> >   Bluetooth: qca_controller_memdump() hci0: hci_devcd_init Return:-95
+> >
+> > This means that _something_ decided that it wanted to get a memdump
+> > but then hci_devcd_init() returned -EOPNOTSUPP (AKA -95).
+> >
+> > The cleanup code in qca_controller_memdump() when we get back an error
+> > from hci_devcd_init() undoes most things but forgets to clear
+> > QCA_IBS_DISABLED. One side effect of this is that, during the next
+> > suspend, qca_suspend() will always get a timeout.
+> >
+> > Let's fix it so that we clear the bit.
+> >
+> > Fixes: 06d3fdfcdf5c ("Bluetooth: hci_qca: Add qcom devcoredump support"=
+)
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> > ---
+> > I'm nowhere near an expert on this code so please give extra eyes on
+> > this patch. I also have no idea how to reproduce the problem nor even
+> > how to trigger a memdump to test it. I'd love any advice that folks
+> > could give. ;-)
+> >
+> >  drivers/bluetooth/hci_qca.c | 1 +
+> >  1 file changed, 1 insertion(+)
+>
+> Totally fine if you just need more time, but I wanted to follow up and
+> check to see if there is anything you need me to do to help move this
+> patch forward. If not, I'll snooze this patch and check up on it again
+> sometime around the end of July.
 
-While I was looking at this in another off-list thread I think I came
-around to the same conclusion: I think we want the
-security_key_session_to_parent() hook back, and while I'm wearing my
-SELinux hat, I think we want a SELinux implementation.
+It being the end of July, I'm back to check up on this patch. I
+checked mainline and bluetooth-next and I don't see any sign of this
+patch. Is there anything blocking it? Do you need me to repost it or
+take any other actions?
 
-Micka=C3=ABl, is this something you want to work on?
+Thanks!
 
---=20
-paul-moore.com
+-Doug
 
