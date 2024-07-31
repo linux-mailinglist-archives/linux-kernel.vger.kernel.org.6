@@ -1,98 +1,119 @@
-Return-Path: <linux-kernel+bounces-269850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5D994377C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:01:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92990943782
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AADBAB237F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:01:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D421F2274E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCB0168C26;
-	Wed, 31 Jul 2024 21:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A3616C68F;
+	Wed, 31 Jul 2024 21:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="g2PwaoY9"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ca9RYeeg"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136771A270;
-	Wed, 31 Jul 2024 21:01:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6CD613C8F4;
+	Wed, 31 Jul 2024 21:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722459705; cv=none; b=fObfZV8ixm85V5USPMsrAvsbcNJE+lVoN9SwYx/RGphRFsszn9vf4zeRWwkFa6RlMiSL1v47k7rjmdaXvpnv66Ln6btfN8uoiTljUj2BIuUhHEjq9ZSDqjUWbsO9kAOtfz+MmcrZaHlalEAVnLApPy/gZEX0pZYu7eoWTwVu6oc=
+	t=1722459839; cv=none; b=TltGIYjwHfbvq/8qqIGzvDE6ltTsDIDmCYQxGhVO3AcqtxQGFN255Zcx0xheRp4oS1+6eSr0AcmgWaA89u4bUhpS1U14g7LGgjCsiBBTYrthK1TQO17doDGCy0D5hHRJEiRzzSs3s4rXn7dKDEGtwunwHFBFHjX4LAjPpGyYhjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722459705; c=relaxed/simple;
-	bh=6Vxh3SBrYAtxdL/OKrkk51hWH6YsXZOAFyq3vwA/xKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AfTwy/cuaKIGaVAbAAIvCYrtzpcfvcOYdwQ3X95bcJF1oI2BafB27WrSH2PFiWPsvQ8A2kxbDM+ZdA5vX1DoAIMrHPTzAH51WFJm04CPPiq4hGL2rWvxAx65k1pQWns+WZBY+mm6WO8zO/VB/POAKJhPxN/ZcRLqm5xA+nC9pKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=g2PwaoY9; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=G7i8IsCNsbxalJ27SsujhFj30+XZeFDYtj71lANOu0s=; b=g2PwaoY90y6/x5iqnZuSVpjZgB
-	7LcI8mdLiji2/dfPn7fZGas0Al+NnbTjfky8zQowlJL0JT1Vbe66m0/dGrj4vzRqE5vhgx0sKmBYF
-	o17UXeTW6JTC+4sFS9YWGNS05UscRsyfs3zWbnWY9uiEMU2Up0K3iJRgJzkxVYSWNGjPZ4LB4HHGk
-	rWlwjSdgmmZvpDxXIzXQ30eLhUezN4xRwwMyGU1yqJVY3PdRfNNHsmJzINT6EXbLmJHPLqvTURqZq
-	wN4tvgZNHiXbHFmodWkvJ6hJlQUHjvBrf7ITcEHwwiwI01QNldP/oczvMcfOUhGmEvl0ue/4zSy04
-	oVNQuosA==;
-Received: from [2001:9e8:9fa:4501:3235:adff:fed0:37e6] (port=36588 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sZGRv-009HY3-Jj;
-	Wed, 31 Jul 2024 23:01:31 +0200
-Date: Wed, 31 Jul 2024 23:01:26 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 3/4] kbuild: slim down package for building external
- modules
-Message-ID: <20240731-light-overjoyed-tuatara-bbdc2f@lindesnes>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-4-masahiroy@kernel.org>
+	s=arc-20240116; t=1722459839; c=relaxed/simple;
+	bh=AUkJ686A8RH4qcFlXPTcSnFatT/ytf00l23UxvbQAAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UXJmLP08J2tCs3tzhVod3t+b1bLnEuEJyFbYdT0B9+aQcYrZr5Gg+dn5JmVnj+UesLSt2EBF6oHh5NdZQoG1ujnoOiHgeFAqbefEI69brHq5W5hXblmr1TCnE0N34J/4RlugVPll8RE/QyGFS/+o7NzXMK/7cl2nEmlbJaWP27A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ca9RYeeg; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb4b6ecb3dso4155260a91.3;
+        Wed, 31 Jul 2024 14:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722459838; x=1723064638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9HPGA+i9bLxv8+ywKzP8zynz5mLJCS77FFmzEIhkQ6g=;
+        b=Ca9RYeegsC4kUwSHnRfR1Yx2SjRyoEHm4NRDdMFU5bMBo9xnfcRVAq94cbO7+zCy1g
+         8lbgrywfnGkEBbliD2jkRRWhckkfU0AWBbd2TJSkU8q/t8vJQzatVnyvBhatL03amVeV
+         5kK5JDiy+JUIZYvM1O10bRhGy2KLZdrZ53nEXvqo/d1+2NAFKgHFtDPXHBv6oWvILtWQ
+         8KkeTIoE5wmmMGqCEnKt2oCjIQcS9t1sqRlYzxuVCFTh3Ui6L5O0ogbO0v28upcFpkb6
+         1OYVe/xYQ/ltuuVaSnbjwfKJBPQ1bCsxOi5jFAplYZnkCVNPAPQFS6ChCtsKTf/eWoME
+         FYwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722459838; x=1723064638;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9HPGA+i9bLxv8+ywKzP8zynz5mLJCS77FFmzEIhkQ6g=;
+        b=fDA/TXD0qaSFLxKPoKwdLp49ej5bw9Fwrnlc+8I49aEgYee17gxkW1PBXWadBWvWEL
+         QhDqv03HF/ZJgoIBMy3A0T1mrouTAj2DEKggRC0GpZxVDV6UDRuCj3kubQByLXYpIHDO
+         5UtoON+ikMrtj3eGu+EK4+KQM8SyM1eA0zFxCIphGjAYY4Zv5f2Zm9kBZKnxUA+2yoeq
+         zUgK4SjGpJXXjhsDQI+Nh6Mnbq9dRHEVCn3mBIF2U586ZT9qfJ7ii+DnyvwJ03p5XkNh
+         D3dW/+6DaRvf2OBvjlo+HyV975QV7v/fD0iUa8lwl2DOZGjB2+gsu66hEbWqX+dw4Hpy
+         gSDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUL442njezhaIW66ZqSdnDLRTaeyuaDIYGBp7w19//aBiGeqie4RCyg1weUQCcjJ3NhqYEnBTbmyPptatQ6GzIvGS4f2BMdcZtFjc/AvdSdO577prQYCQ5wziW9H/AbiLho6D16
+X-Gm-Message-State: AOJu0YzkS30dMGIl2XF1QIB1kTAqtG/wZ1lmVUWRu7QrSqLrVapmhIsx
+	4hq9mHnqbV9bHavhhkohB9pii/N3qgA0QbpXS4Oz+l3NqwxMaFGk
+X-Google-Smtp-Source: AGHT+IFk10AYWxbSh1MmvpWEmpv9q0UkSPOj4nAsBLWAvUgWZuIy6nbW6vx6nkjdyo27E1GFlvccQg==
+X-Received: by 2002:a17:90a:a110:b0:2c9:a56b:8db6 with SMTP id 98e67ed59e1d1-2cfe7b73301mr634074a91.37.1722459837737;
+        Wed, 31 Jul 2024 14:03:57 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2cfcb85b7a5sm2146765a91.1.2024.07.31.14.03.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 14:03:57 -0700 (PDT)
+Message-ID: <66c69c35-6486-4b84-9315-3a88232694be@gmail.com>
+Date: Wed, 31 Jul 2024 14:03:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240727074526.1771247-4-masahiroy@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240731095022.970699670@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Jul 27, 2024 at 04:42:03PM +0900, Masahiro Yamada wrote:
-> Exclude directories and files unnecessary for building external modules:
+On 7/31/24 03:03, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
->  - include/config/  (except include/config/auto.conf)
->  - scripts/atomic/
->  - scripts/dtc/
->  - scripts/kconfig/
->  - scripts/mod/mk_elfconfig
->  - scripts/package/
->  - scripts/unifdef
->  - .config
->  - *.o
->  - .*.cmd
+> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
+> Anything received after that time might be too late.
 > 
-> Avoid copying files twice for the following directories:
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.3-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
 > 
->  - include/generated/
->  - arch/*/include/generated/
+> thanks,
 > 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+> greg k-h
 
-nice.
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
+
 
