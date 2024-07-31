@@ -1,92 +1,450 @@
-Return-Path: <linux-kernel+bounces-268771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F76B942918
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A312942925
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FF69B20FF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:25:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7AE3AB22279
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA91B1A7F98;
-	Wed, 31 Jul 2024 08:25:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E551A7F9D;
+	Wed, 31 Jul 2024 08:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qPifwyiA"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bhlr1r1X"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1215D18A6A3;
-	Wed, 31 Jul 2024 08:25:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4471A7F8F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414304; cv=none; b=DAx+ugOPOImPXsInzeZqBi6uZkioWYoY+qOzZ4C+3zUlOGTDYD8lpp+STzfNsFHJ1pT6YweI9ywRL66ybMUkdcHh10qj4TdoqQTMHPqywqoQB2f1PAJ/jW4gDUvS4qEL4TXVNpF9uwicXmM+QytqNdapwIe2OZ07rGUzsgKgHOU=
+	t=1722414538; cv=none; b=Fv3Mlq3XETDnmvg5ybQPxIKp/mXRW8NlqBEexurXM27C/xnNKTMr4bU5FvnlK3ABHVEbfOlyyicnhqgnVf3aOGtWAW9uLJGMJWnr+ZwLpTdT2kztJFRr3NYW1PTYpiAMAdam0rcdbVt0QFfOmc9dWU99PFZ1Eh3gRN/UzQqjz1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414304; c=relaxed/simple;
-	bh=V/qMid1eZAZ9KqR4unGjgGs1o2BzZRAEjRLlRpm8Vdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQZysK/hiTWK/v4qyLBgmxpR7UTuycJ36DNuHoRxem6cpijJ3fkOqiQVF3iCHmyza7+l07CGdLLk6PFNWJLFbqzyDczNq9uRbCSrvRJTzUhUlb4F8iM1gGgYRykHbYbQP2uK8YSRMnUFudGtLzHzXdWSkAJLh5EOBKVgBRrUqDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qPifwyiA; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9Ohyf01z+RQdbQQcz4+PP/EvJqHgnb9g8adgwYo0As8=; b=qPifwyiAX5xb8gnHPkVc5vS3zC
-	RT5FqN29h0hS/WprOebZI85qTmsYpZaejB9WhdNcrwsxSdYSJI0QSgn2INPKdKdll53n/D1YAhdp8
-	gwB2L4KmKY1xgxqUw+DJ2n5FVvb+qSSkZFLMGPWkQFvae7FOhuJ0HUyIkjxge3H449D1fgYrLkdO4
-	XleptULGrZfO7P0MubCgGChxybTVRcZosZ38IqC1HpZvA4NJ/mZ22b0cWuwO02B1KRbG8Rojx/M61
-	rXNVMvDS9pXywgSmJRZoVVoyGQuVvbtasj9zj2WHEi8PNcwwiyrVkT/9QLe5vv86DSBxfEcuziJz0
-	ZDG1+22g==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60238)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sZ4dO-0008GX-0p;
-	Wed, 31 Jul 2024 09:24:34 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sZ4dM-00063s-9V; Wed, 31 Jul 2024 09:24:32 +0100
-Date: Wed, 31 Jul 2024 09:24:32 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
-	vincent.whitchurch@axis.com, bhe@redhat.com, nico@fluxnic.net,
-	ardb@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
-Message-ID: <Zqn0wL5iScf455O5@shell.armlinux.org.uk>
-References: <20240620090028.729373-1-ruanjinjie@huawei.com>
- <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
+	s=arc-20240116; t=1722414538; c=relaxed/simple;
+	bh=7Yro7bx0P2yElCv1SCZFfFeCha0fF9BH4AKjQjnO1n0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ajpfEruDBfqOSVIYTxxpzEycBZMsdUTTaAAo6ZAoXNQY1MLShZpa3EatBd8CuI/Pv8ht/rtoOoPFnB5fQivNTSY1kWVq/T0gd5TkPO2vE5fboVzp4K7COKqJ+XwEatdqucBPTZ8nTEcI2atsLRtiiyVCMTOosvKtc9tNiZqPpo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bhlr1r1X; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722414536; x=1753950536;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=7Yro7bx0P2yElCv1SCZFfFeCha0fF9BH4AKjQjnO1n0=;
+  b=Bhlr1r1XL/1ohNNeSqIpWrLXcwE0kGYMIjgkVEsHxb6a5g5PHY7jYlY4
+   5O3tgCniS9WB/YkN9zviVMUnpwajWJrZr0EOZBu1ozXSKh7Nro8VMVQzX
+   scjmZ9r0BEBylGU5RznhqU6KE3qdvwiWXpq/rpELGdaBopOAy0fXlsHQl
+   TQcYd1gmXgdLj44TnMxL8mliUH0KfGbIsH9ZrphhC+f6ih87ADYmsJ+HL
+   eiTIGNM9wHirHcBz4gtNra40+HXZw5OxCt+W8AzF3fJujbCcAX2uhUIdF
+   sSSeWkxX/PXjf6qfQKZRlOOqLLFOOzu+e5bucsXnSKf/gTS9UEIYZmD6p
+   g==;
+X-CSE-ConnectionGUID: vxUxuyRoQjegm7piwakrSw==
+X-CSE-MsgGUID: u/mbdj6ZS+WxC1nXI3glCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="19971066"
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="19971066"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 01:28:55 -0700
+X-CSE-ConnectionGUID: RcqgeXpLTE+YXDZRGWN51Q==
+X-CSE-MsgGUID: JKw1WgDKSbOQ29QjKI9oLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="55209710"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 01:28:49 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,
+  baolin.wang@linux.alibaba.com,  chrisl@kernel.org,  david@redhat.com,
+  hannes@cmpxchg.org,  hughd@google.com,  kaleshsingh@google.com,
+  kasong@tencent.com,  linux-kernel@vger.kernel.org,  mhocko@suse.com,
+  minchan@kernel.org,  nphamcs@gmail.com,  ryan.roberts@arm.com,
+  senozhatsky@chromium.org,  shakeel.butt@linux.dev,  shy828301@gmail.com,
+  surenb@google.com,  v-songbaohua@oppo.com,  willy@infradead.org,
+  xiang@kernel.org,  yosryahmed@google.com
+Subject: Re: [PATCH 1/1] mm: swap: add nr argument in swapcache_prepare and
+ swapcache_clear to support large folios
+In-Reply-To: <CAGsJ_4wH1qbG5hQ8K-OyvO5ut+rFo3Ng_+pUp7wMLWo-1PwERg@mail.gmail.com>
+	(Barry Song's message of "Wed, 31 Jul 2024 16:20:27 +0800")
+References: <20240730071339.107447-1-21cnbao@gmail.com>
+	<20240730071339.107447-2-21cnbao@gmail.com>
+	<874j86oubf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<CAGsJ_4wH1qbG5hQ8K-OyvO5ut+rFo3Ng_+pUp7wMLWo-1PwERg@mail.gmail.com>
+Date: Wed, 31 Jul 2024 16:25:16 +0800
+Message-ID: <87zfpynf2r.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 10:07:53AM +0800, Jinjie Ruan wrote:
-> >  #ifdef CONFIG_PREEMPTION
-> > +#ifdef CONFIG_PREEMPT_DYNAMIC
-> > +	bl	need_irq_preemption
-> > +	cmp	r0, #0
-> > +	beq	2f
-> > +#endif
+Barry Song <21cnbao@gmail.com> writes:
 
-Depending on the interrupt rate, this can be regarded as a fast path,
-it would be nice if we could find a way to use static branches in
-assembly code.
+> On Wed, Jul 31, 2024 at 4:14=E2=80=AFPM Huang, Ying <ying.huang@intel.com=
+> wrote:
+>>
+>> Hi, Barry,
+>>
+>> Barry Song <21cnbao@gmail.com> writes:
+>>
+>> > From: Barry Song <v-songbaohua@oppo.com>
+>> >
+>> > Right now, swapcache_prepare() and swapcache_clear() supports one entry
+>> > only, to support large folios, we need to handle multiple swap entries.
+>> >
+>> > To optimize stack usage, we iterate twice in __swap_duplicate(): the
+>> > first time to verify that all entries are valid, and the second time
+>> > to apply the modifications to the entries.
+>> >
+>> > Currently, we're using nr=3D1 for the existing users.
+>> >
+>> > Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
+>> > ---
+>> >  include/linux/swap.h |   4 +-
+>> >  mm/memory.c          |   6 +--
+>> >  mm/swap.h            |   5 ++-
+>> >  mm/swap_state.c      |   2 +-
+>> >  mm/swapfile.c        | 101 +++++++++++++++++++++++++------------------
+>> >  5 files changed, 68 insertions(+), 50 deletions(-)
+>> >
+>> > diff --git a/include/linux/swap.h b/include/linux/swap.h
+>> > index ba7ea95d1c57..5b920fa2315b 100644
+>> > --- a/include/linux/swap.h
+>> > +++ b/include/linux/swap.h
+>> > @@ -480,7 +480,7 @@ extern int get_swap_pages(int n, swp_entry_t swp_e=
+ntries[], int order);
+>> >  extern int add_swap_count_continuation(swp_entry_t, gfp_t);
+>> >  extern void swap_shmem_alloc(swp_entry_t);
+>> >  extern int swap_duplicate(swp_entry_t);
+>> > -extern int swapcache_prepare(swp_entry_t);
+>> > +extern int swapcache_prepare(swp_entry_t entry, int nr);
+>> >  extern void swap_free_nr(swp_entry_t entry, int nr_pages);
+>> >  extern void swapcache_free_entries(swp_entry_t *entries, int n);
+>> >  extern void free_swap_and_cache_nr(swp_entry_t entry, int nr);
+>> > @@ -554,7 +554,7 @@ static inline int swap_duplicate(swp_entry_t swp)
+>> >       return 0;
+>> >  }
+>> >
+>> > -static inline int swapcache_prepare(swp_entry_t swp)
+>> > +static inline int swapcache_prepare(swp_entry_t swp, int nr)
+>> >  {
+>> >       return 0;
+>> >  }
+>> > diff --git a/mm/memory.c b/mm/memory.c
+>> > index 833d2cad6eb2..b8675617a5e3 100644
+>> > --- a/mm/memory.c
+>> > +++ b/mm/memory.c
+>> > @@ -4081,7 +4081,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>> >                        * reusing the same entry. It's undetectable as
+>> >                        * pte_same() returns true due to entry reuse.
+>> >                        */
+>> > -                     if (swapcache_prepare(entry)) {
+>> > +                     if (swapcache_prepare(entry, 1)) {
+>> >                               /* Relax a bit to prevent rapid repeated=
+ page faults */
+>> >                               schedule_timeout_uninterruptible(1);
+>> >                               goto out;
+>> > @@ -4387,7 +4387,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>> >  out:
+>> >       /* Clear the swap cache pin for direct swapin after PTL unlock */
+>> >       if (need_clear_cache)
+>> > -             swapcache_clear(si, entry);
+>> > +             swapcache_clear(si, entry, 1);
+>> >       if (si)
+>> >               put_swap_device(si);
+>> >       return ret;
+>> > @@ -4403,7 +4403,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
+>> >               folio_put(swapcache);
+>> >       }
+>> >       if (need_clear_cache)
+>> > -             swapcache_clear(si, entry);
+>> > +             swapcache_clear(si, entry, 1);
+>> >       if (si)
+>> >               put_swap_device(si);
+>> >       return ret;
+>> > diff --git a/mm/swap.h b/mm/swap.h
+>> > index baa1fa946b34..7c6330561d84 100644
+>> > --- a/mm/swap.h
+>> > +++ b/mm/swap.h
+>> > @@ -59,7 +59,7 @@ void __delete_from_swap_cache(struct folio *folio,
+>> >  void delete_from_swap_cache(struct folio *folio);
+>> >  void clear_shadow_from_swap_cache(int type, unsigned long begin,
+>> >                                 unsigned long end);
+>> > -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry);
+>> > +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, =
+int nr);
+>> >  struct folio *swap_cache_get_folio(swp_entry_t entry,
+>> >               struct vm_area_struct *vma, unsigned long addr);
+>> >  struct folio *filemap_get_incore_folio(struct address_space *mapping,
+>> > @@ -120,7 +120,7 @@ static inline int swap_writepage(struct page *p, s=
+truct writeback_control *wbc)
+>> >       return 0;
+>> >  }
+>> >
+>> > -static inline void swapcache_clear(struct swap_info_struct *si, swp_e=
+ntry_t entry)
+>> > +static inline void swapcache_clear(struct swap_info_struct *si, swp_e=
+ntry_t entry, int nr)
+>> >  {
+>> >  }
+>> >
+>> > @@ -172,4 +172,5 @@ static inline unsigned int folio_swap_flags(struct=
+ folio *folio)
+>> >       return 0;
+>> >  }
+>> >  #endif /* CONFIG_SWAP */
+>> > +
+>>
+>> NITPICK: Is it necessary to add a blank line here?  But I don't think a
+>> new version is necessary if this is the only change needed.
+>
+> No need to add a blank line; it was probably a mistake I made in Vim.
+>
+>>
+>> >  #endif /* _MM_SWAP_H */
+>> > diff --git a/mm/swap_state.c b/mm/swap_state.c
+>> > index a1726e49a5eb..b06f2a054f5a 100644
+>> > --- a/mm/swap_state.c
+>> > +++ b/mm/swap_state.c
+>> > @@ -477,7 +477,7 @@ struct folio *__read_swap_cache_async(swp_entry_t =
+entry, gfp_t gfp_mask,
+>> >               /*
+>> >                * Swap entry may have been freed since our caller obser=
+ved it.
+>> >                */
+>> > -             err =3D swapcache_prepare(entry);
+>> > +             err =3D swapcache_prepare(entry, 1);
+>> >               if (!err)
+>> >                       break;
+>> >
+>> > diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> > index 5f73a8553371..757d38a86f56 100644
+>> > --- a/mm/swapfile.c
+>> > +++ b/mm/swapfile.c
+>> > @@ -3363,7 +3363,7 @@ void si_swapinfo(struct sysinfo *val)
+>> >  }
+>> >
+>> >  /*
+>> > - * Verify that a swap entry is valid and increment its swap map count.
+>> > + * Verify that nr swap entries are valid and increment their swap map=
+ counts.
+>> >   *
+>> >   * Returns error code in following case.
+>> >   * - success -> 0
+>> > @@ -3373,60 +3373,77 @@ void si_swapinfo(struct sysinfo *val)
+>> >   * - swap-cache reference is requested but the entry is not used. -> =
+ENOENT
+>> >   * - swap-mapped reference requested but needs continued swap count. =
+-> ENOMEM
+>> >   */
+>> > -static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+>> > +static int __swap_duplicate(swp_entry_t entry, unsigned char usage, i=
+nt nr)
+>> >  {
+>> >       struct swap_info_struct *p;
+>> >       struct swap_cluster_info *ci;
+>> >       unsigned long offset;
+>> >       unsigned char count;
+>> >       unsigned char has_cache;
+>> > -     int err;
+>> > +     int err, i;
+>> >
+>> >       p =3D swp_swap_info(entry);
+>> >
+>> >       offset =3D swp_offset(entry);
+>> > +     VM_WARN_ON(nr > SWAPFILE_CLUSTER - offset % SWAPFILE_CLUSTER);
+>> >       ci =3D lock_cluster_or_swap_info(p, offset);
+>> >
+>> > -     count =3D p->swap_map[offset];
+>> > +     err =3D 0;
+>> > +     for (i =3D 0; i < nr; i++) {
+>> > +             count =3D p->swap_map[offset + i];
+>> >
+>> > -     /*
+>> > -      * swapin_readahead() doesn't check if a swap entry is valid, so=
+ the
+>> > -      * swap entry could be SWAP_MAP_BAD. Check here with lock held.
+>> > -      */
+>> > -     if (unlikely(swap_count(count) =3D=3D SWAP_MAP_BAD)) {
+>> > -             err =3D -ENOENT;
+>> > -             goto unlock_out;
+>> > -     }
+>> > +             /*
+>> > +              * swapin_readahead() doesn't check if a swap entry is v=
+alid, so the
+>> > +              * swap entry could be SWAP_MAP_BAD. Check here with loc=
+k held.
+>> > +              */
+>> > +             if (unlikely(swap_count(count) =3D=3D SWAP_MAP_BAD)) {
+>> > +                     err =3D -ENOENT;
+>> > +                     goto unlock_out;
+>> > +             }
+>> >
+>> > -     has_cache =3D count & SWAP_HAS_CACHE;
+>> > -     count &=3D ~SWAP_HAS_CACHE;
+>> > -     err =3D 0;
+>> > +             has_cache =3D count & SWAP_HAS_CACHE;
+>> > +             count &=3D ~SWAP_HAS_CACHE;
+>> >
+>> > -     if (usage =3D=3D SWAP_HAS_CACHE) {
+>> > +             if (usage =3D=3D SWAP_HAS_CACHE) {
+>> > +                     /* set SWAP_HAS_CACHE if there is no cache and e=
+ntry is used */
+>> > +                     if (!has_cache && count)
+>> > +                             continue;
+>> > +                     else if (has_cache)             /* someone else =
+added cache */
+>> > +                             err =3D -EEXIST;
+>> > +                     else                            /* no users rema=
+ining */
+>> > +                             err =3D -ENOENT;
+>> >
+>> > -             /* set SWAP_HAS_CACHE if there is no cache and entry is =
+used */
+>> > -             if (!has_cache && count)
+>> > -                     has_cache =3D SWAP_HAS_CACHE;
+>> > -             else if (has_cache)             /* someone else added ca=
+che */
+>> > -                     err =3D -EEXIST;
+>> > -             else                            /* no users remaining */
+>> > -                     err =3D -ENOENT;
+>> > +             } else if (count || has_cache) {
+>> >
+>> > -     } else if (count || has_cache) {
+>> > +                     if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+>> > +                             continue;
+>> > +                     else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_M=
+AX)
+>> > +                             err =3D -EINVAL;
+>> > +                     else if (swap_count_continued(p, offset + i, cou=
+nt))
+>> > +                             continue;
+>>
+>> IIUC, this will make the change to swap map directly instead of
+>> verification.  If the verification failed for some entry later, the
+>> count will be wrong?  Or I missed something?
+>
+> To avoid using a bitmap or a larger stack, we actually verify during
+> the first iteration.
+> This ensures that by the second iteration, we can safely commit the
+> modification.
+>
+> I actually put some words in the changelog :-)
+>
+> To optimize stack usage, we iterate twice in __swap_duplicate(): the
+> first time to verify that all entries are valid, and the second time
+> to apply the modifications to the entries.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Yes, I have seen it and I think that it is a good strategy.
+
+But, IIUC, swap_count_continued() will change the higher bits of the
+swap_map instead of verifying.  Or, my understanding is wrong?
+
+--
+Best Regards,
+Huang, Ying
+
+>>
+>> > +                     else
+>> > +                             err =3D -ENOMEM;
+>> > +             } else
+>> > +                     err =3D -ENOENT;                  /* unused swap=
+ entry */
+>> >
+>> > -             if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+>> > +             if (err)
+>> > +                     goto unlock_out;
+>> > +     }
+>> > +
+>> > +     for (i =3D 0; i < nr; i++) {
+>> > +             count =3D p->swap_map[offset + i];
+>> > +             has_cache =3D count & SWAP_HAS_CACHE;
+>> > +             count &=3D ~SWAP_HAS_CACHE;
+>> > +
+>> > +             if (usage =3D=3D SWAP_HAS_CACHE)
+>> > +                     has_cache =3D SWAP_HAS_CACHE;
+>> > +             else if ((count & ~COUNT_CONTINUED) < SWAP_MAP_MAX)
+>> >                       count +=3D usage;
+>> > -             else if ((count & ~COUNT_CONTINUED) > SWAP_MAP_MAX)
+>> > -                     err =3D -EINVAL;
+>> > -             else if (swap_count_continued(p, offset, count))
+>> > -                     count =3D COUNT_CONTINUED;
+>> >               else
+>> > -                     err =3D -ENOMEM;
+>> > -     } else
+>> > -             err =3D -ENOENT;                  /* unused swap entry */
+>> > +                     count =3D COUNT_CONTINUED;
+>> >
+>> > -     if (!err)
+>> > -             WRITE_ONCE(p->swap_map[offset], count | has_cache);
+>> > +             WRITE_ONCE(p->swap_map[offset + i], count | has_cache);
+>> > +     }
+>> >
+>> >  unlock_out:
+>> >       unlock_cluster_or_swap_info(p, ci);
+>> > @@ -3439,7 +3456,7 @@ static int __swap_duplicate(swp_entry_t entry, u=
+nsigned char usage)
+>> >   */
+>> >  void swap_shmem_alloc(swp_entry_t entry)
+>> >  {
+>> > -     __swap_duplicate(entry, SWAP_MAP_SHMEM);
+>> > +     __swap_duplicate(entry, SWAP_MAP_SHMEM, 1);
+>> >  }
+>> >
+>> >  /*
+>> > @@ -3453,29 +3470,29 @@ int swap_duplicate(swp_entry_t entry)
+>> >  {
+>> >       int err =3D 0;
+>> >
+>> > -     while (!err && __swap_duplicate(entry, 1) =3D=3D -ENOMEM)
+>> > +     while (!err && __swap_duplicate(entry, 1, 1) =3D=3D -ENOMEM)
+>> >               err =3D add_swap_count_continuation(entry, GFP_ATOMIC);
+>> >       return err;
+>> >  }
+>> >
+>> >  /*
+>> > - * @entry: swap entry for which we allocate swap cache.
+>> > + * @entry: first swap entry from which we allocate nr swap cache.
+>> >   *
+>> > - * Called when allocating swap cache for existing swap entry,
+>> > + * Called when allocating swap cache for existing swap entries,
+>> >   * This can return error codes. Returns 0 at success.
+>> >   * -EEXIST means there is a swap cache.
+>> >   * Note: return code is different from swap_duplicate().
+>> >   */
+>> > -int swapcache_prepare(swp_entry_t entry)
+>> > +int swapcache_prepare(swp_entry_t entry, int nr)
+>> >  {
+>> > -     return __swap_duplicate(entry, SWAP_HAS_CACHE);
+>> > +     return __swap_duplicate(entry, SWAP_HAS_CACHE, nr);
+>> >  }
+>> >
+>> > -void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry)
+>> > +void swapcache_clear(struct swap_info_struct *si, swp_entry_t entry, =
+int nr)
+>> >  {
+>> >       unsigned long offset =3D swp_offset(entry);
+>> >
+>> > -     cluster_swap_free_nr(si, offset, 1, SWAP_HAS_CACHE);
+>> > +     cluster_swap_free_nr(si, offset, nr, SWAP_HAS_CACHE);
+>> >  }
+>> >
+>> >  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+>>
+>> --
+>> Best Regards,
+>> Huang, Ying
+>
+> Thanks
+> Barry
 
