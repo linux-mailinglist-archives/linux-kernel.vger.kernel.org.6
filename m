@@ -1,82 +1,156 @@
-Return-Path: <linux-kernel+bounces-269839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 247F194375C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:47:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E91494375F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0FF1F22E4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:47:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A256DB228D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B62916087B;
-	Wed, 31 Jul 2024 20:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EC0168C26;
+	Wed, 31 Jul 2024 20:47:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="jYVbQ0ZO"
-Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="TavgKwuM"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9665917543;
-	Wed, 31 Jul 2024 20:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4747A16087B;
+	Wed, 31 Jul 2024 20:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722458862; cv=none; b=C4WlfmW6IHOu+A1X76d4hoTJ1N0F/4FlbkHDmbRB9R9p04J6BPfhnLhOu2x+JMzS/Q3ANY7FEIhjD39h81DEAjRyw1hysoPsI24x0kmsd/txQzGsmAtIPbVfvBM4TxEZ1vkfPA5kXbEjV1Hdo4rKBwsUr18JqA4ugPHVrA5ZlmI=
+	t=1722458875; cv=none; b=fBtGToW2f5eSG9EAL71BKXzhrYXs8udNG8OYykR+zVt1rPi4Clid/Yar6twfYVAWQwN1EbUjALCpwHBKVMfO1JfqLYYZzlGZ/bbjijWIFNvGcH79/6KXdbdpfb2zpGuY7Mp3CtbOY8AI8sbA8h3AzRfxaHyIjUnoPQlz/csFksk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722458862; c=relaxed/simple;
-	bh=6GI437kxfcxbyHL2J71e2uhod0ZNk1DRb13coGms1rQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fyQZXJucQkaH2scYyJtTccuU3BISjqID+xckmy6zsyycZn54+IwMQm6AXMJenKOKRMrwB1CyTmzz89AWdSwfrzg1qatGEfi/t9mct2gLLANg1LSI/rTUoTMqL+majAsP2k8scEweKNcQTg+HyWGyGt0TAA9CrUxm8yyHiox8Vno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=jYVbQ0ZO; arc=none smtp.client-ip=194.63.252.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
-	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
-	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TWh2jtULicJS4e6o3gtav6LoiukZ/VmA2CtVVW5fe0M=; b=jYVbQ0ZOPIz5X41gXzK3q0FueJ
-	j2/RVW+2E6olE/wYs175ZIi5OHSwmv28bg5Vdmez1QhiXX+1G8I6hsoQcFcKN/5OWQ/lQUdFpMqUQ
-	IujhFPidVVGP5jWImc7jvL9ipArXiD7Hd3sy94M+ULjxn4CNoofMv67YIoaYbldts1/sRTcvHL912
-	eST0xHFx4w2fdOslUs/n6YTakbrK6/5Ttu1DdPh1cdoPKc8vniAYMJpVRQrTp8cmYlZN1kmYf0WfO
-	RhDlYc5iYqIx1LRW541fH/G6uG0x97KmGNe8n54Tk/JVVrQO8F5GhdiL5tLagrig+w2LVo+YjpKZd
-	I5wklzQw==;
-Received: from [2001:9e8:9fa:4501:3235:adff:fed0:37e6] (port=53628 helo=lindesnes.fjasle.eu)
-	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <nicolas@fjasle.eu>)
-	id 1sZGEK-009EnU-Lx;
-	Wed, 31 Jul 2024 22:47:28 +0200
-Date: Wed, 31 Jul 2024 22:47:25 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
-	Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: [PATCH 2/4] modpost: detect endianness on run-time
-Message-ID: <20240731-sassy-hysterical-petrel-fa7fcd@lindesnes>
-References: <20240727074526.1771247-1-masahiroy@kernel.org>
- <20240727074526.1771247-3-masahiroy@kernel.org>
+	s=arc-20240116; t=1722458875; c=relaxed/simple;
+	bh=T+bxtDsypoLZuohvEpFnoUYBkgJSQsGGu/MQFPg+TOc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T7RVUYUEyKF0bo9F3th48Rdcu8ZE407k2YwAvfphHjmF/NxCeSskOqfsXKJVzzDqwPpyO4cQ/2U+ita1Arjij9VD7wFsTzKgzH4tY7zOH6+Op2mfVwmiVVIq7nr4zno1VCn7XcwW0aiykuFCU2da8haTBw4s3BOj93aGwErJqRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=TavgKwuM; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722458872; x=1722718072;
+	bh=pd9iNbqzsLLrheaLjTGk3cr9YXPx27FeADL9bde0lPQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=TavgKwuMerzXMQg9cvfC/OiJ3ceY/aNT7TA+sFCIQ+V0GtzMvyKc4S/8xSJS6UHFx
+	 wm88gNTwEl1ldmBbGVz4/K/hocbVa7J8Rl+j0RdG87nBy3XQDT/WbCEScCUZgX48IP
+	 Jmqv64m0o3+kkRluQ3LHy+PzpsXhxsWbODfBhzepAEt7S9vmgUCigKUhMrDpbr02ZT
+	 ErGuJKBP4wjJjEKlm9mVE8buvCrc0DZFDC7XEtBGmELWsimUG2nEGf7gm5uWaqGkmc
+	 4WxIgjPd5eqp4VJCyfU8yf2SYUgRBTvNiElj4aOb+apoh/quK97+rNkeumdeX7ikYj
+	 dCoQt1+hVj07g==
+Date: Wed, 31 Jul 2024 20:47:48 +0000
+To: Gary Guo <gary@garyguo.net>, Matt Gilbride <mattgilbride@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Christian Brauner <brauner@kernel.org>, Rob Landley <rob@landley.net>, Davidlohr Bueso <dave@stgolabs.net>, Michel Lespinasse <michel@lespinasse.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/6] rust: kernel: add `drop_contents` to `BoxExt`
+Message-ID: <52cc1987-ec62-46dd-9d81-4afc155fe88f@proton.me>
+In-Reply-To: <20240731210206.2b56b432.gary@garyguo.net>
+References: <20240711-b4-rbtree-v6-0-14bef1a8cdba@google.com> <20240711-b4-rbtree-v6-1-14bef1a8cdba@google.com> <20240731210206.2b56b432.gary@garyguo.net>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 7db0d0a6009e4b0532f4c4605b81b7899702302c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240727074526.1771247-3-masahiroy@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Jul 27, 2024 at 04:42:02PM +0900, Masahiro Yamada wrote:
-> Endianness is currently detected on compile-time, but we can defer this
-> until run-time. This change avoids re-executing scripts/mod/mk_elfconfig
-> even if modpost in the linux-headers package needs to be rebuilt for a
-> foreign architecture.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+On 31.07.24 22:02, Gary Guo wrote:
+> On Thu, 11 Jul 2024 16:20:57 +0000
+> Matt Gilbride <mattgilbride@google.com> wrote:
+>=20
+>> From: Benno Lossin <benno.lossin@proton.me>
+>>
+>> Sometimes (see [1]) it is necessary to drop the value inside of a
+>> `Box<T>`, but retain the allocation. For example to reuse the allocation
+>> in the future.
+>> Introduce a new function `drop_contents` that turns a `Box<T>` into
+>> `Box<MaybeUninit<T>>` by dropping the value.
+>>
+>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+>> Link: https://lore.kernel.org/rust-for-linux/20240418-b4-rbtree-v3-5-323=
+e134390ce@google.com/ [1]
+>> ---
+>>  rust/kernel/alloc/box_ext.rs | 24 +++++++++++++++++++++++-
+>>  1 file changed, 23 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/rust/kernel/alloc/box_ext.rs b/rust/kernel/alloc/box_ext.rs
+>> index 829cb1c1cf9e..557895db4f48 100644
+>> --- a/rust/kernel/alloc/box_ext.rs
+>> +++ b/rust/kernel/alloc/box_ext.rs
+>> @@ -4,7 +4,7 @@
+>>
+>>  use super::{AllocError, Flags};
+>>  use alloc::boxed::Box;
+>> -use core::mem::MaybeUninit;
+>> +use core::{mem::MaybeUninit, ptr};
+>>
+>>  /// Extensions to [`Box`].
+>>  pub trait BoxExt<T>: Sized {
+>> @@ -17,6 +17,20 @@ pub trait BoxExt<T>: Sized {
+>>      ///
+>>      /// The allocation may fail, in which case an error is returned.
+>>      fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit<T>>, AllocErr=
+or>;
+>> +
+>> +    /// Drops the contents, but keeps the allocation.
+>> +    ///
+>> +    /// # Examples
+>> +    ///
+>> +    /// ```
+>> +    /// use kernel::alloc::flags;
+>> +    ///
+>> +    /// let value =3D Box::new([0; 32], flags::GFP_KERNEL);
+>> +    /// let value =3D value.unwrap().drop_contents();
+>> +    /// // Now we can re-use `value`:
+>> +    /// Box::write(value, [1; 32]);
+>> +    /// ```
+>> +    fn drop_contents(self) -> Box<MaybeUninit<T>>;
+>=20
+> Should this have signature `fn drop_contents(this: Self) -> ...`? Box
+> types normally don't have methods to avoid shadowing functions that the
+> pointee may have.
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+Note that the newest version of this patch can be found at [1]. I agree,
+it should probably take `this: Self` instead of a `self` receiver.
+
+@Miguel, do you think I should send a new version with that change?
+
+[1]: https://lore.kernel.org/rust-for-linux/20240708205325.1275473-1-benno.=
+lossin@proton.me/
+
+---
+Cheers,
+Benno
+
+>>  }
+>>
+>>  impl<T> BoxExt<T> for Box<T> {
+>> @@ -53,4 +67,12 @@ fn new_uninit(flags: Flags) -> Result<Box<MaybeUninit=
+<T>>, AllocError> {
+>>          // zero-sized types, we use `NonNull::dangling`.
+>>          Ok(unsafe { Box::from_raw(ptr) })
+>>      }
+>> +
+>> +    fn drop_contents(self) -> Box<MaybeUninit<T>> {
+>> +        let ptr =3D Box::into_raw(self);
+>> +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`=
+.
+>> +        unsafe { ptr::drop_in_place(ptr) };
+>> +        // SAFETY: `ptr` is valid, because it came from `Box::into_raw`=
+.
+>> +        unsafe { Box::from_raw(ptr.cast()) }
+>> +    }
+>>  }
+>>
+>=20
+> Best,
+> Gary
+
 
