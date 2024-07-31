@@ -1,105 +1,147 @@
-Return-Path: <linux-kernel+bounces-269738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85AEA943648
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:19:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25559943625
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6CD41C20DA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6BCE1F23472
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF0A161310;
-	Wed, 31 Jul 2024 19:14:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32B616C437;
+	Wed, 31 Jul 2024 19:13:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4DglsAp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="qEDwW4M6"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA337183CB8;
-	Wed, 31 Jul 2024 19:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453267; cv=none; b=vGWWI3xg9VArWs1/m3o3YTqiAkHiQ0t1dr8eyjfA7TnAr5S2sQBS63lahtgJCs/L4uUf682eqHewP8zIgTppCu6Ug8ECjM9oIGCOPtH474RociMeHiZf16190CDB0JRW+ix0gG5s2/5YKzPn8V5uDTAMDeZSfpxRj2R4N6WP2c8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453267; c=relaxed/simple;
-	bh=MULSNYeZeSPrl1VTRH84C1j8hdrGU7G7dLkCXe5sadw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOL/8MLXgJGhoOV5kUJrad1Nuxp4u8BrSQMPUpijKYzxdhyjJfWFO2FVEsAwanSkT9Sjxpcm5ICYaJ78rRkpjLN9jalYd7J8QaruEM43XrFZkCJd6K5SC9BBznqMzDbzN3YCA4C4UnhBhqTP34wmPF3c3J/G6cscec74I0O4e5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4DglsAp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F91CC116B1;
-	Wed, 31 Jul 2024 19:14:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453266;
-	bh=MULSNYeZeSPrl1VTRH84C1j8hdrGU7G7dLkCXe5sadw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=L4DglsApNHqnJbYdmle/VboL3eAuc/cGZtznSEUUR4PXU/31dn9uf/Las/Es0fzdt
-	 FwjIlabd7BoF1VbE/M87/fDpFmiUXjrfUwG2onm3oeV0fHSUL7TyBvkW7FMYgIoBVO
-	 X4P69LDvfguzIxrDlAtbPvjv4rE0A6cz0aDtWxUVWkGK2gqwxq8aqjGRWIoN+W40tq
-	 d7JT/ZgHCe9PN/ccdIretDFgmf+ieNt6QpkzEv9DVhDENkYB432XzjCKZchXXNLcDl
-	 Y86cYW0FKiXuJ4ehXoCiSLCRgDNYR41SoiibVHl+HosNAl+9/7KhW3ABbRNcFtZv7q
-	 aGNj/91wIcjVQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	"Oliver O'Halloran" <oohall@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] nvdimm: Use of_property_present() and of_property_read_bool()
-Date: Wed, 31 Jul 2024 13:13:04 -0600
-Message-ID: <20240731191312.1710417-26-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8DC161314;
+	Wed, 31 Jul 2024 19:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722453226; cv=pass; b=mA+pEQJpsdUaN+dMvq0i41PfstHPcxv16PkoTxplwf3y7xe4tOeKLDYQhOvA+orZnDeLre9bY84EPYG1Ummy/UeC10regIJbydsKttZX90zLM5Zx/afhbg7uvTc17Hmdk8XlGBhZ2p3Pc2b+jKt0PsSHsE+N5oUP1DEMXm2noxU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722453226; c=relaxed/simple;
+	bh=NZoJXqLy6vZhc05SjrTiCHFxzwDxKYHyUwWMAWN1DMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=grgHSR024C/BWd7TUF2gHpY2csYcP1DqmIpPwqd+kl0qGHrqB+J/PrH0W7VMYS8wCwghFsDmeFLJbCJLImU/gX574jEz5aUUld2ZZpuuPS7IYHHXdo3OnfgZmqySOzyBQUcYtzfMc5GGKC/gf+9g/86L3l4ZW6X+DNdxB2kKJvw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=qEDwW4M6; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from darkstar.musicnaut.iki.fi (85-76-100-193-nat.elisa-mobile.fi [85.76.100.193])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: aaro.koskinen)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4WZ1wG4sN1zyQf;
+	Wed, 31 Jul 2024 22:13:34 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1722453219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKNVn6TfX89GWfjIM0Jaen4pOYmILV2qL8jp0k43Fn8=;
+	b=qEDwW4M66WNuY45SArOnCaxXp7QfJZUIZxO2cY19UkdOFMc6EEYHuKVDHlXzKFRS8XKbhq
+	VqqvxLaAzaYV13ztrjOjdQbPpCsadMRmScwbbjPkWLR9+H3AnJd1jPsfkegX/D4vbvP3Ul
+	33r2w/V+jEaRFLClsQ7UsjY5rKZzH54=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1722453219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jKNVn6TfX89GWfjIM0Jaen4pOYmILV2qL8jp0k43Fn8=;
+	b=Jfyw1d2Knad26sGf6oXlIzSPvanRQvdMpHOcxwKmv6kvOZqgpontBeibOGoYWK+Oiqho7k
+	5e3YHhqTqhpEqOGXJ4AR10qyuSCPlCufqARgN0NCB/JdEhF2xC1zmXkbv+qBmBnVAs5hnz
+	JNY+msDThwLJUG01+1RVwU8LdFKTdEI=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1722453219; a=rsa-sha256; cv=none;
+	b=dA0q57eRsz7dG4S4uC6uc/jooWpGeO5R8w8QHbFHSOlFLEYcxLZgsE+bi74s0zB3Q6uyGK
+	oh47LKfeAh4dWREJi9VsIfCbtXhlsb7ccYoYxZ4rKLaemaM3DaeYCBHxKeQTYMK9+BS2V1
+	jnXX/HuCOxG/kKw7mfVXa3pZ7c2qOrQ=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
+Date: Wed, 31 Jul 2024 22:13:32 +0300
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Russell King <linux@armlinux.org.uk>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Richard Earnshaw <richard.earnshaw@arm.com>,
+	Richard Sandiford <richard.sandiford@arm.com>,
+	Ramana Radhakrishnan <ramanara@nvidia.com>,
+	Nicolas Pitre <nico@fluxnic.net>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+	Nikita Shubin <nikita.shubin@maquefel.me>,
+	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+	Gregory Clement <gregory.clement@bootlin.com>,
+	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
+	debian-arm@lists.debian.org,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+Message-ID: <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 
-Use of_property_present() and of_property_read_bool() to test
-property presence and read boolean properties rather than
-of_(find|get)_property(). This is part of a larger effort to remove
-callers of of_find_property() and similar functions.
-of_(find|get)_property() leak the DT struct property and data pointers
-which is a problem for dynamically allocated nodes which may be freed.
+Hi,
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- drivers/nvdimm/of_pmem.c | 2 +-
- drivers/nvmem/layouts.c  | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On Wed, Jul 31, 2024 at 07:29:29PM +0200, Arnd Bergmann wrote:
+> === early ARMv6 ===
+> 
+> This is the ARM1136r0p in NXP i.MX31 and OMAP24xx, which in
+> practice means just the Nokia N8xx tablet.
+> It causes a lot of pain to support in the kernel since it
+> requires special hacks to support in SMP-enabled kernels.
 
-diff --git a/drivers/nvdimm/of_pmem.c b/drivers/nvdimm/of_pmem.c
-index 403384f25ce3..b4a1cf70e8b7 100644
---- a/drivers/nvdimm/of_pmem.c
-+++ b/drivers/nvdimm/of_pmem.c
-@@ -47,7 +47,7 @@ static int of_pmem_region_probe(struct platform_device *pdev)
- 	}
- 	platform_set_drvdata(pdev, priv);
- 
--	is_volatile = !!of_find_property(np, "volatile", NULL);
-+	is_volatile = of_property_read_bool(np, "volatile");
- 	dev_dbg(&pdev->dev, "Registering %s regions from %pOF\n",
- 			is_volatile ? "volatile" : "non-volatile",  np);
- 
-diff --git a/drivers/nvmem/layouts.c b/drivers/nvmem/layouts.c
-index 77a4119efea8..65d39e19f6ec 100644
---- a/drivers/nvmem/layouts.c
-+++ b/drivers/nvmem/layouts.c
-@@ -123,7 +123,7 @@ static int nvmem_layout_bus_populate(struct nvmem_device *nvmem,
- 	int ret;
- 
- 	/* Make sure it has a compatible property */
--	if (!of_get_property(layout_dn, "compatible", NULL)) {
-+	if (!of_property_present(layout_dn, "compatible")) {
- 		pr_debug("%s() - skipping %pOF, no compatible prop\n",
- 			 __func__, layout_dn);
- 		return 0;
--- 
-2.43.0
+FWIW, I have been never able to boot N8x0 unless CONFIG_SMP was disabled
+(but haven't tested recently if the situation has changed). And probably
+nobody else is anymore even booting these with modern kernels. Common
+distro kernel support for N8x0 would be unlikely anyway due to bootloader
+and memory limitations.
 
+These tablets are not very attractive for hobbyists anymore as the display
+support got broken and eventually deleted due to bitrot. There has been
+some out-of-tree patches/interest to regain display and other features,
+but no major progress really in 10 years or so. The last major mainline
+feature was adding Retu watchdog support that allowed the device to stay
+on longer than 30 seconds after the boot (the hardware watchdog cannot
+be disabled).
+
+I guess in OMAP-land N8x0 is one of the least used/active boards, so if
+it causes "a lot of pain" then maybe could be a candidate for deprecation.
+But with custom kernel config, the board has been pretty stable overall
+between the releases for limited use cases.
+
+> === OMAP1 ===
+> 
+> This is now the only ARMv4T/ARMv5 platform with no
+> DT support, making it a target for removal at some
+> point. Unlike PXA, there are still users, but it seems
+> there are no current plans for a DT conversion.
+> 
+> I would suggest going through the five boards
+> individually to see which ones we can remove in 2025
+> and keep the remaining ones for the moment.
+
+Here situation hasn't changed - all of the boards are equally
+important/useful, at least from a maintainer point of view. The routine
+I use to test/debug kernel releases relies on all of them.
+
+A.
 
