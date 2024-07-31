@@ -1,97 +1,75 @@
-Return-Path: <linux-kernel+bounces-269517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1081A9433B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:54:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48DF19433B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C511C242FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:54:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A04D284AD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCB51BBBE4;
-	Wed, 31 Jul 2024 15:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2073E1BBBFE;
+	Wed, 31 Jul 2024 15:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Akto6h+Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JRqAY2g4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C281799F;
-	Wed, 31 Jul 2024 15:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD9A1799F;
+	Wed, 31 Jul 2024 15:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441277; cv=none; b=cgs0u/EFNFARr+W6PpgS1pK77ZykuvVzJ+DY1lgCHcgpUp/rWSi/gUQ/+rkLybHwgPK7fSUXdn71nIyeTLu5I8ppbxIVtDNJyDbqE9y/n+wsXEmboIG3DLPnNuRdVUa1kC9oiOyiqfxdE58O21mNuC/sjPXCUl+tJu9FP6a2jzY=
+	t=1722441296; cv=none; b=UL2VpWocLZmD+1JTcxa/juneLevoc1gHAWutTmGemPHpw40sdoxux7K45ipFvwSnzJE85piAnO5WSWls/nhqgGVqDM1dAfcwn36/pTV6uEh7ivNgrTTf2L4tlQReMdbOiiXRfQRG1+iUCAiHVbFFAyf95W3UQS9I6SQNb2B0gWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441277; c=relaxed/simple;
-	bh=QB/+oRrzERp7DM97KpOzJ2rbZl1zjzVLdZiMQA3ZbIg=;
+	s=arc-20240116; t=1722441296; c=relaxed/simple;
+	bh=18/UMq8EJj3RydzQiisL2ZuorE1XGAfvTcjjkSYiTEo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thcE8ReHgdHxSc99jo6uV+0xRxYFTK/vU+ursKY/rkL/bt2knSKsnN1AdYRHRxExNX1lrwCLtp5MARRUUsXXb0pjUfplEsEi4yrtmG1zix5JjJ1I7GSSP8QbApp0Uricme/WGSe0wJlu83SWh40vML02JcuCUmjlWs7LXI9omMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Akto6h+Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A467C116B1;
-	Wed, 31 Jul 2024 15:54:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722441276;
-	bh=QB/+oRrzERp7DM97KpOzJ2rbZl1zjzVLdZiMQA3ZbIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Akto6h+ZxZrA9Tr2b/3OKLTudUDg/9UN/tYPgKlZ2pOpH9a/1lNPLCXBFaYJVBLdD
-	 Ii36GLDGzfKvUo5YZcpM+R2zW62G9j7lgcWJnMRaOwEKaO4HFkbAJP1NMxHO/o6CU8
-	 PsAfxVD/TpvTHv1IBdMXyq3gu6k1zRXrS0OcklR9V+PcrzXtKJeYyHYMosRlBQkxAY
-	 aFOsUTAbImzIPCmcG3VaPW0UqA136q5j3GR5QR0DUUdu/0rOryR42+B+breO8z6icL
-	 khfJZ5AW4mJ9h5yNxV0y3FzjQG1brOYA1pspFkDb7y4P5F3omFFF/Xhcnv61+KUanr
-	 dRjHTCD1jcGew==
-Date: Wed, 31 Jul 2024 16:54:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com
-Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc3 review
-Message-ID: <481386a9-e85e-4923-be7a-f95e783a112e@sirena.org.uk>
-References: <20240731100057.990016666@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YRvbdNf03ennBGFV2bfF933U1lo3VZIk84QnnDWxv+ougEukiG3V+kyrhhNRhtffmUPA0GwdesDM0FlqmvE91sMzEmvGJicV2WoCDgmAUS6dihbYBdXIb0Q9PcGH7lBP+TF74F5uAgIr7u0Ntqp87PbL+ht3Mk+HfIXZztopiCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JRqAY2g4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=18/UMq8EJj3RydzQiisL2ZuorE1XGAfvTcjjkSYiTEo=; b=JRqAY2g43ZA6+38/TEL7PsUtRZ
+	/AKmPwMnY91ZSyijHWifeMlJiPaFDzeFri13YYiMK8vFSLCM8B55hH7cgmIcXi37noTkUKuUmLkqR
+	zlu6Fo/iW6O+qZRgmPGy532gc9nNesxhbQjMxtTuyeynRKxZH5HU3Y6v2RpbxDL4i0zjZio978gi3
+	dBYWitgm2HpU1raA+vgUyroSFa6mbkXMsYWu4wxsv9UHWhKhvjPcXiKwMltEuSTOYHcFo5zFCp0e3
+	7SqAj1OXS1+eQ14vXT6/F+S+t6M+2+SNxI4W+i+JghhWx4/ohQRLIZ29mwee63TmVOQDn3ZThrs6E
+	pNq7lGMA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZBf8-00000001n7z-25uz;
+	Wed, 31 Jul 2024 15:54:50 +0000
+Date: Wed, 31 Jul 2024 08:54:50 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dongliang Cui <dongliang.cui@unisoc.com>
+Cc: linkinjeon@kernel.org, sj1557.seo@samsung.com, hch@infradead.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com,
+	Zhiguo Niu <zhiguo.niu@unisoc.com>
+Subject: Re: [PATCH v3] exfat: check disk status during buffer write
+Message-ID: <ZqpeSvEgVtIWrWVr@infradead.org>
+References: <20240731022715.4044482-1-dongliang.cui@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gRTQ4DHMYcmn+phQ"
-Content-Disposition: inline
-In-Reply-To: <20240731100057.990016666@linuxfoundation.org>
-X-Cookie: You are number 6!  Who is number one?
-
-
---gRTQ4DHMYcmn+phQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240731022715.4044482-1-dongliang.cui@unisoc.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jul 31, 2024 at 12:02:57PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.103 release.
-> There are 440 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Besides the additional checks for the shutdown flag already mentioned
+the subject is now incorrect I think, it should talk about implementing
+shutdown handling.
 
-Tested-by: Mark Brown <broonie@kernel.org>
+In case you haven't done so yet, please also see if exfat now passes
+the various testcases in xfstests that exercise the shutdown path.
 
---gRTQ4DHMYcmn+phQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmaqXjUACgkQJNaLcl1U
-h9Anawf/Su5y8CkNmA5i1IbvNfqjeQufcLBIes9TXxqkphGmY5n25Arkz2BWk5TU
-judfyZfiXxNnyAkyOX9KBUmfjiN1leoNI4NBPzdyW9GIhBd5pHIkhq1BGzuqnQQp
-vTClR1ee7I4S/qpVx3eKgxjIhAkzh27NDGEIQVurrkG/SQqjpsZq6FsnnV9BQDSH
-2i5ZfDDvp1Fep/t0bijahVqY355EhKZ1PPZQyigjvFpLYmiDA98oli20aCrvDRXL
-9+38wKOBqlaYwXBhp5D8yIXFpIAXMPCqpin3bja2orSvdEadpxlqY06DG0SJXU9v
-318DOEa4PGSpWk6nqxWJ16iSfNNybA==
-=Zzhz
------END PGP SIGNATURE-----
-
---gRTQ4DHMYcmn+phQ--
+Otherwise this looks reasonable to me, thanks for the work!
 
