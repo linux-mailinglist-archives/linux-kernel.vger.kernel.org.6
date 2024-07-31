@@ -1,95 +1,94 @@
-Return-Path: <linux-kernel+bounces-269426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D8B9432B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:08:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C7B9432D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02568285CC0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:08:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48D40B2750A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3241CAAC;
-	Wed, 31 Jul 2024 15:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A021C233B;
+	Wed, 31 Jul 2024 15:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qy5g79g2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h6AjUHTB";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qy5g79g2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="h6AjUHTB"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n+LzfB0y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ydR+ch/D";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n+LzfB0y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ydR+ch/D"
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD381642B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B701C231D
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438516; cv=none; b=Zx3BSkkRf2au6IxoRZQ4eF3R2Z98sy8ki5pjpiG8Ggeog/gsBQAua5G5Rgms+EtHxgORlnsVaZJ4QpEMy7TM2VSbi84hVDSCGcFyU0epVPbAzuCDzHgrN4XovrACdInwg4ZAz94RQ1h5Kr406BYkpdf1ttX3q+b185YeFlpqHvY=
+	t=1722438566; cv=none; b=r4PnCFlt928bXBqdj8mKGnsS+7Lrz6C7QnW//tnfvzTMid2MOPMRCxyb9sSERl9RbM6k6909GVe6v2dVTJmPq5nfCpaV6lFpFnDlFXBEmO4YsF1tncVFBWhpS2ZCNZ4fkpELYQUUyDXYDLMQYCVW8FmaVpr1Opryz/Dssdcf3jQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438516; c=relaxed/simple;
-	bh=n6lBCFJLZNaA41qUqjdkipaL9trbn3rvOGjWXAUu1Mo=;
+	s=arc-20240116; t=1722438566; c=relaxed/simple;
+	bh=3ndBlWRcFufEb8ojj5SZStSf/KFaD4/9h2eLkj/hkHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TbgTLVVlaFZPM6befC/aF1rF34BZhfcJlNP6NAMK1q+ACgikpMPW/IPZP5+GXknQscT8FrBNrDwowJlqcVC1FDCPMAJAnZxG6QfbdKPZGtQgcNeYXQzmyTjE1JlwqoxkzSYP5W5FrCfcDZSWG1AHq9FiO5p3vuGSKKA239bRtvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qy5g79g2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h6AjUHTB; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qy5g79g2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=h6AjUHTB; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=EI+ScR8oJ3jw6VWGKphGu8QlEUFULDJI0YDhbl5mOyebB/h5xuGBWWPPM5AiFvsyEXr+Os5Z/Iu+95yfkCuPE0kjJ2BAhQ1YufIp4rPqdXdGWEG/+1DXze9+s3R3OdHB+Mn5A25J2vmD2IOc1ShRPffRWTDV8WlGv1i9zKRO9k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n+LzfB0y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ydR+ch/D; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n+LzfB0y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ydR+ch/D; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4D6E31F833;
-	Wed, 31 Jul 2024 15:08:30 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 55E8C1F6E6;
+	Wed, 31 Jul 2024 15:08:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722438510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1722438529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Nl6rGQjI8NmFXSzFaYBS8yJKHN5SNOcvfiJQVFu7/SU=;
-	b=qy5g79g2HVvR5zy8NixZnOu+B33PbK3gjDVKDqnpipvGXJZnvbQ9Tcb2anOD27fIKBjvMp
-	KL1nbWLV8zmfW3o/jdaKl6XACZTPxGTAJzrsNe2wx64B5zIfn3v982NQcUMTZ9GN9lIYyF
-	qHDqM3QtyKaWsYa8jL7J8ZoieTbS+fI=
+	bh=HvYDar7nlJRAbumXmnzZD/PKiloQtUGH+gS7cyzPqNY=;
+	b=n+LzfB0yI1k+ruzCEqmBGdxpiMaWaDbLhXr7hPrpQXjQApisfYxgxM/ueTFkRHsb2TY4lz
+	nAnwb5+YOd7JDaSanhIB0Q9Shsutx4xtHBCy+dL+8QQBKkCt37BhBbseRYosGtYn+S0m/G
+	Sed2TTvzBc1h/ZpHuvSQdWVb3JGRKTg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722438510;
+	s=susede2_ed25519; t=1722438529;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Nl6rGQjI8NmFXSzFaYBS8yJKHN5SNOcvfiJQVFu7/SU=;
-	b=h6AjUHTBRJLf2IsmFkbictuYKCowUfeGAujqSWNDOCpq01ht+rNKxqQZf/RHbBalodMv/W
-	JDnymA/PnR0VUnAg==
+	bh=HvYDar7nlJRAbumXmnzZD/PKiloQtUGH+gS7cyzPqNY=;
+	b=ydR+ch/DAKoT03GLQjl5EFOGaHa1g93pOhkZ+uk+YbHfKrilqXqqyyyB8FyUCPh+FyKSuI
+	7ktd/X1PQeJHUOAA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qy5g79g2;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=h6AjUHTB
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722438510; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1722438529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Nl6rGQjI8NmFXSzFaYBS8yJKHN5SNOcvfiJQVFu7/SU=;
-	b=qy5g79g2HVvR5zy8NixZnOu+B33PbK3gjDVKDqnpipvGXJZnvbQ9Tcb2anOD27fIKBjvMp
-	KL1nbWLV8zmfW3o/jdaKl6XACZTPxGTAJzrsNe2wx64B5zIfn3v982NQcUMTZ9GN9lIYyF
-	qHDqM3QtyKaWsYa8jL7J8ZoieTbS+fI=
+	bh=HvYDar7nlJRAbumXmnzZD/PKiloQtUGH+gS7cyzPqNY=;
+	b=n+LzfB0yI1k+ruzCEqmBGdxpiMaWaDbLhXr7hPrpQXjQApisfYxgxM/ueTFkRHsb2TY4lz
+	nAnwb5+YOd7JDaSanhIB0Q9Shsutx4xtHBCy+dL+8QQBKkCt37BhBbseRYosGtYn+S0m/G
+	Sed2TTvzBc1h/ZpHuvSQdWVb3JGRKTg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722438510;
+	s=susede2_ed25519; t=1722438529;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Nl6rGQjI8NmFXSzFaYBS8yJKHN5SNOcvfiJQVFu7/SU=;
-	b=h6AjUHTBRJLf2IsmFkbictuYKCowUfeGAujqSWNDOCpq01ht+rNKxqQZf/RHbBalodMv/W
-	JDnymA/PnR0VUnAg==
+	bh=HvYDar7nlJRAbumXmnzZD/PKiloQtUGH+gS7cyzPqNY=;
+	b=ydR+ch/DAKoT03GLQjl5EFOGaHa1g93pOhkZ+uk+YbHfKrilqXqqyyyB8FyUCPh+FyKSuI
+	7ktd/X1PQeJHUOAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BD1313297;
-	Wed, 31 Jul 2024 15:08:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4720013297;
+	Wed, 31 Jul 2024 15:08:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id suo3Dm5Tqma2AQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 15:08:30 +0000
-Message-ID: <3efc8b38-182a-4021-b550-41040aecf1c1@suse.cz>
-Date: Wed, 31 Jul 2024 17:08:30 +0200
+	id RHEVEYFTqmbRAQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 15:08:49 +0000
+Message-ID: <29d91335-de79-422c-9cef-475e524f6ebe@suse.cz>
+Date: Wed, 31 Jul 2024 17:08:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,8 +96,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 15/20] mm: Make kswapd use kthread's preferred
- affinity
+Subject: Re: [RFC PATCH 16/20] mm: Allocate kswapd on its node
 Content-Language: en-US
 To: Frederic Weisbecker <frederic@kernel.org>,
  LKML <linux-kernel@vger.kernel.org>
@@ -106,7 +104,7 @@ Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
  Andrew Morton <akpm@linux-foundation.org>,
  Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
 References: <20240726215701.19459-1-frederic@kernel.org>
- <20240726215701.19459-16-frederic@kernel.org>
+ <20240726215701.19459-17-frederic@kernel.org>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -147,83 +145,58 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <20240726215701.19459-16-frederic@kernel.org>
+In-Reply-To: <20240726215701.19459-17-frederic@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: 4D6E31F833
-X-Spam-Score: -4.30
 X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.30 / 50.00];
+X-Spamd-Result: default: False [-4.09 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
 	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
 	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	MIME_TRACE(0.00)[0:+];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	TO_DN_SOME(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.cz:+]
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.09
 
 On 7/26/24 11:56 PM, Frederic Weisbecker wrote:
-> Now that kthreads have an infrastructure to handle preferred affinity
-> against CPU hotplug and housekeeping cpumask, convert kswapd to use
-> it instead of handling halfway all the constraints by itself.
+> kswapd runs preferrably on a specific node. Allocate its task
+> structure accordingly for better memory locality.
 > 
 > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
 Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
+also squashable to the previous one
+
 > ---
->  mm/vmscan.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
+>  mm/vmscan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 2e34de9cd0d4..94359a893b4f 100644
+> index 94359a893b4f..adf8c1e7e89d 100644
 > --- a/mm/vmscan.c
 > +++ b/mm/vmscan.c
-> @@ -7116,10 +7116,6 @@ static int kswapd(void *p)
->  	unsigned int highest_zoneidx = MAX_NR_ZONES - 1;
->  	pg_data_t *pgdat = (pg_data_t *)p;
->  	struct task_struct *tsk = current;
-> -	const struct cpumask *cpumask = cpumask_of_node(pgdat->node_id);
-> -
-> -	if (!cpumask_empty(cpumask))
-> -		set_cpus_allowed_ptr(tsk, cpumask);
->  
->  	/*
->  	 * Tell the memory management that we're a "memory allocator",
-> @@ -7288,7 +7284,7 @@ void __meminit kswapd_run(int nid)
+> @@ -7284,7 +7284,7 @@ void __meminit kswapd_run(int nid)
 >  
 >  	pgdat_kswapd_lock(pgdat);
 >  	if (!pgdat->kswapd) {
-> -		pgdat->kswapd = kthread_run(kswapd, pgdat, "kswapd%d", nid);
-> +		pgdat->kswapd = kthread_create(kswapd, pgdat, "kswapd%d", nid);
+> -		pgdat->kswapd = kthread_create(kswapd, pgdat, "kswapd%d", nid);
+> +		pgdat->kswapd = kthread_create_on_node(kswapd, pgdat, nid, "kswapd%d", nid);
 >  		if (IS_ERR(pgdat->kswapd)) {
 >  			/* failure at boot is fatal */
 >  			pr_err("Failed to start kswapd on node %d，ret=%ld\n",
-> @@ -7296,6 +7292,8 @@ void __meminit kswapd_run(int nid)
->  			BUG_ON(system_state < SYSTEM_RUNNING);
->  			pgdat->kswapd = NULL;
->  		}
-> +		kthread_affine_preferred(pgdat->kswapd, cpumask_of_node(pgdat->node_id));
-> +		wake_up_process(pgdat->kswapd);
->  	}
->  	pgdat_kswapd_unlock(pgdat);
->  }
 
 
