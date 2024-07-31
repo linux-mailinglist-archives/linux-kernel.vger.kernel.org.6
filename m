@@ -1,380 +1,117 @@
-Return-Path: <linux-kernel+bounces-269418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174C39432A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:04:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC7C9432A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AEAF1C2194D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:04:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D464B27BF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A448017548;
-	Wed, 31 Jul 2024 15:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9FAC17BD6;
+	Wed, 31 Jul 2024 15:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NtNKPUre"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012006.outbound.protection.outlook.com [52.101.66.6])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a8RkqHBs"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A629B14A8B;
-	Wed, 31 Jul 2024 15:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438284; cv=fail; b=gjqVQ6eSq/HjONnrdFNcRUdP//T3xRBlD1yrZz+EZYRrlVCwjjguhK/Qsq0pHjUql4BACUv22K2jmPWtuVAW65e/sdgt6Do0g/AFKszjyEuJ0gL1rbMslnaf7Xlv0n3zocGwr77OjdETYNOMN036G54Upd0ZLBGpyDvDbCNAS/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438284; c=relaxed/simple;
-	bh=ilN0lyFX/i6NSqDe5x6Riafp3zUs3GKHG0KJ4TcDumA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZoEeBdjM5fvkvTmSuQ6iN5z5W4LzBs16yaqnQlZRn5Ab9C+4RbN6l1D4Hto1hKmE8/ogY3XY7ROC0gL5s4fFLPUfJ7lGjZdyux2O1UWpc8f/2+WFeJKb/x9df9MdPJZWgjMxlI0dnsrZ7/cHkoOLQa8n5Ix32Hxdu6A0ch6v98E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NtNKPUre; arc=fail smtp.client-ip=52.101.66.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JfPJn39UDSJQpl1oP+JnPlRunRonc1Y/unhcLtdEI5rJE7LMhdfb2wm13kDyEKtywbqd74PfE17Uo9btOfmOJftmoI/SDLjWTIi51xaxJBFZ0An+4jCqNDsGKj/a9xv8UDm1efKi5a2qHV0tescVg9cVO0DBPUhRjCJqQ4H1eYHGX3auT6K59TkAAIMLF3M01hHCpkIx+peFfvFFCBmOgPzhu0hFh7/p+VNbPxE0HlcvO/LbH6ksx7yI5NwjaJjGUK6hR7aEwzyA+qEfPm3SPTQwhAIuRFbJzFtjpVGW39f2AkNQyfAb3+dVMXbMEM6s6cKSd0eYg9JH2O0CL8sADA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=60KRb2GKTzaPOVBx0dWjAp9lQc9Vt9jLYjF5/7sfktI=;
- b=zJcZCwpJRn8IYf0Y9FN+1YV5IWr7+jkHCNyKRnjHtOqzRDPXX8fvOgqPd9kRCTNocnCruXMRoEMg7gigwB+Fmp54+NUCcgAmTNjJu9n9RNEMK9g3nrMO1fHyMmjmlIofIb+a0ghsl0VQDvSB/nLczIZGpVwTUih3rzo4wkwWpKphDncBQa1ihlw3FH/V+402vCd0oaMorJKi2zp+aj+lhdl8NahwZmzbE1ULBzNmN+Y58ygNQ0+kcAOgPUaAoKn4J/mfj5BbfsCc3/SlietIlfg3QVAG0ZO3soFoVzQhHz11mQYwJk7q1BgDgHOSZn56IorFD/j9infGBataXmmYyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=60KRb2GKTzaPOVBx0dWjAp9lQc9Vt9jLYjF5/7sfktI=;
- b=NtNKPUreOwSgiqtSbSdCgdg3zr5oBxztNnEI02xWjd6+Px3VtIckL/8jJaj5JQuWuc3F470mL00oKX/om3HniKQc3HinuvY9xLRewxI2fTnqxvf5cYitV7yyqbwNaAg0WJcjfN1T64SPvqyk6hZhIvf89bbQPJ/t6FCds2r0dQPKLP7pM+dTwf6WGk7vpIXaJhWuXsC2h3dw3CGK4vkWsMVjNesNqMz2zofv4fCdxLm306vwWExBlXbDUGCA4WnMLmv6Gk7eWkiWjKUah1XBvHHlZC3w/5CARi/bDGX01PEGaUKNpzi6/F7SmgnD87UeQn6Uz3SBLDeNxoTHMyU09g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB9092.eurprd04.prod.outlook.com (2603:10a6:102:22a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Wed, 31 Jul
- 2024 15:04:38 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 15:04:38 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: robh@kernel.org
-Cc: Frank.Li@nxp.com,
-	alexandre.belloni@bootlin.com,
-	christophe.leroy@csgroup.eu,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
-Date: Wed, 31 Jul 2024 11:04:20 -0400
-Message-Id: <20240731150420.2217925-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR08CA0005.namprd08.prod.outlook.com
- (2603:10b6:a03:100::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41D317552
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722438287; cv=none; b=hX3q3nlYiGOcm2CP4j9H2eHrlJhxLMAHCRn6SmktOTd2CSL0kBjQvOHUU6KpYoJXoCMjeTDRBhXRFGFl/0RAxwwj2EEfWTRUXmp6bhZVL3n7fYe8BL+Ke8DtI8F3kXkk5okGRA8TmeK3PbQT1D/8Je3HYi4n9S3pW2IdYwdZs+4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722438287; c=relaxed/simple;
+	bh=0xlivJ5NDPWrLl/YBt8mgBivQ2EKz8rE8uNuVmAVF5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UdBnxDIjLwaaJ5SqfuB9hGQVJevUvuM++vcpd/hoyqHawDyfqiH7jR/Fn7PgeCTzjx3i4CgDMRI3sHPnTmCtWsnGmozM3oYUjXwkoVrxsTn9GD3uJ3Cf7lWaV7a5W9P/XsT46jwE1MRvK3ow+J+4tE/4JGgr9e5vUBN/uEVsr3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a8RkqHBs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722438284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vOJO9sg3TlSfmYNdHGnaBZGap5yNJluWPijE8vwrVqQ=;
+	b=a8RkqHBs6HP/8KJI9Kj59jI+AtLu9pz8ueBTITl4JgSActinAO+I2cx/yWWVw/GssLBsN1
+	CShoOPOqTfl4qXcGmSdGpjBk6R83sH3A+dtCQ+VsfrbsL3t9/TpLh5VbFkiYDqF+YjPdc1
+	UJXse0t4X3YNDliDxcmk1EX1RmZcYJ4=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-508-eK84Fi-HP2qMZFwedCHlQQ-1; Wed, 31 Jul 2024 11:04:40 -0400
+X-MC-Unique: eK84Fi-HP2qMZFwedCHlQQ-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b7a47a271cso12918366d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:04:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722438279; x=1723043079;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vOJO9sg3TlSfmYNdHGnaBZGap5yNJluWPijE8vwrVqQ=;
+        b=qIXnqs075MnFCKE/ovJyDPikRKLwucrEMacC6sTWdrgnTcc5TQZYm4+KEQHJRcmM07
+         Vx/UTDiwsaNQSSJvaoT63pPCVpz3gHXTa0IowROF34W7AB19ivUT9OsCOzA14UWrow0V
+         TE93un0xNjClLua8eQckEuwsJpLGRphUqDOEy5NX1mthrf5nYE98SIBqcOXP3h5fpfXX
+         7x+z0bH5z8Hddjy//TwAOUUhi2nToWCg4nfZW3TKOI2xjO4VG+Uu1n9NxKDpoicTlrpH
+         zlNabsX3yT2Mtn1vn4JryS192UFUQtRTfsRcKc6oBfZm40YT9Bu+gOIO0N8aMM4bSCSY
+         cn1Q==
+X-Gm-Message-State: AOJu0Ywci4zirchtRcD7eBBCDR0kyRh2lbqyDgSSEQs5NcFI+nV11NM5
+	9ERwRZL32jEt5cSRhACMDvlIDVOiaCmyQeeHu+MIYsvzQQkmNXI9MNm6ZvNQA/hEMehDtcLVq0Z
+	+Yod5xZ1eGUg/WnGahBFA4SiYRnAVV6r5z9iksnRS8oskYnVj/n9YD1fXyGK/eA==
+X-Received: by 2002:a05:6214:4109:b0:6b5:dd7d:919b with SMTP id 6a1803df08f44-6bb3e318443mr154258456d6.4.1722438279527;
+        Wed, 31 Jul 2024 08:04:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFgiHGBMWk5x1HYwpQHAjg8hvv0cWuE13O2hya7MRyHGFB9sikLbOJVfIKdC3NoLC8ye9DpiA==
+X-Received: by 2002:a05:6214:4109:b0:6b5:dd7d:919b with SMTP id 6a1803df08f44-6bb3e318443mr154258076d6.4.1722438278827;
+        Wed, 31 Jul 2024 08:04:38 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fab9974sm74268696d6.108.2024.07.31.08.04.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 08:04:38 -0700 (PDT)
+Date: Wed, 31 Jul 2024 11:04:35 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v1] mm/hugetlb: remove hugetlb_follow_page_mask() leftover
+Message-ID: <ZqpSg2c3r98rBvUH@x1n>
+References: <20240731142000.625044-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9092:EE_
-X-MS-Office365-Filtering-Correlation-Id: 79408280-ec48-4f66-9b82-08dcb17218f5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|52116014|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jqQmIFyFOKVwxeuM8RtApPrY0q6x0pOPvQay4bncB+UK3k/mAccQKPVO1BQk?=
- =?us-ascii?Q?y3bpumJ9LCp+SoJ0O0m8pyCHGwZMba+TpIo+rxtrWBTCfaLRDqiukDrk2vc5?=
- =?us-ascii?Q?XMCVTqRQ1nMSkYVgMcWNPFWPJkK5bUOw1IzhGBpSQc1Ha61rn0i4tEJ7w2HK?=
- =?us-ascii?Q?Uf8XOXBtG/S/hP2NBdhPqUPe/vKYkHPEeUMnBubb8OOpabOQKuyqzRP7LBFf?=
- =?us-ascii?Q?tKfixsLDlleIMTZ+r9k+V2YJ0WRe0f12zAiHBGPoQbA8RktoBSTRNfwMHKRD?=
- =?us-ascii?Q?a0ArGT1+D2PSP4eWY2FWaPGOTDTB6F8XHA26AhcC9bHIgImByepBiaxk7HGP?=
- =?us-ascii?Q?1uvWGgXq97y+5KaNUbji8oTVCdQCEP+3OX4A9vMxm8tNbhyFgfNWHZVzTLR7?=
- =?us-ascii?Q?tgk92FjdXitfoJzAOhO++p0j6yEmflwwRyS+jQiW+zqzsJ8XBNl9dbrUBocZ?=
- =?us-ascii?Q?A5gdE2JlbGaSzQGp5vdSiwej9vh1BARaHrL0lKkmG9aRaaWYm61Xb6RlJSxm?=
- =?us-ascii?Q?jJEorebFnvnkpWzI9wutAntZuLQQeBtbLPoBLhJSgnRjwFTSb35Ni8gWCemS?=
- =?us-ascii?Q?zSfxTkVoW2UhbhXpkPgRaXqb0gPIkgPKPL/l34QlV+zdf2UnAFy7F8487A7L?=
- =?us-ascii?Q?8USlcZ4mXRIubysym/ExbCpAvF6vdXzBLRX/ltuHQH6xSGK7OtDHXBcDdpua?=
- =?us-ascii?Q?UEp1YPR5wRCqaIHTNQ5JrUgsjPILirP2iRpV0IgpZTTlJw/6IxqGxanlMCbj?=
- =?us-ascii?Q?NkQOX1qCAp/FIHlDCEYCWjdMLG3x/VDotA1coLtUx8f0K2QsNcRFNl929Lpt?=
- =?us-ascii?Q?cC21BhEGLDzNjTGXMQAARUkvtYawxate29z/P2cosmD2Nzd+ZukJIX9oiTn2?=
- =?us-ascii?Q?iGBYgwzbbhZqJD4gLvkMyQTpT5074oxD25/8iVxzT17+6uarcbJ7bAfQS9+t?=
- =?us-ascii?Q?LsFD31MzTspQGxfPXcVJogYrES8MGOManmNLoqaX9UfSg4nF9NNkSmKDe9ko?=
- =?us-ascii?Q?OOTalD0qU/8rRoAqSoZqrR5z6v0txOOJhRpTHAVgW99slNX2PDlGjHtK0OXk?=
- =?us-ascii?Q?yAHeUaNbZ81rxp+XAUpPHPPmFOuRiFdBcHJeOX7sEfSjYwp5EQO2t5H9UbyP?=
- =?us-ascii?Q?8R+PQxwpFopOVYvfSiMgsqv5vFbUO5ZtvpKLv2ATbpklCU6zoLtjLLr+rC/m?=
- =?us-ascii?Q?QHRoUAvcpqnCkmc5qDJoVQVepF9ucFYUGjilsL9DzuoVB2hzEk9dnzOzhz2W?=
- =?us-ascii?Q?MBqApQu0gEXALifotk7jXVjKrp42a2mxSNfF2W9oF42st31uJgSWl2zpDQ4/?=
- =?us-ascii?Q?7WX5SxTIs5r5NCvl1gZvk1Nk8CMMdy6ACB4bj3O9rms67qskSDp42RYxrEDR?=
- =?us-ascii?Q?AmOJw3Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6daUwNWoG0mc+LvNhCI/TFQuPAGQp6aVo//AA9Bxd4xJxjJh3orG89Umni7U?=
- =?us-ascii?Q?bjO9pEHFyqOLptikSBEgnD84PbtA1c7x99UQ4EdYaHniS+h+ZZ19CYgFKwUT?=
- =?us-ascii?Q?dGeOHTJKuVzo0b2Bo+VANd4GD2MG2RqsY3UVp9SvHbfuXLJM6iNdgfZqwrJ2?=
- =?us-ascii?Q?4XZ9NKQ4BNJDmf2eGQdu63yAXKyrO6/BhcR1ObmO4kE1Wumqf8hlGr/XA1nD?=
- =?us-ascii?Q?9DD83Sf+Yt20LpzuPLGX1Xhx+gh0WbF0YxpAV71ZPyCfwZheYFC1Zau9bDcl?=
- =?us-ascii?Q?tWQdPCUViejNJ9lhqZ3P2tuyFrsYmmoazXFc2zPOJq76ZKZL2rrvq90sbzNa?=
- =?us-ascii?Q?e8jbRAHaLTiX+yW7wBCd58LHz3bUtUG6i8G1OYlFwjU56rioIcZGLfCxHVUF?=
- =?us-ascii?Q?cGkhjMr07wsHNFcpRz9jdthMJvsDPnd40Cm/OvyW+yZ5B7ymvqcsyzAgBGk1?=
- =?us-ascii?Q?MQu3z2avbocbLZ+XOkqoe2QN8YA6cf14bJzyJl0DwcYM1CPJgfaPjnogZ/yB?=
- =?us-ascii?Q?RjHjkXAnMf9wugi0xHMkf0i8hgxZi2x2Ep2YrKFDazV0wIzfoQ2myaKjovu7?=
- =?us-ascii?Q?i5yMti1O5b5e7emZp6aJ9+Ee331yQ+e05Kmj61yehCxjaPjGPm4x7H1eZwju?=
- =?us-ascii?Q?DOvqoT278PSHwS/vqa7tUrSrZ3mFyaoGNFLE8uYdrYkqoQoGD2reDCNIN4Il?=
- =?us-ascii?Q?Dq5djqUGLbF3h7c4b4RbzYeth42xmC+im2bf2WHYMKgHHj1AyS6+pKu8olL4?=
- =?us-ascii?Q?wHoJ6dKyIXbPW7KMdcmXKogG4GvkuP8z8IUUugAPcn4lM5+PaJ6VeEr3w+vs?=
- =?us-ascii?Q?RUqfICL9g5CkbpeElS2geCPKQupVYMz/Wwn4KAKJPOfP5/TzKtcPFNPsbqLq?=
- =?us-ascii?Q?crXWBOaG0WkitUZUUpCPwE0fuLCw9nzegQY0h3E1WMVIoFmLt+DzV0It3f7Y?=
- =?us-ascii?Q?m/41A5/sb/1juDoV5JXJ2FngJcuKXO0FvKKDyJP07knrws1lN3gOzq3XG3aQ?=
- =?us-ascii?Q?7BZkdApFr6LGfDQHODM6Fks6hYt7CHs6giWQrPK6hhDzqYUHwWHWTysyrgYL?=
- =?us-ascii?Q?2rj7MO0GADK22UA/Xi84mWtxMtFyl/IPUXkuXfo72HUlWrohuM86ekBxc1OY?=
- =?us-ascii?Q?djkWR2vgxMQeANfsPIUEUvKP9SSzoS6Dkgfa9RwJE7396szPAf+ZHoC/NFD0?=
- =?us-ascii?Q?PQJFsqtBMpeqVt96JYjYLFxjfPgRc1fmLlEN1DTeiij/2dsCHSk3m48pK1h9?=
- =?us-ascii?Q?pW5jTqsVbxs0YpJc3G4u1Oj46C3ILmFnNNq6vedZwcd/xiQaNV2OBWhF2Kk7?=
- =?us-ascii?Q?GupxjKN8PiwLD4u9cnfpc6tOePFtwzO/Ur0p4uWVAwP/+Bx5zzrKHtzO9cOQ?=
- =?us-ascii?Q?OyBOWudnBmUlLw/B5tnQm6L7PXFeqlnChMEwH9Wxh5SaQKkSDVHF53IXGUmi?=
- =?us-ascii?Q?Giz/yGdltDqL893yzN7qPVz3JOLfZoD1iFse6544z0qg39Y6Fdex3g1LJb8R?=
- =?us-ascii?Q?sx7BnOeKnAxYCHOGu0CLD8osx+SrQ/HbpoUgluRV+YId5BOypbh/dMhu2TNM?=
- =?us-ascii?Q?CIH2UnyzFvG1XhbxnvE=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 79408280-ec48-4f66-9b82-08dcb17218f5
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:04:38.4216
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SYVPB8Qn6vhxnrP5TNZbya8fhYFNBTs3kUyEcUCKvNpmvmicMjZbW5YPs7GKDwVYN3TC6nSMpyh10OBUGOuq2A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9092
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240731142000.625044-1-david@redhat.com>
 
-Convert dt-binding rcpm from txt to yaml format.
-Add fsl,ls1028a-rcpm compatible string.
+On Wed, Jul 31, 2024 at 04:20:00PM +0200, David Hildenbrand wrote:
+> We removed hugetlb_follow_page_mask() in commit 9cb28da54643 ("mm/gup:
+> handle hugetlb in the generic follow_page_mask code") but forgot to
+> cleanup some leftovers.
+> 
+> While at it, simplify the hugetlb comment, it's overly detailed and
+> rather confusing. Stating that we may end up in there during coredumping
+> is sufficient to explain the PF_DUMPCORE usage.
+> 
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Peter Xu <peterx@redhat.com>
+> Cc: Muchun Song <muchun.song@linux.dev>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Additional changes:
-- Add missed compatible string fsl,<chip>-rcpm.
-- Remove map fsl,<chip>-rcpm to fsl,qoriq-rcpm-<version>.
+Reviewed-by: Peter Xu <peterx@redhat.com>
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v1 to v2
-- add missed compatible string
-- Remove compatible string map table
-- use oneof Item to align compatible string map table
-- Fix typo 1045a
----
- .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |   2 +-
- .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 101 ++++++++++++++++++
- .../devicetree/bindings/soc/fsl/rcpm.txt      |  69 ------------
- 3 files changed, 102 insertions(+), 70 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
- delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-
-diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
-index 388102ae30cd8..3ec111f2fdc40 100644
---- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
-+++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
-@@ -42,7 +42,7 @@ properties:
-         minItems: 1
-     description:
-       phandle to rcpm node, Please refer
--      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-+      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
- 
-   big-endian:
-     $ref: /schemas/types.yaml#/definitions/flag
-diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
-new file mode 100644
-index 0000000000000..762316ef4d150
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
-@@ -0,0 +1,101 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Run Control and Power Management
-+
-+description:
-+  The RCPM performs all device-level tasks associated with device run control
-+  and power management.
-+
-+maintainers:
-+  - Frank Li <Frank.Li@nxp.com>
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - fsl,ls1012a-rcpm
-+              - fsl,ls1021a-rcpm
-+              - fsl,ls1028a-rcpm
-+              - fsl,ls1043a-rcpm
-+              - fsl,ls1045a-rcpm
-+          - enum:
-+              - fsl,qoriq-rcpm-2.1+
-+        minItems: 1
-+      - items:
-+          - enum:
-+              - fsl,p2041-rcpm
-+              - fsl,p3041-rcpm
-+              - fsl,p4080-rcpm
-+              - fsl,p5020-rcpm
-+              - fsl,p5040-rcpm
-+          - enum:
-+              - fsl,qoriq-rcpm-1.0
-+        minItems: 1
-+      - items:
-+          - enum:
-+              - fsl,b4420-rcpm
-+              - fsl,b4860-rcpm
-+              - fsl,t4240-rcpm
-+          - enum:
-+              - fsl,qoriq-rcpm-2.0
-+        minItems: 1
-+      - items:
-+          - enum:
-+              - fsl,t1040-rcpm
-+          - enum:
-+              - fsl,qoriq-rcpm-2.1
-+        minItems: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#fsl,rcpm-wakeup-cells":
-+    description: |
-+      The number of IPPDEXPCR register cells in the
-+      fsl,rcpm-wakeup property.
-+
-+      Freescale RCPM Wakeup Source Device Tree Bindings
-+
-+      Required fsl,rcpm-wakeup property should be added to a device node if
-+      the device can be used as a wakeup source.
-+
-+      fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
-+      register cells. The number of IPPDEXPCR register cells is defined in
-+      "#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
-+      the bit mask that should be set in IPPDEXPCR0, and the second register
-+      cell is for IPPDEXPCR1, and so on.
-+
-+      Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
-+      mechanism for keeping certain blocks awake during STANDBY and MEM, in
-+      order to use them as wake-up sources.
-+
-+  little-endian:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      RCPM register block is Little Endian. Without it RCPM
-+      will be Big Endian (default case).
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    rcpm: global-utilities@e2000 {
-+          compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
-+          reg = <0xe2000 0x1000>;
-+          #fsl,rcpm-wakeup-cells = <2>;
-+    };
-+
-+    serial@2950000 {
-+         compatible = "fsl,ls1021a-lpuart";
-+         reg = <0x2950000 0x1000>;
-+         interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
-+         clocks = <&sysclk>;
-+         clock-names = "ipg";
-+         fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
-+    };
-diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-deleted file mode 100644
-index 5a33619d881d0..0000000000000
---- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
-+++ /dev/null
-@@ -1,69 +0,0 @@
--* Run Control and Power Management
---------------------------------------------
--The RCPM performs all device-level tasks associated with device run control
--and power management.
--
--Required properites:
--  - reg : Offset and length of the register set of the RCPM block.
--  - #fsl,rcpm-wakeup-cells : The number of IPPDEXPCR register cells in the
--	fsl,rcpm-wakeup property.
--  - compatible : Must contain a chip-specific RCPM block compatible string
--	and (if applicable) may contain a chassis-version RCPM compatible
--	string. Chip-specific strings are of the form "fsl,<chip>-rcpm",
--	such as:
--	* "fsl,p2041-rcpm"
--	* "fsl,p5020-rcpm"
--	* "fsl,t4240-rcpm"
--
--	Chassis-version strings are of the form "fsl,qoriq-rcpm-<version>",
--	such as:
--	* "fsl,qoriq-rcpm-1.0": for chassis 1.0 rcpm
--	* "fsl,qoriq-rcpm-2.0": for chassis 2.0 rcpm
--	* "fsl,qoriq-rcpm-2.1": for chassis 2.1 rcpm
--	* "fsl,qoriq-rcpm-2.1+": for chassis 2.1+ rcpm
--
--All references to "1.0" and "2.0" refer to the QorIQ chassis version to
--which the chip complies.
--Chassis Version		Example Chips
-----------------		-------------------------------
--1.0				p4080, p5020, p5040, p2041, p3041
--2.0				t4240, b4860, b4420
--2.1				t1040,
--2.1+				ls1021a, ls1012a, ls1043a, ls1046a
--
--Optional properties:
-- - little-endian : RCPM register block is Little Endian. Without it RCPM
--   will be Big Endian (default case).
--
--Example:
--The RCPM node for T4240:
--	rcpm: global-utilities@e2000 {
--		compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
--		reg = <0xe2000 0x1000>;
--		#fsl,rcpm-wakeup-cells = <2>;
--	};
--
--* Freescale RCPM Wakeup Source Device Tree Bindings
---------------------------------------------
--Required fsl,rcpm-wakeup property should be added to a device node if the device
--can be used as a wakeup source.
--
--  - fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
--	register cells. The number of IPPDEXPCR register cells is defined in
--	"#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
--	the bit mask that should be set in IPPDEXPCR0, and the second register
--	cell is for IPPDEXPCR1, and so on.
--
--	Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
--	mechanism for keeping certain blocks awake during STANDBY and MEM, in
--	order to use them as wake-up sources.
--
--Example:
--	lpuart0: serial@2950000 {
--		compatible = "fsl,ls1021a-lpuart";
--		reg = <0x0 0x2950000 0x0 0x1000>;
--		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&sysclk>;
--		clock-names = "ipg";
--		fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
--	};
 -- 
-2.34.1
+Peter Xu
 
 
