@@ -1,95 +1,95 @@
-Return-Path: <linux-kernel+bounces-269361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 505DD943206
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:31:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C872943207
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8921F25ECC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F801C21C06
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC4D1BB6B6;
-	Wed, 31 Jul 2024 14:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796311BB6BD;
+	Wed, 31 Jul 2024 14:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p0KWYzyW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ziAw5+LG";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p0KWYzyW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ziAw5+LG"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sRcRseK/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yOjHPtns";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lgYEkuBz";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bGXxIJpY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C4926AE4
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B37C926AE4
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436258; cv=none; b=kse7OsmoA9dMjYzfOAYTbA3Ll4p0X/nOy+mzT8KjuaW02KSaa2nvcqsBMmFNRo75SGWDxClJTPJ7GRH1XdAvB1UxGV3nbnkqkhhhPcskHmZri4oxAhjJ8shBmW5nAlngaZ8qNmvOg5Iq9vCGj2XRww4FHgWljZLJ3T0SuZrgNSg=
+	t=1722436289; cv=none; b=Q/dGFweqzBL0K/C/CRq5w08vwPLuMre/ReZNqMAQZ2It8l0WVi/FGwnhvCD1hFFwV0dbGg3/tIGts6cQi9hxbZo484a1n1cklDNutbv8Sci5csn72aTmGbmXwSyHiP5W6ZFYMIjI5TlF/DYhwEradYGtYiDWtI1tNHWOLA9czdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436258; c=relaxed/simple;
-	bh=2A7GX/nPiWN34ST/yOELs8DUMToFVbUoBQdW8NtwF0Y=;
+	s=arc-20240116; t=1722436289; c=relaxed/simple;
+	bh=s/dNb0WJgGXT+WqLobWyc56rEYkYqU2y4Fz3kPl1C9Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LsyeMaj4foUTWbyvwD4Vt04DDJftB7TETRxi1TVOTmtCdMZyfd/3ye7+abW/8mZVplSP4l/5ugrqoW2dSomFszGtBknLY5UBtD7kx+IjfAygEYCqAyHedsoUaHxZ4Qf/WlX//tM7wwg812iX5n8qMJIFHQzdqhagx+BptLYNgTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p0KWYzyW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ziAw5+LG; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p0KWYzyW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ziAw5+LG; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=ME/WM2JptiT85NdYnExoG/0G2mRsviP9ZS4gofxcZ7vTE+r/qz/KZCoGaSHc5zAADIBM21UmNTvkzIwm2pZCSmVwc2qkoS8m+tpsfgLjmLPzRYVb3pej0byg/TIDQFUUEDMSYJb/5zUtZNeeIPdbOT+y9B0MKAoMranqqvD1Jag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sRcRseK/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yOjHPtns; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lgYEkuBz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bGXxIJpY; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 98E2121A8C;
-	Wed, 31 Jul 2024 14:30:35 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D1F1F1F809;
+	Wed, 31 Jul 2024 14:31:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722436235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1722436275; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9tM0W7I0njbVjziqfb3oDmm539qCu3D95U35+py9AN8=;
-	b=p0KWYzyW/S5rExZ8tzvQyl5FgfWAHu9zlG1HUa5sJjeK0Ll6hehu8p1nJsoyK7GjIksg2i
-	i0dMU4065Upomho/2xErm7KAR1juCWLW8wXI8kr/c/P1KjRF6R36tnRAI4HMnChEmOy5U0
-	j2ZMhZA4Qj2wBzITf222wJdAftKoEs0=
+	bh=OuZbBveZ6qairsKxQDumRPqX5vJlLgj+W3IqJApmEx8=;
+	b=sRcRseK/0LwGuBNqPg33L2SuPW28LvklKNxglWLZTB+N8qejqqqdqWWRiUx5MLDR3vMkXS
+	udaZc4P9X63iBtdOOILrWXaLuuzmk9VEb+wf25SOdxBCNeRcE8FSW4JIlvasJe+fSvIBLe
+	EB0gTO27tTqfR8b/oHJ02tOrtNBG9Ow=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722436235;
+	s=susede2_ed25519; t=1722436275;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9tM0W7I0njbVjziqfb3oDmm539qCu3D95U35+py9AN8=;
-	b=ziAw5+LG0u3RRL9zFWhLgBHk6mXOUnHdx81r4FW5Qz5gNKiIkJMydjAsdryZVM8iRJcSC0
-	Z6np5XOfVr2ClsBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=p0KWYzyW;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ziAw5+LG
+	bh=OuZbBveZ6qairsKxQDumRPqX5vJlLgj+W3IqJApmEx8=;
+	b=yOjHPtnsULK72mYpLBQV/9tuy1FbgnhVqbDjiNZ4Yy8ChbIbSaBxudXv6UGhLJd7J8phOE
+	L2tQ/X/v5xYwciDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lgYEkuBz;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=bGXxIJpY
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722436235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1722436274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9tM0W7I0njbVjziqfb3oDmm539qCu3D95U35+py9AN8=;
-	b=p0KWYzyW/S5rExZ8tzvQyl5FgfWAHu9zlG1HUa5sJjeK0Ll6hehu8p1nJsoyK7GjIksg2i
-	i0dMU4065Upomho/2xErm7KAR1juCWLW8wXI8kr/c/P1KjRF6R36tnRAI4HMnChEmOy5U0
-	j2ZMhZA4Qj2wBzITf222wJdAftKoEs0=
+	bh=OuZbBveZ6qairsKxQDumRPqX5vJlLgj+W3IqJApmEx8=;
+	b=lgYEkuBzStNoVtSWVBanDNuEROnjL6qfLcQdwm4Q5tL4IaJVEAFMbdTkKbAVDSPhLZVqnZ
+	BWXDjP0CRFoA0jGIJPb2Mib0iIMTG376g8wkItaXX+2yi5lpnxkzk/m+Wz1rSsc012lrK6
+	fcDobCtKOqpFhVMzB7QDyShJyl3RqGs=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722436235;
+	s=susede2_ed25519; t=1722436274;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9tM0W7I0njbVjziqfb3oDmm539qCu3D95U35+py9AN8=;
-	b=ziAw5+LG0u3RRL9zFWhLgBHk6mXOUnHdx81r4FW5Qz5gNKiIkJMydjAsdryZVM8iRJcSC0
-	Z6np5XOfVr2ClsBQ==
+	bh=OuZbBveZ6qairsKxQDumRPqX5vJlLgj+W3IqJApmEx8=;
+	b=bGXxIJpYYF+s83qeXIYVtbm9vTFTEJX9cKs1hbaWM07zn1pEdz5XEi0cmTtEm1a0t73KD7
+	Ed4rAnxqV4cxHqCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F0ED13297;
-	Wed, 31 Jul 2024 14:30:35 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BD8FC13297;
+	Wed, 31 Jul 2024 14:31:14 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mySoHotKqmbIdAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 14:30:35 +0000
-Message-ID: <f82fe3a3-58f1-4966-879b-fa978c6f350d@suse.cz>
-Date: Wed, 31 Jul 2024 16:30:35 +0200
+	id Ye3lLbJKqmYKdQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 14:31:14 +0000
+Message-ID: <17d83377-4904-49a3-9b3e-2ea0aefd9885@suse.cz>
+Date: Wed, 31 Jul 2024 16:31:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,14 +99,11 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH 1/2] mm: krealloc: consider spare memory for __GFP_ZERO
 Content-Language: en-US
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: akpm@linux-foundation.org, cl@linux.com, penberg@kernel.org,
- rientjes@google.com, iamjoonsoo.kim@lge.com, roman.gushchin@linux.dev,
- 42.hyeyoo@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kasan-dev <kasan-dev@googlegroups.com>
+To: Danilo Krummrich <dakr@kernel.org>, akpm@linux-foundation.org,
+ cl@linux.com, penberg@kernel.org, rientjes@google.com,
+ iamjoonsoo.kim@lge.com, roman.gushchin@linux.dev, 42.hyeyoo@gmail.com
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org
 References: <20240730194214.31483-1-dakr@kernel.org>
- <66836dd6-b0c2-4f77-b2a3-c43296aa6c93@suse.cz>
- <Zql9KXRDBb5Ufpp-@pollux.localdomain>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -147,133 +144,95 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
  1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
  EP+ylKVEKb0Q2A==
-In-Reply-To: <Zql9KXRDBb5Ufpp-@pollux.localdomain>
+In-Reply-To: <20240730194214.31483-1-dakr@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [0.20 / 50.00];
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
 	XM_UA_NO_VERSION(0.01)[];
+	MIME_TRACE(0.00)[0:+];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_TO(0.00)[kernel.org,linux-foundation.org,linux.com,google.com,lge.com,linux.dev,gmail.com];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[linux-foundation.org,linux.com,kernel.org,google.com,lge.com,linux.dev,gmail.com,vger.kernel.org,kvack.org,googlegroups.com];
 	RCVD_TLS_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	MID_RHS_MATCH_FROM(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[11];
+	RCPT_COUNT_SEVEN(0.00)[10];
 	TAGGED_RCPT(0.00)[];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	DKIM_TRACE(0.00)[suse.cz:+];
 	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim]
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: 98E2121A8C
-X-Spam-Level: 
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim]
 X-Rspamd-Action: no action
 X-Spam-Flag: NO
-X-Spam-Score: 0.20
+X-Spam-Score: -2.80
+X-Rspamd-Queue-Id: D1F1F1F809
 
-On 7/31/24 1:54 AM, Danilo Krummrich wrote:
-> On Tue, Jul 30, 2024 at 11:14:16PM +0200, Vlastimil Babka wrote:
->> On 7/30/24 9:42 PM, Danilo Krummrich wrote:
->> > As long as krealloc() is called with __GFP_ZERO consistently, starting
->> > with the initial memory allocation, __GFP_ZERO should be fully honored.
->> > 
->> > However, if for an existing allocation krealloc() is called with a
->> > decreased size, it is not ensured that the spare portion the allocation
->> > is zeroed. Thus, if krealloc() is subsequently called with a larger size
->> > again, __GFP_ZERO can't be fully honored, since we don't know the
->> > previous size, but only the bucket size.
->> > 
->> > Example:
->> > 
->> > 	buf = kzalloc(64, GFP_KERNEL);
->> > 	memset(buf, 0xff, 64);
->> > 
->> > 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
->> > 
->> > 	/* After this call the last 16 bytes are still 0xff. */
->> > 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
->> > 
->> > Fix this, by explicitly setting spare memory to zero, when shrinking an
->> > allocation with __GFP_ZERO flag set or init_on_alloc enabled.
->> > 
->> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
->> > ---
->> >  mm/slab_common.c | 7 +++++++
->> >  1 file changed, 7 insertions(+)
->> > 
->> > diff --git a/mm/slab_common.c b/mm/slab_common.c
->> > index 40b582a014b8..cff602cedf8e 100644
->> > --- a/mm/slab_common.c
->> > +++ b/mm/slab_common.c
->> > @@ -1273,6 +1273,13 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
->> >  
->> >  	/* If the object still fits, repoison it precisely. */
->> >  	if (ks >= new_size) {
->> > +		/* Zero out spare memory. */
->> > +		if (want_init_on_alloc(flags)) {
->> > +			kasan_disable_current();
->> > +			memset((void *)p + new_size, 0, ks - new_size);
->> > +			kasan_enable_current();
->> 
->> If we do kasan_krealloc() first, shouldn't the memset then be legal
->> afterwards without the disable/enable dance?
+On 7/30/24 9:42 PM, Danilo Krummrich wrote:
+> As long as krealloc() is called with __GFP_ZERO consistently, starting
+> with the initial memory allocation, __GFP_ZERO should be fully honored.
 > 
-> No, we always write into the poisoned area. The following tables show what we do
-> in the particular case:
+> However, if for an existing allocation krealloc() is called with a
+> decreased size, it is not ensured that the spare portion the allocation
+> is zeroed. Thus, if krealloc() is subsequently called with a larger size
+> again, __GFP_ZERO can't be fully honored, since we don't know the
+> previous size, but only the bucket size.
 > 
-> Shrink
-> ------
->           new        old
-> 0         size       size        ks
-> |----------|----------|----------|
-> |   keep   |        poison       |  <- poison
-> |--------------------------------|
-> |   keep   |         zero        |  <- data
+> Example:
 > 
+> 	buf = kzalloc(64, GFP_KERNEL);
+> 	memset(buf, 0xff, 64);
 > 
-> Poison and zero things between old size and ks is not necessary, but we don't
-> know old size, hence we have do it between new size and ks.
+> 	buf = krealloc(buf, 48, GFP_KERNEL | __GFP_ZERO);
 > 
-> Grow
-> ----
->           old        new
-> 0         size       size        ks
-> |----------|----------|----------|
-> |       unpoison      |   keep   | <- poison
-> |--------------------------------|
-> |         keep        |   zero   | <- data
+> 	/* After this call the last 16 bytes are still 0xff. */
+> 	buf = krealloc(buf, 64, GFP_KERNEL | __GFP_ZERO);
 > 
-> Zeroing between new_size and ks in not necessary in this case, since it must be
-> zero already. But without knowing the old size we don't know whether we shrink
-> and actually need to do something, or if we grow and don't need to do anything.
+> Fix this, by explicitly setting spare memory to zero, when shrinking an
+> allocation with __GFP_ZERO flag set or init_on_alloc enabled.
 > 
-> Analogously, we also unpoison things between 0 and old size for the same reason.
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Thanks, you're right!
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
->> 
->> > +		}
->> > +
->> >  		p = kasan_krealloc((void *)p, new_size, flags);
->> >  		return (void *)p;
->> >  	}
->> > 
->> > base-commit: 7c3dd6d99f2df6a9d7944ee8505b195ba51c9b68
->> 
+> ---
+>  mm/slab_common.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 40b582a014b8..cff602cedf8e 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -1273,6 +1273,13 @@ __do_krealloc(const void *p, size_t new_size, gfp_t flags)
+>  
+>  	/* If the object still fits, repoison it precisely. */
+>  	if (ks >= new_size) {
+> +		/* Zero out spare memory. */
+> +		if (want_init_on_alloc(flags)) {
+> +			kasan_disable_current();
+> +			memset((void *)p + new_size, 0, ks - new_size);
+> +			kasan_enable_current();
+> +		}
+> +
+>  		p = kasan_krealloc((void *)p, new_size, flags);
+>  		return (void *)p;
+>  	}
+> 
+> base-commit: 7c3dd6d99f2df6a9d7944ee8505b195ba51c9b68
 
 
