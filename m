@@ -1,114 +1,107 @@
-Return-Path: <linux-kernel+bounces-268734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CDC0942871
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:57:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1721B942873
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:57:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90AE1F2417D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:57:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4D871F241B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C808D1A76C3;
-	Wed, 31 Jul 2024 07:57:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F4D1A7F65;
+	Wed, 31 Jul 2024 07:57:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZPBDXhfD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="q5MmTzUL"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC4318C91D
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46A1A7F68
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722412624; cv=none; b=biyK1iONJQBA+WcfJFKneHbTwYZ0okeXUayJEIzG+t4iHrA22L5158zR5kWePucki+l7ryLyf+2mCvUNq5Ta4KPBh7pWvS/m44nmVH62LDj7gAbiuagnAaa7jep5fPNZvwJIpNh6/gH72zP7xHHloe6XrkIQin1ZSojtinszR6s=
+	t=1722412630; cv=none; b=McYaavaIkiQXopnz3Lyhx2VgS4PZvFbUbymcLFKrgQwYF3zxypIW+sTsDwQlrt1F1gTqpxiCqt+ozDJDmAvOiE5933s7JdpPsZKuANLqpV5+1Jrc6jNcAWJH0IlVmc7af7Kt4KJ7k07OOhDx3/QMqeS3jqnG5LZPW9Ped7rezIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722412624; c=relaxed/simple;
-	bh=ozgdOpWtF81Hf/gEOh3bpv8GZZcV0210ozHrG8wclUI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hYUGJfSOvNDgDU5r9AIH4yutPLTpAkW/5NxzCeaYBSsYK3xv/csvO6qHwm3sbrO7uZ7sD8JUN4/f8SLmkcnwq9+j2t/THcHigOcX+iXOsgtBoIhhw6nS5qvmmJq34Ssaq9oG/aYtPIikiSedf7CAUpYj3Nn2Gz2Ew4Zfgo4I16g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZPBDXhfD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722412621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=B9AaEcQYPcilFXNuPPHJ/dNKFao/QXRMpFdXw24PBoM=;
-	b=ZPBDXhfDtzdU7cB3zdCLbk+zCO0Fl7bRYR+g7beY0RmvbOTrGGYkjDsx6DpJ5PTMRILq3u
-	SaBncFX+YRMEwbdETHuNvjsuof8kAFenfMq4t/+nIueGpm1vyx+jHCO5ft9fnF3hZIsZbU
-	Goz2j2h/OpWOuAPXONWit7f6JlrLVNw=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-651-C2IrSy3XMNKsyP_OYuMCBQ-1; Wed,
- 31 Jul 2024 03:56:58 -0400
-X-MC-Unique: C2IrSy3XMNKsyP_OYuMCBQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 20CE61955D4C;
-	Wed, 31 Jul 2024 07:56:57 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.143])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0611B1955F3B;
-	Wed, 31 Jul 2024 07:56:53 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 31 Jul 2024 09:56:56 +0200 (CEST)
-Date: Wed, 31 Jul 2024 09:56:52 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: andrii@kernel.org, peterz@infradead.org, jolsa@kernel.org,
-	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] uprobes: kill uprobe_register_refctr()
-Message-ID: <20240731075651.GB12813@redhat.com>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134530.GA12318@redhat.com>
- <20240731143748.55bb97c1d68aea1f1946729d@kernel.org>
+	s=arc-20240116; t=1722412630; c=relaxed/simple;
+	bh=5xMUQQnHfiLd7ujJcusm+8XOcwFYI/PU72Bs1QhUKnU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QRdlqAAOjA6u/VT+7PLJOh5IIrAEBBnOKqKLRGmJr3IuMVA98IOTlAH1EnJPXqBm6gI14TH3mOEgXR1EKOyPVzI/GAa43TaUsz3TOuhfiWqW0sNLFhkUp7Xrl/d3UbOG28jZLwDgah1xo7GfjM9N6cnGUiRl6lrxGEpWWKEAwGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=q5MmTzUL; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428243f928cso13161625e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722412627; x=1723017427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mERmM/WSYpb8xDnumITCRtHrfI1svR9aufTX1a5k9Go=;
+        b=q5MmTzULb08VR1wEzzpxx9/pxcVvZh0vbR/JTsZnqbLkxiMvT0kfPpZ+mBV5gWtXnl
+         5KJFhhTwwABjGC+PLvgOi0X3kCtEZsEyq1NeuIL8pS2yZryAcvJTQ9Cp6FMNkGMfXSfg
+         nyAJuAyTejo3+16X24MBL+hZBaXL5qOjDtwZ5g2Wej2qMxXQQlOQteJ4pkwxPRZFZmQR
+         RLn2Qk4X9JTURvtHxjvxBzBvFLeQ2c2fv7eCeSoZoupu+9T/06i6mikMR8q03iX7VVkZ
+         uA/h44S8DuwUSMYCfgBXwIWl8dr56dA8Z99D9bH4bATp6D8dgcqvDO4T9zf9FnlzRgCJ
+         QsFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722412627; x=1723017427;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mERmM/WSYpb8xDnumITCRtHrfI1svR9aufTX1a5k9Go=;
+        b=jVG+Pd/+C7QdY4dJ5S7nSZRteRzrT3KHjYsOh1nuiU21O9i8zOc3BGOT+KXy0MXAEG
+         FVtXLRoglzk4L2dDjwNPRAccgV2umA+IO80nYqoeG06Xnz+FH36shI6UTV8LpVDf3SZG
+         R1IQqBLew7mLXAspKbixh9G5eUXY9d/+O4wpQXSzBZTDsSa+CushdGa9/AT2/SG4I/UW
+         tkAYly+0ubcOY4OVA84FyM8/LhOD+ji5xsKVg2MGPA1yeGabqAR9vpsL16iyoZuz30IL
+         XhfpxPQdu3YH43ObsQUnWhpiRw8pLw9cvccKbRZac4vASoPr7UqDrsvQhOdvTiYkPaGo
+         Eqzw==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Nbkg273sdJp/l7oaR7UxB02XOkF6eP8Cx7kRbZnd/oZ3YXmeQjdLIkFzMeq1i1S2x9YkB4CljmSrbD+NZ8Y363lTkxkjR4R0qQLw
+X-Gm-Message-State: AOJu0YxPdrKu31wZqndYifGvYf7Xogch1WMkLoZx5qAitaQK3b3slkZC
+	SUGfgtu8wk0H7Q+wduFUSdYqnYeDOMKJVrLWszPg4cUSDDpy7+nMGrJN5VDGbr8=
+X-Google-Smtp-Source: AGHT+IH/zfkXj5ULQZEFU6EvFUMJIx7j4wtOjvfjIg2atf3Em/LAAqfxwNTWM/qdKFYhsjISa/CeKA==
+X-Received: by 2002:a05:600c:1550:b0:426:5e8e:410a with SMTP id 5b1f17b1804b1-42811dd7a57mr93317365e9.24.1722412627182;
+        Wed, 31 Jul 2024 00:57:07 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9c3f:3dd8:b524:cb31])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb223f6sm11524355e9.45.2024.07.31.00.57.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 00:57:06 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: brgl@bgdev.pl,
+	Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	warthog618@gmail.com,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools/gpio:Fix the wrong format specifier
+Date: Wed, 31 Jul 2024 09:57:05 +0200
+Message-ID: <172241262296.10170.8900238511707870912.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240724024636.3634-1-zhujun2@cmss.chinamobile.com>
+References: <20240724024636.3634-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731143748.55bb97c1d68aea1f1946729d@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 07/31, Masami Hiramatsu wrote:
->
-> OK, but it seems
->
-> tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
->
-> is still using uprobe_register_refctr().
->
-> That should be updated too.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-OOPS, thanks a lot :/
 
-I'll send v3 with the additional change below in reply to 4/5 in a minute.
+On Tue, 23 Jul 2024 19:46:36 -0700, Zhu Jun wrote:
+> The unsigned int should use "%u" instead of "%d".
+> 
+> 
 
-Masami, Peter, please let me know if you want me to resend the whole series.
+Applied, thanks!
 
-Oleg.
+[1/1] tools/gpio:Fix the wrong format specifier
+      commit: ac93ca125b5409df56c5139648bbe10fd1ea989b
 
---- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-+++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-@@ -458,8 +458,8 @@ static int testmod_register_uprobe(loff_t offset)
- 	if (err)
- 		goto out;
- 
--	err = uprobe_register_refctr(d_real_inode(uprobe.path.dentry),
--				     offset, 0, &uprobe.consumer);
-+	err = uprobe_register(d_real_inode(uprobe.path.dentry),
-+			      offset, 0, &uprobe.consumer);
- 	if (err)
- 		path_put(&uprobe.path);
- 	else
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
