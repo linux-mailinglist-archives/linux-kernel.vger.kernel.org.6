@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-269007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA4D942C36
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:42:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B68C942C3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:44:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB0571F276E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E602281032
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:44:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D84B1AC429;
-	Wed, 31 Jul 2024 10:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E46A1AC44F;
+	Wed, 31 Jul 2024 10:43:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="koN49hfT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Bn6l+77Y"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKLVI+dz"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A67916D4CB;
-	Wed, 31 Jul 2024 10:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EBA16D4CB;
+	Wed, 31 Jul 2024 10:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722422526; cv=none; b=mpgR8ouOwAZsPyCv4euTVuoID6cT76ASh1ykud5TuI5Oa4z50mPKRd3sBtX9tfGtLfMNtCGgPgFqmvFzhy4Tn66z9dLuY3EBlH2it6hvswwWVsaTNgDlgV1J+NhtdL4f4nXbTzWi0MwHFhXkGtRFPjWGetR/uMbifEM8U0cTEYg=
+	t=1722422631; cv=none; b=JFAi53t55yeLT31bs3lxLtfSj4cqUVuX216V2z/f1TWjqE1sT54Y7HMRT92myPff3j22M+51WmtO8wUKynQ1Iw7FoKGgxKqxb8dvNeUmxXNju6jPJopQjoqH77lXC3HHMrE74l7qSTqoB4tavExYS7rOE31oevlY60Hnyx13Szg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722422526; c=relaxed/simple;
-	bh=c1PZJWTnZ77sIhB6Q/PuYa0ol3vZjIlc5O0OR+alf90=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KtR/RlqKVDpZ5+tQW3cJ3e+MQZC/zJHo+gYLVnT9y6M/YKSEqayy8UGqCTDcss9R/lcx5zHkVPWWSglcLDDCjSDdgSO/kIs/UyPNwrfa0OftfOOfF4hsI6dFFR5ix/gUjKYyeOAw1Gd7sgift2/8j4W+NXxhc8JkWDTcefYoMXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=koN49hfT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Bn6l+77Y; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 31 Jul 2024 10:42:02 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722422523;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4xsLdUGOkXdnQjiuDxXU6QaiwEFqtg7nmTnt54WPI64=;
-	b=koN49hfTZoAcWLH2L3t3CUJMOONhPHfQbpvwIaebqzJDh0zNBK19YBf748KQSK42JBYy8n
-	3+Cg0hW5as/yTmjR85DG5T1i67fZvosMaIP/EhWsQY5D+2ew5hWcrPnBI4LJxLMeXjPQSK
-	zChsEx37IoAJEqO3kID3IjlYy7O818MpFjDXVqJybBfOhEe7oVSY6ub1tjQzNu6N4yL1rz
-	uPdnAPVOmK0dKL4FZssM7rbQkc725hPF9ZPTER8qvOkhi5Ojp/9oohbsZtuEhPZx4JdooI
-	2ntSicEqTIcg1vJ2ZtlKlh0uYmAQRpx0VsDOoCw1xg8FNh1UxrPDwX7low/ecw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722422523;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4xsLdUGOkXdnQjiuDxXU6QaiwEFqtg7nmTnt54WPI64=;
-	b=Bn6l+77YApqoK1b5OnItdksiN8vEx0/TbZeolFY+z8/YC9yiZNpkkfYDRm2LF79u0aRq+f
-	Z6JgTiZUWtpH28CA==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] tick/broadcast: Move per CPU pointer access into
- the atomic section
-Cc: David Wang <00107082@163.com>, Thomas Gleixner <tglx@linutronix.de>,
- Yu Liao <liaoyu15@huawei.com>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <87ttg56ers.ffs@tglx>
-References: <87ttg56ers.ffs@tglx>
+	s=arc-20240116; t=1722422631; c=relaxed/simple;
+	bh=CZpbxjYakAqKKHm1+a5euY33QbkxnqhBmouUV1qwPtk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sXfY7Ct5B0BgqEGtqDBxFgvJJqcYcMmdKzoN+NTgPdU5FRTFwMAPXCaArNBEZwAf+dnpT93joXiAwRHWHpycvTy0ybgQX7ib2S/0Dj3nX8HXko2XXq4Czg5NVlg5qgZfHFg7HrsTN8xLCWaKSFkDoaTsAcI//Ai/lEszUKt1r/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eKLVI+dz; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-704466b19c4so3384836a34.0;
+        Wed, 31 Jul 2024 03:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722422629; x=1723027429; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yITlV2EmP04/pdfMm5rgZ7lDN6+U5nqKkJKbXuYj7Jg=;
+        b=eKLVI+dzX0C1j/rdMaQawA48KeHpvPWaPAh1JP7dbEOAXK/8XZ6S2XzvqPn5koecNR
+         fMLsYD4NiZ5yBvojw576YYjK/Kfxp6n9fpXf4aMaggXNuKy/2NrLKQwzv5tN+zhLjpt3
+         L/0fsvDszsSLAQcP9g8KWQmkWcGZm2jSjgHm08pvZo2L/P604Wn4Cjz+KDuyn7vNCXAN
+         ZpRM6Q1h8djed5LXKm1JHhXzQe8UblbN40eAH0s3JfyZTKgsDnDNcXzjX2YtzsqJ75fW
+         mqhOX2h3V8y0721xfzb1AdlA7vs8r05284UAsnQfADRn7W5RfG9XTDs/9bAkmnqmO3ut
+         3fWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722422629; x=1723027429;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yITlV2EmP04/pdfMm5rgZ7lDN6+U5nqKkJKbXuYj7Jg=;
+        b=jqVCUQe8NPM5LkaqWRZL04Pq+HqxKFPUPnIS7uZP4PgMlzfruwq21E2EpLvXGNHDCL
+         7OQ6cd3hISLsp1GxRj49f89pInrW1abZe2VzcBRf74OBtL4XXaU87GFVeH1bRJ3DMWQX
+         lIyFm4e+h3L8JJ9/F7SG7e8Nmhr/Ak6VcFrxMEhsi0bMK0+b7mLeDG4jHQKegKH4EDaM
+         edhd+akUAPyUGK7qvY2fM+9SJJC5zASheFJc3p08Vve4QKZTGHuFm1LXp9/MKHMR8WCE
+         qHH8fqebI0wKjfBB2780bcAG0B3BySN1AzBuXdLen/Ti9/akTg8cGH/eya4ETy0+Y2k3
+         tAvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWDqHvxpQs8KvswKBT7vouY7j5wydK343Fnyeq9yzGvKfvzsGDor3/8n5/g3zPRtMaMUcS2nl331wjKS4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBaMLVD4GAwVB1gjbYEXIa3lCX4xv+QFjLJy6rIkpYwEaOLSQb
+	QREevZRt8Wfxoriz1SDdjhB10vNYTsvFzGm8SnUoLlQvZsv9FTme
+X-Google-Smtp-Source: AGHT+IF7lo5715caiO5yQuVUS/Wxz7nFOFtJwBaZnI797vwpaHgFj3G+ha2rUkQ1l3bkOpJG6N5crw==
+X-Received: by 2002:a05:6359:b97:b0:1ac:f3df:3be1 with SMTP id e5c5f4694b2df-1adb243f94amr1301149855d.4.1722422629214;
+        Wed, 31 Jul 2024 03:43:49 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7a9f816da59sm8791375a12.29.2024.07.31.03.43.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 03:43:48 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	rock.xu@nio.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v1 0/5] net: stmmac: FPE via ethtool + tc
+Date: Wed, 31 Jul 2024 18:43:11 +0800
+Message-Id: <cover.1722421644.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172242252292.2215.8458613461295137284.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the timers/urgent branch of tip:
+Move the Frame Preemption(FPE) over to the new standard API which uses
+ethtool-mm/tc-mqprio/tc-taprio.
 
-Commit-ID:     6881e75237a84093d0986f56223db3724619f26e
-Gitweb:        https://git.kernel.org/tip/6881e75237a84093d0986f56223db3724619f26e
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Wed, 31 Jul 2024 12:23:51 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 31 Jul 2024 12:37:43 +02:00
+Furong Xu (5):
+  net: stmmac: configure FPE via ethtool-mm
+  net: stmmac: support fp parameter of tc-mqprio
+  net: stmmac: support fp parameter of tc-taprio
+  net: stmmac: drop unneeded FPE handshake code
+  net: stmmac: silence FPE kernel logs
 
-tick/broadcast: Move per CPU pointer access into the atomic section
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |   6 +
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  |  37 +++++-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |   7 ++
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  14 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |   3 +
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  | 111 ++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c |  25 ++--
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   |  95 ++++++++++-----
+ include/linux/stmmac.h                        |   2 +-
+ 9 files changed, 248 insertions(+), 52 deletions(-)
 
-The recent fix for making the take over of the broadcast timer more
-reliable retrieves a per CPU pointer in preemptible context.
+-- 
+2.34.1
 
-This went unnoticed as compilers hoist the access into the non-preemptible
-region where the pointer is actually used. But of course it's valid that
-the compiler keeps it at the place where the code puts it which rightfully
-triggers:
-
-  BUG: using smp_processor_id() in preemptible [00000000] code:
-       caller is hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
-
-Move it to the actual usage site which is in a non-preemptible region.
-
-Fixes: f7d43dd206e7 ("tick/broadcast: Make takeover of broadcast hrtimer reliable")
-Reported-by: David Wang <00107082@163.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Yu Liao <liaoyu15@huawei.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/all/87ttg56ers.ffs@tglx
----
- kernel/time/tick-broadcast.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/time/tick-broadcast.c b/kernel/time/tick-broadcast.c
-index b484309..ed58eeb 100644
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -1141,7 +1141,6 @@ void tick_broadcast_switch_to_oneshot(void)
- #ifdef CONFIG_HOTPLUG_CPU
- void hotplug_cpu__broadcast_tick_pull(int deadcpu)
- {
--	struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
- 	struct clock_event_device *bc;
- 	unsigned long flags;
- 
-@@ -1167,6 +1166,8 @@ void hotplug_cpu__broadcast_tick_pull(int deadcpu)
- 		 * device to avoid the starvation.
- 		 */
- 		if (tick_check_broadcast_expired()) {
-+			struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
-+
- 			cpumask_clear_cpu(smp_processor_id(), tick_broadcast_force_mask);
- 			tick_program_event(td->evtdev->next_event, 1);
- 		}
 
