@@ -1,108 +1,127 @@
-Return-Path: <linux-kernel+bounces-268470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A8B94250B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:25:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FEA294250C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:27:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E99A8284745
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:25:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC061C22820
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB2A1862F;
-	Wed, 31 Jul 2024 03:24:55 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A019182A0;
+	Wed, 31 Jul 2024 03:26:59 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBDF1B7E4;
-	Wed, 31 Jul 2024 03:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B43175B1
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722396294; cv=none; b=G2cskZn5z+d1ccnw+xSwZr1uN7RrSGDs/CrpyIW8fRIn2iWvWvJxcaHNnfVbgxgUrRWxdNr/O1eWSKcDt1aNziXvHhI6OQ4LLyHWyfLYoCWLeMH29gMNsL4SqCg0WdhUWPv9ifeY8WOUw6Wvm4jG2bE9gWF4t7Z8B7S3kK13h60=
+	t=1722396419; cv=none; b=ksP0oqff//yk1ZcI1b5auChdbU5aJJsjijcDqXPnAhihx0P/wbXQXx1c8Me5mqgZ0RmRQLbuxsCGtqlL3bWFKKUokD7MwIXfpjGlLJPIAEzM4SsJn8zNCkYMRcz8URyYaF+CfV97adNJZ20Gij/UJcLBtmuX3b5ugDyCi3VDZdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722396294; c=relaxed/simple;
-	bh=se5qPHX+45kqLYveaN/QeV4JLjgf9rYwG1qdS38SNDw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=mb9nvEzBuPZfzORiNee9vqyLAbmIXfEqYLnYRv2bCeAP7sR/i0nsmr4ng3G7F3dcaT83BsOIMjvrYYhGCPE1HQOjo6p5J/ko+bZHSgLcC3KWah0XGeCZhcq45UMATnB5nm5ZSYelly+sQW4a4ogaFl4vpycrSEdRITm2wai35PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYcsN08qGz4f3jM1;
-	Wed, 31 Jul 2024 11:24:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A7C421A1621;
-	Wed, 31 Jul 2024 11:24:48 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4V+rqlmMIxcAQ--.41185S3;
-	Wed, 31 Jul 2024 11:24:48 +0800 (CST)
-Subject: Re: [PATCH 1/7] jbd2: correctly compare tids with tid_geq function in
- jbd2_fc_begin_commit
-To: Kemeng Shi <shikemeng@huaweicloud.com>, tytso@mit.edu, jack@suse.com
-Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
- <20240730113335.2365290-2-shikemeng@huaweicloud.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <2209e7b1-999f-ce69-6d9f-4b825fa6f7d9@huaweicloud.com>
-Date: Wed, 31 Jul 2024 11:24:46 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1722396419; c=relaxed/simple;
+	bh=liKaOn1dZUadxK42k7YYL4aluuKR8mZbXAqMmhNmRsw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PV3jMVZEwc6/YMYlCRio5an9DS8oGX13CjmnrrP9gPR1MKqrXx3i2rUMvXzBJAXWONYkbjd2u1zpKiA0si9VkY7eFSTu0PWvplscZx5OXQDj+RBrHVSJ2bUuSm4LFr5JaofBhjgCEBcvw8ZGLneEFFiZNAg7a4dxJy8/9+4UYzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from qiao.. (unknown [210.73.53.31])
+	by APP-01 (Coremail) with SMTP id qwCowAC3vUnmrqlmoLRaAg--.54511S2;
+	Wed, 31 Jul 2024 11:26:36 +0800 (CST)
+From: Zhe Qiao <qiaozhe@iscas.ac.cn>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alexghiti@rivosinc.com,
+	surenb@google.com,
+	akpm@linux-foundation.org,
+	wangkefeng.wang@huawei.com,
+	willy@infradead.org,
+	qiaozhe@iscas.ac.cn
+Cc: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fault_error()
+Date: Wed, 31 Jul 2024 11:26:27 +0800
+Message-ID: <20240731032627.59696-1-qiaozhe@iscas.ac.cn>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240730113335.2365290-2-shikemeng@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAHL4V+rqlmMIxcAQ--.41185S3
-X-Coremail-Antispam: 1UD129KBjvdXoW7Gw1DWF43WFyrJFy3WF1fCrg_yoW3CrX_XF
-	1SyrnrXrZIgrs5Aw18Cay8urnagrs7ur1rG3Wxtw1akw45GF1rtFnrJas8Kr1DWFWktrW5
-	Aa92vw40qF9xXjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
-	UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAC3vUnmrqlmoLRaAg--.54511S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7WF4UZFyxZrW3AFy8CF4UJwb_yoW8GF15pF
+	Wak3y2vrZ2grnayFZ2yr1UXa1rG3Z5tw1jk342kasY9r45ury5Gws5Aw4vg340qFy8XFy5
+	Ar4YyFyfuFWDuwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWUuVWrJwAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+	6xIIjxv20xvE14v26r126r1DMcIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
+	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwI
+	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
+	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
+	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
+	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JU7GYJUUUUU=
+X-CM-SenderInfo: ptld061kh6x2xfdvhtffof0/
 
-On 2024/7/30 19:33, Kemeng Shi wrote:
-> Use tid_geq to compare tids to work over sequence number wraps.
-> 
-> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Add processing for VM_CAULT_SIGSEGV to mm_fault_error () to avoid
+direct execution of BUG().
 
-Looks good to me.
+Fixes: 07037db5d479 ("RISC-V: Paging and MMU")
+Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
+---
+ arch/riscv/mm/fault.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
-
-> ---
->  fs/jbd2/journal.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-> index 1ebf2393bfb7..da5a56d700f1 100644
-> --- a/fs/jbd2/journal.c
-> +++ b/fs/jbd2/journal.c
-> @@ -710,7 +710,7 @@ int jbd2_fc_begin_commit(journal_t *journal, tid_t tid)
->  		return -EINVAL;
->  
->  	write_lock(&journal->j_state_lock);
-> -	if (tid <= journal->j_commit_sequence) {
-> +	if (tid_geq(journal->j_commit_sequence, tid)) {
->  		write_unlock(&journal->j_state_lock);
->  		return -EALREADY;
->  	}
-> 
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 5224f3733802..a9f2b4af8f3f 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -61,26 +61,27 @@ static inline void no_context(struct pt_regs *regs, unsigned long addr)
+ 
+ static inline void mm_fault_error(struct pt_regs *regs, unsigned long addr, vm_fault_t fault)
+ {
++	if (!user_mode(regs)) {
++		no_context(regs, addr);
++		return;
++	}
++
+ 	if (fault & VM_FAULT_OOM) {
+ 		/*
+ 		 * We ran out of memory, call the OOM killer, and return the userspace
+ 		 * (which will retry the fault, or kill us if we got oom-killed).
+ 		 */
+-		if (!user_mode(regs)) {
+-			no_context(regs, addr);
+-			return;
+-		}
+ 		pagefault_out_of_memory();
+ 		return;
+ 	} else if (fault & (VM_FAULT_SIGBUS | VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE)) {
+ 		/* Kernel mode? Handle exceptions or die */
+-		if (!user_mode(regs)) {
+-			no_context(regs, addr);
+-			return;
+-		}
+ 		do_trap(regs, SIGBUS, BUS_ADRERR, addr);
+ 		return;
++	} else if (fault & VM_FAULT_SIGSEGV) {
++		do_trap(regs, SIGSEGV, SEGV_MAPERR, addr);
++		return;
+ 	}
++
+ 	BUG();
+ }
+ 
+-- 
+2.43.0
 
 
