@@ -1,161 +1,234 @@
-Return-Path: <linux-kernel+bounces-269163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB115942EAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:36:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40E79942EA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289381C215CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 648891C21610
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F871B1401;
-	Wed, 31 Jul 2024 12:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4134B1B1409;
+	Wed, 31 Jul 2024 12:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sp8xW5+D"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fq0Dk+YT"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7C51AED3A
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99451B012E
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722429368; cv=none; b=aE5t0Uc9+DXSCuEyPP0gkWCseV/PAmvL7qxYp42PACshaEc48ye6+4UxQGY8hQVz93cjlVwR92PMWC0b6JbqJJJXG9Et65LYhzUGMW8vrtNY4FJe3/pIFjDSBdH7Mo5onFscWwdlld/XjyXPboArTKMWsULIAUCG+7NAb7dPwCU=
+	t=1722429315; cv=none; b=UpzUxkWZUYAkolm97/2tPSFSKomjGWDy3y8EmWoaDHPsSuvOeGZn2Kl05ltQbKqgN8MetgGqzrsMXzQy/W+T4tbCuPrzL0MVABkljcKcgc0edGht3PvFubYkG4nBqDv0/KbNFaVVpIM34Z6M9T8PZdHsGWuprkO+oQPBhe4ViHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722429368; c=relaxed/simple;
-	bh=WlOOsz/BddjK9BJ8X1xSO57i4x404QClCnZqzgYNZWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WWa16fFPbEnulBidM8sDBhq29p1mm/w9yZTIwCWdESPwgTk7Qeh1EWBNCDXuzR69TosbBRRmizyfUHv+WQcVpiNZCHYm7x4LgRMawrj7Hwlpbe3Fo2gtReSB+5M49Mh/8tltFMvcOY7sryntRiiELG/YYM4l5EgzDIILdg4fmlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sp8xW5+D; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722429365;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5Cq15lFRqX254TiblEFswKviVqFepxkbmzwO8PyVaqY=;
-	b=Sp8xW5+Dnu9di26ZR+UGvhy69x4lHhnd9wmkCqYjC/OJTlY5PgHTklWRFA2UPhcdOExBVZ
-	SQ9Ymg8mGKo67NAo6UyQPYFmiVIYSI6BPcdglZX+Xf6eed8Yt4RrIqkvXldcNKyVhsuglL
-	ms7nJGn0Kq1Qj3fixqCrWXJK3ZPhRUw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-XXaIVjrKPFCp7uNH2QC8hw-1; Wed, 31 Jul 2024 08:36:04 -0400
-X-MC-Unique: XXaIVjrKPFCp7uNH2QC8hw-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42808f5d32aso6965045e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:36:03 -0700 (PDT)
+	s=arc-20240116; t=1722429315; c=relaxed/simple;
+	bh=F7g6Jwb0g+6zJzbakncV3Hcpjd44JyJqciMFM3KHbkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLUh5MHcbZDTlV5DrrHLGQ1fDhuUlxFH0+0C8+7Z66OJNt4COSqXwc0Pr1vYN3jTWRxM/RCoWjFvgty/UPP7CGyYUlU6KktEEuto4dProZ8b+J9PED/koQ596jDoAFIjnA3xloUtlupuqW21hFmX6Mv0ilnT8BmJY5+amVuAjdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fq0Dk+YT; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4929540f38dso1618276137.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:35:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722429313; x=1723034113; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9plYtmRP80+wBlogJewa2d7p+Jj8DwjpEDlvgRHRWB0=;
+        b=Fq0Dk+YTzwRDG/fKkbe/amDNLOOvrkAVP3ALPEeceBaphyCWOkJqGoMmROnmE0oHS9
+         sJ4HswK8I5X2L1iugJicSc04QK9box5nTIZIMRUWdWVBQEwJ8R7XTWfLW9/Lh9tY4xQn
+         oHM0gXPGCuZJ/0+9+iOHyebktPxC/n/BpARyVOpDyHpJBU8iv8c4fGH6IZvwg5jSouwt
+         EiTKlua0Rc5qxgaV0wzm9Z7BAI6wIknmJMagMWSWyxETZ4ak67CKl4iLi+2d9DRgdrmQ
+         WT0PKHOcvKVO+KF/Un4aho9RzCtEY4KOeIkaYcs4MmrkcEHK/q9UzYro6/QqBKBDKmPI
+         +law==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722429362; x=1723034162;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722429313; x=1723034113;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5Cq15lFRqX254TiblEFswKviVqFepxkbmzwO8PyVaqY=;
-        b=I9f7qeggnAmOjZAAortUYFecBnCnhAAo9/NKH+HhgE+4cHvc5wZqgBmaEfLI8tlIEz
-         8rXOE/zbKAOtigP8FjbXj0baRYOE5MF/OjHIbiEtizdpNOk/4+KRSgrRki2Gnr355jQn
-         ivIlCul9YfkruiwSD9bgYwjQHzPRnFdMYIqoR2M8avWbRTiKxGr3BZHPZ6+s42euJZt8
-         iAmaE+h5Vmbp2tkh0amoQWO/S3R3OGWP33rforV7ymmyt9G4lnl78Fl5Ty0GimnomrTN
-         axFKA5ywaR90hG2i9uNJFO6vTz0p8EnaSTwqk6LFD5xFgUHF07aUt8Oz/WNvILsYEec6
-         uypA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjzviyq30S6+0WlqM6MDlkjgT68MCVbe/UbFCctnHsBQGFSYhFCpaDF4F+txIatwBYGfdg3m7QyRlHEYL5/4nVtupxKaCo52v/PvGs
-X-Gm-Message-State: AOJu0YxUYTtbR6lY0wA0vJuNFGWN7OfCp0lZ+u/BaMF5HJ9j9/7PABRg
-	/C0CE3O3EKGDoUhurEu46SjFxJK8C8Ky7OS1N3MNiwtkdlbzrC1oG3aGarRVBoDA1zwFRCOLK3F
-	rgkQzy4Ze/aALtoe85gTZZFFYo1MPHshfThCiqzezuO4IfXYd9gNYbwjUYRNchFhQl9rFVw==
-X-Received: by 2002:a05:6000:4014:b0:35f:2a75:91fd with SMTP id ffacd0b85a97d-36b34d24059mr7741551f8f.6.1722429362261;
-        Wed, 31 Jul 2024 05:36:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERtyUidPwaNumRAOZZK4tOwj3EaThvDdekjFGdjXct9xc5jiS45HLvLSR1u6b2d6FlB8ESjg==
-X-Received: by 2002:a05:6000:4014:b0:35f:2a75:91fd with SMTP id ffacd0b85a97d-36b34d24059mr7741534f8f.6.1722429361686;
-        Wed, 31 Jul 2024 05:36:01 -0700 (PDT)
-Received: from eisenberg.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c0829sm16925976f8f.17.2024.07.31.05.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 05:36:01 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH 2/2] ata: ahci: Remove deprecated PCI functions
-Date: Wed, 31 Jul 2024 14:34:56 +0200
-Message-ID: <20240731123454.22780-4-pstanner@redhat.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240731123454.22780-2-pstanner@redhat.com>
-References: <20240731123454.22780-2-pstanner@redhat.com>
+        bh=9plYtmRP80+wBlogJewa2d7p+Jj8DwjpEDlvgRHRWB0=;
+        b=teHn7N1Qqm8AczzYF3Yy07HMqlw9VlCAEW+g8Nd/DMBd5terfvf3XTAm4z0oMQ70Ah
+         60ZQpzcxbgFU54lv/2xr4V9XwPwVuWIdww5BbYqVbf69uVT8j96TqUpE9bDutCS4xKZk
+         IyCgH3KdIQ2QG4Z3gzX6PBWdqEB9X3fxBbmiias8pgaK+BxAavcQ0MB2Enn96AbBGI6K
+         KTCmtAV7m5gTvYIOFOnfgXzdeaXMHZoQwZc5TsXh0MocOu7/HJxpOapSA/526DBtwNR3
+         49jNkRJXCOFSAzX7T2QFCsE+e1DVwhvrX5I4iHoXKy2QEJnYJn55vx+i3LuQcU0nl2e6
+         P2fg==
+X-Forwarded-Encrypted: i=1; AJvYcCURHZKpXRX3gOtIxumvjR2lZCrHvgZ4VBolhr5awHRiQMuDjcOmjCd+juniOHFTuLLpe+gD51EIRdlVrH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4etjeWT1mTK0WcxUS3lYzY4s9X3jDSBxKn+fdwQsc39IWYecD
+	60sWhWFKHVPguic6mHw9glsYUBnyaQaAmdNJq5NdkkHqlJMbW2NtaASFVyZp/et97ZjyuvzzSBz
+	ix4zA3seKk3N+fXkZhmVV1S0nL/imWFTZ+2cHtw==
+X-Google-Smtp-Source: AGHT+IGN7M9FJCdRY3tkah4AXjZbzv47boPqqFbb4PPEhjPuCbgfBfVFwzyXe0/MWeRtskwNEueTT6O9SNvE7rYef2A=
+X-Received: by 2002:a05:6102:548b:b0:493:e713:c0ff with SMTP id
+ ada2fe7eead31-493fa15f9b3mr17451687137.4.1722429312654; Wed, 31 Jul 2024
+ 05:35:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240730151639.792277039@linuxfoundation.org>
+In-Reply-To: <20240730151639.792277039@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 31 Jul 2024 18:05:01 +0530
+Message-ID: <CA+G9fYuotiGuEVYgNp5hGh3tWJcGykZycfH7kzAC2PgxwPWfrQ@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/568] 6.6.44-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pcim_iomap_regions_request_all() and pcim_iomap_table() have been
-deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On Tue, 30 Jul 2024 at 21:21, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.44 release.
+> There are 568 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.6.44-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Replace these functions in ahci with their successors,
-pcim_request_all_regions() and pcim_iomap().
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/ata/acard-ahci.c | 6 ++++--
- drivers/ata/ahci.c       | 6 ++++--
- 2 files changed, 8 insertions(+), 4 deletions(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/drivers/ata/acard-ahci.c b/drivers/ata/acard-ahci.c
-index 547f56341705..3999305b5356 100644
---- a/drivers/ata/acard-ahci.c
-+++ b/drivers/ata/acard-ahci.c
-@@ -370,7 +370,7 @@ static int acard_ahci_init_one(struct pci_dev *pdev, const struct pci_device_id
- 	/* AHCI controllers often implement SFF compatible interface.
- 	 * Grab all PCI BARs just in case.
- 	 */
--	rc = pcim_iomap_regions_request_all(pdev, 1 << AHCI_PCI_BAR, DRV_NAME);
-+	rc = pcim_request_all_regions(pdev, DRV_NAME);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
-@@ -386,7 +386,9 @@ static int acard_ahci_init_one(struct pci_dev *pdev, const struct pci_device_id
- 	if (!(hpriv->flags & AHCI_HFLAG_NO_MSI))
- 		pci_enable_msi(pdev);
- 
--	hpriv->mmio = pcim_iomap_table(pdev)[AHCI_PCI_BAR];
-+	hpriv->mmio = pcim_iomap(pdev, AHCI_PCI_BAR, 0);
-+	if (!hpriv->mmio)
-+		return -ENOMEM;
- 
- 	/* save initial config */
- 	ahci_save_initial_config(&pdev->dev, hpriv);
-diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-index a05c17249448..905af6b68d80 100644
---- a/drivers/ata/ahci.c
-+++ b/drivers/ata/ahci.c
-@@ -1869,7 +1869,7 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	/* AHCI controllers often implement SFF compatible interface.
- 	 * Grab all PCI BARs just in case.
- 	 */
--	rc = pcim_iomap_regions_request_all(pdev, 1 << ahci_pci_bar, DRV_NAME);
-+	rc = pcim_request_all_regions(pdev, DRV_NAME);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
-@@ -1893,7 +1893,9 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (ahci_sb600_enable_64bit(pdev))
- 		hpriv->flags &= ~AHCI_HFLAG_32BIT_ONLY;
- 
--	hpriv->mmio = pcim_iomap_table(pdev)[ahci_pci_bar];
-+	hpriv->mmio = pcim_iomap(pdev, ahci_pci_bar, 0);
-+	if (!hpriv->mmio)
-+		return -ENOMEM;
- 
- 	/* detect remapped nvme devices */
- 	ahci_remap_check(pdev, ahci_pci_bar, hpriv);
--- 
-2.45.2
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
+## Build
+* kernel: 6.6.44-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: 7d0be44d622fe39aeb7f09de19807d1dce272100
+* git describe: v6.6.43-569-g7d0be44d622f
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.4=
+3-569-g7d0be44d622f
+
+## Test Regressions (compared to v6.6.42-17-ge83c10183573)
+
+## Metric Regressions (compared to v6.6.42-17-ge83c10183573)
+
+## Test Fixes (compared to v6.6.42-17-ge83c10183573)
+
+## Metric Fixes (compared to v6.6.42-17-ge83c10183573)
+
+## Test result summary
+total: 246982, pass: 213532, fail: 3566, skip: 29419, xfail: 465
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 127 total, 127 passed, 0 failed
+* arm64: 36 total, 36 passed, 0 failed
+* i386: 27 total, 27 passed, 0 failed
+* mips: 24 total, 24 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 34 total, 34 passed, 0 failed
+* riscv: 17 total, 17 passed, 0 failed
+* s390: 12 total, 12 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 31 total, 30 passed, 1 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-smoketest
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
