@@ -1,170 +1,209 @@
-Return-Path: <linux-kernel+bounces-268661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB605942782
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79619942786
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681EC282736
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0901F23950
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0E81A7F83;
-	Wed, 31 Jul 2024 07:06:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7B11A4B58;
+	Wed, 31 Jul 2024 07:07:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QZshJLrw"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eHionC9k"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065D21A76D3;
-	Wed, 31 Jul 2024 07:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F850266AB
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722409561; cv=none; b=UUrUWd4QXHu/8eoL7ui8mR1A+6Zh/oTP+z6IRWhQFMK9AIVyv5FwPQu538D/4LJ4NzJtChbCmMOPl5eWM3fX2Reh4NjkridjHtC1VSOCq9oK+BDYKZvzlGnjxnmza+wLOsD5ExBxr4PezOwTvVwptcpnaNYJ8IH8ADXMX2OeKiA=
+	t=1722409647; cv=none; b=PI6yfKPRVlkO6104pfMicqgs+XtWBPT6pjHLhl4/WJOdMDC3QUZQ65bBJCvirTTTdRAZcccGk1zSFCAzi8AdAI2w6ZbSpnSYR+mP81nAy0SDlrhhuWg3cQHJadf+fCpzfGc20Ju8REvgDz1jYxs7q+Uo56TrpfNWXK/e/a7vkrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722409561; c=relaxed/simple;
-	bh=GurD/Q0npPzHPTRJX8cDQoXtccXZwbnjZ9gjIPH/mms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TYZga6SoyOFZxsfdD+kjAZU5jHGdRGgBSIdXWIQhREZOUY0AY8mvxauVHxNMgal4RvnP42F1lFiPrtq287JyU4gEPvFi80q6pgJ52XkevPQ7H/iZ+YZslbtZd31jx175fpp9+c50VqMujWOnY/Bl4gBoCzZRpTld/T/4YqcGp7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QZshJLrw; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722409558;
-	bh=GurD/Q0npPzHPTRJX8cDQoXtccXZwbnjZ9gjIPH/mms=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QZshJLrwme+plhI3Jf9Jyv6pV26GARlnGTptV1j+qt9dYm1/+bvLhpDuRZ2yydSwL
-	 hFsAg3vtU8rk3G4q7CVapvn8i078PxWtmHpxHhaKKdJ0qDj6VC8EQRXs/XRfp2TIO+
-	 D0bZwjfmBdtXJXhR6Zx0ghbkrriEcF1zZlb3mBuNBdiB+0PB6eye78YbUeIH86/UmY
-	 powpJUWkoaXFV5yCZy56SckMQnerxRXlrqFoWzqIMMJsby6SN1Os0F056Ruiy8dlwz
-	 auSSKHt6ijHz7Y6tx+gSRMO5LAhMi+105rg55y0AD9fnS1VBT6HXAczcwhhavq360+
-	 fGZyqnqXhzynA==
-Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DE8303780B79;
-	Wed, 31 Jul 2024 07:05:57 +0000 (UTC)
-Message-ID: <fb7f0071-503c-4f06-bae2-1c0e6d69a5e3@collabora.com>
-Date: Wed, 31 Jul 2024 09:05:57 +0200
+	s=arc-20240116; t=1722409647; c=relaxed/simple;
+	bh=YPyvNeoLsZV/8SRLmt6tzoyEftxMwY363Jj6/4Cvt9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A4hovV4hqXcASIqGRXY3LAVhxOUevIqMWdioq26cr+DPIi9caRseLU4Sfm3t/eP4Lq9U6J2VnrJuGsE0HZM4NE/3fvy0Az6TlGFzyKA0f9TNDJwfcMbgywFB1XIOe9r37U0WsImWRoG8ACauKlJRgPR3VK5yEEJ5mz4n1DjNeeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eHionC9k; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc34431so4251357a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722409644; x=1723014444; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tpy+nnibbUxT24aBwgVje1ug92d+vgtxsaPNSOQztMA=;
+        b=eHionC9kHczv8tcQqz5cZjTfT7cdrCDbCE2t+C+Iwmd8zOXaCrlMjAq3nHriPU9Ujp
+         FJAjDtKvfA3boYEr0XzxhZhBLIX3wyp0cneyvO0Vdx21KffCh7G3Qwo/Pko0Y05nb077
+         UCV8tBrndQt3d6fgJU/BvznNdyoFf3T6xM3HDaRyXLCnkgj+XcyNTwEoV/SFf0S1izSH
+         p5N6LEEcaHw8+90+Vp2a42mTYiJ78+vBNKLCic7bqzOjIvrQzTkwaftg09WGUp6GPE9G
+         uarhMXT2AsrCkCIIWRj3+1CM8WvVFdO9WXXYu44CggiXFTQjcsfio7fsXiPZDLHs7xWy
+         EeAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722409644; x=1723014444;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tpy+nnibbUxT24aBwgVje1ug92d+vgtxsaPNSOQztMA=;
+        b=lEUkRxX4Qrb2DFmQg9pzEsr+eHVjj0pRH+4/zLe8ykLtd4cC/5nGzaZp5yU77dRZbE
+         Vk4dSL3cs4L/lSviT67pLsYi0zUmgDhTiIFEMrZxhYAq8479wtHNE7BUbuqIJ3cQ9u0R
+         TA3MMeonf9NPjG5JQCa/sd/hM1mCQ5O8YyvxvWRaK9MOl7F8d3M3HndZANxdWH1FtD8J
+         GgQ79gC8lNBC21Z7dCaZ9/Ml25bBWGyiZVRl3Fv3vQjUnHPZt7aKYrlJD6RwNhQ+BHY8
+         u2Q1uD5MitumuJHo+4ezMnAqRPAAq8vlocaoX3zTsSSRDbJCP/Rd3T2O+tcYjAXRSNGU
+         JtLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIr+5YqYa9hqWiLRa4V8M/QhcEIHKdO9wbPRjZNOOjqmU1yMNI77pAqVJvMelpG1fJPZ4PIootp1844ZZKUbWr6T4bNRfwNGuFgRut
+X-Gm-Message-State: AOJu0YxjEDvTOEOOStd770KWAfq9jckJAysIBawIpY+/lL5HdMLe2tEm
+	a80kYOOIUb941ZmeDXk2rjvuvXaRR3dbSTjnxxPeUnR9FuLVpDIGV7lV/W/xna/+vkgpqUkSo7L
+	ZxBff9NSbzy2qq5BnL5DVz1zT4luTDJ7HyjqPqg==
+X-Google-Smtp-Source: AGHT+IGZexRCl8N0H7iNZBGguludMOGdSOIQzKBFKm/K8c3Qp5kaS9pSyHKHgpZH79otFq1q9zgflZQKxZFwQLjP0Sw=
+X-Received: by 2002:a05:6402:51cc:b0:5a1:de88:a5ef with SMTP id
+ 4fb4d7f45d1cf-5b02317f4c0mr11460864a12.27.1722409643609; Wed, 31 Jul 2024
+ 00:07:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] media: test-drivers: Use V4L2_FMT_FLAG_ENUM_ALL
- flag
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
- <20240722150523.149667-3-benjamin.gaignard@collabora.com>
- <92c88d0f-219e-43b4-9dce-5ae99585b767@xs4all.nl>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <92c88d0f-219e-43b4-9dce-5ae99585b767@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240730151724.637682316@linuxfoundation.org>
+In-Reply-To: <20240730151724.637682316@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 31 Jul 2024 12:37:10 +0530
+Message-ID: <CA+G9fYvDT-Ek263796cuaOLCPMDAC3Gu6OkG=dSAP9CfBPYU5w@mail.gmail.com>
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-
-Le 30/07/2024 à 09:13, Hans Verkuil a écrit :
-> On 22/07/2024 17:05, Benjamin Gaignard wrote:
->> Since V4L2_FMT_FLAG_ENUM_ALL flag mostly targeting stateless
->> decoder pixel formats enumeration, update vicodec visl test
->> drivers to use it.
->>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->> ---
->>   drivers/media/test-drivers/vicodec/vicodec-core.c |  7 ++++---
->>   drivers/media/test-drivers/visl/visl-video.c      | 11 +++++++----
->>   2 files changed, 11 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/media/test-drivers/vicodec/vicodec-core.c b/drivers/media/test-drivers/vicodec/vicodec-core.c
->> index 3e011fe62ae1..1b4cd8ddd7c2 100644
->> --- a/drivers/media/test-drivers/vicodec/vicodec-core.c
->> +++ b/drivers/media/test-drivers/vicodec/vicodec-core.c
->> @@ -706,6 +706,7 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
->>   		    bool is_out)
->>   {
->>   	bool is_uncomp = (ctx->is_enc && is_out) || (!ctx->is_enc && !is_out);
->> +	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
-> This is not what I am looking for: to properly test this in v4l2-compliance this
-> flag actually has to make a difference in the result. I.e. you actually have to
-> add some limitation. This might be easier to do in visl than vicodec. As long as
-> at least one test-driver support this, then that's good enough for me.
-
-Ok I will focus on visl and made it return another list of formats when the
-flag is set.
-
-Regards,
-Benjamin
-
-> Regards,
+On Tue, 30 Jul 2024 at 21:22, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> 	Hans
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
->>   
->>   	if (V4L2_TYPE_IS_MULTIPLANAR(f->type) && !multiplanar)
->>   		return -EINVAL;
->> @@ -718,18 +719,18 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
->>   
->>   		if (ctx->is_enc ||
->>   		    !vb2_is_streaming(&ctx->fh.m2m_ctx->cap_q_ctx.q))
->> -			info = v4l2_fwht_get_pixfmt(f->index);
->> +			info = v4l2_fwht_get_pixfmt(index);
->>   		else
->>   			info = v4l2_fwht_find_nth_fmt(info->width_div,
->>   						     info->height_div,
->>   						     info->components_num,
->>   						     info->pixenc,
->> -						     f->index);
->> +						     index);
->>   		if (!info)
->>   			return -EINVAL;
->>   		f->pixelformat = info->id;
->>   	} else {
->> -		if (f->index)
->> +		if (index)
->>   			return -EINVAL;
->>   		f->pixelformat = ctx->is_stateless ?
->>   			V4L2_PIX_FMT_FWHT_STATELESS : V4L2_PIX_FMT_FWHT;
->> diff --git a/drivers/media/test-drivers/visl/visl-video.c b/drivers/media/test-drivers/visl/visl-video.c
->> index f8d970319764..c5f3e13b4198 100644
->> --- a/drivers/media/test-drivers/visl/visl-video.c
->> +++ b/drivers/media/test-drivers/visl/visl-video.c
->> @@ -341,21 +341,24 @@ static int visl_enum_fmt_vid_cap(struct file *file, void *priv,
->>   				 struct v4l2_fmtdesc *f)
->>   {
->>   	struct visl_ctx *ctx = visl_file_to_ctx(file);
->> +	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
->>   
->> -	if (f->index >= ctx->coded_format_desc->num_decoded_fmts)
->> +	if (index >= ctx->coded_format_desc->num_decoded_fmts)
->>   		return -EINVAL;
->>   
->> -	f->pixelformat = ctx->coded_format_desc->decoded_fmts[f->index];
->> +	f->pixelformat = ctx->coded_format_desc->decoded_fmts[index];
->>   	return 0;
->>   }
->>   
->>   static int visl_enum_fmt_vid_out(struct file *file, void *priv,
->>   				 struct v4l2_fmtdesc *f)
->>   {
->> -	if (f->index >= ARRAY_SIZE(visl_coded_fmts))
->> +	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
->> +
->> +	if (index >= ARRAY_SIZE(visl_coded_fmts))
->>   		return -EINVAL;
->>   
->> -	f->pixelformat = visl_coded_fmts[f->index].pixelformat;
->> +	f->pixelformat = visl_coded_fmts[index].pixelformat;
->>   	return 0;
->>   }
->>   
+> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
+> Anything received after that time might be too late.
 >
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.3-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+
+
+As others reported,
+
+Following perf build warnings / errors noticed on stable-rc 6.10 for x86_64,
+arm64, arm and i386 with gcc-13 toolchain.
+
+Perf build regressions:
+----
+* arm, build
+  - gcc-13-lkftconfig-perf
+* arm64, build
+  - gcc-13-lkftconfig-perf
+* i386, build
+  - gcc-13-lkftconfig-perf
+* x86_64, build
+  - gcc-13-lkftconfig-perf
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+Perf build logs:
+-------------
+tests/pmu.c: In function 'test__name_len':
+tests/pmu.c:400:32: error: too few arguments to function
+'pmu_name_len_no_suffix'
+  400 |         TEST_ASSERT_VAL("cpu", pmu_name_len_no_suffix("cpu")
+== strlen("cpu"));
+      |                                ^~~~~~~~~~~~~~~~~~~~~~
+tests/tests.h:15:15: note: in definition of macro 'TEST_ASSERT_VAL'
+   15 |         if (!(cond)) {
+          \
+      |               ^~~~
+In file included from tools/perf/util/evsel.h:13,
+                 from tools/perf/util/evlist.h:14,
+                 from tests/pmu.c:2:
+tools/perf/util/pmus.h:8:5: note: declared here
+    8 | int pmu_name_len_no_suffix(const char *str, unsigned long *num);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+tests/pmu.c:401:33: error: too few arguments to function
+'pmu_name_len_no_suffix'
+  401 |         TEST_ASSERT_VAL("i915", pmu_name_len_no_suffix("i915")
+== strlen("i915"));
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+tests/tests.h:15:15: note: in definition of macro 'TEST_ASSERT_VAL'
+   15 |         if (!(cond)) {
+          \
+      |               ^~~~
+tools/perf/util/pmus.h:8:5: note: declared here
+    8 | int pmu_name_len_no_suffix(const char *str, unsigned long *num);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+tests/pmu.c:402:36: error: too few arguments to function
+'pmu_name_len_no_suffix'
+  402 |         TEST_ASSERT_VAL("cpum_cf",
+pmu_name_len_no_suffix("cpum_cf") == strlen("cpum_cf"));
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~
+tests/tests.h:15:15: note: in definition of macro 'TEST_ASSERT_VAL'
+   15 |         if (!(cond)) {
+          \
+      |               ^~~~
+tools/perf/util/pmus.h:8:5: note: declared here
+    8 | int pmu_name_len_no_suffix(const char *str, unsigned long *num);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+tests/pmu.c:405:33: error: too few arguments to function
+'pmu_name_len_no_suffix'
+  405 |
+pmu_name_len_no_suffix(uncore_chas[i]) ==
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+tests/tests.h:15:15: note: in definition of macro 'TEST_ASSERT_VAL'
+   15 |         if (!(cond)) {
+          \
+      |               ^~~~
+tools/perf/util/pmus.h:8:5: note: declared here
+    8 | int pmu_name_len_no_suffix(const char *str, unsigned long *num);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+tests/pmu.c:410:33: error: too few arguments to function
+'pmu_name_len_no_suffix'
+  410 |                                 pmu_name_len_no_suffix(mrvl_ddrs[i]) ==
+      |                                 ^~~~~~~~~~~~~~~~~~~~~~
+tests/tests.h:15:15: note: in definition of macro 'TEST_ASSERT_VAL'
+   15 |         if (!(cond)) {
+          \
+      |               ^~~~
+tools/perf/util/pmus.h:8:5: note: declared here
+    8 | int pmu_name_len_no_suffix(const char *str, unsigned long *num);
+      |     ^~~~~~~~~~~~~~~~~~~~~~
+tests/pmu.c: In function 'test__name_cmp':
+tests/pmu.c:418:34: error: implicit declaration of function
+'pmu_name_cmp'; did you mean 'test__name_cmp'?
+[-Werror=implicit-function-declaration]
+  418 |         TEST_ASSERT_EQUAL("cpu", pmu_name_cmp("cpu", "cpu"), 0);
+      |                                  ^~~~~~~~~~~~
+tests/tests.h:23:13: note: in definition of macro 'TEST_ASSERT_EQUAL'
+   23 |         if (val != expected) {
+          \
+      |             ^~~
+cc1: all warnings being treated as errors
+
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
