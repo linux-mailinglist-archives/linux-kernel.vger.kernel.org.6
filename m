@@ -1,173 +1,222 @@
-Return-Path: <linux-kernel+bounces-269448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E073E9432ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:18:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E8E29432B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:08:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CA90B2ABDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:17:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C426D1F23C67
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB8D1CB31C;
-	Wed, 31 Jul 2024 15:09:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5866C1758B;
+	Wed, 31 Jul 2024 15:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fRdWxwX/"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2076.outbound.protection.outlook.com [40.107.92.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QHZERTQr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lZ9oCMgJ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QHZERTQr";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lZ9oCMgJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB611CB32F;
-	Wed, 31 Jul 2024 15:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438590; cv=fail; b=MBI12GyWfrP+8tN1pl8TbJblks3quzEPToStlNZdWdzWLbNl7YuxB4wSjSCg9rTW41NYArqMjICmvrAOtvOV2hGW+98bkkHmV/S4T4R/Jku1QQW+SBvZnjEA90oLxhgZbx3sh6cOWebTAu/+ofb4xzl6L2hYaULwY804Bz5tx8I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438590; c=relaxed/simple;
-	bh=2k6VbzH2BIqJNNwYxpT7TO+paYM30wolsECgnn94tRQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MwS1kr3jlKkdxyPNP0vjxq7O3oMCDeU+8jppLYJj+5D6hyn6FkXzu9x8om5VdzewG6E6/lBuEGyA1KgiBABAjlOT30KYiDjzHfxX31IVX3neGqOf7sdp4PfL4TYMwnOjX/Vq4HthqwY5rYbpjJWv95gaFqSMMQZ26rLncL7BEu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fRdWxwX/; arc=fail smtp.client-ip=40.107.92.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IX+BMBa9iti0Sx3v42x3CsK59eV70bbqiXzomz1ODUBtra++QYJBMHP/GJgKh9dmUgM84SpbfpWFqltA8TJd9d/GIA1+LRo8kl2LqKiKSq04ABlObTLDd8X7l4GIxqlcUutrTzUJsh5184DafbMrK49dIiKOig9tMBGqOVEfijeC4e9PSfDMY29qg9BHSo04kn/zYsGSQskBObdvBWekLEqTN3WRKtB7wLhgFRSy0BHxHFMK+lOYrqkE2bHVhlF8GpYGTOich529xcpUKX7vC9Gl1cClHRY0gAn8C6fDZ6cNxC5lOZzZ7ockiFPLHLyscj0urQF5F3Y3MATtMcNS1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=R35YcfpMfkkvWIJmb1WPtShF2Ta3rExIk7TUgVjB+5Y=;
- b=uyJmo1XlB0C0KZ5WEOm9wfxayaxBmOpTp1ZfQcSxp67WscS2d29kwKKKbt6Ba8K2qhC53kl3l7NIIxUhtPtMYyvvwcCiU2niy5XRTGAA8C4cP9gIIdCHt8pyv3fnWZRIrBYLG3gRzwDWRE9pW3akuAOG3sa5lEgGmgkcw/xVW6mqwaHs8QLyyIDl3gIB459Zafkp4l94QMTYj1dvv1iydlNpHYbYUjfxf4EjbPpGMP2eMyjIPxtKgDDSAXfJoZ0cPFhefXQ82zZPeIf3PksCG++pyeQvVNpa+mfGYOqAXFT2R8kcHG+VeYF0TCCc8bcndwVIrfhjcru7R+QmZLxPHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=R35YcfpMfkkvWIJmb1WPtShF2Ta3rExIk7TUgVjB+5Y=;
- b=fRdWxwX/pKN/kKsW82CjWXMxFs0DBD8b1L41+A2Z/NESDZEANDLfzsRNjeaUQRM/T/WvoZNpqPaweJbfgB34qeJiAfInBS+ks9N9q7eJrtcW230fNcywPQUuJczoEyHKArE2If1m1EH70fcbE50JK6Uu0egIITM3Nq30+Plxfto=
-Received: from DM6PR13CA0030.namprd13.prod.outlook.com (2603:10b6:5:bc::43) by
- DM6PR12MB4137.namprd12.prod.outlook.com (2603:10b6:5:218::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.20; Wed, 31 Jul 2024 15:09:45 +0000
-Received: from DS3PEPF0000C37D.namprd04.prod.outlook.com
- (2603:10b6:5:bc:cafe::8) by DM6PR13CA0030.outlook.office365.com
- (2603:10b6:5:bc::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.23 via Frontend
- Transport; Wed, 31 Jul 2024 15:09:45 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF0000C37D.mail.protection.outlook.com (10.167.23.7) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 15:09:45 +0000
-Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 31 Jul
- 2024 10:09:41 -0500
-From: Nikunj A Dadhania <nikunj@amd.com>
-To: <linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>, <bp@alien8.de>,
-	<x86@kernel.org>, <kvm@vger.kernel.org>
-CC: <mingo@redhat.com>, <tglx@linutronix.de>, <dave.hansen@linux.intel.com>,
-	<pgonda@google.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
-	<nikunj@amd.com>
-Subject: [PATCH v11 20/20] x86/cpu/amd: Do not print FW_BUG for Secure TSC
-Date: Wed, 31 Jul 2024 20:38:11 +0530
-Message-ID: <20240731150811.156771-21-nikunj@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240731150811.156771-1-nikunj@amd.com>
-References: <20240731150811.156771-1-nikunj@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF0317591
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722438515; cv=none; b=dR3UldyS8dyRRlTUJm15UA83c4PkA4YnA8lkuCTDfZjtTWV8HvEPSNSefXLxGb9bv0OoP+tA2IiczlaznHtDms6tmt1WHHzrf7xbQy24Zlr9VIkcpx8oFn9UVyKi/GZAyJz+T1OajI4/D+TrwPJukhJ7C4upKvHmcOk2kKRvCjo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722438515; c=relaxed/simple;
+	bh=OxTsD5Hu8BdeqiVTTMft4KdH4o8UsVtLUKZevVjlb7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGpv6/t4PH2KCknm8OyYeWIAS4/IxhG2CbgXuq/6eIpd5CScMd3wTpXd8xykBFh+C+UFbUzTwTHu8DPmifeBvu4+9Z1m/SmndpDP0H47C1hdpAfW9oi9hVJsfM5i/+Bq0TOIjlbcHkj8XtBwFc+wdPfUTS6Z9l+3vYHcgh9g8Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QHZERTQr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lZ9oCMgJ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QHZERTQr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lZ9oCMgJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A36221F6E6;
+	Wed, 31 Jul 2024 15:08:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722438506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwp8xAbk3X/CxJzE8xc/YbQEeo68FxxlFa0BXZImWLc=;
+	b=QHZERTQrG5TRZ3d4zFgNUv9c/gvXRmGOnhc7TDFAWmMOtp47A/yeGISpPRCpCHdWgarohE
+	7DMP78ue68VJZsuFlYC7WnmU5UtLjhr27YTW9QeYk4IkodZhY5V9Cev3NKhSZBNLOKeW5N
+	ZX7w93jAwOutsTj/ndqbpvUTZNm1DGM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722438506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwp8xAbk3X/CxJzE8xc/YbQEeo68FxxlFa0BXZImWLc=;
+	b=lZ9oCMgJ88fl5BeXMilddt/5HwB0VS01xWomZ22vB2GBwdSeHr7djZkOdY/g7kGi+RUuHM
+	8Cx6AUciYO4ApUAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=QHZERTQr;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=lZ9oCMgJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722438506; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwp8xAbk3X/CxJzE8xc/YbQEeo68FxxlFa0BXZImWLc=;
+	b=QHZERTQrG5TRZ3d4zFgNUv9c/gvXRmGOnhc7TDFAWmMOtp47A/yeGISpPRCpCHdWgarohE
+	7DMP78ue68VJZsuFlYC7WnmU5UtLjhr27YTW9QeYk4IkodZhY5V9Cev3NKhSZBNLOKeW5N
+	ZX7w93jAwOutsTj/ndqbpvUTZNm1DGM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722438506;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cwp8xAbk3X/CxJzE8xc/YbQEeo68FxxlFa0BXZImWLc=;
+	b=lZ9oCMgJ88fl5BeXMilddt/5HwB0VS01xWomZ22vB2GBwdSeHr7djZkOdY/g7kGi+RUuHM
+	8Cx6AUciYO4ApUAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0BE8313297;
+	Wed, 31 Jul 2024 15:08:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id q007AGpTqmayAQAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 31 Jul 2024 15:08:26 +0000
+Date: Wed, 31 Jul 2024 17:08:24 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Donet Tom <donettom@linux.ibm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 6/9] mm: Make hugetlb mappings go through
+ mm_get_unmapped_area_vmflags
+Message-ID: <ZqpTaKHdrYt61HYy@localhost.localdomain>
+References: <20240729091018.2152-1-osalvador@suse.de>
+ <20240729091018.2152-7-osalvador@suse.de>
+ <8a57e184-4994-4642-959d-44dc7efbceca@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37D:EE_|DM6PR12MB4137:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2431b0ee-0c4d-4678-e36d-08dcb172d009
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?elEgJjT5FbuQ8tfjLqoqI5eFNWzyijAjWL+kZt1sHfuTX3QLTH+oLGgCdLFH?=
- =?us-ascii?Q?FNrkdESnAg+tdwDofX+E8XNxL6HwCwtGLHQJZwePn8gVapzkSXYBBlUjjtOL?=
- =?us-ascii?Q?mhbltsIdVwOwWHmW/QRErlDUOS7xT91u/vdtaYi6blheDkKnadRuqa6cjx1l?=
- =?us-ascii?Q?0B2fgK1kFKvEieWMq/9ASVOgpaMTysYR04ELXu7liS/dKBOhFTE5+nF+iNnA?=
- =?us-ascii?Q?o6FZ134TZAIaM+f4BfugeWrvOTJDYvqo+qD6LAng8MCVWzhpO8pbXj9KVl0v?=
- =?us-ascii?Q?aRcoXQ72H8OCf8F8HMUO1fuImlO0odzRqSmKBo5cxh8KxNnFKqGWOu5+j2th?=
- =?us-ascii?Q?MRuuPzPlVLwxjrEAbG23hW6ns0iq7bg05uEFZ142J9f3HRXXrY+QiqN+IVJb?=
- =?us-ascii?Q?fnoNf1LZI96K0jbuKxpie+KVrgybOcouFUFwzs1/uRF1hq9HvSlQfXI9uUNA?=
- =?us-ascii?Q?9izLhSYlrGmpkCNBYCE9Mhpt5lURk7rh8KLIEUNZ0JwEbP7aVdrl8Vvxkg2g?=
- =?us-ascii?Q?m+juT9J4u0E+9t66o9yOJtewqH3yaxZKlOHd47+ga2ASClrzTNWCJKl4vOSB?=
- =?us-ascii?Q?6XMLP5+e2eZ0XJzBhi7suMmm9JU4qz4MsBInLJK+d9y5KfT3mSjU4Rhvrbhj?=
- =?us-ascii?Q?y8LgzYiLEje4++/D0uytdc2Zp7uUFS3fq/A09z5g3GdMc++MOgeLUecrb7QO?=
- =?us-ascii?Q?BGEH1Ipp9oDB+OIzJYxekOiA/EStf80gTcpk+/cqNGVpoUXeC8S37YFrFu+H?=
- =?us-ascii?Q?uolHMPPCBF0nnXqJcfyHtQv1Q9ufhuxS4p9dhClBg6kdvUXw4x3SnqtBU+oD?=
- =?us-ascii?Q?NmR3Pqm61Yt6JU9h2orvRxPyBAV/gvYRTcsLvvQhRvnmk14vyldrG4tH8N6q?=
- =?us-ascii?Q?SPGXpZ707snv7rnrEqTIvHy7BiwjgowJZ+qV5dNHoUXaBftBat1sxOZ5tGx5?=
- =?us-ascii?Q?wMxMts9ygjFy/Z0JAc4nOoUnt0kIT3iyx7AdUzjCAiEnRLE5PbHJxiVcGNWn?=
- =?us-ascii?Q?j8zxKRkO1V6JSrF4KQHNXrdPSDaSHpB8qCsYj9JcirBfGN4GVZGA//J0BHEE?=
- =?us-ascii?Q?rxvQVs8qKrwVOKh633U0Co8ty4THRRaTIvgNJ+XHt+gpBm5FHS6TXcgC4SgG?=
- =?us-ascii?Q?AlpqRmqcAhQyeOLMonwqPbblzZWFYFWYRZegzPTu2etZdXoo2SL75rS14gLF?=
- =?us-ascii?Q?w96G/QKLT5FbjQlYr2NMi4MsgVSB5UlUYRSfzkEDPgV3xTAc3lzgOncgvaVL?=
- =?us-ascii?Q?rKHeRBjlEdCC1cndahD59Y3ux+TJLLFZogdGv3VNBsBnZwAhNKLcOdhiV6LG?=
- =?us-ascii?Q?N53U5h0Ryp/qJZ9xML7FQ63Wc58Bf1+243Ce/CTn/xWaZovu44wz8d0XyD1k?=
- =?us-ascii?Q?q0Imao4Ypow5+3CL7CDs2X/wCamRK6AiT9yZwoTiWaop07D7Dr1q0KCTW5kJ?=
- =?us-ascii?Q?uyV1YLlcC9JUZBcdyMwjVjua53TzkVxl?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:09:45.3371
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2431b0ee-0c4d-4678-e36d-08dcb172d009
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37D.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4137
+In-Reply-To: <8a57e184-4994-4642-959d-44dc7efbceca@lucifer.local>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: A36221F6E6
+X-Spam-Score: -4.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
 
-When Secure TSC is enabled and TscInvariant (bit 8) in CPUID_8000_0007_edx
-is set, the kernel complains with the below firmware bug:
+On Wed, Jul 31, 2024 at 12:02:47PM +0100, Lorenzo Stoakes wrote:
+> On Mon, Jul 29, 2024 at 11:10:15AM GMT, Oscar Salvador wrote:
+> >   * Someone wants to read @bytes from a HWPOISON hugetlb @page from @offset.
+> > @@ -1300,7 +1307,6 @@ static const struct file_operations hugetlbfs_file_operations = {
+> >  	.read_iter		= hugetlbfs_read_iter,
+> >  	.mmap			= hugetlbfs_file_mmap,
+> >  	.fsync			= noop_fsync,
+> > -	.get_unmapped_area	= hugetlb_get_unmapped_area,
+> 
+> This is causing a NULL pointer deref error in the mm self-tests,
+> specifically hugepage-shm.
+> 
+> This is because in __get_unmapped_area(), you check to see if the file has
+> an f_ops->get_unampped_area() however ('wonderfully'...) the shm stuff
+> wraps it, so this will be shm_get_unmapped_area() which then accesses the
+> underlying hugetlb file and _unconditionally_ calls
+> f_op->get_unmapped_area(), which you just made NULL and... kaboom :)
+> 
+> You can't even add null check in to this wrapper as at this point
+> everything assumes that you _can_ get an unmapped area. So yeah, it's kinda
+> broken.
+> 
+> This makes me think the whole thing is super-delicate and you probably need
+> to rethink this approach carefully, or least _very carefully_ audit users
+> of this operation.
 
-[Firmware Bug]: TSC doesn't count with P0 frequency!
+Thanks for reporting this Lorenzo, highly appreciated.
 
-Secure TSC does not need to run at P0 frequency; the TSC frequency is set
-by the VMM as part of the SNP_LAUNCH_START command. Skip this check when
-Secure TSC is enabled
+I will check, but..
 
-Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-Tested-by: Peter Gonda <pgonda@google.com>
----
- arch/x86/kernel/cpu/amd.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+> By doing this you are causing an compilation error (at least on my compiler
+> with an x86-64 defconfig-based build):
+> 
+> arch/x86/mm/hugetlbpage.c:84:1: error: no previous prototype for
+> ‘hugetlb_get_unmapped_area’ [-Werror=missing-prototypes]
+>    84 | hugetlb_get_unmapped_area(struct file *file, unsigned long addr,
+>       | ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index be5889bded49..87b55d2183a0 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -370,7 +370,8 @@ static void bsp_determine_snp(struct cpuinfo_x86 *c)
- 
- static void bsp_init_amd(struct cpuinfo_x86 *c)
- {
--	if (cpu_has(c, X86_FEATURE_CONSTANT_TSC)) {
-+	if (cpu_has(c, X86_FEATURE_CONSTANT_TSC) &&
-+	    !cc_platform_has(CC_ATTR_GUEST_SECURE_TSC)) {
- 
- 		if (c->x86 > 0x10 ||
- 		    (c->x86 == 0x10 && c->x86_model >= 0x2)) {
+Something is off here.
+
+git grep hugetlb_get_unmapped_area
+
+returns nothing.
+After this, arch/x86/mm/hugetlbpage.c should only contain:
+
+  #ifdef CONFIG_X86_64
+  bool __init arch_hugetlb_valid_size(unsigned long size)
+  {
+          if (size == PMD_SIZE)
+                  return true;
+          else if (size == PUD_SIZE && boot_cpu_has(X86_FEATURE_GBPAGES))
+                  return true;
+          else
+                  return false;
+  }
+  
+  #ifdef CONFIG_CONTIG_ALLOC
+  static __init int gigantic_pages_init(void)
+  {
+          /* With compaction or CMA we can allocate gigantic pages at runtime */
+          if (boot_cpu_has(X86_FEATURE_GBPAGES))
+                  hugetlb_add_hstate(PUD_SHIFT - PAGE_SHIFT);
+          return 0;
+  }
+  arch_initcall(gigantic_pages_init);
+  #endif
+  #endif
+
+so what is going here?
+Maybe the series was not properly applied to mm-unstable?
+
+I will have a look.
+
+
 -- 
-2.34.1
-
+Oscar Salvador
+SUSE Labs
 
