@@ -1,130 +1,120 @@
-Return-Path: <linux-kernel+bounces-269973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF4694397A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:47:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0627594397F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:48:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F17301C21ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:47:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A00221F216C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC7E16DEC1;
-	Wed, 31 Jul 2024 23:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508D316D9D8;
+	Wed, 31 Jul 2024 23:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gou4eYjW"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="q6RWam+/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FB116DC18;
-	Wed, 31 Jul 2024 23:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3731114B097
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722469614; cv=none; b=Ncmpm/jFawEPUOiJXrKe0CcxPlm3zika+0ci9gIqEPxw1P6LjnMAB2FclmS16dHcy1vAaR2+FQaqe8nFPzh9xevHDxbETh9+oG5ZLr6iZHzMn8N2dkRxE2zIbsvdFBZ9ErVrfNzbAdQNZ/BFRY6pS0paD3R1KoHpd5NgG3d7y4Q=
+	t=1722469705; cv=none; b=bBhaG4byaFnvkOpYWFixFX2FwSKAjFy9xHKjyhtkfusOZV2bvxHpFp0WqtuBSKXN0DE744GrhaTd9z2dXdeVVugEXS208gug72m06VzaKTe3BXRYTAfJl+7U4lrrtUgcICv0+f2gSSHjAQCBFlchzGhZpfDOHihzq6kvI5cklcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722469614; c=relaxed/simple;
-	bh=4CllI5JYtB8gD8+ULbcQHaCWjlZXTdjx7xrOZ2HPPAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JazB5Q+qZx+AYTk1zQO6lxiSq+XqvJu/KC33BSfuOBNUgHUwqmufHwpY3f0kN7N/Bpq8V7Y2LA55Tj7RZ+dgeYpDyjXo+4L/NRuJOE60iD55hc/dgSI9As1vG54VmWm4V9e9iiMKyyguy4WHdHrHVcOtUMtJyX3X+DNA089KkC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gou4eYjW; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722469610;
-	bh=YDGZwp9ng90T2/Df7goq3T7ZaVE8u1W/+w7Mct2Bglg=;
+	s=arc-20240116; t=1722469705; c=relaxed/simple;
+	bh=/IIaZdmYNOt4xk2a7EyuaHC4cDYJRlszzg+xMZxGdpw=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=CysGLRpglHCewbeziBeGZgpQgDCbZA6R75djidjXnIqJvAvmN++7d1SfoTxta8LNZPl7sjVq5OeU2G+HwLvr9D+MGAcOB1u7RH3ruQaLVbhYOvhLjNyYS2Szeady+LzEehgdadb9x7/yGKR2mK+Yv6WxbOvQpawUNKJbC8dsLXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=q6RWam+/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76133C116B1;
+	Wed, 31 Jul 2024 23:48:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722469704;
+	bh=/IIaZdmYNOt4xk2a7EyuaHC4cDYJRlszzg+xMZxGdpw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gou4eYjWVJoDwI/EVvM/Tm0x7p8bOhDtatJSkmzSy5pG/EUXFyYk7qlbIKHoGAn21
-	 rw4i26J6y5ynZe78zKVxDRAf1SpjiyWABETMhKUYkb4ExHZYaqn1BQbRhKPaAAK0P0
-	 moQgt+XFuPSihipaOgXoeNfFfFdt0IsLoHOVocRFLwxd27CIQ03eOINcF6YbHxXVox
-	 VjNafcCgs+qHufje05sZj+BGNVmcTDB+GMTbygSIx9io6EuevpJlC8Gzy5H5nmL0A/
-	 lT2FtBuDUzrQI5jWJKZs7z6RaapMUeCe17uNdPuPKeRp3skB6BbSn2a7zawSvul6//
-	 HPceDy3JqLXHQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZ7zZ30ltz4wxk;
-	Thu,  1 Aug 2024 09:46:50 +1000 (AEST)
-Date: Thu, 1 Aug 2024 09:46:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Alexandre Torgue <alexandre.torgue@st.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patches in the stm32 tree
-Message-ID: <20240801094649.0ea1f73d@canb.auug.org.au>
-In-Reply-To: <20240717075355.10020fec@canb.auug.org.au>
-References: <20240717075355.10020fec@canb.auug.org.au>
+	b=q6RWam+/TIoT+yhWHSD4A7t9yMd/ceP7lTrzPzAUy+DJC9L3/UsUqAKkQfhz6VyZT
+	 RopuopQ7N1o0+WyoLTeWh0D2lmyTGclYl9+WlZbdpczR03a9iYY/QjNW6Jh52bAOCO
+	 iTav0yOEdQjyg+r1kP67nYY2wG17RkSf9dMiPt1M=
+Date: Wed, 31 Jul 2024 16:48:23 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Carlos Llamas <cmllamas@google.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@android.com, "J. R. Okajima"
+ <hooanon05g@gmail.com>, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH v2] lockdep: upper limit LOCKDEP_CHAINS_BITS
+Message-Id: <20240731164823.c8ac96ab0f8968ce8213c02d@linux-foundation.org>
+In-Reply-To: <20240723164018.2489615-1-cmllamas@google.com>
+References: <11faf952-c0f8-6e1d-3560-12d77847a8ac@i-love.sakura.ne.jp>
+	<20240723164018.2489615-1-cmllamas@google.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/d.rd=yzUlSt3VbH2DghGSCu";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/d.rd=yzUlSt3VbH2DghGSCu
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Tue, 23 Jul 2024 16:40:17 +0000 Carlos Llamas <cmllamas@google.com> wrote:
 
-On Wed, 17 Jul 2024 07:53:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> The following commits are also in Linus Torvalds' tree as different
-> commits (but the same patches):
->=20
->   1245911be805 ("ARM: multi_v7_defconfig: Add MCP23S08 pinctrl support")
->   1eafc48af859 ("arm64: stm32: enable scmi regulator for stm32")
->   2599b1f071f4 ("ARM: dts: stm32: Document output pins for PWMs on stm32m=
-p135f-dk")
->   32bc9d195039 ("ARM: dts: stm32: Add ethernet support for DH STM32MP13xx=
- DHCOR DHSBC board")
->   3389697affa5 ("arm64: dts: st: add HPDMA nodes on stm32mp251")
->   55dc557485c7 ("arm64: dts: st: add ethernet1 and ethernet2 support on s=
-tm32mp25")
->   5d6c1cef82a0 ("arm64: dts: st: describe power supplies for stm32mp257f-=
-ev1 board")
->   9bcaeb10520a ("ARM: dts: stm32: add ethernet1 for STM32MP135F-DK board")
->   a11b40677a34 ("regulator: Add STM32MP25 regulator bindings")
->   a29ad03d8393 ("arm64: dts: st: add scmi regulators on stm32mp25")
->   a43179fe3f09 ("arm64: dts: st: add eth2 pinctrl entries in stm32mp25-pi=
-nctrl.dtsi")
->   a4a0254811cc ("ARM: dts: stm32: omit unused pinctrl groups from stm32mp=
-13 dtb files")
->   a80ce2d743fb ("ARM: dts: stm32: add ethernet1 and ethernet2 support on =
-stm32mp13")
->   ba3e48a76df3 ("ARM: dts: stm32: OP-TEE async notif interrupt for ST STM=
-32MP15x boards")
->   c62c13b4efe4 ("ARM: dts: stm32: add ethernet1/2 RMII pins for STM32MP13=
-F-DK board")
->   d41b45f29bc3 ("ARM: dts: stm32: order stm32mp13-pinctrl nodes")
->   de2997982cf9 ("arm64: dts: st: enable Ethernet2 on stm32mp257f-ev1 boar=
-d")
+> From: "J. R. Okajima" <hooanon05g@gmail.com>
+> 
+> CONFIG_LOCKDEP_CHAINS_BITS value decides the size of chain_hlocks[] in
+> kernel/locking/lockdep.c, and it is checked by add_chain_cache() with
+>     BUILD_BUG_ON((1UL << 24) <= ARRAY_SIZE(chain_hlocks));
+> This patch is just to silence BUILD_BUG_ON().
+> 
+> ...
+>
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -1515,7 +1515,7 @@ config LOCKDEP_BITS
+>  config LOCKDEP_CHAINS_BITS
+>  	int "Bitsize for MAX_LOCKDEP_CHAINS"
+>  	depends on LOCKDEP && !LOCKDEP_SMALL
+> -	range 10 30
+> +	range 10 21
+>  	default 16
+>  	help
+>  	  Try increasing this value if you hit "BUG: MAX_LOCKDEP_CHAINS too low!" message.
 
-These duplicates are till there.
+checking your homework...
 
---=20
-Cheers,
-Stephen Rothwell
+With LOCKDEP_CHAINS_BITS == 21:
 
---Sig_/d.rd=yzUlSt3VbH2DghGSCu
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+	#define MAX_LOCKDEP_CHAINS_BITS CONFIG_LOCKDEP_CHAINS_BITS
 
------BEGIN PGP SIGNATURE-----
+		gives MAX_LOCKDEP_CHAINS_BITS == 21
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaqzOkACgkQAVBC80lX
-0GxI4Qf/ZHB6RZ16DIEhZQ7ayW47zMm5Y/tpdf+6u331Nfn1k8QarU1ncswbd7UO
-FTZlg7f2YqlAwd6jFJGaxn8f9aabgKEynnrRY9DbC40iYpvwJBktTCxSJg5plyPB
-KOznxp7eL8U90XnI7GrBDSP/QAT9PYdPZn54Oi+NRm0ZJGcvskMUa0hlqqn1spHi
-GIuZq6DQ1OJ5lAw7xCwb37pCZCefxzVxbH5jwdcykXFDRoy92t9ItpYLrLMtshnW
-zhMrsjefBrxYO8YwOW/UZiAiWP7HFWE1Y+tqKVZa/DnpGdHqkn8UpJt6Jb0kaBi9
-mRNNq8rFa3OuZxIPHpQClL48/syadw==
-=WcoT
------END PGP SIGNATURE-----
+	#define MAX_LOCKDEP_CHAINS      (1UL << MAX_LOCKDEP_CHAINS_BITS)
 
---Sig_/d.rd=yzUlSt3VbH2DghGSCu--
+		gives MAX_LOCKDEP_CHAINS == (1UL << 21)
+
+	#define MAX_LOCKDEP_CHAIN_HLOCKS (MAX_LOCKDEP_CHAINS*5)
+
+		gives MAX_LOCKDEP_CHAIN_HLOCKS = 5 * (1UL << 21)
+
+	static u16 chain_hlocks[MAX_LOCKDEP_CHAIN_HLOCKS];
+
+		gives ARRAY_SIZE(chain_hlocks) == 5 * (1UL << 21)
+
+so
+
+	BUILD_BUG_ON((1UL << 24) <= ARRAY_SIZE(chain_hlocks));
+	ie, BUILD_BUG_ON((1UL << 24) <= 5 * (1UL << 21));
+
+is OK, whereas
+
+	BUILD_BUG_ON((1UL << 24) <= 5 * (1UL << 22));
+
+will bug out.  So LGTM, I'll add it to mm.git.
+
+
+btw, the help text "Bitsize for MAX_LOCKDEP_CHAINS" is odd.  What's a
+bitsize?  Maybe "bit shift count for..." or such.
+
+
 
