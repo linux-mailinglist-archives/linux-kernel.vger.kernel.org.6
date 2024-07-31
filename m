@@ -1,159 +1,209 @@
-Return-Path: <linux-kernel+bounces-269880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25706943805
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:33:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD30194380A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EB21F229A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:33:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 322A4B22393
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBAA16C6AE;
-	Wed, 31 Jul 2024 21:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F6916C861;
+	Wed, 31 Jul 2024 21:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EQecaB5e"
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ct5/Veca"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7E33A1A8
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BB13F9C5
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722461592; cv=none; b=caODnt88XKREBtiGkkDmvtCtvv7KG2F4KoxdAUSxC2ITKiEXk28y7cWNtrMGeTg7AuPf669CSdE4qi7cfqgakL7BUr/3oPZxvHp5geSpsxH4AQnNaFfJiu0G3OwaXjwpGXvJrSeiLouRAVx4S4gTzPyd77KCjyCCNtyXoUi34yg=
+	t=1722461626; cv=none; b=kHft8ihT6z07+ZU0CEL71y5LyOr2rErxwJqyjNo0OZHFHD4yfwPB5vLXczPrg683uv6+KQzQq5lQC+BNYSAAYLtHeE+jJMLMY2QhlVw1lQN/ULDt2VkyHU6tw2V0WCzth0c8z+NLRU1l2eCRPAvmlLCvQ9JvXq0ilmpCBAq7dpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722461592; c=relaxed/simple;
-	bh=/ks9JRMMnDvphqXUqsmokZE6QY/FSp7LG0iS22XaAzk=;
+	s=arc-20240116; t=1722461626; c=relaxed/simple;
+	bh=QDEvnq82N57jTLmqconLtEOjULtygLMOjR80JzO/Uow=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jK8SrTPPVHLTgF9YQISCbY5pNull5hiSvRvSIkCUk7GTKo9UGSg1LfBocjVwReirX6DrLujczw5Lq6EcvsKZNxBU0Kt/BWz1PzYtn5KjfTjybmgr4FtD/KyhmEkTKMP8PkHouehEoqlle5qojPSxHssoGEtz1213vrdsg83zoRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EQecaB5e; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-825809a4decso2045168241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:33:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=IhBh54l3ldcQy+fFA90GxNaxUB7FTuvV/OY/oVO6h8Z+MwK58qspIq767gtwv2+qgGC/HCWft8J8zap5hfofnB+Qkup8trXLLUNcaRa8ZplLyWSkHKpsURJDFmMZYZZ4oHNVbOE4B2P7tCEvIqHbtQcrcbKIK4d9qMy+onZ9Los=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ct5/Veca; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so24497a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:33:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722461589; x=1723066389; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722461623; x=1723066423; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dREKhEuZ+QTDPptJNWWM+egDyVC/sMlwDDn5nj0/gbQ=;
-        b=EQecaB5ebMpJu/diAKGhXz/DvUHqdiR8rldsq1lEpHeXJebFP2DDVltbIy11nH4aZz
-         NcJkqhFRJ7AZc7Zb07lvyX/1ZSlHQ0wKfvnPeoSvQEEygtoJXB0rLinsju+0la4MG7If
-         rARs7bePtYmxs7WLbSZ6UDbuRuZDnGz1RsTFQWOanp2qm2+kNWanqsYGJS4uxHoDxN1T
-         fbA4+d+/DRiQVBAGF8S2XdyKOHJdToxbZ9x0kbzpnfRnOOu9P2T3xbyJ15tgaJozaoJf
-         XR1pR7CRvkVWwTAbg9gmD/SWhUGZsuP2FPk44kdrHqgQHKDt2ojOSLYGlWMwIP1M3lAV
-         8PRw==
+        bh=qT2CbU3e64LwMM3GkfeJLb6Pchn2DXv7wXZ8rasocw0=;
+        b=Ct5/VecavRXLxIQFu9tl1QRTfbN8oRxvJghGB7q9vrmi4GvDB1ClqMX27eohj+NCF2
+         NG8H40r0wnilT/ktQuGgP8znSNGdhtiNRZS7cJsPSTO11QqhDyVxWthFsEOI3+oZBrhc
+         TwxJeMaFGNRaj//htc59TnvrcfksuLQWRISCiUcAM9QiO0u9v3ubplmLSjcNCqa08CWr
+         oy92TTsVxwja95mowwETMCt5HoULxCqf+yZCoUuAsu3fmDjgXM0jnws4U3uV1wBbZvje
+         jzg61et1QvxwCLx3pWcelqdS/5FVb4w/QrOVPsbRfIAcppMvO4/+4aoFETTOip+zdlUA
+         KxkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722461589; x=1723066389;
+        d=1e100.net; s=20230601; t=1722461623; x=1723066423;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dREKhEuZ+QTDPptJNWWM+egDyVC/sMlwDDn5nj0/gbQ=;
-        b=EG5mlHr2ClTtuikp4yX1NGtK2B8mrKYxMv0Uwp8AsYCR6lwEdoqMLIQbclIhQ7hZVg
-         +0VlcxPw1xmAdOkMOahQh7H85PVXHIlheWgCENmzF3TgqS7IrALLa7dV16vce3j8cIIV
-         04CBxiT2tw8TgUiEyMxxD8CZgGMDZhEfbQyEvwA+j5eh7iJejy2pnlMvP4u3byODWK5f
-         Dy0sMZIblgh+VCV1XrbeWHFmACE8zj8QLX0S9lik998+I0szBR45Cd2zF6hM8PJVdzSr
-         U72J92cRZvc/NhVJXVmPeq2riRP9vR9Pt7DjiFOm9DsP+sWRyRvZ51wBqH61nqjdHp6h
-         z4kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX8mfDKFjwA2EvSWs7UTwJltnPCE8kwRkkRylDcJSLqWXHCPbprKqZzBaeG9vgVLxohnUzOjrrdy1YvhFl4UR+JePDaIf1ayqtVr9NJ
-X-Gm-Message-State: AOJu0YzWwXG8OLbEPNjZq+wn9EueDQ9zMtUi4pzDiPGpsaVoKOOZx4KA
-	TFr3bHu2ybr6DwMtCpaF4/vVhLx439uie2cZa/ffZCMFLhtSFy48c9D+qkgkrU7p3o5x7UxhGYq
-	siUtSYjYg7929UONazOuXo8L5Z9kF3nHl/DH4
-X-Google-Smtp-Source: AGHT+IGzRIYcjWpVOooTnwdmT8UVl9DoOQY068XBNlB0HObnodh9BUjeFnRlX6rdpnVyqqHVV9gVh1G33vYQOpy9HWk=
-X-Received: by 2002:a05:6102:5129:b0:492:a6fb:23e5 with SMTP id
- ada2fe7eead31-494506c65b3mr743308137.3.1722461589519; Wed, 31 Jul 2024
- 14:33:09 -0700 (PDT)
+        bh=qT2CbU3e64LwMM3GkfeJLb6Pchn2DXv7wXZ8rasocw0=;
+        b=WY6GVhCn8I4jIsivOjsrHTndT2yvLddjb5txL8E25Be0/x8nx2EOMOCz7uaXs/ESdO
+         48gY3nd8nA7JwtwlysHn1rFaTV4Ab1NtcbDhVdvsH3OjV8Kf42YuK+ZgAjG9z3rZHDTa
+         LyvTq5mNe7mTJCbUHHg1RegTjBvzDguevdclxmQfZ53cEuUwBdgnigQ0rDAHWgZ71e+g
+         mEHbkhXYZrmIjYEsI8HWVwN/pVTPn+KFk+QtHxwzpvdu6h5crOxWiZwDtLPsi4YhCahv
+         8j4vH/8Lf7m9qYO83qDwWcK6Sjkl7X5MQT41mhnexBcGsEumj5bd/WNn5sZ8z3ETUuLt
+         DvOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtnDG5McvUBLUbNxHGkl4q/Y+mq226T2IWVJ/jo3vwaaEptXN8SllzG2vnBy/s9VRD5Dk16UF837f0HJLINMQFO43Qm/xvBGbSQiAZ
+X-Gm-Message-State: AOJu0YzmMiOmqxm8XvyuQ69aRnl54Uk+dddOhSvIIFBGY5gXYkx6X/aj
+	bGloVkaDhJKQYxqTCEaOTR9wIfJEo7F8lAxmGFre1xjqSQi59hZG4zb7B0+z1PpsqVjnS+QxoMc
+	HWqmjo/HRjlkS78WHWQqsYCW4Fe8260t/opvg
+X-Google-Smtp-Source: AGHT+IED6P4njH1kFTeL8uebfbc6qlu33azi3bN5/ytT8UeUR/yn6BvbajOL7ztRhsvLqNC6mAXpN/eL5nQpCVXaf68=
+X-Received: by 2002:a05:6402:3547:b0:57c:c3a7:dab6 with SMTP id
+ 4fb4d7f45d1cf-5b71ed92d2amr5027a12.3.1722461622374; Wed, 31 Jul 2024 14:33:42
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
- <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com>
- <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com> <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 31 Jul 2024 17:32:58 -0400
-Message-ID: <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
-Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
- used before call to jump_label_init()
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
+References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+ <20240729.cho6saegoHei@digikod.net> <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
+ <20240729.rayi3Chi9aef@digikod.net> <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
+ <20240729.roSo6soogho8@digikod.net> <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
+ <CAG48ez2bnvuX8i-D=5DxmfzEOKTWAf-DkgQq6aNC4WzSGoEGHg@mail.gmail.com> <CAHC9VhTk4X61K72FubR8ahNeGyzWKkF=vJZD+k-8+xO7RwZpgg@mail.gmail.com>
+In-Reply-To: <CAHC9VhTk4X61K72FubR8ahNeGyzWKkF=vJZD+k-8+xO7RwZpgg@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 31 Jul 2024 23:33:04 +0200
+Message-ID: <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, keyrings@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 4:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
-te:
-> > On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien8.de=
-> wrote:
+On Wed, Jul 31, 2024 at 11:27=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> On Wed, Jul 31, 2024 at 4:54=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+e:
+> > On Wed, Jul 31, 2024 at 10:29=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > On Mon, Jul 29, 2024 at 11:17=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mi=
+c@digikod.net> wrote:
+> > > > On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
+> > > > > On Mon, Jul 29, 2024 at 5:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn =
+<mic@digikod.net> wrote:
+> > > > > > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
+> > > > > > > On Mon, Jul 29, 2024 at 4:09=E2=80=AFPM Micka=C3=ABl Sala=C3=
+=BCn <mic@digikod.net> wrote:
+> > > > > > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> > > > > > > > > On Mon, Jul 29, 2024 at 2:59=E2=80=AFPM Micka=C3=ABl Sala=
+=C3=BCn <mic@digikod.net> wrote:
+> > > > > > > > > > A process can modify its parent's credentials with
+> > > > > > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are t=
+he same.  This
+> > > > > > > > > > doesn't take into account all possible access controls.
+> > > > > > > > > >
+> > > > > > > > > > Enforce the same access checks as for impersonating a p=
+rocess.
+> > > > > > > > > >
+> > > > > > > > > > The current credentials checks are untouch because they=
+ check against
+> > > > > > > > > > EUID and EGID, whereas ptrace_may_access() checks again=
+st UID and GID.
+> > > > > > > > >
+> > > > > > > > > FWIW, my understanding is that the intended usecase of
+> > > > > > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like=
+ "keyctl
+> > > > > > > > > new_session" and "e4crypt new_session") want to be able t=
+o change the
+> > > > > > > > > keyring of the parent process that spawned them (which I =
+think is
+> > > > > > > > > usually a shell?); and Yama LSM, which I think is fairly =
+widely used
+> > > > > > > > > at this point, by default prevents a child process from u=
+sing
+> > > > > > > > > PTRACE_MODE_ATTACH on its parent.
+> > > > > > > >
+> > > > > > > > About Yama, the patched keyctl_session_to_parent() function=
+ already
+> > > > > > > > check if the current's and the parent's credentials are the=
+ same before
+> > > > > > > > this new ptrace_may_access() check.
+> > > > > > >
+> > > > > > > prepare_exec_creds() in execve() always creates new credentia=
+ls which
+> > > > > > > are stored in bprm->cred and then later committed in begin_ne=
+w_exec().
+> > > > > > > Also, fork() always copies the credentials in copy_creds().
+> > > > > > > So the "mycred =3D=3D pcred" condition in keyctl_session_to_p=
+arent()
+> > > > > > > basically never applies, I think.
+> > > > > > > Also: When that condition is true, the whole operation is a n=
+o-op,
+> > > > > > > since if the credentials are the same, then the session keyri=
+ng that
+> > > > > > > the credentials point to must also be the same.
+> > > > > >
+> > > > > > Correct, it's not a content comparison.  We could compare the
+> > > > > > credential's data for this specific KEYCTL_SESSION_TO_PARENT ca=
+ll, I
+> > > > > > guess this should not be performance sensitive.
+> > > > >
+> > > > > Yeah, though I guess keyctl_session_to_parent() is already kind o=
+f
+> > > > > doing that for the UID information; and for LSMs that would mean
+> > > > > adding an extra LSM hook?
 > > > >
-> > > > Hi,
-> > > >
-> > > > this is with today's linux-next:
-> > > >
-> > > > ...
-> > > >
-> > > > 09:44:13  [console-expect]#kexec -e
-> > > > 09:44:13  kexec -e
-> > > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next-2=
-0240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (G=
-NU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 UT=
-C 2024
-> > > > 09:44:16  [    0.000000] ------------[ cut here ]------------
-> > > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_ca=
-ll_inline.c:153 __static_call_update+0x1c6/0x220
->
-> ...
->
-> > > KP, please take a look at this as soon as you can (lore link below fo=
-r
-> > > those who aren't on the list).  One obvious first thing to look at is
-> > > simply moving the call to early_security_init(), but that requires
-> > > some code audit to make sure it is safe and doesn't break something
-> > > else.  Of course, if we can do something with how we setup/use static
-> > > calls that is even better.  I'll take a look at it myself later today=
-,
-> > > but I'm busy with meetings for the next several hours.
+> > > > I'm wondering why security_key_session_to_parent() was never used: =
+see
+> > > > commit 3011a344cdcd ("security: remove dead hook key_session_to_par=
+ent")
 > > >
-> > > If we can't resolve this in the next day or two I'm going to
+> > > While I was looking at this in another off-list thread I think I came
+> > > around to the same conclusion: I think we want the
+> > > security_key_session_to_parent() hook back, and while I'm wearing my
+> > > SELinux hat, I think we want a SELinux implementation.
 > >
-> > Thanks for the ping.
-> >
-> > Taking a look, yeah it's possible that we need to move jump_label_init
-> > before early_security_init / inside it.
-> >
-> > I will do a repro and test my change and reply back.
+> > FYI: Those checks, including the hook that formerly existed there, are
+> > (somewhat necessarily) racy wrt concurrent security context changes of
+> > the parent because they come before asynchronous work is posted to the
+> > parent to do the keyring update.
 >
-> I'm pretty sure we don't want to move jump_label_init() inside
-> early_security_init(), we likely want to keep those as distinct calls
-> in start_kernel().  Shuffling the ordering around seems like a better
-> solution if we can't solve this some other way.
+> I was wondering about something similar while looking at
+> keyctl_session_to_parent(), aren't all of the parent's cred checks
+> here racy?
+
+Yeah...
+
+> > In theory we could make them synchronous if we have the child wait for
+> > the parent to enter task work... actually, with that we could probably
+> > get rid of the whole cred_transfer hack and have the parent do
+> > prepare_creds() and commit_creds() normally, and propagate any errors
+> > back to the child, as long as we don't create any deadlocks with
+> > this...
 >
-> Regardless, thanks for looking into this, I'll hold off on digging
-> into this and wait for your patch.
+> Assuming that no problems are caused by waiting on the parent, this
+> might be the best approach.  Should we also move, or duplicate, the
+> cred checks into the parent's context to avoid any races?
 
-Since I don't want to leave linux-next broken any longer, I'm going to
-yank the static-call patches from the lsm/next branch but I'll leave
-them in lsm/dev so you can continue to use that as a basis for your
-fix.  If we don't have a fix in hand by the first half of next week,
-I'll drop the patches from lsm/dev too and we can revisit the patchset
-when you have a fix ready.
+Yeah, I think that'd probably be a reasonable way to do it. Post task
+work to the parent, wait for the task work to finish (with an
+interruptible sleep that cancels the work item on EINTR), and then do
+the checks and stuff in the parent. I guess whether we should also do
+racy checks in the child before that depends on whether we're worried
+about a child without the necessary permissions being able to cause
+spurious syscall restarts in the parent...
 
-For casual observers, the lsm/next is normally an automatically
-composed branch made up of the latest lsm/stable-X.Y and lsm/dev
-branches however in this particular case I'm going to manually update
-the lsm/next branch.  The normal process is described here:
-
-* https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-
---=20
-paul-moore.com
+> > > Micka=C3=ABl, is this something you want to work on?
+>
+> --
+> paul-moore.com
 
