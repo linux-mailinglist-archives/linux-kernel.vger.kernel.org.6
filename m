@@ -1,145 +1,159 @@
-Return-Path: <linux-kernel+bounces-269743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF2AC943655
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:20:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88827943653
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F18311C2362C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAB4E1C22BA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9233916C6AE;
-	Wed, 31 Jul 2024 19:19:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89E1E15FA7A;
+	Wed, 31 Jul 2024 19:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XNFSh2rg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHxA4SNy"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306051607B7;
-	Wed, 31 Jul 2024 19:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA5115252D;
+	Wed, 31 Jul 2024 19:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453539; cv=none; b=fvm/rVC/YirVQoOsNIncO1jw5Xk+olOVJCEN/YKGYduGL5cwcF4V+kB/QQks6/poq/ZP0nmoZUcstp7q53tByUCXzzUDzszdW/TrSEDRa7RWcusFFLwKXQr8J+ADyQ5rRD8Z+LKlfOKSW2w8x3opzbXRXEzK7o+MeeSOoFYKrR4=
+	t=1722453526; cv=none; b=oAikoRP7fXtCOjIW0kE/RmNk8m/mh9a6vJEOc+P3AnnQCbKvY0V1fuDF4h7lqTwhH6gMslzzINSyDQHceBim1KtekhNqGTuDjzFbakbnluWr6wd3bJfHye8wBGTCGNIyhYDHFKTKoi3AkVU2FqkWLBjASascK9Nl+Fik8ucAPKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453539; c=relaxed/simple;
-	bh=+P/abtSGxiZPMAiZAo3haGY/M/31j5J/u+le+gI6cVE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=drYvsJzfsZAqrxyf6VGKme4ZA60Q01E8tuxEE/eIG4EwdKDBxVe4Z0uJRDDt5vwbWVMlHfkxtQom+qD7RjsyBJxNGxXI0tzfGCw7vIDRL16P7z0gs1Hjb9ij820VdyNMoq8BQJTV0iRXyK0VnGNU31MOFJ0N3y6YDvtsZSjkWo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XNFSh2rg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VAwfbG030503;
-	Wed, 31 Jul 2024 19:17:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=l3ltcUHk9tMQkTOvGEzCW7
-	XZoeuWZcKvuiV5U4TLfXA=; b=XNFSh2rgueqD8EbrBEGarNu7G0nomh9uFZ+L2g
-	TaxQbV/pc/ONkjTDka20Dl5i80ShFY6KllW4mZsGLSSZTxtnfKnCE1oStY9yFGbK
-	EmJYW+rHdNtWC5zFoVJf9VNtNX577L2dc6pu53Go/mJyhH1K/nxpjM1OdAD52nw9
-	3B/NcGZjay1Fsl7jqgEJ/BAVBc6Ox/TsOQOqZvJrMzgh7sNz1l2xPL8K9VEzpftn
-	0f8MZpPm6WtRxP94xge3w6p/va8guE3T3o+SITBGVY67+5Pn8SrojSO0TIpFjMcs
-	SXF5c+SgANopUb9wUDLd+z7LJXYw5LzLLEQeMnV8hHADtI8g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qm081cwk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 19:17:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46VJHgxk021058
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 19:17:42 GMT
-Received: from abhinavk-linux1.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 31 Jul 2024 12:17:41 -0700
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "Chandan
- Uddaraju" <chandanu@codeaurora.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>
-CC: Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Archit Taneja
-	<architt@codeaurora.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] drm/msm/dpu: move dpu_encoder's connector assignment to atomic_enable()
-Date: Wed, 31 Jul 2024 12:17:22 -0700
-Message-ID: <20240731191723.3050932-1-quic_abhinavk@quicinc.com>
-X-Mailer: git-send-email 2.44.0
+	s=arc-20240116; t=1722453526; c=relaxed/simple;
+	bh=KJXr8v/OtPrbW9nPLGgNd7ySuI7MnDx84Zz8ZrsnQlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNPml9/mDKMSNKUIGilLj81/OrPcEP1AviLi65Sxn21JtDujzD4n6po6rmQwSY3VuRsS3bEgx9X9hSsTpYsfnSUxP2P/1a0e65FV2VSYm5rE2qnAstNVmmVOKY0FVcgSlUUN91NdBFuOgrtmunft+mbddr9zfZu30UpOk5lssac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aHxA4SNy; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fd6ed7688cso48084505ad.3;
+        Wed, 31 Jul 2024 12:18:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722453524; x=1723058324; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YKmXPYGLiuooxOyOTiioTCzv35HEsS/Fq6QbtaZlhZ0=;
+        b=aHxA4SNyBS2j58+Vg+Fs+D4Yd+myrY3Cy/6HT39JeXRx5P+WXDgCISaVgzAzYgIKSj
+         PgyTu7cBO9bit/EO/7k9lAix6xyuCwbShxgVNBWcT3Wb/CcvI1leirriDFFFkkuefba/
+         CXJLnvp3Y+7tRgFVvhCwMIGpPC5Xjz2u5EWQQlmFIgIUlFFdrInLMOPwmJSshNXrJinZ
+         9Hfwu91W0rmAvCzHRL9+kJG4NVY2bGS4+0I+IZGiJwfZxApX1qCezVUKflseJHp5pieW
+         8S0x9AS5bIN6IQ/Aoe9tZobf90hjhUe4orEC/RmwUr5nqxYvAuc3YgBDCjvkOiyRUoXi
+         XrxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722453524; x=1723058324;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YKmXPYGLiuooxOyOTiioTCzv35HEsS/Fq6QbtaZlhZ0=;
+        b=b1JW+PXH9ac8s6Uyp8QpHdiqqP2gJFlTPmUgbAhT6/AfkBjC0o92zJzPocybN2j3PP
+         gBuiRZjGIguGIgw7No06Xp9sLxcFV2UJUt2iTL7vqXYwrmQP0uSGDHkXcr+Tvv6we80k
+         OM88yLm+S8tnMifcPmoWhHNgsOWpu3db41hr0gKo+0qQHgkdz8zKJg+Sq7yE8THLRVy9
+         FAcuM2/8cz/szV/5RhEd7Ejlzcn1Ao/66GEDqbtc0ZQ04B/ws8YIWTgvqAMG1gNewCCF
+         15mnfb5OWTK55ER1hQzNcG/S6IPR0pwgD/syOTxf+53jFY6UlyzIhPxf/b5OoG7uD+IY
+         i8Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFofKlUwdlIyT9gmDWDJMUqqttW3ovleryqoX29tQcufk5CknCJfiyltMFix0sJiLVWWtSWrNq4nNFJcg8A52FZyuY3BhzrhwymYnZhG+B5JRZ1b6linECyBrfT4N/kvaNYP/a4TMM
+X-Gm-Message-State: AOJu0YyKd8wxAQCdGleKlFgFJ5/upCoPGdlUsiBk8qPSB4SUrqRgi8mK
+	N0PCrA3IuSmeEvo9/dha0os1YLV2B9q5HK845XGvBqDif8fhReTw
+X-Google-Smtp-Source: AGHT+IGtmnnl8w0OObeGNOiEbvgRRrT+3phJ2aRna86jFJDkcu5+xWDzRmjV52RpxJofqPq1X8hLSw==
+X-Received: by 2002:a17:903:2349:b0:1fb:4f7f:3b59 with SMTP id d9443c01a7336-1ff4ce5792fmr3809585ad.3.1722453524371;
+        Wed, 31 Jul 2024 12:18:44 -0700 (PDT)
+Received: from embed-PC.myguest.virtualbox.org ([106.205.109.112])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7d37745sm124165475ad.112.2024.07.31.12.18.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 12:18:43 -0700 (PDT)
+Date: Thu, 1 Aug 2024 00:48:33 +0530
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, oneukum@suse.com,
+	usb-storage@lists.one-eyed-alien.net, linux-usb@vger.kernel.org,
+	skhan@linuxfoundation.org, dan.carpenter@linaro.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
+Message-ID: <ZqqOCYZ6TtXdXpea@embed-PC.myguest.virtualbox.org>
+References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
+ <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
+ <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
+ <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
+ <804a6d40-73a4-4af6-944b-95e9324d7429@rowland.harvard.edu>
+ <Zqp8vbbIC8E/XrQY@embed-PC.myguest.virtualbox.org>
+ <b35a344a-018b-44ae-975a-7767a3d5b6ec@rowland.harvard.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TS2lMN5NxMTUrN4xROGPYtVXkpKCpPxJ
-X-Proofpoint-ORIG-GUID: TS2lMN5NxMTUrN4xROGPYtVXkpKCpPxJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- mlxscore=0 priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1011
- malwarescore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b35a344a-018b-44ae-975a-7767a3d5b6ec@rowland.harvard.edu>
 
-For cases where the crtc's connectors_changed was set without enable/active
-getting toggled , there is an atomic_enable() call followed by an
-atomic_disable() but without an atomic_mode_set().
+On Wed, Jul 31, 2024 at 02:19:54PM -0400, Alan Stern wrote:
+> On Wed, Jul 31, 2024 at 11:34:45PM +0530, Abhishek Tamboli wrote:
+> > On Wed, Jul 31, 2024 at 10:04:33AM -0400, Alan Stern wrote:
+> > > On Wed, Jul 31, 2024 at 11:15:28AM +0200, 'Oliver Neukum' via USB Mass Storage on Linux wrote:
+> > > > Hi,
+> > > > 
+> > > > On 30.07.24 19:56, Abhishek Tamboli wrote:
+> > > > > On Tue, Jul 30, 2024 at 09:09:05AM +0200, Oliver Neukum wrote:
+> > > > 
+> > > > > > 1. use a constant, where a constant is used
+> > > > > I think you are suggesting that I should replace hard-coded values like the
+> > > > > buffer size with named constants. For example:
+> > > > > 
+> > > > > #define BUF_SIZE 8
+> > > > > unsigned char buf[BUF_SIZE];
+> > > > 
+> > > > Yes, but the constant we need to look at here is bl_len.
+> > > > This is a variable needlessly.
+> > > 
+> > > The code in ms_scsi_read_capacity() is written that way to be consistent 
+> > > with the sd_scsi_read_capacity() routine.  Or maybe it was just 
+> > > copied-and-pasted, and then the variable's type was changed for no good 
+> > > reason.
+> > > 
+> > > Replacing the variable with a constant won't make much difference.  The 
+> > > compiler will realize that bl_len has a constant value and will generate 
+> > > appropriate code anyway.  I think just changing the type is a fine fix.
+> > > 
+> > > > > > 2. use the macros for converting endianness
+> > > > > Can I use macros like cpu_to_le32 for converting the bl_num and bl_len values.
+> > > > > Should I replace all instances of manual bitwise shifts with these macros?
+> > > > 
+> > > > Yes.
+> > > > 
+> > > > > For example:
+> > > > > 
+> > > > >      u32 bl_len = 0x200;
+> > > > >      buf[0] = cpu_to_le32(bl_num) >> 24;
+> > > > >      buf[4] = cpu_to_le32(bl_len) >> 24;
+> > > > > 
+> > > > > Is using cpu_to_le32 appropriate for the data format required by this
+> > > > > device?
+> > > > 
+> > > > Well, the format is big endian. So, cpu_to_be32() will be required.
+> > > 
+> > > Better yet, use put_unaligned_be32().
+> > Would you recommend submitting a follow-up patch to incorporate this change, or should I leave it as is for now.
+> 
+> You can submit another patch as a clean-up, if you want.  But as I said, 
+> it isn't needed.
+> 
+> > >However, there's nothing really 
+> > >wrong with the code as it stands. It doesn't need to be changed now.
+> > As you mentioned there's no need to change the code, So my initial patch is okay as is?
+> 
+> It is as far as I'm concerned.  Obviously Oliver has a different 
+> opinion.  But I'm the Maintainer of the usb-storage driver, so my 
+> opinion counts for more than his does, in this case.  :-)
+Thank you for your clarification and support. I appreciate your feedback.
+I'm glad to know that my initial patch is acceptable to you.
 
-This results in a NULL ptr access for the dpu_encoder_get_drm_fmt() call in
-the atomic_enable() as the dpu_encoder's connector was cleared in the
-atomic_disable() but not re-assigned as there was no atomic_mode_set() call.
-
-Fix the NULL ptr access by moving the assignment for atomic_enable() and also
-use drm_atomic_get_new_connector_for_encoder() to get the connector from
-the atomic_state.
-
-Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 34c56e855af7..3b171bf227d1 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -1171,8 +1171,6 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
- 
- 	cstate->num_mixers = num_lm;
- 
--	dpu_enc->connector = conn_state->connector;
--
- 	for (i = 0; i < dpu_enc->num_phys_encs; i++) {
- 		struct dpu_encoder_phys *phys = dpu_enc->phys_encs[i];
- 
-@@ -1270,6 +1268,8 @@ static void dpu_encoder_virt_atomic_enable(struct drm_encoder *drm_enc,
- 
- 	dpu_enc->commit_done_timedout = false;
- 
-+	dpu_enc->connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
-+
- 	cur_mode = &dpu_enc->base.crtc->state->adjusted_mode;
- 
- 	dpu_enc->wide_bus_en = dpu_encoder_is_widebus_enabled(drm_enc);
--- 
-2.44.0
-
+Thanks & Regards
+Abhishek Tamboli
 
