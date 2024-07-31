@@ -1,115 +1,80 @@
-Return-Path: <linux-kernel+bounces-269781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 313AF9436D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C449436D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:03:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07061F268E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:02:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3D941F27577
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DFE219E1;
-	Wed, 31 Jul 2024 20:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC7324AEDA;
+	Wed, 31 Jul 2024 20:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqKkrrHt"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GmNw9rXg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A1381AD;
-	Wed, 31 Jul 2024 20:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0D14084E
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456129; cv=none; b=eMlXUJMPsLCQG7TLr5xhjbZ2Y3SQ4t3zafCUDkGbPBeB06fQ/IJd4Z0rj72AHMB8OPObLRjzFcNBtVDXcHSr7Zr8KDiDmlCgtBiBQo6xXTEuGEqIN8ifvHboVN0nQpo/JcnzgzCE2VyK+eydLw563XFsDww5i8syuUrqb+mLNH4=
+	t=1722456196; cv=none; b=I91HBySVD39diGI9LNaEHLOfhxfB1EpoCFRhVN4uhAmRwnz7bTD8oTe0Rn7ZMy+NcZnLiaS36f/MUhsaapsaXtmC28qy5fpNX40nObublR0Pj8IR4UzAj1VXXI9zIslHIJzHddT1PRgfSja21FpRvoZa3+tS2P1M1B+O4BWD0G0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456129; c=relaxed/simple;
-	bh=QFiLxSsKfiwzKnzdvA9UzCQ3GD7o2VslezEJoqA4HVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=XI0ckh+5nVnwFabssXwEuzEEE0Ayn3tYbMi09FM/MI0ImG2l+3eGIU8WKtbj3USzBiq8kNsZ6vnCBkmsROdUV5GPvyQ1TTDEYTHfzR+81R3mBn/BdFv/XiEOnSCzOPiKtvet1KrWrJ9cW+NYNVEFxkyw7oqD2I93BqGPGv+QLrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqKkrrHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0809EC4AF0E;
-	Wed, 31 Jul 2024 20:02:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456129;
-	bh=QFiLxSsKfiwzKnzdvA9UzCQ3GD7o2VslezEJoqA4HVc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=uqKkrrHtsuA7xZEi7vhRur/0faE0uJd2OvFgdmLOxw0jwyAeOyvOUWTPUupxnO+Rf
-	 O8IKY2jfQ1bmISQrBjHJoAx6wy+C+z1/BEAbVPhnC62H/Gc0xUQyt/wihcu73mlQ+w
-	 ANtaA+10Zd0/PGOU+B/DohQFrl6F/bE9hyq+xkvvIqs9VurmzXRqR6oiPKdi+/YugE
-	 ObyNHYMpgN23K+C0g5wzyO6Q+uo9nBhruXxoGgwGQWq8kI3+OiNuwhgoPnhhXIuEuc
-	 uq0lS0izmC9X14OgV+3Zyx6qizU86xXQd3Gq3V7HhfzOOcKOyg3PBvNiJ1U6WGITNi
-	 4DjJif0hLTJSg==
-Date: Wed, 31 Jul 2024 15:02:07 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: Make pcim_request_all_regions() a public
- function
-Message-ID: <20240731200207.GA78649@bhelgaas>
+	s=arc-20240116; t=1722456196; c=relaxed/simple;
+	bh=XmMVpdtq1CvBFB7F50MXSgiYhS1qClRnuBs0Pb8wTqg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XMBpLHz3cS63dF0gtSyvCkx54RZaa+RQm0fHLE4lOE1mNcrBWxG4q30vJRCWzg3f9r/YC3+CobVewgwAHtpvk+NOKEeYArhmltX/ryysWMG9U8Lj8v63qoJLWdzVHT5ztYZcyGRv9z47dOjC9y+3ER23SpqMTjg6lGlS/tU4ReI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GmNw9rXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06C8CC116B1;
+	Wed, 31 Jul 2024 20:03:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722456196;
+	bh=XmMVpdtq1CvBFB7F50MXSgiYhS1qClRnuBs0Pb8wTqg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GmNw9rXg6115TDx2JZwy10APnP9bhuuiZcVP+/0Gbi9TVzUsqK6hjytv5tYZLdprG
+	 WFxNDEfKz6+7E20zW+IF6s9wfOsIgNp11RUPxuenETsHvxdT7UybvcucOXnotvMs9r
+	 0NgemfkUMb/OY6rUsMF01SQeNQC+h/Zbeo5g0Cm4=
+Date: Wed, 31 Jul 2024 13:03:15 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Oscar Salvador <osalvador@suse.de>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, Peter Xu
+ <peterx@redhat.com>, Muchun Song <muchun.song@linux.dev>, David Hildenbrand
+ <david@redhat.com>, Donet Tom <donettom@linux.ibm.com>, Matthew Wilcox
+ <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Michal Hocko
+ <mhocko@suse.com>
+Subject: Re: [PATCH v2 6/9] mm: Make hugetlb mappings go through
+ mm_get_unmapped_area_vmflags
+Message-Id: <20240731130315.7f1f22d006fb19686104ee54@linux-foundation.org>
+In-Reply-To: <ZqpUJnhi5l38ijwj@localhost.localdomain>
+References: <20240729091018.2152-1-osalvador@suse.de>
+	<20240729091018.2152-7-osalvador@suse.de>
+	<8a57e184-4994-4642-959d-44dc7efbceca@lucifer.local>
+	<ZqpTaKHdrYt61HYy@localhost.localdomain>
+	<ZqpUJnhi5l38ijwj@localhost.localdomain>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731123454.22780-2-pstanner@redhat.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 02:34:54PM +0200, Philipp Stanner wrote:
-> In order to remove the deprecated function
-> pcim_iomap_regions_request_all(), a few drivers need an interface to
-> request all BARs a PCI-Device offers.
-> 
-> Make pcim_request_all_regions() a public interface.
+On Wed, 31 Jul 2024 17:11:34 +0200 Oscar Salvador <osalvador@suse.de> wrote:
 
-pcim_iomap_regions_request_all() is only used by a dozen or so
-drivers.  Can we convert them all at once to consolidate reviewing
-them?  Or are the others harder so we have to do this piece-meal?
+> > git grep hugetlb_get_unmapped_area
+> 
+> Heh, of course I saw what is wrong after pressing intro.
+> Ok, with the entire series applied you should not see this problem as
+> hugetlb_get_unmapped_area gets totally wiped out, but checking out only
+> this commit indeed throws an error.
+> 
+> I will see how I can reshufle this.
 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  drivers/pci/devres.c | 3 ++-
->  include/linux/pci.h  | 1 +
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> index 3780a9f9ec00..0ec2b23e6cac 100644
-> --- a/drivers/pci/devres.c
-> +++ b/drivers/pci/devres.c
-> @@ -932,7 +932,7 @@ static void pcim_release_all_regions(struct pci_dev *pdev)
->   * desired, release individual regions with pcim_release_region() or all of
->   * them at once with pcim_release_all_regions().
->   */
-> -static int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
-> +int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
->  {
->  	int ret;
->  	int bar;
-> @@ -950,6 +950,7 @@ static int pcim_request_all_regions(struct pci_dev *pdev, const char *name)
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL(pcim_request_all_regions);
->  
->  /**
->   * pcim_iomap_regions_request_all - Request all BARs and iomap specified ones
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 4cf89a4b4cbc..5b5856ba63e1 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -2289,6 +2289,7 @@ static inline void pci_fixup_device(enum pci_fixup_pass pass,
->  				    struct pci_dev *dev) { }
->  #endif
->  
-> +int pcim_request_all_regions(struct pci_dev *pdev, const char *name);
->  void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen);
->  void pcim_iounmap(struct pci_dev *pdev, void __iomem *addr);
->  void __iomem * const *pcim_iomap_table(struct pci_dev *pdev);
-> -- 
-> 2.45.2
-> 
+I dropped the v2 series, so reshuffle away.
 
