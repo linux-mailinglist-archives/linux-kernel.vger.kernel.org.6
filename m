@@ -1,111 +1,141 @@
-Return-Path: <linux-kernel+bounces-269037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9369942CA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E109942CA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:02:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 540831F26FF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7D11C213FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2E71AC456;
-	Wed, 31 Jul 2024 10:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784551AC450;
+	Wed, 31 Jul 2024 11:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYZQhOwn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Det0uVEC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FFD1A8C0C;
-	Wed, 31 Jul 2024 10:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE023145FEF;
+	Wed, 31 Jul 2024 11:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423557; cv=none; b=I4i9XPhMCqhdhuioc3S60j6fJCV+HlJcsCu2THYcHNy4IAurhKfqi70G9PxioBgG4VEChPoTZyalAvhE8EWU+a9O9jAJehwGaleadSt+A3o1Y2xgfOAebz8OiV/bjLcJ7qY+yDRd1mOaXN39C3/hsGPuOlaOSXLsVC6nuRaVVts=
+	t=1722423731; cv=none; b=QSCe5e6TyBTlkhRjkXD0aObwUOedpr6rWlX9ZpmzA2TPKdx6cK4Yk87T5jI8m2DF3oy2oDauQVc6/S+Cwy5nqEUQKjuYfgYmI8uT7h/VtnyUULBWAyEaxbabA5M9iMCLyi8hSbZ2CXO4eav6VPdS0djyMcUm8sMx2V2XmN38Bos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423557; c=relaxed/simple;
-	bh=WAt+uKUcWmsl15ThUfwoCHfKCOypKIoAIzDoID2uCro=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dOFUHjVVx+pdMcv8FkIdeRuYs1e2ms2HdNSi+8VhLYUx4JLrQv+Q8QelQf1/lPrOuAVr4q2d3KW+1c1+/XplwVtIh8qGE5Gka41J0yD1hqvXJg+7s3zT3SYUULP/vRzue88qSvtOBIqii6wrPSQ1wzfxS1bn36jsqJKEzx1Q9ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MYZQhOwn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5A88C4AF10;
-	Wed, 31 Jul 2024 10:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722423556;
-	bh=WAt+uKUcWmsl15ThUfwoCHfKCOypKIoAIzDoID2uCro=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MYZQhOwnMd7DGLOMs49T9UkHY7p+38xxoap4wFimL58ep0kXeKmhKehWIF6+V1YvO
-	 Qp08ixMRHLJfvw0MZxIUX1ICqMYqYELvWEeu48g3Tit+MgDxRby9ryviAmGoB/3ffD
-	 ptGFN24Cmjhb47ZJGz1MWQo6emMDNmZCv9odI81Gz6SoEVjd9RWUzLU86/u7sSQxRf
-	 FdS+4un6uQPnxz46Y50YmbfYewRKsorylo+G3rewR0F9AN/eVNi5zNa4Oxr/X1P0CU
-	 rpAJ31zd4L8gST8XG0GP6jf6VKK9BSDIy4qI6iJ3RAw6iZhiYxRn2RKetCS52kGK4R
-	 V+ZHlIxgWEiJQ==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-26123e59c8aso666179fac.1;
-        Wed, 31 Jul 2024 03:59:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUQiQj8Rjzwd24h5pRTX9TTZeO/3kRpdXExSSi9s8t4kOWgB9EoRHfcEg8s3U9ORt18DHosUhK4jQ=@vger.kernel.org, AJvYcCUwF5kGyKOujh1lNgIwtCPcWIiX8H6RsbB8Bg/WgcPNEiUycFC/H9coYk2BPrf0B/46d+eLX+ghgjY=@vger.kernel.org, AJvYcCXEPzC02uG1foDHsYhb32GloajRWVw5stdEq12gjLhTh6JWMqPK36jNJDXrR6tRb/bHwustmdah3Ry+YTfK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1/HnO8moItt747SmBJLIPFlTKPjH7BO1X5Arl1HN4Jr40pOU6
-	HxQRqUFW+MSXaEjIhmVpvH7XR/9NRUu4/Ln1WVSuQgF3zBuodnN6lbqb4RoU43ZmfPJdxREbRG5
-	RWd+RW7eQkO4XXEiiMwP5OsgBgk4=
-X-Google-Smtp-Source: AGHT+IEnDZbw2dFh8GGsUt2bFDG9W3nBtCNuFqKxK18Y/P1eEfHY17D0uoNuEG4z99VyYqLxmmpsTcZJjxYb2hp3wh4=
-X-Received: by 2002:a4a:df47:0:b0:5d5:bc1f:daa with SMTP id
- 006d021491bc7-5d5bc1f0f75mr10929184eaf.1.1722423555797; Wed, 31 Jul 2024
- 03:59:15 -0700 (PDT)
+	s=arc-20240116; t=1722423731; c=relaxed/simple;
+	bh=JOqfqwu552ErS4arcscKszrGQQdQrUqWAJP/x8QhsRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nJut8QagKgqW6sc1cYcAkcwfSH6SFVWWNAdsn3nzpMI+IUSc0pim/5PZMox+0FX4EW4tfIxNbW9bHSv0QOgtmWAUkxOXoI2jsiTTPAEhi4g29s8YUe6/TBao581UAOl7sx3mcWjqyYub+6nw7JYjDeyEWTENJ9h0JnRH91o6Jpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Det0uVEC; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722423730; x=1753959730;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JOqfqwu552ErS4arcscKszrGQQdQrUqWAJP/x8QhsRM=;
+  b=Det0uVECodwwt9MNBGNYCGqFEUcc1lwKMTZlHkmgxyfRlWEEJEeZ1kHP
+   0icKoAHpwUh0R85wgrOPo7qDiqyOcj4jPTQG0nt/3PsEcWT/GOTw0zrEi
+   oUkR48hX0C7NmQmqdIONtaw7QaDWf2Q0DbBumrsZKPSkeJKFoo/aFaVNd
+   B4Jbcql8Ua/fdJOU05TrYNPHtYF+PY8PtBtHzvVjhFCPV9m0m5XO/xOBC
+   RSLPrFfkHIL0BDUtRNzyirX4DBYkJuOk2OjkorxpVkq5Rr7iiUGTImXfM
+   SJv88eB0TkpBU+XvaBVb9VpozvgQ6hlrCkjCAw9KlAldHtIniBLRjIp5Y
+   g==;
+X-CSE-ConnectionGUID: IXrM96z4QAGMR12KFP0SIQ==
+X-CSE-MsgGUID: GY75+SPCRDirL7cCMHaYjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="42824058"
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="42824058"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 04:02:09 -0700
+X-CSE-ConnectionGUID: OuAcWI4qQpyKkAAwhBADAw==
+X-CSE-MsgGUID: siziB5eXS7ebOyv84UT52A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="92172464"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa001.jf.intel.com with SMTP; 31 Jul 2024 04:01:56 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 31 Jul 2024 14:01:54 +0300
+Date: Wed, 31 Jul 2024 14:01:54 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>, kernel-team@android.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 07/15] usb: typec: tcpci: use GENMASK() for TCPC_TRANSMIT
+ register fields
+Message-ID: <ZqoZogC9vYg6vSOS@kuha.fi.intel.com>
+References: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
+ <20240710-tcpc-cleanup-v1-7-0ec1f41f4263@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731095223.2778-1-ilpo.jarvinen@linux.intel.com>
-In-Reply-To: <20240731095223.2778-1-ilpo.jarvinen@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 31 Jul 2024 12:59:04 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gv3xe=bmGQVDuk_wMczA5u0ASvBOQJSKShW=nAfg7hxQ@mail.gmail.com>
-Message-ID: <CAJZ5v0gv3xe=bmGQVDuk_wMczA5u0ASvBOQJSKShW=nAfg7hxQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] docs: thermal: Remove extra parenthesis
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-pm@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240710-tcpc-cleanup-v1-7-0ec1f41f4263@linaro.org>
 
-On Wed, Jul 31, 2024 at 11:52=E2=80=AFAM Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> thermal_zone_device_register() prototype in the thermal zone device
-> interface documentation has double closing parenthesis. Remove one
-> of them.
->
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+On Wed, Jul 10, 2024 at 11:36:14AM +0100, André Draszik wrote:
+> Convert all fields from register TCPC_TRANSMIT to using GENMASK() and
+> FIELD_PREP() so as to keep using a similar approach throughout the code
+> base and make it arguably easier to read.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
+
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
 > ---
->  Documentation/driver-api/thermal/sysfs-api.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Documentation/driver-api/thermal/sysfs-api.rst b/Documentati=
-on/driver-api/thermal/sysfs-api.rst
-> index 6c1175c6afba..63ed1801ac40 100644
-> --- a/Documentation/driver-api/thermal/sysfs-api.rst
-> +++ b/Documentation/driver-api/thermal/sysfs-api.rst
-> @@ -43,7 +43,7 @@ temperature) and throttle appropriate devices.
->                                       int trips, int mask, void *devdata,
->                                       struct thermal_zone_device_ops *ops=
-,
->                                       const struct thermal_zone_params *t=
-zp,
-> -                                     int passive_delay, int polling_dela=
-y))
-> +                                     int passive_delay, int polling_dela=
-y)
->
->      This interface function adds a new thermal zone device (sensor) to
->      /sys/class/thermal folder as `thermal_zone[0-*]`. It tries to bind a=
-ll the
-> --
+>  drivers/usb/typec/tcpm/tcpci.c | 7 +++++--
+>  include/linux/usb/tcpci.h      | 6 ++----
+>  2 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci.c b/drivers/usb/typec/tcpm/tcpci.c
+> index ad5c9d5bf6a9..b9ee9ccff99b 100644
+> --- a/drivers/usb/typec/tcpm/tcpci.c
+> +++ b/drivers/usb/typec/tcpm/tcpci.c
+> @@ -607,8 +607,11 @@ static int tcpci_pd_transmit(struct tcpc_dev *tcpc, enum tcpm_transmit_type type
+>  	}
+>  
+>  	/* nRetryCount is 3 in PD2.0 spec where 2 in PD3.0 spec */
+> -	reg = ((negotiated_rev > PD_REV20 ? PD_RETRY_COUNT_3_0_OR_HIGHER : PD_RETRY_COUNT_DEFAULT)
+> -	       << TCPC_TRANSMIT_RETRY_SHIFT) | (type << TCPC_TRANSMIT_TYPE_SHIFT);
+> +	reg = FIELD_PREP(TCPC_TRANSMIT_RETRY,
+> +			 (negotiated_rev > PD_REV20
+> +			  ? PD_RETRY_COUNT_3_0_OR_HIGHER
+> +			  : PD_RETRY_COUNT_DEFAULT));
+> +	reg |= FIELD_PREP(TCPC_TRANSMIT_TYPE, type);
+>  	ret = regmap_write(tcpci->regmap, TCPC_TRANSMIT, reg);
+>  	if (ret < 0)
+>  		return ret;
+> diff --git a/include/linux/usb/tcpci.h b/include/linux/usb/tcpci.h
+> index 3cd61e9f73b3..f7f5cfbdef12 100644
+> --- a/include/linux/usb/tcpci.h
+> +++ b/include/linux/usb/tcpci.h
+> @@ -148,10 +148,8 @@
+>  #define TCPC_RX_DATA			0x34 /* through 0x4f */
+>  
+>  #define TCPC_TRANSMIT			0x50
+> -#define TCPC_TRANSMIT_RETRY_SHIFT	4
+> -#define TCPC_TRANSMIT_RETRY_MASK	0x3
+> -#define TCPC_TRANSMIT_TYPE_SHIFT	0
+> -#define TCPC_TRANSMIT_TYPE_MASK		0x7
+> +#define TCPC_TRANSMIT_RETRY		GENMASK(5, 4)
+> +#define TCPC_TRANSMIT_TYPE		GENMASK(2, 0)
+>  
+>  #define TCPC_TX_BYTE_CNT		0x51
+>  #define TCPC_TX_HDR			0x52
+> 
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
 
-I was about to apply this, but then I realized that the function in
-question doesn't even exist any more.
-
-Let me have a look at this file.
+-- 
+heikki
 
