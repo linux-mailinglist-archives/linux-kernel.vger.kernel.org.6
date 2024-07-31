@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-269336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D66859431B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:10:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D975C9431BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 917D7284215
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:10:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DFDDB23387
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC8691B3F04;
-	Wed, 31 Jul 2024 14:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681561B373D;
+	Wed, 31 Jul 2024 14:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="elfMgnTT"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="RheJVGsL"
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC881B3744
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4371B14FF;
+	Wed, 31 Jul 2024 14:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722435013; cv=none; b=QGF/SrR5ma5kG18+GxSR9pvXXvaycYIVoIHxDnRgJQem+De4FoegQ0KG+SnQReMwUqXETqLWLN5w8DzVPRf3qvEu8QYnWqfGe4kBE9oIlyYEnmOauQ/ynD4fnhkiRoRyQoDvr4K5kwj+FjeE6Jg2QJJ1YwZBp2ZcUSa9fTmwzb8=
+	t=1722435098; cv=none; b=EFaN3B8mo0PoWeGm9pPnGTurRk3HfC4woKTEyfmj44okIWvqov0u6OKkl8pywJEUdAkUethaVO1GDnS8DaLvvTvCvmXRyLhN0DajXNVIiIfB6t7iROgIKmdUBtHrU+hqSaVRZegWxoJZujSiCQOaeonO3dF7FtZyjGnZrnp/d3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722435013; c=relaxed/simple;
-	bh=dmVOCIu8kbYlKl/Cr9b5rGbdHU19hBCDOxflVjQyj+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MDMFo3FHA11T8optlk2xB2Z1drhpIoo6Sa0GyH4E+8Twxltx0p0W4klikbBRP1iF9eCFKP4TDWvjeGm8yCEFuMpu+le+/wduWjLELlHBjP8qm5v9dYLCXwNyrLrjVGF01f54ugbvsYIVgZWiq8BpFnVdeZt3SextASLIlLj10us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=elfMgnTT; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7ab76558a9so177680566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1722435010; x=1723039810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gqyqw/nHSlejBJnG1P+gVR7MBqt6hfQ4M9UtXPV7Jj8=;
-        b=elfMgnTTjCM3UmWuyHhfZduzBYb7necRHX8q8rotq4qZO09Q/crQGEbfimYIdPi5VE
-         Xul8wBlWaOEj6sFDP+OzNGu0+61bI38lGQzhub8drJMJw1474Hwx9WlEcaDFtKYwdJ+u
-         mPgoizyjvEfyNQLMLaG+5nsrSp5j2qmpV4evpmt+AJ1VRtuDQ1+5urj6eyhqisHWOb/9
-         X954oagG0F8vyrx4ff6BecFsllcL5c4fwt+P6V7A6vUSFHWqhC2b45V7GYYrvZYVwRWN
-         cysllFHa2xVeCHPp1nb3bnQPk7yYxtUDHYG1JZPXd/zrza1jI8q3kj1NFn52K7d3gCXW
-         bUHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722435010; x=1723039810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gqyqw/nHSlejBJnG1P+gVR7MBqt6hfQ4M9UtXPV7Jj8=;
-        b=gcnPVu7Nxhz4DnncWQdz879CbVBKw3YMQvYtSPSopMxNd3Be34Czky0OmqA32vNxJI
-         KWZESeJpsnruD4c2iw4MojEPmTPhzP30AHPB5SBsMZi83LTY4jN6mkdGjN97jwFM6HDu
-         EAC7hujedsiEH9QA9iw/W1Ol7RIoEZ6k7+jsMQOk0ewQ/70hVGXld1d6fzjwaGH3shhb
-         xai15rFdvZFCd3MPi55U983UE0CpUyg3vZO6YG9y6OdL9orNKDtxaVFRyNgeBMEjX7yI
-         5lPSSQeR40a+Gqu+qlSAeMu7ZFPiTcitTdEL67z5DaGU0FNqX0ze+JUtvJE7Kngazaig
-         5nkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXByX7wQgKGzprzQG3SZHV/P8yoPI8T15evfUnyfT204Emdi03CSCPBzXM+Ba/rUlwI4dydRmSPngBZ9tMJWH9TUiq9Pqy43dMkDh4i
-X-Gm-Message-State: AOJu0YzgR/MmA7fpT65EwepA29aRubyxVB8Mm1bueUP72efE1cr4x5NI
-	nzskYq23rlffCsg/BAuv+i5w90322rrbz5/rHKx1q9mL+SyvBrmZ//T85JzWCMY=
-X-Google-Smtp-Source: AGHT+IF2QCYCUqjPekfpSqYJ4AImkm365cVwJfODis1nmhKBhNr8Twq9mBAr+HyjSZ/Z5pxT2z9Qdg==
-X-Received: by 2002:a17:907:60cb:b0:a7d:88c4:2897 with SMTP id a640c23a62f3a-a7d88c437b8mr345160666b.2.1722435009133;
-        Wed, 31 Jul 2024 07:10:09 -0700 (PDT)
-Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad416basm772297966b.104.2024.07.31.07.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 07:10:08 -0700 (PDT)
-Date: Wed, 31 Jul 2024 16:10:07 +0200
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-arch@vger.kernel.org
-Subject: Re: [PATCH v4 02/13] riscv: Do not fail to build on byte/halfword
- operations with Zawrs
-Message-ID: <20240731-56ba72420d7f745dacb66fd8@orel>
-References: <20240731072405.197046-1-alexghiti@rivosinc.com>
- <20240731072405.197046-3-alexghiti@rivosinc.com>
+	s=arc-20240116; t=1722435098; c=relaxed/simple;
+	bh=g0FCq4nnchDFfxh51t3tr65YF79O4pzb8rTXeXDOps0=;
+	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
+	 In-Reply-To; b=UHLxxPtG81mjKaTi59KRc7sZumG3J4kGS2AwIUKyUbyuqeZGzLScHzXh399AOBlFi4ANlAzCFWeayCHUuF+QfMK5EkEUR99H9tBnApdeT8V4avWoIZ88O4dkznFkX6MMIWQd2IltblzCbVYXqfcJvuj79/Gj7sU+IBTQkTMQGtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=RheJVGsL; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [213.135.10.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id E4BD2505D;
+	Wed, 31 Jul 2024 16:11:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
+	t=1722435067;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
+	 references:references; bh=g0FCq4nnchDFfxh51t3tr65YF79O4pzb8rTXeXDOps0=;
+	b=RheJVGsLyDe1VaZaZGyLz41KRqG0eQbpu4lcvjRkmhqYsQxVpnY6SHspc+AJsru6X0q+4H
+	bFookNN2M2VflPjpAAD+KOxP9DSJKXFp+N5ii2OEzP5Mgf0JxBAhKMVXa+A/z9hdaMiFVU
+	fIYwA/Yrhh0W5AFk+8q9MlwIDS81LaZkUIvk2pT5xihTXbtf6qz8ClP1SJsvpKShFVOdsd
+	d9SijFRnSMSkdjPpL9ejDJsPMgkEgPbHP2qO4t795kQoPdBkT7deSy2NsBu4gEQc2GD+eq
+	+UD6qx97Lzo8BKfKecddrJISdAvVIB3G0WsxUA5xQY7a7wjGLRtxXewwju3sqQ==
+Content-Type: multipart/signed;
+ boundary=96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Wed, 31 Jul 2024 16:11:05 +0200
+Message-Id: <D33S9T73M6ND.G7CCJ4PDVYQU@walle.cc>
+To: "Michal Simek" <michal.simek@amd.com>, "Mahapatra, Amit Kumar"
+ <amit.kumar-mahapatra@amd.com>, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ "broonie@kernel.org" <broonie@kernel.org>, "pratyush@kernel.org"
+ <pratyush@kernel.org>, "miquel.raynal@bootlin.com"
+ <miquel.raynal@bootlin.com>, "richard@nod.at" <richard@nod.at>,
+ "vigneshr@ti.com" <vigneshr@ti.com>, "sbinding@opensource.cirrus.com"
+ <sbinding@opensource.cirrus.com>, "lee@kernel.org" <lee@kernel.org>,
+ "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
+ "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
+ "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "perex@perex.cz"
+ <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
+ <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, "Conor Dooley"
+ <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
+From: "Michael Walle" <michael@walle.cc>
+X-Mailer: aerc 0.16.0
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+ <c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org>
+ <BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org> <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org> <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org> <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com> <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org> <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org> <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com> <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com> <D2ZHJ765LUGP.2KTA46P1BL75X@walle.cc> <e1587f61-f765-4a22-b06e-71387cc49c4d@amd.com> <D33M26RLVLHF.3Q5YARPBNSBOY@walle.cc> <9fb60743-3e89-49fa-a399-3cf2607a7e41@amd.com>
+In-Reply-To: <9fb60743-3e89-49fa-a399-3cf2607a7e41@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731072405.197046-3-alexghiti@rivosinc.com>
 
-On Wed, Jul 31, 2024 at 09:23:54AM GMT, Alexandre Ghiti wrote:
-> riscv does not have lr instructions on byte and halfword but the
-> qspinlock implementation actually uses such atomics provided by the
-> Zabha extension, so those sizes are legitimate.
+--96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-We currently always come to __cmpwait() through smp_cond_load_relaxed()
-and queued_spin_lock_slowpath() adds another invocation. However, isn't
-the reason we're hitting the BUILD_BUG() because the switch fails to find
-a case for 16, not because it fails to find cases for 1 or 2? The new
-invocation passes a pointer to a struct mcs_spinlock, which looks like
-it has size 16. We need to ensure that when ptr points to a pointer that
-we pass the size of uintptr_t.
+> > All I'm saying is that you shouldn't put burden on us (the SPI NOR
+> > maintainers) for what seems to me at least as a niche. Thus I was
+> > asking for performance numbers and users. Convince me that I'm
+> > wrong and that is worth our time.
+>
+> No. It is not really just feature of our evaluation boards. Customers are=
+ using=20
+> it. I was talking to one guy from field and he confirms me that these=20
+> configurations are used by his multiple customers in real products.
 
-> 
-> Then instead of failing to build, just fallback to the !Zawrs path.
+Which begs the question, do we really have to support every feature
+in the core (I'd like to hear Tudors and Pratyush opinion here).
+Honestly, this just looks like a concatenation of two QSPI
+controllers. Why didn't you just use a normal octal controller which
+is a protocol also backed by the JEDEC standard. Is it any faster?
+Do you get more capacity? Does anyone really use large SPI-NOR
+flashes? If so, why? I mean you've put that controller on your SoC,
+you must have some convincing arguments why a customer should use
+it.
 
-No matter what sizes we're failing on, if we do this then
-queued_spin_lock_slowpath() won't be able to take advantage of Zawrs.
+> > The first round of patches were really invasive regarding the core
+> > code. So if there is a clean layering approach which can be enabled
+> > as a module and you are maintaining it I'm fine with that (even if
+> > the core code needs some changes then like hooks or so, not sure).
+>
+> That discussion started with Miquel some years ago when he was trying to =
+to=20
+> solve description in DT which is merged for a while in the kernel.
 
-Thanks,
-drew
+What's your point here? From what I can tell the DT binding is wrong
+and needs to be reworked anyway.
 
-> 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/include/asm/cmpxchg.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/cmpxchg.h
-> index ebbce134917c..9ba497ea18a5 100644
-> --- a/arch/riscv/include/asm/cmpxchg.h
-> +++ b/arch/riscv/include/asm/cmpxchg.h
-> @@ -268,7 +268,8 @@ static __always_inline void __cmpwait(volatile void *ptr,
->  		break;
->  #endif
->  	default:
-> -		BUILD_BUG();
-> +		/* RISC-V doesn't have lr instructions on byte and half-word. */
-> +		goto no_zawrs;
->  	}
->  
->  	return;
-> -- 
-> 2.39.2
-> 
-> 
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> And Amit is trying to figure it out which way to go.
+> I don't want to predict where that code should be going or how it should =
+look=20
+> like because don't have spi-nor experience. But I hope we finally move fo=
+rward=20
+> on this topic to see the path how to upstream support for it.
+
+You still didn't answer my initial question. Will AMD support and
+maintain that code? I was pushing you towards putting that code into
+your own driver because then that's up to you what you are doing
+there.
+
+So how do we move forward? I'd like to see as little as core changes
+possible to get your dual flash setup working. I'm fine with having a
+layer in spi-nor/ (not sure that's how it will work with mtdcat
+which looks like it's similar as your stacked flash) as long as it
+can be a module (selected by the driver).
+
+-michael
+
+--96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZqpF+REcbWljaGFlbEB3
+YWxsZS5jYwAKCRASJzzuPgIf+L4FAYD66zueUFU1636OvgoGDTll3VhlpfWvCNks
+ygBkg8btX0/kDdus+Zs1Lz63qoncGBIBfjSOIExt4q/UijTQMIfXmQjnzxUHEsUH
+/aUgW/mzMqFLKqdncy63f8sPZX5ZY3vmAA==
+=2i8/
+-----END PGP SIGNATURE-----
+
+--96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c--
 
