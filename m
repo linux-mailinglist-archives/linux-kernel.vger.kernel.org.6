@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-269757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07B3994368C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:38:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427FF9436A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:42:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39A801C21E8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:38:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0F75B2339A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F5177E59A;
-	Wed, 31 Jul 2024 19:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4462614AD3F;
+	Wed, 31 Jul 2024 19:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZZatykF"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eXxzDAtu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F353038DEC
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845EA7E59A;
+	Wed, 31 Jul 2024 19:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722454685; cv=none; b=ZDcOQ8Ne5Or9ZWhRiAORb3SGEOR2lCzgbt0LjMiESFKimCQm+Cb7zSHMGWDryJ7Hjwr6Q/ucaOdau0kw+KWykHa2av/ANjKzW/u/+rn6pDnHDxtmuKeg9GTKTAm6oz0GLusWVBh12fpn1BO82ivhEAHLWcnHUHpZfCa2363yfAA=
+	t=1722454875; cv=none; b=XZbtMznToN4TAQeeSgl+aGejS5S6WJ3tbEC/aCI0HvoNtGbhZuXvxdhaCDE3ZU6CuId5EMK2TS2203jOpwEvV/EA1RMdHWqB3RfTxqHvSZejrnou4F/mS0vtMsEmB4B1+G6qC8qtDMFqLMLlYRv/mthp3XoRITGrEj5JdVEcCDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722454685; c=relaxed/simple;
-	bh=dSb8vVCLtvBwVy0nW+BM0SMjTiQyTQKs//IgzE0RTUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WWUgP8UTtdsZ54J85z+nSJbvUk7p17v7t3fON+rlLylxCwwn30VEhfIYmxBoT1A+pWknDktztTsrQ3FHUtAIJ6zcgD88T1AJNg+TjsyGlP0xXBnbEjxsSLPGOu8Spyb5cOYO8dLyAT5oqFRZ12q9n4JYYUWxEYj8OjLPhxetBFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XZZatykF; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f01db9f419so7072341fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:38:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722454682; x=1723059482; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=72sAWVBR8h+gUQRIaEFVlfyy2iR2XsX6552mwHwwfZo=;
-        b=XZZatykFCw8Z3W76JGlEebBPxVVPCBwpxwo2J6ADMQevw1oHyCOcx+3QojrPdY5z7q
-         VmttSWaQNUyfwZL+S0x8UKA86tDUKddhOxQs3wIqaB8PXGCj4ZrFKHRuxXzoTp3MXIUn
-         Pe2IDUkzBZNSPlmAaP4FWmiEv37nKZOkQv2rpVAEoVWRaTaDEa+hg4Zm8rVpSvumQix9
-         MOKqseRYPjbx3UlMC0bzn4kVpvb/DyrHau0zqrYI90hkL0mp5LOQJEEOHrROY4K2NsNY
-         /0dzmI/7xQtbxBau1d1IMQdgZ6J4IdxmcVrSqDQwHLN19iu+fFXXkjVpKbbNPLDeBlaq
-         5poQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722454682; x=1723059482;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=72sAWVBR8h+gUQRIaEFVlfyy2iR2XsX6552mwHwwfZo=;
-        b=C3KLfHb1KPfQ9fj0yMojDPj22fIgHh6T9JsJbA+PZlsYbDmhg2/NisJOPZRIPOPAA+
-         OyqT/ftkLhiJoq7RYFbuBOEhqkjZ8hSvC1xP74e4nGO/VCbt7PXxt0BdhiqAjfmPeii/
-         ad7fA/gOcXK25KFWd+7vD0VjFWmNdQ1zEfK0MXkTYaAmjujx1BzDYfDOqZCahoC0/wsR
-         jfDu3dWuStcs/DKXQzG4++EcTMP83F1TQVnnuUMtZ8xl+OG9xzf7hgWb23CshztAFOj3
-         GpLjl22HLY39j/Y/6ozCe0b1x8FpjEUbUGSFr38JwRO46ucsvD/A3eqUXS4IuL82+VEx
-         bSLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+CndCI5J25kHrylcRYP+c8jyDyz1ms5SH70rPeezrezJVdZpkkK8bflGNdP//kddvVLQugot4y2XizwlF+xi0OM2iXWwCBecOSUHV
-X-Gm-Message-State: AOJu0YyS7UdFhI48n60MphSP2xJI9NfNHdDEcmQQWcckJqmpuiPmGSVh
-	GOScmvXRmMfKNinZxAWKVddSzQQ8uW9eFOD5dD5N9m5+5ddWaW5d
-X-Google-Smtp-Source: AGHT+IFX5EBt208JIlRQZNgRtMb35uf1gZ2AWx4Ej3RVS/mj0n7QNgKL7UUCQ0rbAcgcHJYP0DaOyA==
-X-Received: by 2002:a05:651c:b27:b0:2ef:315c:67e1 with SMTP id 38308e7fff4ca-2f1532e7c89mr2091761fa.4.1722454681414;
-        Wed, 31 Jul 2024 12:38:01 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8500:f3cf:8e28:7954:b203? (p200300c78f2a8500f3cf8e287954b203.dip0.t-ipconnect.de. [2003:c7:8f2a:8500:f3cf:8e28:7954:b203])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63b59c95sm9188229a12.50.2024.07.31.12.38.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 12:38:01 -0700 (PDT)
-Message-ID: <8f82f816-b677-4f6d-b381-d25f0bb04521@gmail.com>
-Date: Wed, 31 Jul 2024 21:38:00 +0200
+	s=arc-20240116; t=1722454875; c=relaxed/simple;
+	bh=ybbPtwxAbX+EdKv2j4xf5JOnL86Xh7bOuRhCwIfI1vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ejbm19y2svvIo1SjRFz/Di9lNfWbBV2KZinWphUPvZk9PpZ8AnfxXqa3jdgMGlyxtrOb1/zpKkjrPFyMMU4oZwW6jFt7oiUfgr59OrHprZqfumIhPeOgaUqMVLHt213rlCy0Yo2QwCiqx0bwcnGr8/bTFUTqb03CYVnuY8y/++M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eXxzDAtu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF13C4AF09;
+	Wed, 31 Jul 2024 19:41:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722454875;
+	bh=ybbPtwxAbX+EdKv2j4xf5JOnL86Xh7bOuRhCwIfI1vg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=eXxzDAtu26AfRwv2jPkKCDNmEcjx5dvC/nrIF7bX3JyESgSKP/drRJqSwswz+Xbvz
+	 1a/qOgmfOdppRfahfAnw11W9qDDeCy9Vn5CKXG6wNzU5wgCfgGIR0xG9JZEGo9ZYT8
+	 W6N2x+Fdae5JLj4uAF2dVKdyL2u/h0JPSsVthWaFHnqFwdnmhBpGq0mEjoJBOpPCfM
+	 pHbjTiGSKcZp68kKnKokVKgHx1QlsjcmfWSMi6AswOJJfL2Uzynh6W12SYFc8IGdrH
+	 0uCrQEoxmjTfbYdhFdvo/6B1MEtkTVU0SbBH4nKaGsrIdQkN61zWJOb0y120nW7na3
+	 o+OfdssbdzW2Q==
+Date: Wed, 31 Jul 2024 14:41:13 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Sunil V L <sunilvl@ventanamicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-pci@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Drew Fustini <dfustini@tenstorrent.com>
+Subject: Re: [PATCH v7 02/17] ACPI: scan: Add a weak function to reorder the
+ IRQCHIP probe
+Message-ID: <20240731194113.GA77955@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] staging: rtl8723bs: Improve clarity of MAR usage
-To: Manjae Cho <manjae.cho@samsung.com>, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <CGME20240731081603epcas1p1d140964329ddaf9146bacb6bd1111506@epcas1p1.samsung.com>
- <20240731081540.912533-1-manjae.cho@samsung.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240731081540.912533-1-manjae.cho@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729142241.733357-3-sunilvl@ventanamicro.com>
 
-On 7/31/24 10:15, Manjae Cho wrote:
-> This patch improves the readability of the code related to the Multicast
-> Address Register (REG_MAR) in the rtl8723bs driver. It adds comments to
-> clarify the purpose and offset of the register, making the code more
-> self-documenting without introducing new macros.
+On Mon, Jul 29, 2024 at 07:52:24PM +0530, Sunil V L wrote:
+> Unlike OF framework, the irqchip probe using IRQCHIP_ACPI_DECLARE has no
+> order defined. Depending on the Makefile is not a good idea. So,
+> usually it is worked around by mandating only root interrupt controller
+> probed using IRQCHIP_ACPI_DECLARE and other interrupt controllers are
+> probed via cascade mechanism.
 > 
-> Signed-off-by: Manjae Cho <manjae.cho@samsung.com>
+> However, this is also not a clean solution because if there are multiple
+> root controllers (ex: RINTC in RISC-V which is per CPU) which need to be
+> probed first, then the cascade will happen for every root controller.
+> So, introduce a architecture specific weak function to order the probing
+> of the interrupt controllers which can be implemented by different
+> architectures as per their interrupt controller hierarchy.
+
+Nit: I think it's nice if the commit log and even the subject line
+includes the actual *name* of the function being added.
+
+s/a architecture/an architecture/
+
+No need to repost for these.
+
+> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
 > ---
+>  drivers/acpi/scan.c  | 3 +++
+>  include/linux/acpi.h | 2 ++
+>  2 files changed, 5 insertions(+)
 > 
-> v2: Add comments for clarity instead of new macros
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 59771412686b..52a9dfc8e18c 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -2755,6 +2755,8 @@ static int __init acpi_match_madt(union acpi_subtable_headers *header,
+>  	return 0;
+>  }
+>  
+> +void __weak arch_sort_irqchip_probe(struct acpi_probe_entry *ap_head, int nr) { }
+> +
+>  int __init __acpi_probe_device_table(struct acpi_probe_entry *ap_head, int nr)
+>  {
+>  	int count = 0;
+> @@ -2763,6 +2765,7 @@ int __init __acpi_probe_device_table(struct acpi_probe_entry *ap_head, int nr)
+>  		return 0;
+>  
+>  	mutex_lock(&acpi_probe_mutex);
+> +	arch_sort_irqchip_probe(ap_head, nr);
+>  	for (ape = ap_head; nr; ape++, nr--) {
+>  		if (ACPI_COMPARE_NAMESEG(ACPI_SIG_MADT, ape->id)) {
+>  			acpi_probe_count = 0;
+> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+> index 0687a442fec7..3fff86f95c2f 100644
+> --- a/include/linux/acpi.h
+> +++ b/include/linux/acpi.h
+> @@ -1343,6 +1343,8 @@ struct acpi_probe_entry {
+>  	kernel_ulong_t driver_data;
+>  };
+>  
+> +void arch_sort_irqchip_probe(struct acpi_probe_entry *ap_head, int nr);
+> +
+>  #define ACPI_DECLARE_PROBE_ENTRY(table, name, table_id, subtable,	\
+>  				 valid, data, fn)			\
+>  	static const struct acpi_probe_entry __acpi_probe_##name	\
+> -- 
+> 2.43.0
 > 
->   drivers/staging/rtl8723bs/hal/sdio_halinit.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-> index c9cd6578f7f8..535cd439121d 100644
-> --- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-> +++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-> @@ -380,8 +380,8 @@ static void _InitWMACSetting(struct adapter *padapter)
->   	rtw_write32(padapter, REG_RCR, pHalData->ReceiveConfig);
->   
->   	/*  Accept all multicast address */
-> -	rtw_write32(padapter, REG_MAR, 0xFFFFFFFF);
-> -	rtw_write32(padapter, REG_MAR + 4, 0xFFFFFFFF);
-> +	rtw_write32(padapter, REG_MAR, 0xFFFFFFFF);	/* Offset 0x0620-0x0623 */
-> +	rtw_write32(padapter, REG_MAR + 4, 0xFFFFFFFF);	/* Offset 0x0624-0x0627 */
->   
->   	/*  Accept all data frames */
->   	value16 = 0xFFFF;
-
-Hi Manjae,
-
-may be this is version v2 of this patch with this subject. But the 
-version is not about the subject. It is about the code change itself.
-
-So I can see that this patch was send in with the following subjects:
-[PATCH] Improve MAR register definition and usage for rtl8723
-[PATCH v2] staging: rtl8723bs: Improve MAR register definition and usage
-[PATCH] staging: rtl8723bs: Improve MAR register definition and usage
-[PATCH v2] staging: rtl8723bs: Improve clarity of MAR usage
-
-To me the last patch should be a v4. The next patch you send is the v5.
-A change history is expected.
-
-Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-
-Thanks for your support.
-
-Bye Philipp
 
