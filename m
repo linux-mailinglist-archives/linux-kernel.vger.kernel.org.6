@@ -1,120 +1,104 @@
-Return-Path: <linux-kernel+bounces-269614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D5C9434DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:17:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F77C9434DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A311C23724
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:17:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29512B226A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41201AE85E;
-	Wed, 31 Jul 2024 17:17:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE231BC067;
+	Wed, 31 Jul 2024 17:17:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="PP9t2c3+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H679FsUr"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AAGEB7o3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2D51396;
-	Wed, 31 Jul 2024 17:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B4718AF9
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 17:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722446233; cv=none; b=q9BTr2K9ZmdL6rna+B5/xv47RplcNYCPU3gYKoTKLuLCzWc6SwTcZy6Y0kuawtH6QujMFmLrWp4ZJvvkzkEIvi+a/rSX1NhcTUS0OJA3wI8+id31wRB8q1rPAxBkmNUB02m891IKB8AazXyInInHgu576EK8VSoYiVBMuJTQ/MA=
+	t=1722446269; cv=none; b=R4qTqk0ZYrld/9u3/OIWnHpKvMjznelxMpEH8CjY/+s+cNPdQ+etujmEgN8ENs7zSjGu0G47BxzZPfAGSg/qgeFMsqRPZtdyoYgHmBR0WbGAYcL4w1j7kAov3wTQLh1X53UhN6hM0dDgNZ8tCrwja7d9bE7ZJZ/7uJlLZTiX7JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722446233; c=relaxed/simple;
-	bh=/ptNCRa8BuFsInH6VMyF0zSzEPmkxWE1KAQ8UMgYdpk=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=fSUteZUgC14pGeebUOlzZarQgMQ7w2getzFTUwRwWSDWARJKt9l0zcoQl8cFPY/qvw92FN2HQVoVGYEwgXjrW49vD+z7Qy2tOm2zjDKc18eHR6eEmM9oNMUXl5N2eRXBJ2i4QqfsaFMwUeJpBNLS2+o9ZN9gZe8oTZ0t5jhdUic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=PP9t2c3+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H679FsUr; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 75CD313832BF;
-	Wed, 31 Jul 2024 13:17:10 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 31 Jul 2024 13:17:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722446230;
-	 x=1722532630; bh=qqLGv/Rrjo/QdG2fPOcEcMg2UTgPErujpTL4/GBY9Sc=; b=
-	PP9t2c3+Z6iCxXXrYyz9oCR9E43ZG0wRPBncMpfqEzFbm6CRg+b99FtDRyRlinYr
-	XoF/v+4P6xhDnrw7VAI2mknndHgI9zMUEbnmo0B36ODFHu1nYXoqSPdOU2uO7HAJ
-	TZ+vk3bexwM4gFtikS/Atw3X1yQf7ZwCjjl+UlpMQ7dyAi1fOcRKVJvl/AzAeeYo
-	t4/0Gzh2W+rWIEqtijKdsTlZXo6Uiw8xfdmSyXGTOZJE9/L8SR+086lNNb/XzDSl
-	PKxSa792oJlmRG7PxQHGTMRhDtERjIHLtosYHdVjm61rZXQu2GxvvvnDyrMQEnNM
-	RSexXBb4UIesEcIoWyJmrw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722446230; x=
-	1722532630; bh=qqLGv/Rrjo/QdG2fPOcEcMg2UTgPErujpTL4/GBY9Sc=; b=H
-	679FsUrBlfj+kk49OlW7cZG3wbt5jFGaONqC5Gs/fGp/Xvd1HHbWnocAldqnzR5K
-	lET3iQf0YRhrzUMgyrbOFlVXoanQSMe19Cx0fjuAac/jh/OM6tgbsOnVEUVA3aCQ
-	KoyCWfL17ecD9whEBK2Gby6B5tr68FPBhuIwBLDLNflbvmi0XXMl/ZzUlVHPns2b
-	E/E5XfZd983D23PxTbOwqZMVFq9txIqL/GaUwGS7BK2XJmIyhiUumKlQULHWqaTw
-	XBGJYxMAbg2SVFhEEYB3sN9jn8Up1pP7wI8TukwHZCiGo+AS6CL9Ttw4P1+4iElA
-	PcSTZHrAHP3w/40APLpPQ==
-X-ME-Sender: <xms:lnGqZg_cEcg5hKayVx_EM3MDocic-pJQqH0ahJwA9R5nik_gSH9vMw>
-    <xme:lnGqZotIGmNfKJoih6GqlvHJVXw5qZNJ340v7LnrVWxrL1vASJhnDGdm1gYzpCjVH
-    dr5cRsfj1QI9kzwrFc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeigdduudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefh
-    vdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:lnGqZmAd4jA1c0RQIdnRMHMGFV5GTZSqwmEjJND5BRh1BR_kv7NtoQ>
-    <xmx:lnGqZgcuDpC1-dokiPTxvXowbqhHdrcMF8_yzOXugorzqhPOLO8gRg>
-    <xmx:lnGqZlOnG9C5TwfhUWzfBu0bgsoNiZ5MGaItHdD0AFpPInJIZ6hz3w>
-    <xmx:lnGqZqlshS-puMMw02UN8PXw8qUFjNA8YrD4UWwM-cryoOuhySFj0A>
-    <xmx:lnGqZo3wO6s9IhaUiLu6GtEZvMVd3id7IN6mh-_QGYxlsKkH5TbCjQIg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 1B80FB6008D; Wed, 31 Jul 2024 13:17:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722446269; c=relaxed/simple;
+	bh=WUx/M4+1jhIUgwiAVPxAGlK3xL8kzwraYQRiOxtSloY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kBwtAEp2r/t7dImHSvpFPoUncWOjxx35h9swqvZBpyEzbLRs60IDWdt75qV0BB+0x+pR8x/e7GS5Et5Oc5rTyB9vFNfxDM9c/Q1OVOwHI2jIhTF0cPGCH737xjoAosKodWC8W82ktHoShrDqVYRZkXMn12AKx/XniAi1TulkFbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AAGEB7o3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722446266;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WUx/M4+1jhIUgwiAVPxAGlK3xL8kzwraYQRiOxtSloY=;
+	b=AAGEB7o30hZ63hyjkzcQJr6haIrv3VLlag9L7bT0l1qEnUh0JJlqx+D7LABL9FA9qkfDS1
+	6gdCjefNuSZ7zUwxVOexkSM7RO7YJ4nV0SadGCmKrtlmaMbQ6adtwfYXo7tbo0UNTVsgqY
+	uYkaoUBIlxy6OMs46A7f6cc9Alr1AQs=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-479-BL5xakLTPhyQoHBsW22cFA-1; Wed,
+ 31 Jul 2024 13:17:40 -0400
+X-MC-Unique: BL5xakLTPhyQoHBsW22cFA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B47941955D47;
+	Wed, 31 Jul 2024 17:17:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.31])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2535F19560AA;
+	Wed, 31 Jul 2024 17:17:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 31 Jul 2024 19:17:37 +0200 (CEST)
+Date: Wed, 31 Jul 2024 19:17:33 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, andrii@kernel.org,
+	mhiramat@kernel.org, jolsa@kernel.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
+ uprobe *
+Message-ID: <20240731171732.GA2752@redhat.com>
+References: <20240729134444.GA12293@redhat.com>
+ <20240729134535.GA12332@redhat.com>
+ <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+ <20240731165614.GI33588@noisy.programming.kicks-ass.net>
+ <CAEf4BzZXze8wRQwEJSy5nFzH=uk4wZPHY-gWw6j7iZfeBEiO0g@mail.gmail.com>
+ <20240731170551.GK33588@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 31 Jul 2024 19:16:49 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Yury Norov" <yury.norov@gmail.com>,
- "Anshuman Khandual" <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, "Andrew Morton" <akpm@linux-foundation.org>,
- "Rasmus Villemoes" <linux@rasmusvillemoes.dk>,
- Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <14f622a9-599a-4b63-8830-0bc825f7c468@app.fastmail.com>
-In-Reply-To: <ZqpokVWg75iROgKH@yury-ThinkPad>
-References: <20240725054808.286708-1-anshuman.khandual@arm.com>
- <20240725054808.286708-2-anshuman.khandual@arm.com>
- <Zqkt3byHNZQvCZiB@yury-ThinkPad>
- <b1dd907d-d45b-4602-964e-70654094a315@arm.com>
- <ZqpokVWg75iROgKH@yury-ThinkPad>
-Subject: Re: [PATCH V2 1/2] uapi: Define GENMASK_U128
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731170551.GK33588@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Jul 31, 2024, at 18:38, Yury Norov wrote:
+On 07/31, Peter Zijlstra wrote:
+>
+> On Wed, Jul 31, 2024 at 10:01:47AM -0700, Andrii Nakryiko wrote:
+> > > Do I stuff this on top of Oleg's patch or do you want me to fold it in
+> > > one of them?
+> >
+> > Please fold so we have better (potential) bisectability of BPF
+> > selftests, thanks!
+>
+> Fold where, patch 5?
 
-> OK then, I see. So, is that a GCC bug or intentional behavior? 
+Yes...
 
-I just double-checked to see what is in C23 and found that
-it indeed defines a 'wb' and 'wbu' suffix for arbitrarily
-sized integers. This is supported by gcc-14 and clang-15
-or higher on 64-bit architectures.
+Or I can resend these 2 series as v3 1-8 with 5/5 updated (thanks Andrii !!!),
+whatever is more convenient for you.
 
-It's too early to rely on those versions though, as gcc-14
-was only just released.
+Oleg.
 
-     Arnd
 
