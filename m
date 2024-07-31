@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-268717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090BA942849
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:44:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C54F194288E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9E24282A89
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:44:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF731C23F40
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677781A76CD;
-	Wed, 31 Jul 2024 07:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l0laINnu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C822D1A7F6C;
+	Wed, 31 Jul 2024 08:01:19 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEBBD1A76C2
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:44:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A941A76A3
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411874; cv=none; b=gVUvqLYZheRBVuUkZJCd3UpW9m8lf7aYCXNrfbVSlmFC1BXkPMhMy4L1RUzFqIgqHzOyIcW3ABgRCRHGVI9GH91hpQfQ8/fGr577izjIYg0EnZ+EeLSy9jHm0vVm8NJkz8jyIllBKG6MrZEGckvXyLVNQczn+ewhblht5lvlWrE=
+	t=1722412879; cv=none; b=ZUm0T/appVFnsXo5IlwGfDNT3bOiH/j9gaWf7w0cafnOy8ooSChdtXQEsgnp2STkffRIP4krynqiv8BxST/sAk5HVwBlZBVXdc9hmaL++ce+1M/AprFaR4/EKHpfVp+RIPNoJ5dqbU8Bu/jDtZXwO+bJO9YffqaIEYraJcw5Icc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411874; c=relaxed/simple;
-	bh=uI8ued3A1y+KABwhLnnHrEksiCAWTyppjF8eLSYsOcw=;
+	s=arc-20240116; t=1722412879; c=relaxed/simple;
+	bh=8McQ3P/hPDG3tbZcqgiR+j7AJr1Ilf05vNWGKKldcec=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tNN7oapW/zLacpGtPgHwzSEYBQULc5BFprzTnq6ezj0ur6/24HY3gFcWMOgggzh6hYb1vFt5OFt5yUMRtk7+/OJRo7b+yIF5Jq1qToWnTJqZKNWneH0IycCHsOqPzpBv21z+ELr+QZ9QDuXOzwKDnYeiHN1IdXtZkLIAVyxJ8to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l0laINnu; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722411873; x=1753947873;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=uI8ued3A1y+KABwhLnnHrEksiCAWTyppjF8eLSYsOcw=;
-  b=l0laINnu+BHwe9Guc8BNYfCm4z6Bgv5F+saioXY3TXtRrJRFr5KkZMZa
-   3o+oLh4eDey8MDeOgVTNljlgAUl9j36Zfzi8YgN80iBQEkRVIqlwvDS+F
-   mdTNchTdXhiTk6zn+pXI2rqHdELSoAZZCHXVcP6T0hBsz1lsz6qEHZ+Br
-   0idyzvSwVW5B52thbF9YjYV9znOK2rBoBeiG9zAkoy0Lz5vNZMqbHG21n
-   jmXltJRL/J2mabJ/Kgs6RkPOmw4RVGdixePUkwiFJ8mMwSW8FtvA3cS6C
-   DmG3VT8QPpHmIVTCyhGVoSSVvMiYoMU9yvuinsRHwiRrEq8zD7qbSOmnQ
-   g==;
-X-CSE-ConnectionGUID: zKLcK9SbRCi04ORwBvbhRA==
-X-CSE-MsgGUID: eddvyOtLRAaITHFbOQQnaA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="31423135"
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="31423135"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 00:44:33 -0700
-X-CSE-ConnectionGUID: AU/vUc6qTpOrr5lhfWTkQg==
-X-CSE-MsgGUID: cu7MWQ00QVmLseBL9zTmcQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="59455163"
-Received: from liuzhao-optiplex-7080.sh.intel.com (HELO localhost) ([10.239.160.36])
-  by orviesa003.jf.intel.com with ESMTP; 31 Jul 2024 00:44:28 -0700
-Date: Wed, 31 Jul 2024 16:00:15 +0800
-From: Zhao Liu <zhao1.liu@intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Philippe =?iso-8859-1?Q?Mathieu-Daud=E9?= <philmd@linaro.org>,
-	Ani Sinha <anisinha@redhat.com>,
-	Eduardo Habkost <eduardo@habkost.net>,
-	Igor Mammedov <imammedo@redhat.com>,
-	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
-	Peter Maydell <peter.maydell@linaro.org>,
-	Shannon Zhao <shannon.zhaosl@gmail.com>,
-	Yanan Wang <wangyanan55@huawei.com>, linux-kernel@vger.kernel.org,
-	qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v4 2/6] arm/virt: Wire up GPIO error source for ACPI /
- GHES
-Message-ID: <ZqnvD8o+Fa4o/+Db@intel.com>
-References: <cover.1722259246.git.mchehab+huawei@kernel.org>
- <e994c3944d31775d62bbd017dec3adff50ddf269.1722259246.git.mchehab+huawei@kernel.org>
- <ZqigPgTl7quJ553J@intel.com>
- <20240731072158.3aaf85ac@foz.lan>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UjK3ZKcNgZKkUcqyFt043Q86GutgwzR802JoL/yaucl8dTtUBs0uRiLzfuCmAQPBz3mARY4ElM2/9CtPlFg+hBp9ESf8lDCu6PVQrIWYCTZ8foqqhudXdCollkbeIu5YK0BCRbahsZurmY7GQORvhCN0J+K+7G4gm8eMbPfFBjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sZ4GN-0002X6-K8; Wed, 31 Jul 2024 10:00:47 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sZ4GK-003TS4-Eg; Wed, 31 Jul 2024 10:00:44 +0200
+Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id E13C5312682;
+	Wed, 31 Jul 2024 08:00:42 +0000 (UTC)
+Date: Wed, 31 Jul 2024 10:00:41 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Simon Horman <horms@kernel.org>
+Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH can-next 19/21] can: rockchip_canfd: add hardware
+ timestamping support
+Message-ID: <20240731-powerful-scarlet-bullfrog-6ccccd-mkl@pengutronix.de>
+References: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
+ <20240729-rockchip-canfd-v1-19-fa1250fd6be3@pengutronix.de>
+ <20240730163014.GC1781874@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=gb2312
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="hzezjs5mnmqttyrf"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731072158.3aaf85ac@foz.lan>
-
-On Wed, Jul 31, 2024 at 07:21:58AM +0200, Mauro Carvalho Chehab wrote:
-
-[snip]
-
-> > The name looks inconsistent with the style of other MachineClass virtual
-> > methods. What about the name like "notify_xxx"? And pls add the comment
-> > about this new method.
-> > 
-> > BTW, I found this method is called in generic_error_device_notify() of
-> > Patch 6. And the mc->generic_error_device_notify() - as the virtual
-> > metchod of MachineClass looks just to implement a hook, and it doesn't
-> > seem to have anything to do with MachineClass/MachineState, so my
-> > question is why do we need to add this method to MachineClass?
-> > 
-> > Could we maintain a notifier list in ghes.c and expose an interface
-> > to allow arm code register a notifier? This eliminates the need to add
-> > the ¡°notify¡± method to MachineClass.
-> 
-> Makes sense. I'll change the logic to use this notifier list code inside
-> ghes.c, and drop generic_error_device_notify():
-> 
-> 	NotifierList generic_error_notifiers =
-> 	    NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
-> 
-> 	/* Notify BIOS about an error via Generic Error Device - GED */
-> 	static void generic_error_device_notify(void)
-> 	{
-> 	    notifier_list_notify(&generic_error_notifiers, NULL);
-> 	}
-
-Fine for me.
-
-Regards,
-Zhao
+In-Reply-To: <20240730163014.GC1781874@kernel.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
+--hzezjs5mnmqttyrf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On 30.07.2024 17:30:14, Simon Horman wrote:
+> On Mon, Jul 29, 2024 at 03:05:50PM +0200, Marc Kleine-Budde wrote:
+> > Add support for hardware based timestamping.
+> >=20
+> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+>=20
+> Hi Marc,
+>=20
+> This patch seems to break allmodconfig builds on (at least) x86_64
+> when applied to net-next.
+>=20
+> In file included from drivers/net/can/rockchip/rockchip_canfd-ethtool.c:9:
+> drivers/net/can/rockchip/rockchip_canfd.h:471:29: error: field 'cc' has i=
+ncomplete type
+>   471 |         struct cyclecounter cc;
+
+The required header gets somehow pulled in on arm64, but it even fails
+on arm. Fixed.
+
+Thanks,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--hzezjs5mnmqttyrf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmap7yYACgkQKDiiPnot
+vG+FmQf/Q1ZiJkvdFwG9Zqa/C/CevF13n/Nag0jZ1IZK9fOSblBoGBJhM7d2j/5z
+b9hPW4o8YQqi6ydhCch4o50NfC+2wYDzWYyhhpZyUF23EwdhmYollJgCoSGzB+Tv
+x2Hi1aOvTcL0doilpEI05XZNzCstptf8MwFVFtMgsyhsk4usgjCSEsdeipORGBu/
++vMvEUPuPD+psL3lP7JhMkXNLzKO2KzNyhhm/bGTSNxbEbNbwLyWJgZyHDy1QBng
+MdfKtG0byZ6wAKgIPiQuUCIIyWCQU27uH1KclIa3NfOOHxtT49DxrkP/h840JkOW
+/X6WtVYUQ0Gj0iYIg/XZA/PhHxN9Qw==
+=EFuX
+-----END PGP SIGNATURE-----
+
+--hzezjs5mnmqttyrf--
 
