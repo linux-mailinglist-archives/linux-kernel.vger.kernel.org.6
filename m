@@ -1,146 +1,296 @@
-Return-Path: <linux-kernel+bounces-269948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99131943923
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:00:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604CF943925
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52CA3286901
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA70287219
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:01:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B59616D9CC;
-	Wed, 31 Jul 2024 23:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BF41552FA;
+	Wed, 31 Jul 2024 23:01:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r2TVlNlD"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F6/IkK1t"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629DC16CD1C
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F023B101EE
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722466811; cv=none; b=SQKbw5Fc6HfkR3cbZGT1acI/oZi8auikBZaPn4hxYzU0zph8rZCD4nSA1yvtQ16FTna/VSmbgBu0R42WSa3bjDxeR5XRUP9Z+vLbFqMwcr3dlxFOe7s2F18cEHxBmsX//nLa22ToCgn+fVUt8y3ypVaBnQsirCK/rs6nZR5RwyA=
+	t=1722466873; cv=none; b=pX+jGXA/nCHQOQCJXLxjN2AkgRoNnzaFTJq7puHe/5K8zqriRxhi77qF+215rlRPXsq6u4HTME84BOzmq7E/j1iW66h+SKoik66Q51AxjxGbnGmwPlk3Em2hFRbmfyvTLTitxMGCkm1bHUtq2NMbCXoU46oqXiSM3BgsxNszImI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722466811; c=relaxed/simple;
-	bh=OJgk9cJ+TdeGwOTgs0ZEde/0xIJ389zukYYTF7pgxO8=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=osVKIZxwTKn8NqF9dWsLqGwg9aFUwfdRXI6hpsQ73P2b4kIbkOSqWruQTDWfcmmbPliFHcd+0WPDelrW3Pvda0Tx/vQddGyHymYtzrxP+ddydWnNWRb0ylyZ6qNF1Z5bZXZTHeYFDOHbtk+InS1L56tMAbLiSUwQ9FWqYa6n3Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r2TVlNlD; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0b3d35ccfbso7764786276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:00:09 -0700 (PDT)
+	s=arc-20240116; t=1722466873; c=relaxed/simple;
+	bh=XS+XtaKZoRB/ayFSxyFtnEqz9q7ORmchzY5GNKVvXFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tF7GxqhAmrv+p1r0c7bgCrAzGHjtr6vNb21UI0kKMVroNL+4bib/6hF85iao3UortxejVrmQGBFnUKCmZEVpTAFEtu7MqjAboKwmYJPL2Ijk88CKRoN00bM7oAtKBT3oWWmA3wVY2Byv7G5DVr0CGtn1Bw4s4Bq6FLMtz+A0Idk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F6/IkK1t; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-81f86cebca3so39204439f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:01:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722466808; x=1723071608; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IvDlKqQSP4EQTz9NFmsrxvp0IpCcDOcWrteWc7+vTTo=;
-        b=r2TVlNlDi9muKMX0v1tXfZnpImzvplWv3Q7irYc/IcWVls8G2eUXkcPsdUsnAml+FC
-         JEEm0KZpiWI6LKCGsgVDhMvRW2R6zWdVf+67Zh4Y2Xojq9Uudu0REtjidCgzLTm9XLIi
-         CbpbGN/BuvgKV9o1iRHCqi76IkfTHq6ffvkTKZXvs0x2qUK/gs+83Tx7Xr6miSaT2wLV
-         st1JY+o1qb0+JhKvz6ezfcCCJMObE0tdSesULbLncfbQLJdxYgKPw3ZOJx1ToUGPCho6
-         F5/rbdx5YTY2dOReKP6R8oCS3CauNIxA6ECCLdjK1GxjZiODxiP75Iw2a/gSDpBKVnvW
-         Ci9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722466808; x=1723071608;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=linuxfoundation.org; s=google; t=1722466871; x=1723071671; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IvDlKqQSP4EQTz9NFmsrxvp0IpCcDOcWrteWc7+vTTo=;
-        b=RK+tzIW3I03P/wvY+Pg5XRvRjSAP//OT4M5mSnKBM79yibPl/jT7PDMkjJ8Ef5yYrZ
-         nrBuDx/2u7bM2F8MkpfNKLBpkABgole32E/HKty/utPC6BLBtjqEoTIGwwQbdY+wB3iX
-         a4fqNlMl0K7C8/ammHF17XCLN6vxLap5dIDU8MrB7hkPVsJvQvZZhUb2xroc1FN5H1+8
-         CpNA1j0hODN52LIIs+Mogl2HgpgOiSxQYh4HmqbCBV1XLriTB4oLaaUWCbWyeNPt+LRW
-         RxLMy9BPqeW3wrE8S8c0QYQ/diqQJYTB0Z5O2CRZ7hrCwHsqseELoRcj4VAu2YWDlLqW
-         NG/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfOHFloMxjmse4zyjApNQDL48/FItvwp4IpONEL4/8NuieUd7qw1edG3Z6hCm9xDyewVctRJGA1QR1st4MWdNHTj83JH9aN0JTpBG8
-X-Gm-Message-State: AOJu0YyMi53KopRNaSoCmOikflenzaXq+XYiI8iJIk0JHT8CqnUO62Fa
-	KAk8qEMlPkh83lKdDmT9k9KVej3k6sRbpkZ68gAPutvQ+9J4d2bEmVLWeQSOpO3bwAI/BgwCXg7
-	PKcDmHw==
-X-Google-Smtp-Source: AGHT+IFR7w2wRPd8Gbc8O26Wa4D6n9qH15B2Ufe2fKiQvk6YNr6BOOAn2gagsJjY5+BdwpcK7lp2dOONGop+
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:91b9:a9ed:5ab1:7e4c])
- (user=irogers job=sendgmr) by 2002:a05:6902:154a:b0:e07:2e88:89fe with SMTP
- id 3f1490d57ef6-e0bcd20e3aemr808276.3.1722466808184; Wed, 31 Jul 2024
- 16:00:08 -0700 (PDT)
-Date: Wed, 31 Jul 2024 16:00:05 -0700
-Message-Id: <20240731230005.12295-1-irogers@google.com>
+        bh=kDwjdwiPcSpBbMQWeCAjcPyjGJaiNdBEjkZt2AO8miQ=;
+        b=F6/IkK1tSHIKDUecNg8wq+VTG+yYExsdpHnAM8A4+UerjsHAvXMDlPAq3IX/FU5Wj7
+         AYL6Djl88sHiuSE7GWVSEU9vPhvlI7e7kWZAkjEWFKznixBJ0LQNb4m9zXujVmPnhF9K
+         ItZrflwR38xNtu9uDV5GRUxGCDii39q0h3XnU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722466871; x=1723071671;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kDwjdwiPcSpBbMQWeCAjcPyjGJaiNdBEjkZt2AO8miQ=;
+        b=L8cqBboRN7sTNV43exR6S17YSQdILwCV8dh5j8ArEvPCMDVlrIeTzW3guOjnmeejpj
+         VaHHJ1Ox2ABcDhEh1uhl/LM8YFQ6dXV3qeeYSoKPvMSLghioGhk9fVPfGnPXByqmmFtf
+         JEWw+mmjccRG7nFEHwTMJmJl0n6ZRCNAvnVWa8uu72jJDi278p7UH5+uAzLy421SJw6U
+         HAYMCpdFWDBeZoojZRSLTNkd6b9C7LAjf/hMiKhY+VJdorW5kLxSjdcZoLFMqqx1cyXP
+         GcWapLW849okedZoa9Ar9oqsHpQb9gbFGuQFtRVmRmFMI9En4uf1b5LDMs6gnLGPDVdw
+         LFVw==
+X-Gm-Message-State: AOJu0Yyv5hmn/ULui0OKGc+icHtyOUTB89ZkRrLD3RYXzDHSd61MjIB1
+	iKxh9vU8DuOCaFPii5HnlK2YRvmApKhlP+Jh7P146PspfOgby/eJQu6KqADqHAE=
+X-Google-Smtp-Source: AGHT+IHyabB8AYt4mXefBvL2HOiAWnjHK9oUHizasDsbvE0cOYxuXwSiVcCgvlXkxRAWnVk0bmukpg==
+X-Received: by 2002:a5d:958a:0:b0:803:f97f:59e1 with SMTP id ca18e2360f4ac-81fcbe581b4mr64114239f.0.1722466870324;
+        Wed, 31 Jul 2024 16:01:10 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fbd9d72sm3438040173.98.2024.07.31.16.01.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 16:01:10 -0700 (PDT)
+Message-ID: <3956cee8-1623-42d6-bbc6-71b5abd67759@linuxfoundation.org>
+Date: Wed, 31 Jul 2024 17:01:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Subject: [PATCH v1] perf python: Remove PYTHON_PERF ifdefs
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tools/nolibc: add support for [v]sscanf()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240731-nolibc-scanf-v1-0-f71bcc4abb9e@weissschuh.net>
+ <20240731-nolibc-scanf-v1-1-f71bcc4abb9e@weissschuh.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240731-nolibc-scanf-v1-1-f71bcc4abb9e@weissschuh.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-When perf code was compiled one way for the binary and another for the
-python module, the PYTHON_PERF ifdef was used to remove some code from
-the python module. Since switching to building the perf code as a
-series of libraries, with the same libraries being used for the python
-module, the ifdefs became unused as PYTHON_PERF is never defined. As
-such remove the ifdefs.
+On 7/31/24 12:32, Thomas Weißschuh wrote:
+> The implementation is limited and only supports numeric arguments.
 
-Fixes: 9dabf4003423 ("perf python: Switch module to linking libraries from building source")
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/evsel_fprintf.c | 2 --
- tools/perf/util/mmap.c          | 4 ----
- 2 files changed, 6 deletions(-)
+I would like to see more information in here. Why is this needed
+etc. etc.
 
-diff --git a/tools/perf/util/evsel_fprintf.c b/tools/perf/util/evsel_fprintf.c
-index 8719b3cb5646..c2c0500d5da9 100644
---- a/tools/perf/util/evsel_fprintf.c
-+++ b/tools/perf/util/evsel_fprintf.c
-@@ -107,7 +107,6 @@ int evsel__fprintf(struct evsel *evsel, struct perf_attr_details *details, FILE
- 	return ++printed;
- }
- 
--#ifndef PYTHON_PERF
- int sample__fprintf_callchain(struct perf_sample *sample, int left_alignment,
- 			      unsigned int print_opts, struct callchain_cursor *cursor,
- 			      struct strlist *bt_stop_list, FILE *fp)
-@@ -248,4 +247,3 @@ int sample__fprintf_sym(struct perf_sample *sample, struct addr_location *al,
- 
- 	return printed;
- }
--#endif /* PYTHON_PERF */
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index 122ee198a86e..43b02293f1d2 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -230,9 +230,7 @@ void mmap__munmap(struct mmap *map)
- {
- 	bitmap_free(map->affinity_mask.bits);
- 
--#ifndef PYTHON_PERF
- 	zstd_fini(&map->zstd_data);
--#endif
- 
- 	perf_mmap__aio_munmap(map);
- 	if (map->data != NULL) {
-@@ -295,12 +293,10 @@ int mmap__mmap(struct mmap *map, struct mmap_params *mp, int fd, struct perf_cpu
- 
- 	map->core.flush = mp->flush;
- 
--#ifndef PYTHON_PERF
- 	if (zstd_init(&map->zstd_data, mp->comp_level)) {
- 		pr_debug2("failed to init mmap compressor, error %d\n", errno);
- 		return -1;
- 	}
--#endif
- 
- 	if (mp->comp_level && !perf_mmap__aio_enabled(map)) {
- 		map->data = mmap(NULL, mmap__mmap_len(map), PROT_READ|PROT_WRITE,
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+> 
+> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+> ---
+>   tools/include/nolibc/stdio.h                 | 93 ++++++++++++++++++++++++++++
+>   tools/testing/selftests/nolibc/nolibc-test.c | 59 ++++++++++++++++++
+>   2 files changed, 152 insertions(+)
+> 
+> diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
+> index c968dbbc4ef8..d63c45c06d8e 100644
+> --- a/tools/include/nolibc/stdio.h
+> +++ b/tools/include/nolibc/stdio.h
+> @@ -348,6 +348,99 @@ int printf(const char *fmt, ...)
+>   	return ret;
+>   }
+>   
+> +static __attribute__((unused))
+> +int vsscanf(const char *str, const char *format, va_list args)
 
+Is there a reason why you didn't use the same code in lib/vsprintf.c?
+You could simply duplicate the code here?
+
+With all these libc functionality added, it isn't nolibc looks like :)
+
+> +{
+> +	uintmax_t uval;
+> +	intmax_t ival;
+> +	int base;
+> +	char *endptr;
+> +	int matches;
+> +	int lpref;
+> +
+> +	matches = 0;
+> +
+> +	while (1) {
+> +		if (*format == '%') {
+> +			lpref = 0;
+> +			format++;
+> +
+> +			if (*format == 'l') {
+> +				lpref = 1;
+> +				format++;
+> +				if (*format == 'l') {
+> +					lpref = 2;
+> +					format++;
+> +				}
+> +			}
+> +
+> +			if (*format == '%') {
+> +				if ('%' != *str)
+> +					goto done;
+> +				str++;
+> +				format++;
+> +				continue;
+> +			} else if (*format == 'd') {
+> +				ival = strtoll(str, &endptr, 10);
+> +				if (lpref == 0)
+> +					*va_arg(args, int *) = ival;
+> +				else if (lpref == 1)
+> +					*va_arg(args, long *) = ival;
+> +				else if (lpref == 2)
+> +					*va_arg(args, long long *) = ival;
+> +			} else if (*format == 'u' || *format == 'x' || *format == 'X') {
+> +				base = *format == 'u' ? 10 : 16;
+> +				uval = strtoull(str, &endptr, base);
+> +				if (lpref == 0)
+> +					*va_arg(args, unsigned int *) = uval;
+> +				else if (lpref == 1)
+> +					*va_arg(args, unsigned long *) = uval;
+> +				else if (lpref == 2)
+> +					*va_arg(args, unsigned long long *) = uval;
+> +			} else if (*format == 'p') {
+> +				*va_arg(args, void **) = (void *)strtoul(str, &endptr, 16);
+> +			} else {
+> +				SET_ERRNO(EILSEQ);
+> +				goto done;
+> +			}
+> +
+> +			format++;
+> +			str = endptr;
+> +			matches++;
+> +
+> +		} else if (*format == '\0') {
+> +			goto done;
+> +		} else if (isspace(*format)) {
+> +			while (isspace(*format))
+> +				format++;
+> +			while (isspace(*str))
+> +				str++;
+> +		} else if (*format == *str) {
+> +			format++;
+> +			str++;
+> +		} else {
+> +			if (!matches)
+> +				matches = EOF;
+> +			goto done;
+> +		}
+> +	}
+> +
+> +done:
+> +	return matches;
+> +}
+> +
+> +static __attribute__((unused, format(scanf, 2, 3)))
+> +int sscanf(const char *str, const char *format, ...)
+> +{
+> +	va_list args;
+> +	int ret;
+> +
+> +	va_start(args, format);
+> +	ret = vsscanf(str, format, args);
+> +	va_end(args);
+> +	return ret;
+> +}
+> +
+>   static __attribute__((unused))
+>   void perror(const char *msg)
+>   {
+> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
+> index 093d0512f4c5..addbceb0b276 100644
+> --- a/tools/testing/selftests/nolibc/nolibc-test.c
+> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
+> @@ -1277,6 +1277,64 @@ static int expect_vfprintf(int llen, int c, const char *expected, const char *fm
+>   	return ret;
+>   }
+>   
+> +static int test_scanf(void)
+> +{
+> +	unsigned long long ull;
+> +	unsigned long ul;
+> +	unsigned int u;
+> +	long long ll;
+> +	long l;
+> +	void *p;
+> +	int i;
+> +
+> +	if (sscanf("", "foo") != EOF)
+> +		return 1;
+> +
+> +	if (sscanf("foo", "foo") != 0)
+> +		return 2;
+> +
+> +	if (sscanf("123", "%d", &i) != 1)
+> +		return 3;
+> +
+> +	if (i != 123)
+> +		return 4;
+> +
+> +	if (sscanf("a123b456c0x90", "a%db%uc%p", &i, &u, &p) != 3)
+> +		return 5;
+> +
+> +	if (i != 123)
+> +		return 6;
+> +
+> +	if (u != 456)
+> +		return 7;
+> +
+> +	if (p != (void *)0x90)
+> +		return 8;
+> +
+> +	if (sscanf("a    b1", "a b%d", &i) != 1)
+> +		return 9;
+> +
+> +	if (i != 1)
+> +		return 10;
+> +
+> +	if (sscanf("a%1", "a%%%d", &i) != 1)
+> +		return 11;
+> +
+> +	if (i != 1)
+> +		return 12;
+> +
+> +	if (sscanf("1|2|3|4|5|6",
+> +		   "%d|%ld|%lld|%u|%lu|%llu",
+> +		   &i, &l, &ll, &u, &ul, &ull) != 6)
+> +		return 13;
+> +
+> +	if (i != 1 || l != 2 || ll != 3 ||
+> +	    u != 4 || ul != 5 || ull != 6)
+> +		return 14;
+> +
+> +	return 0;
+
+Can we simplify this code? It is hard to read code with too
+many conditions. Maybe defining an array test conditions
+instead of a series ifs.
+
+> +}
+> +
+>   static int run_vfprintf(int min, int max)
+>   {
+>   	int test;
+> @@ -1298,6 +1356,7 @@ static int run_vfprintf(int min, int max)
+>   		CASE_TEST(char);         EXPECT_VFPRINTF(1, "c", "%c", 'c'); break;
+>   		CASE_TEST(hex);          EXPECT_VFPRINTF(1, "f", "%x", 0xf); break;
+>   		CASE_TEST(pointer);      EXPECT_VFPRINTF(3, "0x1", "%p", (void *) 0x1); break;
+> +		CASE_TEST(scanf);        EXPECT_ZR(1, test_scanf()); break;
+>   		case __LINE__:
+>   			return ret; /* must be last */
+>   		/* note: do not set any defaults so as to permit holes above */
+> 
+
+thanks,
+-- Shuah
 
