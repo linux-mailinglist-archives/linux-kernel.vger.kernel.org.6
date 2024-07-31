@@ -1,50 +1,95 @@
-Return-Path: <linux-kernel+bounces-269622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27C69434FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:26:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C632943504
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 230941F2393D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256051F23764
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2C811BD035;
-	Wed, 31 Jul 2024 17:26:26 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE951BD4F9;
+	Wed, 31 Jul 2024 17:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVglhXZQ"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC951B140E;
-	Wed, 31 Jul 2024 17:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B881BDC8;
+	Wed, 31 Jul 2024 17:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722446786; cv=none; b=lyzzxP5zzt70Yzq2Ad0/2hTDKc/Pcj92xk1mBsSlZXlgtliBvMqGiIpmqGv/VcliEvslDGab5kBgy5AFI/HDzUfMQ2a5broUGWZMu0ByDVZh09MoYUBRIP00Hw9yL5ho2xg39oDQYhExBvgN/C1zoLTf36SRuAVINqYjNRRnj1U=
+	t=1722446887; cv=none; b=IAQJ4u2SOwcu1Tjr6kNRPi0g61yjfR6C1sA3xdrXm3KpGDxFG4WswuTJM/7YFpOTXVzb/WNu9RXo8CoMG4M+TCtlPeubp/BzzLlIQ+0GEQ4VM0KuBgEgM3DJDUDkiTmXCJmLQSkiGDGK5yFSM3QJ5PEGAvyJbHGTZ3dU48xDkCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722446786; c=relaxed/simple;
-	bh=6uBjQmqhYb7s274FfB+JfWmH8yUQJacTabtId67xZUU=;
+	s=arc-20240116; t=1722446887; c=relaxed/simple;
+	bh=v42xTc0oCCwicMaNmmOfMJfqEsCKrbNyJaEIMbAOXxU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQsHVA1bkLNjzIJZZ4oLdow9XDJqgKLRCFJ/LwoantZt4i4Th/rViO12hdLcnbx3cVsw6HCYKqE2OMTwPKlFKZZ/5lC9CnVbtxwkgzjmT3H66IHkI6zzjpyt76gXQNh+4dwMbgmCvq3IGp3LApF9q4V3iipyEogMmITTaIVIpqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 718B9C116B1;
-	Wed, 31 Jul 2024 17:26:22 +0000 (UTC)
-Date: Wed, 31 Jul 2024 18:26:20 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org,
-	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
-	Ramon Fried <ramon@neureality.ai>,
-	Elad Nachman <enachman@marvell.com>
-Subject: Re: [PATCH v3 2/3] dma-mapping: replace zone_dma_bits by
- zone_dma_limit
-Message-ID: <ZqpzvHXBHXMt9IAZ@arm.com>
-References: <cover.1722249878.git.baruch@tkos.co.il>
- <053fa4806a2c63efcde80caca473a8b670a2701c.1722249878.git.baruch@tkos.co.il>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GmAkDb3tUMKSWAUm9EMcUTC7zTPUz8YpAh6397Xt1FFAOY4soIBniNnOB7Zj7u9auAfs9hBb6bl0IuevEyBWBxRWeG0K7X9vbGJxPiZU8RUlbTlVJxdrAfGLl1TaWBW+VIHVzG3uENRUB+Itl7BFekdHbnAf8O8+VLue1c2rnnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVglhXZQ; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3db18102406so4241339b6e.1;
+        Wed, 31 Jul 2024 10:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722446885; x=1723051685; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRt+wirySSP/0rxSfCYSdxmXJCuEIe74VBuQeagotrY=;
+        b=gVglhXZQKliekxy96S2497VCmm1G+vBf5iOrV8qxr3OTDgHvJrv8A0fDY4T65qBV9I
+         TTPfPJKNxt2wvs4ywBORjp45l2K2ai/YT8dzepY1rBKfq0LAmQ8AhyRNcd8XxEFNwJOR
+         m/I6Ljbgg5LhIKsbYlccGAqNwictf9nGiAc57k41Eb+vIRI2V5oz3FgPhMEcSooXc5c/
+         LZ6NCP6kj/6cboLiDXiTvEBZdfRNfwqYQQbZMSuzxOpOg10AvIar45zwkiUj1lpI4A8J
+         C5ZpFq2CIbLH/8KHLlSNnmkwhp96XSSG4EJy/81Jox9QlDu/aJ+iGE4RKBA5jHXB9uig
+         knaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722446885; x=1723051685;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DRt+wirySSP/0rxSfCYSdxmXJCuEIe74VBuQeagotrY=;
+        b=vSVR/+Vg9mpqmVzVvgWJWJBUgxMNQbGohZd0LcAYfF33jfifnN1RKF+U0tCVLwUHPr
+         ssaHqogWv4w8hYduDjXc2vwgktvaPtX7MXSthJ7MUoYOXVWpsMBIm3sqYZfZCaCBqxlF
+         ABXwnS3vGuroS7gIo+MO9a2/Km+ypJuoP/hEBh4WtVHZlqOByxlJ2pWe1CCiidV8VA68
+         3fRCC4VzhnBuU7WEdFEvO3yUsCU7cWK+YKj+HP/7lDgFuQVmK5cHNscAqgvjPC6VFet1
+         I+seaBqbzvS3mWJERjeNxbo0NVfqHgeWqDb+NKHVX2wBIXnlcBKux4QWYjEu0VE0GWRw
+         Q1vA==
+X-Forwarded-Encrypted: i=1; AJvYcCUtE+CW0+8RiFqCFxVwec+5Piq3Qjr1toD6qYBF1JMFZQn7Ec9VgbarPEf+6xUH/3/F8xxH3hrWHJZvW0C7deK6YFgJHJ92jCAuGXuRjWu8Eg7M0JRmb8lGvSkbpNcLSJZXjMMpKzCFMwjvXIR3yNsfQvMgSqV1BU3IjV/VdUOwElZg5VCSSlkKPt6gHPEZemEMMzhkxuagwdwFUlRLpsZ/nTJ+e+7DPUXwhrhK2n2jXukqxAhDUhuUtCU=
+X-Gm-Message-State: AOJu0YwKWvIPX199zQ6/6U7UoOppTOYthIyv8RkbrHipki7aUvhJhnmH
+	JfNk08NtjbNXEWlNi2/Q8c9f0yhWhCNM44dLCGFvC3gtYnjgVx5q
+X-Google-Smtp-Source: AGHT+IFJbEbhXaPmjuoxCmR+/hmNt9JvEc6afSJEmUV9Ud116y5IbhnecHFxJGgYOSL+laQhmm8OlQ==
+X-Received: by 2002:a05:6808:30aa:b0:3d9:4147:4e38 with SMTP id 5614622812f47-3db23cb417fmr16579228b6e.36.1722446884744;
+        Wed, 31 Jul 2024 10:28:04 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:1da7:72de:e91f:aa85])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f8273af7sm9200866a12.30.2024.07.31.10.28.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 10:28:04 -0700 (PDT)
+Date: Wed, 31 Jul 2024 10:28:01 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v7 7/7] input: keyboard: support i.MX95 BBM module
+Message-ID: <Zqp0IZfUobg6dq8G@google.com>
+References: <20240731-imx95-bbm-misc-v2-v7-0-a41394365602@nxp.com>
+ <20240731-imx95-bbm-misc-v2-v7-7-a41394365602@nxp.com>
+ <ZqpCwOhXiLzxK43-@pluto>
+ <PAXPR04MB84598B36C6721748FB98905088B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,160 +98,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <053fa4806a2c63efcde80caca473a8b670a2701c.1722249878.git.baruch@tkos.co.il>
+In-Reply-To: <PAXPR04MB84598B36C6721748FB98905088B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-On Mon, Jul 29, 2024 at 01:51:25PM +0300, Baruch Siach wrote:
-> From: Catalin Marinas <catalin.marinas@arm.com>
+Hi Peng,
+
+On Wed, Jul 31, 2024 at 03:37:18PM +0000, Peng Fan wrote:
+> Hi Cristian,
 > 
-> Hardware DMA limit might not be power of 2. When RAM range starts above
-> 0, say 4GB, DMA limit of 30 bits should end at 5GB. A single high bit
-> can not encode this limit.
+> > Subject: Re: [PATCH v7 7/7] input: keyboard: support i.MX95 BBM
+> > module
+> > 
+> > On Wed, Jul 31, 2024 at 08:56:11PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > The BBM module provides BUTTON feature. To i.MX95, this module is
+> > > managed by System Manager and exported using System
+> > Management Control
+> > > Interface(SCMI). Linux could use i.MX SCMI BBM Extension protocol
+> > to
+> > > use BUTTON feature.
+> > >
+> > > This driver is to use SCMI interface to enable pwrkey.
+> > >
+> > > +}
+> > > +
+> > > +static void scmi_imx_bbm_key_remove(struct scmi_device *sdev) {
+> > > +	struct device *dev = &sdev->dev;
+> > > +	struct scmi_imx_bbm *bbnsm = dev_get_drvdata(dev);
+> > > +
+> > > +	device_init_wakeup(dev, false);
+
+I do not believe you need to reset the wakeup flag on driver unbind, as
+well as in the error handling path of probe(). If this is needed then
+driver core should do this cleanup (maybe it already does?).
+
+> > > +
+> > > +	cancel_delayed_work_sync(&bbnsm->check_work);
+> > > +}
+> > > +
+> > 
+> > ..so in v6 I asked you to add a cancel_delayed_work_sync() on the
+> > removal path, BUT I missed, my bad, that indeed above there was
+> > already a call to cancel_delayed_work_sync() associated to a
+> > devm_add_action_or_reset....so now we have 2....also you should try
+> > not to mix devm_add_action_or_reset and plain .remove methods..use
+> > one or the other.
 > 
-> Use direct phys_addr_t limit address for DMA zone limit.
+> Thanks for your detailed reviewing on this. I will wait to see if Sudeep
+> has any comments to patch 1-4. If no comments, I will not do a new
+> version to this patchset.
 > 
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+> If v7 patch 1-4 are good for Sudeep to pick up, I will separate this patch
+> out as a standalone one for input subsystem maintainer.
 
-You should add your Co-developed-by line, the patch evolved a bit from
-initial my partial diff.
+If you remove the duplicated cancel_delayed_work_sync() in remove() and
+unneded device_init_wakeup(dev, false); then you can merge the input
+patch with the rest of them with my:
 
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 9b5ab6818f7f..870fd967c610 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -114,36 +114,28 @@ static void __init arch_reserve_crashkernel(void)
->  				    low_size, high);
->  }
->  
-> -/*
-> - * Return the maximum physical address for a zone accessible by the given bits
-> - * limit. If DRAM starts above 32-bit, expand the zone to the maximum
-> - * available memory, otherwise cap it at 32-bit.
-> - */
-> -static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
-> +static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
->  {
-> -	phys_addr_t zone_mask = DMA_BIT_MASK(zone_bits);
-> -	phys_addr_t phys_start = memblock_start_of_DRAM();
-> -
-> -	if (phys_start > U32_MAX)
-> -		zone_mask = PHYS_ADDR_MAX;
-> -	else if (phys_start > zone_mask)
-> -		zone_mask = U32_MAX;
-> +	/* We have RAM in low 32-bit area, keep DMA zone there */
-> +	if (memblock_start_of_DRAM() < U32_MAX)
-> +		zone_limit = min(U32_MAX, zone_limit);
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Does this matter anymore? Or is it to keep ZONE_DMA below (or equal to)
-the ZONE_DMA32 limit?
-
-Anyway, since this patch is about replacing zone_dma_bits with
-zone_dma_limit, we should not introduce functional changes. AFAICT, we
-need zone_limit to be set to memblock_end_of_DRAM() when phys_start is
-above U32_MAX. You can do the functional change in a subsequent patch
-once all the other refactoring has been handled.
-
->  
-> -	return min(zone_mask, memblock_end_of_DRAM() - 1) + 1;
-> +	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
->  }
-[...]
-> diff --git a/include/linux/dma-direct.h b/include/linux/dma-direct.h
-> index edbe13d00776..98b7d8015043 100644
-> --- a/include/linux/dma-direct.h
-> +++ b/include/linux/dma-direct.h
-> @@ -12,7 +12,7 @@
->  #include <linux/mem_encrypt.h>
->  #include <linux/swiotlb.h>
->  
-> -extern unsigned int zone_dma_bits;
-> +extern phys_addr_t zone_dma_limit;
->  
->  /*
->   * Record the mapping of CPU physical to DMA addresses for a given region.
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 3b4be4ca3b08..3dbc0b89d6fb 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -20,7 +20,7 @@
->   * it for entirely different regions. In that case the arch code needs to
->   * override the variable below for dma-direct to work properly.
->   */
-> -unsigned int zone_dma_bits __ro_after_init = 24;
-> +phys_addr_t zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);
->  
->  static inline dma_addr_t phys_to_dma_direct(struct device *dev,
->  		phys_addr_t phys)
-> @@ -580,7 +580,7 @@ int dma_direct_supported(struct device *dev, u64 mask)
->  	 * part of the check.
->  	 */
->  	if (IS_ENABLED(CONFIG_ZONE_DMA))
-> -		min_mask = min_t(u64, min_mask, DMA_BIT_MASK(zone_dma_bits));
-> +		min_mask = min_t(u64, min_mask, zone_dma_limit);
->  	return mask >= phys_to_dma_unencrypted(dev, min_mask);
->  }
->  
-> diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
-> index d10613eb0f63..410a7b40e496 100644
-> --- a/kernel/dma/pool.c
-> +++ b/kernel/dma/pool.c
-> @@ -70,7 +70,7 @@ static bool cma_in_zone(gfp_t gfp)
->  	/* CMA can't cross zone boundaries, see cma_activate_area() */
->  	end = cma_get_base(cma) + size - 1;
->  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp & GFP_DMA))
-> -		return end <= DMA_BIT_MASK(zone_dma_bits);
-> +		return end <= zone_dma_limit;
->  	if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp & GFP_DMA32))
->  		return end <= DMA_BIT_MASK(32);
->  	return true;
-
-I haven't got to the third patch yet but with this series we can have
-zone_dma_limit above DMA_BIT_MASK(32). The above function could return
-false for GFP_DMA32 when 'end' is perfectly valid within ZONE_DMA (which
-implies safe for GFP_DMA32).
-
-> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
-> index df68d29740a0..dfd83e5ee0b3 100644
-> --- a/kernel/dma/swiotlb.c
-> +++ b/kernel/dma/swiotlb.c
-> @@ -450,7 +450,7 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
->  	if (!remap)
->  		io_tlb_default_mem.can_grow = true;
->  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp_mask & __GFP_DMA))
-> -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(zone_dma_bits);
-> +		io_tlb_default_mem.phys_limit = zone_dma_limit;
->  	else if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp_mask & __GFP_DMA32))
->  		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(32);
->  	else
-> @@ -629,7 +629,7 @@ static struct page *swiotlb_alloc_tlb(struct device *dev, size_t bytes,
->  	}
->  
->  	gfp &= ~GFP_ZONEMASK;
-> -	if (phys_limit <= DMA_BIT_MASK(zone_dma_bits))
-> +	if (phys_limit <= zone_dma_limit)
->  		gfp |= __GFP_DMA;
->  	else if (phys_limit <= DMA_BIT_MASK(32))
->  		gfp |= __GFP_DMA32;
-
-I think this has the same issue as dma_direct_optimal_gfp_mask(). If
-the requested limit is strictly smaller than DMA_BIT_MASK(32) (but
-potentially bigger than zone_dma_limit), we should go for __GFP_DMA
-rather than __GFP_DMA32. You should probably fix this in the first patch
-as well.
-
-As above, with this series we can end up with zone_dma_limit above
-DMA_BIT_MASK(32) and all these checks become confusing. Even the
-swiotlb_init_late() above if called with GFP_DMA32 will set a phys_limit
-that may not be accessible at all if the DRAM starts above 4GB.
-Similarly, cma_in_zone() could return false with GFP_DMA32 in similar
-hardware configurations.
-
-So we either introduce a zone_dma32_limit variable and allow a 32-bit
-range above the start of DRAM or sanitise these sites to make sure
-passing GFP_DMA32 is safe - i.e. assume we only have ZONE_DMA if
-zone_dma_limit is above 32-bit. I prefer the latter without introducing
-a zone_dma32_limit.
+Thanks.
 
 -- 
-Catalin
+Dmitry
 
