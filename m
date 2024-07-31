@@ -1,403 +1,121 @@
-Return-Path: <linux-kernel+bounces-269683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAAB9435BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:42:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E7419435BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0930C1C2190B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:42:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6058D1C21F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9213D48CFC;
-	Wed, 31 Jul 2024 18:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF1747F69;
+	Wed, 31 Jul 2024 18:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KHzV9ntq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="aRv7cnXn"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F97E76034
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D53D381AD
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722451320; cv=none; b=FaeOppGTOAUnc64kCMMPO4CtrnpfgKNudqqvDhyHTqURhxigXRCSS+e5CTx72Pi+ns0HDDCaoVzF52jBrBPx1woIZKc3P1ueD6haAO4QeAqy7acjCnq3oki7FzFtwbw/VjEtJP5TxJlOuzSPcj39UWBvp/PYHRsF84m8oXLUhNY=
+	t=1722451313; cv=none; b=BHTkBOdl62W6koGs8OiYg4tlr1VyY4ybqeLKSoeXKy5IF86xNqva95AyWTzo8P/il+0QLugNjx2HwDbSXC/PnFXUIcbJrtIP9VqGYPuFRyLwgbPbvDTZhLkvctGO+1HF/cqpgf3omqe8qk9wn6xcGgxepd56Xihrbo7b9li+GpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722451320; c=relaxed/simple;
-	bh=+XrSOlhqSZXfwy/y1oqNKf8gyh+vYiUrF9apse13BZg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ZiMpR3WGC4sIpqg10sFpzYr1AS8TKucK1NSOyQ1KVIpoHN8x11whCNigO1W9fYlmfO4ktikQa+RgMTFDEHvK0qZE6gUB/4HAP+wVFOCJl5cd3eCZbaSrKczP/IMfStu7ntaNBRA+sPXAKxX2nh7Uup04Ivq7VKMBqXGaxmZW14g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KHzV9ntq; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722451317; x=1753987317;
-  h=date:from:to:cc:subject:message-id;
-  bh=+XrSOlhqSZXfwy/y1oqNKf8gyh+vYiUrF9apse13BZg=;
-  b=KHzV9ntqKrAIdl9DpLye+DUmmVJhKWY2v9dHlD6bn/84nXtYWCaB+pOF
-   p3OElVM72J5rguCXeTnYLafPaB6eTuAGig7XUfKsumArSEb5vAtC6DiEa
-   Os0ulLQK4YFUXXCDiIrepXKm2fD1j7IZvtPT9iZrNk9dMw/TS3rZsAWqw
-   HStsiT22DBxO1525O2JwxhJkm6lKStdJsirBIs7/s1ws7iFBCxp2hDKFJ
-   WNixD4CxFa0aRZpopRAGacZNRCCy/Ju8Dhe0J7OgKxhF7Em4gjYn/KW5/
-   lOAOIh8W7gvTYht23qYNQ9/wCKKa8da+d9qYM3TxWiPPcEUA92Ed4jfth
-   w==;
-X-CSE-ConnectionGUID: Mb5tZkSgR4W7h1MX1F3wrQ==
-X-CSE-MsgGUID: 89SmxMyrSfuJjCWxzEtO6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="30986013"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="30986013"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 11:41:57 -0700
-X-CSE-ConnectionGUID: 3aYvF0OsRxSK95TM6TDR2A==
-X-CSE-MsgGUID: FziAILrbSoeoRSUiDZDuJA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="58910088"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 31 Jul 2024 11:41:55 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZEGn-000uiS-2z;
-	Wed, 31 Jul 2024 18:41:53 +0000
-Date: Thu, 01 Aug 2024 02:41:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240729-cbc] BUILD
- REGRESSION 303f7de5e5f60dfc378b9a32a201110936b43d83
-Message-ID: <202408010259.DDXDYo57-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722451313; c=relaxed/simple;
+	bh=lJilw/AoVHYdYfRUwSwCjA7exwUKyo868FVxs6MJao8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i8gw3CxBnenqiywGafaEd7Uzg0wIRHcCEQCl3ymqRfY+5/pEn6PugRrOsHz5yVPSrj/gZ1fzifKIGfmJ3cStRuFP4cdxdKpLYUA4xcsaN1X+BUZS/oQMwTd7YK60IuS9zzAy4i6QK52b75FTaRsTiFv+HPmkyXuK7ezc3BPWQAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=aRv7cnXn; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722451303; x=1722710503;
+	bh=j42rHfXMMIaRB2UIZ2G8pZNOKdDpMtFUjLRZK4Fc7YQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=aRv7cnXnwMx+MADwFzWx7EPDrs0XS7Fo4WyNQN8t4Ejrnf+wGiV7WO82K4ss8euJi
+	 c15z5eWV6fRWrwdT0ufY+Uajqkp57T7Knue3H4uoowr8gEAtBGAyDQ5sAGDS6VRkQT
+	 ZcSCACYQVDyzSkgw4CvQsR6kGajgm15GLygS6zPNlv1sb/6R3beyoJ/cYFvRQ6XkeG
+	 uW6YCoQav8e1OTEzpAkTMKcD63g6GK8l7FJW0x6obz+BkNoYLY4lx0GRtGKp40kO8i
+	 9gL4LX0uiflpNGVMJNwtxogSSo1d+GrTCe9dn/fLdDN/379oUD/jBSkiseHS8N/nwc
+	 P0Y/51xokpdUw==
+Date: Wed, 31 Jul 2024 18:41:38 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
+Message-ID: <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
+In-Reply-To: <20240723-linked-list-v3-4-89db92c7dbf4@google.com>
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-4-89db92c7dbf4@google.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 8aa0c8a898d34210a5055c792d60eb3bc6c0071d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240729-cbc
-branch HEAD: 303f7de5e5f60dfc378b9a32a201110936b43d83  perf: Avoid -Wflex-array-member-not-at-end warnings
+On 23.07.24 10:22, Alice Ryhl wrote:
+> +/// The prev/next pointers for an item in a linked list.
+> +///
+> +/// # Invariants
+> +///
+> +/// The fields are null if and only if this item is not in a list.
+> +#[repr(transparent)]
+> +pub struct ListLinks<const ID: u64 =3D 0> {
+> +    #[allow(dead_code)]
+> +    inner: Opaque<ListLinksFields>,
 
-Error/Warning reports:
+Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it is
+enough and you change this, be aware that `Opaque` is `!Unpin`, so if
+you intend for `ListLinks` to also be `!Unpin`, then you need a
+`PhantomPinned`)
 
-https://lore.kernel.org/oe-kbuild-all/202407310719.KIRn0GjQ-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202407310922.Mkw2WfT2-lkp@intel.com
+> +}
+> +
+> +// SAFETY: The next/prev fields of a ListLinks can be moved across threa=
+d boundaries.
 
-Error/Warning: (recently discovered and may have been fixed)
+Why? This is not a justification.
 
-./usr/include/scsi/fc/fc_els.h:1131:15: error: unknown type name 'offsetof'
-./usr/include/scsi/fc/fc_els.h:1131:52: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-./usr/include/scsi/fc/fc_els.h:1131:63: error: expected ')'
-./usr/include/scsi/fc/fc_els.h:1132:15: error: expected declaration specifiers or '...' before string constant
-./usr/include/scsi/fc/fc_els.h:1149:1: error: conflicting types for 'static_assert'
-include/linux/stddef.h:16:33: error: expected declaration specifiers or '...' before '__builtin_offsetof'
-include/uapi/scsi/fc/fc_els.h:1131:14: error: a function declaration without a prototype is deprecated in all versions of C [-Werror,-Wstrict-prototypes]
-include/uapi/scsi/fc/fc_els.h:1131:15: error: expected ')'
-include/uapi/scsi/fc/fc_els.h:1131:15: error: expected parameter declarator
-include/uapi/scsi/fc/fc_els.h:1131:1: error: type specifier missing, defaults to 'int'; ISO C99 and later do not support implicit int [-Wimplicit-int]
-include/uapi/scsi/fc/fc_els.h:1132:15: error: expected declaration specifiers or '...' before string constant
+> +unsafe impl<const ID: u64> Send for ListLinks<ID> {}
+> +// SAFETY: The type is opaque so immutable references to a ListLinks are=
+ useless. Therefore, it's
+> +// okay to have immutable access to a ListLinks from several threads at =
+once.
 
-Error/Warning ids grouped by kconfigs:
+You don't need to argue via `Opaque`, the type doesn't expose any
+`&self` functions, so there are no functions to consider.
 
-recent_errors
-|-- alpha-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- arc-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- arc-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- arm-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- arm-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- arm64-allmodconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- i386-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|   |-- usr-include-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|   `-- usr-include-scsi-fc-fc_els.h:error:unknown-type-name-offsetof
-|-- i386-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- loongarch-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- loongarch-defconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- m68k-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- m68k-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- microblaze-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- microblaze-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- nios2-randconfig-002-20240731
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- openrisc-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- parisc-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- parisc-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- powerpc-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- powerpc-allyesconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- riscv-allmodconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- riscv-allyesconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- s390-allmodconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- sh-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- sh-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- sparc-allmodconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- sparc-randconfig-001-20240731
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- um-allmodconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- um-allyesconfig
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-|-- x86_64-allyesconfig
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   |-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|   |-- usr-include-scsi-fc-fc_els.h:error:conflicting-types-for-static_assert
-|   |-- usr-include-scsi-fc-fc_els.h:error:expected-)
-|   `-- usr-include-scsi-fc-fc_els.h:warning:type-specifier-missing-defaults-to-int
-|-- x86_64-randconfig-014-20240731
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-randconfig-076-20240731
-|   |-- include-uapi-scsi-fc-fc_els.h:error:a-function-declaration-without-a-prototype-is-deprecated-in-all-versions-of-C-Werror-Wstrict-prototypes
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-)
-|   |-- include-uapi-scsi-fc-fc_els.h:error:expected-parameter-declarator
-|   `-- include-uapi-scsi-fc-fc_els.h:error:type-specifier-missing-defaults-to-int-ISO-C99-and-later-do-not-support-implicit-int
-|-- x86_64-randconfig-161-20240731
-|   |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-|   `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
-`-- xtensa-allyesconfig
-    |-- include-linux-stddef.h:error:expected-declaration-specifiers-or-...-before-__builtin_offsetof
-    `-- include-uapi-scsi-fc-fc_els.h:error:expected-declaration-specifiers-or-...-before-string-constant
+---
+Cheers,
+Benno
 
-elapsed time: 1463m
+> +unsafe impl<const ID: u64> Sync for ListLinks<ID> {}
+> +
+> +impl<const ID: u64> ListLinks<ID> {
+> +    /// Creates a new initializer for this type.
+> +    pub fn new() -> impl PinInit<Self> {
+> +        // INVARIANT: Pin-init initializers can't be used on an existing=
+ `Arc`, so this value will
+> +        // not be constructed in an `Arc` that already has a `ListArc`.
+> +        ListLinks {
+> +            inner: Opaque::new(ListLinksFields {
+> +                prev: ptr::null_mut(),
+> +                next: ptr::null_mut(),
+> +            }),
+> +        }
+> +    }
+> +}
+>=20
+> --
+> 2.45.2.1089.g2a221341d9-goog
+>=20
 
-configs tested: 166
-configs skipped: 4
-
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240731   gcc-13.2.0
-arc                   randconfig-002-20240731   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                              allyesconfig   gcc-14.1.0
-arm                                 defconfig   clang-14
-arm                   randconfig-001-20240731   gcc-14.1.0
-arm                   randconfig-002-20240731   clang-20
-arm                   randconfig-003-20240731   clang-20
-arm                   randconfig-004-20240731   gcc-14.1.0
-arm                        shmobile_defconfig   gcc-14.1.0
-arm                           tegra_defconfig   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-arm64                 randconfig-001-20240731   clang-15
-arm64                 randconfig-002-20240731   clang-20
-arm64                 randconfig-003-20240731   gcc-14.1.0
-arm64                 randconfig-004-20240731   clang-20
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240731   gcc-14.1.0
-csky                  randconfig-002-20240731   gcc-14.1.0
-hexagon                           allnoconfig   clang-20
-hexagon                             defconfig   clang-20
-hexagon               randconfig-001-20240731   clang-16
-hexagon               randconfig-002-20240731   clang-20
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240731   clang-18
-i386         buildonly-randconfig-002-20240731   clang-18
-i386         buildonly-randconfig-003-20240731   clang-18
-i386         buildonly-randconfig-004-20240731   gcc-13
-i386         buildonly-randconfig-005-20240731   clang-18
-i386         buildonly-randconfig-006-20240731   clang-18
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240731   gcc-13
-i386                  randconfig-002-20240731   clang-18
-i386                  randconfig-003-20240731   clang-18
-i386                  randconfig-004-20240731   clang-18
-i386                  randconfig-005-20240731   gcc-13
-i386                  randconfig-006-20240731   clang-18
-i386                  randconfig-011-20240731   gcc-12
-i386                  randconfig-012-20240731   gcc-13
-i386                  randconfig-013-20240731   clang-18
-i386                  randconfig-014-20240731   gcc-8
-i386                  randconfig-015-20240731   gcc-10
-i386                  randconfig-016-20240731   gcc-13
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-loongarch             randconfig-001-20240731   gcc-14.1.0
-loongarch             randconfig-002-20240731   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                         amcore_defconfig   gcc-14.1.0
-m68k                          amiga_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                       bmips_be_defconfig   gcc-14.1.0
-mips                  decstation_64_defconfig   gcc-13.2.0
-mips                           ip22_defconfig   gcc-14.1.0
-mips                         rt305x_defconfig   clang-20
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-nios2                 randconfig-001-20240731   gcc-14.1.0
-nios2                 randconfig-002-20240731   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240731   gcc-14.1.0
-parisc                randconfig-002-20240731   gcc-14.1.0
-parisc64                            defconfig   gcc-14.1.0
-powerpc                    adder875_defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                     mpc83xx_defconfig   clang-20
-powerpc               randconfig-002-20240731   gcc-14.1.0
-powerpc               randconfig-003-20240731   clang-20
-powerpc64             randconfig-001-20240731   clang-20
-powerpc64             randconfig-002-20240731   clang-15
-powerpc64             randconfig-003-20240731   clang-20
-riscv                            alldefconfig   gcc-14.1.0
-riscv                            allmodconfig   clang-20
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                               defconfig   clang-20
-riscv                 randconfig-001-20240731   clang-20
-riscv                 randconfig-002-20240731   clang-15
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   clang-20
-s390                  randconfig-001-20240731   gcc-14.1.0
-s390                  randconfig-002-20240731   gcc-14.1.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                          landisk_defconfig   gcc-14.1.0
-sh                    randconfig-001-20240731   gcc-14.1.0
-sh                    randconfig-002-20240731   gcc-14.1.0
-sh                   rts7751r2dplus_defconfig   gcc-14.1.0
-sh                            shmin_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240731   gcc-14.1.0
-sparc64               randconfig-002-20240731   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-13
-um                                  defconfig   clang-20
-um                             i386_defconfig   gcc-13
-um                    randconfig-001-20240731   clang-20
-um                    randconfig-002-20240731   clang-20
-um                           x86_64_defconfig   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240731   gcc-13
-x86_64       buildonly-randconfig-002-20240731   gcc-13
-x86_64       buildonly-randconfig-003-20240731   clang-18
-x86_64       buildonly-randconfig-004-20240731   gcc-13
-x86_64       buildonly-randconfig-005-20240731   gcc-13
-x86_64       buildonly-randconfig-006-20240731   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                randconfig-001-20240731   gcc-12
-x86_64                randconfig-002-20240731   gcc-12
-x86_64                randconfig-003-20240731   clang-18
-x86_64                randconfig-004-20240731   gcc-10
-x86_64                randconfig-005-20240731   gcc-13
-x86_64                randconfig-006-20240731   clang-18
-x86_64                randconfig-011-20240731   clang-18
-x86_64                randconfig-012-20240731   clang-18
-x86_64                randconfig-013-20240731   gcc-7
-x86_64                randconfig-014-20240731   clang-18
-x86_64                randconfig-015-20240731   clang-18
-x86_64                randconfig-016-20240731   clang-18
-x86_64                randconfig-071-20240731   clang-18
-x86_64                randconfig-072-20240731   gcc-13
-x86_64                randconfig-073-20240731   clang-18
-x86_64                randconfig-074-20240731   clang-18
-x86_64                randconfig-075-20240731   clang-18
-x86_64                randconfig-076-20240731   clang-18
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                  nommu_kc705_defconfig   gcc-14.1.0
-xtensa                randconfig-001-20240731   gcc-14.1.0
-xtensa                randconfig-002-20240731   gcc-14.1.0
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
