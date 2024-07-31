@@ -1,137 +1,117 @@
-Return-Path: <linux-kernel+bounces-269708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3AC943601
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:00:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A87943605
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:04:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 205F71F2216C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:00:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DF4F1F23611
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6B739FD6;
-	Wed, 31 Jul 2024 19:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C504F2E646;
+	Wed, 31 Jul 2024 19:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEyTMbbM"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="aR1x6fcb"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7171396;
-	Wed, 31 Jul 2024 19:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D840D51C;
+	Wed, 31 Jul 2024 19:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722452436; cv=none; b=XJ1+fFStilYqMO9bR6VlHbaM2/dfcZ8xHr+lthbvGyZOA4a8ZnD0oFwTBtAGRfwUHNJMJSGP6fgUrLYsLLUKa9uGv3Heh6LDyHjhiMjXbh9DbEwFWDeBWaNhbs1vX5M4WOegyxLH/wjhz1RDwRvnBS7WkfMy0u99cAdZf089nC8=
+	t=1722452655; cv=none; b=UY0raG3iwA1KMIeiNGTgTCELigwMqmz/+ELm2NfnoCe9kUpVKHtnCk4P1bKb12VDKknas74R/Flxz+6OftzA+6kotp8rG6ed6lDYKi9w7KXPZIOPAmVuTYyOcs/uz6dF7qeeaE8XbP4BGZqcMqgQfhNci1NJs8PUl0pxubMOCrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722452436; c=relaxed/simple;
-	bh=dfjG0nkpDi+PVFo2iKDqqWAVFvkKDak2CdcBdbqs9z8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3ghlsjbLtqnUiwhDbq0nJBkz+8XioN+nacPL/KN640SoGe+bocXmikLDbCyOe19zGi2fYuxO3yXunH3KEHlVHwoMkabktiwB5IXWog8wbE9SPV0Vj+jj8kght120OSFInEGC/wHSxr7v77d7O+Sw7Hc6RNgbZg6JCKafhh9oqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEyTMbbM; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd6ed7688cso47882015ad.3;
-        Wed, 31 Jul 2024 12:00:35 -0700 (PDT)
+	s=arc-20240116; t=1722452655; c=relaxed/simple;
+	bh=+MvyBo2H6Y8yiRyRHf0TiyAD5R2lLXljDQOJRl/ofIw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s4SqPx5Ezx4/tn8hCaFKczUptkyUWMO7zsqPfqpoFXeOFNumBIp8LvGpolEOlFfH9eK0lXL83EEB/Gb3vh+etLedOGDl3lsPxBI26CzmsC671qsqkpmWUk2JQK+i9VH0MF917reX2uNUB3JZryJKc/TQ58IcCAY/MzBoNUxeSRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=aR1x6fcb; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-367990aaef3so3267123f8f.0;
+        Wed, 31 Jul 2024 12:04:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722452435; x=1723057235; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhBhpwLr2HpmurRTx9ZSvRWlLOyBcjMFLfekALkXPIs=;
-        b=IEyTMbbMYMjVxLxZ9PFf2XEfsGhAA0aYjR+c5xHPof0jNK0c9de4MIwQUO2+NBNpLn
-         //+3BYS30Z1YEkiGza5699yBmgr2T+lADInfHjSrV8TyJ7M8dWjCqfDoqQBWMvRLg63y
-         DfrMrHBxAUdRYb+bLc0ixh1t6tgHaurtQ9+F+ytlxLsiZEHXFRgeKSfq3Qi3BFs0iDZa
-         5CHIpzlDuv+v6lQHURKNRL55wmZBSgR6mJVbqIUH6LMa6Vxj0HEm6jHhDkgtSmGS/VZz
-         Uqk5HuONRnMm4xnGMM/pBOKVUDo0imXHKRHWKknKTGTep8XnGvsOq8lFV2uzVtzkozv5
-         uc0A==
+        d=googlemail.com; s=20230601; t=1722452652; x=1723057452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0FyhqBwngf/KZmQNhoC+ky+u7X/8DxKtgdDpV78vvEg=;
+        b=aR1x6fcbpujIcduNzPWFKQn23PYdU98aW9hWBAu0+x1xt5PcPZYFuN7iKZ0vud61dw
+         boS6U7ZmGjNu+DdJMutBjuVKCxLLU8CVTs2Zu7kI3ZuOwnpKXV/JW5sDmjd/Aj8odgtG
+         eU+8MOY5HTLicZ4jZk92pAKCpEKKmIghgE5Rx/GM+bjI0IaITEgrNrRCJLeWf/z6PLrV
+         Y3kpL5PAYD8JSbLO8joMmHHxnUNL4H3d2bTzhBokT8u/yyAzPgqTExdPPd+NG2wB/AUP
+         VABsKKoepZnUYlAZ2lQrAYHZFPVZKwuGtZn2qcQP58jHHh+qxhBtItO1gwQukFjeBy9E
+         IMTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722452435; x=1723057235;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hhBhpwLr2HpmurRTx9ZSvRWlLOyBcjMFLfekALkXPIs=;
-        b=ijVJSXXBZRRp/VnEhHFwm/dXCJADZUjaRXOSqcFzgAQXteSswrz3f/ayd2QmSrf5dy
-         TuIyznPJ5NfY0GuyK+BBUkflUWq8gowjyl5e8uTh8o9GSe85T5vbI+KKVHgRTLNW4H3I
-         jWmjNLqKclaWAdlsyGQ03KY/zuellsc0jtdLZ/JDr52TuVakg+wdRNuhrEG+6+T9CpId
-         IuJspDPumLLvDlm9MB0fnJEhpYwEMWn7eAwwAYG7jvfN77u53xvX1/QjekZDR47Sd8l/
-         xMD9nlKD3L9vwRDQ8fq5YRwzpCG7uT1oIKs3qMMjQkYPk72UIQVeVluVt+M+JxJTErsp
-         NagQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+MZvpBnlzTWLD55Qaszp/bzCMu6vJgjtR3tvMpYaaG8IzUXgPH/UACY8M9HRV/sJ8HZnpLrv8MrFWgcs8ma0qJp2cYIaI1EeQojgPKwYndedVqivHjgu9CQvnI5XaUdJF1TmenNEHAuY=
-X-Gm-Message-State: AOJu0YzlILAuR/brdgdPrlms7KP8j17nTCvl5px0aGnmyt60YDSKZTdH
-	zTq0/CpHjTYP64LMxFGmSBATjei2cljJfGJJjd9jrB3ae4OQn1Nz
-X-Google-Smtp-Source: AGHT+IH8paNnuD4C76PDoddZdjgnSFW/JdZaJ4AqmIjT/T8p0H6d5BZrgkicVB32ZNtYCfZSmhnK3Q==
-X-Received: by 2002:a17:902:e547:b0:1fc:2b3b:1482 with SMTP id d9443c01a7336-1ff4ce587c8mr3297435ad.12.1722452434468;
-        Wed, 31 Jul 2024 12:00:34 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:1da7:72de:e91f:aa85])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7cb0370sm123650325ad.65.2024.07.31.12.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 12:00:34 -0700 (PDT)
-Date: Wed, 31 Jul 2024 12:00:31 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v3 2/2] Input: ilitek_ts_i2c - add report id message
- validation
-Message-ID: <ZqqJz4Jw8dU7uA7a@google.com>
-References: <20231222183114.30775-1-francesco@dolcini.it>
- <20231222183114.30775-3-francesco@dolcini.it>
+        d=1e100.net; s=20230601; t=1722452652; x=1723057452;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FyhqBwngf/KZmQNhoC+ky+u7X/8DxKtgdDpV78vvEg=;
+        b=WI7xhjm1JHSdO5ySz2KyKjqDWm6RlYpdfCPgwly423DdHw3Wq/1pAI/z4DavbKPbkN
+         PNit1Ly96sHp7+yR7FYAe/QEozUzJtYGTVE4OhyFv3viaBKs4ibA/uaaWR7MosmYCifu
+         JaQhNkMejc8/fMtu4hHCTQRgRBMu1IAJmBH9Q5SzGsnnAidothJ3V8+Qv/uA1lbys7w4
+         5zQFmUWBcPmuj530Duk6+lteYjOpicYr+wmNabblzMBsCC5VhSc9X8zBFYNHOc2o45AY
+         PINKnI6vUXE3R1mG4IMPMm0sjMQA4lYB46DQ7WQiXlRYTgzd12yrXnRdy5frQgISQHnK
+         LVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCW78AidCwbVMqMsgvXyxVHlBY3z9eYdaMArNbEEFzA7XyHkwUiVKHSQbSazjoxTcv1Zv+TUqby4mVy4dXJ3FHDDZh9t7GBlerjJc1/+y2MX2vhI4zZVTX24TpjgemxB0davwYr5
+X-Gm-Message-State: AOJu0YxgEihRHYySXTVKCJ4zeLayx99WMYpvcgSMe5y5sbdi2pB7uz1S
+	Or1akzuzJ58YOdzaalqj3tRkQd5d8akdRNz+9cYbEwG/pAmo6kE=
+X-Google-Smtp-Source: AGHT+IH6fw4jG0HDdoJ7Rn8PahT4zwlICFi5K/wz2JahioLHATpdd6agfaaWuGLu6cvYWPHseMgIsA==
+X-Received: by 2002:adf:ffd0:0:b0:367:98e6:2a1b with SMTP id ffacd0b85a97d-36baacb623bmr144624f8f.4.1722452651449;
+        Wed, 31 Jul 2024 12:04:11 -0700 (PDT)
+Received: from [192.168.1.3] (p5b057724.dip0.t-ipconnect.de. [91.5.119.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857d66sm17658356f8f.83.2024.07.31.12.04.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 12:04:11 -0700 (PDT)
+Message-ID: <78db8b6e-cbd5-480c-b8af-5ffc3d771199@googlemail.com>
+Date: Wed, 31 Jul 2024 21:04:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20231222183114.30775-3-francesco@dolcini.it>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240731095022.970699670@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 22, 2023 at 07:31:14PM +0100, Francesco Dolcini wrote:
-> From: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> 
-> Ilitek touch IC driver answer to plain i2c read request, after it has
-> generated an interrupt request, with a report id message starting
-> with an identifier and a series of points.
-> If a request is sent unsolicited by an interrupt request the answer
-> do not contain this identifier.
-> Add a test to discard these messages, making the driver robust to
-> spurious interrupt requests.
-> 
-> Fixes: 42370681bd46 ("Input: Add support for ILITEK Lego Series")
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Signed-off-by: Emanuele Ghidoli <emanuele.ghidoli@toradex.com>
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
-> v3: added reviewed by
-> ---
->  drivers/input/touchscreen/ilitek_ts_i2c.c | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/ilitek_ts_i2c.c b/drivers/input/touchscreen/ilitek_ts_i2c.c
-> index 250133f0d68f..557362490244 100644
-> --- a/drivers/input/touchscreen/ilitek_ts_i2c.c
-> +++ b/drivers/input/touchscreen/ilitek_ts_i2c.c
-> @@ -37,6 +37,8 @@
->  #define ILITEK_TP_CMD_GET_MCU_VER			0x61
->  #define ILITEK_TP_CMD_GET_IC_MODE			0xC0
->  
-> +#define ILITEK_TP_I2C_REPORT_ID				0x48
-> +
->  #define REPORT_COUNT_ADDRESS				61
->  #define ILITEK_SUPPORT_MAX_POINT			40
->  
-> @@ -163,6 +165,11 @@ static int ilitek_process_and_report_v6(struct ilitek_ts_data *ts)
->  		goto err_sync_frame;
->  	}
->  
-> +	if (buf[0] != ILITEK_TP_I2C_REPORT_ID) {
-> +		dev_err(dev, "get touch info failed. Wrong id: 0x%02X\n", buf[0]);
-> +		goto err_sync_frame;
+Am 31.07.2024 um 12:03 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Please rebase and use direct return once you fix the previous patch.
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Thanks.
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+
+
+Beste Grüße,
+Peter Schneider
 
 -- 
-Dmitry
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
