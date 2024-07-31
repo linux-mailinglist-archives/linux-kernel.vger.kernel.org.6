@@ -1,137 +1,142 @@
-Return-Path: <linux-kernel+bounces-269065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C6E942D05
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE47942D04
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:14:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD361C237EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19727286D5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5656E1AD3F9;
-	Wed, 31 Jul 2024 11:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A281AD9C0;
+	Wed, 31 Jul 2024 11:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b="rrgTglXU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CeGFb1BO"
-Received: from fhigh3-smtp.messagingengine.com (fhigh3-smtp.messagingengine.com [103.168.172.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IqAYGOpX"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560BE1AB531
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D1411AC43E
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722424468; cv=none; b=NIYvpXhx9Y2TtrRQg74QuNtuR8zSFfy7P41GxZAST4/kaMsOCZawyA3ZU9X5RKAg+mIqWs2D368BQcD+ZrZXSzES5Bv07HwZSy5OHDXIM+FXSK12CaqqIj2HrrCbGLC9ZPLTOSvtYAEJqEdmbKCw66Y2I4sJxJPBQk6+egtsyzI=
+	t=1722424433; cv=none; b=DXwl4lfOeNkZZww8UxBUpj+vRGtFm0Jrelmhdk8WnHiM2UXK92A/j23SQwovowLhtimRLTbsMg7BgMmnVsBNlhwCKcPTOr/gKTKtRvQUQriH4bOQKZi28d78FcqKn1ml2SOcP/Kzo1f4jGJWRHgGyFyEcRw7+L7rUnm35BE/k7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722424468; c=relaxed/simple;
-	bh=DOBSWQTIKLSmnSD9RKYcOZOaTVLgLR1j48z8auY6zK4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hW2vKvtyetv9OHCWq1ifSLdZOWx2eCmk4+zAadQDWrMMfDHbA9AuuuRbaXKaFljohhB17DjAjyfhm5eub1lzwQ86B/F0428kESKUdYOmN5ociySYfIiaZlUZIatXXONhfBsWQjHArCWnASkH/bhcJ+lF47V3INe1Pf5oSJmZZ8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is; spf=pass smtp.mailfrom=alyssa.is; dkim=pass (2048-bit key) header.d=alyssa.is header.i=@alyssa.is header.b=rrgTglXU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CeGFb1BO; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alyssa.is
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alyssa.is
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5AB041146E48;
-	Wed, 31 Jul 2024 07:14:24 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 31 Jul 2024 07:14:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alyssa.is; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm2; t=1722424464; x=1722510864; bh=eCXBIyPqwvOILLDz8424S
-	c020ymYIO3Ie5hmMKC2phM=; b=rrgTglXUYMVSUbnPE7ELCuyzTjL+O3UDSFQ16
-	R91lC5MyfA3W+THZ40f2c6DoOA1hYF2zAUBl59+joGQ3gMesTOi2pTAUivmD+erq
-	cH6URmpA2xX4DwOiwSTQSFn7gqqe/2kxExYb0K+PnYU1EJZ6NfCvuXGNGDtUlcCj
-	jyniasmw/5pvkCnBdp3NYH+V3SkMdxML/wHHH12TCvLNKpwVL2b52ZUSxENy1BXm
-	2KYQejbZEu/N1RRpElYtB7pl4nZVL8ZBB4dYcoJ/Dgl+1K93KlRirkflA2CL9qbE
-	d8vTf5zrqdq56BSCzOHugNXV/mVs7vC0S6StWk/WmrFHph7KQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1722424464; x=1722510864; bh=eCXBIyPqwvOILLDz8424Sc020ymY
-	IO3Ie5hmMKC2phM=; b=CeGFb1BOEsMehEZ6Z7VTnijgihmQdoqweNVj1vsVL85l
-	p1JDJQE3DyWRb8DbnFYXq9JHQpQn/M1ihSzB702r/A0JF33e3kqPIuE2qzr6EypP
-	25llKlfuwJX2GMs/NGFk/yUDlfuycUGHnjkrzG3knUWviIgAwMf0TedeLg5n53rx
-	UNZDR/5cyRpZUi73LdZdo2ZY0FnXJPR1M0iSUchjUeAcimuctzNHqEJoLvU9PviF
-	G7nsH2NPUh2kt0MgDbIDlJOYbX/R2RPKc2Gp4PXlcOJxZyZdXt3VlnI9MjX/W3iz
-	7LwqoLd0gQC9auNjpKVT26H4PEqnuCP2n9Kxm1GBQA==
-X-ME-Sender: <xms:jxyqZoOfJeHOvQ9HIm28hdXF18nGAOecgnfMIegOr5gdbZwowVIAeQ>
-    <xme:jxyqZu-4DpmBfNtjjQbytghw6Ks6QoATq5glqg21l5QdmHmsAFC1AE3Jh9VTv2ULh
-    4Oq11vRcqRw6HGlHw>
-X-ME-Received: <xmr:jxyqZvTPHxt78mhf7cfQMLSozCrST4l9CpsYLzBI26C0qFHuIItrjWdyC5wxwQCZ6pc_C4km8dAGRXFN6lzk4y3ey3QH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeigdeflecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeetlhihshhsrgcu
-    tfhoshhsuceohhhisegrlhihshhsrgdrihhsqeenucggtffrrghtthgvrhhnpeeufeeivd
-    ehffevgeeijeejvefgjeejudevkeffieevueevvdetvdfhleeiuedtgfenucffohhmrghi
-    nhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhephhhisegrlhihshhsrgdrihhspdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:kByqZgsvNLMtlCF-hdna_r9iXaDgZMFLN9p23dKJx5_ymny7itnAHA>
-    <xmx:kByqZgeu41PUG8ah4N3uKBrZIcmCocaSP7F1wjHSHRmoTaNh1gX1GQ>
-    <xmx:kByqZk3_pUcHTS9XYzyzEEIWYCeCFI4cRIXCZI-zVkNAU8ugRidGTQ>
-    <xmx:kByqZk9zpjhALZMBp2ZljSjv4eFxgSubYPTq_3BCdSwu2F4YifJVFA>
-    <xmx:kByqZlFiNV9W9ZB0-FWWgYlXcFPEcD59H_zGuCxSGkT1yNnEb02FNlVD>
-Feedback-ID: i12284293:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 31 Jul 2024 07:14:23 -0400 (EDT)
-Received: by mbp.qyliss.net (Postfix, from userid 1000)
-	id E5C6C3A6C; Wed, 31 Jul 2024 13:14:21 +0200 (CEST)
-From: Alyssa Ross <hi@alyssa.is>
-To: Bryan Tan <bryan-bt.tan@broadcom.com>,
-	Vishnu Dasa <vishnu.dasa@broadcom.com>
-Cc: Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] VMCI: fix reference to ioctl-number.rst
-Date: Wed, 31 Jul 2024 13:13:03 +0200
-Message-ID: <20240731111302.3072858-2-hi@alyssa.is>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722424433; c=relaxed/simple;
+	bh=k85fIEDQsiqzt/RqUNSYKo+/sV4yzirvaADWzzxO5Lg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CGh36IuaNUcP0MgrISS8QDqQwU6DDZRonhkW2dz+oQEJ5+INa4FIAkyPz+XEj4oN4xHqNS9faApfyTEPuprD5nHtE7CG0ScOgG7z9qkaxGwo9NAiUXxMPjejNAmuZH2TOj/XkufhwmEC5VwvGb0r0GwbulhCJChFJLPSSXjQwSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IqAYGOpX; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a83a968ddso783013766b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:13:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722424430; x=1723029230; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OlLQXU1YYTz38Qbe2t9ZiljMXVGAE2UwbufdyYLNy6A=;
+        b=IqAYGOpXOaCP9qYaPuQM6sZhAx0eq2hFGtZGAvbBxp4mTSrxH7dEK8BFcbpvoKF26Y
+         ecwVwtnEfDDh5Gl+X1GdEvLxmHvO8EoqPH6TdWAbJymnb2S/87eO2RAQ8GQbbPT5aigT
+         YJ29Hd9nZtypqv85TEA5IM6Y89PuSnM1FBgWJlLPeX1maTJ8CYjRN4/TqB+CZMQP/wM3
+         xCBlYIB7MJlq2pNbmGwFFTOIcjzdKbs9fX8yTJI5I5m9BzAJqIrsozWnG1ftS259vGdz
+         RaVbyrRV1JzpBPjs3Qx+cX+R+Ev7VFHyXQzMPnAAavdjDl8yD/rDhnV0tfdHjodAn3dI
+         sbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722424430; x=1723029230;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OlLQXU1YYTz38Qbe2t9ZiljMXVGAE2UwbufdyYLNy6A=;
+        b=dyBNYgc2m9LLNCIkazujmpxiV44JJ2GWn1ANj9QNPQ5BLv3yCKrSefHifJV6SSyIj1
+         /Sqss7JDM52eL116AqSroTklJ23ZWOEs8+Zb6Uci7VjxUplN5DjHaYZHJRff/kIerDPl
+         dOfSQeJayzBGiXIlPKxMHsXVgH87Qz/dpJxLBg+xfEXMIOlLh/+3J5pN/CgcPzkwcW7C
+         prVLroI0MErXmyg5g+4ymJ1EF1EinJkShxeCp7pSuO1XlTKNbl2RNyFBWJ3noJFJAf82
+         4NaA+bOkhzZPyOryS4xRRtQgO5U7qsrKAoS6YFccn9fjA4OZRiR698Gj9XwdKY49LzBN
+         n5Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCVgroAQS/fqIvqTq9rYDBQYkzuQEKnRk4HEOA8jB2FflnCxOYm+VucM6KUqpdktVyJ3OTIPKqBO/gdBOns6gX22QMS5JBFMTmqdKxoF
+X-Gm-Message-State: AOJu0Yxvz1Byu3TTC6zS7cCWX0DCNx4KluhafKMe9Tm+WUIQsJ1lRDuz
+	dWHTCBnoTvkAwe03OgrsjgEOqPV8uX4LOWHzJmWV09fECTDOUe8fkfMl3QlGM3Y=
+X-Google-Smtp-Source: AGHT+IHGjJTeTxJqEgwE71cEFYOEfZQxduOvoGQx3kI/0iNz9R/KYl4BEutWT+YryytsPXhOaeT02g==
+X-Received: by 2002:a17:907:7205:b0:a7a:9144:e23a with SMTP id a640c23a62f3a-a7d40129016mr1005259366b.43.1722424429589;
+        Wed, 31 Jul 2024 04:13:49 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::7424? ([2a02:8109:aa0d:be00::7424])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb9819sm752741466b.205.2024.07.31.04.13.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 04:13:49 -0700 (PDT)
+Message-ID: <023d4ea8-635d-435f-bae2-87284f70123b@linaro.org>
+Date: Wed, 31 Jul 2024 13:13:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] Enable EUD on Qualcomm sm8450 SoC
+To: Elson Roy Serrao <quic_eserrao@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Fixes: 20259849bb1a ("VMCI: Some header and config files.")
-Signed-off-by: Alyssa Ross <hi@alyssa.is>
----
-You may notice that ioctl-number.rst does not actually mention code 7 — 
-I've had a separate patch accepted to do that:
+Hi,
 
-https://lore.kernel.org/all/20240725171120.12226-2-hi@alyssa.is/
+On 31/07/2024 00:24, Elson Roy Serrao wrote:
+> The Embedded USB Debugger (EUD) is a mini High-Speed USB on-chip hub to
+> support the USB-based debug and trace capabilities on Qualcomm devices.
+> The current implementation lacks in below aspects that are needed for
+> proper EUD functionality.
+> 
+> 1.) HS-Phy control: EUD being a HS hub needs HS-Phy support for it's
+>      operation. Hence EUD module should enable/disable HS-phy
+>      accordingly.
+> 	
+> 2.) Proper routing of USB role switch notifications: EUD hub is physically
+>      present in between the USB connector and the USB controller. So the
+>      usb role switch notifications originating from the connector should
+>      route through EUD. EUD also relies on role switch notifications to
+>      communicate with the USB, regarding EUD attach/detach events.
+> 
+> This series aims at implementing the above aspects to enable EUD on
+> Qualcomm sm8450 SoC.
 
- include/linux/vmw_vmci_defs.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Are there any plans to make this feature available for folks outside of 
+Qualcomm / an NDA?
 
-diff --git a/include/linux/vmw_vmci_defs.h b/include/linux/vmw_vmci_defs.h
-index 6fb663b36f72..244c5ff412e1 100644
---- a/include/linux/vmw_vmci_defs.h
-+++ b/include/linux/vmw_vmci_defs.h
-@@ -431,11 +431,11 @@ enum {
- 	((((_p)[0] & 0xFF) << 24) | (((_p)[1] & 0xFF) << 16) | ((_p)[2]))
- 
- /*
-- * The VMCI IOCTLs.  We use identity code 7, as noted in ioctl-number.h, and
-- * we start at sequence 9f.  This gives us the same values that our shipping
-- * products use, starting at 1951, provided we leave out the direction and
-- * structure size.  Note that VMMon occupies the block following us, starting
-- * at 2001.
-+ * The VMCI IOCTLs.  We use identity code 7, as noted in ioctl-number.rst,
-+ * and we start at sequence 9f.  This gives us the same values that our
-+ * shipping products use, starting at 1951, provided we leave out the
-+ * direction and structure size.  Note that VMMon occupies the block
-+ * following us, starting at 2001.
-  */
- #define IOCTL_VMCI_VERSION			_IO(7, 0x9f)	/* 1951 */
- #define IOCTL_VMCI_INIT_CONTEXT			_IO(7, 0xa0)
+There is an openOCD fork on CodeLinaro but it still requires some 
+proprietary library which is only available to folks with a quicinc 
+email as I understand it.
 
-base-commit: e4fc196f5ba36eb7b9758cf2c73df49a44199895
+Kind regards,
+
+~ someone eager for JTAG access
+> 
+> Elson Roy Serrao (8):
+>    dt-bindings: soc: qcom: eud: Add phy related bindings
+>    dt-bindings: soc: qcom: eud: Add usb role switch property
+>    dt-bindings: soc: qcom: eud: Add compatible for sm8450
+>    arm64: dts: qcom: sm8450: Add EUD node
+>    arm64: dts: qcom: Enable EUD on sm8450 hdk
+>    usb: misc: eud: Add High-Speed Phy control for EUD operations
+>    usb: misc: eud: Handle usb role switch notifications
+>    usb: misc: eud: Add compatible for sm8450
+> 
+>   .../bindings/soc/qcom/qcom,eud.yaml           |  17 +++
+>   arch/arm64/boot/dts/qcom/sm8450-hdk.dts       |  15 ++-
+>   arch/arm64/boot/dts/qcom/sm8450.dtsi          |  29 ++++
+>   drivers/usb/misc/qcom_eud.c                   | 125 +++++++++++++++---
+>   4 files changed, 164 insertions(+), 22 deletions(-)
+> 
+
 -- 
-2.45.2
-
+// Caleb (they/them)
 
