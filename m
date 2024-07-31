@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-269325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 191E7943191
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:59:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4056943193
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:59:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A95CB23023
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:59:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B34B1F22465
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:59:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FBEF1B3722;
-	Wed, 31 Jul 2024 13:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ACF1B29AB;
+	Wed, 31 Jul 2024 13:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="qVTpSZLB"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YE/byaHt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772981AED53
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973A71B29CF;
+	Wed, 31 Jul 2024 13:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722434355; cv=none; b=BzfL0euc0EiB0BnZTyJBnAB5acCR8XVwLZNoRthTEiu/PiqufEhovVuNRUE9Ye1AnI2c2cy0zuDDEGTWn4GdjknJ8IWxrKjUzW1MEn5amWIWSnCUtDRJXipAfP1pSiPC9ob5YJAP+bcW2PF3TqgQQia36TqqslbytknPwRVQbXc=
+	t=1722434369; cv=none; b=n0lyk09iIxlxeTjhr75H7fK/AzUDv7ENrfbnnQZf6PQoP832gil9Yr93XpwGuNaKyalaB2K7bD+mijvECkR9/d2PoV8Y8ZXgUvTqoqi+98R7e1/ibDIkglDnewnHUHJsSIfpXCKsF5ggMWDE/MlclY7WezurS9jArwb0dIDLRZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722434355; c=relaxed/simple;
-	bh=6etOxoOt+Uv0mlCOS1EtH++jzIHf2RtrsgN5gME3owI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EYZSIPme7NidY7Y+t0ncgszZmZjzHmQNcrBqkrpZQXID/ZSnFlJcKfrresvbPPw2+jc+MTRQqR6Ct6aOiccm2EVCFN3JD1Lc9wJzGwnStV60xhJ/kPYpZ5VB3PN0PM7dSbak6Zo8eNCKBQbdBtxniay41BhqhXH9SmUwCunzg4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=qVTpSZLB; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so29023255e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:59:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722434352; x=1723039152; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+lprbpLX5iCNs3yfE0hQ92bHfdVj+BJgLJ/8w5c0+04=;
-        b=qVTpSZLBpBUDffkt197Bed8M3geoWHfz6rTIW5fx/RVZ6851/3W8otCy2SQyUZXxfq
-         88LgpWzb6wIsx1aomITtf20YUkND5nagJCCo3qFMUyU58sP94NIPTkWQ3Wni7ne4WhEp
-         nx5M8PpHnMjoIxhypZs4Gy8aanRBaDM5MXO5SwsehywQyvQlCFzMvMiFPwTmPmy7+JDO
-         2Ql4gxhpEzJo8chWwdVwo81AdBfK27cgT+tWI3kV0aaOvjXn/aKvL6Fv8XNiV70IhvFC
-         8YNPsZTDGtUfLfwGByrWsLT1lEfDlc6wpl36iOyvdqRiWGFV9tVUrg5jK8bq1Jgk2okQ
-         qs1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722434352; x=1723039152;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+lprbpLX5iCNs3yfE0hQ92bHfdVj+BJgLJ/8w5c0+04=;
-        b=hr/k7H8i9tA4AD53WOTdv3swsni427I3Nw0XOfE6zfZW9vxU9QNfb0RCZdApIcllTO
-         P1tY5aOTZTxD71LxZ+b8/pSimXbDxkOzyMRg0dWYnCCSQhxbj99u+2akPzmg2iqXwHpZ
-         S3MIASxNrH41ZDw2+i3DpO3jJb5NSR6vPb2ta2jE63nppfjUj/dDK6YRh2emIX4DZuGi
-         o/OIfTveeVDn4iGOIDxWDrdq4re9hcA9w1GZGonFFFudFKHadv7nCbLMQkIBBPFODZga
-         0E5S7geS41c5kO1yXwoHFTBOp4xXAeVNl5sjz8baDZrK8rhgC2xRByzfNr2Hjv31H2ZO
-         PmAw==
-X-Gm-Message-State: AOJu0YwPLnyhDB8sPU+SudAIYD12oFwvG4+8XTQxlyL7opt9GZVZyFjx
-	4UflQSWqSlR3dqy9vfjvCEYAkxMvXvdckakF5frwyVz2e8xYwNe/oB8ADn6/DMA=
-X-Google-Smtp-Source: AGHT+IHwbNQ7kDa9E7p1dwhtAUL7lTtuLM/rc0FDjS7lRtc9Kd7SyT6zeX/UvQGb+jTugOi5IxrwbQ==
-X-Received: by 2002:a05:600c:35d5:b0:426:5269:9824 with SMTP id 5b1f17b1804b1-42811ab2a89mr118059145e9.0.1722434351584;
-        Wed, 31 Jul 2024 06:59:11 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b5fec25sm22714445e9.0.2024.07.31.06.59.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 06:59:11 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	will@kernel.org,
-	longman@redhat.com,
-	boqun.feng@gmail.com
-Cc: linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [RESEND PATCH] locking/ww_mutex/test: Use swap() macro
-Date: Wed, 31 Jul 2024 15:58:51 +0200
-Message-ID: <20240731135850.81018-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722434369; c=relaxed/simple;
+	bh=38eH4sewTUypD+7B7wn9cp51XdNEcMKdka19KqwuSX8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dTcRIjfrxcl6RHke6IrqzEkmdvsnv9LVBklSOxx+uMcZQuTgVbQk+fWAC3dStl3mgR10+5dZhOr35epoFFNJ2Mm8fq3IVwlJFkFFli8W7gNUBhO5Hp1U+LroQHAf0cWXBrX77jPoVe25UkJgbS1mmMXXyYyC7fGcDx3NEYhmFkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YE/byaHt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2880CC32786;
+	Wed, 31 Jul 2024 13:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722434369;
+	bh=38eH4sewTUypD+7B7wn9cp51XdNEcMKdka19KqwuSX8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YE/byaHtVOKy2HgZn8cwiNqoRtxr6z7qxmf7n2w3goj5s0dUMQDXKhjWXdvt+BI/m
+	 luUuW37VIeEPnrDhKZ360tV8FCupFf87MWZfolO8ZkVcA1Qd6pSuzgSGmJqQ9Zi+i9
+	 NU4i84WTH9dZN29zR0Fznb5ghselgGQrKAV4DaaTV1PykAC+xNeR3jEHR9y6v//ars
+	 47TVHNysEuLpd0SPkDslvUjwlcuuaIxY6pyLMbgypJ89zamUuxemmnIZfg1pWL5nHJ
+	 6yExgUrmFeXxCYiFhvwl/MY/SxMiv+8vYEBgXOmacTSEQLU3OJq1h9koiBkD7lAqGJ
+	 Kw6uaJ5sBPpqA==
+Date: Wed, 31 Jul 2024 15:59:21 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/4] HID: treat fixed up report as const
+Message-ID: <2kfmgwlmliwmn6olmnaab2mdn4ywquqputk3hcdqqkyqc6bfvd@jtlmixoar7qu>
+References: <20240730-hid-const-fixup-v1-0-f667f9a653ba@weissschuh.net>
+ <20240730-hid-const-fixup-v1-1-f667f9a653ba@weissschuh.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240730-hid-const-fixup-v1-1-f667f9a653ba@weissschuh.net>
 
-Fixes the following Coccinelle/coccicheck warning reported by
-swap.cocci:
+On Jul 30 2024, Thomas Weiﬂschuh wrote:
+> Prepare the HID core for the ->report_fixup() callback to return const
+> data. This will then allow the HID drivers to store their static reports
+> in read-only memory.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+> ---
+>  drivers/hid/hid-core.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
+> index 988d0acbdf04..dc233599ae56 100644
+> --- a/drivers/hid/hid-core.c
+> +++ b/drivers/hid/hid-core.c
+> @@ -1203,6 +1203,7 @@ int hid_open_report(struct hid_device *device)
+>  {
+>  	struct hid_parser *parser;
+>  	struct hid_item item;
+> +	const __u8 *fixed_up;
+>  	unsigned int size;
+>  	__u8 *start;
+>  	__u8 *buf;
+> @@ -1232,11 +1233,11 @@ int hid_open_report(struct hid_device *device)
+>  		return -ENOMEM;
+>  
+>  	if (device->driver->report_fixup)
+> -		start = device->driver->report_fixup(device, buf, &size);
+> +		fixed_up = device->driver->report_fixup(device, buf, &size);
+>  	else
+> -		start = buf;
+> +		fixed_up = buf;
+>  
+> -	start = kmemdup(start, size, GFP_KERNEL);
+> +	start = kmemdup(fixed_up, size, GFP_KERNEL);
 
-  WARNING opportunity for swap()
+I think that kmemdup makes all of your efforts pointless because from
+now, there is no guarantees that the report descriptor is a const.
 
-Compile-tested only.
+How about you also change the struct hid_device to have both .dev_rdesc
+and .rdesc as const u8 *, and then also amend the function here so that
+start and end are properly handled?
 
-Acked-by: Waiman Long <longman@redhat.com>
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- kernel/locking/test-ww_mutex.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+This will make a slightly bigger patch but at least the compiler should
+then shout at us if we try to change the content of those buffers
+outside of the authorized entry points.
 
-diff --git a/kernel/locking/test-ww_mutex.c b/kernel/locking/test-ww_mutex.c
-index 78719e1ef1b1..252bef786aef 100644
---- a/kernel/locking/test-ww_mutex.c
-+++ b/kernel/locking/test-ww_mutex.c
-@@ -402,7 +402,7 @@ static inline u32 prandom_u32_below(u32 ceil)
- static int *get_random_order(int count)
- {
- 	int *order;
--	int n, r, tmp;
-+	int n, r;
- 
- 	order = kmalloc_array(count, sizeof(*order), GFP_KERNEL);
- 	if (!order)
-@@ -413,11 +413,8 @@ static int *get_random_order(int count)
- 
- 	for (n = count - 1; n > 1; n--) {
- 		r = prandom_u32_below(n + 1);
--		if (r != n) {
--			tmp = order[n];
--			order[n] = order[r];
--			order[r] = tmp;
--		}
-+		if (r != n)
-+			swap(order[n], order[r]);
- 	}
- 
- 	return order;
--- 
-2.45.2
+Cheers,
+Benjamin
 
+>  	kfree(buf);
+>  	if (start == NULL)
+>  		return -ENOMEM;
+> 
+> -- 
+> 2.45.2
+> 
 
