@@ -1,64 +1,52 @@
-Return-Path: <linux-kernel+bounces-269713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF238943615
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:13:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDC94943617
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 598F8B214FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C8A283916
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF4C49624;
-	Wed, 31 Jul 2024 19:13:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1C413D523;
+	Wed, 31 Jul 2024 19:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="assU+0D1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeeZtwBA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582541396;
-	Wed, 31 Jul 2024 19:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CBE12CD8B;
+	Wed, 31 Jul 2024 19:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453215; cv=none; b=EaEOZ6IUCZVBYLK7OhHRVIQ6Gjz5TC9qXhG1pKfE/9XFBvYxNqQLMWNLf9cBsMAm48LpIzcBdCGJqhUUaTNCEzm8+Xns7toqKvG1V8aFnfmcRV/QzPLlgoRpczOK+kGn8esQ1SsEdIwBDtsVYIpqLRBDpx93i3mwkVEYZ0gAcVg=
+	t=1722453217; cv=none; b=a9dM/xW5AQ8M82EZvtJh3ro2UxCPGhIFS2iR1snAawlRlHWcm4soka7ljnXDBSQzr9Y11t4XjnMybprRX/MpTpbIUwSaOu6LQPGEETdVs/EaAhIcKS2z11hL7HTSwgN8s/QRndBQVvt4dkYPogGu++fuTMHLJUWHJ6HRrrHB9zI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453215; c=relaxed/simple;
-	bh=sXfKPdSvD2xim8678B03Zbrmf3C5NmYf7KYIuKYHsoA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bQlcHCMK4R6kioYji9O4VVATWd5mVKfnXAQ4T/UrybpA3qC979Ki5Ay0I8z59yyLtLUZEjxTA2sKCK3V26tj5SSDt9gb2HCS3TkNiZ7lGD2h3CMm9a24Mk9euf/mvcW1A8trWz0/gZgT6IC+l/pWxZEo9ocNYm7pJWptqWTj03s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=assU+0D1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A3BC116B1;
-	Wed, 31 Jul 2024 19:13:34 +0000 (UTC)
+	s=arc-20240116; t=1722453217; c=relaxed/simple;
+	bh=hOU/2ld5kf2bldZq16dLixHCIlSUJ7gODRhc167/YF0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CJ+fi2u+725S8MMWtaiCYZLQEeRfkMBo1QRaIvC+wS2JKKOSM9ichK4XooIpRqfo8U88Se5MrRF1XjuZZIoZi+SUv/m2uF8L+haSEYexaWPOdV3RNlroDwT6JTQK0PdBmfrP/uDnUL5oraxSpge3iS75OeanL0B/A+gPXvwmlZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SeeZtwBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26D8C4AF09;
+	Wed, 31 Jul 2024 19:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453214;
-	bh=sXfKPdSvD2xim8678B03Zbrmf3C5NmYf7KYIuKYHsoA=;
+	s=k20201202; t=1722453217;
+	bh=hOU/2ld5kf2bldZq16dLixHCIlSUJ7gODRhc167/YF0=;
 	h=From:To:Cc:Subject:Date:From;
-	b=assU+0D1YghzXsD+joyjA3vi6CzirGdiekQCGVFCwHkLtRIYEffmPn0VE9pkTLcIf
-	 nGenEgRMNufXPB3RChqIQ14LmpOjfpNdeqnXPegXMIi+3q5cxTjBcGhxpF1/RMRpBn
-	 kWr4HA3112qA6xrchcDYw13HLGcuF5V4f/bpaqatUVN08wHoY0j0LIzoSvXeJG0pOT
-	 Te5mUnjsSF8WhBhx5FHwemCb/2Toeh3ciUXfpeMw2DZg4rtjufftUGiBYK05JlOfz8
-	 vzVOMURc2wrTJSxxVV8Kmv2wn1cV3cCvb7taxlts4AL9SVew0DGzC1aeHhRGETpDPV
-	 QuzoGThOJ9hkw==
+	b=SeeZtwBAmUfIkYk4PWKWiUXJRmHJEJygOK9WabmeYbzh+4+g9b04ceZJSs/cjCUpO
+	 UiPPoiHvGdkV0pmf+o12DwPaQRoy/Fj6FIsTrd4DuNH58tnknvGQ8abS6Rh6+UNOkx
+	 ce2cBqSweF6Naa1EDEyoDP1MmeJi+EHbAnsYpfVK0fkV1ViAlD/2NZRGpiNeTfx/FE
+	 quWOrGxalVSGTWhZgTt/iazEg8hsjB5lf9DEUMRqnHLeCo00HA7afKyWXGDK1g2k8L
+	 75qK96YtzBjPJvGoz77TMBivuxj39Hgf3D9jKAYHzfdqwztncskhBmkq53O3RYOx8R
+	 O2eh+4UMZjAyA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Patrice Chotard <patrice.chotard@foss.st.com>,
-	Yangtao Li <tiny.windzz@gmail.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev
-Subject: [PATCH] cpufreq: Use of_property_present()
-Date: Wed, 31 Jul 2024 13:12:40 -0600
-Message-ID: <20240731191312.1710417-2-robh@kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: Use of_property_present()
+Date: Wed, 31 Jul 2024 13:12:41 -0600
+Message-ID: <20240731191312.1710417-3-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -69,88 +57,54 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use of_property_present() to test for property presence rather than
-of_(find|get)_property(). This is part of a larger effort to remove
-callers of of_find_property() and similar functions. of_find_property()
-leaks the DT struct property and data pointers which is a problem for
+of_find_property(). This is part of a larger effort to remove callers
+of of_find_property() and similar functions. of_find_property() leaks
+the DT struct property and data pointers which is a problem for
 dynamically allocated nodes which may be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/cpufreq/cpufreq-dt.c           | 11 +++--------
- drivers/cpufreq/pmac64-cpufreq.c       |  2 +-
- drivers/cpufreq/sti-cpufreq.c          |  2 +-
- drivers/cpufreq/sun50i-cpufreq-nvmem.c |  2 +-
- 4 files changed, 6 insertions(+), 11 deletions(-)
+ drivers/gpio/gpiolib-of.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index 6532c4d71338..983443396f8f 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -69,7 +69,6 @@ static int set_target(struct cpufreq_policy *policy, unsigned int index)
- static const char *find_supply_name(struct device *dev)
- {
- 	struct device_node *np __free(device_node) = of_node_get(dev->of_node);
--	struct property *pp;
- 	int cpu = dev->id;
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index f6af5e7be4d1..6683e531df52 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -1058,13 +1058,13 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 	int index = 0, ret, trim;
+ 	const char *name;
+ 	static const char group_names_propname[] = "gpio-ranges-group-names";
+-	struct property *group_names;
++	bool has_group_names;
  
- 	/* This must be valid for sure */
-@@ -77,14 +76,10 @@ static const char *find_supply_name(struct device *dev)
- 		return NULL;
+ 	np = dev_of_node(&chip->gpiodev->dev);
+ 	if (!np)
+ 		return 0;
  
- 	/* Try "cpu0" for older DTs */
--	if (!cpu) {
--		pp = of_find_property(np, "cpu0-supply", NULL);
--		if (pp)
--			return "cpu0";
--	}
-+	if (!cpu && of_property_present(np, "cpu0-supply"))
-+		return "cpu0";
+-	group_names = of_find_property(np, group_names_propname, NULL);
++	has_group_names = of_property_present(np, group_names_propname);
  
--	pp = of_find_property(np, "cpu-supply", NULL);
--	if (pp)
-+	if (of_property_present(np, "cpu-supply"))
- 		return "cpu";
+ 	for (;; index++) {
+ 		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
+@@ -1085,7 +1085,7 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
  
- 	dev_dbg(dev, "no regulator for cpu%d\n", cpu);
-diff --git a/drivers/cpufreq/pmac64-cpufreq.c b/drivers/cpufreq/pmac64-cpufreq.c
-index 2cd2b06849a2..c87cd6e0b638 100644
---- a/drivers/cpufreq/pmac64-cpufreq.c
-+++ b/drivers/cpufreq/pmac64-cpufreq.c
-@@ -505,7 +505,7 @@ static int __init g5_pm72_cpufreq_init(struct device_node *cpunode)
- 			continue;
- 		if (strcmp(loc, "CPU CLOCK"))
- 			continue;
--		if (!of_get_property(hwclock, "platform-get-frequency", NULL))
-+		if (!of_property_present(hwclock, "platform-get-frequency"))
- 			continue;
- 		break;
- 	}
-diff --git a/drivers/cpufreq/sti-cpufreq.c b/drivers/cpufreq/sti-cpufreq.c
-index 8e2e703c3865..b15b3142b5fe 100644
---- a/drivers/cpufreq/sti-cpufreq.c
-+++ b/drivers/cpufreq/sti-cpufreq.c
-@@ -267,7 +267,7 @@ static int __init sti_cpufreq_init(void)
- 		goto skip_voltage_scaling;
- 	}
+ 		if (pinspec.args[2]) {
+ 			/* npins != 0: linear range */
+-			if (group_names) {
++			if (has_group_names) {
+ 				of_property_read_string_index(np,
+ 						group_names_propname,
+ 						index, &name);
+@@ -1123,7 +1123,7 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 				break;
+ 			}
  
--	if (!of_get_property(ddata.cpu->of_node, "operating-points-v2", NULL)) {
-+	if (!of_property_present(ddata.cpu->of_node, "operating-points-v2")) {
- 		dev_err(ddata.cpu, "OPP-v2 not supported\n");
- 		goto skip_voltage_scaling;
- 	}
-diff --git a/drivers/cpufreq/sun50i-cpufreq-nvmem.c b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-index 95ac8d46c156..293921acec93 100644
---- a/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-+++ b/drivers/cpufreq/sun50i-cpufreq-nvmem.c
-@@ -146,7 +146,7 @@ static bool dt_has_supported_hw(void)
- 		return false;
- 
- 	for_each_child_of_node_scoped(np, opp) {
--		if (of_find_property(opp, "opp-supported-hw", NULL)) {
-+		if (of_property_present(opp, "opp-supported-hw")) {
- 			has_opp_supported_hw = true;
- 			break;
- 		}
+-			if (!group_names) {
++			if (!has_group_names) {
+ 				pr_err("%pOF: GPIO group range requested but no %s property.\n",
+ 					np, group_names_propname);
+ 				break;
 -- 
 2.43.0
 
