@@ -1,128 +1,89 @@
-Return-Path: <linux-kernel+bounces-268801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7136494296B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:45:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4D9942967
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4750B21B62
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:45:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5BA284E62
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEC01AAE0F;
-	Wed, 31 Jul 2024 08:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1551A8C0B;
+	Wed, 31 Jul 2024 08:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OldTkb8L"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfJyoowh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06AC1A8BF6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D271A8BF0;
 	Wed, 31 Jul 2024 08:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722415490; cv=none; b=YZnItgJIpj/w7wNnHdAuEP3r4S/xNFOTriKlfPUCL8/yozhOFIRM9npLqjHyKOp4zsh6YNIyaTDnS7UgupJ9g5bXyMpCjbPdjfV5qsqENXyrKvu3fY1Ta+/2pV7Hv4MHGjDz+M0+Y4uATELUHyaVCtDwQl7v6YfkAXOWXBHh8NE=
+	t=1722415488; cv=none; b=VXcdN5abHMYRp9Wk42G71Q6zFVxEgFojRCn4/JPosRh8ziIKsmgxXrqgxMNbwQxvqoF3tmLgZc3byi4gF8DeRYLIYQtelmH8S9miVvD8bhdV7VN7EiLigbWYgwiE/KkI+z6bmOmv9iFDcpIgg9lRzhhZX/Xd4C+mpyXn6GSPPg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722415490; c=relaxed/simple;
-	bh=1HUvOzGn/5/wnNY0VeoxnmUHfzCa0HeyclKPmXiNkU8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=eZFNqKRZVxS3XXscXfOgFNpwlKhpbNxOyXvsUwhHRi525F6vbOesSDxtYwou86Z9b/2B7nm2z9y8sCdK+gZ9/twdXN3Uo27+g/h13muO1I8pgI77TNkhh88QPRPHupI7tgjPU9FqvJJoGw05tcj5GOuwjevuFEedIqqJ3WJT1q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OldTkb8L; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V4KmR8017422;
-	Wed, 31 Jul 2024 08:44:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tzjcsNVmdmaVZf0vOv+8BHQKa8BBZ7bcsZkbwlFsE4k=; b=OldTkb8L/4anYwDb
-	lIN3UJg6ZhZiho0bkCJFTmO188gAgJRQXA84CKMad/r5rz4lA+L2sKGRbs9rgqUJ
-	bm1HcSUF35l9bA06VginkHNrASfnDCR/ZhAc3Js+t0o2sh5N+er8jK1XVwpHUWBj
-	P/QAPtc0LBedMvg3tlCGRYUBa9nFjUvCjTcakrjmv7ZKNk4sJ3DEbZMXkIejKkVn
-	aybjUe+OJThYLT5bsSSVcUj4AkFk6/u0mNXgJ2cnPJXi2LRxrZAQ0AcAFd5DRXK8
-	UhjRIQlx4ZWlsM+lMKrSljYeA0ru59OtAAVdg5WKXMzQnMMr/l6d1WZHXmbkMxpA
-	PNSu2g==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mryu2mce-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 08:44:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46V8igc9014941
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 08:44:42 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
- 2024 01:44:37 -0700
-Message-ID: <ea7fcbe4-1822-eca4-7492-55f1f2895605@quicinc.com>
-Date: Wed, 31 Jul 2024 14:14:34 +0530
+	s=arc-20240116; t=1722415488; c=relaxed/simple;
+	bh=WzC80hl1AW1tiBkiKAI6/dELkDarMZZqpTulR3LSY6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U89ni27yMu2PochwQj+Q1t231hJOXdzUt7qojZADo0H12tX/2cBz4+jKi3X/1vi7ryPhk0yr+fFajgmycgTfXQLyFrNvQBvLRnMXGri4Ur+P0JOOtq7hIo76wCyH6+am+0ep1837n3jUWUVIutLbb/5wPKnpjEcHDTI5WVTh5as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfJyoowh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5647C116B1;
+	Wed, 31 Jul 2024 08:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722415488;
+	bh=WzC80hl1AW1tiBkiKAI6/dELkDarMZZqpTulR3LSY6Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZfJyoowhJ0sxAIFJP8EH8/5EeNk5XFa+k/rD9fPPqt89+baW6O46DfPVbZHwu06z4
+	 vUYjpNjYSV+X976z7l28rQZ5LswYHGqZ+GERZq076T5w3mHwLSfZQtYNyD7txtZU+6
+	 lyVixwyfS4Qzu6d0QtITvrqZ7CjxFVYoFz/I/KpXaopCd1xUNdHvtyRTZfU5rogwud
+	 sQzATIetOuPz2X7ltmYAL0zW1qY6wBeHFAMnLzBFWQgTwtOrpSaEr3WCjtyCZTu+M9
+	 YX5QW8mtHcV8yjGjccDem99PPL5YUzsAXOi6bOz5H13AQHfJhFSOTuGLrriW6NXNoX
+	 1YQf5cUB3m49Q==
+Date: Wed, 31 Jul 2024 09:44:43 +0100
+From: Simon Horman <horms@kernel.org>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	netdev@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH net v1] net: wan: fsl_qmc_hdlc: Discard received CRC
+Message-ID: <20240731084443.GL1967603@kernel.org>
+References: <20240730063133.179598-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH 1/4] clk: qcom: gcc-sc8180x: Register QUPv3 RCGs for DFS
- on sc8180x
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        "Jagadeesh
- Kona" <quic_jkona@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20240725-gcc-sc8180x-fixes-v1-0-576a55fe4780@quicinc.com>
- <20240725-gcc-sc8180x-fixes-v1-1-576a55fe4780@quicinc.com>
- <g4etw2efnugdsv73ejbbqfxmumy5m3oqzkpeqexzpgzlxsms5r@u62f5jcskqfd>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <g4etw2efnugdsv73ejbbqfxmumy5m3oqzkpeqexzpgzlxsms5r@u62f5jcskqfd>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: dFtDdG6RPGAwE8MznNszhoK27aaGZB98
-X-Proofpoint-GUID: dFtDdG6RPGAwE8MznNszhoK27aaGZB98
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_05,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=887
- mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310064
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730063133.179598-1-herve.codina@bootlin.com>
 
+On Tue, Jul 30, 2024 at 08:31:33AM +0200, Herve Codina wrote:
+> Received frame from QMC contains the CRC.
+> Upper layers don't need this CRC and tcpdump mentioned trailing junk
+> data due to this CRC presence.
+> 
+> As some other HDLC driver, simply discard this CRC.
 
-On 7/27/2024 4:24 PM, Dmitry Baryshkov wrote:
-> On Thu, Jul 25, 2024 at 05:03:11PM GMT, Satya Priya Kakitapalli wrote:
->> QUPv3 clocks support DFS, thus register the RCGs which require
->> support for DFS.
->  From the commit message it is not clear if the patch fixes the issue
-> (and thus should have Fixes and possibly cc:stable) or an improvement.
+It might be nice to specifically site an example.
+But yes, I see this pattern in hdlc_rx_done().
 
+> 
+> Fixes: d0f2258e79fd ("net: wan: Add support for QMC HDLC")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> ---
+>  drivers/net/wan/fsl_qmc_hdlc.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
 
-Actually its a fix, I'll add Fixes tag in next post.
+The above notwithstanding, this looks good to me.
 
-
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
->>   drivers/clk/qcom/gcc-sc8180x.c | 350 ++++++++++++++++++++++++-----------------
->>   1 file changed, 210 insertions(+), 140 deletions(-)
->>
->
+Reviewed-by: Simon Horman <horms@kernel.org>
 
