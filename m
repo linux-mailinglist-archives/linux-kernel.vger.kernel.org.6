@@ -1,160 +1,258 @@
-Return-Path: <linux-kernel+bounces-269935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7A3943906
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4742943916
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183AE1F23604
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:34:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49D391F22365
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:41:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057F916D9AA;
-	Wed, 31 Jul 2024 22:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F145316D9A8;
+	Wed, 31 Jul 2024 22:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEUyZ7GY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hdhAALxr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB8816D336
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A49A16C68F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722465235; cv=none; b=al6X2k1a+O2tltlbdG5HZgpHSemGuTyaMf0gzDYMCuRW9xMeD1dYW3QtOz+FlHnoI8i7u62Orb+mpi2nDGR1VC5UzMamwjmKz7G36Xh5ogDlf4qdoz24OK2u8kou7uoY5+XbMw7XkwOo9FRFUfYNO5DmviiEDrPPggpzXltv1hM=
+	t=1722465654; cv=none; b=gFj53PTVHI3QKdG9tjuJEei+sHpU95DQcnpKEP9lW63UL4WtTHd4djkvRcitY1+k9jiuLVLMnxrwvdXEEsGtO2y6bgggCPUkzJp6hRbNjPE/H1FnLw57I0fmDznYy9ZLyPKDzzcKjc68xuLdOzx1Uykhv5vzrvCrIXHjwqO0h4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722465235; c=relaxed/simple;
-	bh=f6tsL8JBQOiIEWm0dBMmAi8XbIcgpoN4n5O0IPGl0Cs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RcWWmWBPr/vnntV+B+p+vevEoFleuM4mk4zAMFkGYGtOr1eT9I/XMYcGq6QaLXkxPIchXB2XcMuBsp5bH6eYoXYBPX3J31fWSG/7L/+zNazx2YN9buhLmcqbT1wvN7Uh5cX6JDclielLORqydgTo7KP4XPVmdTNbPCBGnPeKm2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEUyZ7GY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBAD2C4AF0C
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722465235;
-	bh=f6tsL8JBQOiIEWm0dBMmAi8XbIcgpoN4n5O0IPGl0Cs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CEUyZ7GYYFZvGX1xIh4GhBHZM+Dly6EQtrfdDjUNJ6CcZMvoiMGiDI2wbAXQAnvf9
-	 935chzRX5fCDhL2SHUvHUnhkEqBdXP7/YA57pW6Lo7n0W5MVwyp2Vh0so2V8GDAnwT
-	 7fBgonCS+ACxuOwVSGKw0rbWJaGS2hVO+JKMe8/gneeEdOTPp2Awh8t5Jkhkk/KTFc
-	 axLlmHEdYdSMi6GjNqx4L4kFy9iD3vy7vsda/nhBPY5OJ0BdtBMJlVBsp8RFqzMMQO
-	 yY7nHeQKhe+tCBjhEInLzJty0FqI7NJK53vSWdfyrOtV2WbZHSZgXAz3qd7k2v1RC4
-	 wrjWZKn/STL2w==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso93077041fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:33:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXXO2BeFM2YWx0MvMckA5O3b0wNdW0z8Ta6T2+G85me/peWgBLtGhRfnuLfsnqI5OsNBczBKkPTdvOSHjyGGOdJ0Ck5meWJsAsWJT1Y
-X-Gm-Message-State: AOJu0Yx3os5lvlQgtVl0GQmSOHWgqNaJTd0ieWtJTMbrNaLE7fEluvzt
-	gN+DJlHxEtkMmN9uU0Jz8bCDUzK+5W/fBeP3Ddx/xfjYTvUnaBaeLWCHDvc9Vufxle5wAQ0K69k
-	QmVcfhGkt0fvZMXPdPBmRZwGwzj49tEKe2APb
-X-Google-Smtp-Source: AGHT+IEqkDYIUYgA+dpFwMbXnG49w+fYyvopH2UKs/YAoOj74cucLjjYPHzqoCnWIr422QeLxH1hwFJi16y2JHGIaA0=
-X-Received: by 2002:a2e:2d02:0:b0:2ef:24f3:fb9c with SMTP id
- 38308e7fff4ca-2f153399865mr5764941fa.38.1722465233242; Wed, 31 Jul 2024
- 15:33:53 -0700 (PDT)
+	s=arc-20240116; t=1722465654; c=relaxed/simple;
+	bh=D+xqB7QZ+U41MAtuu8qP7YpEJJ9ccNhbDn+BUdimlug=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QEH+wJo4GzEON0zkxmjjX/Jjw6nGMp3EY4lJDJpY6XFTFhZvo58qb+48+C81QGYe2e5pDe7W/cDKjDx7UD13SQVErQZAXeHmgJs4zcHUP71zA9ByhZjM1vB6D6DUHbCQiMViZxMXHLNULa4w3UOhkMrw6KIcKslsPtme/SfjyoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hdhAALxr; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722465651;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cQ69meUnXF981oBqKVYehrvEv7xZ1o51stokMqwXltk=;
+	b=hdhAALxrHPHsuLv4wGC20uhjZ7hK2TwilwdwinBbuihbc07sct4apautAxM+Y498JvQcHd
+	D6DV7kVwgcNR7ctL0ePwbl1LdqHCsMH//em67ujW5PygLesImMvNtDfR1B0BGljj6hbOyq
+	yoiTi2rLBji7ZkORFpD2wThtfr7PVgs=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-614-HFV50Z_ONoaDG2Bk6xK6QQ-1; Wed,
+ 31 Jul 2024 18:40:45 -0400
+X-MC-Unique: HFV50Z_ONoaDG2Bk6xK6QQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 992FA19560B3;
+	Wed, 31 Jul 2024 22:40:42 +0000 (UTC)
+Received: from emerald.lyude.net (unknown [10.22.16.173])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8CDEA300019A;
+	Wed, 31 Jul 2024 22:40:37 +0000 (UTC)
+From: Lyude Paul <lyude@redhat.com>
+To: rust-for-linux@vger.kernel.org
+Cc: Danilo Krummrich <dakr@redhat.com>,
+	airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	FUJITA Tomonori <fujita.tomonori@gmail.com>,
+	Aakash Sen Sharma <aakashsensharma@gmail.com>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 1/3] rust: Introduce irq module
+Date: Wed, 31 Jul 2024 18:35:39 -0400
+Message-ID: <20240731224027.232642-2-lyude@redhat.com>
+In-Reply-To: <20240731224027.232642-1-lyude@redhat.com>
+References: <20240731224027.232642-1-lyude@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
- <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com>
- <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com>
- <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com> <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Thu, 1 Aug 2024 00:33:42 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
-Message-ID: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
-Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
- used before call to jump_label_init()
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
-	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Wed, Jul 31, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Tue, Jul 30, 2024 at 4:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org> w=
-rote:
-> > > On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien8.=
-de> wrote:
-> > > > >
-> > > > > Hi,
-> > > > >
-> > > > > this is with today's linux-next:
-> > > > >
-> > > > > ...
-> > > > >
-> > > > > 09:44:13  [console-expect]#kexec -e
-> > > > > 09:44:13  kexec -e
-> > > > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next=
--20240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld =
-(GNU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 =
-UTC 2024
-> > > > > 09:44:16  [    0.000000] ------------[ cut here ]------------
-> > > > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_=
-call_inline.c:153 __static_call_update+0x1c6/0x220
-> >
-> > ...
-> >
-> > > > KP, please take a look at this as soon as you can (lore link below =
-for
-> > > > those who aren't on the list).  One obvious first thing to look at =
-is
-> > > > simply moving the call to early_security_init(), but that requires
-> > > > some code audit to make sure it is safe and doesn't break something
-> > > > else.  Of course, if we can do something with how we setup/use stat=
-ic
-> > > > calls that is even better.  I'll take a look at it myself later tod=
-ay,
-> > > > but I'm busy with meetings for the next several hours.
-> > > >
-> > > > If we can't resolve this in the next day or two I'm going to
-> > >
-> > > Thanks for the ping.
-> > >
-> > > Taking a look, yeah it's possible that we need to move jump_label_ini=
-t
-> > > before early_security_init / inside it.
-> > >
-> > > I will do a repro and test my change and reply back.
-> >
-> > I'm pretty sure we don't want to move jump_label_init() inside
-> > early_security_init(), we likely want to keep those as distinct calls
-> > in start_kernel().  Shuffling the ordering around seems like a better
-> > solution if we can't solve this some other way.
-> >
-> > Regardless, thanks for looking into this, I'll hold off on digging
-> > into this and wait for your patch.
->
-> Since I don't want to leave linux-next broken any longer, I'm going to
-> yank the static-call patches from the lsm/next branch but I'll leave
-> them in lsm/dev so you can continue to use that as a basis for your
-> fix.  If we don't have a fix in hand by the first half of next week,
-> I'll drop the patches from lsm/dev too and we can revisit the patchset
-> when you have a fix ready.
->
-> For casual observers, the lsm/next is normally an automatically
-> composed branch made up of the latest lsm/stable-X.Y and lsm/dev
-> branches however in this particular case I'm going to manually update
-> the lsm/next branch.  The normal process is described here:
->
-> * https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
->
+This introduces a module for dealing with interrupt-disabled contexts,
+including the ability to enable and disable interrupts
+(with_irqs_disabled()) - along with the ability to annotate functions as
+expecting that IRQs are already disabled on the local CPU.
 
-I sent this a couple of minutes after you sent the email. I was trying
-to reproduce / confirm the original issue before posting the patch.
+V2:
+* Actually make it so that we check whether or not we have interrupts
+  disabled with debug assertions
+* Fix issues in the documentation (added suggestions, missing periods, made
+  sure that all rustdoc examples compile properly)
+* Pass IrqDisabled by value, not reference
+* Ensure that IrqDisabled is !Send and !Sync using
+  PhantomData<(&'a (), *mut ())>
+* Add all of the suggested derives from Benno Lossin
 
-https://lore.kernel.org/linux-security-module/20240731213429.2244234-1-kpsi=
-ngh@kernel.org/T/#u
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+---
+ rust/helpers.c     | 22 ++++++++++++
+ rust/kernel/irq.rs | 87 ++++++++++++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs |  1 +
+ 3 files changed, 110 insertions(+)
+ create mode 100644 rust/kernel/irq.rs
 
-> --
-> paul-moore.com
+diff --git a/rust/helpers.c b/rust/helpers.c
+index 87ed0a5b60990..b0afe14372ae3 100644
+--- a/rust/helpers.c
++++ b/rust/helpers.c
+@@ -69,6 +69,28 @@ void rust_helper_spin_unlock(spinlock_t *lock)
+ }
+ EXPORT_SYMBOL_GPL(rust_helper_spin_unlock);
+ 
++unsigned long rust_helper_local_irq_save(void)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++
++	return flags;
++}
++EXPORT_SYMBOL_GPL(rust_helper_local_irq_save);
++
++void rust_helper_local_irq_restore(unsigned long flags)
++{
++	local_irq_restore(flags);
++}
++EXPORT_SYMBOL_GPL(rust_helper_local_irq_restore);
++
++bool rust_helper_irqs_disabled(void)
++{
++	return irqs_disabled();
++}
++EXPORT_SYMBOL_GPL(rust_helper_irqs_disabled);
++
+ void rust_helper_init_wait(struct wait_queue_entry *wq_entry)
+ {
+ 	init_wait(wq_entry);
+diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
+new file mode 100644
+index 0000000000000..e50110f92f3fa
+--- /dev/null
++++ b/rust/kernel/irq.rs
+@@ -0,0 +1,87 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Interrupt controls
++//!
++//! This module allows Rust code to control processor interrupts. [`with_irqs_disabled()`] may be
++//! used for nested disables of interrupts, whereas [`IrqDisabled`] can be used for annotating code
++//! that requires that interrupts already be disabled.
++
++use bindings;
++use core::marker::*;
++
++/// A token that is only available in contexts where IRQs are disabled.
++///
++/// [`IrqDisabled`] is marker made available when interrupts are not active. Certain functions take
++/// an `IrqDisabled` in order to indicate that they may only be run in IRQ-free contexts.
++///
++/// This is a marker type; it has no size, and is simply used as a compile-time guarantee that
++/// interrupts are disabled where required.
++///
++/// This token can be created by [`with_irqs_disabled`]. See [`with_irqs_disabled`] for examples and
++/// further information.
++#[derive(Copy, Clone, Debug, Ord, Eq, PartialOrd, PartialEq, Hash)]
++pub struct IrqDisabled<'a>(PhantomData<(&'a (), *mut ())>);
++
++impl IrqDisabled<'_> {
++    /// Create a new [`IrqDisabled`] without disabling interrupts.
++    ///
++    /// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
++    /// without interrupts. If debug assertions are enabled, this function will assert that
++    /// interrupts are disabled upon creation. Otherwise, it has no size or cost at runtime.
++    ///
++    /// # Panics
++    ///
++    /// If debug assertions are enabled, this function will panic if interrupts are not disabled
++    /// upon creation.
++    ///
++    /// # Safety
++    ///
++    /// This function must only be called in contexts where it is already known that interrupts have
++    /// been disabled for the current CPU, as the user is making a promise that they will remain
++    /// disabled at least until this [`IrqDisabled`] is dropped.
++    pub unsafe fn new() -> Self {
++        // SAFETY: FFI call with no special requirements
++        debug_assert!(unsafe { bindings::irqs_disabled() });
++
++        Self(PhantomData)
++    }
++}
++
++/// Run the closure `cb` with interrupts disabled on the local CPU.
++///
++/// This creates an [`IrqDisabled`] token, which can be passed to functions that must be run
++/// without interrupts.
++///
++/// # Examples
++///
++/// Using [`with_irqs_disabled`] to call a function that can only be called with interrupts
++/// disabled:
++///
++/// ```
++/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
++///
++/// // Requiring interrupts be disabled to call a function
++/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
++///     /* When this token is available, IRQs are known to be disabled. Actions that rely on this
++///      * can be safely performed
++///      */
++/// }
++///
++/// // Disabling interrupts. They'll be re-enabled once this closure completes.
++/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
++/// ```
++#[inline]
++pub fn with_irqs_disabled<'a, T, F>(cb: F) -> T
++where
++    F: FnOnce(IrqDisabled<'a>) -> T,
++{
++    // SAFETY: FFI call with no special requirements
++    let flags = unsafe { bindings::local_irq_save() };
++
++    let ret = cb(IrqDisabled(PhantomData));
++
++    // SAFETY: `flags` comes from our previous call to local_irq_save
++    unsafe { bindings::local_irq_restore(flags) };
++
++    ret
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index e6b7d3a80bbce..37835ccd51087 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -36,6 +36,7 @@
+ pub mod firmware;
+ pub mod init;
+ pub mod ioctl;
++pub mod irq;
+ #[cfg(CONFIG_KUNIT)]
+ pub mod kunit;
+ #[cfg(CONFIG_NET)]
+-- 
+2.45.2
+
 
