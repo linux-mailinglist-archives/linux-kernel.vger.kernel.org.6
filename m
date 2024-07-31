@@ -1,261 +1,232 @@
-Return-Path: <linux-kernel+bounces-269921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6025E9438CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:24:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 099799438D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:28:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8443B1C21B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:24:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865A41F2283F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:28:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CF616D4FA;
-	Wed, 31 Jul 2024 22:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9DF16D9B0;
+	Wed, 31 Jul 2024 22:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eYA29Yfa"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Jth3GdOD"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2058916938C
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551B214B097
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722464677; cv=none; b=k48h9mvqUZPlE1wO0MDDvKAN2A1l4EYS4jcqZ+PYJ+zRmEeUUKypYrMRFkugsOQMuZMf4jBseRYDfgQ3cA7jp2kDabP8QDlYBl1Lab+bLdGFDRB4lT0kAz5wMj3TGevTn+E1Gmymy/qM9TZ83r0EHhuGRpex1nsx3V3NVNhqgBU=
+	t=1722464917; cv=none; b=jt3PyVz0pAYvTGEIoZ5W2qO4beabupO3GOoEMewEeiY3wF2uxMpJE+boHrRXyP77MoyO9cWSg7nrkpcfaWhEeU7ptLV5vua05tB15LUb8Lx74qKo0yHAMJNiB5xxdGE68KpN/zfr0N/nKkD23xPzZYVM09qcMEDKV1iDZ5mR6rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722464677; c=relaxed/simple;
-	bh=CXSSbh0YIaW34RcUbHuRknjZCmUN+XojVPuNYh/lCAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z1R1lZrcK5eYoLMD/BADQmQYkxFTIY4A68LTCTeLUVvq6IdlbeUx/qa7lKY7tWPxXmEdSSLgxfKdvJ9WDWRXG/CM878u6NoHt2/AG0oUjwqS5ia9/Gomu/zoIbuFJYUG4ETnApfKoiQbCla6Z8n+yRMmHamRC0x9b9A9dH3PDB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eYA29Yfa; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428243f928fso27143135e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:24:34 -0700 (PDT)
+	s=arc-20240116; t=1722464917; c=relaxed/simple;
+	bh=ktdUo3VuS/y90V9e4gyDsQB1AciL1Vj6iMBH9PHA7hQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=ikupkP5wdXISiDe21QXbTbOEf4Pc8lHRLTdPUtXvStc/at60R/VduYApkkEm6Fe1etYDGdiWCaYQkIU+lLNslf9Ud/naarPZUFo9SLPk8/wwGMup2/PS6ODv2utnaLcCgrhxXb52fiKl1j2e2wpRu2kM8AEpfWxV2XR2nSRgsxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Jth3GdOD; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fe9aa3bfaso37086021cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:28:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722464673; x=1723069473; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HQlMiv99SKoMmbKZZ1ltrZHqFERyiZWEJtmRLsLyF1M=;
-        b=eYA29YfawiVvgC9IF/4Vpj49Icm9i6GzQaOfAO/Cz4UORKBdTkQ1L7kXy6fNFV4bNP
-         gpJrG2dSaPkYV+Vxc6gDnU8K16nT7PLIdsuGoKPSseCJy+Mxbuha0Zrdj3vbzg/JHFz8
-         VGunvKk2J53TzsLc+tR+9aPTtB6i2Z2d09Kq4q4nL2TMNLD+vOZyMuKjsnofsDrwQ3Wz
-         TESuMLZsB9k1b8bP/29enZLqAq7D3SiQitNtn9205qYSotVl5do1vDD003S5F8byuoAZ
-         aPTJfhuOI5uX71VfFq3QoQzKqxJfKqjPU4eTdp/XiSfkF0JAdY52WR3VCUuPQQgjbIbl
-         daLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722464673; x=1723069473;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=broadcom.com; s=google; t=1722464914; x=1723069714; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HQlMiv99SKoMmbKZZ1ltrZHqFERyiZWEJtmRLsLyF1M=;
-        b=EYb3xqvlAsLETCEFGyMhC8y+yvCiz3dmv9VGx7g19Uk8uipy1BZ+IO3ZPe3y9YREEB
-         fNP3IjSFLl71x54n6SgroU6YtidHZJUt+eoHzYfGS2R7ZSv1O+zeHOkt/Euczo1FYX6R
-         zKxsgx/NiloSOUUJYgPRK2dkrwGc8e/AQJBMO+cSIUB/P19IK3t3wGa9sR8OceAq1Q6m
-         qZpEyhH3p2iGPnTreZ5vf5XVlX/NIzgYBJS2XEtLNLrA/6yXh6ofdvkeviHqZXpsSIP1
-         AtqCzc4mBdXs04DzNMiBYU8Jfy7mrRzYhn5CuIQ7q39y77ehhDGsxYH+uyrN1UaadojV
-         Sl4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUhSobrOC/rxB3aQiDV7gGsdRhxDZmLy4wBN6ez173/bW0BbmX90amkjWsicsD9JcZgIJsuBFO/2utifIazMtVM489AhsjuY61ACX9B
-X-Gm-Message-State: AOJu0YxllbKj47VAPQG1jJRV0bbylGzmJKw+rYqWGfWBFsiAVD0eEIad
-	C6xETSCandDr4jFeGHyP98UeuA5FMVssCsA5rJXNMRnCJxkrR1YND+NDTb6LJm0=
-X-Google-Smtp-Source: AGHT+IHEe+B6/mkybCqk++zmz0NLQ7zdxFHmKZ3rRujD/mbhmZ3LhHu3p8qwRPBYIM07qUFvFJMm5g==
-X-Received: by 2002:a05:600c:4ece:b0:428:29e:8c42 with SMTP id 5b1f17b1804b1-428a9bdb04emr8101645e9.9.1722464672870;
-        Wed, 31 Jul 2024 15:24:32 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:e24b:3670:5765:d3ce])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8a2475sm35825775e9.9.2024.07.31.15.24.31
+        bh=ylwnOpuO0B3o3dwzu5zhP3ff0eBjDChdy+VytRAtBsU=;
+        b=Jth3GdODHOBf+NCNILSs9+owEDWhJOYmXKideEdCcQCKc9yXhbg3zCEuV7Yc997GXo
+         VRjaZRcbFyILF6zsdzmDtvizPxE5WJaTzLVOQ9o+jIqlM+E+zl6X0qU+cQfZZV0SZ+kj
+         ygs0h0PZF8Vl+2GqSAHz2QB4e9KUBUjLlHbRc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722464914; x=1723069714;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ylwnOpuO0B3o3dwzu5zhP3ff0eBjDChdy+VytRAtBsU=;
+        b=JPNfrOkXnhXurNU6DA7hr4K/Occ86Tw3MBkWP4YhnSlZV+cRZSNFQLJGVJiZGMEjBl
+         WMqjINo7J5lqyB3PFM5uOuKkjoDO3T/Lrxtgs6SyLn0o4NLIa9ouOJWOY0m0n8Rcx4y+
+         KMJT4MC/z4k2Da/8cDYlQJnGEbuReKWjL9AISr0iiAT8fYDuzGLElrRA9ZSyTPCTJk6H
+         Qq0Fq4opKtO5eTMQRdeWv0VEeHMAPHk7Hl9Mi5PQd/jgX17qyIJjIJezxXSzN9gn44sS
+         mcGCD7xl7LQaQa77mN+F+kQHw495mJvh6UCfXcefY9c1fvty/muq8cWI2c19BuFsElce
+         nP1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWHAzF4mOiscBcp3PHQzBhwBilyzzjCxivjgODyNn9ijRAYHUVJRxhKT+hdwG0M2GNVSwlCjwq2M8TUGsuXiAPN16jGL4pb63zkaxVh
+X-Gm-Message-State: AOJu0YzTC4Iv+IXw1r/AvgwQ5YRxL1HPETG6GgwCeDgUhAHy2s9w4atg
+	EI9QWJ4qw5vEafAyAS3JNAlfrsC2mybE9xA6iqlKzhiFlWpNsarDQlzO2S4B3A==
+X-Google-Smtp-Source: AGHT+IFwR4Jva4IlO5SairxSPbBykKoc31AdO5AtsqRwbWmbP0SsRS/EClXVJl6Lj0koeII7dR94vw==
+X-Received: by 2002:a05:622a:54c:b0:450:3eb:cb42 with SMTP id d75a77b69052e-4515eae9963mr7941031cf.45.1722464914085;
+        Wed, 31 Jul 2024 15:28:34 -0700 (PDT)
+Received: from stbsrv-and-01.and.broadcom.net ([192.19.144.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8416c80sm62359181cf.96.2024.07.31.15.28.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 15:24:32 -0700 (PDT)
-Date: Thu, 1 Aug 2024 00:24:28 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <bokad5wa2vw5qwdrrqpkkyrxgmxco2ix76wdaxlqv6usi5rdck@46bp6ywqteo2>
-References: <20240515112034.298116-1-dima.fedrau@gmail.com>
- <20240515112034.298116-3-dima.fedrau@gmail.com>
- <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
- <20240731084648.GA18584@debian>
+        Wed, 31 Jul 2024 15:28:33 -0700 (PDT)
+From: Jim Quinlan <james.quinlan@broadcom.com>
+To: linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	bcm-kernel-feedback-list@broadcom.com,
+	jim2101024@gmail.com,
+	james.quinlan@broadcom.com
+Cc: devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list),
+	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 00/12] PCI: brcnstb: Enable STB 7712 SOC
+Date: Wed, 31 Jul 2024 18:28:14 -0400
+Message-Id: <20240731222831.14895-1-james.quinlan@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r76f7ixvgggnra3n"
-Content-Disposition: inline
-In-Reply-To: <20240731084648.GA18584@debian>
+
+V5 Changes:
+  o All commits: Use imperative voice in commit subjects/messages
+       (Manivannan)
+  o Commit "PCI: brcmstb: Enable 7712 SOCs"
+    -- Augment commit message to include PCIe details and revision.
+       (Manivannan)
+  o Commit "PCI: brcmstb: Change field name from 'type' to 'model'"
+    -- Instead of "model" use "soc_base" (Manivannan)
+  o Commit "PCI: brcmstb: Refactor for chips with many regular inbound BARs"
+    -- Get rid of the confusing "BAR" variable names and types and use
+       something like "inbound_win". (Manivannan)
+  o Commit "PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE..."
+    -- Mention in the commit message that this change is in preparation
+       for the 7712 SoC. (Manivannan)
+  o Commit: "PCI: brcmstb: Use swinit reset if available"
+    -- Change reset name "swinit" to "swinit_reset" (Manivannan)
+    -- Add 1us delay for reset (Manivannan)
+    -- Use dev_err_probe() (Multiple reviewers)
+  o Commit "PCI: brcmstb: Use bridge reset if available"
+    -- Change reset name "bridge" to "bridge_reset" (Manivannan)
+    -- The Reset API can take NULL so need need to test variable
+       before calling (Manivannan)
+    -- Added a call to bridge_sw_init_set() method in probe()
+       as some registers cannot be accessed w/o this. (JQ)
+  o Commit "PCI: brcmstb: Use common error handling code in ..."
+    -- Use more descriptive goto label (Manivannan)
+    -- Refactor error paths to be less encumbered (Manivannan)
+    -- Use dev_err_probe() (Multiple reviewers)
+  o Commits "dt-bindings: PCI: brcmstb: ..."
+    -- Specify the "resets" and "reset-names" in the same manner
+       as does qcom,ufs.yaml specifies "clocks" and
+       "clock-names" (Krzysztof)
+    -- Drop reset desccriptions as they were pretty content-free
+       anyhow. (Krzysztof)
+
+V4 Changes:
+  o Commit "Check return value of all reset_control_xxx calls"
+    -- Blank line before "return" (Stan)
+  o Commit "Use common error handling code in brcmstb_probe()"
+    -- Drop the "Fixes" tag (Stan)
+  o Commit "dt-bindings: PCI ..."
+    -- Separate the main commit into two: cleanup and adding the
+       7712 SoC (Krzysztof)
+    -- Fold maintainer change commit into cleanup change (Krzysztof)
+    -- Use minItems/maxItems where appropriate (Krzysztof)
+    -- Consistent order of resets/reset-names in decl and usage
+       (Krzysztof)
+
+V3 Changes:
+  o Commit "Enable 7712 SOCs"
+    -- Move "model" check from outside to inside func (Stan)
+  o Commit "Check return value of all reset_control_xxx calls"
+    -- Propagate errors up the chain instead of ignoring them (Stan)
+  o Commit "Refactor for chips with many regular inbound BARs"
+    -- Nine suggestions given, nine implemented (Stan)
+  o Commit "Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
+    -- Drop tab, add parens around macro params in expression (Stan)
+  o Commit "Use swinit reset if available"
+    -- Treat swinit the same as other reset controllers (Stan)
+       Stan suggested to use dev_err_probe() for getting resources
+       but I will defer that to future series (if that's okay).
+  o Commit "Get resource before we start asserting resets"
+    -- Squash this with previous commit (Stan)
+  o Commit "Use "clk_out" error path label"
+    -- Move clk_prepare_enable() after getting resouurces (Stan)
+    -- Change subject to "Use more common error handling code in
+       brcm_pcie_probe()" (Markus)
+    -- Use imperative commit description (Markus)
+    -- "Fixes:" tag added for missing error return. (Markus)
+  o Commit "dt-bindings: PCI ..."
+    -- Split off maintainer change in separate commit.
+    -- Tried to accomodate Krzysztof's requests, I'm not sure I
+       have succeeded.  Krzysztof, please see [1] below.
+  
+  [1] Wrt the YAML of brcmstb PCIe resets, here is what I am trying
+      to describe:
+
+      CHIP       NUM_RESETS    NAMES
+      ====       ==========    =====
+      4908       1             perst
+      7216       1             rescal
+      7712       3             rescal, bridge, swinit
+      Others     0             -
 
 
---r76f7ixvgggnra3n
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+V2 Changes (note: four new commits):
+  o Commit "dt-bindings: PCI ..."
+    -- s/Adds/Add/, fix spelling error (Bjorn)
+    -- Order compatible strings alphabetically (Krzysztof)
+    -- Give definitions first then rules (Krzysztof)
+    -- Add reason for change in maintainer (Krzysztof)
+  o Commit "Use swinit reset if available"
+    -- no need for "else" clause (Philipp)
+    -- fix improper use of dev_err_probe() (Philipp) 
+  o Commit "Use "clk_out" error path label"
+    -- Improve commit message (Bjorn)
+  o Commit "PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets SoC-specific"
+    -- Improve commit subject line (Bjorn)
+  o Commit (NEW) -- Change field name from 'type' to 'model'
+    -- Added as requested (Stanimir)
+  o Commit (NEW) -- Check return value of all reset_control_xxx calls
+    -- Added as requested (Stanimir)
+  o Commit (NEW) "Get resource before we start asserting reset controllers"
+    -- Added as requested (Stanimir)
+  o Commit (NEW) -- "Remove two unused constants from driver"
 
-Hello Dimitri,
 
-On Wed, Jul 31, 2024 at 10:46:48AM +0200, Dimitri Fedrau wrote:
-> Am Mon, Jul 29, 2024 at 11:28:56PM +0200 schrieb Uwe Kleine-K=F6nig:
-> > > +static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u=
-8 *reg,
-> > > +				u16 *val, bool *ctrl, int len)
-> > > +{
-> > > +	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] =3D { { 0 } };
-> > > +	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-> > > +	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
-> > > +	int i, ret, reg_i, val_i;
-> > > +
-> > > +	if (!len)
-> > > +		return 0;
-> > > +
-> > > +	if (read)
-> > > +		len++;
-> > > +
-> > > +	if (len > MC33XS2410_MAX_TRANSFERS)
-> > > +		return -EINVAL;
-> > > +
-> > > +	for (i =3D 0; i < len; i++) {
-> > > +		reg_i =3D i * MC33XS2410_WORD_LEN;
-> > > +		val_i =3D reg_i + 1;
-> > > +		if (read) {
-> > > +			if (i < len - 1) {
-> > > +				tx[reg_i] =3D reg[i];
-> > > +				tx[val_i] =3D ctrl[i] ? MC33XS2410_RD_CTRL : 0;
-> > > +				t[i].tx_buf =3D &tx[reg_i];
-> > > +			}
-> > > +
-> > > +			if (i > 0)
-> > > +				t[i].rx_buf =3D &rx[reg_i - MC33XS2410_WORD_LEN];
-> > > +		} else {
-> > > +			tx[reg_i] =3D reg[i] | MC33XS2410_WR;
-> > > +			tx[val_i] =3D val[i];
-> > > +			t[i].tx_buf =3D &tx[reg_i];
-> > > +		}
-> > > +
-> > > +		t[i].len =3D MC33XS2410_WORD_LEN;
-> > > +		t[i].cs_change =3D 1;
-> > > +	}
-> > > +
-> > > +	t[len - 1].cs_change =3D 0;
-> > > +
-> > > +	ret =3D spi_sync_transfer(spi, &t[0], len);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	if (read) {
-> > > +		for (i =3D 0; i < len - 1; i++) {
-> > > +			reg_i =3D i * MC33XS2410_WORD_LEN;
-> > > +			val[i] =3D FIELD_GET(MC33XS2410_RD_DATA_MASK,
-> > > +					   get_unaligned_be16(&rx[reg_i]));
-> > > +		}
-> > > +	}
-> > > +
-> > > +	return 0;
-> >=20
-> > Huh, this is complicated. Isn't that covered by regmap somehow?
->=20
-> AFAIK it isn't supported. The main reason why regmap-spi doesn't work for
-> this device is that the device needs a CS change after transmitting 16
-> bits. This is not covered by regmap-spi. So I would end up implementing
-> reg_read, regmap_write should be fine in regmap-spi. Besides that if I
-> want to come as close as possible to an atomic configuration, which is not
-> possible, I would have to implement some bulk read/write operations and
-> end up with a similar implementation. I would stick to the current
-> implementation if you agree.
+V1:
+  This submission is for the Broadcom STB 7712, sibling SOC of the RPi5 chip.
+  Stanimir has already submitted a patch "Add PCIe support for bcm2712" for
+  the RPi version of the SOC.  It is hoped that Stanimir will allow us to
+  submit this series first and subsequently rebase his patch(es).
 
-ack.
+  The largest commit, "Refactor for chips with many regular inbound BARs"
+  affects both the STB and RPi SOCs.  It allows for multiple inbound ranges
+  where previously only one was effectively used.  This feature will also
+  be present in future STB chips, as well as Broadcom's Cable Modem group.
 
-> > > +static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 du=
-ty_cycle)
-> > > +{
-> > > +	if (!period)
-> > > +		return 0;
-> > > +
-> > > +	duty_cycle *=3D 256;
-> >=20
-> > This might overflow.
-> >=20
->=20
-> How ? Max period and duty_cycle is checked by the caller and can be
-> maximum 2000000000, 2000000000 * 256 =3D 512000000000, fits in u64. Did I
-> miss anything ?
+Jim Quinlan (12):
+  dt-bindings: PCI: Cleanup of brcmstb YAML and add 7712 SoC
+  dt-bindings: PCI: brcmstb: Add 7712 SoC description
+  PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+  PCI: brcmstb: Use bridge reset if available
+  PCI: brcmstb: Use swinit reset if available
+  PCI: brcmstb: PCI: brcmstb: Make HARD_DEBUG, INTR2_CPU_BASE offsets
+    SoC-specific
+  PCI: brcmstb: Remove two unused constants from driver
+  PCI: brcmstb: Don't conflate the reset rescal with phy ctrl
+  PCI: brcmstb: Refactor for chips with many regular inbound windows
+  PCI: brcmstb: Check return value of all reset_control_xxx calls
+  PCI: brcmstb: Change field name from 'type' to 'soc_base'
+  PCI: brcmstb: Enable 7712 SOCs
 
-I didn't notice the check in the caller. Please add a respective comment
-for the next reader who might miss that.
+ .../bindings/pci/brcm,stb-pcie.yaml           |  40 +-
+ drivers/pci/controller/pcie-brcmstb.c         | 510 +++++++++++++-----
+ 2 files changed, 406 insertions(+), 144 deletions(-)
 
-> > > +	duty_cycle =3D DIV_ROUND_CLOSEST_ULL(duty_cycle, period);
-> >=20
-> > round-closest is most probably wrong. Please test your driver with
-> > PWM_DEBUG enabled and increasing and decreasing series of duty_cycle and
-> > period.
->=20
-> Yes, I should probably round it down. But I tested with PWM_DEBUG enabled
-> and it gave me the best results so far. There are still few cases where
-> there are complaints. I try to fix it.
 
-I don't have the hardware so I cannot test myself. Please make sure that
-there are no more complaints, at least none you are aware of. PWM_DEBUG
-should be happy if you pick a hardware setting where period is maximal
-but not bigger than requested and then for that given period duty_cycle
-is maximal but not bigger than requested. So typically use round-down
-division in .apply(). In .get_state() you should return a pwm_state that
-makes .apply() write the exact same state as found when .get_state() was
-called. So typically you have to use round-up there.
-=20
-> > > +	state->polarity =3D (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwp=
-wm)) ?
-> > > +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
-> > > +
-> > > +	state->enabled =3D !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > [...]
-> > > +static int mc33xs2410_probe(struct spi_device *spi)
-> > > +{
-> > > [...]
-> > > +	/* Disable watchdog */
-> > > +	ret =3D mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
-> > > +	if (ret < 0)
-> > > +		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
-> >=20
-> > Wouldn't the watchdog functionality better be handled by a dedicated
-> > watchdog driver? Disabling it here unconditionally looks wrong.
->=20
-> Yes, would be better. I planned this after this patchset is accepted.
-> Without disabling the watchdog, the device is not able to operate. So I
-> would stick to it for now and come up with a patch later on.
+base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+-- 
+2.17.1
 
-How long is the default timeout? Don't you need to disable the watchdog
-in the bootloader anyhow?
-
-If you still think the watchdog should be disabled here, please add a
-comment that it's conceptually wrong to do here, but needed until there
-is a proper watchdog driver.
-
-Should this better be a mfd driver then?
-
-Best regards
-Uwe
-
---r76f7ixvgggnra3n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaquZgACgkQj4D7WH0S
-/k6tEAf+InTFr4VRf+x21Q9Hn8F37H/X/QwTJcQkDU44YHHwidAZkEPPmOjiH/XC
-TV2XeP+d8PiaEgDVxbKrQs/TC9a+gfioEt2j/kAQk92QNcL2DX+zPgOtjF/20+5Q
-oOY6FOO2/4mUkz/sFWYAaOiYaytxc6GjRcCjIy61rP96Q0yz57js9dq/fnoG2mG2
-tV13fQ/B7P1McJhmIuzt7Eas+ZGSQAnb7WjtAeXIpx7aXRD/2MOOWCh0gUWouH8M
-3RNTN5zaiN6oeHm/u44wT3YlEt9h86rZpeYOU8MkMbSYWG4T8IGoQM3azVv3r9Eq
-RGhrrnv+P8rB3Vg8O0AbnknulO1/Jg==
-=0W2O
------END PGP SIGNATURE-----
-
---r76f7ixvgggnra3n--
 
