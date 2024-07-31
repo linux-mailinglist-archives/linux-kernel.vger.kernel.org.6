@@ -1,183 +1,107 @@
-Return-Path: <linux-kernel+bounces-268485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6BFC94252F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:45:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF43942532
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:53:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054221C214C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 087681C211A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634131BC4E;
-	Wed, 31 Jul 2024 03:45:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0534118049;
-	Wed, 31 Jul 2024 03:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BFC19478;
+	Wed, 31 Jul 2024 03:53:39 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BA4C8FF;
+	Wed, 31 Jul 2024 03:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722397503; cv=none; b=Lbrfrz6HFlcCCV6Cae1zX443GqWTxVKBO3/umg1yp0Q1nQm4MJD7K5lrF9uj3V9+HM8KKu+0lZjN2pGwRFPK3qpFf08zIQ7I8wkFwm6QMx3+iwbIigu+rFPoHUMXMFrUVMsDGpQTaGir7S5iQo9Lb3wDIH9lSstsB/hPkh5ybSw=
+	t=1722398019; cv=none; b=GJDnmau5t564rXrlHTx3rmUCpcQ6dUmlcOHD5H4/923V6aXnE9fesUmF8umy4RDFEu6iTZpFynWn6hYdyZEfmt+Rh7JSuFrMmNdbMhT7Tqpp+p4Ujtp4oncp1RbQzKuQ+gZKGMuZRj2BO/8ielKLKYQXDMBKPHlPnwMzsQPcbko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722397503; c=relaxed/simple;
-	bh=R3SnnIddhK4TM5HoC+drXmaK4feI1RvTi2Q2m/Vx+P4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XGzNAt8h5pcnHEcwqC5nVrKCnunlLgNnC3RhlGfkCNEf5U5zIDFo+MPunjOxaruqT+k73shwiPn7DPuK75Lkfa4N3GW8jXdcLXEPmULKWwqIOpLM/6K8WjuQkLtXS4E1s45pbSaaD1WykNL0UUpQxxUM++RLOcuK6Pua3QwonXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 622D71007;
-	Tue, 30 Jul 2024 20:45:25 -0700 (PDT)
-Received: from [10.162.41.10] (a077893.blr.arm.com [10.162.41.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B3B183F64C;
-	Tue, 30 Jul 2024 20:44:57 -0700 (PDT)
-Message-ID: <b1dd907d-d45b-4602-964e-70654094a315@arm.com>
-Date: Wed, 31 Jul 2024 09:14:54 +0530
+	s=arc-20240116; t=1722398019; c=relaxed/simple;
+	bh=2Q5isxy0WNvN9EZ4GOe06noEhULgDUODGbVkKjRxRNU=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PZlRCsBulQFi86DiMnfpnFpt72J1mHa5AwBFE2Ld1k7ftqLXYPDZelB4i+jbuKUqa/4VF3j2BnEITC/KiA5hALwLKV3hktCfgUKKk2cy/T9oe9+NJPywXyPYUumzu4Of6lSillqjhbCIwQUPhjbkxN/5wOA8IAxeLsF6DqkcnOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYdVQ74dwz4f3jM1;
+	Wed, 31 Jul 2024 11:53:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A1E391A0568;
+	Wed, 31 Jul 2024 11:53:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoQ2talmJ2teAQ--.41822S3;
+	Wed, 31 Jul 2024 11:53:27 +0800 (CST)
+Subject: Re: [PATCH 6/7] jbd2: correct comment jbd2_mark_journal_empty
+To: Kemeng Shi <shikemeng@huaweicloud.com>, tytso@mit.edu, jack@suse.com
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+ <20240730113335.2365290-7-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <67e4b306-7a85-5a19-4a89-7820b35a0758@huaweicloud.com>
+Date: Wed, 31 Jul 2024 11:53:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] uapi: Define GENMASK_U128
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org
-References: <20240725054808.286708-1-anshuman.khandual@arm.com>
- <20240725054808.286708-2-anshuman.khandual@arm.com>
- <Zqkt3byHNZQvCZiB@yury-ThinkPad>
+In-Reply-To: <20240730113335.2365290-7-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Zqkt3byHNZQvCZiB@yury-ThinkPad>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXPoQ2talmJ2teAQ--.41822S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw45XFW8Gw43WFy5Xw13Jwb_yoW3KFg_XF
+	40vrs7W39Iqr4Iyr4rC3W8WrsIqrs7ur1rJ3Wxt39IkF1UJFWrKFnrJry5t347WF1vkay2
+	93Z29a18tFZFqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jjVb
+	kUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-
-On 7/30/24 23:45, Yury Norov wrote:
-> On Thu, Jul 25, 2024 at 11:18:07AM +0530, Anshuman Khandual wrote:
->> This adds GENMASK_U128() and __GENMASK_U128() macros using __BITS_PER_U128
->> and __int128 data types. These macros will be used in providing support for
->> generating 128 bit masks.
->>
->> Cc: Yury Norov <yury.norov@gmail.com>
->> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> Cc: Arnd Bergmann <arnd@arndb.de>>
->> Cc: linux-kernel@vger.kernel.org
->> Cc: linux-arch@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  include/linux/bits.h                   | 2 ++
->>  include/uapi/asm-generic/bitsperlong.h | 2 ++
->>  include/uapi/linux/bits.h              | 3 +++
->>  include/uapi/linux/const.h             | 1 +
->>  4 files changed, 8 insertions(+)
->>
->> diff --git a/include/linux/bits.h b/include/linux/bits.h
->> index 0eb24d21aac2..0a174cce09d2 100644
->> --- a/include/linux/bits.h
->> +++ b/include/linux/bits.h
->> @@ -35,5 +35,7 @@
->>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
->>  #define GENMASK_ULL(h, l) \
->>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
->> +#define GENMASK_U128(h, l) \
->> +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
->>  
->>  #endif	/* __LINUX_BITS_H */
->> diff --git a/include/uapi/asm-generic/bitsperlong.h b/include/uapi/asm-generic/bitsperlong.h
->> index fadb3f857f28..6275367b17bb 100644
->> --- a/include/uapi/asm-generic/bitsperlong.h
->> +++ b/include/uapi/asm-generic/bitsperlong.h
->> @@ -28,4 +28,6 @@
->>  #define __BITS_PER_LONG_LONG 64
->>  #endif
->>  
->> +#define __BITS_PER_U128 128
+On 2024/7/30 19:33, Kemeng Shi wrote:
+> After jbd2_mark_journal_empty, journal log is supposed to be empty.
 > 
-> Do we need such a macro for a fixed-width type? Even if we do, I'm not
-> sure that a header named bitsperlong.h is a good place to host it.
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-__BITS_PER_U128 is being used anymore, will drop it.
+Looks good to me.
 
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+> ---
+>  fs/jbd2/journal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
->> +
->>  #endif /* _UAPI__ASM_GENERIC_BITS_PER_LONG */
->> diff --git a/include/uapi/linux/bits.h b/include/uapi/linux/bits.h
->> index 3c2a101986a3..4d4b7b08003c 100644
->> --- a/include/uapi/linux/bits.h
->> +++ b/include/uapi/linux/bits.h
->> @@ -12,4 +12,7 @@
->>          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
->>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
->>  
->> +#define __GENMASK_U128(h, l) \
->> +	((_BIT128((h) + 1)) - (_BIT128(l)))
->> +
->>  #endif /* _UAPI_LINUX_BITS_H */
->> diff --git a/include/uapi/linux/const.h b/include/uapi/linux/const.h
->> index a429381e7ca5..a0211136dfd8 100644
->> --- a/include/uapi/linux/const.h
->> +++ b/include/uapi/linux/const.h
->> @@ -27,6 +27,7 @@
->>  
->>  #define _BITUL(x)	(_UL(1) << (x))
->>  #define _BITULL(x)	(_ULL(1) << (x))
->> +#define _BIT128(x)	((unsigned __int128)(1) << (x))
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index f17d05bc61df..dc18b9f7c999 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -1939,7 +1939,7 @@ static void jbd2_mark_journal_empty(journal_t *journal, blk_opf_t write_flags)
+>  	if (had_fast_commit)
+>  		jbd2_set_feature_fast_commit(journal);
+>  
+> -	/* Log is no longer empty */
+> +	/* Log is empty */
+>  	write_lock(&journal->j_state_lock);
+>  	journal->j_flags |= JBD2_FLUSHED;
+>  	write_unlock(&journal->j_state_lock);
 > 
-> GENMASK() macros may be used in assembly code. This is not the case
-> for GENMASK_128 at this time, of course, but I think we'd introduce 
-> assembly glue at this point to simplify things in future. Can you
-> check the include/uapi/linux/const.h and add something like _U128()
-> in there?
 
-
-https://lore.kernel.org/lkml/20240724103142.165693-1-anshuman.khandual@arm.com/
-
-We had _U128() in the previous version V1 but as Arnd explained earlier
-gcc silently truncates the constant passed into that helper. So _U128()
-cannot take a real large 128 bit constant as the input.
-
---- a/include/uapi/linux/const.h
-+++ b/include/uapi/linux/const.h
-@@ -16,14 +16,17 @@
- #ifdef __ASSEMBLY__
- #define _AC(X,Y)	X
- #define _AT(T,X)	X
-+#define _AC128(X)	X
- #else
- #define __AC(X,Y)	(X##Y)
- #define _AC(X,Y)	__AC(X,Y)
- #define _AT(T,X)	((T)(X))
-+#define _AC128(X)	((unsigned __int128)(X))
- #endif
- 
- #define _UL(x)		(_AC(x, UL))
- #define _ULL(x)		(_AC(x, ULL))
-+#define _U128(x)	(_AC128(x))
- 
- #define _BITUL(x)	(_UL(1) << (x))
- #define _BITULL(x)	(_ULL(1) << (x))
-
-AFAICS unsigned __int128 based constants can only be formed via shifting
-and merging operations involving two distinct user provided 64 bit parts.
-Probably something like the following
-
-#define _AC128(h, l)	(((unsigned __int128)h << 64) | (unsigned __int128)l)
-#define _U128(h, l)	(_AC128(h, l))
-
-But then carving out h and l components for the required 128 bit constant
-needs to be done manually and for assembly the shifting operations has to
-be platform specific. Hence just wondering if it is worth adding the macro
-_U128().
-
-> 
->>  
->>  #define __ALIGN_KERNEL(x, a)		__ALIGN_KERNEL_MASK(x, (__typeof__(x))(a) - 1)
->>  #define __ALIGN_KERNEL_MASK(x, mask)	(((x) + (mask)) & ~(mask))
->> -- 
->> 2.30.2
 
