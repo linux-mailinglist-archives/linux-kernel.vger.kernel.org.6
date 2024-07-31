@@ -1,166 +1,129 @@
-Return-Path: <linux-kernel+bounces-269059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46E2942CED
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADD4942CF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B6D01F214F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4971F21F67
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7AE1AED4A;
-	Wed, 31 Jul 2024 11:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B371B1422;
+	Wed, 31 Jul 2024 11:09:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNOktRAw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m75s8vF3"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D8F1AE871;
-	Wed, 31 Jul 2024 11:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5EC1AD9ED;
+	Wed, 31 Jul 2024 11:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722424117; cv=none; b=HsA4ojV7VLrVYCRaazw2nbZ7V0IIh54NGA4e5MnIFzlCvh9VUX0bJJD10H7uCDkdpKK4HSOcNGA+TOGibsYr4QDbqnIXhY6dTHHU0sf+yyBVwsY+Q+b1BBiq4mIgG0/bzeEWWf9FcRyXV3TRklHu/cx/6aS7xDJ5MrpmvqyTf0w=
+	t=1722424168; cv=none; b=rHgND+7FwuWt7AzULY0pOjw4sWlqIYjHv78lHJ/Ks5/1PQI2yg1ns/2uZ7WZRMbzEYG6Cpug4ZUb4VKzFr58iZ4wB3pwLmBQD9SxN8MhrPrF5h6Sq+ySvi40VvIFqYLoOPqyOpo4RW9ZZKB6qkifUBoDFq0rXFtsmobXk+IXN6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722424117; c=relaxed/simple;
-	bh=Y/jwTbl8exAJcAQjeSQ75R4nQbjTbH7374EjfkBBvVQ=;
+	s=arc-20240116; t=1722424168; c=relaxed/simple;
+	bh=0wbaklBvidhgCVWydtP1JSplbMUzjg/Z9mE0IUa3ldU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XAwwG4iYrdeiJuxSUa5YbGBby5jHcJ0osHuro9QL4SNHaFOW7iZZrskJUp/ikRCg5lhv50UxkcB2P7HevyN0EduZxtRqD5TX6AF15Xk+gMIC0kNzGuEUsQYXVltAeeWfBmbtR+05FtzcBY5Ja/PBbutJoUig2redUQE5H+dXKWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNOktRAw; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=KY9baU2KrduJ4RVUQY9KnYvTqn57qj4+I9G3RILImsgLppCAZeS34iNat+HBIVevKxqll/ShQ9NNoiLCaEA/xtGx50gmTrX2epGOuTfbddfGSs1jdnNh7tF0dDy+V6TidmxZ7B77qhgknfDpgRZ92FBqdiU1SdTBXpT1nw3qcPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m75s8vF3; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722424116; x=1753960116;
+  t=1722424167; x=1753960167;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Y/jwTbl8exAJcAQjeSQ75R4nQbjTbH7374EjfkBBvVQ=;
-  b=XNOktRAwYLOPahv9zwrqX2IAiQTlo3IwMi7jwjrfEw3SVy58UNijWrAY
-   DIgVXv7a3iVsZJ9WSUKk40uWuKT64FN36kF7L8gkgJt/OHZEO5q+yPjCI
-   rShg91nSQ6q0FNb1M9P+EKwpGaZMO5L2rkq+e/dwc+vBsWGP7sogcEkO4
-   dl+6WOmiPL9hNZMsdwjAxZU3/dz+EKFNa4GeXahudIV1XJuU45e2hjN3Y
-   TqHboNrmgH5DpFyaQjOMyi/r88cVvJw6zRoHWshJ+IdD0gn3ltAC8W8Gm
-   ZxtanTdct+Z/4GYFrmskxyJxv99mlkccAOkpIzqacEvxd8gLJuJqClohO
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=0wbaklBvidhgCVWydtP1JSplbMUzjg/Z9mE0IUa3ldU=;
+  b=m75s8vF3gDHfStOT2Cgk1TFGCHZUK8fwSI7tfp8E5mx6/44CWz3fZkrl
+   nDMDVLb2+bHWbkIgusD3ely7DYGNrZDGraH5nd/cLN2Jk0C2VBnEtAvZl
+   Ao5I+DKmPXrp4x8epmIp5EHEOZri16Sl9UI7mlufTPq8Vxo5Xyyzzm72p
+   ZzXYYLw/kfYPv6nPBe0LvhqckgnTFrbM5d4tycV2zDqDNIsEQVPkCFc71
+   gjQtmgWk1+p2TfFvw9h2D8R6kNLpIPMkjgeMRYAzrkF9Lm1dnLppO21By
+   A4fKl5vRdiquOL2spJObDtJZw8VIF46CH+Quclc/tG6UFYAe4Q8zoMuVR
    g==;
-X-CSE-ConnectionGUID: U6JZQyWMRd22jHSs6vLlag==
-X-CSE-MsgGUID: +LVGCXdeQKyx24m+vC/8nw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="23209720"
+X-CSE-ConnectionGUID: N17NXhqJTLGsxThN3H+ffA==
+X-CSE-MsgGUID: C7llhsmlR+ehV9fh2qwA+Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="30874884"
 X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="23209720"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 04:08:35 -0700
-X-CSE-ConnectionGUID: ZtK+kAqRSp6niW97SVmTxA==
-X-CSE-MsgGUID: y27S1BV/Tl2KF+5Kv81JYg==
+   d="scan'208";a="30874884"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 04:09:26 -0700
+X-CSE-ConnectionGUID: WgJDqCthRY+KfmbqBuUNag==
+X-CSE-MsgGUID: fkLd8JwERrODbQeO9SMWEw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="54707963"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 31 Jul 2024 04:08:32 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZ7C2-000uAO-0P;
-	Wed, 31 Jul 2024 11:08:30 +0000
-Date: Wed, 31 Jul 2024 19:08:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Huan Yang <link@vivo.com>, Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: Re: [PATCH v2 1/5] dma-buf: heaps: Introduce
- DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-Message-ID: <202407311822.ZneNMq5I-lkp@intel.com>
-References: <20240730075755.10941-2-link@vivo.com>
+   d="scan'208";a="59501647"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa003.jf.intel.com with SMTP; 31 Jul 2024 04:09:23 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 31 Jul 2024 14:09:22 +0300
+Date: Wed, 31 Jul 2024 14:09:21 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>, kernel-team@android.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/15] usb: typec: tcpm/tcpci_maxim: sort TCPC_ALERT_MASK
+ values by bit
+Message-ID: <ZqobYaPsEie2k9R+@kuha.fi.intel.com>
+References: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
+ <20240710-tcpc-cleanup-v1-8-0ec1f41f4263@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240730075755.10941-2-link@vivo.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240710-tcpc-cleanup-v1-8-0ec1f41f4263@linaro.org>
 
-Hi Huan,
+On Wed, Jul 10, 2024 at 11:36:15AM +0100, André Draszik wrote:
+> This makes it easier to see what's missing and what's being programmed.
+> 
+> While at it, add brackets to help with formatting and remove a comment
+> that doesn't add much value.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-[auto build test WARNING on 931a3b3bccc96e7708c82b30b2b5fa82dfd04890]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Huan-Yang/dma-buf-heaps-Introduce-DMA_HEAP_ALLOC_AND_READ_FILE-heap-flag/20240730-170340
-base:   931a3b3bccc96e7708c82b30b2b5fa82dfd04890
-patch link:    https://lore.kernel.org/r/20240730075755.10941-2-link%40vivo.com
-patch subject: [PATCH v2 1/5] dma-buf: heaps: Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240731/202407311822.ZneNMq5I-lkp@intel.com/config)
-compiler: xtensa-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240731/202407311822.ZneNMq5I-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407311822.ZneNMq5I-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/dma-buf/dma-heap.c:44: warning: Function parameter or struct member 'priv' not described in 'dma_heap'
-   drivers/dma-buf/dma-heap.c:44: warning: Function parameter or struct member 'heap_devt' not described in 'dma_heap'
-   drivers/dma-buf/dma-heap.c:44: warning: Function parameter or struct member 'list' not described in 'dma_heap'
-   drivers/dma-buf/dma-heap.c:44: warning: Function parameter or struct member 'heap_cdev' not described in 'dma_heap'
->> drivers/dma-buf/dma-heap.c:104: warning: expecting prototype for Trigger sync file read, read into dma(). Prototype was for dma_heap_read_file_sync() instead
-
-
-vim +104 drivers/dma-buf/dma-heap.c
-
-    86	
-    87	/**
-    88	 * Trigger sync file read, read into dma-buf.
-    89	 *
-    90	 * @dmabuf:			which we done alloced and export.
-    91	 * @heap_file:			file info wrapper to read from.
-    92	 *
-    93	 * Whether to use buffer I/O or direct I/O depends on the mode when the
-    94	 * file is opened.
-    95	 * Remember, if use direct I/O, file must be page aligned.
-    96	 * Since the buffer used for file reading is provided by dma-buf, when
-    97	 * using direct I/O, the file content will be directly filled into
-    98	 * dma-buf without the need for additional CPU copying.
-    99	 *
-   100	 * 0 on success, negative if anything wrong.
-   101	 */
-   102	static int dma_heap_read_file_sync(struct dma_buf *dmabuf,
-   103					   struct dma_heap_file *heap_file)
- > 104	{
-   105		struct iosys_map map;
-   106		ssize_t bytes;
-   107		int ret;
-   108	
-   109		ret = dma_buf_vmap(dmabuf, &map);
-   110		if (ret)
-   111			return ret;
-   112	
-   113		/**
-   114		 * The kernel_read_file function can handle file reading effectively,
-   115		 * and if the return value does not match the file size,
-   116		 * then it indicates an error.
-   117		 */
-   118		bytes = kernel_read_file(heap_file->file, 0, &map.vaddr, dmabuf->size,
-   119					 &heap_file->fsize, READING_POLICY);
-   120		if (bytes != heap_file->fsize)
-   121			ret = -EIO;
-   122	
-   123		dma_buf_vunmap(dmabuf, &map);
-   124	
-   125		return ret;
-   126	}
-   127	
+> ---
+>  drivers/usb/typec/tcpm/tcpci_maxim_core.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> index 87102b4d060d..ad9bb61fd9e0 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> @@ -97,11 +97,13 @@ static void max_tcpci_init_regs(struct max_tcpci_chip *chip)
+>  	if (ret < 0)
+>  		return;
+>  
+> -	alert_mask = TCPC_ALERT_TX_SUCCESS | TCPC_ALERT_TX_DISCARDED | TCPC_ALERT_TX_FAILED |
+> -		TCPC_ALERT_RX_HARD_RST | TCPC_ALERT_RX_STATUS | TCPC_ALERT_CC_STATUS |
+> -		TCPC_ALERT_VBUS_DISCNCT | TCPC_ALERT_RX_BUF_OVF | TCPC_ALERT_POWER_STATUS |
+> -		/* Enable Extended alert for detecting Fast Role Swap Signal */
+> -		TCPC_ALERT_EXTND | TCPC_ALERT_EXTENDED_STATUS | TCPC_ALERT_FAULT;
+> +	alert_mask = (TCPC_ALERT_TX_SUCCESS | TCPC_ALERT_TX_DISCARDED |
+> +		      TCPC_ALERT_TX_FAILED | TCPC_ALERT_RX_HARD_RST |
+> +		      TCPC_ALERT_RX_STATUS | TCPC_ALERT_POWER_STATUS |
+> +		      TCPC_ALERT_CC_STATUS |
+> +		      TCPC_ALERT_EXTND | TCPC_ALERT_EXTENDED_STATUS |
+> +		      TCPC_ALERT_VBUS_DISCNCT | TCPC_ALERT_RX_BUF_OVF |
+> +		      TCPC_ALERT_FAULT);
+>  
+>  	ret = max_tcpci_write16(chip, TCPC_ALERT_MASK, alert_mask);
+>  	if (ret < 0) {
+> 
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+heikki
 
