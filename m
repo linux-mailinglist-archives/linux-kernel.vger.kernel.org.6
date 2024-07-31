@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-269795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6547E9436F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:15:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF389436F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9DA1B224AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE5D281EFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6788116D304;
-	Wed, 31 Jul 2024 20:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B431D16D4C2;
+	Wed, 31 Jul 2024 20:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jeMcF3Pt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o3lFIqEb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FEF816C6B5;
-	Wed, 31 Jul 2024 20:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14BB1662F6;
+	Wed, 31 Jul 2024 20:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456883; cv=none; b=C35X1M6j82a0y8/ujW+phElx6oR5iQEiSfjhjdJBVMuX6B14vRb8WUPvQSPo1UuRu9r1nChLu+upv57HjwAmpNg/n5EFL9NJVGyAH4D71aaUBjtujLWVAo0JxHKe9i45uVsKF4G6ZlcQ9eQFjlYeT/DjPuf43pDqdwLFuMAz4jM=
+	t=1722456886; cv=none; b=bbIgn4jH92IJE2RCwXBRlWTgLFgRD46x1reJTbEAlnmWE4ZYhsx3OawhbVPp8XkrVXmRFvuyW4Rt3BzUkhC5yJMRpe1V/nhap4IjZtQXWFV12yq3TfwUB2y2kZrX2KLL8VzOY/fuJOIwmMApTPfzCEbReLzzW/1aG7RJbNMVoUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456883; c=relaxed/simple;
-	bh=oJGAtAHYW6J5L4jx2/Dh0v9aVLJrCw5LhgkmOC6rItM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r10XXzr9eg7TtsR2Gb+FCQXspWFAtCoDl2lfdR2ZuXOfj1C7HEaNeMCRZTtWoiLvDVRxZ1gyWczI2ZBSzpnFnG7XJLlkO9H4flWvRh2ZyZisyVDaGI2iS67t/jvjtlctjV0rsVlffgMPReiUoJJ4CMzV5HdL56BIXIWsDj6TkmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jeMcF3Pt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5325DC4AF0C;
-	Wed, 31 Jul 2024 20:14:43 +0000 (UTC)
+	s=arc-20240116; t=1722456886; c=relaxed/simple;
+	bh=tMhpetnh40I4ns0pZylCMUve7dx/xgFLkF9dXVERM4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=agCct40Fv/NUqOtnurqsTVjxcIoGVk/zX0h+1qGalB5Bd6ZbvliBRsITwHGAJuZhwNIDzGcZZuknL0toSlGXNqGuUuMq1PABGfNW3Hy5hjPcJwTULQojrs/wQvoEcNnsagJGiHSjIN1gvtPbGGKU2/byOj/W/SZ+5sO7JMODnbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o3lFIqEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F34AC116B1;
+	Wed, 31 Jul 2024 20:14:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456883;
-	bh=oJGAtAHYW6J5L4jx2/Dh0v9aVLJrCw5LhgkmOC6rItM=;
+	s=k20201202; t=1722456885;
+	bh=tMhpetnh40I4ns0pZylCMUve7dx/xgFLkF9dXVERM4s=;
 	h=From:To:Cc:Subject:Date:From;
-	b=jeMcF3PtJ+DxggC/AT6CnpH4gsTnjuC3wUxRDbu1cWWob1QUbEUb9XYXDsOQnszMJ
-	 ej21lvwHzaU+i9FxOkXg0RaN/SHXn3QUMFHleZi2r25mPl5xstWdhbRWmfYBrOvkzE
-	 jZYOHMGZuUErxLw6UTac7HRR+JmCA8rAgIjroyLnL2GJUD9DTjJoHNli61TrrLiXu7
-	 p9IuvJi3q6nyaSIHxY0RFJngGe2LRMYGi5+l6Oh6hTP7lx4kBUc95UXseBwexBO8ap
-	 8kZrt0+Rh/4YenPZA2/Z9cTrMxBxE4OmMzGpvZiyDoXBxlhds3qvjEW8zeYuBKtWmi
-	 oxiAwz+uV0ZKA==
+	b=o3lFIqEbQjiSdrOEgD3ceFQvHfj6ERRDdjoc+GJptOG7PuNLNBdmJZ3anKVI29D7U
+	 hJh9/b7/vxrS8Gq9DzOKO4g/QZWXtsdN6pQg85LTrXvVZ6l3IEdbHFYEl/fZxGuqDH
+	 HVd29BFrgTfRbz8BXTB0tE9gO4eglT6ARvYBiZfGQCoShhbqZKmIlaOlkeIgyqdexn
+	 Nq56e1u4zYba3yIPs7wkuY42B/wWwKnc0+NdMHHHOB94wMZddm+LtNL1Vm5Ipy+FcZ
+	 oT3zTVPsIT/Cf/TgPNidlJJzgyDe4V//D8rltpe0QsGSKEBSVlOP46LDtxIVPGGtC1
+	 APDFXx2OiLN5w==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: linux-input@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] input: tegra: Use of_property_read_variable_u32_array() and of_property_present()
-Date: Wed, 31 Jul 2024 14:14:01 -0600
-Message-ID: <20240731201407.1838385-6-robh@kernel.org>
+Subject: [PATCH] clk: at91: Use of_property_count_u32_elems() to get property length
+Date: Wed, 31 Jul 2024 14:14:02 -0600
+Message-ID: <20240731201407.1838385-7-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,132 +60,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There's no need to get the length of an DT array property before
-parsing the array. of_property_read_variable_u32_array() takes a
-minimum and maximum length and returns the actual length (or error
-code).
+Replace of_get_property() with the type specific
+of_property_count_u32_elems() to get the property length.
 
 This is part of a larger effort to remove callers of of_get_property()
 and similar functions. of_get_property() leaks the DT property data
 pointer which is a problem for dynamically allocated nodes which may
 be freed.
----
- drivers/input/keyboard/tegra-kbc.c | 72 +++++++++++-------------------
- 1 file changed, 27 insertions(+), 45 deletions(-)
 
-diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-index a1765ed8c825..53f39fc155ea 100644
---- a/drivers/input/keyboard/tegra-kbc.c
-+++ b/drivers/input/keyboard/tegra-kbc.c
-@@ -491,12 +491,10 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
- 	struct device_node *np = kbc->dev->of_node;
- 	u32 prop;
- 	int i;
--	u32 num_rows = 0;
--	u32 num_cols = 0;
-+	int num_rows;
-+	int num_cols;
- 	u32 cols_cfg[KBC_MAX_GPIO];
- 	u32 rows_cfg[KBC_MAX_GPIO];
--	int proplen;
--	int ret;
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/clk/at91/dt-compat.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/at91/dt-compat.c b/drivers/clk/at91/dt-compat.c
+index a32dc2111b90..f5a5f9ba7634 100644
+--- a/drivers/clk/at91/dt-compat.c
++++ b/drivers/clk/at91/dt-compat.c
+@@ -563,9 +563,10 @@ of_at91_clk_pll_get_characteristics(struct device_node *np)
+ 	if (num_cells < 2 || num_cells > 4)
+ 		return NULL;
  
- 	if (!of_property_read_u32(np, "nvidia,debounce-delay-ms", &prop))
- 		kbc->debounce_cnt = prop;
-@@ -510,56 +508,23 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
- 	    of_property_read_bool(np, "nvidia,wakeup-source")) /* legacy */
- 		kbc->wakeup = true;
+-	if (!of_get_property(np, "atmel,pll-clk-output-ranges", &tmp))
++	num_output = of_property_count_u32_elems(np, "atmel,pll-clk-output-ranges");
++	if (num_output <= 0)
+ 		return NULL;
+-	num_output = tmp / (sizeof(u32) * num_cells);
++	num_output /= num_cells;
  
--	if (!of_get_property(np, "nvidia,kbc-row-pins", &proplen)) {
--		dev_err(kbc->dev, "property nvidia,kbc-row-pins not found\n");
--		return -ENOENT;
--	}
--	num_rows = proplen / sizeof(u32);
--
--	if (!of_get_property(np, "nvidia,kbc-col-pins", &proplen)) {
--		dev_err(kbc->dev, "property nvidia,kbc-col-pins not found\n");
--		return -ENOENT;
--	}
--	num_cols = proplen / sizeof(u32);
--
--	if (num_rows > kbc->hw_support->max_rows) {
--		dev_err(kbc->dev,
--			"Number of rows is more than supported by hardware\n");
--		return -EINVAL;
--	}
--
--	if (num_cols > kbc->hw_support->max_columns) {
--		dev_err(kbc->dev,
--			"Number of cols is more than supported by hardware\n");
--		return -EINVAL;
--	}
--
--	if (!of_get_property(np, "linux,keymap", &proplen)) {
-+	if (!of_property_present(np, "linux,keymap")) {
- 		dev_err(kbc->dev, "property linux,keymap not found\n");
- 		return -ENOENT;
- 	}
- 
--	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
--		dev_err(kbc->dev,
--			"keypad rows/columns not properly specified\n");
--		return -EINVAL;
--	}
--
- 	/* Set all pins as non-configured */
- 	for (i = 0; i < kbc->num_rows_and_columns; i++)
- 		kbc->pin_cfg[i].type = PIN_CFG_IGNORE;
- 
--	ret = of_property_read_u32_array(np, "nvidia,kbc-row-pins",
--				rows_cfg, num_rows);
--	if (ret < 0) {
-+	num_rows = of_property_read_variable_u32_array(np, "nvidia,kbc-row-pins",
-+				rows_cfg, 1, KBC_MAX_GPIO);
-+	if (num_rows < 0) {
- 		dev_err(kbc->dev, "Rows configurations are not proper\n");
--		return -EINVAL;
--	}
--
--	ret = of_property_read_u32_array(np, "nvidia,kbc-col-pins",
--				cols_cfg, num_cols);
--	if (ret < 0) {
--		dev_err(kbc->dev, "Cols configurations are not proper\n");
-+		return num_rows;
-+	} else if (num_rows > kbc->hw_support->max_rows) {
-+		dev_err(kbc->dev,
-+			"Number of rows is more than supported by hardware\n");
- 		return -EINVAL;
- 	}
- 
-@@ -568,11 +533,28 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
- 		kbc->pin_cfg[rows_cfg[i]].num = i;
- 	}
- 
-+	num_cols = of_property_read_variable_u32_array(np, "nvidia,kbc-col-pins",
-+				cols_cfg, 1, KBC_MAX_GPIO);
-+	if (num_cols < 0) {
-+		dev_err(kbc->dev, "Cols configurations are not proper\n");
-+		return num_cols;
-+	} else if (num_cols > kbc->hw_support->max_columns) {
-+		dev_err(kbc->dev,
-+			"Number of cols is more than supported by hardware\n");
-+		return -EINVAL;
-+	}
-+
- 	for (i = 0; i < num_cols; i++) {
- 		kbc->pin_cfg[cols_cfg[i]].type = PIN_CFG_COL;
- 		kbc->pin_cfg[cols_cfg[i]].num = i;
- 	}
- 
-+	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
-+		dev_err(kbc->dev,
-+			"keypad rows/columns not properly specified\n");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
+ 	characteristics = kzalloc(sizeof(*characteristics), GFP_KERNEL);
+ 	if (!characteristics)
 -- 
 2.43.0
 
