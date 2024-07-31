@@ -1,145 +1,115 @@
-Return-Path: <linux-kernel+bounces-269270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD01943017
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:27:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 284079430CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BF7A1C21ACA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:27:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A5F283F39
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9A91B14E9;
-	Wed, 31 Jul 2024 13:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C31E1B1505;
+	Wed, 31 Jul 2024 13:28:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OG0plAhm"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ErUut1kc"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB511DA32;
-	Wed, 31 Jul 2024 13:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCDE1B0123
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722432418; cv=none; b=Pl7dy/3vuBWtJ2p5ZaT58gF866Saww1xpksWbCaoqqt9PinaOeTPoMSVrpbJIPTk808eDmpvvy91XEJiCbbHjyStyvUz0KWwGV47y9cJ177Lpk1XuWEgTd2XZ2bOpPyTtqtGlZITgFOVdVFMBmOb8yOqBGKTNC7m1ZG0G2IzFso=
+	t=1722432526; cv=none; b=N0tQ6U20aGsrEFkPUb17jkpCuLAwXffuPh7xX98vBDxRIQYPftSZienaiHH9ZnP6nuy0tTCGR/0u2to0PUoA1XLTyPCsF5IbxuhP3cTTvDiJ2WtGerS+GGTZLh+Ya7d+JTm7fOlOhHmlJkJY42DSzzV+5mhxUwR/glXupFtvqhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722432418; c=relaxed/simple;
-	bh=1pxyHklx0dZzFSCAeZVxv961y39cas8ZzxrfAZ7wGCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S2snpxxIvb41ZrJS32IKFxnhpM8fytFzadq7AQK4aW2qUVYNLs9uFm+9xYyDsXKpMsYkwVZyG7g2d1tcB8GwIw56CDJWTnNRVMzF4W5f5JnqL/Gj1e2Ablnnh6RsgTjlFcgbmgHEqBh2ORk05N9lJcGMx3vbI0fzTBol89KDmS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OG0plAhm; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2e697d0f-d1bb-443d-890f-0e1d953e8c1f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722432413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AKzWt3W/M/Jxmp/25NUe1y1cnbKsZzftAQcvAh5wFbU=;
-	b=OG0plAhmNY53TGlp7kLA5wSaRDpgFtsO0ib67rPc9P1tEO60NJP/4xiZqLpVMr/UsAjrZs
-	1Zn7i3TIRFxZDosuygt7/ssCdfMb/BH1NvG8PJhN/JbP1gb1DV7HpJqpGnCG8bhhBKltSX
-	OCVES6xTHObPmSS59nRT2RfJVyP7mSk=
-Date: Wed, 31 Jul 2024 14:26:47 +0100
+	s=arc-20240116; t=1722432526; c=relaxed/simple;
+	bh=AN6dcobfsnNdYLOXFrgy8ln44GUPCni1YdOBd+ilrH0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H1LltMcBerl4w4914G3nO1+2WRsKEEYVf0ENdpGDjFEZxKkp9i1WiCymKwiAcdYszrq1ltnvRvKUTkbyyENPyOdrTxiwHqtEJWLtiQFCkX/rKVdCB0vxU3VenRJoJrbymztpwLW8xCy3bAFdBzb1KHIBhqG4888A9Cjd9fBWFLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ErUut1kc; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2cb7d562so74828431fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:28:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722432523; x=1723037323; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UjNb/W9PzqFhyA7ecL9dMbHE01A2sX3SN01rofguaBg=;
+        b=ErUut1kc3ExWCE4ZGijB1wIaTrsUQ+/Oma+Wfw/CnYab3Kymr1uTP16AthNUgo4z7a
+         m3YW3jVdJ4pKP4MJ3H9mgluhPkp3Z5Vdj2G3LrRtfafsMRMlz0K7HyHtiIVxWYqCX5Um
+         lwJXTByeNDsocFnK1XUm1Coe5f22WvS3nrTWj8fBYEXWXPMj93Q3QQ9LqVDtgJiFNBy6
+         anf6/XkK4aVyW4zuhsiI6m+v9L2+i4JCpi5aGOzdjDm0Bocc4/83sKgYM+yLX0uI46Bj
+         pMBBOGoJ6gOyaguMg95ra+XirI8+9D7BvIIByEPVcIV74DLMVksWd6BmQRzv/yuwYA07
+         wTZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722432523; x=1723037323;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UjNb/W9PzqFhyA7ecL9dMbHE01A2sX3SN01rofguaBg=;
+        b=XGikETPMW29B6oE313Tkw6PMqH8IMdLsdwqN3R7EKFyeeJuR4nTrTqX+EbGTvvJ+w6
+         /5qHcTIFsIlecR6fGkITvFVI8lHYkh/uHlAcgZatHtMLjrAHL3XDZB2ZAge/cfwzKOV9
+         o6LZaGI/vbE9/Y65GE+mjNe7dyiDH/aplM/T26H52LwgB/fbWmI9YENsQ9amodN/dMMh
+         m9FVrc9Bpcp0jhYkp1QA4hLS2m2IVcla13GcdEETq53OFnJJXS11xqErRrUDNuvQ4LIa
+         43cHgca8z1mOfJXZB8GvcPmp8JBcYnmRaWH2SMkDeoBljLohujf191x94RgM/iNc8+SZ
+         7O2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwpC2wsthnKuk7HOptHdjhX4QXW4qhHlDb4WMYTJwmYBEyI3CSeSzzJgHv4m5fyrvO/feKRNlnOohDy2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDjrJHxK7qYIM8IHYpdsr709JQJNr7evMTB2JfRu6MYy9adr8u
+	VhP0+RrwdgbQUjzzcsf/c4cc8OzU4J/75rdwOHKBiPA4a3OVYmC7XGKWBDHRf3Q=
+X-Google-Smtp-Source: AGHT+IE6atB6z6OV9CQhmRK/cwk7H5bC/E7Z6lhESECLwGOuzOQFg2ndG+qf9TrXDb9ItYztuLPMiQ==
+X-Received: by 2002:ac2:5a4b:0:b0:52c:dfe6:6352 with SMTP id 2adb3069b0e04-5309b2bcc1dmr9914290e87.48.1722432522905;
+        Wed, 31 Jul 2024 06:28:42 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c363aesm2225844e87.291.2024.07.31.06.28.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 06:28:42 -0700 (PDT)
+Date: Wed, 31 Jul 2024 16:28:40 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, stable@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH V3 4/8] clk: qcom: clk-alpha-pll: Update set_rate for
+ Zonda PLL
+Message-ID: <6ntwin4iu7ue4n6kvz6hiqv7ixuc32bc6goxm4bg4czkdlsyyk@25qfz47opij2>
+References: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
+ <20240731062916.2680823-5-quic_skakitap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next V3 0/3] mlx5 PTM cross timestamping support
-To: Tariq Toukan <tariqt@nvidia.com>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, Saeed Mahameed <saeedm@nvidia.com>,
- Gal Pressman <gal@nvidia.com>, Leon Romanovsky <leonro@nvidia.com>,
- John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>, linux-kernel@vger.kernel.org,
- Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- Carolina Jubran <cjubran@nvidia.com>, Bar Shapira <bshapira@nvidia.com>,
- Rahul Rameshbabu <rrameshbabu@nvidia.com>
-References: <20240730134055.1835261-1-tariqt@nvidia.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20240730134055.1835261-1-tariqt@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731062916.2680823-5-quic_skakitap@quicinc.com>
 
-On 30/07/2024 14:40, Tariq Toukan wrote:
-> Hi,
+On Wed, Jul 31, 2024 at 11:59:12AM GMT, Satya Priya Kakitapalli wrote:
+> The Zonda PLL has a 16 bit signed alpha and in the cases where the alpha
+> value is greater than 0.5, the L value needs to be adjusted accordingly.
+> Thus update the logic to handle the signed alpha val.
 > 
-> This is V3. You can find V2 as part of a larger series here:
-> https://lore.kernel.org/netdev/d1dba3e1-2ecc-4fdf-a23b-7696c4bccf45@gmail.com/T/
-> 
-> This patchset by Rahul and Carolina adds PTM (Precision Time Measurement)
-> support to the mlx5 driver.
-> 
-> PTM is a PCI extended capability introduced by PCI-SIG for providing an
-> accurate read of the device clock offset without being impacted by
-> asymmetric bus transfer rates.
-> 
-> The performance of PTM on ConnectX-7 was evaluated using both real-time
-> (RTC) and free-running (FRC) clocks under traffic and no traffic
-> conditions. Tests with phc2sys measured the maximum offset values at a 50Hz
-> rate, with and without PTM.
-> 
-> Results:
-> 
-> 1. No traffic
-> +-----+--------+--------+
-> |     | No-PTM | PTM    |
-> +-----+--------+--------+
-> | FRC | 125 ns | <29 ns |
-> +-----+--------+--------+
-> | RTC | 248 ns | <34 ns |
-> +-----+--------+--------+
-> 
-> 2. With traffic
-> +-----+--------+--------+
-> |     | No-PTM | PTM    |
-> +-----+--------+--------+
-> | FRC | 254 ns | <40 ns |
-> +-----+--------+--------+
-> | RTC | 255 ns | <45 ns |
-> +-----+--------+--------+
-> 
-> 
-> Series generated against:
-> commit 1722389b0d86 ("Merge tag 'net-6.11-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net")
-> 
-> Thanks,
-> Tariq.
-> 
-> V3:
-> - Rebased on latest. As a result, had to replace the call to the recently
->    removed function convert_art_ns_to_tsc().
-> - Added more CCs to the series per Jakub's feedback.
-> - Added perf numbers.
-> 
-> 
-> Carolina Jubran (1):
->    net/mlx5: Add support for enabling PTM PCI capability
-> 
-> Rahul Rameshbabu (2):
->    net/mlx5: Add support for MTPTM and MTCTR registers
->    net/mlx5: Implement PTM cross timestamping support
-> 
->   drivers/net/ethernet/mellanox/mlx5/core/fw.c  |  1 +
->   .../ethernet/mellanox/mlx5/core/lib/clock.c   | 91 +++++++++++++++++++
->   .../net/ethernet/mellanox/mlx5/core/main.c    |  6 ++
->   include/linux/mlx5/device.h                   |  7 +-
->   include/linux/mlx5/driver.h                   |  2 +
->   include/linux/mlx5/mlx5_ifc.h                 | 43 +++++++++
->   6 files changed, 149 insertions(+), 1 deletion(-)
+> Fixes: f21b6bfecc27 ("clk: qcom: clk-alpha-pll: add support for zonda pll")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
 
-For the series:
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Tested-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+
+-- 
+With best wishes
+Dmitry
 
