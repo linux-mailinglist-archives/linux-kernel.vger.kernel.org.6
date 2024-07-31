@@ -1,97 +1,134 @@
-Return-Path: <linux-kernel+bounces-269694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38169435E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:53:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726DE9435EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9992850DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8A81F25D72
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2163B14F124;
-	Wed, 31 Jul 2024 18:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA05A16C437;
+	Wed, 31 Jul 2024 18:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nj/a2JY7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CfJ06FYr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="byDRyuMX"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BD613B2BB
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FEB4084E;
+	Wed, 31 Jul 2024 18:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722451995; cv=none; b=elhmG+Dvu4ytogeBTxhuVWj/7pk8aqWkX98T39JetQqB6k1ZOJ/Qcu+Zmz91SUCGFXgI7g6cZtT5gGBrIhFoB9aIwU50bfxIW3j04FZmJQTZ1YmnQdudOMi1K+H6Dc4l6iqY6YXx0bOdDXV5+pjHEdpg1WmhGLJsOGakPrspwiM=
+	t=1722452014; cv=none; b=mieXpRdIz7jfRfugzRH25zf3EJkhBWnofL10zsQaQjooNmX3Aigyaev03uzwKPW+v99aRpAGnHHsQdHdje9UB0uo5TlxUG07WOaEumU6lSvFM8vgWyaMdeM+IiRjFPFQZXnGltytPVjnZZTb8VrnjuAfh8F2En97kgTLK/SAl2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722451995; c=relaxed/simple;
-	bh=UUi5/J2ap4WNpFaqtmfkjaBR6xBlhFPX1Fgv6gjnn7E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JwYrY4Cnj8qLaOGxTArQ45o+lR56nl8jxoP11VUFhX0Ixy6soDc1xsjdiZGVMcY2nJf2Ba827Qwt20hhlvnWHiV9pFM2001eOFfaNf//AiJzKxvZ4E4OMU4MdmlQoCrQVoj0Plizd1MY1PJpSU1MTkGdf8OUu9FgUV7pk1X0g9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nj/a2JY7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CfJ06FYr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722451991;
+	s=arc-20240116; t=1722452014; c=relaxed/simple;
+	bh=buUpnDg1F1l0M/Tvk6rpatgsJHyw0PqhGQyFI0jWV6c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fB8nyo6g84EIdadEHhRJa0ok9DQ950ejiGa65/bVcSMTjuPoxKx56dzGKCTSh8KH9SZSQHifTITMc+HJktJI0TR2XvMtDjTJ4nUAEX/ADBknJIwaHP3Ewjp4fEFRCJAk0kgNdnQd2qKnE2+RWMjycsyh35NvdxAUFufEuESwRsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=byDRyuMX; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E33F60003;
+	Wed, 31 Jul 2024 18:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722452003;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=/3aMem7ZER8M4kJsRCB2muNUJiSoszp3BgGAcEL0vVY=;
-	b=nj/a2JY7znXXhTX8mRM4yHNVeNi50SwafccRZlHINGCLHFY7wu5FE9zL3nwIRNLm2BpNHs
-	8z5NmJOaRBrzuF/ITE9OYAMv6SlYeDYhN48RW9l1Tin/X1N5d83bWehXz6j95e2WS/IRi9
-	m+UydU8rodVeCT71wAo6pMDADZiCLXGND8xfBF5hoYTPxycTO7DABWxZjzWwv5d+Bc2BjW
-	zJef3gblC9DcmJ0bIyO5h2w5yjUBikzKUJorgMOPvbi73BVy8B2UR808FtMqscEGdsG8uq
-	uoEIyJjVvFqqinbr08giYSOnlIc5CJ2pwjrgsKWlBBpZ3/r4OuPkBesiFW3a2g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722451991;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/3aMem7ZER8M4kJsRCB2muNUJiSoszp3BgGAcEL0vVY=;
-	b=CfJ06FYrJoMT7+EKbU1Xmp6RiaTFuKy9J/rFjH4dN5HziiZDQCFAh5axgx4JQ6DW6wWJf/
-	uX4SbG/SPawEJwBw==
-To: Feng Tang <feng.tang@intel.com>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>, "H .
- Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- x86@kernel.org, paulmck@kernel.org, rui.zhang@intel.com, Waiman Long
- <longman@redhat.com>, linux-kernel@vger.kernel.org
-Cc: Feng Tang <feng.tang@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v4] x86/tsc: Use topology_max_packages() to get package
- number
-In-Reply-To: <20240729021202.180955-1-feng.tang@intel.com>
-References: <20240729021202.180955-1-feng.tang@intel.com>
-Date: Wed, 31 Jul 2024 20:53:11 +0200
-Message-ID: <878qxh5r6w.ffs@tglx>
+	bh=+RwDl/YSl15GSm3QO/xjSVgJYzWaKiDYQt0ysAu1/lc=;
+	b=byDRyuMXvLAd8GA90IQiv/5/+RsyV54sSwdDN7CedZEIeijIiRw/GEfMGJmQT/rYIzlwSm
+	5QcCIiejRqi682ZECGwr8vD2CHovUCkXoMUkK7D55STCaBMhoGD9yMSkAu1Fk+nL765I9t
+	QeSoFKQ2VobkvLho1f4uXi7FfIzZfdIvrOwGc/2+iO+C+aZQKGpjV45mOPrP9Po73qDWZg
+	e3Gk4ZEY75wc+8PIhrqU27aWFuhUyyc39VYkKg7i0QilfgK0t3SnRkltIgh2NUKeWJ887Q
+	bthXYXpc0HW3mEeUVKneSAbNw0S1DrbA4MyXXJpd2glNGkpDQCkAbmF62G7knA==
+Message-ID: <f60d47cc-84ff-4031-a9e6-244954af901e@bootlin.com>
+Date: Wed, 31 Jul 2024 20:53:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 1/4] selftests/bpf: convert
+ get_current_cgroup_id_user to test_progs
+To: Alan Maguire <alan.maguire@oracle.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240731-convert_cgroup_tests-v1-0-14cbc51b6947@bootlin.com>
+ <20240731-convert_cgroup_tests-v1-1-14cbc51b6947@bootlin.com>
+ <f54ddf95-a5ab-4c56-966f-9bff37f50364@oracle.com>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+Content-Language: en-US
+In-Reply-To: <f54ddf95-a5ab-4c56-966f-9bff37f50364@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexis.lothore@bootlin.com
 
-On Mon, Jul 29 2024 at 10:12, Feng Tang wrote:
->  	pr_info("Allowing %u present CPUs plus %u hotplug CPUs\n", assigned, disabled);
-> -	if (topo_info.nr_rejected_cpus)
-> +	if (topo_info.nr_rejected_cpus) {
->  		pr_info("Rejected CPUs %u\n", topo_info.nr_rejected_cpus);
-> +		if (__max_logical_packages <= 4)
-> +			pr_info("TSC might be buggered due to the rejected CPUs\n");
+Hello Alan,
 
-I'm not really convinced of the value of this message.
+On 7/31/24 19:23, Alan Maguire wrote:
+> On 31/07/2024 11:38, Alexis Lothoré (eBPF Foundation) wrote:
 
-People who limit their CPUs on the command line or at compile time
-really should know what they are doing. The kernel already tells that
-there are rejected CPUs and that extra TSC info is just annoying and
-confusing noise for people who run that and have a perfectly working TSC
-on a single/dual/quad socket machine.
+[...]
 
-I just drop that noise.
+>> +	pid = getpid();
+>> +	if (!ASSERT_OK(bpf_map__update_elem(skel->maps.pidmap, &key,
+>> +					    sizeof(key), &pid, sizeof(pid), 0),
+>> +		       "write pid"))
+>> +		goto cleanup_progs;
+>> +
+> 
+> I think it would be worth using a global variable in the BPF program
+> my_pid, and setting skel->bss->my_pid here as other more up-to-date
+> tests do (example progs/test_usdt.c, prog_tests/usdt.c). No need for a
+> separate map anymore.
+
+That sounds like a good improvement, thanks for the hint and the example :) I'll
+spin a new revision with this, and make sure to use it in my next test
+conversion patches too when relevant.
+
+TBH I am not familiar with global variables usage in ebpf/libbpf, so it is not
+clear for me when I should prefer it over classic maps. From some quick search I
+feel like it should be the default choice when needing basic controls
+knobs/feedback on a bpf program from userspace ? Or maybe it should be used even
+more broadly by default ?
+
+>> +	/* trigger the syscall on which is attached the tested prog */
+>> +	if (!ASSERT_OK(syscall(__NR_nanosleep, &req, NULL), "nanosleep"))
+>> +		goto cleanup_progs;
+>> +
+>> +	if (!ASSERT_OK(bpf_map__lookup_elem(skel->maps.cg_ids, &key,
+>> +					    sizeof(key), &kcgid, sizeof(kcgid),
+>> +					    0),
+>> +		       "read bpf cgroup id"))
+>> +		goto cleanup_progs;
+>> +
+> 
+> ditto here, cg_ids could be a global var cg_id that the bpf prog sets
+> and we check here via skel->bss->cg_id.
+
+ACK, I'll update this too.
 
 Thanks,
 
-        tglx
+Alexis
 
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
