@@ -1,82 +1,117 @@
-Return-Path: <linux-kernel+bounces-268992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 708F1942BFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:33:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6926D942BFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24130283244
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3771C23199
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5525C1A8C0F;
-	Wed, 31 Jul 2024 10:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8071AC45A;
+	Wed, 31 Jul 2024 10:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RcdHX7kV"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EDjqtvn6"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7077161311
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E36C161311;
+	Wed, 31 Jul 2024 10:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722422019; cv=none; b=lTcb0ejSod4VmqrVbMIH9O2amMNnZOywHjx8MYUTDrzDf5Bg43a0//fCbDBbylWV1Anr9EUmTkkwvTCqun3IC+gynqSzdeH7tPffx+v8JQtaqo1ZcxM2/aEJ7wCnXX4F4xcmow8bgB4wus1tCauwDaAULKIQNNNbpHfDJ2JZLO0=
+	t=1722422043; cv=none; b=l/I5J4LwVBD3ZlC44Mk60N9K30du74x8CWKEXKxC6T02/T5R95IqJb2EHYx8IkCBHTG4iWUwL5bJkzcu6NNsZyYCwkH1jZGgHoiA2e3BmWyn98+7RYaBqrGP5g9Zj08bJMkzzO1+uMrZoWcyOFzjsBFO6B9NepOAu9Y/XTc8EZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722422019; c=relaxed/simple;
-	bh=99VymIsOD12hH9kjWKSrInnoYJo3qd2LVwdE12gwp9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sAuDH+lc4TbyLATy5lEdrCB5ATnzlLuldw0il1zNfkiHqZFjd5kF1B9pLSdQOtLYNXl6fcWYz2mRmelkCCO1P80Ay4edUQniuHNf6vEsERtg6aQTAlwPUXf5ZtADR5yWnyfn2kOPg4Or95+INMFUpskuBlU4/zafR8DWzsqwxT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RcdHX7kV; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ny25EBy/rKrBs+Y+T9v9eAxFn5pKHTTrpsG8unnB2og=; b=RcdHX7kVomSICF9SGygrx7i20K
-	U/vLz+5pYblGpTQCdWZubsyguNIwgAHdEbtmIIJ++HsSBx9OsxvG66Y+iCXswwVsyOwDonPiJvcwH
-	SCv4ShzfNIGpG/ZVuJCrfeOgl/8oC7SgQZxTgNC/TAItT0PGVQGoXWyahrPTWfNYDCy7LdVjKQMqI
-	NntDiUE2JizSkIBmup8v2C0WB85w4jAVjzk5HC6C5oYqd0CwIyPD+anXwEZm88iNMe/ssyiItrlTr
-	Yt4mtRyE1r2VUH0PA4yiXHnu0fGEPrYMuKxFAWWyo8rOemz9Nl+n68R6A99chGullMAAQhq2Gvuvp
-	Rme1eXwA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZ6eE-00000005C7P-01Oi;
-	Wed, 31 Jul 2024 10:33:34 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E0BE8300820; Wed, 31 Jul 2024 12:33:32 +0200 (CEST)
-Date: Wed, 31 Jul 2024 12:33:32 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Andy Lutomirski <luto@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Jens Axboe <axboe@kernel.dk>,
-	the arch/x86 maintainers <x86@kernel.org>
-Subject: Re: Linux 6.11-rc1
-Message-ID: <20240731103332.GX33588@noisy.programming.kicks-ass.net>
-References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
- <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
- <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
- <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+	s=arc-20240116; t=1722422043; c=relaxed/simple;
+	bh=dOa8hT4xWqQ2AnDtQygL24wv+0L76YIYrzot6K+GRtw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o0yja5SCdznpeBC+MjsUh6rI35LfWnTcm4eonpDPQJcX8kYBDKbmYxnnvMofp2EG6c8LZBR2GU1iw4h38MWGktLxkTPKAigs6qe48weUzCbmrt8n4Ckhdxrn6LzrRi1tp2hdmbeFLgF78GynWlq5Y9rxi+I+REGb1OkSdcaMYzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EDjqtvn6; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2610623f445so3795280fac.1;
+        Wed, 31 Jul 2024 03:34:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722422041; x=1723026841; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CLpJAlwrYnKpG4yNN+f5PTDXi5Vm9RWGLixCvfhYZ0w=;
+        b=EDjqtvn6HJw5z9cHytCcpGGpavcdfP2kd4ItnJjtcdKLx3nGH0atfwVyv71L2hndsW
+         eoulHjA7jZTBEpvy1bMq8F8rr+2wbl5oMSUXqI2N9t4xv9ILCH+v15czPIm7SxmD1Tam
+         HCIErnXNJFonWKSUk9fe3qV8l3qL64fNPsucILetWNCjc09kCQheExAY3d/YeIUByLv/
+         uWbNoZGPv5o19Anp3Zd1UxVnuY2rXG4XToMdp+NoYR0T07ss+lAaguYhEfc9bVFiOSci
+         4GDR/PKGfqKKktmuXg6Lii2366SbyDhZ/smju6qyccwFmYMnyksRf2ehPvRWxIotgsgV
+         rZFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722422041; x=1723026841;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CLpJAlwrYnKpG4yNN+f5PTDXi5Vm9RWGLixCvfhYZ0w=;
+        b=FUDhuQ5/pd3uauV4GpXkJh5IeimuxDSlqSOc06w7BzfHK7shto0nfEKrbED3or2FUT
+         7zi5M9YwgIplhH2AfrF1LiiknxFeKfdwnwIlAnuNL+7K0YvIVPYBQP0Ul0uuKuLPzKNw
+         XIIDfEpBDRDiAhnytVGxUxIPfzlNEzWHDRaDZTIWfOnbYFt1btVxHqVfYZ4rdx2IfNSq
+         YCqQIcZbkMpNP4DW5E3Mb2cNYfMflvQN2AdXb/vJpEK2yWHiOgfABL+gJMOXN9/aeNp4
+         KQjGNGhVVg0/vfjcXvh5kdXlY3bFzVP4eNbLnIZPm8lipAdHc27RSdB2qGZDPXNAAV6U
+         2PVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQJEfet/ekbH/oDL7NmdZXPp3QcvSgAtUtZk22xo2Xdf+S7VI1UbTePouJRJPOt4jkY4JVkVCsWKDlgZrjWpGehi7Bg8sclzW4K9Z/DTR5D+UV8875/ZxC3NlYiZgtjgc55qbxoKoI1CQ=
+X-Gm-Message-State: AOJu0YxKUoLKvSYGySHNQGKXp3ZwUg4627YTfWpGyKZMYto62IVzZSun
+	JbJMrxsI8IuvO8fyGj42r4JEJPJhSNYOYnddko5Mq7LPDTQSC0Zv
+X-Google-Smtp-Source: AGHT+IG0a80aavBWEprMsVQIzBNeMtP25uSHl/X9jrMtPKSQsZSgH8vwwvHyW892+ooHawHz5yMqIw==
+X-Received: by 2002:a05:6870:6488:b0:260:faa1:4453 with SMTP id 586e51a60fabf-267d4cfc02dmr16644539fac.8.1722422041368;
+        Wed, 31 Jul 2024 03:34:01 -0700 (PDT)
+Received: from localhost.localdomain ([211.171.34.11])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e1a89sm9734940b3a.30.2024.07.31.03.33.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 03:34:00 -0700 (PDT)
+From: Kartik Kulkarni <kartik.koolks@gmail.com>
+To: hdegoede@redhat.com,
+	mchehab@kernel.org,
+	akari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht,
+	helen.koike@collabora.com,
+	kartik.koolks@gmail.com
+Subject: [PATCH v2] staging: atomisp: bnr: fix trailing statement
+Date: Wed, 31 Jul 2024 10:33:53 +0000
+Message-Id: <20240731103353.39245-1-kartik.koolks@gmail.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 30, 2024 at 11:53:31AM -0700, Linus Torvalds wrote:
+Fix checkpatch error trailing statements should be on next line in
+ia_css_bnr.host.c:48
 
-> Definitely something wrong with the page tables. But where that
-> wrongness comes from, I have no idea.
+Signed-off-by: Kartik Kulkarni <kartik.koolks@gmail.com>
+---
+v2: Move Signed-off-by line above the exclusion block
+---
+ .../atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c      | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-[   10.231081] CR0: 80050033 CR2: ffa02ffc CR3: 02bc6000 CR4: 000006f0
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c
+index 457a004e1..b75cfd309 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/bnr/bnr_1.0/ia_css_bnr.host.c
+@@ -45,7 +45,8 @@ ia_css_bnr_dump(
+     const struct sh_css_isp_bnr_params *bnr,
+     unsigned int level)
+ {
+-	if (!bnr) return;
++	if (!bnr)
++		return;
+ 	ia_css_debug_dtrace(level, "Bayer Noise Reduction:\n");
+ 	ia_css_debug_dtrace(level, "\t%-32s = %d\n",
+ 			    "bnr_gain_all", bnr->gain_all);
+-- 
+2.20.1
 
-See CR3 being a user address.... but yeah, million dollar question is
-how the fuck did that happen?
 
