@@ -1,211 +1,121 @@
-Return-Path: <linux-kernel+bounces-269451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36F99432F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:19:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 990EB9432EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:17:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA7D3B20AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:17:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 493AAB2AE79
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:17:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1597E1BD4FC;
-	Wed, 31 Jul 2024 15:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D3717991;
+	Wed, 31 Jul 2024 15:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSnG2aTi"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/mfiNwC"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D5717552;
-	Wed, 31 Jul 2024 15:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4301758B;
+	Wed, 31 Jul 2024 15:10:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438654; cv=none; b=qD3+b9QSzZVfsV8VUTeYni9hu8VuIFCKhZGXEblFQL0GJMyYWMF/TnvjechL/eCICaRCLCnwu27j3CPKEXkQ6ceWbLwKX6jAbGOFrq5VFph3huApIqTsjmqUQPC9BmORzimi3abjoqC1YHZwHbodesSWQhPpptozTk29zgT2ypg=
+	t=1722438624; cv=none; b=dqpQaE1/bGNlk3UV/4OYGv82LLkzp9Iz5HqUPMt4YTbVHcBA5elosCa/nVPj7p64u/HFv4+1Vt/sCNcoyIcX0sbtvJPpydNDB+RMuSMI2YDpcYuzqKDUzlWpiXpNjmKj8oGCBmWBYPhchfgjC/LiCGx+IZ3jAWWyfiQI8F2Oxck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438654; c=relaxed/simple;
-	bh=Xt+mb5hIBYa4aoADZVAEEXbmVtyCi1kCj04mH9kCKPk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f8EeIOU/r9jxwvECR8v0HEQV67Tog6y0ebobad3mmgNAS5Pp+7AqXDqfskVC5E5GuPxnUwmbv754kVmzzfxAcHg4hTkNMnXPPBzoemyvxEJ6C9yuD31GyNKbrdZ8XBfm9fU2mhRhlhewB4qMQME5xoxv4/XhBNdXt/saUw1MWVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSnG2aTi; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1722438624; c=relaxed/simple;
+	bh=mg3rwHUBRj5NFcD84jPC4GZQa5CLuMZgrhGUzasiLEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BMHmPu7h25Kx44eQEj/Ir63WnbtP6WgPDZ2UWTZUfWR2qrn82SfxL7gY2CQVSyMmsvsIQ4vM5qPuOlZeozJaU0n1d6Yranxk4TWvUsuOwRbkGDkwU5uAUBkgtAb+zVRBHfh03bTpaC/y2Vc0KWuBhZHXfpJcg+0XNFMAYIYxQbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/mfiNwC; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd90c2fc68so45291375ad.1;
-        Wed, 31 Jul 2024 08:10:52 -0700 (PDT)
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39865a15900so20983375ab.1;
+        Wed, 31 Jul 2024 08:10:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722438652; x=1723043452; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAMngMCa2HAFboRJYmZVtugYfv6PWexcdwffsm2pQ28=;
-        b=CSnG2aTiNkufkAp54gyfQY+8jsH+iTWaWDUJWRtqbF5U4H3N3rYEsgkw1cC/PAKNLs
-         XJF5hLRfMYyFbmUXzvMLZjpiKFkAmg7JspeQ5Pq78ODOCU0AAyq4cf6xPQHza29JRNoZ
-         KzvOZ29hCyfjQgTj2onEPVGLM/685y4S8Wfn3iTWWhZVe6iLfYDzE40ZZ3TMAxmSlw4k
-         tW8wNImPdErWWKGjJ2cOCXUk/FdeVW/BrjSs0GMVm4bxwRj+SmVWU6RPa4IudFk88q6v
-         RVevB0vNt86fKfYhUoCqG2+NMkZ+owIH56fehV+Y3XQOKtP2IUoKd7AqJPxGhLW2+6yc
-         J2uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722438652; x=1723043452;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1722438622; x=1723043422; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FAMngMCa2HAFboRJYmZVtugYfv6PWexcdwffsm2pQ28=;
-        b=Zzs1IxioPtcVvykCc+oIJyO7vQh/vJeXY//YGLeWOq1A6Dnxk2RFRpY9ZqgfExONo2
-         7pFdiux21i18xyYFGqV4xq8TlV3/MDatKRZ91QiUWqY5iSkd6ITOUK1ZZ51IyVI2aXHP
-         4I+/6uhS7Vp0NNmz5TlNxGm3o5bfa4MvG2k6u9LZ11UQ62kT9KtuiX0iygxUBr+21t9O
-         TsXm53ZDOcijHGJgFpjbBNyHpDgTQl+czySW2a7dpNbUOIs7FK++++OTWPkfJk0DeDjS
-         Z3BZFDFEwvabQaNJqoITbxpmZ7fmqbm49fCl+1I/HSyJ7tS+2tC2xWbDxUkogCn+R1lX
-         sMRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJby0LywN0i1ucxvodqIuF438/7fPkCcdeUgQYv/b6i5DLkHjOJTq3tFmwiBiuWy01tkToEWkiua+bDWkAbS4Nlr1Se5zYag5WgFe0BQHb4acj2cXo8qytX7g8CAa2ROHcJQGX
-X-Gm-Message-State: AOJu0YzxilCSIfDfnxdJC2SuFb+VfZnM/ybZG2muRoSapk1wV4PaF9L2
-	CI5imWmIcJhh8PXgYRdKzD2jlNCyRyu4/QSp3hQzJ+DiynIorI8WGeGE0nQzY48=
-X-Google-Smtp-Source: AGHT+IGn3zRosNfD+5PBLu5X9lqbDgN8DXQmPHfrvofJJ9jXYr5NhRn4fzYFkefxSMaUoros5PDI4g==
-X-Received: by 2002:a17:903:1387:b0:1fd:aa8d:ad00 with SMTP id d9443c01a7336-1ff0482ba5cmr107135245ad.18.1722438651745;
-        Wed, 31 Jul 2024 08:10:51 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fbe1sm121377195ad.45.2024.07.31.08.10.48
+        bh=NI4Uz7WpMjZ/bG9q7ybNvSKLCB8PS92F5Vl2OFTuldo=;
+        b=N/mfiNwCyRU60V2X4RqYqHalUxxCMs9B3r1jYKNx2A9R0TMQXCQnTA31b+QStgUedl
+         /0AmtHn3UVF5QmgMsK2Nk9ycy9RCdaTttiUrG8g4eyckEC9B6yc83HdzK/73+GbkYNKY
+         yFsJbpWgrpTphVJqpJIE+e258NDhXIxbCa4ACR7gIM6kGeLxPw/KtgOb7YMut4iCF2tk
+         VnzNYYc1SWOXq7OseJdXPtPfwGgaEFA7VbiCJF33DRmCki7LTJJzv4xix2u378/Rakgx
+         fHk2/pf7NxdhbcDrfaIwrfie2JIli42fjwv/xv1AXFWAsdqUxfiTFgnuQ2hCNIUh/5Ok
+         OW+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722438622; x=1723043422;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NI4Uz7WpMjZ/bG9q7ybNvSKLCB8PS92F5Vl2OFTuldo=;
+        b=V2yBowhxL8ftZWRZ/OdsNYLo3kRawHGXbXIhXIp74N6MRfmCDmHLE4FuhzJHVCAROa
+         56m7rlKFZGm7l7R64NTSjleV9/yuv5Xy8vTlEVZme83v519mR7RJnIGgx/vROZ5y5Vuy
+         P3qUsN98MP+0mCxV81dzHkX0DE2VcsG3aqrKH/2p6ZZipqjDzZ8aoMBxmjJpPVTiqBG9
+         t7K1pZiwxkxZO8oMhTdzLzNGdEkk7ArjYDtvdLtE4vRoW93Cvu1xDkzuEK4fESu4HKso
+         DFCF1n+NYHPWlNJpSvjR+hynt5h68cC1mU87cEYUYKVJksxpy+NPN/Bgdc54etCGseXM
+         Sxtg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5pE91fznsu4Wl8J+XdSuA1HnIEnwIr7vHY7qFEkucVkd2AEABpSPqI92SVen2PbgDGJ651v7Pn81DUOPdLjkdGoX1Xs9S7j8VJvQtHgX/srZd74a7FkL2Cb0VJhQP7AyRcO+GxU2HPtY=
+X-Gm-Message-State: AOJu0Yw9tjxbHIC/F/AEfcTRjZPX0mrr7DDJ3pDpWcv4j/h66vo2y7ii
+	xglNwZ1xONgWedWOmvsZPQDPbS4tZPGn/gRzYC16SBPxk3oqWy7kvYE02g==
+X-Google-Smtp-Source: AGHT+IEY7/ewQuyHW6YInhVwwomKxOmW1tQUBn36xyssBY/9z2RHF7Z8NIZ6MGWs0qQ3WJPBNGfCkA==
+X-Received: by 2002:a05:6e02:13a1:b0:39a:e9c4:6baf with SMTP id e9e14a558f8ab-39aec2c9e0emr164218925ab.26.1722438621801;
+        Wed, 31 Jul 2024 08:10:21 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f817f5a2sm9043938a12.24.2024.07.31.08.10.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 08:10:51 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: jiri@resnulli.us
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	nicolas.dichtel@6wind.com,
-	liuhangbin@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com,
-	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net,v2] rtnetlink: fix possible deadlock in team_port_change_check
-Date: Thu,  1 Aug 2024 00:09:40 +0900
-Message-Id: <20240731150940.14106-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Wed, 31 Jul 2024 08:10:21 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 31 Jul 2024 08:10:20 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Eugene Shalygin <eugene.shalygin@gmail.com>
+Cc: Ross Brown <true.robot.ross@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] hwmon: (asus-ec-sensors) remove VRM temp X570-E
+ GAMING
+Message-ID: <1a473986-f174-492a-a779-0c79c8692498@roeck-us.net>
+References: <20240730062320.5188-1-eugene.shalygin@gmail.com>
+ <20240730062320.5188-2-eugene.shalygin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730062320.5188-2-eugene.shalygin@gmail.com>
 
-In do_setlink() , do_set_master() is called when dev->flags does not have
-the IFF_UP flag set, so 'team->lock' is acquired and dev_open() is called,
-which generates the NETDEV_UP event. This causes a deadlock as it tries to
-acquire 'team->lock' again.
+On Tue, Jul 30, 2024 at 08:21:42AM +0200, Eugene Shalygin wrote:
+> From: Ross Brown <true.robot.ross@gmail.com>
+> 
+> X570-E GAMING does not have VRM temperature sensor.
+> 
+> Signed-off-by: Ross Brown <true.robot.ross@gmail.com>
+> Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
 
-To solve this, we need to unlock 'team->lock' before calling dev_open()
-in team_port_add() and then reacquire the lock when dev_open() returns.
-Since the implementation acquires the lock in advance when the team
-structure is used inside dev_open(), data races will not occur even if it
-is briefly unlocked.
+Applied.
 
-============================================
-WARNING: possible recursive locking detected
-6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0 Not tainted
---------------------------------------------
-syz.0.15/5889 is trying to acquire lock:
-ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team_core.c:2950 [inline]
-ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
+Thanks,
+Guenter
 
-but task is already holding lock:
-ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(team->team_lock_key#2);
-  lock(team->team_lock_key#2);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz.0.15/5889:
- #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6644
- #1: ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5889 Comm: syz.0.15 Not tainted 6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_deadlock kernel/locking/lockdep.c:3061 [inline]
- validate_chain kernel/locking/lockdep.c:3855 [inline]
- __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- team_port_change_check drivers/net/team/team_core.c:2950 [inline]
- team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
- dev_change_flags+0x10c/0x160 net/core/dev.c:8914
- vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- dev_open net/core/dev.c:1515 [inline]
- dev_open+0x144/0x160 net/core/dev.c:1503
- team_port_add drivers/net/team/team_core.c:1216 [inline]
- team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
- do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
- do_setlink+0x306d/0x4060 net/core/rtnetlink.c:2907
- __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
- rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
- rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
- netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg net/socket.c:745 [inline]
- ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
- __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc07ed77299
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc07fb7f048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fc07ef05f80 RCX: 00007fc07ed77299
-RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
-RBP: 00007fc07ede48e6 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fc07ef05f80 R15: 00007ffeb5c0d528
-
-Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Fixes: ec4ffd100ffb ("Revert "net: rtnetlink: Enslave device before bringing it up"")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/net/team/team_core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-index ab1935a4aa2c..ee595c3c6624 100644
---- a/drivers/net/team/team_core.c
-+++ b/drivers/net/team/team_core.c
-@@ -1212,8 +1212,9 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
- 			   portname);
- 		goto err_port_enter;
- 	}
--
-+	mutex_unlock(&team->lock);
- 	err = dev_open(port_dev, extack);
-+	mutex_lock(&team->lock);
- 	if (err) {
- 		netdev_dbg(dev, "Device %s opening failed\n",
- 			   portname);
---
+> ---
+>  drivers/hwmon/asus-ec-sensors.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
+> index 6bb8d7b1d219..ee396f21fac5 100644
+> --- a/drivers/hwmon/asus-ec-sensors.c
+> +++ b/drivers/hwmon/asus-ec-sensors.c
+> @@ -420,7 +420,7 @@ static const struct ec_board_info board_info_strix_b550_i_gaming = {
+>  
+>  static const struct ec_board_info board_info_strix_x570_e_gaming = {
+>  	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB |
+> -		SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_VRM |
+> +		SENSOR_TEMP_T_SENSOR |
+>  		SENSOR_FAN_CHIPSET | SENSOR_CURR_CPU |
+>  		SENSOR_IN_CPU_CORE,
+>  	.mutex_path = ASUS_HW_ACCESS_MUTEX_ASMX,
 
