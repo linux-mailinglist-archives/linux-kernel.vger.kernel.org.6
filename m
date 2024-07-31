@@ -1,101 +1,74 @@
-Return-Path: <linux-kernel+bounces-269212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7779942F56
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6917F942EE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751521F2BAB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 221B1287E07
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245181BD035;
-	Wed, 31 Jul 2024 12:51:21 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851221AD9FF;
+	Wed, 31 Jul 2024 12:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pPAl4iOU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0BF1B14F3;
-	Wed, 31 Jul 2024 12:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C644518DF62
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430280; cv=none; b=VHntaqOYHq3SqUkkakOwquOTC0ctrQTnxysTOow0Hgn3s8knOuHH5H8m2qDbikF/9f94sfmVA7V7XeZXc1HT0ekuzzz79f1dw4ikYZh3hiDp3OhYekzvDvPnsvyl3wN4rqzXdpIbxOxn7DIpQFdeYPQ0pxzPGTHSYoygukF5+ps=
+	t=1722429941; cv=none; b=I/hZudV8iqMqcH0c73JWFgsc0YsADzrfw4llUrqXkYFn2iN10TjcULA1rtUqNc2Uokh6LSeOC4XokvGjx4DgJBrqQiqDxzRx4HOqb/lVqPnaGXbHXjZJK+9vA9L1284UEWTcb7KPhno27Gp67BPqsXLEGD4R02UqsH04D8RqIF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430280; c=relaxed/simple;
-	bh=7D1wnIiLRUuecJ0+mFmmgFGNfbsV+q2YIJz9stuWLo4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ar/yN8r+wdZ0GbNEj2YH57iCvtWbMHRm3mH7G6TFqFxs70CHGwnflgRCMMZRo6e3CdS0J/D2ac5odXlOYm1+6QB5EqEfxF7wHfBJGyrDr8igG+5fo2S/azvdWXdkvypDw0CVbrNVLjumu0qxRzSetC+OVuBVKavWJro65FzKSBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WYsKr6JkYz1j6Ln;
-	Wed, 31 Jul 2024 20:46:40 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id C46411A016C;
-	Wed, 31 Jul 2024 20:51:14 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 31 Jul 2024 20:51:14 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v12 14/14] mm: page_frag: add an entry in MAINTAINERS for page_frag
-Date: Wed, 31 Jul 2024 20:45:04 +0800
-Message-ID: <20240731124505.2903877-15-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240731124505.2903877-1-linyunsheng@huawei.com>
-References: <20240731124505.2903877-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1722429941; c=relaxed/simple;
+	bh=+GPzbDOsidhFZ3Y4CmebonwYwnqKoagFXlUDvpg98F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lgw3cK06oEbBX11wN3lImmSt4U5Z7qUpyFD7rnVDO4emvL0m0HrBxPZJspK24I2XJnOMSXlRM3g0MO35E2ZAvJ2bcgRLvBJ29rsuTvIIaunQ0HqpM/8avRwIkL4IwmJrl/PhijHWYRF390E3bI8Cl18W9Lc23t3W8ue7kPOpGsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pPAl4iOU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90369C116B1;
+	Wed, 31 Jul 2024 12:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722429941;
+	bh=+GPzbDOsidhFZ3Y4CmebonwYwnqKoagFXlUDvpg98F8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pPAl4iOULqXixQGi4H1zDZR1R9kqTf5Pa9K8NruQjjvxnGV5sK5BuYZBqFG4NO5Br
+	 G64w9JNcaWUSFwuhZJfWzGoHeuNl4jyqT7UmxdlQq8tp3Rfs4EYNQWFPoC3+tKtmY1
+	 9wywLky92FCTR4nblrPqRlS/n7TV7q/RWkIfcUgs=
+Date: Wed, 31 Jul 2024 14:45:37 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: =?utf-8?B?5p2O5ZOy?= <sensor1010@163.com>
+Cc: rafael@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] driver:core: no need to invert the return value of
+ the call_driver_probe()
+Message-ID: <2024073100-outclass-yearbook-1feb@gregkh>
+References: <20240710140041.4066-1-sensor1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+In-Reply-To: <20240710140041.4066-1-sensor1010@163.com>
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add an entry in MAINTAINERS to indicate the
-new subsystem/library's maintainer, maillist, status and file
-lists of page_frag.
+On Wed, Jul 10, 2024 at 07:00:41AM -0700, 李哲 wrote:
+> In the probe function (either drv->bus->probe() or drv->probe()),
+> there is no return value of EPROBE_DEFER. the error return from probe
+> should be -EPROBE_DEFER, hence no negation of call_driver_probe()'s
+> return is needed, nor should there be an EPROBE_DEFER check in
+> driver_probe_device()
 
-Alexander is the original author of page_frag, add him in the
-MAINTAINERS too.
+Are you sure?  What makes the logic in commit 45ddcb42949f ("driver
+core: Don't return EPROBE_DEFER to userspace during sysfs bind")
+incorrect?  It required the check for EPROBE_DEFER like this, has
+something changed since then to make this test not required?
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+thanks,
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c0a3d9e93689..0e05e544e12f 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17232,6 +17232,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	mm/page_frag_test.c
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
--- 
-2.33.0
-
+greg k-h
 
