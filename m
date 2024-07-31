@@ -1,154 +1,109 @@
-Return-Path: <linux-kernel+bounces-268396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CAF294242C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:35:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4710494242D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:36:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D141C22A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7059E1C22A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FF6C8FF;
-	Wed, 31 Jul 2024 01:35:17 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6ED6C8C7;
+	Wed, 31 Jul 2024 01:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="y/Wrdc65"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6EB1AA3C3;
-	Wed, 31 Jul 2024 01:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C7F4C80;
+	Wed, 31 Jul 2024 01:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722389716; cv=none; b=VNrA/Vr63EFOgVugtSb5o6ZkUE+v6xjyizax4kjWP+5F7Zcv43YWV73wREBKpLxOaaDSqi8/QOXSZErwiyQpVGR45BrjZ97eavgYK7Tcfy3T2HUCJVRz5ePOnvc9Ld5uiMgq4wSqNWpaOjXipHOJ13pwovVCUFhArDOX0rWW0OU=
+	t=1722389763; cv=none; b=p1cogMrsbw3AYFHKRFwosQXUFU88chSesa/hOgM5OTFhVFxUJ5p/86PiSi/D2WGcn7Ya8ofPYsba373HjRfFXt4bf0JE34sNyJNM+xzPXdY2lZaEf50DSfO2+cp0n9zPtymyF7TigmULWdsnVR0GSIjE7JQOcSXBIZCKU/6gZgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722389716; c=relaxed/simple;
-	bh=i7McqhjslTEUgJNczjwLHkbohcNeCfBcxZU9Cyupdi4=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=ALyxqBdb0WE9BK0R/tASIUbchGJH4UkotO8NdQ7m7PoWWhGvdKSR3bm7mfOF2N2UZlBZU0fuhu54V8cFsS9B7euPzBq0hZqfJMZGxNxVyCDUFs9m7p2z8B7axDb6HGR+prL51CZXFaH3nYJvdihH6MeMhiGpGImv2jfkYfibm2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYZQt0c56z4f3jjx;
-	Wed, 31 Jul 2024 09:35:02 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B55E91A0359;
-	Wed, 31 Jul 2024 09:35:10 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP1 (Coremail) with SMTP id cCh0CgB3f1G6lKlmF8ZJAQ--.37087S2;
-	Wed, 31 Jul 2024 09:35:10 +0800 (CST)
-Subject: Re: [PATCH 5/7] jbd2: remove unneeded done_copy_out variable in
- jbd2_journal_write_metadata_buffer
-To: Jan Kara <jack@suse.cz>
-Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
- <20240730113335.2365290-6-shikemeng@huaweicloud.com>
- <20240730134943.ircjz6l5ix6zmmwe@quack3>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <0f83f5e5-97d1-fc63-f611-21cd08e9e70b@huaweicloud.com>
-Date: Wed, 31 Jul 2024 09:34:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1722389763; c=relaxed/simple;
+	bh=dTqWL5q4Eij9ZmgP3ZNingNO/Df/MzIfctKb2/wovK4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Xd2lMJHJB/6DBCd4n0h6/+48i1xQFqOeU5E6HGmrxo7+9XFUs/U2Nj3A7Taru8W6o7oOlKSVGM2MD7OypbiiYTf2gIwxWp55yiQpoTZRwDq6rMXII85amGANWJLk1jfUWTtjxHLznaUAeu3YU26k2H7jn8z7DNvse0eVE4JKW/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=y/Wrdc65; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722389758; bh=kkAa6icvMy++tO8DHmrSjlvrPU6/p29/N18+pIiRkuQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=y/Wrdc65CRS+e9hQvNsom4Hsb3bHhPosghQa6wlReGzQKD26p6lfUsOwYzAjjK+r9
+	 ObNXzaky5/jGiw657MLbe2dYlSvR2T3/IwoyR6ncm1uJz/YvPUJXVIAyh8+aPB+JQE
+	 jJjIrFIBlg5Bb6qMK/oSqk1gRUSsm6PAUKrBdb6Q=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id 8F8032B0; Wed, 31 Jul 2024 09:35:56 +0800
+X-QQ-mid: xmsmtpt1722389756tyrsd2zy4
+Message-ID: <tencent_DB74336E9E1D1B304BFF1B3F25DBBAA6BB08@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wiVmMAq+zrkzh4WfQc8DcvUQTYRyyFNArWnC4jOFixdAa4SoKt3
+	 h27BsQpTeqVwwFJKHFhueKYxO0TiUjz9N9q/JYl2tYoMGiaYQvJzY+Y+tSyNTki/d4GlSLuwtXnT
+	 8sDjk//IxJmyK0a4m1INpe7D7HwLes/m8CU4UijugO9XcMboAPQ1wnuB36xkD259mv/3L7joqxA2
+	 +yoYy0LqUSGbR1KAqMNRlcG3PU+OG12GfjpYwOc0ZZoxrVEN6QP6pKxCV1Idq8eDfln5/pSq27nm
+	 UIDLuAyLPYmm7nBFam/g7O7yChroviTWUo0l5u2wgeyTPysMwXLUzPTdbjV39jHDFRujF3OroWSp
+	 +SIsSLFkcAbrwbF/G3jmlaJuqHWf5C7mGW0FU+BxNyOX06RggZOXxWy7GibLopjPgUBMSKKRJao2
+	 UmUWrzCK7jJMeQFe9SDiriue6yDGKl1rCnBcds6OF/dzStlRRiVYSrcwAD6x0aP66X26F5Ysu9YB
+	 F2aLoiXsKE+T+Hp2zXIwzi5UHmeTVoo2UACgb8bLGQtO4V20ouTVrCQNiqJ5lGYo20d+1IpueNyJ
+	 MfaJkOZ4EV4HaHli6KeXCHK7fmQ5Az4vUROLXeoHlkqhnJTJEnYlDO3Ib8hqAZgNknYjEFQ7//XU
+	 6t/SFuF45iFxNDKGK+QZNEG2jFxHAmGQHRwRx27h2z/g6DA/I/GiEr1f3awjLDDmOhSbmsQYF6O6
+	 500lCYvvITybeZ8fI4Uo2rp/sHwQbBzEuX4ELuEMP5HMUXIxtwzgRVOAF9XOTqBRiY0GM4lQ0Myr
+	 /ZmCNDrTg4jDoUx6xEvtMVQqsXggjQKEjHP8mzfXXZpjdYBLu2gofuVl+ieS+mwP9TAc+FBv2jaG
+	 P5x6R60QACmqFLtrisrERlVascMutKTcGLqovqVD6yAJLS+XaQTg6FxpVxXxzFFlbTPHX1YwO9
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: Edward Adam Davis <eadavis@qq.com>
+To: kent.overstreet@linux.dev
+Cc: eadavis@qq.com,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] bcachefs: Add checks for entry's _data bytes
+Date: Wed, 31 Jul 2024 09:35:56 +0800
+X-OQ-MSGID: <20240731013556.38650-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <apj4zcnnq5nwcly4mnl76uiuwibkzayqd3beeum3p436kycksf@co4yrhzxo7kl>
+References: <apj4zcnnq5nwcly4mnl76uiuwibkzayqd3beeum3p436kycksf@co4yrhzxo7kl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240730134943.ircjz6l5ix6zmmwe@quack3>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgB3f1G6lKlmF8ZJAQ--.37087S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF18tr18ZFyDJrWUZr1fWFg_yoW8tFWDpF
-	WrKrWkKFykJry2yr1DWw4UZryUKrWDWr17Kr47Ca43Aa9Ig3sI9F1YyFW0g3WjyrZ3AF48
-	ZF17XFyxWwsIya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
-	tUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+Content-Transfer-Encoding: 8bit
 
+syzbot report slab-out-of-bounds in journal_entry_dev_usage_to_text,
+it because vstruct_bytes(entry) smaller than sizeof(struct
+jset_entry_dev_usage), overflow occurs when calculating the difference in
+jset_entry_dev_usage_nr_types(u).
 
+Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/bcachefs/bcachefs_format.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-on 7/30/2024 9:49 PM, Jan Kara wrote:
-> On Tue 30-07-24 19:33:33, Kemeng Shi wrote:
->> It's more intuitive to use jh_in->b_frozen_data directly instead of
->> done_copy_out variable. Simply remove unneeded done_copy_out variable
->> and use b_frozen_data instead.
->>
->> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-> 
->> @@ -357,17 +355,15 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->>  		new_folio = bh_in->b_folio;
->>  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
->>  		mapped_data = kmap_local_folio(new_folio, new_offset);
->> -	}
->> -
->> -	/*
->> -	 * Fire data frozen trigger if data already wasn't frozen.  Do this
->> -	 * before checking for escaping, as the trigger may modify the magic
->> -	 * offset.  If a copy-out happens afterwards, it will have the correct
->> -	 * data in the buffer.
->> -	 */
->> -	if (!done_copy_out)
->> +		/*
->> +		 * Fire data frozen trigger if data already wasn't frozen. Do
->> +		 * this before checking for escaping, as the trigger may modify
->> +		 * the magic offset.  If a copy-out happens afterwards, it will
->> +		 * have the correct data in the buffer.
->> +		 */
->>  		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
->>  					   jh_in->b_triggers);
->> +	}
-> 
-> I like how you've got rid of the conditional. But I'd go further and also
-> move the escaping check and thus unmap & possible frozen buffer creation
-> into the branch. Like:
-> 
-> 		do_escape = jbd2_data_needs_escaping(mapped_data);
-> 			- create this trivial helper
-> 		kunmap_local(mapped_data);
-> 		if (do_escape) {
-> 			handle b_frozen_data creation
-> 		}
-Thanks Jan. It does look better this way, I will do it in next version.
-
-Kemeng.
-> 
-> 								Honza
-> 
->>  
->>  	/*
->>  	 * Check for escaping
->> @@ -380,7 +376,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->>  	/*
->>  	 * Do we need to do a data copy?
->>  	 */
->> -	if (do_escape && !done_copy_out) {
->> +	if (do_escape && !jh_in->b_frozen_data) {
->>  		char *tmp;
->>  
->>  		spin_unlock(&jh_in->b_state_lock);
->> @@ -408,7 +404,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
->>  copy_done:
->>  		new_folio = virt_to_folio(jh_in->b_frozen_data);
->>  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
->> -		done_copy_out = 1;
->>  	}
->>  
->>  	/*
->> -- 
->> 2.30.0
->>
+diff --git a/fs/bcachefs/bcachefs_format.h b/fs/bcachefs/bcachefs_format.h
+index e3b1bde489c3..d536da101e89 100644
+--- a/fs/bcachefs/bcachefs_format.h
++++ b/fs/bcachefs/bcachefs_format.h
+@@ -1252,6 +1252,11 @@ struct jset_entry_dev_usage {
+ 
+ static inline unsigned jset_entry_dev_usage_nr_types(struct jset_entry_dev_usage *u)
+ {
++	if (vstruct_bytes(&u->entry) < sizeof(struct jset_entry_dev_usage)) {
++		pr_info("entry data bytes %u is too small", vstruct_bytes(&u->entry));
++		return 0;
++	}
++
+ 	return (vstruct_bytes(&u->entry) - sizeof(struct jset_entry_dev_usage)) /
+ 		sizeof(struct jset_entry_dev_usage_type);
+ }
+-- 
+2.43.0
 
 
