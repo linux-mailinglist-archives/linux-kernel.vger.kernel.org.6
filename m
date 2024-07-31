@@ -1,110 +1,90 @@
-Return-Path: <linux-kernel+bounces-269159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AE9942E96
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FE5942EA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DAFBB22EB4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:35:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534CE1F2572F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B271B0119;
-	Wed, 31 Jul 2024 12:35:11 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112B3193072;
-	Wed, 31 Jul 2024 12:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC951B143D;
+	Wed, 31 Jul 2024 12:35:14 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858A11B1417;
+	Wed, 31 Jul 2024 12:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722429310; cv=none; b=H4b89W0PQ0kt3Y8bd7k0Ic8l0wB0JACVu7Y2ilxNI4dbl2mvV866y2mSHO8ckqAJgpugY+xleZqI12fg7UzGNUirpJvp4D41wZ/xbNbi3StCbD0ZEEiRC2lUdnwzILq4yuP5myyAJ/ONI7RKccXYVLsooo90TpY8o+rsEPvbqSs=
+	t=1722429314; cv=none; b=pI3hI+n72feGM7Hw//y8mx4PXCCs/kSWtqgzz9v6ZkO7nVu1u4Zz8E6d++PEmNHwg5Tl0/evI3ZUc0bZY2xuuHPmmdHcTWXCdHfWRtYZ93PDmlm5Uu0Yc5o6gYThLwkeir0jjqplpRqmil4y7r/N+JzbUAkip98Or5gvzSmJp6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722429310; c=relaxed/simple;
-	bh=QDhUH0NrptmRx0+ialx0kp8xmjW/WIOSe4tR2tjeT8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mk4xiNQeBc8gPsUX8AP/eg9cEBHCpsqHUz+Bb11eWmDYGWiWYrSdQ7jLl90eV0Trn/Z2SQTzlnRm2DhVPBmRl/xyfU+W0QYpXEIJgW5iQscOH1uGpshhEe2ORJ5BDEj4aMchQ5UJ0cWEJg6WC5I432bsXVBPeGCj7NwIJlhfzSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E8E781007;
-	Wed, 31 Jul 2024 05:35:32 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D7C053F766;
-	Wed, 31 Jul 2024 05:35:04 -0700 (PDT)
-Date: Wed, 31 Jul 2024 13:35:02 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI Extension
- protocol
-Message-ID: <ZqovdlPcnBbZn0Ue@bogus>
-References: <20240718-imx95-bbm-misc-v2-v6-0-18f008e16e9d@nxp.com>
- <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
- <dee6e871-daa3-4886-be57-e4d4b3fa198d@kernel.org>
- <PAXPR04MB84592DE4592FC5D270F0820B88B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1722429314; c=relaxed/simple;
+	bh=7woaMrSvfPkIKfB6RgqFAqJK8Sy4SrWjKpHyfryP0WE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s35JMZsgw3qocaL93sjxAHpkCt9RYyCLIyKs0oUI7ZE39FMbS3gAp1oSjRRF0mZF+j15VT2ljJ1nuagcE+yV6rJvR8W3yJBVGjGVe7XSvk6NEfnajFK6Rjhr8mSxh1l33YMqigTPCN7Aa1DuZV3/4XZtjyn3uFwl9ZAYbGh182Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WYrzZ2BnPzQnDy;
+	Wed, 31 Jul 2024 20:30:50 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C3A4180101;
+	Wed, 31 Jul 2024 20:35:09 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 31 Jul 2024 20:35:09 +0800
+Message-ID: <e532356e-3153-4132-9d20-940bc3b84ef3@huawei.com>
+Date: Wed, 31 Jul 2024 20:35:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB84592DE4592FC5D270F0820B88B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v11 08/14] mm: page_frag: some minor refactoring before
+ adding new API
+To: Alexander H Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240719093338.55117-1-linyunsheng@huawei.com>
+ <20240719093338.55117-9-linyunsheng@huawei.com>
+ <dbf876b000158aed8380d6ac3a3f6e8dd40ace7b.camel@gmail.com>
+ <fdc778be-907a-49bd-bf10-086f45716181@huawei.com>
+ <CAKgT0UeQ9gwYo7qttak0UgXC9+kunO2gedm_yjtPiMk4VJp9yQ@mail.gmail.com>
+ <5a0e12c1-0e98-426a-ab4d-50de2b09f36f@huawei.com>
+ <af06fc13-ae3f-41ca-9723-af1c8d9d051d@huawei.com>
+ <ad691cb4a744cbdc7da283c5c068331801482b36.camel@gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <ad691cb4a744cbdc7da283c5c068331801482b36.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Wed, Jul 31, 2024 at 12:18:28PM +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI
-> > Extension protocol
-> > 
-> > On 18/07/2024 09:41, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Add i.MX SCMI Extension protocols bindings for:
-> > > - Battery Backed Module(BBM) Protocol
-> > >   This contains persistent storage (GPR), an RTC, and the ON/OFF
-> > button.
-> > >   The protocol can also provide access to similar functions
-> > implemented via
-> > >   external board components.
-> > > - MISC Protocol.
-> > >   This includes controls that are misc settings/actions that must be
-> > exposed
-> > >   from the SM to agents. They are device specific and are usually
-> > define to
-> > >   access bit fields in various mix block control modules, IOMUX_GPR,
-> > and
-> > >   other GPR/CSR owned by the SM.
-> > >
-> > > Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
-> > 
-> > Why quotes? Which tools did you use?
+On 2024/7/30 23:12, Alexander H Duyck wrote:
+
+...
+
+>>         }
+>>
+>>         nc->pagecnt_bias--;
+>>         nc->remaining = remaining - fragsz;
+>>
+>>         return encoded_page_address(encoded_va) +
+>>                 (page_frag_cache_page_size(encoded_va) - remaining);
 > 
-> I could not recall why have this. I will drop and resend the patchset.
-> 
+> Parenthesis here shouldn't be needed, addition and subtractions
+> operations can happen in any order with the result coming out the same.
 
-Resend only if you have any other comments addressed, no spin just for this
-one please.
-
--- 
-Regards,
-Sudeep
+I am playing safe to avoid overflow here, as I am not sure if the allocator
+will give us the last page. For example, '0xfffffffffffff000 + 0x1000' will
+have a overflow.
 
