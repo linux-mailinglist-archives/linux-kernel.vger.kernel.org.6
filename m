@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-269716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA7694361F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:14:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8095D943620
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15E95B245BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:14:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41627283AF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:14:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3B91607B6;
-	Wed, 31 Jul 2024 19:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609A61662EC;
+	Wed, 31 Jul 2024 19:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YawNJ9oZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNSgZ8ro"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E384015FCE6;
-	Wed, 31 Jul 2024 19:13:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D62616131A;
+	Wed, 31 Jul 2024 19:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453222; cv=none; b=XvZu3AePPfIXbCKCCKYAStD5WM1AQsInBTBIWVFoFMPqtCgxSXpYb/+tuTBkx87PBq2j0O3PxiyLjP9dMAmHcKZglYBm0JJgXDjJABV33s1QrBHET849Y1OOVtbeVFCVWhaqPD3ye5KqWi+IOi21HxWF/ZpJOLZa+Nc/mXlxEnE=
+	t=1722453223; cv=none; b=T5oWlNurM7fVChcPrzAbR0LzULbYzcxNfWOL2MXsH2lQj3+5nQ8WxoTmL7+4f4JZHYn1amsQ+EZ/2oPdWRhNskOKP99X9tzy//jy88YD6j3zdIXczwvdlr4BHItudUMSQIlW+byRGE24RX0VpJ2pbI2YdtNlt60M5mmEjkOq964=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453222; c=relaxed/simple;
-	bh=+jskVYz4RvJQMTJu5G7MN+BNF0iQeceivR3RGFlI1R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U0/fj66Tvf+Ea6D2of4OwT1XfHiPl93oDi0hwOK7Skue4CbILOO/LB6HU1jF/57Jkx6PpzuuIwu/OahW+ney6ddaJBRTfLShIMTdV2JD2QtJhP1Jugq8mtWLR7nvtTV2QZUFs9o34vHZCGIcVEuYyTGaFg7wCWYAjuabyxyUrVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YawNJ9oZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4607CC116B1;
-	Wed, 31 Jul 2024 19:13:41 +0000 (UTC)
+	s=arc-20240116; t=1722453223; c=relaxed/simple;
+	bh=pmzVBfErfDZLVuCinmTqkl6HqSh7UgeK/z6ulWyG5QE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W4Bh6CS+11i4MWiR0rfkMM1Vij271QEKo33eSNKHDpG8o1SWpMmfL4OInrJqsI0m8F4Bnx44JKtvjoU3E/nJD6P36RBfwu3ONi/tfMZQBmK0Xf0QcbYR0EDlLqX2qdWKUyb3qsJWj9rZIBA/lzkERMbFFjld+r4RuHd8xWpKnC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNSgZ8ro; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A982C4AF0B;
+	Wed, 31 Jul 2024 19:13:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453221;
-	bh=+jskVYz4RvJQMTJu5G7MN+BNF0iQeceivR3RGFlI1R0=;
+	s=k20201202; t=1722453223;
+	bh=pmzVBfErfDZLVuCinmTqkl6HqSh7UgeK/z6ulWyG5QE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=YawNJ9oZXyselFYCRQcg5njQBjTr/DIvwQQFn2kOLnx3s80hhJet2mN0KQIoF12ep
-	 6MXH0TZW6nvxrReZkr4GgWCCr5j3H9iobNbkb9Nr4R2nNM2sgcCsnYBFrwX7otk0W2
-	 q68/UocCL4Iow0UNYAbYogw0y+LE1SvKJynxC4RDU5+TGlFM/s1ho0WqJpjrK0rrVm
-	 ufPxoQhVWvCm/3WNAiLdAvBGIpF2K7/+Ci7k135pNPoRWswnjqblRr4bG4DZRjpL8K
-	 uLj5reFf78C6VSO/7ONAdRfwYFOvB5kqSVevkxO1pR41cVWuyA8mxunbdC+xN4ZlHH
-	 ErKQv1YdVxPag==
+	b=rNSgZ8ro7ch7uk0D4ymyJ5ZD1OJT3xcQc8yIxxXzq22MtNsKn+xkSeSzbKPJ8yGHw
+	 ZsE3Xh478MQUaFU46/NgHjymE/afsLg5wguORGrzIHznx368ywc9AcxS87nGAXjiBT
+	 QK+8gYtV6CmeMcIM/j6jk7sSiwOCZ1qPuarrvzMQjPq3AYtLSlV+SZZ3uUQHhsbhvU
+	 R2x+VHFOFivOT8i5/tCAT7IbCdjBg2r/jm/5+dPgwT9tC5F5o2p90cIsI5T7HvzTqU
+	 oNOtQL/ukqNWU/TrOHCMfELmwv5C2218LSxOXpMDmletyv8WPYoOmgX+2AppXbyi2J
+	 Vj3pbNlUVJyCw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: linux-iio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
+To: Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: adc: aspeed: Use of_property_present()
-Date: Wed, 31 Jul 2024 13:12:43 -0600
-Message-ID: <20240731191312.1710417-5-robh@kernel.org>
+Subject: [PATCH] iommu: Use of_property_present()
+Date: Wed, 31 Jul 2024 13:12:44 -0600
+Message-ID: <20240731191312.1710417-6-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,30 +58,50 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use of_property_present() to test for property presence rather than
-of_find_property(). This is part of a larger effort to remove callers
-of of_find_property() and similar functions. of_find_property() leaks
-the DT struct property and data pointers which is a problem for
+of_(find|get)_property(). This is part of a larger effort to remove
+callers of of_find_property() and similar functions. of_find_property()
+leaks the DT struct property and data pointers which is a problem for
 dynamically allocated nodes which may be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/iio/adc/aspeed_adc.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/iommu/fsl_pamu_domain.c | 4 +---
+ drivers/iommu/of_iommu.c        | 2 +-
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iio/adc/aspeed_adc.c b/drivers/iio/adc/aspeed_adc.c
-index 090416c0d622..064cddaf6399 100644
---- a/drivers/iio/adc/aspeed_adc.c
-+++ b/drivers/iio/adc/aspeed_adc.c
-@@ -555,8 +555,7 @@ static int aspeed_adc_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/iommu/fsl_pamu_domain.c b/drivers/iommu/fsl_pamu_domain.c
+index e9d2bff4659b..30be786bff11 100644
+--- a/drivers/iommu/fsl_pamu_domain.c
++++ b/drivers/iommu/fsl_pamu_domain.c
+@@ -416,14 +416,12 @@ static struct iommu_group *fsl_pamu_device_group(struct device *dev)
  
--	if (of_find_property(data->dev->of_node, "aspeed,battery-sensing",
--			     NULL)) {
-+	if (of_property_present(data->dev->of_node, "aspeed,battery-sensing")) {
- 		if (data->model_data->bat_sense_sup) {
- 			data->battery_sensing = 1;
- 			if (readl(data->base + ASPEED_REG_ENGINE_CONTROL) &
+ static struct iommu_device *fsl_pamu_probe_device(struct device *dev)
+ {
+-	int len;
+-
+ 	/*
+ 	 * uboot must fill the fsl,liodn for platform devices to be supported by
+ 	 * the iommu.
+ 	 */
+ 	if (!dev_is_pci(dev) &&
+-	    !of_get_property(dev->of_node, "fsl,liodn", &len))
++	    !of_property_present(dev->of_node, "fsl,liodn"))
+ 		return ERR_PTR(-ENODEV);
+ 
+ 	return &pamu_iommu;
+diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+index 78d61da75257..e7a6a1611d19 100644
+--- a/drivers/iommu/of_iommu.c
++++ b/drivers/iommu/of_iommu.c
+@@ -214,7 +214,7 @@ void of_iommu_get_resv_regions(struct device *dev, struct list_head *list)
+ 		 * that represent reservations in the IOVA space, which are regions that should
+ 		 * not be mapped.
+ 		 */
+-		if (of_find_property(it.node, "reg", NULL)) {
++		if (of_property_present(it.node, "reg")) {
+ 			err = of_address_to_resource(it.node, 0, &phys);
+ 			if (err < 0) {
+ 				dev_err(dev, "failed to parse memory region %pOF: %d\n",
 -- 
 2.43.0
 
