@@ -1,151 +1,106 @@
-Return-Path: <linux-kernel+bounces-268781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66DE1942934
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:31:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19B2942936
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4201F2445B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:31:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A68DB21246
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928DF1A8BF5;
-	Wed, 31 Jul 2024 08:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81201A7F93;
+	Wed, 31 Jul 2024 08:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LS0UDwha"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWpV01Ls"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5021AAE0E;
-	Wed, 31 Jul 2024 08:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0BF1798C;
+	Wed, 31 Jul 2024 08:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414640; cv=none; b=megiiZZ7CBFo4eBD9Mwk+hR7iUYJ7U3Ao7/cS9bKIGUYCj2ep4Y1B9+g7N//mUPpljv6RxPBipdzIabvTN5dUhr97Lz7pWuzd95X3QkXvoaxxCS4R0ycrTH7RdnqpbCLePJEt8l4XTYHHsEFzSzEdVS0cthFD8+FtvfKR4v/hUo=
+	t=1722414733; cv=none; b=ngJ3aMNJFIYltoF92D1karCppXPGrZ2YdhYG3iKfKs6+Na8vfHB695tAxWkcJeaSe1wWlCtCttxH1+sHDoQLG2j8d1dpcE1o81KOlb6NzsjCzC8i/NyEw8BMOWSH+XGF8GSlX4tPcyPdDPYEsv3QD6ST3/K3k8BM4is11B6ANkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414640; c=relaxed/simple;
-	bh=BxheicAMlVYSpLX+AoGM0dXc5idzCrLGeBHA0d9/j38=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=khAgRMJU9b08vYaLHp9w/Y/vI2b/fHbeK1c0Fw9il0DcMNxU4X4FyAr51x1vGtyUQt/GFCJJjxqUeVh+9hOBFzZebdtZcDPBID+auwI4QAV+dQorx+DzKTiB0ZEGREDLtqtksqEarD1LuRYiPoDDGlEuyNS00g5TWtiW+OpoIi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LS0UDwha; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B25BC116B1;
-	Wed, 31 Jul 2024 08:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722414640;
-	bh=BxheicAMlVYSpLX+AoGM0dXc5idzCrLGeBHA0d9/j38=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=LS0UDwhaYWzzO4Dz4qdx2xlEYJ6FJ+Pn/Kms+fXz6OJR10Ay21X+7wRNmH4sAVRu7
-	 xjy1VFitOOHdFzr9Kj+gcnhIN03ZXOHnqjc/MXmRcwv5d19NdQmHmLXVkudvgAHFLT
-	 or6fH8OuvmKvVCmjghBAPCUeHWeDVQjMrPJHjoJlv8nZnE10NRfv5pfd9ABuNPjso+
-	 PJwK4qx8K0EVKjieyQY2HuAKsur2rMLsGr+QBMReepdwJOBcgDeYcoPveZmhPCRnw2
-	 OZuSAg0YOPOcXni5H1ShO1oEoqJ3fsQqf0aFYVQlI0bjxJgmMFgtzgw6rsaJv47R4d
-	 TuosSET0qK5Gw==
-Message-ID: <7031d811-2bb2-4325-996c-a6de766925db@kernel.org>
-Date: Wed, 31 Jul 2024 10:30:36 +0200
+	s=arc-20240116; t=1722414733; c=relaxed/simple;
+	bh=zwBc+7j1gOA4RZxN95Rhd67uNlCz6saAi/ghZlnCYt0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ajLOCrlMycpl7v1L677zxX/xTtjWr5x27brm62DN0FEEImDBIYCyTxRqiCWKjIYSuhDX1ySpRXrE/0uF34nPM7qMZ1GCMqXMFboTnFZJFF0UW3X2XyiKN1tzqvTv/pVaczqWcXmkjts+XYdVxteWssPbXA1oodCh6E3nhz36+dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWpV01Ls; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7afd1aeac83so611035a12.0;
+        Wed, 31 Jul 2024 01:32:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722414731; x=1723019531; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iL+G1y8BebAmWAL7Z1uTpjezb81fXhMCih8TdXof3zU=;
+        b=PWpV01LsDjqTHhYDx+v0eiSQM44CdQzwi25gQgUruln3biLvbx6D+tTyPXv1iEUj8q
+         bIKR69/ujbqReyubeDfO10EZPQkDU2zum3y8KqspD7PkLWGI0f5Uj0SQaDF/IInX6+PT
+         pre08CNevkvYEk4FONLsZxhQB9lwdEIcC+gI3X4vnSm6lXTuV7kSazGdaWYaP5eqkGoN
+         ncQMGxGALiS2gt70cRchhN8V0PrI0UAs6AYkur4xsYXX8MbbJ3hePhLpfL+Dry18N3J3
+         YO6HzJtbqWvpGPP9UhuNEIXB5Bz79sV4pS5RBOOh1shlTPo1/3IA7bxIPll6TNp6put9
+         NcNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722414731; x=1723019531;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iL+G1y8BebAmWAL7Z1uTpjezb81fXhMCih8TdXof3zU=;
+        b=lSPr9n8qqKuvtAOkoEDFG0eu7cY5TCO6dQ1P8aSFtK0SRkpYZOeNgh79a97KpFI0lD
+         WxQo3/fIurezO5rIREYb0eOnGeke6SuUPIotbvHTAaXbYyHXDaqGwa4kzocCBYY87daj
+         URShi3W8GO3T1ekOTMSIuKZsT7V8Xz5dfMcfUkDVXcSasGeRFVaOvzDlUO6kmbilt3nJ
+         lQs1xUFCBlOmAOjbrUsAge/s9s6V4f4ExzS6s2d7HePFZKQnOn7LAseDgBOA3aQLdp2C
+         UmPehG6SAnm/92tJCyYN9e5tvs7FAe/UDf4kTq4a3zEvp30Om1ol/m8ZocCcRkod6jFr
+         bZmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUva36hjxiJ0O7z/Okfss3cJs8hnxjaNTOp/K30gYuYjTW49ViW5fqD4Y1uXMRd/XSZrd3fbnpVNpRMyHi9oY2G5wyKZ0w0qxlhsWPF
+X-Gm-Message-State: AOJu0YygdfdyqXULZmilzx6hz1nXeMqkxu6ZP1EZ//SpLNVff2xzE9s0
+	OwxnpCVn2Auc6bMFpiYTTJvh7M2gciIhfJ+N8EkJLyTYtujDBV046uGG/Kikt7GiA7Hb83R8gak
+	snSO28v1rhp73+pdWJ0rbKs2IKqbDvclUj1Q=
+X-Google-Smtp-Source: AGHT+IFLifyxPwPs2V/mWl8Q/lMkHvc/4jKMKDeqHYBr/em7bPkFfz3c/JwkPmtAwbt0Mx9a1loSf9CNfX1otqlHP/8=
+X-Received: by 2002:a17:90b:78b:b0:2cb:4c30:51bd with SMTP id
+ 98e67ed59e1d1-2cfcab35c67mr7433852a91.19.1722414730959; Wed, 31 Jul 2024
+ 01:32:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 25/27] ARM: dts: at91: sam9x7: add device tree for SoC
-To: Varshini Rajendran <varshini.rajendran@microchip.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
- <20240729070934.1991467-1-varshini.rajendran@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240729070934.1991467-1-varshini.rajendran@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240731032030.2847151-1-neal@gompa.dev>
+In-Reply-To: <20240731032030.2847151-1-neal@gompa.dev>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 31 Jul 2024 10:31:58 +0200
+Message-ID: <CANiq72nXN-pkHAG6A19JrjiL-uKpem_-8GN8RhiVgc+sKJN6wA@mail.gmail.com>
+Subject: Re: [PATCH] init/Kconfig: Only block on RANDSTRUCT for RUST
+To: Neal Gompa <neal@gompa.dev>
+Cc: rust-for-linux@vger.kernel.org, asahi@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Asahi Lina <lina@asahilina.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/07/2024 09:09, Varshini Rajendran wrote:
-> Add device tree file for SAM9X7 SoC family.
-> 
-> Co-developed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+On Wed, Jul 31, 2024 at 5:21=E2=80=AFAM Neal Gompa <neal@gompa.dev> wrote:
+>
+> When enabling Rust in the kernel, we only need to block on the
+> RANDSTRUCT feature and GCC plugin. The rest of the GCC plugins
+> are reasonably safe to enable.
 
-...
+Yeah, only that one is what we had initially years ago, and then we
+went the easy route since anyway the mixed builds are best effort at
+the moment and GCC plugins could possibly be going away anyway.
 
-> +
-> +		can1: can@f8004000 {
-> +			compatible = "bosch,m_can";
-> +			reg = <0xf8004000 0x100>, <0x300000 0xbc00>;
-> +			reg-names = "m_can", "message_ram";
-> +			interrupts = <30 IRQ_TYPE_LEVEL_HIGH 0>,
-> +				     <69 IRQ_TYPE_LEVEL_HIGH 0>;
-> +			interrupt-names = "int0", "int1";
-> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 30>, <&pmc PMC_TYPE_GCK 30>;
-> +			clock-names = "hclk", "cclk";
-> +			assigned-clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_GCK 30>;
-> +			assigned-clock-rates = <480000000>, <40000000>;
-> +			assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
-> +			bosch,mram-cfg = <0x7800 0 0 64 0 0 32 32>;
-> +			status = "disabled";
-> +		};
-> +
-> +		tcb: timer@f8008000 {
-> +			compatible = "microchip,sam9x7-tcb","atmel,sama5d2-tcb", "simple-mfd", "syscon";
+Did you test it with the other GCC plugins enabled etc.?
 
-Why this is simple-mfd without children?
+> +       depends on RANDSTRUCT_NONE
 
-> +			reg = <0xf8008000 0x100>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
-> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&pmc PMC_TYPE_GCK 17>, <&clk32k 0>;
-> +			clock-names = "t0_clk", "gclk", "slow_clk";
-> +			status = "disabled";
-> +		};
-> +
+Also, why is this changed?
 
-Best regards,
-Krzysztof
+Thanks!
 
+Cheers,
+Miguel
 
