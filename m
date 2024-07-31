@@ -1,185 +1,161 @@
-Return-Path: <linux-kernel+bounces-269371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269370-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37C95943226
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB48943222
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2D46281C40
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:38:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064A42816EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAD21BBBF7;
-	Wed, 31 Jul 2024 14:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9331B3749;
+	Wed, 31 Jul 2024 14:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PbKaWnOY"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2047.outbound.protection.outlook.com [40.107.223.47])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dPqui2rZ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C9E1DDC9;
-	Wed, 31 Jul 2024 14:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436661; cv=fail; b=K+W6GmQxVd52Cl25zS0HhVKSVA6wh4DF/YVOUAXFZ4ohSMvPxbAxthBiY5+B/Q4qhMpxOExGs55XeGH87pIa1pj7Q5VHjycGhpzI0yEFRHXSyA0tWqnY5jifpC7ndSXxzGr3j1b4q9kwxBAXsuqPAsF3WZVKXADZJtAFh6ZVqNQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436661; c=relaxed/simple;
-	bh=bxnY19o6pPmTix1flyLltP0l18xq6oyV2uxM4DowdP4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Go/dP0JvVL/dXX8sIgkyZecoR3pz7PjwPK43PkcAngy6QyR7wTaX5kORQ3C64GAg9h5FEDP+N8Vxgo7Fr5FV70ZvdNLDGBvnoMQrpYO8l/80Iy1R0zkgFSFkuOPch1O6RDhnGLEefl0g81ZvaSiL/qqIpnD7LYORYeGdZDyQNSc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PbKaWnOY; arc=fail smtp.client-ip=40.107.223.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oLBQkOUfs0CITdCWhLBLHZ27CQEcpUl2FODKyWRTlH3O2nUpwVkNEvBZaAgwCIKQnII5XEZLNYnaN3oaY1c2Iko13y8Q5tN0tHsx+V0HwKLlh62BzHIWDM++cSUWkWkJ9unz1ioJOMk59yxEOCbAOGN3mLzTvMjVuYv0db/BDzBfstmBu6PhwZyasyia5Wqnuc+6bf9NN18MHX70qVDp5Ebm+DTqAgWFDRnqZnPRrufBChnn+jvJfZd0jI2LORsKds+wrEDc/uoiU7q9fBMnARW+8OcuRo6TIGrxcbB/8iTIy3CX8LOmiv3ZOzJQDwWGiuXvCwdJxdUrbkv9jPGN2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MeDUULQtWm/kyvL5w6tSM/K6BP5RDE1YfylxD87KvYw=;
- b=ZQ1pF+nXAmJ7hk6UPKWPUxeuJW19kGaeFZzR64mMS4EJVslyfepgrE7TXE7t2WRHLdRnBzr/sjy22S4TTeHuk8SipAZH0i0D1djArgKXCNMI7CZk1tM84v25l7BlQGYghlGD9miElI6QhGYU0xS8gTdgbZ1niNWyoCXJtH4QsKrGg7qeN7Y3GFVYTivqyA/VTCCWxBbfwdD1xf6SvePL+AOvD5cAdgcbDJ5NYMznXyZWs/OGYjSfNG6bKA7NoL4qyl4yZLzi7D5FSwHe20P4ibS64H+ZrlkZUYGJUNm9RimtnxD20Cm/2rwQx660wSBD9APnZBiodTfED4oUqJQsgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MeDUULQtWm/kyvL5w6tSM/K6BP5RDE1YfylxD87KvYw=;
- b=PbKaWnOY4Ueb0/S0IyZf0U6oCYpKW54/4DHHfLJmPDzCMGuby49vFtS4yt3XShTJwWq1um7XPxCmEgjqu6pbwJaplJqhSkr9BUXMrUPtrYbUBkJhxa94ADGAdaf86Q1iXNsGG0hq2///TMpvCtPK57V8w53WiRdddYp/G1v0mgg=
-Received: from BL1PR13CA0246.namprd13.prod.outlook.com (2603:10b6:208:2ba::11)
- by IA1PR12MB8311.namprd12.prod.outlook.com (2603:10b6:208:3fa::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
- 2024 14:37:33 +0000
-Received: from BL6PEPF00022575.namprd02.prod.outlook.com
- (2603:10b6:208:2ba:cafe::6b) by BL1PR13CA0246.outlook.office365.com
- (2603:10b6:208:2ba::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.29 via Frontend
- Transport; Wed, 31 Jul 2024 14:37:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF00022575.mail.protection.outlook.com (10.167.249.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 14:37:32 +0000
-Received: from jallen-jump-host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 31 Jul
- 2024 09:37:31 -0500
-From: John Allen <john.allen@amd.com>
-To: <pbonzini@redhat.com>, <kvm@vger.kernel.org>, <seanjc@google.com>
-CC: <thomas.lendacky@amd.com>, <bp@alien8.de>, <mlevitsk@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <x86@kernel.org>, <yazen.ghannam@amd.com>,
-	John Allen <john.allen@amd.com>
-Subject: [PATCH v2] KVM: x86: Advertise SUCCOR and OVERFLOW_RECOV cpuid bits
-Date: Wed, 31 Jul 2024 14:36:49 +0000
-Message-ID: <20240731143649.17082-1-john.allen@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E981DDC9;
+	Wed, 31 Jul 2024 14:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722436654; cv=none; b=rkL0xU7ynAozi2Imlw4vSykWUu/GqmCMsgz1WjPnCf2MZIQEaMHh0b+iV8UE2eA4oUWDnITpMDO46OqYLFNSEiuRZMCYbshl8YlSpCgjKA/oakUzqdygqR062jfBvGnWnH3ZBUwrM/G3nC5TSYgoi/8x226J43KkQL8Y4zbi9qI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722436654; c=relaxed/simple;
+	bh=gWEUBtkFKZ9RYmy9L6XrO/5e+6MR4sPM4fHH7iWE8/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PKwXrzLQ6G3dG5eMRQuSmoshsYMcBhWgoMsduUWfUMSrZulADaG8V+aBEETBJEnnsFA3tvls8I9YB2vQPjqrdrN8zAegvGFWU6fc7lJjKlgMfveo/I7iGwyWnM6O56rKMVAf5JTL7LbT5GvuFIGcKpAeXK265BeznOuz2aRtzHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dPqui2rZ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VEbO72052518;
+	Wed, 31 Jul 2024 09:37:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722436644;
+	bh=QpzGqPZNogg7gfb8tMWXYKRLjjvoWBSL6FCUeY/FuoI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=dPqui2rZu1RfCO16r3Ige6SnhRZsBQWrEtJInfEB4RrgUUOieoAUWKv0o+o6Mxbv4
+	 kZAPzfG4HxvQnDnX0tPUpADZ2qKzppK8afgyXhNZ3MaumwECBMdk4ZTfRymEskgcyE
+	 Z7VAg0JRd7/3t7+rHsHLmkJ5WLmgex3YqeGSeU6U=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VEbOA6128110
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 31 Jul 2024 09:37:24 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
+ Jul 2024 09:37:24 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 31 Jul 2024 09:37:24 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VEbNK2065889;
+	Wed, 31 Jul 2024 09:37:24 -0500
+Message-ID: <087ee9e2-50ec-4791-a534-b3ebbf594fe6@ti.com>
+Date: Wed, 31 Jul 2024 09:37:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00022575:EE_|IA1PR12MB8311:EE_
-X-MS-Office365-Filtering-Correlation-Id: 26182e5a-2a5a-4abc-0241-08dcb16e502c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ky91cJXKQElIXRdsaqR3hocQoas+gbtqDge6PaVf5Y9XfRgPBhTugh6HS03J?=
- =?us-ascii?Q?aJDSO1EL9p/NutaMPwPzcdlTwXBzdVaghQcHK5+qHBedvK5UurKHIA75ia1b?=
- =?us-ascii?Q?J9lC9G2IjhDfK34I6hQ39VZICcVGYlLsdyUEaweG52HO9R+KeqL7wfdfy7Y5?=
- =?us-ascii?Q?7Jju2KrpvXVvGxTD99t9fsUCuZJ/OK0La8gvlU8zTqYDSeHLQgy/ukMaFLym?=
- =?us-ascii?Q?38Il5qkQa5hAAskCoZ1b3fV2rmaRPYLeB0DiLDNOAAeB4qZmZFIH7auwBQk/?=
- =?us-ascii?Q?mmsvATrNonVR5u/MZfwWt6gHp0cNgDwkwHDuqsL5xNjIURN6J2qBXUPkH0P4?=
- =?us-ascii?Q?rnUuK/07tGEBqJHCStaS1BNaZpZa03TPwCUgener6fG+aZNxLBePkRAFBS6f?=
- =?us-ascii?Q?uclPj0l27vT7FYM7b0udcGafb12GeLOT1PaE+Tkm6P7uIf7R1YgLXwh+T7r3?=
- =?us-ascii?Q?jXnMSIwo418mBxj7rLjCaaxjjL0v0G4K4VDxEaGGpAFDUYaAvpuf17SYQ/an?=
- =?us-ascii?Q?IPf/tujCDCScrrXsZBeWetWC95GXbTr5onNOHTN2SWX3BWUjgLlDvGaLhrnC?=
- =?us-ascii?Q?4ks3Jw5ME6YoUVdW96QisntWFhb+BGVcU6jIzj30Evau0wtcTM39yXAxcBTH?=
- =?us-ascii?Q?/az9wN3TKmlfPoijuiouS444rFs7ORfRNxhBlBPODuTmqrJ3cV/0m7vFOSad?=
- =?us-ascii?Q?RWVqT9bySVQ4i2gHxHSRhlbYLesbxcZD3GKe3CjiH02P3WamC+YJKOX7FrLZ?=
- =?us-ascii?Q?lao7fIxd2r4FW1ITraxjpW40A3AFbue1l2jpubpQ5phbqOaXb+8m8DwR0TMb?=
- =?us-ascii?Q?EeubuCZTsiMPXlkecm/8i7w5VzdTnZeTSCjFeY42UKxTLvERbtQn02e43hM6?=
- =?us-ascii?Q?Qmv61U8qrohBS80579rlotwQV0Cqi+hfyMTD3zxEa1JZNVHnK+l4I73RI+v4?=
- =?us-ascii?Q?bOt+27rL/nxla8b63c+8vjQ1ORbuY6DqB6HgJf6BFMrO6tq2hfGPNPT/9TAY?=
- =?us-ascii?Q?2Hqfz+8lomnHu/l54hqlQdxmg1/eCUb+NluUCSy+T1ckuksrdpLhQAeSOgte?=
- =?us-ascii?Q?DrTlizPdnriHtsWaRmYfS6r5RoHM0G69kB3YnkDrgdkAKW8/PWb81DEOiVEF?=
- =?us-ascii?Q?7usKPvTjsvtEdiGPkmEH1yAs5iPDrmcc8BmkaLULaWsIWS1ZRrRuTCk/PmVe?=
- =?us-ascii?Q?hVAwS7tuzwhxmBoEXovBnoPRX4xE5HFd7LlB7mO+3VG1MSTdyyi+sZbkEzzo?=
- =?us-ascii?Q?j+TLpRnldLqZdmUhSkMtDUtDHNX4ZC7dqT7WBY2SlfRQmGxqgkU6wypgJA9l?=
- =?us-ascii?Q?CD5PmEgDG8lq7BoWw5JY46yA24EBRMQNRyzwOeKpaS3T9e8qotsD7FB0DZbL?=
- =?us-ascii?Q?Vexgr1jpQT9jgfxVmRfHLsTlnkFU9xTgP7CsfYzXmPRCkB5qV5cRSh+iOVCB?=
- =?us-ascii?Q?b6MhoFsoNCFo7aRRk61tyqelbtdKJ9t8?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 14:37:32.8254
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26182e5a-2a5a-4abc-0241-08dcb16e502c
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00022575.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8311
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
+To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Udit Kumar
+	<u-kumar1@ti.com>,
+        Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye
+	<a-limaye@ti.com>
+References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
+ <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
+ <20240730123343.mqafgpj4zcnd5vs4@plaything>
+ <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
+ <20240731110607.7fb42mgcsf2apodv@unshaven>
+ <20240731135714.p53lki7mihzxcyk2@uda0497581>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20240731135714.p53lki7mihzxcyk2@uda0497581>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Handling deferred, uncorrected MCEs on AMD guests is now possible with
-additional support in qemu. Ensure that the SUCCOR and OVERFLOW_RECOV
-bits are advertised to the guest in KVM.
+On 7/31/24 8:57 AM, Manorit Chawdhry wrote:
+> Hi Nishanth,
+> 
+> On 06:06-20240731, Nishanth Menon wrote:
+>> On 09:49-20240731, Manorit Chawdhry wrote:
+>>>>> + */
+>>>>> +
+>>>>> +#include "k3-j784s4.dtsi"
+>>>>> +
+>>>>> +/ {
+>>>>> +	model = "Texas Instruments K3 J742S2 SoC";
+>>>>> +	compatible = "ti,j742s2";
+>>>>> +
+>>>>> +	cpus {
+>>>>> +		cpu-map {
+>>>>> +			/delete-node/ cluster1;
+>>>>> +		};
+>>>>> +	};
+>>>>> +
+>>>>> +	/delete-node/ cpu4;
+>>>>> +	/delete-node/ cpu5;
+>>>>> +	/delete-node/ cpu6;
+>>>>> +	/delete-node/ cpu7;
+>>>>
+>>>> I suggest refactoring by renaming the dtsi files as common and split out
+>>>> j784s4 similar to j722s/am62p rather than using /delete-node/
+>>>>
+>>>
+>>> I don't mind the suggestion Nishanth if there is a reason behind it.
+>>> Could you tell why we should not be using /delete-node/?
+>>>
+>>
+>> Maintenance, readability and sustenance are the reasons. This is a
+>> optimized die. It will end up having it's own changes in property
+>> and integration details. While reuse is necessary, modifying the
+>> properties with overrides and /delete-nodes/ creates maintenance
+>> challenges down the road. We already went down this road with am62p
+>> reuse with j722s, and eventually determined split and reuse is the
+>> best option. See [1] for additional guidance.
+>>
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n189
+> 
+> Thank you for giving some reasoning, would do the needful!
+> 
 
-Suggested-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: John Allen <john.allen@amd.com>
----
-v2:
-  - Add cpuid_entry_override for CPUID_8000_0007_EBX.
-  - Handle masking bits in arch/x86/kvm/cpuid.c
----
- arch/x86/kvm/cpuid.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+This refactor will require some interesting naming for the
+common SoC files. Based on your name for the EVM, I'm guessing
+you will go with
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 2617be544480..f8e1fd409cee 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -743,6 +743,11 @@ void kvm_set_cpu_caps(void)
- 	if (!tdp_enabled && IS_ENABLED(CONFIG_X86_64))
- 		kvm_cpu_cap_set(X86_FEATURE_GBPAGES);
- 
-+	kvm_cpu_cap_mask(CPUID_8000_0007_EBX,
-+		F(OVERFLOW_RECOV) |
-+		F(SUCCOR)
-+	);
-+
- 	kvm_cpu_cap_init_kvm_defined(CPUID_8000_0007_EDX,
- 		SF(CONSTANT_TSC)
- 	);
-@@ -1237,11 +1242,12 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 		entry->edx &= ~GENMASK(17, 16);
- 		break;
- 	case 0x80000007: /* Advanced power management */
-+		cpuid_entry_override(entry, CPUID_8000_0007_EBX);
- 		cpuid_entry_override(entry, CPUID_8000_0007_EDX);
- 
- 		/* mask against host */
- 		entry->edx &= boot_cpu_data.x86_power;
--		entry->eax = entry->ebx = entry->ecx = 0;
-+		entry->eax = entry->ecx = 0;
- 		break;
- 	case 0x80000008: {
- 		/*
--- 
-2.34.1
+k3-j784s4-common.dtsi
 
+included from the real k3-j784s4.dtsi and the new k3-j742s2.dtsi?
+
+Too bad the Jacinto SoC names don't use a hierarchical naming. :(
+
+J7<family><part><spin><etc>..
+
+Andrew
+
+> Regards,
+> Manorit
+> 
+>>
+>> -- 
+>> Regards,
+>> Nishanth Menon
+>> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+> 
 
