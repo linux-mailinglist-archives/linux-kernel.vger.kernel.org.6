@@ -1,149 +1,361 @@
-Return-Path: <linux-kernel+bounces-269497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79A594337F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:38:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BBA94339B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DB69286C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C68161C21D25
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8561B5810;
-	Wed, 31 Jul 2024 15:38:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D9CF1BD018;
+	Wed, 31 Jul 2024 15:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RXrLfcy5"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="hAqBz+ZH";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b="jGoAXE+E"
+Received: from smtpout42.security-mail.net (smtpout42.security-mail.net [85.31.212.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E451B5816
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722440323; cv=none; b=r0TshZstLIQ0UzAIWQAdXWSPX3V3oH1aF1tiV7w7abdzxoAkOWxCxKVOmiuEwRe1ct0xp5XGPj4NZ2W9khZOK2QY7mQoGSwrK1mGCWlt6+KVMgRIYi4txHVa0yu+DUcQs0LfsDZRcp6BImj7zooCQclzzsSYZS0j9NbbBzHXm00=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722440323; c=relaxed/simple;
-	bh=FvmMs8DP050nNeG3/2PG6cue5mHmkVhAqrhHnxcfwdw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L0+ISj1Zu09RUvYyVRg++/HfhGK+85H8VrV+voCoqmpX/MS9/i060WOHfkynJLwSxSM9iF+VhPyT8DlKTaDMyRj11nOWIQjELp+sdCKQ8NBAnOS2dBfQwJT4qzHpXFhguDKrG4JM0kKF236N5ByU4e6JvEDXZoBqsdd7VcDuHP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RXrLfcy5; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso9311286e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:38:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722440319; x=1723045119; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nqxYY02XSCW5aR/b6Hv6+wQ/epmOGp5dhlBbrSTUONA=;
-        b=RXrLfcy5k0jSUiiuTZ7cRjWBnz99V+1GJmvymgTBgMTag6Z9xri7VnsxL9MkgBZZI6
-         cVOZQdpIJR+AGawCcuYKzbDi9pPMV1uCo9JR1TgFT/o33vqKFYZZ+gPT/sr5gOcuEAGN
-         qW96JBUVEs7GTzBzXvPT+htNfU0gNwC23lmUw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722440319; x=1723045119;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nqxYY02XSCW5aR/b6Hv6+wQ/epmOGp5dhlBbrSTUONA=;
-        b=FF3Q/BkMcsdq2pjyG6zkbcvXcZjmJRIcYMA+n8vraaUclrc6XwsvL3ApxOb0+akIlU
-         ePpfxRulbNqmBV869gRSz55Ml2I5MX149eb5ZY+aRgQBnmBBk2Wlh+myWC8VMs+mPucx
-         SifXINmIOeMXgtBirXwwy7W+RYmnIEifXdr3RjXjyuZ9cfx+IxrRN1t4bXMj8XngGVt9
-         m6+/q2d1GnzfRNmIZW06uCjJ6Mqvm23cCZNaeYIJ9/nJ6LlCEkRTytJl3DRge7DyY7/Y
-         i4qgB+wqr87+x81VWQ6GeGt6BaWD1soO5ZFerBHOcg+Toxjj1e7mGGNGOLoT1tgiiW7Q
-         Q1cg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZIpekRjS55bgShXHUDfe9IBPqXuOBYqWuqL/GmSwUjrtHhtb2qKIoyrEf/VwD5VjMvdjsvb7dQpy+AH6458p6hkOfZLbwiuDnOznu
-X-Gm-Message-State: AOJu0YzRsBMiDWCYyogPM5BY1Elrt/y5xgao3i5K/6hBMWTAqPPJzuwQ
-	MqCF9jUwVG0bpUL2bvKNz6dDZO9beHqqWlKUb2Owtosgf+cE5V5+9yN8EGiq0xvxzAk6G2zEDXL
-	WbJ9h3Q==
-X-Google-Smtp-Source: AGHT+IHUHRFHyyYjmaS+zHqed7tt0QYpRZa8HtqpcJYg+RPxwdJQ4JKKM4eHTehJCmtRJWZSjjGEsA==
-X-Received: by 2002:a05:6512:2c8c:b0:52e:9fe0:bee8 with SMTP id 2adb3069b0e04-5309b269b9dmr10351916e87.8.1722440319072;
-        Wed, 31 Jul 2024 08:38:39 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590585sm8820677a12.22.2024.07.31.08.38.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 08:38:38 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a167b9df7eso9445748a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:38:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWtGbfSE4lXawvfLnzIIDYVFTzk8Rh+py5SOHL0ZjDFXkri9dlaWbdcf3Oi0q8kdQyAxjR6FPqGf89ahVFy8M9Hc0l2RSqMJrX5trbU
-X-Received: by 2002:a05:6402:35d6:b0:59e:686b:1874 with SMTP id
- 4fb4d7f45d1cf-5b02000c768mr11557176a12.6.1722440317614; Wed, 31 Jul 2024
- 08:38:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8551AD9CF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=85.31.212.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722440714; cv=fail; b=csilZVqBVdP1ay6bl8i0JeISUEh30To/NoWzoUMmTwOHOdXrIBL/uxiIhkxbRw0eS5LJ0Fk6pmOug2kEvbB+4P4LD3KfoDdqg+Z9J8QrEDN8Ljs7ivf9ETZJJnkmSub5VjG6FYjHZLgR9CKtryIHJ2KCVJrLT0XtLqWcRxQwkfI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722440714; c=relaxed/simple;
+	bh=OP5HnrUAFmyTF2AOpffIpYr8ZTfrDgVU6PcCcVPBxVM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DdatfNJv1OMAbBjET36JpGkDdJqYISOyz7Mgn3jckRcIPwxxieHEh7pBdK+Fpuv8aAtY21kLyLA0NWndRZLqvpLEtV2NcOSoxO+BeYzC2HMQo7UN2g6GNZc3D74DWV9VErRoxaCmQrSC8XxBN/hdGOVEf9wfj3t8xB2I6wH7rW4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com; spf=pass smtp.mailfrom=kalrayinc.com; dkim=pass (1024-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=hAqBz+ZH; dkim=fail (2048-bit key) header.d=kalrayinc.com header.i=@kalrayinc.com header.b=jGoAXE+E reason="signature verification failed"; arc=fail smtp.client-ip=85.31.212.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kalrayinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kalrayinc.com
+Received: from localhost (localhost [127.0.0.1])
+	by fx302.security-mail.net (Postfix) with ESMTP id 719762F82F7
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 17:38:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kalrayinc.com;
+	s=sec-sig-email; t=1722440330;
+	bh=OP5HnrUAFmyTF2AOpffIpYr8ZTfrDgVU6PcCcVPBxVM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=hAqBz+ZHXAFRGuYTbLieL3CUjmak8TLZD8cLMRzJ6SonH8IR7pQ7D+4p7jEvr5i4B
+	 e+kYUYkuXDW19TMUmFogx/CjZ5pBOA/baCRYsvg3sDaVGaNHN4avbBDUr34SLypdyj
+	 MG0cNSxEU4R4Ntp/H8eoZcar+ARF5tUHNAL98e40=
+Received: from fx302 (localhost [127.0.0.1]) by fx302.security-mail.net
+ (Postfix) with ESMTP id 41F3D2F85EF; Wed, 31 Jul 2024 17:38:50 +0200 (CEST)
+Received: from PAUP264CU001.outbound.protection.outlook.com
+ (mail-francecentralazlp17011027.outbound.protection.outlook.com
+ [40.93.76.27]) by fx302.security-mail.net (Postfix) with ESMTPS id
+ A09E52F80D3; Wed, 31 Jul 2024 17:38:49 +0200 (CEST)
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:14b::6)
+ by PASP264MB4979.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:43a::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
+ 2024 15:38:46 +0000
+Received: from PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39]) by PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::7a6f:1976:3bf3:aa39%4]) with mapi id 15.20.7828.016; Wed, 31 Jul
+ 2024 15:38:46 +0000
+X-Secumail-id: <14861.66aa5a89.9e70f.0>
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jMZHdc/OuQ7uWzGwwinImO6vdzbmJYpOv7gWzFYcMorgHjgy+s7epp09UuMaFONwpIag7AYlgTagN59BZSsKk27tWA+36TCzoFAWmweFtKu2bFvOYxM5TRU8Y07c4eE2XsrOezpXiLhWXWILph1JTb91LcHuhNpLNbUxW6XqJcWP0O1dBnxJNPEvPGZL8sopN8OJq1o2q/f5zzS7/AgSk8Gszs3bn5cHlYNtgBTMEWo3NdgN7rAkIahBcj4mdQk7fC8L7Zn2tuzi0hGPdBja38fv/Om+vIj8xb2TwxN0tvUsatR+cAhlNZ8NeTOVg2KEslDZ9wP4vI8cSvfQtxQatA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microsoft.com; s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qc61yfRQFgd/qK/OPzW6cTVV/ugRpXGiNFkykQVTjNo=;
+ b=WJUh32T9qcYLsf5EfxXqe70+ar2C7VEy037RFydKpjtYhkj/oFzCOq4arx15109GU7FTMmvhrVYjLKCIpskPT1zXLz10sKO2KjGeYtXxTO+VfD4rLrvVJ7aomTQyzuwv5iBjWe0HqtO4FKwWKFgYnz86h64em+YI6qEANTvUcUgnS0Pa2D4b1vN9L2xDCj1JroUXAsMT+yxuqtyehuoqgC8oD3TNHckrBqM+wK33RjiIRzj9U47aDbvY3y2RFkKsJFLxwe+oRm2HCUgaLDlNklCy0+ZK2Lp2n0HBVi3ylzOk0eiTDp/tyGIZVgii/t2rU2H89WQ042C0INFn6QuDkw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=kalrayinc.com; dmarc=pass action=none
+ header.from=kalrayinc.com; dkim=pass header.d=kalrayinc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kalrayinc.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qc61yfRQFgd/qK/OPzW6cTVV/ugRpXGiNFkykQVTjNo=;
+ b=jGoAXE+E7/xRU18QqxjCnDd/TPLR5rzmkim6TV3Vy2lbDUBC8HnoiI/c788diLoVATnky/a+2v2g16xqx66eaBC0/KVcy9w2Wt8HI3HhV1+0Bk5iUcUS4lACqhh/sz9xU+n1TxTSaLkFCTXA1g0x75Qj99nYbM80YMxqMBYkfQTPTLXMbnXQZgcMwTwEwFQvdi08BoBs4S9wA4QILtgnbVBmFdYAOHlxJbx7FrFmRqkzLFmWAC8t6R0w0OW1q5Z1aH+6B08k3uFANz3f7vi6yXmRFXUKcGST94qTzNyi8N8yZUiZ6rt07GB2cZH7KQ6X4qUcrC9J4TPHnoqtzzBQdw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=kalrayinc.com;
+Message-ID: <434c5199-613e-4765-af44-d7404a4554dc@kalrayinc.com>
+Date: Wed, 31 Jul 2024 17:38:45 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 36/37] kvx: dts: DeviceTree for qemu emulated
+ Coolidge SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>
+Cc: Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter
+ <jvetter@kalrayinc.com>, devicetree@vger.kernel.org
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-37-ysionneau@kalrayinc.com>
+ <d93f93fa-bbc8-4b89-9abc-767486bc443c@kernel.org>
+Content-Language: en-us, fr
+From: Yann Sionneau <ysionneau@kalrayinc.com>
+In-Reply-To: <d93f93fa-bbc8-4b89-9abc-767486bc443c@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PA7P264CA0084.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:349::8) To PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:14b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com> <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
- <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com> <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
- <e718056c1999497ebf8726af49475701@AcuMS.aculab.com> <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
- <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com> <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
- <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
- <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com> <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
- <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
- <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
- <73d65e2553e543069f9969ccec4ea9b3@AcuMS.aculab.com> <CAHk-=wgP+Fm=O2tYtS=3fDB7Vh+=rSYCC1mjqxcTQ=024G0qYw@mail.gmail.com>
- <CAHk-=whNTuPVeOSB6bG7YRXeYym9anS2QawRHEKRJe2MQuOPPA@mail.gmail.com> <0549691a6a3d4f7a9e77003b70fcf6fe@AcuMS.aculab.com>
-In-Reply-To: <0549691a6a3d4f7a9e77003b70fcf6fe@AcuMS.aculab.com>
-From: Linus Torvalds <torvalds@linuxfoundation.org>
-Date: Wed, 31 Jul 2024 08:38:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
-Message-ID: <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
-Subject: Re: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-To: David Laight <David.Laight@aculab.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
-	Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
-	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PR0P264MB3481:EE_|PASP264MB4979:EE_
+X-MS-Office365-Filtering-Correlation-Id: 609f42f2-37bf-4d52-829b-08dcb176ddea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info: vjrVJpPE2m7s0sEEi5h7NdWWb74F1nPiFRTYDYQrjmGi1/IXVO22X8Qet/GupKFmNRxDJYtsGxgy/6L0CYVB6jQ3Wsu784nVqNLIRG++lzL0Vu38t8+Q3jCI/yIa//U/kzD/diwvqLmu7FJyq64X7x8ALn0reHA4qhWgNUMaHDArLj1RfuA1rhbLSqfIttpo0JDyuPcN8QPS/CQTRA9HUWGb7UnRbKM2oLn5VbT2ZWXOa02KonUgwaHynJlxgKDy7GkjeXo+W2YY92jWzdU0Zc4Hu3mhQbmmsmg3j/CtuWaOjtMFxDd2WFkVp1DjLFhgJsvRBLyFTf0XYFaNMfBtWPe1of3dr9NCZBhZ4xD2P86Shf+2BEqq7Fc1MmYyybIS9z7OHXDxMPbeUwT3ULCQ/qnU6R/OE21+PcVRQU7ZvevuHgeZi3g1vOeC51rQ6HVslE1FwYRo14aFb617IaGaxE2o4gBD8848I2lvjWGQ1n4FP6eivDRj5KXIBkJe2Bo6Jz1OZI39eoFEL2adaGG9F9xV6DOwRGLqquLaf+q+nV78MHDcIDFOI8MAndgYdQPZMFYlcMgO8qpOUdjkp9JRnej+uVkIU1TofJUIFOEvNpOuAcpnIh5fjfIlFsYYnaOAEuyhjdTUbwODKBFtq6dXoA5B+rz28KWNypVwSqg2L+JsGaoIRNOOM2TJp4tKAUtml9R9/XVxE/u/xdYuPP424QBXWZYbhRq1u29om/VN5HtBfwt4VulwZBjr6h7Vr3VlyLCgB9fdCBDuTf8wt7Lfbi1w8hz/8JM31rCiivEb1iqH0eDF76mIVN988nRUr2dmo8fWPjrKftzPyi2w+YZ9LLO//Mwd1UdtxzuHuT6TZIz+yRD2H7RvZ2P5rKCG+3692I2wQf16eqTbKmMBRnh8AVQIKxDDUG56R6CAWhVW/OEOHB8Jovj21E83nKxaedcnH71
+ ElJE4qvVLDpwJsJLv2j1ZOyfZqveDj2bFxkdwOAQsmRlt5QqFdHUQn7N06ZYsW/EZ8BnHNbGPy0TuoUEbYuc3lQGWDY4ziVD977BK5cwE1trhAm/amnDHKcH05TBKFJRZz4b3aANNXwWy4E0lp/aB/iljS4UGxlpBcccbuaPRHPSsoXCfudRwai04FEY11czaIehsAOSJPftOfok8UK0xFBQRqn3U30A6IBib1oI82Vq8cG8I76VmWEZWGtEJFUKU0tcnr04+nG5zpcqd8Dgi2sJ4CDYhDsYXzS3MTk+5AZDOSewzDnoQaGkePkb/nx6m98UNu/6LnOItAIBICLPyh5JuvMEyvIM26UIBpxQ=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: jH5SNLPorN9ttRmUOreWLfAPsDB7HrvtfudLHhdMZ2cwlhl+y97zm7hkWQdynkinZswiMLGXXCvlGuKaIleqmwYds0eeWbsg0eO9U6IofXNUZbnUbRUpKYyo8f4gqAOHXaq1OouflJVFLC+iYEIDacFvDmiW7dNWhWqRcsB4yEmyn8tzzeYMs/q0bTa/euyNF2twel/gRTTBY4uvDOkkgF9qgWFUkgpA3LuCmTqbWtRW3z7cHnQdjx8dzXu6OBlh/7ysFIj94wW7T/8IbWJfRDryhCm96OxYqDkXjSHwC+dD43PDpAdDdivQmnwWbQLAG6PlBojeMRclFmWw6/uDAsb94ZEN+jEifFG+0KLzXT9EknBX4+pbzUe/Z5JwXmQYDHFcMzctD4FtNsb2k5iaPZXBVmRJSEJwYRDFOm0X00/T3NwikfU7cMCCcMe8i8ssX4RfyYbF462G72ndr5I5kd3a05OI3ihnRkkwJYv1UNaR3wuBpOkAjqcP02bZZJyNFegPdBa1UotwOMVM/14Jaa6sb6kNmzj4yP3t68oTsICNPQ53+WBsdtjqw/wLTgj9cmAvf5fm81b0Mc+TE6HC80rFW/h/NM/KjqjMb851DvD9+8gn7bgwe8T2X+7rIBjEo6Y2qb/dGtNnqssqKmkuBOSchvfDy4WXDQ3mWbTrcbpilPBr3Eh58ajXuGk69zijLBQ16jzw8g108Cblrwp82PLkT80/JEpwriQhIgBCjB2qXjKgEP6P9Dt0HjclhypefWs7CBhEwR8nvA5I7LIP9aLfSTwZtbU69fyYhuUfDtObT/dNNGrZ3d7/o6s/qY1MpTW5GRo+ElyIhiHLkVoFuv1gbWRidug7t/tBUcshU+LJtkVsJxaneVkjhMlkD0GYZ/pGsW7RmdvC8v+sgR50QroSCY/FnhnVqGeLpWwugzjAE/pOZdopq2yIuhDAXEwj
+ cW32LEdBsP4E40372hfTxBgbnXQQU+xoVwTHnZQKMOMvTFhfnETLWuRein/gzYDmfUVvcQxW8cghp7flgeIB1Yt8G4Ft/9bPLWe+Nutrqz8u595/mySDyNj09Zj0ExqX5b7NdtSTqcDVZcyT82q7iDOszRyg4YvZ7P1nPiOTItqaC5kCeShfoLLUxnThRZiBgBCQX7vPBxfZcBF9ia1QslicZObox0C+j3zwJXVYw5Mm+2Iw8+7HGc9xRijf2VWmGFBg6W3cCgjZXPFYJAh+PeC6z/7msgcK9QAfbL1lvxYDa5GNMEiibPzpFpv+chNnLC2hN34G+cx9IXbM+ErQVquBTivbLyFzwwI6ArxC6TAjaQ+KwaF+lBEsfy4MgXCTKVjCBT5sP4JVV54mmQ7CSIl6gYnU49Fcfxalj6+nB6bUH6wRBRocOGVjltGJ4lMT935YFdy1OFiHEGdZZHly4hbUVk0PMAamUIdjiCl60rUAvjqfJU12iao3qOxaXaVq0QU6XoMU+v8WB223DKHCk03ndd/sbZOx4iJPgXyVH/0G+CP5KvvRjr0vBVdWbh/3PHmNHerHzwWMun94JLNIBxhwGjM6rBxp7KHPZ8Gb8tdpOgUm/hp90hcF4EmEZWmMLI4LHgmx6/a6FzH/tO4YHpkNeOkj//jnSBMfmCBYI2vVrCnGCdQ0oY6P9SrSWowrPgb1Yorz+gDWSsZkhVMX4g==
+X-OriginatorOrg: kalrayinc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 609f42f2-37bf-4d52-829b-08dcb176ddea
+X-MS-Exchange-CrossTenant-AuthSource: PR0P264MB3481.FRAP264.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:38:46.7965
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8931925d-7620-4a64-b7fe-20afd86363d3
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JRzUqiRfgLD2j0lDJn+R+O2n5l8q5XWwWYhaPaOX+2dl9fUR5u1+EIi/uBJDioDf7EKeVKNGR+JO1nT2r7ZZDg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PASP264MB4979
+X-ALTERMIMEV2_out: done
 
-On Wed, 31 Jul 2024 at 01:10, David Laight <David.Laight@aculab.com> wrote:
+Hello Krzysztof,
+
+On 22/07/2024 11:55, Krzysztof Kozlowski wrote:
+> On 22/07/2024 11:41, ysionneau@kalrayinc.com wrote:
+>> From: Yann Sionneau <ysionneau@kalrayinc.com>
+>>
+>> Add device tree for QEMU that emulates a Coolidge V1 SoC.
+>>
+>> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
+>> ---
+>>
+>> Notes:
+>>
+>> V2 -> V3: New patch
+>> ---
+>>  arch/kvx/boot/dts/Makefile          |   1 +
+>>  arch/kvx/boot/dts/coolidge-qemu.dts | 444 ++++++++++++++++++++++++++++
+>>  2 files changed, 445 insertions(+)
+>>  create mode 100644 arch/kvx/boot/dts/Makefile
+>>  create mode 100644 arch/kvx/boot/dts/coolidge-qemu.dts
+>>
+>> diff --git a/arch/kvx/boot/dts/Makefile b/arch/kvx/boot/dts/Makefile
+>> new file mode 100644
+>> index 0000000000000..cd27ceb7a6cce
+>> --- /dev/null
+>> +++ b/arch/kvx/boot/dts/Makefile
+>> @@ -0,0 +1 @@
+>> +dtb-y += coolidge-qemu.dtb
+>> diff --git a/arch/kvx/boot/dts/coolidge-qemu.dts b/arch/kvx/boot/dts/coolidge-qemu.dts
+>> new file mode 100644
+>> index 0000000000000..1d5af0d2e687d
+>> --- /dev/null
+>> +++ b/arch/kvx/boot/dts/coolidge-qemu.dts
+>> @@ -0,0 +1,444 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +/dts-v1/;
+>> +/*
+>> + * Copyright (C) 2024, Kalray Inc.
+>> + */
+>> +
+>> +/ {
+>> +	model = "Kalray Coolidge processor (QEMU)";
+>> +	compatible = "kalray,coolidge-qemu";
+>> +	#address-cells = <0x02>;
+> That's not a hex, so just <2>
+Ack, I will fix this.
 >
-> The __UNIQUE_ID_() define just seemed excessive - especially
-> since all compiler versions support __COUNTER__.
+>> +	#size-cells = <0x02>;
+>> +
+>> +	chosen {
+>> +		stdout-path = "/axi/serial@20210000";
+> No, use phandle/label.
+Ack, I will fix this. However can you point me to where this is documented? In https://www.kernel.org/doc/Documentation/devicetree/bindings/chosen.txt I can see a path is used as example and not a phandle/label.
+>
+>> +	};
+>> +
+>> +	memory@100000000 {
+>> +		phandle = <0x40>;
+>> +		reg = <0x01 0x00 0x00 0x8000000>;
+>> +		device_type = "memory";
+>> +	};
+>> +
+>> +	axi {
+>> +		compatible = "simple-bus";
+>> +		#address-cells = <0x02>;
+> Same problem.
+Ack.
+>
+>
+>> +		#size-cells = <0x02>;
+>> +		ranges;
+>> +
+>> +		virtio-mmio@30003c00 {
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
 
-Yes, we could probably just simplify it.
+I fail to understand what I should put even after reading the link above. This node is kind of "generic" and could be used either for a virtio-block device or a virtio-net device.
 
-The thing is, "all compiler versions support __COUNTER__" wasn't
-historically true.
+Could you elaborate on this please?
 
-We used to have this:
+>
+>
+>> +			compatible = "virtio,mmio";
+>> +			reg = <0x00 0x30003c00 0x00 0x200>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			interrupts = <0x9e 0x04>;
+>> +		};
+>> +
+>> +		virtio-mmio@30003e00 {
+>> +			compatible = "virtio,mmio";
+>> +			reg = <0x00 0x30003e00 0x00 0x200>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			interrupts = <0x9f 0x04>;
+>> +		};
+>> +
+>> +		itgen0: itgen_soc_periph0@27000000 {
+> Please follow DTS coding style.
+Oops, ack, I will fix this and replace "_" with "-" in node/property names.
+>
+>> +			compatible = "kalray,coolidge-itgen";
+>> +			reg = <0x00 0x27000000 0x00 0x1104>;
+>> +			msi-parent = <&apic_mailbox>;
+>> +			#interrupt-cells = <0x02>;
+>> +			interrupt-controller;
+>> +		};
+>> +
+>> +		serial@20210000 {
+>> +			reg-shift = <0x02>;
+>> +			reg-io-width = <0x04>;
+> Sorry, but width and shift are rarely hex values. Make your code
+> readable. Adhere to existing coding style.
+Ack, I will fix this.
+>
+>
+>> +			clocks = <&ref_clk>;
+>> +			interrupts = <0x29 0x04>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			reg = <0x00 0x20210000 0x00 0x100>;
+>> +			compatible = "snps,dw-apb-uart";
+> Follow DTS coding style - order the properties correctly.
+Oops, ack, I will fix this.
+>
+>
+>> +		};
+>> +
+>> +		serial@20211000 {
+>> +			reg-shift = <0x02>;
+>> +			reg-io-width = <0x04>;
+>> +			phandle = <0x3c>;
+>> +			clocks = <&ref_clk>;
+>> +			interrupts = <0x2a 0x04>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			reg = <0x00 0x20211000 0x00 0x100>;
+>> +			compatible = "snps,dw-apb-uart";
+>> +		};
+>> +
+>> +		serial@20212000 {
+>> +			reg-shift = <0x02>;
+>> +			reg-io-width = <0x04>;
+>> +			phandle = <0x3b>;
+>> +			clocks = <&ref_clk>;
+>> +			interrupts = <0x2b 0x04>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			reg = <0x00 0x20212000 0x00 0x100>;
+>> +			compatible = "snps,dw-apb-uart";
+>> +		};
+>> +
+>> +		serial@20213000 {
+>> +			reg-shift = <0x02>;
+>> +			reg-io-width = <0x04>;
+>> +			phandle = <0x3a>;
+>> +			clocks = <&ref_clk>;
+>> +			interrupts = <0x2c 0x04>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			reg = <0x00 0x20213000 0x00 0x100>;
+>> +			compatible = "snps,dw-apb-uart";
+>> +		};
+>> +
+>> +		serial@20214000 {
+>> +			reg-shift = <0x02>;
+>> +			reg-io-width = <0x04>;
+>> +			phandle = <0x39>;
+>> +			clocks = <&ref_clk>;
+>> +			interrupts = <0x2d 0x04>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			reg = <0x00 0x20214000 0x00 0x100>;
+>> +			compatible = "snps,dw-apb-uart";
+>> +		};
+>> +
+>> +		serial@20215000 {
+>> +			reg-shift = <0x02>;
+>> +			reg-io-width = <0x04>;
+>> +			phandle = <0x38>;
+>> +			clocks = <&ref_clk>;
+>> +			interrupts = <0x2e 0x04>;
+>> +			interrupt-parent = <&itgen0>;
+>> +			reg = <0x00 0x20215000 0x00 0x100>;
+>> +			compatible = "snps,dw-apb-uart";
+>> +		};
+>> +	};
+>> +
+>> +	memory@0 {
+> Why memory is in multiple places?
+I should put all memory nodes one after another? Ok I will do this.
+>
+>> +		device_type = "memory";
+>> +		reg = <0x00 0x00 0x00 0x400000>;
+>> +	};
+>> +
+>> +	apic_mailbox: apic_mailbox@a00000 {
+> Why this is outside of SoC? Where is the SoC anyway?
 
-  /* Not-quite-unique ID. */
-  #ifndef __UNIQUE_ID
-  # define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __LINE__)
-  #endif
+Oops, I didn't know it was mandatory to put a soc { } in the DT, I've browsed the DT spec and the "soc" node is not formally described as something special. Maybe this needs to be documented somewhere?
 
-because __COUNTER__ is such a new-fangled thing and only got
-introduced in gcc-4 or something like that.
+I reckon it's a nice way to separate what's on the board (PCB) and what's in the SoC.
 
-So that "prefix" literally exists because it literally wasn't unique
-enough without it.
+I'll add a `soc { [...] };` in the next patch iteration that will contain what's in the SoC.
 
-And the "__UNIQUE_ID_" thing is probably because that way it was
-clearer what was going on when something went wrong.
+>
+>> +		compatible = "kalray,coolidge-apic-mailbox";
+> Your compatibles are confusing. What is the soc name? In other binding
+> you entirely omitted coolidge. See writing bindings (or any other recent
+> DTS which passed review) - it has rationale behind it.
 
-But together they really end up being a somewhat unreadable mess.
+SoC name is "Coolidge" and the "APIC Mailbox" hw is in the SoC, it is memory mapped.
 
-That said, I did end up liking the "prefix" part when looking at
-expansions, because it helps show "which" expansion it is (ie "x_123"
-and "y_124" were clearer than just some pure counter value that
-doesn't have any relationship to the origin at all in the name).
+But I guess this point is now already more clear since my last emails answering the "core intc" reviews.
 
-But I did change it to "x_" from "__x", because that way it was
-minimal, yet clearly separate from the counter number (ie "x_123" was
-better than "__x123").
+>
+>> +		reg = <0x00 0xa00000 0x00 0xea00>;
+>> +		#interrupt-cells = <0x00>;
+>> +		#address-cells = <0>;
+> And this is not <0x0>? It's like random coding style.
+Oops, I will clean this up for next iteration.
+>
+> I stopped reviewing here. Rest of the DTS does not look better.
 
-It was the repeated useless "__UNIQUE_ID_" part of the expansion that
-ended up annoying. Not quite annoying enough to change it to just
-"___" or something, but I was close.
+I'm sorry if it looks like a mess here, I am new to submitting DT upstream and it looks like I failed to apply all the rules.
 
-           Linus
+I thank you for taking the time to review it nonetheless and I hope my next patch iterations will be better and easier to review.
+
+Regards,
+
+-- 
+
+Yann
+
+
+
+
+
 
