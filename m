@@ -1,209 +1,171 @@
-Return-Path: <linux-kernel+bounces-269808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03F0894370C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:20:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8C794370F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF98CB250D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA3F1C21A8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9871607A4;
-	Wed, 31 Jul 2024 20:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E094816087B;
+	Wed, 31 Jul 2024 20:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VBWRqU2P"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWAtc2tf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 284811C69A
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26605182D8;
+	Wed, 31 Jul 2024 20:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722457221; cv=none; b=b0Yw8/ePvgtKGQB1egYSQQcYRgY63JI8hiSbxd77RCPCckLwYs8CUBKOkz+CDdEF9DpCrTxqQAenkQHGEGDuHPUobBxHFeAqd9Tpc+nFHge+K+qaO0rFqi036gPPGXUbH2KbAXkIWAOXw2GoY8yirvkMjCdK1iVsrVby0Dskl2Q=
+	t=1722457421; cv=none; b=D80mPbRHWAiUkPGO0ymKp22epQvuLiwR8tk083PI9mNK8rRzO31YRRWpAU5aujJiZi0gN4UYUpYB2uyhaPKQ25zzQEw0j2N1oeRY38G5xgLpy6Y2Ps9WKb4+wyM1FTb1L3GEYC11KP7vbMtWjQ/sAUXJblebsyN3vL6gd+5kzL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722457221; c=relaxed/simple;
-	bh=2aiuv61kpXlZ+Kq1VOGf1QXgctN6J+8y82lmazM+Ab0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d7+w2W5UsPvJyq2QfREZ3YnDtb9HEeb/fmWqzEmiAoqdLKac/XyWg17YxrD59hcHvbk171b5++Is2rpwmv3j16Qhtx7aAapBygRhItMOutgFaEuOK2Mglot8UJbYlaxXOv3x1agN+LveZ5yzsfxJg/BxQaY+4pw6qRUVgjzmSTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VBWRqU2P; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc4aff530dso302085ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:20:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722457219; x=1723062019; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=malZ2EoQLdWxUs/KXch6e9xeSrSPCikfYMF4yS/eV70=;
-        b=VBWRqU2PGrlmWtDfwnzb5/UdxO2imN6r2hs/+eg6U9dWP6hfHj4N+bVTc5BLy4heyX
-         RmxA01kJMncqaOpc+EbcjiWD0PUiHX27qQ/OUGEftLxojAHO/cPcrpzwdE+l3bTUUDwH
-         c4SyzKGCQsi4f0VdWE/g2Q/aKWeu0MpjR8xcHWi486jiLGK3WbOGEuFtqocuDHMCne5E
-         CgPuNvHCJvWo+TJcnLbB2p+lZohjhaaPd0JXibDaW7CAFIAeT1dV8e3YGijK6EfNEM0N
-         GgLobQzflZOs4ip5PlaNkhM6b57tvBSiXZPIT7+B7Syc3QG4Xk2X3635EMPc/qBdaJUf
-         IiQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722457219; x=1723062019;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=malZ2EoQLdWxUs/KXch6e9xeSrSPCikfYMF4yS/eV70=;
-        b=a9vXVO3mp4Rmp8qjAOFCxKUuDLXzQD79Ga8SN97+m0MxSnalUiONihjakdq0L5st0g
-         As4GrGFTl9otQUabykw/D2bvWKuShBqWGOrtjVVqqPCh4KHuJ9J80fzp5bkuTL0YIbx8
-         uTCdOcspxINlthSfjOEHraepd1cvDzMr7X1HGrQoiw+1vQbFa9QlKgADKHHyJqjCkCvL
-         qBt3njVU4oJIIjxTFXgHUMyh6lnmYWszwRvz3NPBR/okHi0ewmVP8CP/8sJBAS4GrBZ0
-         n0+8Wku3s0+xQfud7s8WiAphl7nfbzm+SV4yrh2YtdYsm155kzfxs5XR7RsokTKAOlQF
-         EhPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjpaNRVR90Vr9wgsyhlEto+b+EsyHkflABb9LObUnR8pqrlIq3OfA3fWIuYnUpHdj8q2bNtENBN2z9zhZ9aEKiKNhQ9dabup85UpBT
-X-Gm-Message-State: AOJu0YwtMV1anHr/ChjPOyaDaf/WLUyAeFYrG3BWz1a5Bk1zR+DDsIK+
-	1rDZq78dPSEVbHN3jqydpIJI9yRZb2gLFY0LW2nyXauBdULuHvuW0dbLPFob4+WVVnAwvISAiQK
-	m7eipWYQtlopb715x47p0QcrwweeS0lQM+kKW
-X-Google-Smtp-Source: AGHT+IE0rH9FW364UxJBG0bFVTmvAYSBlq9OGq19o5QlQqjKh+sQqachxIPgLtLDfS4O+MEniegoo4G4/jHMYbR1lfA=
-X-Received: by 2002:a17:902:e493:b0:1fe:d7da:cd22 with SMTP id
- d9443c01a7336-1ff426a0685mr4001915ad.29.1722457219021; Wed, 31 Jul 2024
- 13:20:19 -0700 (PDT)
+	s=arc-20240116; t=1722457421; c=relaxed/simple;
+	bh=AY5BnWdQ2yo2WR6h0ILx9cGNB0P+qWgeQPBR2YUHwvo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=ty+OpNk/mzU3FtRXcgyc7DdDy0oCrAIBIeW6/IipfmMT/Jd71LvyiHHOe20EOVPymQucYjfgq1B9FD9sisz1hWuoEYgxUzibAdsVwFV1XZ8Y2nHQLaX9vLTnr9KqoT0++VQAsVkCF3iAGqXr+J9cRFywx+evWXUmvtl+Hx01A0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWAtc2tf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59D6FC116B1;
+	Wed, 31 Jul 2024 20:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722457420;
+	bh=AY5BnWdQ2yo2WR6h0ILx9cGNB0P+qWgeQPBR2YUHwvo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=mWAtc2tfrspROl+zbHWZYl09LpX6URPVKntcxAbob7gPhpjZIerjxdwBfttMrXKu9
+	 MBZK5Bi1Ynl8UcdoMe0xNoUapMEzotKDii6M9r8ej82LINNVKENFATnIZhht6VR0fm
+	 8hgx6QLrj+NgFwRpixgXx2jSgNSQfZmPpOddURJSB7gWRluvJxG9sOWlHZrhs9QbAB
+	 iggB8gYwbL3hAiEBZ4a6N1gYgpfLdialV8foX5KcuaPXrKwWvgSprGiWBxkJSw1kMy
+	 qnfaSxzMSKIUnb+74rwPSWLnQIPwNdBomwYuCGBf1U4I6QmSRwy32a1xS35LUc+hYG
+	 a4l6/nmRF8Teg==
+Date: Wed, 31 Jul 2024 15:23:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: matthew.gerlach@linux.intel.com
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	dinguyen@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"D M, Sharath Kumar" <sharath.kumar.d.m@intel.com>,
+	D@bhelgaas.smtp.subspace.kernel.org,
+	M@bhelgaas.smtp.subspace.kernel.org
+Subject: Re: [PATCH 7/7] pci: controller: pcie-altera: Add support for Agilex
+Message-ID: <20240731202338.GA78770@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730191744.3097329-1-irogers@google.com> <20240730191744.3097329-3-irogers@google.com>
- <Zqo5vVdrkhL5NHJK@x1> <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
- <ZqpZWywTe2j3U9Pl@x1> <ZqpcRIzzBb5KC6Zb@x1> <CAP-5=fVm5FkLDOLk4cbD9K6VPZ088f3Yk3bG8LT79E_OLLN4Lw@mail.gmail.com>
- <ZqqIEckIXQEAd9xr@x1>
-In-Reply-To: <ZqqIEckIXQEAd9xr@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 31 Jul 2024 13:20:06 -0700
-Message-ID: <CAP-5=fV8S0z=Fn+aoq4SxatBeeJ5MEUL02km_6+enqWaaW2qQA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
-	Sandipan Das <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, philip.li@intel.com, oliver.sang@intel.com, 
-	Weilin Wang <weilin.wang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731143946.3478057-8-matthew.gerlach@linux.intel.com>
 
-On Wed, Jul 31, 2024 at 11:53=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Wed, Jul 31, 2024 at 08:58:43AM -0700, Ian Rogers wrote:
-> > On Wed, Jul 31, 2024 at 8:46=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Melo wr=
-ote:
-> > > > On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
-> > > > > On Wed, Jul 31, 2024 at 6:18=E2=80=AFAM Arnaldo Carvalho de Melo
-> > > > > <acme@kernel.org> wrote:
-> > > > > >
-> > > > > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
-> > > > > > > empty-pmu-events.c exists so that builds may occur without py=
-thon
-> > > > > > > being installed on a system. Manually updating empty-pmu-even=
-ts.c to
-> > > > > > > be in sync with jevents.py is a pain, let's use jevents.py to=
- generate
-> > > > > > > empty-pmu-events.c.
-> > > > > >
-> > > > > > What am I missing here?
-> > > > > >
-> > > > > > If it exists so that we can build on a system without python ho=
-w can we
-> > > > > > use python to generate it?
-> > > > > >
-> > > > > > Now having python in the system is a requirement and thus we do=
-n't need
-> > > > > > empty-pmu-events.c anymore?
-> > > > > >
-> > > > > > Can you guys please clarify that?
-> > > > >
-> > > > > The requirement for python hasn't changed.
-> > > > >
-> > > > > Case 1: no python or NO_JEVENTS=3D1
-> > > > > Build happens using empty-pmu-events.c that is checked in, no pyt=
-hon
-> > > > > is required.
-> > > > >
-> > > > > Case 2: python
-> > > > > pmu-events.c is created by jevents.py (requiring python) and then=
- built.
-> > > > > This change adds a step where the empty-pmu-events.c is created u=
-sing
-> > > > > jevents.py and that file is diffed against the checked in version=
-.
-> > > > > This stops the checked in empty-pmu-events.c diverging if changes=
- are
-> > > > > made to jevents.py. If the diff causes the build to fail then you=
- just
-> > > > > copy the diff empty-pmu-events.c over the checked in one.
-> > > >
-> > > > I'll try and add your explanation to the log message, thanks for
-> > > > clarifying it!
-> > >
-> > > So, with it in place I'm now noticing:
-> > >
-> > > =E2=AC=A2[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename=
- $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
-> > > =E2=AC=A2[acme@toolbox perf-tools-next]$ alias m=3D'rm -rf ~/libexec/=
-perf-core/ ; make -k CORESIGHT=3D1 O=3D/tmp/build/$(basename $PWD)/ -C tool=
-s/perf install-bin && perf test python'
-> > > =E2=AC=A2[acme@toolbox perf-tools-next]$ m
-> > > <SNIP>
-> > >   GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events=
-.c
-> > >   MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
-> > >   CC      /tmp/build/perf-tools-next/util/annotate.o
-> > >   CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
-> > >   CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
-> > >   CC      /tmp/build/perf-tools-next/util/block-info.o
-> > >   CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test.o
-> > >   CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
-> > >   MKDIR   /tmp/build/perf-tools-next/ui/browsers/
-> > >   CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
-> > >   CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
-> > >   CC      /tmp/build/perf-tools-next/util/block-range.o
-> > >   TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log
-> > > --- pmu-events/empty-pmu-events.c       2024-07-31 12:44:14.355042296=
- -0300
-> > > +++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c    =
-   2024-07-31 12:45:35.048682785 -0300
-> > > @@ -380,7 +380,7 @@
-> > >                          continue;
-> > >
-> > >                  ret =3D pmu_events_table__for_each_event_pmu(table, =
-table_pmu, fn, data);
-> > > -                if (pmu || ret)
-> > > +                if (ret)
-> >
-> > Right, you need to copy:
-> >  /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
-> > to
-> > tools/perf/pmu-events/empty-pmu-events.c
-> > to fix this.
-> >
-> > This change has happened as you are testing with:
-> > https://lore.kernel.org/lkml/20240716132951.1748662-1-kan.liang@linux.i=
-ntel.com/
-> > which isn't in the git repo yet (therefore, I can't make a patch set
-> > on it). The change is WAI as it is telling you empty-pmu-events.c has
-> > become stale and needs Kan's fix applying to it.
->
-> ok, I'll remove Kan's patch, publish perf-tools-next and wait for the
-> now normal flow of patches.
+In subject:
 
-I can resend Kan's patch with the empty-pmu-events.c fix applied. I
-don't see the changes in tmp.perf-tools-next so I can do it with
-cherry picks.
+  PCI: altera: Add Agilex support
 
-Thanks,
-Ian
+to match style of history.
+
+>  #define TLP_CFG_DW1(pcie, tag, be)	\
+> -	(((TLP_REQ_ID(pcie->root_bus_nr,  RP_DEVFN)) << 16) | (tag << 8) | (be))
+> +	(((TLP_REQ_ID((pcie)->root_bus_nr,  RP_DEVFN)) << 16) | ((tag) << 8) | (be))
+
+Seems OK, but unrelated to adding Agilex support, so it should be a
+separate patch.
+
+> +#define AGLX_RP_CFG_ADDR(pcie, reg)	\
+> +	(((pcie)->hip_base) + (reg))
+
+Fits on one line.
+
+> +#define AGLX_BDF_REG 0x00002004
+> +#define AGLX_ROOT_PORT_IRQ_STATUS 0x14c
+> +#define AGLX_ROOT_PORT_IRQ_ENABLE 0x150
+> +#define CFG_AER                   BIT(4)
+
+Indent values to match #defines above.
+
+>  static bool altera_pcie_hide_rc_bar(struct pci_bus *bus, unsigned int  devfn,
+>  				    int offset)
+>  {
+> -	if (pci_is_root_bus(bus) && (devfn == 0) &&
+> -	    (offset == PCI_BASE_ADDRESS_0))
+> +	if (pci_is_root_bus(bus) && devfn == 0 && offset == PCI_BASE_ADDRESS_0)
+>  		return true;
+
+OK, but again unrelated to Agilex.
+
+> @@ -373,7 +422,7 @@ static int tlp_cfg_dword_write(struct altera_pcie *pcie, u8 bus, u32 devfn,
+>  	 * Monitor changes to PCI_PRIMARY_BUS register on root port
+>  	 * and update local copy of root bus number accordingly.
+>  	 */
+> -	if ((bus == pcie->root_bus_nr) && (where == PCI_PRIMARY_BUS))
+> +	if (bus == pcie->root_bus_nr && where == PCI_PRIMARY_BUS)
+
+Ditto.
+
+> @@ -577,7 +731,7 @@ static void altera_wait_link_retrain(struct altera_pcie *pcie)
+>  			dev_err(dev, "link retrain timeout\n");
+>  			break;
+>  		}
+> -		udelay(100);
+> +		usleep_range(50, 150);
+
+Where do these values come from?  Needs a comment, ideally with a spec
+citation.
+
+How do we know a 50us delay is enough when we previously waited at
+least 100us?
+
+> @@ -590,7 +744,7 @@ static void altera_wait_link_retrain(struct altera_pcie *pcie)
+>  			dev_err(dev, "link up timeout\n");
+>  			break;
+>  		}
+> -		udelay(100);
+> +		usleep_range(50, 150);
+
+Ditto.
+
+> +static void aglx_isr(struct irq_desc *desc)
+> +{
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	struct altera_pcie *pcie;
+> +	struct device *dev;
+> +	u32 status;
+> +	int ret;
+> +
+> +	chained_irq_enter(chip, desc);
+> +	pcie = irq_desc_get_handler_data(desc);
+> +	dev = &pcie->pdev->dev;
+>  
+> +	status = readl(pcie->hip_base + pcie->pcie_data->port_conf_offset +
+> +		       pcie->pcie_data->port_irq_status_offset);
+> +	if (status & CFG_AER) {
+> +		ret = generic_handle_domain_irq(pcie->irq_domain, 0);
+> +		if (ret)
+> +			dev_err_ratelimited(dev, "unexpected IRQ,\n");
+
+Was there supposed to be more data here, e.g., an IRQ %d or something?
+Or is it just a spurious "," at the end of the line?
+
+>  	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
+> -					&intx_domain_ops, pcie);
+> +						 &intx_domain_ops, pcie);
+
+Cleanup that should be in a separate patch.  *This* patch should have
+the absolute minimum required to enable Agilex to make it easier to
+review/backport/revert/etc.
+
+> +static const struct altera_pcie_data altera_pcie_3_0_f_tile_data = {
+> +	.ops = &altera_pcie_ops_3_0,
+> +	.version = ALTERA_PCIE_V3,
+> +	.cap_offset = 0x70,
+
+It looks like this is where the PCIe Capability is?  There's no way to
+discover this offset, e.g., by following the capability list like
+pci_find_capability() does?
+
+Bjorn
 
