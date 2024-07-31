@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-268698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68455942802
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 08225942805
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF1A1F220AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:32:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6BAE1F21DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCFD1A76D6;
-	Wed, 31 Jul 2024 07:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5811A76A3;
+	Wed, 31 Jul 2024 07:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iGLYvky0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3aGfT5d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A2D1A76B3;
-	Wed, 31 Jul 2024 07:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B5F17580;
+	Wed, 31 Jul 2024 07:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411143; cv=none; b=r1cnQ2PHTMw8gNqRFeUeCax943lTNQHHOvm4mvVmOU3ow97BwbJxc7b3wKrtILEwefU8EB3A3/tUVYFgPDVFs0zlYeIVUPTVhr0vj+iz53mQXqo8bTEoYFYJ7HZqauDKYOcZEMkg6wrPp9OPTqRcZO/V4ekDGgRTVsg/l4d7HUs=
+	t=1722411170; cv=none; b=uOJf7ubIsoTOeXNwk82WUbLybyopslScF3LpQk1tq5uFtM1Y813iHNIFuB3DaiN5HC1DVCkMH5oAFuPCmWXH+G19/q83kEULrBbuhZCulz2N3mpSCQ7Bg9xX4ibymvYBG1H+2L2kfvltYE/7xmMLZWZPBOcb4C2VNqSp6Jni16U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411143; c=relaxed/simple;
-	bh=tvSnHv96MZMRu/wkU3sIo+nGT+lO1kqmKwYNjS4FVhk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z0nCHXSWpUbB+NpdUME//F9JfvAJ2cSbX//qoanB9ZkJXqjl5vMvZnXmavwqt4xuLT8hbnF4Doal/7+G1SsVAMXMAm6qKNeHuhyJFl95DL2FjJhVjn92IX+Ra8TUo9bqbzD/FnbdOrC+jm1JbfwWj8YLui9twsRmhVeSuh6/fho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iGLYvky0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B92FDC116B1;
-	Wed, 31 Jul 2024 07:32:15 +0000 (UTC)
+	s=arc-20240116; t=1722411170; c=relaxed/simple;
+	bh=tEAJ+RxFDnmJrb00ivNy8MJ5AJq4LCNF9FtEx90iKis=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b493DoC1x+CMtKrjUYHZUn3lvlh+xbWLhW54SXJ2CO6kXmQWzFoPzIySXfEF0rqb0hGXNZLoNbeKl9MunTAwtvghsX/kE70PuhGmE04jLT4WRYImRp5cUWEu7bGn8iuITBkFPo5dxKjd0VBUiF9Hbza69z6pnnH5wi163NXSKI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R3aGfT5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4176AC4AF0C;
+	Wed, 31 Jul 2024 07:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722411143;
-	bh=tvSnHv96MZMRu/wkU3sIo+nGT+lO1kqmKwYNjS4FVhk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iGLYvky0V7j5Zcnu+jqpXeXqAZBouE2aOzAMBMsCy9hBfkxw5rSMRdd1hLTUF3c4v
-	 TuOtQEFGEjiWvVd7g+NeMptxrzUCOPKJdhoEO56jrYLv8S6f92AA8+VIhdLjsatqCS
-	 FVrlwaVilqU3QTvKCnGySMuwmRZu11es3UBXP6Vk4eCujyu5teGg99XLVbSyvdQKbU
-	 sp7aMtTP/MmF5DOBHHZ6K2IMx2/u5wL5Fv7etZinrlnCDcryL+STj7eg1bMXFAHSTZ
-	 FpJKNZqaEQsdpHN6s975i6heewhaACIw3DVuGOsYjs2BnDAFlaXoCMOHtYzn9ya9ue
-	 Ww7n/gNG+aCDw==
-Message-ID: <8da6c3bf-05a5-41a9-8f3d-0b8c6495bef1@kernel.org>
-Date: Wed, 31 Jul 2024 09:32:13 +0200
+	s=k20201202; t=1722411169;
+	bh=tEAJ+RxFDnmJrb00ivNy8MJ5AJq4LCNF9FtEx90iKis=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=R3aGfT5d3jx0PQs5XzsVJ75+grDPjIZOBvMixjTFJ7refBpfOfUp3z+Zq7zsooxFE
+	 inoKCmfJmRW6/Axc9V2PFUTx3wU7Why5Jer5Zg1Q5GzOdcYMlJWPVJ9NihzgyCoZtH
+	 RwfSZ4aOGFfvkre0TOc8NCu7hoplI9a++YxEv2Fbas4wlAldIHZ1U/BygSi5wUZCzL
+	 R2QGrqQ8tjXh+0PwgXsmh1us2rIKdjjE0unEyOkjAEDrnn4uJKIVF5SFRuXF3I7CSJ
+	 FqkLWJxfG7jk11Yn+fJWnulZHCh90jITOucDx2xHQ7yJOSpBlZ07ZRHrNDRvtY5+wu
+	 WAZgk03yKoH4w==
+Message-ID: <54a4f7a5-6c56-48da-bc28-d01f39d9ec5b@kernel.org>
+Date: Wed, 31 Jul 2024 09:32:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] dt-bindings: media: imx335: Add reset-gpios to the
- DT example
-To: Umang Jain <umang.jain@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, "Paul J. Murphy"
- <paul.j.murphy@intel.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Martina Krasteva <martinax.krasteva@intel.com>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20240731-imx335-gpio-v3-0-443bfa6ce864@ideasonboard.com>
- <20240731-imx335-gpio-v3-1-443bfa6ce864@ideasonboard.com>
+Subject: Re: [PATCH 1/1] dt-bindings: usb: microchip,usb2514: Add USB2517
+ compatible
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240731071950.989113-1-alexander.stein@ew.tq-group.com>
+ <6728a670-84aa-4b1c-8aa5-1cde84b97adf@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -115,30 +104,20 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240731-imx335-gpio-v3-1-443bfa6ce864@ideasonboard.com>
+In-Reply-To: <6728a670-84aa-4b1c-8aa5-1cde84b97adf@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/07/2024 09:02, Umang Jain wrote:
-> It's easy to get the polarity of GPIOs in the device tree wrong, as
-> shown by a recently fixed bug in the imx335 driver. To lower the chance
-> of future mistakes, especially in new bindings that would take the
-> imx335 binding as a starting point, add the reset-gpios property to the
-> DT example. This showcases the correct polarity of the XCLR signal for
-> Sony sensors in the most common case of the signal not being inverted on
-> the board.
+On 31/07/2024 09:27, Krzysztof Kozlowski wrote:
+> On 31/07/2024 09:19, Alexander Stein wrote:
+>> USB2517 is a 7-port variant of this USB hub. Add an USB compatible
+>> based on USB vendor & product ID.
+>>
+>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 > 
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Just one sentence like - make the example complete by adding reset-gpios
-with proper polarity - would be enough. Concise, yet still informative,
-commit msgs are preferred, usually.
-
-This device is not different than 1000 others which use GPIOs and for
-every device you must use proper polarity. Commit msg suggests that here
-we should explain something more.
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Of course assuming there is some user? If so, where?
 
 Best regards,
 Krzysztof
