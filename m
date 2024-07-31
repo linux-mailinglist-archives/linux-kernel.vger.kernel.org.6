@@ -1,160 +1,126 @@
-Return-Path: <linux-kernel+bounces-268570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8EF9942656
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:17:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C1F942659
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 485BAB246A9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:17:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B93ADB24AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C568716A92C;
-	Wed, 31 Jul 2024 06:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="MXYS9aCZ"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2088.outbound.protection.outlook.com [40.92.102.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A97716CD2F;
+	Wed, 31 Jul 2024 06:17:37 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBDDD1BC40;
-	Wed, 31 Jul 2024 06:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722406643; cv=fail; b=FL9TxKHZLlg0qJMqeR/loAFVu3uJUxf297LY6KL//lCeZ0C+Ljvvq8JH8O1fGw2hTE7Mhwzpo7tKPiigzrnVab15B/+JwPB66K7qHUCHQcZRAT7vv1TZQtV9xUKErzntCmF6FFCKYJevRqWPWRdpxeG2lW6h+tsyBMqK1VrIkss=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722406643; c=relaxed/simple;
-	bh=ag85/mo16wjY0D1996KU/GIcFArNPIU+Py79d0HALTA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=DgEsGo7jF5hJiOTKtmL2kIOShcU1VEvptt5H+oHiAxopXTZx6jo09gbkoWvqs2KCsLKgiAH+kPOtOcPaiF8jbtMsB4IQ8XhagikREF/NHI9TJwY983wYnM85tbH+9ie6i5n4Q8ztFx6pzVWfGVUVqcLbzgXCHXNN+7rPvcW9LS4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=MXYS9aCZ; arc=fail smtp.client-ip=40.92.102.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q6SSiEBRbpA0ihBIfRxeAhi3liWh/3HJojX22Fbe/NBgoZbICaf45juvOLIPULKUWGjtBAszDLkef7OcaQBxvLmb2T9tnEk4vkk4uFSSMk9GhiKG9bthFECCWRtiAToGwgNy08/JcPCEvtQhAiXkI1mtWGYAzh+JpAA0B66gegbjDpluPVX8y3LNnwZCm1iAb1LLGpdPy9I0/9PoIZeNrpE80jbXVL+uhzXKGXfLanI9S7LXyUYM5kX5rHfjX/bLr7xENx/oxcj2KOhcgamfVLg7EWfNqmWj+DpkB8UuRwJkjGPVaRk05ps0akB7eK6f4eqHG8K5AwTNwSXi5U3s3g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ag85/mo16wjY0D1996KU/GIcFArNPIU+Py79d0HALTA=;
- b=MyoaUy15dVn3prMwyqV/4Kwt54pHoXo3+Dpkmp9qzh8vLybtpPT8I/ZsxULLdcqgB4ExFLeHDUKGFcM3zbP+sFYWuJ+o0/w70Q+chxH28TbiLu2BqbIZKWSTH+cl5od3COgZMNxbPheIw75+3i2F7DW7HSGFZxU9GT3MbN196rd/QFCuz+vmC133tHVvE1CeWYdJXg8V1E6PZ3b2MSoOB3IZc3YhHMBNCMbgHtd1wlsC+JJJlgg3e3a54xx2X14kG1a3z5lcGCZGDqPzB01T5Znwdk3Rrw6o5gkkKO+lM8ehXUkvCVjsQP01XVNRUhpnSHj9UkBQ+zdg7wAR+tlCOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ag85/mo16wjY0D1996KU/GIcFArNPIU+Py79d0HALTA=;
- b=MXYS9aCZD3wrTfG2DyNbhMIPwBh69tW8svvebkbL5hsvKl2LF52qc8i4nb6wX54Qj048mJsnLdOIvAZiszpKAL+1CNGoYLdEI54chuvpNdhuVyM7A57d2u9tms+Tic7WrXhaJWzTiUbbxrOS3IxSVLJkegICa4J5s092A1SpGK0JHCheotL95YNvXCIPIHSnobJl4o0DG/Xi2ur1P7ILyibMZCgm0RRC8hUZ8pZi4GKngQLQkwy33DMYLn3XadkZxsq5VQE0tOYF2k6PkzP9FaOP77mt6QI+WDahDGLickoKriXOZRWuquH1289CviJq/3o9AInXRKzIR6ed0ZXuQQ==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by MA0P287MB1790.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:f5::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
- 2024 06:17:13 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%6]) with mapi id 15.20.7828.016; Wed, 31 Jul 2024
- 06:17:13 +0000
-Message-ID:
- <MA0P287MB282211CF334C521A1BFD717DFEB12@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Wed, 31 Jul 2024 14:17:08 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/4] riscv: sophgo: Add SG2042 external hardware
- monitor support
-To: Inochi Amaoto <inochiama@outlook.com>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, Chao Wei <chao.wei@sophgo.com>,
- Hal Feng <hal.feng@starfivetech.com>, Jinyu Tang <tangjinyu@tinylab.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <IA1PR20MB49538C09E94D90F07B7B2562BBB02@IA1PR20MB4953.namprd20.prod.outlook.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <IA1PR20MB49538C09E94D90F07B7B2562BBB02@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [p3VAc2Do3eBR1MObLuDaQJVqYvP+nlgd]
-X-ClientProxiedBy: SI2PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:196::7) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <5d7e4088-b9f0-442d-9668-2896820120ad@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3248E61FDF;
+	Wed, 31 Jul 2024 06:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722406656; cv=none; b=s+6flaNfFBSFZ24SzATt/eKrB5TcuLUF1mJEoBSQGiBqKTyXLMOFxNTpPvEq9sRXP75aJ9lOlMjU4JhIo2RWiuUG6YE0DB3FsL+a5JYpnrabfTLpAT5mU03bVdwqJp8xf7rZvAE4aKlGpEECVCFrnkMiZwhj8KEa5pz6NzFwriA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722406656; c=relaxed/simple;
+	bh=YM/SgtpE2smUDyS2bmA9l0A/LX9fLBtn3R6YCrgqOgM=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZMBo5fiUAF4Gc5+4ubP/9NoTD+cshc1KZFOWQ0LDGsSlmmNuZB5BE77407SIde+/clwikTBvSvL8WFlnE0huBQwRXTftgts4Jf84aMtSUYDsgp4KH0nkfQUHod/ml3aFaYsNQKlPSSFvY1ZbE0qrxxf6k1taxURgrCiqokKBB/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WYhhT4y9Yz4f3jrq;
+	Wed, 31 Jul 2024 14:17:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 945071A018D;
+	Wed, 31 Jul 2024 14:17:26 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAXPoT01qlmsONnAQ--.46040S3;
+	Wed, 31 Jul 2024 14:17:26 +0800 (CST)
+Subject: Re: [PATCH 7/7] jbd2: remove unneeded check of ret in jbd2_fc_get_buf
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ jack@suse.com
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+ <20240730113335.2365290-8-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <a5da8406-ed52-b71f-4766-a16e8d175496@huaweicloud.com>
+Date: Wed, 31 Jul 2024 14:17:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|MA0P287MB1790:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15cca108-5771-4857-225b-08dcb1286b04
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|19110799003|8060799006|5072599009|3412199025|4302099013|440099028|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	dFyEuEaFVL3KOobaCweoyxl/nGAbvAmBwjeYykq04zgpm+QyZ/sfOP4sdEMrrAWM7utTNuKwFYNlLYFup6B2Beg6psTDEyr7RYaguDW74TitCW424Z4wzBKf0x3uJjAyS/7iZQaundoypMZBTyF8hrMiDegIF/NaY0zSCguL10FpRTU7ij66tPzgHM2v/e1WL734RKd8kQEjo2xVngQs4Vhywlg4EmNPsbW/wfJkkGzfwKZP02rJd+YoXHG6kfFWbPF5CnkllrhzGMYX+mAEnX4v2iuNWeC/fsRMH7ZUyX6dHobQEvWn7yHdwFDvZNJ69UKYT89M6dydxL9RFCfMkwRGtwd67F6B5Cbz3ddSy7S18IhDVW54m6cvZGNzZqYlSueiaYm3TKlED/iMA6xUN4ySv++vcJnS+6jnBuBkIw//CcMBD/YRquTusX4myYgg3UUckVrszWhvBKTJ42nGcLkOQ1s8vcYUXx7r5vawlmMPhaRaU/nG8tly1c0jmzR1NUlbLKvHQivi8eR8d0+aJ/WyQa7KwED6V+rqYVGW76IIDJAtYJ+MtiWVIGnCt5eCjH6EkWB0oW+E6c+bzybspk1KU8ZaCIsVounla2Mq8J4xsaJuigwVEpsRsc2merS1gF5kHg4c4XDxK7p76BC/FKr+Zhh8gKhx/lfUPCIJz5crm0ZJKv67A0wPD7wadZ04JliCWGZb7PlrkAHz4vBbyLEBHvxfvJlGISZK8be9qpxXOQ+VZi0t5+Goy+G/pzZtIjyOiwwTpoLrd5JtNt8vkA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TlRzUTZEZEJVdzJtdnF2alpNcFExSnFtQWZGSFZyb2p4eC9XV2dBakVFY0lM?=
- =?utf-8?B?ekZNQnR0K2Nnb3cyZEpkdm16cWwyd2JhNlFwdUdpa2pSaUpGRFhwVnRTYnlP?=
- =?utf-8?B?QUNGY0hwbEh5cWN0UitvT3lUalNhelZubFlrbWk1YVpjMWNjc1p2WFBJRzFG?=
- =?utf-8?B?R3NlUTA3bXNBNTBoMnJxRXVRMVUxaENjTXgyNDJORWJwNlVUTEtCMGFiODRX?=
- =?utf-8?B?YXlOdXZXeGtJcjZKeklmL0YyVkYrc25PL1F0dURYMndqcTRCejV4RUN6TGJo?=
- =?utf-8?B?Rkc0MWpzMDl2NmJpZ01qK3dIUCszeXA1aHl3TGVhZGVEd2tDYlBFZHlwOTha?=
- =?utf-8?B?R1lxQks5SUtlaTlOUFA1WFpKOGQ0NXQrNkc0ekIvWS9UUzhSRCtUZW9nOTk3?=
- =?utf-8?B?S0E1S2huVGc5K1M3eUdoZ1JEV0FOcGc2SmlhOW1kQ3Fhc0srbXhPblRwRHlh?=
- =?utf-8?B?MHZBb2JEYnp3a3MvNm40WHhRU1ZxaUpyWmNicUVQb0hQTmRPSU9DbldiMm4v?=
- =?utf-8?B?Ny9PWVF5ejF5K1QyYWhObDlNYytEbzlBdUNHRkJXdnFWWVdSNWUrblRxVE5D?=
- =?utf-8?B?SXd4b1FPRXkxbkx3dGZxc2kvVEd0L3kvMzdKTXNrMDlROURmVFpnZHVEVmFz?=
- =?utf-8?B?MzVCVFg0NTlNOXh3NmQ1blVtVkxibGRVR29yMWpFOU1Qalh6cGJsV3drSzZX?=
- =?utf-8?B?aHVrWFFyTXRhakxVbFNjTWtwZFZFMi9IdGJrcXNCdFhUcUhBcENEazI4cnlo?=
- =?utf-8?B?SUtXNFh2bjV3OGdhaUh0cXNxcHZUaTZHekhZV1pBcXdlR1RZVmVNQzdkeU1P?=
- =?utf-8?B?ZDZpZTZyaVFuVlJET0pLZUJIMHFPOE9qbHloV3ZRc3QyWVlpN3FBWGRmUXRJ?=
- =?utf-8?B?THRhZWIvQzFBTHFIbjZUUDJKTFNGRU9ZQ3V3SnFSdU1zV05ZZkVKWEMvWlE3?=
- =?utf-8?B?ZUNWUnJVKzZkK0F1bldibkhxNHZxcUUvRHN3dTRrYmNXNVpjRnpRcTU5YUNj?=
- =?utf-8?B?Uk5sS1NZRldpeGlucVVWZ3pvYzhkTW52OWlvajRFTVRXSGhmcHNqRmtOeXhx?=
- =?utf-8?B?UWV5REI4REphcDlUVS9JRXJ4ck85ZHYzSVVKT0tDc1VjMmxXSE9vWldaUUwx?=
- =?utf-8?B?aS9xUFl1UktTWTJScTNtTkVlc2hWN3M5LzB1SDEvV2ltWFVITmtobWpObnAr?=
- =?utf-8?B?Rjg1QlpmdTlrWExxWllSTjFUUnA4SEI1RVlxVi9xMEdMZEtLV21DWW9XK0pJ?=
- =?utf-8?B?MlBhanIwbzh6ZEZJQ2tGa1J5RHpyL3BEUlpoNkdDK3RJbnJRdGVlcTJjSVU3?=
- =?utf-8?B?S00ya2FQQncxN1MyQUJmU2ZhUUUxYmlVWjJST0FUcENtSXd1L214NHVzMmRJ?=
- =?utf-8?B?cXl6akVsTXFXa3pMNmhGVmdDN0l2RkZ4VE04QjZmcFI2VVBjOFF1dlJPbnc4?=
- =?utf-8?B?TG9waHBrd0RuaVBaUjA1R3RyMHZ2QlBDOTcvN3dRbmdkajNUbTFhRVpwYzJD?=
- =?utf-8?B?bjEyYUkveHVVNW4yVGtubFNoQjhDbm9vRVR0ZzhVWnNnTzJsYkZJWDI3VW5O?=
- =?utf-8?B?UGZtaDloWXRaNmluM2RRK3RseCtRdExkZFhiUjJObytLZkhKTWMxcnN6MFp1?=
- =?utf-8?B?VkE4eTFNbW53S2hhcTU4NWhnVU5SSk84SVRldCtQdFNOY2NwZWpJaHQ2NXFX?=
- =?utf-8?Q?Dxax7v9lqO7wcejqtGUu?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15cca108-5771-4857-225b-08dcb1286b04
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 06:17:13.4448
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0P287MB1790
+In-Reply-To: <20240730113335.2365290-8-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAXPoT01qlmsONnAQ--.46040S3
+X-Coremail-Antispam: 1UD129KBjvdXoW7JFy5ZF4kGw4kZr1rKFyDJrb_yoWDCrc_Xr
+	W8Zr9rZrZxWF1rAF4rC3y8WrnIqws7Zr1kW34xt397KF1Uta1Yq348trW5K39rJF92yr43
+	A3Wa9w40kr9rCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
+	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
+	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
+	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
+	UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+
+On 2024/7/30 19:33, Kemeng Shi wrote:
+> Simply return -EINVAL if j_fc_off is invalid to avoid repeated check of
+> ret.
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> ---
+>  fs/jbd2/journal.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index dc18b9f7c999..6f90f7b8e9e5 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -842,12 +842,8 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
+>  		fc_off = journal->j_fc_off;
+>  		blocknr = journal->j_fc_first + fc_off;
+>  		journal->j_fc_off++;
+> -	} else {
+> -		ret = -EINVAL;
+> -	}
+> -
+> -	if (ret)
+> -		return ret;
+> +	} else
+> +		return -EINVAL;
+>  
+
+I'd like this style, just a suggestion.
+
+	if (journal->j_fc_off + journal->j_fc_first >= journal->j_fc_last)
+		return -EINVAL;
+
+	fc_off = journal->j_fc_off;
+	blocknr = journal->j_fc_first + fc_off;
+	journal->j_fc_off++;
+
+	...
+
+Thanks,
+Yi.
 
 
-On 2024/7/30 15:49, Inochi Amaoto wrote:
-> Add support for the onboard hardware monitor for SG2042.
-> Can be tested with OpenSBI v1.5.
->
-> The patch require the following i2c patch:
-> https://lore.kernel.org/all/IA1PR20MB4953DB82FB7D75BF8409FFF4BBB72@IA1PR20MB4953.namprd20.prod.outlook.com/
-
-Please check my comments on patch 2 of this serials.
-
-Others are LGTM.
-
-Tested-by: Chen Wang <unicorn_wang@outlook.com>
-
-Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
-
-[......]
+>  	ret = jbd2_journal_bmap(journal, blocknr, &pblock);
+>  	if (ret)
+> 
 
 
