@@ -1,134 +1,132 @@
-Return-Path: <linux-kernel+bounces-268795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1896D942954
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:39:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FF894294A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB4B1F227D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7954284617
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B7C1AB511;
-	Wed, 31 Jul 2024 08:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K6SkM0CI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2381A8BF3;
+	Wed, 31 Jul 2024 08:37:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA321AB507
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33621A8BE3;
+	Wed, 31 Jul 2024 08:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722415144; cv=none; b=Xhw3EIR6d4HD3ED+eO5OsI3Iv8C6VvwB5FVhzzC7Ik+yK0AxeUU8XT+JRejCU0KLyIcqzLjfLSmLPry9n2xLQSy9v8WvtNzQQbFDlCJ3D2v+C6hwoOClWxf099oYDIbKGIuJekUgllJU7Y1SfB/pZgMVh/KyVqjuxEC/1pGBfZs=
+	t=1722415043; cv=none; b=MIAK9larkR/Wv9NrD5lsC7u4SAfHmH2QW4HcthSoZ8b3Sg4kxb4o9ugs0fNoNj86WF9+Iy216x65kYcjZR+0a2JtcPATCjbdFjlSgor6uyTEWrHMt7yxKSJSfufFNMrxsTTQvReJKh8nqk1wXxwBLmPTiR/Xkv7YHoGCVMcx2Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722415144; c=relaxed/simple;
-	bh=GNp4KhZ3KD5qJo7h5W+Qs5sFdu/0kTvhWIvEgdRa97U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s4y8NJF+u4dCV4IvH8Mo6OphmF23GwJM9nek/a/odqu9rA8czIS53RidR//AfbaNJCh360XAFA/EtokqN7NjthOmdHeUA2h0uag/LCvFa7m55Hk9XjGZ/CeZtVRcPh0Ul+cBjMfTbOwjUZMH7WD11qBpjzoZYbyBB56oz+nx1ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K6SkM0CI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722415142;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sHBEjJP0Fw2TqNNryvFolQU0aiFEitvWX6GJ3CXCZWM=;
-	b=K6SkM0CIh3JBkSCzdn14hcBR5uClYIyxU+UT8IhzgnytpY/y9oyRdOA2vgo/GxoWj7jbV3
-	yqXkBMXgm7lOjsCH7+w979vksw9UHBsePtgNPtD14bBREavF/9EC3OW3KO4ye1LMABD5lE
-	+bt64UCEq7nn76a8Dkkg8Kysvf9A7vs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-170-2gT7LWvbNYOZf4RBsXMawg-1; Wed,
- 31 Jul 2024 04:38:58 -0400
-X-MC-Unique: 2gT7LWvbNYOZf4RBsXMawg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E8C661955D4A;
-	Wed, 31 Jul 2024 08:38:57 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.45.224.159])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A573D300018D;
-	Wed, 31 Jul 2024 08:38:55 +0000 (UTC)
-From: tglozar@redhat.com
-To: rostedt@goodmis.org
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jwyatt@redhat.com,
-	jkacur@redhat.com,
-	Tomas Glozar <tglozar@redhat.com>
-Subject: [PATCH v2 6/6] rtla: Documentation: Mention --deepest-idle-state
-Date: Wed, 31 Jul 2024 10:36:55 +0200
-Message-ID: <20240731083655.375293-7-tglozar@redhat.com>
-In-Reply-To: <20240731083655.375293-1-tglozar@redhat.com>
-References: <20240731083655.375293-1-tglozar@redhat.com>
+	s=arc-20240116; t=1722415043; c=relaxed/simple;
+	bh=kx+WXr+aG/XOA88K5RCoIIY+kKBJctVEAjfLgYDBvLQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=Y+Jt2aGGytXF4Jv+EAX5L19Yu6Ndbtif3ski4v/HBoeVn40RN1q+fJ9coQLpOYGI2ceny4qy11t9EI5djJOE8/pQpcqrvtySXl6YGfEwdk9TNj6M7Vkp7jm4it5JBh9Gk07mnFEJMBDrsw6JEWyNnoytZ+eUBQyOzTHS+Hn0Qm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYlnw1lMmz4f3jqM;
+	Wed, 31 Jul 2024 16:37:08 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E11B21A15AC;
+	Wed, 31 Jul 2024 16:37:16 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP4 (Coremail) with SMTP id gCh0CgA3XoS796lmxQZxAQ--.38747S2;
+	Wed, 31 Jul 2024 16:37:16 +0800 (CST)
+Subject: Re: [PATCH 7/7] jbd2: remove unneeded check of ret in jbd2_fc_get_buf
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ jack@suse.com
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+ <20240730113335.2365290-8-shikemeng@huaweicloud.com>
+ <a5da8406-ed52-b71f-4766-a16e8d175496@huaweicloud.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <7c6b48fa-0734-df56-eb6b-3df427bce59d@huaweicloud.com>
+Date: Wed, 31 Jul 2024 16:37:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <a5da8406-ed52-b71f-4766-a16e8d175496@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgA3XoS796lmxQZxAQ--.38747S2
+X-Coremail-Antispam: 1UD129KBjvJXoWrtr4rAw1kJF1rZFyftw4ruFg_yoW8Jr1kpr
+	yrGFyYyFWFvrW7WF1IqFs5GrWjv3yvkFyUCr90kw1vkw47Jrn7J3s8Gw1rWa90kr1S93Wx
+	Zr17ZayDG3yYyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
+	VjvjDU0xZFpf9x0JUSNtxUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-From: Tomas Glozar <tglozar@redhat.com>
 
-Add --deepest-idle-state to manpage and mention libcpupower dependency
-in README.txt.
 
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
----
- Documentation/tools/rtla/common_timerlat_options.rst | 8 ++++++++
- tools/tracing/rtla/README.txt                        | 4 ++++
- 2 files changed, 12 insertions(+)
-
-diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
-index cef6651f1435..10dc802f8d65 100644
---- a/Documentation/tools/rtla/common_timerlat_options.rst
-+++ b/Documentation/tools/rtla/common_timerlat_options.rst
-@@ -31,6 +31,14 @@
-         *cyclictest* sets this value to *0* by default, use **--dma-latency** *0* to have
-         similar results.
- 
-+**--deepest-idle-state** *n*
-+        Disable idle states higher than *n* for cpus that are running timerlat threads to
-+        reduce exit from idle latencies. If *n* is -1, all idle states are disabled.
-+        On exit from timerlat, the idle state setting is restored to its original state
-+        before running timerlat.
-+
-+        Requires rtla to be built with libcpupower.
-+
- **-k**, **--kernel-threads**
- 
-         Use timerlat kernel-space threads, in contrast of **-u**.
-diff --git a/tools/tracing/rtla/README.txt b/tools/tracing/rtla/README.txt
-index 4af3fd40f171..dd5621038c55 100644
---- a/tools/tracing/rtla/README.txt
-+++ b/tools/tracing/rtla/README.txt
-@@ -11,6 +11,7 @@ RTLA depends on the following libraries and tools:
- 
-  - libtracefs
-  - libtraceevent
-+ - libcpupower (optional, for --deepest-idle-state)
- 
- It also depends on python3-docutils to compile man pages.
- 
-@@ -26,6 +27,9 @@ For development, we suggest the following steps for compiling rtla:
-   $ make
-   $ sudo make install
-   $ cd ..
-+  $ cd $libcpupower_src
-+  $ make
-+  $ sudo make install
-   $ cd $rtla_src
-   $ make
-   $ sudo make install
--- 
-2.45.2
+on 7/31/2024 2:17 PM, Zhang Yi wrote:
+> On 2024/7/30 19:33, Kemeng Shi wrote:
+>> Simply return -EINVAL if j_fc_off is invalid to avoid repeated check of
+>> ret.
+>>
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>> ---
+>>  fs/jbd2/journal.c | 8 ++------
+>>  1 file changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+>> index dc18b9f7c999..6f90f7b8e9e5 100644
+>> --- a/fs/jbd2/journal.c
+>> +++ b/fs/jbd2/journal.c
+>> @@ -842,12 +842,8 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
+>>  		fc_off = journal->j_fc_off;
+>>  		blocknr = journal->j_fc_first + fc_off;
+>>  		journal->j_fc_off++;
+>> -	} else {
+>> -		ret = -EINVAL;
+>> -	}
+>> -
+>> -	if (ret)
+>> -		return ret;
+>> +	} else
+>> +		return -EINVAL;
+>>  
+> 
+> I'd like this style, just a suggestion.
+> 
+> 	if (journal->j_fc_off + journal->j_fc_first >= journal->j_fc_last)
+> 		return -EINVAL;
+> 
+> 	fc_off = journal->j_fc_off;
+> 	blocknr = journal->j_fc_first + fc_off;
+> 	journal->j_fc_off++;
+> 
+> 	...
+> 
+Sorry, I miss this. I also think code looks better in this way. I will do
+it in next version. Thanks.
+> Thanks,
+> Yi.
+> 
+> 
+>>  	ret = jbd2_journal_bmap(journal, blocknr, &pblock);
+>>  	if (ret)
+>>
+> 
 
 
