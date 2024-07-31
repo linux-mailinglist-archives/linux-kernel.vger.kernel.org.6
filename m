@@ -1,138 +1,102 @@
-Return-Path: <linux-kernel+bounces-269352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82749431E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8465C9431E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8D2D2871E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:20:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D2BD287215
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2091B29C6;
-	Wed, 31 Jul 2024 14:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64601B29AF;
+	Wed, 31 Jul 2024 14:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NHAZMaM/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PMTMrE3F"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5857A193079
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C749A193079;
+	Wed, 31 Jul 2024 14:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722435614; cv=none; b=kqSNa1rHCMO9MV7Wp9Eo2kSwwNXvqvBGI56DfGNH8jLc6PhAC30Yq2FNdd6rGAHq0uiHE0F9bst/OHWFzM4BykjmfJ1rLJiKj+kNCMehATKyOEFCcwr4EV/yD97mDR3124ESPTpoy1EpWIRartBUW9eG7IEm2uTzCZAHzgoFU1w=
+	t=1722435625; cv=none; b=CCtoHwLhIky/rZYe4wJdOOWWZRlVaw0s2tnEFEuWZWsVwUPSPpNEkuGqyj1qymkGgJlixYp/s7iShUCYekDEGqsGJdPPr7NI1AirOxtG02Ba+Svf4Yc9KU64L4WnxVgBD1eutq8/l5tNgqPOawZb6LqcZjr/7suBB1z8iUL6SQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722435614; c=relaxed/simple;
-	bh=umV/3wAO7tQw18Xoft0QYP/gnHE80Mq8jo7NHcA5zGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TESRwz7eTSzYaFPLM18Etnni+14ClOmxNzHHDV2NwmZcuvH//n675nx8vvh6sGX/uab7da4TNEbZu3wYGOW7G9+e/iHHkPORRvHtXO2CMekLvd1Birvb4AU6Y4T9uEk4OAyxnQADcOlWVc32/dxdC+5oDpJ2dIGdN7A+Z7vpb+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NHAZMaM/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722435611;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=2OX9pHIYPCYciT54Hwf95cCUxzek0vThGczntvqQatQ=;
-	b=NHAZMaM/VGDLWaUr/QMhc+gdAtYj7D9VtQitFu4o28f32es7XUL9VRomvj9NvdKchfscy+
-	wcF7f2WrbFu9yVPTw1q1BCWF3MMMgtP31h+Z2RRlGwBTgGYSvDVVnPAGR/KsXp35Q93dsG
-	bfh+BDpBNg8Gh88HZQ8CVpucaMaf3bg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-440-1ubZouPnO7KGbLcP0s3P_g-1; Wed,
- 31 Jul 2024 10:20:08 -0400
-X-MC-Unique: 1ubZouPnO7KGbLcP0s3P_g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DF2D91955D50;
-	Wed, 31 Jul 2024 14:20:05 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.39.194.228])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B863019560AE;
-	Wed, 31 Jul 2024 14:20:01 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH v1] mm/hugetlb: remove hugetlb_follow_page_mask() leftover
-Date: Wed, 31 Jul 2024 16:20:00 +0200
-Message-ID: <20240731142000.625044-1-david@redhat.com>
+	s=arc-20240116; t=1722435625; c=relaxed/simple;
+	bh=FgBETMnfB48dT/wLYRZDMPpRX1/Ps+MPcaDACxaPp/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mn47K9KO+/h/jGhLqIW9gmvFae2UxFQi8VFy2vi7zW85nrFze1y3+I3W9GuBsdUbxFf2teO52chNnavie6O81cFRtOw9EvDmdVDY07Px+cLvN5RFpes+KcDYM9u/gWuUppE7xLZ9yHyqR0CgyoTf7TXrusXlT/ydx6tz5LhzQMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PMTMrE3F; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fc4fccdd78so40661445ad.2;
+        Wed, 31 Jul 2024 07:20:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722435623; x=1723040423; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uw1THOXbTOFDexNRb9fnp+dVI7+0XGtcfzpjBj/YxcY=;
+        b=PMTMrE3FHeEItK+mtEaF6TMvC+P4md+G5T8O9BiZ/Jn8TJMjKTMWHyNgE0qz9ayUHT
+         uxZSxLL1xC0BJccCoAkpTfBk4ryCyxHoRJgT+AKhLhGkAUdtL6FxZEF+YQGloNMrbJI1
+         Sx6UFz+T7ENPXnzSM9AXPA67UjmVlC8km5ogTUwUtv7+ahunnIWpIV7vJ1wmhmaPothJ
+         DeEBwwvdn3sHx6HAvHPS9YOIhbaZFKCDtWej//iuFcT4oQryIHHzHq+fsNegfwdHHWK1
+         BUcxfKKDVSko+c4sU32dSG00B4A6O+Mw7Jsq87h0B0lweRrJa6eAY3sph7F1Dpe6/1dE
+         g+9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722435623; x=1723040423;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uw1THOXbTOFDexNRb9fnp+dVI7+0XGtcfzpjBj/YxcY=;
+        b=bcjhE64e/hRpiEITkEBIJHMdVfX52It8i9gj0bLc+9oFG0ElbB4e5jf7hMZrRIcT97
+         i6ChmRzKmYAqSLh+2K9yTsPX7wovgzRmwcTv6OLmwCLHYGe2HM2goatTuCrWqVCWnmau
+         FZLHqU/nwS5qV3T7j2LCsC5MnQbhupatVWkxQgzWmArKB++WAZQPR3q5bkNzR+T6knsY
+         Yck1yQqGIWyx0cq8/Hds9nQnO8d3vt9xKYScLzF1go/sifNi43fdBNlipa8SkC/AxVP0
+         5YVj8okPdMTdh+dBi9yRkhxN5s3G4CaPbCfnJN4cAo+SrmBKh7ELq89sTixhBZFWrDlz
+         07oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViZDWUmmdpYja81CGix+L6xM+mdz01M9nQiC2VXil/qZMZFVAkYTLFuyV07EY+t6NhxbhmbuLi5WHIum5Dqa4NGLSkbnM6fbybXC84Qm4O7j6SYxio4oATmAB+ohfVaILltJmCE8M+
+X-Gm-Message-State: AOJu0YyScpsaoxkFbVHmCfip1g+QxCQ4R2tgE3SWrGHitAQRDE28jYXi
+	E88Ho/7+3o1ZorjOQLDNgr6Ajs/r5XbH2ok6dwHknKMJCLLRkr5m
+X-Google-Smtp-Source: AGHT+IGVkeS1mYhhDeBXqjn+i0znnj8l7EMNV4/oVTC292vIFcl3BLHy6ZJObUPfDmjC5rlb5sSJjg==
+X-Received: by 2002:a17:902:ecc7:b0:1fb:8a0e:76f9 with SMTP id d9443c01a7336-1ff04868db9mr129107295ad.39.1722435622643;
+        Wed, 31 Jul 2024 07:20:22 -0700 (PDT)
+Received: from joaog-nb ([67.159.246.222])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fc5e81sm120867425ad.278.2024.07.31.07.20.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 07:20:22 -0700 (PDT)
+Date: Wed, 31 Jul 2024 11:20:16 -0300
+From: =?utf-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <jpaulo.silvagoncalves@gmail.com>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] iio: adc: ads1119: Fix IRQ flags
+Message-ID: <20240731142016.6immldd7i4y7v2iw@joaog-nb>
+References: <20240731140657.88265-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20240731140657.88265-1-francesco@dolcini.it>
 
-We removed hugetlb_follow_page_mask() in commit 9cb28da54643 ("mm/gup:
-handle hugetlb in the generic follow_page_mask code") but forgot to
-cleanup some leftovers.
+On Wed, Jul 31, 2024 at 04:06:57PM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+> Remove IRQF_TRIGGER_FALLING flag from irq request, this should come from
+> the platform firmware and should not be hard-coded into the driver.
+> 
+> Add IRQF_ONESHOT flag to the irq request, the interrupt should not be
+> re-activated in interrupt context, it should be done only after the
+> device irq handler run.
+>
 
-While at it, simplify the hugetlb comment, it's overly detailed and
-rather confusing. Stating that we may end up in there during coredumping
-is sufficient to explain the PF_DUMPCORE usage.
-
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- fs/userfaultfd.c        | 11 ++---------
- include/linux/hugetlb.h |  3 ---
- 2 files changed, 2 insertions(+), 12 deletions(-)
-
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index b3ed7207df7e..68cdd89c97a3 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -371,15 +371,8 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	unsigned int blocking_state;
- 
- 	/*
--	 * We don't do userfault handling for the final child pid update.
--	 *
--	 * We also don't do userfault handling during
--	 * coredumping. hugetlbfs has the special
--	 * hugetlb_follow_page_mask() to skip missing pages in the
--	 * FOLL_DUMP case, anon memory also checks for FOLL_DUMP with
--	 * the no_page_table() helper in follow_page_mask(), but the
--	 * shmem_vm_ops->fault method is invoked even during
--	 * coredumping and it ends up here.
-+	 * We don't do userfault handling for the final child pid update
-+	 * and when coredumping (faults triggered by get_dump_page()).
- 	 */
- 	if (current->flags & (PF_EXITING|PF_DUMPCORE))
- 		goto out;
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index fa5cc81e61a3..3e4b03de815d 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -127,9 +127,6 @@ int move_hugetlb_page_tables(struct vm_area_struct *vma,
- 			     unsigned long len);
- int copy_hugetlb_page_range(struct mm_struct *, struct mm_struct *,
- 			    struct vm_area_struct *, struct vm_area_struct *);
--struct page *hugetlb_follow_page_mask(struct vm_area_struct *vma,
--				      unsigned long address, unsigned int flags,
--				      unsigned int *page_mask);
- void unmap_hugepage_range(struct vm_area_struct *,
- 			  unsigned long, unsigned long, struct page *,
- 			  zap_flags_t);
--- 
-2.45.2
-
+Reviwed-by: João Paulo Gonçalves <jpaulo.silvagoncalves@gmail.com>
 
