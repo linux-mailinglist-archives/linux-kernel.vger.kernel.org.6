@@ -1,175 +1,170 @@
-Return-Path: <linux-kernel+bounces-268662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFC12942783
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:07:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB605942782
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:07:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CA621F27A86
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 681EC282736
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CFB1A76BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0E81A7F83;
 	Wed, 31 Jul 2024 07:06:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EH0/0930"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QZshJLrw"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B0F1A4F33
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065D21A76D3;
+	Wed, 31 Jul 2024 07:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722409561; cv=none; b=ZP0+6SWPvY+XNEi88bEI657Kw0PqrAfYlNl5p1Er0qTpMwNF0kA13ndywCJL8GvuCzhOxFzze+Qh4yeJuyIE018jMij4jGGHnJlni8+79tm78yBsVEBmZqtxeLsoyLGsWBSE8Zvn56av9hParwft5CoUeGDtnpLFnkwujqiVyfg=
+	t=1722409561; cv=none; b=UUrUWd4QXHu/8eoL7ui8mR1A+6Zh/oTP+z6IRWhQFMK9AIVyv5FwPQu538D/4LJ4NzJtChbCmMOPl5eWM3fX2Reh4NjkridjHtC1VSOCq9oK+BDYKZvzlGnjxnmza+wLOsD5ExBxr4PezOwTvVwptcpnaNYJ8IH8ADXMX2OeKiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722409561; c=relaxed/simple;
-	bh=7XD9EIzKfrzHxR8R1rUbV5Jj4bPwKwqrDZgXaJFs3os=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uUs8501QibudXRty699eBshEm2gIp2YqspYbeHOsT8LumbKvUKgEMa5NJendJC1YPqzkLwwzpD6hXgARls6WsWV+59veafsrHRcodZP7J8Ay9jt31JrwId64BlWQ0FDFzDyomLRFZFPXC5UTi6qxbzcMbiqwbY9DX9UaC7vgXTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EH0/0930; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-428141be2ddso34280305e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:05:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722409557; x=1723014357; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XWyBLNHlp9hCXozkWOndIbFuJnRj4rl0Qp1LlWnlIPI=;
-        b=EH0/0930UrTTYLsNG8xu3L9fuVuRoKaUiyZsa88CzjEKYlGD2hr5T+oB/k+iBD5znM
-         IDyuPgy1x4nFzsBFoY8cI1hhlQPa5kuOZX/ieA1Je3qKHoeAdUu9jJ02yJerpBHoWJFP
-         TfnMkXjqt/K9k86cMdSRkpAn8e+Z40ypfBnVmpWTxv5GFPOOIshWD72kAlwkjYN+PKRs
-         o1stTuJD3f8HZLmBXl1NGr5RVAAm8RZ1zQbvgo9rf/m7yjEJF+9kYO7ixdlqAZ7oKsZ0
-         WM1pnXCO2r+XIYyn3sr3qFZCdNvIyZwmayGrotPCdL5x1Smpt/CarSXppFLX4kjEaLut
-         dLAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722409557; x=1723014357;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XWyBLNHlp9hCXozkWOndIbFuJnRj4rl0Qp1LlWnlIPI=;
-        b=YLRE9iHr2xsQbT8Nx8BtwyL8JzEeAEwdANTK/JY36qEio+NdtnfaKIHERRyeLMzg3K
-         nswKYpjs/77gnKwuHOYoZuUWE/c3xizJeCtOUcpUstd0BtrH00yb9x0htB7Qw1s97Pj0
-         9qCj8qJl4rszN6F4rWl93c3pRmn5zOnCf1JQGs44Hb8YEARutj4PjCro1y1ZBZRBbIXm
-         T7evXGpBSLr4hjMspvGPNOiew0e6XK/w/xthwRSYf/3Wf67e0pJQ1PnAF7FNgg0KP6Jb
-         KPJF/Q3cuE4vkJMVyEMSckyybcnj2u59AnXaeUJF1jEHJgXOSaxSpQkyTNpCl4xBdh9F
-         yb1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVG2mR9oGEKuJLmgwS1NqDL+vrCqUyhSnaiTzV0ioW55IqJVaxIXkVnrighzaha13XAnr4BLwwmQaLd61bbq+hvswkFBT5P/T0r8tjU
-X-Gm-Message-State: AOJu0YwRSQ2WLXnv84fR2Em+97dn+8ioUX5l3mHx+0AGF9IEf1sULeQs
-	npTH9PFRuXNNd1eeaJxQ+ckSsCx3QIsfli+1j1kdM6VKm2Vfp648EBXipWPfXGg=
-X-Google-Smtp-Source: AGHT+IH10sHLkGAMAl3Q8EfCabIQTlCzo//xvraMgc7zTKLTmSclsI3goKn7cG5tDtZ67xA9JkON9Q==
-X-Received: by 2002:a05:600c:1da8:b0:426:6ead:5709 with SMTP id 5b1f17b1804b1-42811d8893fmr106640625e9.9.1722409557405;
-        Wed, 31 Jul 2024 00:05:57 -0700 (PDT)
-Received: from [192.168.1.61] (2a02-842a-d52e-6101-6f8f-5617-c4b6-8627.rev.sfr.net. [2a02:842a:d52e:6101:6f8f:5617:c4b6:8627])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8a2593sm9953215e9.4.2024.07.31.00.05.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 00:05:57 -0700 (PDT)
-From: Julien Stephan <jstephan@baylibre.com>
-Date: Wed, 31 Jul 2024 09:05:48 +0200
-Subject: [PATCH v2 7/7] docs: iio: ad7380: add support for single-ended
- parts
+	bh=GurD/Q0npPzHPTRJX8cDQoXtccXZwbnjZ9gjIPH/mms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TYZga6SoyOFZxsfdD+kjAZU5jHGdRGgBSIdXWIQhREZOUY0AY8mvxauVHxNMgal4RvnP42F1lFiPrtq287JyU4gEPvFi80q6pgJ52XkevPQ7H/iZ+YZslbtZd31jx175fpp9+c50VqMujWOnY/Bl4gBoCzZRpTld/T/4YqcGp7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QZshJLrw; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722409558;
+	bh=GurD/Q0npPzHPTRJX8cDQoXtccXZwbnjZ9gjIPH/mms=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QZshJLrwme+plhI3Jf9Jyv6pV26GARlnGTptV1j+qt9dYm1/+bvLhpDuRZ2yydSwL
+	 hFsAg3vtU8rk3G4q7CVapvn8i078PxWtmHpxHhaKKdJ0qDj6VC8EQRXs/XRfp2TIO+
+	 D0bZwjfmBdtXJXhR6Zx0ghbkrriEcF1zZlb3mBuNBdiB+0PB6eye78YbUeIH86/UmY
+	 powpJUWkoaXFV5yCZy56SckMQnerxRXlrqFoWzqIMMJsby6SN1Os0F056Ruiy8dlwz
+	 auSSKHt6ijHz7Y6tx+gSRMO5LAhMi+105rg55y0AD9fnS1VBT6HXAczcwhhavq360+
+	 fGZyqnqXhzynA==
+Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: benjamin.gaignard)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id DE8303780B79;
+	Wed, 31 Jul 2024 07:05:57 +0000 (UTC)
+Message-ID: <fb7f0071-503c-4f06-bae2-1c0e6d69a5e3@collabora.com>
+Date: Wed, 31 Jul 2024 09:05:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-ad7380-add-single-ended-chips-v2-7-cd63bf05744c@baylibre.com>
-References: <20240731-ad7380-add-single-ended-chips-v2-0-cd63bf05744c@baylibre.com>
-In-Reply-To: <20240731-ad7380-add-single-ended-chips-v2-0-cd63bf05744c@baylibre.com>
-To: Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
- Julien Stephan <jstephan@baylibre.com>
-X-Mailer: b4 0.13.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/3] media: test-drivers: Use V4L2_FMT_FLAG_ENUM_ALL
+ flag
+To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
+ ezequiel@vanguardiasur.com.ar
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com
+References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
+ <20240722150523.149667-3-benjamin.gaignard@collabora.com>
+ <92c88d0f-219e-43b4-9dce-5ae99585b767@xs4all.nl>
+Content-Language: en-US
+From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+In-Reply-To: <92c88d0f-219e-43b4-9dce-5ae99585b767@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The AD7380 family has some compatible single-ended chips: AD7386/7/8(-4).
-These single-ended chips have a  2:1 multiplexer in front of each ADC.
-They also include additional configuration registers that allow for either
-manual selection or automatic switching (sequencer mode), of the
-multiplexer inputs. Add a section to describe this.
 
-Signed-off-by: Julien Stephan <jstephan@baylibre.com>
----
- Documentation/iio/ad7380.rst | 42 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Le 30/07/2024 à 09:13, Hans Verkuil a écrit :
+> On 22/07/2024 17:05, Benjamin Gaignard wrote:
+>> Since V4L2_FMT_FLAG_ENUM_ALL flag mostly targeting stateless
+>> decoder pixel formats enumeration, update vicodec visl test
+>> drivers to use it.
+>>
+>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
+>> ---
+>>   drivers/media/test-drivers/vicodec/vicodec-core.c |  7 ++++---
+>>   drivers/media/test-drivers/visl/visl-video.c      | 11 +++++++----
+>>   2 files changed, 11 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/media/test-drivers/vicodec/vicodec-core.c b/drivers/media/test-drivers/vicodec/vicodec-core.c
+>> index 3e011fe62ae1..1b4cd8ddd7c2 100644
+>> --- a/drivers/media/test-drivers/vicodec/vicodec-core.c
+>> +++ b/drivers/media/test-drivers/vicodec/vicodec-core.c
+>> @@ -706,6 +706,7 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
+>>   		    bool is_out)
+>>   {
+>>   	bool is_uncomp = (ctx->is_enc && is_out) || (!ctx->is_enc && !is_out);
+>> +	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+> This is not what I am looking for: to properly test this in v4l2-compliance this
+> flag actually has to make a difference in the result. I.e. you actually have to
+> add some limitation. This might be easier to do in visl than vicodec. As long as
+> at least one test-driver support this, then that's good enough for me.
 
-diff --git a/Documentation/iio/ad7380.rst b/Documentation/iio/ad7380.rst
-index 061cd632b5df..9c784c1e652e 100644
---- a/Documentation/iio/ad7380.rst
-+++ b/Documentation/iio/ad7380.rst
-@@ -17,10 +17,16 @@ The following chips are supported by this driver:
- * `AD7381 <https://www.analog.com/en/products/ad7381.html>`_
- * `AD7383 <https://www.analog.com/en/products/ad7383.html>`_
- * `AD7384 <https://www.analog.com/en/products/ad7384.html>`_
-+* `AD7386 <https://www.analog.com/en/products/ad7386.html>`_
-+* `AD7387 <https://www.analog.com/en/products/ad7387.html>`_
-+* `AD7388 <https://www.analog.com/en/products/ad7388.html>`_
- * `AD7380-4 <https://www.analog.com/en/products/ad7380-4.html>`_
- * `AD7381-4 <https://www.analog.com/en/products/ad7381-4.html>`_
- * `AD7383-4 <https://www.analog.com/en/products/ad7383-4.html>`_
- * `AD7384-4 <https://www.analog.com/en/products/ad7384-4.html>`_
-+* `AD7386-4 <https://www.analog.com/en/products/ad7386-4.html>`_
-+* `AD7387-4 <https://www.analog.com/en/products/ad7387-4.html>`_
-+* `AD7388-4 <https://www.analog.com/en/products/ad7388-4.html>`_
- 
- 
- Supported features
-@@ -69,6 +75,42 @@ must restart iiod using the following command:
- 
- 	root:~# systemctl restart iiod
- 
-+Channel selection and sequencer (single-end chips only)
-+-------------------------------------------------------
-+
-+Single-ended chips of this family (ad7386/7/8(-4)) have a 2:1 multiplexer in
-+front of each ADC. They also include additional configuration registers that
-+allow for either manual selection or automatic switching (sequencer mode), of
-+the multiplexer inputs.
-+
-+From an IIO point of view, all inputs are exported, i.e ad7386/7/8
-+export 4 channels and ad7386-4/7-4/8-4 export 8 channels.
-+
-+Inputs ``AinX0`` of multiplexers correspond to the first half of IIO channels (i.e
-+0-1 or 0-3) and inputs ``AinX1`` correspond to second half (i.e 2-3 or 4-7).
-+Example for AD7386/7/8 (2 channels parts):
-+
-+.. code-block::
-+
-+	   IIO   | AD7386/7/8
-+	         |         +----------------------------
-+	         |         |     _____        ______
-+	         |         |    |     |      |      |
-+	voltage0 | AinA0 --|--->|     |      |      |
-+	         |         |    | mux |----->| ADCA |---
-+	voltage2 | AinA1 --|--->|     |      |      |
-+	         |         |    |_____|      |_____ |
-+	         |         |     _____        ______
-+	         |         |    |     |      |      |
-+	voltage1 | AinB0 --|--->|     |      |      |
-+	         |         |    | mux |----->| ADCB |---
-+	voltage3 | AinB1 --|--->|     |      |      |
-+	         |         |    |_____|      |______|
-+	         |         |
-+	         |         +----------------------------
-+
-+
-+When enabling sequencer mode, the effective sampling rate is divided by two.
- 
- Unimplemented features
- ----------------------
+Ok I will focus on visl and made it return another list of formats when the
+flag is set.
 
--- 
-2.45.1
+Regards,
+Benjamin
 
+> Regards,
+>
+> 	Hans
+>
+>>   
+>>   	if (V4L2_TYPE_IS_MULTIPLANAR(f->type) && !multiplanar)
+>>   		return -EINVAL;
+>> @@ -718,18 +719,18 @@ static int enum_fmt(struct v4l2_fmtdesc *f, struct vicodec_ctx *ctx,
+>>   
+>>   		if (ctx->is_enc ||
+>>   		    !vb2_is_streaming(&ctx->fh.m2m_ctx->cap_q_ctx.q))
+>> -			info = v4l2_fwht_get_pixfmt(f->index);
+>> +			info = v4l2_fwht_get_pixfmt(index);
+>>   		else
+>>   			info = v4l2_fwht_find_nth_fmt(info->width_div,
+>>   						     info->height_div,
+>>   						     info->components_num,
+>>   						     info->pixenc,
+>> -						     f->index);
+>> +						     index);
+>>   		if (!info)
+>>   			return -EINVAL;
+>>   		f->pixelformat = info->id;
+>>   	} else {
+>> -		if (f->index)
+>> +		if (index)
+>>   			return -EINVAL;
+>>   		f->pixelformat = ctx->is_stateless ?
+>>   			V4L2_PIX_FMT_FWHT_STATELESS : V4L2_PIX_FMT_FWHT;
+>> diff --git a/drivers/media/test-drivers/visl/visl-video.c b/drivers/media/test-drivers/visl/visl-video.c
+>> index f8d970319764..c5f3e13b4198 100644
+>> --- a/drivers/media/test-drivers/visl/visl-video.c
+>> +++ b/drivers/media/test-drivers/visl/visl-video.c
+>> @@ -341,21 +341,24 @@ static int visl_enum_fmt_vid_cap(struct file *file, void *priv,
+>>   				 struct v4l2_fmtdesc *f)
+>>   {
+>>   	struct visl_ctx *ctx = visl_file_to_ctx(file);
+>> +	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+>>   
+>> -	if (f->index >= ctx->coded_format_desc->num_decoded_fmts)
+>> +	if (index >= ctx->coded_format_desc->num_decoded_fmts)
+>>   		return -EINVAL;
+>>   
+>> -	f->pixelformat = ctx->coded_format_desc->decoded_fmts[f->index];
+>> +	f->pixelformat = ctx->coded_format_desc->decoded_fmts[index];
+>>   	return 0;
+>>   }
+>>   
+>>   static int visl_enum_fmt_vid_out(struct file *file, void *priv,
+>>   				 struct v4l2_fmtdesc *f)
+>>   {
+>> -	if (f->index >= ARRAY_SIZE(visl_coded_fmts))
+>> +	u32 index = f->index & ~V4L2_FMT_FLAG_ENUM_ALL;
+>> +
+>> +	if (index >= ARRAY_SIZE(visl_coded_fmts))
+>>   		return -EINVAL;
+>>   
+>> -	f->pixelformat = visl_coded_fmts[f->index].pixelformat;
+>> +	f->pixelformat = visl_coded_fmts[index].pixelformat;
+>>   	return 0;
+>>   }
+>>   
+>
 
