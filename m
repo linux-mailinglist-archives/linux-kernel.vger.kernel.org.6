@@ -1,144 +1,370 @@
-Return-Path: <linux-kernel+bounces-269799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18869436FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:16:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26B429436FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C641F22781
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:16:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1B51C20993
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFBC1684A7;
-	Wed, 31 Jul 2024 20:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571594503A;
+	Wed, 31 Jul 2024 20:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZj3Uy8s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GOhpvIHL"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A9C1607A4;
-	Wed, 31 Jul 2024 20:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8074815884D
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456895; cv=none; b=o0uimelmE6U4v6eh2LwOATA0YjeFL9KayH8FcHnmfu4pohAwBjVBfl+aAzPfCqTYA9Tk4w3tpCACKZRSmSiGvOd/vsLlQ2nNyjpp5eoUVYkdSJDrhmFLUMZTkBs5bytyUUExTbXtjFk3sc0JUgHwMrcYXz4CGC6SUbssn2AkvFs=
+	t=1722456919; cv=none; b=AbwnrLsZKJKag6JZH9GKju4m+/QKSDRwrSWmRKGwkuCT6pHByclW3ujtv32hr4ndBl9YgNDx6WsfuEPQmzU11Lx8tNnL2SDo81Sp1GRSR8F0ucCWVUjAzezM+NVgBUWMRcbsTNM/s8qVSel1fk8Hane0XuXmFjLkkDy66deDMa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456895; c=relaxed/simple;
-	bh=cmxbg9tXZ3TGFq1ogXXHs75c8dx++gE7S6ykYNbxItI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=riJNlchz8qcpN0kI2kFEWaF0gOSxD6ndioIywQm8jKhTZ2BT6tqYpOwLmoeXoG3+jHEWApOtDiAPYzlWolh5DSdWNPkiofv4KKi268X4LLkRwLVa1ksWdloC9/+udHQXbKVs+e2y034B/C7FVh593Q2kzMHrtyzFLKYX/T7Nu70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kZj3Uy8s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE620C116B1;
-	Wed, 31 Jul 2024 20:14:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456895;
-	bh=cmxbg9tXZ3TGFq1ogXXHs75c8dx++gE7S6ykYNbxItI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kZj3Uy8szHiPbYDeOyxTXGV27jO2qT9xeLHfagIpRQdlnTg/2f9ZKHMaDLibAaue5
-	 3PWRdhMYoWciAGkm2CtI/oTFKxpxVdrvTVcBwBoAo5ubie3zdjIhv6fN6uWu5zuPOh
-	 0thQzf053ZuY/ePCpnKe0yKJK48HWA0s5dwSvYf3bZLjBvfb3H21ULklcP3b8qat1y
-	 BIO5AcoC3FjaXzTdW87bRQmneCr0WaDHvo7t+qfOaFuXw5eRMrYJdnELF4NR/cEL0i
-	 AUH+GmJy8TM3zxmSUcrUpiVVZn9xkJM8DYF6iMYP3qus45h9MUDteURN007dAPzPxf
-	 lCAA9zUL7sPGA==
-Date: Wed, 31 Jul 2024 17:14:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Kajol Jain <kjain@linux.ibm.com>
-Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-	maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com,
-	hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf vendor events power10: Update JSON/events
-Message-ID: <ZqqbO54hbW5Tzk9Y@x1>
-References: <20240723052154.96202-1-kjain@linux.ibm.com>
- <CAP-5=fWsQbA-h=_Y_q7z1E7GjCkHE3w-9h-OXu4jLBM3Fag6ag@mail.gmail.com>
- <ZqOt9G9e-AIN6hY-@x1>
- <ZqqULZ5pSojnixUh@x1>
+	s=arc-20240116; t=1722456919; c=relaxed/simple;
+	bh=CVt1fbmPXVyLuB05VF0Eeyv464whL7R9zjlKv47LJxY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tlvzq7Ck9uPhqzcfPH+iA/ktEc3YVwpTCCKIya0NIoh99m6KZ+7cEt0Lv979ei6+RNH3/tFeifIxAah41RcJU94t/AQ7xQIkko3ILxkLWa/Ww+Ry7QoaSlRjbv3eLunu9YciF7wTV1aWoaiRBQ3tPCmwbsGm0o4hBOf+vqV4udQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GOhpvIHL; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-65026e6285eso119017077b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722456916; x=1723061716; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1oDowfhQycvrmi4jlaqZRlUo3on0dMIH9H6CfupRya0=;
+        b=GOhpvIHLxg6YOp4cYgkGtm2CtfG5R6sdlaa2JPtlbcOTIG9yF8lvZ1SkkkwRTqp0kH
+         RABoDx7i0CW/hE4TtSF3+R4NczT18uf4ggGsCqmFUSIYlUpBrBI4rAVsYjR2agIfZ0aC
+         AXHccVjo23sTM41I5bDSb6W/vcIOtmCq3YZCvsvxwDDsV7KV/kcjT0y7lOAd5tT+OHLR
+         2T2hr+OjTcj1Csm006pf+FiVgOvSPXx1m7zoFRAZ+ICSJapjPOp+5kCyjgaFuhRj6KMO
+         /dquaKfqbT5PXjVhfYyeoxKfCQIpaomcdSqX8aKwyd5YeqfQVyuzJcnQX+V1WLbyogdy
+         wYCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722456916; x=1723061716;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1oDowfhQycvrmi4jlaqZRlUo3on0dMIH9H6CfupRya0=;
+        b=KRCRg+66TuCSTqlvZdAegjoN1DJqZV7pi1LqsK3cDvkBRw4Q1Z2Gfs61E6Ju43hFNX
+         RTm0lBIYoLX/xR1yEqmYtpiGfR2A4Q2YpcNxMzCQ7UIGifOeRu/GuRx2OaOgVCDYqs1A
+         OZLyEJphmgrjUNbQJJa7ZNMdmj47aDgTvlbpQPE3FJARkHJMxu7IRKhZf3i0/Xf76Fgl
+         dTP0JcDbYSn70LGz0rvrafH9RsVzYbWCa5Pi+SM9KXyfM1d+PSPKU7dzGczepw3f55jh
+         kEmYiZOZKN2Y2wGj7INWVacy4fJhQpzglH/FDnOh8rZTSb5+MNjTf6BngQc67tw5ySxa
+         lEBg==
+X-Forwarded-Encrypted: i=1; AJvYcCUF5/ifYes1mg5pk5gdg2HCQo56zSTcDiLnmlgH2O3ZJGTZuEs0MG+oCfcIvB754w6VhE8oXN86U2JWS1rfvYEOBDxmrf/ZfdX2jhlv
+X-Gm-Message-State: AOJu0YzjHk5HoDzzKz1L7GyYdWk0/yZ9sSptkI5xhIXcapd9x/evd9ze
+	YeaTdBN7yeruMDpul8vwYdpdAvTrb+zDd/Yi9g5jNCNpHeDNZQ+/MIolcQ6xTIE85QG3d9w92g=
+	=
+X-Google-Smtp-Source: AGHT+IENdh72dh9PnFdNT8axzxCFtztiUq7XqSGjM62xHve7F+RNbtwzib3M4neI57xZTVWRyukmA3UyZQ==
+X-Received: from rmoar-specialist.c.googlers.com ([fda3:e722:ac3:cc00:2b:7d90:c0a8:45d3])
+ (user=rmoar job=sendgmr) by 2002:a05:6902:1004:b0:e0b:b348:9848 with SMTP id
+ 3f1490d57ef6-e0bcd37b07amr164276.9.1722456916236; Wed, 31 Jul 2024 13:15:16
+ -0700 (PDT)
+Date: Wed, 31 Jul 2024 20:15:08 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZqqULZ5pSojnixUh@x1>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240731201508.53805-1-rmoar@google.com>
+Subject: [PATCH v2] kunit: add test duration attribute
+From: Rae Moar <rmoar@google.com>
+To: shuah@kernel.org, davidgow@google.com, dlatypov@google.com, 
+	brendan.higgins@linux.dev
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, Rae Moar <rmoar@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 31, 2024 at 04:44:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Fri, Jul 26, 2024 at 11:08:55AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Tue, Jul 23, 2024 at 09:02:23AM -0700, Ian Rogers wrote:
-> > > On Mon, Jul 22, 2024 at 10:27 PM Kajol Jain <kjain@linux.ibm.com> wrote:
-> > > >
-> > > > Update JSON/events for power10 platform with additional events.
-> > > > Also move PM_VECTOR_LD_CMPL event from others.json to
-> > > > frontend.json file.
-> > > >
-> > > > Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
-> > > 
-> > > Reviewed-by: Ian Rogers <irogers@google.com>
-> > 
-> > Thanks, applied to tmp.perf-tools-next,
-> 
-> This seems to be causing this:
-> 
-> Exception processing pmu-events/arch/powerpc/power10/others.json
-> Traceback (most recent call last):
->   File "pmu-events/jevents.py", line 1309, in <module>
->     main()
->   File "pmu-events/jevents.py", line 1291, in main
->     ftw(arch_path, [], preprocess_one_file)
->   File "pmu-events/jevents.py", line 1241, in ftw
->     ftw(item.path, parents + [item.name], action)
->   File "pmu-events/jevents.py", line 1239, in ftw
->     action(parents, item)
->   File "pmu-events/jevents.py", line 623, in preprocess_one_file
->     for event in read_json_events(item.path, topic):
->   File "pmu-events/jevents.py", line 440, in read_json_events
->     events = json.load(open(path), object_hook=JsonEvent)
->   File "/usr/lib/python3.6/json/__init__.py", line 296, in load
->   CC      /tmp/build/perf/bench/evlist-open-close.o
->     return loads(fp.read(),
->   File "/usr/lib/python3.6/encodings/ascii.py", line 26, in decode
->     return codecs.ascii_decode(input, self.errors)[0]
-> UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 9231: ordinal not in range(128)
-> pmu-events/Build:35: recipe for target '/tmp/build/perf/pmu-events/pmu-events.c' failed
-> make[3]: *** [/tmp/build/perf/pmu-events/pmu-events.c] Error 1
-> make[3]: *** Deleting file '/tmp/build/perf/pmu-events/pmu-events.c'
-> Makefile.perf:763: recipe for target '/tmp/build/perf/pmu-events/pmu-events-in.o' failed
-> make[2]: *** [/tmp/build/perf/pmu-events/pmu-events-in.o] Error 2
-> make[2]: *** Waiting for unfinished jobs....
->   CC      /tmp/build/perf/tests/hists_cumulate.o
->   CC      /tmp/build/perf/arch/powerpc/util/event.o
->   CC      /tmp/build/perf/bench/breakpoint.o
->   CC      /tmp/build/perf/builtin-data.o
-> 
-> 
-> This happened in the past, I'm now trying to figure this out :-\
-> 
-> This was in:
-> 
-> toolsbuilder@five:~$ cat dm.log/ubuntu:18.04-x-powerpc
-> 
-> 
-> So 32-bit powerpc, ubuntu 18.04
+Add a new test duration attribute to print the duration of a test run.
 
-This did the trick, so I fixed it in my repo, please ack, just replacing
-’ with ' :-\
+Example:
+ KTAP version 1
+    # Subtest: memcpy
+    # module: memcpy_kunit
+    1..4
+    # memcpy_large_test.speed: slow
+    # memcpy_large_test.duration: 1.134787584s
+    ok 1 memcpy_large_test
+    ...
 
-- Arnaldo
+This attribute is printed for each test (excluding parameterized tests).
 
+Add documentation for this new attribute to KUnit docs.
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power10/others.json b/tools/perf/pmu-events/arch/powerpc/power10/others.json
-index 53ca610152faa237..3789304cb363bbb7 100644
---- a/tools/perf/pmu-events/arch/powerpc/power10/others.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power10/others.json
-@@ -197,6 +197,6 @@
-   {
-     "EventCode": "0x0B0000026880",
-     "EventName": "PM_L2_SNP_TLBIE_SLBIE_DELAY",
--    "BriefDescription": "Cycles when a TLBIE/SLBIEG/SLBIAG that targets this thread's LPAR was in flight while in a hottemp condition. Multiply this count by 1000 to obtain the total number of cycles. This can be divided by PM_L2_SNP_TLBIE_SLBIE_START to obtain the overall efficiency. Note: ’inflight’ means SnpTLB has been sent to core(ie doesn’t include when SnpTLB is in NCU waiting to be launched serially behind different SnpTLB). The NCU Snooper gets in a ’hottemp’ delay window when it detects it is above its TLBIE/SLBIE threshold for process SnpTLBIE/SLBIE with this core. Event count should be multiplied by 2 since the data is coming from a 2:1 clock domain and the data is time sliced across all 4 threads."
-+    "BriefDescription": "Cycles when a TLBIE/SLBIEG/SLBIAG that targets this thread's LPAR was in flight while in a hottemp condition. Multiply this count by 1000 to obtain the total number of cycles. This can be divided by PM_L2_SNP_TLBIE_SLBIE_START to obtain the overall efficiency. Note: 'inflight' means SnpTLB has been sent to core(ie doesn't include when SnpTLB is in NCU waiting to be launched serially behind different SnpTLB). The NCU Snooper gets in a 'hottemp' delay window when it detects it is above its TLBIE/SLBIE threshold for process SnpTLBIE/SLBIE with this core. Event count should be multiplied by 2 since the data is coming from a 2:1 clock domain and the data is time sliced across all 4 threads."
-   }
- ]
+In order to save the timespec64 object, add the ability to save a memory
+allocated object to the attributes framework.
+
+Signed-off-by: Rae Moar <rmoar@google.com>
+---
+Changes v1->v2:
+- Change sprintf to kasprintf
+
+ .../dev-tools/kunit/running_tips.rst          |  7 +++
+ include/kunit/attributes.h                    |  5 ++
+ include/kunit/test.h                          |  1 +
+ lib/kunit/attributes.c                        | 54 ++++++++++++++++++-
+ lib/kunit/test.c                              | 25 +++++++--
+ 5 files changed, 86 insertions(+), 6 deletions(-)
+
+diff --git a/Documentation/dev-tools/kunit/running_tips.rst b/Documentation/dev-tools/kunit/running_tips.rst
+index bd689db6fdd2..a528d92e5d8f 100644
+--- a/Documentation/dev-tools/kunit/running_tips.rst
++++ b/Documentation/dev-tools/kunit/running_tips.rst
+@@ -446,3 +446,10 @@ This attribute indicates whether the test uses init data or functions.
+ 
+ This attribute is automatically saved as a boolean and tests can also be
+ filtered using this attribute.
++
++``duration``
++
++This attribute indicates the length of time in seconds of the test execution.
++
++This attribute is automatically saved as a timespec64 and printed for each test
++(excluding parameterized tests).
+diff --git a/include/kunit/attributes.h b/include/kunit/attributes.h
+index bc76a0b786d2..89ca54ef380d 100644
+--- a/include/kunit/attributes.h
++++ b/include/kunit/attributes.h
+@@ -18,6 +18,11 @@ struct kunit_attr_filter {
+ 	char *input;
+ };
+ 
++/*
++ * Frees all of a test's allocated attributes.
++ */
++void kunit_free_attr(void *test_or_suite, bool is_test);
++
+ /*
+  * Returns the name of the filter's attribute.
+  */
+diff --git a/include/kunit/test.h b/include/kunit/test.h
+index ec61cad6b71d..dca78d9bd3f6 100644
+--- a/include/kunit/test.h
++++ b/include/kunit/test.h
+@@ -82,6 +82,7 @@ enum kunit_speed {
+ /* Holds attributes for each test case and suite */
+ struct kunit_attributes {
+ 	enum kunit_speed speed;
++	struct timespec64 *duration;
+ };
+ 
+ /**
+diff --git a/lib/kunit/attributes.c b/lib/kunit/attributes.c
+index 2cf04cc09372..fd01d54e52d7 100644
+--- a/lib/kunit/attributes.c
++++ b/lib/kunit/attributes.c
+@@ -40,6 +40,7 @@ struct kunit_attr {
+ 	int (*filter)(void *attr, const char *input, int *err);
+ 	void *attr_default;
+ 	enum print_ops print;
++	bool to_free;
+ };
+ 
+ /* String Lists for enum Attributes */
+@@ -79,8 +80,22 @@ static const char *attr_string_to_string(void *attr, bool *to_free)
+ 	return (char *) attr;
+ }
+ 
++static const char *attr_duration_to_string(void *attr, bool *to_free)
++{
++	struct timespec64 *val = (struct timespec64 *)attr;
++	char *str = kasprintf(GFP_KERNEL, "%lld.%09lds", val->tv_sec, val->tv_nsec);
++
++	*to_free = true;
++	return str;
++}
++
+ /* Filter Methods */
+ 
++static int attr_default_filter(void *attr, const char *input, int *err)
++{
++	return false;
++}
++
+ static const char op_list[] = "<>!=";
+ 
+ /*
+@@ -246,8 +261,20 @@ static void *attr_is_init_get(void *test_or_suite, bool is_test)
+ 		return ((void *) suite->is_init);
+ }
+ 
++static void *attr_duration_get(void *test_or_suite, bool is_test)
++{
++	struct kunit_case *test = is_test ? test_or_suite : NULL;
++
++	if (test && !test->generate_params)
++		return ((void *) test->attr.duration);
++	else
++		return ((void *) NULL);
++}
++
+ /* List of all Test Attributes */
+ 
++static struct timespec64 duration_default = {0, 0};
++
+ static struct kunit_attr kunit_attr_list[] = {
+ 	{
+ 		.name = "speed",
+@@ -256,6 +283,7 @@ static struct kunit_attr kunit_attr_list[] = {
+ 		.filter = attr_speed_filter,
+ 		.attr_default = (void *)KUNIT_SPEED_NORMAL,
+ 		.print = PRINT_ALWAYS,
++		.to_free = false,
+ 	},
+ 	{
+ 		.name = "module",
+@@ -264,6 +292,7 @@ static struct kunit_attr kunit_attr_list[] = {
+ 		.filter = attr_string_filter,
+ 		.attr_default = (void *)"",
+ 		.print = PRINT_SUITE,
++		.to_free = false,
+ 	},
+ 	{
+ 		.name = "is_init",
+@@ -272,10 +301,33 @@ static struct kunit_attr kunit_attr_list[] = {
+ 		.filter = attr_bool_filter,
+ 		.attr_default = (void *)false,
+ 		.print = PRINT_SUITE,
++		.to_free = false,
++	},
++	{
++		.name = "duration",
++		.get_attr = attr_duration_get,
++		.to_string = attr_duration_to_string,
++		.filter = attr_default_filter,
++		.attr_default = (void *)(&duration_default),
++		.print = PRINT_ALWAYS,
++		.to_free = true,
+ 	}
+ };
+ 
+-/* Helper Functions to Access Attributes */
++/* Helper Functions to Access/Free Attributes */
++
++void kunit_free_attr(void *test_or_suite, bool is_test)
++{
++	int i;
++	void *attr;
++
++	for (i = 0; i < ARRAY_SIZE(kunit_attr_list); i++) {
++		if (kunit_attr_list[i].to_free) {
++			attr = kunit_attr_list[i].get_attr(test_or_suite, is_test);
++			kfree(attr);
++		}
++	}
++}
+ 
+ const char *kunit_attr_filter_name(struct kunit_attr_filter filter)
+ {
+diff --git a/lib/kunit/test.c b/lib/kunit/test.c
+index e8b1b52a19ab..0d18e4969015 100644
+--- a/lib/kunit/test.c
++++ b/lib/kunit/test.c
+@@ -376,11 +376,11 @@ static void kunit_run_case_check_speed(struct kunit *test,
+ /*
+  * Initializes and runs test case. Does not clean up or do post validations.
+  */
+-static void kunit_run_case_internal(struct kunit *test,
++static struct timespec64 kunit_run_case_internal(struct kunit *test,
+ 				    struct kunit_suite *suite,
+ 				    struct kunit_case *test_case)
+ {
+-	struct timespec64 start, end;
++	struct timespec64 start, end, duration;
+ 
+ 	if (suite->init) {
+ 		int ret;
+@@ -389,7 +389,9 @@ static void kunit_run_case_internal(struct kunit *test,
+ 		if (ret) {
+ 			kunit_err(test, "failed to initialize: %d\n", ret);
+ 			kunit_set_failure(test);
+-			return;
++			duration.tv_sec = 0;
++			duration.tv_nsec = 0;
++			return duration;
+ 		}
+ 	}
+ 
+@@ -399,7 +401,11 @@ static void kunit_run_case_internal(struct kunit *test,
+ 
+ 	ktime_get_ts64(&end);
+ 
+-	kunit_run_case_check_speed(test, test_case, timespec64_sub(end, start));
++	duration = timespec64_sub(end, start);
++
++	kunit_run_case_check_speed(test, test_case, duration);
++
++	return duration;
+ }
+ 
+ static void kunit_case_internal_cleanup(struct kunit *test)
+@@ -424,6 +430,7 @@ struct kunit_try_catch_context {
+ 	struct kunit *test;
+ 	struct kunit_suite *suite;
+ 	struct kunit_case *test_case;
++	struct timespec64 duration;
+ };
+ 
+ static void kunit_try_run_case(void *data)
+@@ -440,7 +447,7 @@ static void kunit_try_run_case(void *data)
+ 	 * abort will be called, this thread will exit, and finally the parent
+ 	 * thread will resume control and handle any necessary clean up.
+ 	 */
+-	kunit_run_case_internal(test, suite, test_case);
++	ctx->duration = kunit_run_case_internal(test, suite, test_case);
+ }
+ 
+ static void kunit_try_run_case_cleanup(void *data)
+@@ -521,6 +528,7 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
+ {
+ 	struct kunit_try_catch_context context;
+ 	struct kunit_try_catch *try_catch;
++	struct timespec64 *duration = kmalloc(sizeof(struct timespec64), GFP_KERNEL);
+ 
+ 	try_catch = &test->try_catch;
+ 
+@@ -533,6 +541,10 @@ static void kunit_run_case_catch_errors(struct kunit_suite *suite,
+ 	context.test_case = test_case;
+ 	kunit_try_catch_run(try_catch, &context);
+ 
++	duration->tv_sec = context.duration.tv_sec;
++	duration->tv_nsec = context.duration.tv_nsec;
++	test_case->attr.duration = duration;
++
+ 	/* Now run the cleanup */
+ 	kunit_try_catch_init(try_catch,
+ 			     test,
+@@ -670,6 +682,7 @@ int kunit_run_tests(struct kunit_suite *suite)
+ 		}
+ 
+ 		kunit_print_attr((void *)test_case, true, KUNIT_LEVEL_CASE);
++		kunit_free_attr((void *)test_case, true);
+ 
+ 		kunit_print_test_stats(&test, param_stats);
+ 
+@@ -680,6 +693,7 @@ int kunit_run_tests(struct kunit_suite *suite)
+ 
+ 		kunit_update_stats(&suite_stats, test_case->status);
+ 		kunit_accumulate_stats(&total_stats, param_stats);
++
+ 	}
+ 
+ 	if (suite->suite_exit)
+@@ -688,6 +702,7 @@ int kunit_run_tests(struct kunit_suite *suite)
+ 	kunit_print_suite_stats(suite, suite_stats, total_stats);
+ suite_end:
+ 	kunit_print_suite_end(suite);
++	kunit_free_attr((void *)suite, false);
+ 
+ 	return 0;
+ }
+
+base-commit: 67c9971cd6d309ecbcb87b942e22ffc194d7a376
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
+
 
