@@ -1,161 +1,160 @@
-Return-Path: <linux-kernel+bounces-269933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB629438FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:31:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C7A3943906
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A18EE2874AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 183AE1F23604
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502C216DC0E;
-	Wed, 31 Jul 2024 22:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057F916D9AA;
+	Wed, 31 Jul 2024 22:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="P4Nt85ZW"
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEUyZ7GY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAB116D9DF
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB8816D336
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722464935; cv=none; b=MqiYgpD58zhIukUrr4RCdziWcgs+OzVs9yMjBdMmrbIuf38J2h9X6W2E7W1J7ktwaunbmhOUoXiBCAEneKm06R737ZwLaGzMIiqA5OL6DAJu86bDY/V9u/xyxRp7o0oSGukNjqas2is+GtsGUL/HSt/Y2rGKroZlfu36BUB1cTU=
+	t=1722465235; cv=none; b=al6X2k1a+O2tltlbdG5HZgpHSemGuTyaMf0gzDYMCuRW9xMeD1dYW3QtOz+FlHnoI8i7u62Orb+mpi2nDGR1VC5UzMamwjmKz7G36Xh5ogDlf4qdoz24OK2u8kou7uoY5+XbMw7XkwOo9FRFUfYNO5DmviiEDrPPggpzXltv1hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722464935; c=relaxed/simple;
-	bh=vMmafbjGGptgOc928LWw3HzijtKQn7umoBI3Z8nrrhU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=IJ+Odmg5p1i4yk8JKlkSonY2PILcETTWL9TRosO42Eet1nQt6NgXaBaDE7W5G2e6B+qazo6KzVePsSWsLYSL83VcmW08ViEZgsf7L3T4lm3uKYi+jqLH31XIiXOutykyhZAGBPW1Lx/vv/NEp9ogOA5hrzAZsOf0OFVWtTPfk6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=P4Nt85ZW; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-709485aca4bso2649488a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:28:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722464933; x=1723069733; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=48kNXVxTxIS1qqb8DRwWYkv7S1xxdo30DtPId8NrWW4=;
-        b=P4Nt85ZWFaJw34g5bso1bpAimKBVe4hcNGUKvo/9+HYteosKysA5dquwMKR3TlFTzn
-         BScVbS5K1Cs0rNo0iKKhvLlV8+AfeLGTsHzraNshYzlDOStnOw32ttJ7Xlj1AGQVTsyv
-         oLf/odzRidX6mkfPmUDZL86/BOTqKTCPNcVjw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722464933; x=1723069733;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=48kNXVxTxIS1qqb8DRwWYkv7S1xxdo30DtPId8NrWW4=;
-        b=bK0igTDVOe5Nz8kVJBRkBw+3Jrsg+9XMNfBxsjC5FGjdNuw9WBwzfK2IcIh/gZE5ef
-         qyFdF5N0vF/LUH3TpVMLfLbRpfzkBA4//1TIddWuD3NyaJDLsz7pblXvRFUvxj/NLfMg
-         3QN/dFrSP65fqFRvjCGvyJiuc37gbm9q651wsD26k7vFgA3K72JZ79d+Ho1u3/kNlRvq
-         ALAHJiirC8hlnXODNjFT/wehMPAab43q8BAl6dz9tau6RN0F5M9nyyoGGOSoCpikiVgR
-         EfihYGoU3Jw8QwATG3/zFn9+7O2yp5DqQ7qqff8CXY8j3JiYLyTl9TxzX/GJQcEjopgh
-         jHAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU+1DDruE0sWj68hVyN2W4u0N1ciCwlqfi2VUcqQpEhDaAG7q4+hESY/rKhEYlLbqpa0H+9HZk0FjrxZUNup6EyxIENLCRN5mRAGt5o
-X-Gm-Message-State: AOJu0YyEDWNAob6GVA3ep77a8OYzqiJtGF2i7t/+WVNfUh0pwCF5QvsI
-	75BgSt7FO554Hm131zGWonxRNyGFYQNqdnmRwXmW9vMT2pBIdJpeOw2AFEAWTQ==
-X-Google-Smtp-Source: AGHT+IG0HTaGPAQVkMi4hiaQmCdPYjlys/O4jVp+HDfUjEJVYYKtUw47a6LfeJvzWSfPWDUXJnJ9nw==
-X-Received: by 2002:a05:6830:2a8d:b0:704:3fea:5354 with SMTP id 46e09a7af769-7096b80ab4fmr546436a34.10.1722464933013;
-        Wed, 31 Jul 2024 15:28:53 -0700 (PDT)
-Received: from stbsrv-and-01.and.broadcom.net ([192.19.144.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe8416c80sm62359181cf.96.2024.07.31.15.28.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 15:28:52 -0700 (PDT)
-From: Jim Quinlan <james.quinlan@broadcom.com>
-To: linux-pci@vger.kernel.org,
-	Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	bcm-kernel-feedback-list@broadcom.com,
-	jim2101024@gmail.com,
-	james.quinlan@broadcom.com
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-rpi-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v5 12/12] PCI: brcmstb: Enable 7712 SOCs
-Date: Wed, 31 Jul 2024 18:28:26 -0400
-Message-Id: <20240731222831.14895-13-james.quinlan@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240731222831.14895-1-james.quinlan@broadcom.com>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+	s=arc-20240116; t=1722465235; c=relaxed/simple;
+	bh=f6tsL8JBQOiIEWm0dBMmAi8XbIcgpoN4n5O0IPGl0Cs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RcWWmWBPr/vnntV+B+p+vevEoFleuM4mk4zAMFkGYGtOr1eT9I/XMYcGq6QaLXkxPIchXB2XcMuBsp5bH6eYoXYBPX3J31fWSG/7L/+zNazx2YN9buhLmcqbT1wvN7Uh5cX6JDclielLORqydgTo7KP4XPVmdTNbPCBGnPeKm2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEUyZ7GY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBAD2C4AF0C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722465235;
+	bh=f6tsL8JBQOiIEWm0dBMmAi8XbIcgpoN4n5O0IPGl0Cs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CEUyZ7GYYFZvGX1xIh4GhBHZM+Dly6EQtrfdDjUNJ6CcZMvoiMGiDI2wbAXQAnvf9
+	 935chzRX5fCDhL2SHUvHUnhkEqBdXP7/YA57pW6Lo7n0W5MVwyp2Vh0so2V8GDAnwT
+	 7fBgonCS+ACxuOwVSGKw0rbWJaGS2hVO+JKMe8/gneeEdOTPp2Awh8t5Jkhkk/KTFc
+	 axLlmHEdYdSMi6GjNqx4L4kFy9iD3vy7vsda/nhBPY5OJ0BdtBMJlVBsp8RFqzMMQO
+	 yY7nHeQKhe+tCBjhEInLzJty0FqI7NJK53vSWdfyrOtV2WbZHSZgXAz3qd7k2v1RC4
+	 wrjWZKn/STL2w==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso93077041fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:33:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXXO2BeFM2YWx0MvMckA5O3b0wNdW0z8Ta6T2+G85me/peWgBLtGhRfnuLfsnqI5OsNBczBKkPTdvOSHjyGGOdJ0Ck5meWJsAsWJT1Y
+X-Gm-Message-State: AOJu0Yx3os5lvlQgtVl0GQmSOHWgqNaJTd0ieWtJTMbrNaLE7fEluvzt
+	gN+DJlHxEtkMmN9uU0Jz8bCDUzK+5W/fBeP3Ddx/xfjYTvUnaBaeLWCHDvc9Vufxle5wAQ0K69k
+	QmVcfhGkt0fvZMXPdPBmRZwGwzj49tEKe2APb
+X-Google-Smtp-Source: AGHT+IEqkDYIUYgA+dpFwMbXnG49w+fYyvopH2UKs/YAoOj74cucLjjYPHzqoCnWIr422QeLxH1hwFJi16y2JHGIaA0=
+X-Received: by 2002:a2e:2d02:0:b0:2ef:24f3:fb9c with SMTP id
+ 38308e7fff4ca-2f153399865mr5764941fa.38.1722465233242; Wed, 31 Jul 2024
+ 15:33:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
+ <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com>
+ <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com>
+ <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com> <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Thu, 1 Aug 2024 00:33:42 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
+Message-ID: <CACYkzJ7Yi4qJYf-b5N=Jq9WRX3edAeymE8=fU3pwwxhSVYZgTg@mail.gmail.com>
+Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
+ used before call to jump_label_init()
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
+	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Broadcom STB 7712 is the sibling chip of the RPi 5 (2712).
-It has one PCIe controller with a single port, supports gen2
-and one lane only.  The current revision of the chip is "C0"
-or "C1".
+On Wed, Jul 31, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Tue, Jul 30, 2024 at 4:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org> w=
+rote:
+> > > On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien8.=
+de> wrote:
+> > > > >
+> > > > > Hi,
+> > > > >
+> > > > > this is with today's linux-next:
+> > > > >
+> > > > > ...
+> > > > >
+> > > > > 09:44:13  [console-expect]#kexec -e
+> > > > > 09:44:13  kexec -e
+> > > > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next=
+-20240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld =
+(GNU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 =
+UTC 2024
+> > > > > 09:44:16  [    0.000000] ------------[ cut here ]------------
+> > > > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_=
+call_inline.c:153 __static_call_update+0x1c6/0x220
+> >
+> > ...
+> >
+> > > > KP, please take a look at this as soon as you can (lore link below =
+for
+> > > > those who aren't on the list).  One obvious first thing to look at =
+is
+> > > > simply moving the call to early_security_init(), but that requires
+> > > > some code audit to make sure it is safe and doesn't break something
+> > > > else.  Of course, if we can do something with how we setup/use stat=
+ic
+> > > > calls that is even better.  I'll take a look at it myself later tod=
+ay,
+> > > > but I'm busy with meetings for the next several hours.
+> > > >
+> > > > If we can't resolve this in the next day or two I'm going to
+> > >
+> > > Thanks for the ping.
+> > >
+> > > Taking a look, yeah it's possible that we need to move jump_label_ini=
+t
+> > > before early_security_init / inside it.
+> > >
+> > > I will do a repro and test my change and reply back.
+> >
+> > I'm pretty sure we don't want to move jump_label_init() inside
+> > early_security_init(), we likely want to keep those as distinct calls
+> > in start_kernel().  Shuffling the ordering around seems like a better
+> > solution if we can't solve this some other way.
+> >
+> > Regardless, thanks for looking into this, I'll hold off on digging
+> > into this and wait for your patch.
+>
+> Since I don't want to leave linux-next broken any longer, I'm going to
+> yank the static-call patches from the lsm/next branch but I'll leave
+> them in lsm/dev so you can continue to use that as a basis for your
+> fix.  If we don't have a fix in hand by the first half of next week,
+> I'll drop the patches from lsm/dev too and we can revisit the patchset
+> when you have a fix ready.
+>
+> For casual observers, the lsm/next is normally an automatically
+> composed branch made up of the latest lsm/stable-X.Y and lsm/dev
+> branches however in this particular case I'm going to manually update
+> the lsm/next branch.  The normal process is described here:
+>
+> * https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+>
 
-Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-Reviewed-by: Stanimir Varbanov <svarbanov@suse.de>
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/pci/controller/pcie-brcmstb.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+I sent this a couple of minutes after you sent the email. I was trying
+to reproduce / confirm the original issue before posting the patch.
 
-diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-index 4623b70f9ad8..44b323a13357 100644
---- a/drivers/pci/controller/pcie-brcmstb.c
-+++ b/drivers/pci/controller/pcie-brcmstb.c
-@@ -1202,6 +1202,10 @@ static void brcm_extend_rbus_timeout(struct brcm_pcie *pcie)
- 	const unsigned int REG_OFFSET = PCIE_RGR1_SW_INIT_1(pcie) - 8;
- 	u32 timeout_us = 4000000; /* 4 seconds, our setting for L1SS */
- 
-+	/* 7712 does not have this (RGR1) timer */
-+	if (pcie->soc_base == BCM7712)
-+		return;
-+
- 	/* Each unit in timeout register is 1/216,000,000 seconds */
- 	writel(216 * timeout_us, pcie->base + REG_OFFSET);
- }
-@@ -1673,6 +1677,13 @@ static const int pcie_offsets_bmips_7425[] = {
- 	[PCIE_INTR2_CPU_BASE] = 0x4300,
- };
- 
-+static const int pcie_offset_bcm7712[] = {
-+	[EXT_CFG_INDEX]  = 0x9000,
-+	[EXT_CFG_DATA]   = 0x9004,
-+	[PCIE_HARD_DEBUG] = 0x4304,
-+	[PCIE_INTR2_CPU_BASE] = 0x4400,
-+};
-+
- static const struct pcie_cfg_data generic_cfg = {
- 	.offsets	= pcie_offsets,
- 	.soc_base	= GENERIC,
-@@ -1738,6 +1749,14 @@ static const struct pcie_cfg_data bcm7216_cfg = {
- 	.num_inbound_wins = 3,
- };
- 
-+static const struct pcie_cfg_data bcm7712_cfg = {
-+	.offsets	= pcie_offset_bcm7712,
-+	.perst_set	= brcm_pcie_perst_set_7278,
-+	.bridge_sw_init_set = brcm_pcie_bridge_sw_init_set_generic,
-+	.soc_base	= BCM7712,
-+	.num_inbound_wins = 10,
-+};
-+
- static const struct of_device_id brcm_pcie_match[] = {
- 	{ .compatible = "brcm,bcm2711-pcie", .data = &bcm2711_cfg },
- 	{ .compatible = "brcm,bcm4908-pcie", .data = &bcm4908_cfg },
-@@ -1747,6 +1766,7 @@ static const struct of_device_id brcm_pcie_match[] = {
- 	{ .compatible = "brcm,bcm7445-pcie", .data = &generic_cfg },
- 	{ .compatible = "brcm,bcm7435-pcie", .data = &bcm7435_cfg },
- 	{ .compatible = "brcm,bcm7425-pcie", .data = &bcm7425_cfg },
-+	{ .compatible = "brcm,bcm7712-pcie", .data = &bcm7712_cfg },
- 	{},
- };
- 
--- 
-2.17.1
+https://lore.kernel.org/linux-security-module/20240731213429.2244234-1-kpsi=
+ngh@kernel.org/T/#u
 
+> --
+> paul-moore.com
 
