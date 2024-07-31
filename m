@@ -1,199 +1,161 @@
-Return-Path: <linux-kernel+bounces-268613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF1F29426F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7629426FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:37:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86DC7283800
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:37:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FF6D2841EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7A716CD24;
-	Wed, 31 Jul 2024 06:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3F116D303;
+	Wed, 31 Jul 2024 06:37:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Agl1ePpN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nXyq4HRA"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50CC1946F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9780D16C695;
+	Wed, 31 Jul 2024 06:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407825; cv=none; b=m8n3e1z9oGaTDCOebnmFytuSUg++G0oaoqtU3dBEGAqrktsdjB97xD7FCgCQQK89xbt3R0aiJaKDNti5HYCYly6/bMZIju2eTm9tS1amTcMmKX42n56ONJcAiuvLo34YRLm2LRtSrJGT7k1tlrSRXQV1TuRzhS+XO6tykiViX5k=
+	t=1722407843; cv=none; b=OcBmUDWJFT69gP/dqU/uUst2EbyqJXO7aOXoNA11VNwGPiOnQDhgpGChfrLWGq87F5n88fFOIfBKo/J9NFQLx76+YNhtKYNZKKulJIzaUIQX94w3uQrUbA6Wn40rP3skHq7T+ZZIEO7DXuJOoFS6GUojHpA5lQZHdvkwn2IG8kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407825; c=relaxed/simple;
-	bh=T5xtq2+T4SGA+SuVDFG7nCUZboCIDjJHRn/Bzy4RjSY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EgARh3KMMLgVXo3f7ZkdCyJM26BM7wwEMIlda8nxsWy1q2Ox5rkEAzNkpNz9gO2kW2lOZRXTHmjyIp/h7B53+yIQedzpBa6bJUMuwvrMJZZpWgvRgHXcXsTKes2WgXwOXruUNDc6x3L8KzaYQ9lSLY7SrtUmi3/9s+SJNQEx2go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Agl1ePpN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722407822;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2f5yai2p+2ixByjx7pWktU2JtLhPUEw7G/kkgGPzfME=;
-	b=Agl1ePpN3fN9ZO/Al2xGq351ASohUb3D9vwP4FjFzQlkE/Se4drMmS5DWAC1WqSSPG44ao
-	oqrtq82rE0IODBK7dBC7g0+f2lmF7FKCZWzl519CTp0SK1FmMUr29tKhMezlMfHPlVomoF
-	bsKOkyu4NNEBVvB2c1IVoLuXPR6Ymk8=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-168-jvWeRHXrMjuwctG2lQwICg-1; Wed, 31 Jul 2024 02:37:00 -0400
-X-MC-Unique: jvWeRHXrMjuwctG2lQwICg-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1ff3dfaa090so9793685ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:37:00 -0700 (PDT)
+	s=arc-20240116; t=1722407843; c=relaxed/simple;
+	bh=PMGZUubJJ8umfwOXQuBkzTp61GgTj6250h1dDc81FvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hnm+FuihvKMqk4jJT/1dy+qgt5RbI/VpA29a2o/J3SlL8JZpJa5kRK1AcTQudN/h+jEnqpd5ongfyOVO2Qrni0oUoJ7InSN6inq8AakZKX/lADkTq/+gScMMo/td3vEDIqxCxBzEbPrSmwi2TISErCCZpIhXwPNKOhRwDfR55YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nXyq4HRA; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd65aaac27so4585825ad.1;
+        Tue, 30 Jul 2024 23:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722407840; x=1723012640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D/gj7A7Iixy8zZuYKD1Pp/1Lqkird0pzzQjp0dasAE4=;
+        b=nXyq4HRAilqq9sHnEgjkolG7Ts04rpzMq1tfSM2egzaGeygDlVvfXyZUnQdYeunH6m
+         eRqQZ0sG69llZXY5Z53u9veBRNw5lAV6TbbfV2ARcU7B/riq01XTcfIGGtc1bmaI+Hm9
+         bSraHy0I+QJwR30qMNUtG+0kj/g7A1fSbBAmQRjZblfZPLj8ckhPQQbz2sOMPUt5r9Si
+         EzDvuHl+KDMI0lAga77z6c3G9H1CDLQtorUVsrYj94KpFCuT8z9u9xY7sYUM+fnonrVk
+         vgBeCt1J5yvhxpbIEptZvgG6lKRI8R2oMr1WOZsAjByA04GvcqXH7nezFPcBk/7FPJsD
+         4CDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722407819; x=1723012619;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2f5yai2p+2ixByjx7pWktU2JtLhPUEw7G/kkgGPzfME=;
-        b=g5wuxky4cHYpkAJpP8dAsAfNYPXhZDaIhUJ9/vohAfQJHQUBp08DnGAFQhPw/od9Mg
-         MIcyQfWyaywdb7GIk9t3MUAwVgRqp+Fxb21IxdhB8OjVsXelP4MXR255qGnHKP3h7bKF
-         +8x2c8LtATMfYu/aCYSWVfSkkBoFOO2W7oWoMOZW36PhnNL3GVmgWRIfLy3muRFHXia3
-         ibpvf/RJobnGq1qvhJc3jwz154ZvxVfNqoehj6XhSllc3vbB8WAUAaMBxsLpb1eOvWPy
-         3AAGkj7NXNBoGvlIYed7M6kxe+ZN4keqfaEFL6DSMsB9SUSsJXqkvCmq4J/iDfUnnMul
-         BuJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKBMPXThDTvHZr94OZFX1UF4hXcU1qH+2ILYj6zusnKJG5jczVaqYMr9poYnIZit3iQ3p7ekajtbfq0GfTE/45kR+BwyAWaZimLABa
-X-Gm-Message-State: AOJu0YykPgzU/qy37PrAscE80IVDy8j6G8RZnIvjxMvi1YWd5NZ3n4I/
-	VINuHOhcFzofNiqesz8c5FKX+/0PtorLl+pvybFaXo25QWL0IxDv7y7S7d2Q+Rw8IYgsy3od4Xv
-	79S6oD5s8Tfb0MJKAplbcrKSfA//4IOwL8JT9VWNINd3rGD55aMjuNaTSVxHorg==
-X-Received: by 2002:a17:902:e810:b0:1f7:1655:825c with SMTP id d9443c01a7336-1ff04860a59mr127749495ad.36.1722407819474;
-        Tue, 30 Jul 2024 23:36:59 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHmcfjVds5cuNEcd1txMPa+VApIJaSskNZFLiX3i8Sit0Q2n9g9r0lcLijWVpFQdhLCW8zJaA==
-X-Received: by 2002:a17:902:e810:b0:1f7:1655:825c with SMTP id d9443c01a7336-1ff04860a59mr127749205ad.36.1722407819034;
-        Tue, 30 Jul 2024 23:36:59 -0700 (PDT)
-Received: from [192.168.68.54] ([43.252.112.134])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee1477sm113129505ad.169.2024.07.30.23.36.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 30 Jul 2024 23:36:58 -0700 (PDT)
-Message-ID: <68acf6c9-4ab8-4ed5-bddc-f3fc5313597e@redhat.com>
-Date: Wed, 31 Jul 2024 16:36:49 +1000
+        d=1e100.net; s=20230601; t=1722407840; x=1723012640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D/gj7A7Iixy8zZuYKD1Pp/1Lqkird0pzzQjp0dasAE4=;
+        b=kQFIGWd37ovuK9uJTm4yqaNlKUjODsORsQDOz2HjXBHw9MJ5Ec8rVxrfgG/LbT8H4e
+         eT4FQM/rF2lihV56RmgTESte8UUUga5iQnc4WWkc7D9MffQ5qRcGTB8agZMNRd123eek
+         OgqhL9lmEgyOBL4ftDYxaObpxTzWEglfG/hdhrZNosipZr5FNLuRVEYPDfzVe1u3slxy
+         EVSPuOjTSiQ8DBo7p1nqiKZGoyvA2HDCSqlg0J3cCwYflHlBAmWJ66dTcvpT0Ks40itS
+         qVV6CgsOnSu99KH3amdEulpItH7rN6xW+8jrkJKPit20b470kCmpW0KXQjm790xWWA6U
+         LrLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVVcOmpiB7VVduyyF0MXHBcKPUWwIfD+E5va6SwYahUO+g9a4IgGSvQazbChgpJIRvt7/+1BTbJqoNn0gtJO/VRgBfD2TuxBiJTILhT
+X-Gm-Message-State: AOJu0YysK4QGCPgK/ocvq1fyZOykBZ7jcZKmVqwbY+fsJGP/NUJnKVnW
+	tBRLXhpiT1TsDgJNyxAvx0FtfOQUjOtVZ5nqMUNL+YMTDwbi+k50TZ8AD9o+Ra6hPg==
+X-Google-Smtp-Source: AGHT+IF8MmY2AIZk8l3U+q3JHFwmPtvte8cubN5gUQAyvu8Ez3e4FUippvIASDtwo9VTaguDAPIDEQ==
+X-Received: by 2002:a17:902:e743:b0:1f7:3a70:9e71 with SMTP id d9443c01a7336-1ff37be4cd4mr60687485ad.13.1722407839547;
+        Tue, 30 Jul 2024 23:37:19 -0700 (PDT)
+Received: from localhost.localdomain ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fed7ee4ce6sm113164905ad.157.2024.07.30.23.37.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 23:37:18 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: anshulusr@gmail.com,
+	jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v5 0/3] Replaced IIO_INTENSITY channel with IIO_LIGHT
+Date: Wed, 31 Jul 2024 12:07:02 +0530
+Message-ID: <20240731063706.25412-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/15] arm64: Mark all I/O as non-secure shared
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-References: <20240701095505.165383-1-steven.price@arm.com>
- <20240701095505.165383-6-steven.price@arm.com>
- <b20b7e5b-95aa-4fdb-88a7-72f8aa3da8db@redhat.com>
- <e05d2363-d3e4-4a23-9347-723454d603c9@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <e05d2363-d3e4-4a23-9347-723454d603c9@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Suzuki,
+Hello,
 
-On 7/30/24 8:36 PM, Suzuki K Poulose wrote:
-> On 30/07/2024 02:36, Gavin Shan wrote:
->> On 7/1/24 7:54 PM, Steven Price wrote:
->> I'm unable to understand this. Steven, could you please explain a bit how
->> PROT_NS_SHARED is turned to a shared (non-secure) mapping to hardware?
->> According to tf-rmm's implementation in tf-rmm/lib/s2tt/src/s2tt_pvt_defs.h,
->> a shared (non-secure) mapping is is identified by NS bit (bit#55). I find
->> difficulties how the NS bit is correlate with PROT_NS_SHARED. For example,
->> how the NS bit is set based on PROT_NS_SHARED.
-> 
-> 
-> There are two things at play here :
-> 
-> 1. Stage1 mapping controlled by the Realm (Linux in this case, as above).
-> 2. Stage2 mapping controlled by the RMM (with RMI commands from NS Host).
-> 
-> Also :
-> The Realm's IPA space is divided into two halves (decided by the IPA Width of the Realm, not the NSbit #55), protected (Lower half) and
-> Unprotected (Upper half). All stage2 mappings of the "Unprotected IPA"
-> will have the NS bit (#55) set by the RMM. By design, any MMIO access
-> to an unprotected half is sent to the NS Host by RMM and any page
-> the Realm wants to share with the Host must be in the Upper half
-> of the IPA.
-> 
-> What we do above is controlling the "Stage1" used by the Linux. i.e,
-> for a given VA, we flip the Guest "PA" (in reality IPA) to the
-> "Unprotected" alias.
-> 
-> e.g., DTB describes a UART at address 0x10_0000 to Realm (with an IPA width of 40, like in the normal VM case), emulated by the host. Realm is
-> trying to map this I/O address into Stage1 at VA. So we apply the
-> BIT(39) as PROT_NS_SHARED while creating the Stage1 mapping.
-> 
-> ie., VA == stage1 ==> BIT(39) | 0x10_0000 =(IPA)== > 0x80_10_0000
-> 
-                                                      0x8000_10_0000
+The first patch in the series adds support for configuring the gain and
+resolution(integration time) of the ltr390 sensor by writing to the
+respective registers. Then the available values for gain and resolution
+that are listed in the datasheet are provided via the `read_avail`
+callback. 
 
-> Now, the Stage2 mapping won't be present for this IPA if it is emulated
-> and thus an access to "VA" causes a Stage2 Abort to the Host, which the
-> RMM allows the host to emulate. Otherwise a shared page would have been
-> mapped by the Host (and NS bit set at Stage2 by RMM), allowing the
-> data to be shared with the host.
-> 
+The second patch adds a new channel for the ALS feature of the sensor.
+The same configuration of gain and resolution has to be provided for this
+channel as well. As there are two IIO channels now, we would need to
+switch the sensor's mode of operation depending on which sensor is being
+accessed. Hence, mode switching is also provided.
 
-Thank you for the explanation and details. It really helps to understand
-how the access fault to the unprotected space (upper half) is routed to NS
-host, and then VMM (QEMU) for emulation. If the commit log can be improved
-with those information, it will make reader easier to understand the code.
+Then the third patch adds support for calculating `counts_per_uvi` based
+on the current gain and resolution value.
 
-I had the following call trace and it seems the address 0x8000_10_1000 is
-converted to 0x10_0000 in [1], based on current code base (branch: cca-full/v3).
-At [1], the GPA is masked with kvm_gpa_stolen_bits() so that BIT#39 is removed
-in this particular case.
+Changes in v5:
+- Replaced the IIO_INTENSITY channel with IIO_LIGHT channel
+- We calculate the lux value directly using `als_data / (gain * int_time)`
+- Provided a scale channel where the scale is 0.6 * WINDOW_FACTOR
+- Link to v4: https://lore.kernel.org/linux-iio/20240730065822.5707-1-abhashkumarjha123@gmail.com/T/#m
 
-   kvm_vcpu_ioctl(KVM_RUN)                         // non-secured host
-   kvm_arch_vcpu_ioctl_run
-   kvm_rec_enter
-   rmi_rec_enter                                   // -> SMC_RMI_REC_ENTER
-     :
-   rmm_handler                                     // tf-rmm
-   handle_ns_smc
-   smc_rec_enter
-   rec_run_loop
-   run_realm
-     :
-   el2_vectors
-   el2_sync_lel
-   realm_exit
-     :
-   handle_realm_exit
-   handle_exception_sync
-   handle_data_abort
-     :
-   handle_rme_exit                                 // non-secured host
-   rec_exit_sync_dabt
-   kvm_handle_guest_abort                          // -> [1]
-   gfn_to_memslot
-   io_mem_abort
-   kvm_io_bus_write                                // -> run->exit_reason = KVM_EXIT_MMIO
+Changes in v4:
+- Added "bitfield.h" include to fix `-Wimplicit-function-declaration`.
+- Link to v3: https://lore.kernel.org/linux-iio/20240729115056.355466-1-abhashkumarjha123@gmail.com/
 
-Another question is how the Granule Protection Check (GPC) table is updated so
-that the corresponding granule (0x8000_10_1000) to is accessible by NS host? I
-mean how the BIT#39 is synchronized to GPC table and translated to the property
-"granule is accessible by NS host".
-     
-Thanks,
-Gavin
+Changes in v3:
+- Added cover letter to the patch series.
+- Fixed indentation in the patch description.
+- Patch specific changes are listed below.
 
+[PATCH v3 1/3]
+	- Cleaned up the spurious changes made in v2.
+	- ltr390_set_int_time and ltr390_set_gain now return -EINVAL to
+	indicate no match.
 
+[PATCH v3 2/3]
+	- Used enum ltr390_mode inside the ltr390_data struct.
+	- Refactored `ltr390_set_mode` function according to the comments in v2.
 
+[PATCH v3 3/3]
+	- Simplified the formula for `counts_per_uvi` calculation.
+	- Removed spurious whitespace changes introduced in v2.
 
+- Link to v2: https://lore.kernel.org/linux-iio/20240728151957.310237-1-abhashkumarjha123@gmail.com/
+
+Changes in v2:
+- Split the single patch into 3 patches.
+- Used FIELD_PREP to perform bit shifting.
+- Used enum for mode selection instead of defines.
+- Fixed indentation and whitespace issues pointed out in the comments
+- Replaced `mutex_lock(&data->lock)` with `guard(mutex)(&data->lock)`
+- Provided available values for gain and resolution via `read_avail`
+  instead of sysfs attributes.
+- Refactored `ltr390_set_gain` and `ltr390_set_int_time`.
+- Used early returns instead of single exit points.
+
+- Link to v1: https://lore.kernel.org/linux-iio/20240718104947.7384-1-abhashkumarjha123@gmail.com/
+
+Regards,
+Abhash
+
+Abhash Jha (3):
+  iio: light: ltr390: Add configurable gain and resolution
+  iio: light: ltr390: Add ALS channel and support for gain and
+    resolution
+  iio: light: ltr390: Calculate 'counts_per_uvi' dynamically
+
+ drivers/iio/light/ltr390.c | 238 ++++++++++++++++++++++++++++++++++---
+ 1 file changed, 220 insertions(+), 18 deletions(-)
+
+-- 
+2.43.0
 
 
