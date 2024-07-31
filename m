@@ -1,181 +1,149 @@
-Return-Path: <linux-kernel+bounces-269408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF06943288
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:58:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5621943289
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:59:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88411C20AD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BB711F2665E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1697F1BBBEA;
-	Wed, 31 Jul 2024 14:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D891BBBEA;
+	Wed, 31 Jul 2024 14:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IaUvdhIF"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="thja6tMy"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5807E186E4F;
-	Wed, 31 Jul 2024 14:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDB2186E4F;
+	Wed, 31 Jul 2024 14:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722437900; cv=none; b=K6S+LDCk/8vKTiWbc7VJOz02V9FHzYOuXsZl8YHt8AYgrYUm/8YKl9sNGmI9ScC1+8GiwdxBu+Eleoi74MAmm5jvUcPxuMkYGyitVBlp3tQSi8ciRRt8YCOcIAkWWz7h2Bm4Y7DLJTSiT94+1n3T5nzBi9tDDeDuAxZiaN4hyTk=
+	t=1722437944; cv=none; b=EhDWB1TtEHSY/fCapQHBQEi+Aa7a+ZSXF4OO3RA/jP4my1oQs+zrj1aad/sLuTVR/oPKIidcmhBlMjL6cU3nIAn8Za+cMxRi5gEqwuw+KG+oQhMu1s0Ucj/AEl1HGYY8Yp1iTIPuP38w37H4YOhJSbnky3bX8m/DbO1itjHW+EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722437900; c=relaxed/simple;
-	bh=gRxptiPpJoMbRFyIMNoXDXxeINftFgTK635awdM4nZg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YyZj3arFOuWQhbDkLkwF91AdBtuRkqSphT/qAYYJGlhrzCIcBiidGXtv24Q7s5lCPWY7ezHK9wpszIbbTMFCILODGSD98Q1W7Pr+YOdu7Kez5c4Nv2vNpLweqt+52s32Q9muTdufAtTZUTN5em9C3L/bMS5MmSF/avGUtXF6wow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IaUvdhIF; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VEwClG056748;
-	Wed, 31 Jul 2024 09:58:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722437892;
-	bh=wWfWjYfY1LUP58W0JQcL+f/TU7wLTX3//5xKhnoI6tw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=IaUvdhIFlJ6oqiEahWA0zZuE1X2KpUsSerAQeIs4S/EVzijL8HdvfMn6+qJ7lwtvx
-	 sg5DfcAXOECWF8XnRy4LKYYwyTJ6USdIvxpat4NGTW92ENo1WSirIgC54IL1BmZOT/
-	 vRScP+FiYeOhGcNAweuZnSw4iKl4SZbuRKIwejbA=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VEwCQc049240
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 09:58:12 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 09:58:11 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 09:58:11 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VEwACd095111;
-	Wed, 31 Jul 2024 09:58:11 -0500
-Date: Wed, 31 Jul 2024 20:28:10 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Andrew Davis <afd@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>
-Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
-Message-ID: <20240731145810.xoxal3ef7i3relru@uda0497581>
-References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
- <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
- <20240730123343.mqafgpj4zcnd5vs4@plaything>
- <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
- <20240731110607.7fb42mgcsf2apodv@unshaven>
- <20240731135714.p53lki7mihzxcyk2@uda0497581>
- <087ee9e2-50ec-4791-a534-b3ebbf594fe6@ti.com>
+	s=arc-20240116; t=1722437944; c=relaxed/simple;
+	bh=G0SUxC1G8UKkcrNjMPfp4DfwcRvmGOvQQHEzv+X3sgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ti28aWFLc/rAsACkMYN9IJWbkLv01dcwgsg0kB/AQ3ocAp4xVlKBIl1bTJZjKy8QkqwswxMAGFHhkYrLesPsjHdhFLIw9iPMioORBju1ccxX37a0CSSzOKPGnN1gxuxl+zuBVF5EyxngRTkKcu4aZFAPWVMo+EyKsgUeXFEqMgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=thja6tMy; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WYwGM4NnZz9sjZ;
+	Wed, 31 Jul 2024 16:58:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1722437931;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BgSn0z1/NA0/gQBgFUj6VIEvjR2OUfBqvPIzl8DJV1s=;
+	b=thja6tMykuLqTRrbRjmpYHMjjkpPsQzNZQcUqg44DfoSY0BTA76LZYOr5PrN9Uv7PZRo1z
+	vHINpfE/SzF/ogJxNpbyr0lzetQo+4n7htLeYdG8l+agb3PhbzbGvSJb8aNB5/RY8BcKLJ
+	xyePYI8FIvsh04u/ct4tmXu1DMANlgMvJo75mOGA8nwETs/eRyOz2A8pIk/gwTTHjmNtYG
+	IjCnw+UjNwmzUkhoeiIu6Jr/71TpCBxwSnRvRqRpPP4lYfhkoSB20iUSCXiHblJrkL+Pnu
+	BDq/pXwaJJ7yQILh0ExuyzDFILaVs7B1oR3teJp00hgtw5ANu3eblFCkfV6OoA==
+Date: Thu, 1 Aug 2024 00:58:42 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Shuah Khan <shuah@kernel.org>, kernel@collabora.com, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests: openat2: don't print total number of tests
+ and then skip
+Message-ID: <20240731.145750-musky.jailer.washed.charter-3gbj12e1twc@cyphar.com>
+References: <20240731133951.404933-1-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qkfgmkgav4jyrb6b"
 Content-Disposition: inline
-In-Reply-To: <087ee9e2-50ec-4791-a534-b3ebbf594fe6@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240731133951.404933-1-usama.anjum@collabora.com>
+X-Rspamd-Queue-Id: 4WYwGM4NnZz9sjZ
 
-Hi Andrew,
 
-On 09:37-20240731, Andrew Davis wrote:
-> On 7/31/24 8:57 AM, Manorit Chawdhry wrote:
-> > Hi Nishanth,
-> > 
-> > On 06:06-20240731, Nishanth Menon wrote:
-> > > On 09:49-20240731, Manorit Chawdhry wrote:
-> > > > > > + */
-> > > > > > +
-> > > > > > +#include "k3-j784s4.dtsi"
-> > > > > > +
-> > > > > > +/ {
-> > > > > > +	model = "Texas Instruments K3 J742S2 SoC";
-> > > > > > +	compatible = "ti,j742s2";
-> > > > > > +
-> > > > > > +	cpus {
-> > > > > > +		cpu-map {
-> > > > > > +			/delete-node/ cluster1;
-> > > > > > +		};
-> > > > > > +	};
-> > > > > > +
-> > > > > > +	/delete-node/ cpu4;
-> > > > > > +	/delete-node/ cpu5;
-> > > > > > +	/delete-node/ cpu6;
-> > > > > > +	/delete-node/ cpu7;
-> > > > > 
-> > > > > I suggest refactoring by renaming the dtsi files as common and split out
-> > > > > j784s4 similar to j722s/am62p rather than using /delete-node/
-> > > > > 
-> > > > 
-> > > > I don't mind the suggestion Nishanth if there is a reason behind it.
-> > > > Could you tell why we should not be using /delete-node/?
-> > > > 
-> > > 
-> > > Maintenance, readability and sustenance are the reasons. This is a
-> > > optimized die. It will end up having it's own changes in property
-> > > and integration details. While reuse is necessary, modifying the
-> > > properties with overrides and /delete-nodes/ creates maintenance
-> > > challenges down the road. We already went down this road with am62p
-> > > reuse with j722s, and eventually determined split and reuse is the
-> > > best option. See [1] for additional guidance.
-> > > 
-> > > 
-> > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n189
-> > 
-> > Thank you for giving some reasoning, would do the needful!
-> > 
-> 
-> This refactor will require some interesting naming for the
-> common SoC files. Based on your name for the EVM, I'm guessing
-> you will go with
+--qkfgmkgav4jyrb6b
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-One other reason I was trying to avoid that and going with
-/delete-node/. For such a small delta change tbh, this churn doesn't
-feel worth the effort to me and is just gonna create confusion.
+On 2024-07-31, Muhammad Usama Anjum <usama.anjum@collabora.com> wrote:
+> Don't print that 88 sub-tests are going to be executed, but then skip.
+> This is against TAP compliance. Instead check pre-requisites first
+> before printing total number of tests.
+>=20
+> Old non-tap compliant output:
+>   TAP version 13
+>   1..88
+>   ok 2 # SKIP all tests require euid =3D=3D 0
+>   # Planned tests !=3D run tests (88 !=3D 1)
+>   # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:1 error:0
+>=20
+> New and correct output:
+>   TAP version 13
+>   1..0 # SKIP all tests require euid =3D=3D 0
+>=20
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+> ---
+> Changes since v1:
+> - Remove simplifying if condition lines
+> - Update the patch message
 
-EVM one was required as Rob did raise an interesting point and we did
-require a soc file that wasn't existing with the previous patchset but
-now for deleting just 4 cpus and 1 dsp, am gonna have to rename all the
-files, change the hierarchical structure, add all the cpus again with
-some weird naming for the file as don't know if some other soc is gonna
-come up in future so don't wanna clutter the file names as well with
-j784s4-j742s2-j7xxx.dtsi which is just gonna create another set of mess
-in future.
+Feel free to take my
 
-Regards,
-Manorit
+Reviewed-by: Aleksa Sarai <cyphar@cyphar.com>
 
-> 
-> k3-j784s4-common.dtsi
-> 
-> included from the real k3-j784s4.dtsi and the new k3-j742s2.dtsi?
-> 
-> Too bad the Jacinto SoC names don't use a hierarchical naming. :(
-> 
-> J7<family><part><spin><etc>..
-> 
-> Andrew
-> 
-> > Regards,
-> > Manorit
-> > 
-> > > 
-> > > -- 
-> > > Regards,
-> > > Nishanth Menon
-> > > Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-> > 
+> ---
+>  tools/testing/selftests/openat2/resolve_test.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/tools/testing/selftests/openat2/resolve_test.c b/tools/testi=
+ng/selftests/openat2/resolve_test.c
+> index bbafad440893c..85a4c64ee950d 100644
+> --- a/tools/testing/selftests/openat2/resolve_test.c
+> +++ b/tools/testing/selftests/openat2/resolve_test.c
+> @@ -508,12 +508,13 @@ void test_openat2_opath_tests(void)
+>  int main(int argc, char **argv)
+>  {
+>  	ksft_print_header();
+> -	ksft_set_plan(NUM_TESTS);
+> =20
+>  	/* NOTE: We should be checking for CAP_SYS_ADMIN here... */
+>  	if (geteuid() !=3D 0)
+>  		ksft_exit_skip("all tests require euid =3D=3D 0\n");
+> =20
+> +	ksft_set_plan(NUM_TESTS);
+> +
+>  	test_openat2_opath_tests();
+> =20
+>  	if (ksft_get_fail_cnt() + ksft_get_error_cnt() > 0)
+> --=20
+> 2.39.2
+>=20
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--qkfgmkgav4jyrb6b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZqpRHgAKCRAol/rSt+lE
+bxmMAP907FsjWBb5NU4KU1NShiIRSuUw+b24sOqt2XLx9lbhJQD/XDOJQnSNTmmK
+UvItrEPmh3NeBsOqVpyP8kLUoDmlXAo=
+=D8Np
+-----END PGP SIGNATURE-----
+
+--qkfgmkgav4jyrb6b--
 
