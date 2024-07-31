@@ -1,132 +1,221 @@
-Return-Path: <linux-kernel+bounces-268536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABAC9425E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:43:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CF6A9425EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F54A28768F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2AE11F24FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2234E1B3;
-	Wed, 31 Jul 2024 05:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B4750A93;
+	Wed, 31 Jul 2024 05:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ioYu4bWi"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LnaED0ef"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E736849643;
-	Wed, 31 Jul 2024 05:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1512747B;
+	Wed, 31 Jul 2024 05:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722404623; cv=none; b=XhYTVrfxSqloiY7636bVEcxgWlaujg5FhVm9Z2Uk96mgj0nnJYUQL4jHexkrLqAGgbjiQW0cBnrAMvUE1Koj7I9PTvsYkTyf67M/k7fGAOtAzP5MZpb7vtwPw+X9eHv8nAr54VDG3l71B/+kroPegxV2CAvKigoCz0Gl1QT+poY=
+	t=1722404700; cv=none; b=fpAOsrX5axdAdgPqZV7JMebbuMlndy0BQWB+6Y0aNfiYLhXJ3f6MPel+aiIpRMRc7jZ535/1WhL4dqYemZfVaKBL5NaQXOytQJ24YilnOIlA2un5tATzhsIeoTZiVblOhHaQHgRtZbIDd1gbqr4K0xrSedfP597N4W05xXBB68s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722404623; c=relaxed/simple;
-	bh=7nIvlbwFyFJE/Qy3OjuEZ4hhCdB6Rr+OIuVEIt2km94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Jl9rmbWX1BPOHwT7Hzm5KhJbp0Qc9xYulIyyoGjTNwPJ+8hA2UVL89GrNlVAof3Uwc6FtFW5UaqUfftJG/aaP3qmvJD5cQwB6GrtSW7tcpauIY0cRycQZflLJFnn9cdxsehCvPMvLRhDuJRcbSOwcQLVVyU8C8D/OAgO594qKWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ioYu4bWi; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46V5hT22065986;
-	Wed, 31 Jul 2024 00:43:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722404609;
-	bh=3r9PTWzvN5H+b40F4RKaTChUoLRqaWMmaRO5hXHpP90=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ioYu4bWiHlYC4EQMXVQIxTl7Ur0iEln4mRjGuHGxCiS/kD1SYALa/eDfNo6PpiFG7
-	 qFzsepOFooC4PlFh+G5jTaa/Nf0nO1uyg6iSgWgm7CHIs7ULypwvV/5Owikkb2Uj7I
-	 Czg2Ji2NJS6uT8ajO+EDhlT77W+7FbOLrM2zekNI=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46V5hTf1106339
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 00:43:29 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 00:43:28 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 00:43:28 -0500
-Received: from [172.24.227.248] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.248] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46V5hOB5077514;
-	Wed, 31 Jul 2024 00:43:25 -0500
-Message-ID: <a456bde9-e00f-4aed-be28-9874b0d57674@ti.com>
-Date: Wed, 31 Jul 2024 11:13:23 +0530
+	s=arc-20240116; t=1722404700; c=relaxed/simple;
+	bh=dvCs+55BZAlqOsYn/39Io4p6jWFtaeqX35sqsxB2pr4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UizgRe5pcuJ3jYp+xR9HmFG3/RrlFjZRGXN5Xh1z/g27CR/fQZoTFhz+65zoAFIpgFuDKt/13R5daLOddS3QTNRWlep98L2sxzUBEmMCRFbvu/QBrs85ItjhxbRJi23hBgAT1QCEb/7QSU/cQ1CiJ++l+K5khO1jahO5T19RoBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LnaED0ef; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc566ac769so33677295ad.1;
+        Tue, 30 Jul 2024 22:44:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722404698; x=1723009498; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BC/1wGF6ESoob1KqZeUdHt7PS9fgESUzLCWFdRi9eQs=;
+        b=LnaED0efYD267i0ARHM8fKxPYN2rzFyXGKGQYs9ip7fjI6bdb7ni8kN/XezuDiSQ/t
+         txBuOpZQ5u5RvqR1oUVMaVx9fL2ypQuEBYe4WuMk/b8Xk5T6m9k9bm5U+MUejKPKTPm/
+         eRtFypJa/2nyavROBqDBrCBq5NraQYbLkga62w/CrAqoD5AAK/Nv2HPZgHUGBZzFoHz1
+         oNNTwfWKKjLLb6k2JlpQKKiUoqeHHbxDbXiZ2kOXQqt2YKuS8/w/I00jNPVUTyoYjVld
+         eYiTXkKlBVR1tApFg1KkbUfPNStJUtHMmUOhjkuBPuMlehqqwp1CsrjkZxD7p+aByHPW
+         9oBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722404698; x=1723009498;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BC/1wGF6ESoob1KqZeUdHt7PS9fgESUzLCWFdRi9eQs=;
+        b=Vcbydaw+/kdmTv7Sk7a16cVyUUmo08NREv/kTsUQ+M9wqt72bt8mq76bRvcSyVIRAm
+         6sgurkMjxvGVgnrKOC5mVepcj20Vqn5tYo7iatTag69Y1tzFJkJfnxL4m1Ur9lfdW19w
+         HVMt1jMXypSzwE+HyyN6Bz088VxOT2S6GsbVminV3ebrd8q5jjps2OX7qxNbUJ3KozBh
+         1RNkAVSfUtEuLqyMpUt+RtYRM5tWodvNEhxdpmmbPI4eshBapOky18hbP51srsaA9pwk
+         XhZfXpU2V81Y7hVdyrBqrbO6481r2OtlyJOVDLgJo7AAcb2AtjCHe1mt/5eWUfEHKDre
+         hfFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXY1CKBI9GaatKnqa4Wn4wyiIoE6OHEMWNmc4oZxBYD27HOrFk+wq+UwR+f+YAFuoWtlvDDGX2veDU76fMWVZdZVb4ZwiN74frmg6iBqNiQ2/3d9D7TmQbUIpYAINFgrDRWIhNKVVQ9jf0RvnAJq1oxVNY5C4hvRy3OKi7v6xYLmok6cgI=
+X-Gm-Message-State: AOJu0YxaOyWCP29LM0CbPIAUBod0BMOQiP4nShWBzCGEPo1pABvcwJA5
+	QeEqmitRlnJD7FjTjsFbEIDZVLD4WTLMRx7EI6u0dJqizvSlZ+S9
+X-Google-Smtp-Source: AGHT+IHxQObfjU980Misuy2+P7JlI9fIsZPaHtla2bfIq7tNqqyqhR+dKEHn/hWwBPXv4Sw1+e+gZg==
+X-Received: by 2002:a17:902:da91:b0:1fc:560b:1456 with SMTP id d9443c01a7336-1ff047a42d0mr111765665ad.15.1722404697830;
+        Tue, 30 Jul 2024 22:44:57 -0700 (PDT)
+Received: from localhost.localdomain ([115.240.194.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ce4239sm111968755ad.80.2024.07.30.22.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 22:44:57 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: gpio: nxp,lpc3220-gpio: Convert to dtschema
+Date: Wed, 31 Jul 2024 11:14:30 +0530
+Message-ID: <20240731054442.109732-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: Correct McASP DMAs
-To: Parth Pancholi <parth105105@gmail.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: Parth Pancholi <parth.pancholi@toradex.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240730093754.1659782-1-parth105105@gmail.com>
-Content-Language: en-US
-From: Jayesh Choudhary <j-choudhary@ti.com>
-In-Reply-To: <20240730093754.1659782-1-parth105105@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-Hello Parth,
+Convert the NXP LPC3220 SoC GPIO controller bindings to DT schema format.
 
-Thank you for the patch.
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-On 30/07/24 15:07, Parth Pancholi wrote:
-> From: Parth Pancholi <parth.pancholi@toradex.com>
-> 
-> Correct the McASP nodes - mcasp3 and mcasp4 with the right
-> DMAs thread IDs as per TISCI documentation [1] for J784s4.
-> This fixes the related McASPs probe failure due to incorrect
-> DMA IDs.
-> 
-> Link: http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/psil_cfg.html#psi-l-source-and-destination-thread-ids/ [1]
-> Fixes: 5095ec4aa1ea ("arm64: dts: ti: k3-j784s4-main: Add McASP nodes")
-> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-> ---
->   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> index f170f80f00c1..d4ac1c9872a5 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> @@ -2755,7 +2755,7 @@ mcasp3: mcasp@2b30000 {
->   		interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>,
->   			     <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
->   		interrupt-names = "tx", "rx";
-> -		dmas = <&main_udmap 0xc500>, <&main_udmap 0x4500>;
-> +		dmas = <&main_udmap 0xc403>, <&main_udmap 0x4403>;
->   		dma-names = "tx", "rx";
->   		clocks = <&k3_clks 268 0>;
->   		clock-names = "fck";
-> @@ -2773,7 +2773,7 @@ mcasp4: mcasp@2b40000 {
->   		interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>,
->   			     <GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
->   		interrupt-names = "tx", "rx";
-> -		dmas = <&main_udmap 0xc501>, <&main_udmap 0x4501>;
-> +		dmas = <&main_udmap 0xc404>, <&main_udmap 0x4404>;
->   		dma-names = "tx", "rx";
->   		clocks = <&k3_clks 269 0>;
->   		clock-names = "fck";
-Reviewed-by: Jayesh Choudhary <j-choudhary@ti.com>
+---
+Changes in v3:
+  - Removed unnecessary #include from example.
 
+Changes in v2:
+  - Changed the file name to match the compatible string.
+  - Removed optional from the description of '#gpio-cells' as it was wrongly
+    present.
+---
+ .../devicetree/bindings/gpio/gpio_lpc32xx.txt | 43 ----------------
+ .../bindings/gpio/nxp,lpc3220-gpio.yaml       | 50 +++++++++++++++++++
+ 2 files changed, 50 insertions(+), 43 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
 
-Warm Regards,
-Jayesh
+diff --git a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt b/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
+deleted file mode 100644
+index 49819367a011..000000000000
+--- a/Documentation/devicetree/bindings/gpio/gpio_lpc32xx.txt
++++ /dev/null
+@@ -1,43 +0,0 @@
+-NXP LPC32xx SoC GPIO controller
+-
+-Required properties:
+-- compatible: must be "nxp,lpc3220-gpio"
+-- reg: Physical base address and length of the controller's registers.
+-- gpio-controller: Marks the device node as a GPIO controller.
+-- #gpio-cells: Should be 3:
+-   1) bank:
+-      0: GPIO P0
+-      1: GPIO P1
+-      2: GPIO P2
+-      3: GPIO P3
+-      4: GPI P3
+-      5: GPO P3
+-   2) pin number
+-   3) optional parameters:
+-      - bit 0 specifies polarity (0 for normal, 1 for inverted)
+-- reg: Index of the GPIO group
+-
+-Example:
+-
+-	gpio: gpio@40028000 {
+-		compatible = "nxp,lpc3220-gpio";
+-		reg = <0x40028000 0x1000>;
+-		gpio-controller;
+-		#gpio-cells = <3>; /* bank, pin, flags */
+-	};
+-
+-	leds {
+-		compatible = "gpio-leds";
+-
+-		led0 {
+-			gpios = <&gpio 5 1 1>; /* GPO_P3 1, active low */
+-			linux,default-trigger = "heartbeat";
+-			default-state = "off";
+-		};
+-
+-		led1 {
+-			gpios = <&gpio 5 14 1>; /* GPO_P3 14, active low */
+-			linux,default-trigger = "timer";
+-			default-state = "off";
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml b/Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
+new file mode 100644
+index 000000000000..25b5494393cc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/nxp,lpc3220-gpio.yaml
+@@ -0,0 +1,50 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpio/nxp,lpc3220-gpio.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC3220 SoC GPIO controller
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    const: nxp,lpc3220-gpio
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 3
++    description: |
++      1) bank:
++        0: GPIO P0
++        1: GPIO P1
++        2: GPIO P2
++        3: GPIO P3
++        4: GPI P3
++        5: GPO P3
++      2) pin number
++      3) flags:
++        - bit 0 specifies polarity (0 for normal, 1 for inverted)
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    gpio@40028000 {
++        compatible = "nxp,lpc3220-gpio";
++        reg = <0x40028000 0x1000>;
++        gpio-controller;
++        #gpio-cells = <3>; /* bank, pin, flags */
++    };
+-- 
+2.45.2
+
 
