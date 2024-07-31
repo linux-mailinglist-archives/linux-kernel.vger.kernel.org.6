@@ -1,52 +1,56 @@
-Return-Path: <linux-kernel+bounces-269714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDC94943617
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:13:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674E294361C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C8A283916
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E22F7B236EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1C413D523;
-	Wed, 31 Jul 2024 19:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71C9156F30;
+	Wed, 31 Jul 2024 19:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeeZtwBA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIZEaUE7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CBE12CD8B;
-	Wed, 31 Jul 2024 19:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FD061FEB;
+	Wed, 31 Jul 2024 19:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453217; cv=none; b=a9dM/xW5AQ8M82EZvtJh3ro2UxCPGhIFS2iR1snAawlRlHWcm4soka7ljnXDBSQzr9Y11t4XjnMybprRX/MpTpbIUwSaOu6LQPGEETdVs/EaAhIcKS2z11hL7HTSwgN8s/QRndBQVvt4dkYPogGu++fuTMHLJUWHJ6HRrrHB9zI=
+	t=1722453220; cv=none; b=nVGB/Yebw0qgptk9i3WOkPniQKCQOvNG2mZ2TZA5/Dj2sV1zDAmjdCfS46PGPWUcJICCMHtjbxANWFKY8DwiS58Du/PAQU9gxlH2yfdakPao5rPA//xaTGe5i0rIIw7EY3ECyPReV87KdRgdweZQ8Xu5ArNzb/fkqcEtLe/Xl+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453217; c=relaxed/simple;
-	bh=hOU/2ld5kf2bldZq16dLixHCIlSUJ7gODRhc167/YF0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CJ+fi2u+725S8MMWtaiCYZLQEeRfkMBo1QRaIvC+wS2JKKOSM9ichK4XooIpRqfo8U88Se5MrRF1XjuZZIoZi+SUv/m2uF8L+haSEYexaWPOdV3RNlroDwT6JTQK0PdBmfrP/uDnUL5oraxSpge3iS75OeanL0B/A+gPXvwmlZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SeeZtwBA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C26D8C4AF09;
-	Wed, 31 Jul 2024 19:13:36 +0000 (UTC)
+	s=arc-20240116; t=1722453220; c=relaxed/simple;
+	bh=/vCbSfFh+Teb1SyCZnsnZm+zGpfoIjaZBtt5r0JSCrU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cmdsS2Uzmd6HKA4mkXU+CpkBSVgYejREsPbOX59nVPVYBpSOrTS65cfA99IMdKg1YR+8C5dTrA3XizfnaNjhdnDle1voXiwRbdsr3OZpKBGfFZCHtDZLJ3PObVVu0whAkl6pCRBb1OOG6znIn2LG8PjhlP27e3gKwS1VoJYqgDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIZEaUE7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E252C4AF09;
+	Wed, 31 Jul 2024 19:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453217;
-	bh=hOU/2ld5kf2bldZq16dLixHCIlSUJ7gODRhc167/YF0=;
+	s=k20201202; t=1722453219;
+	bh=/vCbSfFh+Teb1SyCZnsnZm+zGpfoIjaZBtt5r0JSCrU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=SeeZtwBAmUfIkYk4PWKWiUXJRmHJEJygOK9WabmeYbzh+4+g9b04ceZJSs/cjCUpO
-	 UiPPoiHvGdkV0pmf+o12DwPaQRoy/Fj6FIsTrd4DuNH58tnknvGQ8abS6Rh6+UNOkx
-	 ce2cBqSweF6Naa1EDEyoDP1MmeJi+EHbAnsYpfVK0fkV1ViAlD/2NZRGpiNeTfx/FE
-	 quWOrGxalVSGTWhZgTt/iazEg8hsjB5lf9DEUMRqnHLeCo00HA7afKyWXGDK1g2k8L
-	 75qK96YtzBjPJvGoz77TMBivuxj39Hgf3D9jKAYHzfdqwztncskhBmkq53O3RYOx8R
-	 O2eh+4UMZjAyA==
+	b=iIZEaUE7CYfFDuICSbjuei0BwDlx9VRivB/9NykOaBEkhcRYStKmUMbDQqdSzH2O9
+	 a6VM4ZwmJnLXbZHc7Q052iIAB7G7pXP85MpcQRLXWeYDKoypf/Obi2EuWbRX4OUkeS
+	 4YFnYSTYUGxqNEaJ6Yf0A0qxmO7FLQs1v5S5bOO7Puixuq3qvIeGByAZm1MGsCyLy6
+	 rc79PB8USLcrWgCAN34og4v4JEtW4b4/6N//eZF2Oxf51MyFdMC+OF9xZ1aAT/YEQx
+	 xNIiAtyzbZh4Qa9aS2xI/j+U0+T+3DGe10iYPNiTUNPYIa9RfN76mAesn+rFyW4+dx
+	 K1UsAr4sGNXdQ==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] gpio: Use of_property_present()
-Date: Wed, 31 Jul 2024 13:12:41 -0600
-Message-ID: <20240731191312.1710417-3-robh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: Use of_property_present()
+Date: Wed, 31 Jul 2024 13:12:42 -0600
+Message-ID: <20240731191312.1710417-4-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,54 +61,57 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Use of_property_present() to test for property presence rather than
-of_find_property(). This is part of a larger effort to remove callers
-of of_find_property() and similar functions. of_find_property() leaks
-the DT struct property and data pointers which is a problem for
-dynamically allocated nodes which may be freed.
+of_(find|get)_property(). This is part of a larger effort to remove
+callers of of_find_property() and similar functions.
+of_(find|get)_property() leak the DT struct property and data pointers
+which is a problem for dynamically allocated nodes which may be freed.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/gpio/gpiolib-of.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/clk.c                 | 2 +-
+ drivers/clk/renesas/clk-mstp.c    | 2 +-
+ drivers/clk/versatile/clk-sp810.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index f6af5e7be4d1..6683e531df52 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -1058,13 +1058,13 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 	int index = 0, ret, trim;
- 	const char *name;
- 	static const char group_names_propname[] = "gpio-ranges-group-names";
--	struct property *group_names;
-+	bool has_group_names;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 285ed1ad8a37..7264cf6165ce 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5232,7 +5232,7 @@ static int of_parse_clkspec(const struct device_node *np, int index,
+ 		 * clocks.
+ 		 */
+ 		np = np->parent;
+-		if (np && !of_get_property(np, "clock-ranges", NULL))
++		if (np && !of_property_present(np, "clock-ranges"))
+ 			break;
+ 		index = 0;
+ 	}
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 5304c977562f..5bc473c2adb3 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -207,7 +207,7 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
+ 		clks[i] = ERR_PTR(-ENOENT);
  
- 	np = dev_of_node(&chip->gpiodev->dev);
- 	if (!np)
- 		return 0;
+-	if (of_find_property(np, "clock-indices", &i))
++	if (of_property_present(np, "clock-indices"))
+ 		idxname = "clock-indices";
+ 	else
+ 		idxname = "renesas,clock-indices";
+diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+index 45adac1b4630..033d4f78edc8 100644
+--- a/drivers/clk/versatile/clk-sp810.c
++++ b/drivers/clk/versatile/clk-sp810.c
+@@ -110,7 +110,7 @@ static void __init clk_sp810_of_setup(struct device_node *node)
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num;
  
--	group_names = of_find_property(np, group_names_propname, NULL);
-+	has_group_names = of_property_present(np, group_names_propname);
+-	deprecated = !of_find_property(node, "assigned-clock-parents", NULL);
++	deprecated = !of_property_present(node, "assigned-clock-parents");
  
- 	for (;; index++) {
- 		ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3,
-@@ -1085,7 +1085,7 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 
- 		if (pinspec.args[2]) {
- 			/* npins != 0: linear range */
--			if (group_names) {
-+			if (has_group_names) {
- 				of_property_read_string_index(np,
- 						group_names_propname,
- 						index, &name);
-@@ -1123,7 +1123,7 @@ static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 				break;
- 			}
- 
--			if (!group_names) {
-+			if (!has_group_names) {
- 				pr_err("%pOF: GPIO group range requested but no %s property.\n",
- 					np, group_names_propname);
- 				break;
+ 	for (i = 0; i < ARRAY_SIZE(sp810->timerclken); i++) {
+ 		snprintf(name, sizeof(name), "sp810_%d_%d", instance, i);
 -- 
 2.43.0
 
