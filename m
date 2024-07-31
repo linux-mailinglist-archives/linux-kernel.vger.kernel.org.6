@@ -1,125 +1,92 @@
-Return-Path: <linux-kernel+bounces-268768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17AF94290F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:21:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F76B942918
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8161C20FCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:21:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FF69B20FF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E095D1A7F93;
-	Wed, 31 Jul 2024 08:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA91B1A7F98;
+	Wed, 31 Jul 2024 08:25:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="eQuyrOJM"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="qPifwyiA"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3AF1A71F7;
-	Wed, 31 Jul 2024 08:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1215D18A6A3;
+	Wed, 31 Jul 2024 08:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414083; cv=none; b=oKfodqz5T9V6CQAbmetvpUp9eO1oo+TG89prFdq9kQZ9TRZXtPuTWtvwXeb2mMocr7ZAYTZp0yn3KoTJaTPp3uazFnuFZpRUsTFAeG6zaxs+vV/YABLBf7+E+PYz4Dj4MfdVHG9ZXWVwZolr41UwFAULhKsnHf3L8c7EFSqGOZ4=
+	t=1722414304; cv=none; b=DAx+ugOPOImPXsInzeZqBi6uZkioWYoY+qOzZ4C+3zUlOGTDYD8lpp+STzfNsFHJ1pT6YweI9ywRL66ybMUkdcHh10qj4TdoqQTMHPqywqoQB2f1PAJ/jW4gDUvS4qEL4TXVNpF9uwicXmM+QytqNdapwIe2OZ07rGUzsgKgHOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414083; c=relaxed/simple;
-	bh=XvOseKdPDeiZOL5iY3NTqf4lGmanWm38s3cef+z6OV0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RtVRbbzKMu9102aC5C+jAAMiDHK71rkEkeWCK+s/mzpWe4S3aERrYY8TwMRSTmiy+soehUNCG+NlfAyjlMtmQetay1a4culHMYnmJz4IjtXLBqVwKjkjH5CvwS99XacVRk86G5zSl9SdxBUNqbzmFvmWpofCkwOd8FWh+rpFph8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=eQuyrOJM; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722414080;
-	bh=XvOseKdPDeiZOL5iY3NTqf4lGmanWm38s3cef+z6OV0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eQuyrOJMNX6MC7AYBXZyXiXDz3KkG4/EpJBC31guT23ZMqJo233kjA03RXD29lQ7w
-	 HhzYHHlGhB/Epd7iR/sjmDZj8E4gCj+ASP+QVdu27pja1C15i/COtg0Brlz8u+na/s
-	 PJyPiajPdgt7Y+oRDodb/Ysu+gxugSKkNxn/hECWHnNqqVA8qjZ99bYIdT3gm5hO2y
-	 jrPwxasS+mH+eGfw6QeIQAozJp+9t7CjA6RRXfd+cSRmpE5TwomMVc+j4aOyupRzcu
-	 r3gbtDTBZVWgbdanzx0zM2flmRcJEFeG/q1JgF8JnP+AWYhouuZvIjFEoQ1fkO+dTB
-	 P4rZ7IHsPh2eg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 87CCC378000B;
-	Wed, 31 Jul 2024 08:21:19 +0000 (UTC)
-Message-ID: <8c4e777d-4698-446d-a29a-5df7e49e88d3@collabora.com>
-Date: Wed, 31 Jul 2024 10:21:18 +0200
+	s=arc-20240116; t=1722414304; c=relaxed/simple;
+	bh=V/qMid1eZAZ9KqR4unGjgGs1o2BzZRAEjRLlRpm8Vdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQZysK/hiTWK/v4qyLBgmxpR7UTuycJ36DNuHoRxem6cpijJ3fkOqiQVF3iCHmyza7+l07CGdLLk6PFNWJLFbqzyDczNq9uRbCSrvRJTzUhUlb4F8iM1gGgYRykHbYbQP2uK8YSRMnUFudGtLzHzXdWSkAJLh5EOBKVgBRrUqDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=qPifwyiA; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9Ohyf01z+RQdbQQcz4+PP/EvJqHgnb9g8adgwYo0As8=; b=qPifwyiAX5xb8gnHPkVc5vS3zC
+	RT5FqN29h0hS/WprOebZI85qTmsYpZaejB9WhdNcrwsxSdYSJI0QSgn2INPKdKdll53n/D1YAhdp8
+	gwB2L4KmKY1xgxqUw+DJ2n5FVvb+qSSkZFLMGPWkQFvae7FOhuJ0HUyIkjxge3H449D1fgYrLkdO4
+	XleptULGrZfO7P0MubCgGChxybTVRcZosZ38IqC1HpZvA4NJ/mZ22b0cWuwO02B1KRbG8Rojx/M61
+	rXNVMvDS9pXywgSmJRZoVVoyGQuVvbtasj9zj2WHEi8PNcwwiyrVkT/9QLe5vv86DSBxfEcuziJz0
+	ZDG1+22g==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60238)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZ4dO-0008GX-0p;
+	Wed, 31 Jul 2024 09:24:34 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZ4dM-00063s-9V; Wed, 31 Jul 2024 09:24:32 +0100
+Date: Wed, 31 Jul 2024 09:24:32 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
+	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
+	vincent.whitchurch@axis.com, bhe@redhat.com, nico@fluxnic.net,
+	ardb@kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
+Message-ID: <Zqn0wL5iScf455O5@shell.armlinux.org.uk>
+References: <20240620090028.729373-1-ruanjinjie@huawei.com>
+ <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] arm64: dts: mt8183: Add kukui-jacuzzi-cerise
- series boards
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
- <20240731-jacuzzi_dt-v2-1-4995335daa30@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240731-jacuzzi_dt-v2-1-4995335daa30@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Il 31/07/24 08:26, Hsin-Te Yuan ha scritto:
-> Cerise is known as ASUS Chromebook CZ1.
-> Stern is known as ASUS Chromebook Flip CZ1.
-> 
-> They are almost identical. The only difference is that Cerise is a
-> clamshell device without touchscreen and Stern is a convertible device.
-> 
-> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> ---
->   arch/arm64/boot/dts/mediatek/Makefile              |  4 +++
->   .../mediatek/mt8183-kukui-jacuzzi-cerise-rev3.dts  | 26 +++++++++++++++++++
->   .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts   | 26 +++++++++++++++++++
->   .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi  | 21 ++++++++++++++++
->   .../mediatek/mt8183-kukui-jacuzzi-stern-rev3.dts   | 29 ++++++++++++++++++++++
->   .../dts/mediatek/mt8183-kukui-jacuzzi-stern.dts    | 29 ++++++++++++++++++++++
->   6 files changed, 135 insertions(+)
-> 
+On Wed, Jul 31, 2024 at 10:07:53AM +0800, Jinjie Ruan wrote:
+> >  #ifdef CONFIG_PREEMPTION
+> > +#ifdef CONFIG_PREEMPT_DYNAMIC
+> > +	bl	need_irq_preemption
+> > +	cmp	r0, #0
+> > +	beq	2f
+> > +#endif
 
-..snip..
+Depending on the interrupt rate, this can be regarded as a fast path,
+it would be nice if we could find a way to use static branches in
+assembly code.
 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi
-> new file mode 100644
-> index 000000000000..087a0ef33e13
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +/*
-> + * Copyright 2021 Google LLC
-> + */
-> +
-> +/dts-v1/;
-> +#include "mt8183-kukui-jacuzzi.dtsi"
-> +
-> +&cpu_thermal {
-> +	sustainable-power = <4500>; /* milliwatts */
-> +};
-> +
-> +&mmc1_pins_uhs {
-> +	pins-clk {
-> +		drive-strength = <MTK_DRIVE_6mA>;
-
-Sorry for not noticing that in v1, I have one more nit: please do not use
-the MTK_DRIVE_(x)mA definitions.
-
-This is just `drive-strength = <6>`.
-
-Thanks,
-Angelo
-
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
