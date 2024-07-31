@@ -1,115 +1,90 @@
-Return-Path: <linux-kernel+bounces-268916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FC50942B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:47:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F057942B3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF111F21F5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A12D41C240FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BA3B1AAE06;
-	Wed, 31 Jul 2024 09:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDE571B1419;
+	Wed, 31 Jul 2024 09:48:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aSIk9tdP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XynXCVkh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6BC16B395;
-	Wed, 31 Jul 2024 09:47:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D2731B1409
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722419247; cv=none; b=RbIRlzBtLj9Nu1wqRcwJiH9CX6sTtB+LMvz2zPGsl8vnWoPT1jUeJepuZkasfOXHFdzabkihqT0iHbTN61lV7ekrf1RFwwxLwhp3OQVU/94BJqrEvqnbPU74CvpRfM7p/dCkRT04WOLCZOI7orOkIZsqppichkflKzdunen2bQI=
+	t=1722419315; cv=none; b=pSIahY3TwWJwHT6SNBnrDy1XE1oHlYkd2OK24Ep6yQoU9URASadNe7wI99w3HHqHqUb9kp0GMX9BY6isl4JMlvNMsSqH7eeMsOKZZyoOL7pUADaFkibxaHLxFLds5pVI8fWvGS6Pt1SPn8umijfoh6S0YPJ7r97uNAt+4JlYGi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722419247; c=relaxed/simple;
-	bh=AGXgFWGPvCkQywQFuD8KV4/KxjstWINHIpS7W9YsYhU=;
+	s=arc-20240116; t=1722419315; c=relaxed/simple;
+	bh=hD8lIRhXLx1NKeE9SHEx3vaCYzZmsY2ws5/kT1O4sq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyKE6ByHVSmlW4r7Hi366gFPHodBlkBzOmxf99vDDq2UUDqZgS9T/a/JqfKs7j9ss/12v7yVZGyPIFfGKcE9485/juGRZjST4ncQv+FNPZa9jVcg2JkH7C4DUYoCAlh/3JvCNqQpJKD2Fue292y7xmDru3wDEk8Ku70rEamcmRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aSIk9tdP; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722419246; x=1753955246;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=AGXgFWGPvCkQywQFuD8KV4/KxjstWINHIpS7W9YsYhU=;
-  b=aSIk9tdP30aGhkE2uLX9oRQAzWRxBlE0saASdT7AgYRmSIC3d36EX2vo
-   677yTL2YG/qifVnHN/Uu8Wj1gaDnCO/AeH/fWWs+QBB3Ev2S9gChpeEtu
-   biJlhBeRAH2qnL8A9EH7hXH38jRHddRRIIVt0wIggzdn57YgIz/4dOOrK
-   8d3ECsSEuhwGZPk1J7MCW1u2ykXEn7TBAuaY2YLx7FvaO/pZxsFs0hvkm
-   KvukgMsOVyxRBFVZLbQPzHToc23+U2l3uERn81Aw82W3t86oJ7gNaFizu
-   gYBeAk4ufNE/hYuvLz7JZaWtjVmMEJAKw5VN0HkWBI2W5WqzEx9TkRxx8
-   A==;
-X-CSE-ConnectionGUID: Zglfi/kjT++FpY3O65/UhQ==
-X-CSE-MsgGUID: MJ+5zBv+TGuP2/W0kym+aQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="19876878"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="19876878"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 02:47:25 -0700
-X-CSE-ConnectionGUID: 5f0OupZTTFm3hSPIojK+pA==
-X-CSE-MsgGUID: SnWXh8EgRV+pkCAph7Or6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="59481339"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa003.jf.intel.com with SMTP; 31 Jul 2024 02:47:21 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 31 Jul 2024 12:47:20 +0300
-Date: Wed, 31 Jul 2024 12:47:20 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Badhri Jagan Sridharan <badhri@google.com>, kernel-team@android.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/15] usb: typec: tcpci: fix a comment typo
-Message-ID: <ZqoIKCTYIaHYoMXe@kuha.fi.intel.com>
-References: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
- <20240710-tcpc-cleanup-v1-1-0ec1f41f4263@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPrcAC0HgP9G/q2x1IiwRjynAnxlZ/dUpFGQwg4RRjWCwx6xZW29PKXLXlGqxENTcskP4R/qwLu946GhmUDAt45BlvxAr4J+LVFsYr2znkBOzYcOzQppvh+BV6RmI1Pz8RYSqTdbRoxM994XcUFhnoc7YJG0sL4rQe7WW/ZIFkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XynXCVkh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6023CC4AF0F;
+	Wed, 31 Jul 2024 09:48:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722419314;
+	bh=hD8lIRhXLx1NKeE9SHEx3vaCYzZmsY2ws5/kT1O4sq4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XynXCVkhcTtt5zN1C6F0F1EWtj2mIunLDdFJyaJ4VxziUHmWnNlwyuQlLIVU5pf5e
+	 72ikVKNQJpTcBwu/MbMYAqlvw/l9gjli69hCctJJFooCq64VwFrRFyzOo+NQBsjDEM
+	 tmeQ6p2KdE4sS1wtERinIlBC91eXL8cMxHYj41O8=
+Date: Wed, 31 Jul 2024 11:48:31 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
+Cc: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"opensource.kernel" <opensource.kernel@vivo.com>
+Subject: Re: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRD?=
+ =?utf-8?Q?H_v2=5D_usb=3A_gadget=3A_uvc=3A_Fixed_th?= =?utf-8?Q?e?= abnormal
+ enumeration problem of mobile phone as UVC camera.
+Message-ID: <2024073117-velocity-buckle-ab6b@gregkh>
+References: <TYUPR06MB62176C90FAD82DB165866B19D2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240710-tcpc-cleanup-v1-1-0ec1f41f4263@linaro.org>
+In-Reply-To: <TYUPR06MB62176C90FAD82DB165866B19D2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
 
-On Wed, Jul 10, 2024 at 11:36:08AM +0100, André Draszik wrote:
-> autonously -> autonomously
+On Wed, Jul 31, 2024 at 09:39:16AM +0000, èƒ¡è¿žå‹¤ wrote:
+> When the phone is connected to the computer to use the webcam function,
+> the phone needs to be enumerated as a uvc camera function.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
+> Because uvc->func.bind_deactivated is configured as true in the f_uvc
+> driver uvc_alloc function, the usb_gadget_deactivate function is called
+> during the execution of the configfs_composite_bind function to
+> set gadget->deactivated to true, which in turn causes the
+> usb_gadget_connect_locked function to fail to call the corresponding
+> controller pullup operation (such as: dwc3_gadget_pullup,
+> mtu3_gadget_pullup), and the USB cannot be enumerated
+> normally under the uvc function combination.
+> 
+> After applying this patch, we measured that under the uvc function,
+> the dwc3 controller and the mtu3 controller can be enumerated normally,
+> and the webcam function is normal.
+> 
+> Therefore, modify the f_uvc driver to remove the operation of setting
+> uvc->func.bind_deactivated to true.
+> 
+> Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
 > ---
->  include/linux/usb/tcpci.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/usb/tcpci.h b/include/linux/usb/tcpci.h
-> index 0ab39b6ea205..d27fe0c22a8b 100644
-> --- a/include/linux/usb/tcpci.h
-> +++ b/include/linux/usb/tcpci.h
-> @@ -190,7 +190,7 @@ struct tcpci;
->   *		Optional; Callback to perform chip specific operations when FRS
->   *		is sourcing vbus.
->   * @auto_discharge_disconnect:
-> - *		Optional; Enables TCPC to autonously discharge vbus on disconnect.
-> + *		Optional; Enables TCPC to autonomously discharge vbus on disconnect.
->   * @vbus_vsafe0v:
->   *		optional; Set when TCPC can detect whether vbus is at VSAFE0V.
->   * @set_partner_usb_comm_capable:
-> 
-> -- 
-> 2.45.2.803.g4e1b14247a-goog
+> v2:
+>   - Modify "Fixes:" tag on the commit
+>   - Modify description information.
 
--- 
-heikki
+I see no "Fixes:" tag here :(
+
 
