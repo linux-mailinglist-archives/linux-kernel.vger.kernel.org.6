@@ -1,186 +1,212 @@
-Return-Path: <linux-kernel+bounces-269666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBCF994358D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD77A94358F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:24:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47210B22F1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:21:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1636DB22EF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B5E4087C;
-	Wed, 31 Jul 2024 18:21:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB3A4084E;
+	Wed, 31 Jul 2024 18:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLIfzR2l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MTPx0y8f"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63EAE2868B;
-	Wed, 31 Jul 2024 18:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450068; cv=none; b=gDNKDl5cbSuH51+MkUkXuW9iXAkMz+7H3bW1MKxet+FLX+gMhJpCcgmxP5eJSawem/kUUYje+YDtAf84J0XPMGEL2x86z8MNZwlhNU4JNksV1qKU94/vlS4DDwvBUZaP1oRQHVcagMvnqzIC4Xi9mZRqN+RALNCCM436D09IcqU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450068; c=relaxed/simple;
-	bh=VdEye2jTkmKFtiaXEoH9vld+unsPx+YqDgjQAU++yBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+JRHz2t6WTdDG2+DHRs7AE9NixDCnaH2h4JeisJX1hafK9BSfxu9LOlYLuat/ehfYjw+koQIEIyrcUyIIeji8/7mlOUVbgD2Lq5UfR07P+X8DTqrTBADb0RUoycu6EqrGcQ07nE0Qgenl7QHv6REGCvJp0dhAKNbFZgazQ3L4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLIfzR2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D040C116B1;
-	Wed, 31 Jul 2024 18:21:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722450067;
-	bh=VdEye2jTkmKFtiaXEoH9vld+unsPx+YqDgjQAU++yBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JLIfzR2lX3pOOR5VS7dk3awIliw7ZS3o3Du2+kGjdHvgeoxYunnt0y6xtqT1yRHjH
-	 oHAu3oMyReXikLss54p/Sp+XuC/IK7io90x/kpuL0ATIj1bi8KnDoBgE08ehy9C60O
-	 1Eo4au1ndzYJy6Q6jwcxSD9J5nfw3jTAASqtZjUqSab5SCgzd5daP/teP8BhGN1VHL
-	 slqhdByNXYQmbodxqH1HBlWZB0Wfyfyl+NWPBWNwkDYOK1YY9Dkj9HroyEiL7bDcRD
-	 THJS7rOhg1Q9JY8fYF2iwUxaV2F6ukMiVKA+CcucrxNpyKM1xkw7rnfHtjD0yy6G/E
-	 wZUHctmbQxeiQ==
-Date: Wed, 31 Jul 2024 11:21:05 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v1] perf inject: Fix leader sampling inserting additional
- samples
-Message-ID: <ZqqAkcz4xOto_sK5@google.com>
-References: <20240729220620.2957754-1-irogers@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCFB738F83
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722450228; cv=fail; b=mkAJsZCfa1uq3wXEOA4lNn5focLXr9ygLXvejvgyg1haZ6a+Z4noEBYq/UPwPYKmVRMxWnerPUbxQ1u12oWmfPptOijlq/aydTlwtGyrCLnzRAsWttSmASEYZL8LGiP1m24dCwLwh/Ko1kEsbEHYHciM/y/tMNepn54gAHjB+5s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722450228; c=relaxed/simple;
+	bh=F8QFxQ0BE1ep5vkvZ7Xko8Apbu+zbpdVzuayHvxoc7E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDIDNmrtMOmqvG6KLFAHjaaUu9CZBkH98irow0C+D2S6rMiEprJOjdEwo4i5jFaQW2+lzf506NjH6zkBIvIJO3mwALqLqVwa8TBl2hUnmPYKXvyG31ICexmoerFyGMh2cR+WQqiYYhg7JxcaScKRNJcuSl9MuFj3H67pI4116UU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MTPx0y8f; arc=fail smtp.client-ip=40.107.92.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Epmkm2OQjE9Gt1Y7DD575TxhLb1t57Z5AXja1MclBn+YeHcOe9hxF5pExB2I4FvzdZiHRU1ox2BBS8WEiEpgjCcjMxP8ZEtSVtQDOkzndZzFGe8C6DR4THHTw2BlFmI7Qlytau3mp7lWziT0BQ7BmcpMoqIhjbXxeG6lo8R5x0S8GS2wFPzvrdXn1pE0507XKNDrTJhtGb92ybISWWSf1GL9e8TeGnEeBgDGQVFCzOIJZyn/jpG3Z0ppSgawLNXNA3SpyM1rka4eWGmzJawuG30IvokKRSraH8VeFJYONHWKQHujgghEcJc3OT6cwbxlLwDWYncuSfkFhAVCujcTMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=r+tXPdxmIXlprDye405kD3AUGHPTo7N8U4SVrSsxEyU=;
+ b=fQ+9r+Ey5zKhT7TpqgMtyljkLnrZrUAhJ09SAzL0AVbQWosero2cASSXCIKOhwGi81xpZYsCY7PNrD4UkiNZMX0srrgdAtF88ciBoAuICUgzP+IahHLFeu0q6/JzqtonAEcUgSQBzBtTAPNTGdbx7oPd8nuMFDaNBf9PMzmXO0eppP7ImY6O/xcdJJF5TIblT6kQCkX8HL/f5mlKlTHHNFdMP0wNtprb8NB1JJRLT19MIUcLftr9aAmNukOZZAWKyMeSCkLR/7rWn7pAPceJPrMxItjJNy69Fa/EUoyMEMbWi6AM0WUXNs7SedO8DxU2L9xk0RSQIGshbLFsDIhtbA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=r+tXPdxmIXlprDye405kD3AUGHPTo7N8U4SVrSsxEyU=;
+ b=MTPx0y8f4hMv3kbAvfGG8UJYVj5GrF3mjyDDzimvul5gfF55hCw3ucYkYjmR6NsLFSsWQwFz0lff7lJBRxayEJm5KyCyS3x49FezIdOD2D6ekMv3c5kxtVa51CqsPBwFOtKFMH7im5cwLYGS+TRAy1QzbHFJyeXnluTgw6IOAetqn+cHUvMgBYG+ZfBbvvINQmqGrGxk9Rr9ksz35Im6BJylM2Gky91vJJD/OOP3eI0fn6AqRvZYYn/RQDGUoMoJiFmUraxNHHydLV+Lt05Cxr4Wfzj8K9Rc/3lBZywLtobcj2KMGDokefKxbgPDm4uG/b5oIcSa3lJaETsA4I6RTw==
+Received: from PH7P220CA0046.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:32b::10)
+ by CH2PR12MB4326.namprd12.prod.outlook.com (2603:10b6:610:af::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
+ 2024 18:23:41 +0000
+Received: from SA2PEPF000015CB.namprd03.prod.outlook.com
+ (2603:10b6:510:32b:cafe::b4) by PH7P220CA0046.outlook.office365.com
+ (2603:10b6:510:32b::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.17 via Frontend
+ Transport; Wed, 31 Jul 2024 18:23:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF000015CB.mail.protection.outlook.com (10.167.241.201) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Wed, 31 Jul 2024 18:23:39 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
+ 2024 11:23:26 -0700
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 31 Jul
+ 2024 11:23:26 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.10)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Wed, 31 Jul 2024 11:23:25 -0700
+Date: Wed, 31 Jul 2024 11:23:24 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
+ allocation
+Message-ID: <ZqqBHKEJCm4XXFq5@Asurada-Nvidia>
+References: <20240728235106.2435208-1-nicolinc@nvidia.com>
+ <20240729182446.GH3371438@nvidia.com>
+ <Zqf2HFUf/75hRcUU@Asurada-Nvidia>
+ <BN9PR11MB5276B125671FEC70EDAFF50C8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240729220620.2957754-1-irogers@google.com>
+In-Reply-To: <BN9PR11MB5276B125671FEC70EDAFF50C8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CB:EE_|CH2PR12MB4326:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0fa8b5aa-c8c4-448d-fc7a-08dcb18de65b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?wvMbOyy3RpSm6xg+9uJcHudDB56sSZaLXypvXz5ePOO6aIfZ1UMcUZYIdLaf?=
+ =?us-ascii?Q?ehDbuOnfkBOS9l1boJJpI+YD8IlEhF+PkRkDgAe1ikW4/fh9L20PoQUMPLBK?=
+ =?us-ascii?Q?pQT8i3NKv/Yo7Qo6zaMvIualKH9bmXRejURezuARMc9eP/XYsqCP2Glh20tO?=
+ =?us-ascii?Q?uNUCLfpn3TGS/mf1e15HCavpbRCBJCCo+X2fxYeCJAAB4NGgOtW0Pzc6ki1U?=
+ =?us-ascii?Q?yLrlBiA1XpabzblTSCT8vRBHQwQ3iEx2U/aBTHsQiPo4KxeRu9BkeLdvn5B5?=
+ =?us-ascii?Q?H1GgCIPeCQFSlPRVasOvhN8h0edw1V3ePIhwdnA6csitNsdqLjh11tpOaP8J?=
+ =?us-ascii?Q?8ji11Hdk3wp7bLMeEKZVOhlMB7xPi6p55sqDNfefdxcjE1IzZE4HqwzJgEIl?=
+ =?us-ascii?Q?JPZVvvexjPxwSXSjHQ3oYRKl1Lsptt+6brgRN9b2xw0bb0ZVZ0178Vk1GSPy?=
+ =?us-ascii?Q?XMQIXjy800mmqR3eDxIaSESkZWaVkDNPzN0qT8NIjsglw28RcqxMwRdtLlTD?=
+ =?us-ascii?Q?nsMf9ESrCglyp496YED40yDd7Mrn09svy+XhnccxCarKLI4CRRA9lGIH452s?=
+ =?us-ascii?Q?dDf7B5ke7epa5IVtvQzurSjRcktIlZbKLd9Pv4FKw0hLxi6R+ue2FFERow1z?=
+ =?us-ascii?Q?b2zkVqgoGz8K8wvOnU4+gZzMKjBRMIcSTg3OfRqyUTsEPbslbdQO/JTphFdP?=
+ =?us-ascii?Q?gWKKHw7Cu3eB1f8ZhIBoU93rb8yy7Lw0sBlDW02hDYqQ0WUwxKmDWW2w/l8I?=
+ =?us-ascii?Q?uKcXi87cNZWbEA/0Hd8KHvr/9Qq6rbivAgBLsYMEIuoTYXyXKRkLn2I/AySC?=
+ =?us-ascii?Q?9mdMaVJpf1sy3CCvwRSpMhLxE96Xwb9kMgo68PAVIJnBhkvegutxwRK+iQLD?=
+ =?us-ascii?Q?R7uPX92bIhbqMFigWBMtx8Nw0KemMzkzvQo+CcQhZKhqWDxg2D/lTnNO6oYT?=
+ =?us-ascii?Q?3DBLaSp6SbIKQ4cXmrWrxk/jbnHZ0VrnGatbACAAiVlETsW9FAq2NLA7/LPU?=
+ =?us-ascii?Q?zY3RVU4rzjjhJXw/cNy+Wkl3y90F1zDhwjWFjOzFGj9/Z6jo2oLGOmQVQ4Pp?=
+ =?us-ascii?Q?tVHALwg5GE0LVOsTOK8jXfzLHqhpKEVlBhwAh+lHKaLy7m55hqqjpPZr3Lqw?=
+ =?us-ascii?Q?Hl11dbs6j6xQXlfULQbxFLdK7gnBrHWW+F4GV7Ln3NjCX7ujUNl40V3EnOKy?=
+ =?us-ascii?Q?ltOICEoaJGdLVaaJ6JW7ifbH2MowiJgRVAb2qPO5Yw8gYJLS7Ksbj3ljmopy?=
+ =?us-ascii?Q?DpdEct45OBfxqCzIPsFwU0ju44qIouM7iLeEOA4SpHPleX8euOBLPciDEXRz?=
+ =?us-ascii?Q?RnS8iIvX0vL/mR046AFZTWqbCmLE+a2kvHRI1F5Ss0pFAuzdjOVhiTZoj+al?=
+ =?us-ascii?Q?qmgo6daq6WJWJdmUvkVUHjTRx/yaldEJLK8j1E0xrdz/FtZniunAg6/uOQre?=
+ =?us-ascii?Q?86Ai12kkmeq+VJdAivaB3sHiXJkxu8LZ?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 18:23:39.1654
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fa8b5aa-c8c4-448d-fc7a-08dcb18de65b
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015CB.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4326
 
-Hi Ian,
+On Wed, Jul 31, 2024 at 07:50:53AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Tuesday, July 30, 2024 4:06 AM
+> >
+> > On Mon, Jul 29, 2024 at 03:24:46PM -0300, Jason Gunthorpe wrote:
+> > > On Sun, Jul 28, 2024 at 04:51:06PM -0700, Nicolin Chen wrote:
+> > > > IOMMU_RESV_SW_MSI is a unique region defined by an IOMMU driver.
+> > Though it
+> > > > is eventually used by a device for address translation to an MSI location
+> > > > (including nested cases), practically it is a universal region across all
+> > > > domains allocated for the IOMMU that defines it.
+> > > >
+> > > > Currently IOMMUFD core fetches and reserves the region during an
+> > attach to
+> > > > an hwpt_paging. It works with a hwpt_paging-only case, but might not
+> > work
+> > > > with a nested case where a device could directly attach to a hwpt_nested,
+> > > > bypassing the hwpt_paging attachment.
+> > >
+> > > Well, it does this because the attach is the only place where we have
+> > > *all* the devices available.
+> > >
+> > > Doing it doing allocation means you get only one device.
+> > >
+> > > So, I'd imagine more like we allocate the MSI region during allocation
+> > > for the device specific during allocation
+> > >
+> > > But continue to enforce that every attached device also has its MSI
+> > > region allocated.. Which probably just means checking that the
+> > > driver's reported MSI address is the same as the address during
+> > > allocation?
+> >
+> > The idea here is to treat IOMMU_RESV_SW_MSI as a per-IOMMU thing
+> > v.s. a per-device thing, because it's defined by SW for an IOMMU
+> > that doesn't have a HW MSI window. In another word, devices don't
+> > really matter, so long as we know which IOMMU that can be decided
+> > by any "one device".
+> >
+> 
+> The problem is that the entire reserved region interface in IOMMU is
+> per-device, leaving the room that though IOMMU_RESV_SW_MSI
+> is per-IOMMU on existing platforms there might be a new
+> implementation future with per-device difference.
+>
+> Then we'll have trouble in the callers which assume a specific type
+> is per-IOMMU.
+ 
+Looking at the existing cases, we are fine. But yes, I agree it
+would potentially break if an IOMMU defines an IOMMU_RESV_SW_MSI
+for one device not for another, i.e. one device has MSI behind
+the IOMMU while another one doesn't.
 
-On Mon, Jul 29, 2024 at 03:06:20PM -0700, Ian Rogers wrote:
-> The processing of leader samples would turn an individual sample with
-> a group of read values into multiple samples. Perf inject would pass
-> through the additional samples increasing the output data file size:
-> 
-> ```
-> $ perf record -g -e "{instructions,cycles}:S" -o perf.orig.data true
-> $ perf script -D -i perf.orig.data | sed -e 's/perf.orig.data/perf.data/g' > orig.txt
-> $ perf inject -i perf.orig.data -o perf.new.data
-> $ perf script -D -i perf.new.data | sed -e 's/perf.new.data/perf.data/g' > new.txt
-> $ diff -u orig.txt new.txt
-> --- orig.txt    2024-07-29 14:29:40.606576769 -0700
-> +++ new.txt     2024-07-29 14:30:04.142737434 -0700
-> ...
-> -0xc550@perf.data [0x30]: event: 3
-> +0xc550@perf.data [0xd0]: event: 9
-> +.
-> +. ... raw event: size 208 bytes
-> +.  0000:  09 00 00 00 01 00 d0 00 fc 72 01 86 ff ff ff ff  .........r......
-> +.  0010:  74 7d 2c 00 74 7d 2c 00 fb c3 79 f9 ba d5 05 00  t},.t},...y.....
-> +.  0020:  e6 cb 1a 00 00 00 00 00 01 00 00 00 00 00 00 00  ................
-> +.  0030:  02 00 00 00 00 00 00 00 76 01 00 00 00 00 00 00  ........v.......
-> +.  0040:  e6 cb 1a 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> +.  0050:  62 18 00 00 00 00 00 00 f6 cb 1a 00 00 00 00 00  b...............
-> +.  0060:  00 00 00 00 00 00 00 00 0c 00 00 00 00 00 00 00  ................
-> +.  0070:  80 ff ff ff ff ff ff ff fc 72 01 86 ff ff ff ff  .........r......
-> +.  0080:  f3 0e 6e 85 ff ff ff ff 0c cb 7f 85 ff ff ff ff  ..n.............
-> +.  0090:  bc f2 87 85 ff ff ff ff 44 af 7f 85 ff ff ff ff  ........D.......
-> +.  00a0:  bd be 7f 85 ff ff ff ff 26 d0 7f 85 ff ff ff ff  ........&.......
-> +.  00b0:  6d a4 ff 85 ff ff ff ff ea 00 20 86 ff ff ff ff  m......... .....
-> +.  00c0:  00 fe ff ff ff ff ff ff 57 14 4f 43 fc 7e 00 00  ........W.OC.~..
-> +
-> +1642373909693435 0xc550 [0xd0]: PERF_RECORD_SAMPLE(IP, 0x1): 2915700/2915700: 0xffffffff860172fc period: 1 addr: 0
-> +... FP chain: nr:12
-> +.....  0: ffffffffffffff80
-> +.....  1: ffffffff860172fc
-> +.....  2: ffffffff856e0ef3
-> +.....  3: ffffffff857fcb0c
-> +.....  4: ffffffff8587f2bc
-> +.....  5: ffffffff857faf44
-> +.....  6: ffffffff857fbebd
-> +.....  7: ffffffff857fd026
-> +.....  8: ffffffff85ffa46d
-> +.....  9: ffffffff862000ea
-> +..... 10: fffffffffffffe00
-> +..... 11: 00007efc434f1457
-> +... sample_read:
-> +.... group nr 2
-> +..... id 00000000001acbe6, value 0000000000000176, lost 0
-> +..... id 00000000001acbf6, value 0000000000001862, lost 0
-> +
-> +0xc620@perf.data [0x30]: event: 3
-> ...
-> ```
-> 
-> This behavior is incorrect as in the case above perf inject should
-> have done nothing. Fix this behavior by disabling separating samples
-> for a tool that requests it. Only request this for `perf inject` so as
-> to not affect other perf tools. With the patch and the test above
-> there are no differences between the orig.txt and new.txt.
-> 
-> Fixes: e4caec0d1af3 ("perf evsel: Add PERF_SAMPLE_READ sample related processing")
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> If we really want to go this route I wonder whether a per-IOMMU
+> get_resv_regions() API should first exist then there is a clear definition
+> what types are per-IOMMU and what are not.
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Probably it'd be necessary.
 
-Thanks,
-Namhyung
-
-> ---
->  tools/perf/builtin-inject.c | 1 +
->  tools/perf/util/session.c   | 3 +++
->  tools/perf/util/tool.h      | 1 +
->  3 files changed, 5 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-> index a212678d47be..c80fb0f60e61 100644
-> --- a/tools/perf/builtin-inject.c
-> +++ b/tools/perf/builtin-inject.c
-> @@ -2204,6 +2204,7 @@ int cmd_inject(int argc, const char **argv)
->  			.finished_init	= perf_event__repipe_op2_synth,
->  			.compressed	= perf_event__repipe_op4_synth,
->  			.auxtrace	= perf_event__repipe_auxtrace,
-> +			.dont_split_sample_group = true,
->  		},
->  		.input_name  = "-",
->  		.samples = LIST_HEAD_INIT(inject.samples),
-> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-> index 5596bed1b8c8..080242c69196 100644
-> --- a/tools/perf/util/session.c
-> +++ b/tools/perf/util/session.c
-> @@ -1511,6 +1511,9 @@ static int deliver_sample_group(struct evlist *evlist,
->  	int ret = -EINVAL;
->  	struct sample_read_value *v = sample->read.group.values;
->  
-> +	if (tool->dont_split_sample_group)
-> +		return deliver_sample_value(evlist, tool, event, sample, v, machine);
-> +
->  	sample_read_group__for_each(v, sample->read.group.nr, read_format) {
->  		ret = deliver_sample_value(evlist, tool, event, sample, v,
->  					   machine);
-> diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-> index c957fb849ac6..62bbc9cec151 100644
-> --- a/tools/perf/util/tool.h
-> +++ b/tools/perf/util/tool.h
-> @@ -85,6 +85,7 @@ struct perf_tool {
->  	bool		namespace_events;
->  	bool		cgroup_events;
->  	bool		no_warn;
-> +	bool		dont_split_sample_group;
->  	enum show_feature_header show_feat_hdr;
->  };
->  
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
-> 
+Thanks
+Nic
 
