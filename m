@@ -1,125 +1,113 @@
-Return-Path: <linux-kernel+bounces-269293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AEB94311F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:40:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB7C942FFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB97284D02
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:40:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7227A1C219E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0D91B150E;
-	Wed, 31 Jul 2024 13:40:33 +0000 (UTC)
-Received: from server.atrad.com.au (server.atrad.com.au [150.101.241.2])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1661B14E9;
+	Wed, 31 Jul 2024 13:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9FK417R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650541AD3FE;
-	Wed, 31 Jul 2024 13:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.101.241.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F92F1DA32;
+	Wed, 31 Jul 2024 13:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722433232; cv=none; b=PeBnbEI/bZmZeTmZalW3WaVAepV7S1QFKpXUyKWxNr1EtSkaifYVt2fSGdygsXQNCmBaAxrHlXwixEa0+/22lAY1/Kzbof9eF8xr2SNk51olgyGevATOG1fNb4nB/IqXcKCy2uADpcOUL0ilSeIJ7zrvjAk9mtMEc/d+xWhZqyQ=
+	t=1722432094; cv=none; b=ekiLqTDy8GR9r/RsBAsnB+IuoBU6Xu9pUXyeGoV1S7rsjsVYZlv2Z5NVBvrcsSJm6Rnt/IAjypVW0gqyBOSCIhbTRtx9CzW2fCQutshEYFRvdJ25+TKEeV5vYl3MPfKtM81Z0ejgm+idHfE0uSnz6MganGkqkkSvpQKVrOMvNUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722433232; c=relaxed/simple;
-	bh=h0PF3yhyybjZDecyKpukDJch8WS+YmJcGqdqDbZnb0w=;
+	s=arc-20240116; t=1722432094; c=relaxed/simple;
+	bh=4pKhzn3viZ4A2g7dqBTFjYMUfhTUiR+ezhfeiO/rQL0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrUQL7GlOwJNi/k/QONRQOpl0kY25XxInStsZxRHrxrmlUlR5mKybqPlBFgmn+AaQoEjYLOIbQgcefgZzGJepPuxcIVzxSO0ma7EmrRDigT2nueU2BPO6xWVRQcIBYgjZ7JMb722Nu6lgM0s6DX25GxouWe9x3nPsoOhqP2zGtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=just42.net; spf=pass smtp.mailfrom=just42.net; arc=none smtp.client-ip=150.101.241.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=just42.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=just42.net
-Received: from marvin.atrad.com.au (marvin.atrad.com.au [192.168.0.2])
-	by server.atrad.com.au (8.18.1/8.18.1) with ESMTPS id 46VDLPNr028891
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 31 Jul 2024 22:51:27 +0930
-Date: Wed, 31 Jul 2024 22:51:25 +0930
-From: Jonathan Woithe <jwoithe@just42.net>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/10] platform/x86: fujitsu-laptop: Use backlight power
- constants
-Message-ID: <Zqo6VfQGyApMdTWN@marvin.atrad.com.au>
-References: <20240731125220.1147348-1-tzimmermann@suse.de>
- <20240731125220.1147348-8-tzimmermann@suse.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNtWirzpNCBXod1RRJ/EmXse9nAW6Zva7KCv+aMEsA7HqI3PqNjJ1LOBH0OmC38L62AxMioMJhpYb87CGttd0RqbSSxdHxAXSO/FdKcz5cv9QvkWYZLmFiJr3Jkkx4c8FgHf7FOAg5EnAjG5q8ZsWrw7zo3vEh6HTChYf2rFSgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9FK417R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3B4C116B1;
+	Wed, 31 Jul 2024 13:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722432093;
+	bh=4pKhzn3viZ4A2g7dqBTFjYMUfhTUiR+ezhfeiO/rQL0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b9FK417RYzBCZgfHJ/rdRaiLwxrkrCRrsTMon5+7TW6cOOoa/sqxBWkVrZ83/ubC0
+	 /2PbH4fH/h+PP0TFDFZG5AVsCFtayy50BkUaFhY8/DrxvckW2W9mvrj0DkTujeKqT1
+	 O3WTMvEpLB9JUwzjqOSwtKD576XPbiMt+pYTSrUvOdd3kCrO0C3ZLkKyzuv2rSzVyB
+	 k2HOR3ixbDImeSaN77tUNwsIdZzFv4ovGfJp6nZVOuxAxxeSU13odZrqO0npYYzdQy
+	 TJ87BLcOw2iCt+xQlaHT6aHFWvzT0NbYMi3M/3bPjY1b2rvJGIq94bnrk4l/HEPqsk
+	 q5A9OC6xS9D2g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sZ9Gy-000000000tq-2uQK;
+	Wed, 31 Jul 2024 15:21:44 +0200
+Date: Wed, 31 Jul 2024 15:21:44 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+Cc: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:USB SERIAL SUBSYSTEM" <linux-usb@vger.kernel.org>
+Subject: Re: [PATCH] USB: serial: Change usb_debug to not echo by default
+Message-ID: <Zqo6aBRw15Rf_3Gh@hovoldconsulting.com>
+References: <20240715104456.1814444-1-marmarek@invisiblethingslab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240731125220.1147348-8-tzimmermann@suse.de>
-X-MIMEDefang-action: accept
-X-Scanned-By: MIMEDefang 2.86 on 192.168.0.1
+In-Reply-To: <20240715104456.1814444-1-marmarek@invisiblethingslab.com>
 
-On Wed, Jul 31, 2024 at 02:50:57PM +0200, Thomas Zimmermann wrote:
-> Replace FB_BLANK_ constants with their counterparts from the
-> backlight subsystem. The values are identical, so there's no
-> change in functionality or semantics.
+On Mon, Jul 15, 2024 at 12:44:53PM +0200, Marek Marczykowski-Górecki wrote:
+> This driver is intended as a "client" end of the console connection.
+> When connected to a host it's supposed to receive debug logs, and
+> possibly allow to interact with whatever debug console is available
+> there. Feeding messages back, depending on a configuration may cause log
+> messages be executed as shell commands (which can be really bad if one
+> is unlucky, imagine a log message like "prevented running `rm -rf
+> /home`").
+
+This should not be an issue as canonical input is also enabled by
+default (and as long as no one outputs random commands like that on a
+single line).
+
+> In case of Xen, it exposes sysrq-like debug interface, and
+> feeding it its own logs will pretty quickly hit 'R' for "instant
+> reboot".
+
+But this sounds annoying enough.
+
+> Contrary to a classic serial console, the USB one cannot be configured
+> ahead of time, as the device shows up only when target OS is up. And at
+> the time device is opened to execute relevant ioctl, it's already too
+> late, especially when logs start flowing shortly after device is
+> initialized.
+> Avoid the issue by changing default to no echo for this type of devices.
 > 
-> Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
-> Cc: Jonathan Woithe <jwoithe@just42.net>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: "Ilpo J�rvinen" <ilpo.jarvinen@linux.intel.com>
-
-I see no issues as far as fujitsu-laptop is concerned.
-
-Acked-by: Jonathan Woithe <jwoithe@just42.net>
-
-Regards
-  jonathan
-
+> Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 > ---
->  drivers/platform/x86/fujitsu-laptop.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
+>  drivers/usb/serial/usb_debug.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> diff --git a/drivers/platform/x86/fujitsu-laptop.c b/drivers/platform/x86/fujitsu-laptop.c
-> index 968fc91bd5e4..ae992ac1ab4a 100644
-> --- a/drivers/platform/x86/fujitsu-laptop.c
-> +++ b/drivers/platform/x86/fujitsu-laptop.c
-> @@ -43,7 +43,6 @@
->  #include <linux/bitops.h>
->  #include <linux/dmi.h>
->  #include <linux/backlight.h>
-> -#include <linux/fb.h>
->  #include <linux/input.h>
->  #include <linux/input/sparse-keymap.h>
->  #include <linux/kfifo.h>
-> @@ -356,7 +355,7 @@ static int bl_get_brightness(struct backlight_device *b)
->  {
->  	struct acpi_device *device = bl_get_data(b);
->  
-> -	return b->props.power == FB_BLANK_POWERDOWN ? 0 : get_lcd_level(device);
-> +	return b->props.power == BACKLIGHT_POWER_OFF ? 0 : get_lcd_level(device);
+> diff --git a/drivers/usb/serial/usb_debug.c b/drivers/usb/serial/usb_debug.c
+> index 6934970f180d..91150c050637 100644
+> --- a/drivers/usb/serial/usb_debug.c
+> +++ b/drivers/usb/serial/usb_debug.c
+> @@ -76,6 +76,11 @@ static void usb_debug_process_read_urb(struct urb *urb)
+>  	usb_serial_generic_process_read_urb(urb);
 >  }
 >  
->  static int bl_update_status(struct backlight_device *b)
-> @@ -364,7 +363,7 @@ static int bl_update_status(struct backlight_device *b)
->  	struct acpi_device *device = bl_get_data(b);
->  
->  	if (fext) {
-> -		if (b->props.power == FB_BLANK_POWERDOWN)
-> +		if (b->props.power == BACKLIGHT_POWER_OFF)
->  			call_fext_func(fext, FUNC_BACKLIGHT, 0x1,
->  				       BACKLIGHT_PARAM_POWER, BACKLIGHT_OFF);
->  		else
-> @@ -933,9 +932,9 @@ static int acpi_fujitsu_laptop_add(struct acpi_device *device)
->  	    acpi_video_get_backlight_type() == acpi_backlight_vendor) {
->  		if (call_fext_func(fext, FUNC_BACKLIGHT, 0x2,
->  				   BACKLIGHT_PARAM_POWER, 0x0) == BACKLIGHT_OFF)
-> -			fujitsu_bl->bl_device->props.power = FB_BLANK_POWERDOWN;
-> +			fujitsu_bl->bl_device->props.power = BACKLIGHT_POWER_OFF;
->  		else
-> -			fujitsu_bl->bl_device->props.power = FB_BLANK_UNBLANK;
-> +			fujitsu_bl->bl_device->props.power = BACKLIGHT_POWER_ON;
->  	}
->  
->  	ret = acpi_fujitsu_laptop_input_setup(device);
-> -- 
-> 2.45.2
+> +static void usb_debug_init_termios(struct tty_struct *tty)
+> +{
+> +	tty->termios.c_lflag &= ~ECHO;
 
--- 
+I disabled echoing of newlines here as well when applying. Thanks.
+
+Johan
 
