@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-268535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33AE9425E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:41:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABAC9425E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2E291C23856
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:41:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F54A28768F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B3A44F5FB;
-	Wed, 31 Jul 2024 05:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF2234E1B3;
+	Wed, 31 Jul 2024 05:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VTTFC+Vx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ioYu4bWi"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB2F22905;
-	Wed, 31 Jul 2024 05:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E736849643;
+	Wed, 31 Jul 2024 05:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722404462; cv=none; b=gbIatojVIwsJf8XmG2Uh3S5F7seRubN3UXq+u/uUMcPwoKrRA/TdDYMRUsuE5dzvnFfgA+22uMUv48aNqlwcsMycFyK6+SNDGF646t8bt9Jp6l1n59A5H1Ifo9GFbuKL0CerIJ0Phvy0tWnnw/xTQ6MFXwCR8mMAEyKgFfjoA4o=
+	t=1722404623; cv=none; b=XhYTVrfxSqloiY7636bVEcxgWlaujg5FhVm9Z2Uk96mgj0nnJYUQL4jHexkrLqAGgbjiQW0cBnrAMvUE1Koj7I9PTvsYkTyf67M/k7fGAOtAzP5MZpb7vtwPw+X9eHv8nAr54VDG3l71B/+kroPegxV2CAvKigoCz0Gl1QT+poY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722404462; c=relaxed/simple;
-	bh=fKgL4zb1iqlbHuVVHRC49clDJtM3aTkOg/gvHqVg19c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gK5NM53J7X0nQ7RxBOb7wRVlryiPMKazETtpszgiIzuazCmKJ6Cq3Nn+3LZ30aGBHv4WhfTV0fGr4cyBHS5ofD0Ad7RRvrbsDOu7nw2H/XhK8Mwv7127jJdRtPXYWzWDYu5i4RZQVDYjwEp8PM7gsvDwDm32U+UD8AoqYp+ORV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VTTFC+Vx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45D61C116B1;
-	Wed, 31 Jul 2024 05:40:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722404462;
-	bh=fKgL4zb1iqlbHuVVHRC49clDJtM3aTkOg/gvHqVg19c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VTTFC+VxRa6kN12GQu6P+2O+jbzejsJVUC81bbbXCKmOkZLCMwCFeHEvJIDHX0RKJ
-	 QcILrG1ibZqs91fcfHlhePnkMM3/EFnonIsBY3gC5NIqYKzNnbXi+hxXC0aQ4BE2LR
-	 sjBJ3VL4Dp27i1AUXcSpxoG1Qb9oo5B9dmNdvx34J237k7K4GQKhPb7Luiq4bhulSN
-	 QEjhiYrJNaNF+5SqaLskS3sgrVkiDKf8mav+aN3HJkTQGznivXHKrAEHvxJsZRVOD6
-	 vaTGuMsVC5jlVYhPCSqZPxQ9DzSOUasmEzzJSOGfc89iw8+Y/w52HmQhEFpLg2Qifj
-	 TFk9j3BeXkX/w==
-Message-ID: <45ecf94c-ccf4-420e-a2f7-8674b643e469@kernel.org>
-Date: Wed, 31 Jul 2024 07:40:56 +0200
+	s=arc-20240116; t=1722404623; c=relaxed/simple;
+	bh=7nIvlbwFyFJE/Qy3OjuEZ4hhCdB6Rr+OIuVEIt2km94=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jl9rmbWX1BPOHwT7Hzm5KhJbp0Qc9xYulIyyoGjTNwPJ+8hA2UVL89GrNlVAof3Uwc6FtFW5UaqUfftJG/aaP3qmvJD5cQwB6GrtSW7tcpauIY0cRycQZflLJFnn9cdxsehCvPMvLRhDuJRcbSOwcQLVVyU8C8D/OAgO594qKWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ioYu4bWi; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46V5hT22065986;
+	Wed, 31 Jul 2024 00:43:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722404609;
+	bh=3r9PTWzvN5H+b40F4RKaTChUoLRqaWMmaRO5hXHpP90=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ioYu4bWiHlYC4EQMXVQIxTl7Ur0iEln4mRjGuHGxCiS/kD1SYALa/eDfNo6PpiFG7
+	 qFzsepOFooC4PlFh+G5jTaa/Nf0nO1uyg6iSgWgm7CHIs7ULypwvV/5Owikkb2Uj7I
+	 Czg2Ji2NJS6uT8ajO+EDhlT77W+7FbOLrM2zekNI=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46V5hTf1106339
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 31 Jul 2024 00:43:29 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
+ Jul 2024 00:43:28 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 31 Jul 2024 00:43:28 -0500
+Received: from [172.24.227.248] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.248] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46V5hOB5077514;
+	Wed, 31 Jul 2024 00:43:25 -0500
+Message-ID: <a456bde9-e00f-4aed-be28-9874b0d57674@ti.com>
+Date: Wed, 31 Jul 2024 11:13:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,86 +64,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 8/8] usb: misc: eud: Add compatible for sm8450
-To: Elson Roy Serrao <quic_eserrao@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, gregkh@linuxfoundation.org
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
- <20240730222439.3469-9-quic_eserrao@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm64: dts: ti: k3-j784s4-main: Correct McASP DMAs
+To: Parth Pancholi <parth105105@gmail.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: Parth Pancholi <parth.pancholi@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240730093754.1659782-1-parth105105@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240730222439.3469-9-quic_eserrao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <20240730093754.1659782-1-parth105105@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On 31/07/2024 00:24, Elson Roy Serrao wrote:
-> Add compatible string to enable EUD on sm8450 SoC.
+Hello Parth,
+
+Thank you for the patch.
+
+On 30/07/24 15:07, Parth Pancholi wrote:
+> From: Parth Pancholi <parth.pancholi@toradex.com>
 > 
-> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
+> Correct the McASP nodes - mcasp3 and mcasp4 with the right
+> DMAs thread IDs as per TISCI documentation [1] for J784s4.
+> This fixes the related McASPs probe failure due to incorrect
+> DMA IDs.
+> 
+> Link: http://downloads.ti.com/tisci/esd/latest/5_soc_doc/j784s4/psil_cfg.html#psi-l-source-and-destination-thread-ids/ [1]
+> Fixes: 5095ec4aa1ea ("arm64: dts: ti: k3-j784s4-main: Add McASP nodes")
+> Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
 > ---
->  drivers/usb/misc/qcom_eud.c | 1 +
->  1 file changed, 1 insertion(+)
+>   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
-> index 9a49c934e8cf..465d57c05c3c 100644
-> --- a/drivers/usb/misc/qcom_eud.c
-> +++ b/drivers/usb/misc/qcom_eud.c
-> @@ -315,6 +315,7 @@ static void eud_remove(struct platform_device *pdev)
->  
->  static const struct of_device_id eud_dt_match[] = {
->  	{ .compatible = "qcom,sc7280-eud" },
-> +	{ .compatible = "qcom,sm8450-eud" },
+> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> index f170f80f00c1..d4ac1c9872a5 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+> @@ -2755,7 +2755,7 @@ mcasp3: mcasp@2b30000 {
+>   		interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>,
+>   			     <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
+>   		interrupt-names = "tx", "rx";
+> -		dmas = <&main_udmap 0xc500>, <&main_udmap 0x4500>;
+> +		dmas = <&main_udmap 0xc403>, <&main_udmap 0x4403>;
+>   		dma-names = "tx", "rx";
+>   		clocks = <&k3_clks 268 0>;
+>   		clock-names = "fck";
+> @@ -2773,7 +2773,7 @@ mcasp4: mcasp@2b40000 {
+>   		interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>,
+>   			     <GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
+>   		interrupt-names = "tx", "rx";
+> -		dmas = <&main_udmap 0xc501>, <&main_udmap 0x4501>;
+> +		dmas = <&main_udmap 0xc404>, <&main_udmap 0x4404>;
+>   		dma-names = "tx", "rx";
+>   		clocks = <&k3_clks 269 0>;
+>   		clock-names = "fck";
+Reviewed-by: Jayesh Choudhary <j-choudhary@ti.com>
 
-No, let's don't.
 
-I'll fix the existing file.
-
-Best regards,
-Krzysztof
-
+Warm Regards,
+Jayesh
 
