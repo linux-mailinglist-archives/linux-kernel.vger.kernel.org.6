@@ -1,162 +1,149 @@
-Return-Path: <linux-kernel+bounces-268520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E95619425B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:22:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DE0A9425BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 893281F24FDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5181F24E0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:27:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E996B374D4;
-	Wed, 31 Jul 2024 05:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A336949649;
+	Wed, 31 Jul 2024 05:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Om+CYcFT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="j9fYdYHf"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355C12942A
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C419A2942A;
+	Wed, 31 Jul 2024 05:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722403325; cv=none; b=qWnjITT9Ynvha4jxmdksWqwulk96PtwZHzxxEZr7hqHxsChhzDQB18X4TpH+4y482HP88ufx0ZsX3JpWZ5CQzpRbMnCyZlyXbUKbO79m6oowFOx8ftmI15Tz6DkkuYF5EmEgLtIArjZu2Sr0bCxT1Qd+v+JG32YPttXiJmZByJE=
+	t=1722403635; cv=none; b=CzvnGXwexAlS1qAN6j26LXHAQmQxZYaObGuxuLRyZUZzXlBtD76cJlRRddwVMFh0T+VOZzuYsUHQpMEQdUENrgG2vGQC2cn8Y9F0In1H+vtipCDXmQM/X+JBW5ECvgl+BJrJcNG1guUSBWFi2GeTtGBCeWqw32RwGyklZwQTNFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722403325; c=relaxed/simple;
-	bh=PQ0rvOL0SCooKEPFtRsKNPBkA8CYab0m/+Eba8BWVaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hYvwdbu9TC9tAnsGizup6ys08qenYWBcmjx9qvTx949Gu6M+FwXucH5bHjkbh8FZyb5X84gpflSdSHrv5FWSY42bc3melGA4QpIsqgnlxVEh3UApSU08dyvOb+4pqTlZ4zENzAbsxushaFM84OKfM6grgghr0HcDONClAoBc4wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Om+CYcFT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97588C116B1;
-	Wed, 31 Jul 2024 05:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722403324;
-	bh=PQ0rvOL0SCooKEPFtRsKNPBkA8CYab0m/+Eba8BWVaI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Om+CYcFTpahto5bnDPvArAw4xmXCYoIk4U1Jmtec425rHsnaWgMYvgD82MgSTYkDf
-	 BrdnFzxHEMxOl6pUQ9mfGh9jkvFMpovc5zPzZZ3dkqNrnfOcRdH2mwdo2h7LY8Vk6B
-	 D9hyiRBhVIIfPtwyrNW9QP013xQi5EGOi+uKFEul0ZFE1X3AxpbVYpz5yTgbU/ahkl
-	 LLF5JOd0uW8iUhcv5JndGTFXURAgj2gluqcpjTRWEMc6pWrjNoHuqKxxcklJ9CMWh/
-	 Uel4AmJaZ5nnarALxL+JBnfm1OBeKKvaxD0GsrG5wNkWyWXBCZBPT1EqAoOB2aTtMq
-	 +5GKjHwcQHELQ==
-Date: Wed, 31 Jul 2024 07:21:58 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Zhao Liu <zhao1.liu@intel.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Philippe
- =?UTF-8?B?TWF0aGlldS1EYXVkw6k=?= <philmd@linaro.org>, Ani Sinha
- <anisinha@redhat.com>, Eduardo Habkost <eduardo@habkost.net>, Igor Mammedov
- <imammedo@redhat.com>, Marcel Apfelbaum <marcel.apfelbaum@gmail.com>, Peter
- Maydell <peter.maydell@linaro.org>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, Yanan Wang <wangyanan55@huawei.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v4 2/6] arm/virt: Wire up GPIO error source for ACPI /
- GHES
-Message-ID: <20240731072158.3aaf85ac@foz.lan>
-In-Reply-To: <ZqigPgTl7quJ553J@intel.com>
-References: <cover.1722259246.git.mchehab+huawei@kernel.org>
-	<e994c3944d31775d62bbd017dec3adff50ddf269.1722259246.git.mchehab+huawei@kernel.org>
-	<ZqigPgTl7quJ553J@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722403635; c=relaxed/simple;
+	bh=lHOQEwHFGr6IRvkQ0edrsSx+6YXVaxIcl8yCX7E0gTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fvB5oRk4J97+tHGNZMucjPJajmEvDJNYCX3e/GybacT3tIIVi8jd+X5MAVPkzLXjpLMrtG2DsRgD0glVdPEdFjCAV1M3KAjDogdZPjr/v0iIzqKygBSI6Aj9fNl+R0d8Jd9eRHBmpYRZItRMo8F8Ll2xpTxDo3nDmcyMWQa4i98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=j9fYdYHf; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46V5Qi7A058561;
+	Wed, 31 Jul 2024 00:26:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722403604;
+	bh=n9xBTiMwvt0rpB6EyYnOnZsaylDjxVHudrA+wyU00ws=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=j9fYdYHfpMs9glxOErzDyT0DknOq1J49TpzwbUWILC/qAd88MvAhGG5+QqRdBfAmk
+	 Zug0g1iQ6mk2lEEE1/h5JsQOIpKKiHSKIO+f3CjN7sLpyEDvRdHhic3hyQmfR/0Mi6
+	 PZoa031v2yFJdzp3cVSjx5e+RZmAfFoUOLYgo7HE=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46V5Qijq070686
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 31 Jul 2024 00:26:44 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
+ Jul 2024 00:26:43 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 31 Jul 2024 00:26:43 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46V5QYDW110549;
+	Wed, 31 Jul 2024 00:26:35 -0500
+Message-ID: <3dbe09c5-8803-4ad8-9618-a9660854274b@ti.com>
+Date: Wed, 31 Jul 2024 10:56:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [DO NOT MERGE][PATCH v4 6/6] arm64: dts: ti: k3-am64: Add
+ ti,pa-stats property
+To: Nishanth Menon <nm@ti.com>
+CC: Suman Anna <s-anna@ti.com>, Sai Krishna <saikrishnag@marvell.com>,
+        Jan
+ Kiszka <jan.kiszka@siemens.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Kory Maincent <kory.maincent@bootlin.com>,
+        Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Roger
+ Quadros <rogerq@kernel.org>,
+        Tero Kristo <kristo@kernel.org>, <srk@ti.com>
+References: <20240729113226.2905928-1-danishanwar@ti.com>
+ <20240729113226.2905928-7-danishanwar@ti.com>
+ <20240730120816.unujbfewvcfd3xov@geiger>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <20240730120816.unujbfewvcfd3xov@geiger>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Em Tue, 30 Jul 2024 16:11:42 +0800
-Zhao Liu <zhao1.liu@intel.com> escreveu:
 
-> Hi Mauro,
->=20
-> On Mon, Jul 29, 2024 at 03:21:06PM +0200, Mauro Carvalho Chehab wrote:
-> > Date: Mon, 29 Jul 2024 15:21:06 +0200
-> > From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > Subject: [PATCH v4 2/6] arm/virt: Wire up GPIO error source for ACPI / =
-GHES
-> > X-Mailer: git-send-email 2.45.2
-> >=20
-> > From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> >=20
-> > Creates a Generic Event Device (GED) as specified at
-> > ACPI 6.5 specification at 18.3.2.7.2:
-> > https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#event=
--notification-for-generic-error-sources
-> > with HID PNP0C33.
-> >=20
-> > The PNP0C33 device is used to report hardware errors to
-> > the bios via ACPI APEI Generic Hardware Error Source (GHES).
-> >=20
-> > It is aligned with Linux Kernel patch:
-> > https://lore.kernel.org/lkml/1272350481-27951-8-git-send-email-ying.hua=
-ng@intel.com/
-> >=20
-> > [mchehab: use a define for the generic event pin number and do some cle=
-anups]
-> > Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > ---
-> >  hw/arm/virt-acpi-build.c | 30 ++++++++++++++++++++++++++----
-> >  hw/arm/virt.c            | 14 ++++++++++++--
-> >  include/hw/arm/virt.h    |  1 +
-> >  include/hw/boards.h      |  1 +
-> >  4 files changed, 40 insertions(+), 6 deletions(-) =20
->=20
-> [snip]
->=20
-> > +static void virt_set_error(void)
-> > +{
-> > +    qemu_set_irq(qdev_get_gpio_in(gpio_error_dev, 0), 1);
-> > +}
-> > + =20
->=20
-> [snip]
->=20
-> > +    mc->generic_error_device_notify =3D virt_set_error; =20
->=20
-> [snip]
->=20
-> > diff --git a/include/hw/boards.h b/include/hw/boards.h
-> > index 48ff6d8b93f7..991f99138e57 100644
-> > --- a/include/hw/boards.h
-> > +++ b/include/hw/boards.h
-> > @@ -308,6 +308,7 @@ struct MachineClass {
-> >      int64_t (*get_default_cpu_node_id)(const MachineState *ms, int idx=
-);
-> >      ram_addr_t (*fixup_ram_size)(ram_addr_t size);
-> >      uint64_t smbios_memory_device_size;
-> > +    void (*generic_error_device_notify)(void); =20
->=20
-> The name looks inconsistent with the style of other MachineClass virtual
-> methods. What about the name like "notify_xxx"? And pls add the comment
-> about this new method.
->=20
-> BTW, I found this method is called in generic_error_device_notify() of
-> Patch 6. And the mc->generic_error_device_notify() - as the virtual
-> metchod of MachineClass looks just to implement a hook, and it doesn't
-> seem to have anything to do with MachineClass/MachineState, so my
-> question is why do we need to add this method to MachineClass?
->=20
-> Could we maintain a notifier list in ghes.c and expose an interface
-> to allow arm code register a notifier? This eliminates the need to add
-> the =E2=80=9Cnotify=E2=80=9D method to MachineClass.
 
-Makes sense. I'll change the logic to use this notifier list code inside
-ghes.c, and drop generic_error_device_notify():
+On 30/07/24 5:38 pm, Nishanth Menon wrote:
+> On 17:02-20240729, MD Danish Anwar wrote:
+>> Add ti,pa-stats phandles to k3-am64x-evm.dts. This is a phandle to
+>> PA_STATS syscon regmap and will be used to dump IET related statistics
+>> for ICSSG Driver
+>>
+>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+>> Reviewed-by: Roger Quadros <rogerq@kernel.org>
+>> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+>> ---
+>>  arch/arm64/boot/dts/ti/k3-am642-evm.dts | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+>> index 6bb1ad2e56ec..dcb28d3e7379 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+>> +++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+>> @@ -253,6 +253,7 @@ icssg1_eth: icssg1-eth {
+>>  		ti,mii-g-rt = <&icssg1_mii_g_rt>;
+>>  		ti,mii-rt = <&icssg1_mii_rt>;
+>>  		ti,iep = <&icssg1_iep0>,  <&icssg1_iep1>;
+>> +		ti,pa-stats = <&icssg1_pa_stats>;
+> 
+> Follow:  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n117
+> for ordering properties.
 
-	NotifierList generic_error_notifiers =3D
-	    NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
+Sure Nishant, I will take care of ordering properties when I post these
+DTS patches for merge.
 
-	/* Notify BIOS about an error via Generic Error Device - GED */
-	static void generic_error_device_notify(void)
-	{
-	    notifier_list_notify(&generic_error_notifiers, NULL);
-	}
+For now, I have posted DTS patches only for reference and only the
+dt-binding patch is for merging.
 
-Regards,
-Mauro
+>>  		interrupt-parent = <&icssg1_intc>;
+>>  		interrupts = <24 0 2>, <25 1 3>;
+>>  		interrupt-names = "tx_ts0", "tx_ts1";
+>> -- 
+>> 2.34.1
+>>
+> 
+
+-- 
+Thanks and Regards,
+Danish
 
