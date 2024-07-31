@@ -1,106 +1,105 @@
-Return-Path: <linux-kernel+bounces-268972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF39E942BC5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:15:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5E5942BC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 672C028111D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 309F51F22FD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD40E1AB53F;
-	Wed, 31 Jul 2024 10:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="fjZt/u+B"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C5E1AB517;
+	Wed, 31 Jul 2024 10:16:22 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BF053370;
-	Wed, 31 Jul 2024 10:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF328801;
+	Wed, 31 Jul 2024 10:16:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722420931; cv=none; b=sO5bTrQ+RAcnVqFHiDW4v3uO3xdK3YZSiCxTZmCKyAMod8AvCTIdy/pWdcM+Aw79h8wDD3i3/Hwyu+QhOmVvNXBkMw9uCZsLzUnkHswILJblcohDA/qN5NsmWHKOvgdOo+E9Plp/RyEo2gZ+N99f6BCd1uE2zGA7a0XZF6QZowc=
+	t=1722420982; cv=none; b=SEV6+mZKJr/t3Q52nPAY/JjlCV47lwmZwmnPb1DS3nreT5dUlL0i8NridA6vbVTh0r+ifFN0/agoiWtFqEEkUIX6cVIUKlYNOClInrzLqh7/mk1oID9tLGmgUQ1xcwVsK5ts9tmYYapbqO+047Afgm5wX17pYCvyxBjKqeMDybA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722420931; c=relaxed/simple;
-	bh=z+VQEntqBxo5Gd2LvLOmLC4MpGmQveBzWyM3KmPsLAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tqfkTJcZ2j+ghZC5nak4DTKU1r5Jvss66xaFX6/3ki+6rXPgvCVph0Klw4EJxTDu20XQkXAOZq0C4n/ENmEglfqr5EXnLbdG81R90M59sks97f999JRbc/aWW/zdTnGsjdYA+Dh3BgEaSNF8/k7aoT3pYqCD1CFjTYFkIp6GGmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=fjZt/u+B; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=qMBM7pjQFwnbFVqnUX8SB3vfklTZ2ocTvkMoeIJbxQ4=; b=fjZt/u+BQ9Vz/yMivaqlHmM58H
-	OgLS6W+bfy2IQA0xkn3anddDj+f5ij2o3A9jTJHE96XREjU3SE0wSBJhRhZScfR9ZtdrT5Q5ni8cr
-	7pu7f7uEwLsruVT2u60fxv9OUHIJt1ZQsIvCrKPpx5gwjWcTx4WxDewRAEKyXWl/tm3WcGLvK7GDu
-	ikow8z5kDrgmUGvoLWpdNsZHBamXkCPMVVumCAVXgRfKS20GQdJCVKMY9S8CVvDDXOFdUs1rTmzJ6
-	xbvjYTgPJTt7Qp2zA0PNedoTQBkcVPyEaHr7SalzMkgtBUyGbOzSZgRPFK0Xjmh2mWCBUDaUcmrsh
-	zm7ia9JQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:47592)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sZ6ME-00005e-0w;
-	Wed, 31 Jul 2024 11:14:58 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sZ6MD-00067m-VX; Wed, 31 Jul 2024 11:14:58 +0100
-Date: Wed, 31 Jul 2024 11:14:57 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	linus.walleij@linaro.org, eric.devolder@oracle.com, robh@kernel.org,
-	vincent.whitchurch@axis.com, bhe@redhat.com, nico@fluxnic.net,
-	ardb@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
-Message-ID: <ZqoOoUPDIeJX5M0e@shell.armlinux.org.uk>
-References: <20240620090028.729373-1-ruanjinjie@huawei.com>
- <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
- <Zqn0wL5iScf455O5@shell.armlinux.org.uk>
- <034499ea-2cd6-8775-ee94-771cbecd4cdb@huawei.com>
+	s=arc-20240116; t=1722420982; c=relaxed/simple;
+	bh=f63JFiTCszeHxLkMWbyoDf07plGaFJuYndHwtLyb5V4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BFZxjp+UmQ4MoeFl/sf+rrRboDboG0yLlQbdS/ZCgCWYWoMOJSLngeDFUa/+kRGkCZJhYEkGt2LXSZF0KS5QseI5XbuoRUsb0u4asdqEH7AiuOcirsBtRPFnEBkkZAu29puYbIb15ML5dTuhd9H1nXQ+bK41G4arXTC8LoIXqx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WYny96f4qzgYkn;
+	Wed, 31 Jul 2024 18:14:25 +0800 (CST)
+Received: from dggpeml500003.china.huawei.com (unknown [7.185.36.200])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6D1FD18009B;
+	Wed, 31 Jul 2024 18:16:16 +0800 (CST)
+Received: from [10.174.177.173] (10.174.177.173) by
+ dggpeml500003.china.huawei.com (7.185.36.200) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 31 Jul 2024 18:16:16 +0800
+Message-ID: <9b6398a6-a1a3-dcee-7e80-9b805ce794f7@huawei.com>
+Date: Wed, 31 Jul 2024 18:15:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <034499ea-2cd6-8775-ee94-771cbecd4cdb@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [Regression] 6.11.0-rc1: BUG: using smp_processor_id() in
+ preemptible when suspend the system
+Content-Language: en-US
+To: Thomas Gleixner <tglx@linutronix.de>, David Wang <00107082@163.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-tip-commits@vger.kernel.org>,
+	<stable@vger.kernel.org>, <x86@kernel.org>
+References: <20240730142557.4619-1-00107082@163.com> <87ikwm7waq.ffs@tglx>
+From: Yu Liao <liaoyu15@huawei.com>
+In-Reply-To: <87ikwm7waq.ffs@tglx>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500003.china.huawei.com (7.185.36.200)
 
-On Wed, Jul 31, 2024 at 06:03:11PM +0800, Jinjie Ruan wrote:
-> On 2024/7/31 16:24, Russell King (Oracle) wrote:
-> > On Wed, Jul 31, 2024 at 10:07:53AM +0800, Jinjie Ruan wrote:
-> >>>  #ifdef CONFIG_PREEMPTION
-> >>> +#ifdef CONFIG_PREEMPT_DYNAMIC
-> >>> +	bl	need_irq_preemption
-> >>> +	cmp	r0, #0
-> >>> +	beq	2f
-> >>> +#endif
-> > 
-> > Depending on the interrupt rate, this can be regarded as a fast path,
-> > it would be nice if we could find a way to use static branches in
-> > assembly code.
-> It seems to be hard to use static keys in assembly code.
+On 2024/7/30 23:07, Thomas Gleixner wrote:
+> On Tue, Jul 30 2024 at 22:25, David Wang wrote:
+>> When I suspend my system, via `systemctl suspend`, kernel BUG shows up in log:
+>>
+>>  kernel: [ 1734.412974] smpboot: CPU 2 is now offline
+>>  kernel: [ 1734.414952] BUG: using smp_processor_id() in preemptible [00000000] code: systemd-sleep/4619
+>>  kernel: [ 1734.414957] caller is hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
 > 
-> By the way, currently, most architectures have simplified assembly code
-> and implemented its most functions in C functions. Does arm32 have this
-> plan?
+> The below should fix that.
+> 
+> Thanks,
+> 
+>         tglx
+> ---
+> --- a/kernel/time/tick-broadcast.c
+> +++ b/kernel/time/tick-broadcast.c
+> @@ -1141,7 +1141,6 @@ void tick_broadcast_switch_to_oneshot(vo
+>  #ifdef CONFIG_HOTPLUG_CPU
+>  void hotplug_cpu__broadcast_tick_pull(int deadcpu)
+>  {
+> -	struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
+>  	struct clock_event_device *bc;
+>  	unsigned long flags;
+>  
+> @@ -1167,6 +1166,8 @@ void hotplug_cpu__broadcast_tick_pull(in
+>  		 * device to avoid the starvation.
+>  		 */
+>  		if (tick_check_broadcast_expired()) {
+> +			struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
+> +
+>  			cpumask_clear_cpu(smp_processor_id(), tick_broadcast_force_mask);
+>  			tick_program_event(td->evtdev->next_event, 1);
+>  		}
+> 
 
-arm32 is effectively in maintenance mode; very little active development
-is occuring. So, there are no plans to change the code without good
-reason (as code changes without reason will needlessly affect its
-stability.)
+Sorry for causing this issue. I have tested the patch on an x86 machine, this
+patch can fix the issue.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Tested-by: Yu Liao <liaoyu15@huawei.com>
+
 
