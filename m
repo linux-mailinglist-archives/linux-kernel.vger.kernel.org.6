@@ -1,169 +1,153 @@
-Return-Path: <linux-kernel+bounces-269228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1675942F7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:00:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA55942F77
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EAAE1F2D988
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E89A3287458
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE23B1B5805;
-	Wed, 31 Jul 2024 12:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vjaTU0fW"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D6D1AC43E;
-	Wed, 31 Jul 2024 12:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775081B4C26;
+	Wed, 31 Jul 2024 12:55:03 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087551AC43E;
+	Wed, 31 Jul 2024 12:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430509; cv=none; b=PV4Zjb/fzcHMGrgI95X9Vmr5GWmbfpqVF/Fe0R/adq9SL4cDaWWPTDm5TYfFakw1Ms739/VJTbW+7qqpy/4vw5wRPYkyYILBl4+rWT31CMAfb/n559JvbxEiCPig5O/Zqkx6Ww5tWCuM3AiwqA4KAB5nDniw9H5i25bTXVlTotc=
+	t=1722430503; cv=none; b=DMV7vOGw/Ftcxinl4K8M8OOOyJ/SRWW/fXzfuEH+SvGW1FOQdE0/MVj6ugUQnbSBz6RaNRNWUKdR6FlKiaXSkZe8WClPRF2/80VujFpdNysAJM1gGfuyT+Q/Epwxv0ALei7EpHw/l2hZKwAXiLU2//EZShzYL/WRdubVjisCmpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430509; c=relaxed/simple;
-	bh=lTq7S21kjmzc4xVHxfjpvVAF+NSW7/VHXNsHCO59Kgw=;
+	s=arc-20240116; t=1722430503; c=relaxed/simple;
+	bh=rXJN/m0SY2VySI8/Zb1NUZlygvm5O4/4DKDvwUgyCu8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gIYKbsGdVL8VGYSQEhVQtZKBugSov13rE1e6JVIdsZ/BVQ2z+E+3MwjmFlZFIQlPOCP7PQE7iIO3EaIULG7QRVuJtErJ7hy4zA3fg+Md8fCjsurm9dApEpvwUK2Oyl1LXjcJDVsjaJb5tKlzRnqLF1xY/8LKvpn1fOCZXkuZKIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=vjaTU0fW; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93DB9268;
-	Wed, 31 Jul 2024 14:54:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722430457;
-	bh=lTq7S21kjmzc4xVHxfjpvVAF+NSW7/VHXNsHCO59Kgw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vjaTU0fWRpOtDnaS28JyH8m7hqg3wnahs+Iap3znqY/IwAbRqlNrF9TzfoUElmC3F
-	 5dnsJurORTIIjbNtM7hWz+buP+bfwIFQHyyrGWtLPzsErp/33G1L7z+KPt3tThfP1H
-	 cgH4quPhaZmlEBp7jIrpB3z7VRAro1YHGSlcofv4=
-Date: Wed, 31 Jul 2024 15:54:44 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-Cc: gregkh@linuxfoundation.org, dan.scally@ideasonboard.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, opensource.kernel@vivo.com
-Subject: Re: [PATCH v2] usb: gadget: uvc: Fixes the abnormal enumeration
- problem of mobile phone as UVC camera.
-Message-ID: <20240731125444.GX8146@pendragon.ideasonboard.com>
-References: <TYUPR06MB62175899DECC7A9B0DA0DF01D2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
- <20240731122351.GU8146@pendragon.ideasonboard.com>
- <TYUPR06MB6217EF08BA3F758EB20C833DD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QvKGeyxcrpb0gvyzsAB88ed4Q52ayBK5AiG34PRLO28z0w290qdzfNeObFdLnwu7QOrCMas6If2x7vczRurk+NqAgMlPpB01qHJ2aDicDdtfKGPt0GH64jRx4B+ICAIWrH+SQvh9UJy+fkd7a+d4toLR3R8lXRReHmpoZs3iZ0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 170CE1007;
+	Wed, 31 Jul 2024 05:55:26 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80E553F766;
+	Wed, 31 Jul 2024 05:54:59 -0700 (PDT)
+Date: Wed, 31 Jul 2024 13:54:57 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Luke Parkin <luke.parkin@arm.com>, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] firmware: arm_scmi: Create debugfs files for
+ counts
+Message-ID: <Zqo0IWvrdUUNIAGL@pluto>
+References: <20240730093342.3558162-1-luke.parkin@arm.com>
+ <20240730093342.3558162-5-luke.parkin@arm.com>
+ <Zqop6qq0jibefw0g@bogus>
+ <ZqouwIJUYDJB64xP@pluto>
+ <Zqow0WOz0eVf6fwv@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <TYUPR06MB6217EF08BA3F758EB20C833DD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
+In-Reply-To: <Zqow0WOz0eVf6fwv@bogus>
 
-Hello 胡,
-
-When replying, please don't drop the CC list unless you need to discuss
-confidential topics. Your question, and the answers you will get, can
-help other people facing the same problem, so it's important to keep
-them on public mailing lists.
-
-On Wed, Jul 31, 2024 at 12:46:27PM +0000, 胡连勤 wrote:
-> Hello linux community expert:
+On Wed, Jul 31, 2024 at 01:40:49PM +0100, Sudeep Holla wrote:
+> On Wed, Jul 31, 2024 at 01:32:00PM +0100, Cristian Marussi wrote:
+> > On Wed, Jul 31, 2024 at 01:11:22PM +0100, Sudeep Holla wrote:
+> > > On Tue, Jul 30, 2024 at 10:33:41AM +0100, Luke Parkin wrote:
+> > > > Create debugfs files for the metrics in the debug_counters array
+> > > > 
+> > > > Signed-off-by: Luke Parkin <luke.parkin@arm.com>
+> > > > ---
+> > > > v3->v4
+> > > > Use new locations for debug array
+> > > > Use counter instead of stats
+> > > > v2->v3
+> > > > Add extra statistics also added in v3
+> > > > v1->v2
+> > > > Only create stats pointer if stats are enabled
+> > > > Move stats debugfs creation into a seperate helper function
+> > > > ---
+> > > >  drivers/firmware/arm_scmi/driver.c | 38 ++++++++++++++++++++++++++++++
+> > > >  1 file changed, 38 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
+> > > > index 5acd3d324def..ec6434692d1a 100644
+> > > > --- a/drivers/firmware/arm_scmi/driver.c
+> > > > +++ b/drivers/firmware/arm_scmi/driver.c
+> > > > @@ -2847,6 +2847,41 @@ static int scmi_device_request_notifier(struct notifier_block *nb,
+> > > >  	return NOTIFY_OK;
+> > > >  }
+> > > >  
+> > > > +static void scmi_debugfs_counters_setup(struct scmi_debug_info *dbg,
+> > > > +					struct dentry *trans)
+> > > > +{
+> > > > +	struct dentry *counters;
+> > > > +
+> > > > +	counters = debugfs_create_dir("counters", trans);
+> > > > +
+> > > > +	debugfs_create_atomic_t("sent_ok", 0400, counters,
+> > > > +				&dbg->counters[SENT_OK]);
+> > > > +	debugfs_create_atomic_t("sent_fail", 0400, counters,
+> > > > +				&dbg->counters[SENT_FAIL]);
+> > > > +	debugfs_create_atomic_t("sent_fail_polling_unsupported", 0400, counters,
+> > > > +				&dbg->counters[SENT_FAIL_POLLING_UNSUPPORTED]);
+> > > > +	debugfs_create_atomic_t("sent_fail_channel_not_found", 0400, counters,
+> > > > +				&dbg->counters[SENT_FAIL_CHANNEL_NOT_FOUND]);
+> > > > +	debugfs_create_atomic_t("response_ok", 0400, counters,
+> > > > +				&dbg->counters[RESPONSE_OK]);
+> > > > +	debugfs_create_atomic_t("notif_ok", 0400, counters,
+> > > > +				&dbg->counters[NOTIF_OK]);
+> > > > +	debugfs_create_atomic_t("dlyd_resp_ok", 0400, counters,
+> > > > +				&dbg->counters[DLYD_RESPONSE_OK]);
+> > > > +	debugfs_create_atomic_t("xfers_resp_timeout", 0400, counters,
+> > > > +				&dbg->counters[XFERS_RESPONSE_TIMEOUT]);
+> > > > +	debugfs_create_atomic_t("response_polled_ok", 0400, counters,
+> > > > +				&dbg->counters[RESPONSE_POLLED_OK]);
+> > > > +	debugfs_create_atomic_t("err_msg_unexpected", 0400, counters,
+> > > > +				&dbg->counters[ERR_MSG_UNEXPECTED]);
+> > > > +	debugfs_create_atomic_t("err_msg_invalid", 0400, counters,
+> > > > +				&dbg->counters[ERR_MSG_INVALID]);
+> > > > +	debugfs_create_atomic_t("err_msg_nomem", 0400, counters,
+> > > > +				&dbg->counters[ERR_MSG_NOMEM]);
+> > > > +	debugfs_create_atomic_t("err_protocol", 0400, counters,
+> > > > +				&dbg->counters[ERR_PROTOCOL]);
+> > > 
+> > > Just curious and wonder if we can keep all these read-only and have another
+> > > debugfs file which is write only to just reset the counters ?
+> > > 
+> > > Cristian,
+> > > 
+> > > Thoughts ? Or am I missing somthing ?
+> > 
+> > Do you mean creating a bunch of additional reset_sent_ok
+> > reset_<your_counters> that are just WO and used to reset each single
+> > counter ?
 > 
-> Which kernel interface does the user space program call to modify bind_deactivated to false?
-> I traced the kernel code and have not found where to modify this value.
-
-In this very specific case, the function is activated by a call to
-usb_function_activate() in uvc_function_connect(), itself called from
-uvc_v4l2_subscribe_event() in response to the application calling the
-VIDIOC_SUBSCRIBE_EVENT ioctl on the video device to subscribe to the
-UVC_EVENT_SETUP event.
-
-You can find a sample userspace application meant to work with this
-driver at https://gitlab.freedesktop.org/camera/uvc-gadget. Note that I
-haven't used it personally for a few years, so I may not be able to
-easily provide detailed technical support.
-
-> -----邮件原件-----
-> 发件人: Laurent Pinchart <laurent.pinchart@ideasonboard.com> 
-> 发送时间: 2024年7月31日 20:24
-> 收件人: 胡连勤 <hulianqin@vivo.com>
-> 抄送: gregkh@linuxfoundation.org; dan.scally@ideasonboard.com; linux-usb@vger.kernel.org; linux-kernel@vger.kernel.org; akpm@linux-foundation.org; opensource.kernel <opensource.kernel@vivo.com>
-> 主题: Re: 答复: [PATCH v2] usb: gadget: uvc: Fixes the abnormal enumeration problem of mobile phone as UVC camera.
+> No, not at all. Sorry if my response meant that.
 > 
-> On Wed, Jul 31, 2024 at 11:49:11AM +0000, 胡连勤 wrote:
-> > When the phone is connected to the computer to use the webcam 
-> > function, the phone needs to be enumerated as a uvc camera function.
-> > 
-> > Because uvc->func.bind_deactivated is configured as true in the f_uvc 
-> > driver uvc_alloc function, the usb_gadget_deactivate function is 
-> > called during the execution of the configfs_composite_bind function to 
-> > set gadget->deactivated to true, which in turn causes the 
-> > usb_gadget_connect_locked function to fail to call the corresponding 
-> > controller pullup operation (such as: dwc3_gadget_pullup, 
-> > mtu3_gadget_pullup), and the USB cannot be enumerated normally under 
-> > the uvc function combination.
-> > 
-> > After applying this patch, we measured that under the uvc function, 
-> > the dwc3 controller and the mtu3 controller can be enumerated 
-> > normally, and the webcam function is normal.
-> > 
-> > Fixes this by removing the setting of uvc->func.bind_deactivated to true.
-> > 
-> > Signed-off-by: Lianqin Hu <hulianqin@vivo.com>
-> > ---
-> > v2:
-> >   - Add "Fixes:" tag on the commit
-> >   - Modify description information.
-> > ---
-> >  drivers/usb/gadget/function/f_uvc.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/gadget/function/f_uvc.c 
-> > b/drivers/usb/gadget/function/f_uvc.c
-> > index 40187b7112e7..6d63bea14211 100644
-> > --- a/drivers/usb/gadget/function/f_uvc.c
-> > +++ b/drivers/usb/gadget/function/f_uvc.c
-> > @@ -1107,7 +1107,6 @@ static struct usb_function *uvc_alloc(struct usb_function_instance *fi)
-> >  	uvc->func.disable = uvc_function_disable;
-> >  	uvc->func.setup = uvc_function_setup;
-> >  	uvc->func.free_func = uvc_free;
-> > -	uvc->func.bind_deactivated = true;
+> > (...I suppose because a global WO reset-all is already there...)
+> >
 > 
-> This is done on purpose. The UVC function requires a userspace control
-> application, so the function is deactivated by default at bind time,
-> and gets activated when the application is ready.
-> 
-> This patch isn't right.
-> 
-> >  	return &uvc->func;
-> >  
-> > -----邮件原件-----
-> > 发件人: gregkh@linuxfoundation.org <gregkh@linuxfoundation.org>
-> > 发送时间: 2024年7月31日 19:13
-> > 收件人: 胡连勤 <hulianqin@vivo.com>
-> > 抄送: akpm@linux-foundation.org; linux-kernel@vger.kernel.org; 
-> > opensource.kernel <opensource.kernel@vivo.com>
-> > 主题: Re: [PATCH v1] usb: gadget: uvc: Fixed the abnormal enumeration problem of mobile phone as UVC camera.
-> > 
-> > On Wed, Jul 31, 2024 at 08:45:31AM +0000, 胡连勤 wrote:
-> > > When the phone is connected to the computer to use the webcam 
-> > > function, the phone needs to be enumerated as a uvc camera function.
-> > 
-> > <snip>
-> > 
-> > Note, why aren't you using scripts/get_maintainer.pl to find the
-> > proper mailing list and developers for this change?  Please do so.
-> > 
-> > thanks,
-> > 
-> > greg k-h
+> Indeed, I hadn't seen it carefully. Do we really need per counter reset ?
+> For me one global reset all with all files read-only should suffice.
+> Let me know if and why you think otherwise.
 
--- 
-Regards,
+Well we don't need strictly anything since it is a debug/devel feat, it
+just seemed handy to have a way to just reset one of the counters you are
+actively working on, if you think about a testing or live devel
+scenario...but it is not really needed and I have no strong opinion
+about this...it was just a nice to have I asked Luke to add last minute...
 
-Laurent Pinchart
+...patch 5 indeed already adds also a global WO reset, beside switching all
+the above counters to RW...it is just a matter to drop those RO->RW perms
+changes in patch 5.
+
+Thanks,
+Cristian
 
