@@ -1,235 +1,84 @@
-Return-Path: <linux-kernel+bounces-268669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BB7942798
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A36894279E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:15:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32FA2846B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35DB1F25925
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:15:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081FC1A4F3B;
-	Wed, 31 Jul 2024 07:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D85A1381D5;
+	Wed, 31 Jul 2024 07:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BtpsglQm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="VhuvNot+"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF9D3BBEF
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24941A4F3B;
+	Wed, 31 Jul 2024 07:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722410058; cv=none; b=b7g8fHSo+lMz9wb99PBZAi3qVuB2NGT5+wrzsmXmUeLnwmiJWB9GCJtVvcBEKauAP6brJKWkiE9IDPuj9/qR79S5Ay2LJ1TGOLWEAoqOBJPjWHf5gT1K5ii9heAtPgReDx7RVPWKnwcPbYt4GKvd/frhvQjMjUVsNPewGGsRr64=
+	t=1722410090; cv=none; b=dC3wyERzUhHpsScDqh2ZBYnfgZMPNyay3CnzaJn13NNHmgZnigJri9l/XZNEFazAHsBCNn2fayvrlbBBjdwcjh8EdvWD+WFOYT1SoKMtAb5mqb/SYgrkqmp2F4njAQq6qBRAlDSZ1ET7ztacc2iVsWQH0A82msuUaEG76fQUF0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722410058; c=relaxed/simple;
-	bh=DFaSIMLeOwLIqKDhfXsm+CzJw6oi2I2Zp7gYG/9j2qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eL+7i3vqVZ1DTJtMErVISR798GYXNxWCh99fkObzhWnWOS4DqJclg0j6pEm33TEM3voYcxf99Ihk1c62KNI7cR7udhf4+nmlJzR01n06ZhTE8z9xBUISLUROLmmJ2m4F/30WRkWsNEVLR0ChgFKWtL1eblgthCdNCLr8JacmkO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BtpsglQm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722410055;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t/nl+e6vaRZ78PI4+ibEbjJ97p6P9Y0eAgdFv5fCQo0=;
-	b=BtpsglQmtHB9aSwvA7wgItWXDugttA8Y2TfEFjYG/vmGzBKDb1OatlnBFabhUuEdHK5p7K
-	mT12Hd33MNIKV8euD723jQ12lMCkOfhfqVhTY5i1AcNth/prfiwc+vM8yZpKRJobSojwIR
-	WzStxS/UKXExXVYUj3XtqUIl1IXVaL4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-467-NfQNP68vMtWiWfzKzFWtJg-1; Wed, 31 Jul 2024 03:14:11 -0400
-X-MC-Unique: NfQNP68vMtWiWfzKzFWtJg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42817980766so30806865e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:14:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722410050; x=1723014850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t/nl+e6vaRZ78PI4+ibEbjJ97p6P9Y0eAgdFv5fCQo0=;
-        b=DYsBqynXFJRjYSvb6vI9uTRs5D47iYGyAC5K+twpHi+/PGsUaAuoaCSiEEt6nYWqdp
-         Q++OMhEFb9V7QKh/LGoDi7UbvgDzj5Z2gV3xiB7Q9kTLHnCDvTX35kYHQmRcAgEBfMd3
-         ph2JCFlJuA62o/oxF1g7/+q9OzDuJ5LFCGLHTs2XVC71GhX2EHIZllWmIn6WkztixOQb
-         jixtPb9RsRn0xDhXU2tthBWyTl8Fqv9FAc33cps9sp9liN2w91Og4ILgGlsu+lhERWWA
-         1yBefzAUy/dwnE/PvJ5Ts2+IjyrsxVHYrmL4ciWLKUF8YvpBtWr0u4RoRQFDzr58yeUP
-         xiBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSNB8IBFpHx/K/pIZDF1/kVSjSGhfPAjOiMUIAaPTZw9agEsmVN40pBELUIGn/RQpDnNzoCqFXEMu9pv0YP74SICYp9vpEaD0Tkqx0
-X-Gm-Message-State: AOJu0YxGqPqxUyM/HUjSoW/ZYRexCPCIRoGR8wsKLqb88kIlI0f2vRP6
-	KRaAPSJNIAXj1b9+030/1OjC7ZyDOxg1Qu53wTcykGHNIL+IcszSb22ec+AvW6TvC8a3uG/y8fL
-	Q96LmBao9O/VQrDs0eGHM7V0JwQq1p8hVQiXftz6LXwn3KIueZt82xF9eHYu9jg==
-X-Received: by 2002:adf:e708:0:b0:368:72c6:99c4 with SMTP id ffacd0b85a97d-36b5cee2d27mr10280311f8f.10.1722410050044;
-        Wed, 31 Jul 2024 00:14:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6jSeb18RuPmbGirWKCJrktRGOmYgiWhv8GsuwSZXyrcvukngIBWVpZXtCAeXpiAo/LIVg5g==
-X-Received: by 2002:adf:e708:0:b0:368:72c6:99c4 with SMTP id ffacd0b85a97d-36b5cee2d27mr10280268f8f.10.1722410049236;
-        Wed, 31 Jul 2024 00:14:09 -0700 (PDT)
-Received: from sgarzare-redhat (host-82-57-51-79.retail.telecomitalia.it. [82.57.51.79])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c067esm16215525f8f.20.2024.07.31.00.14.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 00:14:08 -0700 (PDT)
-Date: Wed, 31 Jul 2024 09:14:04 +0200
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: luigi.leonardi@outlook.com
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
-	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kvm@vger.kernel.org, Daan De Meyer <daan.j.demeyer@gmail.com>
-Subject: Re: [PATCH net-next v4 1/3] vsock: add support for SIOCOUTQ ioctl
-Message-ID: <g3ufcvs6nkwujosuopyulvtnmtbheknp7wnnzwvhrrpnaw4jed@zaisttr2hmmx>
-References: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
- <20240730-ioctl-v4-1-16d89286a8f0@outlook.com>
+	s=arc-20240116; t=1722410090; c=relaxed/simple;
+	bh=5/mte6CyAyshwnEEpmhRwBe8k1+zKLkBUzU34rGWZ6Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cV5IbwLKnbT+BwDlboq9WyFzmOQfD572ql+9AzAzLLqD2GMt+GrDELdUsB3YKjhih++7aJ6m2R9yw9mccJoK5bvcllDXZbOHl5W9jSkGF7d908Tpd/RghR5kJm9jihr2mUyM+hRoEmT88fjF9ya9Cm8cVpR2dQcqUUMF1GEuets=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=VhuvNot+; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [IPV6:2405:201:2015:f873:9278:2c85:fd02:c5f5] (unknown [IPv6:2405:201:2015:f873:9278:2c85:fd02:c5f5])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AE5C5842;
+	Wed, 31 Jul 2024 09:13:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722410039;
+	bh=5/mte6CyAyshwnEEpmhRwBe8k1+zKLkBUzU34rGWZ6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VhuvNot+Nf72HAxsq3LbjwC/PrAhMrUYiav6NKQ80Mu1XvxbYTMbMK+Tj54h1iCfi
+	 nqebW6M217O5Px79hkZ9di3Dy1F8lkzRCwjDAnyn2UrDzg8xORhwWHm3V2NA72UPxl
+	 F56lRvDSwNATL91dkTsq3QLd2D9w6BZeQVqjwLHE=
+Message-ID: <9bdb6598-8ca2-4fb9-bbab-d04c2c2f7032@ideasonboard.com>
+Date: Wed, 31 Jul 2024 12:44:41 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20240730-ioctl-v4-1-16d89286a8f0@outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] media: imx335: Support vertical flip
+To: linux-media@vger.kernel.org
+Cc: Alexander Shiyan <eagle.alexander923@gmail.com>,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240710044633.81372-1-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Umang Jain <umang.jain@ideasonboard.com>
+In-Reply-To: <20240710044633.81372-1-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 09:43:06PM GMT, Luigi Leonardi via B4 Relay wrote:
->From: Luigi Leonardi <luigi.leonardi@outlook.com>
->
->Add support for ioctl(s) in AF_VSOCK.
->The only ioctl available is SIOCOUTQ/TIOCOUTQ, which returns the number
->of unsent bytes in the socket. This information is transport-specific
->and is delegated to them using a callback.
->
->Suggested-by: Daan De Meyer <daan.j.demeyer@gmail.com>
->Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
->---
-> include/net/af_vsock.h   |  3 +++
-> net/vmw_vsock/af_vsock.c | 58 +++++++++++++++++++++++++++++++++++++++++++++---
-> 2 files changed, 58 insertions(+), 3 deletions(-)
+Hello
 
-LGTM!
+Can this be collected please ?
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
-
+On 10/07/24 10:16 am, Umang Jain wrote:
+> Hi all,
 >
->diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
->index 535701efc1e5..fc504d2da3d0 100644
->--- a/include/net/af_vsock.h
->+++ b/include/net/af_vsock.h
->@@ -169,6 +169,9 @@ struct vsock_transport {
-> 	void (*notify_buffer_size)(struct vsock_sock *, u64 *);
-> 	int (*notify_set_rcvlowat)(struct vsock_sock *vsk, int val);
+> This work intends to supprt vertical flipping for IMX335 driver.
+> 1/2 contains a small drive by fix, to rename the mode struct name
+> 2/2 introduces the support for vertical flip for the mode.
 >
->+	/* SIOCOUTQ ioctl */
->+	ssize_t (*unsent_bytes)(struct vsock_sock *vsk);
->+
-> 	/* Shutdown. */
-> 	int (*shutdown)(struct vsock_sock *, int);
+> Umang Jain (2):
+>    media: imx335: Rectify name of mode struct
+>    media: imx335: Support vertical flip
 >
->diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
->index 4b040285aa78..58e639e82942 100644
->--- a/net/vmw_vsock/af_vsock.c
->+++ b/net/vmw_vsock/af_vsock.c
->@@ -112,6 +112,7 @@
-> #include <net/sock.h>
-> #include <net/af_vsock.h>
-> #include <uapi/linux/vm_sockets.h>
->+#include <uapi/asm-generic/ioctls.h>
->
-> static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
-> static void vsock_sk_destruct(struct sock *sk);
->@@ -1292,6 +1293,57 @@ int vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
-> }
-> EXPORT_SYMBOL_GPL(vsock_dgram_recvmsg);
->
->+static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
->+			  int __user *arg)
->+{
->+	struct sock *sk = sock->sk;
->+	struct vsock_sock *vsk;
->+	int ret;
->+
->+	vsk = vsock_sk(sk);
->+
->+	switch (cmd) {
->+	case SIOCOUTQ: {
->+		ssize_t n_bytes;
->+
->+		if (!vsk->transport || !vsk->transport->unsent_bytes) {
->+			ret = -EOPNOTSUPP;
->+			break;
->+		}
->+
->+		if (sock_type_connectible(sk->sk_type) && sk->sk_state == TCP_LISTEN) {
->+			ret = -EINVAL;
->+			break;
->+		}
->+
->+		n_bytes = vsk->transport->unsent_bytes(vsk);
->+		if (n_bytes < 0) {
->+			ret = n_bytes;
->+			break;
->+		}
->+
->+		ret = put_user(n_bytes, arg);
->+		break;
->+	}
->+	default:
->+		ret = -ENOIOCTLCMD;
->+	}
->+
->+	return ret;
->+}
->+
->+static int vsock_ioctl(struct socket *sock, unsigned int cmd,
->+		       unsigned long arg)
->+{
->+	int ret;
->+
->+	lock_sock(sock->sk);
->+	ret = vsock_do_ioctl(sock, cmd, (int __user *)arg);
->+	release_sock(sock->sk);
->+
->+	return ret;
->+}
->+
-> static const struct proto_ops vsock_dgram_ops = {
-> 	.family = PF_VSOCK,
-> 	.owner = THIS_MODULE,
->@@ -1302,7 +1354,7 @@ static const struct proto_ops vsock_dgram_ops = {
-> 	.accept = sock_no_accept,
-> 	.getname = vsock_getname,
-> 	.poll = vsock_poll,
->-	.ioctl = sock_no_ioctl,
->+	.ioctl = vsock_ioctl,
-> 	.listen = sock_no_listen,
-> 	.shutdown = vsock_shutdown,
-> 	.sendmsg = vsock_dgram_sendmsg,
->@@ -2286,7 +2338,7 @@ static const struct proto_ops vsock_stream_ops = {
-> 	.accept = vsock_accept,
-> 	.getname = vsock_getname,
-> 	.poll = vsock_poll,
->-	.ioctl = sock_no_ioctl,
->+	.ioctl = vsock_ioctl,
-> 	.listen = vsock_listen,
-> 	.shutdown = vsock_shutdown,
-> 	.setsockopt = vsock_connectible_setsockopt,
->@@ -2308,7 +2360,7 @@ static const struct proto_ops vsock_seqpacket_ops = {
-> 	.accept = vsock_accept,
-> 	.getname = vsock_getname,
-> 	.poll = vsock_poll,
->-	.ioctl = sock_no_ioctl,
->+	.ioctl = vsock_ioctl,
-> 	.listen = vsock_listen,
-> 	.shutdown = vsock_shutdown,
-> 	.setsockopt = vsock_connectible_setsockopt,
->
->-- 
->2.45.2
->
+>   drivers/media/i2c/imx335.c | 77 +++++++++++++++++++++++++++++++++++---
+>   1 file changed, 72 insertions(+), 5 deletions(-)
 >
 
 
