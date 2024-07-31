@@ -1,208 +1,181 @@
-Return-Path: <linux-kernel+bounces-268416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6252694246D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C81942470
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816A61C22D14
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6D1285B48
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA192101C4;
-	Wed, 31 Jul 2024 02:08:01 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EA010940;
+	Wed, 31 Jul 2024 02:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fGKY+EtZ";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="fGKY+EtZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8688FD51C;
-	Wed, 31 Jul 2024 02:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B468101C4;
+	Wed, 31 Jul 2024 02:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722391681; cv=none; b=d6GGTRwPfx4cpy1jRnx6pksINXJ/K0EsjRXotUeY12qwPYE35pCu+76ZQqwevYCth5AkK8Tq/sJAo/pbRhjEVAn9j7s27Qdeaq5hz6Z07wbCl1pZmPHZ49iNds/OkPtuho9s6b8OnFmCHztU8LlcRj6Z3FPJCaUh7WqPVWY1ldM=
+	t=1722392059; cv=none; b=ERuflZn49X8by9uL8DU01vO6QrIAlljWt7Y2NmrA1SQxK4yS29ZdV+QEvoipbMBWgfSqkQpoo85scZqdzNTPz3QN6PZ5bpFTjY4qCSO5zYKClNrkvaemjn4UgwmT2d56znifpIdN6PA+qF6v8SjiA2KrKbJTijSCKkUSNJZBTPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722391681; c=relaxed/simple;
-	bh=35PjJBOStJHfs3CcqH4NT7m0IULmwTL7mQZn2DspvVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=C39Jxo0lKG1yecG5bbWs+EU8zwOymCv+MPMu2TpwNBZV2l6rPn3RsWHsJAtYcxW8VoVsomqhPilXx4bJTySwwfS90xh1U+M6MaszmGEQBPBE6WQEOrnEdgTOPwrT8eQZsQ0rN20vJF6625ds/dUfUYy62aess+1gcsgrsD4ycW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WYb6j31hJzgYQB;
-	Wed, 31 Jul 2024 10:06:05 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id B79F31400DD;
-	Wed, 31 Jul 2024 10:07:55 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 31 Jul 2024 10:07:54 +0800
-Message-ID: <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
-Date: Wed, 31 Jul 2024 10:07:53 +0800
+	s=arc-20240116; t=1722392059; c=relaxed/simple;
+	bh=Zf9AA9aIXHwTBBiD9oLmRaGfwDCmv/LevEcuNtay4sk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FUy2CnfJ4NtSsJ2jPSFigHg0mgkmls4wOZVbb41ISo7SSdnJ0mRRdFuqIg9Vw+VyegF8In5zJKytQ6tO0FlKWbNeIauHtEsIMfV8YCox64LRH5CNS0KZ2XtnDKGDknSbIj7P+LK7Ey8Nl+miKoYjOj1R2KFCJ9zngclkgwByakE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fGKY+EtZ; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=fGKY+EtZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 86C9421EF6;
+	Wed, 31 Jul 2024 02:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722392054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=EcWBOKPbUOQ/gLATLyls+MqjOHRtPx91BjGH09NjhMs=;
+	b=fGKY+EtZAXpz7BkI6BsIPkRuE7p/QUh1H+S4AgKVnoSH5CwShfO3fZLONS8W3naRbAE7hC
+	QHE7twnRWEhb6/+Nqe/2ob/b3MWZIeljY/5PahyaSoobDXXzgRwj3hHDyzPEQFrYZ+AuIp
+	dP/lPAfJZgeQ8MCWKtWRyw+Jyk0OLdQ=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=fGKY+EtZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722392054; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=EcWBOKPbUOQ/gLATLyls+MqjOHRtPx91BjGH09NjhMs=;
+	b=fGKY+EtZAXpz7BkI6BsIPkRuE7p/QUh1H+S4AgKVnoSH5CwShfO3fZLONS8W3naRbAE7hC
+	QHE7twnRWEhb6/+Nqe/2ob/b3MWZIeljY/5PahyaSoobDXXzgRwj3hHDyzPEQFrYZ+AuIp
+	dP/lPAfJZgeQ8MCWKtWRyw+Jyk0OLdQ=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8025C13297;
+	Wed, 31 Jul 2024 02:14:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RfNEH/adqWbmJAAAD6G6ig
+	(envelope-from <dsterba@suse.com>); Wed, 31 Jul 2024 02:14:14 +0000
+From: David Sterba <dsterba@suse.com>
+To: torvalds@linux-foundation.org
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs fixes for 6.11-rc2
+Date: Wed, 31 Jul 2024 04:14:09 +0200
+Message-ID: <cover.1722390813.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
-Content-Language: en-US
-To: <linux@armlinux.org.uk>, <arnd@arndb.de>, <afd@ti.com>,
-	<akpm@linux-foundation.org>, <rmk+kernel@armlinux.org.uk>,
-	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
-	<vincent.whitchurch@axis.com>, <bhe@redhat.com>, <nico@fluxnic.net>,
-	<ardb@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>
-References: <20240620090028.729373-1-ruanjinjie@huawei.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <20240620090028.729373-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.81 / 50.00];
+	DWL_DNSWL_MED(-2.00)[suse.com:dkim];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:dkim]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.81
+X-Rspamd-Queue-Id: 86C9421EF6
 
-Gentle ping.
+Hi,
 
-On 2024/6/20 17:00, Jinjie Ruan wrote:
-> Enable support for PREEMPT_DYNAMIC on arm32, allowing the preemption model
-> to be chosen at boot time.
-> 
-> Similar to arm64, arm32 does not yet use the generic entry code, we must
-> define our own `sk_dynamic_irqentry_exit_cond_resched`, which will be
-> enabled/disabled by the common code in kernel/sched/core.c.
-> 
-> And arm32 use generic preempt.h, so declare
-> `sk_dynamic_irqentry_exit_cond_resched` if the arch do not use generic
-> entry. Other architectures which use generic preempt.h but not use generic
-> entry can benefit from it.
-> 
-> Test ok with the below cmdline parameters on Qemu versatilepb board:
-> 	`preempt=none`
-> 	`preempt=voluntary`
-> 	`preempt=full`
-> 
-> Update preempt mode with debugfs interface on above Qemu board is also
-> tested ok:
-> 	# cd /sys/kernel/debug/sched
-> 	# echo none > preempt
-> 	# echo voluntary > preempt
-> 	# echo full > preempt
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  arch/arm/Kconfig                 |  1 +
->  arch/arm/include/asm/exception.h |  2 ++
->  arch/arm/kernel/Makefile         |  2 +-
->  arch/arm/kernel/common.c         | 13 +++++++++++++
->  arch/arm/kernel/entry-armv.S     |  7 ++++++-
->  include/asm-generic/preempt.h    |  5 +++++
->  6 files changed, 28 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm/kernel/common.c
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 036381c5d42f..843f320dde7f 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -124,6 +124,7 @@ config ARM
->  	select HAVE_PERF_EVENTS
->  	select HAVE_PERF_REGS
->  	select HAVE_PERF_USER_STACK_DUMP
-> +	select HAVE_PREEMPT_DYNAMIC_KEY
->  	select MMU_GATHER_RCU_TABLE_FREE if SMP && ARM_LPAE
->  	select HAVE_REGS_AND_STACK_ACCESS_API
->  	select HAVE_RSEQ
-> diff --git a/arch/arm/include/asm/exception.h b/arch/arm/include/asm/exception.h
-> index 3c82975d46db..ac96b76b394e 100644
-> --- a/arch/arm/include/asm/exception.h
-> +++ b/arch/arm/include/asm/exception.h
-> @@ -12,4 +12,6 @@
->  
->  #define __exception_irq_entry	__irq_entry
->  
-> +bool need_irq_preemption(void);
-> +
->  #endif /* __ASM_ARM_EXCEPTION_H */
-> diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
-> index 89a77e3f51d2..58acd62dc5e9 100644
-> --- a/arch/arm/kernel/Makefile
-> +++ b/arch/arm/kernel/Makefile
-> @@ -17,7 +17,7 @@ CFLAGS_REMOVE_return_address.o = -pg
->  
->  # Object file lists.
->  
-> -obj-y		:= elf.o entry-common.o irq.o opcodes.o \
-> +obj-y		:= common.o elf.o entry-common.o irq.o opcodes.o \
->  		   process.o ptrace.o reboot.o io.o \
->  		   setup.o signal.o sigreturn_codes.o \
->  		   stacktrace.o sys_arm.o time.o traps.o
-> diff --git a/arch/arm/kernel/common.c b/arch/arm/kernel/common.c
-> new file mode 100644
-> index 000000000000..52b0abcae07e
-> --- /dev/null
-> +++ b/arch/arm/kernel/common.c
-> @@ -0,0 +1,13 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/jump_label.h>
-> +#include <asm/exception.h>
-> +
-> +#ifdef CONFIG_PREEMPT_DYNAMIC
-> +DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
-> +
-> +bool need_irq_preemption(void)
-> +{
-> +	return static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched);
-> +}
-> +#endif
-> diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
-> index 6150a716828c..571e86433833 100644
-> --- a/arch/arm/kernel/entry-armv.S
-> +++ b/arch/arm/kernel/entry-armv.S
-> @@ -221,6 +221,11 @@ __irq_svc:
->  	irq_handler from_user=0
->  
->  #ifdef CONFIG_PREEMPTION
-> +#ifdef CONFIG_PREEMPT_DYNAMIC
-> +	bl	need_irq_preemption
-> +	cmp	r0, #0
-> +	beq	2f
-> +#endif
->  	ldr	r8, [tsk, #TI_PREEMPT]		@ get preempt count
->  	ldr	r0, [tsk, #TI_FLAGS]		@ get flags
->  	teq	r8, #0				@ if preempt count != 0
-> @@ -228,7 +233,7 @@ __irq_svc:
->  	tst	r0, #_TIF_NEED_RESCHED
->  	blne	svc_preempt
->  #endif
-> -
-> +2:
->  	svc_exit r5, irq = 1			@ return from exception
->   UNWIND(.fnend		)
->  ENDPROC(__irq_svc)
-> diff --git a/include/asm-generic/preempt.h b/include/asm-generic/preempt.h
-> index 51f8f3881523..2db7a3e86303 100644
-> --- a/include/asm-generic/preempt.h
-> +++ b/include/asm-generic/preempt.h
-> @@ -2,6 +2,7 @@
->  #ifndef __ASM_PREEMPT_H
->  #define __ASM_PREEMPT_H
->  
-> +#include <linux/jump_label.h>
->  #include <linux/thread_info.h>
->  
->  #define PREEMPT_ENABLED	(0)
-> @@ -89,6 +90,10 @@ void dynamic_preempt_schedule_notrace(void);
->  #define __preempt_schedule()		dynamic_preempt_schedule()
->  #define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
->  
-> +#ifndef CONFIG_GENERIC_ENTRY
-> +DECLARE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
-> +#endif
-> +
->  #else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_KEY*/
->  
->  #define __preempt_schedule() preempt_schedule()
+please pull the following fixes, thanks.
+
+- fix regression in extent map rework when handling insertion of
+  overlapping compressed extent
+
+- fix unexpected file length when appending to a file using direct io
+  and buffer not faulted in
+
+- in zoned mode, fix accounting of unusable space when flipping
+  read-only block group back to read-write
+
+- fix page locking when COWing an inline range, assertion failure found
+  by syzbot
+
+- fix calculation of space info in debugging print
+
+- tree-checker, add validation of data reference item
+
+- fix a few -Wmaybe-uninitialized build warnings
+
+----------------------------------------------------------------
+The following changes since commit c3ece6b7ffb4a7c00e8d53cbf4026a32b6127914:
+
+  btrfs: change BTRFS_MOUNT_* flags to 64bit type (2024-07-19 17:20:23 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git tags/for-6.11-rc1-tag
+
+for you to fetch changes up to b8e947e9f64cac9df85a07672b658df5b2bcff07:
+
+  btrfs: initialize location to fix -Wmaybe-uninitialized in btrfs_lookup_dentry() (2024-07-30 15:33:06 +0200)
+
+----------------------------------------------------------------
+Boris Burkov (1):
+      btrfs: make cow_file_range_inline() honor locked_page on error
+
+David Sterba (1):
+      btrfs: initialize location to fix -Wmaybe-uninitialized in btrfs_lookup_dentry()
+
+Filipe Manana (2):
+      btrfs: fix corrupt read due to bad offset of a compressed extent map
+      btrfs: fix corruption after buffer fault in during direct IO append write
+
+Naohiro Aota (2):
+      btrfs: do not subtract delalloc from avail bytes
+      btrfs: zoned: fix zone_unusable accounting on making block group read-write again
+
+Qu Wenruo (1):
+      btrfs: tree-checker: validate dref root and objectid
+
+ fs/btrfs/block-group.c            | 13 +++--
+ fs/btrfs/ctree.h                  |  1 +
+ fs/btrfs/direct-io.c              | 38 +++++++++++----
+ fs/btrfs/extent-tree.c            |  3 +-
+ fs/btrfs/extent_map.c             |  2 +-
+ fs/btrfs/file.c                   | 17 +++++--
+ fs/btrfs/free-space-cache.c       |  4 +-
+ fs/btrfs/inode.c                  | 18 ++++---
+ fs/btrfs/space-info.c             |  5 +-
+ fs/btrfs/space-info.h             |  1 +
+ fs/btrfs/tests/extent-map-tests.c | 99 +++++++++++++++++++++++++++++++++++++++
+ fs/btrfs/tree-checker.c           | 47 +++++++++++++++++++
+ include/trace/events/btrfs.h      |  8 ++++
+ 13 files changed, 225 insertions(+), 31 deletions(-)
 
