@@ -1,128 +1,145 @@
-Return-Path: <linux-kernel+bounces-269054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D359A942CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:08:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63335942CAF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B771C21B7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:08:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C37B286C33
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D64141B29C3;
-	Wed, 31 Jul 2024 11:06:35 +0000 (UTC)
-Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6E21AD3FD;
+	Wed, 31 Jul 2024 11:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMNWaVYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA8DC1B1426
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A7A145FEF;
+	Wed, 31 Jul 2024 11:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423995; cv=none; b=UOlyFUM5d6eZqtofKT9gvQWiSeSqCXTvxxlV5QP/Q4Epk3CdSeZGuUuqkH3IkCY3qTL++D8L5n6MqTS5GIUKWFyDFw0NzM4dL2dKHVx1mu0oPYTi0JJUa3lCverKPfGhotsCbkg7U0rtkOEtPwgEjhMJFFxDMtHshlFYk6q4GF8=
+	t=1722423939; cv=none; b=LxBtJLMlkmzADHRe1nPxpb+7fkzEgbMvPEHg1IKdhmo2P+KcWWe6wXTTdddscD9nEPGulLcsal6CmoQ00LrtYlfm/aR1rju6QmcyNGzHdzOMWiJtjdIFcjoI/pRWsgYOFYZ1uxd/63FigsEHCEjp6d2olb16Pnbn+yCS298mpkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423995; c=relaxed/simple;
-	bh=x2LrKK5tcGR0WVNSKSNm+lRjBT558gT2pvQ5vmXD+Cc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nQ3CPNH1lCNM2T4cXl9vEoYTDqSFRaIOSMHtCwEYDEmI3OM/xAw8h8JX3RQHSoeaxOwpoGQM4vqEKc725rjc/eOvMa0rvzeyQzlqvRB/G35hwloqPHiIUQl0M5VroBq7MPguVD+4DF9KJnFxsY8JYRctCbjaInhlnADVlH6ciwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net; spf=pass smtp.mailfrom=0leil.net; arc=none smtp.client-ip=83.166.143.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0leil.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0leil.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WYq686GwNzVx2;
-	Wed, 31 Jul 2024 13:06:24 +0200 (CEST)
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4WYq680w8hzTBq;
-	Wed, 31 Jul 2024 13:06:24 +0200 (CEST)
-From: Quentin Schulz <foss+kernel@0leil.net>
-Date: Wed, 31 Jul 2024 13:05:29 +0200
-Subject: [PATCH 2/2] arm64: dts: rockchip: override BIOS_DISABLE signal via
- GPIO hog on RK3399 Puma
+	s=arc-20240116; t=1722423939; c=relaxed/simple;
+	bh=xFeWmt0lCu7DCurnFG/E+GW2S+Doc2pe0dmmRONG6gE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qr66BaSddxSQZiDgMNz6s9Q94S/pvPhl9pWxg8swCkFPEt/4z+FILKSMqPG85CMye18LTeEypjPBH9NadRzZd3OjNn/A92b7zViJIYXeYbX8FDMd7lJEe+EcCziMEcN40xB5XSJNsY5Q5ENAqUzRMqm5CeGMMcCwkXnGh1VjvLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMNWaVYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E00F7C116B1;
+	Wed, 31 Jul 2024 11:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722423939;
+	bh=xFeWmt0lCu7DCurnFG/E+GW2S+Doc2pe0dmmRONG6gE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=tMNWaVYrcnPMbF2LTmtTyA7nF3B4Fih0u2TeHD7mbbZirqAhpdA6KWNCo6NBC08f1
+	 HoXnBDTQy/th9PBv10On+yYijjdkh0IpY9gN5XIjUvvIwTACBExrXJiLPe5hbs0l1u
+	 w5uvYKzZ0/IcLp8SiU5alEBZpi/aQzrbPawexByNePA/AUVgBYK7e9ITo2fY5E7ccN
+	 ETAThn2fMB1STEKMCVPxGpvjePivno2v0LV3hvTMa1DB2i5pP8KSOCHP2ZHzzVINSR
+	 ZULUQCcmBKCAGLQpcuEgesYJuzUnE8DsHDO6+grTlLmnLXCLpBi3DS4iQzmqZcIh3J
+	 ixsFIQK/kPP8A==
+Message-ID: <ec80640b-2f50-4857-b957-1008a87617e5@kernel.org>
+Date: Wed, 31 Jul 2024 13:05:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] dt-bindings: arm64: mediatek: Add
+ kukui-jacuzzi-cerise board
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sean Wang <sean.wang@mediatek.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240731-jacuzzi_dt-v3-0-1c4314e8962f@chromium.org>
+ <20240731-jacuzzi_dt-v3-2-1c4314e8962f@chromium.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240731-jacuzzi_dt-v3-2-1c4314e8962f@chromium.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-puma-emmc-6-v1-2-4e28eadf32d0@cherry.de>
-References: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
-In-Reply-To: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Judy Hsiao <judyhsiao@chromium.org>, 
- Brian Norris <briannorris@chromium.org>
-Cc: stable@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Quentin Schulz <quentin.schulz@cherry.de>, 
- foss+kernel@0leil.net
-X-Mailer: b4 0.14.0
-X-Infomaniak-Routing: alpha
 
-From: Quentin Schulz <quentin.schulz@cherry.de>
+On 31/07/2024 12:47, Hsin-Te Yuan wrote:
+> Cerise is known as ASUS Chromebook CZ1.
+> Stern is known as ASUS Chromebook Flip CZ1.
+> 
+> They are almost identical. The only difference is that Cerise is a
+> clamshell device without touchscreen and Stern is a convertible device.
+> 
+> Although the commercial names are different, the bootloader still
+> expects these cerise compatible strings even on stern.
+> 
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 
-The Qseven BIOS_DISABLE signal on the RK3399-Q7 keeps the on-module eMMC
-and SPI flash powered-down initially (in fact it keeps the reset signal
-asserted). BIOS_DISABLE_OVERRIDE pin allows to override that signal so
-that eMMC and SPI can be used regardless of the state of the signal.
+<form letter>
+This is a friendly reminder during the review process.
 
-Let's make this GPIO a hog so that it's reserved and locked in the
-proper state.
+It looks like you received a tag and forgot to add it.
 
-At the same time, make sure the pin is reserved for the hog and cannot
-be requested by another node.
+If you do not know the process, here is a short explanation:
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Quentin Schulz <quentin.schulz@cherry.de>
----
- arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-index a782e614d9bba..d24444cdf54af 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi
-@@ -154,6 +154,22 @@ bios-disable-hog {
- 	};
- };
- 
-+&gpio3 {
-+	/*
-+	 * The Qseven BIOS_DISABLE signal on the RK3399-Q7 keeps the on-module
-+	 * eMMC and SPI flash powered-down initially (in fact it keeps the
-+	 * reset signal asserted). BIOS_DISABLE_OVERRIDE pin allows to override
-+	 * that signal so that eMMC and SPI can be used regardless of the state
-+	 * of the signal.
-+	 */
-+	bios-disable-override-hog {
-+		gpios = <RK_PD5 GPIO_ACTIVE_LOW>;
-+		gpio-hog;
-+		line-name = "bios_disable_override";
-+		output-high;
-+	};
-+};
-+
- &gmac {
- 	assigned-clocks = <&cru SCLK_RMII_SRC>;
- 	assigned-clock-parents = <&clkin_gmac>;
-@@ -458,9 +474,14 @@ &pcie_clkreqn_cpm {
- 
- &pinctrl {
- 	pinctrl-names = "default";
--	pinctrl-0 = <&q7_thermal_pin>;
-+	pinctrl-0 = <&q7_thermal_pin &bios_disable_override_hog_pin>;
- 
- 	gpios {
-+		bios_disable_override_hog_pin: bios-disable-override-hog-pin {
-+			rockchip,pins =
-+				<3 RK_PD5 RK_FUNC_GPIO &pcfg_pull_down>;
-+		};
-+
- 		q7_thermal_pin: q7-thermal-pin {
- 			rockchip,pins =
- 				<0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_up>;
+If a tag was not added on purpose, please state why and what changed.
+</form letter>
 
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
