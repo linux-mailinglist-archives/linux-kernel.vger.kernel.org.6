@@ -1,104 +1,90 @@
-Return-Path: <linux-kernel+bounces-269083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FC2942D5F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:37:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E1E942D57
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C58B2872AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 306BCB21303
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB50D1AED3C;
-	Wed, 31 Jul 2024 11:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14451AE855;
+	Wed, 31 Jul 2024 11:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="bxLoMOPO"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIafMp8i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB531AE878
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403481A8BEF;
+	Wed, 31 Jul 2024 11:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722425834; cv=none; b=XViGE2uyE1clpkVLcAkSQYUWPktIhfUPstyQou/yVBuYgIVRcJGJq0nojOpKueIsDvEOLf/8kDZLsGb+pjaur749nfmNg24RKxmgJW1/ccyUyEPceR8s+tcu/o9uGbQYBukcja7e34dDES+O4hfesNLr63YJp1Wk8WO4nh4pZO0=
+	t=1722425821; cv=none; b=EJPmJlK+EaDy2gUJ7qiqMfUidqdPRahh/3+A2vGvRF5tb0Z6V6wqrmtfU6Us9yhAJahaFEXV0wAt5RgL0+Z9QdcWbzDbOQyAkkPTrW1uJH+WSnV4vt2/SBxtpevW210O5QZvoIIvbzP0ABYjjBheyPPAF3xElQMm0/fQNmIlU0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722425834; c=relaxed/simple;
-	bh=gmAAodUXdgnNESvRXNAekJJqooqvvUxv3wuMM+/4RoA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mNHyTZidrYpvxns6oAoZoxJIi01xAZ0b3k5JqipQEUk3fR9jaXjMMlORewOJhKW+FE1EJ2npSqIB9sT7aK4eq7kR9V3yKZa380/h3eepmgFBeNrk2GczzZWgEVUuywrQHwNNFzg+iirjWvKxqryUVEKGzOtCaaBYzkljZ2zpRhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=bxLoMOPO; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so656939766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1722425831; x=1723030631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5iVqiOcI/Lm61Kn6z1In0PhQoNC9BfNgfzLWAbxhDSI=;
-        b=bxLoMOPOeudPozRvAPyB7PabtaNkaJp9NcIjy/NUHVUHtZy91XIeOZFdzZEqHTQWgR
-         MtUxk5AV7lcG1PbWvNlM5IgjD6iNy1yXFsmlxkuT4AUs1yF5WffguciTZrncOJ4la9TR
-         YnI5p6HwgEYW8UjjtNSwuXG2qfKAOMVyQ3/bWbAsiGP8LUIfotLsicQsMs8N9CeyPeti
-         ymMXVq94xmEGSpEYKMrQzj1GlB9x9eGADLRR8SxUuZy9RouPx0G15ssbdl4dTK8iEvFt
-         QbH8lJT8pSA0UJjyb5oGmX/T5flpOKEkI7sXJzaWW5sh9YXbnhXqil2bD+R6KTzJZtHa
-         AcCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722425831; x=1723030631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5iVqiOcI/Lm61Kn6z1In0PhQoNC9BfNgfzLWAbxhDSI=;
-        b=Ds5xt0NBrjGdpwifMfwQWc5VC7qroAsKHh/VvTZfBHEb+FPQJ9goB1W9hF8dKiEYOe
-         po+cKW+ikrm8ktWVBPP3Px2mfayiInZbbPtwJbMEkgKSzh+yqQT12ICqt5zqHjes7If3
-         n8fE6zeBk+oypXhr/mP4qmXVLGf3sAvGeqPTnlKgJbbThH7ESATBc5I2xqnjVSi6Lbl2
-         hrf4jCHnw/q6ZakW36teH/kDALRf5tYTZ0cSkldfC0tMn24ycwbNgEPFgj6pUOt58aXK
-         4PAWp6qWx8dWerZGdhJ+crtO7tPgDN5lFyFpRZd5GXg8DuGifE1MpA6zUuFxf6MRmG9O
-         pU4w==
-X-Forwarded-Encrypted: i=1; AJvYcCU2n3r8vy6U+V6RD+Vzgzp01IQc8snd+6i43ZwKYLMf2A6oGhmA0hm9Rkmt9FA13nciwbDVdnLc2nSLf5cWL4xDT1XL5H49zwMZywDH
-X-Gm-Message-State: AOJu0YySzoMx37mQbnqm9il3kZJB4pMC3NFKzh7hP118QUkbtah8gcwd
-	cmBhQgYYYxXp5EMp7QZPqHcsafRfDce5CxX2AWUh+nwC7ahf97Jp2/D9ilKVvXncj7unEjx3jkN
-	GSr6Jw3vFOQypCaYSTR03eJm5S8FyVO6uVMsDLg==
-X-Google-Smtp-Source: AGHT+IGKzF7L3tGT7YjvoFGJDwdINXnVaS2Vxa/MttoDWTfIP0ZESkvvOTXarzXIGvRKUq2y7x6k6CcvXSEnf4eYun4=
-X-Received: by 2002:a17:907:6d1b:b0:a77:e55a:9e8c with SMTP id
- a640c23a62f3a-a7d40128ab4mr796501666b.47.1722425831422; Wed, 31 Jul 2024
- 04:37:11 -0700 (PDT)
+	s=arc-20240116; t=1722425821; c=relaxed/simple;
+	bh=2mhwWJxE5yx29WXEJC/VcAvSFAoWXPOnNXtcqC8T5fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ed5coCVDT1etjKXlKmvfKVBi4Qhg/rZ726c9WluGRvyHGhnR+89tcY9KXTTFubI/+utsr/ux6VoKwTrW5bvw4nx73vpLLS0Vc4Boj1qaaJcNPKYquSf2DFsil29oqyiSKp2Hk0hvgx6P12LJkrZRDEeQ5RCvfoDBQ7z0D4YVDOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIafMp8i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0CEBC116B1;
+	Wed, 31 Jul 2024 11:37:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722425820;
+	bh=2mhwWJxE5yx29WXEJC/VcAvSFAoWXPOnNXtcqC8T5fQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lIafMp8iM2uBcBfVUatyyh7A0wsTPD1tAkF41++0iXfKrRTvBGVE0VrU1Gi0zcX84
+	 dq51xkDDgWxhg23vFQ2wFrhmVOmM5avqAJnRhgK4ZKyop4rdPms2QZ01HE1MwBR7Ao
+	 87+t+yhTLPO8kzDsvYPFTyWNHTNEEI0266Z2UmItieR3hrNX5HWxw7yJi7686lHLjK
+	 Cxtyr6UT5jRjkAhwhj+k+DpX3Z7oIWg5QSRYhnmz/n2Qrmhh0FV1a/c6zfIUz6UlaT
+	 mlAGCmRTn3jsxz4OzRqkQkpHjHxvofIUskriY5loDOjXJQij4EvvaSLk9qOaqeOUwM
+	 VsNjrViUncfnQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sZ7dn-000000007h3-1VJq;
+	Wed, 31 Jul 2024 13:37:11 +0200
+Date: Wed, 31 Jul 2024 13:37:11 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Qiang Yu <quic_qianyu@quicinc.com>
+Subject: Re: [PATCH] phy: qcom: qmp-pcie: Configure all tables on port B PHY
+Message-ID: <Zqoh5w9b8nGBw9UY@hovoldconsulting.com>
+References: <20240726-phy-qcom-qmp-pcie-write-all-tbls-second-port-v1-1-751b9ee01184@linaro.org>
+ <ZqO17rPoitKbUa_9@hovoldconsulting.com>
+ <ZqoeXUFtBq-F3x1V@matsya>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729091532.855688-1-max.kellermann@ionos.com>
- <3575457.1722355300@warthog.procyon.org.uk> <CAKPOu+9_TQx8XaB2gDKzwN-YoN69uKoZGiCDPQjz5fO-2ztdFQ@mail.gmail.com>
- <CAKPOu+-4C7qPrOEe=trhmpqoC-UhCLdHGmeyjzaUymg=k93NEA@mail.gmail.com> <3717298.1722422465@warthog.procyon.org.uk>
-In-Reply-To: <3717298.1722422465@warthog.procyon.org.uk>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Wed, 31 Jul 2024 13:37:00 +0200
-Message-ID: <CAKPOu+-4LQM2-Ciro0LbbhVPa+YyHD3BnLL+drmG5Ca-b4wmLg@mail.gmail.com>
-Subject: Re: [PATCH] netfs, ceph: Revert "netfs: Remove deprecated use of
- PG_private_2 as a second writeback flag"
-To: David Howells <dhowells@redhat.com>
-Cc: Ilya Dryomov <idryomov@gmail.com>, Xiubo Li <xiubli@redhat.com>, 
-	Jeff Layton <jlayton@kernel.org>, willy@infradead.org, ceph-devel@vger.kernel.org, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqoeXUFtBq-F3x1V@matsya>
 
-On Wed, Jul 31, 2024 at 12:41=E2=80=AFPM David Howells <dhowells@redhat.com=
-> wrote:
+On Wed, Jul 31, 2024 at 04:52:05PM +0530, Vinod Koul wrote:
+> On 26-07-24, 16:42, Johan Hovold wrote:
+> > One more nit: subject prefix should be just
+> > 
+> > 	phy: qcom-qmp-pcie:
+> 
+> I dont this so, phy: qcom: subdriver is better and used more widely than
+> this
 
-> >  ------------[ cut here ]------------
-> >  WARNING: CPU: 13 PID: 3621 at fs/ceph/caps.c:3386
-> > ceph_put_wrbuffer_cap_refs+0x416/0x500
->
-> Is that "WARN_ON_ONCE(ci->i_auth_cap);" for you?
+I don't really care, but if you check the logs you'll see that 90% of
+the commits do not use a "phy: qcom:" prefix:
 
-Yes, and that happens because no "capsnap" was found, because the
-"snapc" parameter is 0x356 (NETFS_FOLIO_COPY_TO_CACHE); no
-snap_context with address 0x356 could be found, of course.
+$ git log --oneline --no-merges drivers/phy/qualcomm/phy-qcom-qmp* | grep "phy: qcom: " | wc
+     43     404    2949
 
-Max
+$ git log --oneline --no-merges drivers/phy/qualcomm/phy-qcom-qmp* | grep "phy: qcom-qmp-" | wc
+    310    2346   20020
+
+Johan
 
