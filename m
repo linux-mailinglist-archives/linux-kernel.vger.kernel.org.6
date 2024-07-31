@@ -1,119 +1,180 @@
-Return-Path: <linux-kernel+bounces-269844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E4894376A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:52:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECEA94376D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:54:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23786B22DA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:52:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1FA11F22EAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7C3168C26;
-	Wed, 31 Jul 2024 20:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B43D168C26;
+	Wed, 31 Jul 2024 20:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHvTh1Ip"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YWMGofBp"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134F645027;
-	Wed, 31 Jul 2024 20:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC4A16087B
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722459129; cv=none; b=C09WqtqDdb+R9hiEre8PmpTIqIPA0rBbHh061Od/L/UtqqA4JICtB3B95DSzx1XrRukW1dWy3GTCB6wCYqZIcLiY/20MiDl5AoTzNHdoDm1HfEF/GwM1QTsyL6hd8qSMntnav+bpyKkJrNYdftfxrQXeNrQrA5hL69P54XrDTeA=
+	t=1722459254; cv=none; b=stPxKMCfTUXh4kxPPR6z7/MImuVCFwfk7s6Giq3SvdrFmP9OrWB1vl7hYKYa0oKCrA/Y6Dch6frpdE9Wkc5NTPoIwP1j0U/FdvmcxJty4gu840CZxpiXozGGusTIINPVBbiGnfwZWZYUzXJFaNBS5qx2zVWFWn1xHAnwk1W7PrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722459129; c=relaxed/simple;
-	bh=A3gD26s2NXmBTV7HKjEy2yFxyKX1FyIBM/cldbA5FmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UIQaTZtn/2Sx5s1kS9vpfL2tsZA+eLapoZAqea8sZRy58ziYzQrCrhs5EV6s/05Qd9yNOsIc3yRW/RrnQCyqlpoXZ9L4GGJBA2FEi+eyVFw6La6qH+wtamRCI56Q6CQN69dre/cpwGFxhNCSP6LTuznWMMbnGGsfQrqRpY5nG/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZHvTh1Ip; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7a1be7b7bb5so4679492a12.0;
-        Wed, 31 Jul 2024 13:52:07 -0700 (PDT)
+	s=arc-20240116; t=1722459254; c=relaxed/simple;
+	bh=5ygHEV9Xf2MWcBnN1GGdI4uec+twOGAgqOtUspJE+sk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZuZQ6+oksTSjQURqGM12i3foN6nmLZGQwRYSGByTBkKYRfXKcEcUFKdxzxGriX/dlS1kH36cNm3Fdg2Y0ktVkpKgFEpwfQrP25nGGzPSe9KlR9t1NXvudKcdvMIDDgTfVFJ1vXcxmEXZeH0qT9mVwwQGvwM3W8ar9BUEYFHCkaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YWMGofBp; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso28622a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:54:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722459127; x=1723063927; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U6QQny8V99NEEFnUaCvV6kdfdKgC29wv2xf+A0AoKFo=;
-        b=ZHvTh1IpvYpgZJSmCkgNIIFgFRqECoAXR+NzzFK25Xs2kRy4M7Bp6BLFR2fe36QSdn
-         /gfAlPCKOAHpM9gah7LNTuy7SEhWTujgQpqL888LIIT6GCsLTq/8rYKfG8BX1myxV5Su
-         XkTeEB4VvOPLw3AbD246a9h7jEJsDpLtP1eS/TsrNtxFcmUw6T/k2Rc5hdYGepmBklQd
-         IpZEbdmc3rj4ASThMeW3Hgs0XNgeRYwT307yAArPD/AEZd8qLsMGUuckYN790iqepSCE
-         aC1ETbefOR1QTIYe7y0ufyqS5C9ubWdpTSuYXaiL/fDo4kFJQlcQjM8YH6P4+Ow1vnkM
-         BdbQ==
+        d=google.com; s=20230601; t=1722459251; x=1723064051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I+gszA19U6BJ1g716Sog5LgzCr1u8Y0SO/35mfMYtTU=;
+        b=YWMGofBpQ3TICTsEByR8khrkEZ8i2cY2g+zKCDiuVox++JsO/9HbzEa2SKUGtfDH/6
+         daZd1cDxCuYZBd5B9nqMrEphHPiE/lv5EudXzNOPlZFGqwXmVP1JgKvRoOvdIvBKtIWL
+         oVIIxN0Jve4WVjv7GRH2QWAdJ+Pxb8WEuYho0R2bNOCWFeBZJHotb2Y/F3x7MDa+fio0
+         lv4/+Qrf0NA4V7szs6s7+sWmhiNVBDPmxm13TtC+XYSzken6F/lvORmRxsIHi6oOuj6H
+         qwDkrwEbatcMjGVUG7XzE1iI0mRA6qBkhZkf5ajkPry+DS9OwmrVfkpecJxXYnp8f1bu
+         alXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722459127; x=1723063927;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U6QQny8V99NEEFnUaCvV6kdfdKgC29wv2xf+A0AoKFo=;
-        b=siTChWnecfpqDZcrS0Eyza3lv1WtPdmYwvgDYzmQeOXdj3JR+xfo1926nL1l4gQJGL
-         gCEXkC2VKP6L/SOUy1bC5rxoAP2TskVfVNPDwhfG2jgRnP7d3XliZGkfU/jZDwfyKkMg
-         nS062QoQJimYMTN6dcqUKKOa4o/B+weAdy3ou0TdLN/ZA+os/CDnfdyR6fZbleRd+DVE
-         cYRhctuJ22HzUwZhpHkpCAePVWcw2DSdg7I/LbAXrVl0ubc3Y3ks4qozaED1LMB92AG2
-         VEiiNjPq35c2zvM8IawK6dQ3vN8buFByP7dVvrqfUkurcdN4vzLbRrJXS2e5XbMQsmV8
-         eyHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3R6z9UdfObclnvPnWH9WeYOySAAHW9qeTjVNh8ZFghq24dZm00bWlFBKotJkYT3eYGARGw17xW33yaLrEZ4DDeE1xUwVZz57mWL6cJ/BlQ9pTYyBeeNpDydYt4h/GvGxd+laa
-X-Gm-Message-State: AOJu0YzYoPy6Bjhsgpt7uHi/GggfARfuSgUhmXPF2mTafL/mG2Cx8pVy
-	L9DshbQW8mBYgQJdo/I/IyaF4FbNnB1lYyAaac7ETmz5JV2IeCZQ
-X-Google-Smtp-Source: AGHT+IF/AdlMshgvwClMC4XzkNwAlcVLrF+f40BgcsD7rL87BunoA/t/Zf5eqnC1uXAmRDYXBgqaOA==
-X-Received: by 2002:a05:6a20:72ab:b0:1be:c6f8:c530 with SMTP id adf61e73a8af0-1c68cf2cefemr933547637.26.1722459127285;
-        Wed, 31 Jul 2024 13:52:07 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70ead8a3a91sm10373946b3a.195.2024.07.31.13.52.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 13:52:06 -0700 (PDT)
-Message-ID: <e2cc38ce-62fd-43d0-87f8-74002c90ef41@gmail.com>
-Date: Wed, 31 Jul 2024 13:52:01 -0700
+        d=1e100.net; s=20230601; t=1722459251; x=1723064051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I+gszA19U6BJ1g716Sog5LgzCr1u8Y0SO/35mfMYtTU=;
+        b=IAqKqE6+bmHFpcWVSL0zIuJXPcY4UpmOkReAKX95bOApTVJ9GgOFzxy9lpots4zLVT
+         koTUFgpNhRk7Ul7EsefRY16e84JI21+52NlPy16oBwTPobHHQeU3q2Ah9wGQLUzYyi6C
+         ChV9obxW7zwjlePA0dZJ2pJ7gUoPIBogdUWtdmpHkf4l+9HJIO2RjnMag7EfAym/FQ6M
+         J4jtie8Fb08PIjpey3KqE1HHTQUjUUo+094AXkjqSf4kd8FssHyClprNLdOXqO5ANgM6
+         4gR23ieR3UtVQ6xdUGKyzDQe+lEAlp5qxuqiYYNzS0fqgnrjoo3x+mJHGdDJf4kkb5Ha
+         2l/w==
+X-Forwarded-Encrypted: i=1; AJvYcCVsTnB6BUFVD23AXpqnrsol2W1ugexJ7bKwrtOncnCk6I/EnGQUBOtd3vwiNqRU6ikJi4yO7O3WcDn0GsduBtsBNfLTcc7ak/pEmePF
+X-Gm-Message-State: AOJu0YyWhbCh+m0vY+ZL3QK2fOT9BB79cS6vrRmCgAcPoiofh5lRrsku
+	DRcUB9V6NRMqpw/nRjXAn/8pf1p3zIPxNwk8De/KwbpOreWHKb4nNpXVuPP9DCT2deynaMuxnkc
+	hLgJnqySGdxVg2it/zBeX+A7tAMWMOt0U27wW
+X-Google-Smtp-Source: AGHT+IFFyRxG08zaQKhJ3fh/dwim/QR46tcLanqoEgsLZgkh0jNTAu3TdJAgV3n3cl6ajWcjRFwSLUDp01nZn/LDa4g=
+X-Received: by 2002:a05:6402:430b:b0:58b:15e4:d786 with SMTP id
+ 4fb4d7f45d1cf-5b5b534235cmr282372a12.5.1722459250663; Wed, 31 Jul 2024
+ 13:54:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240731100057.990016666@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240731100057.990016666@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+ <20240729.cho6saegoHei@digikod.net> <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
+ <20240729.rayi3Chi9aef@digikod.net> <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
+ <20240729.roSo6soogho8@digikod.net> <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
+In-Reply-To: <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 31 Jul 2024 22:53:34 +0200
+Message-ID: <CAG48ez2bnvuX8i-D=5DxmfzEOKTWAf-DkgQq6aNC4WzSGoEGHg@mail.gmail.com>
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
+To: Paul Moore <paul@paul-moore.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, keyrings@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/31/24 03:02, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.103 release.
-> There are 440 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 02 Aug 2024 09:59:35 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Wed, Jul 31, 2024 at 10:29=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> On Mon, Jul 29, 2024 at 11:17=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+> > On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
+> > > On Mon, Jul 29, 2024 at 5:02=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
+@digikod.net> wrote:
+> > > > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
+> > > > > On Mon, Jul 29, 2024 at 4:09=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn =
+<mic@digikod.net> wrote:
+> > > > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> > > > > > > On Mon, Jul 29, 2024 at 2:59=E2=80=AFPM Micka=C3=ABl Sala=C3=
+=BCn <mic@digikod.net> wrote:
+> > > > > > > > A process can modify its parent's credentials with
+> > > > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the s=
+ame.  This
+> > > > > > > > doesn't take into account all possible access controls.
+> > > > > > > >
+> > > > > > > > Enforce the same access checks as for impersonating a proce=
+ss.
+> > > > > > > >
+> > > > > > > > The current credentials checks are untouch because they che=
+ck against
+> > > > > > > > EUID and EGID, whereas ptrace_may_access() checks against U=
+ID and GID.
+> > > > > > >
+> > > > > > > FWIW, my understanding is that the intended usecase of
+> > > > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "ke=
+yctl
+> > > > > > > new_session" and "e4crypt new_session") want to be able to ch=
+ange the
+> > > > > > > keyring of the parent process that spawned them (which I thin=
+k is
+> > > > > > > usually a shell?); and Yama LSM, which I think is fairly wide=
+ly used
+> > > > > > > at this point, by default prevents a child process from using
+> > > > > > > PTRACE_MODE_ATTACH on its parent.
+> > > > > >
+> > > > > > About Yama, the patched keyctl_session_to_parent() function alr=
+eady
+> > > > > > check if the current's and the parent's credentials are the sam=
+e before
+> > > > > > this new ptrace_may_access() check.
+> > > > >
+> > > > > prepare_exec_creds() in execve() always creates new credentials w=
+hich
+> > > > > are stored in bprm->cred and then later committed in begin_new_ex=
+ec().
+> > > > > Also, fork() always copies the credentials in copy_creds().
+> > > > > So the "mycred =3D=3D pcred" condition in keyctl_session_to_paren=
+t()
+> > > > > basically never applies, I think.
+> > > > > Also: When that condition is true, the whole operation is a no-op=
+,
+> > > > > since if the credentials are the same, then the session keyring t=
+hat
+> > > > > the credentials point to must also be the same.
+> > > >
+> > > > Correct, it's not a content comparison.  We could compare the
+> > > > credential's data for this specific KEYCTL_SESSION_TO_PARENT call, =
+I
+> > > > guess this should not be performance sensitive.
+> > >
+> > > Yeah, though I guess keyctl_session_to_parent() is already kind of
+> > > doing that for the UID information; and for LSMs that would mean
+> > > adding an extra LSM hook?
+> >
+> > I'm wondering why security_key_session_to_parent() was never used: see
+> > commit 3011a344cdcd ("security: remove dead hook key_session_to_parent"=
+)
+>
+> While I was looking at this in another off-list thread I think I came
+> around to the same conclusion: I think we want the
+> security_key_session_to_parent() hook back, and while I'm wearing my
+> SELinux hat, I think we want a SELinux implementation.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+FYI: Those checks, including the hook that formerly existed there, are
+(somewhat necessarily) racy wrt concurrent security context changes of
+the parent because they come before asynchronous work is posted to the
+parent to do the keyring update.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+In theory we could make them synchronous if we have the child wait for
+the parent to enter task work... actually, with that we could probably
+get rid of the whole cred_transfer hack and have the parent do
+prepare_creds() and commit_creds() normally, and propagate any errors
+back to the child, as long as we don't create any deadlocks with
+this...
 
+> Micka=C3=ABl, is this something you want to work on?
 
