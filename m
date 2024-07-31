@@ -1,246 +1,130 @@
-Return-Path: <linux-kernel+bounces-269943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788C9943918
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:41:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28BF94390D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE5D2859C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:41:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 539C4B2558E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082C516D9D2;
-	Wed, 31 Jul 2024 22:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CBF16D9CB;
+	Wed, 31 Jul 2024 22:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sn6uXY6Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="i5v/+86I"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCE816DEA5
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E36135280;
+	Wed, 31 Jul 2024 22:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722465665; cv=none; b=MUDEhkf6iuDNjcEtx1tDs/6MfPDb5+GJtvlCdi/sotn1/1lm9iFhmpVK2VrtyvfCdzyAZ85NHh1/AHWgP6ZU8dVUBgjUbT2F+1lboR1QYezI3vaD7RgKSd5UI0tGof6YpoqzJCU0Jo+Lg/Af3UENXi5YwCOKKcUVY3Afo8xjicI=
+	t=1722465508; cv=none; b=KIn0FtDJHtfQwId1VW7K6crGMFmBzYZTEU9lMzfxkIx6uAtHKYJZu3UjmoMjOil3NJD91FnobfYkMg8X5hfiUklUKl+SJeQAjn5dFTi/uMd4fO9vmwwTY6WxDqApQgi74e+vsnI/5ffOV4laSP57KzXDge+pSDfSI4ttgByXFU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722465665; c=relaxed/simple;
-	bh=rI9isKyV6iocP/wQhqiAf6L6MKq5bEnDPTAOCOq5HTI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZxO0jz2gM00tfn0JXxvvSa4NQlilJK4JW/vnrXp6ycIlDc3+pK+9W0DPvx0249WpcuP729EQpMrJzuqUIYLNUG5rwa5WKZDaN6k/93EyzQkqYQoXdo1E3XGQrIUBTOqqQOu33wQrBegxZaeF8ZK99K5DQdVtxrsxYi7NMLn62ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sn6uXY6Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722465662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ssQgQMnQaWmKnNrKbbGUWz8mRCvKROzX3DA2kHgDsHM=;
-	b=Sn6uXY6Y4i176y4RkvhczwPEnLZaKlleWf0hzHz1Qb+twDdpxw7Rn8rpEFUlo0AWZI7vPq
-	Zxi0FFpQZatKo7wcWmiMMx/tFwNqDfo3iAzNp4051ROBOXSqx5+G+TosRuVxVzPQbJcoa1
-	uVyuKRhmxjCqYpLyeuM7L3PaSEf93yE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-481-8PDcrROiN3yYEs7isEzVPw-1; Wed,
- 31 Jul 2024 18:40:57 -0400
-X-MC-Unique: 8PDcrROiN3yYEs7isEzVPw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A066B19560AA;
-	Wed, 31 Jul 2024 22:40:54 +0000 (UTC)
-Received: from emerald.lyude.net (unknown [10.22.16.173])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 38926300018D;
-	Wed, 31 Jul 2024 22:40:50 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: rust-for-linux@vger.kernel.org
-Cc: Danilo Krummrich <dakr@redhat.com>,
-	airlied@redhat.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Valentin Obst <kernel@valentinobst.de>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 3/3] rust: sync: Add SpinLockIrq
-Date: Wed, 31 Jul 2024 18:35:41 -0400
-Message-ID: <20240731224027.232642-4-lyude@redhat.com>
-In-Reply-To: <20240731224027.232642-1-lyude@redhat.com>
-References: <20240731224027.232642-1-lyude@redhat.com>
+	s=arc-20240116; t=1722465508; c=relaxed/simple;
+	bh=PldbjTm3myb40ZJfjU8jMnVIBncYA81UDAQXR+o+Mws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Ozj1KLO3/9Xk75RUArYeIxvegFoOY4PpKsdvTweF968eVfDoqzPhdAPciYNKXmZ0nhVcpdhqsGpdMvXA2MlGNVwpZQ+L0kLk19xVLSKZ7KVWLjeKxiutetTg085u6/wbJ9Vl/2YKFYZud34Qikdknd55gwa0WXREL5gpAgln/QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=i5v/+86I; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VIkhKl005319;
+	Wed, 31 Jul 2024 22:38:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	unPAnDAwhbhRPpFBmuuyf/vcTyTk5Q1IxUM/QINemDg=; b=i5v/+86IVL+2vGXN
+	5cs1zLX85hPvm4Fwaadt+kVkUziJcNwE3/dov+gtdC5cp8d6010z9xjF1ln68VKY
+	3HHOgT7g9RqXSkKuMi0iNMnELzId2xzj/OZBHRvBiER28IMElOsWPhzyHPwfUcbC
+	L8VkqkT+s6dYijSQLBI/3zoAfwDhAaQ1Hi6oldQbIyPEBH7YAlf4okLbtemQbNQc
+	npcYr4BMDES+Lja9FCp2D1kr8yQiHUWln/g8G4vCI2lD/EdvOIMIAjx2nTy8hJRZ
+	uAR5l9SYpJ7sTpAboV3ItRq30jzSggSzQjgZAIDEGZJS4srU13CewLqN1bPlS/Ps
+	wDcIKQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qjpja4ac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 22:38:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46VMcLMe006103
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 22:38:21 GMT
+Received: from [10.110.31.235] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
+ 2024 15:38:20 -0700
+Message-ID: <240305c2-54d3-4b75-a938-7b40abedddc9@quicinc.com>
+Date: Wed, 31 Jul 2024 15:38:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] usb: misc: eud: Add High-Speed Phy control for EUD
+ operations
+To: Krzysztof Kozlowski <krzk@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <gregkh@linuxfoundation.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <20240730222439.3469-7-quic_eserrao@quicinc.com>
+ <a2460e27-697c-495f-9106-bdb9109d674b@kernel.org>
+Content-Language: en-US
+From: Elson Serrao <quic_eserrao@quicinc.com>
+In-Reply-To: <a2460e27-697c-495f-9106-bdb9109d674b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CTDJsBCJNzVEjVpjnRinAeCeXtERbfxr
+X-Proofpoint-ORIG-GUID: CTDJsBCJNzVEjVpjnRinAeCeXtERbfxr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407310159
 
-A variant of SpinLock that is expected to be used in noirq contexts, and
-thus requires that the user provide an kernel::irq::IrqDisabled to prove
-they are in such a context upon lock acquisition. This is the rust
-equivalent of spin_lock_irqsave()/spin_lock_irqrestore().
 
-V2:
-* s/IrqSpinLock/SpinLockIrq/
-* Implement `lock::Backend` now that we have `Context`
-* Add missing periods
-* Make sure rustdoc examples compile correctly
-* Add documentation suggestions
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/sync.rs               |   2 +-
- rust/kernel/sync/lock/spinlock.rs | 105 ++++++++++++++++++++++++++++++
- 2 files changed, 106 insertions(+), 1 deletion(-)
+On 7/30/2024 10:39 PM, Krzysztof Kozlowski wrote:
+> On 31/07/2024 00:24, Elson Roy Serrao wrote:
+>> The Embedded USB Debugger(EUD) is a HS-USB on-chip hub to support the
+>> debug and trace capabilities on Qualcomm devices. It is physically
+>> present in between the usb connector and the usb controller. Being a
+>> HS USB hub, it relies on HS Phy for its functionality. Add HS phy
+>> support in the eud driver and control the phy during eud enable/disable
+>> operations.
+>>
+> 
+> ...
+>>  static ssize_t enable_show(struct device *dev,
+>> @@ -186,6 +216,11 @@ static int eud_probe(struct platform_device *pdev)
+>>  
+>>  	chip->dev = &pdev->dev;
+>>  
+>> +	chip->usb2_phy = devm_phy_get(chip->dev, "usb2-phy");
+>> +	if (IS_ERR(chip->usb2_phy))
+>> +		return dev_err_probe(chip->dev, PTR_ERR(chip->usb2_phy),
+>> +				     "no usb2 phy configured\n");
+> 
+> This nicely breaks all users.
+> 
+> NAK
+> 
 
-diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
-index 0ab20975a3b5d..b028ee325f2a6 100644
---- a/rust/kernel/sync.rs
-+++ b/rust/kernel/sync.rs
-@@ -15,7 +15,7 @@
- pub use arc::{Arc, ArcBorrow, UniqueArc};
- pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
- pub use lock::mutex::{new_mutex, Mutex};
--pub use lock::spinlock::{new_spinlock, SpinLock};
-+pub use lock::spinlock::{new_spinlock, new_spinlock_irq, SpinLock, SpinLockIrq};
- pub use locked_by::LockedBy;
- 
- /// Represents a lockdep class. It's a wrapper around C's `lock_class_key`.
-diff --git a/rust/kernel/sync/lock/spinlock.rs b/rust/kernel/sync/lock/spinlock.rs
-index 8503d6e8e3de3..c31ea0458efbe 100644
---- a/rust/kernel/sync/lock/spinlock.rs
-+++ b/rust/kernel/sync/lock/spinlock.rs
-@@ -3,6 +3,8 @@
- //! A kernel spinlock.
- //!
- //! This module allows Rust code to use the kernel's `spinlock_t`.
-+use core::marker::*;
-+use kernel::irq::*;
- 
- /// Creates a [`SpinLock`] initialiser with the given name and a newly-created lock class.
- ///
-@@ -116,3 +118,106 @@ unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
-         unsafe { bindings::spin_unlock(ptr) }
-     }
- }
-+
-+/// Creates a [`SpinLockIrq`] initialiser with the given name and a newly-created lock class.
-+///
-+/// It uses the name if one is given, otherwise it generates one based on the file name and line
-+/// number.
-+#[macro_export]
-+macro_rules! new_spinlock_irq {
-+    ($inner:expr $(, $name:literal)? $(,)?) => {
-+        $crate::sync::SpinLockIrq::new(
-+            $inner, $crate::optional_name!($($name)?), $crate::static_lock_class!())
-+    };
-+}
-+pub use new_spinlock_irq;
-+
-+/// A spinlock that may be acquired when interrupts are disabled.
-+///
-+/// A version of [`SpinLock`] that can only be used in contexts where interrupts for the local CPU
-+/// are disabled. It requires that the user acquiring the lock provide proof that interrupts are
-+/// disabled through [`IrqDisabled`].
-+///
-+/// For more info, see [`SpinLock`].
-+///
-+/// # Examples
-+///
-+/// The following example shows how to declare, allocate initialise and access a struct (`Example`)
-+/// that contains an inner struct (`Inner`) that is protected by a spinlock.
-+///
-+/// ```
-+/// use kernel::{
-+///     sync::{new_spinlock_irq, SpinLockIrq},
-+///     irq::{with_irqs_disabled, IrqDisabled}
-+/// };
-+///
-+/// struct Inner {
-+///     a: u32,
-+///     b: u32,
-+/// }
-+///
-+/// #[pin_data]
-+/// struct Example {
-+///     c: u32,
-+///     #[pin]
-+///     d: SpinLockIrq<Inner>,
-+/// }
-+///
-+/// impl Example {
-+///     fn new() -> impl PinInit<Self> {
-+///         pin_init!(Self {
-+///             c: 10,
-+///             d <- new_spinlock_irq!(Inner { a: 20, b: 30 }),
-+///         })
-+///     }
-+/// }
-+///
-+/// // Accessing an `Example` from a function that can only be called in no-irq contexts
-+/// fn noirq_work(e: &Example, irq: IrqDisabled<'_>) {
-+///     assert_eq!(e.c, 10);
-+///     assert_eq!(e.d.lock_with(irq).a, 20);
-+/// }
-+///
-+/// // Allocate a boxed `Example`
-+/// let e = Box::pin_init(Example::new(), GFP_KERNEL)?;
-+///
-+/// // Accessing an `Example` from a context where IRQs may not be disabled already.
-+/// let b = with_irqs_disabled(|irq| {
-+///     noirq_work(&e, irq);
-+///     e.d.lock_with(irq).b
-+/// });
-+/// assert_eq!(b, 30);
-+/// # Ok::<(), Error>(())
-+/// ```
-+pub type SpinLockIrq<T> = super::Lock<T, SpinLockIrqBackend>;
-+
-+/// A kernel `spinlock_t` lock backend that is acquired in no-irq contexts.
-+pub struct SpinLockIrqBackend;
-+
-+unsafe impl super::Backend for SpinLockIrqBackend {
-+    type State = bindings::spinlock_t;
-+    type GuardState = ();
-+    type Context<'a> = IrqDisabled<'a>;
-+
-+    unsafe fn init(
-+        ptr: *mut Self::State,
-+        name: *const core::ffi::c_char,
-+        key: *mut bindings::lock_class_key,
-+    ) {
-+        // SAFETY: The safety requirements ensure that `ptr` is valid for writes, and `name` and
-+        // `key` are valid for read indefinitely.
-+        unsafe { bindings::__spin_lock_init(ptr, name, key) }
-+    }
-+
-+    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` points to valid
-+        // memory, and that it has been initialised before.
-+        unsafe { bindings::spin_lock(ptr) }
-+    }
-+
-+    unsafe fn unlock(ptr: *mut Self::State, _guard_state: &Self::GuardState) {
-+        // SAFETY: The safety requirements of this function ensure that `ptr` is valid and that the
-+        // caller is the owner of the spinlock.
-+        unsafe { bindings::spin_unlock(ptr) }
-+    }
-+}
--- 
-2.45.2
+As per my comment in [patch 1/8], phy would be a required property and hence I will first modify
+and enable EUD on the existing user (sc7280 SoC) and then extend this to other users.
 
+Thanks
+Elson
 
