@@ -1,124 +1,125 @@
-Return-Path: <linux-kernel+bounces-268622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A5C942711
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:39:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8102C942719
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B469B282637
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:39:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5401F239A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:41:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFD116D9B3;
-	Wed, 31 Jul 2024 06:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8147E178CE4;
+	Wed, 31 Jul 2024 06:41:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="jqhe/tyJ"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Fe/GF8iL"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA0049624;
-	Wed, 31 Jul 2024 06:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F42171644
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407886; cv=none; b=mlu1hhuUZOXDVGwOMPoRRM/q7sAZdiY4KtiwQp/39vbibeCWW7nobZREJJaRQV6JClpz9q7bSJMDtuEllf9d8NL0NivS9H0vsrZhKAMkmXTXbB9//t4Um0W6WAcW3n2gLIDEz6Kk1bZ0UzHPmAH6juXBDVRF2kNDRHBHj2cxHjc=
+	t=1722408092; cv=none; b=G75l9VGsby9PzCkD8FXYp8evwyIXtmwJkJyGo29H8wpOezG6K/Wtgs0u7iWTdxMWRxBVzOK/atIM/sxL4p9vGfwsp0mdhPGr23CkTPrYh3t33sz2RcG5LaXMMMhdSqaRDOtmyEZEbfY1p80/n8kWNXHhuoOIUi5mN0zDR83IKSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407886; c=relaxed/simple;
-	bh=L1QXg3uqxYl4CTovcnxt95DP+CEt5OQZZcl1u0OySnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kLlav6yHpAxqQ4ommHpqkzn+k9Ph/4kA9edPvIsk5fBek+Mj1LLyzPmza0dnu6vq30T+OKT3MsXkKT6gAqlM/Wj0dLHw3bPMQL5YpSmoVaabYs1cz170y/EENzg0AcG/HEJ7wEdQulkZG+K1zn7Sba6rTNk/GohI6mMYtJW9mjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=jqhe/tyJ; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=P1V0z9JyXNMjXUrrv9MyjJnAXiVD3xEEot8JcZbXg2w=;
-	t=1722407884; x=1722839884; b=jqhe/tyJToFnr96kQpiEys0KNdmNcFU4Z90ED1uEQd9JMWL
-	/FXC8FdXHRzr/8rJDp36xSt5xMovzhvlWbw1wezHKvMHSarG+mK7d5WNqGhBiVniC9CzcmdCJM0p/
-	6Z40Vq4u8Jzw5lEU15fyX4zF8J4JpPaGqzf35yGZpiRAGjG7hI314ZP5zSBRGJ1nvuLgezu2x9sJI
-	4EsnEpDX+bjjEIQnjglYqxsDKcagg4h0ImGX0O+RQQy3xP1gnWfe6xOzciuzUu7tzjfumXOTbzgBs
-	cIyFkty60oXIbA410jW/TDzJ0TfgT6gc9r6CeTlXTl8ZMtCn7gBzDEvI8lJqZABQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sZ2yH-00070r-AD; Wed, 31 Jul 2024 08:38:01 +0200
-Message-ID: <245f2c54-6d06-4b71-a9f8-a6fc0dbcceb3@leemhuis.info>
-Date: Wed, 31 Jul 2024 08:38:00 +0200
+	s=arc-20240116; t=1722408092; c=relaxed/simple;
+	bh=xAM5KuCUk7fhZ0Bjto448CcHX5hPz++gECDIEyxNyJ8=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=M3LOaB+CNHOTE2cQp8ZAVM+CtuldSYx3qc6ZkUlJ9wLzTIPXwmqOpTELYC9qHk/on6r28xNUW98cyxv3uURx2jiRlO5OfCtT4ra89vlb18CvBGCwRqQVIgQFyHfUVvXDi1HmhRwCyVUXrMb7WKNmOOPHb41a5WlRe3d40rAmm/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Fe/GF8iL; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1d6f47112so341213285a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 23:41:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722408090; x=1723012890; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YzcsKxSamtz5qYylBq+mulofl7DNdl/8yBGrG+evBvI=;
+        b=Fe/GF8iLsPMNu/gtWyxDLrOrBhgj8eKUJW+JtQ2NPfIsWqHNmcoScqOH36SAlZeZTO
+         T8Ky4GrvXo3TJOjiNoCyPK9tXwzSFGBUGoJkcGailaK8afqea+y9dwJGWs/bE+mNtgIW
+         AeJhYEG/UzZOWiFYsLXozy1chmtWWXOLEqOxM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722408090; x=1723012890;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YzcsKxSamtz5qYylBq+mulofl7DNdl/8yBGrG+evBvI=;
+        b=ONwZKwTGftt3IsXRsLu1EGY6cEuTyLdNjmQG92CuacMzz3+4QqjcFKdsOsxXjyInFN
+         BrTkRbfawgzzlD4D/IAAdNtdTnhvHTPKKCpmOoOeJcxUujS003exA16yi98OQ8qCez7M
+         XRIgKWhYhUBAmZBjNlpCzreh6PopujDy2rDBKBjhaPCQeQaMgTxRsrk2lRVidm6drqGD
+         BntwZ8KHn1gj53qpFs+19Rzc66cqlkvfuA484opkrOkqw9XMyKbQtn84aPj8KkwRdy/N
+         ILR/5jHPnbuAXrTqh3jHIYi24RDtIwZiuaotxyBHFG/tUU8t9mhVp4+14fMSaxLSOecf
+         J6Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUpJSBId18ap+NHy2b+He9M5lcFxpQ9Di/s3EqH5BljmgDB72eSJu+r/sBicBLPuFTs+ngwKq3hlqxuYoMXbflsYp7LDQBPLbVS5hEf
+X-Gm-Message-State: AOJu0YzatAjaaftwDZQ1yJGnFXfoCeYfF3gmkE9hBRAI8mCD5zjIkrpg
+	jnr0HKAx1LNPU6bwC7X3xZBtGI2ypu3GdD9u0z0gDSTR9YUwc1WgxpLd6J9wag==
+X-Google-Smtp-Source: AGHT+IHVSnCSNUiDXZ50W1IsLXQBwnHUTc3D4diJbcUDSRlur70rvvyzQTE+g2F4ctDA9qBB1UnD+w==
+X-Received: by 2002:a05:620a:4494:b0:7a2:e53:3f67 with SMTP id af79cd13be357-7a20e534344mr1952685a.19.1722408090009;
+        Tue, 30 Jul 2024 23:41:30 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73ed33bsm710259685a.58.2024.07.30.23.41.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Jul 2024 23:41:29 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Jacobe Zang <jacobe.zang@wesion.com>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>
+CC: <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>
+Date: Wed, 31 Jul 2024 08:41:24 +0200
+Message-ID: <1910785a220.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <20240731061132.703368-4-jacobe.zang@wesion.com>
+References: <20240731061132.703368-1-jacobe.zang@wesion.com>
+ <20240731061132.703368-4-jacobe.zang@wesion.com>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH v6 3/5] arm64: dts: rockchip: Add AP6275P wireless support to Khadas Edge 2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] Brightness at max level after waking up from sleep
- on AMD Laptop
-To: hamza.mahfooz@amd.com
-Cc: regressions@lists.linux.dev, alexander.deucher@amd.com,
- serg.partizan@gmail.com,
- "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
- mario.limonciello@amd.com, ML dri-devel <dri-devel@lists.freedesktop.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <77KAHS.13UUH2XVHQQF1@gmail.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <77KAHS.13UUH2XVHQQF1@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722407884;56903427;
-X-HE-SMSGID: 1sZ2yH-00070r-AD
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-[+amd-glx, +lkml, +dri-devel]
+On July 31, 2024 8:11:58 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
 
-On 27.07.24 18:52, serg.partizan@gmail.com wrote:
-> 
-> After updating from 6.8.9 to 6.9.1 I noticed a bug on my HP Envy x360
-> with AMD Ryzen 5 4500U.
+> Khadas Edge2 uses the PCI-e Ampak AP6275P 2T2R Wi-Fi 6 module. The
+> pcie@0 node can be used as Bridge1, so the wifi@0 node is used as a
+> device under the Bridge1.
 >
-> [...]
-> After waking up from sleep brightness is set to max level, ignoring
-> previous value.
-> 
-> With the help of Arch Linux team, we was able to track bad commit to
-> this:
-> https://gitlab.freedesktop.org/agd5f/linux/-/commit/63d0b87213a0ba241b3fcfba3fe7b0aed0cd1cc5
+> Co-developed-by: Muhammed Efe Cetin <efectn@protonmail.com>
+> Signed-off-by: Muhammed Efe Cetin <efectn@protonmail.com>
+> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> ---
+> .../boot/dts/rockchip/rk3588s-khadas-edge2.dts   | 16 ++++++++++++++++
+> 1 file changed, 16 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts 
+> b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> index dbddfc3bb4641..b80a552dad883 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
+> @@ -283,6 +283,22 @@ &pcie2x1l2 {
+>  reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
+>  vpcie3v3-supply = <&vcc3v3_pcie_wl>;
+>  status = "okay";
+> +
+> + pcie@0,0 {
+> + reg = <0x400000 0 0 0 0>;
+> + #address-cells = <3>;
+> + #size-cells = <2>;
+> + ranges;
+> + device_type = "pci";
+> + bus-range = <0x40 0x4f>;
+> +
+> + wifi: wifi@0,0 {
+> + compatible = "pci14e4,449d";
 
-Hamza Mahfooz, in case you missed it, that is a patch of yours:
-63d0b87213a0ba ("drm/amd/display: add panel_power_savings sysfs entry to
-eDP connectors") [v6.9-rc1].
+Probably need to add "brcm,bcm4329-fmac" as well here.
 
-> I have tested this on latest mainline kernel:
-> 
-> Results after waking up:
-> 
->> cat /sys/class/backlight/amdgpu_bl1/{brightness,actual_brightness}
-> 12
-> 252
-> 
-> Then, on exact this commit (63d0b87213a0ba241b3fcfba3fe7b0aed0cd1cc5),
-> result is the same.
-> 
-> Then, on commit just before this one (aeaf3e6cf842):
-> 
->> cat /sys/class/backlight/amdgpu_bl1/{brightness,actual_brightness}
-> 12
-> 12
-> 
-> I hope I included all relevant information, more info can be found here:
-> 
-> https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/52
+Regards,
+Arend
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
 
-P.S.:
-
-#regzbot introduced: 63d0b87213a0ba241
 
