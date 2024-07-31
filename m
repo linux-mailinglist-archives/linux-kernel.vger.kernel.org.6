@@ -1,239 +1,165 @@
-Return-Path: <linux-kernel+bounces-269906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5216943859
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:57:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0495594385E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8612832DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:57:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27AA1F225B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8A16D30E;
-	Wed, 31 Jul 2024 21:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05C416D4CE;
+	Wed, 31 Jul 2024 21:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aiy7eoDA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcPYoKY7"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A031607B0;
-	Wed, 31 Jul 2024 21:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9106716CD1E;
+	Wed, 31 Jul 2024 21:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463052; cv=none; b=u4ysqGS3PJczMja78cKTjwrdq+SBcgg14IfghD42CIt7bOtoylnKBqaK+R549N/HduxzIYr1QCMUt/gulk+OYYbznxxZjmY1rBZmK2Xm/6AvFbKqGQ//+48aNGbfYrHFjnyZSuWg9W0ehhUXmvVugrScrW9T5UuuHVJOViXf/ls=
+	t=1722463077; cv=none; b=ukB2hgsC4CByKRQF0Xo2S0IK7QLOdgDAEFBY4OMGkJdWc8xwRNkmrAvetrRtnqeaWmBcBL5Mb1nrg4o+ID1zw/JjzmanDCM+hU8xjw+uf9jISSaVF9XLziLQIkQWXh7BlR7+kz499RzhURbIcVjNpWfhkfrTtqaHgeCaI1uq1Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463052; c=relaxed/simple;
-	bh=8BTMHZmbVkL0xfG7BEdkgm3Xhb4FuI2+2lvrGqUhlh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IzRMVdm5qwzSlWxmSDi3ffqpblQoe+sS/WyNHSVTVIoMrlgGhfL5fdaCB5Hg0tKtxsLUD3RpN8RnZ/OmuNId78WE4yVF+h85p5bV+hdXPk2bFAvcnRVwI50Lzegyy1OwUQl20HM4Me2axQIgukVkkNVdj+wmOmfeAv3zQhKLxDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aiy7eoDA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VLSLQe025083;
-	Wed, 31 Jul 2024 21:57:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=e
-	5BpIFBV9dvf22kSzpxc/CcySZZQFH+i7XVuBYM1ARk=; b=aiy7eoDAkIO+yFk6B
-	UOhTys6RSIX96ihSp/v5eFx/tipWiPi+OXHrtujyTsk9UdFrWwk+dmDLIucyiDnB
-	IDP4azvVoWq13YxMJCal58L/j/LmZKkmR2/vx3iuORpu2txfSk1xK2fms+RIfnRw
-	wqB/xIdWZ+NpedMAGYY5QJiwXwNBZvP7MbUpk67fopsvBEdSrWsqdanOj9HaOHeB
-	XgOeWWR1AecPJOKOPce2JCU1kn5dDKvoCmENX76oRNTGPkCkRSw2ohRxixKGVtvF
-	wNH0TeBp+E/UDVhJIlzULCxuGINHYtXQJTTTlfLmAHneLdJpPOQJ+Cl2rsgqUy9E
-	bj5vg==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qw7801x5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 21:57:16 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46VL0XQA011143;
-	Wed, 31 Jul 2024 21:57:15 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqmx6as-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 21:57:15 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46VLvCkP46530932
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 31 Jul 2024 21:57:15 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A99FB58043;
-	Wed, 31 Jul 2024 21:57:12 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1814058053;
-	Wed, 31 Jul 2024 21:57:12 +0000 (GMT)
-Received: from [9.61.157.158] (unknown [9.61.157.158])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 31 Jul 2024 21:57:11 +0000 (GMT)
-Message-ID: <5d86ab31-7b29-4f5e-9c9f-be904c128497@linux.ibm.com>
-Date: Wed, 31 Jul 2024 16:57:11 -0500
+	s=arc-20240116; t=1722463077; c=relaxed/simple;
+	bh=UFPqiLgpEdVZHsORlk2KcjTymHhxXC0iMNM3MMjVYcc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=kQIWc5VySdbJYhToENkU/ROTMvdL4dcIs0zf7e6AI/aoZX5yIE08FoidF1HUDnV/sWrTlINsMucdyv4BABuxCwg6U3cgdhApiNaqP5FFkBvUNoDbALKVjg/amTy9zA6hLuZtu5O27hBAUf8N9Dm/r7Wb4CJIFEd6rMiq2NKl6b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcPYoKY7; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1dcc7bc05so387753785a.0;
+        Wed, 31 Jul 2024 14:57:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722463074; x=1723067874; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UFPqiLgpEdVZHsORlk2KcjTymHhxXC0iMNM3MMjVYcc=;
+        b=XcPYoKY7nDb+jEK/jIAE4iOi4Bci+TvRRHUj5DuKDobpU72G92PpESBGn4el8Wag+D
+         Y7CWRZsbTL0qwZVx9nW3PYUCZCFTViMdWga03k5dOtT2BOpqtoWeEq2UimOJLFmkILfn
+         Z1qLyLUnYqKrarw3BtQjS+dVnA2nEe+CEudXj5tJDvnuRVn+vYpoAqus0A/M2OJmB1jX
+         zYrDW2w/wJTjC8qlXRskdNYl/2/zngZZPbJWJHCkU/swtDSmSERgu2VvQp4R0uoCmgml
+         t4c+NLswTQ6nF1rzUMNMvtvHocboxH/X3AAAGDQ+epzzxom2y7w/A85kJnjEjlLqT/Ly
+         VeCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722463074; x=1723067874;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UFPqiLgpEdVZHsORlk2KcjTymHhxXC0iMNM3MMjVYcc=;
+        b=UEV/jzP4SXu1jNdHXYXqOHM57s4zIk1A5elcZ3v8VfyoZ28j4h5zVqU7iNCUCPvTrH
+         Xe9CPKH4KHI4AfQFko/70zmKgjtmFrKUBlqRBbOkYgcvegBm4dUMB/nUPd7dzw9Ab3/8
+         7kHxVPUpIAeSnULBVe/ErkPDuw9vwbSop/Adiw0dMlNEGKxnSudyuj0mJb9EI+aOptb5
+         JypL+2CWtkNANU3YcoPopaMPqKqoivy5HUA6tjNnrPaUGWlGiA05sz6N5oNvovFuqB6M
+         XcZwe56GEhMEpSizpy03sANhsWgRzL5kf+Ifj2Oiwi1WDnHQyYJIBC8oD86gxV20aQN7
+         tsBA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEVhUCgMNREXeFhNWZ4qrv/eOy9i2VLw6Jk2p45RM1cNBJ+E/P7cy6jexEfc8g33x7cMNdOBCSWMpj9BmeWpGuyUc7nAtTZOfuxEAZ
+X-Gm-Message-State: AOJu0YxNBOqIG4HHQqgtZr5Ya4CWl5DhzCaQeIt/X8vEIgUZk1bUvNqp
+	EGMAYe7j8A3zfNFxV6P6mJpLt4AkoHPLNa2bfJ+hfmxAkJICDPIaqecwUg==
+X-Google-Smtp-Source: AGHT+IGXDSPJ59qUpPzptJiYy10aOJFniW8NsCMCNU8szD0CcqmNq2z8ygYqBxLLAZoxzO6wfupAOg==
+X-Received: by 2002:a05:620a:2952:b0:7a2:c96:855b with SMTP id af79cd13be357-7a30c6bdd25mr69048885a.32.1722463074195;
+        Wed, 31 Jul 2024 14:57:54 -0700 (PDT)
+Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d7395a9dsm795012485a.1.2024.07.31.14.57.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 14:57:53 -0700 (PDT)
+Date: Wed, 31 Jul 2024 17:57:53 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Randy Li <ayaka@soulik.info>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: netdev@vger.kernel.org, 
+ jasowang@redhat.com, 
+ davem@davemloft.net, 
+ edumazet@google.com, 
+ kuba@kernel.org, 
+ pabeni@redhat.com, 
+ linux-kernel@vger.kernel.org
+Message-ID: <66aab3614bbab_21c08c29492@willemb.c.googlers.com.notmuch>
+In-Reply-To: <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info>
+References: <20240731111940.8383-1-ayaka@soulik.info>
+ <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
+ <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info>
+Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue
+ index
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] ARM: dts: aspeed: system1: IBM System1 BMC update
-To: Ninad Palsule <ninad@linux.ibm.com>, robh+dt@kernel.org,
-        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, joel@jms.id.au,
-        andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-References: <20240731214737.986010-1-ninad@linux.ibm.com>
- <20240731214737.986010-2-ninad@linux.ibm.com>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <20240731214737.986010-2-ninad@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RK-45OovhNuK21F1MvrvRInB_y4im7hy
-X-Proofpoint-GUID: RK-45OovhNuK21F1MvrvRInB_y4im7hy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310150
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+nits:
 
-On 7/31/24 16:47, Ninad Palsule wrote:
-> Updated MAX31785a pmbus based fans in the device tree.
->
-> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
-> ---
->   .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 96 +++++++++++++++++++
->   1 file changed, 96 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> index f3efecc7eb8d0..f96b299d743ba 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
-> @@ -764,17 +764,113 @@ regulator@43 {
->   	};
->   };
->   
-> +
+- INDX->INDEX. It's correct in the code
+- prefix networking patches with the target tree: PATCH net-next
 
+Randy Li wrote:
+> =
 
-Don't really need the white space here, but no worries.
+> On 2024/7/31 22:12, Willem de Bruijn wrote:
+> > Randy Li wrote:
+> >> We need the queue index in qdisc mapping rule. There is no way to
+> >> fetch that.
+> > In which command exactly?
+> =
 
+> That is for sch_multiq, here is an example
+> =
 
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
+> tc qdisc add dev=C2=A0 tun0 root handle 1: multiq
+> =
 
+> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst =
 
->   &i2c6 {
->   	status = "okay";
->   
->   	fan-controller@52 {
->   		compatible = "maxim,max31785a";
->   		reg = <0x52>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		fan0: fan@0 {
-> +			compatible = "pmbus-fan";
-> +			reg = <0>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
-> +
-> +		fan1: fan@1 {
-> +			compatible = "pmbus-fan";
-> +			reg = <1>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
-> +
-> +		fan2: fan@2 {
-> +			compatible = "pmbus-fan";
-> +			reg = <2>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
-> +
-> +		fan3: fan@3 {
-> +			compatible = "pmbus-fan";
-> +			reg = <3>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
-> +
-> +		fan4: fan@4 {
-> +			compatible = "pmbus-fan";
-> +			reg = <4>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
->   	};
->   
->   	fan-controller@54 {
->   		compatible = "maxim,max31785a";
->   		reg = <0x54>;
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		fan5: fan@0 {
-> +			compatible = "pmbus-fan";
-> +			reg = <0>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
-> +
-> +		fan6: fan@1 {
-> +			compatible = "pmbus-fan";
-> +			reg = <1>;
-> +			tach-pulses = <2>;
-> +			maxim,fan-rotor-input = "tach";
-> +			maxim,fan-pwm-freq = <25000>;
-> +			maxim,fan-dual-tach;
-> +			maxim,fan-no-watchdog;
-> +			maxim,fan-no-fault-ramp;
-> +			maxim,fan-ramp = <2>;
-> +			maxim,fan-fault-pin-mon;
-> +		};
->   	};
->   
->   	eeprom@55 {
+> 172.16.10.1 action skbedit queue_mapping 0
+> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst =
+
+> 172.16.10.20 action skbedit queue_mapping 1
+> =
+
+> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst =
+
+> 172.16.10.10 action skbedit queue_mapping 2
+
+If using an IFF_MULTI_QUEUE tun device, packets are automatically
+load balanced across the multiple queues, in tun_select_queue.
+
+If you want more explicit queue selection than by rxhash, tun
+supports TUNSETSTEERINGEBPF.
+
+> =
+
+> The purpose here is taking advantage of the multiple threads. For the =
+
+> the server side(gateway of the tunnel's subnet), usually a different =
+
+> peer would invoked a different encryption/decryption key pair, it would=
+ =
+
+> be better to handle each in its own thread. Or the application would =
+
+> need to implement a dispatcher here.
+
+A thread in which context? Or do you mean queue?
+
+> =
+
+> I am newbie to the tc(8), I verified the command above with a tun type =
+
+> multiple threads demo. But I don't know how to drop the unwanted ingres=
+s =
+
+> filter here, the queue 0 may be a little broken.
+
+Not opposed to exposing the queue index if there is a need. Not sure
+yet that there is.
+
+Also, since for an IFF_MULTI_QUEUE the queue_id is just assigned
+iteratively, it can also be inferred without an explicit call.=
 
