@@ -1,68 +1,57 @@
-Return-Path: <linux-kernel+bounces-268775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D46942924
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:28:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E40B5942921
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F324283CAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0D6D283A53
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDDA1A7F9D;
-	Wed, 31 Jul 2024 08:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD631A8BE7;
+	Wed, 31 Jul 2024 08:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="DL2oTxkw"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KhuDuMBK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D31A1A8C00
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601671A6166;
+	Wed, 31 Jul 2024 08:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414493; cv=none; b=icmHJ+cflqmeDpU8u0UX0Dff4DNXPWh95IwSv4u+oJnuJPWyV/0RAwm2dQuxkELOlbtduEMOQAn8iw2biEr7Mu3e5J/ye2c1qhYQJzTMokOuTbA9S8LQRvIu5ws+isVOzK3N7kRLrGFCyqy/fkmW9Fxu1bThiocVgK3vTSS/4CU=
+	t=1722414487; cv=none; b=Qdw65llUOLckA8Zb6iMw/LrdovmPksJMW8Q5bjEFqk4jIrzLFZHhIoTanqLI83daxloN2FXu8m+cq/8u9hC7IVBtERl+llxvwJdVAFhYItLn+r5+OEJ/ObYk/20ONKyGDSV/qLMS40iLHCwYardNXCAsd5Lxxa4+ZIyjQb3YDb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414493; c=relaxed/simple;
-	bh=Av3OORvo/fp0NBEfS461Tz0A6J3kOYedGnuGFjcVt7g=;
+	s=arc-20240116; t=1722414487; c=relaxed/simple;
+	bh=mlRazMvsK22c0jA4I5oFJzC0Vc4GmS54awPfGY0DxZw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q1YbEGyyOV4jkTFOZhoM86UE+fIsBzvrmMyJ9bMjhMOQfDpFZHubFFvSKG3ZDrWYG3JpDK02ebYW/4AYLzMcQ0r1G96f5LlMDfCD39P7Y7tTwgjm272PG4Cpp7ilrSsA/XJ1jayWhlVUmPWISlSoycz34fLz24zGdz8VvIWKmFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=DL2oTxkw; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=/fcqze2vkAObsFYGy2QrciDn6/xJntMtoVf4Cew1w3I=; b=DL2oTxkwW+T8Unq5n7OiqklutK
-	mCX477EF0JkeGN6q+nIr7W7JDWXCh6n+S5oRJwRJkZiSEStGDjewC2jO5ZnqEWW00oEUjLK+Z+W9p
-	5awf29db0NOK+hEMRdbKiO8fhbxPiVXe/WIG01vG98m+GrPqPn2mNux61+v18aRp3u3lEKqe/qbJu
-	4SkhCfIqKqwJR+M16GHPr/lschIHcYPDvrmM44vUf+68Clnv8FeVCjsKfMm9xCpIL2A3dzlBKNLux
-	3joJjWPepIsl+WmOeK9244dad1tPOwTfnoMT9BCrVZm8GGE5EfdEUNP4l7puRAHvXeMcxeVCr62os
-	syCyVoGQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46600)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sZ4gU-0008HA-2V;
-	Wed, 31 Jul 2024 09:27:46 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sZ4gX-00063z-Ks; Wed, 31 Jul 2024 09:27:49 +0100
-Date: Wed, 31 Jul 2024 09:27:49 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: arnd@arndb.de, afd@ti.com, akpm@linux-foundation.org,
-	linus.walleij@linaro.org, eric.devolder@oracle.com, ardb@kernel.org,
-	gregkh@linuxfoundation.org, deller@gmx.de, javierm@redhat.com,
-	bhe@redhat.com, robh@kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH RESEND 0/2] ARM: Switch over to GENERIC_CPU_DEVICES
-Message-ID: <Zqn1hVHUdsDjhtT8@shell.armlinux.org.uk>
-References: <20240702075742.945768-1-ruanjinjie@huawei.com>
- <1309c436-4e7f-89a3-3b33-abddaaac410c@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeWjvZA1Mf0TCL3H4lkNEYktnGrqPDI4fpLIZjf6HKT+snJgGBZIv0zkI8eD67TbqxoJAUA/btAB1KQOMyzpuB22Oa0JhsURJuhg0a7zil/WzedQAa60wlA3/tnD40lBWY0HKAWx7+zgSlWKayzS6gyJTFCbV822nY34oE0BtlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KhuDuMBK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41705C116B1;
+	Wed, 31 Jul 2024 08:28:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722414486;
+	bh=mlRazMvsK22c0jA4I5oFJzC0Vc4GmS54awPfGY0DxZw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KhuDuMBK2U1VnCF/kkcwZOdZz3hWwNradWurT5ECsg4k8JUWibkP9qltixp3BiTMw
+	 ry3qmTd1VoOYucQIRJ5J5imc9qUbd3VNqZKwBYI1lanzhRZs12mRYAZEEI+1+wZAj4
+	 7t2XxHES86C/SYSoKCaR06MvVWF0LRpjhL7l8z1w=
+Date: Wed, 31 Jul 2024 10:27:59 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chris Wulff <Chris.Wulff@biamp.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Dmitry Antipov <dmantipov@yandex.ru>,
+	David Sands <david.sands@biamp.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v3] usb: gadget: f_fs: add capability for dfu run-time
+ descriptor
+Message-ID: <2024073122-shakable-photo-67d1@gregkh>
+References: <CO1PR17MB54197F118CBC8783D289B97DE1102@CO1PR17MB5419.namprd17.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,28 +60,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1309c436-4e7f-89a3-3b33-abddaaac410c@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <CO1PR17MB54197F118CBC8783D289B97DE1102@CO1PR17MB5419.namprd17.prod.outlook.com>
 
-On Wed, Jul 31, 2024 at 09:52:07AM +0800, Jinjie Ruan wrote:
-> On 2024/7/2 15:57, Jinjie Ruan wrote:
-> > Currently, almost all architectures have switched to GENERIC_CPU_DEVICES,
-> > except for arm32. Also switch over to GENERIC_CPU_DEVICES, which can also
-> > make the code more concise.
-> > 
-> > Jinjie Ruan (2):
-> >   ARM: Switch over to GENERIC_CPU_DEVICES using arch_register_cpu()
-> >   ARM: Convert to arch_cpu_is_hotpluggable()
-> > 
-> >  arch/arm/Kconfig           |  1 +
-> >  arch/arm/include/asm/cpu.h |  1 -
-> >  arch/arm/kernel/setup.c    | 14 ++------------
-> >  3 files changed, 3 insertions(+), 13 deletions(-)
+On Wed, Apr 24, 2024 at 10:14:58PM +0000, Chris Wulff wrote:
+> From: David Sands <david.sands@biamp.com>
+> 
+> Add the ability for FunctionFS driver to be able to create DFU Run-Time
+> descriptors.
 
-I think it's fine, but it needs to end up in the patch system to be
-applied. Thanks.
+Don't you need some userspace documentation for this as well?
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+> --- a/include/uapi/linux/usb/ch9.h
+> +++ b/include/uapi/linux/usb/ch9.h
+> @@ -254,6 +254,9 @@ struct usb_ctrlrequest {
+>  #define USB_DT_DEVICE_CAPABILITY	0x10
+>  #define USB_DT_WIRELESS_ENDPOINT_COMP	0x11
+>  #define USB_DT_WIRE_ADAPTER		0x21
+> +/* From USB Device Firmware Upgrade Specification, Revision 1.1 */
+> +#define USB_DT_DFU_FUNCTIONAL		0x21
+
+So USB_DT_WIRE_ADAPTER and USB_DT_DFU_FUNCTIONAL are the same?  That
+seems wrong.
+
+> +/* these are from the Wireless USB spec */
+
+What spec?  What "these"?
+
+>  #define USB_DT_RPIPE			0x22
+>  #define USB_DT_CS_RADIO_CONTROL		0x23
+>  /* From the T10 UAS specification */
+> @@ -263,6 +266,7 @@ struct usb_ctrlrequest {
+>  /* From the USB 3.1 spec */
+>  #define	USB_DT_SSP_ISOC_ENDPOINT_COMP	0x31
+>  
+> +
+>  /* Conventional codes for class-specific descriptors.  The convention is
+>   * defined in the USB "Common Class" Spec (3.11).  Individual class specs
+>   * are authoritative for their usage, not the "common class" writeup.
+
+Unneeded change?
+
+> @@ -329,9 +333,10 @@ struct usb_device_descriptor {
+>  #define USB_CLASS_USB_TYPE_C_BRIDGE	0x12
+>  #define USB_CLASS_MISC			0xef
+>  #define USB_CLASS_APP_SPEC		0xfe
+> -#define USB_CLASS_VENDOR_SPEC		0xff
+> +#define USB_SUBCLASS_DFU			0x01
+>  
+> -#define USB_SUBCLASS_VENDOR_SPEC	0xff
+> +#define USB_CLASS_VENDOR_SPEC		0xff
+> +#define USB_SUBCLASS_VENDOR_SPEC		0xff
+
+Why reorder these?
+
+>  
+>  /*-------------------------------------------------------------------------*/
+>  
+> diff --git a/include/uapi/linux/usb/functionfs.h b/include/uapi/linux/usb/functionfs.h
+> index 9f88de9c3d66..6d2061500184 100644
+> --- a/include/uapi/linux/usb/functionfs.h
+> +++ b/include/uapi/linux/usb/functionfs.h
+> @@ -37,6 +37,31 @@ struct usb_endpoint_descriptor_no_audio {
+>  	__u8  bInterval;
+>  } __attribute__((packed));
+>  
+> +/**
+> + * struct usb_dfu_functional_descriptor - DFU Functional descriptor
+> + * @bLength:		Size of the descriptor (bytes)
+> + * @bDescriptorType:	USB_DT_DFU_FUNCTIONAL
+> + * @bmAttributes:	DFU attributes
+> + * @wDetachTimeOut:	Maximum time to wait after DFU_DETACH (ms, le16)
+> + * @wTransferSize:	Maximum number of bytes per control-write (le16)
+> + * @bcdDFUVersion:	DFU Spec version (BCD, le16)
+> + */
+> +struct usb_dfu_functional_descriptor {
+> +	__u8  bLength;
+> +	__u8  bDescriptorType;
+> +	__u8  bmAttributes;
+> +	__le16 wDetachTimeOut;
+> +	__le16 wTransferSize;
+> +	__le16 bcdDFUVersion;
+> +} __attribute__ ((packed));
+> +
+> +/* from DFU functional descriptor bmAttributes */
+> +#define DFU_FUNC_ATT_WILL_DETACH		(1 << 3)
+> +#define DFU_FUNC_ATT_MANIFEST_TOLERANT		(1 << 2)
+> +#define DFU_FUNC_ATT_CAN_UPLOAD			(1 << 1)
+> +#define DFU_FUNC_ATT_CAN_DOWNLOAD		(1 << 0)
+
+Please use proper BIT macros here to make this more obvious.  And in
+sorted order?
+
+thanks,
+
+greg k-h
 
