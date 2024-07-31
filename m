@@ -1,150 +1,280 @@
-Return-Path: <linux-kernel+bounces-269414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF0094329A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:01:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 420299432A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2031F21309
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654351C21435
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019661642B;
-	Wed, 31 Jul 2024 15:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF93E14AA9;
+	Wed, 31 Jul 2024 15:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3xRRTUT9"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLXg2z4i"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6B0B3232
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF993232;
+	Wed, 31 Jul 2024 15:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438084; cv=none; b=Ut7Wm6uZxrT+6AVQfr193Z9ZT5Z1SW7V8iUzcMqZpcdC4tUdW2z+U7W3yJjQfJlquTnt5F/3tC0UzCngJjhyeb1buTgsQOm9FWIwpEHztRGzc1gTjHqUe+SW92ne5jUI+Ufqz61YiAR/5AyNCAhBcDmXxnesLoBU69vqe8z3tVI=
+	t=1722438160; cv=none; b=bC23XZPSfddOsHieq2732WH7pIjgJqS+KSRlpoyjKrwT+UU1k4fupEIKHHkFMHxYejsSv7688bpidxsxIxlh/LP7aRwqZRzAbzCFvamPwpyEheMa0Iu17ZosRVZHpXJ/Put4/44LtTGc5PtbrtT2WytNdCMLL+lBBl9TP5t7HcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438084; c=relaxed/simple;
-	bh=wUHLhFS9SdXHmqa3PQC6xsI/T85uU0FHGAHHTqH7qew=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WJC0szHoCwRkw5VaChPpqNsLubY3Ny32kQMWilEpS4TFgXlXXe9sjabumrxrIKhPEqD3EXzkDIg4GEgnHQqsHdi7QVEifK4KJerKgtG1PNHCayb6wDyLLsht6j+XqND0y9/zZaa0ap/yIFhZ+HhQVFC3uC7C0Fde1XyOvmCa2t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3xRRTUT9; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7acb08471b1so3068155a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:01:22 -0700 (PDT)
+	s=arc-20240116; t=1722438160; c=relaxed/simple;
+	bh=GdbXqK3pOYa0rkRvKMpQ1qP1/xyRibNZjDLqjkPfE2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gi7oj/5r6zKXioQByVZOnEiWm/hpk3E/3Bo4qW+J39Yhj9LE6dedt1/rFo9nltHqkKkuM2ue8izOwHn2PBUjo6jnaqcukVj2KBZY1hWlfYyUMUVcIZ0iWaZXTM3ekdyEiY2JlRbjauBimXNFAYsbvRH8RuFxydnbu6eyzfpq11w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLXg2z4i; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d1c655141so4326736b3a.1;
+        Wed, 31 Jul 2024 08:02:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722438082; x=1723042882; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gNJBybQopQ2ZrxRweqcaE48I1KQGrUoMT3Gla2tgL0c=;
-        b=3xRRTUT9Lxg9Pt5q3mX3veCC3CBSxjoRg7JuyFreN2guenAh34q6Fc70OF9yvqJI+y
-         XM8lD8DrxJ6iuqxcBQfFRcWfjJORSI5Z6fNfQYCfP1ngzsvjNWmQUTd7dm3RzZ9un0Vp
-         kkQoucLYdWUrjKJ4y1BqNeNf5PlXYGaZvDM4QW6KNjM3KliPDu9Qkr8qjnnnWfEGfIvb
-         lI/smDcZErgunOcJUXj7e44VovwKpgS4pzcFL8pBzQ6uB9K4W8DrcfSzTDaq/3956KHb
-         +BygWzRsIp9eBHsVw9I7Szrcq4RaYLgZmsHHadx5zpv4yUK6W7zVRzK8DeNZS8vUe8QB
-         dKOg==
+        d=gmail.com; s=20230601; t=1722438158; x=1723042958; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n3pEcVDWIeBBKJY5rYo4nIp1+5IBnyuWvRwhKMSQzHM=;
+        b=HLXg2z4iYFFciYI3MiRdHb5/mGXrN4m3aXOMXEM8/SU8LrQ4uJovXxwoEftugkbRpj
+         RCqvGInGtSdZtXM1U6hTPD4koC1ezkWI9lU9c0oRhmRyXgamUYcOa6PGB2K96rmH4tDX
+         rgG72HuPk2JYhAzjsocs3VWPw5Uk3LHilf8GL2BopAcqhoEKg+sNUcfSXsyc+xdY7L4t
+         Fkv/OeOmGD35TIRmpRKm+cAdXZxKUYep8fV2mDFG3zcPVp6UIgEX6TOQlU18ErafeEud
+         9KF88gRXEFjzR4rV2HBNMmjWxfWH4vgSZRZYrpZDzt36wNt54jXpMpd6KaKP1j0qJ+Z0
+         KFhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722438082; x=1723042882;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gNJBybQopQ2ZrxRweqcaE48I1KQGrUoMT3Gla2tgL0c=;
-        b=YX5CpXIqIfS8505/5DVMrMtM/NJo5ZghkApPbQhVZIpH4RT4PowddcMGQBF5D6F7xe
-         2CMSOVNPNhfPixJiOlgBs/pmWKt48xt2a/1rm7y1fYjE4V57nAgWB4yB2wrgC/G8BE4w
-         rZz0V40xBElJqKL8ICd7IDweizaqAYt6FsS/w/89U6fLW/we633/U0syRuF+jDbKODkc
-         463tSeZQ2rWHLkg6fINRDbC8vUSc0fEIhkedph20kezt4LKxYoqbfuUiP+JgUradGLb1
-         MNoY6y8Op++x4KkJVpRSEJeUcAZUjL9Pe5kB7RcmpuDGrKSRfwG6ZKaZi+xgIcXDLqg/
-         9hAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwkVBmffR89JAXpBum142gJxfbo45PyLYBtXBOa63W3PX7LgH6aDwZM2A0iue3W2epCbOvgvPQ1IjoLE4BHTdDVj1UKuWfe3h3vhxG
-X-Gm-Message-State: AOJu0YzfRtiVspdE5CZSrBXhKvbSjUCHdM6b5NwaCrNY0ML5ooJLwqUW
-	IrqDUQhPkz3QPHvWg6UocZ7z+Yf+4p4wMp2+eKoeixir2cnCIJVKc6gknktpc4uWoUXvOkZ227K
-	W8g==
-X-Google-Smtp-Source: AGHT+IGcAn8E6dkVWW8sE36BP9jCnCmxK5HfcNcn6NYUeDPjrXiDSAMLJMNmKjWnCHzC8DBP855Q/NibcH4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a02:610:b0:7a1:6633:6a07 with SMTP id
- 41be03b00d2f7-7ac8dcbb142mr75473a12.2.1722438081874; Wed, 31 Jul 2024
- 08:01:21 -0700 (PDT)
-Date: Wed, 31 Jul 2024 08:01:20 -0700
-In-Reply-To: <87cymtdc0t.fsf@draig.linaro.org>
+        d=1e100.net; s=20230601; t=1722438158; x=1723042958;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3pEcVDWIeBBKJY5rYo4nIp1+5IBnyuWvRwhKMSQzHM=;
+        b=PSPjFLnUUdy+7u/BYj17pTIanTSXpdfCdXOppfKX+XTEJgllNNX17qqPm8SlSZ5J/m
+         9YsKUVHCVK7hpdoIawWgk5gqc7YpGHDrdZKFolNIqewtfAEwTaXRnVSgrX8cad81T4At
+         heUzXgEzDZWsq6+8pqWOjd/v64mcZRGWKkJkO8IU1ou8klFWtvkv7zkCwIw1bspunFER
+         ISdOMdwAe5rJnxKEdbjZwQa2b1mWou01u6dE2fGZHRCP4vafh0/UuAQEIe0V1LEcw7cs
+         iq5di3jAA9H/MO3do0hyo0AckfwYfKweRdJGZksZQukR9In9xuwyd70OPmqoAq+q/8U0
+         TF9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXiQipoIQ6zY/miMw3gg9pVVSdobWgKbRh69+hS75JuRIE3t5XS0k8/X8lRJPPO4fHDFgLXZLeBa5tgCrUahkqBX8gdQS72z6t7fWWJ6X7uZNMkMA5KrJhp3GvZ+m95Zknn695h0nvY2p6FpDpqilDE5ulHQ2BtM9DemsdXcmITlXGS0aJRWXeyHyvafyq/wpxADy1z5+bSrXKqOHZekFhy
+X-Gm-Message-State: AOJu0Yyq+glCQt4MoFb//lXCnMOCwVZhNua5ihP3a3Zf2p5CJFljfcfC
+	wJErTUrJ5oER3Z7fETzoxX7JE44VsDhBoUN+T8K7qNb+Ok5+6qN8
+X-Google-Smtp-Source: AGHT+IFDe+Gop8MQmy/8qvQgta8yZDYKCAntFqVNAuMmp6Sw0Ob7fNHgNCvkehwyfC09R83AyyEuCQ==
+X-Received: by 2002:a17:902:c947:b0:1fd:a644:e466 with SMTP id d9443c01a7336-1ff0485ba7cmr146711915ad.39.1722438158295;
+        Wed, 31 Jul 2024 08:02:38 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8582dsm121843175ad.6.2024.07.31.08.02.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 08:02:37 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Wed, 31 Jul 2024 08:02:36 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Inochi Amaoto <inochiama@outlook.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Jean Delvare <jdelvare@suse.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Jinyu Tang <tangjinyu@tinylab.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	chunzhi.lin@sophgo.com, haijiao.liu@sophgo.com,
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v8 2/4] drivers: hwmon: sophgo: Add SG2042 external
+ hardware monitor support
+Message-ID: <75f6f910-43ff-4d98-b39f-b4b0629a56a1@roeck-us.net>
+References: <IA1PR20MB49538C09E94D90F07B7B2562BBB02@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953DE89C56AB3F328954131BBB02@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <MA0P287MB2822D0C770667CFE484EBC95FEB12@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+ <IA1PR20MB49534944E268A0A71AA3D5D1BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240229025759.1187910-1-stevensd@google.com> <ZnXHQid_N1w4kLoC@google.com>
- <87cymtdc0t.fsf@draig.linaro.org>
-Message-ID: <ZqpRwCKxVkDmmDB3@google.com>
-Subject: Re: [PATCH v11 0/8] KVM: allow mapping non-refcounted pages
-From: Sean Christopherson <seanjc@google.com>
-To: "Alex =?utf-8?Q?Benn=C3=A9e?=" <alex.bennee@linaro.org>
-Cc: David Stevens <stevensd@chromium.org>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Yu Zhang <yu.c.zhang@linux.intel.com>, Isaku Yamahata <isaku.yamahata@gmail.com>, 
-	Zhi Wang <zhi.wang.linux@gmail.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvmarm@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <IA1PR20MB49534944E268A0A71AA3D5D1BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
 
-On Wed, Jul 31, 2024, Alex Benn=C3=A9e wrote:
-> Sean Christopherson <seanjc@google.com> writes:
->=20
-> > On Thu, Feb 29, 2024, David Stevens wrote:
-> >> From: David Stevens <stevensd@chromium.org>
-> >>=20
-> >> This patch series adds support for mapping VM_IO and VM_PFNMAP memory
-> >> that is backed by struct pages that aren't currently being refcounted
-> >> (e.g. tail pages of non-compound higher order allocations) into the
-> >> guest.
-> >>=20
-> >> Our use case is virtio-gpu blob resources [1], which directly map host
-> >> graphics buffers into the guest as "vram" for the virtio-gpu device.
-> >> This feature currently does not work on systems using the amdgpu drive=
-r,
-> >> as that driver allocates non-compound higher order pages via
-> >> ttm_pool_alloc_page().
-> >>=20
-> >> First, this series replaces the gfn_to_pfn_memslot() API with a more
-> >> extensible kvm_follow_pfn() API. The updated API rearranges
-> >> gfn_to_pfn_memslot()'s args into a struct and where possible packs the
-> >> bool arguments into a FOLL_ flags argument. The refactoring changes do
-> >> not change any behavior.
-> >>=20
-> >> From there, this series extends the kvm_follow_pfn() API so that
-> >> non-refconuted pages can be safely handled. This invloves adding an
-> >> input parameter to indicate whether the caller can safely use
-> >> non-refcounted pfns and an output parameter to tell the caller whether
-> >> or not the returned page is refcounted. This change includes a breakin=
-g
-> >> change, by disallowing non-refcounted pfn mappings by default, as such
-> >> mappings are unsafe. To allow such systems to continue to function, an
-> >> opt-in module parameter is added to allow the unsafe behavior.
-> >>=20
-> >> This series only adds support for non-refcounted pages to x86. Other
-> >> MMUs can likely be updated without too much difficulty, but it is not
-> >> needed at this point. Updating other parts of KVM (e.g. pfncache) is n=
-ot
-> >> straightforward [2].
-> >
-> > FYI, on the off chance that someone else is eyeballing this, I am worki=
-ng on
-> > revamping this series.  It's still a ways out, but I'm optimistic that =
-we'll be
-> > able to address the concerns raised by Christoph and Christian, and may=
-be even
-> > get KVM out of the weeds straightaway (PPC looks thorny :-/).
->=20
-> I've applied this series to the latest 6.9.x while attempting to
-> diagnose some of the virtio-gpu problems it may or may not address.
-> However launching KVM guests keeps triggering a bunch of BUGs that
-> eventually leave a hung guest:
+On Wed, Jul 31, 2024 at 03:17:57PM +0800, Inochi Amaoto wrote:
+> On Wed, Jul 31, 2024 at 02:13:20PM GMT, Chen Wang wrote:
+> > 
+> > On 2024/7/30 15:50, Inochi Amaoto wrote:
+> > [......]
+> > > +#define REG_CRITICAL_ACTIONS			0x65
+> > The name "REG_CRITICAL_ACTIONS" is ambiguous. I have confirmed with sophgo
+> > engineers that the complete process is: when the measured temperature
+> > exceeds the temperature set by REG_CRITICAL_TEMP, the processor is powered
+> > off and shut down, and then after the temperature returns to the temperature
+> > set by REG_REPOWER_TEMP, it is decided whether to power on again or remain
+> > in the shutdown state based on the action set by REG_CRITICAL_ACTIONS,
+> > whether it is reboot or poweroff.
+> > 
+> > So based on the above description, I think it would be better to
+> > call "REG_CRITICAL_ACTIONS" as "REG_REPOWER_ACTIONS". "REG_CRITICAL_ACTIONS"
+> > gives people the first impression that it is used to set actions related to
+> > REG_CRITICAL_TEMP.
+> > 
+> > It is also recommended to add the above description of temperature control
+> > and action settings in the code. Currently, sophgo does not have a clear
+> > document description for this part, and adding it will help us understand
+> > its functions.
+> > 
+> > Adding sophgo engineers Chunzhi and Haijiao, FYI.
+> > 
+> > > +#define REG_CRITICAL_TEMP			0x66
+> > > +#define REG_REPOWER_TEMP			0x67
+> > > +
+> > > +#define CRITICAL_ACTION_REBOOT			1
+> > > +#define CRITICAL_ACTION_POWEROFF		2
+> > 
+> > As I said upon, actions are not related to critical, but is for restoring
+> > from critical, suggest to give a better name.
+> > 
+> > [......]
+> > 
+> > > +static ssize_t critical_action_show(struct device *dev,
+> > [......]
+> > > +static ssize_t critical_action_store(struct device *dev,
+> > 
+> > [......]
+> > 
+> > The same reason as upon, "critical_action_xxx" is misleading.
+> > 
+> > [......]
+> > 
+> 
+> Thanks for explanation, I just get the name from the driver of SG2042.
+> This is out of my knowledge.
+> 
+> > > +static int sg2042_mcu_read_temp(struct device *dev,
+> > > +				u32 attr, int channel,
+> > > +				long *val)
+> > > +{
+> > > +	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
+> > > +	int tmp;
+> > > +	u8 reg;
+> > > +
+> > > +	switch (attr) {
+> > > +	case hwmon_temp_input:
+> > > +		reg = channel ? REG_BOARD_TEMP : REG_SOC_TEMP;
+> > > +		break;
+> > > +	case hwmon_temp_crit:
+> > > +		reg = REG_CRITICAL_TEMP;
+> > > +		break;
+> > > +	case hwmon_temp_crit_hyst:
+> > > +		reg = REG_REPOWER_TEMP;
+> > > +		break;
+> > > +	default:
+> > > +		return -EOPNOTSUPP;
+> > > +	}
+> > > +
+> > > +	tmp = i2c_smbus_read_byte_data(mcu->client, reg);
+> > > +	if (tmp < 0)
+> > > +		return tmp;
+> > > +	*val = tmp * 1000;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int sg2042_mcu_read(struct device *dev,
+> > > +			   enum hwmon_sensor_types type,
+> > > +			   u32 attr, int channel, long *val)
+> > > +{
+> > > +	return sg2042_mcu_read_temp(dev, attr, channel, val);
+> > > +}
+> > Can we merge sg2042_mcu_read and sg2042_mcu_read_temp？
+> 
+> Yes, it can be merged. but I think using this nested function 
+> is more clear. And gcc can auto inline this function so we
+> got no performance penalty.
+> 
 
-Can you give v12 (which is comically large) a spin?  I still need to do mor=
-e
-testing, but if it too is buggy, I definitely want to know sooner than late=
-r.
+FWIW, I think that is pointless. Te only difference is unused
+parameters.
 
-Thanks!
+> > > +
+> > > +static int sg2042_mcu_write(struct device *dev,
+> > > +			    enum hwmon_sensor_types type,
+> > > +			    u32 attr, int channel, long val)
+> > > +{
+> > > +	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
+> > > +	int temp = val / 1000;
+> > > +	int hyst_temp, crit_temp;
+> > > +	int ret;
+> > > +	u8 reg;
+> > > +
+> > > +	if (temp > MCU_POWER_MAX)
+> > > +		temp = MCU_POWER_MAX;
 
-https://lore.kernel.org/all/20240726235234.228822-1-seanjc@google.com
+No lower limit ? -1000000 is ok ?
+
+> > > +
+> > > +	mutex_lock(&mcu->mutex);
+> > > +
+> > > +	switch (attr) {
+> > > +	case hwmon_temp_crit:
+> > > +		hyst_temp = i2c_smbus_read_byte_data(mcu->client,
+> > > +						     REG_REPOWER_TEMP);
+> > > +		if (hyst_temp < 0) {
+> > > +			ret = -ENODEV;
+> > > +			goto failed;
+
+Do not overwrite error codes.
+
+> > > +		}
+> > > +
+> > > +		crit_temp = temp;
+> > > +		reg = REG_CRITICAL_TEMP;
+> > > +		break;
+> > > +	case hwmon_temp_crit_hyst:
+> > > +		crit_temp = i2c_smbus_read_byte_data(mcu->client,
+> > > +						     REG_CRITICAL_TEMP);
+> > > +		if (crit_temp < 0) {
+> > > +			ret = -ENODEV;
+> > > +			goto failed;
+
+Do not overwrite error codes.
+
+> > > +		}
+> > > +
+> > > +		hyst_temp = temp;
+> > > +		reg = REG_REPOWER_TEMP;
+> > > +		break;
+> > > +	default:
+> > > +		mutex_unlock(&mcu->mutex);
+> > > +		return -EOPNOTSUPP;
+
+This is inconsistent.
+
+> > > +	}
+> > > +
+> > It is recommended to add some comments to explain why we need to ensure that
+> > crit_temp is greater than or equal to hyst_temp. This is entirely because
+> > the current MCU does not limit the input, which may cause user to set
+> > incorrect crit_temp and hyst_temp.
+> 
+> Yeah, this is good idea.
+> 
+> > > +	if (crit_temp < hyst_temp) {
+> > > +		ret = -EINVAL;
+> > > +		goto failed;
+> > > +	}
+> > > +
+> > > +	ret = i2c_smbus_write_byte_data(mcu->client, reg, temp);
+> > > +
+> > > +failed:
+> > > +	mutex_unlock(&mcu->mutex);
+> > > +	return ret;
+> > > +}
+> > > +
+> > [......]
 
