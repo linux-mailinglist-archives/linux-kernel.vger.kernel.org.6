@@ -1,129 +1,116 @@
-Return-Path: <linux-kernel+bounces-269225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 334DD942F70
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:59:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72A57942F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6129F1C21E1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:59:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CD71F2D500
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E581B14EB;
-	Wed, 31 Jul 2024 12:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SFnuZ0s9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4553C1B29A0
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4F11B4C32;
+	Wed, 31 Jul 2024 12:54:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217211B3F37;
+	Wed, 31 Jul 2024 12:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430414; cv=none; b=XIs9Vcvx92ddTuBmw5pp2Eaim5pHf2Mb+j0pC3xmwDKbSEa8QxpCMve/3sl7ToRZGHmB1VQH7aH9eXYBNIdKZSkrd3CQ7drivhEkL18Bd5HQZVcaTZS38eTs55TyALWvopmr3TsOEMOo3V7hTCY0KCsJJWZMr92QTr8nTuL+kqw=
+	t=1722430449; cv=none; b=tp8WOacCBWrTp2WQnwOrj5aLRBDFkzxqQ5LhIB3MkRC9qfqbazj5rItUUF3h8gfz0nhknX55HnC34t4eAdKCBR3yA/Fab0M6bZqDgOzvmeWsvMzgG2EaFwGxzhgD78qunYzvA3ZFPKcO5KjiIyPWpXtNonT74zx3/3YfkdfQofE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430414; c=relaxed/simple;
-	bh=b2BPJwkxUBGBaV4qfTazgklOYLjv/5idMISq6n5H62s=;
+	s=arc-20240116; t=1722430449; c=relaxed/simple;
+	bh=am7KJVl9wrDRT1DPp9yRFXK4Hr35jYnU3OMg5geB5jY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZIE3lJ6rHW5Qj9SMJqXHdivoyTD1CyKCq3ULLR/sZo0ZvXDE7g3QIoVvGeY2sVdLSyjVp51GX7kirFuQsqcMFdwdMsjM1tU2a19Bz5dqRg8KOdQrb1whHcXqsOWzyxc2YRywGW1qRmkZyLx3P2XiG1FDNB4XUxtXjtYpow1yBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SFnuZ0s9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88190C116B1;
-	Wed, 31 Jul 2024 12:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722430413;
-	bh=b2BPJwkxUBGBaV4qfTazgklOYLjv/5idMISq6n5H62s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SFnuZ0s9O5R1e4z6oivPvMcgYF7am5sWFefAqJxWPdvKrslzGmkWLpCjqf2NRTRYY
-	 jpT2GJ3yWzjoYlWFQgeYPQv/hSCK0Qrp1J6ZllEUlezI3RjLXyDfSNSOYMDVN1viMD
-	 +/9qQilSs1HbfQ5ts4dHrfFM50ZHcsFs1YeVx1Jo=
-Date: Wed, 31 Jul 2024 14:53:29 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH] driver core: Simplify driver API
- device_find_child_by_name() implementation
-Message-ID: <2024073128-tinfoil-unaligned-8164@gregkh>
-References: <20240720-simplify_drv_api-v1-1-07c5e028cccf@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=smKpK6rT0q2JymDVl+QyFzPqVLtlLu7P2mgh57T283uBTk25XKjONgSfMAjjCRVAzm3dH9+2Pk+xYiWGKQupf+Fgz7ARaH7qRx9YthKqnyAeMwLoKl2QgybItML92CUi6fhkNhnyl2rHt8uPLfddhQ2OnXWRJcoQz3TdEjAVqes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 20EE01007;
+	Wed, 31 Jul 2024 05:54:33 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3D51C3F766;
+	Wed, 31 Jul 2024 05:54:04 -0700 (PDT)
+Date: Wed, 31 Jul 2024 13:54:01 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Rob Herring <robh@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-rtc@vger.kernel.org,
+	linux-input@vger.kernel.org
+Subject: Re: [PATCH v7 0/7] firmware: support i.MX95 SCMI BBM/MISC Extenstion
+Message-ID: <Zqoz6RVcvNLEh2UT@bogus>
+References: <20240731-imx95-bbm-misc-v2-v7-0-a41394365602@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240720-simplify_drv_api-v1-1-07c5e028cccf@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240731-imx95-bbm-misc-v2-v7-0-a41394365602@nxp.com>
 
-On Sat, Jul 20, 2024 at 09:21:50AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> Simplify device_find_child_by_name() implementation by using present
-> driver APIs device_find_child() and device_match_name().
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/base/core.c    | 15 +++------------
->  include/linux/device.h |  4 ++++
->  2 files changed, 7 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 730cae66607c..22ab4b8a2bcd 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4089,18 +4089,9 @@ EXPORT_SYMBOL_GPL(device_find_child);
->  struct device *device_find_child_by_name(struct device *parent,
->  					 const char *name)
->  {
-> -	struct klist_iter i;
-> -	struct device *child;
-> -
-> -	if (!parent)
-> -		return NULL;
-> -
-> -	klist_iter_init(&parent->p->klist_children, &i);
-> -	while ((child = next_device(&i)))
-> -		if (sysfs_streq(dev_name(child), name) && get_device(child))
-> -			break;
-> -	klist_iter_exit(&i);
-> -	return child;
-> +	/* TODO: remove type cast after const device_find_child() prototype */
+On Wed, Jul 31, 2024 at 08:56:04PM +0800, Peng Fan (OSS) wrote:
+> i.MX95 System Manager Firmware source: https://github.com/nxp-imx/imx-sm
+> To generate html from the repo: make html
+>
+> i.MX95 System Manager Firmware support vendor extension protocol:
+> - Battery Backed Module(BBM) Protocol
+>   This protocol is intended provide access to the battery-backed module.
+>   This contains persistent storage (GPR), an RTC, and the ON/OFF button.
+>   The protocol can also provide access to similar functions implemented via
+>   external board components. The BBM protocol provides functions to:
+>
+>   - Describe the protocol version.
+>   - Discover implementation attributes.
+>   - Read/write GPR
+>   - Discover the RTCs available in the system.
+>   - Read/write the RTC time in seconds and ticks
+>   - Set an alarm (per LM) in seconds
+>   - Get notifications on RTC update, alarm, or rollover.
+>   - Get notification on ON/OFF button activity.
+>
+> - MISC Protocol for misc settings
+>   This includes controls that are misc settings/actions that must be
+>   exposed from the SM to agents. They are device specific and are usually
+>   define to access bit fields in various mix block control modules,
+>   IOMUX_GPR, and other GPR/CSR owned by the SM.
+>   This protocol supports the following functions:
+>
+>   - Describe the protocol version.
+>   - Discover implementation attributes.
+>   - Set/Get a control.
+>   - Initiate an action on a control.
+>   - Obtain platform (i.e. SM) build information.
+>   - Obtain ROM passover data.
+>   - Read boot/shutdown/reset information for the LM or the system.
+>
+> This patchset is to support the two protocols and users that use the
+> protocols. The upper protocol infomation is also included in patch 1
+>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+>
+> Changes in v7:
+> - Just correct R-b tag from Rob to drop quotes "", and rebased
+> - Link to v6: https://lore.kernel.org/r/20240718-imx95-bbm-misc-v2-v6-0-18f008e16e9d@nxp.com
 
-I do not understand the TODO here.  Why is it needed?  Why not fix it up
-now?
+I specifically asked you to avoid re-spinning just for this reason within
+20 mins from your response, yet you managed to churn it within that time 🙁.
+I must respond at flash speed to avoid such things in the future 😢.
 
-> +	return device_find_child(parent, (void *)name,
-> +				 (int (*)(struct device *, void *))device_match_name);
->  }
->  EXPORT_SYMBOL_GPL(device_find_child_by_name);
->  
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 34eb20f5966f..685ffd2dc867 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -47,6 +47,9 @@ struct dev_pin_info;
->  struct dev_iommu;
->  struct msi_device_data;
->  
-> +/* TODO: unify device match() parameter of driver APIs to this signature */
-
-Same here, why have this?  Why not unify them and then fix this up?
-
-> +typedef int (*device_match_t)(struct device *dev, const void *data);
-> +
->  /**
->   * struct subsys_interface - interfaces to device functions
->   * @name:       name of the device function
-> @@ -1073,6 +1076,7 @@ int device_for_each_child(struct device *dev, void *data,
->  			  int (*fn)(struct device *dev, void *data));
->  int device_for_each_child_reverse(struct device *dev, void *data,
->  				  int (*fn)(struct device *dev, void *data));
-> +/* TODO: change type of @data to const void * and @match to device_match_t */
-
-Again, why leave this here?
-
-thanks,
-
-greg k-h
+--
+Regards,
+Sudeep
 
