@@ -1,94 +1,177 @@
-Return-Path: <linux-kernel+bounces-269915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E6094389A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:08:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C04494389C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:08:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79508B22226
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8179C1C21A69
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC6F16D4CC;
-	Wed, 31 Jul 2024 22:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EAF616D327;
+	Wed, 31 Jul 2024 22:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="YbHWtVbP"
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/RehEzI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3535D101EE
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AF816D30F;
+	Wed, 31 Jul 2024 22:08:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463666; cv=none; b=qEtuASfrvKi9q4OviK5IFvZo4suREImnRLRKVlJPpISpjFK5UnDFzFXqpfwXwjmksofnpnJEBUyIJuLdNS1hPmvMgxiXRXVhdnTHS/TR9uVA4pPltDwSYRR+Nw9pDAX3sOVWU6HyiOmAPzfi7ygzmLDhMjAHhQRHUb3XjHGAMv8=
+	t=1722463715; cv=none; b=ScBQCrITZeAn1UMsk0h++ufBuUs3gCZ3oBaH5mNuPROimCxLDPJDRS68o0XtTrLWz33RtMSaRlwwi2YMVIAezqqFkMr62tr91CrGl8whLwikqsCdCYIpxHW/iH94+PuOf4yzp4ua7wzqSgcqCColVIpjAYUnUAQXMQdYcFiqtEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463666; c=relaxed/simple;
-	bh=5/FzbCoYCYVormMglWnKjh4aEoJ7A7JLI2hhC5fYIWk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=LUes+Jd3pqaml1B9PdVTHN/RHXJpHiJ4qtGKoHSuIKtiSCuKvR3Pb7ORR8MORHZP4Nb1+9NJszJ7A9YVtWSDxYgtT1hycZ7usg2Tn0KUQwFOclBhACIUCOlaWKMaI93hDZ5JitcBmNjuNo0uXgtGHbqAj3uDJ/KAjE0HqympuvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=YbHWtVbP; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d9e13ef8edso4137501b6e.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:07:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1722463664; x=1723068464; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=So/9QSkze1y4ejM3Y8FPZR3gEKL0InNlYUt0gbOuwac=;
-        b=YbHWtVbPJntuKon+IbTPT/vDhjoV2ASN+gJWbIgXucbyWee0Xw1lOim0oVvQgvr/nf
-         1qNLXmCEJXTwqPgLgN8NB5PYdbYAdRMRsyjhSjuAg0FQVo4Uloo/+IuqF3AkSDM5hwu8
-         xTTpVB4VAC7KRVJNV7ei0yC3QIZ20perSlWxYsvTxlDTNz4yX/eET5tnBTAZWTWxMrSe
-         UF+0agmGuEv0yo8/JrXKy8oS6u616NUxMcFJZo0rBK5DKa1ifcG5Rm1TcGaR+HbLMjUr
-         t5h6DlHGtcsHKGYYSUjgCKiPf5sK4VGiBxiQCycAwNSWBGj3uOSpbX6b1zRkG2aX3Ity
-         Yo7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722463664; x=1723068464;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=So/9QSkze1y4ejM3Y8FPZR3gEKL0InNlYUt0gbOuwac=;
-        b=M9y78ILRNSvWVaoCgrBhENKFWKkhyGGVwxCg0k3NtIh+WLreROLK8Graw94XIorLgm
-         K/Z2doBSTASAXV7VovWGXOJJhi7W3dDKdmVssxkEbARsx5W63LmtbNgpHOkE17ygojeh
-         3IBF1YLzqX0e9NUKAGnvNxlBSpib5kp1IR0u4t8/TtLbxfL2E6lzbmczE+aLG+757nvd
-         MzcWwQOPzGqgojjmrnVQyLqjx+EI2bQaVFkI2oFNG83jMPawm/8ZJKAfN7IoGyaKl9a8
-         2AW2l8OtxK10oZRHUoVdUb/RwYxl2rgFqoTp+nXGkOkeIw3MBX3bdKtU5koJgzSapq4Y
-         Ed8g==
-X-Forwarded-Encrypted: i=1; AJvYcCV9qSUgsvi8UYK/zrBfnpjkK0TXCemA5y29N+eqsUL97/ICvV6HLqGoMbwkEOqcsX3vXSd7KnmnVyDan7miScwGWpNjRzTPavCoe/jz
-X-Gm-Message-State: AOJu0YxUWhs8Uio94PD0O3EWSfvO7pPVBEHay9FUSHlBcu9AghX3KsVp
-	4818Yjp6T6CSPcrnzv3DlV4QghjWh2KfTOODPPyOIe0NEewwBbU+0BSlcK+DJOLJNGCrxwMl9t7
-	8EFhaOqRTuyfA3oXEP0K9ogBi5ET7uLL//GWwWfgh6XipKWqydQ==
-X-Google-Smtp-Source: AGHT+IHf/6+JdBOy0saPPGO8DOj4tULdpYpCthc5pvwq0MEaub636v66UIYgIZZHSDY3XUfadWNVZBHASBEOO9hzpPc=
-X-Received: by 2002:a05:6870:63ac:b0:261:164d:685e with SMTP id
- 586e51a60fabf-2687a756a41mr494529fac.43.1722463664294; Wed, 31 Jul 2024
- 15:07:44 -0700 (PDT)
+	s=arc-20240116; t=1722463715; c=relaxed/simple;
+	bh=a34TN3KwIKgc4hKuJGY4XM5T5ue33al74Tkes/MJzus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=stxaVR9CP1t7QQI12sovVHqO68+c+F037XtMVwreug+f34nmPpRE++lCTpAzfPOfbJzeSDa+wo0INpfdruSZNpADVOgUwjgCGfvOEPus+X0oYXY5gsTvHGeEg20O8fCM2FuywB3J5EeEpGZ+WOxwBtsah8RvRL6Qef2suYegAYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/RehEzI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AECCC116B1;
+	Wed, 31 Jul 2024 22:08:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722463715;
+	bh=a34TN3KwIKgc4hKuJGY4XM5T5ue33al74Tkes/MJzus=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=K/RehEzIqnBEp8i5fIQkB3Orr6xN43rTlVv1rawK9Ow/xFfMdIcFDFOLyHcWzNOME
+	 z4iJSGNtAuBghf1eCl9NL2DUx55mAfYOFD6zucmwZplK7qGCeZQ5N2HdrWKDazBqVd
+	 dgYzcaS8ma1cU59ZYW6ApcivZ4SGAQX02+KWZZS31EEBVp11LOLOWCyWan8Rk2zabO
+	 6pXa8NqesnjHJfOrOTgrI6M9NIWGtaKDFrii8wtna6n2C0FN1xMlUrrSfFmLmMUsc1
+	 h/ZxZ15zp3yae9lZQ8H3BdcI42K6yJ1PJZkuZpsaKJz4p6BE8NfaFnAZn9pWWlIe7d
+	 vQfuaUCace2Kg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C8CD7CE0A63; Wed, 31 Jul 2024 15:08:29 -0700 (PDT)
+Date: Wed, 31 Jul 2024 15:08:29 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Leonardo Bras <leobras@redhat.com>
+Cc: neeraj.upadhyay@kernel.org, linux-kernel@vger.kernel.org,
+	rcu@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org,
+	mingo@kernel.org, peterz@infradead.org, imran.f.khan@oracle.com,
+	riel@surriel.com, tglx@linutronix.de
+Subject: Re: [PATCH v2 2/3] locking/csd_lock: Provide an indication of
+ ongoing CSD-lock stall
+Message-ID: <c95fd735-30b0-471b-bbcc-7c456acd6dc4@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240722133559.GA667117@neeraj.linux>
+ <20240722133735.667161-2-neeraj.upadhyay@kernel.org>
+ <ZqquJwsH1vqsZhD2@LeoBras>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Victor Nogueira <victor@mojatatu.com>
-Date: Wed, 31 Jul 2024 19:07:33 -0300
-Message-ID: <CA+NMeC-s6_aZYTMaLn=zsu4fhjVXQeMorPTXABJn41aS4G26qg@mail.gmail.com>
-Subject: Re: [PATCH] selftests: tc-testing: Fixed Typo error
-To: Karan Sanghavi <karansanghvi98@gmail.com>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqquJwsH1vqsZhD2@LeoBras>
 
-On 31/07/2024 15:07, Karan Sanghavi wrote:
-> Corrected the typographical of the word  "different"
-> in the "name" field of the JSON object with ID "4319".
->
-> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+On Wed, Jul 31, 2024 at 06:35:35PM -0300, Leonardo Bras wrote:
+> On Mon, Jul 22, 2024 at 07:07:34PM +0530, neeraj.upadhyay@kernel.org wrote:
+> > From: "Paul E. McKenney" <paulmck@kernel.org>
+> > 
+> > If a CSD-lock stall goes on long enough, it will cause an RCU CPU
+> > stall warning.  This additional warning provides much additional
+> > console-log traffic and little additional information.  Therefore,
+> > provide a new csd_lock_is_stuck() function that returns true if there
+> > is an ongoing CSD-lock stall.  This function will be used by the RCU
+> > CPU stall warnings to provide a one-line indication of the stall when
+> > this function returns true.
+> 
+> I think it would be nice to also add the RCU usage here, as for the 
+> function being declared but not used.
 
-Thank you for the patch.
-I'd suggest you transform this patch and the other one you sent, which
-has the same subject, into a patch series.
-Also please change the subject to target net-next and to specify which
-test files your patches are touching.
+These are external functions, and the commit that uses it is just a few
+farther along in the stack.  Or do we now have some tool that complains
+if an external function is not used anywhere?
 
-cheers,
-Victor
+> > [ neeraj.upadhyay: Apply Rik van Riel feedback. ]
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Imran Khan <imran.f.khan@oracle.com>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Leonardo Bras <leobras@redhat.com>
+> > Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> > Cc: Rik van Riel <riel@surriel.com>
+> > Signed-off-by: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
+> > ---
+> >  include/linux/smp.h |  6 ++++++
+> >  kernel/smp.c        | 16 ++++++++++++++++
+> >  2 files changed, 22 insertions(+)
+> > 
+> > diff --git a/include/linux/smp.h b/include/linux/smp.h
+> > index fcd61dfe2af3..3871bd32018f 100644
+> > --- a/include/linux/smp.h
+> > +++ b/include/linux/smp.h
+> > @@ -294,4 +294,10 @@ int smpcfd_prepare_cpu(unsigned int cpu);
+> >  int smpcfd_dead_cpu(unsigned int cpu);
+> >  int smpcfd_dying_cpu(unsigned int cpu);
+> >  
+> > +#ifdef CONFIG_CSD_LOCK_WAIT_DEBUG
+> > +bool csd_lock_is_stuck(void);
+> > +#else
+> > +static inline bool csd_lock_is_stuck(void) { return false; }
+> > +#endif
+> > +
+> >  #endif /* __LINUX_SMP_H */
+> > diff --git a/kernel/smp.c b/kernel/smp.c
+> > index 81f7083a53e2..9385cc05de53 100644
+> > --- a/kernel/smp.c
+> > +++ b/kernel/smp.c
+> > @@ -207,6 +207,19 @@ static int csd_lock_wait_getcpu(call_single_data_t *csd)
+> >  	return -1;
+> >  }
+> >  
+> > +static atomic_t n_csd_lock_stuck;
+> > +
+> > +/**
+> > + * csd_lock_is_stuck - Has a CSD-lock acquisition been stuck too long?
+> > + *
+> > + * Returns @true if a CSD-lock acquisition is stuck and has been stuck
+> > + * long enough for a "non-responsive CSD lock" message to be printed.
+> > + */
+> > +bool csd_lock_is_stuck(void)
+> > +{
+> > +	return !!atomic_read(&n_csd_lock_stuck);
+> > +}
+> > +
+> >  /*
+> >   * Complain if too much time spent waiting.  Note that only
+> >   * the CSD_TYPE_SYNC/ASYNC types provide the destination CPU,
+> > @@ -228,6 +241,7 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+> >  		cpu = csd_lock_wait_getcpu(csd);
+> >  		pr_alert("csd: CSD lock (#%d) got unstuck on CPU#%02d, CPU#%02d released the lock.\n",
+> >  			 *bug_id, raw_smp_processor_id(), cpu);
+> > +		atomic_dec(&n_csd_lock_stuck);
+> >  		return true;
+> >  	}
+> >  
+> > @@ -251,6 +265,8 @@ static bool csd_lock_wait_toolong(call_single_data_t *csd, u64 ts0, u64 *ts1, in
+> >  	pr_alert("csd: %s non-responsive CSD lock (#%d) on CPU#%d, waiting %lld ns for CPU#%02d %pS(%ps).\n",
+> >  		 firsttime ? "Detected" : "Continued", *bug_id, raw_smp_processor_id(), (s64)ts_delta,
+> >  		 cpu, csd->func, csd->info);
+> > +	if (firsttime)
+> > +		atomic_inc(&n_csd_lock_stuck);
+> >  	/*
+> >  	 * If the CSD lock is still stuck after 5 minutes, it is unlikely
+> >  	 * to become unstuck. Use a signed comparison to avoid triggering
+> > -- 
+> > 2.40.1
+> > 
+> 
+> IIUC we have a single atomic counter for the whole system, which is 
+> modified in csd_lock_wait_toolong() and read in RCU stall warning.
+> 
+> I think it should not be an issue regarding cache bouncing because in worst 
+> case scenario we would have 2 modify / cpu each csd_lock_timeout (which is 
+> 5 seconds by default).
+
+If it does become a problem, there are ways of taking care of it.
+Just a little added complexity.  ;-)
+
+> Thanks!
+
+And thank you for looking this over!
+
+							Thanx, Paul
 
