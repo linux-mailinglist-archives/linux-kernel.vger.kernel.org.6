@@ -1,125 +1,239 @@
-Return-Path: <linux-kernel+bounces-269905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34FAF943856
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:57:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5216943859
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD20D1F221EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:57:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8612832DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAE716D325;
-	Wed, 31 Jul 2024 21:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF8A16D30E;
+	Wed, 31 Jul 2024 21:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKJW7soD"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aiy7eoDA"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2571A16CD16
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02A031607B0;
+	Wed, 31 Jul 2024 21:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463016; cv=none; b=j5g9/g7jru5AikOV+xsxcid0CosSTvXsAEXgvx2nTCgRGq4CwQYXki6yEY/ZBJRP+btVIkQ3ye2EoOwhB8cdGuQvCAf0ymjmUqx9u2KoeWiPPUcH5MBKTsCPWQWIyxgSr8JOyAtrEYPOZ/PwY/sft9iKHtkXp8M2x0hMAbtnfHo=
+	t=1722463052; cv=none; b=u4ysqGS3PJczMja78cKTjwrdq+SBcgg14IfghD42CIt7bOtoylnKBqaK+R549N/HduxzIYr1QCMUt/gulk+OYYbznxxZjmY1rBZmK2Xm/6AvFbKqGQ//+48aNGbfYrHFjnyZSuWg9W0ehhUXmvVugrScrW9T5UuuHVJOViXf/ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463016; c=relaxed/simple;
-	bh=cXsPzIMnBYFbWpD0A990EW8Nt5iOKxaRg4d5AY+77yQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aO7lZgvcyjMDC7CEvpZuUsVp1FuKj5N8w/hBMh9/K/5wedo46ji2nWl5YO3Hx8/s1hW0m4fb+0sy4lRwxeb6A7HPxQ6Zh8i0SktSTfn//fWXhJ6mYiq0HKFvsAd/ne6dIJ7p00bBlLiiG9Qb0NYtkpl2ko8UGUUJlQJP/LiAmo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YKJW7soD; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-661369ff30aso48658537b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722463014; x=1723067814; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cXsPzIMnBYFbWpD0A990EW8Nt5iOKxaRg4d5AY+77yQ=;
-        b=YKJW7soDJNsaYbCt/Xd5ysFcVt+H7DfswW445aKKyw3GoMImHzJHMIjAELcutDX+Dr
-         sWqu5mRkBqutcssVmyW0EeJF6i1QvcdaZ8G1cjrZNC/E9cCHsv+4fDAsUzP95ipFo2+y
-         /LJmBFrH4UrneCXWVjKcqsiH6m6vpcmiPRtYbkj7e6ofXOsr114ilF0wCiHfUNUrMB4n
-         3L+kgINg3kwZPMBqaJAMUMUSiMhbMOYAJH75Ppo4c8yRU4SEHaCH73pG7YcfvMibLtSI
-         X3fy/KaWY3UFrV4YbHnMpCHlZ+de09l0bSJOT297uLu4B+aBljaTFMsTWmIMrP3nwa3S
-         H44w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722463014; x=1723067814;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cXsPzIMnBYFbWpD0A990EW8Nt5iOKxaRg4d5AY+77yQ=;
-        b=UqCS7gPDCAiCgz0m/vjQixd3g+w2G+Aa6KS/KIbw/L6oaWTQqea80tq3b3YgQObrXD
-         6Gt3NqyfWy4BiqoKhP3V/0RK6nehfTfKAWW/M9e0Ni3gwXWhdLlrSguZCERiKdJezoff
-         vvx4dDCkpxAPNs3vuCrAI5aShFKXI82j3kgzVb1XZ0bJhgOiSbci0GfFCpedgrUvEmV7
-         e/qikqwjUjm1vbNqxxPxaE/BMLpnhLQpaCOhHA5OCqvRQrtaKv6j9mSmGsKi7meS4Xdh
-         wyOpTRslfqQIvBrCyqB8lsfQncz/mAIHvgK/rRLT8O5whBAjF9exStNBn09TG3jSqElV
-         wu/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVZngzVqZSeLYaDaWx2+B3XOwUAFj8Wy1T5F1yWEbKf28qPMcf0ZjBb0Y7eywtWEVf/S98JVF3QlNxPzyU4eiz4tADFQUz+t8n391DG
-X-Gm-Message-State: AOJu0YzJcdOj7i/G1ppXhbqMFLOVjbV8o9fi/yaWHf2KgZ+DUTuZlcsk
-	IzJcqL9fcjbH4lthnAJQJaMnoTHdnWIgWoZydFUOsPC0OlKP4cxKbkoJibnCCHbPUb5b+jxbqEJ
-	B933Tskz+bacPln+NKO5V2C6APUgYEshzc8dA+g==
-X-Google-Smtp-Source: AGHT+IEhllkbb8d88rX/PNnVUAXDMYaDCfgcN1jChWefJZEk1zg4xkCycJucKr7VsSwOKCXczbmQnMZH/Oduhi8rWRk=
-X-Received: by 2002:a0d:f781:0:b0:62f:37c9:77bc with SMTP id
- 00721157ae682-6874658d58dmr5252057b3.0.1722463014013; Wed, 31 Jul 2024
- 14:56:54 -0700 (PDT)
+	s=arc-20240116; t=1722463052; c=relaxed/simple;
+	bh=8BTMHZmbVkL0xfG7BEdkgm3Xhb4FuI2+2lvrGqUhlh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IzRMVdm5qwzSlWxmSDi3ffqpblQoe+sS/WyNHSVTVIoMrlgGhfL5fdaCB5Hg0tKtxsLUD3RpN8RnZ/OmuNId78WE4yVF+h85p5bV+hdXPk2bFAvcnRVwI50Lzegyy1OwUQl20HM4Me2axQIgukVkkNVdj+wmOmfeAv3zQhKLxDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aiy7eoDA; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VLSLQe025083;
+	Wed, 31 Jul 2024 21:57:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=e
+	5BpIFBV9dvf22kSzpxc/CcySZZQFH+i7XVuBYM1ARk=; b=aiy7eoDAkIO+yFk6B
+	UOhTys6RSIX96ihSp/v5eFx/tipWiPi+OXHrtujyTsk9UdFrWwk+dmDLIucyiDnB
+	IDP4azvVoWq13YxMJCal58L/j/LmZKkmR2/vx3iuORpu2txfSk1xK2fms+RIfnRw
+	wqB/xIdWZ+NpedMAGYY5QJiwXwNBZvP7MbUpk67fopsvBEdSrWsqdanOj9HaOHeB
+	XgOeWWR1AecPJOKOPce2JCU1kn5dDKvoCmENX76oRNTGPkCkRSw2ohRxixKGVtvF
+	wNH0TeBp+E/UDVhJIlzULCxuGINHYtXQJTTTlfLmAHneLdJpPOQJ+Cl2rsgqUy9E
+	bj5vg==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qw7801x5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 21:57:16 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46VL0XQA011143;
+	Wed, 31 Jul 2024 21:57:15 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqmx6as-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 21:57:15 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46VLvCkP46530932
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 31 Jul 2024 21:57:15 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A99FB58043;
+	Wed, 31 Jul 2024 21:57:12 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1814058053;
+	Wed, 31 Jul 2024 21:57:12 +0000 (GMT)
+Received: from [9.61.157.158] (unknown [9.61.157.158])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 31 Jul 2024 21:57:11 +0000 (GMT)
+Message-ID: <5d86ab31-7b29-4f5e-9c9f-be904c128497@linux.ibm.com>
+Date: Wed, 31 Jul 2024 16:57:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20240731211456eucas1p1b15c30b57274ef5837b57e594d061f43@eucas1p1.samsung.com>
- <CAPLW+4=WsGikZ6qOi8dWg4wFsVbhp29cv=DKP06jc4TQn=yUeQ@mail.gmail.com> <20240731211444.59315-1-m.majewski2@samsung.com>
-In-Reply-To: <20240731211444.59315-1-m.majewski2@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 31 Jul 2024 16:56:42 -0500
-Message-ID: <CAPLW+4k-K8xCcHzZ77=diLGJyw2SKQMGzYAywEKwhxAtJaDZ7A@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] dt-bindings: thermal: samsung,exynos: remove
- outdated information on trip point count
-To: Mateusz Majewski <m.majewski2@samsung.com>
-Cc: Rob Herring <robh@kernel.org>, linux-pm@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Anand Moon <linux.amoon@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] ARM: dts: aspeed: system1: IBM System1 BMC update
+To: Ninad Palsule <ninad@linux.ibm.com>, robh+dt@kernel.org,
+        krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, joel@jms.id.au,
+        andrew@codeconstruct.com.au, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+References: <20240731214737.986010-1-ninad@linux.ibm.com>
+ <20240731214737.986010-2-ninad@linux.ibm.com>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <20240731214737.986010-2-ninad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RK-45OovhNuK21F1MvrvRInB_y4im7hy
+X-Proofpoint-GUID: RK-45OovhNuK21F1MvrvRInB_y4im7hy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 bulkscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ impostorscore=0 spamscore=0 lowpriorityscore=0 clxscore=1011 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407310150
 
-On Wed, Jul 31, 2024 at 4:14=E2=80=AFPM Mateusz Majewski
-<m.majewski2@samsung.com> wrote:
->
-> > Do I understand it correctly that the patch actually removes an
-> > outdated description of *driver* implementation, and not outdated
-> > hardware description?
->
-> Correct.
->
-> > If so, then maybe it makes sense to rework the
-> > patch title and commit message in a way Rob suggests. I.e. rather than
-> > stating that the patch removes an outdated information, instead
-> > mention it removes *software* (driver) description which was
-> > incorrectly added earlier. Because bindings are only meant for
-> > hardware description and should be completely independent of driver's
-> > side of things. Also in that case it probably doesn't make much sense
-> > referencing that commit for using set_trips ops. Just my two cents.
->
-> Makes sense, what do you think about this?
->
-> dt-bindings: thermal: samsung,exynos: remove driver-specific information
->
-> The number of supported trip points was only limited by the driver
-> implementation at the time, which mapped each trip point defined in the
-> devicetree source file to a hardware trip point. An implementation that
-> does not have this limitation is possible; indeed, that is how the
-> driver works currently. Therefore, this information should be removed
-> from the bindings description, which are meant to be independent from
-> the details of the driver implementation.
 
-Looks good to me. But you already have my R-b tag :) More important if
-it's ok with Rob.
+On 7/31/24 16:47, Ninad Palsule wrote:
+> Updated MAX31785a pmbus based fans in the device tree.
+>
+> Signed-off-by: Ninad Palsule <ninad@linux.ibm.com>
+> ---
+>   .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 96 +++++++++++++++++++
+>   1 file changed, 96 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+> index f3efecc7eb8d0..f96b299d743ba 100644
+> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dts
+> @@ -764,17 +764,113 @@ regulator@43 {
+>   	};
+>   };
+>   
+> +
+
+
+Don't really need the white space here, but no worries.
+
+
+Reviewed-by: Eddie James <eajames@linux.ibm.com>
+
+
+>   &i2c6 {
+>   	status = "okay";
+>   
+>   	fan-controller@52 {
+>   		compatible = "maxim,max31785a";
+>   		reg = <0x52>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		fan0: fan@0 {
+> +			compatible = "pmbus-fan";
+> +			reg = <0>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+> +
+> +		fan1: fan@1 {
+> +			compatible = "pmbus-fan";
+> +			reg = <1>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+> +
+> +		fan2: fan@2 {
+> +			compatible = "pmbus-fan";
+> +			reg = <2>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+> +
+> +		fan3: fan@3 {
+> +			compatible = "pmbus-fan";
+> +			reg = <3>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+> +
+> +		fan4: fan@4 {
+> +			compatible = "pmbus-fan";
+> +			reg = <4>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+>   	};
+>   
+>   	fan-controller@54 {
+>   		compatible = "maxim,max31785a";
+>   		reg = <0x54>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		fan5: fan@0 {
+> +			compatible = "pmbus-fan";
+> +			reg = <0>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+> +
+> +		fan6: fan@1 {
+> +			compatible = "pmbus-fan";
+> +			reg = <1>;
+> +			tach-pulses = <2>;
+> +			maxim,fan-rotor-input = "tach";
+> +			maxim,fan-pwm-freq = <25000>;
+> +			maxim,fan-dual-tach;
+> +			maxim,fan-no-watchdog;
+> +			maxim,fan-no-fault-ramp;
+> +			maxim,fan-ramp = <2>;
+> +			maxim,fan-fault-pin-mon;
+> +		};
+>   	};
+>   
+>   	eeprom@55 {
 
