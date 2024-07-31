@@ -1,88 +1,106 @@
-Return-Path: <linux-kernel+bounces-268868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA9D942A79
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:29:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D211942A93
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F811F214C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF25D28386E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE141A8C06;
-	Wed, 31 Jul 2024 09:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dDqo5QNB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8A51AD9C2;
+	Wed, 31 Jul 2024 09:31:56 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F471AAE3A;
-	Wed, 31 Jul 2024 09:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D684218C93B;
+	Wed, 31 Jul 2024 09:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722418121; cv=none; b=C2Mu8wwTgJoLGbjPf7kHg7An3Bj+A5q5bBuTIgzBsOiA/JEeVhZNzIk/RpmHivnDZ11CsndqxEZ6y8jfd3U4J+U0OuLaa4QrnrEM/xK1YxirJ3PPlEM7nhkQlwnjfti/q6uZoTGkRED/pXvAx0zYQCWk+Jt70GQ+mFb+FprHZ8w=
+	t=1722418314; cv=none; b=R+P4yggT8mViOZ7jc8ktZQuK103AHr7MjWJqPpDcz2smUBFPFwLHJtuB7sOpd16mtOIdRKbXrTQsFMZ1armaOQr0F5Q9Ht068ISCcxUNzIsu3Wruavz7iwnFivPP1aYPTOW+Ky8q27IgrQnfsW4clQpO3fWx+NGTWaUIzN65Sjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722418121; c=relaxed/simple;
-	bh=COdq1RVb77IUjNE9K22BKe/No8gvKusuIPqh2LW5SVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eKighTHpgI2zaMlGcsBOUcsR9vW3HR39X9w0nSxsTmGKfTKS4UevvjvKiIAEzKZ794Zcky/WhAA6nxqX7gqBZXv5h9Kz/713t0pdogdMrjvn9Cav8Uz6jpvLwxQHBzoyfcDiF90T87HiajFtGfKKaVXqkNmlIUg1hbzKTLsLQYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dDqo5QNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7604FC116B1;
-	Wed, 31 Jul 2024 09:28:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722418121;
-	bh=COdq1RVb77IUjNE9K22BKe/No8gvKusuIPqh2LW5SVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dDqo5QNB0ZNO1n4Dvw/zVoqWi9EK1bc5KcT52KuZsGojB+EZ8WyswFDMQL0CSnoFM
-	 8VEZ5kmHYybgt1j0aqSsN3X71edtkQB1bTKar+k7QDol13JxuXeJipVpfHh34sL5U/
-	 7oRzwmczULo6u+WrVVLXGORMcAoENFuyhkb5MJBQ=
-Date: Wed, 31 Jul 2024 11:28:38 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pavel Machek <pavel@denx.de>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc2 review
-Message-ID: <2024073126-idiom-degrease-e351@gregkh>
-References: <20240731073248.306752137@linuxfoundation.org>
- <Zqn/mmF1HF1AEsi7@duo.ucw.cz>
+	s=arc-20240116; t=1722418314; c=relaxed/simple;
+	bh=Py8ou2K68+gmANUwBPx6Uulh9cO3lfgjfVdcnqkouLI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pw2hOhmtCEhEhALvbo9oltr5Bw9Qo7k56NkcnhkdDgKEFAB8dRQNWdgMCr9Fm1lN6igZ8QbADWTotPzqVCRwYZbPj9ddA7XgUwt/PkCvFsty+l6xykXVuh77NHgzLjMLzxXclXoBK8TxRiUGYxWR3s7EIQloKstclMsWuCsFwuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYn0k25Q7z4f3lWD;
+	Wed, 31 Jul 2024 17:31:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 3D7691A0568;
+	Wed, 31 Jul 2024 17:31:48 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.124.27])
+	by APP2 (Coremail) with SMTP id Syh0CgC3oL+CBKpm5KxyAQ--.8660S2;
+	Wed, 31 Jul 2024 17:31:48 +0800 (CST)
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+To: tytso@mit.edu,
+	jack@suse.com
+Cc: linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/8] Fix and cleanups to jbd2
+Date: Wed, 31 Jul 2024 17:29:02 +0800
+Message-Id: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zqn/mmF1HF1AEsi7@duo.ucw.cz>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgC3oL+CBKpm5KxyAQ--.8660S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw1fCF1kuF47Ar4kJFykAFb_yoWkJwc_ZF
+	WvgF9rJwsxXF17Wa43Cr13WrWrWw48Jr18KF95Za1DKr1xJ3Z5Zw1UGF4UZrnxX3yvk3y5
+	Kr4Yq3y8tw1kCjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUboxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Y
+	z7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zV
+	AF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4l
+	IxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
+	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
+	WIevJa73UjIFyTuYvjxUzsqWUUUUU
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Wed, Jul 31, 2024 at 11:10:50AM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > This is the start of the stable review cycle for the 6.10.3 release.
-> > There are 809 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> 
-> We see build problems:
-> 
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1394947350
-> 
-> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/7470084220
-> 
-> drivers/net/virtio_net.c: In function 'virtnet_poll_cleantx':
-> 4494
-> drivers/net/virtio_net.c:2334:1: error: invalid use of void expression
-> 4495
->  2334 | +                       free_old_xmit(sq, !!budget);
-> 4496
->       | ^
-> 4497
+v2->v3:
+-Improve patch "jbd2: remove unneeded check of ret in jbd2_fc_get_buf"
+-Collect RVB from Yi.
 
-Ugh, so do I now, sorry for that.  Let me go fix it...
+v1->v2:
+-Move escape handle to futher improve
+jbd2_journal_write_metadata_buffer.
+-Collect RVB from Jan
+
+This series contains a fix and some random cleanups to jbd2. More
+details can be found in respective patches. Thanks!
+
+Kemeng Shi (8):
+  jbd2: correctly compare tids with tid_geq function in
+    jbd2_fc_begin_commit
+  jbd2: remove dead check in journal_alloc_journal_head
+  jbd2: remove unused return value of jbd2_fc_release_bufs
+  jbd2: remove unneeded kmap for jh_in->b_frozen_data in
+    jbd2_journal_write_metadata_buffer
+  jbd2: remove unneeded done_copy_out variable in
+    jbd2_journal_write_metadata_buffer
+  ext4: move escape handle to futher improve
+    jbd2_journal_write_metadata_buffer
+  jbd2: correct comment jbd2_mark_journal_empty
+  jbd2: remove unneeded check of ret in jbd2_fc_get_buf
+
+ fs/jbd2/journal.c    | 95 +++++++++++++++++++-------------------------
+ include/linux/jbd2.h |  2 +-
+ 2 files changed, 42 insertions(+), 55 deletions(-)
+
+-- 
+2.30.0
+
 
