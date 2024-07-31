@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-269908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FE7D943860
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:59:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4E2943862
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9122815A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3691C216B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7E216D325;
-	Wed, 31 Jul 2024 21:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF3E16D4E9;
+	Wed, 31 Jul 2024 21:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFxFUISD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aaaThv1N"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8461607B0;
-	Wed, 31 Jul 2024 21:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE1E16CD1E;
+	Wed, 31 Jul 2024 21:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463133; cv=none; b=N7hiUFZEFMLRuL/aWQ4J8ZLJt6PAkVPQNvqNJ9BUzkiQ4tiHgsRZl4s0GAvAJfy4gka5UF9H6d0oXqux2u8lNq7sEd9+wCKO6r5e80obKxKwWPxzgRpisa6hE/pf/6JFPzRWCh5JWQ1oUTRC6WOu9+D6FzfJB3jQkkFVG9PHplA=
+	t=1722463137; cv=none; b=GrHwmj/Tw8TMeWqnX1zo0sAZ9Ma0JgaksaY21RuGRc+o8iY5hjVgZj1FiZc62vWPfuwhi36hgEdATGSqbfT+/7KfNTJ4apRisPIt3OxbQ6bXzyZ0OXsFiVbUZ+axwxf3x7kUY/XM0FYodQbveNRlmzrAU0PIvWUv6OWmyJaWhfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463133; c=relaxed/simple;
-	bh=t2MyTV5Di8+XYcZPEOSgqvHOVGXfSYCXA8g1hjnUKgM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iqQ8tFaK5l2wf4eyqCvBMFW0OORyfLOWYD2eRZPTj2z+OOwmFhWZ0bx67tKw5YVmoEND+dbxISdocpjyZ/M/luP0bXh59YxPj9JRD2/xk/xG02GR/2ENtrn7HVRzhJL6BasedACm71aZNTOoc+Bqo0djsCQWphTjee6fN/a8cLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFxFUISD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F387C4AF0C;
-	Wed, 31 Jul 2024 21:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722463133;
-	bh=t2MyTV5Di8+XYcZPEOSgqvHOVGXfSYCXA8g1hjnUKgM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=UFxFUISDsVVR1PnEo0+if+nnDSkeIOsWNVY0j/1HO1pKg3brKZ/AaYzlXuZiC9DmN
-	 TTLGeuOzXb5SoQpn4qfacCYVebYPrwXXkxIVNRSlk1R1am39P30tGGiQOdOsPAsJ3J
-	 RT83auSlh03CqGqSWhREPc/c20qSAXocWhXzgPIq1pNU9GBWwCFEr7sLCCkZC+w4Wl
-	 Zx7yM8tOwv3B14xffHImliQ5PVUnRwqciyVU/zdKP4AJeD7rbl1SkU5j9zg0O59qLW
-	 3xWMB+7iVBap9toqtAOhQcdqFvv3FMhA0QlVxRVhwIK3jOIb7GfaAxotm8km0TVjGF
-	 NK2I+QHD2fj/Q==
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef2cce8c08so67545181fa.0;
-        Wed, 31 Jul 2024 14:58:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVMGQS8gr/CvJnY3DgZLprePJ09z0HSVxMoGLpRfuYpUCWpHrJI6ZVogShP7AEOO7QgoCuonl43nx/gkeG/Qik+WEz8jPznODUSefP0BJ7mZ5UfZd5sZUt6ocef1NbPcuvOUzUVbLI/5g==
-X-Gm-Message-State: AOJu0Yy8kAfuswK4zFENC9NkLtY+ERWLWw5VqBTRmfz3EfnMzvMKMbpK
-	EjQWwbGaupLcDLJ+xfgV1130X2y4Zwfat6TZZ6N5nZ80pva21jT70wvFb5PYmFHLN6MiDlXDA51
-	pTcRK+NdP/JYm342vE71AviK24Q==
-X-Google-Smtp-Source: AGHT+IHfEm3FCejVoH42G2fr88q6T7YZhdTVOZtI5mhvYzgPZNxjGe9arcigvArAMB3LMzwmkzq5yB+nJtww9EMej5Q=
-X-Received: by 2002:a2e:320e:0:b0:2ef:2c6b:818 with SMTP id
- 38308e7fff4ca-2f1531162b2mr4209661fa.24.1722463131655; Wed, 31 Jul 2024
- 14:58:51 -0700 (PDT)
+	s=arc-20240116; t=1722463137; c=relaxed/simple;
+	bh=+t6NNYK5Yzsc4IcBa+tphoDqTii/V85hlzuyRXoIX3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A18p3zpPEwM9GRN6onyBQ+RgYlRfC9hqnGm8twWWhjFsM7EVQiEGp3jzblk4pZPj2Sv1NlW5W4LVGg6vymIZrNSY9gp7SCx0yiLvGHpshHDTmWzmSDoPnF5r3rwtPgmhG6EhpBL/wkvylMdHr8PwGXbjbFNqPCovvqiohyYiKTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aaaThv1N; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722463129;
+	bh=6VeT15qq0tj/5Uvd0Y/ZKa1nxomCWg2VMy+EMis9uzc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=aaaThv1NKExyjOdfq/kdHBscTECakvzmtiwHodBe6PFJm0g4Noco4iozEH5qa79yL
+	 H4F4Td3NoIdalzme/wEDBCknM+F6mKv1iUb5oLbzMqudTXQTt0ePbBmDahpjGQkCuS
+	 4s6gl/7/2i4vSzxgLEeOM5+KfqNnx6aH3A43/yL2rA78MJ8Y5P2qUKREl9JDdpzQ8t
+	 tPttIhEjEPl5sW5k3rKA37e06e/s7udPHf+GQGgYoYKVdGv9bMEXvEN1i1mwrwPo5M
+	 S7ieOk1Vcl40ld6H5W8Erg7JwsYDn423unlSKIf37Ixa1F6UK0Fh3OeyHaI+3w61s9
+	 t43z+8gTVPCkA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZ5Zw6r7sz4wc1;
+	Thu,  1 Aug 2024 07:58:48 +1000 (AEST)
+Date: Thu, 1 Aug 2024 07:58:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the iio tree
+Message-ID: <20240801075846.18156579@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2046da39e53a8bbca5166e04dfe56bd5.squirrel@_>
-In-Reply-To: <2046da39e53a8bbca5166e04dfe56bd5.squirrel@_>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 31 Jul 2024 15:58:38 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKpTKv-fthwD9bFHiVESJyNP6uMg7Px7Rh+-k583oz76g@mail.gmail.com>
-Message-ID: <CAL_JsqKpTKv-fthwD9bFHiVESJyNP6uMg7Px7Rh+-k583oz76g@mail.gmail.com>
-Subject: Re: [PATCH v2] of/irq: Make sure to update out_irq->np to the new
- parent in of_irq_parse_raw
-To: WHR <whr@rivoreo.one>
-Cc: Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/+YsoNM8A+he6b6zKQsBbGD_";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/+YsoNM8A+he6b6zKQsBbGD_
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 29, 2024 at 11:54=E2=80=AFPM WHR <whr@rivoreo.one> wrote:
->
-> Commit 935df1bd40d43c4ee91838c42a20e9af751885cc has removed an
-> assignment statement for 'out_irq->np' right after label 'skiplevel',
-> causing the new parent acquired from function of_irq_find_parent didn't
-> being stored to 'out_irq->np' as it supposed to. Under some conditions
-> this can resuit in multiple corruptions and leakages to device nodes.
+Hi all,
 
-Under what conditions? Please provide a specific platform and DT.
+In commit
 
->
-> Update 'out_irq->np' before jumping to label 'skiplevel'.
->
-> Fixes: 935df1bd40d4 ("of/irq: Factor out parsing of interrupt-map parent
-> phandle+args from of_irq_parse_raw()")
-> Signed-off-by: WHR <whr@rivoreo.one>
+  c66b5a1983fe ("ABI: testing: fix admv8818 attr description")
 
-Need a name here.
+Fixes tag
 
-> ---
-> v2:
-> Add 'Fixes:' line, and update subject.
->
->  drivers/of/irq.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-> index c94203ce65bb..580b33ce60d2 100644
-> --- a/drivers/of/irq.c
-> +++ b/drivers/of/irq.c
-> @@ -263,6 +263,7 @@ int of_irq_parse_raw(const __be32 *addr, struct
-> of_phandle_args *out_irq)
->                 if (imap =3D=3D NULL) {
->                         pr_debug(" -> no map, getting parent\n");
->                         newpar =3D of_irq_find_parent(ipar);
-> +                       out_irq->np =3D newpar;
+  Fixes: bf92d87 ("iio:filter:admv8818: Add sysfs ABI documentation")
 
-Honestly, I think the DT is wrong if you get to this point. We'd have
-to have the initial interrupt parent with #interrupt-cells, but not an
-interrupt-controller nor interrupt-map property to get here. Maybe
-that happens in some ancient platform, but if so, I want to know which
-one and what exactly we need to handle.
+has these problem(s):
 
-Rob
+  - SHA1 should be at least 12 digits long
+    This can be fixed for the future by setting core.abbrev to 12 (or
+    more) or (for git v2.11 or later) just making sure it is not set
+    (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/+YsoNM8A+he6b6zKQsBbGD_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaqs5YACgkQAVBC80lX
+0GxdOQf/eDA8XoDIJjLNq4qtOFuuqCx7UgUzcnQnDhbjgiIn5SaQW/X7vypYF6FU
+1LhkEBuQb6AbFKhltF5/Xzqht73kxqHtdtUgy855zLyhyZrpBhfqLwdQE3ElcbtM
+LMKaGCyNgzVgEFI+oYsRP8x8beSCXTQUunerzpV3f/2Ft5cFvkTviqPDyq2XgEVW
+/YY5Jo5QPlf+xV1WUuy9j7qmVkE5JB47mRlOWoiPYQDYY2YvSIS4P2J/XCeLtMhm
+PXN8fcfG0A/fdPOSyCcBKZzCP+vH419W/F8S8vkJzfWwxi6GQSygXlx9XvGhoHLz
+C1PLgbjTrrfHjpTX4szD7XLGuUG3WA==
+=pwr2
+-----END PGP SIGNATURE-----
+
+--Sig_/+YsoNM8A+he6b6zKQsBbGD_--
 
