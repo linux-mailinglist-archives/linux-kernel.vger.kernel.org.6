@@ -1,130 +1,117 @@
-Return-Path: <linux-kernel+bounces-269114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D886942DCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58256942DCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDD4FB238D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AA922865A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B68F1B0100;
-	Wed, 31 Jul 2024 12:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="FZOD2poL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uthfwm23"
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C51AED46;
+	Wed, 31 Jul 2024 12:08:32 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BE11AED22;
-	Wed, 31 Jul 2024 12:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E11AD9F4;
+	Wed, 31 Jul 2024 12:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427712; cv=none; b=uPpASoX9yAGlPfoEwlMzKlXbzJie7M7FVUjgljhHLa7HbsvTjIxgjY3t6VoX6JoR71zVstqzdxjNS9sjn0FuJhNMSULe9ZHSSxHShZ+PmuCqohTGSj5gS8lzU3vAsm0yxMciJmSVNxGgY3vKtbfZxqNLHAu/PVggxeIoUuwkBQ4=
+	t=1722427712; cv=none; b=OkgDv5NSfwMlk43J+K0Lnl9llOzYKT3lavEce4aWkoJn56FaqyhXcRcwf+0Qb6R405BEO8iAc3v9FPKkpOOLpdZY/Cvphl68Z93SECby1+NHzPBQ7SixYwEAG3omBnsApHUm0Z2AU6rMkIkP02x+ACE4QJ0FkOolNgWPtwtz5Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722427712; c=relaxed/simple;
-	bh=X+N/8wDI+2G8ihgNutvu+cqVca5VfoL36s1iWUu+E5A=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=m/MOtI8VnNvToshAord+FWfLnVGjBtIrp4n3cRVIOEGPPS7Bxzk5Eh9di9IwEkZdJHze2QrXAHKvpPc15RnYC7pDO+k7j5tiHy83yzgEbnDYnXFdXqYBriUaKXcWTOw3KsJzPGMXnhzd6qNfHkeAAetf/Hp/AN8eKlXKKyx+hCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=FZOD2poL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uthfwm23; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id C58231146C90;
-	Wed, 31 Jul 2024 08:08:29 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Wed, 31 Jul 2024 08:08:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722427709;
-	 x=1722514109; bh=nsi034J3FNIc62+1DZ1jxTLfxGL9bYqPqg9goj1LTos=; b=
-	FZOD2poL3w9hagQM+2vBrnmmVRE4grXdd0qLHQUBCMKj/iASuef03udPYjUJCDaa
-	lwSbyd+CWrf8AXehGNu2foUvuy9uVLCWaHxDVQSNQVZ0cJRIyYAWpCWWXij6KxJe
-	iWk0b7zRETQ3kTLrceMn0/m35W9N+9O45+tOlRbLV1BWNpIRLbwkHdePbBXphmL6
-	asnbj2Lex4cbPj8KW3HLnhmWGxqkpoENuIxFi/dZGBJYFZs17bI3FQhz6ltMrb6a
-	bniMgCBRFb8KaAecMNbZ0zwWhp5ngEtsF3KPkcKjHbE0qrhbBXGjQSzXWRkYY89a
-	yktmI0B6bYCqN72jKv56qg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722427709; x=
-	1722514109; bh=nsi034J3FNIc62+1DZ1jxTLfxGL9bYqPqg9goj1LTos=; b=u
-	thfwm23GhzSO5u1a4GVgOtrvEj60ovv6DG+K8+t0tbTPU/nJU4m3NE/BAFAwFdWI
-	cZf3nBt7fhqticbl/sG14hpduPKlz+57NzH1EG08hFaTnddQoaq5shbLCUJMI4Dg
-	JhTxy9I3AAN0iylJwNIVob9ggzfO3clgHxDHe7NfJrXtjNhTtULEF9PDZgL5Oik+
-	2fLQy7A3ughWm9hDhjyA31knD3hmsZCqeTXLsGCdHvdbqr6rJkONWUjQvr/oWcP7
-	mdB9ugUVvQB7S6qWvnfkljE7cgeHdrvHkzRmGsGeL+cRY26UvjCxKmjbxYE0+lel
-	SuaNqfzCJRQu3DGzU8U1Q==
-X-ME-Sender: <xms:PSmqZmaTTnEFDti-g-Se4RztNfctW2YwgUtyKxt_o82S-v5zsWAskw>
-    <xme:PSmqZpaC4HRH-P1jxDPnGVPkoOk0njIH1XGhnOb-pN3y3IDlHZ0aOKJE4DqKyhHtM
-    CKAkSUcUBSkqjlaacw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeeigdeglecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
-    ieenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:PSmqZg-2kuau7MwYIY05NKwGFZvjDx6PQ1gjHlPLitfJmZhLX00BFw>
-    <xmx:PSmqZopqwBg9DAldg2FPUT1l7zO9XWasx_gpizxp9QSQIgzYXrvVWw>
-    <xmx:PSmqZhodIYmgGstrQdIRMHvyJ6Zs_IWzIG6tJMsw2ZfC7_umqMbPqA>
-    <xmx:PSmqZmRcHQTCUOni_XTihe62oDh0n3cSf9vB7AKcb9M1pj2ngQu2PQ>
-    <xmx:PSmqZna-PgQDtm17-JBbdeF9UeR096Ex1yIiEspxA79GkdGlfQ1IwfsC>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 5D25DB6008D; Wed, 31 Jul 2024 08:08:29 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	bh=sNUu1HDN1FlTXipUtefdEZ4bTSifsdjWWIskfulLvzQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=H/0pcMvbyMR6Ge126rr0AYMgEbuU5gR/H7n7AEIOWJzMObraPr+BAtlC4ikbI3DJbxLZVQ3c7CV1DI907P0Hqjdai/P5jnW6u8u8ZOa6qyUXnogpY6QhlkeTUgLdDDxq1d7w9Eq+9Sv/h+r2a2Q+OpEYchairHdR5lt39DJkLXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WYrTV0qHZzxSRy;
+	Wed, 31 Jul 2024 20:08:14 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id BF453180AE3;
+	Wed, 31 Jul 2024 20:08:25 +0800 (CST)
+Received: from [10.174.179.80] (10.174.179.80) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 31 Jul 2024 20:08:25 +0800
+Subject: Re: [PATCH v3 8/8] jbd2: remove unneeded check of ret in
+ jbd2_fc_get_buf
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+CC: <linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<tytso@mit.edu>, <jack@suse.com>
+References: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
+ <20240731092910.2383048-9-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huawei.com>
+Message-ID: <5567bcc4-08e4-9fae-df1d-10bda50efef4@huawei.com>
+Date: Wed, 31 Jul 2024 20:08:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 31 Jul 2024 14:08:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Zhiguo Jiang" <justinjiang@vivo.com>,
- "Andrew Morton" <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, "Will Deacon" <will@kernel.org>,
- "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Peter Zijlstra" <peterz@infradead.org>,
- "Johannes Weiner" <hannes@cmpxchg.org>, "Michal Hocko" <mhocko@kernel.org>,
- "Roman Gushchin" <roman.gushchin@linux.dev>,
- "Shakeel Butt" <shakeel.butt@linux.dev>,
- "Muchun Song" <muchun.song@linux.dev>,
- Linux-Arch <linux-arch@vger.kernel.org>, cgroups@vger.kernel.org,
- "Barry Song" <21cnbao@gmail.com>
-Cc: opensource.kernel@vivo.com
-Message-Id: <b8fad35b-ba72-44ef-b89b-5333dd457ca7@app.fastmail.com>
-In-Reply-To: <20240730114426.511-3-justinjiang@vivo.com>
-References: <20240730114426.511-1-justinjiang@vivo.com>
- <20240730114426.511-3-justinjiang@vivo.com>
-Subject: Re: [PATCH 2/2] mm: tlb: add tlb swap entries batch async release
-Content-Type: text/plain
+In-Reply-To: <20240731092910.2383048-9-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-On Tue, Jul 30, 2024, at 13:44, Zhiguo Jiang wrote:
+On 2024/7/31 17:29, Kemeng Shi wrote:
+> Simply return -EINVAL if j_fc_off is invalid to avoid repeated check of
+> ret.
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
 
-> +
-> +
-> +extern bool __tlb_remove_swap_entries(struct mmu_gather *tlb,
-> +		swp_entry_t entry, int nr);
-> +#else
-> +bool __tlb_remove_swap_entries(struct mmu_gather *tlb,
-> +		swp_entry_t entry, int nr)
-> +{
-> +	return false;
-> +}
-> +#endif
+Thanks, looks good to me.
 
-To address the reported build regression, that function must
-be annotated as 'static inline'.
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-     Arnd
+> ---
+>  fs/jbd2/journal.c | 16 +++++-----------
+>  1 file changed, 5 insertions(+), 11 deletions(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index e89d777ded34..c5179aa38111 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -837,17 +837,12 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
+>  
+>  	*bh_out = NULL;
+>  
+> -	if (journal->j_fc_off + journal->j_fc_first < journal->j_fc_last) {
+> -		fc_off = journal->j_fc_off;
+> -		blocknr = journal->j_fc_first + fc_off;
+> -		journal->j_fc_off++;
+> -	} else {
+> -		ret = -EINVAL;
+> -	}
+> -
+> -	if (ret)
+> -		return ret;
+> +	if (journal->j_fc_off + journal->j_fc_first >= journal->j_fc_last)
+> +		return -EINVAL;
+>  
+> +	fc_off = journal->j_fc_off;
+> +	blocknr = journal->j_fc_first + fc_off;
+> +	journal->j_fc_off++;
+>  	ret = jbd2_journal_bmap(journal, blocknr, &pblock);
+>  	if (ret)
+>  		return ret;
+> @@ -856,7 +851,6 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
+>  	if (!bh)
+>  		return -ENOMEM;
+>  
+> -
+>  	journal->j_fc_wbuf[fc_off] = bh;
+>  
+>  	*bh_out = bh;
+> 
 
