@@ -1,63 +1,86 @@
-Return-Path: <linux-kernel+bounces-269585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84661943487
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:56:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69B13943485
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4E811C2331B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:56:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13ACD1F2640D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDA71BD4E7;
-	Wed, 31 Jul 2024 16:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80441BD01E;
+	Wed, 31 Jul 2024 16:56:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="efz3Csix"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CeYuCnD/"
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com [209.85.161.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C6634CDE;
-	Wed, 31 Jul 2024 16:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B3E12B93
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722444981; cv=none; b=FQxd4umSaqYJebSutF7r286rMswyVb3QRuOZGVJZVp22fKNrwMpS6KR70bAusHnuwa7lcHFFfhmJg4jS11uwyb5tViSLPUGXwVTaR9FKActoMPUaU953B5+f2EYnfkb+ceQW7dx4TxL/lldLLHOSh+R7y1tONE12icaUGHDwU1U=
+	t=1722444980; cv=none; b=hM5EJpTeR9TNZLtRz2ELMqjD8sK+MTImljjpgxQwiG21iCZIm/4c5hLMHJzqNBjTInJw1ddQsxKucQKtqIIZLwrU8prLYii5kW9qWaR3AbRbnF3Jb1gzJQRaU0m7iEADLu6WECZNnkAZ4L1LM8j8dCQmwo6Se/UZnrpvFm2ImUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722444981; c=relaxed/simple;
-	bh=Z1l84i7WFLY3J70ZGQGL5lORuV+MntauxP/4ole/9iU=;
+	s=arc-20240116; t=1722444980; c=relaxed/simple;
+	bh=IKLHxbuR0R9BOTQTYx5RDen/I6pf12f5piDZx2DS4mU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uS3PB/nOV7xS+49bHYTfiM3ByvwnlgbLTqGRyHNUujwwDm4+b1vFM3VW4tpO24a1qSSG0Zey/fFMGao/lTM88P+AJnyzmYMVyulNNiQyAPdAOkOxPc6DlVmoW7vAbRybtkw942bB4gCt0SZ+ix5NGyQyl4P4O5rmwaSPAL9ZFbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=efz3Csix; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=+Y3CbVRYq6I9qI+FCwLhJRP1pML6FNbZG9fc1WfeQgs=; b=efz3Csixxs9JsqLUSMNMRJqMpA
-	JG6+T46amFlrIk8zCukmNh5GWHhUYKeE3RGjnynOb3CJ+nzMHjGXQ8yW9GBE+D7eUjRKv/QYcxlwK
-	DKJEHEXkxjj4SxysjiNhmudWlmTeJB98BRGSYkkA+33wsfd/RsEMSQv7eN+XnYICPqQNFdvz715BQ
-	JD1R/8pE0dXDZQLW8r3XtVK3bfSZJ5JTEnmUj0u9RDY1lQg4E/RGSL0e1AudtQXxwO5+HtmRkzrqm
-	eMRi2apUXu0CruNI68G2dMJ2LwIQiw2hVH3eKfp0nqyJCKAv7I3eRlzblmuslx047IkXbALv1vWZN
-	fLtIczjw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZCcZ-0000000GMD8-1NIH;
-	Wed, 31 Jul 2024 16:56:15 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D6D0E300820; Wed, 31 Jul 2024 18:56:14 +0200 (CEST)
-Date: Wed, 31 Jul 2024 18:56:14 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org,
-	jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
- uprobe *
-Message-ID: <20240731165614.GI33588@noisy.programming.kicks-ass.net>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134535.GA12332@redhat.com>
- <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eceNQz194bSQs4ny364mgskAw66ujzYlFY77RT7KKiCGfHjuAfDQepAyej4DRnk0oqS+JB8NnSJZK8fR4TcelQBaMC+Nor42R3mzM9iYdOmfEo7JUSGJlfNtNDC/5E7Q3k6lDNc1KDuYv7cvqD/liYPhOtdzz8zYSWtlnGGyjQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CeYuCnD/; arc=none smtp.client-ip=209.85.161.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-5d5c7f24382so3360889eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:56:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722444977; x=1723049777; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kcpERRGU5dtW2iPAXxOu8gXnKquzRYp88DBD078J7tA=;
+        b=CeYuCnD/PqrVffd/TEtCts0wY6bPovDPDK47cVyO7ybb/aYlBmGMyptbk5tPyYa7qv
+         mQIywnD7Nh8e0wUEN+Q4ty6/1fdP+4feYx5miC1TiQgUgEyhQ+uloTS2orlKLPG0LIRr
+         aA64Kf+ITd1pRVpisQDZ8Ff+kX+/4drIuW/2UeC0pP6BoZRP00rTTxyTswYOAN+6xHR3
+         ASUpHDPbpPXKeqyTFjjrH4agVxDdMZjLu38AUZCA8fwXGdLgMVORE/rlJFM/XsM1H+UP
+         LKkLdr5eKcDh2hrnaNvrT2Hp5wui5dTCo8B3QNiA67/PFrku9kq5Db6zPhp8p0hRHGi5
+         hzfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722444977; x=1723049777;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kcpERRGU5dtW2iPAXxOu8gXnKquzRYp88DBD078J7tA=;
+        b=QF2BPFEFoGSVN0RlHjuaRimd+4E6A2kDrRvxWJ/c60oog/hwbbhGlgh9pPZKcT+AqP
+         +CaJyFC14CmwcuQablDRF9rC8x5bM4ifxdXRyezUy5InWOaNZh7K7MuXpe2n7Bg5Y0+T
+         ZzF3oRtpv4Xs952BM0L34kFgCDhZoQKmyNgXzT0U/7FCGv1Ju/CfpCStnegCmDj39HJl
+         LahT1F1qTx2/HPvFt6W/XXGgnGuv6YEG1aLal8oG8dNBBZKkrTIn1WLu1Uht0dkX2qKJ
+         MruM6D1z2ypj/AvXf+kUZXxwrZoEk0XDzUvMBIvEjqncUQBlFxEQQcCMndW4KT8ff/aN
+         kbwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMIKJF+qY3KbRAi62Ujl5C3gFqQTrxD1gHzv+ZjAhI6TU+J0NHx/nMKpHjBt441gb2mvCujjncly3WnGUleAk0XG0ECTO1jtRFSKHo
+X-Gm-Message-State: AOJu0YyW4w4/4APYIGXU1ZyyZ98gD2sTEM7IMQ22ndMig/k7JMjAQ5jn
+	AfkM1B76GQ053GFmKf7MVAjL5iz8ItawLOvr6xp7cMcOCwh/PFIk2oJHL5P13Bk=
+X-Google-Smtp-Source: AGHT+IEufPjRxTWjzgVrtdmJzPJng6hNeQ52ulh+woNrCp/z6nYp0qwQuW3J63AoyMFVNDqa1RjA9A==
+X-Received: by 2002:a05:6820:160d:b0:5c9:d9db:6a51 with SMTP id 006d021491bc7-5d61e3e28edmr105432eaf.0.1722444976962;
+        Wed, 31 Jul 2024 09:56:16 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:c572:4680:6997:45a1])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7095ad72442sm978393a34.28.2024.07.31.09.56.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 09:56:16 -0700 (PDT)
+Date: Wed, 31 Jul 2024 11:56:15 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Emmanuel Gil Peyrot <linkmauve@linkmauve.fr>
+Cc: linux-sunxi@lists.linux.dev, Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/4] media: cedrus: Don't require requests for all codecs
+Message-ID: <b3ab99a1-2e72-4b7e-8569-f7fe9beb3018@suswa.mountain>
+References: <20240731164422.206503-1-linkmauve@linkmauve.fr>
+ <20240731164422.206503-5-linkmauve@linkmauve.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,91 +90,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+In-Reply-To: <20240731164422.206503-5-linkmauve@linkmauve.fr>
 
-On Wed, Jul 31, 2024 at 09:18:00AM -0700, Andrii Nakryiko wrote:
-> On Mon, Jul 29, 2024 at 6:45 AM Oleg Nesterov <oleg@redhat.com> wrote:
-> >
-> > This way uprobe_unregister() and uprobe_apply() can use "struct uprobe *"
-> > rather than inode + offset. This simplifies the code and allows to avoid
-> > the unnecessary find_uprobe() + put_uprobe() in these functions.
-> >
-> > TODO: uprobe_unregister() still needs get_uprobe/put_uprobe to ensure that
-> > this uprobe can't be freed before up_write(&uprobe->register_rwsem).
-> >
-> > Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
-> > ---
-> >  include/linux/uprobes.h     | 15 +++++-----
-> >  kernel/events/uprobes.c     | 56 +++++++++++++++----------------------
-> >  kernel/trace/bpf_trace.c    | 25 ++++++++---------
-> >  kernel/trace/trace_uprobe.c | 26 ++++++++---------
-> >  4 files changed, 55 insertions(+), 67 deletions(-)
-> >
+On Wed, Jul 31, 2024 at 06:44:14PM +0200, Emmanuel Gil Peyrot wrote:
+> From: Jernej Skrabec <jernej.skrabec@gmail.com>
 > 
-> You'll need something like below to not break our bpf_testmod. And
-> please send pull patch sets, not individually updated patches, it's a
-> PITA to deal with. Thanks!
+> JPEG decoding doesn’t need it currently.
+> 
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> ---
 
-Do I stuff this on top of Oleg's patch or do you want me to fold it in
-one of them?
+Does this change have an effect on runtime?
 
-> commit 9f739a9997ab833394196459fa7e6dd4d13dd48b (HEAD -> uprobes-oleg-cleanups)
-> Author: Andrii Nakryiko <andrii@kernel.org>
-> Date:   Wed Jul 31 09:15:46 2024 -0700
-> 
->     uprobes: fix bpf_testmod after uprobe_register/uprobe_unregister API change
-> 
->     Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> 
-> diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> index 5f152afdec2f..73a6b041bcce 100644
-> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> @@ -431,6 +431,7 @@ uprobe_ret_handler(struct uprobe_consumer *self,
-> unsigned long func,
->  }
-> 
->  struct testmod_uprobe {
-> +       struct uprobe *uprobe;
->         struct path path;
->         loff_t offset;
->         struct uprobe_consumer consumer;
-> @@ -458,12 +459,14 @@ static int testmod_register_uprobe(loff_t offset)
->         if (err)
->                 goto out;
-> 
-> -       err = uprobe_register(d_real_inode(uprobe.path.dentry),
-> -                             offset, 0, &uprobe.consumer);
-> -       if (err)
-> +       uprobe.uprobe = uprobe_register(d_real_inode(uprobe.path.dentry),
-> +                                       offset, 0, &uprobe.consumer);
-> +       if (IS_ERR(uprobe.uprobe)) {
->                 path_put(&uprobe.path);
-> -       else
-> +               uprobe.uprobe = NULL;
-> +       } else {
->                 uprobe.offset = offset;
-> +       }
-> 
->  out:
->         mutex_unlock(&testmod_uprobe_mutex);
-> @@ -474,10 +477,10 @@ static void testmod_unregister_uprobe(void)
->  {
->         mutex_lock(&testmod_uprobe_mutex);
-> 
-> -       if (uprobe.offset) {
-> -               uprobe_unregister(d_real_inode(uprobe.path.dentry),
-> -                                 uprobe.offset, &uprobe.consumer);
-> +       if (uprobe.uprobe) {
-> +               uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
->                 uprobe.offset = 0;
-> +               uprobe.uprobe = NULL;
->         }
-> 
->         mutex_unlock(&testmod_uprobe_mutex);
-> 
-> 
-> [...]
+regards,
+dan carpenter
+
+
 
