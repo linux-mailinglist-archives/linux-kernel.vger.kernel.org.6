@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-269455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D8A943303
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:20:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9B9943327
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:25:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A65FB2B935
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:19:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53EF0B21696
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:20:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6BF1BE855;
-	Wed, 31 Jul 2024 15:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083A31BF323;
+	Wed, 31 Jul 2024 15:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IlBiVUve"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 651D21BBBDA;
-	Wed, 31 Jul 2024 15:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="u+3/e0Dt"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2313812B71;
+	Wed, 31 Jul 2024 15:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438741; cv=none; b=tDRjdwvVGWJnV+ruuzhjqbiCLwLB7C1CdvNUiYpT7mLgbVnoXTEfU+DWiqkLWpKQ4gshqzs1LP5J0+HigjGutAA8rHpHZwVGxthzA0MbHCqBCR+acX9ZmGt1mKW/ZkzepjivXM4nmKrIBtAefyLvLHLEQnoI5BMmYEmInby65OE=
+	t=1722438831; cv=none; b=o7OF84qdMxDs0tF/SFc2ns6a9xhwlXfit+BkOQtH1zXh1iI0JEs0nDnkEfIgnl4fQVCzw4vagR5AE26L8lTtQ6hFOyO26KrY83DD9BR+KkbnEcc3220oMYeY+DC/uHUtPw3DfGLRMMKPFWnyXCRGhUcKOWNlGe0FKTUxo9LJ0z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438741; c=relaxed/simple;
-	bh=AxJOmaOigk76Hu44956QrxC0XelL7qft/EELUebph+U=;
+	s=arc-20240116; t=1722438831; c=relaxed/simple;
+	bh=TNAtonRidmna81IBY8G3UGvtn9tX31MGv18W/k8LTLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BnspOp0BzzmzE33Pacw80BPgVSL1/twnizrAzHo5qkN1lgE4FOODOFtnAHN4YJRxE2x9+SBsMmoJo2jFRn8oKIjSo/7oGXAVhN3KH4tiLaG/ZnzQSlaBI+jaEJ29+wLdS6LH18Chya5bvJkJ01HXSIXobUv7x4fhglNWMUPNrXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IlBiVUve; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc49c0aaffso42370055ad.3;
-        Wed, 31 Jul 2024 08:12:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722438740; x=1723043540; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g7QMclGH2TxOtxr0vvWT8YB638709+b/1APHP7s32Gs=;
-        b=IlBiVUveG71kSaupAWUkqhnOggZVh78EmYYnaUNnBzBdN6C/OmlqZ8bdSkpjRDY21k
-         RRtKvXZMnYfbQyc8nt6kV8+ljAPPkskKqI+21zbMgXAX04Nszwdv3qtekP1d/iTHXkIJ
-         VwUvzWvzkQPahFOYCHLA5iRZMeQTQ4arV4/LTHs500Fi5HxKDaV7hy+p5OLBo+vPhPNQ
-         K7h728h62l7skZjgtdqryn7vXwVaTmcy6dh7+8NmcksFIHKVJphqxOOeHWqHnHdmZl/o
-         m1PB0pz7hHRK5rQrc95ZAontZwF7PkRdizcb48ngGURdNLYRvajOQmxWscfPwbk7eV4b
-         Mo0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722438740; x=1723043540;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7QMclGH2TxOtxr0vvWT8YB638709+b/1APHP7s32Gs=;
-        b=R/zYNF2ZKiviTnrHlY/thQY0raBohhXn3g1197yKa6Sg/Omcp3IaVRGy2uS9Vys7Ig
-         4iSi1vnow+dUfsV5GLEEh7jELfsX2HhPHV12I341Sz7XfqgKjs3I5KK7IBU1fEo3kFU5
-         P48NSHKQn8uQkoTS97UApEPbJtoAkxBOVF7hyi2QcoF7UbS4OG78yl+B/RYYZJL8cab6
-         /ELLLAHxO1Kw4CnMhJCW5ki28EKdgesbr1FtKOMXfnm4kM9YzeK4SyYPB7bEPlT4YnfK
-         0X/cmtwXciOESmXKMczvrRCZ+1dZ65yVp4S+mPmLhvtQQoctk+HhY5eEka7iJaySUfEy
-         /jUw==
-X-Forwarded-Encrypted: i=1; AJvYcCV4z64kWKWiMHuwdFwXHuIGSNS9NElh5lSzcrAek41FbhDr0Yqby3tsKl0KuFor53psjQhOjPYkXY6EXdnT3PZGJ4ZXTI8XvAj/6FvxvoEcDJSBslMozBPY2zCumVde8bdmAkZas4ZjZfHOwS4kufGdGJiZl1cJ+6AtVOjmd4ZTsuP46tnh624rIS5ADDLwVzH4zmAlJJLdcHhSe+GOTKSC
-X-Gm-Message-State: AOJu0YznIDIayiM6syDumuUgGY27f6tfBuHhA3UaetNZmAaxig1ccP+n
-	5mwCvKzpePZGjJf6Z1k/JRDJosKoHi7ZW6bU23qWF37R03W6mLRp
-X-Google-Smtp-Source: AGHT+IGuuLV/I6m/cx7VRfU+gmepK2aLMG/Hbrdi2xPZt7Fze6quw1img0IlEQlVitL3iOAEUcrp5Q==
-X-Received: by 2002:a17:902:ce83:b0:1fa:2401:be7d with SMTP id d9443c01a7336-1ff047e4585mr136680845ad.8.1722438739461;
-        Wed, 31 Jul 2024 08:12:19 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7edd813sm121600575ad.170.2024.07.31.08.12.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 08:12:18 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 31 Jul 2024 08:12:18 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v6 4/8] hwmon: (amc6821) add support for tsd,mule
-Message-ID: <5d5c44cd-6320-4fcd-9409-f3fc97bc5389@roeck-us.net>
-References: <20240725-dev-mule-i2c-mux-v6-0-f9f6d7b60fb2@cherry.de>
- <20240725-dev-mule-i2c-mux-v6-4-f9f6d7b60fb2@cherry.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=od3dDpzniUHlOtwogxG4+xWTQmw6u5Dxf/+KtHaVX0frKZicqLCFOFMFW7p3kDlgV7cq4Mnlj5X1cKjcxX2jeDw96/C+GUosm3lwsgOJ4BTvj6N0HsExv7HucXyUbmptaos/sWmdVQmsiqfZDT7qlnK/uuZQxfLx3DBUmgf241E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=u+3/e0Dt; arc=none smtp.client-ip=212.227.126.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1722438755; x=1723043555; i=christian@heusel.eu;
+	bh=fiuN9fTjYPSMySejhaU8aJ/MESvbQXsZn6JAwSDbzoY=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=u+3/e0Dt4tdSfpFLyFjUl6smtzg7Vx1Q1LJu236Bi6Pdwlm05H6JT7gQSuNwSy0F
+	 zRvEADi+nS398VOq143zX5wzYTyVDnTFKyfMLvfDq4pq76CvlLfghqwzGjwoTHRYv
+	 7pFbAoqBBbkRW7DO7TP4cALFiXUI3zh3wNDd04YEfXERfXEkMN9liS61t0vbykPBo
+	 96wiM+4bFfYH+gDTzRbK32MNTeIdDRi349TVFcp3WzyJq3b5K3DAtlLx6CW0uIn+r
+	 NBF8CWpmFIIbzAp9zJp79sh/bH670SfH5JkktU78RwO/haEzvLW0hj7OkNC+b0bUO
+	 CkxSW8SedJ+DSMKM7g==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([129.206.226.57]) by mrelayeu.kundenserver.de
+ (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1N3Xvv-1s8brM2e1L-012igo; Wed, 31 Jul 2024 17:12:35 +0200
+Date: Wed, 31 Jul 2024 17:12:34 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
+Message-ID: <47c19dd0-b9fc-490b-ada7-3e2fd74c32f1@heusel.eu>
+References: <20240731095022.970699670@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cflmrewle6jrucdq"
+Content-Disposition: inline
+In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
+X-Provags-ID: V03:K1:fPz2yEFyjf42LoBYm0wjWV7TJYdOYLZfAv5I1xJC5lw+EpAFNoE
+ beSr/qV/J+MqsLcIzPYaAc4/Z9FMEp5Jv2ZWOMh7Vz9vYJRTXGUXTIgu5Am92BTzbCpiJi4
+ FP1s3cKUfLTK/07yFCiRpBdEWrjgFrVpD2oFwLxhXsGgJprIEODG+WPDiK/PDwrQkg+4GDS
+ xapcnO+zUJn/9S4HYQSmQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zJPtp1StDLI=;7RB2+PUw1FOq1De1ZUu7NVEbg+P
+ iU05n04wMlOd9H88p3LIlB2FXkchH6QVJy7tNlM79fyq5s7hEeDPRo+iz0HZQUNKruomp0oEj
+ LTg6G/moeQBsEcdVR2ad1CcASgupAi8sHhuUD7b6NzRtmO6dTMzWOkqM3hi+dG6eg264hAJbR
+ WVSnGL9vnwGertfrH9TJ33FBf3SAc7SU9ZPq4g9BK0c/XjLkjS0iC9kDW8a3IK2lsH3VBOD+E
+ M3VR4Po3vOthRycVhKtmJ5fj/YkTCNqd1K1gfHHsJBCE6zW5Gf9GT9CsBuo6y5LtddCtVcFde
+ UteN1GMoinRX+a9+5EDWuJY8fuFRLt8EHo8TMhb+Y6T2kY2hIDsGe6NZrrO/8W0XXHW+W4P+m
+ 1XiziBYUQG/Wh/sQCaphhyuOaDlSxQ5Y31gARZrFeK2yFehU1R5dEigAI9TkmFdZXxEmwRkcD
+ HVokdfnTUXF1ymK5l9ruQNh3ukKuwfciZCOkEt9GJw2oSwtnGulrgoPNp2gFH6y8PLhw72l8l
+ /5kZF8K9aCRNLJCfiDvXj3FZjAUtTGWwNqlRHq8jghWS8Hp4eryOIqofF4GP1m7GYQAumJwtS
+ LNDcHJPaoDuPdRnx/Pv/8ocv5MJfY8OtsjN2m3zyr7NQfthhr2UFmWosaDHYDCcxSHN05oaN1
+ iJUHCBsrKMA8b7NmzlbCGShzOl3APVxgrQJkavgXOynK4mh0qH4SwM5s+vQ0q0yp1FXs51t58
+ Lf9wJOSLDMQFugzd3iFzKAFvjjLKRpT4w==
+
+
+--cflmrewle6jrucdq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240725-dev-mule-i2c-mux-v6-4-f9f6d7b60fb2@cherry.de>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 03:27:50PM +0200, Farouk Bouabid wrote:
-> Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
-> among which is an amc6821 and other devices that are reachable through
-> an I2C-mux.
-> 
-> The devices on the mux can be selected by writing the appropriate device
-> number to an I2C config register (amc6821: reg 0xff)
-> 
-> Implement "tsd,mule" compatible to instantiate the I2C-mux platform device
-> when probing the amc6821.
-> 
-> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+On 24/07/31 12:03PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
+> Anything received after that time might be too late.
+>=20
 
-Applied.
+Tested-by: Christian Heusel <christian@heusel.eu>
 
-Thanks,
-Guenter
+Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
+
+--cflmrewle6jrucdq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmaqVGIACgkQwEfU8yi1
+JYWW6BAAgMb43zlVQ1DaIuqk2kv7cdamBQXFOU6cQz60p5UgvKCgZkYt6nBbHsz0
+FmsnlIlunEe6K6TR3evgcH88R3he0XkLhXAPS672YKtYytRlbIQ1KWNlYqSmp0WP
+5c6tZdq2O8TmKaFzBU0ZFS3C9wh1MfilSxUrfC8B4tGcnDL+YkHjUq770sUYENoq
+21pq9Ne0/ALF6/ID9ck2p2tyh7WwJ1+A07RBoJV8Z0b9cGBevozRtKaw+5BuZUBf
+V4Yiwa/1gvp8MAL/6CbRHBwj+r9x79oxkDH+GKEPZUJzW0R0y6cDqy1Mw3hWL5uw
+h9VXo9qY+qZvVUHC6pIfbWhB4QCDPyBh13v6pFcQ6tNT08VN2n24kjNI6X0yphfZ
+WQeQN+t2psI85rzFfqQA6/33R+Lhr6Ypaep+fGGvoWWZzdwgltZuAnjgBQ8d6qPW
+cvSAMpe86Np5bXpTOHE/pjFiY7kw4/gzccsMiv/QxO0/b62u0u2cYC8+vQ3O74xD
+BJutJ210o24ESKE4UrIEFLcwsYx+SXWwzLeRE6n/28piWwfsEgd9Ojo82K6p1KMN
+xAzTxOLm1hI5b+UIOO3MoqMGpCDtAdIyXm8r5VNW+s78wurxY75hUuPubHA959b7
+V3bNEm6Ocmssc5IJSUgkCyZyRmpYf8C7y5o4eA3pLGYbjjH+PXE=
+=m2sJ
+-----END PGP SIGNATURE-----
+
+--cflmrewle6jrucdq--
 
