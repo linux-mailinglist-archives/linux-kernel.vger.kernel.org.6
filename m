@@ -1,334 +1,261 @@
-Return-Path: <linux-kernel+bounces-268812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5812F9429AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:54:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1B69429A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34C31F2337D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:54:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64348281345
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782AD1A8BF8;
-	Wed, 31 Jul 2024 08:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDBA11A8C06;
+	Wed, 31 Jul 2024 08:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b="ETvfGqxe";
-	dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b="G5XzxLfW"
-Received: from mail-edgeMUC218.fraunhofer.de (mail-edgemuc218.fraunhofer.de [192.102.154.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ULfTVI0K"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAEFA1A6166
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.102.154.218
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722416056; cv=fail; b=Bt558FbQCXTyJ5VucJUNmkLFpoDBIGsGwB0WHtapdsBBW698P4bCwa6jK3QOo5xEfOKla3KMPIO4YZAHwieDcdLW4oJUEOgIBySZhX+NpON20RBtrHKcJwaVwTdAgKBUdnUsBKTKSA5dZf1FhyWGn1fnS8A9+/wwNBGdiVuviqk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722416056; c=relaxed/simple;
-	bh=I/12fuf7tb/VME9lxBYWpC/kJnKFDOnYLE05yqwOPPg=;
-	h=From:To:CC:Subject:Date:Message-Id:Content-Type:MIME-Version; b=q9HQr4botKl6HtM58gmNUYpc2J8yVXkGVPFR7DtapEkRTVfz8krTDOKGNyWdrtvO9PBIc76vPm+Xkeoh3ovjvoV/S4mastK2rElxrEViC20hfbe8YIc68hf572WafZh4RqgvsdBFZ0A7cyL2I9QSxHgECLqD++NPLxsHVN2+laE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aisec.fraunhofer.de; spf=pass smtp.mailfrom=aisec.fraunhofer.de; dkim=pass (2048-bit key) header.d=aisec.fraunhofer.de header.i=@aisec.fraunhofer.de header.b=ETvfGqxe; dkim=pass (1024-bit key) header.d=fraunhofer.onmicrosoft.com header.i=@fraunhofer.onmicrosoft.com header.b=G5XzxLfW; arc=fail smtp.client-ip=192.102.154.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aisec.fraunhofer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aisec.fraunhofer.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=aisec.fraunhofer.de; i=@aisec.fraunhofer.de;
-  q=dns/txt; s=emailbd1; t=1722416051; x=1753952051;
-  h=from:to:cc:subject:date:message-id:
-   content-transfer-encoding:mime-version;
-  bh=I/12fuf7tb/VME9lxBYWpC/kJnKFDOnYLE05yqwOPPg=;
-  b=ETvfGqxeVDWBL6BWLtA8ui1oBeJWXRehEHOt8E0DgGScdgPbpGluOyLq
-   xPPxsYuhPxxbfW2+J+7SwBihzhymwSv0x9BFMHoLt7KgyEKZY/c3EYu/P
-   wcO6vvGbdFZCC5dIMwDEk8sJnCVzKkWes7sz6j7MvZEej2uxzMzmA6xP2
-   4rNlrbvkcgJQj0qTvki6calBRwHchtOpSEPTpvxnSF6spJ+5vg+XpJUSL
-   oRmPGkraoO02Ci/Y+eM204yN96oYtLX519fpQX0QDRnzEvzy9pUp8OHeX
-   bjpZoM9saEfkvPF2x3jyBgUgmXRT8o6w6NswvnwKGqXh3gwbG0Z+oqZpT
-   Q==;
-X-CSE-ConnectionGUID: arGBjx9oRzmZ5Gn7SZDCcg==
-X-CSE-MsgGUID: TNA4XMWMQNCGCigysU7Waw==
-Authentication-Results: mail-edgeMUC218.fraunhofer.de; dkim=pass (signature verified) header.i=@fraunhofer.onmicrosoft.com
-X-IPAS-Result: =?us-ascii?q?A2EoAwAm+qlm/yYF4gpagQmBT4JEb4FxhBo8risqgSyBJ?=
- =?us-ascii?q?QNWDwEBAQEBAQEBAQgBRAQBAQMEhH+JRic0CQ4BAgEDAQEBAQMCAwEBAQEBA?=
- =?us-ascii?q?QEBAQUBAQYBAQEBAQEGBwKBHYUvRg2ECoEmAQEBAQEBAQEBAQEBHQI1aBcPA?=
- =?us-ascii?q?Q0BATcBGBAMAiYCMysBDQWDAIIxAzGPdJw2gTKBAYIMAQEG2yQYgSSBIAkJA?=
- =?us-ascii?q?YEQLoNvhE4BhGiBJocWgRU1YoFib4QKToNGgmmIAow5iVAXJo8ISIEFHANZI?=
- =?us-ascii?q?RMBVRMNCgsJBYlMgy0pgW+BIoJ3glICglqBawxhh3JngQotgRGBIj1KgTyBO?=
- =?us-ascii?q?kskhUKBCoE+HUADCxgNSBEsNQYOG0MBbgemOHsTlgCzAweCNoFioTkaM5dKk?=
- =?us-ascii?q?nMBmHAipA6EOwIEAgQFAg8IgWeCFjM+gzZSGQ+OLRaDWMwndgI5AgcBCgEBA?=
- =?us-ascii?q?wmCOYY1gX8BAQ?=
-IronPort-PHdr: A9a23:HLj1Yxf/ZXKb58TAKoKazsrclGM+4d/LVj580XJao6wbK/fr9sH4J
- 0Wa/vVk1gKXDs3QvuhJj+PGvqynQ2EE6IaMvCNnEtRAAhEfgNgQnwsuDdTDDkv+LfXwaDc9E
- tgEX1hgrDmgZFNYHMv1e1rI+Di89zcPHBX4OwdvY+PzH4/ZlcOs0O6uvpbUZlYt5nK9NJ1oK
- xDkgQzNu5stnIFgJ60tmD7EuWBBdOkT5E86DlWVgxv6+oKM7YZuoQFxnt9kycNaSqT9efYIC
- JljSRk2OGA84sLm8CLOSweC/FIweWUbmRkbZmqN5hGvQ5Dhkw/5h/NN4wTHMfzJSJd3fxmB3
- btxQS3WjR09MAJm/l351pJ5169Yv0fywn43ydv7PbGHJN5wQY/0YN0CHG9QHctuaAZCBZy8c
- 7U2MvVfB9gAiJSlokkKo1ylPRGlFaTOyBVQnX70g/AcgvUxIy3D+zckENAL4EbXqtytHqEPA
- MmO5qDm7xzgTv4GyG/syaTnfU47kfWQXux5eMD1+1sBD1j5i0W0+NC4OjGQ0t4Si2Kavs1YT
- uiElV53kjFx8hyk5dUIqtj5jNg0jWDq5H5I5NoXIPCnckFUaNHxQ9NA8iCAMI1uRdk+Bntlo
- zs+1ugesIWgL0Diqbwizh/bLvGLfIWt3zm5DbbXLy1xmXRlf7yynVC+/Bvoxu79U5ys2U1R5
- mpek9bKv2wQzRGb9MWdS/V880vgkTaC3gze8KdFdGg6j6PGLZ4mzLMq0J0VtEXIBCjtn0vqy
- qSRcy0Z
-X-Talos-CUID: =?us-ascii?q?9a23=3AT8JFc2sXz9XdSd+uUcshsD3c6IssaFL3zmeBJHW?=
- =?us-ascii?q?qDFQ0Z7vKcm2806hrxp8=3D?=
-X-Talos-MUID: =?us-ascii?q?9a23=3AAZXN/A1i87kWee8+/VgEL4oglDUj34KHVHAorrA?=
- =?us-ascii?q?/neKrHi1/Kiyg0wu+Xdpy?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.09,251,1716242400"; 
-   d="scan'208";a="2718144"
-Received: from mail-mtamuc121-intra.mx.fraunhofer.de (HELO mail-mtaMUC121.fraunhofer.de) ([10.226.5.38])
-  by mail-edgeMUC218.fraunhofer.de with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 31 Jul 2024 10:52:57 +0200
-X-CSE-ConnectionGUID: BKgU13QAS12nxeE+Zn+Azg==
-X-CSE-MsgGUID: f8pxlMb7ROWjM9SdxZqceQ==
-IronPort-SDR: 66a9fb68_kP+oM+kihEGPtnYWVk8vkUWNOn2JCezxvDpUZDErjqyuwYS
- PL+PQyhFvtoVBRyEqj2YILi/g7opJjXeu7unJ/Q==
-X-IPAS-Result: =?us-ascii?q?A0BcKgAm+qlm/3+zYZlaHgEBCxIMQAkcgR8LgXJSBz4qa?=
- =?us-ascii?q?YEIhBk8g00BAYUthlCCXAGcLIEsgSUDVg8BAwEBAQEBCAFEBAEBhQaJQwInN?=
- =?us-ascii?q?AkOAQIBAQIBAQEBAwIDAQEBAQEBAQEBBQEBBQEBAQIBAQYFgQ4ThXUNhmAQB?=
- =?us-ascii?q?hEPAQ0BARQjARgQDAImAjMHJAENBSKCXoIxAzECAgKPbo9RAYFAAosigTKBA?=
- =?us-ascii?q?YIMAQEGBATbHBiBJIEgCQkBgRAug2+ETgGEaIEmhxaBFTVigWJvhAqEFIJpi?=
- =?us-ascii?q?AKMOYlQFyaPCEiBBRwDWSETAVUTDQoLCQWJTIMtKYFvgSKCd4JSAoJagWsMY?=
- =?us-ascii?q?YdyZ4EKLYERgSI9SoE8gTpLJIVCgQqBPh1AAwsYDUgRLDUGDhtDAW4Hpjh7E?=
- =?us-ascii?q?5YAswMHgjaBYqE5GjOXSpJzAZhwIqQOhDsCBAIEBQIPAQEGgWc8gVkzPoM2T?=
- =?us-ascii?q?wMZD44hDBaDWMwnQzMCOQIHAQoBAQMJgjmGNYF9AQE?=
-IronPort-PHdr: A9a23:+6hVexRd0VFLY0NmwlWGevWZQNpsouyeAWYlg6HP9ppQJ/3wt523J
- lfWoO5thQWUA9aT4Kdehu7fo63sHnYN5Z+RvXxRFf4EW0oLk8wLmQwnDsOfT0r9Kf/hdSshG
- 8peElRi+iLzKh1OFcLzbEHVuCf34yQbBxP/MgR4PKHyHIvThN6wzOe859jYZAAb4Vj1YeZcN
- hKz/ynYqsREupZoKKs61knsr2BTcutbgEJEd3mUmQrx4Nv1wI97/nZ1mtcMsvBNS777eKJqf
- fl9N3ELI2s17cvkuFz4QA2D62E1fk4WnxFLUG2npBv6C4r2ogretdtk6BK3YMHHcrUTGhKPz
- JV3UhbatiI9DTkFr2/rpJAuhflWow309Hkdi4SBT9ylJupacJzxVM4UXTNET4VcaBNrAYSjb
- 5cxNtceY9xm967g/14cqRX5HjG0DfKo6z1inmT33/Nn9bUwATPq2SsbG90MtSTmr9P8bI0UT
- LGc94PB4xfqTNJbiSal+ankXR9/u8GIQbEueMPb7Xs9ORueslCAjd25YjaX0+A3rFCR7rtHb
- fmloHAX+zhBomiLzeQ+rqmYtohP6xf02zQi8aJpB9iVV3R0TterRcgYp2SbLYxwWsQ4XyRyt
- T0nzqFToZegZ3tiIPUPwhfeb7mCb4Gt3zm6Dr/XLy1xmXRlf7yynVC+/Bvoxu79U5ys2U1R5
- mpek9bKv2wQzRGb9MWdS/V880vgkTaC3gze8KdFdGg6j6PGLZ4mzLMq0J0VtEXIBCjtn0vqy
- qSRcy0Z
-IronPort-Data: A9a23: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
- 2cYYRp1Cgxw9+yg3CM5Osw=
-IronPort-HdrOrdr: A9a23:8eAWbKAZkd2cRj3lHem455DYdb4zR+YMi2TCHihKOHhom+ij5q
- WTdZMgpH3JYVcqKRIdcL+7VZVoLUmxyXcX2+ks1NWZMjUO0VHAROoJ0WKI+Vzd8kPFmdJg6Q
- ==
-X-Talos-CUID: 9a23:N513xWMsEoVGsu5DcgpoyRdPI+keKyfb3Hr9YH2+Sk97R+jA
-X-Talos-MUID: =?us-ascii?q?9a23=3ArQN8XwyOaJ1i05vALKSGqYIMgrGaqKr+EFAJtJ9?=
- =?us-ascii?q?Zge67NwkhADuNvi28T7Zyfw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-AV: E=Sophos;i="6.09,251,1716242400"; 
-   d="scan'208";a="5860122"
-Received: from 153-97-179-127.vm.c.fraunhofer.de (HELO smtp.exch.fraunhofer.de) ([153.97.179.127])
-  by mail-mtaMUC121.fraunhofer.de with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 10:52:56 +0200
-Received: from XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) by
- XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 31 Jul 2024 10:52:56 +0200
-Received: from BEUP281CU002.outbound.protection.outlook.com (40.93.77.1) by
- XCH-HYBRID-04.ads.fraunhofer.de (10.225.9.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11 via Frontend Transport; Wed, 31 Jul 2024 10:52:56 +0200
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IFszY3j+NWeNSEEjw90APL5dgX8RMqFXaLJ6r6dekQQytZyK/BrlLPe8B5KrJGenimuB2XDIxK2Kmrnjl4JRP0rnevDn8wwU8m9xhfg28rP6GTaNQQCfyPheOMIKtMYaJITORJ648iSiiLt9C+xOCk/ba5aUyGEtVZkFAGDTP/7vMlQZuidhvYvB3Ji5vTPzXpRotFy2EHFbgQLQPTJrxS8bexbMpE8vODGOMDArPjO6S2ewpblqi5DTLssWSZfOIt0+nQ4FGeqWRoF4T3616aU5VLQN0ki0cE3W5BLTV3U/G6Uuj4pPrgr2DKIEm00Py+9riBcyBjxJIbyD7rm13w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uoxILkYqXSE5dYWmO+NEKZtraZVmRRoT7fTF46a3ekw=;
- b=ahZzYDBSlA/J6Hwruz5M+RuN1YmGIKwFXD9RgDXuVySCG4H/ZLJVXMMd6TEWU0zXiTUKSMXpVj5BMnRzISSQx33Az9VUSbxa80aGfjJHVSUYS/pTWqmj4AXulpj8QtLjWeee/hUpSkrHX4kC0w0BGFkk4C+c8Pz7J0svAlqs4LIERyx+pYiGkxZ70WOpFA4Vh+DKfZSWsdr1RgiOaLYjiMjdjXQGZBL6p7kmszMMkURFIV5HyyrFqtZmogs5ogoR3SHIPfsobqpyyyE48vwGn0ef675iLj4I0+Yze8Xfd+0NaErwOp07cKCcZoi/nJC0dIHzRNXrRRLKpV00m3Tdwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aisec.fraunhofer.de; dmarc=pass action=none
- header.from=aisec.fraunhofer.de; dkim=pass header.d=aisec.fraunhofer.de;
- arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F981A8BF0;
+	Wed, 31 Jul 2024 08:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722415949; cv=none; b=QXHE1ERX8B9QE4/jmNxHPkEIlbVNbcxYxHMdUQP6ahTIb1W3/1Wlk+wQGk8yPSSIF5nhZ3W7v/KaRAKabINRqsq0pyyrfNdmcYgth+FdcnzywQ7laoXjUYXl9PrsbjKlfY1fEpKfPWB7d5rey5C5Ei+sMzwvZuEFiORVBKTybFo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722415949; c=relaxed/simple;
+	bh=9rZ1LR2MHfwElzYHe5xKBRdAftswcYFgbJGTICHn+lM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YUqDMTS3s0GcrU+jnYsMhVpprHLKJy2Dedk+EqNgyOBTA3hCc601WFAgjGiFwP2vJ20Vlufc/k2QnM2liIgSqFga9wpZSSX50bo/VQZlPsABuLmvFZi6rLVzNLMIJpSh9beymbgA+0e6Fc0n0yV+p4b89LiZX5FnoNLE0dH7mPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ULfTVI0K; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5a108354819so8302277a12.0;
+        Wed, 31 Jul 2024 01:52:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=fraunhofer.onmicrosoft.com; s=selector2-fraunhofer-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uoxILkYqXSE5dYWmO+NEKZtraZVmRRoT7fTF46a3ekw=;
- b=G5XzxLfWDAufp1my+eWWBkowhtVQUw6RV0Ou0mzlf/sPpay/IjBpsij65N9yxZDmOSlgjm8Zkna0Bnu9ASBaFJAKIe8y0yIDGg6rXltk6aabLZzFp3TmxL945mjmlRwPbi9OPsbCvX8QXh8LcKzLH9Xb2I/XFy3YL4JmEwRgGag=
-Received: from BE1P281MB2180.DEUP281.PROD.OUTLOOK.COM (2603:10a6:b10:3f::7) by
- FRYP281MB0192.DEUP281.PROD.OUTLOOK.COM (2603:10a6:d10:7::16) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7828.21; Wed, 31 Jul 2024 08:52:55 +0000
-Received: from BE1P281MB2180.DEUP281.PROD.OUTLOOK.COM
- ([fe80::2e9b:1cd6:256e:55ed]) by BE1P281MB2180.DEUP281.PROD.OUTLOOK.COM
- ([fe80::2e9b:1cd6:256e:55ed%3]) with mapi id 15.20.7828.016; Wed, 31 Jul 2024
- 08:52:54 +0000
-From: =?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-To: Ian Rogers <irogers@google.com>, Arnaldo Carvalho de Melo
-	<acme@redhat.com>, Namhyung Kim <namhyung@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <gyroidos@aisec.fraunhofer.de>,
-	=?UTF-8?q?Michael=20Wei=C3=9F?= <michael.weiss@aisec.fraunhofer.de>
-Subject: [PATCH] tools lib subcmd: Fixed uninitialized use of variable in parse-options
-Date: Wed, 31 Jul 2024 10:52:17 +0200
-Message-Id: <20240731085217.94928-1-michael.weiss@aisec.fraunhofer.de>
-X-Mailer: git-send-email 2.39.2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0131.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b9::9) To BE1P281MB2180.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:b10:3f::7)
+        d=gmail.com; s=20230601; t=1722415943; x=1723020743; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YCgRqVhVvGH1xLiWUEDQJCc52pKSLqaPWPojVI4DuFo=;
+        b=ULfTVI0Kt2vLG93idkfA5MD35L8/qTYtF44GeX72nKbQp+3tbf4owNtNzwPFbW/KGy
+         FmdYevdmQ8V70GOJkgSgbnE55inV/D1t0DbDL9GzCVCR8Ka/zyOlL05LKpCR9Goe5aAe
+         F4CzA3wuGslYvjaAE8bpRGwXu+daE5G+4DVsZQ8/YkBQXx4c/WeB28xbONmo6zHwdgzK
+         j1T6vBetx3k0w92kFbmSocoMb0157vMMEwdmUoZfIGH7RnhwAb224we2DM5pZHWGXf33
+         SxIxqOj4QnnArfxdrcIBiykVyS//I8NyZugpieC7TdUN9ctOcUmk6BuVaSy8ogTbdIJf
+         0Y1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722415943; x=1723020743;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YCgRqVhVvGH1xLiWUEDQJCc52pKSLqaPWPojVI4DuFo=;
+        b=LlbDI+tUJ2meHIfyG6pr3gJtamqFaYPT0T4i43IOoXwjD+94P/AEyfaqSNmq7nlCN/
+         3Y+V4h6ihFVgF7yiX73fUus+VZAn9JsbvBWIoGtAXDOHA/Tk0LNq4QerOe34TbtStrs2
+         AmYx4eHk16e6d3VUZujuStb1PvF4cmCJo05HfxrzmkDC5jBWCj1aCNu3qJ/3Jr4ndc62
+         HeoZ4okljUBq8DzUE76wMnK8iLySfIXSiLqhLdmD/fTkKqn7Cg0lpTc+ei3WQH3MglbC
+         H4rw65CeSS/j3yYRVWpMpvI9SLxTORM1qJhO+SL+0SMNTaWNbnKA08H30n+C4R13EVSN
+         7IrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMSAjJGTj7mCeawubEpuGsnq6/FkdwvyVl8y4N3NOd5fMwmzgSlxIiABtMeSmPdUKsx8Ex24CEnL1ce+jEUQEPOopCOSosoHu/5VlY35j5zxRHrgQafYqQPtCGHxU1DqGedlHfdvYv9Q==
+X-Gm-Message-State: AOJu0Yw6bHUz9Ike5Mz0Wn8f1PJqYz7RUKdnTns8lZLzK2892BU0ABSE
+	Yre8gBP0ql3Sq8716x2ZbAxAL8ZorGzzF4jSnbH4lZJOECp4MmTl
+X-Google-Smtp-Source: AGHT+IFEXB32MF/zDjaTaXXSZ3lHKaaN8xOrOrIvlZ3OexDxC8CPXVT80x1IHlUa898mxjpey4Bf2Q==
+X-Received: by 2002:a05:6402:3595:b0:5a2:8802:8e10 with SMTP id 4fb4d7f45d1cf-5b02000c226mr9194659a12.8.1722415943182;
+        Wed, 31 Jul 2024 01:52:23 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac652911a5sm8291208a12.79.2024.07.31.01.52.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 01:52:22 -0700 (PDT)
+Message-ID: <ae7287257d6611ee27846643f48303c7e0dbb7ac.camel@gmail.com>
+Subject: Re: [PATCH RFC 2/5] iio: adc: ad4030: add driver for ad4030-24
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Esteban Blanc <eblanc@baylibre.com>, baylibre-upstreaming@groups.io, 
+ Lars-Peter Clausen
+	 <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron
+	 <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	 <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nuno Sa
+	 <nuno.sa@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
+Date: Wed, 31 Jul 2024 10:56:22 +0200
+In-Reply-To: <D2ZIG2NK223D.J9VK1MWOICE3@baylibre.com>
+References: <20240627-eblanc-ad4630_v1-v1-0-fdc0610c23b0@baylibre.com>
+	 <20240627-eblanc-ad4630_v1-v1-2-fdc0610c23b0@baylibre.com>
+	 <0036d44542f8cf45c91c867f0ddd7b45d1904d6b.camel@gmail.com>
+	 <D2ZIG2NK223D.J9VK1MWOICE3@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BE1P281MB2180:EE_|FRYP281MB0192:EE_
-X-MS-Office365-Filtering-Correlation-Id: ee250ec4-997a-4ffd-1c7a-08dcb13e2afc
-X-LD-Processed: f930300c-c97d-4019-be03-add650a171c4,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?QWdlY0RXd0IrSHRFbTBzbHFZTThqd0pWYmRodzY4SDQwb05HT0tVOThNMDlF?=
- =?utf-8?B?bGpETkN5Q0M1YkJVT1JoRG5LN1B1MjdqUkhEVlUyTlIwN2J6cGR2b1UvRU5r?=
- =?utf-8?B?Wko2bmJaZCsrb2cwSGJPZ0JiMys3M2NnL1hkSEVpUmJURTN0MUY5dEVMMlNT?=
- =?utf-8?B?eHZEVCtYb2hIbXIrcWlBYXlLUUM5cm9OdCtSVTlTSkpsL3JiM0Z0bjZRa0hn?=
- =?utf-8?B?U2tPanFtYlQ2TE4rWitYdng2MVBnSmZXdWphQk9oSHkwc2RXQ1M2eno0a0Y0?=
- =?utf-8?B?Y3VNaC92TUtCcWNGT2JjdWE5djhGY1laekZVSU85ZHdUa0lRdTFVZ1VBL1VK?=
- =?utf-8?B?M2pMSWdoRXJUcXEzSGxRdXNqOGdabThHcFRjRFRHR1hwak5VblpxNmJTdnA5?=
- =?utf-8?B?aUVDcG1zUlBxdWtSM3FKVVoyZW1vbGs1YklhNmNFSEs0cW1MQWxwZVVyWVMx?=
- =?utf-8?B?anhrTE8wc0EydnhySXg3dkx4YUVwUitXVXdBdU52UUc4eVpWM1JWUEVBQ2xO?=
- =?utf-8?B?QUcxelJIbFY0NVQrUmxrZFhaM0VhZlNadW83VFNacFFKYUwyUHdCTy9ZUWRY?=
- =?utf-8?B?TFAwbDl6N29DQ2thTTU2cHEzY2pIMWgzTDJzTUJJa21XR3FJN0xaNms4UVJQ?=
- =?utf-8?B?T1ZoR0ZDcEt4YXpiUWFMMCs1WWpvbThjdmt4ZmFPK2dOY1UvVm94amdWSUZq?=
- =?utf-8?B?azVNWU5LbW5QTjh1VXVxeUlNRC9rblNvS3pTV2ZEZnNzVDYzUjhacUUrTXVV?=
- =?utf-8?B?bFZQK0IrRkhnMEZDOTdUN25YeHhJdWNYUFp5Mjh1cjNJOFRrZVdGTnpUcHdm?=
- =?utf-8?B?KzRUZVFUVmdEcFJqb1l5aUh1NW1pcGFKQjRZL2liQWRReDV6M0NDMmlNMGxi?=
- =?utf-8?B?enMybCtodlZGZmR5c1B4b0RZUlBidDBiQkVObXJHbU1MTXZocytyKzBEbTcv?=
- =?utf-8?B?NTgzQU8waHVObUh5UEZROUp6V24wcnQyRDkxVnNjOEV3NkpzUmFqOGgyZ0R3?=
- =?utf-8?B?Z285RURia1NKb2Q5T1lPd2FFUlM2bU1OeWowUFFlUHpkcXd4UlNWRU0yOXpE?=
- =?utf-8?B?YWlHTzlxRU95RU1QY2JUcHFKTURDR2ZpdzBUb1hScm9CdG5vOTN5elN6cjFa?=
- =?utf-8?B?N1BMUWVyQ1VMN203ZllKdnp1dTJId0JNSm5KalZNbXlOWC9zeHZXWW5KVzZh?=
- =?utf-8?B?dVNMVWsrUk1XTTJxMWVoNkczb3pxNzBDNGdmU0luMkZsZExDaTJ5cVZHd2lT?=
- =?utf-8?B?bDc2eG10WTIrOTdyWWZnN2lNUFVTVy9EaW9uSnlGOUZRN3NDYXUwM3NRTjR6?=
- =?utf-8?B?ZFdNYS8wTWQ0d3lUeW1GMlR5VmpUZ04xcXl2dmpyMm5KZmxJWHdlOEJqQ29n?=
- =?utf-8?B?b1B6Rm9IWkNyck42M2hIbmxNbEc1U3NSeXoxejdFMG5EcEZYbWRnNTdTYVp0?=
- =?utf-8?B?VE9TQ0Nid2ZKZTVwdVpXZUpQM3VxNFJWMHMwejJHcmRpTWlKRTd2dVJGL29v?=
- =?utf-8?B?WCszcDFPMzhyNzZXMkE5T2RFYit5S2VySlRzSTVNKy9FbFFkZ0pNSjRFaVZI?=
- =?utf-8?B?bGk4TnZ5OS9SMnR4Nmp4V21Ya2dKcjdWK3V6ZGtZWnRwUENiTDdiUkwwZGlh?=
- =?utf-8?B?azJ2YnJ0YmEvb0UrSkRsZlJnbDhYR2s4bnBMTmw1L0FpeWtiLysrTk9LeUVS?=
- =?utf-8?B?Um03eVBXZlRGYTBrRGFMd3lTMXphdzBMSDlxM080aWhYbXdEYWZyREVSb1gr?=
- =?utf-8?B?cExLbFBqemEwUFBpRmVXamp6Sm43MDBjK09NRllaZ0tMRzc5OVFFcE1GYmx0?=
- =?utf-8?B?azFOOGxaMjl3ek1DMU5QQT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BE1P281MB2180.DEUP281.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ZmlXb0ZDQlBTdnYyeUtNUTg5UUFZbG1oUTFHUUprbHYrcjJPTUN4MHJqL1J6?=
- =?utf-8?B?dG4yN2xQWVFqVkFYMUFOaGpaQjZiRFd5R2JOWUhYbDBJcW41QlgvTFBUT1gr?=
- =?utf-8?B?azNBbW1FMHlKYTdCMDROMTNxbkRlQXF6ci8rd0J4cjZSMnB5MUhnbmxYbzJt?=
- =?utf-8?B?OWRTNEVNZm5YWjZCQjRPejczdEd0WlIxRDhTSEFEVWRpaFB4enpqeGZtd0to?=
- =?utf-8?B?SndhcXZLWTczOWw5L3NmKzV3UThtY096bmZNZ2VqRks2aHdjRmhSN3lrWGJL?=
- =?utf-8?B?U3ZrTXRSUTZFMUhXemMxbVFuOEQ1SWE1YlBjdnNOc0FWTTJUdE1hSjhvNWRX?=
- =?utf-8?B?N1QwM1R3TjFwWitDLzJPYTF1aDRualFMRXlxTEZrakw0bFJqTlYvRHkyM1BB?=
- =?utf-8?B?RXlEVDh0dG0vc0N3UXgzaUxMVW9NbkJlK3N4WTFWbWpMSGpMMklYd0lJa09V?=
- =?utf-8?B?cnpkWlBQOGJOV2czNk1rUnlyck1INHFuMEhrdzg4RVRFRmxteloxRXFSUFlq?=
- =?utf-8?B?cGlqZTBvb1pWTFRvN29JTWxzZm5STnBQN0tqZ3RzSkUwNHVMS1hwWnZlV1BQ?=
- =?utf-8?B?KzF6UHkyVktWK2hqNzV0d2k3L29HYVJVS1p5bmtuMVllMW5zNm5sQ2Uyd00y?=
- =?utf-8?B?dWwvWmtHYUZOSmNDOW53cTZkaUh4MVRCbUVpV3lBSmdqQkg2MWJuaHNreVJY?=
- =?utf-8?B?cTJQVDVNTU5xbmQxZWhTSy9pVHVnQ2hJZHRiSzRoQklYVjN3TlZOdkVJc29E?=
- =?utf-8?B?dDRCNXB2MlEyZGZRMWE4UVhTM1l2bTg5OE9ScUZsdzZSMVNxMGZwS3JuRkQy?=
- =?utf-8?B?TVNWZ3VZRkpLRmxWREFBSzhFc0Y1dFhnNnpsbzdzaUk2RWZ4d0ZxWEhOSUFx?=
- =?utf-8?B?QW5sNmdOVEo1WkhHSHVLc0kybzcxRWF0cEZCNjkzcVBIU3BvWnduVkYzaDdS?=
- =?utf-8?B?UThIeDYyaTNsMDc2T21RYnMyMC95YjROMDFiVkt1ZFFDamhjNTUxbmxDUUlQ?=
- =?utf-8?B?dVpkRThhaHZWRzhPRGQ0SGVtZ1E0UCs1andhUVJUbFVWdHJIa3p2RTZRT01I?=
- =?utf-8?B?QlFaaUtieWlYbHlkeldyRmoySkNjZlVCMzFrMCtEREFZelhsUkEvNmt1WWk1?=
- =?utf-8?B?VVcwenZPUkxUd3ltK1h0OE5qNzJkS0hlSTBxNVNrOFZvaHplcTJiT3VPLytQ?=
- =?utf-8?B?dkVtbG9PemZKMzM4b1BKNDNuenpSYS8rYXhFcm5JM1cxSW5sZDgyS0dCRFV6?=
- =?utf-8?B?VnNTNytlSWNpRHVJNEZ6QmVRL1FYcU05L3krNjhheXgzM3FsYzkzb3BnQVJI?=
- =?utf-8?B?Mk1PNzB3Rmt2Uk84WFVHRE56ZENPUlRiaG5TUXgybTJCUW1Qakl4a1Y5SmJW?=
- =?utf-8?B?U3lRSzZWV1hETnRKKzVkbFR6SW1oM0tJdTNZS2IrWWdSU1ZpVmZweG0wekl5?=
- =?utf-8?B?NVhoSnhVWlpPRGlJRWpwWE9NSlp0NXNhVjlLa0pnYkpOUjk3bWdsMmVjd3ZT?=
- =?utf-8?B?eGNjY1RzdHpYblZZU3RNK0c2cS8vSCsvWTZDb3pxenpHWHVmUXRSODZmRTN2?=
- =?utf-8?B?Q2ZhSjB1WWFmSVhiaFFnMmFheVYwR2ZJcDBFVVc2NHE4dmhoR1dmM3czU2JL?=
- =?utf-8?B?a0I1MEc5WG9BUE9JaUo2MUl6cTNOVC8xdzNUWGF6N1BsR3VaZkgrcDVTR3U5?=
- =?utf-8?B?OXpwNjhtMFh3LzZXUzJLQWVobUpnY3ZQTzFtbGtqeHlqS20xS2JxL1ZTcC9J?=
- =?utf-8?B?Y3o2WTVPelV6b3dpamJMdnM2eGM5d2d0QUxva2U5czd1Q3VYcUp3ZzhHMUlW?=
- =?utf-8?B?STU5cUxHVW50akZ2RjJ0U0NyMzQ0ZURZQzNub1BWd2hIaDBTU2dFZkRSeVo2?=
- =?utf-8?B?VzgyUGc5WXpjMjlMMXB5NDZVYXI3Uy9TTk5FMzBVTWl5cktBUXduY1RhSDNM?=
- =?utf-8?B?RC83VS9VRUZyeUJqYUFHYWxRUmoxczhOTlluVWcrS2d1bkt0dGExa1Fid0hr?=
- =?utf-8?B?WTgzQnhxSVhDMTVrREhPRkt1UkFvYkN5MjFHYWg1YTkrd3l5d09uTWFUZ0hX?=
- =?utf-8?B?cmFnM0JXYk9pSWJFcEpYY3NZaUlsbzd6YzhFaXN1MEl4YUhRTGwxMVgrOHUv?=
- =?utf-8?B?QlhrOTc0Y2Z0U0Vkdm9xMEFnWW82aTExMWhvUEdMSkFwUlpBYVBhUVFGK3p3?=
- =?utf-8?B?YXNVNmlsd1JmZzZNYU5wZ1BpZjhRWERYQisvY05tYVRZcVcwY3JudVg2djNo?=
- =?utf-8?Q?awB19X/Edlse0vPtiDQzMJWGsO4enPPdo2MV1lu2ag=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ee250ec4-997a-4ffd-1c7a-08dcb13e2afc
-X-MS-Exchange-CrossTenant-AuthSource: BE1P281MB2180.DEUP281.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 08:52:54.8434
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: f930300c-c97d-4019-be03-add650a171c4
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hapS7Ivpv7mV/wp1wAbFzkPmHg84snlul9F9+qtJvAQC7zAIkXIXrGlZBWrEoTgK/hUe8YiNeuxWjQo5Gvp5BTknJqJSr9YLNXfxkyx5/1KQp4opf0AiHzZcQarQ7DtU
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: FRYP281MB0192
-X-OriginatorOrg: aisec.fraunhofer.de
 
-Since commit ea558c86248b ("tools lib subcmd: Show parent options in
-help"), our debug images fail to build.
+On Fri, 2024-07-26 at 15:38 +0200, Esteban Blanc wrote:
+> Hi Nuno,
+>=20
+> > > +			struct {
+> > > +				s32 val[AD4030_MAX_DIFF_CHANNEL_NB];
+> > > +				u8 common[AD4030_MAX_COMMON_CHANNEL_NB];
+> >=20
+> > Not sure common makes sense as it comes aggregated with the sample. May=
+be
+> > this
+> > could as simple as:
+> >=20
+> > struct {
+> > 	s32 val;
+> > 	u64 timestamp __aligned(8);
+> > } rx_data ...
+>=20
+> See below my answer on channels order and storagebits.
+>=20
+> > So, from the datasheet, figure 39 we have something like a multiplexer =
+where
+> > we
+> > can have:
+> >=20
+> > - averaged data;
+> > - normal differential;
+> > - test pattern (btw, useful to have it in debugfs - but can come later)=
+;
+> > - 8 common mode bits;
+> >=20
+> > While the average, normal and test pattern are really mutual exclusive,=
+ the
+> > common mode voltage is different in the way that it's appended to
+> > differential
+> > sample. Making it kind of an aggregated thingy. Thus I guess it can mak=
+e
+> > sense
+> > for us to see them as different channels from a SW perspective (even mo=
+re
+> > since
+> > gain and offset only apply to the differential data). But there are a c=
+ouple
+> > of
+> > things I don't like (have concerns):
+> >=20
+> > * You're pushing the CM channels into the end. So when we a 2 channel d=
+evice
+> > we'll have:
+> >=20
+> > =C2=A0in_voltage0 - diff
+> > =C2=A0in_voltage1 - diff
+> > =C2=A0in_voltage2 - CM associated with chan0
+> > =C2=A0in_voltage0 - CM associated with chan1
+> >=20
+> > I think we could make it so the CM channel comes right after the channe=
+l
+> > where
+> > it's data belongs too. So for example, odd channels would be CM channel=
+s
+> > (and
+> > labels could also make sense).
+>=20
+> I must agree with you it would make more sense.
+>=20
+> > Other thing that came to mind is if we could somehow use differential =
+=3D true
+> > here. Having something like:
+> >=20
+> > in_voltage1_in_voltage0_raw - diff data
+> > ...
+> > And the only thing for CM would be:
+> >=20
+> > in_voltage1_raw
+> > in_voltage1_scale
+> >=20
+> > (not sure if the above is doable with ext_info - maybe only with
+> > device_attrs)
+> >=20
+> > The downside of the above is that we don't have a way to separate the s=
+can
+> > elements. Meaning that we don't have a way to specify the scan_type for=
+ both
+> > the
+> > common mode and differential voltage. That said, I wonder if it is that
+> > useful
+> > to buffer the common mode stuff? Alternatively, we could just have the
+> > scan_type
+> > for the diff data and apps really wanting the CM voltage could still ac=
+cess
+> > the
+> > raw data. Not pretty, I know...
+>=20
+> At the moment the way I "separate" them is by looking at the
+> `active_scan_mask`. If the user asked for differential channel only, I pu=
+t the
+> chip in differential only mode. If all the channels are asked, I put
+> the chip in differential + common mode. This way there is no need to
+> separate anything in differential mode. See below for an example where
+> this started.
+>=20
+> > However, even if we go with the two separate channels there's one thing=
+ that
+> > concerns me. Right now we have diff data with 32 for storage bits and C=
+M
+> > data
+> > with 8 storage bits which means the sample will be 40 bits and in reali=
+ty we
+> > just have 32. Sure, now we have SW buffering so we can make it work but=
+ the
+> > ultimate goal is to support HW buffering where we won't be able to touc=
+h the
+> > sample and thus we can't lie about the sample size. Could you run any t=
+est
+> > with
+> > this approach on a HW buffer setup?=20
+>=20
+> Let's take AD4630-24 in diff+cm mode as an example. We would have 4 chann=
+els:
+> - Ch0 diff with 24 bits of realbits and 24 bits of storagebits
+> - Ch0 cm with 8 bits of realbits and 8 bits of storagebits
+> - Ch1 diff with 24 bits of realbits and 24 bits of storagebits
+> - Ch1 cm with 8 bits of realbits and 8 bits of storagebits
+> ChX diff realbits + ChX cm realbits =3D 32 bits which is one sample as se=
+nt
+> by the chip.
+>=20
+> The problem I faced when trying to do this in this series is that IIO doe=
+sn't
+> seem to like 24 storagebits and the data would get garbled. In diff only
+> mode with the same channel setup (selecting only Ch0 diff and Ch1 diff)
+> the data is also garbled. I used iio-oscilloscope software to test this s=
+etup.
+> Here is the output with iio_readdev:
+> ```
+> # iio_readdev -s 1 ad4630-24 voltage0
+> WARNING: High-speed mode not enabled
+> Unable to refill buffer: Invalid argument (22)
+> ```
+>=20
+> I think this is happening when computing the padding to align ch1 diff.
+> In `iio_compute_scan_bytes` this line `bytes =3D ALIGN(bytes, length);`
+> will be invoked with bytes =3D 3 and length =3D 3 when selecting ch0 diff
+> and ch1 diff (AD4630-24 in differential mode). The output is 5. As
+> specified in linux/align.h:
+> > @a is a power of 2
+> In our case `a` is `length`, and 3 is not a power of 2.
+>=20
+> It works fine with Ch0/1 diff with 24 realbits and 32 storagebits with 8
+> bits shift.
 
-For our Yocto-based GyroidOS, we build debug images with debugging enabled
-for all binaries including the kernel. Yocto passes the corresponding gcc
-option "-Og" also to the kernel HOSTCFLAGS. This results in the following
-build error:
+Yes, I do understand that and that we need a power of 2 for storage bits. M=
+y
+concern, as stated, is that if we have HW buffering (High speed enabled) CH=
+O
+will have a sample size of (with diff + cm) of 40 which is not really what =
+comes
+from HW. I wonder if it will work in that case. Maybe we can (as this often
+happens on an FGPA) have the HW guys doing some data shuffling so things wo=
+rk in
+the high speed mode as well.
 
-  parse-options.c: In function ‘options__order’:
-  parse-options.c:834:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-    834 |         memcpy(&ordered[nr_opts], o, sizeof(*o));
-        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  parse-options.c:812:30: note: ‘o’ was declared here
-    812 |         const struct option *o, *p = opts;
-        |                              ^
-  ..
+- Nuno S=C3=A1
 
-Fix it by initializing 'o' instead of 'p' in the above failing line 812.
-'p' is initialized afterwards in the following for-loop anyway.
-I think that was the intention of the commit ea558c86248b ("tools lib
-subcmd: Show parent options in help") in the first place.
-
-Fixes: ea558c86248b ("tools lib subcmd: Show parent options in help")
-Signed-off-by: Michael Weiß <michael.weiss@aisec.fraunhofer.de>
----
- tools/lib/subcmd/parse-options.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
-index 4b60ec03b0bb..2a3b51a690c7 100644
---- a/tools/lib/subcmd/parse-options.c
-+++ b/tools/lib/subcmd/parse-options.c
-@@ -809,7 +809,7 @@ static int option__cmp(const void *va, const void *vb)
- static struct option *options__order(const struct option *opts)
- {
- 	int nr_opts = 0, nr_group = 0, nr_parent = 0, len;
--	const struct option *o, *p = opts;
-+	const struct option *o = opts, *p;
- 	struct option *opt, *ordered = NULL, *group;
- 
- 	/* flatten the options that have parents */
--- 
-2.39.2
 
 
