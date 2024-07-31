@@ -1,341 +1,184 @@
-Return-Path: <linux-kernel+bounces-269563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B61943458
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:47:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D8094345D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75DDC1C219F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:47:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DBD0B21E65
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8504B1BC09A;
-	Wed, 31 Jul 2024 16:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55631BC093;
+	Wed, 31 Jul 2024 16:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="i+0frub6"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UeCwLE6d"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8376E12E5D
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971F11AD3FD
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722444465; cv=none; b=usSb1IVN78uA4RAoTtMwMWEGd8gfJtemEClwcVRqv007/VA7JvG5IKfxMBtVeA/x0PhFX8WZ8iRB98TcGKVZyd2IzpWWTwvhF9Yf9fpX6AmyyWffSYVbwRikp8aNPeNaRA3e+2Z7WsBhl36I2NVfquHmYkCyddy/LLQ0YJvbhdI=
+	t=1722444557; cv=none; b=cttxToNBDe9cHkFu3iBZPUuR3bk1JXhJ+Vi500BNNrm7PW9NYkYnBiKxZpNME7kZVvRiy2o7zndwt72Pw8qyLgpxn3Yzvi+ZgiampnBMn/Utk+6fjm81sv+I3VxuGAqZNe2Lr2ddykgtRIuQJ3t2bjJgwwNwSEd3jMBhV+iho5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722444465; c=relaxed/simple;
-	bh=edgvm2Q3OZYieY5CspNnSLWxLbxk2yKGuPsYgCmOjmk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bp4lqGA3U6U2ND0BhLAE1KFSk3RWAzl+M1lRVWPnxskoPzKye6Td7gcX/CHW6nH+91agiEqfS5+pFkMs7yTEuR87mGiO4i7ztbVKXixizkme7wKwlm+IqV/1q5nWJ2M6e3A1wazJ+ZROtZfH1xseh9gKRI0CohdHD4KH6/4/1B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=i+0frub6; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=f4buewgm5nel5i5zajc23htsmm.protonmail; t=1722444455; x=1722703655;
-	bh=edOmevzsP+AiSRfaNCtnPpPP2xx1h3JfYBiL6PV3izg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=i+0frub6IBBNbBEcMppbgPL8u/90kCNSm+tAWgx8GSq9+tqzE3dt2BzKG+Qjrnqm0
-	 WA9YgIjykf0OVQUV0fzU3w5LAfyDUOFAe2PqlpHFcu3Vq+4Yizzh0lCcS3M2rTNbV8
-	 6N3JR03yol39ft//g6kLB4ImCuX58oK4HF2x4HXgSTYlOPZ7cpLQ808hIKEDYDgy/6
-	 4t/6IuvPkiAFnw8h+wcUZ45ZgkWwojaI0S8gQkWZuFeiCN4KHpjLucTCwrNC+InwGU
-	 WFbrL9Gp4D9Lk4ZXuAlTJ/h1BG8NTrSqE4CUqrbTSpx+hN7YUE3IyMGRGQ3HaloT32
-	 xWtyZEeTjdV/g==
-Date: Wed, 31 Jul 2024 16:47:27 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v3 02/10] rust: list: add ListArc
-Message-ID: <037f16f4-e959-4801-90b2-aafb7afcfdb6@proton.me>
-In-Reply-To: <20240723-linked-list-v3-2-89db92c7dbf4@google.com>
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-2-89db92c7dbf4@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 4696937061c3af902ab0f34209c7f5ccd75e6a44
+	s=arc-20240116; t=1722444557; c=relaxed/simple;
+	bh=vIgPYTY/ATG6dVRk9yyFG0fpmnnN1RIECDKQLxtV1LM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QLIvZyI/krDAjHnsCPdDrbn90+PUylDTS64MXxjYqryys1rPiudLQAmAglULL9SbJ/DN+nMSGJTwr/oqxvWYtIPrAdKT7jxDHjUoRPGdKvSbDFOxAEVId28jydyGNNjYZXnk619U2BLp8W5I+23YWAu1VAjJY1DOedDiw0Fj7T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UeCwLE6d; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70d28023accso4533502b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722444555; x=1723049355; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=v3tHZSVh1zalLsmMr1S88H2jiHIf6ekYi55+kBLD0Hg=;
+        b=UeCwLE6dtLk3EPZ0VsiDPp5sp4vFF+BUT+0h91LJXK+7F56zZNCUwTloeaJQjXlo7X
+         16KWxl8f1LBQXJnRb+NWzDmzTBUAaf/5UGSEuNZqF5QI571V1WK2vqzIO9OPRmuoPNEA
+         2+lK56ScaAJww+PgtNHmDuGs5Lpj+NCJarqWU5DtfN1GWcxKXuTo+qKrS/u9tu0RBc6v
+         Y3LSplIe1QtIw5aq6cTKf3mZFzpytqaOC8H9PS0XFBkg3QRtXalKFokkqMHPbCJgcgeD
+         p+LiM+Y0SHa9ucxUApGTxQOH018GNeeXQPsSsgwo/bbTN4Jvb5ozKf1P6zszmU0DcyZ4
+         0rXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722444555; x=1723049355;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v3tHZSVh1zalLsmMr1S88H2jiHIf6ekYi55+kBLD0Hg=;
+        b=hgSMQpX7dlXivdTukzJrLLvPQWsVvOYCtgEeXm+oBO29L/u0k/TJ08AKZicGzDM0oa
+         YHNoOSFaSiaDwtgtZKYwtLdwlapu+IcGvuH1yCNc1MfX06zPY3r7vwPQj0HHQ8bkGBnt
+         XDspWCC4SqiaYd8M2nE8XfLDuLbmvlXd3iRjYWRJKXFZw5dO4lS+KQK4kLK0RPv625q1
+         PoHewE27x3flYJ+qiIykzXV9Y0KaDKA/OT+KgWTdVjoebRWafJTxsFuPrkoHUeomundp
+         AKswHRaLibBbEy3ERb6E9e19K9Dyl2tjatGtA4TDIjFZySvrX6UumCdKxGpqsT/d6bWS
+         S8tg==
+X-Forwarded-Encrypted: i=1; AJvYcCVRN/A19wy5XTJ9xZg4IUlO7drHEwf2NaGsat0itzIpsoCxLHKWiZ83kjGeofiY8dsr5aIbYPLb6//7k4BgUG6Z9d6/KcU6XqROvh8m
+X-Gm-Message-State: AOJu0YxZiuoUGFl2+PmraGiia23E37UJqu13DUca2TFcql9SXol9w7Wk
+	fYlY+kayx+gumO4VlTdqwCZvz7KXg+NXiM0gfAPGE6fziU0ah87wn/EfCA==
+X-Google-Smtp-Source: AGHT+IFml1MY9k5R9lQFYUaFTYKrD8FYyzZdq1b7j+G/eRAbNnvB7sJZyKX+J55/ix4iegOQjx1KSw==
+X-Received: by 2002:a05:6a00:14c4:b0:70d:3916:8515 with SMTP id d2e1a72fcca58-70ece9fc25emr14431991b3a.2.1722444554758;
+        Wed, 31 Jul 2024 09:49:14 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead51abc4sm10191770b3a.0.2024.07.31.09.49.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 09:49:14 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <e15a45c4-77a0-4eec-84b3-d09ba1e8b681@roeck-us.net>
+Date: Wed, 31 Jul 2024 09:49:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.11-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+ Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Peter Anvin <hpa@zytor.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ the arch/x86 maintainers <x86@kernel.org>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+ <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+ <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+ <20240730192237.GR33588@noisy.programming.kicks-ass.net>
+ <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
+ <20240730193841.GS33588@noisy.programming.kicks-ass.net>
+ <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
+ <20240731122002.GE33588@noisy.programming.kicks-ass.net>
+ <87mslx67dm.ffs@tglx>
+ <20240731155551.GF33588@noisy.programming.kicks-ass.net>
+ <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 23.07.24 10:22, Alice Ryhl wrote:
-> The `ListArc` type can be thought of as a special reference to a
-> refcounted object that owns the permission to manipulate the
-> `next`/`prev` pointers stored in the refcounted object. By ensuring that
-> each object has only one `ListArc` reference, the owner of that
-> reference is assured exclusive access to the `next`/`prev` pointers.
-> When a `ListArc` is inserted into a `List`, the `List` takes ownership
-> of the `ListArc` reference.
->=20
-> There are various strategies for ensuring that a value has only one
-> `ListArc` reference. The simplest is to convert a `UniqueArc` into a
-> `ListArc`. However, the refcounted object could also keep track of
-> whether a `ListArc` exists using a boolean, which could allow for the
-> creation of new `ListArc` references from an `Arc` reference. Whatever
-> strategy is used, the relevant tracking is referred to as "the tracking
-> inside `T`", and the `ListArcSafe` trait (and its subtraits) are used to
-> update the tracking when a `ListArc` is created or destroyed.
->=20
-> Note that we allow the case where the tracking inside `T` thinks that a
-> `ListArc` exists, but actually, there isn't a `ListArc`. However, we do
-> not allow the opposite situation where a `ListArc` exists, but the
-> tracking thinks it doesn't. This is because the former can at most
-> result in us failing to create a `ListArc` when the operation could
-> succeed, whereas the latter can result in the creation of two `ListArc`
-> references.
+On 7/31/24 09:17, Linus Torvalds wrote:
+> On Wed, 31 Jul 2024 at 08:55, Peter Zijlstra <peterz@infradead.org> wrote:
+>>
+>> Right, so Thomas found that i386-pti fails to map the entire entry text.
+>> Specifically pti_clone_pgtable() hard relies -- and does not verify --
+>> that the start address is aligned to the given granularity.
+>>
+>> Now, i386 does not align __entry_text_start, and so the termination
+>> condition goes sideways and pte_clone_entry() does not always work right
+>> and it becomes a games of code layout roulette.
+> 
+> Lovely.
+> 
+>> Also, should we just kill PTI on 32bit perhaps?
+> 
+> I don't think there's much technical reason to keep it - I can't
+> imagine any security-conscious people actually use 32-bit x86 any more
+> - but apart from fixing this bug I wonder how much of a maintenance
+> burden it is? I think most of the code is shared with 64-bit, isn't
+> it? The 32-bit case in many ways is simpler, even if it happened to
+> hit this odd alignment issue because it's obviously also a lot less
+> tested.
+> 
+> I'd rather kill highmem and X86_PAE, but I also suspect that horror
+> has a much larger chance of still being used.
+> 
 
-You could add at the end of this paragraph that the latter is a
-soundness issue and could lead to memory bugs, but the former cannot.
+I guess there is at least one user - me with my annoying boot tests ;-).
 
-> This patch introduces the `impl_list_arc_safe!` macro that allows you to
-> implement `ListArcSafe` for types using the strategy where a `ListArc`
-> can only be created from a `UniqueArc`. Other strategies are introduced
-> in later patches.
+But seriously the question is: How likely is it for that code to find
+potential problems in the 64-bit code ? pti_clone_pgtable() doesn't
+seem to be 32-bit specific.
 
-[...]
-
-> diff --git a/rust/kernel/list/arc.rs b/rust/kernel/list/arc.rs
-> new file mode 100644
-> index 000000000000..3b7072e58256
-> --- /dev/null
-> +++ b/rust/kernel/list/arc.rs
-> @@ -0,0 +1,348 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! A wrapper around `Arc` for linked lists.
-> +
-> +use crate::alloc::{AllocError, Flags};
-> +use crate::prelude::*;
-> +use crate::sync::{Arc, ArcBorrow, UniqueArc};
-> +use core::marker::Unsize;
-> +use core::ops::Deref;
-> +use core::pin::Pin;
-> +
-> +/// Declares that this type has some way to ensure that there is exactly=
- one `ListArc` instance for
-> +/// this id.
-> +///
-> +/// Types that implement this trait should include some kind of logic fo=
-r keeping track of whether
-> +/// a [`ListArc`] exists or not. We refer to this logic as "the tracking=
- inside `T`".
-> +///
-> +/// We allow the case where the tracking inside `T` thinks that a [`List=
-Arc`] exists, but actually,
-> +/// there isn't a [`ListArc`]. However, we do not allow the opposite sit=
-uation where a [`ListArc`]
-> +/// exists, but the tracking thinks it doesn't. This is because the form=
-er can at most result in us
-> +/// failing to create a [`ListArc`] when the operation could succeed, wh=
-ereas the latter can result
-> +/// in the creation of two [`ListArc`] references.
-
-Would be good to also add it here.
-
-> +///
-> +/// A consequence of the above is that you may implement the tracking in=
-side `T` by not actually
-> +/// keeping track of anything. To do this, you always claim that a [`Lis=
-tArc`] exists, even if
-> +/// there isn't one. This implementation is allowed by the above rule, b=
-ut it means that
-> +/// [`ListArc`] references can only be created if you have ownership of =
-*all* references to the
-> +/// refcounted object, as you otherwise have no way of knowing whether a=
- [`ListArc`] exists.
-> +pub trait ListArcSafe<const ID: u64 =3D 0> {
-> +    /// Informs the tracking inside this type that it now has a [`ListAr=
-c`] reference.
-> +    ///
-> +    /// This method may be called even if the tracking inside this type =
-thinks that a `ListArc`
-> +    /// reference exists. (But only if that's not actually the case.)
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Must not be called if a [`ListArc`] already exist for this value=
-.
-> +    unsafe fn on_create_list_arc_from_unique(self: Pin<&mut Self>);
-> +
-> +    /// Informs the tracking inside this type that there is no [`ListArc=
-`] reference anymore.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// Must only be called if there is no [`ListArc`] reference, but th=
-e tracking thinks there is.
-> +    unsafe fn on_drop_list_arc(&self);
-> +}
-> +
-> +/// Declares that this type supports [`ListArc`].
-> +///
-> +/// When using this macro, it will only be possible to create a [`ListAr=
-c`] from a [`UniqueArc`].
-> +#[macro_export]
-> +macro_rules! impl_list_arc_safe {
-> +    (impl$({$($generics:tt)*})? ListArcSafe<$num:tt> for $t:ty { untrack=
-ed; } $($rest:tt)*) =3D> {
-> +        impl$(<$($generics)*>)? $crate::list::ListArcSafe<$num> for $t {
-> +            unsafe fn on_create_list_arc_from_unique(self: ::core::pin::=
-Pin<&mut Self>) {}
-> +            unsafe fn on_drop_list_arc(&self) {}
-> +        }
-> +        $crate::list::impl_list_arc_safe! { $($rest)* }
-> +    };
-> +
-> +    () =3D> {};
-> +}
-> +pub use impl_list_arc_safe;
-> +
-> +/// A wrapper around [`Arc`] that's guaranteed unique for the given id.
-> +///
-> +/// The `ListArc` type can be thought of as a special reference to a ref=
-counted object that owns the
-> +/// permission to manipulate the `next`/`prev` pointers stored in the re=
-fcounted object. By ensuring
-> +/// that each object has only one `ListArc` reference, the owner of that=
- reference is assured
-> +/// exclusive access to the `next`/`prev` pointers. When a `ListArc` is =
-inserted into a `List`, the
-> +/// `List` takes ownership of the `ListArc` reference.
-> +///
-> +/// There are various strategies to ensuring that a value has only one `=
-ListArc` reference. The
-> +/// simplest is to convert a [`UniqueArc`] into a `ListArc`. However, th=
-e refcounted object could
-> +/// also keep track of whether a `ListArc` exists using a boolean, which=
- could allow for the
-> +/// creation of new `ListArc` references from an [`Arc`] reference. What=
-ever strategy is used, the
-> +/// relevant tracking is referred to as "the tracking inside `T`", and t=
-he [`ListArcSafe`] trait
-> +/// (and its subtraits) are used to update the tracking when a `ListArc`=
- is created or destroyed.
-> +///
-> +/// Note that we allow the case where the tracking inside `T` thinks tha=
-t a `ListArc` exists, but
-> +/// actually, there isn't a `ListArc`. However, we do not allow the oppo=
-site situation where a
-> +/// `ListArc` exists, but the tracking thinks it doesn't. This is becaus=
-e the former can at most
-> +/// result in us failing to create a `ListArc` when the operation could =
-succeed, whereas the latter
-> +/// can result in the creation of two `ListArc` references.
-> +///
-> +/// # Invariants
-> +///
-> +/// * Each reference counted object has at most one `ListArc` for each v=
-alue of `ID`.
-> +/// * The tracking inside `T` is aware that a `ListArc` reference exists=
-.
-
-I am not entirely sure where to put this, but I think it might be good
-as the first paragraph or directly after the first:
-   =20
-    While this `ListArc` is unique for the given id, there still might
-    exist normal `Arc` references to the object.
-
-Feel free to modify it (I am not really happy with "object").
-
-> +#[repr(transparent)]
-> +pub struct ListArc<T, const ID: u64 =3D 0>
-> +where
-> +    T: ListArcSafe<ID> + ?Sized,
-> +{
-> +    arc: Arc<T>,
-> +}
-
-[...]
-
-> +    /// Transmutes an [`Arc`] into a `ListArc` without updating the trac=
-king inside `T`.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// * The value must not already have a `ListArc` reference.
-> +    /// * The tracking inside `T` must think that there is a `ListArc` r=
-eference.
-> +    #[inline]
-> +    unsafe fn transmute_from_arc(arc: Arc<T>) -> Self {
-
-I think the name is inaccurate now, since it is no longer a transmute,
-so maybe `from_arc_unchecked`?
-
-> +        // INVARIANT: By the safety requirements, the invariants on `Lis=
-tArc` are satisfied.
-> +        Self { arc }
-> +    }
-> +
-> +    /// Transmutes a `ListArc` into an [`Arc`] without updating the trac=
-king inside `T`.
-> +    ///
-> +    /// After this call, the tracking inside `T` will still think that t=
-here is a `ListArc`
-> +    /// reference.
-> +    #[inline]
-> +    fn transmute_to_arc(self) -> Arc<T> {
-
-Maybe also change this then to be consistent, since the name `transmute`
-carries a "dangerous" feel to it, but this is actually totally safe.
-
-> +        // Use a transmute to skip destructor.
-> +        //
-> +        // SAFETY: ListArc is repr(transparent).
-> +        unsafe { core::mem::transmute(self) }
-> +    }
-
-[...]
-
-> +// This is to allow [`ListArc`] (and variants) to be used as the type of=
- `self`.
-> +impl<T, const ID: u64> core::ops::Receiver for ListArc<T, ID> where T: L=
-istArcSafe<ID> + ?Sized {}
-> +
-> +// This is to allow coercion from `ListArc<T>` to `ListArc<U>` if `T` ca=
-n be converted to the
-> +// dynamically-sized type (DST) `U`.
-> +impl<T, U, const ID: u64> core::ops::CoerceUnsized<ListArc<U, ID>> for L=
-istArc<T, ID>
-> +where
-> +    T: ListArcSafe<ID> + Unsize<U> + ?Sized,
-> +    U: ListArcSafe<ID> + ?Sized,
-> +{
-> +}
-> +
-> +// This is to allow `ListArc<U>` to be dispatched on when `ListArc<T>` c=
-an be coerced into
-> +// `ListArc<U>`.
-> +impl<T, U, const ID: u64> core::ops::DispatchFromDyn<ListArc<U, ID>> for=
- ListArc<T, ID>
-> +where
-> +    T: ListArcSafe<ID> + Unsize<U> + ?Sized,
-> +    U: ListArcSafe<ID> + ?Sized,
-> +{
-> +}
-
-Can we start using `feature(derive_smart_pointer)` on new enough
-compiler versions? (I guess you probably want it as a separate patch
-series to avoid delaying this in case it needs anything [eg the new
-build system])
-Do we need any Makefile modifications for that or could we just do
-`#[cfg_attr(compiler-is-new-enough, derive(SmartPointer))` on the struct
-and then cfg these impls away? (and what would "compiler-is-new-enough"
-be?)
-
-
-Aside from my docs nits, this looks good:
-
-Reviewed-by: Benno Lossin <benno.lossin@proton.me>
-
-(feel free to discuss any changes, I am not set on the exact phrasing)
-
----
-Cheers,
-Benno
+Guenter
 
 
