@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-269347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8679431D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:15:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1C69431A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69281B24EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDFC92836DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 528AF1B3F04;
-	Wed, 31 Jul 2024 14:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0881B29CF;
+	Wed, 31 Jul 2024 14:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="jPWOReDo"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="QzII+EPz"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD6B1B3748
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCB71EB56
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722435314; cv=none; b=om1wdU4HPdAisRCAF8j4ag1Qf83mScS8svBDj8HNynUDvRBgqZ+FXd/N/Hzf/2r8gjJ6XgQq+RX0sR1Mti5ZSi1RV9lEM3ILTatETKLObwXApWagdr7NyKqjRdN/M/0Rd9vDa/EpOgYrhifiyGXwFD5o2V7aNydyIp0SwQoH2Bg=
+	t=1722434679; cv=none; b=V60rmVvHDi+vSygckuRy9ZF1BoW5FeeW2yRMQusityolnKLX9yz6FVBuMQOXkyNI41UK7OtM7kDd3unhPKjHHdmOajSk13wuSY9QAHEkXgZMdT//lKl6dBObtXgoAwFurpygRJIPFpJNiy0pfq+yzyF/AuzjXFz2lYxTo/VNSUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722435314; c=relaxed/simple;
-	bh=r4t/RSO2hnjEe6G0UZz+W/1GYVcTqgB0/PT6VIY5r9U=;
+	s=arc-20240116; t=1722434679; c=relaxed/simple;
+	bh=oLh2PxgOYmR7+7wdleZ5fx2VuAWo/Sel6Gx9WfF2ndM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kCWTV9D2mQYAm1KBYAtSe7fzoirZMndyS5XO+ZO5j3ofOQPvm1/35FeJvHwN4MBNm+GtT8goEqnszRxx+5UJcYhJTZL4IHbYJ+SXTltdAaDdIGiIchO2n4hsoodyG5RMVeIwd1jNFmTuS1HgtfobQZLT8X++r5Z2NsCTbgfs/aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=jPWOReDo; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6b7aed340daso34782116d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:15:12 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=X+oKTPZVa6PfHYFV0Mvle/F8IWYCXdmUCTy2a9Da56uAffAzf/YiPB/EE4tFB5y6J7rwfIwICF3MjvBrw/8Ls0dAqigkPSTPMs0267Skv1jeTo9XB/FWM2W6SH/eQBP4U88JUTBlQgMuhf27ydLQ3a0ExsaAqdKtkmr2vH39JJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=QzII+EPz; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-79f19f19059so352795185a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:04:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1722435312; x=1723040112; darn=vger.kernel.org;
+        d=rowland.harvard.edu; s=google; t=1722434677; x=1723039477; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nZoGyjJaWEwHv/KfoCIN2q0gBEBBi+yquexZmDv5wAQ=;
-        b=jPWOReDofvGe9fFrLP9YyShxbJFutSpldxfOK/lc83oI+PG114J/apwW/o5BKp2BHu
-         XIK1uSQFinqafLqbjZ8p5hHYDiXzstGFzRyZodOtbQ+zXegeQPFCpFJVmf7UILT6GbBq
-         x9Cz5p3XVcKRx8F7ZBRGB3X3znna0wLiFiM46MumeX8hsCFqb0ja7CJXpSWrEYpX8qOw
-         LKXErYzR9OL47IeAMh7O4vhCN9QHtc3EVXplsuFaUGRIv4rV7fey8aUALT0/0VvItykK
-         PJ80qjb+mX6R4aQTL5JuG/tIFsSnzYLW5XG0sNeloVZhBT4b5B8Aa+IL9+sz9B3wGeWS
-         dhDA==
+        bh=a33CO1uHADQ6sgXZQtQE5aEWMq1kTwgBEoJ/8BHTMSw=;
+        b=QzII+EPz+AeFudTuY5beEx0D520OPezVkRv61O6qXkLQ77Ff3MNsRsre3F7cjSGyV/
+         +kCO+lbXZrA86yryJnN9QCLfP9QGqeRQWnUzdV7tVKvs+ivYGORBpOok7Easx7uqFyfA
+         OOPWSXwm5UB4dBMN6OUwsAd2Tzrz6nJ8KpUn/fU8RG1T2FFDoM9ox/4QyB/BMHHBcgtH
+         KV+wjbcgc7y9IjmXp+LfOMD5fTgaJ+pGAtUiiR5iWNDCNYTsigwVzyilM6v5COnQIFuy
+         +BgudmFKJinUZuT4ePH3BMbKNxy740NO3/sPwat3NM89hUQrCVMb6te0fQdmQs8hIJf9
+         Lzfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722435312; x=1723040112;
+        d=1e100.net; s=20230601; t=1722434677; x=1723039477;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nZoGyjJaWEwHv/KfoCIN2q0gBEBBi+yquexZmDv5wAQ=;
-        b=PceFrx7RR94+8YUI9Qn50xnDiAOchAGRlWn9+bFeeusY4ZrlLsc5PxpvA7M41DsBZR
-         LAFzEerPq8BjcgwkcJkvw60fZaVXe/29A6lA8f1IKCWtvjCgzFQZaicpoclxe4Kh8U7l
-         8yiq9Q4i0ddRXgalDnaPnk2T4YYNuu/Wjo4uYKzJ3O7kUVY8O4ttlI/flow6yufJv3Z4
-         dOpxMRB0EStLFxHK2dLbFF7b2qFXlqJihrR9O4JtpJaEzkNiJG8YLMt9D/Uyu63aJkud
-         IRXQUoIgZKbHt9bN3ExVh0kR0q+f3RFosOsFeyStOip8jfRjsE7tLBkV4ySuG8aC91cc
-         BtYg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzVzWkRWW7TcnpLGV//eXnQ65GiqKadBW0+YhI+A86NO6FA0+NGue5sj8lmiBYvQvyM7Tb+uqwiY5BwmDSpLGArynHATfd/JNW42BI
-X-Gm-Message-State: AOJu0YxUpOZZWkFzSCyvxlJcFY68k5G+S0Ok54nD5R8BKVSzFSMgQShK
-	6mUYak68pKwWYHqRfYrLpULi/H/d46ZoMBIm/s7FSETjELUBfyRHHd2kGqdj9sw=
-X-Google-Smtp-Source: AGHT+IFNREONZgm7zLR0cLrVINRHZAuZJz57NqpdO1aQ2JjmTspGlBRsHUwaFMQ8H7vcv4eyfHiRWw==
-X-Received: by 2002:ad4:5c6f:0:b0:6b5:d9ef:d56d with SMTP id 6a1803df08f44-6bb559c3461mr182732716d6.21.1722435311609;
-        Wed, 31 Jul 2024 07:15:11 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fa950a3sm74461836d6.90.2024.07.31.07.15.10
+        bh=a33CO1uHADQ6sgXZQtQE5aEWMq1kTwgBEoJ/8BHTMSw=;
+        b=r6hZHBPVE865ToOX1sFQv2ePcJT6PhyktSMDF6XTHi6Bo5AjF7SfD3ovcU4Cqp9EK3
+         gmsH3tn80A6V7eesX5Bxd8tmrGzVjaUdBPHgB90q+x2z43mx+vR3ClVqYA8/HRTPQTln
+         EarhU0shrUTsLkBv2kIC56t2CUBYKo1exdxhUXkRPo6Ym+ThKb6sUsfs+xAOP6MRYf50
+         rL4JqrlJhuxoug8iekEcj1Yo1kn+dbsqKaSZv9T2F5E5aM81hkGhuDyLzare4Ewf/e/o
+         xYNa6GPHfZHo3Y/YARpFC80urPW5Cpwzezq+cnx3g3eGSp8QV3t9hamCO6bCdpuwibUQ
+         6lRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOWQCWbto79JJuHhR888soqHMeniRbN1+A2sjoO7oyCgLG2rs5kmLqQ/JW5sZEAmFjC0FT0yMV9wdA2bKe/G7IOrUnz1zddmvNxDr6
+X-Gm-Message-State: AOJu0YycTToRXwDj6P/CMdfFRgo3enaKbmx3JImu8wrOaHMqJPKd+xWz
+	4Bh3bP1uLjpOzWgMxjZb2+pNgT5pHMcjEDjtafmyoTGvDM6iQ88nXTnDS72g31Ledu1AlMJ87tM
+	=
+X-Google-Smtp-Source: AGHT+IHuaIxXiz9/F7tFd8xWAfJBmkTsfbtztGBLPFY0TGFZMDZboiTLKwe6io78Jn8mrFkjnOLl9g==
+X-Received: by 2002:a05:620a:8016:b0:79d:9102:554a with SMTP id af79cd13be357-7a1e5223dddmr1848014585a.14.1722434676796;
+        Wed, 31 Jul 2024 07:04:36 -0700 (PDT)
+Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1ddea0c2asm645807185a.27.2024.07.31.07.04.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 07:15:11 -0700 (PDT)
-Date: Tue, 30 Jul 2024 16:26:06 -0400
-From: Gregory Price <gourry@gourry.net>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, dave.jiang@intel.com,
-	Jonathan.Cameron@huawei.com, horenchuang@bytedance.com,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	dan.j.williams@intel.com, lenb@kernel.org,
-	"Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
- calculation callback
-Message-ID: <ZqlMXuBxi2oShb-u@PC2K9PVX.TheFacebook.com>
-References: <20240726215548.10653-1-gourry@gourry.net>
- <87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
- <877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZqhbePA9Egcxyx7o@PC2K9PVX.TheFacebook.com>
- <87cymupd7r.fsf@yhuang6-desk2.ccr.corp.intel.com>
- <ZqlF0hn6Jh4Ybl-p@PC2K9PVX.TheFacebook.com>
- <878qxiowmy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+        Wed, 31 Jul 2024 07:04:36 -0700 (PDT)
+Date: Wed, 31 Jul 2024 10:04:33 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Oliver Neukum <oneukum@suse.com>
+Cc: Abhishek Tamboli <abhishektamboli9@gmail.com>,
+	gregkh@linuxfoundation.org, usb-storage@lists.one-eyed-alien.net,
+	linux-usb@vger.kernel.org, skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org, rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
+Message-ID: <804a6d40-73a4-4af6-944b-95e9324d7429@rowland.harvard.edu>
+References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
+ <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
+ <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
+ <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,32 +89,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <878qxiowmy.fsf@yhuang6-desk2.ccr.corp.intel.com>
+In-Reply-To: <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
 
-On Wed, Jul 31, 2024 at 03:20:37PM +0800, Huang, Ying wrote:
-> Gregory Price <gourry@gourry.net> writes:
-> >
-> > In this case, the system is configured explicitly so that kmem does not
-> > manage it. In fact, some systems still cannot be managed with
-> > EFI_MEMORY_SP due to hpa!=spa issues that the driver cannot manage.
+On Wed, Jul 31, 2024 at 11:15:28AM +0200, 'Oliver Neukum' via USB Mass Storage on Linux wrote:
+> Hi,
 > 
-> Sorry, I don't understand.  IIUC, kmem.c can manage almost any memory
-> range via drivers/dax/hmem.  Please check
+> On 30.07.24 19:56, Abhishek Tamboli wrote:
+> > On Tue, Jul 30, 2024 at 09:09:05AM +0200, Oliver Neukum wrote:
 > 
-> drivers/dax/hmem/device.c
-> drivers/dax/hmem/hmem.c
+> > > 1. use a constant, where a constant is used
+> > I think you are suggesting that I should replace hard-coded values like the
+> > buffer size with named constants. For example:
+> > 
+> > #define BUF_SIZE 8
+> > unsigned char buf[BUF_SIZE];
 > 
-> Could you elaborate why kmem.c doesn't work for some memory range?
-> 
+> Yes, but the constant we need to look at here is bl_len.
+> This is a variable needlessly.
 
-Sorry I misunderstood, I thought you meant the cxl+kmem/hmem subsystem
-interaction and handing configuration of the CXL device over to the
-kernel.
+The code in ms_scsi_read_capacity() is written that way to be consistent 
+with the sd_scsi_read_capacity() routine.  Or maybe it was just 
+copied-and-pasted, and then the variable's type was changed for no good 
+reason.
 
-The boot parameter is not likely to be a solution for us but I will look
-at it.
+Replacing the variable with a constant won't make much difference.  The 
+compiler will realize that bl_len has a constant value and will generate 
+appropriate code anyway.  I think just changing the type is a fine fix.
 
-> > But I think a feature that worked in 5.x should work in 6.x, and right
-> > now the change in node placement breaks hardware that worked with 5.x
-> > which happened to have broken or missing HMAT.
+> > > 2. use the macros for converting endianness
+> > Can I use macros like cpu_to_le32 for converting the bl_num and bl_len values.
+> > Should I replace all instances of manual bitwise shifts with these macros?
+> 
+> Yes.
+> 
+> > For example:
+> > 
+> >      u32 bl_len = 0x200;
+> >      buf[0] = cpu_to_le32(bl_num) >> 24;
+> >      buf[4] = cpu_to_le32(bl_len) >> 24;
+> > 
+> > Is using cpu_to_le32 appropriate for the data format required by this
+> > device?
+> 
+> Well, the format is big endian. So, cpu_to_be32() will be required.
+
+Better yet, use put_unaligned_be32().  However, there's nothing really 
+wrong with the code as it stands.  It doesn't need to be changed now.
+
+Alan Stern
 
