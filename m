@@ -1,73 +1,51 @@
-Return-Path: <linux-kernel+bounces-268718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478CF94284A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:44:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AE394284E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4955B2373C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:44:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05A37B22DC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276151A7F6E;
-	Wed, 31 Jul 2024 07:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911731A76D6;
+	Wed, 31 Jul 2024 07:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MYBLEYWi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ksMDSoIy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D029E1A76D1
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88ED1A76C4;
+	Wed, 31 Jul 2024 07:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411877; cv=none; b=QREqLknOB7Z3ADiz6BnnJnFyAnAdhfv/1OYcwK5Oj5efm+jWPJMUYXgqDsrQZwGTPa4sQdfjI6bEwz+wIW6B+FH0EulhNCfctXZu+mSzgtHwFkw2QZR19CsJHvxSj4Vbfo69bRO6J/lH/zS88VkQhFcVo2UvWK0N0Ba05uG3BTo=
+	t=1722411893; cv=none; b=ZQbuyUhK7QCYUeU+Iw6U22pzVkOSG/oiVrX49KU5GJD+dOhRehTMx4/Y5GZ4Lx2miVJG8Z104QYAnJGWkCeFq6yU3CI65R9L/rI9O8v5tryfh1jTP82aJ4brmOwcyRtXS9PajT5oFbjuPyC0WXVfnazGboPsMIvXb8k6ewQUFhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411877; c=relaxed/simple;
-	bh=lxA0ZHyzAHSv0f5PolyU6+qG3+yyZBAlHvqT9SI4L8I=;
+	s=arc-20240116; t=1722411893; c=relaxed/simple;
+	bh=ShY7Nj4mnNJABphfGU7nTPsI5y6WvrjXgfhgmdlfdAg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LjChfZAJjwJHY92ew/LoFBtIrqa94/5IwgagVyHN5xRWm8wFF1T2w8Op2S6vvOYIvmu/kLGAYs6NuPhBsbZchQ3sV9ZIaVWdK/x3R3XcRQ4ksEIgieK4HuJwyjnYEzDkLCF6oNkcQDUlwUpTRF/2K8XfSSRaO0Kzn2V/0ISK02o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MYBLEYWi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722411874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l33ddJooolI2Iwh+l//qHtEKVUiYFMImLADxdtqqUrY=;
-	b=MYBLEYWi6av/lZx9tW0ak6DMY756WLEGjqU41GDTAbvomedL1p4oCDtrLth3GEoRYfvWVd
-	D9w8MBTi0x28+f8en83XT9qhk47JEdidUuWXX1ao/6IqoAhwDwd3xts4mbFtAr21Bfcls6
-	jUZyZ7eB8lRAZoyMRa7oq8IDNBKdOug=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-303-7W_iWS86PH2he35fSQSWzw-1; Wed,
- 31 Jul 2024 03:44:31 -0400
-X-MC-Unique: 7W_iWS86PH2he35fSQSWzw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C3641955F40;
-	Wed, 31 Jul 2024 07:44:29 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.143])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 4DD921955D42;
-	Wed, 31 Jul 2024 07:44:25 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 31 Jul 2024 09:44:28 +0200 (CEST)
-Date: Wed, 31 Jul 2024 09:44:24 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: andrii@kernel.org, peterz@infradead.org, jolsa@kernel.org,
-	rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
- uprobe *
-Message-ID: <20240731074424.GA12813@redhat.com>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134535.GA12332@redhat.com>
- <20240731143946.f5689502e03b9ff2e79be494@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jSBOr245YA98y//EHk/7RleZrs1x7ugRBHNzEyXzXYiaQFc3yl+16tdV4q930D8Lrp4ikMzMu0hF/CGEIR/oqCdHSKd50ZvS882ayROjTCXXI3t4EQfNBgh+dp0xP3JP2WxEqmLjQyI2z9PRRuSzHiJjjWvgxxIOsbnEqOyOmdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ksMDSoIy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEF11C116B1;
+	Wed, 31 Jul 2024 07:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722411893;
+	bh=ShY7Nj4mnNJABphfGU7nTPsI5y6WvrjXgfhgmdlfdAg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ksMDSoIyA4US0w9TtUvGC3IjWc/1rNmQLUy97N8VumsV426KvF8GWKIJHoK10IO64
+	 7bCUSrcUG8nPIBc6f7/49R22jKPniW29jtTa1jPPU39W9PH7wU4Pz/ACyMhYtrzD9U
+	 /pcA4J2X0X3LpEL0NzIInLYZSON9GgpN4isLVtE4=
+Date: Wed, 31 Jul 2024 09:44:50 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Riyan Dhiman <riyandhiman14@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: vme_user: vme_bridge.h: Fix mutex without
+ comment warning
+Message-ID: <2024073127-babbling-antiquely-22a2@gregkh>
+References: <20240731073605.9857-1-riyandhiman14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,36 +54,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240731143946.f5689502e03b9ff2e79be494@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20240731073605.9857-1-riyandhiman14@gmail.com>
 
-On 07/31, Masami Hiramatsu wrote:
->
-> On Mon, 29 Jul 2024 15:45:35 +0200
-> Oleg Nesterov <oleg@redhat.com> wrote:
->
-> > This way uprobe_unregister() and uprobe_apply() can use "struct uprobe *"
-> > rather than inode + offset. This simplifies the code and allows to avoid
-> > the unnecessary find_uprobe() + put_uprobe() in these functions.
-> >
-> > TODO: uprobe_unregister() still needs get_uprobe/put_uprobe to ensure that
-> > this uprobe can't be freed before up_write(&uprobe->register_rwsem).
->
-> Is this TODO item, or just a note? At this moment, this is natural
-> to use get_uprobe() to protect uprobe itself.
+On Wed, Jul 31, 2024 at 01:06:05PM +0530, Riyan Dhiman wrote:
+> Adhere to Linux kernel coding style
+> 
+> Reported by checkpatch:
+> 
+> CHECK: mutex definition without comment
+> 
+> Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+> ---
+>  drivers/staging/vme_user/vme_bridge.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/staging/vme_user/vme_bridge.h b/drivers/staging/vme_user/vme_bridge.h
+> index 9bdc41bb6602..0b1f05944f0d 100644
+> --- a/drivers/staging/vme_user/vme_bridge.h
+> +++ b/drivers/staging/vme_user/vme_bridge.h
+> @@ -28,6 +28,7 @@ struct vme_master_resource {
+>  struct vme_slave_resource {
+>  	struct list_head list;
+>  	struct vme_bridge *parent;
+> +	/* Locking for VME slave resources */
 
-3/3 from the next series removes the extra get_uprobe() + put_uprobe().
+Are you sure about all of these?  Please document them individually and
+put the proof of that in the changelog text.
 
-Initially the change said something like
+thanks,
 
-	This patch adds the additional get_uprobe/put_uprobe into _register,
-	the next patch will remove this.
-
-But then decided to split this "next" patch and send it in another series.
-
-Thanks,
-
-Oleg.
-
+greg k-h
 
