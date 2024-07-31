@@ -1,97 +1,113 @@
-Return-Path: <linux-kernel+bounces-269897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53162943838
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:46:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D2F94383D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D206BB23FA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:46:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 533731C21840
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:48:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4236E16C6AA;
-	Wed, 31 Jul 2024 21:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1BB316C875;
+	Wed, 31 Jul 2024 21:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZsD5LvFM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZiVLey70"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YpUDFfX4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECEC1AA3CC;
-	Wed, 31 Jul 2024 21:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A683D1AA3CC;
+	Wed, 31 Jul 2024 21:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722462406; cv=none; b=M98ZGwk/xQfYVcW0U3GzVOMnxitSk1xQffYIcLXsErGQ0+3k0ZZScQ7QJwLuOmSAaofPaPUWFZkr8Y0Vq4QgPmvjuW3iCj5Ob+bBuU4TLTi1QbihwJhEqgrUW/QCgws3CTvN7iQLo0tLu///oxZLBwQGjGqN/8KmeDlh6Z9nRy4=
+	t=1722462500; cv=none; b=QtTxmienGRGNIXlqHiyzeXgQkdfPnl50sEoKIuoita2cZhX/0l8WwPiK5HfCt87ptsjhlVGHmHOgXkQ8GNyodINB4FgdXdo1B170Z7wGYYak9MJuwiY0UMT14wkV1G90clKdxm2s9bFc9ATF5CmLCKPda3d/idGhociu3O4Ab7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722462406; c=relaxed/simple;
-	bh=jz94UU4hVC0ykhl8YwuqabuD2j+eVBJGh+9c1JpDr8Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=quVpB8Zv75UvY1ksT7mOVYTNK+i8E396YXqaFRNJYAuAU8xZRqbEO9Obm8QPniioyLg/C5olOcY032OD5RdS2Fqoa/afMhKQRZ6I45LNnG5VK3rIwwnnQ5/f8G8OWkghavL+S3iQPTtIUhET/uIuvBzgpA1dah0BSODW6vSR3CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZsD5LvFM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZiVLey70; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722462402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jz94UU4hVC0ykhl8YwuqabuD2j+eVBJGh+9c1JpDr8Q=;
-	b=ZsD5LvFM1NAdmnLWVAh7SpIpqT5s5lpBVyUBZ0v6hkHcXNewCuPj/neT9tHZyejH8M3f6i
-	CGlOF7lDxTN48DsoXUu7KtPWWlQM38sdmvezPSW98HiKhqa8aPvuiAQYRJAnBcpM8N+1MB
-	v+WM+XrxZW3QJ+rwyIGL/EeL48Ye+0KfIZGYNjasTKNT8vBA+PW+YSJbu+B3EUSkfHlgK2
-	9swOKmNRrO4mez15gpSju7WZ0JPsJoR5gMXvKibGyru5uy0z0zEKWREi/ocNlkLMb8au/K
-	0y4yaela1omgPyL4itF37EgdKTAfGimTPAfeoXb1/XyX/iBgsVff/Mb1sc2ZnQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722462402;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jz94UU4hVC0ykhl8YwuqabuD2j+eVBJGh+9c1JpDr8Q=;
-	b=ZiVLey70a7cqQeUwox1KmykYfbP/wM5Ihkz4PKcHRUv6x/zCDAGeLq60p+y7O0suVVt7h6
-	rbX/LpeZ4bMRWlDA==
-To: Marek =?utf-8?Q?Ma=C5=9Blanka?= <mmaslanka@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Rajneesh Bhardwaj
- <irenic.rajneesh@gmail.com>, David E Box <david.e.box@intel.com>, Hans de
- Goede <hdegoede@redhat.com>, Ilpo =?utf-8?Q?J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>, John Stultz <jstultz@google.com>, Stephen
- Boyd <sboyd@kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v3] platform/x86:intel/pmc: Enable the ACPI PM Timer to
- be turned off when suspended
-In-Reply-To: <CAGcaFA2eXzzCVqG-DSWDb1gruV4FemRC3W+dgRub7GgcOyf7yQ@mail.gmail.com>
-References: <CAGcaFA2sQNRo9UThN-C1NOLtGUJ3sKzc=pEC9wdDWMi501iLsA@mail.gmail.com>
- <20240730120546.1042515-1-mmaslanka@google.com> <87cymu7tgq.ffs@tglx>
- <CAGcaFA1HJBYacvDAkZAO9HNhT2dZO7OdgcBYb59p7OJkVqQ6Fw@mail.gmail.com>
- <87h6c55xnp.ffs@tglx>
- <CAGcaFA2eXzzCVqG-DSWDb1gruV4FemRC3W+dgRub7GgcOyf7yQ@mail.gmail.com>
-Date: Wed, 31 Jul 2024 23:46:42 +0200
-Message-ID: <87plqt44l9.ffs@tglx>
+	s=arc-20240116; t=1722462500; c=relaxed/simple;
+	bh=vr1mIW/P/zch5hcYNAgu6dsy6kVfvRcs/Z31WWStMSs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lQFI2EXEbb0fxpkqon0VUfveBQRhDDs39llSkKkKeJqKP6/zryVQAZ15LVErHCbnaq5I1+Rpu8fbCcDOUy+rY2I2L3R6fZSNHGQzNd0Z9nYHzOh7guGrcES96wFw5H3FVYvIOUTMPgGMyG9BEAl4fR6BfGO9aBAOnGdoEd/8FRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YpUDFfX4; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VKR9dg026323;
+	Wed, 31 Jul 2024 21:47:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=B+3PjGiYKpJ0UVYq+Ea0wzBeuF
+	NwN7n2LlEpIGeUN7M=; b=YpUDFfX4ySUaGIP3rzxx+VDpibCWTzQvDPn8rpeBgw
+	JJZ0Qyyi/Jj+OhKvA3MI1Q7p/qLKuqeteac46NJsKYimSCS3O1A9lYM9x6/y1tdK
+	JDl1KmKog8JeTe13eWWKDGS85khba5b7ulZ6hMjIG/LXkotC3tTfJwPwIxVgRnGr
+	XQhR13LdlAsHFodM9rfbG9plVQjWNLDRWc5jBduEf//CAvHbSQhi1OV0IiUd3Znw
+	IjdREcyj/q7/qpilK9xh5pARdrd2yr8YNOkmaOKhp8SwyA+CTVZ07rLsY7aLf+C8
+	8O7jiCnSkJ6gpsTPIeYA7iVnrNGzDYnt4zC9Z6ovKOYQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qnbx9mrh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 21:47:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 46VLMSPI011295;
+	Wed, 31 Jul 2024 21:47:46 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqmx53d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 21:47:46 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 46VLlgLj39059926
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 31 Jul 2024 21:47:45 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9612158060;
+	Wed, 31 Jul 2024 21:47:42 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DFCCA58064;
+	Wed, 31 Jul 2024 21:47:41 +0000 (GMT)
+Received: from gfwa153.aus.stglabs.ibm.com (unknown [9.3.84.127])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 31 Jul 2024 21:47:41 +0000 (GMT)
+From: Ninad Palsule <ninad@linux.ibm.com>
+To: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+        joel@jms.id.au, andrew@codeconstruct.com.au,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        eajames@linux.ibm.com
+Cc: Ninad Palsule <ninad@linux.ibm.com>
+Subject: [PATCH v1 0/1] ARM: dts: aspeed: system1: IBM System1 BMC update
+Date: Wed, 31 Jul 2024 16:47:28 -0500
+Message-ID: <20240731214737.986010-1-ninad@linux.ibm.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2hln8jMhynt7M8DSt3gWFVX9NfqkLq6a
+X-Proofpoint-ORIG-GUID: 2hln8jMhynt7M8DSt3gWFVX9NfqkLq6a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0 impostorscore=0
+ clxscore=1011 malwarescore=0 priorityscore=1501 mlxlogscore=720
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407310150
 
-On Wed, Jul 31 2024 at 23:41, Marek Ma=C5=9Blanka wrote:
-> On Wed, Jul 31, 2024 at 6:33=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->> On Wed, Jul 31 2024 at 16:44, Marek Ma=C5=9Blanka wrote:
->> > Thanks. I'll try do this in that way. But I need to disable/enable
->> > ACPI PM timer only on suspend/resume, so I'll use suspend/resume
->> > callbacks.
->>
->> Why? What's the point of keeping it running when nothing uses it?
->>
-> In case of Intel CPUs the watchdog (iTCO/wdat_wdt) is driven by ACPI PM
-> Timer. But it may also be used by others that I don't know about, so I do=
-n't
-> want to disable it.
+Hello,
 
-Fair enough.
+This patch only applies to openbmc/linux. The max31785 pmbus driver
+changes are not available in the upstream yet. I will try to send those
+changes upstream.
+
+Ninad Palsule (1):
+  ARM: dts: aspeed: system1: IBM System1 BMC update
+
+ .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 96 +++++++++++++++++++
+ 1 file changed, 96 insertions(+)
+
+-- 
+2.43.0
+
 
