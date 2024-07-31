@@ -1,195 +1,79 @@
-Return-Path: <linux-kernel+bounces-269106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1765942DB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:04:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583D0942DB6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:06:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BDDBB218AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14494281F02
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9641AD9DA;
-	Wed, 31 Jul 2024 12:04:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49C21AE84D;
+	Wed, 31 Jul 2024 12:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h6BD3y46"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TLoIfv0d"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33BB18DF93
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D679518DF93;
+	Wed, 31 Jul 2024 12:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427486; cv=none; b=OyY3Vf8CtKvt0k5GRSl2S/dRFuBzjVK4/dyhBQDSkDY7eZeCnq2hOVWwgR+blv1ekp2xA1N6EK6sqEnhlNabNvuhE7r4/YfQIKa9kaU6MCShfwB+6YGtc2YgDEv9qYGuD6DqMTfRN+UAe0lR2n4a+R+SuPJNYjJ+lUCnl6FQqeE=
+	t=1722427555; cv=none; b=LpoHVazcEJF3kKtOFZPRI/ghU1WNs98gca3Wk9i7Iz65KNg0l893P9+Xbpb2diJpOGN8Vqt2gGJ4y2VY6c7bmxvEsawprDPG8fMXSl2FEzFVYlxohlGViaadDLTq7AZ9cXw/KeOBu3P8Le8OaVnCkouCwB6grdfkW1o0Th55fR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722427486; c=relaxed/simple;
-	bh=KKswiAGtRP6TxIVKqhorVJGuCWm8qpxhAkdwCMJLVq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QcR3/DX+M8Bmx+cxkFaSiEYDbm9Ezix17/2LkKqJIwJic8MvTG0aRJW2784Ir5Qv/f/YLH4UyQB3F6EO6vgN50yn1DQd8Wei/qqPOw2ZzE0mf9BizuvXbJ0c0X4+ToIGutHrKQaC0QzdfSP/oRYnE8aSKwHwBk+83xc4PkJuPqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h6BD3y46; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722427483;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=t8OwXpxqWJ9LF2ZjW8frYzF1FvvbDpYijxhktl6pc0I=;
-	b=h6BD3y46prvlcmp+bC3RsrTCvEmZDS+cauiGLzXUjQc1FmFm+FnwJj7JcGk/n5XX59RxwG
-	3z0zjUftckRU+lgxU50rEkS/sky7fFnBMrPgiJI1Bfv5LEfI6g3YGAQErM+fn06lS/SKdB
-	5WSTHsqW7Y2cpfjFfNUoHQ0dMq8RoCM=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-353-fuucoNU_Nemfow4AkiuY6w-1; Wed, 31 Jul 2024 08:04:42 -0400
-X-MC-Unique: fuucoNU_Nemfow4AkiuY6w-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-42816aacabcso33259335e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:04:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722427481; x=1723032281;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t8OwXpxqWJ9LF2ZjW8frYzF1FvvbDpYijxhktl6pc0I=;
-        b=h9Dw1cSeRA0BwpFQ6e/L7kBYs0RBIKKz3h17gIux9W/inbUVEAJlUT7HM4Au2EwyLt
-         NCs2cGlFamRESJ/ra6rC55Blv/Rmpm+j3eXkkC5b62U5xYCotIZkUtL+sttzXCivh3wW
-         9SkfhARyB2vRdzCjJhgM3+DpW7xc9eUzWp2TRZ4ucbYxk6HTQI5HgXWvI9JYDzgTPxWB
-         dyCBhoRlW3zs10KyhtDljaCMhDVp1bqPJRJD1KB1VeBvInlaijMeR3FFtTlHYLXrtFBk
-         Y9rJuOMPHStCKwUhzeZUzOVHQpW9I6q2pfz1SQyAZy9Tr/+8yhy6vO+Ag0oyQrYrnQuz
-         8Nfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTzu9lpgnMEEbpzIgJzyqQa09A35j1TgvcGfYeilcsRrUOpRJ6lHedalXxZRjAyU0GyXJt6xx2gHGNuckdCKEcHEMk3BjGPyHExBjr
-X-Gm-Message-State: AOJu0YwC+gQNMioeus+NrXNSsoI5O8Z0cZL5U6n0hyNdD1vIakX7iSRg
-	zwTK7z7L1Tu0wNGgmRxga8ieXcgaIkteVb5btOWIX8SdiLj+QekYtSdQ2SkEdpmaS+HQhH2AGH1
-	Jox6NFD15tpJ24NE1lNX8xfiXFYu+Hnqfe0OANawqS2A8zef0mGJmiyKcIU+EtA==
-X-Received: by 2002:a5d:4685:0:b0:368:747c:5a04 with SMTP id ffacd0b85a97d-36b5cefdeeamr8580748f8f.25.1722427481181;
-        Wed, 31 Jul 2024 05:04:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmD2lojKxIcqxS7aO5UvLLbTJwvidRSnvM1ZfOBQCWEPb2TODLU+jC+FHTySqsQiKDAq5Fxw==
-X-Received: by 2002:a5d:4685:0:b0:368:747c:5a04 with SMTP id ffacd0b85a97d-36b5cefdeeamr8580721f8f.25.1722427480640;
-        Wed, 31 Jul 2024 05:04:40 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70b:5f00:9b61:28a2:eea1:fa49? (p200300cbc70b5f009b6128a2eea1fa49.dip0.t-ipconnect.de. [2003:cb:c70b:5f00:9b61:28a2:eea1:fa49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9393sm16801326f8f.26.2024.07.31.05.04.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 05:04:40 -0700 (PDT)
-Message-ID: <bca7a510-4f66-42b2-b4a7-40b3bd37ead6@redhat.com>
-Date: Wed, 31 Jul 2024 14:04:38 +0200
+	s=arc-20240116; t=1722427555; c=relaxed/simple;
+	bh=016eNJKS6cVs7YfgG2xWkYfhtcwVUoDKIihnbe1ddv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgbCvQ6sBN7plQ33L1b2nHqJSOBkoz28TpX6QlrSFd/dY2issXT+a7KkZPVvTVNSoZmFwo0LweOyTQX0vt7oBEkjqbrYAZH+oyUGFmY3ZSBJEIoyKsOvkmgm2CIsGPvNGz6YETSHqPCxYF3z79+Vor3QRzGVTUQYBMLIf9JQHys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TLoIfv0d; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=hH3IGZdp3E55VPOf6SKMrVfSLJZyPDh774CBFbCB63o=; b=TLoIfv0drgmqzlSeFO1hDio7Cu
+	t7ra7jLWeYBxkRczQjDds6YWHK04wwy9J7d0PGqbMSIVuPqoScMmsOmsOofgeH/yRxwCQMCMdXo1Z
+	DwQ0kgZpbwWqM25LjxqAImaV5IXAgQn7mk/vTc8uYBw+fcQvxSVWtyIH1ih2xoacayik=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZ85E-003fZm-H0; Wed, 31 Jul 2024 14:05:32 +0200
+Date: Wed, 31 Jul 2024 14:05:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, michal.simek@amd.com, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	git@amd.com,
+	Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
+Subject: Re: [PATCH net-next v2 1/4] net: axienet: Replace the occurrences of
+ (1<<x) by BIT(x)
+Message-ID: <f0a9a77b-8575-4913-a083-5fe630fb5d76@lunn.ch>
+References: <1722417367-4113948-1-git-send-email-radhey.shyam.pandey@amd.com>
+ <1722417367-4113948-2-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/8] mm/dax: Dump start address in fault handler
-To: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
- Matthew Wilcox <willy@infradead.org>,
- Rick P Edgecombe <rick.p.edgecombe@intel.com>,
- Oscar Salvador <osalvador@suse.de>, Mel Gorman
- <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>,
- Borislav Petkov <bp@alien8.de>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Huang Ying <ying.huang@intel.com>, "Kirill A . Shutemov"
- <kirill@shutemov.name>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
- Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner
- <tglx@linutronix.de>, Hugh Dickins <hughd@google.com>, x86@kernel.org,
- Nicholas Piggin <npiggin@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
- Ingo Molnar <mingo@redhat.com>
-References: <20240715192142.3241557-1-peterx@redhat.com>
- <20240715192142.3241557-2-peterx@redhat.com>
-Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240715192142.3241557-2-peterx@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1722417367-4113948-2-git-send-email-radhey.shyam.pandey@amd.com>
 
-On 15.07.24 21:21, Peter Xu wrote:
-> Currently the dax fault handler dumps the vma range when dynamic debugging
-> enabled.  That's mostly not useful.  Dump the (aligned) address instead
-> with the order info.
+On Wed, Jul 31, 2024 at 02:46:04PM +0530, Radhey Shyam Pandey wrote:
+> From: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
 > 
-> Signed-off-by: Peter Xu <peterx@redhat.com>
-> ---
->   drivers/dax/device.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> Replace all occurences of (1<<x) by BIT(x) to get rid of checkpatch.pl
+> "CHECK" output "Prefer using the BIT macro".
 > 
-> diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index eb61598247a9..714174844ca5 100644
-> --- a/drivers/dax/device.c
-> +++ b/drivers/dax/device.c
-> @@ -235,9 +235,9 @@ static vm_fault_t dev_dax_huge_fault(struct vm_fault *vmf, unsigned int order)
->   	int id;
->   	struct dev_dax *dev_dax = filp->private_data;
->   
-> -	dev_dbg(&dev_dax->dev, "%s: %s (%#lx - %#lx) order:%d\n", current->comm,
-> -			(vmf->flags & FAULT_FLAG_WRITE) ? "write" : "read",
-> -			vmf->vma->vm_start, vmf->vma->vm_end, order);
-> +	dev_dbg(&dev_dax->dev, "%s: op=%s addr=%#lx order=%d\n", current->comm,
-> +		(vmf->flags & FAULT_FLAG_WRITE) ? "write" : "read",
-> +		vmf->address & ~((1UL << (order + PAGE_SHIFT)) - 1), order);
->   
->   	id = dax_read_lock();
->   	if (order == 0)
+> Signed-off-by: Appana Durga Kedareswara Rao <appana.durga.rao@xilinx.com>
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
 
-Agreed, the address of the fault is better. Just wondering, would the 
-unmasked address be even better? Using the order we can figure out the 
-to-be-aligned address.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Acked-by: David Hildenbrand <david@redhat.com>
-
--- 
-Cheers,
-
-David / dhildenb
-
+    Andrew
 
