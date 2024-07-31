@@ -1,124 +1,218 @@
-Return-Path: <linux-kernel+bounces-268879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9401C942A95
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:33:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B6A942A7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6C121C237F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:33:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0C7B23CDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C631AD9E6;
-	Wed, 31 Jul 2024 09:31:56 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EBD1AB51E;
+	Wed, 31 Jul 2024 09:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uHXUG/ud";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BmMoWYvo";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uHXUG/ud";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BmMoWYvo"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DFA1AAE05;
-	Wed, 31 Jul 2024 09:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F30817C8D;
+	Wed, 31 Jul 2024 09:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722418315; cv=none; b=d4xP8boBzlK7/kE20sAynrTBwdocIuorKxin3stGsfGLIIWNfIl/zfLcTKQFRZ8Wdt78fIL2CD7uv23+7eSbBidtQv0JUSEiNMayNVgzZuuvTlUYfzZ5vyWNP+9jNCN3b47NHCUUd3Vy4uyD5e9gzfV9DPtFgXdizk9wTBvbUt8=
+	t=1722418137; cv=none; b=iUfv/SilyHI7nLs2e+jq4PxDFc+201bZSTmzXoYJVu4XwwnTb2p6ynAEPL7WVQKtHgIXhNdoF+pNEN0T+CMW88TNNw++3OY38ZpFXWAjUKMuhEqMKfPB+nbxnMVE9GeYQFADzXODioG7VNtbOOrzq2Crp0KF9uZ+vEVqLnxdx/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722418315; c=relaxed/simple;
-	bh=kw6SGK+E2GWOuV47kjsbqDx331VwA9aPNO9ngoMgLZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rR9qBA5yNwIHmnDHch2YWi/eARZqr9EataOZCxDG1hR1gkODRFae6bVQbqAa9eMjw26B9hQxy3r73e2dTApMBQVc9zDBS+x0Ekpc4bMQzrWHw1XvaBjTLTVJlWLo/OTal16HsU9/C5m4UhZGeSEnQNzlEFuJcWY4+05aobu4DBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WYn0n3KV4z4f3jsH;
-	Wed, 31 Jul 2024 17:31:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 60FFC1A18C2;
-	Wed, 31 Jul 2024 17:31:50 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP2 (Coremail) with SMTP id Syh0CgC3oL+CBKpm5KxyAQ--.8660S10;
-	Wed, 31 Jul 2024 17:31:50 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: tytso@mit.edu,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 8/8] jbd2: remove unneeded check of ret in jbd2_fc_get_buf
-Date: Wed, 31 Jul 2024 17:29:10 +0800
-Message-Id: <20240731092910.2383048-9-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
-References: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1722418137; c=relaxed/simple;
+	bh=dW8Zk6W9eMjp2YUthgUJ/GZykyYD06tqeF8b7dB27wg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J9q4iMQzawZ/NPH73gpxLab7Of6oEPT+BeXv8P5zzRoXsrz6YxB6ZGEFM8PJkiDXTYs6IrePpWMjA3X2RF1XzDCt3HSjtksgSNWLHsSvoJihyU3uREUjFWmkom/lvLr6DoehDyqgNx3TfHRKcfCcux8s28gj6F3dQhkqN7fKIn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uHXUG/ud; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BmMoWYvo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uHXUG/ud; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BmMoWYvo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6306C1F833;
+	Wed, 31 Jul 2024 09:28:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722418133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
+	b=uHXUG/ud+yLP3GulJDgZyjAFtOZL37GyTo9PzP0odYPyMQ6xaLycNVEru365CcWF2szoaR
+	aeHH7CKQ0hdUKzMbO3/oUjxW/DroUvOUKsFW3Bw8bhcGgO825l4xNpYkxdMz+IvUAg622d
+	KPVrZkq8hAk97TbWm/jvcKEu9tJI7AM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722418133;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
+	b=BmMoWYvoM9LUzNqtUInq+2feL5ZbQ7D4Cm3a3iJE/PIm+D9TaCRJtsAk4we1ZrGYBlaDoD
+	XC88qYTTAoT49iAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722418133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
+	b=uHXUG/ud+yLP3GulJDgZyjAFtOZL37GyTo9PzP0odYPyMQ6xaLycNVEru365CcWF2szoaR
+	aeHH7CKQ0hdUKzMbO3/oUjxW/DroUvOUKsFW3Bw8bhcGgO825l4xNpYkxdMz+IvUAg622d
+	KPVrZkq8hAk97TbWm/jvcKEu9tJI7AM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722418133;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
+	b=BmMoWYvoM9LUzNqtUInq+2feL5ZbQ7D4Cm3a3iJE/PIm+D9TaCRJtsAk4we1ZrGYBlaDoD
+	XC88qYTTAoT49iAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AC311368F;
+	Wed, 31 Jul 2024 09:28:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zhM2CNUDqmamGwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 31 Jul 2024 09:28:53 +0000
+Date: Wed, 31 Jul 2024 11:29:30 +0200
+Message-ID: <87ed79zz7p.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Edmund Raile <edmund.raile@protonmail.com>
+Cc: o-takashi@sakamocchi.jp,
+	clemens@ladisch.de,
+	tiwai@suse.com,
+	alsa-devel@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4 0/2] ALSA: firewire-lib: restore process context workqueue to prevent deadlock
+In-Reply-To: <20240730195318.869840-1-edmund.raile@protonmail.com>
+References: <20240730195318.869840-1-edmund.raile@protonmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgC3oL+CBKpm5KxyAQ--.8660S10
-X-Coremail-Antispam: 1UD129KBjvJXoWruF4rtF17Cr15Kw47Gr47CFg_yoW8Jr48pr
-	W5Kr98AFy8ZrW7XF1xXrZ5Jayjv3yvkFy5GFZ8CwnYkw47trn7J3Z8Jw18Wa98ArWrK3W8
-	Zr17Za95Ca1YyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjxUFgAwUUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.10 / 50.00];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_ENVRCPT(0.00)[protonmail.com];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[protonmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -0.10
 
-Simply return -EINVAL if j_fc_off is invalid to avoid repeated check of
-ret.
+On Tue, 30 Jul 2024 21:53:23 +0200,
+Edmund Raile wrote:
+> 
+> This patchset serves to prevent an AB/BA deadlock:
+> 
+> thread 0:
+>     * (lock A) acquire substream lock by
+> 	snd_pcm_stream_lock_irq() in
+> 	snd_pcm_status64()
+>     * (lock B) wait for tasklet to finish by calling
+>     	tasklet_unlock_spin_wait() in
+> 	tasklet_disable_in_atomic() in
+> 	ohci_flush_iso_completions() of ohci.c
+> 
+> thread 1:
+>     * (lock B) enter tasklet
+>     * (lock A) attempt to acquire substream lock,
+>     	waiting for it to be released:
+> 	snd_pcm_stream_lock_irqsave() in
+>     	snd_pcm_period_elapsed() in
+> 	update_pcm_pointers() in
+> 	process_ctx_payloads() in
+> 	process_rx_packets() of amdtp-stream.c
+> 
+> ? tasklet_unlock_spin_wait
+>  </NMI>
+>  <TASK>
+> ohci_flush_iso_completions firewire_ohci
+> amdtp_domain_stream_pcm_pointer snd_firewire_lib
+> snd_pcm_update_hw_ptr0 snd_pcm
+> snd_pcm_status64 snd_pcm
+> 
+> ? native_queued_spin_lock_slowpath
+>  </NMI>
+>  <IRQ>
+> _raw_spin_lock_irqsave
+> snd_pcm_period_elapsed snd_pcm
+> process_rx_packets snd_firewire_lib
+> irq_target_callback snd_firewire_lib
+> handle_it_packet firewire_ohci
+> context_tasklet firewire_ohci
+> 
+> The issue has been reported as a regression of kernel 5.14:
+> Link: https://lore.kernel.org/regressions/kwryofzdmjvzkuw6j3clftsxmoolynljztxqwg76hzeo4simnl@jn3eo7pe642q/T/#u
+> ("[REGRESSION] ALSA: firewire-lib: snd_pcm_period_elapsed deadlock
+> with Fireface 800")
+> 
+> Commit 7ba5ca32fe6e ("ALSA: firewire-lib: operate for period elapse event
+> in process context") removed the process context workqueue from
+> amdtp_domain_stream_pcm_pointer() and update_pcm_pointers() to remove
+> its overhead.
+> Commit b5b519965c4c ("ALSA: firewire-lib: obsolete workqueue for period
+> update") belongs to the same patch series and removed
+> the now-unused workqueue entirely.
+> 
+> Though being observed on RME Fireface 800, this issue would affect all
+> Firewire audio interfaces using ohci amdtp + pcm streaming.
+> 
+> ALSA streaming, especially under intensive CPU load will reveal this issue
+> the soonest due to issuing more hardIRQs, with time to occurrence ranging
+> from 2 secons to 30 minutes after starting playback.
+> 
+> to reproduce the issue:
+> direct ALSA playback to the device:
+>   mpv --audio-device=alsa/sysdefault:CARD=Fireface800 Spor-Ignition.flac
+> Time to occurrence: 2s to 30m
+> Likelihood increased by:
+>   - high CPU load
+>     stress --cpu $(nproc)
+>   - switching between applications via workspaces
+>     tested with i915 in Xfce
+> PulsaAudio / PipeWire conceal the issue as they run PCM substream
+> without period wakeup mode, issuing less hardIRQs.
+> 
+> Cc: stable@vger.kernel.org
+> Backport note:
+> Also applies to and fixes on (tested):
+> 6.10.2, 6.9.12, 6.6.43, 6.1.102, 5.15.164
+> 
+> Edmund Raile (2):
+>   Revert "ALSA: firewire-lib: obsolete workqueue for period update"
+>   Revert "ALSA: firewire-lib: operate for period elapse event in process
+>     context"
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
----
- fs/jbd2/journal.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+Applied both patches now.  Thanks.
 
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index e89d777ded34..c5179aa38111 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -837,17 +837,12 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
- 
- 	*bh_out = NULL;
- 
--	if (journal->j_fc_off + journal->j_fc_first < journal->j_fc_last) {
--		fc_off = journal->j_fc_off;
--		blocknr = journal->j_fc_first + fc_off;
--		journal->j_fc_off++;
--	} else {
--		ret = -EINVAL;
--	}
--
--	if (ret)
--		return ret;
-+	if (journal->j_fc_off + journal->j_fc_first >= journal->j_fc_last)
-+		return -EINVAL;
- 
-+	fc_off = journal->j_fc_off;
-+	blocknr = journal->j_fc_first + fc_off;
-+	journal->j_fc_off++;
- 	ret = jbd2_journal_bmap(journal, blocknr, &pblock);
- 	if (ret)
- 		return ret;
-@@ -856,7 +851,6 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
- 	if (!bh)
- 		return -ENOMEM;
- 
--
- 	journal->j_fc_wbuf[fc_off] = bh;
- 
- 	*bh_out = bh;
--- 
-2.30.0
 
+Takashi
 
