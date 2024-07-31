@@ -1,177 +1,107 @@
-Return-Path: <linux-kernel+bounces-268929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D3A942B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:51:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EA1C942B45
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F3E1C23C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:51:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF52B213AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A401AB523;
-	Wed, 31 Jul 2024 09:50:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EE01AAE20;
+	Wed, 31 Jul 2024 09:52:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrEy5xBV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YU+gU5OA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BCC1AAE02
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AAC03CF73;
+	Wed, 31 Jul 2024 09:52:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722419447; cv=none; b=h7QqLRipMtL/UonXEGb0l95t5Tj9pMJnzoehbzl4iU0sP871m6kwS+YlNTWVLPupBEkIyJTYhxmZw9ZmtlBlxINkDeHIDSSkipW3ZmCm3A1dKxpRXeW2qY1gefg1St9JkB2kOHp17a9on21msWIyINA94lRoQS6MCVikk0CWZfE=
+	t=1722419559; cv=none; b=QRKy7001tiBUiMXhUv6UJCc/QN6EHWb1MXvCEtUBPTcxZtlA+WBerCbAxUs2sc6nKekWIqPlXR4QgszrsoIO67nwCbmzR5OgVFrgkNXl8A9JtA0swRUt79pQwWMWOFN+sVl8QffFFK5UWhSKkIBx620VXx10D3njZi+hLCHywvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722419447; c=relaxed/simple;
-	bh=XTrejJ34wyqTmqzJGqmoE5EbaZZYWrCKbhJX3mWbjW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o8EgfjHKBDcJcEP0tVhycQWb5aq5xbT4J6NSgJxuSJGusySas4mHeVFl78iHgI3OiBcX6PgPqFsqG43E5CN5/J0dRkDZYn3DvpNvSHQlFJURB2deodYMsPFn9T+Si2UvocEPSHeL9ymN7tIsuHG5U+QxcOGGK38PguI6KI8iimY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrEy5xBV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722419444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kF8YsGqLWNT4+a8R4w4P9MUEGEAYWYiYSABna27uXpU=;
-	b=KrEy5xBVc1iGF2PVOY7dITK1PYtisicQgOaKSayL34SW7TgJ27MZDD7csgG0vXDCoIV4lP
-	XDevCAOVyoCv7zJYenootvNrJFekg08VPCUcOwVk5HetdAL1xAdx/5306f55E8Cpo0cFe5
-	6YT1V7vpeNo/sA63WDaazWkq43GtuRs=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-29-GvqUvVYCMjeBj4KYAThCsw-1; Wed, 31 Jul 2024 05:50:41 -0400
-X-MC-Unique: GvqUvVYCMjeBj4KYAThCsw-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7a8281dba5so435812566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 02:50:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722419440; x=1723024240;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kF8YsGqLWNT4+a8R4w4P9MUEGEAYWYiYSABna27uXpU=;
-        b=SqUZBlyaGE5ok7bwgdk61sIcbBsgFO7AcvqX7WjfhA+m5GkxEnRqY6IWghnb4vgsbX
-         McLDLROyC7JK3+ANsT/xmO5+cCV6kkOotayyCVCILu6/5f9uyz/dvROJA2/5yqLxS3sc
-         6IYL9SHxj5d4KQFW5j1zL6SkHP2elOJjV35I7AJXcSyU7C/jVoIhLlX3sTI6+J+rL4F4
-         wABfMzEIYukSsO4Fa4aoAEReed/6fdAV4GccM4ZJNhKsClXJrw0GrB/4akawZ5tbHPuB
-         QAo1kpKBp0aHuz0L3ZXjKhgwQxK00++wjuvFrpE0dCHfat5BYTf2gLtwW3ZMmSRxYNeB
-         LNnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVDYXuCbhtYb/bfTTXyMliU33EeswNkhWtcG2iJJSjCyvxN/+5tbxzthH9lT7X0dkPOfj89yi/u49s/nERDz+QplRqkKCabRdw+LVJ
-X-Gm-Message-State: AOJu0YwD2vqHxomPcZeICttjGJA6XEBS1diTfFjzH2MyRSPpoUQf2mzx
-	1RFRCwqQNdBB3qWpjVfx+8rekWjaIem6hzzcomYW9UCLCjkeyz8Yll/vXU54S5sTGJ03jcJfOdC
-	iIPYEXhWilyDc1sT8wOUk39mD42lSdEaJqDfm6RPd1JweZ4/1J8VRY1tg3eckXA==
-X-Received: by 2002:a17:907:94cb:b0:a7a:bece:6223 with SMTP id a640c23a62f3a-a7d3ff7b8e4mr1064731866b.6.1722419440620;
-        Wed, 31 Jul 2024 02:50:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHm0sw2f7Q/hSxPLtTI3KYQw5uCrmW/NKDuI5rQ7HlgfsjazxGbnWK3KS2H8Xhx5SNKvtVQug==
-X-Received: by 2002:a17:907:94cb:b0:a7a:bece:6223 with SMTP id a640c23a62f3a-a7d3ff7b8e4mr1064728266b.6.1722419440130;
-        Wed, 31 Jul 2024 02:50:40 -0700 (PDT)
-Received: from [192.168.10.81] ([151.95.101.29])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7acad93105sm746255566b.167.2024.07.31.02.50.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 02:50:39 -0700 (PDT)
-Message-ID: <57ba7e1d-0121-4d71-89b8-c61c476ca724@redhat.com>
-Date: Wed, 31 Jul 2024 11:50:38 +0200
+	s=arc-20240116; t=1722419559; c=relaxed/simple;
+	bh=73bEQavjF+GaI6c7nkkNPr8lCt+cq5S3EgffHXve1xI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GcKEwSmjO4P79Dyw/MRUaBzWv0aoS75ROLuOM4A6bh3GytVLtN2IgHVUUKzKONe/aS9yj2E3QjxfMWAlRo53Gtk8x+LlRGTzluLCvm6auew59ZgjOKgwqQhHt5LnlrFRkd96udqyQE3Ctkw2ObXAojWX9VfSxSSXsKE7WoxI8F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YU+gU5OA; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722419558; x=1753955558;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=73bEQavjF+GaI6c7nkkNPr8lCt+cq5S3EgffHXve1xI=;
+  b=YU+gU5OAOVXwTpdsz0kZxZyA18YO4vHCNrwwvedPlF3K+8hiNxrSSnz1
+   kTUpo174iRMsl9m7jkGbj7IRd2W9c9Z1AWVtL3j2xvrfJWb64eflIYb1v
+   blKC9Fm4vna2r+qS1CRjW2mtpk62QXKZ4urFeyk5lgiMmIEj7MXm7fafu
+   BA2Wiou7cecOKnei2kdj2OgUw/86zSEAG1/wOZXv7aNxpw44Iv6eH4JhK
+   FFd1GVmn3vaw4tfBCG9oAbAvZc1KXpb+gS83QW/aEK/FqGYnGLqwhW+rx
+   bmo2+OclleTQnyjkFur+n1IrsQdUtlLOfaY5NFcE7+tXYz/4DbxPzihQG
+   g==;
+X-CSE-ConnectionGUID: Z1R6HT3jR4ugH6tozkmFrQ==
+X-CSE-MsgGUID: jgLqmNtsSreL1g1gI4ybyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="31678832"
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="31678832"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 02:52:37 -0700
+X-CSE-ConnectionGUID: lJ95hGZOR2qYjAz+qXoaGQ==
+X-CSE-MsgGUID: DEgwsBZpRmOqsIhq9traSw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="58960823"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.118])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 02:52:30 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-pm@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Subject: [PATCH 1/1] docs: thermal: Remove extra parenthesis
+Date: Wed, 31 Jul 2024 12:52:22 +0300
+Message-Id: <20240731095223.2778-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 84/84] KVM: Don't grab reference on VM_MIXEDMAP pfns
- that have a "struct page"
-To: Sean Christopherson <seanjc@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
- Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-85-seanjc@google.com>
- <992c4a07-fb84-42d8-93b3-96fb3a12c8e0@redhat.com>
- <ZqlLWl0R1p41CS0O@google.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-In-Reply-To: <ZqlLWl0R1p41CS0O@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 7/30/24 22:21, Sean Christopherson wrote:
-> On Tue, Jul 30, 2024, Paolo Bonzini wrote:
->> On 7/27/24 01:52, Sean Christopherson wrote:
->>> Now that KVM no longer relies on an ugly heuristic to find its struct page
->>> references, i.e. now that KVM can't get false positives on VM_MIXEDMAP
->>> pfns, remove KVM's hack to elevate the refcount for pfns that happen to
->>> have a valid struct page.  In addition to removing a long-standing wart
->>> in KVM, this allows KVM to map non-refcounted struct page memory into the
->>> guest, e.g. for exposing GPU TTM buffers to KVM guests.
->>
->> Feel free to leave it to me for later, but there are more cleanups that
->> can be made, given how simple kvm_resolve_pfn() is now:
-> 
-> I'll revisit kvm_resolve_pfn(), Maxim also wasn't a fan of a similar helper that
-> existed in v11.
+thermal_zone_device_register() prototype in the thermal zone device
+interface documentation has double closing parenthesis. Remove one
+of them.
 
-FWIW kvm_resolve_pfn() is totally fine as an intermediate step.  Just 
-food for thought for possible follow-ups.
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ Documentation/driver-api/thermal/sysfs-api.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> Also, check_user_page_hwpoison() should not be needed anymore, probably
->> not since commit 234b239bea39 ("kvm: Faults which trigger IO release the
->> mmap_sem", 2014-09-24) removed get_user_pages_fast() from hva_to_pfn_slow().
-> 
-> Ha, I *knew* this sounded familiar.  Past me apparently came to the same
-> conclusion[*], though I wrongly suspected a memory leak and promptly forgot to
-> ever send a patch.  I'll tack one on this time around.
-
-As you prefer.
-
-Paolo
+diff --git a/Documentation/driver-api/thermal/sysfs-api.rst b/Documentation/driver-api/thermal/sysfs-api.rst
+index 6c1175c6afba..63ed1801ac40 100644
+--- a/Documentation/driver-api/thermal/sysfs-api.rst
++++ b/Documentation/driver-api/thermal/sysfs-api.rst
+@@ -43,7 +43,7 @@ temperature) and throttle appropriate devices.
+ 				      int trips, int mask, void *devdata,
+ 				      struct thermal_zone_device_ops *ops,
+ 				      const struct thermal_zone_params *tzp,
+-				      int passive_delay, int polling_delay))
++				      int passive_delay, int polling_delay)
+ 
+     This interface function adds a new thermal zone device (sensor) to
+     /sys/class/thermal folder as `thermal_zone[0-*]`. It tries to bind all the
+-- 
+2.39.2
 
 
