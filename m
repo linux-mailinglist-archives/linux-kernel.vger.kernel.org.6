@@ -1,89 +1,87 @@
-Return-Path: <linux-kernel+bounces-269364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512EE94320A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:32:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83761943213
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0DC1F2607D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:32:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A415B20F21
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962AE1BBBC8;
-	Wed, 31 Jul 2024 14:32:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B0C1BBBC1;
+	Wed, 31 Jul 2024 14:34:48 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3049726AE4
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:32:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA13D1B14FF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436327; cv=none; b=m8Ng0xG5zxa/9ogwyU7PDRBtDRg8+FXqhc/BYeeDpfw5BccNlpVdr/iLPQ4wjlhCFdtpVKJJP+F7aHlDWsIIAFWLG+e5bYzzlnT6L55ZXocZte6YmhfXWC5mhofgWyz/6lRb2hrYrZj4G8SQ1Dizf5Q1T7yZrGi5vBaw8CVjVzE=
+	t=1722436487; cv=none; b=Wrjz4Ngcpn9HjbUfdyrG7U1/o3Luo90FkKy7y7R4fcFT+lvCFOM2fGzb2arwHRSjzEVAcDAHdIDS7d+4+8LQBsJmnWgZyZAQuFLBCwAOLQuwAOmUkYLA4JbwTC1RrlWK3kXU0Usi6tnvj4clXHlZ7g4HC3qGPF3bPPW2+y2U820=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436327; c=relaxed/simple;
-	bh=ivIdlhDxXFAiWN+qR5VlOoRpbc+tYvoa+/Y+qz9Fd6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P5DmLq3RagsbsVNQtJTI7WrMg2YGon/Ni2/2cWai5eA/Wtxmbn1PyBi9sk9m0keideRSStFnxdaqpguGQA0xI60MdBkWsk+Ftx+9cTmlvuZwCDuotTMqUuw5qAwMZUo6i/ab9cqglOkvEVZEevqAuurMycBp/qFkduObDx91L2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38D32C116B1;
-	Wed, 31 Jul 2024 14:32:04 +0000 (UTC)
-Date: Wed, 31 Jul 2024 10:32:38 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, John Stultz <jstultz@google.com>,
- LKML <linux-kernel@vger.kernel.org>, Joel Fernandes <joelaf@google.com>,
- Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, Ben
- Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Youssef
- Esmat <youssefesmat@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon
- <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng
- <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Xuewen Yan
- <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Metin
- Kaya <Metin.Kaya@arm.com>, Thomas Gleixner <tglx@linutronix.de>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, Connor
- O'Brien <connoro@google.com>
-Subject: Re: [PATCH v11 7/7] sched: Split scheduler and execution contexts
-Message-ID: <20240731103238.5e45e343@gandalf.local.home>
-In-Reply-To: <20240731113720.GB33588@noisy.programming.kicks-ass.net>
-References: <20240709203213.799070-1-jstultz@google.com>
-	<20240709203213.799070-8-jstultz@google.com>
-	<20240712150158.GM27299@noisy.programming.kicks-ass.net>
-	<CANDhNCrkf1Uz42V3vMFChp1nKnkeHH7ZPxd_gC4KOMmWPcRVgQ@mail.gmail.com>
-	<Zqn_0XIcxTpHxswZ@jlelli-thinkpadt14gen4.remote.csb>
-	<20240731113720.GB33588@noisy.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1722436487; c=relaxed/simple;
+	bh=WkvxrXPefTtG5XQXwsJM0bzYPLImtaxazIwI1lyCocI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OC7kz4JrHsCwRAUyPQ9yEtyoI0cbQtJzLVkqwklXNM2I0M9AMoaUivSHsUUULjMmpw6xU5nAYCoopGiJKUPGjt5+bVo/6dFLa4UWYKvgKF/YvY7q6K9j1VktEstz6o2rkuSkEpqrhmUQyaxdEUB8iBIUHE4TO2vQtwcTMI0Cc20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz12t1722436369tdub3n
+X-QQ-Originating-IP: nlDW+JflpgvVOoz5Cpa3YnzZo+s9nlaZD/t8jyQyPA0=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 31 Jul 2024 22:32:47 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 15301098886600835381
+From: WangYuli <wangyuli@uniontech.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	dominique.martinet@atmark-techno.com,
+	tsbogend@alpha.franken.de
+Cc: leesongyang@outlook.com,
+	bhelgaas@google.com,
+	rdunlap@infradead.org,
+	linux-mips@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH 4.19+] MIPS: Octeron: remove source file executable bit
+Date: Wed, 31 Jul 2024 22:32:45 +0800
+Message-ID: <1F49853AED366C76+20240731143245.204547-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Wed, 31 Jul 2024 13:37:20 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+From: Dominique Martinet <dominique.martinet@atmark-techno.com>
 
-> > I don't think I have strong preferences either way, but I actually
-> > considered the proxy to be the blocked donor (the one picked by the
-> > scheduler to run), as it makes the owner use its properties, acting as a
-> > proxy for the owner.  
-> 
-> This. But I suspect we both suffer from not being native English
-> speakers.
+commit 89c7f5078935872cf47a713a645affb5037be694 upstream
 
-Has nothing to do with being a native English speaker or not. "proxy" is
-not a commonly used word and can easily be misused.
+This does not matter the least, but there is no other .[ch] file in the
+repo that is executable, so clean this up.
 
-> 
-> Would 'donor' work in this case?
-> 
-> Then the donor gets all the accounting done on it, while we execute
-> curr.
+Fixes: 29b83a64df3b ("MIPS: Octeon: Add PCIe link status check")
+Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
+Signed-off-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ arch/mips/pci/pcie-octeon.c | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ mode change 100755 => 100644 arch/mips/pci/pcie-octeon.c
 
-I agree that "donor" is a bit easier to understand.
+diff --git a/arch/mips/pci/pcie-octeon.c b/arch/mips/pci/pcie-octeon.c
+old mode 100755
+new mode 100644
+-- 
+2.43.4
 
--- Steve
 
