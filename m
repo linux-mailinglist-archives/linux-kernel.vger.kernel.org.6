@@ -1,119 +1,215 @@
-Return-Path: <linux-kernel+bounces-269391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4916943252
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:44:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F14D2943254
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E622F1C24436
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:44:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729091F27384
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2731BC062;
-	Wed, 31 Jul 2024 14:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B60C1BBBC6;
+	Wed, 31 Jul 2024 14:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RmK7GQRA"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wPO0KTMe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8NUhvU3+";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wPO0KTMe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8NUhvU3+"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AFA1BBBC5;
-	Wed, 31 Jul 2024 14:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589391BBBC3
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722436979; cv=none; b=ZSvj75IWMbokewGVs5KCa+FQlxy2dFVwtpNk++wp4yAVEKxqE/iuKUSMmpVq8XkyWlB1drMegelHFJ1Y7AT2rNtKxwSg/uZ9Lcd1PfmXnEkyVFXVY64K8zGcq0+tTnn+1AvxukO2Y5Q0PsDwOHdEA4Nsqs8hIXdxRi6ZW6M5IhA=
+	t=1722437023; cv=none; b=e2CaoRwE87O8gEpmD343OSw/hJxvpYHd0iz/L0IBKvr2wedjhiGJZVixKxNa58swPdDmD11BpBEMiX90fpiZ/8mx/8HCIAuZqt2yaHzjBUIKb9rBXdGd0R6K+cITf5cgv5pg9QdyPuIZl3wkSHj9FnyMOTJa42nDAvSE+VOQTkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722436979; c=relaxed/simple;
-	bh=03o06WRPMECBH8cNLsTZ+D+b1SXhalEQ2Hoe+OeZjbE=;
+	s=arc-20240116; t=1722437023; c=relaxed/simple;
+	bh=x6iSPw+eF+Tbnn3Y1jGEztMQzDy184vHWR2hrnjKHKY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bF+FcPYFzdecnK96YWxHHYzbLu1o42MgpcPSe8v+amrZd+2cg5ijxRhUuGzin8dX4IoHG5J+8UOwSMxyND9LfyzDCdSP7CZFTdHzTAnjFp+NC9QSe2GhKz2Z2dhVBOJSskYrQpnGfAqV1wKGVnzSnV3GP//FmZdKdxV5Io97dRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=RmK7GQRA; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so72470181fa.2;
-        Wed, 31 Jul 2024 07:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1722436976; x=1723041776; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7+eaS7WmK/h+AxO7xK0Tq5m6QMfSwjAwlMf/qchy6iw=;
-        b=RmK7GQRATtmefFbwvqygIrm4KSXjT7RIGXgZuVl7dxEoYi0whGTVQ5zBwce4Z25T9i
-         WAQReh+mc3IPFEJtoWF2RTh8C5EAK0EwOLJC37RovkHRYf9MBIRzVM08O+dfa4gMKG3k
-         /N8XWdKm30JLcKrIIsCHGyDFGK1EVwk0DqsbbcaVXLnYPrHh1+/mm3fhJzTyBUL+aEYy
-         dTGaYhf9krBMq2FN+BEgaL2EYHfJvboyB9uwYparNall+hGQisTgpUFPMPPJWy6q7fTH
-         rmntLYlP5spX700gbzW5usl0TCJa6DvWtAnXSAthI02fAfjR5ATwDwJfqUSlW2S93rvS
-         P4Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722436976; x=1723041776;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7+eaS7WmK/h+AxO7xK0Tq5m6QMfSwjAwlMf/qchy6iw=;
-        b=eiL84ZLxVfZQATdne8C80P/JCeol7qgtm8v3CipKYBn3N9k4IgCEVvaxyVBr31aoX2
-         /7QhP/mJ50l+ugK4m3eM7c/IeesEKBJ7rgLq2Vs+gZaCAg6wbJzYmCKva4+q1juRtDL4
-         REVkjLcunIlztredvgAajynnIXSBJSxWGC79oeAZeyTrDIl+ndCJe7b+4BFnOnkUl5Qz
-         sSL1NQTh1Z+nmMSu9z2LqNHeVB9wm5KoobJHhaBH05yQL4ZANXtM9MS622L6sjGGyVeu
-         XzY9FjU9arl0F9zy+KeyQq7klka+bsDFZZpZxKe08s5bnXsvdXTdpPlRYAro33eTT+kb
-         ss8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV7/UbdNSAywANsN2mGQ6ynHKBWjbeOQxuUdBXHTaojpaJarEQ6iYcK4Dwj3bGPQ2nAloRCNMNhOfBrMgx05o+eHcK1Ae2hvodSDbSe8VhujF1GU9CjlRsbLUp7v5VrG8OrXLBf
-X-Gm-Message-State: AOJu0YySNdY64dXaMnEGmcNlq1zUkFKWC3weLeVubexfdNmjdYl1urvj
-	gIFFT9ayu9+55wGVouBfXioU5BKBViVoxjVIn7iBRAvZ88Ac2/M=
-X-Google-Smtp-Source: AGHT+IFXclmu5DEIX5SRJTwTFkq5JFNwJWu6kCEgvQ/1i3mVfeno0N3amnMwKWgaIPb8PCQESr5PZQ==
-X-Received: by 2002:a2e:9609:0:b0:2ef:2a60:c1c1 with SMTP id 38308e7fff4ca-2f12ee1663bmr90480651fa.21.1722436975606;
-        Wed, 31 Jul 2024 07:42:55 -0700 (PDT)
-Received: from [192.168.1.3] (p5b057724.dip0.t-ipconnect.de. [91.5.119.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6403bsm24239425e9.35.2024.07.31.07.42.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 07:42:54 -0700 (PDT)
-Message-ID: <018c2396-3a00-47db-be60-4a49e3668a9d@googlemail.com>
-Date: Wed, 31 Jul 2024 16:42:53 +0200
+	 In-Reply-To:Content-Type; b=N3iOjE/k+Qip+yyqWmx5+u4OOzQaEDgalqGbI2QBIkYhMOh6wo7x7Rxoy4LN1aGxzLF8Lm69tPc0vJqfPJ/6AHbTdwRkI4r8sT0Qg+MW2P6FP1GYXMgIuhHdQ2PhiAWsCuy8rJqChgIJldoE8FlmWoe7lUpPSrXN/tiAwJIiP2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wPO0KTMe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8NUhvU3+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wPO0KTMe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8NUhvU3+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 83ACE21A7B;
+	Wed, 31 Jul 2024 14:43:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722437019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
+	b=wPO0KTMeLxsLTMKHxSxvuL7yB53HRVZ/ePvvK1hnRaQ0VD/NTQfiitvP64+M5v05LX5B/H
+	r5vyvaamneCQnpuC+gxzfQwBHlMxz7+StYcDDC4k+6nlOBOv6reYbzi+pSe1GDb4uMckZE
+	40RZLvs0Fr9y9hBrmkXkKxOm19cr6Hs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722437019;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
+	b=8NUhvU3+sLh6ljtIPVkix+w+fzvDC9w/Iya2hRaguhTz6AJZcBJS52Uayh5eRWpyK8DRcM
+	sIQ7bOUsN2+lZdCQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722437019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
+	b=wPO0KTMeLxsLTMKHxSxvuL7yB53HRVZ/ePvvK1hnRaQ0VD/NTQfiitvP64+M5v05LX5B/H
+	r5vyvaamneCQnpuC+gxzfQwBHlMxz7+StYcDDC4k+6nlOBOv6reYbzi+pSe1GDb4uMckZE
+	40RZLvs0Fr9y9hBrmkXkKxOm19cr6Hs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722437019;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
+	b=8NUhvU3+sLh6ljtIPVkix+w+fzvDC9w/Iya2hRaguhTz6AJZcBJS52Uayh5eRWpyK8DRcM
+	sIQ7bOUsN2+lZdCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C6C213297;
+	Wed, 31 Jul 2024 14:43:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZLPSGZtNqmbUeAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 14:43:39 +0000
+Message-ID: <4908d9a3-8b04-4808-8190-c1b602cba9dd@suse.cz>
+Date: Wed, 31 Jul 2024 16:43:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240730151615.753688326@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20240730151615.753688326@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mm: vrealloc: properly document __GFP_ZERO behavior
+Content-Language: en-US
+To: Danilo Krummrich <dakr@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: urezki@gmail.com, hch@infradead.org, mhocko@suse.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240730185049.6244-1-dakr@kernel.org>
+ <20240730185049.6244-4-dakr@kernel.org>
+ <20240730141953.a30fa50c0ba060fe0a765730@linux-foundation.org>
+ <ZqlsdtTWhRahFWmy@pollux.localdomain>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ZqlsdtTWhRahFWmy@pollux.localdomain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.09 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	XM_UA_NO_VERSION(0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmail.com,infradead.org,suse.com,vger.kernel.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.09
 
-Am 30.07.2024 um 17:43 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.1.103 release.
-> There are 440 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 7/31/24 12:43 AM, Danilo Krummrich wrote:
+> On Tue, Jul 30, 2024 at 02:19:53PM -0700, Andrew Morton wrote:
+>> On Tue, 30 Jul 2024 20:49:43 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
+>> 
+>> > Properly document that if __GFP_ZERO logic is requested, callers must
+>> > ensure that, starting with the initial memory allocation, every
+>> > subsequent call to this API for the same memory allocation is flagged
+>> > with __GFP_ZERO. Otherwise, it is possible that __GFP_ZERO is not fully
+>> > honored by this API.
+>> 
+>> I appear to have just seen this, in a separate mailing.
 > 
-> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
-> Anything received after that time might be too late.
+> What you have seen in a separate mail is a similar patch for krealloc() [1].
+> This one is a fixup for vrealloc() from a previous submission you've applied to
+> mm-unstable.
+> 
+>> 
+>> Please, slow down.  We have two months.  Await reviewer feedback, spend
+>> time over those changelogs, value clarity and accuracy and completeness
+>> over hastiness.  The only reason for rushing things is if a patch is
+>> disrupting ongoing testing of the linux-next tree.
+> 
+> There was a discussion in [2], which lead to this fixup series.
+> 
+> In terms of changelogs this series is indeed a bit "lax", since I have
+> recognized that you queue up fixup patches for changes that did already land in
+> mm-unstable to be squashed into the original commits later on.
 
-Just for the record: this builds on my 2-socket Ivy Bridge Xeon E5-2697 v2 server, but 
-fails to boot due to a kernel panic which others have already reported.
+Some of the changes in the fixups would however ideally result in udpdates
+to the original changelogs in addition to squashing code. Also with 4 fixups
+to 2 original patches it might be IMHO better to squash on your side and
+resend as a full replacement. Perhaps also together with the other 2 patches
+about __GFP_ZERO for krealloc in a single series. As Andrew mentioned we are
+early in the rc phase to afford this.
 
-Looking for testing -rc2...
+> [1] https://lore.kernel.org/linux-mm/20240730194214.31483-1-dakr@kernel.org/
+> [2] https://lore.kernel.org/linux-mm/20240722163111.4766-1-dakr@kernel.org/T/#m065a7f875b44dc945dd535c2b7168c3d77a98993
 
-Beste Grüße,
-Peter Schneider
-
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
-
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
