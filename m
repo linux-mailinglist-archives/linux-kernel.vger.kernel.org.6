@@ -1,113 +1,331 @@
-Return-Path: <linux-kernel+bounces-269764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E4D9436B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:47:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6AC9436B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4D9B284CFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:47:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5D191F2371C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4E11304BF;
-	Wed, 31 Jul 2024 19:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87A7166302;
+	Wed, 31 Jul 2024 19:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="I0oT3N+i"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="APTeW19P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07554EB38
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E618044;
+	Wed, 31 Jul 2024 19:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722455230; cv=none; b=gfR4KrhayfPMWhV1Qoosxn6heyHpqEpwmCz469s7f5BnVCEDS45y13sYZsdV6f8IpRQ+6m2R59MROhQSB9SXUZ1ysiflXM/HTnhJ+jl6xSL/bhvsX4VA053CEns8R0XEo62rVUDUhJeVgdFH2gn+QBNXC/qnz7W/GMg7tbOYMBY=
+	t=1722455234; cv=none; b=klHSGEuPVHdiAepQ3yxQamJieDyiqgD36O7IxtvEk2GU1eVv9ERkWP71yq2XgJwUYvBD9/1lGKa8OXZSibCLIlEilyjLX9quuNeTo3r+WLg/2txEGHYTPaNuVhYFmoe87xghlPGsjAz8/EZfpNMbLD4Kli/P9R1MxlmU5UyByn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722455230; c=relaxed/simple;
-	bh=68IEEl4T4i3Q+A1hsoS06kb7yEO9aKYPzH5dciEL+IA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uibjb7nMlmWUGRwqg0E69L5ho07JmgNtd6egswope812jUSdUy5y/v8WB9uHHkFap84yu81zyaIPMWFRhkgAPiVV1/rvJS1qDGAwuvreVd3r7iIHJ8hM1KJB7H3nQ9Yi5Gq8ncQAkXBYOLqQgciDSs6IschpiaA0YOEh73CVkoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=I0oT3N+i; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-81f905eb19cso311002239f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:47:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1722455227; x=1723060027; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=L9qmnQ6BfkDIeZVz78CLRQGm70nI1Qgca6NQE0QO5TU=;
-        b=I0oT3N+iq2jKhfXcyLxLWYU6emSLTcmhzD9A7Q2etAiAakqcHItos3VXIRpUVELytx
-         euG3Eku8y5vZACsiTkdqwBaoe8Yhc4Tw7jVPuMYJIhMTLqPeGi6M1IeJ2fvFsfE3xarp
-         OFYEmk/Ng37ZrMlAAqjU9QbUk5juiU82NxzuY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722455227; x=1723060027;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L9qmnQ6BfkDIeZVz78CLRQGm70nI1Qgca6NQE0QO5TU=;
-        b=bJu03K6FuQ1a17hbhlJOtznOeOtVOiSS2bNFSQiGV2THeB3NkpVxo/sIydRL7mBKqo
-         e2wwLUcM5HIzr1dYh0Y8jqlLM9A910KU5A4fyAgAPi//YI4K+gcBDRbijP/nAU9QjF7w
-         uQTC45uyDL2l5lvEVBWPRPbi+BEbfoipjpHR1idR/EzQwJiZ9z/4yYQyJqWLtbJtfESq
-         1UIi/WPhNT5/5xLOjNZ4MjciNirBGu5tjWrFXFDiw1HoVSIeFLI5Pa9eE/dR6AaX4DDf
-         n4Kd74ablLxfHkfRvVXrsyRMFqFdasIQH9n0tBRP2oJ444DeaZrFEJIHL73aHvGqxCIC
-         UIdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWtou0C8pZesp8VzleXA+7qKldyfwucRtTgwH6NJOXpxSa3XIu0ysbHt8Q7ameZUtMjSBelllxJs7JyC7YO2lxQ1nBAKaChAktOxgjG
-X-Gm-Message-State: AOJu0YwOlticOp3roEkzN2dpsHWC7CxCXXSqKrgAKYhcPBl1xQ+fGqrr
-	ppSnvIZHfCCbrAMRMESWGA/Z3JF0xPFtFF7RBKvtmo0QrpzQE4dkn3A6ji/hwg==
-X-Google-Smtp-Source: AGHT+IG408dxXKgXzbPbvVUq8CBwbTdlcfEckKAmt5cAomdh6fvurEijpX0Uy9o21Yku/co4S8HQqw==
-X-Received: by 2002:a05:6602:6406:b0:803:cc64:e0bf with SMTP id ca18e2360f4ac-81fcc0e8c62mr40513839f.2.1722455227582;
-        Wed, 31 Jul 2024 12:47:07 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.171])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29faa83a0sm3348439173.55.2024.07.31.12.47.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 12:47:07 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Wed, 31 Jul 2024 13:47:05 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-Message-ID: <ZqqUuZqqq7O3nLbs@fedora64.linuxtx.org>
-References: <20240731095022.970699670@linuxfoundation.org>
+	s=arc-20240116; t=1722455234; c=relaxed/simple;
+	bh=nvNratIWItKZQVYz3quVJHi2Shdz8vQJ6LbiC1lFAVk=;
+	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=BInOAW9jpKuXKaP87CakYorE7JTWoFVKp293eQ8OOmKTlBpmRTYus5WmqsMH8raF6skfCEJST1HNZRlL5QJg8KoKbn5jXS/FE0rlmoPa34FSo5axXVsfcXlfL3UoUgmtg7xkw7n/FsaBLNW7bTOJyt4tkAoCPoHAKcQkz2glpl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=APTeW19P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15C0AC4AF0F;
+	Wed, 31 Jul 2024 19:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722455234;
+	bh=nvNratIWItKZQVYz3quVJHi2Shdz8vQJ6LbiC1lFAVk=;
+	h=Subject:From:To:Cc:Date:From;
+	b=APTeW19PzPCi5eC6RjUHc7sgg8yj6sOUBYMNWig/HpsXD4Elo2dXQu4UE/GRlXWNy
+	 EQPkPw46Kg5yp9BH3CU2AjNNhPdiR9TvqjmBHvUQ9V3wi2ELi0lZSB7pJaDeEZ3kEP
+	 mLPeLhDtuuv75ElAqL2vWDHQT6SY7Bg7PDHI7Pymgvkvv9o8aKpXinXzXi/8CbDrU8
+	 9cZsT9k5tcXmZTOyYPvremMOVmXm8+iEIpU/WvOzEV9oyaEUkUN0DJbgeiMDzX0EKW
+	 2B5q4MiWfQbm5c20dNlnBp1p4M3gtlANrKTl/gjMb7nMO1vwfic2kzz3xx0p7LSTRO
+	 O7C2rNK7RGMnQ==
+Subject: [PATCH V9 1/2] cgroup/rstat: Avoid flushing if there is an ongoing
+ overlapping flush
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+To: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com,
+ shakeel.butt@linux.dev
+Cc: Jesper Dangaard Brouer <hawk@kernel.org>, hannes@cmpxchg.org,
+ lizefan.x@bytedance.com, longman@redhat.com, kernel-team@cloudflare.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Wed, 31 Jul 2024 21:47:09 +0200
+Message-ID: <172245504313.3147408.12138439169548255896.stgit@firesoul>
+User-Agent: StGit/1.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 12:03:16PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.3 release.
-> There are 809 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.3-rc3.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+This patch reintroduces and generalizes the "stats_flush_ongoing" concept
+to avoid redundant flushes if there is an ongoing flush, addressing lock
+contention issues on the global cgroup rstat lock.
 
-Tested rc3 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+At Cloudflare, we observed significant performance degradation due to
+lock contention on the rstat lock, primarily caused by kswapd. The
+specific mem_cgroup_flush_stats() call inlined in shrink_node, which
+takes the rstat lock, is particularly problematic.
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+On our 12 NUMA node machines, each with a kswapd kthread per NUMA node, we
+noted severe lock contention on the rstat lock, causing 12 CPUs to waste
+cycles spinning every time kswapd runs. Fleet-wide stats (/proc/N/schedstat)
+for kthreads revealed that we are burning an average of 20,000 CPU cores
+fleet-wide on kswapd, primarily due to spinning on the rstat lock.
+
+Here's a brief overview of the issue:
+- __alloc_pages_slowpath calls wake_all_kswapds, causing all kswapdN threads
+  to wake up simultaneously.
+- The kswapd thread invokes shrink_node (via balance_pgdat), triggering the
+  cgroup rstat flush operation as part of its work.
+- balance_pgdat() has a NULL value in target_mem_cgroup, causing
+  mem_cgroup_flush_stats() to flush with root_mem_cgroup.
+
+The kernel previously addressed this with a "stats_flush_ongoing" concept,
+which was removed in commit 7d7ef0a4686a ("mm: memcg: restore subtree stats
+flushing"). This patch reintroduces and generalizes the concept to apply to
+all users of cgroup rstat, not just memcg.
+
+If there is an ongoing rstat flush and the current cgroup is a descendant, a
+new flush is unnecessary. To ensure callers still receive updated stats,
+they wait for the ongoing flush to complete before returning, but with a
+timeout, as stats may already be inaccurate due to continuous updates.
+
+Lock yielding causes complications for ongoing flushers. Therefore, we limit
+which cgroup can become ongoing flusher to top-level, as lock yielding
+allows others to obtain the lock without being the ongoing flusher, leading
+to a situation where a cgroup that isn't a descendant obtains the lock via
+yielding. Thus, we prefer an ongoing flusher with many descendants. If and
+when the lock yielding is removed, such as when changing this to a mutex,
+we can simplify this code.
+
+This change significantly reduces lock contention, especially in
+environments with multiple NUMA nodes, thereby improving overall system
+performance.
+
+Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
+Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+---
+V9:
+ - Fix logic for 'already_contended'
+ - Didn't address the refcnt suggestion, need more input from experts
+ - I'll deploy this ASAP to my production experiment hosts and report back
+
+V8: https://lore.kernel.org/all/172139415725.3084888.13770938453137383953.stgit@firesoul
+V7: https://lore.kernel.org/all/172070450139.2992819.13210624094367257881.stgit@firesoul
+V6: https://lore.kernel.org/all/172052399087.2357901.4955042377343593447.stgit@firesoul/
+V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
+V4: https://lore.kernel.org/all/171952312320.1810550.13209360603489797077.stgit@firesoul/
+V3: https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
+V2: https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
+V1: https://lore.kernel.org/all/171898037079.1222367.13467317484793748519.stgit@firesoul/
+RFC: https://lore.kernel.org/all/171895533185.1084853.3033751561302228252.stgit@firesoul/
+
+
+ include/linux/cgroup-defs.h |    2 +
+ kernel/cgroup/rstat.c       |  113 ++++++++++++++++++++++++++++++++++++++-----
+ 2 files changed, 103 insertions(+), 12 deletions(-)
+
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index b36690ca0d3f..a33b37514c29 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -548,6 +548,8 @@ struct cgroup {
+ #ifdef CONFIG_BPF_SYSCALL
+ 	struct bpf_local_storage __rcu  *bpf_cgrp_storage;
+ #endif
++	/* completion queue for cgrp_rstat_ongoing_flusher */
++	struct completion flush_done;
+ 
+ 	/* All ancestors including self */
+ 	struct cgroup *ancestors[];
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index fb8b49437573..463f9807ec7e 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -2,6 +2,7 @@
+ #include "cgroup-internal.h"
+ 
+ #include <linux/sched/cputime.h>
++#include <linux/completion.h>
+ 
+ #include <linux/bpf.h>
+ #include <linux/btf.h>
+@@ -11,6 +12,7 @@
+ 
+ static DEFINE_SPINLOCK(cgroup_rstat_lock);
+ static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
++static struct cgroup *cgrp_rstat_ongoing_flusher = NULL;
+ 
+ static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
+ 
+@@ -279,17 +281,32 @@ __bpf_hook_end();
+  * value -1 is used when obtaining the main lock else this is the CPU
+  * number processed last.
+  */
+-static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop)
++static inline bool __cgroup_rstat_trylock(struct cgroup *cgrp, int cpu_in_loop)
++{
++	bool locked;
++
++	locked = spin_trylock_irq(&cgroup_rstat_lock);
++	if (!locked)
++		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, true);
++	else
++		trace_cgroup_rstat_locked(cgrp, cpu_in_loop, false);
++
++	return locked;
++}
++
++static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop,
++				       bool already_contended)
+ 	__acquires(&cgroup_rstat_lock)
+ {
+-	bool contended;
++	bool locked = false;
+ 
+-	contended = !spin_trylock_irq(&cgroup_rstat_lock);
+-	if (contended) {
+-		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, contended);
++	if (!already_contended) /* Skip trylock if already contended */
++		locked = __cgroup_rstat_trylock(cgrp, cpu_in_loop);
++
++	if (!locked) {
+ 		spin_lock_irq(&cgroup_rstat_lock);
++		trace_cgroup_rstat_locked(cgrp, cpu_in_loop, true);
+ 	}
+-	trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
+ }
+ 
+ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
+@@ -299,6 +316,71 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
+ 	spin_unlock_irq(&cgroup_rstat_lock);
+ }
+ 
++#define MAX_WAIT	msecs_to_jiffies(100)
++/**
++ * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
++ * @cgrp: target cgroup
++ *
++ * Function return value follow trylock semantics. Returning true when lock is
++ * obtained. Returning false when not locked and it detected flushing can be
++ * skipped as another ongoing flusher took care of the flush.
++ */
++static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
++{
++	struct cgroup *ongoing;
++	bool locked;
++
++	/*
++	 * Check if ongoing flusher is already taking care of this, if
++	 * we are a descendant skip work, but wait for ongoing flusher
++	 * to complete work.
++	 */
++retry:
++	ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
++	if (ongoing && cgroup_is_descendant(cgrp, ongoing)) {
++		wait_for_completion_interruptible_timeout(
++			&ongoing->flush_done, MAX_WAIT);
++		/* TODO: Add tracepoint here */
++		return false;
++	}
++
++	locked = __cgroup_rstat_trylock(cgrp, -1);
++	if (!locked) {
++		/* Contended: Handle losing race for ongoing flusher */
++		if (!ongoing && READ_ONCE(cgrp_rstat_ongoing_flusher))
++			goto retry;
++
++		__cgroup_rstat_lock(cgrp, -1, true);
++	}
++	/*
++	 * Obtained lock, record this cgrp as the ongoing flusher.
++	 * Due to lock yielding, we might obtain lock while another
++	 * ongoing flusher (that isn't a parent) owns ongoing_flusher.
++	 */
++	if (!READ_ONCE(cgrp_rstat_ongoing_flusher)) {
++		/*
++		 * Limit to top-level as lock yielding allows others to obtain
++		 * lock without being ongoing_flusher. Leading to cgroup that
++		 * isn't descendant to obtain lock via yielding. So, prefer
++		 * ongoing_flusher with many descendants.
++		 */
++		if (cgrp->level < 2) {
++			reinit_completion(&cgrp->flush_done);
++			WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
++		}
++	}
++	return true;
++}
++
++static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
++{
++	if (cgrp == READ_ONCE(cgrp_rstat_ongoing_flusher)) {
++		WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
++		complete_all(&cgrp->flush_done);
++	}
++	__cgroup_rstat_unlock(cgrp, -1);
++}
++
+ /* see cgroup_rstat_flush() */
+ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+ 	__releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
+@@ -328,7 +410,7 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+ 			__cgroup_rstat_unlock(cgrp, cpu);
+ 			if (!cond_resched())
+ 				cpu_relax();
+-			__cgroup_rstat_lock(cgrp, cpu);
++			__cgroup_rstat_lock(cgrp, cpu, false);
+ 		}
+ 	}
+ }
+@@ -350,9 +432,11 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+ {
+ 	might_sleep();
+ 
+-	__cgroup_rstat_lock(cgrp, -1);
++	if (!cgroup_rstat_trylock_flusher(cgrp))
++		return;
++
+ 	cgroup_rstat_flush_locked(cgrp);
+-	__cgroup_rstat_unlock(cgrp, -1);
++	cgroup_rstat_unlock_flusher(cgrp);
+ }
+ 
+ /**
+@@ -368,8 +452,11 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+ 	__acquires(&cgroup_rstat_lock)
+ {
+ 	might_sleep();
+-	__cgroup_rstat_lock(cgrp, -1);
+-	cgroup_rstat_flush_locked(cgrp);
++
++	if (cgroup_rstat_trylock_flusher(cgrp))
++		cgroup_rstat_flush_locked(cgrp);
++	else
++		__cgroup_rstat_lock(cgrp, -1, false);
+ }
+ 
+ /**
+@@ -379,7 +466,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+ void cgroup_rstat_flush_release(struct cgroup *cgrp)
+ 	__releases(&cgroup_rstat_lock)
+ {
+-	__cgroup_rstat_unlock(cgrp, -1);
++	cgroup_rstat_unlock_flusher(cgrp);
+ }
+ 
+ int cgroup_rstat_init(struct cgroup *cgrp)
+@@ -401,6 +488,8 @@ int cgroup_rstat_init(struct cgroup *cgrp)
+ 		u64_stats_init(&rstatc->bsync);
+ 	}
+ 
++	init_completion(&cgrp->flush_done);
++
+ 	return 0;
+ }
+ 
+
+
 
