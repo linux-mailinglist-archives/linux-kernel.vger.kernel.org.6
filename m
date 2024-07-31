@@ -1,162 +1,159 @@
-Return-Path: <linux-kernel+bounces-269879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB924943800
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:30:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25706943805
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:33:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD7DE1C22915
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:30:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EB21F229A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB863145B27;
-	Wed, 31 Jul 2024 21:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBAA16C6AE;
+	Wed, 31 Jul 2024 21:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mmkYjn34"
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EQecaB5e"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800F33A1A8
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7E33A1A8
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722461419; cv=none; b=AxCcsrXp7Dh1PGIGIuW1a3GoE+vfUKkgL1bZVRxkLRcu3m3Bjefh4WEvSpxNjDZn1ub5QtraJ0t0gcQymnSf8gNDujiryFgc+ZSTr/1ifIAZoBkUMfOmyrTGFFEfe91FZ5Mlo/KZzdR5eB4XoimjTllZ6fLmAFij+VETaZWvTnM=
+	t=1722461592; cv=none; b=caODnt88XKREBtiGkkDmvtCtvv7KG2F4KoxdAUSxC2ITKiEXk28y7cWNtrMGeTg7AuPf669CSdE4qi7cfqgakL7BUr/3oPZxvHp5geSpsxH4AQnNaFfJiu0G3OwaXjwpGXvJrSeiLouRAVx4S4gTzPyd77KCjyCCNtyXoUi34yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722461419; c=relaxed/simple;
-	bh=nBmHE4fL1pwtnE1e7OpVqpK39zR0anb08YqLNoN9hmw=;
+	s=arc-20240116; t=1722461592; c=relaxed/simple;
+	bh=/ks9JRMMnDvphqXUqsmokZE6QY/FSp7LG0iS22XaAzk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m0HqqpsEBM3JQ21Gz1ubRLr5sIWAXuNNf1sL70Lb1+2dFVabsm6obLLzxUKiEJJY9uSJgTiqUuXPsxUFub4gPkIYOVtrdgwfi1RL7xhhupHMyvWdPCVPPuk6SUZbmljIeEqcGhq/6Fsn9vM3ao4FtRTEgllmYsKBERXLAIY+C7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mmkYjn34; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4928fb6fdceso1538762137.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:30:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=jK8SrTPPVHLTgF9YQISCbY5pNull5hiSvRvSIkCUk7GTKo9UGSg1LfBocjVwReirX6DrLujczw5Lq6EcvsKZNxBU0Kt/BWz1PzYtn5KjfTjybmgr4FtD/KyhmEkTKMP8PkHouehEoqlle5qojPSxHssoGEtz1213vrdsg83zoRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EQecaB5e; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-825809a4decso2045168241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:33:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722461415; x=1723066215; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1722461589; x=1723066389; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7v5MQa7OcjG2quU7CTmYoYXphTBDWw9No993Vj+T1kA=;
-        b=mmkYjn343t/7G2hXugW0d4hJ0rI8i5pAu6n3iuMG6gZ4qI+WOUlpDrDLp8XwU9JS6K
-         WkpXbdqmV2BO1DyS7dmScV7CX0QSof3ppfYY1Isn3oDgW2LjXR6lY4AL9dFppecX9V6/
-         ZS4Next9DFXzvIHC2ID+P4FrP1sjb7+ya6uwc=
+        bh=dREKhEuZ+QTDPptJNWWM+egDyVC/sMlwDDn5nj0/gbQ=;
+        b=EQecaB5ebMpJu/diAKGhXz/DvUHqdiR8rldsq1lEpHeXJebFP2DDVltbIy11nH4aZz
+         NcJkqhFRJ7AZc7Zb07lvyX/1ZSlHQ0wKfvnPeoSvQEEygtoJXB0rLinsju+0la4MG7If
+         rARs7bePtYmxs7WLbSZ6UDbuRuZDnGz1RsTFQWOanp2qm2+kNWanqsYGJS4uxHoDxN1T
+         fbA4+d+/DRiQVBAGF8S2XdyKOHJdToxbZ9x0kbzpnfRnOOu9P2T3xbyJ15tgaJozaoJf
+         XR1pR7CRvkVWwTAbg9gmD/SWhUGZsuP2FPk44kdrHqgQHKDt2ojOSLYGlWMwIP1M3lAV
+         8PRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722461415; x=1723066215;
+        d=1e100.net; s=20230601; t=1722461589; x=1723066389;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7v5MQa7OcjG2quU7CTmYoYXphTBDWw9No993Vj+T1kA=;
-        b=ocmRdgWzSa0xPaID7NlyOAiCmWgykR9L2xHzmn3b384Q6rhzzmUqVBP23rz1n04hS6
-         WlVh1QQ/VeOgwIuFcBeGa944SN4BcfRiUQP5twi9kGVgTEd0ff7KyscvT7hfZnJBeNrM
-         tHNC3rjjlWhsky2Ru+ta3d0i24hHZyzvp8qcmpmEo0eMO8P0k6Mhd7xxuzsIjNXHNCx2
-         mXCzxomeTNaO2UBP2c12BugBEp/N0RoMV7eY1mPngtvE8IUHQfRzB0yZW/hW6vLcLw3g
-         FP1q+fcq2b27lgPIGvvzSiuSVAOjgWpZ51cRB0r01FuXUGJ6mbijx8bgY15HyMBFbK0K
-         h2JQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5JHELRyuqmqYBZTvFJm+iBgtrnfhOqyREz26QC2he8Xne1HDVtCPQb4voYMmETvgg21uxyC69VOf6tB3NmkjySE2MlcqOLbSzfJ65
-X-Gm-Message-State: AOJu0YwOvYv67QXCl6icgNRiwfzteOXskXXajTpRNvyGRlxkK/DBlu7/
-	N34zEMjQhmOfzVstvKxLCx5cDzAxrdff0Sf8xeWyxACZgNGREmSAgABlK2omOenXlgKnp9pG8DU
-	=
-X-Google-Smtp-Source: AGHT+IFNApyLimozQgkUYVZn2JdLnYE+5sDDS1l+Mh/5q+0JIdir9WIVbfh+cctS2/D5oVxcKCf0+A==
-X-Received: by 2002:a05:6102:2ace:b0:493:b916:aaa6 with SMTP id ada2fe7eead31-4945099baafmr772236137.24.1722461415351;
-        Wed, 31 Jul 2024 14:30:15 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d74353d9sm787853985a.93.2024.07.31.14.30.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 14:30:14 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44fe76fa0b8so475061cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:30:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXJOw9zpFJF5zZUAZe5KXpx41vsbnjF6MTItdpl8rFGKFZ8VNMWRazxdFnmH1dopJzK3ZaCDJGsU4G0z3rZe/Soj/eG2be+B9Bbaj+U
-X-Received: by 2002:ac8:5f4e:0:b0:447:ec33:f488 with SMTP id
- d75a77b69052e-45180991b4amr131431cf.4.1722461413981; Wed, 31 Jul 2024
- 14:30:13 -0700 (PDT)
+        bh=dREKhEuZ+QTDPptJNWWM+egDyVC/sMlwDDn5nj0/gbQ=;
+        b=EG5mlHr2ClTtuikp4yX1NGtK2B8mrKYxMv0Uwp8AsYCR6lwEdoqMLIQbclIhQ7hZVg
+         +0VlcxPw1xmAdOkMOahQh7H85PVXHIlheWgCENmzF3TgqS7IrALLa7dV16vce3j8cIIV
+         04CBxiT2tw8TgUiEyMxxD8CZgGMDZhEfbQyEvwA+j5eh7iJejy2pnlMvP4u3byODWK5f
+         Dy0sMZIblgh+VCV1XrbeWHFmACE8zj8QLX0S9lik998+I0szBR45Cd2zF6hM8PJVdzSr
+         U72J92cRZvc/NhVJXVmPeq2riRP9vR9Pt7DjiFOm9DsP+sWRyRvZ51wBqH61nqjdHp6h
+         z4kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8mfDKFjwA2EvSWs7UTwJltnPCE8kwRkkRylDcJSLqWXHCPbprKqZzBaeG9vgVLxohnUzOjrrdy1YvhFl4UR+JePDaIf1ayqtVr9NJ
+X-Gm-Message-State: AOJu0YzWwXG8OLbEPNjZq+wn9EueDQ9zMtUi4pzDiPGpsaVoKOOZx4KA
+	TFr3bHu2ybr6DwMtCpaF4/vVhLx439uie2cZa/ffZCMFLhtSFy48c9D+qkgkrU7p3o5x7UxhGYq
+	siUtSYjYg7929UONazOuXo8L5Z9kF3nHl/DH4
+X-Google-Smtp-Source: AGHT+IGzRIYcjWpVOooTnwdmT8UVl9DoOQY068XBNlB0HObnodh9BUjeFnRlX6rdpnVyqqHVV9gVh1G33vYQOpy9HWk=
+X-Received: by 2002:a05:6102:5129:b0:492:a6fb:23e5 with SMTP id
+ ada2fe7eead31-494506c65b3mr743308137.3.1722461589519; Wed, 31 Jul 2024
+ 14:33:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730060659.455953-1-tejasvipin76@gmail.com> <20240730060659.455953-2-tejasvipin76@gmail.com>
-In-Reply-To: <20240730060659.455953-2-tejasvipin76@gmail.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Wed, 31 Jul 2024 14:29:57 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XGzQN0LK6SBOY_6P8eF-cAuP4hRwsS+NTZEaik_Os7NA@mail.gmail.com>
-Message-ID: <CAD=FV=XGzQN0LK6SBOY_6P8eF-cAuP4hRwsS+NTZEaik_Os7NA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add more multi functions for better
- error handling
-To: Tejas Vipin <tejasvipin76@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, airlied@gmail.com, 
-	daniel@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+References: <20240730113419.GBZqjPu6SdAt5qZKnh@fat_crate.local>
+ <CAHC9VhRnq81v=DYC3SC=oD2onittYTQbZqp5uoeU2MWuCh0-SA@mail.gmail.com>
+ <CACYkzJ6TUki=14-gPBCQL3wcFGvZF2STTzDzZ_Hfd-G_2V5sEw@mail.gmail.com> <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhSx96-KL-8u5FCa1Bb1H5J6bn89Zv1gfPL9Hxo0kZOKLQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 31 Jul 2024 17:32:58 -0400
+Message-ID: <CAHC9VhSVTkxC9GfYkMm5LRx6MzeD-Lk=ffTnJAvg-=XdiZB=fQ@mail.gmail.com>
+Subject: Re: static_key_enable_cpuslocked(): static key 'security_hook_active_locked_down_0+0x0/0x10'
+ used before call to jump_label_init()
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-security-module@vger.kernel.org, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Narasimhan V <Narasimhan.V@amd.com>, 
+	lkml <linux-kernel@vger.kernel.org>, Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Jul 30, 2024 at 4:36=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Tue, Jul 30, 2024 at 1:40=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> > On Tue, Jul 30, 2024 at 5:03=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Tue, Jul 30, 2024 at 7:34=E2=80=AFAM Borislav Petkov <bp@alien8.de=
+> wrote:
+> > > >
+> > > > Hi,
+> > > >
+> > > > this is with today's linux-next:
+> > > >
+> > > > ...
+> > > >
+> > > > 09:44:13  [console-expect]#kexec -e
+> > > > 09:44:13  kexec -e
+> > > > 09:44:16  ^[[?2004l^M[    0.000000] Linux version 6.11.0-rc1-next-2=
+0240730-1722324631886 (gcc (Ubuntu 11.4.0-1ubuntu1~22.04) 11.4.0, GNU ld (G=
+NU Binutils for Ubuntu) 2.38) #1 SMP PREEMPT_DYNAMIC Tue Jul 30 07:40:55 UT=
+C 2024
+> > > > 09:44:16  [    0.000000] ------------[ cut here ]------------
+> > > > 09:44:16  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_ca=
+ll_inline.c:153 __static_call_update+0x1c6/0x220
+>
+> ...
+>
+> > > KP, please take a look at this as soon as you can (lore link below fo=
+r
+> > > those who aren't on the list).  One obvious first thing to look at is
+> > > simply moving the call to early_security_init(), but that requires
+> > > some code audit to make sure it is safe and doesn't break something
+> > > else.  Of course, if we can do something with how we setup/use static
+> > > calls that is even better.  I'll take a look at it myself later today=
+,
+> > > but I'm busy with meetings for the next several hours.
+> > >
+> > > If we can't resolve this in the next day or two I'm going to
+> >
+> > Thanks for the ping.
+> >
+> > Taking a look, yeah it's possible that we need to move jump_label_init
+> > before early_security_init / inside it.
+> >
+> > I will do a repro and test my change and reply back.
+>
+> I'm pretty sure we don't want to move jump_label_init() inside
+> early_security_init(), we likely want to keep those as distinct calls
+> in start_kernel().  Shuffling the ordering around seems like a better
+> solution if we can't solve this some other way.
+>
+> Regardless, thanks for looking into this, I'll hold off on digging
+> into this and wait for your patch.
 
-On Mon, Jul 29, 2024 at 11:07=E2=80=AFPM Tejas Vipin <tejasvipin76@gmail.co=
-m> wrote:
-> +/**
-> + * mipi_dsi_dcs_get_display_brightness_multi() - gets the current bright=
-ness value
-> + *    of the display
-> + * @ctx: Context for multiple DSI transactions
-> + * @brightness: brightness value
-> + *
-> + * Like mipi_dsi_dcs_get_display_brightness() but deals with errors in a=
- way that
-> + * makes it convenient to make several calls in a row.
-> + */
-> +void mipi_dsi_dcs_get_display_brightness_multi(struct mipi_dsi_multi_con=
-text *ctx,
-> +                                              u16 *brightness)
-> +{
-> +       struct mipi_dsi_device *dsi =3D ctx->dsi;
-> +       struct device *dev =3D &dsi->dev;
-> +       int ret;
-> +
-> +       if (ctx->accum_err)
-> +               return;
-> +
-> +       ret =3D mipi_dsi_dcs_get_display_brightness(dsi, brightness);
-> +       if (ret < 0) {
-> +               ctx->accum_err =3D ret;
-> +               dev_err(dev, "Failed to get display brightness: %d\n",
-> +                       ctx->accum_err);
-> +       }
-> +}
-> +EXPORT_SYMBOL(mipi_dsi_dcs_get_display_brightness_multi);
+Since I don't want to leave linux-next broken any longer, I'm going to
+yank the static-call patches from the lsm/next branch but I'll leave
+them in lsm/dev so you can continue to use that as a basis for your
+fix.  If we don't have a fix in hand by the first half of next week,
+I'll drop the patches from lsm/dev too and we can revisit the patchset
+when you have a fix ready.
 
-I'd be interested in others' opinions, but this function strikes me as
-one that *shouldn't* be converted to _multi.
+For casual observers, the lsm/next is normally an automatically
+composed branch made up of the latest lsm/stable-X.Y and lsm/dev
+branches however in this particular case I'm going to manually update
+the lsm/next branch.  The normal process is described here:
 
-Specifically the whole point of the _multi abstraction is that you can
-fire off a whole pile of initialization commands without needing to
-check for errors constantly. You can check for errors once at the end
-of a sequence of commands and you can be sure that an error message
-was printed for the command that failed and that all of the future
-commands didn't do anything.
+* https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
 
-I have a hard time believing that _get_ brightness would be part of
-this pile of initialization commands. ...and looking at how you use it
-in the next patch I can see that, indeed, it's a bit awkward using the
-_multi variant in the case you're using it.
-
-The one advantage of the _multi functions is that they are also
-"chatty" and we don't need to print the error everywhere. However, it
-seems like we could just make the existing function print an error
-message but still return the error directly. If this automatic
-printing an error message is a problem for someone then I guess maybe
-we've already reached the "tomorrow" [1] and need to figure out if we
-need to keep two variants of the function around instead of marking
-one as deprecated.
-
-NOTE: If we don't convert this then the "set" function will still be
-_multi but the "get" one won't be. I think that's fine since the "set"
-function could plausibly be in a big sequence of commands but the
-"get" function not so much...
-
-[1] https://lore.kernel.org/r/CAD=3DFV=3DWbXdnM4or3Ae+nYoQW1Sce0jP6FWtCHShs=
-ALuEFNhiww@mail.gmail.com
+--=20
+paul-moore.com
 
