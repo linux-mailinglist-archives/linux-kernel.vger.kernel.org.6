@@ -1,183 +1,184 @@
-Return-Path: <linux-kernel+bounces-268830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF6F9429F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2949429F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2001F23025
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8021F22D2E
 	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFC81AAE16;
-	Wed, 31 Jul 2024 09:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9001A8C1F;
+	Wed, 31 Jul 2024 09:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cSV5AuUP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oCWGlq+7"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 676D37E0E4
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0568A1CF93
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722417120; cv=none; b=VJNz6lHTpdAfByz5jwh0PfSf5x9HcgnmSbFykpot48EPjes0Y/g8CMJPdIRylTSEQ1Lr8TGAiWVCLVGFAM3/BaetloMgcgJZSRvVYMwknxJ4mNYg6k5uNeFQWgz3PjSy0yffZ0GhvWXTdtFr8r1GCAugn5TEJArLQX8EYGDdaDM=
+	t=1722417119; cv=none; b=jiAhXymhPHzcowb206sBL2SLi9DikY9vL7paoHFambuojEEm6k6gCaNysZFBYt2DIPjCQY54/LXsrc1sltgBc+8Phi24JZES5WltwwYkiGEh0h54g7arbPGghLAvzM1AwHyuCLD/fTl54KQ1iV8ce0tvudTxCVo/NGx7nyB/mXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722417120; c=relaxed/simple;
-	bh=zFOwlz7RZsJ8oMl5zb5Mc3EfRfbjz3li9FUcBAInntU=;
+	s=arc-20240116; t=1722417119; c=relaxed/simple;
+	bh=9Yb6j7jGTbH7d3cHRo2GNECWrPdXh3RG9PXt1tO6z1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H98QCGB7zE1Ekc25348cYrw3kuGsE4NzQgamhl35dO7BpnRoSpPSIh2HlLzPsrknLsz4N36CRayM37Fkq5b6rk8AZFXfrPkhsoa1g/9JliVr1xyAsPEQkkctO1po0D4yNhe3fPHwaPUJ2wtmbWTlAUZKnX1kcvJVop1s9vZa8XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cSV5AuUP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722417117;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sirp2+QEfzINAnGuq8bJ5Suh2ooYaHREjKEjCWBban8=;
-	b=cSV5AuUPqQ32tr8YGVFZG9NN/rSs4/al3n8W9mNCIrA6KDsqklS8b2VXVbvHtRB0TRpUKz
-	ysdPKLsEQf5T/o6GDWqru9CCMkhLshecxn4XmZ3a7ODtX4Y9qqNox0BM4+SvfhXULdGlVp
-	Cu7n/UNRwcvdY4+n67fhPFxaFrsKvKo=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-27-i6vyHOAZOQuibCWnFswWbw-1; Wed, 31 Jul 2024 05:11:55 -0400
-X-MC-Unique: i6vyHOAZOQuibCWnFswWbw-1
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-44fe49fa389so75037561cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 02:11:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722417115; x=1723021915;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sirp2+QEfzINAnGuq8bJ5Suh2ooYaHREjKEjCWBban8=;
-        b=Berx8FXSp0m03fXm1c8EsAi+6dUbVzeD1gvTdlL63nj1pmyywgKBfH36tdGY8SeDL9
-         +D3Ozqk+h7BCwNChHQEBdg1OAQ5Jkky56JJy5vcTizW6O4+RmofjDmKVZve1mpLPKzBV
-         iJgQ7AUlo0T14VAo3EU5xc9WAJjl0LzyMmV1F0lDfTNoGZ6wBaAmhlIg0pxRaHLQLEi6
-         lv7QfibT30GuW8Kd2ZiYCQzo0m6lsSQJm/+ofjenxsuKYMMCWwmw9OlfkXM/ZIyDLKKY
-         mvYb/BA84jhwAkD8h8EKWoe6EmnlySxcaiSpLQquQx+9Sx1UHfRhi7oP/cRkNq/6uEE9
-         N02A==
-X-Forwarded-Encrypted: i=1; AJvYcCVYTtaCNYGGmMnou2h3fZ+VYWf3rGUzqtQ6bh7l4CNHbS4gc1Zmh+0G1RkX2q62/I3DolPg9+LZnziX5AxyM9w+0Iz5oe8i86Uyb5xq
-X-Gm-Message-State: AOJu0YzWbwS7jzhCv9rIE7LeKteICYJR4kh7wHPcehpIEjh02S+LCtYx
-	wdvgpjq8EWjrvMWz2iZwkARKsof7N5SKsy4zSt2t683zta7NZbZNfInlfIJWCLjEN3Juz2bM9/S
-	ux2f/UVuhs38Eh6mI1a2ePX2tF2iGKnW+KUkxlM4ddxueTyiEmtDvi/JW9BbmvA==
-X-Received: by 2002:a05:6214:2b0d:b0:6b7:9bc1:708a with SMTP id 6a1803df08f44-6bb55afc2cfmr127943916d6.55.1722417114905;
-        Wed, 31 Jul 2024 02:11:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGrsFWsmEQ/ZqG8MzZSOiY36geaZbDTr1xKB10ZveFrjXlXor+opFKorbcmshQHqYMBAoGVGQ==
-X-Received: by 2002:a05:6214:2b0d:b0:6b7:9bc1:708a with SMTP id 6a1803df08f44-6bb55afc2cfmr127943556d6.55.1722417114500;
-        Wed, 31 Jul 2024 02:11:54 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([2a02:b125:8010:68f9:cb3d:8fb3:24a5:346c])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fac396esm71342926d6.111.2024.07.31.02.11.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 02:11:54 -0700 (PDT)
-Date: Wed, 31 Jul 2024 11:11:45 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: John Stultz <jstultz@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>,
-	Youssef Esmat <youssefesmat@google.com>,
-	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>
-Subject: Re: [PATCH v11 7/7] sched: Split scheduler and execution contexts
-Message-ID: <Zqn_0XIcxTpHxswZ@jlelli-thinkpadt14gen4.remote.csb>
-References: <20240709203213.799070-1-jstultz@google.com>
- <20240709203213.799070-8-jstultz@google.com>
- <20240712150158.GM27299@noisy.programming.kicks-ass.net>
- <CANDhNCrkf1Uz42V3vMFChp1nKnkeHH7ZPxd_gC4KOMmWPcRVgQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gcuhuR94DY+BmJd9+9GOPwxg3sO4u+BEuoR52O2Q9OQpOfi9FaxznNnUCHWAFC9CNUT+mz+yvAPoGZX7Xm6hymy3VVwrtQ9OIkSDZzO8355sQYSfrG+HbIxUxCNQm5KO3O0Eaf33jeH4GvyERjHyJASv8kyOUA0Zv4JtUBMZil0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oCWGlq+7; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jLNWTLyRSLiY0M2hXNGR369KX9s09k8VZo8zfT3w1VA=; b=oCWGlq+7+bP07TpOHOBykkm64r
+	LG2PKNb01XEo2VMBaA/Bb4Q6v+vsrUQj3ZIhtg5piUzJOkE07sDE9EQaiR19pWX7OzgwxfBEnmiaw
+	nh+9ghQwy2c2FZuQy6Z3pCk7IyMhBN+JX7P18rwWJ1bmdt+R4nXrd73qVTX6fVbL+k/eZGe5CdhaM
+	lKKtIAjbxtJ4yZyRfVs/qUJC8gmSEbS4RKEhhHHA+KdzFsF17jyPQCgNO3ye4+AXesJNJxS0c+tit
+	kGq3hrzdOeDkrmCDcLSBpP+e6tdLr56nYsl0pEemFPdX0Vzhl2nvMaGBhP4A77oz36o9+db7JrkIJ
+	fdhblR/A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZ5N7-00000005BB3-11qs;
+	Wed, 31 Jul 2024 09:11:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3A326300820; Wed, 31 Jul 2024 11:11:48 +0200 (CEST)
+Date: Wed, 31 Jul 2024 11:11:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@kernel.dk>,
+	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Peter Anvin <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: Linux 6.11-rc1
+Message-ID: <20240731091148.GW33588@noisy.programming.kicks-ass.net>
+References: <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+ <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
+ <20240730192237.GR33588@noisy.programming.kicks-ass.net>
+ <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
+ <20240730193841.GS33588@noisy.programming.kicks-ass.net>
+ <f395b9d1-9515-434b-8ea5-c3bcaac10fd1@roeck-us.net>
+ <20240730200947.GT33588@noisy.programming.kicks-ass.net>
+ <e791c078-a821-4636-b44d-e02c22c046cc@roeck-us.net>
+ <CAHk-=wgnmrbQhnXdpi=sY68m4OJff+qSiOUY-L8SF_u8JkHe8A@mail.gmail.com>
+ <20240731082111.GAZqnz97mCll6rDyV-@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCrkf1Uz42V3vMFChp1nKnkeHH7ZPxd_gC4KOMmWPcRVgQ@mail.gmail.com>
+In-Reply-To: <20240731082111.GAZqnz97mCll6rDyV-@fat_crate.local>
 
-Hi John,
-
-On 12/07/24 12:10, John Stultz wrote:
-> On Fri, Jul 12, 2024 at 8:02 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > On Tue, Jul 09, 2024 at 01:31:50PM -0700, John Stultz wrote:
-> > > From: Peter Zijlstra <peterz@infradead.org>
-> > >
-> > > Let's define the scheduling context as all the scheduler state
-> > > in task_struct for the task selected to run, and the execution
-> > > context as all state required to actually run the task.
-> > >
-> > > Currently both are intertwined in task_struct. We want to
-> > > logically split these such that we can use the scheduling
-> > > context of the task selected to be scheduled, but use the
-> > > execution context of a different task to actually be run.
-> > >
-> > > To this purpose, introduce rq_selected() macro to point to the
-> > > task_struct selected from the runqueue by the scheduler, and
-> > > will be used for scheduler state, and preserve rq->curr to
-> > > indicate the execution context of the task that will actually be
-> > > run.
-> >
-> > > * Swapped proxy for selected for clarity
-> >
-> > I'm not loving this naming...  what does selected even mean? What was
-> > wrong with proxy? -- (did we have this conversation before?)
+On Wed, Jul 31, 2024 at 10:21:11AM +0200, Borislav Petkov wrote:
+> On Tue, Jul 30, 2024 at 04:54:43PM -0700, Linus Torvalds wrote:
+> > You also seemed to say that it only happened with some CPU selections.
+> > Maybe there's something wrong with the ALTERNATIVE() cleanups - I'm
+> > looking at that new "nested alternatives macros" thing, and the odd
+> > games we play with the origin and replacement lengths etc.
+> > 
+> > That all looks entirely crazy. That file was hard to read before, now
+> > it's just incomprehensible to me.
 > 
-> So yeah, this came up earlier:
-> https://lore.kernel.org/lkml/CANDhNCr3acrEpBYd2LVkY3At=HCDZxGWqbMMwzVJ-Mn--dv3DA@mail.gmail.com/
+> I'm sorry to hear that. The reason we did it is because it was starting to
+> become really unwieldy to add a yet another alternative choice N in an
+> ALTERNATIVE_N call...
 > 
-> My big concern is that the way proxy was used early in the series
-> seemed to be inverted from how the term is commonly used.
+> Anyway, I'll try to reproduce here. In the meantime, can anyone who can
+> reproduce - Guenter, Jens - boot that failing kernel with
 > 
-> A proxy is one who takes an action on behalf of someone else.
+>   debug-alternative=-1
 > 
-> In this case we have a blocked task that was picked to run, but then
-> we run another task in its place. Intuitively, this makes the proxy
-> the one that actually runs, not the one that was picked. But the
-> earliest versions of the patch had this flipped, and caused lots of
-> conceptual confusion in the discussions I had with folks about what
-> the patch was doing (as well as my own confusion initially working on
-> the patch).
+> and copy dmesg and vmlinux somewhere for me?
+> 
+> It is a lot of output so make sure to catch it all.
 
-I don't think I have strong preferences either way, but I actually
-considered the proxy to be the blocked donor (the one picked by the
-scheduler to run), as it makes the owner use its properties, acting as a
-proxy for the owner.
+So what I done instead is add: nokaslr to CMDLINE and -S -s to qemu and
+am staring at the failing kernel in gdb.
 
-I think that in this case find_proxy_task() might have a confusing name,
-as it doesn't actually try to find a proxy, but rather the owner of a
-(or a chain of) mutex. We could rename that find_owner_task() and it
-seems it might make sense, as we would have
+So far all the alternatives in the affected paths look just fine.
 
-pick_again:
-        next = pick_next_task(rq, rq_proxy(rq), &rf);
-        rq_set_proxy(rq, next);
-        if (unlikely(task_is_blocked(next))) {
-                next = find_owner_task(rq, next, &rf);
+Not that any of it is making sense, notably:
 
-where, if next was blocked, we search for the owner it is blocked on.
+Code: bf 1e c2 e9 23 06 00 00 66 90 8d 76 00 fc 6a 00 68 f0 bd 1e c2 e9 11 06 00 00 8d 76 00 fc 6a 00 68 54 c5 1e c2 e9 01 06 00 00 <8d> 76 00 fc 68 b0 e9 1e c2 e9 f3 05 00 00 66 90 8d 76 00 fc 6a 00
 
-Anyway, just wanted to tell you the way I understood this so far. Happy
-to go with what you and Peter decide to go with. :)
+decodes to:
 
-Best,
-Juri
+   0:   bf 1e c2 e9 23          mov    $0x23e9c21e,%edi
+   5:   06                      (bad)
+   6:   00 00                   add    %al,(%rax)
+   8:   66 90                   xchg   %ax,%ax
+asm_exc_invalid_op:
+   a:   8d 76 00                lea    0x0(%rsi),%esi
+   d:   fc                      cld
+   e:   6a 00                   push   $0x0
+  10:   68 f0 bd 1e c2          push   $0xffffffffc21ebdf0
+  15:   e9 11 06 00 00          jmp    0x62b
+asm_exc_int3:
+  1a:   8d 76 00                lea    0x0(%rsi),%esi
+  1d:   fc                      cld
+  1e:   6a 00                   push   $0x0
+  20:   68 54 c5 1e c2          push   $0xffffffffc21ec554
+  25:   e9 01 06 00 00          jmp    0x62b
+asm_exc_page_fault:
+  2a:*  8d 76 00                lea    0x0(%rsi),%esi           <-- trapping instruction
+  2d:   fc                      cld
+  2e:   68 b0 e9 1e c2          push   $0xffffffffc21ee9b0
+  33:   e9 f3 05 00 00          jmp    0x62b
+  38:   66 90                   xchg   %ax,%ax
+asm_exc_machine_check:
+  3a:   8d 76 00                lea    0x0(%rsi),%esi
+  3d:   fc                      cld
+  3e:   6a 00                   push   $0x0
 
+And that trapping instruction is the CLAC nop (still a nop in the
+faulting kernel image):
+
+(gdb) disassemble asm_exc_page_fault
+Dump of assembler code for function asm_exc_page_fault:
+   0xc2200350 <+0>:     lea    0x0(%esi),%esi
+   0xc2200353 <+3>:     cld
+   0xc2200354 <+4>:     push   $0xc21ee9b0
+   0xc2200359 <+9>:     jmp    0xc2200951 <handle_exception>
+End of assembler dump.
+
+And then we have the endless stream of:
+
+  asm_exc_int3+0x10/0x10
+
+which really is: asm_exc_page_fault+0x0/0x10, but that cannot be,
+because then we'd have #DF much sooner.
+
+
+The restore_all_switch_stack+0x65/0xe6 thing looks like so in the live
+kernel image:
+
+(gdb) disassemble restore_all_switch_stack
+Dump of assembler code for function entry_INT80_32:
+...
+   0xc22008c5 <+353>:   mov    %cr3,%eax
+   0xc22008c8 <+356>:   or     $0x1000,%eax
+   0xc22008cd <+361>:   mov    %eax,%cr3
+   0xc22008d0 <+364>:   mov    %esi,%esi		<--- here
+   0xc22008d2 <+366>:   testl  $0x2,0x34(%esp)
+   0xc22008da <+374>:   je     0xc22008e8 <entry_INT80_32+388>
+   0xc22008dc <+376>:   mov    %cr3,%eax
+   0xc22008df <+379>:   test   $0x1000,%eax
+   0xc22008e4 <+384>:   jne    0xc22008e8 <entry_INT80_32+388>
+   0xc22008e6 <+386>:   ud2
+   0xc22008e8 <+388>:   pop    %ebx
+...
+
+So that is indeed BUG_IF_WRONG_CR3 and the JMP got patched to a NOP2.
+Nothing strange there.
+
+
+So yeah, no clue still.
 
