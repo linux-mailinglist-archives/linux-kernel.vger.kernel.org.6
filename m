@@ -1,162 +1,277 @@
-Return-Path: <linux-kernel+bounces-269337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D975C9431BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:11:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01F539431C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DFDDB23387
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:11:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 243071C218CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681561B373D;
-	Wed, 31 Jul 2024 14:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00A71B3F01;
+	Wed, 31 Jul 2024 14:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b="RheJVGsL"
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vb2AIKWI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4371B14FF;
-	Wed, 31 Jul 2024 14:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98331B14FF;
+	Wed, 31 Jul 2024 14:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722435098; cv=none; b=EFaN3B8mo0PoWeGm9pPnGTurRk3HfC4woKTEyfmj44okIWvqov0u6OKkl8pywJEUdAkUethaVO1GDnS8DaLvvTvCvmXRyLhN0DajXNVIiIfB6t7iROgIKmdUBtHrU+hqSaVRZegWxoJZujSiCQOaeonO3dF7FtZyjGnZrnp/d3Q=
+	t=1722435111; cv=none; b=DF412jE0un1LVepFFHMoSbO0MOO5QNANWY2h8svjeFA44wQ8U2JUxCdKPh8BNKG73kIOxFC8/H9SsxUBKY6YCoU7A8++LYGRq5SCdI7SDieLkbaa2TPWTuDRb4re63hh2231KBDizmy/LiSqUtF6ucrU4TLtcjrMMJjENgZbN70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722435098; c=relaxed/simple;
-	bh=g0FCq4nnchDFfxh51t3tr65YF79O4pzb8rTXeXDOps0=;
-	h=Content-Type:Date:Message-Id:To:Subject:Cc:From:References:
-	 In-Reply-To; b=UHLxxPtG81mjKaTi59KRc7sZumG3J4kGS2AwIUKyUbyuqeZGzLScHzXh399AOBlFi4ANlAzCFWeayCHUuF+QfMK5EkEUR99H9tBnApdeT8V4avWoIZ88O4dkznFkX6MMIWQd2IltblzCbVYXqfcJvuj79/Gj7sU+IBTQkTMQGtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc; spf=pass smtp.mailfrom=walle.cc; dkim=pass (2048-bit key) header.d=walle.cc header.i=@walle.cc header.b=RheJVGsL; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=walle.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [213.135.10.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id E4BD2505D;
-	Wed, 31 Jul 2024 16:11:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2022082101;
-	t=1722435067;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:content-type:content-type:in-reply-to:in-reply-to:
-	 references:references; bh=g0FCq4nnchDFfxh51t3tr65YF79O4pzb8rTXeXDOps0=;
-	b=RheJVGsLyDe1VaZaZGyLz41KRqG0eQbpu4lcvjRkmhqYsQxVpnY6SHspc+AJsru6X0q+4H
-	bFookNN2M2VflPjpAAD+KOxP9DSJKXFp+N5ii2OEzP5Mgf0JxBAhKMVXa+A/z9hdaMiFVU
-	fIYwA/Yrhh0W5AFk+8q9MlwIDS81LaZkUIvk2pT5xihTXbtf6qz8ClP1SJsvpKShFVOdsd
-	d9SijFRnSMSkdjPpL9ejDJsPMgkEgPbHP2qO4t795kQoPdBkT7deSy2NsBu4gEQc2GD+eq
-	+UD6qx97Lzo8BKfKecddrJISdAvVIB3G0WsxUA5xQY7a7wjGLRtxXewwju3sqQ==
-Content-Type: multipart/signed;
- boundary=96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 31 Jul 2024 16:11:05 +0200
-Message-Id: <D33S9T73M6ND.G7CCJ4PDVYQU@walle.cc>
-To: "Michal Simek" <michal.simek@amd.com>, "Mahapatra, Amit Kumar"
- <amit.kumar-mahapatra@amd.com>, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
- "broonie@kernel.org" <broonie@kernel.org>, "pratyush@kernel.org"
- <pratyush@kernel.org>, "miquel.raynal@bootlin.com"
- <miquel.raynal@bootlin.com>, "richard@nod.at" <richard@nod.at>,
- "vigneshr@ti.com" <vigneshr@ti.com>, "sbinding@opensource.cirrus.com"
- <sbinding@opensource.cirrus.com>, "lee@kernel.org" <lee@kernel.org>,
- "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
- "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
- "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "perex@perex.cz"
- <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>
-Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
- spi-nor
-Cc: "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
- <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
- <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
- <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, "Conor Dooley"
- <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
-From: "Michael Walle" <michael@walle.cc>
-X-Mailer: aerc 0.16.0
-References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
- <c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org>
- <BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org> <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org> <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com> <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org> <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com> <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org> <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org> <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com> <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com> <D2ZHJ765LUGP.2KTA46P1BL75X@walle.cc> <e1587f61-f765-4a22-b06e-71387cc49c4d@amd.com> <D33M26RLVLHF.3Q5YARPBNSBOY@walle.cc> <9fb60743-3e89-49fa-a399-3cf2607a7e41@amd.com>
-In-Reply-To: <9fb60743-3e89-49fa-a399-3cf2607a7e41@amd.com>
+	s=arc-20240116; t=1722435111; c=relaxed/simple;
+	bh=jOPddklYaMJA2zOn9fiqpnFCA5J3HVvmBRrQsJsG5Uw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LztLcKhGIMZRCBJ54no2KAhq6/6rMWk8belG8WsgqRXXv80bN+iN+j4fy1eOWkzLIcDeWomnNJkbCwiK4ocE4/PPux/I/BpMKZnCRk6iwMG3DR/e5ni95YpuXE7o/Af04mVjPxQZnqj7zvnWZ6ccHhFwV0jwJqTSF1yaiAws1Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vb2AIKWI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2374C116B1;
+	Wed, 31 Jul 2024 14:11:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722435111;
+	bh=jOPddklYaMJA2zOn9fiqpnFCA5J3HVvmBRrQsJsG5Uw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vb2AIKWIs9Uzq9/qZVRQy+/u/zyOwvNzs+lernwuhhSK6ZjaJFSSIsvXwVMkSMR7n
+	 NYB3H1sx2nIq9j2SNZ+nicAAONQM2A/S9rR44Na1eSLG/VpyTa9zO+ZedN2I7zMp5S
+	 Y/haBtqOqha1IfScWCXLrfuGGkRBpbcXBHeVQms9YFDh9vhawIwSTycehY8CnA1ijq
+	 NDsT+FSGj0ykUN5q4vNj01lNgA1Rkd2smsuU6DQWKXOG5My4WUO+0Rzb1FtPE5iIAx
+	 Jsn1s/WpwHBwQW76UaKy9GxvX7YD6mftay1VuqzYIxpvyphQCE48rtLnU+nk77w83r
+	 Up3ICnaEEgrQQ==
+Message-ID: <387b4028-7f8a-46df-a7f1-168d1700074d@kernel.org>
+Date: Wed, 31 Jul 2024 16:11:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
+To: Trevor Gamblin <tgamblin@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Lechner <dlechner@baylibre.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
+ <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-> > All I'm saying is that you shouldn't put burden on us (the SPI NOR
-> > maintainers) for what seems to me at least as a niche. Thus I was
-> > asking for performance numbers and users. Convince me that I'm
-> > wrong and that is worth our time.
->
-> No. It is not really just feature of our evaluation boards. Customers are=
- using=20
-> it. I was talking to one guy from field and he confirms me that these=20
-> configurations are used by his multiple customers in real products.
+On 31/07/2024 15:48, Trevor Gamblin wrote:
+> This adds a binding specification for the Analog Devices Inc. AD7625,
+> AD7626, AD7960, and AD7961 ADCs.
 
-Which begs the question, do we really have to support every feature
-in the core (I'd like to hear Tudors and Pratyush opinion here).
-Honestly, this just looks like a concatenation of two QSPI
-controllers. Why didn't you just use a normal octal controller which
-is a protocol also backed by the JEDEC standard. Is it any faster?
-Do you get more capacity? Does anyone really use large SPI-NOR
-flashes? If so, why? I mean you've put that controller on your SoC,
-you must have some convincing arguments why a customer should use
-it.
+Please do not use "This commit/patch/change", but imperative mood. See
+longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
 
-> > The first round of patches were really invasive regarding the core
-> > code. So if there is a clean layering approach which can be enabled
-> > as a module and you are maintaining it I'm fine with that (even if
-> > the core code needs some changes then like hooks or so, not sure).
->
-> That discussion started with Miquel some years ago when he was trying to =
-to=20
-> solve description in DT which is merged for a while in the kernel.
+Why this is not ready, but RFC? What exactly needs to be commented here?
 
-What's your point here? From what I can tell the DT binding is wrong
-and needs to be reworked anyway.
+> 
+> Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+> ---
+>  .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 +++++++++++++++++++++
+>  MAINTAINERS                                        |   9 ++
+>  2 files changed, 185 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+> new file mode 100644
+> index 000000000000..e88db0ac2534
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7625.yaml
+> @@ -0,0 +1,176 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7625.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices Fast PulSAR Analog to Digital Converters
+> +
+> +maintainers:
+> +  - Michael Hennerich <Michael.Hennerich@analog.com>
+> +  - Nuno Sá <nuno.sa@analog.com>
+> +
+> +description: |
+> +  A family of single channel differential analog to digital converters
+> +  in a LFCSP package. Note that these bindings are for the device when
+> +  used with the PulSAR LVDS project:
+> +  http://analogdevicesinc.github.io/hdl/projects/pulsar_lvds/index.html.
 
-> And Amit is trying to figure it out which way to go.
-> I don't want to predict where that code should be going or how it should =
-look=20
-> like because don't have spi-nor experience. But I hope we finally move fo=
-rward=20
-> on this topic to see the path how to upstream support for it.
+Eh? And what could be other case - used for what? What are the
+differences? Why mentioning it?
 
-You still didn't answer my initial question. Will AMD support and
-maintain that code? I was pushing you towards putting that code into
-your own driver because then that's up to you what you are doing
-there.
+> +
+> +  * https://www.analog.com/en/products/ad7625.html
+> +  * https://www.analog.com/en/products/ad7626.html
+> +  * https://www.analog.com/en/products/ad7960.html
+> +  * https://www.analog.com/en/products/ad7961.html
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,ad7625
+> +      - adi,ad7626
+> +      - adi,ad7960
+> +      - adi,ad7961
+> +
+> +  vdd1-supply:
+> +    description: A supply that powers the analog and digital circuitry.
+> +
+> +  vdd2-supply:
+> +    description: A supply that powers the analog and digital circuitry.
+> +
+> +  vio-supply:
+> +    description: A supply for the inputs and outputs.
+> +
+> +  ref-supply:
+> +    description:
+> +      Voltage regulator for the external reference voltage (REF).
+> +
+> +  refin-supply:
+> +    description:
+> +      Voltage regulator for the reference buffer input (REFIN).
+> +
+> +  clocks:
+> +    description:
+> +      The clock connected to the CLK pins, gated by the clk_gate PWM.
+> +    maxItems: 1
+> +
+> +  pwms:
+> +    maxItems: 2
+> +
+> +  pwm-names:
+> +    maxItems: 2
+> +    items:
+> +      - const: cnv
+> +        description: PWM connected to the CNV input on the ADC.
+> +      - const: clk_gate
+> +        description: PWM that gates the clock connected to the ADC's CLK input.
+> +
+> +  io-backends:
+> +    description:
+> +      The AXI ADC IP block connected to the D+/- and DCO+/- lines of the ADC.
+> +    maxItems: 1
+> +
+> +  adi,en0-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN0 is hard-wired to the high state. If neither this
+> +      nor en0-gpios are present, then EN0 is hard-wired low.
+> +
+> +  adi,en1-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN1 is hard-wired to the high state. If neither this
+> +      nor en1-gpios are present, then EN1 is hard-wired low.
+> +
+> +  adi,en2-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN2 is hard-wired to the high state. If neither this
+> +      nor en2-gpios are present, then EN2 is hard-wired low.
+> +
+> +  adi,en3-always-on:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      Indicates if EN3 is hard-wired to the high state. If neither this
+> +      nor en3-gpios are present, then EN3 is hard-wired low.
+> +
+> +  en0-gpios:
+> +    description:
+> +      Configurable EN0 pin.
+> +
+> +  en1-gpios:
+> +    description:
+> +      Configurable EN1 pin.
+> +
+> +  en2-gpios:
+> +    description:
+> +      Configurable EN2 pin.
+> +
+> +  en3-gpios:
+> +    description:
+> +      Configurable EN3 pin.
+> +
+> +required:
+> +  - compatible
+> +  - vdd1-supply
+> +  - vdd2-supply
+> +  - vio-supply
+> +  - clocks
+> +  - pwms
+> +  - pwm-names
+> +  - io-backends
+> +
+> +- if:
+> +  properties:
 
-So how do we move forward? I'd like to see as little as core changes
-possible to get your dual flash setup working. I'm fine with having a
-layer in spi-nor/ (not sure that's how it will work with mtdcat
-which looks like it's similar as your stacked flash) as long as it
-can be a module (selected by the driver).
+I don't think this was ever tested. Please use existing bindings or
+example-schema as template.
 
--michael
+> +    compatible:
+> +      contains:
+> +        enum:
+> +	  - adi,ad7625
+> +	  - adi,ad7626
 
---96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+Krzysztof
 
-iKcEABMJAC8WIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCZqpF+REcbWljaGFlbEB3
-YWxsZS5jYwAKCRASJzzuPgIf+L4FAYD66zueUFU1636OvgoGDTll3VhlpfWvCNks
-ygBkg8btX0/kDdus+Zs1Lz63qoncGBIBfjSOIExt4q/UijTQMIfXmQjnzxUHEsUH
-/aUgW/mzMqFLKqdncy63f8sPZX5ZY3vmAA==
-=2i8/
------END PGP SIGNATURE-----
-
---96d5968b07d14bbafb7edd54105440eb618b58c0255484c32a5e40a9f01c--
 
