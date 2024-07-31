@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-269146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABC78942E4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:24:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25D18942E51
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:24:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BB92882C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:24:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB49288694
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66541B143B;
-	Wed, 31 Jul 2024 12:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C78D1AE870;
+	Wed, 31 Jul 2024 12:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i+jhbPlx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="W6oy4baD"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AF01AE877
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F841AB53D
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722428560; cv=none; b=uwhY++nXlpWZs4N2DWDdINUGi84MI03yUXtwjSKoMICoE8Zo6n4K6JOs/KCh+2W+GWcqSEQuFt3yqntVYIhuc9eosyurFO0xvDWm/3WS9MCY27h5HRcYPfYfiJWs6pGKuTCeYaIxambotixqAXyhpHGhYsaLdWPif03YEQu5Cns=
+	t=1722428615; cv=none; b=GM20+g+Dn1HFQCLAqpinbgXwlX8NkspSqciI2Wy2UMksjCbX8UST+vN0zW6my2i1PKH1aNcm/fOMmy2cpqxZD3wlRrEyPMDwMb2xamko+GPBImOqxTsLqSSoCCyArSDVTQ6Vkluq5NW/zpb3N2XmHK0200+/IrDgvmQDfJnA20Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722428560; c=relaxed/simple;
-	bh=EnfHCYFIHMmHWtZSgMmDdw/34IF1JehxkN2M3mSSt3E=;
+	s=arc-20240116; t=1722428615; c=relaxed/simple;
+	bh=RcZ+AQgi3YsMLsSxpGX2F4Ae+rCnlLhB4QdOc7mOs5Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AzNEzBnGKleNsrsoPobKQxYbl4G9hjwYUMo7MVMUbGJPns9hsdv/Rb8WVAGZSxgWiK4el8T0269dSRK/1lAxgWgCNB4buG33bVvK/7BIW1DnVdA/SOyWrGGkpjl3820CL4zYzDEmo7Ira3XLutWSfxbvo//eWK2MgaoOt4+gwW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i+jhbPlx; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=VWtrsHls5SXrvppxa3BBbgasZZITboSwpe7pdymn/uV+SiDde/fE8Fx68ROuuis3lt2QjDHAPbwEicmkQkOvtMEVdr+gqQGJ0B2CEmIaItPxMpIeKGxplhwBLJcq9JkQQwXw0XMMxkJTeCnSqoEMIjfvSZ6xrEKtj/Jz3JgSSfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=W6oy4baD; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722428558;
+	s=mimecast20190719; t=1722428612;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=u8D0BMiT6IoVXQx1H4dU2A0Q04EQIo67aTwTXMI8Aso=;
-	b=i+jhbPlx7B4M6yUC8ejdemUeOwF3TLHbIL6akp1akhhlWImfXIly+QBIoBp9U+KZDSoaNg
-	TTOCpj5et31uq9yJnFzwHyr3rbM9+M5ffQXAGttoM4TZQmelmx5EcQADqVB4TtgNqC9gxJ
-	VL1i9HsR82rsGcruux+pm2OrFPSbqLU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=iQqyZTwjFNM4CqRL8YVMi36ltzZ+Eq0nhf1fN4pisog=;
+	b=W6oy4baDpnK4xiKgguJxoNGM9Ccpq0gC8nIBjoe9AozqaTt7kkPvDOUXbpHsq7AhWgZ8OI
+	3pp7j/DEanPUHQaELUNE5pYk3/oKx1CcrqBkFCQC7KoA0O/54Q7mnESIXVGE3jEHOWvVdC
+	ENM/ZJslPJB8a4EX+HUgORm0t6bmx2w=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-fFe8ZsjxO2WK48wEliQURg-1; Wed, 31 Jul 2024 08:22:36 -0400
-X-MC-Unique: fFe8ZsjxO2WK48wEliQURg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so38239745e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:22:36 -0700 (PDT)
+ us-mta-532-ruI8sPg9NLaOMFfi8gyJNg-1; Wed, 31 Jul 2024 08:23:31 -0400
+X-MC-Unique: ruI8sPg9NLaOMFfi8gyJNg-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42807a05413so34445675e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:23:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722428555; x=1723033355;
+        d=1e100.net; s=20230601; t=1722428610; x=1723033410;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=u8D0BMiT6IoVXQx1H4dU2A0Q04EQIo67aTwTXMI8Aso=;
-        b=UUrnFiewmBcoFk5hzayjwMpxUeoGdBsgW89Kb7ajOYQSK/bRLKubgi9lcu9pTjmzb4
-         qkgGorSwnDKIQLHKffAhui7iWrus8jrZpX5vNRY1IlEa0WEVVcl4RtnRazkrbLwBNa3Y
-         uXnCj+cAkTN+wmmQOOVbbujHzS51czOcincSt6dyR2Z8NIvouVP2dDjswvTdgr3GSHdz
-         PS/D1i572+atFFMX2/NDSGlyuYUqP8Lc7YOreN9kD0ybDRatf7GyZqAJirSg1YAAo12R
-         RXltc/U6EFKnEeWgO8c+OoYifBrMnw7HJV8EjvYXkgLo8HVSiDeEIt9mvDim+Zt2De9K
-         SANQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWl3BaMs2seL4wJYlLMxeQgM3Jl+Rikdm3lL9wlu5cyt06LrFkGbhISy8VYLl7D4H9ivVoTAa6UZ2s+wCXQLmHHre8wY8uALZSZg0W
-X-Gm-Message-State: AOJu0YzAj0tq+9NnZHFqaRgPbzAUzpPIA88GtbjMTyQ/l5nrYtyaEcNS
-	kdlhshHx4tZwaGqNDI3hGJwN9dbWyvCJtk/Xvy/vQPn/XHQ5fgwUXisIMjn+izXVlyzIHdeC1g0
-	+H8k1E/womJ2oBvLYLyiDyRib5TOUthdIlHkdpNMMwVtRZM1NvFUWdqAFaJ2Syg==
-X-Received: by 2002:a5d:4708:0:b0:367:340e:d6e6 with SMTP id ffacd0b85a97d-36b5d0acf1emr9501349f8f.41.1722428555470;
-        Wed, 31 Jul 2024 05:22:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHW+UTLIN0RxJ1X5ueyznLa5GLDh3jxBCM48XxXY8PyrBp6tsVe90U3Ukmdxw7GxNL3q6QZ2A==
-X-Received: by 2002:a5d:4708:0:b0:367:340e:d6e6 with SMTP id ffacd0b85a97d-36b5d0acf1emr9501327f8f.41.1722428555011;
-        Wed, 31 Jul 2024 05:22:35 -0700 (PDT)
+        bh=iQqyZTwjFNM4CqRL8YVMi36ltzZ+Eq0nhf1fN4pisog=;
+        b=c7f38gSym/4XmDXkEdKFtruCdSC93HQzvBI0JJcqveN/tSJTUHS2YnyJDTw6KniFS9
+         2JMzsYTPngN2wubvfhPUy6YM2HXmyp8DuIM4LowvxIxRn+6aPwRqJsVozGd6aeAF8Zod
+         fCbA0xFFUSpKp4rR3PTXCoSdyE7Zg7Ckn6XJ2xSyb5xhMGFfFamLmOLoUVPFOeBGNuRn
+         j/93qEJfUx0JV0/XCm20GWLE7Aywqa9qVCtwJ0NpUAzX7Qcz4BrLz0c1QOSkpngslcxE
+         fmNM2NlzDHbyukoSTxxTXf5skoluIeXXQfCn10bu/yCJ6jcFlw529NyLyTM6Cns6teg3
+         USqw==
+X-Forwarded-Encrypted: i=1; AJvYcCVVq21qPMZdzw1h4DDK5j8E5snv/Cj+TQwT3EihD6zaC5R3s7PQGGHu2JHyz3pdmAjvFmTUZxaAYDHgVYLoDrPGgQ/jzAiULuHZOZnr
+X-Gm-Message-State: AOJu0YxFBNInUwl0DVvixc80SJDK1BiaYUEe5S7WlS/qkqZPbHGM6w5V
+	RguPmX2RC68NTo6kB+w+r/Znu0uChyG43P7SlGcJLeqlC5X2xUJo3wGEK/z8UBIKW3iDp9q8M+N
+	5ygqU1fw+zpehyzV1UxMQrD9OvuhAV5VNBnYJD8S9LQ8rW+h5gccA8OKIwFpARQ==
+X-Received: by 2002:a05:600c:5492:b0:427:b995:5bd0 with SMTP id 5b1f17b1804b1-42811dd08d3mr88343705e9.23.1722428610153;
+        Wed, 31 Jul 2024 05:23:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTt27FwoRWu2RjhLMqAf42tYFvT7WasDm9gSDSzAaF1mBcNTLaA4FbswprNCtpV6EtCoqDvA==
+X-Received: by 2002:a05:600c:5492:b0:427:b995:5bd0 with SMTP id 5b1f17b1804b1-42811dd08d3mr88343385e9.23.1722428609678;
+        Wed, 31 Jul 2024 05:23:29 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c70b:5f00:9b61:28a2:eea1:fa49? (p200300cbc70b5f009b6128a2eea1fa49.dip0.t-ipconnect.de. [2003:cb:c70b:5f00:9b61:28a2:eea1:fa49])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b3686227csm16968300f8f.99.2024.07.31.05.22.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baf3a1csm19088725e9.35.2024.07.31.05.23.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 05:22:34 -0700 (PDT)
-Message-ID: <644488b6-e838-48bb-98df-d979e01a51d6@redhat.com>
-Date: Wed, 31 Jul 2024 14:22:33 +0200
+        Wed, 31 Jul 2024 05:23:29 -0700 (PDT)
+Message-ID: <a9e95e2f-ab58-469c-a66e-30ee4617ad64@redhat.com>
+Date: Wed, 31 Jul 2024 14:23:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,7 +82,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] mm/x86: Make pud_leaf() only cares about PSE bit
+Subject: Re: [PATCH v3 6/8] mm/x86: arch_check_zapped_pud()
 To: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org
 Cc: Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
@@ -101,7 +101,7 @@ Cc: Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
  Nicholas Piggin <npiggin@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
  Ingo Molnar <mingo@redhat.com>
 References: <20240715192142.3241557-1-peterx@redhat.com>
- <20240715192142.3241557-6-peterx@redhat.com>
+ <20240715192142.3241557-7-peterx@redhat.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -149,45 +149,30 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240715192142.3241557-6-peterx@redhat.com>
+In-Reply-To: <20240715192142.3241557-7-peterx@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 15.07.24 21:21, Peter Xu wrote:
-> An entry should be reported as PUD leaf even if it's PROT_NONE, in which
-> case PRESENT bit isn't there. I hit bad pud without this when testing dax
-> 1G on zapping a PROT_NONE PUD.
+> Introduce arch_check_zapped_pud() to sanity check shadow stack on PUD zaps.
+> It has the same logic of the PMD helper.
 > 
-
-Subject s/cares/care/
-
+> One thing to mention is, it might be a good idea to use page_table_check in
+> the future for trapping wrong setups of shadow stack pgtable entries [1].
+> That is left for the future as a separate effort.
+> 
+> [1] https://lore.kernel.org/all/59d518698f664e07c036a5098833d7b56b953305.camel@intel.com
+> 
+> Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
 > Cc: Thomas Gleixner <tglx@linutronix.de>
 > Cc: Ingo Molnar <mingo@redhat.com>
 > Cc: Borislav Petkov <bp@alien8.de>
 > Cc: Dave Hansen <dave.hansen@linux.intel.com>
 > Cc: x86@kernel.org
-> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
 > Signed-off-by: Peter Xu <peterx@redhat.com>
 > ---
->   arch/x86/include/asm/pgtable.h | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-> index 65b8e5bb902c..25fc6d809572 100644
-> --- a/arch/x86/include/asm/pgtable.h
-> +++ b/arch/x86/include/asm/pgtable.h
-> @@ -1073,8 +1073,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
->   #define pud_leaf pud_leaf
->   static inline bool pud_leaf(pud_t pud)
->   {
-> -	return (pud_val(pud) & (_PAGE_PSE | _PAGE_PRESENT)) ==
-> -		(_PAGE_PSE | _PAGE_PRESENT);
-> +	return pud_val(pud) & _PAGE_PSE;
->   }
->   
->   static inline int pud_bad(pud_t pud)
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
