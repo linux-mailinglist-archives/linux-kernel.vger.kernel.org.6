@@ -1,181 +1,185 @@
-Return-Path: <linux-kernel+bounces-269740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AFF894364F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:19:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306C1943651
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59184284BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:19:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8043AB21229
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E06513D523;
-	Wed, 31 Jul 2024 19:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB76A14AD3F;
+	Wed, 31 Jul 2024 19:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XccSou1N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hKszDlCm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2JKTNFnr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CE64AEF2;
-	Wed, 31 Jul 2024 19:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294531396;
+	Wed, 31 Jul 2024 19:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453387; cv=none; b=Pv/WeFZHGaE34ozACx3ITrOGyDabGB7j8RvsteyfjOXmCZvdM3xejfPev56iQBlqPVgY80rlgJp6v99WY5BFeqPWr35SNH26joiCRdx/93XnTZNqj5tGhqZ4mh4aOKh80wpl6ucD+O3FvrHBRvl4MkjGMC8ZIvTdlLf0gz+RRdk=
+	t=1722453443; cv=none; b=rMK0CpB0OjMi7vOC5wkIFvvqT3YtFkZhrEv4pY9RuGqnBQ4KmTkHXn0WcA9DIxnAKkK9yJktlvuf3j3u8nUrl3osPTabiq8SWasVK/f2BmccqgbtQO96zhQuadt3n9GVhNy/ct8dwXp8UmaD1ePjJIe3h9UPh7BZwAlt0R+77Ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453387; c=relaxed/simple;
-	bh=aR4zViEuQpZ6YG2+gA6uZgTsoo2ObhIDmE4hTAOFXLQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Q376KEozhjkjgDTg5iEkN2fFVVzoxDFku0kAws8TaxN1Mh2umrXE0GJ+PhSljLZUxUE5sgV+IRF2kGTkfBj57bsxfe4NjVx1mlrKOuwJJlKVrNdSxWmk6TdelOs6UolcrLdOMomG1H7EjHbB9Tih7YXfuCSP2JXQH6ACqW47s2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XccSou1N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B305AC116B1;
-	Wed, 31 Jul 2024 19:16:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453387;
-	bh=aR4zViEuQpZ6YG2+gA6uZgTsoo2ObhIDmE4hTAOFXLQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XccSou1NMaIGA2rRPgQ/rltheyaLPgmT09uLRp0aRimlG/8XUwdosUGw2gzhxjiIk
-	 8AZI1IkpOGYn2f1vkH/Xy+Bqw0t6fPCRzmhoS54kiRie1mt+8vPFvwRI+8ET7Hs4yw
-	 iVAaTSSF/uC9+1N2ayh1r7nrVo4x95cIji4rjorK9B30jBw9xdokYpIUKDSkycOP/A
-	 yg/dQO7VFZhmDwS9YzbaloMWcm2zlGcIpPPR70U+mNcaGP3Fr6ZDz2JGoJb6HQ3/y9
-	 ptX9rfb993115fHAxHkDxHavYzlcoo+pm/tVr/dRrh7Y6IXGymtQ7Qbk6f204ViNOS
-	 P2P/9M42U50eg==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Madalin Bucur <madalin.bucur@nxp.com>,
-	Sean Anderson <sean.anderson@seco.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	MD Danish Anwar <danishanwar@ti.com>,
-	Roger Quadros <rogerq@kernel.org>,
-	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
-	Michal Simek <michal.simek@amd.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH net-next] net: Use of_property_read_bool()
-Date: Wed, 31 Jul 2024 13:16:00 -0600
-Message-ID: <20240731191601.1714639-2-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722453443; c=relaxed/simple;
+	bh=nqj64kAThfczR9bdWhrT4KStOx4CZ+UF7F5m/XfLIIk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=mgRDC9foCucokoJT05fMj3D/uh+LU8nain2Hmftsa2nkszEkSkCq3s9nAmiaO2MYeEt3b6YNVwHI343XXO5N0VC0SkrapHiPmG/tt5lZxVWI1/eXkfOTxgtiewU2yITpxkOthofmmCD2nmjinsMaq0ggp4rsNJzoAgBc8OJ/YMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hKszDlCm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2JKTNFnr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 31 Jul 2024 19:17:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722453439;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b6GS5RHz/pZ7rgdQqcinf2PakNtwOpSWpViqa7VEnqE=;
+	b=hKszDlCmgQYg/hQLEwhLWLrjJb5bG8y4SYCdMXuB+vJhi4qDGRoATJTS7feQbTx5WelcHN
+	UFkJ3kw6Ez5nivnQoGCrA1D+TGAuN0dZsaSF8l6iHb74K0DQizDcFRvL2RICTItNOSRYjW
+	TrGsTcqSfsJaU0YHaeEvSOOn3SKk4JaX4x733itRpxMQeEo3RgvpQh/2N+j+0jhw+eIsZc
+	e8SFPr3vW9in+GlD1mj3qrD0yNAv0IbBEX95LzJOIgSPlahh2tyH9fy7tavUP7nu6Qlzh6
+	dtzhp6EhDXrGe7YxclPSR5fcqHnWC8jPCEqpymb8ZJx+rO9tTLHnuSu2fyExEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722453439;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b6GS5RHz/pZ7rgdQqcinf2PakNtwOpSWpViqa7VEnqE=;
+	b=2JKTNFnr8hqL9ykuxB8EPDZ1Gz4EcuCZeu6/zFnkgg2gMyGsWGiVef9QNq4nPhEndM4wO+
+	iRSxyMK3cvB1XMAg==
+From: "tip-bot2 for Feng Tang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/timers] x86/tsc: Use topology_max_packages() to get package number
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Feng Tang <feng.tang@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Waiman Long <longman@redhat.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240729021202.180955-1-feng.tang@intel.com>
+References: <20240729021202.180955-1-feng.tang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <172245343893.2215.4640869699276515381.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Use of_property_read_bool() to read boolean properties rather than
-of_find_property(). This is part of a larger effort to remove callers
-of of_find_property() and similar functions. of_find_property() leaks
-the DT struct property and data pointers which is a problem for
-dynamically allocated nodes which may be freed.
+The following commit has been merged into the x86/timers branch of tip:
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+Commit-ID:     b4bac279319d3082eb42f074799c7b18ba528c71
+Gitweb:        https://git.kernel.org/tip/b4bac279319d3082eb42f074799c7b18ba528c71
+Author:        Feng Tang <feng.tang@intel.com>
+AuthorDate:    Mon, 29 Jul 2024 10:12:02 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Wed, 31 Jul 2024 21:12:09 +02:00
+
+x86/tsc: Use topology_max_packages() to get package number
+
+Commit b50db7095fe0 ("x86/tsc: Disable clocksource watchdog for TSC on
+qualified platorms") was introduced to solve problem that sometimes TSC
+clocksource is wrongly judged as unstable by watchdog like 'jiffies', HPET,
+etc.
+
+In it, the hardware package number is a key factor for judging whether to
+disable the watchdog for TSC, and 'nr_online_nodes' was chosen due to, at
+that time (kernel v5.1x), it is available in early boot phase before
+registering 'tsc-early' clocksource, where all non-boot CPUs are not
+brought up yet.
+
+Dave and Rui pointed out there are many cases in which 'nr_online_nodes'
+is cheated and not accurate, like:
+
+ * SNC (sub-numa cluster) mode enabled
+ * numa emulation (numa=fake=8 etc.)
+ * numa=off
+ * platforms with CPU-less HBM nodes, CPU-less Optane memory nodes.
+ * 'maxcpus=' cmdline setup, where chopped CPUs could be onlined later
+ * 'nr_cpus=', 'possible_cpus=' cmdline setup, where chopped CPUs can
+   not be onlined after boot
+
+The SNC case is the most user-visible case, as many CSP (Cloud Service
+Provider) enable this feature in their server fleets. When SNC3 enabled, a
+2 socket machine will appear to have 6 NUMA nodes, and get impacted by the
+issue in reality.
+
+Thomas' recent patchset of refactoring x86 topology code improves
+topology_max_packages() greatly, by making it more accurate and available
+in early boot phase, which works well in most of the above cases.
+
+The only exceptions are 'nr_cpus=' and 'possible_cpus=' setup, which may
+under-estimate the package number. As during topology setup, the boot CPU
+iterates through all enumerated APIC IDs and either accepts or rejects the
+APIC ID. For accepted IDs, it figures out which bits of the ID map to the
+package number.  It tracks which package numbers have been seen in a
+bitmap.  topology_max_packages() just returns the number of bits set in
+that bitmap.
+
+'nr_cpus=' and 'possible_cpus=' can cause more APIC IDs to be rejected and
+can artificially lower the number of bits in the package bitmap and thus
+topology_max_packages().  This means that, for example, a system with 8
+physical packages might reject all the CPUs on 6 of those packages and be
+left with only 2 packages and 2 bits set in the package bitmap. It needs
+the TSC watchdog, but would disable it anyway.  This isn't ideal, but it
+only happens for debug-oriented options. This is fixable by tracking the
+package numbers for rejected CPUs.  But it's not worth the trouble for
+debugging.
+
+So use topology_max_packages() to replace nr_online_nodes().
+
+Reported-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Waiman Long <longman@redhat.com>
+Link: https://lore.kernel.org/all/20240729021202.180955-1-feng.tang@intel.com
+Closes: https://lore.kernel.org/lkml/a4860054-0f16-6513-f121-501048431086@intel.com/
 ---
- drivers/net/ethernet/freescale/fman/fman_port.c   | 6 +++---
- drivers/net/ethernet/ti/icssg/icssg_prueth.c      | 8 ++++----
- drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c  | 8 ++++----
- drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 +-
- 4 files changed, 12 insertions(+), 12 deletions(-)
+ arch/x86/kernel/tsc.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/freescale/fman/fman_port.c b/drivers/net/ethernet/freescale/fman/fman_port.c
-index 406e75e9e5ea..f17a4e511510 100644
---- a/drivers/net/ethernet/freescale/fman/fman_port.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_port.c
-@@ -1748,7 +1748,7 @@ static int fman_port_probe(struct platform_device *of_dev)
- 	struct resource res;
- 	struct resource *dev_res;
- 	u32 val;
--	int err = 0, lenp;
-+	int err = 0;
- 	enum fman_port_type port_type;
- 	u16 port_speed;
- 	u8 port_id;
-@@ -1795,7 +1795,7 @@ static int fman_port_probe(struct platform_device *of_dev)
- 	if (of_device_is_compatible(port_node, "fsl,fman-v3-port-tx")) {
- 		port_type = FMAN_PORT_TYPE_TX;
- 		port_speed = 1000;
--		if (of_find_property(port_node, "fsl,fman-10g-port", &lenp))
-+		if (of_property_read_bool(port_node, "fsl,fman-10g-port"))
- 			port_speed = 10000;
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index d4462fb..0ced187 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -28,6 +28,7 @@
+ #include <asm/apic.h>
+ #include <asm/cpu_device_id.h>
+ #include <asm/i8259.h>
++#include <asm/topology.h>
+ #include <asm/uv/uv.h>
  
- 	} else if (of_device_is_compatible(port_node, "fsl,fman-v2-port-tx")) {
-@@ -1808,7 +1808,7 @@ static int fman_port_probe(struct platform_device *of_dev)
- 	} else if (of_device_is_compatible(port_node, "fsl,fman-v3-port-rx")) {
- 		port_type = FMAN_PORT_TYPE_RX;
- 		port_speed = 1000;
--		if (of_find_property(port_node, "fsl,fman-10g-port", &lenp))
-+		if (of_property_read_bool(port_node, "fsl,fman-10g-port"))
- 			port_speed = 10000;
+ unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
+@@ -1253,15 +1254,12 @@ static void __init check_system_tsc_reliable(void)
+ 	 *  - TSC which does not stop in C-States
+ 	 *  - the TSC_ADJUST register which allows to detect even minimal
+ 	 *    modifications
+-	 *  - not more than two sockets. As the number of sockets cannot be
+-	 *    evaluated at the early boot stage where this has to be
+-	 *    invoked, check the number of online memory nodes as a
+-	 *    fallback solution which is an reasonable estimate.
++	 *  - not more than four packages
+ 	 */
+ 	if (boot_cpu_has(X86_FEATURE_CONSTANT_TSC) &&
+ 	    boot_cpu_has(X86_FEATURE_NONSTOP_TSC) &&
+ 	    boot_cpu_has(X86_FEATURE_TSC_ADJUST) &&
+-	    nr_online_nodes <= 4)
++	    topology_max_packages() <= 4)
+ 		tsc_disable_clocksource_watchdog();
+ }
  
- 	} else if (of_device_is_compatible(port_node, "fsl,fman-v2-port-rx")) {
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 3e51b3a9b0a5..9dc9de39bb8f 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -1271,8 +1271,8 @@ static int prueth_probe(struct platform_device *pdev)
- 			goto exit_iep;
- 		}
- 
--		if (of_find_property(eth0_node, "ti,half-duplex-capable", NULL))
--			prueth->emac[PRUETH_MAC0]->half_duplex = 1;
-+		prueth->emac[PRUETH_MAC0]->half_duplex =
-+			of_property_read_bool(eth0_node, "ti,half-duplex-capable");
- 
- 		prueth->emac[PRUETH_MAC0]->iep = prueth->iep0;
- 	}
-@@ -1285,8 +1285,8 @@ static int prueth_probe(struct platform_device *pdev)
- 			goto netdev_exit;
- 		}
- 
--		if (of_find_property(eth1_node, "ti,half-duplex-capable", NULL))
--			prueth->emac[PRUETH_MAC1]->half_duplex = 1;
-+		prueth->emac[PRUETH_MAC1]->half_duplex =
-+			of_property_read_bool(eth1_node, "ti,half-duplex-capable");
- 
- 		prueth->emac[PRUETH_MAC1]->iep = prueth->iep0;
- 	}
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
-index e180c1166170..54b7e27608ce 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth_sr1.c
-@@ -1045,8 +1045,8 @@ static int prueth_probe(struct platform_device *pdev)
- 			goto exit_iep;
- 		}
- 
--		if (of_find_property(eth0_node, "ti,half-duplex-capable", NULL))
--			prueth->emac[PRUETH_MAC0]->half_duplex = 1;
-+		prueth->emac[PRUETH_MAC0]->half_duplex =
-+			of_property_read_bool(eth0_node, "ti,half-duplex-capable");
- 
- 		prueth->emac[PRUETH_MAC0]->iep = prueth->iep0;
- 	}
-@@ -1059,8 +1059,8 @@ static int prueth_probe(struct platform_device *pdev)
- 			goto netdev_exit;
- 		}
- 
--		if (of_find_property(eth1_node, "ti,half-duplex-capable", NULL))
--			prueth->emac[PRUETH_MAC1]->half_duplex = 1;
-+		prueth->emac[PRUETH_MAC1]->half_duplex =
-+			of_property_read_bool(eth1_node, "ti,half-duplex-capable");
- 
- 		prueth->emac[PRUETH_MAC1]->iep = prueth->iep1;
- 	}
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index e342f387c3dd..da531a914914 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -2396,7 +2396,7 @@ static int axienet_probe(struct platform_device *pdev)
- 		goto cleanup_clk;
- 	}
- 
--	if (!of_find_property(pdev->dev.of_node, "dmas", NULL)) {
-+	if (!of_property_present(pdev->dev.of_node, "dmas")) {
- 		/* Find the DMA node, map the DMA registers, and decode the DMA IRQs */
- 		np = of_parse_phandle(pdev->dev.of_node, "axistream-connected", 0);
- 
--- 
-2.43.0
-
 
