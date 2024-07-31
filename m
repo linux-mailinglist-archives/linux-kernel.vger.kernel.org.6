@@ -1,112 +1,88 @@
-Return-Path: <linux-kernel+bounces-268981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A12942BDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:24:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A360942BE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:26:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06028281D97
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:24:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B3421C2163F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9F41AC42F;
-	Wed, 31 Jul 2024 10:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TOGYzi17";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MevkQt1e"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAB71AC437;
+	Wed, 31 Jul 2024 10:26:28 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5C51A8BE1;
-	Wed, 31 Jul 2024 10:23:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 776BA8801;
+	Wed, 31 Jul 2024 10:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722421435; cv=none; b=LZ0GzeGgvOSJfnmo2XVppAFrDCFKrgpYNfBdOPpNLREwa7qWpQW3+W4+a6gIeP5sKXtYiTvLZ13aprYGNhujzNauwseuuzm2dTE9lb8yXaBlLvjrfuTVxMMjILlRaKuyDp7rDw1iDOuZgtRKKPIJivPJltdIgk+yvPWML6qQnGk=
+	t=1722421588; cv=none; b=KLh7PQ//VF/obXw4LUE3HFVkXqYXXGMcb+U5W3/vmlsK6Eyd4q1OZI1kXezZFqspiB1ZUfbGL89T4nw3MWpZVLTM+J6xnFY92Q/lBgFRBKsj/WgYJOrfrY+n21YPF1n+sP6ydrhwUPu9CQcHUApSufb8GmzezBfDroeLjCdZkKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722421435; c=relaxed/simple;
-	bh=oGEfHtD0ToV1+zuUa0mS21L7o66T5vc+gxcW+bLl6Ho=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TArbKL1jUWLF26zmYol+l6+tX5FM6WkgXWfh48ErjSQQ2umkz2QbFn9KbwmLMyDVNnXPcsmEVrxNn3TER1c6jo4DOWFA0AIZ0/0l+aWf08QDNk9UuJBe68xk1WxItl/nHBuDSZA/P2LgU6tY3Azn8ZOpYO8r4FiVch2hOQlVHhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TOGYzi17; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MevkQt1e; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722421431;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/BwLAahx4o9JQsvQ7g49tHiHUz9DIP+4aiCErtBm2/o=;
-	b=TOGYzi17BaFYdy9jT+gZ24ydT+vkrVc3gkXxkabf67GWmBQBbO0o2D1Yy5YK2G+4cwnv/u
-	9/WUr/YDuTAqGL3G/4EmEXm7iGWRusdMuV9sToafLgliy2ao9lWQ8tAymSuli/e90LUt1x
-	R4cdjV+ipRwya7CxPwFz60ULgDk9F1AjGuFrot2vUUcG50fTGGLPRxcc4+Tp0FIh+g0sEF
-	MltIl0TS3mkV+HfC9ht6Ot8VeTFj9k7wnbNwe0dz4lq3GFgSDe+Fwbja1BzIgLvtCRAP95
-	Ru8GxFKsZ4AoV7snOwvOs73q3uu8IrHuL1dZVRoR4HZQlNWqgGM+Ojc1URNGBA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722421431;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/BwLAahx4o9JQsvQ7g49tHiHUz9DIP+4aiCErtBm2/o=;
-	b=MevkQt1eG/uoOqgz3l2TkoKsoWublOvamjLpe9TO2PZnLOm5nW6VcmVz7Hoq8dGOtIsW4S
-	0KSvt/mKIUk5+WDQ==
-To: David Wang <00107082@163.com>, liaoyu15@huawei.com
-Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
- stable@vger.kernel.org, x86@kernel.org, Frederic Weisbecker
- <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [PATCH] tick/broadcast: Move per CPU pointer access into the atomic
- section
-In-Reply-To: <20240730142557.4619-1-00107082@163.com>
-References: <20240730142557.4619-1-00107082@163.com>
-Date: Wed, 31 Jul 2024 12:23:51 +0200
-Message-ID: <87ttg56ers.ffs@tglx>
+	s=arc-20240116; t=1722421588; c=relaxed/simple;
+	bh=UkfPCXSY0TJpmYvGROn1A/n8nq/8Glii+x0OVkLjdZ4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HEAkKdwBQMGhiBf+7sDURFjeylCndeQBCLj7Ad+/RF/A7iLH6iiDaM+1BC2Cz3sdSZbTZ152b0ipYr5Gm5cvfIOlFn24KiC0G51OvWLWpKfOTM9iTVxdTYbAKkzLhEViiv2Biq1xX0fO8/nPn/r5apKmalOIwZILLOVdCP6/y9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WYpCk42wBzxVxp;
+	Wed, 31 Jul 2024 18:26:10 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2833C1400DD;
+	Wed, 31 Jul 2024 18:26:22 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 31 Jul
+ 2024 18:26:21 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <mathias.nyman@intel.com>, <gregkh@linuxfoundation.org>,
+	<Frank.Li@nxp.com>
+CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH -next] xhci: Remove unused function declarations
+Date: Wed, 31 Jul 2024 18:24:29 +0800
+Message-ID: <20240731102429.1714302-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-The recent fix for making the take over of the broadcast timer more
-reliable retrieves a per CPU pointer in preemptible context.
+Commit 674f8438c121 ("xhci: split handling halted endpoints into two steps")
+remove xhci_cleanup_stalled_ring() but leave declaration.
+And commit 25355e046d29 ("xhci: use generic command timer for stop endpoint commands.")
+left behind xhci_stop_endpoint_command_watchdog().
 
-This went unnoticed as compilers hoist the access into the non-preemptible
-region where the pointer is actually used. But of course it's valid that
-the compiler keeps it at the place where the code puts it which rightfully
-triggers:
-
-  BUG: using smp_processor_id() in preemptible [00000000] code:
-       caller is hotplug_cpu__broadcast_tick_pull+0x1c/0xc0
-
-Move it to the actual usage site which is in a non-preemptible region.
-
-Fixes: f7d43dd206e7 ("tick/broadcast: Make takeover of broadcast hrtimer reliable")
-Reported-by: David Wang <00107082@163.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 ---
- kernel/time/tick-broadcast.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/host/xhci.h | 4 ----
+ 1 file changed, 4 deletions(-)
 
---- a/kernel/time/tick-broadcast.c
-+++ b/kernel/time/tick-broadcast.c
-@@ -1141,7 +1141,6 @@ void tick_broadcast_switch_to_oneshot(vo
- #ifdef CONFIG_HOTPLUG_CPU
- void hotplug_cpu__broadcast_tick_pull(int deadcpu)
- {
--	struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
- 	struct clock_event_device *bc;
- 	unsigned long flags;
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index ebd0afd59a60..7d0a09939fa4 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1904,10 +1904,6 @@ int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 		enum xhci_ep_reset_type reset_type);
+ int xhci_queue_reset_device(struct xhci_hcd *xhci, struct xhci_command *cmd,
+ 		u32 slot_id);
+-void xhci_cleanup_stalled_ring(struct xhci_hcd *xhci, unsigned int slot_id,
+-			       unsigned int ep_index, unsigned int stream_id,
+-			       struct xhci_td *td);
+-void xhci_stop_endpoint_command_watchdog(struct timer_list *t);
+ void xhci_handle_command_timeout(struct work_struct *work);
  
-@@ -1167,6 +1166,8 @@ void hotplug_cpu__broadcast_tick_pull(in
- 		 * device to avoid the starvation.
- 		 */
- 		if (tick_check_broadcast_expired()) {
-+			struct tick_device *td = this_cpu_ptr(&tick_cpu_device);
-+
- 			cpumask_clear_cpu(smp_processor_id(), tick_broadcast_force_mask);
- 			tick_program_event(td->evtdev->next_event, 1);
- 		}
+ void xhci_ring_ep_doorbell(struct xhci_hcd *xhci, unsigned int slot_id,
+-- 
+2.34.1
+
 
