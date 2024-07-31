@@ -1,170 +1,261 @@
-Return-Path: <linux-kernel+bounces-269920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F3D9438C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:24:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6025E9438CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:24:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0180283F79
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:24:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8443B1C21B96
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B676516D9A8;
-	Wed, 31 Jul 2024 22:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CF616D4FA;
+	Wed, 31 Jul 2024 22:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT98GRI5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eYA29Yfa"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69FF14B097;
-	Wed, 31 Jul 2024 22:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2058916938C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722464640; cv=none; b=RmGKBkkj9cGKwNOpk0QdLTFWzg2uJ56pT3+hsE1s2Gs+TRlgXQCIfYwOG7JI1STrs6KWOxQ8O4sbx+MJymYy5a4sNxSxFn35fQ2isMUB3zCjab4iFOJLOixvzMgslDTeRrK6iMpvNi7EwsJaJLbYp1SH4HgXeqIY/g1G9SnHR68=
+	t=1722464677; cv=none; b=k48h9mvqUZPlE1wO0MDDvKAN2A1l4EYS4jcqZ+PYJ+zRmEeUUKypYrMRFkugsOQMuZMf4jBseRYDfgQ3cA7jp2kDabP8QDlYBl1Lab+bLdGFDRB4lT0kAz5wMj3TGevTn+E1Gmymy/qM9TZ83r0EHhuGRpex1nsx3V3NVNhqgBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722464640; c=relaxed/simple;
-	bh=QsT31Zg0FepZe7IrujgLwIvh6PObB4FX6lPGNIPazLE=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=E44KyQ+ZiPVQ4alA2wcBJrtgeGD/ew8ApzF2doGqy0cORd1K3SYJZFSPD+NePmIWrBAKW2kYsqVdvbbZgD8TTnQYswh/1h4UfS/P6qRqms13DS1oKGSbvTDrhuVo9he2s8chPGT4TuKYstTtJzhxVSwSYgkbKY3rQHZpidxXAv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT98GRI5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A75CC116B1;
-	Wed, 31 Jul 2024 22:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722464639;
-	bh=QsT31Zg0FepZe7IrujgLwIvh6PObB4FX6lPGNIPazLE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=IT98GRI5DTAD2bVKJCrGZBoyuLtacyei+1w/E3Pg+poMCdhSWavI4gTkaW8Rgi9aL
-	 QA/a4RVFEklRBcrPHQeiXuWTWCZY8lTCgQLIIvOMVcvhHGOD1dDUAN+pl5aYkZ+yEj
-	 +qtJCcYqud8+dEpyo4CvtPw2/vRPk2PI0iIE1on+OtGYWwg6C/0/jZephUzpF40rel
-	 v8fbzYhdbCrmJhaJMJHQEgKN1FszJxBp5HFESKHXsvC1P1iYb0rrhrHJL46u2fL7ds
-	 IM1VCxOfBzbvtyxK5uAhoKrmm6cJotHHyPSgSDE5Mp48isy4gO9b+uKP/79NFJp6jC
-	 0Hjx/b6SAMlOw==
-Message-ID: <08ed1ae35b69e11e69ce178af41c77b0.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722464677; c=relaxed/simple;
+	bh=CXSSbh0YIaW34RcUbHuRknjZCmUN+XojVPuNYh/lCAE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1R1lZrcK5eYoLMD/BADQmQYkxFTIY4A68LTCTeLUVvq6IdlbeUx/qa7lKY7tWPxXmEdSSLgxfKdvJ9WDWRXG/CM878u6NoHt2/AG0oUjwqS5ia9/Gomu/zoIbuFJYUG4ETnApfKoiQbCla6Z8n+yRMmHamRC0x9b9A9dH3PDB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eYA29Yfa; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428243f928fso27143135e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:24:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722464673; x=1723069473; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HQlMiv99SKoMmbKZZ1ltrZHqFERyiZWEJtmRLsLyF1M=;
+        b=eYA29YfawiVvgC9IF/4Vpj49Icm9i6GzQaOfAO/Cz4UORKBdTkQ1L7kXy6fNFV4bNP
+         gpJrG2dSaPkYV+Vxc6gDnU8K16nT7PLIdsuGoKPSseCJy+Mxbuha0Zrdj3vbzg/JHFz8
+         VGunvKk2J53TzsLc+tR+9aPTtB6i2Z2d09Kq4q4nL2TMNLD+vOZyMuKjsnofsDrwQ3Wz
+         TESuMLZsB9k1b8bP/29enZLqAq7D3SiQitNtn9205qYSotVl5do1vDD003S5F8byuoAZ
+         aPTJfhuOI5uX71VfFq3QoQzKqxJfKqjPU4eTdp/XiSfkF0JAdY52WR3VCUuPQQgjbIbl
+         daLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722464673; x=1723069473;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HQlMiv99SKoMmbKZZ1ltrZHqFERyiZWEJtmRLsLyF1M=;
+        b=EYb3xqvlAsLETCEFGyMhC8y+yvCiz3dmv9VGx7g19Uk8uipy1BZ+IO3ZPe3y9YREEB
+         fNP3IjSFLl71x54n6SgroU6YtidHZJUt+eoHzYfGS2R7ZSv1O+zeHOkt/Euczo1FYX6R
+         zKxsgx/NiloSOUUJYgPRK2dkrwGc8e/AQJBMO+cSIUB/P19IK3t3wGa9sR8OceAq1Q6m
+         qZpEyhH3p2iGPnTreZ5vf5XVlX/NIzgYBJS2XEtLNLrA/6yXh6ofdvkeviHqZXpsSIP1
+         AtqCzc4mBdXs04DzNMiBYU8Jfy7mrRzYhn5CuIQ7q39y77ehhDGsxYH+uyrN1UaadojV
+         Sl4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUhSobrOC/rxB3aQiDV7gGsdRhxDZmLy4wBN6ez173/bW0BbmX90amkjWsicsD9JcZgIJsuBFO/2utifIazMtVM489AhsjuY61ACX9B
+X-Gm-Message-State: AOJu0YxllbKj47VAPQG1jJRV0bbylGzmJKw+rYqWGfWBFsiAVD0eEIad
+	C6xETSCandDr4jFeGHyP98UeuA5FMVssCsA5rJXNMRnCJxkrR1YND+NDTb6LJm0=
+X-Google-Smtp-Source: AGHT+IHEe+B6/mkybCqk++zmz0NLQ7zdxFHmKZ3rRujD/mbhmZ3LhHu3p8qwRPBYIM07qUFvFJMm5g==
+X-Received: by 2002:a05:600c:4ece:b0:428:29e:8c42 with SMTP id 5b1f17b1804b1-428a9bdb04emr8101645e9.9.1722464672870;
+        Wed, 31 Jul 2024 15:24:32 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:e24b:3670:5765:d3ce])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8a2475sm35825775e9.9.2024.07.31.15.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 15:24:32 -0700 (PDT)
+Date: Thu, 1 Aug 2024 00:24:28 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <bokad5wa2vw5qwdrrqpkkyrxgmxco2ix76wdaxlqv6usi5rdck@46bp6ywqteo2>
+References: <20240515112034.298116-1-dima.fedrau@gmail.com>
+ <20240515112034.298116-3-dima.fedrau@gmail.com>
+ <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
+ <20240731084648.GA18584@debian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r76f7ixvgggnra3n"
+Content-Disposition: inline
+In-Reply-To: <20240731084648.GA18584@debian>
+
+
+--r76f7ixvgggnra3n
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240730-clk-u64-v3-2-4d2b19edaa6e@nxp.com>
-References: <20240730-clk-u64-v3-0-4d2b19edaa6e@nxp.com> <20240730-clk-u64-v3-2-4d2b19edaa6e@nxp.com>
-Subject: Re: [PATCH v3 2/2] clk: clk-conf: support assigned-clock-rates-u64
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan (OSS) <peng.fan@oss.nxp.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Date: Wed, 31 Jul 2024 15:23:57 -0700
-User-Agent: alot/0.10
 
-Quoting Peng Fan (OSS) (2024-07-30 01:57:55)
-> From: Peng Fan <peng.fan@nxp.com>
+Hello Dimitri,
+
+On Wed, Jul 31, 2024 at 10:46:48AM +0200, Dimitri Fedrau wrote:
+> Am Mon, Jul 29, 2024 at 11:28:56PM +0200 schrieb Uwe Kleine-K=F6nig:
+> > > +static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u=
+8 *reg,
+> > > +				u16 *val, bool *ctrl, int len)
+> > > +{
+> > > +	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] =3D { { 0 } };
+> > > +	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+> > > +	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+> > > +	int i, ret, reg_i, val_i;
+> > > +
+> > > +	if (!len)
+> > > +		return 0;
+> > > +
+> > > +	if (read)
+> > > +		len++;
+> > > +
+> > > +	if (len > MC33XS2410_MAX_TRANSFERS)
+> > > +		return -EINVAL;
+> > > +
+> > > +	for (i =3D 0; i < len; i++) {
+> > > +		reg_i =3D i * MC33XS2410_WORD_LEN;
+> > > +		val_i =3D reg_i + 1;
+> > > +		if (read) {
+> > > +			if (i < len - 1) {
+> > > +				tx[reg_i] =3D reg[i];
+> > > +				tx[val_i] =3D ctrl[i] ? MC33XS2410_RD_CTRL : 0;
+> > > +				t[i].tx_buf =3D &tx[reg_i];
+> > > +			}
+> > > +
+> > > +			if (i > 0)
+> > > +				t[i].rx_buf =3D &rx[reg_i - MC33XS2410_WORD_LEN];
+> > > +		} else {
+> > > +			tx[reg_i] =3D reg[i] | MC33XS2410_WR;
+> > > +			tx[val_i] =3D val[i];
+> > > +			t[i].tx_buf =3D &tx[reg_i];
+> > > +		}
+> > > +
+> > > +		t[i].len =3D MC33XS2410_WORD_LEN;
+> > > +		t[i].cs_change =3D 1;
+> > > +	}
+> > > +
+> > > +	t[len - 1].cs_change =3D 0;
+> > > +
+> > > +	ret =3D spi_sync_transfer(spi, &t[0], len);
+> > > +	if (ret < 0)
+> > > +		return ret;
+> > > +
+> > > +	if (read) {
+> > > +		for (i =3D 0; i < len - 1; i++) {
+> > > +			reg_i =3D i * MC33XS2410_WORD_LEN;
+> > > +			val[i] =3D FIELD_GET(MC33XS2410_RD_DATA_MASK,
+> > > +					   get_unaligned_be16(&rx[reg_i]));
+> > > +		}
+> > > +	}
+> > > +
+> > > +	return 0;
+> >=20
+> > Huh, this is complicated. Isn't that covered by regmap somehow?
 >=20
-> i.MX95 System Management Control Firmware(SCMI) manages the clock
-> function, it exposes PLL VCO which could support up to 5GHz rate that
-> exceeds UINT32_MAX. So add assigned-clock-rates-u64 support
-> to set rate that exceeds UINT32_MAX.
+> AFAIK it isn't supported. The main reason why regmap-spi doesn't work for
+> this device is that the device needs a CS change after transmitting 16
+> bits. This is not covered by regmap-spi. So I would end up implementing
+> reg_read, regmap_write should be fine in regmap-spi. Besides that if I
+> want to come as close as possible to an atomic configuration, which is not
+> possible, I would have to implement some bulk read/write operations and
+> end up with a similar implementation. I would stick to the current
+> implementation if you agree.
+
+ack.
+
+> > > +static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 du=
+ty_cycle)
+> > > +{
+> > > +	if (!period)
+> > > +		return 0;
+> > > +
+> > > +	duty_cycle *=3D 256;
+> >=20
+> > This might overflow.
+> >=20
 >=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/clk-conf.c | 42 +++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 37 insertions(+), 5 deletions(-)
+> How ? Max period and duty_cycle is checked by the caller and can be
+> maximum 2000000000, 2000000000 * 256 =3D 512000000000, fits in u64. Did I
+> miss anything ?
+
+I didn't notice the check in the caller. Please add a respective comment
+for the next reader who might miss that.
+
+> > > +	duty_cycle =3D DIV_ROUND_CLOSEST_ULL(duty_cycle, period);
+> >=20
+> > round-closest is most probably wrong. Please test your driver with
+> > PWM_DEBUG enabled and increasing and decreasing series of duty_cycle and
+> > period.
 >=20
-> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-> index 058420562020..684e0c0738b3 100644
-> --- a/drivers/clk/clk-conf.c
-> +++ b/drivers/clk/clk-conf.c
-> @@ -81,11 +81,44 @@ static int __set_clk_parents(struct device_node *node=
-, bool clk_supplier)
->  static int __set_clk_rates(struct device_node *node, bool clk_supplier)
->  {
->         struct of_phandle_args clkspec;
-> -       int rc, index =3D 0;
-> +       int rc, count, index;
->         struct clk *clk;
-> -       u32 rate;
-> +       u32 *rates __free(kfree);
-> +       bool rate_64 =3D false;
-> +
-> +       count =3D of_property_count_u64_elems(node, "assigned-clock-rates=
--u64");
-> +       if (count <=3D 0) {
-> +               count =3D of_property_count_u32_elems(node, "assigned-clo=
-ck-rates");
-> +               if (count <=3D 0)
-> +                       return 0;
-> +
-> +               rates =3D kcalloc(count, sizeof(u32), GFP_KERNEL);
-> +               if (!rates)
-> +                       return -ENOMEM;
-> +               rc =3D of_property_read_variable_u32_array(node,
-> +                                                        "assigned-clock-=
-rates",
-> +                                                        rates,
-> +                                                        1, count);
-> +       } else {
-> +               rates =3D kcalloc(count, sizeof(u64), GFP_KERNEL);
-> +               if (!rates)
-> +                       return -ENOMEM;
-> +               rc =3D of_property_read_variable_u64_array(node,
-> +                                                        "assigned-clock-=
-rates-u64",
-> +                                                        (u64 *)rates,
-> +                                                        1, count);
-> +               rate_64 =3D true;
-> +       }
+> Yes, I should probably round it down. But I tested with PWM_DEBUG enabled
+> and it gave me the best results so far. There are still few cases where
+> there are complaints. I try to fix it.
 
-Can this be less indented somehow?
+I don't have the hardware so I cannot test myself. Please make sure that
+there are no more complaints, at least none you are aware of. PWM_DEBUG
+should be happy if you pick a hardware setting where period is maximal
+but not bigger than requested and then for that given period duty_cycle
+is maximal but not bigger than requested. So typically use round-down
+division in .apply(). In .get_state() you should return a pwm_state that
+makes .apply() write the exact same state as found when .get_state() was
+called. So typically you have to use round-up there.
+=20
+> > > +	state->polarity =3D (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwp=
+wm)) ?
+> > > +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
+> > > +
+> > > +	state->enabled =3D !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > [...]
+> > > +static int mc33xs2410_probe(struct spi_device *spi)
+> > > +{
+> > > [...]
+> > > +	/* Disable watchdog */
+> > > +	ret =3D mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
+> > > +	if (ret < 0)
+> > > +		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
+> >=20
+> > Wouldn't the watchdog functionality better be handled by a dedicated
+> > watchdog driver? Disabling it here unconditionally looks wrong.
+>=20
+> Yes, would be better. I planned this after this patchset is accepted.
+> Without disabling the watchdog, the device is not able to operate. So I
+> would stick to it for now and come up with a patch later on.
 
-	u64 *rates_64 __free(kfree) =3D NULL;
-	u32 *rates __free(kfree) =3D NULL;
-	int count_64, count;
+How long is the default timeout? Don't you need to disable the watchdog
+in the bootloader anyhow?
 
-	count =3D of_property_count_u32_elems(node, "assigned-clock-rates");
-	count_64 =3D of_property_count_u64_elems(node, "assigned-clock-rates-u64");
-	if (count_64 > 0) {
-		count =3D count_64;
-		rates_64 =3D kcalloc(count, sizeof(*rates_64), GFP_KERNEL);
-		if (!rates_64)
-			return -ENOMEM;
+If you still think the watchdog should be disabled here, please add a
+comment that it's conceptually wrong to do here, but needed until there
+is a proper watchdog driver.
 
-		rc =3D of_property_read_u64_array(node,
-						"assigned-clock-rates-u64",
-						rates_64, count);
-	} else if (count > 0) {
-		rates =3D kcalloc(count, sizeof(*rates), GFP_KERNEL));
-		if (!rates)
-			return -ENOMEM;
+Should this better be a mfd driver then?
 
-		rc =3D of_property_read_u32_array(node, "assigned-clock-rates",
-						rates, count);
-	} else {
-		return 0;
-	}
-=09
-	if (rc)
-		return rc;
+Best regards
+Uwe
 
-	for (index =3D 0; index < count; index++) {
-		unsigned long rate;
+--r76f7ixvgggnra3n
+Content-Type: application/pgp-signature; name="signature.asc"
 
-		if (rates_64)
-			rate =3D rates_64[index];
-		else
-			rate =3D rates[index];
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +
-> +       for (index =3D 0; index < count; index++) {
-> +               unsigned long rate;
-> +
-> +               if (rate_64)
-> +                       rate =3D ((u64 *)rates)[index];
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaquZgACgkQj4D7WH0S
+/k6tEAf+InTFr4VRf+x21Q9Hn8F37H/X/QwTJcQkDU44YHHwidAZkEPPmOjiH/XC
+TV2XeP+d8PiaEgDVxbKrQs/TC9a+gfioEt2j/kAQk92QNcL2DX+zPgOtjF/20+5Q
+oOY6FOO2/4mUkz/sFWYAaOiYaytxc6GjRcCjIy61rP96Q0yz57js9dq/fnoG2mG2
+tV13fQ/B7P1McJhmIuzt7Eas+ZGSQAnb7WjtAeXIpx7aXRD/2MOOWCh0gUWouH8M
+3RNTN5zaiN6oeHm/u44wT3YlEt9h86rZpeYOU8MkMbSYWG4T8IGoQM3azVv3r9Eq
+RGhrrnv+P8rB3Vg8O0AbnknulO1/Jg==
+=0W2O
+-----END PGP SIGNATURE-----
 
-Please no casts.
-
-> +               else
-> +                       rate =3D rates[index];
->
+--r76f7ixvgggnra3n--
 
