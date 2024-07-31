@@ -1,117 +1,180 @@
-Return-Path: <linux-kernel+bounces-269525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C5739433D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:05:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772C59433D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E7A5B253A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:05:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3216E2868F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B911BC092;
-	Wed, 31 Jul 2024 16:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E401BD00F;
+	Wed, 31 Jul 2024 16:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mM4UOay6"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oJcjR3VS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pXywWQYL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oJcjR3VS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pXywWQYL"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DCC1BC074
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD92C1BBBD9
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441917; cv=none; b=dMpNp0oJhlx8c3P/NJYTeG+FRJ65gLF1Y57xZz6CSx+UTmArxCmIlvabNBee8/X38I52tK3aCPhWW3D+anxyEz4j4QjKU4UFpggRk87NL8+qsT0Gu83+TK++K3JqbNRiPR3HcXNrNzFOzXLvVc+Rj1SNJyAMMrP/DdZ07suIbxw=
+	t=1722441939; cv=none; b=SWMlP3wRue0xoMHHs3FvVpvIxhO/uh+OOAPXMJMGgNTHNKReR7wer9EndcB8YAvz+QPTNBnoqIV6RAvnqxnKo3EU2ddx32oPFbX7nV+FSogfa3GkvsuCXeqW2gqDY71dBqOAZeAPDiTNhyOU0u0mCX2Yq49SW0+WQKd6wg3WGM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441917; c=relaxed/simple;
-	bh=a6TO/KMWRyZ62evV+V32rHbVhpWXfPPpsymd4oMdEK4=;
+	s=arc-20240116; t=1722441939; c=relaxed/simple;
+	bh=tyUGTtpvkAN/3mchvYJD6+QYbbD7BQk21DeGvldxm+E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rgn6STl4UphXG2+lHdUSwthYcvdTe2jfYw+55q+X1Rl7vscs652d0HkqNUoNezWgAmQiEhLk5DonPZdA/wF4HFM8PyMmVoY80b3k2K4Qgs0pispAtD9Mrfl9mPE5g5qXP99ZAz/E3hODz6CsxvqQQI7RzEo27CtPLYjoxOzBIyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mM4UOay6; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3db1657c0fdso3696922b6e.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:05:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722441915; x=1723046715; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=QXyhYvjtECustBaF35QTJ0n/1JR+w0RoGMaJ7n/9KQg=;
-        b=mM4UOay6nZFJrASPcPA7zA3QCIKb+r9CYQd+EwxmnZLAqkQRJXYX9ieuJFoZocaedc
-         wzf+wLFqNJluVLxXaXtd62AL5ezOXv5sN2nmvaxX5tPi+VQId3w/m+R1Yx4hlRuDyiDu
-         PGHPZ3DiKph6+KvT1gK+9TgSxRd4ho/Cbdz6YFuRqZojbtbSpszLx2/z2GB8pg+F4DRz
-         iuX3TikJ1Uax/j+XYFrPPtHEGaJOYfyXTlhY0YHS0pNfiSt7NnI6h8bVZ5KN3GyJNaW9
-         k2bAE2nGq85PSdmsqqmT1T1tlr8YTRTxhReAF+cnEOBwHtA5RLcp1jkT2npXRHqSs5zA
-         ErrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722441915; x=1723046715;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QXyhYvjtECustBaF35QTJ0n/1JR+w0RoGMaJ7n/9KQg=;
-        b=TCh/eRJp8m8KhToxO4Xok97C37nd3GqpR2SvJtt1tRWOP2ShLAA6YB10rV+c+zU7iH
-         ZADe6p/3HPg4Uge1PYbSdrN2wfCuNfgd4gllFdULy9ASv8YmBoeU7m4yvMCT2fZTeQ/4
-         ADCaw+b0om0vRO31kiclvzLzf6+Pl8rZjcx8OVAne4FFKyu0bZ2oJIThYZsdb8anZaAS
-         Pawg0JSt2fWCL59mnONfhfiqqGf/FvPhMB1Abb7m+H6YHA4X9GaMV/HLnTeIK4jbHASU
-         4rxKSGaNm45fxm7udQgE77GxCdgeKk+Qyf+Mp+93iktDQnYWHVseM3mCwgueMbPQlagG
-         9hrA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSXwgcnP9/MI6YlDlk1GzphW90z/3MB2LDqIzLpWlgYEy+pBSzkWC0joZglmdR0+kJqrY/kiznaabXoOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXPVIsIPXh4r0IXg/8sELY8+TcX19IDtcilJ3CxfYntfRRvQ+/
-	9afEKMi7X/rZhzqcbgskIMmb58rFot6vIejbh/LX9am+/TlE3gQCHKeddNi5URI=
-X-Google-Smtp-Source: AGHT+IEWqqB12HAG5XXwGLWqO3LTdY1XVVq0hNmyNyCXnKeUBxbjaS+soaAUYehjzReJQa3OriYoHA==
-X-Received: by 2002:a05:6808:2029:b0:3db:215d:71f2 with SMTP id 5614622812f47-3db23a2f80amr17817651b6e.35.1722441915021;
-        Wed, 31 Jul 2024 09:05:15 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:c572:4680:6997:45a1])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3db46924878sm492607b6e.4.2024.07.31.09.05.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 09:05:14 -0700 (PDT)
-Date: Tue, 30 Jul 2024 16:41:34 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Santiago Ruano =?iso-8859-1?Q?Rinc=F3n?= <santiagorr@riseup.net>
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org, helen.koike@collabora.com,
-	~lkcamp/patches@lists.sr.ht
-Subject: Re: [PATCH v3 2/2] staging: media: sdis: move open braces to the
- previous line
-Message-ID: <3f885f2a-681c-42e8-bdd4-fd2e2c077f5e@suswa.mountain>
-References: <20240730212854.474708-1-santiagorr@riseup.net>
- <20240730212854.474708-2-santiagorr@riseup.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FnWdX3lN9ITRMoIsQ52D6wt1zOZfNzUWl0sZyYzZ10YA4PvyO2NGkwtmon57WVsq3apXL8bwptkJDQ0AE4xNmObyNZPbJWlZZP/GlBU3POGM8dkPY0c5bFzN73tcR8NzPAtpTQNU12MLWLmCU3AZsJYYcwMFh4RIE3DGe9+H0Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oJcjR3VS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pXywWQYL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oJcjR3VS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pXywWQYL; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D93B21A70;
+	Wed, 31 Jul 2024 16:04:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722441851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
+	b=oJcjR3VS2GX2IeLTqS9h91H8Bg9dxaIuzRM4nH70z+W4uLn4KJ9y72unrG3h6ywQd0a8QR
+	O2ftrCYZvOTG/e3lLLsZYPvmoElT4fC/greQQX0x5NDyzCpiSDfDoeEb3uiVo8mQ9lpB7H
+	i0/Xv2FRg0GLS98GQOamel7pPChUwOA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722441851;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
+	b=pXywWQYLENY8SqT86qk1rM6n4kTpF9M6bKUG9IfhQUVtDviPbTBMVorZJfJAway4vtPSE4
+	iYxvDqZMjrtEYXAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oJcjR3VS;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=pXywWQYL
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722441851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
+	b=oJcjR3VS2GX2IeLTqS9h91H8Bg9dxaIuzRM4nH70z+W4uLn4KJ9y72unrG3h6ywQd0a8QR
+	O2ftrCYZvOTG/e3lLLsZYPvmoElT4fC/greQQX0x5NDyzCpiSDfDoeEb3uiVo8mQ9lpB7H
+	i0/Xv2FRg0GLS98GQOamel7pPChUwOA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722441851;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
+	b=pXywWQYLENY8SqT86qk1rM6n4kTpF9M6bKUG9IfhQUVtDviPbTBMVorZJfJAway4vtPSE4
+	iYxvDqZMjrtEYXAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C807C1368F;
+	Wed, 31 Jul 2024 16:04:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jXscLnpgqmZ0EgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Wed, 31 Jul 2024 16:04:10 +0000
+Date: Wed, 31 Jul 2024 18:04:04 +0200
+From: Oscar Salvador <osalvador@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	David Hildenbrand <david@redhat.com>,
+	Donet Tom <donettom@linux.ibm.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH v2 6/9] mm: Make hugetlb mappings go through
+ mm_get_unmapped_area_vmflags
+Message-ID: <ZqpgdBk-3Bcl3Mvr@localhost.localdomain>
+References: <20240729091018.2152-1-osalvador@suse.de>
+ <20240729091018.2152-7-osalvador@suse.de>
+ <8a57e184-4994-4642-959d-44dc7efbceca@lucifer.local>
+ <ZqpTaKHdrYt61HYy@localhost.localdomain>
+ <354e4db4-e257-48a4-9e05-7f0595728ec6@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240730212854.474708-2-santiagorr@riseup.net>
+In-Reply-To: <354e4db4-e257-48a4-9e05-7f0595728ec6@lucifer.local>
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.31 / 50.00];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -1.31
+X-Rspamd-Queue-Id: 6D93B21A70
 
-On Wed, Jul 31, 2024 at 06:28:54AM +0900, Santiago Ruano Rincón wrote:
-> Fix checkpatch error "ERROR: that open brace { should be on the previous
-> line" in ia_css_sdis.host.c:253 and :258.
+On Wed, Jul 31, 2024 at 04:19:09PM +0100, Lorenzo Stoakes wrote:
+> Yeah this is at commit aee8efc95fc2 ("mm: make hugetlb mappings go through
+> mm_get_unmapped_area_vmflags").
 > 
-> Signed-off-by: Santiago Ruano Rincón <santiagorr@riseup.net>
+> If you:
 > 
-> ---
-> This is one of my first patches. Could you please if is there anything
-> wrong with it? Thank you
+> git checkout aee8efc95fc2
+> git grep hugetlb_get_unmapped_area
 > 
-> V3: Insert the change history (including for V2)
+> You'll see it.
 > 
-> V2: Remove spurious [PATCH] header from the Subject, inserted by mistake
-> ---
+> I'm guessing you remove this in future commits, but the kernel must be able
+> to build at every revision so we can bisect (I found this issue through a
+> bisect and had to fix this up to check).
+> 
+> A trivial fix is just to provide the prototype immediately prior to the
+> function decl, however the more correct solution is probably to do the
+> removals at the same time.
 
-Thanks!
+Yeah, I just squashed the removal commit and this one.
 
-Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> This bit is just a bit of a slightly nitty cleanup to make sure things
+> build at every commit, the first issue is the really key one, just needs
+> some tweaking to deal with the frankly bloody horrible SHM stuff... Do not
+> blame you for missing that one!
 
-regards,
-dan carpenter
+I did not check closely yet, but are blowing up in:
 
+ if (shmem_huge != SHMEM_HUGE_FORCE) {
+         ... 
+	 if (file) {
+		 VM_BUG_ON(file->f_op != &shmem_file_operations)
+
+ ?  
+
+
+-- 
+Oscar Salvador
+SUSE Labs
 
