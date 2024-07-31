@@ -1,55 +1,81 @@
-Return-Path: <linux-kernel+bounces-269510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6819433A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:47:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1082B9433A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5CC01F28701
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:47:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411281C20C39
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2851BC064;
-	Wed, 31 Jul 2024 15:47:24 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD641B581F;
+	Wed, 31 Jul 2024 15:47:10 +0000 (UTC)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63CF1AD9FE;
-	Wed, 31 Jul 2024 15:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35C8442C;
+	Wed, 31 Jul 2024 15:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722440844; cv=none; b=UsAJ6WlLGZSkbj+6jQJPvpZm+qvzdCtoB1LmMsI8c34M5QeW+t/IAHI/pyNOlpMC1a8xfGb12sfowx0mA0rnUj1XmE+Eyw03JlJ84ZTn5b4pOMdmxeiqp7o1jIyw8VzdTTztnZ8X4ZDcKzSf5iuiYggGthY3E50Mj/8+Rp4M6uE=
+	t=1722440830; cv=none; b=TwV/VBAzYNbmULwp7ZcCvwycJ+4jwo+nm+tpk0Qdf3vtut0hC2VEnqDCh3p1b93tSC+Z3qf+N8kmMIYsAoW3Hg2WtqeGpp7+fNd+xysD+xMtWcQcjl+Ge2WaFkgevXdPjeKsZx8GDCn1YEcpz/W01fj6qfoLefTOsH/55ny6t+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722440844; c=relaxed/simple;
-	bh=5L1ZkQfvJW4Hc+i4AwixrEEeoVmD/+4IFHxXjZYWleA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NtaVXz4zdR36YyJebcB/2eM67FCEKqugksc0onylqb5uXrS6hNtb/z71vZkwkMMhrqlEPMPeTZRJx34hYv6k2uwQOaPun48rzUYXlppNbxVZhZzMt97ncT3YfOtGtvGbIMmcHgf56KzpxbQDiVEqsP6cK6X/povyt3/Cb0Mf8XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz15t1722440796txjpre
-X-QQ-Originating-IP: /bxfH/qQrJqd6hIR3sDVK/BqB8lbEXBQYWnbAIq4p6o=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 31 Jul 2024 23:46:34 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 11460382544041475410
-From: WangYuli <wangyuli@uniontech.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Terry Wong <terry.wong2@yahoo.com>,
-	Craig Cabrey <craigcabrey@gmail.com>,
-	Dmitry Savin <envelsavinds@gmail.com>,
-	Lugang He <helugang@uniontech.com>
-Subject: [PATCH v2] HID: multitouch: Add report_fixup for Goodix GT7868Q touchpad
-Date: Wed, 31 Jul 2024 23:46:19 +0800
-Message-ID: <801C5D6FCE55F473+20240731154619.514470-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.43.4
+	s=arc-20240116; t=1722440830; c=relaxed/simple;
+	bh=feyrEY1Zfg+dmjT7MCG3bYo1GNCkft3KyTakTg2uJLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJr7eYwf+1qjox12Vz1uHzDTAQAVaeCx/3cofvleuEJ4IdydtP4fvQP3nMkys71VSd4CzMWbEMhP9RqJUEBP7DcTQ28FCzH7Buih1VgyF8YEFGCn7q4lbTIMSnvu+HytyrWNLjRieVb8nSiBGTK7ZuCMj1LNu+ciLWGQ+HVouTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f035ae1083so76272701fa.3;
+        Wed, 31 Jul 2024 08:47:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722440827; x=1723045627;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zDrQe4dUw5iS9NUlEReAh4/Dypu40sTXmpRUhGMtdTk=;
+        b=l+mkJiJ5CIhvnpVgSnrZ+iNoMegQWNcaf1PuEMk9zX2iw1mM2UYYNjzUZblFmMJRrK
+         wZeAfBrqCQtVmZ8aBACqTZ1jwj6PsL31wyB/z0srjJlXJw+sStoWhQFEJuO633RI00YG
+         kJBut4w1oOks7GIkPs2y53fRekQGMHgyT2FV4xsciF7/rGA4x3HE2ujiG29lWil3FD7/
+         zEOS/SKI42QGgaB1LSg8D8xNFq1n7+soLsBpVhr0VvjJ3BBO1wrvqDnc/wiP+LtITFA9
+         2oXReKHY/KtzNFAlAnYFWbnRcO8oxWoU2vDcVHOXLX4OW5SlaaszTPsb+6erT/nmkZIX
+         hZHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIzWz2mRlxn2sBSZQsv7tfmGq532/fycAmJFjXX0xR1HBuQ2Ps2f9KJNGJvPDi9K7pNS1BxRbz5Ea2zsSfkXyf38KuS7/A4epZBYOuRZocj749Hz7sqKKUPU0CadUeJZ36EwEeFicmXvQKe6L+ag==
+X-Gm-Message-State: AOJu0YwCMeZ87MLig1pVbG6GSsAHy4qwmmN0h6KWTg6oh2PymjJCMBe/
+	vurEGFj1JjICdPIe2y/Hs6qLQp5btxxvcm93v9GLxquBSE/OVzHs
+X-Google-Smtp-Source: AGHT+IEkL2sKgObtAnB7hlXPafPNKdyFIgqibAZUbddLBSfCRZ1aY2oOibJ3CK6qpYUGVjh1Wrmvhw==
+X-Received: by 2002:a2e:924c:0:b0:2ef:20ae:d11c with SMTP id 38308e7fff4ca-2f12edfb4damr96155701fa.8.1722440826404;
+        Wed, 31 Jul 2024 08:47:06 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b0395sm8918585a12.20.2024.07.31.08.47.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 08:47:05 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: leit@meta.com,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Sandipan Das <sandipan.das@amd.com>,
+	linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+Subject: [PATCH v2] perf/x86/amd: Warn only on new bits set
+Date: Wed, 31 Jul 2024 08:46:51 -0700
+Message-ID: <20240731154651.1555511-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,101 +83,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Goodix GT7868Q has incorrect data in the report and needs
-a fixup.
+Warning at every leaking bits can cause a flood of message, triggering
+vairous stall-warning mechanisms to fire, including CSD locks, which
+makes the machine to be unusable.
 
-The device is a haptic touchpad used on
-Lenovo ThinkBook 13x Gen 4 series of laptops and have
-incorrect descriptor that hid-parse fails to parse hence
-device is not working.
+Track the bits that are being leaked, and only warn when a new bit is
+set.
 
-Link: https://github.com/ty2/goodix-gt7868q-linux-driver.git
-Signed-off-by: Terry Wong <terry.wong2@yahoo.com>
-Signed-off-by: Craig Cabrey <craigcabrey@gmail.com>
-Signed-off-by: Dmitry Savin <envelsavinds@gmail.com>
-Link: https://lore.kernel.org/linux-input/20240716222757.22931-1-envelsavinds@gmail.com/T/#mc7922671337acc84c69d367074ce341db5a819dc
-Suggested-by: Lugang He <helugang@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
+That said, this patch will help with the following issues:
+
+1) It will tell us which bits are being set, so, it is easy to
+   communicate it back to vendor, and to do a root-cause analyzes.
+
+2) It avoid the machine to be unusable, because, worst case
+   scenario, the user gets less than 60 WARNs (one per unhandled bit).
+
+Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+Reviewed-by: Sandipan Das <sandipan.das@amd.com>
+Signed-off-by: Breno Leitao <leitao@debian.org>
 ---
- drivers/hid/hid-ids.h        |  2 ++
- drivers/hid/hid-multitouch.c | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+)
+Changelog:
+v2:
+  * Improved the patch description, getting the benefits in words.
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 72d56ee7ce1b..eebfca375bcd 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -520,6 +520,8 @@
- #define USB_DEVICE_ID_GENERAL_TOUCH_WIN8_PIT_E100 0xe100
- 
- #define I2C_VENDOR_ID_GOODIX		0x27c6
-+#define I2C_DEVICE_ID_GOODIX_01E8	0x01e8
-+#define I2C_DEVICE_ID_GOODIX_01E9	0x01e9
- #define I2C_DEVICE_ID_GOODIX_01F0	0x01f0
- 
- #define USB_VENDOR_ID_GOODTOUCH		0x1aad
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index 56fc78841f24..99812c0f830b 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1441,6 +1441,30 @@ static int mt_event(struct hid_device *hid, struct hid_field *field,
- 	return 0;
- }
- 
-+static __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
-+			     unsigned int *size)
-+{
-+	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
-+	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
-+	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-+		if (rdesc[607] == 0x15) {
-+			rdesc[607] = 0x25;
-+			dev_info(
-+				&hdev->dev,
-+				"GT7868Q report descriptor fixup is applied.\n");
-+		} else {
-+			dev_info(
-+				&hdev->dev,
-+				"The byte is not expected for fixing the report descriptor. \
-+It's possible that the touchpad firmware is not suitable for applying the fix. \
-+got: %x\n",
-+				rdesc[607]);
-+		}
-+	}
-+
-+	return rdesc;
-+}
-+
- static void mt_report(struct hid_device *hid, struct hid_report *report)
+v1:
+  * https://lore.kernel.org/all/20240524141021.3889002-1-leitao@debian.org/
+
+
+ arch/x86/events/amd/core.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+index 920e3a640cad..577158d0c324 100644
+--- a/arch/x86/events/amd/core.c
++++ b/arch/x86/events/amd/core.c
+@@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
+ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
  {
- 	struct mt_device *td = hid_get_drvdata(hid);
-@@ -2035,6 +2059,14 @@ static const struct hid_device_id mt_devices[] = {
- 		MT_BT_DEVICE(USB_VENDOR_ID_FRUCTEL,
- 			USB_DEVICE_ID_GAMETEL_MT_MODE) },
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
++	static atomic64_t status_warned = ATOMIC64_INIT(0);
++	u64 reserved, status, mask, new_bits;
+ 	struct perf_sample_data data;
+ 	struct hw_perf_event *hwc;
+ 	struct perf_event *event;
+ 	int handled = 0, idx;
+-	u64 reserved, status, mask;
+ 	bool pmu_enabled;
  
-+	/* Goodix GT7868Q devices */
-+	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
-+	  HID_DEVICE(BUS_I2C, HID_GROUP_ANY, I2C_VENDOR_ID_GOODIX,
-+		     I2C_DEVICE_ID_GOODIX_01E8) },
-+	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
-+	  HID_DEVICE(BUS_I2C, HID_GROUP_ANY, I2C_VENDOR_ID_GOODIX,
-+		     I2C_DEVICE_ID_GOODIX_01E8) },
-+
- 	/* GoodTouch panels */
- 	{ .driver_data = MT_CLS_NSMU,
- 		MT_USB_DEVICE(USB_VENDOR_ID_GOODTOUCH,
-@@ -2270,6 +2302,7 @@ static struct hid_driver mt_driver = {
- 	.feature_mapping = mt_feature_mapping,
- 	.usage_table = mt_grabbed_usages,
- 	.event = mt_event,
-+	.report_fixup = mt_report_fixup,
- 	.report = mt_report,
- 	.suspend = pm_ptr(mt_suspend),
- 	.reset_resume = pm_ptr(mt_reset_resume),
+ 	/*
+@@ -1012,7 +1013,11 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+ 	 * the corresponding PMCs are expected to be inactive according to the
+ 	 * active_mask
+ 	 */
+-	WARN_ON(status > 0);
++	if (status > 0) {
++		new_bits = atomic64_fetch_or(status, &status_warned) ^ atomic64_read(&status_warned);
++		// A new bit was set for the very first time.
++		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
++	}
+ 
+ 	/* Clear overflow and freeze bits */
+ 	amd_pmu_ack_global_status(~status);
 -- 
-2.43.4
+2.43.0
 
 
