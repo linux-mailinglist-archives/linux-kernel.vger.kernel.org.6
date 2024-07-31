@@ -1,129 +1,227 @@
-Return-Path: <linux-kernel+bounces-269457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9B9943327
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:25:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 439BD943306
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53EF0B21696
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:20:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CD52B2BDD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:19:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083A31BF323;
-	Wed, 31 Jul 2024 15:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2D1BF307;
+	Wed, 31 Jul 2024 15:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="u+3/e0Dt"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2313812B71;
-	Wed, 31 Jul 2024 15:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PMbyMSPG"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C1A1BE86D
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438831; cv=none; b=o7OF84qdMxDs0tF/SFc2ns6a9xhwlXfit+BkOQtH1zXh1iI0JEs0nDnkEfIgnl4fQVCzw4vagR5AE26L8lTtQ6hFOyO26KrY83DD9BR+KkbnEcc3220oMYeY+DC/uHUtPw3DfGLRMMKPFWnyXCRGhUcKOWNlGe0FKTUxo9LJ0z0=
+	t=1722438775; cv=none; b=JOFztnABQ7uZdlpPieVk/xxPTeBW411hiqgbcVzhhO5EFLJfu8VQvKz83MZPopt7+CM6DdAlfz0v8sbbPBxYLInjqJcPOdBWVLm4gNqdTm8vEst4vYKp3KkkgKhqKrd0b8p1U86Cbei/5hdd6TlPOnvVS36YEnskmwL/WRBsl/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438831; c=relaxed/simple;
-	bh=TNAtonRidmna81IBY8G3UGvtn9tX31MGv18W/k8LTLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=od3dDpzniUHlOtwogxG4+xWTQmw6u5Dxf/+KtHaVX0frKZicqLCFOFMFW7p3kDlgV7cq4Mnlj5X1cKjcxX2jeDw96/C+GUosm3lwsgOJ4BTvj6N0HsExv7HucXyUbmptaos/sWmdVQmsiqfZDT7qlnK/uuZQxfLx3DBUmgf241E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=u+3/e0Dt; arc=none smtp.client-ip=212.227.126.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1722438755; x=1723043555; i=christian@heusel.eu;
-	bh=fiuN9fTjYPSMySejhaU8aJ/MESvbQXsZn6JAwSDbzoY=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=u+3/e0Dt4tdSfpFLyFjUl6smtzg7Vx1Q1LJu236Bi6Pdwlm05H6JT7gQSuNwSy0F
-	 zRvEADi+nS398VOq143zX5wzYTyVDnTFKyfMLvfDq4pq76CvlLfghqwzGjwoTHRYv
-	 7pFbAoqBBbkRW7DO7TP4cALFiXUI3zh3wNDd04YEfXERfXEkMN9liS61t0vbykPBo
-	 96wiM+4bFfYH+gDTzRbK32MNTeIdDRi349TVFcp3WzyJq3b5K3DAtlLx6CW0uIn+r
-	 NBF8CWpmFIIbzAp9zJp79sh/bH670SfH5JkktU78RwO/haEzvLW0hj7OkNC+b0bUO
-	 CkxSW8SedJ+DSMKM7g==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([129.206.226.57]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1N3Xvv-1s8brM2e1L-012igo; Wed, 31 Jul 2024 17:12:35 +0200
-Date: Wed, 31 Jul 2024 17:12:34 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-Message-ID: <47c19dd0-b9fc-490b-ada7-3e2fd74c32f1@heusel.eu>
-References: <20240731095022.970699670@linuxfoundation.org>
+	s=arc-20240116; t=1722438775; c=relaxed/simple;
+	bh=8zhTVavCJJ8/IwBvdz+QEBE4EZM9UV2ssOh2BpQ6TwQ=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=hfSuLDJOn6rqrpaKIULSlA6eI38MMVv41pd7kF+NTmpfjfhZ3LlWdjkh3iMLdtwr7Udy29qfZ20rEKWsqvEBMDTagOvCZlyJrhRnjKja28qObJaNNWI9ePblUpVhvCbDu6MkEVJng3t2W42VQdF851P5G2I7Ne5rDDVlNv/dbhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PMbyMSPG; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-70f5ef740b7so1927137b3a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:12:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722438773; x=1723043573; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ydsvrBXtt6nU238Px/qRdSbaJLxYYF7XQP8F6wgRzZA=;
+        b=PMbyMSPG6VFpJRl+SkLQ7Fdp0QvPOJ64/wtjwEqihqEkMlJ+6aiXqAq8g74BE98vuM
+         wMKpLnpXCShB84N/Ggo2RDeCAGUB9hRtL3/z1pV3G+fpBbinB/j/2YVWT2+kDfgK5nv8
+         3QEjvawnzCgUUsO0Rm4mZov5VSoEyvRL9YA/o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722438773; x=1723043573;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ydsvrBXtt6nU238Px/qRdSbaJLxYYF7XQP8F6wgRzZA=;
+        b=pcyIQl7F0EXg9G97MnA4n8PSzFc3tScykVlk+xeuJF/b03tFD4XIzO17YDKRVzuZ28
+         afl4F7c/ARw7SlyOfU/eoN+bjIqLtye43nCiwGJkbVi4tNGEp1YX8TlhUMeMbD4sQczB
+         HwUKTsPXEP+U0LZkfcSKEFDnkIiywmIDr88dY9aIN/uR0sepRKs5nmHmNbszQudOEy6R
+         iuGgn1QqSQPdqSvhfvZnz7MAWr1lgmad+dxlBYVx52WxGyagTdyQgIROWLkMUfnI3kIs
+         6bWtgo94fQvIfCC8ozEE7nwDq7yOfhoR2UYndPWsyIJiB+5e8sVZYuYXdqWSzunauZ20
+         lB8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXfzL0rcvisDLyNjeOdk0hlR1GP1geEhJaOvCKgpCv7yVxWLdTSvV3TMYZSafpysOrH/4DlAcyeRvhp9hubkO0M7CY4zviJX2PUK77i
+X-Gm-Message-State: AOJu0YzVkGvtya6XLadwiM5rWYBa82T+XXblXF+IoQTls6O08gCMRgDN
+	eCNeW99SGOP2jeWVAy+xoiq4h+UWrT++BDh+a5xUhKJRzrONrOJBGhGONY+/Aw==
+X-Google-Smtp-Source: AGHT+IHEl06Nm3dVBLJpGj1Uk+cVGvjdXmv2CgeM4NvVMJyMb/tbEYSvWNiGXEabI5NOqoQNRCIVqA==
+X-Received: by 2002:a05:6a00:8592:b0:706:31d9:9c99 with SMTP id d2e1a72fcca58-70ece928cf5mr17384197b3a.0.1722438773104;
+        Wed, 31 Jul 2024 08:12:53 -0700 (PDT)
+Received: from [192.168.178.38] (f215227.upc-f.chello.nl. [80.56.215.227])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead7156c8sm10059508b3a.83.2024.07.31.08.12.45
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 31 Jul 2024 08:12:52 -0700 (PDT)
+From: Arend Van Spriel <arend.vanspriel@broadcom.com>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, Jacobe Zang <jacobe.zang@wesion.com>, <robh@kernel.org>, <krzk+dt@kernel.org>, <heiko@sntech.de>, <kvalo@kernel.org>, <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>, <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, <efectn@protonmail.com>, <dsimic@manjaro.org>, <jagan@edgeble.ai>, <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, <linux-rockchip@lists.infradead.org>, <linux-kernel@vger.kernel.org>, <arend@broadcom.com>, <linux-wireless@vger.kernel.org>, <netdev@vger.kernel.org>, <megi@xff.cz>, <duoming@zju.edu.cn>, <bhelgaas@google.com>, <minipli@grsecurity.net>, <brcm80211@lists.linux.dev>, <brcm80211-dev-list.pdl@broadcom.com>, <nick@khadas.com>, Andy Green <andy@warmcat.com>
+Date: Wed, 31 Jul 2024 17:12:43 +0200
+Message-ID: <1910959c1f8.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+In-Reply-To: <sgfd5ccltsi7mjbybmdbs3fmsfcp3vqtpitdac7exzgxav53kk@6lwogbq4fhks>
+References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
+ <20240730033053.4092132-3-jacobe.zang@wesion.com>
+ <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
+ <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <3d3b8e0a-7492-4db1-bd73-c30a488edaa7@kernel.org>
+ <191035b8c28.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
+ <k3dhdsa5bjzad2ha5e2uurg2azzs773ier5thkot4w2qcvnv54@yuf52eluqsae>
+ <dd381dc1-454f-4ecd-adb7-55de2e15d592@broadcom.com>
+ <sgfd5ccltsi7mjbybmdbs3fmsfcp3vqtpitdac7exzgxav53kk@6lwogbq4fhks>
+User-Agent: AquaMail/1.51.5 (build: 105105504)
+Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add clock description for AP6275P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cflmrewle6jrucdq"
-Content-Disposition: inline
-In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
-X-Provags-ID: V03:K1:fPz2yEFyjf42LoBYm0wjWV7TJYdOYLZfAv5I1xJC5lw+EpAFNoE
- beSr/qV/J+MqsLcIzPYaAc4/Z9FMEp5Jv2ZWOMh7Vz9vYJRTXGUXTIgu5Am92BTzbCpiJi4
- FP1s3cKUfLTK/07yFCiRpBdEWrjgFrVpD2oFwLxhXsGgJprIEODG+WPDiK/PDwrQkg+4GDS
- xapcnO+zUJn/9S4HYQSmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zJPtp1StDLI=;7RB2+PUw1FOq1De1ZUu7NVEbg+P
- iU05n04wMlOd9H88p3LIlB2FXkchH6QVJy7tNlM79fyq5s7hEeDPRo+iz0HZQUNKruomp0oEj
- LTg6G/moeQBsEcdVR2ad1CcASgupAi8sHhuUD7b6NzRtmO6dTMzWOkqM3hi+dG6eg264hAJbR
- WVSnGL9vnwGertfrH9TJ33FBf3SAc7SU9ZPq4g9BK0c/XjLkjS0iC9kDW8a3IK2lsH3VBOD+E
- M3VR4Po3vOthRycVhKtmJ5fj/YkTCNqd1K1gfHHsJBCE6zW5Gf9GT9CsBuo6y5LtddCtVcFde
- UteN1GMoinRX+a9+5EDWuJY8fuFRLt8EHo8TMhb+Y6T2kY2hIDsGe6NZrrO/8W0XXHW+W4P+m
- 1XiziBYUQG/Wh/sQCaphhyuOaDlSxQ5Y31gARZrFeK2yFehU1R5dEigAI9TkmFdZXxEmwRkcD
- HVokdfnTUXF1ymK5l9ruQNh3ukKuwfciZCOkEt9GJw2oSwtnGulrgoPNp2gFH6y8PLhw72l8l
- /5kZF8K9aCRNLJCfiDvXj3FZjAUtTGWwNqlRHq8jghWS8Hp4eryOIqofF4GP1m7GYQAumJwtS
- LNDcHJPaoDuPdRnx/Pv/8ocv5MJfY8OtsjN2m3zyr7NQfthhr2UFmWosaDHYDCcxSHN05oaN1
- iJUHCBsrKMA8b7NmzlbCGShzOl3APVxgrQJkavgXOynK4mh0qH4SwM5s+vQ0q0yp1FXs51t58
- Lf9wJOSLDMQFugzd3iFzKAFvjjLKRpT4w==
+Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+
+On July 31, 2024 3:54:52 PM Sebastian Reichel 
+<sebastian.reichel@collabora.com> wrote:
+
+> Hi,
+>
+> On Wed, Jul 31, 2024 at 02:57:37PM GMT, Arend van Spriel wrote:
+>> On 7/30/2024 7:38 PM, Sebastian Reichel wrote:
+>>> Hi,
+>>>
+>>> On Tue, Jul 30, 2024 at 01:16:57PM GMT, Arend Van Spriel wrote:
+>>>> On July 30, 2024 12:18:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>
+>>>>> On 30/07/2024 11:52, Arend Van Spriel wrote:
+>>>>>> On July 30, 2024 11:01:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>>>>
+>>>>>>> On 30/07/2024 08:37, Arend Van Spriel wrote:
+>>>>>>> > + Linus W
+>>>>>>> >
+>>>>>>> > On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
+>>>>>>> >
+>>>>>>> > > Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
+>>>>>>> > > external low power clock input. In DTS the clock as an optional choice in
+>>>>>>> > > the absence of an internal clock.
+>>>>>>> > >
+>>>>>>> > > Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+>>>>>>> > > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+>>>>>>> > > ---
+>>>>>>> > > .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
+>>>>>>> > > 1 file changed, 8 insertions(+)
+>>>>>>> > >
+>>>>>>> > > diff --git
+>>>>>>> > > a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>>>> > > b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>>>> > > index 2c2093c77ec9a..a3607d55ef367 100644
+>>>>>>> > > --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>>>> > > +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
+>>>>>>> > > @@ -122,6 +122,14 @@ properties:
+>>>>>>> > > NVRAM. This would normally be filled in by the bootloader from platform
+>>>>>>> > > configuration data.
+>>>>>>> > >
+>>>>>>> > > +  clocks:
+>>>>>>> > > +    items:
+>>>>>>> > > +      - description: External Low Power Clock input (32.768KHz)
+>>>>>>> > > +
+>>>>>>> > > +  clock-names:
+>>>>>>> > > +    items:
+>>>>>>> > > +      - const: lpo
+>>>>>>> > > +
+>>>>>>> >
+>>>>>>> > We still have an issue that this clock input is also present in the
+>>>>>>> > bindings specification broadcom-bluetooth.yaml (not in bluetooth
+>>>>>>> > subfolder). This clock is actually a chip resource. What happens if both
+>>>>>>> > are defined and both wifi and bt drivers try to enable this clock? Can this
+>>>>>>> > be expressed in yaml or can we only put a textual warning in the property
+>>>>>>> > descriptions?
+>>>>>>>
+>>>>>>> Just like all clocks, what would happen? It will be enabled.
+>>>>>>
+>>>>>> Oh, wow! Cool stuff. But seriously is it not a problem to have two entities
+>>>>>> controlling one and the same clock? Is this use-case taken into account by
+>>>>>> the clock framework?
+>>>>>
+>>>>> Yes, it is handled correctly. That's a basic use-case, handled by CCF
+>>>>> since some years (~12?). Anyway, whatever OS is doing (or not doing)
+>>>>> with the clocks is independent of the bindings here. The question is
+>>>>
+>>>> Agree. Probably the bindings would not be the place to document this if it
+>>>> would be an issue.
+>>>>
+>>>>> about hardware - does this node, which represents PCI interface of the
+>>>>> chip, has/uses the clocks.
+>>>>
+>>>> The schematics I found for the wifi module and the khadas edge platform show
+>>>> these are indeed wired to the chip.
+>>>
+>>> I have a Rockchip RK3588 Evaluation Board on my desk, which uses the
+>>> same WLAN AP6275P module. I think I already commented on a prior
+>>> version of this series: The LPO clock is needed to make the PCIe
+>>> device visible on the bus. That means this series only works if the
+>>> clock has already been running. Otherwise the PCIe driver will never
+>>> be probed. To become visible the devices requires:
+>>>
+>>> 1. The LPO clock to be enabled
+>>> 2. Power to be applied
+>>> 3. The WL_EN gpio to be configured correctly
+>>>
+>>> If one of the above is not met, the device will not even appear in
+>>> 'lspci'. I believe the binding needs to take into consideration, that
+>>> pwrseq is needed for the PCIe side. Fortuantely the heavy lifting of
+>>> creating the proper infrastructure for this has already been done by
+>>> Bartosz Golaszewski for Qualcomm WLAN chips. What is missing is a
+>>> pwrseq driver for the Broadcom chip (or this specific module?).
+>>
+>> That does not really make sense. There is no relation between the LPO clock
+>> and the PCIe clocks so 1) being a requirement for probing the device looks
+>> odd. It also does not match past experience when I assisted Andy Green in
+>> getting this module up and running almost two years ago.
+>
+> Well, first of all I can easily reproduce this on my RK3588 EVB1. I
+> intentionally ignore any bluetooth bits to avoid cross-effects from
+> bluetooth enabling any clocks / regulators / GPIOs and make sure the
+> RTC output clock is disabled at boot time (i.e. boot once without
+> any reference to the RTC clock and without 'clk_ignore_unused'
+> kernel argument). When booting up like this the WLAN device is not
+> visible in 'lspci' despite the WL_REG_ON GPIO being hogged. If I
+> additionally hack the RTC output clock to be enabled the WLAN device
+> becomes visible in 'lspci'.
+>
+> The datasheet fully explains this:
+>
+> https://www.lcsc.com/datasheet/lcsc_datasheet_2203281730_AMPAK-Tech-AP6275P_C2984107.pdf
+>
+> PDF Page 23/24 (20/21 in the footer) has the Host Interface Timing
+> Diagram. WL_REG_ON should only be enabled after 2 cycles from LPO.
+> That means with LPO being disabled WL_REG_ON cannot be enabled. I'm
+> pretty sure WL_REG_ON means WLAN_REGULATOR_ON, so the logic is not
+> powered. On page 27 (24 in the footer) there is also a PCIe Power-On
+> Timing diagram, which shows that WL_REG_ON must be enabled before
+> the PCIe refclk is enabled.
+>
+> So there is a specific power up sequence, which must be followed.
+
+The chip also has an (less accurate) internal LPO so the 32khz sleep clock 
+in the diagram does not have to be an external clock. Maybe Ampak 
+bootstrapped the chip to disable the internal clock. Dunno.
+
+What Andy needed back then to get firmware running was a change in the 
+nvram file to force using the internal LPO, but the device was already 
+visible on the PCIe bus.
+
+Regards,
+Arend
 
 
---cflmrewle6jrucdq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 24/07/31 12:03PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.3 release.
-> There are 809 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Fri, 02 Aug 2024 09:47:47 +0000.
-> Anything received after that time might be too late.
->=20
-
-Tested-by: Christian Heusel <christian@heusel.eu>
-
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
-
---cflmrewle6jrucdq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmaqVGIACgkQwEfU8yi1
-JYWW6BAAgMb43zlVQ1DaIuqk2kv7cdamBQXFOU6cQz60p5UgvKCgZkYt6nBbHsz0
-FmsnlIlunEe6K6TR3evgcH88R3he0XkLhXAPS672YKtYytRlbIQ1KWNlYqSmp0WP
-5c6tZdq2O8TmKaFzBU0ZFS3C9wh1MfilSxUrfC8B4tGcnDL+YkHjUq770sUYENoq
-21pq9Ne0/ALF6/ID9ck2p2tyh7WwJ1+A07RBoJV8Z0b9cGBevozRtKaw+5BuZUBf
-V4Yiwa/1gvp8MAL/6CbRHBwj+r9x79oxkDH+GKEPZUJzW0R0y6cDqy1Mw3hWL5uw
-h9VXo9qY+qZvVUHC6pIfbWhB4QCDPyBh13v6pFcQ6tNT08VN2n24kjNI6X0yphfZ
-WQeQN+t2psI85rzFfqQA6/33R+Lhr6Ypaep+fGGvoWWZzdwgltZuAnjgBQ8d6qPW
-cvSAMpe86Np5bXpTOHE/pjFiY7kw4/gzccsMiv/QxO0/b62u0u2cYC8+vQ3O74xD
-BJutJ210o24ESKE4UrIEFLcwsYx+SXWwzLeRE6n/28piWwfsEgd9Ojo82K6p1KMN
-xAzTxOLm1hI5b+UIOO3MoqMGpCDtAdIyXm8r5VNW+s78wurxY75hUuPubHA959b7
-V3bNEm6Ocmssc5IJSUgkCyZyRmpYf8C7y5o4eA3pLGYbjjH+PXE=
-=m2sJ
------END PGP SIGNATURE-----
-
---cflmrewle6jrucdq--
 
