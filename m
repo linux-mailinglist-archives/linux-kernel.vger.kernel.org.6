@@ -1,177 +1,160 @@
-Return-Path: <linux-kernel+bounces-269164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03CC942EB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B10942EB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51CAB1F25D4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:37:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABCB91F2636E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5C61AED36;
-	Wed, 31 Jul 2024 12:36:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898EA1B0136;
+	Wed, 31 Jul 2024 12:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mX2yAiTI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="O4TlkjaW"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5361A8BED;
-	Wed, 31 Jul 2024 12:36:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41321AE87A
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722429402; cv=none; b=Rml+RHzQVb1g7p3fcq0z3yO10T0O09/2B+IzqVr+qnZXu5ltNZdT5Vt5gbPpSHFZJ35h5Ma9fjSCnc2E4rdX+vtZFucdkNYIK8piFEcMWNeqxNUGTjKBt02QUGLPCNEyIaTxYNS6VKOJy07QUUyOfOebZpYaf8AXd6KDQVWBI5E=
+	t=1722429412; cv=none; b=Ydo2oet3giUbPMVU7HSqod+88BjNDDXPb6eG5umqulqjQrCG56nEb6vNunCKMMWlk2daEGEE0g6e/bMvejVLghaGQPkOkEUDL95Nm6iZ0liLf392RB1XVDgL8fjgwytUK/IRCTq/buDqZJTh9aJmqnwPl3gDCLgOF7OlMuOgeCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722429402; c=relaxed/simple;
-	bh=SEcUI8JtPnuzuLd77dWkUBzPD+0GWOA3rL4w76reUP8=;
+	s=arc-20240116; t=1722429412; c=relaxed/simple;
+	bh=RsJ9V+NACpeKXbCZlRUxlcMm9COBvOIORjHPho639po=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ggXggtb3Lt/6ev4iSur0ajGT2272d64Cd3zOHIobE0/P352UD8BAB0SI/j9aFQaoHIhyfV6CD5mVzBBR1Xb71SfnBrssOfDpy57uHuBcxOYEnhlGRmSmHY1IDEcdaC30ikBaFLGft8vGChsbzU915xZN5Wg9Jcvi6allZJ8fo/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mX2yAiTI; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722429401; x=1753965401;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SEcUI8JtPnuzuLd77dWkUBzPD+0GWOA3rL4w76reUP8=;
-  b=mX2yAiTIKibjuBafOG4U3vkWgzOT7mZ31piZMNBrxx0kDB3rUEw8UZui
-   CnCa5ceIdn3jUoMRiC6Ml5yETttBbIynMqmIlVDYDPJCmYaWE9WwE7bDV
-   ELCSSbOxjYPKsvvHYwLrESA78yeT4StL4j+1SjzoKChdsoGN1gqCc9Q1Z
-   FZwJSNQWcV1uD/gnxylAj/giG6RHEeRiOxceYY+YXNeyGuTm5peKPnS39
-   K14VjwQLUq/wmgs6ZdEWlpXDji/oS+Z4NFD99yxQqYY+yMO0UfgwX3sHq
-   seUtxVP6fkZWyGJJRQ9DJMSDQkS9mDVrgRtuYh7YDEwOzkRQe+uC3xgRE
-   A==;
-X-CSE-ConnectionGUID: jCp2djKnT5ysOW062iaH8Q==
-X-CSE-MsgGUID: HAOtlO2xRhmpQoc810hRNw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="42834911"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="42834911"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 05:36:40 -0700
-X-CSE-ConnectionGUID: sacR2TFbQO6bYV3DL124zg==
-X-CSE-MsgGUID: YUfOL5iFQy2akmg+OycpUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="55471318"
-Received: from kuha.fi.intel.com ([10.237.72.185])
-  by orviesa008.jf.intel.com with SMTP; 31 Jul 2024 05:36:36 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 31 Jul 2024 15:36:35 +0300
-Date: Wed, 31 Jul 2024 15:36:35 +0300
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Badhri Jagan Sridharan <badhri@google.com>, kernel-team@android.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/15] usb: typec: tcpm/tcpci_maxim: use GENMASK() for
- TCPC_VENDOR_CC_CTRL2 register
-Message-ID: <Zqov06zsAQOiy4Zt@kuha.fi.intel.com>
-References: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
- <20240710-tcpc-cleanup-v1-11-0ec1f41f4263@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oj0VC9scz1OmM1hbQtHwe+88HkwAebW5jUS6a3DJbP6FlwUNx0KRClraUfC9O8fXAQ8PPZkDKDuy7C9WhgxyVcw6mwmeloXwPzWR4yVUIfYBYuQBX64Y87YFS3YzKa9xYcx2iXWFYbQpU16JPjR4KpIDwGJ1qyqMZUh+HfiwKF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=O4TlkjaW; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-396db51d140so28786105ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:36:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722429410; x=1723034210; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnptpaQuPvdgbkatvxSE05bjhHWwNlFkhsE34q5UbRA=;
+        b=O4TlkjaWaD5JBmqJC+N4GHGarHh1QDplPjt4AjvjwcZIkfDDMhvyPUJTDDL4w8Op+x
+         rmuB67HNd5q+M0Cda1HwlykW7twVJBdid8oQ9sH2+fgdfYmNFycSAoc2Ncf+EZoe7clr
+         1XsXopT3PVAWdCdhOlGJWhkSl7u9/i/x+oMA+4N0EmCbWDw5pM4cq5TBFn7vbKeNh7xY
+         YMumFHNKkoVPb98fT1eCKzmRpXdufslhgJAb4WCAwmk2fIsEf2qrlc7xfZ9oZnMZLrgL
+         NCKVrQZSbWOOi3FFghKRRUJMx8HyQWqky4hE7/6rN5oIOuLtFV8VYTiMkK9GqmBoicmQ
+         Tjgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722429410; x=1723034210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AnptpaQuPvdgbkatvxSE05bjhHWwNlFkhsE34q5UbRA=;
+        b=WkE9rkUBsrTHlniHPbDim/DtLQOzZXSqOy+TqtrUL/A4xf2+VtIpOkdEA7FNeYy++3
+         wVqzygY274bCJTDffyfTjNDiJDacXXnkWOxqWweyNMM0E2zQ8XJa3DmvvV2sbEd++yr4
+         6uLlcITTbAoHMgWjh+0s3xEgYRzhzM0ogmfOupFn930tEhltgvoieE/98QKDxhnxhjZf
+         JXtxBAlXIslhsJJE5/j60USv0Q4SPZM31GkF5EXBMoCER+WuF6QzvNrGAt9jSZkMzXn6
+         y8u+yusiCZWFN7ZuXHfBn2MpwNHDmOslpw69BAghhhV2jAraQP+XBTLc3nF8uGlEhHoF
+         LU8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXiMyqn0qEmFg5M3X1VqOj1fOvxamqlbgj5udBWwjqtpHkGvEXa0iW/eW/rxLcg2HTysfoTL9XaLBUuaNEZ1DsyevF1OTxKWLIxPYtO
+X-Gm-Message-State: AOJu0Yz/z4+oF1YbFhpCciDOiaX2ce23gTxBcCwVaCFUvs19XOZB4K9p
+	afdMadxjWhL7gVi/hG+TJBHALISph32sxyGkHW00Oij2v4gqtL2RLY5NjehGJ/QcyJB0Ws10h4w
+	U
+X-Google-Smtp-Source: AGHT+IGMdEfHzed7KKq0xWC2HtO73icj1nR2eF9lSBKPV35jrF4Nl1JViRHuYqNtwFSOKO0D3RousA==
+X-Received: by 2002:a05:6e02:1a29:b0:375:ae6b:9d92 with SMTP id e9e14a558f8ab-39aec2d9897mr193860285ab.12.1722429409806;
+        Wed, 31 Jul 2024 05:36:49 -0700 (PDT)
+Received: from blmsp ([2001:4091:a245:8609:c1c4:a4f8:94c8:31f2])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39a22e97bedsm55462175ab.33.2024.07.31.05.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 05:36:49 -0700 (PDT)
+Date: Wed, 31 Jul 2024 14:36:45 +0200
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+To: Nishanth Menon <nm@ti.com>
+Cc: Tero Kristo <kristo@kernel.org>, 
+	Santosh Shilimkar <ssantosh@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, Vibhore Vardhan <vibhore@ti.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/6] firmware: ti_sci: Partial-IO support
+Message-ID: <dskdxir6375ap47lm2ptp7ttnaaxhczsf6bwk73xl5pajfqhnk@4324gihbq43u>
+References: <20240729080101.3859701-1-msp@baylibre.com>
+ <20240729080101.3859701-3-msp@baylibre.com>
+ <20240730122801.jzo5ahkurxaexwcm@ambiance>
+ <x4y44ajcdi2y2dieaa6oohrptpzyiono3fruvwcdelmtzsh4ne@cgqxsz45ohcy>
+ <20240730150722.bzls2qrfqwlmh6mn@clergyman>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240710-tcpc-cleanup-v1-11-0ec1f41f4263@linaro.org>
+In-Reply-To: <20240730150722.bzls2qrfqwlmh6mn@clergyman>
 
-On Wed, Jul 10, 2024 at 11:36:18AM +0100, André Draszik wrote:
-> Convert register TCPC_VENDOR_CC_CTRL2 to using GENMASK() and
-> FIELD_PREP() so as to keep using a similar approach throughout the code
-> base and make it arguably easier to read.
+On Tue, Jul 30, 2024 at 10:07:22AM GMT, Nishanth Menon wrote:
+> On 15:01-20240730, Markus Schneider-Pargmann wrote:
+> > > > +
+> > > > +	return NOTIFY_DONE;
+> > > > +}
+> > > > +
+> > > >  /* Description for K2G */
+> > > >  static const struct ti_sci_desc ti_sci_pmmc_k2g_desc = {
+> > > >  	.default_host_id = 2,
+> > > > @@ -3398,6 +3485,35 @@ static int ti_sci_probe(struct platform_device *pdev)
+> > > >  		goto out;
+> > > >  	}
+> > > >  
+> > > > +	if (of_property_read_bool(dev->of_node, "ti,partial-io-wakeup-sources")) {
+> > > 
+> > > You should probably check on TISCI_MSG_QUERY_FW_CAPS[1] if
+> > > Partial IO on low power mode is supported as well? if there is a
+> > > mismatch, report so?
+> > 
+> > I actually have another series in my queue that introduces this check. I
+> > just implemented this check for Partial-IO yesterday in the patch that
+> > introduces fw capabilities. If you like I can switch these series
+> > around.
 > 
-> Signed-off-by: André Draszik <andre.draszik@linaro.org>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  drivers/usb/typec/tcpm/maxim_contaminant.c | 18 +++++++++++-------
->  drivers/usb/typec/tcpm/tcpci_maxim.h       |  6 +++---
->  2 files changed, 14 insertions(+), 10 deletions(-)
+> Yes, please introduce it part of the series.
 > 
-> diff --git a/drivers/usb/typec/tcpm/maxim_contaminant.c b/drivers/usb/typec/tcpm/maxim_contaminant.c
-> index 8ac8eeade277..f7acaa42329f 100644
-> --- a/drivers/usb/typec/tcpm/maxim_contaminant.c
-> +++ b/drivers/usb/typec/tcpm/maxim_contaminant.c
-> @@ -116,13 +116,14 @@ static int max_contaminant_read_resistance_kohm(struct max_tcpci_chip *chip,
->  	if (channel == CC1_SCALE1 || channel == CC2_SCALE1 || channel == CC1_SCALE2 ||
->  	    channel == CC2_SCALE2) {
->  		/* Enable 1uA current source */
-> -		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL_MASK,
-> -					 ULTRA_LOW_POWER_MODE);
-> +		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL,
-> +					 FIELD_PREP(CCLPMODESEL, ULTRA_LOW_POWER_MODE));
->  		if (ret < 0)
->  			return ret;
->  
->  		/* Enable 1uA current source */
-> -		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCRPCTRL_MASK, UA_1_SRC);
-> +		ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCRPCTRL,
-> +					 FIELD_PREP(CCRPCTRL, UA_1_SRC));
->  		if (ret < 0)
->  			return ret;
->  
-> @@ -176,7 +177,8 @@ static int max_contaminant_read_comparators(struct max_tcpci_chip *chip, u8 *ven
->  	int ret;
->  
->  	/* Enable 80uA source */
-> -	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCRPCTRL_MASK, UA_80_SRC);
-> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCRPCTRL,
-> +				 FIELD_PREP(CCRPCTRL, UA_80_SRC));
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -209,7 +211,8 @@ static int max_contaminant_read_comparators(struct max_tcpci_chip *chip, u8 *ven
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCRPCTRL_MASK, 0);
-> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCRPCTRL,
-> +				 FIELD_PREP(CCRPCTRL, 0));
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -298,8 +301,9 @@ static int max_contaminant_enable_dry_detection(struct max_tcpci_chip *chip)
->  	if (ret < 0)
->  		return ret;
->  
-> -	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL_MASK,
-> -				 ULTRA_LOW_POWER_MODE);
-> +	ret = regmap_update_bits(regmap, TCPC_VENDOR_CC_CTRL2, CCLPMODESEL,
-> +				 FIELD_PREP(CCLPMODESEL,
-> +					    ULTRA_LOW_POWER_MODE));
->  	if (ret < 0)
->  		return ret;
->  	ret = max_tcpci_read8(chip, TCPC_VENDOR_CC_CTRL2, &temp);
-> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim.h b/drivers/usb/typec/tcpm/tcpci_maxim.h
-> index 78ff3b73ee7e..92c9a628ebe1 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_maxim.h
-> +++ b/drivers/usb/typec/tcpm/tcpci_maxim.h
-> @@ -20,9 +20,9 @@
->  #define SBUOVPDIS                               BIT(7)
->  #define CCOVPDIS                                BIT(6)
->  #define SBURPCTRL                               BIT(5)
-> -#define CCLPMODESEL_MASK                        GENMASK(4, 3)
-> -#define ULTRA_LOW_POWER_MODE                    BIT(3)
-> -#define CCRPCTRL_MASK                           GENMASK(2, 0)
-> +#define CCLPMODESEL                             GENMASK(4, 3)
-> +#define ULTRA_LOW_POWER_MODE                    1
-> +#define CCRPCTRL                                GENMASK(2, 0)
->  #define UA_1_SRC                                1
->  #define UA_80_SRC                               3
->  
+> > 
+> > > 
+> > > > +		info->nr_wakeup_sources =
+> > > > +			of_count_phandle_with_args(dev->of_node,
+> > > > +						   "ti,partial-io-wakeup-sources",
+> > > > +						   NULL);
+> > > > +		info->wakeup_source_nodes =
+> > > > +			devm_kzalloc(dev, sizeof(*info->wakeup_source_nodes),
+> > > > +				     GFP_KERNEL);
+> > > > +
+> > > > +		for (i = 0; i != info->nr_wakeup_sources; ++i) {
+> > > > +			struct device_node *devnode =
+> > > > +				of_parse_phandle(dev->of_node,
+> > > > +						 "ti,partial-io-wakeup-sources",
+> > > > +						 i);
+> > > > +			info->wakeup_source_nodes[i] = devnode;
+> > > 
+> > > Curious: Don't we need to maintain reference counting for the devnode
+> > > if CONFIG_OF_DYNAMIC?
+> > 
+> > In case you mean I missed of_node_put(), yes, I did, thank you. I added
+> > it in a ti_sci_remove().
+> 
+> And unless I am mistaken, of_node_get as required as you are
+> retaining the reference of the node till shutdown / remove is invoked.
+
+The function documentation says the refcount is already incremented:
+
+ * Return: The device_node pointer with refcount incremented.  Use
+ * of_node_put() on it when done.
+
+Best
+Markus
+
 > 
 > -- 
-> 2.45.2.803.g4e1b14247a-goog
-
--- 
-heikki
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
 
