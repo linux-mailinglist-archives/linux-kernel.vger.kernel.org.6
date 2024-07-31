@@ -1,220 +1,382 @@
-Return-Path: <linux-kernel+bounces-269420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D68C49432AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:05:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C08A19432B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9825A28322B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:05:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468651F2820A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A50171AA;
-	Wed, 31 Jul 2024 15:05:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4006917555;
+	Wed, 31 Jul 2024 15:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAarTChl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="SsGqaR05"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013056.outbound.protection.outlook.com [52.101.67.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D6E14A8B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438331; cv=none; b=LC63RnJd/bweoAAVTwjgeUXknWifsw2iF/INkXOf1GoUbtT0vrei1bCTxM8rj5+kc4l0L1nK/oYmIw6ac1Y1eQZoT2qUDIcO4yGeicYba4zSjVoMnWJDKT7VXhSeF8o8tnKVDUdhO6zHHRU+mQ+4e5B5cQeMbjDT/E95TKrlIhI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438331; c=relaxed/simple;
-	bh=0FPivFlgdP7KStsSXp2yt+KRdCooWZOtbQ8j1XEa59M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=koOHCKUAOXkimmZKlGbyvVeic6G+YGIZGrrVCdkdXfYalt1IoTDLr8ckNwQMtG5ZyHa2o4dZLHEykuvI2KvIwH1wnOEdlOaxvbBX8T6ka1xShMpY2Ma6/hjOGW/mM8vSEQ0EEOZDhR7IaYyGzZO0BCQyptgsM0VO1le+Cnainzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAarTChl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C44DC116B1;
-	Wed, 31 Jul 2024 15:05:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722438331;
-	bh=0FPivFlgdP7KStsSXp2yt+KRdCooWZOtbQ8j1XEa59M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LAarTChlnt+TZU9VI2tHB2dh282EHxdelUCf2Zm4/WLvzu9EJGiNWedGINvBbsPYq
-	 t/kTuMVt6ztbj7dlNtUfdNcL+oUtnyygzJDsxR5r/3bJemRvIFPthBLqNt7veNXaBH
-	 3TTQOI9AMMebmCTcRSnJQ/5Y9HozsfZ158tqQNjsiBseLoxlymdeNsOb44/kZLLS8r
-	 EtwbRDjTExwv5bvSJxcgFQeBw0pZnb0ceMy444d6RZhvSxDl7eYfFbeAiKATPE7hMM
-	 P1CiFKf80jb4q14y4ClrktQ9ksGGhWubNC4mzkkqskQgOu58DtDtAHosfWRCF4jgpX
-	 /HaxH1GuOOtvg==
-Date: Wed, 31 Jul 2024 12:05:28 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: kan.liang@linux.intel.com
-Cc: namhyung@kernel.org, irogers@google.com, peterz@infradead.org,
-	Andi Kleen <andi@firstfloor.org>, mingo@kernel.org,
-	linux-kernel@vger.kernel.org, adrian.hunter@intel.com,
-	ak@linux.intel.com, eranian@google.com
-Subject: Re: [PATCH 0/9] Support branch counters in block annotation
-Message-ID: <ZqpSuBqSZsj2FEcO@x1>
-References: <20240703200356.852727-1-kan.liang@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C61A12B71;
+	Wed, 31 Jul 2024 15:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722438461; cv=fail; b=aFqFWFSV55SYchxm3cxqbYQYhbJ21NrnLP2Rev8U19GSBcPz0KhbIn0uhkJXK4DZ783Vn8e5mMs3qLJnkAiVGFly+Gv5oUngishZszhBpMgsH7y6uqKtgUHY1b0yNh+bxmTQsxextu9MakG6hw1xsEvzqrDnePxZWM3L8jIKs10=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722438461; c=relaxed/simple;
+	bh=vieYpTp192k0S0l2lAGaOdfImKpGidLKvBBSZnDZFxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=A8IWOoH24IBJ5rQoFRv8xgDpY8cG+MHLhJvAEi2mw+m+mtKHU47H5HuTPugAhr3eGZJXGKAMBCufDgqBg65MjG9pLLXAauyqeCAjbHTbHmap8BuX38P24PS3npmVz/qxdnQWwzEGG5q0rPLE5JxS9EM1loB/GVFgYRxgdaYDiWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=SsGqaR05; arc=fail smtp.client-ip=52.101.67.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WbG90CkGcJIw9oxqsnTvc+5QjhkDh+ZlGrQx6QvcpnWZbFsuZQGCpnQx6yuwESMF5uNAKn6BxsYfxUdapsdWfK/f3cFqRiBZrz1DTQQlHHG9+Fz77CIwLdizHD9YYNnhOUt3A34Auv8XveFGGmspCxme8fXP7KB/JKWtNdkkjka9fj9dUlIlRDzOomtln7HGdGKsfpZCy+B3P/chfmN/dHnnP7h0RynENDXH1235JGJqht6ki3u8D4GlTVIHcSjpIwYmlh7yMvpOeH44wf6M9m0mpHICC2rPchyJS4yWUYrb3kLTnmRuEV/I7/QEi3esICutXN9trkioug75N06ZEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2g+/10huIqAsccUGGXH+HyIvJrJ3eTI0s+jklVM6xkg=;
+ b=o+5Z9eqPwsr28C2Qt59NihDnlMakQCFk3S1zdKGbqMRfatlhHRcQYQbY7Y/fnn935sTbwHIvFyRzXej5dgSKvQ6l7TDyOznzlY+zAjUQ1IiQuecBtg+Dn7XSxh3uHEc3+tDrR0GlgDDJ9TpWCMoUpGYQdK8IsI1vNg4EHK2a7dtSacOLxJBkY/aNk5kU5va4Oj4o6pzPFX81pqwUu4iDb3Fw6Z2aprLts2shzcEpGWNZZkQlYgl29v/Du0tZrg/GkYFZPlfWAYTaLx0SgtAaMdM2GwP7/c1VOer1lRGXZJpRf5vwX53v5wdQ1mmjOYYo4uFBhuHHVh7XgfcprutJlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2g+/10huIqAsccUGGXH+HyIvJrJ3eTI0s+jklVM6xkg=;
+ b=SsGqaR05gdoM7GpRZ+HsL7SLHwK0wdYPC2yc4AxsDHAhXLep1ASndEr/w9BYHDBg8M/BKppairDwSxLLDqhkDqPjkJjp+mCojuC6qbt8RkEvwk3MXUsP1UzjUMy7hIcMAvq4JgFdlegK322yuym76V3NqVu3CwzGjFozxh1aAuKZaa50Viw27RQohaSu+4YJwVmFo8ysEpXVIcKxr6B0kXMkaOOvbH+SMr3xPs5ONfTG0PB8vLj7BAMujhiatiuZFHi7X6KMRq6Cz30DcG4UIwm3ZU/96l2fTfDTUR1hGJu9hL79n+DSNuG/Qrm0x65Czm5KRlEcju4HrRspH2BxnQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB9092.eurprd04.prod.outlook.com (2603:10a6:102:22a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Wed, 31 Jul
+ 2024 15:07:36 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 15:07:36 +0000
+Date: Wed, 31 Jul 2024 11:07:27 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: robh@kernel.org
+Cc: alexandre.belloni@bootlin.com, christophe.leroy@csgroup.eu,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
+Message-ID: <ZqpTL1JWJ6RfU+iL@lizhi-Precision-Tower-5810>
+References: <20240731150420.2217925-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731150420.2217925-1-Frank.Li@nxp.com>
+X-ClientProxiedBy: BYAPR02CA0051.namprd02.prod.outlook.com
+ (2603:10b6:a03:54::28) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240703200356.852727-1-kan.liang@linux.intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9092:EE_
+X-MS-Office365-Filtering-Correlation-Id: abf668dd-6467-413f-77aa-08dcb1728307
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?HJkZ5AorUsBqXvZfxxCUxcaUfHhKAsbzdiHoYUcsi0AhAubDDzL6v2Am+Ccr?=
+ =?us-ascii?Q?73PEAGUXtwKtiPV/NORDubxCRHNTPmq50eSTptuqBNiPlMXq2fsdrGeb0Gsq?=
+ =?us-ascii?Q?dEN9r6vJ8N7Rv1gaO39hApIQV8Fu9oEDnPrJ/R+TuI/DiBQvcrr/KlQzAdKC?=
+ =?us-ascii?Q?sCYyUwuAozchTozcgjSy5WbVI58icoQV42MPNTvpsc/+0bxtDISsC8M2jV/S?=
+ =?us-ascii?Q?UhOERXuwm7sf1PKeCm8fLgK04obKYc2yG6tOiY8zgxdLAI3dfNltdqvFw6aY?=
+ =?us-ascii?Q?vdhlGG69gVcGa/OK3oTQit7GsfQqHt8UClFyGFUCDsMn0vn4/fMpnV0SALsx?=
+ =?us-ascii?Q?QJBRsGyreWaVcSJUude8dC1+TApG4XlhQtf9fBPh7oMqJKwsMJoJ9c1s/nxI?=
+ =?us-ascii?Q?YcJwyYL1RYQMmV6O3aWgUHIydiApDDEri2kNHgeOZloTKQY2HxfnJ4W5baWl?=
+ =?us-ascii?Q?y9o9j2RSVEIXzeotxD1N/dy1A/AgvGrHWFBK6Jxa2oYIRPARvBBQQBvyF/4k?=
+ =?us-ascii?Q?zOgt23u6r/h0gbYFiqM4QJqsPpNQpBjGQODPXV1GtONCEpunLS86q3jSWyRQ?=
+ =?us-ascii?Q?sMerJTO+whihxvXUYufsLAwz/fIl7AcXS1CxSMNKZl2mG84+DGR1peqyvCx9?=
+ =?us-ascii?Q?AT/4YaFPtX50dvX2XWUoxQX37tsxYguqKlMANOmEMmFWAyMpvW3Az5kcmJxi?=
+ =?us-ascii?Q?t1Ku18+jUTgVkZFNtopmx0Wnw2bH9sR8mq/qtRamLTlCDdyqX+9208QMsLp2?=
+ =?us-ascii?Q?YtwDy+6h44RyqUYmsG1lkH+uXzs6iIpgeQomS9DrG7JW36K8gVLiMeDgiYd6?=
+ =?us-ascii?Q?lpJiK7vU37YKKme6n1CpsDRpNCavKW2rDlEtofS0TOjJiBrf8G7VaL1BHKjx?=
+ =?us-ascii?Q?6cXOqv6uHZtdLIRfKLpmw+cbkGmH3RcCSqfBFhfepx9Adm2N1/jnylOrenCw?=
+ =?us-ascii?Q?daDMGvDNuVvrSux9zZUf65d2GpSbXCndjxfdAfgROSSWj2oW/v2lQmM1U2zV?=
+ =?us-ascii?Q?6FJNf9eDDVY+WiaLBKV+rgNYxgkl8ODGm8PTtZg4qkp3sMlPcgFMGrMcH5oC?=
+ =?us-ascii?Q?zk2FBVB7Xhg9iFf9QI84J8yY2t9yQcwqmKAcLD5QMCM6U2tUWhDsbWLVgcVV?=
+ =?us-ascii?Q?PugKj4aMLEqUN0bTQpAAKYhJNpWZo6g5y2zyqDxLdKhKaaJ7VipHgRFcI+cS?=
+ =?us-ascii?Q?8JfTL5aNBW9Z03oDF5JhLkY+Mfp9UdTrBtkG3AG8NMmG/whCsyb3PFCZyGsu?=
+ =?us-ascii?Q?J9YRFrzpLnH+TjK/vfZUePU1og25iVoHJxtqoaeZJUuurxK+Sb7yiAgGH7Cg?=
+ =?us-ascii?Q?dhMZonxaO3ybbCWrgC9UB02g3mo9qUya7/kE6DfPucGS6zdTzWQYrMATZM8y?=
+ =?us-ascii?Q?C5VycvE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rLnjFgvEN8UQs0DaQfKnhYcvf13Dy5Xv+VS7LhmtLOOCAN4E7Hesq6wB+SHd?=
+ =?us-ascii?Q?p0eAcH1IwPn9ibkWIJdJYz3tPtFYdq/DOstx6i4t6NO3hNIiLqmz8eVc4/Oi?=
+ =?us-ascii?Q?Y50VfaVGFYwqMF8t2c/5wJaU38pTn2Ts2+imlWxCDkXbuEVUdhrjJKis3Oly?=
+ =?us-ascii?Q?gxCQvPeSxKPMzzypJ0leh4UNUNIWXzcZ2OUtLo9DqbP2vuVuuCwENPlDsefd?=
+ =?us-ascii?Q?1kmye9IxlFU/1BQoZvZnZDX7O0XP8oj0TXFfTmpgPlhP4SL+jQke/DJnxmHA?=
+ =?us-ascii?Q?3bJ9k5KmNPTPIn7wfw/rvAU8j50Us9Eul3YKi/ThlJY1YCMbEJ49ug/7wCfW?=
+ =?us-ascii?Q?OTWN+dD43gyyX9nYuLJMmuzTmhigIqh6Xp88yoON2lWYBElZrBd131NBiVwc?=
+ =?us-ascii?Q?g0cPEb5PXU18et2WeKirkHIjmdXlXuxo6nU4OdBrYBrt7HBqOJMc9okffQor?=
+ =?us-ascii?Q?BqFPm8/nJwbbeK6aVuIK8G1PRNC/gkJOSXCHdlk4bFyLkS32OiDCA9OFtq96?=
+ =?us-ascii?Q?ec0ffSuyBFzvyGHMSQOleJ+8MS7NmAYDPtlf7N5ZREkS9GzC0IKyhh/AJ/2L?=
+ =?us-ascii?Q?UVFEN8vhGEmyYRucVYEGdnEoNObutoe2wPZSU3qo6xAX2Gp1podnTt09Tcw3?=
+ =?us-ascii?Q?MIqhOqEAe7ys3WDVTiGry5pqX6zogRwSnEAH5YSdZrtpljvl2BY3PEzwcXmC?=
+ =?us-ascii?Q?8r0N1rdAKcEj4J1RFfrlw2sbdN/Oemsxm25PiYuyKvrr0jm+bzHJmZBBj8n4?=
+ =?us-ascii?Q?BEyVHaIqj/bXClyRdPRQszTsMUXF2wcrcaiva+N/+E2r2x+C7i83Q6xB4aCm?=
+ =?us-ascii?Q?bhWNHmwlM2C8OMZZSwApT9OObdHVzZxEJWGK7m+VRwhopMhJutD8ktQr2OG8?=
+ =?us-ascii?Q?KeqyzGV9l3QjRPdZn6Ks6HXi6M/UuIdYZWpc7mi14qn9/1A+3R1hP5/kLoMp?=
+ =?us-ascii?Q?BBwF6Z1U1Sj9jMx8R/g9BZEfC5gd7PkSmt6zw04pnmZfFmny6emkrr2tIEKY?=
+ =?us-ascii?Q?fyaj2T9J07WVbHIjErGkJwoXhW4m1hYABdHVL4UizkqHwcxa4MEboJGDu4bM?=
+ =?us-ascii?Q?qT5zB34yjUCue2frvex/n2WMFTPlOO2yNZ9VQuF+tzb1ATHWmpXUVRQbhKpM?=
+ =?us-ascii?Q?7WtZ6y2BJAwX/HI2WOZIilHJ3CnD0NG47rcVe1DJUYVe19OmmwkbiGJqFMGh?=
+ =?us-ascii?Q?ZKQ0UxTJuML4W2UClDkjzIusgxUfOGb+dIbi0pSHdPEVZDgVSd397HKmbJI0?=
+ =?us-ascii?Q?piCnr79KimME0rJ1+ZWIjqWyH5JScaG8xUB3BVS3dpM3OwFv8JHuIUe74cMc?=
+ =?us-ascii?Q?YGBPRTozWGYlr0jURD8rfhDFyEwSo3O7b/oO1mvgonFDjPWx39Jg2JmUt8TH?=
+ =?us-ascii?Q?/Emkh1KJIJxHAlkL5H+r77JbTFRqSIkOIPQiBZlNtwgdmhuDCnUmlRfuvyK1?=
+ =?us-ascii?Q?X+NqTv+YHRqZAj4qV1Imi+PKAuGwg8GcCN6kKJlPW+45vhIqAkUl8osAozpg?=
+ =?us-ascii?Q?qnxizpi3bWIPJT8Wl6246AjqvA8QEmOLrS/nk/maqFeovWXZWbGplxzl0S9I?=
+ =?us-ascii?Q?I/jHxAJWa7Iu1r5AuqQpP9X1/M6GtnFYu8ma7vxd?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: abf668dd-6467-413f-77aa-08dcb1728307
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:07:36.3225
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 53762fLrTB6V+fS2MXqYfgNZSbhFJEBMW/tNNaE5MlsfiXFgbnUnvTpbK4WD+SPFkGW358n5u1hAmwA4tzmBBg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9092
 
-On Wed, Jul 03, 2024 at 01:03:47PM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
+On Wed, Jul 31, 2024 at 11:04:20AM -0400, Frank Li wrote:
+> Convert dt-binding rcpm from txt to yaml format.
+> Add fsl,ls1028a-rcpm compatible string.
 > 
-> The branch counters logging (A.K.A LBR event logging) introduces a
-> per-counter indication of precise event occurrences in LBRs. It can
-> provide a means to attribute exposed retirement latency to combinations
-> of events across a block of instructions. It also provides a means of
-> attributing Timed LBR latencies to events.
+> Additional changes:
+> - Add missed compatible string fsl,<chip>-rcpm.
+> - Remove map fsl,<chip>-rcpm to fsl,qoriq-rcpm-<version>.
 > 
-> The kernel support and basic perf tool support have been merged.
-> https://lore.kernel.org/lkml/20231025201626.3000228-1-kan.liang@linux.intel.com/
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Change from v1 to v2
+> - add missed compatible string
+> - Remove compatible string map table
+> - use oneof Item to align compatible string map table
+> - Fix typo 1045a
+> ---
+>  .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |   2 +-
+>  .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 101 ++++++++++++++++++
+>  .../devicetree/bindings/soc/fsl/rcpm.txt      |  69 ------------
+>  3 files changed, 102 insertions(+), 70 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
 > 
-> This series is to provide advanced perf tool support via adding the
-> branch counters information in block annotation. It can further
-> facilitate the analysis of branch blocks.
-> 
-> The patch 1 and 2 are to fix two existing issues of --total-cycles and
-> the branch counters feature.
-> 
-> The patch 3-9 are the advanced perf tool support.
+> diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> index 388102ae30cd8..3ec111f2fdc40 100644
+> --- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> +++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+> @@ -42,7 +42,7 @@ properties:
+>          minItems: 1
+>      description:
+>        phandle to rcpm node, Please refer
+> -      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> +      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+>  
+>    big-endian:
+>      $ref: /schemas/types.yaml#/definitions/flag
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+> new file mode 100644
+> index 0000000000000..762316ef4d150
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+> @@ -0,0 +1,101 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Run Control and Power Management
+> +
+> +description:
+> +  The RCPM performs all device-level tasks associated with device run control
+> +  and power management.
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - fsl,ls1012a-rcpm
+> +              - fsl,ls1021a-rcpm
+> +              - fsl,ls1028a-rcpm
+> +              - fsl,ls1043a-rcpm
+> +              - fsl,ls1045a-rcpm
 
-I couldn't find any newer versions of this series nor reviews, is that
-right?
+Sorry, I missed commit last change. I will fix 1045a at next version.
 
-I'll try and review this soon, but if someone else could take a look,
-try it and provide a Reviewed-by or at least an Acked-by, that would
-help!
+Frank
 
-- Arnaldo
- 
-> Here are some examples.
-> 
-> perf annotation:
-> 
-> $perf record -e "{branch-instructions:ppp,branch-misses}:S" -j any,counter
-> $perf report  --total-cycles --stdio
-> 
->  # To display the perf.data header info, please use --header/--header-only options.
->  #
->  #
->  # Total Lost Samples: 0
->  #
->  # Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }'
->  # Event count (approx.): 1610046
->  #
->  # Branch counter abbr list:
->  # branch-instructions:ppp = A
->  # branch-misses = B
->  # '-' No event occurs
->  # '+' Event occurrences may be lost due to branch counter saturated
->  #
->  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles          Branch Counter [Program Block Range]
->  # ...............  ..............  ...........  ..........  ......................  ..
->  #
->            57.55%            2.5M        0.00%           3             |A   |-   |                 ...
->            25.27%            1.1M        0.00%           2             |AA  |-   |                 ...
->            15.61%          667.2K        0.00%           1             |A   |-   |                 ...
->             0.16%            6.9K        0.81%         575             |A   |-   |                 ...
->             0.16%            6.8K        1.38%         977             |AA  |-   |                 ...
->             0.16%            6.8K        0.04%          28             |AA  |B   |                 ...
->             0.15%            6.6K        1.33%         946             |A   |-   |                 ...
->             0.11%            4.5K        0.06%          46             |AAA+|-   |                 ...
-> 
-> (The below output is in the TUI mode. Users can press 'B' to display
-> the Branch counter abbr list.)
-> 
-> Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }',
-> 4000 Hz, Event count (approx.):
-> f3  /home/sdp/test/tchain_edit [Percent: local period]
-> Percent       │ IPC Cycle       Branch Counter (Average IPC: 1.39, IPC Coverage: 29.4%)
->               │                                     0000000000401755 <f3>:
->   0.00   0.00 │                                       endbr64
->               │                                       push    %rbp
->               │                                       mov     %rsp,%rbp
->               │                                       movl    $0x0,-0x4(%rbp)
->   0.00   0.00 │1.33     3          |A   |-   |      ↓ jmp     25
->  11.03  11.03 │                                 11:   mov     -0x4(%rbp),%eax
->               │                                       and     $0x1,%eax
->               │                                       test    %eax,%eax
->  17.13  17.13 │2.41     1          |A   |-   |      ↓ je      21
->               │                                       addl    $0x1,-0x4(%rbp)
->  21.84  21.84 │2.22     2          |AA  |-   |      ↓ jmp     25
->  17.13  17.13 │                                 21:   addl    $0x1,-0x4(%rbp)
->  21.84  21.84 │                                 25:   cmpl    $0x270f,-0x4(%rbp)
->  11.03  11.03 │0.61     3          |A   |-   |      ↑ jle     11
->               │                                       nop
->               │                                       pop     %rbp
->   0.00   0.00 │0.24    20          |AA  |B   |      ← ret
-> 
-> perf script:
-> 
-> $perf script -F +brstackinsn,+brcntr
-> 
->  # Branch counter abbr list:
->  # branch-instructions:ppp = A
->  # branch-misses = B
->  # '-' No event occurs
->  # '+' Event occurrences may be lost due to branch counter saturated
->      tchain_edit  332203 3366329.405674:      53030 branch-instructions:ppp:            401781 f3+0x2c (home/sdp/test/tchain_edit)
->         f3+31:
->         0000000000401774        insn: eb 04                     br_cntr: AA     # PRED 5 cycles [5]
->         000000000040177a        insn: 81 7d fc 0f 27 00 00
->         0000000000401781        insn: 7e e3                     br_cntr: A      # PRED 1 cycles [6] 2.00 IPC
->         0000000000401766        insn: 8b 45 fc
->         0000000000401769        insn: 83 e0 01
->         000000000040176c        insn: 85 c0
-> 
-> $perf script -F +brstackinsn,+brcntr -v
-> 
->      tchain_edit  332203 3366329.405674:      53030 branch-instructions:ppp:            401781 f3+0x2c (/home/sdp/test/tchain_edit)
->         f3+31:
->         0000000000401774        insn: eb 04                     br_cntr: branch-instructions:ppp 2 branch-misses 0      # PRED 5 cycles [5]
->         000000000040177a        insn: 81 7d fc 0f 27 00 00
->         0000000000401781        insn: 7e e3                     br_cntr: branch-instructions:ppp 1 branch-misses 0      # PRED 1 cycles [6] 2.00 IPC
->         0000000000401766        insn: 8b 45 fc
->         0000000000401769        insn: 83 e0 01
->         000000000040176c        insn: 85 c0
-> 
-> Kan Liang (9):
->   perf report: Fix --total-cycles --stdio output error
->   perf report: Remove the first overflow check for branch counters
->   perf evlist: Save branch counters information
->   perf annotate: Save branch counters for each block
->   perf evsel: Assign abbr name for the branch counter events
->   perf report: Display the branch counter histogram
->   perf annotate: Display the branch counter histogram
->   perf script: Add branch counters
->   perf test: Add new test cases for the branch counter feature
-> 
->  tools/perf/Documentation/perf-report.txt |   1 +
->  tools/perf/Documentation/perf-script.txt |   2 +-
->  tools/perf/builtin-annotate.c            |  13 +-
->  tools/perf/builtin-diff.c                |   8 +-
->  tools/perf/builtin-report.c              |  25 ++-
->  tools/perf/builtin-script.c              |  69 +++++++-
->  tools/perf/builtin-top.c                 |   4 +-
->  tools/perf/tests/shell/record.sh         |  17 +-
->  tools/perf/ui/browsers/annotate.c        |  18 +-
->  tools/perf/ui/browsers/hists.c           |  18 +-
->  tools/perf/util/annotate.c               | 209 +++++++++++++++++++++--
->  tools/perf/util/annotate.h               |  24 ++-
->  tools/perf/util/block-info.c             |  66 ++++++-
->  tools/perf/util/block-info.h             |   8 +-
->  tools/perf/util/branch.h                 |   1 +
->  tools/perf/util/disasm.c                 |   1 +
->  tools/perf/util/evlist.c                 |  66 +++++++
->  tools/perf/util/evlist.h                 |   2 +
->  tools/perf/util/evsel.c                  |  15 +-
->  tools/perf/util/evsel.h                  |  12 ++
->  tools/perf/util/hist.c                   |   5 +-
->  tools/perf/util/hist.h                   |   2 +-
->  tools/perf/util/machine.c                |   3 +
->  23 files changed, 519 insertions(+), 70 deletions(-)
-> 
+> +          - enum:
+> +              - fsl,qoriq-rcpm-2.1+
+> +        minItems: 1
+> +      - items:
+> +          - enum:
+> +              - fsl,p2041-rcpm
+> +              - fsl,p3041-rcpm
+> +              - fsl,p4080-rcpm
+> +              - fsl,p5020-rcpm
+> +              - fsl,p5040-rcpm
+> +          - enum:
+> +              - fsl,qoriq-rcpm-1.0
+> +        minItems: 1
+> +      - items:
+> +          - enum:
+> +              - fsl,b4420-rcpm
+> +              - fsl,b4860-rcpm
+> +              - fsl,t4240-rcpm
+> +          - enum:
+> +              - fsl,qoriq-rcpm-2.0
+> +        minItems: 1
+> +      - items:
+> +          - enum:
+> +              - fsl,t1040-rcpm
+> +          - enum:
+> +              - fsl,qoriq-rcpm-2.1
+> +        minItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  "#fsl,rcpm-wakeup-cells":
+> +    description: |
+> +      The number of IPPDEXPCR register cells in the
+> +      fsl,rcpm-wakeup property.
+> +
+> +      Freescale RCPM Wakeup Source Device Tree Bindings
+> +
+> +      Required fsl,rcpm-wakeup property should be added to a device node if
+> +      the device can be used as a wakeup source.
+> +
+> +      fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
+> +      register cells. The number of IPPDEXPCR register cells is defined in
+> +      "#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
+> +      the bit mask that should be set in IPPDEXPCR0, and the second register
+> +      cell is for IPPDEXPCR1, and so on.
+> +
+> +      Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
+> +      mechanism for keeping certain blocks awake during STANDBY and MEM, in
+> +      order to use them as wake-up sources.
+> +
+> +  little-endian:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description:
+> +      RCPM register block is Little Endian. Without it RCPM
+> +      will be Big Endian (default case).
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    rcpm: global-utilities@e2000 {
+> +          compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
+> +          reg = <0xe2000 0x1000>;
+> +          #fsl,rcpm-wakeup-cells = <2>;
+> +    };
+> +
+> +    serial@2950000 {
+> +         compatible = "fsl,ls1021a-lpuart";
+> +         reg = <0x2950000 0x1000>;
+> +         interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> +         clocks = <&sysclk>;
+> +         clock-names = "ipg";
+> +         fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> deleted file mode 100644
+> index 5a33619d881d0..0000000000000
+> --- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+> +++ /dev/null
+> @@ -1,69 +0,0 @@
+> -* Run Control and Power Management
+> --------------------------------------------
+> -The RCPM performs all device-level tasks associated with device run control
+> -and power management.
+> -
+> -Required properites:
+> -  - reg : Offset and length of the register set of the RCPM block.
+> -  - #fsl,rcpm-wakeup-cells : The number of IPPDEXPCR register cells in the
+> -	fsl,rcpm-wakeup property.
+> -  - compatible : Must contain a chip-specific RCPM block compatible string
+> -	and (if applicable) may contain a chassis-version RCPM compatible
+> -	string. Chip-specific strings are of the form "fsl,<chip>-rcpm",
+> -	such as:
+> -	* "fsl,p2041-rcpm"
+> -	* "fsl,p5020-rcpm"
+> -	* "fsl,t4240-rcpm"
+> -
+> -	Chassis-version strings are of the form "fsl,qoriq-rcpm-<version>",
+> -	such as:
+> -	* "fsl,qoriq-rcpm-1.0": for chassis 1.0 rcpm
+> -	* "fsl,qoriq-rcpm-2.0": for chassis 2.0 rcpm
+> -	* "fsl,qoriq-rcpm-2.1": for chassis 2.1 rcpm
+> -	* "fsl,qoriq-rcpm-2.1+": for chassis 2.1+ rcpm
+> -
+> -All references to "1.0" and "2.0" refer to the QorIQ chassis version to
+> -which the chip complies.
+> -Chassis Version		Example Chips
+> ----------------		-------------------------------
+> -1.0				p4080, p5020, p5040, p2041, p3041
+> -2.0				t4240, b4860, b4420
+> -2.1				t1040,
+> -2.1+				ls1021a, ls1012a, ls1043a, ls1046a
+> -
+> -Optional properties:
+> - - little-endian : RCPM register block is Little Endian. Without it RCPM
+> -   will be Big Endian (default case).
+> -
+> -Example:
+> -The RCPM node for T4240:
+> -	rcpm: global-utilities@e2000 {
+> -		compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
+> -		reg = <0xe2000 0x1000>;
+> -		#fsl,rcpm-wakeup-cells = <2>;
+> -	};
+> -
+> -* Freescale RCPM Wakeup Source Device Tree Bindings
+> --------------------------------------------
+> -Required fsl,rcpm-wakeup property should be added to a device node if the device
+> -can be used as a wakeup source.
+> -
+> -  - fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
+> -	register cells. The number of IPPDEXPCR register cells is defined in
+> -	"#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
+> -	the bit mask that should be set in IPPDEXPCR0, and the second register
+> -	cell is for IPPDEXPCR1, and so on.
+> -
+> -	Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
+> -	mechanism for keeping certain blocks awake during STANDBY and MEM, in
+> -	order to use them as wake-up sources.
+> -
+> -Example:
+> -	lpuart0: serial@2950000 {
+> -		compatible = "fsl,ls1021a-lpuart";
+> -		reg = <0x0 0x2950000 0x0 0x1000>;
+> -		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+> -		clocks = <&sysclk>;
+> -		clock-names = "ipg";
+> -		fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
+> -	};
 > -- 
-> 2.38.1
+> 2.34.1
+> 
 
