@@ -1,230 +1,202 @@
-Return-Path: <linux-kernel+bounces-268638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9597794272C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:52:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6971394272F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C171F22803
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:52:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 962CDB23275
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:52:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA41A5C8EF;
-	Wed, 31 Jul 2024 06:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD4E1A4B55;
+	Wed, 31 Jul 2024 06:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ANeWDiib"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2042.outbound.protection.outlook.com [40.107.117.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVzvCBur"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED82717D2;
-	Wed, 31 Jul 2024 06:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722408714; cv=fail; b=nnwusZMFiROg7m2QNaU5+pHW8Q5d500KNwC7YAVkDr8StM4UUjo8J8msHwE1dCIenl2Dc7dsEipYNGRbjrPRf7SD+YoXsQPTg2r30VBqiksqQAODFGCKh0vmgNjJOq3GH2PVa2jsj1jMZsIvVw24lsBinl8TSbYpR3i9xP5mzU8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722408714; c=relaxed/simple;
-	bh=hlFDQRdXIsLaJ+0UepwewvfgiTE1RDIbDWX7UWZGWHo=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=A/QJLCo1emMan4zhZVHC5w2FPHDezoBxpn8gry0ICzcFpe4kY3GnbIiQ/Igxss6im8qMTUN8qQyERpDMm9wKhgCAIuE8lQnnC5gYAr6+oOeBiPDZ4a1qkvVBcdjocu5cLh+LrlX361C78UU6b8+/2r6z0nKYcmXCHNwAxib+Wj4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ANeWDiib; arc=fail smtp.client-ip=40.107.117.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HWu8GoxfiBpxqdkRDgBv9FAylS8mZaDnpc2l83LcBPhoCVyLuuh+jR+/Az4EjPmo0hG7vlkgh7G+Q8ywAsu93jLs1+ARODSw1nt1LmGlkJ59ZXF+0bXoOe4uHBVo8mFvVtqgKZTiTgGZ2a6zGEzer5eKwfGiFULnScPL0CDcgcakYPjTVyd9SOylZFHODPOQKAH8fQimYAIKVfBLPLtLCnhEnWYhGP/Iv/G9AV4OU19czjNlofwMC2WyrrM8kELfdMp/le3POUmnv/tuTKcTRbG/S7NQtrenJ4xEZSdUbeSL0ElQQxf5yoHzRS5xAyIXeDlu8jyo37TwtMMloPKm7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i3veoaQjIdWTy2ikVuNZYwz3n7DbIVPufqW/C5yMM6Q=;
- b=lngyYXhiom/Dt2LhvrRV9ZM3a2IcFaDHzWF91nOPRlOZv90Oy/ZAzG0Sa4vfhqw2u/6PgRm8LoFKF/L0r4Im776hoBzayzQO24OL0ySPIA5hML/v/fzE8L0PmiAz1NU5zCXiBijEsVq9M23AjAA+Z2FWsRCdQnbY+SQcW5EnG2Y+Diupq34O7WtRIXwOT8Bs8W8mxMBFO5um57mQRg8lwHOB6yzg0jY2CgoD7i1jipfLcYqw/5BQmZfY2d6wAX+ljFmKVFKNeC5zsvktG4kPbGNSyfDnIo0BwEeBkE4mDg6FSAfrNBT0TjcJt8ZOX+hEbGIkiY/wOT5O77VakBzBdQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i3veoaQjIdWTy2ikVuNZYwz3n7DbIVPufqW/C5yMM6Q=;
- b=ANeWDiibMmdBrRgD7NS9uChjjP/jogBx8l/EFS7l4nVzD2EGn2YzxpmYu1zrs4G0apdmWAu9YRJI2ddxW6BndQzhlynFiFhEY/LX4/wqV3hHUJ9N17Q6U4gTkyzGGIZqnvM43zYUATCVBgY0RiKhsOlLaQF0gdWo7Xcnjxc3XTviawPrG7gLeSPCDmujYdWmXK4QJ08vKGtStQuKVBOceuhNWoFp255ugv/2Turdnw3mDIKu4RiKHdlkdjBS83VgPkUXFDx6SqD+i/HXfeKBKka0SLlbREXgr7oeIpHNSXgRDU8NZi46o1XPFWA/Jommr9xh87Glg6MZVlOjr0eH8g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- JH0PR06MB6939.apcprd06.prod.outlook.com (2603:1096:990:66::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7807.27; Wed, 31 Jul 2024 06:51:47 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%3]) with mapi id 15.20.7828.016; Wed, 31 Jul 2024
- 06:51:47 +0000
-From: Rong Qianfeng <rongqianfeng@vivo.com>
-To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D687A6E614;
+	Wed, 31 Jul 2024 06:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722408724; cv=none; b=Is25clFygqu+u50MTS0umAYXUqEPS5SwUKo+I0ZMAsC0dKLAs6OWyTNvv6rUIuzH3zP8MtVWNRFG+d1wOaS2h2KysLxJJhOUtNItw9w7rbUiWwRToH0iuowX4gAI/2kXLYmYXjhQeznNvq7KG7Z/fkp/nFmb1bT9adMBw9IKg2E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722408724; c=relaxed/simple;
+	bh=QGQ7UcDgLseVwst6/lVeoLfgo6ne99fQU3rFqT+jJzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gSgIteeCAvm/7fVw77evdmTXt8dDtZPpCGvKYzvG6hpbDYaQQ2AINUy+1VpUGZ1vz8bjyy4+jilGh6YaJ53itIdr82rQfZZ1KCFU9E9sw9Uu/jjzEdjunn8Xo5vGEUlajmKjrO6/bVsVJAvPY7sdWuvCng0Dd2aQBnUmnPR7e/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVzvCBur; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fed72d23a7so38427915ad.1;
+        Tue, 30 Jul 2024 23:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722408722; x=1723013522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UL4pzV5kNcQzdAISGWSssRa96/8ZELbs9Z5LYhAlirQ=;
+        b=HVzvCBurD0TMBtytxo8mkIJENWbhQKKKdv8xzV+mZiQdj3qT8v8IKWdu6aF0GpTBZx
+         fg7+hb+9jiHjCSCjx9teHOsSRNSrvi+UsQnTU4CkO7BqO/aQb9yyh2I4AnRyXK+st/hk
+         t9v4ELYIl+xNjDL8tS8OnCFulGK4LYS2Wd35Rh7r30JnJkWjNPSqhIHyHnhe5K4bOtmL
+         4GXkU3zARoOUqNDbgD3qYEnQEy4AI45jT0S2Dv/UyO5XteYu3ZKaD/sT9ByWuyUrE9j1
+         wjcTNPw5/N93Mw3W1yXDz7qY9y2TeX3TmTSkxapmcNdBD4OM5QMdVdQc+xNPARI6x9zC
+         uIYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722408722; x=1723013522;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UL4pzV5kNcQzdAISGWSssRa96/8ZELbs9Z5LYhAlirQ=;
+        b=YvdSRr8tjPD/3UqaVnBFun/B33RblYuHsVRcZgJS1XVM3oNM73rc/wbSBIGqJENQPw
+         tGvv6vGju9o97EVHgswWPlevAsmavEGf/SHVtBQfYREkfWRE0KAytnA8DNIJcqzDufXF
+         JZYE/rvbO/i1qpUKctMEZXSR55tNwnyQz6P7ZX6Rh+tBu6iupUzQ58jE1TzXxT78qpVZ
+         sXYFLc4Dhtmmyyyt3JegS8hePYb65lL6hGLVtscIxIv160ms8uVKCWrLqnZoIhYaD3mU
+         XipDy3IsBx2A2IhkaRLaE+y9stDAhvxTatSo1tw6fz2GddqcKnu9l9BEuuK9a0bJTIg8
+         kgsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmM5/LdMfM9KdXW31p36/dnWuA3RllVA1cqCBHee9WVdcYU3irvBx/q6OBmcuYyGTB21do8Vv1rlV5GR7Q0p4YgApi+kO00E2sKBwk2rRIdymqBUNKK+1v5Lklch82giPsCeq0jz8MY1EiJk+IcHgUskPwKTDUfPp5cBce6A721VV1sw==
+X-Gm-Message-State: AOJu0Yx0mym03ShIbIgHoWjJS7UtffuVPytroKNJ1wSMVEV8IitU04uH
+	eub9LlJ2WfHOeo88REGH+hb7g/WqjHpKmYzLF9cYGHNQ1Bbsz4ie
+X-Google-Smtp-Source: AGHT+IHq5APEBHZUKRRPP88QWREisQJS1K0mGr46QU+4f0kE0BSoDDxkFSH7nRK0wak612oG6IxWrg==
+X-Received: by 2002:a17:902:c40e:b0:1fd:6677:69b4 with SMTP id d9443c01a7336-1ff0489f48fmr138938025ad.49.1722408721968;
+        Tue, 30 Jul 2024 23:52:01 -0700 (PDT)
+Received: from localhost.localdomain ([115.240.194.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8c826sm112752865ad.58.2024.07.30.23.51.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 23:52:01 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Rong Qianfeng <rongqianfeng@vivo.com>
-Subject: [PATCH] mm/filemap: In page fault retry path skip filemap_map_pages() if no read-ahead pages
-Date: Wed, 31 Jul 2024 14:51:28 +0800
-Message-Id: <20240731065128.50971-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.39.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR06CA0037.apcprd06.prod.outlook.com
- (2603:1096:404:2e::25) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+Subject: [PATCH v2] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to DT schema
+Date: Wed, 31 Jul 2024 12:21:33 +0530
+Message-ID: <20240731065137.156935-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|JH0PR06MB6939:EE_
-X-MS-Office365-Filtering-Correlation-Id: d6da644a-8581-48d0-5b94-08dcb12d3f5c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?MxBYz1tnwjR3bcNtX63hoyxt/EQ6ucwBS0LKec/kaSvd6iN8zFTGsZygAxTt?=
- =?us-ascii?Q?zyAgmfEFgnUgrfgfKarUTFB1pp533JgI0Iyxy1bsPzPQXHBsGp5n8DcMvnis?=
- =?us-ascii?Q?5VswJ2GUUipOjDJEC3rlfOjgr3aR5Gap5CX5CKIizPVfVirQsWr9o+SRvkxX?=
- =?us-ascii?Q?sB8RGf4ED1hmQhk0isNDYz4NpnxHcIlXrYO1inn8nd9fcfrj+OJftB/xQgdq?=
- =?us-ascii?Q?FN9aDRU+SqTc2yja02j5yBO/+2KemoOQEk45drYfcvecKl60hCKFVCIXrrGs?=
- =?us-ascii?Q?WypIC8ZsV2LV6AmNi6TQNlKjIbTCGSQdb9xuQg6XDOtzMCYa+g1Bi5CbfH25?=
- =?us-ascii?Q?NoeJohVLGJcuZx+mJGrX171xf0xQso7kHc0P0fbNIVJm3Ig3JoMERPssXbnQ?=
- =?us-ascii?Q?vWyRJ9qa0JCSiv21bSqyE0v3R8mGu/VMGb6rxK5TP9sTYFo6d64Tr9+0iOL8?=
- =?us-ascii?Q?4Pift/ObuK+4gggIrH7EbOY/ZtgpX0q8BlNOIQLenhum3Em/F9VZPD1cgDPL?=
- =?us-ascii?Q?OZfxt3BweQgC45+02INVuTybkzOEPdqmOVuscZ82AhX6irqEghG/NvACW60b?=
- =?us-ascii?Q?4fo2C5ZsDn9P5wjtFdScYTVn4fOyFxpQ4MiuHWoaTK47RSbz0Hg78u2UYIbR?=
- =?us-ascii?Q?2wf/4nDwNE4o2iXYjiDlr5oGr/nZ/KRpRoNmTQ9V5Y7tkADbzeD6OBEWIjpV?=
- =?us-ascii?Q?T399d8llLb4XDzXbripLu+45XQju7IgZwPi4GmfC5V0zq9S2oDNpEOxnIJAS?=
- =?us-ascii?Q?/AL5MF01ZLzlAny75bQByYsj6ktNxrXHOFRXs1R3MFrOMyETtFCWcL7TO2xb?=
- =?us-ascii?Q?dQkJu4wBY7mpK54CoegaSxAyytZJQ3Zj8BgU8tBwqhiMU+3JXEUU8oLuF7fi?=
- =?us-ascii?Q?gLbWa0t3HRlMORCt5RwYIARojKrK+CM03BF/NpFbCe0VSw63qeqsVwOlrI82?=
- =?us-ascii?Q?FOIDJia60su6KPfMDxHgbiExeXHknLCBFi+RvNmLwNRn59pJYIeI8ns+0Z/m?=
- =?us-ascii?Q?cCaOrfsi8vVj8JVaiGwCmPzUNsV8yoijjsWVOmFxfE8h277+RilGv+skqoqs?=
- =?us-ascii?Q?mDCFiTDzfzw1qkRMAlUNbo7smIcqboT2kzn5ft0FNnPDsyLVjqV9WOLql9HA?=
- =?us-ascii?Q?EBUvrguOsGUS7YCJEP9icCXF5UbuZncDNdvh63n+9q2Mk0+bxP46QzML8wUw?=
- =?us-ascii?Q?epjdebzlHIXXp7s2vpYaJVhWAhG3izZSxB8iw7P1R7dOnUoB3b8zKAmxLOK6?=
- =?us-ascii?Q?gNqRDYedSAttO7SvHbbhDy6VFcWFTYve1GlICxFNjrGlBQ59oWrvt0sj5oQc?=
- =?us-ascii?Q?7XyjvIXGcIpiTB68hF3J+hNEGq5J0FlYw+jrcgwLsGNMzuyWaNRiq3TsSmm9?=
- =?us-ascii?Q?13tNeJJ2viT1IbPWOfyUm3qAK8EdfF41JEiRWigAOKkExjtvlA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Pw6FpsqEvhghUkV5At6WpQayPwmPvvj3ERGfpGJePrWC4RNX40yhPJ3B+1B6?=
- =?us-ascii?Q?BY7H7xHV9XWDlwHnFpciWtmjST+FgZ1hvCe+hcgAjISJkmqpFZi00w7wAIig?=
- =?us-ascii?Q?Ko/sR3ftJuwVrmsMCFTgYctadqpCAmqOLBlN2TTNoG/CgwFgDJGhDOzSMKwQ?=
- =?us-ascii?Q?0UHoh4NlrMR93wiu/x22QtgSmqWLC0VIdRTP5seitliRn4plFr2fa8DKqoa9?=
- =?us-ascii?Q?M5s4vVrOOIsaCVOWyGlga93P3rT8E/7TcbXqJZ1Iu0dCfbXCIKiRNRBMDigC?=
- =?us-ascii?Q?XZ/l83ItLf3+lTt4ibNiM7TbpDtPM2X5ycqRr9XA1wPz1cNDjVMzkvaedmQt?=
- =?us-ascii?Q?jThkhqzQ/Nv+hDwQUovV4+Go2E4BgjzRgmqpLbN4/OscylWBtpNJl69KBCmZ?=
- =?us-ascii?Q?DBOWH7gdut5UkbyW1Ntpw2CrFLR1KnVJAXvWjmcNsD5SSsMwRGq/r1E9mAvm?=
- =?us-ascii?Q?3YFG7535oWLyghKdRTS9lYgNPsMslAGfcDKrA9UmohMUL+eFAq+tGE2TdrND?=
- =?us-ascii?Q?1JDJpWhu/plcruywNCTRBxmaPinAro3PrAzj/NOZfF9gpIcAd/sHKz5n4gYd?=
- =?us-ascii?Q?8nWPV1vcC6gLDjj14bsoTy3N1OfdhJpadptzVprbICgFFxx0faWrjc7onjFo?=
- =?us-ascii?Q?e/RqaQ4WOilyOTDrUQ0K16sRTQSZ9yt928rKIsexFwMlUMWYp+fKCRbiUfue?=
- =?us-ascii?Q?Cjip31kGDchY/thE40mhWKQUTaz9+1+hBigBFe6kL6yC6OwEkZqmUl3jjYVK?=
- =?us-ascii?Q?qllae9C6i7WI1Fog9enXgkCmZgV7eNGGL/V//NC+toV81bg+ONRYUavI1Yuv?=
- =?us-ascii?Q?c+X9E26JQcM1P1+0GisAA3ygfi12jHC7/3gLPlVr14bJs+EFQCa/NhumEp/v?=
- =?us-ascii?Q?oma0zD8T9MPbvrjhf9oa+6MyiJOA7j/AG09c43xtEOxh2h5vIxfygk3gWiZW?=
- =?us-ascii?Q?ptiq4cPyEhk4nQtCj86dwWnVcvGWKwI/A76UfbYEijIPpguTXkJ8K1VLq05i?=
- =?us-ascii?Q?uVsc3hVuTlQgRLIvQHRT9TWijVAd94k1kzTNYbBuPD1oqtfH+lNlU4G7w3DM?=
- =?us-ascii?Q?3783Ikzjs18HuDEK//9mYC/S6BhDFAdQiegf/B+SmPzdT8BHTGDmVZmH2Pv7?=
- =?us-ascii?Q?YXh3IuTsBSukF77wERnoDHEKTcnltenLgqh5Std4lgyQ0nMAWREzFv0kc3qc?=
- =?us-ascii?Q?flsX8lzTqmfYwYCf/PddeBNPbZBBPt9QRj1O7WEyyM93WU44wKlSRxUs+Tg9?=
- =?us-ascii?Q?/iSH2RFc+62EnUDcA62H4tj9ezEfDht5ay864edlKgBMFvDOB8pCTectH69b?=
- =?us-ascii?Q?L9RGqSqXPhqX8HwcpP+7avaeR9+/SmqxzFeskFezufkW6RNJH49k5jy96aHm?=
- =?us-ascii?Q?XP77/+lNKQky+aF/4TcKC+m5n5LqRz0LEm5koHmKt/LF9tfM4CCwpibjWRzD?=
- =?us-ascii?Q?1K+kFP0wvV8icY+FF8WcsZfsAw6liX8o7hzySbUmurM8xwp1b64qkqJAtz4p?=
- =?us-ascii?Q?/CdUYEATyGlD6fJElDGWxeMNWyYfTFS9hhIW68PTIIMuNaOfpd6Ok4uN5rZw?=
- =?us-ascii?Q?3FyMzKg0wfOBiOYxxVBvSZVzx6XXvSIv/fpy56gw?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d6da644a-8581-48d0-5b94-08dcb12d3f5c
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 06:51:47.6377
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eNfNye5kBJ7Wukasx59q2N9aLps/Ai9yQbN9XA9Zcl1fMKOdzVNpKkwanI0ayr9QOsJEKyBvJdcxYh/WOgnVBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6939
+Content-Transfer-Encoding: 8bit
 
-In filemap_fault(), if don't want read-ahead, the process is as follows:
+Convert the NXP LPC32xx Clock Controller bindings to yaml format.
 
-First, __filemap_get_folio alloc one new folio, because PG_uptodate is not
-set, filemap_read_folio() will be called later to read data into the folio.
-Secondly, before returning, it will check whether the per vma lock or
-mmap_lock is released. If the lock is released, VM_FAULT_RETRY is returned,
-which means that the page fault path needs retry again. Finally,
-filemap_map_pages() is called in do_fault_around() to establish a page
-table mapping for the previous folio.
-
-Because filemap_read_folio() just read the data of one folio, without
-read-ahead pages, it is no needs to go through the do_fault_around() again
-in the page fault retry path.
-
-Signed-off-by: Rong Qianfeng <rongqianfeng@vivo.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 ---
- mm/filemap.c | 23 +++++++++++++++++++----
- 1 file changed, 19 insertions(+), 4 deletions(-)
+Changes in v2:
+  - Listed the items with description in the clock property.
+  - Corrected clock-names property.
+---
+ .../bindings/clock/nxp,lpc3220-clk.txt        | 30 -----------
+ .../bindings/clock/nxp,lpc3220-clk.yaml       | 51 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 30 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index d62150418b91..f29adf5cf081
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3105,6 +3105,15 @@ static int lock_folio_maybe_drop_mmap(struct vm_fault *vmf, struct folio *folio,
- 	return 1;
- }
- 
-+static inline bool want_readahead(unsigned long vm_flags, struct file_ra_state *ra)
-+{
-+	if (vm_flags & VM_RAND_READ || !ra->ra_pages)
-+		return false;
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+deleted file mode 100644
+index 20cbca3f41d8..000000000000
+--- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-NXP LPC32xx Clock Controller
+-
+-Required properties:
+-- compatible: should be "nxp,lpc3220-clk"
+-- reg:  should contain clock controller registers location and length
+-- #clock-cells: must be 1, the cell holds id of a clock provided by the
+-  clock controller
+-- clocks: phandles of external oscillators, the list must contain one
+-  32768 Hz oscillator and may have one optional high frequency oscillator
+-- clock-names: list of external oscillator clock names, must contain
+-  "xtal_32k" and may have optional "xtal"
+-
+-Examples:
+-
+-	/* System Control Block */
+-	scb {
+-		compatible = "simple-bus";
+-		ranges = <0x0 0x040004000 0x00001000>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-
+-		clk: clock-controller@0 {
+-			compatible = "nxp,lpc3220-clk";
+-			reg = <0x00 0x114>;
+-			#clock-cells = <1>;
+-
+-			clocks = <&xtal_32k>, <&xtal>;
+-			clock-names = "xtal_32k", "xtal";
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+new file mode 100644
+index 000000000000..16f79616d18a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/nxp,lpc3220-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	return true;
-+}
++title: NXP LPC32xx Clock Controller
 +
- /*
-  * Synchronous readahead happens when we don't even find a page in the page
-  * cache at all.  We don't want to perform IO under the mmap sem, so if we have
-@@ -3141,9 +3150,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- #endif
- 
- 	/* If we don't want any read-ahead, don't bother */
--	if (vm_flags & VM_RAND_READ)
--		return fpin;
--	if (!ra->ra_pages)
-+	if (!want_readahead(vm_flags, ra))
- 		return fpin;
- 
- 	if (vm_flags & VM_SEQ_READ) {
-@@ -3191,7 +3198,7 @@ static struct file *do_async_mmap_readahead(struct vm_fault *vmf,
- 	unsigned int mmap_miss;
- 
- 	/* If we don't want any read-ahead, don't bother */
--	if (vmf->vma->vm_flags & VM_RAND_READ || !ra->ra_pages)
-+	if (!want_readahead(vmf->vma->vm_flags, ra))
- 		return fpin;
- 
- 	mmap_miss = READ_ONCE(ra->mmap_miss);
-@@ -3612,6 +3619,14 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
- 	unsigned long rss = 0;
- 	unsigned int nr_pages = 0, mmap_miss = 0, mmap_miss_saved, folio_type;
- 
-+	/*
-+	 * If no other read-ahead pages, return zero will
-+	 * call __do_fault() to end the page fault path.
-+	 */
-+	if ((vmf->flags & FAULT_FLAG_TRIED) &&
-+	    !want_readahead(vma->vm_flags, &file->f_ra))
-+		return 0;
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
 +
- 	rcu_read_lock();
- 	folio = next_uptodate_folio(&xas, mapping, end_pgoff);
- 	if (!folio)
++properties:
++  compatible:
++    const: nxp,lpc3220-clk
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    minItems: 1
++    items:
++      - description: External 32768 Hz oscillator.
++      - description: Optional high frequency oscillator.
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: xtal_32k
++      - const: xtal
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@0 {
++        compatible = "nxp,lpc3220-clk";
++        reg = <0x00 0x114>;
++        #clock-cells = <1>;
++        clocks = <&xtal_32k>, <&xtal>;
++        clock-names = "xtal_32k", "xtal";
++    };
 -- 
-2.39.0
+2.45.2
 
 
