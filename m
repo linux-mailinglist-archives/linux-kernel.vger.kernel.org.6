@@ -1,110 +1,102 @@
-Return-Path: <linux-kernel+bounces-269953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50520943937
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:12:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCA994393C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067BB1F22190
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:12:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85886B23969
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E936616DC03;
-	Wed, 31 Jul 2024 23:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D00616DC1D;
+	Wed, 31 Jul 2024 23:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rNatAXpP";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7RO4tWle"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="k2v6Kg3x"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B973B16CD27;
-	Wed, 31 Jul 2024 23:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF0216DEC6;
+	Wed, 31 Jul 2024 23:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722467542; cv=none; b=E8gih6MDH0cnJZ51zA8Hpu8sYJuXh4oxP01gss6K8+bL6R3dWWxHPzpJ1tLRdUFpQG/NTgGLUnOjFzsYIQqQg8nVS69u3ZToRiMQcsPDWsx2dRct9VFbk0/BnNSF3EiWah6N/8NZ6MRlAYjY82HpQsWDxlWPEcChF+JmCDM6M6M=
+	t=1722467553; cv=none; b=tgggmxzG7PlL3axHArRow0b/WWSae7mZiHH5vE8M932JaO1ufqzDArK8IIt0sZYN0nqLfCZe+yBt0MrroHGADhyJnmHSsPj8fLv0WgtypfXARPdpadE9OI9+YljysYF0t7ky2pCW265slJkQEzb97vEYLZsHeywk2o7xfVZ0LOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722467542; c=relaxed/simple;
-	bh=yTFNCo6dsHpaN6r1OgcB6s6GIEPGM96pH7z4v3J1TrM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NKYzMJY9DzldPG73z+6NbVNkEC4FoDVV95aTa0I2vO5H2xh6RWHnldqeEUtc59z0NH4l9WsQoNsPtk9DyIZffu4KWmpzUhZvxI7oKbG/TgNnAGiKma7/xS5stkjA8ZwKhRjRrARK2i+gSHYRjPM/kI9HxxArla+y3SaGN3OxQnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rNatAXpP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7RO4tWle; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722467538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYSYkJYx0g5ZV/EeanAUfppc8A9wc8Vu/gyG9KH/nOI=;
-	b=rNatAXpPTdn8K+FwcHrdTjR+m5SoafikSNWQguPUxNfHkuHjiaQHRDrdLoAMfpcc6bBDvV
-	m1XQ9g8ew6wsevZk/Zxt1Fijqbb0lRMfZN/JWQij7HfsLmrjOCpxBhLzD7q/HImgYVBvQ5
-	L3i3sga7Ch7t6dTtibgW3nQDR7/cZVHZShLpaiHg54+EkAq4jiqTRvdHgULIapmOWt/G1O
-	NwjnuhC+a10z06A8lCtC1iSYyNAufPS83gOTQYYSDnI6jHb5198oJDt7hLJQ9pz3MU0RE3
-	yAl2f03ceHA6osDLbrkBKFil4VxBw31rd04WdTNijqwYa0lL3L5lOwFGPr2cMQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722467538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TYSYkJYx0g5ZV/EeanAUfppc8A9wc8Vu/gyG9KH/nOI=;
-	b=7RO4tWleTldG4HxsvdmV72m9MRB0FlsuoFfJLFaC+dJn0bXaG1IhgBpKT1XRE9xaQEl7ab
-	Zg9Mn+AxLkShmXAA==
-To: Bjorn Helgaas <helgaas@kernel.org>, Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 1/1] selftest: drivers: Add support its msi hwirq checking
-In-Reply-To: <87sevp47kc.ffs@tglx>
-References: <20240731192436.GA76176@bhelgaas> <87sevp47kc.ffs@tglx>
-Date: Thu, 01 Aug 2024 01:12:17 +0200
-Message-ID: <87ikwl40mm.ffs@tglx>
+	s=arc-20240116; t=1722467553; c=relaxed/simple;
+	bh=Jb/zfmrX2MqjnLDAy5dnEm8A41KF10wWlVBtPn8reR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=D1JboNw1OYk5awpMZ5lDw3RXGJjjhCUjh7vJfaPmPQLJ+esHq6r4XxxIPFB4rxRD475ZyVxVa+za5tVb6t+7XF7w6eF+6VyWiSFoWGkDgehsQw2Wzq8U9bdXUGEM6AkpSvwlMwmKwV71Xn70u4zKRUWD7PaR4XXBKHo2ycN9Jdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=k2v6Kg3x; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722467545;
+	bh=sGkfM983o3g+F4N3kvcDfoiHMLxXBQakXL9buNV3XUw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=k2v6Kg3xUMQ8EJg9XGuVHcYdeYBTzzYZog3QubLWQOHS29kJNX0yUARsL9c7/0hoj
+	 iHODcsf3I7U9L7NaCOHlQyKIClCCwK3xGPTZmvTIBdhpZ2QFsqR47/hrajIfFtq7+s
+	 OPMavXed6CC+LBSpnBgbjW34EH/Mp97Fpx5Q6KikJqDcvuUy0kQDG9feg3LzLrgKnN
+	 /B1Wy4vC145l4ISvY2B+/dHRfZlr7htwqfTj5797zP8Qe0N84NPofSuBzG8LRsUUQo
+	 ckX2lI/krnX4nNWNRslmGxBRImEMKkLS72wQ8BJaI3IyCxolNbK78TFepTFmR8hD69
+	 RUogBNrnLO5dw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZ7Cs1M0zz4x6r;
+	Thu,  1 Aug 2024 09:12:25 +1000 (AEST)
+Date: Thu, 1 Aug 2024 09:12:24 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: error fetching the bcachefs tree
+Message-ID: <20240801091224.4a8fe739@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/t=QXlkk6qVVlKc1=q3z9RG=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Jul 31 2024 at 22:42, Thomas Gleixner wrote:
-> Aside of that the proposed parser does not even work anymore on 6.11
-> because we switched ARM[64] over to per device domains during the merge
-> window.
->
-> So if we want a selftest for the correctness of the hardware interrupt
-> numbers then it should grab the per interrupt sysfs entry 'chip_name'
-> and 'hwirq' pairs and do an analysis per 'chip_name' whether all
-> hardware interrupt numbers for a chip are unique.
+--Sig_/t=QXlkk6qVVlKc1=q3z9RG=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I just hacked up a 20 lines snake script to analyze it and indeed that
-produces duplicates because some interrupt chips do not have unique chip
-names as they are shared between interrupt domains and the chip names
-are constant.
+Hi all,
 
-There are several ways to handle this:
+Trying to fetch the bcachefs tree
+(https://evilpiepirate.org/git/bcachefs.git#for-next) gives me the
+following error:
 
-  1) Amend /sys/kernel/irq/$N/chip_name with the irq domain name
+fatal: unable to access 'https://evilpiepirate.org/git/bcachefs.git/': The =
+requested URL returned error: 500
 
-  2) Expose the irq domain name in /sys/kernel/irq/$N/domain_name
+This has been happening for the past few days.  It also affects the
+header_cleanup tree
+(https://evilpiepirate.org/git/bcachefs.git#header_cleanup).
 
-  3) Utilize the existing /sys/kernel/debug/irq/ mechanism
+--=20
+Cheers,
+Stephen Rothwell
 
-#1 Does change the output of chip_name, but that is a kernel internal
-   detail anyway so there is no real UABI concern.
+--Sig_/t=QXlkk6qVVlKc1=q3z9RG=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-#2 has the advantage that it does not change the output of chip_name but
-   it consumes more memory for a dubious value.
+-----BEGIN PGP SIGNATURE-----
 
-#3 has the downside that it requires CONFIG_GENERIC_IRQ_DEBUGFS=y and is
-   root only, but that should be not a problem for testing. We have other
-   selftests which have Kconfig dependencies and root requirements. The
-   upside is that it does not require kernel changes.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaqxNgACgkQAVBC80lX
+0GxxMQf/bBTETfVTvaTSrBDdH6UaD+QWqd5CnS9r2OKCbVA+MStxThkPenktZJ+U
+wlCPga+Z8/cUt5orfvMDkK/DAAzvHatu5m7NkZvSuWk+Ew1e/JkzaSQcwUlllM0F
+DyFfSZsbwtbNjI3/x4Iq8B7Saeu903SiUz0H4alQKoepU29qXlln5fARejMvplTN
+1D4Mfrn+/oIsyVH5ZiPPuj+D13mgYLhd6nO8UQiA8jRRJEB7SRfFZ/cCX6tC8Tio
+PgRKL5LCDhKdwTbLWxsaFUsLqk5wMmgS+9GXjA4nn61D5b1uWaffoqSTlUsDglV5
+YN1xlG+0UPPFGNa2A/lrN+vYoHCrHg==
+=g0Z3
+-----END PGP SIGNATURE-----
 
-No real strong opinion either way, but all of that is better than a ITS
-specific parser which fails to work on the next kernel version.
-
-Thanks,
-
-        tglx
+--Sig_/t=QXlkk6qVVlKc1=q3z9RG=--
 
