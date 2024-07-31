@@ -1,244 +1,210 @@
-Return-Path: <linux-kernel+bounces-269526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBE779433D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:05:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B84889433DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 925AA2862CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:05:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 12E8CB2675F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:07:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2991BBBE7;
-	Wed, 31 Jul 2024 16:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92431BC073;
+	Wed, 31 Jul 2024 16:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fF82LNfI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8XGssue"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2191BB6B2
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54501CAA9;
+	Wed, 31 Jul 2024 16:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441936; cv=none; b=R+QHn2wQYYN2Tgnfm/1d/NIa3J5jqLzUmMZtpzwA9b5d6Oz+O/vxdd34bV4WiiYnCXeCh10tfl6OxTZSzueSpcNSY6hhcb7qXyG2FoHIzrcH/xOkTJg6Rmt8b8InWJXqEf+QO7TKUmHldynMXcGUwsptraNoKy4QGYkBCtvaL3Q=
+	t=1722442056; cv=none; b=agi57KcF/AKNgnceIsSwVit8GQ9ZPZxnrX73BDU3HzyIdKxQmgByHhJ68HIB+ao2KPkeQL6rVp3nZcTDKvvA3FitQp60valTq+jqZnPDt4ikKnfd+SafyPGXEGyXkbc2zJlkzAXhN/Cw1tY/b+vi6oM9xi/MlAbLa18DQwfpFYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441936; c=relaxed/simple;
-	bh=U10/q7arjnd/q6yYhxXbpLqgDRSYgVYrCtJHqjc/j80=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IrHP7MZ49w8bW6GVIjSu1YOaOtIWgfmF4Q+J9k4twpCuFJrdeRO3xCVk7W5Fia8uIMk302lLzUF7HkoidVZFl31Y2csbcduOUh/msIB33XfakQkQYVyvsH6bhNhbS47aUp2Xn4SU3/Oxq6pjHXV4DqCbOvHbE00kjlfnG04nkQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fF82LNfI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3678C116B1;
-	Wed, 31 Jul 2024 16:05:34 +0000 (UTC)
+	s=arc-20240116; t=1722442056; c=relaxed/simple;
+	bh=/T0PogkqnHRsWRuK6VPDBhO66ZfmSpD7WOcpsonFMyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MySnYNLM4AP4VRm6zeUGEpt2Jw3zjbJkZFso8H1hkeF953G3QoUIX5EblDmJGB0CO4nPpxBPkmGVuN/nUFxh26YQPqlbAKbiNskdJIapscKlSYC8mysynE2OXiChP+8sYnVf0SqLKYos8Yiy+iGPt53uX6rNkLVZc54ELQmr4h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8XGssue; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35271C116B1;
+	Wed, 31 Jul 2024 16:07:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722441935;
-	bh=U10/q7arjnd/q6yYhxXbpLqgDRSYgVYrCtJHqjc/j80=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fF82LNfIMTdVxYgELzUgEMVH2Llw7ne/XZB52q7c2Jd7maRrCnaDx8uwMH3T40NoN
-	 SzT6l1EjO7AHjH+0Akcj0HBxT2e4iHXRKNqa6rrhin+PASDY50DLK1iBI7LDQvBGe5
-	 56lKfU+JchhItfRXP/NAUZ9fWRMXwfBTbypHgxUp29eoonzpEOvfEGN+4gffe4Wg8t
-	 WuCD5pnJv4HFJDvlfxxjfKLVQw8XmkbBYmVaoytnI/jsArx5l9HLUoB9xvMyAiCumd
-	 HE4h2zbPv7uywLyQqa+UBus5vOEDb3xFtse6qBA8krM3zftTbGyn7sG+ABXPOjgdPH
-	 bBY27WwSgvWag==
-From: Borislav Petkov <bp@kernel.org>
-To: X86 ML <x86@kernel.org>
-Cc: Ananth Narayan <ananth.narayan@amd.com>,
-	Jon Grimm <Jon.Grimm@amd.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>
-Subject: [PATCH] Documentation/srso: Document a method for checking safe RET operates properly
-Date: Wed, 31 Jul 2024 18:05:31 +0200
-Message-ID: <20240731160531.28640-1-bp@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1722442055;
+	bh=/T0PogkqnHRsWRuK6VPDBhO66ZfmSpD7WOcpsonFMyo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=J8XGssue9wCJ45qJ+K7j0xyUuLBxiStj7SL269jGPapUY/W0wpXOk+VPiwLEpXbkM
+	 WSEXi05v2UArn12Qmz9/yiJRjEVJL/bZNVVvA2+jZZhW4soP8vly0H4EW9N9yY+4v8
+	 QddQaXtYCgW4vfYi6+9auScAkfZ8QlpXj1lcVoDJ3xCcxSgV7LNtB72uG/OXDZSfRl
+	 wqRmSJpJO1xMnuWns5OqH9sqyZ8SdAPTqpbDqrPcn8D61STthHfVbQ9madruVtdF3R
+	 1Ms2HDe5dwBtfKSxwQTL/Z3mMrhEj0nROIrSyFIRVWNK7OCzNp2R912nTWqM6jeJYm
+	 hqfVBA1QxRCyA==
+Date: Wed, 31 Jul 2024 18:07:32 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>
+Subject: Re: [PATCH v3 13/25] context_tracking, rcu: Rename
+ rcu_dynticks_task*() into rcu_task*()
+Message-ID: <ZqphRBrI4mlSdER4@localhost.localdomain>
+References: <20240724144325.3307148-1-vschneid@redhat.com>
+ <20240724144325.3307148-14-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240724144325.3307148-14-vschneid@redhat.com>
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Le Wed, Jul 24, 2024 at 04:43:13PM +0200, Valentin Schneider a écrit :
+> The context_tracking.state RCU_DYNTICKS subvariable has been renamed to
+> RCU_WATCHING, and the 'dynticks' prefix can be dropped without losing any
+> meaning.
+> 
+> While at it, flip the suffixes of these helpers. We are not telling
+> that we are entering dynticks mode from an RCU-task perspective anymore; we
+> are telling that we are exiting RCU-tasks because we are in eqs mode.
+> 
+> Suggested-by: Frederic Weisbecker <frederic@kernel.org>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> ---
+>  kernel/context_tracking.c | 28 ++++++++++++++--------------
+>  1 file changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/kernel/context_tracking.c b/kernel/context_tracking.c
+> index 8262f57a43636..1c16a7336360f 100644
+> --- a/kernel/context_tracking.c
+> +++ b/kernel/context_tracking.c
+> @@ -38,24 +38,24 @@ EXPORT_SYMBOL_GPL(context_tracking);
+>  #ifdef CONFIG_CONTEXT_TRACKING_IDLE
+>  #define TPS(x)  tracepoint_string(x)
+>  
+> -/* Record the current task on dyntick-idle entry. */
+> -static __always_inline void rcu_dynticks_task_enter(void)
+> +/* Record the current task on exiting RCU-tasks (dyntick-idle entry). */
+> +static __always_inline void rcu_task_exit(void)
 
-Add a method to quickly verify whether safe RET operates properly on
-a given system using perf tool.
+So this makes sense.
 
-Also, add a selftest which does the same thing.
+>  {
+>  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
+>  	WRITE_ONCE(current->rcu_tasks_idle_cpu, smp_processor_id());
+>  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
+>  }
+>  
+> -/* Record no current task on dyntick-idle exit. */
+> -static __always_inline void rcu_dynticks_task_exit(void)
+> +/* Record no current task on entering RCU-tasks (dyntick-idle exit). */
+> +static __always_inline void rcu_task_enter(void)
 
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- Documentation/admin-guide/hw-vuln/srso.rst | 69 +++++++++++++++++++++
- tools/testing/selftests/x86/Makefile       |  2 +-
- tools/testing/selftests/x86/srso.c         | 70 ++++++++++++++++++++++
- 3 files changed, 140 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/x86/srso.c
+That too.
 
-diff --git a/Documentation/admin-guide/hw-vuln/srso.rst b/Documentation/admin-guide/hw-vuln/srso.rst
-index 4bd3ce3ba171..2ad1c05b8c88 100644
---- a/Documentation/admin-guide/hw-vuln/srso.rst
-+++ b/Documentation/admin-guide/hw-vuln/srso.rst
-@@ -158,3 +158,72 @@ poisoned BTB entry and using that safe one for all function returns.
- In older Zen1 and Zen2, this is accomplished using a reinterpretation
- technique similar to Retbleed one: srso_untrain_ret() and
- srso_safe_ret().
-+
-+Checking the safe RET mitigation actually works
-+-----------------------------------------------
-+
-+In case one wants to validate whether the SRSO safe RET mitigation works
-+on a kernel, one could use two performance counters
-+
-+* PMC_0xc8 - Count of RET/RET lw retired
-+* PMC_0xc9 - Count of RET/RET lw retired mispredicted
-+
-+and compare the number of RETs retired properly vs those retired
-+mispredicted, in kernel mode. Another way of specifying those events
-+is::
-+
-+        # perf list ex_ret_near_ret
-+
-+        List of pre-defined events (to be used in -e or -M):
-+
-+        core:
-+          ex_ret_near_ret
-+               [Retired Near Returns]
-+          ex_ret_near_ret_mispred
-+               [Retired Near Returns Mispredicted]
-+
-+Either the command using the event mnemonics::
-+
-+        # perf stat -e ex_ret_near_ret:k -e ex_ret_near_ret_mispred:k sleep 10s
-+
-+or using the raw PMC numbers::
-+
-+        # perf stat -e cpu/event=0xc8,umask=0/k -e cpu/event=0xc9,umask=0/k sleep 10s
-+
-+should give the same amount. I.e., every RET retired should be
-+mispredicted::
-+
-+        [root@brent: ~/kernel/linux/tools/perf> ./perf stat -e cpu/event=0xc8,umask=0/k -e cpu/event=0xc9,umask=0/k sleep 10s
-+
-+         Performance counter stats for 'sleep 10s':
-+
-+                   137,167      cpu/event=0xc8,umask=0/k
-+                   137,173      cpu/event=0xc9,umask=0/k
-+
-+              10.004110303 seconds time elapsed
-+
-+               0.000000000 seconds user
-+               0.004462000 seconds sys
-+
-+vs the case when the mitigation is disabled (spec_rstack_overflow=off)
-+or not functioning properly, showing usually a lot smaller number of
-+mispredicted retired RETs vs the overall count of retired RETs during
-+a workload::
-+
-+       [root@brent: ~/kernel/linux/tools/perf> ./perf stat -e cpu/event=0xc8,umask=0/k -e cpu/event=0xc9,umask=0/k sleep 10s
-+
-+        Performance counter stats for 'sleep 10s':
-+
-+                  201,627      cpu/event=0xc8,umask=0/k
-+                    4,074      cpu/event=0xc9,umask=0/k
-+
-+             10.003267252 seconds time elapsed
-+
-+              0.002729000 seconds user
-+              0.000000000 seconds sys
-+
-+Also, there is a selftest which performs the above, go to
-+tools/testing/selftests/x86/ and do::
-+
-+        make srso
-+        ./srso
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index 5c8757a25998..d51249f14e2f 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -77,7 +77,7 @@ all_32: $(BINARIES_32)
- 
- all_64: $(BINARIES_64)
- 
--EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64)
-+EXTRA_CLEAN := $(BINARIES_32) $(BINARIES_64) srso
- 
- $(BINARIES_32): $(OUTPUT)/%_32: %.c helpers.h
- 	$(CC) -m32 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $< $(EXTRA_FILES) -lrt -ldl -lm
-diff --git a/tools/testing/selftests/x86/srso.c b/tools/testing/selftests/x86/srso.c
-new file mode 100644
-index 000000000000..1dcc49faf5a2
---- /dev/null
-+++ b/tools/testing/selftests/x86/srso.c
-@@ -0,0 +1,70 @@
-+#include <linux/perf_event.h>
-+#include <cpuid.h>
-+#include <errno.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <sys/ioctl.h>
-+#include <sys/syscall.h>
-+#include <unistd.h>
-+
-+int main(void)
-+{
-+	struct perf_event_attr ret_attr, mret_attr;
-+	long long count_rets, count_rets_mispred;
-+	int rrets_fd, mrrets_fd;
-+	unsigned int cpuid1_eax, b, c, d;
-+
-+	__cpuid(1, cpuid1_eax, b, c, d);
-+
-+	if (cpuid1_eax < 0x00800f00 ||
-+	    cpuid1_eax > 0x00afffff) {
-+		fprintf(stderr, "This needs to run on a Zen[1-4] machine (CPUID(1).EAX: 0x%x). Exiting...\n", cpuid1_eax);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&ret_attr, 0, sizeof(struct perf_event_attr));
-+	memset(&mret_attr, 0, sizeof(struct perf_event_attr));
-+
-+	ret_attr.type = mret_attr.type = PERF_TYPE_RAW;
-+	ret_attr.size = mret_attr.size = sizeof(struct perf_event_attr);
-+	ret_attr.config = 0xc8;
-+	mret_attr.config = 0xc9;
-+	ret_attr.disabled = mret_attr.disabled = 1;
-+	ret_attr.exclude_user = mret_attr.exclude_user = 1;
-+	ret_attr.exclude_hv = mret_attr.exclude_hv = 1;
-+
-+	rrets_fd = syscall(SYS_perf_event_open, &ret_attr, 0, -1, -1, 0);
-+	if (rrets_fd == -1) {
-+		perror("opening retired RETs fd");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	mrrets_fd = syscall(SYS_perf_event_open, &mret_attr, 0, -1 , -1, 0);
-+	if (mrrets_fd == -1) {
-+		perror("opening retired mispredicted RETs fd");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	ioctl(rrets_fd, PERF_EVENT_IOC_RESET, 0);
-+	ioctl(mrrets_fd, PERF_EVENT_IOC_RESET, 0);
-+
-+	ioctl(rrets_fd, PERF_EVENT_IOC_ENABLE, 0);
-+	ioctl(mrrets_fd, PERF_EVENT_IOC_ENABLE, 0);
-+
-+	printf("Sleeping for 10 seconds\n");
-+	sleep(10);
-+
-+	ioctl(rrets_fd, PERF_EVENT_IOC_DISABLE, 0);
-+	ioctl(mrrets_fd, PERF_EVENT_IOC_DISABLE, 0);
-+
-+	read(rrets_fd, &count_rets, sizeof(long long));
-+	read(mrrets_fd, &count_rets_mispred, sizeof(long long));
-+
-+	printf("RETs: (%lld retired <-> %lld mispredicted)\n",
-+		count_rets, count_rets_mispred);
-+	printf("SRSO Safe-RET mitigation works correctly if both counts are almost equal.\n");
-+
-+	return 0;
-+}
-+
--- 
-2.43.0
+>  {
+>  #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL)
+>  	WRITE_ONCE(current->rcu_tasks_idle_cpu, -1);
+>  #endif /* #if defined(CONFIG_TASKS_RCU) && defined(CONFIG_NO_HZ_FULL) */
+>  }
+>  
+> -/* Turn on heavyweight RCU tasks trace readers on idle/user entry. */
+> -static __always_inline void rcu_dynticks_task_trace_enter(void)
+> +/* Turn on heavyweight RCU tasks trace readers on kernel exit. */
+> +static __always_inline void rcu_task_trace_exit(void)
 
+But that eventually doesn't, because it's not about not wathing anymore from
+an RCU-TASKS-TRACE perspective. It's actually about adding more heavyweight
+ordering to track down RCU-TASKS-TRACE read side while traditional RCU is not
+watching. Sorry for understanding it that late.
+
+Oh well. So a more accurate name here would be rcu_task_trace_heavyweight_enter().
+
+>  {
+>  #ifdef CONFIG_TASKS_TRACE_RCU
+>  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
+> @@ -63,8 +63,8 @@ static __always_inline void rcu_dynticks_task_trace_enter(void)
+>  #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
+>  }
+>  
+> -/* Turn off heavyweight RCU tasks trace readers on idle/user exit. */
+> -static __always_inline void rcu_dynticks_task_trace_exit(void)
+> +/* Turn off heavyweight RCU tasks trace readers on kernel entry. */
+> +static __always_inline void rcu_task_trace_enter(void)
+
+And rcu_task_trace_heavyweight_exit().
+
+Thanks!
+
+>  {
+>  #ifdef CONFIG_TASKS_TRACE_RCU
+>  	if (IS_ENABLED(CONFIG_TASKS_TRACE_RCU_READ_MB))
+> @@ -87,7 +87,7 @@ static noinstr void ct_kernel_exit_state(int offset)
+>  	 * critical sections, and we also must force ordering with the
+>  	 * next idle sojourn.
+>  	 */
+> -	rcu_dynticks_task_trace_enter();  // Before ->dynticks update!
+> +	rcu_task_trace_exit();  // Before CT state update!
+>  	seq = ct_state_inc(offset);
+>  	// RCU is no longer watching.  Better be in extended quiescent state!
+>  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && (seq & CT_RCU_WATCHING));
+> @@ -109,7 +109,7 @@ static noinstr void ct_kernel_enter_state(int offset)
+>  	 */
+>  	seq = ct_state_inc(offset);
+>  	// RCU is now watching.  Better not be in an extended quiescent state!
+> -	rcu_dynticks_task_trace_exit();  // After ->dynticks update!
+> +	rcu_task_trace_enter();  // After CT state update!
+>  	WARN_ON_ONCE(IS_ENABLED(CONFIG_RCU_EQS_DEBUG) && !(seq & CT_RCU_WATCHING));
+>  }
+>  
+> @@ -149,7 +149,7 @@ static void noinstr ct_kernel_exit(bool user, int offset)
+>  	// RCU is watching here ...
+>  	ct_kernel_exit_state(offset);
+>  	// ... but is no longer watching here.
+> -	rcu_dynticks_task_enter();
+> +	rcu_task_exit();
+>  }
+>  
+>  /*
+> @@ -173,7 +173,7 @@ static void noinstr ct_kernel_enter(bool user, int offset)
+>  		ct->nesting++;
+>  		return;
+>  	}
+> -	rcu_dynticks_task_exit();
+> +	rcu_task_enter();
+>  	// RCU is not watching here ...
+>  	ct_kernel_enter_state(offset);
+>  	// ... but is watching here.
+> @@ -240,7 +240,7 @@ void noinstr ct_nmi_exit(void)
+>  	// ... but is no longer watching here.
+>  
+>  	if (!in_nmi())
+> -		rcu_dynticks_task_enter();
+> +		rcu_task_exit();
+>  }
+>  
+>  /**
+> @@ -274,7 +274,7 @@ void noinstr ct_nmi_enter(void)
+>  	if (rcu_dynticks_curr_cpu_in_eqs()) {
+>  
+>  		if (!in_nmi())
+> -			rcu_dynticks_task_exit();
+> +			rcu_task_enter();
+>  
+>  		// RCU is not watching here ...
+>  		ct_kernel_enter_state(CT_RCU_WATCHING);
+> -- 
+> 2.43.0
+> 
 
