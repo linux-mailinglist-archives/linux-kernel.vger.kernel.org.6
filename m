@@ -1,52 +1,58 @@
-Return-Path: <linux-kernel+bounces-269803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6832C943703
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:18:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D36CD943707
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0122285E70
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899601F21D6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041D916CD1C;
-	Wed, 31 Jul 2024 20:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936DA16CD28;
+	Wed, 31 Jul 2024 20:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ugq/t2kA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Op72e/4e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFB616C87B;
-	Wed, 31 Jul 2024 20:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1CF81607B6;
+	Wed, 31 Jul 2024 20:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456979; cv=none; b=Lkgr2uqEzZbIhef5n4gcM4EiVADpqfffdgYcYAaYrHCtrLp3MfdsCS1iNgFLjPOxPWcVEwRrZLuwdCTQFkGI9iDkulRV6oB2JoUxr+mZTliK/o7t/G2vQYRDWOuO9oaAlEp/AJS8UXkDvQqRvyrvOBjMY81/YIPziAHhA0JkK34=
+	t=1722457046; cv=none; b=mmO+M4dnocnmOJ3iakMAgcQGG1u93/1vU2p6UNx4yMGh2VOFc4fMVXgjVhgtfQCBYuxmwNmkjsnROHPmYedR/t9LPGlxUwjuBaP8dEe4/Rlazzq7fX7DdJBcoOetL3z/6vU5GUP9XtB+bYJ2US4paatHuwOF/oOd92q8MJmRAYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456979; c=relaxed/simple;
-	bh=DiyhX8yumavlCwzOlf34nZDby+Y3G8PuxaAMdIsspjE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eFSgg41CmRroFFtSNbkpd60yyrBSpTZY5WW34Eqbp4Xny6M0liwQFCKeByXTT55q4zocr/ptqUX7OaGIoiu0WrrS85PSFRLokemT9aBUowCfwq/uq1xJh1wLzUbl4FeXC9KXNn4raLa63LiMNvEAP82gZQ5442medCBh8LBDOnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ugq/t2kA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 011E9C116B1;
-	Wed, 31 Jul 2024 20:16:18 +0000 (UTC)
+	s=arc-20240116; t=1722457046; c=relaxed/simple;
+	bh=NpKqk1XmCVOrCE1ZUbg2FqAEOp2/vYAMzkjm5/5cpvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aV/eeNih/rtbHgueFTsKVNdNU3JC3okppt1zpG+di83xQIFx2Tgub5rASXFCUEzoGM99z8XckoB+6Ura6NUHCzSm3QJFfoKMGh72qWVEH0w8GtbJrw4TrHIZFAI9J5VTfc10ktR1WOOmFeluD0fM82ixlEA0C8aApEy8of2454M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Op72e/4e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B08AC116B1;
+	Wed, 31 Jul 2024 20:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722456979;
-	bh=DiyhX8yumavlCwzOlf34nZDby+Y3G8PuxaAMdIsspjE=;
+	s=k20201202; t=1722457045;
+	bh=NpKqk1XmCVOrCE1ZUbg2FqAEOp2/vYAMzkjm5/5cpvA=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Ugq/t2kAWfxRBMZCvicvH2hfM+YVi5YqCm/G+wijpunQAXl0CTCR9yX+if28hSZlb
-	 o6Fn+1Gnc1lokd1g+yOh4ksqUoUdwyt1y+/k771nT5BaOi091AyjBAX/mrVYo2EnOo
-	 Tn5Ypsn+pLySrlzE2g4DsWZOR8BdO4n7A1Ci2HAgr0KwbK6zE1mkmlZVORvZIM+Ov1
-	 AR/Ug24320NQSVAxLCBK+yjmhki4vCO9ZUBPxGH1TyWxqNnZ4AFRv3ZPSTf9fK4Kl7
-	 Sbl5zUwEwhJTUdbgDPB2WlfaHgv1HFZwwxHylNpyK/voxFRaY3Fby0ViKfSqB8miVH
-	 eOAqAJNxQsxZA==
+	b=Op72e/4eGmuPhdZyyIRxLbLThEErzT/AH9ug4xmIUbxF4qfsd18SEV3QKv2YnJVuK
+	 TXzgtpFyhOyXu97UqLn0ElyBIxQNF1EtBNQJwTFLJ0lh8em81RO9+w6BYgy7CqGNoq
+	 C2G6nm/NwDAMFU2r+p2e0uHASN1oeDy3WPyzz16NvOAjXP3Jp5YmIH1QyOdsaPp4+R
+	 xQvAqVi5zjNzLBrVnYZ5L5kLi3M6h8CVsMPeXb7EnaZbwhzzAX/NXlt7Knikbp3734
+	 h1HRwLAO9B9WBwXsteeMS5YXWt00E5DWBhjQbeqGS3d1eMNP/GTljJWj0pT/260fxC
+	 +1CQVh+O8v9Pw==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org,
+To: Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: spear: Use of_property_for_each_u32() instead of open coding
-Date: Wed, 31 Jul 2024 14:16:15 -0600
-Message-ID: <20240731201615.1841145-1-robh@kernel.org>
+Subject: [PATCH net-next] net: phy: qca807x: Drop unnecessary and broken DT validation
+Date: Wed, 31 Jul 2024 14:17:03 -0600
+Message-ID: <20240731201703.1842022-2-robh@kernel.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -56,66 +62,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use of_property_count_u32_elems() and of_property_for_each_u32() instead
-of of_find_property() and open coding the property parsing.
-
-This is part of a larger effort to remove callers of of_find_property()
-and similar functions. of_find_property() leaks the DT struct property
-and data pointers which is a problem for dynamically allocated nodes
-which may be freed.
+The check for "leds" and "gpio-controller" both being present is never
+true because "leds" is a node, not a property. This could be fixed
+with a check for child node, but there's really no need for the kernel
+to validate a DT. Just continue ignoring the LEDs if GPIOs are present.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- drivers/cpufreq/spear-cpufreq.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/net/phy/qcom/qca807x.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-diff --git a/drivers/cpufreq/spear-cpufreq.c b/drivers/cpufreq/spear-cpufreq.c
-index 78b875db6b66..4d28147c23f1 100644
---- a/drivers/cpufreq/spear-cpufreq.c
-+++ b/drivers/cpufreq/spear-cpufreq.c
-@@ -171,9 +171,8 @@ static struct cpufreq_driver spear_cpufreq_driver = {
- static int spear_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct device_node *np;
--	const struct property *prop;
- 	struct cpufreq_frequency_table *freq_tbl;
--	const __be32 *val;
-+	u32 val;
- 	int cnt, i, ret;
+diff --git a/drivers/net/phy/qcom/qca807x.c b/drivers/net/phy/qcom/qca807x.c
+index 672c6929119a..ba558486c72f 100644
+--- a/drivers/net/phy/qcom/qca807x.c
++++ b/drivers/net/phy/qcom/qca807x.c
+@@ -733,16 +733,6 @@ static int qca807x_probe(struct phy_device *phydev)
+ 								     "qcom,dac-disable-bias-current-tweak");
  
- 	np = of_cpu_device_node_get(0);
-@@ -186,26 +185,23 @@ static int spear_cpufreq_probe(struct platform_device *pdev)
- 				&spear_cpufreq.transition_latency))
- 		spear_cpufreq.transition_latency = CPUFREQ_ETERNAL;
- 
--	prop = of_find_property(np, "cpufreq_tbl", NULL);
--	if (!prop || !prop->value) {
-+	cnt = of_property_count_u32_elems(np, "cpufreq_tbl");
-+	if (cnt <= 0) {
- 		pr_err("Invalid cpufreq_tbl\n");
- 		ret = -ENODEV;
- 		goto out_put_node;
- 	}
- 
--	cnt = prop->length / sizeof(u32);
--	val = prop->value;
+ #if IS_ENABLED(CONFIG_GPIOLIB)
+-	/* Make sure we don't have mixed leds node and gpio-controller
+-	 * to prevent registering leds and having gpio-controller usage
+-	 * conflicting with them.
+-	 */
+-	if (of_find_property(node, "leds", NULL) &&
+-	    of_find_property(node, "gpio-controller", NULL)) {
+-		phydev_err(phydev, "Invalid property detected. LEDs and gpio-controller are mutually exclusive.");
+-		return -EINVAL;
+-	}
 -
- 	freq_tbl = kcalloc(cnt + 1, sizeof(*freq_tbl), GFP_KERNEL);
- 	if (!freq_tbl) {
- 		ret = -ENOMEM;
- 		goto out_put_node;
- 	}
- 
--	for (i = 0; i < cnt; i++)
--		freq_tbl[i].frequency = be32_to_cpup(val++);
-+	of_property_for_each_u32(np, "cpufreq_tbl", &val)
-+		freq_tbl[i].frequency = val;
- 
--	freq_tbl[i].frequency = CPUFREQ_TABLE_END;
-+	freq_tbl[cnt].frequency = CPUFREQ_TABLE_END;
- 
- 	spear_cpufreq.freq_tbl = freq_tbl;
- 
+ 	/* Do not register a GPIO controller unless flagged for it */
+ 	if (of_property_read_bool(node, "gpio-controller")) {
+ 		ret = qca807x_gpio(phydev);
 -- 
 2.43.0
 
