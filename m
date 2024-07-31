@@ -1,96 +1,116 @@
-Return-Path: <linux-kernel+bounces-268765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229CC942908
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3466694290A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:20:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBA6F2832D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65C701C2284E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:20:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51581A7F88;
-	Wed, 31 Jul 2024 08:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 805FF1A76B3;
+	Wed, 31 Jul 2024 08:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pXEd/Tc/"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Ex5C/Yg7"
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E041A71F7;
-	Wed, 31 Jul 2024 08:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222E01A7F9F;
+	Wed, 31 Jul 2024 08:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413994; cv=none; b=m/Q21kb3HQ7z9hgEK+F4A6Rt9cxb0o6JuF1HeufjztEJeAvzccKm5PljuXI/hER8AXt7ZW4MEHBfu6B0qO259HHOvbuNx36isAqwxniuAdww1LswAOV93xvj6c6vHTqckWHE3QqPfoe8JDlRgfjrIhudYVcPSY8InU12D64BI2s=
+	t=1722413999; cv=none; b=ERm1tVd6gUTIBt2Cu/n1my0pbXVW81eLfMWu3oNnhjQLGLuc7UZ9qmZ/Pui8rZeCWkgOSTPn7tGxfTVN614+QIMfDCifLy4CwavCJBI6/LKc3njwe5ECcs6DtusoPwY839UnO4qjpabHpdWXxraFqPBp07L/B6koXZ6M7Ul3308=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413994; c=relaxed/simple;
-	bh=KLZUCxzeOJ7bmWokWFva6t7JItSJeH9Na9Ou99VElKo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WnpFsUkDHpN1xtT14+7J9b6piPjd7JGfX8igUIiI2n5YNZnLk7k8yYH2ju8FCQt+Q37ToVW122iCgyTBkHb3W4hVCCKWfdKF7Ivcf7B89sv7Ygts8aNAEWYmE2dtHyGAeVyruo+pZ5fNxNsXL1l0E71uTfhuzCmwzE7kRC8mkEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pXEd/Tc/; arc=none smtp.client-ip=46.235.227.194
+	s=arc-20240116; t=1722413999; c=relaxed/simple;
+	bh=mrhS/CCOOLZe9KQcoq1oQixTFVyt0KJQA7x9+zGR/K8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LxgdwxJ9w+RToewRnoFhWDwAvpdea7izfS9YY1mHj+b7TA/WLWLjVqPhkFCBw/pMFb68ZUVqNKVwa6wcjEPVsYrQBAXyzx3tzYbBSaN8qnjdBUIBk7XeFq3GuKFHw88WsHgvOIhZ44y3NR9YHZ3ychRpHvIHPuTgbLXz67Xg4qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Ex5C/Yg7; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722413984;
-	bh=KLZUCxzeOJ7bmWokWFva6t7JItSJeH9Na9Ou99VElKo=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=pXEd/Tc/d44O5iXg1PN+3/mP91j0XIABoTKN5Ng/BuNkTB6sdOo0og8Lj1RHQPw5k
-	 TIuW9bQseNthbgIPNxWLP2yd6ppMfQOifVUkUF0KxAlHggs1K2ASm6WIAEBZqB06Hr
-	 OUi+6dJyYYTvU0rRYEYE57U9tO+M6VdwjDu5uplHuCF6QdGyKR7/I1L/vFyLqVk0li
-	 O5nyaO3D31cUpLyQvf8Ke7Z8I6Erehzxvv0cJTwjoU2SHD0Es3GbrmUEzqRypFCISW
-	 D/wTwC1NGEs8TQrjmI3UevVs+oV/f8qf8KdrLTTeUUXZwoB7Iuf3OVBceU7EF8iRgH
-	 nnfq6+icpUiuA==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	s=mail; t=1722413996;
+	bh=mrhS/CCOOLZe9KQcoq1oQixTFVyt0KJQA7x9+zGR/K8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ex5C/Yg7cE3mf8MoncxyQ8zZv7dkOOubpQA0xVjlLHlRZN0moIPuegQyZMWxZLR1C
+	 ILgzNQAdoIOJ9waU0cbz9b5D15Ggb4I3n9PIAxzEaOnB1WgYd5AdPU/qYiP+13VR1K
+	 hpgRidRV5LAqeGrVcx55LiVXqb2tGZvaRfRRG32zwDUGKA964buoKYV7XKDUNHaWrI
+	 5KNDC/ypO8R32WZxz9fhePPgsK+i+McMaTAsiIPfkVbrWZUXpH95YIIdH4M5tPSUSs
+	 cUrB4nKMV03GDvEJSliA4Oh9jasyqXfQ0pta9c51dozkXuoZtETBtCPgYx1EYrzpPP
+	 ILiDa1lCMpmcQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2A011378000B;
-	Wed, 31 Jul 2024 08:19:44 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, 
- Chen-Yu Tsai <wenst@chromium.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>
-In-Reply-To: <20240731034411.371178-1-wenst@chromium.org>
-References: <20240731034411.371178-1-wenst@chromium.org>
-Subject: Re: [PATCH 0/3] arm64: dts: mediatek: mt8195: Fix and clean up
- xhci1
-Message-Id: <172241398409.37591.6997026723129845017.b4-ty@collabora.com>
-Date: Wed, 31 Jul 2024 10:19:44 +0200
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 06B9E378000B;
+	Wed, 31 Jul 2024 08:19:55 +0000 (UTC)
+Message-ID: <a5d5d7f1-535c-4139-9cfb-b4e4fffc3083@collabora.com>
+Date: Wed, 31 Jul 2024 10:19:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
+ kukui-jacuzzi-cerise board
+To: Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
+ <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-On Wed, 31 Jul 2024 11:44:07 +0800, Chen-Yu Tsai wrote:
-> This series fixes and cleans up the representation of xhci1, whether
-> used in USB 2.0 only or USB 2.0 + 3.0 designs. This work is a result
-> of discussions from the original Kernel CI report [1] on xhci1 failing
-> to probe, and subsequent patches [2][3].
+Il 31/07/24 08:26, Hsin-Te Yuan ha scritto:
+> Cerise is known as ASUS Chromebook CZ1.
+> Stern is known as ASUS Chromebook Flip CZ1.
 > 
-> Patch 1 explicitly disables USB 3.0 on the Cherry design. The super
-> speed pairs are used for PCIe instead.
+> They are almost identical. The only difference is that Cerise is a
+> clamshell device without touchscreen and Stern is a convertible device.
 > 
-> [...]
+> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 
-Applied to v6.11-next/dts64, thanks!
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-[1/3] arm64: dts: mediatek: mt8195-cherry: Mark USB 3.0 on xhci1 as disabled
-      commit: 09d385679487c58f0859c1ad4f404ba3df2f8830
-[2/3] arm64: dts: mediatek: mt8395-nio-12l: Mark USB 3.0 on xhci1 as disabled
-      commit: be985531a5dd9ca50fc9f3f85b8adeb2a4a75a58
-[3/3] arm64: dts: mediatek: mt8195: Assign USB 3.0 PHY to xhci1 by default
-      commit: fe035fa6f56c5b8146fcfe4253edbb9e9399ce2d
-
-Cheers,
-Angelo
-
+> ---
+>   Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> index 1d4bb50fcd8d..087773a43673 100644
+> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+> @@ -146,6 +146,20 @@ properties:
+>           items:
+>             - const: google,burnet
+>             - const: mediatek,mt8183
+> +      - description: Google Cerise (ASUS Chromebook CZ1)
+> +        items:
+> +          - enum:
+> +              - google,cerise-sku0
+> +              - google,cerise-rev3-sku0
+> +          - const: google,cerise
+> +          - const: mediatek,mt8183
+> +      - description: Google Stern (ASUS Chromebook Flip CZ1)
+> +        items:
+> +          - enum:
+> +              - google,cerise-sku1
+> +              - google,cerise-rev3-sku1
+> +          - const: google,cerise
+> +          - const: mediatek,mt8183
+>         - description: Google Cozmo (Acer Chromebook 314)
+>           items:
+>             - const: google,cozmo
+> 
 
 
