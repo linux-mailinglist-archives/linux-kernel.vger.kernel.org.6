@@ -1,158 +1,233 @@
-Return-Path: <linux-kernel+bounces-268960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB2F1942BA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:08:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0E2942BA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CC2A1F21B3F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84DA9280F95
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D1A1AAE20;
-	Wed, 31 Jul 2024 10:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z35eQKaE"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22DD1A8C0B
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9716C1AAE16;
+	Wed, 31 Jul 2024 10:08:45 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B6C1A8C0B
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722420513; cv=none; b=c5016vwKA6NbOmpJ1t7kA18zIE4EwqZmH3xVuvYLDyGA3TRPBy+DBOz2NI7ncABq9qeGNsxBFtHLfjawvOwgzLHLwAbKSWLICWnDRTCDvjy9jNYaONR6wCCGhiuM1k4tkTSNT5xb7udEu+MIoxM69RNFiIDSyI2nABFTyLl7BRI=
+	t=1722420525; cv=none; b=RGCGtinkSqlonFD8iogYNfU0EZ928b7nsGcqtLFfp5cTkSDQZkbw2iIqNnI37O1vR69nsW9hvxto8bPfQw3JWiUDtXyFUMteaoeKU0NEozBuyXnbUAMT7fJQ79ga+DWAqhUvMeaVeUDEFSdWkRQ0ZimdMyL7me5GtItEOOOPpqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722420513; c=relaxed/simple;
-	bh=VfhxbFRl+BG/Sa7wjKV+KHziPw2TtlYFc7Jr7qm3zHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o/tVJ8obINWf5coAHqAocjAvVbUu+B9dDGezc2QeuR7vmR60BhAWUu0nqgbi2V/2RGAWnwH68SiU2d/bb3ggQ3cSiZT2TV05ppiHC0flAyoAvywFBKJsBEkdPjntlRpGbck7sqZOHy2dNoVG674LogaEHd0ALm0w8vGEPzn4NG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z35eQKaE; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52efd08e6d9so8348625e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:08:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722420510; x=1723025310; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w5C3Fs7RfQOfTL3CPVuKhp+TlqAOyBUF7xiHspn7ajk=;
-        b=Z35eQKaEIXkRtRA7xlPeu3AetU/VmCstZYLQd0Mha2koB6UwJs35n+dIrYPho5xgEw
-         BCi17nmPm9S+98ZpXyUlH30ckw6M1Cm3I2kbsJ8TajMeMY7xReeF+CjyB5Up1QJvdXnL
-         fPapuu0uQtITbXVgff+p84illW/Q/wOety3MXFRdJDYW3Ou2/UKEF3Wht3GRkUuvyF32
-         AuVxsKronQm/7bTGq/oFCJ6c+azww6V3g1g0ZZ2gp51qfLENkD3iy+sWAziB+Fqpmhl/
-         uZiRZMRbBu4KIM5tArxmTEnrSBNFUGHPHP9By1ONYDoYB75cYqXTVb9icINyCGIXl87T
-         7U5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722420510; x=1723025310;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5C3Fs7RfQOfTL3CPVuKhp+TlqAOyBUF7xiHspn7ajk=;
-        b=iyYRt2byqHP0BsFiFOE6wCPLdiFr7q8Ps9b/0MhjSZlq0R2tHmrlAbTxklSN4NXnXK
-         PGR2HJa0oWhQoZNItE1awvvQuIfGS3wM9+6MGD8EvQKlVKofzT+rwwhmmLYzOAs3IH4y
-         MspOj5kB6l9sxfXsYY2WnOanQi+cxROu0F1wPAz8MTMRnK79BDR/2u1uT73YVRz78OHO
-         lBOg12irn5pMgGTopDCCUMUbtIDBsmkK0WWSnNwcKznqN+J7l2Yv3N8dhfBrgTNkFAbx
-         VEBuLSiQoZsFyZxJbeDpyr3iz1ci+yurGt2ZYW+V65+t7GnB8//uHnnuNBE5mwx6cgUH
-         x3BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXHZy9ClqmForneg8/J9nWwefYmL7MMCgikTJGFTbKpQYBPkcZ162Ei70FND0ImWky6TRMlh+dVkk/1qfwVbEeMhipJZcCfRyAmzwY
-X-Gm-Message-State: AOJu0Yxhd89/mhjI94IVkQGbWb24oEK+nwAGxWrXp1/fjHP/XdLLBETB
-	qWaT4bh97OhcR/pSwEDtQdGBANYXu9zlVlM0yUlDUiaE1PmvGmOHU5+e5O7JeFA=
-X-Google-Smtp-Source: AGHT+IFaMSAK62na1im8GG0hveleO0frKhkFCNiWMxnYb4zivcEU9chV/KAM+65nyNSMQztbR+qFCg==
-X-Received: by 2002:a05:6512:48d3:b0:52e:be1f:bf8b with SMTP id 2adb3069b0e04-5309b2b6e10mr8464133e87.47.1722420509581;
-        Wed, 31 Jul 2024 03:08:29 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4282babaa2esm15925465e9.25.2024.07.31.03.08.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 03:08:29 -0700 (PDT)
-Message-ID: <b0bd35b2-25f0-4968-853e-6369cabae307@linaro.org>
-Date: Wed, 31 Jul 2024 12:08:28 +0200
+	s=arc-20240116; t=1722420525; c=relaxed/simple;
+	bh=uz2t1NnpwQFIdWvonAV+fm4haMvGFvMDaxcUxXo2Yh8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tSsoAhpq+gJbnmv1hed3jRz6vU3VIUzG2wWyRRqg7clLPUvgiy9a9bo6Yw3lDjm/qYs4PPeeyNZJr3PbhvNGNx5QBnbV5wtNqzuwbBL6jPCgAFsAEqz8gjBSIMHbuXVLkEMQok9k6GCJfg6xsRiNlg5T0ftPAIC/MSWT93q8sCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Dxh+khDapmYRgFAA--.16376S3;
+	Wed, 31 Jul 2024 18:08:33 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMBxmcUgDapmPygIAA--.41017S2;
+	Wed, 31 Jul 2024 18:08:32 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: [PATCH] LoongArch: Revert qspinlock to test-and-set on VMs
+Date: Wed, 31 Jul 2024 18:08:32 +0800
+Message-Id: <20240731100832.2255320-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] thermal: trip: Avoid skipping trips in
- thermal_zone_set_trips()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- Lukasz Luba <lukasz.luba@arm.com>
-References: <12509184.O9o76ZdvQC@rjwysocki.net>
- <4448b729-5998-440c-939e-08e719070ac5@linaro.org>
- <CAJZ5v0iAd18d3_o8i74ao9tg=JPXhBZ29wMiYBd8xS64B7wGsA@mail.gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <CAJZ5v0iAd18d3_o8i74ao9tg=JPXhBZ29wMiYBd8xS64B7wGsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxmcUgDapmPygIAA--.41017S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On 30/07/2024 18:46, Rafael J. Wysocki wrote:
-> On Tue, Jul 30, 2024 at 4:57 PM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->> On 30/07/2024 16:41, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Say there are 3 trip points A, B, C sorted in ascending temperature
->>> order with no hysteresis.  If the zone temerature is exactly equal to
->>> B, thermal_zone_set_trips() will set the boundaries to A and C and the
->>> hardware will not catch any crossing of B (either way) until either A
->>> or C is crossed and the boundaries are changed.
->>
->> When the temperature is B, an interrupt fired which led to the
->> thermal_zone_update() and in turn it calls thermal_zone_set_trips()
->>
->> As the current temperature is equal to trip B, it makes sense to set A
->> and C, as B has been processes when handling the thermal trips right
->> before calling thermal_zone_set_trips()
-> 
-> So say that A, B and C are active trips and the thermal zone uses the
-> Bang-bang governor.  Say that each trip point has a fan associated
-> with it, so that every time it is crossed on the way up, the fan
-> should be turned on, and every time it is crossed on the way down, the
-> fan should be turned off.  Denote these fans as f_A, f_B, and f_C,
-> respectively.
-> 
-> Say the initial thermal zone temperature is below A, so the initial
-> thermal_zone_set_trips() interval is {-INT_MAX, A}.  The zone
-> temperature starts to rise and A is reached, so an interrupt triggers.
-> __thermal_zone_device_update() runs and it sees that the zone
-> temperature is equal to A, so thermal_zone_set_trips() sets the new
-> interval to {-INT_MAX, B} and f_A is turned on.
-> 
-> Say the zone temperature is still rising, despite f_A being on, and B
-> is reached.   __thermal_zone_device_update() runs and it sees that the
-> zone temperature is equal to B, so thermal_zone_set_trips() sets the
-> new interval to {A, C} and f_B is turned on.
-> 
-> Say the temperature rises somewhat above B, but does not reach C and
-> starts to fall down.  B is crossed on the way down, so f_B should be
-> turned off, but nothing happens, because an interrupt will only
-> trigger when A is reached.
-> 
->> I'm failing to understand the issue you describe
-> 
-> I hope the above helps.
+Similar with x86, when VM is detected, revert to a simple test-and-set
+lock to avoid the horrors of queue preemption.
 
-Yes, I understand now. This is really specific when it is with active 
-trip points, so passive delay is not involved.
+Tested on 3C5000 Dual-way machine with 32 cores and 2 numa nodes,
+test case is kcbench on kernel mainline 6.10, the detailed command is
+"kcbench --src /root/src/linux"
 
-Thanks for the clarification
+Performance on host machine
+                      kernel compile time       performance impact
+   Original           150.29 seconds
+   With patch         150.19 seconds            almost no impact
 
+Performance on virtual machine:
+1. 1 VM with 32 vCPUs and 2 numa node, numa node pinned
+                      kernel compile time       performance impact
+   Original           170.87 seconds
+   With patch         171.73 seconds            almost no impact
 
->> Were you able to reproduce the issue with emul_temp ?
-> 
-> I haven't tried, but I'm sure I'd be able to reproduce it.
+2. 2 VMs, each VM with 32 vCPUs and 2 numa node, numa node pinned
+                      kernel compile time       performance impact
+   Original           2362.04 seconds
+   With patch         354.73  seconds            +565%
 
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/include/asm/Kbuild      |  1 -
+ arch/loongarch/include/asm/paravirt.h  |  3 ++
+ arch/loongarch/include/asm/qspinlock.h | 41 ++++++++++++++++++++++++++
+ arch/loongarch/kernel/paravirt.c       |  9 ++++++
+ arch/loongarch/kernel/setup.c          |  5 ++++
+ arch/loongarch/kernel/smp.c            |  2 ++
+ 6 files changed, 60 insertions(+), 1 deletion(-)
+ create mode 100644 arch/loongarch/include/asm/qspinlock.h
+
+diff --git a/arch/loongarch/include/asm/Kbuild b/arch/loongarch/include/asm/Kbuild
+index 2bb3676429c0..4635b755b2b4 100644
+--- a/arch/loongarch/include/asm/Kbuild
++++ b/arch/loongarch/include/asm/Kbuild
+@@ -6,7 +6,6 @@ generic-y += mcs_spinlock.h
+ generic-y += parport.h
+ generic-y += early_ioremap.h
+ generic-y += qrwlock.h
+-generic-y += qspinlock.h
+ generic-y += user.h
+ generic-y += ioctl.h
+ generic-y += statfs.h
+diff --git a/arch/loongarch/include/asm/paravirt.h b/arch/loongarch/include/asm/paravirt.h
+index dddec49671ae..dcc2b46d31fe 100644
+--- a/arch/loongarch/include/asm/paravirt.h
++++ b/arch/loongarch/include/asm/paravirt.h
+@@ -19,6 +19,7 @@ static inline u64 paravirt_steal_clock(int cpu)
+ 
+ int __init pv_ipi_init(void);
+ int __init pv_time_init(void);
++void __init pv_spinlock_init(void);
+ 
+ #else
+ 
+@@ -31,5 +32,7 @@ static inline int pv_time_init(void)
+ {
+ 	return 0;
+ }
++
++static inline void pv_spinlock_init(void) { }
+ #endif // CONFIG_PARAVIRT
+ #endif
+diff --git a/arch/loongarch/include/asm/qspinlock.h b/arch/loongarch/include/asm/qspinlock.h
+new file mode 100644
+index 000000000000..b2d53b8c6679
+--- /dev/null
++++ b/arch/loongarch/include/asm/qspinlock.h
+@@ -0,0 +1,41 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_LOONGARCH_QSPINLOCK_H
++#define _ASM_LOONGARCH_QSPINLOCK_H
++
++#include <linux/jump_label.h>
++#include <asm/cpu-features.h>
++
++#ifdef CONFIG_PARAVIRT
++
++DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
++
++#define virt_spin_lock virt_spin_lock
++static inline bool virt_spin_lock(struct qspinlock *lock)
++{
++	int val;
++
++	if (static_branch_likely(&virt_spin_lock_key))
++		return false;
++
++	/*
++	 * On hypervisors without PARAVIRT_SPINLOCKS support we fall
++	 * back to a Test-and-Set spinlock, because fair locks have
++	 * horrible lock 'holder' preemption issues.
++	 */
++
++__retry:
++	val = atomic_read(&lock->val);
++
++	if (val || !atomic_try_cmpxchg(&lock->val, &val, _Q_LOCKED_VAL)) {
++		cpu_relax();
++		goto __retry;
++	}
++
++	return true;
++}
++
++#endif /* CONFIG_PARAVIRT */
++
++#include <asm-generic/qspinlock.h>
++
++#endif // _ASM_LOONGARCH_QSPINLOCK_H
+diff --git a/arch/loongarch/kernel/paravirt.c b/arch/loongarch/kernel/paravirt.c
+index 9c9b75b76f62..49ebc54bdbcb 100644
+--- a/arch/loongarch/kernel/paravirt.c
++++ b/arch/loongarch/kernel/paravirt.c
+@@ -9,6 +9,7 @@
+ #include <linux/static_call.h>
+ #include <asm/paravirt.h>
+ 
++DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
+ static int has_steal_clock;
+ struct static_key paravirt_steal_enabled;
+ struct static_key paravirt_steal_rq_enabled;
+@@ -300,3 +301,11 @@ int __init pv_time_init(void)
+ 
+ 	return 0;
+ }
++
++void __init pv_spinlock_init(void)
++{
++	if (!cpu_has_hypervisor)
++		return;
++
++	static_branch_disable(&virt_spin_lock_key);
++}
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index 0f0740f0be27..70a670efe3cf 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -599,6 +599,11 @@ void __init setup_arch(char **cmdline_p)
+ 	parse_early_param();
+ 	reserve_initrd_mem();
+ 
++	/*
++	 * Initialise the static keys early as they may be enabled by the
++	 * cpufeature code and early parameters.
++	 */
++	jump_label_init();
+ 	platform_init();
+ 	arch_mem_init(cmdline_p);
+ 
+diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
+index ca405ab86aae..f499bff1050b 100644
+--- a/arch/loongarch/kernel/smp.c
++++ b/arch/loongarch/kernel/smp.c
+@@ -509,6 +509,8 @@ void smp_prepare_boot_cpu(void)
+ 			rr_node = next_node_in(rr_node, node_online_map);
+ 		}
+ 	}
++
++	pv_spinlock_init();
+ }
+ 
+ /* called from main before smp_init() */
+
+base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.39.3
 
 
