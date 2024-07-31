@@ -1,202 +1,154 @@
-Return-Path: <linux-kernel+bounces-268395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C43942426
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CAF294242C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F401F23424
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:26:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31D141C22A34
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A986C2ED;
-	Wed, 31 Jul 2024 01:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRQZpw52"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FF6C8FF;
+	Wed, 31 Jul 2024 01:35:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6D38BE0;
-	Wed, 31 Jul 2024 01:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6EB1AA3C3;
+	Wed, 31 Jul 2024 01:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722389170; cv=none; b=dT3P/q8J530cfKCijzWzzIRldbIjFgwTRG0Ec62IOtIvlpfASYH5r1YU9U497ZP7klg1BuulrruTem5Wdwtbm46Mec1S3Yu3nTE6i0srlT6ns1GIs4YRb2Y/garLbxmJ47M8zDMeHyAUE/rlR6cbURUvDxoCimAmzDm9XtqxR5s=
+	t=1722389716; cv=none; b=VNrA/Vr63EFOgVugtSb5o6ZkUE+v6xjyizax4kjWP+5F7Zcv43YWV73wREBKpLxOaaDSqi8/QOXSZErwiyQpVGR45BrjZ97eavgYK7Tcfy3T2HUCJVRz5ePOnvc9Ld5uiMgq4wSqNWpaOjXipHOJ13pwovVCUFhArDOX0rWW0OU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722389170; c=relaxed/simple;
-	bh=06LFBPA6T6F2EWn9cPGZo5IMaK6O3uRHX4yqHc0sRf8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=F7LMXiZsiF1q14cKLnxOtaxIlzABCKgr3IN5YkVIvczkoICM5aMnlyDGkhmy4fRjhP6v8MUJXPxgECGVaenP1GaJus99rOp8rDTSmOHQPIOpjsJbDx1D7Md3kvx7xaCBwD31C6BMm1cvCSztm+SnRbSeXpqMYsUx2KZzZ1nmHGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRQZpw52; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722389168; x=1753925168;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=06LFBPA6T6F2EWn9cPGZo5IMaK6O3uRHX4yqHc0sRf8=;
-  b=JRQZpw52ZF8ucm2W7O2l7EsVEnGl1s8hCaO6zcsU/yeo+CybWxbr4C6s
-   /sgC3kAeY0P/c/eOLydQaghNAqoS5uLPiGqf8itIj0BZ2ioLqGjCwmX2b
-   muO6YKc28hax0r2fCLzHO+Liboko17RHSOuJzwc9zYQx4H7A1B6Jp/m7t
-   Oq0lnfE8JCki3Lf330YsnS9JHWUfuh3YJaY2KsjlFwpZWQsvxJh3KHIKA
-   ndlEXSOQYSRxpK5M6YHCCgayhPkfDwDvnAY2+SNTXSxa5eIr/JM+ieFn8
-   MzDGS0q/NVTB3okc4Ww6m5LeXrt39GUICefNxd4LH3iBB3tZW94o96pTE
-   w==;
-X-CSE-ConnectionGUID: dhb7ZssCQvKM1LwvMz5k3g==
-X-CSE-MsgGUID: FoPtL126TeeK1c98M+ynpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20398231"
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="20398231"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 18:26:08 -0700
-X-CSE-ConnectionGUID: /+iu9CEnTWma/xEo4/qtqg==
-X-CSE-MsgGUID: TYcdjIGOQviTnArIcqjAYg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="54562879"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 18:26:05 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-mm@kvack.org,  akpm@linux-foundation.org,  dave.jiang@intel.com,
-  Jonathan.Cameron@huawei.com,  horenchuang@bytedance.com,
-  linux-kernel@vger.kernel.org,  linux-acpi@vger.kernel.org,
-  dan.j.williams@intel.com,  lenb@kernel.org,  "Aneesh Kumar K.V"
- <aneesh.kumar@linux.ibm.com>
-Subject: Re: [PATCH] acpi/hmat,mm/memtier: always register hmat adist
- calculation callback
-In-Reply-To: <ZqhbePA9Egcxyx7o@PC2K9PVX.TheFacebook.com> (Gregory Price's
-	message of "Mon, 29 Jul 2024 23:18:16 -0400")
-References: <20240726215548.10653-1-gourry@gourry.net>
-	<87ttg91046.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZqelvPwM2MIG26wY@PC2K9PVX.TheFacebook.com>
-	<877cd3u1go.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZqhbePA9Egcxyx7o@PC2K9PVX.TheFacebook.com>
-Date: Wed, 31 Jul 2024 09:22:32 +0800
-Message-ID: <87cymupd7r.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722389716; c=relaxed/simple;
+	bh=i7McqhjslTEUgJNczjwLHkbohcNeCfBcxZU9Cyupdi4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ALyxqBdb0WE9BK0R/tASIUbchGJH4UkotO8NdQ7m7PoWWhGvdKSR3bm7mfOF2N2UZlBZU0fuhu54V8cFsS9B7euPzBq0hZqfJMZGxNxVyCDUFs9m7p2z8B7axDb6HGR+prL51CZXFaH3nYJvdihH6MeMhiGpGImv2jfkYfibm2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYZQt0c56z4f3jjx;
+	Wed, 31 Jul 2024 09:35:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id B55E91A0359;
+	Wed, 31 Jul 2024 09:35:10 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP1 (Coremail) with SMTP id cCh0CgB3f1G6lKlmF8ZJAQ--.37087S2;
+	Wed, 31 Jul 2024 09:35:10 +0800 (CST)
+Subject: Re: [PATCH 5/7] jbd2: remove unneeded done_copy_out variable in
+ jbd2_journal_write_metadata_buffer
+To: Jan Kara <jack@suse.cz>
+Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240730113335.2365290-1-shikemeng@huaweicloud.com>
+ <20240730113335.2365290-6-shikemeng@huaweicloud.com>
+ <20240730134943.ircjz6l5ix6zmmwe@quack3>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <0f83f5e5-97d1-fc63-f611-21cd08e9e70b@huaweicloud.com>
+Date: Wed, 31 Jul 2024 09:34:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <20240730134943.ircjz6l5ix6zmmwe@quack3>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgB3f1G6lKlmF8ZJAQ--.37087S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF18tr18ZFyDJrWUZr1fWFg_yoW8tFWDpF
+	WrKrWkKFykJry2yr1DWw4UZryUKrWDWr17Kr47Ca43Aa9Ig3sI9F1YyFW0g3WjyrZ3AF48
+	ZF17XFyxWwsIya7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
+	tUUUUU=
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-Gregory Price <gourry@gourry.net> writes:
 
-> On Tue, Jul 30, 2024 at 09:12:55AM +0800, Huang, Ying wrote:
->> Gregory Price <gourry@gourry.net> writes:
->> 
->> > On Mon, Jul 29, 2024 at 09:02:33AM +0800, Huang, Ying wrote:
->> >> Gregory Price <gourry@gourry.net> writes:
->> >> 
->> >> > In the event that hmat data is not available for the DRAM tier,
->> >> > or if it is invalid (bandwidth or latency is 0), we can still register
->> >> > a callback to calculate the abstract distance for non-cpu nodes
->> >> > and simply assign it a different tier manually.
->> >> >
->> >> > In the case where DRAM HMAT values are missing or not sane we
->> >> > manually assign adist=(MEMTIER_ADISTANCE_DRAM + MEMTIER_CHUNK_SIZE).
->> >> >
->> >> > If the HMAT data for the non-cpu tier is invalid (e.g. bw = 0), we
->> >> > cannot reasonable determine where to place the tier, so it will default
->> >> > to MEMTIER_ADISTANCE_DRAM (which is the existing behavior).
->> >> 
->> >> Why do we need this?  Do you have machines with broken HMAT table?  Can
->> >> you ask the vendor to fix the HMAT table?
->> >>
->> >
->> > It's a little unclear from the ACPI specification whether HMAT is
->> > technically optional or not (given that the kernel handles missing HMAT
->> > gracefully, it certainly seems optional). In one scenario I have seen
->> > incorrect data, and in another scenario I have seen the HMAT omitted
->> > entirely. In another scenario I have seen the HMAT-SLLBI omitted while
->> > the CDAT is present.
->> 
->> IIUC, HMAT is optional.  Is it possible for you to ask the system vendor
->> to fix the broken HMAT table.
->> 
->
-> In this case we are (BW=0), but in the other cases, there is technically
-> nothing broken.  That's my concern.
->
->> > In all scenarios the result is the same: all nodes in the same tier.
->> 
->> I don't think so, in drivers/dax/kmem.c, we will put memory devices
->> onlined by kmem.c in another tier by default.
->> 
->
-> This presumes driver configured devices, which is not always the case.
->
-> kmem.c will set MEMTIER_DEFAULT_DAX_ADISTANCE
->
-> but if BIOS/EFI has set up the node instead, you get the default of
-> MEMTIER_ADISTANCE_DRAM if HMAT is not present or otherwise not sane.
 
-"efi_fake_mem=" kernel parameter can be used to add "EFI_MEMORY_SP" flag
-to the memory range, so that kmem.c can manage it.
+on 7/30/2024 9:49 PM, Jan Kara wrote:
+> On Tue 30-07-24 19:33:33, Kemeng Shi wrote:
+>> It's more intuitive to use jh_in->b_frozen_data directly instead of
+>> done_copy_out variable. Simply remove unneeded done_copy_out variable
+>> and use b_frozen_data instead.
+>>
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+> 
+>> @@ -357,17 +355,15 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  		new_folio = bh_in->b_folio;
+>>  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
+>>  		mapped_data = kmap_local_folio(new_folio, new_offset);
+>> -	}
+>> -
+>> -	/*
+>> -	 * Fire data frozen trigger if data already wasn't frozen.  Do this
+>> -	 * before checking for escaping, as the trigger may modify the magic
+>> -	 * offset.  If a copy-out happens afterwards, it will have the correct
+>> -	 * data in the buffer.
+>> -	 */
+>> -	if (!done_copy_out)
+>> +		/*
+>> +		 * Fire data frozen trigger if data already wasn't frozen. Do
+>> +		 * this before checking for escaping, as the trigger may modify
+>> +		 * the magic offset.  If a copy-out happens afterwards, it will
+>> +		 * have the correct data in the buffer.
+>> +		 */
+>>  		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
+>>  					   jh_in->b_triggers);
+>> +	}
+> 
+> I like how you've got rid of the conditional. But I'd go further and also
+> move the escaping check and thus unmap & possible frozen buffer creation
+> into the branch. Like:
+> 
+> 		do_escape = jbd2_data_needs_escaping(mapped_data);
+> 			- create this trivial helper
+> 		kunmap_local(mapped_data);
+> 		if (do_escape) {
+> 			handle b_frozen_data creation
+> 		}
+Thanks Jan. It does look better this way, I will do it in next version.
 
-> Not everyone is going to have the ability to get a platform vendor to
-> fix a BIOS bug, and I've seen this in production.
+Kemeng.
+> 
+> 								Honza
+> 
+>>  
+>>  	/*
+>>  	 * Check for escaping
+>> @@ -380,7 +376,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  	/*
+>>  	 * Do we need to do a data copy?
+>>  	 */
+>> -	if (do_escape && !done_copy_out) {
+>> +	if (do_escape && !jh_in->b_frozen_data) {
+>>  		char *tmp;
+>>  
+>>  		spin_unlock(&jh_in->b_state_lock);
+>> @@ -408,7 +404,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  copy_done:
+>>  		new_folio = virt_to_folio(jh_in->b_frozen_data);
+>>  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+>> -		done_copy_out = 1;
+>>  	}
+>>  
+>>  	/*
+>> -- 
+>> 2.30.0
+>>
 
-So, some vendor build a machine with broken/missing HMAT/CDAT and wants
-users to use CXL memory devices in it?  Have the vendor tested whether
-CXL memory devices work?
-
->> > The HMAT is explicitly described as "A hint" in the ACPI spec.
->> >
->> > ACPI 5.2.28.1 HMAT Overview
->> >
->> > "The software is expected to use this information as a hint for
->> > optimization, or when the system has heterogeneous memory"
->> >
->> > If something is "a hint", then it should not be used prescriptively.
->> >
->> > Right now HMAT appears to be used prescriptively, this despite the fact
->> > that there was a clear intent to separate CPU-nodes and non-CPU-nodes in
->> > the memory-tier code. So this patch simply realizes this intent when the
->> > hints are not very reasonable.
->> 
->> If HMAT isn't available, it's hard to put memory devices to
->> appropriate memory tiers without other information.
->
-> Not having a CPU is "other information".  What tier a device belongs to
-> is really arbitrary, "appropriate" is at best a codified opinion.
->
->> In commit
->> 992bf77591cb ("mm/demotion: add support for explicit memory tiers"),
->> Aneesh pointed out that it doesn't work for his system to put
->> non-CPU-nodes in lower tier.
->> 
->
-> This seems like a bug / something else incorrect.  I will investigate.
->
->> Even if we want to use other information to put memory devices to memory
->> tiers, we can register another adist calculation callback instead of
->> reusing hmat callback.
->> 
->
-> I suppose during init, we could register a default adist callback with
-> CPU/non-CPU checks if HMAT is not sane. I can look at that.
->
-> It might also be worth having some kind of modal mechanism, like:
->
-> echo "auto" > /sys/.../memory_tiering/mode     # Auto select mode
-> echo "hmat" > /sys/.../memory_tiering/mode     # Use HMAT Info
-> echo "simple" > /sys/.../memory_tiering/mode   # CPU vs non-CPU Node
-> echo "topology" > /sys/.../memory_tiering/mode # More complex
->
-> To abstract away the hardware complexities as best as possible.
->
-> But the first step here would be creating two modes.  HMAT-is-sane and
-> CPU/Non-CPU seems reasonable to me but open to opinions.
-
-IMHO, we should reduce user configurable knobs unless we can prove it
-is really necessary.
-
---
-Best Regards,
-Huang, Ying
 
