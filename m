@@ -1,93 +1,92 @@
-Return-Path: <linux-kernel+bounces-268410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A6894245A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:00:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3604F942463
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:01:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E87FA285DF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:00:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1731F24DA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD2110940;
-	Wed, 31 Jul 2024 02:00:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E9D17591;
+	Wed, 31 Jul 2024 02:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ag3Qi5mS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89451DDAB
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 02:00:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595FC101EE;
+	Wed, 31 Jul 2024 02:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722391205; cv=none; b=HobHzk+Oj0bIp4nS3GEN/JMosMREnKShsLa5wmRCtstvRoSyIXcd6vapLR3KQVBLipTwN8spYxYpMVUGvGKAXjktCIq8ZFMj1I+B1MX3TsZd6GUuYG0LF5eaJkFZKKCVuSJ0RiZSjnZhEEzIJvSCq9eNvrBCfo0XtLeRiPTijgo=
+	t=1722391235; cv=none; b=qZrt1qANXcxx+XcDyWoNMxZyVnSTMEWv9Eav6Ol8uMKr9z8G/qpl7p1B2QCbEQJHe6hG/vQ/oNnmfkEQ0JAP2THurr6i+vfbTgmw3GoPtRFTyGXxD4XjIWPIgj7ltm13jfxZy0hkIXGIwPEgVRvTSmTCndoJb1noy8T+qCstcKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722391205; c=relaxed/simple;
-	bh=K1qOC5tHUaMsNZMC1TjMJaYf6RAeKSo/0m0qrGDii54=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ghf2jZAc20j7QtP6QU2yXYwTqENrl4i/8kxNA/VKMqFffLcF2PvL9saE7CZfspv0I9TthLydgXXydjfl2ufAA+0l1MKE2EwsMgLZXUnLKpgrt3Me5xUCoNzWcappMqJCZG1a9jSQ/RSDoPibwpjxTaptpiqTcAsKRmH+zkiUi8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39a1f627b3dso86552495ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:00:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722391203; x=1722996003;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oifXDfDa4Pc0Sdv5gbrkS91BTKOjBFXuRwSI5Vt+woE=;
-        b=E8i9PyWGUAih4E6rkjZGzbmvZWnzRFaVuB7ioHaESi3AvfCFihIoMNlraW0Lm98d36
-         yv4vbkgaOXSD/ZpfMHu5ZD6kR7s/8j7hGG6ewTtk/PXuPBJuhBSIw+fXGZ+Gm3izjkz6
-         gEOx4CW22aea2e1nqXPYa/tnRjpicQCWmVKwwcnMRbvVM362vpEPBeOYrUqRBANeyRh5
-         iXgwQjJNFJt9SYpWaGwDhDbt6/tnrBIE1g8bs8UHH/2UfqSqUAL5WB1JX2qwtEQaJDni
-         mbL++BwSGwdo9/j3tKDFf+WhH/uwshbqOxiuRd7f4e/g9f7XSmk7fVa7Xv6XShNV9xAC
-         G5nw==
-X-Forwarded-Encrypted: i=1; AJvYcCVyOF3UryQTAJTtHlmsRARgkKqyh048+9AqYgitZPZTN/xpCA/vtO0iTEYClwP5HorqN9D92Sy/ZnvuANZ30BM60ha3O5jnIiNYrWsG
-X-Gm-Message-State: AOJu0Yzo9u9ug9ds3lg+Uk1Czeq4HT+tiI6nzrlAP5aSKgOdn5yucbOw
-	jxQNLzz0dH3HljryRcOx/B+9n7wTiDLdCVixzLj8qqNn0gGXxltCzq5+7CeQGOq14tBgWjyfLsX
-	1/gcWAJkBXqbrM1l8xlyVWBF//OKoYbuTtYnzTLawAGk/X+5ww0oERJs=
-X-Google-Smtp-Source: AGHT+IEc9c926Yi+AT5PgUKRiu91sAVFQJ4tCQhhgGVLxxVCE3cfKmVkDEp3A00yLNByqBX3a4esm6+HSw2f3lbDf8KogXFJ5U+M
+	s=arc-20240116; t=1722391235; c=relaxed/simple;
+	bh=sdz++PZ6RZ23VmIE/Z+Z64A5WI/0VoJIYJRyBM+f5pU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ItQ3bKUu5X4uNAoJhtLt1h30MTN8iGjAxETibVo9PQ+JHvP9rjJ7I4GyEYoG3VwlvEWabSXoYUIGDHM9N9fCNQAfhyvT3Mus4b1+fknlLEnSxeo3pDWMnEJozcY9oz3wPHF/79sVYYoqrfSSg2PO0cLi+vlRmM2EWQB2Jzd8UL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ag3Qi5mS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0BA11C4AF18;
+	Wed, 31 Jul 2024 02:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722391235;
+	bh=sdz++PZ6RZ23VmIE/Z+Z64A5WI/0VoJIYJRyBM+f5pU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Ag3Qi5mSFoFAcbeFNgKczshNVXb88OAEvsu5nwRcTBh86eiIiYz99kVA0HonuU7oJ
+	 8nzUZd2reXACfqxH2gN4nl4qMisWysb3/wTjIhA2vwxj6GgJSOIrvX96xT1AjzCk1U
+	 XE1mn9ehfiBnyUrae6zv9I10Kxu1Amhl0pKCQ6mdPU+jl0TsDyIkNbhHASgj+jsyP4
+	 duYNT7xJcORkRi5F1QsMQBJ5PK9QBGH0HOpS1PqWcTM57ohBN1yJTgXtr9UEUpNexQ
+	 /nFuHVmfa11hSIPbstCkJ5GuIC3dbgiHO0AX7Jcy3p/cokRjC6s1V30YqOS229drJ4
+	 mBb8+4vvqNcag==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id F26B1C6E39C;
+	Wed, 31 Jul 2024 02:00:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1d:b0:397:95c7:6f72 with SMTP id
- e9e14a558f8ab-39aec448e1cmr10502905ab.6.1722391203729; Tue, 30 Jul 2024
- 19:00:03 -0700 (PDT)
-Date: Tue, 30 Jul 2024 19:00:03 -0700
-In-Reply-To: <0000000000005dc7ce0611833268@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dce735061e8173dc@google.com>
-Subject: Re: [syzbot] [mptcp?] WARNING in __mptcp_clean_una
-From: syzbot <syzbot+5b3e7c7a0b77f0c03b0d@syzkaller.appspotmail.com>
-To: cpaasch@apple.com, davem@davemloft.net, edumazet@google.com, 
-	geliang.tang@linux.dev, geliang@kernel.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, martineau@kernel.org, matttbe@kernel.org, 
-	mptcp@lists.linux.dev, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: wangxun: use net_prefetch to simplify logic
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172239123498.15322.8541759926396935716.git-patchwork-notify@kernel.org>
+Date: Wed, 31 Jul 2024 02:00:34 +0000
+References: <20240729152651.258713-1-jdamato@fastly.com>
+In-Reply-To: <20240729152651.258713-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ jiawenwu@trustnetic.com, mengyuanlou@net-swift.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ duanqiangwen@net-swift.com
 
-syzbot suspects this issue was fixed by commit:
+Hello:
 
-commit fb7a0d334894206ae35f023a82cad5a290fd7386
-Author: Paolo Abeni <pabeni@redhat.com>
-Date:   Mon Apr 29 18:00:31 2024 +0000
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-    mptcp: ensure snd_nxt is properly initialized on connect
+On Mon, 29 Jul 2024 15:26:47 +0000 you wrote:
+> Use net_prefetch to remove #ifdef and simplify prefetch logic. This
+> follows the pattern introduced in a previous commit f468f21b7af0 ("net:
+> Take common prefetch code structure into a function"), which replaced
+> the same logic in all existing drivers at that time.
+> 
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> 
+> [...]
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c8bdbd980000
-start commit:   4f5e5092fdbf Merge tag 'net-6.8-rc5' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d7c92dd8d5c7a1e
-dashboard link: https://syzkaller.appspot.com/bug?extid=5b3e7c7a0b77f0c03b0d
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14fc9c8a180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17d0cc1c180000
+Here is the summary with links:
+  - [net-next] net: wangxun: use net_prefetch to simplify logic
+    https://git.kernel.org/netdev/net-next/c/e832bc9e818c
 
-If the result looks correct, please mark the issue as fixed by replying with:
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-#syz fix: mptcp: ensure snd_nxt is properly initialized on connect
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
