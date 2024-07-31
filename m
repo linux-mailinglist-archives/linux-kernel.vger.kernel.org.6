@@ -1,182 +1,122 @@
-Return-Path: <linux-kernel+bounces-268645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A958E942741
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:00:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F623942758
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDC461C20DC3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2CCCB234F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC021A4B3A;
-	Wed, 31 Jul 2024 07:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="orb3e89D"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F049B1A4F33;
+	Wed, 31 Jul 2024 07:04:03 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B3F15AF6;
-	Wed, 31 Jul 2024 07:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E9E16CD03;
+	Wed, 31 Jul 2024 07:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722409248; cv=none; b=jd2+M00TyIZ6i0CAtMIG89uwZmmg1BCLnn8AXbiAGQ8LeLMlFwXz8uFQwJ69Fll07u1gNdmZDTh7BKu/JH8LnmnhLe7BYppmRJqki+lt/6HwrxHVXMivQ5OUTDydDaNb7UfwJ5sxer1jkdPVP43rvT5gFin8eor2w0iUg+ZYFIo=
+	t=1722409443; cv=none; b=PUQvbaY1XmmCHuEzGa8N/fQ293bJpD9+fL/J+Tam2vf70nqJXcfll7FvuS0zkrOo8FYWmD0Vm6RHlXnxhcIdeh73IIIe9or7OntvmvDDpEmqq9NAcYYq+mKaQWe9m8R4svdCZb4pYfsAj0aH0LIh21+fUWW811bDPiuAXbCqDyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722409248; c=relaxed/simple;
-	bh=2m1FPDyQe8xDyUfFki4gWqbW/FycigIA1fOZMOU7sCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RQZU3l6LqOoRsAVV8b0h5+0ELtmFv1+0espp9/bjxSSpwLPRVfs81icsbtE3GfcNOO9wE+NFbkkhWpq74dwcrETfyySjxVYnWdi/eP9RjF0hw6loYQEtbmByhCmcEe2/vsa7mcAw5JjfDdDUwFvzvFIUlRLg9NaaT0SCEDiTg3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=orb3e89D; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722409245;
-	bh=2m1FPDyQe8xDyUfFki4gWqbW/FycigIA1fOZMOU7sCw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=orb3e89D9C564m+JGiavnP8Jg53kCcIwPKPgGZ0Iu+f/xS8iTbw0uyVi6n8cqexmL
-	 WPiGpIM3efYttUML/4mD7eueAqq3urfHxiZZSRgvXH68y8zQkdLw8SS6jJP3ZOoJmC
-	 5GiuiJoaUwVrd/01SPOugAlY4f5fvOFFzeFv3+WsCTNarenvfxdrXaXRgbvMFGX0/6
-	 bSSzJQlINFLt3j5covI7DU4383tbrOJSbVD7jSFAYMtZpXn5IplfyTY9l1w37HpG0T
-	 lej3f6KWE67ToViDbpO3jkrUKKNVxKlr6ab5kqWNSAx+C5/J/PySzE+KIPWM4iBvpO
-	 4F5hTRb2t40zQ==
-Received: from [100.93.89.217] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D8C1E3780B79;
-	Wed, 31 Jul 2024 07:00:44 +0000 (UTC)
-Message-ID: <07a6b2a7-9884-40cb-b29a-3b30731d9686@collabora.com>
-Date: Wed, 31 Jul 2024 09:00:44 +0200
+	s=arc-20240116; t=1722409443; c=relaxed/simple;
+	bh=IXtc+vSUzAJ4RGLHgjuucvwOnmcaeyZSx+7/uBxXmWo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=APGrY9VQQ9sXXhnT1bktFMwZ3WWcQDJ6SCqc21Oq8WaeUiyuHGDHDF/C2pW1tdCMheNj4dz/KFJ/U8gOhRbU9U70Xiwz4z2Ua+8Gk7IKht0FetKPS2I5JIdSi7eAhxhbqKiR9iJtX2X+BdKQl421MI4ONfIjmCb5RzsF/3vfikM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 46V71uDV025236;
+	Wed, 31 Jul 2024 15:01:56 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WYjYJ4X9qz2L2d7h;
+	Wed, 31 Jul 2024 14:56:04 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 31 Jul 2024 15:01:54 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <axboe@kernel.dk>, <dlemoal@kernel.org>, <hch@lst.de>
+CC: <bvanassche@acm.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <niuzhiguo84@gmail.com>,
+        <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>
+Subject: [PATCH V3] block: uapi: Use unsigned int type for IOPRIO_PRIO_MASK
+Date: Wed, 31 Jul 2024 15:01:27 +0800
+Message-ID: <1722409287-12183-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/3] media: videodev2: Add flag to unconditionnaly
- enumerate pixels formats
-To: Hans Verkuil <hverkuil-cisco@xs4all.nl>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240722150523.149667-1-benjamin.gaignard@collabora.com>
- <20240722150523.149667-2-benjamin.gaignard@collabora.com>
- <0b4e2f13-8d79-4931-b868-6100f8b8893f@xs4all.nl>
- <3459c15d-5492-4765-b81c-9360d4291384@xs4all.nl>
-Content-Language: en-US
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-In-Reply-To: <3459c15d-5492-4765-b81c-9360d4291384@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 46V71uDV025236
 
+Generally, the input of IOPRIO_PRIO_DATA has 16 bits, but the output of
+IOPRIO_PRIO_DATA will be expanded to "UL" from IOPRIO_PRIO_MASK.
+ #define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
+This is not reasonable and meaningless, unsigned int is more suitable for it.
 
-Le 30/07/2024 à 09:19, Hans Verkuil a écrit :
-> On 30/07/2024 09:08, Hans Verkuil wrote:
->> On 22/07/2024 17:05, Benjamin Gaignard wrote:
->>> When the index field is ORed with V4L2_FMT_FLAG_ENUM_ALL the driver
->>> will ignore any configuration and enumerate all the possible formats.
->>> Drivers which do not support this flag yet always return an EINVAL
->>> error code.
->>>
->>> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
->>> ---
->>> changes in version 5:
->>> - Reset the proposal to follow Hans's advices
->>> - Add new flag to be used with index field.
->>>
->>>   .../userspace-api/media/v4l/vidioc-enum-fmt.rst      | 12 +++++++++++-
->>>   .../userspace-api/media/videodev2.h.rst.exceptions   |  1 +
->>>   include/uapi/linux/videodev2.h                       |  3 +++
->>>   3 files changed, 15 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->>> index 3adb3d205531..12e1e65e6a71 100644
->>> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->>> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
->>> @@ -85,7 +85,11 @@ the ``mbus_code`` field is handled differently:
->>>       * - __u32
->>>         - ``index``
->>>         - Number of the format in the enumeration, set by the application.
->>> -	This is in no way related to the ``pixelformat`` field.
->>> +        This is in no way related to the ``pixelformat`` field. When the
->> You need to start a new paragraph before 'When'. Otherwise you might read
->> that the 'When' sentence is somehow related to the previous sentence.
->>
->>> +        index is ORed with V4L2_FMT_FLAG_ENUM_ALL the driver will ignore
->>> +        any configuration and enumerate all the possible formats. Drivers
->> I'd rephrase this a little bit:
->>
->> the driver will enumerate all the possible formats, ignoring any limitations
->> from the current configuration.
->>
->> And after that I would like to see an example of a use-case.
-> Should the flag be kept on return of VIDIOC_ENUM_FMT or should it be cleared?
-> For reference: VIDIOC_QUERYCTRL will clear the V4L2_CTRL_FLAG_NEXT_CTRL flag.
->
-> Regardless of what we pick, it should be documented.
+So if use format "%d" to print IOPRIO_PRIO_DATA directly, there will be a
+build warning or error showned as the following, which is from the
+local test when I modify f2fs codes.
 
-I believe most of the flags are cleared in v4l2 so I will to do the same and
-document it.
+fs/f2fs/sysfs.c:348:31: warning: format ‘%d’ expects argument of type ‘int’,
+but argument 4 has type ‘long unsigned int’ [-Wformat=]
+   return sysfs_emit(buf, "%s,%d\n",
+                              ~^
+                              %ld
 
->
-> Regards,
->
-> 	Hans
->
->>> +        which do not support this flag yet always return an ``EINVAL``
->>> +        error code.
->>>       * - __u32
->>>         - ``type``
->>>         - Type of the data stream, set by the application. Only these types
->>> @@ -234,6 +238,12 @@ the ``mbus_code`` field is handled differently:
->>>   	valid. The buffer consists of ``height`` lines, each having ``width``
->>>   	Data Units of data and the offset (in bytes) between the beginning of
->>>   	each two consecutive lines is ``bytesperline``.
->>> +    * - ``V4L2_FMT_FLAG_ENUM_ALL``
->> I am not really happy with this name since the prefix is identical to that
->> of other V4L2_FMT_FLAG_ defines. How about: V4L2_FMTDESC_FLAG_ENUM_ALL?
->> Or V4L2_FMT_IDX_ENUM_ALL?
->>
->>> +      - 0x80000000
->>> +      - When the applications ORs ``index`` with ``V4L2_FMT_FLAG_ENUM_ALL`` flag
->>> +        the driver enumerates all the possible pixel formats without taking care
->>> +        of any already set configuration. Drivers which do not support this flag
->>> +        yet always return ``EINVAL``.
->>>   
->>>   Return Value
->>>   ============
->>> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->>> index bdc628e8c1d6..8dc10a500fc6 100644
->>> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->>> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
->>> @@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->>>   replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->>>   replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->>>   replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
->>> +replace define V4L2_FMT_FLAG_ENUM_ALL fmtdesc-flags
->>>   
->>>   # V4L2 timecode types
->>>   replace define V4L2_TC_TYPE_24FPS timecode-type
->>> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
->>> index 4e91362da6da..3d11f91273a1 100644
->>> --- a/include/uapi/linux/videodev2.h
->>> +++ b/include/uapi/linux/videodev2.h
->>> @@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
->>>   #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->>>   #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->>>   
->>> +/*  Format description flag, to be ORed with the index */
->>> +#define V4L2_FMT_FLAG_ENUM_ALL			0x80000000
->>> +
->>>   	/* Frame Size and frame rate enumeration */
->>>   /*
->>>    *	F R A M E   S I Z E   E N U M E R A T I O N
->> Regards,
->>
->> 	Hans
->>
->
+When modules use IOPRIO_PRIO_CLASS & IOPRIO_PRIO_LEVEL get ioprio's class and
+level, their outputs are both unsigned int.
+ IOPRIO_CLASS_MASK is:
+ #define IOPRIO_CLASS_SHIFT	13
+ #define IOPRIO_NR_CLASSES	8
+ #define IOPRIO_CLASS_MASK	(IOPRIO_NR_CLASSES - 1)
+ IOPRIO_LEVEL_MASK is:
+ #define IOPRIO_LEVEL_NR_BITS	3
+ #define IOPRIO_NR_LEVELS	(1 << IOPRIO_LEVEL_NR_BITS)
+ #define IOPRIO_LEVEL_MASK	(IOPRIO_NR_LEVELS - 1)
+
+Ioprio is passed along as an int internally, so we should not be using an
+unsigned long for IOPRIO_PRIO_MASK to not end up with IOPRIO_PRIO_DATA
+returning an unsigned long as well.
+
+Fixes: 06447ae5e33b ("ioprio: move user space relevant ioprio bits to UAPI includes")
+Cc: stable@vger.kernel.org
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Link: https://lore.kernel.org/all/1717155071-20409-1-git-send-email-zhiguo.niu@unisoc.com
+---
+v3: modify commit message according to Damien Le Moal'ssuggestion
+v2: add Fixes tag and Cc tag
+---
+---
+ include/uapi/linux/ioprio.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/uapi/linux/ioprio.h b/include/uapi/linux/ioprio.h
+index bee2bdb0..9ead07f 100644
+--- a/include/uapi/linux/ioprio.h
++++ b/include/uapi/linux/ioprio.h
+@@ -11,7 +11,7 @@
+ #define IOPRIO_CLASS_SHIFT	13
+ #define IOPRIO_NR_CLASSES	8
+ #define IOPRIO_CLASS_MASK	(IOPRIO_NR_CLASSES - 1)
+-#define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
++#define IOPRIO_PRIO_MASK	((1U << IOPRIO_CLASS_SHIFT) - 1)
+ 
+ #define IOPRIO_PRIO_CLASS(ioprio)	\
+ 	(((ioprio) >> IOPRIO_CLASS_SHIFT) & IOPRIO_CLASS_MASK)
+-- 
+1.9.1
+
 
