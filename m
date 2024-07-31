@@ -1,165 +1,103 @@
-Return-Path: <linux-kernel+bounces-268666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2BA94278C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:10:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817E794278F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:11:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0729F281366
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFA471C213D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7207A1A4F11;
-	Wed, 31 Jul 2024 07:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QINaSfa5"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B8A1A4F19;
+	Wed, 31 Jul 2024 07:11:19 +0000 (UTC)
+Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DB716A39E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AD81A4F0A;
+	Wed, 31 Jul 2024 07:11:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722409849; cv=none; b=CoxtJax3ov6M6ChTxZ8RFq1eBKYYLiq5gqMbc/oTzsbbp3tSC2NSqBLkMud7rKrMKitYqSQG2X71hc81z5xO2sjq6g+EHlO+ENmCQoJ1m0ihiWW37UJcAiIWeIB0LNQclA9LbDXkizkdvEDbNJfIipx+dgL+b5goWe7+L0NuZDk=
+	t=1722409878; cv=none; b=c/27kLvZYQyPMdhB+hWKglRFV4ZTQmB5Om1NFaK75AtStk86fQxaBJY3GkyStq1tuM6iTKgBSIxaJPbwrdwPjwd8lmQL2WH1kQn61L7OwRyryDWhAITtII2a5p2gcxu8pka23m3oy3dm/bSw0kaRv9woSHDsgDXx5pRNTVQ+BNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722409849; c=relaxed/simple;
-	bh=xO8K6Mhpi49vHI0hD/R3LJFRz9UzoDtAj7UGbP4GDIw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzKapg2U/2dhJZCrV3l3KZyGw47uvdhvdfKVFOH+YVbJFxQl988VDUdoMSAjqVfHizXTl4zpB6f+3jHIGYNMKXfUJQWgYziCvBrSVgyaX/20EmtD2ng0INpW/MVuxCW8rnyUBZUuQ5/f/OSRZiCIVSyBf/UehqL/8xAkyNimjZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QINaSfa5; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a156557029so8756757a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:10:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722409844; x=1723014644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rM3knuOZHaqsTFzkDvpQFpGqEOzU5UQ/01PDBT9efdA=;
-        b=QINaSfa5a064e65U/mhsfN0EwG3lP9R3+T8erxPldIBaIXzqpNd/Jllpa0ZFIzWLW5
-         kB2FhkM68KHuIgJhZIp8BMGhXRvH6AxlWJoSnc+eMhm4WQWuU+tkqZYH//Qh789by1Rk
-         TdRsu9QmpWGrKnpWfg4IbpnLktr/hIdJGcPyOEm9sk+F7UK2N1l0omoOJoxEcJPj23Zu
-         Ga6dEYhXV7Ufg+NvZqYvKZSgQNMLBIdrOF4e6yIx0lu19RsEErwSLdrFuhrC/h8K42p/
-         aLhTeFgSUCJvSOeUvQkq9frAC05HLbs4CTXY/aXbVYGswVMCsjOYEKxFZ+JiDJE/X3uT
-         hWfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722409844; x=1723014644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rM3knuOZHaqsTFzkDvpQFpGqEOzU5UQ/01PDBT9efdA=;
-        b=eIyZe769a/XInBbTXn7kdLZe1peugEnxVPu3XrDVPJpH8CYHpWFpwsRUWJ9pal92f0
-         ceNM5yTjfWnbBl68oX9vsFcuUw6M+/mfYz0inxlt6QQKb3quubNIeiNu3wNSpVzhGA2e
-         RUkvOneMPEHTOhDVa8hqp8iSYyPNxvfgAxB0CD2N40jqqJYvyWlzRvvslEE5veUe3tJw
-         GO6mb2bNLfV7BvjkD8G1aRnOF2oQeu/uqlw2An+sJY+OF6gMsUMKZW0OMfVRRv2cqtC9
-         m2aYsfAvSTlkfcY67I98nBVtnuriwfXjxLzDCl4+IlXlucrE595A2tY5t1KtCLZudfvO
-         iMeg==
-X-Forwarded-Encrypted: i=1; AJvYcCX0Nqyp4ZfcObV0Yr4tAapR8irjTcXc+7b5IweNU6RgrjhCgCirN5Cx/At+DePzZe2pldx99vMqAqwYnWIb00wJaPEA6n5LiWG9xbWb
-X-Gm-Message-State: AOJu0YxrQan7YCDE9wJk/NiD9WcT2fqmEQTInYROfRrZa74OmuDG0gVU
-	PKTSQyL0l8HK+8BkjNDYNKCX/klS8mea+cZm+Kgk0ib5lR8kq88VcU7O4YrWeL3PuhcSpjoLbDB
-	c6dkPqO/+3MaV3WNI0M8s+2ngl8fzNecPhLpb1w==
-X-Google-Smtp-Source: AGHT+IGUys3WnYAg9sQ+TuEMKkqzevv5FUJda7lT6udM7lAkPAKhnz7RRtQdNEaRKDEN5SpkAfN9qgIvkzT1vcXEvPo=
-X-Received: by 2002:a50:d6d4:0:b0:58b:9561:650b with SMTP id
- 4fb4d7f45d1cf-5b021d21cd1mr8461697a12.25.1722409844400; Wed, 31 Jul 2024
- 00:10:44 -0700 (PDT)
+	s=arc-20240116; t=1722409878; c=relaxed/simple;
+	bh=H5BOo9P2TXbND+GiR9lKx61g3ZNzCZr2BZVJADEb/xw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FVqKXEg6l04w7A6QK/AWiKuVhxjGBxrNjnPZXTtXbnEz3aHhulHuR2NU7eiWUmbUGAYShiGPyJQiLM6MevUJkh5635mEpxPASukFodAVREgL+vh2GYzMU4/DPkz0uWFkSOJ4LE5klyt0oYAQg/NkEXAMzvAvla64g2yWB7w9V98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=18.194.254.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtp82t1722409846t9y894bn
+X-QQ-Originating-IP: FOg9DxHI9YWI5+Z3ZM+7/3WT6X/u1/eRWdy2vDnql8U=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 31 Jul 2024 15:10:44 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 17477064754091558293
+From: WangYuli <wangyuli@uniontech.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	sashal@kernel.org
+Cc: keith.busch@intel.com,
+	axboe@fb.com,
+	hch@lst.de,
+	sagi@grimberg.me,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xuerpeng@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	hmy <huanglin@uniontech.com>,
+	Wentao Guan <guanwentao@uniontech.com>,
+	Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 4.19] nvme/pci: Add APST quirk for Lenovo N60z laptop
+Date: Wed, 31 Jul 2024 15:10:34 +0800
+Message-ID: <579BC59E06EFBC7F+20240731071034.106350-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731032627.59696-1-qiaozhe@iscas.ac.cn>
-In-Reply-To: <20240731032627.59696-1-qiaozhe@iscas.ac.cn>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Wed, 31 Jul 2024 09:10:33 +0200
-Message-ID: <CAHVXubh2MawWGzcL38DPnj2Xa=ZGNr6JK3of3v=eSEOkMeu8Bw@mail.gmail.com>
-Subject: Re: [PATCH] riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fault_error()
-To: Zhe Qiao <qiaozhe@iscas.ac.cn>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	surenb@google.com, akpm@linux-foundation.org, wangkefeng.wang@huawei.com, 
-	willy@infradead.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-Hi Zhe,
+commit ab091ec536cb7b271983c0c063b17f62f3591583 upstream
 
-On Wed, Jul 31, 2024 at 5:26=E2=80=AFAM Zhe Qiao <qiaozhe@iscas.ac.cn> wrot=
-e:
->
-> Add processing for VM_CAULT_SIGSEGV to mm_fault_error () to avoid
-> direct execution of BUG().
+There is a hardware power-saving problem with the Lenovo N60z
+board. When turn it on and leave it for 10 hours, there is a
+20% chance that a nvme disk will not wake up until reboot.
 
-Sorry to bother you again, but since there is a typo
-(s/VM_CAULT_SIGSEGV/VM_FAULT_SIGSEGV), do you mind rephrasing the
-commit log like this (or similar)?
+Link: https://lore.kernel.org/all/2B5581C46AC6E335+9c7a81f1-05fb-4fd0-9fbb-108757c21628@uniontech.com
+Signed-off-by: hmy <huanglin@uniontech.com>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+---
+ drivers/nvme/host/pci.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-"Handle VM_FAULT_SIGSEGV in the page fault path so that we correctly
-kill the process and we don't BUG() the kernel."
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 163497ef48fd..a243c066d923 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2481,6 +2481,13 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+ 			return NVME_QUIRK_NO_APST;
+ 	}
+ 
++	/*
++	 * NVMe SSD drops off the PCIe bus after system idle
++	 * for 10 hours on a Lenovo N60z board.
++	 */
++	if (dmi_match(DMI_BOARD_NAME, "LXKT-ZXEG-N6"))
++		return NVME_QUIRK_NO_APST;
++
+ 	return 0;
+ }
+ 
+-- 
+2.43.4
 
->
-> Fixes: 07037db5d479 ("RISC-V: Paging and MMU")
-> Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
-> ---
->  arch/riscv/mm/fault.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-> index 5224f3733802..a9f2b4af8f3f 100644
-> --- a/arch/riscv/mm/fault.c
-> +++ b/arch/riscv/mm/fault.c
-> @@ -61,26 +61,27 @@ static inline void no_context(struct pt_regs *regs, u=
-nsigned long addr)
->
->  static inline void mm_fault_error(struct pt_regs *regs, unsigned long ad=
-dr, vm_fault_t fault)
->  {
-> +       if (!user_mode(regs)) {
-> +               no_context(regs, addr);
-> +               return;
-> +       }
-> +
->         if (fault & VM_FAULT_OOM) {
->                 /*
->                  * We ran out of memory, call the OOM killer, and return =
-the userspace
->                  * (which will retry the fault, or kill us if we got oom-=
-killed).
->                  */
-> -               if (!user_mode(regs)) {
-> -                       no_context(regs, addr);
-> -                       return;
-> -               }
->                 pagefault_out_of_memory();
->                 return;
->         } else if (fault & (VM_FAULT_SIGBUS | VM_FAULT_HWPOISON | VM_FAUL=
-T_HWPOISON_LARGE)) {
->                 /* Kernel mode? Handle exceptions or die */
-> -               if (!user_mode(regs)) {
-> -                       no_context(regs, addr);
-> -                       return;
-> -               }
->                 do_trap(regs, SIGBUS, BUS_ADRERR, addr);
->                 return;
-> +       } else if (fault & VM_FAULT_SIGSEGV) {
-> +               do_trap(regs, SIGSEGV, SEGV_MAPERR, addr);
-> +               return;
->         }
-> +
->         BUG();
->  }
->
-> --
-> 2.43.0
->
-
-That's a very good catch, good job! You can add:
-
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-
-Thanks,
-
-Alex
 
