@@ -1,162 +1,121 @@
-Return-Path: <linux-kernel+bounces-269561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 460CB943452
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:45:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7F06943456
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77AC61C2150C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:45:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 054791C2199D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EEE1BD026;
-	Wed, 31 Jul 2024 16:45:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F7C1BD01F;
+	Wed, 31 Jul 2024 16:46:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b="oNt6EIHB"
-Received: from kozue.soulik.info (kozue.soulik.info [108.61.200.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pJHtM0RG"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F67C1BC09E;
-	Wed, 31 Jul 2024 16:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.61.200.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0A81B14E7
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722444314; cv=none; b=c7sYAppUgYVKq4+ey01MAMY68t1eRaUGzZLTaSchEk9xN3PRRCKJuDn6TctokgwTmVsiLRzROhxWQLdd0lFVA63/qUglKABo4DSyDbfp1LwTOqONQOKAf4ylkJr7yIZWIMl0JCUptoCapI9kIQn2Y+SAz+rzljhBDV5V2dWUOzw=
+	t=1722444417; cv=none; b=FWqtfhx0v9q9tDXf68ystnwS0qJ7bEjEkzSIYiPUNzj39d5yRNq3pdoDZ6NclSQT0tz4S5ebvBB9iTtkflPujmpTwhexZ0tCecf9U1YxYXWsuNSFi65qSxM21ns3n1TFUnzk0wkWH+i0XukrgCQzbV+KGTJlb/tRkzJEzG9mJjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722444314; c=relaxed/simple;
-	bh=8x9lJEHfZ3jfyxBOiJb3GTpMIoOuy6Gd7KaJ47G4+xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tbphbydgy2NydK6DoEqr3JDt5N87Umno8vAF0CjMdOQn/G0LiIPMxxoVfA2l/HfcPwGsmJXV7Im/WQt3OfxP+1Ux7HlaYTTXK1x82IdM8cxL6ZBq4SBMotvDEgyw7/hAXZdpNSpqZ2ZI4fBk+uiLUGpk3Kv/Bai2/45//Q7Vp04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info; spf=pass smtp.mailfrom=soulik.info; dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b=oNt6EIHB; arc=none smtp.client-ip=108.61.200.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soulik.info
-Received: from [192.168.10.7] (unknown [10.0.12.132])
-	by kozue.soulik.info (Postfix) with ESMTPSA id DAA962FDA00;
-	Thu,  1 Aug 2024 01:45:33 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 kozue.soulik.info DAA962FDA00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soulik.info; s=mail;
-	t=1722444335; bh=0o9Zv/4IXTu2a6JOrT9Mnt0TyC2AejbKp0bVV7nYd1g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oNt6EIHBeDQHhd6CxHCSTe9qoKHrVpfurovs58pG0fOTpOG7a5xICGOAaACFMt8mz
-	 e+Xy92Juz28ICUWSVINLKbWdOarFkdz2RPrIWndJ/X5AUNQz+zLg0J6di9vesABUHu
-	 mrPVdbkFPIAQqoOrDOQ94Qv3UnL4p5fPgp3StcTM=
-Message-ID: <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info>
-Date: Thu, 1 Aug 2024 00:45:08 +0800
+	s=arc-20240116; t=1722444417; c=relaxed/simple;
+	bh=DPC7a/ItVVS/ZUsDBa3A34Cag7H61CGwBsA/cvnuO+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OuthLkNDFeqbn/v4VoELcFl4BUMurF2wqOf8i7xINivs4o8BPsUjChBrj+UQYZZ1vLuns2VudYNYrvTBzxWW7MEb/QL08VlWIymvbTwqn7qW98j/LtQYfrKCMXYpD3iD6b0Sf1W2tYCrT1V4FI03pFW4OjnhT7nQlrkINnUYuh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pJHtM0RG; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2611da054fbso3819953fac.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722444413; x=1723049213; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9Y17BSh/uyhoM7VykjQAyLacxqXElZzql32CV9WyQ20=;
+        b=pJHtM0RGdLn5+O28CzkMS+62BASSYNGIjbh3LTlIWM+rmVD4m/sy+flHKKJvMWNNdR
+         0JyVBE0aA0oDIZute/5Wo+kOyfhU9UUVxmUUqI2+ThmVNwo5JrJkXZ0/pNx1Th+AYeSU
+         oKvYKE4izz4lL789eHTT2PRLUFu41SB9wAIyIakwXMxVOORt+gBfZz/2FTGs/W2HYGDb
+         +RnVS/3jzVGKEpjtcuEmNmzDVlwCiFmAd7YMCBegauOBOB61ojDwvOPvkA/UWETvGCCw
+         1dMEVsYnYYc7GLHfoTSsbv3P8OSCKA7tIoAkuijcvoxMrZ/quL4eu8lopXXM+Ro20z2z
+         Ui6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722444413; x=1723049213;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Y17BSh/uyhoM7VykjQAyLacxqXElZzql32CV9WyQ20=;
+        b=Gtvu5iBf7n8PP5XNldODwMpbKmY407+hXd29R7faDxgc22nGrhTM+cObPUeraVKc27
+         kQTYUndosXZ6+nmIbSIeU2kqxtcNyIYc2eerSUrzbQkOSNmPAVmsZHWR4w9GDcWtNCvt
+         mHwu3YgYzckS4JgPYEvf5gitTLUPEBmb1d9WBKwK9RubKLF1Bx+ZKImsYAKIdjCyQWVE
+         LLv2vM+DbizlJY+zpsG0By29Rt3eyRiALOvcllK4yEPYEw70LLVKWjaPPWvIu1kcfshy
+         6EPRc04WIZasyKKtUPnzIn0DHIdzxEOVdjVhY0U+jA5oDYV7+clDjoULN8luCdDuj16u
+         uU/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUcoXGY4ZgbLqET2wqNL8baGpFIU8fkfZIISfIqJ61pyqxpxBHc9XqIlUQ+Fex3ZI+bHKOKWODUr0nPUBg/j2SoiZDI02qM5djcMp/e
+X-Gm-Message-State: AOJu0Yw8ut5htAYe8NDr/RZ40q6FRGLKoLtXwMdrsRsvgHL0Pxos2vqD
+	VxsNugBpAfgzeZfOav0vDhLP6VuNcQBHwddDfdjrQY//BOf1oHqMRbZHfu7Er/4=
+X-Google-Smtp-Source: AGHT+IFRqHHmQ3zAhsmwrlSOV1mFp0GjcMDmn6Si4PesAAvwXnlJVIJpEu0YlsAaasZvPrDHo57arg==
+X-Received: by 2002:a05:6871:aa06:b0:267:e2b2:ec52 with SMTP id 586e51a60fabf-267e2b304ffmr14807007fac.49.1722444413477;
+        Wed, 31 Jul 2024 09:46:53 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:c572:4680:6997:45a1])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26577239eccsm2721257fac.53.2024.07.31.09.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 09:46:53 -0700 (PDT)
+Date: Wed, 31 Jul 2024 11:46:51 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Jens Axboe <axboe@kernel.dk>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org,
+	patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org, akpm@linux-foundation.org,
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org,
+	linux-ext4 <linux-ext4@vger.kernel.org>,
+	linux-block <linux-block@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc1 review
+Message-ID: <ea202d37-7460-4e45-9e19-6a2b23ada0a0@suswa.mountain>
+References: <20240730151615.753688326@linuxfoundation.org>
+ <CA+G9fYuGGbhKgt6dD2pBCK1y4M3-KUhPZcw21gYtUFzQ32KLdg@mail.gmail.com>
+ <ad4543e3-53bf-4e2c-8a3c-1e21b9cfa246@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue
- index
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, jasowang@redhat.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
-References: <20240731111940.8383-1-ayaka@soulik.info>
- <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Randy Li <ayaka@soulik.info>
-In-Reply-To: <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ad4543e3-53bf-4e2c-8a3c-1e21b9cfa246@kernel.dk>
 
+On Wed, Jul 31, 2024 at 10:13:26AM -0600, Jens Axboe wrote:
+> > ----------
+> >   ## Build
+> > * kernel: 6.1.103-rc1
+> > * git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> > * git commit: a90fe3a941868870c281a880358b14d42f530b07
+> > * git describe: v6.1.102-441-ga90fe3a94186
+> > * test details:
+> > https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.1.y/build/v6.1.102-441-ga90fe3a94186
+> 
+> I built and booted 6.1.103-rc3 and didn't hit anything. Does it still
+> trigger with that one? If yes, how do I reproduce this?
+> 
+> There are no deadline changes since 6.1.102, and the block side is just
+> some integrity bits, which don't look suspicious. The other part this
+> could potentially be is the sbitmap changes, but...
+> 
 
-On 2024/7/31 22:12, Willem de Bruijn wrote:
-> Randy Li wrote:
->> We need the queue index in qdisc mapping rule. There is no way to
->> fetch that.
-> In which command exactly?
+I believe these were fixed in -rc2.  We're on -rc3 now.
 
-That is for sch_multiq, here is an example
-
-tc qdisc add dev  tun0 root handle 1: multiq
-
-tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst 
-172.16.10.1 action skbedit queue_mapping 0
-tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst 
-172.16.10.20 action skbedit queue_mapping 1
-
-tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst 
-172.16.10.10 action skbedit queue_mapping 2
-
-
-The purpose here is taking advantage of the multiple threads. For the 
-the server side(gateway of the tunnel's subnet), usually a different 
-peer would invoked a different encryption/decryption key pair, it would 
-be better to handle each in its own thread. Or the application would 
-need to implement a dispatcher here.
-
-
-I am newbie to the tc(8), I verified the command above with a tun type 
-multiple threads demo. But I don't know how to drop the unwanted ingress 
-filter here, the queue 0 may be a little broken.
-
->
->> Signed-off-by: Randy Li <ayaka@soulik.info>
->> ---
->>   drivers/net/tap.c           | 9 +++++++++
->>   drivers/net/tun.c           | 4 ++++
->>   include/uapi/linux/if_tun.h | 1 +
->>   3 files changed, 14 insertions(+)
->>
->> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
->> index 77574f7a3bd4..6099f27a0a1f 100644
->> --- a/drivers/net/tap.c
->> +++ b/drivers/net/tap.c
->> @@ -1120,6 +1120,15 @@ static long tap_ioctl(struct file *file, unsigned int cmd,
->>   		rtnl_unlock();
->>   		return ret;
->>   
->> +	case TUNGETQUEUEINDEX:
->> +		rtnl_lock();
->> +		if (!q->enabled)
->> +			ret = -EINVAL;
->> +
-> Below will just overwrite the above ret
-Sorry, I didn't verify the tap type.
->
->> +		ret = put_user(q->queue_index, up);
->> +		rtnl_unlock();
->> +		return ret;
->> +
->>   	case SIOCGIFHWADDR:
->>   		rtnl_lock();
->>   		tap = tap_get_tap_dev(q);
->> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
->> index 1d06c560c5e6..5473a0fca2e1 100644
->> --- a/drivers/net/tun.c
->> +++ b/drivers/net/tun.c
->> @@ -3115,6 +3115,10 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
->>   		if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
->>   			return -EPERM;
->>   		return open_related_ns(&net->ns, get_net_ns);
->> +	} else if (cmd == TUNGETQUEUEINDEX) {
->> +		if (tfile->detached)
->> +			return -EINVAL;
->> +		return put_user(tfile->queue_index, (unsigned int __user*)argp);
-> Unless you're certain that these fields can be read without RTNL, move
-> below rtnl_lock() statement.
-Would fix in v2.
->>   	}
->>   
->>   	rtnl_lock();
->> diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
->> index 287cdc81c939..2668ca3b06a5 100644
->> --- a/include/uapi/linux/if_tun.h
->> +++ b/include/uapi/linux/if_tun.h
->> @@ -61,6 +61,7 @@
->>   #define TUNSETFILTEREBPF _IOR('T', 225, int)
->>   #define TUNSETCARRIER _IOW('T', 226, int)
->>   #define TUNGETDEVNETNS _IO('T', 227)
->> +#define TUNGETQUEUEINDEX _IOR('T', 228, unsigned int)
->>   
->>   /* TUNSETIFF ifr flags */
->>   #define IFF_TUN		0x0001
->> -- 
->> 2.45.2
->>
->
+regards,
+dan carpenter
 
