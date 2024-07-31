@@ -1,265 +1,133 @@
-Return-Path: <linux-kernel+bounces-269231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78C65942F8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86F3F942F94
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B90A1C20FF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EFC28AA28
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA221AD9EB;
-	Wed, 31 Jul 2024 12:57:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E011B3F02;
+	Wed, 31 Jul 2024 12:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="C4UwkRQz"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A680B1B150F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="psCgaXB5"
+Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9065C1AB52C;
+	Wed, 31 Jul 2024 12:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430667; cv=none; b=EiWRDWWbsNrNCQ0c1N8qN/iLVIaL5OZcenuVs98SZu7RD2uC8nB84BS8s23XornELNiFHninB8gIzQb71ot+baKfIWCwxAcQaBHoFMqdayravgrGdLbM8BJemPwc2+2j1vnhep6xnwlyqKRRj1nB8icj0gH2ZVma2jPuF68fQ9I=
+	t=1722430747; cv=none; b=sT/H/f9ieDYOSdGw203iuAztmPencGNFeUhoL2ouB63DiMhxf7utAS7++kV9RsGR/DYMThmEL3fTf8EpeegcZE4dQtAVcUDdfPjaFA+rzyzJtBoMWkcUK4WrGGloszC/J/Fo/MCm8qoWTSv4VYhMVFkfWtzJBI+QoJgO4qM37jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430667; c=relaxed/simple;
-	bh=O7oZZngsgG4aTYFX6SR1nQEaymMgdukO/CqxAueIZ6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSenH7h7pfqXkDYeI1Qb56OP/D62E0UX1o8GVs2OzaVZ037E195gXyafMtx/C+TXALWPhzoSGgzz2Q4YSoLbFFYRtRXqsYVZ7aETLDXEK6vVvss4ZqrQkt0YU5pW+vhvy9VH8/Ad+j2UflXLNGgVd6OgUt1nMvtb308mCdxzajE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=C4UwkRQz; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-709485aca4bso2296926a34.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722430664; x=1723035464; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=EzC0eqz8Kjb84+0Jbqizan62tKi+1Crzp5DWFl/GO8k=;
-        b=C4UwkRQzIs9eJl71Hu0+nYaePviIJHgs0ZUj3hK4hPCKs7y0Ow4afsb7MJ/g4DJQoF
-         OgVbYSRy7msbodd2QC6/gP+UNeIysjlfEDJo8KfZGookk+QliIdj8e7mFzuTFnv/t1gq
-         C9Nd2pBcIqNiEuWB1DGwOxcxoWOHfERN9UWSM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722430664; x=1723035464;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EzC0eqz8Kjb84+0Jbqizan62tKi+1Crzp5DWFl/GO8k=;
-        b=qx5H7tlO6rniYP04QgKZl5LTa+dG6tCJeUOudgSd1bTRISVnK9NyoOLfsoVBwHSG2o
-         cKWR8+lmGn5ydNaOmWMWDrOOshvOtv0tJcTklfgrmUGzENkKSTFes0+198bzq9P9uGlI
-         DPzaLjDM9EUBPqMkPDmUJi+tk8kN3Fe4kESqGaAVAwhoZ6JbKSOhfOxPZQyJ+SUqGUsm
-         v6Go6B23RsCuZ0DOcJ2ISixFf0BycmDVWt/1uvky59hWph3Kdvray/sShV4JpJvJpr2+
-         klPjj16Fq6cgekn9BtdrcL3EbnyMhV5lf+2nv3+N2beFzy2Z5SXXHELV/bRF72ckji+2
-         ZszQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU432ZHuMx/krT3YT9AomOGvBaQwk8WoClWqLhYd+1v1nNMuyEYIJ6EsHUJ+E9ThHO7XP85C+qoFhjM06dZ1so8Xwx4peBIPJIhTwV1
-X-Gm-Message-State: AOJu0Yy09yi6AAyphdwOD0NRxDVDt1iLROcE1e6e88eIfrMw//J81yq7
-	VNtJczUvOB6SrOuyUs3aMbm+U5aAMe1Awp9K4dKlDPNsfdim2HKb30RXKCc03g==
-X-Google-Smtp-Source: AGHT+IHnwjS7xUKmnQm2qU+GCK1j/DPPQMAqXjgNJonWiPZW/IiZxnqhcjOzlbYc88CqRd8NLxWBbQ==
-X-Received: by 2002:a05:6358:b409:b0:1ac:efb0:fb2e with SMTP id e5c5f4694b2df-1adc06d4d72mr2646273855d.22.1722430663503;
-        Wed, 31 Jul 2024 05:57:43 -0700 (PDT)
-Received: from [192.168.178.137] (f215227.upc-f.chello.nl. [80.56.215.227])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3f91a8cfsm72720796d6.60.2024.07.31.05.57.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 05:57:42 -0700 (PDT)
-Message-ID: <dd381dc1-454f-4ecd-adb7-55de2e15d592@broadcom.com>
-Date: Wed, 31 Jul 2024 14:57:37 +0200
+	s=arc-20240116; t=1722430747; c=relaxed/simple;
+	bh=iSskvgHd2RV0PGf40AdW5HOVIBJ+OOv5C1Gm+PsLey8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=LebNN4MDuMvlZU+/MTiZkiFVHnPC+Z8ipykfZlYWyQGrh1xMDMIVUAEWp4GRo5RoxkQB7gfraKpClx4cbWvgZW+OoVCsy6tgIDteVtm25dpHO4uG8VRVA9LsZK78nQ6sDlCdu8fhdWjwvrrgUuj3uNiIqAVTRWvmLA5rZ4Q2ETE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=psCgaXB5 reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=0h4LaQtBvmiVXs/Hf+P23R81FvK6xyzFgOO+MeKx4mk=; b=p
+	sCgaXB540S9bk2RCFO1xY5k7RTkQBrGDTb2lojNxamDNLVAeWCR7JNRgg9LJE3gy
+	ORUI0Lm7GlGQug9x1gxjOINkPiq1MznlRhxKruVctzCwnt2nwnig9NguYMQqL1Bu
+	A1m/MiqNMgDfGybVXo3kyR0kSPCv4RGcLADwYXMhrs=
+Received: from 00107082$163.com ( [111.35.189.52] ) by
+ ajax-webmail-wmsvr-40-133 (Coremail) ; Wed, 31 Jul 2024 20:58:40 +0800
+ (CST)
+Date: Wed, 31 Jul 2024 20:58:40 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Gautham R.Shenoy" <gautham.shenoy@amd.com>
+Cc: perry.yuan@amd.com, Alexander.Deucher@amd.com, Li.Meng@amd.com, 
+	Mario.Limonciello@amd.com, Xiaojian.Du@amd.com, Xinmei.Huang@amd.com, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	rafael.j.wysocki@intel.com, viresh.kumar@linaro.org
+Subject: Re: [Regression] 6.11.0-rc1: AMD CPU boot with error when CPPC
+ feature disabled by BIOS
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <87zfpxsweb.fsf@BLR-5CG11610CF.amd.com>
+References: <20240730140111.4491-1-00107082@163.com>
+ <87zfpxsweb.fsf@BLR-5CG11610CF.amd.com>
+X-NTES-SC: AL_Qu2ZAPiYv08p5iWRZ+kXn0oTju85XMCzuv8j3YJeN500mSXt0QA9Y09JGEbrzsGEKAKMgCiOVDZp48NWcaB9f44c8JlJf7TLehw1lLTj9v3b
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/5] dt-bindings: net: wireless: brcm4329-fmac: add
- clock description for AP6275P
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org, krzk+dt@kernel.org,
- heiko@sntech.de, kvalo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, conor+dt@kernel.org,
- Linus Walleij <linus.walleij@linaro.org>, efectn@protonmail.com,
- dsimic@manjaro.org, jagan@edgeble.ai, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, arend@broadcom.com,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, megi@xff.cz,
- duoming@zju.edu.cn, bhelgaas@google.com, minipli@grsecurity.net,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- nick@khadas.com, Andy Green <andy@warmcat.com>
-References: <20240730033053.4092132-1-jacobe.zang@wesion.com>
- <20240730033053.4092132-3-jacobe.zang@wesion.com>
- <191025b5268.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <f45c1fa7-f321-4a1f-b65c-6ed326a18268@kernel.org>
- <191030eac78.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <3d3b8e0a-7492-4db1-bd73-c30a488edaa7@kernel.org>
- <191035b8c28.279b.9b12b7fc0a3841636cfb5e919b41b954@broadcom.com>
- <k3dhdsa5bjzad2ha5e2uurg2azzs773ier5thkot4w2qcvnv54@yuf52eluqsae>
-Content-Language: en-US
-From: Arend van Spriel <arend.vanspriel@broadcom.com>
-Autocrypt: addr=arend.vanspriel@broadcom.com; keydata=
- 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
-In-Reply-To: <k3dhdsa5bjzad2ha5e2uurg2azzs773ier5thkot4w2qcvnv54@yuf52eluqsae>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <2f793cc8.a13d.19108df0a58.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v7QBNapmnHJvAA--.13654W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRctqmVOB4ulsQACsI
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On 7/30/2024 7:38 PM, Sebastian Reichel wrote:
-> Hi,
-> 
-> On Tue, Jul 30, 2024 at 01:16:57PM GMT, Arend Van Spriel wrote:
->> On July 30, 2024 12:18:20 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->>> On 30/07/2024 11:52, Arend Van Spriel wrote:
->>>> On July 30, 2024 11:01:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>>
->>>>> On 30/07/2024 08:37, Arend Van Spriel wrote:
->>>>>> + Linus W
->>>>>>
->>>>>> On July 30, 2024 5:31:15 AM Jacobe Zang <jacobe.zang@wesion.com> wrote:
->>>>>>
->>>>>>> Not only AP6275P Wi-Fi device but also all Broadcom wireless devices allow
->>>>>>> external low power clock input. In DTS the clock as an optional choice in
->>>>>>> the absence of an internal clock.
->>>>>>>
->>>>>>> Reviewed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>>>>>> Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->>>>>>> ---
->>>>>>> .../bindings/net/wireless/brcm,bcm4329-fmac.yaml          | 8 ++++++++
->>>>>>> 1 file changed, 8 insertions(+)
->>>>>>>
->>>>>>> diff --git
->>>>>>> a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>> b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>> index 2c2093c77ec9a..a3607d55ef367 100644
->>>>>>> --- a/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>> +++ b/Documentation/devicetree/bindings/net/wireless/brcm,bcm4329-fmac.yaml
->>>>>>> @@ -122,6 +122,14 @@ properties:
->>>>>>> NVRAM. This would normally be filled in by the bootloader from platform
->>>>>>> configuration data.
->>>>>>>
->>>>>>> +  clocks:
->>>>>>> +    items:
->>>>>>> +      - description: External Low Power Clock input (32.768KHz)
->>>>>>> +
->>>>>>> +  clock-names:
->>>>>>> +    items:
->>>>>>> +      - const: lpo
->>>>>>> +
->>>>>>
->>>>>> We still have an issue that this clock input is also present in the
->>>>>> bindings specification broadcom-bluetooth.yaml (not in bluetooth
->>>>>> subfolder). This clock is actually a chip resource. What happens if both
->>>>>> are defined and both wifi and bt drivers try to enable this clock? Can this
->>>>>> be expressed in yaml or can we only put a textual warning in the property
->>>>>> descriptions?
->>>>>
->>>>> Just like all clocks, what would happen? It will be enabled.
->>>>
->>>> Oh, wow! Cool stuff. But seriously is it not a problem to have two entities
->>>> controlling one and the same clock? Is this use-case taken into account by
->>>> the clock framework?
->>>
->>> Yes, it is handled correctly. That's a basic use-case, handled by CCF
->>> since some years (~12?). Anyway, whatever OS is doing (or not doing)
->>> with the clocks is independent of the bindings here. The question is
->>
->> Agree. Probably the bindings would not be the place to document this if it
->> would be an issue.
->>
->>> about hardware - does this node, which represents PCI interface of the
->>> chip, has/uses the clocks.
->>
->> The schematics I found for the wifi module and the khadas edge platform show
->> these are indeed wired to the chip.
-> 
-> I have a Rockchip RK3588 Evaluation Board on my desk, which uses the
-> same WLAN AP6275P module. I think I already commented on a prior
-> version of this series: The LPO clock is needed to make the PCIe
-> device visible on the bus. That means this series only works if the
-> clock has already been running. Otherwise the PCIe driver will never
-> be probed. To become visible the devices requires:
-> 
-> 1. The LPO clock to be enabled
-> 2. Power to be applied
-> 3. The WL_EN gpio to be configured correctly
-> 
-> If one of the above is not met, the device will not even appear in
-> 'lspci'. I believe the binding needs to take into consideration, that
-> pwrseq is needed for the PCIe side. Fortuantely the heavy lifting of
-> creating the proper infrastructure for this has already been done by
-> Bartosz Golaszewski for Qualcomm WLAN chips. What is missing is a
-> pwrseq driver for the Broadcom chip (or this specific module?).
-
-That does not really make sense. There is no relation between the LPO 
-clock and the PCIe clocks so 1) being a requirement for probing the 
-device looks odd. It also does not match past experience when I assisted 
-Andy Green in getting this module up and running almost two years ago.
-
-"""
-On 11/9/22 18:26, Arend Van Spriel wrote:
- > On November 8, 2022 11:48:22 AM Andy Green <andy@warmcat.com> wrote:
- >> Hi -
- >>
- >> I'm trying to bring up AP6275 support on 6.1-rc4... I have tried a 
-forward-ported sdk broadcom driver from the 5.10 based soc sdk, and the 
-mainline brcm fullmac driver.
- >
- > Do you have a reference to the SDK? For what SoC?
-
-Hi Arend -
-
-It's the OOT broadcom driver that came with the latest (Sept 2022) 
-vendor SDK for RK3588, from Rockchip.  Their evb has an AP6275 onboard.
-
-PCIe generally is working on this (eg, for NVMe in the PCIe 4-lane slot) 
-and for network, and the PCIe part seems OK when I hack in a gpio 
-regulator to hold up the module enable gpio.
-"""
-
-So regarding 2) and 3) I agree with you.
-
-Regards,
-Arend
+SGksCgpBdCAyMDI0LTA3LTMxIDE4OjEyOjEyLCAiR2F1dGhhbSBSLlNoZW5veSIgPGdhdXRoYW0u
+c2hlbm95QGFtZC5jb20+IHdyb3RlOgo+SGVsbG8gRGF2aWQsCj4KPkRhdmlkIFdhbmcgPDAwMTA3
+MDgyQDE2My5jb20+IHdyaXRlczoKPgo+PiBIaSwKPj4KPj4gSSBub3RpY2Ugc29tZSBrZXJuZWwg
+d2FybmluZyBhbmQgZXJyb3JzIHdoZW4gSSB1cGRhdGUgdG8gNi4xMS4wLXJjMToKPj4KPj4gIGtl
+cm5lbDogWyAgICAxLjAyMjczOV0gYW1kX3BzdGF0ZTogVGhlIENQUEMgZmVhdHVyZSBpcyBzdXBw
+b3J0ZWQgYnV0IGN1cnJlbnRseSBkaXNhYmxlZCBieSB0aGUgQklPUy4KPj4gIGtlcm5lbDogWyAg
+ICAxLjAyMjczOV0gUGxlYXNlIGVuYWJsZSBpdCBpZiB5b3VyIEJJT1MgaGFzIHRoZSBDUFBDIG9w
+dGlvbi4KPj4gIGtlcm5lbDogWyAgICAxLjA5ODA1NF0gYW1kX3BzdGF0ZTogbWluX2ZyZXEoMCkg
+b3IgbWF4X2ZyZXEoMCkgb3Igbm9taW5hbF9mcmVxKDApIHZhbHVlIGlzIGluY29ycmVjdAo+PiAg
+a2VybmVsOiBbICAgIDEuMTEwMDU4XSBhbWRfcHN0YXRlOiBtaW5fZnJlcSgwKSBvciBtYXhfZnJl
+cSgwKSBvciBub21pbmFsX2ZyZXEoMCkgdmFsdWUgaXMgaW5jb3JyZWN0Cj4+ICBrZXJuZWw6IFsg
+ICAgMS4xMjIwNTddIGFtZF9wc3RhdGU6IG1pbl9mcmVxKDApIG9yIG1heF9mcmVxKDApIG9yIG5v
+bWluYWxfZnJlcSgwKSB2YWx1ZSBpcyBpbmNvcnJlY3QKPj4gIGtlcm5lbDogWyAgICAxLjEzNDA2
+Ml0gYW1kX3BzdGF0ZTogbWluX2ZyZXEoMCkgb3IgbWF4X2ZyZXEoMCkgb3Igbm9taW5hbF9mcmVx
+KDApIHZhbHVlIGlzIGluY29ycmVjdAo+PiAga2VybmVsOiBbICAgIDEuMTM0NjQxXSBhbWRfcHN0
+YXRlOiBtaW5fZnJlcSgwKSBvciBtYXhfZnJlcSgwKSBvciBub21pbmFsX2ZyZXEoMCkgdmFsdWUg
+aXMgaW5jb3JyZWN0Cj4+ICBrZXJuZWw6IFsgICAgMS4xMzUxMjhdIGFtZF9wc3RhdGU6IG1pbl9m
+cmVxKDApIG9yIG1heF9mcmVxKDApIG9yIG5vbWluYWxfZnJlcSgwKSB2YWx1ZSBpcyBpbmNvcnJl
+Y3QKPj4gIGtlcm5lbDogWyAgICAxLjEzNTY5M10gYW1kX3BzdGF0ZTogbWluX2ZyZXEoMCkgb3Ig
+bWF4X2ZyZXEoMCkgb3Igbm9taW5hbF9mcmVxKDApIHZhbHVlIGlzIGluY29ycmVjdAo+PiAga2Vy
+bmVsOiBbICAgIDEuMTM2MzcxXSBhbWRfcHN0YXRlOiBtaW5fZnJlcSgwKSBvciBtYXhfZnJlcSgw
+KSBvciBub21pbmFsX2ZyZXEoMCkgdmFsdWUgaXMgaW5jb3JyZWN0Cj4+ICBrZXJuZWw6IFsgICAg
+MS4xMzYzOTBdIGFtZF9wc3RhdGU6IGZhaWxlZCB0byByZWdpc3RlciB3aXRoIHJldHVybiAtMTkK
+Pj4gIGtlcm5lbDogWyAgICAxLjEzODQxMF0gbGVkdHJpZy1jcHU6IHJlZ2lzdGVyZWQgdG8gaW5k
+aWNhdGUgYWN0aXZpdHkgb24gQ1BVcwo+Pgo+Pgo+PiBUaG9zZSB3YXJuaW5nIG1lc3NhZ2Ugd2Fz
+IGludHJvZHVjZWQgYnkgY29tbWl0Ogo+PiAgYmZmN2QxM2MxOTBhZDk4Y2Y0Zjg3NzE4OWIwMjJj
+NzVkZjRjYjM4MyAoImNwdWZyZXE6IGFtZC1wc3RhdGU6IGFkZCBkZWJ1ZyBtZXNzYWdlIHdoaWxl
+IENQUEMgaXMgc3VwcG9ydGVkIGFuZCBkaXNhYmxlZCBieSBTQklPUykKPj4gLCB3aGljaCBtYWtl
+IHNlbnNlLgo+Cj4KPklmIENQUEMgaXMgZGlzYWJlZCBpbiB0aGUgQklPUywgdGhlbiB0aGUgX0NQ
+QyBvYmplY3RzIHNob3VsZG4ndCBoYXZlCj5iZWVuIGNyZWF0ZWQuIEFuZCB0aGUgZXJyb3IgbWVz
+c2FnZSB0aGF0IHlvdSBzaG91bGQgaGF2ZSBzZWVuIGlzCj4idGhlIF9DUEMgb2JqZWN0IGlzIG5v
+dCBwcmVzZW50IGluIFNCSU9TIG9yIEFDUEkgZGlzYWJsZWQiLgo+Cj4KPkNvdWxkIHlvdSBwbGVh
+c2Ugc2hhcmUgdGhlIGZhbWlseSBhbmQgbW9kZWwgbnVtYmVyIG9mIHRoZSBwbGF0Zm9ybSB3aGVy
+ZQo+eW91IGFyZSBvYnNlcnZpbmcgdGhpcyA/CgpNeSBgY2F0IC9wcm9jL2NwdWluZm9gIHNob3dz
+IHNvbWV0aGluZyBhcyBmb2xsb3dpbmc6CnByb2Nlc3Nvcgk6IDAKdmVuZG9yX2lkCTogQXV0aGVu
+dGljQU1ECmNwdSBmYW1pbHkJOiAyMwptb2RlbAkJOiAxMTMKbW9kZWwgbmFtZQk6IEFNRCBSeXpl
+biAzIDMxMDAgNC1Db3JlIFByb2Nlc3NvcgpzdGVwcGluZwk6IDAKbWljcm9jb2RlCTogMHg4NzAx
+MDIxCmNwdSBNSHoJCTogMzYwMC4wMDAKY2FjaGUgc2l6ZQk6IDUxMiBLQgpwaHlzaWNhbCBpZAk6
+IDAKc2libGluZ3MJOiA4CmNvcmUgaWQJCTogMApjcHUgY29yZXMJOiA0CmFwaWNpZAkJOiAwCmlu
+aXRpYWwgYXBpY2lkCTogMApmcHUJCTogeWVzCmZwdV9leGNlcHRpb24JOiB5ZXMKY3B1aWQgbGV2
+ZWwJOiAxNgp3cAkJOiB5ZXMKZmxhZ3MJCTogZnB1IHZtZSBkZSBwc2UgdHNjIG1zciBwYWUgbWNl
+IGN4OCBhcGljIHNlcCBtdHJyIHBnZSBtY2EgY21vdiBwYXQgcHNlMzYgY2xmbHVzaCBtbXggZnhz
+ciBzc2Ugc3NlMiBodCBzeXNjYWxsIG54IG1teGV4dCBmeHNyX29wdCBwZHBlMWdiIHJkdHNjcCBs
+bSBjb25zdGFudF90c2MgcmVwX2dvb2Qgbm9wbCB4dG9wb2xvZ3kgbm9uc3RvcF90c2MgY3B1aWQg
+ZXh0ZF9hcGljaWQgYXBlcmZtcGVyZiByYXBsIHBuaSBwY2xtdWxxZHEgbW9uaXRvciBzc3NlMyBm
+bWEgY3gxNiBzc2U0XzEgc3NlNF8yIG1vdmJlIHBvcGNudCBhZXMgeHNhdmUgYXZ4IGYxNmMgcmRy
+YW5kIGxhaGZfbG0gY21wX2xlZ2FjeSBzdm0gZXh0YXBpYyBjcjhfbGVnYWN5IGFibSBzc2U0YSBt
+aXNhbGlnbnNzZSAzZG5vd3ByZWZldGNoIG9zdncgaWJzIHNraW5pdCB3ZHQgdGNlIHRvcG9leHQg
+cGVyZmN0cl9jb3JlIHBlcmZjdHJfbmIgYnBleHQgcGVyZmN0cl9sbGMgbXdhaXR4IGNwYiBjYXRf
+bDMgY2RwX2wzIGh3X3BzdGF0ZSBzc2JkIG1iYSBpYnBiIHN0aWJwIHZtbWNhbGwgZnNnc2Jhc2Ug
+Ym1pMSBhdngyIHNtZXAgYm1pMiBjcW0gcmR0X2EgcmRzZWVkIGFkeCBzbWFwIGNsZmx1c2hvcHQg
+Y2x3YiBzaGFfbmkgeHNhdmVvcHQgeHNhdmVjIHhnZXRidjEgY3FtX2xsYyBjcW1fb2NjdXBfbGxj
+IGNxbV9tYm1fdG90YWwgY3FtX21ibV9sb2NhbCBjbHplcm8gaXJwZXJmIHhzYXZlZXJwdHIgcmRw
+cnUgd2Jub2ludmQgYXJhdCBucHQgbGJydiBzdm1fbG9jayBucmlwX3NhdmUgdHNjX3NjYWxlIHZt
+Y2JfY2xlYW4gZmx1c2hieWFzaWQgZGVjb2RlYXNzaXN0cyBwYXVzZWZpbHRlciBwZnRocmVzaG9s
+ZCBhdmljIHZfdm1zYXZlX3ZtbG9hZCB2Z2lmIHZfc3BlY19jdHJsIHVtaXAgcmRwaWQgb3ZlcmZs
+b3dfcmVjb3Ygc3VjY29yIHNtY2Egc2V2IHNldl9lcwpidWdzCQk6IHN5c3JldF9zc19hdHRycyBz
+cGVjdHJlX3YxIHNwZWN0cmVfdjIgc3BlY19zdG9yZV9ieXBhc3MgcmV0YmxlZWQgc210X3JzYiBz
+cnNvCmJvZ29taXBzCTogNzE5OS45NQpUTEIgc2l6ZQk6IDMwNzIgNEsgcGFnZXMKY2xmbHVzaCBz
+aXplCTogNjQKY2FjaGVfYWxpZ25tZW50CTogNjQKYWRkcmVzcyBzaXplcwk6IDQzIGJpdHMgcGh5
+c2ljYWwsIDQ4IGJpdHMgdmlydHVhbApwb3dlciBtYW5hZ2VtZW50OiB0cyB0dHAgdG0gaHdwc3Rh
+dGUgY3BiIGVmZl9mcmVxX3JvIFsxM10gWzE0XQoKCgoKPgo+LS0KPlRoYW5rcyBhbmQgUmVnYXJk
+cwo+Z2F1dGhhbS4KCgo=
 
