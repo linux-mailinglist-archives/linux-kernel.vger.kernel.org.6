@@ -1,91 +1,97 @@
-Return-Path: <linux-kernel+bounces-268383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D149423F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:53:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0237A9423FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:54:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CF8BB234B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:53:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FC121F252F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:54:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D25846F;
-	Wed, 31 Jul 2024 00:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932D5846F;
+	Wed, 31 Jul 2024 00:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cPT8PPFu"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sjpx7Il8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2CE46B5
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5801C8C7;
+	Wed, 31 Jul 2024 00:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722387176; cv=none; b=UnCyKTddKv1zYsrNOY5p3agcOSs8BrvACm/3pZFUTb4MDFUH7EOq3dmoF5BJZYJurpe1YPVelaRLJ2dmAVsMSjS5PdUXOqoexQ9+oL//bUzdM/XamQ+0/ckIs7l2v5OeN32kvs6vuUzAfNvBUuNe+obBwrV9farYgAh/QcOAXn8=
+	t=1722387268; cv=none; b=u+YvbtAOHL55cxuckopSTBD7vjZ1ke9pO7lWY7dqZFF+7MOnPn/XDUkOLNC1I8ssKKIo78dzhqExmXi4yewyZF4SDTRfdVCYuHewJZv24UXSrrE2RRDX+0yPlGQHIr5xyzMBAsMQOCNgMEGV6I3UyepGGUugFXj2tRnkAlr9tik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722387176; c=relaxed/simple;
-	bh=RFzBDEACN54BlktdwPVLsaXYKHqevn8Ah3qOD6p3lVo=;
+	s=arc-20240116; t=1722387268; c=relaxed/simple;
+	bh=sNK1q/hPPhJzRGBRVR4nFgGZxEucNYGuSj6F6L8vNOA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7o/CJ21GWNQa+hi+WMRkYkxHcG+SLKc5eiQOQvHIWbnFaYDBaLyX+Fw64uEI6Ma6kJ3e5h9tJcxjKwH5nInKgRTXNwqJfHVze31awH1c7FLrELEti8oV66Uqm3sUXxkwm/0wJte64uqAce72v/KHQcqTBE6LUtOE+bNsK3yXBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cPT8PPFu; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 30 Jul 2024 20:52:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722387172;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdOSEkeUenRtcbHdw9g4dXOoiO0ucmftbM8CCNfxNnE=;
-	b=cPT8PPFuUL/funWQ6votzxwr0H5FXftlOS+Uv2sTnM0jARnERS8SgUFIqDTICep4theyTS
-	jKsB9vIPE9/Gr6+7rPNExFF924QL2KWQAZ9Hey1WpD2DGuSfqad9jch9ehtHnYR6QYgEqm
-	EXlSDOlkBJM2av5R7kx86ypnbbXotDg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] bcachefs: Add checks for entry's _data bytes
-Message-ID: <apj4zcnnq5nwcly4mnl76uiuwibkzayqd3beeum3p436kycksf@co4yrhzxo7kl>
-References: <000000000000b2c0fc061e6cb26b@google.com>
- <tencent_3D4E4FB18DDDA5988DE9920ADDDFDD859907@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tio07r5CSxuTCEO84qXedNg4gEas+AZ9zvhA3QMdM3hPx3o6oIkPcKCzslxNXdRBDCxWj97HHGvD8tLYDECWXTCFHQYgZkv3Q1V1hBoflJHxUse3frkJhpWnpTV9hWMIuvXJBYfCE8BKPTnx/G7onQyZBICvs+rwaSzxcId3ucQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sjpx7Il8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C601BC32782;
+	Wed, 31 Jul 2024 00:54:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722387268;
+	bh=sNK1q/hPPhJzRGBRVR4nFgGZxEucNYGuSj6F6L8vNOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sjpx7Il8Dp+naWxcnqGCe92P2EmvPrYn9JL14kcPew8GmBZ/L+HEtHtu2vEUrUwz3
+	 wYYIxcMobTdXWMw+gLEnRTyTjrnDdn6Bv5OJJMicbWy+/H5vJUOIxnjR5sw3TCde8m
+	 DU4TD74rI6YDyYXQIrnt9lKPgeLjFWRjmAjvBNeicKiv4ZSu7jpsNtyBOXq0xUA2Sk
+	 lcYgtY1jjTwVM+IkXTWXwvmnEpDp+CDdK9rPeXFzxVJ3djz+6uDYGIygJs2S+ezX0g
+	 LmbgnEjpE/y+sTFCHerOdubuHTfkU8Y4GnO2O/77her38grJKt1NJG30cXK7FyeTRm
+	 YpPFVMpAQ1eOw==
+Date: Wed, 31 Jul 2024 01:54:21 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc1 review
+Message-ID: <89551797-0561-42c3-af6f-7d4cfadb4452@sirena.org.uk>
+References: <20240730151724.637682316@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="MGUMh83iBNVXp0ET"
+Content-Disposition: inline
+In-Reply-To: <20240730151724.637682316@linuxfoundation.org>
+X-Cookie: Don't SANFORIZE me!!
+
+
+--MGUMh83iBNVXp0ET
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_3D4E4FB18DDDA5988DE9920ADDDFDD859907@qq.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 30, 2024 at 12:10:19PM GMT, Edward Adam Davis wrote:
-> syzbot report slab-out-of-bounds in journal_entry_dev_usage_to_text,
-> it because vstruct_bytes(entry) smaller than sizeof(struct 
-> jset_entry_dev_usage), overflow occurs when calculating the difference in
-> jset_entry_dev_usage_nr_types(u).
-> 
-> Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=05d7520be047c9be86e0
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
->  fs/bcachefs/sb-clean.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/fs/bcachefs/sb-clean.c b/fs/bcachefs/sb-clean.c
-> index 47f10ab57f40..278e1a25159a 100644
-> --- a/fs/bcachefs/sb-clean.c
-> +++ b/fs/bcachefs/sb-clean.c
-> @@ -310,6 +310,9 @@ static void bch2_sb_clean_to_text(struct printbuf *out, struct bch_sb *sb,
->  		    !entry->u64s)
->  			continue;
->  
-> +		if (vstruct_bytes(entry) < sizeof(struct jset_entry_dev_usage))
-> +			continue;
+On Tue, Jul 30, 2024 at 05:37:56PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.3 release.
+> There are 809 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-This is wrong: you haven't checked the entry type and you're assuming
-it's a dev_usage entry.
+Tested-by: Mark Brown <broonie@kernel.org>
 
-The check should go in journal_entry_dev_usage_to_text().
+--MGUMh83iBNVXp0ET
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmapiz0ACgkQJNaLcl1U
+h9C7Lgf/XwfpId07DqJjRuqY3NFHqFWdyKe12u+/QSz/ihr9VMOe/3UzBGEUFS8g
+sOcOcVlavhdHx4f5GUTklKfdtYFXKuYk3vRsqqzyvSkZU3YkSm1EqG4CV7v63pMU
+eVkJzQe4Lt6WEcWFRA8HcECYumDY9kcQyd+h+Y3clfYoFAMtg5+7M5kCeFXCNz7i
+TANsCm5Rzo7PzZVaguMaciJi8mklIAoc9DR1UBxxARzXpTtddr2CT/cpo8VzaIbK
+28ysHEVmRbTkVGKttWppmFJarO5J2JRDp1gel9PJcJty4kv64CTZ+L7KuwqX7r6D
+udmYMfau8652vKcT23Odk7o2zBg62w==
+=Ku6b
+-----END PGP SIGNATURE-----
+
+--MGUMh83iBNVXp0ET--
 
