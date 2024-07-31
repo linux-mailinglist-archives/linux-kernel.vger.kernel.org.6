@@ -1,133 +1,131 @@
-Return-Path: <linux-kernel+bounces-269233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F3F942F94
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC32C942F90
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EFC28AA28
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 833821F2E26E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E011B3F02;
-	Wed, 31 Jul 2024 12:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="psCgaXB5"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9065C1AB52C;
-	Wed, 31 Jul 2024 12:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755041B3743;
+	Wed, 31 Jul 2024 12:58:54 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67741AB52C;
+	Wed, 31 Jul 2024 12:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430747; cv=none; b=sT/H/f9ieDYOSdGw203iuAztmPencGNFeUhoL2ouB63DiMhxf7utAS7++kV9RsGR/DYMThmEL3fTf8EpeegcZE4dQtAVcUDdfPjaFA+rzyzJtBoMWkcUK4WrGGloszC/J/Fo/MCm8qoWTSv4VYhMVFkfWtzJBI+QoJgO4qM37jc=
+	t=1722430734; cv=none; b=OYlF5cE7HqrHAc8hV6rlz1zDuhZfHvvbHmnSPcn0H16A94olifZ7unjIK8zFWZmguCJ2O5CpuEdG26+BkIXaqoMpwB4rWDypLToIIOP62LR+xY1nKP+HR2DprvIfVHtn0+R1PZu1bkBR+fEk8FY+0A/5E40E9QxJMZ5zy3mqt/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430747; c=relaxed/simple;
-	bh=iSskvgHd2RV0PGf40AdW5HOVIBJ+OOv5C1Gm+PsLey8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=LebNN4MDuMvlZU+/MTiZkiFVHnPC+Z8ipykfZlYWyQGrh1xMDMIVUAEWp4GRo5RoxkQB7gfraKpClx4cbWvgZW+OoVCsy6tgIDteVtm25dpHO4uG8VRVA9LsZK78nQ6sDlCdu8fhdWjwvrrgUuj3uNiIqAVTRWvmLA5rZ4Q2ETE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=psCgaXB5 reason="signature verification failed"; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=0h4LaQtBvmiVXs/Hf+P23R81FvK6xyzFgOO+MeKx4mk=; b=p
-	sCgaXB540S9bk2RCFO1xY5k7RTkQBrGDTb2lojNxamDNLVAeWCR7JNRgg9LJE3gy
-	ORUI0Lm7GlGQug9x1gxjOINkPiq1MznlRhxKruVctzCwnt2nwnig9NguYMQqL1Bu
-	A1m/MiqNMgDfGybVXo3kyR0kSPCv4RGcLADwYXMhrs=
-Received: from 00107082$163.com ( [111.35.189.52] ) by
- ajax-webmail-wmsvr-40-133 (Coremail) ; Wed, 31 Jul 2024 20:58:40 +0800
- (CST)
-Date: Wed, 31 Jul 2024 20:58:40 +0800 (CST)
-From: "David Wang" <00107082@163.com>
-To: "Gautham R.Shenoy" <gautham.shenoy@amd.com>
-Cc: perry.yuan@amd.com, Alexander.Deucher@amd.com, Li.Meng@amd.com, 
-	Mario.Limonciello@amd.com, Xiaojian.Du@amd.com, Xinmei.Huang@amd.com, 
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	rafael.j.wysocki@intel.com, viresh.kumar@linaro.org
-Subject: Re: [Regression] 6.11.0-rc1: AMD CPU boot with error when CPPC
- feature disabled by BIOS
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
- Copyright (c) 2002-2024 www.mailtech.cn 163com
-In-Reply-To: <87zfpxsweb.fsf@BLR-5CG11610CF.amd.com>
-References: <20240730140111.4491-1-00107082@163.com>
- <87zfpxsweb.fsf@BLR-5CG11610CF.amd.com>
-X-NTES-SC: AL_Qu2ZAPiYv08p5iWRZ+kXn0oTju85XMCzuv8j3YJeN500mSXt0QA9Y09JGEbrzsGEKAKMgCiOVDZp48NWcaB9f44c8JlJf7TLehw1lLTj9v3b
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1722430734; c=relaxed/simple;
+	bh=Cz9rXVlUuUIx2KdvrKVffZhncBvWWxea9mzmttsi2Cg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=raA7593JR4oKwtvymFx5C1SjZmEWP15zleoFXbsjeaxmKThfyiMPSKUc2iNUUHZMMoMIclnpOLbhvt/zgH4zJB8RbLkYwj9mhpacMjXqz8sBxXbL1x34UcdEOXNhFvQ95xX2RiSKa2bI3JsMkGSGi25tHHLjjufF8eI8a5p/rSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D69881007;
+	Wed, 31 Jul 2024 05:59:16 -0700 (PDT)
+Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 78EE43F766;
+	Wed, 31 Jul 2024 05:58:48 -0700 (PDT)
+Date: Wed, 31 Jul 2024 13:58:46 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI Extension
+ protocol
+Message-ID: <Zqo1BpZ9i3LC_TIQ@bogus>
+References: <20240718-imx95-bbm-misc-v2-v6-0-18f008e16e9d@nxp.com>
+ <20240718-imx95-bbm-misc-v2-v6-1-18f008e16e9d@nxp.com>
+ <dee6e871-daa3-4886-be57-e4d4b3fa198d@kernel.org>
+ <PAXPR04MB84592DE4592FC5D270F0820B88B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+ <ZqovdlPcnBbZn0Ue@bogus>
+ <PAXPR04MB84599389611E0E789E425FD588B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <2f793cc8.a13d.19108df0a58.Coremail.00107082@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:_____wD3v7QBNapmnHJvAA--.13654W
-X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqRctqmVOB4ulsQACsI
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB84599389611E0E789E425FD588B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
 
-SGksCgpBdCAyMDI0LTA3LTMxIDE4OjEyOjEyLCAiR2F1dGhhbSBSLlNoZW5veSIgPGdhdXRoYW0u
-c2hlbm95QGFtZC5jb20+IHdyb3RlOgo+SGVsbG8gRGF2aWQsCj4KPkRhdmlkIFdhbmcgPDAwMTA3
-MDgyQDE2My5jb20+IHdyaXRlczoKPgo+PiBIaSwKPj4KPj4gSSBub3RpY2Ugc29tZSBrZXJuZWwg
-d2FybmluZyBhbmQgZXJyb3JzIHdoZW4gSSB1cGRhdGUgdG8gNi4xMS4wLXJjMToKPj4KPj4gIGtl
-cm5lbDogWyAgICAxLjAyMjczOV0gYW1kX3BzdGF0ZTogVGhlIENQUEMgZmVhdHVyZSBpcyBzdXBw
-b3J0ZWQgYnV0IGN1cnJlbnRseSBkaXNhYmxlZCBieSB0aGUgQklPUy4KPj4gIGtlcm5lbDogWyAg
-ICAxLjAyMjczOV0gUGxlYXNlIGVuYWJsZSBpdCBpZiB5b3VyIEJJT1MgaGFzIHRoZSBDUFBDIG9w
-dGlvbi4KPj4gIGtlcm5lbDogWyAgICAxLjA5ODA1NF0gYW1kX3BzdGF0ZTogbWluX2ZyZXEoMCkg
-b3IgbWF4X2ZyZXEoMCkgb3Igbm9taW5hbF9mcmVxKDApIHZhbHVlIGlzIGluY29ycmVjdAo+PiAg
-a2VybmVsOiBbICAgIDEuMTEwMDU4XSBhbWRfcHN0YXRlOiBtaW5fZnJlcSgwKSBvciBtYXhfZnJl
-cSgwKSBvciBub21pbmFsX2ZyZXEoMCkgdmFsdWUgaXMgaW5jb3JyZWN0Cj4+ICBrZXJuZWw6IFsg
-ICAgMS4xMjIwNTddIGFtZF9wc3RhdGU6IG1pbl9mcmVxKDApIG9yIG1heF9mcmVxKDApIG9yIG5v
-bWluYWxfZnJlcSgwKSB2YWx1ZSBpcyBpbmNvcnJlY3QKPj4gIGtlcm5lbDogWyAgICAxLjEzNDA2
-Ml0gYW1kX3BzdGF0ZTogbWluX2ZyZXEoMCkgb3IgbWF4X2ZyZXEoMCkgb3Igbm9taW5hbF9mcmVx
-KDApIHZhbHVlIGlzIGluY29ycmVjdAo+PiAga2VybmVsOiBbICAgIDEuMTM0NjQxXSBhbWRfcHN0
-YXRlOiBtaW5fZnJlcSgwKSBvciBtYXhfZnJlcSgwKSBvciBub21pbmFsX2ZyZXEoMCkgdmFsdWUg
-aXMgaW5jb3JyZWN0Cj4+ICBrZXJuZWw6IFsgICAgMS4xMzUxMjhdIGFtZF9wc3RhdGU6IG1pbl9m
-cmVxKDApIG9yIG1heF9mcmVxKDApIG9yIG5vbWluYWxfZnJlcSgwKSB2YWx1ZSBpcyBpbmNvcnJl
-Y3QKPj4gIGtlcm5lbDogWyAgICAxLjEzNTY5M10gYW1kX3BzdGF0ZTogbWluX2ZyZXEoMCkgb3Ig
-bWF4X2ZyZXEoMCkgb3Igbm9taW5hbF9mcmVxKDApIHZhbHVlIGlzIGluY29ycmVjdAo+PiAga2Vy
-bmVsOiBbICAgIDEuMTM2MzcxXSBhbWRfcHN0YXRlOiBtaW5fZnJlcSgwKSBvciBtYXhfZnJlcSgw
-KSBvciBub21pbmFsX2ZyZXEoMCkgdmFsdWUgaXMgaW5jb3JyZWN0Cj4+ICBrZXJuZWw6IFsgICAg
-MS4xMzYzOTBdIGFtZF9wc3RhdGU6IGZhaWxlZCB0byByZWdpc3RlciB3aXRoIHJldHVybiAtMTkK
-Pj4gIGtlcm5lbDogWyAgICAxLjEzODQxMF0gbGVkdHJpZy1jcHU6IHJlZ2lzdGVyZWQgdG8gaW5k
-aWNhdGUgYWN0aXZpdHkgb24gQ1BVcwo+Pgo+Pgo+PiBUaG9zZSB3YXJuaW5nIG1lc3NhZ2Ugd2Fz
-IGludHJvZHVjZWQgYnkgY29tbWl0Ogo+PiAgYmZmN2QxM2MxOTBhZDk4Y2Y0Zjg3NzE4OWIwMjJj
-NzVkZjRjYjM4MyAoImNwdWZyZXE6IGFtZC1wc3RhdGU6IGFkZCBkZWJ1ZyBtZXNzYWdlIHdoaWxl
-IENQUEMgaXMgc3VwcG9ydGVkIGFuZCBkaXNhYmxlZCBieSBTQklPUykKPj4gLCB3aGljaCBtYWtl
-IHNlbnNlLgo+Cj4KPklmIENQUEMgaXMgZGlzYWJlZCBpbiB0aGUgQklPUywgdGhlbiB0aGUgX0NQ
-QyBvYmplY3RzIHNob3VsZG4ndCBoYXZlCj5iZWVuIGNyZWF0ZWQuIEFuZCB0aGUgZXJyb3IgbWVz
-c2FnZSB0aGF0IHlvdSBzaG91bGQgaGF2ZSBzZWVuIGlzCj4idGhlIF9DUEMgb2JqZWN0IGlzIG5v
-dCBwcmVzZW50IGluIFNCSU9TIG9yIEFDUEkgZGlzYWJsZWQiLgo+Cj4KPkNvdWxkIHlvdSBwbGVh
-c2Ugc2hhcmUgdGhlIGZhbWlseSBhbmQgbW9kZWwgbnVtYmVyIG9mIHRoZSBwbGF0Zm9ybSB3aGVy
-ZQo+eW91IGFyZSBvYnNlcnZpbmcgdGhpcyA/CgpNeSBgY2F0IC9wcm9jL2NwdWluZm9gIHNob3dz
-IHNvbWV0aGluZyBhcyBmb2xsb3dpbmc6CnByb2Nlc3Nvcgk6IDAKdmVuZG9yX2lkCTogQXV0aGVu
-dGljQU1ECmNwdSBmYW1pbHkJOiAyMwptb2RlbAkJOiAxMTMKbW9kZWwgbmFtZQk6IEFNRCBSeXpl
-biAzIDMxMDAgNC1Db3JlIFByb2Nlc3NvcgpzdGVwcGluZwk6IDAKbWljcm9jb2RlCTogMHg4NzAx
-MDIxCmNwdSBNSHoJCTogMzYwMC4wMDAKY2FjaGUgc2l6ZQk6IDUxMiBLQgpwaHlzaWNhbCBpZAk6
-IDAKc2libGluZ3MJOiA4CmNvcmUgaWQJCTogMApjcHUgY29yZXMJOiA0CmFwaWNpZAkJOiAwCmlu
-aXRpYWwgYXBpY2lkCTogMApmcHUJCTogeWVzCmZwdV9leGNlcHRpb24JOiB5ZXMKY3B1aWQgbGV2
-ZWwJOiAxNgp3cAkJOiB5ZXMKZmxhZ3MJCTogZnB1IHZtZSBkZSBwc2UgdHNjIG1zciBwYWUgbWNl
-IGN4OCBhcGljIHNlcCBtdHJyIHBnZSBtY2EgY21vdiBwYXQgcHNlMzYgY2xmbHVzaCBtbXggZnhz
-ciBzc2Ugc3NlMiBodCBzeXNjYWxsIG54IG1teGV4dCBmeHNyX29wdCBwZHBlMWdiIHJkdHNjcCBs
-bSBjb25zdGFudF90c2MgcmVwX2dvb2Qgbm9wbCB4dG9wb2xvZ3kgbm9uc3RvcF90c2MgY3B1aWQg
-ZXh0ZF9hcGljaWQgYXBlcmZtcGVyZiByYXBsIHBuaSBwY2xtdWxxZHEgbW9uaXRvciBzc3NlMyBm
-bWEgY3gxNiBzc2U0XzEgc3NlNF8yIG1vdmJlIHBvcGNudCBhZXMgeHNhdmUgYXZ4IGYxNmMgcmRy
-YW5kIGxhaGZfbG0gY21wX2xlZ2FjeSBzdm0gZXh0YXBpYyBjcjhfbGVnYWN5IGFibSBzc2U0YSBt
-aXNhbGlnbnNzZSAzZG5vd3ByZWZldGNoIG9zdncgaWJzIHNraW5pdCB3ZHQgdGNlIHRvcG9leHQg
-cGVyZmN0cl9jb3JlIHBlcmZjdHJfbmIgYnBleHQgcGVyZmN0cl9sbGMgbXdhaXR4IGNwYiBjYXRf
-bDMgY2RwX2wzIGh3X3BzdGF0ZSBzc2JkIG1iYSBpYnBiIHN0aWJwIHZtbWNhbGwgZnNnc2Jhc2Ug
-Ym1pMSBhdngyIHNtZXAgYm1pMiBjcW0gcmR0X2EgcmRzZWVkIGFkeCBzbWFwIGNsZmx1c2hvcHQg
-Y2x3YiBzaGFfbmkgeHNhdmVvcHQgeHNhdmVjIHhnZXRidjEgY3FtX2xsYyBjcW1fb2NjdXBfbGxj
-IGNxbV9tYm1fdG90YWwgY3FtX21ibV9sb2NhbCBjbHplcm8gaXJwZXJmIHhzYXZlZXJwdHIgcmRw
-cnUgd2Jub2ludmQgYXJhdCBucHQgbGJydiBzdm1fbG9jayBucmlwX3NhdmUgdHNjX3NjYWxlIHZt
-Y2JfY2xlYW4gZmx1c2hieWFzaWQgZGVjb2RlYXNzaXN0cyBwYXVzZWZpbHRlciBwZnRocmVzaG9s
-ZCBhdmljIHZfdm1zYXZlX3ZtbG9hZCB2Z2lmIHZfc3BlY19jdHJsIHVtaXAgcmRwaWQgb3ZlcmZs
-b3dfcmVjb3Ygc3VjY29yIHNtY2Egc2V2IHNldl9lcwpidWdzCQk6IHN5c3JldF9zc19hdHRycyBz
-cGVjdHJlX3YxIHNwZWN0cmVfdjIgc3BlY19zdG9yZV9ieXBhc3MgcmV0YmxlZWQgc210X3JzYiBz
-cnNvCmJvZ29taXBzCTogNzE5OS45NQpUTEIgc2l6ZQk6IDMwNzIgNEsgcGFnZXMKY2xmbHVzaCBz
-aXplCTogNjQKY2FjaGVfYWxpZ25tZW50CTogNjQKYWRkcmVzcyBzaXplcwk6IDQzIGJpdHMgcGh5
-c2ljYWwsIDQ4IGJpdHMgdmlydHVhbApwb3dlciBtYW5hZ2VtZW50OiB0cyB0dHAgdG0gaHdwc3Rh
-dGUgY3BiIGVmZl9mcmVxX3JvIFsxM10gWzE0XQoKCgoKPgo+LS0KPlRoYW5rcyBhbmQgUmVnYXJk
-cwo+Z2F1dGhhbS4KCgo=
+On Wed, Jul 31, 2024 at 12:49:59PM +0000, Peng Fan wrote:
+> > Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95 SCMI
+> > Extension protocol
+> >
+> > On Wed, Jul 31, 2024 at 12:18:28PM +0000, Peng Fan wrote:
+> > > > Subject: Re: [PATCH v6 1/7] dt-bindings: firmware: add i.MX95
+> > SCMI
+> > > > Extension protocol
+> > > >
+> > > > On 18/07/2024 09:41, Peng Fan (OSS) wrote:
+> > > > > From: Peng Fan <peng.fan@nxp.com>
+> > > > >
+> > > > > Add i.MX SCMI Extension protocols bindings for:
+> > > > > - Battery Backed Module(BBM) Protocol
+> > > > >   This contains persistent storage (GPR), an RTC, and the ON/OFF
+> > > > button.
+> > > > >   The protocol can also provide access to similar functions
+> > > > implemented via
+> > > > >   external board components.
+> > > > > - MISC Protocol.
+> > > > >   This includes controls that are misc settings/actions that must
+> > > > > be
+> > > > exposed
+> > > > >   from the SM to agents. They are device specific and are usually
+> > > > define to
+> > > > >   access bit fields in various mix block control modules,
+> > > > > IOMUX_GPR,
+> > > > and
+> > > > >   other GPR/CSR owned by the SM.
+> > > > >
+> > > > > Reviewed-by: "Rob Herring (Arm)" <robh@kernel.org>
+> > > >
+> > > > Why quotes? Which tools did you use?
+> > >
+> > > I could not recall why have this. I will drop and resend the patchset.
+> > >
+> >
+> > Resend only if you have any other comments addressed, no spin just
+> > for this one please.
+>
+> Sorry, I pushed the button too quick to send out v7(just correct
+> this R-b tag and rebased to linux-next) before checking my inbox.
+>
+
+Just makes me wonder if I should wait for 3-4 pings + 2-3 weeks after the
+last version of any of your patch set without any version bump before I
+can look at it. Otherwise it is quite impossible to match your speed of
+patch respinning and the whole review process gets complicated to follow.
+
+Also it is bit sad that you thought it needs to be re-spinned just for this
+which can be easily fixed when applying. Also I haven't even started looking
+at this series for the reason I mentioned above.
+
+--
+Regards,
+Sudeep
 
