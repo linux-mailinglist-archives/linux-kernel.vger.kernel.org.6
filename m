@@ -1,94 +1,171 @@
-Return-Path: <linux-kernel+bounces-268925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB82942B36
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:50:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B5CA942B12
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBE2F1F22355
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A7CF1F21F2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8771C1AE87A;
-	Wed, 31 Jul 2024 09:48:31 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB161A8C12;
+	Wed, 31 Jul 2024 09:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d4OuVXCX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18C81AD41E;
-	Wed, 31 Jul 2024 09:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C731AAE13;
+	Wed, 31 Jul 2024 09:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722419311; cv=none; b=S7m5I/6L8B3MJpvXHaYucDhUnfuFsKKypTo5+nMa4FwtsZZjvQl44wwlCybuM823V5LW2mvP9+8CGhVqRuERKFOsPJcdcUlxkOddgLyDn5ELXjrvyY27AdWvxS0R0LNsuM+kpDjlIw5RmsIJxIfX6zLwHVJMdzrUqLMf040cvHg=
+	t=1722419083; cv=none; b=eAUUuhezlNxqRGW4WZ04u5rPHVw2DI7LRIMGvLLWMh4jTcVBejOnw/hZelDm22VJCx9HmaRC1BetwaQYf82zqM3Hn0pQ01kPNbo9ge6BW3YZTRYFfRJ+Egk7gV777D+8BO7r5KeeOHrnKGctbWi0j0Ms7wcFTQ8G118r76Jdb/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722419311; c=relaxed/simple;
-	bh=5iZTq3WDNF5dJsxTKkHdkaf9O7XfircfT6TGotZbUHE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZQXz4T5q2m9NMWBuXzu0WhPovjRY7eTWZAS/1sb/byLkrCnz1Ua/uSMscDtA2YnsSIJtPCSfJShXGsUoE14rM2o5lTS03KFjCeLoiEgRgAgjeWRHA6o+YVa8cKvufU9MaP0fsfBYanr7bOuAulqM4XWo/WWmcYVYDzwzUXlfz/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WYnHB27yvzQnQ4;
-	Wed, 31 Jul 2024 17:44:06 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 37580140427;
-	Wed, 31 Jul 2024 17:48:25 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 31 Jul 2024 17:48:24 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <shaojijie@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH net-next 10/10] net: hibmcge: Add maintainer for hibmcge
-Date: Wed, 31 Jul 2024 17:42:45 +0800
-Message-ID: <20240731094245.1967834-11-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240731094245.1967834-1-shaojijie@huawei.com>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1722419083; c=relaxed/simple;
+	bh=crVqC2Bga0UvBn87o71gcZy+LewySJ3ybRAxogOcgDM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AaeqvAFTjXMFCx/VSyv529zyKKGMmzpLFZruqeXe6oP074vDJcJOe6kQRqgSdZv2k0f/Crcp6B41BPfAMNwjXTgB/D8+GxvHXWAYlafwOcjS18e1dKk7w4scTAEBUbxNHdwzWqP1qhLawTuA5HNnR/xOOttEcxTWuM4boTd7gi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d4OuVXCX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191E5C116B1;
+	Wed, 31 Jul 2024 09:44:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722419082;
+	bh=crVqC2Bga0UvBn87o71gcZy+LewySJ3ybRAxogOcgDM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=d4OuVXCXBt6SvEkK5KyLLZeXT55qi7n4KwEKDICztpk3l0P0ZMUUzMJTguI9PgMty
+	 T9quXSv9q06HAaD/fBdER7Jpyk3eaEsJ6mIS6jWLTFr8ZKLQZlPAPGFzOJtQvpTcX+
+	 7aPktrSyHCAjaOo6cvR1Bd8ps8F/5i05ZQO3KU2RFbYHHzN6PaZhVfDdR5J3ufcT66
+	 r0zeeE4u5p62K/LnflaW4Z/Xdx4LCN2cUNt92MSCfyNj7hqy56Fc08lwTgR6/uRQG3
+	 qLCbm/dVXnl5eWV1QJtQq1qNcBTr/k6rd5fSydppTo4kB4l7lb03Ukz4x9PGbY5ITY
+	 INB0ZIqlHcRAw==
+Message-ID: <178bf399-2a13-4331-bb0d-341fe47ab112@kernel.org>
+Date: Wed, 31 Jul 2024 11:44:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] dt-bindings: arm64: mediatek: Add
+ kukui-jacuzzi-cerise board
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Hsin-Te Yuan <yuanhsinte@chromium.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org>
+ <20240731-jacuzzi_dt-v2-2-4995335daa30@chromium.org>
+ <bb696e60-642f-43f1-9ccf-972e1d839bcd@kernel.org>
+ <909d4058-e3e9-4b59-b476-8f78e668c73b@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <909d4058-e3e9-4b59-b476-8f78e668c73b@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add myself as the maintainer for the hibmcge ethernet driver.
+On 31/07/2024 10:47, AngeloGioacchino Del Regno wrote:
+> Il 31/07/24 10:16, Krzysztof Kozlowski ha scritto:
+>> On 31/07/2024 08:26, Hsin-Te Yuan wrote:
+>>> Cerise is known as ASUS Chromebook CZ1.
+>>> Stern is known as ASUS Chromebook Flip CZ1.
+>>>
+>>> They are almost identical. The only difference is that Cerise is a
+>>> clamshell device without touchscreen and Stern is a convertible device.
+>>>
+>>> Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
+>>> ---
+>>>   Documentation/devicetree/bindings/arm/mediatek.yaml | 14 ++++++++++++++
+>>>   1 file changed, 14 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> index 1d4bb50fcd8d..087773a43673 100644
+>>> --- a/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> +++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+>>> @@ -146,6 +146,20 @@ properties:
+>>>           items:
+>>>             - const: google,burnet
+>>>             - const: mediatek,mt8183
+>>> +      - description: Google Cerise (ASUS Chromebook CZ1)
+>>> +        items:
+>>> +          - enum:
+>>> +              - google,cerise-sku0
+>>> +              - google,cerise-rev3-sku0
+>>> +          - const: google,cerise
+>>> +          - const: mediatek,mt8183
+>>> +      - description: Google Stern (ASUS Chromebook Flip CZ1)
+>>> +        items:
+>>> +          - enum:
+>>> +              - google,cerise-sku1
+>>> +              - google,cerise-rev3-sku1
+>>> +          - const: google,cerise
+>>
+>> Why not google,stern? If this is not compatible with cerise and has
+>> different name, I think logical would be to have different compatible -
+>> either here or the first one.
+>>
+> 
+> They're both compatible, but the commercial names are different because one
+> is convertible, one is not... and the bootloader still checks for cerise
+> even on stern - that's how I read it, and it's not the first time...
+> 
+> ...but it doesn't hurt to have a "google,stern" compatible added to the mix,
+> it's just one more const to add... and I don't have any strong opinion about
+> that, so, Hsin-Te, it's your call. :-)
 
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+OK. Such explanations - including that bootloader expect exactly these
+strings - should be in commit msg.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dd4297ea41f9..fa7a52a03945 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9956,6 +9956,13 @@ S:	Maintained
- W:	http://www.hisilicon.com
- F:	drivers/net/ethernet/hisilicon/hns3/
- 
-+HISILICON NETWORK HIBMCGE DRIVER
-+M:	Jijie Shao <shaojijie@huawei.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+W:	http://www.hisilicon.com
-+F:	drivers/net/ethernet/hisilicon/hibmcge/
-+
- HISILICON NETWORK SUBSYSTEM DRIVER
- M:	Yisen Zhuang <yisen.zhuang@huawei.com>
- M:	Salil Mehta <salil.mehta@huawei.com>
--- 
-2.33.0
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+
+Best regards,
+Krzysztof
 
 
