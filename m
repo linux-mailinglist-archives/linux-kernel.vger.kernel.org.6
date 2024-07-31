@@ -1,209 +1,136 @@
-Return-Path: <linux-kernel+bounces-269303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04BE943143
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:48:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2660943146
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C8C281E97
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:48:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB611C20953
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14EC1B29C6;
-	Wed, 31 Jul 2024 13:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE521B372F;
+	Wed, 31 Jul 2024 13:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="f2DoW9dG"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2066.outbound.protection.outlook.com [40.107.255.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nwL1aMJR"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5371AD40D;
-	Wed, 31 Jul 2024 13:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722433676; cv=fail; b=l5MGPcvDvvig47bXGU/f34DbKGH2D3hu/ABwlIK1MfTeBqOXmBiipRcCuM7cT0aROUObDOOXtxjezE0aMxo1ooiLLOQ4G/9+hYi5/j1c/OFKBPUG/G6KaDhGAXnN/ago0a5RG+G2RmDG2JNcmHvs4JbbdbsTSgUDrIWM54P/GFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722433676; c=relaxed/simple;
-	bh=Cbvjhg6kIy01pJzSOYRZiKg7+76EUdGMCgQ9uHBRkUU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eRSmBS1f+uv5KPzuyOaoxhOR3QyJxhnxPmVVwyTNnU3KcFLDHbY3nMJoAZJPwJBv3kX7na85G7TdvTjFh8ik2UdDusO+4dCrCXLPE6X1pkQwA19WDcsY8xZscbPkQ5UVoHe2f7uANWrG/RzKRfO69BY2Br6WVuWbZPAeujuZTQM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=f2DoW9dG; arc=fail smtp.client-ip=40.107.255.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=roMWDHWaq8p+Ekz/mPpD58djaP2FmppEVpVT0GW3616khaz8rzIloGZwLCYYovEQu98m3q9Jf81aUI3D0/npXAlBLKj31HU7WoK1nAqC/v9WE+8ZHvuNIIssgw3cpAFAioOfUrGI0uNUeP73O5mLSpLes4NkkK9W0IiMDPyz1szA2VidHthew2TaAZIuvZdApOAGdneqwnlvWX2k63bn+gX9KDGt36aq0F8RcZuDIHMkhWglQE+93a4i8g85jpVf/QGdDJi+1TmUDbwK27mEEWnsONZgO1jJj4QxWqMIL0sM4z1Kyd0Et90Wz2bWNlLb8HvPrtUUHZ1x3BZxmPqJkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kA/C094rUWezWaL7UZkxusvqmDDV1m2UEA+xY06SfDY=;
- b=gXTWxbd5+NH0EUuNvP5yQsa26AsF+eqzEIkZYO1xRY3RmToescHGBCM7TptIW6SaH2chq9LDAEOkiOXUo58GfklXD/Z1jigc6RvkmAw0KFGAgjaB/QiD0PN+1d2VuiPSk9WeLT3KfWVVAKpx3LCy+76NuIhLOHfUq7aGpIcHQB/L0jW/77wQ+Omacx6tztQyTwX0Rde6RWaOwcuGyNESgqBmNMjRfLIdOuEJaRSV+LHLL9AhnLzUxEG4ihmhpLVgqvdgRMwhXhh1BokKRfTYxUNdgIyM92OW/2FFDV44Vl8Difd8Gm1rNF23AYHiZvNHyja9pS4X5HknFrhpylnO/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kA/C094rUWezWaL7UZkxusvqmDDV1m2UEA+xY06SfDY=;
- b=f2DoW9dGaxBQ442kW/VA9wPqeOOU66OiOl4L72eFDJDC9HA8rOSJ0JQoXtoYSc4Ij3ZAg8LJlUZAmbKEKt/nC01puwls46SjtGZ6NdQuXz1tgNrbM8fV8BVks0V9yoTk0q1WOHk+lWPOpLRBrSf//LhFoV+1bX+mYo7Sznlpu9cmVcqWo3yP3t0wmrtE9xBtK9Ser/qHg8gc6xKUPGHWgZme71z3irDDGQjOZotvOf2b+PU7fSONAcIBA4YV4jCVc9+JVP/hM5YgXQM0JqU/heMXL2T9wwm48h/sofnbb6B18cbftbs8oWDn7HVfCvD9471XgGKQVUgsVo35Jh2p7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com (2603:1096:990:47::12)
- by SEYPR06MB6904.apcprd06.prod.outlook.com (2603:1096:101:1e1::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
- 2024 13:47:50 +0000
-Received: from JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed]) by JH0PR06MB6849.apcprd06.prod.outlook.com
- ([fe80::ed24:a6cd:d489:c5ed%3]) with mapi id 15.20.7828.016; Wed, 31 Jul 2024
- 13:47:50 +0000
-Message-ID: <dbcd8d48-3095-4ed1-88fb-1de463e8f593@vivo.com>
-Date: Wed, 31 Jul 2024 21:47:45 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mm: tlb: add tlb swap entries batch async release
-To: Arnd Bergmann <arnd@arndb.de>, Andrew Morton <akpm@linux-foundation.org>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Will Deacon <will@kernel.org>, "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
- Nicholas Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Linux-Arch <linux-arch@vger.kernel.org>, cgroups@vger.kernel.org,
- Barry Song <21cnbao@gmail.com>
-Cc: opensource.kernel@vivo.com
-References: <20240730114426.511-1-justinjiang@vivo.com>
- <20240730114426.511-3-justinjiang@vivo.com>
- <b8fad35b-ba72-44ef-b89b-5333dd457ca7@app.fastmail.com>
-From: zhiguojiang <justinjiang@vivo.com>
-In-Reply-To: <b8fad35b-ba72-44ef-b89b-5333dd457ca7@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2P153CA0013.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:140::12) To JH0PR06MB6849.apcprd06.prod.outlook.com
- (2603:1096:990:47::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13141B0114
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722433688; cv=none; b=UICC4Qp0ly3Y+txW0W/U0a5cV8kho270BJcp5XYg0bFFDlcdKlwqatanWy7M+PUdz1uwFQ3/sPzxMlkQh+iRCCcMT0VqC7tpdSNfR0yXLp5GlwV7iSDMLOsJr6+SpwB+Rh+/hfOhYq3hemBQdyoF1QwWSlrtgfi/5l2XtkLlKZ4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722433688; c=relaxed/simple;
+	bh=jDRgG/QLRcrZ3k33DG+HUit1LgtQ0AiJ4a37RlX/MEo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=j63aRh8NHiuP5XykmydrHDXdl/BtdNn+IAW91fZndCxFKIR5kO7hwlRbA9V9cw/16Tcplk6lRJ3kWjO7f3SnpHZ3k8FUd+asN/l4vw1eQyYQdTOrGzjq9qgCjFozUFzgETcBtWl6nh7YX54jA5V+1cAa5c93FJRTox7nKNTokxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nwL1aMJR; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-709428a9469so2979350a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:48:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722433686; x=1723038486; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bdRZF0zEVgJezgw1kjlb7+blA/W6S32stDzVeGft97I=;
+        b=nwL1aMJRIMYI11TxcL0iw+A+yVDajClnIsgVIbNSuH1r6VmSu9/6xACu3BPdSqa1+J
+         l35qlAHP4lrqIBRqkdFnNMTb10VTpqqnUed3Df7y/ZerRAOjpb2fobQoIwiZHk10Dc1H
+         Xr6/Z8llBJpGg/vNozdRsikL7re54tv45zPs8A0gEzJbu22W2an6CMiUuFja4gLBC82E
+         Takv2hd0fsqPGIau4y1wWEoIcA7NBUDqixFl0Jzoc/aJTPcONh5XqbiEbCY5rr9XSZrc
+         22ajVsKWlEZD9sV33DRcVqTjtczX1szHhD1yOHIgmujxMPbDPx04aFTm4fhPMX5NQ5BT
+         9tjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722433686; x=1723038486;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bdRZF0zEVgJezgw1kjlb7+blA/W6S32stDzVeGft97I=;
+        b=BlGSJ06uGdppVt4cAUbVeuq0xmwActU16ceGS2VJb7jRBHlrfHT1J+sBp4cJBfWn7b
+         r+d9exzRExAH0A1L02pOc34+ZUJ5RtC+fmXauSiZ8RRdGve8cqOGaDlEIOqqlBetSF1T
+         731DIHTqXgTzgzsWjdqrgSNh1PkvGpuquHpR+Bs9h6pnD70LgVOKX/YsWUBqj1hb1EQy
+         O3EsyoJ+DWcjwnUOdnzM03fP2eDem0hhYqwq7lWr7stj3WQwWz+kfeJcPBY2BAGd3c2b
+         UU1Uqw+hR11OngnjcFlnLxcUspQXdBD58cc0kkEkK4ic65x6dtsBqTZc0K/sFk83iiF/
+         EtSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjwQBLhpNQ42cOejABVCx+fFx61jhMauGIsJwm/utJMmCTk+ec/Rq45wkBMBdmXO6KtZofAmlLqBlMa7KLMIVcRbXAJQZGqjR+Z0EH
+X-Gm-Message-State: AOJu0YxGFair4NXASozK+NC2L22hOsSqM1UaqWzovs4qlMtQdkdUR7wS
+	om9I692w6Q1dgnlVKfS840NScO6Twa7yeKKuKyPF89dVLGhOHEiZrqkK7KOTR0k=
+X-Google-Smtp-Source: AGHT+IFuGK3+GfRNWwUpwAOBceLvx7l5m5dsWdus7T/LXIS+gjchpPdFnIJvpqhgswgrT52cWnyV2g==
+X-Received: by 2002:a9d:6e11:0:b0:703:5dbc:1aa9 with SMTP id 46e09a7af769-70940c18633mr14176869a34.13.1722433685650;
+        Wed, 31 Jul 2024 06:48:05 -0700 (PDT)
+Received: from [127.0.1.1] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73955ccsm746209985a.11.2024.07.31.06.48.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 06:48:05 -0700 (PDT)
+From: Trevor Gamblin <tgamblin@baylibre.com>
+Subject: [PATCH RFC 0/3] iio: adc: add new ad7625 driver
+Date: Wed, 31 Jul 2024 09:48:02 -0400
+Message-Id: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR06MB6849:EE_|SEYPR06MB6904:EE_
-X-MS-Office365-Filtering-Correlation-Id: a9cce5c7-421e-4655-ca5f-08dcb1675e5b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020|43062017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YmdUZ0JVdzl2MXpEK1BwNFhaaFR3dEpPSTBPdjJnWVZyTjdHQk9zZVQrVUdY?=
- =?utf-8?B?dHlSY2phVUMwa1lIK25UdERhRDMxb3NIWUlQSEhXUUZGeGVSenlGTEZJdFp4?=
- =?utf-8?B?Wmc2eTNCcVBoMDZJRzZYZ3JUd3pVbXRPVDJIVi9tVmEyVEZLbU0rMWFQWkJD?=
- =?utf-8?B?VkNxRS9INGt0YXphcExINWgxck5mNzRCOGd1MmFUekdSWkdiOEU2dTYzdzZ5?=
- =?utf-8?B?ZnBqM2tRRUVZNEtXQW1EcG1rTmpoclp3aWd0cHV5OStsQWx0RVhWZjZtVXNY?=
- =?utf-8?B?SzdiZUk4VEhiaEluYUpBTWsxVmlkeHZvS0pOdmRlWjdjbVp3RnBqYTFnM3cv?=
- =?utf-8?B?MExxdWRaSHpqcW81WXQ5YmlJWlRmVEM3a091djFVZGloSzd6ZDBYbXBqaTNa?=
- =?utf-8?B?cHU3UFNRWTZpYUVBQVhBUXBPN1JTU2t5TEJxRmhRYTI2TkhOWnFkK2pjell1?=
- =?utf-8?B?Q1ZBRHJHUFd2U3NobHJnUkJVNUtNbHBCU2V5dXIrclFCWDNqOFQzZjdkd1Y4?=
- =?utf-8?B?MmtkZ0lWMlBuU01aYTZlRklEVEw1Yzc1QzJoUTBrb1M0SXl0OS9KeHVkUGk2?=
- =?utf-8?B?K3pobkhpclp3WHRqajJmMDM1WmRtK0VML0Fzb2FTL01mNzNjL0JqSzhsK0ly?=
- =?utf-8?B?Szl5blJQamJETU5abDBBRkZnd3dXYXViQURwVTBFTGt1andIaGVUSDhZd28w?=
- =?utf-8?B?a2pLVWMrb0ZicnV3RVVRWCs1bVovRmhPRFFDZURqNjhYYjNVREJXL00rVEVz?=
- =?utf-8?B?RXVCWGhnazF6WTgrWUJyYlR2Z1IyUThOYUxzWVgyWlVMTkVCT2M4V1FVb1p1?=
- =?utf-8?B?blRtQ21yOTVQZzNtRTM2Uk9OM090cEpBTVlqczFlS1hJTWdlNFFsa2w3Unha?=
- =?utf-8?B?YnhSVnpJOEpSMGJQUW4wUk00K0c0dkN5SnhrSHZGUkxsYkVXd1pKcmMxSmlX?=
- =?utf-8?B?bXd0YklBcVJueGJEVUQ1WTludnNvNURTbzFCUHpjcWppb2xoMlVKTngzQXVq?=
- =?utf-8?B?NUJiS1JrTkQwTkl1VTlkdkFvNWdlVlh5VXFpcVczMytjMGRZUjEzSE90M1Vw?=
- =?utf-8?B?ejlrZytqOHVHV2Z1S0IwcHUzQWRGY1pQVGtiR2pFdUk2YnpkNUtjMlZXRlNu?=
- =?utf-8?B?dHpxWlQ2Z09jdE5naW9kd0ZFbkJoVy9QWjUyVlIvOEt6ampIdGF6VGdKOWtI?=
- =?utf-8?B?NUJxMExEUkVrSUM4eXJ0emtGS080TnRuNzRvM0JEZ0dVQWVmcjVkWjhPUVJZ?=
- =?utf-8?B?S0R2US9lY3BHUms2TE83UUNNMVVITWdYVjd4MjdKMXhsb1pFcEZFYVUvUXBN?=
- =?utf-8?B?dDcrYTRhcE9hOWUzZElGMlcvYjdaNE0yYTcwN1d1T2Y1VlF3RDR4c1Z3WU83?=
- =?utf-8?B?OUZOYjZReDFlZzFWc25zRDN6OHA4aVMveHNWYm1QMGZNR0NDS0ZVSVB2SStv?=
- =?utf-8?B?U0x5U3hwbTRiY2pTdUZic1YxMGZnUW1WRXhsbHBUd3gvNllYRytYMDlTMzdG?=
- =?utf-8?B?a2FpTTNpaTJFTmhuVnc5MTlrc01tY3pyU2tsWnNqMkpUMGswby9NQ0QwWUND?=
- =?utf-8?B?eUh0QmJWZnhNRk5nQ2lETWVJLzY2RVltWHJINDFrV1VzMy9kVHJIYmduYUd2?=
- =?utf-8?B?TUI3WGUwL0FMMjhvYXJ4OWJyNXJCMW00WlNmbWttc2tPbk40ZTZzVVhZMkJP?=
- =?utf-8?B?bjNsQXBUMUpkQlNPb29OaGprblBpQU42NytkbW1lb0hScnVJdWVIQi9na3g4?=
- =?utf-8?B?RHUrSTNUWlNCQVo3SVZ5OFVLR0tRbWtpeXA3UFJtakpDQnBuYy9nRVAvZUgw?=
- =?utf-8?Q?vE1EwDUxcXKTNRzUj6Q7gygqvEDfaMBT6GBM0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR06MB6849.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020)(43062017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?eCsyWlAwRnZlc1J1dTVMbUl3MnYxb2RpK0ZuNHhxQnhTZy9lZ3B5VEJpOC9G?=
- =?utf-8?B?NExQSG9LYnZxaENpM21sa3ZXVDdLbVFQWXQ2QlhUcGhNUzFQOHdkb3ZrWTZz?=
- =?utf-8?B?Y01SZFd6VUc3YTRMSTlCRUZLSVhLQ2ZXVW5yVk9BejJPUSt2ZjJEL29YRndz?=
- =?utf-8?B?cUxrK0d6L2lTT2VBRnBpcEJVN0JNbW0zb0xDZDZsaFZqQW9SN2hhcUt0d0dj?=
- =?utf-8?B?YWVRVWl6QUcwaHhhaDlmVTM4VXZkRG1oWThBaXFKT2RPWldCOVJoZGR6eVND?=
- =?utf-8?B?TWw3YkFpdzNvT2c2UFFxUUk1aDJwU29wU0tFdkVKWlIzd24xNXFBNkZ6eVhB?=
- =?utf-8?B?cVdJaHc0c0FtczBnM0xtZ09sZ0xJQTYxVFIxZHBoRFE5cUhhMmljYkErT1B2?=
- =?utf-8?B?NngxUC9NRlZ0TXBubHlLMldxSFJ6VElURTJCTzFrV2dhTnVqSFI2YXNjOC91?=
- =?utf-8?B?MW04TDYrdjViaDNyU2pOR1dxenorYUU4Y1YyNGxtOHJqT09Uc3p1V1hPa0lr?=
- =?utf-8?B?MWVhaEM2ZzlYd1FPYVNYQXYyd3RBODlwK29naDBNSUdUNFA0WHl5ME5JN1FV?=
- =?utf-8?B?Zm55ZjF5RTJLV3VlT2pjVTZqbE1kWlZoZ0UwUUVJenI4N2VLbkhINStLY1BZ?=
- =?utf-8?B?d1dWS3hVNTJFbGJ1dHoxaDQveTBSNVdCN2s2aXZ5eVlJaG82WVZabFBnK2Vn?=
- =?utf-8?B?ckhSUXVZc2wzYUd6aUhVenF6OTBVVVYvRGVVUmtaaVdlWTRsbVVmZmdpOFRu?=
- =?utf-8?B?WTVIQU91NCtteVJMclhIR3J1WE54SCtCY2ZnYTNKY3dIVEZuZ0hpVUdyV2VG?=
- =?utf-8?B?aEJGeG04YWF5SHUyR3lvQU51TUNvNVFPWmtrcHNoSVRUUHcvSUE3SS9lMWM2?=
- =?utf-8?B?VmpiRFRzbUhOWDZsN2xxZWxMRUZPLzNxVitDN3RiL3pLM2hERHNsb1VhSUc0?=
- =?utf-8?B?TytvZWNPVm5YQ0FMV0ZnK0JaQnl4STdLMVB6bDI5R3ZlMnUyOFVLOVRVQjZn?=
- =?utf-8?B?amFhaWZtYktvWXl3SHhXZjE3eE9hYWo3dWx0cFA2ZVJTUVVaV2x0aUl2dGhS?=
- =?utf-8?B?ODVxOWw5VFRTWFVRTVF4eUVLcURiSnk5QVZTUXNHQlNFS2tEckJQeDIzSEQv?=
- =?utf-8?B?Qm1DU3kzYkNFSnhKUGo2N3dwSWdUR05rckwrMjRyN1hoRE5Fc1hsZHZobHR0?=
- =?utf-8?B?NFJxVTQxcjBoTjQyZ2Z6VzQzWkZlR3RHNFJ4S1dwWWZrc0hKRGZ2TURnSlZu?=
- =?utf-8?B?N1B3d1JuWjB2ZU5aRFZOVUV5bVh0ZXBWeVQxcHhUMTBLWS9iYnZOK2RZdUFi?=
- =?utf-8?B?SkdqMUtJOEoydGxVV2xlM3Z3YVdRaUI1S0FLSFl2dGdxTkpiVlJkQnRzZUxX?=
- =?utf-8?B?eVRrcGN4cmw3U3kzVDM1ZlJyRDRWeDdaR3Q2NGtTeHhEZGZGUWFORWJ1dXZT?=
- =?utf-8?B?QWRZQ3dpYnhpK1A0L2I4RzAvd2ZuaUxHbHM5ZmpQOU5UUzJIYlZockNLZWlB?=
- =?utf-8?B?TnV2WGZlZVA3UmUzUEpZeUtpMFVORTNPN2FoVXVRazloUmsvWXpsajQwV2Jy?=
- =?utf-8?B?WmF4RTlSL2hSbThvUFptMlZLNnNrWlByenRlbGpsVTFrY0xiRjRtN1JSOE1z?=
- =?utf-8?B?bXJRKzZ5b285VUw2WVJGRVUrRjg0RXpyYUJoaVQ1ZHc0VENPRHRKUDJDeXpK?=
- =?utf-8?B?d0MxWkNJVGhjOGtRQ05wZ1pSd0pmSk9mSzgrR1pmWldSUUNENVc2L2cweks2?=
- =?utf-8?B?VWR1VmZBVnNodEhweko3YWI4SnhOMkw1SlArTkV1OHVsQnkxUjIwa3Q2K2or?=
- =?utf-8?B?V0VHbnpMc2hxeVFzM082N2MxOGx3akVtaWE4aVNYSjVPek5sbi9HWTBkMjlJ?=
- =?utf-8?B?aC8rbSsxcEIrZmtzR082VE5vSnVUc1BrRExuM0xBODZpcU15R1FzYjQya1Er?=
- =?utf-8?B?Yjh6cldFUHZDT3FlTUsxeHBrY3Q2czkzcnRvbkNTQ2JZOU80dGVJMlhYM08z?=
- =?utf-8?B?TFMxemg2TWw4WTVyMytDNGV2TzlIQ1AvVjVQWE80QmpJUnlKc3ZrR1l0TnN2?=
- =?utf-8?B?RzZReHRDU1FQeWVSemU5dDUyd245aGRUYXhYeFRpSEI2M1pNVUFGbVNyU1B0?=
- =?utf-8?Q?VR1GIrryakg9pPvYLIakHgotB?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a9cce5c7-421e-4655-ca5f-08dcb1675e5b
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR06MB6849.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 13:47:50.3489
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CBTG/XXrxRdk8JGnxaLHTrX2oaRJWSAZnkOSobOt40saZAnNaFrah/y2H9DP4yWJdXbJhNVVVQNOV7SnBTVtqg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB6904
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJJAqmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc2MD3cQUczMj0/giQ10zgxRD89REIwtLUwsloPqCotS0zAqwWdFKQW7
+ OSrG1tQCtbOUMYAAAAA==
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ David Lechner <dlechner@baylibre.com>, 
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Trevor Gamblin <tgamblin@baylibre.com>
+X-Mailer: b4 0.14.1
 
+This series adds a new driver for the Analog Devices Inc. AD7625,
+AD7626, AD7960, and AD7961. These chips are part of a family of
+LVDS-based SAR ADCs. The initial driver implementation does not support
+the devices' self-clocked mode, although that can be added later.
 
+One aspect that is still uncertain is whether there should be a
+devicetree property indicating if the DCO+/- pins are connected, so
+specific feedback on that is appreciated.
 
-在 2024/7/31 20:08, Arnd Bergmann 写道:
-> On Tue, Jul 30, 2024, at 13:44, Zhiguo Jiang wrote:
->
->> +
->> +
->> +extern bool __tlb_remove_swap_entries(struct mmu_gather *tlb,
->> +		swp_entry_t entry, int nr);
->> +#else
->> +bool __tlb_remove_swap_entries(struct mmu_gather *tlb,
->> +		swp_entry_t entry, int nr)
->> +{
->> +	return false;
->> +}
->> +#endif
-> To address the reported build regression, that function must
-> be annotated as 'static inline'.
->
->       Arnd
-Hi Arnd,
+The devices make use of two offset PWM signals, one to trigger
+conversions and the other as a burst signal for transferring data to the
+host. These rely on the new PWM waveform functionality being
+reviewed in [1].
 
-I have added 'static inline' for __tlb_remove_swap_entries() in [PATCH 
-v2 3/3].
-Thanks for your nice guidance.
-https://lore.kernel.org/linux-mm/20240731133318.527-1-justinjiang@vivo.com/T/#t
+This work is being done by BayLibre and on behalf of Analog Devices
+Inc., hence the maintainers are @analog.com.
 
-Thanks
-Zhiguo
+Special thanks to David Lechner for his guidance and reviews.
+
+Signed-off-by: Trevor Gamblin <tgamblin@baylibre.com>
+---
+Trevor Gamblin (3):
+      dt-bindings: iio: adc: add AD762x/AD796x ADCs
+      iio: adc: ad7625: add driver
+      docs: iio: new docs for ad7625 driver
+
+ .../devicetree/bindings/iio/adc/adi,ad7625.yaml    | 176 ++++++
+ Documentation/iio/ad7625.rst                       |  91 +++
+ MAINTAINERS                                        |  11 +
+ drivers/iio/adc/Kconfig                            |  15 +
+ drivers/iio/adc/Makefile                           |   1 +
+ drivers/iio/adc/ad7625.c                           | 626 +++++++++++++++++++++
+ 6 files changed, 920 insertions(+)
+---
+base-commit: ac6a258892793f0a255fe7084ec2b612131c67fc
+change-id: 20240730-ad7625_r1-60d17ea28958
+
+Best regards,
+-- 
+Trevor Gamblin <tgamblin@baylibre.com>
 
 
