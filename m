@@ -1,258 +1,197 @@
-Return-Path: <linux-kernel+bounces-269142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF307942E28
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:23:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC78942E4F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766B7287531
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:23:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BB92882C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E801B1B012E;
-	Wed, 31 Jul 2024 12:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66541B143B;
+	Wed, 31 Jul 2024 12:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rzfkowe2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i+jhbPlx"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3831F1AD9F8
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AF01AE877
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722428476; cv=none; b=QXPsJmgP+dKKwueVe7622pAecAW1X3bzu+uyDOhKj1u2eH7mLpjr2psho5UuOGpLMyBHZ2ZNaGHxJsFcLJrkPTO00py56NgyFhM45WsV9+uN6sNODlk4lreqW5HVgq/CBXoeMbOoWB+LlrjzZeq+XMQULNE6e8i5y3kjtxhN//8=
+	t=1722428560; cv=none; b=uwhY++nXlpWZs4N2DWDdINUGi84MI03yUXtwjSKoMICoE8Zo6n4K6JOs/KCh+2W+GWcqSEQuFt3yqntVYIhuc9eosyurFO0xvDWm/3WS9MCY27h5HRcYPfYfiJWs6pGKuTCeYaIxambotixqAXyhpHGhYsaLdWPif03YEQu5Cns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722428476; c=relaxed/simple;
-	bh=l1LspisWQQdp97UiLG2RIp87QcdG17vt7kG5xRkEdjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s3EZNuMp6QbokL6dieYyV3rkveOdQEvuL/o1CGpUjPNlT6mxuy3J7MPazgi7nWQuZgMBLALtp5HuF4vRKb4mnCIt+ESbzmRQveaczvYQgL/+uBD7/X4eE/xqZxV/OjHE+aGhqseSiw6fxWWlNpvxA48lIy6+89J/fe5wAusxFs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rzfkowe2; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1722428560; c=relaxed/simple;
+	bh=EnfHCYFIHMmHWtZSgMmDdw/34IF1JehxkN2M3mSSt3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AzNEzBnGKleNsrsoPobKQxYbl4G9hjwYUMo7MVMUbGJPns9hsdv/Rb8WVAGZSxgWiK4el8T0269dSRK/1lAxgWgCNB4buG33bVvK/7BIW1DnVdA/SOyWrGGkpjl3820CL4zYzDEmo7Ira3XLutWSfxbvo//eWK2MgaoOt4+gwW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i+jhbPlx; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722428473;
+	s=mimecast20190719; t=1722428558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=4v7hdRCoEPujGr8jK0JqsH11PIwi+iIoAMYv6jnJbDo=;
-	b=Rzfkowe2dpfdncQGsUEHEEsu0F9QD48gqzUWmYUiNXBnfiPPjFIrp1K/aeSUh2EtIE/mMx
-	rchPUUhJdBVf7TrBFQQvI6eVF+LjM2UgeenKRAd4Q0/FpWqdmp5J5eJUV5ItwZCDkLBuuC
-	5m1SqZzPS3+GjxgnUi5faMVa9AHuIF0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-452-QNNGEfMfNBWqurKlxIlLVw-1; Wed,
- 31 Jul 2024 08:21:10 -0400
-X-MC-Unique: QNNGEfMfNBWqurKlxIlLVw-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5C18E1954226;
-	Wed, 31 Jul 2024 12:21:08 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.39.194.74])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A868C1955D42;
-	Wed, 31 Jul 2024 12:21:04 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	David Hildenbrand <david@redhat.com>,
-	James Houghton <jthoughton@google.com>,
-	stable@vger.kernel.org,
-	Peter Xu <peterx@redhat.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Muchun Song <muchun.song@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Subject: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-Date: Wed, 31 Jul 2024 14:21:03 +0200
-Message-ID: <20240731122103.382509-1-david@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=u8D0BMiT6IoVXQx1H4dU2A0Q04EQIo67aTwTXMI8Aso=;
+	b=i+jhbPlx7B4M6yUC8ejdemUeOwF3TLHbIL6akp1akhhlWImfXIly+QBIoBp9U+KZDSoaNg
+	TTOCpj5et31uq9yJnFzwHyr3rbM9+M5ffQXAGttoM4TZQmelmx5EcQADqVB4TtgNqC9gxJ
+	VL1i9HsR82rsGcruux+pm2OrFPSbqLU=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-450-fFe8ZsjxO2WK48wEliQURg-1; Wed, 31 Jul 2024 08:22:36 -0400
+X-MC-Unique: fFe8ZsjxO2WK48wEliQURg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280c0b3017so38239745e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 05:22:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722428555; x=1723033355;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u8D0BMiT6IoVXQx1H4dU2A0Q04EQIo67aTwTXMI8Aso=;
+        b=UUrnFiewmBcoFk5hzayjwMpxUeoGdBsgW89Kb7ajOYQSK/bRLKubgi9lcu9pTjmzb4
+         qkgGorSwnDKIQLHKffAhui7iWrus8jrZpX5vNRY1IlEa0WEVVcl4RtnRazkrbLwBNa3Y
+         uXnCj+cAkTN+wmmQOOVbbujHzS51czOcincSt6dyR2Z8NIvouVP2dDjswvTdgr3GSHdz
+         PS/D1i572+atFFMX2/NDSGlyuYUqP8Lc7YOreN9kD0ybDRatf7GyZqAJirSg1YAAo12R
+         RXltc/U6EFKnEeWgO8c+OoYifBrMnw7HJV8EjvYXkgLo8HVSiDeEIt9mvDim+Zt2De9K
+         SANQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWl3BaMs2seL4wJYlLMxeQgM3Jl+Rikdm3lL9wlu5cyt06LrFkGbhISy8VYLl7D4H9ivVoTAa6UZ2s+wCXQLmHHre8wY8uALZSZg0W
+X-Gm-Message-State: AOJu0YzAj0tq+9NnZHFqaRgPbzAUzpPIA88GtbjMTyQ/l5nrYtyaEcNS
+	kdlhshHx4tZwaGqNDI3hGJwN9dbWyvCJtk/Xvy/vQPn/XHQ5fgwUXisIMjn+izXVlyzIHdeC1g0
+	+H8k1E/womJ2oBvLYLyiDyRib5TOUthdIlHkdpNMMwVtRZM1NvFUWdqAFaJ2Syg==
+X-Received: by 2002:a5d:4708:0:b0:367:340e:d6e6 with SMTP id ffacd0b85a97d-36b5d0acf1emr9501349f8f.41.1722428555470;
+        Wed, 31 Jul 2024 05:22:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHW+UTLIN0RxJ1X5ueyznLa5GLDh3jxBCM48XxXY8PyrBp6tsVe90U3Ukmdxw7GxNL3q6QZ2A==
+X-Received: by 2002:a5d:4708:0:b0:367:340e:d6e6 with SMTP id ffacd0b85a97d-36b5d0acf1emr9501327f8f.41.1722428555011;
+        Wed, 31 Jul 2024 05:22:35 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70b:5f00:9b61:28a2:eea1:fa49? (p200300cbc70b5f009b6128a2eea1fa49.dip0.t-ipconnect.de. [2003:cb:c70b:5f00:9b61:28a2:eea1:fa49])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b3686227csm16968300f8f.99.2024.07.31.05.22.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 05:22:34 -0700 (PDT)
+Message-ID: <644488b6-e838-48bb-98df-d979e01a51d6@redhat.com>
+Date: Wed, 31 Jul 2024 14:22:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 5/8] mm/x86: Make pud_leaf() only cares about PSE bit
+To: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Cc: Dave Jiang <dave.jiang@intel.com>, Rik van Riel <riel@surriel.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
+ Matthew Wilcox <willy@infradead.org>,
+ Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+ Oscar Salvador <osalvador@suse.de>, Mel Gorman
+ <mgorman@techsingularity.net>, Andrew Morton <akpm@linux-foundation.org>,
+ Borislav Petkov <bp@alien8.de>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Huang Ying <ying.huang@intel.com>, "Kirill A . Shutemov"
+ <kirill@shutemov.name>, "Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+ Dan Williams <dan.j.williams@intel.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Hugh Dickins <hughd@google.com>, x86@kernel.org,
+ Nicholas Piggin <npiggin@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Ingo Molnar <mingo@redhat.com>
+References: <20240715192142.3241557-1-peterx@redhat.com>
+ <20240715192142.3241557-6-peterx@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240715192142.3241557-6-peterx@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-We recently made GUP's common page table walking code to also walk hugetlb
-VMAs without most hugetlb special-casing, preparing for the future of
-having less hugetlb-specific page table walking code in the codebase.
-Turns out that we missed one page table locking detail: page table locking
-for hugetlb folios that are not mapped using a single PMD/PUD.
+On 15.07.24 21:21, Peter Xu wrote:
+> An entry should be reported as PUD leaf even if it's PROT_NONE, in which
+> case PRESENT bit isn't there. I hit bad pud without this when testing dax
+> 1G on zapping a PROT_NONE PUD.
+> 
 
-Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
-hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
-page tables, will perform a pte_offset_map_lock() to grab the PTE table
-lock.
+Subject s/cares/care/
 
-However, hugetlb that concurrently modifies these page tables would
-actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
-locks would differ. Something similar can happen right now with hugetlb
-folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Signed-off-by: Peter Xu <peterx@redhat.com>
+> ---
+>   arch/x86/include/asm/pgtable.h | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
+> index 65b8e5bb902c..25fc6d809572 100644
+> --- a/arch/x86/include/asm/pgtable.h
+> +++ b/arch/x86/include/asm/pgtable.h
+> @@ -1073,8 +1073,7 @@ static inline pmd_t *pud_pgtable(pud_t pud)
+>   #define pud_leaf pud_leaf
+>   static inline bool pud_leaf(pud_t pud)
+>   {
+> -	return (pud_val(pud) & (_PAGE_PSE | _PAGE_PRESENT)) ==
+> -		(_PAGE_PSE | _PAGE_PRESENT);
+> +	return pud_val(pud) & _PAGE_PSE;
+>   }
+>   
+>   static inline int pud_bad(pud_t pud)
 
-This issue can be reproduced [1], for example triggering:
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-[ 3105.936100] ------------[ cut here ]------------
-[ 3105.939323] WARNING: CPU: 31 PID: 2732 at mm/gup.c:142 try_grab_folio+0x11c/0x188
-[ 3105.944634] Modules linked in: [...]
-[ 3105.974841] CPU: 31 PID: 2732 Comm: reproducer Not tainted 6.10.0-64.eln141.aarch64 #1
-[ 3105.980406] Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-4.fc40 05/24/2024
-[ 3105.986185] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[ 3105.991108] pc : try_grab_folio+0x11c/0x188
-[ 3105.994013] lr : follow_page_pte+0xd8/0x430
-[ 3105.996986] sp : ffff80008eafb8f0
-[ 3105.999346] x29: ffff80008eafb900 x28: ffffffe8d481f380 x27: 00f80001207cff43
-[ 3106.004414] x26: 0000000000000001 x25: 0000000000000000 x24: ffff80008eafba48
-[ 3106.009520] x23: 0000ffff9372f000 x22: ffff7a54459e2000 x21: ffff7a546c1aa978
-[ 3106.014529] x20: ffffffe8d481f3c0 x19: 0000000000610041 x18: 0000000000000001
-[ 3106.019506] x17: 0000000000000001 x16: ffffffffffffffff x15: 0000000000000000
-[ 3106.024494] x14: ffffb85477fdfe08 x13: 0000ffff9372ffff x12: 0000000000000000
-[ 3106.029469] x11: 1fffef4a88a96be1 x10: ffff7a54454b5f0c x9 : ffffb854771b12f0
-[ 3106.034324] x8 : 0008000000000000 x7 : ffff7a546c1aa980 x6 : 0008000000000080
-[ 3106.038902] x5 : 00000000001207cf x4 : 0000ffff9372f000 x3 : ffffffe8d481f000
-[ 3106.043420] x2 : 0000000000610041 x1 : 0000000000000001 x0 : 0000000000000000
-[ 3106.047957] Call trace:
-[ 3106.049522]  try_grab_folio+0x11c/0x188
-[ 3106.051996]  follow_pmd_mask.constprop.0.isra.0+0x150/0x2e0
-[ 3106.055527]  follow_page_mask+0x1a0/0x2b8
-[ 3106.058118]  __get_user_pages+0xf0/0x348
-[ 3106.060647]  faultin_page_range+0xb0/0x360
-[ 3106.063651]  do_madvise+0x340/0x598
-
-Let's make huge_pte_lockptr() effectively use the same PT locks as any
-core-mm page table walker would. Add ptep_lockptr() to obtain the PTE
-page table lock using a pte pointer -- unfortunately we cannot convert
-pte_lockptr() because virt_to_page() doesn't work with kmap'ed page
-tables we can have with CONFIG_HIGHPTE.
-
-Take care of PTE tables possibly spanning multiple pages, and take care of
-CONFIG_PGTABLE_LEVELS complexity when e.g., PMD_SIZE == PUD_SIZE. For
-example, with CONFIG_PGTABLE_LEVELS == 2, core-mm would detect
-with hugepagesize==PMD_SIZE pmd_leaf() and use the pmd_lockptr(), which
-would end up just mapping to the per-MM PT lock.
-
-There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
-folio being mapped using two PTE page tables.  While hugetlb wants to take
-the PMD table lock, core-mm would grab the PTE table lock of one of both
-PTE page tables.  In such corner cases, we have to make sure that both
-locks match, which is (fortunately!) currently guaranteed for 8xx as it
-does not support SMP and consequently doesn't use split PT locks.
-
-[1] https://lore.kernel.org/all/1bbfcc7f-f222-45a5-ac44-c5a1381c596d@redhat.com/
-
-Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic follow_page_mask code")
-Reviewed-by: James Houghton <jthoughton@google.com>
-Cc: <stable@vger.kernel.org>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Muchun Song <muchun.song@linux.dev>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-
-Third time is the charm?
-
-Retested on arm64 and x86-64. Cross-compiled on a bunch of others.
-
-v2 -> v3:
-* Handle CONFIG_PGTABLE_LEVELS oddities as good as possible. It's a mess.
-  Remove the size >= P4D_SIZE check and simply default to the
-  &mm->page_table_lock.
-* Align the PTE pointer to the start of the page table to handle PTE page
-  tables bigger than a single page (unclear if this could currently trigger).
-* Extend patch description
-
-v1 -> 2:
-* Extend patch description
-* Drop "mm: let pte_lockptr() consume a pte_t pointer"
-* Introduce ptep_lockptr() in this patch
-
----
- include/linux/hugetlb.h | 27 +++++++++++++++++++++++++--
- include/linux/mm.h      | 22 ++++++++++++++++++++++
- 2 files changed, 47 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
-index c9bf68c239a01..e6437a06e2346 100644
---- a/include/linux/hugetlb.h
-+++ b/include/linux/hugetlb.h
-@@ -944,9 +944,32 @@ static inline bool htlb_allow_alloc_fallback(int reason)
- static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
- 					   struct mm_struct *mm, pte_t *pte)
- {
--	if (huge_page_size(h) == PMD_SIZE)
-+	unsigned long size = huge_page_size(h);
-+
-+	VM_WARN_ON(size == PAGE_SIZE);
-+
-+	/*
-+	 * hugetlb must use the exact same PT locks as core-mm page table
-+	 * walkers would. When modifying a PTE table, hugetlb must take the
-+	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
-+	 * PT lock etc.
-+	 *
-+	 * The expectation is that any hugetlb folio smaller than a PMD is
-+	 * always mapped into a single PTE table and that any hugetlb folio
-+	 * smaller than a PUD (but at least as big as a PMD) is always mapped
-+	 * into a single PMD table.
-+	 *
-+	 * If that does not hold for an architecture, then that architecture
-+	 * must disable split PT locks such that all *_lockptr() functions
-+	 * will give us the same result: the per-MM PT lock.
-+	 */
-+	if (size < PMD_SIZE && !IS_ENABLED(CONFIG_HIGHPTE))
-+		/* pte_alloc_huge() only applies with !CONFIG_HIGHPTE */
-+		return ptep_lockptr(mm, pte);
-+	else if (size < PUD_SIZE || CONFIG_PGTABLE_LEVELS == 2)
- 		return pmd_lockptr(mm, (pmd_t *) pte);
--	VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
-+	else if (size < P4D_SIZE || CONFIG_PGTABLE_LEVELS == 3)
-+		return pud_lockptr(mm, (pud_t *) pte);
- 	return &mm->page_table_lock;
- }
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index b100df8cb5857..f6c7fe8f5746f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2926,6 +2926,24 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
- 	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
- }
- 
-+static inline struct page *ptep_pgtable_page(pte_t *pte)
-+{
-+	unsigned long mask = ~(PTRS_PER_PTE * sizeof(pte_t) - 1);
-+
-+	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
-+	return virt_to_page((void *)((unsigned long)pte & mask));
-+}
-+
-+static inline struct ptdesc *ptep_ptdesc(pte_t *pte)
-+{
-+	return page_ptdesc(ptep_pgtable_page(pte));
-+}
-+
-+static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-+{
-+	return ptlock_ptr(ptep_ptdesc(pte));
-+}
-+
- static inline bool ptlock_init(struct ptdesc *ptdesc)
- {
- 	/*
-@@ -2950,6 +2968,10 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
- {
- 	return &mm->page_table_lock;
- }
-+static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
-+{
-+	return &mm->page_table_lock;
-+}
- static inline void ptlock_cache_init(void) {}
- static inline bool ptlock_init(struct ptdesc *ptdesc) { return true; }
- static inline void ptlock_free(struct ptdesc *ptdesc) {}
 -- 
-2.45.2
+Cheers,
+
+David / dhildenb
 
 
