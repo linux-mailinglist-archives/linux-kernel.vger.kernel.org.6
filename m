@@ -1,108 +1,247 @@
-Return-Path: <linux-kernel+bounces-269513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE9D9433AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:51:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6639433AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB011C23444
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A53E32833A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08961B581F;
-	Wed, 31 Jul 2024 15:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ryd+0aCl"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462581A3BD5;
+	Wed, 31 Jul 2024 15:51:50 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF6D1B3F0F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A6A1AD9FE;
+	Wed, 31 Jul 2024 15:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441094; cv=none; b=AZ9TA9Iih2mueAzubMN0DQIFyJG0i07nnvhh/rKRWzucaHQaky/X1YoMV9eYvUsLIFSFL90v/JHX6dK4AxOZmbGtDraYTkDGytJ5DjEKPG9qYyDX7ve2miSw9NMp5JK12T2gmwbIA4Qg8BzI67g8EroXd+of4mUj+8TNm429wOM=
+	t=1722441109; cv=none; b=tc4xQfd/K2vYgTLXjlah8PVYPNP5KzVN9xdUpT9DGzmk0rqHIcTN7D09SnCe5EyM7OazIH534WLg6yFqJs3BM7782oGeR/cI8zjYoUCPBEpIVfIgiDuLU03YRGbdR0IkuGgJ0uJvYuEhzS2C9vbIkR3NJctXGyQHuT7mBOaHvKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441094; c=relaxed/simple;
-	bh=qPPJaDa3oltxDrhp3U0v18X4YZrjzYBSJplVnujrCz4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W7nceCd5WnKalCpTEWyclAqypd1t4OFFSOhN8z79GNzhvvR7Ooy+O58JxZvzO3ufSKvoR09mO46qzSWtbcOauFdF4QHG+axWm2vXGNdshiG8Ov812Gqxf2+viwfNPwUVm19VF1i44kloF5wU9IHijlSiYWsqtANLAxCV8aDpn84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ryd+0aCl; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e0b286b922eso4133128276.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1722441091; x=1723045891; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J+Y1tBH56NyXCyU3BPl+HWO+PHBBC2ShKFx3B+Ne8TU=;
-        b=Ryd+0aClWamE0KM2+5GJ+Yj9xnPL+S8UkaFsjoM6RE6DVkGq17VLNzuMmFtcB9KPxw
-         o7zaI0j2BUwznl72VL8x4EWAjf44oK4iR7sI8uE3shcro3yNqJkes18b/0sAVinCUMj9
-         PokcwxDDFGV0G4HLY11eQ+bxwvpuyTgwLy3CyIQooVIJ28r6qtdFfzCTqrWds5LThfzK
-         9t2ZJnZZDs0Q1Yed2wJlOESzxV8m3b7AFON+DplJeddWgBz5ZUu2HKAJXd4FJDKQ9Yp4
-         M4YM0nE/zjgRm1lKVgzkUUMx/xvgfnVjtd2ilPfMyO09081cUZSY+latw0KXYHVO+kJa
-         4jmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722441091; x=1723045891;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J+Y1tBH56NyXCyU3BPl+HWO+PHBBC2ShKFx3B+Ne8TU=;
-        b=RoWl6t+Zl/ASTiC4VgUvJNK4p3kou17vLBVXeiEJrW5rxFXkbkN9+3hroBqq4Fmj5w
-         USaYaWKqD0JMz8sis5gNlmG04Tt0ioYI2nCAnqpuDzbJ/KZRWSojBPHAY95p/vDcQNwf
-         jYiD/YjrFyOSCKQlcvXecyN7Kkp6arOwYrt7Dfoq+yzzNV0ShiroQm8v1NCrEfGR+5G7
-         fe6ZsjaPGSjYJfhC5hnQHaDzDOe7ZqDO2CRXPKVUKYNijgKSx8wouH32+N/Xm06Yquvw
-         u8pOpwl7WjFSNG0wpUGhH2VjQ6KOFu5C1Q4eXNrMm6FAK9LaIkLAJYty3GQ0Kc6m3gOP
-         t6Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVojL8gLTQXNebOcUkzG0fVKrW0+XnHiqVin+NdK4PsJ+1yICXhdSZbDt9fEE1PCIGBTGJB5YUXTtKYGisO4bak3AWWgw0unhylphga
-X-Gm-Message-State: AOJu0Yxn5YeIlEqJWAsMbNsuydgOEJYGZ8xWpjtsvIARGdi6E2ZAP1QZ
-	MZ6KCb1NqAaNyC4s/nKQ9vJAsolD0j8U53cAkj2/pKhUKSzlwZY8WN5wtx8L/Jgj0HDSMdYD534
-	m85iG/uJyRi378OchPCOJMgMGqlkBpxgQ7vjt
-X-Google-Smtp-Source: AGHT+IHwIZcmqLvjLJdL4nFbCs9ggYLgBXJnYBwKJ74/hRqjfxBmEuMXVpuI03ApuJDsvsemBmMco8Se14aj/qLzVvk=
-X-Received: by 2002:a05:6902:100b:b0:e0b:1241:cc17 with SMTP id
- 3f1490d57ef6-e0b54468ebemr16610271276.15.1722441090793; Wed, 31 Jul 2024
- 08:51:30 -0700 (PDT)
+	s=arc-20240116; t=1722441109; c=relaxed/simple;
+	bh=sHoaTphO82tBC4+EhCDCDI0u09HIu+sTJ4X78ZvWgJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hDEh2dBAXm6Ii1ulcw+QYSNhEDD4XLDuQEMFkV9XlIwr3RPKgISsUB6RNfFgwExEsj2ZPFfttOEk3FgZo70WmJ8Fez/xw/67a25oJab9KQLMwe0+d4ai7HnmhThDybLQo72LkkedWe9SFzjghhk18NGZTFwflFZx4BUWsWy/UQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9804BC116B1;
+	Wed, 31 Jul 2024 15:51:48 +0000 (UTC)
+Date: Wed, 31 Jul 2024 11:52:22 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: tglozar@redhat.com
+Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jwyatt@redhat.com, jkacur@redhat.com
+Subject: Re: [PATCH v2 4/6] rtla/timerlat: Add --deepest-idle-state for top
+Message-ID: <20240731115222.21e99427@gandalf.local.home>
+In-Reply-To: <20240731083655.375293-5-tglozar@redhat.com>
+References: <20240731083655.375293-1-tglozar@redhat.com>
+	<20240731083655.375293-5-tglozar@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731075225.617792-1-ruanjinjie@huawei.com>
-In-Reply-To: <20240731075225.617792-1-ruanjinjie@huawei.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 31 Jul 2024 11:51:20 -0400
-Message-ID: <CAHC9VhR9MC9GhGZi_1ftycfGyeuCQ=BXgAs+v+9D-nXWg+eu=A@mail.gmail.com>
-Subject: Re: [PATCH] audit: Use strscpy instead of memcpy when copying comm
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: eparis@redhat.com, audit@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 3:46=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
- wrote:
->
-> There may be random garbage beyond a string's null terminator, memcpy mig=
-ht
-> use the entire comm array. so avoid that possibility by using strscpy
-> instead of memcpy.
->
-> Link: https://github.com/KSPP/linux/issues/90
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+On Wed, 31 Jul 2024 10:36:53 +0200
+tglozar@redhat.com wrote:
+
+> From: Tomas Glozar <tglozar@redhat.com>
+> 
+> Add option to limit deepest idle state on CPUs where timerlat is running
+> for the duration of the workload.
+> 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 > ---
->  kernel/auditsc.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  tools/tracing/rtla/src/timerlat_top.c | 46 ++++++++++++++++++++++++++-
+>  1 file changed, 45 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+> index 8c16419fe22a..ef1d3affef95 100644
+> --- a/tools/tracing/rtla/src/timerlat_top.c
+> +++ b/tools/tracing/rtla/src/timerlat_top.c
+> @@ -48,6 +48,7 @@ struct timerlat_top_params {
+>  	int			pretty_output;
+>  	int			warmup;
+>  	int			buffer_size;
+> +	int			deepest_idle_state;
+>  	cpu_set_t		hk_cpu_set;
+>  	struct sched_attr	sched_param;
+>  	struct trace_events	*events;
+> @@ -447,7 +448,7 @@ static void timerlat_top_usage(char *usage)
+>  		"",
+>  		"  usage: rtla timerlat [top] [-h] [-q] [-a us] [-d s] [-D] [-n] [-p us] [-i us] [-T us] [-s us] \\",
+>  		"	  [[-t[file]] [-e sys[:event]] [--filter <filter>] [--trigger <trigger>] [-c cpu-list] [-H cpu-list]\\",
+> -		"	  [-P priority] [--dma-latency us] [--aa-only us] [-C[=cgroup_name]] [-u|-k] [--warm-up s]",
+> +		"	  [-P priority] [--dma-latency us] [--aa-only us] [-C[=cgroup_name]] [-u|-k] [--warm-up s] [--deepest-idle-state n]",
+>  		"",
+>  		"	  -h/--help: print this menu",
+>  		"	  -a/--auto: set automatic trace mode, stopping the session if argument in us latency is hit",
+> @@ -481,6 +482,7 @@ static void timerlat_top_usage(char *usage)
+>  		"	  -U/--user-load: enable timerlat for user-defined user-space workload",
+>  		"	     --warm-up s: let the workload run for s seconds before collecting data",
+>  		"	     --trace-buffer-size kB: set the per-cpu trace buffer size in kB",
 
-If you look at audit_log_pid_context() you'll see that we don't record
-the entire task::comm field, we only record up the NUL byte, so any
-garbage present after the end of the string should not make it into
-the audit record.  We use memcpy(), as opposed to any of the string
-based copy functions, as the task::comm field is relatively short and
-having to count the length of the string in addition to copying the
-string is likely more expensive than simply copying the full buffer.
+Could probably do:
 
---=20
-paul-moore.com
+#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
+#else
++		"	     --deepest-idle-state n: [rtla built without libcpupower, --deepest-idle-state is not supported]",
+#endif
+
+>  		NULL,
+>  	};
+>  
+> @@ -518,6 +520,9 @@ static struct timerlat_top_params
+>  	/* disabled by default */
+>  	params->dma_latency = -1;
+>  
+> +	/* disabled by default */
+> +	params->deepest_idle_state = -2;
+> +
+>  	/* display data in microseconds */
+>  	params->output_divisor = 1000;
+>  
+> @@ -550,6 +555,7 @@ static struct timerlat_top_params
+>  			{"aa-only",		required_argument,	0, '5'},
+>  			{"warm-up",		required_argument,	0, '6'},
+>  			{"trace-buffer-size",	required_argument,	0, '7'},
+> +			{"deepest-idle-state",	required_argument,	0, '8'},
+>  			{0, 0, 0, 0}
+>  		};
+>  
+> @@ -726,6 +732,9 @@ static struct timerlat_top_params
+>  		case '7':
+>  			params->buffer_size = get_llong_from_str(optarg);
+>  			break;
+> +		case '8':
+> +			params->deepest_idle_state = get_llong_from_str(optarg);
+> +			break;
+>  		default:
+>  			timerlat_top_usage("Invalid option");
+>  		}
+> @@ -922,6 +931,9 @@ int timerlat_top_main(int argc, char *argv[])
+>  	int return_value = 1;
+>  	char *max_lat;
+>  	int retval;
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +	int i;
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+>  
+>  	params = timerlat_top_parse_args(argc, argv);
+>  	if (!params)
+> @@ -971,6 +983,26 @@ int timerlat_top_main(int argc, char *argv[])
+>  		}
+>  	}
+>  
+> +	if (params->deepest_idle_state >= -1) {
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +		for (i = 0; i < sysconf(_SC_NPROCESSORS_CONF); i++) {
+> +			if (params->cpus && !CPU_ISSET(i, &params->monitored_cpus))
+> +				continue;
+> +			if (save_cpu_idle_disable_state(i) < 0) {
+> +				err_msg("Could not save cpu idle state.\n");
+> +				goto out_free;
+> +			}
+> +			if (set_deepest_cpu_idle_state(i, params->deepest_idle_state) < 0) {
+> +				err_msg("Could not set deepest cpu idle state.\n");
+> +				goto out_free;
+> +			}
+> +		}
+> +#else
+> +		err_msg("rtla built without libcpupower, --deepest-idle-state is not supported\n");
+> +		goto out_free;
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+
+We could get rid of most of the ifdefs if you changed the header file to be:
+
+#ifdef HAVE_LIBCPUPOWER_SUPPORT
+int save_cpu_idle_disable_state(unsigned int cpu);
+int restore_cpu_idle_disable_state(unsigned int cpu);
+void free_cpu_idle_disable_states(void);
+int set_deepest_cpu_idle_state(unsigned int cpu, unsigned int state);
+static inline have_libcpower_support(void) { return 1; }
+#else
+static inline int save_cpu_idle_disable_state(unsigned int cpu) { return -1 }
+static inline int restore_cpu_idle_disable_state(unsigned int cpu) { return -1; }
+static inline void free_cpu_idle_disable_states(void) { }
+static inline int set_deepest_cpu_idle_state(unsigned int cpu, unsigned int state) { return -1 }
+static inline have_libcpower_support(void) { return 0; }
+#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+
+
+Then the above can simply be:
+
+	if (params->deepest_idle_state >= -1) {
+
+		if (!have_libcpower_support()) {
+			err_msg("rtla built without libcpupower, --deepest-idle-state is not supported\n");
+			goto out_free;
+		}
+
+		for (i = 0; i < sysconf(_SC_NPROCESSORS_CONF); i++) {
+			if (params->cpus && !CPU_ISSET(i, &params->monitored_cpus))
+				continue;
+			if (save_cpu_idle_disable_state(i) < 0) {
+				err_msg("Could not save cpu idle state.\n");
+				goto out_free;
+			}
+			if (set_deepest_cpu_idle_state(i, params->deepest_idle_state) < 0) {
+				err_msg("Could not set deepest cpu idle state.\n");
+				goto out_free;
+			}
+		}
+
+Makes the code much nicer to look at.
+
+> +	}
+> +
+>  	if (params->trace_output) {
+>  		record = osnoise_init_trace_tool("timerlat");
+>  		if (!record) {
+> @@ -1125,6 +1157,15 @@ int timerlat_top_main(int argc, char *argv[])
+>  	timerlat_aa_destroy();
+>  	if (dma_latency_fd >= 0)
+>  		close(dma_latency_fd);
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +	if (params->deepest_idle_state >= -1) {
+> +		for (i = 0; i < sysconf(_SC_NPROCESSORS_CONF); i++) {
+
+You would think gcc may optimize it, but I don't have that much confidence
+it can or would. You may want to change that to:
+
+		int nr_cpus = sysconf(_SC_NPROCESSORS_CONF);
+
+		for (i = 0; i < nr_cpus; i++) {
+
+Otherwise you may be calling that sysconf() for each iteration of the loop.
+
+-- Steve
+
+> +			if (params->cpus && !CPU_ISSET(i, &params->monitored_cpus))
+> +				continue;
+> +			restore_cpu_idle_disable_state(i);
+> +		}
+> +	}
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+>  	trace_events_destroy(&record->trace, params->events);
+>  	params->events = NULL;
+>  out_free:
+> @@ -1134,6 +1175,9 @@ int timerlat_top_main(int argc, char *argv[])
+>  	osnoise_destroy_tool(record);
+>  	osnoise_destroy_tool(top);
+>  	free(params);
+> +#ifdef HAVE_LIBCPUPOWER_SUPPORT
+> +	free_cpu_idle_disable_states();
+> +#endif /* HAVE_LIBCPUPOWER_SUPPORT */
+>  out_exit:
+>  	exit(return_value);
+>  }
+
 
