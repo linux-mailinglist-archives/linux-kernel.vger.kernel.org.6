@@ -1,251 +1,319 @@
-Return-Path: <linux-kernel+bounces-268805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60452942979
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:46:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF11942980
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:47:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 846B61C20965
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:46:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28BB72850CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1631A8BE9;
-	Wed, 31 Jul 2024 08:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB4A1A8BF9;
+	Wed, 31 Jul 2024 08:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="n4Cx3i2z"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2042.outbound.protection.outlook.com [40.107.117.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5X8WkFo"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE77443169
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:46:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722415595; cv=fail; b=pYxJzSwWLDUUPrJzRRIndCyLp21eGdoMD4b31dn709rFBgma14LNXee3UuGwchZDP0UYYIo1PY6ia/JpM//UbVWOY5kPoJ7v4pHYWn5PziPyMGuTAZsgXe3aU0bT8QuEBSjPmfVdxrRflj/gyB2juniUBT8RDkHBDMw/w0ZldQM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722415595; c=relaxed/simple;
-	bh=gN6FgOXlYOdeF4Kz+Fu9+ePViWhUBCAud3FCgFZJ8Dc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rOjkwwMMrnwWo70A41t7CS07JIMZ/EHkMiEBXOr3jgRmA93lAggftbLAcLdlyiBKs3HpgMXqoFaAvuFtZSKLPA3PmJNnUVCX31ic3tTZUOu45zuZhkpVS7OTUGFumOQQCHD1nTE/w9llnZ3+up9N1IZERzQpj7leBJB12U0eKCI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=n4Cx3i2z; arc=fail smtp.client-ip=40.107.117.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SDR0eisWPY7JhSq1TgQ0pmOMw2W7ZIdl9H45sXezJqSCfA7m7BtPiiGtNK0iGjo9K/mAzVqGRvsfZHdjOcwzbX9/nelSI+OMNRZDbA/GLNPX0gYDKfCNpjoD+BSbQuTWOsMAwjHw6eIJFxmPS0V9Ddx/S4VuMZ12P+t8mpiqJEeAjJyM9pLwOfBUgoNZhi3kT4ZJWZ4iTL7QHpMCB7THEvAUjwEO+OYENFz/TaOcnnYVGlqXWpoGXvXEMadShpLKuq6vf7EfUpPHqeWwdMmJoQ9pCmqWPtaxkqdKabrmg6NVxhYvC4Z/w6wyY+FNsxxB+RLfddxidvRxWnVF/e973g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gN6FgOXlYOdeF4Kz+Fu9+ePViWhUBCAud3FCgFZJ8Dc=;
- b=tZckNvJf+/PPpVm82fDwwDlyVoJevZ1yHEPMuARyYhnxhSucbOZ/HT2OQU6vNRL8arMRYIVg2JsOtPbe2oIhEyjAloW9T+Og6MiX8fsZTZiJJeQYfiwwQNMj+3TjmPHiVysHMEsi5RHyDpTnItyZxHrjHQNiNBAL9wQU0+smW/escyhG6I9dK/eWW7IDOiJAVt64CMYldK9NIydcKoeKZ0JVRlzjl+Xkqb3xfnCD11jGUuVVXT0Bca3U9hO5YeU0wQIur4CEups+ZUglBT+O71Pk9RLl7UNHnjjrFpcrnHnsniixuhbWXRMXUZAsUX9BQzN8dNM9BY+9q8eEPd7HTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gN6FgOXlYOdeF4Kz+Fu9+ePViWhUBCAud3FCgFZJ8Dc=;
- b=n4Cx3i2zBA7QEC8Fjwu5sSR6+7M2qmDSGDEFX6l3GHOUrv/B+h/1am9urgJnqiDy87RFfzOwyPtjv7RGRsh1tOub8O53irUtiLEdlVEWXfTirxevaCS3WlGJSuN0bguidYWT2a/s2nflEBphIUsoH9Nidn9PVGascRiB7hRFUQFzalEqkWYS3CxrQ1qNWoNYBmijq63rkR9LOsu/scYCS8BRPIPN3m63McFaMfTrbYSBldSTTGOlcKxWhXtF0eRarDG0H4Zd2xAeQd5UpcIrNxZo3ChxSVL6Sbc63V+KRjFcgQVxbqyewQxMVhVs+lqEUdXnnvOO3BDEEN36OHEr4w==
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
- by JH0PR06MB6317.apcprd06.prod.outlook.com (2603:1096:990:19::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
- 2024 08:46:25 +0000
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe%4]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 08:46:25 +0000
-From: =?utf-8?B?6IOh6L+e5Yuk?= <hulianqin@vivo.com>
-To: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	opensource.kernel <opensource.kernel@vivo.com>
-Subject:
- =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjFdIHVzYjogZ2FkZ2V0OiB1dmM6IEZpeGVkIHRo?=
- =?utf-8?B?ZSBhYm5vcm1hbCBlbnVtZXJhdGlvbiBwcm9ibGVtIG9mIG1vYmlsZSBwaG9u?=
- =?utf-8?Q?e_as_UVC_camera.?=
-Thread-Topic: [PATCH v1] usb: gadget: uvc: Fixed the abnormal enumeration
- problem of mobile phone as UVC camera.
-Thread-Index: AdrjJNj29VsAs/ObR7ym5N0VtlAoXAAATxHg
-Date: Wed, 31 Jul 2024 08:46:25 +0000
-Message-ID:
- <TYUPR06MB62176DB2198FF5E5AF5825DED2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
-References:
- <TYUPR06MB6217A8530C44FD14D0ECA18CD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
-In-Reply-To:
- <TYUPR06MB6217A8530C44FD14D0ECA18CD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|JH0PR06MB6317:EE_
-x-ms-office365-filtering-correlation-id: 8fa4712f-4a5c-46cb-431e-08dcb13d4336
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?SUdqcGNVNFBwdklwNXNldVVmQ3RGcWhxV1lnSUNxU1I2UzZWT1pPMHVxdlhW?=
- =?utf-8?B?aHZzV3hGdDBicFEyTHBGODFPbi8yZmJERld5ZGU5Um9lUTN5aWxKQ2RsU0FC?=
- =?utf-8?B?bTZyaVlpb2tpeGgvb082K1VDK2x5VkdVMGx3cGFmMkJMK2RoOVRSbWZUdlJX?=
- =?utf-8?B?QUlRTitocXpxZ281NEdwRnNMZUFHWjQzcncrL1NUZ0UrU2ZMaExGOWhkU1Mv?=
- =?utf-8?B?M3pTU3I1S2pQSGFRNElmNXBaWndhTVpqT0QxN0lBZFlaTVNNb0RwcENuL3VU?=
- =?utf-8?B?WFNPemxERksya3I2M0lKTTEzUVBmdHY1M0tpS09abVhLUUdCVHJsVkg2QU0v?=
- =?utf-8?B?dkNkU2MzaDhjV2RpeWdrUGVUOVZFbmNvd3AyelRGcHYycWUyRlREM2VZWFA0?=
- =?utf-8?B?T2d3VjdQb1lGQVhKVFVabW8vY3NWYnBCV1JDbjFwTHRmWDVITkcxSVJNVmY0?=
- =?utf-8?B?d3kxbjRaU2lKZGVQWklvbm1QY204WDhmRmhIdk1obko2VHk2a3lvdVlmR29t?=
- =?utf-8?B?TUN5QnVrUzVIc3I1aUY4L2FOcm0xaTVTajlTMUwzZmtMN2VCVDBWTUdPSkFn?=
- =?utf-8?B?RWtpUHBmS3JSV3p4TjFPVEFManJpelFKaTRhQUVGNDlJbm1NbWVBTE05NS9V?=
- =?utf-8?B?ekYySGNYRzNidStWKzIzUENuS1dhUm9aejgzMjdVdkZxaVlaSFdpZ3VTU0pt?=
- =?utf-8?B?UnNoQi8yT3RlSURqQnJ1OGJNVEdQSi9OVnVIY1R2bC9ObjRaZ2gyRWM5bGNh?=
- =?utf-8?B?UlBLYTBYeWw3WXRQVThGaWp6MWtlRDNTSTY2MVBkL0I1bjVqZHRmSUxrdmZ1?=
- =?utf-8?B?QkFvQ1pZaStoK1p1QWhNZndUeE5PMUdRaHNWcFdwL2p6YzJTQkNmMC9QUzIr?=
- =?utf-8?B?OE45STdUSi9zcTFnYUpUejZOSzZQdmRSZTBLRXJRUUVlNEZsLzZoeFdDalli?=
- =?utf-8?B?VCtsY09iSVdXdDlvYlBJU3VZK3ZDSWtRY0RwSnpCL2dUUmRTSlhnSUFMYVhO?=
- =?utf-8?B?WWtSQ3RSRTFSZHA0TFdkT0I5Z0p2VTVoNXZvbzdMaDVIdFo5SGhNU25wdVYz?=
- =?utf-8?B?dEc0NkRBUkthS0ZHOERoV1l0R0E5T3lKU21XTURVWHlsM2ZpM0tCdFZiN2F2?=
- =?utf-8?B?WkVZeTcwVnhqNVFzQ2VZSkNQRlNEaDNCdVhLQXBJZUtsMGZZOTI3NG9GZDl3?=
- =?utf-8?B?Q0J0M05pV2Evd0N6YmJ1ak1KdDcwNi9MM2JSQmthTWlPUDdmbXRxSXlWUnVz?=
- =?utf-8?B?ZzYwcE9reFdadlZJRFpiOUc4d2N5ZUw0dkpGdmk4b0J1RnpVRzhPcjVMWjZi?=
- =?utf-8?B?V0grWUMrUFROTVE1YXo3U3BwY1JkZ0xUd3dNbisrRTdBKzgwbWdPQm0yYlZO?=
- =?utf-8?B?MUpWb0FaOHdGanBSOURiMXRxNVFoR2ZMdW9UL21CZmpGWmpnZzgydk9ZSFl6?=
- =?utf-8?B?MW5rdHZ4amJiaTRGT20zMHQ2K3JpTzFlUHJtTXBLM2diZVFFd2hneGs2aWM1?=
- =?utf-8?B?cVZPS3FYYzBYQzdZZzc4UXdZbkE2VUxIMm5IMm5CMC9RZFFQNzN6VGFJNGxN?=
- =?utf-8?B?eGdYb0dQU2ZuSndkTTZEUXQ4cmU4V3hnUjVMNTFDY0FlQ0hyU3ZsTVZPek5k?=
- =?utf-8?B?NVBPd2xDK2hWQllLd3RwMDNOK1lKNFlXcFRpWEEvMkZIOXpBTUViamZZSDJ5?=
- =?utf-8?B?MHVHaDhjSUVDcDVYWlhFc0FKVHpVRCt3M0VETVNaOVdDZDZIZHVLcy8wYXdP?=
- =?utf-8?B?SElhR3NUcDMyQzFHQlJtcmJYejRhQ1duODloRHFhSi9NUVdIVzRPSTBlNlEz?=
- =?utf-8?Q?FjVwNAif5A8vFpcvJIN9oAcXnqtjpe1V2FF+s=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?a3gvS2svMGFtak9JSWtTc2NlR0xHSG9FL3hmY1dxb0YyVzd5b1JkeVFnM04w?=
- =?utf-8?B?amZZZHFMcW5pdyt5cWlOeURyTlQvVHl0Y1lobzQrUHFHL3plemJWUXhDS21B?=
- =?utf-8?B?b1cvRzhGZmwxT1c0MWdabTBPYUl4R0pVUnJqRDJNU1FhRmFjS28zcmY3dTBQ?=
- =?utf-8?B?ZzJ0Vk9YbXBmVlNjeCtwQWJPWW1RU1lkVGlXVU0yZ0FHYWo0L005WENHUFR1?=
- =?utf-8?B?dE8xeE1vM0hWbTFwc3VUL0k4a2NsdSsyVXBQOHV3eGQrSEQ5Yk9aZzFrVFp6?=
- =?utf-8?B?VDlrVDA5bE1hSCsrUEpyeW5ZdVRzMDl5MVU0bHNTdmVkd25lL3V3bGhMdUsv?=
- =?utf-8?B?cmh2WlNlWEJBTGJmZVdiZU8zTjdIR2tNMDQ4NzJNb1o0OTBEeENSV0VSREtz?=
- =?utf-8?B?MHlvSThVZkZZN0xvR1pXQVhJM254dmFSMzlaNTdWK0g1K2tVSFNHVnhHWGpM?=
- =?utf-8?B?WFlUQk0wN0hoSUczZGtJL3dGL3RyT2hQUDRmWmIvdENxcWJnMXo0N29RbmRW?=
- =?utf-8?B?cmRXWVJpdTgzbk1lR2crbmoranUvSGVrRStvVXB5Z2c0NkxldXhwU1QyNHZk?=
- =?utf-8?B?a0NSTC9ubTBRQXpPdGRKRmlxb0kwUjc1b082aFZDYW1nUkJ1V3Z2UEdCY2lz?=
- =?utf-8?B?akM2MnN1bWRVdEdGWDgybi9HVnVjdEZ3Q3Z4T2hNMkZ6VExPSWVTdFkxNEFa?=
- =?utf-8?B?emF2OWtRWEYyQnBUcG9wekptK29yVnFaRkhZOTFHbjlSa2hxdXpWei91ZEZY?=
- =?utf-8?B?aWJsSEhaaEhqcG5kakwxSUlKbFJTdlVla0hkcHFPQUpiWjBveTR2Tk1qVTJ0?=
- =?utf-8?B?OXVZOHZ0aXpLaGJKeXpoVDB2OENuRDRvKzdDRFAwWTE3OWVFZTI2aDlPOUlV?=
- =?utf-8?B?NDlUV2d4T2REbzExQklEOGo0WkV5Wnd6TDU0cnh1cUN2ZHR3RjJKN1dZUmFM?=
- =?utf-8?B?SFBYUXBsOVltRDNQdkhkSTh4Qk52SXp6Vkx4MFJ4VjFVejRodEJxV2wvTmJB?=
- =?utf-8?B?MHI2bzFjQjN2d2UxMGUzV28rVXM2M3A0NVF2Wm9lNEYyaXQ0UFNNYjZEYTN6?=
- =?utf-8?B?eHJNYm5PWkoyUktzWFUvdmpIR2YrdTVwblg4TkpINkN5Rnc4Nm9IM1hlNFA4?=
- =?utf-8?B?c2VEb3NjYU1ab2dONVZad09XanFNNFgxWlhQaVJGQVR0Y3R1anphTUdFWUlL?=
- =?utf-8?B?ait1c1UxSExsWUlBOUZYZUpybmFWMVZhWlpmQlBtTkhSeXRlcUxTRW9Sczl3?=
- =?utf-8?B?WTJsS0EzVG5hOEMrNzdzR3E1R2lYLzhiWXk0VDBMM3hzTnRPa2VYWi9OaThV?=
- =?utf-8?B?dFNhVWxOVEJsZ1p3enpzbzJLcHAyenE3MlJLVmZjWjF4TGdMUXNXdXdoRm13?=
- =?utf-8?B?Y2s4YkJCSThvU29kd0NLT1B2VTlHOHpTNXFNb21IMWlUV0o2NS9rNlhOZ01I?=
- =?utf-8?B?RXlVSk1acXJRTGNLZkhadzRDRGJLblVxcTcyZkI0WEdiYVNQRDdacTFKbE9m?=
- =?utf-8?B?MjJqcC84cythYUtDZ2NDL2RtUDRYL1M4VWdTNm8wajBIb1g1REhDVzliNzBN?=
- =?utf-8?B?Rnhvc3NBNHZ0WmhpU01LeUNCMkw4dVl6OGF6MGFnaGYrTGQwOHJveitVRFpQ?=
- =?utf-8?B?Ui91Z3pLYVZxNE1PV1k1aEVNcFFUVHBJZjB6MlhRV0prdUFJMmZMM0F3VStv?=
- =?utf-8?B?MlN5TmVkVEVQSVZEUmJyN1dJL2tPZW5Vc1UxZnIrTXB3aFc4bld6NUI1RkV4?=
- =?utf-8?B?alZhZlErV0RtdDJsdTRqZlVqdG52em9rb1Rpb0FQdnZGalNISnh4Y1NpOTVF?=
- =?utf-8?B?a3hFMHpBNC9qdUREY0dIblNKeDlEcWlxQitISnV0emZyc0R0VlkyY3g4bUVm?=
- =?utf-8?B?cVkwMGNQY2ROWVRDSmJ3L1hQajFjeVo3aEdLSFE1SHEzcWRBaHlQaTN1Tmc5?=
- =?utf-8?B?SE5Dd1MyVFhtb0pLaFZIVTc4UnlpK0pEUHZiL25qNm5qN3RNd1I2aVcyNFUr?=
- =?utf-8?B?QlkyWHJCVjRCL1ZPZ3BMZTlObm8yOWdSZk9QdGE0U3lxWVkrZVVwVnI5M0cy?=
- =?utf-8?B?NWI4QXJvaVJkZ0pBMTRvRWZCSTlkY3NPaUhXSUE4Vjd5R1hiQ242d1ZHdVEv?=
- =?utf-8?Q?JiX8=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A831C43169;
+	Wed, 31 Jul 2024 08:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722415615; cv=none; b=klYFjHZFGVMowutDphpawHJrynRlB5B85ZYtoPx2UflqOrNg5LlPaBU7Ffv4QHJWI8RAjxr2nYKMIJHbKWcKLEtWblWmoPajoLOu5Kw3YD+n1RIt/FRdEKCLuwqiCvWDHyvAjK7dtUBkTmSJl72zYdQBpwuCylpq7HJuSebRUuY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722415615; c=relaxed/simple;
+	bh=EcLUai8puZv+oubCoR+USsYHTmJR8FRADIRjqIyMSqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=phEYx0+YO+eYqiItxhXLX6VeIbe7PtgJHrM8+3mtRbOe5b+pvkehfNnaLszahSYUUEKP2bV0DgwcgDL4CeUB7k9Q8DhkgynYT+mu5Nb9oKvj6DwKna0unyEu4dkMifn4di/BTEjHN0VcJFjL65vAOrFJWOgUkBrpSDLZbMBM6TQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G5X8WkFo; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so8162629a12.2;
+        Wed, 31 Jul 2024 01:46:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722415612; x=1723020412; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Fdoov56BhyXFrrpuPxNAzdSwKPOoGW7Wnv2Q1w89FEM=;
+        b=G5X8WkFo1ixqcNrGC17Ikg8228+mlaD3G+EVQ2eQSNCUrUEF3ec2l6j10zooVPvqYr
+         8S94yR+Wqrp/Odu5shPzKIf7AA/nC+D0oAyNtoARpgOhRjGoZqkQSNyYbFdy/lXPYaQY
+         GW2UPk2eWt+ZkYGGP2MUSx9uASaxDxQR1IhdrqI+uGJuBunkrk9bwMPEziPH+yAoNY/G
+         CXT0D4fRPmSMbXiEF4tQz5HNy+tJJMyreVHP92JS2K8VF4yIGPmpiFa7Q8+pt9zeed0h
+         SyKxsxyLsTBmWcDxwERcx8Lu3RNQRRREjmT1I0Q2P2V31LgtpyQOD3gicOiAM5BWeCbW
+         2FHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722415612; x=1723020412;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fdoov56BhyXFrrpuPxNAzdSwKPOoGW7Wnv2Q1w89FEM=;
+        b=CqwHMo3ynrWAY4noI3HYsUsW0DH5qpgBJiouc0so2g86h3WbHZOYrAGgS+/46VO6CS
+         XHpqHw9YFMyWyyo5BmupUHZYLkeW1c1Bz6DGJynFMUEfzxHua9DMFwcsVwsFjSzPqJW5
+         W+Smuyi+64l1LJed5KScJuXG1OyZOaxhfu4kWM/N8KsFa2l79NFfloQ5KPvRePKW7eT4
+         4Wqv0BKRa3oe0AMGrQOwE0tTr+bSZlzXb6kt1Sjwgn0MKwWTBYVR0Qlq9q7sW4iYFCi9
+         H24TWEF8VRUX27/HqOQ+CuTrjeFDiA/QMQkQQWTFcT2ILFdAR5JMlKahNbtuROktlaNR
+         +0xA==
+X-Forwarded-Encrypted: i=1; AJvYcCUY5sKZaTF72+RLkOL+Mu5bA/A62akOsQoJlmVG3f2EszUAI0uncnrkKSC3gBcY7hqaqkNSA3oMYMLOYtvqad0Wwqf17GA17FyEFTqzZXETRC6i/fGlYB25pkmLTyUPcO1H/mu+UsU9k5ECEBFvTuYp10rvKGc7Wjy/jmx/TWNHOB+6Gg==
+X-Gm-Message-State: AOJu0YwzbrCVonc2//gCSfdbNZtjLcD93BZuuqCT1MlQ3RgffBGCPTep
+	46rCXK5m/YtZ/Rp3pm0FoGXZWDoeuN8b38CAOySyQim+LtDn9XBuXLSqjnHP
+X-Google-Smtp-Source: AGHT+IF1nPhIrXaIqS08sTpvKWy9YSO4UfeVVUfbu2iPgIg1qtLvq/pNU9HiR1jo7b849HypgQFuXg==
+X-Received: by 2002:a17:907:7209:b0:a77:f2c5:84b3 with SMTP id a640c23a62f3a-a7d40057776mr934755866b.22.1722415611304;
+        Wed, 31 Jul 2024 01:46:51 -0700 (PDT)
+Received: from debian ([2a00:79c0:620:8300:303:6c5b:4b07:6715])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23094sm741718966b.5.2024.07.31.01.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 01:46:50 -0700 (PDT)
+Date: Wed, 31 Jul 2024 10:46:48 +0200
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <20240731084648.GA18584@debian>
+References: <20240515112034.298116-1-dima.fedrau@gmail.com>
+ <20240515112034.298116-3-dima.fedrau@gmail.com>
+ <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8fa4712f-4a5c-46cb-431e-08dcb13d4336
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 08:46:25.8482
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gxBRSLE2+aPPZa31KrTXY/qWbyk4CPYc1QJRItYsBm7l+Wx/+QtWz8PF7ZKFCl4Ss18Fufoc58FXhXCLvS7Ucw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6317
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
 
-SGVsbG8gbGludXggY29tbXVuaXR5IGV4cGVydDoNCg0KVGhlIGZvbGxvd2luZyBhcmUgYW5zd2Vy
-cyB0byBzZXZlcmFsIHF1ZXN0aW9ucyBhYm91dCB0aGlzIHBhdGNoOg0KDQoxLldoeSBkb2VzIHRo
-ZSBkd2MzIGNvbnRyb2xsZXIgbWF0dGVyIGhlcmU/ICBXaGF0IGFib3V0IG90aGVyIGNvbnRyb2xs
-ZXJzPw0KIFdlIGhhdmUgdGVzdGVkIHRoYXQgYm90aCB0aGUgZHdjMyBjb250cm9sbGVyIGFuZCB0
-aGUgbXR1MyBjb250cm9sbGVyIA0KIGhhdmUgc3VjaCBwcm9ibGVtcyB1bmRlciB0aGUgdXZjIGZ1
-bmN0aW9uIGNvbWJpbmF0aW9uLg0KDQoyLldoeSB3YXMgdGhpcyBzZXQgdG8gYmUgdHJ1ZSB0byBz
-dGFydCB3aXRoPyAgV2hhdCBjb21taXQgaWQgZG9lcyB0aGlzDQpmaXg/ICBTaG91bGQgaXQgYmUg
-YmFja3BvcnRlZCB0byBvbGRlciBrZXJuZWxzLCBhbmQgaWYgc28sIGhvdyBmYXIgYmFjaz8NCiBT
-ZXQgdG8gdHJ1ZSBmb3IgY29tbWl0IHJlY29yZHM6DQogaHR0cHM6Ly9naXQua2VybmVsLm9yZy9w
-dWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1pdC8/aWQ9ZjI3
-N2JmMjdjZjVjZDU2YmNkMWM0Yjk1YWUxNDBmNjE2ODBhNmU4Mw0KIA0KIEl0IHNlZW1zIHRoYXQg
-dGhlIGZfdXZjIGRyaXZlciBsb2dpYyBpcyBvcHRpbWl6ZWQsIGFuZCB0aGUgY29kZSBsb2dpYyBp
-cyBtb3JlIHJlYXNvbmFibGUuDQogDQoga2VybmVsNS4xMCwga2VybmVsIDUuMTUsIGtlcm5lbDYu
-MSwgYW5kIGtlcm5lbDYuNiB2ZXJzaW9ucyBhbGwgbmVlZCB0byBiZSBzeW5jaHJvbml6ZWQsIA0K
-IEZyb20gdGhlIGN1cnJlbnQgcG9pbnQgb2YgdmlldywgdGhlc2Uga2VybmVsIHZlcnNpb25zIHdp
-bGwgYmUgY29tcGF0aWJsZSB3aXRoIEFuZHJvaWQgMTQgYW5kIG5ld2VyIHZlcnNpb25zLg0KDQoz
-LldoYXQgdXNlci12aXNhYmxlIGNoYW5nZXMgZG9lcyB0aGlzIHBhdGNoIGNhdXNlPyAgV2hhdCB1
-c2VkIHRvIHdvcmsgdGhhdA0Kbm93IHdpbGwgbm90IGFzIHRoYXQgd2FzIGFkZGVkIGZvciBhIHJl
-YXNvbiwgcmlnaHQ/DQogQWZ0ZXIgbWVyZ2luZyB0aGlzIHBhdGNoLCB0aGUgd2ViY2FtIGZ1bmN0
-aW9uIHdpbGwgYmVjb21lIG5vcm1hbCwgDQogVGhlIHdlYmNhbSBmdW5jdGlvbiBzZWVtcyB0byBi
-ZSB1c2VkIGZvciB0aGUgZmlyc3QgdGltZSBvbiBBbmRyb2lkIDE1Lg0KDQpUaGFua3MNCg0KLS0t
-LS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiDog6Hov57li6QgDQrlj5HpgIHml7bpl7Q6
-IDIwMjTlubQ35pyIMzHml6UgMTY6NDYNCuaUtuS7tuS6ujogZ3JlZ2toQGxpbnV4Zm91bmRhdGlv
-bi5vcmcNCuaKhOmAgTogYWtwbUBsaW51eC1mb3VuZGF0aW9uLm9yZzsgbGludXgta2VybmVsQHZn
-ZXIua2VybmVsLm9yZzsgb3BlbnNvdXJjZS5rZXJuZWwgPG9wZW5zb3VyY2Uua2VybmVsQHZpdm8u
-Y29tPg0K5Li76aKYOiBbUEFUQ0ggdjFdIHVzYjogZ2FkZ2V0OiB1dmM6IEZpeGVkIHRoZSBhYm5v
-cm1hbCBlbnVtZXJhdGlvbiBwcm9ibGVtIG9mIG1vYmlsZSBwaG9uZSBhcyBVVkMgY2FtZXJhLg0K
-DQpXaGVuIHRoZSBwaG9uZSBpcyBjb25uZWN0ZWQgdG8gdGhlIGNvbXB1dGVyIHRvIHVzZSB0aGUg
-d2ViY2FtIGZ1bmN0aW9uLCB0aGUgcGhvbmUgbmVlZHMgdG8gYmUgZW51bWVyYXRlZCBhcyBhIHV2
-YyBjYW1lcmEgZnVuY3Rpb24uDQoNCkJlY2F1c2UgdXZjLT5mdW5jLmJpbmRfZGVhY3RpdmF0ZWQg
-aXMgY29uZmlndXJlZCBhcyB0cnVlIGluIHRoZSBmX3V2YyBkcml2ZXIgdXZjX2FsbG9jIGZ1bmN0
-aW9uLCB0aGUgdXNiX2dhZGdldF9kZWFjdGl2YXRlIGZ1bmN0aW9uIGlzIGNhbGxlZCBkdXJpbmcg
-dGhlIGV4ZWN1dGlvbiBvZiB0aGUgY29uZmlnZnNfY29tcG9zaXRlX2JpbmQgZnVuY3Rpb24gdG8g
-c2V0IGdhZGdldC0+ZGVhY3RpdmF0ZWQgdG8gdHJ1ZSwgd2hpY2ggaW4gdHVybiBjYXVzZXMgdGhl
-IHVzYl9nYWRnZXRfY29ubmVjdF9sb2NrZWQgZnVuY3Rpb24gdG8gZmFpbCB0byBjYWxsIHRoZSBj
-b3JyZXNwb25kaW5nIGNvbnRyb2xsZXIgcHVsbHVwIG9wZXJhdGlvbiAoc3VjaCBhczogZHdjM19n
-YWRnZXRfcHVsbHVwLCBtdHUzX2dhZGdldF9wdWxsdXApLCBhbmQgdGhlIFVTQiBjYW5ub3QgYmUg
-ZW51bWVyYXRlZCBub3JtYWxseSB1bmRlciB0aGUgdXZjIGZ1bmN0aW9uIGNvbWJpbmF0aW9uLg0K
-DQpBZnRlciBhcHBseWluZyB0aGlzIHBhdGNoLCB3ZSBtZWFzdXJlZCB0aGF0IHVuZGVyIHRoZSB1
-dmMgZnVuY3Rpb24sIHRoZSBkd2MzIGNvbnRyb2xsZXIgYW5kIHRoZSBtdHUzIGNvbnRyb2xsZXIg
-Y2FuIGJlIGVudW1lcmF0ZWQgbm9ybWFsbHksIGFuZCB0aGUgd2ViY2FtIGZ1bmN0aW9uIGlzIG5v
-cm1hbC4NCg0KVGhlcmVmb3JlLCBtb2RpZnkgdGhlIGZfdXZjIGRyaXZlciB0byByZW1vdmUgdGhl
-IG9wZXJhdGlvbiBvZiBzZXR0aW5nDQp1dmMtPmZ1bmMuYmluZF9kZWFjdGl2YXRlZCB0byB0cnVl
-Lg0KDQpTaWduZWQtb2ZmLWJ5OiBMaWFucWluIEh1IDxodWxpYW5xaW5Adml2by5jb20+DQotLS0N
-CnYxOg0KICAtIE1vZGlmeSBkZXNjcmlwdGlvbiBpbmZvcm1hdGlvbi4NCi0tLQ0KIGRyaXZlcnMv
-dXNiL2dhZGdldC9mdW5jdGlvbi9mX3V2Yy5jIHwgMSAtDQogMSBmaWxlIGNoYW5nZWQsIDEgZGVs
-ZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX3V2
-Yy5jIGIvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfdXZjLmMNCmluZGV4IDQwMTg3Yjcx
-MTJlNy4uNmQ2M2JlYTE0MjExIDEwMDY0NA0KLS0tIGEvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0
-aW9uL2ZfdXZjLmMNCisrKyBiL2RyaXZlcnMvdXNiL2dhZGdldC9mdW5jdGlvbi9mX3V2Yy5jDQpA
-QCAtMTEwNyw3ICsxMTA3LDYgQEAgc3RhdGljIHN0cnVjdCB1c2JfZnVuY3Rpb24gKnV2Y19hbGxv
-YyhzdHJ1Y3QgdXNiX2Z1bmN0aW9uX2luc3RhbmNlICpmaSkNCiAJdXZjLT5mdW5jLmRpc2FibGUg
-PSB1dmNfZnVuY3Rpb25fZGlzYWJsZTsNCiAJdXZjLT5mdW5jLnNldHVwID0gdXZjX2Z1bmN0aW9u
-X3NldHVwOw0KIAl1dmMtPmZ1bmMuZnJlZV9mdW5jID0gdXZjX2ZyZWU7DQotCXV2Yy0+ZnVuYy5i
-aW5kX2RlYWN0aXZhdGVkID0gdHJ1ZTsNCiANCiAJcmV0dXJuICZ1dmMtPmZ1bmM7DQogDQotLQ0K
-Mi4zOS4wDQoNCg0KLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0K5Y+R5Lu25Lq6OiBncmVna2hAbGlu
-dXhmb3VuZGF0aW9uLm9yZyA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+IA0K5Y+R6YCB5pe2
-6Ze0OiAyMDI05bm0N+aciDMx5pelIDE1OjI4DQrmlLbku7bkuro6IOiDoei/nuWLpCA8aHVsaWFu
-cWluQHZpdm8uY29tPg0K5oqE6YCBOiBha3BtQGxpbnV4LWZvdW5kYXRpb24ub3JnOyBsaW51eC1r
-ZXJuZWxAdmdlci5rZXJuZWwub3JnOyBvcGVuc291cmNlLmtlcm5lbCA8b3BlbnNvdXJjZS5rZXJu
-ZWxAdml2by5jb20+DQrkuLvpopg6IFJlOiBbUEFUQ0hdIHVzYjogZ2FkZ2V0OiB1dmM6IEZpeGVk
-IHRoZSBhYm5vcm1hbCBlbnVtZXJhdGlvbiBwcm9ibGVtIG9mIG1vYmlsZSBwaG9uZSBhcyBVVkMg
-Y2FtZXJhLg0KDQpPbiBXZWQsIEp1bCAzMSwgMjAyNCBhdCAwNjo0ODo1N0FNICswMDAwLCDog6Ho
-v57li6Qgd3JvdGU6DQo+IEZyb20gYzQ2NDU1OGE3MGUxY2EzNmMwZTRiZDBhMTIxZmI1MDU2NWI0
-NDYxMCBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDENCj4gRnJvbTogTGlhbnFpbiBIdSA8aHVsaWFu
-cWluQHZpdm8uY29tPg0KPiBEYXRlOiBXZWQsIDMxIEp1bCAyMDI0IDE0OjIxOjUyICswODAwDQo+
-IFN1YmplY3Q6IFtQQVRDSF0gdXNiOiBnYWRnZXQ6IHV2YzogRml4ZWQgdGhlIGFibm9ybWFsIGVu
-dW1lcmF0aW9uIA0KPiBwcm9ibGVtIG9mICBtb2JpbGUgcGhvbmUgYXMgVVZDIGNhbWVyYS4NCg0K
-V2h5IGlzIHRoaXMgaW4gdGhlIGJvZHkgb2YgdGhlIGVtYWlsPyAgUGxlYXNlIGZpeCB1cCwgYW5k
-IGFsc28sIHByb3Blcmx5IGhhbmRsZSB0aGlzIGJlaW5nIGEgbmV3IHZlcnNpb24gb2YgYW4gb2xk
-IHN1Ym1pc3Npb24gYXMgdGhlIGRvY3VtZW50YXRpb24gYXNrcyB5b3UgdG8uDQoNCnRoYW5rcywN
-Cg0KZ3JlZyBrLWgNCg==
+Am Mon, Jul 29, 2024 at 11:28:56PM +0200 schrieb Uwe Kleine-König:
+Hi Uwe,
+
+[...]
+
+> > +static int mc33xs2410_xfer_regs(struct spi_device *spi, bool read, u8 *reg,
+> > +				u16 *val, bool *ctrl, int len)
+> > +{
+> > +	struct spi_transfer t[MC33XS2410_MAX_TRANSFERS] = { { 0 } };
+> > +	u8 tx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+> > +	u8 rx[MC33XS2410_MAX_TRANSFERS * MC33XS2410_WORD_LEN];
+> > +	int i, ret, reg_i, val_i;
+> > +
+> > +	if (!len)
+> > +		return 0;
+> > +
+> > +	if (read)
+> > +		len++;
+> > +
+> > +	if (len > MC33XS2410_MAX_TRANSFERS)
+> > +		return -EINVAL;
+> > +
+> > +	for (i = 0; i < len; i++) {
+> > +		reg_i = i * MC33XS2410_WORD_LEN;
+> > +		val_i = reg_i + 1;
+> > +		if (read) {
+> > +			if (i < len - 1) {
+> > +				tx[reg_i] = reg[i];
+> > +				tx[val_i] = ctrl[i] ? MC33XS2410_RD_CTRL : 0;
+> > +				t[i].tx_buf = &tx[reg_i];
+> > +			}
+> > +
+> > +			if (i > 0)
+> > +				t[i].rx_buf = &rx[reg_i - MC33XS2410_WORD_LEN];
+> > +		} else {
+> > +			tx[reg_i] = reg[i] | MC33XS2410_WR;
+> > +			tx[val_i] = val[i];
+> > +			t[i].tx_buf = &tx[reg_i];
+> > +		}
+> > +
+> > +		t[i].len = MC33XS2410_WORD_LEN;
+> > +		t[i].cs_change = 1;
+> > +	}
+> > +
+> > +	t[len - 1].cs_change = 0;
+> > +
+> > +	ret = spi_sync_transfer(spi, &t[0], len);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (read) {
+> > +		for (i = 0; i < len - 1; i++) {
+> > +			reg_i = i * MC33XS2410_WORD_LEN;
+> > +			val[i] = FIELD_GET(MC33XS2410_RD_DATA_MASK,
+> > +					   get_unaligned_be16(&rx[reg_i]));
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> 
+> Huh, this is complicated. Isn't that covered by regmap somehow?
+>
+
+AFAIK it isn't supported. The main reason why regmap-spi doesn't work for
+this device is that the device needs a CS change after transmitting 16
+bits. This is not covered by regmap-spi. So I would end up implementing
+reg_read, regmap_write should be fine in regmap-spi. Besides that if I
+want to come as close as possible to an atomic configuration, which is not
+possible, I would have to implement some bulk read/write operations and
+end up with a similar implementation. I would stick to the current
+implementation if you agree.
+
+> > +}
+> > +
+> > [...]
+> > +
+> > +static u8 mc33xs2410_pwm_get_freq(u64 period)
+> > +{
+> > +	u8 step, count;
+> > +
+> > +	/*
+> > +	 * Check if period is within the limits of each of the four frequency
+> > +	 * ranges, starting with the highest frequency(lowest period). Higher
+> > +	 * frequencies are represented with better resolution by the device.
+> > +	 * Therefore favor frequency range with the better resolution to
+> > +	 * minimize error introduced by the frequency steps.
+> 
+> I'm not a native English speaker, but I find that misleading. That
+> period is in the "possible" range is already asserted by the caller. So
+> the switch is about "Check which step is appropriate for the given
+> period", right?
+> 
+
+Yes, you are right. Will fix it in the next version.
+
+> > +	 */
+> > +
+> > +	switch (period) {
+> > +	case MC33XS2410_MIN_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(3):
+> > +		step = 3;
+> > +		break;
+> > +	case MC33XS2410_MAX_PERIOD_STEP(3) + 1 ... MC33XS2410_MAX_PERIOD_STEP(2):
+> > +		step = 2;
+> > +		break;
+> > +	case MC33XS2410_MAX_PERIOD_STEP(2) + 1 ... MC33XS2410_MAX_PERIOD_STEP(1):
+> > +		step = 1;
+> > +		break;
+> > +	case MC33XS2410_MAX_PERIOD_STEP(1) + 1 ... MC33XS2410_MAX_PERIOD_STEP(0):
+> > +		step = 0;
+> > +		break;
+> > +	}
+> > +
+> > +	count = DIV_ROUND_UP(MC33XS2410_MAX_PERIOD_STEP(step), period) - 1;
+> > +
+> > +	return FIELD_PREP(MC33XS2410_PWM_FREQ_STEP_MASK, step) |
+> > +	       FIELD_PREP(MC33XS2410_PWM_FREQ_COUNT_MASK, count);
+> > +}
+> > +
+> > [...]
+> > +
+> > +static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 duty_cycle)
+> > +{
+> > +	if (!period)
+> > +		return 0;
+> > +
+> > +	duty_cycle *= 256;
+> 
+> This might overflow.
+> 
+
+How ? Max period and duty_cycle is checked by the caller and can be
+maximum 2000000000, 2000000000 * 256 = 512000000000, fits in u64. Did I
+miss anything ?
+
+> > +	duty_cycle = DIV_ROUND_CLOSEST_ULL(duty_cycle, period);
+> 
+> round-closest is most probably wrong. Please test your driver with
+> PWM_DEBUG enabled and increasing and decreasing series of duty_cycle and
+> period.
+>
+
+Yes, I should probably round it down. But I tested with PWM_DEBUG enabled
+and it gave me the best results so far. There are still few cases where
+there are complaints. I try to fix it.
+
+> > +
+> > +	/* Device is not able to generate 0% duty cycle */
+> > +	if (!duty_cycle)
+> > +		return -ERANGE;
+> 
+> Given that the hardware emits a low level when disabled, please disable
+> if duty_cycle = 0 is requested.
+> 
+
+Ok.
+
+> > +	return duty_cycle - 1;
+> > +}
+> > +
+> > [...]
+> > +static int mc33xs2410_pwm_get_state(struct pwm_chip *chip,
+> > +				    struct pwm_device *pwm,
+> > +				    struct pwm_state *state)
+> > +{
+> > +	struct mc33xs2410_pwm *mc33xs2410 = to_pwm_mc33xs2410_chip(chip);
+> > +	struct spi_device *spi = mc33xs2410->spi;
+> > +	u8 reg[4] = {
+> > +			MC33XS2410_PWM_FREQ(pwm->hwpwm + 1),
+> > +			MC33XS2410_PWM_DC(pwm->hwpwm + 1),
+> > +			MC33XS2410_PWM_CTRL1,
+> > +			MC33XS2410_PWM_CTRL3,
+> > +		    };
+> > +	bool ctrl[4] = { true, true, true, true };
+> > +	u16 val[4];
+> > +	int ret;
+> > +
+> > +	ret = mc33xs2410_read_regs(spi, reg, ctrl, val, 4);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	state->period = mc33xs2410_pwm_get_period(val[0]);
+> > +	pwm_set_relative_duty_cycle(state, val[1] + 1, 256);
+> 
+> pwm_set_relative_duty_cycle doesn't use the right rounding for
+> .get_state().
+> 
+
+As mentioned above, will try to fix it.
+
+> > +	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
+> > +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
+> > +
+> > +	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > [...]
+> > +static int mc33xs2410_probe(struct spi_device *spi)
+> > +{
+> > [...]
+> > +	/* Disable watchdog */
+> > +	ret = mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
+> 
+> Wouldn't the watchdog functionality better be handled by a dedicated
+> watchdog driver? Disabling it here unconditionally looks wrong.
+> 
+
+Yes, would be better. I planned this after this patchset is accepted.
+Without disabling the watchdog, the device is not able to operate. So I
+would stick to it for now and come up with a patch later on.
+
+> > +	/* Transition to normal mode */
+> > +	ret = mc33xs2410_modify_reg(spi, MC33XS2410_GLB_CTRL,
+> > +				    MC33XS2410_GLB_CTRL_MODE_MASK,
+> > +				    MC33XS2410_GLB_CTRL_NORMAL_MODE);
+> > [...]
+> 
+> Best regards
+> Uwe
+
+Best regards
+Dimitri
+
 
