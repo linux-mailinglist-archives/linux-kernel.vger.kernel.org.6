@@ -1,172 +1,228 @@
-Return-Path: <linux-kernel+bounces-269085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD7942D63
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:38:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C34942D65
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1144E284D0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:38:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4FB5B240A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227551AD9EB;
-	Wed, 31 Jul 2024 11:38:22 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BD71AD9E0;
+	Wed, 31 Jul 2024 11:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg17DCcH"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D1F1AC447
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BB41A8BEF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722425901; cv=none; b=h68JI0lGYaRyC4ddnJ4hCoz7Pq/PJjgdnrU9NFsW3hcU3nwq6wsH6XUIr9u9EI1aHE4aVoQ40zoXx5hssazLxXnkxlK3HN381bXnpJHsv3nLxFHV2WDc60O1OBShrmeATWoxzH/wb/xUXgmtrFRW1q4Zzm+CdQScwuc3ktyVotA=
+	t=1722425966; cv=none; b=UKd7+5pXDliN79jdorV+j67letzgYybM3erd7NKl3uaZYDSUdtzSY/lXAZRm+sc9eHGlQSLvPOVKKv7u5jACsjXLvT5q5UdsCnYAMFwmo0NFWFFJ5q3dZf4uHfBPcfG9okb6K9M/9RTR0UiSC9Nv460H4q416R2i17wfPbglc68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722425901; c=relaxed/simple;
-	bh=MRcb3H0cCeRUNZWmoGXwCN3qJqO9FFcHz5ZtUIzyW5s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nC7XS4zyDoTazBFLt77JlvLVIHPg0Wi8qeS0vTU0GeqvSaYJk2tgFV/wjFjtCj5jGwiEjWqZjf1DoC2P9k26jEoL49BZaPZcMsXnifsO4aaDolDJQShVJ6974EauKjB1Y//Cwx+azOGXHrKbCV6+y9oIGIFqHPvy5mfG4QFpkMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8e43f0c1so820144339f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:38:20 -0700 (PDT)
+	s=arc-20240116; t=1722425966; c=relaxed/simple;
+	bh=VbX8lSJGqSUaTBoWiEIuWZU1AG6jJ+f+6PDE3s72Xm8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cgBY4SUFduhgNnhSdBCooMN1tC45GePoSfVY/OEiMnSsE5utb/FZXL/xMtVgsDsb/wxC4/U7OD5wWhqnO8naNRPQm7myuxtjG91R0uMD1f9dzBG4IE00r2FyB23T61ZtlUFIJK2B6k1FnH52FQKMx6K6ZiqXqLIXLUlZnGqjDNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg17DCcH; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d1c655141so4118698b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722425964; x=1723030764; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=eLclCjvWmzDVskwplMLBw1uSn78KDC7EwkI18+XKFCg=;
+        b=dg17DCcH79kw3pLouCU/se7r/OAHB2/9LQnUao9DqwuFDl5Ubl6PQ1JNvakr7vXXAU
+         MC1TMpFebLMkwrIUkLfUnxGGva8H1lKDwnUe+w8+R2JAgODtTGQ53LojLREOTZr9XwZV
+         MQaS40ni2klLhuB+s3lxOTH1hmurNA3JsQiATPDl2h7QmxnGlIzL+s6G2EofpkeIdtX6
+         eZrSEwfHhS2HKyJWbNnKQsCZ11mMSjFF9fodZi2AiqC5cGozlhnfULQSD6+g3tQuQiFn
+         +cnCXw99nkXSrMsYOnHqAT7G1zhXSnAshlEw9FORB9SoLYtIwzLZrRw5iJkzm5Q4nVz/
+         csgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722425899; x=1723030699;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AZQzn55hmwUwe/OLN07Yt1bGgbGwuLAI4PDXp5aGGzQ=;
-        b=T+x+7R7J6Ub//CaTCJNgfyhkYU246KecH+jYfV3q2o+TFX1NfEygSAn08VAozJ8W8q
-         1M1S1e/OO67sR6hSalGTSzUlYYF5LiTt4yUaVkiMzr/Cgn9OhtQ41Y4aGCSeLpPeZXtp
-         u2fDOZEF9i2joOxMCE465wfdFHzGAGFI/bzND6AG6L2E38O7nx4wFxcJZGSwZHgbDRwk
-         NsNh4epbMKAmuykwnE40e4hLRxWJQQuO35wEtN96mKbd5Oe9NpYRBh4qp1Z1KmBhJQvH
-         M8+LtU854KDCyH5LtkK+JtsZZx7XA6NkdBsm7xSX/lM+jGlS+KSr/AG8kH7sgc3qkUxv
-         SFOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUReVHmG5XCtI1dqRHsYreqc09qeyOxlpsOGixm2JhaoAYCyAMbm5kEPgBZwC7xioqw5lC+J51kprADrnLh9YdfPw9tJ6hE6AvMERWX
-X-Gm-Message-State: AOJu0Yyyg4Ha/MB9BPg6P4fqSaTppIqGxmZuglrcxyUNNrkDVYtmy0W9
-	rRti4D085l5CMG2u3CSyDe5o3BGuVhzVZVpaJHZt0EaaVdUgwUQP4ts5jcyD5yHotoghIWFYRJI
-	FZAr6V8idvSabdmLvUuYkPFX4IzOucBXTf/txM18Dnq6PMcn184zXIlI=
-X-Google-Smtp-Source: AGHT+IEsBuLENj62DdnzKW8aEcsM1YkZAnwt3UvU7FAzopC0Cd1elTa9/gEeBOr1PiAxcEcNZIuXWDOSPCJBjwP31vXC5zpwLqRx
+        d=1e100.net; s=20230601; t=1722425964; x=1723030764;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eLclCjvWmzDVskwplMLBw1uSn78KDC7EwkI18+XKFCg=;
+        b=lXOy3i+n9OgwEB1IOazYweoMDCFazQsKkcb2vj7lREEQnvUBG/emT5iDLXOUKBWWaq
+         GeB4NguTQmRLDUXUKHZTiIIhnu8bhmzAPQCDBn38quz3+GxJ4IEGBrZgnkNbXR87K//s
+         NbX1CR7nbqBG2USRzegAWXpn4ftzB3lzPGjrKM8OxudOnglFl4qmOrYqgaTEmkqrHiVD
+         04EQFJprVtkTbTlaYFVrcdpsx1zyXESK/1M5W1wuWC9a3AYok8qqe+ffzeBTguG0acpf
+         LL3MXSqSR8iJMoEZvBiQmrEUCOaDOpxvGnQjDy1OtPJhhAY88st0dMNjdwGX8cb87Qbb
+         hHYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXnK23uNcD2OvbPA9JQ8OqzZvdweod1PRvfymq3GwyuoGyIic6np8cmWyPkijNhZhd/Y4CdpwmmapUqSr+V4UyUigwsRfzV/Z6TZCh
+X-Gm-Message-State: AOJu0Yx9/0mt2HddmrEWfRkUeEi+ZfG9QRaWo5dSd283rBiW/5JHkfYj
+	ih0x8xRVU/tVmOwCmvdJuWF7eFunKVTesgY5/kcGajw6YeVW7p7P
+X-Google-Smtp-Source: AGHT+IEC2QxBU4qtJWH66S0e//PI9jURHmJfotISS0SZIVdP3MgLEpncrKN9daK8Bt/bNO4NKaaq9Q==
+X-Received: by 2002:a05:6a20:7354:b0:1bd:1d6e:d444 with SMTP id adf61e73a8af0-1c4a118279emr13946423637.2.1722425963927;
+        Wed, 31 Jul 2024 04:39:23 -0700 (PDT)
+Received: from alif.. ([14.195.28.86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e15d7sm9748343b3a.22.2024.07.31.04.39.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 04:39:23 -0700 (PDT)
+From: Harith George <mail2hgg@gmail.com>
+To: linus.walleij@linaro.org,
+	linux@armlinux.org.uk,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: harith.g@alifsemi.com,
+	akpm@linux-foundation.org,
+	rppt@kernel.org,
+	rmk+kernel@armlinux.org.uk,
+	m.szyprowski@samsung.com,
+	vishal.moola@gmail.com,
+	david@redhat.com,
+	willy@infradead.org,
+	nico@fluxnic.net,
+	ardb@kernel.org
+Subject: [PATCH 1/2] arm: mm: Fix kernel memory mapping for xip kernels
+Date: Wed, 31 Jul 2024 17:09:04 +0530
+Message-Id: <20240731113905.3326586-1-mail2hgg@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:150f:b0:4c0:9a05:44c4 with SMTP id
- 8926c6da1cb9f-4c6352e57admr767806173.0.1722425899452; Wed, 31 Jul 2024
- 04:38:19 -0700 (PDT)
-Date: Wed, 31 Jul 2024 04:38:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e39b37061e898704@google.com>
-Subject: [syzbot] [fbdev?] KASAN: global-out-of-bounds Read in bit_putcs (3)
-From: syzbot <syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com>
-To: daniel@ffwll.ch, deller@gmx.de, dri-devel@lists.freedesktop.org, 
-	linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Harith George <harith.g@alifsemi.com>
 
-syzbot found the following issue on:
+The patchset introducing kernel_sec_start/end variables to separate the
+kernel/lowmem memory mappings, broke the mapping of the kernel memory
+for xipkernels.
 
-HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13b495bd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35545feca25ede03
-dashboard link: https://syzkaller.appspot.com/bug?extid=793cf822d213be1a74f2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+kernel_sec_start/end variables are in RO area before the MMU is switched
+on for xipkernels.
+So these cannot be set early in boot in head.S. Fix this by setting these
+after MMU is switched on.
+xipkernels need two different mappings for kernel text (starting at
+CONFIG_XIP_PHYS_ADDR) and data (starting at CONFIG_PHYS_OFFSET).
+Also, move the kernel code mapping from devicemaps_init() to map_kernel().
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/caeac6485006/disk-c912bf70.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/501c87f28da9/vmlinux-c912bf70.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6812e99b7182/Image-c912bf70.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+793cf822d213be1a74f2@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: global-out-of-bounds in __fb_pad_aligned_buffer include/linux/fb.h:633 [inline]
-BUG: KASAN: global-out-of-bounds in bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
-BUG: KASAN: global-out-of-bounds in bit_putcs+0x9b8/0xe30 drivers/video/fbdev/core/bitblit.c:185
-Read of size 1 at addr ffff80008b830d80 by task syz.1.1270/10828
-
-CPU: 0 PID: 10828 Comm: syz.1.1270 Not tainted 6.10.0-rc7-syzkaller-gc912bf709078 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call trace:
- dump_backtrace+0x1b8/0x1e4 arch/arm64/kernel/stacktrace.c:317
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:324
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:114
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x198/0x538 mm/kasan/report.c:488
- kasan_report+0xd8/0x138 mm/kasan/report.c:601
- __asan_report_load1_noabort+0x20/0x2c mm/kasan/report_generic.c:378
- __fb_pad_aligned_buffer include/linux/fb.h:633 [inline]
- bit_putcs_aligned drivers/video/fbdev/core/bitblit.c:96 [inline]
- bit_putcs+0x9b8/0xe30 drivers/video/fbdev/core/bitblit.c:185
- fbcon_putcs+0x318/0x4e8 drivers/video/fbdev/core/fbcon.c:1288
- do_update_region+0x1e8/0x3d0 drivers/tty/vt/vt.c:609
- update_region+0x1e0/0x478 drivers/tty/vt/vt.c:633
- vcs_write+0x90c/0x10c8 drivers/tty/vt/vc_screen.c:698
- do_loop_readv_writev fs/read_write.c:764 [inline]
- vfs_writev+0x5c8/0xb80 fs/read_write.c:973
- do_writev+0x178/0x304 fs/read_write.c:1018
- __do_sys_writev fs/read_write.c:1091 [inline]
- __se_sys_writev fs/read_write.c:1088 [inline]
- __arm64_sys_writev+0x80/0x94 fs/read_write.c:1088
- __invoke_syscall arch/arm64/kernel/syscall.c:34 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:48
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:131
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:150
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:712
- el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
-
-The buggy address belongs to the variable:
- oid_data+0x340/0x3a0
-
-The buggy address belongs to the virtual mapping at
- [ffff80008b260000, ffff80008ee20000) created by:
- declare_kernel_vmas+0x58/0xb8 arch/arm64/mm/mmu.c:770
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1a9430
-flags: 0x5ffc00000002000(reserved|node=0|zone=2|lastcpupid=0x7ff)
-raw: 05ffc00000002000 fffffdffc5a50c08 fffffdffc5a50c08 0000000000000000
-raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
- ffff80008b830c80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff80008b830d00: 00 00 00 07 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9 f9
->ffff80008b830d80: f9 f9 f9 f9 f9 f9 f9 f9 00 00 00 00 06 f9 f9 f9
-                   ^
- ffff80008b830e00: 05 f9 f9 f9 06 f9 f9 f9 00 00 00 00 00 00 00 00
- ffff80008b830e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 02 f9 f9
-==================================================================
-
-
+Fixes: a91da5457085 ("ARM: 9089/1: Define kernel physical section start and end")
+Signed-off-by: Harith George <harith.g@alifsemi.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/arm/kernel/head.S |  8 ++++++--
+ arch/arm/mm/mmu.c      | 34 +++++++++++++++++++++-------------
+ 2 files changed, 27 insertions(+), 15 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
+index 1ec35f065617..28873cda464f 100644
+--- a/arch/arm/kernel/head.S
++++ b/arch/arm/kernel/head.S
+@@ -252,11 +252,15 @@ __create_page_tables:
+ 	 */
+ 	add	r0, r4, #KERNEL_OFFSET >> (SECTION_SHIFT - PMD_ENTRY_ORDER)
+ 	ldr	r6, =(_end - 1)
++
++	/* For XIP, kernel_sec_start/kernel_sec_end are currently in RO memory */
++#ifndef CONFIG_XIP_KERNEL
+ 	adr_l	r5, kernel_sec_start		@ _pa(kernel_sec_start)
+ #if defined CONFIG_CPU_ENDIAN_BE8 || defined CONFIG_CPU_ENDIAN_BE32
+ 	str	r8, [r5, #4]			@ Save physical start of kernel (BE)
+ #else
+ 	str	r8, [r5]			@ Save physical start of kernel (LE)
++#endif
+ #endif
+ 	orr	r3, r8, r7			@ Add the MMU flags
+ 	add	r6, r4, r6, lsr #(SECTION_SHIFT - PMD_ENTRY_ORDER)
+@@ -264,6 +268,7 @@ __create_page_tables:
+ 	add	r3, r3, #1 << SECTION_SHIFT
+ 	cmp	r0, r6
+ 	bls	1b
++#ifndef CONFIG_XIP_KERNEL
+ 	eor	r3, r3, r7			@ Remove the MMU flags
+ 	adr_l	r5, kernel_sec_end		@ _pa(kernel_sec_end)
+ #if defined CONFIG_CPU_ENDIAN_BE8 || defined CONFIG_CPU_ENDIAN_BE32
+@@ -271,8 +276,7 @@ __create_page_tables:
+ #else
+ 	str	r3, [r5]			@ Save physical end of kernel (LE)
+ #endif
+-
+-#ifdef CONFIG_XIP_KERNEL
++#else
+ 	/*
+ 	 * Map the kernel image separately as it is not located in RAM.
+ 	 */
+diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+index f11bf84aa3a2..537f94cd6012 100644
+--- a/arch/arm/mm/mmu.c
++++ b/arch/arm/mm/mmu.c
+@@ -1402,18 +1402,6 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
+ 		create_mapping(&map);
+ 	}
+ 
+-	/*
+-	 * Map the kernel if it is XIP.
+-	 * It is always first in the modulearea.
+-	 */
+-#ifdef CONFIG_XIP_KERNEL
+-	map.pfn = __phys_to_pfn(CONFIG_XIP_PHYS_ADDR & SECTION_MASK);
+-	map.virtual = MODULES_VADDR;
+-	map.length = ((unsigned long)_exiprom - map.virtual + ~SECTION_MASK) & SECTION_MASK;
+-	map.type = MT_ROM;
+-	create_mapping(&map);
+-#endif
+-
+ 	/*
+ 	 * Map the cache flushing regions.
+ 	 */
+@@ -1603,12 +1591,27 @@ static void __init map_kernel(void)
+ 	 * This will only persist until we turn on proper memory management later on
+ 	 * and we remap the whole kernel with page granularity.
+ 	 */
++#ifdef CONFIG_XIP_KERNEL
++	phys_addr_t kernel_nx_start = kernel_sec_start;
++#else
+ 	phys_addr_t kernel_x_start = kernel_sec_start;
+ 	phys_addr_t kernel_x_end = round_up(__pa(__init_end), SECTION_SIZE);
+ 	phys_addr_t kernel_nx_start = kernel_x_end;
++#endif
+ 	phys_addr_t kernel_nx_end = kernel_sec_end;
+ 	struct map_desc map;
+ 
++	/*
++	 * Map the kernel if it is XIP.
++	 * It is always first in the modulearea.
++	 */
++#ifdef CONFIG_XIP_KERNEL
++	map.pfn = __phys_to_pfn(CONFIG_XIP_PHYS_ADDR & SECTION_MASK);
++	map.virtual = MODULES_VADDR;
++	map.length = ((unsigned long)_exiprom - map.virtual + ~SECTION_MASK) & SECTION_MASK;
++	map.type = MT_ROM;
++	create_mapping(&map);
++#else
+ 	map.pfn = __phys_to_pfn(kernel_x_start);
+ 	map.virtual = __phys_to_virt(kernel_x_start);
+ 	map.length = kernel_x_end - kernel_x_start;
+@@ -1618,7 +1621,7 @@ static void __init map_kernel(void)
+ 	/* If the nx part is small it may end up covered by the tail of the RWX section */
+ 	if (kernel_x_end == kernel_nx_end)
+ 		return;
+-
++#endif
+ 	map.pfn = __phys_to_pfn(kernel_nx_start);
+ 	map.virtual = __phys_to_virt(kernel_nx_start);
+ 	map.length = kernel_nx_end - kernel_nx_start;
+@@ -1762,6 +1765,11 @@ void __init paging_init(const struct machine_desc *mdesc)
+ {
+ 	void *zero_page;
+ 
++#ifdef CONFIG_XIP_KERNEL
++	/* Store the kernel RW RAM region start/end in these variables */
++	kernel_sec_start = CONFIG_PHYS_OFFSET & SECTION_MASK;
++	kernel_sec_end = round_up(__pa(_end), SECTION_SIZE);
++#endif
+ 	pr_debug("physical kernel sections: 0x%08llx-0x%08llx\n",
+ 		 kernel_sec_start, kernel_sec_end);
+ 
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
