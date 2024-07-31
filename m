@@ -1,197 +1,380 @@
-Return-Path: <linux-kernel+bounces-269417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDBD79432A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:03:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 174C39432A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B9EF1F27683
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:03:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AEAF1C2194D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871FA14AA9;
-	Wed, 31 Jul 2024 15:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A448017548;
+	Wed, 31 Jul 2024 15:04:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R2WNgrHE"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NtNKPUre"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012006.outbound.protection.outlook.com [52.101.66.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDEE179A7;
-	Wed, 31 Jul 2024 15:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438215; cv=none; b=ZHXm6OqBdGvVE+uEq+Zy+wRIbuiUwnhxlOInHs+BTjMKAVVwvqgwKVShFwf2dQvZBLPehyOyRPjy9mPzqyuyEJ5JND/ESEjRPUNn1fZ5GlOMX7FRR17gykUDbaWvVDFiSub+eZJc+5448wfvMZTVDmdl2BbBPii4MrmF7HEwHHo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438215; c=relaxed/simple;
-	bh=w725O9o35CuqOJYfC/jc69eIJ692ZJXk5gFvqBeLKB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=DSwqiYdXkQVlhmoe2AnCtJsF+0ABMiksJlGHWjnS/qP+xsyuuxJnZTE+HHangylFIfymCBtHJ5BpRYGZxDjFbsSmMOz5lfAzfDHyVa1IG89J4AETgidkiX7jp9gNdzA9ysnEIDQar/5hTDObiKJJUY462RSE8HDTsz0knz+QXX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=R2WNgrHE; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VF3Pup073340;
-	Wed, 31 Jul 2024 10:03:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722438205;
-	bh=SAMkNtHJ39bUStU5cDxoOD5j7eAIr5DRoEqh60eACww=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=R2WNgrHEzcmIKp2NABoIAQswtpAikVG3inoOPlkI8NbW2E4QGZpEMJI5PGJ7M9lUQ
-	 sqyKpnsNZy7tZJM+7Wzfi8PJ3lOL7Nz1ThoEIK1Bmzn0Mjw3qcK7TVWzwndWXOyHw3
-	 n1RDPpq4cunkK4D3g/sWz/tPpSkqVzVU4MstJAPs=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VF3PMn011951
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 10:03:25 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 10:03:25 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 10:03:25 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VF3OVt053269;
-	Wed, 31 Jul 2024 10:03:24 -0500
-Message-ID: <c6497a37-695b-45d8-b413-2b338e3f42a7@ti.com>
-Date: Wed, 31 Jul 2024 10:03:24 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A629B14A8B;
+	Wed, 31 Jul 2024 15:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.6
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722438284; cv=fail; b=gjqVQ6eSq/HjONnrdFNcRUdP//T3xRBlD1yrZz+EZYRrlVCwjjguhK/Qsq0pHjUql4BACUv22K2jmPWtuVAW65e/sdgt6Do0g/AFKszjyEuJ0gL1rbMslnaf7Xlv0n3zocGwr77OjdETYNOMN036G54Upd0ZLBGpyDvDbCNAS/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722438284; c=relaxed/simple;
+	bh=ilN0lyFX/i6NSqDe5x6Riafp3zUs3GKHG0KJ4TcDumA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZoEeBdjM5fvkvTmSuQ6iN5z5W4LzBs16yaqnQlZRn5Ab9C+4RbN6l1D4Hto1hKmE8/ogY3XY7ROC0gL5s4fFLPUfJ7lGjZdyux2O1UWpc8f/2+WFeJKb/x9df9MdPJZWgjMxlI0dnsrZ7/cHkoOLQa8n5Ix32Hxdu6A0ch6v98E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NtNKPUre; arc=fail smtp.client-ip=52.101.66.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JfPJn39UDSJQpl1oP+JnPlRunRonc1Y/unhcLtdEI5rJE7LMhdfb2wm13kDyEKtywbqd74PfE17Uo9btOfmOJftmoI/SDLjWTIi51xaxJBFZ0An+4jCqNDsGKj/a9xv8UDm1efKi5a2qHV0tescVg9cVO0DBPUhRjCJqQ4H1eYHGX3auT6K59TkAAIMLF3M01hHCpkIx+peFfvFFCBmOgPzhu0hFh7/p+VNbPxE0HlcvO/LbH6ksx7yI5NwjaJjGUK6hR7aEwzyA+qEfPm3SPTQwhAIuRFbJzFtjpVGW39f2AkNQyfAb3+dVMXbMEM6s6cKSd0eYg9JH2O0CL8sADA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=60KRb2GKTzaPOVBx0dWjAp9lQc9Vt9jLYjF5/7sfktI=;
+ b=zJcZCwpJRn8IYf0Y9FN+1YV5IWr7+jkHCNyKRnjHtOqzRDPXX8fvOgqPd9kRCTNocnCruXMRoEMg7gigwB+Fmp54+NUCcgAmTNjJu9n9RNEMK9g3nrMO1fHyMmjmlIofIb+a0ghsl0VQDvSB/nLczIZGpVwTUih3rzo4wkwWpKphDncBQa1ihlw3FH/V+402vCd0oaMorJKi2zp+aj+lhdl8NahwZmzbE1ULBzNmN+Y58ygNQ0+kcAOgPUaAoKn4J/mfj5BbfsCc3/SlietIlfg3QVAG0ZO3soFoVzQhHz11mQYwJk7q1BgDgHOSZn56IorFD/j9infGBataXmmYyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=60KRb2GKTzaPOVBx0dWjAp9lQc9Vt9jLYjF5/7sfktI=;
+ b=NtNKPUreOwSgiqtSbSdCgdg3zr5oBxztNnEI02xWjd6+Px3VtIckL/8jJaj5JQuWuc3F470mL00oKX/om3HniKQc3HinuvY9xLRewxI2fTnqxvf5cYitV7yyqbwNaAg0WJcjfN1T64SPvqyk6hZhIvf89bbQPJ/t6FCds2r0dQPKLP7pM+dTwf6WGk7vpIXaJhWuXsC2h3dw3CGK4vkWsMVjNesNqMz2zofv4fCdxLm306vwWExBlXbDUGCA4WnMLmv6Gk7eWkiWjKUah1XBvHHlZC3w/5CARi/bDGX01PEGaUKNpzi6/F7SmgnD87UeQn6Uz3SBLDeNxoTHMyU09g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by PAXPR04MB9092.eurprd04.prod.outlook.com (2603:10a6:102:22a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Wed, 31 Jul
+ 2024 15:04:38 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 15:04:38 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: robh@kernel.org
+Cc: Frank.Li@nxp.com,
+	alexandre.belloni@bootlin.com,
+	christophe.leroy@csgroup.eu,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
+Date: Wed, 31 Jul 2024 11:04:20 -0400
+Message-Id: <20240731150420.2217925-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR08CA0005.namprd08.prod.outlook.com
+ (2603:10b6:a03:100::18) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
-To: Manorit Chawdhry <m-chawdhry@ti.com>
-CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>
-References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
- <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
- <20240730123343.mqafgpj4zcnd5vs4@plaything>
- <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
- <20240731110607.7fb42mgcsf2apodv@unshaven>
- <20240731135714.p53lki7mihzxcyk2@uda0497581>
- <087ee9e2-50ec-4791-a534-b3ebbf594fe6@ti.com>
- <20240731145810.xoxal3ef7i3relru@uda0497581>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20240731145810.xoxal3ef7i3relru@uda0497581>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB9092:EE_
+X-MS-Office365-Filtering-Correlation-Id: 79408280-ec48-4f66-9b82-08dcb17218f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|7416014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jqQmIFyFOKVwxeuM8RtApPrY0q6x0pOPvQay4bncB+UK3k/mAccQKPVO1BQk?=
+ =?us-ascii?Q?y3bpumJ9LCp+SoJ0O0m8pyCHGwZMba+TpIo+rxtrWBTCfaLRDqiukDrk2vc5?=
+ =?us-ascii?Q?XMCVTqRQ1nMSkYVgMcWNPFWPJkK5bUOw1IzhGBpSQc1Ha61rn0i4tEJ7w2HK?=
+ =?us-ascii?Q?Uf8XOXBtG/S/hP2NBdhPqUPe/vKYkHPEeUMnBubb8OOpabOQKuyqzRP7LBFf?=
+ =?us-ascii?Q?tKfixsLDlleIMTZ+r9k+V2YJ0WRe0f12zAiHBGPoQbA8RktoBSTRNfwMHKRD?=
+ =?us-ascii?Q?a0ArGT1+D2PSP4eWY2FWaPGOTDTB6F8XHA26AhcC9bHIgImByepBiaxk7HGP?=
+ =?us-ascii?Q?1uvWGgXq97y+5KaNUbji8oTVCdQCEP+3OX4A9vMxm8tNbhyFgfNWHZVzTLR7?=
+ =?us-ascii?Q?tgk92FjdXitfoJzAOhO++p0j6yEmflwwRyS+jQiW+zqzsJ8XBNl9dbrUBocZ?=
+ =?us-ascii?Q?A5gdE2JlbGaSzQGp5vdSiwej9vh1BARaHrL0lKkmG9aRaaWYm61Xb6RlJSxm?=
+ =?us-ascii?Q?jJEorebFnvnkpWzI9wutAntZuLQQeBtbLPoBLhJSgnRjwFTSb35Ni8gWCemS?=
+ =?us-ascii?Q?zSfxTkVoW2UhbhXpkPgRaXqb0gPIkgPKPL/l34QlV+zdf2UnAFy7F8487A7L?=
+ =?us-ascii?Q?8USlcZ4mXRIubysym/ExbCpAvF6vdXzBLRX/ltuHQH6xSGK7OtDHXBcDdpua?=
+ =?us-ascii?Q?UEp1YPR5wRCqaIHTNQ5JrUgsjPILirP2iRpV0IgpZTTlJw/6IxqGxanlMCbj?=
+ =?us-ascii?Q?NkQOX1qCAp/FIHlDCEYCWjdMLG3x/VDotA1coLtUx8f0K2QsNcRFNl929Lpt?=
+ =?us-ascii?Q?cC21BhEGLDzNjTGXMQAARUkvtYawxate29z/P2cosmD2Nzd+ZukJIX9oiTn2?=
+ =?us-ascii?Q?iGBYgwzbbhZqJD4gLvkMyQTpT5074oxD25/8iVxzT17+6uarcbJ7bAfQS9+t?=
+ =?us-ascii?Q?LsFD31MzTspQGxfPXcVJogYrES8MGOManmNLoqaX9UfSg4nF9NNkSmKDe9ko?=
+ =?us-ascii?Q?OOTalD0qU/8rRoAqSoZqrR5z6v0txOOJhRpTHAVgW99slNX2PDlGjHtK0OXk?=
+ =?us-ascii?Q?yAHeUaNbZ81rxp+XAUpPHPPmFOuRiFdBcHJeOX7sEfSjYwp5EQO2t5H9UbyP?=
+ =?us-ascii?Q?8R+PQxwpFopOVYvfSiMgsqv5vFbUO5ZtvpKLv2ATbpklCU6zoLtjLLr+rC/m?=
+ =?us-ascii?Q?QHRoUAvcpqnCkmc5qDJoVQVepF9ucFYUGjilsL9DzuoVB2hzEk9dnzOzhz2W?=
+ =?us-ascii?Q?MBqApQu0gEXALifotk7jXVjKrp42a2mxSNfF2W9oF42st31uJgSWl2zpDQ4/?=
+ =?us-ascii?Q?7WX5SxTIs5r5NCvl1gZvk1Nk8CMMdy6ACB4bj3O9rms67qskSDp42RYxrEDR?=
+ =?us-ascii?Q?AmOJw3Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6daUwNWoG0mc+LvNhCI/TFQuPAGQp6aVo//AA9Bxd4xJxjJh3orG89Umni7U?=
+ =?us-ascii?Q?bjO9pEHFyqOLptikSBEgnD84PbtA1c7x99UQ4EdYaHniS+h+ZZ19CYgFKwUT?=
+ =?us-ascii?Q?dGeOHTJKuVzo0b2Bo+VANd4GD2MG2RqsY3UVp9SvHbfuXLJM6iNdgfZqwrJ2?=
+ =?us-ascii?Q?4XZ9NKQ4BNJDmf2eGQdu63yAXKyrO6/BhcR1ObmO4kE1Wumqf8hlGr/XA1nD?=
+ =?us-ascii?Q?9DD83Sf+Yt20LpzuPLGX1Xhx+gh0WbF0YxpAV71ZPyCfwZheYFC1Zau9bDcl?=
+ =?us-ascii?Q?tWQdPCUViejNJ9lhqZ3P2tuyFrsYmmoazXFc2zPOJq76ZKZL2rrvq90sbzNa?=
+ =?us-ascii?Q?e8jbRAHaLTiX+yW7wBCd58LHz3bUtUG6i8G1OYlFwjU56rioIcZGLfCxHVUF?=
+ =?us-ascii?Q?cGkhjMr07wsHNFcpRz9jdthMJvsDPnd40Cm/OvyW+yZ5B7ymvqcsyzAgBGk1?=
+ =?us-ascii?Q?MQu3z2avbocbLZ+XOkqoe2QN8YA6cf14bJzyJl0DwcYM1CPJgfaPjnogZ/yB?=
+ =?us-ascii?Q?RjHjkXAnMf9wugi0xHMkf0i8hgxZi2x2Ep2YrKFDazV0wIzfoQ2myaKjovu7?=
+ =?us-ascii?Q?i5yMti1O5b5e7emZp6aJ9+Ee331yQ+e05Kmj61yehCxjaPjGPm4x7H1eZwju?=
+ =?us-ascii?Q?DOvqoT278PSHwS/vqa7tUrSrZ3mFyaoGNFLE8uYdrYkqoQoGD2reDCNIN4Il?=
+ =?us-ascii?Q?Dq5djqUGLbF3h7c4b4RbzYeth42xmC+im2bf2WHYMKgHHj1AyS6+pKu8olL4?=
+ =?us-ascii?Q?wHoJ6dKyIXbPW7KMdcmXKogG4GvkuP8z8IUUugAPcn4lM5+PaJ6VeEr3w+vs?=
+ =?us-ascii?Q?RUqfICL9g5CkbpeElS2geCPKQupVYMz/Wwn4KAKJPOfP5/TzKtcPFNPsbqLq?=
+ =?us-ascii?Q?crXWBOaG0WkitUZUUpCPwE0fuLCw9nzegQY0h3E1WMVIoFmLt+DzV0It3f7Y?=
+ =?us-ascii?Q?m/41A5/sb/1juDoV5JXJ2FngJcuKXO0FvKKDyJP07knrws1lN3gOzq3XG3aQ?=
+ =?us-ascii?Q?7BZkdApFr6LGfDQHODM6Fks6hYt7CHs6giWQrPK6hhDzqYUHwWHWTysyrgYL?=
+ =?us-ascii?Q?2rj7MO0GADK22UA/Xi84mWtxMtFyl/IPUXkuXfo72HUlWrohuM86ekBxc1OY?=
+ =?us-ascii?Q?djkWR2vgxMQeANfsPIUEUvKP9SSzoS6Dkgfa9RwJE7396szPAf+ZHoC/NFD0?=
+ =?us-ascii?Q?PQJFsqtBMpeqVt96JYjYLFxjfPgRc1fmLlEN1DTeiij/2dsCHSk3m48pK1h9?=
+ =?us-ascii?Q?pW5jTqsVbxs0YpJc3G4u1Oj46C3ILmFnNNq6vedZwcd/xiQaNV2OBWhF2Kk7?=
+ =?us-ascii?Q?GupxjKN8PiwLD4u9cnfpc6tOePFtwzO/Ur0p4uWVAwP/+Bx5zzrKHtzO9cOQ?=
+ =?us-ascii?Q?OyBOWudnBmUlLw/B5tnQm6L7PXFeqlnChMEwH9Wxh5SaQKkSDVHF53IXGUmi?=
+ =?us-ascii?Q?Giz/yGdltDqL893yzN7qPVz3JOLfZoD1iFse6544z0qg39Y6Fdex3g1LJb8R?=
+ =?us-ascii?Q?sx7BnOeKnAxYCHOGu0CLD8osx+SrQ/HbpoUgluRV+YId5BOypbh/dMhu2TNM?=
+ =?us-ascii?Q?CIH2UnyzFvG1XhbxnvE=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 79408280-ec48-4f66-9b82-08dcb17218f5
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 15:04:38.4216
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: SYVPB8Qn6vhxnrP5TNZbya8fhYFNBTs3kUyEcUCKvNpmvmicMjZbW5YPs7GKDwVYN3TC6nSMpyh10OBUGOuq2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9092
 
-On 7/31/24 9:58 AM, Manorit Chawdhry wrote:
-> Hi Andrew,
-> 
-> On 09:37-20240731, Andrew Davis wrote:
->> On 7/31/24 8:57 AM, Manorit Chawdhry wrote:
->>> Hi Nishanth,
->>>
->>> On 06:06-20240731, Nishanth Menon wrote:
->>>> On 09:49-20240731, Manorit Chawdhry wrote:
->>>>>>> + */
->>>>>>> +
->>>>>>> +#include "k3-j784s4.dtsi"
->>>>>>> +
->>>>>>> +/ {
->>>>>>> +	model = "Texas Instruments K3 J742S2 SoC";
->>>>>>> +	compatible = "ti,j742s2";
->>>>>>> +
->>>>>>> +	cpus {
->>>>>>> +		cpu-map {
->>>>>>> +			/delete-node/ cluster1;
->>>>>>> +		};
->>>>>>> +	};
->>>>>>> +
->>>>>>> +	/delete-node/ cpu4;
->>>>>>> +	/delete-node/ cpu5;
->>>>>>> +	/delete-node/ cpu6;
->>>>>>> +	/delete-node/ cpu7;
->>>>>>
->>>>>> I suggest refactoring by renaming the dtsi files as common and split out
->>>>>> j784s4 similar to j722s/am62p rather than using /delete-node/
->>>>>>
->>>>>
->>>>> I don't mind the suggestion Nishanth if there is a reason behind it.
->>>>> Could you tell why we should not be using /delete-node/?
->>>>>
->>>>
->>>> Maintenance, readability and sustenance are the reasons. This is a
->>>> optimized die. It will end up having it's own changes in property
->>>> and integration details. While reuse is necessary, modifying the
->>>> properties with overrides and /delete-nodes/ creates maintenance
->>>> challenges down the road. We already went down this road with am62p
->>>> reuse with j722s, and eventually determined split and reuse is the
->>>> best option. See [1] for additional guidance.
->>>>
->>>>
->>>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n189
->>>
->>> Thank you for giving some reasoning, would do the needful!
->>>
->>
->> This refactor will require some interesting naming for the
->> common SoC files. Based on your name for the EVM, I'm guessing
->> you will go with
-> 
-> One other reason I was trying to avoid that and going with
-> /delete-node/. For such a small delta change tbh, this churn doesn't
-> feel worth the effort to me and is just gonna create confusion.
-> 
-> EVM one was required as Rob did raise an interesting point and we did
-> require a soc file that wasn't existing with the previous patchset but
-> now for deleting just 4 cpus and 1 dsp, am gonna have to rename all the
-> files, change the hierarchical structure, add all the cpus again with
-> some weird naming for the file as don't know if some other soc is gonna
-> come up in future so don't wanna clutter the file names as well with
-> j784s4-j742s2-j7xxx.dtsi which is just gonna create another set of mess
-> in future.
-> 
+Convert dt-binding rcpm from txt to yaml format.
+Add fsl,ls1028a-rcpm compatible string.
 
-Which is why I would suggesting getting the name picked and agreed on
-here before you start doing the renames (renames for .dtsi files are not
-a problem, only the final .dtb names seem to require stability as the
-bootloader tend to load them by name, and those are not changing)
+Additional changes:
+- Add missed compatible string fsl,<chip>-rcpm.
+- Remove map fsl,<chip>-rcpm to fsl,qoriq-rcpm-<version>.
 
-What is wrong with just k3-j784s4-common.dtsi? All future spins of
-this base device can include from this file. Every spin doesn't need
-to be in the common file's name.
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+Change from v1 to v2
+- add missed compatible string
+- Remove compatible string map table
+- use oneof Item to align compatible string map table
+- Fix typo 1045a
+---
+ .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |   2 +-
+ .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 101 ++++++++++++++++++
+ .../devicetree/bindings/soc/fsl/rcpm.txt      |  69 ------------
+ 3 files changed, 102 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+ delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
 
-Andrew
+diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+index 388102ae30cd8..3ec111f2fdc40 100644
+--- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
++++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+@@ -42,7 +42,7 @@ properties:
+         minItems: 1
+     description:
+       phandle to rcpm node, Please refer
+-      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+ 
+   big-endian:
+     $ref: /schemas/types.yaml#/definitions/flag
+diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+new file mode 100644
+index 0000000000000..762316ef4d150
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+@@ -0,0 +1,101 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Run Control and Power Management
++
++description:
++  The RCPM performs all device-level tasks associated with device run control
++  and power management.
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - fsl,ls1012a-rcpm
++              - fsl,ls1021a-rcpm
++              - fsl,ls1028a-rcpm
++              - fsl,ls1043a-rcpm
++              - fsl,ls1045a-rcpm
++          - enum:
++              - fsl,qoriq-rcpm-2.1+
++        minItems: 1
++      - items:
++          - enum:
++              - fsl,p2041-rcpm
++              - fsl,p3041-rcpm
++              - fsl,p4080-rcpm
++              - fsl,p5020-rcpm
++              - fsl,p5040-rcpm
++          - enum:
++              - fsl,qoriq-rcpm-1.0
++        minItems: 1
++      - items:
++          - enum:
++              - fsl,b4420-rcpm
++              - fsl,b4860-rcpm
++              - fsl,t4240-rcpm
++          - enum:
++              - fsl,qoriq-rcpm-2.0
++        minItems: 1
++      - items:
++          - enum:
++              - fsl,t1040-rcpm
++          - enum:
++              - fsl,qoriq-rcpm-2.1
++        minItems: 1
++
++  reg:
++    maxItems: 1
++
++  "#fsl,rcpm-wakeup-cells":
++    description: |
++      The number of IPPDEXPCR register cells in the
++      fsl,rcpm-wakeup property.
++
++      Freescale RCPM Wakeup Source Device Tree Bindings
++
++      Required fsl,rcpm-wakeup property should be added to a device node if
++      the device can be used as a wakeup source.
++
++      fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
++      register cells. The number of IPPDEXPCR register cells is defined in
++      "#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
++      the bit mask that should be set in IPPDEXPCR0, and the second register
++      cell is for IPPDEXPCR1, and so on.
++
++      Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
++      mechanism for keeping certain blocks awake during STANDBY and MEM, in
++      order to use them as wake-up sources.
++
++  little-endian:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      RCPM register block is Little Endian. Without it RCPM
++      will be Big Endian (default case).
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    rcpm: global-utilities@e2000 {
++          compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
++          reg = <0xe2000 0x1000>;
++          #fsl,rcpm-wakeup-cells = <2>;
++    };
++
++    serial@2950000 {
++         compatible = "fsl,ls1021a-lpuart";
++         reg = <0x2950000 0x1000>;
++         interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++         clocks = <&sysclk>;
++         clock-names = "ipg";
++         fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
++    };
+diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+deleted file mode 100644
+index 5a33619d881d0..0000000000000
+--- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++++ /dev/null
+@@ -1,69 +0,0 @@
+-* Run Control and Power Management
+--------------------------------------------
+-The RCPM performs all device-level tasks associated with device run control
+-and power management.
+-
+-Required properites:
+-  - reg : Offset and length of the register set of the RCPM block.
+-  - #fsl,rcpm-wakeup-cells : The number of IPPDEXPCR register cells in the
+-	fsl,rcpm-wakeup property.
+-  - compatible : Must contain a chip-specific RCPM block compatible string
+-	and (if applicable) may contain a chassis-version RCPM compatible
+-	string. Chip-specific strings are of the form "fsl,<chip>-rcpm",
+-	such as:
+-	* "fsl,p2041-rcpm"
+-	* "fsl,p5020-rcpm"
+-	* "fsl,t4240-rcpm"
+-
+-	Chassis-version strings are of the form "fsl,qoriq-rcpm-<version>",
+-	such as:
+-	* "fsl,qoriq-rcpm-1.0": for chassis 1.0 rcpm
+-	* "fsl,qoriq-rcpm-2.0": for chassis 2.0 rcpm
+-	* "fsl,qoriq-rcpm-2.1": for chassis 2.1 rcpm
+-	* "fsl,qoriq-rcpm-2.1+": for chassis 2.1+ rcpm
+-
+-All references to "1.0" and "2.0" refer to the QorIQ chassis version to
+-which the chip complies.
+-Chassis Version		Example Chips
+----------------		-------------------------------
+-1.0				p4080, p5020, p5040, p2041, p3041
+-2.0				t4240, b4860, b4420
+-2.1				t1040,
+-2.1+				ls1021a, ls1012a, ls1043a, ls1046a
+-
+-Optional properties:
+- - little-endian : RCPM register block is Little Endian. Without it RCPM
+-   will be Big Endian (default case).
+-
+-Example:
+-The RCPM node for T4240:
+-	rcpm: global-utilities@e2000 {
+-		compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
+-		reg = <0xe2000 0x1000>;
+-		#fsl,rcpm-wakeup-cells = <2>;
+-	};
+-
+-* Freescale RCPM Wakeup Source Device Tree Bindings
+--------------------------------------------
+-Required fsl,rcpm-wakeup property should be added to a device node if the device
+-can be used as a wakeup source.
+-
+-  - fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
+-	register cells. The number of IPPDEXPCR register cells is defined in
+-	"#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
+-	the bit mask that should be set in IPPDEXPCR0, and the second register
+-	cell is for IPPDEXPCR1, and so on.
+-
+-	Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
+-	mechanism for keeping certain blocks awake during STANDBY and MEM, in
+-	order to use them as wake-up sources.
+-
+-Example:
+-	lpuart0: serial@2950000 {
+-		compatible = "fsl,ls1021a-lpuart";
+-		reg = <0x0 0x2950000 0x0 0x1000>;
+-		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&sysclk>;
+-		clock-names = "ipg";
+-		fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
+-	};
+-- 
+2.34.1
 
-> Regards,
-> Manorit
-> 
->>
->> k3-j784s4-common.dtsi
->>
->> included from the real k3-j784s4.dtsi and the new k3-j742s2.dtsi?
->>
->> Too bad the Jacinto SoC names don't use a hierarchical naming. :(
->>
->> J7<family><part><spin><etc>..
->>
->> Andrew
->>
->>> Regards,
->>> Manorit
->>>
->>>>
->>>> -- 
->>>> Regards,
->>>> Nishanth Menon
->>>> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
->>>
 
