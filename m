@@ -1,232 +1,319 @@
-Return-Path: <linux-kernel+bounces-269917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8C19438C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 992779438C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7C2AB22B3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:22:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EC07283FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BED16D4FA;
-	Wed, 31 Jul 2024 22:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E4416D33D;
+	Wed, 31 Jul 2024 22:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lLiGyYxH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/mdeohq"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF9114B097;
-	Wed, 31 Jul 2024 22:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D32E14B097
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:22:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722464540; cv=none; b=jzilGAp62LFFk0dbQ9AfqeQzgt1PvzsZ0OiAQ4OtaVVcVR5tmWxisF4UrWjKNWAXaEgZ0eO6mU+58LeSD6lasCbjgiXld00jTFjVDPEgW2yVggcK42QhY/kLVYbTpEzqoIJN22V8msjRpMUsskcbGJLAVoHr/u2E1lBOViBjB5M=
+	t=1722464578; cv=none; b=AO8q6cf0b/HmwEu2fcfvGwSuTROtES3vRH3adFZogegfrQ8gCIftHz6Ad8PL/JdqVZPObuLfjHRkzuBsqbZ78rN2yUd6DE1FN1LmrOd20mDY5Y4zl17PfV1x6vD0ohRhl0WgoRao/ZbPii34aaZr7/GK0rWg2k34i2H7ci15034=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722464540; c=relaxed/simple;
-	bh=3X7f/hW80XyZc/FI4+gk68GjQ/vH3hQbTVI2mw7iPSw=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwFhmDe9p5p9rGWJBgyN3Dw+2rqwgblxrp4XyGiJcSKRKUEKTGihgo316FWcSjYzKtDOQ4j9OPQ1BAkyr3bpazbuAnqmcvPz4G9nz6izeyMKip0QDTBfTYTS1aWKSUjAAa3ZUf+yPY7SYapZ8WqV5zSGkiianAYY2x0GdC4j+bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lLiGyYxH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VCUhJw010022;
-	Wed, 31 Jul 2024 22:21:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=PkS1pxyTMdqdnnXPAyaaYeM/
-	WEVnTjm0ZKicIg64RXU=; b=lLiGyYxHehouvl1UqcMAWVkvaq9JNGwuc7yqF4H3
-	qT9Dx4aAWEUV09yH/M/3gppkk6/++E3DREgr9NW1RvV/hm5PwLCR55Erm6CAmHx2
-	lV44WrTyI/ZCs209FfyLng72CxW4i0k+Zc8UBRcsXud/kcEDrM3Pk35tPMDaxyRl
-	uY94O3tmGuWJJzC2MaSMHOEc9eVvshVMnMgJUspPsg2cv8C+eWSv+ATUdr5rU4e5
-	HcpAt8Xi/DeVY8ACpwxm0VEi5ymiE0OvPUnPz45HBEujHPEy75l11W+tYSEo5nf0
-	KEKkZuCNUpMweIFrqZJdeURK+I3LMdpnET7TkKWOJEA0Xw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qnba9k50-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 22:21:55 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46VMLsqj014520
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 22:21:54 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 31 Jul 2024 15:21:53 -0700
-Date: Wed, 31 Jul 2024 15:21:53 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: David Hildenbrand <david@redhat.com>,
-        Christoph Hellwig
-	<hch@infradead.org>, Will Deacon <will@kernel.org>,
-        Quentin Perret
-	<qperret@google.com>,
-        Chris Goldsworthy <quic_cgoldswo@quicinc.com>,
-        "Android
- KVM" <android-kvm@google.com>,
-        Patrick Daly <quic_pdaly@quicinc.com>,
-        "Alex
- Elder" <elder@linaro.org>,
-        Srinivas Kandagatla
-	<srinivas.kandagatla@linaro.org>,
-        Murali Nalajal <quic_mnalajal@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Srivatsa Vaddagiri
-	<quic_svaddagi@quicinc.com>,
-        Carl van Schaik <quic_cvanscha@quicinc.com>,
-        Philip Derrin <quic_pderrin@quicinc.com>,
-        Prakruthi Deepak Heragu
-	<quic_pheragu@quicinc.com>,
-        Jonathan Corbet <corbet@lwn.net>, Rob Herring
-	<robh+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Fuad Tabba <tabba@google.com>,
-        "Sean Christopherson" <seanjc@google.com>,
-        Andrew Morton
-	<akpm@linux-foundation.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-mm@kvack.org>
-Subject: Re: [PATCH v17 19/35] arch/mm: Export direct {un,}map functions
-Message-ID: <20240731140323693-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20240222-gunyah-v17-0-1e9da6763d38@quicinc.com>
- <20240222-gunyah-v17-19-1e9da6763d38@quicinc.com>
- <ZdhEtH7xzbzdhS2j@infradead.org>
- <20240223071006483-0800.eberman@hu-eberman-lv.qualcomm.com>
- <Zdxwo0abvklfam-Z@infradead.org>
- <2f4c44ad-b309-4baa-ac21-2ae19efd31fb@redhat.com>
- <20240226092020370-0800.eberman@hu-eberman-lv.qualcomm.com>
- <49d14780-56f4-478d-9f5f-0857e788c667@redhat.com>
- <20240229170329275-0800.eberman@hu-eberman-lv.qualcomm.com>
+	s=arc-20240116; t=1722464578; c=relaxed/simple;
+	bh=Wct0Fwv4wsgfFcKl7SdX6qUXNy4WsyM0shvuM8+kKww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=USMWOrNC52ht+tF7arvhSLLcMgU0fqhZatRQKv1JRf20IHPOPHHfWKyHi9xXO/hngN7KpG46EysWcREY7hgq209xb2lPptuiyEhC+3neXUUAtJ5lxDY7iI4r3zXL8CH+rwtS2iYyqYVKFirVDyB7M0WEbOhQHb22DDuuq2ldovA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/mdeohq; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-71871d5e087so4813916a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:22:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722464576; x=1723069376; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=p4civQS6RAaCPDUBssyrmp8dEj1PI4rO0BONlBZb0ag=;
+        b=N/mdeohqtb3YM0uqLsWCUK4RzjUUutp/wfJddu7oJyl5EpXYxn6AsHX9FYeyF9j4yp
+         GbFFe67W7fmalutA9mv9L485gH5EEm6rxfRVzvPza24wGxVk71S07FVCM2FjZZV/d5Kh
+         QgzSIEmYybIGBUMh9+aKEjgz5gIZ73eRy0CQMWk7W+VsEaKNkcfIiBZ2a6Srt2wkMOYU
+         oV+SyTlcOV3MknxbM3GLoPSQFY5X3n6/vIvRbgeWQPDcedoL3XSvLi4/bP0KIDffcxkz
+         NUrwsw6HA2dDzO+C4rc+jcAUQH9j9P6ua84uptL2lpcClh6RletYV3bmwuWJrV8YyAJ0
+         aqKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722464576; x=1723069376;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p4civQS6RAaCPDUBssyrmp8dEj1PI4rO0BONlBZb0ag=;
+        b=iwqlv6L0MXEbD9GTxjrlRVoJtoS85VSm8ND/32bRsyCzbYi1qSFd+5ZLrj5MDIcWZt
+         5z2r0zAYFa3dgMVamIHU8DxdmljTh0zSU1hOAqRypGKe4JqtnCu2mr0mg+uv27XWoyr/
+         yfBv2+/O7DNa8o1UlT3frz59gQnZNjNuJP0rQ26fuqzL6bYTdDckFF66ndqKUQmBQ0VZ
+         2gfQJp8fNLF8iBtO7a/z2TIjdueFFL4CswhhVX4bugmzptwCy5zB5j2p8VpvB0GE2SKc
+         ZNOJftirXK3NuEPbQnMOkfocVouFEkwuY5S0B0rjUfLDTqhtj0RuuWV81jVm7DwYtmQp
+         1PuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ74x5qpLIOOgk9b9Jy+TRw72hDT5DtiO3dSLCQ6wPqEwrWkD4Gm775qdR92+cPwLmCl5wr0f28+xjXLdnf1NodmT5R1fR/E/JQkN0
+X-Gm-Message-State: AOJu0YxeqrkKihjxBmQ855NmHOksHWGZfmTyBOCJ7lshzKA/N7M+6hdA
+	Qe0d9q15I74QJaYlut4OIWnLdEZTuoC+O1vRRQpcC1DMyWI9RF5e
+X-Google-Smtp-Source: AGHT+IFa0exT4zWgmWzw8uMLJqvEKoYId3m6kYFrlnJkgKJausyuRkbJw2ipt6/KWFyO5s4MPBIFtQ==
+X-Received: by 2002:a17:90a:7081:b0:2c9:719f:b04b with SMTP id 98e67ed59e1d1-2cfe7b6fd0cmr774015a91.29.1722464576058;
+        Wed, 31 Jul 2024 15:22:56 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4cf0f9sm1858001a91.46.2024.07.31.15.22.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 15:22:55 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <d01798a0-5817-4645-8c8c-d61dcf668c25@roeck-us.net>
+Date: Wed, 31 Jul 2024 15:22:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240229170329275-0800.eberman@hu-eberman-lv.qualcomm.com>
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: j4I54y4kCbHW5wCFqcXe9qcnZqg6h32C
-X-Proofpoint-GUID: j4I54y4kCbHW5wCFqcXe9qcnZqg6h32C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310157
+User-Agent: Mozilla Thunderbird
+Subject: Re: Linux 6.11-rc1
+To: Peter Zijlstra <peterz@infradead.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jens Axboe <axboe@kernel.dk>, Andy Lutomirski <luto@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ the arch/x86 maintainers <x86@kernel.org>
+References: <231e7a2e-7e2e-4b82-b084-8943b2236de0@kernel.dk>
+ <20240730193841.GS33588@noisy.programming.kicks-ass.net>
+ <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
+ <20240731122002.GE33588@noisy.programming.kicks-ass.net>
+ <87mslx67dm.ffs@tglx>
+ <20240731155551.GF33588@noisy.programming.kicks-ass.net>
+ <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+ <20240731163105.GG33588@noisy.programming.kicks-ass.net>
+ <20240731165108.GH33588@noisy.programming.kicks-ass.net>
+ <87bk2d5v83.ffs@tglx>
+ <20240731212007.GW26599@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240731212007.GW26599@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-I wanted to revive this thread based on the mm alignment discussion for
-guest_memfd.
+On 7/31/24 14:20, Peter Zijlstra wrote:
+> On Wed, Jul 31, 2024 at 07:26:04PM +0200, Thomas Gleixner wrote:
+>> On Wed, Jul 31 2024 at 18:51, Peter Zijlstra wrote:
+>>> On Wed, Jul 31, 2024 at 06:31:05PM +0200, Peter Zijlstra wrote:
+>>> Thomas, this all still relies on the full text section being PMD mapped,
+>>> and since we don't have ALIGN_ENTRY_TEXT_END and _etext has PAGE_SIZE
+>>> alignment, can't have a PAGE mapped tail which then doesn't get cloned?
+>>>
+>>> Do we want to make pto_clone_entry_text() use PTI_LEVEL_KERNEL_IMAGE
+>>> such that it will clone whatever it has?
+>>
+>> Yes, I think so.
+> 
+> The alternative is ripping that level thing out entirely, and simply
+> duplicate anything we find in the page-tables.
+> 
 
-Gunyah's guest_memfd allocates memory via filemap_alloc_folio, identical
-to KVM's guest_memfd. There's a possiblity of a stage-2 fault when
-memory is donated to guest VM and Linux incidentally tries to access the
-donated memory with an unaligned access. This access will cause kernel
-to panic as it expects to be able to access all memory which has been
-mapped in stage 1. We don't want to disallow unaligned access simply
-because Gunyah drivers are enabled.
+The patch below (on top of the previous one, because otherwise it doesn't
+apply) causes qemu to bail out hard, with
 
-There are two options I see to prevent the stage-2 fault from crashing
-the kernel: we can fix up the stage-2 fault or ensure that Linux has a
-S1 table consistent with S2.
+...
+[    3.658327] sr 2:0:0:0: Attached scsi generic sg0 type 5
+[    3.858040] sched_clock: Marking stable (3834034034, 23728553)->(3865222956, -7460369)
+[    3.861469] registered taskstats version 1
+[    3.861584] Loading compiled-in X.509 certificates
+[    4.082031] Btrfs loaded, zoned=no, fsverity=no
+[    4.096034] cryptomgr_test (69) used greatest stack depth: 6136 bytes left
 
-To do the latter, the obvious solution seemed to be using the
-set_direct_map functions, but you and Christoph have valid concerns
-about exporting this to modules since it's a low-level API. One way to
-avoid exporting the symbols is to make Gunyah a built-in, but I'd like
-to find a better solution.
+No backtrace or other message, it just exits immediately.
 
-One way I can think of is to create a "guest_memfd library" that both
-KVM and Gunyah can use. It abstracts the common bits between the 2 into
-a built-in module and can be the one to call the set_direct_map
-functions. I also think the abstraction will also help keep KVM
-guest_memfd cleaner once we start supporting huge folios (and splitting
-them). Do KVM and mm folks also see value to using a library-fied
-guest_memfd?
+Guenter
 
-Thanks,
-Elliot
+> We could add something like:
+> 
+> 	WARN_ON_ONCE(IS_ENABLED(CONFIG_X86_64));
+> 
+> in the PTE path, but do we really care?
+> 
+> ---
+> --- a/arch/x86/mm/pti.c
+> +++ b/arch/x86/mm/pti.c
+> @@ -47,16 +47,6 @@
+>   #define __GFP_NOTRACK	0
+>   #endif
+>   
+> -/*
+> - * Define the page-table levels we clone for user-space on 32
+> - * and 64 bit.
+> - */
+> -#ifdef CONFIG_X86_64
+> -#define	PTI_LEVEL_KERNEL_IMAGE	PTI_CLONE_PMD
+> -#else
+> -#define	PTI_LEVEL_KERNEL_IMAGE	PTI_CLONE_PTE
+> -#endif
+> -
+>   static void __init pti_print_if_insecure(const char *reason)
+>   {
+>   	if (boot_cpu_has_bug(X86_BUG_CPU_MELTDOWN))
+> @@ -294,14 +284,7 @@ static void __init pti_setup_vsyscall(vo
+>   static void __init pti_setup_vsyscall(void) { }
+>   #endif
+>   
+> -enum pti_clone_level {
+> -	PTI_CLONE_PMD,
+> -	PTI_CLONE_PTE,
+> -};
+> -
+> -static void
+> -pti_clone_pgtable(unsigned long start, unsigned long end,
+> -		  enum pti_clone_level level)
+> +static void pti_clone_pgtable(unsigned long start, unsigned long end)
+>   {
+>   	unsigned long addr;
+>   
+> @@ -341,7 +324,7 @@ pti_clone_pgtable(unsigned long start, u
+>   			continue;
+>   		}
+>   
+> -		if (pmd_leaf(*pmd) || level == PTI_CLONE_PMD) {
+> +		if (pmd_leaf(*pmd)) {
+>   			target_pmd = pti_user_pagetable_walk_pmd(addr);
+>   			if (WARN_ON(!target_pmd))
+>   				return;
+> @@ -375,37 +358,33 @@ pti_clone_pgtable(unsigned long start, u
+>   			*target_pmd = *pmd;
+>   
+>   			addr = round_up(addr + 1, PMD_SIZE);
+> +			continue;
+> +		}
+>   
+> -		} else if (level == PTI_CLONE_PTE) {
+> -
+> -			/* Walk the page-table down to the pte level */
+> -			pte = pte_offset_kernel(pmd, addr);
+> -			if (pte_none(*pte)) {
+> -				addr = round_up(addr + 1, PAGE_SIZE);
+> -				continue;
+> -			}
+> -
+> -			/* Only clone present PTEs */
+> -			if (WARN_ON(!(pte_flags(*pte) & _PAGE_PRESENT)))
+> -				return;
+> +		/* Walk the page-table down to the pte level */
+> +		pte = pte_offset_kernel(pmd, addr);
+> +		if (pte_none(*pte)) {
+> +			addr = round_up(addr + 1, PAGE_SIZE);
+> +			continue;
+> +		}
+>   
+> -			/* Allocate PTE in the user page-table */
+> -			target_pte = pti_user_pagetable_walk_pte(addr);
+> -			if (WARN_ON(!target_pte))
+> -				return;
+> +		/* Only clone present PTEs */
+> +		if (WARN_ON(!(pte_flags(*pte) & _PAGE_PRESENT)))
+> +			return;
+>   
+> -			/* Set GLOBAL bit in both PTEs */
+> -			if (boot_cpu_has(X86_FEATURE_PGE))
+> -				*pte = pte_set_flags(*pte, _PAGE_GLOBAL);
+> +		/* Allocate PTE in the user page-table */
+> +		target_pte = pti_user_pagetable_walk_pte(addr);
+> +		if (WARN_ON(!target_pte))
+> +			return;
+>   
+> -			/* Clone the PTE */
+> -			*target_pte = *pte;
+> +		/* Set GLOBAL bit in both PTEs */
+> +		if (boot_cpu_has(X86_FEATURE_PGE))
+> +			*pte = pte_set_flags(*pte, _PAGE_GLOBAL);
+>   
+> -			addr = round_up(addr + 1, PAGE_SIZE);
+> +		/* Clone the PTE */
+> +		*target_pte = *pte;
+>   
+> -		} else {
+> -			BUG();
+> -		}
+> +		addr = round_up(addr + 1, PAGE_SIZE);
+>   	}
+>   }
+>   
+> @@ -475,7 +454,7 @@ static void __init pti_clone_user_shared
+>   	start = CPU_ENTRY_AREA_BASE;
+>   	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
+>   
+> -	pti_clone_pgtable(start, end, PTI_CLONE_PMD);
+> +	pti_clone_pgtable(start, end);
+>   }
+>   #endif /* CONFIG_X86_64 */
+>   
+> @@ -495,8 +474,7 @@ static void __init pti_setup_espfix64(vo
+>   static void pti_clone_entry_text(void)
+>   {
+>   	pti_clone_pgtable((unsigned long) __entry_text_start,
+> -			  (unsigned long) __entry_text_end,
+> -			  PTI_CLONE_PMD);
+> +			  (unsigned long) __entry_text_end);
+>   }
+>   
+>   /*
+> @@ -571,7 +549,7 @@ static void pti_clone_kernel_text(void)
+>   	 * pti_set_kernel_image_nonglobal() did to clear the
+>   	 * global bit.
+>   	 */
+> -	pti_clone_pgtable(start, end_clone, PTI_LEVEL_KERNEL_IMAGE);
+> +	pti_clone_pgtable(start, end_clone);
+>   
+>   	/*
+>   	 * pti_clone_pgtable() will set the global bit in any PMDs
 
-On Thu, Feb 29, 2024 at 05:35:45PM -0800, Elliot Berman wrote:
-> On Tue, Feb 27, 2024 at 10:49:32AM +0100, David Hildenbrand wrote:
-> > On 26.02.24 18:27, Elliot Berman wrote:
-> > > On Mon, Feb 26, 2024 at 12:53:48PM +0100, David Hildenbrand wrote:
-> > > > On 26.02.24 12:06, Christoph Hellwig wrote:
-> > > > > The point is that we can't we just allow modules to unmap data from
-> > > > > the kernel mapping, no matter how noble your intentions are.
-> > > > 
-> > > > I absolutely agree.
-> > > > 
-> > > 
-> > > Hi David and Chirstoph,
-> > > 
-> > > Are your preferences that we should make Gunyah builtin only or should add
-> > > fixing up S2 PTW errors (or something else)?
-> > 
-> > Having that built into the kernel certainly does sound better than exposing
-> > that functionality to arbitrary OOT modules. But still, this feels like it
-> > is using a "too-low-level" interface.
-> > 
-> 
-> What are your thoughts about fixing up the stage-2 fault instead? I
-> think this gives mmu-based isolation a slight speed boost because we
-> avoid modifying kernel mapping. The hypervisor driver (KVM or Gunyah)
-> knows that the page isn't mapped. Whether we get S2 or S1 fault, the
-> kernel is likely going to crash, except in the rare case where we want
-> to fix the exception. In that case, we can modify the S2 fault handler
-> to call fixup_exception() when appropriate.
-> 
-> > > 
-> > > Also, do you extend that preference to modifying S2 mappings? This would
-> > > require any hypervisor driver that supports confidential compute
-> > > usecases to only ever be builtin.
-> > > 
-> > > Is your concern about unmapping data from kernel mapping, then module
-> > > being unloaded, and then having no way to recover the mapping? Would a
-> > > permanent module be better? The primary reason we were wanting to have
-> > > it as module was to avoid having driver in memory if you're not a Gunyah
-> > > guest.
-> > 
-> > What I didn't grasp from this patch description: is the area where a driver
-> > would unmap/remap that memory somehow known ahead of time and limited?
-> > 
-> > How would the driver obtain that memory it would try to unmap/remap the
-> > direct map of? Simply allocate some pages and then unmap the direct map?
-> 
-> That's correct.
-> 
-> > 
-> > For example, we do have mm/secretmem.c, where we unmap the directmap on
-> > allocation and remap when freeing a page. A nice abstraction on alloc/free,
-> > so one cannot really do a lot of harm.
-> > 
-> > Further, we enlightened the remainder of the system about secretmem, such
-> > that we can detect that the directmap is no longer there. As one example,
-> > see the secretmem_active() check in kernel/power/hibernate.c.
-> > 
-> 
-> I'll take a look at this. guest_memfd might be able to use PM notifiers here
-> instead, but I'll dig in the archives to see why secretmem isn't using that.
-> 
-> > A similar abstraction would make sense (I remember a discussion about having
-> > secretmem functionality in guest_memfd, would that help?), but the question
-> > is "which" memory you want to unmap the direct map of, and how the driver
-> > became "owner" of that memory such that it would really be allowed to mess
-> > with the directmap.
-> 
 
