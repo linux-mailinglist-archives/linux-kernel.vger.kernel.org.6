@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-268492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56DF942543
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:11:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4496894254D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:15:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 150F01C21533
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:11:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5203B243D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD4A11B978;
-	Wed, 31 Jul 2024 04:11:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEB9C8FF;
-	Wed, 31 Jul 2024 04:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF3801B964;
+	Wed, 31 Jul 2024 04:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8JfWHLu"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A42D51C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722399088; cv=none; b=eVGwy1juIHn8umPVOgjoGUJgmbnPsueMTHNvrI6ajULXpfOswP6OlihgqiFWz7sLUpgYvGGz/97JHjap+iYncRs1YoY2Q+g2npApvBtfgsQ/OKYgoKRk05Emnj0/rkxRI6TAeRsy+vfsrTgVDpW2ZUBv/rFArkBbhqK8zQ3PxSU=
+	t=1722399290; cv=none; b=Umd9Pg2Q9J3/9caBVAMLZY7+LZ/2NdvCdA5U5q+PEMct2tVkB50TwMjryjUpJ1cb6hjaMFdNLfGvD+KVFTnYFMPoqg/eSZ/fhyUqHdpNO9/iTkxi6i7DWuyLCrDxg6IhbvPGw/kr9Y9zowgBlzVjR6KWr3PklyYVZWtAAydSIwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722399088; c=relaxed/simple;
-	bh=C/0wmiana2eUriUmsFxEbhtWvChe43/8d5MMQ4Enqn4=;
+	s=arc-20240116; t=1722399290; c=relaxed/simple;
+	bh=iWf9tURr24PLvKdM/gsrZGW46AiQA+Nol1wnwIHK64w=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f3DOKFaDx4s50IW27hc5QyhXMd74c3h/8fCq7dp7qYSfDmzx5Kbl+v0NpT1MWe7vTV8bkl9i3NG9c7fT9zZrc0yTTgcQLA75s4RwK1+DG8HiuRk2fDCiW9xuTANPpoJzT50B8L50j9BpgwmxqSPnzglXB/JKzA1Q0gJWNPU1A54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11F951007;
-	Tue, 30 Jul 2024 21:11:50 -0700 (PDT)
-Received: from [10.162.41.10] (a077893.blr.arm.com [10.162.41.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4920B3F5A1;
-	Tue, 30 Jul 2024 21:11:21 -0700 (PDT)
-Message-ID: <d94c44df-055b-4fd1-a384-28ce5ce59921@arm.com>
-Date: Wed, 31 Jul 2024 09:41:19 +0530
+	 In-Reply-To:Content-Type; b=WWOjQ8o9VJ4dZvTR/N5S8MUAGnfFDZpKlHx1KVtODmerGUYlI0JPMkcS222CjyS4ESgwMXtZRgOUnpuij1twghuTjaIo44J6F2lEw7cYepZ65vUI+710DAjpl1qTN30j1WhdCjutRFfz35DO7yT4E+dtZSdpOUWtOBGbkyuj7kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P8JfWHLu; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-709346604a7so2100163a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 21:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722399288; x=1723004088; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DNL7NFkFF5FUxcfpExxj2V2R2UfPEnaSrY2fTx/MR1s=;
+        b=P8JfWHLux9mH95ISVtfzjkV71P0uPJN5zXHCMFeMfDa5bTS2oxrhoROOJweVHRa1JM
+         P8VjASx2uxXnrTzIgAw2kxTDoOZ1pkLblP3KLrLwb6qVWSXPtYifG4I55XLur0oTO98o
+         l+7VULcQ4+Y8EUs8soV4AcYBZb/ayHFKAW77I+KF6TH0HYxBe69GwGyuAV2LBJNRZQd9
+         hMLKv9ByJjAjcP2cl/HM/tD+dEctlhwpcq7jKZvtx2ZXHWF+aMzNFT8MFLeOomerXTzt
+         S7e2kUWgr2xzrDpb7HhPkN9TymRmsOT/kjdzevuWiAA5Nrj/aHJXtpSzWHLNHdcpH3MM
+         bDtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722399288; x=1723004088;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DNL7NFkFF5FUxcfpExxj2V2R2UfPEnaSrY2fTx/MR1s=;
+        b=PEBGX+e41yniJ2W4ba5xkuzWzn752DaTZhEdbLoovmoL1j2OfSsgx2zb9kFZWoqEPm
+         pbu0nroQgssrZLQ1bCF991P2YXy1btjgXc7q4/SED1IhJYhgh1fHS5R0aNHeVBqrU6vD
+         KT37KJyLb91dj0oB31rGrkfdrsj+KO0e7zC9AQ8OO5VsS7d90SSmQqNgM4WSEO+IX0qM
+         68C/4C5NbIk6mGxtzDohqieYzUwyCHz/vXBH71RTaFBjI8MKRuMvV4E36U+icUf+UY7l
+         TV1eHPipEQogViDmLqMm5fUny+3ExpJeNiq9xz4n+4NhFXwta1TlKcHL5+hCmUFeCvej
+         suvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNdtbICj193ulBQ6sfSyh4PNrRTCvYEVqtpixxdqyfIzBRVVdfJlZYEcEORWjlNANzpF/B4sQcUbrbqh8o+yl3mn2XPN+CjwpjU6t/
+X-Gm-Message-State: AOJu0YzSoDtfpOkcyDKWqZ6vj6g7YMPHyDaZBG43ONWG+/QMyOrq5yw8
+	A7HIZAyoSJ2qY8O5g6OeIeI/bFuPKS8ciqe09rcSF6ktz5BuDLCm
+X-Google-Smtp-Source: AGHT+IEX1prPmIFIeqrORL9JH3Dud7a2tNptrr6Vggd45C+iXglyBbfvs5ramvLw9JlVo4nqcrEEtw==
+X-Received: by 2002:a9d:5f09:0:b0:703:fdda:fe2b with SMTP id 46e09a7af769-70940c0e09amr14129305a34.11.1722399287720;
+        Tue, 30 Jul 2024 21:14:47 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.21])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8aa702sm9107977b3a.215.2024.07.30.21.14.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 21:14:47 -0700 (PDT)
+Message-ID: <c614ec0c-ff5c-4ef6-8542-53ee5308f62a@gmail.com>
+Date: Wed, 31 Jul 2024 12:14:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,127 +75,66 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] lib/test_bits.c: Add tests for GENMASK_U128()
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, Arnd Bergmann <arnd@arndb.de>,
- linux-arch@vger.kernel.org
-References: <20240725054808.286708-1-anshuman.khandual@arm.com>
- <20240725054808.286708-3-anshuman.khandual@arm.com>
- <Zqku82z-y2fjtIZT@yury-ThinkPad>
+Subject: Re: [PATCH v4 22/22] mm/zsmalloc: update comments for page->zpdesc
+ changes
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, minchan@kernel.org, willy@infradead.org,
+ david@redhat.com, 42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>,
+ nphamcs@gmail.com
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-23-alexs@kernel.org>
+ <20240730093726.GB16599@google.com>
+ <8fc7939b-416a-4328-9df2-488f17783543@gmail.com>
+ <20240731021619.GD16599@google.com>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <Zqku82z-y2fjtIZT@yury-ThinkPad>
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <20240731021619.GD16599@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 7/30/24 23:50, Yury Norov wrote:
-> On Thu, Jul 25, 2024 at 11:18:08AM +0530, Anshuman Khandual wrote:
->> This adds GENMASK_U128() tests although currently only 64 bit wide masks
->> are being tested.
+On 7/31/24 10:16 AM, Sergey Senozhatsky wrote:
+> On (24/07/30 19:45), Alex Shi wrote:
+>> On 7/30/24 5:37 PM, Sergey Senozhatsky wrote:
+>>> On (24/07/29 19:25), alexs@kernel.org wrote:
+>>>>
+>>>> From: Alex Shi <alexs@kernel.org>
+>>>>
+>>>
+>>> Usually some simple commit message is still expected.
 >>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: linux-kernel@vger.kernel.org
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->>  lib/test_bits.c | 25 +++++++++++++++++++++++++
->>  1 file changed, 25 insertions(+)
+>> Uh, my fault. Just forgive this part, is the following log fine?
 >>
->> diff --git a/lib/test_bits.c b/lib/test_bits.c
->> index 01313980f175..f0d1033cf3c9 100644
->> --- a/lib/test_bits.c
->> +++ b/lib/test_bits.c
->> @@ -39,6 +39,26 @@ static void genmask_ull_test(struct kunit *test)
->>  #endif
->>  }
->>  
->> +#ifdef CONFIG_ARCH_SUPPORTS_INT128
+>>     After the page to zpdesc conversion, there still left few comments or
+>>     function named with page not zpdesc, let's update the comments and
+>>     rename function create_page_chain() as create_zpdesc_chain().
 > 
-> Can you move this ifdefery inside the function scope, so that you'll
-> not have do it below in tests array declarattion?
+> A bit of a different thing, still documentation related tho: do
+> we want to do something about comments that mention page_lock in
+> zsmalloc.c?
 
-Sure, will fold in the following changes in here.
+Good question!
 
-diff --git a/lib/test_bits.c b/lib/test_bits.c
-index f0d1033cf3c9..f8b058974d07 100644
---- a/lib/test_bits.c
-+++ b/lib/test_bits.c
-@@ -39,9 +39,9 @@ static void genmask_ull_test(struct kunit *test)
- #endif
- }
+There are some comments mentioned about the page_lock in the file, but missed
+in the header of file, so how about the following adding:
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 731055ccef23..eac110edbff0 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -25,6 +25,8 @@
+  *
+  * Usage of struct zpdesc(page) flags:
+  *     PG_private: identifies the first component page
++ *     PG_lock: lock all component pages for a zspage free, serialize with
++ *              migration
+  */
  
--#ifdef CONFIG_ARCH_SUPPORTS_INT128
- static void genmask_u128_test(struct kunit *test)
- {
-+#ifdef CONFIG_ARCH_SUPPORTS_INT128
-        /* Tests mask generation only when the mask width is within 64 bits */
-        KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ULL, GENMASK_U128(87, 80) >> 64);
-        KUNIT_EXPECT_EQ(test, 0x0000000000ffffffULL, GENMASK_U128(87, 64) >> 64);
-@@ -56,8 +56,8 @@ static void genmask_u128_test(struct kunit *test)
-        GENMASK_U128(0, 10);
-        GENMASK_U128(9, 10);
- #endif
--}
- #endif
-+}
- 
- static void genmask_input_check_test(struct kunit *test)
- {
-@@ -84,9 +84,7 @@ static void genmask_input_check_test(struct kunit *test)
- static struct kunit_case bits_test_cases[] = {
-        KUNIT_CASE(genmask_test),
-        KUNIT_CASE(genmask_ull_test),
--#ifdef CONFIG_ARCH_SUPPORTS_INT128
-        KUNIT_CASE(genmask_u128_test),
--#endif
-        KUNIT_CASE(genmask_input_check_test),
-        {}
- };
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 
-
-> 
->> +static void genmask_u128_test(struct kunit *test)
->> +{
->> +	/* Tests mask generation only when the mask width is within 64 bits */
->> +	KUNIT_EXPECT_EQ(test, 0x0000000000ff0000ULL, GENMASK_U128(87, 80) >> 64);
->> +	KUNIT_EXPECT_EQ(test, 0x0000000000ffffffULL, GENMASK_U128(87, 64) >> 64);
->> +	KUNIT_EXPECT_EQ(test, 0x0000000000000001ULL, GENMASK_U128(0, 0));
->> +	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(63, 0));
->> +	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffULL, GENMASK_U128(64, 0) >> 1);
->> +	KUNIT_EXPECT_EQ(test, 0x00000000ffffffffULL, GENMASK_U128(81, 50) >> 50);
->> +
->> +#ifdef TEST_GENMASK_FAILURES
->> +	/* these should fail compilation */
->> +	GENMASK_U128(0, 1);
->> +	GENMASK_U128(0, 10);
->> +	GENMASK_U128(9, 10);
->> +#endif
->> +}
->> +#endif
->> +
->>  static void genmask_input_check_test(struct kunit *test)
->>  {
->>  	unsigned int x, y;
->> @@ -56,12 +76,17 @@ static void genmask_input_check_test(struct kunit *test)
->>  	/* Valid input */
->>  	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(1, 1));
->>  	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(39, 21));
->> +	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(100, 80));
->> +	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(110, 65));
->>  }
->>  
->>  
->>  static struct kunit_case bits_test_cases[] = {
->>  	KUNIT_CASE(genmask_test),
->>  	KUNIT_CASE(genmask_ull_test),
->> +#ifdef CONFIG_ARCH_SUPPORTS_INT128
->> +	KUNIT_CASE(genmask_u128_test),
->> +#endif
->>  	KUNIT_CASE(genmask_input_check_test),
->>  	{}
->>  };
->> -- 
->> 2.30.2
+Thanks a lot!
 
