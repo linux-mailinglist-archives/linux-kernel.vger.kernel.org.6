@@ -1,87 +1,208 @@
-Return-Path: <linux-kernel+bounces-268415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9FB942469
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:04:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6252694246D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 04:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 386B3285C91
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816A61C22D14
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E45DF53;
-	Wed, 31 Jul 2024 02:04:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA192101C4;
+	Wed, 31 Jul 2024 02:08:01 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023E1FC02
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 02:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8688FD51C;
+	Wed, 31 Jul 2024 02:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722391445; cv=none; b=ocXcAKP+tOquIzCunY0bhGR/e0ehd7138s7xmyKZuz6ddh8ISUTozXQ+lIVsaN7l6ZATunQsjJLT/OjwX/tydfFZRvg2IhaR6jO/GfYErOOKZiQrhPS7q8Z3aVZsgxtRnim3A3UIqpAqStoLzL/IX0mw0tM+8/gNa5fKhiE639M=
+	t=1722391681; cv=none; b=d6GGTRwPfx4cpy1jRnx6pksINXJ/K0EsjRXotUeY12qwPYE35pCu+76ZQqwevYCth5AkK8Tq/sJAo/pbRhjEVAn9j7s27Qdeaq5hz6Z07wbCl1pZmPHZ49iNds/OkPtuho9s6b8OnFmCHztU8LlcRj6Z3FPJCaUh7WqPVWY1ldM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722391445; c=relaxed/simple;
-	bh=T/G4RUCN356zA4DXyqKGyc6HpZ+Z3TXbkd91LLnGiu8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=j0N3bjZJD+IRPyFmv0UBBgdjgzNlivrMt/Zqh7xKAUq/ak0Krb/alSLriQ1VsAD3W2bGJ2Xv83lXVwV/ywBXW3hTuAC1m9THQ7xhgu9edLQ41RfBAiaeSL1+FF4JZ29cBA87zpspYCYtNtRkuq84CC6nWectZX21CObn9/gGMws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39ace60d44fso77273865ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 19:04:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722391443; x=1722996243;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+xxggrsURR/7ryB1jZUFz1fkl2aRd7pNagLrGnAGSA=;
-        b=KwSp7EzJUr9F6whCFl/cmAKkVr3hryh7rix/QcS2EjIl3QYFju/l/BYrSHoHJ6u/B3
-         Zwjg6Wct2Z/N88BVsTLSkpdQ+f9jo5QFMuEPoLWC1Kfs9nashB/qT950ucTGdFagQ/Mf
-         UmWYoHm6aPUe/76uAOycKYAdbLqd6HOYe+Lm2zWKGfah0nTmW129KC4P/bpNPKAn4At2
-         gHaeJLsC9wUHCI1wnnokIsPjU5mE66bqOuPJ3Gjna7DY/DKIuRqD11n0fqbAY339+8y4
-         dPoJ08Q75DrEnykjg2LMSnqRRZcF1CqV8pir4r3DXg5gMcO46OpCiSq5E5symVA4rRY9
-         ibkw==
-X-Forwarded-Encrypted: i=1; AJvYcCXeK32QMSaJoCWR/9/EW9Jd9dS1Km1yflaKMLQCbr4JW1T9zLPGnSPqKaEZEJDUwEhTsdR1cOlZ0a0pT4C7haoKXqw8KMboIAhuf1oe
-X-Gm-Message-State: AOJu0YzdM4m2u6gm0YJnq8poS24cmSj32D7D5KXrT+VDs+DVsET8yKzD
-	UZxHDvywL3lwT30spPcYDPHOYID1BijggV65k0Mb9CXYtrJmftXRydVSTBgAVjok+Abjvjs2G/S
-	EG4GG3T5HfsYRhpycZ/VlXb/6UY1aysuH1qCUdo25w21N4Nlv6P0Bqq4=
-X-Google-Smtp-Source: AGHT+IHO2ph6U7jU4u/LCjNrSkeiU9eO1PD9v7FlYGXMf/jeBPDEfdMH0aCT3bRG8QmjiZ0ICSYljOVV56JXnl63tEa4jte4RTgh
+	s=arc-20240116; t=1722391681; c=relaxed/simple;
+	bh=35PjJBOStJHfs3CcqH4NT7m0IULmwTL7mQZn2DspvVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=C39Jxo0lKG1yecG5bbWs+EU8zwOymCv+MPMu2TpwNBZV2l6rPn3RsWHsJAtYcxW8VoVsomqhPilXx4bJTySwwfS90xh1U+M6MaszmGEQBPBE6WQEOrnEdgTOPwrT8eQZsQ0rN20vJF6625ds/dUfUYy62aess+1gcsgrsD4ycW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WYb6j31hJzgYQB;
+	Wed, 31 Jul 2024 10:06:05 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id B79F31400DD;
+	Wed, 31 Jul 2024 10:07:55 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 31 Jul 2024 10:07:54 +0800
+Message-ID: <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
+Date: Wed, 31 Jul 2024 10:07:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e1:b0:397:ca8e:d377 with SMTP id
- e9e14a558f8ab-39aec138eaemr7636355ab.0.1722391443152; Tue, 30 Jul 2024
- 19:04:03 -0700 (PDT)
-Date: Tue, 30 Jul 2024 19:04:03 -0700
-In-Reply-To: <tencent_8D66803C29363A97EC36024BCE7451774309@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000223422061e8182f5@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in journal_entry_dev_usage_to_text
-From: syzbot <syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
+Content-Language: en-US
+To: <linux@armlinux.org.uk>, <arnd@arndb.de>, <afd@ti.com>,
+	<akpm@linux-foundation.org>, <rmk+kernel@armlinux.org.uk>,
+	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
+	<vincent.whitchurch@axis.com>, <bhe@redhat.com>, <nico@fluxnic.net>,
+	<ardb@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>
+References: <20240620090028.729373-1-ruanjinjie@huawei.com>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <20240620090028.729373-1-ruanjinjie@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Hello,
+Gentle ping.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-Tested-by: syzbot+05d7520be047c9be86e0@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         1722389b Merge tag 'net-6.11-rc1' of git://git.kernel...
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=171ff655980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
-dashboard link: https://syzkaller.appspot.com/bug?extid=05d7520be047c9be86e0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=179548d3980000
-
-Note: testing is done by a robot and is best-effort only.
+On 2024/6/20 17:00, Jinjie Ruan wrote:
+> Enable support for PREEMPT_DYNAMIC on arm32, allowing the preemption model
+> to be chosen at boot time.
+> 
+> Similar to arm64, arm32 does not yet use the generic entry code, we must
+> define our own `sk_dynamic_irqentry_exit_cond_resched`, which will be
+> enabled/disabled by the common code in kernel/sched/core.c.
+> 
+> And arm32 use generic preempt.h, so declare
+> `sk_dynamic_irqentry_exit_cond_resched` if the arch do not use generic
+> entry. Other architectures which use generic preempt.h but not use generic
+> entry can benefit from it.
+> 
+> Test ok with the below cmdline parameters on Qemu versatilepb board:
+> 	`preempt=none`
+> 	`preempt=voluntary`
+> 	`preempt=full`
+> 
+> Update preempt mode with debugfs interface on above Qemu board is also
+> tested ok:
+> 	# cd /sys/kernel/debug/sched
+> 	# echo none > preempt
+> 	# echo voluntary > preempt
+> 	# echo full > preempt
+> 
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  arch/arm/Kconfig                 |  1 +
+>  arch/arm/include/asm/exception.h |  2 ++
+>  arch/arm/kernel/Makefile         |  2 +-
+>  arch/arm/kernel/common.c         | 13 +++++++++++++
+>  arch/arm/kernel/entry-armv.S     |  7 ++++++-
+>  include/asm-generic/preempt.h    |  5 +++++
+>  6 files changed, 28 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/arm/kernel/common.c
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 036381c5d42f..843f320dde7f 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -124,6 +124,7 @@ config ARM
+>  	select HAVE_PERF_EVENTS
+>  	select HAVE_PERF_REGS
+>  	select HAVE_PERF_USER_STACK_DUMP
+> +	select HAVE_PREEMPT_DYNAMIC_KEY
+>  	select MMU_GATHER_RCU_TABLE_FREE if SMP && ARM_LPAE
+>  	select HAVE_REGS_AND_STACK_ACCESS_API
+>  	select HAVE_RSEQ
+> diff --git a/arch/arm/include/asm/exception.h b/arch/arm/include/asm/exception.h
+> index 3c82975d46db..ac96b76b394e 100644
+> --- a/arch/arm/include/asm/exception.h
+> +++ b/arch/arm/include/asm/exception.h
+> @@ -12,4 +12,6 @@
+>  
+>  #define __exception_irq_entry	__irq_entry
+>  
+> +bool need_irq_preemption(void);
+> +
+>  #endif /* __ASM_ARM_EXCEPTION_H */
+> diff --git a/arch/arm/kernel/Makefile b/arch/arm/kernel/Makefile
+> index 89a77e3f51d2..58acd62dc5e9 100644
+> --- a/arch/arm/kernel/Makefile
+> +++ b/arch/arm/kernel/Makefile
+> @@ -17,7 +17,7 @@ CFLAGS_REMOVE_return_address.o = -pg
+>  
+>  # Object file lists.
+>  
+> -obj-y		:= elf.o entry-common.o irq.o opcodes.o \
+> +obj-y		:= common.o elf.o entry-common.o irq.o opcodes.o \
+>  		   process.o ptrace.o reboot.o io.o \
+>  		   setup.o signal.o sigreturn_codes.o \
+>  		   stacktrace.o sys_arm.o time.o traps.o
+> diff --git a/arch/arm/kernel/common.c b/arch/arm/kernel/common.c
+> new file mode 100644
+> index 000000000000..52b0abcae07e
+> --- /dev/null
+> +++ b/arch/arm/kernel/common.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/jump_label.h>
+> +#include <asm/exception.h>
+> +
+> +#ifdef CONFIG_PREEMPT_DYNAMIC
+> +DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+> +
+> +bool need_irq_preemption(void)
+> +{
+> +	return static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched);
+> +}
+> +#endif
+> diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+> index 6150a716828c..571e86433833 100644
+> --- a/arch/arm/kernel/entry-armv.S
+> +++ b/arch/arm/kernel/entry-armv.S
+> @@ -221,6 +221,11 @@ __irq_svc:
+>  	irq_handler from_user=0
+>  
+>  #ifdef CONFIG_PREEMPTION
+> +#ifdef CONFIG_PREEMPT_DYNAMIC
+> +	bl	need_irq_preemption
+> +	cmp	r0, #0
+> +	beq	2f
+> +#endif
+>  	ldr	r8, [tsk, #TI_PREEMPT]		@ get preempt count
+>  	ldr	r0, [tsk, #TI_FLAGS]		@ get flags
+>  	teq	r8, #0				@ if preempt count != 0
+> @@ -228,7 +233,7 @@ __irq_svc:
+>  	tst	r0, #_TIF_NEED_RESCHED
+>  	blne	svc_preempt
+>  #endif
+> -
+> +2:
+>  	svc_exit r5, irq = 1			@ return from exception
+>   UNWIND(.fnend		)
+>  ENDPROC(__irq_svc)
+> diff --git a/include/asm-generic/preempt.h b/include/asm-generic/preempt.h
+> index 51f8f3881523..2db7a3e86303 100644
+> --- a/include/asm-generic/preempt.h
+> +++ b/include/asm-generic/preempt.h
+> @@ -2,6 +2,7 @@
+>  #ifndef __ASM_PREEMPT_H
+>  #define __ASM_PREEMPT_H
+>  
+> +#include <linux/jump_label.h>
+>  #include <linux/thread_info.h>
+>  
+>  #define PREEMPT_ENABLED	(0)
+> @@ -89,6 +90,10 @@ void dynamic_preempt_schedule_notrace(void);
+>  #define __preempt_schedule()		dynamic_preempt_schedule()
+>  #define __preempt_schedule_notrace()	dynamic_preempt_schedule_notrace()
+>  
+> +#ifndef CONFIG_GENERIC_ENTRY
+> +DECLARE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
+> +#endif
+> +
+>  #else /* !CONFIG_PREEMPT_DYNAMIC || !CONFIG_HAVE_PREEMPT_DYNAMIC_KEY*/
+>  
+>  #define __preempt_schedule() preempt_schedule()
 
