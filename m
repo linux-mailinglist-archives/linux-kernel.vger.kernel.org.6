@@ -1,566 +1,167 @@
-Return-Path: <linux-kernel+bounces-269211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60285942F4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:56:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 341B5942EE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC19A1F2BA2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A5F1F26694
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653EB1BD010;
-	Wed, 31 Jul 2024 12:51:18 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324191B0124;
+	Wed, 31 Jul 2024 12:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eoPgn+6f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA26D1AB517;
-	Wed, 31 Jul 2024 12:51:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6651AC425;
+	Wed, 31 Jul 2024 12:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722430277; cv=none; b=CeA9ieu1T0PvA0WanRYtjtS4mmqBJbsC9b3R1bQDX1gm1jEtr1euVtZc0Bf7xaBj2/aKwq8UcX/GuLj6QNxyyqRpT5qI6nA1DwIdyFKKJQ50e28E9IxIvNid8JnZCAs43H833IkslEb63psvD05XSsFgIqJu5HxKb5dNo29X/d8=
+	t=1722429912; cv=none; b=SIC5fuCp/OAXxT3Prib01Fo6g7hFjFBMZhsy15LkTJPQ3Ifwm8aI+EvR+2Hqvnz35ZUU1vMo9cCiF7tWcGcooESc9yBE+9rZJYdzr1C2RAS3ud/sYfPWafepsgrif88xwmBjWAUwA6YXG8Ssadu1t8Ez5RfmCpJFFmBUo8xurRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722430277; c=relaxed/simple;
-	bh=QawwHjBiSOOSJbB8e9BbCOqick4aIjwzxflIMEgkjG8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vBkisUojBlHNfzP1J3AURl9Qfn755KthLa1yu1Ou+8jJbUY+0mQyP9jsi90z7+qu0VOhNoMWsjuzvf5SeuX0nhSiH/UUayuUzq38ZIV4ySyPj/t8XWO+8vj9Jlcy7IgJrsi5rN4/xtXT3PikVeylfp5ocyynnogC4h165frQBz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WYsKL6bQhzyPLV;
-	Wed, 31 Jul 2024 20:46:14 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5BB22140360;
-	Wed, 31 Jul 2024 20:51:13 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 31 Jul 2024 20:51:13 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-mm@kvack.org>, <linux-doc@vger.kernel.org>
-Subject: [PATCH net-next v12 13/14] mm: page_frag: update documentation for page_frag
-Date: Wed, 31 Jul 2024 20:45:03 +0800
-Message-ID: <20240731124505.2903877-14-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240731124505.2903877-1-linyunsheng@huawei.com>
-References: <20240731124505.2903877-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1722429912; c=relaxed/simple;
+	bh=EBsNIatrrf6lgvG736PJZ1ORIo+mkpep33/JrZlDzUY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J48bn7o7CdcHx1uLN4eOOVxYwVfxOw5ljcWHsd9aMMgDBT6+v4XMDocAttQsMFcYIe4fBMx3rcxs+tWrLLOixtU32y6z60JhL4Z6tlv9rOiG3Tc5W6pI6pfxq5xzgJrwEpNb+MsrtHVYd2Sc308BEsZCgGcSfQhGSRsLsWKoSC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eoPgn+6f; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722429910; x=1753965910;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=EBsNIatrrf6lgvG736PJZ1ORIo+mkpep33/JrZlDzUY=;
+  b=eoPgn+6fwhdwsroufZAZ5iinM5LiLavwaiDeqjPuG3jS9JwzHPWA7v1c
+   hSz3p3H8aHm5CXzQF4EA1eEW1sMIECguwC2W7c6SZE+KOzjHDa20pdSjk
+   cFImWQQoVPNFPXCMi08zpDciZSGo09JcrytEkXDIxrQV6T9NgT5zQYTCl
+   d3JV7w1yiDTk2HadKj4wYft6Eb5FZkZftg6AeX3d1t+NMV/rPQp1gx4ZW
+   iuMr3C96yE63UsQsu//RrN2RBeJ4Nhdz3lsMoGph9QXgb++LsCJOmH+Zi
+   gB6AZjbqHbdbluSCaQnjlMJ7JfrteBY0Wz3N+SNU5K4jEi1MMPPDK5J6Q
+   Q==;
+X-CSE-ConnectionGUID: QJOHkTMmQ0eZrXAk3iF6Zg==
+X-CSE-MsgGUID: KQiI57KrRRqcLMg0lEWjuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20188375"
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="20188375"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 05:45:09 -0700
+X-CSE-ConnectionGUID: IMgVWtSkR8WIUP1HmXLtmA==
+X-CSE-MsgGUID: pvtvDXjxR/eabJWF1L+PoQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="59524277"
+Received: from kuha.fi.intel.com ([10.237.72.185])
+  by orviesa003.jf.intel.com with SMTP; 31 Jul 2024 05:45:06 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 31 Jul 2024 15:45:05 +0300
+Date: Wed, 31 Jul 2024 15:45:04 +0300
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>, kernel-team@android.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 15/15] usb: typec: tcpm/tcpci_maxim: use device managed
+ TCPCI port deregistration
+Message-ID: <Zqox0KNoLwvMFMKL@kuha.fi.intel.com>
+References: <20240710-tcpc-cleanup-v1-0-0ec1f41f4263@linaro.org>
+ <20240710-tcpc-cleanup-v1-15-0ec1f41f4263@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf200006.china.huawei.com (7.185.36.61)
+In-Reply-To: <20240710-tcpc-cleanup-v1-15-0ec1f41f4263@linaro.org>
 
-Update documentation about design, implementation and API usages
-for page_frag.
+On Wed, Jul 10, 2024 at 11:36:22AM +0100, André Draszik wrote:
+> Instead of open-coding the call to tcpci_unregister_port() in various
+> places, let's just register a hook using devm_add_action_or_reset() so
+> that it gets called automatically as and when necessary by the device
+> management APIs.
+> 
+> Signed-off-by: André Draszik <andre.draszik@linaro.org>
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- Documentation/mm/page_frags.rst | 169 +++++++++++++++++++++++++++++++-
- include/linux/page_frag_cache.h | 107 ++++++++++++++++++++
- mm/page_frag_cache.c            |  77 ++++++++++++++-
- 3 files changed, 350 insertions(+), 3 deletions(-)
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-diff --git a/Documentation/mm/page_frags.rst b/Documentation/mm/page_frags.rst
-index 503ca6cdb804..abdab415a8e2 100644
---- a/Documentation/mm/page_frags.rst
-+++ b/Documentation/mm/page_frags.rst
-@@ -1,3 +1,5 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
- ==============
- Page fragments
- ==============
-@@ -40,4 +42,169 @@ page via a single call.  The advantage to doing this is that it allows for
- cleaning up the multiple references that were added to a page in order to
- avoid calling get_page per allocation.
- 
--Alexander Duyck, Nov 29, 2016.
-+
-+Architecture overview
-+=====================
-+
-+.. code-block:: none
-+
-+                      +----------------------+
-+                      | page_frag API caller |
-+                      +----------------------+
-+                                  |
-+                                  |
-+                                  v
-+    +------------------------------------------------------------------+
-+    |                   request page fragment                          |
-+    +------------------------------------------------------------------+
-+             |                                 |                     |
-+             |                                 |                     |
-+             |                          Cache not enough             |
-+             |                                 |                     |
-+             |                         +-----------------+           |
-+             |                         | reuse old cache |--Usable-->|
-+             |                         +-----------------+           |
-+             |                                 |                     |
-+             |                             Not usable                |
-+             |                                 |                     |
-+             |                                 v                     |
-+        Cache empty                   +-----------------+            |
-+             |                        | drain old cache |            |
-+             |                        +-----------------+            |
-+             |                                 |                     |
-+             v_________________________________v                     |
-+                              |                                      |
-+                              |                                      |
-+             _________________v_______________                       |
-+            |                                 |              Cache is enough
-+            |                                 |                      |
-+ PAGE_SIZE < PAGE_FRAG_CACHE_MAX_SIZE         |                      |
-+            |                                 |                      |
-+            |               PAGE_SIZE >= PAGE_FRAG_CACHE_MAX_SIZE    |
-+            v                                 |                      |
-+    +----------------------------------+      |                      |
-+    | refill cache with order > 0 page |      |                      |
-+    +----------------------------------+      |                      |
-+      |                    |                  |                      |
-+      |                    |                  |                      |
-+      |              Refill failed            |                      |
-+      |                    |                  |                      |
-+      |                    v                  v                      |
-+      |      +------------------------------------+                  |
-+      |      |   refill cache with order 0 page   |                  |
-+      |      +----------------------------------=-+                  |
-+      |                       |                                      |
-+ Refill succeed               |                                      |
-+      |                 Refill succeed                               |
-+      |                       |                                      |
-+      v                       v                                      v
-+    +------------------------------------------------------------------+
-+    |             allocate fragment from cache                         |
-+    +------------------------------------------------------------------+
-+
-+API interface
-+=============
-+As the design and implementation of page_frag API implies, the allocation side
-+does not allow concurrent calling. Instead it is assumed that the caller must
-+ensure there is not concurrent alloc calling to the same page_frag_cache
-+instance by using its own lock or rely on some lockless guarantee like NAPI
-+softirq.
-+
-+Depending on different aligning requirement, the page_frag API caller may call
-+page_frag_alloc*_align*() to ensure the returned virtual address or offset of
-+the page is aligned according to the 'align/alignment' parameter. Note the size
-+of the allocated fragment is not aligned, the caller needs to provide an aligned
-+fragsz if there is an alignment requirement for the size of the fragment.
-+
-+Depending on different use cases, callers expecting to deal with va, page or
-+both va and page for them may call page_frag_alloc_va*, page_frag_alloc_pg*,
-+or page_frag_alloc* API accordingly.
-+
-+There is also a use case that needs minimum memory in order for forward progress,
-+but more performant if more memory is available. Using page_frag_alloc_prepare()
-+and page_frag_alloc_commit() related API, the caller requests the minimum memory
-+it needs and the prepare API will return the maximum size of the fragment
-+returned. The caller needs to either call the commit API to report how much
-+memory it actually uses, or not do so if deciding to not use any memory.
-+
-+.. kernel-doc:: include/linux/page_frag_cache.h
-+   :identifiers: page_frag_cache_init page_frag_cache_is_pfmemalloc
-+                 page_frag_cache_page_offset page_frag_alloc_va
-+                 page_frag_alloc_va_align page_frag_alloc_va_prepare_align
-+                 page_frag_alloc_probe page_frag_alloc_commit
-+                 page_frag_alloc_commit_noref page_frag_alloc_abort
-+
-+.. kernel-doc:: mm/page_frag_cache.c
-+   :identifiers: __page_frag_alloc_va_align page_frag_alloc_pg
-+                 page_frag_alloc_va_prepare page_frag_alloc_pg_prepare
-+                 page_frag_alloc_prepare page_frag_cache_drain
-+                 page_frag_free_va
-+
-+Coding examples
-+===============
-+
-+Init & Drain API
-+----------------
-+
-+.. code-block:: c
-+
-+   page_frag_cache_init(pfrag);
-+   ...
-+   page_frag_cache_drain(pfrag);
-+
-+
-+Alloc & Free API
-+----------------
-+
-+.. code-block:: c
-+
-+    void *va;
-+
-+    va = page_frag_alloc_va_align(pfrag, size, gfp, align);
-+    if (!va)
-+        goto do_error;
-+
-+    err = do_something(va, size);
-+    if (err) {
-+        page_frag_free_va(va);
-+        goto do_error;
-+    }
-+
-+Prepare & Commit API
-+--------------------
-+
-+.. code-block:: c
-+
-+    unsigned int offset, size;
-+    bool merge = true;
-+    struct page *page;
-+    void *va;
-+
-+    size = 32U;
-+    page = page_frag_alloc_prepare(pfrag, &offset, &size, &va);
-+    if (!page)
-+        goto wait_for_space;
-+
-+    copy = min_t(unsigned int, copy, size);
-+    if (!skb_can_coalesce(skb, i, page, offset)) {
-+        if (i >= max_skb_frags)
-+            goto new_segment;
-+
-+        merge = false;
-+    }
-+
-+    copy = mem_schedule(copy);
-+    if (!copy)
-+        goto wait_for_space;
-+
-+    err = copy_from_iter_full_nocache(va, copy, iter);
-+    if (err)
-+        goto do_error;
-+
-+    if (merge) {
-+        skb_frag_size_add(&skb_shinfo(skb)->frags[i - 1], copy);
-+        page_frag_alloc_commit_noref(pfrag, offset, copy);
-+    } else {
-+        skb_fill_page_desc(skb, i, page, offset, copy);
-+        page_frag_alloc_commit(pfrag, offset, copy);
-+    }
-diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_cache.h
-index ba5d7f8a03cd..9a2c9abd23d0 100644
---- a/include/linux/page_frag_cache.h
-+++ b/include/linux/page_frag_cache.h
-@@ -52,11 +52,28 @@ static inline void *encoded_page_address(unsigned long encoded_va)
- 	return (void *)(encoded_va & PAGE_MASK);
- }
- 
-+/**
-+ * page_frag_cache_init() - Init page_frag cache.
-+ * @nc: page_frag cache from which to init
-+ *
-+ * Inline helper to init the page_frag cache.
-+ */
- static inline void page_frag_cache_init(struct page_frag_cache *nc)
- {
- 	memset(nc, 0, sizeof(*nc));
- }
- 
-+/**
-+ * page_frag_cache_is_pfmemalloc() - Check for pfmemalloc.
-+ * @nc: page_frag cache from which to check
-+ *
-+ * Used to check if the current page in page_frag cache is pfmemalloc'ed.
-+ * It has the same calling context expectation as the alloc API.
-+ *
-+ * Return:
-+ * true if the current page in page_frag cache is pfmemalloc'ed, otherwise
-+ * return false.
-+ */
- static inline bool page_frag_cache_is_pfmemalloc(struct page_frag_cache *nc)
- {
- 	return encoded_page_pfmemalloc(nc->encoded_va);
-@@ -76,6 +93,19 @@ void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
- 				 unsigned int fragsz, gfp_t gfp_mask,
- 				 unsigned int align_mask);
- 
-+/**
-+ * page_frag_alloc_va_align() - Alloc a page fragment with aligning requirement.
-+ * @nc: page_frag cache from which to allocate
-+ * @fragsz: the requested fragment size
-+ * @gfp_mask: the allocation gfp to use when cache needs to be refilled
-+ * @align: the requested aligning requirement for virtual address of fragment
-+ *
-+ * WARN_ON_ONCE() checking for @align before allocing a page fragment from
-+ * page_frag cache with aligning requirement.
-+ *
-+ * Return:
-+ * virtual address of the page fragment, otherwise return NULL.
-+ */
- static inline void *page_frag_alloc_va_align(struct page_frag_cache *nc,
- 					     unsigned int fragsz,
- 					     gfp_t gfp_mask, unsigned int align)
-@@ -84,11 +114,32 @@ static inline void *page_frag_alloc_va_align(struct page_frag_cache *nc,
- 	return __page_frag_alloc_va_align(nc, fragsz, gfp_mask, -align);
- }
- 
-+/**
-+ * page_frag_cache_page_offset() - Return the current page fragment's offset.
-+ * @nc: page_frag cache from which to check
-+ *
-+ * The API is only used in net/sched/em_meta.c for historical reason, do not use
-+ * it for new caller unless there is a strong reason.
-+ *
-+ * Return:
-+ * the offset of the current page fragment in the page_frag cache.
-+ */
- static inline unsigned int page_frag_cache_page_offset(const struct page_frag_cache *nc)
- {
- 	return page_frag_cache_page_size(nc->encoded_va) - nc->remaining;
- }
- 
-+/**
-+ * page_frag_alloc_va() - Alloc a page fragment.
-+ * @nc: page_frag cache from which to allocate
-+ * @fragsz: the requested fragment size
-+ * @gfp_mask: the allocation gfp to use when cache need to be refilled
-+ *
-+ * Get a page fragment from page_frag cache.
-+ *
-+ * Return:
-+ * virtual address of the page fragment, otherwise return NULL.
-+ */
- static inline void *page_frag_alloc_va(struct page_frag_cache *nc,
- 				       unsigned int fragsz, gfp_t gfp_mask)
- {
-@@ -98,6 +149,21 @@ static inline void *page_frag_alloc_va(struct page_frag_cache *nc,
- void *page_frag_alloc_va_prepare(struct page_frag_cache *nc, unsigned int *fragsz,
- 				 gfp_t gfp);
- 
-+/**
-+ * page_frag_alloc_va_prepare_align() - Prepare allocing a page fragment with
-+ * aligning requirement.
-+ * @nc: page_frag cache from which to prepare
-+ * @fragsz: in as the requested size, out as the available size
-+ * @gfp: the allocation gfp to use when cache need to be refilled
-+ * @align: the requested aligning requirement
-+ *
-+ * WARN_ON_ONCE() checking for @align before preparing an aligned page fragment
-+ * with minimum size of @fragsz, @fragsz is also used to report the maximum size
-+ * of the page fragment the caller can use.
-+ *
-+ * Return:
-+ * virtual address of the page fragment, otherwise return NULL.
-+ */
- static inline void *page_frag_alloc_va_prepare_align(struct page_frag_cache *nc,
- 						     unsigned int *fragsz,
- 						     gfp_t gfp,
-@@ -117,6 +183,21 @@ struct page *page_frag_alloc_prepare(struct page_frag_cache *nc,
- 				     unsigned int *fragsz,
- 				     void **va, gfp_t gfp);
- 
-+/**
-+ * page_frag_alloc_probe - Probe the available page fragment.
-+ * @nc: page_frag cache from which to probe
-+ * @offset: out as the offset of the page fragment
-+ * @fragsz: in as the requested size, out as the available size
-+ * @va: out as the virtual address of the returned page fragment
-+ *
-+ * Probe the current available memory to caller without doing cache refilling.
-+ * If no space is available in the page_frag cache, return NULL.
-+ * If the requested space is available, up to @fragsz bytes may be added to the
-+ * fragment using commit API.
-+ *
-+ * Return:
-+ * the page fragment, otherwise return NULL.
-+ */
- static inline struct page *page_frag_alloc_probe(struct page_frag_cache *nc,
- 						 unsigned int *offset,
- 						 unsigned int *fragsz,
-@@ -138,6 +219,14 @@ static inline struct page *page_frag_alloc_probe(struct page_frag_cache *nc,
- 	return page;
- }
- 
-+/**
-+ * page_frag_alloc_commit - Commit allocing a page fragment.
-+ * @nc: page_frag cache from which to commit
-+ * @fragsz: size of the page fragment has been used
-+ *
-+ * Commit the actual used size for the allocation that was either prepared or
-+ * probed.
-+ */
- static inline void page_frag_alloc_commit(struct page_frag_cache *nc,
- 					  unsigned int fragsz)
- {
-@@ -146,6 +235,16 @@ static inline void page_frag_alloc_commit(struct page_frag_cache *nc,
- 	nc->remaining -= fragsz;
- }
- 
-+/**
-+ * page_frag_alloc_commit_noref - Commit allocing a page fragment without taking
-+ * page refcount.
-+ * @nc: page_frag cache from which to commit
-+ * @fragsz: size of the page fragment has been used
-+ *
-+ * Commit the alloc preparing or probing by passing the actual used size, but
-+ * not taking refcount. Mostly used for fragmemt coalescing case when the
-+ * current fragment can share the same refcount with previous fragment.
-+ */
- static inline void page_frag_alloc_commit_noref(struct page_frag_cache *nc,
- 						unsigned int fragsz)
- {
-@@ -153,6 +252,14 @@ static inline void page_frag_alloc_commit_noref(struct page_frag_cache *nc,
- 	nc->remaining -= fragsz;
- }
- 
-+/**
-+ * page_frag_alloc_abort - Abort the page fragment allocation.
-+ * @nc: page_frag cache to which the page fragment is aborted back
-+ * @fragsz: size of the page fragment to be aborted
-+ *
-+ * It is expected to be called from the same context as the alloc API.
-+ * Mostly used for error handling cases where the fragment is no longer needed.
-+ */
- static inline void page_frag_alloc_abort(struct page_frag_cache *nc,
- 					 unsigned int fragsz)
- {
-diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
-index 6a21d710c0e2..f0028d2b673c 100644
---- a/mm/page_frag_cache.c
-+++ b/mm/page_frag_cache.c
-@@ -97,6 +97,18 @@ static struct page *__page_frag_cache_reload(struct page_frag_cache *nc,
- 	return page;
- }
- 
-+/**
-+ * page_frag_alloc_va_prepare() - Prepare allocing a page fragment.
-+ * @nc: page_frag cache from which to prepare
-+ * @fragsz: in as the requested size, out as the available size
-+ * @gfp: the allocation gfp to use when cache needs to be refilled
-+ *
-+ * Prepare a page fragment with minimum size of @fragsz, @fragsz is also used
-+ * to report the maximum size of the page fragment the caller can use.
-+ *
-+ * Return:
-+ * virtual address of the page fragment, otherwise return NULL.
-+ */
- void *page_frag_alloc_va_prepare(struct page_frag_cache *nc,
- 				 unsigned int *fragsz, gfp_t gfp)
- {
-@@ -125,6 +137,19 @@ void *page_frag_alloc_va_prepare(struct page_frag_cache *nc,
- }
- EXPORT_SYMBOL(page_frag_alloc_va_prepare);
- 
-+/**
-+ * page_frag_alloc_pg_prepare - Prepare allocing a page fragment.
-+ * @nc: page_frag cache from which to prepare
-+ * @offset: out as the offset of the page fragment
-+ * @fragsz: in as the requested size, out as the available size
-+ * @gfp: the allocation gfp to use when cache needs to be refilled
-+ *
-+ * Prepare a page fragment with minimum size of @fragsz, @fragsz is also used
-+ * to report the maximum size of the page fragment the caller can use.
-+ *
-+ * Return:
-+ * the page fragment, otherwise return NULL.
-+ */
- struct page *page_frag_alloc_pg_prepare(struct page_frag_cache *nc,
- 					unsigned int *offset,
- 					unsigned int *fragsz, gfp_t gfp)
-@@ -152,6 +177,21 @@ struct page *page_frag_alloc_pg_prepare(struct page_frag_cache *nc,
- }
- EXPORT_SYMBOL(page_frag_alloc_pg_prepare);
- 
-+/**
-+ * page_frag_alloc_prepare - Prepare allocing a page fragment.
-+ * @nc: page_frag cache from which to prepare
-+ * @offset: out as the offset of the page fragment
-+ * @fragsz: in as the requested size, out as the available size
-+ * @va: out as the virtual address of the returned page fragment
-+ * @gfp: the allocation gfp to use when cache needs to be refilled
-+ *
-+ * Prepare a page fragment with minimum size of @fragsz, @fragsz is also used
-+ * to report the maximum size of the page fragment. Return both 'struct page'
-+ * and virtual address of the fragment to the caller.
-+ *
-+ * Return:
-+ * the page fragment, otherwise return NULL.
-+ */
- struct page *page_frag_alloc_prepare(struct page_frag_cache *nc,
- 				     unsigned int *offset,
- 				     unsigned int *fragsz,
-@@ -183,6 +223,18 @@ struct page *page_frag_alloc_prepare(struct page_frag_cache *nc,
- }
- EXPORT_SYMBOL(page_frag_alloc_prepare);
- 
-+/**
-+ * page_frag_alloc_pg - Alloce a page fragment.
-+ * @nc: page_frag cache from which to alloce
-+ * @offset: out as the offset of the page fragment
-+ * @fragsz: the requested fragment size
-+ * @gfp: the allocation gfp to use when cache needs to be refilled
-+ *
-+ * Get a page fragment from page_frag cache.
-+ *
-+ * Return:
-+ * the page fragment, otherwise return NULL.
-+ */
- struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
- 				unsigned int *offset, unsigned int fragsz,
- 				gfp_t gfp)
-@@ -215,6 +267,10 @@ struct page *page_frag_alloc_pg(struct page_frag_cache *nc,
- }
- EXPORT_SYMBOL(page_frag_alloc_pg);
- 
-+/**
-+ * page_frag_cache_drain - Drain the current page from page_frag cache.
-+ * @nc: page_frag cache from which to drain
-+ */
- void page_frag_cache_drain(struct page_frag_cache *nc)
- {
- 	if (!nc->encoded_va)
-@@ -235,6 +291,19 @@ void __page_frag_cache_drain(struct page *page, unsigned int count)
- }
- EXPORT_SYMBOL(__page_frag_cache_drain);
- 
-+/**
-+ * __page_frag_alloc_va_align() - Alloc a page fragment with aligning
-+ * requirement.
-+ * @nc: page_frag cache from which to allocate
-+ * @fragsz: the requested fragment size
-+ * @gfp_mask: the allocation gfp to use when cache need to be refilled
-+ * @align_mask: the requested aligning requirement for the 'va'
-+ *
-+ * Get a page fragment from page_frag cache with aligning requirement.
-+ *
-+ * Return:
-+ * Return va of the page fragment, otherwise return NULL.
-+ */
- void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
- 				 unsigned int fragsz, gfp_t gfp_mask,
- 				 unsigned int align_mask)
-@@ -281,8 +350,12 @@ void *__page_frag_alloc_va_align(struct page_frag_cache *nc,
- }
- EXPORT_SYMBOL(__page_frag_alloc_va_align);
- 
--/*
-- * Frees a page fragment allocated out of either a compound or order 0 page.
-+/**
-+ * page_frag_free_va - Free a page fragment.
-+ * @addr: va of page fragment to be freed
-+ *
-+ * Free a page fragment allocated out of either a compound or order 0 page by
-+ * virtual address.
-  */
- void page_frag_free_va(void *addr)
- {
+> ---
+>  drivers/usb/typec/tcpm/tcpci_maxim_core.c | 30 ++++++++++++++----------------
+>  1 file changed, 14 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/tcpm/tcpci_maxim_core.c b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> index ee3e86797f17..7abfd29b4b01 100644
+> --- a/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> +++ b/drivers/usb/typec/tcpm/tcpci_maxim_core.c
+> @@ -472,6 +472,11 @@ static bool max_tcpci_attempt_vconn_swap_discovery(struct tcpci *tcpci, struct t
+>  	return true;
+>  }
+>  
+> +static void max_tcpci_unregister_tcpci_port(void *tcpci)
+> +{
+> +	tcpci_unregister_port(tcpci);
+> +}
+> +
+>  static int max_tcpci_probe(struct i2c_client *client)
+>  {
+>  	int ret;
+> @@ -515,27 +520,21 @@ static int max_tcpci_probe(struct i2c_client *client)
+>  		return dev_err_probe(&client->dev, PTR_ERR(chip->tcpci),
+>  				     "TCPCI port registration failed\n");
+>  
+> +        ret = devm_add_action_or_reset(&client->dev,
+> +				       max_tcpci_unregister_tcpci_port,
+> +				       chip->tcpci);
+> +        if (ret)
+> +                return ret;
+> +
+>  	chip->port = tcpci_get_tcpm_port(chip->tcpci);
+> +
+>  	ret = max_tcpci_init_alert(chip, client);
+>  	if (ret < 0)
+> -		goto unreg_port;
+> +		return dev_err_probe(&client->dev, ret,
+> +				     "IRQ initialization failed\n");
+>  
+>  	device_init_wakeup(chip->dev, true);
+>  	return 0;
+> -
+> -unreg_port:
+> -	tcpci_unregister_port(chip->tcpci);
+> -
+> -	return dev_err_probe(&client->dev, ret,
+> -			     "Maxim TCPCI driver initialization failed\n");
+> -}
+> -
+> -static void max_tcpci_remove(struct i2c_client *client)
+> -{
+> -	struct max_tcpci_chip *chip = i2c_get_clientdata(client);
+> -
+> -	if (!IS_ERR_OR_NULL(chip->tcpci))
+> -		tcpci_unregister_port(chip->tcpci);
+>  }
+>  
+>  static const struct i2c_device_id max_tcpci_id[] = {
+> @@ -558,7 +557,6 @@ static struct i2c_driver max_tcpci_i2c_driver = {
+>  		.of_match_table = of_match_ptr(max_tcpci_of_match),
+>  	},
+>  	.probe = max_tcpci_probe,
+> -	.remove = max_tcpci_remove,
+>  	.id_table = max_tcpci_id,
+>  };
+>  module_i2c_driver(max_tcpci_i2c_driver);
+> 
+> -- 
+> 2.45.2.803.g4e1b14247a-goog
+
 -- 
-2.33.0
-
+heikki
 
