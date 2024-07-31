@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-269278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8772F9430E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:31:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8730D9430E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09A76B23BB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:31:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88321C21A3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B94AD1B29A6;
-	Wed, 31 Jul 2024 13:31:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2375B1B150C;
+	Wed, 31 Jul 2024 13:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nf6JzJE/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zC/34seq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkRT3kC8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D783619413E
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E6E2208E;
+	Wed, 31 Jul 2024 13:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722432671; cv=none; b=nZRibItv+FIy0KlQiMG+8g/zZ7Rc2fPQXYjzLTjSs3nNIyQbnSU6wbNPWgekEnaEkA/hdqJ07iRvhFzaXT5ONnyieaMrRrdE1wEeq1GUI5mYSUERd7SnFVGDPod/BmPbmvVSEoif2XCNjtbNb3M6oMI18+X1nTY8k3FB9BAYj3U=
+	t=1722432684; cv=none; b=IjXGGCaXSnpmpD+QCTvc4KdrWPM29CpP9LVXhlhkT5CT2mrAzmUJRWkNCVYbo1NEe5oh+lycPtfntHp1Zt4quXzL8V21tgUPbzaR9pu/bnnKBdMDWAQdAmIh2B7ziB1drDyjImxOX0OU7ZIgkkodQHAvreK18qaRluNXiSK35sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722432671; c=relaxed/simple;
-	bh=jfJnIeRp0Hm7cvvA9socefml3SaofeOlG1Xc6j/08/c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LtmdrPIFJ23BmIgKo9YkBT+FJ+/yF4cPhaBIfPMfbqT/UaO3mFnin9umIIUL85PmDulfMQ19h9OnPKJgrU+SCYpPjIcXmgaYk2FAPdZPmXG6/bw1mTfg6GxV0407JYJ2Nuax7zSTpH4mq+LluIzb0AQA1WyX6XVXzvlh3L7AR34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nf6JzJE/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zC/34seq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722432667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8jWVZQWhQQ0QCOi8Hpb86takd5VvlLVoal4eaFGN0yg=;
-	b=nf6JzJE/K8GYlPOmSOjOASNUuoAOufPA5RowGkC6kjjVolQ6cetL9ZRdr707984cDQaceJ
-	8wUWkloZa2Z7FJ4wjJwtFYuxzWRA3L7TlNRdBjMjZ+Ev5l+Fr5xcW45KwCmuuJ/MRV/pM+
-	r/6UskK8tHr8Xm+HQy5qrcMxxBaLDopF91UpBgUB3Z9cdAV5xpVX1J0GFm8LULXI/ru1VC
-	JMYfpKqX7C6aSnRsSG7mewhL1Aeh+QIOtw/r5Kx8J0rCtneJRwUzNMEpDjVxSGjQvSLN+c
-	vu7DCx+rUp2Pq2dv0xLd+19e4NVuHbigYiM7gPSuw7DePoKEB7SfkM7fWNz4jg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722432667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8jWVZQWhQQ0QCOi8Hpb86takd5VvlLVoal4eaFGN0yg=;
-	b=zC/34seqY/lLF8Ev3cWmJOajlqvA4cdXOoLohzypkgO1lxoPflXJeKPFcFbWNCNF1Bdl4v
-	rJdd1ZcUGUsuMOBA==
-To: Borislav Petkov <bp@alien8.de>, Mike Lothian <mike@fireburn.co.uk>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/setup: Parse the builtin command line before merging
-In-Reply-To: <20240730152108.GAZqkE5Dfi9AuKllRw@fat_crate.local>
-References: <CAHbf0-G4bmpuXorwH-e_chWm1fXX7AJ8ck5AL4p+AFevhvdBfg@mail.gmail.com>
- <20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local>
- <CAHbf0-FTrRPfDTkkSjq9yvyFrWvoYjH_uJAW5KDae8vO-hch+w@mail.gmail.com>
- <20240730152108.GAZqkE5Dfi9AuKllRw@fat_crate.local>
-Date: Wed, 31 Jul 2024 15:31:06 +0200
-Message-ID: <87jzh1663p.ffs@tglx>
+	s=arc-20240116; t=1722432684; c=relaxed/simple;
+	bh=zm91Q4SwUAgP+Wn+H1r0fJM1fUPmFDfFMc135yP2Iy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YV2+2FeVHqMSuys301I39iU5kh5ZkGPS2M0CrQECPQE0fave3WHBLvsRYl6mvg9mWZqZ8devyOsDfOE7Jhy0ftfcPi2jz2PThqzjfB7Hvtc5yV5kRRRqK0ES9YNkgYIc9CKiY9TUlxkqp2NOgy/5L4ns5OdWgcfKAcGGNVVzhMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkRT3kC8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880F9C32786;
+	Wed, 31 Jul 2024 13:31:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722432683;
+	bh=zm91Q4SwUAgP+Wn+H1r0fJM1fUPmFDfFMc135yP2Iy4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YkRT3kC8I5ivwMHPtQ8hClLHCgG4uY+uIAdWATS8zuZdvDGD5fll//e2LZ5xLywGO
+	 YkEU53cflLdafjYufB2z24eJmUSFo5e/w5q63vygEqsDtxVF/Bln1sIX7BxQrqSDdw
+	 sKvMt7PMXF916qIN3RN3mLHLIbPetJBVKZer3SYo3L/M72JlsS8NStUNuOULardnGh
+	 Ci8bhcl496TVPzbygkDX2PVa5Gkk34ABOz6di/7wijbJdgpU1qYKcMiBgxsCzYlXLq
+	 qnmmNNZW/aIwV7qlN27ozD6E5aDUV05ZLcdi1wcwlhvxF2vgkH6owIdFRpfDB3Lbvu
+	 Dr+EmUbmJVwiA==
+Date: Wed, 31 Jul 2024 14:31:19 +0100
+From: Will Deacon <will@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Michal Luczaj <mhal@rbox.co>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
+ xa_store() failure
+Message-ID: <20240731133118.GA2946@willie-the-truck>
+References: <20240730155646.1687-1-will@kernel.org>
+ <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co>
+ <Zql3vMnR86mMvX2w@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zql3vMnR86mMvX2w@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Jul 30 2024 at 17:21, Borislav Petkov wrote:
+On Tue, Jul 30, 2024 at 04:31:08PM -0700, Sean Christopherson wrote:
+> On Tue, Jul 30, 2024, Michal Luczaj wrote:
+> > On 7/30/24 17:56, Will Deacon wrote:
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index d0788d0a72cc..b80dd8cead8c 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+> > >  
+> > >  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+> > >  		r = -EINVAL;
+> > > -		goto kvm_put_xa_release;
+> > > +		goto err_xa_release;
+> > >  	}
+> > >  
+> > >  	/*
+> > > @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+> > >  
+> > >  kvm_put_xa_release:
+> > >  	kvm_put_kvm_no_destroy(kvm);
+> > > +err_xa_release:
+> > >  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+> > >  unlock_vcpu_destroy:
+> > >  	mutex_unlock(&kvm->lock);
+> > 
+> > My bad for neglecting the "impossible" path. Thanks for the fix.
+> > 
+> > I wonder if it's complete. If we really want to consider the possibility of
+> > this xa_store() failing, then keeping vCPU fd installed and calling
+> > kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
+> 
+> Yeah, the vCPU is exposed to userspace, freeing its assets will just cause
+> different problems.  KVM_BUG_ON() will prevent _new_ vCPU ioctl() calls (and kick
+> running vCPUs out of the guest), but it doesn't interrupt other CPUs, e.g. if
+> userspace is being sneaking and has already invoked a vCPU ioctl(), KVM will hit
+> a use-after-free (several of them).
 
-> On Mon, Jul 22, 2024 at 05:56:08PM +0100, Mike Lothian wrote:
->> That patch does indeed make the warning go away :D
->> 
->> Is there anything else you need from me?
->
-> Nah, all good.
->
-> Thanks for reporting and testing.
->
-> From: "Borislav Petkov (AMD)" <bp@alien8.de>
-> Date: Tue, 30 Jul 2024 16:15:12 +0200
-> Subject: [PATCH] x86/setup: Parse the builtin command line before merging
->
-> Commit in Fixes was added as a catch-all for cases where the cmdline is
-> parsed before being merged with the builtin one.
->
-> And promptly one issue appeared, see Link below. And the microcode
-> loader really needs to parse it that early. And the merging happens
-> late. Reshuffling the early boot nightmare^W code to handle that
-> properly would be a painful exercise for another day so do the chicken
-> thing and parse the builtin cmdline too before it has been merged.
->
-> Fixes: 0c40b1c7a897 ("x86/setup: Warn when option parsing is done too early")
-> Reported-by: Mike Lothian <mike@fireburn.co.uk>
-> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> Link: https://lore.kernel.org/r/20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local
+Damn, yes. Just because we haven't returned the fd yet, doesn't mean
+userspace can't make use of it.
 
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+> As Michal alluded to, it should be impossible for xa_store() to fail since KVM
+> pre-allocates/reserves memory.  Given that, deliberately leaking the vCPU seems
+> like the least awful "solution".
+
+Could we actually just move the xa_store() before the fd creation? I
+can't immediately see any issues with that...
+
+Will
 
