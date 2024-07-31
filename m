@@ -1,98 +1,160 @@
-Return-Path: <linux-kernel+bounces-269100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18260942D99
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:57:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 310F1942D9F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0D452856A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:57:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA8228194E
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533481AED23;
-	Wed, 31 Jul 2024 11:57:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C26F1AE875;
+	Wed, 31 Jul 2024 11:57:26 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790C11AE868
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF621AE846;
+	Wed, 31 Jul 2024 11:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722427024; cv=none; b=P7UFEDvC1iua0VTt0lh2uwLTh5vjGITFQ1bGMBov6h4fTQWttU3TedizOK5WgJyvdv97+4NLJd//GYpi3LSoRmll/llUrM4WLIOCg5c2zyYpk2+wuhjA5T4AobiB4F2lKenFTAIxm8gL36KUp4l98xnMECNBxQqps2hrdX1vh+4=
+	t=1722427045; cv=none; b=K0DfKI4sc4d9ncVbU+LYgYlmVYxoxOR8jyKjIhGHPVJE5DvleX71fGPPZGcg6gavT913Oz88r5B4qPm6gnsjkyigIsOBzLePWNn90eI0Wy0bEIXITTJ4yG8FY8U5VjWSsVEmgDDkz+fvjLl3Bt0nhg+2mJvWTxil9YJDM6Bvzag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722427024; c=relaxed/simple;
-	bh=hQUoUT6P370vSdku525I9ZyIqVpjyDqZTAwNNZoSxuo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ronZmex5t1svpYx6xQHyvQycMRwQW60A0+bhDti2c7fqWmM44mp1pqj3hlvNCPYiDgYOFplPM34zXDs+vYt5US8136Qj58hm6P0ehOjqPDgHFfCBlAQq4ikSaLDqjj9qQ7FLm3TULPVM2+A18MKdjA4NPkA+9BB/gDkyITOQTxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-396a820a8a3so13130255ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:57:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722427022; x=1723031822;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xSrgeN+yuzirQre8G4sG5Sw6kVPo4mH3hIOR53sJbwQ=;
-        b=oSSPyfTwskJL7F7XUTE6G/+8Nk+71u/WEkJJjJXw8JdK/23tetK6sEDgLsCJtMEvyh
-         tBDbUR/wY/4i5R1q47ZdZVfUEm8ePGvp+KGNWs5lt93mUiNLiM+S+VtaL+JGqasaStyU
-         Fe6+db4l+0KPFKYKutGLCzZBpbSfmmtEE1B7P/EhTmMYSaSYLwDzhu8+WMPgbJemFUQY
-         LERHzgehMKb00mFjiB2543BGYJdMaE51AI25QbQfVnv90DA6Mu7ZX/F/Z9LOd80awAm1
-         rY4tyS4b99A5WGcTxEUs+IG/3E6FxqGmrCwTyKSal0EuiMCCyXDpHE0vqhWIhachDOhm
-         /yfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUUCly2sl/kATU4pSkr036pPu0PrinZ2dAbxYwb9OXmWKfrTDhHth3GA4jvGeICo9qQPjHNgeaZGEJSd1j8t6B5tuz0/irvOyEmvVRs
-X-Gm-Message-State: AOJu0Yx4TQhE+M5YQZySiPhMMGBXZ3X2Y9sfCn5Qkbt3M4nnFqxP70eX
-	pDaFryIClour9UBnBPHbLRYqnznz4MjqkBqc1p0l0f9QSPhjvZKYOhnlQiIX2QIW6UiVNqsMQiC
-	jmInbfs+b7WBxnwcdLT6tJIWz1n6FhLRSso7WeHf6sdGQ5nRrAEP8TUg=
-X-Google-Smtp-Source: AGHT+IG6yJHm71PfnjSzpzV2tajfrhXIQF3DZ9LmFmTF0gSF9zc7EprT5Loy3CMpp2Oq1hqsKdRV7a+B3kc8FcJHdRu9wenzlL2s
+	s=arc-20240116; t=1722427045; c=relaxed/simple;
+	bh=bPG5ie4o6eFHk5P0SKST3hcdakVW4lNHJZL4wIMuuMY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MA5DPOZt3S+DunrOw7tuTiqSu8U1GFcPWaAzhws7g+IMK876RmSkWTmg8f40MlouMgA4tecZwbZF1ynHJEVTExIyLshZenpl60N1iO5g1pJFIRQZxLuQ5PInzoMfzodd2kYo0XGADBO/3/+gd0hZEXSTGsJGbxya6Uni8snZwCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WYrDj6TlGz4f3k6d;
+	Wed, 31 Jul 2024 19:57:09 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 913271A018D;
+	Wed, 31 Jul 2024 19:57:18 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgAHL4WdJqpmGUR+AQ--.55088S3;
+	Wed, 31 Jul 2024 19:57:18 +0800 (CST)
+Subject: Re: [PATCH v3 5/8] jbd2: remove unneeded done_copy_out variable in
+ jbd2_journal_write_metadata_buffer
+To: Kemeng Shi <shikemeng@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ jack@suse.com
+References: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
+ <20240731092910.2383048-6-shikemeng@huaweicloud.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <01115725-c0ca-6bca-c6e2-5f75e1a5c13a@huaweicloud.com>
+Date: Wed, 31 Jul 2024 19:57:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:381:37d6:e590 with SMTP id
- e9e14a558f8ab-39b06af47damr3064295ab.2.1722427022641; Wed, 31 Jul 2024
- 04:57:02 -0700 (PDT)
-Date: Wed, 31 Jul 2024 04:57:02 -0700
-In-Reply-To: <00000000000022a23c061604edb3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d61bb8061e89caa5@google.com>
-Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in __run_timer_base
-From: syzbot <syzbot+1acbadd9f48eeeacda29@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, brauner@kernel.org, davem@davemloft.net, 
-	dvyukov@google.com, elver@google.com, glider@google.com, 
-	gregkh@linuxfoundation.org, hdanton@sina.com, jhs@mojatatu.com, 
-	kasan-dev@googlegroups.com, keescook@chromium.org, kuba@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-usb@vger.kernel.org, luyun@kylinos.cn, 
-	netdev@vger.kernel.org, pctammela@mojatatu.com, rafael@kernel.org, 
-	stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com, 
-	victor@mojatatu.com, vinicius.gomes@intel.com, viro@zeniv.linux.org.uk, 
-	vladimir.oltean@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20240731092910.2383048-6-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgAHL4WdJqpmGUR+AQ--.55088S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1kWF4rWr4DAr1UurykZrb_yoW5Xr48pF
+	9akr9rtryvqry2yr1kWw4UZrW0grWDWrW2krsrCa43Aayag3sF9F1qyr1rK3WjyrZ7Ja18
+	XryUuFZ7WwnIyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CEbIxv
+	r21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr
+	0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY
+	17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcV
+	C0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY
+	6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUjuHq7UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-syzbot suspects this issue was fixed by commit:
+On 2024/7/31 17:29, Kemeng Shi wrote:
+> It's more intuitive to use jh_in->b_frozen_data directly instead of
+> done_copy_out variable. Simply remove unneeded done_copy_out variable
+> and use b_frozen_data instead.
+> 
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-commit 22f00812862564b314784167a89f27b444f82a46
-Author: Alan Stern <stern@rowland.harvard.edu>
-Date:   Fri Jun 14 01:30:43 2024 +0000
+Looks good to me.
 
-    USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
+Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14f906bd980000
-start commit:   89be4025b0db Merge tag '6.10-rc1-smb3-client-fixes' of git..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b9016f104992d69c
-dashboard link: https://syzkaller.appspot.com/bug?extid=1acbadd9f48eeeacda29
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=145ed3fc980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c1541c980000
+> ---
+>  fs/jbd2/journal.c | 21 ++++++++-------------
+>  1 file changed, 8 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 9c1ffb0dc740..f17d05bc61df 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -318,7 +318,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  				  struct buffer_head **bh_out,
+>  				  sector_t blocknr)
+>  {
+> -	int done_copy_out = 0;
+>  	int do_escape = 0;
+>  	char *mapped_data;
+>  	struct buffer_head *new_bh;
+> @@ -349,7 +348,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  	 * we use that version of the data for the commit.
+>  	 */
+>  	if (jh_in->b_frozen_data) {
+> -		done_copy_out = 1;
+>  		new_folio = virt_to_folio(jh_in->b_frozen_data);
+>  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+>  		mapped_data = jh_in->b_frozen_data;
+> @@ -357,17 +355,15 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  		new_folio = bh_in->b_folio;
+>  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
+>  		mapped_data = kmap_local_folio(new_folio, new_offset);
+> -	}
+> -
+> -	/*
+> -	 * Fire data frozen trigger if data already wasn't frozen.  Do this
+> -	 * before checking for escaping, as the trigger may modify the magic
+> -	 * offset.  If a copy-out happens afterwards, it will have the correct
+> -	 * data in the buffer.
+> -	 */
+> -	if (!done_copy_out)
+> +		/*
+> +		 * Fire data frozen trigger if data already wasn't frozen. Do
+> +		 * this before checking for escaping, as the trigger may modify
+> +		 * the magic offset.  If a copy-out happens afterwards, it will
+> +		 * have the correct data in the buffer.
+> +		 */
+>  		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
+>  					   jh_in->b_triggers);
+> +	}
+>  
+>  	/*
+>  	 * Check for escaping
+> @@ -380,7 +376,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  	/*
+>  	 * Do we need to do a data copy?
+>  	 */
+> -	if (do_escape && !done_copy_out) {
+> +	if (do_escape && !jh_in->b_frozen_data) {
+>  		char *tmp;
+>  
+>  		spin_unlock(&jh_in->b_state_lock);
+> @@ -408,7 +404,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  copy_done:
+>  		new_folio = virt_to_folio(jh_in->b_frozen_data);
+>  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+> -		done_copy_out = 1;
+>  	}
+>  
+>  	/*
+> 
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: USB: class: cdc-wdm: Fix CPU lockup caused by excessive log messages
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
