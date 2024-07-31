@@ -1,199 +1,128 @@
-Return-Path: <linux-kernel+bounces-268802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 049E194296C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:45:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7136494296B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C011C2108E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:45:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4750B21B62
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FD361AAE26;
-	Wed, 31 Jul 2024 08:44:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FEC01AAE0F;
+	Wed, 31 Jul 2024 08:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OldTkb8L"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C1A1A8C19
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06AC1A8BF6;
+	Wed, 31 Jul 2024 08:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722415492; cv=none; b=CTDb1syHb41a7g4Fc0TBKFZuSutr5xpyrD5HDOY2k5++/2OwUlbuA+tAxkZeULH3/Uur0KqDJaTqvgWPgd3NnLC+Y4P8GBG8yt/ErSF6hhfxyxibed4fMFC7yGd8LTXBpLm02wTiy2D6qGVZQOgNg9m+X7Sv6DDaIwJVUCuIONs=
+	t=1722415490; cv=none; b=YZnItgJIpj/w7wNnHdAuEP3r4S/xNFOTriKlfPUCL8/yozhOFIRM9npLqjHyKOp4zsh6YNIyaTDnS7UgupJ9g5bXyMpCjbPdjfV5qsqENXyrKvu3fY1Ta+/2pV7Hv4MHGjDz+M0+Y4uATELUHyaVCtDwQl7v6YfkAXOWXBHh8NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722415492; c=relaxed/simple;
-	bh=m7kjkEJjHEIsiOOrhqX0hZQGn/1tIv43L/h3KkEOHwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T+sgEx2i13eupAsaxOZV59yJ4tDX+pgB16PmgSOJQ4BdXzTW7PqQxnfEhmmkxaZrT0t4ScuTA7Ad1WZEa0IGrYkv0TQGMB9yyCoNR+XXw3pRVX5XiWlBRhigIlr0Q0Ge08rPAhuTZw/fckSua7qMJBCYTWM2tF7HGz4jpRrJFnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sZ4wY-0000Cy-9Q; Wed, 31 Jul 2024 10:44:22 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sZ4wW-003U0I-6M; Wed, 31 Jul 2024 10:44:20 +0200
-Received: from pengutronix.de (unknown [IPv6:2a01:4f8:1c1c:29e9:22:41ff:fe00:1400])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 205C031271C;
-	Wed, 31 Jul 2024 08:44:18 +0000 (UTC)
-Date: Wed, 31 Jul 2024 10:44:15 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Rob Herring <robh@kernel.org>
-Cc: kernel@pengutronix.de, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Elaine Zhang <zhangqing@rock-chips.com>, David Jander <david.jander@protonic.nl>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH can-next 01/21] dt-bindings: can: rockchip_canfd: add
- binding for rockchip CAN-FD controller
-Message-ID: <20240731-enthusiastic-quiet-elk-18194b-mkl@pengutronix.de>
-References: <20240729-rockchip-canfd-v1-0-fa1250fd6be3@pengutronix.de>
- <20240729-rockchip-canfd-v1-1-fa1250fd6be3@pengutronix.de>
- <20240730192158.GA2001115-robh@kernel.org>
+	s=arc-20240116; t=1722415490; c=relaxed/simple;
+	bh=1HUvOzGn/5/wnNY0VeoxnmUHfzCa0HeyclKPmXiNkU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eZFNqKRZVxS3XXscXfOgFNpwlKhpbNxOyXvsUwhHRi525F6vbOesSDxtYwou86Z9b/2B7nm2z9y8sCdK+gZ9/twdXN3Uo27+g/h13muO1I8pgI77TNkhh88QPRPHupI7tgjPU9FqvJJoGw05tcj5GOuwjevuFEedIqqJ3WJT1q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OldTkb8L; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V4KmR8017422;
+	Wed, 31 Jul 2024 08:44:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tzjcsNVmdmaVZf0vOv+8BHQKa8BBZ7bcsZkbwlFsE4k=; b=OldTkb8L/4anYwDb
+	lIN3UJg6ZhZiho0bkCJFTmO188gAgJRQXA84CKMad/r5rz4lA+L2sKGRbs9rgqUJ
+	bm1HcSUF35l9bA06VginkHNrASfnDCR/ZhAc3Js+t0o2sh5N+er8jK1XVwpHUWBj
+	P/QAPtc0LBedMvg3tlCGRYUBa9nFjUvCjTcakrjmv7ZKNk4sJ3DEbZMXkIejKkVn
+	aybjUe+OJThYLT5bsSSVcUj4AkFk6/u0mNXgJ2cnPJXi2LRxrZAQ0AcAFd5DRXK8
+	UhjRIQlx4ZWlsM+lMKrSljYeA0ru59OtAAVdg5WKXMzQnMMr/l6d1WZHXmbkMxpA
+	PNSu2g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mryu2mce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 08:44:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46V8igc9014941
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 08:44:42 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
+ 2024 01:44:37 -0700
+Message-ID: <ea7fcbe4-1822-eca4-7492-55f1f2895605@quicinc.com>
+Date: Wed, 31 Jul 2024 14:14:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uoxl2fbtiq2wmpls"
-Content-Disposition: inline
-In-Reply-To: <20240730192158.GA2001115-robh@kernel.org>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 1/4] clk: qcom: gcc-sc8180x: Register QUPv3 RCGs for DFS
+ on sc8180x
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240725-gcc-sc8180x-fixes-v1-0-576a55fe4780@quicinc.com>
+ <20240725-gcc-sc8180x-fixes-v1-1-576a55fe4780@quicinc.com>
+ <g4etw2efnugdsv73ejbbqfxmumy5m3oqzkpeqexzpgzlxsms5r@u62f5jcskqfd>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <g4etw2efnugdsv73ejbbqfxmumy5m3oqzkpeqexzpgzlxsms5r@u62f5jcskqfd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dFtDdG6RPGAwE8MznNszhoK27aaGZB98
+X-Proofpoint-GUID: dFtDdG6RPGAwE8MznNszhoK27aaGZB98
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_05,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=887
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407310064
 
 
---uoxl2fbtiq2wmpls
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/27/2024 4:24 PM, Dmitry Baryshkov wrote:
+> On Thu, Jul 25, 2024 at 05:03:11PM GMT, Satya Priya Kakitapalli wrote:
+>> QUPv3 clocks support DFS, thus register the RCGs which require
+>> support for DFS.
+>  From the commit message it is not clear if the patch fixes the issue
+> (and thus should have Fixes and possibly cc:stable) or an improvement.
 
-On 30.07.2024 13:21:58, Rob Herring wrote:
-> On Mon, Jul 29, 2024 at 03:05:32PM +0200, Marc Kleine-Budde wrote:
-> > Add the binding of the rockchip rk3568 CAN-FD controller to the device
-> > tree bindings documentation.
->=20
-> Subject line space is valuable. Don't say 'binding' twice. Or anything=20
-> else for that matter.=20
->=20
-> > Co-developed-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-> > ---
-> >  .../bindings/net/can/rockchip,canfd.yaml           | 76 ++++++++++++++=
-++++++++
-> >  MAINTAINERS                                        |  7 ++
-> >  2 files changed, 83 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/can/rockchip,canfd.y=
-aml b/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
-> > new file mode 100644
-> > index 000000000000..85f7ea68d8b9
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/can/rockchip,canfd.yaml
-> > @@ -0,0 +1,76 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/can/rockchip,canfd.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title:
-> > +  Rockchip CAN-FD controller
-> > +
-> > +maintainers:
-> > +  - Marc Kleine-Budde <mkl@pengutronix.de>
-> > +
-> > +allOf:
-> > +  - $ref: can-controller.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - const: rockchip,rk3568-canfd
-> > +      - items:
-> > +          - enum:
-> > +              - rockchip,rk3568v2-canfd
-> > +              - rockchip,rk3568v3-canfd
-> > +          - const: rockchip,rk3568-canfd
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 2
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: baudclk
->=20
-> Just 'baud'
 
-ok
+Actually its a fix, I'll add Fixes tag in next post.
 
->=20
-> > +      - const: apb_pclk
->=20
-> apb or pclk.
 
-pclk seems to be more common.
-
->=20
-> > +
-> > +  resets:
-> > +    maxItems: 2
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: can
-> > +      - const: can-apb
->=20
-> They are always for 'can' so that's redundant. I guess it is fine on=20
-> the first entry, but definitely drop on the 2nd. Or do 'core' and 'apb'.
-
-I've picked core and apb.
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---uoxl2fbtiq2wmpls
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmap+VsACgkQKDiiPnot
-vG8xRAf/V3oltDCzkRNsA3hUaZKwlWUi4NXICpbMlvwlVV0AuaFXrtKgziSCFkvD
-DmI7ndfoLddvmlqZZdGvowWcRRyXOq7CFIj79GAimQuqr2Muj86MGa92SVKFKYjS
-LSQowAyUusircIBwUObRs/tTKCDwdFnd/kQ8WTHZsor+n0dLnOlziURX+n5iN1Gl
-PEWElBCcdYeOs0PFKi+zXbXXwzM0B0fBbsrH8yikXev7tVlLHbFxbmEL5EYjVa3m
-SWRWAKLOafWxYPs6cjAh+2Ydvz9M8BtiHTBuV6mA27KBxy2RqaGWKe0akKG3UNgY
-YJNBUGi9nhWvH5zKjsw3T5+hExKfLg==
-=sm8+
------END PGP SIGNATURE-----
-
---uoxl2fbtiq2wmpls--
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/gcc-sc8180x.c | 350 ++++++++++++++++++++++++-----------------
+>>   1 file changed, 210 insertions(+), 140 deletions(-)
+>>
+>
 
