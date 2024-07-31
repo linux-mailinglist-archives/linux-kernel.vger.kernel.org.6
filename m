@@ -1,272 +1,266 @@
-Return-Path: <linux-kernel+bounces-268731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7020994286E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:56:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D3C994286F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B34A1C2195E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310D51C21918
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CFF1A7F6E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7531A7F70;
 	Wed, 31 Jul 2024 07:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="N/WKGPWQ";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fa8Ihuvg"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="IIiGcgyW"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A02D450E2;
-	Wed, 31 Jul 2024 07:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.154.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722412553; cv=fail; b=KnrxYcc7Bzkqahkua3E9cz3Pk9PLz7nnP3UV6Zf61Amd+J6uakFQrvyg9/G/VdxG46RDYhI7Xu7WWflLABHPoNudxDqchVD/w1DQ6zOqmvYICXnQ6zfOgBcZ+/9IbCQOlTwoYuiBbVB+pJDS1jrsOXf/YGXfZ56oXd+ZcUZJYoo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722412553; c=relaxed/simple;
-	bh=twGhPuaLBWuIwFuqPEm6o6lA2uYRUgNUf+pasWlkiBc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=kDouF3f1Qg+R2Wbf/oSNL26fRskrZum2ecMdiQpXhdoEHWEDJBIXlsQYn4Asi46UAI6MOZDRZwLjO3kEk2PnaCxPjVTnUTyme3JWcuBkqYsQk90pViRK0sQWn/gcosrwxU2EBjLoS3fBDBAmz4pfYVP6n+Ye+xh+DTpYivZLwGU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=N/WKGPWQ; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fa8Ihuvg; arc=fail smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1722412550; x=1753948550;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=twGhPuaLBWuIwFuqPEm6o6lA2uYRUgNUf+pasWlkiBc=;
-  b=N/WKGPWQbLmWnsXj5XXRZn06XN7K1Aru41PwqkQBSAiNQVFIeJr27x/v
-   ++g/2i6726mdOzTsPjpMHU6h9bRT+Ubm+9EN+Joad/jz/MtJ2VXkRtphC
-   /4Yy30eyLkObi4PqLyvOOSG/2/GWwF8z3bthufGwI11I5WrIVU0Xs4s/k
-   gwQ7s3DRn2afmFIfRd/QiyM8WacegUK0toZ8diC5YwQCbazZz5diL5UaY
-   5FBZ+J/uPfUMW3Gvx2PwXAfRd5Sh7tD/8XuApLNpUPxHABf4POeYt4SSC
-   b+DDQbx/9Ho+6JcsQfpE4HuBVFGxw8K3VipNlutKo+K0Uefq3IgMl2J8n
-   Q==;
-X-CSE-ConnectionGUID: E44E5yLcSSi7THEmw6H9sA==
-X-CSE-MsgGUID: PKT5KzrzQrGjujXgpMZ07A==
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="197322511"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 31 Jul 2024 00:55:48 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 31 Jul 2024 00:55:37 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Wed, 31 Jul 2024 00:55:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wPILky6pptwPNW1Pyjf30Iz6opoGGHDVNhR7VQ5rk9krSfGgBStcEWAe0bFffQ5KOS117lKFEUwndnge0Aq9wVp7wPM1NKTVoSk0A/yFwIQBjUoZl3qR1mzDjDR4sWYAyByyQnSZ1s5ZeDkhvBMPA08krMuSIJTGkeQQkGtUZQgkZf5Y9rZ+EerzwhYI8eILZpTsteBQSnyGq60y9ojimpY9u1IwG+Onk3K/JAP61xTnSFnkMc7y++moVPowJZlMKhAm7Cb9gvjP1ljvB9mzFGoRAlGhAyoyAALLI8AmGB/cUH+PPtmSK0Sr7eIDJIQAXZ86JASzoyoWLIfqP8kcAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=twGhPuaLBWuIwFuqPEm6o6lA2uYRUgNUf+pasWlkiBc=;
- b=DyFfG0lPVVRZtH/CI5DBDElIEnqCSVVcUY90wzZwMDSEk1EzXehMTKshNCfL5WMe4qdD/BZ5sHNc+1VM+0fxNNnf+0NopaTTc1WKjvL+5/YJeF2MKEwoK77wxCxchzpYYZEAO3+Bchimf+sUGNqldfRvuef8ivt2hr0P3nhV3sS5ZSiPiLQFFuHW+8eTQN6N0pS9jt2v2Htpn+Ef5Otu8MTkF819LFLS933McjIMsc+Nr9EbLZunyVHTQtMvWsHgHNSRru/D9sA4vc3WMdLfM07xK7jidrbR5j9N84m9NDD69SFaLKSlLaEQbv4al6SOrRCXiZDxW1E36i/INoc5tg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=twGhPuaLBWuIwFuqPEm6o6lA2uYRUgNUf+pasWlkiBc=;
- b=fa8IhuvgGpSOXldKvdySi0JI8mHQNlU6VWjJ4er9a8i0wwlKFbZB88nNAMtJvuwBnSaMfVPAWTCH8EOZOcRUMVjB9twmqSqFaeT0ZWyqejLFGmqj3b3YPBStyYzLG5Z7vlKJWNnDg0EPnL7NEyY70G0UVlLxsoIZHCHqRRAj6JWnyzP8D/oESgML7l1m3bY5PERag1/JNgrGubXVzZzL6TkVogoB/eiazEnuvN34hy9gqMhaBvjsx7PYnrsDu5TQm2lvwMaxiSQ1qd4HacFFCWzjZBWeMN+kHuftD+Xl2HTgyrhuvO1pdT7njSN2BpNbTL/+otynXO93LY8WNLPu+Q==
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com (2603:10b6:806:25b::19)
- by PH7PR11MB7962.namprd11.prod.outlook.com (2603:10b6:510:245::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
- 2024 07:55:34 +0000
-Received: from SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9]) by SA1PR11MB8278.namprd11.prod.outlook.com
- ([fe80::84fa:e267:e389:fa9%5]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 07:55:34 +0000
-From: <Parthiban.Veerasooran@microchip.com>
-To: <rdunlap@infradead.org>
-CC: <masahiroy@kernel.org>, <alexanderduyck@fb.com>, <krzk+dt@kernel.org>,
-	<robh@kernel.org>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<UNGLinuxDriver@microchip.com>, <Thorsten.Kummermehr@microchip.com>,
-	<Pier.Beruto@onsemi.com>, <Selvamani.Rajagopal@onsemi.com>,
-	<Nicolas.Ferre@microchip.com>, <benjamin.bigler@bernformulastudent.ch>,
-	<linux@bigler.io>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<saeedm@nvidia.com>, <anthony.l.nguyen@intel.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <andrew@lunn.ch>, <corbet@lwn.net>,
-	<linux-doc@vger.kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <Horatiu.Vultur@microchip.com>,
-	<ruanjinjie@huawei.com>, <Steen.Hegelund@microchip.com>,
-	<vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net-next v5 13/14] microchip: lan865x: add driver support
- for Microchip's LAN865X MAC-PHY
-Thread-Topic: [PATCH net-next v5 13/14] microchip: lan865x: add driver support
- for Microchip's LAN865X MAC-PHY
-Thread-Index: AQHa4jaTAREq0XzH102IOZrpnjB75bIOqbGAgAHP4IA=
-Date: Wed, 31 Jul 2024 07:55:34 +0000
-Message-ID: <6acd6d65-7dfb-4b3d-9a39-edcc5728261f@microchip.com>
-References: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
- <20240730040906.53779-14-Parthiban.Veerasooran@microchip.com>
- <6750b19d-4af3-44c8-90a6-9cb70fcec385@infradead.org>
-In-Reply-To: <6750b19d-4af3-44c8-90a6-9cb70fcec385@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB8278:EE_|PH7PR11MB7962:EE_
-x-ms-office365-filtering-correlation-id: 373fb0cc-3a93-47be-399a-08dcb13628a1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?dFA4YjJJeVpKWlUyVWQ5SStWVmE1aTNuYXd3c1o1ZFZ1ZDlPZk5mZlV0bFlF?=
- =?utf-8?B?d3UxbE5hdHNweVhBYnhYSFJhTVI2WmY2NUszVXVoL0lXWXBpVUdMNHg1N013?=
- =?utf-8?B?TFEyNFBTZ000bTl1QUpWeUFKMEtKcEVPd0RmUWQ3RDB0N1JtYkNLNTQ0RWtQ?=
- =?utf-8?B?SXVzcklsMThXVDdCajJNMllWeEFmNnJTbTdMcG1TeG9wbUozbGZSNERwQk1z?=
- =?utf-8?B?OU1EUTJUZGxYSTNuYW5vbXRNSmVJdUpUUWZCaU0zN0lvRXdNbThFOUpJbVB4?=
- =?utf-8?B?S3VtVmdMTDB3RDgwRkRnZk5pb3dHVWcwTkM2YzVJd0RubjUvdk43cVBHcDdT?=
- =?utf-8?B?bUhHTHJITExyN3F2YjZTODQ2aERYNmdtbHRGZDBJVHVVUUl3UTlaUjgzVzVj?=
- =?utf-8?B?QVhOTDJpTHY3NmVWS2EzRXF5Vk4wbFVyNVd4VHpGRk5BQytSYlF0dk1VL0tp?=
- =?utf-8?B?WUZwN3FzVlpDRTZ2SmdUSUdmdzd3N3ZjdmF0eS9MSDZSZTYvM3VxMjZRUi9B?=
- =?utf-8?B?QkZ6eTRsMzFBejluZW9KNnJzMnZodjZHVWdFL2hKR2lDWWp1bHR4VUlLVnZM?=
- =?utf-8?B?U3JrdmQ0cVdsblRBallLQ3pLTHZ5VFc2VmZtMmt5VWR2ZTVha0s0dC9wVDBM?=
- =?utf-8?B?VXVNY0tLMkI5ZGdBVko3dWcrVFJDcW9PYk1oWm9yR000eHI5RGIzUXZhdzh6?=
- =?utf-8?B?MmUwTXFYRXJMaTJFTjlZRHNPWkJzdENDTHJ2YUJsSXVZL1VQd05hMDZjYkJS?=
- =?utf-8?B?alBjaUk3OExGbTEza2Qyek5ROEFkTllicWF2TkpaQThXcE5hOS83Ujd3eUdN?=
- =?utf-8?B?d3hGcm0rTVI0SnNDVjkyd1FzSUlBZTRIMTBBUS93RHB2UXFBNnhZVE42WG1h?=
- =?utf-8?B?NHE4TGJJSFgvTXkzVHA5ZnMvRGpyNUs4S1pERWdKRDBLQTQyUmZpR0FzZjRC?=
- =?utf-8?B?eXZFaTc5U3BsaFk3TVlPd3ZTLzNzajFja1hSNXRKT1lsaVFuYTlsZFp0RFZR?=
- =?utf-8?B?K3hoWVkxZmNKTVVDU2QrQXd5OU4vVUhuR3pMcUtlQ2pHVUkweTd5ZEtUMmVw?=
- =?utf-8?B?bnBReXJ0Vk5POHlEaHVBd3ZPcExLcEtYamJzRmpISTQ0MExZSG43ajVObGlM?=
- =?utf-8?B?UXpxVlFaelprWmpmQ0d0SGRlM0RqbjJPWXBxZjQybkVkYUlKOTMyUjNwK2s3?=
- =?utf-8?B?bzhjeHY3aXkyTzNlNDk0eHZqMlNiM2c0R1pzRDhSWnB3N2E1amlza1NwSVFT?=
- =?utf-8?B?Q0luRFpzZWNDN0Q0Ulcya09RdFpFNWpuT3hHemQ0dThBeW9zSDBLNTdOeEtK?=
- =?utf-8?B?WFMrRUNuTnFUODI4eXRVQndwc1BodTFCekc2RXVqclQ1dmlSeHFuMzArdk03?=
- =?utf-8?B?bys3L3VZV3p6aW9qelB4TGVqM3ErM1M1aHFwZVpzbnBFRnl1T2MyNzJBNnNO?=
- =?utf-8?B?WnVsMUtzNjc0bWR3NlY2TXRhYXhia25YcVZoU1hqSVZzL3pRSGZHaTI4bUg1?=
- =?utf-8?B?aGU1WXNtblRCN3BTd3hTUk84eDBnZlg3TW1zaW1ScEgzdEtobkdoWmhNUW05?=
- =?utf-8?B?UTM2MTUyRUVTcE1QSU9EUjBoaFpsb3B2Q2ZwaHphdWNONmFFNmJiVHorQnFW?=
- =?utf-8?B?TEphMGJWNWhBL3lodFhIK1p0eFp2ZGRMaTZRczhqYU0vZTlqV3k1NHZobWJR?=
- =?utf-8?B?ekoxRjduc0thbHhvM3RsMmYzZS93UWs4RHBzK2Ruc0tVRlhzWHorTTJOWHNY?=
- =?utf-8?B?TXZLVGNYcGMvWFZhYlpSajFkZUZHSjlRSjN6T21naU5tQVBQa1dvWWE2OW0r?=
- =?utf-8?B?eU4xTjlrUjN3SCtiS0xiSUlmeU03cEZoZkFaK1BKYUFaUXc4VlNYZ0U2K2d2?=
- =?utf-8?B?N1FZNXlSbDZSSU9LODhXUkk4Vm9Ba0FTY3Z1eGY3SkpYYkE9PQ==?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB8278.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VTFSWWFDZkR3c1R2aUhLbkw2Vkg1eUxsaUpZMVV2MUFpTlhIZW5YZ0p6cGlh?=
- =?utf-8?B?V3ozVzJScFRoY1MrYktvWUthMHlJWklhemp3ZkdVcUdmU1o1blNTN1B3MzNv?=
- =?utf-8?B?eG5vR0lpcGQwenpSQTNuY3lOWWk5ZkZ4bTd4L09nYXNSbFY4R0FTOStVaXVv?=
- =?utf-8?B?emtWVkxxRSswUElOTmQ1WXNtRU9EeXdOZEVGdnFndUhNZmcvbWVtRWgvZ2Za?=
- =?utf-8?B?d2ptMWJYZ1drNmNZSE43RUcxdDYzTWRoY3VPVlRENmZLcXlWS0FnSUk0aDN6?=
- =?utf-8?B?RnpWQVlOUnlHdTViQ2hyTlY4OFYzNnZvZzFhMkphTWtBaFJTTWU5SFF4L3Mr?=
- =?utf-8?B?MEg1bXZrLzVwWDFUZ29NZlI3RFd3N2xqYjdlZ3BVaTZrOTNHUFRNa2Q5QWt3?=
- =?utf-8?B?UkNHRjI1cnIzM1c0SnN2OVY5MHNxOEpMVHZsM2dkZUNTZ0xrUlM4WndHRWxV?=
- =?utf-8?B?bnMzYUVEK1RNaGVmUjNCRTIzWk9oSkdQNWJyWlFtd2o0aTBnazJYLzB6ZXZv?=
- =?utf-8?B?QmZoS3NUYVJHcTV1VndzZllCYktXVjBLcWdhVFpSbjErYVBXZnhlWkltR3RV?=
- =?utf-8?B?OVBUYzhwVk9UNVoxUS9LZVJKdFVDaUNGR2x1TnQwTkdub2hxZnZMaElJOWFI?=
- =?utf-8?B?US9BTmpHRmFhMEtZUmpNWnYyV1JJeVVvbUxuMGIzQ2luVlB5QUlqUzFVZVAw?=
- =?utf-8?B?MkZTZDMxMVI0QmpBVDNEVzBLanhjOXFhL2wxSEl0Z3hmWWl4SlRCSTY1elVv?=
- =?utf-8?B?OUtYTjQzcmlBUU5lK05BMmRjRjBSMzNCSmc0Qkx4N3RnbWFBaFlOaTdrOUJk?=
- =?utf-8?B?UWtRbGI4ZGtqUUNRcmUxUHFZUjZ1SVBkZm5ZVGx5MjJxb2lPTDFHTy84TWla?=
- =?utf-8?B?c0dVN3BNcE44NENxZGh5UCt6Rml5U3RlN0JOTWdPMWtvaFZzcE4xQW4yUi8r?=
- =?utf-8?B?eEJWUW5OTXI3L0JvOVIwdXdGekl6UCtSc3g0WW5MYVk1MW52M3ZZMTVlV2R4?=
- =?utf-8?B?Q2dpWEJ1QTBWeVZwVlNLZkNkMDc2S3ZrWEg1SjFxUFBmMkhjbTFFUm5XVUdS?=
- =?utf-8?B?RDlmbmlxU0s3cm1kVnJNV2tRdGh2SUZFNkJVYWtpM2F2a0p0YVBNbEhnSVVr?=
- =?utf-8?B?WXNZVTFibWRXeEE5cDVnS0FERzdnTjA0M09PaTd3WmVHNFNBQmdUaENhclVE?=
- =?utf-8?B?c3c3T2xzcFJWaHZKUE5yblFlYTF2d0dxTkRGbVo1L3RNVFp1TkRaa1I1WEFB?=
- =?utf-8?B?a29ZYkQrbW04NDhPWE56amd5Y0VIL3BQNEVqa0MrMzQ1UmNibTlvNXF4V2dS?=
- =?utf-8?B?UVcrS3RnUVB2UDhYd1JLdHc4aUZHMlk0aDZFN2VYTWszWHYrL09ScFdGWmZB?=
- =?utf-8?B?eUR4UlhkNHpzNmh3VExuMHhzVU91S1Y3ZFIvbGhTVkRueCtGcUplWVJmUi9E?=
- =?utf-8?B?WkZBK1ZIMWRZV3YvZko5OVRQT2p5c3VUR3lYVUg2YytkblBCVUhVdTd0eW95?=
- =?utf-8?B?cnYvcDJEbWZYUHozK2VoTjhWbjdqVHA0a2F4RUlGdEdzODJGLzUveDRZTk5a?=
- =?utf-8?B?Rlh6TlZ1ZXJ3QWRUVEk2Qkt5Zk5UZWo1NWJRWW1UNURpZ21pSUVvWE1Yd1Fw?=
- =?utf-8?B?a2I3N0xqU0pJNml5bkJaRlh2R0hzakN6ZGpJVk5IQUlCMWVzRVBMZmIrZ3Mx?=
- =?utf-8?B?Zis5eCtIa2JhUU5seTE3Uko4bzBWRXY2aW1RNG1jV09kdktyN2s0YjB4Yi9X?=
- =?utf-8?B?WkovQ2ZCVE1wUUlJNmM0emcyUjA1MWhhMTZ1Mi9GdkdmM0RmUDZpaEhZUjcr?=
- =?utf-8?B?VmFmVFB4aG5vNU1FenVDcE9pTUcyNHY5ejJHNmVnVTIydi9YelNzSkVzUlg2?=
- =?utf-8?B?aEtXWTNMTjJFOVRrejlmTzZGWU5BNHdidGUwOVhOMUYzbnVnSFBhak91Rm1q?=
- =?utf-8?B?WmlnLzhCeWVhaGdSVmJkY255N2pZVyttZGg1a1NXNldHZmQ3bmpLTjZNSTNo?=
- =?utf-8?B?Ty93QUxrU0ZyWC93ODE2MkVYZCtkVXgvQjloQ1JpTmhJa0xvcGFkbnlzVWhZ?=
- =?utf-8?B?OXdWZ3lzcEhPZWVvaUp4ZUpJb0o0SVZZdHFsalNhNnFSZDNLa3hPU1hubUlF?=
- =?utf-8?B?Q3I5UXpoZGZEWVBiWkVuQTdjS1d6Y3ZMT2xyS3RwSnNXbEd1SVkyT09MQXBI?=
- =?utf-8?B?TXc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <10BC3A366DC1A94080F89E7201BBBF56@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35B318C91D;
+	Wed, 31 Jul 2024 07:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722412554; cv=none; b=kyQYp+OODF9gCinWyJ8byc1EsH8bqOUPb7CMDxokrrj0ht8qO83eGG7cuSUFjW9fxzrtoX7ecGFiOsHQVOGW0usFYRoVdh5dWCm/cnk3hHsByerxomG7dJ4Hjr0apNDgja6KnRN0Mv4l9mUTUAbK5mRPix2bRlEC5b5yLyA975o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722412554; c=relaxed/simple;
+	bh=tt99L3qQEZSlmPhZEggYbDhQJG+ExvCJjahC6H5Ay0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PhY/CE3lyLtdA2Axz9cwZicztj/3yhnWQclEuUZYT+bmev14nNbjyXi2b+ZcmAI3hTABhB94xcF+d+n888z//jxHN0Yf5nuTb9aLgmg4Gn7cPHji9wezXjQQBKGXK8hqkHbQ1OnKAPo+Pv9+T9N5xuzVbMmE3tNWFovAf3kW0b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=IIiGcgyW; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B2AD4240002;
+	Wed, 31 Jul 2024 07:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
+	t=1722412544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5cuuYq4B4A2tJJ88qvDkr4pnPIMR7Qh0bCqjvCxUpLM=;
+	b=IIiGcgyWSrvUnfZN1McrAfgoL2uGDkBB2gqXhFkPZdYNjfz/4DVKGhlj3GlkgDgQucKCdq
+	MO+tOqjNrytj2uyKieU3ut5WHrLpkV07PpG0RqWgRONbcXWOKtJ8bL9ywRyt240fXLsUym
+	RMopYc4XZHg0bhHMFRV3zFbSfHa6FTAHuxTSjWsx1TvZk0JGGkZ+20M0+VVnrVskrC9qje
+	8M0d07KxNszNj1uIlLkT1TNTrpAwt1eAacBLlcQrt/havZ63mQgXc/fzXKt3qmhinY5q6c
+	jq35KsMQzR20Hx1cesRubvoiSxOEAPVFKifurYwVfHoQKCygWnkbnTwP9kuRZA==
+Message-ID: <8f2343cc-125c-4877-b7be-bfe4134870be@arinc9.com>
+Date: Wed, 31 Jul 2024 10:55:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB8278.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 373fb0cc-3a93-47be-399a-08dcb13628a1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 07:55:34.7357
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: NjpV1hbUlccydexEWEWPofINCZAuCLdqMtTSQC3t4Fc8hSXEXRZmUzBbPs2BkckAPU321E8MS6FaJqHy5d8W6GLl4C2/92vBbHe3jgiQkzFqmttwUPSLXmX77wrvNKo6
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7962
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>,
+ Jakub Kicinski <kuba@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>,
+ frank-w@public-files.de, Frank Wunderlich <linux@fw-web.de>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+ <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+ <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
+ <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+ <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
+ <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
+ <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
+ <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
+ <9c498e37-df8b-469e-818a-9b1c9f2b1a3c@collabora.com>
+ <cebb10b8-b0bf-4cb7-bba4-c3f941ba2b82@leemhuis.info>
+ <1aedb1d4-8dc3-4e17-aff1-7cc417465967@arinc9.com>
+ <130518e2-d6dd-49ed-9cc2-ca9cdec93b98@leemhuis.info>
+ <aeb255ff-3755-4f76-a8f8-cda27a67f818@arinc9.com>
+ <b3fa66cc-516b-4d78-aee5-62a47b52a3b1@collabora.com>
+ <2076f699540c3c9d10effdb8b55d3f89@arinc9.com>
+ <921f448b-4085-4c8d-85f8-478318d9c054@kernel.org>
+ <0f417818-3009-4476-88fb-47a9ca15d525@arinc9.com>
+ <cf031c05-4082-4cfe-9a4a-0c855764ee04@kernel.org>
+Content-Language: en-US
+From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+In-Reply-To: <cf031c05-4082-4cfe-9a4a-0c855764ee04@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: arinc.unal@arinc9.com
 
-SGkgUmFuZHksDQoNCk9uIDMwLzA3LzI0IDk6NDUgYW0sIFJhbmR5IER1bmxhcCB3cm90ZToNCj4g
-RVhURVJOQUwgRU1BSUw6IERvIG5vdCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVu
-bGVzcyB5b3Uga25vdyB0aGUgY29udGVudCBpcyBzYWZlDQo+IA0KPiBPbiA3LzI5LzI0IDk6MDkg
-UE0sIFBhcnRoaWJhbiBWZWVyYXNvb3JhbiB3cm90ZToNCj4+IFRoZSBMQU44NjUwLzEgaXMgZGVz
-aWduZWQgdG8gY29uZm9ybSB0byB0aGUgT1BFTiBBbGxpYW5jZSAxMEJBU0UtVDF4DQo+PiBNQUMt
-UEhZIFNlcmlhbCBJbnRlcmZhY2Ugc3BlY2lmaWNhdGlvbiwgVmVyc2lvbiAxLjEuIFRoZSBJRUVF
-IENsYXVzZSA0DQo+PiBNQUMgaW50ZWdyYXRpb24gcHJvdmlkZXMgdGhlIGxvdyBwaW4gY291bnQg
-c3RhbmRhcmQgU1BJIGludGVyZmFjZSB0byBhbnkNCj4+IG1pY3JvY29udHJvbGxlciB0aGVyZWZv
-cmUgcHJvdmlkaW5nIEV0aGVybmV0IGZ1bmN0aW9uYWxpdHkgd2l0aG91dA0KPj4gcmVxdWlyaW5n
-IE1BQyBpbnRlZ3JhdGlvbiB3aXRoaW4gdGhlIG1pY3JvY29udHJvbGxlci4gVGhlIExBTjg2NTAv
-MQ0KPj4gb3BlcmF0ZXMgYXMgYW4gU1BJIGNsaWVudCBzdXBwb3J0aW5nIFNDTEsgY2xvY2sgcmF0
-ZXMgdXAgdG8gYSBtYXhpbXVtIG9mDQo+PiAyNSBNSHouIFRoaXMgU1BJIGludGVyZmFjZSBzdXBw
-b3J0cyB0aGUgdHJhbnNmZXIgb2YgYm90aCBkYXRhIChFdGhlcm5ldA0KPj4gZnJhbWVzKSBhbmQg
-Y29udHJvbCAocmVnaXN0ZXIgYWNjZXNzKS4NCj4+DQo+PiBCeSBkZWZhdWx0LCB0aGUgY2h1bmsg
-ZGF0YSBwYXlsb2FkIGlzIDY0IGJ5dGVzIGluIHNpemUuIFRoZSBFdGhlcm5ldA0KPj4gTWVkaWEg
-QWNjZXNzIENvbnRyb2xsZXIgKE1BQykgbW9kdWxlIGltcGxlbWVudHMgYSAxMCBNYnBzIGhhbGYg
-ZHVwbGV4DQo+PiBFdGhlcm5ldCBNQUMsIGNvbXBhdGlibGUgd2l0aCB0aGUgSUVFRSA4MDIuMyBz
-dGFuZGFyZC4gMTBCQVNFLVQxUw0KPj4gcGh5c2ljYWwgbGF5ZXIgdHJhbnNjZWl2ZXIgaW50ZWdy
-YXRlZCBpcyBpbnRvIHRoZSBMQU44NjUwLzEuIFRoZSBQSFkgYW5kDQo+PiBNQUMgYXJlIGNvbm5l
-Y3RlZCB2aWEgYW4gaW50ZXJuYWwgTWVkaWEgSW5kZXBlbmRlbnQgSW50ZXJmYWNlIChNSUkpLg0K
-Pj4NCj4+IFNpZ25lZC1vZmYtYnk6IFBhcnRoaWJhbiBWZWVyYXNvb3JhbiA8UGFydGhpYmFuLlZl
-ZXJhc29vcmFuQG1pY3JvY2hpcC5jb20+DQo+PiAtLS0NCj4+ICAgTUFJTlRBSU5FUlMgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA2ICsNCj4+ICAgZHJpdmVycy9uZXQvZXRo
-ZXJuZXQvbWljcm9jaGlwL0tjb25maWcgICAgICAgIHwgICAxICsNCj4+ICAgZHJpdmVycy9uZXQv
-ZXRoZXJuZXQvbWljcm9jaGlwL01ha2VmaWxlICAgICAgIHwgICAxICsNCj4+ICAgLi4uL25ldC9l
-dGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9LY29uZmlnICAgIHwgIDE5ICsNCj4+ICAgLi4uL25l
-dC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9NYWtlZmlsZSAgIHwgICA2ICsNCj4+ICAgLi4u
-L25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9sYW44NjV4LmMgIHwgMzkxICsrKysrKysr
-KysrKysrKysrKw0KPj4gICA2IGZpbGVzIGNoYW5nZWQsIDQyNCBpbnNlcnRpb25zKCspDQo+PiAg
-IGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuODY1
-eC9LY29uZmlnDQo+PiAgIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL25ldC9ldGhlcm5ldC9t
-aWNyb2NoaXAvbGFuODY1eC9NYWtlZmlsZQ0KPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVy
-cy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvbGFuODY1eC5jDQo+Pg0KPiANCj4+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAvbGFuODY1eC9LY29uZmln
-IGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9jaGlwL2xhbjg2NXgvS2NvbmZpZw0KPj4gbmV3
-IGZpbGUgbW9kZSAxMDA2NDQNCj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uZjNkNjBkMTRlMjAyDQo+
-PiAtLS0gL2Rldi9udWxsDQo+PiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb2NoaXAv
-bGFuODY1eC9LY29uZmlnDQo+PiBAQCAtMCwwICsxLDE5IEBADQo+PiArIyBTUERYLUxpY2Vuc2Ut
-SWRlbnRpZmllcjogR1BMLTIuMC1vbmx5DQo+PiArIw0KPj4gKyMgTWljcm9jaGlwIExBTjg2NXgg
-RHJpdmVyIFN1cHBvcnQNCj4+ICsjDQo+PiArDQo+PiAraWYgTkVUX1ZFTkRPUl9NSUNST0NISVAN
-Cj4+ICsNCj4+ICtjb25maWcgTEFOODY1WA0KPj4gKyAgICAgdHJpc3RhdGUgIkxBTjg2NXggc3Vw
-cG9ydCINCj4+ICsgICAgIGRlcGVuZHMgb24gU1BJDQo+PiArICAgICBkZXBlbmRzIG9uIE9BX1RD
-Ng0KPiANCj4gU2luY2UgT0FfVEM2IGlzIGRlc2NyaWJlZCBhcyBhIGxpYnJhcnksIGl0IHdvdWxk
-IG1ha2Ugc2Vuc2UgdG8gc2VsZWN0IE9BX1RDNiBoZXJlIGluc3RlYWQNCj4gb2YgZGVwZW5kaW5n
-IG9uIGl0Lg0KPiBPVE9ILCB0aGF0IG1pZ2h0IGNhdXNlIHNvbWUgS2NvbmZpZyBkZXBlbmRlbmN5
-IGlzc3Vlcy4uLiBJIGhhdmVuJ3QgbG9va2VkIGludG8gdGhhdC5ZZXMgdGhhdCBtYWtlcyBzZW5z
-ZS4gSSB3aWxsIGNoYW5nZSBpdCBpbiB0aGUgbmV4dCB2ZXJzaW9uLg0KDQpCZXN0IHJlZ2FyZHMs
-DQpQYXJ0aGliYW4gVg0KPiANCj4+ICsgICAgIGhlbHANCj4+ICsgICAgICAgU3VwcG9ydCBmb3Ig
-dGhlIE1pY3JvY2hpcCBMQU44NjUwLzEgUmV2LkIxIE1BQ1BIWSBFdGhlcm5ldCBjaGlwLiBJdA0K
-Pj4gKyAgICAgICB1c2VzIE9QRU4gQWxsaWFuY2UgMTBCQVNFLVQxeCBTZXJpYWwgSW50ZXJmYWNl
-IHNwZWNpZmljYXRpb24uDQo+PiArDQo+PiArICAgICAgIFRvIGNvbXBpbGUgdGhpcyBkcml2ZXIg
-YXMgYSBtb2R1bGUsIGNob29zZSBNIGhlcmUuIFRoZSBtb2R1bGUgd2lsbCBiZQ0KPj4gKyAgICAg
-ICBjYWxsZWQgbGFuODY1eC4NCj4+ICsNCj4+ICtlbmRpZiAjIE5FVF9WRU5ET1JfTUlDUk9DSElQ
-DQo+IA0KPiANCj4gLS0NCj4gflJhbmR5DQoNCg==
+On 31/07/2024 08:29, Krzysztof Kozlowski wrote:
+> On 30/07/2024 18:38, Arınç ÜNAL wrote:
+>> On 30/07/2024 19:04, Krzysztof Kozlowski wrote:
+>>> On 30/07/2024 13:22, arinc.unal@arinc9.com wrote:
+>>>>>>>
+>>>>>>> Reminder: try to not see a revert as a bad thing. It's just means
+>>>>>>> "not
+>>>>>>> ready yet, revert and we'll try again later" -- that's actually
+>>>>>>> something Linus wrote just a few hours ago:
+>>>>>>> https://lore.kernel.org/lkml/CAHk-=wgQMOscLeeA3QXOs97xOz_CTxdqJjpC20tJ-7bUdHWtSA@mail.gmail.com/
+>>>>>>
+>>>>>> Except it is ready and trying again is my responsibility, which means
+>>>>>> unnecessary work for me to do. I've already got a ton of things to do.
+>>>>>> Applying the device tree patch resolves this regression; no reverts
+>>>>>> needed.
+>>>>>> And then there's the patch in the works by Daniel that will address
+>>>>>> all the
+>>>>>> remaining cases outside of the reported regression.
+>>>>>>
+>>>>>
+>>>>> The commit that fixes your breakage in a way that does *not* please me
+>>>>> (because of older devicetrees being still broken with the new driver)
+>>>>> was
+>>>>> picked and it is in v6.11-rc1.
+>>>>>
+>>>>> I had to do this because I value the community (in this case, the
+>>>>> users) much
+>>>>> more than trying to make an arrogant developer to act in a
+>>>>> community-friendly
+>>>>> manner while leaving things completely broken.
+>>>>>
+>>>>> That said, remembering that we're humans and, as such, it's normal to
+>>>>> get something
+>>>>> wrong during the development process, I want to remind you that:
+>>>>>
+>>>>>    1. A series that creates regressions is *not* good and *not* ready to
+>>>>> be
+>>>>>       upstreamed; and
+>>>>>    2. As a maintainer, you have the responsibility of not breaking the
+>>>>> kernel,
+>>>>>       not breaking devices and not breaking currently working
+>>>>> functionality; and
+>>>>>    3. Devicetrees being wrong (but working) since day 0 is not an excuse
+>>>>> to break
+>>>>>       functionality; and
+>>>>>    4. Blaming the one who introduced the devicetree (you're doing that,
+>>>>> since you
+>>>>>       are blaming the devicetree being wrong) isn't solving anything and
+>>>>> will not
+>>>>>       magically make your code acceptable or good; and
+>>>>>    5. If you push a wrong commit, there's nothing to be ashamed of; and
+>>>>>    6. If you make a mistake, you should recognize that and find a way to
+>>>>>       make things right, that should be done for the community, not for
+>>>>>       yourself; and
+>>>>>    7. You shall respect the community: in this case, with your arrogant
+>>>>> behavior
+>>>>>       you did *not* respect the users.
+>>>>>
+>>>>> P.S.: The right way of making such change is to:
+>>>>>         1. Avoid breaking currently working devices by making sure that
+>>>>> their DT
+>>>>>            still works with the new driver; and
+>>>>>         2. If breakage is unavoidable, make it so one kernel version has
+>>>>> a fix that
+>>>>>            works with both old and new driver, and the next version
+>>>>> introduces the
+>>>>>            breakage. N.2 should ideally never happen, anyway.
+>>>>>
+>>>>> Let's wrap up this matter now - I don't want to spend any more word,
+>>>>> nor time,
+>>>>> on this, as I really have nothing else to say.
+>>>>>
+>>>>> Best regards,
+>>>>> Angelo
+>>>>
+>>>> To be clear, I only became aware that my patch was picked by reading
+>>>> this
+>>>> email. It is clear that we have different views. To that extend, all of
+>>>> what you have written above can be answered to by reading what I have
+>>>> already written in this thread. Therefore, I don't see any wrongdoing
+>>>> from
+>>>> my side and invite everyone to fully read this thread to draw their own
+>>>> conclusions; something you seem not to have done. And I'm not the one,
+>>>> calling people names here. I can only offer my respect for hard working
+>>>> people.
+>>>>
+>>>> In my view, your behaviour of not applying a devicetree patch before a
+>>>> Linux driver patch was applied, and then not replying to any arguments
+>>>> whatsoever, was keeping the devicetree files hostage until your demands
+>>>
+>>> Hm, why ever DTS patch should be applied before driver patch is? This
+>>> clearly suggests ABI break. You proposed to fix ABI issue by fixing DTS,
+>>> which is not the way, because it literally fixes nothing. You got
+>>> comments - fix the driver to be backwards compatible.
+>>
+>> As I argued in this thread, I see no ABI issue here. I proposed to fix
+>> broken devicetrees, nothing more. Please read the full thread to understand
+>> where I'm coming from.
+> 
+> I read most of it and it does suggest ABI break. But even if you do not
+> focus on that aspect, your suggestion that DTS should be applied before
+> driver patch is just wrong. It was never like this and it must not be
+> like this.
+> 
+> Best regards,
+> Krzysztof
+
+I will use the ABI, bindings, and dt-bindings terms synonymously here.
+
+Let's discuss the Devicetree Specification Releasev0.4. In 2.1, it is
+stated that DTSpec specifies a construct called a devicetree to describe
+system hardware. A boot program loads a devicetree into a client program’s
+memory and passes a pointer to the devicetree to the client.
+
+A devicetree is a tree data structure with nodes that describe the devices
+in a system. Each node has property/value pairs that describe the
+characteristics of the device being represented. Each node has exactly one
+parent except for the root node, which has no parent. A device in this
+context may be an actual hardware device, such as a UART. It may be part of
+a hardware device, such as the random-number generator in a TPM. It may
+also be a device provided through virtualisation, such as a protocol
+providing access to an I2C device attached to a remote CPU. A device may
+include functions implemented by firmware running in higher privilege
+levels or remote processors. There is no requirement that nodes in a device
+tree be a physical hardware device, but generally they have some
+correlation to physical hardware devices. Nodes should not be designed for
+OS- or project- specific purposes. They should describe something which can
+be implemented by any OS or project.
+
+As read here, devicetree design is not to be influenced by any project.
+That would mean that bindings and devicetree source files are described
+first, then the implementation is made by any OS or project. To be specific
+to the case here, it makes no sense to hold a patch that fixes a devicetree
+source file until a Linux driver patch is taken in.
+
+I think the dt-bindings and the DT source files being hosted on the Linux
+repository greatly contributes to this false impression that Linux drivers
+have any influence over the design of bindings or fixing DT source files
+that did not comply with the bindings. That is why I'm looking forward to
+the efforts to take dt-bindings and DT source files out of the Linux
+repository into its own, separate repository. This would be a great step in
+addressing all the project-dependent bindings of Linux, U-Boot, OpenWrt,
+and all other projects, to have a single, unified repository to describe
+all the hardware that exists in the world.
+
+One of the concepts of the devicetree architecture is that a boot program
+can describe and communicate system hardware information to a client
+program, thus eliminating the need for the client program to have
+hard-coded descriptions of system hardware. Not only eliminate the need of
+that, but allow hardware with a different value for the description than
+what was hard-coded.
+
+A driver change cannot possibly break ABI because it's the implementation
+being changed, not the bindings. The implementation change can be so that
+it breaks compliance with the bindings. Which is not the case with the
+change made in the Linux driver in question. I have eliminated the
+hard-coded description from the Linux driver. That did not break compliance
+with the bindings. Instead, the implementation change made the driver
+compliant with the bindings; specifically, the description where the reg
+value represents the PHY address of the switch.
+
+It is important to note that old devicetrees that abided to the bindings
+still work after the Linux driver change. This is also, of course, the case
+for any DT source files hosted out of the Linux repository.
+
+Therefore, the correct path forward was to correct the DT source files that
+include values for descriptions that do not reflect the hardware it
+describes. Which is eventually what happened here. To be more specific, we
+fixed the incorrect description of the switch's PHY address on the DT
+source file as, on the hardware, the switch listens on PHY address 0x1f.
+
+Arınç
 
