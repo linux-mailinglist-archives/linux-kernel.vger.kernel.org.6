@@ -1,115 +1,127 @@
-Return-Path: <linux-kernel+bounces-268469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB0F942509
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:23:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888019424E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7561C21249
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:23:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAAB8285FCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66F1182BD;
-	Wed, 31 Jul 2024 03:22:49 +0000 (UTC)
-Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BA3A18049;
+	Wed, 31 Jul 2024 03:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="turT+Ug/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0F417C7C;
-	Wed, 31 Jul 2024 03:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A682F22;
+	Wed, 31 Jul 2024 03:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722396169; cv=none; b=MzN5s9BgvDA1rzaLKky7vG7R3LPIxSGbKyTLTGGVYMyOxsbfeHL5zWxP053QasO6xjAmMlpX71j3o9EzDBUhqcjrOit2fWQbKe4fU3qTip+8rERLTaNGSLbcVE3ZO2HLP+vpB0TOuPLA7r5bwmFv52cCD2VaOEA+/7IoUi/X6ts=
+	t=1722396017; cv=none; b=XKuDb2G21Mso+xJGvqOVcei2mMTM55W9Ecjci9NeTBfACOqVAhtT0rpZvLQnly3A9SIKYVtxqTr11nR8bBrI2crO97H2rEu2UjoH+r1O2QiQDh9rmi/vg0doLTpd+tP2ag7CVnUUlXXa66RLtEYY42yEDJ0P7ZYRwSvSWKaJ3Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722396169; c=relaxed/simple;
-	bh=T8izX+/yGXdwTJfp1aXGvxIT9IaA5SVPOv77vOCYAkk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gVfR62lVpj0TW5Opm1nDuI8OASsPtG17NcUdD8WZgd3misR+evgTBK4/oIbIWmSoKd9LrJnc3/5LyKc9/KvjE50rKlbRru3TxYCF6apoj/jO2yp2c6mwyulYaoRKZeDiA/CXljIPkY1E117GGrSJKapnps5xHDIPvYeLdKBCQxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.254.200.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtpsz2t1722396148tsc187y
-X-QQ-Originating-IP: 6jVb//9MNTYm9+pTLpUuNPc2RR0vlXEgVFqCQe54XpQ=
-Received: from [10.20.53.89] ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Wed, 31 Jul 2024 11:22:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 16900428801888143573
-Message-ID: <4453C8E00ABF5220+5cc48da4-637f-437f-abc8-5183399fc414@uniontech.com>
-Date: Wed, 31 Jul 2024 11:22:24 +0800
+	s=arc-20240116; t=1722396017; c=relaxed/simple;
+	bh=hDZt6iIUDYiAN923V1UwKGNGcbxjG5lzmaD0FxmfFNA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=R4VfHOSam67sae0I1fR5YYEXj7Q829sDmstdpVy48CX0H4WHSUXkfHgUsQ+2MRTlvGsdGZGhkcmS44CZbg3zCNataJXeP4SPsUXPgnrqNoof6KPBCYf45lI7IU1D3aqs/S6KTobLDwt4+kN5QPS6McdtPPxG5KrBItxkDIfWFEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=turT+Ug/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E294C32782;
+	Wed, 31 Jul 2024 03:20:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722396017;
+	bh=hDZt6iIUDYiAN923V1UwKGNGcbxjG5lzmaD0FxmfFNA=;
+	h=From:Subject:Date:To:Cc:From;
+	b=turT+Ug/FBnGiOZtQqDjjbr+TaF7gg2taYNvpZR0mRVJIUbWSZKF+jb0ud17G51PR
+	 lRS/6DyL1fK4zYhYLKEzgWacvLW+MuNfOm43vlAkZqdQE8OphDC2NGg7L72N9gm86z
+	 sZ81Y44GT1bvg0aqo/RcvJhZ5nGQyV2QkKUCGDRBsSXCMeTaujAlBHy5tNLc3BEBFq
+	 TtUg2LeDzCDLHf+GR1Fw8V/J67ReJ38tkXrxH9YssqaG5mZ0UV4AS6IoHK8ARWFE2Q
+	 45F6nYI1oOlHckckQfD3/G/YIJMeWCp8sjZT0kriBaoouZcCeY+d3iKRAMFLzdwXxB
+	 LxgQPmzK8OjRA==
+From: Bjorn Andersson <andersson@kernel.org>
+Subject: [PATCH v2 0/7] arm64: dts: qcom: sc8180x: Enable the USB multiport
+ controller
+Date: Tue, 30 Jul 2024 20:24:37 -0700
+Message-Id: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/cpufeatures: SGX: Adjust the error message when BIOS
- does not support SGX
-To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
- <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
- "mingo@redhat.com" <mingo@redhat.com>,
- "xiangzelong@uniontech.com" <xiangzelong@uniontech.com>
-Cc: "baimingcong@uniontech.com" <baimingcong@uniontech.com>,
- "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
- "jarkko@kernel.org" <jarkko@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
- "guanwentao@uniontech.com" <guanwentao@uniontech.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
- "wubo@uniontech.com" <wubo@uniontech.com>
-References: <D345627B0A699F37+20240730024931.1026933-1-wangyuli@uniontech.com>
- <a56bc12f6c60107c935db31d7330d28980ac4d5a.camel@intel.com>
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <a56bc12f6c60107c935db31d7330d28980ac4d5a.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHauqWYC/13MQQ6CMBCF4auQWTumLUWKK+9hWECZyiwo2ArBE
+ O5uJXHj8n/J+zaIFJgiXLMNAi0cefQp1CkD2zf+QchdalBCaVEojdEaacSKc2xxmFBTq0rTuZK
+ chHSaAjleD/Bep+45vsbwPvxFftcfVfxTi0SBF9FUQueV0rm5PWe27O3ZjgPU+75/ALuS7NCuA
+ AAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1616;
+ i=quic_bjorande@quicinc.com; h=from:subject:message-id;
+ bh=hDZt6iIUDYiAN923V1UwKGNGcbxjG5lzmaD0FxmfFNA=;
+ b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmqa6HAhUhl3sNxQYkwRvuMbP2hTzu7MO7f4G2k
+ 3GN1MjEIRaJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZqmuhxUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcVfiQ/5ARfNLoV7wFNzFwiaVzs2ULTj2CUC0qccSV9dnkk
+ Wv4eDYErwEATenvdR+LlwJC+EUBNHH2voPiUJ0BzLLM3Qv//TJATN2Se4vM9P3CNr/wwvOoIyAT
+ YLeEnxJlXgnHukUCeLXChAVKFy9gIlazBBsBUUtRXeuCK5Ifw3Uj/e8vdOt8jtEEiJ8rUHhP4qf
+ 5NOm0XBOvPtC1Wnr2gBk+LXRDSZ2lGUx4wUz0XKUSb2tVr9sZ0rS7OP9mI+d/mo/YPRK2P8GpEu
+ 8xe8J5rQbSWeha7f+SUl3ilFTuxEraR8JWEtBdg/NdF5qnMdAaSay7BlJ5rx9nqm3DiHEx92WiO
+ GjP/VTBZU6J801TaQqss2gAg9bpdiKywKYW58X9hVghDc6BvlF33RFLB8NDtDafINZTI3U/VAkl
+ TbWf5ZzciGBuWz9AWwH+8UokrnRTrF7b1XO9frl4RBK/bcipwEiMNlD2IgjqJn3heKj/QIPohp6
+ OxlGZPWWS+TH+H8jmdjR7vP2D9zHi7HE79iWsKR08ti909wx1nNHy2WcveGuVwTUMv+4QLTlEc0
+ XRQvqpDYlmH5JdGMBE8JpCdqUmBEB25LHRsxFqyTeBnvRYGhZ07u90rncCyfGsuTSHmxr9gncUc
+ pvM3ZUsmf9m9XLc2saYQzuCuUCJ3iCaTdr+4v/kbawvY=
+X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
 
-On 2024/7/30 19:57, Huang, Kai wrote:
+The USB multiport controller found in SC8180X is used to driver the
+camera in the Lenovo Flex 5G, and a couple of additional USB ports on
+the Primus AUX board.
 
-> +linux-sgx list, Jarkko, Haitao.
->
-> This message is only printed when SGX is reported in CPUID but is not
-> enabled in the FEAT_CTL MSR.  I can only recall this can happen when the
-> BIOS actually provides an option for the user to turn on/off SGX, in
-> which case the current message is correct.
->
-> I could be wrong, but I don't recall I have met any machine that doesn't
-> have any SGX option in the BIOS but still reports SGX in the CPUID.  Can
-> you confirm this is the case?
+---
+Changes in v2:
+- Moved mp index last in DT labels
+- Dropped applied PHY patches, and sent dwc3 binding update separately
+- Spelled out GPIO_ACTIVE_HIGH as necessary
+- Moved status last in a few nodes
+- Corrected MP_PHY_PIPE_1_CLK
+- Link to v1: https://lore.kernel.org/r/20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com
 
-Sure.
+---
+Bjorn Andersson (7):
+      dt-bindings: clock: qcom: Add missing USB MP resets
+      clk: qcom: gcc-sc8180x: Add missing USB MP resets
+      arm64: dts: qcom: sc8180x-pmics: Add second PMC8180 GPIO
+      arm64: dts: qcom: sc8180x: Align USB nodes with binding
+      arm64: dts: qcom: sc8180x: Add USB MP controller and phys
+      arm64: dts: qcom: sc8180x-primus: Enable the two MP USB ports
+      arm64: dts: qcom: sc8180x-lenovo-flex-5g: Enable USB multiport controller
 
-For example, Lenovo ThinkPad T480s that compliance id is TP00092A.
+ .../arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts |  34 ++++
+ arch/arm64/boot/dts/qcom/sc8180x-pmics.dtsi        |  16 +-
+ arch/arm64/boot/dts/qcom/sc8180x-primus.dts        |  60 +++++++
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 181 +++++++++++++++++++--
+ drivers/clk/qcom/gcc-sc8180x.c                     |   4 +
+ include/dt-bindings/clock/qcom,gcc-sc8180x.h       |   4 +
+ 6 files changed, 285 insertions(+), 14 deletions(-)
+---
+base-commit: 668d33c9ff922c4590c58754ab064aaf53c387dd
+change-id: 20240524-sc8180x-usb-mp-4eb278df7ef1
 
->
-> I don't see this is mentioned in the github link below which reports this
-> issue.  In fact, it says:
->
-> 	非bug，主板bios关闭了SGX，正常内核提醒
->
-> .. which is
->
-> 	Not bug, the motherboard BIOS disabled SGX, normal kernel
-> message
-hah, that's a typo.
->
-> And the link also shows this issue is "closed".
->
-> Please clarify.
+Best regards,
 -- 
-WangYuli
+Bjorn Andersson <quic_bjorande@quicinc.com>
+
 
