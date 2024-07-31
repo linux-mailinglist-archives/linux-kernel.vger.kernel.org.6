@@ -1,131 +1,84 @@
-Return-Path: <linux-kernel+bounces-268996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE834942C14
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:36:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FE5942C19
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:38:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8C71C22F7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:36:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D39F7B22F57
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0239E1A8BE9;
-	Wed, 31 Jul 2024 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x4ALYZGY"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F5E1AC450;
+	Wed, 31 Jul 2024 10:38:08 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75EF1A8C02
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DA11AC437;
+	Wed, 31 Jul 2024 10:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722422179; cv=none; b=moFrhNkM/s59gGhFnOc30zpy/9iDUaAUqeAbBXje7c1hu/2IlVd9Rydu/b1I3QxZdxX7yR82QmaFdTfi5XV9RsVT2K/Tktv36IoVyUgmGN5lW+tuvF43+U9H6qDyBbM/hMI4n+mpVSimR579GUWhOrBlDNWZ91gT7PD19FVBPtY=
+	t=1722422287; cv=none; b=e+MD93oc0CFOT8yP318KIMGvKXv43G57SQRxRVrwikbAz6F0Fl32xwsQ1BD4bTMHeYM7ytftpD9juM397NVc15IhpPGn0v6elxKk9+iNL+VMK3N/eY3peociyOdlcqlshp/wH9qvIwUkHuxDTK+m0GScxbZ62J8sn0NIluNgj50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722422179; c=relaxed/simple;
-	bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bSLFf32IUQaeSTzmpy9UosBaaxCXJlKTlWyBv9fpqfFCv7woNjTc9Gsu+ih0WfUhIwBaha2VZq8o2gcLGupCj0aQEmEbQmXFsFFM6FMqxueVkvMKpTR4ks6MsdnXyllMvx2axClD0kUUtJwvapJR42muEej5aKcxgeAcGFtIyJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x4ALYZGY; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfef5980a69so4555035276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722422177; x=1723026977; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
-        b=x4ALYZGYnX7JQpEVivNIbct/58G9/OEX6YULStOLMGRjBQ69puON/MKyuZP87+BqmY
-         aEnBbsY7uEEn3rmS6t8P6oeiOA0KvKPGSycTfIfyW04Ch0k1UTDkrdbvTqaYQ1H4Zie6
-         pczzFGVTtfG0dHFimI4n89TBoYjrprnrZN+aMv/q8bAXdvCvmTt977hm7H4b2tSyirdh
-         gW3GCKZB2wR4txkUlKCE6ZMqZRTUJBMXGvKx6eYuTac8YuIz8jnWLx15rbNexR92otVR
-         /qAf+9VC6lQpqorMnvYzDyjqLrZaXoloXZo7N/h4DtF3i5bwZwDecTStsLkf9O6Zkost
-         Nhng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722422177; x=1723026977;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=O4ckb6Oqb3ncJsu76380tJXMj+cK5C9kz9ggdB4lYew=;
-        b=RxGQJI0XXsnd6uzh8fIvjIVz8vX0/2T+JIakIejvdAFLe+v82TpOE+dbqAN8eXvLs5
-         73FBPokOExfhbYpCxsTxGxGotFqnT+uoYlIY/FFWjuDJQpK7uZ9bo9lWcCEF4VVERLiv
-         eXFH6hgZ2EaoMhgL5a22WJbrh2rByWHEgfkL2irtsyAzqHlPruEPfVI1ZK3AVyB/043h
-         yFfo5yxAmXfDR6udGPU1e7zX/ruygreIUqR5YQ+hHnbXcmj+bjJAtCVzRAowsRuif1FJ
-         Aehurf6AXHwYh8dbRtoiuzGagfs/BhaSB817nd5IJZR5xqIHrVzEjY2CzmomjOtRU05b
-         EUaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV0lex6Yf2H3vvj/cXugFuouXrf2V+C6YOFQO0OM6WTfZXR0uM6JmaVtxeF/MQaeLjEE9+29esnB6pCVA5Fdj3PHEDi0sezphS+rAK6
-X-Gm-Message-State: AOJu0Yxqk7G3uJrSuK+co4EC28pD9TJ4Lb6JaOE3QkNFEYLHsCVvMqh+
-	YucD+6PCk/yCFrhvJXST0p/LC/wsmn9dJYgcg7v9Vd/1z51842Ajl66Ts0fkQKOPwkASfEKuz5Q
-	gW73UAnRHubTD6cZVGV3tEULBdy9fA5sVpQJS5A==
-X-Google-Smtp-Source: AGHT+IE4Y0e/F10tasO9Hsf+j3yu7/uUrjh/4//0ti7GwEJstGqgDi8KunOtAzG0ELqcvTEvSFLeK3FKcUPdYjLJ62o=
-X-Received: by 2002:a05:6902:120d:b0:e0b:2afc:a803 with SMTP id
- 3f1490d57ef6-e0b544ebb73mr13729666276.30.1722422176743; Wed, 31 Jul 2024
- 03:36:16 -0700 (PDT)
+	s=arc-20240116; t=1722422287; c=relaxed/simple;
+	bh=I0yiiKdG8uu0A5nkhiVeRJO16oolJGWz/B3KCOfMjs8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kjRtmFJpGrWsaod+UdAKIgb0/LxT9IoFEPEgLlHZAWUw/dDJsSa07TmoQSiGJE4D7FkQTpIUQutt+SkwoDoIJFF8C+jhBLhfjTrQ+hbKcVd9gtJHCqftAp1tEHfUZagQ5yUOAxrV9MaM25kP8Pjxh7UNS7B2I1mJlUSc0IWWDNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WYpMf5W0pzyN22;
+	Wed, 31 Jul 2024 18:33:02 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D593180AE3;
+	Wed, 31 Jul 2024 18:38:01 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 31 Jul
+ 2024 18:38:00 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <basavaraj.natikar@amd.com>, <jikos@kernel.org>, <bentiss@kernel.org>,
+	<yuehaibing@huawei.com>
+CC: <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH resend -next] HID: amd_sfh: Remove unused declarations
+Date: Wed, 31 Jul 2024 18:35:45 +0800
+Message-ID: <20240731103545.2014741-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711131637.opzrayksfadimgq4@vireshk-i7> <CAPDyKFqczrJzHApBOYRSg=MXzzd1_nSgQQ3QwKYLWzgZ+XY32A@mail.gmail.com>
- <20240718030556.dmgzs24d2bk3hmpb@vireshk-i7> <CAPDyKFqCqDqSz2AGrNvkoWzn8-oYnS2fT1dyiMC8ZP1yqYvLKg@mail.gmail.com>
- <20240725060211.e5pnfk46c6lxedpg@vireshk-i7> <CAPDyKFpSmZgxtmCtiTrFOwgj7ZpNpkDMhxsK0KnuGsWi1a9U5g@mail.gmail.com>
- <20240725112519.d6ec7obtclsf3ace@vireshk-i7> <CAPDyKFqTtqYEFfaHq-jbxnp5gD7qm9TbLrah=k=VD2TRArvU8A@mail.gmail.com>
- <20240729060550.crgrmbnlv66645w2@vireshk-i7> <CAPDyKFosi4dhf36iNaNgGN6RHLDunL1nEwD+A_aW2khxER59nQ@mail.gmail.com>
- <20240730033242.4ajotym33bheativ@vireshk-i7>
-In-Reply-To: <20240730033242.4ajotym33bheativ@vireshk-i7>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 31 Jul 2024 12:35:40 +0200
-Message-ID: <CAPDyKFqbPCrxziTgr65Ku_unJKwdKhZkVFHkm4TKf2jyonrZ4A@mail.gmail.com>
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM domains
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nikunj Kela <nkela@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-[...]
+Commit 4b2c53d93a4b ("SFH:Transport Driver to add support of AMD Sensor
+Fusion Hub (SFH)") declared but never implemented them.
 
->
-> > That's right, but why do we want to call dev_pm_opp_set_opp() for the
-> > multiple PM domain case then? It makes the behaviour inconsistent.
->
-> To have a common path for all required OPP device types, irrespective of the
-> fact that the required OPP device is a genpd or not. And we are talking about a
-> required OPP of a separate device here, it must be set via this call only,
-> technically speaking.
->
-> Genpd makes it a little complex, and I agree to that. But I strongly feel this
-> code needs to be generic and not genpd specific. The OPP core should have as
-> less genpd specific code as possible. It must handle all device types with a
-> single code path.
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Acked-by: Basavaraj Natikar <Basavaraj.Natikar@amd.com>
+---
+ drivers/hid/amd-sfh-hid/amd_sfh_hid.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-I agree that we really should avoid genpd specific code and that's
-exactly what I am working towards too.
+diff --git a/drivers/hid/amd-sfh-hid/amd_sfh_hid.h b/drivers/hid/amd-sfh-hid/amd_sfh_hid.h
+index 97296f587bc7..1c91be8daedd 100644
+--- a/drivers/hid/amd-sfh-hid/amd_sfh_hid.h
++++ b/drivers/hid/amd-sfh-hid/amd_sfh_hid.h
+@@ -73,8 +73,6 @@ struct amdtp_hid_data {
+ };
+ 
+ /* Interface functions between HID LL driver and AMD SFH client */
+-void hid_amdtp_set_feature(struct hid_device *hid, char *buf, u32 len, int report_id);
+-void hid_amdtp_get_report(struct hid_device *hid, int report_id, int report_type);
+ int amdtp_hid_probe(u32 cur_hid_dev, struct amdtp_cl_data *cli_data);
+ void amdtp_hid_remove(struct amdtp_cl_data *cli_data);
+ int amd_sfh_get_report(struct hid_device *hid, int report_id, int report_type);
+-- 
+2.34.1
 
-However, calling dev_pm_opp_set_opp() from _set_required_opps() looks
-to me like it has the exact opposite effect:
-*) To solve the bug according to the change you proposed, means more
-genpd hacks.
-**) To make the code for the required OPPs consistent between the
-single/multiple PM domain case, we need additional genpd hacks.
-***) We can't remove some of the existing genpd hacks [1], as those
-would then still be needed.
-
-Finally, while I understand that you prefer a single code path, we can
-still keep _set_required_opps() common and generic. Today, it's used
-only for performance-states of PM domains (the involved code isn't
-even genpd specific as it calls
-dev_pm_domain_set_performance_state()). If tomorrow we see a need to
-extend it to additional resources, it's easy also without calling
-dev_pm_opp_set_opp() from it.
-
-Kind regards
-Uffe
-
- [1]
-https://lore.kernel.org/all/20240718234319.356451-7-ulf.hansson@linaro.org/
 
