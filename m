@@ -1,280 +1,194 @@
-Return-Path: <linux-kernel+bounces-269415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 420299432A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:02:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68BC19432A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654351C21435
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:02:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5B6282040
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF93E14AA9;
-	Wed, 31 Jul 2024 15:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BA314285;
+	Wed, 31 Jul 2024 15:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLXg2z4i"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Uf9wpamL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jPm3MRIF";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Uf9wpamL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jPm3MRIF"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF993232;
-	Wed, 31 Jul 2024 15:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AB3110A1F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722438160; cv=none; b=bC23XZPSfddOsHieq2732WH7pIjgJqS+KSRlpoyjKrwT+UU1k4fupEIKHHkFMHxYejsSv7688bpidxsxIxlh/LP7aRwqZRzAbzCFvamPwpyEheMa0Iu17ZosRVZHpXJ/Put4/44LtTGc5PtbrtT2WytNdCMLL+lBBl9TP5t7HcY=
+	t=1722438206; cv=none; b=f039Ay7vHVMNI5QpF9iFkOZvNt3KnUjMdPPpR3PxeRqajDIP9G/DcLEhvdGOjkxay89CxcJrGlOmnXkNoJceZkNqgwzxSEhm3kqKPSSVUi+sd/J6rSffDbduozEZ3PkckPebGjzQfKuy5RUE6IuKVHjm9/wj/DQgSI+/qZnh9HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722438160; c=relaxed/simple;
-	bh=GdbXqK3pOYa0rkRvKMpQ1qP1/xyRibNZjDLqjkPfE2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gi7oj/5r6zKXioQByVZOnEiWm/hpk3E/3Bo4qW+J39Yhj9LE6dedt1/rFo9nltHqkKkuM2ue8izOwHn2PBUjo6jnaqcukVj2KBZY1hWlfYyUMUVcIZ0iWaZXTM3ekdyEiY2JlRbjauBimXNFAYsbvRH8RuFxydnbu6eyzfpq11w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLXg2z4i; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d1c655141so4326736b3a.1;
-        Wed, 31 Jul 2024 08:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722438158; x=1723042958; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=n3pEcVDWIeBBKJY5rYo4nIp1+5IBnyuWvRwhKMSQzHM=;
-        b=HLXg2z4iYFFciYI3MiRdHb5/mGXrN4m3aXOMXEM8/SU8LrQ4uJovXxwoEftugkbRpj
-         RCqvGInGtSdZtXM1U6hTPD4koC1ezkWI9lU9c0oRhmRyXgamUYcOa6PGB2K96rmH4tDX
-         rgG72HuPk2JYhAzjsocs3VWPw5Uk3LHilf8GL2BopAcqhoEKg+sNUcfSXsyc+xdY7L4t
-         Fkv/OeOmGD35TIRmpRKm+cAdXZxKUYep8fV2mDFG3zcPVp6UIgEX6TOQlU18ErafeEud
-         9KF88gRXEFjzR4rV2HBNMmjWxfWH4vgSZRZYrpZDzt36wNt54jXpMpd6KaKP1j0qJ+Z0
-         KFhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722438158; x=1723042958;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3pEcVDWIeBBKJY5rYo4nIp1+5IBnyuWvRwhKMSQzHM=;
-        b=PSPjFLnUUdy+7u/BYj17pTIanTSXpdfCdXOppfKX+XTEJgllNNX17qqPm8SlSZ5J/m
-         9YsKUVHCVK7hpdoIawWgk5gqc7YpGHDrdZKFolNIqewtfAEwTaXRnVSgrX8cad81T4At
-         heUzXgEzDZWsq6+8pqWOjd/v64mcZRGWKkJkO8IU1ou8klFWtvkv7zkCwIw1bspunFER
-         ISdOMdwAe5rJnxKEdbjZwQa2b1mWou01u6dE2fGZHRCP4vafh0/UuAQEIe0V1LEcw7cs
-         iq5di3jAA9H/MO3do0hyo0AckfwYfKweRdJGZksZQukR9In9xuwyd70OPmqoAq+q/8U0
-         TF9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXiQipoIQ6zY/miMw3gg9pVVSdobWgKbRh69+hS75JuRIE3t5XS0k8/X8lRJPPO4fHDFgLXZLeBa5tgCrUahkqBX8gdQS72z6t7fWWJ6X7uZNMkMA5KrJhp3GvZ+m95Zknn695h0nvY2p6FpDpqilDE5ulHQ2BtM9DemsdXcmITlXGS0aJRWXeyHyvafyq/wpxADy1z5+bSrXKqOHZekFhy
-X-Gm-Message-State: AOJu0Yyq+glCQt4MoFb//lXCnMOCwVZhNua5ihP3a3Zf2p5CJFljfcfC
-	wJErTUrJ5oER3Z7fETzoxX7JE44VsDhBoUN+T8K7qNb+Ok5+6qN8
-X-Google-Smtp-Source: AGHT+IFDe+Gop8MQmy/8qvQgta8yZDYKCAntFqVNAuMmp6Sw0Ob7fNHgNCvkehwyfC09R83AyyEuCQ==
-X-Received: by 2002:a17:902:c947:b0:1fd:a644:e466 with SMTP id d9443c01a7336-1ff0485ba7cmr146711915ad.39.1722438158295;
-        Wed, 31 Jul 2024 08:02:38 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8582dsm121843175ad.6.2024.07.31.08.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 08:02:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Wed, 31 Jul 2024 08:02:36 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, Jean Delvare <jdelvare@suse.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>,
-	Chao Wei <chao.wei@sophgo.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Jinyu Tang <tangjinyu@tinylab.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	chunzhi.lin@sophgo.com, haijiao.liu@sophgo.com,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v8 2/4] drivers: hwmon: sophgo: Add SG2042 external
- hardware monitor support
-Message-ID: <75f6f910-43ff-4d98-b39f-b4b0629a56a1@roeck-us.net>
-References: <IA1PR20MB49538C09E94D90F07B7B2562BBB02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953DE89C56AB3F328954131BBB02@IA1PR20MB4953.namprd20.prod.outlook.com>
- <MA0P287MB2822D0C770667CFE484EBC95FEB12@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <IA1PR20MB49534944E268A0A71AA3D5D1BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
+	s=arc-20240116; t=1722438206; c=relaxed/simple;
+	bh=T0AN2B/3oSVlwXqkiUGN44+YerkBQ3pon2pEu4stpPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pJoldwhPj1DojrjKawgMi0KcJy5W803Jmj9zBMh5pfFvzmWPdm+1SDmXjrm5/7JPBtnrcPhPSH+V4YR2gV5vndits7f26ZnHXfneoFS7ludpEAW7ZzSByhv8WdEjTIfmizas0+OQTn95UqKXhtKvDNbMO4lqRCJA1NkyfRTAX6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Uf9wpamL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jPm3MRIF; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Uf9wpamL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jPm3MRIF; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9755D21A39;
+	Wed, 31 Jul 2024 15:03:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722438200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/gTbnSqMbDPKaBwe+1dHRarBN9iNabXhJy8yHd52Ajs=;
+	b=Uf9wpamLofkO+rrYtTBLDebP1+phZEdGOsXFl6vccaj0Jbmbb1xr1uS1xAisAUBw8x0TAi
+	2VVdcVhznBFSTYiWYqsUslU+1E8KFDHN2dyPgNznwctgJT36TqSQ9mPdH8OlDrIS202+EJ
+	o1T1PFWiH7GVOQWd7T3ueJKMgPwJXks=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722438200;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/gTbnSqMbDPKaBwe+1dHRarBN9iNabXhJy8yHd52Ajs=;
+	b=jPm3MRIFKyDcKTZHpLnL+u8uGX+Da3TL8Uvo3YhfR22HBsGjVQYPGWpTc/L4indUSg9Pva
+	vkQrt/g7G0SkufAQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Uf9wpamL;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jPm3MRIF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722438200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/gTbnSqMbDPKaBwe+1dHRarBN9iNabXhJy8yHd52Ajs=;
+	b=Uf9wpamLofkO+rrYtTBLDebP1+phZEdGOsXFl6vccaj0Jbmbb1xr1uS1xAisAUBw8x0TAi
+	2VVdcVhznBFSTYiWYqsUslU+1E8KFDHN2dyPgNznwctgJT36TqSQ9mPdH8OlDrIS202+EJ
+	o1T1PFWiH7GVOQWd7T3ueJKMgPwJXks=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722438200;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=/gTbnSqMbDPKaBwe+1dHRarBN9iNabXhJy8yHd52Ajs=;
+	b=jPm3MRIFKyDcKTZHpLnL+u8uGX+Da3TL8Uvo3YhfR22HBsGjVQYPGWpTc/L4indUSg9Pva
+	vkQrt/g7G0SkufAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 846FD13297;
+	Wed, 31 Jul 2024 15:03:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3177HzhSqmb5fgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 15:03:20 +0000
+Message-ID: <4cbc97b4-932e-4780-bc8d-3f12d90b2d51@suse.cz>
+Date: Wed, 31 Jul 2024 17:03:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <IA1PR20MB49534944E268A0A71AA3D5D1BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 13/20] mm: Make Kcompactd use kthread's preferred
+ affinity
+Content-Language: en-US
+To: Frederic Weisbecker <frederic@kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+Cc: Michal Hocko <mhocko@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+References: <20240726215701.19459-1-frederic@kernel.org>
+ <20240726215701.19459-14-frederic@kernel.org>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20240726215701.19459-14-frederic@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Rspamd-Queue-Id: 9755D21A39
 
-On Wed, Jul 31, 2024 at 03:17:57PM +0800, Inochi Amaoto wrote:
-> On Wed, Jul 31, 2024 at 02:13:20PM GMT, Chen Wang wrote:
-> > 
-> > On 2024/7/30 15:50, Inochi Amaoto wrote:
-> > [......]
-> > > +#define REG_CRITICAL_ACTIONS			0x65
-> > The name "REG_CRITICAL_ACTIONS" is ambiguous. I have confirmed with sophgo
-> > engineers that the complete process is: when the measured temperature
-> > exceeds the temperature set by REG_CRITICAL_TEMP, the processor is powered
-> > off and shut down, and then after the temperature returns to the temperature
-> > set by REG_REPOWER_TEMP, it is decided whether to power on again or remain
-> > in the shutdown state based on the action set by REG_CRITICAL_ACTIONS,
-> > whether it is reboot or poweroff.
-> > 
-> > So based on the above description, I think it would be better to
-> > call "REG_CRITICAL_ACTIONS" as "REG_REPOWER_ACTIONS". "REG_CRITICAL_ACTIONS"
-> > gives people the first impression that it is used to set actions related to
-> > REG_CRITICAL_TEMP.
-> > 
-> > It is also recommended to add the above description of temperature control
-> > and action settings in the code. Currently, sophgo does not have a clear
-> > document description for this part, and adding it will help us understand
-> > its functions.
-> > 
-> > Adding sophgo engineers Chunzhi and Haijiao, FYI.
-> > 
-> > > +#define REG_CRITICAL_TEMP			0x66
-> > > +#define REG_REPOWER_TEMP			0x67
-> > > +
-> > > +#define CRITICAL_ACTION_REBOOT			1
-> > > +#define CRITICAL_ACTION_POWEROFF		2
-> > 
-> > As I said upon, actions are not related to critical, but is for restoring
-> > from critical, suggest to give a better name.
-> > 
-> > [......]
-> > 
-> > > +static ssize_t critical_action_show(struct device *dev,
-> > [......]
-> > > +static ssize_t critical_action_store(struct device *dev,
-> > 
-> > [......]
-> > 
-> > The same reason as upon, "critical_action_xxx" is misleading.
-> > 
-> > [......]
-> > 
+On 7/26/24 11:56 PM, Frederic Weisbecker wrote:
+> Now that kthreads have an infrastructure to handle preferred affinity
+> against CPU hotplug and housekeeping cpumask, convert Kcompactd to use
+> it instead of handling halfway all the constraints by itself.
 > 
-> Thanks for explanation, I just get the name from the driver of SG2042.
-> This is out of my knowledge.
-> 
-> > > +static int sg2042_mcu_read_temp(struct device *dev,
-> > > +				u32 attr, int channel,
-> > > +				long *val)
-> > > +{
-> > > +	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-> > > +	int tmp;
-> > > +	u8 reg;
-> > > +
-> > > +	switch (attr) {
-> > > +	case hwmon_temp_input:
-> > > +		reg = channel ? REG_BOARD_TEMP : REG_SOC_TEMP;
-> > > +		break;
-> > > +	case hwmon_temp_crit:
-> > > +		reg = REG_CRITICAL_TEMP;
-> > > +		break;
-> > > +	case hwmon_temp_crit_hyst:
-> > > +		reg = REG_REPOWER_TEMP;
-> > > +		break;
-> > > +	default:
-> > > +		return -EOPNOTSUPP;
-> > > +	}
-> > > +
-> > > +	tmp = i2c_smbus_read_byte_data(mcu->client, reg);
-> > > +	if (tmp < 0)
-> > > +		return tmp;
-> > > +	*val = tmp * 1000;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int sg2042_mcu_read(struct device *dev,
-> > > +			   enum hwmon_sensor_types type,
-> > > +			   u32 attr, int channel, long *val)
-> > > +{
-> > > +	return sg2042_mcu_read_temp(dev, attr, channel, val);
-> > > +}
-> > Can we merge sg2042_mcu_read and sg2042_mcu_read_temp？
-> 
-> Yes, it can be merged. but I think using this nested function 
-> is more clear. And gcc can auto inline this function so we
-> got no performance penalty.
-> 
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 
-FWIW, I think that is pointless. Te only difference is unused
-parameters.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-> > > +
-> > > +static int sg2042_mcu_write(struct device *dev,
-> > > +			    enum hwmon_sensor_types type,
-> > > +			    u32 attr, int channel, long val)
-> > > +{
-> > > +	struct sg2042_mcu_data *mcu = dev_get_drvdata(dev);
-> > > +	int temp = val / 1000;
-> > > +	int hyst_temp, crit_temp;
-> > > +	int ret;
-> > > +	u8 reg;
-> > > +
-> > > +	if (temp > MCU_POWER_MAX)
-> > > +		temp = MCU_POWER_MAX;
-
-No lower limit ? -1000000 is ok ?
-
-> > > +
-> > > +	mutex_lock(&mcu->mutex);
-> > > +
-> > > +	switch (attr) {
-> > > +	case hwmon_temp_crit:
-> > > +		hyst_temp = i2c_smbus_read_byte_data(mcu->client,
-> > > +						     REG_REPOWER_TEMP);
-> > > +		if (hyst_temp < 0) {
-> > > +			ret = -ENODEV;
-> > > +			goto failed;
-
-Do not overwrite error codes.
-
-> > > +		}
-> > > +
-> > > +		crit_temp = temp;
-> > > +		reg = REG_CRITICAL_TEMP;
-> > > +		break;
-> > > +	case hwmon_temp_crit_hyst:
-> > > +		crit_temp = i2c_smbus_read_byte_data(mcu->client,
-> > > +						     REG_CRITICAL_TEMP);
-> > > +		if (crit_temp < 0) {
-> > > +			ret = -ENODEV;
-> > > +			goto failed;
-
-Do not overwrite error codes.
-
-> > > +		}
-> > > +
-> > > +		hyst_temp = temp;
-> > > +		reg = REG_REPOWER_TEMP;
-> > > +		break;
-> > > +	default:
-> > > +		mutex_unlock(&mcu->mutex);
-> > > +		return -EOPNOTSUPP;
-
-This is inconsistent.
-
-> > > +	}
-> > > +
-> > It is recommended to add some comments to explain why we need to ensure that
-> > crit_temp is greater than or equal to hyst_temp. This is entirely because
-> > the current MCU does not limit the input, which may cause user to set
-> > incorrect crit_temp and hyst_temp.
-> 
-> Yeah, this is good idea.
-> 
-> > > +	if (crit_temp < hyst_temp) {
-> > > +		ret = -EINVAL;
-> > > +		goto failed;
-> > > +	}
-> > > +
-> > > +	ret = i2c_smbus_write_byte_data(mcu->client, reg, temp);
-> > > +
-> > > +failed:
-> > > +	mutex_unlock(&mcu->mutex);
-> > > +	return ret;
-> > > +}
-> > > +
-> > [......]
 
