@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-268621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D709594270F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:39:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06A5C942711
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:39:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 804DA1F239E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:39:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B469B282637
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F0616EB79;
-	Wed, 31 Jul 2024 06:37:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFD116D9B3;
+	Wed, 31 Jul 2024 06:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FrtfgSzD"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="jqhe/tyJ"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDED16D4CC;
-	Wed, 31 Jul 2024 06:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA0049624;
+	Wed, 31 Jul 2024 06:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407866; cv=none; b=YYjzKyAylTRnGuhnbVR4oL5Nb3zHvcDLk85NEHGfDu6550LiW6ZJMPyGEoXDjbmCfUlZecypKHA3vi4bk7MCx3Haoj77aNdDQCalLsVkZtBAPfd4M1xLP88Txcjt/iTPlx+YtHGeRicycfUNpGByCximhXXaY1shvpVYkP1r2Bc=
+	t=1722407886; cv=none; b=mlu1hhuUZOXDVGwOMPoRRM/q7sAZdiY4KtiwQp/39vbibeCWW7nobZREJJaRQV6JClpz9q7bSJMDtuEllf9d8NL0NivS9H0vsrZhKAMkmXTXbB9//t4Um0W6WAcW3n2gLIDEz6Kk1bZ0UzHPmAH6juXBDVRF2kNDRHBHj2cxHjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407866; c=relaxed/simple;
-	bh=oGqGN98+teCVsumZkvZBF5tx4Nr+UtAmKTXVPhiWj54=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pBdrNJZ6tOqdQbBxaeryFxUA24PeujiB2D0N4VLgiDrj7ufU23CKydacHgJBOyQg5kuirjliDOMunZwW/yxUgJ0HU8r4ve6/e76Zlupq3orT8qY2BCEaE3Sfwd+B2OSnbhLfeatOJMzy6OJfzpqbyAaCqV+xHLNsJMx8vC0FeXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FrtfgSzD; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7EC5CC0007;
-	Wed, 31 Jul 2024 06:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722407857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ev28OYDmUbsqAmB9uXzO3SMs9tRUOMJ/SmpgfsPedY0=;
-	b=FrtfgSzDzROgnSCe5sqP+VOBka5ja4MtGX7QdGkij6m/CyVc9Gvj6HKYkwn+/4fztGNqsA
-	5QZ7O3Qb7wLskPuNvocvt3mpM5hu05HooADIUN7A8fpkjMS4qodoZVghWK6VxAk5cWRqLi
-	qVRnjfCcGo1iHJlXGJaERNe9WF5QUQ6jh1L/8Qaby4N9X7Z+X75bX9+RXCQjlufXM06UEI
-	a8K38/dPiJ/igPMfomMbSaowXiMq2cH14MpMzzYohqDBvaGttp90KTC/RRPhOBEzAsithu
-	Xza3iyMGa81OoBMO4byeoZGrpYZO7Zv1zclRtuYAct09rQ0am5/lgm9SzDO9Fw==
-From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Wed, 31 Jul 2024 08:37:27 +0200
-Subject: [PATCH bpf-next v4 3/3] selftests/bpf: add wrong type test to
- cgroup dev
+	s=arc-20240116; t=1722407886; c=relaxed/simple;
+	bh=L1QXg3uqxYl4CTovcnxt95DP+CEt5OQZZcl1u0OySnI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kLlav6yHpAxqQ4ommHpqkzn+k9Ph/4kA9edPvIsk5fBek+Mj1LLyzPmza0dnu6vq30T+OKT3MsXkKT6gAqlM/Wj0dLHw3bPMQL5YpSmoVaabYs1cz170y/EENzg0AcG/HEJ7wEdQulkZG+K1zn7Sba6rTNk/GohI6mMYtJW9mjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=jqhe/tyJ; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=P1V0z9JyXNMjXUrrv9MyjJnAXiVD3xEEot8JcZbXg2w=;
+	t=1722407884; x=1722839884; b=jqhe/tyJToFnr96kQpiEys0KNdmNcFU4Z90ED1uEQd9JMWL
+	/FXC8FdXHRzr/8rJDp36xSt5xMovzhvlWbw1wezHKvMHSarG+mK7d5WNqGhBiVniC9CzcmdCJM0p/
+	6Z40Vq4u8Jzw5lEU15fyX4zF8J4JpPaGqzf35yGZpiRAGjG7hI314ZP5zSBRGJ1nvuLgezu2x9sJI
+	4EsnEpDX+bjjEIQnjglYqxsDKcagg4h0ImGX0O+RQQy3xP1gnWfe6xOzciuzUu7tzjfumXOTbzgBs
+	cIyFkty60oXIbA410jW/TDzJ0TfgT6gc9r6CeTlXTl8ZMtCn7gBzDEvI8lJqZABQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sZ2yH-00070r-AD; Wed, 31 Jul 2024 08:38:01 +0200
+Message-ID: <245f2c54-6d06-4b71-a9f8-a6fc0dbcceb3@leemhuis.info>
+Date: Wed, 31 Jul 2024 08:38:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240731-convert_dev_cgroup-v4-3-849425d90de6@bootlin.com>
-References: <20240731-convert_dev_cgroup-v4-0-849425d90de6@bootlin.com>
-In-Reply-To: <20240731-convert_dev_cgroup-v4-0-849425d90de6@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Alan Maguire <alan.maguire@oracle.com>, 
- Martin KaFai Lau <martin.lau@linux.dev>, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: alexis.lothore@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION] Brightness at max level after waking up from sleep
+ on AMD Laptop
+To: hamza.mahfooz@amd.com
+Cc: regressions@lists.linux.dev, alexander.deucher@amd.com,
+ serg.partizan@gmail.com,
+ "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+ mario.limonciello@amd.com, ML dri-devel <dri-devel@lists.freedesktop.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <77KAHS.13UUH2XVHQQF1@gmail.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <77KAHS.13UUH2XVHQQF1@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1722407884;56903427;
+X-HE-SMSGID: 1sZ2yH-00070r-AD
 
-Current cgroup_dev test mostly tests that device operation is accepted or
-refused base on passed major/minor (and so, any operation performed during
-test involves only char device)
+[+amd-glx, +lkml, +dri-devel]
 
-Add a small subtest ensuring that the device type passed to bpf program
-allows it to take decisions as well.
+On 27.07.24 18:52, serg.partizan@gmail.com wrote:
+> 
+> After updating from 6.8.9 to 6.9.1 I noticed a bug on my HP Envy x360
+> with AMD Ryzen 5 4500U.
+>
+> [...]
+> After waking up from sleep brightness is set to max level, ignoring
+> previous value.
+> 
+> With the help of Arch Linux team, we was able to track bad commit to
+> this:
+> https://gitlab.freedesktop.org/agd5f/linux/-/commit/63d0b87213a0ba241b3fcfba3fe7b0aed0cd1cc5
 
-Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
-Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
----
-Changes in v4:
-- update parameters to test both ret and errno
+Hamza Mahfooz, in case you missed it, that is a patch of yours:
+63d0b87213a0ba ("drm/amd/display: add panel_power_savings sysfs entry to
+eDP connectors") [v6.9-rc1].
 
-Changes in v3:
-- reorganize subtests order
+> I have tested this on latest mainline kernel:
+> 
+> Results after waking up:
+> 
+>> cat /sys/class/backlight/amdgpu_bl1/{brightness,actual_brightness}
+> 12
+> 252
+> 
+> Then, on exact this commit (63d0b87213a0ba241b3fcfba3fe7b0aed0cd1cc5),
+> result is the same.
+> 
+> Then, on commit just before this one (aeaf3e6cf842):
+> 
+>> cat /sys/class/backlight/amdgpu_bl1/{brightness,actual_brightness}
+> 12
+> 12
+> 
+> I hope I included all relevant information, more info can be found here:
+> 
+> https://gitlab.archlinux.org/archlinux/packaging/packages/linux/-/issues/52
 
-Changes in v2:
-- change test name ("null" block device does not make sense)
-- use updated subtest API for this new subtest
----
- tools/testing/selftests/bpf/prog_tests/cgroup_dev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/cgroup_dev.c b/tools/testing/selftests/bpf/prog_tests/cgroup_dev.c
-index 8661e145ba84..5ab7547e38c0 100644
---- a/tools/testing/selftests/bpf/prog_tests/cgroup_dev.c
-+++ b/tools/testing/selftests/bpf/prog_tests/cgroup_dev.c
-@@ -114,6 +114,10 @@ void test_cgroup_dev(void)
- 	if (test__start_subtest("deny-write"))
- 		test_write("/dev/zero", buf, TEST_BUFFER_SIZE, -1, EPERM);
- 
-+	if (test__start_subtest("deny-mknod-wrong-type"))
-+		test_mknod("/dev/test_dev_cgroup_block", S_IFBLK, 1, 3, -1,
-+			   EPERM);
-+
- cleanup_progs:
- 	dev_cgroup__destroy(skel);
- cleanup_cgroup:
+P.S.:
 
--- 
-2.45.2
-
+#regzbot introduced: 63d0b87213a0ba241
 
