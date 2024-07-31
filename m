@@ -1,224 +1,127 @@
-Return-Path: <linux-kernel+bounces-268531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CAAD9425D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:37:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A99A9425D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43915284448
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:37:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D9041F2310F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8118449649;
-	Wed, 31 Jul 2024 05:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17384F5FB;
+	Wed, 31 Jul 2024 05:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G10I71C5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R1snS/O8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0EB549643;
-	Wed, 31 Jul 2024 05:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2C12E403;
+	Wed, 31 Jul 2024 05:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722404272; cv=none; b=r/HO2VnDelxIbjAADXsHyIFIceua913eMDf6fVue/iyeHAMWyrUZXsR8Oi4CTAhPl0pOt4ml5HXFPlCH9Bpq9dpDqGb+QztVCl+Xq3CuRHkudUmon0pB+PK9TKALJjqYqmdo9lHvLRSa1AHw+SJvY/RGpuCX7ifngQLRSk1jfeE=
+	t=1722404292; cv=none; b=CzOhyxvTHNRGS/31K99kWf0YnA/2sEl6cHNxzEXQtXG1snBIaiDEXnpkfRTGLyjcCkxyEbeSoiYva9r597Pp7AZtX3NnTWA7OqWj+WitjfiPt9hFTL+vYCYweA+FSqJM2CCoLWOoMMB3mE/LZV44wQD0McIW24rpPCBOKbMYlkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722404272; c=relaxed/simple;
-	bh=nuK5IhR8wYzp6ANKjkoRcwHuzp4JZbmJSzE/Sb+/2oU=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=OuyioMI/Q08bUeGk6h39lDdeo2CqS0bv3t0n1Bnry8YvjkC3XY+QZFQMDrwwecHK3ctWjcIitfDl3zlzZyurxS2gB43a2qHXCTG/oq0cHUyuxAuI4ym+cYd1xlfhb8WEBroXg/GAOUETqfu35X9Y9efyB0aqk+5UHjJQBBKzlyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G10I71C5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E2C9C116B1;
-	Wed, 31 Jul 2024 05:37:50 +0000 (UTC)
+	s=arc-20240116; t=1722404292; c=relaxed/simple;
+	bh=Yvr+7J/EtuyCJes/Wz2/7a+ZZ6wXOzllweYFakhEI04=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qrWbI88anmJ9wbCGq32aWVlUmb/rC+qPvG3NvbpCdAMjK6RkjxA65XWjYXsAuSWS1e7Nx4wh3ExJcKOmyvt0e3waAUtYYn9k2WfgCmSy2QG9+tIFdmIUqqMnuxvqqB19ZXt12+Oa2SFDcRHQEYeF4uEtuZOn5aISR91QjQckaEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R1snS/O8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C16EBC116B1;
+	Wed, 31 Jul 2024 05:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722404272;
-	bh=nuK5IhR8wYzp6ANKjkoRcwHuzp4JZbmJSzE/Sb+/2oU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=G10I71C5l6U0gayOjzbQYIrZkfwXJOOe+A41JXiNFArBpQRYgViQw3iN+Wkk9pQrg
-	 J6YyaeQAOiVtt4kQnz64Y1XXvuRci5Ks3VJAkRMHSKISsOzB1eAUvCp4TLZMP5VdRj
-	 qTk/qtfcZHTk1ydLqgcOwBQlBnNK1h61lKGfIYrsTh5WRoz98l2spy9nB9f6i41Prb
-	 QqQTvjxsLM6PlI0N2Vzz82xybRU9V154N6KmDj9YLxuBXJJb7TBU+nnQ5wMTEeMBHL
-	 ZWZvo3wpsC0m+EyBE+3rB045r6OWmDy45+/XpxIUbpz+H8XrHPp/fK2aEwHCKkysQU
-	 /6WAj6u8bTS9g==
-Date: Wed, 31 Jul 2024 14:37:48 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: andrii@kernel.org, peterz@infradead.org, jolsa@kernel.org,
- rostedt@goodmis.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] uprobes: kill uprobe_register_refctr()
-Message-Id: <20240731143748.55bb97c1d68aea1f1946729d@kernel.org>
-In-Reply-To: <20240729134530.GA12318@redhat.com>
-References: <20240729134444.GA12293@redhat.com>
-	<20240729134530.GA12318@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1722404291;
+	bh=Yvr+7J/EtuyCJes/Wz2/7a+ZZ6wXOzllweYFakhEI04=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=R1snS/O8xv25cBgKd/NMJ+Fu5osExJVC8xTozE37szQv6SCzSv7Fbb8am7zgSAUep
+	 IahX6i7ITecrciyvIEemBvv+7hvXJ0SKhgCMOPtSQ5OKzxTL2YLs0op5J1Sz4GbWrD
+	 14lTcmdqfd3Qpo6vzBdIdJGywz79yRB7/y7Do+Y34JoRkoOHj4sKPrKiE86kKFNyav
+	 sdI2yri7MrXVkHX/9MSP1w0LwQ4q9qtPOeoCQFMbmYoKHBkUHNaEvyWXI4SlaSEejg
+	 I/XWkY4ozWng9O2vLJbwAnw+V8IkyhIoIMKYsJX/4efweQw942KG60oRLYupoiEepr
+	 0keKTSJx47x5Q==
+Message-ID: <3428ad6b-348c-4a81-8439-ee7e09aedd6f@kernel.org>
+Date: Wed, 31 Jul 2024 07:38:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] dt-bindings: soc: qcom: eud: Add compatible for
+ sm8450
+To: Elson Roy Serrao <quic_eserrao@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <20240730222439.3469-4-quic_eserrao@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240730222439.3469-4-quic_eserrao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 29 Jul 2024 15:45:30 +0200
-Oleg Nesterov <oleg@redhat.com> wrote:
-
-> It doesn't make any sense to have 2 versions of _register(). Note that
-> trace_uprobe_enable(), the only user of uprobe_register(), doesn't need
-> to check tu->ref_ctr_offset to decide which one should be used, it could
-> safely pass ref_ctr_offset == 0 to uprobe_register_refctr().
+On 31/07/2024 00:24, Elson Roy Serrao wrote:
+> Document the EUD compatible for sm8450 SoC.
 > 
-> Add this argument to uprobe_register(), update the callers, and kill
-> uprobe_register_refctr().
-> 
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
 > ---
->  include/linux/uprobes.h     |  9 ++-------
->  kernel/events/uprobes.c     | 24 ++++++------------------
->  kernel/trace/bpf_trace.c    |  8 ++++----
->  kernel/trace/trace_uprobe.c |  7 +------
->  4 files changed, 13 insertions(+), 35 deletions(-)
+>  Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml | 1 +
 
-OK, but it seems 
+This should be squashed with the previous patches or the previous
+patches should explain why the properties are missing in existing
+binding, but everything was fine.
 
-tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+You add new device with all its new quirks or properties. Adding
+"compatible" alone is not a change itself.
 
-is still using uprobe_register_refctr().
+Best regards,
+Krzysztof
 
-That should be updated too.
-
-Thanks,
-
-> 
-> diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-> index b503fafb7fb3..440316fbf3c6 100644
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -110,8 +110,7 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
->  extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
->  extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
->  extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
-> -extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
-> -extern int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
-> +extern int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
->  extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
->  extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
->  extern int uprobe_mmap(struct vm_area_struct *vma);
-> @@ -152,11 +151,7 @@ static inline void uprobes_init(void)
->  #define uprobe_get_trap_addr(regs)	instruction_pointer(regs)
->  
->  static inline int
-> -uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
-> -{
-> -	return -ENOSYS;
-> -}
-> -static inline int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
-> +uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
->  {
->  	return -ENOSYS;
->  }
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index dfe6306a63b1..b7f40bad8abc 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1121,25 +1121,26 @@ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consume
->  EXPORT_SYMBOL_GPL(uprobe_unregister);
->  
->  /*
-> - * __uprobe_register - register a probe
-> + * uprobe_register - register a probe
->   * @inode: the file in which the probe has to be placed.
->   * @offset: offset from the start of the file.
-> + * @ref_ctr_offset: offset of SDT marker / reference counter
->   * @uc: information on howto handle the probe..
->   *
-> - * Apart from the access refcount, __uprobe_register() takes a creation
-> + * Apart from the access refcount, uprobe_register() takes a creation
->   * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
->   * inserted into the rbtree (i.e first consumer for a @inode:@offset
->   * tuple).  Creation refcount stops uprobe_unregister from freeing the
->   * @uprobe even before the register operation is complete. Creation
->   * refcount is released when the last @uc for the @uprobe
-> - * unregisters. Caller of __uprobe_register() is required to keep @inode
-> + * unregisters. Caller of uprobe_register() is required to keep @inode
->   * (and the containing mount) referenced.
->   *
->   * Return errno if it cannot successully install probes
->   * else return 0 (success)
->   */
-> -static int __uprobe_register(struct inode *inode, loff_t offset,
-> -			     loff_t ref_ctr_offset, struct uprobe_consumer *uc)
-> +int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
-> +		    struct uprobe_consumer *uc)
->  {
->  	struct uprobe *uprobe;
->  	int ret;
-> @@ -1189,21 +1190,8 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
->  		goto retry;
->  	return ret;
->  }
-> -
-> -int uprobe_register(struct inode *inode, loff_t offset,
-> -		    struct uprobe_consumer *uc)
-> -{
-> -	return __uprobe_register(inode, offset, 0, uc);
-> -}
->  EXPORT_SYMBOL_GPL(uprobe_register);
->  
-> -int uprobe_register_refctr(struct inode *inode, loff_t offset,
-> -			   loff_t ref_ctr_offset, struct uprobe_consumer *uc)
-> -{
-> -	return __uprobe_register(inode, offset, ref_ctr_offset, uc);
-> -}
-> -EXPORT_SYMBOL_GPL(uprobe_register_refctr);
-> -
->  /*
->   * uprobe_apply - unregister an already registered probe.
->   * @inode: the file in which the probe has to be removed.
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index cd098846e251..afa909e17824 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -3480,10 +3480,10 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
->  		      &bpf_uprobe_multi_link_lops, prog);
->  
->  	for (i = 0; i < cnt; i++) {
-> -		err = uprobe_register_refctr(d_real_inode(link->path.dentry),
-> -					     uprobes[i].offset,
-> -					     uprobes[i].ref_ctr_offset,
-> -					     &uprobes[i].consumer);
-> +		err = uprobe_register(d_real_inode(link->path.dentry),
-> +				      uprobes[i].offset,
-> +				      uprobes[i].ref_ctr_offset,
-> +				      &uprobes[i].consumer);
->  		if (err) {
->  			bpf_uprobe_unregister(&path, uprobes, i);
->  			goto error_free;
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index c98e3b3386ba..1f590f989c1e 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -1089,12 +1089,7 @@ static int trace_uprobe_enable(struct trace_uprobe *tu, filter_func_t filter)
->  	tu->consumer.filter = filter;
->  	tu->inode = d_real_inode(tu->path.dentry);
->  
-> -	if (tu->ref_ctr_offset)
-> -		ret = uprobe_register_refctr(tu->inode, tu->offset,
-> -				tu->ref_ctr_offset, &tu->consumer);
-> -	else
-> -		ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
-> -
-> +	ret = uprobe_register(tu->inode, tu->offset, tu->ref_ctr_offset, &tu->consumer);
->  	if (ret)
->  		tu->inode = NULL;
->  
-> -- 
-> 2.25.1.362.g51ebf55
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
