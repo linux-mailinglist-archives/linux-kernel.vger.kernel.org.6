@@ -1,185 +1,235 @@
-Return-Path: <linux-kernel+bounces-268668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C148D942793
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:11:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BB7942798
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:14:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9BB6B21B96
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A32FA2846B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4171A4F18;
-	Wed, 31 Jul 2024 07:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 081FC1A4F3B;
+	Wed, 31 Jul 2024 07:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eReLRDpa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BtpsglQm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271133CFC
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EF9D3BBEF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722409899; cv=none; b=bA7btzHt8ZPCCZg33Bd0Wreg4mufhpMQGohpzFayaykXGY+6oQ4DaXyAQKuh83gTPER7baUIzpppaBCBzlDf/Mgba0Sx82keaaZb7zryAmxVyRZX9t/tdu6fcpW/yqO4lYgdyhRpmNEMxViLkwqPQcVhbISCOXkPqIknZB849+4=
+	t=1722410058; cv=none; b=b7g8fHSo+lMz9wb99PBZAi3qVuB2NGT5+wrzsmXmUeLnwmiJWB9GCJtVvcBEKauAP6brJKWkiE9IDPuj9/qR79S5Ay2LJ1TGOLWEAoqOBJPjWHf5gT1K5ii9heAtPgReDx7RVPWKnwcPbYt4GKvd/frhvQjMjUVsNPewGGsRr64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722409899; c=relaxed/simple;
-	bh=1mcVc1Ueop4K8tFmzU4UoOsc564uDrYB7DSVbqZjfng=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h+P1E1By62gH/KoA9+tDlv0c2a6CR1/NW6ggZs127nOWx/N9nDVqZD0kFWUoWjOhi2W+gpERF5W2x5CCzITKOyYRqGLuCiTUmHFaXlPR7zGwIqkBVLtoHIQmZyy7SwHPECYiYnxsIAcaabhDGFFxEilFP2lpQFAwUuAeDj6Cbuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eReLRDpa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CED9C116B1;
-	Wed, 31 Jul 2024 07:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722409899;
-	bh=1mcVc1Ueop4K8tFmzU4UoOsc564uDrYB7DSVbqZjfng=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eReLRDpaXNlyUK6zTE3tj16Cpe8H1D8jaOFIwN4MAQPBkVNDqprZyGblRQD8YBzbF
-	 0LGb+x6QErM/2oWBBxcRhEzi/0aJpuzaSMhBjDAC8EqVlzBJyOe92/8DFFKweTYGU1
-	 CyF04Eekq/T86cSK/5+3i+sbN4+r66beuMnNMQ+MGhrO1lEFwWicmugeHCZN/Q9hwi
-	 RUQPD9Sw3+Fq56Tt9U8vJY2/TzrE/OJFyn+JSVVDc51jIKj6dPvA+ZEA2DCBZajf0V
-	 d+nFTdQz+shKAyz0X7CKV4DRPNHWy7gZhCedc8yGEHvkkR4khH+ukXURjuyAmTrFuF
-	 Fq/o7r/Nrtogw==
-Date: Wed, 31 Jul 2024 09:11:33 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric Blake
- <eblake@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
- <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
- <peter.maydell@linaro.org>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v3 4/7] acpi/ghes: Add a logic to handle block addresses
- and FW first ARM processor error injection
-Message-ID: <20240731091133.07ddd58c@foz.lan>
-In-Reply-To: <20240730131709.10e72c7d@imammedo.users.ipa.redhat.com>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<6a3542a7d8acfbf88c906ec6f6dc5a697257b461.1721630625.git.mchehab+huawei@kernel.org>
-	<20240730131709.10e72c7d@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722410058; c=relaxed/simple;
+	bh=DFaSIMLeOwLIqKDhfXsm+CzJw6oi2I2Zp7gYG/9j2qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eL+7i3vqVZ1DTJtMErVISR798GYXNxWCh99fkObzhWnWOS4DqJclg0j6pEm33TEM3voYcxf99Ihk1c62KNI7cR7udhf4+nmlJzR01n06ZhTE8z9xBUISLUROLmmJ2m4F/30WRkWsNEVLR0ChgFKWtL1eblgthCdNCLr8JacmkO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BtpsglQm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722410055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t/nl+e6vaRZ78PI4+ibEbjJ97p6P9Y0eAgdFv5fCQo0=;
+	b=BtpsglQmtHB9aSwvA7wgItWXDugttA8Y2TfEFjYG/vmGzBKDb1OatlnBFabhUuEdHK5p7K
+	mT12Hd33MNIKV8euD723jQ12lMCkOfhfqVhTY5i1AcNth/prfiwc+vM8yZpKRJobSojwIR
+	WzStxS/UKXExXVYUj3XtqUIl1IXVaL4=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-NfQNP68vMtWiWfzKzFWtJg-1; Wed, 31 Jul 2024 03:14:11 -0400
+X-MC-Unique: NfQNP68vMtWiWfzKzFWtJg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-42817980766so30806865e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:14:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722410050; x=1723014850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t/nl+e6vaRZ78PI4+ibEbjJ97p6P9Y0eAgdFv5fCQo0=;
+        b=DYsBqynXFJRjYSvb6vI9uTRs5D47iYGyAC5K+twpHi+/PGsUaAuoaCSiEEt6nYWqdp
+         Q++OMhEFb9V7QKh/LGoDi7UbvgDzj5Z2gV3xiB7Q9kTLHnCDvTX35kYHQmRcAgEBfMd3
+         ph2JCFlJuA62o/oxF1g7/+q9OzDuJ5LFCGLHTs2XVC71GhX2EHIZllWmIn6WkztixOQb
+         jixtPb9RsRn0xDhXU2tthBWyTl8Fqv9FAc33cps9sp9liN2w91Og4ILgGlsu+lhERWWA
+         1yBefzAUy/dwnE/PvJ5Ts2+IjyrsxVHYrmL4ciWLKUF8YvpBtWr0u4RoRQFDzr58yeUP
+         xiBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVSNB8IBFpHx/K/pIZDF1/kVSjSGhfPAjOiMUIAaPTZw9agEsmVN40pBELUIGn/RQpDnNzoCqFXEMu9pv0YP74SICYp9vpEaD0Tkqx0
+X-Gm-Message-State: AOJu0YxGqPqxUyM/HUjSoW/ZYRexCPCIRoGR8wsKLqb88kIlI0f2vRP6
+	KRaAPSJNIAXj1b9+030/1OjC7ZyDOxg1Qu53wTcykGHNIL+IcszSb22ec+AvW6TvC8a3uG/y8fL
+	Q96LmBao9O/VQrDs0eGHM7V0JwQq1p8hVQiXftz6LXwn3KIueZt82xF9eHYu9jg==
+X-Received: by 2002:adf:e708:0:b0:368:72c6:99c4 with SMTP id ffacd0b85a97d-36b5cee2d27mr10280311f8f.10.1722410050044;
+        Wed, 31 Jul 2024 00:14:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6jSeb18RuPmbGirWKCJrktRGOmYgiWhv8GsuwSZXyrcvukngIBWVpZXtCAeXpiAo/LIVg5g==
+X-Received: by 2002:adf:e708:0:b0:368:72c6:99c4 with SMTP id ffacd0b85a97d-36b5cee2d27mr10280268f8f.10.1722410049236;
+        Wed, 31 Jul 2024 00:14:09 -0700 (PDT)
+Received: from sgarzare-redhat (host-82-57-51-79.retail.telecomitalia.it. [82.57.51.79])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c067esm16215525f8f.20.2024.07.31.00.14.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 00:14:08 -0700 (PDT)
+Date: Wed, 31 Jul 2024 09:14:04 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: luigi.leonardi@outlook.com
+Cc: "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, Daan De Meyer <daan.j.demeyer@gmail.com>
+Subject: Re: [PATCH net-next v4 1/3] vsock: add support for SIOCOUTQ ioctl
+Message-ID: <g3ufcvs6nkwujosuopyulvtnmtbheknp7wnnzwvhrrpnaw4jed@zaisttr2hmmx>
+References: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
+ <20240730-ioctl-v4-1-16d89286a8f0@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20240730-ioctl-v4-1-16d89286a8f0@outlook.com>
 
-Em Tue, 30 Jul 2024 13:17:09 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> On Mon, 22 Jul 2024 08:45:56 +0200
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> that's quite a bit of code that in 99% won't ever be used
-> (assuming error injection testing scenario),
-> not to mention it's a hw depended one and governed by different specs.
+On Tue, Jul 30, 2024 at 09:43:06PM GMT, Luigi Leonardi via B4 Relay wrote:
+>From: Luigi Leonardi <luigi.leonardi@outlook.com>
 >
-> Essentially we would need to create _whole_ lot of QAPI
-> commands to cover possible errors for no benefit to QEMU.
-> 
-> Let take for example very simple _OST status reporting,
-> QEMU of cause can decode values and present it to users in
-> more 'presentable' form. However instead of translating
-> numbers (aka. spec language) into a made up QEMU language,
-> QEMU just passes values up the stack and users can use
-> well defined spec to interpret its meaning.
-> 
-> benefits are: QEMU doesn't have to maintain translation
-> code and QAPI ABI is limited to passing raw values.
-> 
-> Can we do similar thing here as well?
-> i.e. simplify error injection commands to
-> a command that takes raw value and passes it
-> to guest (QEMU here acts as proxy, if I'm not
-> mistaken)?
-> 
-> Preferably make it generic enough to handle
-> not only ARM but other error formats HEST is
-> able to handle.
+>Add support for ioctl(s) in AF_VSOCK.
+>The only ioctl available is SIOCOUTQ/TIOCOUTQ, which returns the number
+>of unsent bytes in the socket. This information is transport-specific
+>and is delegated to them using a callback.
+>
+>Suggested-by: Daan De Meyer <daan.j.demeyer@gmail.com>
+>Signed-off-by: Luigi Leonardi <luigi.leonardi@outlook.com>
+>---
+> include/net/af_vsock.h   |  3 +++
+> net/vmw_vsock/af_vsock.c | 58 +++++++++++++++++++++++++++++++++++++++++++++---
+> 2 files changed, 58 insertions(+), 3 deletions(-)
 
-A too generic interface doesn't sound feasible to me, as the
-EINJ code needs to check QEMU implementation details before
-doing the error inject.
+LGTM!
 
-See, processor is probably the simplest error injection
-source, as most of the fields there aren't related to how
-the hardware simulation is done.
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
 
-Yet, if you see patch 7 of this series, you'll notice that some
-fields should actually be filled based on the emulation.
+>
+>diff --git a/include/net/af_vsock.h b/include/net/af_vsock.h
+>index 535701efc1e5..fc504d2da3d0 100644
+>--- a/include/net/af_vsock.h
+>+++ b/include/net/af_vsock.h
+>@@ -169,6 +169,9 @@ struct vsock_transport {
+> 	void (*notify_buffer_size)(struct vsock_sock *, u64 *);
+> 	int (*notify_set_rcvlowat)(struct vsock_sock *vsk, int val);
+>
+>+	/* SIOCOUTQ ioctl */
+>+	ssize_t (*unsent_bytes)(struct vsock_sock *vsk);
+>+
+> 	/* Shutdown. */
+> 	int (*shutdown)(struct vsock_sock *, int);
+>
+>diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+>index 4b040285aa78..58e639e82942 100644
+>--- a/net/vmw_vsock/af_vsock.c
+>+++ b/net/vmw_vsock/af_vsock.c
+>@@ -112,6 +112,7 @@
+> #include <net/sock.h>
+> #include <net/af_vsock.h>
+> #include <uapi/linux/vm_sockets.h>
+>+#include <uapi/asm-generic/ioctls.h>
+>
+> static int __vsock_bind(struct sock *sk, struct sockaddr_vm *addr);
+> static void vsock_sk_destruct(struct sock *sk);
+>@@ -1292,6 +1293,57 @@ int vsock_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
+> }
+> EXPORT_SYMBOL_GPL(vsock_dgram_recvmsg);
+>
+>+static int vsock_do_ioctl(struct socket *sock, unsigned int cmd,
+>+			  int __user *arg)
+>+{
+>+	struct sock *sk = sock->sk;
+>+	struct vsock_sock *vsk;
+>+	int ret;
+>+
+>+	vsk = vsock_sk(sk);
+>+
+>+	switch (cmd) {
+>+	case SIOCOUTQ: {
+>+		ssize_t n_bytes;
+>+
+>+		if (!vsk->transport || !vsk->transport->unsent_bytes) {
+>+			ret = -EOPNOTSUPP;
+>+			break;
+>+		}
+>+
+>+		if (sock_type_connectible(sk->sk_type) && sk->sk_state == TCP_LISTEN) {
+>+			ret = -EINVAL;
+>+			break;
+>+		}
+>+
+>+		n_bytes = vsk->transport->unsent_bytes(vsk);
+>+		if (n_bytes < 0) {
+>+			ret = n_bytes;
+>+			break;
+>+		}
+>+
+>+		ret = put_user(n_bytes, arg);
+>+		break;
+>+	}
+>+	default:
+>+		ret = -ENOIOCTLCMD;
+>+	}
+>+
+>+	return ret;
+>+}
+>+
+>+static int vsock_ioctl(struct socket *sock, unsigned int cmd,
+>+		       unsigned long arg)
+>+{
+>+	int ret;
+>+
+>+	lock_sock(sock->sk);
+>+	ret = vsock_do_ioctl(sock, cmd, (int __user *)arg);
+>+	release_sock(sock->sk);
+>+
+>+	return ret;
+>+}
+>+
+> static const struct proto_ops vsock_dgram_ops = {
+> 	.family = PF_VSOCK,
+> 	.owner = THIS_MODULE,
+>@@ -1302,7 +1354,7 @@ static const struct proto_ops vsock_dgram_ops = {
+> 	.accept = sock_no_accept,
+> 	.getname = vsock_getname,
+> 	.poll = vsock_poll,
+>-	.ioctl = sock_no_ioctl,
+>+	.ioctl = vsock_ioctl,
+> 	.listen = sock_no_listen,
+> 	.shutdown = vsock_shutdown,
+> 	.sendmsg = vsock_dgram_sendmsg,
+>@@ -2286,7 +2338,7 @@ static const struct proto_ops vsock_stream_ops = {
+> 	.accept = vsock_accept,
+> 	.getname = vsock_getname,
+> 	.poll = vsock_poll,
+>-	.ioctl = sock_no_ioctl,
+>+	.ioctl = vsock_ioctl,
+> 	.listen = vsock_listen,
+> 	.shutdown = vsock_shutdown,
+> 	.setsockopt = vsock_connectible_setsockopt,
+>@@ -2308,7 +2360,7 @@ static const struct proto_ops vsock_seqpacket_ops = {
+> 	.accept = vsock_accept,
+> 	.getname = vsock_getname,
+> 	.poll = vsock_poll,
+>-	.ioctl = sock_no_ioctl,
+>+	.ioctl = vsock_ioctl,
+> 	.listen = vsock_listen,
+> 	.shutdown = vsock_shutdown,
+> 	.setsockopt = vsock_connectible_setsockopt,
+>
+>-- 
+>2.45.2
+>
+>
 
-On ARM, we have some IDs that depend on the emulation
-(MIDR, MPIDR, power state). Doing that on userspace may require
-a QAPI to query them.
-
-The memory layout, however, is the most complex one. Even for
-an ARM processor CPER (which is the simplest scenario), the 
-physical/virtual address need to be checked against the emulation
-environment.
-
-Other error sources (like memory errors, CXL, etc) will require
-a deep knowledge about how QEMU mapped such devices.
-
-So, in practice, if we move this to an EINJ script, we'll need
-to add a probably more complex QAPI to allow querying the memory
-layout and other device and CPU specific bindings.
-
-Also, we don't know what newer versions of ACPI spec will reserve
-us. See, even the HEST table contents is dependent of the HEST 
-revision number, as made clear at the ACPI 6.5 notes:
-
-	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#acpi-error-source
-
-and at:
-
-	https://uefi.org/specs/ACPI/6.5/18_Platform_Error_Interfaces.html#error-source-structure-header-type-12-onward
-
-So, if we're willing to add support for a more generic "raw data"
-QAPI, I would still do it per-type, and for the fields that won't
-require knowledge of the device-emulation details.
-
-Btw, my proposal on patch 7 of this series is to have raw data
-for:
-	- the error-info field;
-	- registers dump;
-	- micro-architecture specific data.
-
-I don't mind trying to have more raw data there as I see (marginal) 
-benefits of allowing to generate CPER invalid records [1], but some of
-those  fields need to be validated and/or filled internally at QEMU - if
-not forced to an specific value by the caller.
-
-[1] a raw data EINJ can be useful for fuzzy logic fault detection to 
-    check if badly formed packages won't cause a Kernel panic or be
-    an exploit. Yet, not really a concern for APEI, as if the hardware
-    is faulty, a Kernel panic is not out of the table. Also, if the
-    the BIOS is already compromised and has malicious code on it, 
-    the EINJ interface is not the main concern.
-
-> PS:
-> For user convenience, QEMU can carry a script that
-> could help generate this raw value in user friendly way
-> but at the same time it won't put maintenance
-> burden on QEMU itself.
-
-The script will still require reviews, and the same code will 
-be there. So, from maintenance burden, there won't be much
-difference.
-
-Btw, I'm actually using myself a script to test it, currently
-sitting together with rasdaemon - which is the Linux tool to detect
-and handle hardware errors:
-
-	https://github.com/mchehab/rasdaemon/blob/master/contrib/qemu_einj.py
-
-as it helps a lot when trying to simulate more complex errors.
-
-Once QEMU gains support to inject processor errors, I can prepare a 
-separate patch to move it to QEMU.
-
-Thanks,
-Mauro
 
