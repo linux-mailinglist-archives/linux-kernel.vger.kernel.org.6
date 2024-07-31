@@ -1,110 +1,113 @@
-Return-Path: <linux-kernel+bounces-269787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A42E9436E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 432ED9436E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:12:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B32C1C21915
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7504E1C21960
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:12:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE5D1649BF;
-	Wed, 31 Jul 2024 20:11:05 +0000 (UTC)
-Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537DC1607B6;
+	Wed, 31 Jul 2024 20:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vt+QSq4b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AC149627;
-	Wed, 31 Jul 2024 20:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246717579;
+	Wed, 31 Jul 2024 20:12:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722456664; cv=none; b=OsnQaH2reg6bSOh1lqAVBlQ0OLCcst6WVIqJCqDDmesBBKcvlIyBMg3EwWVc2ktBn3Nbkp3Z9z/HAFNzDNMhNM7RnYp98etSGq76r89GfRFjvS/k/TqdZ4w0NqfUnbnbXtsq1LC+c1urtkVePMFQEboyyPohz4+nvHQg9n0mFp0=
+	t=1722456723; cv=none; b=t7TsMKsWB2MW4gxkmBg9VQ9nQKo5bsRuq+KacSE/A3oYnFBD+90ao17LLd8LlWDqIhOrRU3BZtmpjUaNV7KIVo8kA9Ke3BtrjrA4TNQlxuqCfKiNRqVIb3Kjz1o7WbfJ3JVGa3BkDbXkiXAqDRaiyvNjzIZ+5BkXxM+5xzoRnCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722456664; c=relaxed/simple;
-	bh=/i+TJhra+65mna0gA2/eaKhKujPAlGmCNAqwDnjBLKw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
-	 References:In-Reply-To; b=Orr/6L1tE4de/Ev7AbKcjqn5FTIaohFIQRaijiU3noi+yNbikgIIp0mxdgFPIQafnixYsBmOGRPmduYB+60GCU+EawPwib6/Qs2se7z8TJ2QK7jpFe6+EeJEeBRqf98XGAmqtF6LrLwo0MkNDHIVmigMvpzX8lLag6wQudC7FtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
-Received: from localhost (unknown [IPv6:2a02:810b:4340:4ee9:4685:ff:fe12:5967])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3ffe.de (Postfix) with ESMTPSA id 8A22F540D;
-	Wed, 31 Jul 2024 22:11:00 +0200 (CEST)
+	s=arc-20240116; t=1722456723; c=relaxed/simple;
+	bh=5IeJZWRy61r1+KpM9Ds67BGzx8a4wfH6JVyA+DyWDoE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EN6GvATodaKk4uQGI4aKqhX9uEkb+/6sjWRhoZuhB9GuHvByr/harsaVjaMHKg3cJMQfNYKL64Wzh0Ket7Aab6qid2XhJm18Dl79vinuZdPHB9P0NR/xXS2UAl7iib35TVTHIbLLPTeEWrwFk+HC6ME3s4kKG04Zzih85xUD6Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vt+QSq4b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F8D7C116B1;
+	Wed, 31 Jul 2024 20:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722456723;
+	bh=5IeJZWRy61r1+KpM9Ds67BGzx8a4wfH6JVyA+DyWDoE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Vt+QSq4bzdxKdy9JENfaxNjJv5lZI3/6Le8VIwsPYAyrt3KBvl1diWGcJIVHXTMSB
+	 l4oYCqDH4hCzUoeZMC3s9qTZAk+Zkc6s9ZCnVQwIKM2bc4DxG7AobXMhqQMNPp7KsR
+	 af0/ngdvsXtRSBfmRMHPhDEeeotphdHJpgZg4bH/r/lPbahyKvVXeaGOgOTqsM2iA7
+	 9kFOli1C24jMkQnN2MIW+I4dfS0qzbXwAR05RXLASkMSEWLdghQftDq18pj686sItO
+	 zpaut9sGNWH0WOkYsr1G4hBgQeIvV5DscPwIuiLmfbjldaaEman2NwxQqahtigB6Q7
+	 DGURJmCFVrU8A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sZFg1-00H70p-4D;
+	Wed, 31 Jul 2024 21:12:01 +0100
+Date: Wed, 31 Jul 2024 21:12:00 +0100
+Message-ID: <87v80l48z3.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] KVM: arm64: Clarify meaning of _MASK and _nMASK for FGT registers
+In-Reply-To: <20240731-kvm-arm64-fgt-doc-v1-2-abb364f8fe57@kernel.org>
+References: <20240731-kvm-arm64-fgt-doc-v1-0-abb364f8fe57@kernel.org>
+	<20240731-kvm-arm64-fgt-doc-v1-2-abb364f8fe57@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/28.2
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 31 Jul 2024 22:11:00 +0200
-Message-Id: <D33ZXDVKL33Z.1SDI3XDBGZIO8@kernel.org>
-Subject: Re: [PATCH] usb: gadget: f_acm: make bInterfaceProtocol
- configurable
-Cc: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-X-Mailer: aerc 0.16.0
-References: <20240730194337.2583784-1-mwalle@kernel.org>
- <2024073151-violator-unskilled-6866@gregkh>
- <D33LLE6K8QGH.1BCZM42INRVEX@kernel.org>
- <2024073145-treat-winnings-3bb4@gregkh>
-In-Reply-To: <2024073145-treat-winnings-3bb4@gregkh>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, tabba@google.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Greg,
+On Wed, 31 Jul 2024 19:58:38 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> Since the use of _MASK to mean bits where setting the bit causes traps to
+> be generated is a little unusual add a clarifying comment.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_arm.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
+> index d347483395b4..1d8745740fb1 100644
+> --- a/arch/arm64/include/asm/kvm_arm.h
+> +++ b/arch/arm64/include/asm/kvm_arm.h
+> @@ -343,6 +343,10 @@
+>   * FGT register definitions
+>   *
+>   * RES0 and polarity masks for the FGT registers.
+> + *
+> + * _RES0:  Bits which are RES0
+> + * _MASK:  Bits which enable traps when set
+> + * _nMASK: Bits which disable traps when set
 
-On Wed Jul 31, 2024 at 11:16 AM CEST, Greg Kroah-Hartman wrote:
-> On Wed, Jul 31, 2024 at 10:57:04AM +0200, Michael Walle wrote:
-> > Hi Greg,
-> >=20
-> > On Wed Jul 31, 2024 at 10:32 AM CEST, Greg Kroah-Hartman wrote:
-> > > On Tue, Jul 30, 2024 at 09:43:37PM +0200, Michael Walle wrote:
-> > > >  struct f_serial_opts {
-> > > >  	struct usb_function_instance func_inst;
-> > > >  	u8 port_num;
-> > > > +	u8 protocol;
-> > > > +
-> > > > +	struct mutex lock;
-> > > > +	int refcnt;
-> > >
-> > > Attempting to "roll your own" reference count is almost never a good
-> > > idea.  If you really need one, please use the proper in-kernel apis f=
-or
-> > > this.  But you need to justify it as well, I didn't see why this was
-> > > needed at all.
-> >=20
-> > Honestly, I couldn't grok all that usb gadget magic, so I've looked
-> > at similar gadgets and took that from there:
-> >   grep refcnt drivers/usb/gadget/function/ -r
-> >=20
-> > They are all doing the same, so maybe that code is old or didn't use
-> > the proper APIs back then.
->
-> It's old code, please do things properly.
+The rest of the code call this "negative polarity". Also, in some
+cases (such as with HCRX_EL2), such bits are *enable* bits. So you
+probably want to capture this as well.
 
-Sorry, I have to come back to this. What do you have in mind?
+	M.
 
-The mutex is needed in any case to protect the members of
-f_serial_ops from concurrent access between the .bind() and the
-configfs write.
-
-Which leaves us with refcnt. I don't think refcount_t is suitable
-here. For example, refcount_inc() will warn if you increment from
-0; which makes sense for resource reference counting. But doesn't
-make sense in this case; there is no resource handling or freeing if
-the refcnt is 0. It just prohibits the write to the configfs
-attribute if refcnt !=3D 0, that is, there is at least one instance of
-the gadget function.
-
-Maybe I should just rename "refcnt" to "users" and add a comment to
-the mutex what it will protect.
-
-What do you think?
-
--michael
+-- 
+Without deviation from the norm, progress is not possible.
 
