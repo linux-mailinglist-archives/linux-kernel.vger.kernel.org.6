@@ -1,189 +1,167 @@
-Return-Path: <linux-kernel+bounces-269612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736289434D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:12:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88819943526
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D63B4B24363
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:12:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F1EB22BF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3C9F1BF32B;
-	Wed, 31 Jul 2024 17:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C733A8F0;
+	Wed, 31 Jul 2024 17:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jViwoHkM"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dvTxmvOJ"
+Received: from smtp.smtpout.orange.fr (smtp-29.smtpout.orange.fr [80.12.242.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1947B1BE227;
-	Wed, 31 Jul 2024 17:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B907617543;
+	Wed, 31 Jul 2024 17:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722445876; cv=none; b=QRluBDox4/oH2Y2vZoCRPJxvqpj7jjWYvW1TOOHlXHdzmJ8H/KtPqKkQoDRFWVMVlbJGXB2ZrfN8/hd+4JCqPht3MX9VrX0ety6Hw98YovT3xcFb6Ybv4V5BqPkrVmDvACorwhpxBPjGV2j2bXAZ9vITlGNxlS2nsYOM5PVdndU=
+	t=1722447994; cv=none; b=I9HTZUgYrIxBrIbjJ0Dr8zSQf0TNn1tf7NHa1UOeOlacAtLvISOZdYn6B2T3A99whln7pkV29MZgfAg+Mhr5aesymIuonzIz+VyOFVWbF9tbVOQPhYzwr4TYizYBGSv/ld+QdCYIObEhKUZhXaPMtIwL8C0R3A8G8Py5YD03AW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722445876; c=relaxed/simple;
-	bh=bLKIStg32CKaj6+VtwdHIZvNTmLrFgAVJyIBzHe+KWc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=ZqzvUV9kfD7A/Yb6KrbMsCRYWZy/efiB3rjZtIvOA7990vrhlm+EjAswBMuqR94YjatgLdEKk3tt5EJ6oLCqcvGLWstTJ+c/7VSs4ZbK6+2bcScOqIE++/gMfM2LWep7cpgSSn09LK2fLGNb5NlC0VUzR5rHU3NpshNaWYbtnLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jViwoHkM; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VHB9l3117367;
-	Wed, 31 Jul 2024 12:11:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722445869;
-	bh=m8yE4PnEM9kCNwvR96U6Zj1VFy8LOKMPDIbWtSVfzE4=;
-	h=From:Date:Subject:References:In-Reply-To:To:CC;
-	b=jViwoHkMf7BhDByqtGuxiueikGLsGl1rKo5oIhHK5eyv6A4SnnqXqbTnmy6eVdXLg
-	 ZdkEOHFmxW9LbOiYZnctkK6Mxd4p+th3D5bwGyZZvR2Z3A/4bP4dWZr9r8lm+VCrMv
-	 wxAp7t4yLBi0+uKSZPJnxRdFlQdXvcbc6Og96/hQ=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VHB9Gl109252
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 12:11:09 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 12:11:09 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 12:11:09 -0500
-Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VHAVgW036362;
-	Wed, 31 Jul 2024 12:11:06 -0500
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-Date: Wed, 31 Jul 2024 22:40:35 +0530
-Subject: [PATCH v3 9/9] arm64: dts: ti: Add support for J742S2 EVM board
+	s=arc-20240116; t=1722447994; c=relaxed/simple;
+	bh=VYynSQlkqfKPdPrpqBX9BNsxQD2Rk2GmDS0e1sRFgFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=id6TSi7bHjkICxR1ZbYJIJHCeZxqfTHPgj+RUFFfg1ROMO9N0jkCOh9AYS+sWIx6a2n3AYsIBS0aMOMXcRgSbuFLl2sbDtvwvEUwSZu91fCw5YoJXpqowzEEumaJalW+2xxayMS8i8ls4BD9Qp01BC/9drf1OUgnqRRA2W5n9ZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dvTxmvOJ; arc=none smtp.client-ip=80.12.242.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ZCrRsJemgWPKVZCrRsG3Ul; Wed, 31 Jul 2024 19:11:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722445898;
+	bh=l/N7BL6uXIDoiEcTV0sQ9X+6QKDbvzDQWB0h4bM+lFE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=dvTxmvOJZbGhRxoANl70qmf7S2ZSEKLOcNeA9hLaqEFBvPQUcsA6f9iuxkqiSgiAu
+	 MJOoqNaHkAis3+RugHTH6u2kXY+UKzaEFLzfPZwMxF3sTZAm+DeHEmp8yjO3uU9F4/
+	 HSwpkttWi+aUh05ALFIE3fLkL1l2S7CFYAmCcXxBYnZ6RRTnafAawtCfja3mIbTWEZ
+	 6A2+ULcm7D39ArVc/5GdclhHK+BrJw5SBb9cp1nSTKfIHbxlA3sxI7pVOwjp+D37d2
+	 mKUR4ccBalvZNLsOncet2VLSiWwX5OYVyTA1j2PZVVbsSrR8/EMAhCmdjzjd2Nq9wr
+	 Xqk1uLNDRGQzA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Wed, 31 Jul 2024 19:11:38 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <0fbca32a-d0e9-4884-9839-be1714543398@wanadoo.fr>
+Date: Wed, 31 Jul 2024 19:11:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240731-b4-upstream-j742s2-v3-9-da7fe3aa9e90@ti.com>
-References: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
-In-Reply-To: <20240731-b4-upstream-j742s2-v3-0-da7fe3aa9e90@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
-        Neha Malcom
- Francis <n-francis@ti.com>,
-        Aniket Limaye <a-limaye@ti.com>, Manorit Chawdhry
-	<m-chawdhry@ti.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722445831; l=3518;
- i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
- bh=bLKIStg32CKaj6+VtwdHIZvNTmLrFgAVJyIBzHe+KWc=;
- b=ihjIAZX8EBLlNu8Yw2LQskvPqfR4ghVf2LcNY2eyB3HR/dRzUDpo5AIAp0Orv4gmPc/iHTjfr
- NmXYKk1G3X8BUmZTOiCeTOyiHWoPBXKsI7v6WbDc20fCvXle/+zcm5n
-X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
- pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] udmabuf: use kmem_cache to alloc udmabuf folio
+To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20240731073752.1225177-1-link@vivo.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20240731073752.1225177-1-link@vivo.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-J742S2 EVM board is designed for TI J742S2 SoC. It supports the following
-interfaces:
-* 16 GB DDR4 RAM
-* x2 Gigabit Ethernet interfaces capable of working in Switch and MAC mode
-* x1 Input Audio Jack, x1 Output Audio Jack
-* x1 USB2.0 Hub with two Type A host and x1 USB 3.1 Type-C Port
-* x1 4L PCIe connector
-* x1 UHS-1 capable micro-SD card slot
-* 512 Mbit OSPI flash, 1 Gbit Octal NAND flash, 512 Mbit QSPI flash,
-  UFS flash.
-* x6 UART through UART-USB bridge
-* XDS110 for onboard JTAG debug using USB
-* Temperature sensors, user push buttons and LEDs
-* x1 GESI expander, x2 Display connector
-* x1 15-pin CSI header
-* x6 MCAN instances
+Le 31/07/2024 à 09:37, Huan Yang a écrit :
+> The current udmabuf_folio contains a list_head and the corresponding
+> folio pointer, with a size of 24 bytes. udmabuf_folio uses kmalloc to
+> allocate memory.
+> 
+> However, kmalloc is a public pool, starting from 8,16,32 bytes.
+> Additionally, if the size is not aligned with the kmalloc size, it will
+> be rounded up to the corresponding size.
+> This means that each udmabuf_folio allocation will get 32 bytes, and
+> waste 8 bytes.
+> 
+> Considering that each udmabuf creates a folio corresponding to a
+> udmabuf_folio, the wasted memory can be significant in the case of
+> memory fragmentation.
+> 
+> Furthermore, if udmabuf is frequently used, the allocation and
+> deallocation of udmabuf_folio will also be frequent.
+> 
+> Therefore, this patch adds a kmem_cache dedicated to the allocation and
+> deallocation of udmabuf_folio.This is expected to improve the
+> performance of allocation and deallocation within the expected range,
+> while also avoiding memory waste.
+> 
+> Signed-off-by: Huan Yang <link@vivo.com>
+> ---
+> v3 -> v2: fix error description.
+> v2 -> v1: fix double unregister, remove unlikely.
+>   drivers/dma-buf/udmabuf.c | 19 +++++++++++++++----
+>   1 file changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> index 047c3cd2ceff..c112c58ef09a 100644
+> --- a/drivers/dma-buf/udmabuf.c
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -24,6 +24,8 @@ static int size_limit_mb = 64;
+>   module_param(size_limit_mb, int, 0644);
+>   MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes. Default is 64.");
+>   
+> +static struct kmem_cache *udmabuf_folio_cachep;
+> +
+>   struct udmabuf {
+>   	pgoff_t pagecount;
+>   	struct folio **folios;
+> @@ -169,7 +171,7 @@ static void unpin_all_folios(struct list_head *unpin_list)
+>   		unpin_folio(ubuf_folio->folio);
+>   
+>   		list_del(&ubuf_folio->list);
+> -		kfree(ubuf_folio);
+> +		kmem_cache_free(udmabuf_folio_cachep, ubuf_folio);
+>   	}
+>   }
+>   
+> @@ -178,7 +180,7 @@ static int add_to_unpin_list(struct list_head *unpin_list,
+>   {
+>   	struct udmabuf_folio *ubuf_folio;
+>   
+> -	ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
+> +	ubuf_folio = kmem_cache_alloc(udmabuf_folio_cachep, GFP_KERNEL);
+>   	if (!ubuf_folio)
+>   		return -ENOMEM;
+>   
+> @@ -491,11 +493,20 @@ static int __init udmabuf_dev_init(void)
+>   					   DMA_BIT_MASK(64));
+>   	if (ret < 0) {
+>   		pr_err("Could not setup DMA mask for udmabuf device\n");
+> -		misc_deregister(&udmabuf_misc);
+> -		return ret;
+> +		goto err;
+> +	}
+> +
+> +	udmabuf_folio_cachep = KMEM_CACHE(udmabuf_folio, 0);
+> +	if (!udmabuf_folio_cachep) {
+> +		ret = -ENOMEM;
+> +		goto err;
+>   	}
+>   
+>   	return 0;
+> +
+> +err:
+> +	misc_deregister(&udmabuf_misc);
+> +	return ret;
+>   }
+>   
+>   static void __exit udmabuf_dev_exit(void)
 
-Link: https://www.ti.com/lit/ug/sprujd8/sprujd8.pdf (EVM user guide)
-Link: https://www.ti.com/lit/zip/SPAC001 (Schematics)
-Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
----
- arch/arm64/boot/dts/ti/Makefile                    |  4 ++++
- arch/arm64/boot/dts/ti/k3-j742s2-evm.dts           | 26 ++++++++++++++++++++++
- .../boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi   |  3 ++-
- 3 files changed, 32 insertions(+), 1 deletion(-)
+Hi,
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index e20b27ddf901..1bf645726a10 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -119,6 +119,9 @@ dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-pcie0-pcie1-ep.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-quad-port-eth-exp1.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-j784s4-evm-usxgmii-exp1-exp2.dtbo
- 
-+# Boards with J742S2 SoC
-+dtb-$(CONFIG_ARCH_K3) += k3-j742s2-evm.dtb
-+
- # Build time test only, enabled by CONFIG_OF_ALL_DTBS
- k3-am625-beagleplay-csi2-ov5640-dtbs := k3-am625-beagleplay.dtb \
- 	k3-am625-beagleplay-csi2-ov5640.dtbo
-@@ -240,3 +243,4 @@ DTC_FLAGS_k3-j721e-common-proc-board += -@
- DTC_FLAGS_k3-j721e-sk += -@
- DTC_FLAGS_k3-j721s2-common-proc-board += -@
- DTC_FLAGS_k3-j784s4-evm += -@
-+DTC_FLAGS_k3-j742s2-evm += -@
-diff --git a/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-new file mode 100644
-index 000000000000..ac683bcbfe97
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-j742s2-evm.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Copyright (C) 2024 Texas Instruments Incorporated - https://www.ti.com/
-+ *
-+ * EVM Board Schematics: https://www.ti.com/lit/zip/SPAC001
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/gpio/gpio.h>
-+#include "k3-j742s2.dtsi"
-+#include "k3-j784s4-j742s2-evm-common.dtsi"
-+
-+/ {
-+	model = "Texas Instruments J742S2 EVM";
-+	compatible = "ti,j742s2-evm", "ti,j742s2";
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		bootph-all;
-+		/* 16G RAM */
-+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>,
-+		      <0x00000008 0x80000000 0x00000003 0x80000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-index 068ceed4ea15..a7bb1857b4e8 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi
-@@ -2,7 +2,8 @@
- /*
-  * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-  *
-- * EVM Board Schematics: https://www.ti.com/lit/zip/sprr458
-+ * EVM Board Schematics(j784s4): https://www.ti.com/lit/zip/sprr458
-+ * EVM Board Schematics(j742s2): https://www.ti.com/lit/zip/SPAC001
-  */
- / {
- 	chosen {
+should a kmem_cache_destroy() be also added in udmabuf_dev_exit()?
 
--- 
-2.45.1
+CJ
+
+> 
+> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
 
 
