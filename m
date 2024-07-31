@@ -1,279 +1,203 @@
-Return-Path: <linux-kernel+bounces-269882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF49B94380D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:34:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 280CF94380F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54A1A1F223D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:34:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 675D2B21A26
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8A03F9C5;
-	Wed, 31 Jul 2024 21:33:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254F166308;
+	Wed, 31 Jul 2024 21:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VIAhYFGx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GQu1F0BL"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E2D16C87A
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:33:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35F445957
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722461629; cv=none; b=SiU2kPVwHRwEicPcAInI1MGIkb0++rKhmxeLt24q9jOqdUU1XR2/9ra87cpillBXzqvBO1vPurwbnMt6mR6fqCqkhsDKex92/1Dmz+Nx+9Z958kj8Tqlm5LavGfGx/kZb78cyBZlu867Dz5fUKeunWViK6vvqtl/N56lVykvKFY=
+	t=1722461668; cv=none; b=ee8xvxXHDLw3yW0Ct2NnEu99jcCV7ZvQAmzUj92wtKjXgiiM/HiLQHIhTDQLuhdPA+xL2UlnbCsbM3IcCAB3mUzx8TRD8h4aiwpdeETPhrSGRzEqZVG5Ja0tTJmV00jvVWGGCZ9Wssyf00NBjoO3RX1pnd0yXgg1lSNeKwXJ4fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722461629; c=relaxed/simple;
-	bh=yfEJ2IyPNo+UIkIuSJZXNNRPNIQb6tp9VjSrL5NU0b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GiX989uQL/78TNWxkttmjqW8Lsq0xibYhibrHtrAABwyckFqWVrLcuITMIFVO3YwrGdIxR8LNQqzW2B5BCwX+ilGsgSrhaPIjhES+qa9UPunN5/Stj31ep5DIABG/yAfKRW7TMQtiTFueoOmhxCJPnvQcuT4MNvfdAUwwXzMFmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VIAhYFGx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722461627;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lMJD3KA2qGNWCxRW43U2dkrvCsCBxrMP59mKFMIzsms=;
-	b=VIAhYFGx518140XiO4Gwpn1+vq1NHcnmoR61UUMxQX1jTUm4g+NyKQ1K+taQJeo6TGGm1G
-	tWO+Ia5m5f0qtyCDnoETUjoKYqETyGzbxiXgORJAJZg5TzFZLilGseB3vtabTAgJ8sC9SN
-	Yhb3abwoVzjj1KmT1l54WajAy2Q201Q=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-663-b9QxL9pfNDG2OIQr1R-RxQ-1; Wed, 31 Jul 2024 17:33:44 -0400
-X-MC-Unique: b9QxL9pfNDG2OIQr1R-RxQ-1
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6b993657236so60773886d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:33:44 -0700 (PDT)
+	s=arc-20240116; t=1722461668; c=relaxed/simple;
+	bh=7409YPGD84DSohjrVEJAwG5xvR83yL1kGxaxMdosLHg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sOOImTO7K6nw+gdAFtZUi8x23wY8FQtfaLZb0cJfu/F5dvVFDp6xU2mixa6uQBPtsTElLjcyWgjNZIlYhRFNDUAqhTZ4mlp/+0rVFFaB/3G2WvRDR4qCxWDcOq/jhVLhrAbGigB3cRFzn2HJxZ84OnGlOCn5dzpdY1vyHwxqQAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GQu1F0BL; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso41717515e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:34:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722461665; x=1723066465; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bli9lhI61IaRjVxZ6El/2TlE2JOrlJn5Lbi96Tzc1cY=;
+        b=GQu1F0BLQxTE5HrRAYdznGPthK87JO7jzNA+e0LtPBS1Xeb7WCoXTu2o2+hnzBzEUl
+         buBKc8MLsCIEA0Bjx1nzCTqT1i+hXRpUbn5iBBD2SbfwEsIe35BUVWVchgQPPD+DFajC
+         lgje4uUGsgJyywhKyYgL3ztHIrUUCdz3okoNP58tNgHhPgWtwYf9i8AxVGsRIaJgg9X8
+         CKcJQ2zOdQWlDWO3kjiYGEMSBdXzPvWGQVqYoBqIqg7REf/xE5sFBvxtZ1ndtnA7kFmX
+         qadHFbyDM1p2Ld/bexaE0vVnZucLwHYBDMHOjdX234OwQF4buenYjN+cAaHLeLST4GQT
+         nxzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722461624; x=1723066424;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lMJD3KA2qGNWCxRW43U2dkrvCsCBxrMP59mKFMIzsms=;
-        b=C49+x1DUBNIXyuwwtzcIsXoGbOJRQfHzEifAA88qCbDqna0EaehsMogFAJvU442TJi
-         ciy9ZLkLHk4KrJscOQjmqs8c4M1UTQopltMncGKdRsCTIXdC/VinmJm2WBypSrkJeV6S
-         6lgkzLEQraCxkIph/4Onl4VGKTtk5ckRW3t5u/CVL4eXU7Uh/PNNP7aI7mCUmMC96Dhj
-         KeYhyWyByElaozhhuWXBlyQYfEK+VYHFoAHPv9CRoMjc9LPGvHmwxe0wpsWsQkASly9T
-         FDRe7AyLxcJYYZbIoCp+GwugH/Ot6mAh2eyLUPyIOcjrhjrx+MJoTY6TvFDBScYqfUcr
-         fw1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVRbO+B76WmyGDVmSzxJM95zTihsA4uVWl/RHXBUsFw1EFT/4f8rbHz0S4CBm9teTjpsSBnbT4K3Yo1b889s6PTRmnbbuhkuObJSFZ5
-X-Gm-Message-State: AOJu0YwbPGeI1MVQwIcHf9XgQyTM1HGrhkKH0+c/JauSRx//2HJ21DtT
-	da1RViVXftAcFfObrMl9TYfMrnNCjk2Eocvb1oS4gS0MMH/zqPv3kNFl3gi9QikSqz5bu1SPaTh
-	s/Le6HCQc1/SYA6spxMWUtsgnVkdXtv0f+lVZ/vK9JzKcd7W3Ke9Q+mBr8LrTaA==
-X-Received: by 2002:a05:6214:5241:b0:6b4:fe1a:eeee with SMTP id 6a1803df08f44-6bb8d7be0f2mr6531046d6.46.1722461623993;
-        Wed, 31 Jul 2024 14:33:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF/YTx441czrHIh+I1/t3wiuD00rLVQQeAR+4PNmWQ7Z+E6AwR9B1FNdAnu3NkwBA7KgkE5Ug==
-X-Received: by 2002:a05:6214:5241:b0:6b4:fe1a:eeee with SMTP id 6a1803df08f44-6bb8d7be0f2mr6530786d6.46.1722461623499;
-        Wed, 31 Jul 2024 14:33:43 -0700 (PDT)
-Received: from [192.168.1.152] ([70.22.187.239])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bb3fa950a3sm78404816d6.90.2024.07.31.14.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 14:33:42 -0700 (PDT)
-Message-ID: <9de7c031-58e6-56df-6b9c-b10952551d02@redhat.com>
-Date: Wed, 31 Jul 2024 17:33:41 -0400
+        d=1e100.net; s=20230601; t=1722461665; x=1723066465;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bli9lhI61IaRjVxZ6El/2TlE2JOrlJn5Lbi96Tzc1cY=;
+        b=j983ILYmDmRSNUefVBYbL/DP5AZsiTB3ipadazCVuN/DJyom2uLxuEzZO3lgCb6HXW
+         QSGc1phdUpx45S41WTuP7f767R/TXU1ycrIGVt1t6AefJsgO9jkCFLi/Byhmy0i8c9Sz
+         +rXStU2FExT+4ylHvO1Hf3pRfXuR7NIJezSLbVbk4YQLUnadrhv+kP4JLgTkk+YKKaKJ
+         74eF/4/Kr6h8jayn79i/rAPOQI3329o2BaiHBynzsgzIjzdTciwTOemeJMp4oP7DvT/R
+         Nk7IMyAgdG7Zp5wdMTy5KN7Exh+l3Dti4KfTy+knfT/gmnu0H4ZJVBid9uFiamAQSANs
+         5XXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxPNxHo/Aw76HikUyrNix65aXhL9w6KE9xaHuAhEWl8VM+xN5oC+YQmkZJEJbpXVaeyku1tTl8UBnRCcGmPvrv9vID8VKQb47f3ApU
+X-Gm-Message-State: AOJu0Yx4IeVG0XCj5ESJRDconMx8Y8dVJxF301ftM3Zp2r/+7ccOJNFK
+	fhuCdOqpW4Jw3QhUDsXemgUSnyCixUOwdVLytLitsURyz/z+UR4Udmrc6pp14lFO/mY0i+FvOpg
+	Cp/j0QjAXsnDXZjaGdQSiesFFAw58hW6QN/4Q
+X-Google-Smtp-Source: AGHT+IEnnH7Vl1oPP/7poRoKnYi3pQkDBFhO+xnBb/MH3dLIwjkKyZ7/ziEU66uYwoK2Ox4X3gDKYbUA6wyDWgsUmeg=
+X-Received: by 2002:a05:600c:3543:b0:426:6ee7:c05a with SMTP id
+ 5b1f17b1804b1-428a9bdcd50mr4067365e9.15.1722461664765; Wed, 31 Jul 2024
+ 14:34:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.12.0
-Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
- load
-Content-Language: en-US
-To: Konstantin Kharlamov <Hi-Angel@yandex.ru>,
- Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yangerkun@huawei.com" <yangerkun@huawei.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-Cc: dm-devel@lists.linux.dev
-References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
- <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
- <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
- <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
- <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
- <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
- <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
- <37df66ec9cf1a0570a86ec0b9f17ae18ed11b832.camel@yandex.ru>
-From: Matthew Sakai <msakai@redhat.com>
-In-Reply-To: <37df66ec9cf1a0570a86ec0b9f17ae18ed11b832.camel@yandex.ru>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240628-tracepoint-v4-0-353d523a9c15@google.com>
+ <20240628-tracepoint-v4-1-353d523a9c15@google.com> <20240731170508.GJ33588@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240731170508.GJ33588@noisy.programming.kicks-ass.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 31 Jul 2024 23:34:13 +0200
+Message-ID: <CAH5fLghYodekhH-1A0BWZVwgbqkWbP3WP70-us2FtHqvOqD_Hw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] rust: add static_key_false
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)" <peterz@infradaed.org>, 
+	Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 31, 2024 at 7:05=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Fri, Jun 28, 2024 at 01:23:31PM +0000, Alice Ryhl wrote:
+>
+> >  rust/kernel/arch/arm64/jump_label.rs     | 34 ++++++++++++++++++++++++=
+++++
+> >  rust/kernel/arch/loongarch/jump_label.rs | 35 ++++++++++++++++++++++++=
++++++
+> >  rust/kernel/arch/mod.rs                  | 24 ++++++++++++++++++++
+> >  rust/kernel/arch/riscv/jump_label.rs     | 38 ++++++++++++++++++++++++=
+++++++++
+> >  rust/kernel/arch/x86/jump_label.rs       | 35 ++++++++++++++++++++++++=
++++++
+> >  rust/kernel/lib.rs                       |  2 ++
+> >  rust/kernel/static_key.rs                | 32 ++++++++++++++++++++++++=
++++
+> >  scripts/Makefile.build                   |  2 +-
+> >  8 files changed, 201 insertions(+), 1 deletion(-)
+>
+> So I really find the amount of duplicated asm offensive. Is is far too
+> easy for any of this to get out of sync.
+>
+> > diff --git a/rust/kernel/arch/x86/jump_label.rs b/rust/kernel/arch/x86/=
+jump_label.rs
+> > new file mode 100644
+> > index 000000000000..383bed273c50
+> > --- /dev/null
+> > +++ b/rust/kernel/arch/x86/jump_label.rs
+> > @@ -0,0 +1,35 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2024 Google LLC.
+> > +
+> > +//! X86 Rust implementation of jump_label.h
+> > +
+> > +/// x86 implementation of arch_static_branch
+> > +#[macro_export]
+> > +#[cfg(target_arch =3D "x86_64")]
+> > +macro_rules! arch_static_branch {
+> > +    ($key:path, $keytyp:ty, $field:ident, $branch:expr) =3D> {'my_labe=
+l: {
+> > +        core::arch::asm!(
+> > +            r#"
+> > +            1: .byte 0x0f,0x1f,0x44,0x00,0x00
+> > +
+> > +            .pushsection __jump_table,  "aw"
+> > +            .balign 8
+> > +            .long 1b - .
+> > +            .long {0} - .
+> > +            .quad {1} + {2} + {3} - .
+> > +            .popsection
+> > +            "#,
+> > +            label {
+> > +                break 'my_label true;
+> > +            },
+> > +            sym $key,
+> > +            const ::core::mem::offset_of!($keytyp, $field),
+> > +            const $crate::arch::bool_to_int($branch),
+> > +        );
+> > +
+> > +        break 'my_label false;
+> > +    }};
+> > +}
+>
+> Note that this uses the forced 5 byte version, and not the dynamic sized
+> one. On top of that it hard-codes the nop5 string :/
+>
+> Please work harder to not have to duplicate stuff like this.
 
-On 7/31/24 10:14, Konstantin Kharlamov wrote:
-> CC'ing VDO maintainers, because the problem is only reproducible with
-> VDO, so potentially they might have some ideas.
+I really didn't want to duplicate it, but it's very hard to find a
+performant alternative. Is there any way we could accept duplication
+only in the cases where an 'i' parameter is used? I don't have the
+choice of using a Rust helper for 'i' parameters.
 
-I don't see anything that implicates VDO directly. The blocked VDO 
-threads (with the test patch) seem to be stuck in raid5_make_request() 
-so it seems like the raid itself is not handling requests in a timely 
-manner.
+Perhaps one option could be to put the Rust code inside jump_label.h
+and have the header file evaluate to either C or Rust depending on the
+value of some #ifdefs?
 
-There is one potentially useful detail, however: VDO mostly submits 4K 
-bios. The large number of smaller bios may be exacerbating an issue in 
-the raid5.
+#ifndef RUST_ASM
+/* existing C code goes here */
+#endif
+#ifdef RUST_ASM
+// rust code goes here
+#endif
 
-Matt
+That way the duplication is all in a single file. It would also avoid
+the need for duplicating the nop5 string, as the Rust case is still
+going through the C preprocessor and can use the existing #define.
 
-> On Mon, 2024-07-22 at 20:56 +0300, Konstantin Kharlamov wrote:
->> Hi, sorry for the delay, I had to give away the nodes and we had a
->> week
->> of teambuilding and company party, so for the past week I only
->> managed
->> to hack away stripping debug symbols, get another node and set it up.
->>
->> Experiments below are based off of vanilla 6.9.8 kernel *without*
->> your
->> patch.
->>
->> On Mon, 2024-07-15 at 09:56 +0800, Yu Kuai wrote:
->>> Line number will be helpful.
->>
->> So, after tinkering with building scripts I managed to build modules
->> with debug symbols (not the kernel itself but should be good enough),
->> but for some reason kernel doesn't show line numbers in stacktraces.
->> No
->> idea what could be causing it, so I had to decode line numbers
->> manually, below is an output where I inserted line numbers for
->> raid456
->> manually after decoding them with `gdb`.
->>
->>      […]
->>      [ 1677.293366]  <TASK>
->>      [ 1677.293661]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
->>      [ 1677.293972]  ? _raw_spin_unlock_irq+0x10/0x30
->>      [ 1677.294276]  ? _raw_spin_unlock_irq+0xa/0x30
->>      [ 1677.294586]  raid5d at drivers/md/raid5.c:6572
->>      [ 1677.294910]  md_thread+0xc1/0x170
->>      [ 1677.295228]  ? __pfx_autoremove_wake_function+0x10/0x10
->>      [ 1677.295545]  ? __pfx_md_thread+0x10/0x10
->>      [ 1677.295870]  kthread+0xff/0x130
->>      [ 1677.296189]  ? __pfx_kthread+0x10/0x10
->>      [ 1677.296498]  ret_from_fork+0x30/0x50
->>      [ 1677.296810]  ? __pfx_kthread+0x10/0x10
->>      [ 1677.297112]  ret_from_fork_asm+0x1a/0x30
->>      [ 1677.297424]  </TASK>
->>      […]
->>      [ 1705.296253]  <TASK>
->>      [ 1705.296554]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
->>      [ 1705.296864]  ? _raw_spin_unlock_irq+0x10/0x30
->>      [ 1705.297172]  ? _raw_spin_unlock_irq+0xa/0x30
->>      [ 1677.294586]  raid5d at drivers/md/raid5.c:6597
->>      [ 1705.297794]  md_thread+0xc1/0x170
->>      [ 1705.298099]  ? __pfx_autoremove_wake_function+0x10/0x10
->>      [ 1705.298409]  ? __pfx_md_thread+0x10/0x10
->>      [ 1705.298714]  kthread+0xff/0x130
->>      [ 1705.299022]  ? __pfx_kthread+0x10/0x10
->>      [ 1705.299333]  ret_from_fork+0x30/0x50
->>      [ 1705.299641]  ? __pfx_kthread+0x10/0x10
->>      [ 1705.299947]  ret_from_fork_asm+0x1a/0x30
->>      [ 1705.300257]  </TASK>
->>      […]
->>      [ 1733.296255]  <TASK>
->>      [ 1733.296556]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
->>      [ 1733.296862]  ? _raw_spin_unlock_irq+0x10/0x30
->>      [ 1733.297170]  ? _raw_spin_unlock_irq+0xa/0x30
->>      [ 1677.294586]  raid5d at drivers/md/raid5.c:6572
->>      [ 1733.297792]  md_thread+0xc1/0x170
->>      [ 1733.298096]  ? __pfx_autoremove_wake_function+0x10/0x10
->>      [ 1733.298403]  ? __pfx_md_thread+0x10/0x10
->>      [ 1733.298711]  kthread+0xff/0x130
->>      [ 1733.299018]  ? __pfx_kthread+0x10/0x10
->>      [ 1733.299330]  ret_from_fork+0x30/0x50
->>      [ 1733.299637]  ? __pfx_kthread+0x10/0x10
->>      [ 1733.299943]  ret_from_fork_asm+0x1a/0x30
->>      [ 1733.300251]  </TASK>
->>
->>> Meanwhile, can you check if the underlying
->>> disks has IO while raid5 stuck, by /sys/block/[device]/inflight.
->>
->> The two devices that are left after the 3rd one is removed has these
->> numbers that don't change with time:
->>
->>      [Mon Jul 22 20:18:06 @ ~]:> for d in dm-19 dm-17; do echo -n $d;
->> cat
->>      /sys/block/$d/inflight; done
->>      dm-19       9        1
->>      dm-17      11        2
->>      [Mon Jul 22 20:18:11 @ ~]:> for d in dm-19 dm-17; do echo -n $d;
->> cat
->>      /sys/block/$d/inflight; done
->>      dm-19       9        1
->>      dm-17      11        2
->>
->> They also don't change after I return the disk back (which is to be
->> expected I guess, given that the lockup doesn't go away).
->>
->>>>
->>>>> At first, can the problem reporduce with raid1/raid10? If not,
->>>>> this
->>>>> is
->>>>> probably a raid5 bug.
->>>>
->>>> This is not reproducible with raid1 (i.e. no lockups for raid1),
->>>> I
->>>> tested that. I didn't test raid10, if you want I can try (but
->>>> probably
->>>> only after the weekend, because today I was asked to give the
->>>> nodes
->>>> away, for the weekend at least, to someone else).
->>>
->>> Yes, please try raid10 as well. For now I'll say this is a raid5
->>> problem.
->>
->> Tested: raid10 works just fine, i.e. no lockup and fio continues
->> having non-zero IOPS.
->>
->>>>> The best will be that if I can reporduce this problem myself.
->>>>> The problem is that I don't understand the step 4: turning off
->>>>> jbod
->>>>> slot's power, is this only possible for a real machine, or can
->>>>> I
->>>>> do
->>>>> this in my VM?
->>>>
->>>> Well, let's say that if it is possible, I don't know a way to do
->>>> that.
->>>> The `sg_ses` commands that I used
->>>>
->>>> 	sg_ses --dev-slot-num=9 --set=3:4:1   /dev/sg26 #
->>>> turning
->>>> off
->>>> 	sg_ses --dev-slot-num=9 --clear=3:4:1 /dev/sg26 #
->>>> turning
->>>> on
->>>>
->>>> …sets and clears the value of the 3:4:1 bit, where the bit is
->>>> defined
->>>> by the JBOD's manufacturer datasheet. The 3:4:1 specifically is
->>>> defined
->>>> by "AIC" manufacturer. That means the command as is unlikely to
->>>> work on
->>>> a different hardware.
->>>
->>> I never do this before, I'll try.
->>>>
->>>> Well, while on it, do you have any thoughts why just using a
->>>> `echo
->>>> 1 >
->>>> /sys/block/sdX/device/delete` doesn't reproduce it? Does perhaps
->>>> kernel
->>>> not emulate device disappearance too well?
->>>
->>> echo 1 > delete just delete the disk from kernel, and scsi/dm-raid
->>> will
->>> know that this disk is deleted. However, the disk will stay in
->>> kernel
->>> for the other way, dm-raid does not aware that underlying disks are
->>> problematic and IO will still be generated and issued.
->>>
->>> Thanks,
->>> Kuai
-> 
+I'm also open to other alternatives. But I don't have infinite
+resources to drive major language changes.
 
+Alice
 
