@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-269914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F197E943895
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:06:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E6094389A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:08:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35021B214FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:06:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79508B22226
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5724516D31C;
-	Wed, 31 Jul 2024 22:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC6F16D4CC;
+	Wed, 31 Jul 2024 22:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HtSpoymF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="YbHWtVbP"
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EB3160860;
-	Wed, 31 Jul 2024 22:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3535D101EE
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463559; cv=none; b=AveYAEOKvnAR2CwxurlC0+1ZsGnP7h4+j94etUxac27pDPqS8r/ynayX19OfpLLOvOx15my3wZmbVOTO4FLtE26K3+FjzVbW9EWTe2efQeLxsdoxHmchNllozIDH0BP38sav/OlKlxQaZEHd0Mng+4QWNzuEXs6jOCHtvZD+bDY=
+	t=1722463666; cv=none; b=qEtuASfrvKi9q4OviK5IFvZo4suREImnRLRKVlJPpISpjFK5UnDFzFXqpfwXwjmksofnpnJEBUyIJuLdNS1hPmvMgxiXRXVhdnTHS/TR9uVA4pPltDwSYRR+Nw9pDAX3sOVWU6HyiOmAPzfi7ygzmLDhMjAHhQRHUb3XjHGAMv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463559; c=relaxed/simple;
-	bh=AxUC1XBNg8UXVpQWib+TWN9QyXDtktFY04EXdDehLPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=skEJtuiK6uYkwbCzNvXaAeHnYXUUaCb8kjJFVlXrkx02BrpVLeJSzHwspx9maf1uXtC4aZLdVa9LPbgZJeg2iB9yMiozbyJg9IgRbHUUJYVxvER8PslIWBoDHoz7cjce4JWZhCFnwlsLEXKfVRHCDFXSxebNqeF7TZpL3fR0SnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HtSpoymF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722463555;
-	bh=jrOlqhZluOehL23q8ZHUZiIkCRgOco9y3L6Z0N1WKCE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=HtSpoymFNhTee3Y5zelQC8e9IEZXVr7RU1JfMLOWhgLsNUE/Fuz+Tg6UaEtg+d9cJ
-	 TqbkBsAxhfTFhY/mpZ047jPjZkwpu6slXzUBoj+7zpPqIodahB5RRMH/Npne6gES/Z
-	 ET9b/wblOo92rgnLe0hsfCJsmP7yMv/yyiIJG6z+uX/qeYTvmvApSIBxUYN9y+amTe
-	 KIl4VpiEgF6LiL1yqMx18R6Me19EpqwjhfoQGrmUGb+N70OG9LgNGQWS87UeRK6Nih
-	 MajTS3lLmvXf9TN69ORZzxRitqD4K3JsbgYe+0vSncgX/TYjxQ0zk46XK0N95yrfvu
-	 DPeruOnQQ6FvA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZ5l74wz8z4wc1;
-	Thu,  1 Aug 2024 08:05:55 +1000 (AEST)
-Date: Thu, 1 Aug 2024 08:05:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the vfs-brauner
- tree
-Message-ID: <20240801080554.6b9bffb5@canb.auug.org.au>
+	s=arc-20240116; t=1722463666; c=relaxed/simple;
+	bh=5/FzbCoYCYVormMglWnKjh4aEoJ7A7JLI2hhC5fYIWk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=LUes+Jd3pqaml1B9PdVTHN/RHXJpHiJ4qtGKoHSuIKtiSCuKvR3Pb7ORR8MORHZP4Nb1+9NJszJ7A9YVtWSDxYgtT1hycZ7usg2Tn0KUQwFOclBhACIUCOlaWKMaI93hDZ5JitcBmNjuNo0uXgtGHbqAj3uDJ/KAjE0HqympuvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=YbHWtVbP; arc=none smtp.client-ip=209.85.167.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3d9e13ef8edso4137501b6e.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:07:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1722463664; x=1723068464; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=So/9QSkze1y4ejM3Y8FPZR3gEKL0InNlYUt0gbOuwac=;
+        b=YbHWtVbPJntuKon+IbTPT/vDhjoV2ASN+gJWbIgXucbyWee0Xw1lOim0oVvQgvr/nf
+         1qNLXmCEJXTwqPgLgN8NB5PYdbYAdRMRsyjhSjuAg0FQVo4Uloo/+IuqF3AkSDM5hwu8
+         xTTpVB4VAC7KRVJNV7ei0yC3QIZ20perSlWxYsvTxlDTNz4yX/eET5tnBTAZWTWxMrSe
+         UF+0agmGuEv0yo8/JrXKy8oS6u616NUxMcFJZo0rBK5DKa1ifcG5Rm1TcGaR+HbLMjUr
+         t5h6DlHGtcsHKGYYSUjgCKiPf5sK4VGiBxiQCycAwNSWBGj3uOSpbX6b1zRkG2aX3Ity
+         Yo7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722463664; x=1723068464;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=So/9QSkze1y4ejM3Y8FPZR3gEKL0InNlYUt0gbOuwac=;
+        b=M9y78ILRNSvWVaoCgrBhENKFWKkhyGGVwxCg0k3NtIh+WLreROLK8Graw94XIorLgm
+         K/Z2doBSTASAXV7VovWGXOJJhi7W3dDKdmVssxkEbARsx5W63LmtbNgpHOkE17ygojeh
+         3IBF1YLzqX0e9NUKAGnvNxlBSpib5kp1IR0u4t8/TtLbxfL2E6lzbmczE+aLG+757nvd
+         MzcWwQOPzGqgojjmrnVQyLqjx+EI2bQaVFkI2oFNG83jMPawm/8ZJKAfN7IoGyaKl9a8
+         2AW2l8OtxK10oZRHUoVdUb/RwYxl2rgFqoTp+nXGkOkeIw3MBX3bdKtU5koJgzSapq4Y
+         Ed8g==
+X-Forwarded-Encrypted: i=1; AJvYcCV9qSUgsvi8UYK/zrBfnpjkK0TXCemA5y29N+eqsUL97/ICvV6HLqGoMbwkEOqcsX3vXSd7KnmnVyDan7miScwGWpNjRzTPavCoe/jz
+X-Gm-Message-State: AOJu0YxUWhs8Uio94PD0O3EWSfvO7pPVBEHay9FUSHlBcu9AghX3KsVp
+	4818Yjp6T6CSPcrnzv3DlV4QghjWh2KfTOODPPyOIe0NEewwBbU+0BSlcK+DJOLJNGCrxwMl9t7
+	8EFhaOqRTuyfA3oXEP0K9ogBi5ET7uLL//GWwWfgh6XipKWqydQ==
+X-Google-Smtp-Source: AGHT+IHf/6+JdBOy0saPPGO8DOj4tULdpYpCthc5pvwq0MEaub636v66UIYgIZZHSDY3XUfadWNVZBHASBEOO9hzpPc=
+X-Received: by 2002:a05:6870:63ac:b0:261:164d:685e with SMTP id
+ 586e51a60fabf-2687a756a41mr494529fac.43.1722463664294; Wed, 31 Jul 2024
+ 15:07:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/FP4Knip0dpa71H0bCSkm+4d";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: Victor Nogueira <victor@mojatatu.com>
+Date: Wed, 31 Jul 2024 19:07:33 -0300
+Message-ID: <CA+NMeC-s6_aZYTMaLn=zsu4fhjVXQeMorPTXABJn41aS4G26qg@mail.gmail.com>
+Subject: Re: [PATCH] selftests: tc-testing: Fixed Typo error
+To: Karan Sanghavi <karansanghvi98@gmail.com>, Jamal Hadi Salim <jhs@mojatatu.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
---Sig_/FP4Knip0dpa71H0bCSkm+4d
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 31/07/2024 15:07, Karan Sanghavi wrote:
+> Corrected the typographical of the word  "different"
+> in the "name" field of the JSON object with ID "4319".
+>
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
 
-Hi all,
+Thank you for the patch.
+I'd suggest you transform this patch and the other one you sent, which
+has the same subject, into a patch series.
+Also please change the subject to target net-next and to specify which
+test files your patches are touching.
 
-Commits
-
-  9861c8945bc7 ("qnx6: Convert directory handling to use kmap_local")
-  2d6834a509de ("ufs: Convert ufs_check_page() to ufs_check_folio()")
-
-are missing a Signed-off-by from their author and committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FP4Knip0dpa71H0bCSkm+4d
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaqtUIACgkQAVBC80lX
-0GyMYQf/TsKQlW2LvL43iLlsJT8tDzgpouEjxozJrhW9FOoygwcY8h551mUzyU9c
-SFQBTet3Wa1GLzqZLV56noLod1gMcaqhkdGqq2myWHEhTBzN+a5jREbML9EaYYBe
-ZtJLj1/pKjPPmkBEZPctwXxKuXfQMtfmzll/WfM2e2ztvEO4KqrkxASdf+l0zGQA
-aQo3J8sMpqwV4+isDPqQ2dmqvE+BN1VxuuPTo+1ZnLTMcZHq2Wsn4Bf5zwdLel/E
-OoRpIs97MqX/CsTJJB9ZbhUTE9EKzyaKkqJwESQMAysoDR03UfrkMYcY48VV9R4v
-epa82QSWy+zPQ9zMBY/JmvaAEbXPKw==
-=RXe/
------END PGP SIGNATURE-----
-
---Sig_/FP4Knip0dpa71H0bCSkm+4d--
+cheers,
+Victor
 
