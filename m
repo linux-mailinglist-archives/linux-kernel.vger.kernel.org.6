@@ -1,95 +1,151 @@
-Return-Path: <linux-kernel+bounces-268780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632A6942930
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DE1942934
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C741F219CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4201F2445B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7B21A8BEB;
-	Wed, 31 Jul 2024 08:30:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928DF1A8BF5;
+	Wed, 31 Jul 2024 08:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Va2XUVvS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LS0UDwha"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3641A7F68;
-	Wed, 31 Jul 2024 08:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5021AAE0E;
+	Wed, 31 Jul 2024 08:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414635; cv=none; b=o79evoT1/miQT4QMSFVmC5mZmwP/WDorVU51ibLx7lR7yPckw2BvMA9VFFiq0i951jxvxJZAD1C6JoVW8lQ2w9m+P8iFTJrfLUPoc0MRa7znrWM+MRgjMQK/7DdXi4ZcYusjzWG1Uhjh8cI7ahlubhiLkW6axeeeA+Pa3+TyssY=
+	t=1722414640; cv=none; b=megiiZZ7CBFo4eBD9Mwk+hR7iUYJ7U3Ao7/cS9bKIGUYCj2ep4Y1B9+g7N//mUPpljv6RxPBipdzIabvTN5dUhr97Lz7pWuzd95X3QkXvoaxxCS4R0ycrTH7RdnqpbCLePJEt8l4XTYHHsEFzSzEdVS0cthFD8+FtvfKR4v/hUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414635; c=relaxed/simple;
-	bh=83tdkFTvpxeNWsYDJk5FXBclyqEpGP5v1+TSNN8ARpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQhGEwxulRX7r+0QsFeRtImDtiIh4/Xf0oT7pqye8CuBhMNkRBtEcr77gPEDOUJVJlzGnup8J2tZfh+Jp4e6ZGwwu0wCncq3FNcqMYez7NaLkDGA1Rdx+Nb/EPQ5Z57yeVuChHVXWlMI9UW9+uaow7wz+WGScMyAZDHozE99LYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Va2XUVvS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDDBC116B1;
-	Wed, 31 Jul 2024 08:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722414635;
-	bh=83tdkFTvpxeNWsYDJk5FXBclyqEpGP5v1+TSNN8ARpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Va2XUVvSfqlIJj6AwPaTzk2hTukSHAjkHmMVg/0NI559w1qKvqq1RB+L3pW3LjmBp
-	 VlzI3ic4Yr/2EQsKa8RRWAqE4Ssz+Q1qgd5Ns2Yc0G5MjT2v8Jr2oOU/B5DlaKtAEn
-	 Al8dUsjVjhmyRMczbIAVlHbJM3f4uBLXW/ffg4+c=
-Date: Wed, 31 Jul 2024 10:30:32 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] usb: gadget: uvc: Improve error checking and tagging
-Message-ID: <2024073119-turbine-subscript-e19a@gregkh>
-References: <20240324-uvc-gadget-errorcheck-v2-1-f141b13ade0e@pengutronix.de>
+	s=arc-20240116; t=1722414640; c=relaxed/simple;
+	bh=BxheicAMlVYSpLX+AoGM0dXc5idzCrLGeBHA0d9/j38=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=khAgRMJU9b08vYaLHp9w/Y/vI2b/fHbeK1c0Fw9il0DcMNxU4X4FyAr51x1vGtyUQt/GFCJJjxqUeVh+9hOBFzZebdtZcDPBID+auwI4QAV+dQorx+DzKTiB0ZEGREDLtqtksqEarD1LuRYiPoDDGlEuyNS00g5TWtiW+OpoIi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LS0UDwha; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B25BC116B1;
+	Wed, 31 Jul 2024 08:30:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722414640;
+	bh=BxheicAMlVYSpLX+AoGM0dXc5idzCrLGeBHA0d9/j38=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=LS0UDwhaYWzzO4Dz4qdx2xlEYJ6FJ+Pn/Kms+fXz6OJR10Ay21X+7wRNmH4sAVRu7
+	 xjy1VFitOOHdFzr9Kj+gcnhIN03ZXOHnqjc/MXmRcwv5d19NdQmHmLXVkudvgAHFLT
+	 or6fH8OuvmKvVCmjghBAPCUeHWeDVQjMrPJHjoJlv8nZnE10NRfv5pfd9ABuNPjso+
+	 PJwK4qx8K0EVKjieyQY2HuAKsur2rMLsGr+QBMReepdwJOBcgDeYcoPveZmhPCRnw2
+	 OZuSAg0YOPOcXni5H1ShO1oEoqJ3fsQqf0aFYVQlI0bjxJgmMFgtzgw6rsaJv47R4d
+	 TuosSET0qK5Gw==
+Message-ID: <7031d811-2bb2-4325-996c-a6de766925db@kernel.org>
+Date: Wed, 31 Jul 2024 10:30:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240324-uvc-gadget-errorcheck-v2-1-f141b13ade0e@pengutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 25/27] ARM: dts: at91: sam9x7: add device tree for SoC
+To: Varshini Rajendran <varshini.rajendran@microchip.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, nicolas.ferre@microchip.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
+ <20240729070934.1991467-1-varshini.rajendran@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240729070934.1991467-1-varshini.rajendran@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 05, 2024 at 09:44:56AM +0200, Michael Grzeschik wrote:
-> Right now after one transfer was completed with EXDEV the currently
-> encoded frame will get the UVC_STREAM_ERR tag attached. Since the
-> complete and encode path are handling separate requests from different
-> threads, there is no direct correspondence between the missed transfer
-> of one request and the currently encoded request which might already
-> belong to an completely different frame.
+On 29/07/2024 09:09, Varshini Rajendran wrote:
+> Add device tree file for SAM9X7 SoC family.
 > 
-> When queueing requests into the hardware by calling ep_queue the
-> underlying ringbuffer of the usb driver will be filled. However when
-> one of these requests will have some issue while transfer the hardware
-> will trigger an interrupt but will continue transferring the pending
-> requests in the ringbuffer. This interrupt-latency will make it
-> impossible to react in time to tag the fully enqueued frame with the
-> UVC_STREAM_ERR in the header.
-> 
-> This patch is also addressing this particular issue by delaying the
-> transmit of the EOF/ERR tagged header by waiting for the last enqueued
-> buffer of the frame to be completed. This way it is possible to react to
-> send the EOF/ERR tag depending on the whole frame transfer status.
-> 
-> Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
-> ---
-> Changes in v2:
-> - removed unnecessary uvc_gadget_errorcheck_param module parameter
-> - Link to v1: https://lore.kernel.org/r/20240324-uvc-gadget-errorcheck-v1-1-5538c57bbeba@pengutronix.de
-> ---
->  drivers/usb/gadget/function/uvc.h       |  2 +
->  drivers/usb/gadget/function/uvc_video.c | 69 ++++++++++++++++++++++++++++-----
->  2 files changed, 61 insertions(+), 10 deletions(-)
+> Co-developed-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
 
-Same here, can you rebase and resubmit if still needed?
+...
 
-thanks,
+> +
+> +		can1: can@f8004000 {
+> +			compatible = "bosch,m_can";
+> +			reg = <0xf8004000 0x100>, <0x300000 0xbc00>;
+> +			reg-names = "m_can", "message_ram";
+> +			interrupts = <30 IRQ_TYPE_LEVEL_HIGH 0>,
+> +				     <69 IRQ_TYPE_LEVEL_HIGH 0>;
+> +			interrupt-names = "int0", "int1";
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 30>, <&pmc PMC_TYPE_GCK 30>;
+> +			clock-names = "hclk", "cclk";
+> +			assigned-clocks = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_GCK 30>;
+> +			assigned-clock-rates = <480000000>, <40000000>;
+> +			assigned-clock-parents = <&pmc PMC_TYPE_CORE PMC_UTMI>, <&pmc PMC_TYPE_CORE PMC_UTMI>;
+> +			bosch,mram-cfg = <0x7800 0 0 64 0 0 32 32>;
+> +			status = "disabled";
+> +		};
+> +
+> +		tcb: timer@f8008000 {
+> +			compatible = "microchip,sam9x7-tcb","atmel,sama5d2-tcb", "simple-mfd", "syscon";
 
-greg k-h
+Why this is simple-mfd without children?
+
+> +			reg = <0xf8008000 0x100>;
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
+> +			clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&pmc PMC_TYPE_GCK 17>, <&clk32k 0>;
+> +			clock-names = "t0_clk", "gclk", "slow_clk";
+> +			status = "disabled";
+> +		};
+> +
+
+Best regards,
+Krzysztof
+
 
