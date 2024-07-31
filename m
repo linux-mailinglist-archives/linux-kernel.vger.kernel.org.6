@@ -1,496 +1,1415 @@
-Return-Path: <linux-kernel+bounces-269067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AB9942D0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:18:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A7B942D18
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFF51F24D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:18:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CF20B23A78
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A27C1AC439;
-	Wed, 31 Jul 2024 11:18:14 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CC918DF9F;
-	Wed, 31 Jul 2024 11:18:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D8A1AC43C;
+	Wed, 31 Jul 2024 11:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="f7wpcpM6"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1AB1A4B34;
+	Wed, 31 Jul 2024 11:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722424693; cv=none; b=Ka2xVEJYAiBArNOS9ri72lcRfUtMHeSGeUTSIU4ZDzInJTdp6p2JbW1cKgGwD0fSBy2AecxZkYNaFK+e14SvVM1IFfyrpchYcNFum34piosAzXtovSWwWUNyvVz2ECidD3fl5hIx+sqIVMQ0+pknq7SiVcn0RGJ178RUOzrPjfg=
+	t=1722424747; cv=none; b=ON0Dh6FCLQ5y3QQweGL++eCeq2Gy+Ol/vSZp2F3Rx7/AITLx7/c1jqpL9ixW2ina0IYvEcun772URlPrnzr/pt20ch9GMkbS30us5W2QubESNLsJY/gslVa5hqwKVgU8UWKQORevKrEgRNMkiCDgvZlJXVNihykICHE0Lo/+KuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722424693; c=relaxed/simple;
-	bh=YJ+nWlgIedLUnFzj0oykuBCkN+zSezYcACoiF7DhWTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WENcpVp1q9nmIP8Q140LPJ3NBN7WmWWov4oKKHhCSV4yk4nxoGMTgT8p5cc4hd8lAQlX5rsO1XBtDl7cxqKrRbx0fhVtJhCaBD87Yhd15urR2Hvv3DjKRcPGx0WgjP3/h363q+OsLMzfsVkCzfDgV+iOJq0t22JxCCEKue+TXm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.50])
-	by app1 (Coremail) with SMTP id HgEQrADHKG4fHapmomJhAg--.45294S2;
-	Wed, 31 Jul 2024 19:16:47 +0800 (CST)
-Received: from [192.168.1.111] (unknown [10.12.177.116])
-	by gateway (Coremail) with SMTP id _____wBX0HEaHapmO2+iAA--.8075S2;
-	Wed, 31 Jul 2024 19:16:44 +0800 (CST)
-Message-ID: <ec4a7bf5-3275-4cde-be8c-339671c38074@hust.edu.cn>
-Date: Wed, 31 Jul 2024 19:16:43 +0800
+	s=arc-20240116; t=1722424747; c=relaxed/simple;
+	bh=NnJqoMWBO42GjKssuAvj0DZ8MzwvkXONp4bw/7xqhSI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DqfW4nchmCSo7rr2iPtke/bwGhd1OD6Hvndj9R0+iyn3e0eZv863RiYpK8GYDHWJPh6B9UN+GlrGNZBPPusUJkyNJZkqZGf49mnRe7PuR+Ald7HvQyvv63rWXUHK9NAEZa2IB2Jbtjy2eNFvS7knigrztlWFBmBYmQPNRE28Noc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=f7wpcpM6; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V4fQKR026781;
+	Wed, 31 Jul 2024 04:18:19 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=Tv48nC3h7jHqsEzYH5qynMn
+	mKNnHNV7fO5VvH3mggBo=; b=f7wpcpM6BhCtQDD7BtOjdcj2zDEpBTkP2tlenBc
+	7+AJAvF7iV2U0cpUlcvOdyWL/QpGLJ6q5tVL8NUlPNyczMeukq0aceoywZGlX7Zn
+	ZMUQy6KS3ITWLHNDx+KGS5WY4vSvw6hGv3nwZDcYRkrRUDDFjK/0IozYS4fUA4ZQ
+	SgS7BsPbTR9DFSUHaK8gfhrmCSZfXWcNKP3fblfeaN4WolT65IaQryCaw+GJpouA
+	6mZfB0X8V3riyqy+Yagcoq8DRk+ip7VEeyXTGt7sN6smJlgUuf1YbQQgMtowj3gB
+	ipqGBH/lTWmOt9wNGV3H2mYvM+QtWyN1jiETS4DyZgSNlpA==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 40qeeusfk0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 04:18:18 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 31 Jul 2024 04:18:16 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 31 Jul 2024 04:18:16 -0700
+Received: from Dell2s-9.sclab.marvell.com (unknown [10.110.150.250])
+	by maili.marvell.com (Postfix) with ESMTP id 7F82D5E6869;
+	Wed, 31 Jul 2024 04:18:16 -0700 (PDT)
+From: Vasyl Gomonovych <vgomonovych@marvell.com>
+To: <bp@alien8.de>, <tony.luck@intel.com>, <james.morse@arm.com>,
+        <mchehab@kernel.org>, <rric@kernel.org>, <sgoutham@marvell.com>
+CC: Vasyl Gomonovych <vgomonovych@marvell.com>, <linux-kernel@vger.kernel.org>,
+        <linux-edac@vger.kernel.org>
+Subject: [PATCH] Add EDAC Driver for Marvell OcteonTX2/CN10K SoCs
+Date: Wed, 31 Jul 2024 04:17:40 -0700
+Message-ID: <20240731111800.2253740-1-vgomonovych@marvell.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/zh_CN: Add dev-tools/kcsan Chinese translation
-To: Alex Shi <seakeel@gmail.com>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <siyanteng@loongson.cn>, Jonathan Corbet <corbet@lwn.net>,
- Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20240727150844.6502-1-tttturtleruss@hust.edu.cn>
- <7670e090-92e5-48ed-9365-e611ae1d4972@gmail.com>
- <75cbc7d7-5faf-4286-a702-ac242c6f87f3@hust.edu.cn>
- <bbbc3a51-21c6-47fc-ba3e-924ad8d86b63@gmail.com>
-From: Haoyang Liu <tttturtleruss@hust.edu.cn>
-In-Reply-To: <bbbc3a51-21c6-47fc-ba3e-924ad8d86b63@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HgEQrADHKG4fHapmomJhAg--.45294S2
-Authentication-Results: app1; spf=neutral smtp.mail=tttturtleruss@hust
-	.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvAXoWfWr15urW7KF1xXFyUXrW3trb_yoW5JrykAo
-	W5Kr4fCrn5Xr1Ygr1UJ3yDJFyay3WUCrnrA3srKrsrAry0k3Z5Aay8J345t3y5CrWrG3W3
-	ta47Xry7Ca4DXF98n29KB7ZKAUJUUUU3529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUOc7k0a2IF6w4xM7kC6x804xWl1xkIjI8I6I8E6xAIw20EY4v2
-	0xvaj40_Wr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7
-	IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xv
-	wVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2kKe7AKxV
-	WUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc02
-	F40EFcxC0VAKzVAqx4xG6I80ewAv7VACjcxG62k0Y48FwI0_Gr1j6F4UJwAv7VCjz48v1s
-	IEY20_GFW3Jr1UJwAv7VCY1x0262k0Y48FwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr0_
-	Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l42xK82
-	IY6x8ErcxFaVAv8VW8uFyUJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v2
-	6r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17
-	CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2
-	KfnxnUUI43ZEXa7IU0lksPUUUUU==
-X-CM-SenderInfo: rxsqjiqrssiko6kx23oohg3hdfq/1tbiAQsPAmapsLAaFAAAsG
+Content-Type: text/plain
+X-Proofpoint-GUID: U1u6CK_dLbJPcJCUBIUum01f7UxFbwbG
+X-Proofpoint-ORIG-GUID: U1u6CK_dLbJPcJCUBIUum01f7UxFbwbG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_08,2024-07-30_01,2024-05-17_01
 
+This commit introduces an Error Detection and Correction (EDAC)
+driver for Marvell OcteonTX2 and CN10K System on Chips (SoCs).
+The driver supports the firmware-first model and
+handles error notifications via the
+Software Delegated Exception Interface (SDEI).
+It also provides error injection capabilities
+through System Management Calls (SMC).
 
-在 2024/7/30 9:21, Alex Shi 写道:
->
-> On 7/29/24 8:56 PM, Haoyang Liu wrote:
->> 在 2024/7/28 12:17, Alex Shi 写道:
->>> On 7/27/24 11:08 PM, Haoyang Liu wrote:
->>>> Translate dev-tools/kcsan commit 31f605a308e6
->>>> ("kcsan, compiler_types: Introduce __data_racy type qualifier")
->>>> into Chinese and add it in dev-tools/zh_CN/index.rst
->>>>
->>>> Signed-off-by: Haoyang Liu <tttturtleruss@hust.edu.cn>
->>>> ---
->>>> v2 -> v3: Revised some sentences based on reviewer's suggestions and updated the KTSAN url.
->>>> v1 -> v2: Added commit tag and fixed style problems according to reviewer's suggestions.
->>>>
->>>>    .../translations/zh_CN/dev-tools/index.rst    |   2 +-
->>>>    .../translations/zh_CN/dev-tools/kcsan.rst    | 321 ++++++++++++++++++
->>>>    2 files changed, 322 insertions(+), 1 deletion(-)
->>>>    create mode 100644 Documentation/translations/zh_CN/dev-tools/kcsan.rst
->>>>
->>>> diff --git a/Documentation/translations/zh_CN/dev-tools/index.rst b/Documentation/translations/zh_CN/dev-tools/index.rst
->>>> index c540e4a7d5db..6a8c637c0be1 100644
->>>> --- a/Documentation/translations/zh_CN/dev-tools/index.rst
->>>> +++ b/Documentation/translations/zh_CN/dev-tools/index.rst
->>>> @@ -21,6 +21,7 @@ Documentation/translations/zh_CN/dev-tools/testing-overview.rst
->>>>       testing-overview
->>>>       sparse
->>>>       kcov
->>>> +   kcsan
->>>>       gcov
->>>>       kasan
->>>>       ubsan
->>>> @@ -32,7 +33,6 @@ Todolist:
->>>>     - checkpatch
->>>>     - coccinelle
->>>>     - kmsan
->>>> - - kcsan
->>>>     - kfence
->>>>     - kgdb
->>>>     - kselftest
->>>> diff --git a/Documentation/translations/zh_CN/dev-tools/kcsan.rst b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
->>>> new file mode 100644
->>>> index 000000000000..f91283e8633c
->>>> --- /dev/null
->>>> +++ b/Documentation/translations/zh_CN/dev-tools/kcsan.rst
->>>> @@ -0,0 +1,321 @@
->>>> +.. SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +.. include:: ../disclaimer-zh_CN.rst
->>>> +
->>>> +:Original: Documentation/dev-tools/kcsan.rst
->>>> +:Translator: 刘浩阳 Haoyang Liu <tttturtleruss@hust.edu.cn>
->>>> +
->>>> +内核并发消毒剂 （KCSAN）
->>>> +===========================
->>>> +
->>>> +内核并发消毒剂（KCSAN）是一个动态竞争检测器，依赖编译时插桩，并且使用基于观察
->>>> +点的采样方法来检测竞争。KCSAN 的主要目的是检测 `数据竞争`_。
->>>> +
->>>> +使用
->>>> +----
->>>> +
->>>> +KCSAN 受 GCC 和 Clang 支持。使用 GCC 需要版本 11 或更高，使用 Clang 也需要
->>>> +版本 11 或更高。
->>>> +
->>>> +为了启用 KCSAN，用如下参数配置内核::
->>>> +
->>>> +    CONFIG_KCSAN = y
->>>> +
->>>> +KCSAN 提供了几个其他的配置选项来自定义行为（见 ``lib/Kconfig.kcsan`` 中的各自的
->>>> +帮助文档以获取更多信息）。
->>>> +
->>>> +错误报告
->>>> +~~~~~~~~~~
->>>> +
->>>> +一个典型数据竞争的报告如下所示::
->>>> +
->>>> +    ==================================================================
->>>> +    BUG: KCSAN: data-race in test_kernel_read / test_kernel_write
->>>> +
->>>> +    write to 0xffffffffc009a628 of 8 bytes by task 487 on cpu 0:
->>>> +     test_kernel_write+0x1d/0x30
->>>> +     access_thread+0x89/0xd0
->>>> +     kthread+0x23e/0x260
->>>> +     ret_from_fork+0x22/0x30
->>>> +
->>>> +    read to 0xffffffffc009a628 of 8 bytes by task 488 on cpu 6:
->>>> +     test_kernel_read+0x10/0x20
->>>> +     access_thread+0x89/0xd0
->>>> +     kthread+0x23e/0x260
->>>> +     ret_from_fork+0x22/0x30
->>>> +
->>>> +    value changed: 0x00000000000009a6 -> 0x00000000000009b2
->>>> +
->>>> +    Reported by Kernel Concurrency Sanitizer on:
->>>> +    CPU: 6 PID: 488 Comm: access_thread Not tainted 5.12.0-rc2+ #1
->>>> +    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
->>>> +    ==================================================================
->>>> +
->>>> +报告的头部提供了一个关于竞争中涉及到的函数的简短总结。随后是竞争中的两个线程的
->>>> +访问类型和堆栈信息。如果 KCSAN 发现了一个值的变化，那么那个值的旧值和新值会在
->>>> +“value changed”这一行单独显示。
->>>> +
->>>> +另一个不太常见的数据竞争类型的报告如下所示::
->>>> +
->>>> +    ==================================================================
->>>> +    BUG: KCSAN: data-race in test_kernel_rmw_array+0x71/0xd0
->>>> +
->>>> +    race at unknown origin, with read to 0xffffffffc009bdb0 of 8 bytes by task 515 on cpu 2:
->>>> +     test_kernel_rmw_array+0x71/0xd0
->>>> +     access_thread+0x89/0xd0
->>>> +     kthread+0x23e/0x260
->>>> +     ret_from_fork+0x22/0x30
->>>> +
->>>> +    value changed: 0x0000000000002328 -> 0x0000000000002329
->>>> +
->>>> +    Reported by Kernel Concurrency Sanitizer on:
->>>> +    CPU: 2 PID: 515 Comm: access_thread Not tainted 5.12.0-rc2+ #1
->>>> +    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
->>>> +    ==================================================================
->>>> +
->>>> +这个报告是当另一个竞争线程不可能被发现，但是可以从观测的内存地址的值改变而推断
->>>> +出来的时候生成的。这类报告总是会带有“value changed”行。这类报告的出现通常是因
->>>> +为在竞争线程中没有插桩，也可能是因为其他原因，比如 DMA 访问。这类报告只会在
->>> “没有插桩” 好像不是很合适？
->> 改为“缺少插桩”如何？
->>>> +设置了内核参数 ``CONFIG_KCSAN_REPORT_RACE_UNKNOWN_ORIGIN=y`` 时才会出现，而这
->>>> +个参数是默认启用的。
->>>> +
->>>> +选择性分析
->>>> +~~~~~~~~~~~~~
->>>> +
->>>> +对于一些特定的访问，函数，编译单元或者整个子系统，可能需要禁用数据竞争检测。
->>>> +对于静态黑名单，有如下可用的参数：
->>>> +
->>>> +* KCSAN 支持使用 ``data_race(expr)`` 注解，这个注解告诉 KCSAN 任何由访问
->>>> +  ``expr`` 所引起的数据竞争都应该被忽略，其产生的行为后果被认为是安全的。请查阅
->>>> +  `"Marking Shared-Memory Accesses" in the LKMM`_ 获得更多信息。
->>>> +
->>>> +* 与 ``data_race(...)`` 相似，可以使用类型限定符 ``__data_racy`` 来标记一个变量
->>>> +  ，所有访问该变量而导致的数据竞争都是故意为之并且应该被 KCSAN 忽略::
->>>> +
->>>> +    struct foo {
->>>> +        ...
->>>> +        int __data_racy stats_counter;
->>>> +        ...
->>>> +    };
->>>> +
->>>> +* 使用函数属性 ``__no_kcsan`` 可以对整个函数禁用数据竞争检测::
->>>> +
->>>> +    __no_kcsan
->>>> +    void foo(void) {
->>>> +        ...
->>>> +
->>>> +  为了动态限制该为哪些函数生成报告，查阅 `Debug 文件系统接口`_ 黑名单/白名单特性。
->>>> +
->>>> +* 为特定的编译单元禁用数据竞争检测，将下列参数加入到 ``Makefile`` 中::
->>>> +
->>>> +    KCSAN_SANITIZE_file.o := n
->>>> +
->>>> +* 为 ``Makefile`` 中的所有编译单元禁用数据竞争检测，将下列参数添加到相应的
->>>> +  ``Makefile`` 中::
->>>> +
->>>> +    KCSAN_SANITIZE := n
->>>> +
->>>> +.. _"Marking Shared-Memory Accesses" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/access-marking.txt
->>>> +
->>>> +此外，KCSAN 可以根据偏好设置显示或隐藏整个类别的数据竞争。可以使用如下
->>>> +Kconfig 参数进行更改:
->>>> +
->>>> +* ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY``: 如果启用了该参数并且通过观测点观测
->>> 把 watchpoint 这样的专有名词放在括号里带上吧
->> 好的
->>>> +  到一个有冲突的写操作，但是对应的内存地址中存储的值没有改变，则不会报告这起数据
->>>> +  竞争。
->>>> +
->>>> +* ``CONFIG_KCSAN_ASSUME_PLAIN_WRITES_ATOMIC``: 假设默认情况下，不超过字大小的简
->>>> +  单对齐写入操作是原子的。假设这些写入操作不会受到不安全的编译器优化影响，从而导
->>>> +  致数据竞争。该选项使 KCSAN 不报告仅由不超过字大小的简单对齐写入操作引起
->>>> +  的冲突所导致的数据竞争。
->>>> +
->>>> +* ``CONFIG_KCSAN_PERMISSIVE``: 启用额外的宽松规则来忽略某些常见类型的数据竞争。
->>>> +  与上面的规则不同，这条规则更加复杂，涉及到值改变模式，访问类型和地址。这个
->>>> +  选项依赖编译选项 ``CONFIG_KCSAN_REPORT_VALUE_CHANGE_ONLY=y``。请查看
->>>> +  ``kernel/kcsan/permissive.h`` 获取更多细节。对于只侧重于特定子系统而不是整个
->>>> +  内核报告的测试者和维护者，建议禁用该选项。
->>>> +
->>>> +要使用尽可能严格的规则，选择 ``CONFIG_KCSAN_STRICT=y``，这将配置 KCSAN 尽可
->>>> +能紧密地遵循 Linux 内核内存一致性模型（LKMM）。
->>>> +
->>>> +Debug 文件系统接口
->>>> +~~~~~~~~~~~~~~~~~~~~~
->>>> +
->>>> +文件 ``/sys/kernel/debug/kcsan`` 提供了如下接口：
->>>> +
->>>> +* 读 ``/sys/kernel/debug/kcsan`` 返回不同的运行时统计数据。
->>>> +
->>>> +* 将 ``on`` 或 ``off`` 写入 ``/sys/kernel/debug/kcsan`` 允许打开或关闭 KCSAN。
->>>> +
->>>> +* 将 ``!some_func_name`` 写入 ``/sys/kernel/debug/kcsan`` 会将
->>>> +  ``some_func_name`` 添加到报告过滤列表中，这将（默认）禁止报告任意一个顶层栈帧
->>>> +  在该列表中的数据竞争。
->>> Don't understand this?
->> 这里改为“这将（默认）禁止报告任意一个调用在该列表中的函数导致的数据竞争”或者“该列表（默认）会将数据竞争报告中的顶层堆栈帧是列表中函数的情况列入黑名单。”
-> The latter is better.
-OK.
->>>> +
->>>> +* 将 ``blacklist`` 或 ``whitelist`` 写入 ``/sys/kernel/debug/kcsan`` 会改变报告
->>>> +  过滤行为。例如，黑名单的特性可以用来过滤掉经常发生的数据竞争。白名单特性可以帮
->>>> +  助复现和修复测试。
->>>> +
->>>> +性能调优
->>>> +~~~~~~~~~~~~~
->>>> +
->>>> +影响 KCSAN 整体的性能和 bug 检测能力的核心参数是作为内核命令行参数公开的，其默认
->>>> +值也可以通过相应的 Kconfig 选项更改。
->>>> +
->>>> +* ``kcsan.skip_watch`` (``CONFIG_KCSAN_SKIP_WATCH``): 在另一个观测点设置之前每
->>>> +  个 CPU 要跳过的内存操作次数。更加频繁的设置观测点将增加观察到竞争情况的可能性
->>>> +  。这个参数对系统整体的性能和竞争检测能力影响最显著。
->>>> +
->>>> +* ``kcsan.udelay_task`` (``CONFIG_KCSAN_UDELAY_TASK``): 对于任务，观测点设置之
->>>> +  后暂停执行的微秒延迟。值越大，检测到竞争情况的可能性越高。
->>>> +
->>>> +* ``kcsan.udelay_interrupt`` (``CONFIG_KCSAN_UDELAY_INTERRUPT``): 对于中断，
->>>> +  观测点设置之后暂停执行的微秒延迟。中断对于延迟的要求更加严格，其延迟通常应该小
->>>> +  于为任务选择的延迟。
->>>> +
->>>> +它们可以通过 ``/sys/module/kcsan/parameters/`` 在运行时进行调整。
->>>> +
->>>> +数据竞争
->>>> +--------
->>>> +
->>>> +在一次执行中，如果两个内存访问存在 *冲突*，在不同的线程中并发执行，并且至少
->>>> +有一个访问是 *简单访问*，则它们就形成了 *数据竞争*。如果它们访问了同一个内存地址并且
->>>> +至少有一个是写操作，则称它们存在 *冲突*。有关更详细的讨论和定义，见
->>>> +`"Plain Accesses and Data Races" in the LKMM`_。
->>>> +
->>>> +.. _"Plain Accesses and Data Races" in the LKMM: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/memory-model/Documentation/explanation.txt#n1922
->>>> +
->>>> +与 Linux 内核内存一致性模型（LKMM）的关系
->>>> +~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>> +
->>>> +LKMM 定义了各种内存操作的传播和排序规则，让开发者可以推理并发代码。最终这允许确
->>>> +定并发代码可能的执行情况并判断这些代码是否存在数据竞争。
->>>> +
->>>> +KCSAN 可以识别 *被标记的原子操作* （ ``READ_ONCE``, ``WRITE_ONCE`` , ``atomic_*``
->>>> +等），以及内存屏障所隐含的一部分顺序保证。启用 ``CONFIG_KCSAN_WEAK_MEMORY=y``
->>>> +配置，KCSAN 会对加载或存储缓冲区进行建模，并可以检测遗漏的
->>>> +``smp_mb()``, ``smp_wmb()``, ``smp_rmb()``, ``smp_store_release()``，以及所有的
->>>> +具有等效隐含内存屏障的 ``atomic_*`` 操作。
->>>> +
->>>> +请注意，KCSAN 不会报告所有由于缺失内存顺序而导致的数据竞争，特别是在需要内存屏障
->>>> +来禁止后续内存操作在屏障之前重新排序的情况下。因此，开发人员应该仔细考虑那些未
->>>> +被检查的内存顺序要求。
->>> Nice work!
->>>
->>>> +
->>>> +数据竞争以外的竞争检测
->>>> +---------------------------
->>>> +
->>>> +对于有着复杂并发设计的代码，竞争状况不总是表现为数据竞争。如果并发操作引起了意‘
->>> What's of the apostrophe "'" for?
->> It's a mistake.
->>>> +料之外的系统行为，则认为发生了竞争状况。另一方面，数据竞争是在 C 语言层面定义
->>>> +的。下面的宏定义可以用来检测非数据竞争的漏洞并发代码的属性。
->>>> +
->>>> +.. kernel-doc:: include/linux/kcsan-checks.h
->>>> +    :functions: ASSERT_EXCLUSIVE_WRITER ASSERT_EXCLUSIVE_WRITER_SCOPED
->>>> +                ASSERT_EXCLUSIVE_ACCESS ASSERT_EXCLUSIVE_ACCESS_SCOPED
->>>> +                ASSERT_EXCLUSIVE_BITS
->>>> +
->>>> +实现细节
->>>> +-----------
->>>> +
->>>> +KCSAN 需要观测两个并发访问。特别重要的是，我们想要（a）增加观测到竞争的机会（尤
->>>> +其是很少发生的竞争），以及（b）能够实际观测到这些竞争。我们可以通过（a）注入
->>>> +不同的延迟，以及（b）使用地址观测点（或断点）来实现。
->>>> +
->>>> +如果我们在设置了地址观察点的情况下故意延迟一个内存访问，然后观察到观察点被触发
->>>> +，那么两个对同一地址的访问就发生了竞争。使用硬件观察点，这是 `DataCollider
->>>> +<http://usenix.org/legacy/events/osdi10/tech/full_papers/Erickson.pdf>`_ 中采用
->>>> +的方法。与 DataCollider 不同，KCSAN 不使用硬件观察点，而是依赖于编译器插装和“软
->>> 插装?
->> 笔误。
->>> "compiler instrumenting" 为什么要翻译成插桩？
->> 指的是“KCSAN then relies on the compiler instrumenting plain accesses.”这句吗。
-> I don't understand the details of KCSAN, but according the doc, KCSAN make a array and
-> watch the data address in the array, so is there a real stub which inserted by gcc/clang?
-Yes, gcc/clang will insert a real stub.
-> Thanks
-> Alex
+Key Features:
+ - Support for EDAC-capable on-chip peripherals.
+ - Integration with the SDEI for error notification.
+ - Error injection via SMC calls.
+ - Detailed error reporting and logging.
 
-Thanks for your review. I will send a V4 PATCH soon.
+Signed-off-by: Vasyl Gomonovych <vgomonovych@marvell.com>
+---
+ drivers/edac/Kconfig         |   10 +
+ drivers/edac/Makefile        |    1 +
+ drivers/edac/octeontx_edac.c | 1274 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 1285 insertions(+)
+ create mode 100644 drivers/edac/octeontx_edac.c
 
-Haoyang
-
->>>> +观测点”。
->>>> +
->>>> +在 KCSAN 中，观察点是通过一种高效的编码实现的，该编码将访问类型、大小和地址存储
->>>> +在一个长整型变量中；使用“软观察点”的好处是具有可移植性和更大的灵活性。然后，
->>>> +KCSAN依赖于编译器对普通访问的插桩。对于每个插桩的普通访问：
->>>> +
->>>> +1. 检测是否存在一个复合的观测点，如果存在，并且至少有一个操作是写操作，则我们发
->>> matching, not ‘复合'
->> “符合”
->>>> +   现了一个竞争访问。
->>>> +
->>>> +2. 如果不存在匹配的观察点，则定期的设置一个观测点并随机延迟一小段时间。
->>>> +
->>>> +3. 在延迟前检查数据值，并在延迟后重新检查数据值；如果值不匹配，我们推测存在一个
->>>> +   未知来源的竞争状况。
->>>> +
->>>> +为了检测普通访问和标记访问之间的数据竞争，KCSAN 也对标记访问进行标记，但仅用于
->>>> +检查是否存在观察点；即 KCSAN 不会在标记访问上设置观察点。通过不在标记操作上设
->>>> +置观察点，如果对一个变量的所有并发访问都被正确标记，KCSAN 将永远不会触发观察点
->>>> +，因此也不会报告这些访问。
->>>> +
->>>> +弱内存建模
->>>> +~~~~~~~~~~~~~~~~~~~
->>> '~' number should be double of Chinese chars. and all of marks should follow this rules.
->>>
->>> * please at least 'make html-doc' and check everything of your html file *
->> OK，sure.
->>>> +
->>>> +KSCAN 检测由于缺失内存屏障的数据检测的方法是居于对访问重新排序的建模（使用参数
->>> it's too hard to understand this line.
->>> KCSAN通过建模访问重新排序（使用``CONFIG_KCSAN_WEAK_MEMORY=y``）来检测由于缺少内存屏障而导致的数据竞争？
->> 这样翻译确实更好。
->>>
->>>> +``CONFIG_KCSAN_WEAK_MEMORY=y``）。每个设置了观察点的普通内存访问也会被选择在其
->>>> +函数范围内进行模拟重新排序（最多一个正在进行的访问）。
->>>> +
->>>> +一旦某个访问被选择用于重新排序，它将在函数范围内与每个其他访问进行检查。如果遇
->>>> +到适当的内存屏障，该访问将不再被考虑进行模拟重新排序。
->>>> +
->>>> +当内存操作的结果应该由屏障排序时，KCSAN 可以检测到仅由于缺失屏障而导致的冲突的
->>>> +数据竞争。考虑下面的例子::
->>>> +
->>>> +    int x, flag;
->>>> +    void T1(void)
->>>> +    {
->>>> +        x = 1;                  // data race!
->>>> +        WRITE_ONCE(flag, 1);    // correct: smp_store_release(&flag, 1)
->>>> +    }
->>>> +    void T2(void)
->>>> +    {
->>>> +        while (!READ_ONCE(flag));   // correct: smp_load_acquire(&flag)
->>>> +        ... = x;                    // data race!
->>>> +    }
->>>> +
->>>> +当启用了弱内存建模，KCSAN 将考虑对 ``T1`` 中的 ``x`` 进行模拟重新排序。在写入
->>>> +``flag`` 之后，x再次被检查是否有并发访问：因为 ``T2`` 可以在写入
->>>> +``flag`` 之后继续进行，因此检测到数据竞争。如果遇到了正确的屏障， ``x`` 在正确
->>>> +释放 ``flag`` 后将不会被考虑重新排序，因此不会检测到数据竞争。
->>>> +
->>>> +在复杂性上的权衡以及实际的限制意味着只能检测到一部分由于缺失内存屏障而导致的数
->>>> +据竞争。由于当前可用的编译器支持，KCSAN 的实现仅限于建模“缓冲”（延迟访问）的
->>>> +效果，因为运行时不能“预取”访问。同时要注意，观测点只设置在普通访问上，这是唯
->>>> +一一个 KCSAN 会模拟重新排序的访问类型。这意味着标记访问的重新排序不会被建模。
->>>> +
->>>> +上述情况的一个后果是获取操作不需要屏障插桩（不需要预取）。此外，引入地址或控制
->>> acquire 也是专有名词
->> 好的。
->>> Thanks
->>> Alex
->> 谢谢您的review，我会根据您的意见进行修改。
->>
->> Sincerely,
->>
->> Haoyang
->>
->>>> +依赖的标记访问不需要特殊处理（标记访问不能重新排序，后续依赖的访问不能被预取）
->>>> +。
->>>> +
->>>> +关键属性
->>>> +~~~~~~~~~~~~~~
->>>> +
->>>> +1. **内存开销**：整体的内存开销只有几 MiB，取决于配置。当前的实现是使用一个小长
->>>> +   整型数组来编码观测点信息，几乎可以忽略不计。
->>>> +
->>>> +2. **性能开销**：KCSAN 的运行时旨在性能开销最小化，使用一个高效的观测点编码，在
->>>> +   快速路径中不需要获取任何锁。在拥有 8 个 CPU 的系统上的内核启动来说：
->>>> +
->>>> +   - 使用默认 KCSAN 配置时，性能下降 5 倍；
->>>> +   - 仅因运行时快速路径开销导致性能下降 2.8 倍（设置非常大的
->>>> +     ``KCSAN_SKIP_WATCH`` 并取消设置 ``KCSAN_SKIP_WATCH_RANDOMIZE``）。
->>>> +
->>>> +3. **注解开销**：KCSAN 运行时之外需要的注释很少。因此，随着内核的发展维护的开
->>>> +   销也很小。
->>>> +
->>>> +4. **检测设备的竞争写入**：由于设置观测点时会检查数据值，设备的竞争写入也可以
->>>> +   被检测到。
->>>> +
->>>> +5. **内存排序**：KCSAN 只了解一部分 LKMM 排序规则；这可能会导致漏报数据竞争（
->>>> +   假阴性）。
->>>> +
->>>> +6. **分析准确率**： 对于观察到的执行，由于使用采样策略，分析是 * 不健全 * 的
->>>> +   （可能有假阴性），但期望得到完整的分析（没有假阳性）。
->>>> +
->>>> +考虑的替代方案
->>>> +-------------------
->>>> +
->>>> +一个内核数据竞争检测的替代方法是 `Kernel Thread Sanitizer (KTSAN)
->>>> +<https://github.com/google/kernel-sanitizers/blob/master/KTSAN.md>`_。KTSAN 是一
->>>> +个基于先行发生关系（happens-before）的数据竞争检测器，它显式建立内存操作之间的先
->>>> +后发生顺序，这可以用来确定 `数据竞争`_ 中定义的数据竞争。
->>>> +
->>>> +为了建立正确的先行发生关系，KTSAN 必须了解 LKMM 的所有排序规则和同步原语。不幸
->>>> +的是，任何遗漏都会导致大量的假阳性，这在包含众多自定义同步机制的内核上下文中特
->>>> +别有害。为了跟踪前因后果关系，KTSAN 的实现需要为每个内存位置提供元数据（影子内
->>>> +存），这意味着每页内存对应 4 页影子内存，在大型系统上可能会带来数十 GiB 的开销
->>>> +。
+diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
+index 16c8de5050e5..0bbe0d65ee16 100644
+--- a/drivers/edac/Kconfig
++++ b/drivers/edac/Kconfig
+@@ -573,5 +573,15 @@ config EDAC_VERSAL
+ 	  Support injecting both correctable and uncorrectable errors
+ 	  for debugging purposes.
+ 
++config EDAC_OCTEONTX
++	bool "Marvell OcteonTX2 and CN10K SoC EDAC"
++	depends on ARM_SDE_INTERFACE
++	help
++	  Support for error detection and correction on the
++	  Marvell OcteonTX2 and CN10K SoCs.
++	  This driver will allow SECDED errors notify and report in
++	  the firmware first model and reported via SDEI callbacks.
++	  EDAC Driver report Single Bit Errors and Double Bit Errors.
++
+ 
+ endif # EDAC
+diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
+index 4edfb83ffbee..07dbb6558b6f 100644
+--- a/drivers/edac/Makefile
++++ b/drivers/edac/Makefile
+@@ -89,3 +89,4 @@ obj-$(CONFIG_EDAC_DMC520)		+= dmc520_edac.o
+ obj-$(CONFIG_EDAC_NPCM)			+= npcm_edac.o
+ obj-$(CONFIG_EDAC_ZYNQMP)		+= zynqmp_edac.o
+ obj-$(CONFIG_EDAC_VERSAL)		+= versal_edac.o
++obj-$(CONFIG_EDAC_OCTEONTX)		+= octeontx_edac.o
+diff --git a/drivers/edac/octeontx_edac.c b/drivers/edac/octeontx_edac.c
+new file mode 100644
+index 000000000000..3d91b16cbdf2
+--- /dev/null
++++ b/drivers/edac/octeontx_edac.c
+@@ -0,0 +1,1274 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Marvell OcteonTx2, CN10K EDAC Firmware First RAS driver
++ * The driver supports SDE Interface notification
++ * The driver supports error injection via SMC call
++ *
++ * Copyright (C) 2022 Marvell.
++ */
++
++#include <linux/of_address.h>
++#include <linux/arm_sdei.h>
++#include <linux/arm-smccc.h>
++#include <linux/sys_soc.h>
++#include <linux/cper.h>
++#include "edac_module.h"
++
++#define OCTEONTX2_RING_SIG ((int)'M' << 24 | 'R' << 16 | 'V' << 8 | 'L')
++
++#define PCI_DEVICE_ID_OCTEONTX2_LMC	(0xa022)
++#define PCI_DEVICE_ID_OCTEONTX2_MCC	(0xa070)
++#define PCI_DEVICE_ID_OCTEONTX2_MDC	(0xa073)
++
++#define OCTEONTX2_EDAC_INJECT	(0xc2000c0b)
++#define OCTEONTX2_MDC_EINJ_CAP	(0x10000000)
++#define OCTEONTX2_MCC_EINJ_CAP	(0x40000000)
++
++#define CN10K_EDAC_INJECT	(0xc2000b10)
++#define CN10K_DSS_EINJ_CAP	(0x20000000)
++
++#define SIZE	CPER_REC_LEN
++#define NAME_SZ	8
++
++struct cper_sec_plat_gic {
++	uint8_t validation_bits;
++	uint8_t error_type;
++	uint8_t error_sev;
++	uint8_t reserved0;
++	uint32_t error_code;
++	uint64_t misc0;
++	uint64_t misc1;
++	uint64_t erraddr;
++};
++
++struct cper_sec_platform_err {
++	struct cper_sec_fw_err_rec_ref fwrec;
++	uint32_t module_id;
++	uint32_t reserved0;
++	union {
++		struct cper_sec_plat_gic gic;
++	} perr;
++};
++
++struct processor_error {
++	struct cper_sec_proc_arm desc;
++	struct cper_arm_err_info info;
++};
++
++/* OcteonTX Reporting Error Source Record */
++struct octeontx_res_record {
++	union {
++		struct processor_error  core;
++		struct cper_sec_mem_err mem;
++		struct cper_sec_platform_err gic;
++	};
++	u32 error_severity;
++	char msg[32];
++	u64 syndrome;
++};
++
++/* Reporting Error Source Ring Buffer */
++struct octeontx_res_ring {
++	u32 head;
++	u32 tail;
++	u32 size;
++	u32 sig;
++	u32 reg;
++	struct octeontx_res_record records[0] __aligned(8);
++};
++
++struct octeontx_edac {
++	union {
++		struct mem_ctl_info *mci;
++		struct edac_device_ctl_info *edac_dev;
++	};
++	phys_addr_t ring_pa;
++	struct octeontx_res_ring __iomem *ring;
++	size_t ring_sz;
++	u32 sdei_num;
++	u32 ecc_cap;
++	struct mutex lock;
++	char name[NAME_SZ];
++	struct delayed_work work;
++};
++
++/* List of Hardware Error Sources */
++struct octeontx_res_list {
++	struct octeontx_edac *hes;
++	u32 count;
++};
++
++struct octeontx_edac_pvt {
++	unsigned long inject;
++	unsigned long error_type;
++	unsigned long address;
++	struct octeontx_edac *hes;
++};
++
++static const struct soc_device_attribute cn10_socinfo[] = {
++	{.soc_id = "jep106:0369:00b9", .revision = "0x00000000",},
++	{.soc_id = "jep106:0369:00b9", .revision = "0x00000001",},
++	{.soc_id = "jep106:0369:00b9", .revision = "0x00000008",},
++	{.soc_id = "jep106:0369:00bd",},
++	{.soc_id = "jep106:0369:00ba", .revision = "0x00000000",},
++	{.soc_id = "jep106:0369:00ba", .revision = "0x00000001",},
++	{.soc_id = "jep106:0369:00bc", .revision = "0x00000000",},
++	{.soc_id = "jep106:0369:00bc", .revision = "0x00000008",},
++	{},
++};
++
++static const struct of_device_id octeontx_edac_of_match[] = {
++	{.compatible = "marvell,sdei-ghes",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, octeontx_edac_of_match);
++
++static const struct of_device_id tad_of_match[] = {
++	{.name = "tad",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, tad_of_match);
++
++static const struct of_device_id dss_of_match[] = {
++	{.name = "dss",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, dss_of_match);
++
++static const struct of_device_id mdc_of_match[] = {
++	{.name = "mdc",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, mdc_of_match);
++
++static const struct of_device_id mcc_of_match[] = {
++	{.name = "mcc",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, mcc_of_match);
++
++static const struct of_device_id cpu_of_match[] = {
++	{.name = "core",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, cpu_of_match);
++
++static const struct of_device_id gic_of_match[] = {
++	{.name = "gic",},
++	{},
++};
++MODULE_DEVICE_TABLE(of, gic_of_match);
++
++static const struct pci_device_id octeontx_edac_pci_tbl[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVICE_ID_OCTEONTX2_LMC) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVICE_ID_OCTEONTX2_MCC) },
++	{ PCI_DEVICE(PCI_VENDOR_ID_CAVIUM, PCI_DEVICE_ID_OCTEONTX2_MDC) },
++	{ 0, },
++};
++
++static struct octeontx_res_list __ro_after_init edac_list;
++
++#define otx_printk(level, fmt, arg...) edac_printk(level, "octeontx", fmt, ##arg)
++
++#define to_mci(k) container_of(k, struct mem_ctl_info, dev)
++
++#define TEMPLATE_SHOW(reg)					\
++static ssize_t reg##_show(struct device *dev,			\
++		struct device_attribute *attr,			\
++		char *data)					\
++{								\
++	struct mem_ctl_info *mci = to_mci(dev);			\
++	struct octeontx_edac_pvt *pvt = mci->pvt_info;		\
++	return sprintf(data, "0x%016llx\n", (u64)pvt->reg);	\
++}
++
++#define TEMPLATE_STORE(reg)					\
++static ssize_t reg##_store(struct device *dev,			\
++		struct device_attribute *attr,			\
++		const char *data, size_t count)			\
++{								\
++	struct mem_ctl_info *mci = to_mci(dev);			\
++	struct octeontx_edac_pvt *pvt = mci->pvt_info;		\
++	if (isdigit(*data)) {					\
++		if (!kstrtoul(data, 0, &pvt->reg))		\
++			return count;				\
++	}							\
++	return 0;						\
++}
++
++#define TEMPLATE_DEV_SHOW(reg)					\
++static ssize_t dev_##reg##_show(struct edac_device_ctl_info *dev,\
++		char *data)					\
++{								\
++	struct octeontx_edac_pvt *pvt = dev->pvt_info;		\
++	return sprintf(data, "0x%016llx\n", (u64)pvt->reg);	\
++}
++
++#define TEMPLATE_DEV_STORE(reg)				\
++static ssize_t dev_##reg##_store(struct edac_device_ctl_info *dev,\
++		const char *data, size_t count)			\
++{								\
++	struct octeontx_edac_pvt *pvt = dev->pvt_info;		\
++	if (isdigit(*data)) {					\
++		if (!kstrtoul(data, 0, &pvt->reg))		\
++			return count;				\
++	}							\
++	return 0;						\
++}
++
++
++static const u64 einj_val = 0x5555555555555555;
++static u64 einj_fn(void)
++{
++	return einj_val;
++}
++
++static void octeontx_edac_inject_error(struct octeontx_edac_pvt *pvt)
++{
++	struct arm_smccc_res res;
++	unsigned long arg[8] = {0};
++	bool read = false;
++	bool call = false;
++	u64 val = einj_val;
++	unsigned long error_type = pvt->error_type & 0x0000FFFF;
++
++	if (soc_device_match(cn10_socinfo)) {
++		arg[0] = CN10K_EDAC_INJECT;
++		arg[1] = 0xd;
++		arg[2] = pvt->address;
++		arg[3] = (error_type >> 8) & 1;
++		arg[4] = error_type & 0xFF;
++		arm_smccc_smc(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], &res);
++	} else {
++		arg[0] = OCTEONTX2_EDAC_INJECT;
++		arg[1] = 0x3;
++		arg[2] = pvt->address;
++		arg[3] = error_type;
++
++		arg[3] &= ~0x100;
++		switch (arg[2]) {
++		case 1 ... 2:
++			arg[2] = (u64)&val;
++			read = true;
++			break;
++		case 5 ... 6:
++			arg[2] = (u64)einj_fn;
++			call = true;
++			break;
++		case 3:
++		case 7:
++			arg[3] |= 0x100;
++			break;
++		}
++
++		arm_smccc_smc(arg[0], arg[1], arg[2], arg[3], arg[4], arg[5], arg[6], arg[7], &res);
++
++		if (read && val != einj_val)
++			otx_printk(KERN_DEBUG, "read mismatch\n");
++
++		if (call && einj_fn() != einj_val)
++			otx_printk(KERN_DEBUG, "call mismatch\n");
++	}
++
++	otx_printk(KERN_DEBUG, "Inject: CPU%d: (0x%lx, 0x%lx, 0x%lx, 0x%lx, 0x%lx) 0x%lx\n",
++			smp_processor_id(),
++			arg[0], arg[1], arg[2], arg[3], arg[4], res.a0);
++}
++
++static ssize_t inject(struct octeontx_edac_pvt *pvt,
++		const char *data, size_t count)
++{
++	if (!(pvt->error_type & pvt->hes->ecc_cap))
++		return count;
++
++	if (!isdigit(*data))
++		return count;
++
++	if (kstrtoul(data, 0, &pvt->inject))
++		return count;
++
++	if (pvt->inject != 1)
++		return count;
++
++	pvt->inject = 0;
++
++	octeontx_edac_inject_error(pvt);
++
++	return count;
++}
++
++
++static ssize_t inject_store(struct device *dev,
++		struct device_attribute *attr,
++		const char *data, size_t count)
++{
++	struct mem_ctl_info *mci = to_mci(dev);
++	struct octeontx_edac_pvt *pvt = mci->pvt_info;
++
++	return inject(pvt, data, count);
++}
++
++static ssize_t dev_inject_store(struct edac_device_ctl_info *dev,
++		const char *data, size_t count)
++{
++	struct octeontx_edac_pvt *pvt = dev->pvt_info;
++
++	return inject(pvt, data, count);
++}
++
++
++TEMPLATE_SHOW(address);
++TEMPLATE_STORE(address);
++TEMPLATE_SHOW(error_type);
++TEMPLATE_STORE(error_type);
++
++TEMPLATE_DEV_SHOW(address);
++TEMPLATE_DEV_STORE(address);
++TEMPLATE_DEV_SHOW(error_type);
++TEMPLATE_DEV_STORE(error_type);
++
++
++static DEVICE_ATTR_WO(inject);
++static DEVICE_ATTR_RW(error_type);
++static DEVICE_ATTR_RW(address);
++
++static struct attribute *octeontx_dev_attrs[] = {
++	&dev_attr_inject.attr,
++	&dev_attr_error_type.attr,
++	&dev_attr_address.attr,
++	NULL
++};
++
++ATTRIBUTE_GROUPS(octeontx_dev);
++
++static struct edac_dev_sysfs_attribute octeontx_dev_sysfs_attr[] = {
++	{
++		.attr = {
++		.name = "inject",
++		.mode = (0200)
++		},
++		.store = dev_inject_store
++	},
++	{
++		.attr = {
++		.name = "error_type",
++		.mode = (0644)
++		},
++		.show = dev_error_type_show,
++		.store = dev_error_type_store
++	},
++	{
++		.attr = {
++			.name = "address",
++			.mode = (0644)
++		},
++		.show = dev_address_show,
++		.store = dev_address_store},
++	{
++		.attr = {.name = NULL}
++	}
++};
++
++
++static void octeontx_edac_dev_attributes(struct edac_device_ctl_info *edac_dev)
++{
++	struct octeontx_edac_pvt *pvt = edac_dev->pvt_info;
++
++	edac_dev->sysfs_attributes = octeontx_dev_sysfs_attr;
++
++	pvt->inject = 0;
++	pvt->error_type = 0;
++	pvt->address = 0;
++}
++
++static enum hw_event_mc_err_type octeontx_edac_severity(int cper_sev)
++{
++	switch (cper_sev) {
++	case CPER_SEV_CORRECTED:
++		return HW_EVENT_ERR_CORRECTED;
++	case CPER_SEV_RECOVERABLE:
++		return HW_EVENT_ERR_UNCORRECTED;
++	case CPER_SEV_FATAL:
++		return HW_EVENT_ERR_FATAL;
++	case CPER_SEV_INFORMATIONAL:
++		return HW_EVENT_ERR_INFO;
++	}
++
++	return HW_EVENT_ERR_INFO;
++}
++
++static int octeontx_sdei_register(struct octeontx_edac *hes, sdei_event_callback *cb)
++{
++	int err = 0;
++
++	err = sdei_event_register(hes->sdei_num, cb, hes);
++	if (err) {
++		pr_err("Failed to register sdei-event #%d\n", hes->sdei_num);
++		return err;
++	}
++
++	err = sdei_event_enable(hes->sdei_num);
++	if (err) {
++		sdei_event_unregister(hes->sdei_num);
++		pr_err("Failed to enable sdei-event #%d\n", hes->sdei_num);
++		return err;
++	}
++	/*Ensure that reg updated*/
++	wmb();
++
++	return 0;
++}
++
++static void octeontx_sdei_unregister(struct octeontx_edac *hes)
++{
++	int err = 0;
++
++	err = sdei_event_disable(hes->sdei_num);
++	if (err) {
++		pr_err("Failed to disable sdei-event #%d (%pe)\n",
++				hes->sdei_num, ERR_PTR(err));
++		return;
++	}
++
++	err = sdei_event_unregister(hes->sdei_num);
++	if (err)
++		pr_err("Failed to unregister sdei-event #%d (%pe)\n",
++				hes->sdei_num, ERR_PTR(err));
++
++	/*Ensure that reg updated*/
++	wmb();
++}
++
++static int octeontx_mc_sdei_callback(u32 event_id, struct pt_regs *regs, void *arg)
++{
++	struct octeontx_edac *hes = arg;
++	struct mem_ctl_info *mci = hes->mci;
++
++	edac_queue_work(&mci->work, msecs_to_jiffies(0));
++
++	return 0;
++}
++
++static int octeontx_device_sdei_callback(u32 event_id, struct pt_regs *regs, void *arg)
++{
++	struct octeontx_edac *hes = arg;
++	struct edac_device_ctl_info *edac_dev = hes->edac_dev;
++
++	edac_queue_work(&edac_dev->work, msecs_to_jiffies(0));
++
++	return 0;
++}
++
++static int octeontx_cpu_sdei_callback(u32 event_id, struct pt_regs *regs, void *arg)
++{
++	struct octeontx_edac *hes = arg;
++
++	edac_queue_work(&hes->work, msecs_to_jiffies(0));
++
++	return 0;
++}
++
++static void octeontx_edac_mem_msg(struct octeontx_res_record *rec, char msg[SIZE])
++{
++	struct cper_mem_err_compact cmem;
++	struct cper_sec_mem_err *err = &rec->mem;
++	u32 len = SIZE;
++	u32 n = 0;
++
++	cper_mem_err_pack(err, &cmem);
++	n += cper_mem_err_location(&cmem, msg);
++
++	if (err->validation_bits & CPER_MEM_VALID_ERROR_TYPE)
++		n += snprintf(msg + n, len - n, "%s ", cper_mem_err_type_str(err->error_type));
++	msg[n] = '\0';
++}
++
++static void octeontx_edac_gic_msg(struct octeontx_res_record *rec, char msg[SIZE])
++{
++	struct cper_sec_platform_err *plat_err = NULL;
++	struct cper_sec_plat_gic *gicerr = NULL;
++	u32 len = SIZE;
++	u32 n = 0;
++
++	plat_err = &rec->gic;
++	gicerr   = &plat_err->perr.gic;
++
++	n += scnprintf(msg + n, len - n, "vbits=0x%x ", gicerr->validation_bits);
++	n += scnprintf(msg + n, len - n, "type 0x%x sev %d code 0x%x ",
++			gicerr->error_type, gicerr->error_sev, gicerr->error_code);
++	n += scnprintf(msg + n, len - n, "misc0=0x%llx misc1 0x%llx addr 0x%llx ",
++			gicerr->misc0, gicerr->misc1, gicerr->erraddr);
++	msg[n] = '\0';
++}
++
++static void octeontx_edac_cpu_msg(struct octeontx_res_record *rec, char msg[SIZE])
++{
++	struct cper_sec_proc_arm *desc = NULL;
++	struct cper_arm_err_info *info = NULL;
++	u32 len = SIZE;
++	u32 n = 0;
++
++	desc = &rec->core.desc;
++	info = &rec->core.info;
++
++	n += scnprintf(msg + n, len - n, "%s ", rec->msg);
++	n += scnprintf(msg + n, len - n, "midr=0x%llx ", desc->midr);
++	if (desc->validation_bits & CPER_ARM_VALID_MPIDR)
++		n += scnprintf(msg + n, len - n, "mpidr=0x%llx ", desc->mpidr);
++	if (info->validation_bits & CPER_ARM_INFO_VALID_PHYSICAL_ADDR)
++		n += scnprintf(msg + n, len - n, "paddr=0x%llx ", info->physical_fault_addr);
++	if (info->validation_bits & CPER_ARM_INFO_VALID_VIRT_ADDR)
++		n += scnprintf(msg + n, len - n, "vaddr=0x%llx ", info->virt_fault_addr);
++	if (info->validation_bits & CPER_ARM_INFO_VALID_ERR_INFO)
++		n += scnprintf(msg + n, len - n, "info=0x%llx ", info->error_info);
++	msg[n] = '\0';
++}
++
++static void octeontx_edac_mc_wq(struct work_struct *work)
++{
++	struct delayed_work *dw = to_delayed_work(work);
++	struct mem_ctl_info *mci = container_of(dw, struct mem_ctl_info, work);
++	struct octeontx_edac_pvt *pvt = mci->pvt_info;
++	struct octeontx_edac *hes = pvt->hes;
++	struct octeontx_res_ring *ring = hes->ring;
++	struct octeontx_res_record rec;
++	enum hw_event_mc_err_type type;
++	u32 head = 0;
++	u32 tail = 0;
++	char msg[SIZE];
++
++	mutex_lock(&hes->lock);
++
++loop:
++	head = ring->head;
++	tail = ring->tail;
++
++	/*Ensure that head updated*/
++	rmb();
++
++	if (head == tail)
++		goto exit;
++
++	memcpy_fromio(&rec, ring->records + tail, sizeof(rec));
++
++	type = octeontx_edac_severity(rec.error_severity);
++
++	if (type == HW_EVENT_ERR_FATAL || type == HW_EVENT_ERR_UNCORRECTED) {
++		if (IS_ENABLED(CONFIG_MEMORY_FAILURE))
++			memory_failure(PHYS_PFN(rec.mem.physical_addr), 0);
++		else
++			otx_printk(KERN_ALERT, "PFN 0x%lx not offlined/poisoned, kernel might crash!\n",
++				 PHYS_PFN(rec.mem.physical_addr));
++	}
++
++	octeontx_edac_mem_msg(&rec, msg);
++
++	++tail;
++	ring->tail = tail % ring->size;
++
++	/*Ensure that tail updated*/
++	wmb();
++
++	edac_mc_handle_error(type, mci, 1, PHYS_PFN(rec.mem.physical_addr),
++			offset_in_page(rec.mem.physical_addr),
++			rec.syndrome, -1, -1, -1, rec.msg, msg);
++
++	if (head != tail)
++		goto loop;
++
++exit:
++	mutex_unlock(&hes->lock);
++}
++
++static void octeontx_edac_wq_handler(struct octeontx_edac *hes,
++				struct edac_device_ctl_info *edac_dev)
++{
++	struct octeontx_res_ring *ring = hes->ring;
++	struct octeontx_res_record rec;
++	enum hw_event_mc_err_type type;
++	u32 head = 0;
++	u32 tail = 0;
++	u32 inst = 0;
++	char msg[SIZE];
++
++	mutex_lock(&hes->lock);
++
++loop:
++	head = ring->head;
++	tail = ring->tail;
++
++	/*Ensure that head updated*/
++	rmb();
++
++	if (head == tail)
++		goto exit;
++
++	memcpy_fromio(&rec, ring->records + tail, sizeof(rec));
++
++	type = octeontx_edac_severity(rec.error_severity);
++
++	if (!strcmp(hes->name, gic_of_match[0].name)) {
++		octeontx_edac_gic_msg(&rec, msg);
++	} else if (!strcmp(hes->name, tad_of_match[0].name) ||
++			!strcmp(hes->name, mdc_of_match[0].name)) {
++		octeontx_edac_mem_msg(&rec, msg);
++	} else if (!strncmp(hes->name, cpu_of_match[0].name, 4)) {
++		octeontx_edac_cpu_msg(&rec, msg);
++		if (kstrtoint(&hes->name[4], 10, &inst) || inst > 255)
++			inst = 0;
++	}
++
++	++tail;
++	ring->tail = tail % ring->size;
++
++	/*Ensure that tail updated*/
++	wmb();
++
++	if (type == HW_EVENT_ERR_FATAL || type == HW_EVENT_ERR_UNCORRECTED)
++		edac_device_handle_ue(edac_dev, inst, 0, msg);
++	else
++		edac_device_handle_ce(edac_dev, inst, 0, msg);
++
++	if (head != tail)
++		goto loop;
++
++exit:
++	mutex_unlock(&hes->lock);
++}
++
++static void octeontx_edac_device_wq(struct work_struct *work)
++{
++	struct delayed_work *dw = to_delayed_work(work);
++	struct edac_device_ctl_info *edac_dev =
++			container_of(dw, struct edac_device_ctl_info, work);
++	struct octeontx_edac_pvt *pvt = edac_dev->pvt_info;
++	struct octeontx_edac *hes = pvt->hes;
++
++	octeontx_edac_wq_handler(hes, edac_dev);
++}
++
++static void octeontx_edac_cpu_wq(struct work_struct *work)
++{
++	struct delayed_work *dw = to_delayed_work(work);
++	struct octeontx_edac *hes = container_of(dw, struct octeontx_edac, work);
++	struct edac_device_ctl_info *edac_dev = hes->edac_dev;
++
++	octeontx_edac_wq_handler(hes, edac_dev);
++}
++
++static void octeontx_edac_enable_msix(struct pci_dev *pdev)
++{
++	u16 ctrl;
++
++	if ((pdev->msi_enabled) || (pdev->msix_enabled)) {
++		dev_err(&pdev->dev, "MSI(%d) or MSIX(%d) already enabled\n",
++			pdev->msi_enabled, pdev->msix_enabled);
++		return;
++	}
++
++	pdev->msix_cap = pci_find_capability(pdev, PCI_CAP_ID_MSIX);
++	if (pdev->msix_cap) {
++		pci_read_config_word(pdev, pdev->msix_cap + PCI_MSIX_FLAGS, &ctrl);
++		ctrl |= PCI_MSIX_FLAGS_ENABLE;
++		pci_write_config_word(pdev, pdev->msix_cap + PCI_MSIX_FLAGS, ctrl);
++	} else {
++		dev_err(&pdev->dev, "PCI dev %04d:%02d.%d missing MSIX capabilities\n",
++			pdev->bus->number, PCI_SLOT(pdev->devfn), PCI_FUNC(pdev->devfn));
++	}
++}
++
++static void octeontx_edac_msix_init(void)
++{
++	const struct pci_device_id *pdevid;
++	struct pci_dev *pdev;
++	size_t i;
++
++	if (soc_device_match(cn10_socinfo))
++		return;
++
++	for (i = 0; i < ARRAY_SIZE(octeontx_edac_pci_tbl); i++) {
++		pdevid = &octeontx_edac_pci_tbl[i];
++		pdev = NULL;
++		while ((pdev = pci_get_device(pdevid->vendor, pdevid->device, pdev)))
++			octeontx_edac_enable_msix(pdev);
++	}
++}
++
++static int octeontx_of_match_resource(struct octeontx_res_list *list)
++{
++	struct device_node *root = NULL;
++	struct device_node *node = NULL;
++	struct octeontx_edac *hes = NULL;
++	const __be32 *res = NULL;
++	u64 size = 0;
++	u64 base = 0;
++	size_t count = 0;
++
++	root = of_find_matching_node(NULL, octeontx_edac_of_match);
++	if (!root)
++		return -ENODEV;
++
++	for_each_available_child_of_node(root, node)
++		count++;
++
++	if (!count)
++		return -ENODEV;
++
++	list->count = count;
++	list->hes = NULL;
++
++	list->hes = kcalloc(count, sizeof(struct octeontx_edac), GFP_KERNEL);
++	if (!list->hes)
++		return -ENOMEM;
++
++	hes = list->hes;
++	for_each_available_child_of_node(root, node) {
++
++		strscpy(hes->name, node->name, sizeof(hes->name));
++
++		mutex_init(&hes->lock);
++
++		if (of_property_read_u32(node, "event-id", &hes->sdei_num)) {
++			otx_printk(KERN_ERR, "Unable read SDEI id\n");
++			return -EINVAL;
++		}
++
++		res = of_get_address(node, 2, &size, NULL);
++		base = of_translate_address(node, res);
++		if (base == OF_BAD_ADDR) {
++			otx_printk(KERN_ERR, "Unable translate address\n");
++			return -EINVAL;
++		}
++		hes->ring_pa = (phys_addr_t)base;
++		hes->ring_sz = (size_t)size;
++
++		otx_printk(KERN_DEBUG, "%s 0x%08x: 0x%llx/0x%lx\n",
++				hes->name, hes->sdei_num, hes->ring_pa, hes->ring_sz);
++
++		hes++;
++	}
++
++	return 0;
++}
++
++static struct octeontx_edac *octeontx_edac_get_hes(const char *name)
++{
++	struct octeontx_edac *hes = NULL;
++	u32 i = 0;
++
++	if (!name)
++		return NULL;
++
++	for (i = 0; i < edac_list.count; i++) {
++		hes = &edac_list.hes[i];
++		if (strcmp(name, hes->name) == 0)
++			return hes;
++	}
++
++	return NULL;
++}
++
++static int octeontx_edac_map_resource(struct platform_device *pdev,
++				struct octeontx_edac **src, char *str)
++{
++	struct octeontx_edac *hes = NULL;
++	struct device *dev = &pdev->dev;
++	const char *name = str ? str : dev->driver->of_match_table->name;
++
++	hes = octeontx_edac_get_hes(name);
++	if (!hes) {
++		dev_err(dev, "Unable to find hardware error source\n");
++		return -ENODEV;
++	}
++
++	if (!devm_request_mem_region(dev, hes->ring_pa, hes->ring_sz, hes->name)) {
++		dev_err(dev, "Unable request ring\n");
++		return -EBUSY;
++	}
++
++	hes->ring = devm_ioremap(dev, hes->ring_pa, hes->ring_sz);
++	if (!hes->ring) {
++		dev_err(dev, "Unable map ring\n");
++		return -ENOMEM;
++	}
++
++	if (hes->ring->sig != OCTEONTX2_RING_SIG)
++		return -ENODEV;
++	hes->ring->reg = OCTEONTX2_RING_SIG;
++
++	*src = hes;
++
++	return 0;
++}
++
++static int octeontx_edac_mc_init(struct platform_device *pdev,
++					struct octeontx_edac *hes)
++{
++	struct device *dev = &pdev->dev;
++	struct octeontx_edac_pvt *pvt = NULL;
++	struct mem_ctl_info *mci = NULL;
++	struct edac_mc_layer layers[1] = {0};
++	struct dimm_info *dimm;
++	int ret = 0;
++	int idx = 0;
++
++	idx = edac_device_alloc_index();
++
++	layers[0].type = EDAC_MC_LAYER_ALL_MEM;
++	layers[0].size = 1;
++	layers[0].is_virt_csrow = false;
++
++	mci = edac_mc_alloc(idx, ARRAY_SIZE(layers), layers,
++			sizeof(struct octeontx_edac_pvt));
++	if (!mci) {
++		dev_err(dev, "Unable alloc MC\n");
++		ret = -ENOMEM;
++		goto err0;
++	}
++
++	mci->pdev = dev;
++	pvt = mci->pvt_info;
++	platform_set_drvdata(pdev, mci);
++	mci->edac_ctl_cap = EDAC_FLAG_SECDED;
++	mci->edac_cap = EDAC_FLAG_SECDED;
++	mci->mod_name = dev->driver->name;
++	mci->ctl_name = hes->name;
++	mci->dev_name = hes->name;
++	mci->scrub_mode = SCRUB_HW_PROG;
++	mci->edac_check = NULL;
++	pvt->hes = hes;
++	hes->mci = mci;
++
++	dimm = edac_get_dimm(mci, 0, 0, 0);
++	dimm->grain = 1;
++
++	ret = edac_mc_add_mc_with_groups(mci, hes->ecc_cap ? octeontx_dev_groups : NULL);
++	if (ret)
++		goto err1;
++
++	INIT_DELAYED_WORK(&mci->work, octeontx_edac_mc_wq);
++	edac_stop_work(&mci->work);
++
++	ret = octeontx_sdei_register(hes, octeontx_mc_sdei_callback);
++	if (ret)
++		goto err1;
++
++	otx_printk(KERN_DEBUG, "Register %s %d/%d/%d\n",
++			hes->name, hes->ring->tail,
++			hes->ring->head, hes->ring->size);
++
++	return 0;
++
++err1:
++	edac_mc_del_mc(&pdev->dev);
++	edac_mc_free(mci);
++
++err0:
++	dev_err(dev, "Unable register %d\n", ret);
++
++	return ret;
++}
++
++static int octeontx_edac_device_init(struct platform_device *pdev,
++				struct octeontx_edac *hes,
++				char *dev_name, char *blk_name)
++{
++	struct device *dev = &pdev->dev;
++	struct edac_device_ctl_info *edac_dev = NULL;
++	struct octeontx_edac_pvt *pvt = NULL;
++	int idx = 0;
++	int ret = 0;
++
++	idx = edac_device_alloc_index();
++
++	edac_dev = edac_device_alloc_ctl_info(sizeof(*pvt),
++			dev_name, 1, blk_name, 1, 0, NULL, 0, idx);
++	if (!edac_dev)
++		return -ENOMEM;
++
++	edac_dev->dev = dev;
++	pvt = edac_dev->pvt_info;
++	platform_set_drvdata(pdev, edac_dev);
++	edac_dev->mod_name = dev->driver->name;
++	edac_dev->ctl_name = hes->name;
++	edac_dev->dev_name = hes->name;
++	edac_dev->edac_check = NULL;
++	pvt->hes = hes;
++	hes->edac_dev = edac_dev;
++
++	if (hes->ecc_cap)
++		octeontx_edac_dev_attributes(edac_dev);
++
++	if (edac_device_add_device(edac_dev))
++		goto err0;
++
++	INIT_DELAYED_WORK(&edac_dev->work, octeontx_edac_device_wq);
++
++	edac_stop_work(&edac_dev->work);
++
++	ret = octeontx_sdei_register(hes, octeontx_device_sdei_callback);
++	if (ret)
++		goto err0;
++
++	otx_printk(KERN_DEBUG, "Register %s %d/%d/%d\n",
++			hes->name, hes->ring->tail,
++			hes->ring->head, hes->ring->size);
++
++	return 0;
++
++err0:
++	dev_err(dev, "Unable register %d\n", ret);
++	edac_device_free_ctl_info(edac_dev);
++
++	return -ENXIO;
++}
++
++static int octeontx_dss_probe(struct platform_device *pdev)
++{
++	struct octeontx_edac *hes = NULL;
++	int ret = 0;
++
++	ret = octeontx_edac_map_resource(pdev, &hes, NULL);
++	if (ret)
++		return ret;
++
++	hes->ecc_cap = CN10K_DSS_EINJ_CAP;
++
++	ret = octeontx_edac_mc_init(pdev, hes);
++
++	return ret;
++}
++
++static int octeontx_tad_probe(struct platform_device *pdev)
++{
++	struct octeontx_edac *hes = NULL;
++	int ret = 0;
++
++	ret = octeontx_edac_map_resource(pdev, &hes, NULL);
++	if (ret)
++		return ret;
++
++	ret = octeontx_edac_device_init(pdev, hes, "llc", hes->name);
++
++	return ret;
++}
++
++static int octeontx_mdc_probe(struct platform_device *pdev)
++{
++	struct octeontx_edac *hes = NULL;
++	int ret = 0;
++
++	ret = octeontx_edac_map_resource(pdev, &hes, NULL);
++	if (ret)
++		return ret;
++
++	if (soc_device_match(cn10_socinfo))
++		hes->ecc_cap = 0;
++	else
++		hes->ecc_cap = OCTEONTX2_MDC_EINJ_CAP;
++
++	ret = octeontx_edac_device_init(pdev, hes, hes->name, hes->name);
++
++	return ret;
++}
++
++static int octeontx_mcc_probe(struct platform_device *pdev)
++{
++	struct octeontx_edac *hes = NULL;
++	int ret = 0;
++
++	ret = octeontx_edac_map_resource(pdev, &hes, NULL);
++	if (ret)
++		return ret;
++
++	hes->ecc_cap = OCTEONTX2_MCC_EINJ_CAP;
++
++	ret = octeontx_edac_mc_init(pdev, hes);
++
++	return ret;
++}
++
++static int octeontx_cpu_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct octeontx_edac *hes = NULL;
++	struct edac_device_ctl_info *edac_dev = NULL;
++	char *name = (char *)dev->driver->of_match_table->name;
++	int idx = 0;
++	int ret = 0;
++	int i = 0;
++	u8 cores = 0;
++
++	for (i = 0; i < edac_list.count; i++) {
++		hes = &edac_list.hes[i];
++		if (!strncmp(name, hes->name, 4))
++			cores++;
++	}
++
++	idx = edac_device_alloc_index();
++
++	edac_dev = edac_device_alloc_ctl_info(0, "cpu", cores, name, 1, 0, NULL, 0, idx);
++	if (!edac_dev)
++		return -ENOMEM;
++
++	edac_dev->dev = dev;
++	platform_set_drvdata(pdev, edac_dev);
++	edac_dev->mod_name = dev->driver->name;
++	edac_dev->ctl_name = name;
++	edac_dev->dev_name = name;
++	edac_dev->edac_check = NULL;
++
++	ret = edac_device_add_device(edac_dev);
++	if (ret)
++		goto err0;
++
++	for (i = 0; i < edac_list.count; i++) {
++		hes = &edac_list.hes[i];
++		if (strncmp(name, hes->name, 4))
++			continue;
++
++		ret = octeontx_edac_map_resource(pdev, &hes, hes->name);
++		if (ret)
++			goto err0;
++
++		hes->edac_dev = edac_dev;
++
++		INIT_DELAYED_WORK(&hes->work, octeontx_edac_cpu_wq);
++		edac_stop_work(&hes->work);
++
++		octeontx_sdei_register(hes, octeontx_cpu_sdei_callback);
++	}
++
++	otx_printk(KERN_DEBUG, "Register %d %s\n", cores, edac_dev->ctl_name);
++
++	return 0;
++
++err0:
++	dev_err(dev, "Unable register %d\n", ret);
++	edac_device_free_ctl_info(edac_dev);
++
++	return ret;
++}
++
++static int octeontx_gic_probe(struct platform_device *pdev)
++{
++	struct octeontx_edac *hes = NULL;
++	int ret = 0;
++
++	ret = octeontx_edac_map_resource(pdev, &hes, NULL);
++	if (ret)
++		return ret;
++
++	ret = octeontx_edac_device_init(pdev, hes, "gic", hes->name);
++
++	return ret;
++}
++
++static int octeontx_device_remove(struct platform_device *pdev)
++{
++	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
++	struct octeontx_edac_pvt *pvt = edac_dev->pvt_info;
++
++	octeontx_sdei_unregister(pvt->hes);
++	edac_device_del_device(&pdev->dev);
++	edac_device_free_ctl_info(edac_dev);
++	platform_device_unregister(pdev);
++
++	return 0;
++}
++
++static int octeontx_mc_remove(struct platform_device *pdev)
++{
++	struct mem_ctl_info *mci = platform_get_drvdata(pdev);
++	struct octeontx_edac_pvt *pvt = mci->pvt_info;
++
++	octeontx_sdei_unregister(pvt->hes);
++	edac_mc_del_mc(&pdev->dev);
++	edac_mc_free(mci);
++	platform_device_unregister(pdev);
++
++	return 0;
++}
++
++static int octeontx_cpu_remove(struct platform_device *pdev)
++{
++	struct edac_device_ctl_info *edac_dev = platform_get_drvdata(pdev);
++	struct device *dev = &pdev->dev;
++	char *name = (char *)dev->driver->of_match_table->name;
++	struct octeontx_edac *hes = NULL;
++	int i = 0;
++
++	for (i = 0; i < edac_list.count; i++) {
++		hes = &edac_list.hes[i];
++		if (strncmp(name, hes->name, 4))
++			continue;
++		octeontx_sdei_unregister(hes);
++	}
++	edac_device_del_device(&pdev->dev);
++	edac_device_free_ctl_info(edac_dev);
++	platform_device_unregister(pdev);
++
++	return 0;
++}
++
++static struct platform_driver tad_edac_drv = {
++	.probe = octeontx_tad_probe,
++	.remove = octeontx_device_remove,
++	.driver = {
++		.name = "tad_edac",
++		.of_match_table = tad_of_match,
++	},
++};
++
++static struct platform_driver dss_edac_drv = {
++	.probe = octeontx_dss_probe,
++	.remove = octeontx_mc_remove,
++	.driver = {
++		.name = "dss_edac",
++		.of_match_table = dss_of_match,
++	},
++};
++
++static struct platform_driver mdc_edac_drv = {
++	.probe = octeontx_mdc_probe,
++	.remove = octeontx_device_remove,
++	.driver = {
++		.name = "mdc_edac",
++		.of_match_table = mdc_of_match,
++	},
++};
++
++static struct platform_driver mcc_edac_drv = {
++	.probe = octeontx_mcc_probe,
++	.remove = octeontx_mc_remove,
++	.driver = {
++		.name = "mcc_edac",
++		.of_match_table = mcc_of_match,
++	}
++};
++
++static struct platform_driver cpu_edac_drv = {
++	.probe = octeontx_cpu_probe,
++	.remove = octeontx_cpu_remove,
++	.driver = {
++		.name = "cpu_edac",
++		.of_match_table = cpu_of_match,
++	}
++};
++
++static struct platform_driver gic_edac_drv = {
++	.probe = octeontx_gic_probe,
++	.remove = octeontx_device_remove,
++	.driver = {
++		.name = "gic_edac",
++		.of_match_table = gic_of_match,
++	}
++};
++
++static int __init octeontx_edac_init(void)
++{
++	struct platform_device *mdc = NULL;
++	struct platform_device *dss = NULL;
++	struct platform_device *tad = NULL;
++	struct platform_device *mcc = NULL;
++	struct platform_device *cpu = NULL;
++	struct platform_device *gic = NULL;
++	int ret = 0;
++
++	octeontx_edac_msix_init();
++
++	ret = octeontx_of_match_resource(&edac_list);
++	if (ret)
++		goto exit0;
++
++	sdei_init();
++
++	if (soc_device_match(cn10_socinfo)) {
++
++		ret = platform_driver_register(&dss_edac_drv);
++		if (!ret)
++			dss = platform_device_register_simple(dss_edac_drv.driver.name,
++					PLATFORM_DEVID_NONE, NULL, 0);
++		if (!ret && IS_ERR(dss)) {
++			pr_err("Unable register %s %ld\n", dss_edac_drv.driver.name, PTR_ERR(dss));
++			platform_driver_unregister(&dss_edac_drv);
++		}
++
++		ret = platform_driver_register(&tad_edac_drv);
++		if (!ret)
++			tad = platform_device_register_simple(tad_edac_drv.driver.name,
++					PLATFORM_DEVID_NONE, NULL, 0);
++		if (!ret && IS_ERR(tad)) {
++			pr_err("Unable register %s %ld\n", tad_edac_drv.driver.name, PTR_ERR(tad));
++			platform_driver_unregister(&tad_edac_drv);
++		}
++
++		ret = platform_driver_register(&cpu_edac_drv);
++		if (!ret)
++			cpu = platform_device_register_simple(cpu_edac_drv.driver.name,
++					PLATFORM_DEVID_NONE, NULL, 0);
++		if (!ret && IS_ERR(cpu)) {
++			pr_err("Unable register %s %ld\n", cpu_edac_drv.driver.name, PTR_ERR(cpu));
++			platform_driver_unregister(&cpu_edac_drv);
++		}
++
++		ret = platform_driver_register(&gic_edac_drv);
++		if (!ret)
++			gic = platform_device_register_simple(gic_edac_drv.driver.name,
++					PLATFORM_DEVID_NONE, NULL, 0);
++		if (!ret && IS_ERR(gic)) {
++			pr_err("Unable register %s %ld\n", gic_edac_drv.driver.name, PTR_ERR(gic));
++			platform_driver_unregister(&gic_edac_drv);
++		}
++	} else {
++		ret = platform_driver_register(&mcc_edac_drv);
++		if (!ret)
++			mcc = platform_device_register_simple(mcc_edac_drv.driver.name,
++					PLATFORM_DEVID_NONE, NULL, 0);
++		if (!ret && IS_ERR(mcc)) {
++			pr_err("Unable register %s %ld\n", mcc_edac_drv.driver.name, PTR_ERR(mcc));
++			platform_driver_unregister(&mcc_edac_drv);
++		}
++	}
++
++	ret = platform_driver_register(&mdc_edac_drv);
++	if (!ret)
++		mdc = platform_device_register_simple(mdc_edac_drv.driver.name,
++				PLATFORM_DEVID_NONE, NULL, 0);
++	if (!ret && IS_ERR(mdc)) {
++		pr_err("Unable register %s %ld\n", mdc_edac_drv.driver.name, PTR_ERR(mdc));
++		platform_driver_unregister(&mdc_edac_drv);
++	}
++
++	return 0;
++
++exit0:
++	if (ret == -ENODEV)
++		return ret;
++
++	pr_err("OcteonTX edac init failed %d\n", ret);
++	kfree(edac_list.hes);
++
++	return ret;
++}
++
++static void __exit octeontx_edac_exit(void)
++{
++	if (soc_device_match(cn10_socinfo)) {
++		platform_driver_unregister(&dss_edac_drv);
++		platform_driver_unregister(&tad_edac_drv);
++		platform_driver_unregister(&cpu_edac_drv);
++		platform_driver_unregister(&gic_edac_drv);
++	} else {
++		platform_driver_unregister(&mcc_edac_drv);
++	}
++	platform_driver_unregister(&mdc_edac_drv);
++	kfree(edac_list.hes);
++}
++
++late_initcall(octeontx_edac_init);
++module_exit(octeontx_edac_exit);
++
++MODULE_AUTHOR("Vasyl Gomonovych <vgomonovych@marvell.com>");
++MODULE_AUTHOR("Marvell International Ltd.");
++MODULE_DESCRIPTION("OcteonTX2 / CN10K EDAC driver");
++MODULE_LICENSE("GPL");
+-- 
+2.43.0
 
 
