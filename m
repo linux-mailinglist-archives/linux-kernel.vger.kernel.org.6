@@ -1,160 +1,82 @@
-Return-Path: <linux-kernel+bounces-269838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F16B943759
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 247F194375C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964B02844E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:47:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA0FF1F22E4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A87C16CD2F;
-	Wed, 31 Jul 2024 20:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B62916087B;
+	Wed, 31 Jul 2024 20:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="gUK3KgDr"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="jYVbQ0ZO"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D9B16CD16
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9665917543;
+	Wed, 31 Jul 2024 20:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722458788; cv=none; b=RjBiJnwq7HSdctIkPbYqnbINyJKp63+PmqonkJ+njk3RfHrUcVtGtI3PMywlxXvYLH6ZI1wmvHx+gElNXk+lVZvIY7vKYh0L42n79UCVtkl+ZQxpJi5twGohV6KP4DqHFqTA2nQdL+LU6f88HVWtB/NSgjKzkFCk1YdzRN3PRQw=
+	t=1722458862; cv=none; b=C4WlfmW6IHOu+A1X76d4hoTJ1N0F/4FlbkHDmbRB9R9p04J6BPfhnLhOu2x+JMzS/Q3ANY7FEIhjD39h81DEAjRyw1hysoPsI24x0kmsd/txQzGsmAtIPbVfvBM4TxEZ1vkfPA5kXbEjV1Hdo4rKBwsUr18JqA4ugPHVrA5ZlmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722458788; c=relaxed/simple;
-	bh=txmpJQycIV5QPKrTWpGC8PUo9tKcejxgqsvRbMC+V8c=;
+	s=arc-20240116; t=1722458862; c=relaxed/simple;
+	bh=6GI437kxfcxbyHL2J71e2uhod0ZNk1DRb13coGms1rQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ccpoFpPSg+hvdKtGUBD2FFE+JnfLsGDGYDlFqx411aV7OxW9M7WSjFw5a536UQLI2Ju+xxn4yBv3DIgqXyg9bh+RPjBtTMU6wJCK8/8FpO22cDLtCthHxB3smbk3/5A1z/hxhWTk51BDvpICbSmsMR9QSe3wLZK2rTZv5tDtrM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=gUK3KgDr; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ef642fbso5982265e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1722458785; x=1723063585; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZxpiuYMhfG8wroCEpsj+T0XsF8n6WcrGB7EkeYVEIFg=;
-        b=gUK3KgDrIf3SDfrPly7lL/g4COmy1oDeJqy2LlzveAKKZ2lhHpArQwwY//wPF+Z4MH
-         EWWUC2PECSxsdzGJAS/t4mD0HOm3ogStf7cHvddWiaL61YSCf4l+ukri3lcTU/IdZWiS
-         i0CqkDeMpDe2e/yAfjZ86Qw7u3b0XimrmpWYQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722458785; x=1723063585;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZxpiuYMhfG8wroCEpsj+T0XsF8n6WcrGB7EkeYVEIFg=;
-        b=YAu6SFjygzzuyZXa0miRwgQOR+lddpOtHQQYZpxv1Vw/jxjw99ZCkYm32e21lM0Ao9
-         28Al3UnndPfxIaA3JCVa3yA/lyM3+VYHlS72gGs0xB9Hf06DfW2rDQLk0B5NrK8sr2qS
-         KfiyDJ7oPJxnxsRKYIvawvADC0cXOdkwbp+MetBWy5pqvZl5AdPCBlLswzCYs53hcO48
-         sQYbH8MJKNRuFQJVWhmaG5sxL8QxCdcuKfQFbdB9ZCioM3wk3tqxeGgbhYAaOcvJIIiL
-         JEmvip4l4AAcrHO+ybBpxDUYqQSbhG6J8Aszw5hscCpAYvshRaFOqmOTmbakB1wznqo3
-         dsag==
-X-Forwarded-Encrypted: i=1; AJvYcCXT1r0dad7GxJc11JVOCJUVmyuu/r9exXAOSub22dx2m6tZOfY3Kf5/CPWu8o3X/6TOr8dcS12Ez80QE2Agvn0ftELkGgJygsFhu/5/
-X-Gm-Message-State: AOJu0YycaIcyvmxrIaf9u7zcwv2V5c2JdXeBDpushi2w71/4tWPJPj7r
-	mssrysMv3p5CtSgSjITiGHem/ShHDnqV9dL0xoOySRdv0LtuF5zmUsybWIZ4Iak=
-X-Google-Smtp-Source: AGHT+IEOfnwTGBUJMCvgdzsVYm/9gkwgL+/zq/em2Ac2MZaEU7lsjUilDMlqzOjNzanNWiAy/HCT3A==
-X-Received: by 2002:a05:600c:458e:b0:426:6358:7c5d with SMTP id 5b1f17b1804b1-428b4ae9a29mr2485615e9.4.1722458785050;
-        Wed, 31 Jul 2024 13:46:25 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8a246asm33360225e9.3.2024.07.31.13.46.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 13:46:24 -0700 (PDT)
-Date: Wed, 31 Jul 2024 22:46:22 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Huan Yang <link@vivo.com>
-Cc: Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH v2 0/5] Introduce DMA_HEAP_ALLOC_AND_READ_FILE heap flag
-Message-ID: <Zqqing7M2notp6Ou@phenom.ffwll.local>
-Mail-Followup-To: Huan Yang <link@vivo.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Brian Starkey <Brian.Starkey@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"T.J. Mercier" <tjmercier@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240730075755.10941-1-link@vivo.com>
- <Zqiqv7fomIp1IPS_@phenom.ffwll.local>
- <25cf34bd-b11f-4097-87b5-39e6b4a27d85@vivo.com>
- <37b07e69-df85-45fc-888d-54cb7c4be97a@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fyQZXJucQkaH2scYyJtTccuU3BISjqID+xckmy6zsyycZn54+IwMQm6AXMJenKOKRMrwB1CyTmzz89AWdSwfrzg1qatGEfi/t9mct2gLLANg1LSI/rTUoTMqL+majAsP2k8scEweKNcQTg+HyWGyGt0TAA9CrUxm8yyHiox8Vno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=jYVbQ0ZO; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:
+	MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TWh2jtULicJS4e6o3gtav6LoiukZ/VmA2CtVVW5fe0M=; b=jYVbQ0ZOPIz5X41gXzK3q0FueJ
+	j2/RVW+2E6olE/wYs175ZIi5OHSwmv28bg5Vdmez1QhiXX+1G8I6hsoQcFcKN/5OWQ/lQUdFpMqUQ
+	IujhFPidVVGP5jWImc7jvL9ipArXiD7Hd3sy94M+ULjxn4CNoofMv67YIoaYbldts1/sRTcvHL912
+	eST0xHFx4w2fdOslUs/n6YTakbrK6/5Ttu1DdPh1cdoPKc8vniAYMJpVRQrTp8cmYlZN1kmYf0WfO
+	RhDlYc5iYqIx1LRW541fH/G6uG0x97KmGNe8n54Tk/JVVrQO8F5GhdiL5tLagrig+w2LVo+YjpKZd
+	I5wklzQw==;
+Received: from [2001:9e8:9fa:4501:3235:adff:fed0:37e6] (port=53628 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sZGEK-009EnU-Lx;
+	Wed, 31 Jul 2024 22:47:28 +0200
+Date: Wed, 31 Jul 2024 22:47:25 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH 2/4] modpost: detect endianness on run-time
+Message-ID: <20240731-sassy-hysterical-petrel-fa7fcd@lindesnes>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-3-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <37b07e69-df85-45fc-888d-54cb7c4be97a@vivo.com>
-X-Operating-System: Linux phenom 6.9.10-amd64 
+In-Reply-To: <20240727074526.1771247-3-masahiroy@kernel.org>
 
-On Tue, Jul 30, 2024 at 08:04:04PM +0800, Huan Yang wrote:
+On Sat, Jul 27, 2024 at 04:42:02PM +0900, Masahiro Yamada wrote:
+> Endianness is currently detected on compile-time, but we can defer this
+> until run-time. This change avoids re-executing scripts/mod/mk_elfconfig
+> even if modpost in the linux-headers package needs to be rebuilt for a
+> foreign architecture.
 > 
-> 在 2024/7/30 17:05, Huan Yang 写道:
-> > 
-> > 在 2024/7/30 16:56, Daniel Vetter 写道:
-> > > [????????? daniel.vetter@ffwll.ch ?????????
-> > > https://aka.ms/LearnAboutSenderIdentification?????????????]
-> > > 
-> > > On Tue, Jul 30, 2024 at 03:57:44PM +0800, Huan Yang wrote:
-> > > > UDMA-BUF step:
-> > > >    1. memfd_create
-> > > >    2. open file(buffer/direct)
-> > > >    3. udmabuf create
-> > > >    4. mmap memfd
-> > > >    5. read file into memfd vaddr
-> > > Yeah this is really slow and the worst way to do it. You absolutely want
-> > > to start _all_ the io before you start creating the dma-buf, ideally
-> > > with
-> > > everything running in parallel. But just starting the direct I/O with
-> > > async and then creating the umdabuf should be a lot faster and avoid
-> > That's greate,  Let me rephrase that, and please correct me if I'm wrong.
-> > 
-> > UDMA-BUF step:
-> >   1. memfd_create
-> >   2. mmap memfd
-> >   3. open file(buffer/direct)
-> >   4. start thread to async read
-> >   3. udmabuf create
-> > 
-> > With this, can improve
-> 
-> I just test with it. Step is:
-> 
-> UDMA-BUF step:
->   1. memfd_create
->   2. mmap memfd
->   3. open file(buffer/direct)
->   4. start thread to async read
->   5. udmabuf create
-> 
->   6 . join wait
-> 
-> 3G file read all step cost 1,527,103,431ns, it's greate.
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 
-Ok that's almost the throughput of your patch set, which I think is close
-enough. The remaining difference is probably just the mmap overhead, not
-sure whether/how we can do direct i/o to an fd directly ... in principle
-it's possible for any file that uses the standard pagecache.
--Sima
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 
