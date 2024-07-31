@@ -1,186 +1,110 @@
-Return-Path: <linux-kernel+bounces-269653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAAC943569
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:07:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 299C294356C
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F00CB20DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:07:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 560F61C214AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677D13D97F;
-	Wed, 31 Jul 2024 18:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C474A3D97F;
+	Wed, 31 Jul 2024 18:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qmjsv8S3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SWUvbruv";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Qmjsv8S3";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SWUvbruv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHi8WS+7"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65041F954;
-	Wed, 31 Jul 2024 18:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CEE4776A;
+	Wed, 31 Jul 2024 18:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722449235; cv=none; b=kVOrCENj0MdPO2VX5sygEh8eX84Q/sXcvFhj5lsKwXHSwLEWZxOaHOn9VBtEcT+gkLKOmuX2iBYBJFxjhzwBuWjtpUGij8grT6ahhJPOPER6cxThqbmWMXmjnstXXY75LqXI5ixYDTiy3v3G+9Yme+qVBiuQXJnKCl83TzPqOus=
+	t=1722449264; cv=none; b=IsvfPnhKxBK+I9RfLPpydmHDh+M3uilaM7wMEnDRI9j0XBecdXOKGCm57LyV11GgHGU6qeXEBt5KbbAx3VfHgrijYWJodNTgWA6LwKgPqsevklxEkT0AEtsH50tZZuMz8yZCqKIFe4Y6PTz38v1Goz4Vfqah4mWX8F6QF6o6AEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722449235; c=relaxed/simple;
-	bh=2uSzs8P1Rp4TWAnNHCI26IxcMq2MH0hB+z16Sl9Qu6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isfjEnHN82CPnctF2+zhArSj+N4WB0vFz3rex+W88+ISedU9mvvMieK6KnxlGrUUcKOGYcpmbE1BMyPUWczgIxKxbaFQ4cQQb7Skk5+pmN6yZFj3ETKW/wiL22hk7ZVHnyp3bJUel3tcYiQK7q+76L7EZkX9FZqj+o5HgEOQcbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qmjsv8S3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SWUvbruv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Qmjsv8S3; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=SWUvbruv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D864F1F86C;
-	Wed, 31 Jul 2024 18:07:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722449231;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F7SBrUgvTDAnh5l+GkoOFFdqcfM90kNY/MnFDS/g4X4=;
-	b=Qmjsv8S3JfCcdtFGJGnqftBV0mthI9SOW41l24zjtUCYm6ldkqgnSi78wswv5sZI8RmA22
-	S/NOKHuO9UrgIIDgXMHbTY9QNt8917ysnT83TepDbn2QtLUT+B8+RC5xs01IvV+r/o7HWI
-	9Ap3IE4M7SyfSzVE3sq4te8fv0pMRu4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722449231;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F7SBrUgvTDAnh5l+GkoOFFdqcfM90kNY/MnFDS/g4X4=;
-	b=SWUvbruvRbzUhgOiTcV8Qi1HQgZ7J7+F1Z7pHSkyAsKDHnHlwr9z1sxqMkiXqLgcdWe/q+
-	nZ8gXoLP65jqJdBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722449231;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F7SBrUgvTDAnh5l+GkoOFFdqcfM90kNY/MnFDS/g4X4=;
-	b=Qmjsv8S3JfCcdtFGJGnqftBV0mthI9SOW41l24zjtUCYm6ldkqgnSi78wswv5sZI8RmA22
-	S/NOKHuO9UrgIIDgXMHbTY9QNt8917ysnT83TepDbn2QtLUT+B8+RC5xs01IvV+r/o7HWI
-	9Ap3IE4M7SyfSzVE3sq4te8fv0pMRu4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722449231;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=F7SBrUgvTDAnh5l+GkoOFFdqcfM90kNY/MnFDS/g4X4=;
-	b=SWUvbruvRbzUhgOiTcV8Qi1HQgZ7J7+F1Z7pHSkyAsKDHnHlwr9z1sxqMkiXqLgcdWe/q+
-	nZ8gXoLP65jqJdBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B7CD71368F;
-	Wed, 31 Jul 2024 18:07:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RqZnLE99qmbpMwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Wed, 31 Jul 2024 18:07:11 +0000
-Date: Wed, 31 Jul 2024 20:07:02 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Aleksa Sarai <cyphar@cyphar.com>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Florian Weimer <fweimer@redhat.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, Dave Chinner <dchinner@redhat.com>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: Testing if two open descriptors refer to the same inode
-Message-ID: <20240731180702.GU17473@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <874j88sn4d.fsf@oldenburg.str.redhat.com>
- <ghqndyn4x7ujxvybbwet5vxiahus4zey6nkfsv6he3d4en6ehu@bq5s23lstzor>
- <875xsoqy58.fsf@oldenburg.str.redhat.com>
- <vmjtzzz7sxctmf7qrf6mw5hdd653elsi423joiiusahei22bft@quvxy4kajtxt>
- <87sevspit1.fsf@oldenburg.str.redhat.com>
- <CAGudoHEBNRE+78n=WEY=Z0ZCnLmDFadisR-K2ah4SUO6uSm4TA@mail.gmail.com>
- <20240729.113049-lax.waffle.foxy.nit-U1v9CY38xge@cyphar.com>
+	s=arc-20240116; t=1722449264; c=relaxed/simple;
+	bh=wlwyUDdk+glkVmWzVpN0PT2B/PBZ8qoo54dvMQfFCMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=f70EmKBGFd7x8A2tUfS4kU5egZJ0DPwcZiHiMuN2raOVjUqOI5Wf2ON500ghwN/WCUkPDJbEkLeU+rCqeaisrGsf6Pa9daN1DA5/edeCJlR9U28aHcWs3y2fYWgEfLg/bC8tK+/qs6j4PRcxCAx1oT74sbPyJOF/EZ4En5UihPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHi8WS+7; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7104f93a20eso813943b3a.1;
+        Wed, 31 Jul 2024 11:07:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722449262; x=1723054062; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H/z4Ls39b3YeZyEIMdUMB9gw4yNYyChcTS8DQMKP+kM=;
+        b=OHi8WS+7rRMcPxa3A16wU8twb3GJIMT2N56VsxQp7yD4W6Ir16gBCBnRw3X3qfW5cZ
+         /xBvPYr0XMxbJJ6PTN8Bim7PVebPSFilgzovCaFA60PJzl7jGT822XBXSn4Y6oXxz974
+         aEQ+2RptNMTieZWPBdp+vOmx+3xYAM2cEjZtm7YgPJIHuGYxaREjyVlZwKnCHB9W/xSf
+         egszlyIImuQxM4iooZmW548bsOZHcEl+Vr3KZXxkS7E3twv411Mzh21nC6fSiKhBF2AC
+         0/JLpC3uExiMi+BI6ddqIVPcBfP+8SywWB0pP6/9fw/mdPw70O8kDLzG0n52TfnwICzf
+         MB4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722449262; x=1723054062;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H/z4Ls39b3YeZyEIMdUMB9gw4yNYyChcTS8DQMKP+kM=;
+        b=uggxZQ6hzq4bAYvViNBZXgKpugvoYWXs62y8UMpG5aDTOrmuFnA1LVdRPY925cPv11
+         PEWw4J6abzwsJlF4gtKXSUasTeG8Y8ggtyU4EJ2j+BUIMJ+5i7Gz33onrCZDEYg2ummM
+         WEWHEeCCzOSFwd3KHe4ITPh08XZ66YcawBDb8kA3BhBUennE5ziX6T4NS5TGMnCIMjrt
+         tb0TWiUk8vcpNzVuCKD+Kygagj1Bv2y7IyXzx6GQVF+yS1X+0uD71Zd3z6aEwvlP/f34
+         T8p/CGjP47IIcc5x4C48xG05Lg0014TBC57z9GtXA01n+iQfKMg/5FHjPDbfBw6xEcsg
+         oFrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUw58/jdjlsGtX85EL8qBDLbydQrwA8L9QIiHVusloblMXhTr2RBcmZ/0hb4e8dcRNKfzyyNCnlf7hw8Eg+2ABuSaT30YKNWJxttbGRkG4TXtagJ22e5X03bj0UC3S4+Qnw74e/DKduKuhti1qxfi3RAJAuC/NgNSqBSzEJK6sw38qSEI8y
+X-Gm-Message-State: AOJu0Yzujy8f9vJ7byThERzjSfGHz8qA+XsD3YBJOgn9slNgs8tqPdB7
+	1SIxygxwqg7M+yeCVENrxzrQiErV/OyV8+aH9zoP8vCrcuoJOwlT
+X-Google-Smtp-Source: AGHT+IExHjnuHIHhiKnfD7PgAec7VBsRU/u68Qc66aDoay96q4LeW6baWuHjfXc3EkVbgRtFJxRB9w==
+X-Received: by 2002:a05:6a20:7fa1:b0:1c4:17e1:14d0 with SMTP id adf61e73a8af0-1c68d10d77fmr273276637.47.1722449261896;
+        Wed, 31 Jul 2024 11:07:41 -0700 (PDT)
+Received: from Emma ([2401:4900:1c21:dad1:5054:ff:fe53:2787])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead86ffabsm10585931b3a.143.2024.07.31.11.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 11:07:41 -0700 (PDT)
+Date: Wed, 31 Jul 2024 18:07:38 +0000
+From: Karan Sanghavi <karansanghvi98@gmail.com>
+To: Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	Shuah Khan <shuah@kernel.org>,
+	Karan Sanghavi <karansanghvi98@gmail.com>, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Karan Sanghavi <karansanghvi98@gmail.com>
+Subject: [PATCH] selftests: tc-testing: Fixed Typo error
+Message-ID: <Zqp9asVA-q_OzDP-@Emma>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240729.113049-lax.waffle.foxy.nit-U1v9CY38xge@cyphar.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,redhat.com,vger.kernel.org,kernel.org];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto]
-X-Spam-Flag: NO
-X-Spam-Score: -0.80
 
-On Mon, Jul 29, 2024 at 09:40:57PM +1000, Aleksa Sarai wrote:
-> On 2024-07-29, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> > On Mon, Jul 29, 2024 at 12:57 PM Florian Weimer <fweimer@redhat.com> wrote:
-> > > > On Mon, Jul 29, 2024 at 12:40:35PM +0200, Florian Weimer wrote:
-> > > >> > On Mon, Jul 29, 2024 at 08:55:46AM +0200, Florian Weimer wrote:
-> > > >> >> It was pointed out to me that inode numbers on Linux are no longer
-> > > >> >> expected to be unique per file system, even for local file systems.
-> > > >> >
-> > > >> > I don't know if I'm parsing this correctly.
-> > > >> >
-> > > >> > Are you claiming on-disk inode numbers are not guaranteed unique per
-> > > >> > filesystem? It sounds like utter breakage, with capital 'f'.
-> > > >>
-> > > >> Yes, POSIX semantics and traditional Linux semantics for POSIX-like
-> > > >> local file systems are different.
-> > > >
-> > > > Can you link me some threads about this?
-> > >
-> > > Sorry, it was an internal thread.  It's supposed to be common knowledge
-> > > among Linux file system developers.  Aleksa referenced LSF/MM
-> > > discussions.
-> > 
-> > So much for open development :-P
-> 
-> To be clear, this wasn't _decided_ at LSF/MM, it was brought up as a
-> topic. There is an LWN article about the session that mentions the
-> issue[1].
+Corrected the typographical of the word  "different"
+in the "name" field of the JSON object with ID "4319".
 
-A discussion about inode numbers or subvolumes comes up every year with
-better of worse suggestions what to do about it.
+Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+---
+ tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> My understanding is that the btrfs and bcachefs folks independently
-> determined they cannot provide this guarantee. As far as I understand,
-> the reason why is that inode number allocation on btree filesystems
-> stores information about location and some other bits (maybe subvolumes)
-> in the bits, making it harder to guarantee there will be no collisions.
+diff --git a/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json b/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
+index 03723cf84..6897ff5ad 100644
+--- a/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
++++ b/tools/testing/selftests/tc-testing/tc-tests/filters/cgroup.json
+@@ -1189,7 +1189,7 @@
+     },
+     {
+         "id": "4319",
+-        "name": "Replace cgroup filter with diffferent match",
++        "name": "Replace cgroup filter with different match",
+         "category": [
+             "filter",
+             "cgroup"
+-- 
+2.43.0
 
-No, on btrfs the inode numbers don't encode anything about location,
-it's a simple number. The inode numbers remain the same when a snapshot
-is taken as it's a 1:1 clone of the file hierarchy, the directory
-representing a subvolume/snapshot has fixed inode number 256. The only
-difference is the internal subvolume id.
 
