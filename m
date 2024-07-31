@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-269086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C34942D65
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6268E942D66
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:39:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4FB5B240A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:39:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F291C21A55
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20BD71AD9E0;
-	Wed, 31 Jul 2024 11:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFB91AD9EA;
+	Wed, 31 Jul 2024 11:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dg17DCcH"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OB7OS++f"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BB41A8BEF
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A431A8BEF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722425966; cv=none; b=UKd7+5pXDliN79jdorV+j67letzgYybM3erd7NKl3uaZYDSUdtzSY/lXAZRm+sc9eHGlQSLvPOVKKv7u5jACsjXLvT5q5UdsCnYAMFwmo0NFWFFJ5q3dZf4uHfBPcfG9okb6K9M/9RTR0UiSC9Nv460H4q416R2i17wfPbglc68=
+	t=1722425975; cv=none; b=UNrHVBdubtpQ6d1Rae3Un6xOUTGRQzgwz0WyDGvLUhzYnip5dHtkodtoPvF1NLTNccHXjUkm/B4/ytfwftjHSmUDqFql4cktHWdM9FdSOUj3+XocnnqSd1X277rMphkePB3MV4oEe/QHh1lbD1ZwQl39aT6yVz947gHhLbnS2/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722425966; c=relaxed/simple;
-	bh=VbX8lSJGqSUaTBoWiEIuWZU1AG6jJ+f+6PDE3s72Xm8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cgBY4SUFduhgNnhSdBCooMN1tC45GePoSfVY/OEiMnSsE5utb/FZXL/xMtVgsDsb/wxC4/U7OD5wWhqnO8naNRPQm7myuxtjG91R0uMD1f9dzBG4IE00r2FyB23T61ZtlUFIJK2B6k1FnH52FQKMx6K6ZiqXqLIXLUlZnGqjDNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dg17DCcH; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1722425975; c=relaxed/simple;
+	bh=Sqp4QMCAb+3yPAvyOyWl6RP06SAAmeeES7e2qhgudA8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=aDq4PYdX/P9/5PzWewDm8jlrfAjrg1YlTrM84UezE7V42yPr3+E/g8mhP61Uq0ZyYTeoNcQr9+ngafP7o3GJ4nYCFCUXMyNbtjekCxGhFRv+kTzyPWyKkuHgXs1HS9LvoytprM9wmsJfJJZj09LlDB3LePcsKELAU03aYL6BGRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OB7OS++f; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d1c655141so4118698b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:39:24 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-70d162eef54so3926342b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 04:39:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722425964; x=1723030764; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLclCjvWmzDVskwplMLBw1uSn78KDC7EwkI18+XKFCg=;
-        b=dg17DCcH79kw3pLouCU/se7r/OAHB2/9LQnUao9DqwuFDl5Ubl6PQ1JNvakr7vXXAU
-         MC1TMpFebLMkwrIUkLfUnxGGva8H1lKDwnUe+w8+R2JAgODtTGQ53LojLREOTZr9XwZV
-         MQaS40ni2klLhuB+s3lxOTH1hmurNA3JsQiATPDl2h7QmxnGlIzL+s6G2EofpkeIdtX6
-         eZrSEwfHhS2HKyJWbNnKQsCZ11mMSjFF9fodZi2AiqC5cGozlhnfULQSD6+g3tQuQiFn
-         +cnCXw99nkXSrMsYOnHqAT7G1zhXSnAshlEw9FORB9SoLYtIwzLZrRw5iJkzm5Q4nVz/
-         csgQ==
+        d=gmail.com; s=20230601; t=1722425973; x=1723030773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ufe9f1aVq4XJvqV0V6RRRWx503LS6so5gVk+Ooe+2bY=;
+        b=OB7OS++f6mB3CI2HGdywZS2mQ/jEFRy2SN4gM0Q+js59P05zbDa2a+tgNxT53CdqLx
+         ssbxWU9DtlPkMb0M6QtcyNJBwtzZYP639pSPZAVig0neOosZovIun5l8Nl1DpsnrJc4r
+         ztoXRL7qDOMLKbvH+wNg2Mf5vafsvQCDq8n6rXZHUV0Zwv2bOnhfKV4w1/oR7bi4gLhr
+         YoJAPLrLRj0/WXBt+JknHaR7DfGusUdeY6WNvWUUGEpz3+rhuqERWjjGd3Z+yzo/c+b0
+         iSOgZ7meDY6ALDxXEvg30LLPKvckN/tbK1yWtLVEjMpRvs/PNgMWGjl954yuzccnbu9F
+         9opg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722425964; x=1723030764;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eLclCjvWmzDVskwplMLBw1uSn78KDC7EwkI18+XKFCg=;
-        b=lXOy3i+n9OgwEB1IOazYweoMDCFazQsKkcb2vj7lREEQnvUBG/emT5iDLXOUKBWWaq
-         GeB4NguTQmRLDUXUKHZTiIIhnu8bhmzAPQCDBn38quz3+GxJ4IEGBrZgnkNbXR87K//s
-         NbX1CR7nbqBG2USRzegAWXpn4ftzB3lzPGjrKM8OxudOnglFl4qmOrYqgaTEmkqrHiVD
-         04EQFJprVtkTbTlaYFVrcdpsx1zyXESK/1M5W1wuWC9a3AYok8qqe+ffzeBTguG0acpf
-         LL3MXSqSR8iJMoEZvBiQmrEUCOaDOpxvGnQjDy1OtPJhhAY88st0dMNjdwGX8cb87Qbb
-         hHYw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXnK23uNcD2OvbPA9JQ8OqzZvdweod1PRvfymq3GwyuoGyIic6np8cmWyPkijNhZhd/Y4CdpwmmapUqSr+V4UyUigwsRfzV/Z6TZCh
-X-Gm-Message-State: AOJu0Yx9/0mt2HddmrEWfRkUeEi+ZfG9QRaWo5dSd283rBiW/5JHkfYj
-	ih0x8xRVU/tVmOwCmvdJuWF7eFunKVTesgY5/kcGajw6YeVW7p7P
-X-Google-Smtp-Source: AGHT+IEC2QxBU4qtJWH66S0e//PI9jURHmJfotISS0SZIVdP3MgLEpncrKN9daK8Bt/bNO4NKaaq9Q==
-X-Received: by 2002:a05:6a20:7354:b0:1bd:1d6e:d444 with SMTP id adf61e73a8af0-1c4a118279emr13946423637.2.1722425963927;
-        Wed, 31 Jul 2024 04:39:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722425973; x=1723030773;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ufe9f1aVq4XJvqV0V6RRRWx503LS6so5gVk+Ooe+2bY=;
+        b=Mtd5vaYeuLL71lq4f8vgob91r+McHsqAKIupZ5hLtoJcgN/i8CjEkkuXXRpfg3dS/1
+         ygcIPDmBMSmdZJ4cO26QWOHR9scbEaqj+he64kKfukCqzyO7SA/NrsDsFZ3Zxsr1JwOS
+         wWxLwF6uH9n16ltt96iQXF8bjMUE5cN1etRvgC5zIdE+QNaJ3R0HagXFa/+eV23CxVMn
+         Jpb1m4pM7fAAlf04h80v+mJQiCZNoPjZePusPzYLvY8JB4aMa5ECLlsqP6/QheO+zGCq
+         nts5zN9K3uoC8esKVCOAcEwwHsgokZB/UspwtNjziHy3RMY/7XX5C/aC15DAsK8NuXSc
+         oDHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHx64dSPVODxQl1VTDH5RtMAc+zkL1BofSq54GUaRmrg9jUUJuqUdZWTxA2HFjzCiznaFP09MYfyrASwwoW9tbDn7o+VCg5SMmo0I1
+X-Gm-Message-State: AOJu0Yzw8A2vuWcR4v2STa8kYSeCOjnB7RMIWi+BW6jbuAOWpGB4+ySX
+	Co8kz/w2FgyLVn5tJA3COhnL64mc4J4gKkog0Wbvr4nFhsb/gpiL
+X-Google-Smtp-Source: AGHT+IEpWQE0PpAjVOudxt5MtO5UL/YgFmAYeA5XrPyfqeIgzsAv3P4uAhWllcuzmQBA9T4/qgErtg==
+X-Received: by 2002:a05:6a20:7284:b0:1c4:936e:b8a2 with SMTP id adf61e73a8af0-1c4a12cd2f2mr13742329637.27.1722425973414;
+        Wed, 31 Jul 2024 04:39:33 -0700 (PDT)
 Received: from alif.. ([14.195.28.86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e15d7sm9748343b3a.22.2024.07.31.04.39.20
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e15d7sm9748343b3a.22.2024.07.31.04.39.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 04:39:23 -0700 (PDT)
+        Wed, 31 Jul 2024 04:39:33 -0700 (PDT)
 From: Harith George <mail2hgg@gmail.com>
 To: linus.walleij@linaro.org,
 	linux@armlinux.org.uk,
@@ -79,10 +81,12 @@ Cc: harith.g@alifsemi.com,
 	willy@infradead.org,
 	nico@fluxnic.net,
 	ardb@kernel.org
-Subject: [PATCH 1/2] arm: mm: Fix kernel memory mapping for xip kernels
-Date: Wed, 31 Jul 2024 17:09:04 +0530
-Message-Id: <20240731113905.3326586-1-mail2hgg@gmail.com>
+Subject: [PATCH 2/2] arm: smp: Fix SMP for xip kernels
+Date: Wed, 31 Jul 2024 17:09:05 +0530
+Message-Id: <20240731113905.3326586-2-mail2hgg@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240731113905.3326586-1-mail2hgg@gmail.com>
+References: <20240731113905.3326586-1-mail2hgg@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,135 +97,75 @@ Content-Transfer-Encoding: 8bit
 
 From: Harith George <harith.g@alifsemi.com>
 
-The patchset introducing kernel_sec_start/end variables to separate the
-kernel/lowmem memory mappings, broke the mapping of the kernel memory
-for xipkernels.
+Fix the physical address calculation of the following to get smp working
+on xip kernels.
+- secondary_data needed for secondary cpu bootup.
+- secondary_startup address passed through psci.
+- identity mapped code region needed for enabling mmu for secondary cpus.
 
-kernel_sec_start/end variables are in RO area before the MMU is switched
-on for xipkernels.
-So these cannot be set early in boot in head.S. Fix this by setting these
-after MMU is switched on.
-xipkernels need two different mappings for kernel text (starting at
-CONFIG_XIP_PHYS_ADDR) and data (starting at CONFIG_PHYS_OFFSET).
-Also, move the kernel code mapping from devicemaps_init() to map_kernel().
-
-Fixes: a91da5457085 ("ARM: 9089/1: Define kernel physical section start and end")
 Signed-off-by: Harith George <harith.g@alifsemi.com>
 ---
- arch/arm/kernel/head.S |  8 ++++++--
- arch/arm/mm/mmu.c      | 34 +++++++++++++++++++++-------------
- 2 files changed, 27 insertions(+), 15 deletions(-)
+ arch/arm/kernel/head.S     | 4 ++++
+ arch/arm/kernel/psci_smp.c | 7 +++++++
+ arch/arm/mm/idmap.c        | 7 +++++++
+ 3 files changed, 18 insertions(+)
 
 diff --git a/arch/arm/kernel/head.S b/arch/arm/kernel/head.S
-index 1ec35f065617..28873cda464f 100644
+index 28873cda464f..f22c50d4bd41 100644
 --- a/arch/arm/kernel/head.S
 +++ b/arch/arm/kernel/head.S
-@@ -252,11 +252,15 @@ __create_page_tables:
- 	 */
- 	add	r0, r4, #KERNEL_OFFSET >> (SECTION_SHIFT - PMD_ENTRY_ORDER)
- 	ldr	r6, =(_end - 1)
-+
-+	/* For XIP, kernel_sec_start/kernel_sec_end are currently in RO memory */
-+#ifndef CONFIG_XIP_KERNEL
- 	adr_l	r5, kernel_sec_start		@ _pa(kernel_sec_start)
- #if defined CONFIG_CPU_ENDIAN_BE8 || defined CONFIG_CPU_ENDIAN_BE32
- 	str	r8, [r5, #4]			@ Save physical start of kernel (BE)
- #else
- 	str	r8, [r5]			@ Save physical start of kernel (LE)
-+#endif
- #endif
- 	orr	r3, r8, r7			@ Add the MMU flags
- 	add	r6, r4, r6, lsr #(SECTION_SHIFT - PMD_ENTRY_ORDER)
-@@ -264,6 +268,7 @@ __create_page_tables:
- 	add	r3, r3, #1 << SECTION_SHIFT
- 	cmp	r0, r6
- 	bls	1b
-+#ifndef CONFIG_XIP_KERNEL
- 	eor	r3, r3, r7			@ Remove the MMU flags
- 	adr_l	r5, kernel_sec_end		@ _pa(kernel_sec_end)
- #if defined CONFIG_CPU_ENDIAN_BE8 || defined CONFIG_CPU_ENDIAN_BE32
-@@ -271,8 +276,7 @@ __create_page_tables:
- #else
- 	str	r3, [r5]			@ Save physical end of kernel (LE)
- #endif
--
--#ifdef CONFIG_XIP_KERNEL
-+#else
+@@ -411,7 +411,11 @@ ENTRY(secondary_startup)
  	/*
- 	 * Map the kernel image separately as it is not located in RAM.
- 	 */
-diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-index f11bf84aa3a2..537f94cd6012 100644
---- a/arch/arm/mm/mmu.c
-+++ b/arch/arm/mm/mmu.c
-@@ -1402,18 +1402,6 @@ static void __init devicemaps_init(const struct machine_desc *mdesc)
- 		create_mapping(&map);
- 	}
- 
--	/*
--	 * Map the kernel if it is XIP.
--	 * It is always first in the modulearea.
--	 */
--#ifdef CONFIG_XIP_KERNEL
--	map.pfn = __phys_to_pfn(CONFIG_XIP_PHYS_ADDR & SECTION_MASK);
--	map.virtual = MODULES_VADDR;
--	map.length = ((unsigned long)_exiprom - map.virtual + ~SECTION_MASK) & SECTION_MASK;
--	map.type = MT_ROM;
--	create_mapping(&map);
--#endif
--
- 	/*
- 	 * Map the cache flushing regions.
- 	 */
-@@ -1603,12 +1591,27 @@ static void __init map_kernel(void)
- 	 * This will only persist until we turn on proper memory management later on
- 	 * and we remap the whole kernel with page granularity.
+ 	 * Use the page tables supplied from  __cpu_up.
  	 */
 +#ifdef CONFIG_XIP_KERNEL
-+	phys_addr_t kernel_nx_start = kernel_sec_start;
++	ldr	r3, =(secondary_data + PLAT_PHYS_OFFSET - PAGE_OFFSET)
 +#else
- 	phys_addr_t kernel_x_start = kernel_sec_start;
- 	phys_addr_t kernel_x_end = round_up(__pa(__init_end), SECTION_SIZE);
- 	phys_addr_t kernel_nx_start = kernel_x_end;
+ 	adr_l	r3, secondary_data
 +#endif
- 	phys_addr_t kernel_nx_end = kernel_sec_end;
- 	struct map_desc map;
- 
-+	/*
-+	 * Map the kernel if it is XIP.
-+	 * It is always first in the modulearea.
-+	 */
-+#ifdef CONFIG_XIP_KERNEL
-+	map.pfn = __phys_to_pfn(CONFIG_XIP_PHYS_ADDR & SECTION_MASK);
-+	map.virtual = MODULES_VADDR;
-+	map.length = ((unsigned long)_exiprom - map.virtual + ~SECTION_MASK) & SECTION_MASK;
-+	map.type = MT_ROM;
-+	create_mapping(&map);
-+#else
- 	map.pfn = __phys_to_pfn(kernel_x_start);
- 	map.virtual = __phys_to_virt(kernel_x_start);
- 	map.length = kernel_x_end - kernel_x_start;
-@@ -1618,7 +1621,7 @@ static void __init map_kernel(void)
- 	/* If the nx part is small it may end up covered by the tail of the RWX section */
- 	if (kernel_x_end == kernel_nx_end)
- 		return;
--
-+#endif
- 	map.pfn = __phys_to_pfn(kernel_nx_start);
- 	map.virtual = __phys_to_virt(kernel_nx_start);
- 	map.length = kernel_nx_end - kernel_nx_start;
-@@ -1762,6 +1765,11 @@ void __init paging_init(const struct machine_desc *mdesc)
+ 	mov_l	r12, __secondary_switched
+ 	ldrd	r4, r5, [r3, #0]		@ get secondary_data.pgdir
+ ARM_BE8(eor	r4, r4, r5)			@ Swap r5 and r4 in BE:
+diff --git a/arch/arm/kernel/psci_smp.c b/arch/arm/kernel/psci_smp.c
+index d4392e177484..3bb0c4dcfc5c 100644
+--- a/arch/arm/kernel/psci_smp.c
++++ b/arch/arm/kernel/psci_smp.c
+@@ -45,8 +45,15 @@ extern void secondary_startup(void);
+ static int psci_boot_secondary(unsigned int cpu, struct task_struct *idle)
  {
- 	void *zero_page;
+ 	if (psci_ops.cpu_on)
++#ifdef CONFIG_XIP_KERNEL
++		return psci_ops.cpu_on(cpu_logical_map(cpu),
++			((phys_addr_t)(&secondary_startup)
++			- XIP_VIRT_ADDR(CONFIG_XIP_PHYS_ADDR)
++			+ CONFIG_XIP_PHYS_ADDR));
++#else
+ 		return psci_ops.cpu_on(cpu_logical_map(cpu),
+ 					virt_to_idmap(&secondary_startup));
++#endif
+ 	return -ENODEV;
+ }
+ 
+diff --git a/arch/arm/mm/idmap.c b/arch/arm/mm/idmap.c
+index 448e57c6f653..4a833e89782a 100644
+--- a/arch/arm/mm/idmap.c
++++ b/arch/arm/mm/idmap.c
+@@ -84,8 +84,15 @@ static void identity_mapping_add(pgd_t *pgd, const char *text_start,
+ 	unsigned long addr, end;
+ 	unsigned long next;
  
 +#ifdef CONFIG_XIP_KERNEL
-+	/* Store the kernel RW RAM region start/end in these variables */
-+	kernel_sec_start = CONFIG_PHYS_OFFSET & SECTION_MASK;
-+	kernel_sec_end = round_up(__pa(_end), SECTION_SIZE);
++	addr = (phys_addr_t)(text_start) - XIP_VIRT_ADDR(CONFIG_XIP_PHYS_ADDR)
++		+ CONFIG_XIP_PHYS_ADDR;
++	end = (phys_addr_t)(text_end) - XIP_VIRT_ADDR(CONFIG_XIP_PHYS_ADDR)
++		+ CONFIG_XIP_PHYS_ADDR;
++#else
+ 	addr = virt_to_idmap(text_start);
+ 	end = virt_to_idmap(text_end);
 +#endif
- 	pr_debug("physical kernel sections: 0x%08llx-0x%08llx\n",
- 		 kernel_sec_start, kernel_sec_end);
+ 	pr_info("Setting up static identity map for 0x%lx - 0x%lx\n", addr, end);
  
+ 	prot |= PMD_TYPE_SECT | PMD_SECT_AP_WRITE | PMD_SECT_AF;
 -- 
 2.34.1
 
