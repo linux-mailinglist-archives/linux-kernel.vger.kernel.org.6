@@ -1,206 +1,395 @@
-Return-Path: <linux-kernel+bounces-268627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF96394271F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:49:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44995942720
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3A0F283D8B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:49:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F372D283E11
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 06:49:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBF874413;
-	Wed, 31 Jul 2024 06:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552A81A4B38;
+	Wed, 31 Jul 2024 06:49:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="lkdypalH"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2047.outbound.protection.outlook.com [40.107.117.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhwaXpfL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0804A282F0
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722408546; cv=fail; b=CIPYkm0k8qjb3We2Ljt2iLAcDs/om+hAMnA80hWtnR0L9W1ONJqFYVWTu7fX38j/hf1Z8efDXZKTv/ZZZ+l/K1prUwxeYG5UBlIIX9/RkzdNH+N8ro/Cy4UQ4cZdUNPUYl58iSJlNPFmtg5juuznN+anT07p5iO25V/sFFAk/j4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722408546; c=relaxed/simple;
-	bh=91V3TtSIpB46oy0tVzvPe1Py7gip2SPREWwV5AY9txc=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H7kZX7J7pGdsUDw/q5VAQuHu2JhfKmGpzngEVwzA0LbCWyM9QQL6xxgWgH+A+7V5JjZoTnpSl39D0Z5M13StGh5Hp7s/0B8JCPeP64PxjXLieNqN1gU5lQXplzj4zL+L5Xmf7Gx9vx+XwsOHflAtdbs3UHH31dbB3Z+dFn7uU7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=lkdypalH; arc=fail smtp.client-ip=40.107.117.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=eSx8kuFKzVnJNShajZ5Y18AqK4WzVpZDkD81FJ6JrNuvXvLmShgkMPeJuLe5Wbm3VvLNZCXu/v3adELS73grNNRozc9luOC7169q8d5TbyQhtnILDm5RXGmtMEOlQ9NBNsyBle3aPKbmrhM9pkFQyiwrqsC+C7xp4dey9ADOrvF8TmST2+mIDTijmDTxATRF9F0Rdk/0c+kASF2JxF308ByPusmsFZAy2sTJYUrkHaM9MCF4uetOYNuy5i3CHhXei7loceWWISsYPhxc6/GpDfj4HldrB90eDx9uQ6pNuvCOH1qB0twyYQVM+4VTay+WTOlcvRpK0wOM4E/MyPXjKw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=91V3TtSIpB46oy0tVzvPe1Py7gip2SPREWwV5AY9txc=;
- b=FTJuwnL53iAkdoawhom/HfwhBR54XuLC7GR5d4ZhauhHzMYYbaLpBHrjhI+GpMH0nX+qLO6ZKkZOsJUffl0prwT0Z3Hl44Qds3ZGiUrXub3zPf6WWqbDKu1qzu4N1z+7/wRqQCMcBPIeFYzp1Ua9IKIWhy/dzvMx7P4L3eOIzlQE1EI6Mqt/zu6skdZmKEHr9d2g8J9iurZRyR15AIt/1xW5lJJTQus2+ahYqa67sTi8vlmTNADPH/thehXLVUTLirtKyiKYpD6zhWDQjS1SyBYI/CJ83LZN1SPhqPbjIsnnpQ6PpK+Z7Tz4WP6mnEpHRI9KCENrL50YdglN8vrrFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=91V3TtSIpB46oy0tVzvPe1Py7gip2SPREWwV5AY9txc=;
- b=lkdypalH8un//xS7V4a/u3XWyY+zqA5I33oTSDu7fSyDbhb4SZei75dk6ZMbcBNpeqS/gV9ORht4SF4QciM1oeOp68hrPKMnQr8y/jXaUXQ+v3NakZUawgXnHnOZEQwW5imrXEEjXHqw1T1NxGsCTKtCohtzqWtAUHvf0GjjoCIJCZ40n6uvzZTIgl/va7FSKomz0gUPZblQTQvK/3DGEsVbTRzpLSnVhEagc1iB+WDUTnHJRh+iroqv1OY21ikQwhpMF0sPJiCOmE5bChaoHtYY9L7kJNWAMWTpDndqz/JRcGRgNqkqltAsBr0XXdlnNphXu0uuktDCaBbDtNOvXw==
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com (2603:1096:400:358::7)
- by TY0PR06MB5331.apcprd06.prod.outlook.com (2603:1096:400:214::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Wed, 31 Jul
- 2024 06:48:57 +0000
-Received: from TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe]) by TYUPR06MB6217.apcprd06.prod.outlook.com
- ([fe80::c18d:f7c6:7590:64fe%4]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 06:48:57 +0000
-From: =?gb2312?B?uvrBrMfa?= <hulianqin@vivo.com>
-To: "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC: opensource.kernel <opensource.kernel@vivo.com>
-Subject: [PATCH] usb: gadget: uvc: Fixed the abnormal enumeration problem of
-  mobile phone as UVC camera.
-Thread-Topic: [PATCH] usb: gadget: uvc: Fixed the abnormal enumeration problem
- of  mobile phone as UVC camera.
-Thread-Index: AQHa4xS9u02gHE5J0kmbmjmtyNKMWw==
-Date: Wed, 31 Jul 2024 06:48:57 +0000
-Message-ID:
- <TYUPR06MB6217E6066E3A74EDE86FED1FD2B12@TYUPR06MB6217.apcprd06.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYUPR06MB6217:EE_|TY0PR06MB5331:EE_
-x-ms-office365-filtering-correlation-id: 53132a8e-1eca-400f-c550-08dcb12cda3f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?gb2312?B?QTJIQ21EeHNyRk1kM1ozaXZaNXlUVFM5SWMrYkZJbUhXNXlYODNmbXJGUDRj?=
- =?gb2312?B?OXNZRWVTYXRJWkd4SUM2Y1VSKzVoK0p1WEIrWHlrSzlDMWc0QW9XUTB4U25P?=
- =?gb2312?B?RlY0TkV0K2owWTZBRHByTEVlYlJKOUNMdXN0R1REZ1VxaStRWlZiWlA3Y25N?=
- =?gb2312?B?WlgyK1FzME1DUFVBREgyQUlTN1RBVlFBckMyY2d4bkx0MmZIUjMvNkNHVWpm?=
- =?gb2312?B?aGY5WWJJdEdtbXBoRDE5N3c2eFlrdVliQXY0UkFVWHkxV1MvVExNbEIvOVRr?=
- =?gb2312?B?MisrdnJ3U3NiQ3VwTnVJMzlZT1NGSlF3cERDRUtDUHl1S1ZlWmdRQ0tsbVc5?=
- =?gb2312?B?aUcwNmU2ampKb1lwUC9UdVlFdExkOWsxamN0U2V6NXd0RldINWhtbjBURmZt?=
- =?gb2312?B?K3NUa1dncEJxeHZ5TzluOFJJbk4wcXg5MjNlL0l6eGZzYkJJTnhwaGhLMmpO?=
- =?gb2312?B?VThSK1J2QlR1T3lGai9PRTFZQXkwYjJ1emdON0UrWXdldjk3L2ltTEZDU0hJ?=
- =?gb2312?B?TVpZNHlDOElQZkoraHdER2lPWjMzaHN0NmVwMlhQTTJtOFBWYW9hcExjQXBP?=
- =?gb2312?B?UWVFV1V0NEhlZGhTQkFMZnBGQTk5MGhDLzNHS3l5T3NKK0pIQTBZeXo5SHVy?=
- =?gb2312?B?MXh6clpaZE9UU0VYZ1VoRVM4MU1haktwZ3h3ekl4d01aMkpDZll0eGJ2ZW1Q?=
- =?gb2312?B?dXFrVGJpK3ZwTG56Skxaa2dLaE5BWGRjaGs3ZmZBcXVnT1lybkZRbW5NaVI0?=
- =?gb2312?B?cmQxTUJIb0ZxaDlCNy9LU1dZRUNyOFFiMWNZcElQN0RzZFFoUWxwNHEyV0pL?=
- =?gb2312?B?T0JjQ1NFbWVLSFZNZXZSTGorSVZ4MEliOVhZRnBaaXJyR0FBK2k5WnlrZXJq?=
- =?gb2312?B?L09NN0N2UHNDUlZOdDVUZFNTd0c1RXZYUFRYM2dmaFFJVEluMXRPUTNwZ2pV?=
- =?gb2312?B?THp3Qkw1MVgwTFpNaE5xUXJwUXg5c1JLbGlyejNWdjNnaThVVmZmbkV5OWdP?=
- =?gb2312?B?aElJMVUvM1JBQWZwMG8yZ2ZFZ1FwbGJHcmVFeVpxTHVxdmg3RS9WdkJkV3F2?=
- =?gb2312?B?UVBrTG9lbmsvWFNDZlZrTURQbWgzT0dtTEVhL21wOE1mUWtpa2NmVWxrSFpZ?=
- =?gb2312?B?RGpmd3NmZlRsZ3YrSmFhdFZBblVYUDcyK1htbDVDZVZpeFRueWw1N0lCTTFV?=
- =?gb2312?B?cXlnVEdMbncxMVlYR2dIOG11YU9FUGgrVjBuYS9mZmJ0WlViSmRCYUpGa3dv?=
- =?gb2312?B?THhOUE5vQU1ISDNodE8yYUxMRVZSellPb3BYc2hKZFNvZ0dPcXdsMXRCcXph?=
- =?gb2312?B?SnJtMDBLVURrMGo3VVZ5YWVWeS9ybk1SdnVnRkwrNkV0RGZkU0dsOWpqNCtW?=
- =?gb2312?B?TnBJQkV3YkhlRzk3Um1mR1UvQmQ3V3N4MzJhMEJuWTZIU2lUQWJMUnMyTGVl?=
- =?gb2312?B?OTRmRlRSeEhrV2svdEtPZXd6UHpaUXFMUHFQeXpKSGNLNmkrV3V5dWpCSFRm?=
- =?gb2312?B?MUJxNlpPYitGbFJ3OWNRWVp0bzZTS1VpTWFDZC9HQnhqTjFsZWZMYzhXVk9m?=
- =?gb2312?B?VGlKeUhqblI0ZnRuK0h0MHRrTXY0S1VsMlFvd3JwOWtxSWRxUjNtOFpWbldP?=
- =?gb2312?B?bUYxWkZhcU9vbkxodWdGckNRL211TmtTUUtVRFA2NTBWdDRac2kvM056cHFI?=
- =?gb2312?B?WStTL3pBNUE3cDRHcFN2NElUMCtpbHhoV1pPS3ZsSjdPeEwzWEhpbTZZd3FW?=
- =?gb2312?B?SURCc3VaRG1adEh1clF3VzB1cG5yMUZjelNLLzl3ZVFsZDJFcDdCclVXUWhm?=
- =?gb2312?B?QllvTUVldGNGRXcybmZPeWFYNG5mQ1VjK0Y1cjJIRDA5bEhnWWE1STduaXRM?=
- =?gb2312?B?ZmRWbzFiZGRyMWhjLzYyZFFqV0JDMWdWYUVwd09STUtCaHc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYUPR06MB6217.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?cHorYUgzN1RoSWlVa3BiSTZBRHpERzd3cU94b2RIcE1aWk10MEpUQ29uVSs1?=
- =?gb2312?B?K3NGeENmRGhjRlFxcnFQdFFBSndld2lZOTRuT2YyRHRaNGhxTUVZUXkrVDJK?=
- =?gb2312?B?eXNEbWZMNk9zWWVSWFpERWZnalJDVzNIRzVHZGxDeVpzRml4M0g1R0E4dnlh?=
- =?gb2312?B?UzAybHVlSVI3VzhoZ2dQR2MyaFR4eCtDZE9zajF3QUNSRVQ1YURYcDFnSEtz?=
- =?gb2312?B?ekZrN1ZTMHlHRkxoWklTcFNGdUtQYjZxZjEvZXRkNmlZbTNVY1NWTVpmQWJs?=
- =?gb2312?B?ckg1ek5GOUJKQUFxRXJDRnJTd0Y4RytpaDhWRmp1ZmE0a2FNbWRNdS82V2hs?=
- =?gb2312?B?Z2FsQi8rTDJia01NTjRWSVhheG9yZWljK1ROckN1SVMwWXJNREtNZ3Bod3BR?=
- =?gb2312?B?SUFaWnRsUHRmeHJwclZjOFpwYU1UK3JEcVRUVnZBRWFZVWg2d3IwSFpJSjJa?=
- =?gb2312?B?Sld2TXo4Ry9kekNKTzRSbmc4SHhub0tnQVducDhSOVpNUWFVV2lQL3NNNGdI?=
- =?gb2312?B?clBvdm9FaGF6TTdJL294MHFWRnRzdStsTDVnQ0FlZytoRnJ5VDB0SXprUlND?=
- =?gb2312?B?SURRS28wazk4U25qWHVmckZCT1ZPSDFjTFhKQnBJQlUrTTh0amcwSDR6dGl6?=
- =?gb2312?B?VUJXSWhBbHExelFFaWhXaGhjZFhqZkFPT3VTT3pTK0xMTVJTOTBVckpFRlIx?=
- =?gb2312?B?K2d0L2s1WUpob1Z5b3E5YVFTUnpFSkF6YUJjVXRBSDZXRGtBalhQNjBJSXJJ?=
- =?gb2312?B?V0hEOGlIS3ZnNmpkbkJ5Mk9Hd0lWbWRwc2VrRXNzZTJlUXR4MmwwNS9RM0dI?=
- =?gb2312?B?ZS9yWEMwdk5XYzNHTGppV0ViOE51ZVpFRDRtallNU2d3am5GMjJuakY3VVdw?=
- =?gb2312?B?N0xjK1BuQjJzUlBpVGtLM2ZaR2tjTzhOTUdIbG1FOHVKa0tQbW03ck9BSEFC?=
- =?gb2312?B?T29MM2VGVmdvVHVYbFVrSEl2WWhINEJLWC93L25oVjJTVWVRTFhScDRJL1hR?=
- =?gb2312?B?QzJvVFFkbmpTeWJadlVSZ2NFS3ptRnZmVnRlQ1d5bVZTeXdhVjdJNDRHZ3Yy?=
- =?gb2312?B?TFpQS0FvNi9QVXdhcEQ1RE5GU0dUenJqczQvMHgzWXV5NG9xYXppNVhoc29L?=
- =?gb2312?B?WkhmSEsrdzFFclVGT0lVcGVxV3lOd1puTzZ0ZFFZME5CWmMwZjkzTHlQVDF2?=
- =?gb2312?B?RTdPV3Y1MGczU3kyVDkyUDErbE1LQzlDN0pkaUwwUWRzdnFpUEJlQ0krLy9m?=
- =?gb2312?B?MGJESTVkQ0dqMngrUTl6VG1Od1VrK0lNWVdUTllqZWd2R1MweWxGUEo2TXZs?=
- =?gb2312?B?c0YwZTZhNEs5czBZdC9EeDhmeEhhbXdseTlCblQ5UHp1SU9iK0dkalNEVmlW?=
- =?gb2312?B?YTM2ekpOc2szS3IwOGJrWjQ5cWt1K2VjS253Y3pZZkw0OGV6V1Uwamp6OU5B?=
- =?gb2312?B?Ky94R243TjFhZGgveGVEZkwxT2FEYm1OUzlnZmE4YStjUDBCbEZ2Y1dySkRq?=
- =?gb2312?B?dDVZREhYeGJUQ1RCR2FJYmxaUlFTVEV6UnJZWnNNN1J4Sisxc2tPaUxLSFlC?=
- =?gb2312?B?cURwekFGVW5EUXlFRlA4eHFYNTlQSEx2d0cwQzJnL21VOUJrbG1SVEZ3Qyt6?=
- =?gb2312?B?d2J0dzBZMEFpaUJmMTZheEV4dXhtd2dSU2locnF0cG1IcERYdGVUQTA5NkY5?=
- =?gb2312?B?b0NYQnZuVjJULzYrbHBmS29nYldvd3B5d3RsbE5xK2UrcFBKNzdTOEVjMXRK?=
- =?gb2312?B?VUc4ZFdaajMvK1drNnZOR3VuN00wSTJpS1F4aFhwK0tFYlZPOWF1VGNjZ2Z2?=
- =?gb2312?B?OWJpeHpZMThGcDhxVnlMOFRjUXZ0YWRlbTFScUc0bnlzWFlCWU80RTR2MVlN?=
- =?gb2312?B?TEhoaTFFZEJoQjdlMkRRK0toV1hUTkZVd3N3Y2xnVUdGQzFHdWIwMGo1bmhQ?=
- =?gb2312?B?bEE2YVB2bjZqVFdlL1hyVnJWWE9LZzl3cCt0YW02emM3bmZieFlYTnNMZDFE?=
- =?gb2312?B?MW16bkJwR3drVjdEVXdsN2pySHdKL1B2dmgrcVJBNWg2UzR3TnZrK25PcEg3?=
- =?gb2312?B?cm9iM1ppYkFUdXRPclVCdy92RHJ5R2VaVmdaV0RIQ3NiNmdVYi9aSDJIZ1lw?=
- =?gb2312?Q?bnmQ=3D?=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D749282F0
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722408561; cv=none; b=Z6Me4w5mORgP0xHvkMi8vrQ8c/hOkU6ZIdKLnFK7PQJdP62nWXwHXU+uBjBgUKX1nLmzWJ2Xw5VcimRD0q3LVMpH4eEcchQ+1lE5GijZBmp15ii4jG1njw01Gp1LoRdej+UvhxX8xotyQDd+7aIATtRJSKQ9TfRDYLUXsJpNe7w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722408561; c=relaxed/simple;
+	bh=lomILYpvPKm/NS0cDcgC+VgOu47pIcIw0Zfb9DiRd4M=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LiujKczBr2ua2aLEO85x/C6xDOrC4BgYO3MCkjsyNipZsTPT2PkE26NtJRQ2xx2ypSozVWwBDGwvRaPUAIeUNyZT5GJaZbFvy9alEmGWtkaHfUIFw7vE3nYpEAbOosHnLSHz36jxw++oYIKKy5jBuTXtqcx78tC3nIv/5uJn0uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhwaXpfL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EFDC116B1;
+	Wed, 31 Jul 2024 06:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722408560;
+	bh=lomILYpvPKm/NS0cDcgC+VgOu47pIcIw0Zfb9DiRd4M=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DhwaXpfL3QtP8RxnqVuk/olvugDtbGOsQLE9Ve8u6zmn+DI1VZxOAgHseFnZuLyQy
+	 Pa1CC610wgWlfggmRJWf8QmYrRqVX4u8J+tHYvA6yrzQ8rYEJrIHwNnJ0gq5uHbIgs
+	 th59NxNjrxpbkfGjAkbcjHbSqCjgGwoFqAWrisGTkOAwOSP/q41j2ElJXV9D8+FiMF
+	 bulkzFIf9ExYjrIWE++A1+vZGsP+N7q8BIeHh8T6Y+ITIQlwuw5hYTUtNLnmiTyA27
+	 1DrR+/azUxeh6h5vtsRT1Lb/RUOJmzGpDdeIHSkxwwtGgaesIRK9ovAoJY0RUnyNtH
+	 O1WH/eukAn4Aw==
+From: Chris Li <chrisl@kernel.org>
+Subject: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap cluster
+ order
+Date: Tue, 30 Jul 2024 23:49:12 -0700
+Message-Id: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYUPR06MB6217.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53132a8e-1eca-400f-c550-08dcb12cda3f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 06:48:57.7533
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7kjRweXmD53ZT+A78AV8uFvN74YKdYGGCiC4NDxhVE8ARX12LY7JG8m3XKbYM9IOcXuMaE9S7+6F1hkrk+laOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB5331
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAGjeqWYC/2XMwU7DMAzG8VeZciYodpxm5cR7IA5u5m4RVTslq
+ ICmvjveJDQgx8/y738xVUqWap52F1NkzTUvs47wsDPpxPNRbD7oNuiQXEBv6wefLU/Tkvh9KRa
+ Cp0R7J0nIKDoXGfPnLfjyqvuUq7593forXK8/KfqfWsE6S3HfwUDoB+ye36TMMj0u5WiurRXvv
+ oPWo3rkAH4gjiOOjfe/fd94r1766NmDvhA1nu4+AjSe1DvsA9OBUmT+47dt+wZdePL9bQEAAA=
+ =
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>, 
+ Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+ Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org, 
+ linux-mm@kvack.org, Chris Li <chrisl@kernel.org>, 
+ Barry Song <baohua@kernel.org>
+X-Mailer: b4 0.13.0
 
-RnJvbSBjNDY0NTU4YTcwZTFjYTM2YzBlNGJkMGExMjFmYjUwNTY1YjQ0NjEwIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaWFucWluIEh1IDxodWxpYW5xaW5Adml2by5jb20+CkRhdGU6
-IFdlZCwgMzEgSnVsIDIwMjQgMTQ6MjE6NTIgKzA4MDAKU3ViamVjdDogW1BBVENIXSB1c2I6IGdh
-ZGdldDogdXZjOiBGaXhlZCB0aGUgYWJub3JtYWwgZW51bWVyYXRpb24gcHJvYmxlbSBvZgogbW9i
-aWxlIHBob25lIGFzIFVWQyBjYW1lcmEuCgpXaGVuIHRoZSBwaG9uZSBpcyBjb25uZWN0ZWQgdG8g
-dGhlIGNvbXB1dGVyIHRvIHVzZSB0aGUgd2ViY2FtIGZ1bmN0aW9uLAp0aGUgcGhvbmUgbmVlZHMg
-dG8gYmUgZW51bWVyYXRlZCBhcyBhIHV2YyBjYW1lcmEgZnVuY3Rpb24uCgpCZWNhdXNlIHV2Yy0+
-ZnVuYy5iaW5kX2RlYWN0aXZhdGVkIGlzIGNvbmZpZ3VyZWQgYXMgdHJ1ZSBpbiB0aGUgZl91dmMK
-ZHJpdmVyIHV2Y19hbGxvYyBmdW5jdGlvbiwgdGhlIHVzYl9nYWRnZXRfZGVhY3RpdmF0ZSBmdW5j
-dGlvbiBpcyBjYWxsZWQKZHVyaW5nIHRoZSBleGVjdXRpb24gb2YgdGhlIGNvbmZpZ2ZzX2NvbXBv
-c2l0ZV9iaW5kIGZ1bmN0aW9uIHRvCnNldCBnYWRnZXQtPmRlYWN0aXZhdGVkIHRvIHRydWUsIHdo
-aWNoIGluIHR1cm4gY2F1c2VzIHRoZQp1c2JfZ2FkZ2V0X2Nvbm5lY3RfbG9ja2VkIGZ1bmN0aW9u
-IHRvIGZhaWwgdG8gY2FsbCB0aGUgY29ycmVzcG9uZGluZwpjb250cm9sbGVyIHB1bGx1cCBvcGVy
-YXRpb24gKHN1Y2ggYXM6IGR3YzNfZ2FkZ2V0X3B1bGx1cCwKbXR1M19nYWRnZXRfcHVsbHVwKSwg
-YW5kIHRoZSBVU0IgY2Fubm90IGJlIGVudW1lcmF0ZWQKbm9ybWFsbHkgdW5kZXIgdGhlIHV2YyBm
-dW5jdGlvbiBjb21iaW5hdGlvbi4KCkFmdGVyIGFwcGx5aW5nIHRoaXMgcGF0Y2gsIHdlIG1lYXN1
-cmVkIHRoYXQgdW5kZXIgdGhlIHV2YyBmdW5jdGlvbiwKdGhlIGR3YzMgY29udHJvbGxlciBhbmQg
-dGhlIG10dTMgY29udHJvbGxlciBjYW4gYmUgZW51bWVyYXRlZCBub3JtYWxseSwKYW5kIHRoZSB3
-ZWJjYW0gZnVuY3Rpb24gaXMgbm9ybWFsLgoKVGhlcmVmb3JlLCBtb2RpZnkgdGhlIGZfdXZjIGRy
-aXZlciB0byByZW1vdmUgdGhlIG9wZXJhdGlvbiBvZiBzZXR0aW5nCnV2Yy0+ZnVuYy5iaW5kX2Rl
-YWN0aXZhdGVkIHRvIHRydWUuCgpTaWduZWQtb2ZmLWJ5OiBMaWFucWluIEh1IDxodWxpYW5xaW5A
-dml2by5jb20+Ci0tLQogZHJpdmVycy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfdXZjLmMgfCAxIC0K
-IDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2Iv
-Z2FkZ2V0L2Z1bmN0aW9uL2ZfdXZjLmMgYi9kcml2ZXJzL3VzYi9nYWRnZXQvZnVuY3Rpb24vZl91
-dmMuYwppbmRleCA0MDE4N2I3MTEyZTcuLjZkNjNiZWExNDIxMSAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy91c2IvZ2FkZ2V0L2Z1bmN0aW9uL2ZfdXZjLmMKKysrIGIvZHJpdmVycy91c2IvZ2FkZ2V0L2Z1
-bmN0aW9uL2ZfdXZjLmMKQEAgLTExMDcsNyArMTEwNyw2IEBAIHN0YXRpYyBzdHJ1Y3QgdXNiX2Z1
-bmN0aW9uICp1dmNfYWxsb2Moc3RydWN0IHVzYl9mdW5jdGlvbl9pbnN0YW5jZSAqZmkpCiAJdXZj
-LT5mdW5jLmRpc2FibGUgPSB1dmNfZnVuY3Rpb25fZGlzYWJsZTsKIAl1dmMtPmZ1bmMuc2V0dXAg
-PSB1dmNfZnVuY3Rpb25fc2V0dXA7CiAJdXZjLT5mdW5jLmZyZWVfZnVuYyA9IHV2Y19mcmVlOwot
-CXV2Yy0+ZnVuYy5iaW5kX2RlYWN0aXZhdGVkID0gdHJ1ZTsKIAogCXJldHVybiAmdXZjLT5mdW5j
-OwogCi0tIAoyLjM5LjAKCg==
+This is the short term solutions "swap cluster order" listed
+in my "Swap Abstraction" discussion slice 8 in the recent
+LSF/MM conference.
+
+When commit 845982eb264bc "mm: swap: allow storage of all mTHP
+orders" is introduced, it only allocates the mTHP swap entries
+from the new empty cluster list.  It has a fragmentation issue
+reported by Barry.
+
+https://lore.kernel.org/all/CAGsJ_4zAcJkuW016Cfi6wicRr8N9X+GJJhgMQdSMp+Ah+NSgNQ@mail.gmail.com/
+
+The reason is that all the empty clusters have been exhausted while
+there are plenty of free swap entries in the cluster that are
+not 100% free.
+
+Remember the swap allocation order in the cluster.
+Keep track of the per order non full cluster list for later allocation.
+
+This series gives the swap SSD allocation a new separate code path
+from the HDD allocation. The new allocator use cluster list only
+and do not global scan swap_map[] without lock any more.
+
+This streamline the swap allocation for SSD. The code matches the
+execution flow much better.
+
+User impact: For users that allocate and free mix order mTHP swapping,
+It greatly improves the success rate of the mTHP swap allocation after the
+initial phase.
+
+It also performs faster when the swapfile is close to full, because the
+allocator can get the non full cluster from a list rather than scanning
+a lot of swap_map entries. 
+
+With Barry's mthp test program V2:
+
+Without:
+$ ./thp_swap_allocator_test -a
+Iteration 1: swpout inc: 32, swpout fallback inc: 192, Fallback percentage: 85.71%
+Iteration 2: swpout inc: 0, swpout fallback inc: 231, Fallback percentage: 100.00%
+Iteration 3: swpout inc: 0, swpout fallback inc: 227, Fallback percentage: 100.00%
+...
+Iteration 98: swpout inc: 0, swpout fallback inc: 224, Fallback percentage: 100.00%
+Iteration 99: swpout inc: 0, swpout fallback inc: 215, Fallback percentage: 100.00%
+Iteration 100: swpout inc: 0, swpout fallback inc: 222, Fallback percentage: 100.00%
+
+$ ./thp_swap_allocator_test -a -s
+Iteration 1: swpout inc: 0, swpout fallback inc: 224, Fallback percentage: 100.00%
+Iteration 2: swpout inc: 0, swpout fallback inc: 218, Fallback percentage: 100.00%
+Iteration 3: swpout inc: 0, swpout fallback inc: 222, Fallback percentage: 100.00%
+..
+Iteration 98: swpout inc: 0, swpout fallback inc: 228, Fallback percentage: 100.00%
+Iteration 99: swpout inc: 0, swpout fallback inc: 230, Fallback percentage: 100.00%
+Iteration 100: swpout inc: 0, swpout fallback inc: 229, Fallback percentage: 100.00%
+
+$ ./thp_swap_allocator_test -s
+Iteration 1: swpout inc: 0, swpout fallback inc: 224, Fallback percentage: 100.00%
+Iteration 2: swpout inc: 0, swpout fallback inc: 218, Fallback percentage: 100.00%
+Iteration 3: swpout inc: 0, swpout fallback inc: 222, Fallback percentage: 100.00%
+..
+Iteration 98: swpout inc: 0, swpout fallback inc: 228, Fallback percentage: 100.00%
+Iteration 99: swpout inc: 0, swpout fallback inc: 230, Fallback percentage: 100.00%
+Iteration 100: swpout inc: 0, swpout fallback inc: 229, Fallback percentage: 100.00%
+
+$ ./thp_swap_allocator_test
+Iteration 1: swpout inc: 0, swpout fallback inc: 224, Fallback percentage: 100.00%
+Iteration 2: swpout inc: 0, swpout fallback inc: 218, Fallback percentage: 100.00%
+Iteration 3: swpout inc: 0, swpout fallback inc: 222, Fallback percentage: 100.00%
+..
+Iteration 98: swpout inc: 0, swpout fallback inc: 228, Fallback percentage: 100.00%
+Iteration 99: swpout inc: 0, swpout fallback inc: 230, Fallback percentage: 100.00%
+Iteration 100: swpout inc: 0, swpout fallback inc: 229, Fallback percentage: 100.00%
+
+With: # with all 0.00% filter out
+$ ./thp_swap_allocator_test -a | grep -v "0.00%"
+$ # all result are 0.00%
+
+$ ./thp_swap_allocator_test -a -s | grep -v "0.00%"
+./thp_swap_allocator_test -a -s | grep -v "0.00%" 
+Iteration 14: swpout inc: 223, swpout fallback inc: 3, Fallback percentage: 1.33%
+Iteration 19: swpout inc: 219, swpout fallback inc: 7, Fallback percentage: 3.10%
+Iteration 28: swpout inc: 225, swpout fallback inc: 1, Fallback percentage: 0.44%
+Iteration 29: swpout inc: 227, swpout fallback inc: 1, Fallback percentage: 0.44%
+Iteration 34: swpout inc: 220, swpout fallback inc: 8, Fallback percentage: 3.51%
+Iteration 35: swpout inc: 222, swpout fallback inc: 11, Fallback percentage: 4.72%
+Iteration 38: swpout inc: 217, swpout fallback inc: 4, Fallback percentage: 1.81%
+Iteration 40: swpout inc: 222, swpout fallback inc: 6, Fallback percentage: 2.63%
+Iteration 42: swpout inc: 221, swpout fallback inc: 2, Fallback percentage: 0.90%
+Iteration 43: swpout inc: 215, swpout fallback inc: 7, Fallback percentage: 3.15%
+Iteration 47: swpout inc: 226, swpout fallback inc: 2, Fallback percentage: 0.88%
+Iteration 49: swpout inc: 217, swpout fallback inc: 1, Fallback percentage: 0.46%
+Iteration 52: swpout inc: 221, swpout fallback inc: 8, Fallback percentage: 3.49%
+Iteration 56: swpout inc: 224, swpout fallback inc: 4, Fallback percentage: 1.75%
+Iteration 58: swpout inc: 214, swpout fallback inc: 5, Fallback percentage: 2.28%
+Iteration 62: swpout inc: 220, swpout fallback inc: 3, Fallback percentage: 1.35%
+Iteration 64: swpout inc: 224, swpout fallback inc: 1, Fallback percentage: 0.44%
+Iteration 67: swpout inc: 221, swpout fallback inc: 1, Fallback percentage: 0.45%
+Iteration 75: swpout inc: 220, swpout fallback inc: 9, Fallback percentage: 3.93%
+Iteration 82: swpout inc: 227, swpout fallback inc: 1, Fallback percentage: 0.44%
+Iteration 86: swpout inc: 211, swpout fallback inc: 12, Fallback percentage: 5.38%
+Iteration 89: swpout inc: 226, swpout fallback inc: 2, Fallback percentage: 0.88%
+Iteration 93: swpout inc: 220, swpout fallback inc: 1, Fallback percentage: 0.45%
+Iteration 94: swpout inc: 224, swpout fallback inc: 1, Fallback percentage: 0.44%
+Iteration 96: swpout inc: 221, swpout fallback inc: 6, Fallback percentage: 2.64%
+Iteration 98: swpout inc: 227, swpout fallback inc: 1, Fallback percentage: 0.44%
+Iteration 99: swpout inc: 227, swpout fallback inc: 3, Fallback percentage: 1.30%
+
+$ ./thp_swap_allocator_test      
+./thp_swap_allocator_test 
+Iteration 1: swpout inc: 233, swpout fallback inc: 0, Fallback percentage: 0.00%
+Iteration 2: swpout inc: 131, swpout fallback inc: 101, Fallback percentage: 43.53%
+Iteration 3: swpout inc: 71, swpout fallback inc: 155, Fallback percentage: 68.58%
+Iteration 4: swpout inc: 55, swpout fallback inc: 168, Fallback percentage: 75.34%
+Iteration 5: swpout inc: 35, swpout fallback inc: 191, Fallback percentage: 84.51%
+Iteration 6: swpout inc: 25, swpout fallback inc: 199, Fallback percentage: 88.84%
+Iteration 7: swpout inc: 23, swpout fallback inc: 205, Fallback percentage: 89.91%
+Iteration 8: swpout inc: 9, swpout fallback inc: 219, Fallback percentage: 96.05%
+Iteration 9: swpout inc: 13, swpout fallback inc: 213, Fallback percentage: 94.25%
+Iteration 10: swpout inc: 12, swpout fallback inc: 216, Fallback percentage: 94.74%
+Iteration 11: swpout inc: 16, swpout fallback inc: 213, Fallback percentage: 93.01%
+Iteration 12: swpout inc: 10, swpout fallback inc: 210, Fallback percentage: 95.45%
+Iteration 13: swpout inc: 16, swpout fallback inc: 212, Fallback percentage: 92.98%
+Iteration 14: swpout inc: 12, swpout fallback inc: 212, Fallback percentage: 94.64%
+Iteration 15: swpout inc: 15, swpout fallback inc: 211, Fallback percentage: 93.36%
+Iteration 16: swpout inc: 15, swpout fallback inc: 200, Fallback percentage: 93.02%
+Iteration 17: swpout inc: 9, swpout fallback inc: 220, Fallback percentage: 96.07%
+
+$ ./thp_swap_allocator_test -s
+ ./thp_swap_allocator_test -s
+Iteration 1: swpout inc: 233, swpout fallback inc: 0, Fallback percentage: 0.00%
+Iteration 2: swpout inc: 97, swpout fallback inc: 135, Fallback percentage: 58.19%
+Iteration 3: swpout inc: 42, swpout fallback inc: 192, Fallback percentage: 82.05%
+Iteration 4: swpout inc: 19, swpout fallback inc: 214, Fallback percentage: 91.85%
+Iteration 5: swpout inc: 12, swpout fallback inc: 213, Fallback percentage: 94.67%
+Iteration 6: swpout inc: 11, swpout fallback inc: 217, Fallback percentage: 95.18%
+Iteration 7: swpout inc: 9, swpout fallback inc: 214, Fallback percentage: 95.96%
+Iteration 8: swpout inc: 8, swpout fallback inc: 213, Fallback percentage: 96.38%
+Iteration 9: swpout inc: 2, swpout fallback inc: 223, Fallback percentage: 99.11%
+Iteration 10: swpout inc: 2, swpout fallback inc: 228, Fallback percentage: 99.13%
+Iteration 11: swpout inc: 4, swpout fallback inc: 214, Fallback percentage: 98.17%
+Iteration 12: swpout inc: 5, swpout fallback inc: 226, Fallback percentage: 97.84%
+Iteration 13: swpout inc: 3, swpout fallback inc: 212, Fallback percentage: 98.60%
+Iteration 14: swpout inc: 0, swpout fallback inc: 222, Fallback percentage: 100.00%
+Iteration 15: swpout inc: 3, swpout fallback inc: 222, Fallback percentage: 98.67%
+Iteration 16: swpout inc: 4, swpout fallback inc: 223, Fallback percentage: 98.24%
+
+=========
+Kernel compile under tmpfs with cgroup memory.max = 470M.
+12 core 24 hyperthreading, 32 jobs. 10 Run each group
+
+SSD swap 10 runs average, 20G swap partition:
+With:
+user    2929.064
+system  1479.381 : 1376.89 1398.22 1444.64 1477.39 1479.04 1497.27
+1504.47 1531.4 1532.92 1551.57
+real    1441.324
+
+Without:
+user    2910.872
+system  1482.732 : 1440.01 1451.4 1462.01 1467.47 1467.51 1469.3
+1470.19 1496.32 1544.1 1559.01
+real    1580.822
+
+Two zram swap: zram0 3.0G zram1 20G.
+
+The idea is forcing the zram0 almost full then overflow to zram1:
+
+With:
+user    4320.301
+system  4272.403 : 4236.24 4262.81 4264.75 4269.13 4269.44 4273.06
+4279.85 4285.98 4289.64 4293.13
+real    431.759
+
+Without
+user    4301.393
+system  4387.672 : 4374.47 4378.3 4380.95 4382.84 4383.06 4388.05
+4389.76 4397.16 4398.23 4403.9
+real    433.979
+
+------ more test result from Kaiui ----------
+
+Test with build linux kernel using a 4G ZRAM, 1G memory.max limit on top of shmem:
+
+System info: 32 Core AMD Zen2, 64G total memory.
+
+Test 3 times using only 4K pages:
+=================================
+
+With:
+-----
+1838.74user 2411.21system 2:37.86elapsed 2692%CPU (0avgtext+0avgdata 847060maxresident)k
+1839.86user 2465.77system 2:39.35elapsed 2701%CPU (0avgtext+0avgdata 847060maxresident)k
+1840.26user 2454.68system 2:39.43elapsed 2693%CPU (0avgtext+0avgdata 847060maxresident)k
+
+Summary (~4.6% improment of system time):
+User: 1839.62
+System: 2443.89: 2465.77 2454.68 2411.21
+Real: 158.88
+
+Without:
+--------
+1837.99user 2575.95system 2:43.09elapsed 2706%CPU (0avgtext+0avgdata 846520maxresident)k
+1838.32user 2555.15system 2:42.52elapsed 2709%CPU (0avgtext+0avgdata 846520maxresident)k
+1843.02user 2561.55system 2:43.35elapsed 2702%CPU (0avgtext+0avgdata 846520maxresident)k
+
+Summary:
+User: 1839.78
+System: 2564.22: 2575.95 2555.15 2561.55
+Real: 162.99
+
+Test 5 times using enabled all mTHP pages:
+==========================================
+
+With:
+-----
+1796.44user 2937.33system 2:59.09elapsed 2643%CPU (0avgtext+0avgdata 846936maxresident)k
+1802.55user 3002.32system 2:54.68elapsed 2750%CPU (0avgtext+0avgdata 847072maxresident)k
+1806.59user 2986.53system 2:55.17elapsed 2736%CPU (0avgtext+0avgdata 847092maxresident)k
+1803.27user 2982.40system 2:54.49elapsed 2742%CPU (0avgtext+0avgdata 846796maxresident)k
+1807.43user 3036.08system 2:56.06elapsed 2751%CPU (0avgtext+0avgdata 846488maxresident)k
+
+Summary (~8.4% improvement of system time):
+User: 1803.25
+System: 2988.93: 2937.33 3002.32 2986.53 2982.40 3036.08
+Real: 175.90
+
+mTHP swapout status:
+/sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpout:347721
+/sys/kernel/mm/transparent_hugepage/hugepages-32kB/stats/swpout_fallback:3110
+/sys/kernel/mm/transparent_hugepage/hugepages-512kB/stats/swpout:3365
+/sys/kernel/mm/transparent_hugepage/hugepages-512kB/stats/swpout_fallback:8269
+/sys/kernel/mm/transparent_hugepage/hugepages-2048kB/stats/swpout:24
+/sys/kernel/mm/transparent_hugepage/hugepages-2048kB/stats/swpout_fallback:3341
+/sys/kernel/mm/transparent_hugepage/hugepages-1024kB/stats/swpout:145
+/sys/kernel/mm/transparent_hugepage/hugepages-1024kB/stats/swpout_fallback:5038
+/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout:322737
+/sys/kernel/mm/transparent_hugepage/hugepages-64kB/stats/swpout_fallback:36808
+/sys/kernel/mm/transparent_hugepage/hugepages-16kB/stats/swpout:380455
+/sys/kernel/mm/transparent_hugepage/hugepages-16kB/stats/swpout_fallback:1010
+/sys/kernel/mm/transparent_hugepage/hugepages-256kB/stats/swpout:24973
+/sys/kernel/mm/transparent_hugepage/hugepages-256kB/stats/swpout_fallback:13223
+/sys/kernel/mm/transparent_hugepage/hugepages-128kB/stats/swpout:197348
+/sys/kernel/mm/transparent_hugepage/hugepages-128kB/stats/swpout_fallback:80541
+
+Without:
+--------
+1794.41user 3151.29system 3:05.97elapsed 2659%CPU (0avgtext+0avgdata 846704maxresident)k
+1810.27user 3304.48system 3:05.38elapsed 2759%CPU (0avgtext+0avgdata 846636maxresident)k
+1809.84user 3254.85system 3:03.83elapsed 2755%CPU (0avgtext+0avgdata 846952maxresident)k
+1813.54user 3259.56system 3:04.28elapsed 2752%CPU (0avgtext+0avgdata 846848maxresident)k
+1829.97user 3338.40system 3:07.32elapsed 2759%CPU (0avgtext+0avgdata 847024maxresident)k
+
+Summary:
+User: 1811.61
+System: 3261.72 : 3151.29 3304.48 3254.85 3259.56 3338.40
+Real: 185.356
+
+mTHP swapout status:
+hugepages-32kB/stats/swpout:35630
+hugepages-32kB/stats/swpout_fallback:1809908
+hugepages-512kB/stats/swpout:523
+hugepages-512kB/stats/swpout_fallback:55235
+hugepages-2048kB/stats/swpout:53
+hugepages-2048kB/stats/swpout_fallback:17264
+hugepages-1024kB/stats/swpout:85
+hugepages-1024kB/stats/swpout_fallback:24979
+hugepages-64kB/stats/swpout:30117
+hugepages-64kB/stats/swpout_fallback:1825399
+hugepages-16kB/stats/swpout:42775
+hugepages-16kB/stats/swpout_fallback:1951123
+hugepages-256kB/stats/swpout:2326
+hugepages-256kB/stats/swpout_fallback:170165
+hugepages-128kB/stats/swpout:17925
+hugepages-128kB/stats/swpout_fallback:1309757
+
+Reported-by: Barry Song <21cnbao@gmail.com>
+Signed-off-by: Chris Li <chrisl@kernel.org>
+---
+Changes in v5:
+- Suggestion and fix up from v4 discussion thread from Yinm and Ryan.
+- Adding Kairui's swap cache reclaim patches on top of patch 3.
+- Link to v4: https://lore.kernel.org/r/20240711-swap-allocator-v4-0-0295a4d4c7aa@kernel.org
+
+Changes in v4:
+- Remove a warning in patch 2.
+- Allocating from the free cluster list before the nonfull list. Revert the v3 behavior.
+- Add cluster_index and cluster_offset function.
+- Patch 3 has a new allocating path for SSD.
+- HDD swap allocation does not need to consider clusters any more.
+
+Changes in v3:
+- Using V1 as base.
+- Rename "next" to "list" for the list field, suggested by Ying.
+- Update comment for the locking rules for cluster fields and list,
+  suggested by Ying.
+- Allocate from the nonfull list before attempting free list, suggested
+  by Kairui.
+- Link to v2: https://lore.kernel.org/r/20240614-swap-allocator-v2-0-2a513b4a7f2f@kernel.org
+
+Changes in v2:
+- Abandoned.
+- Link to v1: https://lore.kernel.org/r/20240524-swap-allocator-v1-0-47861b423b26@kernel.org
+
+---
+Chris Li (3):
+      mm: swap: swap cluster switch to double link list
+      mm: swap: mTHP allocate swap entries from nonfull list
+      mm: swap: separate SSD allocation from scan_swap_map_slots()
+
+Kairui Song (6):
+      mm: swap: clean up initialization helper
+      mm: swap: skip slot cache on freeing for mTHP
+      mm: swap: allow cache reclaim to skip slot cache
+      mm: swap: add a fragment cluster list
+      mm: swap: relaim the cached parts that got scanned
+      mm: swap: add a adaptive full cluster cache reclaim
+
+ include/linux/swap.h |  34 ++-
+ mm/swapfile.c        | 840 ++++++++++++++++++++++++++++++---------------------
+ 2 files changed, 514 insertions(+), 360 deletions(-)
+---
+base-commit: ff3a648ecb9409aff1448cf4f6aa41d78c69a3bc
+change-id: 20240523-swap-allocator-1534c480ece4
+
+Best regards,
+-- 
+Chris Li <chrisl@kernel.org>
+
 
