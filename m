@@ -1,231 +1,263 @@
-Return-Path: <linux-kernel+bounces-268387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5769D942409
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:03:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B011894240B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83F61F244B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:03:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6FF7B23B98
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 01:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718B1BE5E;
-	Wed, 31 Jul 2024 01:03:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885698F49;
+	Wed, 31 Jul 2024 01:06:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cZAiBBHA"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gPfME1Xw"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9853A8BE0;
-	Wed, 31 Jul 2024 01:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722387807; cv=fail; b=cwAYpIoX5eCHmuQXHmyegHbGH74dAeTe4xvFXa1kmyDQbEgcr/gBD7DwQzei+ZoRtV7uSZfQlDQrja0TpddUEVx3sDoscfn6kkdgk4GxGidUaRpOhSyzim5gnIdyW+mvIqb+hkXbh74QfcLh5N5njYPctGU7MuBQ3OP3tbF46Dk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722387807; c=relaxed/simple;
-	bh=xVLCK8UW3pQV51EkbWdXUjYI1sWZVxUF7qODVlNZdwQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=d/x3vOaCKEXSIC0xc7kY4EzzXUxrQyp0pAeqHUp3lPJx2PKcCul8yQ1DMhUNvPnueM/hK1pcJxYeC1erVtOgYyIscDoRbOh9KP7c7n3zjmlxAAHcR8fwS+8i6izlsur3ZsspqUoTTpvpwtVNId3hv6PlWaLg4NXcFGqnIkBofpc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cZAiBBHA; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722387805; x=1753923805;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=xVLCK8UW3pQV51EkbWdXUjYI1sWZVxUF7qODVlNZdwQ=;
-  b=cZAiBBHAuw+0ngEc4Ez2cN1gjdXlMyonqMcbu1ub6vNAG05U9XO8L7Iv
-   nDPGkU/77yrMdsf4BKan9d+Bv76Sz9TxgUooDRqDkkitoM1ojn8j3GQZc
-   eh577K2O/Pa5FKxlrLq7oVUGTSFbcZwytb38cI5XQFex65B9zlTCMTXvR
-   cVs+h9xVhszpnERrRHbneNnw72q2htsmszzyyPh7XVCYuvSFoqiqGcC9z
-   ehujXDxRXRrC15D4av+OIMGBrcOQ9nYpx3YSJ0V2NIRh0pU17JXoLcQYM
-   l+S9WfxVLl1MxEnXMH8Y2xfLHpLz7xn07SPhdUrOo9KjNwtbtHWNjTrUF
-   g==;
-X-CSE-ConnectionGUID: LV9ogCGAReGl3ZBvwRSgmg==
-X-CSE-MsgGUID: g9M0+MOZTK2+GnKwWc0PHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="37753889"
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="37753889"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2024 18:03:24 -0700
-X-CSE-ConnectionGUID: /JRZ/cDBRZqz+CAIIFvgXQ==
-X-CSE-MsgGUID: 4JSHzPGARUGpRvNBeDhE1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
-   d="scan'208";a="54559373"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 30 Jul 2024 18:03:23 -0700
-Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 30 Jul 2024 18:03:23 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 30 Jul 2024 18:03:23 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.41) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 30 Jul 2024 18:03:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=twAVIu8RKZrrIbd3KzfL6ctHsC+qcKzKG4YuavGkNLc7tI3J208NpE4PFmvGE+HywQBxvSmTuPoCpD7MK4hcSQgnPzt3VFVblLM7V006RpPDngb8xcJdrbs5bA0GMyMjsPUSGy3ce5P1Ku/Ad6nGxGue/MrQz67IddO8jbP33ysu73IHPnDTvtvTcnoqL0d5xuq1Ffm67CpWY8HyBpNZHzpvDHgBXKGTp7kBkp33fxp2xzeaM5NCLvcZUK3imAj/Glicgr+jbRBMPzLswj6eDy+1pjmdzZEiP4O5jEHrqsIu+/To4+eH+Jo955F8788dRot45XU3A5DkkLyZLbVsyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=spnM0nVx5Pwu2GAyr6rS0Cm6vQiQm9hcGCo8tRdp7ro=;
- b=ypesmWgoYhr+gf1STxdWqaKU/1KZOt8q1MSIu/69H/MsSUuTmSB2ZSudXtbbwhiNOeBlD8y4b+Sxtt375S7VkStwzZTqwcHhhAfrVjLLqbs/1BlWhJ9prMpvX+nfJyHPr66Hj6YY/xgEXs+2RWKTs2zmT+xJ5W0a33J9Kwef04mYUluAwaHcGnU4rwIX+8RkR7+d8gob/xkzhYn26rMxYeqsVMfXKXClT2ApCIL5kmtgqiKkgJfPVSyl8/ZrC5HyvGHoqKaiyWH1jG/muwX/bPErnJ5oKca2tIwY+f8+FzUZtWNFdvAICu04ntCIWentk3Fld0nBkStwcZcJuNYlqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
- by CH3PR11MB8239.namprd11.prod.outlook.com (2603:10b6:610:156::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Wed, 31 Jul
- 2024 01:03:21 +0000
-Received: from CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
- ([fe80::cfad:add4:daad:fb9b%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 01:03:21 +0000
-Date: Wed, 31 Jul 2024 09:03:10 +0800
-From: Chao Gao <chao.gao@intel.com>
-To: Suleiman Souhlal <ssouhlal@freebsd.org>
-CC: Suleiman Souhlal <suleiman@google.com>, Sean Christopherson
-	<seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] KVM: x86: Include host suspended time in steal time.
-Message-ID: <ZqmNTl8KrjpfsRuR@chao-email>
-References: <20240710074410.770409-1-suleiman@google.com>
- <ZqhPVnmD7XwFPHtW@chao-email>
- <Zqi2RJKp8JxSedOI@freefall.freebsd.org>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zqi2RJKp8JxSedOI@freefall.freebsd.org>
-X-ClientProxiedBy: SI2PR01CA0024.apcprd01.prod.exchangelabs.com
- (2603:1096:4:192::20) To CH3PR11MB8660.namprd11.prod.outlook.com
- (2603:10b6:610:1ce::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E042F37;
+	Wed, 31 Jul 2024 01:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722387959; cv=none; b=hFjDxHWBWAN1pmlY4ziY+YNPGaeBK10FR1vySbt7VI1NdLn3It+G+DNUWmMzYXIpoAUT+VMWg71OTtKvWWZfeN9RS+RaQ+xuo0zdhR4Ts9rn8qTnRLrOmobtS9f2vj8gGffbe/C40Y+rn8JXzOlmFgg1knawNsd0dvcSxAvhH4E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722387959; c=relaxed/simple;
+	bh=di3rbEeVr0sa9MFEnfNsUReIXLyPPC9C92q/Sp/gq8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p0RcZ8Qb83T95bCu/kzGtIci+bGhh+qpb/aAQEczZYrwnBJ8pSdT7D28mbY4jnS54YWdD6jN38teGmeFMnV9goiFLFlU4/JUTgJGTQX9N85RHK4wTjSw+7MP8I7hffEs/pgvkYOBgpprGcjeVyyxHoRNHRGoGvWBsLQraIJ3avs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gPfME1Xw; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd70ba6a15so37094615ad.0;
+        Tue, 30 Jul 2024 18:05:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722387957; x=1722992757; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UmWYrFFBXc+W/UjXwhIBzE2u4A4ubZF2p/m+px8209Q=;
+        b=gPfME1XwtkdBKvYjMPRx1L1R4hLCRwv7pHoF1eZcAUXz2ySWpxq5KeoFnWYBgaF4H9
+         CLVA1Y7Thgf7eBwW7ySDqEJteATs+ZG64vU/o5cgEbkZrToeKtFy88VDlNxosVT5h+e0
+         BKWdoGdRzbdv4jIaWLBro+JupuqZ0XCC2SlzVMgS8pSGqm/UD1A+2BGUv38zMT9Eu4jJ
+         TheYv0LjlfLAv161/VQVqmYDp4e3zrDCQxaShLcONgRufYrvPsx3N40dWj6VvZlyTVbe
+         Bcyp+5B6WCaRLnebK49rOEMUfH0qEBCi6biom1N/1936gMDzuLLwvpci2xKS18VpaRdq
+         x3fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722387957; x=1722992757;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UmWYrFFBXc+W/UjXwhIBzE2u4A4ubZF2p/m+px8209Q=;
+        b=ljEPKmwYeKVdZXxD8eGGv+7X1is5oN6nto+emqkOLoreOP5QbX6IPDZoeBcrTebeJa
+         NV5Lyut5SXO3SebKMY76pn2yDw08nAxeG2RdBGYoSpftRbjuhO6ZzjZyIyG+Wexo8M1o
+         oNOMJ0QnQUBu4Tnk30CXFLJ0sj+bW0+4W7bbYUb7wfz16k3EY7sLKCKyxXxWgzhluDQ9
+         u5bxF63tweao06Xe3UR8imQXTxCiXONjbYSsAW/AUY9qX89pGnjdt0EeChoQmTXzm6G+
+         ETw5h7jbD5Scu29WLHLGL5hBoGClnF3Wj/ZFfV9rEtvTQUW/WsUzHNF9KWVfIrUzkRlj
+         n1OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU88qtJsz5rMBNRqeADaXofYn7aqcBmfTISeLoNCsjnOMUbaXXYp8kvBD/yakKuh87s3uTHpFNW6LUi1BEavRl0aPoqSZHM7DvWsUuSlpv3g74FW1g/rlYgntMjiUwEAD2qw8OoC5U=
+X-Gm-Message-State: AOJu0YyyHhiFwBRq7tU0mvPLm4JYcqbxCCt+Bd23+hhqSZbL/FKczuKJ
+	VAQU1kVBc0MTFbkL7u/0ijS/B6kg34hRZ1w2bPGEiCDXFDIiVUNaXX975A==
+X-Google-Smtp-Source: AGHT+IH4D0mZbxlaseFMClzF2hXzRJT5BLHOoE/CoOTOom7BwtP4i5xwc5qsAdaWuU9puxhR5uX/Iw==
+X-Received: by 2002:a17:90a:e989:b0:2cf:ce3a:4fef with SMTP id 98e67ed59e1d1-2cfce3a523emr3279752a91.19.1722387957042;
+        Tue, 30 Jul 2024 18:05:57 -0700 (PDT)
+Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc46b93fsm52258a91.34.2024.07.30.18.05.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 18:05:56 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 30 Jul 2024 15:05:55 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Qais Yousef <qyousef@layalina.io>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	void@manifault.com, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, mingo@redhat.com, peterz@infradead.org,
+	David Vernet <dvernet@meta.com>,
+	"Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 2/2] sched_ext: Add cpuperf support
+Message-ID: <ZqmN8w8YofaNY79C@slm.duckdns.org>
+References: <20240619031250.2936087-1-tj@kernel.org>
+ <20240619031250.2936087-3-tj@kernel.org>
+ <20240724234527.6m43t36puktdwn2g@airbuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|CH3PR11MB8239:EE_
-X-MS-Office365-Filtering-Correlation-Id: 343dddad-3297-460c-d918-08dcb0fc9244
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?yHQzfEtyNsxF9oh7+KLfYZPmfozLavHKNSsCRqsnaUZljeqrRGzJZ43NUPF6?=
- =?us-ascii?Q?C2iKPjMRyuKM+QP5XilyB/Hv7VQMbdLjNSxaW+XGVSC/ApBnru+jpDKhIUGS?=
- =?us-ascii?Q?U1j542kosUlZ73iEkZt0+zujhOozrXVjAwX6EbO3+hNHyoF0k9zBOGn6YY6Y?=
- =?us-ascii?Q?j0clKrIymAGiW2202RzuIkqRgJlkrWffDTwEwBL3qZoVDxsGkLak3LwaBnbX?=
- =?us-ascii?Q?1xJjHZX4cGWhWaGJMS2axhcTmPq6CM0xbj/HhDme1EM/k7ZwRYiljq283CQF?=
- =?us-ascii?Q?3aEEXC2wKiH88VqwKSB0PUFuL3CIeoz7buqdcLdmkd27CUUOnN3F63oEcweI?=
- =?us-ascii?Q?O1Cfn5ediOudVOPJ2yTdh0EpHpr/3ZC8khCEvc+lltL5FgUNCpIq3K1HNyPn?=
- =?us-ascii?Q?S//v97hHmYYnVArCIXZGtnqjyxflLQ3Ug6wamuwOu2F72ew/SCWMqI9UoS/V?=
- =?us-ascii?Q?S1pDMTQPovgsj5qyyse2J6U5pUorphwBYuRq0Gjg3TEka3NpIKFAEOsmx5Mw?=
- =?us-ascii?Q?ftfrcrNu9Yadw9vwISmXROAFaKJEqxWOuPcA2iqBy4vp7muqsKCohx1VY+Ax?=
- =?us-ascii?Q?CjDnNDUBzEb5vKajb05vDI3DtnM87Unnd1Dzp0JRoZ2B5rNrcF0ML6GBILW6?=
- =?us-ascii?Q?iQMfWWZSsCbcqN0t3KtPOA/gJQxK1urrGRseStovZo9EewiNlhaplTtJF6gS?=
- =?us-ascii?Q?5s+omX30SK1rVY1mvnnoMJywOAFNqrdSZnCOgFeVnbLRygBdt8eMpjme/7A8?=
- =?us-ascii?Q?PFfvSIRvBaf61MM7slb50/oG29WhajYngaO3AQ4v8u5DFmx4b8qMwJHKKMVZ?=
- =?us-ascii?Q?cIvB42CDxkv9LSpqyTRbe+JmFp7GCfXcLu7rWWYkfbX9w7NoZd/XkesQDus1?=
- =?us-ascii?Q?xRUKZMzTDLnsJ+uHIjpkjfBa0kH16iD5vqe+1bpxDFwRT2vsWEdqPbK1PAJK?=
- =?us-ascii?Q?Tjnr2TPuEWoQAVCVhW8cZIHKxu1kPbPLwu/oGQoRXB51JXk3kD8vT6yMpgRl?=
- =?us-ascii?Q?7bnyVgeYDnwH0z4omvDXQX9mgnUqV81BBGHOy7aezBi0sbF4bvQYBrGozmeW?=
- =?us-ascii?Q?GuZSuHlNyvfQSakf9gW28+kEUguFBYNB2m7BQZHfJRXYv7xPoBsoFhzAdqiH?=
- =?us-ascii?Q?z+QuFuKodV9Q4EgEcR6bMSDgWiBaNoFIMWAWwlDy2iRfVAljU6s6Pn2NiSmu?=
- =?us-ascii?Q?t5ynPAnaL79W+vwZP5vm8WD6Vax4A34PbqrVqL/T5bJqHYYNr+4DF1WA+4J0?=
- =?us-ascii?Q?v3Df2TlJI+aewAIR0q+rqfsfCzV17i4ncf+VhXkus86QpJ6ORr6JKH+0IwOW?=
- =?us-ascii?Q?xG+yCUF30uHjJEcdxFW9nBsTnYDOJe8+gUWCLv+aYkbDow=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?+bIPELgYMG62efx7rxtmJOx/270BtIoNss2RWk57Z2RYLwQXwQtSCdIIVez/?=
- =?us-ascii?Q?8mZroxa8DR8kRYa7fblcBIqEQkPvOIvChGApj/tTzB9drcmxpgj3LryOWkOl?=
- =?us-ascii?Q?T6iZMw8aNiD5AXoU+cy6Vx+QqywvJSnX7qT/H3/KbrfFYzzMqX6gFLvSfEYi?=
- =?us-ascii?Q?WHLeybxGmZyMu705XNpij6M51xCc5qIOakHPU45EYpLRevUVuHk6Dfql5fBN?=
- =?us-ascii?Q?MjoaDtRhegBwZQUQ+iXcQtSw43pZxDVFL80Dvf817ZUqOL8Uu0A8CaFA6Goi?=
- =?us-ascii?Q?a2HgpPtW43AWIpp7sPNhyFD7E6aDhJJvILSNDvBqsNQSQSnGXZhHKpWuX+Vi?=
- =?us-ascii?Q?E1VRsUlk3Oig1uCZarqI+mXWa1sv+c01i29cBR2J2qxj4oso0KsAllCa2qbt?=
- =?us-ascii?Q?+NziAKozFI2uz03dVODmHw4C7QBITRq6aymQxCpauddgalDb9H16JA/151gZ?=
- =?us-ascii?Q?KZI/ty5CIlwO7coSpytoVPb0oOWryETH6Kbfo9B/Aq0rde/GPB6dxbgo4ELo?=
- =?us-ascii?Q?K3tTejr3sLXsGH6k98KQzi0QBSaaeSGyfw45NGj47oW52JTD9BYqzWqFavR+?=
- =?us-ascii?Q?XdH3a43zqZQUC1uqQvGGgOZ7p8G5iWSY1Sw8kBLF6kVyq992egmZKPAsKarH?=
- =?us-ascii?Q?TEi6pvBV4cyFpV7sy89LGEpRoYl9x1qMxOTAM8+vu17bNb5r+zFQr+pGlUpk?=
- =?us-ascii?Q?GsQ8WojV6ZG27+Fh3HN2XlC1nyNvYYlksVtH4+AK2VJt69skrXbEHlc42MEr?=
- =?us-ascii?Q?JiJDA+AOnmxsDD3ORdtLe7jGjinUCEYaSLy1cgdDpglvqaGm1ttaDVXTNVFb?=
- =?us-ascii?Q?ZcNK9gH3BDqAT6uWdOTl9qNnCEdkilZuJSmyciSWOD1hc/VAFt7Qy85mjSnj?=
- =?us-ascii?Q?hrnRfZ9bZrzYvXYDoTM/TgEx6ZQ4DO5JM3gn8/IjSu+oSshorRfC38AJw8Is?=
- =?us-ascii?Q?LebqWT6ma/BzeYu3ejDqjaqlQIPUGdhNmsLt3hblonMwlfCfGBju1zMIooQ3?=
- =?us-ascii?Q?vFApPcnmyGDiYaqUchq95tixBQ39de8nqOFjBLx3nHEE4uRGp/q3apDoEeQ5?=
- =?us-ascii?Q?TLPInfNhOmgCwyYPKGEvWE2NQ1IOZ9prgRB3GKfnTvWHepE0uf3///BZPe8+?=
- =?us-ascii?Q?PG3ZxQbjifsXIszbk68/QObFNrwfNbgGlhrc9Uyt9iRs8sWbZ7mWseO/yWoZ?=
- =?us-ascii?Q?6DbjgvoEbgfqUoI+LJc+kXCJqVH63Tis61E4r4nZGScPhflGw/pAolrEwAX0?=
- =?us-ascii?Q?tGf16pYZJTk9gJs4sUSRXpvSviU9d1/wzpWjsRvyyGL1xqiE6MgFs2LhrC1F?=
- =?us-ascii?Q?cGHEVb7iU7w69XIZEmEUJCzvvn6BPl9GBVdlUmA0PWAwXttxiyyFVW41k0NY?=
- =?us-ascii?Q?74Q3n/BLhKsJRWliT5kWQYbiRQ/3B/MyW07bPFj5kaLKvD4Iq1MyvhAl4TEc?=
- =?us-ascii?Q?LAQ2UN90G7Euf61JomaUdTCciKJeFTszfT85CBqBKmWtYVs/R5yeffWwtFFg?=
- =?us-ascii?Q?utBCp7RB69cShvcXoUm1e05ndPjJ4kGVA/L5fH8K/8couZ62xuDr8G3Vd/Mj?=
- =?us-ascii?Q?JI8Adh3X1wlKgb8NI8QfAcksd8+xOfneJlGKr8kh?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 343dddad-3297-460c-d918-08dcb0fc9244
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 01:03:21.3116
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c5WWA066Q+otDLMVHFvdMDkZ7DWtnHNV6w6+tMlB1tc0soS1u+nre6Vn12RINqKf/NQre4Dl51yypRM1cOi5vA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8239
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240724234527.6m43t36puktdwn2g@airbuntu>
 
->> >+static int
->> >+kvm_arch_resume_notifier(struct kvm *kvm)
->> >+{
->> >+	kvm->last_suspend_duration = ktime_get_boottime_ns() -
->> >+	    kvm->suspended_time;
->> 
->> Is it possible that a vCPU doesn't get any chance to run (i.e., update steal
->> time) between two suspends? In this case, only the second suspend would be
->> recorded.
->
->Good point. I'll address this.
->
->> 
->> Maybe we need an infrastructure in the PM subsystem to record accumulated
->> suspended time. When updating steal time, KVM can add the additional suspended
->> time since the last update into steal_time (as how KVM deals with
->> current->sched_info.run_deley). This way, the scenario I mentioned above won't
->> be a problem and KVM needn't calculate the suspend duration for each guest. And
->> this approach can potentially benefit RISC-V and ARM as well, since they have
->> the same logic as x86 regarding steal_time.
->
->Thanks for the suggestion.
->I'm a bit wary of making a whole PM subsystem addition for such a counter, but
->maybe I can make a architecture-independent KVM change for it, with a PM
->notifier in kvm_main.c.
+Hello, Qais.
 
-Sounds good.
+On Thu, Jul 25, 2024 at 12:45:27AM +0100, Qais Yousef wrote:
+> On 06/18/24 17:12, Tejun Heo wrote:
+> > sched_ext currently does not integrate with schedutil. When schedutil is the
+> > governor, frequencies are left unregulated and usually get stuck close to
+> > the highest performance level from running RT tasks.
+> 
+> Have you tried to investigate why is that? By default RT run at max frequency.
+> Only way to prevent them from doing that is by using uclamp
+> 
+> 	https://kernel.org/doc/html/latest/scheduler/sched-util-clamp.html#sched-util-clamp-min-rt-default
+> 
+> If that's not the cause, then it's likely something else is broken.
 
->
->> 
->> Additionally, it seems that if a guest migrates to another system after a suspend
->> and before updating steal time, the suspended time is lost during migration. I'm
->> not sure if this is a practical issue.
->
->The systems where the host suspends don't usually do VM migrations. Or at least
->the ones where we're encountering the problem this patch is trying to address
->don't (laptops).
->But even if they did, it doesn't seem that likely that the migration would
->happen over a host suspend.
->If it's ok with you, I'll put this issue aside for the time being.
+Nothing is necessarily broken. SCX just wasn't providing any signal to
+schedutil before this patch, so schedutil ends up just going by with the
+occasional signals from RT.
 
-I am fine with putting this issue aside.
+...
+> What is exactly the problem you're seeing? You shouldn't need to set
+> performance directly. Are you trying to fix a problem, or add a new feature?
+
+I'm having a hard time following the question. When active, the BPF
+scheduler is the only one who can tell how much each CPU is being used, and
+the straightforward to integrate with schedutil is by indicating what the
+current CPU utilization level is which is the signal that schedutil takes
+from each scheduler class.
+
+> > This gives direct control over CPU performance setting to the BPF scheduler.
+> 
+> Why would we need to do that?  schedutil is supposed to operate in utilization
+
+Because nobody else knows? No one *can* know. Schedutil is driven by the
+utilization signal from the scheduler. Here, the scheduler is implemented in
+BPF. Nothing else knows how much workload each CPU is going to get. Note
+that the kernel side does not have any meaningful information re. task <->
+CPU relationship. That can change on every dispatch. Only the BPF scheduler
+itself knows how the CPUs are going to be used.
+
+> signal. Overriding it with custom unknown changes makes it all random governor
+> based on what's current bpf sched_ext is loaded? This make bug reports and
+> debugging problems a lot harder.
+
+If schedutil is misbehaving while an SCX scheduler is loaded, it's the BPF
+scheduler's fault. There isn't much else to it.
+
+> I do hope by the way that loading external scheduler does cause the kernel to
+> be tainted. With these random changes, it's hard to know if it is a problem in
+> the kernel or with external out of tree entity. Out of tree modules taint the
+> kernel, so should loading sched_ext.
+
+Out of tree modules can cause corruptions which can have lasting impacts on
+the system even after the module is unloaded. That's why we keep the
+persistent taint flags - to remember that the current misbehavior has a
+reasonable chance of being impacted by what happened to the system
+beforehand. Kernel bugs aside, SCX schedulers shouldn't leave persistent
+impacts on the system. In those cases, we usually mark the dumps which SCX
+already does.
+
+> It should not cause spurious reports, nor prevent us from changing the code
+> without worrying about breaking out of tree code.
+
+Oh yeah, we can and will make compatibility breaking changes. Not
+willy-nilly, hopefully.
+
+...
+> > +	/*
+> > +	 * The heuristics in this function is for the fair class. For SCX, the
+> > +	 * performance target comes directly from the BPF scheduler. Let's just
+> > +	 * follow it.
+> > +	 */
+> > +	if (scx_switched_all())
+> > +		return false;
+> 
+> Why do you need to totally override? What problems did you find in current util
+> value and what have you done to try to fix it first rather than override it
+> completely?
+
+Because it's way cleaner this way. Otherwise, we need to keep calling into
+update_blocked_averages() so that the fair class's util metrics can decay
+(it often doesn't decay completely due to math inaccuracies but Vincent was
+looking at it). When switched_all(), the fair class is not used at all and
+keeping calling it to decay the utility metrics to zero seems kinda silly.
+
+...
+> > +/**
+> > + * scx_bpf_cpuperf_cap - Query the maximum relative capacity of a CPU
+> > + * @cpu: CPU of interest
+> > + *
+> > + * Return the maximum relative capacity of @cpu in relation to the most
+> > + * performant CPU in the system. The return value is in the range [1,
+> > + * %SCX_CPUPERF_ONE]. See scx_bpf_cpuperf_cur().
+> > + */
+> > +__bpf_kfunc u32 scx_bpf_cpuperf_cap(s32 cpu)
+> > +{
+> > +	if (ops_cpu_valid(cpu, NULL))
+> > +		return arch_scale_cpu_capacity(cpu);
+> > +	else
+> > +		return SCX_CPUPERF_ONE;
+> > +}
+> 
+> Hmm. This is tricky. It looks fine, but I worry about changing how we want to
+> handle capacities in the future and then being tied down forever with out of
+> tree sched_ext not being able to load.
+> 
+> How are we going to protect against such potential changes? Just make it a NOP?
+
+So, if it's a necessary change, we just break the API and update the
+out-of-tree schedulers accordingly. With BPF's CO-RE and supporting
+features, we can handle quite a bit of backward compatibility - ie. it's
+cumbersome but usually possible to provide BPF-side helpers that allow
+updated BPF schedulers to be loaded in both old and new kernels, so it
+usually isn't *that* painful.
+
+> A bit hypothetical but so far these are considered internal scheduler details
+> that could change anytime with no consequence. With this attaching to this info
+> changing them will become a lot harder as there's external dependencies that
+> will fail to load or work properly. And what is the regression rule in this
+> case?
+
+This is not different from any other BPF hooks and has been discussed many
+times. As I wrote before, we don't want to change for no reason but we
+definitely can change things if necessary.
+
+> You should make all functions return an error to future proof them against
+> suddenly disappearing.
+
+Really, no need to be that draconian.
+
+...
+> > +__bpf_kfunc void scx_bpf_cpuperf_set(u32 cpu, u32 perf)
+> > +{
+> > +	if (unlikely(perf > SCX_CPUPERF_ONE)) {
+> > +		scx_ops_error("Invalid cpuperf target %u for CPU %d", perf, cpu);
+> > +		return;
+> > +	}
+> > +
+> > +	if (ops_cpu_valid(cpu, NULL)) {
+> > +		struct rq *rq = cpu_rq(cpu);
+> > +
+> > +		rq->scx.cpuperf_target = perf;
+> > +
+> > +		rcu_read_lock_sched_notrace();
+> > +		cpufreq_update_util(cpu_rq(cpu), 0);
+> > +		rcu_read_unlock_sched_notrace();
+> > +	}
+> > +}
+> 
+> Is the problem that you break how util signal works in sched_ext? Or you want
+> the fine control? We expect user application to use uclamp to set their perf
+> requirement. And sched_ext should not break util signal, no? If it does and
+> there's a good reason for it, then it is not compatible with schedutil, as the
+> name indicates it operates on util signal as defined in PELT.
+> 
+> You can always use min_freq/max_freq in sysfs to force min and max frequencies
+> without hacking the governor. I don't advise it though and I'd recommend trying
+> to be compatible with schedutil as-is rather than modify it. Consistency is
+> a key.
+
+It's not hacking the governor and uclamp should work the same way on top.
+The BPF scheduler is the only thing that can tell how and how much a given
+CPU is going to be used. There is no way for the kernel to project per-CPU
+utilization without asking the BPF scheduler.
+
+Thanks.
+
+-- 
+tejun
 
