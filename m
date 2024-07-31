@@ -1,203 +1,96 @@
-Return-Path: <linux-kernel+bounces-269883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 280CF94380F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:34:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15E6943811
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:34:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 675D2B21A26
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:34:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D501C22549
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254F166308;
-	Wed, 31 Jul 2024 21:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B6B16D304;
+	Wed, 31 Jul 2024 21:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GQu1F0BL"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MS0qMhVL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35F445957
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:34:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8777A45957;
+	Wed, 31 Jul 2024 21:34:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722461668; cv=none; b=ee8xvxXHDLw3yW0Ct2NnEu99jcCV7ZvQAmzUj92wtKjXgiiM/HiLQHIhTDQLuhdPA+xL2UlnbCsbM3IcCAB3mUzx8TRD8h4aiwpdeETPhrSGRzEqZVG5Ja0tTJmV00jvVWGGCZ9Wssyf00NBjoO3RX1pnd0yXgg1lSNeKwXJ4fE=
+	t=1722461675; cv=none; b=fAXI2d1l7WZAGo4VRMXJYOz/S05iPIPZ1X3uVdeV84qqNkFS6t/FGIHpVjwQevRFubyV8dP3TGEu13H+DOsvZ04r7JolTP0+yc22JPCvZcecAONTqgm/cpdIPseMJT0gsP6iji95XV5MkQfRk0mZIDL1iA1/Ssgb5cyo0vd1UWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722461668; c=relaxed/simple;
-	bh=7409YPGD84DSohjrVEJAwG5xvR83yL1kGxaxMdosLHg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sOOImTO7K6nw+gdAFtZUi8x23wY8FQtfaLZb0cJfu/F5dvVFDp6xU2mixa6uQBPtsTElLjcyWgjNZIlYhRFNDUAqhTZ4mlp/+0rVFFaB/3G2WvRDR4qCxWDcOq/jhVLhrAbGigB3cRFzn2HJxZ84OnGlOCn5dzpdY1vyHwxqQAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GQu1F0BL; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso41717515e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:34:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722461665; x=1723066465; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bli9lhI61IaRjVxZ6El/2TlE2JOrlJn5Lbi96Tzc1cY=;
-        b=GQu1F0BLQxTE5HrRAYdznGPthK87JO7jzNA+e0LtPBS1Xeb7WCoXTu2o2+hnzBzEUl
-         buBKc8MLsCIEA0Bjx1nzCTqT1i+hXRpUbn5iBBD2SbfwEsIe35BUVWVchgQPPD+DFajC
-         lgje4uUGsgJyywhKyYgL3ztHIrUUCdz3okoNP58tNgHhPgWtwYf9i8AxVGsRIaJgg9X8
-         CKcJQ2zOdQWlDWO3kjiYGEMSBdXzPvWGQVqYoBqIqg7REf/xE5sFBvxtZ1ndtnA7kFmX
-         qadHFbyDM1p2Ld/bexaE0vVnZucLwHYBDMHOjdX234OwQF4buenYjN+cAaHLeLST4GQT
-         nxzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722461665; x=1723066465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bli9lhI61IaRjVxZ6El/2TlE2JOrlJn5Lbi96Tzc1cY=;
-        b=j983ILYmDmRSNUefVBYbL/DP5AZsiTB3ipadazCVuN/DJyom2uLxuEzZO3lgCb6HXW
-         QSGc1phdUpx45S41WTuP7f767R/TXU1ycrIGVt1t6AefJsgO9jkCFLi/Byhmy0i8c9Sz
-         +rXStU2FExT+4ylHvO1Hf3pRfXuR7NIJezSLbVbk4YQLUnadrhv+kP4JLgTkk+YKKaKJ
-         74eF/4/Kr6h8jayn79i/rAPOQI3329o2BaiHBynzsgzIjzdTciwTOemeJMp4oP7DvT/R
-         Nk7IMyAgdG7Zp5wdMTy5KN7Exh+l3Dti4KfTy+knfT/gmnu0H4ZJVBid9uFiamAQSANs
-         5XXw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxPNxHo/Aw76HikUyrNix65aXhL9w6KE9xaHuAhEWl8VM+xN5oC+YQmkZJEJbpXVaeyku1tTl8UBnRCcGmPvrv9vID8VKQb47f3ApU
-X-Gm-Message-State: AOJu0Yx4IeVG0XCj5ESJRDconMx8Y8dVJxF301ftM3Zp2r/+7ccOJNFK
-	fhuCdOqpW4Jw3QhUDsXemgUSnyCixUOwdVLytLitsURyz/z+UR4Udmrc6pp14lFO/mY0i+FvOpg
-	Cp/j0QjAXsnDXZjaGdQSiesFFAw58hW6QN/4Q
-X-Google-Smtp-Source: AGHT+IEnnH7Vl1oPP/7poRoKnYi3pQkDBFhO+xnBb/MH3dLIwjkKyZ7/ziEU66uYwoK2Ox4X3gDKYbUA6wyDWgsUmeg=
-X-Received: by 2002:a05:600c:3543:b0:426:6ee7:c05a with SMTP id
- 5b1f17b1804b1-428a9bdcd50mr4067365e9.15.1722461664765; Wed, 31 Jul 2024
- 14:34:24 -0700 (PDT)
+	s=arc-20240116; t=1722461675; c=relaxed/simple;
+	bh=lr6RndWb/v97/nsxy7O9GZ+yCqur6+qPiC4EmRPnwws=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EhLk/zA768cCpk4SUGzUAlO71cVYQJH4DKh2yKVXj419wiWPM9TdGICBaC+iWJC59HHKHK14q1tYiHkzTJloklRBdJQuhosNiStZDwXpe8qvIhhdsgVI7rcMhA4ZzSQCxu+2FBy+40D9L/854olYoHKtD9qXmjuK74gT8N7hgzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MS0qMhVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEECAC116B1;
+	Wed, 31 Jul 2024 21:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722461675;
+	bh=lr6RndWb/v97/nsxy7O9GZ+yCqur6+qPiC4EmRPnwws=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MS0qMhVL5wCt5bFwEaXjK01fwm/rMkFRUFRqDy2k4EU9M2XvEnFQj3yCgcRFf7qhC
+	 kRkiW262Lwi9ChozOSiKW564hZXoupHLo/xbjgkMgB31TnCr8SM85KgeOb9jJvoNp6
+	 TJqzFQTla+cWTa3tqIiNrrW7i7VIiT683g1yTiODcMrLzK2xXEhbnRAtbAACvt0hRq
+	 vyoPPBrblaKSvhVkmcaDSFpeUaMxxf/U7CD7tCXAhjC/OagdXEoqlLpCmAoILgKwHi
+	 aSLysAYeStf8BbSKH8bkWxr4yRDccTrE3MDj+f2sqy+F28mjjwd79UgQz8x9GKyrCt
+	 rgN6NvOOZF01w==
+From: KP Singh <kpsingh@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: paul@paul-moore.com,
+	kpsingh@kernel.org,
+	bp@alien8.de,
+	sfr@canb.auug.org.au
+Subject: [PATCH] init/main.c: Do jump_label_init before early_security_init
+Date: Wed, 31 Jul 2024 23:34:29 +0200
+Message-ID: <20240731213429.2244234-1-kpsingh@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628-tracepoint-v4-0-353d523a9c15@google.com>
- <20240628-tracepoint-v4-1-353d523a9c15@google.com> <20240731170508.GJ33588@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240731170508.GJ33588@noisy.programming.kicks-ass.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 31 Jul 2024 23:34:13 +0200
-Message-ID: <CAH5fLghYodekhH-1A0BWZVwgbqkWbP3WP70-us2FtHqvOqD_Hw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] rust: add static_key_false
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)" <peterz@infradaed.org>, 
-	Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 7:05=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Fri, Jun 28, 2024 at 01:23:31PM +0000, Alice Ryhl wrote:
->
-> >  rust/kernel/arch/arm64/jump_label.rs     | 34 ++++++++++++++++++++++++=
-++++
-> >  rust/kernel/arch/loongarch/jump_label.rs | 35 ++++++++++++++++++++++++=
-+++++
-> >  rust/kernel/arch/mod.rs                  | 24 ++++++++++++++++++++
-> >  rust/kernel/arch/riscv/jump_label.rs     | 38 ++++++++++++++++++++++++=
-++++++++
-> >  rust/kernel/arch/x86/jump_label.rs       | 35 ++++++++++++++++++++++++=
-+++++
-> >  rust/kernel/lib.rs                       |  2 ++
-> >  rust/kernel/static_key.rs                | 32 ++++++++++++++++++++++++=
-+++
-> >  scripts/Makefile.build                   |  2 +-
-> >  8 files changed, 201 insertions(+), 1 deletion(-)
->
-> So I really find the amount of duplicated asm offensive. Is is far too
-> easy for any of this to get out of sync.
->
-> > diff --git a/rust/kernel/arch/x86/jump_label.rs b/rust/kernel/arch/x86/=
-jump_label.rs
-> > new file mode 100644
-> > index 000000000000..383bed273c50
-> > --- /dev/null
-> > +++ b/rust/kernel/arch/x86/jump_label.rs
-> > @@ -0,0 +1,35 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +// Copyright (C) 2024 Google LLC.
-> > +
-> > +//! X86 Rust implementation of jump_label.h
-> > +
-> > +/// x86 implementation of arch_static_branch
-> > +#[macro_export]
-> > +#[cfg(target_arch =3D "x86_64")]
-> > +macro_rules! arch_static_branch {
-> > +    ($key:path, $keytyp:ty, $field:ident, $branch:expr) =3D> {'my_labe=
-l: {
-> > +        core::arch::asm!(
-> > +            r#"
-> > +            1: .byte 0x0f,0x1f,0x44,0x00,0x00
-> > +
-> > +            .pushsection __jump_table,  "aw"
-> > +            .balign 8
-> > +            .long 1b - .
-> > +            .long {0} - .
-> > +            .quad {1} + {2} + {3} - .
-> > +            .popsection
-> > +            "#,
-> > +            label {
-> > +                break 'my_label true;
-> > +            },
-> > +            sym $key,
-> > +            const ::core::mem::offset_of!($keytyp, $field),
-> > +            const $crate::arch::bool_to_int($branch),
-> > +        );
-> > +
-> > +        break 'my_label false;
-> > +    }};
-> > +}
->
-> Note that this uses the forced 5 byte version, and not the dynamic sized
-> one. On top of that it hard-codes the nop5 string :/
->
-> Please work harder to not have to duplicate stuff like this.
+LSM indirect calls being are now replaced by static calls, this requires
+a jumpt_table_init before early_security_init where LSM hooks and their
+static calls and keys are initialized.
 
-I really didn't want to duplicate it, but it's very hard to find a
-performant alternative. Is there any way we could accept duplication
-only in the cases where an 'i' parameter is used? I don't have the
-choice of using a Rust helper for 'i' parameters.
+Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
+Signed-off-by: KP Singh <kpsingh@kernel.org>
+---
+ init/main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Perhaps one option could be to put the Rust code inside jump_label.h
-and have the header file evaluate to either C or Rust depending on the
-value of some #ifdefs?
+diff --git a/init/main.c b/init/main.c
+index 206acdde51f5..5bd45af7a49e 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -922,6 +922,8 @@ void start_kernel(void)
+ 	boot_cpu_init();
+ 	page_address_init();
+ 	pr_notice("%s", linux_banner);
++	/* LSM and command line parameters use static keys */
++	jump_label_init();
+ 	early_security_init();
+ 	setup_arch(&command_line);
+ 	setup_boot_config();
+@@ -933,8 +935,6 @@ void start_kernel(void)
+ 	boot_cpu_hotplug_init();
+ 
+ 	pr_notice("Kernel command line: %s\n", saved_command_line);
+-	/* parameters may set static keys */
+-	jump_label_init();
+ 	parse_early_param();
+ 	after_dashes = parse_args("Booting kernel",
+ 				  static_command_line, __start___param,
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
-#ifndef RUST_ASM
-/* existing C code goes here */
-#endif
-#ifdef RUST_ASM
-// rust code goes here
-#endif
-
-That way the duplication is all in a single file. It would also avoid
-the need for duplicating the nop5 string, as the Rust case is still
-going through the C preprocessor and can use the existing #define.
-
-I'm also open to other alternatives. But I don't have infinite
-resources to drive major language changes.
-
-Alice
 
