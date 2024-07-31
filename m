@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-268778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6528D94292C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632A6942930
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 970181C215A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10C741F219CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6DCA1A7F93;
-	Wed, 31 Jul 2024 08:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7B21A8BEB;
+	Wed, 31 Jul 2024 08:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZgYgAoj+"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Va2XUVvS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF291B7F4;
-	Wed, 31 Jul 2024 08:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3641A7F68;
+	Wed, 31 Jul 2024 08:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722414620; cv=none; b=J6GEjOOSMVTQihIILlO5LDJGsZ6XA1KAyDA7iYLHICbIQDNicIzZzw24N2PETHxsHANdddVI7oQT+T/a+T5BPUuuix6kxdPBXjc90VaHVj4df0idxuSmBpDE6Xlce/1ksu8l10BruW2ZY9of2J50MMHNEiUI/ES/BQ3zmKhk9H4=
+	t=1722414635; cv=none; b=o79evoT1/miQT4QMSFVmC5mZmwP/WDorVU51ibLx7lR7yPckw2BvMA9VFFiq0i951jxvxJZAD1C6JoVW8lQ2w9m+P8iFTJrfLUPoc0MRa7znrWM+MRgjMQK/7DdXi4ZcYusjzWG1Uhjh8cI7ahlubhiLkW6axeeeA+Pa3+TyssY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722414620; c=relaxed/simple;
-	bh=OR8H7WCKIvfDnHtuwKjrLnw1TJnOIDK3iNbYRPYfkJg=;
+	s=arc-20240116; t=1722414635; c=relaxed/simple;
+	bh=83tdkFTvpxeNWsYDJk5FXBclyqEpGP5v1+TSNN8ARpU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAZPV8tulliNWIHakX8Vx2LXiSd2jf73GQRr3r0xv/lB3BvTR1ol85gpZtC7UsFfGjZblPxG+KZEt2IoxTUKtPpI6WNbpcAx7lbC2wvvZ56ijzGN882yj3bBv1eN9ABDVYYGc3KoImtvTaQ4/yaMjCcgW0m9B36bbnhUXT1lV0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZgYgAoj+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD2EC4AF09;
-	Wed, 31 Jul 2024 08:30:19 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQhGEwxulRX7r+0QsFeRtImDtiIh4/Xf0oT7pqye8CuBhMNkRBtEcr77gPEDOUJVJlzGnup8J2tZfh+Jp4e6ZGwwu0wCncq3FNcqMYez7NaLkDGA1Rdx+Nb/EPQ5Z57yeVuChHVXWlMI9UW9+uaow7wz+WGScMyAZDHozE99LYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Va2XUVvS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EDDBC116B1;
+	Wed, 31 Jul 2024 08:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722414619;
-	bh=OR8H7WCKIvfDnHtuwKjrLnw1TJnOIDK3iNbYRPYfkJg=;
+	s=korg; t=1722414635;
+	bh=83tdkFTvpxeNWsYDJk5FXBclyqEpGP5v1+TSNN8ARpU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZgYgAoj+0L9QnXpC9qJ+G5XctMKEzn88t9UaPCQdzjJ8+cQ+8EI4tXXP0thqV68Xf
-	 RTRvG/Or5nMDk0OAUiWmkkp1pagorkqxR8X/i+GyLeHyVbwVRqLTVNT2D/hwGBiwPl
-	 tbzT9GZoPOhYJDk4Mn2IanG/C5xLD1pnrvb/pcJE=
-Date: Wed, 31 Jul 2024 10:30:16 +0200
+	b=Va2XUVvSfqlIJj6AwPaTzk2hTukSHAjkHmMVg/0NI559w1qKvqq1RB+L3pW3LjmBp
+	 VlzI3ic4Yr/2EQsKa8RRWAqE4Ssz+Q1qgd5Ns2Yc0G5MjT2v8Jr2oOU/B5DlaKtAEn
+	 Al8dUsjVjhmyRMczbIAVlHbJM3f4uBLXW/ffg4+c=
+Date: Wed, 31 Jul 2024 10:30:32 +0200
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Michael Grzeschik <m.grzeschik@pengutronix.de>
 Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Daniel Scally <dan.scally@ideasonboard.com>,
 	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: function: uvc: set req_size once when the
- vb2 queue is calculated
-Message-ID: <2024073100-manor-sworn-7bf2@gregkh>
-References: <20240404-uvc_request_calc_once-v1-1-fea7fd8f0496@pengutronix.de>
+Subject: Re: [PATCH v2] usb: gadget: uvc: Improve error checking and tagging
+Message-ID: <2024073119-turbine-subscript-e19a@gregkh>
+References: <20240324-uvc-gadget-errorcheck-v2-1-f141b13ade0e@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,25 +54,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240404-uvc_request_calc_once-v1-1-fea7fd8f0496@pengutronix.de>
+In-Reply-To: <20240324-uvc-gadget-errorcheck-v2-1-f141b13ade0e@pengutronix.de>
 
-On Thu, Apr 04, 2024 at 10:35:01AM +0200, Michael Grzeschik wrote:
-> The uvc gadget driver is calculating the req_size on every
-> video_enable/alloc_request and is based on the fixed configfs parameters
-> maxpacket, maxburst and mult.
+On Fri, Apr 05, 2024 at 09:44:56AM +0200, Michael Grzeschik wrote:
+> Right now after one transfer was completed with EXDEV the currently
+> encoded frame will get the UVC_STREAM_ERR tag attached. Since the
+> complete and encode path are handling separate requests from different
+> threads, there is no direct correspondence between the missed transfer
+> of one request and the currently encoded request which might already
+> belong to an completely different frame.
 > 
-> As those parameters can not be changed once the gadget is started and
-> the same calculation is done already early on the
-> vb2_streamon/queue_setup path its save to remove one extra calculation
-> and reuse the calculation from uvc_queue_setup for the allocation step.
+> When queueing requests into the hardware by calling ep_queue the
+> underlying ringbuffer of the usb driver will be filled. However when
+> one of these requests will have some issue while transfer the hardware
+> will trigger an interrupt but will continue transferring the pending
+> requests in the ringbuffer. This interrupt-latency will make it
+> impossible to react in time to tag the fully enqueued frame with the
+> UVC_STREAM_ERR in the header.
+> 
+> This patch is also addressing this particular issue by delaying the
+> transmit of the EOF/ERR tagged header by waiting for the last enqueued
+> buffer of the frame to be completed. This way it is possible to react to
+> send the EOF/ERR tag depending on the whole frame transfer status.
 > 
 > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 > ---
->  drivers/usb/gadget/function/uvc_queue.c |  2 ++
->  drivers/usb/gadget/function/uvc_video.c | 15 ++-------------
->  2 files changed, 4 insertions(+), 13 deletions(-)
+> Changes in v2:
+> - removed unnecessary uvc_gadget_errorcheck_param module parameter
+> - Link to v1: https://lore.kernel.org/r/20240324-uvc-gadget-errorcheck-v1-1-5538c57bbeba@pengutronix.de
+> ---
+>  drivers/usb/gadget/function/uvc.h       |  2 +
+>  drivers/usb/gadget/function/uvc_video.c | 69 ++++++++++++++++++++++++++++-----
+>  2 files changed, 61 insertions(+), 10 deletions(-)
 
-Is this still needed?  If so, can you rebase and resubmit it?
+Same here, can you rebase and resubmit if still needed?
 
 thanks,
 
