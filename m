@@ -1,180 +1,130 @@
-Return-Path: <linux-kernel+bounces-269527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 772C59433D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:05:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F769433CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:04:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3216E2868F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:05:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24F59283275
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E401BD00F;
-	Wed, 31 Jul 2024 16:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2AE1B5824;
+	Wed, 31 Jul 2024 16:04:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oJcjR3VS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pXywWQYL";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="oJcjR3VS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pXywWQYL"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JkY8w3kc"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD92C1BBBD9
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48385171AF
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722441939; cv=none; b=SWMlP3wRue0xoMHHs3FvVpvIxhO/uh+OOAPXMJMGgNTHNKReR7wer9EndcB8YAvz+QPTNBnoqIV6RAvnqxnKo3EU2ddx32oPFbX7nV+FSogfa3GkvsuCXeqW2gqDY71dBqOAZeAPDiTNhyOU0u0mCX2Yq49SW0+WQKd6wg3WGM8=
+	t=1722441887; cv=none; b=WM7f7iknBpPbxAKtXmi4/4Db/yz1tEjRRviJbW2TwjNAiSZ6/Zz9aSbs+m7zF+GeEm4dibmByYHL/QP96qck+ds+1CVfetEjFIk1TIWEn4A2t7P5F7a3D9moo21Lwayp0+ZIE2oW37Xk0euc+VF+bJB88uzqQXhiLbz+OSgRFHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722441939; c=relaxed/simple;
-	bh=tyUGTtpvkAN/3mchvYJD6+QYbbD7BQk21DeGvldxm+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FnWdX3lN9ITRMoIsQ52D6wt1zOZfNzUWl0sZyYzZ10YA4PvyO2NGkwtmon57WVsq3apXL8bwptkJDQ0AE4xNmObyNZPbJWlZZP/GlBU3POGM8dkPY0c5bFzN73tcR8NzPAtpTQNU12MLWLmCU3AZsJYYcwMFh4RIE3DGe9+H0Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oJcjR3VS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pXywWQYL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=oJcjR3VS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pXywWQYL; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D93B21A70;
-	Wed, 31 Jul 2024 16:04:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722441851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
-	b=oJcjR3VS2GX2IeLTqS9h91H8Bg9dxaIuzRM4nH70z+W4uLn4KJ9y72unrG3h6ywQd0a8QR
-	O2ftrCYZvOTG/e3lLLsZYPvmoElT4fC/greQQX0x5NDyzCpiSDfDoeEb3uiVo8mQ9lpB7H
-	i0/Xv2FRg0GLS98GQOamel7pPChUwOA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722441851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
-	b=pXywWQYLENY8SqT86qk1rM6n4kTpF9M6bKUG9IfhQUVtDviPbTBMVorZJfJAway4vtPSE4
-	iYxvDqZMjrtEYXAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=oJcjR3VS;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=pXywWQYL
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722441851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
-	b=oJcjR3VS2GX2IeLTqS9h91H8Bg9dxaIuzRM4nH70z+W4uLn4KJ9y72unrG3h6ywQd0a8QR
-	O2ftrCYZvOTG/e3lLLsZYPvmoElT4fC/greQQX0x5NDyzCpiSDfDoeEb3uiVo8mQ9lpB7H
-	i0/Xv2FRg0GLS98GQOamel7pPChUwOA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722441851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ny1cQJm2Lwyao+X/FxxVd6jUz5C/XMTTGu2oaWCfi4M=;
-	b=pXywWQYLENY8SqT86qk1rM6n4kTpF9M6bKUG9IfhQUVtDviPbTBMVorZJfJAway4vtPSE4
-	iYxvDqZMjrtEYXAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C807C1368F;
-	Wed, 31 Jul 2024 16:04:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jXscLnpgqmZ0EgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Wed, 31 Jul 2024 16:04:10 +0000
-Date: Wed, 31 Jul 2024 18:04:04 +0200
-From: Oscar Salvador <osalvador@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	David Hildenbrand <david@redhat.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH v2 6/9] mm: Make hugetlb mappings go through
- mm_get_unmapped_area_vmflags
-Message-ID: <ZqpgdBk-3Bcl3Mvr@localhost.localdomain>
-References: <20240729091018.2152-1-osalvador@suse.de>
- <20240729091018.2152-7-osalvador@suse.de>
- <8a57e184-4994-4642-959d-44dc7efbceca@lucifer.local>
- <ZqpTaKHdrYt61HYy@localhost.localdomain>
- <354e4db4-e257-48a4-9e05-7f0595728ec6@lucifer.local>
+	s=arc-20240116; t=1722441887; c=relaxed/simple;
+	bh=/bLeVpK+e0dmd5q9ldXdqMghU9aFz30yulU+T5Q5OOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gy0mAOsZtnwtIugDvuDBRFk0sxamS29UwITziMfc5zae4zi5G/e0mfeo5cjilCju75Y3Eg8Vn83bVNemWa+JbbM95rmHVze0lqe6+2Yx1PL8efSSIZwn0gwHfLbJYIWd+NHIiO84QaCGWQCHS0yMd+hF2pkQCyyvHkDXArRWjOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JkY8w3kc; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5a2ffc346ceso8373660a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:04:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722441883; x=1723046683; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yaKOV8TmQ0VNaMsLmwJtsrXt1HeOlVVbSAymsrtRf0=;
+        b=JkY8w3kcyaRiuhu84THBkby+5Dsg9vhnqRlnvz7fIAXAdyGDZRJL8ix5D8TKQ2GXYg
+         7F/dBmRVc+ip4heqd5hqiQlEYd97yQ61czTW+45yQd2eA+F9Qor3hfYQkzAEPQDKSvPk
+         MduIqCqsUgyw1FuC2EEnfBbrCQ16iR96d3+PU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722441883; x=1723046683;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+yaKOV8TmQ0VNaMsLmwJtsrXt1HeOlVVbSAymsrtRf0=;
+        b=PE2yiCHguQbhnTK+b4hScHvLQg+J//iKnN4epNiLZMtbiL89KdQadEAr7VEAAsk0Vu
+         zxUx5yakXRnkbzn48NR9G83AXDEIc2Pi2uUA3BIqv5nx/ks+2Znmnd1/2bAbuwnoUbJh
+         2vndsqtf6yYCt3/R1gtq3XxZ/ePj0Ny0dqXMtFbopeZy2yLpDReVVnQV9heCmsgIeWcF
+         1Qfw39HYQelSqSMnkorgn4wZYr8OiyMT8kH9BomaqguTboGAxbzEqkq1k3jwTHQ5y3An
+         ClaYFCeKM4DjoaOFDqwDqL97Zta7i3PO2ntQkcEuw3M/qHWfSLzFHbQMPwiBu2DpmV/v
+         6g1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVrkL43E6/PJpFGAa+7gHS3YQcRYCnHXY5ACiDQLeB2bJs//xxHRW6iWJc0PzdbtR/CasVSo55N7tMesVfgNgFLzy4tL6Afw6pp9s0b
+X-Gm-Message-State: AOJu0YzNMqX1Eg79lb8Setyy+iu64zOM4iX3xy6RKMwuOz+Td4vkHytY
+	ac+Q5WaMy+Yv/jGzGpxEp7Bv02dz3WHFsrQiwIxiiSaBhWn9DZz4Gts+QXKHcii/niXvKsRbjJe
+	DXUdJzA==
+X-Google-Smtp-Source: AGHT+IGvKBKI66dU224PTMDVzdXaqxRLcGENBmeGc7Xk1NuoS/MTU29Tyd8gIMPDRCQpxcxSp2p1NQ==
+X-Received: by 2002:a17:907:3e1a:b0:a75:23bb:6087 with SMTP id a640c23a62f3a-a7d40095f19mr987090666b.29.1722441882774;
+        Wed, 31 Jul 2024 09:04:42 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb9d9asm787399766b.219.2024.07.31.09.04.41
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 09:04:41 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so8834635a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:04:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV4CaICp/4JrR0+fNAATJ8ZRRbYu7v9H5YYOGn91QX92A/Dz0mdWu7nn2QEmorOkut8aA1x6yQFfH/xPl6klBmPaBf1JJr0N7n/OK+a
+X-Received: by 2002:a05:6402:34cc:b0:5a0:e61c:edfd with SMTP id
+ 4fb4d7f45d1cf-5b0207cb548mr11807179a12.14.1722441880993; Wed, 31 Jul 2024
+ 09:04:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <354e4db4-e257-48a4-9e05-7f0595728ec6@lucifer.local>
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.31 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.31
-X-Rspamd-Queue-Id: 6D93B21A70
+References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
+ <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com> <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
+ <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com> <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
+ <e718056c1999497ebf8726af49475701@AcuMS.aculab.com> <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
+ <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com> <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
+ <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
+ <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com> <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
+ <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
+ <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
+ <73d65e2553e543069f9969ccec4ea9b3@AcuMS.aculab.com> <CAHk-=wgP+Fm=O2tYtS=3fDB7Vh+=rSYCC1mjqxcTQ=024G0qYw@mail.gmail.com>
+ <CAHk-=whNTuPVeOSB6bG7YRXeYym9anS2QawRHEKRJe2MQuOPPA@mail.gmail.com>
+ <0549691a6a3d4f7a9e77003b70fcf6fe@AcuMS.aculab.com> <CAHk-=whwrXgtOrr6AKQTSYSG5V820cSsMcUjRhapnoqCh+Ciog@mail.gmail.com>
+ <fbdf2df07e7140dbb96dcda48d4da270@AcuMS.aculab.com>
+In-Reply-To: <fbdf2df07e7140dbb96dcda48d4da270@AcuMS.aculab.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Wed, 31 Jul 2024 09:04:24 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whwmV+gWoSLBT4w1UabxCwaS9rXkgPsTnC3Di=5nfe_Vw@mail.gmail.com>
+Message-ID: <CAHk-=whwmV+gWoSLBT4w1UabxCwaS9rXkgPsTnC3Di=5nfe_Vw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
+To: David Laight <David.Laight@aculab.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+	Matthew Wilcox <willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
+	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 31, 2024 at 04:19:09PM +0100, Lorenzo Stoakes wrote:
-> Yeah this is at commit aee8efc95fc2 ("mm: make hugetlb mappings go through
-> mm_get_unmapped_area_vmflags").
-> 
-> If you:
-> 
-> git checkout aee8efc95fc2
-> git grep hugetlb_get_unmapped_area
-> 
-> You'll see it.
-> 
-> I'm guessing you remove this in future commits, but the kernel must be able
-> to build at every revision so we can bisect (I found this issue through a
-> bisect and had to fix this up to check).
-> 
-> A trivial fix is just to provide the prototype immediately prior to the
-> function decl, however the more correct solution is probably to do the
-> removals at the same time.
+On Wed, 31 Jul 2024 at 08:57, David Laight <David.Laight@aculab.com> wrote:
+>
+> Perhaps something like:
+> #define do_foo(x, uniq) ({ \
+>         __auto_type _x_##uniq = z; \
 
-Yeah, I just squashed the removal commit and this one.
+I  like it.
 
-> This bit is just a bit of a slightly nitty cleanup to make sure things
-> build at every commit, the first issue is the really key one, just needs
-> some tweaking to deal with the frankly bloody horrible SHM stuff... Do not
-> blame you for missing that one!
+Not quite enough to do it now, though.
 
-I did not check closely yet, but are blowing up in:
+But I did commit my min3/max3 patch, because when I looked at it a bit
+more, I realized that the old min3/max3 implementation was actually
+completely and fundamentally broken, and has been for a decade since
+it was rewritten in 2014.
 
- if (shmem_huge != SHMEM_HUGE_FORCE) {
-         ... 
-	 if (file) {
-		 VM_BUG_ON(file->f_op != &shmem_file_operations)
+I don't think anybody has actually hit the bug in practice (it will
+cast away significant bits if you use it with just the right types),
+but when I looked at it again I was like "Really? We've had that
+horror for a decade?"
 
- ?  
-
-
--- 
-Oscar Salvador
-SUSE Labs
+       Linus
 
