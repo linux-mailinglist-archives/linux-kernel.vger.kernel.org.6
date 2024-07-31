@@ -1,141 +1,166 @@
-Return-Path: <linux-kernel+bounces-269588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C94F0943493
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:59:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CC6943494
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BC34286403
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:59:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE9B1F22A4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317F51BD038;
-	Wed, 31 Jul 2024 16:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7D11BD01F;
+	Wed, 31 Jul 2024 16:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFmpArsf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ranQsrYo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AB612B93;
-	Wed, 31 Jul 2024 16:58:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F88812B93;
+	Wed, 31 Jul 2024 16:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722445132; cv=none; b=p4wpp0gl9uGb7ZtSCdX2SpXkSq3St2ZFet01dzdFwlbNI6DniiOu72qZj6PogQy8woj7s3eJQ1wzfmcUoUwtcvKtOdizIcsrHZ6r+NuuXt7Yr5yQOtgXZuGfooj62Jqx3pBQrQfy5yEby+4pOtuORj3T2ysEa/6KbU0ePDUjiR0=
+	t=1722445175; cv=none; b=GRroKANLPSg9MMzWAiZQK3c+e4uU1utvpll/vs/5OWKbewlphGVPXcbg5CXAmTnl0bSL1Y/GAlzpc7gqTgCXJf7rLPNR3SMHMIyep/AluocGqmHSMycluBEV75VejqHu4Ytxsop3voQsKxQRK47o6VtOgMx6DXO/4+G2JhrBNTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722445132; c=relaxed/simple;
-	bh=fV2uUlnN5HtdGjeA+Eg6mzoArO5TgeZybB976lohHLU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J1FwC5BLCgo8L5uURNB7qng3vujj45GBA0i/64GMxGFfSlUPv874weHvPrQtDRBbvB+qofeCtUSTe8loYv4Yn4M9qriDzpk3x8gEbN7WR1NELkVQnGorBRfLqatnuKva2cGizrUjrofUaBB49vcIB8OhTQC8XI+OZJyswF5VUA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFmpArsf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A715C116B1;
-	Wed, 31 Jul 2024 16:58:47 +0000 (UTC)
+	s=arc-20240116; t=1722445175; c=relaxed/simple;
+	bh=T5X6f1K32kns6RA907bQ7f9UBfa+XyFbsVazMXgTJjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y59iK/Jyc7yqe/NA2kQyrJZ8YISf60Z0bCtzWV0vY5ub8J1/oNe6t51T/uCTXIjthnCQqUuxfTNK29CK8b0AzD8AnRfWI7fujxzvrEpCw9JdYIQna6UB0BJTPcCfnk/+BdxqESfgF+Kuii2Ixa1iN+O8ajZ2V1eY5yroxZichbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ranQsrYo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA2E1C116B1;
+	Wed, 31 Jul 2024 16:59:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722445132;
-	bh=fV2uUlnN5HtdGjeA+Eg6mzoArO5TgeZybB976lohHLU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nFmpArsfu10ex2Mh/08kg4RPfnlRHkcrlWy112BzLMf83mUeLAnrE85gGevMGdfCh
-	 HwFdx+cARnLs+8CTRfx5DL73CrLvCnOqsQw2xwp/6qQ5frB05hjqFsljJYPK5assod
-	 zur5jJroZ8M79Gr4FtBfdo+TmTE0VCkJPz/cPCx7M4vJuynlhMCRqIaLKJkjp3X6+C
-	 w/sAYTvpCeRpA7dkiRGJIcil+9G+QTBg3Hy2Gufv1K4YMV7WbHoJGsaDoPrp8s1Gw2
-	 kiIto1JJ4UJAUBLPThzex9kI7KmhQl7wIrzeNWXdovF9DCRNqxMRfaqaOemEXrhA3L
-	 +1vEeYQSua5OQ==
-Message-ID: <186bc509-c0eb-4c60-a65f-99e773c151fb@kernel.org>
-Date: Wed, 31 Jul 2024 18:58:45 +0200
+	s=k20201202; t=1722445174;
+	bh=T5X6f1K32kns6RA907bQ7f9UBfa+XyFbsVazMXgTJjs=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=ranQsrYoiFptE6K5ltsv9xIHf3Fzj2Xdwn2IeZte4tyMx2M7NmlykzZgN404c24Pf
+	 guLctRh8JL2GzfRjKmn+Au1ksbHvljOHJ1dC4JlSo0IZCiadoIc+yRL8CGNmtHFbTK
+	 vmz8bt2ByO2hh0UcBhH5C0lhB2wqF8BK0zSzJ+PuOGikynxBEKYa29nCNiNTTSakWx
+	 8tjBNkYDqzYL8O+N/0Hi+XZFP8qD7+ICHQpcshWGqsJhi3RYKVOBMrz0pfvnAVK1Z+
+	 xbQfani5f42Ma1imuCC6MehiZzOIjfs3+1Vhii5wanWA4aX9WWkO1FVELDNccZRfru
+	 jHeIEIN8AhPhQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 60170CE0A01; Wed, 31 Jul 2024 09:59:34 -0700 (PDT)
+Date: Wed, 31 Jul 2024 09:59:34 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
+	Sandipan Das <sandipan.das@amd.com>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] perf/x86/amd: Warn only on new bits set
+Message-ID: <de55c0e0-0a1b-449a-94f5-56d4ef3fc3b5@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240731154651.1555511-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
-To: Trevor Gamblin <tgamblin@baylibre.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- David Lechner <dlechner@baylibre.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240731-ad7625_r1-v1-0-a1efef5a2ab9@baylibre.com>
- <20240731-ad7625_r1-v1-1-a1efef5a2ab9@baylibre.com>
- <387b4028-7f8a-46df-a7f1-168d1700074d@kernel.org>
- <996e975f-89ad-413e-b051-b55899d4f20f@baylibre.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <996e975f-89ad-413e-b051-b55899d4f20f@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731154651.1555511-1-leitao@debian.org>
 
-On 31/07/2024 17:22, Trevor Gamblin wrote:
+On Wed, Jul 31, 2024 at 08:46:51AM -0700, Breno Leitao wrote:
+> Warning at every leaking bits can cause a flood of message, triggering
+> vairous stall-warning mechanisms to fire, including CSD locks, which
+> makes the machine to be unusable.
 > 
-> On 2024-07-31 10:11 a.m., Krzysztof Kozlowski wrote:
->> On 31/07/2024 15:48, Trevor Gamblin wrote:
->>> This adds a binding specification for the Analog Devices Inc. AD7625,
->>> AD7626, AD7960, and AD7961 ADCs.
->> Please do not use "This commit/patch/change", but imperative mood. See
->> longer explanation here:
->> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-> Will do.
->>
->> Why this is not ready, but RFC? What exactly needs to be commented here?
-> There's one outstanding question about whether or not there should be a 
-> DT property for specifying whether DCO+/- lines are connected (mentioned 
-> in the cover letter but not here). I guess it doesn't need to be an RFC 
-> just for that.
+> Track the bits that are being leaked, and only warn when a new bit is
+> set.
+> 
+> That said, this patch will help with the following issues:
+> 
+> 1) It will tell us which bits are being set, so, it is easy to
+>    communicate it back to vendor, and to do a root-cause analyzes.
+> 
+> 2) It avoid the machine to be unusable, because, worst case
+>    scenario, the user gets less than 60 WARNs (one per unhandled bit).
+> 
+> Suggested-by: Paul E. McKenney <paulmck@kernel.org>
+> Reviewed-by: Sandipan Das <sandipan.das@amd.com>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
 
-RFC means patch is not ready for review and you just ask for some
-comments. Some maintainers even ignore RFC and wait till you send
-something ready.
+Nice!!!
 
-Best regards,
-Krzysztof
+A question about an admittedly unlikely race below.
 
+> ---
+> Changelog:
+> v2:
+>   * Improved the patch description, getting the benefits in words.
+> 
+> v1:
+>   * https://lore.kernel.org/all/20240524141021.3889002-1-leitao@debian.org/
+> 
+> 
+>  arch/x86/events/amd/core.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
+> index 920e3a640cad..577158d0c324 100644
+> --- a/arch/x86/events/amd/core.c
+> +++ b/arch/x86/events/amd/core.c
+> @@ -943,11 +943,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
+>  static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+>  {
+>  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+> +	static atomic64_t status_warned = ATOMIC64_INIT(0);
+> +	u64 reserved, status, mask, new_bits;
+>  	struct perf_sample_data data;
+>  	struct hw_perf_event *hwc;
+>  	struct perf_event *event;
+>  	int handled = 0, idx;
+> -	u64 reserved, status, mask;
+>  	bool pmu_enabled;
+>  
+>  	/*
+> @@ -1012,7 +1013,11 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
+>  	 * the corresponding PMCs are expected to be inactive according to the
+>  	 * active_mask
+>  	 */
+> -	WARN_ON(status > 0);
+> +	if (status > 0) {
+> +		new_bits = atomic64_fetch_or(status, &status_warned) ^ atomic64_read(&status_warned);
+
+It is possible that two CPUs could execute the above line concurrently,
+correct?  In that case, the reports might be a bit confused.
+
+Why not be exact, perhaps as follows, introducing a "u64 prev_bits"?
+
+		prev_bits = atomic64_fetch_or(status, &status_warned);
+		new_bits = status & ~prev_bits;
+
+Or, if you would like to avoid the added variable and to keep this to
+a single line:
+
+		new_bits = status & ~atomic64_fetch_or(status, &status_warned);
+
+Or is my boolean arithmetic off this morning?  (Wouldn't be the first
+time...)
+
+							Thanx, Paul
+
+> +		// A new bit was set for the very first time.
+> +		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
+> +	}
+>  
+>  	/* Clear overflow and freeze bits */
+>  	amd_pmu_ack_global_status(~status);
+> -- 
+> 2.43.0
+> 
 
