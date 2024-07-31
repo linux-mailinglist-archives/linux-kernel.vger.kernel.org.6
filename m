@@ -1,107 +1,115 @@
-Return-Path: <linux-kernel+bounces-268467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7BE942506
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:22:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BB0F942509
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:23:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C19941C2176A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:22:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7561C21249
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 03:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33EE2D627;
-	Wed, 31 Jul 2024 03:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DUKq3CBn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66F1182BD;
+	Wed, 31 Jul 2024 03:22:49 +0000 (UTC)
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB60D17BCC
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0F417C7C;
+	Wed, 31 Jul 2024 03:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722396094; cv=none; b=doxP7JXUg+izSv+LePx8JV1fQaiJXvxBZM4nI7fGsuZyRC/UUk6G8ahdAaysInwrhqpMYoXWnhCnU+kA6Ozl2EOJhvrYMkxy7MADnyFgWydxdbRD99BtgyL5GjGVF7FaRJRgMH8Uz6aBmMC//7dOqPraGbWwAlNNU2BZlLBOJ1M=
+	t=1722396169; cv=none; b=MzN5s9BgvDA1rzaLKky7vG7R3LPIxSGbKyTLTGGVYMyOxsbfeHL5zWxP053QasO6xjAmMlpX71j3o9EzDBUhqcjrOit2fWQbKe4fU3qTip+8rERLTaNGSLbcVE3ZO2HLP+vpB0TOuPLA7r5bwmFv52cCD2VaOEA+/7IoUi/X6ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722396094; c=relaxed/simple;
-	bh=8+9z5mMlcdAWMW3cReFctIogTSgAXib8SXPR/OCNbSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rn6ub5jXUy0DQc0+jgO2VPZgCVgCuH6RTwDqbynShT+vDTh/wPW6DT7IZXAr3NCC+FCOV6cT8l2FoDscjxYsrSbXAbpaz4WpSWhd4O7/FIbhWiNyL+WhnJnjJlYb9V8LF/uhpxehnsAK6zc4hVLJ0aiuXCeb3r+q+NNi+Y7gRHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DUKq3CBn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722396091;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+9z5mMlcdAWMW3cReFctIogTSgAXib8SXPR/OCNbSU=;
-	b=DUKq3CBnyDd2OTq6jxGz+DTy4/QZv2N7yADUcNbEMM39qcMV3q04FZT692rkL0Qxc1z7tL
-	JxYc8SppCOg8JRMRnzn/RRDaKVNOk7K7i13rpNdzFQzEMNz4itwpq/33nvoBDYc1dC/Cnb
-	nbhVbpoxlUzsoyTdvRgzKjoKUBjW4K8=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-539-pQ32hqtJODa7TrnAEbvjUg-1; Tue, 30 Jul 2024 23:21:30 -0400
-X-MC-Unique: pQ32hqtJODa7TrnAEbvjUg-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-70e93462241so5623114b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 20:21:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722396089; x=1723000889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8+9z5mMlcdAWMW3cReFctIogTSgAXib8SXPR/OCNbSU=;
-        b=tPEppBxm/eOkr96Hl4wpNVCgWhModTX7WkjLhD27FVMks7cSCKB+OUmIsiumV72uiB
-         Y272jTHklI/uSaIaQGF55Ary6uO39fHXccMHePTNOpNRjE+BY8VAvFOzGCWfAUvHEThT
-         mrUGwGKFPlY+JvhSukhpwHSrcqN2NcOtBKndvOQwU0xVKe6hzKV4NVU6pQYh6GCLKb4c
-         u5ruAZDWBBK5aw8KHVqbeotO8Wd339/4j4RNk7Hmy3gUy1zGpbPNUZZSVxkhVQSRkTSD
-         n5HQZs3BJhWw3MGOBDxp/Gp3cSCHkcmmNAZnRMk4FW2HvZjQUCShxvNWATHemnvtsTml
-         Jb6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU0ybwHU0q/uR0VrIXi+NHoE+CONiRR9V8cVhuBFTIL18uHhZeZe4Rhos3ffwDQ7E1VX2F6mBNviR/WOx5dWGHJVYCgBwqjv+c8tLbq
-X-Gm-Message-State: AOJu0Yw0dOQ/v9U3sknvNTXLcTDSSh8xuShmq4mOt8bK3y64TsU38hJe
-	QiEn5tijyrThnbus95t8BpOQtjEzhVOQkald2syvpk0h0/IYfo8a+/4soKwNllxxFzYxwdMydSX
-	TDEWVCsOymuc96Ob6HMqbc4qRBpLQ5pYPre9Ii5EczhDFHnilBLuuoUpY4hq/Px/xC4nMfW83W7
-	GZdgeOS5ZG/wmfNcigTMHa6R+kmwryucBxcTl6
-X-Received: by 2002:a05:6a20:431e:b0:1c4:8650:d6da with SMTP id adf61e73a8af0-1c4a1184098mr18137301637.1.1722396088968;
-        Tue, 30 Jul 2024 20:21:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHyW4udyXgOynWPU6sFEx+eYkhyApxZ3M3JsIfoMTHydwIbe/BHy5bvZP7PulcbNJ8nlYxgYYxKYiSilfMjmE=
-X-Received: by 2002:a05:6a20:431e:b0:1c4:8650:d6da with SMTP id
- adf61e73a8af0-1c4a1184098mr18137275637.1.1722396088530; Tue, 30 Jul 2024
- 20:21:28 -0700 (PDT)
+	s=arc-20240116; t=1722396169; c=relaxed/simple;
+	bh=T8izX+/yGXdwTJfp1aXGvxIT9IaA5SVPOv77vOCYAkk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gVfR62lVpj0TW5Opm1nDuI8OASsPtG17NcUdD8WZgd3misR+evgTBK4/oIbIWmSoKd9LrJnc3/5LyKc9/KvjE50rKlbRru3TxYCF6apoj/jO2yp2c6mwyulYaoRKZeDiA/CXljIPkY1E117GGrSJKapnps5xHDIPvYeLdKBCQxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz2t1722396148tsc187y
+X-QQ-Originating-IP: 6jVb//9MNTYm9+pTLpUuNPc2RR0vlXEgVFqCQe54XpQ=
+Received: from [10.20.53.89] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 31 Jul 2024 11:22:25 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16900428801888143573
+Message-ID: <4453C8E00ABF5220+5cc48da4-637f-437f-abc8-5183399fc414@uniontech.com>
+Date: Wed, 31 Jul 2024 11:22:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731031653.1047692-1-lulu@redhat.com> <20240731031653.1047692-4-lulu@redhat.com>
-In-Reply-To: <20240731031653.1047692-4-lulu@redhat.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 31 Jul 2024 11:21:17 +0800
-Message-ID: <CACGkMEs9T17z2oBk2dYZnqt+FX_wr=hWUAbXaG__s5qo3XQtVQ@mail.gmail.com>
-Subject: Re: [PATCH v8 3/3] vdpa/mlx5: Add the support of set mac address
-To: Cindy Lu <lulu@redhat.com>
-Cc: dtatulea@nvidia.com, mst@redhat.com, parav@nvidia.com, sgarzare@redhat.com, 
-	netdev@vger.kernel.org, virtualization@lists.linux-foundation.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/cpufeatures: SGX: Adjust the error message when BIOS
+ does not support SGX
+To: "Huang, Kai" <kai.huang@intel.com>, "seanjc@google.com"
+ <seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "xiangzelong@uniontech.com" <xiangzelong@uniontech.com>
+Cc: "baimingcong@uniontech.com" <baimingcong@uniontech.com>,
+ "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+ "jarkko@kernel.org" <jarkko@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+ "guanwentao@uniontech.com" <guanwentao@uniontech.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+ "wubo@uniontech.com" <wubo@uniontech.com>
+References: <D345627B0A699F37+20240730024931.1026933-1-wangyuli@uniontech.com>
+ <a56bc12f6c60107c935db31d7330d28980ac4d5a.camel@intel.com>
+From: WangYuli <wangyuli@uniontech.com>
+Autocrypt: addr=wangyuli@uniontech.com; keydata=
+ xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
+ IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
+ qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
+ 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
+ 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
+ VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
+ DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
+ o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
+In-Reply-To: <a56bc12f6c60107c935db31d7330d28980ac4d5a.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Wed, Jul 31, 2024 at 11:17=E2=80=AFAM Cindy Lu <lulu@redhat.com> wrote:
+On 2024/7/30 19:57, Huang, Kai wrote:
+
+> +linux-sgx list, Jarkko, Haitao.
 >
-> Add the function to support setting the MAC address.
-> For vdpa/mlx5, the function will use mlx5_mpfs_add_mac
-> to set the mac address
+> This message is only printed when SGX is reported in CPUID but is not
+> enabled in the FEAT_CTL MSR.  I can only recall this can happen when the
+> BIOS actually provides an option for the user to turn on/off SGX, in
+> which case the current message is correct.
 >
-> Tested in ConnectX-6 Dx device
+> I could be wrong, but I don't recall I have met any machine that doesn't
+> have any SGX option in the BIOS but still reports SGX in the CPUID.  Can
+> you confirm this is the case?
+
+Sure.
+
+For example, Lenovo ThinkPad T480s that compliance id is TP00092A.
+
 >
-> Signed-off-by: Cindy Lu <lulu@redhat.com>
-> ---
-
-Acked-by: Jason Wang <jasowang@redhat.com>
-
-Thanks
-
+> I don't see this is mentioned in the github link below which reports this
+> issue.  In fact, it says:
+>
+> 	非bug，主板bios关闭了SGX，正常内核提醒
+>
+> .. which is
+>
+> 	Not bug, the motherboard BIOS disabled SGX, normal kernel
+> message
+hah, that's a typo.
+>
+> And the link also shows this issue is "closed".
+>
+> Please clarify.
+-- 
+WangYuli
 
