@@ -1,135 +1,125 @@
-Return-Path: <linux-kernel+bounces-268365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF43E9423C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:22:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 856AF9423C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECD4F1C22638
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:22:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7F1D1C214B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F014C83;
-	Wed, 31 Jul 2024 00:22:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A144C80;
+	Wed, 31 Jul 2024 00:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dl9J8SP8"
-Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA33DA41;
-	Wed, 31 Jul 2024 00:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="n2QdBGJs"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C106A41;
+	Wed, 31 Jul 2024 00:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722385321; cv=none; b=ctlkx0qBOEARTRAVUW7SxZmtDJdtnjU62+VCQo45NBOisYLFWsWi8HKCSIsi1SJcOVM6pnAj6WYsuMdbMdfTkRYK4KKVeLORXxHbjCeL4KXNwWr/ger7rJakeuE3yGA8EApqNiHHEJccVt6hb67eB3cwXLd5Ltmgh+RGiYv+Ocw=
+	t=1722385567; cv=none; b=DIkel5MncCWzgaloYaL3HIqb5rrE78NxSQPaWRaHzhItRLWQ1fJZv+ExLefjnlYxr1oFzM6cMGkroSwtqx3RCi0aDk9Larn6s4lc4atNctDBUP1it0f8FGEFKhJgCAXVU31CpHMAg38mLzGNoIuQ435GIyYk8lH4HvzyrzNIQ78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722385321; c=relaxed/simple;
-	bh=Be7IDsaltHpOt9duyrEi4EFaUTA1FF7S9nmfFfk6XqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KAdWBmP/jRZHtltgt83z0gWG6KPuP+2FobHAwFbxcQtoOVeQWdKtwcQovM5Dx2yX/iqRHoORTNxnlBNGV5NysYSw0CV6uwx6GcQ3bONVev3n+S7ZKhhdUStIfj0ewpx8NWfoGoPaYOghr79+TzMDRGH78v1PcYDvHvlh7PGjFhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dl9J8SP8; arc=none smtp.client-ip=209.85.160.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-260e5b2dfb5so3403720fac.3;
-        Tue, 30 Jul 2024 17:21:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722385319; x=1722990119; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zv44PSmRmGyba/q7aqW6v9CZMieeVvkEwzEJWnLLESM=;
-        b=Dl9J8SP8M+Gdmj7lDr71rx9wIVzPLH+V5n3d6b6ZDKgQkU24272Z2ZVQAvXUYYDcP0
-         T2qKOFB9qzGQA9/kMSRAmqyWjn9eEdwKo2D9BycpUhqFHliRvs/SPFBDcPf4i9hDXdH2
-         zypDHsYVETT0bhuSstMSo3zrJw7XYG1X5vgOrnbbQ2YOk6/s+yqFwypwoHfAMib2eavx
-         oALz3StQseeEstgc86KzUzlhEmqfNu3cBy1G+M+ID2YjC+N1HXDTUlHm+vX0/NjAhI8k
-         b4OTrWfEa3F3NEtnhSiYE0+1nE0T/K69A5SntJR44bNaImeQwgrM9dmo5e/6n7JOWtNb
-         x2rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722385319; x=1722990119;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zv44PSmRmGyba/q7aqW6v9CZMieeVvkEwzEJWnLLESM=;
-        b=CXJP/OmLi2YPlYE0LUUD1Hi1szQgKg6+6agh+UrgvIKiaDlGLqBlvDYusMZXeeFmgz
-         x9RbibY9qkGCzRyvI5MJSbBR+kaYhkKoX7iDCHNWjKSwnbVrViKUeNNHEu3pzRJQXzBg
-         Jl10zNlnzQuurQjFUqPSe2Ye+2CQwBxRRoRAjSOqyoPSzwMl2aNR/cVDN+uOBhVrO41c
-         MziW+SUe2VyKsfWmYjKA/+ZwvSCJMQRGg0Z/IzEOgdAk2g9sBVxOegWU4mH2fn/ieI3Q
-         ac1wpwAwzX+WTpzKrUgedFi26fdh27bqOa1HyQsmXbA54kZ6cZ/oLSpJwTXI4/M1pqgn
-         ap/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX5CtstFfImaXDt7uV5dZoUlKnyGDNxUWsATJReSDmkleDdJ/1DAquyCb2mY7YOmnvh86+Te24GMClb3kdZyJYZsV76DKHR1TsP+b8pS19+Zo/NicOcPICmDyUAVUjHwX08aIBZwOGLb8qy+9bp6G2076rM6cSkhAjfXwPQnD3/uQ==
-X-Gm-Message-State: AOJu0YwtqZzbD8tVZNgL3Lup+zs1xwSBtDNJLtTzqM1BjhvxmLHmlgXD
-	XBWX3LeNtN3NjR6Pt3OHPGIP5Pomc00Ec4xj7ahCDmmsa7OLn6S9
-X-Google-Smtp-Source: AGHT+IECKNlAjXtfcAK0zmXQoFMslDGFB+xQk5ohSw3tBFUqgfYx07tAWgxn0a3I0E9wCntSi6E+Og==
-X-Received: by 2002:a05:6870:b28c:b0:260:fdda:5068 with SMTP id 586e51a60fabf-267d4cfe2a2mr14910412fac.4.1722385318809;
-        Tue, 30 Jul 2024 17:21:58 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead816722sm8987381b3a.106.2024.07.30.17.21.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 17:21:58 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 14:21:56 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <longman@redhat.com>
-Cc: Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Jonathan Corbet <corbet@lwn.net>, cgroups@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kamalesh Babulal <kamalesh.babulal@oracle.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Subject: Re: [PATCH-cgroup v7] cgroup: Show # of subsystem CSSes in
- cgroup.stat
-Message-ID: <ZqmDpLTm6tKhAmYv@slm.duckdns.org>
-References: <20240715150034.2583772-1-longman@redhat.com>
+	s=arc-20240116; t=1722385567; c=relaxed/simple;
+	bh=IhKVSeDpEIR0WfU3acxx40BZ/jtCd8w63O+9vmbWxPc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=hBjH+p9JcWbQwitCR25ZfZjAGeZDIAarO0jwwqg06/G/tfpYuYr7XzVeRO9qB5y4Jm/Xx6aye4GkPfumslY4NNGK79XXEgGaMYw8eUYV7yXOs3LvGp5V1EAhBryMP80buLgSQEr2bUGcJ19xWrZY+0KxTaIVigU2ZSXf0BxdIXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=n2QdBGJs reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=CdXm5ndIlLZn9vyVZfUjhbWrsMIGQ3uIrPZHyi3mqmA=; b=n
+	2QdBGJsxbBBJkQpbxoP8I43gWEDGguDX4dzVr5q+kvOS0nuoJTendYBbcjo03Aap
+	/5KRf0b2CJD/7xOghaPCs3bzOet+Rhx4WkudkQStcv9asTkYiWYWzU5NrKQM4XoJ
+	0OmVACctIx/1iW+h2P7tDRvazLkRSrKT4WyqVjCpIo=
+Received: from 00107082$163.com ( [111.35.189.52] ) by
+ ajax-webmail-wmsvr-40-106 (Coremail) ; Wed, 31 Jul 2024 08:25:01 +0800
+ (CST)
+Date: Wed, 31 Jul 2024 08:25:01 +0800 (CST)
+From: "David Wang" <00107082@163.com>
+To: "Xiaojian Du" <xiaojidu@amd.com>
+Cc: perry.yuan@amd.com, Alexander.Deucher@amd.com, Li.Meng@amd.com, 
+	Mario.Limonciello@amd.com, Xiaojian.Du@amd.com, Xinmei.Huang@amd.com, 
+	gautham.shenoy@amd.com, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, 
+	viresh.kumar@linaro.org
+Subject: Re: [Regression] 6.11.0-rc1: AMD CPU boot with error when CPPC
+ feature disabled by BIOS
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20230109(dcb5de15)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <1d5f4859-6810-355f-3e0e-ed1c9e53c3f4@amd.com>
+References: <20240730140111.4491-1-00107082@163.com>
+ <1d5f4859-6810-355f-3e0e-ed1c9e53c3f4@amd.com>
+X-NTES-SC: AL_Qu2ZAP+Tuk0r5ySRYukZnEYQheY4XMKyuPkg1YJXOp80uCTi6BovcnldDFHX6Ou0Gw2zth6cayd0+tZ3V41fQKtzo5BJhSeNYiA8SSi1pA5r
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240715150034.2583772-1-longman@redhat.com>
+Message-ID: <2c2569aa.47a.191062d0d40.Coremail.00107082@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3v0RehKlmZxRqAA--.62075W
+X-CM-SenderInfo: qqqrilqqysqiywtou0bp/1tbiqQQtqmVOB302nwACsQ
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Mon, Jul 15, 2024 at 11:00:34AM -0400, Waiman Long wrote:
-> Cgroup subsystem state (CSS) is an abstraction in the cgroup layer to
-> help manage different structures in various cgroup subsystems by being
-> an embedded element inside a larger structure like cpuset or mem_cgroup.
-> 
-> The /proc/cgroups file shows the number of cgroups for each of the
-> subsystems.  With cgroup v1, the number of CSSes is the same as the
-> number of cgroups.  That is not the case anymore with cgroup v2. The
-> /proc/cgroups file cannot show the actual number of CSSes for the
-> subsystems that are bound to cgroup v2.
-> 
-> So if a v2 cgroup subsystem is leaking cgroups (usually memory cgroup),
-> we can't tell by looking at /proc/cgroups which cgroup subsystems may
-> be responsible.
-> 
-> As cgroup v2 had deprecated the use of /proc/cgroups, the hierarchical
-> cgroup.stat file is now being extended to show the number of live and
-> dying CSSes associated with all the non-inhibited cgroup subsystems that
-> have been bound to cgroup v2. The number includes CSSes in the current
-> cgroup as well as in all the descendants underneath it.  This will help
-> us pinpoint which subsystems are responsible for the increasing number
-> of dying (nr_dying_descendants) cgroups.
-> 
-> The CSSes dying counts are stored in the cgroup structure itself
-> instead of inside the CSS as suggested by Johannes. This will allow
-> us to accurately track dying counts of cgroup subsystems that have
-> recently been disabled in a cgroup. It is now possible that a zero
-> subsystem number is coupled with a non-zero dying subsystem number.
-> 
-> The cgroup-v2.rst file is updated to discuss this new behavior.
-> 
-> With this patch applied, a sample output from root cgroup.stat file
-> was shown below.
-...
-
-Applied to cgroup/for-6.12.
-
-Thanks.
-
--- 
-tejun
+SGkgRHUsIAoKVGhhbmtzIGZvciB0aGUgcXVpY2sgcmVzcG9uc2UKCkF0IDIwMjQtMDctMzEgMDE6
+NDM6NDcsICJYaWFvamlhbiBEdSIgPHhpYW9qaWR1QGFtZC5jb20+IHdyb3RlOgo+SGnCoCBEYXZp
+ZCwKPgo+Q1BQQyBmZWF0dXJlIGlzIGVuYWJsZWQgYnkgZGVmYXVsdCBpbiBCSU9TIGZvciBuZXcg
+WkVOWCBhcmNoIENQVSwgYW5kIAo+YW1kLXBzdGF0ZSBkcml2ZXIgaXMgZW5hYmxlZCBpbiBuZXcg
+bGludXgga2VybmVsLgo+Cj5Gb3IgeW91ciBzeXN0ZW0gLHdoeSBDUFBDIGlzIGRpc2FibGVkLCBp
+cyBpdCBmb3IgZGVidWcgb3Igc29tZSBzcGVjaWFsIGNhc2U/CgogSSBkbyBub3QgaGF2ZSBhbnkg
+c3BlY2lhbCBwdXJwb3NlLCBpdCBpcyBqdXN0IHRoZSBkZWZhdWx0IEJJT1Mgc2V0dXAgZm9yIG15
+IG9sZCBzeXN0ZW0uCgo+Cj5JZiB5b3Ugd2FudCB0byB1c2UgbGVnYWN5IGFjcGkgY3B1IGRyaXZl
+ciwgeW91IGNhbiBkaXNhYmxlIGFtZC1wc3RhdGUgCj5kcml2ZXIgbW9kdWxlIGluIHlvdXIgbGlu
+dXgga2VybmVsIGNvbmZpZyBmaWxlIGFuZCBjb21waWxlIGEgbmV3IGtlcm5lbC4KPgo+PiBUaG9z
+ZSB3YXJuaW5nIG1lc3NhZ2Ugd2FzIGludHJvZHVjZWQgYnkgY29tbWl0Ogo+PiAgIGJmZjdkMTNj
+MTkwYWQ5OGNmNGY4NzcxODliMDIyYzc1ZGY0Y2IzODMgKCJjcHVmcmVxOiBhbWQtcHN0YXRlOiBh
+ZGQgZGVidWcgbWVzc2FnZSB3aGlsZSBDUFBDIGlzIHN1cHBvcnRlZCBhbmQgZGlzYWJsZWQgYnkg
+U0JJT1MpCj4+ICwgd2hpY2ggbWFrZSBzZW5zZS4KPj4KPj4gVGhvc2UgZXJyb3IgbWVzc2FnZSB3
+YXMgaW50cm9kdWNlZCBieSBjb21taXQ6Cj4+ICAgOGY4YjQyYzFmY2M5MzlhNzNiNTQ3YjE3MmE5
+ZmZjYjY1ZWY0YmY0NyAoImNwdWZyZXE6IGFtZC1wc3RhdGU6IG9wdGltaXplIHRoZSBpbml0aWFs
+IGZyZXF1ZW5jeSB2YWx1ZXMgdmVyaWZpY2F0aW9uIikKPj4gLCB3aGVuIENQUEMgaXMgZGlzYWJs
+ZWQgYnkgQklPUywgdGhpcyBlcnJvciBtZXNzYWdlIGRvZXMgbm90IG1ha2Ugc2Vuc2UsIGFuZCB0
+aGUgZXJyb3IgcmV0dXJuLWNvZGUgd291bGQgYWJvcnQgdGhlIGRyaXZlciByZWdpc3RlcmF0aW9u
+LAo+PiBidXQgdGhpcyBiZWhhdmlvciBjb3VsZCBiZSBoYW5kbGVkIGVhcmxpZXIgd2hlbiBkZXRl
+Y3RpbmcgQ1BQQyBmZWF0dXJlLgo+Pgo+PiBJIGZlZWwgZm9sbG93aW5nIGNoYW5nZXMgd291bGQg
+bWFrZSBhIGNsZWFuIGZpeDogZG8gbm90IHJlZ2lzdGVyIGFtZF9wc3RhdGUgZHJpdmVyIHdoZW4g
+Q1BQQyBkaXNhYmxlZCBieSBCSU9TLgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVmcmVxL2Ft
+ZC1wc3RhdGUuYyBiL2RyaXZlcnMvY3B1ZnJlcS9hbWQtcHN0YXRlLmMKPj4gaW5kZXggNjhjNjE2
+YjU3MmYyLi5iMDZmYWVhNThmZDQgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvY3B1ZnJlcS9hbWQt
+cHN0YXRlLmMKPj4gKysrIGIvZHJpdmVycy9jcHVmcmVxL2FtZC1wc3RhdGUuYwo+PiBAQCAtMTgz
+Nyw4ICsxODM3LDYgQEAgc3RhdGljIGJvb2wgYW1kX2NwcGNfc3VwcG9ydGVkKHZvaWQpCj4+ICAg
+ICAgICAgICAqIElmIHRoZSBDUFBDIGZlYXR1cmUgaXMgZGlzYWJsZWQgaW4gdGhlIEJJT1MgZm9y
+IHByb2Nlc3NvcnMgdGhhdCBzdXBwb3J0IE1TUi1iYXNlZCBDUFBDLAo+PiAgICAgICAgICAgKiB0
+aGUgQU1EIFBzdGF0ZSBkcml2ZXIgbWF5IG5vdCBmdW5jdGlvbiBjb3JyZWN0bHkuCj4+ICAgICAg
+ICAgICAqIENoZWNrIHRoZSBDUFBDIGZsYWcgYW5kIGRpc3BsYXkgYSB3YXJuaW5nIG1lc3NhZ2Ug
+aWYgdGhlIHBsYXRmb3JtIHN1cHBvcnRzIENQUEMuCj4+IC0gICAgICAgICogTm90ZTogYmVsb3cg
+Y2hlY2tpbmcgY29kZSB3aWxsIG5vdCBhYm9ydCB0aGUgZHJpdmVyIHJlZ2lzdGVyYXRpb24gcHJv
+Y2VzcyBiZWNhdXNlIG9mCj4+IC0gICAgICAgICogdGhlIGNvZGUgaXMgYWRkZWQgZm9yIGRlYnVn
+Z2luZyBwdXJwb3Nlcy4KPgo+QXMgeW91IHNlZSwgaXQgaXMgZm9yIGRlYnVnIHB1cnBvc2UsIGlu
+IHNvbWUgY29ybmVyIGNhc2UsIGlmIENQUEMgCj5mZWF0dXJlIGlzIGRpc2FibGVkLCB0aGlzIGRl
+YnVnIGluZm8gd2lsbCBoZWxwIHRvIGd1aWRlIHVzZXIgdG8gCj4qcmUtZW5hYmxlKiBpdC4KPgo+
+VGFyZ2V0IHN5c3RlbSwgaW5jbHVkaW5nIENQVStiYXNlYm9hcmQrQklPUywgaXMgc3VwcG9zZWQg
+dG8gZW5hYmxlIGFuZCAKPnVzZSBDUFBDIGZlYXR1cmUgZm9yIGJldHRlciBQZXJmb3JtYW5jZSBw
+ZXIgV2F0dC4KCkkgYWdyZWUgdGhhdCB0aGUgd2FybmluZyBndWlkZSBtYWtlcyB0b3RhbCBzZW5z
+ZSwgIGJ1dCAgdGhlICAqZXJyb3JzKiBkb2VzIG5vdCwgd2h5IGJvdGhlciB0cnlpbmcgYW5kIHJl
+cG9ydCBlcnJvciB3aGVuIHRoZSBmZWF0dXJlIGlzIGRpc2FibGVkIGJ5IEJJT1MuCgoKPgo+PiAg
+ICAgICAgICAgKi8KPj4gICAgICAgICAgaWYgKCFjcHVfZmVhdHVyZV9lbmFibGVkKFg4Nl9GRUFU
+VVJFX0NQUEMpKSB7Cj4+ICAgICAgICAgICAgICAgICAgaWYgKGNwdV9mZWF0dXJlX2VuYWJsZWQo
+WDg2X0ZFQVRVUkVfWkVOMSkgfHwgY3B1X2ZlYXR1cmVfZW5hYmxlZChYODZfRkVBVFVSRV9aRU4y
+KSkgewo+PiBAQCAtMTg1Niw2ICsxODU0LDcgQEAgc3RhdGljIGJvb2wgYW1kX2NwcGNfc3VwcG9y
+dGVkKHZvaWQpCj4+ICAgICAgICAgIGlmICh3YXJuKQo+PiAgICAgICAgICAgICAgICAgIHByX3dh
+cm5fb25jZSgiVGhlIENQUEMgZmVhdHVyZSBpcyBzdXBwb3J0ZWQgYnV0IGN1cnJlbnRseSBkaXNh
+YmxlZCBieSB0aGUgQklPUy5cbiIKPj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAiUGxlYXNlIGVuYWJsZSBpdCBpZiB5b3VyIEJJT1MgaGFzIHRoZSBDUFBDIG9wdGlv
+bi5cbiIpOwo+PiArICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwo+TWF5YmUgbmVlZCBhIHBh
+aXIgb2YgY3VybHkgYnJhY2UgYWZ0ZXIgdGhpcyAiaWYod2FybikiIGZvciB5b3VyIGNoYW5nZS4K
+Pj4gICAgICAgICAgcmV0dXJuIHRydWU7Cj4+ICAgfQo+Pgo+Pgo+Pgo+PiBUaGFua3MKPj4gRGF2
+aWQKPj4K
 
