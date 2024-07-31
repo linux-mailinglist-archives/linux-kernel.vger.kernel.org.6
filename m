@@ -1,139 +1,138 @@
-Return-Path: <linux-kernel+bounces-269746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7214794365F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:24:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E6B1943665
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0562B20DDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:24:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC078B22972
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A2C14A0AE;
-	Wed, 31 Jul 2024 19:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B82166316;
+	Wed, 31 Jul 2024 19:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qptgQ/oR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="QihTxrdq"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E49C219FF;
-	Wed, 31 Jul 2024 19:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5E9149C51;
+	Wed, 31 Jul 2024 19:27:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722453880; cv=none; b=hbPVedevfmgrgEFyskoE0Nznc6x7154QDluc+ukJXb+SDTsJ0V/ObkICoHiGJUU+12gG/CLS44ggZZMJIMM3IE7+qxeovX1Vpj0CYFczH9tUrq8wA363vh5vBPJJCMQvd5nxeOyRNFnwl2pspBWH89v+EuD4ib7jxOSU9K+lRRE=
+	t=1722454068; cv=none; b=R5n2o2ACAZqLUHS2V3R/XjqGmLg+K/13ogOjuN0XN9GH61SofSWk2Mg5fBr9RPYzAPBrfYelSx9SV+naboeaEQ8zRFq0ODk0uusEkBls17rfAvTVc2fQDqpsQS9Cw6i9FwrXTDhl4eZdaLdmf2buQVAHeyj1IXESo5OhaJjCBSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722453880; c=relaxed/simple;
-	bh=xJcYHFAV6fd0/f7i19pUzRNKY45o0cGNlETGkISQBdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UzU82R9+jIqdim3k59p7KXBqVGwoiFQ0fy/YStu58/rKvsh/N1qTHGhSwHkMJQfcAnSe2LDp0eI3izd1tgvTWzGuPELIrzvxJ4TSqv34z4VlxMgElmyK5FvosIzgQkkDOq+APcU0jb4qEsoqHOpjmOeYebgM5ohtzxxsu5HGAfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qptgQ/oR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8753DC116B1;
-	Wed, 31 Jul 2024 19:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722453879;
-	bh=xJcYHFAV6fd0/f7i19pUzRNKY45o0cGNlETGkISQBdw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=qptgQ/oRY3DOV92eDsBfXPhe7VkWMxBBglAeqdsS9k8s5Qp3rofN9NttRIztmVQRY
-	 aErHHAgWEQ/BlqS+JeDi55hcMYR9+JBcaz/v1DiMkOOCbvzdNuMgNlmmR4NbU6CWaL
-	 yQfTq8+hj353uKoX4/+gkl+h16E5TN71GKQJ2Rzr3pgIVyrO+aanm5ncasi7628LWo
-	 7QZ9SodTGk8zmSRyGuA86JlEAcNZ428LlPXu7HU9hGAfL6XX9JhKJ8xk/4riv000s/
-	 FnaZxdp96T2yZdYnmIFB88sweOWaA8UbJPln2Lo6AyIMGpPUL5UzS7XDEmumddAl4V
-	 j6gdmYpM499ng==
-Date: Wed, 31 Jul 2024 14:24:36 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Joseph Jang <jjang@nvidia.com>
-Cc: shuah@kernel.org, mochs@nvidia.com, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-tegra@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/1] selftest: drivers: Add support its msi hwirq checking
-Message-ID: <20240731192436.GA76176@bhelgaas>
+	s=arc-20240116; t=1722454068; c=relaxed/simple;
+	bh=Mhx8E0fT9obAxJYSTGJ2xXP2P1OHW/oSmyU+JnM5NMI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mDlBjFBWzABfcexKUgcS1n402IImIqQMat9mRfm0yV6/nHAcF1pOvSSlPp9yfGQb+a5f+TvT0nHHE6Db87pzAsdW87/INx2nOPJ5NztEAsi6KG2+Ez/oImZPlszvq3rIIr1EBJCZh31jCSTHi2PNcQ3YluXbMJbkSLjLmlGi0kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=QihTxrdq; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1sZEz2-008LM1-1t; Wed, 31 Jul 2024 21:27:36 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=5cZZTTx5MpJgwdaoTjtIaSNaIM4FcBhy+Kr0FE1iKtU=; b=QihTxrdqEswI3MLvYwAESwnzUX
+	jI9p+Z15WK/vcr4r0tVB3W+ejqL80bbMyrIlGLL90Uw9BVR9tgV3acAkPXyLsH8S8354Izgw5Knc2
+	8k3fDR3N5MSaxcTeFoKF9uLBbJ3h5rW06BThrMvrUBRQ+7qGCQlawvxcXm61ROfSSDIb4GZxyJqyk
+	MtYKJEheuwNKg6wo5Vr03SvT+ogdL9dXn9ZPRl6Q0ss26/RiQB+ef0GuEUPN/kitutvbkCKcaAmgu
+	vz+nvONjMVcSFBlmgvXKpWPD4zVbqOrgcKE01nnk/+H4EA65QQg16sr1mLAQ5k2LUQmcH4laK/g9d
+	BU3iPZ7w==;
+Received: from [10.9.9.74] (helo=submission03.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1sZEz1-0005EC-Ju; Wed, 31 Jul 2024 21:27:35 +0200
+Received: by submission03.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1sZEyj-004luM-V7; Wed, 31 Jul 2024 21:27:18 +0200
+Message-ID: <9c77a7f7-4932-498a-ac51-65a5e755c926@rbox.co>
+Date: Wed, 31 Jul 2024 21:27:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240530012727.324611-2-jjang@nvidia.com>
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
+ xa_store() failure
+To: Sean Christopherson <seanjc@google.com>
+Cc: Will Deacon <will@kernel.org>, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ Alexander Potapenko <glider@google.com>, Marc Zyngier <maz@kernel.org>
+References: <20240730155646.1687-1-will@kernel.org>
+ <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co> <Zql3vMnR86mMvX2w@google.com>
+ <20240731133118.GA2946@willie-the-truck>
+ <3e5f7422-43ce-44d4-bff7-cc02165f08c0@rbox.co> <Zqpj8M3xhPwSVYHY@google.com>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <Zqpj8M3xhPwSVYHY@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[+cc Thomas]
-
-On Wed, May 29, 2024 at 06:27:27PM -0700, Joseph Jang wrote:
-> Validate there are no duplicate ITS-MSI hwirqs from the
-> /sys/kernel/irq/*/hwirq.
+On 7/31/24 18:18, Sean Christopherson wrote:
+> On Wed, Jul 31, 2024, Michal Luczaj wrote:
+>> On 7/31/24 15:31, Will Deacon wrote:
+>>> On Tue, Jul 30, 2024 at 04:31:08PM -0700, Sean Christopherson wrote:
+>>>> On Tue, Jul 30, 2024, Michal Luczaj wrote:
+>>>>> On 7/30/24 17:56, Will Deacon wrote:
+>>>>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+>>>>>> index d0788d0a72cc..b80dd8cead8c 100644
+>>>>>> --- a/virt/kvm/kvm_main.c
+>>>>>> +++ b/virt/kvm/kvm_main.c
+>>>>>> @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+>>>>>>  
+>>>>>>  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+>>>>>>  		r = -EINVAL;
+>>>>>> -		goto kvm_put_xa_release;
+>>>>>> +		goto err_xa_release;
+>>>>>>  	}
+>>>>>>  
+>>>>>>  	/*
+>>>>>> @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+>>>>>>  
+>>>>>>  kvm_put_xa_release:
+>>>>>>  	kvm_put_kvm_no_destroy(kvm);
+>>>>>> +err_xa_release:
+>>>>>>  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+>>>>>>  unlock_vcpu_destroy:
+>>>>>>  	mutex_unlock(&kvm->lock);
+>>>>>
+>>>>> My bad for neglecting the "impossible" path. Thanks for the fix.
+>>>>>
+>>>>> I wonder if it's complete. If we really want to consider the possibility of
+>>>>> this xa_store() failing, then keeping vCPU fd installed and calling
+>>>>> kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
+>>>>
+>>>> Yeah, the vCPU is exposed to userspace, freeing its assets will just cause
+>>>> different problems.  KVM_BUG_ON() will prevent _new_ vCPU ioctl() calls (and kick
+>>>> running vCPUs out of the guest), but it doesn't interrupt other CPUs, e.g. if
+>>>> userspace is being sneaking and has already invoked a vCPU ioctl(), KVM will hit
+>>>> a use-after-free (several of them).
+>>>
+>>> Damn, yes. Just because we haven't returned the fd yet, doesn't mean
+>>> userspace can't make use of it.
+>>>
+>>>> As Michal alluded to, it should be impossible for xa_store() to fail since KVM
+>>>> pre-allocates/reserves memory.  Given that, deliberately leaking the vCPU seems
+>>>> like the least awful "solution".
+>>>
+>>> Could we actually just move the xa_store() before the fd creation? I
+>>> can't immediately see any issues with that...
+>>
+>> Hah, please see commit afb2acb2e3a3 :) Long story short: create_vcpu_fd()
+>> can legally fail, which must be handled gracefully, which would involve
+>> destruction of an already xa_store()ed vCPU, which is racy.
 > 
-> One example log show 2 duplicated MSI entries in the /proc/interrupts.
-> 
-> 150: 0 ... ITS-MSI 3355443200 Edge      pciehp
-> 152: 0 ... ITS-MSI 3355443200 Edge      pciehp
+> Ya, the basic problem is that we have two ways of publishing the vCPU, fd and
+> vcpu_array, with no way of setting both atomically.  Given that xa_store() should
+> never fail, I vote we do the simple thing and deliberately leak the memory.
 
-I don't know how ITS-MSI works, so I don't know whether it's an error
-that both entries mention 3355443200.
-
-3355443200 == 0xc8000000, which looks like it could be an address or
-address/data pair or something, and it does make sense to me that if
-two devices write the same MSI address/data, it should result in the
-same IRQ.
-
-It seems like maybe this is a generic issue, i.e., if this is a
-problem, maybe it would affect *other* kinds of MSI too, not just
-ITS-MSI?
-
-> Kernel patch ("PCI/MSI: Fix MSI hwirq truncation") [1] fix above issue.
-> [1]: https://lore.kernel.org/all/20240115135649.708536-1-vidyas@nvidia.com/
-> 
-> Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-> Signed-off-by: Joseph Jang <jjang@nvidia.com>
-> ---
->  tools/testing/selftests/drivers/irq/Makefile  |  5 +++++
->  .../selftests/drivers/irq/its-msi-irq-test.sh | 20 +++++++++++++++++++
->  2 files changed, 25 insertions(+)
->  create mode 100644 tools/testing/selftests/drivers/irq/Makefile
->  create mode 100755 tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
-> 
-> diff --git a/tools/testing/selftests/drivers/irq/Makefile b/tools/testing/selftests/drivers/irq/Makefile
-> new file mode 100644
-> index 000000000000..569df5de22ee
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +TEST_PROGS := its-msi-irq-test.sh
-> +
-> +include ../../lib.mk
-> diff --git a/tools/testing/selftests/drivers/irq/its-msi-irq-test.sh b/tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
-> new file mode 100755
-> index 000000000000..87c88674903f
-> --- /dev/null
-> +++ b/tools/testing/selftests/drivers/irq/its-msi-irq-test.sh
-> @@ -0,0 +1,20 @@
-> +#!/bin/bash
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +if [ -z "$(grep "ITS-MSI" /proc/interrupts)" ]; then
-> +	echo "SKIP: no ITS-MSI irq."
-> +	exit 4
-> +fi
-> +
-> +# Get ITS-MSI hwirq list from /sys/kernel/irq/*/hwirq.
-> +its_msi_irq_list=$(grep "ITS-MSI" /sys/kernel/irq/*/chip_name |
-
-Is there a limit on the size of the "*" expansion here?
-
-> +				   awk -F ':' '{print $1}' |
-> +				   xargs -I {} sh -c 'cat $(dirname {})/hwirq' | sort -V)
-> +
-> +# Check whether could find duplicated its-msi hwirq or not.
-> +if [ -n "$(echo "$its_msi_irq_list" | uniq -cd)" ]; then
-> +	echo "ERROR: find duplicated its-msi hwirq."
-> +	exit 1
-> +fi
-> +
-> +exit 0
-> -- 
-> 2.34.1
-> 
+I agree it's a good idea. So for a failed xa_store(), just drop the goto?
 
