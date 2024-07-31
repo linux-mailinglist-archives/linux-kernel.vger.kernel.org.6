@@ -1,130 +1,239 @@
-Return-Path: <linux-kernel+bounces-268752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8109428DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC7A9428DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B4EC284F11
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505DD1C20F16
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 08:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3C91A7F73;
-	Wed, 31 Jul 2024 08:10:52 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 432E51A7206;
+	Wed, 31 Jul 2024 08:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KrzXhxbi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7DEA1A7F64
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B640E450E2
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722413451; cv=none; b=uAxXU4gbvIehZuX8+ZHNngRt3SCoPkrEG1fjRc9A+j7H4FfIKQ9U3Y5bFhZEkZpMS5JDRn7qnwcx3PSyeQRMaeaCI8DxuNiJWDr03IEt6XC7QT4s3A7fRFwckTszz49rl+EZAKIL/Jby6tYGLckv3jAtWv5Pwax9ZggVWYsS88E=
+	t=1722413428; cv=none; b=NKdErF8C5Iq3eRVBl1cj4omIyf6ir/GXEioobI7AAlHitue9MbMEmaNasyTuzekxPD80Q4DgGZKqAya9sEzkIBRevsdWOaZfSX6KSncLvx5KOSs0lDx1+z7afe7vpJvwLK7SkIgnM6btvFQjC9YB5GMBnHrltWrndBulbG8lXKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722413451; c=relaxed/simple;
-	bh=m/8cIYF97oU89DZY8gsHKzQYr9GGmbQQzEuh29nDxRk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=HQ4IlZ0bmKbVbXiHkorMR8wN/Gl4RTr13ZJyV/xqRzxph1YZVmywU1O2HWBSqbZjX9q1LbkdL9LYb5SaFIBNu7N39IGP+lCIu97TA/Md4XzvIcO56UvvuDh3uABa9ffa6rlGn3KGqTMoORSDboCJf5CQkdnJywZmtAzgAIzzPvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-14-0qShZarpOyuFvbAFA6eT4Q-1; Wed, 31 Jul 2024 09:10:39 +0100
-X-MC-Unique: 0qShZarpOyuFvbAFA6eT4Q-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Wed, 31 Jul
- 2024 09:09:59 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Wed, 31 Jul 2024 09:09:59 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Linus Torvalds' <torvalds@linuxfoundation.org>
-CC: Arnd Bergmann <arnd@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>, Matthew Wilcox
-	<willy@infradead.org>, Christoph Hellwig <hch@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	"pedro.falcato@gmail.com" <pedro.falcato@gmail.com>, Mateusz Guzik
-	<mjguzik@gmail.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "Lorenzo
- Stoakes" <lorenzo.stoakes@oracle.com>
-Subject: RE: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Topic: [PATCH v2 1/8] minmax: Put all the clamp() definitions together
-Thread-Index: Adrg+PsJWBOjJVDsQ/+qaYGHKHGutQAEaRMAAANJSHAAAfkwAAACaxqgAGQsLzQABAMbUAACpmiTABKeZ/A=
-Date: Wed, 31 Jul 2024 08:09:59 +0000
-Message-ID: <0549691a6a3d4f7a9e77003b70fcf6fe@AcuMS.aculab.com>
-References: <402c3c617c29465c898b1af55e3c6095@AcuMS.aculab.com>
- <5cd3e11780df40b0b771da5548966ebd@AcuMS.aculab.com>
- <CAHk-=wj=Zv+mMuqJQJptH9zGFhPXqku9YKyR7Vo4f0O0HEcbxw@mail.gmail.com>
- <b47fad1d0cf8449886ad148f8c013dae@AcuMS.aculab.com>
- <CAHk-=wgH0oETG1eY9WS79aKrPqYZZzfOYxjtgmyr7jH52c8vsg@mail.gmail.com>
- <e718056c1999497ebf8726af49475701@AcuMS.aculab.com>
- <CAHk-=wj900Q3FtEWJFGADQ0EbmYwBHW8cWzB0p0nvFck=0+y6A@mail.gmail.com>
- <e946e002-8ca8-4a09-a800-d117c89b39d3@app.fastmail.com>
- <CAHk-=whCvSUpbOawsbj4A6EUT7jO8562FG+vqiLQvW0CBBZZzA@mail.gmail.com>
- <CAHk-=wgRDupSBzUX_N_Qo_eaYyDfOH=VTihhikN36cGxCc+jvg@mail.gmail.com>
- <f88a19d1-c374-43d1-a905-1e973fb6ce5a@app.fastmail.com>
- <8111159a-c571-4c71-b731-184af56b5cb1@app.fastmail.com>
- <CAHk-=wgLsFdNert_OfCmRon7Y9+ETnjxkz_UA5mv0=1RB71kww@mail.gmail.com>
- <CAHk-=widciTZs3CCoi7X2+4SnVWrKu1Jv2uOV9+oewXGen7Q9A@mail.gmail.com>
- <73d65e2553e543069f9969ccec4ea9b3@AcuMS.aculab.com>
- <CAHk-=wgP+Fm=O2tYtS=3fDB7Vh+=rSYCC1mjqxcTQ=024G0qYw@mail.gmail.com>
- <CAHk-=whNTuPVeOSB6bG7YRXeYym9anS2QawRHEKRJe2MQuOPPA@mail.gmail.com>
-In-Reply-To: <CAHk-=whNTuPVeOSB6bG7YRXeYym9anS2QawRHEKRJe2MQuOPPA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1722413428; c=relaxed/simple;
+	bh=glgPFwmR31L8rIn/sadIkIZtyqWXy2j8TAYzrwb2cC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PO6qzfEQ63U14L6rjxm6rA++5BQNBas+IVTQfw2qgf3lxcqKkWDd9pph4WwBZ08TnyvuW2pN+KxFgyeduLnCF3S12upibH+38PW93gNuLDxkjQ3PdQ7Uy/eNgF8a8qbgBJnogARVbkhycrRWrLn5JDvPlRGDoNpiyPWQJ6M6XLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KrzXhxbi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722413425;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6QtFFxRVfRNy+RE/1vwcURKkg2d+dBiPjiEmg9auM+0=;
+	b=KrzXhxbiu23nZVARwXSgL2+QESDWd21pi61pJguRPO2ZMrpQaCcBGRqVapoZihaZq6pVb9
+	UbjAhnIxl5mkVPrDKmvhRqZtu/eve9ydqTCwhB38DUs9b0sA7QD6ktS73aeUc9X7NH1Yq4
+	6ouQGUpVr869ESAhZd1rheC/a/NWIBU=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-427-dkkBZ4oXOTaftdMxBYuApQ-1; Wed,
+ 31 Jul 2024 04:10:18 -0400
+X-MC-Unique: dkkBZ4oXOTaftdMxBYuApQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BCAB119560BF;
+	Wed, 31 Jul 2024 08:10:16 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.143])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C199B19560AA;
+	Wed, 31 Jul 2024 08:10:13 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed, 31 Jul 2024 10:10:16 +0200 (CEST)
+Date: Wed, 31 Jul 2024 10:10:12 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
+Cc: jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v3 4/5] uprobes: kill uprobe_register_refctr()
+Message-ID: <20240731081012.GA13690@redhat.com>
+References: <20240729134444.GA12293@redhat.com>
+ <20240729134530.GA12318@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729134530.GA12318@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMzEgSnVseSAyMDI0IDAwOjA0DQo+IA0KPiBP
-biBUdWUsIDMwIEp1bCAyMDI0IGF0IDE1OjQ0LCBMaW51cyBUb3J2YWxkcw0KPiA8dG9ydmFsZHNA
-bGludXhmb3VuZGF0aW9uLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBEb2VzIHRoaXMgd29yayBmb3Ig
-eW91Pw0KPiANCj4gSXQgc2VlbXMgdG8gYXQgbGVhc3QgYnVpbGQgY2xlYW5seSBoZXJlLCBidXQg
-SSdtIG5vdCBjbGFpbWluZyBpdCdzIGFsbA0KPiB0aGF0IGdyZWF0Lg0KPiANCj4gVGhlIG5lc3Rl
-ZCBfX2NtcCgpIGlzIHN0aWxsIHJhdGhlciBsZXNzIHRoYW4gb3B0aW1hbCBmcm9tIGFuIGV4cGFu
-c2lvbg0KPiBzdGFuZHBvaW50LCBidXQgYXQgbGVhc3QgaXQgZXhwYW5kcyBvbmx5IHRob3NlIHVu
-aXF1ZSB0ZW1wb3Jhcmllcy4NCg0KVGhhdCBpcyB0aGUgbWFpbiBnYWluLCBJSVJDIEFybmQgZGlk
-IHN1Z2dlc3Qgc3BsaXR0aW5nIGl0IGJ1dCB0aGF0IGlzDQphIHJlbGF0aXZlbHkgc21hbGwgZ2Fp
-bi4NCg0KPiBbIFNpZGUgbm90ZTogaGF2aW5nIG5vdCBsb29rZWQgYXQgYSBsb3Qgb2YgdGhlIHJl
-c3VsdGluZyBwcmUtcHJvY2Vzc2VkDQo+IG1lc3MsIEknbSBub3QgY29udmluY2VkIGl0IHJlYWxs
-eSBoZWxwcyB0byBtYWtlIHRob3NlIHVuaXF1ZSBuYW1lcyBzbw0KPiBsb25nLg0KPiANCj4gICBU
-aGUgd2hvbGUgIl9fVU5JUVVFX0lEXyIgcHJlZml4IGxvb2tzIGdvb2Qgb25jZSwgYnV0IHRvIHNv
-bWUgZGVncmVlDQo+IGl0IGFjdHVhbGx5IGhpZGVzIHRoZSBpbXBvcnRhbnQgcGFydCwgd2hpY2gg
-aXMgdGhlIGFjdHVhbCBwcmVmaXggYW5kDQo+IHRoZSB1bmlxdWUgbnVtYmVyLg0KDQpJIGp1c3Qg
-cGFzc2VkIF9fQ09VTlRFUl9fIHRocm91Z2ggaW4gbXkgbWluMygpIHBhdGNoIHRvIGF2b2lkDQpw
-YXNzaW5nIGxvdHMgb2YgcGFyYW1ldGVycyBhbmQgdGhlbiBhcHBlbmRlZCBpdCB0byB0aGUgbmFt
-ZQ0KZ2l2aW5nIF94XzEyMzQ1IChldGMpLg0KVGhlIF9fVU5JUVVFX0lEXygpIGRlZmluZSBqdXN0
-IHNlZW1lZCBleGNlc3NpdmUgLSBlc3BlY2lhbGx5DQpzaW5jZSBhbGwgY29tcGlsZXIgdmVyc2lv
-bnMgc3VwcG9ydCBfX0NPVU5URVJfXy4NCg0KSnVzdCBuZWVkIHRvIHJlbWVtYmVyIGEgcmVsYXkg
-I2RlZmluZSBzaW5jZSAjZGVmaW5lIGFyZ3VtZW50cyBnZXQNCmV4cGFuZGVkIHdoZW4gdGhleSBh
-cmUgc3Vic3RpdHV0ZWQgbm90IGF0IHRoZSAnY2FsbCcgc2l0ZS4NCihXaGljaCBpcyBhbHNvIHRy
-dWUgZm9yIF9fVU5JUVVFX0lEKCkpDQoNClRoYXQgYWxzbyBtYWtlcyBpdCBtdWNoIGVhc2llciB0
-byBhZGQgYW4gZXh0cmEgdW5pcXVlIG5hbWUuDQoNCj4gICBCdXQgaG9uZXN0bHksIG5vYm9keSBl
-dmVyIGxvb2tzIGF0IHRoaXMgcGFydCBub3JtYWxseSwgc28gaXQNCj4gcHJvYmFibHkgZG9lc24n
-dCBtYXR0ZXIgXQ0KDQpFeGNlcHQgdGhhdCB3aGVuIHlvdSBkbyBpdCBpcyBhbGwgYSByaWdodCBQ
-SVRBLg0KTm90IGhlbHBlZCBieSB0aGUgYWN0dWFsIG5hbWUgYmVpbmcgcmFtbWVkIG9uIHRoZSBl
-bmQuDQoNCj4gDQo+IEl0IG1pZ2h0IGJlIHBvc3NpYmxlIHRvIGN1dCBkb3duIG9uIHRoYXQgYnkg
-ZG9pbmcgdGhlbSBpbiBzZXJpZXMNCj4gaW5zdGVhZCBvZiBuZXN0ZWQsIGJ1dCBJIHRoaW5rIHRo
-YXQgd291bGQgcmVxdWlyZSBzb21ldGhpbmcgbGlrZQ0KPiBnZW5lcmF0aW5nIGEgZm91cnRoIHVu
-aXF1ZSBuYW1lLCBhbmQgc29tZXRoaW5nIGFsb25nIHRoZSBsaW5lcyBvZg0KPiANCj4gICAgIF9f
-YXV0b190eXBlIHU0ID0gX19jbXAob3AsIHV4LCB1eSk7IF9fY21wKG9wLCB1NCwgdXopOw0KPiAN
-Cj4gYXMgdGhhdCBsYXN0IGxpbmUuDQo+IA0KPiBBbmQgbm8sIEkgZGlkICpub3QqIHRyeSB0aGF0
-LCBhbmQgdGhlcmUgbWlnaHQgYmUgc29tZXRoaW5nIEknbSBtaXNzaW5nLg0KDQpJZiB5b3UgaGF2
-ZSB0byBwYXNzIHRocm91Z2ggYSAndTQnIG5hbWUgdGhhdCBjb3VsZCBlYXNpbHkgdGFrZSBsb25n
-ZXIuDQoNCglEYXZpZA0KDQo+IA0KPiAgICAgICAgIExpbnVzDQoNCi0NClJlZ2lzdGVyZWQgQWRk
-cmVzcyBMYWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBN
-SzEgMVBULCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+It doesn't make any sense to have 2 versions of _register(). Note that
+trace_uprobe_enable(), the only user of uprobe_register(), doesn't need
+to check tu->ref_ctr_offset to decide which one should be used, it could
+safely pass ref_ctr_offset == 0 to uprobe_register_refctr().
+
+Add this argument to uprobe_register(), update the callers, and kill
+uprobe_register_refctr().
+
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ include/linux/uprobes.h                       |  9 ++-----
+ kernel/events/uprobes.c                       | 24 +++++--------------
+ kernel/trace/bpf_trace.c                      |  8 +++----
+ kernel/trace/trace_uprobe.c                   |  7 +-----
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c   |  4 ++--
+ 5 files changed, 15 insertions(+), 37 deletions(-)
+
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index b503fafb7fb3..440316fbf3c6 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -110,8 +110,7 @@ extern bool is_trap_insn(uprobe_opcode_t *insn);
+ extern unsigned long uprobe_get_swbp_addr(struct pt_regs *regs);
+ extern unsigned long uprobe_get_trap_addr(struct pt_regs *regs);
+ extern int uprobe_write_opcode(struct arch_uprobe *auprobe, struct mm_struct *mm, unsigned long vaddr, uprobe_opcode_t);
+-extern int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
+-extern int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
++extern int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc);
+ extern int uprobe_apply(struct inode *inode, loff_t offset, struct uprobe_consumer *uc, bool);
+ extern void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consumer *uc);
+ extern int uprobe_mmap(struct vm_area_struct *vma);
+@@ -152,11 +151,7 @@ static inline void uprobes_init(void)
+ #define uprobe_get_trap_addr(regs)	instruction_pointer(regs)
+ 
+ static inline int
+-uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *uc)
+-{
+-	return -ENOSYS;
+-}
+-static inline int uprobe_register_refctr(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
++uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset, struct uprobe_consumer *uc)
+ {
+ 	return -ENOSYS;
+ }
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index dfe6306a63b1..b7f40bad8abc 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -1121,25 +1121,26 @@ void uprobe_unregister(struct inode *inode, loff_t offset, struct uprobe_consume
+ EXPORT_SYMBOL_GPL(uprobe_unregister);
+ 
+ /*
+- * __uprobe_register - register a probe
++ * uprobe_register - register a probe
+  * @inode: the file in which the probe has to be placed.
+  * @offset: offset from the start of the file.
++ * @ref_ctr_offset: offset of SDT marker / reference counter
+  * @uc: information on howto handle the probe..
+  *
+- * Apart from the access refcount, __uprobe_register() takes a creation
++ * Apart from the access refcount, uprobe_register() takes a creation
+  * refcount (thro alloc_uprobe) if and only if this @uprobe is getting
+  * inserted into the rbtree (i.e first consumer for a @inode:@offset
+  * tuple).  Creation refcount stops uprobe_unregister from freeing the
+  * @uprobe even before the register operation is complete. Creation
+  * refcount is released when the last @uc for the @uprobe
+- * unregisters. Caller of __uprobe_register() is required to keep @inode
++ * unregisters. Caller of uprobe_register() is required to keep @inode
+  * (and the containing mount) referenced.
+  *
+  * Return errno if it cannot successully install probes
+  * else return 0 (success)
+  */
+-static int __uprobe_register(struct inode *inode, loff_t offset,
+-			     loff_t ref_ctr_offset, struct uprobe_consumer *uc)
++int uprobe_register(struct inode *inode, loff_t offset, loff_t ref_ctr_offset,
++		    struct uprobe_consumer *uc)
+ {
+ 	struct uprobe *uprobe;
+ 	int ret;
+@@ -1189,21 +1190,8 @@ static int __uprobe_register(struct inode *inode, loff_t offset,
+ 		goto retry;
+ 	return ret;
+ }
+-
+-int uprobe_register(struct inode *inode, loff_t offset,
+-		    struct uprobe_consumer *uc)
+-{
+-	return __uprobe_register(inode, offset, 0, uc);
+-}
+ EXPORT_SYMBOL_GPL(uprobe_register);
+ 
+-int uprobe_register_refctr(struct inode *inode, loff_t offset,
+-			   loff_t ref_ctr_offset, struct uprobe_consumer *uc)
+-{
+-	return __uprobe_register(inode, offset, ref_ctr_offset, uc);
+-}
+-EXPORT_SYMBOL_GPL(uprobe_register_refctr);
+-
+ /*
+  * uprobe_apply - unregister an already registered probe.
+  * @inode: the file in which the probe has to be removed.
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index cd098846e251..afa909e17824 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -3480,10 +3480,10 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
+ 		      &bpf_uprobe_multi_link_lops, prog);
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		err = uprobe_register_refctr(d_real_inode(link->path.dentry),
+-					     uprobes[i].offset,
+-					     uprobes[i].ref_ctr_offset,
+-					     &uprobes[i].consumer);
++		err = uprobe_register(d_real_inode(link->path.dentry),
++				      uprobes[i].offset,
++				      uprobes[i].ref_ctr_offset,
++				      &uprobes[i].consumer);
+ 		if (err) {
+ 			bpf_uprobe_unregister(&path, uprobes, i);
+ 			goto error_free;
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index c98e3b3386ba..1f590f989c1e 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -1089,12 +1089,7 @@ static int trace_uprobe_enable(struct trace_uprobe *tu, filter_func_t filter)
+ 	tu->consumer.filter = filter;
+ 	tu->inode = d_real_inode(tu->path.dentry);
+ 
+-	if (tu->ref_ctr_offset)
+-		ret = uprobe_register_refctr(tu->inode, tu->offset,
+-				tu->ref_ctr_offset, &tu->consumer);
+-	else
+-		ret = uprobe_register(tu->inode, tu->offset, &tu->consumer);
+-
++	ret = uprobe_register(tu->inode, tu->offset, tu->ref_ctr_offset, &tu->consumer);
+ 	if (ret)
+ 		tu->inode = NULL;
+ 
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+index fd28c1157bd3..86babdd6f850 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+@@ -458,8 +458,8 @@ static int testmod_register_uprobe(loff_t offset)
+ 	if (err)
+ 		goto out;
+ 
+-	err = uprobe_register_refctr(d_real_inode(uprobe.path.dentry),
+-				     offset, 0, &uprobe.consumer);
++	err = uprobe_register(d_real_inode(uprobe.path.dentry),
++			      offset, 0, &uprobe.consumer);
+ 	if (err)
+ 		path_put(&uprobe.path);
+ 	else
+-- 
+2.25.1.362.g51ebf55
+
 
 
