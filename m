@@ -1,118 +1,82 @@
-Return-Path: <linux-kernel+bounces-268991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 428BA942BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:32:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708F1942BFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECAB01F2384D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:32:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24130283244
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D14E1AC421;
-	Wed, 31 Jul 2024 10:32:40 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5525C1A8C0F;
+	Wed, 31 Jul 2024 10:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RcdHX7kV"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFA8161311;
-	Wed, 31 Jul 2024 10:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7077161311
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722421960; cv=none; b=nI+46LU5p0Q91r2W6L5t0J7iANZnanjMWVAB5QvUNvZZXRSCoPY3xcDFFfCdWjvlbATOGObIp4yYdpx2l3DKnrBHNj3lUVtPWP+xot86T2cYLXOsA8mD5pzMTr6MSVsgXeCC+oHc2veCREHcSkh7ByC1LdQxHIvheMCI6MLnwdc=
+	t=1722422019; cv=none; b=lTcb0ejSod4VmqrVbMIH9O2amMNnZOywHjx8MYUTDrzDf5Bg43a0//fCbDBbylWV1Anr9EUmTkkwvTCqun3IC+gynqSzdeH7tPffx+v8JQtaqo1ZcxM2/aEJ7wCnXX4F4xcmow8bgB4wus1tCauwDaAULKIQNNNbpHfDJ2JZLO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722421960; c=relaxed/simple;
-	bh=dUhvKnefzAJf8BMqcx0kLvWGGyMJGELwZE3cmzTeerQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QKuJeajRfJvH7IyzmUmsBApSmMc6ylwext0tALJNx40DU+mPn5JXPYaw3xcAYnpwXFJStQOaSyg8B140rWLWJQ8fBtrkZlS9fOQ/c4m8yiMvHSfBmt4KG5Y94dgdet0r9kiXKTbd3aTB1++YGl125keWUrGGppqv56rKISuWZNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WYpFM5fZKzyPJk;
-	Wed, 31 Jul 2024 18:27:35 +0800 (CST)
-Received: from dggpeml500026.china.huawei.com (unknown [7.185.36.106])
-	by mail.maildlp.com (Postfix) with ESMTPS id 21D06140427;
-	Wed, 31 Jul 2024 18:32:34 +0800 (CST)
-Received: from [10.174.178.66] (10.174.178.66) by
- dggpeml500026.china.huawei.com (7.185.36.106) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 31 Jul 2024 18:32:33 +0800
-Message-ID: <ef374ef8-a19e-7b9b-67a1-5b89fb505545@huawei.com>
-Date: Wed, 31 Jul 2024 18:32:18 +0800
+	s=arc-20240116; t=1722422019; c=relaxed/simple;
+	bh=99VymIsOD12hH9kjWKSrInnoYJo3qd2LVwdE12gwp9Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sAuDH+lc4TbyLATy5lEdrCB5ATnzlLuldw0il1zNfkiHqZFjd5kF1B9pLSdQOtLYNXl6fcWYz2mRmelkCCO1P80Ay4edUQniuHNf6vEsERtg6aQTAlwPUXf5ZtADR5yWnyfn2kOPg4Or95+INMFUpskuBlU4/zafR8DWzsqwxT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RcdHX7kV; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ny25EBy/rKrBs+Y+T9v9eAxFn5pKHTTrpsG8unnB2og=; b=RcdHX7kVomSICF9SGygrx7i20K
+	U/vLz+5pYblGpTQCdWZubsyguNIwgAHdEbtmIIJ++HsSBx9OsxvG66Y+iCXswwVsyOwDonPiJvcwH
+	SCv4ShzfNIGpG/ZVuJCrfeOgl/8oC7SgQZxTgNC/TAItT0PGVQGoXWyahrPTWfNYDCy7LdVjKQMqI
+	NntDiUE2JizSkIBmup8v2C0WB85w4jAVjzk5HC6C5oYqd0CwIyPD+anXwEZm88iNMe/ssyiItrlTr
+	Yt4mtRyE1r2VUH0PA4yiXHnu0fGEPrYMuKxFAWWyo8rOemz9Nl+n68R6A99chGullMAAQhq2Gvuvp
+	Rme1eXwA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZ6eE-00000005C7P-01Oi;
+	Wed, 31 Jul 2024 10:33:34 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E0BE8300820; Wed, 31 Jul 2024 12:33:32 +0200 (CEST)
+Date: Wed, 31 Jul 2024 12:33:32 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: Linux 6.11-rc1
+Message-ID: <20240731103332.GX33588@noisy.programming.kicks-ass.net>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+ <b7ecddb7-4486-4b2d-9179-82250cf830e7@roeck-us.net>
+ <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.0.2
-Subject: Re: [PATCH net] net/smc: delete buf_desc from buffer list under lock
- protection
-To: Wen Gu <guwen@linux.alibaba.com>, <wenjia@linux.ibm.com>,
-	<jaka@linux.ibm.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <alibuda@linux.alibaba.com>, <tonylu@linux.alibaba.com>,
-	<linux-s390@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240731093102.130154-1-guwen@linux.alibaba.com>
-From: shaozhengchao <shaozhengchao@huawei.com>
-In-Reply-To: <20240731093102.130154-1-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpeml500026.china.huawei.com (7.185.36.106)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wj2BYPvYQAQa-pyT3hERcd2pVw+rL5kw7Y=-8PA3JTDAg@mail.gmail.com>
 
-Hi Wen Gu:
-   "The operations to link group buffer list should be protected by
-sndbufs_lock or rmbs_lock" It seems that the logic is smooth. But will
-this really happen? Because no process is in use with the link group,
-does this mean that there is no concurrent scenario?
+On Tue, Jul 30, 2024 at 11:53:31AM -0700, Linus Torvalds wrote:
 
-Thank you
+> Definitely something wrong with the page tables. But where that
+> wrongness comes from, I have no idea.
 
-Zhengchao Shao
+[   10.231081] CR0: 80050033 CR2: ffa02ffc CR3: 02bc6000 CR4: 000006f0
 
-On 2024/7/31 17:31, Wen Gu wrote:
-> The operations to link group buffer list should be protected by
-> sndbufs_lock or rmbs_lock. So fix it.
-> 
-> Fixes: 3e034725c0d8 ("net/smc: common functions for RMBs and send buffers")
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> ---
->   net/smc/smc_core.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
-> index 3b95828d9976..ecfea8c38da9 100644
-> --- a/net/smc/smc_core.c
-> +++ b/net/smc/smc_core.c
-> @@ -1368,18 +1368,24 @@ static void __smc_lgr_free_bufs(struct smc_link_group *lgr, bool is_rmb)
->   {
->   	struct smc_buf_desc *buf_desc, *bf_desc;
->   	struct list_head *buf_list;
-> +	struct rw_semaphore *lock;
->   	int i;
->   
->   	for (i = 0; i < SMC_RMBE_SIZES; i++) {
-> -		if (is_rmb)
-> +		if (is_rmb) {
->   			buf_list = &lgr->rmbs[i];
-> -		else
-> +			lock = &lgr->rmbs_lock;
-> +		} else {
->   			buf_list = &lgr->sndbufs[i];
-> +			lock = &lgr->sndbufs_lock;
-> +		}
-> +		down_write(lock);
->   		list_for_each_entry_safe(buf_desc, bf_desc, buf_list,
->   					 list) {
->   			list_del(&buf_desc->list);
->   			smc_buf_free(lgr, is_rmb, buf_desc);
->   		}
-> +		up_write(lock);
->   	}
->   }
->   
+See CR3 being a user address.... but yeah, million dollar question is
+how the fuck did that happen?
 
