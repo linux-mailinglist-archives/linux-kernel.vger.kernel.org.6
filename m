@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-269309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB8EC943159
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:50:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6FB94315D
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55FD9B22DA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF71B1C20F92
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D59B1B29A8;
-	Wed, 31 Jul 2024 13:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3711B29C9;
+	Wed, 31 Jul 2024 13:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="vKCmkXhq"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MAMVHZj3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75501AAE3F
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862EC1A7F7F;
+	Wed, 31 Jul 2024 13:51:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722433850; cv=none; b=lT4Q/zAG7AnEBjSmUJEmg28mpbgV+q8o3YRrH+VeGTxHH0rgAKU4+TQ2u71qJLuYBhTyxX/wGAhw6IcBBNWtopDOMCFIEV3YrOvPwEsdzcxnoNXQtRTz64H5BvWHK8QR68BQJvftA/+Nr/iADGIKEuZB4fytqG6I9FEBEPhCuiM=
+	t=1722433888; cv=none; b=CIaD7PGxjvIxR+rrMl47iL5btDpyn2i277Uby20c9zJJ3VjoFaN4mwzDGxZuzDMRs/dKGxGfLcA/bwgJ07K0h6OkyOWdbZzhQlNnpB0rNKGbExJC9ZWFRN2xIDsBmYQqbZXE6RotgIDvQevKzUf6E6sSlILe6U4j/dFM0S9N0ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722433850; c=relaxed/simple;
-	bh=VrYxixv9GrSlHcpoMIf1d1vd1y+GqlVfp7maNLmLfT4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MQ4HHWJqubNI5O/cRTUoOAIuG0tfkkWf3+TrT0MPKR9rAjJjQw7UJQGFREhJ0fpgwxwJMaFTuDSnIqS87IFpsRLUO5lT4xBmESygGB1SEMstUPQQtOd5CRiexs+5sTP6jwhHqRXh2ALSO9nVYiliG5XkfOqFM0oOo616wFfp6MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=vKCmkXhq; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so5932955e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 06:50:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722433847; x=1723038647; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=y7hnFzPJEcOIabXbhmUEAZBsUSgPXLCHLtzI2HnWZ9g=;
-        b=vKCmkXhqcyL30fgTsWyLB0EZQY9l7bkeQ6Ivv+K7AxYyvZYifLPuWXzFGfZ37liwW2
-         konY01DVoCpXf97OPmPKdw99zH7GPpb9x8LcAv07wRs1POZhScJ5T3UiYhWFc8mlka2f
-         K4KjV9QBYkPmrZosO9MqdwUwhoPWSLUxZX4dleE2IhmgpdYffls92lrztqDpmc7u/ar0
-         JqomhloqAgAEYi77dLQhVxKU/ywhPNPnvve4Ymkz3uuu7prpTAk7u2FXo+9VVVCjgQlo
-         9P6zWUh2i3QqmCHJHju5VO0PmJyg2nYMEPjEur/cE6QtCi8N4xHvkhKGJozDdQ1vy4Kr
-         N3FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722433847; x=1723038647;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y7hnFzPJEcOIabXbhmUEAZBsUSgPXLCHLtzI2HnWZ9g=;
-        b=Bt2tA4Qc8rrKXAIcUv0lSg2ADcIwBnIP5poFhgjeL821ZuDNfkwKrGgliE1SsS0ceS
-         cMMl0Kr/UabGpgig5EwMnjQT0q2TNFm2ZXbdqA9oDqLgWhqxCL4ZOdn6tQByPftmDUAP
-         ntHxkgAxzXiKB0Jm8HUm4cyIx67Fud6LhEB8YF6jkZiTi4LIHs8AJd29IlYkyjIa5Jto
-         TripZn+/MGQPdiv1ZsZqlXyWhRDtR9fjNbQbjbTXgPYnOeN8MAi5h0Gh7HxT8TpuLrC2
-         kUMjT0cfmvmJHKzlPrp9Z3y2k5k1P05+CBdnW368S22Pd0pyGN581QzqTl9M3OlngfeS
-         zYow==
-X-Forwarded-Encrypted: i=1; AJvYcCXwRoG+S8Cre3j/Qf8SEsBzzDvWuES/IpLkXlt9xlaNfmgCghpqmvM8DOHu8Sntwc/j4c1ULcwXr0N2sIblOP1kW2lsfevWSO7ViEOi
-X-Gm-Message-State: AOJu0Yx0eer7USzM8ECS7m2dOrgSYJ4BoG9h5PB+KCm2yMD9Q8pt+9/W
-	1+yLNIdZtfVVYqUMxjEUW848xapAPmgkUigZXUVRTtPQuB7Qoj/pxu+db96oROQ=
-X-Google-Smtp-Source: AGHT+IGtHk37P70L5w/N69KdcbAk942SnKefdRks2f4UU2B9nujaFdFMGK2y3KLXZi4xOhR3p8WzDw==
-X-Received: by 2002:a05:600c:3b17:b0:428:9a1:f226 with SMTP id 5b1f17b1804b1-428243e1b22mr38734125e9.1.1722433847072;
-        Wed, 31 Jul 2024 06:50:47 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6403bsm22795905e9.35.2024.07.31.06.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 06:50:46 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [RESEND PATCH] HID: hid-steam: Use clamp() macro
-Date: Wed, 31 Jul 2024 15:50:04 +0200
-Message-ID: <20240731135003.80609-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722433888; c=relaxed/simple;
+	bh=xpw6F7XSh7e3ShH1slcaKE1e0vMjHFOJ5tOhmnzsnBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kRKJPZTYdpBN8JuyyZe5iSwfjS5jDPWG5mQ7BODL2kMZx1BlMqHL1DfqNfUDbm0QXemEbICWv/wNKhnHJZgRi2hoN1eag+abh1wAaAvyZmmwXzRUPGTj+6F1IBnZwOvT7NhB2uDexFicPOKoiF4G1yAUUK455MktQc93gy79XJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MAMVHZj3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B8822F85;
+	Wed, 31 Jul 2024 15:50:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722433836;
+	bh=xpw6F7XSh7e3ShH1slcaKE1e0vMjHFOJ5tOhmnzsnBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MAMVHZj3PrsxK4q8G25hetinqKao+Hx7PUY/cPDME1vWAvnDF8YD5F8SHyOure/hF
+	 8hHUs4nq9FOq56V8IQ35NAApiQ6oF2MawjnrtHbsHkES+ysUfU2tAaYo8kQqkkT+pR
+	 zQa+qiLM2XJJwfNBxjGSXJfR+tf0J2KY7TFk0nmM=
+Date: Wed, 31 Jul 2024 16:51:03 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Andy Hsieh <andy.hsieh@mediatek.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Louis Kuo <louis.kuo@mediatek.com>,
+	Florian Sylvestre <fsylvestre@baylibre.com>
+Subject: Re: [PATCH v6 3/5] media: platform: mediatek: isp_30: add mediatek
+ ISP3.0 sensor interface
+Message-ID: <20240731135103.GE12477@pendragon.ideasonboard.com>
+References: <20240729-add-mtk-isp-3-0-support-v6-0-c374c9e0c672@baylibre.com>
+ <20240729-add-mtk-isp-3-0-support-v6-3-c374c9e0c672@baylibre.com>
+ <20240730132931.GM1552@pendragon.ideasonboard.com>
+ <CAEHHSvaiwBWnV+kmjNG=RzPk3W9Y25saNQv5-KiU8EtampUbZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEHHSvaiwBWnV+kmjNG=RzPk3W9Y25saNQv5-KiU8EtampUbZQ@mail.gmail.com>
 
-Use clamp() to actually clamp the value to the range [-32767, 32767]
-(as mentioned in the function comment) instead of manually mapping
-one specific value.
+On Wed, Jul 31, 2024 at 03:33:59PM +0200, Julien Stephan wrote:
+> Le mar. 30 juil. 2024 à 15:29, Laurent Pinchart a écrit :
+> [...]
+> > > +             mtk_seninf_update(priv, SENINF_TOP_PHY_SENINF_CTL_CSI0, DPHY_MODE, 0 /* 4D1C*/);
+> >
+> > As this is a V4L2 driver, I'm pretty sure someone will ask for
+> >
+> >                 mtk_seninf_update(priv, SENINF_TOP_PHY_SENINF_CTL_CSI0,
+> >                                   DPHY_MODE, 0 /* 4D1C*/);
+> >
+> > I wouldn't care too much about going slightly over 80 characters, but
+> > getting close to 100 where lines could be wrapped without hindering
+> > readability will likely upset some people. Same in other places where
+> > applicable.
+> 
+> Hi Laurent,
+> 
+> On an early version of this series, Angelo asked me to un-wrap lines
+> that can fit into 100 chars...
+> Both are fine for me, we just need to agree on something here ....
 
-Compile-tested only.
+For new V4L2 drivers I have a preference for a soft 80 columns limit,
+but I don't insist too much usually. Some other V4L2 core developers do
+insist more.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- drivers/hid/hid-steam.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> [...]
+> > > +     /* Configure timestamp */
+> > > +     writel(SENINF_TIMESTAMP_STEP, input->base + SENINF_TG1_TM_STP);
+> >
+> > Can we have a mtk_seninf_input_write(), the same way we have
+> > mtk_seninf_mux_write() ? Same for writes to priv->base below, with a
+> > mtk_seninf_write() inline function.
+> 
+> ... and here :) In an early review Angelo also  asked me to remove
+> these accessors.
+> 
+> I can add them back and reduce line chars if needed.
 
-diff --git a/drivers/hid/hid-steam.c b/drivers/hid/hid-steam.c
-index bf8b633114be..3442985d52ce 100644
---- a/drivers/hid/hid-steam.c
-+++ b/drivers/hid/hid-steam.c
-@@ -1341,7 +1341,7 @@ static inline s16 steam_le16(u8 *data)
- {
- 	s16 x = (s16) le16_to_cpup((__le16 *)data);
- 
--	return x == -32768 ? -32767 : x;
-+	return clamp(x, -32767, 32767);
- }
- 
- /*
+With my V4L2 hat, trying to achieve some level of consistency between
+drivers in the subsystem, I'd like to have wrappers around writel() and
+readl(). Angelo, I hope you don't mind my overruling you in this case.
+
 -- 
-2.45.2
+Regards,
 
+Laurent Pinchart
 
