@@ -1,157 +1,189 @@
-Return-Path: <linux-kernel+bounces-269398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E261D943269
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:48:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69B194326B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4877D281380
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:48:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B87B1F20F04
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6C71B581B;
-	Wed, 31 Jul 2024 14:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79D21BBBC5;
+	Wed, 31 Jul 2024 14:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ctjUUWua"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="EbxWVyvi"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0EB186E4F;
-	Wed, 31 Jul 2024 14:48:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99983611E;
+	Wed, 31 Jul 2024 14:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722437293; cv=none; b=uRE2r7TfBRO1RB3FALPdR1x+fLRh9Zf9yjC8wPugLeRZp6S2Pfm4cFWnIqlX1gGtzuZVKRL41vNNXh4MYYudA+tQ/z5oUrIadzd4pCOI5RsAKtV6L1vm6QWQg4O/DObWTDM3IwNxkCKKV8vtHcondY4Kv+1FELSKBpkwozouUEM=
+	t=1722437331; cv=none; b=TCEzBdJv4czD4yGulk5RoUkeB9kfFLDPZUJx+OFA2vU2c5N7CmCZURTKrG76KTnxKjwETEec3vgF+Gt2cCMYCTtlyBAoQMCbDZgf2uMs/WgRCOW+0Y8aOwazApFKOpSkTyJlQQlodARxDPN0360+apjssgoXlG6TYSLDXY/eM6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722437293; c=relaxed/simple;
-	bh=bij9ygVrhf3Ik+xAO+cYZBmvHCL5kJCkWDxB4IsZekY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dxfX0HdC23P2bp/nxhtKfCBmEpFpshdT8wjAqiFwA0R3VkAvMGmcrTeZjDsgpraJ0mW94zVtD/9EgjG4g/VtjgQyVO7kniVgqyHSvTr0pSK0aEmJnMD8e8oUDDbcdwKdVu/1bcJ64vkSS/GLPvjXObYBi3zEmQrTkHKSf0sxD18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ctjUUWua; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C6188C0002;
-	Wed, 31 Jul 2024 14:48:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722437286;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYb96CYTFrtvLLMBBd+KpMxW0vaxTI7+SnwCTQcAYKc=;
-	b=ctjUUWua/Ob720TUPNUK6WWBEHCjArvTvAM0iWtrtiP/zZHCB/DIJDRi12amGQeHWeNVUc
-	jBfQ/7DmDV8/ZXfUaxPWVULUSyRHEhfoEHe2loWHUR+3G+QchUW2+e8pZEOqXmX7AbGIdr
-	5SBwwgJl4oOTfOttvu0fh9HOPyTTuT0/wt5k8sjdxMAwt8iGsoOs0FbmSca1Cm0ZeEivkC
-	iYuIRYSI/xUqtvtzPC0ELxN6kbAkrFQ6jw2qbK51lW+ie6z5+wQHunbCWbM0BQPJPWjaEH
-	5AcdDpNGM+BCLh+ighoRwk05mHSsQgjPMcu4q/xn9dwlnyADgQMmTxKPZKQkWQ==
-Message-ID: <184916b4-8e7b-4ed1-913e-dc03e5f61364@bootlin.com>
-Date: Wed, 31 Jul 2024 16:48:01 +0200
+	s=arc-20240116; t=1722437331; c=relaxed/simple;
+	bh=Vawp62FULKBA3dCF5MI+TAT+Dpj7YqVUAAoe599LNfw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hlelE9VokXndE1imZLJwtcPkWcRyH2zmMtqzzk3EGm9I1nFQFDmRx8X1wryuo1ldjFQbIhFvcAPn4OuFchlSmg/MiE0I0kW5YsQ0QQPKVl0xUoCdIstZhEzKg6af5RKEmDTRw8TdwvPqDE9nTjMaa1YGeiNYwOvhUy1Ma48JCYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=EbxWVyvi; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722437322; x=1722696522;
+	bh=RzXi2xAm5ag+0eW5UgNGGENUHE//qEaGWyg1913ArEw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=EbxWVyvie+M4gw3ZApE3+GGv07WI6wtPc978p39s72PYzDMkNKMgMlGXZ/dNxaPEk
+	 8g6i31UUSxM57An6i10FBZpO4EvorwQDjITLUJDeaDqNUiRZQ1p3nCtoZOWT9tWDBy
+	 0ctuP+jv3lKToT7Zrf/pio3WRyeYVec/ZZAaOotDwFRuu0LsZhxClZ/iuXMPpQsHXq
+	 xcjmqOoYKHqI4e5HPFYAGPP5CoH3sb7xhjybizgi3srsv7OWYb0BKPfzvgDqU7OM84
+	 /133e4qeJeyS+EnLJUQY6AhqABRvh/nauZw9PKBOhorEEV1dYUf+NX+pSfuSpVd3+w
+	 j7mTx7C4Hj25Q==
+Date: Wed, 31 Jul 2024 14:48:32 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Boqun Feng <boqun.feng@gmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Jonathan Corbet <corbet@lwn.net>, Viresh Kumar <viresh.kumar@linaro.org>, Danilo Krummrich <dakr@redhat.com>, Trevor Gross <tmgross@umich.edu>, gregkh@linuxfoundation.org
+Subject: Re: [RFC PATCH] rust: types: Add explanation for ARef pattern
+Message-ID: <373fa545-004a-41a8-97a8-d8a7632562c2@proton.me>
+In-Reply-To: <CAH5fLgijqHoKrWmHBb+FQntPDgR2qA_r4y0gyib21AHU+mscNw@mail.gmail.com>
+References: <20240710032447.2161189-1-boqun.feng@gmail.com> <ZqK1l05zcCwGforV@boqun-archlinux> <beaf1fa3-eebe-443c-bc51-abd9348a411d@proton.me> <ZqOyMbi7xl67UfjY@Boquns-Mac-mini.home> <81ceeca9-8ae5-4a82-9a46-f47767e60f75@proton.me> <ZqO9j1dCiHm3r-pz@Boquns-Mac-mini.home> <8641453e-664d-4290-b9bc-4a2567ddc3fe@proton.me> <ZqPMpNNq0Q0S-M2P@cassiopeiae> <CAH5fLgijqHoKrWmHBb+FQntPDgR2qA_r4y0gyib21AHU+mscNw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 81bde7f2fb0fbe04ab82c747ad33b45df681d53c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
- Add Sophgo SARADC binding documentation
-To: Inochi Amaoto <inochiama@outlook.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20240731-sg2002-adc-v3-0-5ac40a518c0a@bootlin.com>
- <20240731-sg2002-adc-v3-1-5ac40a518c0a@bootlin.com>
- <IA1PR20MB495346557FA84CC694D184A0BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Language: en-US
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-In-Reply-To: <IA1PR20MB495346557FA84CC694D184A0BBB12@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.bonnefille@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 7/31/24 2:41 PM, Inochi Amaoto wrote:
-> On Wed, Jul 31, 2024 at 02:24:14PM GMT, Thomas Bonnefille wrote:
->> The Sophgo SARADC is a Successive Approximation ADC that can be found in
->> the Sophgo SoC.
+On 29.07.24 13:31, Alice Ryhl wrote:
+> On Fri, Jul 26, 2024 at 6:20=E2=80=AFPM Danilo Krummrich <dakr@kernel.org=
+> wrote:
 >>
->> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->> ---
->>   .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 48 ++++++++++++++++++++++
->>   1 file changed, 48 insertions(+)
+>> On Fri, Jul 26, 2024 at 03:54:37PM +0000, Benno Lossin wrote:
+>>> On 26.07.24 17:15, Boqun Feng wrote:
+>>>> On Fri, Jul 26, 2024 at 02:42:36PM +0000, Benno Lossin wrote:
+>>>>> On 26.07.24 16:26, Boqun Feng wrote:
+>>>>>> On Fri, Jul 26, 2024 at 01:43:38PM +0000, Benno Lossin wrote:
+>>>>>> [...]
+>>>>>>>>>
+>>>>>>>>> You can always get a `&T` from `ARef<T>`, since it implements `De=
+ref`.
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Yeah, but this is unrelated. I was talking about that API provider=
+s can
+>>>>>>>> decide whether they want to only provide a `raw_ptr` -> `ARef<Self=
+>` if
+>>>>>>>> they don't need to provide a `raw_ptr` -> `&Self`.
+>>>>>>>>
+>>>>>>>>>> Overall, I feel like we don't necessarily make a preference betw=
+een
+>>>>>>>>>> `->&Self` and `->ARef<Self>` functions here, since it's up to th=
+e users'
+>>>>>>>>>> design?
+>>>>>>>>>
+>>>>>>>>> I would argue that there should be a clear preference for functio=
+ns
+>>>>>>>>> returning `&Self` when possible (ie there is a parameter that the
+>>>>>>>>
+>>>>>>>> If "possible" also means there's going to be `raw_ptr` -> `&Self`
+>>>>>>>> function (as the same publicity level) anyway, then agreed. In oth=
+er
+>>>>>>>> words, if the users only need the `raw_ptr` -> `ARef<Self>`
+>>>>>>>> functionality, we don't want to force people to provide a `raw_ptr=
+` ->
+>>>>>>>> `&Self` just because, right?
+>>>>>>>
+>>>>>>> I see... I am having a hard time coming up with an example where us=
+ers
+>>>>>>> would exclusively want `ARef<Self>` though... What do you have in m=
+ind?
+>>>>>>> Normally types wrapped by `ARef` have `&self` methods.
+>>>>>>>
+>>>>>>
+>>>>>> Having `&self` methods doesn't mean the necessarity of a `raw_ptr` -=
+>
+>>>>>> `&Self` function, for example, a `Foo` is wrapped as follow:
+>>>>>>
+>>>>>>   struct Foo(Opaque<foo>);
+>>>>>>   impl Foo {
+>>>>>>       pub fn bar(&self) -> Bar { ... }
+>>>>>>       pub unsafe fn get_foo(ptr: *mut foo) -> ARef<Foo> { ... }
+>>>>>>   }
+>>>>>>
+>>>>>> in this case, the abstration provider may not want user to get a
+>>>>>> `raw_ptr` -> `&Self` function, so no need to have it.
+>>>>>
+>>>>> I don't understand this, why would the abstraction provider do that? =
+The
+>>>>
+>>>> Because no user really needs to convert a `raw_ptr` to a `&Self` whose
+>>>> lifetime is limited to a scope?
+>>>
+>>> What if you have this:
+>>>
+>>>     unsafe extern "C" fn called_from_c_via_vtable(foo: *mut bindings::f=
+oo) {
+>>>         // SAFETY: ...
+>>>         let foo =3D unsafe { Foo::from_raw(foo) };
+>>>         foo.bar();
+>>>     }
+>>>
+>>> In this case, there is no need to take a refcount on `foo`.
+>>>
+>>>> Why do we provide a function if no one needs and the solely purpose is
+>>>> to just avoid providing another function?
+>>>
+>>> I don't think that there should be a lot of calls to that function
+>>> anyways and thus I don't think there is value in providing two function=
+s
+>>> for almost the same behavior. Since one can be derived by the other, I
+>>> would go for only implementing the first one.
 >>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->> new file mode 100644
->> index 000000000000..79d8cb52279f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
->> @@ -0,0 +1,48 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title:
->> +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analog to
->> +  Digital Converters
->> +
->> +maintainers:
->> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
->> +
->> +description:
->> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
->> +
->> +properties:
->> +  compatible:
->> +    oneOf:
->> +      - items:
->> +          - const: sophgo,cv1800b-saradc
-> 
-> There is no need to use "oneOF" and "items"
-> 
+>> I don't think there should be a rule saying that we can't provide a wrap=
+per
+>> function for deriving an `ARef<T>`. `Device` is a good example:
+>>
+>> `let dev: ARef<Device> =3D unsafe { Device::from_raw(raw_dev) }.into();`
+>>
+>> vs.
+>>
+>> `let dev =3D unsafe { Device::get(raw_dev) };`
+>>
+>> To me personally, the latter looks quite a bit cleaner.
+>>
+>> Besides that, I think every kernel engineer (even without Rust backgroun=
+d) will
+>> be able to decode the meaning of this call. And if we get the chance to =
+make
+>> things obvious to everyone *without* the need to make a compromise, we s=
+hould
+>> clearly take it.
+>=20
+> I think I've come around on this question. I think it's fine to have
+> raw_ptr->ARef methods that increment the refcount, but we should make
+> a naming convention clear. I propose:
+>=20
+> * Functions named things like from_raw_file or from_raw_mm do not
+> increment the refcount.
+> * Functions named things like get_file or or mmget do increment the
+> refcount, just like the C function of the same name.
 
-Thank you very much, I'll do that.
+I have thought about this a bit and I think that we can try to do it. I
+like the name `Device::get` and `Device::from_raw`. I would not
+duplicate the name ie `Device::get_device` (nor would I do that with
+`from_raw`).
 
-> Suggestions: add a compatible like "cv1800-saradc" as fallback
-> and add use "sophgo,cv1800b-saradc" as specific compatible.
-> Use the "cv1800-saradc" in the cv18xx.dtsi and override the
-> compatible with specific one if necessary.
-> 
+One of my bigger problems was the naming, so it's good to see this.
 
-If I understand correctly, maintainers doesn't want the use of wildcards 
-as generic compatibles [1]. They prefer to use the most basic SoC as the 
-generic compatible.
-Is the CV1800 a real SoC or is it just a kind of wildcard to say CV18* ?
+---
+Cheers,
+Benno
 
-> For example:
-> - items:
->      - enum:
->          - sophgo,cv1800b-saradc
->      - const: sophgo,cv1800-saradc
-> - const: sophgo,cv1800b-saradc
-> 
-
-To avoid the issue of falling back on a wildcard I planned to do this 
-instead:
-properties:
-   compatible:
-     const: sophgo,cv1800b-saradc
-
-
-
-> Regards,
-> Inochi
-
-[1] : https://lore.kernel.org/all/20240708165719.000021b9@Huawei.com/
-
-Thank you for your comments :)
-Thomas
 
