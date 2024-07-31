@@ -1,296 +1,173 @@
-Return-Path: <linux-kernel+bounces-269949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604CF943925
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:01:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E457943929
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA70287219
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:01:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1B62826E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 23:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BF41552FA;
-	Wed, 31 Jul 2024 23:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E4616D4FF;
+	Wed, 31 Jul 2024 23:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F6/IkK1t"
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1V41JND"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F023B101EE
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0DC101EE;
+	Wed, 31 Jul 2024 23:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722466873; cv=none; b=pX+jGXA/nCHQOQCJXLxjN2AkgRoNnzaFTJq7puHe/5K8zqriRxhi77qF+215rlRPXsq6u4HTME84BOzmq7E/j1iW66h+SKoik66Q51AxjxGbnGmwPlk3Em2hFRbmfyvTLTitxMGCkm1bHUtq2NMbCXoU46oqXiSM3BgsxNszImI=
+	t=1722466958; cv=none; b=TTOzaL6oM5FbG82KKfn9dksCBBIti37/RKur0P3afoYIK0No9g32BRaqRmBI3o/4N3qf+/Jn1Awc/2Jr7GhTRwn/MuhoTKXbBfSO1gaIU4q9CFr7eNv5gb+yhR8tmT6Gnz91Bkq/0O2Rs7J4GNWNXDWLJT0Y2ExBCyIDMgkv6hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722466873; c=relaxed/simple;
-	bh=XS+XtaKZoRB/ayFSxyFtnEqz9q7ORmchzY5GNKVvXFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tF7GxqhAmrv+p1r0c7bgCrAzGHjtr6vNb21UI0kKMVroNL+4bib/6hF85iao3UortxejVrmQGBFnUKCmZEVpTAFEtu7MqjAboKwmYJPL2Ijk88CKRoN00bM7oAtKBT3oWWmA3wVY2Byv7G5DVr0CGtn1Bw4s4Bq6FLMtz+A0Idk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F6/IkK1t; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-81f86cebca3so39204439f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:01:11 -0700 (PDT)
+	s=arc-20240116; t=1722466958; c=relaxed/simple;
+	bh=T3h7NIC263TS4VjgpaJsYcFVLKjUz1wp3oH8WWzKtl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NvRJf7yWE2RjPFXafReCmhBxMadtYzAamhzi1rGDA6FDJYe7E7orP2XWWStIco+gGimPJpFLKA0f3GJIjr/QEaxIqbk+kbF5uHDdn5eX7DgNs31W3vsrcWhHSE66M09h447RWpaSZ2Na0Kf+saQ8SWM6Vs097N3sob8+clUhITs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1V41JND; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428119da952so39579105e9.0;
+        Wed, 31 Jul 2024 16:02:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722466871; x=1723071671; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kDwjdwiPcSpBbMQWeCAjcPyjGJaiNdBEjkZt2AO8miQ=;
-        b=F6/IkK1tSHIKDUecNg8wq+VTG+yYExsdpHnAM8A4+UerjsHAvXMDlPAq3IX/FU5Wj7
-         AYL6Djl88sHiuSE7GWVSEU9vPhvlI7e7kWZAkjEWFKznixBJ0LQNb4m9zXujVmPnhF9K
-         ItZrflwR38xNtu9uDV5GRUxGCDii39q0h3XnU=
+        d=gmail.com; s=20230601; t=1722466955; x=1723071755; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5J6VZcNo0LtNQ5f0ps5pzEZ8PgHvh7UDv7Qgap+Mbjg=;
+        b=B1V41JNDA8+8dyJ2M+/2EdGAAz0dPfAKydwylSPbF5Jvp5/rEU8MYU+Fkqu1FgqBoe
+         dEUevRYHBhi2937zWa/cvvTo11FuelBI92XP1DXfs8JItJ7p1wHBJzDC32v7Vifpp24a
+         hn/kmqiH871KcTa1GO4HoV3kNm/KSJyL9jCpjVs/WNLEmsJmzzt6BlmHS1NMjFzrNc0L
+         lt3wRi28XhrZaJoyNkwhf0ofHlDWPg4m/EN90U9kL/+HVKInjSNOXTthzQhxnzGvFeDM
+         /79lQxcNZo8USbjd8/AujsdcLNqQbAk7ZdGfXfgMeTL9ruW/VFOMGFRV9pBkuEZHzZj5
+         zQ7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722466871; x=1723071671;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kDwjdwiPcSpBbMQWeCAjcPyjGJaiNdBEjkZt2AO8miQ=;
-        b=L8cqBboRN7sTNV43exR6S17YSQdILwCV8dh5j8ArEvPCMDVlrIeTzW3guOjnmeejpj
-         VaHHJ1Ox2ABcDhEh1uhl/LM8YFQ6dXV3qeeYSoKPvMSLghioGhk9fVPfGnPXByqmmFtf
-         JEWw+mmjccRG7nFEHwTMJmJl0n6ZRCNAvnVWa8uu72jJDi278p7UH5+uAzLy421SJw6U
-         HAYMCpdFWDBeZoojZRSLTNkd6b9C7LAjf/hMiKhY+VJdorW5kLxSjdcZoLFMqqx1cyXP
-         GcWapLW849okedZoa9Ar9oqsHpQb9gbFGuQFtRVmRmFMI9En4uf1b5LDMs6gnLGPDVdw
-         LFVw==
-X-Gm-Message-State: AOJu0Yyv5hmn/ULui0OKGc+icHtyOUTB89ZkRrLD3RYXzDHSd61MjIB1
-	iKxh9vU8DuOCaFPii5HnlK2YRvmApKhlP+Jh7P146PspfOgby/eJQu6KqADqHAE=
-X-Google-Smtp-Source: AGHT+IHyabB8AYt4mXefBvL2HOiAWnjHK9oUHizasDsbvE0cOYxuXwSiVcCgvlXkxRAWnVk0bmukpg==
-X-Received: by 2002:a5d:958a:0:b0:803:f97f:59e1 with SMTP id ca18e2360f4ac-81fcbe581b4mr64114239f.0.1722466870324;
-        Wed, 31 Jul 2024 16:01:10 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c29fbd9d72sm3438040173.98.2024.07.31.16.01.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 16:01:10 -0700 (PDT)
-Message-ID: <3956cee8-1623-42d6-bbc6-71b5abd67759@linuxfoundation.org>
-Date: Wed, 31 Jul 2024 17:01:09 -0600
+        d=1e100.net; s=20230601; t=1722466955; x=1723071755;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5J6VZcNo0LtNQ5f0ps5pzEZ8PgHvh7UDv7Qgap+Mbjg=;
+        b=pjbbtXaJ6Voh2CA3lYUP+lOaJZjV904ecigydJUNzoV9edmnga1op84+Vr4a4E0y70
+         bJWXVSryR3AXcxfvgfbiOZTWKepx93lmJmcWZqCW1rM3brqIt2CmWI4YxUN8XjwZiHWK
+         hayYt5nHEID2PdzEEhfME3H9QpG2rbrP2eZIm3gWRZJJFl8/z+awNQM4eZkS0FHV/435
+         EyCObDdSSZqqC1JWILkAdR5zw6PcIyPp8XTTiJO/ntrSmz86Y1ZvriXxNK/zXwOKGnoK
+         3GDPTMQoCFar2mLgYZ1jnVyODm0Rz1s/uwzwXcxn+EkuJdGGOjPIP9vspZBkfS97J19b
+         natg==
+X-Forwarded-Encrypted: i=1; AJvYcCVG4664uUwiVRfIY2t4GdTQDloXeEcbOf+zaWGrYOIC7lF+34pUjkkWqozGecRTSzMSgKoRtC3zKiF55RTuDwNO0ZUpvLQecXsLEoR+F93oBwG400YwPYIJG4V919FOeu8MMzmcBvxqWw==
+X-Gm-Message-State: AOJu0Yx7Vt+fuOv3BQtExK1X9vLxoN2BvQqvkbNf7NxTaHZnWCYnDpiT
+	ReYqd6TwTMyckeAIH+aHQQNq6PPYo8De6a9JrJVzDY8S25jhWZys
+X-Google-Smtp-Source: AGHT+IEdmZ6Tq+R0aohGrLw8B3uVS9OsbbEWsd1pnFEYVKwRYVznc7DlJgb2QViXJoV8iTVcmvfCSg==
+X-Received: by 2002:a05:600c:1385:b0:426:5e8e:410a with SMTP id 5b1f17b1804b1-428b030c91bmr5519885e9.24.1722466955197;
+        Wed, 31 Jul 2024 16:02:35 -0700 (PDT)
+Received: from alessandro-pc.station (net-37-119-36-202.cust.vodafonedsl.it. [37.119.36.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baacd7fsm35534635e9.18.2024.07.31.16.02.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 16:02:34 -0700 (PDT)
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	skhan@linuxfoundation.org
+Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: arm: socfpga: Add Altera SOCFPGA SDRAM EDAS
+Date: Thu,  1 Aug 2024 01:02:26 +0200
+Message-ID: <20240731230231.12917-1-alessandro.zanni87@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] tools/nolibc: add support for [v]sscanf()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240731-nolibc-scanf-v1-0-f71bcc4abb9e@weissschuh.net>
- <20240731-nolibc-scanf-v1-1-f71bcc4abb9e@weissschuh.net>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240731-nolibc-scanf-v1-1-f71bcc4abb9e@weissschuh.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 7/31/24 12:32, Thomas Weißschuh wrote:
-> The implementation is limited and only supports numeric arguments.
+Added new yaml file that substitues the old txt file.
 
-I would like to see more information in here. Why is this needed
-etc. etc.
+Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+---
+ .../arm/altera/socfpga-sdram-edac.txt         | 15 ------
+ .../arm/altera/socfpga-sdram-edac.yaml        | 46 +++++++++++++++++++
+ 2 files changed, 46 insertions(+), 15 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
 
-> 
-> Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
-> ---
->   tools/include/nolibc/stdio.h                 | 93 ++++++++++++++++++++++++++++
->   tools/testing/selftests/nolibc/nolibc-test.c | 59 ++++++++++++++++++
->   2 files changed, 152 insertions(+)
-> 
-> diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
-> index c968dbbc4ef8..d63c45c06d8e 100644
-> --- a/tools/include/nolibc/stdio.h
-> +++ b/tools/include/nolibc/stdio.h
-> @@ -348,6 +348,99 @@ int printf(const char *fmt, ...)
->   	return ret;
->   }
->   
-> +static __attribute__((unused))
-> +int vsscanf(const char *str, const char *format, va_list args)
+diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
+deleted file mode 100644
+index f5ad0ff69fae..000000000000
+--- a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
+-The EDAC accesses a range of registers in the SDRAM controller.
+-
+-Required properties:
+-- compatible : should contain "altr,sdram-edac" or "altr,sdram-edac-a10"
+-- altr,sdr-syscon : phandle of the sdr module
+-- interrupts : Should contain the SDRAM ECC IRQ in the
+-	appropriate format for the IRQ controller.
+-
+-Example:
+-	sdramedac {
+-		compatible = "altr,sdram-edac";
+-		altr,sdr-syscon = <&sdr>;
+-		interrupts = <0 39 4>;
+-	};
+diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
+new file mode 100644
+index 000000000000..78fbe31e4a2b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/arm/altera/socfpga-sdram-edac.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
++
++maintainers:
++  - Dinh Nguyen <dinguyen@kernel.org>
++
++description:
++  The EDAC accesses a range of registers in the SDRAM controller.
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - altr,sdram-edac
++              - altr,sdram-edac-a10
++
++  altr,sdr-syscon:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description: 
++      Phandle of the sdr module
++
++  interrupts:
++    maxItems: 1
++
++required:
++  - compatible
++  - altr,sdr-syscon
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    sdramedac {
++      compatible = "altr,sdram-edac";
++      altr,sdr-syscon = <&sdr>;
++      interrupts = <0 39 4>;
++    };
++
++...
+-- 
+2.43.0
 
-Is there a reason why you didn't use the same code in lib/vsprintf.c?
-You could simply duplicate the code here?
-
-With all these libc functionality added, it isn't nolibc looks like :)
-
-> +{
-> +	uintmax_t uval;
-> +	intmax_t ival;
-> +	int base;
-> +	char *endptr;
-> +	int matches;
-> +	int lpref;
-> +
-> +	matches = 0;
-> +
-> +	while (1) {
-> +		if (*format == '%') {
-> +			lpref = 0;
-> +			format++;
-> +
-> +			if (*format == 'l') {
-> +				lpref = 1;
-> +				format++;
-> +				if (*format == 'l') {
-> +					lpref = 2;
-> +					format++;
-> +				}
-> +			}
-> +
-> +			if (*format == '%') {
-> +				if ('%' != *str)
-> +					goto done;
-> +				str++;
-> +				format++;
-> +				continue;
-> +			} else if (*format == 'd') {
-> +				ival = strtoll(str, &endptr, 10);
-> +				if (lpref == 0)
-> +					*va_arg(args, int *) = ival;
-> +				else if (lpref == 1)
-> +					*va_arg(args, long *) = ival;
-> +				else if (lpref == 2)
-> +					*va_arg(args, long long *) = ival;
-> +			} else if (*format == 'u' || *format == 'x' || *format == 'X') {
-> +				base = *format == 'u' ? 10 : 16;
-> +				uval = strtoull(str, &endptr, base);
-> +				if (lpref == 0)
-> +					*va_arg(args, unsigned int *) = uval;
-> +				else if (lpref == 1)
-> +					*va_arg(args, unsigned long *) = uval;
-> +				else if (lpref == 2)
-> +					*va_arg(args, unsigned long long *) = uval;
-> +			} else if (*format == 'p') {
-> +				*va_arg(args, void **) = (void *)strtoul(str, &endptr, 16);
-> +			} else {
-> +				SET_ERRNO(EILSEQ);
-> +				goto done;
-> +			}
-> +
-> +			format++;
-> +			str = endptr;
-> +			matches++;
-> +
-> +		} else if (*format == '\0') {
-> +			goto done;
-> +		} else if (isspace(*format)) {
-> +			while (isspace(*format))
-> +				format++;
-> +			while (isspace(*str))
-> +				str++;
-> +		} else if (*format == *str) {
-> +			format++;
-> +			str++;
-> +		} else {
-> +			if (!matches)
-> +				matches = EOF;
-> +			goto done;
-> +		}
-> +	}
-> +
-> +done:
-> +	return matches;
-> +}
-> +
-> +static __attribute__((unused, format(scanf, 2, 3)))
-> +int sscanf(const char *str, const char *format, ...)
-> +{
-> +	va_list args;
-> +	int ret;
-> +
-> +	va_start(args, format);
-> +	ret = vsscanf(str, format, args);
-> +	va_end(args);
-> +	return ret;
-> +}
-> +
->   static __attribute__((unused))
->   void perror(const char *msg)
->   {
-> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> index 093d0512f4c5..addbceb0b276 100644
-> --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> @@ -1277,6 +1277,64 @@ static int expect_vfprintf(int llen, int c, const char *expected, const char *fm
->   	return ret;
->   }
->   
-> +static int test_scanf(void)
-> +{
-> +	unsigned long long ull;
-> +	unsigned long ul;
-> +	unsigned int u;
-> +	long long ll;
-> +	long l;
-> +	void *p;
-> +	int i;
-> +
-> +	if (sscanf("", "foo") != EOF)
-> +		return 1;
-> +
-> +	if (sscanf("foo", "foo") != 0)
-> +		return 2;
-> +
-> +	if (sscanf("123", "%d", &i) != 1)
-> +		return 3;
-> +
-> +	if (i != 123)
-> +		return 4;
-> +
-> +	if (sscanf("a123b456c0x90", "a%db%uc%p", &i, &u, &p) != 3)
-> +		return 5;
-> +
-> +	if (i != 123)
-> +		return 6;
-> +
-> +	if (u != 456)
-> +		return 7;
-> +
-> +	if (p != (void *)0x90)
-> +		return 8;
-> +
-> +	if (sscanf("a    b1", "a b%d", &i) != 1)
-> +		return 9;
-> +
-> +	if (i != 1)
-> +		return 10;
-> +
-> +	if (sscanf("a%1", "a%%%d", &i) != 1)
-> +		return 11;
-> +
-> +	if (i != 1)
-> +		return 12;
-> +
-> +	if (sscanf("1|2|3|4|5|6",
-> +		   "%d|%ld|%lld|%u|%lu|%llu",
-> +		   &i, &l, &ll, &u, &ul, &ull) != 6)
-> +		return 13;
-> +
-> +	if (i != 1 || l != 2 || ll != 3 ||
-> +	    u != 4 || ul != 5 || ull != 6)
-> +		return 14;
-> +
-> +	return 0;
-
-Can we simplify this code? It is hard to read code with too
-many conditions. Maybe defining an array test conditions
-instead of a series ifs.
-
-> +}
-> +
->   static int run_vfprintf(int min, int max)
->   {
->   	int test;
-> @@ -1298,6 +1356,7 @@ static int run_vfprintf(int min, int max)
->   		CASE_TEST(char);         EXPECT_VFPRINTF(1, "c", "%c", 'c'); break;
->   		CASE_TEST(hex);          EXPECT_VFPRINTF(1, "f", "%x", 0xf); break;
->   		CASE_TEST(pointer);      EXPECT_VFPRINTF(3, "0x1", "%p", (void *) 0x1); break;
-> +		CASE_TEST(scanf);        EXPECT_ZR(1, test_scanf()); break;
->   		case __LINE__:
->   			return ret; /* must be last */
->   		/* note: do not set any defaults so as to permit holes above */
-> 
-
-thanks,
--- Shuah
 
