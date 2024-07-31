@@ -1,139 +1,143 @@
-Return-Path: <linux-kernel+bounces-269543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF28594340D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D82943416
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84ABE1F2254F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 571691C21F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4BF1BBBC7;
-	Wed, 31 Jul 2024 16:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D61A1BC094;
+	Wed, 31 Jul 2024 16:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1Yw0CyLp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="biJfHcwA"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD571A76C2
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84911A4B2B
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722442881; cv=none; b=OHAX9yciIekcSriU1NiPCMRb5nHq0ZOrr1hYdfztATzloJhHuMQtyvfAS1ZlZo+MnJt5Gd3om8J8o7zTJIgCIq6SuWSJXgyh9UPgSXAnEiHHm/XxvoVSTwzLizGQUJODPkphqGRZCg++C3l5tVkAAJiPTYi/E6SdLtE2Fjpa7H8=
+	t=1722443020; cv=none; b=N1IRIh1RnJkz7qpxd4ADeFiIwpfe+kioY1kL3gRC6WPxsHLQ895vO66w0hYVx9IdQUVHWoivSF7tTBsZRKml3TQ6eaQtQTRFITCZivDoltzELuZGi6X8mE5SugJnBBmvwBBrDweCgmXgHphwV3lsDYzuPM7Uc6eo9usKFlD76Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722442881; c=relaxed/simple;
-	bh=UcMfimX8M8ETWdPGuhN59Tp/J7zkSCXITMwCdzMqt6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Aqj0SSsJjX3mduBgXG804fQsnVydqsL7AQs+Po0Ai9RS/DyRYD+NFRL49W+2Qhi79NxLJe/F5F/nk4sJRc4jpnsAtqY/feD4WqbXT82LkolwanXhcxzCdPBgl9EnP1NKJXBXaktYVuPlgSNVJOqcpjY0eN9E0Yo8bfySr/hymQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1Yw0CyLp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BA9C4AF0B;
-	Wed, 31 Jul 2024 16:21:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1722442881;
-	bh=UcMfimX8M8ETWdPGuhN59Tp/J7zkSCXITMwCdzMqt6s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1Yw0CyLpOrWw//fRYbx4Ane1cEALRdKjo0VL/ctgkYLbwX4mlyHrl/DVfLINHcNNx
-	 lK5PtrtkyVqEQCTh0ERqsD2vEHm2bd+elgHDTP08qeSfDM6/fONYQmo6dm2W3PB/hJ
-	 u8LmJ6vQn2CmszyW4LNXQmN9nZ9Uk3Hn8MZOqRXg=
-Date: Wed, 31 Jul 2024 18:21:18 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH] driver core: Simplify driver API
- device_find_child_by_name() implementation
-Message-ID: <2024073119-mortally-ashes-80f0@gregkh>
-References: <20240720-simplify_drv_api-v1-1-07c5e028cccf@quicinc.com>
- <2024073128-tinfoil-unaligned-8164@gregkh>
- <917359cc-a421-41dd-93f4-d28937fe2325@icloud.com>
+	s=arc-20240116; t=1722443020; c=relaxed/simple;
+	bh=2HhUeVKAqujM6tGjz7xY7eoGDJF2k6V8JCfwVRNXp0M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MaaQSeSH4voP/75Rh5MvXepo6tTe//+vGVkClh/kk4wHXeW2CCWUC6SNdwIp28KhOnFp4aKG+PIIL/wjFZQn72FPTFuGW564wkpirPMrI3F3mU6FlxRElE3hyumEtmFCMkS/k53I1dpNj+rWyYoKXVV7O/ainbapxzR1XVmlKoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=biJfHcwA; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aa086b077so529244266b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:23:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722443016; x=1723047816; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/Jy3Eo6Gu+vhJFsd2nEOfkihTm91GOS2uDXcn/bR1Cs=;
+        b=biJfHcwAcXl5q7WHRKuHuTlJpEVNHd/ETzyt8bdMQqx09kSVQdUbzlc84RSDJs1FGO
+         fJ7i/T87Q6CA7d7D5Y22ilGEhOMdOd9CpUn3uYrwX52tZX1fEuvndacJiVMJEpnOhF8h
+         JseXeFiC4wl6gSoHQBOwzW4q6AKC3NoZfZYzKx7zGNJdUTt84uKxeTxSBSEefzAr2ECB
+         /hCxo75bYp+vx7zEWp2qyBMA9yU0ewUx8QuQiQUSJ6qR1NhQUjjtL8Ac/ajeVk1fMWtF
+         +bhPybB6eQCsjIk2Yq33QlZSICOC40hdNK1Sj4hXSv8ySBLljNr6crzZpXZhY2/vK4nl
+         nrDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722443016; x=1723047816;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Jy3Eo6Gu+vhJFsd2nEOfkihTm91GOS2uDXcn/bR1Cs=;
+        b=OZtVCB4qGmfBAWZMHnb5iyT92714tJhF//SO0u7PPGxKlNihHesTg0sFBVWYx9pWzm
+         QsfER6n/mVQb//WRYSwCSvAM+tv2zjCc3146qpXeHP38d/x7dx5d5qEXyxZsl5I2I3ZO
+         CH9AwJIJajfmANU2sQoYST3LJ0HFMtqLOBBz+EeW3d8g4QkFlovTgO9usDt+81dqr9qv
+         gU+nkiz9X16VrwpoaGhk5J/FVUp64cFgrc/r9ci+jzjJzfZ8cnHcZjw6ZP7coCfg1OUy
+         6ovHpdxESUouGmq0AqmuMYFPXGABEKWfBQULIwfXzHEGoJD1fc2Z0fL0dBEb/bavO1yK
+         rNCw==
+X-Forwarded-Encrypted: i=1; AJvYcCXwZjZz1HMPle2yM5HLXnuZKHY4kZXB0gpUjbcGkDoDI/ZhdLzt0MIF8e7YBzI2dX9Z2Oag7gpTvrkenpXa03uMVm7Fy4Fkvf4vqV1Q
+X-Gm-Message-State: AOJu0YyAkeVrJxIHuYUp2KjzLqiegk5+QSFJ39qRT/O2EiRZMGF5TZdE
+	RvuBlRdKUroxjHTCbT3oQSqRv2g34xqJUAvFdsgKhrAMosQhRseXV2qRoOlNuqQ=
+X-Google-Smtp-Source: AGHT+IFaeuLsqXvHIvwNkMOmXQ/kk95KnaHAVzfZZFY2rJSwrdZANzuSfUeE19U50MBeGB1J/TbUHg==
+X-Received: by 2002:a17:907:a0d5:b0:a7a:b070:92c6 with SMTP id a640c23a62f3a-a7d40116a4bmr801926666b.50.1722443015967;
+        Wed, 31 Jul 2024 09:23:35 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad416basm784769266b.104.2024.07.31.09.23.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 09:23:35 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 614DC5F8CB;
+	Wed, 31 Jul 2024 17:23:34 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,  Marc Zyngier <maz@kernel.org>,
+  Oliver Upton <oliver.upton@linux.dev>,  Tianrui Zhao
+ <zhaotianrui@loongson.cn>,  Bibo Mao <maobibo@loongson.cn>,  Huacai Chen
+ <chenhuacai@kernel.org>,  Michael Ellerman <mpe@ellerman.id.au>,  Anup
+ Patel <anup@brainfault.org>,  Paul Walmsley <paul.walmsley@sifive.com>,
+  Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
+  Christian Borntraeger <borntraeger@linux.ibm.com>,  Janosch Frank
+ <frankja@linux.ibm.com>,  Claudio Imbrenda <imbrenda@linux.ibm.com>,
+  kvm@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  kvmarm@lists.linux.dev,  loongarch@lists.linux.dev,
+  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
+  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  David Matlack <dmatlack@google.com>,
+  David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 01/84] KVM: arm64: Release pfn, i.e. put page, if
+ copying MTE tags hits ZONE_DEVICE
+In-Reply-To: <20240726235234.228822-2-seanjc@google.com> (Sean
+	Christopherson's message of "Fri, 26 Jul 2024 16:51:10 -0700")
+References: <20240726235234.228822-1-seanjc@google.com>
+	<20240726235234.228822-2-seanjc@google.com>
+Date: Wed, 31 Jul 2024 17:23:34 +0100
+Message-ID: <87a5hxfs3d.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <917359cc-a421-41dd-93f4-d28937fe2325@icloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2024 at 12:04:40AM +0800, Zijun Hu wrote:
-> On 2024/7/31 20:53, Greg Kroah-Hartman wrote:
-> > On Sat, Jul 20, 2024 at 09:21:50AM +0800, Zijun Hu wrote:
-> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> >>
-> >> Simplify device_find_child_by_name() implementation by using present
-> >> driver APIs device_find_child() and device_match_name().
-> >>
-> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> >> ---
-> >>  drivers/base/core.c    | 15 +++------------
-> >>  include/linux/device.h |  4 ++++
-> >>  2 files changed, 7 insertions(+), 12 deletions(-)
-> >>
-> >> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> >> index 730cae66607c..22ab4b8a2bcd 100644
-> >> --- a/drivers/base/core.c
-> >> +++ b/drivers/base/core.c
-> >> @@ -4089,18 +4089,9 @@ EXPORT_SYMBOL_GPL(device_find_child);
-> >>  struct device *device_find_child_by_name(struct device *parent,
-> >>  					 const char *name)
-> >>  {
-> >> -	struct klist_iter i;
-> >> -	struct device *child;
-> >> -
-> >> -	if (!parent)
-> >> -		return NULL;
-> >> -
-> >> -	klist_iter_init(&parent->p->klist_children, &i);
-> >> -	while ((child = next_device(&i)))
-> >> -		if (sysfs_streq(dev_name(child), name) && get_device(child))
-> >> -			break;
-> >> -	klist_iter_exit(&i);
-> >> -	return child;
-> >> +	/* TODO: remove type cast after const device_find_child() prototype */
-> > 
-> > I do not understand the TODO here.  Why is it needed?  Why not fix it up
-> > now?
-> > 
-> 
-> i have below findings during trying to simplify this API.
-> 
-> there are a type of driver APIs for finding device, for example,
-> (bus|driver|class)_find_device() which all take below type for
-> parameter @match:
-> int (*match)(struct device *, const void *match_data)
-> but device_find_child() take below type with void * for @match_data:
-> int (*match)(struct device *, void *match_data).
-> 
-> @match's type of device_find_child() is not good as other finding APIs
-> since nothing will be touched for finding operations normally.
-> 
-> i want to introduce a dedicate type for device match.
-> typedef int (*device_match_t)(struct device *dev, const void *data);
+Sean Christopherson <seanjc@google.com> writes:
 
-Yes, that would be good.
+> Put the page reference acquired by gfn_to_pfn_prot() if
+> kvm_vm_ioctl_mte_copy_tags() runs into ZONE_DEVICE memory.  KVM's less-
+> than-stellar heuristics for dealing with pfn-mapped memory means that KVM
+> can get a page reference to ZONE_DEVICE memory.
+>
+> Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a gues=
+t")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/arm64/kvm/guest.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index 11098eb7eb44..e1f0ff08836a 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -1059,6 +1059,7 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
+>  		page =3D pfn_to_online_page(pfn);
+>  		if (!page) {
+>  			/* Reject ZONE_DEVICE memory */
+> +			kvm_release_pfn_clean(pfn);
 
-> advantages:
-> 1) device_match_t is simpler for finding APIs declarations and definitions
-> 2) maybe stop further driver APIs from using bad match type as
-> device_find_child()
-> 
-> TODO:
-> 1) introduce device_match_t and use it for current present APIs
-> (bus|driver|class)_find_device()
-> 2) change API device_find_child() to take device_match_t, more jobs to
-> do since need to touch many drivers
-> 3) correct this change by by remove all TODO inline comments and force cast.
-> 
-> not sure if my ideas is good, what is your opinions?
+I guess this gets renamed later in the series.
 
-That's great, but evolve it properly, don't add TODO lines here, there's
-no real need for that.  Should end up with a lot of good cleanup
-changes, and might not be all that bad overall.
+However my main comment is does lack of page always mean a ZONE_DEVICE?
+Looking at pfn_to_online_page() I see a bunch of other checks first. Why
+isn't it that functions responsibility to clean up after itself if its
+returning NULLs?
 
-thanks,
+>  			ret =3D -EFAULT;
+>  			goto out;
+>  		}
 
-greg k-h
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
