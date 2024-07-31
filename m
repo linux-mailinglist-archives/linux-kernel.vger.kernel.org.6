@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-269665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632F794358C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:20:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A818943589
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178351F22703
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:20:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C2551C21958
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C951A4F0C;
-	Wed, 31 Jul 2024 18:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD59545020;
+	Wed, 31 Jul 2024 18:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QHrDunwf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="K5z60veX"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4F145BE3;
-	Wed, 31 Jul 2024 18:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914174A1A
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450003; cv=none; b=ds3vq+Ouu2aCLzM8A+zZKppml+XOW9Hobq6MRtj9uGTpxS8CUF41ZjB3rZmrYZ3DYzv/H8mZTQ8Hnt43WG0+CF1wmkLc0Y4cJywtejdBzArGrYhNUhLp6uXY+GNfY/BSI+TtGNPpEkVeFSQoEzrrM8up5jCxZvmVyV+2pIi28KM=
+	t=1722450000; cv=none; b=jOnvO25KS/u/+1RRFQIv3HtfXAJJAsoyXPngOROp8j9Yso2YpuHvJTQfw+mWl9xHOeGHnZ6tAJIAWmLbhkKRAZL/3xeiG9Ucsgmf/Hujcm4fWa4abYoxHkYQCl3UXWOhSJIcGHN8FAMr3/6OJrOp7coLHqfQq6VelPnZlnNqE1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450003; c=relaxed/simple;
-	bh=mhUJZkJDoBn6UrBK6j9k/Zhefn6WhHvCy2ysDMhWtOg=;
+	s=arc-20240116; t=1722450000; c=relaxed/simple;
+	bh=zzeXu0V2XrTOH9QXqXrrAt5OkQnJlMRSRL+oX4kdGts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjpuWtC1uDS9oJ8OPfJJuumiQiCxfsLpexmJ54cTjhmxmUtRgFK175UXFz6sUgozW4+nQMC9cg3aRKxsXdRyirrIDHLVJTjOoOtoyzUspNFlktjcmXhiqBt4avOGhIClZzH6WN4gMMBfAtHP75YC2sIrMgBM3EuFiVvJsHWylEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QHrDunwf; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722450001; x=1753986001;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mhUJZkJDoBn6UrBK6j9k/Zhefn6WhHvCy2ysDMhWtOg=;
-  b=QHrDunwfmTljnjUMhJp4vd5IXXUNGVW/dgSH/T/RyNzOlzNJbKuDoxpt
-   wZyHV+t86/OpZ2CoTrVC5r794mqkDPGyh42bsdd1BFl/ph2X1w33RfMb0
-   mr8AREaPMDqxH+7ES+IuOn29VRBkgv3131Og+oR2bioLqlQdcfRJM/jod
-   FF1L+JOcnRCjuugoQf1VxZ68UUqkPIgmoHQ9WLM3FSyKlTH7grazvfHIm
-   nbg4gYyzn5/U+xp8fHUtG69qRccZdnfKyF/swvf3ydSFTgkQzS0PVVFiE
-   OQASByNZMbLsmG8N3L9oj1NQJjiOMcstWbNCMsPcn6bTi3DC59uXjb7OY
-   Q==;
-X-CSE-ConnectionGUID: Un/HTtHSSXaxC+gn2TF7Hg==
-X-CSE-MsgGUID: xAQGIqJNSXCILtYcEE9g7Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="23268184"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="23268184"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 11:20:00 -0700
-X-CSE-ConnectionGUID: g2GxWhHnQRqpX6Q0Gsc6Bw==
-X-CSE-MsgGUID: RwGiN8jVSjmeOtf88aroXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="55368613"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 31 Jul 2024 11:19:56 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZDvV-000uhg-0v;
-	Wed, 31 Jul 2024 18:19:53 +0000
-Date: Thu, 1 Aug 2024 02:19:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zhiguo Jiang <justinjiang@vivo.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	Nick Piggin <npiggin@kernel.dk>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Arnd Bergmann <arnd@arndb.de>, Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org,
-	cgroups@vger.kernel.org, Barry Song <21cnbao@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH 2/2] mm: tlb: add tlb swap entries batch async release
-Message-ID: <202408010150.13yZScv6-lkp@intel.com>
-References: <20240730114426.511-3-justinjiang@vivo.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lmygOGTZN+UdX6hrLSo663yUElfsFReIBRutnk88vi+z33C3X8jUHZ5RpgiN8jJPKzECg7iISEnlCB/wlOh+QiS9kJz5bMjZ7A9m+Wv1CUJLXY71+O0gSgOH9CA+IMAKoAcDei6yX/C9USXfbnoX6sv18T2SUokICuBSZksnIyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=K5z60veX; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=g.harvard.edu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fe9cf83c7so34914981cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 11:19:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1722449997; x=1723054797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SnOSTDz5p85GiwsKhk/eE53XisA23eDTKA9fiAEKZb4=;
+        b=K5z60veX6K3Q0PGLy3ZzjAxNK7PHwtQEVpavO8292AxUmH6sx8T4a6xYGJd9lhcotu
+         DRGiDJNy0n39hif5PgMpUwSjVGT+zPSYId0oF8H+d+8YBeD0+K0aycFM76yENbD1XA3s
+         GgP1f4/wMfbzHpI/tb6Z3k7GnbcIqlojcfKoi25e3wmC0SJNO+IB/CJYWfYXayIamC0M
+         ic8LGGNECL76QY12WTUOPkcnNOzzyf8hUGe+pBHG+wbfditi276tXaWn9QbaVAZmAGIN
+         YciH8q7bhqs+L1DqWexfS9HC6QE5wNYJY9mEtqTFsVRrURYkJf8qAjZILrqfEdhEVmuH
+         XtwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722449997; x=1723054797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SnOSTDz5p85GiwsKhk/eE53XisA23eDTKA9fiAEKZb4=;
+        b=SxWeIU2hJgPwzLgZIyzbK/waCoNR+B2ZzNbOSaWKhktlNT/92UijAA+xHlH9A4DWXA
+         yh73IDlpGBa/uzvjBV6j7iGfjhGAyCV/U9BBue81hiTULYRDoj+n2a+IVWZtfuMSDF9G
+         b+/rdUhakKFlE+h8EF6s40+RZ+L7kqwUSZlzWDzruEXeGQ75421tv7iy1Pyq4raw0aJb
+         L+szbG79ciErSW48VPK5RCOoHj6jJgowSfcEvUTOjKs23ECgH8BCLVJMeUraYnjH8E7k
+         caE+jSPh6C46x+YsG+ylq70epGWvhbPJLyllPb9H2GmzhKoAQkhDlAjpucqykUQ7eybO
+         vcQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV/rzebam2Qks+HqSlU9H1BlUV4IMqQVrP/XVv/fStM2iB0FBwRgYrIeKT73/d6M+egmtAVZc8koxsyskR0Fpi0XOZi7l7dSckka0I
+X-Gm-Message-State: AOJu0YyPi9FtGl4lHFWeOpTts2t1dTrrcQvHuTtz4LAopUI4g7WOH0Xw
+	lREZ4hrtBnVG+t8ZZxk3JlBPXIz1VVehfGF7ne9nC8RBRdtV3MEIemxCoy1EbA==
+X-Google-Smtp-Source: AGHT+IGHq1pCN5+SZ6wLoOrS7zzkUEg0Kf/ITIW2bSTAZXtWNPHjw1SfGm/eJfr5OIMu6iKyU2I3PQ==
+X-Received: by 2002:a05:622a:249:b0:446:60ba:610a with SMTP id d75a77b69052e-4514f965be1mr1668221cf.9.1722449997405;
+        Wed, 31 Jul 2024 11:19:57 -0700 (PDT)
+Received: from rowland.harvard.edu (iolanthe.rowland.org. [192.131.102.54])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-44fe82012bcsm62119401cf.66.2024.07.31.11.19.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 11:19:56 -0700 (PDT)
+Date: Wed, 31 Jul 2024 14:19:54 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Abhishek Tamboli <abhishektamboli9@gmail.com>
+Cc: gregkh@linuxfoundation.org, oneukum@suse.com,
+	usb-storage@lists.one-eyed-alien.net, linux-usb@vger.kernel.org,
+	skhan@linuxfoundation.org, dan.carpenter@linaro.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: storage: ene_ub6250: Fix right shift warnings
+Message-ID: <b35a344a-018b-44ae-975a-7767a3d5b6ec@rowland.harvard.edu>
+References: <20240729182348.451436-1-abhishektamboli9@gmail.com>
+ <e72cc56a-3066-4cb8-848d-bfe27a48c095@suse.com>
+ <ZqkpOQIjcBSAg8rC@embed-PC.myguest.virtualbox.org>
+ <5d7870b0-6b63-430b-8885-2509b33dc78a@suse.com>
+ <804a6d40-73a4-4af6-944b-95e9324d7429@rowland.harvard.edu>
+ <Zqp8vbbIC8E/XrQY@embed-PC.myguest.virtualbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,43 +90,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730114426.511-3-justinjiang@vivo.com>
+In-Reply-To: <Zqp8vbbIC8E/XrQY@embed-PC.myguest.virtualbox.org>
 
-Hi Zhiguo,
+On Wed, Jul 31, 2024 at 11:34:45PM +0530, Abhishek Tamboli wrote:
+> On Wed, Jul 31, 2024 at 10:04:33AM -0400, Alan Stern wrote:
+> > On Wed, Jul 31, 2024 at 11:15:28AM +0200, 'Oliver Neukum' via USB Mass Storage on Linux wrote:
+> > > Hi,
+> > > 
+> > > On 30.07.24 19:56, Abhishek Tamboli wrote:
+> > > > On Tue, Jul 30, 2024 at 09:09:05AM +0200, Oliver Neukum wrote:
+> > > 
+> > > > > 1. use a constant, where a constant is used
+> > > > I think you are suggesting that I should replace hard-coded values like the
+> > > > buffer size with named constants. For example:
+> > > > 
+> > > > #define BUF_SIZE 8
+> > > > unsigned char buf[BUF_SIZE];
+> > > 
+> > > Yes, but the constant we need to look at here is bl_len.
+> > > This is a variable needlessly.
+> > 
+> > The code in ms_scsi_read_capacity() is written that way to be consistent 
+> > with the sd_scsi_read_capacity() routine.  Or maybe it was just 
+> > copied-and-pasted, and then the variable's type was changed for no good 
+> > reason.
+> > 
+> > Replacing the variable with a constant won't make much difference.  The 
+> > compiler will realize that bl_len has a constant value and will generate 
+> > appropriate code anyway.  I think just changing the type is a fine fix.
+> > 
+> > > > > 2. use the macros for converting endianness
+> > > > Can I use macros like cpu_to_le32 for converting the bl_num and bl_len values.
+> > > > Should I replace all instances of manual bitwise shifts with these macros?
+> > > 
+> > > Yes.
+> > > 
+> > > > For example:
+> > > > 
+> > > >      u32 bl_len = 0x200;
+> > > >      buf[0] = cpu_to_le32(bl_num) >> 24;
+> > > >      buf[4] = cpu_to_le32(bl_len) >> 24;
+> > > > 
+> > > > Is using cpu_to_le32 appropriate for the data format required by this
+> > > > device?
+> > > 
+> > > Well, the format is big endian. So, cpu_to_be32() will be required.
+> > 
+> > Better yet, use put_unaligned_be32().
+> Would you recommend submitting a follow-up patch to incorporate this change, or should I leave it as is for now.
 
-kernel test robot noticed the following build warnings:
+You can submit another patch as a clean-up, if you want.  But as I said, 
+it isn't needed.
 
-[auto build test WARNING on akpm-mm/mm-everything]
+> >However, there's nothing really 
+> >wrong with the code as it stands. It doesn't need to be changed now.
+> As you mentioned there's no need to change the code, So my initial patch is okay as is?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Zhiguo-Jiang/mm-move-task_is_dying-to-h-headfile/20240730-215136
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20240730114426.511-3-justinjiang%40vivo.com
-patch subject: [PATCH 2/2] mm: tlb: add tlb swap entries batch async release
-config: i386-randconfig-061-20240731 (https://download.01.org/0day-ci/archive/20240801/202408010150.13yZScv6-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240801/202408010150.13yZScv6-lkp@intel.com/reproduce)
+It is as far as I'm concerned.  Obviously Oliver has a different 
+opinion.  But I'm the Maintainer of the usb-storage driver, so my 
+opinion counts for more than his does, in this case.  :-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408010150.13yZScv6-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> mm/mmu_gather.c:54:10: sparse: sparse: symbol 'nr_exiting_processes' was not declared. Should it be static?
-   mm/mmu_gather.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h):
-   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +/nr_exiting_processes +54 mm/mmu_gather.c
-
-    53	
-  > 54	atomic_t nr_exiting_processes = ATOMIC_INIT(0);
-    55	static struct kmem_cache *swap_gather_cachep;
-    56	static struct workqueue_struct *swapfree_wq;
-    57	static DEFINE_STATIC_KEY_TRUE(tlb_swap_asyncfree_disabled);
-    58	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Alan Stern
 
