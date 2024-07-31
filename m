@@ -1,218 +1,96 @@
-Return-Path: <linux-kernel+bounces-268869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B6A942A7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:29:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA44942A7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E0C7B23CDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:29:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 695DD1F21405
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EBD1AB51E;
-	Wed, 31 Jul 2024 09:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947791AAE22;
+	Wed, 31 Jul 2024 09:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uHXUG/ud";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BmMoWYvo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uHXUG/ud";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BmMoWYvo"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aNVu2VbV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F30817C8D;
-	Wed, 31 Jul 2024 09:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD1E624;
+	Wed, 31 Jul 2024 09:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722418137; cv=none; b=iUfv/SilyHI7nLs2e+jq4PxDFc+201bZSTmzXoYJVu4XwwnTb2p6ynAEPL7WVQKtHgIXhNdoF+pNEN0T+CMW88TNNw++3OY38ZpFXWAjUKMuhEqMKfPB+nbxnMVE9GeYQFADzXODioG7VNtbOOrzq2Crp0KF9uZ+vEVqLnxdx/g=
+	t=1722418232; cv=none; b=lqWz/1u93AQ3HEp0cnNVguq3ZzMgDf+LtsoJAiZqpmjb7hyCwUAUzEbdcSnJOfj6o8R+46AtstvvDJh3wXbBeh7RdLrGm3L9dRkvp0MkznlLk2JFO3pbOdvym5wklYUupLol+8entqSkV7aglsSVhzMr1mp+xLT0ECRP5v8ZdZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722418137; c=relaxed/simple;
-	bh=dW8Zk6W9eMjp2YUthgUJ/GZykyYD06tqeF8b7dB27wg=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J9q4iMQzawZ/NPH73gpxLab7Of6oEPT+BeXv8P5zzRoXsrz6YxB6ZGEFM8PJkiDXTYs6IrePpWMjA3X2RF1XzDCt3HSjtksgSNWLHsSvoJihyU3uREUjFWmkom/lvLr6DoehDyqgNx3TfHRKcfCcux8s28gj6F3dQhkqN7fKIn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uHXUG/ud; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BmMoWYvo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uHXUG/ud; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BmMoWYvo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6306C1F833;
-	Wed, 31 Jul 2024 09:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722418133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
-	b=uHXUG/ud+yLP3GulJDgZyjAFtOZL37GyTo9PzP0odYPyMQ6xaLycNVEru365CcWF2szoaR
-	aeHH7CKQ0hdUKzMbO3/oUjxW/DroUvOUKsFW3Bw8bhcGgO825l4xNpYkxdMz+IvUAg622d
-	KPVrZkq8hAk97TbWm/jvcKEu9tJI7AM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722418133;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
-	b=BmMoWYvoM9LUzNqtUInq+2feL5ZbQ7D4Cm3a3iJE/PIm+D9TaCRJtsAk4we1ZrGYBlaDoD
-	XC88qYTTAoT49iAQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722418133; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
-	b=uHXUG/ud+yLP3GulJDgZyjAFtOZL37GyTo9PzP0odYPyMQ6xaLycNVEru365CcWF2szoaR
-	aeHH7CKQ0hdUKzMbO3/oUjxW/DroUvOUKsFW3Bw8bhcGgO825l4xNpYkxdMz+IvUAg622d
-	KPVrZkq8hAk97TbWm/jvcKEu9tJI7AM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722418133;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xww2KrgmTygSkhqjYmOgbKvDtHvBLkrRjLM8Ffaw1vI=;
-	b=BmMoWYvoM9LUzNqtUInq+2feL5ZbQ7D4Cm3a3iJE/PIm+D9TaCRJtsAk4we1ZrGYBlaDoD
-	XC88qYTTAoT49iAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2AC311368F;
-	Wed, 31 Jul 2024 09:28:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zhM2CNUDqmamGwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 31 Jul 2024 09:28:53 +0000
-Date: Wed, 31 Jul 2024 11:29:30 +0200
-Message-ID: <87ed79zz7p.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Edmund Raile <edmund.raile@protonmail.com>
-Cc: o-takashi@sakamocchi.jp,
-	clemens@ladisch.de,
-	tiwai@suse.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 0/2] ALSA: firewire-lib: restore process context workqueue to prevent deadlock
-In-Reply-To: <20240730195318.869840-1-edmund.raile@protonmail.com>
-References: <20240730195318.869840-1-edmund.raile@protonmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1722418232; c=relaxed/simple;
+	bh=hSYSX2i9J5Ny39VIH4B+nCpC1hMZVRlS0kYp0AaA30E=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=R5X+nJdWfGs5VJwEoEOApnDmOKFEZppyOda747z0OlbIauQswGBthRnuceQCdsNhV+HivpKR6UH4P0NYONqXxEHrNSZ9Qa/FOQhcV/oWdeyI13mKYKu0V3G+wUrGmrdPpQ9JznGcCY3Fie+K+hEfydExVLSIN4ZXhFMb5qzX8Hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aNVu2VbV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7A133C4AF0C;
+	Wed, 31 Jul 2024 09:30:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722418231;
+	bh=hSYSX2i9J5Ny39VIH4B+nCpC1hMZVRlS0kYp0AaA30E=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aNVu2VbVwtW8UHwTNL8I2seYvNLz1ykbHUSYnMQQUaAy6YlrNZs8CUvC3v6+A/knb
+	 8LUrtlDhK9eJpr2ab6lUM1pvYXx5IgRCftPeSQKTcRasn3lQIFHhWK3tyk8GYtZdAM
+	 5k89YlDPi0x1epuA91dCas7J86w9V+Mvr1CVTmOF/O3jAQv1/l07xU1Ho73ktcf3Kk
+	 wpBbSaWQ+HGaEUqZBEfcNyCEWZV7hRYjagmYnEY2v2pEHo8JJj3kkBr9gLCe0oDy1O
+	 BNZryoMaPoSiinwsRWYF2aFHqK7owsT4MQS1Iu0xTGC2CwisAxHf8i1o1gZLowDHto
+	 U6j5ntoVH6WYQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 687C1C6E398;
+	Wed, 31 Jul 2024 09:30:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.10 / 50.00];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[protonmail.com];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[protonmail.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -0.10
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3 1/2] net: dsa: vsc73xx: make RGMII delays
+ configurable
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172241823142.27092.8446004592094217593.git-patchwork-notify@kernel.org>
+Date: Wed, 31 Jul 2024 09:30:31 +0000
+References: <20240729210200.279798-1-paweldembicki@gmail.com>
+In-Reply-To: <20240729210200.279798-1-paweldembicki@gmail.com>
+To: =?utf-8?q?Pawe=C5=82_Dembicki_=3Cpaweldembicki=40gmail=2Ecom=3E?=@codeaurora.org
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linus.walleij@linaro.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Tue, 30 Jul 2024 21:53:23 +0200,
-Edmund Raile wrote:
-> 
-> This patchset serves to prevent an AB/BA deadlock:
-> 
-> thread 0:
->     * (lock A) acquire substream lock by
-> 	snd_pcm_stream_lock_irq() in
-> 	snd_pcm_status64()
->     * (lock B) wait for tasklet to finish by calling
->     	tasklet_unlock_spin_wait() in
-> 	tasklet_disable_in_atomic() in
-> 	ohci_flush_iso_completions() of ohci.c
-> 
-> thread 1:
->     * (lock B) enter tasklet
->     * (lock A) attempt to acquire substream lock,
->     	waiting for it to be released:
-> 	snd_pcm_stream_lock_irqsave() in
->     	snd_pcm_period_elapsed() in
-> 	update_pcm_pointers() in
-> 	process_ctx_payloads() in
-> 	process_rx_packets() of amdtp-stream.c
-> 
-> ? tasklet_unlock_spin_wait
->  </NMI>
->  <TASK>
-> ohci_flush_iso_completions firewire_ohci
-> amdtp_domain_stream_pcm_pointer snd_firewire_lib
-> snd_pcm_update_hw_ptr0 snd_pcm
-> snd_pcm_status64 snd_pcm
-> 
-> ? native_queued_spin_lock_slowpath
->  </NMI>
->  <IRQ>
-> _raw_spin_lock_irqsave
-> snd_pcm_period_elapsed snd_pcm
-> process_rx_packets snd_firewire_lib
-> irq_target_callback snd_firewire_lib
-> handle_it_packet firewire_ohci
-> context_tasklet firewire_ohci
-> 
-> The issue has been reported as a regression of kernel 5.14:
-> Link: https://lore.kernel.org/regressions/kwryofzdmjvzkuw6j3clftsxmoolynljztxqwg76hzeo4simnl@jn3eo7pe642q/T/#u
-> ("[REGRESSION] ALSA: firewire-lib: snd_pcm_period_elapsed deadlock
-> with Fireface 800")
-> 
-> Commit 7ba5ca32fe6e ("ALSA: firewire-lib: operate for period elapse event
-> in process context") removed the process context workqueue from
-> amdtp_domain_stream_pcm_pointer() and update_pcm_pointers() to remove
-> its overhead.
-> Commit b5b519965c4c ("ALSA: firewire-lib: obsolete workqueue for period
-> update") belongs to the same patch series and removed
-> the now-unused workqueue entirely.
-> 
-> Though being observed on RME Fireface 800, this issue would affect all
-> Firewire audio interfaces using ohci amdtp + pcm streaming.
-> 
-> ALSA streaming, especially under intensive CPU load will reveal this issue
-> the soonest due to issuing more hardIRQs, with time to occurrence ranging
-> from 2 secons to 30 minutes after starting playback.
-> 
-> to reproduce the issue:
-> direct ALSA playback to the device:
->   mpv --audio-device=alsa/sysdefault:CARD=Fireface800 Spor-Ignition.flac
-> Time to occurrence: 2s to 30m
-> Likelihood increased by:
->   - high CPU load
->     stress --cpu $(nproc)
->   - switching between applications via workspaces
->     tested with i915 in Xfce
-> PulsaAudio / PipeWire conceal the issue as they run PCM substream
-> without period wakeup mode, issuing less hardIRQs.
-> 
-> Cc: stable@vger.kernel.org
-> Backport note:
-> Also applies to and fixes on (tested):
-> 6.10.2, 6.9.12, 6.6.43, 6.1.102, 5.15.164
-> 
-> Edmund Raile (2):
->   Revert "ALSA: firewire-lib: obsolete workqueue for period update"
->   Revert "ALSA: firewire-lib: operate for period elapse event in process
->     context"
+Hello:
 
-Applied both patches now.  Thanks.
+This series was applied to netdev/net-next.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Mon, 29 Jul 2024 23:01:59 +0200 you wrote:
+> This patch switches hardcoded RGMII transmit/receive delay to
+> a configurable value. Delay values are taken from the properties of
+> the CPU port: 'tx-internal-delay-ps' and 'rx-internal-delay-ps'.
+> 
+> The default value is configured to 2.0 ns to maintain backward
+> compatibility with existing code.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net-next,v3,1/2] net: dsa: vsc73xx: make RGMII delays configurable
+    https://git.kernel.org/netdev/net-next/c/3b91b03271c5
+  - [net-next,v3,2/2] dt-bindings: net: dsa: vsc73xx: add {rx,tx}-internal-delay-ps
+    https://git.kernel.org/netdev/net-next/c/b735154aeb33
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-Takashi
 
