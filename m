@@ -1,152 +1,157 @@
-Return-Path: <linux-kernel+bounces-269507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C56494339E
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:46:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F6819433A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:47:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD1841C21F2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:46:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5CC01F28701
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:47:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1421B3724;
-	Wed, 31 Jul 2024 15:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mWGtcRW7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2851BC064;
+	Wed, 31 Jul 2024 15:47:24 +0000 (UTC)
+Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878C3747F;
-	Wed, 31 Jul 2024 15:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63CF1AD9FE;
+	Wed, 31 Jul 2024 15:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722440781; cv=none; b=PQBvijqLF5z8hTuKkCHnEwKa6CoD0klpMWl6xV/RTPS/gek+ivyXY75If2wUStFg6PFx7pp0NSGNmghGt0Q/cuLoxsRR4mnNy/KBiJVQr1Xr5oh8m9lq0TlqmR0jJDTSdx/gjl5EHXcCkpDc7RPySdjPaQDtgg10au2H3wlcM40=
+	t=1722440844; cv=none; b=UsAJ6WlLGZSkbj+6jQJPvpZm+qvzdCtoB1LmMsI8c34M5QeW+t/IAHI/pyNOlpMC1a8xfGb12sfowx0mA0rnUj1XmE+Eyw03JlJ84ZTn5b4pOMdmxeiqp7o1jIyw8VzdTTztnZ8X4ZDcKzSf5iuiYggGthY3E50Mj/8+Rp4M6uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722440781; c=relaxed/simple;
-	bh=JSqrGcPdxzdCkjvNhdbWF6uWfXTLDQGpsCJBheDjKec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxcCApiPT/CMRuk33kKZmkHpyB88Va3nZ7tP4Uvi1nrpCTTCQ2QHULKRW0fH6gKIqLvwdQcv2N3XYYU1qZtx17BJY1jnN0m0IqZlDDHEzc3C2a7IdjCodxqxeAQBD6Lrz+sc46v9GknT42DpskcRY+gSlSWyuWvtYERFWPcx4HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mWGtcRW7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6519AC116B1;
-	Wed, 31 Jul 2024 15:46:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722440780;
-	bh=JSqrGcPdxzdCkjvNhdbWF6uWfXTLDQGpsCJBheDjKec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mWGtcRW7JTz9AhW73D1JKdDg1kHMKRaMmla1MWLto+INP4Y79/i/yrILqpqhHnl14
-	 ymI4Wt8UDTBdROJ3m2GVc+AmTUlwTDNRK1OJ23m9COaXD0zKMKkUc5MuvxcrMifplD
-	 dttABrsBdutLR3gIS118enLq0jgSLF4HMMNcVjpidcm7/vpQIJ/2eoC5D8rZUxbVEU
-	 Pk+P4/YzDjbQt/ERLrDRESGGi5v/lcFGW3c5088o+NM5elb+UbGHHAQGRsilPytCGH
-	 e4JwkwecbZW3RxRCXwSffJzaOaGpD/naFrFlCFAdBRyJquwDUttmbtvWbjopPqpiGH
-	 p9LDCZ8h7VtZg==
-Date: Wed, 31 Jul 2024 12:46:12 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: John Garry <john.g.garry@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Jing Zhang <renyu.zj@linux.alibaba.com>,
-	Xu Yang <xu.yang_2@nxp.com>, Sandipan Das <sandipan.das@amd.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	philip.li@intel.com, oliver.sang@intel.com,
-	Weilin Wang <weilin.wang@intel.com>
-Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
-Message-ID: <ZqpcRIzzBb5KC6Zb@x1>
-References: <20240730191744.3097329-1-irogers@google.com>
- <20240730191744.3097329-3-irogers@google.com>
- <Zqo5vVdrkhL5NHJK@x1>
- <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
- <ZqpZWywTe2j3U9Pl@x1>
+	s=arc-20240116; t=1722440844; c=relaxed/simple;
+	bh=5L1ZkQfvJW4Hc+i4AwixrEEeoVmD/+4IFHxXjZYWleA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NtaVXz4zdR36YyJebcB/2eM67FCEKqugksc0onylqb5uXrS6hNtb/z71vZkwkMMhrqlEPMPeTZRJx34hYv6k2uwQOaPun48rzUYXlppNbxVZhZzMt97ncT3YfOtGtvGbIMmcHgf56KzpxbQDiVEqsP6cK6X/povyt3/Cb0Mf8XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.207.19.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtpsz15t1722440796txjpre
+X-QQ-Originating-IP: /bxfH/qQrJqd6hIR3sDVK/BqB8lbEXBQYWnbAIq4p6o=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 31 Jul 2024 23:46:34 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11460382544041475410
+From: WangYuli <wangyuli@uniontech.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Terry Wong <terry.wong2@yahoo.com>,
+	Craig Cabrey <craigcabrey@gmail.com>,
+	Dmitry Savin <envelsavinds@gmail.com>,
+	Lugang He <helugang@uniontech.com>
+Subject: [PATCH v2] HID: multitouch: Add report_fixup for Goodix GT7868Q touchpad
+Date: Wed, 31 Jul 2024 23:46:19 +0800
+Message-ID: <801C5D6FCE55F473+20240731154619.514470-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.43.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZqpZWywTe2j3U9Pl@x1>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
-On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
-> > On Wed, Jul 31, 2024 at 6:18 AM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
-> > > > empty-pmu-events.c exists so that builds may occur without python
-> > > > being installed on a system. Manually updating empty-pmu-events.c to
-> > > > be in sync with jevents.py is a pain, let's use jevents.py to generate
-> > > > empty-pmu-events.c.
-> > >
-> > > What am I missing here?
-> > >
-> > > If it exists so that we can build on a system without python how can we
-> > > use python to generate it?
-> > >
-> > > Now having python in the system is a requirement and thus we don't need
-> > > empty-pmu-events.c anymore?
-> > >
-> > > Can you guys please clarify that?
-> > 
-> > The requirement for python hasn't changed.
-> > 
-> > Case 1: no python or NO_JEVENTS=1
-> > Build happens using empty-pmu-events.c that is checked in, no python
-> > is required.
-> > 
-> > Case 2: python
-> > pmu-events.c is created by jevents.py (requiring python) and then built.
-> > This change adds a step where the empty-pmu-events.c is created using
-> > jevents.py and that file is diffed against the checked in version.
-> > This stops the checked in empty-pmu-events.c diverging if changes are
-> > made to jevents.py. If the diff causes the build to fail then you just
-> > copy the diff empty-pmu-events.c over the checked in one.
-> 
-> I'll try and add your explanation to the log message, thanks for
-> clarifying it!
+Goodix GT7868Q has incorrect data in the report and needs
+a fixup.
 
-So, with it in place I'm now noticing:
+The device is a haptic touchpad used on
+Lenovo ThinkBook 13x Gen 4 series of laptops and have
+incorrect descriptor that hid-parse fails to parse hence
+device is not working.
 
-⬢[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
-⬢[acme@toolbox perf-tools-next]$ alias m='rm -rf ~/libexec/perf-core/ ; make -k CORESIGHT=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin && perf test python'
-⬢[acme@toolbox perf-tools-next]$ m
-<SNIP>
-  GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
-  MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
-  CC      /tmp/build/perf-tools-next/util/annotate.o
-  CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
-  CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
-  CC      /tmp/build/perf-tools-next/util/block-info.o
-  CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test.o
-  CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
-  MKDIR   /tmp/build/perf-tools-next/ui/browsers/
-  CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
-  CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
-  CC      /tmp/build/perf-tools-next/util/block-range.o
-  TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log
---- pmu-events/empty-pmu-events.c	2024-07-31 12:44:14.355042296 -0300
-+++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c	2024-07-31 12:45:35.048682785 -0300
-@@ -380,7 +380,7 @@
-                         continue;
+Link: https://github.com/ty2/goodix-gt7868q-linux-driver.git
+Signed-off-by: Terry Wong <terry.wong2@yahoo.com>
+Signed-off-by: Craig Cabrey <craigcabrey@gmail.com>
+Signed-off-by: Dmitry Savin <envelsavinds@gmail.com>
+Link: https://lore.kernel.org/linux-input/20240716222757.22931-1-envelsavinds@gmail.com/T/#mc7922671337acc84c69d367074ce341db5a819dc
+Suggested-by: Lugang He <helugang@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ drivers/hid/hid-ids.h        |  2 ++
+ drivers/hid/hid-multitouch.c | 33 +++++++++++++++++++++++++++++++++
+ 2 files changed, 35 insertions(+)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 72d56ee7ce1b..eebfca375bcd 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -520,6 +520,8 @@
+ #define USB_DEVICE_ID_GENERAL_TOUCH_WIN8_PIT_E100 0xe100
  
-                 ret = pmu_events_table__for_each_event_pmu(table, table_pmu, fn, data);
--                if (pmu || ret)
-+                if (ret)
-                         return ret;
-         }
-         return 0;
-  CC      /tmp/build/perf-tools-next/tests/openat-syscall.o
-make[3]: *** [pmu-events/Build:42: /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log] Error 1
-make[3]: *** Deleting file '/tmp/build/perf-tools-next/pmu-events/empty-pmu-events.log'
-make[2]: *** [Makefile.perf:763: /tmp/build/perf-tools-next/pmu-events/pmu-events-in.o] Error 2
-make[2]: *** Waiting for unfinished jobs....
-  CC      /tmp/build/perf-tools-next/arch/x86/util/kvm-stat.o
-<SNIP>
+ #define I2C_VENDOR_ID_GOODIX		0x27c6
++#define I2C_DEVICE_ID_GOODIX_01E8	0x01e8
++#define I2C_DEVICE_ID_GOODIX_01E9	0x01e9
+ #define I2C_DEVICE_ID_GOODIX_01F0	0x01f0
+ 
+ #define USB_VENDOR_ID_GOODTOUCH		0x1aad
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 56fc78841f24..99812c0f830b 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -1441,6 +1441,30 @@ static int mt_event(struct hid_device *hid, struct hid_field *field,
+ 	return 0;
+ }
+ 
++static __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
++			     unsigned int *size)
++{
++	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
++	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
++	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
++		if (rdesc[607] == 0x15) {
++			rdesc[607] = 0x25;
++			dev_info(
++				&hdev->dev,
++				"GT7868Q report descriptor fixup is applied.\n");
++		} else {
++			dev_info(
++				&hdev->dev,
++				"The byte is not expected for fixing the report descriptor. \
++It's possible that the touchpad firmware is not suitable for applying the fix. \
++got: %x\n",
++				rdesc[607]);
++		}
++	}
++
++	return rdesc;
++}
++
+ static void mt_report(struct hid_device *hid, struct hid_report *report)
+ {
+ 	struct mt_device *td = hid_get_drvdata(hid);
+@@ -2035,6 +2059,14 @@ static const struct hid_device_id mt_devices[] = {
+ 		MT_BT_DEVICE(USB_VENDOR_ID_FRUCTEL,
+ 			USB_DEVICE_ID_GAMETEL_MT_MODE) },
+ 
++	/* Goodix GT7868Q devices */
++	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
++	  HID_DEVICE(BUS_I2C, HID_GROUP_ANY, I2C_VENDOR_ID_GOODIX,
++		     I2C_DEVICE_ID_GOODIX_01E8) },
++	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
++	  HID_DEVICE(BUS_I2C, HID_GROUP_ANY, I2C_VENDOR_ID_GOODIX,
++		     I2C_DEVICE_ID_GOODIX_01E8) },
++
+ 	/* GoodTouch panels */
+ 	{ .driver_data = MT_CLS_NSMU,
+ 		MT_USB_DEVICE(USB_VENDOR_ID_GOODTOUCH,
+@@ -2270,6 +2302,7 @@ static struct hid_driver mt_driver = {
+ 	.feature_mapping = mt_feature_mapping,
+ 	.usage_table = mt_grabbed_usages,
+ 	.event = mt_event,
++	.report_fixup = mt_report_fixup,
+ 	.report = mt_report,
+ 	.suspend = pm_ptr(mt_suspend),
+ 	.reset_resume = pm_ptr(mt_reset_resume),
+-- 
+2.43.4
+
 
