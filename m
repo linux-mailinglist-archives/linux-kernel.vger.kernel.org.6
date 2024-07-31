@@ -1,215 +1,94 @@
-Return-Path: <linux-kernel+bounces-269392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F14D2943254
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:44:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314B7943258
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729091F27384
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633471C24456
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 14:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B60C1BBBC6;
-	Wed, 31 Jul 2024 14:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A9D1BD013;
+	Wed, 31 Jul 2024 14:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wPO0KTMe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8NUhvU3+";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wPO0KTMe";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8NUhvU3+"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leb7xbLf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589391BBBC3
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 14:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB0E1BC08E;
+	Wed, 31 Jul 2024 14:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722437023; cv=none; b=e2CaoRwE87O8gEpmD343OSw/hJxvpYHd0iz/L0IBKvr2wedjhiGJZVixKxNa58swPdDmD11BpBEMiX90fpiZ/8mx/8HCIAuZqt2yaHzjBUIKb9rBXdGd0R6K+cITf5cgv5pg9QdyPuIZl3wkSHj9FnyMOTJa42nDAvSE+VOQTkg=
+	t=1722437033; cv=none; b=esRKYpuM+OoH12rKfqoVH2w9+KdLSYA2PqV9ynZomoDbctyDT5yV1bBREOH4lIuvYVEixvwaRlalq0mX3TcEMECj3EtTsYCZvB8dNHptzmzlfXzLKQlsPd1fljvXSL+1bIFUc5WdpBbTFQIMoQPlRSZqw/aIsaqoPcyotSxNxdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722437023; c=relaxed/simple;
-	bh=x6iSPw+eF+Tbnn3Y1jGEztMQzDy184vHWR2hrnjKHKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N3iOjE/k+Qip+yyqWmx5+u4OOzQaEDgalqGbI2QBIkYhMOh6wo7x7Rxoy4LN1aGxzLF8Lm69tPc0vJqfPJ/6AHbTdwRkI4r8sT0Qg+MW2P6FP1GYXMgIuhHdQ2PhiAWsCuy8rJqChgIJldoE8FlmWoe7lUpPSrXN/tiAwJIiP2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wPO0KTMe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8NUhvU3+; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wPO0KTMe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8NUhvU3+; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 83ACE21A7B;
-	Wed, 31 Jul 2024 14:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722437019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
-	b=wPO0KTMeLxsLTMKHxSxvuL7yB53HRVZ/ePvvK1hnRaQ0VD/NTQfiitvP64+M5v05LX5B/H
-	r5vyvaamneCQnpuC+gxzfQwBHlMxz7+StYcDDC4k+6nlOBOv6reYbzi+pSe1GDb4uMckZE
-	40RZLvs0Fr9y9hBrmkXkKxOm19cr6Hs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722437019;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
-	b=8NUhvU3+sLh6ljtIPVkix+w+fzvDC9w/Iya2hRaguhTz6AJZcBJS52Uayh5eRWpyK8DRcM
-	sIQ7bOUsN2+lZdCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722437019; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
-	b=wPO0KTMeLxsLTMKHxSxvuL7yB53HRVZ/ePvvK1hnRaQ0VD/NTQfiitvP64+M5v05LX5B/H
-	r5vyvaamneCQnpuC+gxzfQwBHlMxz7+StYcDDC4k+6nlOBOv6reYbzi+pSe1GDb4uMckZE
-	40RZLvs0Fr9y9hBrmkXkKxOm19cr6Hs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722437019;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ErZYWH0yCVNDemD+p8E2JlYmFEAzXVk4NkZZnwYipV8=;
-	b=8NUhvU3+sLh6ljtIPVkix+w+fzvDC9w/Iya2hRaguhTz6AJZcBJS52Uayh5eRWpyK8DRcM
-	sIQ7bOUsN2+lZdCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C6C213297;
-	Wed, 31 Jul 2024 14:43:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZLPSGZtNqmbUeAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 31 Jul 2024 14:43:39 +0000
-Message-ID: <4908d9a3-8b04-4808-8190-c1b602cba9dd@suse.cz>
-Date: Wed, 31 Jul 2024 16:43:39 +0200
+	s=arc-20240116; t=1722437033; c=relaxed/simple;
+	bh=3uUQgB9NsO6QdRwnKkBcuAS4ZDSgOduuYPCnxlW5Kvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d3Pt37aSchfHuMPXiQ6T3JrxP0FTqVzc4PcD/prNQ28LMjz+EXy2x+dRxarNKPOUHRFO/nP8YfsjBIbqwqf25qWVKVZZYeNX3PTtbkr+nW529S2Tqf5CrMKgrzvysvALMFWgyNF2YD+iM4ZmkOvshWDlPKSJcZ4pUZV6b04u/a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leb7xbLf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52E59C116B1;
+	Wed, 31 Jul 2024 14:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722437033;
+	bh=3uUQgB9NsO6QdRwnKkBcuAS4ZDSgOduuYPCnxlW5Kvk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=leb7xbLfru8tcQpwEZwAOOdUFIGDCp1thq7gTY1UcBFWmAZWS4lKpf3jdfAlD7efh
+	 5cdQcAU64khHHAIqGb1Hh9D7++C+qWjbPxBaMwbyxeWg+dE9O34nIPBJ51+RmCN2Vt
+	 zCUU4TYVoVpRerchg3Nm8zCx+a1mQ+UZH3P9Rz28ITevglLMFg56obR1McDMqu7N2v
+	 fTQvhxOWm/34xmqfN2MVe/EdYr08QSFjkaxGPFQUUJNeZGdgMNBTPAjs62fytClG+S
+	 1VEAomVL/gf/nNsiX2t0KuW6YmV5vfuYnlxMDmeXunBhwMPsDpIueHhDozX4kFGoGG
+	 ldPbmLW5yoeAQ==
+Date: Wed, 31 Jul 2024 07:43:51 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Song, Yoong Siang" <yoong.siang.song@intel.com>
+Cc: "Nguyen, Anthony L" <anthony.l.nguyen@intel.com>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+ <john.fastabend@gmail.com>, "Gomes, Vinicius" <vinicius.gomes@intel.com>,
+ Jonathan Corbet <corbet@lwn.net>, "Kitszel, Przemyslaw"
+ <przemyslaw.kitszel@intel.com>, Shinas Rasheed <srasheed@marvell.com>,
+ "Tian, Kevin" <kevin.tian@intel.com>, Brett Creeley
+ <brett.creeley@amd.com>, "Blanco Alcaine, Hector"
+ <hector.blanco.alcaine@intel.com>, "Hay, Joshua A"
+ <joshua.a.hay@intel.com>, "Neftin, Sasha" <sasha.neftin@intel.com>,
+ "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-doc@vger.kernel.org"
+ <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH iwl-next,v1 0/3] Add Default Rx Queue Setting for igc
+ driver
+Message-ID: <20240731074351.13676228@kernel.org>
+In-Reply-To: <PH0PR11MB5830E21A96A862B194D4A4A5D8B12@PH0PR11MB5830.namprd11.prod.outlook.com>
+References: <20240730012212.775814-1-yoong.siang.song@intel.com>
+	<20240730075507.7cf8741f@kernel.org>
+	<PH0PR11MB5830E21A96A862B194D4A4A5D8B12@PH0PR11MB5830.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] mm: vrealloc: properly document __GFP_ZERO behavior
-Content-Language: en-US
-To: Danilo Krummrich <dakr@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: urezki@gmail.com, hch@infradead.org, mhocko@suse.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240730185049.6244-1-dakr@kernel.org>
- <20240730185049.6244-4-dakr@kernel.org>
- <20240730141953.a30fa50c0ba060fe0a765730@linux-foundation.org>
- <ZqlsdtTWhRahFWmy@pollux.localdomain>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <ZqlsdtTWhRahFWmy@pollux.localdomain>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.09 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,infradead.org,suse.com,vger.kernel.org,kvack.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -4.09
 
-On 7/31/24 12:43 AM, Danilo Krummrich wrote:
-> On Tue, Jul 30, 2024 at 02:19:53PM -0700, Andrew Morton wrote:
->> On Tue, 30 Jul 2024 20:49:43 +0200 Danilo Krummrich <dakr@kernel.org> wrote:
->> 
->> > Properly document that if __GFP_ZERO logic is requested, callers must
->> > ensure that, starting with the initial memory allocation, every
->> > subsequent call to this API for the same memory allocation is flagged
->> > with __GFP_ZERO. Otherwise, it is possible that __GFP_ZERO is not fully
->> > honored by this API.
->> 
->> I appear to have just seen this, in a separate mailing.
+On Wed, 31 Jul 2024 07:40:11 +0000 Song, Yoong Siang wrote:
+> Regarding your suggestion of implementing a "wildcard rule,"
+> are you suggesting the use of an ethtool command similar to the following?
 > 
-> What you have seen in a separate mail is a similar patch for krealloc() [1].
-> This one is a fixup for vrealloc() from a previous submission you've applied to
-> mm-unstable.
+> ethtool -U <iface name> flow-type ether action <default queue>
 > 
->> 
->> Please, slow down.  We have two months.  Await reviewer feedback, spend
->> time over those changelogs, value clarity and accuracy and completeness
->> over hastiness.  The only reason for rushing things is if a patch is
->> disrupting ongoing testing of the linux-next tree.
-> 
-> There was a discussion in [2], which lead to this fixup series.
-> 
-> In terms of changelogs this series is indeed a bit "lax", since I have
-> recognized that you queue up fixup patches for changes that did already land in
-> mm-unstable to be squashed into the original commits later on.
+> I have a concern that users might be not aware that this nfc rule is having lowest priority,
+> as the default queue would only take effect when no other filtering rules match.
 
-Some of the changes in the fixups would however ideally result in udpdates
-to the original changelogs in addition to squashing code. Also with 4 fixups
-to 2 original patches it might be IMHO better to squash on your side and
-resend as a full replacement. Perhaps also together with the other 2 patches
-about __GFP_ZERO for krealloc in a single series. As Andrew mentioned we are
-early in the rc phase to afford this.
+I believe that ethtool n-tuple rules are expected to be executed in
+order. User can use the 'loc' argument to place the rule at the end 
+of the table.
 
-> [1] https://lore.kernel.org/linux-mm/20240730194214.31483-1-dakr@kernel.org/
-> [2] https://lore.kernel.org/linux-mm/20240722163111.4766-1-dakr@kernel.org/T/#m065a7f875b44dc945dd535c2b7168c3d77a98993
-
+> Do you see this as a potential issue? If not, I am willing to proceed with
+> exploring the ethtool options you've mentioned.
 
