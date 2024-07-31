@@ -1,131 +1,125 @@
-Return-Path: <linux-kernel+bounces-268885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B059942AA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B1B942AA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C98961F24CE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:35:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8EC51F24E83
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52B71AC436;
-	Wed, 31 Jul 2024 09:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF24C1AB50B;
+	Wed, 31 Jul 2024 09:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="vjkpwMyA"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YyHUQIK1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC9F1AAE17;
-	Wed, 31 Jul 2024 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334C41AAE35;
+	Wed, 31 Jul 2024 09:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722418508; cv=none; b=qxxicFmfz0UdDOsRxHeiUnyuq1hUR3H409P5fNOSvFb+4+AucgfaElOncqN3LvJrlRDc7I0+Ou34KmGCw2LpkJjDfoLBIKcODW29JnNr7JKaMawmJUXkqhOiDUCoB/y4dsi2SA2YU1XxM9B75NbfhZOHaROhD889yv5HZauESCA=
+	t=1722418520; cv=none; b=fE0Cygv2gbTqV0x2p9giTdiEuybqLVNBlEtJar8VYEalG1mCeh9yoSjTZOEfnvkIqMKyJaRho3dBMdVqHXPi8wFZB3FNSOVjqCFj9vcGrxpxEUiWrfqyRtX3FbwFQZFzkoxIMis9RQ0/6G/XEsgi8e1Q2vKtFhg0RpUcEgJxxjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722418508; c=relaxed/simple;
-	bh=OlPnoh/kLKwB+K1SAOzWnjDTIPXs1b69NoLFMlqj2FQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YhFDICIGb3uIQo1sPrcwuSj648U4h21uWa5UrnBY9W+K5QKuQH8VtUo3KUTTWQlOoQHLWHILxwSRHTehnbcIFzsTQ1+yGk4S/2ZJE+ZWwRvUkPnOfT/kjsVUBS6HAt5x9JAV83zjghaZZ4pP/YDqHQQTlqS2G64Yn3yTZkyias8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=vjkpwMyA; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722418505;
-	bh=OlPnoh/kLKwB+K1SAOzWnjDTIPXs1b69NoLFMlqj2FQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vjkpwMyAWerMuA+xGyrZse6LIgpQH6swgmQNUHPALFK+xPfzc6N8tsJJcp1da3xyG
-	 oVEfGwMJipGbEdRaD8QY2M6Moj3COKquD/CzHQ/xBjZobx/T0sQa6rC2iW06xyakvk
-	 1PGi8y28QXK9KpxJe+S10ROu9mw3E1LbhPRkHPuzuKYuvBxCZ1o/f2ZD/ND6HrUXUB
-	 HdmZlRR8+2QKwzyzXsDWdmawogwSB1c7QnVMn2MYu7ys30eOwdMn3+JyiUmtGhUNzg
-	 DMiZ19etfYCpU8OtRkb+6YK8riIoQz98aLjWsG/5fOG40ifeOUACyXdvZhdgQVFZxa
-	 unPzNa917O1lQ==
-Received: from benjamin-XPS-13-9310.. (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: benjamin.gaignard)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 97527378215C;
-	Wed, 31 Jul 2024 09:35:04 +0000 (UTC)
-From: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-To: mchehab@kernel.org,
-	ezequiel@vanguardiasur.com.ar,
-	hverkuil-cisco@xs4all.nl
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	kernel@collabora.com,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>
-Subject: [PATCH v6 3/3] media: verisilicon: Use V4L2_FMTDESC_FLAG_ENUM_ALL flag
-Date: Wed, 31 Jul 2024 11:34:57 +0200
-Message-ID: <20240731093457.29095-4-benjamin.gaignard@collabora.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240731093457.29095-1-benjamin.gaignard@collabora.com>
-References: <20240731093457.29095-1-benjamin.gaignard@collabora.com>
+	s=arc-20240116; t=1722418520; c=relaxed/simple;
+	bh=AmtVfHZDmiR2ybPvRkkSY/6FCf1yF5PpCzn/kf8sqeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZJfZrG4tB/Q+xXpwfAMPSRYqis6n1zs+ElNjmj+211VEN9XTcucSv4T4o77gJZkv92uymxWBjVRMwytittqceKpESwIMSxpBYgtrjGIGeAQ5wDo+G1cITxe/HXynOUKhZGJ2Ib5RMMP1Udzurk7QoYQMZ1wcw77cSnZdM75wV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YyHUQIK1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54537C116B1;
+	Wed, 31 Jul 2024 09:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722418519;
+	bh=AmtVfHZDmiR2ybPvRkkSY/6FCf1yF5PpCzn/kf8sqeU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YyHUQIK1Yr48049aXPDTDS7BwDk/UOsDxYUGSnwrKUSP1sqiFvYewVN7cD9SlvvHe
+	 1Nz3ccDbmnFIEPS4CIUSumweNZ9UuN4k3CuGIDTwhlMLUSZKib7g/4OHBdWrOAGxFr
+	 j6sFVfiru/nWUbYtWHjhVBTQ9bAXFXD5abX/XNjT6Oo7gf6WEm9povBLt29Ap9hMJb
+	 wmFOgXwYFVl+r2ZzZGSqAnZUxeu/w5vDa8WHt6embjHC1tdfCZWxgOp9VrL+zgGW2R
+	 2y11HQturAAieDC+3QqgWVIf+jfQ4blek3IQ3Fj6kE37fbDfmzbAotlOWpalk9F69T
+	 XPP/N0TX64fkA==
+Date: Wed, 31 Jul 2024 10:35:16 +0100
+From: Simon Horman <horms@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH] net/chelsio/libcxgb: Add __percpu annotations to
+ libcxgb_ppm.c
+Message-ID: <20240731093516.GR1967603@kernel.org>
+References: <20240730125856.7321-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730125856.7321-1-ubizjak@gmail.com>
 
-By adding support for the V4L2_FMTDESC_FLAG_ENUM_ALL flag into the driver
-we allow userspace applications to discover all possible
-pixel formats of the hardware block. This way userspace can decide
-which decoder to use given the supported pixel formats.
+On Tue, Jul 30, 2024 at 02:58:19PM +0200, Uros Bizjak wrote:
+> Compiling libcxgb_ppm.c results in several sparse warnings:
+> 
+> libcxgb_ppm.c:368:15: warning: incorrect type in assignment (different address spaces)
+> libcxgb_ppm.c:368:15:    expected struct cxgbi_ppm_pool *pools
+> libcxgb_ppm.c:368:15:    got void [noderef] __percpu *_res
+> libcxgb_ppm.c:374:48: warning: incorrect type in initializer (different address spaces)
+> libcxgb_ppm.c:374:48:    expected void const [noderef] __percpu *__vpp_verify
+> libcxgb_ppm.c:374:48:    got struct cxgbi_ppm_pool *
+> libcxgb_ppm.c:484:19: warning: incorrect type in assignment (different address spaces)
+> libcxgb_ppm.c:484:19:    expected struct cxgbi_ppm_pool [noderef] __percpu *pool
+> libcxgb_ppm.c:484:19:    got struct cxgbi_ppm_pool *[assigned] pool
+> libcxgb_ppm.c:511:21: warning: incorrect type in argument 1 (different address spaces)
+> libcxgb_ppm.c:511:21:    expected void [noderef] __percpu *__pdata
+> libcxgb_ppm.c:511:21:    got struct cxgbi_ppm_pool *[assigned] pool
+> 
+> Add __percpu annotation to *pools and *pool percpu pointers and to
+> ppm_alloc_cpu_pool() function that returns percpu pointer to fix
+> these warnings.
+> 
+> Compile tested only, but there is no difference in the resulting object file.
+> 
+> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> ---
+>  drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+> index 854d87e1125c..01d776113500 100644
+> --- a/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+> +++ b/drivers/net/ethernet/chelsio/libcxgb/libcxgb_ppm.c
+> @@ -342,10 +342,10 @@ int cxgbi_ppm_release(struct cxgbi_ppm *ppm)
+>  }
+>  EXPORT_SYMBOL(cxgbi_ppm_release);
+>  
+> -static struct cxgbi_ppm_pool *ppm_alloc_cpu_pool(unsigned int *total,
+> -						 unsigned int *pcpu_ppmax)
+> +static struct cxgbi_ppm_pool __percpu *ppm_alloc_cpu_pool(unsigned int *total,
+> +							  unsigned int *pcpu_ppmax)
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
----
- .../media/platform/verisilicon/hantro_v4l2.c   | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Let's keep to less than 80 columns wide, as is still preferred for
+Networking code. Perhaps in this case:
 
-diff --git a/drivers/media/platform/verisilicon/hantro_v4l2.c b/drivers/media/platform/verisilicon/hantro_v4l2.c
-index df6f2536263b..f416c5b36dd0 100644
---- a/drivers/media/platform/verisilicon/hantro_v4l2.c
-+++ b/drivers/media/platform/verisilicon/hantro_v4l2.c
-@@ -201,7 +201,15 @@ static int vidioc_enum_fmt(struct file *file, void *priv,
- 	struct hantro_ctx *ctx = fh_to_ctx(priv);
- 	const struct hantro_fmt *fmt, *formats;
- 	unsigned int num_fmts, i, j = 0;
--	bool skip_mode_none;
-+	bool skip_mode_none, enum_all_formats;
-+	u32 index = f->index & ~V4L2_FMTDESC_FLAG_ENUM_ALL;
-+
-+	/*
-+	 * If the V4L2_FMTDESC_FLAG_ENUM_ALL flag is set, we want to enumerate all
-+	 * hardware supported pixel formats
-+	 */
-+	enum_all_formats = !!(f->index & V4L2_FMTDESC_FLAG_ENUM_ALL);
-+	f->index = index;
- 
- 	/*
- 	 * When dealing with an encoder:
-@@ -222,9 +230,9 @@ static int vidioc_enum_fmt(struct file *file, void *priv,
- 
- 		if (skip_mode_none == mode_none)
- 			continue;
--		if (!hantro_check_depth_match(fmt, ctx->bit_depth))
-+		if (!hantro_check_depth_match(fmt, ctx->bit_depth) && !enum_all_formats)
- 			continue;
--		if (j == f->index) {
-+		if (j == index) {
- 			f->pixelformat = fmt->fourcc;
- 			return 0;
- 		}
-@@ -242,9 +250,9 @@ static int vidioc_enum_fmt(struct file *file, void *priv,
- 	for (i = 0; i < num_fmts; i++) {
- 		fmt = &formats[i];
- 
--		if (!hantro_check_depth_match(fmt, ctx->bit_depth))
-+		if (!hantro_check_depth_match(fmt, ctx->bit_depth) && !enum_all_formats)
- 			continue;
--		if (j == f->index) {
-+		if (j == index) {
- 			f->pixelformat = fmt->fourcc;
- 			return 0;
- 		}
--- 
-2.43.0
+static struct cxgbi_ppm_pool __percpu *
+ppm_alloc_cpu_pool(unsigned int *total, unsigned int *pcpu_ppmax)
 
+Also, I do observe that this is an old driver, so the value
+of cleaning it is perhaps limited.
+
+But the above aside, this looks good to me.
+
+>  {
+> -	struct cxgbi_ppm_pool *pools;
+> +	struct cxgbi_ppm_pool __percpu *pools;
+>  	unsigned int ppmax = (*total) / num_possible_cpus();
+>  	unsigned int max = (PCPU_MIN_UNIT_SIZE - sizeof(*pools)) << 3;
+>  	unsigned int bmap;
 
