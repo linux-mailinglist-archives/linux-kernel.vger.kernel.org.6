@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-268525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A99A99425C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:32:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 829009425CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13A22B20FF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31941C237FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B322740BE5;
-	Wed, 31 Jul 2024 05:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E1916E614;
+	Wed, 31 Jul 2024 05:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgExyzuj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I067pFtu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68671AA3EE;
-	Wed, 31 Jul 2024 05:31:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9186C5464A;
+	Wed, 31 Jul 2024 05:33:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722403913; cv=none; b=Tv40q17kwtcAsbpMcI+ztGudkkmlxoJbxdjLYYsm2XLHxmevVrLC+0pOi+rH70GrkQa0EyJNz1K2Kb81dnqfTi0/0nUfaBvLGlunwshENUrlEcG0tcrD6ELdC1zAjnmCzYyi7mZD0VmKjYgx+DB1SWtI1VCwkGJJ1sVeRU2OQ7Q=
+	t=1722404028; cv=none; b=h7dRAkB+QgFDXeRQ3bHVbLa+aw8pdDscCwEXrHuojiP6Zmh6DoYtB8E1Rn8+tdDcxjrkM1UJ0HwoI4Y5tbEPhIHKXyNuNozkYtM8zAiibDa4aqHO1m4FK5F4fTX7241QSECPun1NK3SAfyS5EcLYX2dMroJPS9HmXWNOPlzF01k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722403913; c=relaxed/simple;
-	bh=8YONozmOuSK5fXPxkQyET6ojQutp9hZMMsftyVIrLuI=;
+	s=arc-20240116; t=1722404028; c=relaxed/simple;
+	bh=5u+EinhdB9b6/nYjsUPtYkZPrkKBMixxBO6GoOekOTE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UOx5OLTqSlRG5rcG4DgtkZTPLswFsAXoPi5uekdX2bjOWi7iHi3mPPNNXQSU+Bq9lf9sS+wYhxb+4AUZAqyKFx+JqPuO7Y1WIoABDxOKcJkOBBXcSYLItovIu/O4k+LWucg+kQT7YeTe1xv4fuZ6EMqeb+L2uhRnnREmmTN5vuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgExyzuj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9553C116B1;
-	Wed, 31 Jul 2024 05:31:49 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=LZSb9x++zr0qUpVVj9xqs7ZFkdS2OU7BqAib+2FZ9zYUVEIH0CZwMqSUteBXAoCVEmqQmb0By8OA4tC4lG2M7pjyRK0IanrJYdXqNkYLsn7U8/KPv/qWWHVx+LyMFRpIu/m1phona+TU2vNrQlvW5gKoqb2xFZ+4ndB6ViFJdGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I067pFtu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A3DBC116B1;
+	Wed, 31 Jul 2024 05:33:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722403912;
-	bh=8YONozmOuSK5fXPxkQyET6ojQutp9hZMMsftyVIrLuI=;
+	s=k20201202; t=1722404028;
+	bh=5u+EinhdB9b6/nYjsUPtYkZPrkKBMixxBO6GoOekOTE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cgExyzujngAuQ8Ztv6HqdyJkG4I4OQK2kx1dSHzl3ZU2WABDNJ4LDAhlgG34WsK4M
-	 fYFuYEBBLG48EobTvNji4cwcAdnyMqMgV1slGEEzolzilNdTT8MXuCLHlhbrOX+8mn
-	 q4X7Z5Ya8yE686WDX5vNizPMMqt550nTdqT8P2nvZxiqmN50lOieEtdRGJQastKXh0
-	 mPToCosdf5tAL30d6j5VR7tFo2HLQTyINqayNnZFXh/OXgMPi0PhlMHPg4U+juFC+B
-	 bXBg+Z5P/cWNKM/KjfWcHCEs95G7g4d860QNCnq3+C607DWDxMempmVAlNILY8EGJp
-	 9nCqrt0V0OErw==
-Message-ID: <6b1894c8-766c-4191-9f05-42f1f0a838f5@kernel.org>
-Date: Wed, 31 Jul 2024 07:31:47 +0200
+	b=I067pFtuSkDMorXm5LuTEpDWkNEchym7Oh+pAlj5D6N7a71lDTpG24u6280HA5m6T
+	 FwHGovJdOa6kbALo9yeUpunM4u/TT3/8sIxBvmo2Ck2W6kRs6xp5lTJWbGhMnGTTIJ
+	 fmUohiIIsUWqXZ8tJ/Km8gi68G0SmSuhQ82opgqUwq/O0BVs763ImVPht7oY1A+Tp/
+	 xasWADBM4xCbVDmOhkTxr9u1vj7+gb9WByEynPkbmxmKPSEaT5JODmb8VO27HPcccK
+	 O1wO88FISAkObjH2ZEx+Fqb+/f3yJyGu4xbP3RP9nGI0lQl7Q0DNnjsiN/ML200y3u
+	 t1cjLKzZWARig==
+Message-ID: <63cf3198-fb79-466f-b80a-024e970e400a@kernel.org>
+Date: Wed, 31 Jul 2024 07:33:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: nuvoton,ma35-usb2-phy: add new
- bindings
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240731014313.113417-1-hpchen0nvt@gmail.com>
- <20240731014313.113417-2-hpchen0nvt@gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: soc: qcom: eud: Add phy related bindings
+To: Elson Roy Serrao <quic_eserrao@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <20240730222439.3469-2-quic_eserrao@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,59 +102,53 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240731014313.113417-2-hpchen0nvt@gmail.com>
+In-Reply-To: <20240730222439.3469-2-quic_eserrao@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/07/2024 03:43, Hui-Ping Chen wrote:
-> Add dt-bindings for USB2 PHY found on the Nuvoton MA35 SoC.
+On 31/07/2024 00:24, Elson Roy Serrao wrote:
+> Embedded USB Debugger(EUD) being a High-Speed USB  hub needs
+> HS-Phy support for it's operation. Hence document phy bindings
+> to support this.
 > 
-> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
+> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
 > ---
->  .../bindings/phy/nuvoton,ma35d1-usb2-phy.yaml | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
+>  .../devicetree/bindings/soc/qcom/qcom,eud.yaml       | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
-> new file mode 100644
-> index 000000000000..88e297ba4ecf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/nuvoton,ma35d1-usb2-phy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+> index f2c5ec7e6437..fca5b608ec63 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+> @@ -29,6 +29,14 @@ properties:
+>      description: EUD interrupt
+>      maxItems: 1
+>  
+> +  phys:
+> +    items:
+> +      - description: USB2/HS PHY needed for EUD functionality
 > +
-> +title: Nuvoton MA35D1 USB2 phy
+> +  phy-names:
+> +    items:
+> +      - const: usb2-phy
 > +
-> +maintainers:
-> +  - Hui-Ping Chen <hpchen0nvt@gmail.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - nuvoton,ma35d1-usb2-phy
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  nuvoton,sys:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      phandle of the system-management node.
-> +      This driver has some status bits located in the sys,
+>    ports:
+>      $ref: /schemas/graph.yaml#/properties/ports
+>      description:
+> @@ -48,6 +56,8 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> +  - phys
+> +  - phy-names
 
-Do not reference drivers, but hardware.
-
-> +      it is necessary to reference the sys link.
-
-This tells me nothing. You must be specific - WHAT IS THE PURPOSE of
-this syscon usage in USB2 PHY?
+That's an ABI break and nothing in commit msg justified it.
 
 Best regards,
 Krzysztof
