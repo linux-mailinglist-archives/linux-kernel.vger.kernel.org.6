@@ -1,112 +1,135 @@
-Return-Path: <linux-kernel+bounces-268704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21CD94281B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:35:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4544C942822
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3E171C22B59
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:35:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3A28B231C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2ACA1A76CF;
-	Wed, 31 Jul 2024 07:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8BA1A7F60;
+	Wed, 31 Jul 2024 07:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ARYNlTtR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="iJF8x8QE"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NuYFFgEn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06721A7207;
-	Wed, 31 Jul 2024 07:34:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA87E1A76CA;
+	Wed, 31 Jul 2024 07:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411298; cv=none; b=WPEM/79apJLrRMoeCJzFKommyS4whQuQFGexpQRxOMMkcLiZcMRuvBFm+8/SDLhdL1WjOT+PNfWntiPTF2+PW7Q+oanTjrnHL8h6uhsrxNhSCKrGQSZv9w22H1JhYajQqA1ij9fPVYwZaCGIk+wvGRfojVrjUk0y560RJaQmi4U=
+	t=1722411380; cv=none; b=KFeCazuqX2Sv0o3DhuOAp5gPhEZ5wHhne61fiBUsVzUgHMGEDbA4DJf3gAgST3J5wV8szlLD23Jf/1tOAo9pbB39b6l2Ckw0+bkmHq9Uwr1sCStiGybKsYv+t9o4pSVpy/fEzBxeMiz1MLT+RxyRp/ZyyE0ANnicAsxi3NqObi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411298; c=relaxed/simple;
-	bh=ozN94OUaSV+qUnOWTJkp/n0iGRlevsBOJu6CRBHDP9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tm4a8w6IBsjHP3eP1h/JLJJjpJirVLQlBbhZ7rQ2XgXqvYE2mN6OPlWbcNJW7wwI35Nzvpqlw3vle5eM1ujYCljxZU6qOgVLE+KYuBpnf3NveVoD74nhrT+lyfsUPko8m2UeIjH59PhGv6l0KrjWO2kW/W4nYCJvLkAYLTkPY4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ARYNlTtR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=iJF8x8QE reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1722411380; c=relaxed/simple;
+	bh=Z0quf++gqajFpVICB5Q3/3pf9XLfHXdzDDlmECaMS0g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pz5QBg2g56yKeuPisw4/1vopYjDuw8/ywShcjeC8kAq3cAQkgsrMcYtfFe1TpH92RaeXJ1LmlF/RRtMmjytAmBpBE639IsA9Prrcd2HUPpBGgekRsEBWQdJxorYVxrKGm3J2FBjU10yO8ByKqBr2JPU9t20WaHmc0c26IKsY3XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NuYFFgEn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc692abba4so38060325ad.2;
+        Wed, 31 Jul 2024 00:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1722411294; x=1753947294;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ozN94OUaSV+qUnOWTJkp/n0iGRlevsBOJu6CRBHDP9A=;
-  b=ARYNlTtR4hLxl64sjP4bvJW9NCqQEZ/vVPUgUkRWa2ouE90RKZF6X0ze
-   blgv/Urswz+Vu1CP12tAgXuVFwly9QB77rgGQzp67JXWxZwA+AiByARgt
-   u5RmtwnXkB2ZlP5Mfzg6HaRnQ32CJXNlc41T1R4X9/jLAg8nXZwHWR6Y4
-   G3DEqLjUBVspPsK5A7ORW9bVtI1bq/YkLcTKd/qiD0p1afNtpQRkmCa1D
-   NTerym4XUwlI2RwxoXvocUZLH+3hoZkmLS37NgLHDsILZTNryCnFyRLQx
-   /mdrT89yWxoE8QZwECv4zRreC4VRU0WbeZQmNSu+JnMaH5gplWfNZ+Rdo
-   A==;
-X-CSE-ConnectionGUID: zeSNXCMjSQOP8X8w9cXcCA==
-X-CSE-MsgGUID: Q1I8fI1RSjO/+CPpEouPEw==
-X-IronPort-AV: E=Sophos;i="6.09,250,1716242400"; 
-   d="scan'208";a="38163919"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 31 Jul 2024 09:34:51 +0200
-X-CheckPoint: {66A9E91B-16-CA1431AC-CF855369}
-X-MAIL-CPID: F72C2235984EF8E6293148F69F44A936_1
-X-Control-Analysis: str=0001.0A782F1B.66A9E91B.00F1,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8FDE1164654;
-	Wed, 31 Jul 2024 09:34:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1722411287;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=ozN94OUaSV+qUnOWTJkp/n0iGRlevsBOJu6CRBHDP9A=;
-	b=iJF8x8QEiMpj/SoZW5+stk7l4LElzGnPSvrp5kRRKLsIgc47Foe2/M0skGZTTEGVE/WjoM
-	D5sjQFjvZeUnrNA+/rg3GVrW041b7LI8DQsBnWC/cQZ/e3OzNhQoUZj6NFGmtxDgQhfyOH
-	R8tuhofoOzdcpWsqO4Q8a0dwhRhfUT7PkNKpirGjF7G53n+PZ5lwPRBd6V37XymRdF7aQh
-	ijFygVkpNukehGGQwhWNlWJUfu+3PeDLlmUrqDPesUSWYYUw6arazguUd4xXR0SwetAFEC
-	7KMfuO+4TW3neMhwtBapxMryPf6Epp4+NaoJ31rRYBFFvMY7TWMzjOFBPLbi5w==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: usb: microchip, usb2514: Add USB2517 compatible
-Date: Wed, 31 Jul 2024 09:34:47 +0200
-Message-ID: <6694660.DvuYhMxLoT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <54a4f7a5-6c56-48da-bc28-d01f39d9ec5b@kernel.org>
-References: <20240731071950.989113-1-alexander.stein@ew.tq-group.com> <6728a670-84aa-4b1c-8aa5-1cde84b97adf@kernel.org> <54a4f7a5-6c56-48da-bc28-d01f39d9ec5b@kernel.org>
+        d=gmail.com; s=20230601; t=1722411378; x=1723016178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lRH4DV0DJDUFsL+oAneJ1eExEHHJriff1ENVzKjdwVA=;
+        b=NuYFFgEn/t8eNXRhtUrMCRBI6NsPBNvfJKJ2ImKIf28VqVpynGXO0/X0YxR9j7uYC3
+         40bWoPAx07NHUsZjiPkxu7EH77B5HTUB+NGmqEM4aRxnXTuBaM4+JxVTKI7mYWDC5LHS
+         +4UXo0Mkubc9qIM9Ts8W8QQReTbPX9DpOE58gyWiX1UptWQcwFdoglc3TnPsaLtNdv/U
+         o7Q4GKNYPHQALTX6yDp0qYDyc8vB9bQz1c+V+/B5pApHWIf2PLTUgIE7sM6UwizhlUme
+         vTZr3YPt+VK/4HXyiVEmpbWdj+TzrstX+PTnQpuJT1w50TmiYYBXG5TTGhitVtYQpwxS
+         jzwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722411378; x=1723016178;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lRH4DV0DJDUFsL+oAneJ1eExEHHJriff1ENVzKjdwVA=;
+        b=Oy4EnUNKz5zqikNl7ZwSGXFmEwyyCoQyHEC33vyfQ7yPKYN8mjAo362r2+sqYrbj/K
+         HXNrc+l0qUExAp6nuhckYxcDDUJZCpDsQV9qZM1mr/3E7K6mQkBKUPDmSsHJuSC2JY2o
+         9Z7HucorGqJs2qa9OhUgTm8HTzfZJvVjpy6pgh7R0elE0jYjP2bkcf7jIse5ELmWazBt
+         OqxVPkiGsIG2wmpoyYYyc6khVzCkdOk39bUxz9l8SEzN2CgqntMZYn8Uyuzxi9ZBxvst
+         +VwFvenijI8Q1ATu4hCtmoeI+0j0manl5tkd3ILYr68b8L4F3S34Y9NVCZr+/KhbU1GE
+         jXaw==
+X-Forwarded-Encrypted: i=1; AJvYcCWv0FnLbhGy7C1BmciDP5k14R9hTplZDwjoB12dpS7zRPIgm5QBFWxTQ9+xCXj5DpejTCLL+GhQnIDD5F7fAaBBgt95WgXZzMG28IxNWiKi9VInNAFEu1RigScPpN2hlAxnuwvJ5sCaObU=
+X-Gm-Message-State: AOJu0Yyo7HzJy5j6FlL9OVwWANm4gI5Dq8MWRc152LRXMbA2f6tlFNHb
+	zNqvcR4MXgOdANO/GWv1iGqUuNyWyFIRnDjJ9thhAKlQd+QsCRv0
+X-Google-Smtp-Source: AGHT+IEceKTtYYEsOkXyN0s0CRHubuzO4J5r0XPfOvSvOHmtwtPrADzOS1FSoHURcWoeZWH3v5Mn1w==
+X-Received: by 2002:a17:902:cec3:b0:1fb:779e:4fca with SMTP id d9443c01a7336-1ff047a5335mr138685625ad.14.1722411378005;
+        Wed, 31 Jul 2024 00:36:18 -0700 (PDT)
+Received: from Riyan.inspiron ([2409:40d0:1028:df3:da0:ae29:34f8:4b4d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f1b7dfsm113401935ad.189.2024.07.31.00.36.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 00:36:17 -0700 (PDT)
+From: Riyan Dhiman <riyandhiman14@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: dri-devel@lists.freedesktop.org,
+	linux-fbdev@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Riyan Dhiman <riyandhiman14@gmail.com>
+Subject: [PATCH] staging: vme_user: vme_bridge.h: Fix mutex without comment warning
+Date: Wed, 31 Jul 2024 13:06:05 +0530
+Message-Id: <20240731073605.9857-1-riyandhiman14@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-Am Mittwoch, 31. Juli 2024, 09:32:43 CEST schrieb Krzysztof Kozlowski:
-> On 31/07/2024 09:27, Krzysztof Kozlowski wrote:
-> > On 31/07/2024 09:19, Alexander Stein wrote:
-> >> USB2517 is a 7-port variant of this USB hub. Add an USB compatible
-> >> based on USB vendor & product ID.
-> >>
-> >> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> >=20
-> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->=20
-> Of course assuming there is some user? If so, where?
+Adhere to Linux kernel coding style
 
-There is: arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dts
-introduced by commit ba9943f47dca1 ("arm64: dts: mba93xxla: Add USB support=
-")
+Reported by checkpatch:
 
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+CHECK: mutex definition without comment
 
+Signed-off-by: Riyan Dhiman <riyandhiman14@gmail.com>
+---
+ drivers/staging/vme_user/vme_bridge.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/staging/vme_user/vme_bridge.h b/drivers/staging/vme_user/vme_bridge.h
+index 9bdc41bb6602..0b1f05944f0d 100644
+--- a/drivers/staging/vme_user/vme_bridge.h
++++ b/drivers/staging/vme_user/vme_bridge.h
+@@ -28,6 +28,7 @@ struct vme_master_resource {
+ struct vme_slave_resource {
+ 	struct list_head list;
+ 	struct vme_bridge *parent;
++	/* Locking for VME slave resources */
+ 	struct mutex mtx;
+ 	int locked;
+ 	int number;
+@@ -55,12 +56,14 @@ struct vme_dma_list {
+ 	struct list_head list;
+ 	struct vme_dma_resource *parent;
+ 	struct list_head entries;
++	/* Mutex to protect access to DMA list's entries */
+ 	struct mutex mtx;
+ };
+ 
+ struct vme_dma_resource {
+ 	struct list_head list;
+ 	struct vme_bridge *parent;
++	/* Mutex to protect DMA controller resources and ensure thread-safe operations */
+ 	struct mutex mtx;
+ 	int locked;
+ 	int number;
+@@ -72,6 +75,7 @@ struct vme_dma_resource {
+ struct vme_lm_resource {
+ 	struct list_head list;
+ 	struct vme_bridge *parent;
++	/* Mutex to protect LM Monitor resources and ensure thread-safe operations */
+ 	struct mutex mtx;
+ 	int locked;
+ 	int number;
+-- 
+2.39.2
 
 
