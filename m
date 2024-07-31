@@ -1,186 +1,121 @@
-Return-Path: <linux-kernel+bounces-269773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955A49436BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 553D99436C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 21:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4665E28208B
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C02B28227B
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 19:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D2614F9F4;
-	Wed, 31 Jul 2024 19:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBCC13BC1E;
+	Wed, 31 Jul 2024 19:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sFKPt8tM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yVgJmY9q"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f4M3CFfC"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F0A44C8C;
-	Wed, 31 Jul 2024 19:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1255B44C8C
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722455457; cv=none; b=ccFfYz+wvEZ8ZpQv7y5mIJSyDOqNpZT8WAm/+iiFFd0gS5MIZItXA8j0r7wQ4ega3bgEgifbrrtoiMPni0q1dwTWmmw2vX/Vr0YYR6uBHcjxphAozh9TFLxNNI2acdLCoMAExklkiisFxgPtUKC8ZcTZ4jPoiU8sXWH0yELv7FM=
+	t=1722455495; cv=none; b=lQKTiQptjUwqgMOsYBETV+cOp4MqPSKqMql7Nv5NXFd2MIHKCKhUExfTDxtZNcrgVEncN1GpBO3ZcGE5RBykmawO7oiU38HaJfqQpBFJ9rOykh1XJMPwwmuSp2rlpGy3gIrHIYZszWzLFiB3WgCbeLfJzEFOLQFl1vOPD7CbiAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722455457; c=relaxed/simple;
-	bh=Pyl4iTuhvAopPLvqGGBErERlPtsZfMqhWgvF0qlDSI4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Y2j5qZ33/oRFv6XfkbfffPoct2jUfFi6LytLeZpa8eJcHL5jHy+dNnOENroFv+dcoagoRYH0WnvgzWBhno0z++31jiVFlhwYrSYWstq2Kvjb0JR37Yt/OHnRYW8HvGw3pVKVYbpaRKrP8mJ453j6/rDGB8tHVc2yjWwRCd0oNhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sFKPt8tM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yVgJmY9q; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 31 Jul 2024 19:50:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722455453;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mfpyun4RRF1sf8RFlUm3v26OdJAfZXEPHj2ZGoI2UYg=;
-	b=sFKPt8tMaOKdUkbzf6Bh2C0sWGBTRe2ZptVonltjyJuRj6kvxLU9hQVlF3+aFVatPIrSKX
-	2u75HL7sA4KFEzrLdqDs0ips4C99xmRt2X45AUt8pXLAkrEfxABpTLX85SV1E+PuraZt9b
-	ZMFhdgrt1fSKSBW6BbAkDsw55dUbgummITmW9wJjWJZ4Z6mvGxv8AthG0Vr6/dfOJHMiV6
-	dJpE7EOLuElZd7jTfX+yY4ptRwne4Rr/0n6kh/4c8vcH+v3l5claHAC9X4CxOg5khmZ9wu
-	av/QGLfAtRkJN6/fwROUaER1xDmQSN9tNEhDPRUPdW32lFA93XgR6yjVP0INNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722455453;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mfpyun4RRF1sf8RFlUm3v26OdJAfZXEPHj2ZGoI2UYg=;
-	b=yVgJmY9qZ5w2xqfl+aeRnGQ9EIRs9c0djmJRqxyiGFrKoWWidPGH+pzHVA8pgxkJ939wLO
-	KxL+8nV49/r4j/Cg==
-From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/setup: Parse the builtin command line before merging
-Cc: Mike Lothian <mike@fireburn.co.uk>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240730152108.GAZqkE5Dfi9AuKllRw@fat_crate.local>
-References: <20240730152108.GAZqkE5Dfi9AuKllRw@fat_crate.local>
+	s=arc-20240116; t=1722455495; c=relaxed/simple;
+	bh=VMZGRIt9Bu914/UR0/IET/FSQPvWBZGwluvLZFH+orM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZiqhRBlQL0slHziVQiMKkXYeTgabSdggEDLKVkSCgJh9/ybt4DvUVJkxrxPsygbOeCySvj2n9bKj01bc005V3k1UyaUaeXhFaxxKIbl4K91rNRVaWjQOu8mxdmFi8pqGiJ45r3jfsDyd8BrpTEX+e+mnzgi7JeogHvBPzH8P21o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f4M3CFfC; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efc89dbedso7901554e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 12:51:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722455492; x=1723060292; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VMZGRIt9Bu914/UR0/IET/FSQPvWBZGwluvLZFH+orM=;
+        b=f4M3CFfCqExnc5fFAHSyALV7zureYWB5qfPFjRQKv7kcTCkgMgV1XwgFWwdh0ZxVoK
+         KIEZS2NeKA+/fy/TNEr2iSvbScHho6zUx42H0/vUTKXM7jmFvtIh3AfZD+RjrBaadIFQ
+         4Mm2NGjS2rl3Hkda+P0Z7xM/CuOMKe07ICEwA/4bWZkvHtROHKr2f51WNj9b3fqaGzKZ
+         xnXBs+fwSDHjE2XcDYCTZ9HKkJkW6Qci/OESrCb7U1FngZj1VxyNuAJcqw9aXjlY65OI
+         x6lCquuyN5hBX489ZGQF6qlO4QecDOklnGqBNvQxLdzETFYWrEdzgqUwxWs4sPKZzUfC
+         ct4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722455492; x=1723060292;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VMZGRIt9Bu914/UR0/IET/FSQPvWBZGwluvLZFH+orM=;
+        b=C8vZq08Y/ihfvA/kPHt3mfimoNnCyaM+z1bNOy9DBT3/dDLSwqtAlf2qNudI1TWxdB
+         eT+w3Fu8xJyG4fmk7fm9ZrZ3oS07D8PkVZrg7CFKCD87QW8kur63MlthBsKTiUN2Cxcb
+         rkpgwRd/gtLEi0jmZXrtvb0jqr4Es7gA/fwnpwaZA3CknnHFvXikNB8lUl5Ai7tfCxr6
+         QHOjfMxPW9aQk4Ct4xxKDF06sfbAfV+hjVrBhkHwy4C4KBTFtr0edp5jYI23I470wP50
+         ++K+O385Bzdj/Ff8Pv5kzw7HWUH3v3IsuGO8I3pT/FS/rOwRoQoeXPngtYdjYV1YlB6p
+         rF6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUCkzBW9+//doHXuA6OzZvsRcjI6ObU8fPqdJo/NqT1cwgRBTkyB1MP7AsTj+xm0CSe3kHcoMKKnpW0xbOPmnJualnQBEMSkO2ztna8
+X-Gm-Message-State: AOJu0Yx6xr/h/p4d0aJyq0prpdwHO2PWbaZgmSr4x4Vgi1ykyrycRpka
+	fukTBf78mtKBcc4ERk7CXkSjQpK2n0IQoaWrsFBctAA/0UuMkpdm3gmvsIY2riLG+4ZQjpTtZ/8
+	cFaAAzonj0jOWSzXtR3zPTu+pcVMUbytFIQyT/w==
+X-Google-Smtp-Source: AGHT+IFo7dWMrZVk0qmzwRRLNQJvLLW7Oz1e417fjF9Kw312OQHEVuGlf44xqebNrqhX6w6HMPuGfO2OVeaJq0nSOW0=
+X-Received: by 2002:a05:6512:1c9:b0:52c:d905:9645 with SMTP id
+ 2adb3069b0e04-530b61b1939mr53045e87.13.1722455491760; Wed, 31 Jul 2024
+ 12:51:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172245545300.2215.16469263909855039141.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20240730152744.2813600-1-arnd@kernel.org>
+In-Reply-To: <20240730152744.2813600-1-arnd@kernel.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 31 Jul 2024 21:51:19 +0200
+Message-ID: <CACRpkdYaK6_2AY0D07wTc+BFKazaTxhB6qmuJeKir89FM1HL=w@mail.gmail.com>
+Subject: Re: [PATCH] alpha: fix ioread64be()/iowrite64be() helpers
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Kefeng Wang <wangkefeng.wang@huawei.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Baoquan He <bhe@redhat.com>, Jakub Kicinski <kuba@kernel.org>, Breno Leitao <leitao@debian.org>, 
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Tue, Jul 30, 2024 at 5:27=E2=80=AFPM Arnd Bergmann <arnd@kernel.org> wro=
+te:
 
-Commit-ID:     bf514327c324bc8af64f359b341cc9b189c096fd
-Gitweb:        https://git.kernel.org/tip/bf514327c324bc8af64f359b341cc9b189c096fd
-Author:        Borislav Petkov (AMD) <bp@alien8.de>
-AuthorDate:    Tue, 30 Jul 2024 16:15:12 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Wed, 31 Jul 2024 21:46:35 +02:00
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Compile-testing the crypto/caam driver on alpha showed a pre-existing
+> problem on alpha with iowrite64be() missing:
+>
+> ERROR: modpost: "iowrite64be" [drivers/crypto/caam/caam_jr.ko] undefined!
+>
+> The prototypes were added a while ago when we started using asm-generic/i=
+o.h,
+> but the implementation was still missing. At some point the ioread64/iowr=
+ite64
+> helpers were added, but the big-endian versions are still missing, and
+> the generic version (using readq/writeq) is would not work here.
+>
+> Change it to wrap ioread64()/iowrite64() instead.
+>
+> Fixes: beba3771d9e0 ("crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of=
+ COMPILE_TEST")
+> Fixes: e19d4ebc536d ("alpha: add full ioread64/iowrite64 implementation")
+> Fixes: 7e772dad9913 ("alpha: Use generic <asm-generic/io.h>")
+> Closes: https://lore.kernel.org/all/CAHk-=3DwgEyzSxTs467NDOVfBSzWvUS6ztcw=
+hiy=3DM3xog=3D=3DKBmTw@mail.gmail.com/
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-x86/setup: Parse the builtin command line before merging
+So *that* was the problem, I was scratching my head over this one.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Commit in Fixes was added as a catch-all for cases where the cmdline is
-parsed before being merged with the builtin one.
-
-And promptly one issue appeared, see Link below. The microcode loader
-really needs to parse it that early, but the merging happens later.
-
-Reshuffling the early boot nightmare^W code to handle that properly would
-be a painful exercise for another day so do the chicken thing and parse the
-builtin cmdline too before it has been merged.
-
-Fixes: 0c40b1c7a897 ("x86/setup: Warn when option parsing is done too early")
-Reported-by: Mike Lothian <mike@fireburn.co.uk>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240730152108.GAZqkE5Dfi9AuKllRw@fat_crate.local
-Link: https://lore.kernel.org/r/20240722152330.GCZp55ck8E_FT4kPnC@fat_crate.local
----
- arch/x86/include/asm/cmdline.h |  4 ++++
- arch/x86/kernel/setup.c        |  2 +-
- arch/x86/lib/cmdline.c         | 25 ++++++++++++++++++-------
- 3 files changed, 23 insertions(+), 8 deletions(-)
-
-diff --git a/arch/x86/include/asm/cmdline.h b/arch/x86/include/asm/cmdline.h
-index 6faaf27..6cbd9ae 100644
---- a/arch/x86/include/asm/cmdline.h
-+++ b/arch/x86/include/asm/cmdline.h
-@@ -2,6 +2,10 @@
- #ifndef _ASM_X86_CMDLINE_H
- #define _ASM_X86_CMDLINE_H
- 
-+#include <asm/setup.h>
-+
-+extern char builtin_cmdline[COMMAND_LINE_SIZE];
-+
- int cmdline_find_option_bool(const char *cmdline_ptr, const char *option);
- int cmdline_find_option(const char *cmdline_ptr, const char *option,
- 			char *buffer, int bufsize);
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 5d34cad..6129dc2 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -164,7 +164,7 @@ unsigned long saved_video_mode;
- 
- static char __initdata command_line[COMMAND_LINE_SIZE];
- #ifdef CONFIG_CMDLINE_BOOL
--static char __initdata builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
-+char builtin_cmdline[COMMAND_LINE_SIZE] = CONFIG_CMDLINE;
- bool builtin_cmdline_added __ro_after_init;
- #endif
- 
-diff --git a/arch/x86/lib/cmdline.c b/arch/x86/lib/cmdline.c
-index 384da1f..c65cd55 100644
---- a/arch/x86/lib/cmdline.c
-+++ b/arch/x86/lib/cmdline.c
-@@ -207,18 +207,29 @@ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
- 
- int cmdline_find_option_bool(const char *cmdline, const char *option)
- {
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
--		WARN_ON_ONCE(!builtin_cmdline_added);
-+	int ret;
- 
--	return __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-+	ret = __cmdline_find_option_bool(cmdline, COMMAND_LINE_SIZE, option);
-+	if (ret > 0)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_CMDLINE_BOOL) && !builtin_cmdline_added)
-+		return __cmdline_find_option_bool(builtin_cmdline, COMMAND_LINE_SIZE, option);
-+
-+	return ret;
- }
- 
- int cmdline_find_option(const char *cmdline, const char *option, char *buffer,
- 			int bufsize)
- {
--	if (IS_ENABLED(CONFIG_CMDLINE_BOOL))
--		WARN_ON_ONCE(!builtin_cmdline_added);
-+	int ret;
-+
-+	ret = __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
-+	if (ret > 0)
-+		return ret;
-+
-+	if (IS_ENABLED(CONFIG_CMDLINE_BOOL) && !builtin_cmdline_added)
-+		return __cmdline_find_option(builtin_cmdline, COMMAND_LINE_SIZE, option, buffer, bufsize);
- 
--	return __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option,
--				     buffer, bufsize);
-+	return ret;
- }
+Yours,
+Linus Walleij
 
