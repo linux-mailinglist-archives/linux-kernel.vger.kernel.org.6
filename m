@@ -1,105 +1,134 @@
-Return-Path: <linux-kernel+bounces-269018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82FAD942C58
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:48:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7B90942C52
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 12:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E1151F25846
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:48:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05F711C209BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 10:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43511AC434;
-	Wed, 31 Jul 2024 10:48:31 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1811AC434;
+	Wed, 31 Jul 2024 10:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NY5QOId+"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7B6190473
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57679190473
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 10:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722422911; cv=none; b=ZGZ1V5mV7Zgj9/r+P7rOq4YeS8E0uqeyq6Esqdjnm71uoCQ+Gd9lVMqEKTat7t7vCJP/miM6Y3EEieUgu4CkW0EquE/KWZTHAu/mfdsRq+BUVXwB4/+U+K7CtohOIPOqYlRzYOc2jCS0bzI0g3k7iwgl8SWy21EvaGgrpNNK+0Q=
+	t=1722422851; cv=none; b=Zx1+vxbV7EomUtUBj8+C0N6OS2YUIAFiFkpx+UCc1WMOXseqOtwKK6FT+2wYFvLXNawnjITHeVvujbmL9OgSs3dNBe63+IYrOkWHDiMVjT2HC21lbgKCblhz1Sw3FAa9gYquZEQIHyWtpfmQY68eSDIV1wjel0GmhQgAgHl6jk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722422911; c=relaxed/simple;
-	bh=VXhHatSeGioHS9fS387ak0H1IJW0tjK8WdII5K/5cwU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eVTIq+ISy9akfMiMVWk47wN4pM40vIpR2cdPEX8CWeYoHu8B4PgNZnLETcOPuA3y2SnteFYqmlns+XXqLS8m9tmWeYhNwxFS8FNJhyZdjViwFgA+YEHA1yCYPKgw96VsvHCJZa+JVwkUflbe7qIW7j7J9BxsGwGLd8J3WONZUpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WYpjB3QqKz1L9Fh;
-	Wed, 31 Jul 2024 18:48:14 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5D3C1400DD;
-	Wed, 31 Jul 2024 18:48:25 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 31 Jul
- 2024 18:48:25 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <juri.lelli@redhat.com>,
-	<dhaval.giani@gmail.com>
-CC: <rostedt@goodmis.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH v2 -next] sched: Remove unused extern declarations
-Date: Wed, 31 Jul 2024 18:46:29 +0800
-Message-ID: <20240731104629.2303096-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722422851; c=relaxed/simple;
+	bh=bZYli5vmgtFKdt6I++BJc2BNRWZSPqgsIhrgAy/h8v0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dvntJt2gd/82IGAzvPHR7GD9xTQwdOoUEAPH3087sYQf9j4TftiUhHuSlk/fRAS4xGPm005eJRiquj+lNC+2PPOguJvjlLK8x7ZVF7Nia/uPTAkJcBAuGpLUaqVvxcOBNmjOIUNX4Ug596SOuy7edl/4OYRGeWDnpxXL6z8nhSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NY5QOId+; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-816d9285ebdso229367839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 03:47:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1722422849; x=1723027649; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yqftJYgpsdpuaB39a0qAl3cbMgdLrQIYW98lIkiY1Y=;
+        b=NY5QOId+XA6r8Zal2o1fc5SwSx9d2Ay0mrE4tZwcOHx+9tKrPz7GXaehDJyr1bwCXl
+         3AZr4Wg+GbjY8WFH41nLzWPBffPoIvVpgkCVWWmfS95EPWKU4XqFvgnJ7jbhGtUAfnLN
+         XD+tmcUGoldN9LlG7s7mbV6WVMkiix8YvLCbc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722422849; x=1723027649;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6yqftJYgpsdpuaB39a0qAl3cbMgdLrQIYW98lIkiY1Y=;
+        b=IUryxHtzqqMG/7/diLE1yY1gqAQ2xQk+IPzoMezOl0aIVbWVLoZ9llYfJtDT9JssSZ
+         OagM8DJ4GWFID1uPNT4t3bU8lFYyNzowuYxuWO7ecAtxuk3kmFvrh0V0mVqDI53q7jrk
+         ue2efAKSSyZ7QBwRJPuDFZlI8iztvJcCzOW784qAZadEIRj35cEnEkej1hLbGiayy6KU
+         f7ZCJERJMzyAsGlu+nFKFN03bLfW3xR/HgXlB+J7e5dCmbE5+fXvy0HsJEND7ZeEwvSO
+         aPXm51h90AvwFO/kFxwsShe79MUUKypdsi6rqZ6WCjSZki+LShwKi062x5CmxiqiqLAB
+         lBBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiLx2xEpxMcI7QNjJKQqGMh1DooDOjaOAtr2eddYyqhBDlUGoJCWQuYF2VMrip/+/gGeyPQtwbTc7rQoBOEg5atYw2n358J+l05AnC
+X-Gm-Message-State: AOJu0YzEa1c0WVzqjma6LKbYel6fxx/h8pVFiAxSgF2I3ARxQfCLdjvd
+	8RyRomNte97mmOTSiXOQsGV+90vYn1dSoAoFkyzb1typcCPcr7bzTmhvcu76B6H6Itj4X2sVHeU
+	=
+X-Google-Smtp-Source: AGHT+IG77YhthMCyuU0rdCq1IohoSnJWamFfjuvhA+obGGesvdGPDyHrZg7NqXHZD1C0uIDW5pvANw==
+X-Received: by 2002:a05:6e02:216e:b0:397:70e7:143b with SMTP id e9e14a558f8ab-39aec2eae11mr179360445ab.14.1722422849317;
+        Wed, 31 Jul 2024 03:47:29 -0700 (PDT)
+Received: from yuanhsinte.c.googlers.com (46.165.189.35.bc.googleusercontent.com. [35.189.165.46])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9fa5a0bcesm8788400a12.89.2024.07.31.03.47.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 03:47:28 -0700 (PDT)
+From: Hsin-Te Yuan <yuanhsinte@chromium.org>
+Subject: [PATCH v3 0/2] Add kukui-jacuzzi-cerise and kukui-jacuzzi-stern DT
+ and dt-binding
+Date: Wed, 31 Jul 2024 10:47:24 +0000
+Message-Id: <20240731-jacuzzi_dt-v3-0-1c4314e8962f@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADwWqmYC/22M0Q6CIBRAf8XxHA0uUKOn/qO1hoB629QGykrnv
+ 4c+VevxnO2cmUQf0EdyKmYSfMKIfZdB7ApiG9PVnqLLTICBZEcQ9G7sOE14cwNlB+tYWTklAUg
+ OHsFX+Nxml2vmBuPQh9f2Tny1fzeJU06F11oaKJUHebZN6Fsc230farKeEnzUgn/VQBmVWishl
+ DNGsJ96WZY3CZsmO+UAAAA=
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sean Wang <sean.wang@mediatek.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ Hsin-Te Yuan <yuanhsinte@chromium.org>
+X-Mailer: b4 0.15-dev-a9570
 
-From: YueHaibing <yuehaibing@huawei.com>
+Cerise is known as ASUS Chromebook CZ1.
+Stern is known as ASUS Chromebook Flip CZ1.
+    
+They are almost identical. The only difference is that Cerise is a
+clamshell device without touchscreen and Stern is a convertible device.
 
-commit f64f61145a38 ("sched: remove sched_exit()") removed sched_exit(), then
-commit ad46c2c4ebce ("sched: clean up fastcall uses of sched_fork()/sched_exit()")
-mistakenly change sched_exit() to sched_dead() extern declarations.
-
-And since commit 7c9414385ebf ("sched: Remove USER_SCHED")
-uids_sysfs_init() is not used anymore.
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
 ---
-v2: fix commit log typo
----
- include/linux/sched/task.h | 1 -
- include/linux/sched/user.h | 2 --
- 2 files changed, 3 deletions(-)
+Changes in v3:
+- Add explanation about the compatible string of Stern.
+- Replace MTK_DRIVE_6mA with 6.
+- Link to v2: https://lore.kernel.org/r/20240731-jacuzzi_dt-v2-0-4995335daa30@chromium.org
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 4df2f9055587..de8a7454d479 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -66,7 +66,6 @@ extern int sched_fork(unsigned long clone_flags, struct task_struct *p);
- extern int sched_cgroup_fork(struct task_struct *p, struct kernel_clone_args *kargs);
- extern void sched_cancel_fork(struct task_struct *p);
- extern void sched_post_fork(struct task_struct *p);
--extern void sched_dead(struct task_struct *p);
- 
- void __noreturn do_task_dead(void);
- void __noreturn make_task_dead(int signr);
-diff --git a/include/linux/sched/user.h b/include/linux/sched/user.h
-index 4cc52698e214..ffa639dd3821 100644
---- a/include/linux/sched/user.h
-+++ b/include/linux/sched/user.h
-@@ -36,8 +36,6 @@ struct user_struct {
- 	struct ratelimit_state ratelimit;
- };
- 
--extern int uids_sysfs_init(void);
--
- extern struct user_struct *find_user(kuid_t);
- 
- extern struct user_struct root_user;
+Changes in v2:
+- Add more SKUs.
+- Remove unnecessary property.
+- Specify classis-type in the dts files.
+- Add dt-bindings for these devices.
+- Include these dts file in Makefile.
+- Link to v1: https://lore.kernel.org/r/20240723-jacuzzi_dt-v1-1-3e994a2b5e24@chromium.org
+
+---
+Hsin-Te Yuan (2):
+      arm64: dts: mt8183: Add kukui-jacuzzi-cerise series boards
+      dt-bindings: arm64: mediatek: Add kukui-jacuzzi-cerise board
+
+ .../devicetree/bindings/arm/mediatek.yaml          | 14 +++++++++++
+ arch/arm64/boot/dts/mediatek/Makefile              |  4 +++
+ .../mediatek/mt8183-kukui-jacuzzi-cerise-rev3.dts  | 26 +++++++++++++++++++
+ .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dts   | 26 +++++++++++++++++++
+ .../dts/mediatek/mt8183-kukui-jacuzzi-cerise.dtsi  | 21 ++++++++++++++++
+ .../mediatek/mt8183-kukui-jacuzzi-stern-rev3.dts   | 29 ++++++++++++++++++++++
+ .../dts/mediatek/mt8183-kukui-jacuzzi-stern.dts    | 29 ++++++++++++++++++++++
+ 7 files changed, 149 insertions(+)
+---
+base-commit: 66ebbdfdeb093e097399b1883390079cd4c3022b
+change-id: 20240723-jacuzzi_dt-06cd0bfd5422
+
+Best regards,
 -- 
-2.34.1
+Hsin-Te Yuan <yuanhsinte@chromium.org>
 
 
