@@ -1,120 +1,88 @@
-Return-Path: <linux-kernel+bounces-268866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122F7942A76
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:28:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA9D942A79
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448E71C21899
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:28:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4F811F214C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7137B1AB51F;
-	Wed, 31 Jul 2024 09:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE141A8C06;
+	Wed, 31 Jul 2024 09:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LvSOl3nr"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dDqo5QNB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEE143ACB;
-	Wed, 31 Jul 2024 09:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F471AAE3A;
+	Wed, 31 Jul 2024 09:28:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722418107; cv=none; b=oK9g9WVJCukk9LMEM5K1/VhmNaNxXNrW2rIOnYaYoLyWADXfKAGx75w/hODQPTF+AmcrC2zAC/VHuUqnadWivdt5TyQli7xnpKo/OPT0wtjNNkxESZTLFytagDyEr56XofU4ZokGsUHmqBJ/iTi19YHFppoOijZaXdBbK+OBUM4=
+	t=1722418121; cv=none; b=C2Mu8wwTgJoLGbjPf7kHg7An3Bj+A5q5bBuTIgzBsOiA/JEeVhZNzIk/RpmHivnDZ11CsndqxEZ6y8jfd3U4J+U0OuLaa4QrnrEM/xK1YxirJ3PPlEM7nhkQlwnjfti/q6uZoTGkRED/pXvAx0zYQCWk+Jt70GQ+mFb+FprHZ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722418107; c=relaxed/simple;
-	bh=ee6gvgisXeK3w70jCFRHuuXJ1Cqj/IDyCSFCexR8Gps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UFzEoi23oGQ6KglNlpdn2NPcfD2wHmr6yakC+3xpGse0CcgQknpkbHX4Njf7LEwYfSz/dtdDwEAdBhRjXk2TJshga6WqFWqQHwjaDENaF/l0ifc83xkuA5WoUWM2DV/f83PktyE03MGc09GM2P9VtLausro/dhtl3iAqp8AFd1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LvSOl3nr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 253E6C4AF0E;
-	Wed, 31 Jul 2024 09:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722418104;
-	bh=ee6gvgisXeK3w70jCFRHuuXJ1Cqj/IDyCSFCexR8Gps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LvSOl3nrIP/Nua3+TgvMkIiOTWIpv6wQ/QsKaFhjWJ8x/XTss+pw6F7wi1QYl/O+S
-	 y0JBBoMp4E0hPwCPyx76miRNZCWdkC14o8mSRsz0I+sCPMWUVVJNgR/2h94Y8TtyRc
-	 CXzdgxZa/0QeYoH8D/B1sYeiZBo1MujmUKsfCJ1u+yHP1faB1suT4rV+F2Y5Twxeto
-	 UxZqiZkq0nGiXjwecFQEmzyzYEyQLvLIOcNrSM5ki1aOHwkVBA80WG7iJ0ggz2fwlF
-	 iS5XW5bpuASDI9rZtbOtXo+NheXGm5fge2BVL/iZ1uwiTU/eNXEKmZXmzA43+lG32O
-	 HxtGlpFTHxNwQ==
-Message-ID: <dafe01f5-5f08-4298-b020-7e3c80e4f15d@kernel.org>
-Date: Wed, 31 Jul 2024 18:28:22 +0900
+	s=arc-20240116; t=1722418121; c=relaxed/simple;
+	bh=COdq1RVb77IUjNE9K22BKe/No8gvKusuIPqh2LW5SVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eKighTHpgI2zaMlGcsBOUcsR9vW3HR39X9w0nSxsTmGKfTKS4UevvjvKiIAEzKZ794Zcky/WhAA6nxqX7gqBZXv5h9Kz/713t0pdogdMrjvn9Cav8Uz6jpvLwxQHBzoyfcDiF90T87HiajFtGfKKaVXqkNmlIUg1hbzKTLsLQYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dDqo5QNB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7604FC116B1;
+	Wed, 31 Jul 2024 09:28:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722418121;
+	bh=COdq1RVb77IUjNE9K22BKe/No8gvKusuIPqh2LW5SVw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dDqo5QNB0ZNO1n4Dvw/zVoqWi9EK1bc5KcT52KuZsGojB+EZ8WyswFDMQL0CSnoFM
+	 8VEZ5kmHYybgt1j0aqSsN3X71edtkQB1bTKar+k7QDol13JxuXeJipVpfHh34sL5U/
+	 7oRzwmczULo6u+WrVVLXGORMcAoENFuyhkb5MJBQ=
+Date: Wed, 31 Jul 2024 11:28:38 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pavel Machek <pavel@denx.de>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc2 review
+Message-ID: <2024073126-idiom-degrease-e351@gregkh>
+References: <20240731073248.306752137@linuxfoundation.org>
+ <Zqn/mmF1HF1AEsi7@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] block: uapi: Use unsigned int type for
- IOPRIO_PRIO_MASK
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>, axboe@kernel.dk, hch@lst.de
-Cc: bvanassche@acm.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, ke.wang@unisoc.com,
- Hao_hao.Wang@unisoc.com
-References: <1722409287-12183-1-git-send-email-zhiguo.niu@unisoc.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <1722409287-12183-1-git-send-email-zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqn/mmF1HF1AEsi7@duo.ucw.cz>
 
-On 7/31/24 16:01, Zhiguo Niu wrote:
-> Generally, the input of IOPRIO_PRIO_DATA has 16 bits, but the output of
-> IOPRIO_PRIO_DATA will be expanded to "UL" from IOPRIO_PRIO_MASK.
->  #define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
-> This is not reasonable and meaningless, unsigned int is more suitable for it.
+On Wed, Jul 31, 2024 at 11:10:50AM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> So if use format "%d" to print IOPRIO_PRIO_DATA directly, there will be a
-> build warning or error showned as the following, which is from the
-> local test when I modify f2fs codes.
+> > This is the start of the stable review cycle for the 6.10.3 release.
+> > There are 809 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > 
-> fs/f2fs/sysfs.c:348:31: warning: format ‘%d’ expects argument of type ‘int’,
-> but argument 4 has type ‘long unsigned int’ [-Wformat=]
->    return sysfs_emit(buf, "%s,%d\n",
->                               ~^
->                               %ld
+> We see build problems:
 > 
-> When modules use IOPRIO_PRIO_CLASS & IOPRIO_PRIO_LEVEL get ioprio's class and
-> level, their outputs are both unsigned int.
->  IOPRIO_CLASS_MASK is:
->  #define IOPRIO_CLASS_SHIFT	13
->  #define IOPRIO_NR_CLASSES	8
->  #define IOPRIO_CLASS_MASK	(IOPRIO_NR_CLASSES - 1)
->  IOPRIO_LEVEL_MASK is:
->  #define IOPRIO_LEVEL_NR_BITS	3
->  #define IOPRIO_NR_LEVELS	(1 << IOPRIO_LEVEL_NR_BITS)
->  #define IOPRIO_LEVEL_MASK	(IOPRIO_NR_LEVELS - 1)
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/pipelines/1394947350
 > 
-> Ioprio is passed along as an int internally, so we should not be using an
-> unsigned long for IOPRIO_PRIO_MASK to not end up with IOPRIO_PRIO_DATA
-> returning an unsigned long as well.
+> https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/jobs/7470084220
+> 
+> drivers/net/virtio_net.c: In function 'virtnet_poll_cleantx':
+> 4494
+> drivers/net/virtio_net.c:2334:1: error: invalid use of void expression
+> 4495
+>  2334 | +                       free_old_xmit(sq, !!budget);
+> 4496
+>       | ^
+> 4497
 
-I would write this commit message like this:
-
-
-An ioprio is passed internally as an int value. When IOPRIO_PRIO_CLASS() and
-IOPRIO_PRIO_LEVEL() are used to extract from it the priority class and level,
-the values obtained are thus also int.
-However, the IOPRIO_PRIO_MASK() macro used to define the IOPRIO_PRIO_DATA()
-macro is defined as:
-
-#define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
-
-that is, the macro gives an unsigned long value, which leads to
-IOPRIO_PRIO_DATA() also returning an unsigned long.
-
-Make things consistent between class, level and data and use int everywhere by
-removing forced unsigned long from IOPRIO_PRIO_MASK.
-
-
-
--- 
-Damien Le Moal
-Western Digital Research
-
+Ugh, so do I now, sorry for that.  Let me go fix it...
 
