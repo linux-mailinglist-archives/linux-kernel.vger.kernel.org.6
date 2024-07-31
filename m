@@ -1,191 +1,119 @@
-Return-Path: <linux-kernel+bounces-269843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B93B6943767
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:50:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E4894376A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 22:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7512328530A
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23786B22DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051FE16B723;
-	Wed, 31 Jul 2024 20:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7C3168C26;
+	Wed, 31 Jul 2024 20:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lwg5MZeL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZHvTh1Ip"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72DC17543
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134F645027;
+	Wed, 31 Jul 2024 20:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722459030; cv=none; b=oVz8c16kbym40TF4V1Fkglq3HvLOZvfrQlXe6ZLHvsbaDPEVLyMWBL6vNbJU7/22rMYIZKk9oDK5AR00x03gqEo/Cz6lbezcSKs1sGyuNJ+52WwHUzwoiuXbQ6d2O+B6T/x5V3i6ylqZfrc3AgJ/PiKkGWL5I+ooRRBTWn0Dpc8=
+	t=1722459129; cv=none; b=C09WqtqDdb+R9hiEre8PmpTIqIPA0rBbHh061Od/L/UtqqA4JICtB3B95DSzx1XrRukW1dWy3GTCB6wCYqZIcLiY/20MiDl5AoTzNHdoDm1HfEF/GwM1QTsyL6hd8qSMntnav+bpyKkJrNYdftfxrQXeNrQrA5hL69P54XrDTeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722459030; c=relaxed/simple;
-	bh=ccUCugW1N2J/712pEft7YYpLGhN0cRZIKLxLFCnlq5s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GIsT3QSE/lL+botoemjnJ3RhXjmAJaS/xFAL4hpvMoCz5kNkl6sXAJoOQLkLzi9qNVpTKsGkT2FhbGV03VdsEZx473bisA5yairNsc+yngKLpKWhTRrnNadk3xHkBtSuFaGAHAsR0XwqS77BEzQE3tZnptjtAJJX/xuUQY8EOjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lwg5MZeL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4281e715904so3691545e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:50:28 -0700 (PDT)
+	s=arc-20240116; t=1722459129; c=relaxed/simple;
+	bh=A3gD26s2NXmBTV7HKjEy2yFxyKX1FyIBM/cldbA5FmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UIQaTZtn/2Sx5s1kS9vpfL2tsZA+eLapoZAqea8sZRy58ziYzQrCrhs5EV6s/05Qd9yNOsIc3yRW/RrnQCyqlpoXZ9L4GGJBA2FEi+eyVFw6La6qH+wtamRCI56Q6CQN69dre/cpwGFxhNCSP6LTuznWMMbnGGsfQrqRpY5nG/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZHvTh1Ip; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7a1be7b7bb5so4679492a12.0;
+        Wed, 31 Jul 2024 13:52:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1722459027; x=1723063827; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L1IW9fAfwq5NHi01t4CV5LKiWLlhlBwcc8UFMWZp9sQ=;
-        b=lwg5MZeLWiv+dJNZg3bkYKn7G9k6z+pydqVZvOooLhyTjSYSdXBZxUm7jexXhugpTr
-         l2k9xC7uogzfWwiNUlfdX+1q0N5c3c4bKtcjkXLdF8pd4B4QKRjhzP4WyzypyP6f7wL7
-         Gncln1tahVWOED+0R8kUYJc0m0iETHd/U8S28=
+        d=gmail.com; s=20230601; t=1722459127; x=1723063927; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=U6QQny8V99NEEFnUaCvV6kdfdKgC29wv2xf+A0AoKFo=;
+        b=ZHvTh1IpvYpgZJSmCkgNIIFgFRqECoAXR+NzzFK25Xs2kRy4M7Bp6BLFR2fe36QSdn
+         /gfAlPCKOAHpM9gah7LNTuy7SEhWTujgQpqL888LIIT6GCsLTq/8rYKfG8BX1myxV5Su
+         XkTeEB4VvOPLw3AbD246a9h7jEJsDpLtP1eS/TsrNtxFcmUw6T/k2Rc5hdYGepmBklQd
+         IpZEbdmc3rj4ASThMeW3Hgs0XNgeRYwT307yAArPD/AEZd8qLsMGUuckYN790iqepSCE
+         aC1ETbefOR1QTIYe7y0ufyqS5C9ubWdpTSuYXaiL/fDo4kFJQlcQjM8YH6P4+Ow1vnkM
+         BdbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722459027; x=1723063827;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1722459127; x=1723063927;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L1IW9fAfwq5NHi01t4CV5LKiWLlhlBwcc8UFMWZp9sQ=;
-        b=rph5JiIvv0oB58Ha777C31UGzwDiJA9KAU1IUlcgirlVMBadPPQycuUdlULab3I5bC
-         yFUUfjyTzC/IhHc0/9Ve44Kj52dMLwLJa3DEvsS/+Uo7Ou/cheAHWwxogTK7rxVXvQ8c
-         44uAL2+FeEy71m08ppV6Ac70yqcaPq355k7AMN+3eclAN3JsgasZu5gqcURWClEXtVJm
-         WIJu11GfsZnmpNNY7oVyPAZfehgHJDF4W2IFDVNcyf6hkPwYNGEhegGHriHe1PuOf1Jm
-         t6CKLUQH+3YXob9WbpSKJ407dJouv/pSKBZmE2Xs1fE0Wyckw58O4V2ZNVSrBwwfgiQr
-         vjTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsqKsdthYPckJYcngW4dlZXIhUZE3p+V1xR3zkaULvXrwuHABnMnhT4KRdJUR55rGrqah+ff/lOxjzxfuYgA3SP7MEz0ouBwksbBlK
-X-Gm-Message-State: AOJu0Yw+JrMjJzb6AI3tMsWDExPpsh3/P+43eeXaCMDGmOR0XU7a1fDI
-	cft0LZ6q8IT9Lz0D5jW7D+C44//9Gh0sXRAvF9U1F4KxxNgnLn/wg1MDaXH+vVY=
-X-Google-Smtp-Source: AGHT+IHiZKSox2G+KBZt85yTqo1If0pNRi36MPMG5PUE38oK6EzOOZBBO76h+Oh0f6kIAO981/aiaA==
-X-Received: by 2002:a05:600c:35c9:b0:425:6962:4253 with SMTP id 5b1f17b1804b1-428b8a3da1emr2490685e9.4.1722459026790;
-        Wed, 31 Jul 2024 13:50:26 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8adc7dsm33246505e9.14.2024.07.31.13.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 13:50:26 -0700 (PDT)
-Date: Wed, 31 Jul 2024 22:50:24 +0200
-From: Daniel Vetter <daniel.vetter@ffwll.ch>
-To: Huan Yang <link@vivo.com>
-Cc: Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-Subject: Re: [PATCH] udmabuf: use kmem_cache to alloc udmabuf folio
-Message-ID: <ZqqjkCZtDP3jtD_2@phenom.ffwll.local>
-Mail-Followup-To: Huan Yang <link@vivo.com>,
-	Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com
-References: <20240731033449.1016195-1-link@vivo.com>
+        bh=U6QQny8V99NEEFnUaCvV6kdfdKgC29wv2xf+A0AoKFo=;
+        b=siTChWnecfpqDZcrS0Eyza3lv1WtPdmYwvgDYzmQeOXdj3JR+xfo1926nL1l4gQJGL
+         gCEXkC2VKP6L/SOUy1bC5rxoAP2TskVfVNPDwhfG2jgRnP7d3XliZGkfU/jZDwfyKkMg
+         nS062QoQJimYMTN6dcqUKKOa4o/B+weAdy3ou0TdLN/ZA+os/CDnfdyR6fZbleRd+DVE
+         cYRhctuJ22HzUwZhpHkpCAePVWcw2DSdg7I/LbAXrVl0ubc3Y3ks4qozaED1LMB92AG2
+         VEiiNjPq35c2zvM8IawK6dQ3vN8buFByP7dVvrqfUkurcdN4vzLbRrJXS2e5XbMQsmV8
+         eyHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3R6z9UdfObclnvPnWH9WeYOySAAHW9qeTjVNh8ZFghq24dZm00bWlFBKotJkYT3eYGARGw17xW33yaLrEZ4DDeE1xUwVZz57mWL6cJ/BlQ9pTYyBeeNpDydYt4h/GvGxd+laa
+X-Gm-Message-State: AOJu0YzYoPy6Bjhsgpt7uHi/GggfARfuSgUhmXPF2mTafL/mG2Cx8pVy
+	L9DshbQW8mBYgQJdo/I/IyaF4FbNnB1lYyAaac7ETmz5JV2IeCZQ
+X-Google-Smtp-Source: AGHT+IF/AdlMshgvwClMC4XzkNwAlcVLrF+f40BgcsD7rL87BunoA/t/Zf5eqnC1uXAmRDYXBgqaOA==
+X-Received: by 2002:a05:6a20:72ab:b0:1be:c6f8:c530 with SMTP id adf61e73a8af0-1c68cf2cefemr933547637.26.1722459127285;
+        Wed, 31 Jul 2024 13:52:07 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70ead8a3a91sm10373946b3a.195.2024.07.31.13.52.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 13:52:06 -0700 (PDT)
+Message-ID: <e2cc38ce-62fd-43d0-87f8-74002c90ef41@gmail.com>
+Date: Wed, 31 Jul 2024 13:52:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731033449.1016195-1-link@vivo.com>
-X-Operating-System: Linux phenom 6.9.10-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc3 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240731100057.990016666@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+In-Reply-To: <20240731100057.990016666@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 31, 2024 at 11:34:49AM +0800, Huan Yang wrote:
-> The current udmabuf_folio contains a list_head and the corresponding
-> folio pointer, with a size of 24 bytes. udmabuf_folio uses kmalloc to
-> allocate memory.
+On 7/31/24 03:02, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.103 release.
+> There are 440 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> However, kmalloc is a public pool, starting from 64 bytes. This means
-> that each udmabuf_folio allocation will waste 40 bytes.
+> Responses should be made by Fri, 02 Aug 2024 09:59:35 +0000.
+> Anything received after that time might be too late.
 > 
-> Considering that each udmabuf creates a folio corresponding to a
-> udmabuf_folio, the wasted memory can be significant in the case of
-> memory fragmentation.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.103-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> Furthermore, if udmabuf is frequently used, the allocation and
-> deallocation of udmabuf_folio will also be frequent.
+> thanks,
 > 
-> Therefore, this patch adds a kmem_cache dedicated to the allocation and
-> deallocation of udmabuf_folio.This is expected to improve the
-> performance of allocation and deallocation within the expected range,
-> while also avoiding memory waste.
-> 
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
->  drivers/dma-buf/udmabuf.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 047c3cd2ceff..db4de8c745ce 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -24,6 +24,8 @@ static int size_limit_mb = 64;
->  module_param(size_limit_mb, int, 0644);
->  MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes. Default is 64.");
->  
-> +static struct kmem_cache *udmabuf_folio_cachep;
-> +
->  struct udmabuf {
->  	pgoff_t pagecount;
->  	struct folio **folios;
-> @@ -169,7 +171,7 @@ static void unpin_all_folios(struct list_head *unpin_list)
->  		unpin_folio(ubuf_folio->folio);
->  
->  		list_del(&ubuf_folio->list);
-> -		kfree(ubuf_folio);
-> +		kmem_cache_free(udmabuf_folio_cachep, ubuf_folio);
->  	}
->  }
->  
-> @@ -178,7 +180,7 @@ static int add_to_unpin_list(struct list_head *unpin_list,
->  {
->  	struct udmabuf_folio *ubuf_folio;
->  
-> -	ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
-> +	ubuf_folio = kmem_cache_alloc(udmabuf_folio_cachep, GFP_KERNEL);
->  	if (!ubuf_folio)
->  		return -ENOMEM;
->  
-> @@ -492,10 +494,20 @@ static int __init udmabuf_dev_init(void)
->  	if (ret < 0) {
->  		pr_err("Could not setup DMA mask for udmabuf device\n");
->  		misc_deregister(&udmabuf_misc);
+> greg k-h
 
-misc_deregister() is now called twice in this error path, I think you've
-forgotten to delete this line too?
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-Otherwise lgtm.
--Sima
-
-> -		return ret;
-> +		goto err;
-> +	}
-> +
-> +	udmabuf_folio_cachep = KMEM_CACHE(udmabuf_folio, 0);
-> +	if (unlikely(!udmabuf_folio_cachep)) {
-> +		ret = -ENOMEM;
-> +		goto err;
->  	}
->  
->  	return 0;
-> +
-> +err:
-> +	misc_deregister(&udmabuf_misc);
-> +	return ret;
->  }
->  
->  static void __exit udmabuf_dev_exit(void)
-> 
-> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
-> -- 
-> 2.45.2
-> 
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Florian
+
 
