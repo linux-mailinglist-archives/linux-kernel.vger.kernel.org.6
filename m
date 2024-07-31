@@ -1,159 +1,132 @@
-Return-Path: <linux-kernel+bounces-268543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE1C9425FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:48:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47249425F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC703B24746
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:48:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D77931C237F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 05:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398D04965B;
-	Wed, 31 Jul 2024 05:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3199050A6D;
+	Wed, 31 Jul 2024 05:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="VGPVHHaR"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="xdN1B6Su"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D677819478;
-	Wed, 31 Jul 2024 05:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BDC7946F;
+	Wed, 31 Jul 2024 05:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722404899; cv=none; b=dRUP6VJDsBv/Gf1MZpIfwRnBeQtBVQAKwY2IbDuHUZVwAFrIbSCFJdnEqspqQ2uI+V9bBst963pMf6krpxU542qPU2q/2vKrZPMJZjhRUfruB7gK2OH2HkD2qgLOHfMbpjpxgv1fZ7EQIF8iOFz+xS5AuaPm+uCefMPrE6kXKGA=
+	t=1722404896; cv=none; b=Fy18lq6BUCDpJjUQKKJ23CskQdY2145ipl5wX9xuXOreff1K/6Nl16hOg5feEAO2NX8OTPFN8gvlPkuZ6TpUKI43Fd0nb15cF6uQ3tKdPaPjlpwZEFalptC5CsT2jBukdlpWombWWynnNZrAfxZjEmcMj2bJUH27C4wgweiUS40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722404899; c=relaxed/simple;
-	bh=5i1diTmBKjYyCLnQOf+ri6jmBCWXGwxZ5KYGgt/oFI8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iafFKG9Uu4yrd3NKTuxYM7xyFauNoj9lY5Xp9f3RP7cEnBDPVpuf8lfaoNjp+bSLlNnpYaRvxAGZscpy9hiVpcA3nc8xm9NFmapmUpiq7+9vhsLilX9oWHfBJoSR3h8Fz1x2Re3yL/SYQQRyNMaG0HU4fM7TuqIgoa06L9x+VBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=VGPVHHaR; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id C0A891F9CA;
-	Wed, 31 Jul 2024 07:48:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1722404888;
-	bh=8J1RbUtAvYpjqNj4JPt8vwUV1t4mknX4y89IaxZ4hSo=; h=From:To:Subject;
-	b=VGPVHHaRR6OmcuxcXvBpidOJXPFNc6Fqq4MSxtwHCjxQJcXoGQ9gVpGefQKyfW/YL
-	 c28ObH8ZGyNCiUDa35dr1z73gYUzg2ONulNI5br2YsfTkaDfrzeXM0LCrbXXzqbHPQ
-	 /3yAyV2f9d1GfOYsga6RR6k5ONwUGZGdcRBzkb+GKn8YF2J5vm05vFBqPi6OcyQag0
-	 7RNWS8FZZwnR57xMv5cuLtXhcdJYX8SzIydlAA9w04TcmM7Qy7DNV31OMv9VbJc3e7
-	 /lUSfrjdb8JffbMtNS0iz8BMaltvdfN3xX1+5dCxLjBaMoNZIw2wCPKfvg17qy7bvZ
-	 fBsiTqGjURWng==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v1] arm64: dts: ti: k3-am62-verdin-dahlia: Keep CTRL_SLEEP_MOCI# regulator on
-Date: Wed, 31 Jul 2024 07:48:04 +0200
-Message-Id: <20240731054804.6061-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722404896; c=relaxed/simple;
+	bh=OVDhFLVxAiC4od63fOsYZkg8AleEFv4G8P6ZadbWjYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K/8zA6zmJvsRaSqdHQ1cQ77d4XtGEwIW0U82P5DZLIFmENeBw4Ozu9Xad9Z7xR6luYvHVhUUE24bNVALuWPkdXKbHlVL9rkz30XdnH1qYvqR0kdJ6ihk7GMX15CowGS6EB4bLcEBU3Vso9BbcqWPvJtLLLoAt34zVyp6RvrQ3mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=xdN1B6Su; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 910F0C32786;
+	Wed, 31 Jul 2024 05:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1722404895;
+	bh=OVDhFLVxAiC4od63fOsYZkg8AleEFv4G8P6ZadbWjYA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=xdN1B6SuG4aCvnTB3w0110DPw+HgQ3lFdkgzjVTzC/e8waPw4tD0GjuxMtJw0yTTY
+	 F2Oz1nUtfFMjLaiPwLQhGM088JdeMGsW9J/bsrU1SDRCYmd6T0GQy13NKBmSd452Su
+	 SGopbdOwW4vPMwcbHm2SyNsBukG4L3TLtHcaMPlc=
+Date: Wed, 31 Jul 2024 07:48:11 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Manjae Cho <manjae.cho@samsung.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Improve MAR register definition and
+ usage
+Message-ID: <2024073158-perfectly-majestic-e730@gregkh>
+References: <CGME20240731053636epcas1p45b75f5d5256ba9360feda929d04a0106@epcas1p4.samsung.com>
+ <20240731053620.783572-1-manjae.cho@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731053620.783572-1-manjae.cho@samsung.com>
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On Wed, Jul 31, 2024 at 02:36:21PM +0900, Manjae Cho wrote:
+> This patch improves the usage of the MAR register by updating the
+> relevant
+> macro definitions and ensuring consistent usage across the codebase.
+> 
+> Signed-off-by: Manjae Cho <manjae.cho@samsung.com>
+> 
+> ---
+>  drivers/staging/rtl8723bs/hal/sdio_halinit.c    | 4 ++--
+>  drivers/staging/rtl8723bs/include/hal_com_reg.h | 3 +++
+>  2 files changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+> index c9cd6578f7f8..9493562c1619 100644
+> --- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+> +++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
+> @@ -380,8 +380,8 @@ static void _InitWMACSetting(struct adapter *padapter)
+>  	rtw_write32(padapter, REG_RCR, pHalData->ReceiveConfig);
+>  
+>  	/*  Accept all multicast address */
+> -	rtw_write32(padapter, REG_MAR, 0xFFFFFFFF);
+> -	rtw_write32(padapter, REG_MAR + 4, 0xFFFFFFFF);
+> +	rtw_write32(padapter, MAR0, 0xFFFFFFFF);
+> +	rtw_write32(padapter, MAR4, 0xFFFFFFFF);
+>  
+>  	/*  Accept all data frames */
+>  	value16 = 0xFFFF;
+> diff --git a/drivers/staging/rtl8723bs/include/hal_com_reg.h b/drivers/staging/rtl8723bs/include/hal_com_reg.h
+> index 9a02ae69d7a4..baf326d53a46 100644
+> --- a/drivers/staging/rtl8723bs/include/hal_com_reg.h
+> +++ b/drivers/staging/rtl8723bs/include/hal_com_reg.h
+> @@ -151,6 +151,9 @@
+>  #define REG_BSSID						0x0618
+>  #define REG_MAR							0x0620
+>  
+> +#define MAR0		REG_MAR		/* Multicast Address Register, Offset 0x0620-0x0623 */
+> +#define MAR4		(REG_MAR + 4)	/* Multicast Address Register, Offset 0x0624-0x0627 */
+> +
+>  #define REG_MAC_SPEC_SIFS				0x063A
+>  /*  20100719 Joseph: Hardware register definition change. (HW datasheet v54) */
+>  #define REG_RESP_SIFS_CCK				0x063C	/*  [15:8]SIFS_R2T_OFDM, [7:0]SIFS_R2T_CCK */
+> -- 
+> 2.25.1
+> 
+> 
 
-This reverts commit 3935fbc87ddebea5439f3ab6a78b1e83e976bf88.
+Hi,
 
-CTRL_SLEEP_MOCI# is a signal that is defined for all the SoM
-implementing the Verdin family specification, this signal is supposed to
-control the power enable in the carrier board when the system is in deep
-sleep mode. However this is not possible with Texas Instruments AM62
-SoC, IOs output buffer is disabled in deep sleep and IOs are in
-tri-state mode.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Given that we cannot properly control this pin, force it to be always
-high to minimize potential issues.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Fixes: 3935fbc87dde ("arm64: dts: ti: k3-am62-verdin-dahlia: support sleep-moci")
-Cc: <stable@vger.kernel.org>
-Link: https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1361669/am625-gpio-output-state-in-deep-sleep/5244802
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
- .../boot/dts/ti/k3-am62-verdin-dahlia.dtsi    | 22 -------------------
- arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi    |  6 -----
- 2 files changed, 28 deletions(-)
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
-index e8f4d136e5df..9202181fbd65 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-verdin-dahlia.dtsi
-@@ -43,15 +43,6 @@ simple-audio-card,cpu {
- 			sound-dai = <&mcasp0>;
- 		};
- 	};
--
--	reg_usb_hub: regulator-usb-hub {
--		compatible = "regulator-fixed";
--		enable-active-high;
--		/* Verdin CTRL_SLEEP_MOCI# (SODIMM 256) */
--		gpio = <&main_gpio0 31 GPIO_ACTIVE_HIGH>;
--		regulator-boot-on;
--		regulator-name = "HUB_PWR_EN";
--	};
- };
- 
- /* Verdin ETHs */
-@@ -193,11 +184,6 @@ &ospi0 {
- 	status = "okay";
- };
- 
--/* Do not force CTRL_SLEEP_MOCI# always enabled */
--&reg_force_sleep_moci {
--	status = "disabled";
--};
--
- /* Verdin SD_1 */
- &sdhci1 {
- 	status = "okay";
-@@ -218,15 +204,7 @@ &usbss1 {
- };
- 
- &usb1 {
--	#address-cells = <1>;
--	#size-cells = <0>;
- 	status = "okay";
--
--	usb-hub@1 {
--		compatible = "usb424,2744";
--		reg = <1>;
--		vdd-supply = <&reg_usb_hub>;
--	};
- };
- 
- /* Verdin CTRL_WAKE1_MICO# */
-diff --git a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-index 359f53f3e019..5bef31b8577b 100644
---- a/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
-@@ -138,12 +138,6 @@ reg_1v8_eth: regulator-1v8-eth {
- 		vin-supply = <&reg_1v8>;
- 	};
- 
--	/*
--	 * By default we enable CTRL_SLEEP_MOCI#, this is required to have
--	 * peripherals on the carrier board powered.
--	 * If more granularity or power saving is required this can be disabled
--	 * in the carrier board device tree files.
--	 */
- 	reg_force_sleep_moci: regulator-force-sleep-moci {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
--- 
-2.39.2
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
+thanks,
+
+greg k-h's patch email bot
 
