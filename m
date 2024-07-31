@@ -1,131 +1,143 @@
-Return-Path: <linux-kernel+bounces-269050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98BB6942CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:07:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E554E942CE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6BDE1C21B6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:07:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22BF91C209E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C2C1AD9D0;
-	Wed, 31 Jul 2024 11:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC3C1AD416;
+	Wed, 31 Jul 2024 11:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n2svMXA2"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="h1p4c5Eo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qSDUNARj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57EB1AD9CC;
-	Wed, 31 Jul 2024 11:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439F21AD3E7;
+	Wed, 31 Jul 2024 11:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722423990; cv=none; b=Dkr+7M6AEW5zihsTWrGSzWzOG+P2hCGYvr1pP/dWQgbd1CYrVyiQL79mHxSRHhhMpBnMTm/HBbJhRX7q8JtOldbHyWB7zxUKEe3Db17gnIQXXb8FcgPnNWZwW8E7GoAJakAem4TCjrdt/xQlDXNwnbR1QNg48Ifox+f+QmrVQGw=
+	t=1722424038; cv=none; b=SIg1/eMkp6ZAbceqiTfkvTnJYMLNhlIbkswYjshexx/7jqsBrcF2il4hXOY78MmzGBFAJrnZ5lQd3hYphA1eBxkeLWorBqJ0f1+fJYIntOnxmzj3asAP3FzuOuOcJwh316NLltUDo16eflBdINGVtyVEnmfWR78VYXX9JGFuq9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722423990; c=relaxed/simple;
-	bh=qqW9ROasfxzULXDNJwyTDYNkw7xA3mV3jd708Uieyzw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cM4XNtplseCLOU9FlfnIxUknKAbrKBluAQk9Tb1U+lYtGUwMnCRQQITUqMkUQjD4UlwDELxT/UAmvXXi6LMWGtmmkrmFAAOvt7bv/stlJ2PO2kdHi0quoH9vKELbalMrEAGYRaxZnpq0xDKkn7ccIEhc9MqmII3iBVvlK++ooK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n2svMXA2; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46VB68qC003152;
-	Wed, 31 Jul 2024 06:06:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722423968;
-	bh=sD6Gjm9intqNxvtkmvWoqH3mQKI1C0bFkBqLXlQoiwU=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=n2svMXA2ZKvooYScysFjujLAigj8+Fj2SdKJ0tpMReUL98UZF3LjKtzNGA+Qv0hIK
-	 UKU9J0X36JZGfFAntWTLNAMTGYK+MavG+gMYu0gCoFB7OxItV1xNT4/ybB6A36KCmq
-	 /aHfFefvYDflhGxQPAnH9JfPZxphtsRDq7kI3YE0=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46VB68es020021
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 31 Jul 2024 06:06:08 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 31
- Jul 2024 06:06:07 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 31 Jul 2024 06:06:07 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46VB67Uk115008;
-	Wed, 31 Jul 2024 06:06:07 -0500
-Date: Wed, 31 Jul 2024 06:06:07 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Manorit Chawdhry <m-chawdhry@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Udit Kumar
-	<u-kumar1@ti.com>,
-        Neha Malcom Francis <n-francis@ti.com>,
-        Aniket Limaye
-	<a-limaye@ti.com>
-Subject: Re: [PATCH v2 2/3] arm64: dts: ti: Introduce J742S2 SoC family
-Message-ID: <20240731110607.7fb42mgcsf2apodv@unshaven>
-References: <20240730-b4-upstream-j742s2-v2-0-6aedf892156c@ti.com>
- <20240730-b4-upstream-j742s2-v2-2-6aedf892156c@ti.com>
- <20240730123343.mqafgpj4zcnd5vs4@plaything>
- <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
+	s=arc-20240116; t=1722424038; c=relaxed/simple;
+	bh=SXBXbD7teweDRIff9XckBV218zMH0Sb8grNXnXDayyk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qm7BPpevKWIjDe5t8hRKmVcHYeP650P2w9WWFbcRGEsCUvYpc0oK2h145h0vd70IsUx36XuWLF2CSfI4Eiv4EU/HQDg+rJEf3ihhAXpPLIErYQWkfHgM9juWXLxYt4bp4jRbbNydqhohM0n7+sLu8QS0n+WQjy3u4W9+U1BnYqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=h1p4c5Eo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qSDUNARj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 31 Jul 2024 11:07:14 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722424035;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiGph7BckQocC0cj67LRP66JeVmjFc7zHelu5jS4gd4=;
+	b=h1p4c5EoiyqXXDGjymJwXby7C7Xt/a+91gAI0jCb+Xjs22/njaexMiLxPoTCOD1BQskX9+
+	zP1i9x82hcI0tADgh8hLfNUT5GjSbbn3GGuM5p26GF+DGQgYzaXUO6dRj2wKkjvboY6PqA
+	8UNJXEkarZauSkhxCN4DPoeLRyMFSW4eogD0Sa1+2NWsUL5dsvvY0dHqBtkYMR96G4oNA0
+	H+6EkX/4yyr4xzRnL2A8xqOdUPpHAi4tXxfy5TQRwW08z+RfE7bRsEkTtU4C6ve3EB9989
+	G2cGXOuAHaDK1VvxY6FuERemzdNvkKwTJcmG8FraJy7Mom9d7erVaGNFH14jBQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722424035;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PiGph7BckQocC0cj67LRP66JeVmjFc7zHelu5jS4gd4=;
+	b=qSDUNARjcW1dVJIYO7k2kunKy+CJ8W0fmfnQVhzAxUPBcYiGXiYl8TzUTv06Oe+03IngwD
+	QxM2YX20m+2MNRCw==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: locking/urgent] jump_label: Fix the fix, brown paper bags galore
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240731105557.GY33588@noisy.programming.kicks-ass.net>
+References: <20240731105557.GY33588@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240731041916.stcbvkr6ovd7t5vk@uda0497581>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Message-ID: <172242403495.2215.11338739604467848579.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 09:49-20240731, Manorit Chawdhry wrote:
-> > > + */
-> > > +
-> > > +#include "k3-j784s4.dtsi"
-> > > +
-> > > +/ {
-> > > +	model = "Texas Instruments K3 J742S2 SoC";
-> > > +	compatible = "ti,j742s2";
-> > > +
-> > > +	cpus {
-> > > +		cpu-map {
-> > > +			/delete-node/ cluster1;
-> > > +		};
-> > > +	};
-> > > +
-> > > +	/delete-node/ cpu4;
-> > > +	/delete-node/ cpu5;
-> > > +	/delete-node/ cpu6;
-> > > +	/delete-node/ cpu7;
-> > 
-> > I suggest refactoring by renaming the dtsi files as common and split out
-> > j784s4 similar to j722s/am62p rather than using /delete-node/
-> > 
-> 
-> I don't mind the suggestion Nishanth if there is a reason behind it.
-> Could you tell why we should not be using /delete-node/? 
-> 
+The following commit has been merged into the locking/urgent branch of tip:
 
-Maintenance, readability and sustenance are the reasons. This is a
-optimized die. It will end up having it's own changes in property
-and integration details. While reuse is necessary, modifying the
-properties with overrides and /delete-nodes/ creates maintenance
-challenges down the road. We already went down this road with am62p
-reuse with j722s, and eventually determined split and reuse is the
-best option. See [1] for additional guidance.
+Commit-ID:     224fa3552029a3d14bec7acf72ded8171d551b88
+Gitweb:        https://git.kernel.org/tip/224fa3552029a3d14bec7acf72ded8171d551b88
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 31 Jul 2024 12:43:21 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 31 Jul 2024 12:57:39 +02:00
 
+jump_label: Fix the fix, brown paper bags galore
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/dts-coding-style.rst#n189
+Per the example of:
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+  !atomic_cmpxchg(&key->enabled, 0, 1)
+
+the inverse was written as:
+
+  atomic_cmpxchg(&key->enabled, 1, 0)
+
+except of course, that while !old is only true for old == 0, old is
+true for everything except old == 0.
+
+Fix it to read:
+
+  atomic_cmpxchg(&key->enabled, 1, 0) == 1
+
+such that only the 1->0 transition returns true and goes on to disable
+the keys.
+
+Fixes: 83ab38ef0a0b ("jump_label: Fix concurrency issues in static_key_slow_dec()")
+Reported-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Darrick J. Wong <djwong@kernel.org>
+Link: https://lkml.kernel.org/r/20240731105557.GY33588@noisy.programming.kicks-ass.net
+---
+ kernel/jump_label.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+index 4ad5ed8..6dc76b5 100644
+--- a/kernel/jump_label.c
++++ b/kernel/jump_label.c
+@@ -236,7 +236,7 @@ void static_key_disable_cpuslocked(struct static_key *key)
+ 	}
+ 
+ 	jump_label_lock();
+-	if (atomic_cmpxchg(&key->enabled, 1, 0))
++	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+ 		jump_label_update(key);
+ 	jump_label_unlock();
+ }
+@@ -289,7 +289,7 @@ static void __static_key_slow_dec_cpuslocked(struct static_key *key)
+ 		return;
+ 
+ 	guard(mutex)(&jump_label_mutex);
+-	if (atomic_cmpxchg(&key->enabled, 1, 0))
++	if (atomic_cmpxchg(&key->enabled, 1, 0) == 1)
+ 		jump_label_update(key);
+ 	else
+ 		WARN_ON_ONCE(!static_key_slow_try_dec(key));
 
