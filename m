@@ -1,115 +1,100 @@
-Return-Path: <linux-kernel+bounces-268376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6055C9423DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:36:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB169423E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 02:39:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713FC1C228A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:36:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F4F1F23859
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 00:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B96A4C83;
-	Wed, 31 Jul 2024 00:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D384C83;
+	Wed, 31 Jul 2024 00:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqLCpqCO"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POt+FxEs"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED6D4431
-	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:36:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2700B4431
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 00:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722386177; cv=none; b=b1o3gngmmWTK/RHEKOzZMXy0tBNldyRcdyVG73AiP06kQSBKkYwhs4C5znyNRKbLCYSHgzcoX50dR93eEKzp2hWwFkPjhfU0lEBD3+5A1/lBQlsLWpBTkLLRfR0y8g+s6PISjfSaIc8vl/neH1OqSKoxMoyz04ITfYT4tsDPV74=
+	t=1722386355; cv=none; b=MhT6qxCEzOEinKryLJw3gw4M2PVYppY0q9ye+MPyhu/k5RlPBht3E3r4aTdxxAtCazxRsa+Car+PilfmnkHqBGRZu0usnwPJKpyfvrs74ipgRcRz3KwNvDgtUoZUkYAUztuoLc3474AhTBaAnfgAmgubrH4LsFaeGT/2ouWqJH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722386177; c=relaxed/simple;
-	bh=+VfRhP+FiN6dbxldXwT+21mprcQcLKLpOfnjKRA20ko=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CoAiUTzYpCuAsPXCAHE4xh7BQC50efNbLLg4GyWrXEViKVRG94m011fD/oUKZ18LOLPbDleqbjg/Ic6Q0T1BZrYmXKrzvqk5X5WHffs2TnZpUNWHsF637S8agH9rBA1IaJBMerdoQkuB0o+t5gi4rTXirT1QwETbfU9yIhgjU4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqLCpqCO; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1722386355; c=relaxed/simple;
+	bh=G78J1xazOqAfpXn0/qpj2FC1yrY6QemILkcM54iNNJQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i4/0mn9zNA3+Y+ABv+LrPdicQV0hTGhvUmjXZOkx4ag3IvTolL5myJWGu7OZPj3Ot6nCDWN+NbATkK32smqTxt9D+dSQQFHVGSwhgGuZ6Q1RGy7lSdpEwaBN08Li4X5+MbRfLOG/c9Bp5GrmUrjarUHcxP6zIkjgmnPny6mTO6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POt+FxEs; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2cd1661174cso3418663a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:36:15 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f149845d81so13591041fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Jul 2024 17:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722386175; x=1722990975; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fbphnlhavq5cSuDvU9XbuNpAKWiecL5M2ABEBD8iQJ8=;
-        b=YqLCpqCOgmAjSutu0KrxCUBdt8L58X58lscDdDoVQEIFYO4qm+C7x4MMfWf21WiS2I
-         4IQOsMLxSMvFLX8I8107yFIwwANc/OHZPWwd3g1v8aMLBFNc8kRefYtw6Ky/M2LOdW6I
-         G6hWj5tdNaf9xDP8+92O92p+/xVL1dwuxI02R3LNwBF/PGKD3Dy0OoCBRnDsffUVc5+L
-         u+HP3lZ/EtjomqEhDi73X7RNNZYZgk7QXQdw+eVD9YMTQeq6Pwaw0I/d1YIYNyqydlt3
-         yfS+3b3C9MrHxfNojdcn6J1p8UAKFq52N+SKBfkTeuYK957OeU353oSw5XapPKbokOMj
-         HOFA==
+        d=gmail.com; s=20230601; t=1722386352; x=1722991152; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G78J1xazOqAfpXn0/qpj2FC1yrY6QemILkcM54iNNJQ=;
+        b=POt+FxEsq0xci85WWzYVlGXhx+XBrkySX8BqdFIWEy7Nso8vvV3a+K6iA7qTT1kvPb
+         zmZHsCSHiPtMm1PAYTc3smbU08Yos+83umT3ff45wdnTbuzxqSfM4wcSb5cJ7Sk+nE7a
+         01y8HvH9FCfzyC/JuuF1HdJXs2fT5afBP5CKOIDZ/wryL2cU7P0jMjlCdX5m2fSiXLTt
+         BISdvdtwXi9o0Q/qUARD+akzIlrVYtfakvhQt+IiIgFl+crA02PginQQW43hlVO61evM
+         GAUQTAf8SjfOm9dA7RnOBVoMSFUG+wp1FO/uyYmqnZfJrO62uvvP2VODZEntQ9YlJmnG
+         xkfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722386175; x=1722990975;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722386352; x=1722991152;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fbphnlhavq5cSuDvU9XbuNpAKWiecL5M2ABEBD8iQJ8=;
-        b=bHeX4rc26KXwVzsH8551pfLcJfPaHAvoglmZdJdyxCNTbQJbc4mzcJpb1YXEirlUJ9
-         DIHJKemL05KvMdxOrxfqh0ElXFzY5qFw+a4uGfNxzWhq47Q5X+EoPuKH9A+L9gw4h4k+
-         8w/ZcLgOdmnMSSVczRAP9lqMYHcoJIMrPAoYoAGE6wM6J+cpvp0GhujvNepXXgMwk3n7
-         tavcnIUaEPoHYiSSpJ0PIz3Ep+00dyAxOgBJinXZIFLfguTgOomzQ+h4vK3wxgbv9SOT
-         60d1cBfRVOj8sIEvMyIwCKlEtM7Iq9UqMeG7mvJlbhMNjBr94FAjRm5dLCufYHmHHPN+
-         Rd9g==
-X-Forwarded-Encrypted: i=1; AJvYcCX9ugd+oYtYcE5Kx+tuxl7JiCpM5ADZpJyatU8UdAIxA4451mk5F/jEdk21CiqjahKxnjaUcANJVhTZGG8s5Ljs1rlBRUrqLJk6hvyR
-X-Gm-Message-State: AOJu0YzDu1Zda/SocOMpm+M2lKzzXko81ktYkFXO9mX7fuoOwdWp7DYg
-	QBjQYsHI1eSrgm9hN7t0wXdc5R8h9RrwZD9YVTjpNvq0N8tZz7BQ
-X-Google-Smtp-Source: AGHT+IFCrqsBHFIFrlJDXHKp9UtwqpJ7XQ7v7u+LOGT2ozY+Tg1Y+819VdHY0UnwCVPax6fXKVxmpg==
-X-Received: by 2002:a17:90b:191:b0:2c9:96fc:ac54 with SMTP id 98e67ed59e1d1-2cf7e1a1f08mr10524587a91.2.1722386175362;
-        Tue, 30 Jul 2024 17:36:15 -0700 (PDT)
-Received: from localhost (dhcp-141-239-149-160.hawaiiantel.net. [141.239.149.160])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc42596bsm27763a91.3.2024.07.30.17.36.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 17:36:14 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 30 Jul 2024 14:36:13 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Matthew Brost <matthew.brost@intel.com>
-Cc: intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, jiangshanlai@gmail.com,
-	christian.koenig@amd.com, ltuikov89@gmail.com, daniel@ffwll.ch
-Subject: Re: [PATCH v2 3/5] workqueue: Add interface for user-defined
- workqueue lockdep map
-Message-ID: <ZqmG_c2tjKNAJWfh@slm.duckdns.org>
-References: <20240731003119.2422940-1-matthew.brost@intel.com>
- <20240731003119.2422940-4-matthew.brost@intel.com>
+        bh=G78J1xazOqAfpXn0/qpj2FC1yrY6QemILkcM54iNNJQ=;
+        b=pQEDfPJ+TfhXSlZ+fMZukBHvwLzFHIZstZ4mfS6h/zGSw3nuZymG6Ba8jSXBPYoB1u
+         CGJog7n1NxLcWyDqtsLiKILI5xl/Ubk7OIqgA6T7y8hgPO3j7LhlBYiRteWiDEsLyuMm
+         Gynhf+6Zn+XI+9Opxt/g+NKRYtveUiCnxP+fS6HkoQlOiIEjauq6hFCx/rgc4Y+R1itT
+         3M+Moiu7OT+MTZSfyVTIsxQY/Peb59sbLrG7CmisrDmQBGiXU8kf48s6GBqQri/dhECh
+         dfxYIzvcpV4xhyDwRUv3RAqG0xdv5b5pk8TcdtYUNiAm4aODZzKrIZxkNUC79BQudau3
+         rktA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkWRbtfvsz4ly3Ajv2m7hJMLDcBf6GPtzkurPzbShHG5C+3WxQGkarxtqd9Sw03vZnPyyHtvUhRgNHE/L3hNJecOnOfkXKmF329ZKn
+X-Gm-Message-State: AOJu0YyHJLz0w1evaHVBOPiuBClnoyQ8lKgX0ckOF+JYZg1ELPlt1v5D
+	hPFWPbRWjDSrpFCxrx60dQTSLR7gslI3ciR3ZAzOsCWA5j2PVxKowqkPlMLjO1DGA7WyHm+HofL
+	XtPoCKXUktjZDFNu07CHdfvEoZ/8=
+X-Google-Smtp-Source: AGHT+IF3QdcyfsTf73ofgzOHHFXCnAc6jKy9oxJ8bWdQTI0xNaDz45AIw6tugYREKf7IH9fo6GqtqCrB8RErPRzM3dw=
+X-Received: by 2002:a2e:b711:0:b0:2ef:2e6b:4102 with SMTP id
+ 38308e7fff4ca-2f12ee626aemr82767921fa.43.1722386351769; Tue, 30 Jul 2024
+ 17:39:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731003119.2422940-4-matthew.brost@intel.com>
+References: <Zqd9AsI5tWH7AukU@pc636> <20240730093630.5603-1-ahuang12@lenovo.com>
+ <ZqjQp8NrTYM_ORN1@pc636> <CAHKZfL3c2Y91yP6X5+GUDCsN6QAa9L46czzJh+iQ6LhGJcAeqw@mail.gmail.com>
+ <ZqkX3mYBPuUf0Gi5@pc636>
+In-Reply-To: <ZqkX3mYBPuUf0Gi5@pc636>
+From: Huang Adrian <adrianhuang0701@gmail.com>
+Date: Wed, 31 Jul 2024 08:39:00 +0800
+Message-ID: <CAHKZfL1i3D7wgbdLWz3xiK7KkAXAxrsyQjFmFarrM94tJPYh3Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm/vmalloc: Combine all TLB flush operations of KASAN
+ shadow virtual address into one operation
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: ahuang12@lenovo.com, akpm@linux-foundation.org, andreyknvl@gmail.com, 
+	bhe@redhat.com, dvyukov@google.com, glider@google.com, hch@infradead.org, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	ryabinin.a.a@gmail.com, sunjw10@lenovo.com, vincenzo.frascino@arm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Jul 31, 2024 at 12:42=E2=80=AFAM Uladzislau Rezki <urezki@gmail.com=
+> wrote:
+> Thank you for posting this! So tasklist_lock is not a problem.
+> I assume you have a full output of lock_stat. Could you please
+> paste it for v6.11-rc1 + KASAN?
 
-On Tue, Jul 30, 2024 at 05:31:17PM -0700, Matthew Brost wrote:
-> +#define alloc_ordered_workqueue_lockdep_map(fmt, flags, lockdep_map, args...)	\
-> +	alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | (flags), 1, lockdep_map, ##args)
-> +#endif
+Full output: https://gist.github.com/AdrianHuang/2c2c97f533ba467ff327815902=
+79ccc9
 
-alloc_ordered_workqueue() is a macro too but would you mind making this an
-inline function?
-
-> @@ -4795,11 +4795,17 @@ static void wq_init_lockdep(struct workqueue_struct *wq)
->  
->  static void wq_unregister_lockdep(struct workqueue_struct *wq)
->  {
-> +	if (wq->flags & __WQ_USER_OWNED_LOCKDEP)
-> +		return;
-
-Do you still need the flag? Can't you test wq->lockdep_map !=
-&wq->__lockdep_map instead?
-
-Thanks.
-
--- 
-tejun
+-- Adrian
 
