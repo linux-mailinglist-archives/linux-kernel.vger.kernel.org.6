@@ -1,238 +1,398 @@
-Return-Path: <linux-kernel+bounces-269485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60DD9943353
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:29:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC5A943357
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 17:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E238A1F273A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A11AE1C24320
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB53C16CD38;
-	Wed, 31 Jul 2024 15:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFFE1CAAC;
+	Wed, 31 Jul 2024 15:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Rf7ucBiR"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012060.outbound.protection.outlook.com [52.101.66.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Cuj7xGSL"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F102171AA;
-	Wed, 31 Jul 2024 15:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722439742; cv=fail; b=Rk1A5shUIVpVHBaTa+60QAgXUqRMLFXtgI1ZTB/gOxnpwOtyDT3D8Cyy8n6cV1/wvNyeEJ9TuS18bcJ0pS0U+WPm1o3cyOY5T9rJFD+/bMsDmTQyVaFBzt3KsvaSNjLFTDB22ZEZIrgIJGq73TIKemE2HEP0Ra9tuCkS8JnYOfw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722439742; c=relaxed/simple;
-	bh=e4ZmsG1l/mOXGThcooB/GhrnskYn1mOk4SE4A/KUAbg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TPD1YcZaBmgiSgZ6JY4zu3o/SZd9yi9GPqd5vUorczZJ4suyPmPJn6RE/cxHgNZr3VwW3+QOePw2Q07JbwSeyQTEqLkYwyhe61fbm5fi/q61J/u7lwTN6/y2s0p9N/laIKfasPbFknW8KFvpti0ONc4WiMpXoVx7pNBzmJsmq8k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Rf7ucBiR; arc=fail smtp.client-ip=52.101.66.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gLmOwY+Wl027IZ2eapcVUZwpDHH1b3QpyG1oijFaHgJ1eCS8kEJPHrB1ptuYbp0Tfq2XsfA1/5P6YGz3IeWxs9C7XRDWii7t/0o9CPEN+ehzdwR/qAqnDsgQ/PkO6Wg5tAcvRKJqRqaf3jjmqzLB0HCwXZ28mj5Q/ijwc+24k0bQZFm/FK8Iybm3GKgTeYLbFJTpHl/0JkmZUqLCH5SFprJ5Xe9RcYM+pGvxy6BFwGYjDgHi3c4tGRPH+jC0mVzH1U3HjOK+1rZwi/JH0FugJhpmayWvvtXhD7etqBVycZwSsYo1oD4mKLM4zFdBzmXBbHDFj6iaf2SKTqXXiICymw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e4ZmsG1l/mOXGThcooB/GhrnskYn1mOk4SE4A/KUAbg=;
- b=gw9wiPsRQhnmg82RZfsOnwVb3G05HCfm6F7EDo0x18iXCYsMfd5IXtcwvUf73Z0EZO6gkVBLRGyOtG/2X6QQrMEeP0ejx0apnj5+juF4edGBLW4KwPiidikzMpTsv8RiMyI0wdCFOJmlxWrgAasqgNe3lxK2xRWC9BZUHe42PyCNWAGQDUtHznMmJTiUI5X936L9G2uBx0pNXDLs/WsDPH20wFSzUyB4XqHnsvkwxF2/Ub2oUc9jVqddcU6zCfEuHKgVxOXlDOTJGAs+zS8ViE4U1sKtNzA8cdAT7ipmUmzR/Dfb9Zp/5vzAf2smEgqC4UAS54yjs+865Th+iA/fxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e4ZmsG1l/mOXGThcooB/GhrnskYn1mOk4SE4A/KUAbg=;
- b=Rf7ucBiRPksdpSV5pTq6M7AJHY+y6k2EidL4leg+ON3Q/lpCI0L/4t4rzm71jqQJneWBHjGrH85+bGXue9cAmzEXHRMtKTsJS/w69S6fKIU85/63+OC3bfikGuli2pU9JCEVH+bh3+HOSjPpT7ou51sgUdD/esknEHmADoAJ1awL6CuvbMRwx97tBPzbpYHPUIEEdf9WRrpJs8rhESb6FlFh1WELoqS2eoF1CKl4GW3gYyDS8e8MNR+S3DZ8nfHwroTE3PMzfCk2HF316mu/QcNSr7JcG7qYDCEKtel2DNOSpvrQrGuaPB0AzoqBJAuwfpnNvX+fmNBnwgLKrdd6Lg==
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
- by GVXPR04MB10302.eurprd04.prod.outlook.com (2603:10a6:150:1e7::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
- 2024 15:28:56 +0000
-Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
- ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7784.020; Wed, 31 Jul 2024
- 15:28:56 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, "Peng Fan (OSS)"
-	<peng.fan@oss.nxp.com>
-CC: Cristian Marussi <cristian.marussi@arm.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
-	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: RE: [PATCH v7 0/7] firmware: support i.MX95 SCMI BBM/MISC Extenstion
-Thread-Topic: [PATCH v7 0/7] firmware: support i.MX95 SCMI BBM/MISC Extenstion
-Thread-Index: AQHa40fEPyVCotchkEOnFP0xvgvrn7IQyt6AgAAoAxA=
-Date: Wed, 31 Jul 2024 15:28:56 +0000
-Message-ID:
- <PAXPR04MB845929B61EF637D67BDEAB0088B12@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240731-imx95-bbm-misc-v2-v7-0-a41394365602@nxp.com>
- <Zqoz6RVcvNLEh2UT@bogus>
-In-Reply-To: <Zqoz6RVcvNLEh2UT@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|GVXPR04MB10302:EE_
-x-ms-office365-filtering-correlation-id: 26b22bf0-930a-4109-080d-08dcb1757e3d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|1800799024|366016|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VHJ4aitRK0FVbjlXN2dJeGFDWDJvZ1pCa2dyWGtIODQxNWcwbUttdFpPdVJO?=
- =?utf-8?B?MElHbm1DN1RWVEJFSi8vQWpXK1cyNnFyZVVtSzgxdjdjd3VxNGVOYW1lVC9N?=
- =?utf-8?B?dEt4R0tkUmVKMWxsR0w5VWFjNmlWa1dqanIwRlBSOVhvSWJLWFNrdUxxbEVE?=
- =?utf-8?B?NzFDV1M5d0Vzdi83a3JVS2k5UXk0aW0rd2xUN0grSGF0ZGlwZ0tDLzdzVmVP?=
- =?utf-8?B?OTZjdUVJcFJkTUplZUlTVytXYlp3UnhTZWhuMEJkeG1mQTRDekVKUkd0akRQ?=
- =?utf-8?B?RVY5SkhubFpxUWV1WWkvcWFvd3lnQi8vN3ZaR3pPdndCeG1mTUFwODFuaXRM?=
- =?utf-8?B?Rm80NlZIVFFFOU5Oejk3QWV5dTZoSlVjZzE1L2cyZlQ4R0djai96WSt1ZTV3?=
- =?utf-8?B?Sjl3bkJzQWl0ZE9CNlNGcGQ0cGxyQWt3RkhNSmF1MzRSeERnczVNVkw3dWJl?=
- =?utf-8?B?Z0oyc3YxdXF2NFFwUFphRGNJc2kzbEdpY1V2Sm8xVWJKSXFrZHRmY29LLzRB?=
- =?utf-8?B?RnNDWms5UG5nYmZEVTZUQTNsdE0xdTltbXRYaTdWNVI4dmdpQW8vY0N4cTd0?=
- =?utf-8?B?NlhCc0pxQXJIR3Z0VGU2WmJ5UDMrNlRWYXdla3dFajMvSjMwenlMdWpTZVE2?=
- =?utf-8?B?eDRReTFTL1dLcjVIUkdwck1xb2F2ZVo2aXJJS3plZG5BTjBrUW0rTXBXNG5J?=
- =?utf-8?B?b2dRT2dCODJvZHpPd3VJQnBaRE9Ea2VseHlXOWEzNHM2Z29KaldTNE9tVzQ2?=
- =?utf-8?B?cytMRlJmWWF0dUpqR01QUEZzNTB3SDVGamFNR3F1bWI5SjhXb3VxK2JqdDk2?=
- =?utf-8?B?MG45Yzc2WlV1dWltcHpGaGo2TWRoV3RQQUFhR2t0L3VSWGNuNVE5UTJHcm1r?=
- =?utf-8?B?NjJGeFZXY3pMMjQvZEtFblduUjMrK2pFVXVibGplQlNDYldoajR2ZGdrQkJv?=
- =?utf-8?B?UitLVG5YLzd2NHRzYzN4a2VkQnpjRUZYMzRVRjA4dTNqTUZRbzNGbU9UQlB6?=
- =?utf-8?B?V0hYUDZ0ZjZvejh0T0FoQzNWYXNmaER2TXU5QjRnTEhTNHlpcmFTQUNnZHg0?=
- =?utf-8?B?NW9ybnE2b0tZcXhKMFRBWEEwWHNxWTI1VzlxUW9wRmpEQ2djb3dsd3J0OSt1?=
- =?utf-8?B?OG9LZi83Uk01cXRQTTgrd3h2MXRkVmlNMUJ5RW5jYlh3Rk5NN3BLZHp0TmVv?=
- =?utf-8?B?Y1Y3WVduQ0Z5RFdRU3laTWp0cDRLMkgrNVkvZWxTdW9rWXV0d2MvUEZ5RVRt?=
- =?utf-8?B?UkExbG4zWkt4TlA3M1FpSWl4U2FibGdwcHl0UHFGajF3VWQxVUlHaTBYaENn?=
- =?utf-8?B?MWkzR3gyRHZqNDRNaUh0MHd1NjlEQlVmdUp3MVdlNVMrSmhQVmhnRmJXRWox?=
- =?utf-8?B?eVRDOEJTcU13dk96Skx4bWpOM0E5V0czUlpkdlUzNDN4c0ZSS2ZRZnpPNWxy?=
- =?utf-8?B?dHVqYWYwamNCSmkwUzVFbEVNcXVBc1o3MDNJTWJLcThhVXYzTU0rVUZwZzZr?=
- =?utf-8?B?U1BqaUdFOUZKQ3VwYmNEZzVCU0xvNURTNStGT0xxeUtlcFhzOThqUmVOUHZ6?=
- =?utf-8?B?dmFRUUMyc2U3OWFDa3A3Wk0xMGNaZUVyMnNUajZoWW9Nc1NxMVVvTGt5a3hI?=
- =?utf-8?B?OGRlaGZGMk1sL2l6UC9sTDZpelJFNzkrVWxlTTNJaFRkbFIzaStQMUduMVV3?=
- =?utf-8?B?cDRwT2pyeXluVHRreSs3ZVJWR1Q4NmNEQy9SZ3dDU3F5SmtXb0c5RXdOL3U4?=
- =?utf-8?B?QWtLZ0dId2lNVk1ZWGlxTGkzRE1sZGM3cDZIcGxDOWp1S08rdmZ3NjJCZmRh?=
- =?utf-8?B?ZDZNY1BOT0F0VE82ZU5vSUlqL0lXcEVKOGZKbkczSTlZMVZ1Nm16R1dxQnBL?=
- =?utf-8?B?K0RUaWFwZVc5MCtUVk5mNjJWdzBPZkZEdHcyRTZDRUkxYVE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?SXVhTDEva2RNUlFzZFQyNUUzZ3BMc0VZNU4rak1qcWVvWnRra1F1bXJxQ0Ns?=
- =?utf-8?B?YXFjL1lwRkM0ODRoaEQrSVI0L01WOWNXbjJFUTFtZnl6MWk5UG9XVXBuNy9B?=
- =?utf-8?B?K3lYbXk1cEdDbm50TDRhRkdVSjA4ZThSNG5zT3BuaHpvdEljakRJdDFpa3hC?=
- =?utf-8?B?MThGemJBV0tRUDI5UEJtU1lsRUpmM3pROGJZSmRDenJqNGpsd3o1SzFRNXhv?=
- =?utf-8?B?bDZBNzZjRHhJOXdINnFYNCtmODJEb3hHTmpCOFdmd0tRNWJpUWM3MzFpVjk0?=
- =?utf-8?B?d3ZQZXFkRWNpT0pmRVIrREttSTNtcng0Q0xJUzlhbUlvcUlHdk82VjhlbnZN?=
- =?utf-8?B?WEUva3VEVjkrbDd2MkhIVDBpak10N1d5UmpqK3hxT2t6U1RXbVkzQVV3YVZZ?=
- =?utf-8?B?MGdvSW5ZWVB0NXVoY1U5c3ZGUHRGWmNYWGhDQW0yQmNYNHQvYnVjR3lmcUEr?=
- =?utf-8?B?WGlvQ0U0czVjekQxTjVNMUFEc2J2Rm54SlN3c1RFVmpEaDh6akxHeHU0Wmcv?=
- =?utf-8?B?OG9tY2ZzOFZkVzhpZDYzMExWRkU4ZVdVYWdJcVRGeVlFUXEySGlHbjBwMDRn?=
- =?utf-8?B?Um5CaVVvYzVhWDBlOGZ0TVhXNnBvUGVpSzJhZ25RMVNJQzcxcElMbjhyTm8r?=
- =?utf-8?B?Q1lUM3p6MkhyMG1CQm9lZmVDYmd1MDdqalROSXdxYUFPTFpOVzdCSllOcUw0?=
- =?utf-8?B?WWdyTkI0dzJLMVJNQUZDdUZtejJxN1haNThLRDc4VkJncnh5K3JHOTh1eUIx?=
- =?utf-8?B?NWUyeDU5cGJUVnhjNlpyUC9zb3ljdzVIN0ZFYjFkeHorZVd4ekdUNkF6VzdU?=
- =?utf-8?B?Y2Z3NlE0aDB3dFBqZTc0QjNheE5FUVo2N0NHdEFoaWNXeVBLRHlQNFR5NFo0?=
- =?utf-8?B?TWxsbW43R1dlb3VGOENJb3liQVNZamVzdXlZVzR5R1NwZ2hyNDZvVTV4T3d4?=
- =?utf-8?B?T25ISGxqZTFNb2FucXZxUngzMEJMbEZWaC9vcU45M1Z0dTVENm5wY1RLY2ph?=
- =?utf-8?B?YnR2Y28wbGU3dnRCcG9reml6L3dNQjFMaEJRTkpwQzQ4Ylh3TG9CS2ZpcGlZ?=
- =?utf-8?B?VGhkT0t2SnJLelhCNXNGRXk5NlZ5b2RhZnVsR3dvODRpRi9pL2xoOXVyNHMy?=
- =?utf-8?B?akRmb1hpaE91SXh5d2pKZktNSVdHMGRiOTljRm5LUnJ5ZGh1cDB6cnRGUllH?=
- =?utf-8?B?U01Ocys0bGRzdnJuWkJLZXQ3MG1xazAyWDlUV0NRRldNZ2k3WHJSREFPZm9I?=
- =?utf-8?B?ZWRGL1gxWVEraFlYM0tVKzZjTUZIU2RMcGFGT1hBb3RvMWZGZVBNQ3JDRlZS?=
- =?utf-8?B?Q0hJOWdLdE4wSUVhSmVXN1d2Q0g0Q25NdE5NNDFKQ1FONVV4KzJGYTBRL2F0?=
- =?utf-8?B?VFpiL3FVUm84MU15Z2Y1WTlWbkJCcmU0bEpVTG45ZHZoRGdySWJQSUo0NXp5?=
- =?utf-8?B?VmNGTWRKOW1tQWpsYndGSm9HV2oydXdXL3ZSN3JQeGN1RElOVldtb3dSZFQ0?=
- =?utf-8?B?M3Z3WktpcjZ4bTlxbEo1ekpMRDh2YmlVemdXYzgvdmo0d2VxNGZDenpMUVpy?=
- =?utf-8?B?NnBPcUFNOE8vdElnY1NLN0RlWXd2OFg5Njd2QnpwNVlhK1pTVU13Q1Y5YWtG?=
- =?utf-8?B?UCtaS25WTmJycUdaTTl0WmcydmE5ZTVhU2dWbEtwUzBBUENZR2lQVkVTUG8v?=
- =?utf-8?B?R3J4dGZsZVozeGZ1bUZRTzVrMjR4R1RzNGhvSVhWSWdtd29PNFNyQWdaMUxp?=
- =?utf-8?B?c0I1dWxDQWh6K1NZdjJ4ejFGVzNnUkRKTEU4Q1d1ZnZSRkQ1Uk5hc2craHo4?=
- =?utf-8?B?a3d4VlE0WXdMU3oyQW0rL3ZmamNZN1BqY1cyaHVnNTBCNko5MUVsT2l0Z2wy?=
- =?utf-8?B?eW93NE9JUkNNWDI0Z0pUOVdXd2Z4STZlTmYwUW0rR1MyK1pVNGV1REd3WkJ2?=
- =?utf-8?B?enVZZjJnSjluWTZud0JFTm5KMEtGM0VpeTVhZlRmTUpTUitOb1JXV0d5TGVQ?=
- =?utf-8?B?cDBoaFJWaHJQSXJXOGdSN1A2dDZLc0lQemJtbjRpYWZGTTk5VzRPbmhiM3JT?=
- =?utf-8?B?eXZuR29ITnd3ZE51eVlIMjJnVTFOZTdwTnZXT2g3QVEwUDM4K3ZVUlQwc0lh?=
- =?utf-8?Q?iekU=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2923179A7
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 15:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722439762; cv=none; b=M6rWDRMyhcDW3hwQbFc0a7G7dgDeEFUm5GAbGM6GkKtm+qqsFCgl4AmDomoUAggS5NFwbnXaOG9tWle9zlLPkHTuyLMv6QPmgNoQhBQ6Wo0uELMEQyVOOIoz+L+CrULNPF+AqThWDj+VD4BeiqY3cjUkddOKgZFolnuSuRyiXc4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722439762; c=relaxed/simple;
+	bh=rA8gZ0+0Yck1BHD6dQLXQ+DYwaNYY7xkNWaXCkxoUAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zu8p2Zc/qzsO21AdPTk9u5bsH3et4C30jCjLp8TRYwveOG6LQSsSswX0DdVbvn2Zzrh0XBOkXyL6zwVelCMh4jYcjKmTNGPBJjbBj0XMJdqZc+NC7EwywqFvrczmgY3Hq+E3U1EZO2iSdUnQLyekDZGxbk9Z4fp0T0orFbwjNak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Cuj7xGSL; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a10835480bso8584720a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 08:29:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1722439757; x=1723044557; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g9uuBBLaILTnkAH0Kq+8GX0EvclZmCoOgmvXbP97jF4=;
+        b=Cuj7xGSLX38IcbzwC/hf9AUeSbBHu35ZWuBwplXcduiWXGj7G9BeDIVuC8Aw+epz2+
+         9fH489hcywDDGm4TXOXJcVcEa1ziEJFZj2Tl3Q7ja4Kl3AJxj1sMPFjvC5wM0Ss4/6yi
+         rqA4suxVa0w0GVBXIGtIdeyoVygo+lw43+b56U+FuaL3KzxRetijuIS11bNZkPi2gjmH
+         v833rMcwWnehy/9Ffz772da9znIjvGnIdC5SAb6MDbf1C4qSf6mbYRcJBnM1ArnPAYS4
+         Vnr7ELKam+l3TLXe2t0x0/b05OklQroMrPqQMW7ItDxBAXvx/idLi7V7IApKIqCwi+fp
+         WDyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722439757; x=1723044557;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g9uuBBLaILTnkAH0Kq+8GX0EvclZmCoOgmvXbP97jF4=;
+        b=JYP/q0i/IFj27DheQ7K7DzBy4LWxBXN/oI7HZaKTHmbsaCJjRdygNFktnRPOhmNNTb
+         Jcv9NDg5wAZHe5Az9kGEC+nAGXJ/FggSuK8U+OQKByhh4dnZVsQeqaDz9xm3MQ5ViBwv
+         alO+lhmRsqdD9X/FgjC5vRjMnm2G/CHkuJnxZKNhXCOV5VZcjldSHQXfiOrzhNSQkL3H
+         Yf5jWBZyXZL2YxHnTKNkYlJ0OfkrFI3ZJ/TCa9TH25C0zRkmVLVMrFx2+li05NNhDkOX
+         7IjFVRms/5p9F6ApGMHVIIxI3seT1INqDGffaWl4l1SAIG4SYw3XZxk7dxFlKDdsesNi
+         bO+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWQK7YBeI0+hojHbgkmDqpybkNL7MqDWbEaJ77qsDOVTd9krb+XJw15H4BSUDZR+JjoAxGbFaDfvfQHkICQc6udFWqaKjauGOvLk2k7
+X-Gm-Message-State: AOJu0YyswANtkd1hjNiwBgg1pnL+9ztrUjcjLyENP0nT4JlOvpn4t/VS
+	NPa6/9QmGNk5ijojAlauKg2GgIQ9g9nDAiTXONE9tuMo9gFUA7HPVwuwFm9ybQM=
+X-Google-Smtp-Source: AGHT+IEte2n+yGIHkogjCwY/1gfqjb8AtqYTboqZ9OnBELWSU7Az1fArUpddqPDVmh8s8bzDcHDi9A==
+X-Received: by 2002:a05:6402:5205:b0:5a2:37e0:1e88 with SMTP id 4fb4d7f45d1cf-5b0208c2044mr10368950a12.9.1722439756386;
+        Wed, 31 Jul 2024 08:29:16 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac631b0395sm8902682a12.20.2024.07.31.08.29.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 08:29:15 -0700 (PDT)
+Date: Wed, 31 Jul 2024 17:29:14 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v4 13/13] riscv: Add qspinlock support
+Message-ID: <20240731-ce25dcdc5ce9ccc6c82912c0@orel>
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-14-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26b22bf0-930a-4109-080d-08dcb1757e3d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 15:28:56.6631
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: fibTnx9ICv6/mUA5ZN6p9HRBxEwbUX0xR/FOz16sq+2MseqyVn25rS64C/Q3Ibb5t9l9Nhsr9TJgoXx9SoQ36Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10302
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731072405.197046-14-alexghiti@rivosinc.com>
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIHY3IDAvN10gZmlybXdhcmU6IHN1cHBvcnQgaS5NWDk1IFND
-TUkgQkJNL01JU0MNCj4gRXh0ZW5zdGlvbg0KPiANCj4gT24gV2VkLCBKdWwgMzEsIDIwMjQgYXQg
-MDg6NTY6MDRQTSArMDgwMCwgUGVuZyBGYW4gKE9TUykgd3JvdGU6DQo+ID4gaS5NWDk1IFN5c3Rl
-bSBNYW5hZ2VyIEZpcm13YXJlIHNvdXJjZToNCj4gPg0KPiANCj4gPiBUbyBnZW5lcmF0ZSBodG1s
-IGZyb20gdGhlIHJlcG86IG1ha2UgaHRtbA0KPiA+DQo+ID4gaS5NWDk1IFN5c3RlbSBNYW5hZ2Vy
-IEZpcm13YXJlIHN1cHBvcnQgdmVuZG9yIGV4dGVuc2lvbg0KPiBwcm90b2NvbDoNCj4gPiAtIEJh
-dHRlcnkgQmFja2VkIE1vZHVsZShCQk0pIFByb3RvY29sDQo+ID4gICBUaGlzIHByb3RvY29sIGlz
-IGludGVuZGVkIHByb3ZpZGUgYWNjZXNzIHRvIHRoZSBiYXR0ZXJ5LWJhY2tlZA0KPiBtb2R1bGUu
-DQo+ID4gICBUaGlzIGNvbnRhaW5zIHBlcnNpc3RlbnQgc3RvcmFnZSAoR1BSKSwgYW4gUlRDLCBh
-bmQgdGhlIE9OL09GRg0KPiBidXR0b24uDQo+ID4gICBUaGUgcHJvdG9jb2wgY2FuIGFsc28gcHJv
-dmlkZSBhY2Nlc3MgdG8gc2ltaWxhciBmdW5jdGlvbnMNCj4gaW1wbGVtZW50ZWQgdmlhDQo+ID4g
-ICBleHRlcm5hbCBib2FyZCBjb21wb25lbnRzLiBUaGUgQkJNIHByb3RvY29sIHByb3ZpZGVzIGZ1
-bmN0aW9ucyB0bzoNCj4gPg0KPiA+ICAgLSBEZXNjcmliZSB0aGUgcHJvdG9jb2wgdmVyc2lvbi4N
-Cj4gPiAgIC0gRGlzY292ZXIgaW1wbGVtZW50YXRpb24gYXR0cmlidXRlcy4NCj4gPiAgIC0gUmVh
-ZC93cml0ZSBHUFINCj4gPiAgIC0gRGlzY292ZXIgdGhlIFJUQ3MgYXZhaWxhYmxlIGluIHRoZSBz
-eXN0ZW0uDQo+ID4gICAtIFJlYWQvd3JpdGUgdGhlIFJUQyB0aW1lIGluIHNlY29uZHMgYW5kIHRp
-Y2tzDQo+ID4gICAtIFNldCBhbiBhbGFybSAocGVyIExNKSBpbiBzZWNvbmRzDQo+ID4gICAtIEdl
-dCBub3RpZmljYXRpb25zIG9uIFJUQyB1cGRhdGUsIGFsYXJtLCBvciByb2xsb3Zlci4NCj4gPiAg
-IC0gR2V0IG5vdGlmaWNhdGlvbiBvbiBPTi9PRkYgYnV0dG9uIGFjdGl2aXR5Lg0KPiA+DQo+ID4g
-LSBNSVNDIFByb3RvY29sIGZvciBtaXNjIHNldHRpbmdzDQo+ID4gICBUaGlzIGluY2x1ZGVzIGNv
-bnRyb2xzIHRoYXQgYXJlIG1pc2Mgc2V0dGluZ3MvYWN0aW9ucyB0aGF0IG11c3QgYmUNCj4gPiAg
-IGV4cG9zZWQgZnJvbSB0aGUgU00gdG8gYWdlbnRzLiBUaGV5IGFyZSBkZXZpY2Ugc3BlY2lmaWMg
-YW5kIGFyZQ0KPiB1c3VhbGx5DQo+ID4gICBkZWZpbmUgdG8gYWNjZXNzIGJpdCBmaWVsZHMgaW4g
-dmFyaW91cyBtaXggYmxvY2sgY29udHJvbCBtb2R1bGVzLA0KPiA+ICAgSU9NVVhfR1BSLCBhbmQg
-b3RoZXIgR1BSL0NTUiBvd25lZCBieSB0aGUgU00uDQo+ID4gICBUaGlzIHByb3RvY29sIHN1cHBv
-cnRzIHRoZSBmb2xsb3dpbmcgZnVuY3Rpb25zOg0KPiA+DQo+ID4gICAtIERlc2NyaWJlIHRoZSBw
-cm90b2NvbCB2ZXJzaW9uLg0KPiA+ICAgLSBEaXNjb3ZlciBpbXBsZW1lbnRhdGlvbiBhdHRyaWJ1
-dGVzLg0KPiA+ICAgLSBTZXQvR2V0IGEgY29udHJvbC4NCj4gPiAgIC0gSW5pdGlhdGUgYW4gYWN0
-aW9uIG9uIGEgY29udHJvbC4NCj4gPiAgIC0gT2J0YWluIHBsYXRmb3JtIChpLmUuIFNNKSBidWls
-ZCBpbmZvcm1hdGlvbi4NCj4gPiAgIC0gT2J0YWluIFJPTSBwYXNzb3ZlciBkYXRhLg0KPiA+ICAg
-LSBSZWFkIGJvb3Qvc2h1dGRvd24vcmVzZXQgaW5mb3JtYXRpb24gZm9yIHRoZSBMTSBvciB0aGUg
-c3lzdGVtLg0KPiA+DQo+ID4gVGhpcyBwYXRjaHNldCBpcyB0byBzdXBwb3J0IHRoZSB0d28gcHJv
-dG9jb2xzIGFuZCB1c2VycyB0aGF0IHVzZSB0aGUNCj4gPiBwcm90b2NvbHMuIFRoZSB1cHBlciBw
-cm90b2NvbCBpbmZvbWF0aW9uIGlzIGFsc28gaW5jbHVkZWQgaW4gcGF0Y2ggMQ0KPiA+DQo+ID4g
-U2lnbmVkLW9mZi1ieTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4NCj4gPiBDaGFu
-Z2VzIGluIHY3Og0KPiA+IC0gSnVzdCBjb3JyZWN0IFItYiB0YWcgZnJvbSBSb2IgdG8gZHJvcCBx
-dW90ZXMgIiIsIGFuZCByZWJhc2VkDQo+ID4gLSBMaW5rIHRvIHY2Og0KPiANCj4gSSBzcGVjaWZp
-Y2FsbHkgYXNrZWQgeW91IHRvIGF2b2lkIHJlLXNwaW5uaW5nIGp1c3QgZm9yIHRoaXMgcmVhc29u
-IHdpdGhpbg0KPiAyMCBtaW5zIGZyb20geW91ciByZXNwb25zZSwgeWV0IHlvdSBtYW5hZ2VkIHRv
-IGNodXJuIGl0IHdpdGhpbiB0aGF0DQo+IHRpbWUg8J+ZgS4NCj4gSSBtdXN0IHJlc3BvbmQgYXQg
-Zmxhc2ggc3BlZWQgdG8gYXZvaWQgc3VjaCB0aGluZ3MgaW4gdGhlIGZ1dHVyZSDwn5iiLg0KPiAN
-Cg0KVGhlIFY2IHBhdGNoc2V0IHdhcyBwb3N0ZWQgYXQgMjAyNC0wNy0xOCwgYW5kIEtyenlzenRv
-ZiByYWlzZWQgdGhhdA0KUi1iIHRhZyBjb21tZW50IGF0IDIwMjQtNy0yMSwgc28ganVzdCBhZnRl
-ciBJIHBvc3RlZCB0aGUgcmVwbHkgYW5kDQpzdGFydGVkIGRvaW5nIHRoZSBuZXcgdmVyc2lvbiwg
-c2luY2UgaXQgaXMgYSBzaW1wbGUgdXBkYXRlLCBpdCB0YWtlcw0Kc2hvcnQgdGltZSB0byBkbyB2
-Ny4gU2luY2UgNi4xMS1yYzEgbWVyZ2Ugd2luZG93IGlzIGNsb3NlZCwgSSB0aGluaw0KYSBjbGVh
-biBwYXRjaHNldCB3b3VsZCBiZSBnb29kIGZvciBtYWludGFpbmVycyB0byBhcHBseS4NCg0KQXMg
-SSByZXBsaWVkIGluIHRoZSB2NiwgSSBub3QgaW50ZW5kIHRvIGJyaW5nIHRyb3VibGUgZm9yIHlv
-dXINCnJldmlld2luZy4gSSB3aWxsIHdhaXQgbW9yZSB0aW1lIGJlZm9yZSBkb2luZyBhIG5ldyB2
-ZXJzaW9uLg0KDQpTb3JyeSwgYWdhaW4hDQoNClRoYW5rcywNClBlbmcuDQoNCj4gLS0NCj4gUmVn
-YXJkcywNCj4gU3VkZWVwDQo=
+On Wed, Jul 31, 2024 at 09:24:05AM GMT, Alexandre Ghiti wrote:
+> In order to produce a generic kernel, a user can select
+> CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+> spinlock implementation if Zabha or Ziccrse are not present.
+> 
+> Note that we can't use alternatives here because the discovery of
+> extensions is done too late and we need to start with the qspinlock
+> implementation because the ticket spinlock implementation would pollute
+> the spinlock value, so let's use static keys.
+> 
+> This is largely based on Guo's work and Leonardo reviews at [1].
+> 
+> Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guoren@kernel.org/ [1]
+> Signed-off-by: Guo Ren <guoren@kernel.org>
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  .../locking/queued-spinlocks/arch-support.txt |  2 +-
+>  arch/riscv/Kconfig                            | 29 +++++++++++++
+>  arch/riscv/include/asm/Kbuild                 |  4 +-
+>  arch/riscv/include/asm/spinlock.h             | 43 +++++++++++++++++++
+>  arch/riscv/kernel/setup.c                     | 38 ++++++++++++++++
+>  include/asm-generic/qspinlock.h               |  2 +
+>  include/asm-generic/ticket_spinlock.h         |  2 +
+>  7 files changed, 118 insertions(+), 2 deletions(-)
+>  create mode 100644 arch/riscv/include/asm/spinlock.h
+> 
+> diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> index 22f2990392ff..cf26042480e2 100644
+> --- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> +++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> @@ -20,7 +20,7 @@
+>      |    openrisc: |  ok  |
+>      |      parisc: | TODO |
+>      |     powerpc: |  ok  |
+> -    |       riscv: | TODO |
+> +    |       riscv: |  ok  |
+>      |        s390: | TODO |
+>      |          sh: | TODO |
+>      |       sparc: |  ok  |
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index ef55ab94027e..c9ff8081efc1 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -79,6 +79,7 @@ config RISCV
+>  	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+>  	select ARCH_WANTS_NO_INSTR
+>  	select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
+> +	select ARCH_WEAK_RELEASE_ACQUIRE if ARCH_USE_QUEUED_SPINLOCKS
+
+Why do we need this? Also, we presumably would prefer not to have it
+when we end up using ticket spinlocks when combo spinlocks is selected.
+Is there no way to avoid it?
+
+>  	select BINFMT_FLAT_NO_DATA_START_OFFSET if !MMU
+>  	select BUILDTIME_TABLE_SORT if MMU
+>  	select CLINT_TIMER if RISCV_M_MODE
+> @@ -488,6 +489,34 @@ config NODES_SHIFT
+>  	  Specify the maximum number of NUMA Nodes available on the target
+>  	  system.  Increases memory reserved to accommodate various tables.
+>  
+> +choice
+> +	prompt "RISC-V spinlock type"
+> +	default RISCV_COMBO_SPINLOCKS
+> +
+> +config RISCV_TICKET_SPINLOCKS
+> +	bool "Using ticket spinlock"
+> +
+> +config RISCV_QUEUED_SPINLOCKS
+> +	bool "Using queued spinlock"
+> +	depends on SMP && MMU && NONPORTABLE
+> +	select ARCH_USE_QUEUED_SPINLOCKS
+> +	help
+> +	  The queued spinlock implementation requires the forward progress
+> +	  guarantee of cmpxchg()/xchg() atomic operations: CAS with Zabha or
+> +	  LR/SC with Ziccrse provide such guarantee.
+> +
+> +	  Select this if and only if Zabha or Ziccrse is available on your
+> +	  platform.
+
+Maybe some text recommending combo spinlocks here? As it stands it sounds
+like enabling queued spinlocks is a bad idea for anybody that doesn't know
+what platforms will run the kernel they're building, which is all distros.
+
+> +
+> +config RISCV_COMBO_SPINLOCKS
+> +	bool "Using combo spinlock"
+> +	depends on SMP && MMU
+> +	select ARCH_USE_QUEUED_SPINLOCKS
+> +	help
+> +	  Embed both queued spinlock and ticket lock so that the spinlock
+> +	  implementation can be chosen at runtime.
+
+nit: Add a blank line here
+
+> +endchoice
+> +
+>  config RISCV_ALTERNATIVE
+>  	bool
+>  	depends on !XIP_KERNEL
+> diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbuild
+> index 5c589770f2a8..1c2618c964f0 100644
+> --- a/arch/riscv/include/asm/Kbuild
+> +++ b/arch/riscv/include/asm/Kbuild
+> @@ -5,10 +5,12 @@ syscall-y += syscall_table_64.h
+>  generic-y += early_ioremap.h
+>  generic-y += flat.h
+>  generic-y += kvm_para.h
+> +generic-y += mcs_spinlock.h
+>  generic-y += parport.h
+> -generic-y += spinlock.h
+>  generic-y += spinlock_types.h
+> +generic-y += ticket_spinlock.h
+>  generic-y += qrwlock.h
+>  generic-y += qrwlock_types.h
+> +generic-y += qspinlock.h
+>  generic-y += user.h
+>  generic-y += vmlinux.lds.h
+> diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm/spinlock.h
+> new file mode 100644
+> index 000000000000..503aef31db83
+> --- /dev/null
+> +++ b/arch/riscv/include/asm/spinlock.h
+> @@ -0,0 +1,43 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +#ifndef __ASM_RISCV_SPINLOCK_H
+> +#define __ASM_RISCV_SPINLOCK_H
+> +
+> +#ifdef CONFIG_RISCV_COMBO_SPINLOCKS
+> +#define _Q_PENDING_LOOPS	(1 << 9)
+> +
+> +#define __no_arch_spinlock_redefine
+> +#include <asm/ticket_spinlock.h>
+> +#include <asm/qspinlock.h>
+> +#include <asm/alternative.h>
+
+We need asm/jump_label.h instead of asm/alternative.h, but...
+
+> +
+> +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+> +
+> +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)			\
+> +static __always_inline type arch_spin_##op(type_lock lock)		\
+> +{									\
+> +	if (static_branch_unlikely(&qspinlock_key))			\
+> +		return queued_spin_##op(lock);				\
+> +	return ticket_spin_##op(lock);					\
+> +}
+
+...do you know what impact this inlined static key check has on the
+kernel size?
+
+Actually, why not use ALTERNATIVE with any nonzero cpufeature value.
+Then add code to riscv_cpufeature_patch_check() to return true when
+qspinlocks should be enabled (based on the value of some global set
+during riscv_spinlock_init)?
+
+> +
+> +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+> +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+> +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+> +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+> +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+> +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+> +
+> +#elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
+> +
+> +#include <asm/qspinlock.h>
+> +
+> +#else
+> +
+> +#include <asm/ticket_spinlock.h>
+> +
+> +#endif
+> +
+> +#include <asm/qrwlock.h>
+> +
+> +#endif /* __ASM_RISCV_SPINLOCK_H */
+> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> index a2cde65b69e9..b811fa331982 100644
+> --- a/arch/riscv/kernel/setup.c
+> +++ b/arch/riscv/kernel/setup.c
+> @@ -244,6 +244,43 @@ static void __init parse_dtb(void)
+>  #endif
+>  }
+>  
+> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+> +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+> +EXPORT_SYMBOL(qspinlock_key);
+> +#endif
+> +
+> +static void __init riscv_spinlock_init(void)
+> +{
+> +	char *using_ext = NULL;
+> +
+> +	if (IS_ENABLED(CONFIG_RISCV_TICKET_SPINLOCKS)) {
+> +		pr_info("Ticket spinlock: enabled\n");
+> +		return;
+> +	}
+> +
+> +	if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&
+> +	    IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
+> +	    riscv_isa_extension_available(NULL, ZABHA) &&
+> +	    riscv_isa_extension_available(NULL, ZACAS)) {
+> +		using_ext = "using Zabha";
+> +	} else if (riscv_isa_extension_available(NULL, ZICCRSE)) {
+> +		using_ext = "using Ziccrse";
+> +	}
+> +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+> +	else {
+
+else if (IS_ENABLED(CONFIG_RISCV_COMBO_SPINLOCKS))
+
+> +		static_branch_disable(&qspinlock_key);
+> +		pr_info("Ticket spinlock: enabled\n");
+> +
+
+nit: remove this blank line
+
+> +		return;
+> +	}
+> +#endif
+> +
+> +	if (!using_ext)
+> +		pr_err("Queued spinlock without Zabha or Ziccrse");
+> +	else
+> +		pr_info("Queued spinlock %s: enabled\n", using_ext);
+> +}
+> +
+>  extern void __init init_rt_signal_env(void);
+>  
+>  void __init setup_arch(char **cmdline_p)
+> @@ -297,6 +334,7 @@ void __init setup_arch(char **cmdline_p)
+>  	riscv_set_dma_cache_alignment();
+>  
+>  	riscv_user_isa_enable();
+> +	riscv_spinlock_init();
+>  }
+>  
+>  bool arch_cpu_is_hotpluggable(int cpu)
+> diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
+> index 0655aa5b57b2..bf47cca2c375 100644
+> --- a/include/asm-generic/qspinlock.h
+> +++ b/include/asm-generic/qspinlock.h
+> @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+>  }
+>  #endif
+>  
+> +#ifndef __no_arch_spinlock_redefine
+
+I'm not sure what's better/worse, but instead of inventing this
+__no_arch_spinlock_redefine thing we could just name all the functions
+something like __arch_spin* and then add defines for both to asm/spinlock.h,
+i.e.
+
+#define queued_spin_lock(l) __arch_spin_lock(l)
+...
+
+#define ticket_spin_lock(l) __arch_spin_lock(l)
+...
+
+Besides not having to touch asm-generic/qspinlock.h and
+asm-generic/ticket_spinlock.h it allows one to find the implementations
+a bit easier as following a tag to arch_spin_lock() will take them to
+queued_spin_lock() which will then take them to
+arch/riscv/include/asm/spinlock.h and there they'll figure out how
+__arch_spin_lock() was defined.
+
+>  /*
+>   * Remapping spinlock architecture specific functions to the corresponding
+>   * queued spinlock functions.
+> @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+>  #define arch_spin_lock(l)		queued_spin_lock(l)
+>  #define arch_spin_trylock(l)		queued_spin_trylock(l)
+>  #define arch_spin_unlock(l)		queued_spin_unlock(l)
+> +#endif
+>  
+>  #endif /* __ASM_GENERIC_QSPINLOCK_H */
+> diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-generic/ticket_spinlock.h
+> index cfcff22b37b3..325779970d8a 100644
+> --- a/include/asm-generic/ticket_spinlock.h
+> +++ b/include/asm-generic/ticket_spinlock.h
+> @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
+>  	return (s16)((val >> 16) - (val & 0xffff)) > 1;
+>  }
+>  
+> +#ifndef __no_arch_spinlock_redefine
+>  /*
+>   * Remapping spinlock architecture specific functions to the corresponding
+>   * ticket spinlock functions.
+> @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_contended(arch_spinlock_t *lock)
+>  #define arch_spin_lock(l)		ticket_spin_lock(l)
+>  #define arch_spin_trylock(l)		ticket_spin_trylock(l)
+>  #define arch_spin_unlock(l)		ticket_spin_unlock(l)
+> +#endif
+>  
+>  #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+> -- 
+> 2.39.2
+>
+
+Thanks,
+drew
 
