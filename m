@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-269532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 345FA9433E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:12:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 689C99433ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AFDB1F2362F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:12:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEDC0B23E98
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 16:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2851BC068;
-	Wed, 31 Jul 2024 16:12:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6A41B29A7;
+	Wed, 31 Jul 2024 16:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bT1yLF3M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X34FkXxG"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3891B29A7;
-	Wed, 31 Jul 2024 16:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3831BBBE1
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 16:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722442321; cv=none; b=dgZqbRoNnjDYtsNFWUJhTaPv3a/0Z81aVUcFvGJyWbEAVUiYWNgYj0w/IEz+zxRxQpfkEgCrc5s2oX3KOHauQ9Ieqky6TB3smyOxKiz2HLBl6oNor5OMNRxGZVb8qzCeRteQlwK803t88IWN56uMc1di7qKA6ZlMPoXQEshQRhQ=
+	t=1722442374; cv=none; b=q3UOPS2gp3GYgh6P1ow+kRX0+/dXRtKFphxdLuJUzqP7yupMlin/UZ8aCTyxaaKT7bzQlfRGR1roymnpxis3av1SawF8Nch2OE+WDAehOaKcPfs8d3yJM5Zd7VNzSZXB8dGUlxpEsyecNaWaRP3y7Av1uoHE4rYw3YbFv1Q80+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722442321; c=relaxed/simple;
-	bh=J8+0BdMzW9w3bgW56LnCnV3YtGAu/FpwNHdrhS881jk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BS/aY16ZtUCTQKZhphlco3nQzc5+sJRmajD5IDrroMlw7bssI58dC9Gj2+KYnhKRkgqKIo1SU2FOVgKiCeTC73o4ohKcWDjwsbuoB2WxJM8PffdRHf4NP6PzVVTt2q5q7VQgkk4ZFWesnX6dpD2+3N/UPfPcuuxcguiWqo5NMHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bT1yLF3M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08061C116B1;
-	Wed, 31 Jul 2024 16:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722442321;
-	bh=J8+0BdMzW9w3bgW56LnCnV3YtGAu/FpwNHdrhS881jk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bT1yLF3MLMnjlPktS2xNQUG0NSi9QpaEuz0h2gSeBZ23PHnm1pSeKmK/1CkDZ9xtS
-	 ve9nt5W1DNyUviXe5q5x1BPU/phHj7EiKCeJff/pM/N8cPjQswof626nwS3sa7i7Ia
-	 JM0sqSr8UkzcsLC5on9tgjf+/e15+IglVeyGPktU2NMXzygxoTe0FJDi/wM9OA6wdv
-	 weT4/Z/KzU5PXLghYcLJyys2VXBGV70ivl6AasWG+TErA0QG5oVNKTF4WTQbMMtYFb
-	 +2EXZJddlvF5JkrMmOMYFatbSx26zo/HKwgAGCDqTeTdUhzV08jTd+OMNMV1ejAt7s
-	 XlcxRZutSM7AA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sZBvv-000000003n0-23B7;
-	Wed, 31 Jul 2024 18:12:12 +0200
-Date: Wed, 31 Jul 2024 18:12:11 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	stsp <stsp2@yandex.ru>, linux-serial@vger.kernel.org,
-	Linux kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [regression] ENOTTY returned for tty fds
-Message-ID: <ZqpiWy81owgsdscR@hovoldconsulting.com>
-References: <b6f4aa5c-10ba-411b-994b-6dbed2bf63db@yandex.ru>
- <2024072452-pegboard-undying-4245@gregkh>
- <c74f1e3e-a376-42e3-86e0-a804f9a7da2c@yandex.ru>
- <2024072401-spearfish-gnarly-a09e@gregkh>
- <be1a3839-23a6-4726-9018-3d18a27163be@yandex.ru>
- <2024072401-obtain-heap-6d8d@gregkh>
- <ZqDdDPF_N9tcbu_S@gondor.apana.org.au>
- <ZqDeTlq-1NP3dne_@gondor.apana.org.au>
- <2024073111-probe-endanger-cc8c@gregkh>
+	s=arc-20240116; t=1722442374; c=relaxed/simple;
+	bh=lcvUNumgCBhCs3ZnEWLbZqaFKAe78KO+4wuzawkdRb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=trnCNFU7CXVTXfWsSyUHzO2g8VAJ0ugqEEILrqbnj1dHwzxXKp9L/tLKWcqBpGGdtqBhrqG3FLlbiVQ/jqOILN/ARauen25l3RSFs1tg/ymiHuZTXDTFHUbpqMdLnw+yAxiTQ4n9CnSrQl47yWnCmFixjvL9dAdlob9ikYmIhLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X34FkXxG; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3684407b2deso2996106f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 09:12:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722442371; x=1723047171; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SFCI0LnaWksWB22UjZyIb2fehmTUcMZdYup0ppfC64w=;
+        b=X34FkXxGusxDxL42em2EN6Xck3X+CFeb8jBKQsu1Iv5T0O2YCWf96lbJl7Tmt89lIm
+         C16yHriA8gWpTvijkhqjm2az/FTX8KBY/wkBkvIKhrbVIBoENoepm+bxxmIbg96fOBOt
+         TTflfxEmo1FrW+HZAQXduCoQXuF8UZK52Zj+lF6K+KGufqfHyzJDNogCcsTVB3F5gqmP
+         hIUZptPpyCe2Jvo1hj8d6Jg3QMWvxJRKUgPPqz/etN8yBtUpgX6fUwY9e28gBn2COApk
+         ZRtTl8haXN4RmJ5X8z8IWFNRwwn0QV6FfMrbeFpbtl365CoLl+8/bnPfTF8frQMJSv4K
+         NqBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722442371; x=1723047171;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SFCI0LnaWksWB22UjZyIb2fehmTUcMZdYup0ppfC64w=;
+        b=DuL3sG/EH6wJQSGK7IG67JDRdtfSCtd7kr0iBk6zlj1VrjND7YgzFJyWu23+cuQD0D
+         uE3qMEdOuIafMViJTxmxKH80JO0UP6m0M+9meYcksIbo1GQmv2IibXwm5n8My9ff3fQO
+         /lHO8xDRTo0XoXNKKsJz9JZfpqGmXXEccY5yvqgdanhsYWOwoksIBF/8ByAqNwsv4pCU
+         JDK+rwDzwUQePNllUkhEcKvwBCgZldglAOhcGR8UiEbxDAzcgRF2K6EoyG2mVf3mPEoU
+         Hn9tQ0/TdNyZBIabDRLs+9AzCKeGsyrbHPiz/SxZF8+FUOn3bhGO0CggbCVDYGPIhgKd
+         FQoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmxMdz/8wBUappXramQB/UxHJwaVHoUdUxNHgO87dSkmFlEv3osECa1YyCSZAzfxicz3soOVMaSENSqW+rB0aesIquKNMrICxxsw3c
+X-Gm-Message-State: AOJu0YycWuQ8huKFpEEgu704YAMwBkKspnlH74GS2snzhIx3BSzJ4Ace
+	YTGoA70pMyTtXWRmNrz7imtqwsk4dhKzrhwxIWdnnE/E1aE8fpZkF0ZcjAIsIBg=
+X-Google-Smtp-Source: AGHT+IF+DWlcc1dX7+4UPVxzcygRhJ7q2mfIicdPSInEzXvyqMTrHJh/itAP4iE8MYhf2kbJri77Kw==
+X-Received: by 2002:a5d:64ab:0:b0:369:f7f9:9ee with SMTP id ffacd0b85a97d-36b5ceceeffmr13422042f8f.6.1722442370836;
+        Wed, 31 Jul 2024 09:12:50 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c0829sm17353573f8f.17.2024.07.31.09.12.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 09:12:50 -0700 (PDT)
+Message-ID: <bd6f3613-5a96-438a-a2df-cb2728e30c29@linaro.org>
+Date: Wed, 31 Jul 2024 17:12:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024073111-probe-endanger-cc8c@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
+ SM8550
+To: Depeng Shao <quic_depengs@quicinc.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-10-quic_depengs@quicinc.com>
+ <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
+ <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
+ <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
+ <3011c561-d39e-4ce5-a544-33f24ca7a67c@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <3011c561-d39e-4ce5-a544-33f24ca7a67c@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-[ For some reason I never received Herbert's replies so I didn't see
-  them until today. ]
-
-On Wed, Jul 31, 2024 at 12:25:43PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 24, 2024 at 06:58:22PM +0800, Herbert Xu wrote:
-> > On Wed, Jul 24, 2024 at 06:53:00PM +0800, Herbert Xu wrote:
-> > > On Wed, Jul 24, 2024 at 12:15:39PM +0200, Greg KH wrote:
-> > > >
-> > > > -ENOTTY is the documented result of invalid ioctl arguments sent, I am
-> > > > pretty sure POSIX requires this somewhere.  So this was fixing a
-> > > > requirement here...
-> > > 
-> > > POSIX does not specify this at all:
-> > > 
-> > > https://pubs.opengroup.org/onlinepubs/9699919799/functions/ioctl.html
-> > 
-> > In fact it says:
-> > 
-> > If an underlying device driver detects an error, then ioctl() shall fail if:
-> > 
-> > [EINVAL]
-> > The request or arg argument is not valid for this device.
-> > 
-> > [ENOTTY]
-> > The file associated with the fildes argument is not a STREAMS device that accepts control functions.
-> > 
-> > Of course this is all moot since POSIX only specifies ioctl(2)
-> > for STREAMS devices, but this patch in question is literally
-> > going against the woring here.
+On 31/07/2024 16:26, Depeng Shao wrote:
+> I'm preparing the next version patches, then I find it is hard to avoid 
+> such warning if only apply current patch, since this will be used in the 
+> below patch, it will be in structures csid_res_8550 -> sm8550_resources 
+> -> camss_dt_match, so I need to add all csid_res_8550, sm8550_resources, 
+> camss_dt_match into this patch if I want to avoid the compile warning,
+> then I also need to add compatible info for it to avoid sm8550_resources 
+> has unused variable warning, but the sm8550_resources structure also 
+> need to add other items to make it complete, then the driver will be 
+> incomplete but can be probed with this patch.
 > 
-> That's going to be going against a lot of existing kernel code then.
-> -ENOTTY is the default action of almost all ioctl handlers when the
-> command is not a valid one, sorry.
+> { .compatible = "qcom,sm8550-camss", .data = &sm8550_resources },
+> 
+> https://lore.kernel.org/all/20240709160656.31146-14-quic_depengs@quicinc.com/
 
-This has been discussed at length before, and Linus made it clear that
-ENOTTY is the right errno for unsupported ioctls, for example, here:
+Couldn't you just add the public structures at the same time they are 
+referenced in &sm8550_resources ?
 
-	https://lore.kernel.org/lkml/BANLkTi=6W0quy1M71UapwKDe97E67b4EiA@mail.gmail.com/
+That way your patchset would progressively apply with no warnings.
 
-The tty code has been returning this since 2012 and commit bbb63c514a34
-("drivers:tty:fix up ENOIOCTLCMD error handling") except for a few cases
-that were missed and that I fixed up in 2021.
-
-If this breaks real applications me may need to revert to EINVAL for the
-affected ioctls however. Apparently, dosemu hasn't been
-updated since 2013, but it looks like it indeed expects EINVAL for
-unsupported TIOCMBIC.
-
-Johan
+---
+bod
 
