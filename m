@@ -1,72 +1,73 @@
-Return-Path: <linux-kernel+bounces-269684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8909435BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:43:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5749435C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 20:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A841F22D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:43:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DE52B21E72
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 18:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F3B49626;
-	Wed, 31 Jul 2024 18:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A6A4962E;
+	Wed, 31 Jul 2024 18:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FK8oVVlQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="x9JvpaD9"
+Received: from smtp38.i.mail.ru (smtp38.i.mail.ru [95.163.41.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68857381AD;
-	Wed, 31 Jul 2024 18:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7DCBE5E;
+	Wed, 31 Jul 2024 18:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.163.41.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722451381; cv=none; b=JwbaijztBH5HtRCzjnsl5+0DMfW/TBOPSPRhSnibR0itfTnjXH8PN7FrwPZgxTcfwabMQSkKX64znIhv6JK3LA5GChCe6d9iOC60ZnmT4De4yp8L8W92g4wujIzjVUE36erBbAOXUt/IM42qC4iXDlGNL4DKBV6xb9LqKkFpFJM=
+	t=1722451570; cv=none; b=U5MFPL1cocKO0ZPvf0j8st5zlQ7Cq/KGpC7+7HVbflCF2pSRuCWujwWzWZEALGpjJM2npyWRwEF27tcd6ZRTFKNBskwQhF03tu9EViHTvNxzWnyxavAPArhn2TDRWptJaw+uA8X5pI+mNkp6JFZkbKht0Lz7RIWZQE0BXFuwLto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722451381; c=relaxed/simple;
-	bh=gT1ojs+HfsdojP33vEn+OJfDKKuLIhtMiC7HnCT+qOY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=elfJXjqFN7fHQRCY7X8Ei8ttPbeTsl79ZZjt4mCnFxp80np2leQPHysCS1D9vB5tNh5RBa3oZqHXCkmRp9LXeoTnJoxusVDupyo84eesiGQvW+O1REyW/tjFfFbaeCoUP+B5u1ncRsNmLRIfeSE5AMZdkQYXEAgOJARN+xML+SU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FK8oVVlQ; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722451380; x=1753987380;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gT1ojs+HfsdojP33vEn+OJfDKKuLIhtMiC7HnCT+qOY=;
-  b=FK8oVVlQcBKVoLmMB2O1VgHs9W02e9w6b68N6Mne1M7gMkcjimqVCVKF
-   bw1SwEmXfvTKoW7DJoRw8WT8A3jZZsLH06yW9fNBG5ez2fICpFgUccST5
-   2hduhqMS8WVKEe+utl0PZj/R5YJMLDu3bonqkbL9l7ZR9jYRnz8jzsJyi
-   eRSww/+KLwV/q7+baVlFBO01QKEuJ4AZ47+Zgye6iYy1l5N2Pa2TUljG2
-   6WqFx0UVKiZOrREH4TsdssYVseI9RA6LioCBhJ4UUCcSj8jPsrGNOzkc6
-   95WTSFGjKbVlaafxDAdI70HjR9MqRe67I7rOTQcUH2b9Rxj3Ff6m7QSO0
-   w==;
-X-CSE-ConnectionGUID: AgfyOjprTxWmDJCePHdl6Q==
-X-CSE-MsgGUID: GCgwH3UXT52GU2FV8PNV1Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="23270214"
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="23270214"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 11:42:59 -0700
-X-CSE-ConnectionGUID: l4+teZzUSmaLaonzjyo7LQ==
-X-CSE-MsgGUID: uxjy+WVvR8CgcMt1r71ZDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
-   d="scan'208";a="85399134"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by orviesa002.jf.intel.com with ESMTP; 31 Jul 2024 11:42:58 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	andriy.shevchenko@linux.intel.com
-Cc: platform-driver-x86@vger.kernel.org,
+	s=arc-20240116; t=1722451570; c=relaxed/simple;
+	bh=FWx4hDIH2q0eB+4Pp3OyQ8hiNbrfPOhArLVOWkvu5iQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TPSDUyaQS/M9okZ5ausZMvdfs1guzYrYFBhXrP35T2CVX5fifY3tfKk9TSltchJHRl0hFzOuQq+OMM7TRHObL3Bl3r+itPCByKI+AY4r9ZWAJR5CL5Xg3PAQQFiEjuOdLOJeJm8u+DjyzVdsra5OcY78ttFzUA5vNQXuHnhvc2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=x9JvpaD9; arc=none smtp.client-ip=95.163.41.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=f+lHgijBViiog2wbs80C4DR3drBALkeguE83lnYNhzc=; t=1722451566; x=1722541566; 
+	b=x9JvpaD9CqwX5k2DU2vvd2TychQ34FXFLaMF1NHBnv0SHkaAe10hc9YLKvMsDQMTjCaa1Al96K3
+	ezyE8bOpDe6bbf8OnPxdO5b1lgrXsKQNP99e3scDyYfbNx8r0S8CnEOrRadINaEkKXUN+NdE85AsY
+	aa9P8pdzuGkZlC8gw8Y=;
+Received: by exim-smtp-5c6c85c787-dzmgd with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1sZEKm-00000000AEA-2sHn; Wed, 31 Jul 2024 21:46:01 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robdclark@gmail.com,
+	sean@poorly.run,
+	quic_abhinavk@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	fekz115@gmail.com
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] platform/x86: ISST: Simplify isst_misc_reg() and isst_misc_unreg()
-Date: Wed, 31 Jul 2024 11:42:56 -0700
-Message-ID: <20240731184256.1852840-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.45.0
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	cros-qcom-dts-watchers@chromium.org,
+	linux@mainlining.org,
+	Danila Tikhonov <danila@jiaxyga.com>
+Subject: [PATCH v2 0/2] Add Qualcomm Adreno 642L speedbin and update SC7280 OPPs
+Date: Wed, 31 Jul 2024 21:45:48 +0300
+Message-ID: <20240731184550.34411-1-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,88 +75,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Authentication-Results: exim-smtp-5c6c85c787-dzmgd; auth=pass smtp.auth=danila@jiaxyga.com smtp.mailfrom=danila@jiaxyga.com
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD926BB450FD17188A9C7DD05013CA63362BF18B36FD939231F182A05F5380850406DD657F80B0BAC3F3DE06ABAFEAF67050B69D64FCD6D39210FD0310B1A6FC1CEE5BD31BE838A11F7
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE757F64E7FD849EB4FEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F79006374E88016F1B7D8D248638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D83B8852E31B8106584E40561C81143144BDADDF5849C030ACCC7F00164DA146DAFE8445B8C89999728AA50765F790063793270F7220657A0A389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC87BD21ED50D08CA4DF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA73AA81AA40904B5D9A18204E546F3947CB2DECCBDF547A30576E601842F6C81A12EF20D2F80756B5FB606B96278B59C4276E601842F6C81A127C277FBC8AE2E8B120C23C05AEC2B18EC76A7562686271ED91E3A1F190DE8FD2E808ACE2090B5E14AD6D5ED66289B5278DA827A17800CE76631511D42670FFE2EB15956EA79C166176DF2183F8FC7C04E672349037D5FA5725E5C173C3A84C361DD96311B40C2D435872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-C1DE0DAB: 0D63561A33F958A5C18F2A3FACA200B75002B1117B3ED696EDE7E9A5CBF811DC54BB1175C6E7DD94823CB91A9FED034534781492E4B8EEAD619183A7BD6BC6F1F36E2E0160E5C55395B8A2A0B6518DF68C46860778A80D54AF47762AB4810619
+X-C8649E89: 1C3962B70DF3F0ADBF74143AD284FC7177DD89D51EBB7742DC8270968E61249B1004E42C50DC4CA955A7F0CF078B5EC49A30900B95165D34980A6B448CFD1B8AC54EE019682A910FDF1150C1D50AA9285A25826F80F6501AF4CAA1C3482256DB1D7E09C32AA3244C81D539AEE2879AD077DD89D51EBB7742C9BD42142E7FF225EA455F16B58544A219BDBC76D41736405DA084F8E80FEBD322CFFF16B4474ECB4573B60270F1EB7C214C2BC1176D5C25
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2bioj2j9vV9f5a3sHc+HdFS244w==
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C7394981A5B90ABC46C0EF5F4825860F061DF2142FDDA702506AA14E88DB4CD5F07DFD962C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
 
-After commit '1630dc626c87 ("platform/x86: ISST: Add model specific
-loading for common module")' isst_misc_reg() and isst_misc_unreg() can be
-simplified. Since these functions are only called during module_init()
-and module_exit() respectively, there is no contention while calling
-misc_register()/misc_deregister or isst_if_cpu_info_init()/
-isst_if_cpu_info_exit().
+This patch series adds support for the A642L GPU speedbin (0x81) to the
+Adreno driver and updates the device tree for the SC7280 platform to
+include this new speedbin. The A642L is used in the Qualcomm Snapdragon
+SM7325 SoCs family, which is identical to the SC7280, just as the SM7125 is
+identical to the SC7180. Therefore, the SM7325 will use the SC7280 device
+tree. Patches for the SM7325 will be sent later, but in the meantime, you
+can find them at the following link:
+https://github.com/mainlining/linux/commits/danila/spacewar-upstream
 
-Hence remove mutex and reference counting.
+Updated: The first version of the submitted patches can be found at the
+following link:
+https://lore.kernel.org/all/20240729201843.142918-1-danila@jiaxyga.com/
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../intel/speed_select_if/isst_if_common.c    | 42 +++++--------------
- 1 file changed, 11 insertions(+), 31 deletions(-)
+Changes in v2:
+- Add Konrad's R-b tag to patches no. 1 and 2 (Konrad)
+- Fix subject prefix for patch no. 1 (Bjorn)
+- Link to v1:
+https://lore.kernel.org/all/20240722184314.36510-1-danila@jiaxyga.com/
 
-diff --git a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-index 3065f149e721..febfd5eeceb4 100644
---- a/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-+++ b/drivers/platform/x86/intel/speed_select_if/isst_if_common.c
-@@ -651,10 +651,6 @@ static long isst_if_def_ioctl(struct file *file, unsigned int cmd,
- 
- /* Lock to prevent module registration when already opened by user space */
- static DEFINE_MUTEX(punit_misc_dev_open_lock);
--/* Lock to allow one shared misc device for all ISST interfaces */
--static DEFINE_MUTEX(punit_misc_dev_reg_lock);
--static int misc_usage_count;
--static int misc_device_ret;
- static int misc_device_open;
- 
- static int isst_if_open(struct inode *inode, struct file *file)
-@@ -720,39 +716,23 @@ static struct miscdevice isst_if_char_driver = {
- 
- static int isst_misc_reg(void)
- {
--	mutex_lock(&punit_misc_dev_reg_lock);
--	if (misc_device_ret)
--		goto unlock_exit;
--
--	if (!misc_usage_count) {
--		misc_device_ret = isst_if_cpu_info_init();
--		if (misc_device_ret)
--			goto unlock_exit;
--
--		misc_device_ret = misc_register(&isst_if_char_driver);
--		if (misc_device_ret) {
--			isst_if_cpu_info_exit();
--			goto unlock_exit;
--		}
--	}
--	misc_usage_count++;
-+	int ret;
- 
--unlock_exit:
--	mutex_unlock(&punit_misc_dev_reg_lock);
-+	ret = isst_if_cpu_info_init();
-+	if (ret)
-+		return ret;
- 
--	return misc_device_ret;
-+	ret = misc_register(&isst_if_char_driver);
-+	if (ret)
-+		isst_if_cpu_info_exit();
-+
-+	return ret;
- }
- 
- static void isst_misc_unreg(void)
- {
--	mutex_lock(&punit_misc_dev_reg_lock);
--	if (misc_usage_count)
--		misc_usage_count--;
--	if (!misc_usage_count && !misc_device_ret) {
--		misc_deregister(&isst_if_char_driver);
--		isst_if_cpu_info_exit();
--	}
--	mutex_unlock(&punit_misc_dev_reg_lock);
-+	misc_deregister(&isst_if_char_driver);
-+	isst_if_cpu_info_exit();
- }
- 
- /**
+To: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+To: Rob Clark <robdclark@gmail.com>
+To: Sean Paul <sean@poorly.run>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+To: Eugene Lepshy <fekz115@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: cros-qcom-dts-watchers@chromium.org
+Cc: linux@mainlining.org
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+
+Eugene Lepshy (2):
+  drm/msm/a6xx: Add A642L speedbin (0x81)
+  arm64: dts: qcom: sc7280: Add 0x81 Adreno speed bin
+
+ arch/arm64/boot/dts/qcom/sc7280.dtsi      | 8 ++++----
+ drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 1 +
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
 -- 
-2.43.0
+2.45.2
 
 
