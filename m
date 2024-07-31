@@ -1,311 +1,219 @@
-Return-Path: <linux-kernel+bounces-269248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20E3F942FBD
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:10:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDAFE942FBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 15:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34B1C1C21E21
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F8171F21C99
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670C31B140E;
-	Wed, 31 Jul 2024 13:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1537F1B0106;
+	Wed, 31 Jul 2024 13:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="DaK8bdqR"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05olkn2044.outbound.protection.outlook.com [40.92.91.44])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Pd8CATNM"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2063.outbound.protection.outlook.com [40.107.94.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC8F1A7F73;
-	Wed, 31 Jul 2024 13:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.91.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7D02209F
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 13:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.63
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722431399; cv=fail; b=ohjGlV3z9dpVoDy5fsW9niD9CUfdEBA0cl75Zh30ri6EazAqMcEz2zD32ePn5dmnURgJQJrVo2VtQe2pdFuhdBGtbkgWS5VSRaUnzy6jEGUj+Eo9mVmdWpkIbZMbO8Y0q2Ej17jaKztRHxbcDWQ+MfAWe7X91k4CwhYjSrNqyvM=
+	t=1722431374; cv=fail; b=TvAYcF3DHubGbNk5zicsToqaaFfQm4ckTqjOfVVH/qOU/1sb3eG4KzOt/M7xGE3FLnCo+raeDRwWDwHzWN4tqgH13v8vE9F1Y84Fn/217ld+1+RYNlFx5wcZt/Hw9V49vgKS90XnFhg0/W7cvEWIUBNmU3eNoyJKz7KYoiqdlGc=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722431399; c=relaxed/simple;
-	bh=FrqmvICJAYRL1u6r3VRFY3tatTT+PT77fp8hqRad4kw=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LPmDJm+S15C+zDH8TNq6qMYzzccDOBo7FLuTls0q7CgeWaV7f4Ot/OU6w1XtBa/xoIX934+4XCCOf5MK3Fv6hSZSbGmv8yDfD/aZ2mwX2IasfkSb2oXb6l9WVNIU2DQF+zNpUqwb/yiQ2t1MArKACKRnkYr37ocX/NJRWVIsFMU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=DaK8bdqR; arc=fail smtp.client-ip=40.92.91.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1722431374; c=relaxed/simple;
+	bh=x8occ2z9MuTsmFn9jMV04OOWqZO3MxoKN3M1cwb7mMA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=mrcSxjO7kqZ0olshk5wpXbP11+MS4yYVufFXTrqXqb/GRLHBxamE/PtBkgrIDLK/cSRVWqQ3w2Ji+c19Gc/BhsXdJMzrMRTWyQLOyKEs7WAd11O402LVsUEoA7TmXRe8CjM0Mg9teuA/hxJwMHYFjKazwVgzbzO+Z2fPGjtM8wo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Pd8CATNM; arc=fail smtp.client-ip=40.107.94.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U+xGKTVCuQsa4QFN6r3qhj0ipJ5fJWR9+TJoC46KE6BO2QVhOQpn9+OgjPo4FtiFDB3mhJ97KzABvE5oHP4YzTmH6x8JQL3DR+TYSxxjpwEn3sqtkAUvWOD9jhn3pChcuREBlOym33kIsYo/Rapt5qOF3z2iC2tfA/rYKEhtB+9F3zTSA7+Zdj4HVw3D522aS7BnWbjzLc8M1RzRT2n54o0twqC65EPxrOAilgGC2IcfqYN7tniKq+LRwKc4HVFcmgK9LMBHJQ7Duxj1Ymln9YNxlQwXhXkV3+i73+eJ76cL7u8btuEhnvBqOfHzaz51rQjojBmxYGr+G9PSdLegjQ==
+ b=IUx6Ub3Yzio5+q9TeFJGGEP3X/g/QYPyG92YsVf8uGKhjGWwPBhm7uRNikCD4iDN6DtlMF6sGSUD/N7VcjNlm1ShCMQZ37FKlBWyDghwxXJhSvxoH+yJC2sLlM1mEN2nkq+53Tn2Azzsy0d9cbJxM/d2+ZJFHyqZIE/AacLJBzUHERzPKoPNyBBylrc6/k8evX3HbwwXyGHDLlq1RKa6DHkX6u9ESJpA5xk/JE752IONnTiQsJiLvgxB8JEAFzrsAYhbyK91RfEj2W2UG1zWT0eybE/CuYhd20UkeUgcyP5OkCX/AtIhGQA08k0PQgKsjgkVtzybfv1hPki6GGNSgg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u7k6x58HlQtTxnkXHpZvJhNcZG2zOcBTIeo04nfI180=;
- b=y113ERM/eaFLZk1IAYh8CyrMwmJ8dhPtE/73o0WiWVpIeJcEDOIBqlRTHOwkimc2drQMuHI8GMS3Ps8J9ca8jl4Ow/rPWAud+iB1ovJmDdSBZ2Idi8Vgc+FdTvqB4K9TGwb4IziFn3F2/g8hr1cB1w+YcVb7j58MEZ0vgvQiZgNXF1CEakNJbCgoXbB/oAxMFXOswFmN7JQRWz2Ugb7NmmlGhxu2I5aBL3HFqNB5ZlM6z2cGo6NU2MbtpvjFVZe26+6gPeOk4R4tYy1XX9n8D5Cqcm6FbWsp6J11Sj+Zm0lbvgbBNzVVjPPu6WCXReQaUoz6NbV78fqmpuNf/Rx99A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=dHpse3wwr0JJHOAScOqqt5FGpmMYLOG3oKIiBCY5GXk=;
+ b=hbbVcx3CWh9Ni6zif2t6ddeFM2Nu9FPFxoMnAqTdnQ/0/Hssga5iDNSAZg8S7rT6yO399BSFomV9nWyFfp1aI0tYu5VSPKneTreY4rat/I+cfc82hEoqY/24Wi6DaBV4l7KbiCB6k2EBrbQQHCj0NwKJZMunWAO8G62/GDAI6hiSfw6knatzddiSh/S9pioZTv/1fscD5b4ifbc3NAlSUPphPUAzu8tQTV5hYq9MpOxlnpfEXnW+0ayobxPzsBNCBB7lnQIj+4x7eJZ7nD18e+kRE+ND3tGVXuyN9oPZJ2wtPe1wVoSwkUnmsCkJ2oqpGqbDgL6xVakUAf0lwqS5BQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u7k6x58HlQtTxnkXHpZvJhNcZG2zOcBTIeo04nfI180=;
- b=DaK8bdqR1rONTkVo5T7LXQdcb4/Wiaz2bjprpegMeEBWmN6nTIxG8SgbEeGq0QWU2eNyTceVngmy80DWNjGUH/f97bzOZQ0Ef7a32X9yP34lXpU6vshpstZBQmnbzaFqzMUQDSmve/5EO2HjuSfymHJQ1pQR6hSiZXtZisTW+XiNMZkw2JRntTItX29ZTmbQ946jiFhWxjHXe7tZNr2Fq+Xh1NdkUvHYWnjx9TQitEYOo7fuLJwuwQys+8I7zV35otmeB/3uLBbgx+aphFAGdGTfmhv4curNXp+YOx5dPg6rXpebImBVbpfTM1svsygFkQoZmiJx5gcZNvL4GR9Y1Q==
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
- by PAXPR03MB7531.eurprd03.prod.outlook.com (2603:10a6:102:1da::11) with
+ bh=dHpse3wwr0JJHOAScOqqt5FGpmMYLOG3oKIiBCY5GXk=;
+ b=Pd8CATNMnlrTeslNp2UUr0b4iKBji0qZE27nBT8WBKhqqOme/I1naRFEoT3HwH6wJFTZbS8KmHn3Wv45WRLsfTFf3BAFcQkm3Z8L/scSg8abCx/Nnvc8ysjVivpIl/uuK1fua/DD3yoGy5K0I5yMM+jhdLahv4mtATO0vhQlXbzbhp/IWbtsjIjXz+MTTRWYbgTZSfvzruQaEXuUQQ7wFc54li3qmacJ+GWyId7g1aK9UNa4Rp3vkBc5FaII+vt29f5+EVgI8zeXHDo5Gejk1DGwO2RQaFlZCu8WYzGzvGp6/XNNsU0eMLiXlLLvlqphZ9GIOhJourbZ9Fg8GFdI6Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
+ PH8PR12MB7424.namprd12.prod.outlook.com (2603:10b6:510:228::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.28; Wed, 31 Jul
- 2024 13:09:54 +0000
-Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
- ([fe80::4b97:bbdb:e0ac:6f7%6]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
- 13:09:54 +0000
-Message-ID:
- <AM6PR03MB5848CA34B5B68C90F210285E99B12@AM6PR03MB5848.eurprd03.prod.outlook.com>
-Date: Wed, 31 Jul 2024 14:09:02 +0100
-User-Agent: Mozilla Thunderbird
-From: Juntong Deng <juntong.deng@outlook.com>
-Subject: Re: [RFC PATCH bpf-next RESEND 00/16] bpf: Checkpoint/Restore In eBPF
- (CRIB)
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, andrii@kernel.org, avagin@gmail.com,
- snorcht@gmail.com, bpf@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <AM6PR03MB58488045E4D0FA6AEDC8BDE099A52@AM6PR03MB5848.eurprd03.prod.outlook.com>
- <etzm4h5qm2jhgi6d4pevooy2sebrvgb3lsa67ym4x7zbh5bgnj@feoli4hj22so>
-Content-Language: en-US
-In-Reply-To: <etzm4h5qm2jhgi6d4pevooy2sebrvgb3lsa67ym4x7zbh5bgnj@feoli4hj22so>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [+ml/5GABGJ6H/biiFv+286PCryDUafOQ]
-X-ClientProxiedBy: BY5PR03CA0002.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::12) To AM6PR03MB5848.eurprd03.prod.outlook.com
- (2603:10a6:20b:e4::10)
-X-Microsoft-Original-Message-ID:
- <21b665bf-f898-448d-8bae-89d3999f7bf4@outlook.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
+ 2024 13:09:27 +0000
+Received: from DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::f018:13a9:e165:6b7e]) by DS7PR12MB5744.namprd12.prod.outlook.com
+ ([fe80::f018:13a9:e165:6b7e%4]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 13:09:26 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, hughd@google.com, willy@infradead.org,
+ david@redhat.com, 21cnbao@gmail.com, ryan.roberts@arm.com, gshan@redhat.com,
+ ioworker0@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: shmem: avoid allocating huge pages larger than
+ MAX_PAGECACHE_ORDER for shmem
+Date: Wed, 31 Jul 2024 09:09:24 -0400
+X-Mailer: MailMate (1.14r6052)
+Message-ID: <2CE85059-2FB8-4DDA-8CFC-6ADEC55AFD45@nvidia.com>
+In-Reply-To: <117121665254442c3c7f585248296495e5e2b45c.1722404078.git.baolin.wang@linux.alibaba.com>
+References: <117121665254442c3c7f585248296495e5e2b45c.1722404078.git.baolin.wang@linux.alibaba.com>
+Content-Type: multipart/signed;
+ boundary="=_MailMate_81D74342-C21F-41CA-A10B-31F17C85D69A_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
+X-ClientProxiedBy: CH2PR10CA0029.namprd10.prod.outlook.com
+ (2603:10b6:610:4c::39) To DS7PR12MB5744.namprd12.prod.outlook.com
+ (2603:10b6:8:73::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|PAXPR03MB7531:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6df438fe-32eb-4d11-1f6f-08dcb16210e7
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|8060799006|19110799003|461199028|440099028|3412199025;
+X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|PH8PR12MB7424:EE_
+X-MS-Office365-Filtering-Correlation-Id: e28159d7-409a-41f2-d2b3-08dcb162015f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	kEWd46blC1Kw80bmZE+AhaBq2iu2iI/ES5EiHXZBcP71cjOGsqZXlC8i6o43GrckbGXHaxkSqUterOdDC4joDdeY8EEiOfKM2W94vbYFQOvsK7jRIQhP2LWYTGiLXVPGP/Me0sYcQoM8bbSKHBAoQdYiQOTS7jOawlc/9wPxT5XQKO7XyqPz2MPrn5gwrEFMpPy3Qag1s1eCQ/wxkab5VWC9LmNaxtC6Ecj4Db1d2eGMFVXuCtxLlJqUdn+d8vUlfA4t8/IdyRXfoKjh83Iiq/rxoT2JWG0kFYxshWPSjq4W3CoWfha5i9yyotmh/UAyPcbEaXjqtl2NJnayM+jAaZ0T9KSaJw49v2oj9mNjEzIuJ5G1wuwbkPNKt0zrTzkrJ0QBU2HIZjbKERwJoGLXgjPUfq5wqykZGP1Ifz2cSII96onT8gjnrZ0zxG/yL3sH6NGReAfb952jyw09kV7wNrlkVflNfaOJE6Qlf5BTUZe6ecBd4m0f9Axb7w93qSpKd1H/lLBxUJznfoa69EqdnjVU95rHeDeIMEIiyyPl6tWrLL1Qq12UhFuj/OCHjOBGqavgq+SDQ1SOYLqetis93RnjfIJxBVpWZa4JHCSbhYnlVMVhFKDGoC+YvkAr5UEZbLdBQs6G+Q7eyJOTTux4sVF8JKnS5EkQEAwMJ8fcJi4PHcibsLVwICChsMU+qf53
+	=?us-ascii?Q?YgSM9jIDiwPJTReoxAKjiCoSYjz6nbrnWpagOejxZsnLEh+VUTk7vtS/8irU?=
+ =?us-ascii?Q?qD0fy9ZVv4Oq61H4BPZkmurGI05z7ZWyrVy13AYFIuna4nHIgwJizhgWYXdP?=
+ =?us-ascii?Q?UygTZ+N+pAW9/5KwHFa3NqDeWYA0JOniIx+QK6/ASsnk926bXAXIWRBPd0lm?=
+ =?us-ascii?Q?vFXVkRqjSQSDgbuNt/uyhks/vNeXuMBYN5hFJdweZed+3Sp80vSzjk6lCibd?=
+ =?us-ascii?Q?tLhS+xJRaX9EVjVRDP54QQuzm8u6j3i1UHci8Z1V2BbyveJxiCgXEm77e0tZ?=
+ =?us-ascii?Q?8YYok/MjRw+t9h1wlI3BZ/QgAaJrQZlMaQXOmA0/Glcrf/kUuOFw3EQ+1pnE?=
+ =?us-ascii?Q?LE8Gp+lAR2xWKWwyHMSdYTmzPnN96VmcYFtVWp2zLhG1a7W5oATXVaQRTHv1?=
+ =?us-ascii?Q?54UzcCqq/o3biXgSE8W+J3ZzlympUiF1Q7QiJZrRxkjW7IW0FJq7lHjcOWP+?=
+ =?us-ascii?Q?I3W34PEAf+xTqW9VjBqmvknKUfhMJnqQHMMa4SJ6seMhGB4s4eN4YLPeF7Uh?=
+ =?us-ascii?Q?lkH5dxgbIW/F6IguYnFBlXP0ZWTU7yVN6gzSONua+Mpk8k3V84zT8fZZDBHs?=
+ =?us-ascii?Q?QKhdr5xw1tCoxwaAYmfjdtWik578DPdvA0xPcWDpdOI37XjeUzSTibQ9TXXJ?=
+ =?us-ascii?Q?gmCbWAf43Fzmy5Zef+tqCIp24VIFDBa63VN/Ieocn5QP32pNfbl9eZ+KY+qc?=
+ =?us-ascii?Q?MfzOtclzxeyF3gD2ObxDpGnqi3YqoqoazTQc/F4sIJrkK4k8A3fV2zQF9Ftl?=
+ =?us-ascii?Q?sfk0FnE6aSNI10utiQyjuVeJ/Rb4UwSQObhOD5WMH2j8kfiyfdyAUWOlG1iM?=
+ =?us-ascii?Q?Jca8UNXVklQHtVz4KhPHZCCQ5IwbApm1G768omyRSXVrNLZ+Tsdf7cDd4PN/?=
+ =?us-ascii?Q?VU0SJFBPW+GsXY4G+haZg+ND3dYcShx6F08uHm+A3n9tFJexcNyxamGx+A7I?=
+ =?us-ascii?Q?yuFpm4isgoohuY79FRn1xVdEHyfilCEYFvUJGgXPVUif0SZ/VNfk2+FnpyGJ?=
+ =?us-ascii?Q?Xfdn0MUrAAJDdSDckXWBUUrzHrSpwosr5DxDG+kraq4+wbR+Sg8NwkVuewtI?=
+ =?us-ascii?Q?sXoeXh4jtKmbyc+jiYg5i9eWdzR6l9iejayYxOeCNqxuSCpG5w/VrLJaBcbD?=
+ =?us-ascii?Q?06o3YtXRXSXUVYcmC1NCL00p5iM6ei3zvPm/obaBxbtwb3NG/eJOzt+Z4HnT?=
+ =?us-ascii?Q?nYHgDDKbQ5gP08EXWsiIZPm9e0o5xyQjb0JVmnIo41sn8wFduPkM4YT5bjwI?=
+ =?us-ascii?Q?bEO3wQCrH3mgxjkKm8HY2h1dSLweTikA+vrE3YSndUkzECyQ1iagW6GgIL6O?=
+ =?us-ascii?Q?SFYz8vD8eZ5ZGPKAK/qnqRELUYZB5ukrS/ysXT0b780gzw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Q2RRK3JZakNhT2drc0JxMkluTzlIMWpsZTJSdTdzTnM5Ump4dzl0OHJHTGZB?=
- =?utf-8?B?bmxxbzlYbWhGK29meW1wZXZBb2hKU1p6WW9weFowQUhvc1psbFVGRnNhM2d2?=
- =?utf-8?B?cnpCbVRFSzljd2FieFhDd3NWVmN3ZlBsQXBHTHI4U3hMMHQrN0M3MGsrajUr?=
- =?utf-8?B?ZFBIekZMTWFoVmM4ZW1lYnZ2dWJyeGlIb3VLaGhZZStvS09jMzF6SWZEQ3A2?=
- =?utf-8?B?QksyM0kwRzY3YnF0czFTLzhZVW5aeXJiOEdtNzhPc0R3a0hna01OVjQ4b09N?=
- =?utf-8?B?SGVnN3FVQlFmT1RxdTdjYkdTNGtqby90M1k4enJmOUVSL2w4WGQ2aEFaQ1lu?=
- =?utf-8?B?Q1NBZk0rSnVoVWR0V0FlZkIxZVRPeXUyblZNUU1ra1JoL0ZPQUM3RlRzNTdT?=
- =?utf-8?B?MitYdTRKaHNjRExQZ1BGQ2hkb0NqTkNyZkgvRG9ibC9Xcm1jNCt0b0Y2Zkh4?=
- =?utf-8?B?R0plWGhyT1dEb2NxWXlvR0dkczFFdGlJUjNVOWVyeDJhWEMvc0FpMmlVRi9y?=
- =?utf-8?B?NWRVNzBHZ050SS91TndoNEtxSEc4Rmk5NTl1Uk1OV0NNNXFEdGFzaWV0cllq?=
- =?utf-8?B?b1BBZWlabDh0Nis0UUladldmbmhablRmRVhNU0lSQ3FUZXQ0bEMzeDZsaTJU?=
- =?utf-8?B?ajVKcmhOWHc5S1YxVk9Ud1pZQ0xMaTZKTFllWk82bjZUcURhL0RRemNFbjEr?=
- =?utf-8?B?bUlSQzRDOTA0WTNMdlVJdjYrbDJEbTlUV2NnSksvM0JMWWJhdU85UjI1TUZN?=
- =?utf-8?B?MFRMY01QalU4YVozL2ZrSEMvV2s1L0xreGRUcjd6N1RNelhuQnhqbE1vUTB3?=
- =?utf-8?B?TC9aUE9mWDJGNElBeFdBWW5VemNML2RWM0svN2pBbmh0MnVlNDVWNThlZFhq?=
- =?utf-8?B?NDRtRFFXb25MTy9xM3FNaHdnTXJJLzV6SmoyVzFyZmU1M09rdzlsWmt5c1VK?=
- =?utf-8?B?NVFTcHQ5K25GMTVTYUlKQ0w3RDBERVl0eHBzdlN3VTBQNGYybm9scFJHbGE1?=
- =?utf-8?B?Y1gzd2RQTFA0QTl3MHpxeUYwT2tUTTdCWnc5MWlGSCs5ZEhpcVE3UGZ1SDBm?=
- =?utf-8?B?cWJtdU5Zb001WUpiS1pNMEZ1ektKVERFMGlxRHQrVnVObEJrK1UzK3I5ZmVo?=
- =?utf-8?B?MWk4bGQvVDMxYVFVTHpweHVlYlNwN3dKbSt4Mm9oQ1owYnNPb0JDMTJtWjRR?=
- =?utf-8?B?MUtrVW9xZDZlMCtGNGJ4ZjYrUlVtU1NFQVd0VVEyWXFGTDJGS1VucmhJckxt?=
- =?utf-8?B?NFpHOHd4emFUR2ZxdzExRHdPa0dLWS9HcVk1SU1GK3BPdVBjNDFBMS9IZCtY?=
- =?utf-8?B?OXJRd3Z5MGU2UEloK1FJWTJHVHlRQWdDeUt6dzRpVy9yMmdwZkxPcEZsRzNh?=
- =?utf-8?B?bGJLaG00OFdVcGdJZVltSk9nZTlIWGNjWnhhaXNmY1hjdnpxdTN5emwzdVg0?=
- =?utf-8?B?d3pwM3gyRWlGMlo4UlR5OEdQQUNNdlJkZG0yaVBzZno5SnkvWTF2RDdsRjF3?=
- =?utf-8?B?RzEvSWJ3NVZzSGZ2TExURnNYNlVjWkNkL2RhbEd4MlVyRXlGd2pielVXOGY3?=
- =?utf-8?B?WkhnNmIvbmlYRUVFZXk0ZEVwOVBGL0xMd3hROExydkpuclJYaVY5SWdoakZN?=
- =?utf-8?B?UFFtWC9HR2kycmplcG9qY01JdTZER1hDU0h4RFVLZzRrQm1GYm1OZXZBdFBh?=
- =?utf-8?Q?XI5sBzXCMFnm2TByXe+0?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6df438fe-32eb-4d11-1f6f-08dcb16210e7
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+	=?us-ascii?Q?JRav9PLRk3WpamhicvGQH8fkajuqLT5ZkJle4g+rcDHxkdgoZXIduw1QjlfW?=
+ =?us-ascii?Q?6jpjCmCv8Hi6XmIg8uLU6bmibwmB3YfAfboVtk+fH/sqg5RtimmmLqBCdymN?=
+ =?us-ascii?Q?fECzKRpO8sQ7MCA/+MALp+g1hT/Iw60VQHxL7l6e31naAc+BGP1uas8NPLgM?=
+ =?us-ascii?Q?m5JhGcBmJsAfS9LRYnbuEwk3n6ZYoW4y7i5t6dEahtySJNb+vTHsx73cSG5S?=
+ =?us-ascii?Q?HTVQsn/PSL8CFfUnw4vCiCrEAYPEY9LB1NCQ03HvyX12imUkeftTWJhf9jLV?=
+ =?us-ascii?Q?KU19k7bubh44dW7HcEoktbOVt6sq22UY7siMO2cYgxCZw5ZZtiKui4wHz2Wd?=
+ =?us-ascii?Q?swqK9H7PN9ZSBJ9ZxtakDT3tyOXFTbjwip+ZX0/KLrB0yu6zKRoBiHuaFUrO?=
+ =?us-ascii?Q?uObfkRM3cgngaYWEPgB5ImEQ7HEBKQMPyILsPkpGFevmqaVXWETUFUaiA/px?=
+ =?us-ascii?Q?Kmx2ytpePmbcncZ+UyycEk6rCFNYmOFLraATTh+Y+FuFp4leyvvMe/ZFzTbR?=
+ =?us-ascii?Q?fJYL47aI0iysIGhulixmmoKhyiioPPv+qvbTfd+YJGzLg2Z4kMzgxFSzm+Ee?=
+ =?us-ascii?Q?2+ieRa3GxW8fVY2Iduo8vp9NWBZd1QRBsmyTZmxb6nK18VkXzjyCAwZDd+xW?=
+ =?us-ascii?Q?eHJHxIc2yLidkeE7Hd6vMF0ZeFDL2P2Y5YVt2UmRBgdiJM1lIUfJms3aMgyL?=
+ =?us-ascii?Q?/ChYiQzqGrmbolQuT/fRjJXC+qUKAZfrJzoYu9i7cFlFr75vBLoE0bHTE1zU?=
+ =?us-ascii?Q?YAdsDkq71HyyEcnajgFCVzLiG2AILdvzCwEtPxtp2XkrtBLNPd04NbwQNEJc?=
+ =?us-ascii?Q?+mFjgQuJA7MihkBLlBta4Ym8IIh/vi+akbkiubMnVFMFQ/NPu7Es5NBbWbZp?=
+ =?us-ascii?Q?xiOzLAcuxal0PBb1/nbcUQPUu7myT/LRADDmxBs/DdhIZS9MLvxJmbY/N1E4?=
+ =?us-ascii?Q?LOurKH+/pTW6ONTgMFe/j3LtSUC8+y6fMntLqw6oW1D1cIU5u+m2uRQpU2r9?=
+ =?us-ascii?Q?dC45kMy7/siUE+RpNP5hFNvO8lbgFBPBRxRNdAlQWzR6lVFErRK5OIVy/zQ3?=
+ =?us-ascii?Q?tBzH3pLqStiwGaWwWmRjSudcjcX/NAIr0BSpqH7mx4rvI7Xe292sKhUSOxGc?=
+ =?us-ascii?Q?PCAIgt6OPCvwtfKBEYA3wU9/DKhc9soTCH6xDltrKyK4rrYsiMjeNQMgXlZj?=
+ =?us-ascii?Q?C4eyna3n9IV+/E4dmPtdqNl5hMOQ8cLm1w1ECcrIn3fuXnsp2OhkxAJYOzGB?=
+ =?us-ascii?Q?VKzyZy184TPeeHUeHAPuhl/c/3qVlrURMDOsbjiNLmzjP0Z4oPEdmuZE5c2w?=
+ =?us-ascii?Q?L4qtVY+g79FHz7+BtsH9jLfp/xHyEfbEXaQPaAF9DVB/cs/jyDLzy65Tv2ac?=
+ =?us-ascii?Q?A9qspD+kuxz+7O206cpveG0zZzikjRbBpmJ5mS61oiC40emeJxJyJD+m48Cc?=
+ =?us-ascii?Q?VjmQFbq4g+inC7FlyGWYZ5QJXL5nopM1F7ZJJkTtgQD7Pp29mIl85fJok3J7?=
+ =?us-ascii?Q?0zk/gC6GYUOOBklILpL5TG7S3fn0eo9rQ47ZicIHbQySIVE8p5Ica28Ic1FB?=
+ =?us-ascii?Q?RM0TamCSOGLVMDXk4hvT4IYBqtKExBAqdXeh5UBs?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e28159d7-409a-41f2-d2b3-08dcb162015f
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 13:09:53.4049
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2024 13:09:26.9032
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR03MB7531
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aqPGdIAbrRFX4mbeUi1Oc5Lo1sqn8wp3QP7ivrxyzPFP9eUpZqfKE7TLxTXDM//8
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7424
 
-On 2024/7/23 00:47, Alexei Starovoitov wrote:
-> On Thu, Jul 11, 2024 at 12:10:17PM +0100, Juntong Deng wrote:
->>
->> In restore_udp_socket I had to add a struct bpf_crib_skb_info for
->> restoring packets, this is because there is currently no BPF_CORE_WRITE.
->>
->> I am not sure what the current attitude of the kernel community
->> towards BPF_CORE_WRITE is, personally I think it is well worth adding,
->> as we need a portable way to change the value in the kernel.
->>
->> This not only allows more complexity in the CRIB restoring part to
->> be transferred from CRIB kfuncs to CRIB ebpf programs, but also allows
->> ebpf to unlock more possible application scenarios.
-> 
-> There are lots of interesting ideas in this patch set, but it seems they are
-> doing the 'C-checkpoint' part of CRIx and something like BPF_CORE_WRITE
-> is necessary for 'R-restore'.
-> I'm afraid BPF_CORE_WRITE cannot be introduced without breaking all safety nets.
-> It will make bpf just as unsafe as any kernel module if bpf progs can start
-> writing into arbitrary kernel data structures. So it's a show stopper.
-> If you think there is a value in adding all these iterators for 'checkpoint'
-> part alone we can discuss and generalize individual patches.
-> 
+--=_MailMate_81D74342-C21F-41CA-A10B-31F17C85D69A_=
+Content-Type: text/plain
 
-Thanks for your review!
+On 31 Jul 2024, at 1:46, Baolin Wang wrote:
 
-I agree, BPF_CORE_WRITE will compromise the safety of ebpf programs,
-which may be a Pandora's box.
+> Similar to commit d659b715e94ac ("mm/huge_memory: avoid PMD-size page cache
+> if needed"), ARM64 can support 512MB PMD-sized THP when the base page size is
+> 64KB, which is larger than the maximum supported page cache size MAX_PAGECACHE_ORDER.
+> This is not expected. To fix this issue, use THP_ORDERS_ALL_FILE_DEFAULT for
+> shmem to filter allowable huge orders.
+>
+> Fixes: e7a2ab7b3bb5 ("mm: shmem: add mTHP support for anonymous shmem")
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+>  mm/shmem.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 2faa9daaf54b..a4332a97558c 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1630,10 +1630,10 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>  	unsigned long within_size_orders = READ_ONCE(huge_shmem_orders_within_size);
+>  	unsigned long vm_flags = vma->vm_flags;
+>  	/*
+> -	 * Check all the (large) orders below HPAGE_PMD_ORDER + 1 that
+> +	 * Check all the (large) orders below MAX_PAGECACHE_ORDER + 1 that
+>  	 * are enabled for this vma.
+>  	 */
+> -	unsigned long orders = BIT(PMD_ORDER + 1) - 1;
+> +	unsigned long orders = THP_ORDERS_ALL_FILE_DEFAULT;
+>  	loff_t i_size;
+>  	int order;
 
-But without BPF_CORE_WRITE, CRIB cannot achieve portable restoration,
-so the restoration part is put on hold for now.
+Acked-by: Zi Yan <ziy@nvidia.com>
 
-In the next version of the patch set, I will focus on implementing
-checkpointing (dumping) via CRIB for better dumping performance and more
-extensibility (which still has a lot of benefits).
+Best Regards,
+Yan, Zi
 
-> High level feedback:
-> 
-> - no need for BPF_PROG_TYPE_CRIB program type. Existing syscall type should fit.
-> 
+--=_MailMate_81D74342-C21F-41CA-A10B-31F17C85D69A_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
 
-- If we use BPF_PROG_TYPE_SYSCALL for CRIB programs, will it cause
-confusion in the functionality of bpf program types?
-(BPF_PROG_TYPE_SYSCALL was originally designed to execute syscalls)
+-----BEGIN PGP SIGNATURE-----
 
-- Is it good to expose all kfuncs needed for checkpointing to
-BPF_PROG_TYPE_SYSCALL? (Maybe we need a separate ebpf program type to
-restrict the kfuncs that can be used)
+iQJDBAEBCgAtFiEEh7yFAW3gwjwQ4C9anbJR82th+ooFAmaqN4QPHHppeUBudmlk
+aWEuY29tAAoJEJ2yUfNrYfqK/68QAI4bZHhdaj70vkXq5+MxnXoffpl7M9Vzebb3
+3oMt5dcTPRbCJaLjWOxvNaWAfAJXjOA7wY+IjyedOfgnbYYT9/5PGQ3sqK2znNaw
+rknXilp9690fInX/fLH7Bsc6PCjlVt83lisOA/v4UuPfkysBV7+/yqwk1mMuOg3P
+gdQrkeuuhtBd5z4HbejLdZ1kJD0qV19LNv4/yB1c+uUmM1GwHixVXOPrwXnf4v+G
+XyKHyOJaHwG0Vm8zUpsceiH+qPE+rY99qhfPxU03eJJrH+1mSN8qMeYe84GkvubU
+X5Fu5EfCJ92g3sA2TNp/DubEFUPRUSbV1tahSQsDrHwELjVbLpRUn4p2/zBuMcKS
+i9ig6Nmzi2/CuBaThXi7uCmug1y+zTT5Va+vixH02IbxAMWEhF6WV0AW+22gni6Y
+sIqrI4I3ImtzhFn+Q8yvcbyPSKm4kSXwVpBLW+AO9jK+nnempBLDqhpG1B4LatuG
+fYNt+vX4XrO0BIYGMGx9xtBWxi8CqKWHLBuqD+o6uvuTD6MOGHyyTbSoeJB0x4do
+fKP+V6Q/kDYKx0WjVXeOhTV5UewG5JVFd6waftHtuXz9IFYoZ1oqr1rb3PSgsOoj
+gkizjz/w0MuV+EHrJhcXheNr+GANCwEcFs/kQE3JlN6mqWlU2o3fzGl4ihk2zW63
+ynkemE/2
+=GBe3
+-----END PGP SIGNATURE-----
 
-- Maybe CRIB needs more specific ebpf program running restrictions?
-(for example, not allowed to modify the context, dumped data can only
-be returned via ringbuf, context is only used to identify the process
-that needs to dump and the part of the data that needs to be dumped)
-
-The above three points were my considerations when I originally added
-BPF_PROG_TYPE_CRIB, maybe we can have more discussion?
-
-> - proposed file/socket iterators are somewhat unnecessary in this open coded form.
->    there is already file/socket iterator. From the selftests it looks like it
->    can be used to do 'checkpoint' part already.
-> 
-
-If you mean iterators like iter/task_file, iter/tcp, etc., then I think
-that is not flexible enough for checkpointing.
-
-This is because the context of bpf iterators is fixed and bpf iterators
-cannot be nested. This means that a bpf iterator program can only
-complete a specific small iterative dump task, and cannot dump
-multi-level data.
-
-An example, when we need to dump all the sockets of a process, we need
-to iterate over all the files (sockets) of the process, and iterate over
-the all packets in the queue of each socket, and iterate over all data
-in each packet.
-
-If we use bpf iterator, since the iterator can not be nested, we need to
-use socket iterator program to get all the basic information of all
-sockets (pass pid as filter), and then use packet iterator program to
-get the basic information of all packets of a specific socket (pass pid,
-fd as filter), and then use packet data iterator program to get all the
-data of a specific packet (pass pid, fd, packet index as filter).
-
-This would be complicated and require a lot of (each iteration)
-bpf program startup and exit (leading to poor performance).
-
-By comparison, open coded iterator is much more flexible, we can iterate
-in any context, at any time, and iteration can be nested, so we can
-achieve more flexible and more elegant dumping through open coded
-iterators.
-
-With open coded iterators, all of the above can be done in a single
-bpf program, and with nested iterators, everything becomes compact
-and simple.
-
-Also, bpf iterators transmit data to user space through seq_file,
-which involves a lot of open (bpf_iter_create), read, close syscalls,
-context switching, memory copying, and cannot achieve the performance
-of using ringbuf.
-
-The bpf iterator is more like an advanced procfs, but still not CRIB.
-
-> - KF_ITER_GETTER is a good addition, but we should be able to do it without these flags.
->    kfunc-s should be able to accept iterator as an argument. Some __suffix annotation
->    may be necessary to help verifier if BTF type alone of the argument won't be enough.
-> 
-
-I agree, kfuncs can accept iterators as arguments and we can
-use __suffix.
-
-But here is a question, should we consider these kfuncs as iter kfuncs?
-
-That is, should we impose specific constraints on these functions?
-For example, specific naming patterns (bpf_iter_<type>_ prefix),
-GETTER methods cannot take extra arguments (like next methods), etc.
-
-Currently the verifier applies these constraints based on flags.
-
-> - KF_OBTAIN looks like a broken hammer to bypass safety. Like:
-> 
->    > Currently we cannot pass the pointer returned by the iterator next
->    > method as argument to the KF_TRUSTED_ARGS kfuncs, because the pointer
->    > returned by the iterator next method is not "valid".
-> 
->    It's true, but should be fixable directly. Make return pointer of iter_next() to be trusted.
-> 
-
-I agree that KF_OBTAIN currently is not a good solution.
-
-For case 1, I tried the ref_obj_id method mentioned by Kumar and
-it worked, solving the ownership and lifetime problems. I will include
-it in the next version of the patch.
-
-For case 2, Kumar mentioned that it had been fixed by Matt, but I found
-there are still some problems.
-
-More details can be found in my reply to Kumar (in the same email thread)
-
-For iter_next(), I currently have an idea to add new flags to allow
-iter_next() to decide whether the return value is trusted or not,
-such as KF_RET_TRUSTED.
-
-What do you think?
-
-Also, for these improvements to the chain of trust, do you think I
-should send them out as separate patches? (rather than as part of
-the CRIB patch set)
-
-> - iterators for skb data don't feel right. bpf_dynptr_from_skb() should do the trick already.
-> 
-
-I agree that using bpf_dynptr would be better, but probably would
-not change much...
-
-This is because, we cannot guarantee that the user provided a large
-enough buffer, the buffer provided by the user may not be able to hold
-all the data of the packet (but we need to dump the whole packet, the
-packet may be very large, which is different from the case of reading
-only a fixed size protocol header for filtering), which means we need to
-read the data in batches (iteratively), so we still need an iterator.
-
-(Back to the BPF_PROG_TYPE_CRIB discussion, BPF_PROG_TYPE_SYSCALL cannot
-use bpf_dynptr_from_skb, but should we expose bpf_dynptr_from_skb to
-BPF_PROG_TYPE_SYSCALL? Maybe we need a separate program type...)
-
-> - start with a small patch set.
->    30 files changed, 3080 insertions(+), 12 deletions(-)
->    isn't really reviewable.
-
-Sorry, I will reduce the size of the patch set in the next version.
-
-I will remove the proof of concept part, keep only the real tests,
-and start trying to integrate CRIB with CRIU.
+--=_MailMate_81D74342-C21F-41CA-A10B-31F17C85D69A_=--
 
