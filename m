@@ -1,198 +1,249 @@
-Return-Path: <linux-kernel+bounces-268726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-268725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F60F94285C
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:46:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F5C94285A
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 09:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5AE1F24032
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:46:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4AB5283CEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 07:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A2D1A7F86;
-	Wed, 31 Jul 2024 07:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844E91A76A3;
+	Wed, 31 Jul 2024 07:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9qviyy6"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gkQ0vt56"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364BC1A76D3;
-	Wed, 31 Jul 2024 07:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411962; cv=none; b=foQpFksjT2h4cck01Ga1XT0RdBgop//w4JUCz8eXEVhCiBrwPyDKV5Y6BC03XuwIk9OgApbU1juy6U/mD4jvoBdw5FG3uuRz7owKv917nNVv9CZ4vDV8dAJzoQf3DB8YpN60JQGBuhP0sfGW6UN8l3nWs+PSq/4fUNSewWmh10U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411962; c=relaxed/simple;
-	bh=IFlsBwR4bWRMJqNSAourFr1ygVrYaUDwK+LML6tYtak=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o/Fx004Chq88eceyjKFuQ5Eg6KvSniJFOsT9ppVs9BOM8rCLDWEqrqDoD/vEY8PeF73BThkJXt38z1vq3aaz3IQ8qcq/YaVp9EanZMDhx5BTKo7cGOLhcWeYAd/WIOaV8vFzRM5YQQSUlVLSzrbzgdAjtHSELzPN/pCOIxxwekc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9qviyy6; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2cf213128a1so3452443a91.2;
-        Wed, 31 Jul 2024 00:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722411960; x=1723016760; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dQbrJo4wrR+w0vLwwcAWRgEUCmmfSCZZD5nQAlef80M=;
-        b=H9qviyy6BlSgpEagt0tC0f1BFw35af0y1NWj2kgRVhzI33Yfi6hsaX3eAAf2Z9nxz+
-         IILxPDKiYfPe8A22BFSemOovBWfOSYXP2X7qEgLlqdCOTq4t2uznsmv2YzxELViejD8v
-         XTocszErczUIoiMy44Yy/Ur++wnoDY5BxlMd5cEjuM8az2eHVqGaXmRRbiDb9hgAtNrf
-         g5Nf6cA06uzIJEVwnuGURGEro59ecNvy7n2NdV3e/7F6hjUavprUDnwAZHSAFbxq30Fn
-         R1pioj+/uPJS1nJ6N8ejU36K8qjQNjRqRxCvO1nci1AzHqPQp8iLYIizBN9yjvZ0Fw+x
-         ia8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722411960; x=1723016760;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dQbrJo4wrR+w0vLwwcAWRgEUCmmfSCZZD5nQAlef80M=;
-        b=g+JdTLxKUCyd/1XXdJMKebkdyU3yH6AOSiJ+A15Y99fOTvylgZHC43PHX/VF/SOKKz
-         qKFE4D39qXH7Rc3BqvpJvKjPQ0CdED/kv1hsFxz+A+KYTb+8X7KL6SjN4nyjlqfnfUNv
-         HHPwqXEE/rXWfAXImB/sAxBovSZmJRzQr5CSmseV6EkLC+lyUxwOcAKrcbckxVAVLJU9
-         2A53K9m9qG2iAhBBci8C9O+VN4Jh/mVVrpZdQkDEDZ1il1zB/v6iSpp2F0V1gLo+3ars
-         anc+Ja52Qi3NuCMa4PeE4mA31bsAPm5hVQNsTDd4kiJDRyMRezYdBhNZEBbmEtrgQ4Bs
-         XILQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWntADku6DMG32Et3ENdnkKxwFgC8TwF/DC+df7hLvuIpKa06CHxhFDZtSIZIbjNXMuYIgG718hJn9E73R+rhiSG5DdhfH07lCgwC5BzuX/WLcCnryXGs/xu+sGfz2afESnLlQ8ScwFBg==
-X-Gm-Message-State: AOJu0YxpXTy874g5YqrAIA+pXl+JOodSGlWDkDrzYZyn9aLYYCzhDbsJ
-	EbvPfmpg+40U2N+Oys9x6LOduvnn4TIOD7atP7xk1478GGjViHirOU8uF4M4
-X-Google-Smtp-Source: AGHT+IERNyh/vJ2i6z5ympNc2/09CjMuj0tqDRHJsuQ6Fp6QsNcqMZ+cloHdCX85JuKsuNIH5KnSew==
-X-Received: by 2002:a17:90a:eb09:b0:2c9:9eb3:8477 with SMTP id 98e67ed59e1d1-2cf7e1c81a4mr11728261a91.16.1722411960229;
-        Wed, 31 Jul 2024 00:46:00 -0700 (PDT)
-Received: from localhost.localdomain ([115.240.194.54])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4064cesm668185a91.12.2024.07.31.00.45.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 00:45:59 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH] dt-bindings: timer: nxp,lpc3220-timer: Convert to dtschema
-Date: Wed, 31 Jul 2024 13:15:40 +0530
-Message-ID: <20240731074544.208411-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70EA182D8
+	for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 07:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722411953; cv=fail; b=NJa6/n1ED9nB93uZvZL30CG0JuEVY/2d1EIM+pDaR6GjPxXKSUm7tslG2JZs9JI5M0omFsz+lNHVGgPSNXKLkkfz0jKh2dLO5ai8bpeCEsk3OSBMjgvhBSYSS2qXhXY1fSwzjUMDYE2JPi9pHJBH1N5/H0IcutIqi/3usPM22SU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722411953; c=relaxed/simple;
+	bh=KcQPwzKCJWoSithCjEhnN5wzylBAYyllFn8YuXKY8VU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=l9JoUQnWYbR2YV6fVCXtO00Xo4rDgsIu/h6fuWIoq+5SAteje8FPCYZV9BDC6S7G8PMPBpD5dJFq/JE/6YZ7PzZUYnXk6NihAqoGzRPAnwax2OhJpWltpjqNOQQvzgine980XtMogmp62zXjPyP2ZXgc4EYJwPB9GfJ+U0lamho=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gkQ0vt56; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722411951; x=1753947951;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=KcQPwzKCJWoSithCjEhnN5wzylBAYyllFn8YuXKY8VU=;
+  b=gkQ0vt56PLXbNtc8rxFS8/Nts/O4HK8crzdASqWD5BicIcsegPrh2q+R
+   QNp2lh1xXuz3sLrxKO5JEdWNRiW+LZpQJ0/kOObCF9/icOwKc9uwKmwfa
+   +u0O+tPvYaMrk+LmIv5e4/YQ88+bylZhX8tbIoB7p4Q7dPL3DOegMwayv
+   eMoMy0YV/GSwSvGfpBBwRhBzorO62HfNO0m9xIAxNdXv0wVb/np6iVQ21
+   31Jt6fGudRsXF07FL9GzvJZDT7NVuOlnPO/Dy6/ZRt9PCE3Lib2DTIhuV
+   s9j57n0227KcGEiZTvz8e5vl6eEzbDafZQpRufw3ruE0Z+wvGGNTp3zyP
+   Q==;
+X-CSE-ConnectionGUID: /2kzBx97Soefqe2hsGnnaA==
+X-CSE-MsgGUID: Gq3/0VBZSbatznaBo1oiIg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="30935856"
+X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
+   d="scan'208";a="30935856"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 00:45:51 -0700
+X-CSE-ConnectionGUID: 69BxjWZCRjKBX56+b/a6ZA==
+X-CSE-MsgGUID: kemKgVTVT4+FbQlQ3lfEew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,250,1716274800"; 
+   d="scan'208";a="54598672"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Jul 2024 00:45:52 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 31 Jul 2024 00:45:50 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 31 Jul 2024 00:45:50 -0700
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.41) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 31 Jul 2024 00:45:50 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Q/qGKrUIoH77upW3Ei3evnftMQER0Y+Azo9DJlYgh9CUlJK3s+Wyu/+o2fu4OKgs4I3UyUkIev8rDaonEjHBx0AShO0UBxNkw2GDmSgZfi3Oj067Gv01yAl6jtm0xmQjd3o8lZQrF800Ljad1aukn3BtVWb0pqLjA/QPs14iVbqFoP3hqea+XzWNPjqJrxduP6j9nECXzqHcEqgesyoOUj3q9Kz7cPC/UdN/QMyD0DSEfovPJhzIca800M/e8OoaaETsEPw+/nXRWaE+NURK9Erz9OuRhov1zdVuQX1Sw3bnt3bG1KBBsBOfTP06WtkXccc60TljL9ZL+z4hCRagug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7iWyryHnpEyJRiXdQCTimesM994mbl7A96dTcsnE+wM=;
+ b=jlEVFxzZ0Y1poCtk7XMOlmCsp1V8PU0sRnA73oMmEfNl/oarxjLLajyapFWtdioq+FMFa9rfHLthgBSRSHb7PD/4o6cxtxCMvRDllAEA8J3jHoYyn4Wm2Acu41M2w6any4gPCdh8w2spcr2VrFs/V7ceJWstQA9q5zXdPyELNiebWOzmE06+Q54rQ2M7Sos7m50jiEa5s6gtWOuznM9s14pFMhiSkkc7saCQpuPeDdFM/mjid+kdwr+iBqHcngvdwRcjfnutiXAQPZqfsYJvaxvVXulG5shbqciJgpkkhiNLiupSund+OgTyjZV6LJTvZYu+XeRIIkkW/veEDbiLEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by PH7PR11MB6329.namprd11.prod.outlook.com (2603:10b6:510:1ff::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Wed, 31 Jul
+ 2024 07:45:47 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%3]) with mapi id 15.20.7807.026; Wed, 31 Jul 2024
+ 07:45:46 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Nicolin Chen <nicolinc@nvidia.com>, "jgg@nvidia.com" <jgg@nvidia.com>
+CC: "Liu, Yi L" <yi.l.liu@intel.com>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
+ allocation
+Thread-Topic: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
+ allocation
+Thread-Index: AQHa4UkZdMuTQ3BgnUqTgvFTxUSDHrIQcNjw
+Date: Wed, 31 Jul 2024 07:45:46 +0000
+Message-ID: <BN9PR11MB5276497781C96415272E6FED8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240728235106.2435208-1-nicolinc@nvidia.com>
+In-Reply-To: <20240728235106.2435208-1-nicolinc@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|PH7PR11MB6329:EE_
+x-ms-office365-filtering-correlation-id: f906ba04-327b-4564-997d-08dcb134c9e5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?/pCZmScHIajBMc7i3uqhdpnECyWptiZFuNkabTsrpCgi7wfGjlOjpuKbBDHA?=
+ =?us-ascii?Q?oxC09oQbPrDhymBpfJ/h7ZGdumgIUU/kJ6q4BjcDCORbDozwX9l7z9jPLa8d?=
+ =?us-ascii?Q?dbwCGhC4YivyB8evdwvM0kTfnqrptS3V7bQzhYoOZ2kgXJqC5gGRi5Ie7Nk5?=
+ =?us-ascii?Q?DfBGLKkB6KL+KTif3KxftJpmxRAKJprXSgGjckxt3khJSsNJVYIe4ZieyGAg?=
+ =?us-ascii?Q?fU6iOxLKqbj0wjsxUCFVM5uzWkO0dEENf2sEM5yBzs/gr0N0umCYpaXZ4PxX?=
+ =?us-ascii?Q?rA86PoDp62AWQyf036STp//Bi2Obe+l6uHfVzgonDLXRZHubxv7YYt+guKST?=
+ =?us-ascii?Q?AdEk1cHityDk5RZcV+QQ/TbMIj3aCPPi0wTUv3ou7/PYBmz4X2kJU5YNDiz+?=
+ =?us-ascii?Q?d+jIM7JJ7D1fmtLskfkZu9aZ74xSI+NZrDEq5+lkdWPgSUeRT/UCdVslk5Jp?=
+ =?us-ascii?Q?oPrU0PEBZ/4tz78bqvWj8HDKG1KKmwTy7BI1M1YDcrVdLzwhOFK/cRRnHfE+?=
+ =?us-ascii?Q?ghUuGdcJ2pMx+rXGZ69x5KMyA2EoaSEjnDE4wElhwWxyn2g3ESbilXWqy2fu?=
+ =?us-ascii?Q?+5Ozebe4B/OmTAQOrvgcIux5Fs2F1EjFHEhEIHSoRhRe41spZhU5/JnFXXm4?=
+ =?us-ascii?Q?u8uuHPLN3jnRNZFWP9E65we1ulKvvEgNEvvVbbpWYZ8Jfp+9LiJaXfIbLEFu?=
+ =?us-ascii?Q?xV8QSDCWg9bn2XJgqfU1qVKuNqeNyu0639AX08GlWQyCgY7g8OTUGL75dTv6?=
+ =?us-ascii?Q?p9KCUjUPvq+YmWb4ib12e1gXiH6TV8uCv0mpbUS2fTh99c7HvUd1ptuCJQU1?=
+ =?us-ascii?Q?rBQFT7OHZGnQ2qr+/YnkR7nlUGlGPJo/vLq73Z/voJHUG09j9lTM/JXl4jd2?=
+ =?us-ascii?Q?pZqoyYnnRVu+f5K8ZFX5LGIsli62NZJuEXCxRWEtD9d8HVYVdJPPW8EB7g4C?=
+ =?us-ascii?Q?B7fJX/qW+FI4dqs+VISZ3Uol5dBfs//nFhz/ao740ILWTs4aEcN4GFQo6iYa?=
+ =?us-ascii?Q?VGBFqPM5zoeZZH1OVzjxO+4vH1fiPlfoSXZzpAPR1xPhM38Q5PXquiuAV6n2?=
+ =?us-ascii?Q?nWHlY6SWBnaA1NnnZHf30fogzFDT1QmDChnNbfP11HFcF7htNO/zO6NT6arl?=
+ =?us-ascii?Q?iag5zZaitlY9sE4wxjA5hF6Aoi5SO1IOK8BfMU6CCZdUBk8iP9VeymzKdsZJ?=
+ =?us-ascii?Q?ThasuiqhWRDsFp1cnFVP8B5hTi51waTa0SIg/rFo6y90M2l6796oFL/IJazb?=
+ =?us-ascii?Q?PNpxliGsGy9WP4vv5cjgzYGS+1hJaGDoY+hOa0n+cCP1PloamYkbWzgeDrny?=
+ =?us-ascii?Q?9f4zlwdjSezN1l3q5i1l8emrRS5Mcb8Ogs+jv/pqrEqxVtaeN5oTBc+lZd/L?=
+ =?us-ascii?Q?kbP8QDmSW//9w18z3FerC30XwvsuxqukdCzJ4drPOh18IAbHhA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?RVyK6j2BE4X+KxhnNRv3JgLrwGMPG1YFfJgdpPiQWCHQsBU+SDWlkMWgstpQ?=
+ =?us-ascii?Q?a/y4pROud90SXEoNv3ZXVBN5ivJ0qcDsIKGhnV4b+iMpx91SZLi1t8aQMbux?=
+ =?us-ascii?Q?4niHO6Zn750fT0lfEnVV1u4l5gMcWB9lwrdYDQdlbHSCabG6K6gRwPnyc7jU?=
+ =?us-ascii?Q?+vTUhc4B0yTACB/6EDb4bAdjPr2Gsq1mOmZKY9HuTdQvPgGHmdQJTaBCut2S?=
+ =?us-ascii?Q?KzLUsTcqq+if1EGh2fJP/BVsJ8UYzgCjLqcipkPziGPKjdodMz1URGmdPhT7?=
+ =?us-ascii?Q?KtEs3bsR/es+2B6kYIS79r+pwMDw6sJGFmj4l63Uxjqw6J07VR/syFlqEQas?=
+ =?us-ascii?Q?jraM+dXS84fBimFBAXJ1v0uU3CSeIoCclO70BW99ydU0C4asssLHk2oKkeeF?=
+ =?us-ascii?Q?YxNOQpYN665ffuQaFkSu0aTatAywvQ7EipWuIXd6vaZcpZJPH5o8b1i6pUNV?=
+ =?us-ascii?Q?khlJsiGzr1YBbQC6xkEn3fJe2Lk/2gXo+Xsrp7ckIbCvhNsr2brNUL8ebvsc?=
+ =?us-ascii?Q?/0FeQODW9SYWOeqA+TMjxALVB/3UmgmifqFov4ocvq/r3EjRf+jo6/0kcGYc?=
+ =?us-ascii?Q?jRAPlszTm9XIXWQmNCPvA3QYYMLMaqOatTuZr9t4vXaDwLO5fKEpU0GManY6?=
+ =?us-ascii?Q?xSL/3oEBbJCiXuURCECqWJwaiHeqiTqoU52FhKdR4IlyDFz7Q33nc566tSy8?=
+ =?us-ascii?Q?to+SlD7ewVQuhrTE2BosMRC36B/NWFtlr+4A+f31FemPS5KlwRiaL6Zh6ZLI?=
+ =?us-ascii?Q?eTn/bjJhS+lP53KgpiC9QRFdGbYt2McKRb/LysOAcOW5jw4ZiaDatNyjcehP?=
+ =?us-ascii?Q?5AQCwj1VqacK/um9umS5GxqIdREVD2ZMOoWKaWPoDkCO+jXNX3LcPojI28+z?=
+ =?us-ascii?Q?vkIgSFsk2Iqo2kxfO4mkPvK0xhNJ4ovav30YqW86DBbz/+jDcxjD8aVCiGFW?=
+ =?us-ascii?Q?MPAp16Z7ng0fFd3gFUFbsy4dOzppAeTQHzACORLoxy4Xylhug6Lye1fzp1rR?=
+ =?us-ascii?Q?KYECd1qr3tp8OXZ3w3zYcqOOrkdxBQVLH3Waq6HN2/JWkvv8Ov9g7bApmmxX?=
+ =?us-ascii?Q?hcqWrT4ZUjvlEJiAjNNuwsOb4KXspQXocxqo3Xt0+miFgzWQE7yzro/NOskk?=
+ =?us-ascii?Q?22l75I0eDfmfPkEUfTpdqHE6VyuIoXD3yjJVB75JwRPLd3357CXIXST/+iP6?=
+ =?us-ascii?Q?qgjKXnqkOBBAYFr7D+4/TIsq62jRAq3gQCkb2SQz9O6CMoWX/Ve8Dc6AzBOY?=
+ =?us-ascii?Q?erXd2ygXoKzwZC3ZYAixMRm6Zf5IytAd8NAqMFsN8nEhrPDUlEdtizoDIjqN?=
+ =?us-ascii?Q?oLBgV67lj2Pp2jOd+LoKeHcC/WGpiTr0l1P3ddFW1dq4gWAfsf1RuifE44qH?=
+ =?us-ascii?Q?ynTQYexalgCmYx0oT9GYcIHQs4THiaMBP0Ys+Bd8VNRzGnHzyppljL2bLTbu?=
+ =?us-ascii?Q?ZEeLdB+LhqZfOt25IjvY0U7bBLnQxiAIXY4cEZtuhvzR6JfUxKz8rV4WpCST?=
+ =?us-ascii?Q?eVYW30/schmJIeLap7+wBlEJ8a+x+zgrtroTLWDEhvCR7AELoe24S725kPS/?=
+ =?us-ascii?Q?F0Ndtgs6R6HyWTMa+ONm0po0hoFaPaTiUZxuaym+?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f906ba04-327b-4564-997d-08dcb134c9e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2024 07:45:46.2914
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3nR32kl7lG26BQNjSA6bpLYlvWiSStvPZXooWvweQpSEhz22Pwk2gInY2lEHF8ikVKEer28ot6DqbqwAcZB4Xg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6329
+X-OriginatorOrg: intel.com
 
-Convert the NXP LPC3220 timer bindings to yaml format.
-Add missing resets property as it is already being used in dts.
+> From: Nicolin Chen <nicolinc@nvidia.com>
+> Sent: Monday, July 29, 2024 7:51 AM
+>=20
+> IOMMU_RESV_SW_MSI is a unique region defined by an IOMMU driver.
+> Though it
+> is eventually used by a device for address translation to an MSI location
+> (including nested cases), practically it is a universal region across all
+> domains allocated for the IOMMU that defines it.
+>=20
+> Currently IOMMUFD core fetches and reserves the region during an attach t=
+o
+> an hwpt_paging. It works with a hwpt_paging-only case, but might not work
+> with a nested case where a device could directly attach to a hwpt_nested,
+> bypassing the hwpt_paging attachment.
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
----
- .../bindings/timer/nxp,lpc3220-timer.txt      | 26 ---------
- .../bindings/timer/nxp,lpc3220-timer.yaml     | 55 +++++++++++++++++++
- 2 files changed, 55 insertions(+), 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.txt
- create mode 100644 Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.yaml
+This probably needs a bit more context. IIUC it's the ARM-side choice
+that instead of letting VMM emulate a vITS for S1 and then map it to
+physical ITS range in S2 it relies on the kernel to continue the msi
+cookie reservation in S2 and then expects the guest to identity map
+it in S1.
 
-diff --git a/Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.txt b/Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.txt
-deleted file mode 100644
-index 51b05a0e70d1..000000000000
---- a/Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--* NXP LPC3220 timer
--
--The NXP LPC3220 timer is used on a wide range of NXP SoCs. This
--includes LPC32xx, LPC178x, LPC18xx and LPC43xx parts.
--
--Required properties:
--- compatible:
--	Should be "nxp,lpc3220-timer".
--- reg:
--	Address and length of the register set.
--- interrupts:
--	Reference to the timer interrupt
--- clocks:
--	Should contain a reference to timer clock.
--- clock-names:
--	Should contain "timerclk".
--
--Example:
--
--timer1: timer@40085000 {
--	compatible = "nxp,lpc3220-timer";
--	reg = <0x40085000 0x1000>;
--	interrupts = <13>;
--	clocks = <&ccu1 CLK_CPU_TIMER1>;
--	clock-names = "timerclk";
--};
-diff --git a/Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.yaml b/Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.yaml
-new file mode 100644
-index 000000000000..3ae2eb0625da
---- /dev/null
-+++ b/Documentation/devicetree/bindings/timer/nxp,lpc3220-timer.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/timer/nxp,lpc3220-timer.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP LPC3220 timer
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+description: |
-+  The NXP LPC3220 timer is used on a wide range of NXP SoCs. This includes
-+  LPC32xx, LPC178x, LPC18xx and LPC43xx parts.
-+
-+properties:
-+  compatible:
-+    const: nxp,lpc3220-timer
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: timerclk
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/lpc32xx-clock.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    timer@4004c000 {
-+        compatible = "nxp,lpc3220-timer";
-+        reg = <0x4004c000 0x1000>;
-+        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
-+        clocks = <&clk LPC32XX_CLK_TIMER1>;
-+        clock-names = "timerclk";
-+    };
--- 
-2.45.2
+With that context if a device is directly attached to a hwpt_nested,
+hwpt_paging attachment is bypassed including the msi doorbell
+setup on the parent S2 then it's broken.
 
+> @@ -364,7 +305,8 @@ int iommufd_hw_pagetable_attach(struct
+> iommufd_hw_pagetable *hwpt,
+>  	}
+>=20
+>  	if (hwpt_is_paging(hwpt)) {
+> -		rc =3D iommufd_hwpt_paging_attach(to_hwpt_paging(hwpt),
+> idev);
+> +		rc =3D iopt_table_enforce_dev_resv_regions(
+> +				&to_hwpt_paging(hwpt)->ioas->iopt, idev-
+> >dev);
+
+Is it simpler to extend the original operation to the parent S2 when
+it's hwpt_nested?
+
+The name iommufd_hwpt_paging_attach() is a bit misleading. The
+actual work there is all about reservations. It doesn't change any
+tracking structure about attachment between device and hwpt.
+
+The only downside is unnecessarily reserved regions of dev1
+(attached to hwpt_nested) added to S2 which might be directly
+attached only by dev2 so the available ranges for dev2 are
+unnecessarily shrunk.
+
+but I'm not sure that would be a real problem in practice, given
+1) there is no usage using up closely the entire IOVA space yet,
+2) guest may change the viommu mode to switch between nested
+   and paging then VMM has to take all devices' reserved regions
+   into consideration anyway, when composing the GPA space.
+
+With that I think continuing this per-device reservation scheme is
+easier than adding specific reservation for SW_MSI at hwpt creation
+time and then further requiring check at attach time to verify=20
+the attached device is allocated with the same address as the one
+during allocation.
 
