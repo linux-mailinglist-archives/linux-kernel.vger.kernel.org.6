@@ -1,90 +1,132 @@
-Return-Path: <linux-kernel+bounces-269080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-269081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA50C942D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:36:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7AF8942D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 13:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194C81C21696
-	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8176C282E68
+	for <lists+linux-kernel@lfdr.de>; Wed, 31 Jul 2024 11:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0391AD9F4;
-	Wed, 31 Jul 2024 11:36:09 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774C61AD9EC;
+	Wed, 31 Jul 2024 11:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CwDK/pds"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF9C1AC447;
-	Wed, 31 Jul 2024 11:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1F01A8BEF;
+	Wed, 31 Jul 2024 11:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722425769; cv=none; b=R5Es8n+PrmaiFGa3qYPoouzDzvZVOeW6UDU4YbqgqQh5YbPSXyWsBAiuJLXlBa620HrlJcRFi3z/lr8xTH0OWn3ozDfqxYA/Ufai4MFHoZtVwsZ4Pqp4AxznehKh05sD31HkA7T3kR8/crv8fHheV1U4VYWhyHb/QAKAs6ToBYk=
+	t=1722425817; cv=none; b=UXO5zBm2McbBmx0cT1coK2C1UzDkxldT/3A7tvdFndOpXudvJjzhR4OK5HO38TtPxwga7f69V0ypfk6SGwfpzCS++oVaQFFdPDVEqVg1z+0k6p4XlZo7lEGYB9D8IXkm7bwfIP5QLlWsSL9r7vyBgEDBySHVI3e6mfdwoXKEDfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722425769; c=relaxed/simple;
-	bh=6vTBV9+mdhv+EHYrb1lvIvVGi44E3Oq+SM9h5Vo2K2c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N3Jc+iXOBPJoy3tVBsvYZzCYsg/Op7ibxxgFdjVi76oU/Zpet8Mto0G0ZqfH28lr+vQsNBUSoVsCrn5wJp7V4rUb5XWjU68/vEg9M0nNUbHJW3S4KGyagEkZk7xeHaXTdWctQwK7dG1PSsWPaS0N8/iAMNuEmrTYCSZlRJ3EcqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875ac5.versanet.de ([83.135.90.197] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sZ7cT-0003Dc-Jz; Wed, 31 Jul 2024 13:35:49 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Brian Norris <briannorris@chromium.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Quentin Schulz <foss+kernel@0leil.net>,
-	Rob Herring <robh@kernel.org>,
-	Judy Hsiao <judyhsiao@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Quentin Schulz <quentin.schulz@cherry.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	stable@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 0/2] fix eMMC/SPI flash corruption when audio has been used on RK3399 Puma
-Date: Wed, 31 Jul 2024 13:35:47 +0200
-Message-Id: <172242573602.2549881.5467215847844665967.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
-References: <20240731-puma-emmc-6-v1-0-4e28eadf32d0@cherry.de>
+	s=arc-20240116; t=1722425817; c=relaxed/simple;
+	bh=DvxRYb8t1EwWUAm27DIBnObbDa/lEizruMwpmgZsz2c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DnMK0GjCTrrg0a8ddG9qAwQsrx8QiMAdCbWRUCVWNkOIUqOuduCuVn19Wo4+JzwdE3/KptAZQ98Oa671xNkeZhdMRVvYrMNPE+xTcvpRwgm7v75XewrZIwIBH38CcuN/U5WXBT482fW5+pGuFFK8N7aN/xJwM+pTQEelIXnzils=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CwDK/pds; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722425816; x=1753961816;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DvxRYb8t1EwWUAm27DIBnObbDa/lEizruMwpmgZsz2c=;
+  b=CwDK/pdskefcQYijEjOrMSOShcnxg6P5CzvAu9EnHvBqN1G37o+QehDz
+   ziEuGNRQJV5aI/XA3naR+LfBXznFG9xpAf3U+L4bVGb9L1/A69yeWQsiV
+   8PBIehBRYUBbjkYX63XDG043VSotI1GwFmmH/83/pO4xsi9Cg98ReZqEK
+   om1yjfpvSJQM1lbAlDTHSFKSUZYNM96v1g+MJlPkMDJW2ucoNVnEOrASb
+   BLAdxp4ivv1zzRp6BJ0F6xP/wSgvWahzm9fkul/Fs35eYuu7onmZroCd6
+   BTiGHJFQlh0yrdjELRWKoCWGQItQRF9G/5gJ2KfYjZ0Uiyn314SvoP8/z
+   g==;
+X-CSE-ConnectionGUID: oG+WMpGASje1sIhozbvZtQ==
+X-CSE-MsgGUID: TWjuMWt0QOaVZoKP9qd3Uw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11149"; a="20454552"
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="20454552"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 04:36:55 -0700
+X-CSE-ConnectionGUID: GOq9DN9kTZ+xvVgfLA40KA==
+X-CSE-MsgGUID: RfkRdjaTSzehKNbqcHf2aw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,251,1716274800"; 
+   d="scan'208";a="54651188"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 31 Jul 2024 04:36:49 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 479C516B; Wed, 31 Jul 2024 14:36:47 +0300 (EEST)
+Date: Wed, 31 Jul 2024 14:36:47 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>, Shivank Garg <shivankg@amd.com>
+Cc: ardb@kernel.org, bp@alien8.de, brijesh.singh@amd.com, corbet@lwn.net, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, jan.kiszka@siemens.com, jgross@suse.com, 
+	kbingham@kernel.org, linux-doc@vger.kernel.org, linux-efi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, michael.roth@amd.com, 
+	mingo@redhat.com, peterz@infradead.org, rick.p.edgecombe@intel.com, 
+	sandipan.das@amd.com, thomas.lendacky@amd.com, x86@kernel.org
+Subject: Re: [PATCH 0/3] x86: Make 5-level paging support unconditional for
+ x86-64
+Message-ID: <jczq52e6vrluqobqzejakdo3mdxqiqohdzbwmq64uikrm2h52n@l2bgf4ir7pj6>
+References: <80734605-1926-4ac7-9c63-006fe3ea6b6a@amd.com>
+ <87wml16hye.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wml16hye.ffs@tglx>
 
-On Wed, 31 Jul 2024 13:05:27 +0200, Quentin Schulz wrote:
-> In commit 91419ae0420f ("arm64: dts: rockchip: use BCLK to GPIO switch
-> on rk3399"), an additional pinctrl state was added whose default pinmux
-> is for 8ch i2s0. However, Puma only has 2ch i2s0. It's been overriding
-> the pinctrl-0 property but the second property override was missed in
-> the aforementioned commit.
+On Wed, Jul 31, 2024 at 11:15:05AM +0200, Thomas Gleixner wrote:
+> On Wed, Jul 31 2024 at 14:27, Shivank Garg wrote:
+> > lmbench:lat_pagefault: Metric- page-fault time (us) - Lower is better
+> >                 4-Level PT              5-Level PT		% Change
+> > THP-never       Mean:0.4068             Mean:0.4294		5.56
+> >                 95% CI:0.4057-0.4078    95% CI:0.4287-0.4302
+> >
+> > THP-Always      Mean: 0.4061            Mean: 0.4288		% Change
+> >                 95% CI: 0.4051-0.4071   95% CI: 0.4281-0.4295	5.59
+> >
+> > Inference:
+> > 5-level page table shows increase in page-fault latency but it does
+> > not significantly impact other benchmarks.
 > 
-> On Puma, a hardware slider called "BIOS Disable/Normal Boot" can disable
-> eMMC and SPI to force booting from SD card. Another software-controlled
-> GPIO is then configured to override this behavior to make eMMC and SPI
-> available without human intervention. This is currently done in U-Boot
-> and it was enough until the aforementioned commit.
-> 
-> [...]
+> 5% regression on lmbench is a NONO.
 
-Applied, thanks!
+Yeah, that's a biggy.
 
-[1/2] arm64: dts: rockchip: fix eMMC/SPI corruption when audio has been used on RK3399 Puma
-      commit: bb94a157b37ec23f53906a279320f6ed64300eba
-[2/2] arm64: dts: rockchip: override BIOS_DISABLE signal via GPIO hog on RK3399 Puma
-      commit: 741f5ba7ccba5d7ae796dd11c320e28045524771
+In our testing (on Intel HW) we didn't see any significant difference
+between 4- and 5-level paging. But we were focused on TLB fill latency.
+In both bare metal and in VMs. Maybe something wrong in the fault path?
 
-Best regards,
+It requires a closer look.
+
+Shivank, could you share how you run lat_pagefault? What file size? How
+parallel you run it?...
+
+It would also be nice to get perf traces. Maybe it is purely SW issue.
+
+> 5-level page tables add a cost in every hardware page table walk. That's
+> a matter of fact and there is absolutely no reason to inflict this cost
+> on everyone.
+>
+> The solution to this to make the 5-level mechanics smarter by evaluating
+> whether the machine has enough memory to require 5-level tables and
+> select the depth at boot time.
+
+Let's understand the reason first.
+
+The risk with your proposal is that 5-level paging will not get any
+testing and rot over time.
+
+I would like to keep it on, if possible.
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+  Kiryl Shutsemau / Kirill A. Shutemov
 
