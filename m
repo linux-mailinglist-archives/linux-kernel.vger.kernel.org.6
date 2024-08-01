@@ -1,80 +1,55 @@
-Return-Path: <linux-kernel+bounces-271838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AB8F9453CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:36:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AC0D9453CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A3D2862D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:36:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2043B22C22
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5368E14A4D6;
-	Thu,  1 Aug 2024 20:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D907F14A60E;
+	Thu,  1 Aug 2024 20:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iLjXCbK2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="TDKAyXJl"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1087F4087C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 20:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B7713DDA3;
+	Thu,  1 Aug 2024 20:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722544585; cv=none; b=CJ7/tBj4Lzd0tBPOkVa4u8LRI5YVO16lOBkhI6ezXQbay+nj0dCHQKMiMejTkc5C3C5wO3AXBySX7z6upWPK0q3hSkWAKjKpMcN0m2xzCISfoOBSknrQG17fZ1+XlMA4AU9lCNTM6dHq5CFZOmR/xZGp47PS65BOBwogvcRWvYE=
+	t=1722545147; cv=none; b=AT+dkMZz+fQtjPAgp+YTzeUMqQaAwngAFnlOMocSBEml6UDC4I3VRyLJyYuhC26nc0oy2Lks4wVvA2lr3CShf2S84R7somrMMCAWntbOh/MOjwGD5nfRCF07QvSJBkM0dQnlyTaJbHGkeJa3Daxlxre9zVeKE2xWmjbtk3KcTew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722544585; c=relaxed/simple;
-	bh=88mQIyKv1v9j5qA/objncp5Pzvf1ssUJs0T91Yu09fQ=;
+	s=arc-20240116; t=1722545147; c=relaxed/simple;
+	bh=mRCJoLNo/ClGYp9kqKLcGGQ71Wf0XCz0964N2mkdT48=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f6R7bwGtr9VcMvcER0utnyO4NP7eFuouhpDDTcKZQxfvqaVgP5byQs0khYYviDKcauk/5JHjuOz5iRfZiyx1ciVh7kmC1zj3FA/OXjJIP0SKeEW4sUch5H+RO0KUHx+cFKGdgMRW5Tv58VQnNMEt1HPx0PTRQLhuwQuAINtc7I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iLjXCbK2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722544582;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9K9HgaDKNdZd379OukpsFKa06aZrb2knoO+bglpEAU8=;
-	b=iLjXCbK2AL1pPjRQZYIoB0K6Ho/EtRHVlfxPH2+qdooITcmDXWVt9SUI8LfVDjwClVaWbI
-	K/WIDf2bHCk+xV2/9B3+YxmO0LMFM5ybKtrSxEbE/EEqpCIQwiyq+KszYMrauPnrcJ0Mni
-	Ux664keSm/y3ttmpiWPSQeBFzIdaSJE=
-Received: from mail-lj1-f198.google.com (mail-lj1-f198.google.com
- [209.85.208.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-eaHKzqhpOK-9hi4zYVpwlA-1; Thu, 01 Aug 2024 16:36:20 -0400
-X-MC-Unique: eaHKzqhpOK-9hi4zYVpwlA-1
-Received: by mail-lj1-f198.google.com with SMTP id 38308e7fff4ca-2ef3133ca88so71838751fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 13:36:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722544579; x=1723149379;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9K9HgaDKNdZd379OukpsFKa06aZrb2knoO+bglpEAU8=;
-        b=JMG618NPcLtV9s++TNZp7uwdWUn91V0IibHSeWtM+SdaUH0NhAfzJxQEIZx9uH4fnM
-         oCWa4+RfKO6cqcjMD1IHxzv0xmOiHx3CH6lg3fHa9oTCfMzHR7zvwvTXD9GebvWz111Z
-         cvH+FDQBpniKf4CsyVtJnUTOmLH5K9hegrtFtO6Xs8dbqfc1UQUHEYGbqUASW5X2Vjyo
-         QFU07xE/UmZ1k/GDWL4N05PskbHYUoxp1j/ayyFhN/jx9O0nxqJSn8FHSyAn/InpnPOV
-         ndCXAGRWkdQI5EixhDDLqKw714GGSknD2v27w28wxdsoKJRUkXQAm9OpoZgGMFq+I7zC
-         NKPA==
-X-Forwarded-Encrypted: i=1; AJvYcCU1jj1lPBEExvGs1m3iffRQLOhaOhuo+ARW2VSpy7tC3tfeMGrFiKamJ2IJzjANTqg3dg3yxwrHJxlzrDdeoSxEq9kOSqs1YR79+ADL
-X-Gm-Message-State: AOJu0YzgByaL5AdL7axkX2beQmGE8utIhOomCJV2+3dEVowG4F90frra
-	OZCPW5qle1t9AJcU0t+9rFEfQ/nRGscTcYH9uSVsW/JIJfg4EOZayro63zEuB+5AI736mr6UzMD
-	VwXqOMd3HWCLEQbeTUjQKhei5/NLCURXtR2uUj6Blb4lXb0Gy078B/zPa+FfyeQ==
-X-Received: by 2002:a2e:9606:0:b0:2ef:23ec:9357 with SMTP id 38308e7fff4ca-2f15a9f988emr10593051fa.0.1722544579010;
-        Thu, 01 Aug 2024 13:36:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGD1jLFu3k9A5oSwiIarD8oISJoLm6YRL5dKjuPQdlltDFKTJ64oPAlpbFUisJe8DOka40hA==
-X-Received: by 2002:a2e:9606:0:b0:2ef:23ec:9357 with SMTP id 38308e7fff4ca-2f15a9f988emr10592691fa.0.1722544578387;
-        Thu, 01 Aug 2024 13:36:18 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8adc7dsm69224985e9.14.2024.08.01.13.36.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 13:36:17 -0700 (PDT)
-Message-ID: <5de3795a-a75b-48af-b62c-07639cd21d59@redhat.com>
-Date: Thu, 1 Aug 2024 22:36:15 +0200
+	 In-Reply-To:Content-Type; b=Nyo/Gndr0aCtDlMmDfm8v+Ew4v58GynuoMa3d70l30kHkyuwNt8W8BLFgzoASxAhPiGEvcuKpWplJbmGhRfX1zs1CAb8YB3hbpR0qFU/SwnRReJd6nl8fCNoIIhHTyuSlSUFzyt8LTWulV0XdbpqNfP8k2KRdtjs3dZxsKH4FyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=TDKAyXJl; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1722545132; x=1723149932; i=deller@gmx.de;
+	bh=Val38mT4EFBf83cRJQQiOok/CpEe6U7DASQ5SF4Q5Kc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TDKAyXJlZduayWRqQPQA1wZM5Qa0HKKF3Jw6vQCv8FVpP4frBJX5tbkJPeghtw0z
+	 xanlDrZjr3GXmLH7eiNj7Ui075/uoHXZBpjTxrn793kjiB1eqX+g/O7xPfoym43JY
+	 mGhs3Xqnv7IQVjoGOq01AiOoCJw3DSQNbLRQ4yS1BG9cr5mwvRIxUivD8p0VymF1w
+	 K65DxPJ09prmsgD7RpDZlQwQj/yngXjyrgbZkfFzuRD/1MNzaWb9rFQte7sFlGhPM
+	 DqK3OGrvSSfaiKOXreSu/As5HpfOm5D3OupYGJ++EbKM7hyKqMKWVU+y7g61bl0/x
+	 Lk14Ac9+OfBxUqClhw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.20.55] ([109.250.63.33]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1McpJg-1rzjd03GUM-00lfVL; Thu, 01
+ Aug 2024 22:45:32 +0200
+Message-ID: <a7a1b5b7-9d98-4c3f-a5c4-36c692c12418@gmx.de>
+Date: Thu, 1 Aug 2024 22:45:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,101 +57,259 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/1] mm: introduce MADV_DEMOTE/MADV_PROMOTE
-To: Andrew Morton <akpm@linux-foundation.org>,
- BiscuitOS Broiler <zhang.renze@h3c.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, arnd@arndb.de,
- linux-arch@vger.kernel.org, chris@zankel.net, jcmvbkbc@gmail.com,
- James.Bottomley@HansenPartnership.com, deller@gmx.de,
- linux-parisc@vger.kernel.org, tsbogend@alpha.franken.de,
- rdunlap@infradead.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
- richard.henderson@linaro.org, ink@jurassic.park.msu.ru, mattst88@gmail.com,
- linux-alpha@vger.kernel.org, jiaoxupo@h3c.com, zhou.haofan@h3c.com
-References: <20240801075610.12351-1-zhang.renze@h3c.com>
- <20240801075610.12351-2-zhang.renze@h3c.com>
- <20240801122514.60ceff638d97f460361f09de@linux-foundation.org>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 1/1] video: Handle HAS_IOPORT dependencies
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ Arnd Bergmann <arnd@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+ linux-kernel@vger.kernel.org
+References: <20240410142329.3567824-1-schnelle@linux.ibm.com>
+ <20240410142329.3567824-2-schnelle@linux.ibm.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801122514.60ceff638d97f460361f09de@linux-foundation.org>
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <20240410142329.3567824-2-schnelle@linux.ibm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lzYvjcjDyDNxEaHtrDlJ0rIuzfB/w2Ev8lE30ZhORoaIL1jTTo2
+ WDuOrQkwWQcwBm71GpUHs7kTE5nQpoMP8wNnBda3FotxwQ9YZG6Uahzur+1iOuzT3LO5bY+
+ svWo1mySdZKnoAxgO6JVy6mA53kaYjqAK5e7N16QlY/tktEBm10Ko9yvLxPe0LkkJrue95Y
+ SGYxdsw/pDGuHnIJl0Vew==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/JHtuh+UIs0=;wLU1+TfU5Egd/kMuFonftWx3N52
+ stXkP4Wzdoi3LaKPEQAfmDoAKlXT3rCQH6k4Q80BGVottqaFGfYJnL6o+Y9zgSZUg6t7XtneY
+ J+Tj0OJCqNBTw1Z/Um5n7wYuD4gUtKtj9SVqFYnkxFaz0SDeNW7W+bu01lotppDxSQOrhWHVK
+ IViq4cNsLUCQpIY6SsJEb0WKJRvzyX9Q05BfMVo10mI4U6iKhAtbt70Jaoz++Xfp4giGizR+1
+ jwhzVsZo3xLUhm1lrIPYcuJbomzXwM7Bou9Ytr0fo3tlYDNrT+rpixRjlilOR2aiLGF0pigVD
+ TEoK3hUxy3lAU9HHYY+XfiIxXW0YQjS5MB4yCgmlkIW6JHSw/Z+T7HlLfeUifFKqYLgtk4Il6
+ yqarvNQsAhmGD1W2k4KR8uwYBc/yHpeoHzb9VuKn5mEM0CAdd9Spij9/JqIsK6aTTFQMgqq+q
+ 7sk5ZumFCjISV4MbMejlHPMxaYQM4c5Q2S95jL9CZSDEVDV254VWlNM2SGLiX5tgh7N55SRRN
+ QF668h4gZJWIqD9Qp6TVfz3RrpueHBt/zzC/ssEiPTKwb4m9AAgwp8ugbGq5ifjfFOHlpazHo
+ uH6MAKX0ArH9Ihf3S4pcQiVraVH+rFxRhGeC2rkE6Ya2aBEx08n00YyDq2xnGWcAj/g8075mi
+ gx2kppZfk9gt4vP62neoY5+3fFaw8jbmjOEB0i62oPguphL6AcBxF9Xp8USvR1yJEZRoH7p3m
+ LjrU3JeExPwrrf587cCbEwJ3ug/m+LaAYB6lZtZJmSZdrvovB3K20nCdytmTBJXzsrXhwN4cF
+ yXbSngScbkjlMOmrTaYbGcyQ==
 
-On 01.08.24 21:25, Andrew Morton wrote:
-> On Thu, 1 Aug 2024 15:56:10 +0800 BiscuitOS Broiler <zhang.renze@h3c.com> wrote:
-> 
->> From: BiscuitOS Broiler <zhang.renze@h3c.com>
-> 
-> Please use a real name.
-> 
->  From Documentation/process/submitting-patches.rst:
-> 
-> : then you just add a line saying::
-> :
-> : 	Signed-off-by: Random J Developer <random@developer.example.org>
-> :
-> : using a known identity (sorry, no anonymous contributions.)
-> 
-> 
+On 4/10/24 16:23, Niklas Schnelle wrote:
+> In a future patch HAS_IOPORT=3Dn will disable inb()/outb() and friends a=
+t
+> compile time. We thus need to #ifdef functions and their callsites which
+> unconditionally use these I/O accessors. In the include/video/vga.h
+> these are conveniently all those functions with the vga_io_* prefix.
+>
+> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
+> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
+> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
-I'm curious, reading d4563201f33a022fc0353033d9dfeb1606a88330, 
-pseudonyms are allowed now as long as we are dealing with a "known 
-identity".
+I've applied this patch now to the for-next fbdev git tree.
 
-"Real name" was replaced by "known identity" in that commit.
+Please let me know if you prefer another patch....
 
-I'm pretty much in favor of people just using their real name here as 
-well. But apparently, "knwon identity" is sufficient. Not that I could 
-tell when someone is a "known identity". Likely "BiscuitOS Broiler" 
-would be a known identity and not "anonymous"?
+Thanks!
+Helge
 
--- 
-Cheers,
 
-David / dhildenb
+> ---
+> Note: This patch does not depend any not-yet-mainline HAS_IOPORT changes
+> and may be merged via subsystem specific trees at your earliest
+> convenience.
+>
+>   include/video/vga.h | 35 +++++++++++++++++++++++++----------
+>   1 file changed, 25 insertions(+), 10 deletions(-)
+>
+> diff --git a/include/video/vga.h b/include/video/vga.h
+> index 947c0abd04ef..ed89295941c4 100644
+> --- a/include/video/vga.h
+> +++ b/include/video/vga.h
+> @@ -201,6 +201,7 @@ extern int restore_vga(struct vgastate *state);
+>    * generic VGA port read/write
+>    */
+>
+> +#ifdef CONFIG_HAS_IOPORT
+>   static inline unsigned char vga_io_r (unsigned short port)
+>   {
+>   	return inb_p(port);
+> @@ -210,12 +211,12 @@ static inline void vga_io_w (unsigned short port, =
+unsigned char val)
+>   {
+>   	outb_p(val, port);
+>   }
+> -
+>   static inline void vga_io_w_fast (unsigned short port, unsigned char r=
+eg,
+>   				  unsigned char val)
+>   {
+>   	outw(VGA_OUT16VAL (val, reg), port);
+>   }
+> +#endif /* CONFIG_HAS_IOPORT */
+>
+>   static inline unsigned char vga_mm_r (void __iomem *regbase, unsigned =
+short port)
+>   {
+> @@ -235,28 +236,34 @@ static inline void vga_mm_w_fast (void __iomem *re=
+gbase, unsigned short port,
+>
+>   static inline unsigned char vga_r (void __iomem *regbase, unsigned sho=
+rt port)
+>   {
+> -	if (regbase)
+> -		return vga_mm_r (regbase, port);
+> -	else
+> +#ifdef CONFIG_HAS_IOPORT
+> +	if (!regbase)
+>   		return vga_io_r (port);
+> +	else
+> +#endif /* CONFIG_HAS_IOPORT */
+> +		return vga_mm_r (regbase, port);
+>   }
+>
+>   static inline void vga_w (void __iomem *regbase, unsigned short port, =
+unsigned char val)
+>   {
+> -	if (regbase)
+> -		vga_mm_w (regbase, port, val);
+> -	else
+> +#ifdef CONFIG_HAS_IOPORT
+> +	if (!regbase)
+>   		vga_io_w (port, val);
+> +	else
+> +#endif /* CONFIG_HAS_IOPORT */
+> +		vga_mm_w (regbase, port, val);
+>   }
+>
+>
+>   static inline void vga_w_fast (void __iomem *regbase, unsigned short p=
+ort,
+>   			       unsigned char reg, unsigned char val)
+>   {
+> -	if (regbase)
+> -		vga_mm_w_fast (regbase, port, reg, val);
+> -	else
+> +#ifdef CONFIG_HAS_IOPORT
+> +	if (!regbase)
+>   		vga_io_w_fast (port, reg, val);
+> +	else
+> +#endif /* CONFIG_HAS_IOPORT */
+> +		vga_mm_w_fast (regbase, port, reg, val);
+>   }
+>
+>
+> @@ -280,6 +287,7 @@ static inline void vga_wcrt (void __iomem *regbase, =
+unsigned char reg, unsigned
+>   #endif /* VGA_OUTW_WRITE */
+>   }
+>
+> +#ifdef CONFIG_HAS_IOPORT
+>   static inline unsigned char vga_io_rcrt (unsigned char reg)
+>   {
+>           vga_io_w (VGA_CRT_IC, reg);
+> @@ -295,6 +303,7 @@ static inline void vga_io_wcrt (unsigned char reg, u=
+nsigned char val)
+>           vga_io_w (VGA_CRT_DC, val);
+>   #endif /* VGA_OUTW_WRITE */
+>   }
+> +#endif /* CONFIG_HAS_IOPORT */
+>
+>   static inline unsigned char vga_mm_rcrt (void __iomem *regbase, unsign=
+ed char reg)
+>   {
+> @@ -333,6 +342,7 @@ static inline void vga_wseq (void __iomem *regbase, =
+unsigned char reg, unsigned
+>   #endif /* VGA_OUTW_WRITE */
+>   }
+>
+> +#ifdef CONFIG_HAS_IOPORT
+>   static inline unsigned char vga_io_rseq (unsigned char reg)
+>   {
+>           vga_io_w (VGA_SEQ_I, reg);
+> @@ -348,6 +358,7 @@ static inline void vga_io_wseq (unsigned char reg, u=
+nsigned char val)
+>           vga_io_w (VGA_SEQ_D, val);
+>   #endif /* VGA_OUTW_WRITE */
+>   }
+> +#endif /* CONFIG_HAS_IOPORT */
+>
+>   static inline unsigned char vga_mm_rseq (void __iomem *regbase, unsign=
+ed char reg)
+>   {
+> @@ -385,6 +396,7 @@ static inline void vga_wgfx (void __iomem *regbase, =
+unsigned char reg, unsigned
+>   #endif /* VGA_OUTW_WRITE */
+>   }
+>
+> +#ifdef CONFIG_HAS_IOPORT
+>   static inline unsigned char vga_io_rgfx (unsigned char reg)
+>   {
+>           vga_io_w (VGA_GFX_I, reg);
+> @@ -400,6 +412,7 @@ static inline void vga_io_wgfx (unsigned char reg, u=
+nsigned char val)
+>           vga_io_w (VGA_GFX_D, val);
+>   #endif /* VGA_OUTW_WRITE */
+>   }
+> +#endif /* CONFIG_HAS_IOPORT */
+>
+>   static inline unsigned char vga_mm_rgfx (void __iomem *regbase, unsign=
+ed char reg)
+>   {
+> @@ -434,6 +447,7 @@ static inline void vga_wattr (void __iomem *regbase,=
+ unsigned char reg, unsigned
+>           vga_w (regbase, VGA_ATT_W, val);
+>   }
+>
+> +#ifdef CONFIG_HAS_IOPORT
+>   static inline unsigned char vga_io_rattr (unsigned char reg)
+>   {
+>           vga_io_w (VGA_ATT_IW, reg);
+> @@ -445,6 +459,7 @@ static inline void vga_io_wattr (unsigned char reg, =
+unsigned char val)
+>           vga_io_w (VGA_ATT_IW, reg);
+>           vga_io_w (VGA_ATT_W, val);
+>   }
+> +#endif /* CONFIG_HAS_IOPORT */
+>
+>   static inline unsigned char vga_mm_rattr (void __iomem *regbase, unsig=
+ned char reg)
+>   {
 
 
