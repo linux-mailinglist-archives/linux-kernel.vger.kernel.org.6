@@ -1,114 +1,183 @@
-Return-Path: <linux-kernel+bounces-271525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5F9944F6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:36:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466BE944F67
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2574B1F227DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:36:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F103B28D588
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE281B1500;
-	Thu,  1 Aug 2024 15:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451C51B32A8;
+	Thu,  1 Aug 2024 15:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a56O/DBL"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pV0P8aex"
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18B521A0B;
-	Thu,  1 Aug 2024 15:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AAC21AED23
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722526595; cv=none; b=q+jMkrr/1dsfIDPMkwpyv9edxOakOv/G9rTjC8xq8wC9Rf4/jC4L0YiRrlC/BX0GQ00q0mBXC3GkHRTkWJTGAwI7bDOEEfK0gOuCsExeEjp/sS4ZsQzDns8o61yQGjEHlycgy3/VcIBv4H4S9XgvBp3oeGYpPTdYDAydaPNi3fQ=
+	t=1722526499; cv=none; b=OD+9GXWIf3xI+Gaov20K2MnFuRe/g11OZds6/4EHDwCzIQ3Q3k+mFZcBvfrjIFx+KauzAONxKptX6Zb74FpH/x/j/AhGc9tcEd7wCxQg+4kmqhxxBjvySsAkoN1+d9Q3Hs0SlZTH9eajyPpU3qF1jAyU29yyGmQF9Pc1TkdFbOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722526595; c=relaxed/simple;
-	bh=Bh04zkUoUkR+Bpdw7Xxl27Vv1Al+y4yZ3LKJUjKUIiY=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=XmH1cTBR6IuV3SUc7tETc7x1y+X85q7dZIZyAd0SiHL/yJ/lqhmoHOfw0JQ5Jxzw8fZxT84VrA/8KD/dh2XbUO8n/9lc9mYXGjUjyqeVPvmQ49f5bO4GyQMQ5homIxFP13m8LuPNl5gJ8XK0sftGZCzBevbTCNQOdR/wD4EvKDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a56O/DBL; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fec34f94abso55847545ad.2;
-        Thu, 01 Aug 2024 08:36:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722526593; x=1723131393; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1i1/5Afa7Io3WkMvQUO0SKDT8T2L7XQxbEH0MVs8m7U=;
-        b=a56O/DBLuVUYLs9xkcrpPzsiPUw4fNZ+Am65J08eBQZoPPShNDgEDxN1qVVoLFoqsF
-         jaO4SMORmEJXPW+ke45WYgoE1Z9TR+AzAs8iJ6AFSr1vOYrLHlxfWru6qM4/1PcRV3Oz
-         l5UB60I78lkj2nypuq/gB6bMYlWuq2FtqokURmi1AoxWf6J4gjJiIkPlPmR2V5dF5/IJ
-         yRi1b7w/DUAuF3aHKeg/D0H6r65lq5GZBiez+z0OEK5ttZTEjLYAKHwE7B8wgxgSnrKi
-         zHe0gQ41MTuiUTNcU38euCGS3+Pn654FKDmggHSE9rRtfdDfbX2uDLUZbzVjYXZAeHc1
-         HybQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722526593; x=1723131393;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1i1/5Afa7Io3WkMvQUO0SKDT8T2L7XQxbEH0MVs8m7U=;
-        b=LjPaJ9JO+CE72+qe1RF4/8D5YrZVhYCQqGpN12/kpNghYP5m1b+mbZK6qorzHB9x4L
-         XXpzDNzCAtJsWVHKe+//6KIteJghrnZmas3SzUS/dRnudTSx/SxOAp0W/DsRWROtDz9r
-         a/WGYrMmQYZfCvmi9MUWticcqUAq2M1ZxvZmSEyOOeGNohj9ZrTc9Vqnhq8QP1hZFqJg
-         3SmsrNjbOnRy4TGC+B0D2vWoIyjr1amjMD/kC2MqwcP8ZEtOm/JM8tNAtA/iOxMfeZbc
-         PZT3va2hLKiVDc7tI4hX5e6z2KEmw67slP4P6MRqU4y/LD/c06Nh8pCVVKqJprs1FAFb
-         BzAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXRo+Wj9NDwjzVxgZrY8/GlBBWM2ysZAzHQPe5N+N5CiUQt+rP2jSsaOlqU7WyKL7mgK+yc3ZIwgmjc/HC0A0snYU3MMBFAvPN+2pwcfzIUqnedPc7yK/YDihb8SUag3s9q6QTgcigwag==
-X-Gm-Message-State: AOJu0YwG/ExHI0U6WMPRsOZCcGfHU+9Ap256SxHOmHSEd9nmoQYuH35W
-	RPc7afknOWs7JgwBNxw9iSiJ1+ZIlH/0c2pSPFHBP+JqGOCwLJcd4wpIVw==
-X-Google-Smtp-Source: AGHT+IGVt4tmSDLcrcaKqUAU3jYK85egdUEbqNwx+aZGQJ1Mv5d9gvuEJs50bkVcvd7CF3anqMkErg==
-X-Received: by 2002:a17:903:22d1:b0:1fc:5eac:9873 with SMTP id d9443c01a7336-1ff572b9dd9mr6963705ad.30.1722526593098;
-        Thu, 01 Aug 2024 08:36:33 -0700 (PDT)
-Received: from peter-bmc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f56febsm28015ad.88.2024.08.01.08.36.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 08:36:32 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Noah Wang <noahwang.wang@outlook.com>,
-	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
-	Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] dt-bindings: Add ISL69260 voltage regulator device
-Date: Thu,  1 Aug 2024 23:34:27 +0800
-Message-Id: <20240801153429.1277378-1-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1722526499; c=relaxed/simple;
+	bh=cDl6RN2bBIoFKiHj7VJYtw6XbTm0TAQroLX/vhciFkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dh4C13643dLVLODIeyTca7jKFeMO+GhIaQc0NNMScejQoiIA45SJ+E2XBco8Qu3j1MFTFDOE30ZiEQBWsE1GzT/tcjf3QmYDnnmM/RVfGnYl/Icffw6S1a0XPUNRwvPwj8E7eatn8s4cqMXXY3HRFipy+KGAEJXxe2hxAuGYvHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pV0P8aex; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4WZY1M0DX7zsVm;
+	Thu,  1 Aug 2024 17:34:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1722526486;
+	bh=A1F5zQZorvNwly9Y8kuUv6R07sNlctROnahVJ8WF67o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pV0P8aexwGkvDEmlicisW25ex2jcKUEbnsi1BWyUaNH8VY5zIzP5c4ikbloRZp0Wn
+	 00qnhlQORTaApFlGR2/ELVg53YeW8AtUhnUsaBK3VqxGvJVJ5iJGpeAr/BPe+EcbSb
+	 QrFsP7iYx5/CJLfoaKvtHDsibuUDIC20IJkVbsrE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4WZY1L1VZpzy5S;
+	Thu,  1 Aug 2024 17:34:46 +0200 (CEST)
+Date: Thu, 1 Aug 2024 17:34:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	James Morris <jmorris@namei.org>, keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to
+ ptrace_may_access()
+Message-ID: <20240801.Ais4tiethaus@digikod.net>
+References: <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
+ <20240729.cho6saegoHei@digikod.net>
+ <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
+ <20240729.rayi3Chi9aef@digikod.net>
+ <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
+ <20240729.roSo6soogho8@digikod.net>
+ <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
+ <CAG48ez2bnvuX8i-D=5DxmfzEOKTWAf-DkgQq6aNC4WzSGoEGHg@mail.gmail.com>
+ <CAHC9VhTk4X61K72FubR8ahNeGyzWKkF=vJZD+k-8+xO7RwZpgg@mail.gmail.com>
+ <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-The ISL69260 is a digital dual output multiphase
-with Intel VR13, VR13.HC, and VR14 specifications.
+On Wed, Jul 31, 2024 at 11:33:04PM +0200, Jann Horn wrote:
+> On Wed, Jul 31, 2024 at 11:27 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Wed, Jul 31, 2024 at 4:54 PM Jann Horn <jannh@google.com> wrote:
+> > > On Wed, Jul 31, 2024 at 10:29 PM Paul Moore <paul@paul-moore.com> wrote:
+> > > > On Mon, Jul 29, 2024 at 11:17 AM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > On Mon, Jul 29, 2024 at 05:06:10PM +0200, Jann Horn wrote:
+> > > > > > On Mon, Jul 29, 2024 at 5:02 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > On Mon, Jul 29, 2024 at 04:21:01PM +0200, Jann Horn wrote:
+> > > > > > > > On Mon, Jul 29, 2024 at 4:09 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > > > On Mon, Jul 29, 2024 at 03:49:29PM +0200, Jann Horn wrote:
+> > > > > > > > > > On Mon, Jul 29, 2024 at 2:59 PM Mickaël Salaün <mic@digikod.net> wrote:
+> > > > > > > > > > > A process can modify its parent's credentials with
+> > > > > > > > > > > KEYCTL_SESSION_TO_PARENT when their EUID and EGID are the same.  This
+> > > > > > > > > > > doesn't take into account all possible access controls.
+> > > > > > > > > > >
+> > > > > > > > > > > Enforce the same access checks as for impersonating a process.
+> > > > > > > > > > >
+> > > > > > > > > > > The current credentials checks are untouch because they check against
+> > > > > > > > > > > EUID and EGID, whereas ptrace_may_access() checks against UID and GID.
+> > > > > > > > > >
+> > > > > > > > > > FWIW, my understanding is that the intended usecase of
+> > > > > > > > > > KEYCTL_SESSION_TO_PARENT is that command-line tools (like "keyctl
+> > > > > > > > > > new_session" and "e4crypt new_session") want to be able to change the
+> > > > > > > > > > keyring of the parent process that spawned them (which I think is
+> > > > > > > > > > usually a shell?); and Yama LSM, which I think is fairly widely used
+> > > > > > > > > > at this point, by default prevents a child process from using
+> > > > > > > > > > PTRACE_MODE_ATTACH on its parent.
+> > > > > > > > >
+> > > > > > > > > About Yama, the patched keyctl_session_to_parent() function already
+> > > > > > > > > check if the current's and the parent's credentials are the same before
+> > > > > > > > > this new ptrace_may_access() check.
+> > > > > > > >
+> > > > > > > > prepare_exec_creds() in execve() always creates new credentials which
+> > > > > > > > are stored in bprm->cred and then later committed in begin_new_exec().
+> > > > > > > > Also, fork() always copies the credentials in copy_creds().
+> > > > > > > > So the "mycred == pcred" condition in keyctl_session_to_parent()
+> > > > > > > > basically never applies, I think.
+> > > > > > > > Also: When that condition is true, the whole operation is a no-op,
+> > > > > > > > since if the credentials are the same, then the session keyring that
+> > > > > > > > the credentials point to must also be the same.
+> > > > > > >
+> > > > > > > Correct, it's not a content comparison.  We could compare the
+> > > > > > > credential's data for this specific KEYCTL_SESSION_TO_PARENT call, I
+> > > > > > > guess this should not be performance sensitive.
+> > > > > >
+> > > > > > Yeah, though I guess keyctl_session_to_parent() is already kind of
+> > > > > > doing that for the UID information; and for LSMs that would mean
+> > > > > > adding an extra LSM hook?
+> > > > >
+> > > > > I'm wondering why security_key_session_to_parent() was never used: see
+> > > > > commit 3011a344cdcd ("security: remove dead hook key_session_to_parent")
+> > > >
+> > > > While I was looking at this in another off-list thread I think I came
+> > > > around to the same conclusion: I think we want the
+> > > > security_key_session_to_parent() hook back, and while I'm wearing my
+> > > > SELinux hat, I think we want a SELinux implementation.
+> > >
+> > > FYI: Those checks, including the hook that formerly existed there, are
+> > > (somewhat necessarily) racy wrt concurrent security context changes of
+> > > the parent because they come before asynchronous work is posted to the
+> > > parent to do the keyring update.
+> >
+> > I was wondering about something similar while looking at
+> > keyctl_session_to_parent(), aren't all of the parent's cred checks
+> > here racy?
+> 
+> Yeah...
+> 
+> > > In theory we could make them synchronous if we have the child wait for
+> > > the parent to enter task work... actually, with that we could probably
+> > > get rid of the whole cred_transfer hack and have the parent do
+> > > prepare_creds() and commit_creds() normally, and propagate any errors
+> > > back to the child, as long as we don't create any deadlocks with
+> > > this...
+> >
+> > Assuming that no problems are caused by waiting on the parent, this
+> > might be the best approach.  Should we also move, or duplicate, the
+> > cred checks into the parent's context to avoid any races?
+> 
+> Yeah, I think that'd probably be a reasonable way to do it. Post task
+> work to the parent, wait for the task work to finish (with an
+> interruptible sleep that cancels the work item on EINTR), and then do
+> the checks and stuff in the parent. I guess whether we should also do
+> racy checks in the child before that depends on whether we're worried
+> about a child without the necessary permissions being able to cause
+> spurious syscall restarts in the parent...
 
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
----
- Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Why doing the check only in the parent and reporting back the result to
+the child could be a security issue?  I guess duplicating the check
+would just avoid executing useless code in the parent side if the child
+doesn't have enough privileges right?
 
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 7913ca9b6b54..6ec8b4cc9e56 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -164,6 +164,8 @@ properties:
-           - isil,isl29030
-             # Intersil ISL68137 Digital Output Configurable PWM Controller
-           - isil,isl68137
-+            # Intersil ISL69260 PMBus Voltage Regulator
-+          - isil,isl69260
-             # Intersil ISL69269 PMBus Voltage Regulator
-           - isil,isl69269
-             # Intersil ISL76682 Ambient Light Sensor
--- 
-2.25.1
+> 
+> > > > Mickaël, is this something you want to work on?
 
+I'll let you handle the new design of the hook, but I'll review it. :)
+
+I guess we're not OK to tie the KEYCTL_SESSION_TO_PARENT call to a
+ptrace_may_access() mainly because of the Yama case?  I'm wondering if
+we should add an exception for Yama here, or if each LSM should
+implement its own new hook with the related new bit of security policy.
+I guess some systems with a fine-tuned SELinux policy could be an issue
+too.
+
+Anyway, I wondering what was the motivation to only/mainly check
+EUID/EGID for keyring change.
 
