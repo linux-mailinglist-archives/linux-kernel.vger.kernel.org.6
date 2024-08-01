@@ -1,130 +1,300 @@
-Return-Path: <linux-kernel+bounces-270834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DCE9445F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:57:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFC139445FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23F211C2125E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:57:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F284F1C22197
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47311586C6;
-	Thu,  1 Aug 2024 07:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86AD16C856;
+	Thu,  1 Aug 2024 07:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="wkWcxefX"
-Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/o6HCT6"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA3D19478
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3504719478;
+	Thu,  1 Aug 2024 07:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722499060; cv=none; b=tL5PYZe4wCArcivMzJ4cz68P3evd/f3bUBeUnl/RQFDpGd6t5SikdCZ25vyKwwjTpLlFInP+jHPqhxgFy9QUlVz6wf7ttmRk6XB3vte43bBCJRE3JE3D+WlFI2vBgtjF5rm+BbAzLRH/V7ofa0JNVJK2qrz/0B06SThi5JHjl68=
+	t=1722499065; cv=none; b=r7HxCePPKIe1a0aGOthq7p6Ck/PjaWaWbOyI6jPKRb53tjtmRh5xika66uq1YszLn3sbsiNO8r38u1/gR1+VMwkZ1RbyxZb9zZbVoVxRjSy4mkjffg+hCYoqSHMz5DfToNqQ9l2wz2enCyMem9taaZhEynNwKADdfm40+FO28U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722499060; c=relaxed/simple;
-	bh=7E9ZA2Dof+8oK5hEk0/I19LSZIO02MAJVi8TTwhomIs=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=p70nm2o2FJXveVhYRifzTMnYm1pRMRWCnMVTJ4Lzud2yL9qg/uCu+HiCJ/f9Uqe5+s91U0EJYfc5uY+8owU/5Z8B6i/kHjHEIvcdeeBQQcWLPY/ZPf9QMCL1pFeia/X6N2ZdA3qwIW7uPryTSMuMaQpveqQ1zv8LUC95jdqp1Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=wkWcxefX; arc=none smtp.client-ip=35.89.44.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
-	by cmsmtp with ESMTPS
-	id YrfUs6glcumtXZQgrs9jd4; Thu, 01 Aug 2024 07:57:37 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id ZQgqskcFPIKFrZQgqsloPA; Thu, 01 Aug 2024 07:57:37 +0000
-X-Authority-Analysis: v=2.4 cv=VcTxPkp9 c=1 sm=1 tr=0 ts=66ab3ff1
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=VwQbUJbxAAAA:8 a=HaFmDPmJAAAA:8
- a=Rfy8vk5LW4CTstU3NUIA:9 a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22
- a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cGnJeYAm1TgGAnA4H938EbdG0bTZ2YHwg5QDMkIFI4g=; b=wkWcxefXvjeXY6DAP0P26Q+h63
-	nFRC2GUPftev/in0kxUPYWl/cv1dy2Fw60iAP9t9vApanVpXKh3hKs4uxQ26mezsaiMZSkvJmnVb5
-	CeoDGMEpVKcFBSyaNNnFZovoMbuj+62uSD4Q8YdAHQpdlkvBdwGCSypJiQYzdHbC4u43c9O8TwJdD
-	I02J6VPGmZSVjvLI4829y5pTe+dU+Up94wTlZfVvu7Se4Rw1iT1elGCwS3P4hSneDrYybgrjnFUBI
-	YoAUHsbO7QRzC2aXfbU/NeZOrcm5uG2XkRm2rQe+f/U1ulsGeF2x7NB6C2cqiuBBs0fxFk3urLrb0
-	UfRzoJ4A==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:60442 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1sZQgm-000JId-0F;
-	Thu, 01 Aug 2024 01:57:32 -0600
-Subject: Re: [PATCH 6.6 000/568] 6.6.44-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240730151639.792277039@linuxfoundation.org>
-In-Reply-To: <20240730151639.792277039@linuxfoundation.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <118d3d10-3d84-2fcc-4e67-f8750d755e6a@w6rz.net>
-Date: Thu, 1 Aug 2024 00:57:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1722499065; c=relaxed/simple;
+	bh=WjopyENnVZGG8BoRkf9D6WdWGKDMbJZhOejX6u3vaig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GqtQz+dHnB3FKumxhQJ+g9ct7peo947nJ2nfJcvijiUG6LMg4FRXoSNO6yCvNcZQ8KkapXaU5Pj7x8b9rgdl4NNSq5ZbQIEd8CEfMP84yFdC8JtY0p1x+MpO8P0nSkL7ccdG8VQHgyVhO6AJoVn6FfaHNqzFLwVCnO/I01bdx7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/o6HCT6; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fdde0c8dcso37245681cf.0;
+        Thu, 01 Aug 2024 00:57:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722499063; x=1723103863; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NH9ilRYLYFpvV4bBytWkKj2NHM9xGHTKENKnDvjIGns=;
+        b=a/o6HCT68OF+t2teK5Cz3lq9xWq85hAsdl6J+KGs7+VQ2SJNxZFQgTQlf5JhInV8mY
+         6bYyR1Llsrh87D43BRTw+G422g4hCqK19tXSXjU1i+H0WvW8eVB/nnqWxwPtjsRYCpWI
+         X4Q2B4x9xHXbpdMhKRSdM86OLjym/JPaocrROhvq1uocf3xEcwB35K5fq9oweKpF+fxC
+         MibUzj0I1LSjALXsCOIIImGkOVa2OPwQASV2g6kK0mAtq0FDbT036tAh/BnNXrZZG+3j
+         NVZLSbcZ04aSNu0hmnTpFRZGeRSrhfNPgpyTFr3dHah/0D4aNeLhRrGBJ5WR3vMeeFMZ
+         Qdrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722499063; x=1723103863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NH9ilRYLYFpvV4bBytWkKj2NHM9xGHTKENKnDvjIGns=;
+        b=DqQaAc6RikrgHkxFJyPLSYfxD1KQesyc7ha/FeDjOzXKX0KKvov4kA8dk3+RXsQ3uo
+         WWrEX1Hlm0ub8bOVEFonfrc0o10wPqvFbrbdfymU8ZLv1erHNiMusJBzTlp9lnU4Blti
+         pzbUr16jfWCzn+If13COJvr4EBqnQ+kf61FaSHpcZmMbVBIYZuHWkYYmJgwVrYhRe1k2
+         +Bj7h93cuxOwrEgTblvaWUp/HxL46BZ9buAKbJ/+DSYuTr18ayrVu85a210s5dhjeRfJ
+         Leu4oPew0w2pI9ND3oyV9LQ2Y6J6o19Vp0OPbsIg22yASD5f2vGX30nslvfXULyoCI6h
+         Tn8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTIxMP6s9t7BAWUh7ukBiUjqYBzUOK50fWf79CyV5szH0KE00irpfNaefynP/t0u/1n7WtVTHClX8nbW2vLcmN+dC0JvOnTDrWFAy1bLTX7VjAYwFVAs5r7e5VENcM+oGUTxN6lye27vqeY8rIdCtiY2gWi+CIDVypN41AsfzL0ato9gHo1nS05vFWcN3rcXgfdg4EtTitYjmdsDAMeiU5
+X-Gm-Message-State: AOJu0YzCOIVw+MriBEl3fyKqTCqmoA8u0W9BXH2eUR5JgN8n4vFgmnCH
+	a1bF3d2EmasDzRmrUGsvBKED9OA3nvverXttLQPCPECJ/o9G65tAJrzU4lewy4xpe/sjbl6gfnz
+	bequhfX8thgnOlfj8hl2YWVzS9yA=
+X-Google-Smtp-Source: AGHT+IH9Nqcz96fXlR6qBIfn9oQsygGJT+Br+pnt3kTFU6l5J618DOIfg76qe0W8eUEc1gOKhsxpS78Zox8XqTejuMo=
+X-Received: by 2002:a05:622a:206:b0:446:5787:875f with SMTP id
+ d75a77b69052e-451567b4292mr18705541cf.38.1722499062896; Thu, 01 Aug 2024
+ 00:57:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1sZQgm-000JId-0F
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:60442
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 23
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfDVOUvXtG88sZMLYjaVT08DPl/E6kU96LC7nYQXfFP7K1x6ZYbctANVI3VQhzdZ+V1n6rLbmB5sqswgS3Yjid8y80dxe83W2u+QY2eMCC1fkkdOAVhSb
- zfg/0knUApaars9GvygyJ13ds/kGbebgMWQuJ5ofD7AxXut2SbfX6zz1VBruohNWR+yNhEUQy+pBDM2t6XVbuH8lcXW5KLPlU1g=
+References: <20240731061132.703368-1-jacobe.zang@wesion.com>
+ <20240731061132.703368-5-jacobe.zang@wesion.com> <0a78a0fb-0a5e-424f-a801-4a63b9ee1a49@gmail.com>
+ <3ded8aea-ee11-43da-9dd7-1259cf931747@broadcom.com> <CABjd4YxiSY0A0iVHGHw9RDey+avxmzUapoLLLyf=80MzVX0yWA@mail.gmail.com>
+ <6e34c814-a6dc-4a96-9e46-ca25af67f4f6@broadcom.com> <CABjd4YxdCh7EceYOfcFxKtV0H7Von0oZAMWD=69sM6y4-CoAQw@mail.gmail.com>
+ <TYZPR03MB7001889335D58561F86978A780B22@TYZPR03MB7001.apcprd03.prod.outlook.com>
+In-Reply-To: <TYZPR03MB7001889335D58561F86978A780B22@TYZPR03MB7001.apcprd03.prod.outlook.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Thu, 1 Aug 2024 10:57:31 +0300
+Message-ID: <CABjd4YwCFpPerXRaR=6zd-61wDE6nH7_s0C6jMRhA4x0L6guLg@mail.gmail.com>
+Subject: Re: [PATCH v6 4/5] wifi: brcmfmac: Add optional lpo clock enable support
+To: Jacobe Zang <jacobe.zang@wesion.com>
+Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, 
+	"kvalo@kernel.org" <kvalo@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, 
+	"pabeni@redhat.com" <pabeni@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"efectn@protonmail.com" <efectn@protonmail.com>, "dsimic@manjaro.org" <dsimic@manjaro.org>, 
+	"jagan@edgeble.ai" <jagan@edgeble.ai>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arend@broadcom.com" <arend@broadcom.com>, 
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz" <megi@xff.cz>, 
+	"duoming@zju.edu.cn" <duoming@zju.edu.cn>, "bhelgaas@google.com" <bhelgaas@google.com>, 
+	"minipli@grsecurity.net" <minipli@grsecurity.net>, 
+	"brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
+	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/30/24 8:41 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.44 release.
-> There are 568 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Aug 1, 2024 at 6:53=E2=80=AFAM Jacobe Zang <jacobe.zang@wesion.com>=
+ wrote:
 >
-> Responses should be made by Thu, 01 Aug 2024 15:14:54 +0000.
-> Anything received after that time might be too late.
+> >>On 7/31/2024 2:01 PM, Alexey Charkov wrote:
+> >>> On Wed, Jul 31, 2024 at 2:15=E2=80=AFPM Arend van Spriel
+> >>> <arend.vanspriel@broadcom.com> wrote:
+> >>>>
+> >>>> On 7/31/2024 12:16 PM, Alexey Charkov wrote:
+> >>>>> Hi Jacobe,
+> >>>>>
+> >>>>>
+> >>>>> On 31/07/2024 9:11 am, Jacobe Zang wrote:
+> >>>>>   > WiFi modules often require 32kHz clock to function. Add support=
+ to
+> >>>>>   > enable the clock to PCIe driver and move "brcm,bcm4329-fmac" ch=
+eck
+> >>>>>   > to the top of brcmf_of_probe
+> >>>>>   >
+> >>>>>   > Co-developed-by: Ondrej Jirman <megi@xff.cz>
+> >>>>>   > Signed-off-by: Ondrej Jirman <megi@xff.cz>
+> >>>>>   > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
+> >>>>>   > ---
+> >>>>>   >  .../net/wireless/broadcom/brcm80211/brcmfmac/of.c    | 12 ++++=
++++++++-
+> >>>>>   >  1 file changed, 11 insertions(+), 1 deletion(-)
+> >>>>>   >
+> >>>>>   > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/o=
+f.c
+> >>>>> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> >>>>>   > index e406e11481a62..7e0a2ad5c7c8a 100644
+> >>>>>   > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> >>>>>   > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
+> >>>>>   > @@ -6,6 +6,7 @@
+> >>>>>   >  #include <linux/of.h>
+> >>>>>   >  #include <linux/of_irq.h>
+> >>>>>   >  #include <linux/of_net.h>
+> >>>>>   > +#include <linux/clk.h>
+> >>>>>   >
+> >>>>>   >  #include <defs.h>
+> >>>>>   >  #include "debug.h"
+> >>>>>   > @@ -70,12 +71,16 @@ void brcmf_of_probe(struct device *dev, enu=
+m
+> >>>>> brcmf_bus_type bus_type,
+> >>>>>   >  {
+> >>>>>   >      struct brcmfmac_sdio_pd *sdio =3D &settings->bus.sdio;
+> >>>>>   >      struct device_node *root, *np =3D dev->of_node;
+> >>>>>   > +    struct clk *clk;
+> >>>>>   >      const char *prop;
+> >>>>>   >      int irq;
+> >>>>>   >      int err;
+> >>>>>   >      u32 irqf;
+> >>>>>   >      u32 val;
+> >>>>>   >
+> >>>>>   > +    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac=
+"))
+> >>>>>   > +        return;
+> >>>>>
+> >>>>> Did you test this? The DTS patch you sent as part of this series do=
+esn't
+> >>>>> list "brcm,bcm4329-fmac" in the compatible, so this will probably r=
+eturn
+> >>>>> right here, skipping over the rest of your patch.
+> >>>>>
+> >>>>> Please test before resending, both with and without the driver for =
+the
+> >>>>> Bluetooth part of the chip (since it also touches clocks).
+> >>>>>
+> >>>>> You are also changing the behavior for other systems by putting thi=
+s
+> >>>>> check further up the probe path, which might break things for no re=
+ason.
+> >>>>> Better put your clk-related addition below where this check was
+> >>>>> originally, rather than reorder stuff you don't have to reorder.
+> >>>>
+> >>>> That was upon my suggestion. That check was originally at the top of=
+ the
+> >>>> function, but people added stuff before that. I agree that makes the
+> >>>> compatible "brcm,brcm4329-fmac" required which is what the textual
+> >>>> binding stated before the switch to YAML was made:
+> >>>>
+> >>>> """
+> >>>> Broadcom BCM43xx Fullmac wireless SDIO devices
+> >>>>
+> >>>> This node provides properties for controlling the Broadcom wireless
+> >>>> device. The
+> >>>> node is expected to be specified as a child node to the SDIO control=
+ler that
+> >>>> connects the device to the system.
+> >>>>
+> >>>> Required properties:
+> >>>>
+> >>>>    - compatible : Should be "brcm,bcm4329-fmac".
+> >>>> """
+> >>>>
+> >>>> Not sure whether this is still true for YAML version (poor YAML read=
+ing
+> >>>> skills ;-) ), but it should as the switch from textual to YAML shoul=
+d
+> >>>> not have changed the bindings specification.
+> >>>>
+> >>>>>   > +
+> >>>>>   >      /* Apple ARM64 platforms have their own idea of board type=
+,
+> >>>>> passed in
+> >>>>>   >       * via the device tree. They also have an antenna SKU para=
+meter
+> >>>>>   >       */
+> >>>>>   > @@ -113,8 +118,13 @@ void brcmf_of_probe(struct device *dev, en=
+um
+> >>>>> brcmf_bus_type bus_type,
+> >>>>>   >          of_node_put(root);
+> >>>>>   >      }
+> >>>>>   >
+> >>>>>   > -    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac=
+"))
+> >>>>>   > +    clk =3D devm_clk_get_optional_enabled(dev, "lpo");
+> >>>>>   > +    if (!IS_ERR_OR_NULL(clk)) {
+> >>>>>   > +        brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> >>>>>   > +        clk_set_rate(clk, 32768);
+> >>>>>   > +    } else {
+> >>>>>   >          return;
+> >>>>>
+> >>>>> Why return here? If the clock is optional, a lot of systems will no=
+t
+> >>>>> have it - that shouldn't prevent the driver from probing. And you a=
+re
+> >>>>> still not handling the -EPROBE_DEFER case which was mentioned on yo=
+ur
+> >>>>> previous submission.
+> >>>>
+> >>>> Right. The else statement above could/should be:
+> >>>>
+> >>>> } else if (clk && PTR_ERR(clk) =3D=3D -EPROBE_DEFER) {
+> >>>>           return PTR_ERR(clk);
+> >>>> }
+> >>>
+> >>> ... plus change the function prototype to return int and propagate
+> >>> that error code through brcmf_get_module_param to brcmf_pcie_probe's
+> >>> return value. I guess checking clk for NULL is also redundant in this
+> >>> case?
+> >>
+> >>Only wanted to give the suggestion to get started. Propagating the
+> >>return value seemed obvious to me, but you are absolutely right.
+> >>PTR_ERR(NULL) will probably be something else than -EPROBE_DEFER but it
+> >>seems odd to me. Maybe PTR_ERR_OR_ZERO(clk) is a better option here.
+> >
+> > Indeed. Perhaps something along the lines of:
+> >
+> >        clk =3D devm_clk_get_optional_enabled(dev, "lpo");
+> >        if (!IS_ERR_OR_NULL(clk)) {
+> >                brcmf_dbg(INFO, "enabling 32kHz clock\n");
+> >                return clk_set_rate(clk, 32768);
+> >        } else {
+> >                return PTR_ERR_OR_ZERO(clk);
+> >        }
+> >
+> > ... which should then go at the very end of brcmf_of_probe. And all of
 >
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.44-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> But before end of brcmf_of_probe is to set interrupt configuration which
+> wifi chip connect via sdio. Like this:
+> ```
+>         if (bus_type !=3D BRCMF_BUSTYPE_SDIO)
+>                 return;
 >
-> thanks,
+>         if (of_property_read_u32(np, "brcm,drive-strength", &val) =3D=3D =
+0)
+>                 sdio->drive_strength =3D val;
 >
-> greg k-h
+>         /* make sure there are interrupts defined in the node */
+>         if (!of_property_present(np, "interrupts"))
+>                 return;
+>
+>         irq =3D irq_of_parse_and_map(np, 0);
+>         if (!irq) {
+>                 brcmf_err("interrupt could not be mapped\n");
+>                 return;
+>         }
+>         irqf =3D irqd_get_trigger_type(irq_get_irq_data(irq));
+>
+>         sdio->oob_irq_supported =3D true;
+>         sdio->oob_irq_nr =3D irq;
+>         sdio->oob_irq_flags =3D irqf;
+> ```
+> So I think the interrupt should be set in the if statement while
+> bus_type=3D=3DBRCMF_BUSTYPE_SDIO, and add else statement
+> to enable clock(or simply put it at the end as Alexey said). And
+> can also use else-if statement to deal with
+> bus_type =3D=3D BRCMF_BUSTYPE_USB or PCIE in the future.
 
-Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
+SDIO devices might also want to enable a clock, so I think wrapping
+the drive strength and interrupts handling into an if statement and
+putting the clock-related stuff right after it (but not in the else
+block) is better.
 
-Tested-by: Ron Economos <re@w6rz.net>
-
+Best regards,
+Alexey
 
