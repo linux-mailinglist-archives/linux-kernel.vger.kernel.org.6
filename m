@@ -1,243 +1,219 @@
-Return-Path: <linux-kernel+bounces-271426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B17E9944E15
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:31:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178BA944E1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4F8E1C24F31
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F4FC1F24912
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB881A2548;
-	Thu,  1 Aug 2024 14:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B30D1A4F21;
+	Thu,  1 Aug 2024 14:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="C54bSfmG"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="ZDzjaonC"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6A91E507
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D296D1E4AB;
+	Thu,  1 Aug 2024 14:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722522693; cv=none; b=A0KgEST5yAfvk+RLRxpoQRmrvIGKD0gbEhn0yHkLHaUNOJ4uaAV37KUIajce08MfSTSMy6vNa0AENAt/9S6VBuZyZODen8pJ3IKrPCLQx9PeKeUOijdsAQYq4r0s92N1tY4wA0Xk2sv8qxdtINzOa/7Tiszwv4IsEXUloIetZfc=
+	t=1722522835; cv=none; b=gPNHbAxQSDrpqRrkpecnzHXCvPCBL1jqpJhdI0KTiUYfMwIbeoYA6o5tEqAglVvyc6PVuLUfBJUd2m+QMjSw4M0cJZsT89RjwrkPe8ovSSeSqrcUqh9jBRTBqyjxEj5P3etShhUQwU12Oq1smKV7JbSDrE8PDba1Nc/paiHylHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722522693; c=relaxed/simple;
-	bh=PXDYvbU7GH3VZGtv9v6mOnvGONlvnBj7L/QfhECgHgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dOmMWbN0K3CHioGRA1EJDAjzS1dtVfrmLbUfIp1V8GIcOSXYaWQUKjycEEJcDLOONPI4o0vwRBFATHJ6E1SH31QjCSaLQy9/8R/9WejupbINNgdwFq0ucHxDQuL8TJV1iMe/aTktcbpiWnjYMfxOrsYXd1cnozFQ7zdlOzjvzBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=C54bSfmG; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so13384765e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:31:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1722522689; x=1723127489; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z3Lz3qosyEF32MTiE5xSgc58f9slmQkAz9tR4HPKQ7c=;
-        b=C54bSfmGYI7/mWgIplPXz+/lSP+8KtlULtwkqsrTCgnlHkcErhutTFqOcfBFlZy4bZ
-         UaIIX4Aiwj+3oY4fYYVdM6drkcuTzgYgu1TnJTkgfR9u8srG4J1Px27Tq3gQTtQTOpiG
-         ZhrT8jO+Bcv5QT+NueJ1oU/3BX98ZUth4IAsFo6bhSWE/G2I7stssqqxGJjcgQ6IBrMQ
-         /kpzJ7SdWa8oX+4zTQIBMFKaGgqrJJ0gWIoHJVBqJgzMZfyZyAwMqcE8EaGz0gUMzIDG
-         6kE9qIx8TyU6DpNJ1DDa2OtVzAnVnZTrlFpKghfS4ZCQQxRRCRo1HwxqyYHzs2T9oWqF
-         RddQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722522689; x=1723127489;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3Lz3qosyEF32MTiE5xSgc58f9slmQkAz9tR4HPKQ7c=;
-        b=ED3c0v0VWV9FfDM4vf+nWs0WQaFChcIf5wISj9GEtd8T7wfJOyeLL6XSkZSnJ5fg2J
-         QKjp4mbIX7yyAZvNr9WJo3aT5/YoqvdxqsJ6xSiBgGJD1BCkYa6kSbRCDkt34MO5jiwS
-         Pus4b/T+3bNPDiXHf5uFN/ys4nhJail0ZC67nmE+vvrCi6dYhiWg6PP030GlZgontR0A
-         siP43XQ2HoH/P5Ss1PtpHAnJC40NM6gW9/xH1G2PnYNY9b2qH2SGTE5KEK1dDwSPRNzm
-         LqNDr7JOBH4B+D6/ian5LIv39VorcLT/7iCIt0nUQDN6UPCP5kEJxYE4nE8cbX8lG6XH
-         XYxw==
-X-Forwarded-Encrypted: i=1; AJvYcCX4TwwxaNaZuhQJDLaNYp4rAhz+1ussetexu8qRY+umtfUsXB9ni89U7cu2IsH8+E20Q3wpbhS7ng7bhsLgI13CXZUaTtNz7ZST63Be
-X-Gm-Message-State: AOJu0Yxn/g3/JNXfePlGR9LnxGuC8V9DMHCqRDc0jIqsAJcVMiOU9uUZ
-	kJPdq8u4jVVgJR9VDm7gROlVQq5SfIdiB97ZYTBQCeeqDi8MNy631k6x7ZdCC08=
-X-Google-Smtp-Source: AGHT+IGb7HDwg2tDazTbE81+iJfYAqxNeJYAKw9dKzKWM2FBDjvWa5adRw+p6S0L9Qf7m5mqqu64tA==
-X-Received: by 2002:a05:600c:138e:b0:424:71f7:77f2 with SMTP id 5b1f17b1804b1-428e47a0825mr17682225e9.16.1722522688520;
-        Thu, 01 Aug 2024 07:31:28 -0700 (PDT)
-Received: from localhost (37-48-50-18.nat.epc.tmcz.cz. [37.48.50.18])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bab9f7esm58248585e9.21.2024.08.01.07.31.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:31:28 -0700 (PDT)
-Date: Thu, 1 Aug 2024 16:31:26 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Jeongjun Park <aha310510@gmail.com>, davem@davemloft.net,
-	kuba@kernel.org, pabeni@redhat.com, nicolas.dichtel@6wind.com,
-	liuhangbin@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com,
-	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Subject: Re: [PATCH net,v2] rtnetlink: fix possible deadlock in
- team_port_change_check
-Message-ID: <ZqucPsGsnwZ2QOXa@nanopsycho.orion>
-References: <20240731150940.14106-1-aha310510@gmail.com>
- <CANn89iJn8XT86yyvqD6ZZvjV7eAxBjUd6rddL6NNaXVRimOXhg@mail.gmail.com>
+	s=arc-20240116; t=1722522835; c=relaxed/simple;
+	bh=qDtxOqPLsQcOJe8TqfVlY5wm51p2NXX3ZCiOi/YHnz8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UOlxUS8GvP7dEVh6aswsAahOIGDWoAGZfLbCV8NAyx8qUqUGaiz9ExGajEvvX33Q3OAdcEgESBnJm8vj00eu4bsjGYa68DGNyisO9eaNRBqt0x/wSjziVJADHxumZ1FZK5G/poZZ4Voy+m6UIR9Bw8Y2TYUHFbIqPkOPM30SNTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=ZDzjaonC; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471B7jM2018617;
+	Thu, 1 Aug 2024 09:31:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=t1VkGL6mPdtrtxmC
+	EAca93+GS4gd18fjPVS4TxXhBk4=; b=ZDzjaonCljViJGvKSqcZZ+H/Sw7lhPhn
+	tEIkGh7doaLrieZtunORafrqZk2lOBwUPcV7vdbfuxxUnDLh5PVTByIBg6jdu2Vn
+	yJu4Ov4Mmm34aiNSXrJgnorMlC/8PupEqKFdCf5WDGJdQcpYmN4dQu1ftnIuM7PB
+	bRSy85EHftukZoM9NHV5AVrZvwyIjF09V6u0bPpiRneANrC6hcS0jNiXJlIFXFDS
+	x8k7CPbkI8ejYw1+ggZwvoW7f4MTm4EU7QN90J2j9aQv+4+jp1gZswuBGQ8rgpt7
+	gfUHPllOhzuLBA8Qzvf2zZt+wb/qj830xyz8Kre6pq6xcfXOANmEVw==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40qjw9adeh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 09:31:45 -0500 (CDT)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
+ 15:31:42 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 1 Aug 2024 15:31:42 +0100
+Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 92C2A820244;
+	Thu,  1 Aug 2024 14:31:42 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Simon
+ Trimmer" <simont@opensource.cirrus.com>
+Subject: [PATCH v3] ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients
+Date: Thu, 1 Aug 2024 14:31:39 +0000
+Message-ID: <20240801143139.34549-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iJn8XT86yyvqD6ZZvjV7eAxBjUd6rddL6NNaXVRimOXhg@mail.gmail.com>
+Content-Type: text/plain
+X-Proofpoint-GUID: 0nB_L6BAJxgoU621T3i4GeheG_Y26O9g
+X-Proofpoint-ORIG-GUID: 0nB_L6BAJxgoU621T3i4GeheG_Y26O9g
+X-Proofpoint-Spam-Reason: safe
 
-Thu, Aug 01, 2024 at 08:28:20AM CEST, edumazet@google.com wrote:
->On Wed, Jul 31, 2024 at 5:10 PM Jeongjun Park <aha310510@gmail.com> wrote:
->>
->> In do_setlink() , do_set_master() is called when dev->flags does not have
->> the IFF_UP flag set, so 'team->lock' is acquired and dev_open() is called,
->> which generates the NETDEV_UP event. This causes a deadlock as it tries to
->> acquire 'team->lock' again.
->>
->> To solve this, we need to unlock 'team->lock' before calling dev_open()
->> in team_port_add() and then reacquire the lock when dev_open() returns.
->> Since the implementation acquires the lock in advance when the team
->> structure is used inside dev_open(), data races will not occur even if it
->> is briefly unlocked.
->>
->> ============================================
->> WARNING: possible recursive locking detected
->> 6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0 Not tainted
->> --------------------------------------------
->> syz.0.15/5889 is trying to acquire lock:
->> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team_core.c:2950 [inline]
->> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
->>
->> but task is already holding lock:
->> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
->>
->> other info that might help us debug this:
->>  Possible unsafe locking scenario:
->>
->>        CPU0
->>        ----
->>   lock(team->team_lock_key#2);
->>   lock(team->team_lock_key#2);
->>
->>  *** DEADLOCK ***
->>
->>  May be due to missing lock nesting notation
->>
->> 2 locks held by syz.0.15/5889:
->>  #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
->>  #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6644
->>  #1: ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
->>
->> stack backtrace:
->> CPU: 1 UID: 0 PID: 5889 Comm: syz.0.15 Not tainted 6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0
->> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
->> Call Trace:
->>  <TASK>
->>  __dump_stack lib/dump_stack.c:93 [inline]
->>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
->>  check_deadlock kernel/locking/lockdep.c:3061 [inline]
->>  validate_chain kernel/locking/lockdep.c:3855 [inline]
->>  __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
->>  lock_acquire kernel/locking/lockdep.c:5759 [inline]
->>  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
->>  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->>  __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
->>  team_port_change_check drivers/net/team/team_core.c:2950 [inline]
->>  team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
->>  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
->>  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
->>  call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
->>  call_netdevice_notifiers net/core/dev.c:2046 [inline]
->>  __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
->>  dev_change_flags+0x10c/0x160 net/core/dev.c:8914
->>  vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
->>  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
->>  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
->>  call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
->>  call_netdevice_notifiers net/core/dev.c:2046 [inline]
->>  dev_open net/core/dev.c:1515 [inline]
->>  dev_open+0x144/0x160 net/core/dev.c:1503
->>  team_port_add drivers/net/team/team_core.c:1216 [inline]
->>  team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
->>  do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
->>  do_setlink+0x306d/0x4060 net/core/rtnetlink.c:2907
->>  __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
->>  rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
->>  rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
->>  netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
->>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->>  netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
->>  netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
->>  sock_sendmsg_nosec net/socket.c:730 [inline]
->>  __sock_sendmsg net/socket.c:745 [inline]
->>  ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
->>  ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
->>  __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
->>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7fc07ed77299
->> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
->> RSP: 002b:00007fc07fb7f048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
->> RAX: ffffffffffffffda RBX: 00007fc07ef05f80 RCX: 00007fc07ed77299
->> RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
->> RBP: 00007fc07ede48e6 R08: 0000000000000000 R09: 0000000000000000
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 000000000000000b R14: 00007fc07ef05f80 R15: 00007ffeb5c0d528
->>
->> Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
->> Fixes: ec4ffd100ffb ("Revert "net: rtnetlink: Enslave device before bringing it up"")
->> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
->> ---
->>  drivers/net/team/team_core.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
->> index ab1935a4aa2c..ee595c3c6624 100644
->> --- a/drivers/net/team/team_core.c
->> +++ b/drivers/net/team/team_core.c
->> @@ -1212,8 +1212,9 @@ static int team_port_add(struct team *team, struct net_device *port_dev,
->>                            portname);
->>                 goto err_port_enter;
->>         }
->> -
->> +       mutex_unlock(&team->lock);
->
->Why would this be safe ?
->
->All checks done in team_port_add() before this point would need to be
->redone after mutex_lock() ?
->
->If another mutex (rtnl ?) is already protecting this path, this would
->suggest team->lock should be removed,
->and RTNL should be used in all needed paths.
+A number of laptops have gone to market with old firmware versions that
+export controls that have since been hidden, but we can't just install a
+newer firmware because the firmware for each product is customized and
+qualified by the OEM. The issue is that alsactl save and restore has no
+idea what controls are good to persist which can lead to
+misconfiguration.
 
-I agree. The problem is, not all other paths rely on rtnl, they rely on
-team->lock instead. I believe that the best solution is to remove
-team->lock entirely.
+There is no reason that the UCM or user should need to interact with any
+of the ALSA controls for the firmware coefficients so they can be
+removed entirely, this also simplifies the driver.
 
-I looked into it, the only problem I see is team_nl_fill_one_option_get()
-function. That operates without rtnl being held. Taking rtnl here is too
-heavy, given that it may be repeatedly used to fetch hash stats.
-It's read only, could be probably converted to RCU. It's in my todo list,
-once I have some spare cycles.
+Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
+---
+Changes in v3:
+- Remove ability to add firmware coefficients as ALSA controls
+  entirely
 
+Changes in v2:
+- v1 was accidentally the backport version for older kernels instead of
+  the one for v6.11
 
+ sound/pci/hda/cs35l56_hda.c | 38 +------------------------------------
+ sound/pci/hda/cs35l56_hda.h |  1 -
+ 2 files changed, 1 insertion(+), 38 deletions(-)
 
+diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+index 96d3f13c5abf..31cc92bac89a 100644
+--- a/sound/pci/hda/cs35l56_hda.c
++++ b/sound/pci/hda/cs35l56_hda.c
+@@ -559,18 +559,6 @@ static void cs35l56_hda_release_firmware_files(const struct firmware *wmfw_firmw
+ 	kfree(coeff_filename);
+ }
+ 
+-static void cs35l56_hda_create_dsp_controls_work(struct work_struct *work)
+-{
+-	struct cs35l56_hda *cs35l56 = container_of(work, struct cs35l56_hda, control_work);
+-	struct hda_cs_dsp_ctl_info info;
+-
+-	info.device_name = cs35l56->amp_name;
+-	info.fw_type = HDA_CS_DSP_FW_MISC;
+-	info.card = cs35l56->codec->card;
+-
+-	hda_cs_dsp_add_controls(&cs35l56->cs_dsp, &info);
+-}
+-
+ static void cs35l56_hda_apply_calibration(struct cs35l56_hda *cs35l56)
+ {
+ 	int ret;
+@@ -595,26 +583,15 @@ static void cs35l56_hda_fw_load(struct cs35l56_hda *cs35l56)
+ 	char *wmfw_filename = NULL;
+ 	unsigned int preloaded_fw_ver;
+ 	bool firmware_missing;
+-	bool add_dsp_controls_required = false;
+ 	int ret;
+ 
+-	/*
+-	 * control_work must be flushed before proceeding, but we can't do that
+-	 * here as it would create a deadlock on controls_rwsem so it must be
+-	 * performed before queuing dsp_work.
+-	 */
+-	WARN_ON_ONCE(work_busy(&cs35l56->control_work));
+-
+ 	/*
+ 	 * Prepare for a new DSP power-up. If the DSP has had firmware
+ 	 * downloaded previously then it needs to be powered down so that it
+-	 * can be updated and if hadn't been patched before then the controls
+-	 * will need to be added once firmware download succeeds.
++	 * can be updated.
+ 	 */
+ 	if (cs35l56->base.fw_patched)
+ 		cs_dsp_power_down(&cs35l56->cs_dsp);
+-	else
+-		add_dsp_controls_required = true;
+ 
+ 	cs35l56->base.fw_patched = false;
+ 
+@@ -698,15 +675,6 @@ static void cs35l56_hda_fw_load(struct cs35l56_hda *cs35l56)
+ 			  CS35L56_FIRMWARE_MISSING);
+ 	cs35l56->base.fw_patched = true;
+ 
+-	/*
+-	 * Adding controls is deferred to prevent a lock inversion - ALSA takes
+-	 * the controls_rwsem when adding a control, the get() / put()
+-	 * functions of a control are called holding controls_rwsem and those
+-	 * that depend on running firmware wait for dsp_work() to complete.
+-	 */
+-	if (add_dsp_controls_required)
+-		queue_work(system_long_wq, &cs35l56->control_work);
+-
+ 	ret = cs_dsp_run(&cs35l56->cs_dsp);
+ 	if (ret)
+ 		dev_dbg(cs35l56->base.dev, "%s: cs_dsp_run ret %d\n", __func__, ret);
+@@ -753,7 +721,6 @@ static int cs35l56_hda_bind(struct device *dev, struct device *master, void *mas
+ 	strscpy(comp->name, dev_name(dev), sizeof(comp->name));
+ 	comp->playback_hook = cs35l56_hda_playback_hook;
+ 
+-	flush_work(&cs35l56->control_work);
+ 	queue_work(system_long_wq, &cs35l56->dsp_work);
+ 
+ 	cs35l56_hda_create_controls(cs35l56);
+@@ -775,7 +742,6 @@ static void cs35l56_hda_unbind(struct device *dev, struct device *master, void *
+ 	struct hda_component *comp;
+ 
+ 	cancel_work_sync(&cs35l56->dsp_work);
+-	cancel_work_sync(&cs35l56->control_work);
+ 
+ 	cs35l56_hda_remove_controls(cs35l56);
+ 
+@@ -806,7 +772,6 @@ static int cs35l56_hda_system_suspend(struct device *dev)
+ 	struct cs35l56_hda *cs35l56 = dev_get_drvdata(dev);
+ 
+ 	cs35l56_hda_wait_dsp_ready(cs35l56);
+-	flush_work(&cs35l56->control_work);
+ 
+ 	if (cs35l56->playing)
+ 		cs35l56_hda_pause(cs35l56);
+@@ -1026,7 +991,6 @@ int cs35l56_hda_common_probe(struct cs35l56_hda *cs35l56, int hid, int id)
+ 	dev_set_drvdata(cs35l56->base.dev, cs35l56);
+ 
+ 	INIT_WORK(&cs35l56->dsp_work, cs35l56_hda_dsp_work);
+-	INIT_WORK(&cs35l56->control_work, cs35l56_hda_create_dsp_controls_work);
+ 
+ 	ret = cs35l56_hda_read_acpi(cs35l56, hid, id);
+ 	if (ret)
+diff --git a/sound/pci/hda/cs35l56_hda.h b/sound/pci/hda/cs35l56_hda.h
+index c40d159507c2..38d94fb213a5 100644
+--- a/sound/pci/hda/cs35l56_hda.h
++++ b/sound/pci/hda/cs35l56_hda.h
+@@ -23,7 +23,6 @@ struct cs35l56_hda {
+ 	struct cs35l56_base base;
+ 	struct hda_codec *codec;
+ 	struct work_struct dsp_work;
+-	struct work_struct control_work;
+ 
+ 	int index;
+ 	const char *system_name;
+-- 
+2.43.0
 
->
->>         err = dev_open(port_dev, extack);
->> +       mutex_lock(&team->lock);
->
->
->
->>         if (err) {
->>                 netdev_dbg(dev, "Device %s opening failed\n",
->>                            portname);
->> --
 
