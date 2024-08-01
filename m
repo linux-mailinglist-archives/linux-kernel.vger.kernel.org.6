@@ -1,112 +1,156 @@
-Return-Path: <linux-kernel+bounces-270818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23B929445B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:41:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBE29445B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3F83B23081
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C901C22343
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:44:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E3A16DC07;
-	Thu,  1 Aug 2024 07:41:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C3116D9DA;
+	Thu,  1 Aug 2024 07:44:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FU1jtMSU"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MatGiVwW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351C158A23
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26F4013C8F6
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722498064; cv=none; b=I+7m+ZTOrlMR+nWbHLGS6NIb/jb+2qxhQCwnpWvu9tEu9BkZ9u5aIFSTGgsyFgo6lPubIXb5vw5S2Ym2xXjp7Zx5n71zZLaNJKJHPtjjnHaeJGi5fT0Jolov8HS5SdB2ADqU12kn+ioDeCGgJVY/LmT1ehyX6IS+SOR10gQLpAw=
+	t=1722498252; cv=none; b=es4VlIe6ST+gz+fYqSQrIImOHizg3Wy7peFNmz4tPVyit8af/FX9+tsfE/XP0Kn1nDthXH5dDoLHtu36aM0JIQHkiB9jIctRyg3+jiZD3jAEiQYY7UZ7DjUAG23GRDLDspBIw/Ugx455TeZuN9JqphcDW+PVGgLAJPewT3onXzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722498064; c=relaxed/simple;
-	bh=krH7ypeUqN8jDA6yfuVAcTiknvkYEg2mDdvvRTl469I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=btW+pj1HTEEQ2gYkgnnotqdfXysd4GwCGAcXZSzwedsdcAXUuDgnaAQlkqhEMWbjtO2d/BYrbix+gDAsB8LRGrW+FalhJQfampzjSuqe+04wVD/alL0y4enjA0xxf0qXYOWQeHS1nXjW8tlPO5KepIhHaAagETQ5dXFDrGdWy54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FU1jtMSU; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so40386585e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 00:41:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722498061; x=1723102861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Pm3f85uhokoCwnyo8e4JOWvdJx2L5ag+T89tC7r1kfY=;
-        b=FU1jtMSUQDP5TT+cYrUfzPjGj4ms6TGBCiN8CM0N9HWXQoPmkqjl0AG3inyXAFyWk1
-         HmX+hTP2HYa7q5LVYIbcUeq90J1XFYKgWWd1HeHzf4+7OKYywzUURDyqBAesswwg1uva
-         VR3mbFChFdWWVTfW9Lf6he76zPpMfVtSg/nLO5nV2s/+rYfl1lDw/1jwBWjeKuz9Ji3k
-         I6ejCRfHPdDpwbHz7bycYUpzMMix9cUGPiZH8FPDFgjnUHqEp8Yg8mnnZUvk6B5NwPDF
-         kl9podO0HZdBf0kJxa6cCR2WLoX2O9J5eEx3Z1mqVdb3cCJot2ZfrBcQLRh+uwBWpJwK
-         J4mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722498061; x=1723102861;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Pm3f85uhokoCwnyo8e4JOWvdJx2L5ag+T89tC7r1kfY=;
-        b=NrgFjseVDCld18s88lS7k0UNVbVgHouJbWAdPdRD94/0tDyWIgXai/KAcephLf+q1W
-         2JZ8rijzGlsoXGq6IG7HhJF5sId1PPrnpO9e4a4KDxVF1jgW/wzRsPpleeGMbJh1f1fH
-         YyyhHCaUjvOUtzOqBxsiAGeRLUouiHiiY0iMbgF+7bQ74athYYQes/BfJOtm2CrkOMiz
-         NS7xTI7WaH+WXnzlgnTC6MTQsbdwovToeGJV92paOGaumDh1M6yEEfI/h30JNcS0ykAe
-         oyQedfbBTnLh0QoZKOZUFJIEmuDewIEQwNw8jxMf5+V3jbrmnPWNBqhqwjp5nbO9/Uol
-         kU/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUr5ohzHrWHQpBLWUvDwnuXqz+eZmGMJrPamI1VAGloLC6GVQC2q4em2ZGRCWyz0kGwHf04zZbGryClBpEfBmBsP8J0UjmJYiltNXqy
-X-Gm-Message-State: AOJu0YwH+b+KZ4BL54w+V3JpPA2JVC/ztf2TNZSm/4mtACbUUQLLEBmr
-	LpPByIOEDjrnoYphqnGZBlMdzSPoSe8CSY6kzYPieKvdCDb67/YYz4fHH10c1Rk=
-X-Google-Smtp-Source: AGHT+IHQHaSYh2jUxkcP/pLad2DAnJ0RUYC8hEpaSIH/fQUOuBzUH5+9XYCdQVAxwK5OOIu75I3Wkg==
-X-Received: by 2002:a05:600c:1551:b0:426:5ef5:bcb1 with SMTP id 5b1f17b1804b1-428a99e36a9mr11537895e9.6.1722498060379;
-        Thu, 01 Aug 2024 00:41:00 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9895:bf13:f4de:f316])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42824af5410sm63708005e9.1.2024.08.01.00.40.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 00:41:00 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"Rob Herring (Arm)" <robh@kernel.org>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpio: Use of_property_present()
-Date: Thu,  1 Aug 2024 09:40:58 +0200
-Message-ID: <172249805624.7809.3439731825920419370.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240731191312.1710417-3-robh@kernel.org>
-References: <20240731191312.1710417-3-robh@kernel.org>
+	s=arc-20240116; t=1722498252; c=relaxed/simple;
+	bh=A5okpnXySOnw/P2+9LILLhHcbtXsXRvRk3sQMgfpUb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGUjfIMhEijvE5SjiJom/fLLZ/hz4+2PiW2cJFSJwaqszd+6lBFd78JxvpQmRA/b0Ite+XxbFGrY5sYjdPM4Q1jyN+4DeT863Lo+cVSzTSZX2EV/EX4xm7R6BLneTCtCTbOQRdPOA0E625waGnu4xQEHQOBi6+Wcw/1oxvV2Nyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MatGiVwW; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722498250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aLqIFQo3+YskQXU1q1/o1FuHxtOKeaCtnjOaWo5ax7o=;
+	b=MatGiVwWF7zzwVnn+Zv4oit/NsFSyovehKfbFX3ddosB3cBmFrz7kZgYbhN6RZoSb+o6+S
+	GYPns7e6r3ovXmwdtxUkX9cMbi/TzNh2oPSXW3ruOVeQu5K8cc+zGh7xeLsvalwAVc3lcX
+	A7hqF1/k7SOWU9qdph7prTvHOWF2cWE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-324-xDoMx_joMCmj2w8WRsGSAQ-1; Thu,
+ 01 Aug 2024 03:44:07 -0400
+X-MC-Unique: xDoMx_joMCmj2w8WRsGSAQ-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AB9CD1955D4A;
+	Thu,  1 Aug 2024 07:44:04 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.91])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2525A1955E80;
+	Thu,  1 Aug 2024 07:44:01 +0000 (UTC)
+Date: Thu, 1 Aug 2024 15:43:57 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Sourabh Jain <sourabhjain@linux.ibm.com>
+Cc: Hari Bathini <hbathini@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+	linuxppc-dev@ozlabs.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
+Message-ID: <Zqs8veRya7v/pXEt@MiWiFi-R3L-srv>
+References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On 07/31/24 at 08:57pm, Sourabh Jain wrote:
+> The following errors are observed when kexec is done with SMT=off on
+> powerpc.
+> 
+> [  358.458385] Removing IBM Power 842 compression device
+> [  374.795734] kexec_core: Starting new kernel
+> [  374.795748] kexec: Waking offline cpu 1.
+> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+> [  374.935833] kexec: Waking offline cpu 2.
+> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+> snip..
+> [  375.515823] kexec: Waking offline cpu 6.
+> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+> [  375.695836] kexec: Waking offline cpu 7.
+> 
+> During kexec, the offline CPUs are brought online, which triggers the
 
+Is this a generic action or specific on ppc about the offline CPUs being
+brought line during kexec? 
 
-On Wed, 31 Jul 2024 13:12:41 -0600, Rob Herring (Arm) wrote:
-> Use of_property_present() to test for property presence rather than
-> of_find_property(). This is part of a larger effort to remove callers
-> of of_find_property() and similar functions. of_find_property() leaks
-> the DT struct property and data pointers which is a problem for
-> dynamically allocated nodes which may be freed.
+> crash hotplug handler `crash_handle_hotplug_event()` to update the kdump
+> image. Given that the system is on the kexec path and the kexec lock is
+> taken, the `crash_handle_hotplug_event()` function fails to take the
+> same lock to update the kdump image, resulting in the above error
+> messages.
+> 
+> To fix this, let's return from `crash_handle_hotplug_event()` if kexec
+> is in progress.
+> 
+> The same applies to the `crash_check_hotplug_support()` function.
+> Return 0 if kexec is in progress.
+> 
+> Cc: Hari Bathini <hbathini@linux.ibm.com>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: kexec@lists.infradead.org
+> Cc: linuxppc-dev@ozlabs.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: x86@kernel.org
+> Reported-by: Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
+> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+> ---
+>  kernel/crash_core.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+> index 63cf89393c6e..d37a16d5c3a1 100644
+> --- a/kernel/crash_core.c
+> +++ b/kernel/crash_core.c
+> @@ -502,6 +502,9 @@ int crash_check_hotplug_support(void)
+>  {
+>  	int rc = 0;
+>  
+> +	if (kexec_in_progress)
+> +		return 0;
+> +
+>  	crash_hotplug_lock();
+>  	/* Obtain lock while reading crash information */
+>  	if (!kexec_trylock()) {
+> @@ -537,6 +540,9 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+>  {
+>  	struct kimage *image;
+>  
+> +	if (kexec_in_progress)
+> +		return;
+> +
+>  	crash_hotplug_lock();
+>  	/* Obtain lock while changing crash information */
+>  	if (!kexec_trylock()) {
+> -- 
+> 2.45.2
 > 
 > 
-> [...]
+> _______________________________________________
+> kexec mailing list
+> kexec@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/kexec
+> 
 
-Applied, thanks!
-
-[1/1] gpio: Use of_property_present()
-      commit: b034a90b2745e43b4a85b56dc5fd7a6fa1a21f31
-
-Best regards,
--- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
