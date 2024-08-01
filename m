@@ -1,138 +1,145 @@
-Return-Path: <linux-kernel+bounces-271677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B067945187
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E61F3945188
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8A51F232FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:31:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5DAD1F2368C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E21B9B31;
-	Thu,  1 Aug 2024 17:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5024C1B4C25;
+	Thu,  1 Aug 2024 17:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DuO94Ghj"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="RFPnmUO2"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1190D143743;
-	Thu,  1 Aug 2024 17:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315F13D62B
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533451; cv=none; b=m8IqKO53wDGRFFsdkmxp0pERV9V34OsSpbfb+MON9Sf7VrEVlW2XQtUZuIUeWSuB/IoaBTkixtaoqHEedsaJhzzyBZAWo6RX801H4KrUct60We2v4w/QdJqtmYXD68P+isq32BmEaPh90xz5thy8fun/xn+ZYWX2MgrNyobEJhI=
+	t=1722533552; cv=none; b=gArXHjV13oTVKfupyW4qdPoIsMOk9WsEkwg40jJxW/cAyML4l00nHuwIIDmmDHJMS+oE3PAbWKvAveb3y/hc2LnP+fflOsS2+0djanul0I3VEZDHyEoZ7bqBE5lllBz1oQOmchEBkaYwBTHwIRmJCAo7Naez76gDCixlzQStrTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533451; c=relaxed/simple;
-	bh=55DhPcRDuHS5ZpJARG/nkE7q25pYrGpOdf2s6UK6Pxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sBoEpjnKT0dIebvoqCZhj0yx98vdo3fi5YRW76Q4B4u9kqTlq2G1vMY9FAhMM1P0hkibeSyhf9erkxbMWwWifiUs6Gew7SLEyl0duM/HmdjP0guF+lvMq8nXW1ROKyjy9Hu7dk6d+fPfUMd58XvIdmZSTIGv5qovV5LA6oFuksQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DuO94Ghj; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 408D1667;
-	Thu,  1 Aug 2024 19:29:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722533399;
-	bh=55DhPcRDuHS5ZpJARG/nkE7q25pYrGpOdf2s6UK6Pxs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DuO94GhjJoHXRM+sCAEccIi2c9T2/6OGnRjs0Aav44GhSzzHJMHLANynwEmfd1cE4
-	 IlJ8v0+PMvu6GdVJKBj8AENST4iqD0iZ3NsgZk8OwCa0wWyNgfQyEuAvDCn17ugNfA
-	 PXeHqO+Cp3uzVQj5sZkj/KZg5tS5ZmmdicJp+/JI=
-Date: Thu, 1 Aug 2024 20:30:26 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Ricard Wanderlof <ricardw@axis.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, kernel@axis.com
-Subject: Re: [PATCH] drm: bridge: adv7511: Accept audio sample widths of 32
- bits via I2S
-Message-ID: <20240801173026.GC18732@pendragon.ideasonboard.com>
-References: <91472c14-3aeb-766a-1716-8219af6e8782@axis.com>
- <dad42efe-7895-50f5-6bba-9b8abb97f34a@axis.com>
+	s=arc-20240116; t=1722533552; c=relaxed/simple;
+	bh=TjMDSHWY5Igoffs0sPVEqbTSyCYscpk6athICFQ4/Gc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=T0d6I8FiUwVmSfv7DMPqP5tJsi5yPnFoAECfJNpBHHfpxKcr+VVFo4HAyev2ewhyK0GW0abfLtc9anCPHcuw+sm85WgMDIdK8KigiGa7Pb+LKPnZt7lMkb3j5OozQkY7SrOGnGxq6S0mr5SJL3zkhZMooNpD43rW5akgYr61Uz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=RFPnmUO2; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-81f96ea9ff7so248705739f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:32:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1722533550; x=1723138350; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=bS2/f0MUierH/zQOzYcFrgW7IacC2rV2Pf3VZgOc8QA=;
+        b=RFPnmUO2AWrQplaw4WptW/q+1M83XxUGNc42WdJlsdA1cjOwAPFwJ92OTROMU2hBwd
+         zDBRyJZjjPlIqBT+b4RLq508cmufnFODCHFBHeEn/tY6YQXIomrGzyGMsQH8qAGbbRh+
+         c1VlO3TBelvyvFYhAbx3Qxb958aCKJVrAiGHyZFso+lNIfuMfGyxBQlgv3bQiEPVqJGf
+         Ob7eAMx1ms95veQa1fjUOd+OYvqfxoghlnGPSWI++6Ak0cMmiNzXiRZ9IZKXld6Y9EW5
+         fuvJdC/pWTdvRQJJQCdzGKNced8OesioNO7RdlIzk/aWIITnQT3viECtn4eU5am+Tq32
+         lhBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722533550; x=1723138350;
+        h=content-transfer-encoding:in-reply-to:cc:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bS2/f0MUierH/zQOzYcFrgW7IacC2rV2Pf3VZgOc8QA=;
+        b=MCHxbsdV+h/LE6JOeKUw+16lXVEkMoRP5qbpI8bY4s/38sI3h0Y9e31pMLIdqtExC4
+         MAdYsQSMpvaBXK6tNPOx4ePiX5K7059ioHjxjjMJNtnW/7mVlf6bGpLnxHb7m7F3Xmrg
+         lq22ShiS9ZOENeMuhE0UuDGK9vHQcS6qjadrPhXnuVeLGYDBfnpx2TycOonLD4ICJzyM
+         NZDZQChTErJNkVHYALpv1SKJQP5oYny9sfiLVwoVEKwSDh3WMvVJGWP1kVtfBecTOGJq
+         cgQAg7qygcMrWrvrm17o254BRcIeUz2mLDCtjiRSwMPzDb6Xf413/58FhnVngPk/H7S4
+         8XKg==
+X-Forwarded-Encrypted: i=1; AJvYcCUX3FD5iicRXaMOoH2UYv1CtA+kfvQF+Mf7XETdBbrYNjqGy94SL9sGQwCuWq67rj3vu1thQlpuEBl/jpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8MW0om3pu67mdowNEnDyjY6n3yVqlNX32eQDntuR7fni1oAga
+	BNoUlZaOiMVDLK5e2nrmC93lrAtmfwsOasXHERRb/ZDUNBfTP/ehR0uU4yssY3I=
+X-Google-Smtp-Source: AGHT+IEW29DvT927BXE65AEWASyCF+zwd6XCxK7iEu1GTTZ94NlmL1vnW2UIMzI/7NaHio7Cnzi6DA==
+X-Received: by 2002:a05:6602:6d10:b0:7fb:790c:a317 with SMTP id ca18e2360f4ac-81fd4367709mr110631939f.6.1722533549872;
+        Thu, 01 Aug 2024 10:32:29 -0700 (PDT)
+Received: from [100.64.0.1] ([147.124.94.167])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a3e19asm21674173.127.2024.08.01.10.32.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 10:32:29 -0700 (PDT)
+Message-ID: <0719e155-0a07-4878-87e3-cd96fed7a1dd@sifive.com>
+Date: Thu, 1 Aug 2024 12:32:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <dad42efe-7895-50f5-6bba-9b8abb97f34a@axis.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -fixes] riscv: Re-introduce global icache flush in
+ patch_text_XXX()
+To: Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>
+References: <20240730135921.156508-1-alexghiti@rivosinc.com>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240730135921.156508-1-alexghiti@rivosinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 10:15:55AM +0200, Ricard Wanderlof wrote:
-> 
-> Hi,
-> 
-> I submitted the patch below a while ago (two months) but as far as I can 
-> make out it has not been included. There was an initial concern from 
-> Dmitry Baryshkov which was subsequently addressed but no other objections. 
-> 
-> On Tue, 28 May 2024, Ricard Wanderlof wrote:
-> 
-> > 
-> > Even though data is truncated to 24 bits, the I2S interface does
-> > accept 32 bit data (the slot widths according to the data sheet
-> > can be 16 or 32 bits) so let the hw_params callback reflect this,
-> > even if the lowest 8 bits are not used when 32 bits are specified.
-> > 
-> > This is normally how 24 bit audio data is handled (i.e. as 32 bit
-> > data, with the LSB:s unused) and this is also reflected in other
-> > bridge drivers which handle audio, for instance sii902x.c and
-> > synopsis/dw-hdmi-i2s-audio.c .
-> > 
-> > Signed-off-by: Ricard Wanderlof <ricard.wanderlof@axis.com>
-> > ---
-> >  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 11 +++++++----
-> >  1 file changed, 7 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> > index 61f4a38e7d2b..4563f5d8136f 100644
-> > --- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> > +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
-> > @@ -101,11 +101,14 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
-> >  	case 20:
-> >  		len = ADV7511_I2S_SAMPLE_LEN_20;
-> >  		break;
-> > -	case 32:
-> > -		if (fmt->bit_fmt != SNDRV_PCM_FORMAT_IEC958_SUBFRAME_LE)
-> > -			return -EINVAL;
-> > -		fallthrough;
-> >  	case 24:
-> > +	case 32:
-> > +		/*
-> > +		 * 32 bits are handled like 24 bits, except that the lowest
-> > +		 * 8 bits are discarded. In fact, the accepted I2S slot widths
-> > +		 * are 16 and 32 bits, so the chip is fully compatible with
-> > +		 * 32 bit data.
-> > +		 */
-> >  		len = ADV7511_I2S_SAMPLE_LEN_24;
-> >  		break;
-> >  	default:
-> 
-> I recently discovered that the maintainer for the ADV7511 driver (in the 
-> I2C) framework is not included by the get_maintainers script, so perhaps 
-> this is the reason?
-> 
-> Otherwise, please enlighten me on what I need to do to get this patch 
-> accepted!
+Hi Alex,
 
-I have no experience with HDMI audio, so I didn't comment on your patch.
+On 2024-07-30 8:59 AM, Alexandre Ghiti wrote:
+> commit edf2d546bfd6 ("riscv: patch: Flush the icache right after
+> patching to avoid illegal insns") mistakenly removed the global icache
+> flush in patch_text_nosync() and patch_text_set_nosync() functions, so
+> reintroduce them.
+> 
+> Fixes: edf2d546bfd6 ("riscv: patch: Flush the icache right after patching to avoid illegal insns")
+> Reported-by: Samuel Holland <samuel.holland@sifive.com>
+> Closes: https://lore.kernel.org/linux-riscv/CAHVXubh8Adb4=-vN4cSh0FrZ16TeOKJbLj4AF09QC241bRk1Jg@mail.gmail.com/T/#m800757c26f72a1d45c240cb815650430166c82ea
 
-Hans, is this within your area of expertise ?
+Shouldn't this use the permalink for the specific message, not the thread?
 
--- 
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> ---
+>  arch/riscv/kernel/patch.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
+> index ab03732d06c4..91edfd764ed9 100644
+> --- a/arch/riscv/kernel/patch.c
+> +++ b/arch/riscv/kernel/patch.c
+> @@ -205,6 +205,9 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)
+>  
+>  	ret = patch_insn_set(tp, c, len);
+>  
+> +	if (!ret)
+> +		flush_icache_range((uintptr_t)tp, (uintptr_t)tp + len);
+
+This patch was based on an old tree from before
+https://git.kernel.org/riscv/c/47742484ee16 removed the "tp" variable. While it
+still compiles because flush_icache_range() is a macro that discards its
+arguments, it will be confusing to anyone reading the code.
+
 Regards,
+Samuel
 
-Laurent Pinchart
+> +
+>  	return ret;
+>  }
+>  NOKPROBE_SYMBOL(patch_text_set_nosync);
+> @@ -237,6 +240,9 @@ int patch_text_nosync(void *addr, const void *insns, size_t len)
+>  
+>  	ret = patch_insn_write(tp, insns, len);
+>  
+> +	if (!ret)
+> +		flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
+> +
+>  	return ret;
+>  }
+>  NOKPROBE_SYMBOL(patch_text_nosync);
+
 
