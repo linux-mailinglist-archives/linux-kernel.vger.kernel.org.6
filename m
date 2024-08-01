@@ -1,123 +1,105 @@
-Return-Path: <linux-kernel+bounces-271551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91139944FEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDFB944FDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8FFEB22C6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:04:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E5A285174
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:02:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5076D1B4C2E;
-	Thu,  1 Aug 2024 16:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B041B32BA;
+	Thu,  1 Aug 2024 16:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TGOeJvzb"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTjEQH3o"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525371B3F25;
-	Thu,  1 Aug 2024 16:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA4231384BF;
+	Thu,  1 Aug 2024 16:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528224; cv=none; b=sv9xjaMdXbwvq3nLL/9btKAUnk4c2eHvJNF++weO7O3T7WH+o4S+4N8JLuBXbkhsUY85m3VF/4wSrLUSrEAy5+6/gtry7GsGE+7mB7YO7IgX9LIkcWgKrBO1eg2e6N8QMjxtSnWUfu4TT3xtLIKXzmN0uTsNs0VWlmhWSmy5pnE=
+	t=1722528151; cv=none; b=i8W/3M/1Oi58YZu2xXALd0I2xDTDWUs0q+t55F7AFqqZMBab48r2Vjzg4Xr/RgidC4nbNmAli5gGtVWDPhmszCH67BJT0xH/QToa4fYIrRkkkUQtiZ5yVEQCa4VztiuoNhKy4ntqs6EURQUFZCcHBnmhovFL4fvqsMrAYfkrGF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528224; c=relaxed/simple;
-	bh=lKEyCcZ5xvVxKerc19SgPa49hrP9i/Su9pkaJ2TQK24=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TsN0IElwQI7zQ1Puz7ZhV3tqRux0b1HqptfKh+xLCJaAXYx6+PSRTnYrwnEWgugIJEvk7cv0Fw6Ii792y4iHba+e+V94AzVhy7wVYHoftWoa9/9EGSYo76QGRb79BLa2EOSkyiKR2CLd6XgI6p3hFzc1mvnIKJIoz3JHWc/9tRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TGOeJvzb; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1722528151; c=relaxed/simple;
+	bh=JbM0mobM8XPHWJlV+GkhV0iKaT4Ass7pcwi0VX4eFCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1ghO1wuFQlQ25zxgWsIVI0jlAzoM7S3wSPGc8YFetq4EICoGgHIYDyRygwKUVZ/Jo3jXdIVSUwp7nnost4KwOH/LgU+0+zZfuyBtufoq42zGPtxzkpc8hFZjCvPyGydAlRN49e/7UfLKCSOcSY5bw1tN9Nitp2Df9qm6dWmD9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TTjEQH3o; arc=none smtp.client-ip=209.85.128.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7a264a24ea7so4721427a12.3;
-        Thu, 01 Aug 2024 09:03:43 -0700 (PDT)
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428119da952so45712415e9.0;
+        Thu, 01 Aug 2024 09:02:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722528222; x=1723133022; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0oqZSVf3Pja7+3axQ7FhMBZCb9fhp3k28x1dNv+Nkh0=;
-        b=TGOeJvzbnTtLPZhLd/0JKqHyIFdVFhIte2id0+FvnOoep4w9jOj0M3ZINw1cxmIGO5
-         UC/7lf9ejtK3GSzGxWLhTiHvtnL4/P4vmXOXozWpW18KC27/8YFrM5vG/I2T347dVy9W
-         rGwQaTsE4Zo2LJxP0a2AmndiAMAc6I62V7ICJggStCTvbiZeJzNiRIasLtV65/Y+z3z9
-         rPmQdWnpqNB1aGquH0vYveZOmSsuz192snrFJqLO6qXR/D+H+/BBBoO6MNfaz4J26Oko
-         NAjXKzoC4TXkdCx/XEQ3SD+4BsAZ6eZ8Ad7qyOsB5IG3B5iLpvSxgNCKSmSz26JjCXB/
-         KADA==
+        d=gmail.com; s=20230601; t=1722528148; x=1723132948; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JbM0mobM8XPHWJlV+GkhV0iKaT4Ass7pcwi0VX4eFCk=;
+        b=TTjEQH3oP5Ofohgx2AAiEcGfxH/TscCMGbQuTiHVNA6g+N6r3GHeeaLnHQolfNA/lf
+         IRd7S5UuDRNnGrBXEE3ADyRlU4IhD2hyOSUHVH0ENNaYBlpWWYUmAXV7XzYNvUqoSHPz
+         KKiCCX2KWjLrG3zD5jVPbSVzXfSdbIZeI7oHVfwRK+WpJBfAArH35XehgARGmAICGD9G
+         qsS2Knjgo8ugeKsaEUETTXd6b+6DRkbfuMv1jDYDtNKgCmQfbRI+TcDz0AAho7YU6+BH
+         rQYKZm9W+Fr0aevJ15ZWzWcY216vRRQ5Ggq/0HadTvj2LAwfFr6BkYxc56H4TBsTX1dT
+         bXQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722528222; x=1723133022;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0oqZSVf3Pja7+3axQ7FhMBZCb9fhp3k28x1dNv+Nkh0=;
-        b=Ux2wHq/mIFUHb/8kUr5vAQmyTcTUApVlp8h0qpFZggQolgC/5+LWHrSj7KBfdTuA6K
-         4t9kTdKR5DYNZlUx+5szRymXQFG5wwU3A084/Hz+Y46A+We5Y28cpm5gzejRiN7Y75Ca
-         kEQ8fj0kbCf6nr6kHm9iL8K+C2JFwtLfaGNnoiUKRBy3BwFaEmreE+dgdfiA/+nRCZZS
-         1/BrxONCZAzZ2dTAbZIa7wKfz9UwTUAhHZ4FQ9PmpBgtS/Gx52e2l5UkGXvq5MPnuvl+
-         98MylGBAjzLPVWt57+uHUKZbU+0h3GKh0P2qbwYuxlJx72CNmnJXvMX43B3Zk1n9bGik
-         9fJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqOy0eUipmTQOm3Tdo4m6av8bHEQ9ZwEqvyR8hrIwwH0Nnv8N1EWd4Z2TrNt8DipygLi2DZHVmL0v8/9oHSoUVzaL7GfTcaSExu218yhHXOy5SNl/UmuZOOmmMHuviSHL+ufhC+Ul65g==
-X-Gm-Message-State: AOJu0Yx81SWH6lOnJhP58Fqlry7gZlvxVvFIjKrUlMKQ2KfTTRvgtyOo
-	g9D3sePRd9zea4JxHYA6oH6JhebUsBKlFd5drB0pj8L50NN/8XJA
-X-Google-Smtp-Source: AGHT+IG6tg51ynV80wHlsk0sv7Mrh3n5BGlH6OX14TfmA459p8pb2kTLYFECWUzhBXE/TS8GtQj3HQ==
-X-Received: by 2002:a17:90b:4b92:b0:2cf:f3e9:d5c8 with SMTP id 98e67ed59e1d1-2cff952e810mr843435a91.31.1722528222522;
-        Thu, 01 Aug 2024 09:03:42 -0700 (PDT)
-Received: from peter-bmc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4cf181sm3535268a91.37.2024.08.01.09.03.40
+        d=1e100.net; s=20230601; t=1722528148; x=1723132948;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JbM0mobM8XPHWJlV+GkhV0iKaT4Ass7pcwi0VX4eFCk=;
+        b=IjRZMBAMKlzTsIykUTxeGpIzHFTRgFjtDrp6+YictZOEwnXl/11up2DbwBACvyq5dt
+         2CsM+/3K5Fi+aasjsM0bPLQP+n4QcC81g3Ah/QiP1W2gX7F3pToAQRp590I8wHbM0+xj
+         Z6KfFLMaGKDv39Nc4+F2D3cZy83ynE0hXLGYpgmjTw/b6l6b6X17nsF502k7ebQFUn5N
+         UWS+Ne5pFL0MW222deHBe26CQHLkDfO2+FvbkxmvyOaL/liuwtB/8bbSRS6dfJzvZUfH
+         evyFjZg5KCtIk+bE7J7LoEQyZ4btkwIGvSOskrN9V3jbyxyabKl7O4uPYrkn+ZU4SXV3
+         6FTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+aeoykduDv24N8PSFQPdShXKIa7PNXUpAjtsWvMdJ47DAOyYNPj+ietXD6+3K9Ngg3GPdwLdbpw6OXK/P+wWFqMx6BHjk4pjO5hMdBHI9SQ1bmgq/7JITVntLgFmJe2wILcGG
+X-Gm-Message-State: AOJu0YxfQnevL5+TOoGyXcibCBpmrh9es2hHNruziizOG8rsU+sms4WH
+	ruBXDb6f7NT0Xvg7cXqbpPCf5LtFbNo1qWazjt724a3hezUMCk4W
+X-Google-Smtp-Source: AGHT+IEWV66ZYrus0W1ET1gIeNLur6+QGxyXdCNjV0dIiQyEy2PYiogbwno7MlX6tYQEIb9prjLr2w==
+X-Received: by 2002:a05:600c:4e8e:b0:426:654e:16d0 with SMTP id 5b1f17b1804b1-428e6a60397mr3059625e9.0.1722528147540;
+        Thu, 01 Aug 2024 09:02:27 -0700 (PDT)
+Received: from skbuf ([188.25.135.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36800cdasm20140304f8f.64.2024.08.01.09.02.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:03:42 -0700 (PDT)
-From: Peter Yin <peteryin.openbmc@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 01/11] ARM: dts: aspeed: Harma: revise hsc chip
-Date: Fri,  2 Aug 2024 00:01:25 +0800
-Message-Id: <20240801160136.1281291-2-peteryin.openbmc@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240801160136.1281291-1-peteryin.openbmc@gmail.com>
-References: <20240801160136.1281291-1-peteryin.openbmc@gmail.com>
+        Thu, 01 Aug 2024 09:02:26 -0700 (PDT)
+Date: Thu, 1 Aug 2024 19:02:24 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com, rock.xu@nio.com
+Subject: Re: [PATCH net-next v1 0/5] net: stmmac: FPE via ethtool + tc
+Message-ID: <20240801160224.4f54tanxs5dz5hwq@skbuf>
+References: <cover.1722421644.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1722421644.git.0x1207@gmail.com>
 
-Revise HSC chip name and address to match LTC4287.
+Hi Furong,
 
-Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
----
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+On Wed, Jul 31, 2024 at 06:43:11PM +0800, Furong Xu wrote:
+> Move the Frame Preemption(FPE) over to the new standard API which uses
+> ethtool-mm/tc-mqprio/tc-taprio.
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-index c118d473a76f..d99fba321379 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-@@ -276,11 +276,10 @@ temperature-sensor@49 {
- 		reg = <0x49>;
- 	};
- 
--	power-monitor@22 {
--		compatible = "lltc,ltc4286";
--		reg = <0x22>;
--		adi,vrange-low-enable;
--		shunt-resistor-micro-ohms = <500>;
-+	power-monitor@44 {
-+		compatible = "lltc,ltc4287";
-+		reg = <0x44>;
-+		shunt-resistor-micro-ohms = <250>;
- 	};
- };
- 
--- 
-2.25.1
+Thanks for working on this! I will review it soon.
 
+On the DWMAC 5.10a that you've tested, were other patches also necessary?
+What is the status of the kselftest? Does it pass? Can you post its
+output as part of the cover letter?
 
