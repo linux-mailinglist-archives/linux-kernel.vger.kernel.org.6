@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-270441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DC20943FDE
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1343943FDF
 	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4D21C22CC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA2C1C22B9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD1C14372E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725AA143733;
 	Thu,  1 Aug 2024 01:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfrhSHla"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSpq9c+7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AC3200A3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B1B13DDC6;
 	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722474637; cv=none; b=pZdqdshmYOJ6Gh98RNyEXzhWkyFiyhyS94tAJdeea6WXrD4fvt/J7hahO32qs0qsvcn+Zjup2kDqa6R+amG1YJM7LG4rTUv1FjFy+afApaJKHJ1XBV/rS1ivHT/FddVFX2z1Dp7P77OIF5TFzJ9FYHPIIFyOXgIMAn3hK92NokA=
+	t=1722474637; cv=none; b=sInsHPsFtAl/qAxQ2VHsLxXc/9NKH9Q1gHvZ/7KVlptGF5Fn7DS8m5Qmj3NWJqwj7bytwHUQ8spk3ORjHs9K525ksJRvO4t6MgH7AbpTMHuQXDfpqxssOIEPmqOaUOu2fGysttVRSOrTWnmJ9BlP7sIo8DIWjvAPXsRpqfHTxu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722474637; c=relaxed/simple;
-	bh=5pekV9wyOQzuoUdRu/1idacnuxzW9pNNfb3AKHrb9fI=;
+	bh=iJtqiAXqX0LwxAhBTKTJEZ3kteVZpRMr4hNaCqlp3Z0=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=XBf3/ul28jbo6h+zfzWPkc20W59CDeToPkVNedHsUygyrtWEiZx6uulf/0L5GusXP4pN8JWSox5ESw9S64Vu4jEyjjJjjm0DFAkU8MjRy7QQYFqMoAueH8CVwHG3fULWcDKNr+DCm3XlpMvm1v1eiH/hur5MxhuK9vM5Hfj0s94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfrhSHla; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 52A54C32786;
+	 In-Reply-To:To:Cc; b=PKazESFVwcPWXJAzza418/Mw1dcoVlk1yhPrvOCsWIpYb73yeCutbCdnK/s2K6MTskEzrpFktajGqhNvHeAZAdUWY8P2UkKabpnVHZJcMaSCWktN1/O1pAD/JSOvYuLH2tIKc2YsfYwLUXlIgQ3wDmoUAtYAcx1SH+JvxhRjOmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSpq9c+7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 44D88C4AF0C;
 	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722474637;
-	bh=5pekV9wyOQzuoUdRu/1idacnuxzW9pNNfb3AKHrb9fI=;
+	bh=iJtqiAXqX0LwxAhBTKTJEZ3kteVZpRMr4hNaCqlp3Z0=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=AfrhSHlal6LeY43VCU92LVPU5ALrvZ4oGFem3VUR+dKX3kJA4Dxp2EgVvk4dWLzXx
-	 Sc9i4BtY2QfUUDXbHKAqa82a7B/35YMXOKvEajgVRAvBFBrtwKdahIqATgV+aKvLHg
-	 zZkF/z20nxfNJvzlX9lEUtqxFvNIinda0RZtFdtG7EZjk6Vk1WfpWGft7aeGbW5UnY
-	 W34a6UgYLBPynPQ9EyOY3zO564D/5jzRzYjD0py3oNg0C86HM51/tElJ6pffvuUIy+
-	 kX/qNlOaN/FZ+PCvek5bVK4QPpylYbYuNqrEmQYMN1f4Z/CtCR6AK8FOTHr71L3RHg
-	 qw/JHzO/oyuyw==
+	b=hSpq9c+7ucTqqSamea53A4yOmCM0BtaeXgsKY7gCYPqzUCBIJ9xLMyUO+15GxxKf1
+	 2D2Ovvzj5jTWMTuVqRZqjOsTnFjhnSAxE38s2mHeYjDsvVWBhKSLiWs0LvaAPo1//w
+	 G9XWDUDl8aCqLMmKpJEbZymEEtBsk0gLMPvshv5OUhNYE08UEwIvrZZbP6TQOhUKtS
+	 UlToWm1qXqQF6vCapVJp51OlMFndXIXwxDcgZ2m+7nXXKeFzO3LZiV0hnlCN5LjN1W
+	 uzP7m3usl/fnk3CvIzbj8DBd5BESdeXW8ymDR5mVGVKM90kAyoKW6zk2r/PlQwACX5
+	 q8eqW9dwoPqjQ==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 40736C6E39B;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2E43AC6E396;
 	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,37 +51,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] net: Add skbuff.h to MAINTAINERS
+Subject: Re: [PATCH net v1] net: wan: fsl_qmc_hdlc: Convert carrier_lock spinlock
+ to a mutex
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172247463726.20901.13788765479950503016.git-patchwork-notify@kernel.org>
+ <172247463718.20901.3118468784661815872.git-patchwork-notify@kernel.org>
 Date: Thu, 01 Aug 2024 01:10:37 +0000
-References: <20240730161404.2028175-1-leitao@debian.org>
-In-Reply-To: <20240730161404.2028175-1-leitao@debian.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- horms@kernel.org
+References: <20240730063104.179553-1-herve.codina@bootlin.com>
+In-Reply-To: <20240730063104.179553-1-herve.codina@bootlin.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andriy.shevchenko@linux.intel.com,
+ christophe.leroy@csgroup.eu, netdev@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, stable@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 30 Jul 2024 09:14:03 -0700 you wrote:
-> The network maintainers need to be copied if the skbuff.h is touched.
+On Tue, 30 Jul 2024 08:31:04 +0200 you wrote:
+> The carrier_lock spinlock protects the carrier detection. While it is
+> hold, framer_get_status() is called witch in turn takes a mutex.
+> This is not correct and can lead to a deadlock.
 > 
-> This also helps git-send-email to figure out the proper maintainers when
-> touching the file.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Reviewed-by: Simon Horman <horms@kernel.org>
+> A run with PROVE_LOCKING enabled detected the issue:
+>   [ BUG: Invalid wait context ]
+>   ...
+>   c204ddbc (&framer->mutex){+.+.}-{3:3}, at: framer_get_status+0x40/0x78
+>   other info that might help us debug this:
+>   context-{4:4}
+>   2 locks held by ifconfig/146:
+>   #0: c0926a38 (rtnl_mutex){+.+.}-{3:3}, at: devinet_ioctl+0x12c/0x664
+>   #1: c2006a40 (&qmc_hdlc->carrier_lock){....}-{2:2}, at: qmc_hdlc_framer_set_carrier+0x30/0x98
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] net: Add skbuff.h to MAINTAINERS
-    https://git.kernel.org/netdev/net/c/8f73ef829858
+  - [net,v1] net: wan: fsl_qmc_hdlc: Convert carrier_lock spinlock to a mutex
+    https://git.kernel.org/netdev/net/c/c4d6a347ba7b
 
 You are awesome, thank you!
 -- 
