@@ -1,873 +1,353 @@
-Return-Path: <linux-kernel+bounces-271475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9256944EBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:06:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1671944EBD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F473282FC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:06:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FE201F22B31
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E1913C8E8;
-	Thu,  1 Aug 2024 15:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC9113B79F;
+	Thu,  1 Aug 2024 15:05:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1vqj5ak5"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtMBJZCi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4CC13B7AA
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1539130A47;
+	Thu,  1 Aug 2024 15:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722524758; cv=none; b=rdizp52wKPHXt8HDAn28TU7aqTqr2wMVSsrqRtA0Lu/o4V18WVsf67Bqdot8mk7ok3r2ha0MTZ8PwtFWeFb3Nxl5+kk/HgzlKRyWGLHXclRxqk2OwtTnSHi0Ju4w5jTGIwZWNLHGPeTZj5j6PlvscK1pbtU9wt1+EWl9l56VVK4=
+	t=1722524753; cv=none; b=hQLkln2koqg6tHQCb5w67Feivsg82hlL6ueBxEY+WXjxs0tuEsJpZllp0u8GP1/jCWXarI2Bzj5uNIgTBCw+TUWRxE64fUi3IeigqHdW4WoDzyz/V73eH3n6VwaUKYe8BUgtTyohZGOXlCqEZwGPz1BNn0eiaBy49e8sKiHUjbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722524758; c=relaxed/simple;
-	bh=ePo8GkeM4nVFloYEazW3BpDzOCWSRAHTqlN2DHgv4KQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DdDhbV/mDL2/1AvJ1rRZxTVzxuHSwovhCrjehJVMX6LSZdPwV6EhA8TcGUUrZMI2HztNS/T+jQL++cR4x6ns1L5ld440bd80t5t0/cwy3EZHgGTXldL8Rxt9zbAR+mrbtM0zGH4mSUzJmbBDaFp3ZE85HVLrQvm5Q7FIOKfmyHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1vqj5ak5; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso83133101fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 08:05:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722524754; x=1723129554; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TtjrYtBRW7HPHuNWK2QADXB0spXw5Ixm3gzQ1LJWqtc=;
-        b=1vqj5ak5hhS7dF/1ShXBHEK/p8/RAXkE2ySLQJSj7Jh3NzXBR4kno2b/gSUmfDEDXT
-         4C1ueqzAuGyNMxupXaGK4+E1x2UoxoILtRJkO30nEX9mtwn4GNOASKzEwcUuCoNWPein
-         7aGoTo5tO75Mz+fwPUfu6y4FaC3kb4ujW9tbyAIdqQ51WgqcT2UCeZyqVNARg27UEvE0
-         jt30waCfv1iJtZx+Jsj3tb7IYSJ8jSX6CHzUmogzVX8IgPcekzmo/qtnY6R3bPWc0Mcv
-         01d1ZOIlKKBxi0vnNdhOYxeadqWoSLpk8bQxmR/e7akAesxyd+6gjZLgCGCeIZxfdoSm
-         yYng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722524754; x=1723129554;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TtjrYtBRW7HPHuNWK2QADXB0spXw5Ixm3gzQ1LJWqtc=;
-        b=S4asiLkeRu0zde3CJrrRwyRNKGeRT0p8ayRuB+iHVYrmXGyt9vlQaYqZV1NRSRczyG
-         MPdaAJHX9Dzk30//Js1Nlp+HTC08KQfs0bOqTDXzqe15xIphxeCa22yiVzhK+YnmdPIw
-         1W3av+LLeQcVY8TwTqJwMyBJaUnKgD/UuI/Gava43/burPcEuq87Tgvo0xFve4YEDqUj
-         6/i1lKzDOiEuRYWPkSGd1UZc41zaYD7LyyvisIUc3wPIE4ydFZpxwyuduxnSjJd2PKl/
-         DXq8xot+LtfRiwEi2BZx1p6M5K6iw/fQJlzvlBMRuN20fH1JQHYZbiL3N/06JrZrdJi4
-         ISXg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgEJgxkO475y2XTm9I39zFA6g6nkVXAn4kMuRGNsFdlF2FziQKTsFSfky8A8UpuUyrwDdEWLtyr2V6i13IZ+jkmFFT/YcTP3FF/bZF
-X-Gm-Message-State: AOJu0YzTRlfWT1I8yaaY8gLvUpNiEd6yTHlOSmPh6LdQStfLO3aqRlDu
-	smmOJjvwN11xDrBEfL0LEkqq+lWYk2KP8miA09hX3Rr3py+RhEueDvVQNu4xMDKpV0onL627c4S
-	NumqGrQnQgi+o5foA6hm8jDiz8Ux4zSfy6ob2
-X-Google-Smtp-Source: AGHT+IFqCfiWfHfsKweigVZQ35+EcPbZAMHufT97KmZwepGFYhVqs3IGhjWfwd37yvqLFfvKIH+/7K6zBPvPsEocSpk=
-X-Received: by 2002:a05:6512:4004:b0:52c:e312:2082 with SMTP id
- 2adb3069b0e04-530bb3b527fmr109611e87.54.1722524752929; Thu, 01 Aug 2024
- 08:05:52 -0700 (PDT)
+	s=arc-20240116; t=1722524753; c=relaxed/simple;
+	bh=GUkho6CZGIWzI1AH1O8rxlbZliBTJFmA1z4ojeD68+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDaHoF2E9mfiilQUCtT7YBMZsneTorwwfTlwlCN6qHeMcK9YspGpOZzq54IHd+7XxzXcZag0eTS40qKdvKz2M1WnFGNPuepkkMuodMnPCNURf1IQmjgY/s6xBJr5DlBkjV+jx4JmTtqZFzCyGZ2OT1Ked4D0Z3SzPVtMlIoBEwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtMBJZCi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D464CC4AF0B;
+	Thu,  1 Aug 2024 15:05:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722524753;
+	bh=GUkho6CZGIWzI1AH1O8rxlbZliBTJFmA1z4ojeD68+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qtMBJZCi6CNLOMkNJfWCxVQHoC8O4rxkW7V3ibTKJVuW2mwCk7Kgz6akoVcJb9yyk
+	 twR1z9paK9a4A6Lu9FjAKRTURh1+1vXqrfo22cNCkX5I4pliwF9gfUdB0xYwPqc+dJ
+	 ZvvtfU1rYhyZeK3FUAMzkuUl7C+wzz3vEZbljU6RhJ7OEyPBUEM0xBnXKxxS0OGJpF
+	 tirRQzXSrLlj5SFjlEQ7xwR+7RF6TO8P6eGwRqQdx2B5rcUNNxoEDX4FUIHUGh3DQG
+	 PIxabX1l4X0wwpxUdCaLi3mqDcoddPUcSgrNJ6vxIxWx9WwvPAm5Vv1Kb8KenRs7zy
+	 EL2oZFeekehnQ==
+Date: Thu, 1 Aug 2024 12:05:50 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
+	Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v3 8/8] perf test: Update sample filtering test
+Message-ID: <ZqukTsjWqbx-xZ7L@x1>
+References: <20240703223035.2024586-1-namhyung@kernel.org>
+ <20240703223035.2024586-9-namhyung@kernel.org>
+ <ZqpFvxFcZMHeAdqp@x1>
+ <ZqrS_80S91EvnQE0@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801000641.1882-1-dakr@kernel.org> <20240801000641.1882-16-dakr@kernel.org>
-In-Reply-To: <20240801000641.1882-16-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 17:05:41 +0200
-Message-ID: <CAH5fLghHwv7-4NviGUA4dtL4EA+Wi380mY4MxvyH=+5=guc-Og@mail.gmail.com>
-Subject: Re: [PATCH v3 15/25] rust: alloc: implement kernel `Vec` type
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
-	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
-	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
-	zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, 
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqrS_80S91EvnQE0@google.com>
 
-On Thu, Aug 1, 2024 at 2:08=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> `Vec` provides a contiguous growable array type (such as `Vec`) with
-> contents allocated with the kernel's allocators (e.g. `Kmalloc`,
-> `Vmalloc` or `KVmalloc`).
->
-> In contrast to Rust's `Vec` type, the kernel `Vec` type considers the
-> kernel's GFP flags for all appropriate functions, always reports
-> allocation failures through `Result<_, AllocError>` and remains
-> independent from unstable features.
->
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/alloc.rs      |   6 +
->  rust/kernel/alloc/kbox.rs |  16 +-
->  rust/kernel/alloc/kvec.rs | 583 ++++++++++++++++++++++++++++++++++++++
->  rust/kernel/prelude.rs    |   2 +-
->  4 files changed, 605 insertions(+), 2 deletions(-)
->  create mode 100644 rust/kernel/alloc/kvec.rs
->
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index 4bddd023aa7f..bd93140f3094 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -5,6 +5,7 @@
->  #[cfg(not(any(test, testlib)))]
->  pub mod allocator;
->  pub mod kbox;
-> +pub mod kvec;
->  pub mod vec_ext;
->
->  #[cfg(any(test, testlib))]
-> @@ -18,6 +19,11 @@
->  pub use self::kbox::KVBox;
->  pub use self::kbox::VBox;
->
-> +pub use self::kvec::KVVec;
-> +pub use self::kvec::KVec;
-> +pub use self::kvec::VVec;
-> +pub use self::kvec::Vec;
-> +
->  /// Indicates an allocation error.
->  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
->  pub struct AllocError;
-> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-> index 7074f00e07bc..39feaed4a8f8 100644
-> --- a/rust/kernel/alloc/kbox.rs
-> +++ b/rust/kernel/alloc/kbox.rs
-> @@ -2,7 +2,7 @@
->
->  //! Implementation of [`Box`].
->
-> -use super::{AllocError, Allocator, Flags};
-> +use super::{AllocError, Allocator, Flags, Vec};
->  use core::fmt;
->  use core::marker::PhantomData;
->  use core::mem::ManuallyDrop;
-> @@ -169,6 +169,20 @@ pub fn into_pin(b: Self) -> Pin<Self>
->      }
->  }
->
-> +impl<T, A, const N: usize> Box<[T; N], A>
-> +where
-> +    A: Allocator,
-> +{
-> +    /// Convert a `Box<[T], A>` to a `Vec<T, A>`.
-> +    pub fn into_vec(b: Self) -> Vec<T, A> {
+On Wed, Jul 31, 2024 at 05:12:47PM -0700, Namhyung Kim wrote:
+> On Wed, Jul 31, 2024 at 11:10:07AM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Jul 03, 2024 at 03:30:35PM -0700, Namhyung Kim wrote:
+> > > Now it can run the BPF filtering test with normal user if the BPF
+> > > objects are pinned by 'sudo perf record --setup-filter pin'.  Let's
+> > > update the test case to verify the behavior.  It'll skip the test if the
+> > > filter check is failed from a normal user, but it shows a message how to
+> > > set up the filters.
+> > > 
+> > > First, run the test as a normal user and it fails.
+> > > 
+> > >   $ perf test -vv filtering
+> > >    95: perf record sample filtering (by BPF) tests:
+> > >   --- start ---
+> > >   test child forked, pid 425677
+> > >   Checking BPF-filter privilege
+> > >   try 'sudo perf record --setup-filter pin' first.       <<<--- here
+> > >   bpf-filter test [Skipped permission]
+> > >   ---- end(-2) ----
+> > >    95: perf record sample filtering (by BPF) tests                     : Skip
+> > > 
+> > > According to the message, run the perf record command to pin the BPF
+> > > objects.
+> > > 
+> > >   $ sudo perf record --setup-filter pin
+> > > 
+> > > And re-run the test as a normal user.
+> > > 
+> > >   $ perf test -vv filtering
+> > >    95: perf record sample filtering (by BPF) tests:
+> > >   --- start ---
+> > >   test child forked, pid 424486
+> > >   Checking BPF-filter privilege
+> > >   Basic bpf-filter test
+> > >   Basic bpf-filter test [Success]
+> > >   Failing bpf-filter test
+> > >   Error: task-clock event does not have PERF_SAMPLE_CPU
+> > >   Failing bpf-filter test [Success]
+> > >   Group bpf-filter test
+> > >   Error: task-clock event does not have PERF_SAMPLE_CPU
+> > >   Error: task-clock event does not have PERF_SAMPLE_CODE_PAGE_SIZE
+> > >   Group bpf-filter test [Success]
+> > >   ---- end(0) ----
+> > >    95: perf record sample filtering (by BPF) tests                     : Ok
+> > 
+> > Ok, so I tested one of the examples you provide as a root user:
+> > 
+> > root@number:~# perf record -o- -e cycles:u --filter 'period < 10' perf test -w noploop | perf script -i-
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.024 MB - ]
+> >        perf-exec  228020 53029.825757:          1 cpu_core/cycles/u:      7fe361d1cc11 [unknown] ([unknown])
+> >        perf-exec  228020 53029.825760:          1 cpu_core/cycles/u:      7fe361d1cc11 [unknown] ([unknown])
+> >             perf  228020 53029.826313:          1 cpu_atom/cycles/u:      7fd80d7ba040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228020 53029.826316:          1 cpu_atom/cycles/u:      7fd80d7ba040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228020 53029.838051:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228020 53029.838054:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228020 53029.838055:          9 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228020 53029.844137:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> >             perf  228020 53029.844139:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> > root@number:~# perf record -o- -e cycles:u --filter 'period < 100000' perf test -w noploop | perf script -i-
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.025 MB - ]
+> >        perf-exec  228084 53076.760776:          1 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+> >        perf-exec  228084 53076.760779:          1 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+> >        perf-exec  228084 53076.760779:         10 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+> >        perf-exec  228084 53076.760780:        497 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+> >        perf-exec  228084 53076.760781:      27924 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+> >             perf  228084 53076.761318:          1 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.761320:          1 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.761321:         14 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.761322:        518 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.761322:      20638 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.768070:          1 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.768072:          1 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.768073:         17 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.768073:        836 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.768074:      44346 cpu_core/cycles/u:      7f317056e89b _dl_relocate_object+0x1db (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228084 53076.843976:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> >             perf  228084 53076.843978:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> >             perf  228084 53076.843979:         13 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> >             perf  228084 53076.843979:        563 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> >             perf  228084 53076.843980:      26519 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> >             perf  228084 53077.482090:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228084 53077.482092:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228084 53077.482093:         15 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228084 53077.482093:        746 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+> >             perf  228084 53077.482094:      38315 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> > root@number:~#
+> > 
+> > Filtering by period works as advertised, now I have done as root;
+> > 
+> > root@number:~# perf record --setup-filter pin
+> > root@number:~# ls -la /sys/fs/bpf/perf_filter/
+> > total 0
+> > drwxr-xr-x. 2 root root 0 Jul 31 10:43 .
+> > drwxr-xr-t. 3 root root 0 Jul 31 10:43 ..
+> > -rw-rw-rw-. 1 root root 0 Jul 31 10:43 dropped
+> > -rw-rw-rw-. 1 root root 0 Jul 31 10:43 filters
+> > -rwxrwxrwx. 1 root root 0 Jul 31 10:43 perf_sample_filter
+> > -rw-rw-rw-. 1 root root 0 Jul 31 10:43 pid_hash
+> > -rw-------. 1 root root 0 Jul 31 10:43 sample_f_rodata
+> > root@number:~# ls -la /sys/fs/bpf/perf_filter/perf_sample_filter 
+> > -rwxrwxrwx. 1 root root 0 Jul 31 10:43 /sys/fs/bpf/perf_filter/perf_sample_filter
+> > root@number:~#
+> > 
+> > And as a normal user I try:
+> > 
+> > acme@number:~$ perf record -o- -e cycles:u perf test -w noploop | perf script -i- | head
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.204 MB - ]
+> >             perf  228218 53158.670585:          1 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.670590:          1 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.670592:          7 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.670593:        117 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.670595:       2152 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.670604:      38977 cpu_atom/cycles/u:  ffffffff99201280 [unknown] ([unknown])
+> >             perf  228218 53158.670650:     167064 cpu_atom/cycles/u:      7f2fb1b67d7c intel_check_word.constprop.0+0x16c (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.671472:     232830 cpu_atom/cycles/u:      7f2fb1b75d98 strcmp+0x78 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.672710:     191183 cpu_atom/cycles/u:      7f2fb1b59311 _dl_map_object_from_fd+0xea1 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  228218 53158.673461:     158125 cpu_atom/cycles/u:      7f2fb1b77148 strcmp+0x1428 (/usr/lib64/ld-linux-x86-64.so.2)
+> > acme@number:~$
+> > 
+> > Ok, no filtering, bot samples, lets try to use filtering as with root:
+> > 
+> > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.019 MB - ]
+> > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.019 MB - ]
+> > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.019 MB - ]
+> > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.019 MB - ]
+> > acme@number:~$
+> 
+> Hmm.. strange.  The above command works well for me.
+> 
+> > 
+> > acme@number:~$ perf record -v -e cycles:u --filter 'period < 10000000' perf test -w noploop 
+> > Using CPUID GenuineIntel-6-B7-1
+> > DEBUGINFOD_URLS=
+> > nr_cblocks: 0
+> > affinity: SYS
+> > mmap flush: 1
+> > comp level: 0
+> > Problems creating module maps, continuing anyway...
+> > pid hash: 228434 -> 13
+> > pid hash: 228434 -> 14
+> 
+> This part is a little strange as it's using two entries.  Hmm, are you
+> using a hybrid machine?  Anyway I think it should work there too..
 
-This doc-comment seems wrong. [T] and [T; N] are not the same thing.
+Yes, I'll try it again on a 5950x since it isn't hybrid.
 
-> +        let len =3D b.len();
-> +        unsafe {
-> +            let ptr =3D Self::into_raw(b);
-> +            Vec::from_raw_parts(ptr as _, len, len)
-> +        }
-> +    }
-> +}
-> +
->  impl<T, A> Box<MaybeUninit<T>, A>
->  where
->      A: Allocator,
-> diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> new file mode 100644
-> index 000000000000..04cc85f7d92c
-> --- /dev/null
-> +++ b/rust/kernel/alloc/kvec.rs
-> @@ -0,0 +1,583 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Implementation of [`Vec`].
-> +
-> +use super::{AllocError, Allocator, Flags};
-> +use crate::types::Unique;
-> +use core::{
-> +    fmt,
-> +    marker::PhantomData,
-> +    mem::{ManuallyDrop, MaybeUninit},
-> +    ops::Deref,
-> +    ops::DerefMut,
-> +    ops::Index,
-> +    ops::IndexMut,
-> +    slice,
-> +    slice::SliceIndex,
-> +};
-> +
-> +/// Create a [`Vec`] containing the arguments.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// let mut v =3D kernel::kvec![];
-> +/// v.push(1, GFP_KERNEL)?;
-> +/// assert_eq!(v, [1]);
-> +///
-> +/// let mut v =3D kernel::kvec![1; 3]?;
-> +/// v.push(4, GFP_KERNEL)?;
-> +/// assert_eq!(v, [1, 1, 1, 4]);
-> +///
-> +/// let mut v =3D kernel::kvec![1, 2, 3]?;
-> +/// v.push(4, GFP_KERNEL)?;
-> +/// assert_eq!(v, [1, 2, 3, 4]);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[macro_export]
-> +macro_rules! kvec {
-> +    () =3D> (
-> +        {
-> +            $crate::alloc::KVec::new()
-> +        }
-> +    );
-> +    ($elem:expr; $n:expr) =3D> (
-> +        {
-> +            $crate::alloc::KVec::from_elem($elem, $n, GFP_KERNEL)
-> +        }
-> +    );
-> +    ($($x:expr),+ $(,)?) =3D> (
-> +        {
-> +            match $crate::alloc::KBox::new([$($x),+], GFP_KERNEL) {
-> +                Ok(b) =3D> Ok($crate::alloc::KBox::into_vec(b)),
-> +                Err(e) =3D> Err(e),
-> +            }
-> +        }
-> +    );
-> +}
-> +
-> +/// The kernel's [`Vec`] type.
-> +///
-> +/// A contiguous growable array type with contents allocated with the ke=
-rnel's allocators (e.g.
-> +/// `Kmalloc`, `Vmalloc` or `KVmalloc`, written `Vec<T, A>`.
+> Also the number is too high.. I expect 1 or 2.  Maybe it didn't release
+> all the entries.  Let me think about the case.
 
-A closing bracket is missing in this sentence.
+I'm inclined for now to keep this series merged and then take fixes on
+top, please advise if this isn't ok with you.
 
-> +/// For non-zero-sized values, a [`Vec`] will use the given allocator `A=
-` for its allocation. For
-> +/// the most common allocators the type aliases `KVec`, `VVec` and `KVVe=
-c` exist.
-> +///
-> +/// For zero-sized types the [`Vec`]'s pointer must be `dangling_mut::<T=
->`; no memory is allocated.
-> +///
-> +/// Generally, [`Vec`] consists of a pointer that represents the vector'=
-s backing buffer, the
-> +/// capacity of the vector (the number of elements that currently fit in=
-to the vector), it's length
-> +/// (the number of elements that are currently stored in the vector) and=
- the `Allocator` used to
-> +/// allocate (and free) the backing buffer.
-> +///
-> +/// A [`Vec`] can be deconstructed into and (re-)constructed from it's p=
-reviously named raw parts
-> +/// and manually modified.
-> +///
-> +/// [`Vec`]'s backing buffer gets, if required, automatically increased =
-(re-allocated) when elements
-> +/// are added to the vector.
-> +///
-> +/// # Invariants
-> +///
-> +/// The [`Vec`] backing buffer's pointer always properly aligned and eit=
-her points to memory
-> +/// allocated with `A` or, for zero-sized types, is a dangling pointer.
-> +///
-> +/// The length of the vector always represents the exact number of eleme=
-nts stored in the vector.
-> +///
-> +/// The capacity of the vector always represents the absolute number of =
-elements that can be stored
-> +/// within the vector without re-allocation. However, it is legal for th=
-e backing buffer to be
-> +/// larger than `size_of<T>` times the capacity.
-> +///
-> +/// The `Allocator` of the vector is the exact allocator the backing buf=
-fer was allocated with (and
-> +/// must be freed with).
-> +pub struct Vec<T, A: Allocator> {
-> +    ptr: Unique<T>,
-> +    /// Never used for ZSTs; it's `capacity()`'s responsibility to retur=
-n usize::MAX in that case.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// `cap` must be in the `0..=3Disize::MAX` range.
-> +    cap: usize,
-
-This section header should say Invariants, not Safety.
-
-> +    len: usize,
-> +    _p: PhantomData<A>,
-> +}
-> +
-> +/// Type alias for `Vec` with a `Kmalloc` allocator.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// let mut v =3D KVec::new();
-> +/// v.push(1, GFP_KERNEL)?;
-> +/// assert_eq!(&v, &[1]);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +pub type KVec<T> =3D Vec<T, super::allocator::Kmalloc>;
-> +
-> +/// Type alias for `Vec` with a `Vmalloc` allocator.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// let mut v =3D VVec::new();
-> +/// v.push(1, GFP_KERNEL)?;
-> +/// assert_eq!(&v, &[1]);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +pub type VVec<T> =3D Vec<T, super::allocator::Vmalloc>;
-> +
-> +/// Type alias for `Vec` with a `KVmalloc` allocator.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// let mut v =3D KVVec::new();
-> +/// v.push(1, GFP_KERNEL)?;
-> +/// assert_eq!(&v, &[1]);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +pub type KVVec<T> =3D Vec<T, super::allocator::KVmalloc>;
-> +
-> +impl<T, A> Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    #[inline]
-> +    fn is_zst() -> bool {
-> +        core::mem::size_of::<T>() =3D=3D 0
-> +    }
-> +
-> +    /// Returns the total number of elements the vector can hold without
-> +    /// reallocating.
-> +    pub fn capacity(&self) -> usize {
-> +        if Self::is_zst() {
-> +            usize::MAX
-> +        } else {
-> +            self.cap
-> +        }
-> +    }
-
-I would consider always storing usize::MAX in the capacity field for zst ty=
-pes?
-
-> +
-> +    /// Returns the number of elements in the vector, also referred to
-> +    /// as its 'length'.
-> +    #[inline]
-> +    pub fn len(&self) -> usize {
-> +        self.len
-> +    }
-> +
-> +    /// Forces the length of the vector to new_len.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// - `new_len` must be less than or equal to [`Self::capacity()`].
-> +    /// - The elements at `old_len..new_len` must be initialized.
-> +    #[inline]
-> +    pub unsafe fn set_len(&mut self, new_len: usize) {
-> +        self.len =3D new_len;
-> +    }
-> +
-> +    /// Extracts a slice containing the entire vector.
-> +    ///
-> +    /// Equivalent to `&s[..]`.
-> +    #[inline]
-> +    pub fn as_slice(&self) -> &[T] {
-> +        self
-> +    }
-> +
-> +    /// Extracts a mutable slice of the entire vector.
-> +    ///
-> +    /// Equivalent to `&mut s[..]`.
-> +    #[inline]
-> +    pub fn as_mut_slice(&mut self) -> &mut [T] {
-> +        self
-> +    }
-> +
-> +    /// Returns an unsafe mutable pointer to the vector's buffer, or a d=
-angling
-> +    /// raw pointer valid for zero sized reads if the vector didn't allo=
-cate.
-> +    #[inline]
-> +    pub fn as_mut_ptr(&self) -> *mut T {
-> +        self.ptr.as_ptr()
-> +    }
-> +
-> +    /// Returns a raw pointer to the slice's buffer.
-> +    #[inline]
-> +    pub fn as_ptr(&self) -> *const T {
-> +        self.as_mut_ptr()
-> +    }
-> +
-> +    /// Returns `true` if the vector contains no elements.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let mut v =3D KVec::new();
-> +    /// assert!(v.is_empty());
-> +    ///
-> +    /// v.push(1, GFP_KERNEL);
-> +    /// assert!(!v.is_empty());
-> +    /// ```
-> +    #[inline]
-> +    pub fn is_empty(&self) -> bool {
-> +        self.len() =3D=3D 0
-> +    }
-> +
-> +    /// Constructs a new, empty Vec<T, A>.
-> +    ///
-> +    /// This method does not allocate by itself.
-> +    #[inline]
-> +    pub const fn new() -> Self {
-> +        Self {
-> +            ptr: Unique::dangling(),
-> +            cap: 0,
-> +            len: 0,
-> +            _p: PhantomData::<A>,
-> +        }
-> +    }
-> +
-> +    /// Returns the remaining spare capacity of the vector as a slice of=
- `MaybeUninit<T>`.
-> +    pub fn spare_capacity_mut(&mut self) -> &mut [MaybeUninit<T>] {
-> +        // SAFETY: The memory between `self.len` and `self.capacity` is =
-guaranteed to be allocated
-> +        // and valid, but uninitialized.
-> +        unsafe {
-> +            slice::from_raw_parts_mut(
-> +                self.as_mut_ptr().add(self.len) as *mut MaybeUninit<T>,
-> +                self.capacity() - self.len,
-> +            )
-> +        }
-
-Is this correct for ZSTs?
-
-> +    }
-> +
-> +    /// Appends an element to the back of the [`Vec`] instance.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let mut v =3D KVec::new();
-> +    /// v.push(1, GFP_KERNEL)?;
-> +    /// assert_eq!(&v, &[1]);
-> +    ///
-> +    /// v.push(2, GFP_KERNEL)?;
-> +    /// assert_eq!(&v, &[1, 2]);
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError>=
- {
-> +        Vec::reserve(self, 1, flags)?;
-> +        let s =3D self.spare_capacity_mut();
-> +        s[0].write(v);
-> +
-> +        // SAFETY: We just initialised the first spare entry, so it is s=
-afe to increase the length
-> +        // by 1. We also know that the new length is <=3D capacity becau=
-se of the previous call to
-> +        // `reserve` above.
-> +        unsafe { self.set_len(self.len() + 1) };
-> +        Ok(())
-> +    }
-> +
-> +    /// Creates a new [`Vec`] instance with at least the given capacity.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let v =3D KVec::<u32>::with_capacity(20, GFP_KERNEL)?;
-> +    ///
-> +    /// assert!(v.capacity() >=3D 20);
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, =
-AllocError> {
-> +        let mut v =3D Vec::new();
-> +
-> +        Self::reserve(&mut v, capacity, flags)?;
-> +
-> +        Ok(v)
-> +    }
-> +
-> +    /// Pushes clones of the elements of slice into the [`Vec`] instance=
-.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let mut v =3D KVec::new();
-> +    /// v.push(1, GFP_KERNEL)?;
-> +    ///
-> +    /// v.extend_from_slice(&[20, 30, 40], GFP_KERNEL)?;
-> +    /// assert_eq!(&v, &[1, 20, 30, 40]);
-> +    ///
-> +    /// v.extend_from_slice(&[50, 60], GFP_KERNEL)?;
-> +    /// assert_eq!(&v, &[1, 20, 30, 40, 50, 60]);
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Re=
-sult<(), AllocError>
-> +    where
-> +        T: Clone,
-> +    {
-> +        self.reserve(other.len(), flags)?;
-> +        for (slot, item) in core::iter::zip(self.spare_capacity_mut(), o=
-ther) {
-> +            slot.write(item.clone());
-> +        }
-> +
-> +        // SAFETY: We just initialised the `other.len()` spare entries, =
-so it is safe to increase
-> +        // the length by the same amount. We also know that the new leng=
-th is <=3D capacity because
-> +        // of the previous call to `reserve` above.
-> +        unsafe { self.set_len(self.len() + other.len()) };
-> +        Ok(())
-> +    }
-> +
-> +    /// Creates a Vec<T, A> directly from a pointer, a length, a capacit=
-y, and an allocator.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// This is highly unsafe, due to the number of invariants that aren=
-=E2=80=99t checked:
-> +    ///
-> +    /// - `ptr` must be currently allocated via the given allocator `A`.
-> +    /// - `T` needs to have the same alignment as what `ptr` was allocat=
-ed with. (`T` having a less
-> +    ///   strict alignment is not sufficient, the alignment really needs=
- to be equal to satisfy the
-> +    ///   `dealloc` requirement that memory must be allocated and deallo=
-cated with the same layout.)
-> +    /// - The size of `T` times the `capacity` (i.e. the allocated size =
-in bytes) needs to be
-> +    ///   smaller or equal the size the pointer was allocated with.
-> +    /// - `length` needs to be less than or equal to `capacity`.
-> +    /// - The first `length` values must be properly initialized values =
-of type `T`.
-> +    /// - The allocated size in bytes must be no larger than `isize::MAX=
-`. See the safety
-> +    ///   documentation of `pointer::offset`.
-> +    ///
-> +    /// It is also valid to create an empty `Vec` passing a dangling poi=
-nter for `ptr` and zero for
-> +    /// `cap` and `len`.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let mut v =3D kernel::kvec![1, 2, 3]?;
-> +    /// v.reserve(1, GFP_KERNEL)?;
-> +    ///
-> +    /// let (mut ptr, mut len, cap) =3D v.into_raw_parts();
-> +    ///
-> +    /// // SAFETY: We've just reserved memory for another element.
-> +    /// unsafe { ptr.add(len).write(4) };
-> +    /// len +=3D 1;
-> +    ///
-> +    /// // SAFETY: We only wrote an additional element at the end of the=
- `KVec`'s buffer and
-> +    /// // correspondingly increased the length of the `KVec` by one. Ot=
-herwise, we construct it
-> +    /// // from the exact same raw parts.
-> +    /// let v =3D unsafe { KVec::from_raw_parts(ptr, len, cap) };
-> +    ///
-> +    /// assert_eq!(v, [1, 2, 3, 4]);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: u=
-size) -> Self {
-> +        let cap =3D if Self::is_zst() { 0 } else { capacity };
-> +
-> +        Self {
-> +            // SAFETY: By the safety requirements, `ptr` is either dangl=
-ing or pointing to a valid
-> +            // memory allocation, allocated with `A`.
-> +            ptr: unsafe { Unique::new_unchecked(ptr) },
-> +            cap,
-> +            len: length,
-> +            _p: PhantomData::<A>,
-> +        }
-> +    }
-> +
-> +    /// Decomposes a `Vec<T, A>` into its raw components: (`pointer`, `l=
-ength`, `capacity`).
-> +    pub fn into_raw_parts(self) -> (*mut T, usize, usize) {
-> +        let me =3D ManuallyDrop::new(self);
-> +        let len =3D me.len();
-> +        let capacity =3D me.capacity();
-> +        let ptr =3D me.as_mut_ptr();
-> +        (ptr, len, capacity)
-> +    }
-> +
-> +    /// Ensures that the capacity exceeds the length by at least `additi=
-onal` elements.
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    /// let mut v =3D KVec::new();
-> +    /// v.push(1, GFP_KERNEL)?;
-> +    ///
-> +    /// v.reserve(10, GFP_KERNEL)?;
-> +    /// let cap =3D v.capacity();
-> +    /// assert!(cap >=3D 10);
-> +    ///
-> +    /// v.reserve(10, GFP_KERNEL)?;
-> +    /// let new_cap =3D v.capacity();
-> +    /// assert_eq!(new_cap, cap);
-> +    ///
-> +    /// # Ok::<(), Error>(())
-> +    /// ```
-> +    pub fn reserve(&mut self, additional: usize, flags: Flags) -> Result=
-<(), AllocError> {
-> +        let len =3D self.len();
-> +        let cap =3D self.capacity();
-> +
-> +        if cap - len >=3D additional {
-> +            return Ok(());
-> +        }
-> +
-> +        if Self::is_zst() {
-> +            // The capacity is already `usize::MAX` for SZTs, we can't g=
-o higher.
-> +            return Err(AllocError);
-> +        }
-> +
-> +        // We know cap is <=3D `isize::MAX` because `Layout::array` fail=
-s if the resulting byte size
-> +        // is greater than `isize::MAX`. So the multiplication by two wo=
-n't overflow.
-
-You know it won't overflow because of the type invariants. The thing
-about Layout::array should instead be used to argue why setting
-self.cap below does not break the invariants.
-
-> +        let new_cap =3D core::cmp::max(cap * 2, len.checked_add(addition=
-al).ok_or(AllocError)?);
-> +        let layout =3D core::alloc::Layout::array::<T>(new_cap).map_err(=
-|_| AllocError)?;
-> +
-> +        // We need to make sure that `ptr` is either NULL or comes from =
-a previous call to
-> +        // `realloc_flags`. A `Vec<T, A>`'s `ptr` value is not guarantee=
-d to be NULL and might be
-> +        // dangling after being created with `Vec::new`. Instead, we can=
- rely on `Vec<T, A>`'s
-> +        // capacity to be zero if no memory has been allocated yet.
-> +        let ptr =3D if cap =3D=3D 0 {
-> +            None
-> +        } else {
-> +            Some(self.ptr.as_non_null().cast())
-> +        };
-> +
-> +        // SAFETY: `ptr` is valid because it's either `None` or comes fr=
-om a previous call to
-> +        // `A::realloc`. We also verified that the type is not a ZST.
-> +        let ptr =3D unsafe { A::realloc(ptr, layout, flags)? };
-> +
-> +        self.ptr =3D ptr.cast().into();
-> +        self.cap =3D new_cap;
-> +
-> +        Ok(())
-> +    }
-> +}
-> +
-> +impl<T: Clone, A: Allocator> Vec<T, A> {
-> +    /// Extend the vector by `n` clones of value.
-> +    pub fn extend_with(&mut self, n: usize, value: T, flags: Flags) -> R=
-esult<(), AllocError> {
-> +        self.reserve(n, flags)?;
-> +
-> +        let spare =3D self.spare_capacity_mut();
-> +
-> +        for i in 0..spare.len() - 1 {
-> +            spare[i].write(value.clone());
-> +        }
-
-Minus one? Shouldn't this instead loop for `0..n`?
-
-> +
-> +        // We can write the last element directly without cloning needle=
-ssly
-> +        spare[spare.len() - 1].write(value);
-
-spare[n-1].write(value);
-
-> +
-> +        // SAFETY: `self.reserve` not bailing out with an error guarante=
-es that we're not
-> +        // exceeding the capacity of this `Vec`.
-> +        unsafe { self.set_len(self.len() + n) };
-> +
-> +        Ok(())
-> +    }
-> +
-> +    /// Create a new `Vec<T, A> and extend it by `n` clones of `value`.
-> +    pub fn from_elem(value: T, n: usize, flags: Flags) -> Result<Self, A=
-llocError> {
-> +        let mut v =3D Self::with_capacity(n, flags)?;
-> +
-> +        v.extend_with(n, value, flags)?;
-> +
-> +        Ok(v)
-> +    }
-> +}
-> +
-> +impl<T, A> Drop for Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    fn drop(&mut self) {
-> +        // SAFETY: We need to drop the vector's elements in place, befor=
-e we free the backing
-> +        // memory.
-> +        unsafe {
-> +            core::ptr::drop_in_place(core::ptr::slice_from_raw_parts_mut=
-(
-> +                self.as_mut_ptr(),
-> +                self.len,
-> +            ))
-> +        };
-> +
-> +        // If `cap =3D=3D 0` we never allocated any memory in the first =
-place.
-> +        if self.cap !=3D 0 {
-> +            // SAFETY: `self.ptr` was previously allocated with `A`.
-> +            unsafe { A::free(self.ptr.as_non_null().cast()) };
-
-Do you need a ZST check here?
-
-> +        }
-> +    }
-> +}
-> +
-> +impl<T> Default for KVec<T> {
-> +    #[inline]
-> +    fn default() -> Self {
-> +        Self::new()
-> +    }
-> +}
-> +
-> +impl<T: fmt::Debug, A: Allocator> fmt::Debug for Vec<T, A> {
-> +    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-> +        fmt::Debug::fmt(&**self, f)
-> +    }
-> +}
-> +
-> +impl<T, A> Deref for Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    type Target =3D [T];
-> +
-> +    #[inline]
-> +    fn deref(&self) -> &[T] {
-> +        // SAFETY: The memory behind `self.as_ptr()` is guaranteed to co=
-ntain `self.len`
-> +        // initialized elements of type `T`.
-> +        unsafe { slice::from_raw_parts(self.as_ptr(), self.len) }
-> +    }
-> +}
-> +
-> +impl<T, A> DerefMut for Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    #[inline]
-> +    fn deref_mut(&mut self) -> &mut [T] {
-> +        // SAFETY: The memory behind `self.as_ptr()` is guaranteed to co=
-ntain `self.len`
-> +        // initialized elements of type `T`.
-> +        unsafe { slice::from_raw_parts_mut(self.as_mut_ptr(), self.len) =
-}
-> +    }
-> +}
-> +
-> +impl<T: Eq, A> Eq for Vec<T, A> where A: Allocator {}
-> +
-> +impl<T, I: SliceIndex<[T]>, A> Index<I> for Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    type Output =3D I::Output;
-> +
-> +    #[inline]
-> +    fn index(&self, index: I) -> &Self::Output {
-> +        Index::index(&**self, index)
-> +    }
-> +}
-> +
-> +impl<T, I: SliceIndex<[T]>, A> IndexMut<I> for Vec<T, A>
-> +where
-> +    A: Allocator,
-> +{
-> +    #[inline]
-> +    fn index_mut(&mut self, index: I) -> &mut Self::Output {
-> +        IndexMut::index_mut(&mut **self, index)
-> +    }
-> +}
-> +
-> +macro_rules! __impl_slice_eq {
-> +    ([$($vars:tt)*] $lhs:ty, $rhs:ty $(where $ty:ty: $bound:ident)?) =3D=
-> {
-> +        impl<T, U, $($vars)*> PartialEq<$rhs> for $lhs
-> +        where
-> +            T: PartialEq<U>,
-> +            $($ty: $bound)?
-> +        {
-> +            #[inline]
-> +            fn eq(&self, other: &$rhs) -> bool { self[..] =3D=3D other[.=
-.] }
-> +        }
-> +    }
-> +}
-> +
-> +__impl_slice_eq! { [A1: Allocator, A2: Allocator] Vec<T, A1>, Vec<U, A2>=
- }
-> +__impl_slice_eq! { [A: Allocator] Vec<T, A>, &[U] }
-> +__impl_slice_eq! { [A: Allocator] Vec<T, A>, &mut [U] }
-> +__impl_slice_eq! { [A: Allocator] &[T], Vec<U, A> }
-> +__impl_slice_eq! { [A: Allocator] &mut [T], Vec<U, A> }
-> +__impl_slice_eq! { [A: Allocator] Vec<T, A>, [U] }
-> +__impl_slice_eq! { [A: Allocator] [T], Vec<U, A> }
-> +__impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, [U; N] }
-> +__impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, &[U; N] }
-> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> index 6bf77577eae7..bb80a43d20fb 100644
-> --- a/rust/kernel/prelude.rs
-> +++ b/rust/kernel/prelude.rs
-> @@ -14,7 +14,7 @@
->  #[doc(no_inline)]
->  pub use core::pin::Pin;
->
-> -pub use crate::alloc::{flags::*, vec_ext::VecExt, Box, KBox, KVBox, VBox=
-};
-> +pub use crate::alloc::{flags::*, vec_ext::VecExt, Box, KBox, KVBox, KVVe=
-c, KVec, VBox, VVec};
->
->  #[doc(no_inline)]
->  pub use alloc::vec::Vec;
-> --
-> 2.45.2
->
+- Arnaldo
+ 
+> Thanks,
+> Namhyung
+> 
+> 
+> > mmap size 528384B
+> > Control descriptor is not initialized
+> > Couldn't start the BPF side band thread:
+> > BPF programs starting from now on won't be annotatable
+> > [ perf record: Woken up 1 times to write data ]
+> > failed to write feature CPU_PMU_CAPS
+> > [ perf record: Captured and wrote 0.009 MB perf.data ]
+> > acme@number:~$
+> > 
+> > I also tried with task-clock:
+> > 
+> > acme@number:~$ perf record -o- -e task-clock -c 10000 perf test -w noploop | perf script -i- | head
+> >             perf  229784 54146.473644:      10000 task-clock:u:      7faf38f1c622 get_common_indices.constprop.0+0xa2 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473654:      10000 task-clock:u:      7faf38f1d323 update_active.constprop.0+0x383 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473664:      10000 task-clock:u:      7faf38f1cd32 intel_check_word.constprop.0+0x122 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473674:      10000 task-clock:u:      7faf38f1cd7c intel_check_word.constprop.0+0x16c (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473684:      10000 task-clock:u:      7faf38f19de5 __tunable_get_val+0x75 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473704:      10000 task-clock:u:      7faf38f190d0 rtld_mutex_dummy+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473754:      10000 task-clock:u:      7faf38f1a80e _dl_cache_libcmp+0xe (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473864:      10000 task-clock:u:      7faf38f2adb9 strcmp+0x99 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.473954:      10000 task-clock:u:      7faf38f1aa02 search_cache+0x112 (/usr/lib64/ld-linux-x86-64.so.2)
+> >             perf  229784 54146.474024:      10000 task-clock:u:      7faf38f0de38 _dl_map_object_from_fd+0x9c8 (/usr/lib64/ld-linux-x86-64.so.2)
+> > acme@number:~$ 
+> > acme@number:~$ perf record -o- -e task-clock -c 10000 --filter 'ip < 0xffffffff00000000' perf test -w noploop | perf script -i- 
+> > [ perf record: Woken up 1 times to write data ]
+> > [ perf record: Captured and wrote 0.127 MB - ]
+> > acme@number:~$
+> > 
+> > Ideas?
+> > 
+> > I'm keeping it in my local tree so that I run it through the container
+> > build tests meanwhile we try to understand this, what am I missing?
+> > 
+> > - Arnaldo
+> > 
+> > ⬢[acme@toolbox perf-tools-next]$ uname -a
+> > Linux toolbox 6.9.10-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Jul 18 21:39:30 UTC 2024 x86_64 GNU/Linux
+> > ⬢[acme@toolbox perf-tools-next]$ perf -vv
+> > perf version 6.11.rc1.g77a71e434cf4
+> >                  dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+> >     dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+> >          syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+> >                 libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
+> >             debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
+> >                 libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+> >                libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+> > numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+> >                libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+> >              libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+> >               libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+> >              libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+> >              libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+> >     libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+> >            libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
+> >                   zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+> >                   lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+> >              get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+> >                    bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+> >                    aio: [ on  ]  # HAVE_AIO_SUPPORT
+> >                   zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+> >                libpfm4: [ on  ]  # HAVE_LIBPFM
+> >          libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+> >          bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+> >   dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+> >             libopencsd: [ on  ]  # HAVE_CSTRACE_SUPPORT
+> > ⬢[acme@toolbox perf-tools-next]$ git log --oneline -10
+> > 2a24133dc55000b3 (HEAD -> perf-tools-next) perf test: Update sample filtering test
+> > d6fed13469889202 perf record: Add --setup-filter option
+> > d8a2ec627150b7a4 perf record: Fix a potential error handling issue
+> > b0313e52f43035b5 perf bpf-filter: Support separate lost counts for each filter
+> > eb29dacbaf215fda perf bpf-filter: Support pin/unpin BPF object
+> > 086e7d06af7ce4eb perf bpf-filter: Split per-task filter use case
+> > d3453d1bb80cdbb2 perf bpf-filter: Pass 'target' to perf_bpf_filter__prepare()
+> > 736cd1c7a7105e1d perf bpf-filter: Make filters map a single entry hashmap
+> > 96ff640908b9808e perf jevents: Don't stop at the first matched pmu when searching a events table
+> > 379fe1f78ed5ceaf perf jevents: Use name for special find value (PMU_EVENTS__NOT_FOUND)
+> > ⬢[acme@toolbox perf-tools-next]$
+> >  
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > >  tools/perf/tests/shell/record_bpf_filter.sh | 13 +++++++------
+> > >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/tests/shell/record_bpf_filter.sh b/tools/perf/tests/shell/record_bpf_filter.sh
+> > > index 31c593966e8c..c5882d620db7 100755
+> > > --- a/tools/perf/tests/shell/record_bpf_filter.sh
+> > > +++ b/tools/perf/tests/shell/record_bpf_filter.sh
+> > > @@ -22,15 +22,16 @@ trap trap_cleanup EXIT TERM INT
+> > >  test_bpf_filter_priv() {
+> > >    echo "Checking BPF-filter privilege"
+> > >  
+> > > -  if [ "$(id -u)" != 0 ]
+> > > -  then
+> > > -    echo "bpf-filter test [Skipped permission]"
+> > > -    err=2
+> > > -    return
+> > > -  fi
+> > >    if ! perf record -e task-clock --filter 'period > 1' \
+> > >  	  -o /dev/null --quiet true 2>&1
+> > >    then
+> > > +    if [ "$(id -u)" != 0 ]
+> > > +    then
+> > > +      echo "try 'sudo perf record --setup-filter pin' first."
+> > > +      echo "bpf-filter test [Skipped permission]"
+> > > +      err=2
+> > > +      return
+> > > +    fi
+> > >      echo "bpf-filter test [Skipped missing BPF support]"
+> > >      err=2
+> > >      return
+> > > -- 
+> > > 2.45.2.803.g4e1b14247a-goog
+> > > 
 
