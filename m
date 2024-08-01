@@ -1,96 +1,126 @@
-Return-Path: <linux-kernel+bounces-270488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E93C94413B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:34:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5908C94411C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1679B30A63
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:11:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC855B25E55
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654DC1A01BA;
-	Thu,  1 Aug 2024 01:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72D214A4C7;
+	Thu,  1 Aug 2024 01:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqrSKcoe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U8LWoIin"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8BF28370;
-	Thu,  1 Aug 2024 01:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F95C13A249;
+	Thu,  1 Aug 2024 01:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722475244; cv=none; b=XzRHFxX7fizSBxz+hcVsZKJ4I5kkS5Wxxw4QbwE2SqN7E4maxUMtFfuhi9HELortSYEISm8+1o42yJ3Ntmc7cBcDVzBwx7dTZ+QYjoGyzVOpSiYlmTNcDjlWVoynbA84Pv4Ewu+7uKtYQQ2ZepdCHJEKZTx5jB/jYwYicO96KEI=
+	t=1722475354; cv=none; b=u9HoTLTeY3gtSqLixEdxBDCEQJsbnpDjo1tHRwODmG9hk5PLzHwoOrsU28IUy5crVjC68VeJW9Wa7q0dOXKKZgc1/xjTSjLKtgulmHffCvp8JaV6zchxCYgomZd88L26pOzTqOIxispMUKFeoRS56Tft2qumDaokx8+F2W2aM9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722475244; c=relaxed/simple;
-	bh=0Cj2CYi5Yaa/r8yTIhFd9T0uI/B1fVza5+1vkd36H74=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=TeACmzD4m67epCUxh1sA4Ti8zu3g7/8nofkmWwhYqVqv5q1AW/VhgQVKrULUsc/h0D8xcvGviZOg9ZC1W1v5Iu+3uPU2VQKvBBzjkZREXsHfYlYV/sUntDKJd2KsvHEApf6R4pjw1YYGrxDEHi5mUY87lybGm2pxeOCajL8FjMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqrSKcoe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 496C4C4AF0E;
-	Thu,  1 Aug 2024 01:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722475244;
-	bh=0Cj2CYi5Yaa/r8yTIhFd9T0uI/B1fVza5+1vkd36H74=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=aqrSKcoerJZT5xTH7Z3RNqdF2mgkwPn9FeI/0Ffr/SK1nb3NvbO1z5beD/ujlJFBi
-	 YkeAV6hjwTlfaqLj1LFiCGncqnzoS+arc8j/tK1436FGJifqGIaHdWdkl+8YsMnp1h
-	 SqHNqPno+1WhXaHNPY47n0PNdK8HKFJYiq1PXgKez2JPq6igX8CVssuxRPQmB5ESEb
-	 +Pvywrt/b6iAR5Mq/CvHMUSC7CPPWOjGQa0xokpFNH3x6OjPX9XrhQVexN2yrSujGb
-	 SWZGYRHhpPFez2pKSVvY+tK4hEIaJQGDN3/dYmmMNKfOvkqYR7ivMPwtmHCNU6m+7u
-	 rEdyAAyNLAvhg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 33592C43140;
-	Thu,  1 Aug 2024 01:20:44 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722475354; c=relaxed/simple;
+	bh=pGgzCNEQpoQTVGCg1pM0uGdSwgXRZRMoaaVlghFUpfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sTB1TeIUvTM8p1wkxRUPXNRDyA8hNg3eYIAhgWeqJ3DsAbm7aSTlz4x94R8wucuQzCujZJu0AumQfSDGiYSJYORIKAMlmRQ8uOOEDtbyKO83BPCTVNM2CRvPZ4mz3VCmR+xCQDx8DJG1MsVcnyhT9iZFMHrymPt76VUxy0dyLY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U8LWoIin; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722475352; x=1754011352;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pGgzCNEQpoQTVGCg1pM0uGdSwgXRZRMoaaVlghFUpfs=;
+  b=U8LWoIinIpsh6mV5YKbXJlWKwMgFR7vDmuii5lCQ/R8hsdmYSofy8TOq
+   Rs1LVnJimBO41Mbto5rtZiaX+2clfJQHBsbs5vgng3yB4B4vQFYdWlAFm
+   sL9yuxaBqvqswa5Bu7gqJFwWK245Z2jFUi7z9Ktyky4m/OZrX7+Czcden
+   UUHwP14EpSgHb6jDptlFLqlBbYAboUhkTaH9wSDb76YOAhyM7KfQZf1tP
+   tXkBRRYMe/FqaDwMcFPzuglXP/jToMaWkyGpqW5syyyoIbfx50K3BLT1q
+   FAR5/nTD5Lo3UNCvwn5T4HkLI6z24DZMVzTVR7WkkMMq8bOrZvsIijlom
+   w==;
+X-CSE-ConnectionGUID: iniWuk8cTXmWDtDhyVHI8A==
+X-CSE-MsgGUID: BJTWeviMRsOqLAi4G8rw0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="19977149"
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="19977149"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 18:22:30 -0700
+X-CSE-ConnectionGUID: zq/SBxTKRJaZUlCol+8aeg==
+X-CSE-MsgGUID: 4iESZe+ZRc+W5LQKg7DvAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="59655057"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2) ([10.209.12.57])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 18:22:30 -0700
+Date: Wed, 31 Jul 2024 18:22:27 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>
+Subject: Re: [PATCH 1/3] cxl: Set target type of root decoder based on CFMWS
+ restrictions
+Message-ID: <ZqrjU+552rs7VuLy@aschofie-mobl2>
+References: <20240729084611.502889-1-ying.huang@intel.com>
+ <20240729084611.502889-2-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v1] net: wan: fsl_qmc_hdlc: Discard received CRC
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172247524420.27205.8731063476744531287.git-patchwork-notify@kernel.org>
-Date: Thu, 01 Aug 2024 01:20:44 +0000
-References: <20240730063133.179598-1-herve.codina@bootlin.com>
-In-Reply-To: <20240730063133.179598-1-herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, christophe.leroy@csgroup.eu,
- andriy.shevchenko@linux.intel.com, netdev@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729084611.502889-2-ying.huang@intel.com>
 
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 30 Jul 2024 08:31:33 +0200 you wrote:
-> Received frame from QMC contains the CRC.
-> Upper layers don't need this CRC and tcpdump mentioned trailing junk
-> data due to this CRC presence.
+On Mon, Jul 29, 2024 at 04:46:09PM +0800, Ying Huang wrote:
+> Now, the target type of root decoder is hard-coded to HOSTONLYMEM,
+> because only type3 expanders are supported.  To support type2
+> accelerators, set the target type of root decoder based on the
+> window restrictions field of CFMWS entry.
 > 
-> As some other HDLC driver, simply discard this CRC.
+
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Alejandro Lucero <alucerop@amd.com>
+> ---
+>  drivers/cxl/acpi.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> Fixes: d0f2258e79fd ("net: wan: Add support for QMC HDLC")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 82b78e331d8e..40c92ad29122 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -382,7 +382,10 @@ static int __cxl_parse_cfmws(struct acpi_cedt_cfmws *cfmws,
+>  
+>  	cxld = &cxlrd->cxlsd.cxld;
+>  	cxld->flags = cfmws_to_decoder_flags(cfmws->restrictions);
+> -	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+> +	if (cxld->flags & CXL_DECODER_F_TYPE2)
+> +		cxld->target_type = CXL_DECODER_DEVMEM;
+> +	else
+> +		cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+>  	cxld->hpa_range = (struct range) {
+>  		.start = cfmws->base_hpa,
+>  		.end = cfmws->base_hpa + cfmws->window_size - 1,
+> -- 
+> 2.39.2
 > 
-> [...]
-
-Here is the summary with links:
-  - [net,v1] net: wan: fsl_qmc_hdlc: Discard received CRC
-    https://git.kernel.org/netdev/net/c/e549360069b4
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
 
