@@ -1,207 +1,166 @@
-Return-Path: <linux-kernel+bounces-271420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C7B8944DFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:28:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4462944E01
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1CF1F251A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:28:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A945289A34
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B9C1A4F21;
-	Thu,  1 Aug 2024 14:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B3F1A57E6;
+	Thu,  1 Aug 2024 14:28:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdGuIYK6"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="tUmaI21Y"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDEE16DECD;
-	Thu,  1 Aug 2024 14:28:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C961A57CF
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722522489; cv=none; b=RWosu1o96349u2t0qadHCYJ0r/AJhsjgNZz6Np+ymXbQI2DAsXEbTNuQfkFNjYrhhypGG3EU5VxXrp1iwYTDjqs42o+zFljxzn3L0apgRoRQAAG9dKc3aB/JJxuxyVvWoZBTMmazRThn6AZWqMUlFgvEIo8d7fDA6qPXxgrSY9U=
+	t=1722522496; cv=none; b=fLjlTG3B+Uggo+1MFu95Yq11pUkkUgtiGLvfg8IurwVbHhSRO7JQ3xkEkNi8xLliGdPM1SR+5OmNzA9tgKC9NXZ/ZTYTWjnlaSx0oKrousRUrvZxRbaVi1ospAyX8sWLxQvO45xlNUtj0GQfO8cJTxG/XI9i7TtzhqR+cRd8W+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722522489; c=relaxed/simple;
-	bh=nXweTf1N/Qrtc92k2Hk2plyPYVbHK4S52KdhUzL4GTA=;
+	s=arc-20240116; t=1722522496; c=relaxed/simple;
+	bh=/Pw3QSE2gQ3HGNcd8AdQrmQmNEZQXSpsYvrgZ7iaxws=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0Gwtz/03syP/bQYcigbulPVVbR4FX8QGqGYjHKegRIL54noJ9GI+66LLK+/s596tcaFPbVsf2T14wP0sDLRvbT/ynPxZupGczNyvX/NFvMoXNdXXIfKKyEuqKBP9akguUOkz2BHgEpdorwjtH0gJ8SGRz9BYYhmSKSBMB1aGCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdGuIYK6; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so952304966b.2;
-        Thu, 01 Aug 2024 07:28:07 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pGM/6sSVVoo+lIKNLq9J2uo5I4V9g378qWDCwTPCcvfQTMluHk+b3dFk/nM3eYyM8YDEzygiJb6yDiAc9lTjllsPxXexES9CPlF0oAPx/MaJvapSzxJhwz2+H3ozPyrjxdTpt8ssflf5bJCEgaU/eMqHDfq+/gCtYpwVFwcMumU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=tUmaI21Y; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-66ca536621cso55737787b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:28:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722522485; x=1723127285; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8hkL8OO2ZxeFgam3kNnsXVfMD29C3IsiuBvZny7yAE8=;
-        b=FdGuIYK6OuxWeiZo/NpbmdsoZKL2kxwLB3ed2/1VqBttR7RTCPWpZJ1hudD1f66ROs
-         YG0xj9BEf6GVRP1v3wJdOvri+Y1imt78/mS7rwc/iypeJO+mPaylrYO4n9jZEjt8dTbU
-         LlI3VkeQ8XO4xj64q7cBhsb5yfjq0u+FJLLwUP1R6zMuBqnOADD5MkZRki7cXLa+ryJB
-         5IfdvGLeN+Z08AVtXIaflHkI/36Z7BlhQopOk436XmuVmdc+0DwfancDm0dnXt2AFU4a
-         RP1p9PlP4TuPbMY5hSHR6buJ1En8rZ0oE2VCmWwlMCPIA5zXMKFB6sjdbzofmY7UZ6In
-         XGMQ==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722522494; x=1723127294; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=EuychuuM4yFooarrHI4W2akU/wSqmgofCLcJrrZseNc=;
+        b=tUmaI21YRAsuQBdGHYDQwncuOrTrAiwaiErANTD4ZLvZ7YPbvIzS5eMniLmAzxqcaQ
+         1NoxjXUzZZntloz87+jZUNKyhxFk0/5J3rjHf/n1dRVQ/AECTSQ3KyYlp/l5AkIn8mc8
+         w1H7/6a1QeFC2umFrXFzUWx5iw1MWb0Z0Ajw1AMw4Tk3d3b6eGbX/2NiW4PKB0accPe0
+         OZtidiPZgx2Sdd9rTBVXsE6FYo9jkZDDwTFW7xeXB5bY7vYj4HSXNR62vSEYLMB2xSCS
+         Tk22HbO3GojhMUUjujCpucxtARnypMq/dT0sb+tfmcyvU8SwMf+hasf9Fn5vw934RcJj
+         6ZgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722522485; x=1723127285;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8hkL8OO2ZxeFgam3kNnsXVfMD29C3IsiuBvZny7yAE8=;
-        b=tG94QfbALyVb/Cr+UOcFKbK3X3C2vfhgziWXuaIgCqUvOMj9D9b9do5Pd3YLAU4i6z
-         V50i91DwLm3IlHc2E6/78aTFYaj33tvjqnbGJOeIWc3GQRPDiQZpJ/ArE3tvnHacElJn
-         qIy39bdkozeDcng8qmWypQJIx+H9EbwJOcoimT8QMtxn6foPpsgOv6JjbxH+Y9f4NOw6
-         QGL5MfRWwwVIh3JrXsfGTEUCt/CO2F7joyodTCBnBbZJEPloxUza3IpiPLd+cqRFLyJ8
-         GAndLePc1OUF6Hw/di7QZD4h84BnnPQlj1NNZY+Z1xSXbpzs4ucLYyvWL655OiP60jb0
-         mzUA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsO00nv9C7g3ha2c8DbrsJq1G4XA0ID5/CRzE43wGw1ukYDbPk3oAMKoJzCGA6RKSAMhqaJZIz0NryXCJWMN2hLSB9Bg3uaYkcVp+xeXV4UNvLiozG3sEevlx0l9Vtzb6w1PltSuCsdtHh02PzekMmCCYFTQ8hsKeJQCsPG9ZrVSWt4g==
-X-Gm-Message-State: AOJu0YwYCNQQuPm7LoiZe6Iib0+arpMPbiRqGjabQTlMC41B65+O+7KE
-	WZfjMvPQO0pLI6NY+9DXciH9+mEdYZz028YLYIKDfTOK44REyiK4rt7QmQ==
-X-Google-Smtp-Source: AGHT+IGFi4C4ODRsJyjv1TBoIj5UnVy1EOO44jMxcUUZsgY26wAnMlldo6NAF00nmgE5bCFQbiW3Bw==
-X-Received: by 2002:a17:907:868a:b0:a7a:b781:60ee with SMTP id a640c23a62f3a-a7dc506e7c4mr23118366b.48.1722522485001;
-        Thu, 01 Aug 2024 07:28:05 -0700 (PDT)
-Received: from debian ([2a00:79c0:66e:2400:224:9bff:fe22:6dd6])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4148fsm912381466b.121.2024.08.01.07.28.03
+        d=1e100.net; s=20230601; t=1722522494; x=1723127294;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EuychuuM4yFooarrHI4W2akU/wSqmgofCLcJrrZseNc=;
+        b=t2itO0qop/ayE34WiDlLkifrUbjy1RrUkmYjYrHDl7dciLyL3sNfOMY4yADbXy90qM
+         zLX5lsO7QsWsvpK5lYcOQVEtKO0UH/RCqwRJo6H6YIW0Ytd6QLE9XsNWGNwDQJCZhfqS
+         a8AzWZr+gLAWxUVDqS2D9nxTzwe44Gxejusa3YfvvI0hQigojeriJflwhBsmBQtKwheb
+         A2nP3fFS+SOG/BFZOUjuLuyZknhGjmZTFr1eUWoTgbxAg+muGjSASLXC8NExdQLNnTbZ
+         oJWN4AyPOpLqsOd006C/Dvv1E+YI9+exrrUzHq8mDMsN/IReZk1w6231f5maYzVb7jw1
+         uB2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVZLweDnnOBMLtq8vTXxoMaCzh8edf5WjHjPQ5+TnvlGg9t5CNcHtUgDOj1+a3zj6EpnTtQ6JvLt7kf6eeB8K9pI98GQcbBBaKukrKK
+X-Gm-Message-State: AOJu0YwQvrlDiHNY6MxAUoV7WIhzkkOl+HF4LrxaYpwjtVSkxReu82+o
+	5EKN0hDEoZwplqyLmzARE3WrtD2DN1xs/gF/f9KSvR3CJ7gc8Pgw7uFVpThENJw=
+X-Google-Smtp-Source: AGHT+IEWtdWvFS2c69Uec6FJ0Uu06+DfOjiepBA1ctw9pK/wJ9IdsjdEszDUF6QIPWxR6kd4lkyKQg==
+X-Received: by 2002:a81:b406:0:b0:632:6615:3d67 with SMTP id 00721157ae682-6895f9e5e38mr1972857b3.6.1722522493999;
+        Thu, 01 Aug 2024 07:28:13 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-67568209b96sm32991887b3.68.2024.08.01.07.28.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:28:04 -0700 (PDT)
-Date: Thu, 1 Aug 2024 16:28:02 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
- MC33XS2410
-Message-ID: <20240801142802.GA212266@debian>
-References: <20240515112034.298116-1-dima.fedrau@gmail.com>
- <20240515112034.298116-3-dima.fedrau@gmail.com>
- <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
- <20240731084648.GA18584@debian>
- <bokad5wa2vw5qwdrrqpkkyrxgmxco2ix76wdaxlqv6usi5rdck@46bp6ywqteo2>
+        Thu, 01 Aug 2024 07:28:13 -0700 (PDT)
+Date: Thu, 1 Aug 2024 10:28:12 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH RFC v3 0/2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+Message-ID: <20240801142812.GA4187848@perftesting>
+References: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bokad5wa2vw5qwdrrqpkkyrxgmxco2ix76wdaxlqv6usi5rdck@46bp6ywqteo2>
+In-Reply-To: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
 
-Am Thu, Aug 01, 2024 at 12:24:28AM +0200 schrieb Uwe Kleine-König:
-Hi Uwe,
-
-[...]
-
-> > > > +static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 duty_cycle)
-> > > > +{
-> > > > +	if (!period)
-> > > > +		return 0;
-> > > > +
-> > > > +	duty_cycle *= 256;
-> > > 
-> > > This might overflow.
-> > > 
-> > 
-> > How ? Max period and duty_cycle is checked by the caller and can be
-> > maximum 2000000000, 2000000000 * 256 = 512000000000, fits in u64. Did I
-> > miss anything ?
+On Thu, Aug 01, 2024 at 01:52:39PM +1000, Aleksa Sarai wrote:
+> Now that we provide a unique 64-bit mount ID interface in statx(2), we
+> can now provide a race-free way for name_to_handle_at(2) to provide a
+> file handle and corresponding mount without needing to worry about
+> racing with /proc/mountinfo parsing or having to open a file just to do
+> statx(2).
 > 
-> I didn't notice the check in the caller. Please add a respective comment
-> for the next reader who might miss that.
+> While this is not necessary if you are using AT_EMPTY_PATH and don't
+> care about an extra statx(2) call, users that pass full paths into
+> name_to_handle_at(2) need to know which mount the file handle comes from
+> (to make sure they don't try to open_by_handle_at a file handle from a
+> different filesystem) and switching to AT_EMPTY_PATH would require
+> allocating a file for every name_to_handle_at(2) call, turning
 > 
-Ok.
-
-> > > > +	duty_cycle = DIV_ROUND_CLOSEST_ULL(duty_cycle, period);
-> > > 
-> > > round-closest is most probably wrong. Please test your driver with
-> > > PWM_DEBUG enabled and increasing and decreasing series of duty_cycle and
-> > > period.
-> > 
-> > Yes, I should probably round it down. But I tested with PWM_DEBUG enabled
-> > and it gave me the best results so far. There are still few cases where
-> > there are complaints. I try to fix it.
+>   err = name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
+>                           AT_HANDLE_MNT_ID_UNIQUE);
 > 
-> I don't have the hardware so I cannot test myself. Please make sure that
-> there are no more complaints, at least none you are aware of. PWM_DEBUG
-> should be happy if you pick a hardware setting where period is maximal
-> but not bigger than requested and then for that given period duty_cycle
-> is maximal but not bigger than requested. So typically use round-down
-> division in .apply(). In .get_state() you should return a pwm_state that
-> makes .apply() write the exact same state as found when .get_state() was
-> called. So typically you have to use round-up there.
->
-
-Thanks, this fixed the remaining complaints. Did it exactly as you
-suggested.
-
-> > > > +	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
-> > > > +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
-> > > > +
-> > > > +	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > [...]
-> > > > +static int mc33xs2410_probe(struct spi_device *spi)
-> > > > +{
-> > > > [...]
-> > > > +	/* Disable watchdog */
-> > > > +	ret = mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
-> > > > +	if (ret < 0)
-> > > > +		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
-> > > 
-> > > Wouldn't the watchdog functionality better be handled by a dedicated
-> > > watchdog driver? Disabling it here unconditionally looks wrong.
-> > 
-> > Yes, would be better. I planned this after this patchset is accepted.
-> > Without disabling the watchdog, the device is not able to operate. So I
-> > would stick to it for now and come up with a patch later on.
+> into
 > 
-> How long is the default timeout? Don't you need to disable the watchdog
-> in the bootloader anyhow?
+>   int fd = openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
+>   err1 = name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPTY_PATH);
+>   err2 = statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxbuf);
+>   mntid = statxbuf.stx_mnt_id;
+>   close(fd);
+> 
+> Also, this series adds a patch to clarify how AT_* flag allocation
+> should work going forwards.
+> 
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+> Changes in v3:
+> - Added a patch describing how AT_* flags should be allocated in the
+>   future, based on Amir's suggestions.
+> - Included AT_* aliases for RENAME_* flags to further indicate that
+>   renameat2(2) is an *at(2) syscall and to indicate that those flags
+>   have been allocated already in the per-syscall range.
+> - Switched AT_HANDLE_MNT_ID_UNIQUE to use 0x01 (to reuse
+>   (AT_)RENAME_NOREPLACE).
+> - v2: <https://lore.kernel.org/r/20240523-exportfs-u64-mount-id-v2-1-f9f959f17eb1@cyphar.com>
+> Changes in v2:
+> - Fixed a few minor compiler warnings and a buggy copy_to_user() check.
+> - Rename AT_HANDLE_UNIQUE_MOUNT_ID -> AT_HANDLE_MNT_ID_UNIQUE to match statx.
+> - Switched to using an AT_* bit from 0xFF and defining that range as
+>   being "per-syscall" for future usage.
+> - Sync tools/ copy of <linux/fcntl.h> to include changes.
+> - v1: <https://lore.kernel.org/r/20240520-exportfs-u64-mount-id-v1-1-f55fd9215b8e@cyphar.com>
+> 
+> ---
+> Aleksa Sarai (2):
+>       uapi: explain how per-syscall AT_* flags should be allocated
+>       fhandle: expose u64 mount id to name_to_handle_at(2)
 > 
 
-Default and also maximum timeout is 256ms. My hardware is configured to
-let the device stay in reset until the driver puts it out of reset by
-setting the associated GPIO. Datasheet refers to it as "Disable mode".
-Outputs are turned off.
-Without having such reset logic, the device would need to have the
-watchdog disabled in the bootloader and continue in "Normal mode" or it
-would go into "Safe mode" while booting the kernel almost sure violating
-the timeout. Outputs are then controlled by the INx input logic signals.
-I think there is no single solution but rather depends on the use case.
-There are three modes which the device can be in when the driver is probed:
-"Disable", "Safe" and "Normal". All three are handled by this driver,
-assuming the watchdog should be disabled.
+Wasn't the conclusion from this discussion last time that we needed to revisit
+this API completely?  Christoph had some pretty adamant objections.
 
-> If you still think the watchdog should be disabled here, please add a
-> comment that it's conceptually wrong to do here, but needed until there
-> is a proper watchdog driver.
-> 
+That being said the uapi comments patch looks good to me, you can add
 
-I will leave a comment, but I'm not sure if I can come up with a good
-solution since the maximum timeout is very low with 256ms. For interaction
-with userspace it must be at least 1s.
-Why is the handling of the watchdog conceptually wrong here, I could use
-devm_watchdog_register_device to register it, why can't I just disable it
-here ?
+Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 
-> Should this better be a mfd driver then?
-> 
+to that one.  The other one I'm going to let others who have stronger opinions
+than me argue about.  Thanks, 
 
-I don't thinks so, the watchdog and the outputs belong somehow together.
-When the device runs into an timeout it switches into "Safe" mode and the
-outputs are controlled by the INx input logic signals.
-I thought of a mfd device as a device which provides multiple functions
-not really belonging together. Didn't find a clear definition. What do you
-think of it ?
-
-Best regards
-Dimitri
+Josef
 
