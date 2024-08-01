@@ -1,102 +1,122 @@
-Return-Path: <linux-kernel+bounces-271598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CAF94508E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:29:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1D3945093
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 063BE1F24009
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:29:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EEDE1C229BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8819D1B3F3F;
-	Thu,  1 Aug 2024 16:29:10 +0000 (UTC)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765781B4C2D;
+	Thu,  1 Aug 2024 16:29:34 +0000 (UTC)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B3A3A1DA;
-	Thu,  1 Aug 2024 16:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC523A1DA;
+	Thu,  1 Aug 2024 16:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722529750; cv=none; b=OZJ4Lc9RNW8EoImOwGgGsPiH7xR//LGbqXC9aPqx3DwbfEgw002zk0F9yL+7103D4OIuw3uF8blpsoBby4brMtXjnvCLA4Xb4uNRgZkq7xAClTf+Qn4ox4RKiahaHP6s60fV9tZ7KtFxaTv166GuS60Py7fJBvH/ziyIzv1RAbk=
+	t=1722529774; cv=none; b=Yb/3nbkqLlgVKCzDhlX5XuPk2NUG5F5vAQii+qAH3OaXIsHBcG1t9W0yxPgmDK43MSfVKAcC9n/psuMYODC4AyJm2Pp7zWOALjGdFAz4UiMaibQeWi+27K7sa3XbCbT+PNSrAmMJ552hR7mCOeR3oDKszc+cMZO4gKRdGhVRjW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722529750; c=relaxed/simple;
-	bh=vAc6sR4RvUyOWXazrzfJmhWS9zb5OgwqFdWUsZbNs7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WzslVEP5uAXhrl8kpj9deItpt1cRSBSHJF3SZZbkGgJXY/GxoPi6J8uy16JqM8V64O7PgYEy58BvFTIUC6s3oq2f55klnYR01prulTu65x84xdX9PXrmnhgVxuaOvwRamLmBRJOkoBCpvzv8dtqiapSUTQKHBcSMWFc/VQcB2lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1722529774; c=relaxed/simple;
+	bh=QsvCNio+3zzxchq5fzKn3o83VQzC4bk3D+jsQv4Z/4w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rdkYI+yg51ORQPfie+h4rs+2PGB3qcpMO64r+Dxmt/grJ033zeAlOGPt+2L+/A5pmnBYNzhJDDG5K2sJ4hFVrIqPZAGHzbYyJyGg1SAx+W/9H9JmNxvkzjmi40bpAHeRJsSxV1Kh0TBVTbYOZWxtH24z+KFZN0w2xt26MLAkV1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so9417631a12.3;
-        Thu, 01 Aug 2024 09:29:07 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0b286b922eso5228284276.1;
+        Thu, 01 Aug 2024 09:29:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722529746; x=1723134546;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WxBNcUyWPwUsaC1CdkFZzuO6Qgw2Nc+LKVt0U5+1vFs=;
-        b=lGk0pa0r0EA9f7/eonb0jnsZOk38X+djml21hHDSNwXZ8OjX5JFDkPrHr2Vrpgpl48
-         h3rgCMDiswE2rRkvDr1UodpCKd/81i1wpprSfO+vbuNw/Z91uCKynTH2yMtN3YNh//LT
-         tYtsl/mKYGHrcY5XUY01egVNoYAl+U3AuVDZUxCZuPxngRaRyHhRYob6WP9Ya0JUUg4J
-         QNJxuD5deebxgfN5jottb1eU0kFeasF8etlEZAbpBeNkHKQhNg/+cIMGEAuzOIjGtuis
-         6NkXXimzT4V0A1UIsqgItJaEUhp62srBOZIJ8fKoGes38bKAUDdk9pmVOAUQRx55NSh1
-         ++yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVQBQIXXJiaEnfVeHjDu4ReohoMR7Jr1hpmMbVJChdjVl4M6kk34YjaBlnafrt+ygzop+TDUVYya5CL/j/XYtdO1l02JNapH4bBgMDR5UZaZF4TW/xgt2hyMfltNwocytwLS1SR
-X-Gm-Message-State: AOJu0YyqKQ3fL7I2G5/6tLJ9frfvUBHow8hns7F9zblv4BMYN7S+KWYJ
-	8HnC5ME2ZQxL/QMBdpbtzHGLEwPU5ANPoDweagmS4QZvTLaMMeSpTZAzEg==
-X-Google-Smtp-Source: AGHT+IGOgRSel2XYFaAwKx4ZoURyc/82n7DKzFgPUwOBjyhxXiZvOUdVk51dv6P6McnzR5nO0YGvug==
-X-Received: by 2002:aa7:df97:0:b0:5ab:324c:d77d with SMTP id 4fb4d7f45d1cf-5b7f36f3feemr711392a12.1.1722529746034;
-        Thu, 01 Aug 2024 09:29:06 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6358fa5esm10360841a12.32.2024.08.01.09.29.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:29:05 -0700 (PDT)
-Date: Thu, 1 Aug 2024 09:29:03 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Stephen Hemminger <stephen@networkplumber.org>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, thevlad@fb.com, thepacketgeek@gmail.com,
-	riel@surriel.com, horms@kernel.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, paulmck@kernel.org,
-	davej@codemonkey.org.uk
-Subject: Re: [PATCH net-next 6/6] net: netconsole: Defer netpoll cleanup to
- avoid lock release during list traversal
-Message-ID: <Zqu3z0YyhCgL+VFi@gmail.com>
-References: <20240801161213.2707132-1-leitao@debian.org>
- <20240801161213.2707132-7-leitao@debian.org>
- <20240801092156.2bb27a27@hermes.local>
+        d=1e100.net; s=20230601; t=1722529770; x=1723134570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y8+kc5F3GMejqWVlpNJDpHQgkOH2t0JJ464cT8v7PXs=;
+        b=PJ2GCsINKBJER2I3Pa2e2kP9qwVeHr5P/xwq2G1IjIKN+WMxoNzPKLtx3Py0e+cRma
+         0wsbYhhR4auV8q+fqehg6ubDqfHXfkY7uXmmWDUxHMnhPnRI8FpCPSMwtePzBtE+FEhe
+         OtX6Fi4Tt4u5NX/W4ahlY13RJpw7SYAKZoKPkrLPwJal22U67s8apRoS/eD8Y2HzbuIS
+         waujHmox2aVvdXNqEbkj+5udmNK4q9yVyUavNZTc28zZo/Hu16SRnAyVlHla8XKWhKJu
+         EpXEORK8dCa8jcdWs3eZHCbdTPbzPHq4p0Dm0d6i89+zurOh2rliXF2zHGos48mzv0pQ
+         IH4A==
+X-Forwarded-Encrypted: i=1; AJvYcCVn5PRKZYauBmo37CtEfehoUspKtXHSQoAFqWzuNf1YFipxUMV3G6qUvfWhBiYWJgFozbqQoJGM1X2CjrCsU7ihd6KOI4FTX01jqesNFmhCK0gUqr0X7lSEApEHUhvscZQBR73Yk1uWQHVBiy4+zUYZ1xhuw5N+d+PI33mHO/0T3e+HRAfIRqN47odHkZ3TVucgMRg6TGt7vE2jmAujf0XvwgG+r16DfDkKW5UdS8b0c+oGj8U+IeMvypbNyxXgfC7d
+X-Gm-Message-State: AOJu0YzrrOSZRgplx/ee5SMYurH2kf1PBeBm8bCHLG57f+xOXHOJTU5X
+	fScLjAcBgOMeXsGK+NkWyS6wOqo2OxnKTa8SrA2EXZz6uP3PXqjnZa/x0Pti
+X-Google-Smtp-Source: AGHT+IF3UR4ctJqF4dv1x5CADGAyHth2iWUQp0VMFhr+jpA7GGfWdUhdF8HSTvzfymvymsO0ACuNTQ==
+X-Received: by 2002:a25:183:0:b0:e08:5791:4864 with SMTP id 3f1490d57ef6-e0bde465acfmr843983276.51.1722529769878;
+        Thu, 01 Aug 2024 09:29:29 -0700 (PDT)
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0be0e45cafsm8071276.36.2024.08.01.09.29.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 09:29:29 -0700 (PDT)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-65f9708c50dso63085747b3.2;
+        Thu, 01 Aug 2024 09:29:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUfPj7FCPOdJVi8VgeeHmStiZQgTXcdwl8IP8ajoeKF5TracoY2xSleOR6e1paCxws/eq5D+ZTMmJE/omWST8lGSDw1rkvKpwbXKvK0tSP4lVsi+I5hKMRdSUeKBlL9HW/S+k1PzUgdrxZ1SKbLinu4wyMGjCP7jfA0X36bb91UpZKXArTcC4GY0NaEMiF02u6tt3l5G0wzQSYSrXWfeIeKUJHvlljf5qvOtvDvh2SHLt5Bv25bG632Ez8FqrQ00iCQ
+X-Received: by 2002:a81:8a02:0:b0:627:88fc:61c5 with SMTP id
+ 00721157ae682-689608712bemr5781657b3.14.1722529769028; Thu, 01 Aug 2024
+ 09:29:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801092156.2bb27a27@hermes.local>
+References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com> <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Aug 2024 18:29:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
+Message-ID: <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r9a08g045: Add DMAC node
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	biju.das.jz@bp.renesas.com, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Stephen,
+Hi Claudiu,
 
-On Thu, Aug 01, 2024 at 09:21:56AM -0700, Stephen Hemminger wrote:
-> On Thu,  1 Aug 2024 09:12:03 -0700
-> Breno Leitao <leitao@debian.org> wrote:
-> 
-> > diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-> > index eb9799edb95b..dd984ee4a564 100644
-> > --- a/drivers/net/netconsole.c
-> > +++ b/drivers/net/netconsole.c
-> > @@ -37,6 +37,7 @@
-> >  #include <linux/configfs.h>
-> >  #include <linux/etherdevice.h>
-> >  #include <linux/utsname.h>
-> > +#include <linux/rtnetlink.h>
-> >  
-> >  MODULE_AUTHOR("Maintainer: Matt Mackall <mpm@selenic.com>");
-> 
-> Should the Maintainer part be removed from the AUTHOR string by now?
+On Thu, Jul 11, 2024 at 2:34=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add DMAC node.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Yes, I think this is a good idea. I will send a patch soon.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.12.
 
---breno
+> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+> @@ -363,6 +363,44 @@ irqc: interrupt-controller@11050000 {
+>                         resets =3D <&cpg R9A08G045_IA55_RESETN>;
+>                 };
+>
+> +               dmac: dma-controller@11820000 {
+
+> +                       power-domains =3D <&cpg>;
+
+Updating to " <&cpg R9A08G045_PD_DMAC>" while applying.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
