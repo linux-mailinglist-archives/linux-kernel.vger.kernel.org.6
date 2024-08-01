@@ -1,129 +1,103 @@
-Return-Path: <linux-kernel+bounces-271679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A94294518E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:34:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CF69945194
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED73B23431
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:34:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB09E1F236DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49811B9B2E;
-	Thu,  1 Aug 2024 17:34:23 +0000 (UTC)
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC951B9B28;
+	Thu,  1 Aug 2024 17:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="io79+YZv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF1913D62B;
-	Thu,  1 Aug 2024 17:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828DD182D8
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533663; cv=none; b=t5QOlEufSg7hCvg4B+BomDwYntYPEvg3It1aUWbzj5sOvqGpZFt13mZzI2Cd9t0yzpxnH2cug6jnvQq4QYAUv4FPdniJq6o81WjzWibjNiwz14lrFW/JdQn37g5StNZxFwQ5Oh+umBv0sYobahOJ8ZQAmucuvZPhgrunBRIyzJo=
+	t=1722533916; cv=none; b=B3cayiBIizmbRwqKphbI0nEc5E6Y/8vLvDoyaSvulQ6FaLERIKgd6/NUc/vIY/c7xhFWbFxkDI++ukIKGa0tpeJ3NBjVyXbmvh9MFSyKLjbZvUyL7KrlKUgp/xjoeezVbaiO7Op+7e6ZMoJg4qKjWgbF8bZ4x/SUYHYVhhm3vH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533663; c=relaxed/simple;
-	bh=QGfv6Mwl2jnbBI5jZ5Gi7DAKze67LLzTrgAtwyJNyr8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=riBDZX4jX/4SAoFTsm6P0ozSp9BXrWF30mfC/dri7VRf0fSlcH7MALSe0FWqqopGEG7dEkpd624hx5JxL41HjAyF9o69/MgoL8/UvpUvvKtxez+/6J3r28fIYc0RM7y9IvPUyvgLNw/AcS+Ul7xvIZ6rGQOUOdqSsaA5WTnPPXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-65f7bd30546so19669137b3.1;
-        Thu, 01 Aug 2024 10:34:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722533659; x=1723138459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b7RLlBjK6VYDjExx9r5TpBCz781pCBuMFrVQOrMhhBk=;
-        b=rOS26AfyhoiHWFlBodif68+WU/tWDEcOxcT/Y8bT1UCpefpFPdzkY4IimGw+SdsVEU
-         tJGdKDN9xJrc4aI9B9i6GD8aY7XZOq1f2074VZC+69qm8wEmHxAEux68q1j8yIanXzoJ
-         4hzHlA5rEcaQDVUnI6shZ/wZtr/seoiCR5rIs4ZoCjZJWoLqwY4uSrJy9qfDJwlhLj1G
-         HYw0OCCrHl0TJlhea4wwAzbwaUiUbKsW3joi1kkvy/BiaMach5+YVW6vwcxvd/1yFDDt
-         DxF6WgduZw9iogy+7r3J+PSGlhxq7j1R7OB/67k0H8rRXQRfoXmQunqqjCt8M8QJkCSX
-         YlEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW+Hj7SIcGXclvsRxLOcoSn+3aviRApbDc3CiImBe7dFaH/2s/DT4ikzExrkkijIg1ZulSA2/gqPPZ6G5gMOuUERduY6HpvMr1EyzhIqvpk35M5joDAq+J1b7l9XlY0q/dqLZ86++kkKAnV6XpljBNlHxuyqUvrMILEP+q2AXPbCederLfeSl3X2mcLnz+SFKvNbcvQAvE6V0P32kobq6NLLoejcr98lSJcmoncxhVDyIDo9oc7rDiyBqMPoFdYSpY=
-X-Gm-Message-State: AOJu0Yx9wOSwOOGIK/v7BZD2sl7Rxg+eX+qDb6YIv5qjUeeSGon5Vbzq
-	CNO64FOySkm6ybYeZE7IlVn16debbOT+zm/BQsjUCyLAVhogx3bLFyWWlGMU
-X-Google-Smtp-Source: AGHT+IEpDNT2ogMgupDB98BwUhJQZQ61IZB1mOGnyGEmEAwT8R54mpFr8XrFoOgraWpkDIuZTzeI0A==
-X-Received: by 2002:a81:7755:0:b0:66b:c28b:f234 with SMTP id 00721157ae682-689638f35f5mr7412837b3.21.1722533659002;
-        Thu, 01 Aug 2024 10:34:19 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-689af65b26dsm214667b3.7.2024.08.01.10.34.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 10:34:18 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-661d7e68e89so20248157b3.0;
-        Thu, 01 Aug 2024 10:34:18 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVelEtnSLsTPOcBQ4H6g7FJBEakHBGLnpo+bKfhSbq9eqpnKZ2o3kSrKpQhcljb8kF73fYoD+sCEHJAbDRgUIev8LU4PhWCbm2I4XiuO5eC6/kFPSxTEZ1CGuqYMT07FnIcxTVGzfWCEcUETS7K8HfV+vP0RsGepFvI2IlXqV1QLOYhBrJDArzoelGlA8RiL5P78nhtKxAseEVtfxyHO2AJP8TBQvp7TfWkNgaQsLX9TtJWrNqnQqKL1VuRdatrBuQ=
-X-Received: by 2002:a81:7755:0:b0:66b:c28b:f234 with SMTP id
- 00721157ae682-689638f35f5mr7412527b3.21.1722533658194; Thu, 01 Aug 2024
- 10:34:18 -0700 (PDT)
+	s=arc-20240116; t=1722533916; c=relaxed/simple;
+	bh=RAvj/gF93jOqzP4GL/lSwxlRywzRFQiXo/RpNNJdT3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h/3OjhEviQTI1g1TJqjkLxLzkGo3IXsgsGdm+5q2+nIUkXtVV/+ccjghnZXwnEgRH51neR025mtijZPmnMBuYDvS1irxeBVmDEPJGt6bhPSpPAZESFFnJ65PdJEuaU48NtoRT+uP5OIqNkQyQY8WIA7b0beke6P4LW97wWGpjJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=io79+YZv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA171C32786;
+	Thu,  1 Aug 2024 17:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722533916;
+	bh=RAvj/gF93jOqzP4GL/lSwxlRywzRFQiXo/RpNNJdT3U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=io79+YZv2SL7kMus3yFshjkRLpYratoUxh8wgJnTSQqRIrgv0ObxMkabbrrByaZac
+	 fCStYZvWJRIwp3b/erIXpaYMjGyqawY4RSmx9Tpom4oNiP64eEDKULp7CNcxl2DVin
+	 gZoR074rTdAU0ShM5o2VWPGS5AboortYNo0w30iaY/iZfpSP3fLbaFYx97XhFUawqA
+	 vvA+DY1nMjDLL1KznuikDRpj/WzxTkbhmIBQiCVZ1LipHSW2BAZ4LmWuBK06GHOLes
+	 XghC92uos44mIBsdC7a8k1Bv49c1WLKgLOPR7DcfaO64tnVbbE8zfSVq1VsGmDnda3
+	 JEjDIAxmEgyAw==
+Date: Thu, 1 Aug 2024 14:38:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Song Liu <song@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] perf bpf: Move BPF disassembly routines to separate
+ file to avoid clash with capstone bpf headers
+Message-ID: <ZqvIGLQNAtYqjo7u@x1>
+References: <ZqpUSKPxMwaQKORr@x1>
+ <CAM9d7cgTrDEdAn=dv9ciRZfpMdYwdmDrAAvsYEYE=GssPS_aWw@mail.gmail.com>
+ <ZqqHnlgG0YS4DRAt@x1>
+ <CAP-5=fVH-YG65AmFz-N0uSXg2OcGJrmkw5tQtuEuFY=h_4K8_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
- <20240422105355.1622177-9-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com> <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
-In-Reply-To: <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Aug 2024 19:34:05 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
-Message-ID: <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] arm64: dts: renesas: r9a08g045: Update
- #power-domain-cells = <1>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, magnus.damm@gmail.com, ulf.hansson@linaro.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fVH-YG65AmFz-N0uSXg2OcGJrmkw5tQtuEuFY=h_4K8_g@mail.gmail.com>
 
-Hi Claudiu,
-
-On Thu, Aug 1, 2024 at 7:28=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxon=
-.dev> wrote:
-> On 01.08.2024 19:13, Geert Uytterhoeven wrote:
-> > On Mon, Apr 22, 2024 at 12:54=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.=
-dev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Update CPG #power-domain-cells =3D <1> and move all the IPs to be part=
- of the
-> >> IP specific power domain as the driver has been modified to support
-> >> multiple power domains.
-> >>
-> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, Aug 01, 2024 at 08:18:23AM -0700, Ian Rogers wrote:
+> On Wed, Jul 31, 2024 at 11:51 AM Arnaldo Carvalho de Melo
+> <acme@kernel.org> wrote:
 > >
-> > Now the watchdog fixes are in v6.11-rc1, I will queue this in
-> > renesas-devel for v6.12.
->
-> Only the RZ/G3S support has been merged.
->
-> The watchdog fixes that allows us to use this patch were submitted as RFC
-> but got no input from Ulf, yet.
+> > On Wed, Jul 31, 2024 at 10:07:50AM -0700, Namhyung Kim wrote:
+> > > On Wed, Jul 31, 2024 at 8:12 AM Arnaldo Carvalho de Melo
+> [snip]
+> > > I think this can be gated by LIBBFD and LIBBPF config, but not sure
+> > > it can express the both requirements easily.
+> >
+> > It is possible, but as discussed with Ian in another message, the
+> > cheapest way to do it was, I think, like I did, in the end it is just a
+> > stub returning an error when those libraries are not linked with perf.
+> >
+> > When we manage to implement the disassembly of BPF using something other
+> > than libbfd we can spend more time in this area, I think.
+> 
+> Not following this, can you show an example perf command. There is a
+> BPF disassembler already in the kernel tree:
+> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/kernel/bpf/disasm.c?h=perf-tools-next
+> and in use in bpftool that we use in the perf build.
 
-Oops, postponing.
+Well, looking at the files in this patch shows it, here, more precisely:
 
-> [1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.u=
-j@bp.renesas.com/
 
-Gr{oetje,eeting}s,
+tools/perf/util/disasm_bpf.c
 
-                        Geert
+#else // defined(HAVE_LIBBFD_SUPPORT) && defined(HAVE_LIBBPF_SUPPORT)
+int symbol__disassemble_bpf(struct symbol *sym __maybe_unused, struct annotate_args *args __maybe_unused)
+{
+        return SYMBOL_ANNOTATE_ERRNO__NO_LIBOPCODES_FOR_BPF;
+}
+#endif // defined(HAVE_LIBBFD_SUPPORT) && defined(HAVE_LIBBPF_SUPPORT)
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+- Arnaldo
 
