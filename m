@@ -1,49 +1,50 @@
-Return-Path: <linux-kernel+bounces-270875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2D1944686
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D98994468B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3822828DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4928A2809C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA7516CD09;
-	Thu,  1 Aug 2024 08:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C4C316DECD;
+	Thu,  1 Aug 2024 08:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="MO+oof9h"
+	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="HFyQUvTl"
 Received: from mail.tkos.co.il (golan.tkos.co.il [84.110.109.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56AD13CA8E;
-	Thu,  1 Aug 2024 08:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72C216C85D;
+	Thu,  1 Aug 2024 08:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722500735; cv=none; b=RKw8n0iwiKJG1X9F9uSJxa6oOgrjoXNL90aLzPjCV/p63JESCDRfBTHIBTMG8zuKLGJcQWwoxY9iVyBpSU2QjW3SlgrFZd/XR0U+oRVbExm3Fq+u4j6a9haS5ycBS+lcsbgxrxtFmZC/5VBdHWh/iEhDZFmgmgOVIF5kMxIyZ38=
+	t=1722500737; cv=none; b=uD+tJS/hoMdXQxk7tPy6LGjo8sOveDfnOFDRyzYg1Fb5pvMnZC91Duv9ROCYMAF63OsCg3lv2E0wJPi+L4jzBTnQC+rAO6iKlEC2YUPnI9wdnOXwUkvrKhSRzduWb/MKaiyEaSsSpYpJH4PZbESgob7g01ciOajEnFoKEA1rmUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722500735; c=relaxed/simple;
-	bh=e4Yj33YrCMXIAhWSQdxNKN5zPpV1PvwBwZyzghUIBMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LIfFXlfwxKxxlQJeeXlFWdYGnNLQiYzBtcV31a2Dd0J5pQgLRqNUsJU3mv8Lx4pw3MGM8uVAib6ql+4jkrrlNxdDa5fzNv4FgacJfcRJNKGhUvz5Zkn1lTg9RAUvKbj3oobo51iAlGv6rQBmRLshElSfe5Lv0ufDeOxKYwhVomo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=MO+oof9h; arc=none smtp.client-ip=84.110.109.230
+	s=arc-20240116; t=1722500737; c=relaxed/simple;
+	bh=Yaa82cqvK/7ZFcSlM9y57cf/s6CJpTcrZlbQ2R51MpE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nrDTaKKmS9LpwyaZpBVa+yPoAJzHi9oIgAIRMeiJaKpMmiW4uNqK9/k1OqZaOTEIQwUpzBMI22UC9CCRWK8wpy+lh957VnPSLDK7ba5tQB7+lmmRGUx54alAo4rPCb1AGhsiHkWKRqWue/COheHZNBnpiA1QJCHNm1sJ4wHkJTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=HFyQUvTl; arc=none smtp.client-ip=84.110.109.230
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
 Received: from tarshish.tkos.co.il (unknown [10.0.8.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.tkos.co.il (Postfix) with ESMTPS id 2C0424403E6;
-	Thu,  1 Aug 2024 11:24:05 +0300 (IDT)
+	by mail.tkos.co.il (Postfix) with ESMTPS id 864ED440932;
+	Thu,  1 Aug 2024 11:24:07 +0300 (IDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1722500645;
-	bh=e4Yj33YrCMXIAhWSQdxNKN5zPpV1PvwBwZyzghUIBMk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MO+oof9hDinlwTZLphphkO6pelfCsHxYxJT4C+Os5kSj1t+43czch0I6u23S4KUfu
-	 PfGWEk7NoZj3A9BJoFch2FAl4appafP9F83imsHL1OdV1bSejsH4eVEanTVffDe6JX
-	 QlIAMEMHeKOJRgrcMIDYtDxc1iCrHYRJMGRJxsGGGoupMtfZ32BCKXetYX8E13E9fW
-	 ODXffujw3tqQNWsuIT0SR4/yG8AAIcYni+NuPF0i0ugO+JcpU3BxcQwJKqv0B/ylce
-	 rD3xBWePHo3b0Nwf/hetxL7yfuEL91j/d4ktrcDmk6HlKjpyNskSqTdJwkYgJtpnyJ
-	 j1T+l6rnBLP8w==
+	s=default; t=1722500648;
+	bh=Yaa82cqvK/7ZFcSlM9y57cf/s6CJpTcrZlbQ2R51MpE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HFyQUvTlTTY/eVqJOchHKkcdrdrGmNohf9og26uXHRe5MRgamACVy6P1EEO1MVAh1
+	 II0T6z3ntd4j4LJPyPrQjkGF+KVwjbHDj6f1p31XD7ZDg4siEAAlAqy90hAE3AOKEQ
+	 kfDZc6BxfUE3DB1Ze04ejUdK82dx8Wuu01nPg3VFnD2z6gBadmBRwLLlR4AEFA8JPV
+	 FRAiKSo0+y6o3FQTn67gC63CII16EWCV7sAwsaCZfaXA6F0NrmAOJc7xQLK8POsxo0
+	 aoykzw5fl8o8QJh5LduEATALVyA6vathNBxOzfVlGDILkvJmQOO8u8pCpXR56wm8Tt
+	 VHJdGhIcLRSPQ==
 From: Baruch Siach <baruch@tkos.co.il>
 To: Christoph Hellwig <hch@lst.de>,
 	Marek Szyprowski <m.szyprowski@samsung.com>,
@@ -59,10 +60,12 @@ Cc: Baruch Siach <baruch@tkos.co.il>,
 	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>,
 	Ramon Fried <ramon@neureality.ai>,
 	Elad Nachman <enachman@marvell.com>
-Subject: [PATCH v4 0/2] dma: support DMA zone starting above 4GB
-Date: Thu,  1 Aug 2024 11:25:05 +0300
-Message-ID: <cover.1722499975.git.baruch@tkos.co.il>
+Subject: [PATCH v4 1/2] dma: improve DMA zone selection
+Date: Thu,  1 Aug 2024 11:25:06 +0300
+Message-ID: <f8f4da7ea3ead153ca21e628ca90e24fd0e7206e.1722499975.git.baruch@tkos.co.il>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1722499975.git.baruch@tkos.co.il>
+References: <cover.1722499975.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,78 +74,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-DMA zones code assumes that DMA lower limit is zero. When there is no RAM 
-below 4GB, arm64 platform code sets DMA/DMA32 zone limits to cover the entire 
-RAM[0].
+When device DMA limit does not fit in DMA32 zone it should use DMA zone,
+even when DMA zone is stricter than needed.
 
-My target platform has RAM starting at 32GB. Devices with 30-bit DMA mask are 
-mapped to 1GB at the bottom of RAM, between 32GB - 33GB. DMA zone over the 
-entire RAM breaks DMA allocation for these devices.
+Same goes for devices that can't allocate from the entire normal zone.
+Limit to DMA32 in that case.
 
-In response to a previous RFC hack[1] Catalin Marinas suggested to add a
-separate offset value as base address for the DMA zone, and then refined the 
-suggestion to use start of RAM[3]. This series attempts to implement that 
-suggestion.
+Reported-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+---
+ kernel/dma/direct.c  | 6 +++---
+ kernel/dma/swiotlb.c | 4 ++--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-With this series applied, the DMA zone covers the right RAM range for my 
-platform.
-
-v4:
-
-  * Drop last patch. zone_dma_limit includes RAM base address.
-
-  * Adjust DMA zone selection in swiotlb as well.
-
-  * Don't change max_zone_phys() behaviour
-
-  * Update code to fallback to DMA zone when zone_dma_limit > DMA_BIT_MASK(32)
-
-v3:
-
-  * Rebase on v6.11-rc1.
-
-  * Drop zone_dma_base. Use memblock_start_of_DRAM() instead.
-
-  * Drop DT patches. Low DMA range limit no longer needed.
-
-  * Add patch to improve dma_direct_optimal_gfp_mask() heuristics as Catalin 
-    suggested.
-
-RFC v2:
-
-  * Add patch from Catalin[2] changing zone_dma_bits to zone_dma_limit to 
-    simplify subsequent patches
-
-  * Test on real hardware
-
-RFC v1: https://lore.kernel.org/all/cover.1703683642.git.baruch@tkos.co.il/
-
-[0] See commit 791ab8b2e3db ("arm64: Ignore any DMA offsets in the 
-    max_zone_phys() calculation")
-
-[1] https://lore.kernel.org/all/9af8a19c3398e7dc09cfc1fbafed98d795d9f83e.1699464622.git.baruch@tkos.co.il/
-
-[2] https://lore.kernel.org/all/ZZ2HnHJV3gdzu1Aj@arm.com/
-
-[3] https://lore.kernel.org/all/ZnH-VU2iz9Q2KLbr@arm.com/
-
-Baruch Siach (1):
-  dma: improve DMA zone selection
-
-Catalin Marinas (1):
-  dma: replace zone_dma_bits by zone_dma_limit
-
- arch/arm64/mm/init.c       | 30 +++++++++++++++---------------
- arch/powerpc/mm/mem.c      |  9 ++++-----
- arch/s390/mm/init.c        |  2 +-
- include/linux/dma-direct.h |  2 +-
- kernel/dma/direct.c        | 10 +++++-----
- kernel/dma/pool.c          |  5 +++--
- kernel/dma/swiotlb.c       |  6 +++---
- 7 files changed, 32 insertions(+), 32 deletions(-)
-
-
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 4480a3cd92e0..3b4be4ca3b08 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -4,7 +4,7 @@
+  *
+  * DMA operations that map physical memory directly without using an IOMMU.
+  */
+-#include <linux/memblock.h> /* for max_pfn */
++#include <linux/memblock.h>
+ #include <linux/export.h>
+ #include <linux/mm.h>
+ #include <linux/dma-map-ops.h>
+@@ -59,9 +59,9 @@ static gfp_t dma_direct_optimal_gfp_mask(struct device *dev, u64 *phys_limit)
+ 	 * zones.
+ 	 */
+ 	*phys_limit = dma_to_phys(dev, dma_limit);
+-	if (*phys_limit <= DMA_BIT_MASK(zone_dma_bits))
++	if (*phys_limit < DMA_BIT_MASK(32))
+ 		return GFP_DMA;
+-	if (*phys_limit <= DMA_BIT_MASK(32))
++	if (*phys_limit < memblock_end_of_DRAM())
+ 		return GFP_DMA32;
+ 	return 0;
+ }
+diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+index df68d29740a0..043b0ecd3e8d 100644
+--- a/kernel/dma/swiotlb.c
++++ b/kernel/dma/swiotlb.c
+@@ -629,9 +629,9 @@ static struct page *swiotlb_alloc_tlb(struct device *dev, size_t bytes,
+ 	}
+ 
+ 	gfp &= ~GFP_ZONEMASK;
+-	if (phys_limit <= DMA_BIT_MASK(zone_dma_bits))
++	if (phys_limit < DMA_BIT_MASK(32))
+ 		gfp |= __GFP_DMA;
+-	else if (phys_limit <= DMA_BIT_MASK(32))
++	else if (phys_limit < memblock_end_of_DRAM())
+ 		gfp |= __GFP_DMA32;
+ 
+ 	while (IS_ERR(page = alloc_dma_pages(gfp, bytes, phys_limit))) {
 -- 
 2.43.0
 
