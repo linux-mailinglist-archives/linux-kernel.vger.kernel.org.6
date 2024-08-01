@@ -1,133 +1,223 @@
-Return-Path: <linux-kernel+bounces-271164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6614F944A40
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:21:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 826F6944A45
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:22:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 985491C20E19
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:21:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A600A1C20E98
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:22:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07255189BAE;
-	Thu,  1 Aug 2024 11:21:06 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E3A189534;
+	Thu,  1 Aug 2024 11:22:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QV5uuEkL"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208B8189BA0
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F92189531
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511265; cv=none; b=YOllZn7KVFCGWNOtVIFu5UJ/xBUj0gEyM/W5PgYn6lLGJgczUi1EDRe/tLNLk/L8YUtoQbJTyVoKvjOAOdIL8UNiiqMhFAKU6sRvnq9VkB0AiPfvf/V3UGFnNMxql965eWGQnYMhOn7vhi/ea360RtuQv9dHWSxYA3++4Pu5BoI=
+	t=1722511347; cv=none; b=FruVzC3/ghnsVVcNoiURwHOAKUzLPthdb9RT9LYgtlF5vBc+3/sSb7/GBjUeWpy10t3JY9EEIKdr+nC5CjqbFDzo3q7lcZwBwymrA4FXMT4zbGEfDGrWvypBomzCIDvlrV7ZXaROKZC+egMAioRmi4qBtLMQ+qrDWHfOMF7iHqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722511265; c=relaxed/simple;
-	bh=t/qTzkznLocZGKmH0f6UN2PI4opU3S7RVyDVos+suoI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ilgBMgwxl5JpgR1lzFeo5+UCdG7cBJ3KCQUXPii83zw/wh95obDAniLexe5pa9wlka+mXQZWCheDKq9EZWLPWNe0Kn5daPuH8o0bbgG7GgMpLweNXRqdlDdMhkK5jM46p9jpIrCYIMkxctXnkcIPuV8enAPd4vrQlIDLdv0gzJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3962d4671c7so103191485ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:21:03 -0700 (PDT)
+	s=arc-20240116; t=1722511347; c=relaxed/simple;
+	bh=wT1WeQtWSF4pKg/aqyS1PtzbeURzHustn4W7PgKlu/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDUU57Ov7HdCpdRaxLUitySVIRwOD8xywXrOvitw14o1LF1N4Md+hrdVL9Stz4+bht2yYSQKezMO2ymenbQG6vVy/eod2SvFOB8i4JMEXmq6Uh3jjyXLkST1wybCLX0oOnsFhKfmW2VYSiKNNztKnZmcc11+MNs2cP8nY7UAibs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QV5uuEkL; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aada2358fso336029366b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:22:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722511342; x=1723116142; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2qlZj/baYl2pbc9LuE7Qbzb/56dqo6s6gnzipMfbe3g=;
+        b=QV5uuEkLlhu0v3M2uPfkYKSaz6GZaHbVnu102+7axKQdD4l8dQLcds3JLNFXbZVCLD
+         kFpkil7+YE8t1NCKM8OqTHgKGlan1i8Z2FYmB7eFijfR1uYLzRJ67n04PBn5GSP2f0q+
+         r0PcCG/0xY6tuXSDjOeC43cVTekKxpYu+WhNj985Yq3RmupPV4Pj4RDJu06tu/sDX+gR
+         pQ5Muea2WHTE0H2st0UlBopKKt9DtEU1Ef/XLj2usTlvmK12nHnxHZVtxGUhqaMTg1vw
+         Ja3G5MHKm+QQkb+mamMMoTmX5n8Qowhn1AyEstPOpoA7+AAGLTsltSSPAJ6wYja4qbri
+         fHwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722511263; x=1723116063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1722511342; x=1723116142;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cGR2bRjeAehL7VeNquYItORYpN2Wu5qxJiqzMHLgDco=;
-        b=Nv46euRyTO/8rUjiYQ9fPUJyLqx//tgTpu3AQMBXRQST6LxNjpjsoNWOMvCd7bGkyV
-         NFOjN+66i4Qgg5vtEFjhAE0H1c2U9tAWzCJ9wtzQlFOuZM3lJwG4njsn+2GyQrhkuMmW
-         XSVN2vW8MJwK4vhH0WXL/F9tB7TMtaCJ5ULrSh9MUEoIBkSX5DVCjt0oZP1ZHW3M3p/E
-         TSLwqPWmmZE8VRPmBpWAb9bKQ/9O7q7Mz/2xXqLheYsk00+q4JtO1OSYmOKIi3gSxU5v
-         RtOOds5lFbmFvYxB9SzwbeKMCN+C8hYcralbDzS1xFgxwH9lWDJms7d1wKEQMaPyMo8r
-         a7lQ==
-X-Gm-Message-State: AOJu0YwsNza3sWRs9pyRjgl5CBANVoRJVcYplGEsjvBddz8eWP1HCWdI
-	cfJ3EZemX1Sxb5aSXI9h2SEOauC2ooOIdrNtB61g2wesqYV4O3x9a5zhq+6Io4sDLuLOJHvmlQk
-	prWCh0rGpGiu2uUVxwAvgpCzK1BOTxErVn+QLNLWB7LvJTK3YPDRw/R0=
-X-Google-Smtp-Source: AGHT+IHWFIM7rrUn2tYVcK/tsWFs6SNcjVAskj2wDG0phwkizSGQ8xq7TH0INHcN08WDy+1g+hg3RalZvC79hIJt2Nag561vClOq
+        bh=2qlZj/baYl2pbc9LuE7Qbzb/56dqo6s6gnzipMfbe3g=;
+        b=Gt4OieTPEUfQJTgCR+dYIBKrz6ATsSZo3V+hXPCapx887AzwJzCHExYGTDFHqCXBF9
+         tEBVgM6wUfdbQhf2Ik71pEXobNCTiwKRWucqYKxbRYUTvbIyi9v88TAFBuR/Ie66TEbu
+         iwsY450UdvSIPruLTqLJJj0OSpRsYTYZj6hCOVvw9TOtgiHRARt514OVdf2ch8iWoRMF
+         IkczSupiIAdU3VkUHqD3890ZcUDmCnt6aCbIqxVMm1bPZIWMjbdvVZQXTsy6fu55o82X
+         Y4AV2omnFQMMJ0HnJDZPt4uFx/GzI6ktierZSReL811U+u6TwNQ6EkgaLLOYZfRNgIwV
+         UjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzBqGphxBIdA/izhsjIxQoSkL0bTJ2n8jbDUxxblP2Q9dU1SWX9dHDNmbnoN0VikDr0DVUkZpSMpFa5Hx/f+s2yKtmjYmW75gdHnp+
+X-Gm-Message-State: AOJu0YwjY6NGCrvmImNKJnTd/BLB6JkzoLvv2KjsrlHTX+nJe2U+IZW8
+	VhxITWeF+5RsmKV8WLMr9EvzcfYOTKrG0MlRBOfHPAYFV6pnoKe+P9EP37Vzsko=
+X-Google-Smtp-Source: AGHT+IHSi4OBNzaU+B2LgJN8/gLfHe2x6D+r2Bobw+i8XhnHPuZjnSs85LOFa27DBHA9NywFZOhCkA==
+X-Received: by 2002:a17:907:1608:b0:a7a:bae8:f2b5 with SMTP id a640c23a62f3a-a7dbcd4b357mr54629866b.36.1722511342367;
+        Thu, 01 Aug 2024 04:22:22 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23624sm885445266b.20.2024.08.01.04.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 04:22:22 -0700 (PDT)
+Message-ID: <f08678b1-260f-4200-889b-a4ec016fc7e1@suse.com>
+Date: Thu, 1 Aug 2024 13:22:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:396:1fc1:7034 with SMTP id
- e9e14a558f8ab-39b182d06bcmr2103875ab.0.1722511263264; Thu, 01 Aug 2024
- 04:21:03 -0700 (PDT)
-Date: Thu, 01 Aug 2024 04:21:03 -0700
-In-Reply-To: <20240801090658.1894596-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f80371061e9d679a@google.com>
-Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
+To: Sami Tolvanen <samitolvanen@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
+References: <20240617175818.58219-17-samitolvanen@google.com>
+ <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
+ <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
+ <00714a65-953f-4885-9229-1990543c4154@suse.com>
+ <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 7/26/24 23:05, Sami Tolvanen wrote:
+> On Mon, Jul 22, 2024 at 8:20 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
+>>
+>> From my perspective, I'm okay if gendwarfksyms doesn't provide
+>> functionality to compare a new object file with its reference symtypes
+>> file.
+>>
+>> As mentioned, genksyms has this functionality but I actually think the
+>> way it works is not ideal. Its design is to operate on one compilation
+>> unit at the time. This has the advantage that a comparison of each file
+>> is performed in parallel during the build, simply because of the make
+>> job system. On the other hand, it has two problems.
+>>
+>> The first one is that genksyms doesn't provide a comparison of the
+>> kernel as a whole. This means that the tool gives rather scattered and
+>> duplicated output about changed structs in the build log. Ideally, one
+>> would like to see a single compact report about what changed at the end
+>> of the build.
+> 
+> Sure, that makes sense. Android uses STG for this, which might be
+> useful to other folks too:
+> 
+> https://android.googlesource.com/platform/external/stg/
+> https://android.googlesource.com/platform/external/stg/+/refs/heads/main/doc/stgdiff.md#output-formats
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in pick_link
+STG is an interesting tool. I've played with it a bit last year. To be
+frank, I was surprised to see a new tool being proposed by Google to
+generate modversion CRCs from DWARF instead of potentially extending
+your STG project for this purpose. I'm not sure if it is something that
+you folks have considered and evaluated.
 
-loop0: detected capacity change from 0 to 8
-err: 0, folio: ffffea0000780a50, in: ffff88801768c878, do_read_cache_folio
-=====================================================
-BUG: KMSAN: uninit-value in pick_link+0xd8c/0x1690 fs/namei.c:1850
- pick_link+0xd8c/0x1690 fs/namei.c:1850
- step_into+0x156f/0x1640 fs/namei.c:1909
- open_last_lookups fs/namei.c:3674 [inline]
- path_openat+0x39da/0x6100 fs/namei.c:3883
- do_filp_open+0x20e/0x590 fs/namei.c:3913
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
- x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> A few months ago, I also started working on a tool inspired by this
+>> script. The goal is to have similar functionality but hopefully with
+>> a much faster implementation. Hence, this tool is written in a compiled
+>> language (Rust at the moment) and should also become multi-threaded. I'm
+>> hoping to find some time to make progress on it and make the code
+>> public. It could later be added to the upstream kernel to replace the
+>> comparison functionality implemented by genksyms, if there is interest.
+>>
+>> So as mentioned, I'm fine if gendwarfksyms doesn't have this
+>> functionality. However, for distributions that rely on the symtypes
+>> format, I'd be interested in having gendwarfksyms output its dump data
+>> in this format as well.
+> 
+> We can definitely tweak the output format, but I'm not sure if making
+> it fully compatible with the genksyms symtypes format is feasible,
+> especially for Rust code. I also intentionally decided to use DWARF
+> tag names in the output instead of shorthands like s# etc. to make it
+> a bit more readable.
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
- alloc_pages_noprof mm/mempolicy.c:2343 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
- do_read_cache_folio+0x131/0x1260 mm/filemap.c:3753
- do_read_cache_page mm/filemap.c:3859 [inline]
- read_cache_page+0x63/0x1d0 mm/filemap.c:3868
- read_mapping_page include/linux/pagemap.h:907 [inline]
- page_get_link+0x73/0xab0 fs/namei.c:5272
- pick_link+0xd6c/0x1690
- step_into+0x156f/0x1640 fs/namei.c:1909
- open_last_lookups fs/namei.c:3674 [inline]
- path_openat+0x39da/0x6100 fs/namei.c:3883
- do_filp_open+0x20e/0x590 fs/namei.c:3913
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
- x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Sure, it might be necessary to extend the symtypes format a bit, for
+example, by allowing spaces in type names. What other problems do you
+see?
 
-CPU: 1 UID: 0 PID: 5934 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-=====================================================
+The example I showed preserves the DWARF tag names in type descriptions.
+Cross-references and the target type names use the s# prefix as they
+they need to be distinguished from other tokens.
 
+>> For example, instead of producing:
+>>
+>> gendwarfksyms: process_exported_symbols: _some_mangled_func_name (@ XYZ)
+>> subprogram(
+>>    [formal parameters...]
+>> )
+>> -> structure_type core::result::Result<(), core::fmt::Error> {
+>>    [a description of the structure...]
+>> };
+>>
+>> .. the output could be something like this:
+>>
+>> S#'core::result::Result<(), core::fmt::Error>' structure_type core::result::Result<(), core::fmt::Error> { [a description of the structure...] }
+>> _some_mangled_func_name subprogram _some_mangled_func_name ( [formal parameters...] ) -> S#'core::result::Result<(), core::fmt::Error>'
+> 
+> This wouldn't be enough to make the output format compatible with
+> symtypes though. genksyms basically produces a simple key-value pair
+> database while gendwarfksyms currently outputs the fully expanded type
+> string for each symbol. If you need the tool to produce a type
+> database, it might also be worth discussing if we should use a bit
+> less ad hoc format in that case.
 
-Tested on:
+What I think is needed is the ability to compare an updated kernel with
+some previous reference and have an output that clearly and accurately
+shows why CRCs of some symbols changed. The previous reference should be
+possible to store in Git together with the kernel source. It means it
+should be ideally some text format and limited in size. This is what
+distributions that care about stable kABI do in some form currently.
 
-commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d732bd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=107ea623980000
+This functionality would be needed if some distribution wants to
+maintain stable Rust kABI (not sure if it is actually feasible), or if
+the idea is for gendwarfksyms to be a general tool that could replace
+genksyms. I assume for the sake of argument that this is the case.
 
+Gendwarfksyms could implement this functionality on its own, or as
+discussed, I believe it could provide a symtypes-like dump and a second
+tool could be used to work with this format and for comparing it.
+
+From my point of view, the current --debug format is not suitable for
+this purpose because its expanded and unstructured form means it is
+bloated and hard to compare with a previous reference.
+
+I'm also not quite yet sold on using separate DWARF tooling, such as
+libabigail or STG, to actually understand why gendwarfksyms produced
+a different CRC for some symbol. Using these tools makes sense in the
+genksyms world, where genksyms operates on the source code level and
+this additional tooling can only work on debug data.
+
+With gendwarfksyms working directly with DWARF data, it doesn't seem
+appealing to me to first run gendwarfksyms to produce CRCs, compare them
+with their reference, and if they are different, use a second tool to
+process the same DWARF data again and with some luck hopefully get an
+actual answer why the CRCs changed. I'm worried that users might
+encounter inaccurate answers if the two tools interpret the input data
+differently.
+
+> 
+> One more thing to note about the current --debug output is that it
+> directly correlates with the debugging information and thus may not
+> contain all aliases. For example, the Rust compiler deduplicates
+> identical function implementations (e.g. Deref::deref and
+> DerefMut::deref_mut etc.), but only one of the symbol names appears in
+> DWARF. We use symbol addresses to print out #SYMVERs also for the
+> aliases, but they don't show up in the debugging output right now.
+
+Thanks,
+Petr
 
