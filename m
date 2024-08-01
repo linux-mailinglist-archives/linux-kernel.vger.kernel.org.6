@@ -1,108 +1,104 @@
-Return-Path: <linux-kernel+bounces-270781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FC3894452F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:10:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D353E944531
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:10:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811381C217A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:10:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55D89B22A4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFC8158845;
-	Thu,  1 Aug 2024 07:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378CB16DC07;
+	Thu,  1 Aug 2024 07:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HIzUN4PQ"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oS+sPwg8"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A1318E0E;
-	Thu,  1 Aug 2024 07:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCB216D9BD;
+	Thu,  1 Aug 2024 07:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722496217; cv=none; b=Hx5d5yEsl38qggpG9EnNsVz6mJvXsHEnI6Cm6+PlJ3q50X0P740JHL5dfKqzcxAxlQ7y763IyFDWFy+aWOPooJNtD5WYFIvd1QcS38MkSpZcG/jG8zVFSGs5m9JIgMQV11vJ4jLC9CPInBXa1HO9tIaPhktQwWkXG9c7vekix0U=
+	t=1722496223; cv=none; b=kN9lJuxf9RVowb+eBEr9ir4/ZT5xwNnu0rJDpKFoLhb79kMUhjMAPWwA8p39EFXiyPojbyd72g+Eax2Fh1RagQzGsb0jrL+qnhnYYIZCO0dEfcV/rh+k+YLh0awLk4+rjNOMbYwrjmYnOoUYkzC8gEG1BULIEORHF5MiB+xdU3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722496217; c=relaxed/simple;
-	bh=EqByN6qCkhiy9eydAEw/kNfM2HmA0wKFkMpmPQzBOHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OhKjP/tq4Y8YcCkkPfc39p0tJzv6Wb3UxqFhipflPWDfnZ4vUfWSPh5Lgxv6tjeKWNldc9SJKKsraXDEr5coFIzZVniIkhBOqwPMovRw5o1xntvBvEuzzg7Tn3InAoeUtjlM6fnzBwLSiVDA0tjWbTWxKCnzpvDJlfeM9aVF02Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HIzUN4PQ; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47179vav054261;
-	Thu, 1 Aug 2024 02:09:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722496197;
-	bh=E4vu66DMs+gbUx27j2GWJkHnjdcHGXqRKM7N6f2Q11U=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=HIzUN4PQk2j8hYzjU4HsZ8cqPS8XuVUVuiVJul9D5ZZyg3NOq2egIFyRticrlwTmD
-	 0jw583PNDRLyz4THZdYTQ3fYmee8sowP7iCXfndVZJvzFBvn86x6nBDvtvFt0CjgeX
-	 XnveNL2RWQH1zEEQc+piPjMEd6A7peQZ+dq2eX4Q=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47179vwm044138
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 1 Aug 2024 02:09:57 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
- Aug 2024 02:09:56 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 1 Aug 2024 02:09:56 -0500
-Received: from [10.249.135.225] ([10.249.135.225])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47179qCl061988;
-	Thu, 1 Aug 2024 02:09:53 -0500
-Message-ID: <bcf0cbee-a001-4922-b0d5-c2f88b8c9724@ti.com>
-Date: Thu, 1 Aug 2024 12:39:51 +0530
+	s=arc-20240116; t=1722496223; c=relaxed/simple;
+	bh=aMjfXeXEC6UootsAZyVk/rPsGbBpGhaaxXIkK8HnfN8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RD0RUW3gADANIOh2JEBUg3t8WMq0nLkVYtpK4zf3B3DtOlEkkK/Ho+2ljNx9EDUjFRcsTKypTMnwJm3n4j5K//m81leL6dAvhNpHmhbbX1qiVMQewWeZHaQCu7MlYDZtMoEE40so1r95G46HYNvvq8C1U/H4tJhV8DGJGesXtxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oS+sPwg8; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=3+u/IePx+23HYIcKU4vqAjAChZzr/8w7Kjttwuq7ON4=; b=oS+sPwg8yk6DlU2PKLnTDoBDpE
+	wt23eiQeLPvbFf8haXHNuaZo42UR+bDVMmaXZu+EXueEBCs1k47CPKYXCleoNDeDF72R7Zyca1Eb9
+	PT+XNg2ZhUg8AD8rr34ln8ZPhL0CO6L/HQhORuo/e4RdRYIzWhjrV+af2yh0DEijynryOXd5433Mf
+	vtHjflVSOLaUlfY+/0jbHkKBKmSUI9GPw6YpU9shHR1Qz3KF9a7pAq5NsxAHnMmycZ420hY4lBe0A
+	CDrN2HiGmlWYo5QDPBxjHnd/9Oljl2Z3RIv4lD8u6YMSHdWd+2ROmWRcYSDkVKHAhM8NdggG1mQZ5
+	CwWwv0yw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sZPx3-00000000f62-07Wa;
+	Thu, 01 Aug 2024 07:10:17 +0000
+Date: Thu, 1 Aug 2024 08:10:16 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
+	squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: Re: [PATCH] filemap: Init the newly allocated folio memory to 0
+ for the filemap
+Message-ID: <20240801071016.GN5334@ZenIV>
+References: <20240801025842.GM5334@ZenIV>
+ <20240801052837.3388478-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: Use of_property_read_bool()
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        Madalin Bucur
-	<madalin.bucur@nxp.com>,
-        Sean Anderson <sean.anderson@seco.com>,
-        "David S.
- Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, MD Danish Anwar
-	<danishanwar@ti.com>,
-        Roger Quadros <rogerq@kernel.org>,
-        Radhey Shyam Pandey
-	<radhey.shyam.pandey@amd.com>,
-        Michal Simek <michal.simek@amd.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20240731191601.1714639-2-robh@kernel.org>
-Content-Language: en-US
-From: "Anwar, Md Danish" <a0501179@ti.com>
-In-Reply-To: <20240731191601.1714639-2-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801052837.3388478-1-lizhi.xu@windriver.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
+On Thu, Aug 01, 2024 at 01:28:37PM +0800, Lizhi Xu wrote:
+> > > syzbot report KMSAN: uninit-value in pick_link, this is because the
+> > > corresponding folio was not found from the mapping, and the memory was
+> > > not initialized when allocating a new folio for the filemap.
+> > >
+> > > To avoid the occurrence of kmsan report uninit-value, initialize the
+> > > newly allocated folio memory to 0.
+> > 
+> > NAK.
+> > 
+> > You are papering over the real bug here.
+> Did you see the splat? I think you didn't see that.
 
+Sigh...  It is stepping into uninitialized data in pick_link(), and by
+the look of traces it's been created by page_get_link().
 
-On 8/1/2024 12:46 AM, Rob Herring (Arm) wrote:
-> Use of_property_read_bool() to read boolean properties rather than
-> of_find_property(). This is part of a larger effort to remove callers
-> of of_find_property() and similar functions. of_find_property() leaks
-> the DT struct property and data pointers which is a problem for
-> dynamically allocated nodes which may be freed.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+What page_get_link() does is reading from page cache of symlink;
+the contents should have come from ->read_folio() (if it's really
+a symlink on squashfs, that would be squashfs_symlink_read_folio()).
 
-Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
+Uninit might have happened if
+	* ->read_folio() hadn't been called at all (which is an obvios
+bug - that's what should've read the symlink contents) or
+	* ->read_folio() had been called, it failed and yet we are
+still trying to use the resulting page.  Again, an obvious bug - if
+trying to read fails, we should _not_ use the results or leave it
+in page cache for subsequent callers.
+	* ->read_folio() had been called, claimed to have succeeded and
+yet it had left something in range 0..inode->i_size-1 uninitialized.
+Again, a bug, this time in ->read_folio() instance.
 
--- 
-Thanks and Regards,
-Md Danish Anwar
+Your patch is basically "fill the page with zeroes before reading anything
+into it".  It makes KMSAM warning STFU, but it does not fix anything
+in any of those cases.
 
