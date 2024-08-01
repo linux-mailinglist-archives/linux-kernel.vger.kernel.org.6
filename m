@@ -1,160 +1,119 @@
-Return-Path: <linux-kernel+bounces-271242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138A5944B82
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0928B944B87
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ABBAB22EDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F70288A63
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF701A0702;
-	Thu,  1 Aug 2024 12:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F0B1A0719;
+	Thu,  1 Aug 2024 12:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BUG1Y6Zb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCn4DhID"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0D315252D;
-	Thu,  1 Aug 2024 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4D615252D;
+	Thu,  1 Aug 2024 12:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515922; cv=none; b=Zfl1y94G6md8XUjkrA6dCoSGNvb474GvmZruHQTHKzuX40F2Xbnn8NnHbNWm7JMcR4+NWDda+LR++TVMKf0vRcLbQzaBzEGq+/qZHs847PURxAiRUIXgA/D7FBn7nBL0RctAsV7BsQly3TlBjcUSs4pAUc2nRzSFsdc332V0CRw=
+	t=1722515949; cv=none; b=bA3NowNrJ9b/LPZQKN+Pp7s2EI/QXSW5WucG/hRrp1LpcAVhuDxcDMou4oM8h6Sm3DHyT68l/QhPKJJ2r+DRrIM47hsfUU4arUxCWrrkPueiHEbLLKZqb4/a6ib0QJigIwjHIiNXiz6CQg95XpnCagRWsKziQmDNhfUDgBuHVJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515922; c=relaxed/simple;
-	bh=qMfKCQlV8Rw5iOQMrAPWoP4mWDS25cA9Rwa3hGAEjgw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NCMObTWtbC2CSiFLLScniG7lef30whImtCacn5slp3wjq6QFyhyvIhkaMFCKIljbgNI1qQsiUMP+L+bdlRWNZQWQmMkdhg1Y8dHLcSiw/wRQt87Fo1duIYNgJq/6YvM2Sdd0SIvp1kS1Me0+ZX8N/6wfVVAi0kcoryipTcK8XkU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BUG1Y6Zb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4717KRDf006305;
-	Thu, 1 Aug 2024 12:38:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VYCw6YwUEX891kBKIdfEmI1nZ+u8bjnlBY6X3MIqy/M=; b=BUG1Y6ZbxLzG7zJd
-	ijC3wgkV1NiLUkzcvH5JmYXKej3KLbQjvPLnUj5TPSCqF0wdRonmvn0XRDCRx4AZ
-	B8Z/5SUEKkwqQEBN2PkZbXEEAL/OmZMOlayhi1nuzKEq0TlAD115BzKFDAHsBK/u
-	SS31BOVc5Rrmqjdtlnyyu96vU7o30Ldn3KJt2F1R12yABBdSHwWqwTCc1vNvXZw8
-	Edl3CT6jwGXgjYiaoQudEBgZiDPpZZyunn1siz0dyKj2rclHPyghpRT7CrFlRtz/
-	aEn++mJY9LQ2FQpzFs+8k6b6gzpIj5nfSSOt2IKUoYsxQr0xSZhuQYr81Rui9nal
-	HZKQrg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qjpjcenp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 12:38:32 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471CcVrL029477
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 12:38:31 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 1 Aug 2024 05:38:27 -0700
-Date: Thu, 1 Aug 2024 18:08:23 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>
-CC: Vladimir Lypak <vladimir.lypak@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Jordan Crouse
-	<jordan@cosmicpenguin.net>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] drm/msm/a5xx: disable preemption in submits by
- default
-Message-ID: <20240801123823.geauowjux6r2ao72@hu-akhilpo-hyd.qualcomm.com>
-References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
- <20240711100038.268803-2-vladimir.lypak@gmail.com>
- <CAF6AEGsyhQfsfyNwZQa99HSKxy6uXQvf=ikEijjLOBnkXJ=-2g@mail.gmail.com>
+	s=arc-20240116; t=1722515949; c=relaxed/simple;
+	bh=HBLGXJAA56+z2j8DW+eYMm1UK33BW0xzkvU79F0+rlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M35jFUluXIC0RCnT5mfEvBWAX2jeCZRVGNI/VLUkEXMRF/vKCyAzaUtcMBg94KuvxseuVcRHRZolzNW8UXvroB11rr/DLA46e4L38FC4/+lG5plRBJc9P+CfCiBWGVTfLAXRW4fK6gLXlJFMRZE2PBWXcU35a/ugRPAXSWJA5So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCn4DhID; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B04C32786;
+	Thu,  1 Aug 2024 12:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722515948;
+	bh=HBLGXJAA56+z2j8DW+eYMm1UK33BW0xzkvU79F0+rlk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nCn4DhIDkkEjOtwKn+8KB/FH9Bq93/RvdjSoKKVEk2sTX0poiVs6zed4NrpceWj3B
+	 ud97PfOJ3obUOkUfrmF4sIsCEYQ4fxL6Ep04la58Eoi9XhIf/YvI0EVFzNx7oEf/xu
+	 JHD3wnLR877SRn2kRzwZ7KSIeM0c2r/j/IGEIDRHHJhTCNfebXj12JTs6rR3zKL5Q5
+	 dRKOPRr5nPzlLNVk1RRgQvfPkVrdcBr0Ua5ilKSmuFshMUCgZUwZJ978c5nvFWKlrG
+	 JZKLc3E2cxqUBFEV8FxYQoDg3YhR40H6n3eJc8z1jKQ0iup/V+7T52xPKLkhhshkwK
+	 /iLdAEM5iLwHA==
+Date: Thu, 1 Aug 2024 13:39:01 +0100
+From: Lee Jones <lee@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
+	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andreas Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: (subset) [PATCH v2 0/6] use device_for_each_child_node() to
+ access device child nodes
+Message-ID: <20240801123901.GC6756@google.com>
+References: <20240721-device_for_each_child_node-available-v2-0-f33748fd8b2d@gmail.com>
+ <172192488125.1053789.17350723750885690064.b4-ty@kernel.org>
+ <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGsyhQfsfyNwZQa99HSKxy6uXQvf=ikEijjLOBnkXJ=-2g@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: wnLHomIJUi7DfauNRmCHQ1nL4fNCY4Aq
-X-Proofpoint-ORIG-GUID: wnLHomIJUi7DfauNRmCHQ1nL4fNCY4Aq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_10,2024-08-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=999
- spamscore=0 malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010082
+In-Reply-To: <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
 
-On Mon, Jul 15, 2024 at 02:00:10PM -0700, Rob Clark wrote:
-> On Thu, Jul 11, 2024 at 3:02 AM Vladimir Lypak <vladimir.lypak@gmail.com> wrote:
-> >
-> > Fine grain preemption (switching from/to points within submits)
-> > requires extra handling in command stream of those submits, especially
-> > when rendering with tiling (using GMEM). However this handling is
-> > missing at this point in mesa (and always was). For this reason we get
-> > random GPU faults and hangs if more than one priority level is used
-> > because local preemption is enabled prior to executing command stream
-> > from submit.
-> > With that said it was ahead of time to enable local preemption by
-> > default considering the fact that even on downstream kernel it is only
-> > enabled if requested via UAPI.
-> >
-> > Fixes: a7a4c19c36de ("drm/msm/a5xx: fix setting of the CP_PREEMPT_ENABLE_LOCAL register")
-> > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> > ---
-> >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > index c0b5373e90d7..6c80d3003966 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > @@ -150,9 +150,13 @@ static void a5xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
-> >         OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
-> >         OUT_RING(ring, 1);
-> >
-> > -       /* Enable local preemption for finegrain preemption */
-> > +       /*
-> > +        * Disable local preemption by default because it requires
-> > +        * user-space to be aware of it and provide additional handling
-> > +        * to restore rendering state or do various flushes on switch.
-> > +        */
-> >         OUT_PKT7(ring, CP_PREEMPT_ENABLE_LOCAL, 1);
-> > -       OUT_RING(ring, 0x1);
-> > +       OUT_RING(ring, 0x0);
-> 
-> From a quick look at the a530 pfp fw, it looks like
-> CP_PREEMPT_ENABLE_LOCAL is allowed in IB1/IB2 (ie. not restricted to
-> kernel RB).  So we should just disable it in the kernel, and let
-> userspace send a CP_PREEMPT_ENABLE_LOCAL to enable local preemption.
+On Mon, 29 Jul 2024, Javier Carrasco wrote:
 
-Ack. AFAIU about a5x preemption, this should work.
-
--Akhil
-
-> 
-> BR,
-> -R
-> 
-> >         /* Allow CP_CONTEXT_SWITCH_YIELD packets in the IB2 */
-> >         OUT_PKT7(ring, CP_YIELD_ENABLE, 1);
+> On 25/07/2024 18:28, Lee Jones wrote:
+> > On Sun, 21 Jul 2024 17:19:00 +0200, Javier Carrasco wrote:
+> >> This series aims to clarify the use cases of:
+> >>
+> >> - device_for_each_child_node[_scoped]()
+> >> - fwnode_for_each_available_child_node[_scoped]()
+> >>
+> >> to access firmware nodes.
+> >>
+> >> [...]
+> > 
+> > Applied, thanks!
+> > 
+> > [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
+> >       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
+> > [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
+> >       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
+> > [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
+> >       (no commit info)
+> > 
 > > --
-> > 2.45.2
-> >
+> > Lee Jones [李琼斯]
+> > 
+> 
+> Hi Lee,
+> 
+> could you please tell me where you applied them? I rebased onto
+> linux-next to prepare for v3, and these patches are still added on top
+> of it. Can I find them in some leds/ branch? Thank you.
+
+Sorry, I was side-tracked before pushing.
+
+Pushed now.  They should be in -next tomorrow.
+
+-- 
+Lee Jones [李琼斯]
 
