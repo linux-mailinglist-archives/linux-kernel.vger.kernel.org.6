@@ -1,197 +1,156 @@
-Return-Path: <linux-kernel+bounces-271027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF3994489D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:39:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 412E694488C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:35:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6FD1C2434D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C4C2866F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D654170A02;
-	Thu,  1 Aug 2024 09:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DM2yAlNF"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA284183CD8;
+	Thu,  1 Aug 2024 09:34:33 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D1F140E5C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D38170A14
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722505146; cv=none; b=RGgFVw10w+IA70zF1LUdYytlqUHAXfhErddV84v0Yv+XBrwwP9Tm160/wUPR/YvWiwY9neXx8EnS7VLc+NtF9FPfbUIMYZNq/iojw5TG8ZzTkLvUtISSw28mqtW5qvIPsaasxsQcvgqNCPDCXHdWdVS8NXfHHil46BsRXgzkec0=
+	t=1722504873; cv=none; b=iyiVEPgyWiY8gNNBWeGIaxNZ0hkJJ9Zv339rAdjnuQcty0oN+W/N9TRvuPnrgl6eeEq5kGmlIBJwm2n17SuqQcmQM5kLkuR0MBdrDvBpmnQ/S7oD/eOMGdMtQU5XD2Oip5VadM2dIgBoJds8dFDk5X72VTAEw4cQTlOL3FBPw5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722505146; c=relaxed/simple;
-	bh=oApA0qznxaHEE4A8R8hgJNhN2ArNXKYa4oVQONhFyNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FUHy0QPzWpB/mvXymTCp9XTbhLdWYhWZWDlOJ/xD8jt+yti05g8evfeDvEYo4hxpxcaReIVEM8gckSjLN3lb3mbvl6uOZdPradmtKJ7/ap4G4rNkHFLognZU/bYzcTXXTTA2iY/t4QPbOLKSpSUYVhJrYXGnpnK6WA2Zy5/NyXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DM2yAlNF; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42809d6e719so45105215e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722505143; x=1723109943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rQdGA7GJE2VgdG2QsBIACC0GGavEy5/6TiWZnrghIfE=;
-        b=DM2yAlNFOH3v32S8roDbhB1p2pIU7YJOAem6WmYFZWHbT/trYdRbAAlieV8FKu4ayH
-         qK/5kHmhGQRs48PGh2WIjyU5w8ml8AkTzrtmuhgnk+QHpU28SYAzQU56aWyzCjrKz2d1
-         QpeaPH51g8CWhYC8CnvU3WCdRnsTDNd3Q+ASuNBEnE+fBXqURUau4RO/bGd4g1YvHdvw
-         3OXjdmQh9+JrG5Cz3K1swActaHjA2TV3m4F9RdpsaEwGbpeelIfsPsZ0gIEmG/Oh81qM
-         hERu4eJNO4hc/odsmUv8c5+n1HEc2V05+AZE1ZOM2aiL0MClqLyhrVjh3J4h0zTaYVh/
-         nMww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722505143; x=1723109943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rQdGA7GJE2VgdG2QsBIACC0GGavEy5/6TiWZnrghIfE=;
-        b=lh0aArgGiPJ4mDITGVkNLeS+r8YpaM9QQMtR+c8m9QuB2gr+iPbJDsVS22+7FLKakx
-         qQSxuTBGse6Y0x6Zgups3m1mYwOAdL1zmFV69yABNRywpn+42Ann1Grs9/RHbw8SR2fu
-         eWuzqmZh+QuXaXEwTmRFOD0Jb4KsWjSBIHCFH8DbTe/bOAYQ4J+BHrexYASFUp0ohZR0
-         kS0VY6T/qcGk6Hr99GT83tKxPpziTW+39xhVKDjsPtQ6JTukPpWgbBnIS4HwndVldYrA
-         Vac1Cddhd3jJW098w5RiEFp/7PFIMq0xnwLYvAX33VHoS5z34yKr3PKHsCRPfIq1g6rz
-         Na7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWj78RmD0yPOibjaA/+o7wt1UAqwydHa4S0h89eXMOUh0iTy7MhH4c+p/hqfwv7PeQMp7/UFlBMEzv/8kLJltL5Bt3FHsUqxqXlMP9h
-X-Gm-Message-State: AOJu0YzsBly4fRAHBSffxEWHUPpbuN+bHtq1+FTrpluAMrXwj5xeMk0l
-	EHZAAYwac7tgZJ6kjsBrnCQtl0EpUF4fEHqisaXenjyGEr2+ZqNPEZrH1fILniUK8yAXIz724RA
-	4/wSCzCUJmFkK1Qe5b7qF3bUQ8CsgTNvbw724
-X-Google-Smtp-Source: AGHT+IHNeIRKHEDLTaSlMEckCTl/havP+o8WgKH8eXCZheQ+hbQIUOGOrwY0qf/8SqbtvZCCyhr7GP8Uz0b/v6290so=
-X-Received: by 2002:a05:6000:910:b0:368:48b1:803 with SMTP id
- ffacd0b85a97d-36baacbda56mr1204853f8f.12.1722505142506; Thu, 01 Aug 2024
- 02:39:02 -0700 (PDT)
+	s=arc-20240116; t=1722504873; c=relaxed/simple;
+	bh=8yzCb93TuGtK+6B7TxSx3zh57RFbaWRvc8mJ+LFybbI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aNBlBMc607TN8sPg3ZmgmiRXSwFg5IQGBT/Mlo08gyYAmNZHVNdJzVsToiYiYDgGFsPO3/EfC2kEOYIQOYHMS5n/D9m4I90peCw1/UzrLdfltl6C53EonuCYeOCdBlwciLZdLS268vWTS/fNW43QsVA6wHddDjaAr53/XKJ4xsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZNvr3TNKzyPSr;
+	Thu,  1 Aug 2024 17:29:28 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id D504018006C;
+	Thu,  1 Aug 2024 17:34:27 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 1 Aug
+ 2024 17:34:27 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <linux@armlinux.org.uk>, <dianders@chromium.org>, <mhocko@suse.com>,
+	<akpm@linux-foundation.org>, <maz@kernel.org>, <vschneid@redhat.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] ARM: smp: Fix missing backtrace IPI statics
+Date: Thu, 1 Aug 2024 17:40:22 +0800
+Message-ID: <20240801094022.1402616-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
- <20240723-linked-list-v3-9-89db92c7dbf4@google.com> <2b548226-e323-466d-9f6d-762f6cbb5474@proton.me>
-In-Reply-To: <2b548226-e323-466d-9f6d-762f6cbb5474@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 11:38:50 +0200
-Message-ID: <CAH5fLghkPgj560a2b_1oRnvuurEugT4TNj+o-fYhGsuSGpywPg@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] rust: list: support heterogeneous lists
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
-	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Thu, Aug 1, 2024 at 11:24=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 23.07.24 10:22, Alice Ryhl wrote:
-> > @@ -181,6 +185,47 @@ unsafe fn from_fields(me: *mut ListLinksFields) ->=
- *mut Self {
-> >      }
-> >  }
-> >
-> > +/// Similar to [`ListLinks`], but also contains a pointer to the full =
-value.
-> > +///
-> > +/// This type can be used instead of [`ListLinks`] to support lists wi=
-th trait objects.
-> > +#[repr(C)]
-> > +pub struct ListLinksSelfPtr<T: ?Sized, const ID: u64 =3D 0> {
-> > +    /// The `ListLinks` field inside this value.
-> > +    ///
-> > +    /// This is public so that it can be used with `impl_has_list_link=
-s!`.
-> > +    pub inner: ListLinks<ID>,
-> > +    self_ptr: UnsafeCell<MaybeUninit<*const T>>,
->
-> Why do you need `MaybeUninit`?
+It is similar to ARM64 commit 916b93f4e865 ("arm64: smp: Fix missing IPI
+statistics"), commit 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal
+interrupts") set CPU_BACKTRACE IPI "IRQ_HIDDEN" flag but not show it in
+show_ipi_list(), which cause the interrupt kstat_irqs accounting
+is missing in display.
 
-Right now the constructor initializes it to MaybeUninit::zeroed().
-What would you initialize it to without MaybeUninit? Remember that the
-vtable pointer in a fat pointer has strict validity requirements.
+Before this patch, CPU_BACKTRACE IPI is missing (QEMU vexpress-a9):
+	 # cat /proc/interrupts
+	           CPU0
+	 24:          6 GIC-0  34 Level     timer
+	 25:        455 GIC-0  29 Level     twd
+	 26:         42 GIC-0  75 Edge      virtio0
+	 29:          8 GIC-0  44 Level     kmi-pl050
+	 30:        118 GIC-0  45 Level     kmi-pl050
+	 31:          0 GIC-0  36 Level     rtc-pl031
+	 32:          0 GIC-0  41 Level     mmci-pl18x (cmd)
+	 33:          0 GIC-0  42 Level     mmci-pl18x (pio)
+	 34:          0 GIC-0  92 Level     arm-pmu
+	 35:          0 GIC-0  93 Level     arm-pmu
+	 36:          0 GIC-0  94 Level     arm-pmu
+	 37:          0 GIC-0  95 Level     arm-pmu
+	 39:         15 GIC-0  37 Level     uart-pl011
+	IPI0:          0  CPU wakeup interrupts
+	IPI1:          0  Timer broadcast interrupts
+	IPI2:          0  Rescheduling interrupts
+	IPI3:          0  Function call interrupts
+	IPI4:          0  CPU stop interrupts
+	IPI5:          0  IRQ work interrupts
+	IPI6:          0  completion interrupts
+	Err:          0
 
-> > +}
-> > +
-> > +// SAFETY: The fields of a ListLinksSelfPtr can be moved across thread=
- boundaries.
-> > +unsafe impl<T: ?Sized + Send, const ID: u64> Send for ListLinksSelfPtr=
-<T, ID> {}
-> > +// SAFETY: The type is opaque so immutable references to a ListLinksSe=
-lfPtr are useless. Therefore,
-> > +// it's okay to have immutable access to a ListLinks from several thre=
-ads at once.
-> > +//
-> > +// Note that `inner` being a public field does not prevent this type f=
-rom being opaque, since
-> > +// `inner` is a opaque type.
-> > +unsafe impl<T: ?Sized + Sync, const ID: u64> Sync for ListLinksSelfPtr=
-<T, ID> {}
->
-> [...]
->
-> > @@ -135,5 +178,91 @@ unsafe fn post_remove(me: *mut $crate::list::ListL=
-inks<$num>) -> *const Self {
-> >              }
-> >          }
-> >      };
-> > +
-> > +    (
-> > +        impl$({$($generics:tt)*})? ListItem<$num:tt> for $t:ty {
-> > +            using ListLinksSelfPtr;
-> > +        } $($rest:tt)*
-> > +    ) =3D> {
-> > +        // SAFETY: See GUARANTEES comment on each method.
-> > +        unsafe impl$(<$($generics)*>)? $crate::list::ListItem<$num> fo=
-r $t {
-> > +            // GUARANTEES:
-> > +            // This implementation of `ListItem` will not give out exc=
-lusive access to the same
-> > +            // `ListLinks` several times because calls to `prepare_to_=
-insert` and `post_remove`
-> > +            // must alternate and exclusive access is given up when `p=
-ost_remove` is called.
-> > +            //
-> > +            // Other invocations of `impl_list_item!` also cannot give=
- out exclusive access to the
-> > +            // same `ListLinks` because you can only implement `ListIt=
-em` once for each value of
-> > +            // `ID`, and the `ListLinks` fields only work with the spe=
-cified `ID`.
-> > +            unsafe fn prepare_to_insert(me: *const Self) -> *mut $crat=
-e::list::ListLinks<$num> {
-> > +                // SAFETY: The caller promises that `me` points at a v=
-alid value of type `Self`.
-> > +                let links_field =3D unsafe { <Self as $crate::list::Li=
-stItem<$num>>::view_links(me) };
-> > +
-> > +                let spoff =3D $crate::list::ListLinksSelfPtr::<Self, $=
-num>::LIST_LINKS_SELF_PTR_OFFSET;
-> > +                // SAFETY: The constant is equal to `offset_of!(ListLi=
-nksSelfPtr, self_ptr)`, so
-> > +                // the pointer stays in bounds of the allocation.
-> > +                let self_ptr =3D unsafe { (links_field as *const u8).a=
-dd(spoff) }
-> > +                    as *const ::core::cell::UnsafeCell<*const Self>;
->
-> A bit confused why you need to do it this way, can't you just do this?:
->
->     let links_self_field =3D links_field.cast::<$crate::list::ListLinksSe=
-lfPtr>();
->     // SAFETY: ...
->     let self_ptr =3D unsafe { ::core::ptr::addr_of_mut!((*links_self_fiel=
-d).self_ptr) };
+After this pacth, CPU_BACKTRACE IPI is displayed:
+	 # cat /proc/interrupts
+	           CPU0
+	 24:          6 GIC-0  34 Level     timer
+	 25:        687 GIC-0  29 Level     twd
+	 26:         42 GIC-0  75 Edge      virtio0
+	 29:          8 GIC-0  44 Level     kmi-pl050
+	 30:        134 GIC-0  45 Level     kmi-pl050
+	 31:          0 GIC-0  36 Level     rtc-pl031
+	 32:          0 GIC-0  41 Level     mmci-pl18x (cmd)
+	 33:          0 GIC-0  42 Level     mmci-pl18x (pio)
+	 34:          0 GIC-0  92 Level     arm-pmu
+	 35:          0 GIC-0  93 Level     arm-pmu
+	 36:          0 GIC-0  94 Level     arm-pmu
+	 37:          0 GIC-0  95 Level     arm-pmu
+	 39:         29 GIC-0  37 Level     uart-pl011
+	IPI0:          0  CPU wakeup interrupts
+	IPI1:          0  Timer broadcast interrupts
+	IPI2:          0  Rescheduling interrupts
+	IPI3:          0  Function call interrupts
+	IPI4:          0  CPU stop interrupts
+	IPI5:          0  IRQ work interrupts
+	IPI6:          0  completion interrupts
+	IPI7:          0  CPU backtrace interrupts
+	Err:          0
 
-If nothing else, the field is not public. I can't remember if there
-was another reason.
+Fixes: 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal interrupts")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ arch/arm/kernel/smp.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Alice
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 3431c0553f45..be15cca7f8d7 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -531,7 +531,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
+ 	}
+ }
+ 
+-static const char *ipi_types[NR_IPI] __tracepoint_string = {
++static const char *ipi_types[MAX_IPI] __tracepoint_string = {
+ 	[IPI_WAKEUP]		= "CPU wakeup interrupts",
+ 	[IPI_TIMER]		= "Timer broadcast interrupts",
+ 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
+@@ -539,6 +539,7 @@ static const char *ipi_types[NR_IPI] __tracepoint_string = {
+ 	[IPI_CPU_STOP]		= "CPU stop interrupts",
+ 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
+ 	[IPI_COMPLETION]	= "completion interrupts",
++	[IPI_CPU_BACKTRACE]	= "CPU backtrace interrupts"
+ };
+ 
+ static void smp_cross_call(const struct cpumask *target, unsigned int ipinr);
+@@ -547,7 +548,7 @@ void show_ipi_list(struct seq_file *p, int prec)
+ {
+ 	unsigned int cpu, i;
+ 
+-	for (i = 0; i < NR_IPI; i++) {
++	for (i = 0; i < MAX_IPI; i++) {
+ 		if (!ipi_desc[i])
+ 			continue;
+ 
+-- 
+2.34.1
+
 
