@@ -1,260 +1,112 @@
-Return-Path: <linux-kernel+bounces-271432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DB60944E30
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3BC9944E32
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FBD71C217EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F4E128725E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7DA1A57D5;
-	Thu,  1 Aug 2024 14:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDF21A4F38;
+	Thu,  1 Aug 2024 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="rIjEeupL"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiT5bUPj"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D12D1A0AFF
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E561A57F1;
+	Thu,  1 Aug 2024 14:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523150; cv=none; b=QiRAxd7XbaBaLYhWe2yCLo13EFiHTnI8E8/cq7wid4L2eH+j+qE+wAmxX0hT4CdhJcFKS9b13NifzjmjdZ4fSzW18SUemSEacYNi8MNcGMGRGVOnYFHCEyKw99M91fgScm+W9S4SFEAP7JZp9bsNaM4/fKMH9TZu237/jns4HhY=
+	t=1722523157; cv=none; b=nF6vOALE/6FdYn8gSE5jXUIMq+RmBmidKf/zmmFmWlHc2mSw9d+o0lKqnE73DuEUJ/eSse40zqhl4O1yUIlQFhbOSoVe4NwVoh4mHNwzwKY+/8G+/E0feNuLB0VS6/Gq+XeZRqL6igKaci+YWRdSpz1UUWyEORY8kWIhQRYk0qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523150; c=relaxed/simple;
-	bh=cxb0uqdh31axH/cKN4VDKaqd5OG9AK2gmKD/3foMa5Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NA9Y6qmB+GuNpkkwDiZhm1zcRFg3YuITIkGBaiiB2KhhYnOwz4Xx087KT+VeT/XpcdVvq3gbCmChG9ryfXYFzmq/1iZsEN5lDHMGKSXTmD8sGZl9X/2nkrcBLHo4zgF687YNNJ1gu7JDBih7JQV9T9ZsuSGe+7J07wyZtop+YMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=rIjEeupL; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so923442766b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:39:06 -0700 (PDT)
+	s=arc-20240116; t=1722523157; c=relaxed/simple;
+	bh=G9HtxKdCspvTdt7SWFMdCVGM7sRODkA1sGeUTi+my+o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UfVU8d96mVTkBJyt2M3fC8w5W/CLZSLiKvCsvFb5rtsEqPKAcKE7EGzaaUqwztv/aN5f4QKIYka7LQkk+Xid8O6AdUJ6ZQpU4lsMFULstMiY6fMrZ/xAtMR9r+yp5Jc0ptvh5DrSbDcZAN5TiTEUDRAroCUNIcmC0BvRpBclYhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EiT5bUPj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc569440e1so63445775ad.3;
+        Thu, 01 Aug 2024 07:39:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1722523145; x=1723127945; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722523154; x=1723127954; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HG2f4Kd2K4/9MIJAaucwbOj4OuPoS6yz1qIeQtu+inU=;
-        b=rIjEeupLHv9fwX9pMGgxpsAo5iYm5CpvnKReQFpZpZOk2xx6et2L/21v6sxRbJmzrB
-         JnN3IxW1GXk9zyIuB7zpNGhAY6FNNEGMPlbOqN31SwEXNI+GBKltHk0BPkXTgJj2ANGt
-         K1iojNMjFHfRyYcWH3xNeVEFh7uIQT0iWH5thvYzStads7nUbg3UaYniDcV2TqRDrfMe
-         lXsLS/ltQtDvOhkYo0GZSHiUgdnIU2uxyeFPGcgK539Q9N4TGBShnAFIOiOt1l1lodsl
-         TzHZUiwaJwp9mej0dwUKnwx+TMcXtnLU5Et3+ZJ7UH8rHo60dfsrfaccfVHzvws790KM
-         L04w==
+        bh=lbzafF7avxRIPZ6txzx3Gb7FIT0SoBNd4I7j1z8J1D8=;
+        b=EiT5bUPj4kEutm/FiK7ujhjVq9VlrUdp2c4KqddFl69KYqfm+YKpe6VxNMqatTWqHS
+         4o0DHCKCyJh3ifxUMKbMWY0JsPmaFxRO5tv8FTmxc6h2fNk64sD81LnzCpnyE3ToilCB
+         N8VakGOylWMogjWndjRXXDCVQojII+jWWHam2CvsEoponrEuK0pXmy9eNZdpiaECyL5l
+         XDGpZe39g1jEj1SYbGZMWfH8dMCWOIjoShPbOz0xjYymbtZ+678cKNW3X/yVr9/cbJgd
+         ZflUdROh5kzD+DH8DoFhgtDIHzMyZuP1R+64HBqoNtzHeOpYQn63eEQtx/sT+je/SBzW
+         ub/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722523145; x=1723127945;
+        d=1e100.net; s=20230601; t=1722523154; x=1723127954;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HG2f4Kd2K4/9MIJAaucwbOj4OuPoS6yz1qIeQtu+inU=;
-        b=hQa7AgFJ6N5yIGEY7cEaTLaLGDMRAQPafNaHZnxm9M170LSy6UWIGjbJCsS3WvCTHc
-         fcGrSApT48sOlboTaA4Ejw9xOzKQvc2Z9ditb5RwqN0Ph90N6sjSNFcQ+jX0dnetfnQq
-         uFzjQvzNfldn7CyHFCxr/yktFCgLYBoQ9CP5gt9i7ze/5O8NjAXHOx8TMOLOWBTkOG7V
-         +Jcd8KrPGCJ3/9MWQuB2F+InucG2nXzqs3kLMdjnNxSThA0S4gpEckSKIx1VnQqxENdb
-         wHQ9rxRvMqt5oWaif0VoN4bDZfttcOAJ0lHq+5ZUcJ1eSokiKv+IxKHo4DVVczoHisLz
-         cIIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXME1FVJfIGfIzMpiivREvWIUgu5ChH5koUAkJrnjeYhfyQRq77VRT/enTiNEdiB3hMPT5SQGuL38lpQzGXt8LYmNHYfwGlhEMxy8kZ
-X-Gm-Message-State: AOJu0YxgqBpMwme/hY+hRuJCS9iE1S539Qi5A2kMQ/dOOZD6JHQ3Ppjk
-	O0/F2Xb2knM/Cv6eXGObqyhHsjz58Qlf6Kji95iiR0HkOKFpn07jKc41vQPW+yU=
-X-Google-Smtp-Source: AGHT+IEYU+xzrcCJWLNpoBtj9pA19ybmUUKWgMMJqzDfViG3QzROmIlMFS1nzgzWerpKk2VDCIaW7g==
-X-Received: by 2002:a17:907:d86:b0:a7a:a30b:7b94 with SMTP id a640c23a62f3a-a7dc4fa95ccmr32488266b.28.1722523144746;
-        Thu, 01 Aug 2024 07:39:04 -0700 (PDT)
-Received: from localhost.localdomain (apn-31-0-3-137.dynamic.gprs.plus.pl. [31.0.3.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad418f1sm902067666b.135.2024.08.01.07.39.03
+        bh=lbzafF7avxRIPZ6txzx3Gb7FIT0SoBNd4I7j1z8J1D8=;
+        b=o3pNWWGq10IakHaxq9GAnTVL1ApxyCCUsZ3Xyt5BoQPnOwdt/k7uW5YIOo4VMageoK
+         aRlA5jJGwuegEGQv9E3T/XwaSXFlQInEC577Z3t6LPgtDepH9pkUJCeAPk5OYw/iBjD1
+         T8CoGv90erDzH2afhn6k0juPbu9Lupuv6/CPefWuzmJ0EgDW2qN842vD+xugqZj9eiUy
+         uOHnw4iW5+R0u9VJ0xWCrMQB512t5WXCj63pwdrHiB2W2H4qPwfMXHhzJ3MJJPtyGRsl
+         wob3soPj+aUFCKvXddGtSc12WC4O0e5CmFbOr1abRx0abprVdpCRTH+UygtmkZ0tHzhf
+         Uwdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+x5ktYOkfuqQNjcDDwXU62pc9jFMbKZVirQZOluG86NqZmTTbBGjP3NFZ/gzixWHjgvQY5IQY+kZqNMbhByjq8VF3CfM5D+6aO6ji
+X-Gm-Message-State: AOJu0YwQANI/fU3X7oQhU04Q6Y+7P84DfuBZaqQ38bcFBlkMl1sEnL5q
+	ZN4Cl1/nPpGjpzIgUkzg9PS0+jNwHhx6VRB85804pQ5ln/4WGVY9MoYPagQb/u8=
+X-Google-Smtp-Source: AGHT+IHWRUVRvZ/e+DpEcXnVHP7B0Zc01C9Y+D5lbzKWZ2xmcHp4uYpuct/oN2r1oVx0Lx3p5Jk6jQ==
+X-Received: by 2002:a17:903:2345:b0:1fb:48c6:a2b0 with SMTP id d9443c01a7336-1ff5722de9fmr4436865ad.5.1722523154444;
+        Thu, 01 Aug 2024 07:39:14 -0700 (PDT)
+Received: from localhost.localdomain ([136.233.9.100])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fed7c7fc02sm139825765ad.31.2024.08.01.07.39.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:39:04 -0700 (PDT)
-From: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
-Subject: [PATCH] kernel/ext4: nested locking for xattr inode
-Date: Thu,  1 Aug 2024 16:38:27 +0200
-Message-Id: <20240801143827.19135-1-wojciech.gladysz@infogain.com>
-X-Mailer: git-send-email 2.35.3
+        Thu, 01 Aug 2024 07:39:13 -0700 (PDT)
+From: Abhash Jha <abhashkumarjha123@gmail.com>
+To: linux-iio@vger.kernel.org
+Cc: jic23@kernel.org,
+	lars@metafoo.de,
+	linux-kernel@vger.kernel.org,
+	Abhash Jha <abhashkumarjha123@gmail.com>
+Subject: [PATCH v2 0/1] Added calibbias to perform offset correction
+Date: Thu,  1 Aug 2024 20:08:56 +0530
+Message-ID: <20240801143857.16438-1-abhashkumarjha123@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add nested locking with I_MUTEX_XATTR subclass to avoid lockdep warning
-while handling xattr inode on file open syscall at ext4_xattr_inode_iget.
+Hello,
+This patch adds support for doing internal offset correction for the
+proximity and gesture circuits. The correction value is written to
+the respective POFFSET_x or GOFFSET_x register depending on which
+direction we want to perform this calibration.
+For the proximity channel we apply the offset to both the DL and UR
+directions. And for the gesture channel we apply the offset to the
+respective U, D, L, R direction.
 
-Backtrace
-EXT4-fs (loop0): Ignoring removed oldalloc option
-======================================================
-WARNING: possible circular locking dependency detected
-5.10.0-syzkaller #0 Not tainted
-------------------------------------------------------
-syz-executor543/2794 is trying to acquire lock:
-ffff8880215e1a48 (&ea_inode->i_rwsem#7/1){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:782 [inline]
-ffff8880215e1a48 (&ea_inode->i_rwsem#7/1){+.+.}-{3:3}, at: ext4_xattr_inode_iget+0x42a/0x5c0 fs/ext4/xattr.c:425
+Changes in v2:
+- Used IIO_CHAN_INFO_CALIBBIAS instead of exposing custom sysfs attributes
+- Used enum to choose between correct the offset registers
+- Corrected the formatting and style errors
+- Link to v1 : https://lore.kernel.org/linux-iio/20240707171357.709d9e35@jic23-huawei/
 
-but task is already holding lock:
-ffff8880215e3278 (&ei->i_data_sem/3){++++}-{3:3}, at: ext4_setattr+0x136d/0x19c0 fs/ext4/inode.c:5559
+Regards,
+Abhash
 
-which lock already depends on the new lock.
+Abhash Jha (1):
+  iio: light: apds9960: Add proximity and gesture offset calibration
 
-the existing dependency chain (in reverse order) is:
+ drivers/iio/light/apds9960.c | 69 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 68 insertions(+), 1 deletion(-)
 
--> #1 (&ei->i_data_sem/3){++++}-{3:3}:
-       lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
-       down_write+0x93/0x180 kernel/locking/rwsem.c:1564
-       ext4_update_i_disksize fs/ext4/ext4.h:3267 [inline]
-       ext4_xattr_inode_write fs/ext4/xattr.c:1390 [inline]
-       ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1538 [inline]
-       ext4_xattr_set_entry+0x331a/0x3d80 fs/ext4/xattr.c:1662
-       ext4_xattr_ibody_set+0x124/0x390 fs/ext4/xattr.c:2228
-       ext4_xattr_set_handle+0xc27/0x14e0 fs/ext4/xattr.c:2385
-       ext4_xattr_set+0x219/0x390 fs/ext4/xattr.c:2498
-       ext4_xattr_user_set+0xc9/0xf0 fs/ext4/xattr_user.c:40
-       __vfs_setxattr+0x404/0x450 fs/xattr.c:177
-       __vfs_setxattr_noperm+0x11d/0x4f0 fs/xattr.c:208
-       __vfs_setxattr_locked+0x1f9/0x210 fs/xattr.c:266
-       vfs_setxattr+0x112/0x2c0 fs/xattr.c:283
-       setxattr+0x1db/0x3e0 fs/xattr.c:548
-       path_setxattr+0x15a/0x240 fs/xattr.c:567
-       __do_sys_setxattr fs/xattr.c:582 [inline]
-       __se_sys_setxattr fs/xattr.c:578 [inline]
-       __x64_sys_setxattr+0xc5/0xe0 fs/xattr.c:578
-       do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
-       entry_SYSCALL_64_after_hwframe+0x61/0xcb
-
--> #0 (&ea_inode->i_rwsem#7/1){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:2988 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3113 [inline]
-       validate_chain+0x1695/0x58f0 kernel/locking/lockdep.c:3729
-       __lock_acquire+0x12fd/0x20d0 kernel/locking/lockdep.c:4955
-       lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
-       down_write+0x93/0x180 kernel/locking/rwsem.c:1564
-       inode_lock include/linux/fs.h:782 [inline]
-       ext4_xattr_inode_iget+0x42a/0x5c0 fs/ext4/xattr.c:425
-       ext4_xattr_inode_get+0x138/0x410 fs/ext4/xattr.c:485
-       ext4_xattr_move_to_block fs/ext4/xattr.c:2580 [inline]
-       ext4_xattr_make_inode_space fs/ext4/xattr.c:2682 [inline]
-       ext4_expand_extra_isize_ea+0xe70/0x1bb0 fs/ext4/xattr.c:2774
-       __ext4_expand_extra_isize+0x304/0x3f0 fs/ext4/inode.c:5898
-       ext4_try_to_expand_extra_isize fs/ext4/inode.c:5941 [inline]
-       __ext4_mark_inode_dirty+0x591/0x810 fs/ext4/inode.c:6018
-       ext4_setattr+0x1400/0x19c0 fs/ext4/inode.c:5562
-       notify_change+0xbb6/0xe60 fs/attr.c:435
-       do_truncate+0x1de/0x2c0 fs/open.c:64
-       handle_truncate fs/namei.c:2970 [inline]
-       do_open fs/namei.c:3311 [inline]
-       path_openat+0x29f3/0x3290 fs/namei.c:3425
-       do_filp_open+0x20b/0x450 fs/namei.c:3452
-       do_sys_openat2+0x124/0x460 fs/open.c:1207
-       do_sys_open fs/open.c:1223 [inline]
-       __do_sys_open fs/open.c:1231 [inline]
-       __se_sys_open fs/open.c:1227 [inline]
-       __x64_sys_open+0x221/0x270 fs/open.c:1227
-       do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
-       entry_SYSCALL_64_after_hwframe+0x61/0xcb
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&ei->i_data_sem/3);
-                               lock(&ea_inode->i_rwsem#7/1);
-                               lock(&ei->i_data_sem/3);
-  lock(&ea_inode->i_rwsem#7/1);
-
- *** DEADLOCK ***
-
-5 locks held by syz-executor543/2794:
- #0: ffff888026fbc448 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x4a/0x2a0 fs/namespace.c:365
- #1: ffff8880215e3488 (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: inode_lock include/linux/fs.h:782 [inline]
- #1: ffff8880215e3488 (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: do_truncate+0x1cf/0x2c0 fs/open.c:62
- #2: ffff8880215e3310 (&ei->i_mmap_sem){++++}-{3:3}, at: ext4_setattr+0xec4/0x19c0 fs/ext4/inode.c:5519
- #3: ffff8880215e3278 (&ei->i_data_sem/3){++++}-{3:3}, at: ext4_setattr+0x136d/0x19c0 fs/ext4/inode.c:5559
- #4: ffff8880215e30c8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_trylock_xattr fs/ext4/xattr.h:162 [inline]
- #4: ffff8880215e30c8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_try_to_expand_extra_isize fs/ext4/inode.c:5938 [inline]
- #4: ffff8880215e30c8 (&ei->xattr_sem){++++}-{3:3}, at: __ext4_mark_inode_dirty+0x4fb/0x810 fs/ext4/inode.c:6018
-
-stack backtrace:
-CPU: 1 PID: 2794 Comm: syz-executor543 Not tainted 5.10.0-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x177/0x211 lib/dump_stack.c:118
- print_circular_bug+0x146/0x1b0 kernel/locking/lockdep.c:2002
- check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2123
- check_prev_add kernel/locking/lockdep.c:2988 [inline]
- check_prevs_add kernel/locking/lockdep.c:3113 [inline]
- validate_chain+0x1695/0x58f0 kernel/locking/lockdep.c:3729
- __lock_acquire+0x12fd/0x20d0 kernel/locking/lockdep.c:4955
- lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
- down_write+0x93/0x180 kernel/locking/rwsem.c:1564
- inode_lock include/linux/fs.h:782 [inline]
- ext4_xattr_inode_iget+0x42a/0x5c0 fs/ext4/xattr.c:425
- ext4_xattr_inode_get+0x138/0x410 fs/ext4/xattr.c:485
- ext4_xattr_move_to_block fs/ext4/xattr.c:2580 [inline]
- ext4_xattr_make_inode_space fs/ext4/xattr.c:2682 [inline]
- ext4_expand_extra_isize_ea+0xe70/0x1bb0 fs/ext4/xattr.c:2774
- __ext4_expand_extra_isize+0x304/0x3f0 fs/ext4/inode.c:5898
- ext4_try_to_expand_extra_isize fs/ext4/inode.c:5941 [inline]
- __ext4_mark_inode_dirty+0x591/0x810 fs/ext4/inode.c:6018
- ext4_setattr+0x1400/0x19c0 fs/ext4/inode.c:5562
- notify_change+0xbb6/0xe60 fs/attr.c:435
- do_truncate+0x1de/0x2c0 fs/open.c:64
- handle_truncate fs/namei.c:2970 [inline]
- do_open fs/namei.c:3311 [inline]
- path_openat+0x29f3/0x3290 fs/namei.c:3425
- do_filp_open+0x20b/0x450 fs/namei.c:3452
- do_sys_openat2+0x124/0x460 fs/open.c:1207
- do_sys_open fs/open.c:1223 [inline]
- __do_sys_open fs/open.c:1231 [inline]
- __se_sys_open fs/open.c:1227 [inline]
- __x64_sys_open+0x221/0x270 fs/open.c:1227
- do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
- entry_SYSCALL_64_after_hwframe+0x61/0xcb
-RIP: 0033:0x7f0cde4ea229
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd81d1c978 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0030656c69662f30 RCX: 00007f0cde4ea229
-RDX: 0000000000000089 RSI: 00000000000a0a00 RDI: 00000000200001c0
-RBP: 2f30656c69662f2e R08: 0000000000208000 R09: 0000000000208000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd81d1c9c0
-R13: 00007ffd81d1ca00 R14: 0000000000080000 R15: 0000000000000003
-EXT4-fs error (device loop0): ext4_expand_extra_isize_ea:2730: inode #13: comm syz-executor543: corrupted in-inode xattr
-
-Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
----
- fs/ext4/xattr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index 46ce2f21fef9..a6bc9a22a8af 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -458,7 +458,7 @@ static int ext4_xattr_inode_iget(struct inode *parent, unsigned long ea_ino,
- 		ext4_set_inode_state(inode, EXT4_STATE_LUSTRE_EA_INODE);
- 		ext4_xattr_inode_set_ref(inode, 1);
- 	} else {
--		inode_lock(inode);
-+		inode_lock_nested(inode, I_MUTEX_XATTR);
- 		inode->i_flags |= S_NOQUOTA;
- 		inode_unlock(inode);
- 	}
-@@ -1039,7 +1039,7 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 	s64 ref_count;
- 	int ret;
- 
--	inode_lock(ea_inode);
-+	inode_lock_nested(ea_inode, I_MUTEX_XATTR);
- 
- 	ret = ext4_reserve_inode_write(handle, ea_inode, &iloc);
- 	if (ret)
 -- 
-2.35.3
+2.43.0
 
 
