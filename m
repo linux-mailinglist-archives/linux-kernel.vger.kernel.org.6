@@ -1,100 +1,133 @@
-Return-Path: <linux-kernel+bounces-270863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 764ED944661
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:20:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B758E944667
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C84F1F246C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:20:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8BAB1C21107
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0F5F16DEAE;
-	Thu,  1 Aug 2024 08:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A0316DEA5;
+	Thu,  1 Aug 2024 08:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q13Ztgdl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ItQK+fI0"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D647381C2;
-	Thu,  1 Aug 2024 08:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3D38BE0;
+	Thu,  1 Aug 2024 08:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722500435; cv=none; b=hU0HlY4tLYr3Mt4kVmtqHJkNRBxWKmWYZH1Q7anqjGWuwhoB0zL1M8YJcc555SL5QzVmGcO7XqKEHNBukRpoOT1AT+DEJg4isisiXGHCfVZBzecjAeHQbzQl9SS4UrGdPNg4z8pEBjsiBEKrq8CFeGdkD3AxrJFIU/H7DF0E/Yc=
+	t=1722500454; cv=none; b=MgTmtA5s+WAxjwXw0spboPrVSvmqy4/+r3b0U4HodGUTv/thmXB/wdjcaKt+Q/u9qP1AzfkwyhjqwfgQtrrSdBB/sCH+pPM9AfFWLglr8hbvu10HSMhIWNgFA4/nYQmDhas4il76AwHvQdGmbOh6ZWOcYvQ9+wQGJ4XJcm9LOqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722500435; c=relaxed/simple;
-	bh=k4Iwf+s99U7rDGCC/PaxZkpV7Cxs3qCZf+vgUr9MhEw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=oEjLVtEu078olzNuUdJcojSf3KGAYmFV75+hNH1wqFYeWT0tNdrtQAN5gHEaGiubYIeQMAgJG+kUBm96ZfR1Zuc+F75RT+bnnVd1Z/qOKmj8WoDCANefPvEhxf3aDslNxXagbJqwLalubxplbkc4AbR9aReYPDxOqdRJ8mBY7FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q13Ztgdl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A05D6C4AF0A;
-	Thu,  1 Aug 2024 08:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722500434;
-	bh=k4Iwf+s99U7rDGCC/PaxZkpV7Cxs3qCZf+vgUr9MhEw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=q13Ztgdlvn+A+FvilNj2PkFm++/n9aRtLwR5FQsS9Nib2f67piQaFRBTYxSZtXBye
-	 reUFpRUvI7oInkTtYzcxBJEgYNY8J7YSOBR9bwbuvfiaBNKfhU1VsVzABFdM8zwP62
-	 j6BkDJNCUMqsEw14tzYXsO8M5hAUXiKpppW70wvC50dJ27GmI5R8bQxSW4ZK+3mQeV
-	 6vR+ylh6uWt8kMxXMwYcbB9nNywfn3hri2I+7LbESVLZ7ey6uDKuxo4m7FDYhNW4gI
-	 KeAs3K4BWqHALav//h4mfB+3a/fouMgNv7MVpbbtviIVbEgSaaeAmK+P123frtARsB
-	 avuPGZTi8er/g==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 93BE7C43443;
-	Thu,  1 Aug 2024 08:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722500454; c=relaxed/simple;
+	bh=pxDD+VqHUK/fgNuVfTXryZFPFuOe9Elqx9CJ2loe6/I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cpxTafWLFT/RCaszEQO8q44sr+aVEbkrx7K37iRLnHobSaLVe+DXaX0dpJLHi+SWCpKDDps2VP/xdie9RKpVnJ8CL8CcpvmhxsWsmM7CnhND/11/4NdKjEK4o07kz/RILpQcT9PCYBcaRl4laxgdezlbXcIGlYNMKvulk7Aqw+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ItQK+fI0; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722500445;
+	bh=pxDD+VqHUK/fgNuVfTXryZFPFuOe9Elqx9CJ2loe6/I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ItQK+fI08GD1pTQ3PR7NQqWCG2Ggto5LWuHL75Ztu/qlUAQKHkATCIWOryCvSpGNv
+	 OXfGHt08E7pb2nGSWfi9FXbT4Enfkt2b/UPQekb1juW3sgWqxB5iePyRe1wr4d7mv3
+	 YEilLf2wws7u7RVF9jK7vQ1Iqrz396YIkZEgXH9aoNIFHPEKTWeeHVrt1eqw8YbaP8
+	 5Eg2+anUn4RazRZ6g0JW2On9WVuCm33AGlLWCjI8+l3stlORjEBZ1LgqgjICqYIH71
+	 RB0CIjZoAXKFX7jmOZTrMX/3q2NvfOqgtiGE4sTo3kT5lL/bh+Y5DwLnx+jb3CCSmp
+	 adywNqe2Gq82w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2FA4B3780520;
+	Thu,  1 Aug 2024 08:20:44 +0000 (UTC)
+Message-ID: <21a9fcfa-e92e-4178-bbae-0193f8b86987@collabora.com>
+Date: Thu, 1 Aug 2024 10:20:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH v7 0/6] Mediatek thermal sensor driver support
+ for MT8186 and MT8188
+To: Julien Panis <jpanis@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Nicolas Pitre <npitre@baylibre.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20240603-mtk-thermal-mt818x-dtsi-v7-0-8c8e3c7a3643@baylibre.com>
+ <171826604410.51825.14935271158174620262.b4-ty@collabora.com>
+ <abefa449-c0bc-4b58-89b8-d4272f7774f6@baylibre.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <abefa449-c0bc-4b58-89b8-d4272f7774f6@baylibre.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH 0/3] Bluetooth: hci_qca: fix post merge window regressions
-From: patchwork-bot+bluetooth@kernel.org
-Message-Id: 
- <172250043460.11616.3564241762852213894.git-patchwork-notify@kernel.org>
-Date: Thu, 01 Aug 2024 08:20:34 +0000
-References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
-In-Reply-To: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: marcel@holtmann.org, luiz.dentz@gmail.com, wt@penguintechs.org,
- dmitry.baryshkov@linaro.org, luiz.von.dentz@intel.com,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- bartosz.golaszewski@linaro.org
 
-Hello:
-
-This series was applied to bluetooth/bluetooth-next.git (master)
-by Luiz Augusto von Dentz <luiz.von.dentz@intel.com>:
-
-On Wed, 31 Jul 2024 17:20:47 +0200 you wrote:
-> Here are the fixes for regressions reported by Wren and Dmitry. I could
-> reproduce the crash on db820c and so I was able to test it but patch 2/3
-> could use a Tested-by from Wren on QCA6390.
+Il 31/07/24 17:34, Julien Panis ha scritto:
+> On 6/13/24 10:07, AngeloGioacchino Del Regno wrote:
+>> On Mon, 03 Jun 2024 12:50:47 +0200, Julien Panis wrote:
+>>> This is a bunch of patches to support the MT8186 and MT8188 thermal
+>>> sensor configurations.
+>>>
+>>> Since the patches of v3 were applied except those related to the SoC
+>>> device trees, this series includes mainly patches for 'mt8186.dtsi'
+>>> and 'mt8188.dtsi'. Due to some thermal zone renaming in these 2 device
+>>> trees, the related definitions were also renamed in the dt-bindings and
+>>> in the driver.
+>>>
+>>> [...]
+>> Applied to v6.10-next/dts64, thanks!
+>>
+>> [3/6] arm64: dts: mediatek: mt8186: add lvts definitions
+>>        commit: 0c598e50e6c823c1057ddad17c546e368a415d6a
+>> [4/6] arm64: dts: mediatek: mt8186: add default thermal zones
+>>        commit: d7c1bde38bf37a59551cfd52cfdb5bd974b17431
+>> [5/6] arm64: dts: mediatek: mt8188: add lvts definitions
+>>        commit: 7e3e18f2ed40ea9018590b4533fa148954a725bc
+>> [6/6] arm64: dts: mediatek: mt8188: add default thermal zones
+>>        commit: 2f950510411a33d98eea28c22d7880eeb48adb61
+>>
+>> Cheers,
+>> Angelo
+>>
 > 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-> Bartosz Golaszewski (3):
->       Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
->       Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
->       Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
+> Hello Angelo,
 > 
-> [...]
+> About this series, the DT patches were initially applied, but removed
+> due to missing dt-bindings in linux-next[1].
+> 
+> But now the dt-bindings patches are applied in mainline[2].
+> 
+> Would it be possible to re-apply the dts patches please ?
+> 
+> [1] https://lore.kernel.org/all/ZnBn-vSj-ssrJFr2@sirena.org.uk/
+> 
+> [2] 
+> https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git/log/?h=thermal/linux-next
+> 4262b8d782a7 ("dt-bindings: thermal: mediatek: Fix thermal zone definition for 
+> MT8186")
+> 744ca11f52e5 ("dt-bindings: thermal: mediatek: Fix thermal zone definitions for 
+> MT8188")
+> 
 
-Here is the summary with links:
-  - [1/3] Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
-    https://git.kernel.org/bluetooth/bluetooth-next/c/3c9b2c902da0
-  - [2/3] Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
-    https://git.kernel.org/bluetooth/bluetooth-next/c/786cd197c92b
-  - [3/3] Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
-    https://git.kernel.org/bluetooth/bluetooth-next/c/9fba2e3f4ac1
+Thanks for the reminder; I have applied those to v6.11-next/dts64.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Cheers,
+Angelo
 
 
