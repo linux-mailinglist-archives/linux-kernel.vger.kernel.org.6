@@ -1,131 +1,164 @@
-Return-Path: <linux-kernel+bounces-271594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8678C945085
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:26:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6C5945087
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C429928191D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2853B1C22F6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3051B3F1E;
-	Thu,  1 Aug 2024 16:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A781B3F26;
+	Thu,  1 Aug 2024 16:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1vbfaIC1"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BnG9jhG7"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764D71B3F14
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9A63A1DA
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722529540; cv=none; b=FPyntThCGZlz7p/GJKNF5O5RsC+4TBfL6KgdQS+FrEjF/Yz0/H+pbvxyKspKhk9XyiXQ0xHTvQJ2Uu9k/DKSrLU0JgC0s47aAG23vD/4BgAnsqH4aOO1+TWjZaClFi4L0G+1vjQnfW9LJTbIeowOA+FJeqvhCqqjVKULE/Yt1Sw=
+	t=1722529627; cv=none; b=ayU8jPg0xbfq+bAKSZMg7CUVnxcJJI7SL9fYe6gsNRHHET6z8GDAie5wufOKXola2ccK09ZD/RzaPoH/gpadQn9zJXegHpm6CCQQx6vc3daXFxZY9av5o7CoHXw23U3dXgYQYD8dPF0tlRt2qOcsnIIeZutlZnSVJWpjTcol6VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722529540; c=relaxed/simple;
-	bh=F30C0Uw+/rZKDQD+xwC0S0Dhh1qkY+UTNmRcgBVa5G8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLh0dLql2ZOIO7zStmBwTMtNuXfNTDRVYCdvhiBOstXBU6iMKNxO7n8jp1EkfmVGcVGZccSj8lWst5DKGEYsGXKZUF4yKH20FKOWkbZTAmRD72WzR6/Z1HW8SfGuTmlfG/OywvHaTMmR0RSAssq0E0UaxsdTUf3OdKVexdNtXuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1vbfaIC1; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc491f9b55so57994705ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:25:39 -0700 (PDT)
+	s=arc-20240116; t=1722529627; c=relaxed/simple;
+	bh=kmduuTslR1r6KFhm5dTaAgQsEJDGFeeYrbMrn4J3Cwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AGKbCBRulRTROHBBaX9AAuNhAJo22oRV7l7EFbzvXzImxpIca2u/UofKNUpCHuE8JVWef4YzA3VFYppFZScBvYh66ACNud1Pn2ZC/s+mefAGbq7dcTrozLMEoZWe57empW4YkoPGJG95mVxg6TURja3Tn2xwKgy8haMxeFRm+UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BnG9jhG7; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39aeccc64e8so2394325ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:27:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722529539; x=1723134339; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l4c5Ol1nE1CTS39JB64ktQJWhAmOmGaN1S0j3xOuMYE=;
-        b=1vbfaIC108LkTwsu7NwCfHaPx8asxLuIOhFkNT1HZRCnxWpn2BqfcHh2T6dpP79K97
-         9YJW+oLfc/dz0dnGqVIpjCQCWn/o88LaFAamQwS7lqcFtrt3dM4tCuRu4DF41PSXVArb
-         ryLu8HLOIDr1YnUg/Ou6FEszdaK3iPkMQEVI9x4geKzVpZAYAZ8GNKVwtYNn4oXy+wNp
-         m1kBTJjgLvQ6yPTBIhNZ6RRTSTvbx+p/PPB3cClB7H6kERpUfcnWFWokFQA/YyQ4BFry
-         UqNXDoawlhfTOyIhGxyhxMl69xa7XKBMOo35IjVhsNoI5JT5CNFw2UiIWhLgdsANdsxm
-         lXMQ==
+        d=linuxfoundation.org; s=google; t=1722529625; x=1723134425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3bS7017cZll4e+874qKazOOkVgc5570pVdFAP9FpAJU=;
+        b=BnG9jhG7h/4vbW8oZN5sxsVnuHRlzi+CY+30SpDDReU/x9ziSQxzrViYNZEy2XF8Ji
+         DxLTHWsMIfzIxIE5Yh7JNifCBnSQV0zaL7BEheNhZ290L3xWM2Q7YvIIcxJPKJjUuVZD
+         JmBSr2t/tVKGR9awBbh26MH4jEHj+Pxgt293E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722529539; x=1723134339;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l4c5Ol1nE1CTS39JB64ktQJWhAmOmGaN1S0j3xOuMYE=;
-        b=iiGKKTfGSaKnrjxJRgXKplNuP8IyKRnKOH1fszUe7+T52dX418+nGy/L08vmuGRTYH
-         7Payy7syuqK5/BddZWrrzVWFV59iAKzBgUDaNM6SLmKdXqzYhC7vsCWjTSfzLQzFMSGf
-         YkPBANqR9FOHIbKWiXVjoAvyFxazQAolBdFaLt1V0/NcQsHscs6jSMNDj5ca5NMpv2CU
-         5pqTtg6bdRPEDfQOUpdn3JA5RNbcgbJy+Izv/yDxNhbEghotLvJIYs603iS694RhMXLy
-         FHWWrZaHMKTXVtoIvlQsCtS9SRe9Cv+uVY+51m5IUr8SU9x3kmBgxYpGgqHSfcgVMpeR
-         So1g==
-X-Gm-Message-State: AOJu0YwKzIG7l9ATGOQi60VLGDgtWvSx/TWRhBGDKKqFTlFbgJH7P5Ao
-	SMZbZsLMS4zst55S0XydKw/e/jT1KRqJqhyfgsynz/obOzJ8O5BrMYI2rF2Hlw==
-X-Google-Smtp-Source: AGHT+IGNApLbGTUsDjNNtlX7dLxDoxzbc5tgy3WDGZeJBPd68Pn4ZuvUqLXwqVnsQv2cdqS0leR5bg==
-X-Received: by 2002:a17:902:ea10:b0:1fb:1afb:b864 with SMTP id d9443c01a7336-1ff5722e77emr9166495ad.5.1722529538342;
-        Thu, 01 Aug 2024 09:25:38 -0700 (PDT)
-Received: from google.com (33.5.83.34.bc.googleusercontent.com. [34.83.5.33])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f29d7dsm684175ad.46.2024.08.01.09.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:25:36 -0700 (PDT)
-Date: Thu, 1 Aug 2024 16:25:32 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, kernel-team@android.com,
-	"J. R. Okajima" <hooanon05g@gmail.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v2] lockdep: upper limit LOCKDEP_CHAINS_BITS
-Message-ID: <Zqu2_OvnXIrCMMu8@google.com>
-References: <11faf952-c0f8-6e1d-3560-12d77847a8ac@i-love.sakura.ne.jp>
- <20240723164018.2489615-1-cmllamas@google.com>
- <20240731164823.c8ac96ab0f8968ce8213c02d@linux-foundation.org>
+        d=1e100.net; s=20230601; t=1722529625; x=1723134425;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3bS7017cZll4e+874qKazOOkVgc5570pVdFAP9FpAJU=;
+        b=j4/lho2q78e8sDEXNgNQjbwgPz1IaL+t+XDLzfJxOY4EDkZAhvH0/Pfw7/i/bRgTGZ
+         OryTzNZG48GxTKvruNHsxx5uJ7z6i5X1D6r99lnrHnIupIiMXkrPBxOOZjyWcv2HH5/y
+         7T1l4heaSY9FXTIHyf9v5bTegd5ACh0soGJ+awpb9E1Xq8gFM/iR0MY3J1dbJZ0kbJ3Q
+         6GmvCbaMbTgIN29HVhFGtNMKUymJgKDvEN2DhlEhQZYs5ug/eZKpoUu3MOqHtJ+HV2Pf
+         CGEBE4o0sn/VvI29gXFo+Yg8hOjMl6XORSr/y5CRaTz5xLgdxEUxZaQ4mJe3K36hP0mp
+         Ontw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEHC/UXcflvcRS1mxLt73uo7thLtDcgmY9CXr9tVkUnNk2XuwVQaTNvtSvTxEi1O8gq/gtS2Qn9Sz/gnI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy2mZJXXJUwLRfkznZzYADzx9ExdXBX1jl3XqPsvm+Y8NfkONX
+	E2MwfsE+2Cz26rcQ2dVwAYDTLdM4cXizphrfZdaDCvcLe5/QIeKFNnq3ggDCBdQaz4BgUv2+Csg
+	o
+X-Google-Smtp-Source: AGHT+IGErCOry7BajNV/z4Zkr4yfnMJio63Sv6XY9m5JQ814Wk5TMigZr92WLgckQyZqxSB0fNMfFg==
+X-Received: by 2002:a05:6e02:18ce:b0:381:c5f0:20d5 with SMTP id e9e14a558f8ab-39b1f772401mr5576285ab.0.1722529625303;
+        Thu, 01 Aug 2024 09:27:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20ae3537sm103715ab.61.2024.08.01.09.27.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 09:27:04 -0700 (PDT)
+Message-ID: <f560819b-3a3c-4999-ad63-422ca31e9b08@linuxfoundation.org>
+Date: Thu, 1 Aug 2024 10:27:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731164823.c8ac96ab0f8968ce8213c02d@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: openat2: don't print total number of tests
+ and then skip
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240731133951.404933-1-usama.anjum@collabora.com>
+ <c1414d9d-61b1-4f92-bc8a-333679362283@linuxfoundation.org>
+ <d30aa38c-5dbd-4c18-b20f-a6eb9e9e722b@collabora.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <d30aa38c-5dbd-4c18-b20f-a6eb9e9e722b@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 04:48:23PM -0700, Andrew Morton wrote:
-[...]
-> so
+On 8/1/24 02:42, Muhammad Usama Anjum wrote:
+> On 7/31/24 9:57 PM, Shuah Khan wrote:
+>> On 7/31/24 07:39, Muhammad Usama Anjum wrote:
+>>> Don't print that 88 sub-tests are going to be executed, but then skip.
+>>> This is against TAP compliance. Instead check pre-requisites first
+>>> before printing total number of tests.
+>>
+>> Does TAP clearly mention this?
+> Yes from https://testanything.org/tap-version-13-specification.html
 > 
-> 	BUILD_BUG_ON((1UL << 24) <= ARRAY_SIZE(chain_hlocks));
-> 	ie, BUILD_BUG_ON((1UL << 24) <= 5 * (1UL << 21));
+> Skipping everything
+> This listing shows that the entire listing is a skip. No tests were run.
 > 
-> is OK, whereas
+> TAP version 13
+> 1..0 # skip because English-to-French translator isn't installed
+
+I don't see how this is applicable to the current scenario. The user
+needs to have root privilege to run the test.
+
+It is important to mention how many tests could have been run.
+As mentioned before, this information is important for users and testers.
+
+I would like to see this information in the output.
+
 > 
-> 	BUILD_BUG_ON((1UL << 24) <= 5 * (1UL << 22));
+> We can see above that we need to print 1..0 and skip without printing the
+> total number of tests to be executed as they are going to be skipped.
 > 
-> will bug out.  So LGTM, I'll add it to mm.git.
->
+>>
+>>>
+>>> Old non-tap compliant output:
+>>>     TAP version 13
+>>>     1..88
+>>>     ok 2 # SKIP all tests require euid == 0
+>>>     # Planned tests != run tests (88 != 1)>>>     # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:1 error:0
+>>>
+>>> New and correct output:
+>>>     TAP version 13
+>>>     1..0 # SKIP all tests require euid == 0
+>>
+>> The problem is that this new output doesn't show how many tests
+>> are in this test suite that could be run.
+>>
+>> I am not use if this is better for communicating coverage information
+>> even if meets the TAP compliance.
+> I think the number of tests represents the number of planned tests. If we
+> don't plan to run X number of tests, we shouldn't print it.
 
-Right. I ran into the BUILD_BUG_ON() while trying to max out
-LOCKDEP_CHAINS_BITS. I initially suspected the assert was incorrect as
-the static array is being indexed as chain_hlocks[base + depth], which
-according to the bitfileds in 'struct lock_chain' should likely be a 30
-bit shift instead:
+88 tests are planned to be run except for the fact the first check
+failed.
 
-	unsigned int    irq_contex :  2,
-			depth      :  6,
-			base       : 24;
+Planned tests could not be run because of user privileges. So these
+tests are all skips because of unmet dependencies.
 
-In practice though, using 1UL << 30 will blow up the bss section. This
-is also true for the _any_ of the CONFIG_LOCKDEP_*_BITS. As they are all
-shifts to determine the size of static arrays.
+So the a good report would show that 88 tests could have been run. You
+can meet the specification and still make it work for us. When we
+adapt TAP 13 we didn't require 100% compliance.
 
-I simply dug up this patch from J.R. which avoids the BUILD_BUG_ON(),
-but perhaps someone should limit the rest of the configs? In practice,
-nobody should be using these 30 bit shifts.
+There are cases where you can comply and still provide how many test
+could be run.
+
+I think you are applying the spec strictly thereby removing useful
+information from the report.
+
+Can you tell me what would fail because of this "non-compliance"?
+
+thanks,
+-- Shuah
 
 
-> btw, the help text "Bitsize for MAX_LOCKDEP_CHAINS" is odd.  What's a
-> bitsize?  Maybe "bit shift count for..." or such.
 
-Indeed that is odd. I'm also not sure what to make of the "*5" magic
-number. I suppose it could be the typical lock depth? I could try to
-clarify these points, if no one with more insight wants to do it.
 
---
-Carlos Llamas
 
