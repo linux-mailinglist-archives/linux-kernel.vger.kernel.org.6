@@ -1,246 +1,177 @@
-Return-Path: <linux-kernel+bounces-271412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1933944DDC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:21:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 560EF944DE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00A821C257BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:21:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8081F24A87
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC763198A2C;
-	Thu,  1 Aug 2024 14:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBE01A4B2C;
+	Thu,  1 Aug 2024 14:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="USCgwMHG"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FVk1uT5v";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oMIStrT0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 663EF1A3BDD
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093C16DECD
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722522083; cv=none; b=Ef9/BM2K6Z8LPMXbEF3C9rVpkmYZEE8iANjMFzjFJq+yOsQsGNRzTtsL3WIKWAC2EMyYyLheGJZUvvii/D24lAqxN9sXIc3mk3zxbzfNhiomcR1SjP2FRwb0j7RCjr2wdjENRlCxPTJUwAdUirrYSqlKLhiq5xJVBYpD8riLWv4=
+	t=1722522153; cv=none; b=ufMLS5JRnTOCFFC+vd1tgf+wEp/Q5r1NUnpdi76A8MjFmBq16EaG+JKkuO8ubQ+13zhRQrGEBSr+B1csLex7ggATLAY60xC71Z22uouI8oD5GiSEDneK8AmUWxS1bgsNxudNDAjUBSvtAc1AW/YYnKjVrKW5eBtoXMq5nQx90ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722522083; c=relaxed/simple;
-	bh=PfMqkfN42J4e0dqvTm5SvtF6IOoWYEeysMtd20JQ8DU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MczLTvvIDmHuwCwDN/URDQ/ECquokvT0iDmBMoTmGrpyMPP2pcb3xB1FXnHDPqXz1pupzaD87EB1uR+/9F6m10cpunksUqSwTJoU4jyqnOne2CbjPNuYNgvpV8/zpewzhDw+C2Q4JjvsqCRC5CPOPxb3TLP9CI4+rcS1SMt6v4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=USCgwMHG; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722522079; x=1722781279;
-	bh=LXd8+skXHkJjJoFz+sBO8AAh+6v9cCgpMDN8fc+xS1E=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=USCgwMHGV9qDIGf5J7oBp9DRKD4fXLEFqMIqdsj5pXlPrkUBSMYCeAIJ4coOdpDC8
-	 NFnco217BvGlPDRFr14EBE7rqZ2JFp5JCYSFXK8Gwj2Eae3hZ9QQOH/wV8XLbopj/B
-	 aMYlzNZ+uJCnxilnzD/cYTjAqb8HpfWa5O81fQuxTSBNJrL1aIviHTgQm9hLG1VKas
-	 PT+2qu3hDJucyH2vqb+iXGzTXD/76qKMM3ukhLOFY1Tbhb/SqwPANM0bqKyGw936Os
-	 wTdx3BtU5x5A7EvbVfgg3Nv60O2QfwUTQy7+1G9P15UyKWjjzqjYtwILalcCgVD2jz
-	 YGas/pgZ1IQZQ==
-Date: Thu, 01 Aug 2024 14:21:13 +0000
-To: Andreas Hindborg <nmi@metaspace.dk>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-Message-ID: <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me>
-In-Reply-To: <878qxgnyzd.fsf@metaspace.dk>
-References: <20240705111455.142790-1-nmi@metaspace.dk> <2838cf2e-936c-45de-bb19-af9da66fbe00@proton.me> <87plqso50o.fsf@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me> <878qxgnyzd.fsf@metaspace.dk>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 39a3d6e161169e2681298c1681513f946ad3eb54
+	s=arc-20240116; t=1722522153; c=relaxed/simple;
+	bh=WXlbsm8Ymu+R94UIcr3gCVF/oF+DZOLLyvULEUPqkf4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=akv+2r/3qQ7j2MywFAMja7bIpXDVoKBiR3FkjjD+G1PRC3Y12JmRS26bU7FNDM2XKivKPGFpqMFhq6LX1HDldtC0DKocBSqXlpgda6S+XrwvfEIF4zfhkkq4yfGgvj5uXrVZ/utNjFu6AAGC0f+S9RyYfE20E48Ey4Dp6/WusF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FVk1uT5v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oMIStrT0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722522149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gaHaU3IkY2Jf1nPS7uPoGLEx+hVc1fctaQkNhB2/9zE=;
+	b=FVk1uT5vVL21I6rdp17UGa1sAr4wYJovTjrvptv6iJEzCGkpqEMRxrqmw0NOp0AbQL+hFJ
+	tFrZ9L4R/rM1TIJwmpXZz3IJ65f150A7YCqqc8rmSuj8HmIaHr/DRAtyUV9RM27rr6AtAW
+	LsiARXfdV6Oru4vGI+/9zSzg6gpgmSyHIk+IBq34gTKc6zX2JM8b5FXoD7SH9vXdqf87O2
+	OU+5MRae1vCKjos6I6TihIteOXfrIBgA6n1wOBuhw5svnXbtxx8MeChLWs4a8Yf2Ph5KTj
+	U9LMFauHmLqYbGa+eE2S35jgywD2MGCHjT0OqZjTphUC/hzWZ5AODN8WSxqzbg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722522149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gaHaU3IkY2Jf1nPS7uPoGLEx+hVc1fctaQkNhB2/9zE=;
+	b=oMIStrT0nlaGgGZcECQKvH3QlDQj6GhwbCrnUbyoCpm7RRYGgr1jc/3QhAgCs0zCbNUNwJ
+	7Fdy5+WjY32+lhBw==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: preffer_ofload param: was: Re: [PATCH printk v3 11/19] printk:
+ nbcon: Rely on kthreads for normal operation
+In-Reply-To: <ZqpAJgKeB0cIlTg7@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-12-john.ogness@linutronix.de>
+ <ZqpAJgKeB0cIlTg7@pathway.suse.cz>
+Date: Thu, 01 Aug 2024 16:28:28 +0206
+Message-ID: <8734noz5jv.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On 01.08.24 15:40, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->> On 01.08.24 13:29, Andreas Hindborg wrote:
->>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>> On 05.07.24 13:15, Andreas Hindborg wrote:
->>>>> +
->>>>> +/// Types that can be used for module parameters.
->>>>> +///
->>>>> +/// Note that displaying the type in `sysfs` will fail if
->>>>> +/// [`core::str::from_utf8`] (as implemented through the [`core::fmt=
-::Display`]
->>>>> +/// trait) writes more than [`PAGE_SIZE`] bytes (including an additi=
-onal null
->>>>> +/// terminator).
->>>>> +///
->>>>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
->>>>> +pub trait ModuleParam: core::fmt::Display + core::marker::Sized {
->>>>> +    /// The `ModuleParam` will be used by the kernel module through =
-this type.
->>>>> +    ///
->>>>> +    /// This may differ from `Self` if, for example, `Self` needs to=
- track
->>>>> +    /// ownership without exposing it or allocate extra space for ot=
-her possible
->>>>> +    /// parameter values. This is required to support string paramet=
-ers in the
->>>>> +    /// future.
->>>>> +    type Value: ?Sized;
->>>>> +
->>>>> +    /// Whether the parameter is allowed to be set without an argume=
-nt.
->>>>> +    ///
->>>>> +    /// Setting this to `true` allows the parameter to be passed wit=
-hout an
->>>>> +    /// argument (e.g. just `module.param` instead of `module.param=
-=3Dfoo`).
->>>>> +    const NOARG_ALLOWED: bool;
->>>>
->>>> I think, there is a better way of doing this. Instead of this bool, we
->>>> do the following:
->>>> 1. have a `const DEFAULT: Option<Self>`
->>>> 2. change the type of the argument of `try_from_param_arg` to
->>>>    `&'static [u8]`
->>>>
->>>> That way we don't have the weird behavior of `try_from_param_arg` that
->>>> for params that don't have a default value.
->>>
->>> Since we have no parameter types for which `NOARG_ALLOWED` is true in
->>> this patch set, it is effectively dead code. I will remove it.
->>
->> Hmm what parameters actually are optional? I looked at the old rust
->> branch and only `bool` is marked as optional. Are there others?
->>
->> If it is used commonly for custom parameters (I could imagine that Rust
->> modules have enums as parameters and specifying nothing could mean the
->> default value), then it might be a good idea to just include it now.
->> (otherwise we might forget the design later)
->=20
-> As far as I can tell from the C code, all parameters are able to have
-> the `NOARG` flag set. We get a null pointer in the callback in that
-> case.
->=20
-> If we want to handle this now, we could drop the `default` field
-> in the Rust module macro. There is no equivalent in the C macros.
-> And then use an `Option<Option<_>>` to represent the value. `None` would
-> be an unset parameter. `Some(None)` would be a parameter without a
-> value. `Some(Some(_))` would be a set parameter with a value. We could
-> probably fix the types so that only parameters with the `NOARG` flag use
-> the double option, others use a single option.
+On 2024-07-31, Petr Mladek <pmladek@suse.com> wrote:
+>> @@ -1511,10 +1511,10 @@ static void nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
+>>  
+>>  	/*
+>>  	 * If flushing was successful but more records are available, this
+>> -	 * context must flush those remaining records because there is no
+>> -	 * other context that will do it.
+>> +	 * context must flush those remaining records if the printer thread
+>> +	 * is not available do it.
+>>  	 */
+>> -	printk_get_console_flush_type(&ft, false);
+>> +	printk_get_console_flush_type(&ft, true);
+>
+> Hmm, it is a bit weird that we change the value even though it does
+> not affect the behavior. The parameter @prefer_offload affects only
+> the legacy loop.
 
-What did you think of my approach that I detailed above? I would like to
-avoid `Option<Option<_>>` if we can.
+For nbcon consoles, prefer_offload is really only annotating the
+intentions. In this case, nbcon_atomic_flush_pending_con() is interested
+in knowing if kthread printer is available, thus using
+prefer_offload=true.
 
-> Or we could just not adopt this feature in the Rust abstractions.
+If the query yields ft.nbcon_atomic set, it means that the kthread
+printer is _not_ available (nbcon_atomic and nbcon_offload are
+exclusive) and it can (and must) handle its flushing responsibilities
+directly (immediately, using the atomic callbacks).
 
-Depends on how common this is and if people need to use it. I think that
-what I proposed above isn't that complex, so it should be easy to
-implement.
+You might ask, why does it not check ft.nbcon_offload? Although that
+would tell it that the kthread is not available, it does not imply that
+atomic printing is allowed. In order to see if atomic printing is
+allowed, it would need to check ft.nbcon_atomic. And since the two are
+exclusive, really it is enough just to check ft.nbcon_atomic. If
+ft.nbcon_atomic is not set, either the kthread is available or there is
+nothing the nbcon console can do about it anyway (for example, it must
+rely on the legacy loop to handle it).
 
->>>>> +                    param_type.to_string(),
->>>>> +                    param_ops_path(&param_type).to_string(),
->>>>> +                );
->>>>> +
->>>>> +                self.emit_param("parmtype", &param_name, &param_kern=
-el_type);
->>>>
->>>> Is the spelling intentional? "parmtype"?
->>>
->>> This is intentional. I don't think the kernel is ever parsing this, but
->>> it is parsed by the `modinfo` tool.
->>
->> Hmm, why is it not `paramtype`? Does that conflict with something?
->=20
-> You would have to take that up with the maintainer(s) of the `modinfo`
-> tool. The name is externally dictated [1].
+I suppose it is wrong that nbcon_atomic_flush_pending_con(false) will
+set ft.nbcon_offload if the kthreads are available. I would fix that.
 
-Thanks for the pointer that's what I wanted to know (is it given from
-somewhere else? or is it a name that we came up with), then it's fine :)
+> IMHO, __wake_up_klogd() is the only location where we really need
+> to know if there are any messages for the legacy loop, for example,
+> when called from printk_deferred().
+>
+> It should not be needed in other situations because it there
+> is always __pr_flush() or console_unlock() which would flush
+> the legacy consoles directly anyway.
+>
+> => I suggest to
+>
+> 1. Remove @prefer_offload parameter from printk_get_console_flush_type
+>
+> 2. Update __wake_up_klogd() to check both ft.legacy_offload and
+>    ft.legacy_direct, like:
+>
+> 	printk_get_console_flush_type(&ft);
+> 	if (!ft.legacy_offload && !ft.legacy_direct)
+> 		val &= ~PRINTK_PENDING_OUTPUT;
+>
+>
+> NOTE: I actually suggested to use in vprintk_emit():
+>
+> 	printk_get_console_flush_type(&ft, deffer_legacy);
+>
+>       But it can be done even without this parameter. Like it
+>       is done in this version of the patchset.
 
->>>>> +                            // Note: when we enable r/w parameters, =
-we need to lock here.
->>>>> +
->>>>> +                            // SAFETY: Parameters do not need to be =
-locked because they are
->>>>> +                            // read only or sysfs is not enabled.
->>>>> +                            unsafe {{
->>>>> +                                <{param_type_internal} as kernel::mo=
-dule_param::ModuleParam>::value(
->>>>> +                                    &__{name}_{param_name}_value
->>>>> +                                )
->>>>> +                            }}
->>>>> +                        }}
->>>>> +                    ",
->>>>> +                    name =3D info.name,
->>>>> +                    param_name =3D param_name,
->>>>> +                    param_type_internal =3D param_type_internal,
->>>>> +                );
->>>>> +
->>>>> +                let kparam =3D format!(
->>>>> +                    "
->>>>> +                    kernel::bindings::kernel_param__bindgen_ty_1 {{
->>>>> +                        // SAFETY: Access through the resulting poin=
-ter is
->>>>> +                        // serialized by C side and only happens bef=
-ore module
->>>>> +                        // `init` or after module `drop` is called.
->>>>> +                        arg: unsafe {{ &__{name}_{param_name}_value =
-}}
->>>>> +                            as *const _ as *mut core::ffi::c_void,
->>>>
->>>> Here you should use `addr_of[_mut]!` instead of taking a reference.
->>>
->>> This is a static initializer, so it would be evaluated in const context=
-.
->>> At that time, this is going to be the only reference to
->>> `&__{name}_{param_name}_value` which would be const. So it should be
->>> fine?
->>
->> When compiling this [1] with a sufficiently new Rust version, you will
->> get an error:
->>
->>     warning: creating a shared reference to mutable static is discourage=
-d
->>      --> src/main.rs:4:22
->>       |
->>     4 |     let x =3D unsafe { &foo };
->>       |                      ^^^^ shared reference to mutable static
->>       |
->>       =3D note: for more information, see issue #114447 <https://github.=
-com/rust-lang/rust/issues/114447>
->>       =3D note: this will be a hard error in the 2024 edition
->>       =3D note: this shared reference has lifetime `'static`, but if the=
- static ever gets mutated, or a mutable reference is created, then any furt=
-her use of this shared reference is Undefined Behavior
->>       =3D note: `#[warn(static_mut_refs)]` on by default
->>     help: use `addr_of!` instead to create a raw pointer
->>       |
->>     4 |     let x =3D unsafe { addr_of!(foo) };
->>       |                      ~~~~~~~~~~~~~
->>
->> [1]: https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=
-=3D2021&gist=3Dc914a438938be6f5fc643ee277efa1d1
->>
->> So I think we should start using `addr_of!` for mutable static now.
->=20
-> Oh. Thanks for the pointer.
->=20
-> Hmm, `addr_of_mut!` still requires the unsafe block. Hopefully that goes
-> away as well with the feature you linked as well.
+I understand what you are saying. But I don't like it. :-)
 
-I think that will take some time until it is gone.
+It would mean that functions only interested in offloading must check
+direct. And that direct and offload are no longer exclusive. IMHO this
+is a hack. The whole point of printk_get_console_flush_type() is so that
+the flusher does not need any special code to figure out what to do.
 
-> This also requires `const_mut_refs`, but as I recall that is going to be
-> stabilized soon.
+If the flusher is only interested in offloaded flushing capabilities, it
+should be able to query that. We could wrap things into macros to make
+it clearer, but it might get a bit ugly with the efficience (depending
+on how well compilers can optimize the macro usage):
 
-That should only be needed if you need `addr_of_mut!`, but IIUC, you
-only need `addr_of!`, right?
+#define is_nbcon_offload_available() ({			\
+	struct console_flush_type ft;			\
+	printk_get_console_flush_type(&ft, true);	\
+	ft.nbcon_offload;				\
+})
 
----
-Cheers,
-Benno
+#define is_nbcon_atomic_available() ({			\
+	struct console_flush_type ft;			\
+	printk_get_console_flush_type(&ft, false);	\
+	ft.nbcon_atomic;				\
+})
 
+And then this code looks like:
+
+if (prb_read_valid(prb, nbcon_seq_read(con), NULL)) &&
+    !is_nbcon_offload_available() &&
+    is_nbcon_atomic_available()) {
+	/* flush directly using atomic callback */
+}
+
+I have backported the printk_get_console_flush_type() macro to the
+atomic series for v7. I would like to keep @prefer_offload and I will
+try to add comments to clarify why the different query types are used.
+
+John
 
