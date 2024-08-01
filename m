@@ -1,107 +1,194 @@
-Return-Path: <linux-kernel+bounces-271478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C33944ECA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:09:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB849944ECD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342BB2842F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCDB91C22AA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C5D13C838;
-	Thu,  1 Aug 2024 15:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E758613BAF1;
+	Thu,  1 Aug 2024 15:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p083xwMc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HdY7X/tF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD080130A47;
-	Thu,  1 Aug 2024 15:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2542E3A1DA;
+	Thu,  1 Aug 2024 15:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722524950; cv=none; b=VJx4qBYuqpcJ+Z28kaqmfJcWppKVEyrxReMicpKdpX8aBIfK4TGau1VOL5s93lANeSdsJHdILt/yM4zmhvgzLAk0LROqkM+t+U8ioIGDNY/lwBRgSpdLy8n8bTpSid4g8rSQ45bvcFa63Bi48axI/URQcLZVlNgEAKahinPyezw=
+	t=1722524995; cv=none; b=sqkFH4XvCC0CRzBeljBuPeEHKKCDt0Dm6QVWxtSk4ZiDQB9e/UtWsXO3bliusWjTvG52UXSMSxOcPQKV3EmZ2VaLYO4A5/YCYtTUJiPDcZIHA+PIMRrnOzlIi4YqijEoHvkxYGdcTCDdaIAo1hf4cEqby4xNzooQhHCQ/w6XwvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722524950; c=relaxed/simple;
-	bh=39oRWrJ6tH5uFM0B512mIFUHDm4aZpg6Aw1BkANjRFc=;
+	s=arc-20240116; t=1722524995; c=relaxed/simple;
+	bh=kbvV4AlvhMw0jKJGpx/bRqh4DWyE7ZqZruWEjEQ6LL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+j/1SQwGTIKizBrDa0J8A0yDTHa/yisaim2n+CGy961tDIZ1SyDTXQPxTbUw4SJPxn4rQIo9D/+Uyu3EXlhI95r7G5Z8ftBLgrDenv++GNfimkAHPLuk6JYBR8JSW5E2HybL02AZbI/6OcPIHg5lTn99xe17IUkXUmG2WGherg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p083xwMc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56F37C4AF09;
-	Thu,  1 Aug 2024 15:09:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPo7mCSix5DtaC15ZVBYBT3dneueFGsZ9NWafeJDbK/sxKE4B83NP2lE224V7A8fJ0fauTRwKDA/Ul5BpYStCshvmsogfawd3QdNyIExnhTVqSq42HbmZdc0CEUig4TlniD9HkYDbUr+hwIkug9/KlHOBMddU3JROe5MfWGDzNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HdY7X/tF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8095C32786;
+	Thu,  1 Aug 2024 15:09:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722524949;
-	bh=39oRWrJ6tH5uFM0B512mIFUHDm4aZpg6Aw1BkANjRFc=;
+	s=k20201202; t=1722524994;
+	bh=kbvV4AlvhMw0jKJGpx/bRqh4DWyE7ZqZruWEjEQ6LL4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p083xwMcsHvLOs1APEhBff7/XtssZGR+OVkKZnge104TTspWNeJR9M5yOIrcN7AfN
-	 vHVufB0i7v3ufcS317/PADTNlLsQN05P0t6agaOpl3FLFoR4fgsWIke2FYcO2dK/ay
-	 DiPw2+WeAXjAR5IMxubc6C8kI/3P2JGPblrsqdOiFr6B+ssaNAfOCvQUCsVY/4jFpj
-	 0Bjf7uBVl61HE5r3tqoU1NSu/CdrYcqVWqBp8gTZL5OCEwU/jRIegSs3DjEoRpOaLh
-	 Nz7eOj7mNfH7qG2Bj0XlfJwwZj72tMPTCIiURMbOiwXTYKxmQqUe8kbw8XbwgdbOVS
-	 okBEDCzJi9Y8Q==
-Date: Thu, 1 Aug 2024 17:09:01 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 01/25] rust: alloc: add `Allocator` trait
-Message-ID: <ZqulDQx8Rid0F6fu@pollux>
-References: <20240801000641.1882-1-dakr@kernel.org>
- <20240801000641.1882-2-dakr@kernel.org>
- <CAH5fLgj5xf4QdDU7yWrqUjcmJw4Rqe0-UzesHLhfQRvPqAv8eA@mail.gmail.com>
- <Zqt_BuyoUk12m61Q@pollux>
- <CAH5fLgiSjwZetUm5WW9cjM8gTsCXPMB3byzKgvMRt-o_n24YKg@mail.gmail.com>
+	b=HdY7X/tFmCpcXLqCSIZGKkUOsNwAms3dfdCuzutVEYV21FG9OekVPWjti7ryadq8y
+	 SyR+NUgifiWNearG3mufdQdbV/YT0W3ngrOBL8yoziKgZCRh6d8aSzXqw63TgvrXo7
+	 4hJ+4wPVPp2Ct+B49GFQVFgGSvt2ihNr2sQxXPk0TjERG8VdtBerrehCFA8aK8Gok6
+	 15DhSVzsrv6tCELNnL+6bR0SbQO9F9Pf3kjZ8mINK3ze0Qobr/eyApZ3hWj+WOGxNS
+	 ZpVIkR9J0yKI7kBVtYlrjrU/BBCTAqMPNF6tss46OGuonqfTKcSmyKxZsvbwZF/SgU
+	 b5GyxIZpx58zQ==
+Date: Thu, 1 Aug 2024 16:09:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
+	Marc Zyngier <maz@kernel.org>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC v7 3/6] irqchip: add mpfs gpio interrupt mux
+Message-ID: <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
+References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
+ <20240723-flatworm-cornflake-8023212f6584@wendy>
+ <87le1k8oq2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="11AmpaTIfaZfcutl"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgiSjwZetUm5WW9cjM8gTsCXPMB3byzKgvMRt-o_n24YKg@mail.gmail.com>
+In-Reply-To: <87le1k8oq2.ffs@tglx>
 
-On Thu, Aug 01, 2024 at 04:25:25PM +0200, Alice Ryhl wrote:
-> On Thu, Aug 1, 2024 at 2:27 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > On Thu, Aug 01, 2024 at 10:19:41AM +0200, Alice Ryhl wrote:
-> > > On Thu, Aug 1, 2024 at 2:07 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> > > > +    /// Free an existing memory allocation.
-> > > > +    ///
-> > > > +    /// # Safety
-> > > > +    ///
-> > > > +    /// `ptr` must point to an existing and valid memory allocation created by this `Allocator`
-> > > > +    /// instance.
-> > > > +    unsafe fn free(ptr: NonNull<u8>) {
-> > > > +        // SAFETY: `ptr` is guaranteed to be previously allocated with this `Allocator` or NULL.
-> > > > +        // Calling `realloc` with a buffer size of zero, frees the buffer `ptr` points to.
-> > > > +        let _ = unsafe { Self::realloc(Some(ptr), Layout::new::<()>(), Flags(0)) };
-> > > > +    }
-> > >
-> > > At the very least, the provided implementation of `free` changes the
-> > > alignment when it calls `realloc`.
-> >
-> > Yes, I think that's fine though. Hopefully no one attempts to use the memory
-> > anymore once `free` is being called.
-> 
-> Sure, but if you require the alignment to remain constant throughout
-> calls to realloc, then you have to word it in a way that allows a
-> different alignment when the new size is zero.
 
-Agreed, this case should be covered once I documented that the new alignment
-must be equal to or smaller than the old alignment.
+--11AmpaTIfaZfcutl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Alice
-> 
+On Mon, Jul 29, 2024 at 12:41:25PM +0200, Thomas Gleixner wrote:
+> On Tue, Jul 23 2024 at 12:27, Conor Dooley wrote:
+> > +
+> > +struct mpfs_irq_mux_bank_config {
+> > +	u32 mask;
+> > +	u8 shift;
+> > +};
+>=20
+> Please see:
+>=20
+>   https://www.kernel.org/doc/html/latest/process/maintainer-tip.html
+>=20
+> vs. coding style.
+>=20
+> > +/*
+> > + * Returns an unsigned long, where a set bit indicates the correspondi=
+ng
+> > + * interrupt is in non-direct/muxed mode for that bank/GPIO controller.
+> > + */
+> > +static inline unsigned long mpfs_irq_mux_get_muxed_irqs(struct mpfs_ir=
+q_mux *priv,
+> > +							unsigned int bank)
+> > +{
+> > +	unsigned long mux_config =3D priv->mux_config, muxed_irqs =3D -1;
+> > +	struct mpfs_irq_mux_bank_config bank_config =3D mpfs_irq_mux_bank_con=
+figs[bank];
+> > +
+> > +	/*
+> > +	 * If a bit is set in the mux, GPIO the corresponding interrupt from
+> > +	 * controller 2 is direct and that controllers 0 or 1 is muxed.
+>=20
+> This is not a coherent sentence.
+
+It should read "controller 0 or 1;s interrupt is muxed". Does that make
+more sense to you?
+
+> > +	 * Invert the bits in the configuration register, so that set bits
+> > +	 * equate to non-direct mode, for GPIO controller 2.
+> > +	 */
+> > +	if (bank =3D=3D 2u)
+> > +		mux_config =3D ~mux_config;
+> > +
+>=20
+> > +static int mpfs_irq_mux_nondirect_alloc(struct irq_domain *d, unsigned=
+ int virq,
+> > +					struct irq_fwspec *fwspec, struct mpfs_irq_mux *priv)
+> > +{
+> > +	unsigned int bank =3D fwspec->param[0] / MPFS_MAX_IRQS_PER_GPIO;
+> > +
+> > +	if (bank > 2)
+> > +		return -EINVAL;
+> > +
+> > +	priv->nondirect_irqchips[bank].domain =3D d;
+> > +
+> > +	irq_domain_set_hwirq_and_chip(d, virq, fwspec->param[0],
+> > +				      &mpfs_irq_mux_nondirect_irq_chip, priv);
+> > +	irq_set_chained_handler_and_data(virq, handle_untracked_irq,
+>=20
+> Why does this use handle_untracked_irq()?
+
+I'll have to go and dig back in my notes as to why it is untracked. It
+was probably something like irqd_set() in handle_irq_event() blowing up
+on the irq_data being invalid (which I figure could relate back to my
+questions in the cover letter about issues with irqd_to_hwirq()) - but
+I'll double check what exactly prompted it when I get back from my
+holidays, but...
+
+> This sets up a chained handler
+> but handle_untracked_irq() is a regular interrupt handler.
+
+=2E..what I was likely using before was handle_simple_irq() which isn't
+chained either. You're expecting to see mpfs_irq_mux_nondirect_handler()
+here I suppose?
+
+>+static void mpfs_irq_mux_nondirect_handler(struct irq_desc *desc)
+>+{
+>+	struct mpfs_irq_mux_irqchip *irqchip_data =3D irq_desc_get_handler_data(=
+desc);
+>+	struct mpfs_irq_mux *priv =3D container_of(irqchip_data, struct mpfs_irq=
+_mux,
+>+						 nondirect_irqchips[irqchip_data->bank]);
+>+	unsigned long muxed_irqs;
+>+	int pos;
+>+
+>+	chained_irq_enter(irq_desc_get_chip(desc), desc);
+>+
+>+	muxed_irqs =3D mpfs_irq_mux_get_muxed_irqs(priv, irqchip_data->bank);
+>+
+>+	for_each_set_bit(pos, &muxed_irqs, MPFS_MAX_IRQS_PER_GPIO)
+>+		generic_handle_domain_irq(irqchip_data->domain, irqchip_data->offset + =
+pos);
+>+
+>+	chained_irq_exit(irq_desc_get_chip(desc), desc);
+>+}
+
+Given you've only commented on one significant issue and two minor items,
+is it safe to conclude that the overall approach doesn't have you
+screaming and running for the hills?
+
+Cheers,
+Conor.
+
+> > +					 &priv->nondirect_irqchips[bank]);
+
+--11AmpaTIfaZfcutl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqulPQAKCRB4tDGHoIJi
+0sKFAP9oHaSYPhW8FIkf4ssGaWWv0SILb0BeDNlL+8x69V02NwEAiitNydpF/yk7
+SFtK2kbzZYCnFccFMEDAeC8qRGJpQQ0=
+=MaNi
+-----END PGP SIGNATURE-----
+
+--11AmpaTIfaZfcutl--
 
