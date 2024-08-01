@@ -1,303 +1,444 @@
-Return-Path: <linux-kernel+bounces-271124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEF79449D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:56:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA7A9449DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE251C25C7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:56:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BA5AB227D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB647183CB7;
-	Thu,  1 Aug 2024 10:56:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96810187FE7;
+	Thu,  1 Aug 2024 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gLXunA1U"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2055.outbound.protection.outlook.com [40.107.95.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="xnSXWQVT"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02091183CC8;
-	Thu,  1 Aug 2024 10:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509800; cv=fail; b=tFC/NVIcJ/10F6duE8AikXQas/nQ6nJ5GX02miAiJJMB/VqiT32CJTsIbnDOZo+FO1N757s1I8xQ+gLcbQ85sOVZHpB+0JGOnJVWStDN2ZaSVWpDVZsNpZnEZkhDDQkBm6noPeSn3Lb+yjt+vKshiG51nhuLbZc6+Ms+JtpCa/w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509800; c=relaxed/simple;
-	bh=f4RKI3cvDbs+siB2EQlVx28Z8P7bx6HzMOjK4uaQhS8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bOQYNZwYdSePVA3h1i8io6Z0WByBTOb1YqTg5Ln48cwhwAgOe7FHUUKiPgFy9nRD1ZAqrXrK3LMeaFu5JQ7m1hj5U7sxPKHsJOFv7qP31XNCCn4dy3T0djN7+t4mrs8ywj8qAsicue+43xK6K5x/Z28hMqd3u0JTgaaMkXdF8js=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gLXunA1U; arc=fail smtp.client-ip=40.107.95.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CUmYD2KD2114ATCgwEZz7iwA9vD8c3s/8UVQc/mxeEP1/l2VBMT/YKA6EbyB7t+1ruzsazkFgfmeu8OxjWpWrLNUDZfAz3SnA+ekYV9WeuNNOpmSzf7Z4WgWtBy7f3VFnAwBxRAFD7IK1MqgI4YIBdzSX3Kbe4OmRhRXPX2JICn+b1CG1rgtTPJw696DN8kiJLHA3inrk3gtDZ4PXGmnnuM2YV/zsa/i8aGURpPhrDGaYAhG55dKBCyK/C5cTmPadlibQjZa3TjIjUsUqbUmsDwJI7e7ceZGteMLCS5t7dKPqzByP4So31+nhpFp9X2ih+C/JIdd+SuFRr4Eei4fBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lOWd3ffQOtezgxWdZWQebReRxDCzVCwiPLeEJx/ReQI=;
- b=R4s45cvCGcFjhlrc8sh9tnNKWs3jQ/eyqL2kLoW70X0RO48T2Qx8WWegzKf2ciS8NKzEgakLXXBUNvjE9B9MX48x4HWMm1dKrXw2MMT2OtxB5Z1GgVHUj1716Tv7EPKYitKhPZ9UOdAjsWFWDJ70NXcGPEdwYgHYLyfEnX/CsiKelhci0tl+UArevxionxrfDIP0WiYuTd6JvMleV8B6AgbymRXk0MGoGjhhlFZ63q1EfQ/H4JIIraLuwVe9kbz7QWpPmZfR7iBdxxD2K2PNxCDrlltYlBk20cGTL2F0jSFI/hZEl5LdGYhTVJAmYAuMsooWfMMtjDJq+Y92zFUn6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lOWd3ffQOtezgxWdZWQebReRxDCzVCwiPLeEJx/ReQI=;
- b=gLXunA1Ul4FG8E9++osxvRhVFiiypldBq2Z9eANdLwuiefqIOP5F4qaQyZT1jeyCw5cuGgiR6vxv6ghyVwH23jE0PaOS6hrnlQo9NB4Et20sD2+iBNMLwWOJLnG1IcmMvTYL5gE6RA6vcGut7H5gghupQGBfKA6LLORGzjGsV8A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by PH8PR12MB7028.namprd12.prod.outlook.com (2603:10b6:510:1bf::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Thu, 1 Aug
- 2024 10:56:36 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7828.016; Thu, 1 Aug 2024
- 10:56:36 +0000
-Message-ID: <98122315-37d4-457a-9c71-14e4d2c70062@amd.com>
-Date: Thu, 1 Aug 2024 12:56:30 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] udmabuf: add get_sg_table helper function
-To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, dri-devel@lists.freedesktop.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240801104512.4056860-1-link@vivo.com>
- <20240801104512.4056860-5-link@vivo.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20240801104512.4056860-5-link@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0249.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f5::19) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBF5184544
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722509916; cv=none; b=f+6gWyeUMnV58sS1/nH8z2WYC+M9+ivxN+0Lm66Tfxm2iiHHK4eVhhgpNLzYsiSVD/lNmwb7emjs2uiZSh5SsWy1CDl67wpavLOFPfrKNu3CUycM8F2B4MtO3MzPgGsibv0sQMojIklQrecFF2Z3hIv74tdfN3Zhx2aqOXpB0+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722509916; c=relaxed/simple;
+	bh=d6O/vDMuzNKaTopgE2ZOD/6qCo4XxgOI6o9iAjPxGRo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=lct4JZ+e6nTAphyu5ZBLg1PaPa39T6jCAG0PfS/S8GEcNlgd+jrh56VBSOSHATQca0yYF1wM7mGoXy21aGgVmtOoBqgv1UHi+U5LuWNWNr1kFAQAYTu92ETd7rN9jnAMKwx7452Njel5HXFFM1w1SsFpKWg9GjySVjoST8JGpFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=xnSXWQVT; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428178fc07eso41715005e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1722509911; x=1723114711; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kVrtk1m5zgFdtHnwDb+mrV04TZqiuqA+XJN3Mt0Abio=;
+        b=xnSXWQVTc17s6oGdnhCjHfnTkg1GluBiKOTjo7AWaLkIMkwxQ4yo86gJized/WzAdj
+         WWEQhRfMdld0bTTV2fp1L/5YcIgESu/zpgl90gYU9ZPCbbDGXIiN1qIUL/x+HGiYDXmq
+         wZDrRPb48CWrISclbmeIxPH3mymkF1j1BPUtsfBkMbPAsVYgeS6d0VM6QDtslOa9vDA2
+         HbaGP2J0ctfTnNd0v/IDiod8YSZpIRMZuyhUVrA8lhVONajjpfIy/Vy26Enr9/sMYZnt
+         mHSVE/pVrDtSbLW7vCE7X84m5HJbhpXSOU2IIoJdvZa/IJp5lU/cu7FA///jOjikdHaW
+         G8+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722509911; x=1723114711;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kVrtk1m5zgFdtHnwDb+mrV04TZqiuqA+XJN3Mt0Abio=;
+        b=MTGV5Q5FQwV7wGqnF19qzPsy7tiCNUQzPtxlvMkz1v5mA7RZYHjIOjtf5o8H673gXu
+         LHpmgdox9BH2VMqgDTtBFWCZnobq4vVnRwCLg1LEL+MZ0S2+UG/1t7OQj8K1awGmJBOW
+         Lm3EQm/SWXXisVB0xVQyfd0oeMwf//gY/bjPUK4C86u3+L0i1Zk3kG4qOjayLbRwIrTN
+         Fd9wphrYEpOYn4XnrJhSUBtFvuAkDQ732l+D5VgfBwz3xiMmMkHykIu0dcf+b6SY3KrU
+         tvFeHGkkRsVUeC/UiAPi4ClH27gGRPU4TLIZp6iPIw5pg1vxqMxBulQLF7kJyJe7gY5F
+         IX1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+h8U9sGDlwd9xmMMstM8rnvYxU255cSrykZ0mqHV41OlPrqGu38NvwGqAi42yiAFkBXjcTkCR2dAOG1K/Ry6lTtSpXi6Pr2q8UpLB
+X-Gm-Message-State: AOJu0Yya6DGbZyPm5Oe8oA7FpN1/nqcubWO6MkijNhwJRDkvBOewoWvR
+	vZfkPxMfjmQxlxNWAf4ey+zQbxTm2tNewppUo4p2plDoSGMSF+Qso3em3Ouqv0Y=
+X-Google-Smtp-Source: AGHT+IG7Mtd6BUWrGEZm919JuKDJtWA+bv/kCh1P/ohmijr2X71oJRpSFqS1TX0vV0dVl0ZhfSemXg==
+X-Received: by 2002:a05:600c:358c:b0:426:5416:67d7 with SMTP id 5b1f17b1804b1-428b030cca0mr14005695e9.27.1722509909833;
+        Thu, 01 Aug 2024 03:58:29 -0700 (PDT)
+Received: from localhost.localdomain (apn-31-0-3-137.dynamic.gprs.plus.pl. [31.0.3.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36861b29sm19068960f8f.93.2024.08.01.03.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 03:58:29 -0700 (PDT)
+From: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	jhs@mojatatu.com,
+	xiyou.wangcong@gmail.com,
+	jiri@resnulli.us,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+Subject: [PATCH] kernel/net: missused TCQ_F_NOLOCK flag
+Date: Thu,  1 Aug 2024 12:57:07 +0200
+Message-Id: <20240801105707.30021-1-wojciech.gladysz@infogain.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|PH8PR12MB7028:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3dcae1c6-699e-44a5-fe30-08dcb2189cd1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WnNHa2UwRUdhZ3JPTkNyWmZHVHQ0VzRxWGJRR0RGc25Cd2dnK0hqMyt1c1kz?=
- =?utf-8?B?Sy94cEUzYi9jVTd5SFhsK1NPU1V0ejROTUhtc2d3TUtrUzQzc1FXeFFvUEhl?=
- =?utf-8?B?MUpXenpNa0pUK05ieVhGN2FBT24yOVFrTTlkVkM0dXN3d2dCZGd0V0pIZjRy?=
- =?utf-8?B?OFBNZnd5RVl0bXBiT0tURStabWFFcVJqQ1Q1dW9nZExEYUgzd09WR2dxeXpi?=
- =?utf-8?B?NUFhb3lEcDVVVEF1V3BCTGJyY29QM21aT2FlekljWFlXSHFqKzBMaWdKTzJH?=
- =?utf-8?B?MUlZczBWVFpPWWhxRlFqWHg4QytWWFFTejFzKzRBRXJjZE90SXE3SW81eVEr?=
- =?utf-8?B?L3J0Y25udHNEZC95cG0wS0IvQ242cEY2L0FHZ290NmVaR2VaMHE3QTk2by9w?=
- =?utf-8?B?Y3ZDc3ordGg0Q3B3TE5HaUYvMkxlWm9JaTRaL2x4eXhENE0zUlJHZjNHOExa?=
- =?utf-8?B?dUV5KzVzZ1BVamJUeUIzdm8yS0hydVVwZXh2TnBuMjEvRWF2WU9rd3BpcE8z?=
- =?utf-8?B?RStEWi95akJLUmNXdXdzQ1o4YWswVGhxUGs4Rjd6d0tTM21CdDFub2xKVElV?=
- =?utf-8?B?MEliMFFJTGN6dnZkdHRhaUZ6ZEZBNVFlUUdJUjBNZUhpaFY0QWU0aVRNTm15?=
- =?utf-8?B?M05zVmVtR1NybWtIUlBPNnJyYUd0MjFlSVg5cFpiV3JMNStuQjJyUUVBZWJ2?=
- =?utf-8?B?NlE5TXJFL2IyMmM1QXRidm1rVkRBSWhLV3BuK1lOdWZYdXJiUXRvY0M2ZVZa?=
- =?utf-8?B?bFFLZHo0VU5UV3VIcmZWN2tBYWI2b29tcGpuSFgzcS9rRWdnS1ZsanVqcHZU?=
- =?utf-8?B?VEdwNFNOSXRWQ1BSM3hKcDJIUDU4UHVROW1rUGtaaWdhNUsvTEZFQzhobC8r?=
- =?utf-8?B?WkdyZXZzRDBDS3lyUjR2R25FdWprQXp1U3ozN0NkNkxFVHNXNWdITCsxRGls?=
- =?utf-8?B?MWZ3M1VqZ1RBNU9Eb3dQTnJZblZxWjR0U1kvUzlxaDVoVkZjMTJWZ25senRk?=
- =?utf-8?B?Z2JGd2FEUzgvWHhGd3JsOXNGdzVPejZmMWd2di9JYzRqMWVHZDFVZm9VYzR6?=
- =?utf-8?B?My9sVHNHV254Wi92NHcvODJSV3ZVQ2JmT21tUUlqbWYxUkpnck5jZExucHM2?=
- =?utf-8?B?ME81S1FDK1RrTnhxNXJIZDduSENvRjZONFN6UmUvbzVBRlZtdlByTSs1ei9O?=
- =?utf-8?B?VEZ3ZS9XMHZTc2J4ZFI4UjBwTTlyN2FPZlYxOFBoZWtnejBHUlFSOWZLSVFu?=
- =?utf-8?B?Q2hzVlc4bzBURU40QVk1UXFNTjhIUTZBYXI3RVZuWm1tczB1T1hueEtqdllx?=
- =?utf-8?B?RDNTMElEL0FlZkR3MWdpTWlCL0c1VDJIQzg4RG1SVlJXM05NblpBZmJMQUJB?=
- =?utf-8?B?UU4xS2h6Syt1L3E5T3R4anEyY3RweExrYnRiTWhJSlUzTTYyc1N1cjQ1cEVD?=
- =?utf-8?B?anBwQ0lWcmh5eVBvZzM4dFFhVklUenlRaWZodFhNTDlodS9qRmFMQUNwdm0y?=
- =?utf-8?B?Ry9IdFN0ejVQVGxIeEFnSDVQMU1YYUpsUnRwZEJtYkdvQlI5bUtqbDVaZkZi?=
- =?utf-8?B?WktoTEFvYzh4R0c2VDJNd1locC9MdS9HYlB3WjZCckdVN2djYlNic254eHQ5?=
- =?utf-8?B?aTZ0dnVVV2lNa0hCcnB6WmZlMTYwbXJJbGxLMGdDOHkvTU16VE1Ibmg5Y20w?=
- =?utf-8?B?UzdKcDdrWjYxVWxLVnoyZEhSK0YwNnphb2t4QjJXenN3aC9qbkEvZlhCR3pU?=
- =?utf-8?B?YWlxSmtWQmNyVXNDUVpGRXV0WkFMQlFFRXFRSkhOYTRTYSs1MUp0bW55eTZB?=
- =?utf-8?B?Tmo5R2FTSGM0a1lvWU1jZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZFcrY0hCNG9zamVQUW5WSVY4cmM1S0llTkY5bnNRSWhRdVBpUXRPWFByUUZZ?=
- =?utf-8?B?R1JwdjZOd0tiK29IYTI1Y3NudUNpTUdYN3VnVlVZaHZxaEtmblFJTnhpMnFL?=
- =?utf-8?B?SVNHSFE4YUNLM3NtRCtlazlQTkM4bVErcGdLOW5GU1hVZndWZFBRbUVIbURT?=
- =?utf-8?B?bW9jTlMvblMwZ0hsbVArdXRUUWtqUGp3ZlNQOTJtcFV1SnB3S3NzcDdPVXdl?=
- =?utf-8?B?V2hLWXJhUzdxbkV3dEJldkNINHFITEo2RlloTTJ2WEFJemd2RmprMzB2UWEw?=
- =?utf-8?B?WDNsRk9nSitZcjFwVGJJdWppajRaZUpSaWh5d3hXckVyY216dmRoRlZOQ1Vo?=
- =?utf-8?B?b20xUFRIbHF2NUFualhPWHFPRGlSUGhORXMrd0xMV3JJMFFzZjB1aHNHbXhq?=
- =?utf-8?B?Ny9NNWxqaVd1M1hEakJDaGlIaVQ4dFlMb3ozL1VGeVIyYmp5cmVGOXVMMGhZ?=
- =?utf-8?B?cjU1SGZSclFOLyt1eENvOVVoVnBJUzRVeGR5MTFSVDdVdjZPSmU3RkkvUW9Y?=
- =?utf-8?B?NTBnNTNjczVFZjhSY1cvWG5hN3hRNVg5Q0p4Z3A0WDF0bnFIeUxmNE9kMUI3?=
- =?utf-8?B?enVDamlLQjAxaWxueWFPTGptWlNXT29TMVgzSzhKVURDcFhKaVpzbWJSSXJG?=
- =?utf-8?B?bG1PTXVqMEhMTFBCbG5aN0dSTEdiYmROVlJvcDRvU25UMGFzdkNYRUVaektQ?=
- =?utf-8?B?ZkRSUFRDRkR5U1dNT25DOFUySVdNZWdTZ1FqQmhxOU9wZjJGaHRiQkpOOWxP?=
- =?utf-8?B?bnJKOTNoSmsxMzR3NnhaQi91ZVF2bldjYUYxUndkckgrWnkwK3NkMkNrdkd3?=
- =?utf-8?B?UmFGSUQvNDN1ZDNiVzhtWmxabjNMQ0d4WHlhMmJ2YzUxTkFWYTl2Mi80QnN2?=
- =?utf-8?B?N251QVhCNHEvbEwvUGtKK2JLL1NGRjVmQzZpbFlLRi85YldDS2JzVFlXWlRs?=
- =?utf-8?B?OTE0NXBBZGlTMlUxclRKNDF0VzRNdFZjMlpQZjREbytGdkxMbmRCZVpuQjIz?=
- =?utf-8?B?eW9wdmZkVmt1MG1EbHpiUzlveVZHSlFYZ0lVYVpyN0hnR0xvWE1NRTFqSExZ?=
- =?utf-8?B?T2h6NWNwTDNubzBNZXhvT09lRmFLSmRTc0M1YVpXR0dWMHQyemI2WGhLL2lT?=
- =?utf-8?B?alJLK3licjBkOWtZRm1GcEVUMHlIVlhaWWY2bW1SYmY1YWlJbUN0UkNoK05V?=
- =?utf-8?B?eGxlVFROL1VTV3ZBUS8xNDN0cWRPM3hWckVucjRXVEJXUWlLMGxsSzRROHN5?=
- =?utf-8?B?d2xoUmJ6MEZ1UElRNnJNMWluM2YwTDlPeXpmbU43Q3NLWjZ4LzJ6b3RUMkZJ?=
- =?utf-8?B?WFk1YU5PbmppaDdnUlJOWmpMUWZMTTNIaUxJdmVXT0o3VTJvRExTNGoxSTll?=
- =?utf-8?B?VFZCSi9CMVF5ZzUwei9CcWxhWVIzWUtOdHVDZG9YUFRQdFlOWEFTaFRYc21G?=
- =?utf-8?B?bVdjNnlGZmk3NzhneHpaelJadmh1SHRhTGtsdkVvL3BEekx2dW9qZGZBUWN0?=
- =?utf-8?B?MjBCT1lESERmT2U2QURDcEpFMVR4aThSZE9EQjNmdzhKNXlSeHdaOTdObVp4?=
- =?utf-8?B?RUhtVDc4enJ1WS90OTBQclRFWkNpeGU2bUxVMjFCb3Uvci9IeEJUQWZlVjBK?=
- =?utf-8?B?R1FvbGFFaFNpR0o4cjNBakFFU0h6Mk05YjFFQWQ0NHVONGZBZ25aR2V3UUhV?=
- =?utf-8?B?UG85dkZZdjMzWkFsTDlIQnVmckw5Z1BVS20yWGZZWjBiYkpsVjFsM2ZlR3Vx?=
- =?utf-8?B?NjdIa0lDb21McWgydlJsdkRnaUdGazBwRk5XVFE0Yml0a3E1dG01aCtmeUVx?=
- =?utf-8?B?SFVBR1A0bmdTWTJqdUtZc0xXekM3dE9EZHZiNnlzT3ByejNtRDY1WlVTN2tX?=
- =?utf-8?B?L1BLZnZ5aFdMNUxGNm5hbG44c3FCY2IvQ2dqNWZnWnF4aVczTjhnVDB6SHg5?=
- =?utf-8?B?NnVlN2dWdTM4WFVwV1NZcXhFNXI2UUgxTVB3cjIwd1JKL0lDS1hDVDkxeC8z?=
- =?utf-8?B?M01rVG1zbTF5ZGMzRGFOREw1RnRpKzcxY0pvWVR6a0RSWjRUUGdlYjhTaFRh?=
- =?utf-8?B?OGltaW1oOFJpZVg0YWhjL3BSd2VWOVp1WXNQSDJDeWJjeE5vTmw1blJmRHlH?=
- =?utf-8?Q?/aREUacQKrw2YZGsGb4L4gsUG?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcae1c6-699e-44a5-fe30-08dcb2189cd1
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 10:56:36.0470
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OkEMqsxziFUoPY9ak7T8jHh48WCmqZpVCTYtlPmWRiIsJb/ZakBzmPNE1HrWRwZH
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7028
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Am 01.08.24 um 12:45 schrieb Huan Yang:
-> Currently, there are three duplicate pieces of code that retrieve
-> sg_table and update uduf->sg.
->
-> Since the sgt is used to populate the page in both mmap and vmap.It is
-> necessary to ensure that ubuf->sg is set correctly.
+TCQ_F_NOLOCK yields no locking option for a qdisc. At some places in the
+code the testing for the flag seems logically reverted. The change fixes
+the following lockdep issue.
 
-That is a really bad idea. Why are sg tables used to populated the page 
-tables?
+======================================================
+WARNING: possible circular locking dependency detected
+5.10.0-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor372/2662 is trying to acquire lock:
+ffff888028151218 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock#2){+...}-{2:2}, at: spin_lock include/linux/spinlock.h:357 [inline]
+ffff888028151218 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock#2){+...}-{2:2}, at: __dev_xmit_skb net/core/dev.c:3689 [inline]
+ffff888028151218 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock#2){+...}-{2:2}, at: __dev_queue_xmit+0x1e02/0x32b0 net/core/dev.c:4053
 
-Regards,
-Christian.
+but task is already holding lock:
+ffff88801016d0d8 (&qdisc_xmit_lock_key){+...}-{2:2}, at: spin_lock include/linux/spinlock.h:357 [inline]
+ffff88801016d0d8 (&qdisc_xmit_lock_key){+...}-{2:2}, at: __netif_tx_lock include/linux/netdevice.h:4077 [inline]
+ffff88801016d0d8 (&qdisc_xmit_lock_key){+...}-{2:2}, at: sch_direct_xmit+0x19c/0x9c0 net/sched/sch_generic.c:341
 
+which lock already depends on the new lock.
 
->
-> This patch add a helper function, if ubuf->sg exist, just return it.
-> Or else, try alloc a new sgt, and cmpxchg to set it.
->
-> When the swap fails, it means that another process has set sg correctly.
-> Therefore, we reuse the new sg. If trigger by device, need invoke map to
-> sync it.
->
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
->   drivers/dma-buf/udmabuf.c | 60 ++++++++++++++++++++++++++++-----------
->   1 file changed, 43 insertions(+), 17 deletions(-)
->
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 7ed532342d7f..677ebb2d462f 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -38,8 +38,9 @@ struct udmabuf_folio {
->   	struct list_head list;
->   };
->   
-> -static struct sg_table *get_sg_table(struct device *dev, struct dma_buf *buf,
-> -				     enum dma_data_direction direction);
-> +static struct sg_table *udmabuf_get_sg_table(struct device *dev,
-> +					     struct dma_buf *buf,
-> +					     enum dma_data_direction direction);
->   
->   static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
->   {
-> @@ -52,12 +53,9 @@ static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
->   	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
->   		return -EINVAL;
->   
-> -	if (!table) {
-> -		table = get_sg_table(NULL, buf, 0);
-> -		if (IS_ERR(table))
-> -			return PTR_ERR(table);
-> -		ubuf->sg = table;
-> -	}
-> +	table = udmabuf_get_sg_table(NULL, buf, 0);
-> +	if (IS_ERR(table))
-> +		return PTR_ERR(table);
->   
->   	for_each_sgtable_page(table, &piter, vma->vm_pgoff) {
->   		struct page *page = sg_page_iter_page(&piter);
-> @@ -84,12 +82,9 @@ static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
->   
->   	dma_resv_assert_held(buf->resv);
->   
-> -	if (!sg) {
-> -		sg = get_sg_table(NULL, buf, 0);
-> -		if (IS_ERR(sg))
-> -			return PTR_ERR(sg);
-> -		ubuf->sg = sg;
-> -	}
-> +	sg = udmabuf_get_sg_table(NULL, buf, 0);
-> +	if (IS_ERR(sg))
-> +		return PTR_ERR(sg);
->   
->   	pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages), GFP_KERNEL);
->   	if (!pages)
-> @@ -154,6 +149,39 @@ static struct sg_table *get_sg_table(struct device *dev, struct dma_buf *buf,
->   	return ERR_PTR(ret);
->   }
->   
-> +static struct sg_table *udmabuf_get_sg_table(struct device *dev,
-> +					     struct dma_buf *buf,
-> +					     enum dma_data_direction direction)
-> +{
-> +	struct udmabuf *ubuf = buf->priv;
-> +	struct sg_table *sg = READ_ONCE(ubuf->sg);
-> +	int ret = 0;
-> +
-> +	if (sg)
-> +		return sg;
-> +
-> +	sg = get_sg_table(dev, buf, direction);
-> +	if (IS_ERR(sg))
-> +		return sg;
-> +
-> +	// Success update ubuf's sg, just return.
-> +	if (!cmpxchg(&ubuf->sg, NULL, sg))
-> +		return sg;
-> +
-> +	// use the new sg table.
-> +	sg_free_table(sg);
-> +	kfree(sg);
-> +	sg = READ_ONCE(ubuf->sg);
-> +
-> +	if (dev)
-> +		ret = dma_map_sgtable(dev, sg, direction, 0);
-> +
-> +	if (ret < 0)
-> +		return ERR_PTR(ret);
-> +
-> +	return sg;
-> +}
-> +
->   static void put_sg_table(struct device *dev, struct sg_table *sg,
->   			 enum dma_data_direction direction)
->   {
-> @@ -230,12 +258,10 @@ static int begin_cpu_udmabuf(struct dma_buf *buf,
->   		return 0;
->   	}
->   
-> -	sg = get_sg_table(dev, buf, direction);
-> +	sg = udmabuf_get_sg_table(dev, buf, direction);
->   	if (IS_ERR(sg))
->   		return PTR_ERR(sg);
->   
-> -	ubuf->sg = sg;
-> -
->   	return 0;
->   }
->   
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&qdisc_xmit_lock_key){+...}-{2:2}:
+       lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
+       __raw_spin_lock include/linux/spinlock_api_smp.h:144 [inline]
+       _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+       spin_lock include/linux/spinlock.h:357 [inline]
+       __netif_tx_lock include/linux/netdevice.h:4077 [inline]
+       sch_direct_xmit+0x19c/0x9c0 net/sched/sch_generic.c:341
+       __dev_xmit_skb net/core/dev.c:3663 [inline]
+       __dev_queue_xmit+0x158e/0x32b0 net/core/dev.c:4053
+       dev_queue_xmit+0x17/0x20 net/core/dev.c:4121
+       neigh_resolve_output+0x644/0x750 net/core/neighbour.c:1508
+       neigh_output include/net/neighbour.h:528 [inline]
+       ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+       __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+       ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+       NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+       ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+       dst_output include/net/dst.h:444 [inline]
+       NF_HOOK+0x166/0x550 include/linux/netfilter.h:309
+       mld_sendpack+0x823/0xd90 net/ipv6/mcast.c:1817
+       mld_send_cr net/ipv6/mcast.c:2118 [inline]
+       mld_ifc_work+0x814/0xcc0 net/ipv6/mcast.c:2649
+       process_one_work+0x857/0xfd0 kernel/workqueue.c:2282
+       worker_thread+0xafa/0x1550 kernel/workqueue.c:2428
+       kthread+0x374/0x3f0 kernel/kthread.c:349
+       ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:306
+
+-> #0 (dev->qdisc_tx_busylock ?: &qdisc_tx_busylock#2){+...}-{2:2}:
+       check_prev_add kernel/locking/lockdep.c:2988 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3113 [inline]
+       validate_chain+0x1695/0x58f0 kernel/locking/lockdep.c:3729
+       __lock_acquire+0x12fd/0x20d0 kernel/locking/lockdep.c:4955
+       lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
+       __raw_spin_lock include/linux/spinlock_api_smp.h:144 [inline]
+       _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+       spin_lock include/linux/spinlock.h:357 [inline]
+       __dev_xmit_skb net/core/dev.c:3689 [inline]
+       __dev_queue_xmit+0x1e02/0x32b0 net/core/dev.c:4053
+       dev_queue_xmit+0x17/0x20 net/core/dev.c:4121
+       neigh_resolve_output+0x644/0x750 net/core/neighbour.c:1508
+       neigh_output include/net/neighbour.h:528 [inline]
+       ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+       __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+       ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+       NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+       ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+       dst_output include/net/dst.h:444 [inline]
+       NF_HOOK include/linux/netfilter.h:309 [inline]
+       ndisc_send_skb+0xaaa/0x1370 net/ipv6/ndisc.c:508
+       ndisc_solicit+0x3ea/0x660 net/ipv6/ndisc.c:666
+       neigh_probe net/core/neighbour.c:1021 [inline]
+       __neigh_event_send+0xec0/0x1460 net/core/neighbour.c:1182
+       neigh_event_send include/net/neighbour.h:457 [inline]
+       neigh_resolve_output+0x1cf/0x750 net/core/neighbour.c:1492
+       neigh_output include/net/neighbour.h:528 [inline]
+       ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+       __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+       ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+       NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+       ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+       dst_output include/net/dst.h:444 [inline]
+       ip6_local_out+0x10f/0x140 net/ipv6/output_core.c:161
+       ip6_send_skb+0x127/0x220 net/ipv6/ip6_output.c:2015
+       ip6_push_pending_frames+0xb4/0xe0 net/ipv6/ip6_output.c:2035
+       icmpv6_push_pending_frames+0x2f4/0x4b0 net/ipv6/icmp.c:304
+       icmp6_send+0x160c/0x20d0 net/ipv6/icmp.c:627
+       __icmpv6_send include/linux/icmpv6.h:28 [inline]
+       icmpv6_send include/linux/icmpv6.h:49 [inline]
+       ip6_link_failure+0x3b/0x4c0 net/ipv6/route.c:2801
+       dst_link_failure include/net/dst.h:423 [inline]
+       ip_tunnel_xmit+0x1b76/0x2b40 net/ipv4/ip_tunnel.c:856
+       __gre_xmit net/ipv4/ip_gre.c:471 [inline]
+       erspan_xmit+0xb22/0x1380 net/ipv4/ip_gre.c:728
+       __netdev_start_xmit include/linux/netdevice.h:4657 [inline]
+       netdev_start_xmit include/linux/netdevice.h:4671 [inline]
+       xmit_one net/core/dev.c:3455 [inline]
+       dev_hard_start_xmit+0x36a/0x880 net/core/dev.c:3471
+       sch_direct_xmit+0x2a0/0x9c0 net/sched/sch_generic.c:343
+       qdisc_restart net/sched/sch_generic.c:408 [inline]
+       __qdisc_run+0xae6/0x1cb0 net/sched/sch_generic.c:416
+       __dev_xmit_skb net/core/dev.c:3722 [inline]
+       __dev_queue_xmit+0xdd5/0x32b0 net/core/dev.c:4053
+       dev_queue_xmit+0x17/0x20 net/core/dev.c:4121
+       neigh_resolve_output+0x644/0x750 net/core/neighbour.c:1508
+       neigh_output include/net/neighbour.h:528 [inline]
+       ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+       __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+       ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+       NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+       ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+       dst_output include/net/dst.h:444 [inline]
+       NF_HOOK include/linux/netfilter.h:309 [inline]
+       rawv6_send_hdrinc+0xd16/0x1930 net/ipv6/raw.c:669
+       rawv6_sendmsg+0x15e5/0x2100 net/ipv6/raw.c:929
+       inet_sendmsg+0x149/0x310 net/ipv4/af_inet.c:854
+       sock_sendmsg_nosec net/socket.c:702 [inline]
+       __sock_sendmsg net/socket.c:714 [inline]
+       sock_write_iter+0x3a0/0x520 net/socket.c:1088
+       call_write_iter include/linux/fs.h:1986 [inline]
+       new_sync_write fs/read_write.c:518 [inline]
+       vfs_write+0x9c0/0xc30 fs/read_write.c:605
+       ksys_write+0x17e/0x2a0 fs/read_write.c:658
+       __do_sys_write fs/read_write.c:670 [inline]
+       __se_sys_write fs/read_write.c:667 [inline]
+       __x64_sys_write+0x7b/0x90 fs/read_write.c:667
+       do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
+       entry_SYSCALL_64_after_hwframe+0x61/0xcb
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&qdisc_xmit_lock_key);
+                               lock(dev->qdisc_tx_busylock ?: &qdisc_tx_busylock#2);
+                               lock(&qdisc_xmit_lock_key);
+  lock(dev->qdisc_tx_busylock ?: &qdisc_tx_busylock#2);
+
+ *** DEADLOCK ***
+
+11 locks held by syz-executor372/2662:
+ #0: ffffffff8806ed80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40 include/linux/rcupdate.h:272
+ #1: ffffffff8806ed80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40 include/linux/rcupdate.h:272
+ #2: ffffffff8806ede0 (rcu_read_lock_bh){....}-{1:2}, at: rcu_lock_acquire+0xd/0x40 include/linux/rcupdate.h:273
+ #3: ffff888028151148 (dev->qdisc_running_key ?: &qdisc_running_key){+...}-{0:0}, at: dev_queue_xmit+0x17/0x20 net/core/dev.c:4121
+ #4: ffff88801016d0d8 (&qdisc_xmit_lock_key){+...}-{2:2}, at: spin_lock include/linux/spinlock.h:357 [inline]
+ #4: ffff88801016d0d8 (&qdisc_xmit_lock_key){+...}-{2:2}, at: __netif_tx_lock include/linux/netdevice.h:4077 [inline]
+ #4: ffff88801016d0d8 (&qdisc_xmit_lock_key){+...}-{2:2}, at: sch_direct_xmit+0x19c/0x9c0 net/sched/sch_generic.c:341
+ #5: ffff88801691a218 (k-slock-AF_INET6){+...}-{2:2}, at: spin_trylock include/linux/spinlock.h:367 [inline]
+ #5: ffff88801691a218 (k-slock-AF_INET6){+...}-{2:2}, at: icmpv6_xmit_lock net/ipv6/icmp.c:109 [inline]
+ #5: ffff88801691a218 (k-slock-AF_INET6){+...}-{2:2}, at: icmp6_send+0xa79/0x20d0 net/ipv6/icmp.c:545
+ #6: ffffffff8806ed80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40 include/linux/rcupdate.h:272
+ #7: ffffffff8806ed80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40 include/linux/rcupdate.h:272
+ #8: ffffffff8806ed80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40 include/linux/rcupdate.h:272
+ #9: ffffffff8806ed80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40 include/linux/rcupdate.h:272
+ #10: ffffffff8806ede0 (rcu_read_lock_bh){....}-{1:2}, at: rcu_lock_acquire+0xd/0x40 include/linux/rcupdate.h:273
+
+stack backtrace:
+CPU: 1 PID: 2662 Comm: syz-executor372 Not tainted 5.10.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x177/0x211 lib/dump_stack.c:118
+ print_circular_bug+0x146/0x1b0 kernel/locking/lockdep.c:2002
+ check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2123
+ check_prev_add kernel/locking/lockdep.c:2988 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3113 [inline]
+ validate_chain+0x1695/0x58f0 kernel/locking/lockdep.c:3729
+ __lock_acquire+0x12fd/0x20d0 kernel/locking/lockdep.c:4955
+ lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
+ __raw_spin_lock include/linux/spinlock_api_smp.h:144 [inline]
+ _raw_spin_lock+0x2a/0x40 kernel/locking/spinlock.c:151
+ spin_lock include/linux/spinlock.h:357 [inline]
+ __dev_xmit_skb net/core/dev.c:3689 [inline]
+ __dev_queue_xmit+0x1e02/0x32b0 net/core/dev.c:4053
+ dev_queue_xmit+0x17/0x20 net/core/dev.c:4121
+ neigh_resolve_output+0x644/0x750 net/core/neighbour.c:1508
+ neigh_output include/net/neighbour.h:528 [inline]
+ ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+ __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+ ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+ NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+ ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:309 [inline]
+ ndisc_send_skb+0xaaa/0x1370 net/ipv6/ndisc.c:508
+ ndisc_solicit+0x3ea/0x660 net/ipv6/ndisc.c:666
+ neigh_probe net/core/neighbour.c:1021 [inline]
+ __neigh_event_send+0xec0/0x1460 net/core/neighbour.c:1182
+ neigh_event_send include/net/neighbour.h:457 [inline]
+ neigh_resolve_output+0x1cf/0x750 net/core/neighbour.c:1492
+ neigh_output include/net/neighbour.h:528 [inline]
+ ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+ __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+ ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+ NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+ ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+ dst_output include/net/dst.h:444 [inline]
+ ip6_local_out+0x10f/0x140 net/ipv6/output_core.c:161
+ ip6_send_skb+0x127/0x220 net/ipv6/ip6_output.c:2015
+ ip6_push_pending_frames+0xb4/0xe0 net/ipv6/ip6_output.c:2035
+ icmpv6_push_pending_frames+0x2f4/0x4b0 net/ipv6/icmp.c:304
+ icmp6_send+0x160c/0x20d0 net/ipv6/icmp.c:627
+ __icmpv6_send include/linux/icmpv6.h:28 [inline]
+ icmpv6_send include/linux/icmpv6.h:49 [inline]
+ ip6_link_failure+0x3b/0x4c0 net/ipv6/route.c:2801
+ dst_link_failure include/net/dst.h:423 [inline]
+ ip_tunnel_xmit+0x1b76/0x2b40 net/ipv4/ip_tunnel.c:856
+ __gre_xmit net/ipv4/ip_gre.c:471 [inline]
+ erspan_xmit+0xb22/0x1380 net/ipv4/ip_gre.c:728
+ __netdev_start_xmit include/linux/netdevice.h:4657 [inline]
+ netdev_start_xmit include/linux/netdevice.h:4671 [inline]
+ xmit_one net/core/dev.c:3455 [inline]
+ dev_hard_start_xmit+0x36a/0x880 net/core/dev.c:3471
+ sch_direct_xmit+0x2a0/0x9c0 net/sched/sch_generic.c:343
+ qdisc_restart net/sched/sch_generic.c:408 [inline]
+ __qdisc_run+0xae6/0x1cb0 net/sched/sch_generic.c:416
+ __dev_xmit_skb net/core/dev.c:3722 [inline]
+ __dev_queue_xmit+0xdd5/0x32b0 net/core/dev.c:4053
+ dev_queue_xmit+0x17/0x20 net/core/dev.c:4121
+ neigh_resolve_output+0x644/0x750 net/core/neighbour.c:1508
+ neigh_output include/net/neighbour.h:528 [inline]
+ ip6_finish_output2+0x150b/0x1ea0 net/ipv6/ip6_output.c:151
+ __ip6_finish_output+0x4b6/0x620 net/ipv6/ip6_output.c:224
+ ip6_finish_output+0x34/0x280 net/ipv6/ip6_output.c:234
+ NF_HOOK_COND include/linux/netfilter.h:298 [inline]
+ ip6_output+0x2c4/0x3d0 net/ipv6/ip6_output.c:257
+ dst_output include/net/dst.h:444 [inline]
+ NF_HOOK include/linux/netfilter.h:309 [inline]
+ rawv6_send_hdrinc+0xd16/0x1930 net/ipv6/raw.c:669
+ rawv6_sendmsg+0x15e5/0x2100 net/ipv6/raw.c:929
+ inet_sendmsg+0x149/0x310 net/ipv4/af_inet.c:854
+ sock_sendmsg_nosec net/socket.c:702 [inline]
+ __sock_sendmsg net/socket.c:714 [inline]
+ sock_write_iter+0x3a0/0x520 net/socket.c:1088
+ call_write_iter include/linux/fs.h:1986 [inline]
+ new_sync_write fs/read_write.c:518 [inline]
+ vfs_write+0x9c0/0xc30 fs/read_write.c:605
+ ksys_write+0x17e/0x2a0 fs/read_write.c:658
+ __do_sys_write fs/read_write.c:670 [inline]
+ __se_sys_write fs/read_write.c:667 [inline]
+ __x64_sys_write+0x7b/0x90 fs/read_write.c:667
+ do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
+ entry_SYSCALL_64_after_hwframe+0x61/0xcb
+RIP: 0033:0x7fd7b2201c69
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 d1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe960e0cb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007fd7b2201c69
+RDX: 0000000000000028 RSI: 0000000020000140 RDI: 0000000000000006
+RBP: 00000000000f4240 R08: 0000000100000000 R09: 0000000100000000
+R10: 0000000100000000 R11: 0000000000000246 R12: 00007ffe960e0d10
+R13: 0000000000000001 R14: 00007ffe960e0d10 R15: 0000000000000003
+
+Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
+---
+ include/net/sch_generic.h |  6 +++---
+ net/sched/sch_generic.c   | 12 ++++++------
+ 2 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
+index 79edd5b5e3c9..35a747e3c00a 100644
+--- a/include/net/sch_generic.h
++++ b/include/net/sch_generic.h
+@@ -166,7 +166,7 @@ static inline struct Qdisc *qdisc_refcount_inc_nz(struct Qdisc *qdisc)
+  */
+ static inline bool qdisc_is_running(struct Qdisc *qdisc)
+ {
+-	if (qdisc->flags & TCQ_F_NOLOCK)
++	if (!(qdisc->flags & TCQ_F_NOLOCK))
+ 		return spin_is_locked(&qdisc->seqlock);
+ 	return test_bit(__QDISC_STATE2_RUNNING, &qdisc->state2);
+ }
+@@ -193,7 +193,7 @@ static inline bool qdisc_is_empty(const struct Qdisc *qdisc)
+  */
+ static inline bool qdisc_run_begin(struct Qdisc *qdisc)
+ {
+-	if (qdisc->flags & TCQ_F_NOLOCK) {
++	if (!(qdisc->flags & TCQ_F_NOLOCK)) {
+ 		if (spin_trylock(&qdisc->seqlock))
+ 			return true;
+ 
+@@ -216,7 +216,7 @@ static inline bool qdisc_run_begin(struct Qdisc *qdisc)
+ 
+ static inline void qdisc_run_end(struct Qdisc *qdisc)
+ {
+-	if (qdisc->flags & TCQ_F_NOLOCK) {
++	if (!(qdisc->flags & TCQ_F_NOLOCK)) {
+ 		spin_unlock(&qdisc->seqlock);
+ 
+ 		/* spin_unlock() only has store-release semantic. The unlock
+diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+index e22ff003d52e..db24f477e310 100644
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -76,7 +76,7 @@ static inline struct sk_buff *__skb_dequeue_bad_txq(struct Qdisc *q)
+ 	spinlock_t *lock = NULL;
+ 	struct sk_buff *skb;
+ 
+-	if (q->flags & TCQ_F_NOLOCK) {
++	if (!(q->flags & TCQ_F_NOLOCK)) {
+ 		lock = qdisc_lock(q);
+ 		spin_lock(lock);
+ 	}
+@@ -121,7 +121,7 @@ static inline void qdisc_enqueue_skb_bad_txq(struct Qdisc *q,
+ {
+ 	spinlock_t *lock = NULL;
+ 
+-	if (q->flags & TCQ_F_NOLOCK) {
++	if (!(q->flags & TCQ_F_NOLOCK)) {
+ 		lock = qdisc_lock(q);
+ 		spin_lock(lock);
+ 	}
+@@ -144,7 +144,7 @@ static inline void dev_requeue_skb(struct sk_buff *skb, struct Qdisc *q)
+ {
+ 	spinlock_t *lock = NULL;
+ 
+-	if (q->flags & TCQ_F_NOLOCK) {
++	if (!(q->flags & TCQ_F_NOLOCK)) {
+ 		lock = qdisc_lock(q);
+ 		spin_lock(lock);
+ 	}
+@@ -236,7 +236,7 @@ static struct sk_buff *dequeue_skb(struct Qdisc *q, bool *validate,
+ 	if (unlikely(!skb_queue_empty(&q->gso_skb))) {
+ 		spinlock_t *lock = NULL;
+ 
+-		if (q->flags & TCQ_F_NOLOCK) {
++		if (!(q->flags & TCQ_F_NOLOCK)) {
+ 			lock = qdisc_lock(q);
+ 			spin_lock(lock);
+ 		}
+@@ -1300,14 +1300,14 @@ static void dev_reset_queue(struct net_device *dev,
+ 
+ 	nolock = qdisc->flags & TCQ_F_NOLOCK;
+ 
+-	if (nolock)
++	if (!nolock)
+ 		spin_lock_bh(&qdisc->seqlock);
+ 	spin_lock_bh(qdisc_lock(qdisc));
+ 
+ 	qdisc_reset(qdisc);
+ 
+ 	spin_unlock_bh(qdisc_lock(qdisc));
+-	if (nolock) {
++	if (!nolock) {
+ 		clear_bit(__QDISC_STATE_MISSED, &qdisc->state);
+ 		clear_bit(__QDISC_STATE_DRAINING, &qdisc->state);
+ 		spin_unlock_bh(&qdisc->seqlock);
+-- 
+2.35.3
 
 
