@@ -1,223 +1,163 @@
-Return-Path: <linux-kernel+bounces-271109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FCB99449AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:47:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8FE9449AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:48:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A041F26B1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:47:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC020B29028
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2E5183CB7;
-	Thu,  1 Aug 2024 10:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A701218453A;
+	Thu,  1 Aug 2024 10:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="usKRXty0"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XRRm4+Z2"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0549183CC4
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D85761FD7;
+	Thu,  1 Aug 2024 10:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509265; cv=none; b=O4fs9X7Z569j1BkZFMu36RNuDA/V2CjJ2jxw66vCb0Bl4x5NRnCdNvm5jhwia0wQSMcK2Vn5TBt0pViezoGcSy7PlW3Hgj5+/stej+6Q36UafCgCKCAnDHDAQNgu6IJvpj4M57frtlp+P/V7WbW07AtguXtAb1tmrEzKzMxg3fs=
+	t=1722509317; cv=none; b=i66prL73JzcRBKaTRLYD61tzNPyGUPiEupPYVTL4FKKMjx8HLykjwFJ3XfPoUiQz4frjAc8oK2ei833m113/6wwcBZW6PYFLQ5tPE+M7CH/XjKnD1M8vaAJ3tdX0gTsRq+o2HQH8IPLtadnEcKT15DndkDLD5dDIA9gFTG9bbVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509265; c=relaxed/simple;
-	bh=hSVSRrz3fsl8s+TtTum1SWINf7gjHKl5ODNPOppJJBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=abc4a8OI4LRAxouIZpNkTNIx+ROwIHYo802+Oa/oTZjJH4gWK3at4ngrGChvg85Eg5BSdhWP9N1skEPkuxG9v03h61viYKhJSZzJ0QyUXsTY6VG29D8sBd2N3JYQ/DD/Qh/iQXD/KNhjGfhjOfDfhBrADF5M0sraXL6rWEicukQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=usKRXty0; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so9560424a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:47:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722509262; x=1723114062; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z85y/g+9vb81jKmcafP4dvn4vFmY5QR0yXRNZFSsnR8=;
-        b=usKRXty0Tl6DGc7zqv6nzKvz6NXTR2yK4G6w+Qhkb6VvyZpihOrUc6d3CE8KInBXZ7
-         NQJqMihbz+C2pkIQXkbJ49VSxKRQTsW1KQxRb9K0XGjrQFq0Tmf88cMK7IBqfUpuxFWI
-         UtJn5yzXU5+ysu2LfLcX0skhzPgMakqCveB4CMwlrpYc93rR9wFF9VUleuUlO4w7S/B3
-         NQM7rpLrhGZ2dJb1k18KeBaD1q5Snbst6W7JSfqKqf7XQPi3Fkv4iPY85u2YoXnXDefo
-         B2nwUwWh1/99fQ976EROMLXSEvsP6EGjWn6Pog7vuWVNkPBAyvmoIQZW4TILWlXf3DRq
-         8ZXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722509262; x=1723114062;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z85y/g+9vb81jKmcafP4dvn4vFmY5QR0yXRNZFSsnR8=;
-        b=aDYLP8COecVW5R5u0kA6sQ27nz41KZePkijRu5Qp8MkwqcBBSeXFmmEBZiKOF2zTWQ
-         UKBVy3CV9Lutbhil3EveL6l0jlcbCcCViSaPKKPNAv6DHk5o83ODID9WgeoOqydkjXrw
-         EXTP/6gp5nEHDSw+g42EJ5RcvrOKw3JS8R4sqyjj8AmG514d5hjhN9bB3EGjtki4c2LM
-         r6c4tsq5rcisB5t33QItw6Mj5WZlf95eEq++UbfDedNfEUV2Ws+89VzE9bOUEDuqQoS7
-         JJ1m9w/38M4ETS5MjjFmKzgYV6PXYqwJXe53L/PScMwtZHSWtkG0DkueI9/pzA6f2KY/
-         Drww==
-X-Forwarded-Encrypted: i=1; AJvYcCU6AuwrSAees8EIVhz/+gJimZQLOFNNqTbIXSqTVafjKky7WyzLlsUgyqTjDFIqVE8UI0dQNA0HdDT0oMTMm7ctv0DA2HP6GotASkdL
-X-Gm-Message-State: AOJu0Yx72FRHI6JOiHMx9hr7mqaDEttbFIhF9rSXpc+Z7RP+IaAymSut
-	CsSm99T15Ri3KMkKN1OTihGDStjx1C5w4QbDPNo3hUng8EnBQDxQpAf04n432bE=
-X-Google-Smtp-Source: AGHT+IETKes+z6wG81VpgxVv6mHim0SINXPJ9ewGaBVr6boePMQ9az0QkbZ1hzXP5XqyWc05zbL4WA==
-X-Received: by 2002:a17:906:c108:b0:a7d:391f:17af with SMTP id a640c23a62f3a-a7daf65a227mr145607566b.51.1722509261910;
-        Thu, 01 Aug 2024 03:47:41 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff1f:b280:31d2:aeb1:18cd:e482])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de7asm880932766b.66.2024.08.01.03.47.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 03:47:41 -0700 (PDT)
-Date: Thu, 1 Aug 2024 12:47:37 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Adam Skladowski <a39.skl@gmail.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>, alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Vladimir Lypak <vladimir.lypak@gmail.com>
-Subject: Re: [PATCH v3 6/8] ASoC: qcom: apq8016_sbc: Add support for msm8953
- SoC
-Message-ID: <ZqtnyWAXTsSGAg0i@linaro.org>
-References: <20240731-msm8953-msm8976-asoc-v3-0-163f23c3a28d@gmail.com>
- <20240731-msm8953-msm8976-asoc-v3-6-163f23c3a28d@gmail.com>
+	s=arc-20240116; t=1722509317; c=relaxed/simple;
+	bh=zMj2kaT0XKsS7rrqSElo8aaZ9plwjhN+xqQDheijjKc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gleK/P4mLej/b8GqhSty7GCUf6fY2i733L/Hq3MT0kzl+PU0rF0Elvy8lP/sU3S8FCojw+KQ/Tq2H9n5iRXO2X73wUDGzLl12joHmvRczNsxywCTQlCIJUCNWecPAMzeqhEhjClPCR1dRb0jhxRJOmERqDvg7x5mSu05Caq6Sds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XRRm4+Z2; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722509314; x=1722768514;
+	bh=lWoM4Uz32+QjRNv6Qi2IgDlBu29MBNkhXDzxAE4VsL4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=XRRm4+Z20OuyFz9Qn2mTNc6lEwkbkHOj1NkEaYimZWVpIbEnvVmJKo+fsnU4hsBTS
+	 QGZWT0ZmfmN0Gw3pndD2LQenC+0MoyQRacuiEVR+/KygBQ/nGl4iJuC7v3l0e5wjV3
+	 EF2DhL0fDsI/CQ03u6S/qj2V29mjXOO3lhN+0vPfMCc5zwgU+AnVmbEKEAhtfFHJIa
+	 QIlHw2m3pG6kYltPMI1no6cliIlutLOAVtbmlknnr0gLuGxmI7fNgybPAkbMV6H4nK
+	 +TanZcRwz3n0+0CBJTq8NipYwMRsXysw8Om7N8ACwU1c+WmCD5D8PodOgKBfvP2hVj
+	 iPmdp0bfNc9sg==
+Date: Thu, 01 Aug 2024 10:48:29 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3 06/10] rust: list: add List
+Message-ID: <f94ec0db-9504-447d-8432-b3dc7015e63a@proton.me>
+In-Reply-To: <CAH5fLgjNCXwhUaHh7dxm-5LmFe-TtiizK2cWscSp9bkdknRywQ@mail.gmail.com>
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-6-89db92c7dbf4@google.com> <3e6a37d1-2460-42ce-8bc3-0b210759efa8@proton.me> <CAH5fLgjNCXwhUaHh7dxm-5LmFe-TtiizK2cWscSp9bkdknRywQ@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 6e482b44ff1c2a8fd13b02dea0f1282d1ed39457
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-6-163f23c3a28d@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 05:25:30PM +0200, Adam Skladowski wrote:
-> From: Vladimir Lypak <vladimir.lypak@gmail.com>
-> 
-> Introduce support for audio card on MSM8953 platform.
-> Main difference between MSM8953 and MSM8916 is Q6AFE CLK API
-> supported by firmware which influence way we set codec clocks.
-> SoCs shipping on at least msm-3.18 should use v2 clocks.
-> 
-> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> [Adam: rename functions, add msg]
-> Co-developed-by: Adam Skladowski <a39.skl@gmail.com>
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
->  sound/soc/qcom/apq8016_sbc.c | 43 +++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 41 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
-> index 5a29adbd3f82..3ed35beb671a 100644
-> --- a/sound/soc/qcom/apq8016_sbc.c
-> +++ b/sound/soc/qcom/apq8016_sbc.c
-> @@ -22,6 +22,11 @@
->  
->  #define MI2S_COUNT  (MI2S_QUINARY + 1)
->  
-> +enum afe_clk_api {
-> +	Q6AFE_CLK_V1,
-> +	Q6AFE_CLK_V2
-> +};
-> +
->  struct apq8016_sbc_data {
->  	struct snd_soc_card card;
->  	void __iomem *mic_iomux;
-> @@ -29,6 +34,7 @@ struct apq8016_sbc_data {
->  	void __iomem *quin_iomux;
->  	struct snd_soc_jack jack;
->  	bool jack_setup;
-> +	enum afe_clk_api q6afe_clk_ver;
->  	int mi2s_clk_count[MI2S_COUNT];
->  };
->  
-> @@ -192,6 +198,28 @@ static int qdsp6_dai_get_lpass_id(struct snd_soc_dai *cpu_dai)
->  	}
->  }
->  
-> +static int qdsp6_get_clk_id(struct apq8016_sbc_data *data, int mi2s_id)
-> +{
-> +	if (data->q6afe_clk_ver == Q6AFE_CLK_V2) {
-> +		switch (mi2s_id) {
-> +		case MI2S_PRIMARY:
-> +			return Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT;
-> +		case MI2S_SECONDARY:
-> +			return Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT;
-> +		case MI2S_TERTIARY:
-> +			return Q6AFE_LPASS_CLK_ID_TER_MI2S_IBIT;
-> +		case MI2S_QUATERNARY:
-> +			return Q6AFE_LPASS_CLK_ID_QUAD_MI2S_IBIT;
-> +		case MI2S_QUINARY:
-> +			return Q6AFE_LPASS_CLK_ID_QUI_MI2S_IBIT;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +	/* If AFE CLK isn't V2 return V1 */
-> +	return LPAIF_BIT_CLK;
-> +}
-> +
->  static int msm8916_qdsp6_dai_init(struct snd_soc_pcm_runtime *rtd)
->  {
->  	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-> @@ -215,7 +243,7 @@ static int msm8916_qdsp6_startup(struct snd_pcm_substream *substream)
->  	if (++data->mi2s_clk_count[mi2s] > 1)
->  		return 0;
->  
-> -	ret = snd_soc_dai_set_sysclk(cpu_dai, LPAIF_BIT_CLK, MI2S_BCLK_RATE, 0);
-> +	ret = snd_soc_dai_set_sysclk(cpu_dai, qdsp6_get_clk_id(data, mi2s), MI2S_BCLK_RATE, 0);
->  	if (ret)
->  		dev_err(card->dev, "Failed to enable LPAIF bit clk: %d\n", ret);
->  	return ret;
-> @@ -236,7 +264,7 @@ static void msm8916_qdsp6_shutdown(struct snd_pcm_substream *substream)
->  	if (--data->mi2s_clk_count[mi2s] > 0)
->  		return;
->  
-> -	ret = snd_soc_dai_set_sysclk(cpu_dai, LPAIF_BIT_CLK, 0, 0);
-> +	ret = snd_soc_dai_set_sysclk(cpu_dai, qdsp6_get_clk_id(data, mi2s), 0, 0);
->  	if (ret)
->  		dev_err(card->dev, "Failed to disable LPAIF bit clk: %d\n", ret);
->  }
-> @@ -265,10 +293,12 @@ static int msm8916_qdsp6_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
->  static void msm8916_qdsp6_add_ops(struct snd_soc_card *card)
->  {
->  	struct snd_soc_dai_link *link;
-> +	struct apq8016_sbc_data *pdata = snd_soc_card_get_drvdata(card);
->  	int i;
->  
->  	/* Make it obvious to userspace that QDSP6 is used */
->  	card->components = "qdsp6";
-> +	pdata->q6afe_clk_ver = Q6AFE_CLK_V1;
->  
->  	for_each_card_prelinks(card, i, link) {
->  		if (link->no_pcm) {
-> @@ -279,6 +309,14 @@ static void msm8916_qdsp6_add_ops(struct snd_soc_card *card)
->  	}
->  }
->  
-> +static void msm8953_qdsp6_add_ops(struct snd_soc_card *card)
-> +{
-> +	struct apq8016_sbc_data *pdata = snd_soc_card_get_drvdata(card);
-> +
-> +	msm8916_qdsp6_add_ops(card);
-> +	pdata->q6afe_clk_ver = Q6AFE_CLK_V2;
-> +}
+On 01.08.24 11:40, Alice Ryhl wrote:
+> On Thu, Aug 1, 2024 at 11:11=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>
+>> On 23.07.24 10:22, Alice Ryhl wrote:
+>>> +    /// Add the provided item to the back of the list.
+>>> +    pub fn push_back(&mut self, item: ListArc<T, ID>) {
+>>> +        let raw_item =3D ListArc::into_raw(item);
+>>> +        // SAFETY:
+>>> +        // * We just got `raw_item` from a `ListArc`, so it's in an `A=
+rc`.
+>>> +        // * If this requirement is violated, then the previous caller=
+ of `prepare_to_insert`
+>>> +        //   violated the safety requirement that they can't give up o=
+wnership of the `ListArc`
+>>> +        //   until they call `post_remove`.
+>>
+>> I don't like this negative phrasing, what about "Since we have ownership
+>> of the `ListArc`, `post_remove` must have been called after each
+>> previous call to `prepare_to_insert`."?
+>=20
+> I think we just need to argue about the most recent call to
+> prepare_to_insert but ok.
 
-Is there a particular reason why you decided to hardcode the
-q6afe_clk_ver for the SoCs rather than finishing up the dynamic
-detection Otto proposed [1]?
+I would argue that's exactly what my version does. Maybe "Since we have
+ownership of the `ListArc`, the most recent call to `prepare_to_insert`
+must have had a matching `post_remove` call afterwards."
+But I liked the above version more.
 
-This works for MSM8953 but there are a few SoCs like MSM8909 where
-both clock API versions exist (depending on the firmware versions).
-If we want to support them at some point, we will need the dynamic
-detection anyway. It would be nice to finish up that patch set.
+>>> +        // * We own the `ListArc`.
+>>> +        // * Removing items from this list is always done using `remov=
+e_internal_inner`, which
+>>> +        //   calls `post_remove` before giving up ownership.
+>>> +        let list_links =3D unsafe { T::prepare_to_insert(raw_item) };
+>>> +        // SAFETY: We have not yet called `post_remove`, so `list_link=
+s` is still valid.
+>>> +        let item =3D unsafe { ListLinks::fields(list_links) };
+>>> +
+>>> +        if self.first.is_null() {
+>>> +            self.first =3D item;
+>>> +            // SAFETY: The caller just gave us ownership of these fiel=
+ds.
+>>> +            // INVARIANT: A linked list with one item should be cyclic=
+.
+>>> +            unsafe {
+>>> +                (*item).next =3D item;
+>>> +                (*item).prev =3D item;
+>>> +            }
+>>> +        } else {
+>>> +            let next =3D self.first;
+>>> +            // SAFETY: By the type invariant, this pointer is valid or=
+ null. We just checked that
+>>> +            // it's not null, so it must be valid.
+>>> +            let prev =3D unsafe { (*next).prev };
+>>> +            // SAFETY: Pointers in a linked list are never dangling, a=
+nd the caller just gave us
+>>> +            // ownership of the fields on `item`.
+>>> +            // INVARIANT: This correctly inserts `item` between `prev`=
+ and `next`.
+>>> +            unsafe {
+>>> +                (*item).next =3D next;
+>>> +                (*item).prev =3D prev;
+>>> +                (*prev).next =3D item;
+>>> +                (*next).prev =3D item;
+>>> +            }
+>>
+>> You have this pattern several times, maybe make a function for this?
+>=20
+> It's just two times. I think it's fine.
 
-Thanks,
-Stephan
+Sure, it seemed more in my mind.
 
-[1]: https://lore.kernel.org/linux-arm-msm/20231029165716.69878-1-otto.pflueger@abscue.de/
+>>> +        if !next.is_null() {
+>>> +            // This is really a no-op, but this ensures that `item` is=
+ a raw pointer that was
+>>> +            // obtained without going through a pointer->reference->po=
+inter conversion rountrip.
+>>> +            // This ensures that the list is valid under the more rest=
+rictive strict provenance
+>>> +            // ruleset.
+>>> +            //
+>>> +            // SAFETY: We just checked that `next` is not null, and it=
+'s not dangling by the
+>>> +            // list invariants.
+>>> +            unsafe {
+>>> +                debug_assert_eq!(item, (*next).prev);
+>>> +                item =3D (*next).prev;
+>>> +            }
+>>
+>> How bad do you reckon is this for performance?
+>=20
+> I don't think it's a problem at all.
+
+Sounds good.
+
+---
+Cheers,
+Benno
+
 
