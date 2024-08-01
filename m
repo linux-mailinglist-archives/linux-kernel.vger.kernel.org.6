@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-270645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF129442BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:38:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192539442C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:38:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868161C215FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:38:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C4361C2169C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0648414A0B2;
-	Thu,  1 Aug 2024 05:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8E014A4F1;
+	Thu,  1 Aug 2024 05:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dHjQyuqP"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsGBmNfj"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94091494A5;
-	Thu,  1 Aug 2024 05:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B982B14A0A7;
+	Thu,  1 Aug 2024 05:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722490674; cv=none; b=t/KL1oCoLkY4z0U1uFax4bqCHRehr+LQ/vT4g3fmHMOex9IOxkZd6GthBpdXrbjBGaOOIKNNEXWPKDPi8UDftNNXk6uyDICQr0AzJW75W1Yr7DQLVYDVu9a2RgWYhTvkbheKMYEbdSQuTZmF4ADhV7p8TnJ8b9q2K9ZlmnljXC4=
+	t=1722490676; cv=none; b=CFEBucovM8lZPoFPIfJtcMdF6qmz4Fcwl4hQkeHYEIwlJnaFTILr8quO1FB2hg+c3nkcx+thrQqPrtLdYG6kyKfwX4bjsUZGqkbxu1ACTnJbVUa4kOHYZryq96aNaxZnZaeXqnKKurpPRBxJ07HEvfRbNlOBjSNPMW0burDfgj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722490674; c=relaxed/simple;
-	bh=VgErsO9Bu9i1N0q7g4chdZ8Ywx5KcoaxHc4DksL9CZU=;
+	s=arc-20240116; t=1722490676; c=relaxed/simple;
+	bh=76hAJit1zg4VNyz5kDOBWkpcSIO1vBmc+rCBxJkh0C0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TdIytVycsMJ7cron2QMEzOeY2PRNj53UHmnrIzCg/iPgupvpWXfkviTW8p7Lt11KDfd1hQRuxqIHb+7tJfJjCfGkQ9YFYKqR3wdtXmo4WIo58QkVViSmdVm6RxSJaQgofC0FG2wh06atWDDwaSsHgvc69mh3Mf5L+6PLN2i3cag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dHjQyuqP; arc=none smtp.client-ip=209.85.210.54
+	 MIME-Version; b=isMh/329fgxY3gdv9eWvGWCjWpTU1jSU0mUKwla3wqqFRkKuDPtmt/Xx9hVLMVmavkolVmAn8gOmof2K4BZiCDNM3AzHUcOeOQFzUa+xTsG3gMTnoTqTwi9oGK/K2QWBAgupZbcCQMNSEsHGGeY5watTPjffJWnQQ6QrpVnZHAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsGBmNfj; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7093472356dso3851819a34.0;
-        Wed, 31 Jul 2024 22:37:52 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d2b921c48so5141319b3a.1;
+        Wed, 31 Jul 2024 22:37:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722490672; x=1723095472; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722490674; x=1723095474; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3MNgSOYTjr0yotm20dGZhPscWJIs6USm/mz1o5vZIGA=;
-        b=dHjQyuqPbegkT7gpCmHzpZbwg2VUVlKWMCCkxwV3DegpbA3Wru7K3uiGZqgIQRqE55
-         nPAYqFx/JxlIciRhEzXSsmRLLhjLHaxG6XwrbwlP2X2wxIpmZ1eqOm2Th/si1HF39K13
-         G6zOGXN2dGbCxa16KVFw87J3zarzJSQHYGDLO4KwHikI5E5NlIe+HtCINwa8ahkjMzK8
-         wmrBVrIMRUHRz1+K4GddJfABAfgrPIRit75LVZ0BqhVKSaWU8muRLQFf11GcRlsRj1fN
-         US9zAIH4xczPBd3PehgJ0pxhDzVhH3Rviv0w5BxuI48cP7ASG6BY0xy8uu8gC3iaJiLG
-         pqRA==
+        bh=zqzCoAbFqxndP749YKSB5ePQejWzAj5lN8I2yJMHRQg=;
+        b=dsGBmNfja9ezssAiHPQ7MOCVnZSuSOWlSlmCKseONZitb9/z1YUvzKCHVXguQPyS+n
+         PWRaWvN058va6tjd42/1zVJDx19DYxY8aLWo8NQuetNH+1I2A1imjzfkbZOJbc9f5odH
+         qQ5Qw6YwyrYZHiaS366Ewpc4WX/C17+pk7TepyF6RykyMltymhdplI8elhcjFuJ7iCcN
+         AwKLVthHzZIaoLjTPxysqaRyOK8ROBQBiu+BMxdm7VdwvZdU+e392wctUHygibZF6ioh
+         TLgAAu0MD/30qcJpNbtxEOeEpQRzOzQi1+KlyBIGwOT03D/aqD8ARnljM1kqiMURY9Mp
+         VGtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722490672; x=1723095472;
+        d=1e100.net; s=20230601; t=1722490674; x=1723095474;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3MNgSOYTjr0yotm20dGZhPscWJIs6USm/mz1o5vZIGA=;
-        b=h0BN8SdlCfzE+lDY1oLLJhCux2OLliVH08XsW750E0NjJbfz00LGTZLoccfBcsWZnI
-         j8ZGX0fNXNdPGSrILghI/a90uWKmbY/DlOd5T9MBu0+Z1SD3A0lbtqVQpf9noJKC68Br
-         kM6aT+7BKNj/7sIg54WwPj1eff039BeGDPlzN5nxLjVt7yDRIS73SZfBiS/sL/5yjESE
-         pL4aNP6TbcLiEULo+ofTmmo6/P/hB2sYNfbVseAj+2ul9PcCxPM99nLn4Ls+u3mz1iRt
-         IWwMkPm9zCYdRw6BGKfwhlGcrH5Lz+Vi4yWeQxPfRNkAswaJ2eiIM65OsG/IJC/D28rC
-         8duQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbl1Wmn2djGoypNzsIphTQIbUJpbnc+5VScjFBAdjeUEH+eNUvhryI/r/ujGj4mSqblyJ35x/kj9RtQ0kRZYuMCCEgJGAyS1LEszktqh6ggcROqVGPuHe8UZJJD8x1rhvH3l72CHb3SQ==
-X-Gm-Message-State: AOJu0Yx0cJA8/Ia8eFrwqryoaM/OHGO2uE7SGgnuD3hd0NFecNPeaPy5
-	lS39pQz6fZnv6YFg8lCdFpRWx366lP1uud6M2/lp3M+QdVfI9CPN
-X-Google-Smtp-Source: AGHT+IFHj5gZE5I/GE+V4PctpDOeXJbUvmybA0nK1W+z6o1ml7knwia+MEFR3nWUNKILeEaXSFbfWQ==
-X-Received: by 2002:a05:6830:681a:b0:709:472d:f35a with SMTP id 46e09a7af769-7096b838521mr1315004a34.2.1722490671798;
-        Wed, 31 Jul 2024 22:37:51 -0700 (PDT)
+        bh=zqzCoAbFqxndP749YKSB5ePQejWzAj5lN8I2yJMHRQg=;
+        b=JYRpT/LpKGA15TL4nXfceeL2txPvgHBb8kghHiTHUS4XYVxwsIrctBb936zWBKm5GP
+         eloZ0DUWJzkBJWYiO9GGNWqiU0ZlLIX4dE32xMypbWaj+QlhIAvKce1q2nqzqMYQI8f3
+         QbWMv7m1n67yhaj8bRpiV6P3eGXbMYvjn0GKu4rTJpiZ72iv/EpcA/Na9u5GsFM9HkIW
+         e9BzABkjSEvUcyvIC415DcEk5IcSLG2a6j0c4SgdV6CGlnsiIfbldYCWbSigEh7AS9XM
+         aiDl2pOUqpkUkDAoMdMpJA/ZJfMaBwBkY2W7ckxXWGfy7pu6sDSo6SX0ymhFoQheMTM+
+         KmFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN8tkE1W2EHF5OTfCT4bTdjzlK3wNWS0VMjcQG63d+4y/9rMk2ol4CypextE0V8Wf4idNkeoLDtaneLLPwGsJn7kokprqafaJVtMOd0yEIIOuAKh2kOf/oTr9av4VG0B3SrP4ODn5R7w==
+X-Gm-Message-State: AOJu0YzqJf19sf85SvVA6Ja4GVxqSw3f4futUM80p26np+zWSUgrEq41
+	xz5VxnMgH0Ra/RGusG4VNbwVPbFw1zzaFbh9CrZI9VffNDre0Qp2
+X-Google-Smtp-Source: AGHT+IFxMA0Y7t88x1vj2vjb2D3KYmjXT888McD9+5ksKpwc9UpwxY/nnkAwoZiGTOjop0aTNn/GdA==
+X-Received: by 2002:a05:6a20:8418:b0:1c4:819f:8e0c with SMTP id adf61e73a8af0-1c68ce76a86mr2161740637.6.1722490673852;
+        Wed, 31 Jul 2024 22:37:53 -0700 (PDT)
 Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead72b89csm11106876b3a.94.2024.07.31.22.37.49
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead72b89csm11106876b3a.94.2024.07.31.22.37.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 22:37:51 -0700 (PDT)
+        Wed, 31 Jul 2024 22:37:53 -0700 (PDT)
 From: Hui-Ping Chen <hpchen0nvt@gmail.com>
 To: vkoul@kernel.org,
 	kishon@kernel.org,
@@ -77,9 +77,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Hui-Ping Chen <hpchen0nvt@gmail.com>
-Subject: [PATCH v3 1/2] dt-bindings: phy: nuvoton,ma35-usb2-phy: add new bindings
-Date: Thu,  1 Aug 2024 05:37:43 +0000
-Message-Id: <20240801053744.807884-2-hpchen0nvt@gmail.com>
+Subject: [PATCH v3 2/2] phy: nuvoton: add new driver for the Nuvoton MA35 SoC USB 2.0 PHY
+Date: Thu,  1 Aug 2024 05:37:44 +0000
+Message-Id: <20240801053744.807884-3-hpchen0nvt@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240801053744.807884-1-hpchen0nvt@gmail.com>
 References: <20240801053744.807884-1-hpchen0nvt@gmail.com>
@@ -91,65 +91,225 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dt-bindings for USB2 PHY found on the Nuvoton MA35 SoC.
+Nuvoton MA35 SoCs support DWC2 USB controller.
+Add the driver to drive the USB 2.0 PHY transceivers.
 
 Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
 ---
- .../bindings/phy/nuvoton,ma35d1-usb2-phy.yaml | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
+ drivers/phy/Kconfig                   |   1 +
+ drivers/phy/Makefile                  |   1 +
+ drivers/phy/nuvoton/Kconfig           |  13 +++
+ drivers/phy/nuvoton/Makefile          |   3 +
+ drivers/phy/nuvoton/phy-ma35d1-usb2.c | 146 ++++++++++++++++++++++++++
+ 5 files changed, 164 insertions(+)
+ create mode 100644 drivers/phy/nuvoton/Kconfig
+ create mode 100644 drivers/phy/nuvoton/Makefile
+ create mode 100644 drivers/phy/nuvoton/phy-ma35d1-usb2.c
 
-diff --git a/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
+diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+index dfab1c66b3e5..f73abff416be 100644
+--- a/drivers/phy/Kconfig
++++ b/drivers/phy/Kconfig
+@@ -95,6 +95,7 @@ source "drivers/phy/mediatek/Kconfig"
+ source "drivers/phy/microchip/Kconfig"
+ source "drivers/phy/motorola/Kconfig"
+ source "drivers/phy/mscc/Kconfig"
++source "drivers/phy/nuvoton/Kconfig"
+ source "drivers/phy/qualcomm/Kconfig"
+ source "drivers/phy/ralink/Kconfig"
+ source "drivers/phy/realtek/Kconfig"
+diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+index 5fcbce5f9ab1..ebc399560da4 100644
+--- a/drivers/phy/Makefile
++++ b/drivers/phy/Makefile
+@@ -25,6 +25,7 @@ obj-y					+= allwinner/	\
+ 					   microchip/	\
+ 					   motorola/	\
+ 					   mscc/	\
++					   nuvoton/	\
+ 					   qualcomm/	\
+ 					   ralink/	\
+ 					   realtek/	\
+diff --git a/drivers/phy/nuvoton/Kconfig b/drivers/phy/nuvoton/Kconfig
 new file mode 100644
-index 000000000000..fff858c909a0
+index 000000000000..270ee2943287
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/phy/nuvoton,ma35d1-usb2-phy.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/phy/nuvoton/Kconfig
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: GPL-2.0-only
++#
++# PHY drivers for Nuvoton MA35 platforms
++#
++config PHY_MA35_USB
++	tristate "Nuvoton MA35 USB2.0 PHY driver"
++	depends on ARCH_MA35 || COMPILE_TEST
++	depends on OF
++	select GENERIC_PHY
++	help
++	  Enable this to support the USB2.0 PHY on the Nuvoton MA35
++	  series SoCs.
 +
-+title: Nuvoton MA35D1 USB2 phy
+diff --git a/drivers/phy/nuvoton/Makefile b/drivers/phy/nuvoton/Makefile
+new file mode 100644
+index 000000000000..2937e3921898
+--- /dev/null
++++ b/drivers/phy/nuvoton/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0
 +
-+maintainers:
-+  - Hui-Ping Chen <hpchen0nvt@gmail.com>
++obj-$(CONFIG_PHY_MA35_USB)		+= phy-ma35d1-usb2.o
+diff --git a/drivers/phy/nuvoton/phy-ma35d1-usb2.c b/drivers/phy/nuvoton/phy-ma35d1-usb2.c
+new file mode 100644
+index 000000000000..8922e5da8e3b
+--- /dev/null
++++ b/drivers/phy/nuvoton/phy-ma35d1-usb2.c
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Nuvoton Technology Corp.
++ */
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/io.h>
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
 +
-+properties:
-+  compatible:
-+    enum:
-+      - nuvoton,ma35d1-usb2-phy
++/* USB PHY Miscellaneous Control Register */
++#define MA35_SYS_REG_USBPMISCR	0x60
++#define PHY0POR			BIT(0)  /* PHY Power-On Reset Control Bit */
++#define PHY0SUSPEND			BIT(1)  /* PHY Suspend; 0: suspend, 1: operaion */
++#define PHY0COMN			BIT(2)  /* PHY Common Block Power-Down Control */
++#define PHY0DEVCKSTB			BIT(10) /* PHY 60 MHz UTMI clock stable bit */
 +
-+  "#phy-cells":
-+    const: 0
++struct ma35_usb_phy {
++	struct clk *clk;
++	struct device *dev;
++	struct regmap *sysreg;
++};
 +
-+  clocks:
-+    maxItems: 1
++static int ma35_usb_phy_power_on(struct phy *phy)
++{
++	struct ma35_usb_phy *p_phy = phy_get_drvdata(phy);
++	unsigned int val;
++	int ret;
 +
-+  nuvoton,sys:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description:
-+      phandle to syscon for checking the PHY clock status.
++	ret = clk_prepare_enable(p_phy->clk);
++	if (ret < 0) {
++		dev_err(p_phy->dev, "Failed to enable PHY clock: %d\n", ret);
++		return ret;
++	}
 +
-+required:
-+  - compatible
-+  - "#phy-cells"
-+  - clocks
-+  - nuvoton,sys
++	regmap_read(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, &val);
++	if (val & PHY0SUSPEND) {
++		/*
++		 * USB PHY0 is in operation mode already
++		 * make sure USB PHY 60 MHz UTMI Interface Clock ready
++		 */
++		ret = readl_poll_timeout((void __iomem *)p_phy->sysreg + MA35_SYS_REG_USBPMISCR,
++					 val, val & PHY0DEVCKSTB, 1, 100);
++		if (ret == -ETIMEDOUT) {
++			dev_err(p_phy->dev, "1.Check PHY clock, Timeout: %d\n", val);
++			return ret;
++		}
++		return 0;
++	}
 +
-+additionalProperties: false
++	/*
++	 * reset USB PHY0.
++	 * wait until USB PHY0 60 MHz UTMI Interface Clock ready
++	 */
++	regmap_update_bits(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, 0x7, (PHY0POR | PHY0SUSPEND));
++	udelay(10);
 +
-+examples:
-+  - |
-+    #include <dt-bindings/clock/nuvoton,ma35d1-clk.h>
++	/* make USB PHY0 enter operation mode */
++	regmap_update_bits(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, 0x7, PHY0SUSPEND);
 +
-+    usb_phy: usb-phy {
-+        compatible = "nuvoton,ma35d1-usb2-phy";
-+        clocks = <&clk USBD_GATE>;
-+        nuvoton,sys = <&sys>;
-+        #phy-cells = <0>;
-+    };
++	/* make sure USB PHY 60 MHz UTMI Interface Clock ready */
++	ret = readl_poll_timeout((void __iomem *)p_phy->sysreg + MA35_SYS_REG_USBPMISCR,
++				 val, val & PHY0DEVCKSTB, 1, 100);
++	if (ret == -ETIMEDOUT) {
++		dev_err(p_phy->dev, "2.Check PHY clock, Timeout: %d\n", ret);
++		return ret;
++	}
++
++	clk_disable_unprepare(p_phy->clk);
++	return 0;
++}
++
++static int ma35_usb_phy_power_off(struct phy *phy)
++{
++	struct ma35_usb_phy *p_phy = phy_get_drvdata(phy);
++
++	clk_disable_unprepare(p_phy->clk);
++	return 0;
++}
++
++static const struct phy_ops ma35_usb_phy_ops = {
++	.power_on = ma35_usb_phy_power_on,
++	.power_off = ma35_usb_phy_power_off,
++	.owner = THIS_MODULE,
++};
++
++static int ma35_usb_phy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *provider;
++	struct ma35_usb_phy *p_phy;
++	struct phy *phy;
++
++	p_phy = devm_kzalloc(&pdev->dev, sizeof(*p_phy), GFP_KERNEL);
++	if (!p_phy)
++		return -ENOMEM;
++
++	p_phy->dev = &pdev->dev;
++	platform_set_drvdata(pdev, p_phy);
++
++	p_phy->sysreg = syscon_regmap_lookup_by_phandle(pdev->dev.of_node, "nuvoton,sys");
++	if (IS_ERR(p_phy->sysreg))
++		return dev_err_probe(&pdev->dev, PTR_ERR(p_phy->sysreg),
++				     "Failed to get SYS registers\n");
++
++	p_phy->clk = of_clk_get(pdev->dev.of_node, 0);
++	if (IS_ERR(p_phy->clk))
++		return dev_err_probe(&pdev->dev, PTR_ERR(p_phy->clk),
++				     "failed to find usb_phy clock\n");
++
++	phy = devm_phy_create(&pdev->dev, NULL, &ma35_usb_phy_ops);
++	if (IS_ERR(phy))
++		return dev_err_probe(&pdev->dev, PTR_ERR(phy), "Failed to create PHY\n");
++
++	phy_set_drvdata(phy, p_phy);
++
++	provider = devm_of_phy_provider_register(&pdev->dev, of_phy_simple_xlate);
++	if (IS_ERR(provider))
++		return dev_err_probe(&pdev->dev, PTR_ERR(provider),
++				     "Failed to register PHY provider\n");
++	return 0;
++}
++
++static const struct of_device_id ma35_usb_phy_of_match[] = {
++	{ .compatible = "nuvoton,ma35d1-usb2-phy", },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ma35_usb_phy_of_match);
++
++static struct platform_driver ma35_usb_phy_driver = {
++	.probe		= ma35_usb_phy_probe,
++	.driver	= {
++		.name	= "ma35d1-usb2-phy",
++		.of_match_table = ma35_usb_phy_of_match,
++	},
++};
++module_platform_driver(ma35_usb_phy_driver);
++
++MODULE_DESCRIPTION("Nuvoton ma35d1 USB2.0 PHY driver");
++MODULE_AUTHOR("hpchen0nvt@gmail.com");
++MODULE_LICENSE("GPL");
 -- 
 2.25.1
 
