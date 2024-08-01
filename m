@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-270433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A072943FC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:50:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 372C5943FCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AD411C2184B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:50:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FFE01F21B2E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F831EB4AD;
-	Thu,  1 Aug 2024 00:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9DD6E5ED;
+	Thu,  1 Aug 2024 00:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A2ty9yc+"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TlZZte+x"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC461EB48E;
-	Thu,  1 Aug 2024 00:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260042E83F;
+	Thu,  1 Aug 2024 00:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722472872; cv=none; b=batMDaY/9kc0kyuYrrvQSFCjeF0pQ0AsZdJsbicRsr77SerzOwxI+kln33IDnkZ9R89AWPs9LZjGm9yp1Tbu2Xs/HWXIc1spOMM5Zt76NKZadew9OjWQoBh3m48M9QL7T3eyhiLiK6waDXO6K/OYWJ8Tk2Z7QGWQus4A7s9ffVw=
+	t=1722473491; cv=none; b=V7QMV+bixmmQwo4h3za3HRqAwEMRqKyW6zV1y6ZsW5RV3sMdtCd5o1SHUlfqQZW1m+OrKs09zunfdr9RDTFrWjPf1LpssWTA9p9nDjLTv/6nknfs5kxI9TxObTrs3rgiaxkWcuX+aMKSjFWe5NxHiutjEmME7Z6enH8NmfusFmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722472872; c=relaxed/simple;
-	bh=l0EmLdN7z5jDB8UnEkkZc4qnK9A9Sr31dW/ETAFaODU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pyRb9qS7DqdWI/DgO82T5Hd47Ki5+J2IfCCgWSm4w5VheyRIAdO7RpVZimvPGZ2LCXPa7T5YpVu8+erTpusy3M0nYMO6G/cngCVRPlykqEBKmTXwrGuhxZtMBWCTDRhuVl+w86QXVwFlIiTC7RtivTWAqZgJke0UOS1z+6iTvig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A2ty9yc+; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3db16129143so3689093b6e.0;
-        Wed, 31 Jul 2024 17:41:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722472869; x=1723077669; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+SRhALzSNIYjZtYZCdYQEI+/EH5x/c0pzDejuFftYNk=;
-        b=A2ty9yc+pUwwecvKYXwXhxOgeM9181/eMX/Tdc8YULOhcFmD5WOYXEuI9fgjYV6ADA
-         v19f6tE8q6kkSuKVhCg6OMJds3FusW+fKgvHrGvLhVAhcnhc/nkTakbh11qzorgUfKjp
-         TOf5zRKhiLfo3nUqrrMioFmp93Tqc6fGJ1vx6bWjFGD2XdhiWkp2+TqIcznZL0N9iVMg
-         3oMKHsabs3kY24Vjs28m9puhiTURgQyZxBVwsVLoOa8Pk0kjxWkkNg0mH9j5LHL7rOvE
-         mVW7EubV+3cRE2aDkdLJ+QfHAFz/qGYMPJ0W3XEjJBi+YZ1KzJvybpYiOeqE37k/r5aK
-         qdyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722472869; x=1723077669;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+SRhALzSNIYjZtYZCdYQEI+/EH5x/c0pzDejuFftYNk=;
-        b=HuQANukk/VGAyLwDu2nD/s5yjEi/sMHphmgSdE2asykatMNhjg1xdlZu72a93ZfCkP
-         oEJ/utdwWxiaw16UlTIpTZa1ps4CtheFRSPu+mXSotLFU1car/q1NVp/nK6mKjiCHP0N
-         M/SY9qLwobc7tT2sqQe5wV4Do6dL4IwJrntuvRofL179LfOd8S7GWavrK0OxxBSiJmJr
-         PzJdauYUpuFByOPMs9iJcRF4AsPcw3DWWKCNfu2HgOvZM0gDqYg1hNm86ryguNzn/9gt
-         80ccGaFuRMSWbQwVzcPKwW9n9tG+PBJOpeSzaidpHBaraK3BU1hFPmA/3cqOewIvTws0
-         7KDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFhoY4RvLo4CEBmfJ8Spt8+A2t6V+csTCYCZgYaQwRsx7hMSZkxv3CQRLDVVLFkx65LqrVuqXqx50iq/miTC19zZ3bDuxEIErmWtEXY1NYUvLAWDy6LKLGxWrdG4nET5JXUy1iHG54dg==
-X-Gm-Message-State: AOJu0YzOQ1kvDN5JKS2t49UZTkKAgwR2N7PT5kV02fIaX8TPZYlW86QO
-	i6gaX8XZJdQg1IkXSZik75zMW1mmAfMKEFcKsImC97YCennwJmqM
-X-Google-Smtp-Source: AGHT+IF2+UXiIKmLrJ8RELf5HuGNCOKJPdjkpvdOPhQ+ZS8Luzx6Jwu6WdMqA97xvIZpCy9sBV+83w==
-X-Received: by 2002:a05:6808:23d6:b0:3da:a16e:1764 with SMTP id 5614622812f47-3db511b4701mr1034618b6e.4.1722472869032;
-        Wed, 31 Jul 2024 17:41:09 -0700 (PDT)
-Received: from [172.19.1.53] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7a9f7b7b029sm10935955a12.11.2024.07.31.17.41.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 17:41:08 -0700 (PDT)
-Message-ID: <2e543ed4-929c-44df-ba42-0a6b259aeb0f@gmail.com>
-Date: Thu, 1 Aug 2024 08:41:05 +0800
+	s=arc-20240116; t=1722473491; c=relaxed/simple;
+	bh=TSjrUWYJXnpOZEh3ey+4es+yDaCbp82UbrQyxn4Q2Cs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tR/S+1tB+61s8D3OAz6DqF8Fnd+Gx6lYUlMRThEQtZbP3QQLRvpcz5IGk1uZO4YMsI/Zu35BVh77OgGYwhoEtWUAr+dpiugs4OBXZX75ErHoI2TBc6LtVRK0CZ3oLToTHfiQTzUWyzwdCpCI2My7zW8GY4okDvrMIVQ/xoCgHcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TlZZte+x; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VGqI21029961;
+	Thu, 1 Aug 2024 00:51:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	etAlBOLm/c6+N+NDIQJ64v0mXMlXSuHpFgcU4hIzgOw=; b=TlZZte+xm7FhaTkl
+	COW1bhS3bfByvy3W4l9xR5Tn6Hqfch94kye1bz/cITXNLXo26CzUr8dBPDufSQ1d
+	+iXl0BkcOracBo32uWOXWcbCWgfs2/ezjUUa+xxbX+OO7GOzlaBV3wDFsEisMgj/
+	F8ngZKHfgLk+p+hxJx/xNFWZ5tNeOAn2ucLrUekTFZz7cfFVw2r6A9M/90EKuth0
+	zGFW/+x5ID3S5NbriGduwTA6A3dSsQYFezM7bn4fREdNOKyFs8Mxv5b5O1DB9OXk
+	r72LrL9dXlRf7//qNqDCXnfF9mhg8tHO6zVyEvYZhjhIGMQyYGzbLVO405n6i2lz
+	vw3jmQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pq5276j9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 00:51:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4710pINS015647
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 00:51:18 GMT
+Received: from [10.110.31.235] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
+ 2024 17:51:17 -0700
+Message-ID: <0c769a55-0fb7-4734-86b1-9469b4cc7b8c@quicinc.com>
+Date: Wed, 31 Jul 2024 17:51:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,93 +64,259 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: phy: nuvoton,ma35-usb2-phy: add new
- bindings
-To: Krzysztof Kozlowski <krzk@kernel.org>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240731014313.113417-1-hpchen0nvt@gmail.com>
- <20240731014313.113417-2-hpchen0nvt@gmail.com>
- <6b1894c8-766c-4191-9f05-42f1f0a838f5@kernel.org>
+Subject: Re: [PATCH 7/8] usb: misc: eud: Handle usb role switch notifications
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <20240730222439.3469-8-quic_eserrao@quicinc.com>
+ <5nsextq3khhku3xfdwwj74wmx5ajyqhjyarfpnpa6i2tjx76ix@z7lpip6pi6re>
 Content-Language: en-US
-From: Hui-Ping Chen <hpchen0nvt@gmail.com>
-In-Reply-To: <6b1894c8-766c-4191-9f05-42f1f0a838f5@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Elson Serrao <quic_eserrao@quicinc.com>
+In-Reply-To: <5nsextq3khhku3xfdwwj74wmx5ajyqhjyarfpnpa6i2tjx76ix@z7lpip6pi6re>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Rh5EhvjqrxgSCIv37YiiyvkgYM84m1jB
+X-Proofpoint-ORIG-GUID: Rh5EhvjqrxgSCIv37YiiyvkgYM84m1jB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_11,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 clxscore=1011 malwarescore=0 suspectscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010002
 
-Dear Krzysztof,
-
-Thank you for your reply.
 
 
-
-On 2024/7/31 下午 01:31, Krzysztof Kozlowski wrote:
-> On 31/07/2024 03:43, Hui-Ping Chen wrote:
->> Add dt-bindings for USB2 PHY found on the Nuvoton MA35 SoC.
+On 7/31/2024 6:06 AM, Dmitry Baryshkov wrote:
+> On Tue, Jul 30, 2024 at 03:24:38PM GMT, Elson Roy Serrao wrote:
+>> Since EUD is physically present between the USB connector and
+>> the USB controller, it should relay the usb role notifications
+>> from the connector. Hence register a role switch handler to
+>> process and relay these roles to the USB controller. This results
+>> in a common framework to send both connector related events
+>> and eud attach/detach events to the USB controller.
 >>
->> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
+>> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
 >> ---
->>   .../bindings/phy/nuvoton,ma35d1-usb2-phy.yaml | 47 +++++++++++++++++++
->>   1 file changed, 47 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
+>>  drivers/usb/misc/qcom_eud.c | 91 ++++++++++++++++++++++++++++---------
+>>  1 file changed, 69 insertions(+), 22 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml b/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
->> new file mode 100644
->> index 000000000000..88e297ba4ecf
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/nuvoton,ma35d1-usb2-phy.yaml
->> @@ -0,0 +1,47 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/phy/nuvoton,ma35d1-usb2-phy.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> diff --git a/drivers/usb/misc/qcom_eud.c b/drivers/usb/misc/qcom_eud.c
+>> index 3de7d465912c..9a49c934e8cf 100644
+>> --- a/drivers/usb/misc/qcom_eud.c
+>> +++ b/drivers/usb/misc/qcom_eud.c
+>> @@ -10,6 +10,7 @@
+>>  #include <linux/iopoll.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/module.h>
+>> +#include <linux/mutex.h>
+>>  #include <linux/of.h>
+>>  #include <linux/phy/phy.h>
+>>  #include <linux/platform_device.h>
+>> @@ -35,12 +36,16 @@ struct eud_chip {
+>>  	struct device			*dev;
+>>  	struct usb_role_switch		*role_sw;
+>>  	struct phy			*usb2_phy;
 >> +
->> +title: Nuvoton MA35D1 USB2 phy
+>> +	/* mode lock */
+>> +	struct mutex			mutex;
+>>  	void __iomem			*base;
+>>  	void __iomem			*mode_mgr;
+>>  	unsigned int			int_status;
+>>  	int				irq;
+>>  	bool				enabled;
+>>  	bool				usb_attached;
+>> +	enum usb_role			current_role;
+>>  };
+>>  
+>>  static int eud_phy_enable(struct eud_chip *chip)
+>> @@ -64,6 +69,38 @@ static void eud_phy_disable(struct eud_chip *chip)
+>>  	phy_exit(chip->usb2_phy);
+>>  }
+>>  
+>> +static int eud_usb_role_set(struct eud_chip *chip, enum usb_role role)
+>> +{
+>> +	struct usb_role_switch *sw;
+>> +	int ret = 0;
 >> +
->> +maintainers:
->> +  - Hui-Ping Chen <hpchen0nvt@gmail.com>
+>> +	mutex_lock(&chip->mutex);
 >> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - nuvoton,ma35d1-usb2-phy
+>> +	/* Avoid duplicate role handling */
+>> +	if (role == chip->current_role)
+>> +		goto err;
 >> +
->> +  "#phy-cells":
->> +    const: 0
+>> +	sw = usb_role_switch_get(chip->dev);
+> 
+> Why isn't chip->role_sw good enough? Why do you need to get it each
+> time?
+>
+
+Hi Dmitry
+
+chip->role_sw is the eud role switch handler to receive role switch notifications from the
+USB connector. The 'sw' I am getting above is the role switch handler of the USB controller.
+As per this design, EUD receives role switch notification from the connector 
+(via chip->role_sw) and then relays it to the 'sw' switch handler of the USB controller.
+
+
+Thanks
+Elson
+ 
+>> +	if (IS_ERR_OR_NULL(sw)) {
+>> +		dev_err(chip->dev, "failed to get usb switch\n");
+>> +		ret = -EINVAL;
+>> +		goto err;
+>> +	}
 >> +
->> +  clocks:
->> +    maxItems: 1
+>> +	ret = usb_role_switch_set_role(sw, role);
+>> +	usb_role_switch_put(sw);
 >> +
->> +  nuvoton,sys:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      phandle of the system-management node.
->> +      This driver has some status bits located in the sys,
-> Do not reference drivers, but hardware.
+>> +	if (ret) {
+>> +		dev_err(chip->dev, "failed to set role\n");
+>> +		goto err;
+>> +	}
+>> +	chip->current_role = role;
+>> +err:
+>> +	mutex_unlock(&chip->mutex);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static int enable_eud(struct eud_chip *priv)
+>>  {
+>>  	int ret;
+>> @@ -77,7 +114,7 @@ static int enable_eud(struct eud_chip *priv)
+>>  			priv->base + EUD_REG_INT1_EN_MASK);
+>>  	writel(1, priv->mode_mgr + EUD_REG_EUD_EN2);
+>>  
+>> -	return usb_role_switch_set_role(priv->role_sw, USB_ROLE_DEVICE);
+>> +	return ret;
+>>  }
+>>  
+>>  static void disable_eud(struct eud_chip *priv)
+>> @@ -106,15 +143,20 @@ static ssize_t enable_store(struct device *dev,
+>>  	if (kstrtobool(buf, &enable))
+>>  		return -EINVAL;
+>>  
+>> +	/* EUD enable is applicable only in DEVICE mode */
+>> +	if (enable && chip->current_role != USB_ROLE_DEVICE)
+>> +		return -EINVAL;
+>> +
+>>  	if (enable) {
+>>  		ret = enable_eud(chip);
+>> -		if (!ret)
+>> -			chip->enabled = enable;
+>> -		else
+>> -			disable_eud(chip);
+>> +		if (ret) {
+>> +			dev_err(chip->dev, "failed to enable eud\n");
+>> +			return count;
+>> +		}
+>>  	} else {
+>>  		disable_eud(chip);
+>>  	}
+>> +	chip->enabled = enable;
+>>  
+>>  	return count;
+>>  }
+>> @@ -185,11 +227,9 @@ static irqreturn_t handle_eud_irq_thread(int irq, void *data)
+>>  	int ret;
+>>  
+>>  	if (chip->usb_attached)
+>> -		ret = usb_role_switch_set_role(chip->role_sw, USB_ROLE_DEVICE);
+>> +		ret = eud_usb_role_set(chip, USB_ROLE_DEVICE);
+>>  	else
+>> -		ret = usb_role_switch_set_role(chip->role_sw, USB_ROLE_HOST);
+>> -	if (ret)
+>> -		dev_err(chip->dev, "failed to set role switch\n");
+>> +		ret = eud_usb_role_set(chip, USB_ROLE_HOST);
+>>  
+>>  	/* set and clear vbus_int_clr[0] to clear interrupt */
+>>  	writel(BIT(0), chip->base + EUD_REG_VBUS_INT_CLR);
+>> @@ -198,16 +238,18 @@ static irqreturn_t handle_eud_irq_thread(int irq, void *data)
+>>  	return IRQ_HANDLED;
+>>  }
+>>  
+>> -static void eud_role_switch_release(void *data)
+>> +static int eud_usb_role_switch_set(struct usb_role_switch *sw,
+>> +				   enum usb_role role)
+>>  {
+>> -	struct eud_chip *chip = data;
+>> +	struct eud_chip *chip = usb_role_switch_get_drvdata(sw);
+>>  
+>> -	usb_role_switch_put(chip->role_sw);
+>> +	return eud_usb_role_set(chip, role);
+>>  }
+>>  
+>>  static int eud_probe(struct platform_device *pdev)
+>>  {
+>>  	struct eud_chip *chip;
+>> +	struct usb_role_switch_desc eud_role_switch = {NULL};
+>>  	int ret;
+>>  
+>>  	chip = devm_kzalloc(&pdev->dev, sizeof(*chip), GFP_KERNEL);
+>> @@ -221,16 +263,6 @@ static int eud_probe(struct platform_device *pdev)
+>>  		return dev_err_probe(chip->dev, PTR_ERR(chip->usb2_phy),
+>>  				     "no usb2 phy configured\n");
+>>  
+>> -	chip->role_sw = usb_role_switch_get(&pdev->dev);
+>> -	if (IS_ERR(chip->role_sw))
+>> -		return dev_err_probe(chip->dev, PTR_ERR(chip->role_sw),
+>> -					"failed to get role switch\n");
+>> -
+>> -	ret = devm_add_action_or_reset(chip->dev, eud_role_switch_release, chip);
+>> -	if (ret)
+>> -		return dev_err_probe(chip->dev, ret,
+>> -				"failed to add role switch release action\n");
+>> -
+>>  	chip->base = devm_platform_ioremap_resource(pdev, 0);
+>>  	if (IS_ERR(chip->base))
+>>  		return PTR_ERR(chip->base);
+>> @@ -248,6 +280,18 @@ static int eud_probe(struct platform_device *pdev)
+>>  	if (ret)
+>>  		return dev_err_probe(chip->dev, ret, "failed to allocate irq\n");
+>>  
+>> +	eud_role_switch.fwnode = dev_fwnode(chip->dev);
+>> +	eud_role_switch.set = eud_usb_role_switch_set;
+>> +	eud_role_switch.get = NULL;
+>> +	eud_role_switch.driver_data = chip;
+>> +	chip->role_sw = usb_role_switch_register(chip->dev, &eud_role_switch);
+>> +
+>> +	if (IS_ERR(chip->role_sw))
+>> +		return dev_err_probe(chip->dev, PTR_ERR(chip->role_sw),
+>> +				"failed to register role switch\n");
+>> +
+>> +	mutex_init(&chip->mutex);
+> 
+> please move mutex_init earlier.
+> 
 
-Okay. I will revise the description.
-
-
-
->> +      it is necessary to reference the sys link.
-> This tells me nothing. You must be specific - WHAT IS THE PURPOSE of
-> this syscon usage in USB2 PHY?
-
-Sorry, I misunderstood. I will correct the description.
-
-Thank you for the reminder.
-
-
-
-> Best regards,
-> Krzysztof
-
-
-Best regards,
-
-Hui-Ping Chen
-
-
+Ack
+>> +
+>>  	enable_irq_wake(chip->irq);
+>>  
+>>  	platform_set_drvdata(pdev, chip);
+>> @@ -262,6 +306,9 @@ static void eud_remove(struct platform_device *pdev)
+>>  	if (chip->enabled)
+>>  		disable_eud(chip);
+>>  
+>> +	if (chip->role_sw)
+>> +		usb_role_switch_unregister(chip->role_sw);
+>> +
+>>  	device_init_wakeup(&pdev->dev, false);
+>>  	disable_irq_wake(chip->irq);
+>>  }
+>> -- 
+>> 2.17.1
+>>
+> 
 
