@@ -1,73 +1,79 @@
-Return-Path: <linux-kernel+bounces-270946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2664B944774
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:07:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D80944776
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D54F5283FF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88C02285392
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984CC163A9B;
-	Thu,  1 Aug 2024 09:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5C170A13;
+	Thu,  1 Aug 2024 09:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EaYZU4LN"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FBdubWV2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2230816F8E7
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C28170A15
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503229; cv=none; b=uIQqwDwfPsuEILKnIgQdicqDVZTtj94cJFAhYTHGC3OmCU3d0B+Gj5AcUhLYizy3IqBroG5e7yojmbrmZ3Jh2RuO/qFvNDUepnfvtvV4S+8AEvI0vFHgXbKpdPsnUQaRRScQy4HdLyOgcda8eyVoOfLGMOZF3Qzd4uYOkbFUqYc=
+	t=1722503235; cv=none; b=ceddjD8Pfo6ZDDYDV2TvfPRkVC6dqd22JOLhq4V2pKMleFt4x2z91SBeYgrFigTaSyTl03wr9b2rq0Vs3ShtaH+fGipn9KUh70k26dFiqRnyY7VN71K7Xud2tKftVGvDRpngEIEpCiDwT3Z82dyn8HEQbr1JqH0M1/g2a2erjmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503229; c=relaxed/simple;
-	bh=gsmNLOnLvcLWoYh5o6wZwKpIn8YC7FQTYJ+NLENYeEo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JTnu/ow9RL8OxiCgE6nejpqQF7uRwMSkyGhH8t4/PxjcnNbRihSNAOjNsXyNPuSbB5mnx+DPYxhw6llWspuGcPu0RwMH7fwyR1UO1TEdgUGpPTl6TsOzUv7wHhj3Zlalwnv8vlo+GtvPmdqu5spuWQmcNNIwqZu4qgVQ2ehwaFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EaYZU4LN; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so877575666b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722503226; x=1723108026; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0ZBoY3AoVccb/INlrM3z9gGvON8IToRFWiibOBUz5W8=;
-        b=EaYZU4LNoOxHtHhMWpflpsMsSB+zvaMmrQl8VRrbyK9ivj8r9jpxhqKS6cbgTTmx8J
-         G5sg9a5LhWZ9SaEB8y5h+EKwpo8XkGT9rPgxOnv8vThmIas+puXGVsiU+USm6h0boqOh
-         wG6h4ETchDaSDXowyIGm616ASF84I9iUKawVtcLzXIpmsPsd2Q+MchOw0qSbSSbSX4qQ
-         kcWotPS0YpdO9ZXGVu5XFAFyHbg7vflEay2FC1lHqK2Le5u23cgxg4u/GghNjUXgK3f6
-         B4EGYYXI+Qab/hsz4U+PvGKgmwHU8OrgdzYfsyA1GKs8IomdiroLp8+9g3M/XpAEdDe5
-         Arcg==
+	s=arc-20240116; t=1722503235; c=relaxed/simple;
+	bh=oz+f2ExRuhr8sgqTuD8RIIayx9QHr6/sG8gtOY5Vzws=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nOBeYP7sLBaV97RN2Z39Fc18USF/X80PU5AFwbJxiQBIHGvTNdhADmhgA1CgEXWdUtXTdy0k6x2SrCzcuoWRaiqTq/9YNFgGcFxNsuE/Xxy1r2HqnAx5Zr/kqOR8r4qZsAU9MXev3XKIrrX4X66ARX6Zmsv66MSjYksh7Ba8T3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FBdubWV2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722503232;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mSKEfuB4n+/b+oxF1D4wGQsbWuy3r00dVzWZOwQpkNw=;
+	b=FBdubWV2cVUH0G3578SyqyvPPGUhsIYBsZo4hy5LyLRw+Z28Hc/iGVElaJ5Y0AUCWXt3LG
+	cUwkIBU8GiMsH6Z6getYR0WOHZdhNvD6cNiMtTqNxjxzv7YJT6tGj7z/CINV/VbFgb/bZv
+	32yy53C3qZR1bWKG9zTiOQeCjbHo0Tg=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-55-n98GteyNMaWvw1iSQuqjcg-1; Thu, 01 Aug 2024 05:07:11 -0400
+X-MC-Unique: n98GteyNMaWvw1iSQuqjcg-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-428087d1ddfso10434465e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:07:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722503226; x=1723108026;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1722503230; x=1723108030;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZBoY3AoVccb/INlrM3z9gGvON8IToRFWiibOBUz5W8=;
-        b=U+Dd4Bjsh6ZIC4HIONYMBtm2x7bj0ujuDqzcol86xZ6UASfqLcNwQOMTVFSYxJ5PpF
-         yukhNDxc4G/utKHLnlQDw95l83WASm7vccWCC6hXDvXnYQsu3D1ckWke56SvOI5Mrlcx
-         BBzJ6Ioj01IjmwV9krQuiRWWUrHnLLuTI4NQI9/+ZwaNlttAP46NAvPv/i/pS4pv7D/N
-         5jrEqPw5FNv+1DsNUTe8ngWz0DmJr8+hDamGaR+ThMozrFujMjL/uhA/XsjGAfvnd3+8
-         jkIakslSza07Yw1pqglosi7XmIjBLpawuFKM9noPq4Xxeohz6KS5EZbFRqyxMzaAwl0h
-         MJVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJPgXd7F/RgdR2Y9AV5LwM5qnHNcqeNJ068si1Pik+8xNS0ZtPycWkROc1m84YuWIh98o/9qw2MO961QYbkYh7eO9/4EWGs7IRyqBX
-X-Gm-Message-State: AOJu0Yx7eTLuG8odMJFEDV+lfeyBxYrZ1MPr9CwBLP1IWWSiWaJLzzuZ
-	ttj8KOK8ZPBUtGgITvu2/AjN7t73aM9f1E9ewrUJP0qoFGWxGT/l
-X-Google-Smtp-Source: AGHT+IFkXQXLFJ5X+Na5/W+NzBmIf8q3vSnukCimnlNwYhkXd1AhMX9KBCaqr0DDQZcpDbO7MU+hlA==
-X-Received: by 2002:a17:907:2d91:b0:a7d:340e:43a4 with SMTP id a640c23a62f3a-a7daf55e504mr102922866b.31.1722503225659;
-        Thu, 01 Aug 2024 02:07:05 -0700 (PDT)
-Received: from ?IPV6:2a04:cec0:1113:4afb:5fa3:8d9c:6e3d:1966? ([2a04:cec0:1113:4afb:5fa3:8d9c:6e3d:1966])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de06sm868138666b.71.2024.08.01.02.07.04
+        bh=mSKEfuB4n+/b+oxF1D4wGQsbWuy3r00dVzWZOwQpkNw=;
+        b=BenwWJz4DDNlkXvHIYuXDfeUfDVykMOTUk8/nnyNxXZbtKkZNra1mgzeJILU8XCHjJ
+         yE218Wcy4An7mOk3N0yxtMETDEZe33jVjA5G0hB259/FgvW1GP12YPaiZErtpnuoJXRy
+         BuMGFCtCHPr44B2NsCgnDeKWEXkTQQkZdP4sAygiulEzSVuS3Av6kkv+y1yGIjxKE/Wi
+         bilvwVFv/1ooy4ZdxsPOV4W3S/MxuW5XDv0QYQ7B9iWXT1q9DHsuKzIfGmk1DYNM+S7r
+         Yam+2nlxD8xf4y90GMkMJWyo4YewNQznPPbHGPfz4ajc3ZbP6HilqvlrcqsMHByr9oks
+         pFJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwTM021l9Ksl7esv9sMoL1Jhq4LODKYFTzYeb5QHXM1xMDZj9vxCUU9JELLH0M5Qtk28fxjhnqjIM5Fm8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOKNs0AtEu8ViciVFEOhg882PztXeQ3zhurmkx+23usDBIe8TY
+	Fn6sCT9Iq8HjfhshvI3I/JZGSzM+p5xOpZ/Ve1MGiPzeZNqYLhGkJHPsdfT0s8yrEyKMH5ZjUdl
+	gze4oyj3Wx2kr9D/1FNE/CAhQmOf1lpaH9AOW9ZVPrfW+NRs/GGTXHrFWHwMh3w==
+X-Received: by 2002:a05:600c:3546:b0:427:9f6f:9c00 with SMTP id 5b1f17b1804b1-428b4aed78dmr9025865e9.6.1722503229899;
+        Thu, 01 Aug 2024 02:07:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFZ8Yo49UNfIIekEb+fzZKQGd2Ra6P+DX7ISYAX2XZE8+eSpcsrF+n5sZUOduN0j+FdCYDkzg==
+X-Received: by 2002:a05:600c:3546:b0:427:9f6f:9c00 with SMTP id 5b1f17b1804b1-428b4aed78dmr9025705e9.6.1722503229351;
+        Thu, 01 Aug 2024 02:07:09 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1712:4410:9110:ce28:b1de:d919? ([2a0d:3344:1712:4410:9110:ce28:b1de:d919])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baa9071sm49462285e9.13.2024.08.01.02.07.08
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 02:07:05 -0700 (PDT)
-Message-ID: <94ecd3a6-3a62-4be6-b384-c8237c818e98@gmail.com>
-Date: Thu, 1 Aug 2024 11:07:03 +0200
+        Thu, 01 Aug 2024 02:07:08 -0700 (PDT)
+Message-ID: <9b084601-9d64-4737-8c32-4c295aafd3df@redhat.com>
+Date: Thu, 1 Aug 2024 11:07:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,102 +81,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
-Subject: Re: [Linux-stm32] [PATCH RESEND v3 0/3] Update STM DSI PHY driver
-To: Yanjun Yang <yangyj.ee@gmail.com>,
- Philippe CORNU <philippe.cornu@foss.st.com>, yannick.fertre@foss.st.com
-Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240129104106.43141-1-raphael.gallais-pou@foss.st.com>
- <21f4d43d-4abd-4aca-7abb-7321bcfa0f1d@foss.st.com>
- <CAE8JAfy9NtBa--DnUt2AEZPFnvjU6idj8DqUbaeLaH0DMFvuhw@mail.gmail.com>
- <e059f157-ff9c-32cb-57a6-48f2331f2555@foss.st.com>
- <ZqeZEB9peRSQkOLZ@void.tail05c47.ts.net>
-Content-Language: en-US, fr
-In-Reply-To: <ZqeZEB9peRSQkOLZ@void.tail05c47.ts.net>
+Subject: Re: [PATCH net-next] net: skbuff: Skip early return in skb_unref when
+ debugging
+To: Breno Leitao <leitao@debian.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ leit@meta.com, Chris Mason <clm@fb.com>,
+ "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240729104741.370327-1-leitao@debian.org>
+ <e6b1f967-aaf4-47f4-be33-c981a7abc120@redhat.com>
+ <Zqoe9/TiETNQmb7z@gmail.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <Zqoe9/TiETNQmb7z@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-Le 29/07/2024 à 15:28, Yanjun Yang a écrit :
-> On Fri, Jul 26, 2024 at 09:55:35AM +0200, Philippe CORNU wrote:
->>
->>
->> On 7/22/24 10:38, Yanjun Yang wrote:
->>>
->>> This patch (commit id:185f99b614427360) seems to break the dsi of
->>> stm32f469 chip.
->>> I'm not familiar with the drm and the clock framework, maybe it's
->>> because there is no
->>>    "ck_dsi_phy" defined for stm32f469.
->>> PS:  Sorry for receiving multiple copies of this email, I forgot to
->>> use plain text mode last time.
->>>
->>
->> Hi,
->> Thank you for letting us know that there was this error. We should have
->> detected this before merging, really sorry for the problems caused by this
->> patch. We will investigate the issue and get back to you as soon as
->> possible. In the meantime, I think you can revert this patch in your git
->> tree.
->>
->> Philippe :-)
->>
+On 7/31/24 13:24, Breno Leitao wrote:
+> Hello Paolo,
 > 
-> Hi,
-Hi,
-
-FYI
-DSI clock tree for stm32f469 can be found here:
-https://www.st.com/resource/en/reference_manual/rm0386-stm32f469xx-and-stm32f479xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
-
-Refer to Figure 17: DSI clock tree.
-
-After some research I think "ck_dsi_phy" was introduced in stm32h7 
-platforms. There is a mux which interfaces between various clocks (among 
-ck_hse) and the byte lane clock. stm32f469 has a much simpler clock tree 
-in which we did not bother to implement this "go-between" clock, even 
-though they is an equivalent of the mux.
-
-> After some testing, the reason behind my problem is the parent's name of
-> 'clk_dsi_phy' for stm32f4 is 'clk-hse' other than 'ck_hse'.  I don't
-> know which is the better why to fix it:
-> 1. Change "ck_hse" to "clk-hse" in where "clk_dsi_phy" is defined.
-Doing so will definitely break other platforms.
-
-> 2. Use "pll_in_khz = clk_get_rate(dsi->pllref_clk) / 1000" instead of
->     "pll_in_khz = (unsigned int)(parent_rate / 1000)" when get the clock
->     rate.
-dsi->pllref_clk refers to the HSE clock if you take a look in the 
-device-tree. This is the reason why this work on your setup. I doubt 
-nevertheless that it wouldn't work on other platforms. But this would be 
-a semantic nonsense, since the DSI byte lane clock is not always derived 
-from HSE clock on other platforms.
-
-Looking again at the clk-stm32f4 driver and the DSI clock tree linked, 
-we can maybe implement the desired clock even if it is not represented 
-on the diagram.
-
-Eventually if this solution does not work we will go to the second 
-solution you suggested and we will test it on all platforms.
-
-@Philippe, @Yannick
-Do you agree with this workflow ?
-
-Regards,
-Raphaël
-
-
+> On Tue, Jul 30, 2024 at 11:38:38AM +0200, Paolo Abeni wrote:
+>> Could you please benchmark such scenario before and after this patch?
 > 
-> Both method can fix my problem. The first one might break other
-> platforms. Maybe I should change the clock name of 'clk-hse'. However,
-> I can't find the defination of this clock name for stm32f4.
+> I've tested it on a 18-core Xeon D-2191A host, and I haven't found any
+> different in either TX/RX in TCP or UDP. At the same time, I must admit
+> that I have very low confidence in my tests.
+> 
+> I run the following tests for 10x on the same machine, just changing my
+> patch, and I getting the simple average of these 10 iterations. This is
+> what I am doing for TCP and UDP:
+> 
+> TCP:
+> 	# iperf -s &
+> 	# iperf -u -c localhost
+> 
+> 	Output: 16.5 Gbits/sec
+> 
+> UDP:
+> 	# iperf -s -u &
+> 	# iperf -u -c localhost
+> 
+> 	Output: 1.05 Mbits/sec
+> 
+> I don't know how to explain why UDP numbers are so low. I am happy to
+> run different tests, if you have any other recommendation.
+
+Beyond the '-b 0' argument, as noted by Jason, you need to do manual CPU 
+pinning of both the sender and the receiver. Additionally, to really 
+flood the receiver you likely have to place the sender on a different host.
+
+In any case, given all the prior discussion, I don't intend to block 
+this patch.
+
+Cheers,
+
+Paolo
+
 
