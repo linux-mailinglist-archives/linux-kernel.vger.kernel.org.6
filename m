@@ -1,202 +1,88 @@
-Return-Path: <linux-kernel+bounces-271223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC62944B3E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:27:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F600944B41
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:27:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFD581F2267A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:27:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0884D2867C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47D401A01BC;
-	Thu,  1 Aug 2024 12:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471EF1A072B;
+	Thu,  1 Aug 2024 12:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0HL747l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Mi560tEj"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A3E17084F;
-	Thu,  1 Aug 2024 12:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC3F18950D;
+	Thu,  1 Aug 2024 12:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515215; cv=none; b=HBnttaYMI8XZVqkKf3tFMx7hqk5kOzdMD4LR2cjexWlNM6wh1050NezvXY00kEH55Ib8zYtsgKm7+OcB0rciy+psakwWU9OwY+lQMHroYeDUc8cd+Qgo08QbaoZTiBk/xVdZDvqA8qTmIS7UDoG/Ss0HOaVBUAHFo+NIJGBBGwI=
+	t=1722515226; cv=none; b=NR/xlcZNrS1UR80k8GF2uG7gfTvzrNOIbRW9pB8ne82B8vTIuLczplpfhCpr+M0YozlYxP1YccnUC8ycAulZS8E+fqXus6vhj/LtVZblC4qk+NgrgegrDee/BGMWqNP8PaSn0rYVndMb0nQW3AY+yhqpI0Cqnd9JY8LPTGtfg1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515215; c=relaxed/simple;
-	bh=ko15EhQwm6KYZ8dfClKPHYYoNPMirgGgRV4mpM7ac0o=;
+	s=arc-20240116; t=1722515226; c=relaxed/simple;
+	bh=mhZTIzPPGSVg8xR2fPDWbNDYLA1pKJOKdUzhAdIMMPg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WywwV4HjzySaDLW3s8ye9p/DKWgQXDyVogUb6+zPAOEfx3nD3egDq/lQX22UxNEu6Z06swjhyqfcHAicSnWV9FcSWEaLnnbQfM36NpYg0DNnQBmF2va8dT5TAGHNgB70MZ588YbLWbdoOGHPNbDwpy4lsnn4HtOdZrfB9y/MyA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0HL747l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3896AC32786;
-	Thu,  1 Aug 2024 12:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722515215;
-	bh=ko15EhQwm6KYZ8dfClKPHYYoNPMirgGgRV4mpM7ac0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K0HL747ltC9X04VfLIHkN2XEFIWEwV3eTrltLBqTO1zz+S/IZ74h5EtpjMzxEMW96
-	 6k47pjMBx4e44sGBKY7a7CmH59BcERjCr2Z7TWywCGJLDE+htE0tj+4S5tfchZjrxW
-	 0WTR8xN3r9+RQrd4jsaVKAr1o8xji2uaWh0xeXFRbMSkmRrDn74RdUdZIqjXHSLxeK
-	 c95I/gwN7rkxOJL02U3LKzubI23/zcP3tH83E4hVqAdf+Oyi90dOXl1F7r5lFUc0K2
-	 gPPQsfY9m6yhw+ioXp6Is5A7Fn3GQ5m3acjvqEcmZDCS5332KCPmhXH5+B6PybSxpp
-	 DGo7zJ6S/a/uA==
-Date: Thu, 1 Aug 2024 14:26:46 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 01/25] rust: alloc: add `Allocator` trait
-Message-ID: <Zqt_BuyoUk12m61Q@pollux>
-References: <20240801000641.1882-1-dakr@kernel.org>
- <20240801000641.1882-2-dakr@kernel.org>
- <CAH5fLgj5xf4QdDU7yWrqUjcmJw4Rqe0-UzesHLhfQRvPqAv8eA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GESh7V+rVQ0Zc8YqznmNDtrOImGm+qIZuw+qU0CjkLaWGppP2pA+FDEnAI7DBaMQJd7NUU2e0HH3c8M2raYRSLRBlWa8Vh0UkVXYa9LrXnDpuTKWYQw5r9TghddhQypwt0Pv+25809yTDiuQ76PY1wmQR0+Jv1rnXQbf7ZiykAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Mi560tEj; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=uFT718APO6F3v1BZlCEjnLz6LfcNBZUUyqBQTFVpYHk=; b=Mi560tEjjru7xoD/nC9LGpedyX
+	5MF3iZBHnhlbJbzmApDDbkdO1hW0upqNBC+Lv2F/X8eJr5aZbD8H5mRzcJzce+XuB5SqwQozkvBmw
+	iJaPW/8B2T636CakzykvlA4bEcltKH4yAng2ltaeWgJVSZ4aBGbLYbUcAV3OYhrE0vg4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZUtT-003ly3-Gm; Thu, 01 Aug 2024 14:26:55 +0200
+Date: Thu, 1 Aug 2024 14:26:55 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next 08/10] net: hibmcge: Implement workqueue and
+ some ethtool_ops functions
+Message-ID: <f54fcc51-3a38-49b6-be14-24a7cdcfdada@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-9-shaojijie@huawei.com>
+ <b20b5d68-2dab-403c-b37b-084218e001bc@lunn.ch>
+ <c44a5759-855a-4a8c-a4d3-d37e16fdebdc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgj5xf4QdDU7yWrqUjcmJw4Rqe0-UzesHLhfQRvPqAv8eA@mail.gmail.com>
+In-Reply-To: <c44a5759-855a-4a8c-a4d3-d37e16fdebdc@huawei.com>
 
-On Thu, Aug 01, 2024 at 10:19:41AM +0200, Alice Ryhl wrote:
-> On Thu, Aug 1, 2024 at 2:07 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > Add a kernel specific `Allocator` trait, that in contrast to the one in
-> > Rust's core library doesn't require unstable features and supports GFP
-> > flags.
-> >
-> > Subsequent patches add the following trait implementors: `Kmalloc`,
-> > `Vmalloc` and `KVmalloc`.
-> >
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > Why do you need this? phylib will poll the PHY once per second and
+> > call the adjust_link callback whenever the link changes state.
 > 
-> It could be nice to mention that the design without `self` parameters
-> is necessary for compatibility with #[derive(SmartPointer)].
+> However, we hope that the network port can be linked only when
+> the PHY and MAC are linked.
+> The adjust_link callback can ensure that the PHY status is normal,
+> but cannot ensure that the MAC address is linked.
 
-Agreed, will do.
+So why would the SGMII link be down? My experience with SGMII is that
+the link comes up as soon as both ends have power. You are also not
+using in-band signalling, you configure the MAC based on the
+adjust_link callback.
 
-> 
-> >  rust/kernel/alloc.rs | 73 ++++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 73 insertions(+)
-> >
-> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> > index 1966bd407017..b79dd2c49277 100644
-> > --- a/rust/kernel/alloc.rs
-> > +++ b/rust/kernel/alloc.rs
-> > @@ -11,6 +11,7 @@
-> >  /// Indicates an allocation error.
-> >  #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-> >  pub struct AllocError;
-> > +use core::{alloc::Layout, ptr::NonNull};
-> >
-> >  /// Flags to be used when allocating memory.
-> >  ///
-> > @@ -86,3 +87,75 @@ pub mod flags {
-> >      /// small allocations.
-> >      pub const GFP_NOWAIT: Flags = Flags(bindings::GFP_NOWAIT);
-> >  }
-> > +
-> > +/// The kernel's [`Allocator`] trait.
-> > +///
-> > +/// An implementation of [`Allocator`] can allocate, re-allocate and free memory buffer described
-> > +/// via [`Layout`].
-> > +///
-> > +/// [`Allocator`] is designed to be implemented as a ZST; [`Allocator`] functions do not operate on
-> > +/// an object instance.
-> > +///
-> > +/// # Safety
-> > +///
-> > +/// Memory returned from an allocator must point to a valid memory buffer and remain valid until
-> > +/// it is explicitly freed.
-> > +///
-> > +/// Any pointer to a memory buffer which is currently allocated must be valid to be passed to any
-> > +/// other [`Allocator`] function. The same applies for a NULL pointer.
-> > +///
-> > +/// If `realloc` is called with:
-> > +///   - a size of zero, the given memory allocation, if any, must be freed
-> > +///   - a NULL pointer, a new memory allocation must be created
-> > +pub unsafe trait Allocator {
-> > +    /// Allocate memory based on `layout` and `flags`.
-> > +    ///
-> > +    /// On success, returns a buffer represented as `NonNull<[u8]>` that satisfies the layout
-> > +    /// constraints (i.e. minimum size and alignment as specified by `layout`).
-> > +    ///
-> > +    /// This function is equivalent to `realloc` when called with a NULL pointer.
-> > +    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
-> > +        // SAFETY: Passing a NULL pointer to `realloc` is valid by it's safety requirements and asks
-> > +        // for a new memory allocation.
-> > +        unsafe { Self::realloc(None, layout, flags) }
-> > +    }
-> > +
-> > +    /// Re-allocate an existing memory allocation to satisfy the requested `layout`. If the
-> > +    /// requested size is zero, `realloc` behaves equivalent to `free`.
-> > +    ///
-> > +    /// If the requested size is larger than the size of the existing allocation, a successful call
-> > +    /// to `realloc` guarantees that the new or grown buffer has at least `Layout::size` bytes, but
-> > +    /// may also be larger.
-> > +    ///
-> > +    /// If the requested size is smaller than the size of the existing allocation, `realloc` may or
-> > +    /// may not shrink the buffer; this is implementation specific to the allocator.
-> > +    ///
-> > +    /// On allocation failure, the existing buffer, if any, remains valid.
-> > +    ///
-> > +    /// The buffer is represented as `NonNull<[u8]>`.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// `ptr` must point to an existing and valid memory allocation created by this allocator
-> > +    /// instance.
-> > +    ///
-> > +    /// Additionally, `ptr` is allowed to be a NULL pointer; in this case a new memory allocation is
-> > +    /// created.
-> > +    unsafe fn realloc(
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError>;
-> 
-> Is it intentional that this allows you to change the alignment of an
-> allocation? If so, that could use a note in the docs.
+Basically, whenever you do something which no other driver does, you
+need to explain why. Do you see any other MAC driver using SGMII doing
+this?
 
-Yes, it's intentional and yes it really misses a note in the documentation.
-
-The idea is to allow a change of alignment as long as the new alignment is
-smaller than the old alignment.
-
-In terms of safety, it is the callers responsibility to ensure constant
-alignment throughout re-allocations (if required).
-
-> 
-> > +    /// Free an existing memory allocation.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// `ptr` must point to an existing and valid memory allocation created by this `Allocator`
-> > +    /// instance.
-> > +    unsafe fn free(ptr: NonNull<u8>) {
-> > +        // SAFETY: `ptr` is guaranteed to be previously allocated with this `Allocator` or NULL.
-> > +        // Calling `realloc` with a buffer size of zero, frees the buffer `ptr` points to.
-> > +        let _ = unsafe { Self::realloc(Some(ptr), Layout::new::<()>(), Flags(0)) };
-> > +    }
-> 
-> At the very least, the provided implementation of `free` changes the
-> alignment when it calls `realloc`.
-
-Yes, I think that's fine though. Hopefully no one attempts to use the memory
-anymore once `free` is being called.
-
-> 
-> Alice
-> 
+	Andrew
 
