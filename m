@@ -1,177 +1,221 @@
-Return-Path: <linux-kernel+bounces-271413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 560EF944DE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:22:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E53B944DE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8081F24A87
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF491F24F41
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBE01A4B2C;
-	Thu,  1 Aug 2024 14:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EC81A4B52;
+	Thu,  1 Aug 2024 14:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FVk1uT5v";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oMIStrT0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ja5VYown"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093C16DECD
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE481A489D;
+	Thu,  1 Aug 2024 14:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722522153; cv=none; b=ufMLS5JRnTOCFFC+vd1tgf+wEp/Q5r1NUnpdi76A8MjFmBq16EaG+JKkuO8ubQ+13zhRQrGEBSr+B1csLex7ggATLAY60xC71Z22uouI8oD5GiSEDneK8AmUWxS1bgsNxudNDAjUBSvtAc1AW/YYnKjVrKW5eBtoXMq5nQx90ZM=
+	t=1722522233; cv=none; b=jwgfMiGit6t71h9ZMzo+4vtmLav7rZK7BUV5821u00+Tl1IiOkgC3PK8Lp+v6OdgJSAvSyka5kUvKLHkHolFzJt628Rj2Z6cYgkT6x7Fx041tG8tqf3LKK8L/5mJAGyj/r8FGKupeTaSDilWzWIeaYjEodQzBQpGAzQ0eda1/4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722522153; c=relaxed/simple;
-	bh=WXlbsm8Ymu+R94UIcr3gCVF/oF+DZOLLyvULEUPqkf4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=akv+2r/3qQ7j2MywFAMja7bIpXDVoKBiR3FkjjD+G1PRC3Y12JmRS26bU7FNDM2XKivKPGFpqMFhq6LX1HDldtC0DKocBSqXlpgda6S+XrwvfEIF4zfhkkq4yfGgvj5uXrVZ/utNjFu6AAGC0f+S9RyYfE20E48Ey4Dp6/WusF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FVk1uT5v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oMIStrT0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722522149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaHaU3IkY2Jf1nPS7uPoGLEx+hVc1fctaQkNhB2/9zE=;
-	b=FVk1uT5vVL21I6rdp17UGa1sAr4wYJovTjrvptv6iJEzCGkpqEMRxrqmw0NOp0AbQL+hFJ
-	tFrZ9L4R/rM1TIJwmpXZz3IJ65f150A7YCqqc8rmSuj8HmIaHr/DRAtyUV9RM27rr6AtAW
-	LsiARXfdV6Oru4vGI+/9zSzg6gpgmSyHIk+IBq34gTKc6zX2JM8b5FXoD7SH9vXdqf87O2
-	OU+5MRae1vCKjos6I6TihIteOXfrIBgA6n1wOBuhw5svnXbtxx8MeChLWs4a8Yf2Ph5KTj
-	U9LMFauHmLqYbGa+eE2S35jgywD2MGCHjT0OqZjTphUC/hzWZ5AODN8WSxqzbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722522149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gaHaU3IkY2Jf1nPS7uPoGLEx+hVc1fctaQkNhB2/9zE=;
-	b=oMIStrT0nlaGgGZcECQKvH3QlDQj6GhwbCrnUbyoCpm7RRYGgr1jc/3QhAgCs0zCbNUNwJ
-	7Fdy5+WjY32+lhBw==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org
-Subject: Re: preffer_ofload param: was: Re: [PATCH printk v3 11/19] printk:
- nbcon: Rely on kthreads for normal operation
-In-Reply-To: <ZqpAJgKeB0cIlTg7@pathway.suse.cz>
-References: <20240722171939.3349410-1-john.ogness@linutronix.de>
- <20240722171939.3349410-12-john.ogness@linutronix.de>
- <ZqpAJgKeB0cIlTg7@pathway.suse.cz>
-Date: Thu, 01 Aug 2024 16:28:28 +0206
-Message-ID: <8734noz5jv.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1722522233; c=relaxed/simple;
+	bh=h8imtv17rvrOvyKv4gWYuT6nIHwd6hUakN89NTUAn6g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AqeUwYicAvoR5IZpou7K9lVoGuPRwuaLkptbT7epjXhkG870PZOaXc+G3gTEHODsU2VxVARJjLCRFdDuVRgqXhMc6j32HAMOV/fiXeI/F4cOUXISTAfMxSz1VjtKP7euOcgQcMcJFM/Vbj2m0TY3bfvMBgqi2SMCZNWhflnQTKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ja5VYown; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D74C32786;
+	Thu,  1 Aug 2024 14:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722522232;
+	bh=h8imtv17rvrOvyKv4gWYuT6nIHwd6hUakN89NTUAn6g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ja5VYownUqOdOYkYE72eDukM3bmYiamU/KPQL0ZfT3UItNb57INa8foQEpDTSn5H7
+	 KFMuWQcWqBHH4UbKZMhZ/zxhQWOPQ7EuMUHUIyZHXm5DPSQfl1H+eFBuFNHZ82YsXM
+	 I+PcDYIoGl76Wg0U63W86ZOe/jr62yN+qugsm8UeZArXPBSKclJlk8qOm7PjPGgARm
+	 sfuBvFDolYotGzQ6/QJC54S4oPhzvhMrzUT7cPtA3nIgdDmG9wuV0TbCbWIU9XJVv3
+	 P2i9BUjIfYqojvjp2NDBWGdJItwall8rxsY7kpTT38PNtJ5ePGneA0G5+C7ZYC+A7q
+	 WuKfufUPglQ4A==
+Message-ID: <ea7fd29c-c320-45b7-8da6-4819ec76c543@kernel.org>
+Date: Thu, 1 Aug 2024 16:23:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: net: motorcomm: Add chip mode cfg
+To: "Frank.Sae" <Frank.Sae@motor-comm.com>, andrew@lunn.ch,
+ hkallweit1@gmail.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, linux@armlinux.org.uk
+Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yuanlai.cui@motor-comm.com,
+ hua.sun@motor-comm.com, xiaoyong.li@motor-comm.com,
+ suting.hu@motor-comm.com, jie.han@motor-comm.com
+References: <20240727092009.1108640-1-Frank.Sae@motor-comm.com>
+ <ac84b12f-ae91-4a2f-a5f7-88febd13911c@kernel.org>
+ <f18fa949-b217-4373-82c4-7981872446b4@motor-comm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <f18fa949-b217-4373-82c4-7981872446b4@motor-comm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-07-31, Petr Mladek <pmladek@suse.com> wrote:
->> @@ -1511,10 +1511,10 @@ static void nbcon_atomic_flush_pending_con(struct console *con, u64 stop_seq,
->>  
->>  	/*
->>  	 * If flushing was successful but more records are available, this
->> -	 * context must flush those remaining records because there is no
->> -	 * other context that will do it.
->> +	 * context must flush those remaining records if the printer thread
->> +	 * is not available do it.
->>  	 */
->> -	printk_get_console_flush_type(&ft, false);
->> +	printk_get_console_flush_type(&ft, true);
->
-> Hmm, it is a bit weird that we change the value even though it does
-> not affect the behavior. The parameter @prefer_offload affects only
-> the legacy loop.
+On 01/08/2024 11:49, Frank.Sae wrote:
+> 
+> On 7/27/24 02:25, Krzysztof Kozlowski wrote:
+>> On 27/07/2024 11:20, Frank.Sae wrote:
+>>>   The motorcomm phy (yt8821) supports the ability to
+>>>   config the chip mode of serdes.
+>>>   The yt8821 serdes could be set to AUTO_BX2500_SGMII or
+>>>   FORCE_BX2500.
+>>>   In AUTO_BX2500_SGMII mode, SerDes
+>>>   speed is determined by UTP, if UTP link up
+>>>   at 2.5GBASE-T, SerDes will work as
+>>>   2500BASE-X, if UTP link up at
+>>>   1000BASE-T/100BASE-Tx/10BASE-T, SerDes will work
+>>>   as SGMII.
+>>>   In FORCE_BX2500, SerDes always works
+>>>   as 2500BASE-X.
+>> Very weird wrapping.
+>>
+>> Please wrap commit message according to Linux coding style / submission
+>> process (neither too early nor over the limit):
+>> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+>>
+>>> Signed-off-by: Frank.Sae<Frank.Sae@motor-comm.com>
+>> Didn't you copy user-name as you name?
+> 
+> sorry, not understand your mean.
 
-For nbcon consoles, prefer_offload is really only annotating the
-intentions. In this case, nbcon_atomic_flush_pending_con() is interested
-in knowing if kthread printer is available, thus using
-prefer_offload=true.
+Does your ID (e.g. passport) has exactly that name? With dot? Really?
 
-If the query yields ft.nbcon_atomic set, it means that the kthread
-printer is _not_ available (nbcon_atomic and nbcon_offload are
-exclusive) and it can (and must) handle its flushing responsibilities
-directly (immediately, using the atomic callbacks).
+> 
+>>> ---
+>>>   .../bindings/net/motorcomm,yt8xxx.yaml          | 17 +++++++++++++++++
+>>>   1 file changed, 17 insertions(+)
+>> Also, your threading is completely broken. Use git send-email or b4.
+> 
+> sorry, not understand your mean of threading broken. the patch used git
+> send-email.
 
-You might ask, why does it not check ft.nbcon_offload? Although that
-would tell it that the kthread is not available, it does not imply that
-atomic printing is allowed. In order to see if atomic printing is
-allowed, it would need to check ft.nbcon_atomic. And since the two are
-exclusive, really it is enough just to check ft.nbcon_atomic. If
-ft.nbcon_atomic is not set, either the kthread is available or there is
-nothing the nbcon console can do about it anyway (for example, it must
-rely on the legacy loop to handle it).
+Email threading is completely broken. It means all reviewers see it as
+complete unrelated emails which makes any review annoyingly more difficult.
 
-I suppose it is wrong that nbcon_atomic_flush_pending_con(false) will
-set ft.nbcon_offload if the kthreads are available. I would fix that.
 
-> IMHO, __wake_up_klogd() is the only location where we really need
-> to know if there are any messages for the legacy loop, for example,
-> when called from printk_deferred().
->
-> It should not be needed in other situations because it there
-> is always __pr_flush() or console_unlock() which would flush
-> the legacy consoles directly anyway.
->
-> => I suggest to
->
-> 1. Remove @prefer_offload parameter from printk_get_console_flush_type
->
-> 2. Update __wake_up_klogd() to check both ft.legacy_offload and
->    ft.legacy_direct, like:
->
-> 	printk_get_console_flush_type(&ft);
-> 	if (!ft.legacy_offload && !ft.legacy_direct)
-> 		val &= ~PRINTK_PENDING_OUTPUT;
->
->
-> NOTE: I actually suggested to use in vprintk_emit():
->
-> 	printk_get_console_flush_type(&ft, deffer_legacy);
->
->       But it can be done even without this parameter. Like it
->       is done in this version of the patchset.
+> 
+> 
+>>> diff --git a/Documentation/devicetree/bindings/net/motorcomm,yt8xxx.yaml b/Documentation/devicetree/bindings/net/motorcomm,yt8xxx.yaml
+>>> index 26688e2302ea..ba34260f889d 100644
+>>> --- a/Documentation/devicetree/bindings/net/motorcomm,yt8xxx.yaml
+>>> +++ b/Documentation/devicetree/bindings/net/motorcomm,yt8xxx.yaml
+>>> @@ -110,6 +110,23 @@ properties:
+>>>         Transmit PHY Clock delay train configuration when speed is 1000Mbps.
+>>>       type: boolean
+>>>   
+>>> +  motorcomm,chip-mode:
+>>> +    description: |
+>>> +      Only for yt8821 2.5G phy, it supports two chip working modes,
+>> Then allOf:if:then disallowing it for the other variant?
+> 
+> sorry, not understand your mean.
 
-I understand what you are saying. But I don't like it. :-)
+So you did not understand anything from any comments?
 
-It would mean that functions only interested in offloading must check
-direct. And that direct and offload are no longer exclusive. IMHO this
-is a hack. The whole point of printk_get_console_flush_type() is so that
-the flusher does not need any special code to figure out what to do.
+You miss if:then: block which disallows this for other chips. You claim
+only one device supports it, so why the property should be valid for
+other devices?
 
-If the flusher is only interested in offloaded flushing capabilities, it
-should be able to query that. We could wrap things into macros to make
-it clearer, but it might get a bit ugly with the efficience (depending
-on how well compilers can optimize the macro usage):
 
-#define is_nbcon_offload_available() ({			\
-	struct console_flush_type ft;			\
-	printk_get_console_flush_type(&ft, true);	\
-	ft.nbcon_offload;				\
-})
+> 
+> 
+>>> +      one is AUTO_BX2500_SGMII, the other is FORCE_BX2500.
+>>> +      If this property is not set in device tree node then driver
+>>> +      selects chip mode FORCE_BX2500 by default.
+>> Don't repeat constraints in free form text.
+>>
+>>> +      0: AUTO_BX2500_SGMII
+>>> +      1: FORCE_BX2500
+>>> +      In AUTO_BX2500_SGMII mode, serdes speed is determined by UTP,
+>>> +      if UTP link up at 2.5GBASE-T, serdes will work as 2500BASE-X,
+>>> +      if UTP link up at 1000BASE-T/100BASE-Tx/10BASE-T, serdes will
+>>> +      work as SGMII.
+>>> +      In FORCE_BX2500 mode, serdes always works as 2500BASE-X.
+>>
+>> Explain why this is even needed and why "auto" is not correct in all
+>> cases. In commit msg or property description.
+> 
+> yt8821 phy does not support strapping to config the serdes mode, so config the
+> serdes mode by dts instead.
+> 
+> even if auto 2500base-x serdes mode is default mode after phy hard reset, and
+> auto as default must be make sense, but from most our customers's feedback,
+> force 2500base-x serdes mode is used in project usually to adapt to mac's serdes
+> settings. for customer's convenience and use simplicity, force 2500base-x serdes
+> mode selected as default here.
 
-#define is_nbcon_atomic_available() ({			\
-	struct console_flush_type ft;			\
-	printk_get_console_flush_type(&ft, false);	\
-	ft.nbcon_atomic;				\
-})
+Sorry, this is not a proper sentence and I cannot parse it.
 
-And then this code looks like:
+> 
+> 
+>>> +    $ref: /schemas/types.yaml#/definitions/uint8
+>> Make it a string, not uint8.
+>>
+> why do you suggest string, the property value(uint8) will be wrote to phy
+> register.
 
-if (prb_read_valid(prb, nbcon_seq_read(con), NULL)) &&
-    !is_nbcon_offload_available() &&
-    is_nbcon_atomic_available()) {
-	/* flush directly using atomic callback */
-}
+Because it is much more readable. I don't care about your phy register.
 
-I have backported the printk_get_console_flush_type() macro to the
-atomic series for v7. I would like to keep @prefer_offload and I will
-try to add comments to clarify why the different query types are used.
+Best regards,
+Krzysztof
 
-John
 
