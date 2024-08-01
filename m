@@ -1,114 +1,108 @@
-Return-Path: <linux-kernel+bounces-271587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D672D945062
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:17:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C378B945066
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13C711C257FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:17:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F5F01F26953
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA9A1B3F23;
-	Thu,  1 Aug 2024 16:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84F21B3F12;
+	Thu,  1 Aug 2024 16:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qv1QDul0"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="XMOlUaM5"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCA313B590;
-	Thu,  1 Aug 2024 16:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BF41D696;
+	Thu,  1 Aug 2024 16:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722529053; cv=none; b=bpkSlzfH1THAe1WiI90pFI2mm6zNeeu20qzLHzeTVsFD3tvaWOQ/Iv3hiLcIDI+l9dh+9n6ss5PyHh3W1XsE3DcVGo+Ep6v2wAP7UoAMQX12gGJpqItTbatgsfmgFE2EDbptiF75W1BWMd0CEkjB+lyFYzux7NZaAfOTrYOVIR0=
+	t=1722529256; cv=none; b=MiYNEuBYm7AfTrFJibPbd4SapFtvUHVBmPvN3t9EzESy0K6AJs8UkB4G0bcpIaBHSYTSJQejZmJ8teoOfVXpPzAtEJlq6nu4ICHnTLlwVxzk1n7AXJ7qIdwKdvkzeopVTxlMhskbKq6fU3I1zMqCwJDJdH5yhsQ9E1OAE3eNIPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722529053; c=relaxed/simple;
-	bh=w/Lchd6acSPY3kYVpTQ6vee+f1StWE9wgHFpNEC4tv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RYiLO1PziOCDcFZCuyFzbwdLskJeikAH0a+hsdTL13KY0Zvf4IcWZlBpqohWgbZLhxIeZluutWv2HzV6hVFfCjKZsncOS/l1+tfe3huEX9jO6Fahd2T+6hlFza2CxOqyhtpOEg/MdDh7aqBGc3s2Pr/JgfGstC2JtqQM2Mdsszs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qv1QDul0; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280bca3960so48054475e9.3;
-        Thu, 01 Aug 2024 09:17:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722529050; x=1723133850; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQTuU6qR13EFs2NHQ6BL0OXr6g/v/sER4c6CH9DF12Q=;
-        b=Qv1QDul0A6zL+wXXEypQrDuEeQgrUgvGQnMlhjmgMX/wqAgMrhIY5j5JWwPLmaoKD5
-         FV4Ky9Cm7OV5RKuQes03Yvfhm82WhghTl7oF4LiQP3HNo+Q89i2hzC/HzYoKf+bNjljx
-         HVu33lR9jvQjIAcUJpPNU5TZ/zv0ElI/wmd9j8XAW3ZrZrV3ZMrxre6IbByUEUgpUbGw
-         dW4dg5TAhmugioTDlzt/14iPcGQvgN7DxwSBeZjN5KzlPphvtX7n1vdBlUj6hnHyxghj
-         iWMLmue1Y//JYtNk8QyW+GtDk151ZOTqElPwhBoj8vrTQI9D+KE5gflFyD15TroZbPe4
-         ftbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722529050; x=1723133850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wQTuU6qR13EFs2NHQ6BL0OXr6g/v/sER4c6CH9DF12Q=;
-        b=Q4uVoDgjNiGYdsyiKzBbw9+SsWsu59eQzGofeiMBiPj1CsQYq4Pa5jwm5Lhi4bMaza
-         kTS6gKxz9Nhdd09ceduXBpx5mYe+HeVhe4WpDxbSuGu4ZZsfW7QTMVGovqd7bwHZwX8A
-         UIjj4f9jZmpf5HC7U38XePIhrgvtaHWlBkuyHbRWM9OtvrpCTK3KxYjiEbKXJDomPHfT
-         SCxxhVET8g4WtOUFnrm4qZMlv2l5cLjktAVgdarEfWdegDzf74waHvDD48NWc2KZ/gIy
-         mqF/dp0KsyC8hgu8fhKCZ7V71IKAI86W9YeSmXpw/9q1zxgjaJ0u7rKL/IqPFlT8OYna
-         dvAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdW81aSBTgJSEDMmX4JNqKBGUVS6ZFCkdiiWyn62LF6xgc/Wh2QFJVPJDw38y3F95D6uPalEknBy4MNVH8T1N1YBL5HbzbgXdLhFiyhbAp6F2uh95669ggthrfIOtSLfrxjmxV
-X-Gm-Message-State: AOJu0Yzx+yn72N7cZTJL11jac0n3JiF5XFDuKICr7U92y6zpHe/RVeZe
-	ZjgZ5vpFz7E5kqA9TEohTwholSEHaFt3ylgi2qg4j3/ryzIvwgFq
-X-Google-Smtp-Source: AGHT+IGuLHUEFnctKFyPwjPEKmH5d3EB5yKodwzaywc+e/ly12Fwykc2aBaSwkWpDaN1Zd26GPaDsw==
-X-Received: by 2002:a05:600c:524f:b0:428:14b6:ce32 with SMTP id 5b1f17b1804b1-428e6aefb96mr3406355e9.9.1722529050114;
-        Thu, 01 Aug 2024 09:17:30 -0700 (PDT)
-Received: from skbuf ([188.25.135.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6d6b935sm2036285e9.6.2024.08.01.09.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:17:29 -0700 (PDT)
-Date: Thu, 1 Aug 2024 19:17:26 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1 0/5] net: stmmac: FPE via ethtool + tc
-Message-ID: <20240801161726.mhyv6af43ync7q56@skbuf>
-References: <cover.1722421644.git.0x1207@gmail.com>
- <20240801160224.4f54tanxs5dz5hwq@skbuf>
+	s=arc-20240116; t=1722529256; c=relaxed/simple;
+	bh=AV4j/NxpeNbE2wHcTX9p8WSiDIp04m+LcerB6SAq9ko=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N4bMohZgDxZt/vLV/Pua/U56Na9h5iEgA1lBZxZ0v5a/wgPSXQZVbxoAV0bXugWfgV1Ges3v9WIGJoY+vLiuHcMpAo3D9+VtqRLzu5h+veGGz6/VHmuMWtt9Gk/3ztNbWvbNMZZcAJ59cMY1ykzZC611l7m7++iPqyCliAPZiD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=XMOlUaM5; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4WZZ2W6LJ2z6ClY9G;
+	Thu,  1 Aug 2024 16:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1722529248; x=1725121249; bh=bqwtgbTBpT4dQI8XCJolG60P
+	zzEIHELp+3Ld7b5xNf8=; b=XMOlUaM50uBfH0qr40a0PaFZl7KnuOohrqkxu8+L
+	1veRNvPOiTL7sFqtlHo4N+G2B25VG6j2ax5vA/ZCUfCqKNnZvB/CYnc3GDwykMuZ
+	UMcAe5Su7eWXRDIpEJL2M38BETEnEF71GON/yD2hccFUu7/XJAloksWmoTHtUBt/
+	kH82GU71inKjeII7/T3/9CO02CvENtVUP6hCVrSVtRn6vNTq1l6jUO3ePxL1Be4x
+	YE4GA30sqJfA8MGH5x680q3lz6mDex7OhyHOkLaSMhPAMM3F8LCgibZpLEy/zs2g
+	8VScL7lvz93hzXtfpqEulm4k7lRYfRrZ6U5aC9p5AVJY+A==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id sdUIef_huBjj; Thu,  1 Aug 2024 16:20:48 +0000 (UTC)
+Received: from [IPV6:2a00:79e0:2e14:8:b0e8:3901:a8d2:924f] (unknown [104.135.204.83])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4WZZ2S0PNVz6ClbJB;
+	Thu,  1 Aug 2024 16:20:47 +0000 (UTC)
+Message-ID: <98763329-897a-4f91-ab08-62bbd6afc8ec@acm.org>
+Date: Thu, 1 Aug 2024 09:20:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801160224.4f54tanxs5dz5hwq@skbuf>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
+To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca,
+ leon@kernel.org, nab@risingtidesystems.com
+Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+ linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
+References: <20240801123253.2908831-1-huangjunxian6@hisilicon.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240801123253.2908831-1-huangjunxian6@hisilicon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 07:02:24PM +0300, Vladimir Oltean wrote:
-> Hi Furong,
-> 
-> On Wed, Jul 31, 2024 at 06:43:11PM +0800, Furong Xu wrote:
-> > Move the Frame Preemption(FPE) over to the new standard API which uses
-> > ethtool-mm/tc-mqprio/tc-taprio.
-> 
-> Thanks for working on this! I will review it soon.
-> 
-> On the DWMAC 5.10a that you've tested, were other patches also necessary?
-> What is the status of the kselftest? Does it pass? Can you post its
-> output as part of the cover letter?
+On 8/1/24 5:32 AM, Junxian Huang wrote:
+> Besides, exchange the order of INIT_WORK() and srpt_refresh_port()
+> in srpt_add_one(), so that when srpt_refresh_port() failed, there
+> is no need to cancel the work in this iteration.
 
-Can you additionally test FPE across a suspend/resume cycle, in 2 cases:
-- FPE was enabled before suspend, make sure it runs again automatically
-  after resume, and that there are no deadlock issues (to be confirmed
-  with CONFIG_PROVE_LOCKING)
-- FPE was disabled before suspend, make sure it can be enabled successfully
-  after resume
+The above description is wrong. There is no need to cancel work after
+INIT_WORK() has been called if the work has never been queued. Hence,
+moving the INIT_WORK() call is not necessary.
+
+> @@ -3220,7 +3221,6 @@ static int srpt_add_one(struct ib_device *device)
+>   		sport->port_attrib.srp_max_rsp_size = DEFAULT_MAX_RSP_SIZE;
+>   		sport->port_attrib.srp_sq_size = DEF_SRPT_SQ_SIZE;
+>   		sport->port_attrib.use_srq = false;
+> -		INIT_WORK(&sport->work, srpt_refresh_port_work);
+>   
+>   		ret = srpt_refresh_port(sport);
+>   		if (ret) {
+> @@ -3229,6 +3229,8 @@ static int srpt_add_one(struct ib_device *device)
+>   			i--;
+>   			goto err_port;
+>   		}
+> +
+> +		INIT_WORK(&sport->work, srpt_refresh_port_work);
+>   	}
+
+I don't think that this change is necessary.
+
+Bart.
+
 
