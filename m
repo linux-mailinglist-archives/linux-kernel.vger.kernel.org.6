@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-270263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AF4943DCE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:09:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95188943DD1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77BDF1C2218D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5F691C222F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005401CEE1B;
-	Thu,  1 Aug 2024 00:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0EE11CEE38;
+	Thu,  1 Aug 2024 00:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mty3YoGN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d2p5t8jG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5751CEE10;
-	Thu,  1 Aug 2024 00:29:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9EF1CEE10;
+	Thu,  1 Aug 2024 00:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722472160; cv=none; b=CSOXHbG8vmmhsSh7y5A3u85VAEHYIdJUZQevNRA0fyUhTo6WzeHDNBMKLXRxhCAbNzerGmVwjxYLtw3SmFvt1n5xzC1AXU/spFJkcNGGEmdoNvoOXdbesZOD0cHaxv0ebY+UmuHgjYu+mG/tuOTk492T626gH1+UDOBOkJbHyTo=
+	t=1722472164; cv=none; b=WgyCi8M+2neQieVXoSdAsbvMUUOIP1VFEookjFjZQ1LRMCB/4OrdJYNVAnX9H8xioa6l+3eliFMgQnmzgSx8FFRKdN4AYa3v1WaEze361e+xju9r71zzpzO0l7s+15LY7Yzb3H3tFVO+Xm4DeGXpZzDCNb0Ft9xpahnhmLpCmfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722472160; c=relaxed/simple;
-	bh=fcFyv7j6W6exUlVaevB2O95QQRiDOt2xr1T1ykcKJD0=;
+	s=arc-20240116; t=1722472164; c=relaxed/simple;
+	bh=R1OzeU8fOoMZmSJ11c9Yzmj9YSBwTx5EEoER6jZfRkw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=snG/xiRZFUmgkY+6XLHJJ2hmQS9ETp4sam5086B7celAtGjBUJdTsH588rg5dRbFAbaOq+vLPY8osHS9MSh+yHs14wXJ3AKp+q1OQp93ffDilLlv4uQasUOMxb6WUfX6jNCA0z8kbdA9qTaR70x9u06w1BVhEgfQJ/Fhn2dcKY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mty3YoGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 667EFC32786;
-	Thu,  1 Aug 2024 00:29:18 +0000 (UTC)
+	 MIME-Version; b=Vi2TUVL9iwA4lF0+dyHzkvgDPhNUWPxOWx5Svpb0kDnDFeH6StmxFFsc5/6IHxFbqKPxzf/alQ9RzslIxG6lG9V9QIYksu2Ok4WdLAxgnOJas3F2p7dHJ8rGFUJfbCScdPMHoUJY+pDPJNvHXZXxZiH32GJNUtl3d7D0nYkuq7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d2p5t8jG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A631CC32786;
+	Thu,  1 Aug 2024 00:29:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722472160;
-	bh=fcFyv7j6W6exUlVaevB2O95QQRiDOt2xr1T1ykcKJD0=;
+	s=k20201202; t=1722472164;
+	bh=R1OzeU8fOoMZmSJ11c9Yzmj9YSBwTx5EEoER6jZfRkw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Mty3YoGNQGPpDzJp9bUtxdDpAs1nuGA+ShnOxNupRkOE6AZgeRw/mg55ck70LO6WY
-	 +MIfA1hj/z4aXKGxeI9rNPocFgIVB8GmNXTNXF0wFbh0bdFSEFrZJF6b2Jx4DhxyNT
-	 4YCkhFpFnTLvqrM6Qr7W6B6/MfQSaDqNp/FUGzEdSsNeDmIU8yRtLXwi2l7tDe9NRh
-	 8SeI3efEcykFGpJxOO5kpFDIqwJyQ8Sda9cQ2eoZH06jJPfUYPP5X005XdPb97amyV
-	 LNqiBxsMKVdhJpc/RuCv4moUUYaWefJ3Bqhycnm78XiGnLZypEJgu0QDay+k52JlcS
-	 fFwMMii0uoiow==
+	b=d2p5t8jGDG30bqlyB4755UVQtsDxrEl1JwLnWWCg8ysxkjbuEN23/FQB8yeaj2qKx
+	 SGR7zh7WkoKrsci+Jn8dSV4tSBViIqiDL8ozGgljslE0CEYoK5AgBul0aHaozX6HKV
+	 Wf8f54rBXhQeeNaJHTTa0Yc21/z/BroOM28oSY2JZy5HeHMdSIPXLUh8KlHm4RreLp
+	 zmBUHS7oCrpb7w2wPKjo5gXz5p93Wvb6oJJICK+CquBoimBOTfY+V1+Q5VTqWbmWE3
+	 /YdwSMjYLQVZE/BdKubbvHBbDqq9CN7BUELgSbSyxD7K/+e3FgzBAoIqxX4bLJjMdC
+	 OruWcxE1FVbwQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
 Cc: Ma Jun <Jun.Ma2@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
 	Tim Huang <Tim.Huang@amd.com>,
 	Alex Deucher <alexander.deucher@amd.com>,
 	Sasha Levin <sashal@kernel.org>,
+	christian.koenig@amd.com,
 	Xinhui.Pan@amd.com,
 	airlied@gmail.com,
 	daniel@ffwll.ch,
-	hannes@cmpxchg.org,
-	friedrich.vock@gmx.de,
-	andrealmeid@igalia.com,
 	amd-gfx@lists.freedesktop.org,
 	dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 6.1 16/61] drm/amdgpu: Fix out-of-bounds write warning
-Date: Wed, 31 Jul 2024 20:25:34 -0400
-Message-ID: <20240801002803.3935985-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 17/61] drm/amdgpu: Fix out-of-bounds read of df_v1_7_channel_number
+Date: Wed, 31 Jul 2024 20:25:35 -0400
+Message-ID: <20240801002803.3935985-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240801002803.3935985-1-sashal@kernel.org>
 References: <20240801002803.3935985-1-sashal@kernel.org>
@@ -68,7 +65,6 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.1.102
@@ -76,33 +72,32 @@ Content-Transfer-Encoding: 8bit
 
 From: Ma Jun <Jun.Ma2@amd.com>
 
-[ Upstream commit be1684930f5262a622d40ce7a6f1423530d87f89 ]
+[ Upstream commit d768394fa99467bcf2703bde74ddc96eeb0b71fa ]
 
-Check the ring type value to fix the out-of-bounds
-write warning
+Check the fb_channel_number range to avoid the array out-of-bounds
+read error
 
 Signed-off-by: Ma Jun <Jun.Ma2@amd.com>
-Suggested-by: Christian König <christian.koenig@amd.com>
 Reviewed-by: Tim Huang <Tim.Huang@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/df_v1_7.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c
-index 2001c7d27a53e..cb73d06e1d38d 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_ring.c
-@@ -324,7 +324,7 @@ int amdgpu_ring_init(struct amdgpu_device *adev, struct amdgpu_ring *ring,
- 	ring->max_dw = max_dw;
- 	ring->hw_prio = hw_prio;
+diff --git a/drivers/gpu/drm/amd/amdgpu/df_v1_7.c b/drivers/gpu/drm/amd/amdgpu/df_v1_7.c
+index b991609f46c10..d4909ee97cd21 100644
+--- a/drivers/gpu/drm/amd/amdgpu/df_v1_7.c
++++ b/drivers/gpu/drm/amd/amdgpu/df_v1_7.c
+@@ -70,6 +70,8 @@ static u32 df_v1_7_get_hbm_channel_number(struct amdgpu_device *adev)
+ 	int fb_channel_number;
  
--	if (!ring->no_scheduler) {
-+	if (!ring->no_scheduler && ring->funcs->type < AMDGPU_HW_IP_NUM) {
- 		hw_ip = ring->funcs->type;
- 		num_sched = &adev->gpu_sched[hw_ip][hw_prio].num_scheds;
- 		adev->gpu_sched[hw_ip][hw_prio].sched[(*num_sched)++] =
+ 	fb_channel_number = adev->df.funcs->get_fb_channel_number(adev);
++	if (fb_channel_number >= ARRAY_SIZE(df_v1_7_channel_number))
++		fb_channel_number = 0;
+ 
+ 	return df_v1_7_channel_number[fb_channel_number];
+ }
 -- 
 2.43.0
 
