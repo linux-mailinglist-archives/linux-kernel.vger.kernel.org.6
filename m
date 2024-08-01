@@ -1,217 +1,96 @@
-Return-Path: <linux-kernel+bounces-271434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1470A944E34
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F87944E35
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B635B26AD8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044351F26F25
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69F81A6177;
-	Thu,  1 Aug 2024 14:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avatN8wY"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365731A57C7;
+	Thu,  1 Aug 2024 14:39:52 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B25189B98;
-	Thu,  1 Aug 2024 14:39:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A851A4F38
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523162; cv=none; b=n/zyH2KC5W3G9EWJAeGtGoAKn8zYREFNBJ8O75h57UN4a5YnVRyhtEb0UOufdJJ1prX8/slnJ2cdF0ltjRfvBs9p1vBeQuOkomNSuXezBdlPe0NT7qJ1SIKLjXgse7Cj6MbKoEFL+Zn4k+4bQGxjO6BeJHEbgBPpDQKEZZ0fsxU=
+	t=1722523191; cv=none; b=Nr9gOIGecm0jhtZrEId58CrWB9OB+0gECVuE2MCy34wv6+hKKzCXEMEQelev15EO/YrxyZsCAVt/J1bc7mXUpPKOn7M8sZ4g/J84FoAFMG6FIx1+xe2A951DY7HtNN8TlikSMnXvjpRsgjXsc0LA/K4252NhazYfALDp9//IXao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523162; c=relaxed/simple;
-	bh=/1bC3Yz8Fn63ZouuD8yZjE4xe/wS8IbUJz9KRAgY9k8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sr6FL7UWWOxqtQZadaUtcWxILLUN6k6s63AVN8mFO5mMX03u6wON5V42czHevhIOipidr/Ww9JU9/O0kRJ0BeIzqKX7zpJvuAAB5haB+LbEdXj5Vbyeb2DsNz8O7hJ7WKBvu4n7wipPlHjODTSBIl8+nhmaEN351uvqfeCqWCaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=avatN8wY; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fc692abba4so52559435ad.2;
-        Thu, 01 Aug 2024 07:39:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722523159; x=1723127959; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XwmHUdjoPV3dd0WcfIoeW7fjmPevT/WB5Pw+zt1UW7M=;
-        b=avatN8wYh3j/cGtSPDpkQHoLMxF8doNQq0ntjIWPvXu3la4tz4AHADIM8bwosV4Q+1
-         4nKr5SEIR8hKBcnMeFToFY98LzpVIJOvbKyurvqWND+WHDUGxBd0HgObk3e9twu6sf56
-         sKuv7m6xE1Z7cK3mWSVzE5lJCXtqevt7OrCcvBF7YQGPgWfJL80R5WBzH4839RU5WJMO
-         rRODg/Qu6ctpHLENam/5rqtRl+B9JHryG4ADsMLZp+TUl3GUJ76sJcQ7m6se3xuljkb3
-         BJIZ8Xmems9UyEA0koSI2N5Y+ltNh4MklZ/b91BMk8VDlv2lU66c76Rpr8BIwQt43k5A
-         ErSw==
+	s=arc-20240116; t=1722523191; c=relaxed/simple;
+	bh=3yi1Lhs4nG2UwrvlA4B+tV591LMpUQXa2zkYbgKQ4Uc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=uF1/ce59ZzVG6tTeqix+aZrdONbyAizM5LWhLN0KgbuMFKUP1vn7X7ehuuXnzNeX6sW9Yle2m2j3QkuomMHloFLvwl1K2CYfVN5KluQHNbxUrWm1FCtIxtd5gVAXjg3TWNN3zyPSQSpbOGWmvuDH3sVBBqNASdFL1+IWlZv9U8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3971269bf67so104483655ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:39:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722523159; x=1723127959;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XwmHUdjoPV3dd0WcfIoeW7fjmPevT/WB5Pw+zt1UW7M=;
-        b=SpVOOWidSWwM+V+fgdXDPvJ5O+hehP2OZEzUKV1hh+YacQe38Ma2aGCEyiZKNt3+vt
-         8nm99nrvKiRW1T8rKQlZFoX1V2+sVAc+e0QMFhd33Sr9iHTuKNpIr8pCvM90rtZsd6Mf
-         BQYtEkTtEI1ZCXE0+uAwNk1tDV9N3bgEnq7qLSSnHZgAfrk+Byaf+ob04NsaZNSrauSk
-         fbc3ioYLGLXz76rMdtF6MA/AypwuI/FN0XgHkBukJDcHkj5F+UjOIiztGMqWi107mSjQ
-         6fwsQOMaodKKTFyGxkJGnGRdTF4nnqCQzGCPrrTGlhCYeR/5UdJZktJXnkzYY2oMbao2
-         m6wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBzTjtkqcq7i74f5C4eQltouqt2dh7kpxzTr4CXn3RvptytS+T8d/cUgB1ifUx6SqMkSXRJ3eHYwa7YKDQN602F2mABU8/3jkNdmx7
-X-Gm-Message-State: AOJu0YxooKDQEEJnenxNsLCFrLeJmz4Q4lr1Xs6+fvyJTiaMMkU3Y26U
-	O0OTUKrIqbTNlNO1Z6GHJl2YXM9nxuDI2loNMsKfRhwL7FPhb6THsJUiNqgpiZY=
-X-Google-Smtp-Source: AGHT+IHGx//19nsjWKJVqTcCtzNmgPNPzjN5CKiKKrPZfSU7SPDHG1DlvR8YTUXUr5jVz09/16gvEw==
-X-Received: by 2002:a17:903:22d1:b0:1fd:b604:58a6 with SMTP id d9443c01a7336-1ff57291927mr4887835ad.17.1722523159287;
-        Thu, 01 Aug 2024 07:39:19 -0700 (PDT)
-Received: from localhost.localdomain ([136.233.9.100])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1fed7c7fc02sm139825765ad.31.2024.08.01.07.39.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:39:18 -0700 (PDT)
-From: Abhash Jha <abhashkumarjha123@gmail.com>
-To: linux-iio@vger.kernel.org
-Cc: jic23@kernel.org,
-	lars@metafoo.de,
-	linux-kernel@vger.kernel.org,
-	Abhash Jha <abhashkumarjha123@gmail.com>
-Subject: [PATCH v2 1/1] iio: light: apds9960: Add proximity and gesture offset calibration
-Date: Thu,  1 Aug 2024 20:08:57 +0530
-Message-ID: <20240801143857.16438-2-abhashkumarjha123@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801143857.16438-1-abhashkumarjha123@gmail.com>
-References: <20240801143857.16438-1-abhashkumarjha123@gmail.com>
+        d=1e100.net; s=20230601; t=1722523189; x=1723127989;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KGnfHLgS6zEexKjr13IGzCFLUlnirn+nRnBK9/AtDbk=;
+        b=QuywR0DX2KzojNqaK9edDW8d1b0YNXUQHuquhVgbNxsAPxAABxZPCBwUklt8K5qOiz
+         enV1yQu4yl1m9FkfudW0PoVyYoPBCuaMwYPYJEWUTRc9DrzrNE3gpyFO/uCvFjSSQFHg
+         OhcWEcCkmEbMRDe4+JiXR0RAdhP2lBJbHPD+Vnl/LHQ5vK5do1yyUeEFWNI06a2OkkOy
+         HJhHVjTf1k2SoEJxqsmBWTO2cjb8Y2hQs3ycRaoozBsOiWuAdNy1/f+SYdpVx3pOhnSS
+         n/5agR5XathwEfaCoj4SoYVQ/3GbZJlV63GeZxQi0Vxw6V4EBqV/8/nbwa+h9fGimYYX
+         J0Gw==
+X-Gm-Message-State: AOJu0YyviWXwBhmUWrH5gwkbSwNngFzpFvfC7CEKkJKEm0jNoKDkE4rL
+	xdUIxw3Og8vqTkLrk93XyKW/LlRQarwwqEB3KwvwRvQLXlzI2Yw5yl/YVm/r1djELvyztvSHCKa
+	eArGN1xrewCQY1wzaxstVXASG2+42B/anLcK9s0i99J0FIJpLOFJymFc=
+X-Google-Smtp-Source: AGHT+IGULwNDT/Zhaqz5zqpxWpz0BM91hfIb9brto++XCG9ibxYTw6qHwS30dyccJMm15PSqyizLtp4he2WEzp0H1FbS0uQrUUO0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1561:b0:397:2946:c83c with SMTP id
+ e9e14a558f8ab-39b1fc4cdf8mr277475ab.4.1722523189622; Thu, 01 Aug 2024
+ 07:39:49 -0700 (PDT)
+Date: Thu, 01 Aug 2024 07:39:49 -0700
+In-Reply-To: <000000000000a90e8c061e86a76b@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d5cc9b061ea02e62@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Proximity and gesture offset registers perform offset correction to
-improve cross-talk performance. Added `calibbias` to the proximity
-and gesture channels.
-Provided facility to set calibbias based on the channel number.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Abhash Jha <abhashkumarjha123@gmail.com>
----
- drivers/iio/light/apds9960.c | 69 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 68 insertions(+), 1 deletion(-)
+***
 
-diff --git a/drivers/iio/light/apds9960.c b/drivers/iio/light/apds9960.c
-index 1065a340b..e7f2e129c 100644
---- a/drivers/iio/light/apds9960.c
-+++ b/drivers/iio/light/apds9960.c
-@@ -146,6 +146,25 @@ struct apds9960_data {
- 
- 	/* gesture buffer */
- 	u8 buffer[4]; /* 4 8-bit channels */
-+
-+	/* calibration value buffer */
-+	int calibbias[5];
-+};
-+
-+enum {
-+	APDS9960_CHAN_PROXIMITY,
-+	APDS9960_CHAN_GESTURE_UP,
-+	APDS9960_CHAN_GESTURE_DOWN,
-+	APDS9960_CHAN_GESTURE_LEFT,
-+	APDS9960_CHAN_GESTURE_RIGHT,
-+};
-+
-+static const unsigned int apds9960_offset_regs[] = {
-+	[APDS9960_CHAN_PROXIMITY] = APDS9960_REG_POFFSET_UR,
-+	[APDS9960_CHAN_GESTURE_UP] = APDS9960_REG_GOFFSET_U,
-+	[APDS9960_CHAN_GESTURE_DOWN] = APDS9960_REG_GOFFSET_D,
-+	[APDS9960_CHAN_GESTURE_LEFT] = APDS9960_REG_GOFFSET_L,
-+	[APDS9960_CHAN_GESTURE_RIGHT] = APDS9960_REG_GOFFSET_R,
- };
- 
- static const struct reg_default apds9960_reg_defaults[] = {
-@@ -255,6 +274,7 @@ static const struct iio_event_spec apds9960_als_event_spec[] = {
- 
- #define APDS9960_GESTURE_CHANNEL(_dir, _si) { \
- 	.type = IIO_PROXIMITY, \
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBBIAS), \
- 	.channel = _si + 1, \
- 	.scan_index = _si, \
- 	.indexed = 1, \
-@@ -282,7 +302,8 @@ static const struct iio_chan_spec apds9960_channels[] = {
- 	{
- 		.type = IIO_PROXIMITY,
- 		.address = APDS9960_REG_PDATA,
--		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-+			BIT(IIO_CHAN_INFO_CALIBBIAS),
- 		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
- 		.channel = 0,
- 		.indexed = 0,
-@@ -316,6 +337,42 @@ static const struct iio_chan_spec apds9960_channels[] = {
- 	APDS9960_INTENSITY_CHANNEL(BLUE),
- };
- 
-+static int apds9960_set_calibbias(struct apds9960_data *data,
-+		struct iio_chan_spec const *chan, int calibbias)
-+{
-+	unsigned int reg;
-+	int ret;
-+
-+	if (calibbias < S8_MIN || calibbias > S8_MAX)
-+		return -EINVAL;
-+
-+	guard(mutex)(&data->lock);
-+	switch (chan->channel) {
-+	case APDS9960_CHAN_PROXIMITY:
-+		/* We will be writing the calibbias value to both the */
-+		/* POFFSET_UR and POFFSET_DL registers */
-+		reg = apds9960_offset_regs[chan->channel];
-+		ret = regmap_write(data->regmap, reg, calibbias);
-+		if (ret < 0)
-+			return ret;
-+
-+		ret = regmap_write(data->regmap, APDS9960_REG_POFFSET_DL, calibbias);
-+		if (ret < 0)
-+			return ret;
-+		break;
-+	default:
-+		/* For GOFFSET_x we will be writing to the */
-+		/* respective offset register */
-+		reg = apds9960_offset_regs[chan->channel];
-+		ret = regmap_write(data->regmap, reg, calibbias);
-+		if (ret < 0)
-+			return ret;
+Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+Author: lizhi.xu@windriver.com
+
+why folio not inited?
+
+#syz test: upstream 2f8c4f506285
+
+diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+index 6ef735bd841a..7cffc1059c42 100644
+--- a/fs/squashfs/symlink.c
++++ b/fs/squashfs/symlink.c
+@@ -49,6 +49,11 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+ 	/*
+ 	 * Skip index bytes into symlink metadata.
+ 	 */
++	if (length < 0) {
++		error = -EINVAL;
++		goto out;
 +	}
 +
-+	data->calibbias[chan->channel] = calibbias;
-+	return 0;
-+}
-+
- /* integration time in us */
- static const int apds9960_int_time[][2] = {
- 	{ 28000, 246},
-@@ -531,6 +588,12 @@ static int apds9960_read_raw(struct iio_dev *indio_dev,
- 		}
- 		mutex_unlock(&data->lock);
- 		break;
-+	case IIO_CHAN_INFO_CALIBBIAS:
-+		mutex_lock(&data->lock);
-+		*val = data->calibbias[chan->channel];
-+		ret = IIO_VAL_INT;
-+		mutex_unlock(&data->lock);
-+		break;
- 	}
- 
- 	return ret;
-@@ -564,6 +627,10 @@ static int apds9960_write_raw(struct iio_dev *indio_dev,
- 		default:
- 			return -EINVAL;
- 		}
-+	case IIO_CHAN_INFO_CALIBBIAS:
-+		if (val2 != 0)
-+			return -EINVAL;
-+		return apds9960_set_calibbias(data, chan, val);
- 	default:
- 		return -EINVAL;
- 	}
--- 
-2.43.0
-
+ 	if (index) {
+ 		bytes = squashfs_read_metadata(sb, NULL, &block, &offset,
+ 								index);
+}
 
