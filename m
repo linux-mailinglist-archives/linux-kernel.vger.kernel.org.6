@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-271357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D0D2944D2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:30:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3C3944D31
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:31:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EA4A1C2262D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:30:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF07EB25FBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56ABA189B98;
-	Thu,  1 Aug 2024 13:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16461A01CB;
+	Thu,  1 Aug 2024 13:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GPnisI6b"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QXiia8eY"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CDAA61FF2
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6168D13D2B8
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722519036; cv=none; b=udfUbeWepUyx2hV85vW+XnKNd0A/a4HnGD76gELAwii5rYSR0PXEElRZet8xvl+eUnsOTr/MGXFWlumGxkgWtIMajVeWQac0WQZnfThAGW0HNHPnKqozzUqAwjzqasIRUUbALdQOw6ziOyasHhooToPgdXmvMWdsz2Zv5aLfK7I=
+	t=1722519064; cv=none; b=T1vxmMv8B4h7oHArpUPcXR0ssj0CqanToRWH4TYGk6/mD0Y4/KtDccMVrsVNyd/pqVsfvagPcD7QlvBazlPQQbEAw/uor3bmBXkx3ibvfk7qglHxTR4B00dGqyRLV7/KS1JAvIQEPX/zX7LRQej5WLyWYB/+LqShejVfLuQx/0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722519036; c=relaxed/simple;
-	bh=+p/9q2S3jDJrrMqPlyzPhzttP9ieHJalkZErx9J/Bi8=;
+	s=arc-20240116; t=1722519064; c=relaxed/simple;
+	bh=5JQrkiP0uOjwss1rpQy/l3A+rpzTZUsAeWqATieGYNY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4jpwkj2mghZllJXSIuq2itt5zK5c151FacqDUGFHMO/wbU7xMBgyejxO4FCbODnDNIs1dJ++pVKMWSPRU95F3JIty5BAfeEOl+XNuZF++bXRstmhnYOLqqI7TdCy6GK4wAv9nSiBBykbGzbm8STAP+d3BdXq9rECmrx0+5DCWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GPnisI6b; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722519034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7S+VuZpDhoSrdItmQyG2cBKjlF+TyM//bwuTj5nERxg=;
-	b=GPnisI6b5419mJ9gpLAeOPOt3/GVz94wYoOGV+MJOXryFFS8sZBbe+1q8kHuIi7cFv/pCK
-	Hn/S+ioBlpBm4HhASPTfIL5HGgl7sf/5LI4pLtcS8iGifZILOuZp6wtx3mbG8+U7VYif2G
-	ueHnNxtVPTjxfMOXZMccq4ak2SKgKf8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-104-dRlYe4tRPCudiY9yKRQ2xQ-1; Thu,
- 01 Aug 2024 09:30:31 -0400
-X-MC-Unique: dRlYe4tRPCudiY9yKRQ2xQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 765281955D57;
-	Thu,  1 Aug 2024 13:30:27 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.16.46])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3863219560B2;
-	Thu,  1 Aug 2024 13:30:20 +0000 (UTC)
-Date: Thu, 1 Aug 2024 09:30:18 -0400
-From: Phil Auld <pauld@redhat.com>
-To: John Stultz <jstultz@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Joel Fernandes <joelaf@google.com>,
-	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Zimuzo Ezeozue <zezeozue@google.com>,
-	Youssef Esmat <youssefesmat@google.com>,
-	Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Xuewen Yan <xuewen.yan94@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Metin Kaya <Metin.Kaya@arm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
-	Connor O'Brien <connoro@google.com>
-Subject: Re: [PATCH v11 7/7] sched: Split scheduler and execution contexts
-Message-ID: <20240801133018.GA47256@pauld.westford.csb>
-References: <20240709203213.799070-1-jstultz@google.com>
- <20240709203213.799070-8-jstultz@google.com>
- <20240712150158.GM27299@noisy.programming.kicks-ass.net>
- <CANDhNCrkf1Uz42V3vMFChp1nKnkeHH7ZPxd_gC4KOMmWPcRVgQ@mail.gmail.com>
- <Zqn_0XIcxTpHxswZ@jlelli-thinkpadt14gen4.remote.csb>
- <20240731113720.GB33588@noisy.programming.kicks-ass.net>
- <CANDhNCoy+eYJwBcCq+YGaO2OqGav_KyLEEbQ-tMkrQY6UDGSDg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dp3V+uYlW6ooK37HVqJ1aLeQ3kVaEV6My1hI51OQyORr0+z7+Jb2fpo2SVZTA4rLBwFEgZA3omThy0SAeBxlQgFhlcdttIpWR0lb7IIyJ8v6Hc5thDVUWv/Z+IU1gUYqfWGi11jX+VV6RPLTHaJF2Yk7Op2xjLQaM5eh7tNhuNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QXiia8eY; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so5892576a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 06:31:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722519062; x=1723123862; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tv4iB82yfscVGFR90a765Fg0rBGgnQwJipeiUQwNkUo=;
+        b=QXiia8eYmVTg+p2V2TNj/SBZT5e0ZZJvME9woB0gWOymDK7exk9uJ7BiHoN9dicAFR
+         T4FBXKEqwgqucRrmyzzepIC4RHPwXtH3370tKymLrA2u+fWA8icyWZosu0I6CGZZgmxy
+         aIxZBrogMBroqYsWeOm+QEorixnqqd7VvMb02zY2cQ0XjhELmNT8xXNSjpWcz6IMfdJF
+         iAtoqLdnmueQfLvuIQGN3hHSsmH9CvPJdrkeu18O75yjbfQ3p2it81vbQG+4zMdKBsje
+         Mpl1QveXK3hmrLvLlllk5Y1QlAVs8dPetzN+yausBnNPgzt5lIrtr2qd/1YPL7vh9cxM
+         DGeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722519062; x=1723123862;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tv4iB82yfscVGFR90a765Fg0rBGgnQwJipeiUQwNkUo=;
+        b=TMtHE/IP8fvENXmReDzBX6hVe2aMPkp1TarNSpMpgdwCjvZBDNzETHWtKl6rP+joxl
+         PPlpc2pZWxHJiT/aLzDyfpTBrUKA3j+WLq6InjHszTJBImXgLT1joR3AQCMo6aIB2J/u
+         QGSYHMp49tY+bry8vm5PqtgZhoabWYjtNpwZH5u4ZzqZ9t5oMf1tYMfJFif+NUxWkz4m
+         vhnjy04I/wmEkreC2PkPT8ap74hnAMmQqlTtYpvXN4cnY9FmvRoJkE68X4uEcrJ1Xyrm
+         DjmtxqSwe27Hq2tYl5bTj1Ba5gFJDp2wZA2M+SJ0N4P1x8pa3JNKGwLlL5DcCH67DENs
+         4mMA==
+X-Forwarded-Encrypted: i=1; AJvYcCVwdCKSWaJO79A48/qcYepAj+fbzgWzMZnnOWhKAdNNVoMocwjSCa/tBMmyOC8mbkhhxmZ4RJdwRs5rpgCnMpCQeFUHJbv10bDOaUYN
+X-Gm-Message-State: AOJu0YwFnaslGIPnpUBSErH6MVFXogipznPkiPC5Xe9DRsEfgwedmBpJ
+	gwlryNCcasEI2r8mk8HajiMm3Ode47UB0gsXr/ig78Ig8vObFibm
+X-Google-Smtp-Source: AGHT+IElO9v+4Isd9ZaN2clcpXml/1imltaATSqt4uv4tE5W6CFLpI3ysrDPJAq4DaCky1y+YsIR6w==
+X-Received: by 2002:a50:ee8d:0:b0:5a1:a447:9f9b with SMTP id 4fb4d7f45d1cf-5b7f54136b9mr201616a12.27.1722519061241;
+        Thu, 01 Aug 2024 06:31:01 -0700 (PDT)
+Received: from f (cst-prg-90-207.cust.vodafone.cz. [46.135.90.207])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5af959990c9sm8749591a12.47.2024.08.01.06.30.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 06:30:59 -0700 (PDT)
+Date: Thu, 1 Aug 2024 15:30:49 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: "Yin, Fengwei" <fengwei.yin@intel.com>, 
+	kernel test robot <oliver.sang@intel.com>, Peter Xu <peterx@redhat.com>, oe-lkp@lists.linux.dev, 
+	lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Huacai Chen <chenhuacai@kernel.org>, 
+	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
+	WANG Xuerui <kernel@xen0n.name>, linux-mm@kvack.org, ying.huang@intel.com, feng.tang@intel.com
+Subject: Re: [linus:master] [mm] c0bff412e6: stress-ng.clone.ops_per_sec
+ -2.9% regression
+Message-ID: <6uxnuf2gysgabyai2r77xrqegb7t7cc2dlzjz6upwsgwrnfk3x@cjj6on3wqm4x>
+References: <202407301049.5051dc19-oliver.sang@intel.com>
+ <193e302c-4401-4756-a552-9f1e07ecedcf@redhat.com>
+ <439265d8-e71e-41db-8a46-55366fdd334e@intel.com>
+ <90477952-fde2-41d7-8ff4-2102c45e341d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,38 +90,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANDhNCoy+eYJwBcCq+YGaO2OqGav_KyLEEbQ-tMkrQY6UDGSDg@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <90477952-fde2-41d7-8ff4-2102c45e341d@redhat.com>
 
-On Wed, Jul 31, 2024 at 04:32:33PM -0700 John Stultz wrote:
-> On Wed, Jul 31, 2024 at 4:37 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > Sorry for the delay, I need the earth to stop spinning so goddamn fast
-> > :-) 36 hours days ftw or so... Oh wait, that'd mean other people also
-> > increase the amount of crap they send my way, don't it?
-> >
-> > Damn..
+On Thu, Aug 01, 2024 at 08:49:27AM +0200, David Hildenbrand wrote:
+> Yes indeed. fork() can be extremely sensitive to each added instruction.
 > 
-> Yeah. My sympathies! I do really appreciate your taking time to
-> provide feedback here (amongst all the other eevdf patches and
-> sched_ext stuff you're reviewing).
->
-
-Not to mention way too many rust patches...
-
-
-> > Would 'donor' work in this case?
-> >
-> > Then the donor gets all the accounting done on it, while we execute
-> > curr.
+> I even pointed out to Peter why I didn't add the PageHuge check in there
+> originally [1].
 > 
-> 'Donor' is great, I'll switch to that.
+> "Well, and I didn't want to have runtime-hugetlb checks in
+> PageAnonExclusive code called on certainly-not-hugetlb code paths."
 > 
-> Thanks again for getting back to me here!
-> -john
+> 
+> We now have to do a page_folio(page) and then test for hugetlb.
+> 
+> 	return folio_test_hugetlb(page_folio(page));
+> 
+> Nowadays, folio_test_hugetlb() will be faster than at c0bff412e6 times, so
+> maybe at least part of the overhead is gone.
 > 
 
--- 
+I'll note page_folio expands to a call to _compound_head.
 
+While _compound_head is declared as an inline, it ends up being big
+enough that the compiler decides to emit a real function instead and
+real func calls are not particularly cheap.
+
+I had a brief look with a profiler myself and for single-threaded usage
+the func is quite high up there, while it manages to get out with the
+first branch -- that is to say there is definitely performance lost for
+having a func call instead of an inlined branch.
+
+The routine is deinlined because of a call to page_fixed_fake_head,
+which itself is annotated with always_inline.
+
+This is of course patchable with minor shoveling.
+
+I did not go for it because stress-ng results were too unstable for me
+to confidently state win/loss.
+
+But should you want to whack the regression, this is what I would look
+into.
 
