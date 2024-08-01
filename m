@@ -1,125 +1,112 @@
-Return-Path: <linux-kernel+bounces-270511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215909440D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E909440BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D163F2830BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:18:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50132824BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA0B1BC9ED;
-	Thu,  1 Aug 2024 01:41:03 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE5A1A4F11;
+	Thu,  1 Aug 2024 01:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rrp3iGEY"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5071DA58;
-	Thu,  1 Aug 2024 01:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB50A13DBAA
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 01:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722476462; cv=none; b=pncoHAIiw0G1qreCDnoM1OxWLcXjq/wjUxpuPPaLZDangN9vNMYhV8SUYsXnOTozpIdjnwe+1t1VGU8Q4IpleEBgct/es/Q3yaS+UV55adRReJsxxxITbnBScoNGrRqNrqaIiK5ipCuW5davnwhVhWMf+TeVZq6JhKHKrPN0Yjw=
+	t=1722476353; cv=none; b=m3F2eoTyWaRppHHfvAApLkX2X2/UWEz6ouUTuSFqFCfvouWjQNEYZdCWMxq7FRs093zEvYk/DyF7TCBjR5bXooUDUnWDNFLpIyYXpJKpouBm+ZLWm+gEGeu2UA/mhu5DS4vwVq3CrQ0KLD++8YN6JCcfx4emELNp2+kHAqD922Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722476462; c=relaxed/simple;
-	bh=5I/Sh/Gj4gK1RlwP8a1JR08fvBvDeanWUWCWoSUVCVw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LB5ro9H0R6VKeG6ONYXUEsQsGCkWtL9uzSUuw8GdbWK5ntZ62IjmwIG1ldKua2QgE7OJH2VPQr8rxaoJn/lkGvP8kmbJLuKcupyMNp/rnlrDQqhzsRqBtxhg2lNtIHyS0PBkVxGhojhmyH69/Nnz0wRnFzmp7+QVZIX8Xg7T3qU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WZBVz6ypbz4f3jsB;
-	Thu,  1 Aug 2024 09:40:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id E79F11A1533;
-	Thu,  1 Aug 2024 09:40:56 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP2 (Coremail) with SMTP id Syh0CgBnnr2l56pmr3OyAQ--.24249S10;
-	Thu, 01 Aug 2024 09:40:56 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: tytso@mit.edu,
-	jack@suse.com
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 8/8] jbd2: remove unneeded check of ret in jbd2_fc_get_buf
-Date: Thu,  1 Aug 2024 09:38:15 +0800
-Message-Id: <20240801013815.2393869-9-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240801013815.2393869-1-shikemeng@huaweicloud.com>
-References: <20240801013815.2393869-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1722476353; c=relaxed/simple;
+	bh=RTyceth+mxn6QaOnqtKbXzAURGPUmxA3nMOQCHvtCeM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lOQ1Be6XxaIvsGzlHyJPjqL2y2lRCjzR8SgHdW0NWfU7H3NZt7BQ241Fv80y4YL7qiF4NgP+fZ2Xq6D3VU2NgI2Z75MuCgwVxC6MIt37xYvQ6hO0vRwGdNd8GxuzkGtU3T300ex9KMrYr9OiELJMOsA0mCivTlexxnAVINOtykg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rrp3iGEY; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fc4aff530dso351985ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722476351; x=1723081151; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RTyceth+mxn6QaOnqtKbXzAURGPUmxA3nMOQCHvtCeM=;
+        b=rrp3iGEY2OkZQ6tBnx5i0fSID5atwQqlQG2v4Vs4AZ4jIs0IgDQKRJOC3n65wrCTsn
+         INUhyxmpzRcp8pjWRZnHg6W6R+mLOxpF1KVmOaKXCq2JO+EeLtsFMiOS4mqFksYEgd64
+         lso/eL1tGCerHH8E5iJDR23IvTI8iyfGSSLkVtm+L7QPidboKalrPvXH2/1OodboBpmv
+         dQwZBdMW33M6nO+S+8r3QW536f0TC44PqLcH8A75rQkJ+wNwPljr3Ua1jLu66LX2Ins+
+         glJv7ob8MMbpfCbR5evoNI6zgRFP0xTpfrhkiId76hM0eiNsIqIp1zcwSVC+cvxfQwfc
+         0gIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722476351; x=1723081151;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RTyceth+mxn6QaOnqtKbXzAURGPUmxA3nMOQCHvtCeM=;
+        b=Nr3TPPkb85ddNX9M8+BYawMMW7S2kics5+kZzh/91gJHMiE/Q12/uMp8+rbT2qFLRQ
+         7Xg1l7yjXl0ZRQj1rh9oqi9nQSvsKPQpbslUjK5ClAg1tZLZGqvUJ4JIQDpGI1BCBdRg
+         /iClDSZ53Lr9CTC649z/F95USMnMAKsfdv3OW1WAsjgw0RE257WP8GwdqSpKzIrjaJCt
+         nFcw/dYBPzTVoGDQRRZPjY4wsxcjP8hOAtddEQkqErH6I7wGhZaf2CAR+KiNQLw6rf6U
+         l77cULmLIE1fSJhq8m0hgrpRKrBl4+IwOKv/0Jk23lq1+N8XqrseoBEpR3P4HxWkiaBz
+         eNSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwJPklhElZbUP7oZ2mfNe2+DeitLOYvfYZdZXCaepcxZVms5H+j2fKRnWVfo1dcG37QkQhbUsOQVjU62RCGcHVLnC3krij346+6fEg
+X-Gm-Message-State: AOJu0Yz830+WlaFRrVVIUh0p6Kls4uWx7ZdfhpyMMcqQCV3OJIAqmzzR
+	5xEug4hiTxwRv8hSrAp2dIDVzve/GdpwH5zAeTGFXfSuDo8BzoVelgZm0ENHIa9P8C3dOSSdRIC
+	kMPk/Hp/w7Bwjrwglo1Q9lK2tk237DRm2xZx5
+X-Google-Smtp-Source: AGHT+IGo/WzGYjFSbdEC6o/Rbz/PYKIGDhEU8lqtb89SNQ0lBJH4ydpnk1HHq9OChue22fi2YkhsGWz5s9ZF8wMPJus=
+X-Received: by 2002:a17:903:32c1:b0:1fa:2c8c:7e8 with SMTP id
+ d9443c01a7336-1ff4ec7654amr810165ad.4.1722476350843; Wed, 31 Jul 2024
+ 18:39:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBnnr2l56pmr3OyAQ--.24249S10
-X-Coremail-Antispam: 1UD129KBjvJXoWruF45GF43WFyxCFW7trW5ZFb_yoW8JF48pr
-	W3Kas8AFy8ZrW7WF1xXrZ5Jayjv392kFyUGFZ8CwnYkw42yrn7J3Z8Jw18Wa98ArWrK3W8
-	Zr17Za95Cw4YyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjxUFgAwUUUUU
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+References: <20240721202113.380750-1-leo.yan@arm.com> <20240721202113.380750-5-leo.yan@arm.com>
+ <9f08c5cb-fb4b-4994-9128-0484aa6c06d7@intel.com> <9f301b09-e040-456c-9bd3-6d5e96ebc8f4@arm.com>
+ <1cb6fdfc-0405-4bfb-acd4-ed3b24744c8b@intel.com> <951fc660-58a2-4b8a-a763-5a1e4d807c75@arm.com>
+In-Reply-To: <951fc660-58a2-4b8a-a763-5a1e4d807c75@arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 31 Jul 2024 18:38:59 -0700
+Message-ID: <CAP-5=fWfU40-QO_TuUMd2KQprvxPOH2pnpKCUxJf1yoUsw-9mQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/6] perf auxtrace: Iterate all AUX events when finish reading
+To: Leo Yan <leo.yan@arm.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, coresight@lists.linaro.org, 
+	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Simply return -EINVAL if j_fc_off is invalid to avoid repeated check of
-ret.
+Just a heads up. Arnaldo added this to tmp.perf-tools-next and it
+caused the intel-pt tests to start failing:
+```
+$ perf test 118 -v
+118: Miscellaneous Intel PT testing:
+--- start ---
+test child forked, pid 148999
+--- Test system-wide sideband ---
+Checking for CPU-wide recording on CPU 0
+OK
+Checking for CPU-wide recording on CPU 1
+OK
+Linux
+Failed to enable event (idx=0): -22
+Failed to record MMAP events on CPU 1 when tracing CPU 0
+...
+```
+It's likely Adrian's comments already address this but you may also
+want to double check this test is passing with v2.
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/jbd2/journal.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index e89d777ded34..c5179aa38111 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -837,17 +837,12 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
- 
- 	*bh_out = NULL;
- 
--	if (journal->j_fc_off + journal->j_fc_first < journal->j_fc_last) {
--		fc_off = journal->j_fc_off;
--		blocknr = journal->j_fc_first + fc_off;
--		journal->j_fc_off++;
--	} else {
--		ret = -EINVAL;
--	}
--
--	if (ret)
--		return ret;
-+	if (journal->j_fc_off + journal->j_fc_first >= journal->j_fc_last)
-+		return -EINVAL;
- 
-+	fc_off = journal->j_fc_off;
-+	blocknr = journal->j_fc_first + fc_off;
-+	journal->j_fc_off++;
- 	ret = jbd2_journal_bmap(journal, blocknr, &pblock);
- 	if (ret)
- 		return ret;
-@@ -856,7 +851,6 @@ int jbd2_fc_get_buf(journal_t *journal, struct buffer_head **bh_out)
- 	if (!bh)
- 		return -ENOMEM;
- 
--
- 	journal->j_fc_wbuf[fc_off] = bh;
- 
- 	*bh_out = bh;
--- 
-2.30.0
-
+Thanks,
+Ian
 
