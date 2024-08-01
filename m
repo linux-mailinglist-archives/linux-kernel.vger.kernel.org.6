@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-271257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB04944BB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:50:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A18944BB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0231C20C78
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:50:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE3288B91
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D2FE1A00F7;
-	Thu,  1 Aug 2024 12:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA011A01DE;
+	Thu,  1 Aug 2024 12:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OsO1PX+T"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fDuouXDk"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702BA158A2C;
-	Thu,  1 Aug 2024 12:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDD418A6B0
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722516595; cv=none; b=AXOucdzwtIn13D84c4xGmNvi480EuaYTIke3EeIcFY/0R/Nc3We4LtFP1A8MLbrkkPuqTh1OWPhWgosZs0EomgoTNd39M8ERKgBgLHB6aR2ZIA8ypOusxAqyStx5sG2C+V/9rffIfFj6j7jzhvwOwEtfjVE2LJcGigmUEUNtyFk=
+	t=1722516691; cv=none; b=ZlxJAlFv0sYBOKyi7CuUAldwETvJd4q4xnIB/KDGIoFsPd6z8h9AUCz13QpZ9HCXfWept4PWioAXbjd9PnRBvWdOY7ZbJ694HzglJ88JuRD3DNAOhfk3LPuL29F7TDG7NQXKf08sXH6G0zh808H9DInQ22NiGQqoqslkK21eCnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722516595; c=relaxed/simple;
-	bh=RWQBIe+xnVoeZ9aYDA6LAf37L+tJ1auBW0Qc1C3LMEI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nG+518zn5dHHiDZMbbgUF+gaDVCmRmGb5qQBtGATUjuAOb/0aK1f7B1F7zlk4+tiJdPdLrQFdQnRIe9XBIJTxh3KXjSinOBuG+tUY+XMairkNBrWD/z8VoHhNMXuVwlfjpUBdwdIIgG85lccYI5FnRMqEiuixf9wzaQK51cU2cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OsO1PX+T reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3B82E40E0263;
-	Thu,  1 Aug 2024 12:49:45 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id wbMWD6ErtCFa; Thu,  1 Aug 2024 12:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722516579; bh=zBGTII34GS3yMqdHYLabA9kg+jbzaHk0f06t8Adhu7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OsO1PX+TfzuDbNZMq4D7bnm1X/fCgYM4iyvUaM6GyAMXwo2typOoZlpZZU5Q4HeLi
-	 1zxBr6/xz3vffERFSxgH0DxaSK5tys5zB++aKYrqkV1j6DLl9Nr39oN1kPyMoe52CP
-	 w3B3/xHAm7XG8IvdPyNVedsO7/95oRSRRzNfW+xiSQG3cfzD6A1WBSxXjELJAfdlA3
-	 GkZAZJf5m3JKNW/3M8p18S10SYNhZ0mbw1RqprdAtNDQd+iubZe5PmpYTvDX93wzAc
-	 KbC7qZQad/TVrXX+ivRiOJmd3Qdsu/gpMDkR8QObSowwpahmOmkiKquJcdAmPha2p3
-	 sPilXm7UNOnsCXo/5WZZtBNwW/jQI8bhWITCucBZSIC3komaYeDmjNDonNvACFRkv0
-	 vZ5YeNx76ChiCzMuIsg/jEm0kKtWYXeN3xuLhdR5hTwrapaFmlrznqCQdLclxS1Gh0
-	 caDHv0dOzoDzRclDN+wtai+WySwEGkTdkN9NONOgVk0SAWQ7REfgvRTkVzMOwKlNgV
-	 uFw5GYv0wmEQjjs9jgagaWeRJdSiBBDDTqJHbog9dLaKhA10zbPU7Cj0zKnxsU+csm
-	 jWimYOWlD94pH17oKmbothkLzahpdrrksAf6gN4tSGoi2vnvbsyjn5S272NClEeDHd
-	 F/3GrrKJzWO9fYlTE30CQ/Sg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 20FA740E026B;
-	Thu,  1 Aug 2024 12:49:32 +0000 (UTC)
-Date: Thu, 1 Aug 2024 14:49:26 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: John Allen <john.allen@amd.com>
-Cc: rafael@kernel.org, lenb@kernel.org, yazen.ghannam@amd.com,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-edac@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] PRM handler direct call interface
-Message-ID: <20240801124926.GBZquEVgG3y2PhefHT@fat_crate.local>
-References: <20240730151731.15363-1-john.allen@amd.com>
+	s=arc-20240116; t=1722516691; c=relaxed/simple;
+	bh=fSBUkzUUkWt107EAs69kOFAPLO3pyAPRIAczRvrIq5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sLK6duQmWXpbuzOkTGRVeMjH+SDBEVnYjPjmeFz7lAaMMGv2UQe7AxP6kTThQ0FwlzSQbOe37vOYgGR9F3ZImjGQ6uiL9LGBZBlaEKN+MHJA6G8qlv6qUZz6gdp18q9w5t/DJIuEJZZvnzVx8CJ9n1eYw758tzE/hrGFNnZ5N6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fDuouXDk; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281faefea9so33824795e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:51:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722516688; x=1723121488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6QMpYiaUKnQGePeyncUAsOyGyvo4sFuaZoIKakgcqds=;
+        b=fDuouXDkFEUNSWEtlelIisa8gBO3deekZ5oIOg2n3ZOVTfZBNtC+ThQ20SzprMx7tZ
+         SplvP8QdSfmK1PHCH2tvVO74mJa6/YGBp5zZb+Zt5me4WQWPCGDd6ueJlBvTo9jW91Vd
+         nnIOesXV/nTmLx9c2FhbigsBrdqOuLXq92UfkEuKPmD4pTScjzXlOtyxLy8XKO0BL3H2
+         NsyMk/kseMN4tAoAr1u/Kfcdq9CSKLo5mAYC8Nbub6pptICtraVonmOtxiHgnh9vG1vS
+         GlZU9S8jHg/Qsn96q2R4mrQPFSqgljutl85ur/bM/usw13zyqTogIJ3NQMOLBQIvtZXv
+         mQLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722516688; x=1723121488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6QMpYiaUKnQGePeyncUAsOyGyvo4sFuaZoIKakgcqds=;
+        b=Xg4v/vlJBnT5zHZVzvTuQwM56wCMvBQuEj0EWoU5ghKb5Eqkvxp/otU9mkGd2CoGUI
+         IHGRgl66vvtkbnhmMJy1SPCK+Hb/KFQwirI/HVmpmJTY3v/h7y/rXJmpEnZmMkMfAg2Z
+         Wg0pStx0Pc/YmWSSiF8yW3b2HWOxZ3Q+SVWew13zhqOMfFD//uYXp9WkJTJXKOKPQ5KM
+         I5aYeqff8KfIhw8E4gTOKoeRPXjb2QAxbwoBq74MJc1+gwjEuixu1joCZinsJNBd4g1w
+         gRKRY+mxZhoHZvewwdFAYM3wEP4A904+zcVvX7CRhCsPAIKtRxCS74ogZ4Xnbx3kuAxW
+         hhVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuYKKdbJjFA7XfxQaeq9t4+9z5PSk8c5T+8pRmTppJx/9RCqrgn8R+zIDF/BxfxPlYH/F+bQ0HTZb3PdTjEE3bI9gukBbHmggX7Z1D
+X-Gm-Message-State: AOJu0Yyy7d63/xZkgdXaDt7QzF/mZLvfclF//jKzRCj9K3D3EzutTFkG
+	HsdiJRpZP1SnzP1BMe4KE8SGvFlOmxJF8ysGVhiqTBAjj2d1vGzhyB03IrFpqJpyeEHGUfvFFVL
+	NcDoIm6VvYsvYY7KSB3cHCXORcq7Rx9nrS6lM
+X-Google-Smtp-Source: AGHT+IGFMbQ6YBajivuDZ1k5rIS4yW0tNO+NYuNxc00k9ljQGThK75whHTQu91KdxYsCWAj62TVJQLL+OJJJ8D283gQ=
+X-Received: by 2002:a05:600c:46d5:b0:428:e140:88c4 with SMTP id
+ 5b1f17b1804b1-428e14088d2mr12744765e9.33.1722516687702; Thu, 01 Aug 2024
+ 05:51:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240730151731.15363-1-john.allen@amd.com>
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
+ <20240723-linked-list-v3-4-89db92c7dbf4@google.com> <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
+ <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com> <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me>
+In-Reply-To: <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 1 Aug 2024 14:51:16 +0200
+Message-ID: <CAH5fLgjntr81+OFxzVqvb+zL4RqHCap9LZnNxNvN_gzF8AKrRg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
+	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 03:17:29PM +0000, John Allen wrote:
-> Platform Runtime Mechanism (PRM) introduces a means for the AML
-> interpreter and OS drivers to invoke runtime handlers from platform
-> firmware in order to remove the need for certain classes of SMIs.
-> Further details can be seen in the PRM specification[1].
->=20
-> Future AMD platforms will implement a PRM module in firmware that will
-> include handlers for performing various types of address translation.
-> The address translation PRM module is documented in chapter 22 of the
-> publicly available "AMD Family 1Ah Models 00h=E2=80=930Fh and Models 10=
-h=E2=80=931Fh
-> ACPI v6.5 Porting Guide"[2].
->=20
-> While the kernel currently has support for calling PRM handlers from th=
-e
-> AML interpreter, it does not support calling PRM handlers directly from
-> OS drivers. This series implements the direct call interface and uses i=
-t
-> for translating normalized addresses to system physical addresses.
->=20
-> Thanks,
-> John
->=20
-> [1]:
-> https://uefi.org/sites/default/files/resources/Platform%20Runtime%20Mec=
-hanism%20-%20with%20legal%20notice.pdf
-> [2]:
-> https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/pr=
-ogrammer-references/58088-0.75-pub.pdf
->=20
-> Tree: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-> Base commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
->=20
-> John Allen (2):
->   ACPI: PRM: Add PRM handler direct call support
->   RAS/AMD/ATL: Translate normalized to system physical addresses using
->     PRM
->=20
->  drivers/acpi/prmt.c            | 24 ++++++++++++++
->  drivers/ras/amd/atl/Kconfig    |  4 +++
->  drivers/ras/amd/atl/Makefile   |  2 ++
->  drivers/ras/amd/atl/internal.h | 10 ++++++
->  drivers/ras/amd/atl/prm.c      | 57 ++++++++++++++++++++++++++++++++++
->  drivers/ras/amd/atl/umc.c      |  5 +++
->  include/linux/prmt.h           |  5 +++
->  7 files changed, 107 insertions(+)
->  create mode 100644 drivers/ras/amd/atl/prm.c
->=20
-> --=20
+On Thu, Aug 1, 2024 at 12:45=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On 01.08.24 11:42, Alice Ryhl wrote:
+> > On Wed, Jul 31, 2024 at 8:41=E2=80=AFPM Benno Lossin <benno.lossin@prot=
+on.me> wrote:
+> >>
+> >> On 23.07.24 10:22, Alice Ryhl wrote:
+> >>> +/// The prev/next pointers for an item in a linked list.
+> >>> +///
+> >>> +/// # Invariants
+> >>> +///
+> >>> +/// The fields are null if and only if this item is not in a list.
+> >>> +#[repr(transparent)]
+> >>> +pub struct ListLinks<const ID: u64 =3D 0> {
+> >>> +    #[allow(dead_code)]
+> >>> +    inner: Opaque<ListLinksFields>,
+> >>
+> >> Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it i=
+s
+> >> enough and you change this, be aware that `Opaque` is `!Unpin`, so if
+> >> you intend for `ListLinks` to also be `!Unpin`, then you need a
+> >> `PhantomPinned`)
+> >
+> > I need the `!Unpin` part for aliasing.
+>
+> Oh good point, do you mind adding a comment for that?
+>
+> >>> +}
+> >>> +
+> >>> +// SAFETY: The next/prev fields of a ListLinks can be moved across t=
+hread boundaries.
+> >>
+> >> Why? This is not a justification.
+> >
+> > What would you say?
+>
+> While trying to come up with a safety comment I thought about the
+> following: this impl does not depend on the type that is behind the
+> pointer (ie the type containing the `ListLinks`). Thus this `ListLinks`
+> will always implement `Send` even if the pointed-to value does not.
+> What we could do (and what definitely would be correct) is this:
+> `List` can only be used with `Send` types, then we could implement
+> `Send` for `ListLinks`. But I haven't actually come up with a problem,
+> so there might a more permissive solution.
+> Do you have a use-case where you need `!Send` types in a list?
+>
+> Here is a part of my reasoning: If the pointed-to value is `!Send`, then
+> the `List` item type must also be `!Send`. Thus all list operations take
+> place on the same thread (since the `List` will be `!Send`). Therefore
+> nobody can access the `prev`/`next` pointers from another thread.
+>
+> But this does not justify that `ListLinks` can be made `Send`. (although
+> there isn't actually a problem)
 
-Applied, thanks.
+I don't think there's any reason to forbid lists with !Send types. The
+List just becomes !Send too.
 
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Alice
 
