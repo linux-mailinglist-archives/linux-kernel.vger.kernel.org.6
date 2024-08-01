@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-270494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D009440A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:13:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6353B9440A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469711F22934
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:13:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBDE282379
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C4314B94B;
-	Thu,  1 Aug 2024 01:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sa8qnex8"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03021A257B;
+	Thu,  1 Aug 2024 01:27:04 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29DB28370;
-	Thu,  1 Aug 2024 01:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A9C1A2562;
+	Thu,  1 Aug 2024 01:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722475616; cv=none; b=KjmsR0ojRfw3SheojcRMO2dG84joG7HWGeJOGn68uF2hdD65rnddQkMvGtPaky1MifafHP4p71lCexlTreDOq0yB5/f4sPLjH9WzBDda4rv1I2beWbiwX9KlMBZmabcMhTQuO6K5GMn+T0CZhYlrlCPkBZGm4j/mnqmMDlvgyKM=
+	t=1722475624; cv=none; b=bWh4c1PdvIV1O9KFqlmzsBhpVbVE+e/Bz2sLuPY/y6CvBhp7BiXksqT6QdSES0JlRo8T1lfNUz2OpwNKnIU6LQajchnxR8Sb1pBcnyDYLJR0hqkn9wIaGyTcmlc0oPy8lXW4Sst0k2uE4j/URAK8XM/81AlAujTLjqB46tabuNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722475616; c=relaxed/simple;
-	bh=dJULF9u1UbKIHK6/B73pmGXfgRNh02RSUeuIW6GysmM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XybpVjFdeoHTUFgkL7pOqV0NIcNZ3kE7vNACI6/ar89OtFxcyiSwRYDjxdEQ2OCE9LFbwL04zdY6zG6JLTXHKnJBjaycBg2UsRD6RfLkmTHkDJVsEK6Q88ZyjrJniMTfyMmGX84L7sVmfh+OksSVhyY3FkipfxOxp1y9nLI9biE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sa8qnex8; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722475612;
-	bh=3+b6rMgl+NJQI1+PnuBqTbcxPeciIVa3QXZNYf8AnZ0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=sa8qnex8b4os+/wv/WnaY6ccwkRy0JeS+wUuVvDsw2i0iZaNoUhNUBnFCjqOHy/5T
-	 jW8tFLw0/sm2PHjT94Q5dWyH9E26u1FT60FxnIZKt+9njvD6IO10PuSBEgnWThxad7
-	 e9qrfr31h3en0lH8yqjFYvoHoW650ZojNyM+uDwHQvTO6Yq+L8JV0DeC/L3Lq8SyLT
-	 FBFOJCuW7zBXU7+dOOJzjixfJF7/v1hGtof2gHk5ELo2D5Ya3KUij5n/cAMmEv+zs8
-	 oRRI/kLcCcZw8lb5a+I+cEJVWJE0WsIC+t+QJJS/CjB6k1KEaFwB/eWi2sCu8e8zBd
-	 aWjGTwu4665eg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZBBz2Hh6z4x0C;
-	Thu,  1 Aug 2024 11:26:51 +1000 (AEST)
-Date: Thu, 1 Aug 2024 11:26:50 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
- =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Daniel Vetter
- <daniel.vetter@ffwll.ch>
-Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
- <dri-devel@lists.freedesktop.org>, DRM XE List
- <intel-xe@lists.freedesktop.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Umesh Nerlige Ramappa
- <umesh.nerlige.ramappa@intel.com>
-Subject: linux-next: manual merge of the drm-xe tree with the drm-misc tree
-Message-ID: <20240801112650.30b8d53d@canb.auug.org.au>
+	s=arc-20240116; t=1722475624; c=relaxed/simple;
+	bh=NyUJU5qt9KOZ5V2FlZXxo9KiqYr69JBvG75ao6KughU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jz7Ib3XCggv5WLCqqTdVn2jiiOHi1iXuaqxWXCr/44I3kNRZWipJCN1pWRVoWf2QLBsIcFoHOlG3DG52iswSjoJuLwBrGBpWDKffEfcS4AyKqweF+gdaS2zrH7wy6Ffud6jguaNRwVTG72uXwvM7xare17FzmlRFiuOjSJxxUQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WZBBv2kjRz1L927;
+	Thu,  1 Aug 2024 09:26:47 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 799C718009B;
+	Thu,  1 Aug 2024 09:26:59 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 09:26:58 +0800
+Message-ID: <3855e3a4-769b-5162-0747-cf72b94f7089@huawei.com>
+Date: Thu, 1 Aug 2024 09:26:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/vNhWEgUKXHB297s8XXMWJXk";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
+Content-Language: en-US
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <arnd@arndb.de>, <afd@ti.com>, <akpm@linux-foundation.org>,
+	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
+	<vincent.whitchurch@axis.com>, <bhe@redhat.com>, <nico@fluxnic.net>,
+	<ardb@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>
+References: <20240620090028.729373-1-ruanjinjie@huawei.com>
+ <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
+ <Zqn0wL5iScf455O5@shell.armlinux.org.uk>
+ <034499ea-2cd6-8775-ee94-771cbecd4cdb@huawei.com>
+ <ZqoOoUPDIeJX5M0e@shell.armlinux.org.uk>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZqoOoUPDIeJX5M0e@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
---Sig_/vNhWEgUKXHB297s8XXMWJXk
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the drm-xe tree got a conflict in:
+On 2024/7/31 18:14, Russell King (Oracle) wrote:
+> On Wed, Jul 31, 2024 at 06:03:11PM +0800, Jinjie Ruan wrote:
+>> On 2024/7/31 16:24, Russell King (Oracle) wrote:
+>>> On Wed, Jul 31, 2024 at 10:07:53AM +0800, Jinjie Ruan wrote:
+>>>>>  #ifdef CONFIG_PREEMPTION
+>>>>> +#ifdef CONFIG_PREEMPT_DYNAMIC
+>>>>> +	bl	need_irq_preemption
+>>>>> +	cmp	r0, #0
+>>>>> +	beq	2f
+>>>>> +#endif
+>>>
+>>> Depending on the interrupt rate, this can be regarded as a fast path,
+>>> it would be nice if we could find a way to use static branches in
+>>> assembly code.
+>> It seems to be hard to use static keys in assembly code.
+>>
+>> By the way, currently, most architectures have simplified assembly code
+>> and implemented its most functions in C functions. Does arm32 have this
+>> plan?
+> 
+> arm32 is effectively in maintenance mode; very little active development
+> is occuring. So, there are no plans to change the code without good
+> reason (as code changes without reason will needlessly affect its
+> stability.)
 
-  drivers/gpu/drm/xe/xe_vm.c
+Thank you for helping me with my question.
 
-between commit:
-
-  4c44f89c5dae ("drm/ttm, drm/amdgpu, drm/xe: Consider hitch moves within b=
-ulk sublist moves")
-
-from the drm-misc tree and commit:
-
-  a2387e69493d ("drm/xe: Take a ref to xe file when user creates a VM")
-
-from the drm-xe tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/xe/xe_vm.c
-index c3bdb6362fe9,f225107bdd65..000000000000
---- a/drivers/gpu/drm/xe/xe_vm.c
-+++ b/drivers/gpu/drm/xe/xe_vm.c
-@@@ -1604,7 -1670,10 +1673,11 @@@ static void vm_destroy_work_func(struc
-  		XE_WARN_ON(vm->pt_root[id]);
- =20
-  	trace_xe_vm_free(vm);
- +	ttm_lru_bulk_move_fini(&xe->ttm, &vm->lru_bulk_move);
-+=20
-+ 	if (vm->xef)
-+ 		xe_file_put(vm->xef);
-+=20
-  	kfree(vm);
-  }
- =20
-
---Sig_/vNhWEgUKXHB297s8XXMWJXk
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaq5FoACgkQAVBC80lX
-0Gw7+Af/a263s5qrAfruejH6cvM7gSin/ndV6J8n0743hIUeZVlD7jHXySuhyg3b
-4VjsiOhWqa9yjZUX9oqIyTKulPGJoUO3BUlcHahP+kflJTbaLfQ1G4wf0/tJ7a1R
-AiLmLY/8QAOB0Wimml3/+KDzQiUfirkWC8QeaaaV/cg2kVNN5EqI8MYln/tWJuhI
-IaxNGQkxZiDQQHzMGQYX7xMnk9sLN71xYlKv25U4KVQY4TTm2loBnheWAsHDemVx
-SUJYb2P5FZZq3wJI7xNdCYn4eO29zxi+6/foLGqKqIxjqDidl3LcPIpk4hKe2DFf
-OVGxbtFQg/rjybSBuz+5rKnGIRw2wQ==
-=5M9J
------END PGP SIGNATURE-----
-
---Sig_/vNhWEgUKXHB297s8XXMWJXk--
+> 
 
