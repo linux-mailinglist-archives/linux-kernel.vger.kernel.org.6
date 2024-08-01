@@ -1,111 +1,196 @@
-Return-Path: <linux-kernel+bounces-271564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66600945014
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:07:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B480A945019
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2461F245A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5F1289EDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DA41B9B35;
-	Thu,  1 Aug 2024 16:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12C61BA879;
+	Thu,  1 Aug 2024 16:05:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LrkCFjWd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="v6cwg5u3"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFE51DA58;
-	Thu,  1 Aug 2024 16:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A91B3F28
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528332; cv=none; b=ZwNJIICYChH/AVIoJGXHsC9C2jijUduycBA7SPyf5nwHo+uBR2BvvvvAP0T2j5W0Uou7NlYXUV0jkJfgyLJIIBZavbLddK4JoHvX41LoUnUbO8gO8I5smKEzESLpbm5pe5qnrVbQGjdiZAgJ/DJlnLIRjuLmk01zhRoskmg83no=
+	t=1722528344; cv=none; b=JcRLyGzBYHn8wMQrECFzFBj4shFMsyajiaObB5TpYwC7AeCOdVSXFXJWwP9M3z0Kz6nVbbZOeoTkmv6q3gu7YSnqfcJprAOdS4RSdo5Jo7QSPBiDpPodlygsy5f4toRjcyW/uSnBQQbUtUY3aad/F1ReJpY3pKEy9iyRwcdEVzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528332; c=relaxed/simple;
-	bh=xpE5ZfVKnxqG5WERp0OB1HLOa7RKYVijxWtgEhj0+Rs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fujlG3n2dBpjuiTvs0szProKp0HO13CZjNzXBkwqrtids4fiei+mtwfa1ai16BYm6r9wLGhqzo10QEu/JomBlcs5IupFEHl8qMts2A4rfZIUFnxYasMRAQ0fRH/NahMXBR0JnZaFVHm1ecqw6mag43Bow9d6DIAFFpzcmAbEV6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LrkCFjWd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0C8CC4AF0C;
-	Thu,  1 Aug 2024 16:05:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722528331;
-	bh=xpE5ZfVKnxqG5WERp0OB1HLOa7RKYVijxWtgEhj0+Rs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=LrkCFjWdx0vDUmXDYIB9x6+f44l0222FvnFFDiq7o5fBefmAKYKTsR228tjJnjDmf
-	 kXbxrtf2nWEA+K3PIZOJ/nmjDvZS3e5uZZyyE4wOrvk9gGoGiucL+v8YoOoUgCnyLh
-	 ZYpcKshuvdcD+SNX5rtImPzDdO7ruoNNOSjS3A9nxN8KIzlsqr7EO1p1/ukLV+Z8Zo
-	 7F9OHykWNwo9dNj/HyJGTYIJk/uc9KtGyULFOw0+KH66JshkF1nqf2i+aYpH3C/ozc
-	 nLsASQjcHL4SbugXKvUlZ3hggXyoSp4fqY7uJ34C06nX40PMI7lUTLzWr3DMvMsu4G
-	 cU+d3SEGZPf8g==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f00ad303aso11036231e87.2;
-        Thu, 01 Aug 2024 09:05:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXujggnkzX0DqCpG6q6yNBT1EhFUMwdijpcicPf1IlNEqc3CqkumVsP1WgQ+1WtV0xFhUV3CNwR2EZG2LrO2phmZB0uwK/E/7QC7ALLPNX2MeV2PyEXvfkB+5I9GUHkKkqHj48weofbP1IsahIMpqO0bIeXgnljMjR/jz7H2kvy4KgIIq0kpA==
-X-Gm-Message-State: AOJu0Yx0JAAeVEHYoC77QOVdVA/wpgp9uzLVFvK6a8ulYhdRhMQRnG8J
-	FO23dpCMEGlQ9vMX/bytySJiExulvG9Rz/bG7Sf4awZYc4kfQcKSpJ6NiA7axR5UUNcVXIvy9ZH
-	XySXMW5ZLqSCl+yuC/RR9iEbUPw==
-X-Google-Smtp-Source: AGHT+IFSaBHEBx0cPsFVT0dU/9exSRj56/Zithgk5yZPkdk+2bYopgDbA53wywVrQFM+8T64rnpjtlyO3GuTZcOUNLg=
-X-Received: by 2002:a05:6512:39cb:b0:52c:def6:7c97 with SMTP id
- 2adb3069b0e04-530bb3d43b5mr254230e87.45.1722528330066; Thu, 01 Aug 2024
- 09:05:30 -0700 (PDT)
+	s=arc-20240116; t=1722528344; c=relaxed/simple;
+	bh=W0bdeForQv6QKPsVnNeruCsx9lZBQ+WVsaGoDd2lbcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WWa3rsymV//Q4J0mwvfgiZmpYHA+OmewvNC5R0Yti9weHLEDro4zOKXplNX5kjcxA1dE/shcTGX6St9AUEsT45Qoyamw/sTYhlTJMyYPm7KRumpbLRdhUjeMb7+wDtdE5Fx8pm/hpN69mM3yWqqBb6TwyO5tBj0vkhILjhoQNoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=v6cwg5u3; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f0407330a3so5389271fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1722528340; x=1723133140; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pmyBtMLAvKKc/g2gbrx5+dBgFoc+eVPA3RV1j9P+NdM=;
+        b=v6cwg5u3PIYTi8hCMpMZr6dGvr3AV7jD3hSBut1Vfzy4h8SRRMOxEBEQ+42MMALZ/U
+         uRDyQGmgKjN6XciK790gVgaJgED7YmdEQh4cVVCvKu16g4jijKCItXXAjYGDHw2Bcd0U
+         0hyLh8EA3bKLqMnxqi5QpPVUIxnO3ZF7wo/9hoiLi3I+Akgv7Xj/VmUxrq0NqOYqNP1Y
+         7WAeaIrQjWGeGU7i2HNF4CaNsMtKkSXXWEkDS8gDk317PIGD3hDZMwu2j4/zAdDg62eO
+         twtjv1K1Y3RoW1F+Ykf/pnHCmi/fOaoLb2afayFoVkA7vVitCRNtye+Ey8qzBLw2Dh0k
+         vNcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722528340; x=1723133140;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pmyBtMLAvKKc/g2gbrx5+dBgFoc+eVPA3RV1j9P+NdM=;
+        b=uAR8u8n3O0pESsQVURctsQpojXsjmsrO8IDZMIiInsFgtg8xiUoTzXCzU8p/AnkNyf
+         /BAe6YGRUAI+XtFZRG1kEijyWnnFsrdmca4kl1PLVbQADIF21vSS5yvCgqnLSav7Chax
+         ebRth1zDV5X7cW1xdL3o+cDEjK8hTxhaHMAW1m7QJP3fItLw7XWlvwEt32jV2NUJk426
+         wk63OA1UY+a34x7f+ggFJf5PY/goefD6DeFygRDo8Ob7GWxTCt8jBKBQ4uTZKc6jSCWW
+         v2QeBm41IlFJ74d/4if0uiZEOGiNfF6mGO0mLQbnofg/919z22Gp7xh+kU5Lg22sfxu8
+         KzpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq0clNOJG0ccCHuPNVwEz9pU+RJ9V+yvFDrA99wQWovmVABzNoFFwY5zRPK/4uRvEv0KWz4/qohNjaTIx8TQDUDlMW7domQHVmltWc
+X-Gm-Message-State: AOJu0YzMmiGUPaNAQqR9smGIaQZf8dOUKCTveP4hsKEo8oAzFIKs7oEc
+	RE2IOhpbKAG5gLwTQmtXcdkOF7GvQ4xZpJ+ADE9MU4YouCdheU3ax29GqHA5uUE=
+X-Google-Smtp-Source: AGHT+IEp1PwFbanwLIIM1AuKEedIZhFMMTemRNxUspEvnFs1UiGExdZMGyfbsV0gon9vLaKYg2uwbA==
+X-Received: by 2002:a2e:9cda:0:b0:2ef:1d8d:2201 with SMTP id 38308e7fff4ca-2f15aaa71dfmr5802441fa.23.1722528340036;
+        Thu, 01 Aug 2024 09:05:40 -0700 (PDT)
+Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e11356sm1650825e9.19.2024.08.01.09.05.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 09:05:38 -0700 (PDT)
+Date: Thu, 1 Aug 2024 17:05:37 +0100
+From: Qais Yousef <qyousef@layalina.io>
+To: MANISH PANDEY <quic_mapa@quicinc.com>
+Cc: axboe@kernel.dk, mingo@kernel.org, peterz@infradead.org,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	linux-block@vger.kernel.org, sudeep.holla@arm.com,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Christoph Hellwig <hch@infradead.org>, kailash@google.com,
+	tkjos@google.com, dhavale@google.com, bvanassche@google.com,
+	quic_nitirawa@quicinc.com, quic_cang@quicinc.com,
+	quic_rampraka@quicinc.com, quic_narepall@quicinc.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+Message-ID: <20240801160537.ux4eg6p42disuqur@airbuntu>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <d2009fca-57db-49e6-a874-e8291c3e27f5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1722334569.git.viresh.kumar@linaro.org> <e0df2db1caa49f15628aa18779b94899dcf37880.1722334569.git.viresh.kumar@linaro.org>
- <CAL_Jsq+SxdPyb3qQyce7u8Ur=WCd1p+pQxJ+yJrTyS2xk3BF0w@mail.gmail.com> <20240801083119.bwd6k6vimwyhv6cl@vireshk-i7>
-In-Reply-To: <20240801083119.bwd6k6vimwyhv6cl@vireshk-i7>
-From: Rob Herring <robh@kernel.org>
-Date: Thu, 1 Aug 2024 10:05:17 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJe4W4XV1RwkRRhJ4U=TzhgE5vo6aBsXBWjPzU89dWeAQ@mail.gmail.com>
-Message-ID: <CAL_JsqJe4W4XV1RwkRRhJ4U=TzhgE5vo6aBsXBWjPzU89dWeAQ@mail.gmail.com>
-Subject: Re: [PATCH V5 8/8] cpufreq: Add Rust based cpufreq-dt driver
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Stephen Boyd <sboyd@kernel.org>, 
-	Nishanth Menon <nm@ti.com>, rust-for-linux@vger.kernel.org, 
-	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>, Erik Schilling <erik.schilling@linaro.org>, 
-	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
-	Joakim Bech <joakim.bech@linaro.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d2009fca-57db-49e6-a874-e8291c3e27f5@quicinc.com>
 
-On Thu, Aug 1, 2024 at 2:31=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
-g> wrote:
->
-> On 31-07-24, 15:14, Rob Herring wrote:
-> > We don't want anything in Rust based on of_find_property() which this
-> > is. That function assumes a device node and its properties are never
-> > freed which is no longer a valid assumption (since OF_DYNAMIC and then
-> > overlays). There's some work starting to address that, and my plan is
-> > using of_find_property() on dynamic nodes will start warning. The
-> > of_property_* API mostly avoids that issue (string types are an issue)
->
-> Okay. Migrated to of_property_present() now. Thanks.
->
-> > Also, it's probably the device property API we want to build Rust
-> > bindings on top of rather than DT and ACPI. OTOH, the device property
-> > API may be missing some features needed with OPP bindings.
->
-> I am not sure which device properties are you talking about. Are there
-> any OF related examples available there ?
+On 08/01/24 14:55, MANISH PANDEY wrote:
+> ++ adding linux-kernel group
+> 
+> On 7/31/2024 7:16 PM, MANISH PANDEY wrote:
+> > Hi Qais Yousef,
+> > Recently we observed below patch has been merged
+> > https://lore.kernel.org/all/20240223155749.2958009-3-qyousef@layalina.io
+> > 
+> > This patch is causing performance degradation ~20% in Random IO along
+> > with significant drop in Sequential IO performance. So we would like to
+> > revert this patch as it impacts MCQ UFS devices heavily. Though Non MCQ
+> > devices are also getting impacted due to this.
 
-device_property_*()
+Could you provide more info about your systems' topology and irq setup please?
 
-Basically a wrapper around fwnode APIs taking struct device rather
-than fwnode. While I think the sharing of properties between DT and
-ACPI is flawed and converting C drivers from of_property_ to
-device_property_ calls is pointless, I think since rust bindings are a
-blank page, using the device_property_ API makes sense.
+> > 
+> > We have several concerns with the patch
+> > 1. This patch takes away the luxury of affining best possible cpus from
+> >   device drivers and limits driver to fall in same group of CPUs.
 
-Rob
+I don't think it does. If rq_affinity is set to 1, then it is set to match the
+performance of the requester to do the completion.
+
+> > 
+> > 2. Why can't device driver use irq affinity to use desired CPUs to
+> > complete the IO request, instead of forcing it from block layer.
+
+If you set the sysfs rq_affinity to 0, you should be able to distribute things
+without block layer trying to match anything?
+
+> > 
+> > 3. Already CPUs are grouped based on LLC, then if a new categorization
+> > is required ?
+
+rq_affinity = 1 is asking to match the performance of the
+requester/orginitaor. On HMP system, this means looking at grouping based on
+capacity, not just LLC.
+
+> > 
+> > > big performance impact if the IO request
+> > > was done from a CPU with higher capacity but the interrupt is serviced
+> > > on a lower capacity CPU.
+> > 
+> > This patch doesn't considers the issue of contention in submission path
+
+What is the issue of contention? Could you please explain it in more details?
+
+> > and completion path. Also what if we want to complete the request of
+> > smaller capacity CPU to Higher capacity CPU?
+
+Assuming you want to use rq_affinity = 1 to match based on LLC but not
+capacity. I'm curious why you want to match on LLC only but not capacity.
+
+Is this on 6.1 kernel and beyond? Arm systems should have a shared LLC based on
+DSU that is enforced in topology in 6.1. So can't see why you want to match
+based on LLC but not capacity. Could you provide more info please?
+
+If you don't want block layer to do any affinity, isn't it better to set
+rq_affinity = 0?
+
+> > Shouldn't a device driver take care of this and allow the vendors to use
+> > the best possible combination they want to use?
+> > Does it considers MCQ devices and different SQ<->CQ mappings?
+
+Why this consideration matters when matching the perf based on capacity but it
+doesn't matter when matching it based on LLC?
+
+> > 
+> > > Without the patch I see the BLOCK softirq always running on little cores
+> > > (where the hardirq is serviced). With it I can see it running on all
+> > > cores.
+> > 
+> > why we can't use echo 2 > rq_affinity to force complete on the same
+> > group of CPUs from where request was initiated?
+
+They are not the samae. rq_affinity = 1 means match. So if both are on the same
+LLC or capacity, no need to force anything. rq_affinity = 2 means always match.
+It's not the same thing, is it?
+
+
+Thanks
+
+--
+Qais Yousef
+
+> > Also why to force vendors to always use SOFTIRQ for completion?
+> > We should be flexible to either complete the IO request via IPI, HARDIRQ
+> > or SOFTIRQ.
+> > 
+> > 
+> > An SoC can have different CPU configuration possible and this patch
+> > forces a restriction on the completion path. This problem is more worse
+> > in MCQ devices as we can have different SQ<->CQ mapping.
+> > 
+> > So we would like to revert the patch. Please let us know if any concerns?
+> > 
+> > Regards
+> > Manish Pandey
 
