@@ -1,105 +1,132 @@
-Return-Path: <linux-kernel+bounces-271645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E36945109
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:45:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4BC94510B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABB521C25936
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19C61289E9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 652B81B3F24;
-	Thu,  1 Aug 2024 16:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B991B5806;
+	Thu,  1 Aug 2024 16:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="Dg6A5Ykc"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KscuT4xq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B031D1B151B;
-	Thu,  1 Aug 2024 16:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5363D1B151B;
+	Thu,  1 Aug 2024 16:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530716; cv=none; b=N/Ee5UBeZNf2A8jTH822ibQbzx86Nn2eDZw1g4pfC+OLjbHmKZ9n4KDLpWyGhroL/b/eaaG0iZjdP11ywHWHew4/RL22uq2BTI6k/Dx6norUPEBt0WmYFI5vbMW3fct52RlmbNnfnmOnOgqITzYS0W80i7Q404hezo+G8VHTg2U=
+	t=1722530752; cv=none; b=AQ9x3S1GWiMQSQs+hOXX9xD0rGlQGNTon+MNyZu/KzclMR1sVTqCm2kwrDpI7eoSi4zXLK3+l554YWxfYuWZoWC9wMfarzTj9ewNPaiaSu+UeEyqmpMTJLQt+jVGXu4mT73r4Ex5fa8np2OYERRyyM02lS9bhNIoGVuFtBQJokg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530716; c=relaxed/simple;
-	bh=sMIMp3uEa+EEzyoCDwp8+qa9SbIjLirvPVuJpld5/2w=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Q/rHplRWruugrJarNvadAAvuMRU9GGhGvlnYJZwoBP486Jkn8mpLVnKUckIkjzEPywdv5K11vQHnE6c1DZep+Oz/Q28/duxAb6p9xHUjG868FGN8ewqMIkvAROhyub59knNnXnovsTpfvMUQWBnX2KfhJSdp7Mj15JK22cL8ttU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=Dg6A5Ykc; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [127.0.0.1] (254C2FDD.nat.pool.telekom.hu [37.76.47.221])
-	by mail.mainlining.org (Postfix) with ESMTPSA id DEA75E4504;
-	Thu,  1 Aug 2024 16:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1722530706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v5l+UJOnTuIA2VF3IVpxLITj1fy8BGXTZgAAao9FeIc=;
-	b=Dg6A5YkcSa+bOJBu/209DtaFqEZs9XbCrbL1TMnnfdQqyMaoZX3JOS4cJltrVAISiyWllX
-	zI/QmqpZRKZInbCcxiuJr/1sZlrheR0Pacan5bI45PjmYbFjjzCCP8Q5vm5f3CH9NplQ+S
-	KLhIiaeOGhmeAHndl8Ax4MIWS62MmSUrxdqV50eM/quiZCR/LrSXQu7HfuBRtdtQmy/wcd
-	6Itxv9kNyIgVp8JrlK/r72cK6PlUfL/PFhVKiKQiZMuUKgheGdxz44xEQCHS6todGMrL2Q
-	39nnuD3L2wF3w3+PRZA4qbS7eJS62iALEti28VaG35ZmrpscfXHa7pUfjbg2Xg==
-Date: Thu, 01 Aug 2024 18:45:03 +0200
-From: =?ISO-8859-1?Q?Barnab=E1s_Cz=E9m=E1n?= <barnabas.czeman@mainlining.org>
-To: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-CC: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Konrad Dybcio <konrad.dybcio@somainline.org>
-Subject: Re: [PATCH 0/2] Add MSM8996/MSM8953 dpu catalog
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
-References: <20240628-dpu-msm8953-msm8996-v1-0-a31c77248db7@mainlining.org>
-Message-ID: <874E8EE9-6BE5-4801-AB2E-536B6A160AF8@mainlining.org>
+	s=arc-20240116; t=1722530752; c=relaxed/simple;
+	bh=9K8/1ZKy51T9Ax3Xh2WIgRnxkcihHgffb1DNF0IENQQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s1sXNHunNnXwp1dT1UFkXW1u36cNg8HIYWNmcb68TaECTolVBscpaqycRo8smEolAXBCnQf9hSwYTptB3SBRJzQnAyJmR4TNZs96B/nixdrqhIvbH3QAbwuxGOP75U43g2nOtC+F/+d1UBP8OdzPJok/86tFViFYrRR6WbD2cX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KscuT4xq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB49EC32786;
+	Thu,  1 Aug 2024 16:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722530751;
+	bh=9K8/1ZKy51T9Ax3Xh2WIgRnxkcihHgffb1DNF0IENQQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KscuT4xqJXdHZXNNabFmnRhf9Y+fGFdNBEfaZHinesb/+F44xEIOj28bdj+DHMD7O
+	 qegrmkvL4KFgE4UK/dVJvnqeg8awqUImJbw0dXGzbkqTlcWWnqodHRwH61q5TcOhy4
+	 pS4B/RFonxyvQ/Kw0tbWXc8twvOZLF5+YL27DxUe6ugYEZN280C/ZN7851On1DNpU+
+	 KxrkszkzkoCf9DCCsjAEZXc0kxOUjaoyg3gGtFAS4j/Voe0gMqJgXPl1JmBQaZMh7J
+	 tIRiyVdns9GVeGnuJIa3AG/splbo8jObmHDdRWTEHFx2b5IHRINuVw2YmkcKRQ3ohW
+	 pP6fqmGeqt7Jg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sZYw1-00HTHq-IK;
+	Thu, 01 Aug 2024 17:45:49 +0100
+Date: Thu, 01 Aug 2024 17:45:49 +0100
+Message-ID: <86le1g19aa.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: selftests: arm64: Correct feature test for S1PIE in get-reg-list
+In-Reply-To: <20240731-kvm-arm64-fix-s1pie-test-v1-1-a9253f3b7db4@kernel.org>
+References: <20240731-kvm-arm64-fix-s1pie-test-v1-1-a9253f3b7db4@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, pbonzini@redhat.com, shuah@kernel.org, catalin.marinas@arm.com, joey.gouly@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Should i resend this patch set?
+On Wed, 31 Jul 2024 17:21:13 +0100,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> The ID register for S1PIE is ID_AA64MMFR3_EL1.S1PIE which is bits 11:8 but
+> get-reg-list uses a shift of 4, checking SCTLRX instead. Use a shift of 8
+> instead.
+> 
+> Fixes: 5f0419a0083b ("KVM: selftests: get-reg-list: add Permission Indirection registers")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  tools/testing/selftests/kvm/aarch64/get-reg-list.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+> index 709d7d721760..4abebde78187 100644
+> --- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+> +++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
+> @@ -32,13 +32,13 @@ static struct feature_id_reg feat_id_regs[] = {
+>  	{
+>  		ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
+>  		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+> -		4,
+> +		8,
+>  		1
+>  	},
+>  	{
+>  		ARM64_SYS_REG(3, 0, 10, 2, 3),	/* PIR_EL1 */
+>  		ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
+> -		4,
+> +		8,
+>  		1
+>  	}
+>  };
 
-On June 28, 2024 4:39:38 PM GMT+02:00, "Barnab=C3=A1s Cz=C3=A9m=C3=A1n" <b=
-arnabas=2Eczeman@mainlining=2Eorg> wrote:
->This patch series add dpu support for MSM8996/MSM8953 devices=2E
->
->Note, by default these platforms are still handled by the MDP5 driver
->unless the `msm=2Eprefer_mdp5=3Dfalse' parameter is provided=2E
->
->Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas=2Eczeman@mainlini=
-ng=2Eorg>
->---
->Dmitry Baryshkov (1):
->      drm/msm/dpu: add support for MSM8953
->
->Konrad Dybcio (1):
->      drm/msm/dpu: Add MSM8996 support
->
-> =2E=2E=2E/drm/msm/disp/dpu1/catalog/dpu_1_16_msm8953=2Eh   | 218 +++++++=
-++++++
-> =2E=2E=2E/drm/msm/disp/dpu1/catalog/dpu_1_7_msm8996=2Eh    | 348 +++++++=
-++++++++++++++
-> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog=2Ec     | 106 +++++++
-> drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog=2Eh     |   2 +
-> drivers/gpu/drm/msm/disp/dpu1/dpu_kms=2Ec            |   2 +
-> drivers/gpu/drm/msm/msm_drv=2Ec                      |   2 +
-> 6 files changed, 678 insertions(+)
->---
->base-commit: df9574a57d02b265322e77fb8628d4d33641dda9
->change-id: 20240528-dpu-msm8953-msm8996-5d0fb7e387b8
->
->Best regards,
+Thanks for spotting this. However, we are fixing it in a very backward
+way.
+
+Can we please switch all this stuff to symbolic naming instead of
+magic numbers? Given how much effort is going into the "automated
+generation" thing, it is mind-boggling that the tests still rely on
+handcrafted numbers. We just end-up with two different sets of bugs.
+
+At the moment, the level of confidence I have in this stuff is
+sub-zero.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
