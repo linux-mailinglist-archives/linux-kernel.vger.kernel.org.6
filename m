@@ -1,167 +1,148 @@
-Return-Path: <linux-kernel+bounces-271626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801859450E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16BC9450E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 022391F2A318
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B261C22DB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F52A1BD512;
-	Thu,  1 Aug 2024 16:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803B11B9B30;
+	Thu,  1 Aug 2024 16:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aaHz21Sq"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aXTZHb1J"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA9D1BD51D
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C4B1B4C41
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530189; cv=none; b=YmLquNFJMxIp5wH4hB2EC67QaivXya8TaoAojlmDmb+ypWRu27OwCSuNxf/NvB28qV6Wp07cWpf7UbRuSg3nQ72L+bsztPImUlYzm3lvkWUkoGGqHzsRKIH6KTMOlWg+SPdriwNWH9wdPRRvECnxvSMclcJrBy1nCyAh19UTzC8=
+	t=1722530213; cv=none; b=oh5Eh3NFpmaoa8PcU/8D2MFMXlHtXlCqtXwIGMzBwLSeS6mVrKgM7C4Y9l/lmvltuje8EWFTnpq2nvYzmd9ml/QVZYLPWrp5NpGsoZLtENKMUcSpaOOlnOliFoYs761VMAZO+HvLht/nskOAClCcyB3ncoGOFZ6j4X0WrC0hdSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530189; c=relaxed/simple;
-	bh=td39YTy0YblpBN7U8Cca15KBI7XvywPv0hYyTHJE4TI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asprP27BOQ6elK+c/Zv95KrfKgFcc2D7E0XcbCb7Cl68XOVvWulDGbzuWUew7iGklwZnqUYUYX4AbJ53a0op1I76h4ZAtKGGBeX473ivX28EuILdXlPLLS3sF568zowQu+mRkANVgvosyp+TqyankDbSDV9NzTcE1mbAZ8c+srY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aaHz21Sq; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5kgU7L+oZQyGtcBGDMc4U5ijvvwscVi4AgswguOBaaQ=; b=aaHz21SqHW9Z9nkdj1tL8/shnl
-	RHcFzIK1wofXSkqTshfpjB8VJzYiPOSW5o1xpxen+3ZuPKzumrnghKN4XJeZWrcdP42K/LsGuB9jt
-	RPwmJgOy7QF9CMrZ3Qym0at5bsvrZvJx72wsXgrIFQbfwt/JeUabZEej0r8Ku9wrlUB/oD5VMDvO4
-	ljyvaKt0Jndz8MctzW0JgzXmlKvoHC8JUb8aq7z2uLB64nc6jmE5MOYXBrVO/8n1kWKSAIx6oUGqp
-	9ielfs2VC94HkhIkL/dNoMLrpZMa3y0FWRN9KKpM9NrOmCdNoH1CFS6Kx+p5yGHU3Wy3WpxcSbeTa
-	H0JmCqxQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZYmo-000000004YR-3SkX;
-	Thu, 01 Aug 2024 16:36:19 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 372B530074E; Thu,  1 Aug 2024 18:36:18 +0200 (CEST)
-Date: Thu, 1 Aug 2024 18:36:18 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-	ak@linux.intel.com, eranian@google.com,
-	Sandipan Das <sandipan.das@amd.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	silviazhao <silviazhao-oc@zhaoxin.com>
-Subject: Re: [PATCH V4 1/5] perf/x86: Extend event update interface
-Message-ID: <20240801163618.GD39708@noisy.programming.kicks-ass.net>
-References: <20240731143835.771618-1-kan.liang@linux.intel.com>
- <20240731143835.771618-2-kan.liang@linux.intel.com>
- <20240801140340.GF37996@noisy.programming.kicks-ass.net>
- <f9b18e66-eb7d-4998-8843-b1a16cc004b0@linux.intel.com>
+	s=arc-20240116; t=1722530213; c=relaxed/simple;
+	bh=em1mA1BE54fq/8Qiri++FwND1MqAxny3D8dbh9JAnPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pg2Dbwxuk+RxBdjJvuA9uMNpIVhEmbceUyfkatnQMHAOA3iIZ5IRXGhUNPqPnnoCQK25vhINK6W2wj7KEJJ5MRATpn8eKlRwumsSdm/d7VKMLGg/a4pdT/RRtUiMps42/a/j/1Vyj6UQ3A1RUI9t9rLFunulEl8WY7uZCZNayQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aXTZHb1J; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb6662ba3aso1724311a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722530212; x=1723135012; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iLHyQpGZ97xDMnvhgT/vb6AyMcdwpqj4il9mZWgq/VA=;
+        b=aXTZHb1JAkFK/ep3OkD9W+yxLy+BviCAHQUGNmJFXC4JQgIUa3nVaKF+uwhOCR5sUk
+         p2SJ+aI9PeH78MqanI7h6r0NEPZnkiTpmKUQNFowUviFJO1vh9ZvOQ5UToZgQAgtslqy
+         EfsG4YUZBBfYfLE+Ml1nIegN9eGuUGMWdiTmQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722530212; x=1723135012;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iLHyQpGZ97xDMnvhgT/vb6AyMcdwpqj4il9mZWgq/VA=;
+        b=D28B4fHZzr9JbSqm4iFswQbrlQw6wcxrfsgESH4Z9V0a/nYO/4ZAVzqM8xg32xRYuk
+         kL5eY7T/TZoLGEARvuQrQOH07ONPpUmsFJzKN0fRVGgxwY65SaKu76gv0oezZ3iSKB/u
+         e0TGisu9NH76nUZLLtI6agtqtPe8uHZj6O46a0o8bl0/Q8pKLoDt9umDgo68UiRfgbEI
+         2oa4n19Uh/Ip+qzfMJLITRZJ9/26KJlyWuWT6XrBM/GbDewmbsud24RQ+hf+lsfXoOGh
+         ueVSHNTAxiSFgmzLLbXFDEzdlvz8CSq+7gYn0uvVY4T/CyHMqwN8iFWSXLOFIIVKRmNG
+         nCQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIk5Cq5hQRjkDqAy/QPfZtp1j70MyjbcRCc23gwQWjAhoyo9LFmTdBbdYka3UPW4TMZmS0mnSYf0Us7HrDMVU5it1RqFVc8C7ZG3lX
+X-Gm-Message-State: AOJu0Yz395W0w5ra9OWMAwXRahVW7mgpjRSxTqTegzacgArQQpK8Kb/7
+	WrOlSD2fKb6wlzWLYuasVzFimnD7A3qvOMax5RpfcVF9AK1YvltYdsiSkhpRSA==
+X-Google-Smtp-Source: AGHT+IHXuci+sTZSMUCBj5eUPCjwHAU9HQMlN9+pK4EtVlqys/N4mSTHfvkKJzr6ahefiQ9CPH5/hQ==
+X-Received: by 2002:a17:90b:4c0c:b0:2cf:f860:f13b with SMTP id 98e67ed59e1d1-2cffa292227mr782311a91.17.1722530211501;
+        Thu, 01 Aug 2024 09:36:51 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffb090f34sm143491a91.13.2024.08.01.09.36.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 09:36:50 -0700 (PDT)
+Message-ID: <8c7a1133-a6ab-49e2-9cff-b542c9882bcb@broadcom.com>
+Date: Thu, 1 Aug 2024 09:36:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9b18e66-eb7d-4998-8843-b1a16cc004b0@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/12] dt-bindings: PCI: brcmstb: Add 7712 SoC
+ description
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-3-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240731222831.14895-3-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 11:31:40AM -0400, Liang, Kan wrote:
+On 7/31/24 15:28, Jim Quinlan wrote:
+> Add description for the 7712 SoC, a Broadcom STB sibling chip of the RPi 5.
+> The 7712 uses three reset controllers: rescal, for phy reset calibration;
+> bridge, for the bridge between the PCIe bus and the memory bus; and swinit,
+> which is a "soft" initialization of the PCIe HW.
 > 
-> 
-> On 2024-08-01 10:03 a.m., Peter Zijlstra wrote:
-> > On Wed, Jul 31, 2024 at 07:38:31AM -0700, kan.liang@linux.intel.com wrote:
-> >> From: Kan Liang <kan.liang@linux.intel.com>
-> >>
-> >> The current event update interface directly reads the values from the
-> >> counter, but the values may not be the accurate ones users require. For
-> >> example, the sample read feature wants the counter value of the member
-> >> events when the leader event is overflow. But with the current
-> >> implementation, the read (event update) actually happens in the NMI
-> >> handler. There may be a small gap between the overflow and the NMI
-> >> handler.
-> > 
-> > This...
-> > 
-> >> The new Intel PEBS counters snapshotting feature can provide
-> >> the accurate counter value in the overflow. The event update interface
-> >> has to be updated to apply the given accurate values.
-> >>
-> >> Pass the accurate values via the event update interface. If the value is
-> >> not available, still directly read the counter.
-> > 
-> >> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> >> index 12f2a0c14d33..07a56bf71160 100644
-> >> --- a/arch/x86/events/core.c
-> >> +++ b/arch/x86/events/core.c
-> >> @@ -112,7 +112,7 @@ u64 __read_mostly hw_cache_extra_regs
-> >>   * Can only be executed on the CPU where the event is active.
-> >>   * Returns the delta events processed.
-> >>   */
-> >> -u64 x86_perf_event_update(struct perf_event *event)
-> >> +u64 x86_perf_event_update(struct perf_event *event, u64 *val)
-> >>  {
-> >>  	struct hw_perf_event *hwc = &event->hw;
-> >>  	int shift = 64 - x86_pmu.cntval_bits;
-> >> @@ -131,7 +131,10 @@ u64 x86_perf_event_update(struct perf_event *event)
-> >>  	 */
-> >>  	prev_raw_count = local64_read(&hwc->prev_count);
-> >>  	do {
-> >> -		rdpmcl(hwc->event_base_rdpmc, new_raw_count);
-> >> +		if (!val)
-> >> +			rdpmcl(hwc->event_base_rdpmc, new_raw_count);
-> >> +		else
-> >> +			new_raw_count = *val;
-> >>  	} while (!local64_try_cmpxchg(&hwc->prev_count,
-> >>  				      &prev_raw_count, new_raw_count));
-> >>  
-> > 
-> > Does that mean the following is possible?
-> > 
-> > Two counters: C0 and C1, where C0 is a PEBS counter that also samples
-> > C1.
-> > 
-> >   C0: overflow-with-PEBS-assist -> PEBS entry with counter value A
-> >       (DS buffer threshold not reached)
-> > 
-> >   C1: overflow -> PMI -> x86_perf_event_update(C1, NULL)
-> >       rdpmcl reads value 'A+d', and sets prev_raw_count
-> > 
-> >   C0: more assists, hit DS threshold -> PMI
-> >       PEBS processing does x86_perf_event_update(C1, A)
-> >       and sets prev_raw_count *backwards*
-> 
-> I think the C0 PMI handler doesn't touch other counters unless
-> PERF_SAMPLE_READ is applied. For the PERF_SAMPLE_READ, only one counter
-> does sampling. It's impossible that C0 and C1 do sampling at the same
-> time. I don't think the above scenario is possible.
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-It is perfectly fine for C0 to have PERF_SAMPLE_READ and C1 to be a
-normal counter, sampling or otherwise.
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-> Maybe we can add the below check to further prevent the abuse of the
-> interface.
-
-There is no abuse in the above scenario. You can have a group with all
-sampling events and any number of them can have PERF_SAMPLE_READ. This
-is perfectly fine.
-
-> WARN_ON_ONCE(!(event->attr.sample_type & PERF_SAMPLE_READ) && val);
-
-I don't see how PERF_SAMPLE_READ is relevant, *any* PMI for the C1 event
-will cause x86_perf_event_update() to be called. And remember that even
-non-sampling events have EVENTSEL_INT set to deal with counter overflow.
-
-The problem here is that C0/PEBS will come in late and try to force
-update an out-of-date value.
-
-If you have C1 be a non-sampling event, this will typically not happen,
-but it still *can*, and when you do, you get your counter moving
-backwards.
 
