@@ -1,147 +1,203 @@
-Return-Path: <linux-kernel+bounces-270805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E815394457C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBAB94457F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 717E2B21CD4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E6A1F21E93
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70B316DC12;
-	Thu,  1 Aug 2024 07:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9E549626;
+	Thu,  1 Aug 2024 07:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nhr0Nzn3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bXs3z4lI"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C4322F19
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0A2158207;
+	Thu,  1 Aug 2024 07:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722497605; cv=none; b=tZchYgpSwOVCD7wX5d7Aa6rfjr+/o7zS8f9ifH3kW2pZzah439vdi1JcoPM4N1yEF6LIC2+K05LRblmEMe2wcrFP/V0Bqt2PXPwhfdQaTyNV3mgK4vGkf1b/hY/AwyasNOMj3nVTmrmDJBUZRE4NO0CZtaXijMxK1UlFDLg+pxI=
+	t=1722497647; cv=none; b=phgdfEaV09c6b2Pjy98OoD/I3SCJ9qbV890kY3BEkdYs4WOiCv3zn41TCCBv3xyNrz3ojPMk5Ex/ZXLQ15WikC1PTGRqBkF8DNvAypIGd/7LI8+bMa704ygNJ9u0hxN4Mws3We1fuK+EhI9tsgdLqqJmh/9LWjFsxg1pjAW8pGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722497605; c=relaxed/simple;
-	bh=Q/Sxk4TAA+tkQD/v7HT/NGRwyiw42m+aeZ1fW4Pnah0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=M/ICe4/vFVQLpM1LqJ1f7oPMp7Isc5bxeCSNQ2U32KSMCjNVq/z6vPuUpvnNt7dEIQAWyBLJIfIKV6oqHWVvxCs0cplb1R2clIge16tudp/zwwMgfLFdd2MJBWOkvZwC/oto8cjlH2XtuXPvhFEVDqe/lD+Vnn5MKeSzCg3kMo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nhr0Nzn3; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722497604; x=1754033604;
-  h=date:from:to:cc:subject:message-id;
-  bh=Q/Sxk4TAA+tkQD/v7HT/NGRwyiw42m+aeZ1fW4Pnah0=;
-  b=nhr0Nzn3wiIQpJN5Bd4tEmMuOMbxURbaWwOGO9NFmHoCkEg+w3gUe0Y4
-   AhnDmyBMQgoeP+QWIrJpRgFcQ7dhTDK7bp5Qet5TXMmy4U9I5/MAFPiXI
-   MHp8J5IZpH7rLIw/BThRT26Ufm5QMEjBiLdITGgsQ1dsNvV6IxvCIZAv1
-   rax7PnDwGHgz0NCrZmlLEMxtD60M4jq95eWLkHiQKJI/1nvaMY19ohdcw
-   4BUetehX/Uq/03ko1N/iu1bCDId/bEmJRpT2BDemDdCZdQC7RsLzmpKBc
-   gMn6PDMqbLmTdwvOYcftA6wTEEjxmDDtRKfRizpLsqGhbmPtK1u7uy6zf
-   Q==;
-X-CSE-ConnectionGUID: ux0bl7VPRhOlzVx/dF8xmg==
-X-CSE-MsgGUID: 95qi/eQDQ1Ow6+/mAy0arQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="31062169"
-X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
-   d="scan'208";a="31062169"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 00:33:23 -0700
-X-CSE-ConnectionGUID: tcInSPZnRQqvBlLfmWvqZg==
-X-CSE-MsgGUID: /SUxsvmXS2K2evQH29kdAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
-   d="scan'208";a="54907068"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 01 Aug 2024 00:33:21 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZQJL-000vKi-1N;
-	Thu, 01 Aug 2024 07:33:19 +0000
-Date: Thu, 01 Aug 2024 15:33:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/timers] BUILD SUCCESS
- b4bac279319d3082eb42f074799c7b18ba528c71
-Message-ID: <202408011515.RcEfrkn8-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722497647; c=relaxed/simple;
+	bh=jWQgIqK7qduK/GL9yTdv/it6HsJmZnpuh8xgZKwSAM8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Xf+m79Dxsuae3YpS3KtNULWAnG8T/xXn0AsY6XW5hoUza6CcvDNJr6I2ZjW4GyY2bNSznTlSgfWOM+CkrgmqkNxMb+9yuhCB/Qvti+XRlqoyWf6ijdKZvPFQvTuIxiQwekJGJw2IcJuS331zyPp6Ujn0dZMuSddlZ5wa6tm18mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bXs3z4lI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47150698032670;
+	Thu, 1 Aug 2024 07:33:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=S
+	Oc099JyKiPKu3si/kk0QU27Tm5aC7/sxQUxbrtkQFg=; b=bXs3z4lItYjICGjPP
+	3bbxtoIQkgEzzs2QL/ydJ2Xr9EbUW0+8/Rw153k4dsvIhE4MnLS8d+XG67XlPuCq
+	06Ost/WwintOetp/fcQCLzo4lblwAarVgIWYob+zCAR/1nMG9vaidt/HLzIbkMjY
+	5z9PL7Ab3NjZLa9PXzcbPqZFK9vMv5Wteyfo7NyOU2nAQbbQQGGV304fSQe1kyKl
+	tfBcl7dqp0hQpyo2DmGxubZJP7o7L6lMRyOHz+Y1CdbX5yvK3CNkd2qOXFNsqgux
+	LgyqOi50klXLYsV5ZZ41p/x+Kly7j0px93A/5eB1pKLGxrml+bXjJ3wVu9MMVvPH
+	MlLzA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40r3tp8b88-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 07:33:57 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4717XuQr005932;
+	Thu, 1 Aug 2024 07:33:56 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40r3tp8b86-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 07:33:56 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4715TDG6009176;
+	Thu, 1 Aug 2024 07:33:55 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40ndx385nj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 07:33:55 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4717Xo8q57147732
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 1 Aug 2024 07:33:52 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 291522004D;
+	Thu,  1 Aug 2024 07:33:50 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9757C20043;
+	Thu,  1 Aug 2024 07:33:46 +0000 (GMT)
+Received: from [9.171.14.149] (unknown [9.171.14.149])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  1 Aug 2024 07:33:46 +0000 (GMT)
+Message-ID: <ac3ce4aa-146b-4be9-9edc-1533d0b7dc98@linux.ibm.com>
+Date: Thu, 1 Aug 2024 13:03:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf vendor events power10: Update JSON/events
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com,
+        hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
+References: <20240723052154.96202-1-kjain@linux.ibm.com>
+ <CAP-5=fWsQbA-h=_Y_q7z1E7GjCkHE3w-9h-OXu4jLBM3Fag6ag@mail.gmail.com>
+ <ZqOt9G9e-AIN6hY-@x1> <ZqqULZ5pSojnixUh@x1> <ZqqbO54hbW5Tzk9Y@x1>
+Content-Language: en-US
+From: kajoljain <kjain@linux.ibm.com>
+In-Reply-To: <ZqqbO54hbW5Tzk9Y@x1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: bAMQxRXsFS9VRiKy1SjeI1_dGQOaTPi5
+X-Proofpoint-GUID: ul4LwN91O2ar-CwS7Z2ez79FxFnb5YB7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_04,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 adultscore=0 mlxlogscore=999 suspectscore=0 clxscore=1011
+ mlxscore=0 malwarescore=0 phishscore=0 priorityscore=1501 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010042
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/timers
-branch HEAD: b4bac279319d3082eb42f074799c7b18ba528c71  x86/tsc: Use topology_max_packages() to get package number
 
-elapsed time: 727m
 
-configs tested: 55
-configs skipped: 128
+On 8/1/24 01:44, Arnaldo Carvalho de Melo wrote:
+> On Wed, Jul 31, 2024 at 04:44:49PM -0300, Arnaldo Carvalho de Melo wrote:
+>> On Fri, Jul 26, 2024 at 11:08:55AM -0300, Arnaldo Carvalho de Melo wrote:
+>>> On Tue, Jul 23, 2024 at 09:02:23AM -0700, Ian Rogers wrote:
+>>>> On Mon, Jul 22, 2024 at 10:27 PM Kajol Jain <kjain@linux.ibm.com> wrote:
+>>>>>
+>>>>> Update JSON/events for power10 platform with additional events.
+>>>>> Also move PM_VECTOR_LD_CMPL event from others.json to
+>>>>> frontend.json file.
+>>>>>
+>>>>> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
+>>>>
+>>>> Reviewed-by: Ian Rogers <irogers@google.com>
+>>>
+>>> Thanks, applied to tmp.perf-tools-next,
+>>
+>> This seems to be causing this:
+>>
+>> Exception processing pmu-events/arch/powerpc/power10/others.json
+>> Traceback (most recent call last):
+>>   File "pmu-events/jevents.py", line 1309, in <module>
+>>     main()
+>>   File "pmu-events/jevents.py", line 1291, in main
+>>     ftw(arch_path, [], preprocess_one_file)
+>>   File "pmu-events/jevents.py", line 1241, in ftw
+>>     ftw(item.path, parents + [item.name], action)
+>>   File "pmu-events/jevents.py", line 1239, in ftw
+>>     action(parents, item)
+>>   File "pmu-events/jevents.py", line 623, in preprocess_one_file
+>>     for event in read_json_events(item.path, topic):
+>>   File "pmu-events/jevents.py", line 440, in read_json_events
+>>     events = json.load(open(path), object_hook=JsonEvent)
+>>   File "/usr/lib/python3.6/json/__init__.py", line 296, in load
+>>   CC      /tmp/build/perf/bench/evlist-open-close.o
+>>     return loads(fp.read(),
+>>   File "/usr/lib/python3.6/encodings/ascii.py", line 26, in decode
+>>     return codecs.ascii_decode(input, self.errors)[0]
+>> UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 9231: ordinal not in range(128)
+>> pmu-events/Build:35: recipe for target '/tmp/build/perf/pmu-events/pmu-events.c' failed
+>> make[3]: *** [/tmp/build/perf/pmu-events/pmu-events.c] Error 1
+>> make[3]: *** Deleting file '/tmp/build/perf/pmu-events/pmu-events.c'
+>> Makefile.perf:763: recipe for target '/tmp/build/perf/pmu-events/pmu-events-in.o' failed
+>> make[2]: *** [/tmp/build/perf/pmu-events/pmu-events-in.o] Error 2
+>> make[2]: *** Waiting for unfinished jobs....
+>>   CC      /tmp/build/perf/tests/hists_cumulate.o
+>>   CC      /tmp/build/perf/arch/powerpc/util/event.o
+>>   CC      /tmp/build/perf/bench/breakpoint.o
+>>   CC      /tmp/build/perf/builtin-data.o
+>>
+>>
+>> This happened in the past, I'm now trying to figure this out :-\
+>>
+>> This was in:
+>>
+>> toolsbuilder@five:~$ cat dm.log/ubuntu:18.04-x-powerpc
+>>
+>>
+>> So 32-bit powerpc, ubuntu 18.04
+> 
+> This did the trick, so I fixed it in my repo, please ack, just replacing
+> ’ with ' :-\
+> 
+> - Arnaldo
+> 
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Hi Arnaldo,
+  Thanks for fixing it. I will make sure in next series of patches, we
+are also checking for this combination to avoid ascii issue.
 
-tested configs:
-arm                        keystone_defconfig   gcc-14.1.0
-arm                             pxa_defconfig   gcc-14.1.0
-i386                             allmodconfig   clang-18
-i386                              allnoconfig   clang-18
-i386                             allyesconfig   clang-18
-i386         buildonly-randconfig-001-20240801   gcc-9
-i386         buildonly-randconfig-002-20240801   gcc-9
-i386         buildonly-randconfig-003-20240801   gcc-9
-i386         buildonly-randconfig-004-20240801   gcc-9
-i386         buildonly-randconfig-005-20240801   gcc-9
-i386         buildonly-randconfig-006-20240801   gcc-9
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240801   gcc-9
-i386                  randconfig-002-20240801   gcc-9
-i386                  randconfig-003-20240801   gcc-9
-i386                  randconfig-004-20240801   gcc-9
-i386                  randconfig-005-20240801   gcc-9
-i386                  randconfig-006-20240801   gcc-9
-i386                  randconfig-011-20240801   gcc-9
-i386                  randconfig-012-20240801   gcc-9
-i386                  randconfig-013-20240801   gcc-9
-i386                  randconfig-014-20240801   gcc-9
-i386                  randconfig-015-20240801   gcc-9
-i386                  randconfig-016-20240801   gcc-9
-loongarch                        allmodconfig   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          amiga_defconfig   gcc-14.1.0
-m68k                          atari_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-mips                           ci20_defconfig   gcc-14.1.0
-mips                        maltaup_defconfig   gcc-14.1.0
-mips                           mtx1_defconfig   gcc-14.1.0
-mips                         rt305x_defconfig   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                 mpc834x_itx_defconfig   gcc-14.1.0
-powerpc                      pcm030_defconfig   gcc-14.1.0
-powerpc                     tqm5200_defconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-sh                         apsh4a3a_defconfig   gcc-14.1.0
-sh                ecovec24-romimage_defconfig   gcc-14.1.0
-sh                   rts7751r2dplus_defconfig   gcc-14.1.0
-sh                           se7751_defconfig   gcc-14.1.0
-sparc                       sparc64_defconfig   gcc-14.1.0
-um                                allnoconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   clang-18
-x86_64                          rhel-8.3-rust   clang-18
+Change looks fine to me.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Kajol Jain
+
+> 
+> diff --git a/tools/perf/pmu-events/arch/powerpc/power10/others.json b/tools/perf/pmu-events/arch/powerpc/power10/others.json
+> index 53ca610152faa237..3789304cb363bbb7 100644
+> --- a/tools/perf/pmu-events/arch/powerpc/power10/others.json
+> +++ b/tools/perf/pmu-events/arch/powerpc/power10/others.json
+> @@ -197,6 +197,6 @@
+>    {
+>      "EventCode": "0x0B0000026880",
+>      "EventName": "PM_L2_SNP_TLBIE_SLBIE_DELAY",
+> -    "BriefDescription": "Cycles when a TLBIE/SLBIEG/SLBIAG that targets this thread's LPAR was in flight while in a hottemp condition. Multiply this count by 1000 to obtain the total number of cycles. This can be divided by PM_L2_SNP_TLBIE_SLBIE_START to obtain the overall efficiency. Note: ’inflight’ means SnpTLB has been sent to core(ie doesn’t include when SnpTLB is in NCU waiting to be launched serially behind different SnpTLB). The NCU Snooper gets in a ’hottemp’ delay window when it detects it is above its TLBIE/SLBIE threshold for process SnpTLBIE/SLBIE with this core. Event count should be multiplied by 2 since the data is coming from a 2:1 clock domain and the data is time sliced across all 4 threads."
+> +    "BriefDescription": "Cycles when a TLBIE/SLBIEG/SLBIAG that targets this thread's LPAR was in flight while in a hottemp condition. Multiply this count by 1000 to obtain the total number of cycles. This can be divided by PM_L2_SNP_TLBIE_SLBIE_START to obtain the overall efficiency. Note: 'inflight' means SnpTLB has been sent to core(ie doesn't include when SnpTLB is in NCU waiting to be launched serially behind different SnpTLB). The NCU Snooper gets in a 'hottemp' delay window when it detects it is above its TLBIE/SLBIE threshold for process SnpTLBIE/SLBIE with this core. Event count should be multiplied by 2 since the data is coming from a 2:1 clock domain and the data is time sliced across all 4 threads."
+>    }
+>  ]
+> 
 
