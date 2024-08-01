@@ -1,217 +1,286 @@
-Return-Path: <linux-kernel+bounces-270496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C4AE9440B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:14:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FCAD9440B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D8D2822BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:14:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55E05281007
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B9136E37;
-	Thu,  1 Aug 2024 01:35:05 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0770114C581;
+	Thu,  1 Aug 2024 01:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A1BkOFn9"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526A813D51E;
-	Thu,  1 Aug 2024 01:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3C114BF8B
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 01:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722476105; cv=none; b=Yz2AlbWH9yKPJ6ls+2PT9m5WLzWFvfS7Mn3SmFMRPESL81Ldvllxod57RpS1Q/qBVRJ+J7ndtcMmWMf9AFNBbmu2/p8mYCXYM1nZNrXJF0I38s6XZe0c0XZFWY6QFA0pBXwo0q0Ffv2/OSHKtgrns/qQyd2iDfHfjRwbp4nMg2U=
+	t=1722476154; cv=none; b=gEFwvH4VucOi6AzXeFRcGK+z5WeVQXjOST1rP6f35d378cwieXxA/uIz/R0NmFuXRmaWSKTwu83ydkLjjqRX46TKDJTk79+cbLq+N5Yz8jJeIfz+QnAcE5WMrr81JTfam/M52GfjDNY1GDPIOijbIl7vexJtcyLZZdVfd93b6qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722476105; c=relaxed/simple;
-	bh=OTctEdVmE9ePZfx9ef7wplwiI5URhWRMOI7lkcfON3M=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=jn/9ZlQcrKTqehipFDdZ+XYchkmDJM9WwLZORu2mFGnBZ2/rByGCwryP9Foa4O0RgWUndKisnm++k/bhXbNpf8oQHa9UJs/ERtwxvbd+mN+TbODbAChN/jzOZuWPUuGS/3hcFtQQISTkizuDVTVB0tSFF48sUErPgEw6gTG+TIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WZBH33NPLz2Clgw;
-	Thu,  1 Aug 2024 09:30:23 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 392C514013B;
-	Thu,  1 Aug 2024 09:34:58 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 1 Aug
- 2024 09:34:57 +0800
-Message-ID: <823a5926-4ed9-4784-b9ae-ee0d0eb8ebf8@huawei.com>
-Date: Thu, 1 Aug 2024 09:34:56 +0800
+	s=arc-20240116; t=1722476154; c=relaxed/simple;
+	bh=D4jQ3hDsPrOEZnB+4u9pnJvTxR87PrXn94gydb83TLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VcdmynFIZk4HVnrRAeKmzvvSjFc3/UZLZporg8vgAb9mAn86KFewYqKXoWqWZdi6QWbpy/8oaF41aKe+bgEDi4ogmp+cKIFxRNPPwHLuvI+KpoHSnjEKSFfzlUl5q8eNfit75lbzguuMpr74HHQJE62nzFpmMJaHQCP/r4RsN0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A1BkOFn9; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc4aff530dso351465ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:35:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722476151; x=1723080951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=plqL2dIvuw7F4PehvmHEAIZYJJhHz3IF52CvuaEwxgA=;
+        b=A1BkOFn91CiJHSOjbuqr957L+Kj2BrFN608vVJvhWzgcPLWUcKkQi0ycEP8Jsgt8N+
+         /j1+KIvrwrhU9Gws7tFu8kt+EHy83M5d2up0y8khZnqQyYyT6v6F/5C3oek4nfXGknnA
+         uGLr/HYwsYW9x4CDp/O5KakIqzl8HsFwrktKC4yhMr/IFlLXGTdfpUy1+5ElAH9gfu/n
+         6DgQT+lLlEemdHkCYKBYyKue2D43cMG0eg8k+Qb0QB5Je+HIAYP4x+xiD+aKDwxMBZn3
+         KwflB/gC4w0W5l21hk3x1G6NZPE4VCTbBaKgOb3ZIWwj/BRpyQkZ9m37W++ZPSdgicr/
+         1vWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722476151; x=1723080951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=plqL2dIvuw7F4PehvmHEAIZYJJhHz3IF52CvuaEwxgA=;
+        b=iuYpeZ9ANb0CdcfpCgICk9/dU4rTchi+nNjyt4VPglRuQobRNSw4ApaGD2Z10X+Lgc
+         u3bLJX4CStbIew2HdkA9Gt+iostkI8UaJyAaIUFTbAARWby5IhktJQ62Xer1AiDAANB0
+         agUjBSiqzWiXejr1bzA+QkMQmOWsDf2LmdK8ipambNySU477fySkxERNi9JZKOuhMbEP
+         XY49sEYvUvlXsZET8Zv8Sejr7uUkVBORfJVntPcUV1GL47aJcQkoh+3BuTRAmWs2xMUp
+         8O5qc6xv8QOLUPRUVuJ7SoAiWRdGeTBZpDKUfJVjmrlwoVBmQd0EBXivcGhD+qx9xcVA
+         +H0w==
+X-Forwarded-Encrypted: i=1; AJvYcCULAqsGozbvWI9IOiKA7KxlHQJV8q0OSbI0qGho6ajvZgb//TIBePXsNyHa3S8CskMwxoQGkuDWE+fFznXPBeadYHCWA8QfDwIi9n2Y
+X-Gm-Message-State: AOJu0YzncIi5zMRs7NYafiKj9qL3d0KuZ9oGfMpory2J6KZdIU7EjJGp
+	S5U80Ewpe6XOf5l8AcnLkNjVD0DYXCaPmOhDMlt7MynQWoCdChl80kMGu8lQE9I1YQn6qB7iaJz
+	QnovZqBcPpVdkpC6/ky3Vv3YJztizviCx7QKo
+X-Google-Smtp-Source: AGHT+IEecAbhodWaECwF1tFkoM0qqJAxepCeosOn1jrWDomaRpij7jppTG47HHjOvrCgW7/w6XugtAT/loHkkZQloJk=
+X-Received: by 2002:a17:903:2283:b0:1fd:67c2:f967 with SMTP id
+ d9443c01a7336-1ff4ec9341bmr804255ad.14.1722476151226; Wed, 31 Jul 2024
+ 18:35:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and
- cpu_hotplug_lock
-From: chenridong <chenridong@huawei.com>
-To: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
-	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
-	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
-	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
-	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240719025232.2143638-1-chenridong@huawei.com>
- <a0d22f13-ac54-49b7-b22a-b319cb542cae@huawei.com>
-Content-Language: en-US
-In-Reply-To: <a0d22f13-ac54-49b7-b22a-b319cb542cae@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+References: <20240730191744.3097329-1-irogers@google.com> <20240730191744.3097329-3-irogers@google.com>
+ <Zqo5vVdrkhL5NHJK@x1> <CAP-5=fXyOfPya+TrKVaFhCK3rNY=AuLZLG67ith5YHf_XXVdNg@mail.gmail.com>
+ <ZqpZWywTe2j3U9Pl@x1> <ZqpcRIzzBb5KC6Zb@x1> <CAP-5=fVm5FkLDOLk4cbD9K6VPZ088f3Yk3bG8LT79E_OLLN4Lw@mail.gmail.com>
+ <ZqqIEckIXQEAd9xr@x1> <CAP-5=fV8S0z=Fn+aoq4SxatBeeJ5MEUL02km_6+enqWaaW2qQA@mail.gmail.com>
+ <ZqqhhsJtBJgfXWV4@x1>
+In-Reply-To: <ZqqhhsJtBJgfXWV4@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 31 Jul 2024 18:35:38 -0700
+Message-ID: <CAP-5=fXvgicd9FjHobQWNmouYHv87FUbtAQqaQfCE_i4bjzFVQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] perf jevents: Autogenerate empty-pmu-events.c
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jing Zhang <renyu.zj@linux.alibaba.com>, Xu Yang <xu.yang_2@nxp.com>, 
+	Sandipan Das <sandipan.das@amd.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, philip.li@intel.com, oliver.sang@intel.com, 
+	Weilin Wang <weilin.wang@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 31, 2024 at 1:41=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Wed, Jul 31, 2024 at 01:20:06PM -0700, Ian Rogers wrote:
+> > On Wed, Jul 31, 2024 at 11:53=E2=80=AFAM Arnaldo Carvalho de Melo
+> > <acme@kernel.org> wrote:
+> > >
+> > > On Wed, Jul 31, 2024 at 08:58:43AM -0700, Ian Rogers wrote:
+> > > > On Wed, Jul 31, 2024 at 8:46=E2=80=AFAM Arnaldo Carvalho de Melo
+> > > > <acme@kernel.org> wrote:
+> > > > >
+> > > > > On Wed, Jul 31, 2024 at 12:33:50PM -0300, Arnaldo Carvalho de Mel=
+o wrote:
+> > > > > > On Wed, Jul 31, 2024 at 07:08:18AM -0700, Ian Rogers wrote:
+> > > > > > > On Wed, Jul 31, 2024 at 6:18=E2=80=AFAM Arnaldo Carvalho de M=
+elo
+> > > > > > > <acme@kernel.org> wrote:
+> > > > > > > >
+> > > > > > > > On Tue, Jul 30, 2024 at 12:17:44PM -0700, Ian Rogers wrote:
+> > > > > > > > > empty-pmu-events.c exists so that builds may occur withou=
+t python
+> > > > > > > > > being installed on a system. Manually updating empty-pmu-=
+events.c to
+> > > > > > > > > be in sync with jevents.py is a pain, let's use jevents.p=
+y to generate
+> > > > > > > > > empty-pmu-events.c.
+> > > > > > > >
+> > > > > > > > What am I missing here?
+> > > > > > > >
+> > > > > > > > If it exists so that we can build on a system without pytho=
+n how can we
+> > > > > > > > use python to generate it?
+> > > > > > > >
+> > > > > > > > Now having python in the system is a requirement and thus w=
+e don't need
+> > > > > > > > empty-pmu-events.c anymore?
+> > > > > > > >
+> > > > > > > > Can you guys please clarify that?
+> > > > > > >
+> > > > > > > The requirement for python hasn't changed.
+> > > > > > >
+> > > > > > > Case 1: no python or NO_JEVENTS=3D1
+> > > > > > > Build happens using empty-pmu-events.c that is checked in, no=
+ python
+> > > > > > > is required.
+> > > > > > >
+> > > > > > > Case 2: python
+> > > > > > > pmu-events.c is created by jevents.py (requiring python) and =
+then built.
+> > > > > > > This change adds a step where the empty-pmu-events.c is creat=
+ed using
+> > > > > > > jevents.py and that file is diffed against the checked in ver=
+sion.
+> > > > > > > This stops the checked in empty-pmu-events.c diverging if cha=
+nges are
+> > > > > > > made to jevents.py. If the diff causes the build to fail then=
+ you just
+> > > > > > > copy the diff empty-pmu-events.c over the checked in one.
+> > > > > >
+> > > > > > I'll try and add your explanation to the log message, thanks fo=
+r
+> > > > > > clarifying it!
+> > > > >
+> > > > > So, with it in place I'm now noticing:
+> > > > >
+> > > > > =E2=AC=A2[acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(base=
+name $PWD)/ ; mkdir -p /tmp/build/$(basename $PWD)/
+> > > > > =E2=AC=A2[acme@toolbox perf-tools-next]$ alias m=3D'rm -rf ~/libe=
+xec/perf-core/ ; make -k CORESIGHT=3D1 O=3D/tmp/build/$(basename $PWD)/ -C =
+tools/perf install-bin && perf test python'
+> > > > > =E2=AC=A2[acme@toolbox perf-tools-next]$ m
+> > > > > <SNIP>
+> > > > >   GEN     /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-ev=
+ents.c
+> > > > >   MKDIR   /tmp/build/perf-tools-next/arch/x86/util/
+> > > > >   CC      /tmp/build/perf-tools-next/util/annotate.o
+> > > > >   CC      /tmp/build/perf-tools-next/arch/x86/util/tsc.o
+> > > > >   CC      /tmp/build/perf-tools-next/arch/x86/tests/hybrid.o
+> > > > >   CC      /tmp/build/perf-tools-next/util/block-info.o
+> > > > >   CC      /tmp/build/perf-tools-next/arch/x86/tests/intel-pt-test=
+.o
+> > > > >   CC      /tmp/build/perf-tools-next/arch/x86/util/pmu.o
+> > > > >   MKDIR   /tmp/build/perf-tools-next/ui/browsers/
+> > > > >   CC      /tmp/build/perf-tools-next/ui/browsers/annotate.o
+> > > > >   CC      /tmp/build/perf-tools-next/builtin-kallsyms.o
+> > > > >   CC      /tmp/build/perf-tools-next/util/block-range.o
+> > > > >   TEST    /tmp/build/perf-tools-next/pmu-events/empty-pmu-events.=
+log
+> > > > > --- pmu-events/empty-pmu-events.c       2024-07-31 12:44:14.35504=
+2296 -0300
+> > > > > +++ /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c=
+       2024-07-31 12:45:35.048682785 -0300
+> > > > > @@ -380,7 +380,7 @@
+> > > > >                          continue;
+> > > > >
+> > > > >                  ret =3D pmu_events_table__for_each_event_pmu(tab=
+le, table_pmu, fn, data);
+> > > > > -                if (pmu || ret)
+> > > > > +                if (ret)
+> > > >
+> > > > Right, you need to copy:
+> > > >  /tmp/build/perf-tools-next/pmu-events/test-empty-pmu-events.c
+> > > > to
+> > > > tools/perf/pmu-events/empty-pmu-events.c
+> > > > to fix this.
+> > > >
+> > > > This change has happened as you are testing with:
+> > > > https://lore.kernel.org/lkml/20240716132951.1748662-1-kan.liang@lin=
+ux.intel.com/
+> > > > which isn't in the git repo yet (therefore, I can't make a patch se=
+t
+> > > > on it). The change is WAI as it is telling you empty-pmu-events.c h=
+as
+> > > > become stale and needs Kan's fix applying to it.
+> > >
+> > > ok, I'll remove Kan's patch, publish perf-tools-next and wait for the
+> > > now normal flow of patches.
+> >
+> > I can resend Kan's patch with the empty-pmu-events.c fix applied. I
+> > don't see the changes in tmp.perf-tools-next so I can do it with
+> > cherry picks.
+>
+> Just force pushed one more time. After a while should be there, there
+> are still some issues here and there, notably:
+>
+>
+> root@x1:~# perf test 105 106 118
+> 105: perf all metricgroups test                                      : FA=
+ILED!
+> 106: perf all metrics test                                           : FA=
+ILED!
 
+These tests can be sensitive to the NMI watchdog being enabled.
+> 118: Miscellaneous Intel PT testing                                  : FA=
+ILED!
 
-On 2024/7/24 8:53, chenridong wrote:
-> 
-> 
-> On 2024/7/19 10:52, Chen Ridong wrote:
->> We found a hung_task problem as shown below:
->>
->> INFO: task kworker/0:0:8 blocked for more than 327 seconds.
->> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->> task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       
->> flags:0x00004000
->> Workqueue: events cgroup_bpf_release
->> Call Trace:
->>   <TASK>
->>   __schedule+0x5a2/0x2050
->>   ? find_held_lock+0x33/0x100
->>   ? wq_worker_sleeping+0x9e/0xe0
->>   schedule+0x9f/0x180
->>   schedule_preempt_disabled+0x25/0x50
->>   __mutex_lock+0x512/0x740
->>   ? cgroup_bpf_release+0x1e/0x4d0
->>   ? cgroup_bpf_release+0xcf/0x4d0
->>   ? process_scheduled_works+0x161/0x8a0
->>   ? cgroup_bpf_release+0x1e/0x4d0
->>   ? mutex_lock_nested+0x2b/0x40
->>   ? __pfx_delay_tsc+0x10/0x10
->>   mutex_lock_nested+0x2b/0x40
->>   cgroup_bpf_release+0xcf/0x4d0
->>   ? process_scheduled_works+0x161/0x8a0
->>   ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
->>   ? process_scheduled_works+0x161/0x8a0
->>   process_scheduled_works+0x23a/0x8a0
->>   worker_thread+0x231/0x5b0
->>   ? __pfx_worker_thread+0x10/0x10
->>   kthread+0x14d/0x1c0
->>   ? __pfx_kthread+0x10/0x10
->>   ret_from_fork+0x59/0x70
->>   ? __pfx_kthread+0x10/0x10
->>   ret_from_fork_asm+0x1b/0x30
->>   </TASK>
->>
->> This issue can be reproduced by the following methods:
->> 1. A large number of cpuset cgroups are deleted.
->> 2. Set cpu on and off repeatly.
->> 3. Set watchdog_thresh repeatly.
->>
->> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
->> acquired in different tasks, which may lead to deadlock.
->> It can lead to a deadlock through the following steps:
->> 1. A large number of cgroups are deleted, which will put a large
->>     number of cgroup_bpf_release works into system_wq. The max_active
->>     of system_wq is WQ_DFL_ACTIVE(256). When cgroup_bpf_release can not
->>     get cgroup_metux, it may cram system_wq, and it will block work
->>     enqueued later.
->> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
->>     smp_call_on_cpu work into system_wq. However it may be blocked by
->>     step 1.
->> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by 
->> step 2.
->> 4. When a cpuset is deleted, cgroup release work is placed on
->>     cgroup_destroy_wq, it will hold cgroup_metux and acquire
->>     cpu_hotplug_lock.read. Acquiring cpu_hotplug_lock.read is blocked by
->>     cpu_hotplug_lock.write as mentioned by step 3. Finally, it forms a
->>     loop and leads to a deadlock.
->>
->> cgroup_destroy_wq(step4)    cpu offline(step3)        
->> WatchDog(step2)            system_wq(step1)
->>                                                 ......
->>                                 __lockup_detector_reconfigure:
->>                                 P(cpu_hotplug_lock.read)
->>                                 ...
->>                 ...
->>                 percpu_down_write:
->>                 P(cpu_hotplug_lock.write)
->>                                                 ...256+ works
->>                                                 cgroup_bpf_release:
->>                                                 P(cgroup_mutex)
->>                                 smp_call_on_cpu:
->>                                 Wait system_wq
->> ...
->> css_killed_work_fn:
->> P(cgroup_mutex)
->> ...
->> cpuset_css_offline:
->> P(cpu_hotplug_lock.read)
->>
->> To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
->> which can break the loop and solve the problem. System wqs are for misc
->> things which shouldn't create a large number of concurrent work items.
->> If something is going to generate >WQ_DFL_ACTIVE(256) concurrent work
->> items, it should use its own dedicated workqueue.
->>
->> Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from 
->> cgroup itself")
->> Link: 
->> https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
->> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->> ---
->>   kernel/bpf/cgroup.c             | 2 +-
->>   kernel/cgroup/cgroup-internal.h | 1 +
->>   kernel/cgroup/cgroup.c          | 2 +-
->>   3 files changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
->> index 8ba73042a239..a611a1274788 100644
->> --- a/kernel/bpf/cgroup.c
->> +++ b/kernel/bpf/cgroup.c
->> @@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct 
->> percpu_ref *ref)
->>       struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
->>       INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
->> -    queue_work(system_wq, &cgrp->bpf.release_work);
->> +    queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
->>   }
->>   /* Get underlying bpf_prog of bpf_prog_list entry, regardless if 
->> it's through
->> diff --git a/kernel/cgroup/cgroup-internal.h 
->> b/kernel/cgroup/cgroup-internal.h
->> index 520b90dd97ec..9e57f3e9316e 100644
->> --- a/kernel/cgroup/cgroup-internal.h
->> +++ b/kernel/cgroup/cgroup-internal.h
->> @@ -13,6 +13,7 @@
->>   extern spinlock_t trace_cgroup_path_lock;
->>   extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
->>   extern void __init enable_debug_cgroup(void);
->> +extern struct workqueue_struct *cgroup_destroy_wq;
->>   /*
->>    * cgroup_path() takes a spin lock. It is good practice not to take
->> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
->> index e32b6972c478..3317e03fe2fb 100644
->> --- a/kernel/cgroup/cgroup.c
->> +++ b/kernel/cgroup/cgroup.c
->> @@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
->>    * destruction work items don't end up filling up max_active of 
->> system_wq
->>    * which may lead to deadlock.
->>    */
->> -static struct workqueue_struct *cgroup_destroy_wq;
->> +struct workqueue_struct *cgroup_destroy_wq;
->>   /* generate an array of cgroup subsystem pointers */
->>   #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
-> 
-> Friendly ping.
-> 
-Hi, Tejun,Roman,and Michal, do you have any opinion? Can this patch be 
-merged?
+I bisected this failure to:
+
+```
+Author: Leo Yan <leo.yan@arm.com>
+Date:   Thu Jul 25 07:46:17 2024 +0100
+
+   perf auxtrace: Iterate all AUX events when finish reading
+
+   When finished to read AUX trace data from mmaped buffer, based on the
+   AUX buffer index the core layer needs to search the corresponding PMU
+   event and re-enable it to continue tracing.
+
+   However, current code only searches the first AUX event. It misses to
+   search other enabled AUX events, thus, it returns failure if the buffer
+   index does not belong to the first AUX event.
+
+   This patch extends the auxtrace_record__read_finish() function to
+   search for every enabled AUX events, so all the mmaped buffer indexes
+   can be covered.
+
+   Signed-off-by: Leo Yan <leo.yan@arm.com>
+   Cc: Mark Rutland <mark.rutland@arm.com>
+   Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+   Cc: Ian Rogers <irogers@google.com>
+   Cc: Adrian Hunter <adrian.hunter@intel.com>
+   Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+   Cc: Jiri Olsa <jolsa@kernel.org>
+   Cc: Namhyung Kim <namhyung@kernel.org>
+   Cc: James Clark <james.clark@linaro.org>
+   Cc: Mike Leach <mike.leach@linaro.org>
+   Cc:  <coresight@lists.linaro.org>
+   Cc: John Garry <john.g.garry@oracle.com>
+   Cc:  <linux-perf-users@vger.kernel.org>
+   Link: https://lore.kernel.org/lkml/
+   Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+tools/perf/util/auxtrace.c | 25 ++++++++++++++++++++-----
+1 file changed, 20 insertions(+), 5 deletions(-)
+```
+
+> root@x1:~# perf test 110
+> 110: perf stat --bpf-counters --for-each-cgroup test                 : FA=
+ILED!
+
+This one flakes if the test machine has load on it.
+
+> root@x1:~#
+>
+> I'm running out of time today, so I'll probably just push what I have to
+> perf-tools-next so that we can start getting testing from linux-next and
+> we can then go on fixing up stuff from there.
+
+Thanks,
+Ian
 
