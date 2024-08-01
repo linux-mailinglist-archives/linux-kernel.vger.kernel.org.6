@@ -1,88 +1,142 @@
-Return-Path: <linux-kernel+bounces-271689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDDC9451C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:45:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D40FA9451CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:46:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0D021C23B58
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:45:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BA82B22C0C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2F61B9B3D;
-	Thu,  1 Aug 2024 17:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="il1JUOQP"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D341BA86F;
+	Thu,  1 Aug 2024 17:45:52 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752513699A
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5A313C8E8;
+	Thu,  1 Aug 2024 17:45:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722534341; cv=none; b=Pj2qFkDvtuZ4/fEQ/UfwA0Dt7EywUV0GQ+8F/lgUpxDiLrKvyJ2OY0M6ksPFoNpx9W/PImRkduLNOvri8f/eExPvzRkpwdM1Zrd5ldDZZnO1ySyLwT3jTEyEsT2N8p3RrGGsXI57zsV3Ilwha1C06JYnAOm3qkLuLHlFZgCLxUo=
+	t=1722534352; cv=none; b=DkOvUvHJrewurC/FYbllXqDUj2ocE5Pbh7pnV6H8M0jjTLDR8wURbfiRmLWHGIxNI6k2aEe4emxNEpLzwBo3sVI7wuEdH5Txz8+sGthXfN9J6rSp3ndxQdY1yv1Hf9fnTUXHKTd6e78w2mC9gFJFJGqs9BnJwauDLUAsMpE8Pyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722534341; c=relaxed/simple;
-	bh=Md+tCugX0T6DBlJwjfQAImnL31p6sihip5oruYd0jwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FpwHn7A7Fzi/9cfHod4i/Ih/J/gZIY+CGnATup2PNBGKr7ehHCHQ5itUvOYUxaI0ojSaQvOJJSlWziwwit3PtAxcnn6MaiKcGi6AV7eBInnarXCXe26l4bJ5KoM0EKqdRa1FnlEQlnHETMIGSpzwOurPbuYGxfodsE6B++yWWRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=il1JUOQP; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6bb96ef0e96so2730876d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:45:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722534339; x=1723139139; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Md+tCugX0T6DBlJwjfQAImnL31p6sihip5oruYd0jwI=;
-        b=il1JUOQPm2e5t3jH9ynm5lAPIr4aXRRPUNbkRi6qZIStlLoaHjHANUmWVb6Kntr6Gu
-         52QCf8XeTIDWtwwtuR8V+RhOT+ByYhGTGvVD/QPX3DyLltIwFzZXvkkjkxmG6KgAHN9B
-         nIIzQeXEYrShVZ70Fr8e5ay4yZr9WrpqTedd5+s+sJTLFFwzbwDEpYM+PECJNJXQHbl2
-         DodFjktjQHHRIxdU9brulkLudt/Wa2AECws+RlSLkBaeODs6CxuFpw+fqqg7ZFziuUfS
-         qgXQM5vXUaptQMSSsr9qtHYOrXn/Zn5P6xbLSnjZCt6grDRE4CGUCLGHJY7awngiKkvS
-         qNKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722534339; x=1723139139;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Md+tCugX0T6DBlJwjfQAImnL31p6sihip5oruYd0jwI=;
-        b=HgqNVdWDLDJBSe5qxR6h/x7nZtfSDD93lYpwR2GKkqVAoRAiootJaP/6Mrvv+dqmiP
-         nGx2uFUQeAEAxNyeoLpbEj8q8fUufOpbKnS4mj5YBiGMXZu/IPfd7MTgl1UVKw+2zLVc
-         A9pFIUwYH6h2R0++ySw8yMb8Sw2Fi79HZoJMLGkWJtskkKHp9yFimNbGLM6VAOzAJ/ob
-         3kreq9NUegq9EaYsLFzH0EIUwl6aBMXYf/0HaPa4wwekn2d8Y79ILohcdxcjq8edj6jR
-         jTllvJd76ziCgQkC9FTd7NOa0/EMnquBVsTHzxejEwQSmEmpqX+ou56GQ3gDGTHQeb+O
-         wpFg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhNpoJ94KtjS3SZcV6317hAXMrQtcwS5QSdpTugsoP16xUGtlKEJw7NIBSvwni9rIoc5UV3YoPw0vBonPTimTj3h73yo/QVhhWIV94
-X-Gm-Message-State: AOJu0Ywgyf4l2Xydcf2dA7sSoEcQPGzz+GVLmgsDlco0dR+FcBYIbzhC
-	yiisT4u/nJQbSHLBNQE8fpsseDYBeCu6WDfECqox1YsVewnWmo/ct+NK+kvb7oWtZjXd5DE0myh
-	sho8OGBImBHyHsnXD7O9EHh8D2DzvQL/xZzt5
-X-Google-Smtp-Source: AGHT+IHxqFWXrBnwwKA5uii4m8WRktVKp0ck40g4Sz01mi9eFCVRKd2tDwa3fcr6zENHmZS+RQTGRB9qTrhExEKmqA8=
-X-Received: by 2002:a05:6214:5b85:b0:6b5:e3ba:5251 with SMTP id
- 6a1803df08f44-6bb98332800mr13418176d6.8.1722534338642; Thu, 01 Aug 2024
- 10:45:38 -0700 (PDT)
+	s=arc-20240116; t=1722534352; c=relaxed/simple;
+	bh=L0lKgzFenYknPcjmMm2DsPSlveu6ZCz/RN3IH34o0N0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QBfWh723Ec32dn7UcoajAyGvkKqENVKz/sNMjz3CEmO3dPbTxFZPchRov1epXlU6+HKLdCvvpQIbBAWef1glIHsWTkFjY3kn4zKmKyv5TaYhRXjwL+wjXtkYcCbpgTQ3Ih7WP2z38dEFCIgOvaQ0d162dma2RZERMGlFd+siulA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WZbsX1GyPz6K6Y1;
+	Fri,  2 Aug 2024 01:43:12 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 41BE0140A86;
+	Fri,  2 Aug 2024 01:45:48 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 1 Aug
+ 2024 18:45:46 +0100
+Date: Thu, 1 Aug 2024 18:45:46 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Mike Rapoport <rppt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
+	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
+ Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
+	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
+	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
+ Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
+ Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
+	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
+	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
+	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
+	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
+	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
+	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
+Subject: Re: [PATCH v3 04/26] MIPS: sgi-ip27: drop
+ HAVE_ARCH_NODEDATA_EXTENSION
+Message-ID: <20240801184546.00000ba6@Huawei.com>
+In-Reply-To: <20240801060826.559858-5-rppt@kernel.org>
+References: <20240801060826.559858-1-rppt@kernel.org>
+	<20240801060826.559858-5-rppt@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730142802.1082627-1-arnd@kernel.org> <20240801010953.GA1835661@google.com>
-In-Reply-To: <20240801010953.GA1835661@google.com>
-From: Richard Fung <richardfung@google.com>
-Date: Thu, 1 Aug 2024 10:45:01 -0700
-Message-ID: <CAGndiTNdCGuHRmnp+G-=_PzTaLXnUZpuXAT8dK-wdoG7Mpwt4A@mail.gmail.com>
-Subject: Re: [PATCH] fuse: fs-verity: aoid out-of-range comparison
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>, Arnd Bergmann <arnd@arndb.de>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-> I think this was just defensive coding to ensure that the assignment to iov_len can't overflow regardless of the type of digest_size
+On Thu,  1 Aug 2024 09:08:04 +0300
+Mike Rapoport <rppt@kernel.org> wrote:
 
-I agree with this. Removing it sounds good to me
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> Commit f8f9f21c7848 ("MIPS: Fix build error for loongson64 and
+> sgi-ip27") added HAVE_ARCH_NODEDATA_EXTENSION to sgi-ip27 to silence a
+> compilation error that happened because sgi-ip27 didn't define array of
+> pg_data_t as node_data like most other architectures did.
+> 
+> After addition of node_data array that matches other architectures and
+> after ensuring that offline nodes do not appear on node_possible_map, it
+> is safe to drop arch_alloc_nodedata() and HAVE_ARCH_NODEDATA_EXTENSION
+> from sgi-ip27.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  arch/mips/Kconfig                |  1 -
+>  arch/mips/sgi-ip27/ip27-memory.c | 10 ----------
+>  2 files changed, 11 deletions(-)
+> 
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index 60077e576935..ea5f3c3c31f6 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -735,7 +735,6 @@ config SGI_IP27
+>  	select WAR_R10000_LLSC
+>  	select MIPS_L1_CACHE_SHIFT_7
+>  	select NUMA
+> -	select HAVE_ARCH_NODEDATA_EXTENSION
+>  	help
+>  	  This are the SGI Origin 200, Origin 2000 and Onyx 2 Graphics
+>  	  workstations.  To compile a Linux kernel that runs on these, say Y
+> diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
+> index c30ef6958b97..eb6d2fa41a8a 100644
+> --- a/arch/mips/sgi-ip27/ip27-memory.c
+> +++ b/arch/mips/sgi-ip27/ip27-memory.c
+> @@ -426,13 +426,3 @@ void __init mem_init(void)
+>  	memblock_free_all();
+>  	setup_zero_pages();	/* This comes from node 0 */
+>  }
+> -
+> -pg_data_t * __init arch_alloc_nodedata(int nid)
+> -{
+> -	return memblock_alloc(sizeof(pg_data_t), SMP_CACHE_BYTES);
+> -}
+> -
+> -void arch_refresh_nodedata(int nid, pg_data_t *pgdat)
+> -{
+> -	__node_data[nid] = (struct node_data *)pgdat;
+> -}
+
 
