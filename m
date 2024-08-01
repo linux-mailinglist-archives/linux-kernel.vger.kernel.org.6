@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-270443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD92943FE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:55:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76711943FE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2061C22BD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:55:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D04E28171A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1184146D7E;
-	Thu,  1 Aug 2024 01:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ECB14884C;
+	Thu,  1 Aug 2024 01:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0HxnOME3"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="FBTzSFF0"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B60B13DDC6;
-	Thu,  1 Aug 2024 01:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA3E91487F1
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 01:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722474654; cv=none; b=hUZKN4bNQf9/epYzdrT5OZlBbL0WF8VkbnW6jjDUCr1hDFi+9aZ0ArZ/9LtlVJm/fykf2bvghzOpWodB8de8KEl1+D7oa9p3dIzWtv+i9wxcEOZhOZtRokdSw/Fz5KAQQuqWqFDV6FMdJyfvj5MYpJoIKNEy0VYTq9Xq5pq35+Q=
+	t=1722474662; cv=none; b=isLx0pSBh7H5hga17vhNmcMCuMLurGBHxf0y0hS2mkYppJ2lsbyPuCzd0eXpasGNufXzmATOFOeP/b62M4F5mqVP8pXJ6u5ItQ/FzPDy86PbU3kcYlvUTTKqT1HYMGM+aNoGyge7WVp4Zrll/Ts3TPGnye3TOZlFw/wCK5vk7Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722474654; c=relaxed/simple;
-	bh=CAJJgmIakQYNVPki7gaEEI+Ck1Xo4hCVjFbvhPu982g=;
+	s=arc-20240116; t=1722474662; c=relaxed/simple;
+	bh=fc64aCYPvOPkEubCL6KFMQiiAcozTTtk7yJQcD31XdU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cnXxVG7G+aJFA8btq1Lt1GeZX1bxhqnlwmSLBjz3X8e7u45XfLSahH1U/qCtv9PsOtTzf7tBLj/2K6VIFoHM8E8OYTO6E2oKesA6L9mrFyVd7ZfLsNu8kZsTiBelb42zdtl6X/5GToDmQetOMc0zUrIImk0LNUzUhnqRUX7cg2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0HxnOME3; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=x0erb+7biLuDSDsPYnc54prG9SaFPCLd+R+sOW39uF4=; b=0HxnOME3H0a8NEJQDPxWX69CwY
-	LX8ddzg2HW46JS2Txy4WCPoDOdTtJeRKa3X3HLd2gh/ZGgM6BxiE4p5iXheU1gt7jIkFJ1EKbKjyr
-	cZBMLr/h3r5KQykz0eHFxm0CLkHrhOROeh3W03gy/Idga6GM/QuF2kqJWwmz8M+TnFb4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sZKL3-003j3k-KF; Thu, 01 Aug 2024 03:10:41 +0200
-Date: Thu, 1 Aug 2024 03:10:41 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 08/10] net: hibmcge: Implement workqueue and
- some ethtool_ops functions
-Message-ID: <b20b5d68-2dab-403c-b37b-084218e001bc@lunn.ch>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-9-shaojijie@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mfu3zK/PFHCKqrMYuntWzdI1tXn2dxj5O4UyAFuvNGtob1A3bJHbRuE3ltl09l/B2MnBIkSubktDzCtu5Id6/sx4KILQu7MDKmqlLzI4KjSP/Pcu/8zajiRAhlrDUTYqE/hT3IGO8S8f/IWdI0R+RGQc7zQm97U/e6dHhVFNFlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=FBTzSFF0; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d2d7e692eso5264235b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 18:10:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722474659; x=1723079459; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SF8gnKEAE9EljJtXDymf4/VYu2nTWcOfe4LLsbP9AN0=;
+        b=FBTzSFF0lt3EQe3OyxxCWBCp7Ni9qglFY/xZ8VZeha4IIF1Io7H4aQr+VY+h6nSDaj
+         4UvL3z1Fm4MzRSqNQKZ3o3IrRXNS6ZcWULvbkvrOvNjEqAvoGz29sY1nKYwJomqldAx3
+         iP8ZRD1/XqlAz8/GHwf3IYTbvYy0e8Xs8YKUf9eFra7FHzxOkuHIa/DGo61u5SNL2jpt
+         mCpL+pCk5u4FJO+tKsfOFOCDILwTa7EW1Zz06qt866KS3v/kCnJGTbDPp610SbXcdFdW
+         57N0l95s+KmW/ceRd44itzZoP2lGN88b1j1bNeRspDQNAuIcVf0iHwOb+mY1eBoi8seB
+         HR0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722474659; x=1723079459;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SF8gnKEAE9EljJtXDymf4/VYu2nTWcOfe4LLsbP9AN0=;
+        b=imCY6YCGSL2A2QNp8ZGr9XoYRwHZSfdm7UdswG4Z6Ahwt9XVRUmWBOqyXgEu8R3uRg
+         LA1wO4meFcldt5ubhkG9ns++eDlCCc5Efvk07prsxLY8X4BOhRyS7J37F9qKLWrPN4ih
+         BoRpcbECwGTjZ7HUahbqCIX2v9t9zz6N6nayU/DKT1xC8jUX13Lc58FhYFmgOhTi1Las
+         OiUBNu1Kmpj0/vRE2JgEX9SiD8uLTa9UIScAOtFy9e2S+lkFwZ+HwLBMbCSXnNsKMHmY
+         IIk3bB31Gqo9alyNw5GaU3rr/AKkDnAbkAalYjBRj5ygL5syqskhLG/Yko4UI8peEjq9
+         7ITA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpGXRR3f1zkaNUlnzySSQ4pTMNC60/LHoTmrJCxDuF/nOC9CgLwdjd9PPhK1N0gjn0IuB7z3rINo+3AjVXdMkDUwtXj5ux1A3GsAq/
+X-Gm-Message-State: AOJu0Yzo+ERTLu2nbW4o0MuhCo4dG2ZbnfR61tiE+cv9hidd0t9z5PQe
+	L3eRoa5WK7BGJZaISfNBmJzXAYXIbR7GijwmAA5rgLTNTSbzzVeRmy0HSDemxhU=
+X-Google-Smtp-Source: AGHT+IE+vBz7tRhC45aToQfMe1oJ8ucMo/aEKZneCwxPpUJhH86CJPQIsx+yfuNixrLgHrwhOoplIA==
+X-Received: by 2002:a05:6a00:acd:b0:70e:98e3:1aef with SMTP id d2e1a72fcca58-7105d7e6eb5mr1179532b3a.29.1722474658867;
+        Wed, 31 Jul 2024 18:10:58 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a3aa8sm10522229b3a.210.2024.07.31.18.10.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 18:10:58 -0700 (PDT)
+Date: Wed, 31 Jul 2024 18:10:55 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrea Parri <parri.andrea@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/2] tools: Add riscv barrier implementation
+Message-ID: <Zqrgn04zEmEpv5+m@ghost>
+References: <20240729-optimize_ring_buffer_read_riscv-v1-0-6bbc0f2434ee@rivosinc.com>
+ <20240729-optimize_ring_buffer_read_riscv-v1-1-6bbc0f2434ee@rivosinc.com>
+ <28d780da-4f43-4db5-8e1b-c66bb9973cd1@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240731094245.1967834-9-shaojijie@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <28d780da-4f43-4db5-8e1b-c66bb9973cd1@rivosinc.com>
 
-> +static void hbg_ethtool_get_drvinfo(struct net_device *netdev,
-> +				    struct ethtool_drvinfo *drvinfo)
-> +{
-> +	strscpy(drvinfo->version, HBG_MOD_VERSION, sizeof(drvinfo->version));
-> +	drvinfo->version[sizeof(drvinfo->version) - 1] = '\0';
+On Tue, Jul 30, 2024 at 10:59:52AM +0200, Clément Léger wrote:
+> 
+> 
+> On 29/07/2024 22:50, Charlie Jenkins wrote:
+> > Many of the other architectures use their custom barrier implmentations.
+> 
+> Hi Charlie,
+> 
+> Typo: implmentations -> implementations
 
-A version is pointless, it tells you nothing useful. If you don't
-touch version, the core will fill it with the uname, so you know
-exactly what kernel this is, which is useful.
+Thank you! I will fix that.
 
-> +static u32 hbg_ethtool_get_link(struct net_device *netdev)
-> +{
-> +	struct hbg_priv *priv = netdev_priv(netdev);
-> +
-> +	return priv->mac.link_status;
-> +}
-> +
-> +static int hbg_ethtool_get_ksettings(struct net_device *netdev,
-> +				     struct ethtool_link_ksettings *ksettings)
-> +{
-> +	struct hbg_priv *priv = netdev_priv(netdev);
-> +
-> +	phy_ethtool_ksettings_get(priv->mac.phydev, ksettings);
+- Charlie
 
-You can avoid this wrapper since phy_attach_direct sets netdev->phydev
-to phydev. You can then call phy_ethtool_get_link_ksettings() etc.
-
-> +static int hbg_ethtool_set_ksettings(struct net_device *netdev,
-> +				     const struct ethtool_link_ksettings *cmd)
-> +{
-> +	struct hbg_priv *priv = netdev_priv(netdev);
-> +
-> +	if (cmd->base.speed == SPEED_1000 && cmd->base.duplex == DUPLEX_HALF)
-> +		return -EINVAL;
-
-So long as you have told phylib about not supporting 1000Base/Half,
-phy_ethtool_set_link_ksettings() will return an error for you.
-
-> +static const struct ethtool_ops hbg_ethtool_ops = {
-> +	.get_drvinfo		= hbg_ethtool_get_drvinfo,
-> +	.get_link		= hbg_ethtool_get_link,
-
-Why not ethtool_op_get_link() ?
-
-> +	.get_link_ksettings	= hbg_ethtool_get_ksettings,
-> +	.set_link_ksettings	= hbg_ethtool_set_ksettings,
-> +};
-> +static void hbg_update_link_status(struct hbg_priv *priv)
-> +{
-> +	u32 link;
-> +
-> +	link = hbg_get_link_status(priv);
-> +	if (link == priv->mac.link_status)
-> +		return;
-> +
-> +	priv->mac.link_status = link;
-> +	if (link == HBG_LINK_DOWN) {
-> +		netif_carrier_off(priv->netdev);
-> +		netif_tx_stop_all_queues(priv->netdev);
-> +		dev_info(&priv->pdev->dev, "link down!");
-> +	} else {
-> +		netif_tx_wake_all_queues(priv->netdev);
-> +		netif_carrier_on(priv->netdev);
-> +		dev_info(&priv->pdev->dev, "link up!");
-> +	}
-> +}
-
-Why do you need this? phylib will poll the PHY once per second and
-call the adjust_link callback whenever the link changes state.
-
-> @@ -177,12 +226,17 @@ static int hbg_init(struct net_device *netdev)
->  	ret = hbg_irq_init(priv);
->  	if (ret)
->  		return ret;
-> -
->  	ret = devm_add_action_or_reset(&priv->pdev->dev, hbg_irq_uninit, priv);
-
-This white space change does not belong here.
-
-     Andrew
+> 
+> > Use the barrier code from the kernel sources to optimize barriers in
+> > tools.
+> > 
+> > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > ---
+> >  tools/arch/riscv/include/asm/barrier.h | 39 ++++++++++++++++++++++++++++++++++
+> >  tools/arch/riscv/include/asm/fence.h   | 13 ++++++++++++
+> >  tools/include/asm/barrier.h            |  2 ++
+> >  3 files changed, 54 insertions(+)
+> > 
+> > diff --git a/tools/arch/riscv/include/asm/barrier.h b/tools/arch/riscv/include/asm/barrier.h
+> > new file mode 100644
+> > index 000000000000..6997f197086d
+> > --- /dev/null
+> > +++ b/tools/arch/riscv/include/asm/barrier.h
+> > @@ -0,0 +1,39 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copied from the kernel sources to tools/arch/riscv:
+> > + *
+> > + * Copyright (C) 2012 ARM Ltd.
+> > + * Copyright (C) 2013 Regents of the University of California
+> > + * Copyright (C) 2017 SiFive
+> > + */
+> > +
+> > +#ifndef _TOOLS_LINUX_ASM_RISCV_BARRIER_H
+> > +#define _TOOLS_LINUX_ASM_RISCV_BARRIER_H
+> > +
+> > +#include <asm/fence.h>
+> > +#include <linux/compiler.h>
+> > +
+> > +/* These barriers need to enforce ordering on both devices and memory. */
+> > +#define mb()		RISCV_FENCE(iorw, iorw)
+> > +#define rmb()		RISCV_FENCE(ir, ir)
+> > +#define wmb()		RISCV_FENCE(ow, ow)
+> > +
+> > +/* These barriers do not need to enforce ordering on devices, just memory. */
+> > +#define smp_mb()	RISCV_FENCE(rw, rw)
+> > +#define smp_rmb()	RISCV_FENCE(r, r)
+> > +#define smp_wmb()	RISCV_FENCE(w, w)
+> > +
+> > +#define smp_store_release(p, v)						\
+> > +do {									\
+> > +	RISCV_FENCE(rw, w);						\
+> > +	WRITE_ONCE(*p, v);						\
+> > +} while (0)
+> > +
+> > +#define smp_load_acquire(p)						\
+> > +({									\
+> > +	typeof(*p) ___p1 = READ_ONCE(*p);				\
+> > +	RISCV_FENCE(r, rw);						\
+> > +	___p1;								\
+> > +})
+> > +
+> > +#endif /* _TOOLS_LINUX_ASM_RISCV_BARRIER_H */
+> > diff --git a/tools/arch/riscv/include/asm/fence.h b/tools/arch/riscv/include/asm/fence.h
+> > new file mode 100644
+> > index 000000000000..37860e86771d
+> > --- /dev/null
+> > +++ b/tools/arch/riscv/include/asm/fence.h
+> > @@ -0,0 +1,13 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copied from the kernel sources to tools/arch/riscv:
+> > + */
+> > +
+> > +#ifndef _ASM_RISCV_FENCE_H
+> > +#define _ASM_RISCV_FENCE_H
+> > +
+> > +#define RISCV_FENCE_ASM(p, s)		"\tfence " #p "," #s "\n"
+> > +#define RISCV_FENCE(p, s) \
+> > +	({ __asm__ __volatile__ (RISCV_FENCE_ASM(p, s) : : : "memory"); })
+> > +
+> > +#endif	/* _ASM_RISCV_FENCE_H */
+> > diff --git a/tools/include/asm/barrier.h b/tools/include/asm/barrier.h
+> > index 8d378c57cb01..0c21678ac5e6 100644
+> > --- a/tools/include/asm/barrier.h
+> > +++ b/tools/include/asm/barrier.h
+> > @@ -8,6 +8,8 @@
+> >  #include "../../arch/arm64/include/asm/barrier.h"
+> >  #elif defined(__powerpc__)
+> >  #include "../../arch/powerpc/include/asm/barrier.h"
+> > +#elif defined(__riscv)
+> > +#include "../../arch/riscv/include/asm/barrier.h"
+> >  #elif defined(__s390__)
+> >  #include "../../arch/s390/include/asm/barrier.h"
+> >  #elif defined(__sh__)
+> > 
+> 
+> Can not really tell for that part except it seems ok to me as well.
+> Andrea might be a better candidate to add its Rb.
+> 
+> Thanks,
+> 
+> Clément
 
