@@ -1,220 +1,133 @@
-Return-Path: <linux-kernel+bounces-271160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCAFE944A3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:20:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6614F944A40
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0D4F1C24A75
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 985491C20E19
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:21:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2E0189B82;
-	Thu,  1 Aug 2024 11:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8Z+qnN8"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07255189BAE;
+	Thu,  1 Aug 2024 11:21:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF47170A14;
-	Thu,  1 Aug 2024 11:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208B8189BA0
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511209; cv=none; b=K3Xq8aKhubV0BtFnxryGmDiURLQ/ePBckd0mdZ+jmJ40bTJQRo+X6mzKnqaopJYuQXOwryCH5jBx6GzROVnSCXdZRtIl9q6isOUzj/KfE7W9rKjgsr6QWgcxI5fDmzu1wNQhKptCWjFz9H01eZe9dugrVx/etDTdOJGp4zFaALI=
+	t=1722511265; cv=none; b=YOllZn7KVFCGWNOtVIFu5UJ/xBUj0gEyM/W5PgYn6lLGJgczUi1EDRe/tLNLk/L8YUtoQbJTyVoKvjOAOdIL8UNiiqMhFAKU6sRvnq9VkB0AiPfvf/V3UGFnNMxql965eWGQnYMhOn7vhi/ea360RtuQv9dHWSxYA3++4Pu5BoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722511209; c=relaxed/simple;
-	bh=H75Gd55t5dSpOM07iQzfr2rSjZFvec2rujGmbrqv24I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g1LeK33b4OBbWnW+nXiIUWcpPA67QBMyv++0F0HcHTkEYLQwZ0fXYtEIcniLv07V2zLQcGBTI3O45gurEOQjds3gDASnP/vehlyB8u/bQuZ2BIzeG6aqgegpVxWi7BF61IUAVH/KbsEk+1v6dGLFVkspbiKBZNiGcZTNYXNX4J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j8Z+qnN8; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fd78c165eeso59581845ad.2;
-        Thu, 01 Aug 2024 04:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722511206; x=1723116006; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QF9E215igExM0Zrrh5mF1HmIwfBoXfOQkWOF/xjHtnk=;
-        b=j8Z+qnN81B5DRQEdTfCBOCCbAEumT0NpDv+WxT2Ai/wVKX3OlFzlDQ8KRvlXwJAaBm
-         Hl8A31gHyp8YqTEqs6roCjjGb1Kpm/qUVhZpAx+tcFQ4uK+SWhB5o3EhNQ6wAmkFQMuY
-         J+SfWLlh2yFGWvyE6sbkyA8cTBxN0dphWaKeKSR51Nh3vDvvkVbznviB6YfudgrvQoZ0
-         32JVGBUnSeiRsFEd9qkuaELq7QcRZCoJs7aeYdQ1FGMoJpD5/b6NjlR12DgFrx1jb3vR
-         +Cm8fKos9tL84AT+pGLXIKLdd8Jti8eA1fK67hc8nWfnGPX12pJTOTlprVaYmjOVVfwc
-         w4Pw==
+	s=arc-20240116; t=1722511265; c=relaxed/simple;
+	bh=t/qTzkznLocZGKmH0f6UN2PI4opU3S7RVyDVos+suoI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ilgBMgwxl5JpgR1lzFeo5+UCdG7cBJ3KCQUXPii83zw/wh95obDAniLexe5pa9wlka+mXQZWCheDKq9EZWLPWNe0Kn5daPuH8o0bbgG7GgMpLweNXRqdlDdMhkK5jM46p9jpIrCYIMkxctXnkcIPuV8enAPd4vrQlIDLdv0gzJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3962d4671c7so103191485ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:21:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722511206; x=1723116006;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QF9E215igExM0Zrrh5mF1HmIwfBoXfOQkWOF/xjHtnk=;
-        b=gTNsgSWZgkI1LLL8ksac6ngARJAwvpM+xcObddPl9JofIIzvR5ebIJUmCBD1iVL+lH
-         MC5USNWhaPYBHLpHfIg0hXTexEde/kFyaqnNlfy6vTzo3IC8tHkpOL/u2fpHl9fjln+o
-         g8OnwU0YlFjIMZKge+XrLZpkh9mzNVmkd4vx87YU58Tnuf+dSEvC7TuDf7Yywno6gDjM
-         0OjGRZLm7LxMZKqU93kYqhNyNoAU46oTCmKVGiIc7E9+PUjkE1iz7pQXdUwRCebSDUJA
-         KfAY/aGbacYgBVN8dVZlTAEwJrzzBs2VDsX6IvDB9qURlYvABwTkbQaahJeLbO6AkkbD
-         jhsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXxYHQiuTEeeaTjWa5xNDbTEeFmmlPbQB2TLmuC4lAX6YUU+BZl46FY6VWqeczfkTFZ9NUGsqKLZeru7DD7jlcGg3khOzRyF+dV6PzvUywQY7eEnAiKaoxs4F7gmNz6KHmorrc
-X-Gm-Message-State: AOJu0YxUYPR31O5FGR+mx9aLPJed5iIbPJ/2PUtOAcM6q1PfiyduX/HX
-	GMAQ2+Usz2TpwNu5y4plaunhGiGMQX/qEWO/YwQDiWmWZsGzC2fm
-X-Google-Smtp-Source: AGHT+IF6xT3FI3bebFLEnOvocp5XiY5B2l4beedOXxR908Wy1uD5Wrvv8oeUIsuok46ApnCMMFUXdw==
-X-Received: by 2002:a17:902:cf07:b0:1ff:458e:8dfc with SMTP id d9443c01a7336-1ff4ce75217mr33126595ad.16.1722511206000;
-        Thu, 01 Aug 2024 04:20:06 -0700 (PDT)
-Received: from localhost.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7fcd252sm136215785ad.285.2024.08.01.04.20.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 04:20:05 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: jiri@resnulli.us
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com,
-	Jeongjun Park <aha310510@gmail.com>
-Subject: [PATCH net] team: fix possible deadlock in team_port_change_check
-Date: Thu,  1 Aug 2024 20:18:42 +0900
-Message-Id: <20240801111842.50031-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1722511263; x=1723116063;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGR2bRjeAehL7VeNquYItORYpN2Wu5qxJiqzMHLgDco=;
+        b=Nv46euRyTO/8rUjiYQ9fPUJyLqx//tgTpu3AQMBXRQST6LxNjpjsoNWOMvCd7bGkyV
+         NFOjN+66i4Qgg5vtEFjhAE0H1c2U9tAWzCJ9wtzQlFOuZM3lJwG4njsn+2GyQrhkuMmW
+         XSVN2vW8MJwK4vhH0WXL/F9tB7TMtaCJ5ULrSh9MUEoIBkSX5DVCjt0oZP1ZHW3M3p/E
+         TSLwqPWmmZE8VRPmBpWAb9bKQ/9O7q7Mz/2xXqLheYsk00+q4JtO1OSYmOKIi3gSxU5v
+         RtOOds5lFbmFvYxB9SzwbeKMCN+C8hYcralbDzS1xFgxwH9lWDJms7d1wKEQMaPyMo8r
+         a7lQ==
+X-Gm-Message-State: AOJu0YwsNza3sWRs9pyRjgl5CBANVoRJVcYplGEsjvBddz8eWP1HCWdI
+	cfJ3EZemX1Sxb5aSXI9h2SEOauC2ooOIdrNtB61g2wesqYV4O3x9a5zhq+6Io4sDLuLOJHvmlQk
+	prWCh0rGpGiu2uUVxwAvgpCzK1BOTxErVn+QLNLWB7LvJTK3YPDRw/R0=
+X-Google-Smtp-Source: AGHT+IHWFIM7rrUn2tYVcK/tsWFs6SNcjVAskj2wDG0phwkizSGQ8xq7TH0INHcN08WDy+1g+hg3RalZvC79hIJt2Nag561vClOq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1aa2:b0:396:1fc1:7034 with SMTP id
+ e9e14a558f8ab-39b182d06bcmr2103875ab.0.1722511263264; Thu, 01 Aug 2024
+ 04:21:03 -0700 (PDT)
+Date: Thu, 01 Aug 2024 04:21:03 -0700
+In-Reply-To: <20240801090658.1894596-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f80371061e9d679a@google.com>
+Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In do_setlink() , do_set_master() is called when dev->flags does not have
-the IFF_UP flag set, so 'team->lock' is acquired and dev_open() is called,
-which generates the NETDEV_UP event. This causes a deadlock as it tries to
-acquire 'team->lock' again.
+Hello,
 
-To solve this, I modified team_port_change_check to check if 'team->lock' 
-has already been acquired and not acquire the lock again if it has been 
-acquired in the upper function.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in pick_link
 
-============================================
-WARNING: possible recursive locking detected
-6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0 Not tainted
---------------------------------------------
-syz.0.15/5889 is trying to acquire lock:
-ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_port_change_check drivers/net/team/team_core.c:2950 [inline]
-ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
-
-but task is already holding lock:
-ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
-
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(team->team_lock_key#2);
-  lock(team->team_lock_key#2);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by syz.0.15/5889:
- #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rtnetlink.c:79 [inline]
- #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x372/0xea0 net/core/rtnetlink.c:6644
- #1: ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5889 Comm: syz.0.15 Not tainted 6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_deadlock kernel/locking/lockdep.c:3061 [inline]
- validate_chain kernel/locking/lockdep.c:3855 [inline]
- __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- team_port_change_check drivers/net/team/team_core.c:2950 [inline]
- team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
- dev_change_flags+0x10c/0x160 net/core/dev.c:8914
- vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
- notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
- call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
- call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
- call_netdevice_notifiers net/core/dev.c:2046 [inline]
- dev_open net/core/dev.c:1515 [inline]
- dev_open+0x144/0x160 net/core/dev.c:1503
- team_port_add drivers/net/team/team_core.c:1216 [inline]
- team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
- do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
- do_setlink+0x306d/0x4060 net/core/rtnetlink.c:2907
- __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
- rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
- rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
- netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
- netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
- netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
- netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg net/socket.c:745 [inline]
- ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
- ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
- __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
+loop0: detected capacity change from 0 to 8
+err: 0, folio: ffffea0000780a50, in: ffff88801768c878, do_read_cache_folio
+=====================================================
+BUG: KMSAN: uninit-value in pick_link+0xd8c/0x1690 fs/namei.c:1850
+ pick_link+0xd8c/0x1690 fs/namei.c:1850
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc07ed77299
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc07fb7f048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007fc07ef05f80 RCX: 00007fc07ed77299
-RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
-RBP: 00007fc07ede48e6 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007fc07ef05f80 R15: 00007ffeb5c0d528
 
-Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Fixes: 3d249d4ca7d0 ("net: introduce ethernet teaming device")
-Signed-off-by: Jeongjun Park <aha310510@gmail.com>
----
- drivers/net/team/team_core.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
+ alloc_pages_noprof mm/mempolicy.c:2343 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
+ do_read_cache_folio+0x131/0x1260 mm/filemap.c:3753
+ do_read_cache_page mm/filemap.c:3859 [inline]
+ read_cache_page+0x63/0x1d0 mm/filemap.c:3868
+ read_mapping_page include/linux/pagemap.h:907 [inline]
+ page_get_link+0x73/0xab0 fs/namei.c:5272
+ pick_link+0xd6c/0x1690
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-index ab1935a4aa2c..4ac6e55998ec 100644
---- a/drivers/net/team/team_core.c
-+++ b/drivers/net/team/team_core.c
-@@ -2946,10 +2946,22 @@ static void __team_port_change_port_removed(struct team_port *port)
- static void team_port_change_check(struct team_port *port, bool linkup)
- {
- 	struct team *team = port->team;
-+	bool flag = true;
- 
--	mutex_lock(&team->lock);
-+	if (mutex_is_locked(&team->lock)){
-+		unsigned long owner, curr = (unsigned long)current;
-+		owner = atomic_long_read(&team->lock.owner);
-+		if (owner != curr)
-+			mutex_lock(&team->lock);
-+		else
-+			flag = false;
-+	}
-+	else{
-+		mutex_lock(&team->lock);
-+	}
- 	__team_port_change_check(port, linkup);
--	mutex_unlock(&team->lock);
-+	if (flag)
-+		mutex_unlock(&team->lock);
- }
- 
- 
---
+CPU: 1 UID: 0 PID: 5934 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
+
+
+Tested on:
+
+commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17d732bd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=107ea623980000
+
 
