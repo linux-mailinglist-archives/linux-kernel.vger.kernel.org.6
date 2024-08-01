@@ -1,143 +1,148 @@
-Return-Path: <linux-kernel+bounces-271136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CBB9449FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:02:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0553944A09
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C9F91F21F26
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:02:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173031C2242E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F92A187FF3;
-	Thu,  1 Aug 2024 11:02:49 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B782187FFB;
+	Thu,  1 Aug 2024 11:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zrs1ICXV"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B934516D4F3;
-	Thu,  1 Aug 2024 11:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FF83E47B;
+	Thu,  1 Aug 2024 11:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722510168; cv=none; b=PS9WiGeArLslZ4kXqgSTzPvxgbhls5f/DjrvsG70IV8bcHPnKlMQrHQWN3NkylL5fDuQVfeMOmgX5SLW2hD0QlpbgyfY0u361Lkai+0XduCQBuXH4yzJ3GcvUecoItb6heee/AoPrvEssQR9ZuAsyeooPX8QlF/cPJIVlyB+dAo=
+	t=1722510434; cv=none; b=S68deJimxvJ+LyH6LAvxtJGRho4l5CF6YXlLcb+sS/7ssgv/rPn8E7UhXKbRNRAFFZP4pWhM09Zr6YonIDrzTAy5Kbbv0yiRoXWHmV7uR5V4eQdNqF8Z9xbcUGVZbhSQnJxPbBzEMwNZ81rA5i5u+F6+QiQ/flNb630zgvU1MCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722510168; c=relaxed/simple;
-	bh=hoLjWusxmWJf7VS+hXKef18xLR1L16y/dJSPkiiOLyI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Z4rkmifNeBVpm6GlMSnuqk0GERjLRqVkjHN0TxWxk3y+yipQ5zBcH89TtpiCtr2vj6DpbRODLcs4ySg6GbK6ukTH4tkUQSSLdeOHm0HKlzftslaUBXd+BCQ+wyyS5awUSXQAbSgQLDS+0E6F05/1Fa4SwP59pcD6fZjrWTGmPJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZQsg3d5KzyPNq;
-	Thu,  1 Aug 2024 18:57:43 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id EBC55180106;
-	Thu,  1 Aug 2024 19:02:42 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 1 Aug 2024 19:02:42 +0800
-Message-ID: <bcbc57ba-3e54-cfe5-60b8-8f3990f40000@hisilicon.com>
-Date: Thu, 1 Aug 2024 19:02:41 +0800
+	s=arc-20240116; t=1722510434; c=relaxed/simple;
+	bh=31mM82ebSebB9a5nveyhbtj2mdaB7JaaiK1wFzqXGf8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZSOLqYPZC3D+C0Wl1t1ZfFbQWSfNoWVDrW/FEMCOPFFwr7QP9RZBsddjZ6mDulsLl5lxlHJIBZTi4ZF4cS7yNO1d2I8xRaABLS+Kk9hOtad+4zaqSAJ5RMunDwYQPiKn04B7Oq7dB2KD74AP9ESNhPZ9EPPmHBAvXGH9FpkzHX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zrs1ICXV; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1722510432; x=1754046432;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=31mM82ebSebB9a5nveyhbtj2mdaB7JaaiK1wFzqXGf8=;
+  b=zrs1ICXVp1dFUkdNv3ykMg5DO+Ipbn/dYuEXYgzbR3lzTRBpigUGm6JM
+   dGFU+BdBA3jVrg80pC84CH9PpDsTCBtzEJPXDBZP/qjjYL+1o/OMoFFCl
+   52ff4GyhrTPtjmBFCPcvzUoUy8GY/RTshuhFnA05pLlCq4r2Sg8rplIHI
+   B11NuySETwXk/WOaiagVucPL7pvGktIvukqwlsJkPFTCBaAdbS+afGDkF
+   9LwmRsSfqGzmbk0sOSbqsy/+etfS+L2yV8BZi7fTIjSo0CETWphQXS8ka
+   hV3cqG7Hb0TzQhBvqYBxFD+Wm930ruKmGuC/aK5e4mkzwHAWNF6QEBIt9
+   Q==;
+X-CSE-ConnectionGUID: KTsYQVRSSuyctp97GVx0PQ==
+X-CSE-MsgGUID: HNcQmoaaQq2ma9hafXCacQ==
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="30631010"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Aug 2024 04:07:04 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 1 Aug 2024 04:06:29 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
+ (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 1 Aug 2024 04:06:28 -0700
+Date: Thu, 1 Aug 2024 16:33:13 +0530
+From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
+	<davem@davemloft.net>, <kuba@kernel.org>, <andrew@lunn.ch>,
+	<horms@kernel.org>, <hkallweit1@gmail.com>, <richardcochran@gmail.com>,
+	<rdunlap@infradead.org>, <Bryan.Whitehead@microchip.com>,
+	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<UNGLinuxDriver@microchip.com>
+Subject: Re: [PATCH net-next V3 3/4] net: lan743x: Migrate phylib to phylink
+Message-ID: <ZqtrcRfRVBR6H9Ri@HYD-DK-UNGSW21.microchip.com>
+References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
+ <20240730140619.80650-4-Raju.Lakkaraju@microchip.com>
+ <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-Content-Language: en-US
-To: Leon Romanovsky <leon@kernel.org>
-CC: <jgg@ziepe.ca>, <bvanassche@acm.org>, <nab@risingtidesystems.com>,
-	<linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <target-devel@vger.kernel.org>
-References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
- <20240801103712.GG4209@unreal>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <20240801103712.GG4209@unreal>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
 
+Hi Russell King,
 
+Thank you for review the patches.
 
-On 2024/8/1 18:37, Leon Romanovsky wrote:
-> On Thu, Aug 01, 2024 at 03:44:15PM +0800, Junxian Huang wrote:
->> Currently cancel_work_sync() is not called when srpt_refresh_port()
->> failed in srpt_add_one(). There is a probability that sdev has been
->> freed while the previously initiated sport->work is still running,
->> leading to a UAF as the log below:
->>
->> [  T880] ib_srpt MAD registration failed for hns_1-1.
->> [  T880] ib_srpt srpt_add_one(hns_1) failed.
->> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
->> ...
->> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
->> ...
->> [  T376] Call trace:
->> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
->> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
->> [  T376]  process_one_work+0x1d8/0x4cc
->> [  T376]  worker_thread+0x158/0x410
->> [  T376]  kthread+0x108/0x13c
->> [  T376]  ret_from_fork+0x10/0x18
->>
->> Add cancel_work_sync() to the exception branch to fix this UAF.
->>
->> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>  drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
->> index 9632afbd727b..244e5c115bf7 100644
->> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
->> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
->> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
->>  {
->>  	struct srpt_device *sdev;
->>  	struct srpt_port *sport;
->> +	u32 i, j;
->>  	int ret;
->> -	u32 i;
->>  
->>  	pr_debug("device = %p\n", device);
->>  
->> @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
->>  		if (ret) {
->>  			pr_err("MAD registration failed for %s-%d.\n",
->>  			       dev_name(&sdev->device->dev), i);
->> -			i--;
->>  			goto err_port;
->>  		}
->>  	}
->> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
->>  	return 0;
->>  
->>  err_port:
->> +	for (j = i, i--; j > 0; j--)a
->> +		cancel_work_sync(&sdev->port[j - 1].work);
+The 07/30/2024 15:56, Russell King (Oracle) wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> There is no need in extra variable, the following code will do the same:
+> On Tue, Jul 30, 2024 at 07:36:18PM +0530, Raju Lakkaraju wrote:
+> > +     default:
+> > +             __set_bit(PHY_INTERFACE_MODE_RGMII,
+> > +                       adapter->phylink_config.supported_interfaces);
+> > +             __set_bit(PHY_INTERFACE_MODE_RGMII_ID,
+> > +                       adapter->phylink_config.supported_interfaces);
+> > +             __set_bit(PHY_INTERFACE_MODE_RGMII_RXID,
+> > +                       adapter->phylink_config.supported_interfaces);
+> > +             __set_bit(PHY_INTERFACE_MODE_RGMII_TXID,
+> > +                       adapter->phylink_config.supported_interfaces);
 > 
-> 	while (i--)
-> 		cancel_work_sync(&sdev->port[i].work);
+> There's a shorter way to write this:
 > 
->>  	srpt_unregister_mad_agent(sdev, i);
+>                 phy_interface_set_rgmii(adapter->phylink_config.supported_interfaces);
 
-i is also used here.
+Ok. I will change.
 
-Junxian
-
->>  err_cm:
->>  	if (sdev->cm_id)
->> -- 
->> 2.33.0
->>
 > 
+> > +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
+> > +{
+> > +     struct device_node *dn = adapter->pdev->dev.of_node;
+> > +     struct net_device *dev = adapter->netdev;
+> > +     struct fixed_phy_status fphy_status = {
+> > +             .link = 1,
+> > +             .speed = SPEED_1000,
+> > +             .duplex = DUPLEX_FULL,
+> > +     };
+> > +     struct phy_device *phydev;
+> > +     int ret;
+> > +
+> > +     if (dn)
+> > +             ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
+> > +
+> > +     if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
+> > +             phydev = phy_find_first(adapter->mdiobus);
+> > +             if (!phydev) {
+> > +                     if (((adapter->csr.id_rev & ID_REV_ID_MASK_) ==
+> > +                           ID_REV_ID_LAN7431_) || adapter->is_pci11x1x) {
+> > +                             phydev = fixed_phy_register(PHY_POLL,
+> > +                                                         &fphy_status,
+> > +                                                         NULL);
+> 
+> I thought something was going to happen with this?
+
+Our SQA confirmed that it's working ping as expected (i.e Speed at 1Gbps
+with full duplex) with Intel I210 NIC as link partner.
+
+Do you suspect any corner case where it's fail?
+ 
+> 
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
+-- 
+Thanks,                                                                         
+Raju
 
