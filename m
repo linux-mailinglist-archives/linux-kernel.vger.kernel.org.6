@@ -1,103 +1,134 @@
-Return-Path: <linux-kernel+bounces-270642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7129442B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C6A9442B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43BD31F2361F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:30:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9E4B1C20DD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271BF13DBA4;
-	Thu,  1 Aug 2024 05:30:30 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39C6B13DBA4;
+	Thu,  1 Aug 2024 05:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BanuGsq1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9C8EC2;
-	Thu,  1 Aug 2024 05:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBEC2744E;
+	Thu,  1 Aug 2024 05:31:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722490229; cv=none; b=Re7LMAD7jsWZkpNOU054pgEmY2Y2oP5r+aLCaCV7i44DPmss2pKwTj5UI2qXgjDo9su37QLhUzTbbCm/wIwzP9qpyPRI+jk9BxLjRmBERF+Wox/iArirlX45ss0JeJ7YvP/8q8fnnmy7YM67Rrhh3OT3FzOjbqHkWhEohTQ/Qcs=
+	t=1722490281; cv=none; b=Y28VSAC5BIEU4LqRKVqqo9anfwKRvSwVsuP9cYI1e0oPtWROcFU+e9BKRBsggiNPTGpVkpGb6QN/d9X0Y5tjiPS6xZ6v2Ef7+lb+3XEn0LXVBYY/argfCAnfsZ1Fu040/QZmd2cWJusF/HvzcLfTHoRG7aT1YQXAarmq3LGXwgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722490229; c=relaxed/simple;
-	bh=A487K/HlTfObpmp7htZEGKjDfQEBCpQkCZDFHSDmdqE=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gCS7KMMQCDcFOdf5dMwapvVRh0JQAX8rdbaMMk2wroSJ8qIbjWGLNKvr+f3DeQHVswzmsy4czgWk0ebSoVDR1iQUjbF6W23r5GZeGpwErEaRllbuyxUxf8nasnEiEWiyzj4X3iw6VmhE0SDbmMTIXNSNohkXSYu3y06mxETud9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4715Tpw6019808;
-	Thu, 1 Aug 2024 13:29:51 +0800 (+08)
-	(envelope-from Dongliang.Cui@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WZHSY2q6xz2LQJ6l;
-	Thu,  1 Aug 2024 13:23:57 +0800 (CST)
-Received: from BJMBX02.spreadtrum.com (10.0.64.8) by BJMBX02.spreadtrum.com
- (10.0.64.8) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Thu, 1 Aug 2024
- 13:29:49 +0800
-Received: from BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb]) by
- BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb%19]) with mapi id
- 15.00.1497.023; Thu, 1 Aug 2024 13:29:49 +0800
-From: =?utf-8?B?5bSU5Lic5LquIChEb25nbGlhbmcgQ3VpKQ==?=
-	<Dongliang.Cui@unisoc.com>
-To: Christoph Hellwig <hch@infradead.org>
-CC: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com"
-	<sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "niuzhiguo84@gmail.com"
-	<niuzhiguo84@gmail.com>,
-        =?utf-8?B?546L55qTIChIYW9faGFvIFdhbmcp?=
-	<Hao_hao.Wang@unisoc.com>,
-        =?utf-8?B?546L56eRIChLZSBXYW5nKQ==?=
-	<Ke.Wang@unisoc.com>,
-        =?utf-8?B?54mb5b+X5Zu9IChaaGlndW8gTml1KQ==?=
-	<Zhiguo.Niu@unisoc.com>,
-        "cuidongliang390@gmail.com"
-	<cuidongliang390@gmail.com>
-Subject: Re: [PATCH v3] exfat: check disk status during buffer write
-Thread-Topic: [PATCH v3] exfat: check disk status during buffer write
-Thread-Index: AdrjuT5YHG+eyC7TRnyilKnSRw6r3Q==
-Date: Thu, 1 Aug 2024 05:29:48 +0000
-Message-ID: <8d0405eea668458d9507aa36e223f503@BJMBX02.spreadtrum.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-transport-fromentityheader: Hosted
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1722490281; c=relaxed/simple;
+	bh=r+dH3tnTDJQpi8X8pE4bNLRxm4x9qSvqVTXiJGce7jU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YPizy0CPiwK66NS/urLEVeGhvrLmmM4Y54a357kDx0oiqIk0M8x1HebnazzfH4axnQ//8YgxDonMaMijhuigM6BYpqsGh4khOK/lAqPBRyhBtYxYN6wuz8zwsvVWcdnFOgwQkPC8yYWTaMlOaCY7TT1KAxxhK1iDs6V5LMGyYxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BanuGsq1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VMRpRY020552;
+	Thu, 1 Aug 2024 05:31:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=QFEJaSAxgxgPNWxAYtoc8e8qb12Q/0iYNTyO3gpgrDs=; b=Ba
+	nuGsq1gNJQgCmUqk+mbPY8Gu6TPR7ncEPjQZ7zY3IrHd8GV+Ym/DTrVhUPXGItvC
+	O1HC49ADQZGIxDAlRr/rhA8LRLgDznzY/mKAD4525LYOYu+OwquWkIRM7MHLES1O
+	ybqS/5IsVfyUo2t4nHlr1tZ7AKAQTYH9qIljPzMMCTTuipgdVHvwDXU1PE5ikXtg
+	HemGPeiWMRNSgZ5vdn2Dri+YsQ/9kruxRha1wa+c668C+6+V9xsk/PjWDHNmMjdO
+	fBSGJaZoJX9N+v2OVpWpu2DKJW+xk7ix/AtF/pqQyj7N045apKf82m/9UUFWk8bb
+	3yTZ7EEWK1X6oeKEf+hQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qkv0tq4b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 05:31:11 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4715VBA7023300
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 05:31:11 GMT
+Received: from hu-akakum-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 31 Jul 2024 22:31:03 -0700
+From: Akash Kumar <quic_akakum@quicinc.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Jing Leng <jleng@ambarella.com>, Felipe Balbi
+	<balbi@kernel.org>,
+        Jack Pham <quic_jackp@quicinc.com>, <kernel@quicinc.com>,
+        Wesley Cheng <quic_wcheng@quicinc.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>
+CC: Vijayavardhan Vennapusa <quic_vvreddy@quicinc.com>,
+        Krishna Kurapati
+	<quic_kriskura@quicinc.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Akash Kumar <quic_akakum@quicinc.com>
+Subject: [PATCH v2] usb: gadget: Increase max configuration interface to 32
+Date: Thu, 1 Aug 2024 11:00:03 +0530
+Message-ID: <20240801053003.15153-1-quic_akakum@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MAIL:SHSQR01.spreadtrum.com 4715Tpw6019808
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: pRNg6HCfHJJSe3ysMV00W7nkeL1p9JS1
+X-Proofpoint-GUID: pRNg6HCfHJJSe3ysMV00W7nkeL1p9JS1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_02,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=799 clxscore=1011
+ adultscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010030
 
-QmVzaWRlcyB0aGUgYWRkaXRpb25hbCBjaGVja3MgZm9yIHRoZSBzaHV0ZG93biBmbGFnIGFscmVh
-ZHkgbWVudGlvbmVkIHRoZSBzdWJqZWN0IGlzIG5vdyBpbmNvcnJlY3QgSSB0aGluaywgaXQgc2hv
-dWxkIHRhbGsgYWJvdXQgaW1wbGVtZW50aW5nIHNodXRkb3duIGhhbmRsaW5nLg0KDQpJbiBjYXNl
-IHlvdSBoYXZlbid0IGRvbmUgc28geWV0LCBwbGVhc2UgYWxzbyBzZWUgaWYgZXhmYXQgbm93IHBh
-c3NlcyB0aGUgdmFyaW91cyB0ZXN0Y2FzZXMgaW4geGZzdGVzdHMgdGhhdCBleGVyY2lzZSB0aGUg
-c2h1dGRvd24gcGF0aC4NCg0KT3RoZXJ3aXNlIHRoaXMgbG9va3MgcmVhc29uYWJsZSB0byBtZSwg
-dGhhbmtzIGZvciB0aGUgd29yayENCg0KSGkgQ2hyaXN0b3BoLA0KDQpUaGFuayB5b3UgZm9yIHlv
-dXIgc3VnZ2VzdGlvbi4gSSB0aGluayB0aGUgY3VycmVudCBwYXRjaCBpcyBwcmltYXJpbHkgYWlt
-ZWQgYXQgYWRkcmVzc2luZyB0aGUgaXNzdWUgb2YgaG90cGx1ZyBhbmQgZW5zdXJpbmcgd3JpdGVy
-cyBhcmUgbm90aWZpZWQgd2hlbiBhIGRldmljZSBoYXMgYmVlbiBlamVjdGVkLg0KDQpQcmV2aW91
-c2x5LCBleGZhdCBkaWRuJ3QgaGF2ZSBhIHNodXRkb3duIHByb2Nlc3MgaW5oZXJlbnRseSwgYW5k
-IGhvdHBsdWcgZGlkbid0IHBvc2UgYW55IHNpZ25pZmljYW50IGlzc3VlcywgZXhjZXB0IGZvciB0
-aGUgb25lIHdlJ3JlIGRpc2N1c3NpbmcgaW4gdGhpcyBlbWFpbC4NCg0KVGhlcmVmb3JlLCByZWdh
-cmRpbmcgd2hhdCBzcGVjaWZpYyBhY3Rpb25zIHNob3VsZCBiZSB0YWtlbiBkdXJpbmcgc2h1dGRv
-d24sIEkgd291bGQgYXBwcmVjaWF0ZSB5b3VyIGlucHV0IG9yIGFueSBzdWdnZXN0aW9ucyBmcm9t
-IFN1bmdqb25nIGFuZCBOYW1qYWUuIA0KDQpBZGRpdGlvbmFsbHksIGNhbiB0aGUgc2h1dGRvd24g
-aGFuZGxpbmcgYmUgc3VwcGxlbWVudGVkIHdpdGggYW5vdGhlciBwYXRjaCBpZiB0aGVyZSBpcyBp
-bmRlZWQgYSBuZWVkIHRvIGltcGxlbWVudCBzb21lIGV4ZmF0IHNodXRkb3duIHByb2Nlc3Nlcz8N
-Cg0KSEkgU3VuZ2pvbmcgYW5kIE5hbWphZS4NCg0KQmFzZWQgb24gdGhlIGFib3ZlLCB3aGF0IGRv
-IHlvdSB0aGluaywgb3IgZG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb25zPw0K
+Currently, max configuration interfaces are limited to 16, which fails
+for compositions containing 10 UVC configurations with interrupt ep
+disabled along with other configurations , and we see bind failures
+while allocating interface ID in uvc bind.
+
+Increase max configuration interface to 32 to support any large
+compositions limited to same size as usb device endpoints as
+interfaces cannot be more than endpoints.
+
+Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+---
+ include/linux/usb/composite.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Changes for v2:
+Removed comment '/* arbitrary; max 255 */' as per review as it was
+confusing as MAX_CONFIG_INTERFACES cannot go beyond 32 due to usb
+ep limitation.
+
+diff --git a/include/linux/usb/composite.h b/include/linux/usb/composite.h
+index 2040696d75b6..d6d4fbfb6d0e 100644
+--- a/include/linux/usb/composite.h
++++ b/include/linux/usb/composite.h
+@@ -255,7 +255,7 @@ int config_ep_by_speed_and_alt(struct usb_gadget *g, struct usb_function *f,
+ int config_ep_by_speed(struct usb_gadget *g, struct usb_function *f,
+ 			struct usb_ep *_ep);
+ 
+-#define	MAX_CONFIG_INTERFACES		16	/* arbitrary; max 255 */
++#define	MAX_CONFIG_INTERFACES		32
+ 
+ /**
+  * struct usb_configuration - represents one gadget configuration
+-- 
+2.17.1
+
 
