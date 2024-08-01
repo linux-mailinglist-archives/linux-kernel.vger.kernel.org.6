@@ -1,196 +1,131 @@
-Return-Path: <linux-kernel+bounces-271565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B480A945019
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:08:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3563E945058
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:16:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5F1289EDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67FA31C25A1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C12C61BA879;
-	Thu,  1 Aug 2024 16:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7641B4C28;
+	Thu,  1 Aug 2024 16:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="v6cwg5u3"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b="PoVx96se"
+Received: from greygoose-centos7.csh.rit.edu (greygoose-centos7.csh.rit.edu [129.21.49.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188A91B3F28
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C7E13D251;
+	Thu,  1 Aug 2024 16:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.21.49.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528344; cv=none; b=JcRLyGzBYHn8wMQrECFzFBj4shFMsyajiaObB5TpYwC7AeCOdVSXFXJWwP9M3z0Kz6nVbbZOeoTkmv6q3gu7YSnqfcJprAOdS4RSdo5Jo7QSPBiDpPodlygsy5f4toRjcyW/uSnBQQbUtUY3aad/F1ReJpY3pKEy9iyRwcdEVzw=
+	t=1722528919; cv=none; b=mWd9RkCYljEw2ggFIWrcro+aGdb1suSTtBATup31bSQGHccGa49ZO8LKB5z1kEl7XO3JRBE0CRQWY8k8UIsKwrJB8jdl8PbVXdq/RqY/KSy+TsgHstVnfRpuqdLHLHzKRJX0gLEA04sgXLRabl8it9yKyx/i+wMzTdz0oVaRHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528344; c=relaxed/simple;
-	bh=W0bdeForQv6QKPsVnNeruCsx9lZBQ+WVsaGoDd2lbcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWa3rsymV//Q4J0mwvfgiZmpYHA+OmewvNC5R0Yti9weHLEDro4zOKXplNX5kjcxA1dE/shcTGX6St9AUEsT45Qoyamw/sTYhlTJMyYPm7KRumpbLRdhUjeMb7+wDtdE5Fx8pm/hpN69mM3yWqqBb6TwyO5tBj0vkhILjhoQNoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=v6cwg5u3; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f0407330a3so5389271fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:05:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1722528340; x=1723133140; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pmyBtMLAvKKc/g2gbrx5+dBgFoc+eVPA3RV1j9P+NdM=;
-        b=v6cwg5u3PIYTi8hCMpMZr6dGvr3AV7jD3hSBut1Vfzy4h8SRRMOxEBEQ+42MMALZ/U
-         uRDyQGmgKjN6XciK790gVgaJgED7YmdEQh4cVVCvKu16g4jijKCItXXAjYGDHw2Bcd0U
-         0hyLh8EA3bKLqMnxqi5QpPVUIxnO3ZF7wo/9hoiLi3I+Akgv7Xj/VmUxrq0NqOYqNP1Y
-         7WAeaIrQjWGeGU7i2HNF4CaNsMtKkSXXWEkDS8gDk317PIGD3hDZMwu2j4/zAdDg62eO
-         twtjv1K1Y3RoW1F+Ykf/pnHCmi/fOaoLb2afayFoVkA7vVitCRNtye+Ey8qzBLw2Dh0k
-         vNcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722528340; x=1723133140;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pmyBtMLAvKKc/g2gbrx5+dBgFoc+eVPA3RV1j9P+NdM=;
-        b=uAR8u8n3O0pESsQVURctsQpojXsjmsrO8IDZMIiInsFgtg8xiUoTzXCzU8p/AnkNyf
-         /BAe6YGRUAI+XtFZRG1kEijyWnnFsrdmca4kl1PLVbQADIF21vSS5yvCgqnLSav7Chax
-         ebRth1zDV5X7cW1xdL3o+cDEjK8hTxhaHMAW1m7QJP3fItLw7XWlvwEt32jV2NUJk426
-         wk63OA1UY+a34x7f+ggFJf5PY/goefD6DeFygRDo8Ob7GWxTCt8jBKBQ4uTZKc6jSCWW
-         v2QeBm41IlFJ74d/4if0uiZEOGiNfF6mGO0mLQbnofg/919z22Gp7xh+kU5Lg22sfxu8
-         KzpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWq0clNOJG0ccCHuPNVwEz9pU+RJ9V+yvFDrA99wQWovmVABzNoFFwY5zRPK/4uRvEv0KWz4/qohNjaTIx8TQDUDlMW7domQHVmltWc
-X-Gm-Message-State: AOJu0YzMmiGUPaNAQqR9smGIaQZf8dOUKCTveP4hsKEo8oAzFIKs7oEc
-	RE2IOhpbKAG5gLwTQmtXcdkOF7GvQ4xZpJ+ADE9MU4YouCdheU3ax29GqHA5uUE=
-X-Google-Smtp-Source: AGHT+IEp1PwFbanwLIIM1AuKEedIZhFMMTemRNxUspEvnFs1UiGExdZMGyfbsV0gon9vLaKYg2uwbA==
-X-Received: by 2002:a2e:9cda:0:b0:2ef:1d8d:2201 with SMTP id 38308e7fff4ca-2f15aaa71dfmr5802441fa.23.1722528340036;
-        Thu, 01 Aug 2024 09:05:40 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e11356sm1650825e9.19.2024.08.01.09.05.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:05:38 -0700 (PDT)
-Date: Thu, 1 Aug 2024 17:05:37 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: MANISH PANDEY <quic_mapa@quicinc.com>
-Cc: axboe@kernel.dk, mingo@kernel.org, peterz@infradead.org,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	linux-block@vger.kernel.org, sudeep.holla@arm.com,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Christoph Hellwig <hch@infradead.org>, kailash@google.com,
-	tkjos@google.com, dhavale@google.com, bvanassche@google.com,
-	quic_nitirawa@quicinc.com, quic_cang@quicinc.com,
-	quic_rampraka@quicinc.com, quic_narepall@quicinc.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-Message-ID: <20240801160537.ux4eg6p42disuqur@airbuntu>
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
- <d2009fca-57db-49e6-a874-e8291c3e27f5@quicinc.com>
+	s=arc-20240116; t=1722528919; c=relaxed/simple;
+	bh=/8nriejmXzDzWVmm/IlmiLk0ggY6nmt4tGPeWk9wNsE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CcRdqswZhgVdqJktZc1qxMEBbXR1QdqLA/HKuXWkHVB6iWtLC7rcvqCxIVwWoiV4WTzkppIMRX4dU9hiGkriFB6iYp1lv6Rx2cAzftnoVLJEd5S2Qak8j5NFIU2Lv9IrPFQWyhd7xPvK10wW/2YfZ9ytFY6yRwNTt98kq6uoHf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu; spf=pass smtp.mailfrom=csh.rit.edu; dkim=pass (1024-bit key) header.d=csh.rit.edu header.i=@csh.rit.edu header.b=PoVx96se; arc=none smtp.client-ip=129.21.49.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=csh.rit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csh.rit.edu
+Received: from localhost (localhost [127.0.0.1])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id 62D5C456D91E;
+	Thu,  1 Aug 2024 12:06:23 -0400 (EDT)
+Authentication-Results: mail.csh.rit.edu (amavisd-new);
+ dkim=pass (1024-bit key) reason="pass (just generated, assumed good)"
+ header.d=csh.rit.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=csh.rit.edu; h=
+	content-transfer-encoding:mime-version:x-mailer:message-id:date
+	:date:subject:subject:from:from:received:received; s=mail; t=
+	1722528382; x=1724342783; bh=/8nriejmXzDzWVmm/IlmiLk0ggY6nmt4tGP
+	eWk9wNsE=; b=PoVx96se74RXOXibEBplzKOSXOOmf51PNbVy6gTdW38BwRj4xSE
+	+xN9S9FtKdp3kD73nLjy3lW/frcR+fZiFe0qzLn1xlDSPnIWjIK2IeRjOhK+V2t0
+	4Gx/vAhZf59DB4xpY2pS3rAZjUTJ1n8mPV5QSdMr4DbibUf9LV64hE/Q=
+X-Virus-Scanned: amavisd-new at csh.rit.edu
+Received: from greygoose-centos7.csh.rit.edu ([127.0.0.1])
+ by localhost (mail.csh.rit.edu [127.0.0.1]) (amavisd-new, port 10026)
+ with ESMTP id ZLVFkvNF_GIA; Thu,  1 Aug 2024 12:06:22 -0400 (EDT)
+Received: from freedom.csh.rit.edu (freedom.csh.rit.edu [129.21.49.182])
+	by greygoose-centos7.csh.rit.edu (Postfix) with ESMTP id AD7EB457328D;
+	Thu,  1 Aug 2024 12:06:22 -0400 (EDT)
+From: Mary Strodl <mstrodl@csh.rit.edu>
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org,
+	urezki@gmail.com,
+	hch@infradead.org,
+	linux-mm@kvack.org,
+	lee@kernel.org,
+	andi.shyti@kernel.org,
+	linux-i2c@vger.kernel.org,
+	s.hauer@pengutronix.de,
+	christian.gmeiner@gmail.com,
+	Mary Strodl <mstrodl@csh.rit.edu>
+Subject: [PATCH v2 0/2] Add support for Congatec CGEB BIOS interface
+Date: Thu,  1 Aug 2024 12:06:08 -0400
+Message-ID: <20240801160610.101859-1-mstrodl@csh.rit.edu>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d2009fca-57db-49e6-a874-e8291c3e27f5@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On 08/01/24 14:55, MANISH PANDEY wrote:
-> ++ adding linux-kernel group
-> 
-> On 7/31/2024 7:16 PM, MANISH PANDEY wrote:
-> > Hi Qais Yousef,
-> > Recently we observed below patch has been merged
-> > https://lore.kernel.org/all/20240223155749.2958009-3-qyousef@layalina.io
-> > 
-> > This patch is causing performance degradation ~20% in Random IO along
-> > with significant drop in Sequential IO performance. So we would like to
-> > revert this patch as it impacts MCQ UFS devices heavily. Though Non MCQ
-> > devices are also getting impacted due to this.
+The following series adds support for the Congatec CGEB interface
+found on some Congatec x86 boards. The CGEB interface is a BIOS
+interface which provides access to onboard peripherals like I2C
+busses and watchdogs. It works by mapping BIOS code and searching
+for magic values which specify the entry points to the CGEB call.
+The CGEB call is an API provided by the BIOS which provides access
+to the functions in an ioctl like fashion.
 
-Could you provide more info about your systems' topology and irq setup please?
+At the request of some folks last time this series went out, CGEB
+now has a userspace component which runs the x86 blob (rather than
+running it directly in the kernel), which sends requests back and
+forth using the cn_netlink API.
 
-> > 
-> > We have several concerns with the patch
-> > 1. This patch takes away the luxury of affining best possible cpus from
-> >   device drivers and limits driver to fall in same group of CPUs.
+You can find a reference implementation of the userspace helper here:
+https://github.com/Mstrodl/cgeb-helper
 
-I don't think it does. If rq_affinity is set to 1, then it is set to match the
-performance of the requester to do the completion.
+I didn't get an answer when I asked where the userspace component
+should live, so I didn't put a ton of work into getting the helper
+up to snuff since similar userspace helpers (like v86d) are not
+in-tree. If folks would like the helper in-tree, that's fine too.
 
-> > 
-> > 2. Why can't device driver use irq affinity to use desired CPUs to
-> > complete the IO request, instead of forcing it from block layer.
+This series is based on the excellent work of Sascha Hauer and
+Christian Gmeiner. You can find their original work here:
 
-If you set the sysfs rq_affinity to 0, you should be able to distribute things
-without block layer trying to match anything?
+http://patchwork.ozlabs.org/patch/219756/
+http://patchwork.ozlabs.org/patch/219755/
+http://patchwork.ozlabs.org/patch/219757/
 
-> > 
-> > 3. Already CPUs are grouped based on LLC, then if a new categorization
-> > is required ?
+http://patchwork.ozlabs.org/patch/483262/
+http://patchwork.ozlabs.org/patch/483264/
+http://patchwork.ozlabs.org/patch/483261/
+http://patchwork.ozlabs.org/patch/483263/
 
-rq_affinity = 1 is asking to match the performance of the
-requester/orginitaor. On HMP system, this means looking at grouping based on
-capacity, not just LLC.
+Mary Strodl (1):
+  x86: Add basic support for the Congatec CGEB BIOS interface
 
-> > 
-> > > big performance impact if the IO request
-> > > was done from a CPU with higher capacity but the interrupt is serviced
-> > > on a lower capacity CPU.
-> > 
-> > This patch doesn't considers the issue of contention in submission path
+Sascha Hauer (1):
+  i2c: Add Congatec CGEB I2C driver
 
-What is the issue of contention? Could you please explain it in more details?
+ drivers/i2c/busses/Kconfig             |    7 +
+ drivers/i2c/busses/Makefile            |    1 +
+ drivers/i2c/busses/i2c-congatec-cgeb.c |  189 ++++
+ drivers/mfd/Kconfig                    |   10 +
+ drivers/mfd/Makefile                   |    1 +
+ drivers/mfd/congatec-cgeb.c            | 1139 ++++++++++++++++++++++++
+ include/linux/mfd/congatec-cgeb.h      |  111 +++
+ include/uapi/linux/connector.h         |    4 +-
+ 8 files changed, 1461 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/i2c/busses/i2c-congatec-cgeb.c
+ create mode 100644 drivers/mfd/congatec-cgeb.c
+ create mode 100644 include/linux/mfd/congatec-cgeb.h
 
-> > and completion path. Also what if we want to complete the request of
-> > smaller capacity CPU to Higher capacity CPU?
+--=20
+2.45.2
 
-Assuming you want to use rq_affinity = 1 to match based on LLC but not
-capacity. I'm curious why you want to match on LLC only but not capacity.
-
-Is this on 6.1 kernel and beyond? Arm systems should have a shared LLC based on
-DSU that is enforced in topology in 6.1. So can't see why you want to match
-based on LLC but not capacity. Could you provide more info please?
-
-If you don't want block layer to do any affinity, isn't it better to set
-rq_affinity = 0?
-
-> > Shouldn't a device driver take care of this and allow the vendors to use
-> > the best possible combination they want to use?
-> > Does it considers MCQ devices and different SQ<->CQ mappings?
-
-Why this consideration matters when matching the perf based on capacity but it
-doesn't matter when matching it based on LLC?
-
-> > 
-> > > Without the patch I see the BLOCK softirq always running on little cores
-> > > (where the hardirq is serviced). With it I can see it running on all
-> > > cores.
-> > 
-> > why we can't use echo 2 > rq_affinity to force complete on the same
-> > group of CPUs from where request was initiated?
-
-They are not the samae. rq_affinity = 1 means match. So if both are on the same
-LLC or capacity, no need to force anything. rq_affinity = 2 means always match.
-It's not the same thing, is it?
-
-
-Thanks
-
---
-Qais Yousef
-
-> > Also why to force vendors to always use SOFTIRQ for completion?
-> > We should be flexible to either complete the IO request via IPI, HARDIRQ
-> > or SOFTIRQ.
-> > 
-> > 
-> > An SoC can have different CPU configuration possible and this patch
-> > forces a restriction on the completion path. This problem is more worse
-> > in MCQ devices as we can have different SQ<->CQ mapping.
-> > 
-> > So we would like to revert the patch. Please let us know if any concerns?
-> > 
-> > Regards
-> > Manish Pandey
 
