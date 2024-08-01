@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-271913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352A09454E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A215F9454E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0872B2160C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:27:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D10B230E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 989E414D6E6;
-	Thu,  1 Aug 2024 23:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC2014D6F6;
+	Thu,  1 Aug 2024 23:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kGeep0n8"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T+NLpDKQ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D3514A4F9
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 23:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0F014D2B3;
+	Thu,  1 Aug 2024 23:27:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722554812; cv=none; b=YjWcrisG/kBJJk1xV5qk1xNK5dOOxr46EjDRmf4Hh9NYuC66sT1jjtZGaVuOpSTK+PGqKC+xK7NLT8Z3ECamZB2u+00x994M6IoPxTRcoKnRyJWQJLJy8bEUy3zRXa1oBaSkJ924zD8bmXQwP5xRCqgCr8e7//q8LisjFyjgZ9w=
+	t=1722554850; cv=none; b=ORYNiRpVaQnVaxoxQsfPFyZQmBFF/G1/srD8hpPqTYSBt/j2Gjz3IUXYuF3O/PF9qG0Lncs2EedYprsXf3z04rUIAmxlIKr9jaF3/VwHjFjqpi4F8xgXZOKWvNsJQROgsorP3Vtce8aFR+55UCvmcg/GVnY71KSyVPNIsTOj4Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722554812; c=relaxed/simple;
-	bh=2COs+2CScpsMjyw2XQ+B14vKPr0ufm67TpkB8p3L3+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZw3K0PjWosbc3gAt49W4DkOz4mh7rp6Kd+TjTk1htnuCuEgHOqylDoRDagtfFvxLHqyYS+AohBCUytLivYmelErmAJYROjmnO2gZkXwthU+T8G9fLuQnGNGjXf2irnVbsfbFhJg7+BPLLYmgqN3QAeuDqtD8PKC3J4gOia/GKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kGeep0n8; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efaae7edfso7768510e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 16:26:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722554809; x=1723159609; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2VEGUPDRRqhVW/PJkPAae6CRq9ZnKyovwy6ZCh6qQPw=;
-        b=kGeep0n8kgNqKaASCLO8rx5bg6N/xKELmRIILVmiExvb9LYO31x96KKV9kqzGEiYEM
-         REYO6NRcPlbl2dV4HFavtNIO4OD3PXnoEhQz7XS7GN1MsQz8wWs5OCVQyTB8OSZ/eSbg
-         3ZxAQ1TFA4YVx3l41J2xUx4OQTIYPFfLBfQ8v2zx6IBhMRal93aafUo//x0sEG5fokUa
-         q8qOR3s5PM3tT0D0stlQRq+5Fk46JBmK9H/PO9HUmY25lA642T/c/EhCq6XhEYZ71Ljp
-         4vnVsCXKH7Tc8Ntu3dQjLbrvnfzhOx8Swb+Dn2+sxTMOtyY3UcvEekkU1IB3lm5U4NgI
-         /gyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722554809; x=1723159609;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2VEGUPDRRqhVW/PJkPAae6CRq9ZnKyovwy6ZCh6qQPw=;
-        b=G8gcCm1SLyFBed1cHN+5xiN9o/rB2W/coxT6fsLWLnYjfN67ZUEuBhlnMuZzFReVG1
-         WwpgfHspqKQt574NqxpgBko0PNQ6zGuVf/B1ZAudY36lKoLsdqoCnkjlbUkftp3yNbxp
-         tj5dmorvCH4ea/LGhaK9RYZPLx/wggU7AuYwfWWxmfKDHmc/SmXrNvWfyjZwUAclZ2qx
-         DV0watiIQQltXTlT2fGW3qnja17HvBaymYrSR7b80p8rvZcGGIAN59xiA4ZDXNb/Lya0
-         kkabpGRVuhQ38UBeojYSW4QD3IfRW4mHUj/kt/pUBlpu9AslIMCXLYgoXdvKJQC5qmSs
-         4Ynw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhMY5BdshQawzVgo1BgjK2tfLGf4OS/l/D+Ul+7X42oiBt/MwnZzBwEB9MG3wRpjJgYlRYq50cS4mJ7T732RjGp6KNefthe/lmOWrj
-X-Gm-Message-State: AOJu0YzY5wwkRd49Dy5HuO4edBjoK4GagGaJZZcd9jcUYTR2F5mJQeWu
-	8gQOI+L0k57+BjynqysPhNv/nEQRbgGyRAyNRnvccCWHFWW81WgCAXQX1q3wIW4=
-X-Google-Smtp-Source: AGHT+IE4Mua+Rvlk/mPH7ZfoTa6bGdKOO4U17oj0KhChirq7ABB8vqTIToIdDn48zSCe17DTxHCx/g==
-X-Received: by 2002:a05:6512:118a:b0:52c:dc57:868b with SMTP id 2adb3069b0e04-530bb3b150cmr1017683e87.13.1722554809015;
-        Thu, 01 Aug 2024 16:26:49 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba3cfe3sm75233e87.281.2024.08.01.16.26.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 16:26:48 -0700 (PDT)
-Date: Fri, 2 Aug 2024 02:26:46 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Chandan Uddaraju <chandanu@codeaurora.org>, 
-	Rajesh Yadav <ryadav@codeaurora.org>, Jeykumar Sankaran <jsanka@codeaurora.org>, 
-	Sravanthi Kollukuduru <skolluku@codeaurora.org>, Archit Taneja <architt@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: move dpu_encoder's connector assignment to
- atomic_enable()
-Message-ID: <tdmzxhdd2hml4zrecawelmw5p2wrqqhzqoxip4wlbzmb2dvfpe@tmoinnmcpxsf>
-References: <20240731191723.3050932-1-quic_abhinavk@quicinc.com>
+	s=arc-20240116; t=1722554850; c=relaxed/simple;
+	bh=bkPW/1gXJe+Xsr5hlP61agbzCFPqOX+jWstC0cB0OI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=McueIacsdjW93yemv2D2tepGZSHJkBhZrQVkmCXrFw/cPjIHKDkfB3duKxFMU08zJeGv8WhGqiPF8+a03BLcCDFm7O/VYk7m4tWdif0SGkMgRAUtV80GqqyBh4rJk/+pkoL7dGaKmoCp8TZZoYHmRJh4bjrfM1aJ0jmcP37ocNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=T+NLpDKQ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 471NRKmq002509;
+	Thu, 1 Aug 2024 18:27:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722554840;
+	bh=R6i0cSNVEoxvCpXKMzbHjAZ6xl7SAJ9St5o6/d/I1dQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=T+NLpDKQi9roSXGei/ajf2CAiXqL+PTYT1SIHqn/cUN4YxQ3WQGx4SKFCzYVbpIdK
+	 k9cZCkHKV6NMuIB4Z1FdZtgwYLeGrO0OcAEyNyGGhOyfARuPLpiKSVEYxo8oRwivbW
+	 dCA6L0mPmOxvf/0dCYxCF0lsx9fQYCOqcD5Sj7LI=
+Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 471NRK3i049537
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 1 Aug 2024 18:27:20 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
+ Aug 2024 18:27:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 1 Aug 2024 18:27:20 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 471NRJva039543;
+	Thu, 1 Aug 2024 18:27:19 -0500
+Message-ID: <69db3dff-1a69-4308-be0d-6aaa5ab708bc@ti.com>
+Date: Thu, 1 Aug 2024 18:27:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731191723.3050932-1-quic_abhinavk@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: dts: ti: k3-j7200-som-p0: Update
+ mux-controller node name
+To: Bhavya Kapoor <b-kapoor@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <vigneshr@ti.com>, <nm@ti.com>
+References: <20240729063411.1570930-1-b-kapoor@ti.com>
+ <20240729063411.1570930-3-b-kapoor@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20240729063411.1570930-3-b-kapoor@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Wed, Jul 31, 2024 at 12:17:22PM GMT, Abhinav Kumar wrote:
-> For cases where the crtc's connectors_changed was set without enable/active
-> getting toggled , there is an atomic_enable() call followed by an
-> atomic_disable() but without an atomic_mode_set().
+On 7/29/24 1:34 AM, Bhavya Kapoor wrote:
+> There are 2 mux-controller nodes in J7200 which are responsible for
+> transferring can signals to the can phy but same node names for both
+> the mux-controllers led to errors while setting up both mux-controllers
+> for can phys simultaneously.
+> Thus, update node names for these mux-controller.
 > 
-> This results in a NULL ptr access for the dpu_encoder_get_drm_fmt() call in
-> the atomic_enable() as the dpu_encoder's connector was cleared in the
-> atomic_disable() but not re-assigned as there was no atomic_mode_set() call.
-> 
-> Fix the NULL ptr access by moving the assignment for atomic_enable() and also
-> use drm_atomic_get_new_connector_for_encoder() to get the connector from
-> the atomic_state.
-> 
-> Fixes: 25fdd5933e4c ("drm/msm: Add SDM845 DPU support")
-> Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Fixes: da23e8d1124b ("arm64: dts: ti: k3-j7200-som-p0: Add support for CAN instance 0 in main domain")
+> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+
+Reviewed-by: Judith Mendez <jm@ti.com>
+
 > ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>   arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+> index 21fe194a5766..89b68325e4e2 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
+> @@ -84,13 +84,13 @@ rtos_ipc_memory_region: ipc-memories@a4000000 {
+>   		};
+>   	};
+>   
+> -	mux0: mux-controller {
+> +	mux0: mux-controller-0 {
+>   		compatible = "gpio-mux";
+>   		#mux-state-cells = <1>;
+>   		mux-gpios = <&exp_som 1 GPIO_ACTIVE_HIGH>;
+>   	};
+>   
+> -	mux1: mux-controller {
+> +	mux1: mux-controller-1 {
+>   		compatible = "gpio-mux";
+>   		#mux-state-cells = <1>;
+>   		mux-gpios = <&exp_som 2 GPIO_ACTIVE_HIGH>;
 
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # SM8350-HDK
-
-Thanks a lot!
-
--- 
-With best wishes
-Dmitry
 
