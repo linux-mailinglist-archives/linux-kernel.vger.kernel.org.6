@@ -1,125 +1,156 @@
-Return-Path: <linux-kernel+bounces-271267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05CD8944BCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:56:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8800944C1C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 375031C241A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:56:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47066B27E23
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:01:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5762C1A08A4;
-	Thu,  1 Aug 2024 12:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJmYrJzN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBEF1A71EA;
+	Thu,  1 Aug 2024 12:58:48 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A002C208D1
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FBF1A71E1;
+	Thu,  1 Aug 2024 12:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722517003; cv=none; b=uZUMeN8b9lRUlpR956hwsNNEtIksoNiwQhXljTUEWyGkmfv8sm5j95Ye3I04vghR4EDErNOrI2m4ZwCf3CyC1sryfKp4R640+4oMYiWT8xVmRzowBdt79kz1K3+y2msLS9gBFfUStyC7f7ewi5O2I0pn5zkgowzVBFYNh6K0SFI=
+	t=1722517127; cv=none; b=XWs/FzamQCJFXPQ3Rk9M9/5D5gKSCzU7UBQaZIh6wXXXZ+7iUOyQBsqBQP3vYmd/9P4fCrOM+lgp13IWFD379bwdK0l+REsjEof2WW3TlPdFu3JU4cjQMoArVN1EQbjTgxLLKR7fareYH5KF3RFYCmfn+w/Lo9gsUmvGW3Hf0fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722517003; c=relaxed/simple;
-	bh=yUOmIatsa2JxbuH+5SkDj8HGMvb+bCebLi05n30xnAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dDMIKollwGkxN0bOTchJE1ub6cb65CL7acEW8X3TVOVUUB4CPvwCRv6yW9TgB5UxapTQC93vYbpw7TsZTcMfCDZG5zdkbGnBIST+gEXdBSo4gPVmaH71rTrq8THCTt7rxNoPtOOqYNNm5RMLs9kQpZWyMLmAIvW8YHLeRJuIDLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJmYrJzN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A953C4AF09;
-	Thu,  1 Aug 2024 12:56:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722517003;
-	bh=yUOmIatsa2JxbuH+5SkDj8HGMvb+bCebLi05n30xnAk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZJmYrJzN4tAnymj5rYqbuo7vESrmbmpWK93FqK7UY+T3aU26iBz1tMvEvtdWu7pKY
-	 4X/yWHt8lYHKWrsYo1KkRgrJdjgf8buhYSDnaQXlrKKo6zbugs3y5VigRBUHW51ebi
-	 mxRlWMz+PgMR1sXXNSPjEv+Y0GEznSW3qxvgA3BAehJ95JMwUaXTn6kW4Z9VG+4u1x
-	 2SMSbY2fRmUT7vAJUEwUqkG5avwLE4gRGo9iIgNC7CPysortKI2QHMxXEwQpIXcNVE
-	 pqDo2XyZSu7PbNzke8huMKfs2YIsmEGIdfj5JiHf0MhY+mvr88DR3g5j0WKtLLiikm
-	 X9E67YJQ5n8PQ==
-Date: Thu, 1 Aug 2024 14:56:37 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>
-Cc: Shiju Jose <shiju.jose@huawei.com>, "Michael S. Tsirkin"
- <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Dongjiu Geng
- <gengdongjiu1@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v3 3/7] acpi/ghes: Support GPIO error source.
-Message-ID: <20240801145637.03c34fd3@foz.lan>
-In-Reply-To: <20240730104028.4f503d91@imammedo.users.ipa.redhat.com>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<64a31a09fe6b11bebad1c592ad20071a9d93fee5.1721630625.git.mchehab+huawei@kernel.org>
-	<20240730104028.4f503d91@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722517127; c=relaxed/simple;
+	bh=gSmc0vpIM4s9a1iCGZSOkfBK2zTfoXZQKvrDXUHTtnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uBCz4+1opqCNhwLtMiH9Utk7ruOE1BkAy63TxuP8KRyZjSko7MLdUVjVNaUvpgHYhYDWu3zwlE9R5l1M436aqdtPgBHY9Gh+tYnhRsY78VVurYIWDJf3QiIjmtCeGDv3EXk9Us+aYWOvnKe5iGBVFhko7mXKmrIWZNkOtjE2McU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZTXw370TzxVws;
+	Thu,  1 Aug 2024 20:58:24 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 75F81180AE6;
+	Thu,  1 Aug 2024 20:58:37 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 1 Aug 2024 20:58:37 +0800
+Message-ID: <03c555c5-a25d-434a-aed4-0f2f7aa65adf@huawei.com>
+Date: Thu, 1 Aug 2024 20:58:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 01/14] mm: page_frag: add a test module for
+ page_frag
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-mm@kvack.org>
+References: <20240731124505.2903877-1-linyunsheng@huawei.com>
+ <20240731124505.2903877-2-linyunsheng@huawei.com>
+ <CAKgT0Udj5Jskjvvba345DFkySuZeg927OHQya0rCcynMtmGg8g@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0Udj5Jskjvvba345DFkySuZeg927OHQya0rCcynMtmGg8g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Em Tue, 30 Jul 2024 10:40:28 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
+On 2024/8/1 2:29, Alexander Duyck wrote:
+> On Wed, Jul 31, 2024 at 5:50 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> Basing on the lib/objpool.c, change it to something like a
+>> ptrpool, so that we can utilize that to test the correctness
+>> and performance of the page_frag.
+>>
+>> The testing is done by ensuring that the fragment allocated
+>> from a frag_frag_cache instance is pushed into a ptrpool
+>> instance in a kthread binded to a specified cpu, and a kthread
+>> binded to a specified cpu will pop the fragment from the
+>> ptrpool and free the fragment.
+>>
+>> We may refactor out the common part between objpool and ptrpool
+>> if this ptrpool thing turns out to be helpful for other place.
+> 
+> This isn't a patch where you should be introducing stuff you hope to
+> refactor out and reuse later. Your objpoo/ptrpool stuff is just going
+> to add bloat and overhead as you are going to have to do pointer
+> changes to get them in and out of memory and you are having to scan
+> per-cpu lists. You would be better served using a simple array as your
+> threads should be stick to a consistent CPU anyway in terms of
+> testing.
+> 
+> I would suggest keeping this much more simple. Trying to pattern this
+> after something like the dmapool_test code would be a better way to go
+> for this. We don't need all this extra objpool overhead getting in the
+> way of testing the code you should be focused on. Just allocate your
+> array on one specific CPU and start placing and removing your pages
+> from there instead of messing with the push/pop semantics.
 
-> > diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> > index 674f6958e905..4f1ab1a73a06 100644
-> > --- a/include/hw/acpi/ghes.h
-> > +++ b/include/hw/acpi/ghes.h
-> > @@ -58,6 +58,7 @@ enum AcpiGhesNotifyType {
-> >  
-> >  enum {
-> >      ACPI_HEST_SRC_ID_SEA = 0,
-> > +    ACPI_HEST_SRC_ID_GPIO = 1,  
-> is it defined by some spec, or just a made up number?
+I am not sure if I understand what you meant here, do you meant something
+like dmapool_test_alloc() does as something like below?
 
-I don't know. Maybe Jonathan or Shiju knows better, as the original patch
-came from them, but I didn't find any parts of the ACPI spec defining the
-values for source ID.
+static int page_frag_test_alloc(void **p, int blocks)
+{
+	int i;
 
-Checking at build_ghes_v2() implementation, this is used on two places:
+	for (i = 0; i < blocks; i++) {
+		p[i] = page_frag_alloc(&test_frag, test_alloc_len, GFP_KERNEL);
 
-1. as GHESv2 source ID:
-    /*
-     * Type:
-     * Generic Hardware Error Source version 2(GHESv2 - Type 10)
-     */
-    build_append_int_noprefix(table_data, ACPI_GHES_SOURCE_GENERIC_ERROR_V2, 2);
-    /* Source Id */
-    build_append_int_noprefix(table_data, source_id, 2);
-    /* Related Source Id */
-    build_append_int_noprefix(table_data, 0xffff, 2);
+		if (!p[i])
+			goto pool_fail;
+	}
 
-as an address offset:
+	for (i = 0; i < blocks; i++)
+		page_frag_free(p[i]);
 
-    address_offset = table_data->len;
-    /* Error Status Address */
-    build_append_gas(table_data, AML_AS_SYSTEM_MEMORY, 0x40, 0,
-                     4 /* QWord access */, 0);
-    bios_linker_loader_add_pointer(linker, ACPI_BUILD_TABLE_FILE,
-        address_offset + GAS_ADDR_OFFSET, sizeof(uint64_t),
-        ACPI_GHES_ERRORS_FW_CFG_FILE, source_id * sizeof(uint64_t));
+	....
+}
 
-So, if I had to guess, I'd say that this was made up, in a way that
-the size of the table will fit just two sources, starting from zero.
+The above was my initial thinking too, I went to the ptrpool thing using
+at least two CPUs as the below reason:
+1. Test the concurrent calling between allocing and freeing more throughly,
+   for example, page->_refcount concurrent handling, cache draining and
+   cache reusing code path will be tested more throughly.
+2. Test the performance impact of cache bouncing between different CPUs.
 
-So, I'll change the code to just:
+I am not sure if there is a more lightweight implementation than ptrpool
+to do the above testing more throughly.
 
-	enum {
-            ACPI_HEST_SRC_ID_SEA = 0,
-            ACPI_HEST_SRC_ID_GPIO, 
-	    /* future ids go here */
-	    ACPI_HEST_SRC_ID_RESERVED,
-	};
+> 
+> Lastly something that is a module only tester that always fails to
+> probe doesn't sound like it really makes sense as a standard kernel
 
-To remove the false impression that this could be originated from the
-spec.
+I had the same feeling as you, but when doing testing, it seems
+convenient enough to do a 'insmod xxx.ko' for testing without a
+'rmmod xxx.ko'
 
-Thanks,
-Mauro
+> module. I still think it would make more sense to move it to the
+> selftests tree and just have it build there as a module instead of
+
+I failed to find one example of test kernel module that is in the
+selftests tree yet. If it does make sense, please provide an example
+here, and I am willing to follow the pattern if there is one.
+
+> trying to force it into the mm tree. The example of dmapool_test makes
+> sense as it could be run at early boot to run the test and then it
+
+I suppose you meant dmapool is built-in to the kernel and run at early
+boot? I am not sure what is the point of built-in for dmapool, as it
+only do one-time testing, and built-in for dmapool only waste some
+memory when testing is done.
+
+> just goes quiet. This module won't load and will always just return
+> -EAGAIN which doesn't sound like a valid kernel module to me.
+
+As above, it seems convenient enough to do a 'insmod xxx.ko' for testing
+without a 'rmmod xxx.ko'.
 
