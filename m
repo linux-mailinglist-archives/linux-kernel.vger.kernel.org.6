@@ -1,152 +1,443 @@
-Return-Path: <linux-kernel+bounces-271264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B6F944BC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:54:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C48944BCE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:56:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12A6428405B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:54:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39AE1B2713A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A6E172BD5;
-	Thu,  1 Aug 2024 12:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVr1kRtK"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8612A19EEC6;
+	Thu,  1 Aug 2024 12:56:39 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C3B208D1
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5B8208D1
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722516858; cv=none; b=gooEcR7vJz4I55axM3x8F0ZV97rK2nVhtMbII7gdV9HfGnU44Ld++2kYJDR0+6KbE6hQUJOZqbSgWbagKeKeb9nKcep7WZQs1byLXH/fYuU+O4Z9Xw0a/SxadNYfuc/yqAti85+RYykcu1Eetm/ZzaMXXE1492nODAL7xs/NODY=
+	t=1722516998; cv=none; b=DOBLU4QtYyU23rWs5Pbu5+8wiFD1lRKvOFI1H99WA97M7lpkYMPaVUCOcLEiNbdAHQO8xoK++p/3spx4uU5TJn+XYmx3L16x40i3h0x0cu7C+TXzHBIYKiTGUjxODOPRR5JXEtr/qXx6tJ6bYw9YGs2z6EGHcZy3BgBpit6RNYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722516858; c=relaxed/simple;
-	bh=c3quo7FXD5Iq+Svv3f2Qp7ZuzsNepiBBsBlXQyvyaVY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WXaUgfEVqVDsbRyBhXRihYpIihZAgwVFiiOME5lYfb9kuwRexx0S2KvkU86Xrb5uPtU8dlmFPsEVnR3FxHkMvVDB4RtLeHD7qTZT5gNQruZlux7EygUXc1gvbaBCAgUyZ6V1jGFy92wKKysb0CJsZc8jbuhT9nfNp2Xj4qO0eGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hVr1kRtK; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-36868fcb919so3454238f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722516856; x=1723121656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oJM7ZW7Cx4ewZwlyf9TpDzuVdkBNUpK6wYJDwO0sS4w=;
-        b=hVr1kRtKvH8C8ydAgmWVab8aVgdYgZDdZ+yLe5iisIDC0mZ+3MYhpfColOgNGV+WRa
-         NfWWhBcTjd0IuAxCgYMapZ9aJgSDjlH5b9dlEF/9OVd6xLG/wY4f+ouOt3DcrMR8F4TQ
-         ELCYcy4/u7zMQqnyGhAzDz/539fNms5e7NO8ePeIbUXOQX95Ysyx8VlNekg6WyqbZQ7v
-         nQLldUHUpTwmizdyFotY0K/KTh4KpnfqfMinbQPc3zYJMciVZ5SLYy3ROgi0M4YtFfGC
-         wiejT5l8RSrwI179UHJZzmGXUieceQpnpx8nuReSHAuQJ5CD3Qi1HKgA3cGJcqYdQhaW
-         hYSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722516856; x=1723121656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oJM7ZW7Cx4ewZwlyf9TpDzuVdkBNUpK6wYJDwO0sS4w=;
-        b=AchzXHW27ntoyyeRbj3GPg4uapYIH3MtNJ/5iF718Th7uPCUpA6mEz/u9rg2ptH+gR
-         azkQnQHsQavs+Hy8NHsPLFapF68qDdPRwGDGSkctP0m9YCgry5GdcRuc3cKH2Lk2o2jZ
-         upaoCDr/FYohimIcyKn5NUgjhiluRasFZNVi2L2ls5W8eNKizd2O6kNyGhW23C839WUX
-         tyLcwB/yXnHZ8FCKhp6cmVZAmOdYnwYWAEmQS3MR28858VSi/NSHbJVkBwPaAFVjznim
-         3Et201okY+HDqqgtwxrxdlz4+ACKHbf6iQfeZd6brE/xiB4CpEybzpncD/I8JyCwDrKJ
-         Nntw==
-X-Forwarded-Encrypted: i=1; AJvYcCW29VLZj44a+NggU5H6jubsPAMWkj65w9O6YJ8VDh4MR/3UbUUDOCcQ2VYN+P4sERXcap28EegtAcPOQ6YALwyykJvOeDHSIdAGJU1K
-X-Gm-Message-State: AOJu0YwGZypAJniIu2zNXFBzBO4i56J0awZayz2o+wmCFvkbRhhg/evf
-	LCLcOxAxwig+DrVqJn0khG4vGUvtmSuOJK9CTp2As1LD1hzlBCIiQBzOVQy/12XI5Url+ytaHoV
-	aZ69PgahZ8C+9LGu7vNl396GjYvs=
-X-Google-Smtp-Source: AGHT+IEn73WxbN6uH+EfdL648nkpBQ6mZ8M7TiPsUS0OMVpuMAMF7/HRxcKTxJ+JMMtr0tPw0IRNmeYPvvqi5MnJTs4=
-X-Received: by 2002:a5d:62c5:0:b0:368:3b21:6643 with SMTP id
- ffacd0b85a97d-36baaf237a1mr1484941f8f.48.1722516855454; Thu, 01 Aug 2024
- 05:54:15 -0700 (PDT)
+	s=arc-20240116; t=1722516998; c=relaxed/simple;
+	bh=xEhmB39UoUaqpTGhVLxj3Ydk7VUfuybDDHz0jF0wDYI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XmPZ/xWlN4UI478IdjhZ9CRq6zhkokf3IdeNgj6Lyn6a+fBvHeiPBZMCJ7kHAiic+uYJUaTyxbHRTCm6Z27F/i17T5y2wZZ1SZX4dgg+DbS1OvjLBaVbd77mnQhP1WdV1EpWPShCPB8Lf1PKOnwcS6L7OxBG75AIU2kFNBiHYlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WZTTc17N1zndMf;
+	Thu,  1 Aug 2024 20:55:32 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4590E180106;
+	Thu,  1 Aug 2024 20:56:33 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 20:56:33 +0800
+Message-ID: <d783ea02-5834-40e5-87e7-5aaf8da63150@huawei.com>
+Date: Thu, 1 Aug 2024 20:56:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kasan-tsbrcu-v5-0-48d3cbdfccc5@google.com>
- <20240730-kasan-tsbrcu-v5-1-48d3cbdfccc5@google.com> <CA+fCnZfURBYNM+o6omuTJyCtL4GpeudpErEd26qde296ciVYuQ@mail.gmail.com>
- <CAG48ez12CMh2wM90EjF45+qvtRB41eq0Nms9ykRuf5-n7iBevg@mail.gmail.com>
-In-Reply-To: <CAG48ez12CMh2wM90EjF45+qvtRB41eq0Nms9ykRuf5-n7iBevg@mail.gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Thu, 1 Aug 2024 14:54:04 +0200
-Message-ID: <CA+fCnZf++VKo-VKYTJsuiYeP9LJoxHdd3nk1DL+tZP1TOQ9xrw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] kasan: catch invalid free before SLUB
- reinitializes the object
-To: Jann Horn <jannh@google.com>
-Cc: Marco Elver <elver@google.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Dmitry Vyukov <dvyukov@google.com>, 
-	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 1/2] erofs: introduce page cache share feature
+Content-Language: en-US
+To: Hongzhen Luo <hongzhen@linux.alibaba.com>, <linux-erofs@lists.ozlabs.org>
+CC: <linux-kernel@vger.kernel.org>
+References: <20240731080704.678259-1-hongzhen@linux.alibaba.com>
+ <20240731080704.678259-2-hongzhen@linux.alibaba.com>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20240731080704.678259-2-hongzhen@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Thu, Aug 1, 2024 at 6:01=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
->
-> > > @@ -503,15 +509,22 @@ bool __kasan_mempool_poison_object(void *ptr, u=
-nsigned long ip)
-> > >                 kasan_poison(ptr, folio_size(folio), KASAN_PAGE_FREE,=
- false);
-> > >                 return true;
-> > >         }
-> > >
-> > >         if (is_kfence_address(ptr))
-> > >                 return false;
-> > > +       if (!kasan_arch_is_ready())
-> > > +               return true;
-> >
-> > Hm, I think we had a bug here: the function should return true in both
-> > cases. This seems reasonable: if KASAN is not checking the object, the
-> > caller can do whatever they want with it.
->
-> But if the object is a kfence allocation, we maybe do want the caller
-> to free it quickly so that kfence can catch potential UAF access? So
-> "return false" in that case seems appropriate.
 
-Return false would mean: allocation is buggy, do not use it and do not
-free it (note that the return value meaning here is inverse compared
-to the newly added check_slab_allocation()). And this doesn't seem
-like something we want for KFENCE-managed objects. But regardless of
-the return value here, the callers tend not to free these allocations
-to the slab allocator, that's the point of mempools. So KFENCE won't
-catch a UAF either way.
 
-> Or maybe we don't
-> because that makes the probability of catching an OOB access much
-> lower if the mempool is going to always return non-kfence allocations
-> as long as the pool isn't empty? Also I guess whether kfence vetoes
-> reuse of kfence objects probably shouldn't depend on whether the
-> kernel is built with KASAN... so I guess it would be more consistent
-> to either put "return true" there or change the !KASAN stub of this to
-> check for kfence objects or something like that? Honestly I think the
-> latter would be most appropriate, though then maybe the hook shouldn't
-> have "kasan" in its name...
-
-Yeah, we could add some custom handling of mempool to KFENCE as well.
-But that would be a separate effort.
-
-> Either way, I agree that the current situation wrt mempools and kfence
-> is inconsistent, but I think I should probably leave that as-is in my
-> series for now, and the kfence mempool issue can be addressed
-> separately afterwards? I also would like to avoid changing kfence
-> behavior as part of this patch.
-
-Sure, sounds good to me.
-
-> If you want, I can add a comment above the "if (is_kfence_address())"
-> that notes the inconsistency?
-
-Up to you, I'll likely add a note to the bug tracker to fix this once
-the patch lands anyway.
-
-Thanks!
+On 2024/7/31 16:07, Hongzhen Luo wrote:
+> Currently, reading files with different paths (or names) but the same
+> content will consume multiple copies of the page cache, even if the
+> content of these page caches is the same. For example, reading identical
+> files (e.g., *.so files) from two different minor versions of container
+> images will cost multiple copies of the same page cache, since different
+> containers have different mount points. Therefore, sharing the page cache
+> for files with the same content can save memory.
+> 
+> This introduces the page cache share feature in erofs. During the mkfs
+> phase, file content is hashed and the hash value is stored in the
+> `trusted.erofs.fingerprint` extended attribute. Inodes of files with the
+> same `trusted.erofs.fingerprint` are mapped to a list. One of these inodes
+> that in the list (the first inode in this implementation) is used to store
+> the actual content. In this way, a single copy of the selected inode's
+> page cache can serve read requests from several files mapped to it.
+> 
+> Below is the memory usage for reading all files in two different minor
+> versions of container images:
+> 
+> +-------------------+------------------+-------------+---------------+
+> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+> |                   |                  |             | Reduction (%) |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     241     |       -       |
+> |       redis       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |     163     |      33%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     872     |       -       |
+> |      postgres     +------------------+-------------+---------------+
+> |    16.1 & 16.2    |        Yes       |     630     |      28%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     2771    |       -       |
+> |     tensorflow    +------------------+-------------+---------------+
+> |  1.11.0 & 2.11.1  |        Yes       |     2340    |      16%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     926     |       -       |
+> |       mysql       +------------------+-------------+---------------+
+> |  8.0.11 & 8.0.12  |        Yes       |     735     |      21%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     390     |       -       |
+> |       nginx       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |     219     |      44%      |
+> +-------------------+------------------+-------------+---------------+
+> |       tomcat      |        No        |     924     |       -       |
+> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+> |                   |        Yes       |     474     |      49%      |
+> +-------------------+------------------+-------------+---------------+
+> 
+> Additionally, the table below shows the runtime memory usage of the
+> container:
+> 
+> +-------------------+------------------+-------------+---------------+
+> |       Image       | Page Cache Share | Memory (MB) |    Memory     |
+> |                   |                  |             | Reduction (%) |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |      35     |       -       |
+> |       redis       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |      28     |      20%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     149     |       -       |
+> |      postgres     +------------------+-------------+---------------+
+> |    16.1 & 16.2    |        Yes       |      95     |      37%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     1028    |       -       |
+> |     tensorflow    +------------------+-------------+---------------+
+> |  1.11.0 & 2.11.1  |        Yes       |     941     |       9%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |     155     |       -       |
+> |       mysql       +------------------+-------------+---------------+
+> |  8.0.11 & 8.0.12  |        Yes       |     139     |      11%      |
+> +-------------------+------------------+-------------+---------------+
+> |                   |        No        |      25     |       -       |
+> |       nginx       +------------------+-------------+---------------+
+> |   7.2.4 & 7.2.5   |        Yes       |      20     |      23%      |
+> +-------------------+------------------+-------------+---------------+
+> |       tomcat      |        No        |     186     |       -       |
+> | 10.1.25 & 10.1.26 +------------------+-------------+---------------+
+> |                   |        Yes       |      98     |      48%      |
+> +-------------------+------------------+-------------+---------------+
+> 
+> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> ---
+> v2: Refactored the implementation.
+> v1: https://lore.kernel.org/all/20240722065355.1396365-4-hongzhen@linux.alibaba.com/
+> ---
+>   fs/erofs/Kconfig           |  10 ++
+>   fs/erofs/Makefile          |   1 +
+>   fs/erofs/internal.h        |   8 ++
+>   fs/erofs/pagecache_share.c | 189 +++++++++++++++++++++++++++++++++++++
+>   fs/erofs/pagecache_share.h |  15 +++
+>   5 files changed, 223 insertions(+)
+>   create mode 100644 fs/erofs/pagecache_share.c
+>   create mode 100644 fs/erofs/pagecache_share.h
+> 
+> diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+> index 7dcdce660cac..756a74de623c 100644
+> --- a/fs/erofs/Kconfig
+> +++ b/fs/erofs/Kconfig
+> @@ -158,3 +158,13 @@ config EROFS_FS_PCPU_KTHREAD_HIPRI
+>   	  at higher priority.
+>   
+>   	  If unsure, say N.
+> +
+> +config EROFS_FS_PAGE_CACHE_SHARE
+> +       bool "EROFS page cache share support"
+> +       depends on EROFS_FS
+> +       default n
+> +	help
+> +	  This permits EROFS to share page cache for files with same
+> +	  fingerprints.
+> +
+> +	  If unsure, say N.
+> diff --git a/fs/erofs/Makefile b/fs/erofs/Makefile
+> index 097d672e6b14..f14a2ac0e561 100644
+> --- a/fs/erofs/Makefile
+> +++ b/fs/erofs/Makefile
+> @@ -8,3 +8,4 @@ erofs-$(CONFIG_EROFS_FS_ZIP_LZMA) += decompressor_lzma.o
+>   erofs-$(CONFIG_EROFS_FS_ZIP_DEFLATE) += decompressor_deflate.o
+>   erofs-$(CONFIG_EROFS_FS_ZIP_ZSTD) += decompressor_zstd.o
+>   erofs-$(CONFIG_EROFS_FS_ONDEMAND) += fscache.o
+> +erofs-$(CONFIG_EROFS_FS_PAGE_CACHE_SHARE) += pagecache_share.o
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 736607675396..e3c17b28d1c5 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -288,6 +288,13 @@ struct erofs_inode {
+>   		};
+>   #endif	/* CONFIG_EROFS_FS_ZIP */
+>   	};
+> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
+> +	struct list_head pcs_list;
+> +	struct rw_semaphore pcs_rwsem;
+> +	char *fprt;
+> +	int fprt_len;
+> +	unsigned long fprt_hash;
+> +#endif
+>   	/* the corresponding vfs inode */
+>   	struct inode vfs_inode;
+>   };
+> @@ -383,6 +390,7 @@ extern const struct inode_operations erofs_fast_symlink_iops;
+>   extern const struct inode_operations erofs_dir_iops;
+>   
+>   extern const struct file_operations erofs_file_fops;
+> +extern const struct file_operations erofs_pcs_file_fops;
+>   extern const struct file_operations erofs_dir_fops;
+>   
+>   extern const struct iomap_ops z_erofs_iomap_report_ops;
+> diff --git a/fs/erofs/pagecache_share.c b/fs/erofs/pagecache_share.c
+> new file mode 100644
+> index 000000000000..985dd2a38b5e
+> --- /dev/null
+> +++ b/fs/erofs/pagecache_share.c
+> @@ -0,0 +1,189 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Copyright (C) 2024, Alibaba Cloud
+> + */
+> +#include <linux/xarray.h>
+> +#include <linux/mutex.h>
+> +#include <linux/xxhash.h>
+> +#include "internal.h"
+> +#include "xattr.h"
+> +#include "pagecache_share.h"
+> +
+> +struct erofs_pcs_lhead {
+> +	struct mutex lmutex;
+> +	struct list_head list;
+> +};
+> +
+> +#define PCS_FPRT_IDX	4
+> +#define PCS_FPRT_NAME	"erofs.fingerprint"
+This macro should be "trusted.erofs.fingerprint"
+> +#define PCS_FPRT_MAXLEN 1024
+> +
+> +DEFINE_XARRAY(pcs_xarray);
+> +
+> +void erofs_pcs_fill_inode(struct inode *inode)
+> +{
+> +	struct erofs_inode *vi = EROFS_I(inode);
+> +	char fprt[PCS_FPRT_MAXLEN];
+> +
+> +	vi->fprt_len = erofs_getxattr(inode, PCS_FPRT_IDX, PCS_FPRT_NAME, fprt,
+> +				      PCS_FPRT_MAXLEN);
+> +	if (vi->fprt_len > 0 && vi->fprt_len <= PCS_FPRT_MAXLEN) {
+> +		vi->fprt = kmalloc(vi->fprt_len, GFP_KERNEL);
+> +		if (IS_ERR(vi->fprt)) {
+> +			vi->fprt_len = -1;
+> +			return;
+> +		}
+> +		memcpy(vi->fprt, fprt, vi->fprt_len);
+This could use strscpy or other string copy function to avoid random 
+garbage beyond a string's null terminator.
+> +		vi->fprt_hash = xxh32(vi->fprt, vi->fprt_len, 0);
+> +	}
+> +}
+> +
+> +int erofs_pcs_add(struct inode *inode)
+> +{
+> +	struct erofs_inode *vi = EROFS_I(inode);
+> +	struct erofs_pcs_lhead *lst;
+> +
+> +	xa_lock(&pcs_xarray);
+> +	lst = xa_load(&pcs_xarray, vi->fprt_hash);
+> +	if (!lst) {
+> +		lst = kmalloc(sizeof(struct erofs_pcs_lhead), GFP_KERNEL);
+> +		if (!lst) {
+> +			xa_unlock(&pcs_xarray);
+> +			return -ENOMEM;
+> +		}
+> +		mutex_init(&lst->lmutex);
+> +		INIT_LIST_HEAD(&lst->list);
+> +		/* we have already held the xa_lock here */
+> +		__xa_store(&pcs_xarray, vi->fprt_hash, lst, GFP_KERNEL);
+Here, fprt_hash is calculated with xxh32, if hash conflict happend, the 
+fprt_hash will be same, and the value in xarray also will be replaced. 
+How can we avoid this case?
+> +	}
+> +	xa_unlock(&pcs_xarray);
+> +
+> +	mutex_lock(&lst->lmutex);
+> +	list_add_tail(&vi->pcs_list, &lst->list);
+> +	mutex_unlock(&lst->lmutex);
+> +	return 0;
+> +}
+> +
+> +int erofs_pcs_remove(struct inode *inode)
+> +{
+> +	struct erofs_inode *vi = EROFS_I(inode);
+> +	struct erofs_pcs_lhead *lst = xa_load(&pcs_xarray, vi->fprt_hash);
+This operation should hold the xarray lock.
+> +
+> +	if (!lst || list_empty(&lst->list))
+> +		return -EINVAL;
+This part should not happen, right? Unless there is a problem with the 
+code logic, and the remove operation seems unnecessary to return a value.
+> +
+> +	mutex_lock(&lst->lmutex);
+> +	down_write(&vi->pcs_rwsem);
+> +	list_del(&vi->pcs_list);
+> +	up_write(&vi->pcs_rwsem);
+> +	mutex_unlock(&lst->lmutex);
+> +
+> +	xa_lock(&pcs_xarray);
+> +	if (list_empty(&lst->list)) {
+> +		__xa_erase(&pcs_xarray, vi->fprt_hash);
+> +		kfree(lst);
+> +	}
+> +	xa_unlock(&pcs_xarray);
+> +	return 0;
+> +}
+> +
+> +static struct inode *erofs_pcs_get4read(struct inode *inode)
+> +{
+> +	struct erofs_inode *vi = EROFS_I(inode), *pcs_inode = NULL, *p, *tmp;
+This should be locked xarray here? Otherwise, how can we prevent another 
+thread deleting from the pcs_xarray?
+> +	struct erofs_pcs_lhead *lst = xa_load(&pcs_xarray, vi->fprt_hash);
+> +
+> +	if (!lst || list_empty(&lst->list))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	mutex_lock(&lst->lmutex);
+> +	list_for_each_entry_safe(p, tmp, &lst->list, pcs_list) {
+> +		if (vi->fprt_len == p->fprt_len &&
+> +			!memcmp(vi->fprt, p->fprt, p->fprt_len)) {
+use string compare helper?
+> +			pcs_inode = p;
+> +			break;
+> +		}
+> +	}
+> +	if (pcs_inode)
+> +		down_read(&pcs_inode->pcs_rwsem);
+> +	mutex_unlock(&lst->lmutex);
+> +
+> +	return pcs_inode ? &pcs_inode->vfs_inode : ERR_PTR(-EINVAL);
+> +}
+> +
+> +static int erofs_pcs_file_open(struct inode *inode, struct file *file)
+> +{
+> +	struct inode *pcs_inode;
+> +	struct file *ano_file;
+> +
+> +	pcs_inode = erofs_pcs_get4read(inode);
+> +	if (IS_ERR(pcs_inode))
+> +		return PTR_ERR(pcs_inode);
+> +
+> +	ano_file = alloc_file_pseudo(pcs_inode, file->f_path.mnt, "[erofs_pcs_f]",
+> +				     O_RDONLY, &erofs_file_fops);
+> +	file_ra_state_init(&ano_file->f_ra, file->f_mapping);
+> +	ihold(pcs_inode);
+> +	file->private_data = (void *)ano_file;
+> +	return 0;
+> +}
+> +
+> +static int erofs_pcs_file_release(struct inode *inode, struct file *file)
+> +{
+> +	struct inode *pcs_inode;
+> +
+> +	if (!file->private_data)
+> +		return -EINVAL;
+> +	pcs_inode = ((struct file *)file->private_data)->f_inode;
+> +	up_read(&EROFS_I(pcs_inode)->pcs_rwsem);
+> +	fput((struct file *)file->private_data);
+> +	file->private_data = NULL;
+> +	return 0;
+> +}
+> +
+> +static ssize_t erofs_pcs_file_read_iter(struct kiocb *iocb,
+> +					struct iov_iter *to)
+> +{
+> +	struct file *file, *ano_file;
+> +	struct kiocb ano_iocb;
+> +	ssize_t res;
+> +
+> +	memcpy(&ano_iocb, iocb, sizeof(struct kiocb));
+> +	file = iocb->ki_filp;
+> +	ano_file = file->private_data;
+> +	if (!ano_file)
+> +		return -EINVAL;
+> +	ano_iocb.ki_filp = ano_file;
+> +	res = filemap_read(&ano_iocb, to, 0);
+> +	memcpy(iocb, &ano_iocb, sizeof(struct kiocb));
+> +	iocb->ki_filp = file;
+> +	file_accessed(file);
+> +	return res;
+> +}
+> +
+> +static vm_fault_t erofs_pcs_fault(struct vm_fault *vmf)
+> +{
+> +	return filemap_fault(vmf);
+> +}
+This helper is unnecessary. We could just assign the default fault helper.
+> +
+> +static const struct vm_operations_struct erofs_pcs_file_vm_ops = {
+> +	.fault = erofs_pcs_fault,
+If .map_pages not assigned, the fault around should not arouse.
+> +};
+> +
+> +static int erofs_pcs_mmap(struct file *file, struct vm_area_struct *vma)
+> +{
+> +	struct file *ano_file = file->private_data;
+> +
+> +	vma_set_file(vma, ano_file);
+> +	vma->vm_ops = &erofs_pcs_file_vm_ops;
+> +	return 0;
+> +}
+> +
+> +const struct file_operations erofs_pcs_file_fops = {
+> +	.open		= erofs_pcs_file_open,
+> +	.llseek		= generic_file_llseek,
+> +	.read_iter	= erofs_pcs_file_read_iter,
+> +	.mmap		= erofs_pcs_mmap,
+> +	.release	= erofs_pcs_file_release,
+> +	.get_unmapped_area = thp_get_unmapped_area,
+> +	.splice_read	= filemap_splice_read,
+> +};
+> diff --git a/fs/erofs/pagecache_share.h b/fs/erofs/pagecache_share.h
+> new file mode 100644
+> index 000000000000..fb75ae3abd8a
+> --- /dev/null
+> +++ b/fs/erofs/pagecache_share.h
+> @@ -0,0 +1,15 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Copyright (C) 2024, Alibaba Cloud
+> + */
+> +#ifndef __EROFS_PAGECACHE_SHARE_H
+> +#define __EROFS_PAGECACHE_SHARE_H
+> +
+> +#include <linux/mutex.h>
+> +#include "internal.h"
+> +
+> +void erofs_pcs_fill_inode(struct inode *inode);
+> +int erofs_pcs_add(struct inode *inode);
+> +int erofs_pcs_remove(struct inode *inode);
+> +
+> +#endif
 
