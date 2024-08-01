@@ -1,318 +1,107 @@
-Return-Path: <linux-kernel+bounces-271113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52F099449B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103689449B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B967286366
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:51:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1201C25633
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C2C183CC8;
-	Thu,  1 Aug 2024 10:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21BB184548;
+	Thu,  1 Aug 2024 10:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Jg4z1PRL"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2082.outbound.protection.outlook.com [40.107.220.82])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECGKPem3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C37187FE5;
-	Thu,  1 Aug 2024 10:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509465; cv=fail; b=HpBA04Sx80HCnmKZcbBByUYnF20jWU7XRZ5lKsFFCiC2kFpzPPg2EARprJctLtK2j7YYG1O2d1uIcXqzop9cYOygMvWqmD8qBL98dBCHe5po5do9Ce0tYnMUUEssrXGrt35GCiOW5SCNG6SP8Yi/1cKJdbvyTiRgbkAJpXMRAh8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509465; c=relaxed/simple;
-	bh=/kk6gkBcwp8N6/dGvxtir2uy7464KoepkUpTsRWzdGg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=W5F+ymgmPtIsHNt7GG9qNLM4FsZIh36sYS6H2A5q1oSbGVz0dZpNOMy7InyRajuhG7zBk8yqDx3CEKYjPibEkdIVY5OwLBIrLcj+uT4g4VYRlMA3xqax/juU1FHDXTxr/dqqqo9ktWp3Qe13P0deZQX1jw8zXZMAZHat/wyziw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Jg4z1PRL; arc=fail smtp.client-ip=40.107.220.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KcIOefE0O6jMLmGziVvtCaDuSv3P7j5T+0XWVyuJ+mJNtHk901QfEO8CZNEJbxB0u+zMIpJbcv9iKursh2ApwSFhTKWx/Z65ivftEFirnEqkXbphVVNrUVGjWwiVSr0+R7mttAAClpGRf1Fe/O/a6NbX7H1Wu4WtyxSn69mDvVHEPUetgpRfEEvVeai1vaSg0qIDvKadGNY3Z1P831nISoT2yg6HCRO+LvgTdCb2iIuMZ+6BpyU7grownzuyXplOUNAz+h/qvvRY7UwyhVt3yoWYA76ilxQ+AEaWqEugeoUgdgQi74KT78f8SPVw+BfepWmg6q4NuwpFB7gz9E7sJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4UVdl8316DUMxjeYz8jc40IPWKonFFiQC98ROgbGQNI=;
- b=magrQE8+Pv85sSDUhhw+wY+eRFaejihJ+VYd4umtLvEvlECzQnpyFjPY7XD7rYx/2cu+6djWNi8rK4Mfyj4cOlHt/Cssifo3GHgf8UAioxIrClXmWL9w5Nks1rD2xRGrz5iJi9U+cF5dEhNcoFM8p2qF3iQ2k9WSq9eU1pzyn7cKysLUkYNB2/83y9nLRl3erGpJz2DyaJ46ynrMLCIX1gmyaavKsqWHq+oWYznMRrbQMgMc0pMZx2LyTrAujnhXddRL5EbPFq5EjBc0O+brrZorRThlUk22fIgeG8X4kekmyNwaURN7wlJqZ4DHq4gdMVEUhVBLzLP1fogrbdGBsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4UVdl8316DUMxjeYz8jc40IPWKonFFiQC98ROgbGQNI=;
- b=Jg4z1PRL1YGWd3meCwW//iSiXNVYzaNr9WDYLc2ft2puXAQxnODxiBrfD+lh9LstTEFisWV445GY+XwZmLREUhcq1rQMapKdLEzBXsLbDnaREWMA8vKjgTTl/ZP6703qXgzWQIFAuD/xND+pvQ/DcrrMpw6g8QAXydqiDC6eKRU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by MW6PR12MB8758.namprd12.prod.outlook.com (2603:10b6:303:23d::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.33; Thu, 1 Aug
- 2024 10:50:59 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%4]) with mapi id 15.20.7828.016; Thu, 1 Aug 2024
- 10:50:59 +0000
-Message-ID: <46d00d9a-b86b-4e4d-863f-48d71060ef2a@amd.com>
-Date: Thu, 1 Aug 2024 12:50:53 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] udmabuf: cancel mmap page fault, direct map it
-To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Sumit Semwal <sumit.semwal@linaro.org>, dri-devel@lists.freedesktop.org,
- linux-media@vger.kernel.org, linaro-mm-sig@lists.linaro.org,
- linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com
-References: <20240801104512.4056860-1-link@vivo.com>
- <20240801104512.4056860-2-link@vivo.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20240801104512.4056860-2-link@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0434.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:d1::7) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C14183CC4;
+	Thu,  1 Aug 2024 10:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722509490; cv=none; b=A0FSfDLnx7hZp8f8NZjouVoIUfLaFSX57PxhKtQocqAZQi36nHuawfasOd2nmtYcntkVKWV5Rzq4iyI9HzhrwO5qaP8m7wQUAxlNWsAOrUHSZqcZUnBe2rfREOJ26WqbhosxBA5typTvnjU2HPSF/n2rAYveveFpI9H2HURi5yo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722509490; c=relaxed/simple;
+	bh=nQfFDUQSVv8HuknkBtK4lXJBt8rvP0e3um6yBQSVNUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OY062rNcGPglJU/IAIGFUqsJYf+OnhT8nEklgvUKIyrg7xi/yEWnUC/SUGZrtabZkORM3h1bVbtqz5GC9A2RrG6qHXGR2UlTAROXQFlaQ0+wWiYG7+V09RnWI1tHAmeWYxn0TuUG7pWAoOyJQiDJxW1EMcOPCwRL9wumF/TrWYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECGKPem3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ACB5C32786;
+	Thu,  1 Aug 2024 10:51:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722509489;
+	bh=nQfFDUQSVv8HuknkBtK4lXJBt8rvP0e3um6yBQSVNUg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ECGKPem3M5JyBbM6Wa57DV81aZXAJGeESobxoiAkrN3aoc6ENYorjhVbDq4/RLRTs
+	 8tUHuRsYnO7ZHEKb8dgAcWo5H0J4nZ2QRK57KlxDruvF4NQm+15fmlZRc2lLfPsvMq
+	 H++KLQMa+MemQrhKSvg0miKUWEqR+oubASngarcs3Pg41tQkgpV42xqi+vCTVGK1nf
+	 tZddURAeiHA1YOTceVFOds5mIJacNM4SgrxGfxuWwMqauGPQlcRGD1EWQbMvVUTGrG
+	 xha4s2E5R8VJDADJkS5ZWLPzEg7YPoNzT9vBaGViGiEF8jDDIXmqSNTRm3kTNjQWye
+	 xmWVyNGgEjwpQ==
+From: Jeff Layton <jlayton@kernel.org>
+To: brauner@kernel.org
+Cc: sfr@canb.auug.org.au,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Documentation: clean up warnings for multigrain timestamp docs
+Date: Thu,  1 Aug 2024 06:51:27 -0400
+Message-ID: <20240801105127.25048-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MW6PR12MB8758:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5cbc1d0b-038c-442a-9c50-08dcb217d442
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bUMrV3c1K29QdHBTRVdETjFpc1hkbGE1cXlvU3V2QnhrRnAyRkhSOTJsaFdU?=
- =?utf-8?B?STBZQkxYRmdUeC9RTG90eGpYVWFRS2JJV3AvcXd2anQxSW1CaFRqT005bHFz?=
- =?utf-8?B?cjZnMEZaaXlvZjNlTzlDcnB6VE0yMThGR3czYXlMUGcreHA3dG5JNHA0YzdW?=
- =?utf-8?B?R1RDT055bmtmcTlwaU5RY0ViLzNuTmxEKzFrWERiVThISGlyNnRHQ1prREMx?=
- =?utf-8?B?OWZadENpMTZnQ3J4Qi8wT2VkSXdBWFNiQk01Q1R1U0tJY1l2SGd6RVpqQ2NS?=
- =?utf-8?B?b295SkFSblViRVlXTGIwazhrUVRoM3Y3aUlDcXprUDhCckZTQ3p1ZmxpWlV3?=
- =?utf-8?B?K0pZUkxPd2lqVnhLUnAwam56QzU0bHBUTWtVcHdNelNJQ2taVUlQekJWNFdL?=
- =?utf-8?B?RkY0ZjNIcTZDNHB3ZmlENDdLNldiSERkejArcG1xVWtiL1lpcWNJam5LVjFj?=
- =?utf-8?B?V0d0aFpmNnphaURTYmJqeVVRT3FYL3JnckJ2OEd4TVZtL1pSN2J1OVZlblZX?=
- =?utf-8?B?Q1hkUjV1T3lHQy9RU2I0VnhSN2NEcHZ0YzkwOHBwTjhBT3UwOCtRYXVqZTZo?=
- =?utf-8?B?RDZhWGZDdEVjazl4WlFnNVI2Qm85T2M5WFBXTCs5S24vclcxYnNnanNwem9S?=
- =?utf-8?B?cmJJVldRbmYrN0xKNy9QTFR6VlU3aW0zdE1Qc1ZmNysxZ3ZpNURSUVU0Mng3?=
- =?utf-8?B?MWtDODRObWhsUEk5MFN1MnZrMCtmMnhOelNpRmNOcDh4am5rNWE0d3d1dVg3?=
- =?utf-8?B?VTJqK3AvbUdDcUxtSEE3OVlZeTFpQmQ0MU1GTXRGN2JaY0R6RVZpMXZwK2xh?=
- =?utf-8?B?bWxZV0tpVHczVnRNeEc3UlF1eExFYWZJWlpYSHg5d2pPNkk0VGp2MFI4ZWtR?=
- =?utf-8?B?empyclQ2SHBnVDIwcW81aEJkV3YwdlBGU3JBWjFXTGF6cmZ2ZnBGTlB4dXd1?=
- =?utf-8?B?Y3hOOXJzT1YrV3RWU1lOTVFQOThvZzcxWGxKV0Z1aTYwWk9MZWx3NlJQZHB1?=
- =?utf-8?B?YVY5cFlmc2Rzb1pvN2hTTmVXRUo4UVFkRWZKVGgveUU3TzZsN0lFWU5oczg4?=
- =?utf-8?B?emxrUTZpbE8vYWNlcmpTVXgvaSt6Y1JXa0pKNG5MaWJHQzF4ckt4YU0wdTNZ?=
- =?utf-8?B?TkYvMUh3OEY3NngwWHZna0tvV2FWZFBRdUFieXN2SXZRNlprRitXTXM4YnUz?=
- =?utf-8?B?U1g4ZmQxTmlmTU1YNHduaVNGSk5YbVJkdEE1cXEwYWJDaC9nNE9lQU45c2xN?=
- =?utf-8?B?UlkzTzVtTytlRzE2elJUaXJRUWpFbGpaSTdGTS9QV3J0Q2FYQmxvTUVxQmNO?=
- =?utf-8?B?ZEQwa25DN09JYU41bW9vQkIzay9EajAwdDJyemtqb2xrenpFeUJSOU8rS2tq?=
- =?utf-8?B?VmVlN3djRVQ5akxtQk83OVM2V1hkd3hrQ0F4VUFyOXBGbWdKZ2tRSTd4VWJo?=
- =?utf-8?B?VlJiU0VCUFhOZWlhN0RFU2dSSE8wQ0dTK0V5M0JIRDBnSHIzZlAzZE80YTE0?=
- =?utf-8?B?bGNPWGdIZVBmTDJZM0lhUG5NVUNLWERhMHdIRmd5ZUEwWU1RVnorMHEwNGdG?=
- =?utf-8?B?bVFqNXV1RitLUXVlYUQvSkROazdkUGV3MHlNNk5sb2YwNFZtRWFpNnFWT3lR?=
- =?utf-8?B?ZmozSVlPczFrbzgyZUhWa3VnSktYNHpHNHp1cThFc09uano0Kzk2alc2c3cr?=
- =?utf-8?B?ajJ2d3Z5SDNicktCcTJyeThwRkNVYnVXeEtJRXhIWDIxK1VkcGo1cFFRQ2py?=
- =?utf-8?B?bXdsYkJQUWo3V1FrRkFuRzM1UmJSSk5hL3FxLzMyWDgzcU1WQm5BVGo4SWRV?=
- =?utf-8?B?MVBWRU5wMmorTkJ2MmxHdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SWtCKzZaaFNOcExnZ2pKWEI0clNXNXBsdXl0OFI0MVl0bFBKanU2RDVpbWdp?=
- =?utf-8?B?YlErdy9wWEw3TjRIandVVEo3Qytodk8vdHViMzFVTFpPSlFLbHhlM1JyQnFQ?=
- =?utf-8?B?blZvbWVvcG5hcXU3QzhQSEgyU29GUDZ4SjNhS1F5U2RhTHdrRmNPd3djOUN4?=
- =?utf-8?B?SllzUm9EaTRySEs0dHZ1dThvWVhxYXdSWVVsMFF1UnJReU04b0p4WktJSnJZ?=
- =?utf-8?B?TmZxWTJ2akNocm9tWlY0WEZEN0ZWK016Q3NHam1pRDZ2UHhsbHhJZDJ1NUlv?=
- =?utf-8?B?Q1d0SmdUaHVmcDZ0aUx1azY1VVBJRWc5ZGxTeGNybXRZbHZjYmQxcWdxci81?=
- =?utf-8?B?L2d0Z2lnUzlzZ0Q5TXMvRUVGKyt4Y1lxMnRQeFJIOFJsYVNrNXBPaXFDZlN1?=
- =?utf-8?B?aHFuKzFsUWtPaTRuNnh1cmpLZVFId3FFUlJtRGdydDZjaCthRGM0NWcycVFv?=
- =?utf-8?B?VzVuMW9sUXNQVldBVjcrVGQrMWdMbUM2WVl6QUErbUZlZHBVYzRBVWR6bzRR?=
- =?utf-8?B?QmxHTmRMSVVaZmx5WTJGcXFBOHMrR25JaDA0N0NvMXNEOXloN016QnUxZ3Bz?=
- =?utf-8?B?N3pTYWd0U0F4OWVYQVY5UHJsUzFBNHo1V2hQYUp6Rmtudmh1Y0FSRjU5clhV?=
- =?utf-8?B?V21lYVdOSVJZeUhNQWEvT2YraWxDY2NnSHdqWnZBYVNzU2Y0QnQzTjJWRUZB?=
- =?utf-8?B?U1cxYVp0VnFMTHpXUTdXQk83OVVuditQTlRoU3d1K3E4UzRJcE8yR0lmMmZq?=
- =?utf-8?B?MjlXcHkzb3dLTDJtMjBsZFZKcTlpUDFWQ25pM2ZpY1g1MGNaUzQ1WFNIZXNR?=
- =?utf-8?B?YjUyYUx6czd1WitIQUswampBajE0SEV0WEZoODhraFBCKzNORDlrWThsZzhR?=
- =?utf-8?B?Z0ZMdGJMaTlvd2JXOGFwM21NSGI2b3BIMFltQmdSTU8xRWFUOEpaSEFPNG13?=
- =?utf-8?B?QVBUTXJvWWRjSThTdEdkb0pWSkc0VWErTW5wM2hmdUFWK2NtT0xtU20xaHJM?=
- =?utf-8?B?RElWWGpFaGNrUll6UjllUlltbFdrV1pwMGkvMytpZVdYb1ZTeUNrcWliZTU3?=
- =?utf-8?B?MGtNczBraGJtOU54TEtXZTVqZXNDNTNIWi9RaXRFNHkyaUJkR0tYQXBzV3Zk?=
- =?utf-8?B?ek54eEU2MlR0ejB2dGJ2S1p6MXEvcGdjNGN4OXhHb0ZZamYvVW15S2xReVND?=
- =?utf-8?B?MXpBMVlaMUhIaGpBcmM3UGVvM0FyL1ZaTFlwTUo5OFpKb085a3MvV1hiR2RJ?=
- =?utf-8?B?bFJ1SGRLb0VjZENCZm5hMml3YkRUUjVMVmhCYm5vcXFPZFF1RzZoWTJ1UkZm?=
- =?utf-8?B?b3VhMmZ4ZzREdGtqZ0crOE1GZ0ZTVXlCQitYRDk4a3RJMUkyclUrQTJvbE5F?=
- =?utf-8?B?OWlhR3o5OThxL1g3VWUvcks5SFJrRld1Y3VpVjRWMTY0SkwxL0NQdjBwaU5J?=
- =?utf-8?B?WnphOGZqRkZ2SGxGaVkxalpLYkZ5cFVEQ0FxdGsxdk12T3puVEtKbEF0cHA2?=
- =?utf-8?B?NkxwSk5GSis5ZFdkNU4zcDVaSnhBcWUxUElhTGFweEJpeVVwbUlzNFRwbWFY?=
- =?utf-8?B?a1ZwalpJM3A3R1hJWUZqOWZBY1h6V2xWNnVJTWxMU05zWFkwaFZScWR4ZVJs?=
- =?utf-8?B?WFJ1bnp5STY5bWYzcHJ3RzRrdk5veThiWFFzNFM1VnhTdytPa1UxaEVGN2w4?=
- =?utf-8?B?MlNnYTZ0WkJGWVlEMFJ1U3VERGE2RW1Vd05oUVRDWlN2Z3AweVZ3L1RyVzhh?=
- =?utf-8?B?YzFBMmVvOHNmMUswcWNlV3Q4RTVqZXF0d284aUhBbjE3b04rWEVGQUJ5N3Fl?=
- =?utf-8?B?MnVFMWJPK0lodkt4YlFDOEVLV0Vaa2cxVUcxa082K2gyckZkUHNEbjNreWFo?=
- =?utf-8?B?azdEWFBXTDVmOWhOSmhTbzBrWU16eWNXd0U4amZvVVFCYzVvSHhsa0ZsQmZC?=
- =?utf-8?B?NEF4SzMwL016WWFhdTYxTTRaVjdyK1R0bDJZR1dtdlh5Nkt2em1tTkh4SVhT?=
- =?utf-8?B?NFBLZ0R0djNPRU1ST2Q5T1E4VjZOQ3FQbXkvMm1JOHZqYVpZbzZEbHl5aTBM?=
- =?utf-8?B?ZGh0Y1RhMnZNMHJNZHRjeDRWTTIzNC92emQ5dnE2czEzMjQ3bG1lOVl6RWFB?=
- =?utf-8?Q?yLi1+s8SogqkItOzvn/gvm9eb?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cbc1d0b-038c-442a-9c50-08dcb217d442
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 10:50:59.7393
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nUFdcgJf/qbiPqNOJd/+dSFz2577fL2xF/GnP/WY37p0TsklKLvHQkkMh1KRibT3
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8758
+Content-Transfer-Encoding: 8bit
 
-Am 01.08.24 um 12:45 schrieb Huan Yang:
-> The current udmabuf mmap uses a page fault mechanism to populate the vma.
->
-> However, the current udmabuf has already obtained and pinned the folio
-> upon completion of the creation.This means that the physical memory has
-> already been acquired, rather than being accessed dynamically. The
-> current page fault method only saves some page table memory.
->
-> As a result, the page fault mechanism has lost its purpose as a demanding
-> page. Due to the fact that page fault requires trapping into kernel mode
-> and filling in when accessing the corresponding virtual address in mmap,
-> this means that user mode access to virtual addresses needs to trap into
-> kernel mode.
->
-> Therefore, when creating a large size udmabuf, this represents a
-> considerable overhead.
->
-> Therefore, the current patch removes the page fault method of mmap and
-> instead fills it directly when mmap is triggered.
->
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
->   drivers/dma-buf/udmabuf.c | 70 ++++++++++++++++++++++-----------------
->   1 file changed, 39 insertions(+), 31 deletions(-)
->
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 047c3cd2ceff..d69aeada7367 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -38,36 +38,39 @@ struct udmabuf_folio {
->   	struct list_head list;
->   };
->   
-> -static vm_fault_t udmabuf_vm_fault(struct vm_fault *vmf)
-> -{
-> -	struct vm_area_struct *vma = vmf->vma;
-> -	struct udmabuf *ubuf = vma->vm_private_data;
-> -	pgoff_t pgoff = vmf->pgoff;
-> -	unsigned long pfn;
-> -
-> -	if (pgoff >= ubuf->pagecount)
-> -		return VM_FAULT_SIGBUS;
-> -
-> -	pfn = folio_pfn(ubuf->folios[pgoff]);
-> -	pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
-> -
-> -	return vmf_insert_pfn(vma, vmf->address, pfn);
-> -}
-> -
-> -static const struct vm_operations_struct udmabuf_vm_ops = {
-> -	.fault = udmabuf_vm_fault,
-> -};
-> +static struct sg_table *get_sg_table(struct device *dev, struct dma_buf *buf,
-> +				     enum dma_data_direction direction);
->   
->   static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct *vma)
->   {
->   	struct udmabuf *ubuf = buf->priv;
-> +	struct sg_table *table = ubuf->sg;
-> +	unsigned long addr = vma->vm_start;
-> +	struct sg_page_iter piter;
-> +	int ret;
->   
->   	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
->   		return -EINVAL;
->   
-> -	vma->vm_ops = &udmabuf_vm_ops;
-> -	vma->vm_private_data = ubuf;
-> -	vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP);
-> +	if (!table) {
-> +		table = get_sg_table(NULL, buf, 0);
-> +		if (IS_ERR(table))
-> +			return PTR_ERR(table);
-> +		ubuf->sg = table;
-> +	}
-> +
-> +	for_each_sgtable_page(table, &piter, vma->vm_pgoff) {
+Stephen Rothwell reported seeing a couple of warnings when building
+htmldocs:
 
-That might not work correctly. We intentionally remove the pages from 
-the sgtable when it is shared between devices.
+/home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst:83: WARNING: duplicate label filesystems/multigrain-ts:multigrain timestamps, other instance in /home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst
+/home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst: WARNING: document isn't included in any toctree
 
-Additional to that the sgtable is *not* a page container, but rather a 
-DMA address container. So that here is also a rather bad idea from the 
-design side.
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ Documentation/filesystems/index.rst         | 1 +
+ Documentation/filesystems/multigrain-ts.rst | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-Regards,
-Christian.
+Christian,
 
-> +		struct page *page = sg_page_iter_page(&piter);
-> +
-> +		ret = remap_pfn_range(vma, addr, page_to_pfn(page), PAGE_SIZE,
-> +				      vma->vm_page_prot);
-> +		if (ret)
-> +			return ret;
-> +		addr += PAGE_SIZE;
-> +		if (addr >= vma->vm_end)
-> +			return 0;
-> +	}
-> +
->   	return 0;
->   }
->   
-> @@ -126,6 +129,10 @@ static struct sg_table *get_sg_table(struct device *dev, struct dma_buf *buf,
->   		sg_set_folio(sgl, ubuf->folios[i], PAGE_SIZE,
->   			     ubuf->offsets[i]);
->   
-> +	// if dev is NULL, no need to sync.
-> +	if (!dev)
-> +		return sg;
-> +
->   	ret = dma_map_sgtable(dev, sg, direction, 0);
->   	if (ret < 0)
->   		goto err_map;
-> @@ -206,20 +213,21 @@ static int begin_cpu_udmabuf(struct dma_buf *buf,
->   {
->   	struct udmabuf *ubuf = buf->priv;
->   	struct device *dev = ubuf->device->this_device;
-> -	int ret = 0;
-> +	struct sg_table *sg;
->   
-> -	if (!ubuf->sg) {
-> -		ubuf->sg = get_sg_table(dev, buf, direction);
-> -		if (IS_ERR(ubuf->sg)) {
-> -			ret = PTR_ERR(ubuf->sg);
-> -			ubuf->sg = NULL;
-> -		}
-> -	} else {
-> +	if (ubuf->sg) {
->   		dma_sync_sg_for_cpu(dev, ubuf->sg->sgl, ubuf->sg->nents,
->   				    direction);
-> +		return 0;
->   	}
->   
-> -	return ret;
-> +	sg = get_sg_table(dev, buf, direction);
-> +	if (IS_ERR(sg))
-> +		return PTR_ERR(sg);
-> +
-> +	ubuf->sg = sg;
-> +
-> +	return 0;
->   }
->   
->   static int end_cpu_udmabuf(struct dma_buf *buf,
+It may be best to fold this patch into f9cb86069bad (Documentation: add a
+new file documenting multigrain timestamps)
+
+diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
+index e8e496d23e1d..44e9e77ffe0d 100644
+--- a/Documentation/filesystems/index.rst
++++ b/Documentation/filesystems/index.rst
+@@ -29,6 +29,7 @@ algorithms work.
+    fiemap
+    files
+    locks
++   multigrain-ts
+    mount_api
+    quota
+    seq_file
+diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentation/filesystems/multigrain-ts.rst
+index f58c14c53b0f..97877ab3d933 100644
+--- a/Documentation/filesystems/multigrain-ts.rst
++++ b/Documentation/filesystems/multigrain-ts.rst
+@@ -79,8 +79,8 @@ is no such guarantee, and the second file may appear to have been modified
+ before, after or at the same time as the first, regardless of which one was
+ submitted first.
+ 
+-Multigrain Timestamps
+-=====================
++Multigrain Timestamp Implementation
++===================================
+ Multigrain timestamps are aimed at ensuring that changes to a single file are
+ always recognizable, without violating the ordering guarantees when multiple
+ different files are modified. This affects the mtime and the ctime, but the
+-- 
+2.45.2
 
 
