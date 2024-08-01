@@ -1,433 +1,168 @@
-Return-Path: <linux-kernel+bounces-271541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05A6944FBD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:57:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CA7944FC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945E5288156
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C670B1C23B41
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42891B3759;
-	Thu,  1 Aug 2024 15:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD041B4C34;
+	Thu,  1 Aug 2024 15:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a1XCUvm6"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Fvf/04Cg"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFDA1B3733;
-	Thu,  1 Aug 2024 15:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E4B1B32DD
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722527856; cv=none; b=MsFO7ud3LxLJ5TUD0r6i2sgEkmU5m9s/cgVAapTdgoV5cEBHIvMzbdR/IFWuSgH/7OvevxkS/0YjaTFs5kBtfNA8nuCgq1GKGTEapQoVATfegW59aui2CEKnZnZVOBfYDXeP35BLzl7M+kbST2nTo2HmD+nBheKZAYLaZ1FQ9g0=
+	t=1722527869; cv=none; b=aIC/8qErdU7PUfsGljZGKNFIvvrG1DXGlsLiT3LTRRO3Sqvxlc/8IzxmfltW8nI2R9dI4QtDxAxWgnrQVcoCZ2fTLcovo74Z2dtO50sKMjGLc0MtUulMPFPx5ABjjToJ5uBujRK2CuHZ3V3s4BkU2ifUmG/KvorhkCtEf4GxO7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722527856; c=relaxed/simple;
-	bh=ES3OuqTIvxphKQSEoXjaScX2/ShgKgenzMVD8KxsDvM=;
+	s=arc-20240116; t=1722527869; c=relaxed/simple;
+	bh=Val1v/0+zIlxQWVpe2WCn6LToykSYu/HfcA8SyqTAsc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fGkT40+MyDTvkF7bDFTB0eiCJpt0vTRpNPnb/3wDWIkcUELnKrwwGvRaD4F8S69sliJfIdXpyYzn4GqQh6MFSTtXXU63V9OivldoWllJZngJoGe8uOpXoikBo4WEwzv1Z9/s5aqOT86a4DyfT8uL4UQlq4Ww5KSE5Bzd7HVY/3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a1XCUvm6; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7163489149eso5053554a12.1;
-        Thu, 01 Aug 2024 08:57:34 -0700 (PDT)
+	 To:Cc:Content-Type; b=sNs1Hg0ZxHU1RV76AT1Q24O0mdu+Aoe4+HZG+ahEMfv42pqolsRJu9m4DERzyotrPLD9xDrtdILd074xGDhD+HM2AezmBBMw+8ITlrUJhC/pZMnnt9dK9BjEzmRYPy5HbbrvzpDaQEcOhBOenpJDeUAvIzwQBd0CBaIzcJ74XxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Fvf/04Cg; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4f51551695cso2551573e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 08:57:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722527854; x=1723132654; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722527865; x=1723132665; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q2B7tON8arfSykpERlZXom9AgtP+Guw0ctcqeBOdhY8=;
-        b=a1XCUvm6xZT+A5jjxE0P9EIScsMVVvlrDOekFGifI3Ienz8Owmeg4w7A1JjeTCzAY6
-         N9E25xFNNkYsuUMTq4YwK9U01A8o7Yo3pHXBDSJy8Eko2mFCOL8sACuIjAgwA00bSYPS
-         PMfBP6/XVWRvJRS1Y5Nd2GXhQIhv7z1WTRdJlt5zHYzoMmR4NBR+FRtaAWR4ixha7V21
-         YXwufyo43diP6/b0xHamb6Hj2DRgDpLEBzXvSoUHq9n1MLb1SawV09BfLyQALAq6elil
-         DrWQdJLWnHkzIk1cNUDrCkEoOjvpWI+pmDec994u6opp+KepLw0w7jGgADvp7jQvQpwE
-         r2Tw==
+        bh=snX6qmvGXBlkj4qHxmnqzT8/9j0530F70W9IbEs0MBs=;
+        b=Fvf/04CgWpLbzB/9MJu7Ro1J1ZZf5ZPP02V3aflehF9703FJneZILls8AkeNaC5vBv
+         QVm5MKRpjNl+oe9xYW6UwVF84gDErS5y8Q0a1a+QpZ5vAwiiGRfRIHRgFCmqqD5tBMRl
+         woswqaCTu9VP35qxI0BAbU9zcRhuFWSkfhayGR/jueBoMIWQ4l4nn/j7DfnuR9StU1SG
+         gtzDLlnpxtDZaCpIp1pojJRZ3Xf+nfJTXr7MCMemLdYws9yKD5G70L23noGLjNykIqZa
+         JfDlZ4cj5+X0GEd9fLcPFe/SOZX0L9+Sihs8vXA1Oih+MbxD/W33+6MMbKat7eqCN3kj
+         czKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722527854; x=1723132654;
+        d=1e100.net; s=20230601; t=1722527865; x=1723132665;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q2B7tON8arfSykpERlZXom9AgtP+Guw0ctcqeBOdhY8=;
-        b=eaAg3xmaybQF9GtpbVuXKSipWZ2qO9UBykfbQSKKNUA98vqs6pJID+3hNlLzCYx+oq
-         BGVI1GEzSGUyizC1pm+bOpRLkhURo/VVdgJy8pP5K2G4vbEttxyqu4mOI2ytJopUoaNt
-         8sTV3X2WaTlIvCuv2JQewz2mbLHEB4BrYKolN6qnpdMwjbh2n1EKrNgLVQSxqxAFXyNo
-         XOZkwjXN9ZY2DP+zUTTaredI2kCoG/SrVMt3pHLMYlZtVZw3IXAJHoIgawMsWrVCIJbr
-         NBv7/CxKvrNIWFr0pgLbJY0Tfo2a+Ddb1dzF9ytUwZR4XTxwbMR3Ol1nzzbbatEc0d4b
-         6Fmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUueU6XNeM+CKoEnIbxcwSxiF2vZgGMQZg4CFAeK6jG4Akj/5BwFtRjQa7ZLbeqPGjm+66xOnwDDXx4kj2XJM0ncbPWudSBUjxn32bWpCQ4DoZNDW6hGDRultLTyxtabPDrOQTcakjhB+j8VQ==
-X-Gm-Message-State: AOJu0YwXc2g1tIppH/oQOIrUudV3IwEpy4GLGTqj/pM5MBpCztkv+qUq
-	mJgM0fNt0J8Pibml5EM7EdaDvshfQ8819EPHopxIgFuMcENCQm25mWhAAxTYv37vCh1xeLx4cdu
-	y0r22ZhDxbUxulbPxg1jUsbGNmgQ=
-X-Google-Smtp-Source: AGHT+IFS8L0lEo0LTZn+3suL/QglBnkiGXHjt4ybdEgng+l+WUpdECW2Qgxqu7MAYlETSoaKQ3NURgS/Z+uytydyG40=
-X-Received: by 2002:a17:90b:4a52:b0:2c9:7f3d:6aea with SMTP id
- 98e67ed59e1d1-2cff9559addmr727438a91.32.1722527853952; Thu, 01 Aug 2024
- 08:57:33 -0700 (PDT)
+        bh=snX6qmvGXBlkj4qHxmnqzT8/9j0530F70W9IbEs0MBs=;
+        b=WRKgw/SHqleyf6PtNLcif4sbpXuFuGujDoQ3OpNPYRrxKV65chYn1vYRRULltVWzvT
+         0SOC5bdfslATDLYIVwdroTDYb3qQ607h3j2M6PrQ/k0IftWv1cKmgLKOD8FCfVT1HEyQ
+         CE5B0vBR0JQm52ZAwqq1S85GBAWxZnMCtv84x6nKXwzCRRuPyys0BDv63E9SE55VWRCz
+         JWhrL5+/8ODc9Z+myOQ3XF2X1XUffGdN4Kt65VXegaG7OHxDSeoEgoMm7mYoEWWJYnLr
+         9jnWh0xd1ydplZ8w/MafU87JdNdIcCPObacsf05RTdPfNao37Zz+hD2RSo0WKNYZevPr
+         CB6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUb3ap8JFtqFPkXcd1sN9uHuKcMJZvA6owAbzfWLX5G9HZGlbVksrUOjRrvrqMpNwd/iccA1wwFGONyn0BQ6iiJM9jnyTm3vnlxt5+o
+X-Gm-Message-State: AOJu0Ywmu+kKBheSV8pb+f7ZbjMFrAzob6g2OCJKZY8m+LJfVPTVjWYs
+	caiayn/Oax2G/VfiOrS/quFMlUIjBYoLjhuJZJXGV0nR5l0x8Jo5kFb9RumfgXvPZaPhPSsRAhj
+	rHaTtPjfoS6A661kZd8zg3RQIcf6jPHUUX5FOKA==
+X-Google-Smtp-Source: AGHT+IGgmhTnl/HxYppSXaq7VmYQRkFbvdmv2Ue6piokAXA8lXZkX+zswFabpVoI9oJENUYd4nOCoCEtPCB9vMYPqZM=
+X-Received: by 2002:a05:6122:1d16:b0:4f2:f1f1:a9f2 with SMTP id
+ 71dfb90a1353d-4f89ff6c61dmr938235e0c.4.1722527864994; Thu, 01 Aug 2024
+ 08:57:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
- <20240711100038.268803-4-vladimir.lypak@gmail.com> <CACu1E7HkRN7pkBOUeC3G59K5rbsMRj81HvfAocpHuG6XuNbCyQ@mail.gmail.com>
- <Zqt9Cxu7FsSALi4y@trashcan> <CACu1E7GrWj1EiTgov6f_nUkUR3WPWD6zs4H7OPL7Maw3i2-WQg@mail.gmail.com>
- <ZquafkbK67ecsp99@trashcan>
-In-Reply-To: <ZquafkbK67ecsp99@trashcan>
-From: Connor Abbott <cwabbott0@gmail.com>
-Date: Thu, 1 Aug 2024 16:57:22 +0100
-Message-ID: <CACu1E7G_zS8UY9unKKNVu-1jL+Dy6NsCUG5sg1EzrZw1fhdM6A@mail.gmail.com>
-Subject: Re: [PATCH 3/4] drm/msm/a5xx: fix races in preemption evaluation stage
-To: Vladimir Lypak <vladimir.lypak@gmail.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jordan Crouse <jordan@cosmicpenguin.net>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240730-k1-01-basic-dt-v5-0-98263aae83be@gentoo.org> <20240730-k1-01-basic-dt-v5-9-98263aae83be@gentoo.org>
+In-Reply-To: <20240730-k1-01-basic-dt-v5-9-98263aae83be@gentoo.org>
+From: Jesse Taube <jesse@rivosinc.com>
+Date: Thu, 1 Aug 2024 11:57:34 -0400
+Message-ID: <CALSpo=bUiwAr=Do6QxLT_vUzjuK4t6=nCtaWRLHzLW_qjKdicA@mail.gmail.com>
+Subject: Re: [PATCH v5 09/10] riscv: dts: spacemit: add Banana Pi BPI-F3 board
+ device tree
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Yangyu Chen <cyy@cyyself.name>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Samuel Holland <samuel.holland@sifive.com>, 
+	Anup Patel <anup@brainfault.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-serial@vger.kernel.org, Jisheng Zhang <jszhang@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	Meng Zhang <zhangmeng.kevin@spacemit.com>, Meng Zhang <kevin.z.m@hotmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 1, 2024 at 3:26=E2=80=AFPM Vladimir Lypak <vladimir.lypak@gmail=
-.com> wrote:
+On Mon, Jul 29, 2024 at 8:29=E2=80=AFPM Yixun Lan <dlan@gentoo.org> wrote:
 >
-> On Thu, Aug 01, 2024 at 01:52:32PM +0100, Connor Abbott wrote:
-> > On Thu, Aug 1, 2024 at 1:25=E2=80=AFPM Vladimir Lypak <vladimir.lypak@g=
-mail.com> wrote:
-> > >
-> > > On Mon, Jul 29, 2024 at 06:26:45PM +0100, Connor Abbott wrote:
-> > > > On Thu, Jul 11, 2024 at 11:10=E2=80=AFAM Vladimir Lypak
-> > > > <vladimir.lypak@gmail.com> wrote:
-> > > > >
-> > > > > On A5XX GPUs when preemption is used it's invietable to enter a s=
-oft
-> > > > > lock-up state in which GPU is stuck at empty ring-buffer doing no=
-thing.
-> > > > > This appears as full UI lockup and not detected as GPU hang (beca=
-use
-> > > > > it's not). This happens due to not triggering preemption when it =
-was
-> > > > > needed. Sometimes this state can be recovered by some new submit =
-but
-> > > > > generally it won't happen because applications are waiting for ol=
-d
-> > > > > submits to retire.
-> > > > >
-> > > > > One of the reasons why this happens is a race between a5xx_submit=
- and
-> > > > > a5xx_preempt_trigger called from IRQ during submit retire. Former=
- thread
-> > > > > updates ring->cur of previously empty and not current ring right =
-after
-> > > > > latter checks it for emptiness. Then both threads can just exit b=
-ecause
-> > > > > for first one preempt_state wasn't NONE yet and for second one al=
-l rings
-> > > > > appeared to be empty.
-> > > > >
-> > > > > To prevent such situations from happening we need to establish gu=
-arantee
-> > > > > for preempt_trigger to be called after each submit. To implement =
-it this
-> > > > > patch adds trigger call at the end of a5xx_preempt_irq to re-chec=
-k if we
-> > > > > should switch to non-empty or higher priority ring. Also we find =
-next
-> > > > > ring in new preemption state "EVALUATE". If the thread that updat=
-ed some
-> > > > > ring with new submit sees this state it should wait until it pass=
-es.
-> > > > >
-> > > > > Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targ=
-ets")
-> > > > > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c     |  6 +++---
-> > > > >  drivers/gpu/drm/msm/adreno/a5xx_gpu.h     | 11 +++++++----
-> > > > >  drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 24 +++++++++++++++++=
-++----
-> > > > >  3 files changed, 30 insertions(+), 11 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/=
-drm/msm/adreno/a5xx_gpu.c
-> > > > > index 6c80d3003966..266744ee1d5f 100644
-> > > > > --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > > > > +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
-> > > > > @@ -110,7 +110,7 @@ static void a5xx_submit_in_rb(struct msm_gpu =
-*gpu, struct msm_gem_submit *submit
-> > > > >         }
-> > > > >
-> > > > >         a5xx_flush(gpu, ring, true);
-> > > > > -       a5xx_preempt_trigger(gpu);
-> > > > > +       a5xx_preempt_trigger(gpu, true);
-> > > > >
-> > > > >         /* we might not necessarily have a cmd from userspace to
-> > > > >          * trigger an event to know that submit has completed, so
-> > > > > @@ -240,7 +240,7 @@ static void a5xx_submit(struct msm_gpu *gpu, =
-struct msm_gem_submit *submit)
-> > > > >         a5xx_flush(gpu, ring, false);
-> > > > >
-> > > > >         /* Check to see if we need to start preemption */
-> > > > > -       a5xx_preempt_trigger(gpu);
-> > > > > +       a5xx_preempt_trigger(gpu, true);
-> > > > >  }
-> > > > >
-> > > > >  static const struct adreno_five_hwcg_regs {
-> > > > > @@ -1296,7 +1296,7 @@ static irqreturn_t a5xx_irq(struct msm_gpu =
-*gpu)
-> > > > >                 a5xx_gpmu_err_irq(gpu);
-> > > > >
-> > > > >         if (status & A5XX_RBBM_INT_0_MASK_CP_CACHE_FLUSH_TS) {
-> > > > > -               a5xx_preempt_trigger(gpu);
-> > > > > +               a5xx_preempt_trigger(gpu, false);
-> > > > >                 msm_gpu_retire(gpu);
-> > > > >         }
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.h b/drivers/gpu/=
-drm/msm/adreno/a5xx_gpu.h
-> > > > > index c7187bcc5e90..1120824853d4 100644
-> > > > > --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
-> > > > > +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.h
-> > > > > @@ -57,10 +57,12 @@ void a5xx_debugfs_init(struct msm_gpu *gpu, s=
-truct drm_minor *minor);
-> > > > >   * through the process.
-> > > > >   *
-> > > > >   * PREEMPT_NONE - no preemption in progress.  Next state START.
-> > > > > - * PREEMPT_START - The trigger is evaulating if preemption is po=
-ssible. Next
-> > > > > - * states: TRIGGERED, NONE
-> > > > > + * PREEMPT_EVALUATE - The trigger is evaulating if preemption is=
- possible. Next
-> > > > > + * states: START, ABORT
-> > > > >   * PREEMPT_ABORT - An intermediate state before moving back to N=
-ONE. Next
-> > > > >   * state: NONE.
-> > > > > + * PREEMPT_START - The trigger is preparing for preemption. Next=
- state:
-> > > > > + * TRIGGERED
-> > > > >   * PREEMPT_TRIGGERED: A preemption has been executed on the hard=
-ware. Next
-> > > > >   * states: FAULTED, PENDING
-> > > > >   * PREEMPT_FAULTED: A preemption timed out (never completed). Th=
-is will trigger
-> > > > > @@ -71,8 +73,9 @@ void a5xx_debugfs_init(struct msm_gpu *gpu, str=
-uct drm_minor *minor);
-> > > > >
-> > > > >  enum preempt_state {
-> > > > >         PREEMPT_NONE =3D 0,
-> > > > > -       PREEMPT_START,
-> > > > > +       PREEMPT_EVALUATE,
-> > > > >         PREEMPT_ABORT,
-> > > > > +       PREEMPT_START,
-> > > > >         PREEMPT_TRIGGERED,
-> > > > >         PREEMPT_FAULTED,
-> > > > >         PREEMPT_PENDING,
-> > > > > @@ -156,7 +159,7 @@ void a5xx_set_hwcg(struct msm_gpu *gpu, bool =
-state);
-> > > > >
-> > > > >  void a5xx_preempt_init(struct msm_gpu *gpu);
-> > > > >  void a5xx_preempt_hw_init(struct msm_gpu *gpu);
-> > > > > -void a5xx_preempt_trigger(struct msm_gpu *gpu);
-> > > > > +void a5xx_preempt_trigger(struct msm_gpu *gpu, bool new_submit);
-> > > > >  void a5xx_preempt_irq(struct msm_gpu *gpu);
-> > > > >  void a5xx_preempt_fini(struct msm_gpu *gpu);
-> > > > >
-> > > > > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c b/drivers/=
-gpu/drm/msm/adreno/a5xx_preempt.c
-> > > > > index 67a8ef4adf6b..f8d09a83c5ae 100644
-> > > > > --- a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
-> > > > > +++ b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
-> > > > > @@ -87,21 +87,33 @@ static void a5xx_preempt_timer(struct timer_l=
-ist *t)
-> > > > >  }
-> > > > >
-> > > > >  /* Try to trigger a preemption switch */
-> > > > > -void a5xx_preempt_trigger(struct msm_gpu *gpu)
-> > > > > +void a5xx_preempt_trigger(struct msm_gpu *gpu, bool new_submit)
-> > > > >  {
-> > > > >         struct adreno_gpu *adreno_gpu =3D to_adreno_gpu(gpu);
-> > > > >         struct a5xx_gpu *a5xx_gpu =3D to_a5xx_gpu(adreno_gpu);
-> > > > >         unsigned long flags;
-> > > > >         struct msm_ringbuffer *ring;
-> > > > > +       enum preempt_state state;
-> > > > >
-> > > > >         if (gpu->nr_rings =3D=3D 1)
-> > > > >                 return;
-> > > > >
-> > > > >         /*
-> > > > > -        * Try to start preemption by moving from NONE to START. =
-If
-> > > > > -        * unsuccessful, a preemption is already in flight
-> > > > > +        * Try to start preemption by moving from NONE to EVALUAT=
-E. If current
-> > > > > +        * state is EVALUATE/ABORT we can't just quit because the=
-n we can't
-> > > > > +        * guarantee that preempt_trigger will be called after ri=
-ng is updated
-> > > > > +        * by new submit.
-> > > > >          */
-> > > > > -       if (!try_preempt_state(a5xx_gpu, PREEMPT_NONE, PREEMPT_ST=
-ART))
-> > > > > +       state =3D atomic_cmpxchg(&a5xx_gpu->preempt_state, PREEMP=
-T_NONE,
-> > > > > +                              PREEMPT_EVALUATE);
-> > > > > +       while (new_submit && (state =3D=3D PREEMPT_EVALUATE ||
-> > > > > +                             state =3D=3D PREEMPT_ABORT)) {
-> > > >
-> > > > This isn't enough because even if new_submit is false then we may
-> > > > still need to guarantee that evaluation happens. We've seen a hang =
-in
-> > > > a scenario like:
-> > > >
-> > > > 1. A job is submitted and executed on ring 0.
-> > > > 2. A job is submitted on ring 2 while ring 0 is still active but
-> > > > almost finished.
-> > > > 3. The submission thread starts evaluating and sees that ring 0 is =
-still busy.
-> > > > 4. The job on ring 0 finishes and a CACHE_FLUSH IRQ is raised.
-> > > > 5. The IRQ tries to trigger a preemption but the state is still
-> > > > PREEMPT_EVALUATE or PREEMPT_ABORT and exits.
-> > > > 6. The submission thread finishes update_wptr() and finally sets th=
-e
-> > > > state to PREEMPT_NONE too late.
-> > > >
-> > > > Then we never preempt to ring 2 and there's a soft lockup.
-> > >
-> > > Thanks, i've missed that. It would need to always wait to prevent suc=
-h
-> > > scenario. The next patch prevented this from happening for me so i ha=
-ve
-> > > overlooked it.
-> > >
-> > > Alternatively there is another approach which should perform better: =
-to
-> > > let evaluation stage run in parallel.
-> > >
-> > > Also i've tried serializing preemption handling on ordered workqueue =
-and
-> > > GPU kthread worker. It's a lot simpler but latency from IRQ doesn't l=
-ook
-> > > good:
-> > >
-> > >            flush-trigger    SW_IRQ-pending   flush_IRQ-trigger
-> > >     uSecs    1    2    3       1    2    3       1    2    3
-> > >      0-10 1515   43   65    4423   39   24     647    0    2
-> > >     10-20 1484  453  103     446  414  309     399    1    1
-> > >     20-40  827 1802  358      19  819  587       2   21    6
-> > >     40-60    7 1264  397       1  368  329       0   30   14
-> > >     60-80    4  311  115       0  181  178       0   24   12
-> > >    80-120    2   36  251       0  250  188       0    9   13
-> > >   120-160    0    4  244       0  176  248       0  226  150
-> > >   160-200    0    1  278       0  221  235       0   86   78
-> > >   200-400    0    2 1266       0 1318 1186       0  476  688
-> > >   400-700    0    0  553       0  745 1028       0  150  106
-> > >  700-1000    0    0  121       0  264  366       0   65   28
-> > > 1000-1500    0    0   61       0  160  205       0   21    8
-> > >     >2000    0    0   12       0   71   48       0    0    0
-> > >
-> > > 1 - current implementation but with evaluation in parallel.
-> > > 2 - serialized on ordered workqueue.
-> > > 3 - serialized on GPU kthread_worker.
-> >
-> > The problem with evaluating in parallel is that evaluating can race
-> > with the rest of the process - it's possible for the thread evaluating
-> > to go to be interrupted just before moving the state to PREEMPT_START
-> > and in the meantime an entire preemption has happened and it's out of
-> > date.
+> From: Yangyu Chen <cyy@cyyself.name>
 >
-> Right. This gets complicated to fix for sure.
+> Banana Pi BPI-F3 [1] is a industrial grade RISC-V development board, it
+> design with SpacemiT K1 8 core RISC-V chip [2].
 >
-> >
-> > What we did was to put a spinlock around the entire evaluation stage,
-> > effectively replacing the busy loop and the EVALUATE stage. It unlocks
-> > only after moving the state to NONE or knowing for certain that we're
-> > starting a preemption. That should be lower latency than a workqueue
-> > while the critical section shouldn't be that large (it's one atomic
-> > operation and checking each ring), and in any case that's what the
-> > spinning loop was doing anyway.
+> Currently only support booting into console with only uart enabled,
+> other features will be added soon later.
 >
-> Actually this is what i've done initially but i didn't want to introduce
-> another spinlock.
->
-> Another thing to consider is: to disable IRQs for entire trigger routine
-> and use regular spin_lock instead so once it's decided to do a switch
-> it won't get interrupted (when called from submit).
+> Link: https://docs.banana-pi.org/en/BPI-F3/BananaPi_BPI-F3 [1]
+> Link: https://www.spacemit.com/en/spacemit-key-stone-2/ [2]
+> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
+> Signed-off-by: Yixun Lan <dlan@gentoo.org>
+Acked-by: Jesse Taube <jesse@rivosinc.com>
 
-Isn't disabling IRQs and a regular spinlock the same as
-spin_lock_irqsave()? We just used the latter, and it seems to work.
-The pseudocode is something like:
-
-spin_lock_irqsave();
-if (!try_preempt_state(NONE, START)) { unlock(); return; }
-if (!evaluate()) {
-    set_preempt_state(ABORT);
-    update_wptr();
-    set_preempt_state(NONE);
-    unlock();
-    return;
-}
-unlock();
-... // trigger the preemption
-
-If the point is to have interrupts disabled for the entire time,
-that's not necessary - once you unlock the state will be START and any
-IRQ calling preempt_trigger() will immediately exit.
-
-As for introducing another spinlock, this is no different than what
-you're doing already with the spin loop. It's already basically a
-(simple) spinlock. We're just replacing this with a real spinlock
-that's simpler to reason about. However, if the spinlock is somehow
-measurably slower than manually spinning, you can always keep it how
-it is now with the EVALUATE state and manually add the irq
-save/restore to make it safe to spin in the submit thread.
-
-Connor
-
+> ---
+>  arch/riscv/boot/dts/Makefile                    |  1 +
+>  arch/riscv/boot/dts/spacemit/Makefile           |  2 ++
+>  arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts | 19 +++++++++++++++++++
+>  3 files changed, 22 insertions(+)
 >
-> Vladimir
+> diff --git a/arch/riscv/boot/dts/Makefile b/arch/riscv/boot/dts/Makefile
+> index fdae05bbf5563..bff887d38abe4 100644
+> --- a/arch/riscv/boot/dts/Makefile
+> +++ b/arch/riscv/boot/dts/Makefile
+> @@ -5,6 +5,7 @@ subdir-y +=3D microchip
+>  subdir-y +=3D renesas
+>  subdir-y +=3D sifive
+>  subdir-y +=3D sophgo
+> +subdir-y +=3D spacemit
+>  subdir-y +=3D starfive
+>  subdir-y +=3D thead
 >
-> >
-> > Connor
-> >
-> > >
-> > > Vladimir
-> > >
-> > > >
-> > > > Connor
-> > > >
-> > > > > +               cpu_relax();
-> > > > > +               state =3D atomic_cmpxchg(&a5xx_gpu->preempt_state=
-, PREEMPT_NONE,
-> > > > > +                                      PREEMPT_EVALUATE);
-> > > > > +       }
-> > > > > +
-> > > > > +       if (state !=3D PREEMPT_NONE)
-> > > > >                 return;
-> > > > >
-> > > > >         /* Get the next ring to preempt to */
-> > > > > @@ -130,6 +142,8 @@ void a5xx_preempt_trigger(struct msm_gpu *gpu=
-)
-> > > > >                 return;
-> > > > >         }
-> > > > >
-> > > > > +       set_preempt_state(a5xx_gpu, PREEMPT_START);
-> > > > > +
-> > > > >         /* Make sure the wptr doesn't update while we're in motio=
-n */
-> > > > >         spin_lock_irqsave(&ring->preempt_lock, flags);
-> > > > >         a5xx_gpu->preempt[ring->id]->wptr =3D get_wptr(ring);
-> > > > > @@ -188,6 +202,8 @@ void a5xx_preempt_irq(struct msm_gpu *gpu)
-> > > > >         update_wptr(gpu, a5xx_gpu->cur_ring);
-> > > > >
-> > > > >         set_preempt_state(a5xx_gpu, PREEMPT_NONE);
-> > > > > +
-> > > > > +       a5xx_preempt_trigger(gpu, false);
-> > > > >  }
-> > > > >
-> > > > >  void a5xx_preempt_hw_init(struct msm_gpu *gpu)
-> > > > > --
-> > > > > 2.45.2
-> > > > >
+> diff --git a/arch/riscv/boot/dts/spacemit/Makefile b/arch/riscv/boot/dts/=
+spacemit/Makefile
+> new file mode 100644
+> index 0000000000000..ac617319a5742
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/spacemit/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +dtb-$(CONFIG_ARCH_SPACEMIT) +=3D k1-bananapi-f3.dtb
+> diff --git a/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts b/arch/riscv=
+/boot/dts/spacemit/k1-bananapi-f3.dts
+> new file mode 100644
+> index 0000000000000..023274189b492
+> --- /dev/null
+> +++ b/arch/riscv/boot/dts/spacemit/k1-bananapi-f3.dts
+> @@ -0,0 +1,19 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+> +/*
+> + * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+> + */
+> +
+> +#include "k1.dtsi"
+> +
+> +/ {
+> +       model =3D "Banana Pi BPI-F3";
+> +       compatible =3D "bananapi,bpi-f3", "spacemit,k1";
+> +
+> +       chosen {
+> +               stdout-path =3D "serial0";
+> +       };
+> +};
+> +
+> +&uart0 {
+> +       status =3D "okay";
+> +};
+>
+> --
+> 2.45.2
+>
 
