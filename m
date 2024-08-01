@@ -1,263 +1,280 @@
-Return-Path: <linux-kernel+bounces-270811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6129694459B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:36:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4134094459E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 850C31C22080
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:36:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59B47B22713
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C844916DC1C;
-	Thu,  1 Aug 2024 07:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D985F16DC12;
+	Thu,  1 Aug 2024 07:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hS3QBUtf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEILie34"
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5E2158A23;
-	Thu,  1 Aug 2024 07:36:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722497793; cv=fail; b=pPbj21V/Au8mHJ7sGVQQVLYdMA7o4HARa14T27NT95J2s4ezNeyGxFJV6c55ZzjbqQz1I1CBf+OazmNOgANuIe4sssrP6Mee6XE5xmBifgzt4Cs7fnHXNgg6phyxx08B+iDpSuL46GqWXRMcO/2c09WefLWWbyWiIPG8DiphtY8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722497793; c=relaxed/simple;
-	bh=CceiHC55ec7fZmdJQHB9E1GoL6UKAK94LLrp/C5euRM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=og1sIWrlpHdHa6OYjo7NpA9f31NBEjiLeUxfgAEfF6a6SleDbqqAGfusiVeSAh2AFPDe0Igm8fhPNClb1CI9WLBxh4clrDkrggk7v+sNadO06K0Hfdzs89Kld/1xyN/YAr38IK0uLSJy/tpji/bN1Rop9fJ1ibEvwPlLwJKPvnM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hS3QBUtf; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722497792; x=1754033792;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=CceiHC55ec7fZmdJQHB9E1GoL6UKAK94LLrp/C5euRM=;
-  b=hS3QBUtfzjH7cnMrpyPBxeNbpuXbBiYgnCDdUEKwnalrF2Ga6S0OAUk9
-   owWuBIoio0i4Mz4lqlNpHWeEG8bWqkwzZcMMZFjmj+jHf9iWf4bbK3Iek
-   1uZ0e5wN7NYKJUwuh/vf03t0OpwV/gmIg5u2PsoYs6OjQAGW10uLa/1Zv
-   Y+uBAnDwYcpd17Dbn4AC82XFa1gwSX+xS9HKv/dYOtORwfbKxu2gNnnxG
-   YiDJKqVdce3njka3McyIk3IPR/DLSH1U5b5trtyyeMFtVhDgu4Baj5ofH
-   Q0gZIsR2K+dpEUHTLOhnUhlaHzAgmcZXqzjxcAUrRPO1kZ++yT8HPJLKm
-   g==;
-X-CSE-ConnectionGUID: AsVUkNVUR165mZMQPNkMug==
-X-CSE-MsgGUID: EOUSRM7lRPe1zGHznHn0kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="45844755"
-X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
-   d="scan'208";a="45844755"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 00:36:31 -0700
-X-CSE-ConnectionGUID: uZHTnHFzRJG/vGAiUaymeg==
-X-CSE-MsgGUID: DNC5JSMVTSesRDJnWsppjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
-   d="scan'208";a="59072297"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Aug 2024 00:36:31 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 1 Aug 2024 00:36:30 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 1 Aug 2024 00:36:30 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 00:36:30 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.171)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 00:36:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qIZaCQdBYdPbaRXc+YRg21Mbvm9SOqixydmvPXVWBG31yAX/FjD1s3erKV+Y1l816AgxA5fcQqOI7f66vG16kllyXAMWlkhJgNrx2G5hJ4BMKh9KXfv9SZNiB9o0He674d1n72Dg3BGiBSUs1srfm0gso88OWosCB+niq0cOUkoFeiuhPBLcj9BoUaZTwM8EPaAIzejXN7WZw/xpUbK7yJLRiamgQC/ENPLkNyM5C/eqjVGhBO80ooAmpVKSYbwcWFvlKHT6bUks2oeeKsxsg4xckbWXjo2qaM2dgjacmpt0FZwTreII19OKGMUdPgmBoaxGjMVF9gWUmJLSLfBH1Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=20Tvt8j0frXFaS0I4bT2O6GhbTYZb+SGyVaBZfw2lJA=;
- b=apVPegI2XwQuY8cuPSmo9nCxwhwEHAnT1vMhobbp5hjRbjF49lYVk6XDbwHcLtuheI9bWTgZ7Bu2lnGABjOtv0gRQPKy83ZJMXEPgLqjsJqeN7DS3BNqop0gdVQSs2rpWK9nVCC2SJJH/b69Pc6ihNZrdDurKljD1Yk8YLJJXOKfF1prOhHaK5VJUmI3zqbq3GZTBbLv8J7iyzIJNHWCf4PlZNUBNYl93anRnYtIOCgx+lXjMn1KKMMUHlCbFBiwCeoMtswrOFkuan8I1bgALYFULjKrojKh5tvJsGxJXpDY89S+u92DeBm59B8PQCKJWrd4YV5BtWMpCljTFX354w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB5803.namprd11.prod.outlook.com (2603:10b6:806:23e::8)
- by LV8PR11MB8700.namprd11.prod.outlook.com (2603:10b6:408:201::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Thu, 1 Aug
- 2024 07:36:22 +0000
-Received: from SA1PR11MB5803.namprd11.prod.outlook.com
- ([fe80::e976:5d63:d66e:7f9a]) by SA1PR11MB5803.namprd11.prod.outlook.com
- ([fe80::e976:5d63:d66e:7f9a%4]) with mapi id 15.20.7828.016; Thu, 1 Aug 2024
- 07:36:22 +0000
-Message-ID: <51c7fa4a-26e5-49e4-baa6-b72d51098ced@intel.com>
-Date: Thu, 1 Aug 2024 10:36:15 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Intel-wired-lan] [PATCH iwl-net v2 2/3] igc: Fix reset adapter
- logics when tx mode change
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
-	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>, Simon Horman
-	<horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Paul Menzel
-	<pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
-CC: <netdev@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
-	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
-References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
- <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
-Content-Language: en-US
-From: Mor Bar-Gabay <morx.bar.gabay@intel.com>
-In-Reply-To: <20240707125318.3425097-3-faizal.abdul.rahim@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TL2P290CA0030.ISRP290.PROD.OUTLOOK.COM
- (2603:1096:950:3::16) To SA1PR11MB5803.namprd11.prod.outlook.com
- (2603:10b6:806:23e::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3B158529;
+	Thu,  1 Aug 2024 07:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722497827; cv=none; b=JE0eeckkPZemnAcC+Noi3BLAYk2N39YKqF19GpGA4+UZDWA9FH86RKM+i2pEj9fdRVY/N++i6vhXl04jjVLssaVBTnBzhGX41Ave7pCvTsaVGYXQrylwXT5MvgmVotdV3yxDS2BRcFOQPZ8rSsVwjs/A9QYVuXO7E5i6fCpBics=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722497827; c=relaxed/simple;
+	bh=WaUR4hy93i4Ek9LDJ+97SoWsUtXnI8FAu3DXyuoQc5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NQ+uNheu8NkdkAFtU7UAuzQWmIpKZSx8lUXHffcPj+/gmYMhBcrRQtJpsBiHzED1njgFnCZubq/iAqbVu6BuyvnHLON1mBH7HDAWdayVGgBrLJGdno35Go3HtQ6LHYvQ53gQPfMUgmdzdZxABO7Wa18mnX4oeo2+jRzVFF0RuHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEILie34; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-492a8333cb1so1699631137.3;
+        Thu, 01 Aug 2024 00:37:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722497825; x=1723102625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sfuN7vtcTfjCBA2br92dqKx97adSDLYFKLRcwy0cyB8=;
+        b=BEILie34Xgjoz5OdPq5k722hSaPBOw5DH2xGASRzjkRkOB9GYpIj3JJrMutHTNsnj3
+         iemj5lLKWRGrYAfptvLYfVlr0TH/9nTpAsudM09irbf/X0f8LurIcc1DoQNFtUnGhq8U
+         3gcTxzIctGzuqWBBWlVs+J4utI5wmsj+z3w8qTMyAdgyk14aLU4ln4Mc+gOiQAHdV+vp
+         F1x0jBzXDC/XE6PIDRaG+vlYzwiUkeNxJcAsX256uZ0PPCVVuiuTMxj0MxIZu2bgxFX0
+         M0iQhAtvogDiKrC9pp//OmNtnG+x132nO0ydBNOuxkWEE/5tUbynWvTvdygWcO7J1Id+
+         SxEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722497825; x=1723102625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sfuN7vtcTfjCBA2br92dqKx97adSDLYFKLRcwy0cyB8=;
+        b=KOg4rNAOU4oTjlhPGi4PnY9Www6YP9lys76+1iZgy+u1KW976q2HHD1bDOg0zuGQeH
+         zews7JnjZlLkGkQuzlLtC1cF68xsK0UhSf5is1qijX3O9RDlvN53m0RyY+s/ozWw5V/H
+         aykx1ERZKLw9Gy2Q5gBe05ZSxUJS7rL4E97LNDG4fEaIBliTQmp7CgXz49t9NEh73M+r
+         HqSqqNeVPyA6u4J1xLPNgFohlonk+2YboSYkrEtIrRvpCB3XC3aNgLJYlE45XfaJFJre
+         cPwkwj1GhN1+y5vIJLnzppwIIrhnIbvCY9k1q/Lt2h8UomurWyrbgvFkwXVx/NAKm+mP
+         Fr0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUu7ORTNBFknVszSy8d6GZh8ZG/IHVdl5j+UHTUyLUg6OFfH0ZL1/k7pK7JxL2uzd89NoVDdSu0k5GVwHmz@vger.kernel.org, AJvYcCVNriCBXX0mpY8cNSixKW6aJ7DXQgEoTyFQZhROI/yMwfunj4pTuthRewKJPVeMHwIJN+myCkjY@vger.kernel.org, AJvYcCVdjLazOgBXA2CD1D6WzCnajomIvbFyk+AKlFMEKxEJ/TXCxSrYbjbnDW4PGDd83GSzErQPPu9DzQBqNQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJWtDhU33WOZiBU2ZdkI9gcLC0O6BQodjVgn0L+5Cdu3NFwNV2
+	TJwX32X56LYbTwfzloZVR1KhZAgaCASs7hjNUgTi5xFzAliDqgGl1Lw5YhX2goB0qbd4R3HM9er
+	Xxfuk8+lAKLkdJKK78nlRbBSCmXM=
+X-Google-Smtp-Source: AGHT+IGx04si4V8GDZUMjmPGLAJNMLD/FLSH9iT4JiQeGnLtSZxzfZoLY2gFZ+CbFpGugwviVfBE/7dkB9wixnRK3ZY=
+X-Received: by 2002:a05:6102:3f51:b0:493:bf46:7f00 with SMTP id
+ ada2fe7eead31-4945069ca67mr2432377137.5.1722497824850; Thu, 01 Aug 2024
+ 00:37:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB5803:EE_|LV8PR11MB8700:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7c106317-1410-4dcd-37c4-08dcb1fca455
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?Z3dqSHVWOWtVdHJPTFFHbkNFV2pINDh1alJNQk5FM0NWY1k2Qk1HY1VmUXBu?=
- =?utf-8?B?Q0dUM0hZckVtRHp2bmxEa1NYVjRxWDV1MTRCYm9TS0loWVZScmlxZkpsV3Jv?=
- =?utf-8?B?SzBHRzlTelMvc0xkOVZuV3pML3UwWThValhHWm1nS1FldkdraG1vcGFHTk8v?=
- =?utf-8?B?U0ttM3UvNC9MYTM3YTkyUlF2NkdpNmpZZE9nanRCZFhlZHFVRklrNkhMcnJW?=
- =?utf-8?B?dER6KzhpUmJSbi9vNFBEZ0VDOUVHdGtEWWRsVGtFNzl3d2hZaDZ6Q0tueFAv?=
- =?utf-8?B?M3FsTUxZYnlTbTh3OHArR0lLbzFBY2JaMkJTNGx6blhQdDdUYnpYQmlrck1L?=
- =?utf-8?B?NG9HU1dBUi9FMTVlZG9tTzY5NHVna2IrcGxsSHlDbzh4QUIyVHlreTVodGR4?=
- =?utf-8?B?aUsvTy9jZmNoaXFIbWZQUFRSc2xyV2lqQUZPbmVGamJiVC9VZnVJbHo1dXU0?=
- =?utf-8?B?WHVySW1HUVVZTHhMTkc0R3ZrbWtiVEEzK0FXb0VjNEdkUW01WUlvMWpCWEUx?=
- =?utf-8?B?QWpIWjhsTDVWT2I3MUErQ0l6ZWJqc1hCQVM5bTRVTTVBNTR3MlJRZjVuRnJT?=
- =?utf-8?B?allDcDhFOVdJaWg2RS9hQjA2YnJKR09TTXNmMldzbVR6S0pGQzZCUW4reGVu?=
- =?utf-8?B?OVl1d1ZreWxUeU1uRHZoUHlTNTREZW51Y2l4UFg0NXZuWmt5WU1RT2tvMTlM?=
- =?utf-8?B?dWZISHorbGEzWnBsOVlPQnJkWFFrT0FsWVVwMXBMNXR2VnFUSVFnZTZyWVRz?=
- =?utf-8?B?VllDUERQSHoyUzRVQ3RRUmlRd3dqWElzSms2MFN3TGRndkVFbVFJejgrL2xp?=
- =?utf-8?B?bGp5WjRwbUNLclA2eVc4b1U1eFVZejZ1MHAyZnN3T0NBUkgyckVGdDRRZTVa?=
- =?utf-8?B?M0V5UFBVS3JpZU4zZGdNd1lqL3QwcVNzb1N2V1pkRnp3N0NtUWl2VThLTHdC?=
- =?utf-8?B?UzhMVXcxY0c3MjIvYS9wQlVpYXVBelcwMG1KTVh0T1hDT00vdUpWT1lqZGlU?=
- =?utf-8?B?OC9jbDBiS1l1WVhSL2RuT1RsVDZJQ3kzcEN2UDNBU2RKc1A4ZERrYmxuYkpG?=
- =?utf-8?B?dGN0ZVMzMm80d2JpaUZzVC9ob0pkZU9Ld1FuV3FtblFYTzh0NEl6YTIyYVZX?=
- =?utf-8?B?Y0s1NmpBZlBKdXBScDJFMlcrazFyLzBSb0NpT1RoMWtYcHJnMitEZUR6NXBE?=
- =?utf-8?B?YjVXdlFVaFlZVC8xQWs2MWFVRVkrNGtxeU43NFV6S0ZpNWN5eldua0xFeEQx?=
- =?utf-8?B?VTY4RFFRbzU2T1dGbGlucGwzYTNFNEw3a2Z6QkJUSXNKdkMxS05rZzBieXFU?=
- =?utf-8?B?SVFOajYvejNDS2pNekNiVkRMbldSYnM2VThEQnpGekY5MjVuYkljNXBTNjJQ?=
- =?utf-8?B?YUF0NjdveHA2Vm85UEM1RDhaVjg4K1JzRE5sdTdLSytEMjFnaFMrdU9YZHVr?=
- =?utf-8?B?MUN4YVRsM3d6T3NCak9nNEZEcGdsYXBDUWRaUzNBOVN3NnBZZjZNYVRHdDB2?=
- =?utf-8?B?akVXMndGbXZXRzNkUDJYcnJvKzZKMzJ3T3lmUXZObTJUdVRhR0RMWFRxa1Np?=
- =?utf-8?B?dFBnem9jQUtKdStIYnRXYTk4OU95WnkyOEpjczkxLy9kbEYxYmhYMVhZbkJJ?=
- =?utf-8?B?VmxENC9JOFVCM1N1ZEI3N1dnclhXR3lNaXNqOU1xYWdQT2huTjFTaTJ5clJp?=
- =?utf-8?B?a0gzbjdKU3hxUG9lY0kwdHAwREwxMWxUSWw1VzVQTFNyVEJIRVBmZkdRN05j?=
- =?utf-8?B?MEFWOG0yVitDR1gyeElZTktwSWxXUXlZdjFEQnJYdzFwZEFOMjNxcU4xcmtB?=
- =?utf-8?B?b0ZLWUtkZG9tZDVWQVRhcHVSTlN5WC84TXp4YmZPUFh6eDlnZ0Rxc3RiWXVN?=
- =?utf-8?Q?MRTh9HhlDjI4J?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB5803.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?d3VKNlpBUU5vYy9LYXFPMkdFTXZBZ0tsMnhYSjhmNGZqbEVhWnNwL2FodDA3?=
- =?utf-8?B?emR4aW0wT3AxSEF1R1hMRHRZYzNUWHBKdXVOeXlQWjM2RzNQcTVpbXhmR01E?=
- =?utf-8?B?dHhzeE1DQktzOG1CODBGbG9hSGtlMnRMeDJyZlB5TUdZQlNJUUVzYkF6YUo4?=
- =?utf-8?B?K056Z0VkR1FjV1dnTzRXWkFxU2xCb1k4WnpXbFcycVErMDFUdk9uN3I5SHJ3?=
- =?utf-8?B?YVRJeFR5V0JBSERzaW02bUhGeEhFMy9ZZUVTYlpoR3RHc2YxQUYrb01oVFdK?=
- =?utf-8?B?VnRZWFJvSGdDL3VqWHFCYnZKSW9vdVFueXl4a3dCZmlZei85TEp2NC90QlRR?=
- =?utf-8?B?MFd0dWsySGJZT1hIVVc5aFN5NHZWcGVhWk82NjBYT1dvR1l1UW4rM3o3MVRj?=
- =?utf-8?B?dGlldk9weWZHK0RaZW9sc0FQRGgxQllxU013am94dTExd252enI2eExtNGtl?=
- =?utf-8?B?bFhubmVQOENIeHdWdHJwL041bDVkWXljWHZDNkRYc0crb1grVG0zZUtVaWRJ?=
- =?utf-8?B?MWN2VnVVMk5HNzI4Mlo1WVhEWndHWDl6QW1lbDZTSWd5WVV1WVNXck02aVZ6?=
- =?utf-8?B?eUllK3I4Wk9xZFhaeGI4UTNnZkRNQTBnUnJOL1J1aWdqcGJzWmFMeHJCS2VC?=
- =?utf-8?B?alo2V3dWdGxJRzBaMVNYdzdYVzM1alcyTE5BaFZ6OE5mb2lZUnFvQlc0dEdk?=
- =?utf-8?B?U1FRdUdOK1ErOUtmVkZwSVVoa0wva2VZWUtndGR1TVBIbGJzSnZoYzZWcGIv?=
- =?utf-8?B?MTI3dm5qa3RaVEFTSEhlR2h2Tk1RK0tQd1RGNjVDa3RXTlZKdUp6MW5ERVlu?=
- =?utf-8?B?alQzdjAyQkRYZWllaVV6ck9ldUlOdzl3UWNQMlFwOVlUZ3JkYXdYTURDTnI1?=
- =?utf-8?B?QXpidjBEdlhoemVIUkJ3STlGTjRsUDRIYTlvTVU5ZmNTUHlzbCtoR0hwMzRG?=
- =?utf-8?B?TERPWEc1dkhnMHh3MXdrZWJZVlMzWnFSUzIrZzhYd0ZlMVk2Q0xGdkpUSnJC?=
- =?utf-8?B?UGszbWIrVEJlcFpGZkxOa2FiNjdyTHMvZUlXQUhiQnByRHE1L0tiWTFyajhF?=
- =?utf-8?B?OU4yV2p4eStzNEtjdklCNFFVa0pjN3V3ZUdIZVRkempmdE9DbTVOWlJrVEJy?=
- =?utf-8?B?K0NSUG9DOFcvQ0x1aW1VcENMVDdlVCtQTDBzMks3SjF3blpsblZwdXNiZ1JC?=
- =?utf-8?B?WEN6NExoaVhwZkRPREVsTStSa1VXYlRybC9BckJLTnpZRkNDNExjb0k4OWwx?=
- =?utf-8?B?SXlYejdkZm9wcXVHMnVSaWowQUlaczk2ejV0YVVvd3c0T3NOM3dwNFY4b1Vy?=
- =?utf-8?B?UkU2NmlpTW1NR2FyYTRJYlBTdzVWWTJxYll0WWN4Q2dHT2hNYmlLNEZwelNL?=
- =?utf-8?B?UnlxdCtkTFJYQXBXdTZ3Umo3bktLdTFNWFR6ZVlaQk1MU2NKVFYrRE1XeThi?=
- =?utf-8?B?ckQ5R1M5a3JCZ29wM3k3bGN0M1BTZ3ZJSHVSbFoyQ3hDZHF1UVpscWEwV0xa?=
- =?utf-8?B?M0NsNkk0cStYbW1BQUdFWTNUaDlLVHBqK1Q2T3BPTG0xbE03UzNJemZCNE01?=
- =?utf-8?B?amxXeTJaQVJ2T3dRaUhhNDFCWVdocHJmYVhRVHNYSitGTUpvck5GNmlwbXpz?=
- =?utf-8?B?Z0thL3A2SG83b0FKbFZnbjNDRkswWmUyUGducGthMGZkM2h6eUtyUVE5SEg4?=
- =?utf-8?B?RVRLa05UZ1dlMm1OWnVha0pVbmRuUmo0MDd2SXZVMkUyQTFhZ096S1JIZ2Vv?=
- =?utf-8?B?OXBwbWdKQldYdXVXMVFkTmZPMTl5djgzdVY2ZFovcUJiQVFmY3lxU1ZBaHEw?=
- =?utf-8?B?dlJ4WDZrY2N5NXR0RWxYdzQ5dkd6dTJpZnZDZXR5WGl0RXcvRGJPYVRXK3Qr?=
- =?utf-8?B?algxS2VzMk5TRTBQanBVZnpvRUJ1UTFZMmdWZkxndGxjZzlqUk5BZXhvWms3?=
- =?utf-8?B?ZVlTTVhVWFdOM25oZmd6VG5TRDFrYWtoZ0JpeVpFYjRaelkxWUhpNTZ6dXAr?=
- =?utf-8?B?NXc3Uk9KTUlYNVZkdU9UNld5VXlaUU5EeVorMzVNLzIxSnhwd2dNMmRCblZ5?=
- =?utf-8?B?eUI4NThHdXFKQlBqTmlDQzNrZ1IxYkpwSGNsMG0rU0VLRVNEQ0V6cjlDNlRK?=
- =?utf-8?B?cGE0YzIrYTlmclVNWjZKZlRpN1RtTlhUY2xoQWV5OTkzWkM3UWRxV09wUHBj?=
- =?utf-8?B?Qnc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7c106317-1410-4dcd-37c4-08dcb1fca455
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB5803.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 07:36:22.9075
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ntrJ/Y7jJmWdX1sYL/tYauFvJd3QTDiNofH320OgIHpZB9lyv7A1u6Sl1dpubE79O04jSzpjyeWZSvslss12Vem4EHLwL0WuYLBnJ0Gfl5k=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR11MB8700
-X-OriginatorOrg: intel.com
+References: <20240731133318.527-1-justinjiang@vivo.com> <20240731091715.b78969467c002fa3a120e034@linux-foundation.org>
+ <dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com>
+In-Reply-To: <dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 1 Aug 2024 15:36:52 +0800
+Message-ID: <CAGsJ_4xv--92w+hOVWtMtYK-0TsR6z67xiHEXCvuRNvXx71b2A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] mm: tlb swap entries batch async release
+To: zhiguojiang <justinjiang@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>, 
+	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin <npiggin@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org, cgroups@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, opensource.kernel@vivo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/07/2024 15:53, Faizal Rahim wrote:
-> Following the "igc: Fix TX Hang issue when QBV Gate is close" changes,
-> remaining issues with the reset adapter logic in igc_tsn_offload_apply()
-> have been observed:
-> 
-> 1. The reset adapter logics for i225 and i226 differ, although they should
->     be the same according to the guidelines in I225/6 HW Design Section
->     7.5.2.1 on software initialization during tx mode changes.
-> 2. The i225 resets adapter every time, even though tx mode doesn't change.
->     This occurs solely based on the condition  igc_is_device_id_i225() when
->     calling schedule_work().
-> 3. i226 doesn't reset adapter for tsn->legacy tx mode changes. It only
->     resets adapter for legacy->tsn tx mode transitions.
-> 4. qbv_count introduced in the patch is actually not needed; in this
->     context, a non-zero value of qbv_count is used to indicate if tx mode
->     was unconditionally set to tsn in igc_tsn_enable_offload(). This could
->     be replaced by checking the existing register
->     IGC_TQAVCTRL_TRANSMIT_MODE_TSN bit.
-> 
-> This patch resolves all issues and enters schedule_work() to reset the
-> adapter only when changing tx mode. It also removes reliance on qbv_count.
-> 
-> qbv_count field will be removed in a future patch.
-> 
-> Test ran:
-> 
-> 1. Verify reset adapter behaviour in i225/6:
->     a) Enrol a new GCL
->        Reset adapter observed (tx mode change legacy->tsn)
->     b) Enrol a new GCL without deleting qdisc
->        No reset adapter observed (tx mode remain tsn->tsn)
->     c) Delete qdisc
->        Reset adapter observed (tx mode change tsn->legacy)
-> 
-> 2. Tested scenario from "igc: Fix TX Hang issue when QBV Gate is closed"
->     to confirm it remains resolved.
-> 
-> Fixes: 175c241288c0 ("igc: Fix TX Hang issue when QBV Gate is closed")
-> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> ---
->   drivers/net/ethernet/intel/igc/igc_tsn.c | 23 ++++++++++++++++++++---
->   1 file changed, 20 insertions(+), 3 deletions(-)
-> 
-Tested-by: Mor Bar-Gabay <morx.bar.gabay@intel.com>
+On Thu, Aug 1, 2024 at 2:31=E2=80=AFPM zhiguojiang <justinjiang@vivo.com> w=
+rote:
+>
+>
+>
+> =E5=9C=A8 2024/8/1 0:17, Andrew Morton =E5=86=99=E9=81=93:
+> > [Some people who received this message don't often get email from akpm@=
+linux-foundation.org. Learn why this is important at https://aka.ms/LearnAb=
+outSenderIdentification ]
+> >
+> > On Wed, 31 Jul 2024 21:33:14 +0800 Zhiguo Jiang <justinjiang@vivo.com> =
+wrote:
+> >
+> >> The main reasons for the prolonged exit of a background process is the
+> > The kernel really doesn't have a concept of a "background process".
+> > It's a userspace concept - perhaps "the parent process isn't waiting on
+> > this process via wait()".
+> >
+> > I assume here you're referring to an Android userspace concept?  I
+> > expect that when Android "backgrounds" a process, it does lots of
+> > things to that process.  Perhaps scheduling priority, perhaps
+> > alteration of various MM tunables, etc.
+> >
+> > So rather than referring to "backgrounding" it would be better to
+> > identify what tuning alterations are made to such processes to bring
+> > about this behavior.
+> Hi Andrew Morton,
+>
+> Thank you for your review and comments.
+>
+> You are right. The "background process" here refers to the process
+> corresponding to an Android application switched to the background.
+> In fact, this patch is applicable to any exiting process.
+>
+> The further explaination the concept of "multiple exiting processes",
+> is that it refers to different processes owning independent mm rather
+> than sharing the same mm.
+>
+> I will use "mm" to describe process instead of "background" in next
+> version.
+> >
+> >> time-consuming release of its swap entries. The proportion of swap mem=
+ory
+> >> occupied by the background process increases with its duration in the
+> >> background, and after a period of time, this value can reach 60% or mo=
+re.
+> > Again, what is it about the tuning of such processes which causes this
+> > behavior?
+> When system is low memory, memory recycling will be trigged, where
+> anonymous folios in the process will be continuously reclaimed, resulting
+> in an increase of swap entries occupies by this process. So when the
+> process is killed, it takes more time to release it's swap entries over
+> time.
+>
+> Testing datas of process occuping different physical memory sizes at
+> different time points:
+> Testing Platform: 8GB RAM
+> Testing procedure:
+> After booting up, start 15 processes first, and then observe the
+> physical memory size occupied by the last launched process at
+> different time points.
+>
+> Example:
+> The process launched last: com.qiyi.video
+> |  memory type  |  0min  |  1min  | BG 5min | BG 10min | BG 15min |
+> -------------------------------------------------------------------
+> |     VmRSS(KB) | 453832 | 252300 |  204364 |   199944 |  199748  |
+> |   RssAnon(KB) | 247348 |  99296 |   71268 |    67808 |   67660  |
+> |   RssFile(KB) | 205536 | 152020 |  132144 |   131184 |  131136  |
+> |  RssShmem(KB) |   1048 |    984 |     952 |     952  |     952  |
+> |    VmSwap(KB) | 202692 | 334852 |  362880 |   366340 |  366488  |
+> | Swap ratio(%) | 30.87% | 57.03% |  63.97% |   64.69% |  64.72%  |
+> min - minute.
+>
+> Based on the above datas, we can know that the swap ratio occupied by
+> the process gradually increases over time.
+
+If I understand correctly, during zap_pte_range(), if 64.72% of the anonymo=
+us
+pages are actually swapped out, you end up zapping 100 PTEs but only freein=
+g
+36.28 pages of memory. By doing this asynchronously, you prevent the
+swap_release operation from blocking the process of zapping normal
+PTEs that are mapping to memory.
+
+Could you provide data showing the improvements after implementing
+asynchronous freeing of swap entries?
+
+
+> >
+> >> Additionally, the relatively lengthy path for releasing swap entries
+> >> further contributes to the longer time required for the background pro=
+cess
+> >> to release its swap entries.
+> >>
+> >> In the multiple background applications scenario, when launching a lar=
+ge
+> >> memory application such as a camera, system may enter a low memory sta=
+te,
+> >> which will triggers the killing of multiple background processes at th=
+e
+> >> same time. Due to multiple exiting processes occupying multiple CPUs f=
+or
+> >> concurrent execution, the current foreground application's CPU resourc=
+es
+> >> are tight and may cause issues such as lagging.
+> >>
+> >> To solve this problem, we have introduced the multiple exiting process
+> >> asynchronous swap memory release mechanism, which isolates and caches
+> >> swap entries occupied by multiple exit processes, and hands them over
+> >> to an asynchronous kworker to complete the release. This allows the
+> >> exiting processes to complete quickly and release CPU resources. We ha=
+ve
+> >> validated this modification on the products and achieved the expected
+> >> benefits.
+> > Dumb question: why can't this be done in userspace?  The exiting
+> > process does fork/exit and lets the child do all this asynchronous free=
+ing?
+> The logic optimization for kernel releasing swap entries cannot be
+> implemented in userspace. The multiple exiting processes here own
+> their independent mm, rather than parent and child processes share the
+> same mm. Therefore, when the kernel executes multiple exiting process
+> simultaneously, they will definitely occupy multiple CPU core resources
+> to complete it.
+> >> It offers several benefits:
+> >> 1. Alleviate the high system cpu load caused by multiple exiting
+> >>     processes running simultaneously.
+> >> 2. Reduce lock competition in swap entry free path by an asynchronous
+> >>     kworker instead of multiple exiting processes parallel execution.
+> > Why is lock contention reduced?  The same amount of work needs to be
+> > done.
+> When multiple CPU cores run to release the different swap entries belong
+> to different exiting processes simultaneously, cluster lock or swapinfo
+> lock may encounter lock contention issues, and while an asynchronous
+> kworker that only occupies one CPU core is used to complete this work,
+> it can reduce the probability of lock contention and free up the
+> remaining CPU core resources for other non-exiting processes to use.
+> >
+> >> 3. Release memory occupied by exiting processes more efficiently.
+> > Probably it's slightly less efficient.
+> We observed that using an asynchronous kworker can result in more free
+> memory earlier. When multiple processes exit simultaneously, due to CPU
+> core resources competition, these exiting processes remain in a
+> runnable state for a long time and cannot release their occupied memory
+> resources timely.
+> >
+> > There are potential problems with this approach of passing work to a
+> > kernel thread:
+> >
+> > - The process will exit while its resources are still allocated.  But
+> >    its parent process assumes those resources are now all freed and the
+> >    parent process then proceeds to allocate resources.  This results in
+> >    a time period where peak resource consumption is higher than it was
+> >    before such a change.
+> - I don't think this modification will cause such a problem. Perhaps I
+>    haven't fully understood your meaning yet. Can you give me a specific
+>    example?
+
+Normally, after completing zap_pte_range, your swap slots are returned to
+the swap file, except for a few slot caches. However, with the asynchronous
+approach, it means that even after your process has completely exited,
+ some swap slots might still not be released to the system. This could
+potentially starve other processes waiting for swap slots to perform
+swap-outs. I assume this isn't a critical issue for you because, in the
+case of killing processes, freeing up memory is more important than
+releasing swap entries?
+
+
+> > - If all CPUs are running in userspace with realtime policy
+> >    (SCHED_FIFO, for example) then the kworker thread will not run,
+> >    indefinitely.
+> - In my clumsy understanding, the execution priority of kernel threads
+>    should not be lower than that of the exiting process, and the
+>    asynchronous kworker execution should only be triggered when the
+>    process exits. The exiting process should not be set to SCHED_LFO,
+>    so when the exiting process is executed, the asynchronous kworker
+>    should also have opportunity to get timely execution.
+> > - Work which should have been accounted to the exiting process will
+> >    instead go unaccounted.
+> - You are right, the statistics of process exit time may no longer be
+>    complete.
+> > So please fully address all these potential issues.
+> Thanks
+> Zhiguo
+>
+
+Thanks
+Barry
 
