@@ -1,145 +1,207 @@
-Return-Path: <linux-kernel+bounces-271419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 923DA944DF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:27:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C7B8944DFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40921C23976
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:27:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1CF1F251A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20521A4F2A;
-	Thu,  1 Aug 2024 14:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B9C1A4F21;
+	Thu,  1 Aug 2024 14:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l0SYYWVp"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdGuIYK6"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D8F16DECD;
-	Thu,  1 Aug 2024 14:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CDEE16DECD;
+	Thu,  1 Aug 2024 14:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722522449; cv=none; b=IMg1JtWy/VBtdUP4CTIRU9MOC2BFCaWfoViyuoReu4Jp9wtf2+S6DxAB4/WVUBfV6c7Gytm6Gy8gZUiRa+wt36OucU3yBRTQiSIWZBFkut8B/fqct39e9ybI0+Nk8uneutarBu5d8lnJGq2wCbo+3pyj1JN8uOk4W+5LKoYn/fA=
+	t=1722522489; cv=none; b=RWosu1o96349u2t0qadHCYJ0r/AJhsjgNZz6Np+ymXbQI2DAsXEbTNuQfkFNjYrhhypGG3EU5VxXrp1iwYTDjqs42o+zFljxzn3L0apgRoRQAAG9dKc3aB/JJxuxyVvWoZBTMmazRThn6AZWqMUlFgvEIo8d7fDA6qPXxgrSY9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722522449; c=relaxed/simple;
-	bh=1eCtyjCb2ulZJKrZXpSy4GAaQXl3s174LMRrlhPrCvA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SvYfGXIxXl+fXW0zy2Y7Q795HDlWkXizWvMW+YqxSbsKolCRZ65PJurzQWMA4257TKe3mbcyeSry/xLljE3exqWonbimdTa6VAu7TncFbL7ulS0EFYs+2qH3kCI50GEPAXUV4zydFxoBw+szjqAK7GXWv+o1CTCHg1QG8J/JhY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l0SYYWVp; arc=none smtp.client-ip=209.85.221.44
+	s=arc-20240116; t=1722522489; c=relaxed/simple;
+	bh=nXweTf1N/Qrtc92k2Hk2plyPYVbHK4S52KdhUzL4GTA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0Gwtz/03syP/bQYcigbulPVVbR4FX8QGqGYjHKegRIL54noJ9GI+66LLK+/s596tcaFPbVsf2T14wP0sDLRvbT/ynPxZupGczNyvX/NFvMoXNdXXIfKKyEuqKBP9akguUOkz2BHgEpdorwjtH0gJ8SGRz9BYYhmSKSBMB1aGCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdGuIYK6; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3684e8220f9so1210487f8f.1;
-        Thu, 01 Aug 2024 07:27:27 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7aabb71bb2so952304966b.2;
+        Thu, 01 Aug 2024 07:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722522446; x=1723127246; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mfKbjBr7r6HcdKc0OHBJ+FJnRWwVUcGXiKdD6HFJQMc=;
-        b=l0SYYWVpXU7Q3w5GROE4czLMuBG0qRCrNfMmHK6ipc5207lo8I4pgBoucwL7oXbfUn
-         VP/SH388RniSngjSDJ1shH+yNv2uLvt37KX27X1SM1AL7UFJhzjI6D5078JYmR05gbmj
-         znEWpzHB4Tb03V0E3L/5SytbZVUT3NCAemMKLn4STgIHG42RDVhxfNrls7udFayVH9gR
-         WO08VGfsuWjCLKfjLHaEhBG85zcFALkbR6acwj5dodJQqLDwCXG2SQRYfhbAgXcL5II3
-         tdCIj2pmII7PkQVQWi4yco2+5ZGnJEUlIpZxXEOkuxt623NUAj8BjAsEoY3GrPdxIbaI
-         MuoA==
+        d=gmail.com; s=20230601; t=1722522485; x=1723127285; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8hkL8OO2ZxeFgam3kNnsXVfMD29C3IsiuBvZny7yAE8=;
+        b=FdGuIYK6OuxWeiZo/NpbmdsoZKL2kxwLB3ed2/1VqBttR7RTCPWpZJ1hudD1f66ROs
+         YG0xj9BEf6GVRP1v3wJdOvri+Y1imt78/mS7rwc/iypeJO+mPaylrYO4n9jZEjt8dTbU
+         LlI3VkeQ8XO4xj64q7cBhsb5yfjq0u+FJLLwUP1R6zMuBqnOADD5MkZRki7cXLa+ryJB
+         5IfdvGLeN+Z08AVtXIaflHkI/36Z7BlhQopOk436XmuVmdc+0DwfancDm0dnXt2AFU4a
+         RP1p9PlP4TuPbMY5hSHR6buJ1En8rZ0oE2VCmWwlMCPIA5zXMKFB6sjdbzofmY7UZ6In
+         XGMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722522446; x=1723127246;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mfKbjBr7r6HcdKc0OHBJ+FJnRWwVUcGXiKdD6HFJQMc=;
-        b=Hh0XRiZjXOQpzpOh0YpPE/KRdHeq9bg0OUtXv5F9MUH6U88P43DPfhBD4aPov/76Aq
-         WLQW+o622fKVX5uoZe0uk59l6h5zH2XU+YcWpNJ4Vj37AtuGNw+5KhYlF2lP3ab+skXZ
-         S/nAAyOKcMVVPevuZgz9k72+4XjQ952Ob8Bz6Hf0HXtgak6dTygunU16c7Q8NsriOVL0
-         E4r3vtfIQZdMObdN4pak3EM3UHqY23hPIspC0QptRXzDq3cj6AbDffUZT+E4VbOP2EwN
-         hLZ8Gd8e/bpSwWSJVI1iO05lcGFoo/TrVkSmY7b/BErSFxAs5Xq9eqWy8ykYBO/oGmdr
-         c1vg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwaY5ZHo+JrK19RVugfQC9zt8EAb4xFOxTVGf0kDFgMggJfks7rREHixh6qgo2094QOWEiHuKP3i90AqXeZtOH8ix0H9ZXtolYr0U6mmFe8Z8o2Zg2w16f0WzO8NJ6mntn
-X-Gm-Message-State: AOJu0Yx0V8ZwxRZe3pMnUSXX90RGRFPFE1BFdMPUwSMcKUKZt94miZeA
-	2P2KfcrycTBldOYTsN9+VjjS04sWLUA8EUwHA7fAOLUXfPoeEUOk
-X-Google-Smtp-Source: AGHT+IFwthUZ5sW7c80c6OwV/xPl71OKvvZGW+mhzAMZR8/ZmM4lkVp1D/y4saHnLynHpvKPRHtIEA==
-X-Received: by 2002:adf:b102:0:b0:368:318a:a191 with SMTP id ffacd0b85a97d-36bb359d0ddmr1413042f8f.8.1722522445264;
-        Thu, 01 Aug 2024 07:27:25 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d966csm19610878f8f.38.2024.08.01.07.27.24
+        d=1e100.net; s=20230601; t=1722522485; x=1723127285;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8hkL8OO2ZxeFgam3kNnsXVfMD29C3IsiuBvZny7yAE8=;
+        b=tG94QfbALyVb/Cr+UOcFKbK3X3C2vfhgziWXuaIgCqUvOMj9D9b9do5Pd3YLAU4i6z
+         V50i91DwLm3IlHc2E6/78aTFYaj33tvjqnbGJOeIWc3GQRPDiQZpJ/ArE3tvnHacElJn
+         qIy39bdkozeDcng8qmWypQJIx+H9EbwJOcoimT8QMtxn6foPpsgOv6JjbxH+Y9f4NOw6
+         QGL5MfRWwwVIh3JrXsfGTEUCt/CO2F7joyodTCBnBbZJEPloxUza3IpiPLd+cqRFLyJ8
+         GAndLePc1OUF6Hw/di7QZD4h84BnnPQlj1NNZY+Z1xSXbpzs4ucLYyvWL655OiP60jb0
+         mzUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsO00nv9C7g3ha2c8DbrsJq1G4XA0ID5/CRzE43wGw1ukYDbPk3oAMKoJzCGA6RKSAMhqaJZIz0NryXCJWMN2hLSB9Bg3uaYkcVp+xeXV4UNvLiozG3sEevlx0l9Vtzb6w1PltSuCsdtHh02PzekMmCCYFTQ8hsKeJQCsPG9ZrVSWt4g==
+X-Gm-Message-State: AOJu0YwYCNQQuPm7LoiZe6Iib0+arpMPbiRqGjabQTlMC41B65+O+7KE
+	WZfjMvPQO0pLI6NY+9DXciH9+mEdYZz028YLYIKDfTOK44REyiK4rt7QmQ==
+X-Google-Smtp-Source: AGHT+IGFi4C4ODRsJyjv1TBoIj5UnVy1EOO44jMxcUUZsgY26wAnMlldo6NAF00nmgE5bCFQbiW3Bw==
+X-Received: by 2002:a17:907:868a:b0:a7a:b781:60ee with SMTP id a640c23a62f3a-a7dc506e7c4mr23118366b.48.1722522485001;
+        Thu, 01 Aug 2024 07:28:05 -0700 (PDT)
+Received: from debian ([2a00:79c0:66e:2400:224:9bff:fe22:6dd6])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4148fsm912381466b.121.2024.08.01.07.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:27:24 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 1 Aug 2024 16:27:17 +0200
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paulmck@kernel.org
-Subject: Re: [PATCH 5/8] uprobes: travers uprobe's consumer list locklessly
- under SRCU protection
-Message-ID: <ZqubRQ3TRsZbV9fo@krava>
-References: <20240731214256.3588718-1-andrii@kernel.org>
- <20240731214256.3588718-6-andrii@kernel.org>
+        Thu, 01 Aug 2024 07:28:04 -0700 (PDT)
+Date: Thu, 1 Aug 2024 16:28:02 +0200
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] pwm: add support for NXPs high-side switch
+ MC33XS2410
+Message-ID: <20240801142802.GA212266@debian>
+References: <20240515112034.298116-1-dima.fedrau@gmail.com>
+ <20240515112034.298116-3-dima.fedrau@gmail.com>
+ <aczpsiqyh4qsbvnqhqdnvkj2j3fihkltafop5ajkxm57sehbx5@mn4vp7avpeac>
+ <20240731084648.GA18584@debian>
+ <bokad5wa2vw5qwdrrqpkkyrxgmxco2ix76wdaxlqv6usi5rdck@46bp6ywqteo2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240731214256.3588718-6-andrii@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <bokad5wa2vw5qwdrrqpkkyrxgmxco2ix76wdaxlqv6usi5rdck@46bp6ywqteo2>
 
-On Wed, Jul 31, 2024 at 02:42:53PM -0700, Andrii Nakryiko wrote:
+Am Thu, Aug 01, 2024 at 12:24:28AM +0200 schrieb Uwe Kleine-König:
+Hi Uwe,
 
-SNIP
+[...]
 
->  static int __copy_insn(struct address_space *mapping, struct file *filp,
->  			void *insn, int nbytes, loff_t offset)
->  {
-> @@ -924,7 +901,8 @@ static bool filter_chain(struct uprobe *uprobe, struct mm_struct *mm)
->  	bool ret = false;
->  
->  	down_read(&uprobe->consumer_rwsem);
-> -	for (uc = uprobe->consumers; uc; uc = uc->next) {
-> +	list_for_each_entry_srcu(uc, &uprobe->consumers, cons_node,
-> +				 srcu_read_lock_held(&uprobes_srcu)) {
->  		ret = consumer_filter(uc, mm);
->  		if (ret)
->  			break;
-> @@ -1120,17 +1098,19 @@ void uprobe_unregister(struct uprobe *uprobe, struct uprobe_consumer *uc)
->  	int err;
->  
->  	down_write(&uprobe->register_rwsem);
-> -	if (WARN_ON(!consumer_del(uprobe, uc))) {
-> -		err = -ENOENT;
-> -	} else {
-> -		err = register_for_each_vma(uprobe, NULL);
-> -		/* TODO : cant unregister? schedule a worker thread */
-> -		WARN(err, "leaking uprobe due to failed unregistration");
-> -	}
-> +
-> +	list_del_rcu(&uc->cons_node);
+> > > > +static int mc33xs2410_pwm_get_relative_duty_cycle(u64 period, u64 duty_cycle)
+> > > > +{
+> > > > +	if (!period)
+> > > > +		return 0;
+> > > > +
+> > > > +	duty_cycle *= 256;
+> > > 
+> > > This might overflow.
+> > > 
+> > 
+> > How ? Max period and duty_cycle is checked by the caller and can be
+> > maximum 2000000000, 2000000000 * 256 = 512000000000, fits in u64. Did I
+> > miss anything ?
+> 
+> I didn't notice the check in the caller. Please add a respective comment
+> for the next reader who might miss that.
+> 
+Ok.
 
-hum, so previous code had a check to verify that consumer is actually
-registered in the uprobe, so it'd survive wrong argument while the new
-code could likely do things?
+> > > > +	duty_cycle = DIV_ROUND_CLOSEST_ULL(duty_cycle, period);
+> > > 
+> > > round-closest is most probably wrong. Please test your driver with
+> > > PWM_DEBUG enabled and increasing and decreasing series of duty_cycle and
+> > > period.
+> > 
+> > Yes, I should probably round it down. But I tested with PWM_DEBUG enabled
+> > and it gave me the best results so far. There are still few cases where
+> > there are complaints. I try to fix it.
+> 
+> I don't have the hardware so I cannot test myself. Please make sure that
+> there are no more complaints, at least none you are aware of. PWM_DEBUG
+> should be happy if you pick a hardware setting where period is maximal
+> but not bigger than requested and then for that given period duty_cycle
+> is maximal but not bigger than requested. So typically use round-down
+> division in .apply(). In .get_state() you should return a pwm_state that
+> makes .apply() write the exact same state as found when .get_state() was
+> called. So typically you have to use round-up there.
+>
 
-> +	err = register_for_each_vma(uprobe, NULL);
-> +
->  	up_write(&uprobe->register_rwsem);
->  
-> -	if (!err)
-> -		put_uprobe(uprobe);
-> +	/* TODO : cant unregister? schedule a worker thread */
-> +	if (WARN(err, "leaking uprobe due to failed unregistration"))
-> +		return;
-> +
-> +	put_uprobe(uprobe);
-> +
-> +	synchronize_srcu(&uprobes_srcu);
+Thanks, this fixed the remaining complaints. Did it exactly as you
+suggested.
 
-could you comment on why it's needed in here? there's already potential
-call_srcu(&uprobes_srcu, ... ) call in put_uprobe above
+> > > > +	state->polarity = (val[2] & MC33XS2410_PWM_CTRL1_POL_INV(pwm->hwpwm)) ?
+> > > > +			  PWM_POLARITY_INVERSED : PWM_POLARITY_NORMAL;
+> > > > +
+> > > > +	state->enabled = !!(val[3] & MC33XS2410_PWM_CTRL3_EN(pwm->hwpwm));
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > [...]
+> > > > +static int mc33xs2410_probe(struct spi_device *spi)
+> > > > +{
+> > > > [...]
+> > > > +	/* Disable watchdog */
+> > > > +	ret = mc33xs2410_write_reg(spi, MC33XS2410_WDT, 0x0);
+> > > > +	if (ret < 0)
+> > > > +		return dev_err_probe(dev, ret, "Failed to disable watchdog\n");
+> > > 
+> > > Wouldn't the watchdog functionality better be handled by a dedicated
+> > > watchdog driver? Disabling it here unconditionally looks wrong.
+> > 
+> > Yes, would be better. I planned this after this patchset is accepted.
+> > Without disabling the watchdog, the device is not able to operate. So I
+> > would stick to it for now and come up with a patch later on.
+> 
+> How long is the default timeout? Don't you need to disable the watchdog
+> in the bootloader anyhow?
+> 
 
-thanks,
-jirka
+Default and also maximum timeout is 256ms. My hardware is configured to
+let the device stay in reset until the driver puts it out of reset by
+setting the associated GPIO. Datasheet refers to it as "Disable mode".
+Outputs are turned off.
+Without having such reset logic, the device would need to have the
+watchdog disabled in the bootloader and continue in "Normal mode" or it
+would go into "Safe mode" while booting the kernel almost sure violating
+the timeout. Outputs are then controlled by the INx input logic signals.
+I think there is no single solution but rather depends on the use case.
+There are three modes which the device can be in when the driver is probed:
+"Disable", "Safe" and "Normal". All three are handled by this driver,
+assuming the watchdog should be disabled.
+
+> If you still think the watchdog should be disabled here, please add a
+> comment that it's conceptually wrong to do here, but needed until there
+> is a proper watchdog driver.
+> 
+
+I will leave a comment, but I'm not sure if I can come up with a good
+solution since the maximum timeout is very low with 256ms. For interaction
+with userspace it must be at least 1s.
+Why is the handling of the watchdog conceptually wrong here, I could use
+devm_watchdog_register_device to register it, why can't I just disable it
+here ?
+
+> Should this better be a mfd driver then?
+> 
+
+I don't thinks so, the watchdog and the outputs belong somehow together.
+When the device runs into an timeout it switches into "Safe" mode and the
+outputs are controlled by the INx input logic signals.
+I thought of a mfd device as a device which provides multiple functions
+not really belonging together. Didn't find a clear definition. What do you
+think of it ?
+
+Best regards
+Dimitri
 
