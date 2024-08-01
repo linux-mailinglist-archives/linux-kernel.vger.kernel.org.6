@@ -1,167 +1,213 @@
-Return-Path: <linux-kernel+bounces-271059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98619448FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:06:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 693B4944904
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93114282E8B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:06:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE66EB25CB9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EEF8183CA3;
-	Thu,  1 Aug 2024 10:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E2F184541;
+	Thu,  1 Aug 2024 10:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CjDTrCnM"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D1duKZfa"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77542AD25
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:06:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A50E184539;
+	Thu,  1 Aug 2024 10:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722506797; cv=none; b=u/jIElexd1+g55Swao2Fv4fG2pKwhvu3KmSGlJ87t/v2v5+KpVA0kDufy8Ig2cSiT3libBPjReywIn/Ky5NIG1X3sIs9Il6WrdhpFFpsr4DUNJnbl4mStcVkG65pCzlniqGfAbkns1uVcD+L8Loy36az2F9k1qI1+bWbum/HoOQ=
+	t=1722506830; cv=none; b=hvy8wvUbe9yKu7rPh8SvDdFVwGmtS8XGWD/Coc9/BxwJeKYQ/TBVKqGeDJiuvEoDr4lsdRrMm83E46wcnfc5II4hBBoV60Uegc6NQ86uO2zUIDsikUKzXePVHiQTx5C4R1xj9wfkn8ElQ9hzvgzjRV2VMkLVyvtv4fko+9l6R1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722506797; c=relaxed/simple;
-	bh=z+38KfQbcX75M09p1A5JOCVuDxFT9dHGHNtlhKcrH2k=;
+	s=arc-20240116; t=1722506830; c=relaxed/simple;
+	bh=9vSY6lydLkfNDrrATRB5SSKr4Pg3eOn4NQvD8VeqDqo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EtslFKq9O/aRX+9g0EdYC5/qXLI9/r5YHpHcOjozBpzuc9vC602vwWGNEUp1i9g0jY90CkTi1YHLyPLx8b9hK6kzRbBBqAPTAhOgxzB4WH5HDVgVVWY7BHBp/aD7RQgbQfV1v/2cBDDYmpr0xbfQqQK+Pg0lCKy0z3Pa+tHKvqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CjDTrCnM; arc=none smtp.client-ip=209.85.208.181
+	 To:Cc:Content-Type; b=S1G1puxQEeplSfLsSeXHkVtBtDmIFib/JkbeFUaLJfif9CuQO1wR0tR1LZ0VlFOv+32SdRvb1eBrcfxy1xgqN+VH8AXcdlhKb3dqMtZf+di4Ue6bg/2NzMnItksG2UKchlsAWgPIe7P0IeOET0cvpCYIkuBkd3XCdgwkhGH6WJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D1duKZfa; arc=none smtp.client-ip=209.85.208.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef25511ba9so15514211fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:06:35 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so11178055a12.3;
+        Thu, 01 Aug 2024 03:07:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722506794; x=1723111594; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722506827; x=1723111627; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=x9H4p7SX3GBcUrgM4jrD6G3JkbOOCNZRQrjrvId9xpo=;
-        b=CjDTrCnMj/iTpO3r1858F53jfALAQqtHsmW5CJXzU7AhOrd9WYORQux8QIPplda+LC
-         VlGAXog/0+UFgg5SVH9d4gf+ILOO02k48Z9vw3Xb8eAKTdxoeItZW0k5nRSXzrjPXXoV
-         mL9eoQerDZqUfcEpgqretvbcX8ox4nmUrkbCyQqQRsgdbUtzlCJzcVCDtd7JSjNgAz+u
-         sMfsuJsHIYqGD2oYceKwYWg12Eb8gRJvLW5GaSI3WN96Ig4RZO68y3nSsCbUHbAW4wIx
-         TfSwkwS3sO3EFwGC3kDwGcZLKjTa5QHTQr4PB72lgUsN5oje6WY2gi5yAFN2zJmwRQiq
-         TMcA==
+        bh=9vSY6lydLkfNDrrATRB5SSKr4Pg3eOn4NQvD8VeqDqo=;
+        b=D1duKZfad4AFIkhnVxuYh68HJxA3Wb63QOKBqUrG9ykbVlqRfh+PmHlQ9Mrro3YfW2
+         Qjstonc/GOVCkjhDHr9XkJpDiuNXZA+yhnSKfJ0UTp9AE2aNJ8yyvAFo7jNjyGLNqMUb
+         MzW6fWPnP2lyUDIPHnyF3NgmwiS03LRWUql9bV4qZk5VlJsKJ/7X4246eiQG+h/05QkJ
+         fD10xw3FoNZm/pjS5C8PVNOhN38pOLGA7rRaR/IXBmFoaQfy3iHEhOMzaBRXr5Vw+bQ0
+         NK8+8B+BJaKUefBUKw5qUKempljIa8ljPFQ+tPTI0UaLU8eoi05+R6cOBG1MS9RO9Jnv
+         x8aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722506794; x=1723111594;
+        d=1e100.net; s=20230601; t=1722506827; x=1723111627;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=x9H4p7SX3GBcUrgM4jrD6G3JkbOOCNZRQrjrvId9xpo=;
-        b=KnRGVS0jcqLOk6LnvCL5+g+xx+R+E6EyGN77qfs8Qp3nPEgH0joduBu0V2MJwLv6JI
-         6fjsjl5n7wg1Oa9ZOzo93ySzeICQnM7zKg0WfiP+BlcJR3Hiqud0iWkwRz/xiId9E1FM
-         fCc4bCEcJUHAY3d9pOoi+omjc+rqlt/MVZJbcXXf7UfTJg/gTwcIzDBQYBZwGmVnYfZG
-         dk316LJik+KFAh1MVsxJrtj298jhS36plJZPZ/GPAo1mFKz7lF02IMgCm66OD7o1zYvc
-         09cTnYEFlDQ0PCjZXeSCMXvQTdkHxNY8g7XPmEfeJsKcvQBJ5qGrJH0qQKMUHS+aSKz/
-         iSYA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5l+aAut2lznC/lMcBbE+KiRsJL/u6JNdRa+qZkWm0f6vd02mI80rpIaudVCE/zNbJzgFlS7XAsEO641HvBBq9rdUF0TBXJL3GOnCU
-X-Gm-Message-State: AOJu0Yz4a5GgHn1NMPl0uJqzWwJk8j5Ek1FxaOqJIELndimwHvLh7Cng
-	yRhqsC7f+yYQl2FDoEHu/lGnw7P//AWO8s0lTWas80EGuzKZ/UJRTyt+HfNGOJGbrorWCNyiRmk
-	kff22oPN12Cif+PEwq7yl6r7zuWQ=
-X-Google-Smtp-Source: AGHT+IHMAXL2mMQWuMoPOPqvgr1kp3DLO1F5BJ6JI3Iyw5DgPG5lsY4Jb7+69+dYUbBLCUbXRUA7WA8c+T+bmPuxkk4=
-X-Received: by 2002:a05:6512:1308:b0:52b:faa1:7c74 with SMTP id
- 2adb3069b0e04-530b8cf905bmr292255e87.5.1722506793489; Thu, 01 Aug 2024
- 03:06:33 -0700 (PDT)
+        bh=9vSY6lydLkfNDrrATRB5SSKr4Pg3eOn4NQvD8VeqDqo=;
+        b=jCsXrDMyl7Iec++jQ1GfqghH1OrE5zm/MwNKAWa8HY7cAoO8NW1rBYpORV94TOcn7o
+         0xUfUeyH42XrTjrcd3FOddcSETVFeqyYASrSd5tP1iMtGmgHD/a/7bNRmKwVYo/by9pS
+         KK6SLgPdqm3NJcyqtHFjX5+ddxxNBqg/iWvhNmxFiZAXMKFUNS8BRZA5bemptBNhZDJu
+         wxuJwBKaKJ3x1+6Kb86+wZFD/fIFNm1kwxkQx8ckh1RnCTIHGJ5zkmV7dCyliJbwHbrN
+         p9TOfh/jwe1N9ATNMZf5kP69a+swrAgoCQV+GtNr5ieD7bhuZEXwh6JVY5j/u5qw8LNa
+         jAtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRh9g9iH/Mw1ioxtWzUrQU4RpxYRNWKP3XC/SG/7a23JJzc2qStqOSvULxYwkdx1HXsqF0QUh9mY3gWa+X4MOeSUxIUTkTg3qtmCl6ebiy3GBI9YV/cQA9rlYjRzPT7q5qQ7WqrA327WflP9VazASVzFCYASot6trHlW9HcTn3qgFFAqw=
+X-Gm-Message-State: AOJu0Yw1XuRcSnaxEyr7SeQ7vQPGd4QFbq5BFzxubAo3+0pqRevONncW
+	RkeDt+awV0c5uzTfTkhLp9DMlygwuaD/30FN6AzqllLf3//UCIQHwlv9Jw0S9ifBGsXBlwlBmBR
+	GgLLO7GBnocxeQT1U4FaI2LRe8NA=
+X-Google-Smtp-Source: AGHT+IEtvdEGMEdlpwj3fZzWkXiTreBRhSwXUsC3Ll4UR5KrAHhq3dJbqwzS/CodcHNC4Ebn20/zdzul4iKt8ZqGaUU=
+X-Received: by 2002:a50:ec82:0:b0:5a0:d481:a22a with SMTP id
+ 4fb4d7f45d1cf-5b6fe82383emr1267700a12.7.1722506826299; Thu, 01 Aug 2024
+ 03:07:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
- <3c79021a-e9a0-4669-a4e7-7060edf12d58@redhat.com> <CAMgjq7CWwK75_2Zi5P40K08pk9iqOcuWKL6khu=x4Yg_nXaQag@mail.gmail.com>
-In-Reply-To: <CAMgjq7CWwK75_2Zi5P40K08pk9iqOcuWKL6khu=x4Yg_nXaQag@mail.gmail.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Thu, 1 Aug 2024 18:06:16 +0800
-Message-ID: <CAMgjq7Dtw1+aKk3gJkcRL5BXYZHmav_T28aPbZew5qZ87VRHdA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap cluster order
-To: David Hildenbrand <david@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chris Li <chrisl@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, Kalesh Singh <kaleshsingh@google.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Barry Song <baohua@kernel.org>
+References: <20240430-loongson1-nand-v7-0-60787c314fa4@gmail.com>
+ <20240430-loongson1-nand-v7-2-60787c314fa4@gmail.com> <20240506091748.18c120d5@xps-13>
+ <CAJhJPsVOx_AZmsRuZ5jy2-wJ+7-Wm+8RQAJ_LhKGLU3aFzrR7g@mail.gmail.com> <20240520173325.79fee6a5@xps-13>
+In-Reply-To: <20240520173325.79fee6a5@xps-13>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Thu, 1 Aug 2024 18:06:29 +0800
+Message-ID: <CAJhJPsWczs4o0Fj9+77r8jPcd4C9Hih5kxy=3X-3Tyz-0-3SDg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] mtd: rawnand: Enable monolithic read when reading subpages
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 1, 2024 at 5:59=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrote=
-:
->
-> On Thu, Aug 1, 2024 at 5:15=E2=80=AFPM David Hildenbrand <david@redhat.co=
-m> wrote:
-> >
-> > On 31.07.24 08:49, Chris Li wrote:
-> > > This is the short term solutions "swap cluster order" listed
-> > > in my "Swap Abstraction" discussion slice 8 in the recent
-> > > LSF/MM conference.
-> > >
-> >
-> > Running the cow.c selftest on mm/mm-unstable, I get:
->
-> Hi David, thanks very much for the test and report!
->
-> >
-> > # [RUN] Basic COW after fork() with mprotect() optimization ... with sw=
-apped-out, PTE-mapped THP (1024 kB)
-> > [   51.865309] Oops: general protection fault, probably for non-canonic=
-al address 0xdead000000000108: 0000 [#1] PREEMPT SMP NOPTI
-> > [   51.867738] CPU: 21 UID: 0 PID: 282 Comm: kworker/21:1 Not tainted 6=
-.11.0-rc1+ #11
-> > [   51.869566] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS=
- 1.16.3-2.fc40 04/01/2014
-> > [   51.871298] Workqueue: events swap_discard_work
-> > [   51.872211] RIP: 0010:__free_cluster+0x27/0x90
-> > [   51.873101] Code: 90 90 90 0f 1f 44 00 00 8b 0d 8d 95 96 01 55 48 89=
- fd 53 48 89 f3 85 c9 75 3a 48 8b 43 50 48 8b 4b 48 48 8d 53 48 48 83 c5 60=
- <48> 89 41 08 48 89 08 48 8b 45 08 48 89 55 08 48 89 43 50 48 89 6b
-> > [   51.876720] RSP: 0018:ffffa3dcc0aafdc8 EFLAGS: 00010286
-> > [   51.877752] RAX: dead000000000122 RBX: ffff8e7ed9686e00 RCX: dead000=
-000000100
-> > [   51.879186] RDX: ffff8e7ed9686e48 RSI: ffff8e7ed9686e18 RDI: ffff8e7=
-ec37831c0
-> > [   51.880577] RBP: ffff8e7ec5d10860 R08: 0000000000000001 R09: 0000000=
-000000028
-> > [   51.881972] R10: 0000000000000200 R11: 00000000000004cb R12: ffff8e7=
-ed9686e00
-> > [   51.883393] R13: 0000000000028200 R14: 0000000000028000 R15: 0000000=
-000000000
-> > [   51.884827] FS:  0000000000000000(0000) GS:ffff8e822f480000(0000) kn=
-lGS:0000000000000000
-> > [   51.886412] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > [   51.887532] CR2: 00007f37d7e17840 CR3: 0000000335a3a001 CR4: 0000000=
-000770ef0
-> > [   51.888931] PKRU: 55555554
-> > [   51.889471] Call Trace:
-> > [   51.889964]  <TASK>
-> > [   51.890391]  ? __die_body.cold+0x19/0x27
-> > [   51.891174]  ? die_addr+0x3c/0x60
-> > [   51.891824]  ? exc_general_protection+0x14f/0x430
-> > [   51.892754]  ? asm_exc_general_protection+0x26/0x30
-> > [   51.893717]  ? __free_cluster+0x27/0x90
-> > [   51.894483]  ? __free_cluster+0x7e/0x90
-> > [   51.895245]  swap_do_scheduled_discard+0x142/0x1b0
-> > [   51.896189]  swap_discard_work+0x26/0x30
-> > [   51.896958]  process_one_work+0x211/0x5a0
-> > [   51.897750]  ? srso_alias_return_thunk+0x5/0xfbef5
-> > [   51.898693]  worker_thread+0x1c9/0x3c0
-> > [   51.899438]  ? __pfx_worker_thread+0x10/0x10
-> > [   51.900287]  kthread+0xe3/0x110
-> > [   51.900913]  ? __pfx_kthread+0x10/0x10
-> > [   51.901656]  ret_from_fork+0x34/0x50
-> > [   51.902377]  ? __pfx_kthread+0x10/0x10
-> > [   51.903114]  ret_from_fork_asm+0x1a/0x30
-> > [   51.903896]  </TASK>
-> >
-> >
-> > Maybe related to this series?
->
-> Right, I can reproduce your problem and I believe this patch can fix
-> it, see the attachment.
->
-> Hi Andrew, can you pick this patch too?
+Sorry!
+I admit this is taking a shortcut.
+Will drop this patch and implement subpage read instead.
+Thanks!
 
-This issue is caused by my PATCH 9/9 and this attachment patch can be
-squashed into it, very sorry for the problem.
+On Mon, May 20, 2024 at 11:33=E2=80=AFPM Miquel Raynal
+
+<miquel.raynal@bootlin.com> wrote:
+>
+> Hi Keguang,
+>
+> keguang.zhang@gmail.com wrote on Mon, 20 May 2024 18:42:30 +0800:
+>
+> > On Mon, May 6, 2024 at 3:17=E2=80=AFPM Miquel Raynal <miquel.raynal@boo=
+tlin.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > devnull+keguang.zhang.gmail.com@kernel.org wrote on Tue, 30 Apr 2024
+> > > 19:11:11 +0800:
+> > >
+> > > > From: Keguang Zhang <keguang.zhang@gmail.com>
+> > > >
+> > > > nand_read_subpage() reads data and ECC data by two separate
+> > > > operations.
+> > > > This patch allows the NAND controllers who support
+> > > > monolithic page read to do subpage read by a single operation,
+> > > > which is more effective than nand_read_subpage().
+> > >
+> > > I am a bit puzzled by this change. Usually nand_read_subpage is used
+> > > for optimizations (when less data than a full page must be retrieved)=
+.
+> > > I know it may be used in other cases (because it's easier for the cor=
+e
+> > > in order to support a wide range of controllers). Can you please show=
+ a
+> > > speed test showing the results before I consider merging this patch?
+> > >
+> > With this patch:
+> > # flash_speed -c 128 -d /dev/mtd1
+> > scanning for bad eraseblocks
+> > scanned 128 eraseblocks, 0 are bad
+> > testing eraseblock write speed
+> > eraseblock write speed is 2112 KiB/s
+> > testing eraseblock read speed
+> > eraseblock read speed is 3454 KiB/s
+> > testing page write speed
+> > page write speed is 1915 KiB/s
+> > testing page read speed
+> > page read speed is 2999 KiB/s
+> > testing 2 page write speed
+> > 2 page write speed is 2000 KiB/s
+> > testing 2 page read speed
+> > 2 page read speed is 3207 KiB/s
+> > Testing erase speed
+> > erase speed is 72495 KiB/s
+> > Testing 2x multi-block erase speed
+> > 2x multi-block erase speed is 74135 KiB/s
+> > Testing 4x multi-block erase speed
+> > 4x multi-block erase speed is 74812 KiB/s
+> > Testing 8x multi-block erase speed
+> > 8x multi-block erase speed is 75502 KiB/s
+> > Testing 16x multi-block erase speed
+> > 16x multi-block erase speed is 75851 KiB/s
+> > Testing 32x multi-block erase speed
+> > 32x multi-block erase speed is 75851 KiB/s
+> > Testing 64x multi-block erase speed
+> > 64x multi-block erase speed is 76204 KiB/s
+> > finished
+> >
+> > Without this patch:
+> > # flash_speed -c 128 -d /dev/mtd1
+> > scanning for bad eraseblocks
+> > scanned 128 eraseblocks, 0 are bad
+> > testing eraseblock write speed
+> > eraseblock write speed is 2074 KiB/s
+> > testing eraseblock read speed
+> > eraseblock read speed is 2895 KiB/s
+> > testing page write speed
+> > page write speed is 998 KiB/s
+> > testing page read speed
+> > page read speed is 1499 KiB/s
+> > testing 2 page write speed
+> > 2 page write speed is 1002 KiB/s
+> > testing 2 page read speed
+> > 2 page read speed is 1554 KiB/s
+> > Testing erase speed
+> > erase speed is 76560 KiB/s
+> > Testing 2x multi-block erase speed
+> > 2x multi-block erase speed is 74019 KiB/s
+> > Testing 4x multi-block erase speed
+> > 4x multi-block erase speed is 74769 KiB/s
+> > Testing 8x multi-block erase speed
+> > 8x multi-block erase speed is 75149 KiB/s
+> > Testing 16x multi-block erase speed
+> > 16x multi-block erase speed is 75921 KiB/s
+> > Testing 32x multi-block erase speed
+> > 32x multi-block erase speed is 75921 KiB/s
+> > Testing 64x multi-block erase speed
+> > 64x multi-block erase speed is 75921 KiB/s
+> > finished
+> >
+> > The throughput of the former is twice that of the latter.
+>
+> And what is your NAND controller driver?
+>
+> subpage reads are used when you only want to read a subset of a NAND
+> page.
+>
+> Otherwise the core may use the RNDOUT command to change the pointer in
+> the chip's SRAM to read from a different location, but I don't see what
+> is impacting so much, unless if the driver implementation is really
+> sub-optimized.
+>
+> Thanks,
+> Miqu=C3=A8l
+
+
+
+--
+Best regards,
+
+Keguang Zhang
 
