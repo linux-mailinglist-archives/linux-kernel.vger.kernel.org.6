@@ -1,139 +1,153 @@
-Return-Path: <linux-kernel+bounces-270633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F7E944296
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:15:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E03694429A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E7A1C2195C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F99282E10
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EB913D8B0;
-	Thu,  1 Aug 2024 05:15:31 +0000 (UTC)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D271411E3;
+	Thu,  1 Aug 2024 05:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNtAANL7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D6313D613;
-	Thu,  1 Aug 2024 05:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4670132114;
+	Thu,  1 Aug 2024 05:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722489330; cv=none; b=KXlw0Vw3TD0FBi3iK2qhrRIm6lhCv1pF9xQ3qeJB/eJNiWLxR9G78T8kmLdqgdjPJeX0i60I4BzakPz50MN5cbpNElx6wyHsy3AMhP7/8qQQguWnzMDVg1VVyJg1tyL/h3f9tF9CPpajSJbVs77QTq5WQpZaFhvvDOMVeLd/77I=
+	t=1722489649; cv=none; b=OY3z8ja+oTbVxfZ2GQ0NCDC0D34kjVywmQyxA85uVUAL3kBeBDaez37jj3d++ZZgSCcK37eqZIILTsUUDzhW+1SuNjPmELTc8ISoeJWTBjH33VPyD8uJ0XgXZ/gQ+07PVd+8rFwzTfi4q/KE6UT2tQzCVzJxU9cxgZ1hWXdbjEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722489330; c=relaxed/simple;
-	bh=nbVPwshAhNrpEsKdxoyVRVev85k1jNuEZ74G8+iJ0NA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k/rbRCqScY3spVU1yCXmFc3BGuafjFIPdUDPOP0TBDJzCnjWaoCgDSXcgUnccjxCsdpshP8PIIsaNrRNow5JMaUdgMIDN2JvQqdHOBt/p/6CttJFQ8WjQzcVagWIS6yO9WgwzlsSQd+cNeQYF2d/+QGjjFDfq8gFfLIL7HnKSoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so348326866b.3;
-        Wed, 31 Jul 2024 22:15:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722489327; x=1723094127;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6B8zqxcAWF094Dn9mqbd0CWQdZb8mUOrQJBlF9bReUs=;
-        b=TZLI/xN2wjsWMkKLjZAk4nbUXAAzvkLXD1/lwNYFVKVcTu8ZubndYL5xsgkOYUVYLz
-         tkXpAlMpon+y2H/rf8mvu89KHsBNWaRm7RR8JKM21Awym+nsCSQWQ02Cbg1zloi/9f/B
-         uftPaLgkiDfD5TTHa9m07+y1V3DO/BeaVzeebkVmxs2AOI86OpWI/lOYY7imrLe2l+Sp
-         wgoES8oWr0XJ6ffv/LAc3Jg71gb579DQ58OAKlmA8Fnx1UC3HT2vQr/OWmM8b5NjE0Wh
-         PQhwI4iHJu7c79RZ7Mb9bHYP+VFyn3oOQwcapBtw1ce6PRq8IXunQ+rpo5DKxDrXgRgc
-         /XSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOJraQlW8TEAr8j+tUMYWxe7r5G4V4ACVzYLJSvx7beLwXFnePGDj67zYedqVrAjjNcgIv8vf3J2O3edGFXkY/qsMVHnJXITzuZLrt20SOWulkEsAVO9uVTJQ3+wcYascmqMVZ
-X-Gm-Message-State: AOJu0Yyu0xjxSM3LK46oMLL/OfXgN734qzZ/ryDNlBFJ4wqX7h5UlBHI
-	DkNolyagxt7CeRJhiVCwuG3hLKMt8atrf59OC3ORqwvr4WosVjn0
-X-Google-Smtp-Source: AGHT+IGXwU28ZlxI9fyosqcU/z8I5NoWlqigyE3Q1sLDc3Kf3NzxQ2p5rwPqHy4k8rHun/ppK6aMIQ==
-X-Received: by 2002:a17:906:dc8e:b0:a7a:a33e:47cc with SMTP id a640c23a62f3a-a7daf76b23dmr95551766b.59.1722489327205;
-        Wed, 31 Jul 2024 22:15:27 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::aaaa:69? ([2a0b:e7c0:0:107::aaaa:69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acadb97e0sm847145566b.210.2024.07.31.22.15.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 22:15:26 -0700 (PDT)
-Message-ID: <d5eff99e-bcfc-44b2-83b8-6eb585441670@kernel.org>
-Date: Thu, 1 Aug 2024 07:15:25 +0200
+	s=arc-20240116; t=1722489649; c=relaxed/simple;
+	bh=YU/63FNruDeAFMPEDziJs8zsHHNVgZHddDQyLvPxjlU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NElOGtziBLIkPsSBMrAxz3GEQbQeY7Qq/DKvmmnHqmxY3xezvc4IiRmaZBPfzhWA5Gr2YImhR0wVpAIxMHrEQYm80Ldy57yHDMpDhx4zKjC4llOcHtiy/XJrLmbDfwxGFAu5w+sYM50FTFNW1mKdYQKL/8hK2ogqohUTWwQ90Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNtAANL7; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722489648; x=1754025648;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=YU/63FNruDeAFMPEDziJs8zsHHNVgZHddDQyLvPxjlU=;
+  b=bNtAANL7D/qVYdAUie5WTTxuEH4P8jZk5X4nVs0axv/YYlnUrOwOkHTb
+   9VtEDScLLsCEvqF/AwgA/8PVDxu2pVKeC8o9k3htlMRAUMXgj+xqyHIV+
+   bGFJXp2hYDRE4jH4WbvRqQHwdEhmU9WewdHdCHsnBe4aP9OGtWblXWMVA
+   tj+5vHrtgAtOxvMMnJKUno2BICOywFh8t9DUtdpsS12DkTSmZY/HVrkBc
+   pHz/yl0115WiBOcEByatP7haeXb5R8+bdJB5H7PWk5fMdXXQ42AlpX59a
+   s2K8dPZcu7TmNWyiFo53EvXop/RBkk9e/r+w/6Wf0yGvki/se5xXVd9wv
+   A==;
+X-CSE-ConnectionGUID: jz/avY4oTK2SaFYqce16gA==
+X-CSE-MsgGUID: GBLJlWMwQzyyUkLFVR+74g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="12821721"
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="12821721"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 22:20:46 -0700
+X-CSE-ConnectionGUID: bOp73MO1TJKYTzo1pn40ag==
+X-CSE-MsgGUID: joynoDV1R9areN3oEVhvkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="59951363"
+Received: from skuppusw-desk2.jf.intel.com ([10.165.154.101])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 22:20:46 -0700
+From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+To: Jithu Joseph <jithu.joseph@intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Ashok Raj <ashok.raj@intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-trace-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Shankar Ravi V <ravi.v.shankar@intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] Add SBAF test to IFS
+Date: Thu,  1 Aug 2024 05:18:10 +0000
+Message-Id: <20240801051814.1935149-1-sathyanarayanan.kuppuswamy@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/809] 6.10.3-rc3 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240731095022.970699670@linuxfoundation.org>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20240731095022.970699670@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 31. 07. 24, 12:03, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.3 release.
-> There are 809 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+This patch series adds support for Structural Based Functional Test at
+Field (SBAF) in the IFS driver. SBAF is a new type of testing that
+provides comprehensive core test coverage, complementing existing IFS
+tests like Scan at Field (SAF) and ArrayBist. Granite Rapids (GNR) is
+the first platform that supports SBAF.
 
-openSUSE configs¹⁾ all green. x86_64 runs fine in qemu.
+SBAF mimics the manufacturing screening environment and leverages the
+same test suite. It makes use of Design For Test (DFT) observation
+sites and features to maximize coverage in minimum time.
 
-Tested-by: Jiri Slaby <jirislaby@kernel.org>
+Similar to the SAF test, SBAF isolates the core under test from the
+rest of the system during execution. Upon completion, the core
+seamlessly resets to its pre-test state and resumes normal operation.
+Any machine checks or hangs encountered during the test are confined to
+the isolated core, preventing disruption to the overall system. Like
+SAF test, the SBAF test is also divided into multiple batches, and each
+batch test can take hundreds of milliseconds (100-200 ms) to complete.
+If such a lengthy interruption is undesirable, it is recommended to
+relocate the time-sensitive applications to other cores for the
+duration of the test.
 
-¹⁾ armv6hl armv7hl arm64 i386 ppc64 ppc64le riscv64 s390x x86_64
+Patch Details:
 
-thanks,
+Patch 1/4: Refactors MSR usage in IFS image loading code to share the
+           code between SBAF and SAF tests.
+Patch 2/4: Leverages SAF image loading logic and adds SBAF image loading support.
+Patch 3/4: Adds support for user to trigger SBAF test.
+Patch 4/4: Adds trace support for SBAF tests.
+
+This series is originally authored by Jithu Joseph. I have made cleanups
+related to code reuse between the SBAF and SAF tests and resubmitting it for
+review.
+
+Changes since v3:
+ * Rebased on top of v6.11-rc1
+ * Added missing error return value in validate_ifs_metadata().
+
+Changes since v2:
+ * Added Reviewed-by tags from Ilpo and Steven.
+ * Fixed minor issues raised by Ilpo.
+
+Changes since v1:
+ * Addressed trace struct hole issue (Steven)
+ * Fixed initialization issue in ifs_sbaf_test_core() (Ilpo)
+
+Jithu Joseph (3):
+  platform/x86/intel/ifs: Add SBAF test image loading support
+  platform/x86/intel/ifs: Add SBAF test support
+  trace: platform/x86/intel/ifs: Add SBAF trace support
+
+Kuppuswamy Sathyanarayanan (1):
+  platform/x86/intel/ifs: Refactor MSR usage in IFS test code
+
+ arch/x86/include/asm/msr-index.h         |   2 +
+ drivers/platform/x86/intel/ifs/ifs.h     |  92 ++++++++-
+ include/trace/events/intel_ifs.h         |  27 +++
+ drivers/platform/x86/intel/ifs/core.c    |  33 ++++
+ drivers/platform/x86/intel/ifs/load.c    |  40 ++--
+ drivers/platform/x86/intel/ifs/runtest.c | 233 +++++++++++++++++++++++
+ 6 files changed, 412 insertions(+), 15 deletions(-)
+
 -- 
-js
-suse labs
+2.25.1
 
 
