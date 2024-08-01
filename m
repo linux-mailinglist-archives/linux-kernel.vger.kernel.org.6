@@ -1,156 +1,158 @@
-Return-Path: <linux-kernel+bounces-271022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 412E694488C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A0629448A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01C4C2866F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80CF286F59
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA284183CD8;
-	Thu,  1 Aug 2024 09:34:33 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EAA170855;
+	Thu,  1 Aug 2024 09:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lSJuRtXi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="U8dHQ5R3"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D38170A14
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F70BEEB3;
+	Thu,  1 Aug 2024 09:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504873; cv=none; b=iyiVEPgyWiY8gNNBWeGIaxNZ0hkJJ9Zv339rAdjnuQcty0oN+W/N9TRvuPnrgl6eeEq5kGmlIBJwm2n17SuqQcmQM5kLkuR0MBdrDvBpmnQ/S7oD/eOMGdMtQU5XD2Oip5VadM2dIgBoJds8dFDk5X72VTAEw4cQTlOL3FBPw5s=
+	t=1722505245; cv=none; b=oca33kRwUZ2ycoeaTmsKmssQXVOs0qU/0PLzUuqKF/xJXbOcUlcfx7zU6oorzqQAfa91M4zTdZbdzabQoF0o8qnNL0niw7bhiULuI3z59E+ppJJZW/gBVhkm4H1Ta80urV7LM5G04UUfAnVWLjAu1m7JclssmOWRvp3OObTm2zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504873; c=relaxed/simple;
-	bh=8yzCb93TuGtK+6B7TxSx3zh57RFbaWRvc8mJ+LFybbI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aNBlBMc607TN8sPg3ZmgmiRXSwFg5IQGBT/Mlo08gyYAmNZHVNdJzVsToiYiYDgGFsPO3/EfC2kEOYIQOYHMS5n/D9m4I90peCw1/UzrLdfltl6C53EonuCYeOCdBlwciLZdLS268vWTS/fNW43QsVA6wHddDjaAr53/XKJ4xsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZNvr3TNKzyPSr;
-	Thu,  1 Aug 2024 17:29:28 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id D504018006C;
-	Thu,  1 Aug 2024 17:34:27 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 1 Aug
- 2024 17:34:27 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <linux@armlinux.org.uk>, <dianders@chromium.org>, <mhocko@suse.com>,
-	<akpm@linux-foundation.org>, <maz@kernel.org>, <vschneid@redhat.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH] ARM: smp: Fix missing backtrace IPI statics
-Date: Thu, 1 Aug 2024 17:40:22 +0800
-Message-ID: <20240801094022.1402616-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722505245; c=relaxed/simple;
+	bh=slx9GME8fpCyBB5+RUUSCj5M9YwkH+vofD8BNrGzCSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=makT2u0+E6mB408uJfMKmNzV4NbXqDzM994zYa6o3K9QMAaDUkWjMnjQJ7aHrbiR3ZeK9UgpqrahQ1nls8Q7TwQPIirshNgK24wUl94tD49aBqaKrsjdpCJ9NngKZpfe1pWbblKs09hueukH08M0lFs7hgigGhc4r6cJYBBAo4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lSJuRtXi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=U8dHQ5R3; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 1 Aug 2024 11:40:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722505241;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=rPX5ai+QQ/sOOeKlbiKU69vZ/qTP4RNjkrEJ+PcP1r0=;
+	b=lSJuRtXiqPMeWYsBjkepjA+Y2Rv9KnSF6Ieqi3GqtLo1xwTQVSkrtCRuhi5s0aQ0YKjpOp
+	HuHsI+6P2H1cz0eQkEQk7iObalvV2PraKH+pvSnD5Ty2EWeBbekfQ35V4ITBGcAA2to2kc
+	ZZ2WCooC8Lm86JJuPoJfkS80aMPU/YgzhO0QZDFMYu9bbRg5y815NrObyPacEFMZts9RAA
+	skvHm/hOWusr5wmjlCOhxcRaUoRi7IAL7FPT2PxxKBsUp//HlWVRJibg+ohuiutHOznys9
+	0sI3UPs9uloFhyDpQBLM/3//vHmxpzWvQ6ogUu9wN908oDN4ONzF264uUyX+kA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722505241;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=rPX5ai+QQ/sOOeKlbiKU69vZ/qTP4RNjkrEJ+PcP1r0=;
+	b=U8dHQ5R3wv7AiywICf5jqN9yKvIfadIuCs4s85sI/VdONsTg5TQwwArCgWEKXvFsFbgQff
+	F+n/tEGek92lmgDQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.10.2-rt13
+Message-ID: <20240801094040.pdwf9TLs@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-It is similar to ARM64 commit 916b93f4e865 ("arm64: smp: Fix missing IPI
-statistics"), commit 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal
-interrupts") set CPU_BACKTRACE IPI "IRQ_HIDDEN" flag but not show it in
-show_ipi_list(), which cause the interrupt kstat_irqs accounting
-is missing in display.
+Dear RT folks!
 
-Before this patch, CPU_BACKTRACE IPI is missing (QEMU vexpress-a9):
-	 # cat /proc/interrupts
-	           CPU0
-	 24:          6 GIC-0  34 Level     timer
-	 25:        455 GIC-0  29 Level     twd
-	 26:         42 GIC-0  75 Edge      virtio0
-	 29:          8 GIC-0  44 Level     kmi-pl050
-	 30:        118 GIC-0  45 Level     kmi-pl050
-	 31:          0 GIC-0  36 Level     rtc-pl031
-	 32:          0 GIC-0  41 Level     mmci-pl18x (cmd)
-	 33:          0 GIC-0  42 Level     mmci-pl18x (pio)
-	 34:          0 GIC-0  92 Level     arm-pmu
-	 35:          0 GIC-0  93 Level     arm-pmu
-	 36:          0 GIC-0  94 Level     arm-pmu
-	 37:          0 GIC-0  95 Level     arm-pmu
-	 39:         15 GIC-0  37 Level     uart-pl011
-	IPI0:          0  CPU wakeup interrupts
-	IPI1:          0  Timer broadcast interrupts
-	IPI2:          0  Rescheduling interrupts
-	IPI3:          0  Function call interrupts
-	IPI4:          0  CPU stop interrupts
-	IPI5:          0  IRQ work interrupts
-	IPI6:          0  completion interrupts
-	Err:          0
+I'm pleased to announce the v6.10.2-rt13 patch set. 
 
-After this pacth, CPU_BACKTRACE IPI is displayed:
-	 # cat /proc/interrupts
-	           CPU0
-	 24:          6 GIC-0  34 Level     timer
-	 25:        687 GIC-0  29 Level     twd
-	 26:         42 GIC-0  75 Edge      virtio0
-	 29:          8 GIC-0  44 Level     kmi-pl050
-	 30:        134 GIC-0  45 Level     kmi-pl050
-	 31:          0 GIC-0  36 Level     rtc-pl031
-	 32:          0 GIC-0  41 Level     mmci-pl18x (cmd)
-	 33:          0 GIC-0  42 Level     mmci-pl18x (pio)
-	 34:          0 GIC-0  92 Level     arm-pmu
-	 35:          0 GIC-0  93 Level     arm-pmu
-	 36:          0 GIC-0  94 Level     arm-pmu
-	 37:          0 GIC-0  95 Level     arm-pmu
-	 39:         29 GIC-0  37 Level     uart-pl011
-	IPI0:          0  CPU wakeup interrupts
-	IPI1:          0  Timer broadcast interrupts
-	IPI2:          0  Rescheduling interrupts
-	IPI3:          0  Function call interrupts
-	IPI4:          0  CPU stop interrupts
-	IPI5:          0  IRQ work interrupts
-	IPI6:          0  completion interrupts
-	IPI7:          0  CPU backtrace interrupts
-	Err:          0
+Changes since v6.10.2-rt12:
 
-Fixes: 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal interrupts")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- arch/arm/kernel/smp.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+  - Guenter Roeck reported that tinyconfig builds broke. Patch by Linus
+    Torvalds.
 
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index 3431c0553f45..be15cca7f8d7 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -531,7 +531,7 @@ void __init smp_prepare_cpus(unsigned int max_cpus)
- 	}
- }
+  - syzbot reported crashes with the tun driver. Patch by Jeongjun Park. 
+
+Known issues
+    None.
+
+The delta patch against v6.10.2-rt12 is appended below and can be found here:
  
--static const char *ipi_types[NR_IPI] __tracepoint_string = {
-+static const char *ipi_types[MAX_IPI] __tracepoint_string = {
- 	[IPI_WAKEUP]		= "CPU wakeup interrupts",
- 	[IPI_TIMER]		= "Timer broadcast interrupts",
- 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
-@@ -539,6 +539,7 @@ static const char *ipi_types[NR_IPI] __tracepoint_string = {
- 	[IPI_CPU_STOP]		= "CPU stop interrupts",
- 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
- 	[IPI_COMPLETION]	= "completion interrupts",
-+	[IPI_CPU_BACKTRACE]	= "CPU backtrace interrupts"
- };
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/incr/patch-6.10.2-rt12-rt13.patch.xz
+
+You can get this release via the git tree at:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.10.2-rt13
+
+The RT patch against v6.10.2 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/older/patch-6.10.2-rt13.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.10/older/patches-6.10.2-rt13.tar.xz
+
+Sebastian
+
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 05fb41fe09f5d..8f9c30e732a0a 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -7,12 +7,14 @@
  
- static void smp_cross_call(const struct cpumask *target, unsigned int ipinr);
-@@ -547,7 +548,7 @@ void show_ipi_list(struct seq_file *p, int prec)
+ static struct callback_head work_exited; /* all we need is ->next == NULL */
+ 
++#ifdef CONFIG_IRQ_WORK
+ static void task_work_set_notify_irq(struct irq_work *entry)
  {
- 	unsigned int cpu, i;
+ 	test_and_set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
+ }
+ static DEFINE_PER_CPU(struct irq_work, irq_work_NMI_resume) =
+ 	IRQ_WORK_INIT_HARD(task_work_set_notify_irq);
++#endif
  
--	for (i = 0; i < NR_IPI; i++) {
-+	for (i = 0; i < MAX_IPI; i++) {
- 		if (!ipi_desc[i])
- 			continue;
- 
--- 
-2.34.1
-
+ /**
+  * task_work_add - ask the @task to execute @work->func()
+@@ -58,6 +60,8 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+ 	if (notify == TWA_NMI_CURRENT) {
+ 		if (WARN_ON_ONCE(task != current))
+ 			return -EINVAL;
++		if (!IS_ENABLED(CONFIG_IRQ_WORK))
++			return -EINVAL;
+ 	} else {
+ 		/* record the work call stack in order to print it in KASAN reports */
+ 		kasan_record_aux_stack(work);
+@@ -82,9 +86,11 @@ int task_work_add(struct task_struct *task, struct callback_head *work,
+ 	case TWA_SIGNAL_NO_IPI:
+ 		__set_notify_signal(task);
+ 		break;
++#ifdef CONFIG_IRQ_WORK
+ 	case TWA_NMI_CURRENT:
+ 		irq_work_queue(this_cpu_ptr(&irq_work_NMI_resume));
+ 		break;
++#endif
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 		break;
+diff --git a/localversion-rt b/localversion-rt
+index 6e44e540b927b..9f7d0bdbffb18 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt12
++-rt13
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 78184fe9e3882..cf00b2f662d54 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5150,6 +5150,7 @@ int do_xdp_generic(struct bpf_prog *xdp_prog, struct sk_buff **pskb)
+ 			bpf_net_ctx_clear(bpf_net_ctx);
+ 			return XDP_DROP;
+ 		}
++		bpf_net_ctx_clear(bpf_net_ctx);
+ 	}
+ 	return XDP_PASS;
+ out_redir:
 
