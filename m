@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-271756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E4F9452EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DBB9452F1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315F61F251FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1A11C23D02
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97F914A619;
-	Thu,  1 Aug 2024 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D7E1494A7;
+	Thu,  1 Aug 2024 18:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="e2Oel1Nu"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KbV9Ee+M"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B222014A4F8;
-	Thu,  1 Aug 2024 18:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF30143743
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722537523; cv=none; b=W3GaD6/FGzTxuguVTnE9Z/AHrfw2m2Nga0gxcSjmL5h7N9xRR6O/rPvsWXoo5A1d5DHhEHsWJDFnEJIWdufr4d993gYMdw7g2yRR5/P3gbymuX4uNyaU2cmfFAGxGBjlyWOTjB3qXqEouPNwclWVuuV9p+3aTgyixeyYgtVw57A=
+	t=1722537603; cv=none; b=qUyRrcnBTdTJM0IrNFBUJssooDgG5yUzY5lAFbwiDdxfnUx96Guz3gofnsklbsof5/WMqORHhtUTKBXwzWruSvaQh2xEBPwBqU4VRIZPcIuCzPLQ0EFAU1a5+Lcz0ttJK/KLO23N/wyoGsxXfn+huvrhNdgnL5RaagxZl8GtE3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722537523; c=relaxed/simple;
-	bh=0wA1I5pw5uMJ7CwgBZx+Bkz88j+ObQ2NSGu6oAhojPM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EsVRZHmx9G8LcuNHh1lVEgZOR3UKyLeMHwqBv3pAYjZ17gp/ctTHIa+C+zaVt8n6m+4JtgW2+i5l6tM2L5E6wvlxJ5kVqwCGP4IUvnRJPNeEzoZee7LzFXj3CuyKXNSiXEayPIYQ3MMjCWVke0xZqyJOhx1DSa7cdpYwx0khtfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=e2Oel1Nu; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=tpusvpg7arbntd277skf5e4uz4.protonmail; t=1722537518; x=1722796718;
-	bh=msNfM+n09dyreTa6/jFHnrjM2fYU7OZAlqKTBUbkzBA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=e2Oel1NuX6s7aIzvYSsdw8ob9WFjL2sa2tub3LArGS4lnHBJuWt5niUllUS84DsLJ
-	 WttCHlEkkxYb0To/5iKo3gEHb5QeAqRo2I4TUZnN13KAIaaWJITGNgQfhAOM/4n4dx
-	 ypu7Fda/19BLRBYSEY9igf5tflK2zVsozP/ZDzVHgxP+53pJpSHMnffIxCHEHFjpTh
-	 BSViOfP2oOCxH9sbhavyY/0fmuDv3hnXkzET5FDR7YppBiY/iBuaU8zpxZVi6DqX9I
-	 Ggvs4eatMPUjZ210UAL3YGrAnk+akZOXXPAvWpfngKJfWHfyj8a1xio0MQXXLLGpen
-	 E7XKcmTwGTOng==
-Date: Thu, 01 Aug 2024 18:38:35 +0000
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] rust: sync: Add SpinLockIrq
-Message-ID: <0117ba2d-75f6-4291-9108-35607aab0f1b@proton.me>
-In-Reply-To: <028a84fded53be13d1b2d53e877a958f6f08c24a.camel@redhat.com>
-References: <20240731224027.232642-1-lyude@redhat.com> <20240731224027.232642-4-lyude@redhat.com> <991a7dd2-f8a8-402d-a651-eafd857c540d@proton.me> <028a84fded53be13d1b2d53e877a958f6f08c24a.camel@redhat.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: e9cd9f11c106d26650f4faa8ff12ecf207845322
+	s=arc-20240116; t=1722537603; c=relaxed/simple;
+	bh=v3ngMtvWawUbNngrsCnmsU9HoWKp4/snJm8LhI4ZsL0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=j3Plzg/5oyKZSYviCRVB54cK+w9I0RCQR60jfF2BbGPw86LyJWyjo41UA/DWoeJ02gr6XS4mSJpzRULweVgQhaosZXF834CSfmONlTbqwenI6DztKnkYdvoQnJI/ema/IyAgNm3VQVB2X3vLGSe7nlzCoy3fnz/7j4SXX/QnSuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KbV9Ee+M; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-66a8ce9eecfso35554647b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:40:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722537601; x=1723142401; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T6yPRhC8+VoSP5QSl7WqotG6f6x/q7DmyfyOAFIfGXQ=;
+        b=KbV9Ee+MtjGJK1M4YAjAMLV3ULX7QteAlLM+xkVtQ+G87phsLuSszTOxbVLq1SZrN7
+         ZhOsRgsCVXgzb8+G+EW11lHLfn8xKdESGbnDBTK4N4YlI+cFx2vg2BntPcHssnVfnTCG
+         fMel8f7pcPTnxZq1xthPjlpI9OdEEiKrOXWC8MOzn8Ns/pp3Diz/CZLbJmu5BfUgiAfh
+         DS3rhJ1z8rA0Z67GeIxEhCNG0KYrXPV/GSExTH+D9dgRz25Fb67PNhXRymZXz3rjEAJK
+         MHO3Wqz3wYYcqMNhRe0VVv9ZCkfANUdEo2WxSAqKkGdPdjHS+KUlIgwQ6t8GObJsSVb/
+         q4mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722537601; x=1723142401;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=T6yPRhC8+VoSP5QSl7WqotG6f6x/q7DmyfyOAFIfGXQ=;
+        b=qedIne9u1ol+SAhPM9ms6jT/EPDhwUlhTHEwipNReiTFjDSjDBI8OxSFvDhkcjpY/X
+         etpvD+k0WU4De0dMYrxtO4Tg6h6Keiew+VScQMTCDktll87vLVN7BXzU0MX7Z8IBNRUc
+         RFvCGnatIthmoEBYuYDFKpo7/ZOdwuu8ssr8XVHfnPtsNCG6rsp+PioBZFlaDy7rateA
+         Tcxe1ApHtcWaASR+zDg1CYMNwWDBM12MNwXNAHz1omajdOX13GmD8qnzVWi89rL/WDs7
+         e44ViUYbD2LHS9ZnPNsnq4iYU9EdVV1D46BiAThp/A7wceror6ZX9mMdD9f69IWqW9T1
+         wUag==
+X-Forwarded-Encrypted: i=1; AJvYcCVXbXQAg43zrZP2sEZ0NtBkmbQgBRJxOIlBzu1ndCn8k2Zq5Z0plg6LVsQhxwbMze34I3lukfmz3MFwcTXNkB3HYAhdfAx34VcyrcY8
+X-Gm-Message-State: AOJu0Yw6s6sGPsZgsuJB4gpbPnHUq9BbIWPqURvxGXIRYz3xwz7Ur4+i
+	CtxtlAGjiV35fNFRNX4Z6gb44ZQIxPBhZjja0gfJQ8wRm6gkCO3cmpl/Pc8v4VWNFlspelMiGKg
+	mdfzxncNaijwsZ2kcTQ==
+X-Google-Smtp-Source: AGHT+IHYOqsisgtCA4aJn8iiJrhlOqWcWkXhmH+zVo7bk8yf1CWdZe9U3mUn5G8dyhc0nxA756eyNP+k6DuS+1MQ
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a05:690c:dc7:b0:64b:2608:a6b9 with SMTP
+ id 00721157ae682-689643921c3mr457477b3.3.1722537600846; Thu, 01 Aug 2024
+ 11:40:00 -0700 (PDT)
+Date: Thu,  1 Aug 2024 18:39:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240801183958.2030252-1-yosryahmed@google.com>
+Subject: [PATCH] x86/hyperv: use helpers to read control registers in hv_snp_boot_ap()
+From: Yosry Ahmed <yosryahmed@google.com>
+To: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yosry Ahmed <yosryahmed@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 01.08.24 19:10, Lyude Paul wrote:
-> On Thu, 2024-08-01 at 10:29 +0000, Benno Lossin wrote:
->> On 01.08.24 00:35, Lyude Paul wrote:
->>> +unsafe impl super::Backend for SpinLockIrqBackend {
->>> +    type State =3D bindings::spinlock_t;
->>> +    type GuardState =3D ();
->>> +    type Context<'a> =3D IrqDisabled<'a>;
->>> +
->>> +    unsafe fn init(
->>> +        ptr: *mut Self::State,
->>> +        name: *const core::ffi::c_char,
->>> +        key: *mut bindings::lock_class_key,
->>> +    ) {
->>> +        // SAFETY: The safety requirements ensure that `ptr` is valid =
-for writes, and `name` and
->>> +        // `key` are valid for read indefinitely.
->>> +        unsafe { bindings::__spin_lock_init(ptr, name, key) }
->>> +    }
->>> +
->>> +    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
->>> +        // SAFETY: The safety requirements of this function ensure tha=
-t `ptr` points to valid
->>> +        // memory, and that it has been initialised before.
->>> +        unsafe { bindings::spin_lock(ptr) }
->>
->> Should this really be the same function as `SpinLock`? (ie is there not
->> a special version that expects IRQ to already be disabled? eg this could
->> add additional debug calls)
->=20
-> Yes, unless there's some spinlock API function I missed (I checked right
-> before sending this response) we don't really have a variant of spin_lock=
-*()
-> that assumes IRQs are disabled. You really just have:
->=20
-> spin_lock() - Grab lock, no IRQ changes
->=20
-> spin_lock_irq() - Grab lock, unconditionally disable IRQs (regardless of
-> current flags) until spin_unlock_irq()
->=20
-> spin_lock_irqsave() - Grab lock, save IRQ flags and restore upon
-> spin_unlock_irqrestore()
+Use native_read_cr*() helpers to read control registers into vmsa->cr*
+instead of open-coded assembly.
 
-I see, I have very limited knowledge of the C side and using the same
-function for both seemed strange.
+No functional change intended, unless there was a purpose to specifying
+rax.
 
-> Usually lockdep is the one to actually warn about the interrupt state bei=
-ng
-> incorrect, as it will throw up a warning if you grab a spinlock in both a=
-n
-> interrupt enabled and disabled context (which means you are forgetting to
-> disable interrupts before lock acquisition somewhere).
-
-Cool.
-
-> As well, I think having further debug calls would be unneeded? As of righ=
-t now
-> there's only really two entrypoints for getting IrqDisabled:
-> with_irqs_disabled(), and IrqDisabled::new(). And since IrqDisabled::new(=
-) now
-> has a debug assertion for disabled interrupts, that means all paths to
-> creating IrqDisabled are either already guaranteed to disable interrupts =
-- or
-> would be making use of the debug assertion for verifying interrupt state.
-
-Yes, but if you eg call some FFI function in the meantime it might
-re-enable IRQs (or just a plain old bug in the Rust side). I don't know
-how expensive this will be for debug builds, if it is too much, we could
-try to introduce different levels of debugging.
-But as you already said above, we don't need it for `SpinLockIrq`, since
-lockdep should take care of that.
-
+Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 ---
-Cheers,
-Benno
+ arch/x86/hyperv/ivm.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/hyperv/ivm.c b/arch/x86/hyperv/ivm.c
+index b4a851d27c7cb..434507dd135c5 100644
+--- a/arch/x86/hyperv/ivm.c
++++ b/arch/x86/hyperv/ivm.c
+@@ -321,9 +321,9 @@ int hv_snp_boot_ap(u32 cpu, unsigned long start_ip)
+ 
+ 	vmsa->efer = native_read_msr(MSR_EFER);
+ 
+-	asm volatile("movq %%cr4, %%rax;" : "=a" (vmsa->cr4));
+-	asm volatile("movq %%cr3, %%rax;" : "=a" (vmsa->cr3));
+-	asm volatile("movq %%cr0, %%rax;" : "=a" (vmsa->cr0));
++	vmsa->cr4 = native_read_cr4();
++	vmsa->cr3 = __native_read_cr3();
++	vmsa->cr3 = native_read_cr0();
+ 
+ 	vmsa->xcr0 = 1;
+ 	vmsa->g_pat = HV_AP_INIT_GPAT_DEFAULT;
+-- 
+2.46.0.rc2.264.g509ed76dc8-goog
 
 
