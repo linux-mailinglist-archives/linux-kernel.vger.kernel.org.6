@@ -1,89 +1,105 @@
-Return-Path: <linux-kernel+bounces-271864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5D9945410
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:22:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70DC94540F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D0C2860A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:22:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7ED30285B28
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD8714B949;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5851314B090;
 	Thu,  1 Aug 2024 21:22:37 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB76838DD6;
-	Thu,  1 Aug 2024 21:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CVSwPCG+"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5586719478;
+	Thu,  1 Aug 2024 21:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722547357; cv=none; b=ITFYv/KCDHG5lrSaiWnj7GonKKjWHZGH7WDw0yUKPBeLmTxoeZ9FI5DWJ0lzHFRBtA0mMZPambU8LL9hYd30fjF+BEANuJfwR1ZT11QfMNILhjGvYQ6WaWJ44GG0EyosqmMQDDcXy80+0XPTx07inlM6V4KxIKrzE83qQX9vhc8=
+	t=1722547356; cv=none; b=QhuOwfW4rQl5dyktazp0S7mTU8Ph0IQ+VyJ5ZNlTNvsjfH5UalqECz+91ZWkc6dDDRNw7owKZI3yy7WwyRYcW5qNL9BHwLExPXDB+f2quedvURBdSLGB2rSMm/bfO9HcDywLQR6a7VDcwFZFzTe4a+okKuO9DZJTf2LUaJxWAcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722547357; c=relaxed/simple;
-	bh=cOOxkB6cqWUVxy4AkVaCg/zdyGfn7cSpdO8jsRqVMNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QGYlIpj2iKNjXp+AynwawqPxT/g1dQetzxyKkQejqPZaOcuFp22NIl8GLZpLNVXFeLG5goIkrZpXssSm02p72+PYa4IMBvWGXpLeP7JAP01Ijqm1gXxKvv8wRY2TsWHWBP0Yp93+O9peSjyO5L32PeXkH5HKA3UZVyz1eNjgzQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86192c.versanet.de ([94.134.25.44] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sZdFk-0002Iu-2c; Thu, 01 Aug 2024 23:22:28 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- Sergey Bostandzhyan <jin@mediatomb.cc>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Sergey Bostandzhyan <jin@mediatomb.cc>
-Subject: Re: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
-Date: Thu, 01 Aug 2024 23:22:27 +0200
-Message-ID: <7179578.dE46n4Xy2H@diego>
-In-Reply-To: <20240801175736.16591-1-jin@mediatomb.cc>
-References:
- <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org>
- <20240801175736.16591-1-jin@mediatomb.cc>
+	s=arc-20240116; t=1722547356; c=relaxed/simple;
+	bh=Fp8RbFPrYmsMxzhho+v2nx41q791mEWu9ZiAY9TT4m8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kMQIrqoZ20oBzEnU5UXjy0AE8c/LGpfa2zd+qvTx04fOFDoVqh6sRmoKHskwRfeOr9npcJ4g38VEwM3AxPQKLXwe+ed8LYkytjiPZgf5gjN+ed9ct0Yo424rGfYeOpEEFe9TRo0WZoXo1JPYtIlUuu93c0/UgZICvs0l963y/G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CVSwPCG+; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from romank-3650.corp.microsoft.com (unknown [131.107.159.62])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C46AB20B7165;
+	Thu,  1 Aug 2024 14:22:34 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C46AB20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1722547354;
+	bh=GyphtkfSY2FEttHBLdf3oNH/TBYDZHQbpfGiwQZszUY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CVSwPCG+GqIeQ88nOaZAI9yksMwnOWj7LTPfJi47DplEv08eluZ10TtNtoDpf3qKq
+	 qaPsRx3ZZJ2L8fqz9XtRNNR65J5I2IxyBXuboW5/RLfC/In8Dlh1tHl4VOgfWM0X5L
+	 nq/3n2XtGI+xJoJ6Hk4QsdqYHvVkzZ4k8KwWXkQA=
+From: Roman Kisel <romank@linux.microsoft.com>
+To: kys@microsoft.com,
+	haiyangz@microsoft.com,
+	wei.liu@kernel.org,
+	decui@microsoft.com,
+	sashal@kernel.org,
+	linux-hyperv@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: apais@microsoft.com,
+	benhill@microsoft.com,
+	ssengar@microsoft.com,
+	sunilmut@microsoft.com,
+	vdso@hexbites.dev
+Subject: [PATCH] Drivers: hv: vmbus: Fix the misplaced function description
+Date: Thu,  1 Aug 2024 14:22:35 -0700
+Message-Id: <20240801212235.352220-1-romank@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
 
-Hi Sergey,
+When hv_synic_disable_regs was introduced, it received the description
+of hv_synic_cleanup. Fix that.
 
-Am Donnerstag, 1. August 2024, 19:57:34 CEST schrieb Sergey Bostandzhyan:
-> Hi,
-> 
-> as requested, I am resending the patch series, now with hopefully all
-> relevant addresses on To/Cc.
-> 
-> I noticed, that a DTS for the R2S Plus is not yet available, while the
-> R2S is already there. The only difference is, that the Plus version has an
-> eMMC, so we can reuse the R2S definitions and only add an eMMC block, which
-> I copied from the DTS in the friendlyarm/uboot-rockchip repo.
-> 
-> I applied the same DTS changes to u-boot and tested u-boot 2024.04 with
-> kernel 6.6.35 on an R2S Plus which I have here and the eMMC became visible
-> and usable.
+Fixes: dba61cda3046 ("Drivers: hv: vmbus: Break out synic enable and disable operations")
 
-general remark, please don't send new versions as threaded replies to old
-versions. The normal case for git-send-email is to create a new thread
-and this continuing inside the old thread confues tooling.
+Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+---
+ drivers/hv/hv.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-And it's hard to follow too.
+diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+index e0d676c74f14..36d9ba097ff5 100644
+--- a/drivers/hv/hv.c
++++ b/drivers/hv/hv.c
+@@ -342,9 +342,6 @@ int hv_synic_init(unsigned int cpu)
+ 	return 0;
+ }
+ 
+-/*
+- * hv_synic_cleanup - Cleanup routine for hv_synic_init().
+- */
+ void hv_synic_disable_regs(unsigned int cpu)
+ {
+ 	struct hv_per_cpu_context *hv_cpu =
+@@ -436,6 +433,9 @@ static bool hv_synic_event_pending(void)
+ 	return pending;
+ }
+ 
++/*
++ * hv_synic_cleanup - Cleanup routine for hv_synic_init().
++ */
+ int hv_synic_cleanup(unsigned int cpu)
+ {
+ 	struct vmbus_channel *channel, *sc;
 
-Though hopefully the binding might still get an Ack from the dt-maintainers
-so I guess don't resend just now :-)
-
-
-Thanks
-Heiko
-
+base-commit: 831bcbcead6668ebf20b64fdb27518f1362ace3a
+-- 
+2.34.1
 
 
