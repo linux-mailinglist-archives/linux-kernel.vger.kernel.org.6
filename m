@@ -1,176 +1,143 @@
-Return-Path: <linux-kernel+bounces-271409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3352D944DCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:18:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86576944DD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:18:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65FC11C25C04
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:18:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BF1FB25FE0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4FB1A489B;
-	Thu,  1 Aug 2024 14:18:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973851A487C;
+	Thu,  1 Aug 2024 14:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G2lQZtyg"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwvhNJSp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8616E1A3BC7;
-	Thu,  1 Aug 2024 14:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C660016EB7A;
+	Thu,  1 Aug 2024 14:18:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722521882; cv=none; b=EtXGpwuaxBllVAJKJw86JNGiZ7TuVDDfamdTdtI1A0O47PKpVwqbhZUqSZgYn8T+tljjYFdOqBlc+yNU4Ya/y9SY3jeO/Sdwwwr86dJ32qD+zhQDonk9bJ+YsOryOG/c5M1JY89c6K/5B7DH6vp5R/9dGmHnvZEoJc0/yMHk26Y=
+	t=1722521925; cv=none; b=Iq2UIiNzduB1ve2ax93RY/rf5AKLjLJfm3onLLkSfo1olIkEuS6BS4HQ9o04XE8PYbHIJ38Asfdr/CTxY9L0bc+asVe9g2yPq0qifq3sWp3RW6KFnQy0pLnymXNx/oXaL25E5Rc/+pZk2NX4aci1r3ANbtRXmBv7WFlXkCQUdbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722521882; c=relaxed/simple;
-	bh=ZQdGR/lTp1NTsfZAb9/FFybF+DPr7n4rNP95bNdQLUM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=J7I7VU1zaYTRQ2qA6HItI7jPbo9kXxzZzlRd4YDZiDkatk3hUo2/AMv2sVHylOa3P1X0G7pFyVxhriL0luw7RHoTM/snbTzmpK6qZ9WsViA2SJCzUh+LLFL2E2eVzTkCgH5HSVDc1MZFeXQPW2nTMQzFIP+mzj9SXpcd02w4hdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G2lQZtyg; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1e24f3c0dso429977085a.1;
-        Thu, 01 Aug 2024 07:18:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722521879; x=1723126679; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZQdGR/lTp1NTsfZAb9/FFybF+DPr7n4rNP95bNdQLUM=;
-        b=G2lQZtygcam9XH6qY54vA/krpt8edsR7vEc0Y8u+LfHKno38bCPDIuPoFLs28wG3ZC
-         MHXcrALMskj1lziNCgMKVLwqgESVy6T27Jai9ShD7QBd7RBazuiKOIKlPfJ/1tZVsJA1
-         G2My3m3n0TiJtcP94/hk09mIdzmakF97qx6ROWcSE8w1vet8ftOliYMMuoX70SgrAPSh
-         Q4WRhCfCNQfPXYA3t4EYeGHQu9LQngPr5yZEYr+Ayvw4FA5DFcbZ4n5cFS9tcuth8xIf
-         NmntfhmI2XBRy8YRO+XRzW/Iq/oQu9L5YDqXSUae/TzLdfehsdwVv0JRrUPhctfaFXRq
-         4e4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722521879; x=1723126679;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZQdGR/lTp1NTsfZAb9/FFybF+DPr7n4rNP95bNdQLUM=;
-        b=wtc8/2bWKt4xHSHACfYlAbbayLJ0M6YIdzUdPC4dcLtbfkXTQA7Cf2EUEA1wDGI9QC
-         9gMh8VVhNxwdnVJ55xebfZBD8SBl8klZtWao6Qdh7u10YD19/CTzalkZ6lbl47R/Oh2k
-         kwUyG1YFgqlkMwb7qTHCQrmNaeQ2VEWHYCIGfQLGKbFsYXRicC4CAILSM1dZU2VOisMC
-         h7ZZK/BLPMTilhXIce0z9hdNFHg1GWtPE5/CODaGEumA/C5gbIQ1F3De58O8vUwmBis1
-         sPdZj1D0NKJoKV8zumkOW5YbWsieXPUbc0PXbxJi0xV+hhr1gxhoXkbf86OXU3ZELKGP
-         ZYDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx5BZ8JBJqk3e4313FJ1i7EYOOFh2hfeYnYUcBIZgTJXvEuCFqPp3ptrxMrM0mxgDLQXhXhXSkEEKFRd6atv/vYmwFYcHSUZ2lW/aK
-X-Gm-Message-State: AOJu0YxeQR5yfCJryjO3MQtLTnSjr7jCRLxA2rRouc5fS+dDwjxhsDAl
-	CXGcmCUUcHF46Zi1hqWVPJO9IfXJbH+Y5bxQoJdVXpx1nv2gRFDVwLm5RA==
-X-Google-Smtp-Source: AGHT+IFeczolI9BeIauW0gRVCzJaAtBNGLFBIF4rH/8rWqyeMDE6K60RXLfs2OFapNgvayIHrDg1CA==
-X-Received: by 2002:a05:620a:17a4:b0:79e:fcba:967e with SMTP id af79cd13be357-7a34eec9fb7mr19919085a.13.1722521879208;
-        Thu, 01 Aug 2024 07:17:59 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1dcc43dacsm770161785a.126.2024.08.01.07.17.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 07:17:58 -0700 (PDT)
-Date: Thu, 01 Aug 2024 10:17:58 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Randy Li <ayaka@soulik.info>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, 
- jasowang@redhat.com, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- linux-kernel@vger.kernel.org
-Message-ID: <66ab99162673_246b0d29496@willemb.c.googlers.com.notmuch>
-In-Reply-To: <343bab39-65c5-4f02-934b-84b6ceed1c20@soulik.info>
-References: <20240731111940.8383-1-ayaka@soulik.info>
- <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
- <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info>
- <66aab3614bbab_21c08c29492@willemb.c.googlers.com.notmuch>
- <3d8b1691-6be5-4fe5-aa3f-58fd3cfda80a@soulik.info>
- <66ab87ca67229_2441da294a5@willemb.c.googlers.com.notmuch>
- <343bab39-65c5-4f02-934b-84b6ceed1c20@soulik.info>
-Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue
- index
+	s=arc-20240116; t=1722521925; c=relaxed/simple;
+	bh=puYGDeVzX+toRNj9EO9NrRRwpz9Fykp7F5J1qOScRbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F7yVIlQ09yggn26wAOnhary44my7bdcbWRiX0Jy3r/bW2oZD5Pp/NtXFCOz45RRcmWEdUpHdV+KYSo/yMDEedF9hvgd35s7jSMThssU4mW6eMbr8xI0m0Xh5SVsyUbKME3KXUJIzWyv1yokYd8Gz5XbWiebtWV3Zi/X9O4yMRcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwvhNJSp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1FEC32786;
+	Thu,  1 Aug 2024 14:18:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722521925;
+	bh=puYGDeVzX+toRNj9EO9NrRRwpz9Fykp7F5J1qOScRbU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uwvhNJSpUBgHZH/tR/pDDK77ENIKcz+f7V7Fux+zulGmeaAF21NZv3g33w0AVqGAd
+	 lzXM9qGOovpsoOI9KGBVDpAnau0gYH9m0pUrpfTpVbDLdPoE8/jO4mODAz+r83tog9
+	 RllGhsRlPN6oNhs2LCd3ccrZ7+zvL2Rw8Ez176A1riX7Gui0T+Z4NWxBCg0K7tQfnQ
+	 1JNhYk+wiAEitEHRNKTGSYHfQMY8vOUtxUhaTzxzlXYeAEceUAJMd2mLxyKQlTFHtJ
+	 m1yt9pxT6CRH5D9xVM2nfshupkm+3SWFvpxMpwv5qxC+nHCvruJijmBVwRDBjAHP33
+	 fswyp2T0Caadg==
+Message-ID: <bb6e21b6-d7b0-43d7-9dc7-7a78a11dfca1@kernel.org>
+Date: Thu, 1 Aug 2024 16:18:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: Add schema for Synopsys
+ DW HDMI QP TX IP
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>
+References: <20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com>
+ <20240801-dw-hdmi-qp-tx-v1-1-148f542de5fd@collabora.com>
+ <ba957155-7a0d-4c88-8326-a1d4d20e4656@kernel.org>
+ <e3ce055d-13c9-4e25-a039-dd4a58c8dd7a@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <e3ce055d-13c9-4e25-a039-dd4a58c8dd7a@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Randy Li wrote:
-> =
+On 01/08/2024 11:29, Cristian Ciocaltea wrote:
+> On 8/1/24 11:38 AM, Krzysztof Kozlowski wrote:> On 01/08/2024 04:05, Cristian Ciocaltea wrote:
+>>> Add dt-binding schema containing the common properties for the Synopsys
+>>> DesignWare HDMI QP TX controller.
+>>>
+>>> Note this is not a full dt-binding specification, but is meant to be
+>>> referenced by platform-specific bindings for this IP core.
+>>
+>> Please provide an user for this binding. Otherwise it is a no-op.
+> 
+> The first user of this is RK3588 HDMI TX Controller [1].
 
-> On 2024/8/1 21:04, Willem de Bruijn wrote:
-> > Randy Li wrote:
-> >> On 2024/8/1 05:57, Willem de Bruijn wrote:
-> >>> nits:
-> >>>
-> >>> - INDX->INDEX. It's correct in the code
-> >>> - prefix networking patches with the target tree: PATCH net-next
-> >> I see.
-> >>> Randy Li wrote:
-> >>>> On 2024/7/31 22:12, Willem de Bruijn wrote:
-> >>>>> Randy Li wrote:
-> >>>>>> We need the queue index in qdisc mapping rule. There is no way t=
-o
-> >>>>>> fetch that.
-> >>>>> In which command exactly?
-> >>>> That is for sch_multiq, here is an example
-> >>>>
-> >>>> tc qdisc add dev=C2=A0 tun0 root handle 1: multiq
-> >>>>
-> >>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip d=
-st
-> >>>> 172.16.10.1 action skbedit queue_mapping 0
-> >>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip d=
-st
-> >>>> 172.16.10.20 action skbedit queue_mapping 1
-> >>>>
-> >>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip d=
-st
-> >>>> 172.16.10.10 action skbedit queue_mapping 2
-> >>> If using an IFF_MULTI_QUEUE tun device, packets are automatically
-> >>> load balanced across the multiple queues, in tun_select_queue.
-> >>>
-> >>> If you want more explicit queue selection than by rxhash, tun
-> >>> supports TUNSETSTEERINGEBPF.
-> >> I know this eBPF thing. But I am newbie to eBPF as well I didn't fig=
-ure
-> >> out how to config eBPF dynamically.
-> > Lack of experience with an existing interface is insufficient reason
-> > to introduce another interface, of course.
-> =
+Patchsets do not work like this. Splitting things causes that your other
+patch simply cannot even be tested because you introduced dependency.
 
-> tc(8) was old interfaces but doesn't have the sufficient info here to =
+Combine patches so bindings referencing common properties can properly
+be tested by automation.
 
-> complete its work.
+Best regards,
+Krzysztof
 
-tc is maintained.
-
-> I think eBPF didn't work in all the platforms? JIT doesn't sound like a=
- =
-
-> good solution for embeded platform.
-> =
-
-> Some VPS providers doesn't offer new enough kernel supporting eBPF is =
-
-> another problem here, it is far more easy that just patching an old =
-
-> kernel with this.
-
-We don't add duplicative features because they are easier to
-cherry-pick to old kernels.
-
-> Anyway, I would learn into it while I would still send out the v2 of =
-
-> this patch. I would figure out whether eBPF could solve all the problem=
- =
-
-> here.
-
-Most importantly, why do you need a fixed mapping of IP address to
-queue? Can you explain why relying on the standard rx_hash based
-mapping is not sufficient for your workload?
 
