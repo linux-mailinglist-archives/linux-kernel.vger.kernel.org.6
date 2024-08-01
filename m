@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-271385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCDE944D6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81105944D71
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35CDC1F2264E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:49:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24A9B1F2304A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303411A38C5;
-	Thu,  1 Aug 2024 13:49:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E14E1A3BB9;
+	Thu,  1 Aug 2024 13:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qBz1BiFA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m3Pm6uON"
-Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b="l761aTSQ"
+Received: from kozue.soulik.info (kozue.soulik.info [108.61.200.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B147F1A256A;
-	Thu,  1 Aug 2024 13:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CEB189B98;
+	Thu,  1 Aug 2024 13:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.61.200.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520144; cv=none; b=YdCh+Ba8/vgSjQA5c/u3+flJCs1B3tvtozKIqDhHx9FFAbY0MsPsijDDlm2zmFAKTV0bMlZe5MX6nECAO1Q36LUWzxInNSkablB1ZAxNO1NqRwjjhCS83nu9BPXkLo60GjZLJ4mz4HsTeF0EP9UkZHugkIMqXLhma8rbaM/GNVc=
+	t=1722520189; cv=none; b=j3HqKJVt6v49bS6VgxfnVZydkoqmZFcb9OtVHAwi0Q3ZziZ3hUSl9z5uzSxt+tCq7sQJMeSZdbiMEJZFidYPKOadaSfADnZvcKprTteu35E4Wn0QkIUpSiFvxx43sd3Eu+sg7+VBs6M5ouCWTRag09KevCl2pAAt6CPoVE9Cezw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520144; c=relaxed/simple;
-	bh=+C52LdFvAjE+mXsGHriIbj6tuuT/lQhCY+ifrbZmo0E=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=G+Nm7mClD207ya6HnlmuAb+IS9rRaYocAfn51aLqumb7ZiwMvaRs1dffswnZc3fEtxYmg1m/U4z6BNumDS5dk1RdTrRxSKtD0ZdSQL4dC4w35hX2yE94+47fkARjSHC/E7AzGYj03mg1puyWiC4AhrQ6CYdQY7FxaC4zuUa3a24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qBz1BiFA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m3Pm6uON; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id A5BC81384F3C;
-	Thu,  1 Aug 2024 09:49:00 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Thu, 01 Aug 2024 09:49:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722520140;
-	 x=1722606540; bh=GJEzgwsKZt4bp3uy6m1hT5few7XxNP8mFrHkdVLGOhs=; b=
-	qBz1BiFAH24xnCBN8qJLdTaJO9PQAO2y79hNSNm4S5dABMsXi7Fit3PE+K7VJWZh
-	H0Brpz3VF0mjbPyhyvsTE9HZn1RIkObzuuLfbIOtVvFpWzCyPND6atXbO2/PJRAa
-	zigyzakOFYj4OZKrTV9kFqJT7BZBT3E3kyjlVxE5TCrrdxoGm/W7KXX1le4xHsaz
-	rbnzl/BiLRi9aKMLStD3ojV8Z4tc5ZiJpFkgbtvS9ElkIJ0kOLtFtaJ+lscQsPzZ
-	3kHbrYK4Iii+u9ArfCEDDqnyNuW9uuQJC+ux8LnPlJEPk53loZX9djJHPKEv6E04
-	Ji45cZeIjexBHHKkhcV3Eg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722520140; x=
-	1722606540; bh=GJEzgwsKZt4bp3uy6m1hT5few7XxNP8mFrHkdVLGOhs=; b=m
-	3Pm6uONRn1padlZDoSowpf+1nXUPSNDmtVqikfaQjZONq5j8VAGiH4wIOOJkvtdU
-	JI85Y+aOI+UgwWGhTxY4TUD+mE5LCL003q5KWKd8StnAhf3bnCG016XBksEBSi2/
-	EVSulFupz3nd6f2Mwj8aVQwTmihwsMn033SpOhBzbvfu/cT79/yXpifAJhTgsyV7
-	DlyiZVer+yltUROZz2UI3YFEDGC1bPL/QnALh8wN0TE3kGk1MdgB7PupfP2Ey+Nr
-	uf3S04Kb5EY7EonoE2OEQUSBhLHze+S8MRcWubbP7NlSzG2UxCHY/+WhW8/Z9izO
-	RGueHut2Ha6E011WK/hKw==
-X-ME-Sender: <xms:S5KrZsufSRNGkRzfdo699hRN_2u-4UtL9Cno4jYrWZ5DEH07WECn_A>
-    <xme:S5KrZpeHA_3HUSQ_MFVkHTyK-rUX7p8Kd676woXY5VPsXlaHtQStXOCMTynaYHtgQ
-    LWxNcC-SH-1Ta3ShHY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeekgdeilecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfei
-    hfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghr
-    tghpthhtoheptd
-X-ME-Proxy: <xmx:S5KrZny95s54ZULH78Zp1ZsenH3tfyJomA1xSN_mvGemBLSLn9SmnA>
-    <xmx:S5KrZvOBr-G5xshLk9lDbBMPN9s_iC7YVLauz-mD40X4scd4UaFBNg>
-    <xmx:S5KrZs9qwoijaUI1wmqYZh2dPC7L5SuTrOIIVUwZ4h_nfc8AJJxiww>
-    <xmx:S5KrZnUQeGCwFDDYVDvr1PGL10zQJnQmS2MZMwwJ3hvMMYPl3jczvQ>
-    <xmx:TJKrZmfcOU6EJzYnkPYNqKJZPrqSIHUfORlmiuvDbUZaUP7K59AMEm0V>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 0EB7FB6008D; Thu,  1 Aug 2024 09:48:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722520189; c=relaxed/simple;
+	bh=GsoCn77fV7d9tlKa+WgxxiX5PGRunJ1LESJ7+Epwvbo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a4ZuVGFLdo8nh7FU8sKoezIocXcfUMCJeZkxBxXkoq3JZRqRHAE+4uhIGAmFpd4RXQo/+oiq+/klyRkuGFdf28J0KKh7GnE9fuQ1VGUkp/93xP566zBSatz46rly8Jl31FJtJ+cXmWrBTb1gSHrPthPr5LJ4UEVKrCx/R9UK5ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info; spf=pass smtp.mailfrom=soulik.info; dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b=l761aTSQ; arc=none smtp.client-ip=108.61.200.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soulik.info
+Received: from ritsuko.sh.sumomo.pri (unknown [10.0.12.132])
+	by kozue.soulik.info (Postfix) with ESMTPSA id 6A0912FE3AC;
+	Thu,  1 Aug 2024 22:50:12 +0900 (JST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 kozue.soulik.info 6A0912FE3AC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soulik.info; s=mail;
+	t=1722520212; bh=lmDvIp8wVJ+pUhzHi6TDXIwavE0pwN92FStcwMmAvKw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l761aTSQV1X3Ej/aDWEAykeF/3xunoHEBX8bizYUBgLoXlpRlwtUcK0CL9yvzH+QH
+	 TAp9B/qNDHJ0OEkypTJc3A0VcxOHWJBhPks4R6vNuhwmsD74rRxArleCxWACJQCYTN
+	 cwu2GXSL3zQYV3yd6tK6H403hY+kD1koc/9iYHts=
+From: Randy Li <ayaka@soulik.info>
+To: netdev@vger.kernel.org
+Cc: willemdebruijn.kernel@gmail.com,
+	jasowang@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	Randy Li <ayaka@soulik.info>
+Subject: [PATCH net-next v2] net: tuntap: add ioctl() TUNGETQUEUEINDEX to fetch queue index
+Date: Thu,  1 Aug 2024 21:49:21 +0800
+Message-ID: <20240801134929.206678-1-ayaka@soulik.info>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 01 Aug 2024 15:48:37 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Guenter Roeck" <linux@roeck-us.net>, "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Richard Henderson" <richard.henderson@linaro.org>,
- "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
- "Matt Turner" <mattst88@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- "Kefeng Wang" <wangkefeng.wang@huawei.com>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>, "Baoquan He" <bhe@redhat.com>,
- "Jakub Kicinski" <kuba@kernel.org>, "Breno Leitao" <leitao@debian.org>,
- "Linus Walleij" <linus.walleij@linaro.org>, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-Id: <78f2483d-b05b-4738-8d3b-ea96a5b322bc@app.fastmail.com>
-In-Reply-To: <6bd73068-4474-4129-857b-39150a31f224@roeck-us.net>
-References: <20240730152744.2813600-1-arnd@kernel.org>
- <6bd73068-4474-4129-857b-39150a31f224@roeck-us.net>
-Subject: Re: [PATCH] alpha: fix ioread64be()/iowrite64be() helpers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024, at 17:47, Guenter Roeck wrote:
-> On Tue, Jul 30, 2024 at 05:27:25PM +0200, Arnd Bergmann wrote:
->> From: Arnd Bergmann <arnd@arndb.de>
->> 
->> Compile-testing the crypto/caam driver on alpha showed a pre-existing
->> problem on alpha with iowrite64be() missing:
->> 
->> ERROR: modpost: "iowrite64be" [drivers/crypto/caam/caam_jr.ko] undefined!
->> 
->> The prototypes were added a while ago when we started using asm-generic/io.h,
->> but the implementation was still missing. At some point the ioread64/iowrite64
->> helpers were added, but the big-endian versions are still missing, and
->> the generic version (using readq/writeq) is would not work here.
->> 
->> Change it to wrap ioread64()/iowrite64() instead.
->> 
->> Fixes: beba3771d9e0 ("crypto: caam: Make CRYPTO_DEV_FSL_CAAM dependent of COMPILE_TEST")
->> Fixes: e19d4ebc536d ("alpha: add full ioread64/iowrite64 implementation")
->> Fixes: 7e772dad9913 ("alpha: Use generic <asm-generic/io.h>")
->> Closes: https://lore.kernel.org/all/CAHk-=wgEyzSxTs467NDOVfBSzWvUS6ztcwhiy=M3xog==KBmTw@mail.gmail.com/
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> Tested-by: Guenter Roeck <linux@roeck-us.net>
+We need the queue index in qdisc mapping rule. There is no way to
+fetch that.
 
-Thanks!
+Changelog:
+v2:
+Fixes the flow when the queue is disabled in the tap type device.
+Put this ioctl() under the lock protection for the tun device.
 
->> +#define ioread64be(p) swab64(ioread64(p))
->>  #define iowrite16be(v,p) iowrite16(swab16(v), (p))
->>  #define iowrite32be(v,p) iowrite32(swab32(v), (p))
->> +#define iowrite64be(v,p) iowrite64(swab64(v), (p))
->> +
->>  
+Signed-off-by: Randy Li <ayaka@soulik.info>
+---
+ drivers/net/tap.c           | 10 ++++++++++
+ drivers/net/tun.c           | 13 +++++++++++++
+ include/uapi/linux/if_tun.h |  1 +
+ 3 files changed, 24 insertions(+)
 
-Fixed
+diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+index 77574f7a3bd4..bbd717cf78a5 100644
+--- a/drivers/net/tap.c
++++ b/drivers/net/tap.c
+@@ -1120,6 +1120,16 @@ static long tap_ioctl(struct file *file, unsigned int cmd,
+ 		rtnl_unlock();
+ 		return ret;
+ 
++	case TUNGETQUEUEINDEX:
++		rtnl_lock();
++		if (!q->enabled)
++			ret = -EINVAL;
++		else
++			ret = put_user(q->queue_index, up);
++
++		rtnl_unlock();
++		return ret;
++
+ 	case SIOCGIFHWADDR:
+ 		rtnl_lock();
+ 		tap = tap_get_tap_dev(q);
+diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+index 1d06c560c5e6..05fa9727721e 100644
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -3151,6 +3151,19 @@ static long __tun_chr_ioctl(struct file *file, unsigned int cmd,
+ 		tfile->ifindex = ifindex;
+ 		goto unlock;
+ 	}
++	if (cmd == TUNGETQUEUEINDEX) {
++		ret = -EINVAL;
++		if (tfile->detached)
++			goto unlock;
++
++		ret = -EFAULT;
++		if(put_user(tfile->queue_index, (unsigned int __user*)argp))
++			goto unlock;
++
++		ret = 0;
++		goto unlock;
++	}
++
+ 
+ 	ret = -EBADFD;
+ 	if (!tun)
+diff --git a/include/uapi/linux/if_tun.h b/include/uapi/linux/if_tun.h
+index 287cdc81c939..2668ca3b06a5 100644
+--- a/include/uapi/linux/if_tun.h
++++ b/include/uapi/linux/if_tun.h
+@@ -61,6 +61,7 @@
+ #define TUNSETFILTEREBPF _IOR('T', 225, int)
+ #define TUNSETCARRIER _IOW('T', 226, int)
+ #define TUNGETDEVNETNS _IO('T', 227)
++#define TUNGETQUEUEINDEX _IOR('T', 228, unsigned int)
+ 
+ /* TUNSETIFF ifr flags */
+ #define IFF_TUN		0x0001
+-- 
+2.45.2
 
-      Arnd
 
