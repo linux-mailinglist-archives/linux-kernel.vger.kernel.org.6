@@ -1,117 +1,197 @@
-Return-Path: <linux-kernel+bounces-271396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D622944DA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:07:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C236944DA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:07:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC1DB22E98
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:07:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10121F241A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394821A4876;
-	Thu,  1 Aug 2024 14:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF351A4885;
+	Thu,  1 Aug 2024 14:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I3mQpYtN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VlPxlJyK"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C531A4870
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:06:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC22C61FF2
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:07:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722521218; cv=none; b=s/HyyOW1xpT937mTgsrRbtRM/Q0X0EQPxJCBMKWg0L8gtGK4ydvsPNmmlEoI+EfEfkfY5DYOepiFONFkCkBHdjb1ALVCja9cpIfARf6Us9m4T4p0kiK/XRGf0AQKkTl8CKKX0+L4ozepxEfu07TyZ/8u/XnYt03PnMSGVPS5f0I=
+	t=1722521238; cv=none; b=HhOXZXk3FwPiTYGKV1XUxTSXMnSGFS7t8ExlIq7c5Y92gEAD4nQolsP0+ZktZ7ONIFpeO9lWaAIHUAWUJzLZvO+mjct4A4DqKA+1zqddtGr45KbSM9rWXdZAAv3PoteA9KI4HiFKHOVPaoa81wc+lugy4MOH2YAYsKQzEhWqzxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722521218; c=relaxed/simple;
-	bh=bz3wKeF8rsjmjXrGrtC9eTN/ZKuBFkTMUakuVj5aqKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4zArGESijibEQFsEeBhOexUk0g19JspTvRu+SujNjkDDJz8vYlOwM3SnfPd/eKGUufD6dsKqIz+/FsFSY2Ix91jjArjMcnEEQxYWSGjnAyOoMT27vubOsA0CArLtA/1J23eoRK+RJimtIz1Mej9bAT5b2emXU4WJ2Kz+3voo+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I3mQpYtN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722521216;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NtpgAPFp+k8BUIgugrTLAvk4bvPd8UTPqZtLDxDKKxg=;
-	b=I3mQpYtNnDzolpHgtotE/DmEvPhV9ZGbsdb29lzDHLmDVZxoTd7duqQcMpeDG9Wbc5KOCW
-	5AGL2bdwl4/MVaI9Qgb1U5eBSRQVrFQ37HahK1hu79i1d1I61333vT/ns4/ozWJhdnopqV
-	1cD+Waavae/uYjoKP3mbvWk+QvMHZ+M=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-390-PwqJlKqZN-yuHHxW4zmYrA-1; Thu,
- 01 Aug 2024 10:06:50 -0400
-X-MC-Unique: PwqJlKqZN-yuHHxW4zmYrA-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4EB7D1955D4B;
-	Thu,  1 Aug 2024 14:06:46 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.183])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DE9561955D48;
-	Thu,  1 Aug 2024 14:06:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  1 Aug 2024 16:06:46 +0200 (CEST)
-Date: Thu, 1 Aug 2024 16:06:39 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Liao Chang <liaochang1@huawei.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] uprobes: Improve scalability by reducing the contention
- on siglock
-Message-ID: <20240801140639.GE4038@redhat.com>
-References: <20240801082407.1618451-1-liaochang1@huawei.com>
+	s=arc-20240116; t=1722521238; c=relaxed/simple;
+	bh=+p16S8GS0ouZfd2TsKNdCxP8LYTgusGnamhyrVa/Ofo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UsxaPpcCqcJu6aoTyKOxMllkKPBNucGWI660P/O+uc62CpZj6MLZV8+OXpgxXAjtqX5/Q8Vp55CDiA4ybqMNcFJwI4oDpHN1Q+DgjT5s8Ir9x4m7XeG9vQTazqNHWPjUd/ZSQGDy9sM+MJT3mn/qW7BebZyk3THvTBKyxkXPaCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VlPxlJyK; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2cb566d528aso5392361a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:07:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722521236; x=1723126036; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dyBBuohO0Hs+IuvszCA+reGtTKvxPWc+GPkqz6wW5/c=;
+        b=VlPxlJyK+wSosYAtgZsX2PUGv41jHdZQmOsi8AWg7Q+1KcB0UKRB7R64BsjLoOs7C6
+         tlULqEBw0+wXBAQE4PcSI061XUD7rgYV/cGVOe7K8ekHcbvutjHs3ljFg+YxlJ5WE3oa
+         l4Hm7nECd/7mBZQ7CNWyfvD25fqkNz8zVsTQYDxO0Xj26BY3e7jt7+/WWwqTI/YYmkPA
+         XHFHnSr5dZAaC02jlkdDrD4eL0t5QXQYh/PRaVeKcRHXH8LPuXsUdaei9IQYC3gZ6NGd
+         tAbDXNyNmpklBCyYzjNMgSSTqqbe3tuhDYx8Pu6CVzkAEmVt5VtJ2a/2EB0hPYkwkPeC
+         esjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722521236; x=1723126036;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dyBBuohO0Hs+IuvszCA+reGtTKvxPWc+GPkqz6wW5/c=;
+        b=WB9Vg69SMNZ0fiOqQMbf1k6id70a7uXCFaH3D2FeeN0BpN12hCEVHN1ZLwNlow012Q
+         zai8mzXV7kC7+xueCc3RNV0XQkJUSQbHzJF5ahDTAAzk9OGspppKnrWvT7yXFq48x9eS
+         4XFcVUYBYln98sug82/hWfxnua8tdWIyAeblNroG3EyxFWaocaf1S2UHDHdHqPjjKeCK
+         nbr0zlvblxU4QOo9riVN+FN2KDGrlCupxs5p74dCl2XM3wT377g7v2IzPapLv28N9+dh
+         8AJJqioAZDpMro4jxFOdtyWzZ5tmkTgJ0Gk9HnIzIKXSNy6rYE8iIAGQDyZQdd0VxZF5
+         aXBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLPCBZA/lEg817xJMQyDxXyEU669PpOBb5MTcI7Btm9QLwsoxqeOUPQ4rMQrNu0J2qnZ6iD/Ep5wFA+xpz3yVQ+eivMbSJMTbPUgKh
+X-Gm-Message-State: AOJu0YyHxNA++BZ8jZgMupCBXSYCxAEGQdWBKqQMMachIfze0r/gpYBP
+	3CoZV4rfuozQJXi4cA3e8vgz2kTkIBdE76MMQbb6uHLvex8HMxqh7vaNICa90T6SSlLGZph5jCf
+	0QKBOuQH593K7MPAK3HSr3mWqptsggEIVPL8i
+X-Google-Smtp-Source: AGHT+IH8wLTy4OfUI1N/iRPbfsy9jlveCpM3VPGUpvU5ua9Ijad6Tf3V2cLkv7wRzPOiYho4OXsD/vmRzOEqdosk0dw=
+X-Received: by 2002:a17:90a:9e5:b0:2c7:c6c4:1693 with SMTP id
+ 98e67ed59e1d1-2cff9487f9emr346403a91.21.1722521235525; Thu, 01 Aug 2024
+ 07:07:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801082407.1618451-1-liaochang1@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20240801-vma-v3-1-db6c1c0afda9@google.com> <ZquVcyeLqGGRbgx-@pollux>
+In-Reply-To: <ZquVcyeLqGGRbgx-@pollux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 1 Aug 2024 16:07:01 +0200
+Message-ID: <CAH5fLgjd47eK=+k1vB2h6gDnZyVBOUi+KAr2L1Htoq3hPnqbqg@mail.gmail.com>
+Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and vm_area_struct
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Matthew Wilcox <willy@infradead.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/01, Liao Chang wrote:
+On Thu, Aug 1, 2024 at 4:02=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
+rote:
 >
-> @@ -2276,22 +2277,25 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
->  	int err = 0;
->  
->  	uprobe = utask->active_uprobe;
-> -	if (utask->state == UTASK_SSTEP_ACK)
-> +	switch (utask->state) {
-> +	case UTASK_SSTEP_ACK:
->  		err = arch_uprobe_post_xol(&uprobe->arch, regs);
-> -	else if (utask->state == UTASK_SSTEP_TRAPPED)
-> +		break;
-> +	case UTASK_SSTEP_TRAPPED:
->  		arch_uprobe_abort_xol(&uprobe->arch, regs);
-> -	else
-> +		fallthrough;
-> +	case UTASK_SSTEP_DENY_SIGNAL:
-> +		set_tsk_thread_flag(current, TIF_SIGPENDING);
-> +		break;
-> +	default:
->  		WARN_ON_ONCE(1);
-> +	}
+> On Thu, Aug 01, 2024 at 12:58:45PM +0000, Alice Ryhl wrote:
+> > This is a follow-up to the page abstractions [1] that were recently
+> > merged in 6.11. Rust Binder will need these abstractions to manipulate
+> > the vma in its implementation of the mmap fop on the Binder file.
+> >
+> > This patch is based on Wedson's implementation on the old rust branch,
+> > but has been changed significantly. All mistakes are Alice's.
+> >
+> > Link: https://lore.kernel.org/r/20240528-alice-mm-v7-4-78222c31b8f4@goo=
+gle.com [1]
+> > Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> > Changes in v3:
+> > - Reorder entries in mm.rs.
+> > - Use ARef for mmput_async helper.
+> > - Clarify that VmArea requires you to hold the mmap read or write lock.
+> > - Link to v2: https://lore.kernel.org/r/20240727-vma-v2-1-ab3e5927dc3a@=
+google.com
+> >
+> > Changes in v2:
+> > - mm.rs is redesigned from scratch making use of AsRef
+> > - Add notes about whether destructors may sleep
+> > - Rename Area to VmArea
+> > - Link to v1: https://lore.kernel.org/r/20240723-vma-v1-1-32ad5a0118ee@=
+google.com
+> > ---
+> >  rust/helpers.c         |  61 +++++++++
+> >  rust/kernel/lib.rs     |   1 +
+> >  rust/kernel/mm.rs      | 337 +++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  rust/kernel/mm/virt.rs | 204 ++++++++++++++++++++++++++++++
+> >  rust/kernel/types.rs   |   9 ++
+> >  5 files changed, 612 insertions(+)
+> >
+> > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
+> > new file mode 100644
+> > index 000000000000..ed2db893fb79
+> > --- /dev/null
+> > +++ b/rust/kernel/mm.rs
+> > @@ -0,0 +1,337 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2024 Google LLC.
+> > +
+> > +//! Memory management.
+> > +//!
+> > +//! C header: [`include/linux/mm.h`](../../../../include/linux/mm.h)
+>
+> NIT: srctree
 
-Liao, at first glance this change looks "obviously wrong" to me.
+Ah, thanks. Good catch.
 
-But let me read this patch more carefully and reply on weekend,
-I am a bit busy right now.
+> > +
+> > +    /// Returns a raw pointer to the inner `mm_struct`.
+> > +    #[inline]
+> > +    pub fn as_raw(&self) -> *mut bindings::mm_struct {
+> > +        self.mm.get()
+> > +    }
+> > +
+> > +    /// Obtain a reference from a raw pointer.
+> > +    ///
+> > +    /// # Safety
+> > +    ///
+> > +    /// The caller must ensure that `ptr` points at an `mm_struct`, an=
+d that it is not deallocated
+> > +    /// during the lifetime 'a.
+> > +    #[inline]
+> > +    pub unsafe fn from_raw_mm<'a>(ptr: *const bindings::mm_struct) -> =
+&'a Mm {
+>
+> I'd just call this `from_raw`, like you call the counterpart `as_raw` abo=
+ve.
+> Same goes for `MmWithUser` and `VmArea`.
 
-Thanks,
+I've been using this naming convention since this discussion:
+https://lore.kernel.org/all/20240401-marge-gepaukt-9a1972c848d9@brauner/
 
-Oleg.
+> > diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> > index bd189d646adb..143a2bf06941 100644
+> > --- a/rust/kernel/types.rs
+> > +++ b/rust/kernel/types.rs
+> > @@ -366,6 +366,15 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+> >              _p: PhantomData,
+> >          }
+> >      }
+> > +
+> > +    /// Pass ownership of the refcount to a raw pointer.
+> > +    pub fn into_raw(self) -> NonNull<T> {
+> > +        let ptr =3D self.ptr;
+> > +        // Skip the destructor.
+> > +        core::mem::forget(self);
+> > +
+> > +        ptr
+> > +    }
+>
+> I think this should be a separate patch.
 
+Sure.
+
+Alice
 
