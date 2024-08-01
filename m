@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-270532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D85944109
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A2094410D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3884E1F21A32
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:25:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FBE1F216C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C6B14A4C3;
-	Thu,  1 Aug 2024 02:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7830414AD23;
+	Thu,  1 Aug 2024 02:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JMEDZa5N"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JtiCJtXA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B73D13CAB0;
-	Thu,  1 Aug 2024 02:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A301370;
+	Thu,  1 Aug 2024 02:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722478578; cv=none; b=BCWBJFtoNV6hjnYNOGR8ggo1KqlX8si4TGBRe1oEZSuBX579Xh5grfsIsCSxFC40bMABCukXKmlzhk1AhmNqDvdOvPk3u0Rx0tthukKJH32KYhZ4U8GsrTSSL3A6fBh02sY9vF6srualLtI98v7C2CqEb6fduALK8ZL6N5z5+60=
+	t=1722478670; cv=none; b=Eqcg3WuBPtzJs/BAU4K1lHylNyXwfVPbHQyCBq6lX/UPrrUI/UqLZ7LNqWkVJrK30SetSscICl1s3L0xHzQjFiQ9JuXiKeDZbz1nVCJdYxQyZA0u8V57fghdn4FBICDMmB/D7p1nH56TIkJnvMhzLsBxH47bVU2m4jF+/wgTnpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722478578; c=relaxed/simple;
-	bh=2HoOPqm+n1OLGJ/DowF/fcV3eBGIO5mRMI0Gloh8tTg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnWFq2KK8Y2n5UufxrSS5a49x6GVGx19tbgs0EToqlwSwx8nYy3jkDacAL/KDySpXWe8+AazyFiOcdeUdotTVTm4BNGCjuXGj2quYbw1SkGhl3rkEmqozISHY2n4MkDPfzkRcF8v3KPTWnBbXs15Pj14loK+tiexOJaajcRqVIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JMEDZa5N; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70f5ef740b7so2506006b3a.2;
-        Wed, 31 Jul 2024 19:16:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722478576; x=1723083376; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ejq2C3F/dAPbPhSGNK4nAupqeIE7GfO8x1h1qatpwug=;
-        b=JMEDZa5NW5+fpV7wzavjGN0zgPE89/K7Cit/SKrHp7A7IXqyWdbgzI8mfoeFGvDPtu
-         giAY19trytHsqZW/1Sk54CB0X4VXx+eYOJtfxdLy20vXRNAhxyQoX8v6genaPNlOic+Z
-         hlFRTIGUwnG3I5EwMNnRMNh5pBAwm2+cd245UvoxR+z3kGgYjkJlWfsoezEjO5fZEDC3
-         3CvYJQVdEoX3aidtswRFyewiyoVfFtYR6+kRpiTIe1fFJUiQ91d4Q/SZW5BUPIHzVuHl
-         dIDduLNQQH6BzI3f2fltQ9fwraZxhdM7CbExCrQ+XId5tpKMXtb8HDryGZS4Dc7fTdo5
-         aVtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722478576; x=1723083376;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ejq2C3F/dAPbPhSGNK4nAupqeIE7GfO8x1h1qatpwug=;
-        b=S3vWTkW5DQO9kCANyoI5w+6hG72m3cltJ0xjYHEMdmzsDzyeif6dTcT22mJf7i0Jfs
-         DFlG3aWZT0EykUNuYGXqRucbT9WvpcjkE8hL4iW3AhdLz805Qta8nVsyb4DyzpVhmjmq
-         Elzs5KIAplsISaaBZHAPZfUdNpqu2ULbmP6DSNpyPOmCIR31aZnDd9SgM8ZtND5bKr1N
-         G9m5lKvqTTR/dMp1LAQr4AXwbLNM6dnsO4OGJ3HhXaiBEk4id9Kcd/M09QPfxV3e1P+r
-         jkKfMPmgYLRfPAOQegvr04KBGHs5QMbYQmnuScmWs8zAQjkKynNZmGv5xqYqpsgShbbV
-         p/rA==
-X-Forwarded-Encrypted: i=1; AJvYcCUELRdWmO1Ol/JrLn3Eu804KVRDvRpiO8/XWD7Z+v/TmKykLd/BAT6rMnz+NnW/iEGOVO5UngewnDvi+Us=@vger.kernel.org, AJvYcCXKKlUMa89JtMFj4ytDd9R0PdCv3ZmjqREJ3IxxnkELAAKKk1y1PL3z2z93CeiZyva3BxB1sqng@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy57vX7wtICBxbHf6XkKXYteQNrzbwUFxx334lyQ8yY87J+/oNJ
-	tTq3xlrE1Yp4vSGp+jKiofKYBSeyoA4CdTr0oinfOHRoxvcVKiBi
-X-Google-Smtp-Source: AGHT+IFWw4mzX8dteIjYqTEzi4a0VvHR94VUKHWAasKvzM/xbT6ANPQqN6jo80HjiYqOH2g+v9A5Vg==
-X-Received: by 2002:a05:6a20:914c:b0:1c2:92ad:3331 with SMTP id adf61e73a8af0-1c68cec8eb9mr1940906637.2.1722478576483;
-        Wed, 31 Jul 2024 19:16:16 -0700 (PDT)
-Received: from Laptop-X1 ([2409:8a02:782c:bea0:2ba1:46ac:dba6:9de4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8d376sm127671345ad.18.2024.07.31.19.16.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 19:16:16 -0700 (PDT)
-Date: Thu, 1 Aug 2024 10:16:11 +0800
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: jiri@resnulli.us, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, nicolas.dichtel@6wind.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com,
-	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Subject: Re: [PATCH net,v2] rtnetlink: fix possible deadlock in
- team_port_change_check
-Message-ID: <Zqrv64570Zp9HaxZ@Laptop-X1>
-References: <20240731150940.14106-1-aha310510@gmail.com>
+	s=arc-20240116; t=1722478670; c=relaxed/simple;
+	bh=oS1RMgLwMHL2Dhqmo7GBAdxNlz2oCF2eZsjIxTf9OW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=goVjILhRua7bf0gMksIcDj5J0ldpkaRp5qiC/wJ1sZN1fUQ4SZOpl/y3sX/ZFhfYYqSLrsBY6clgGH30Iuf2SJgf9UKBjf5kUwtG354IiOKFidSpMkNTFU8r5Z8xzdZzqS0eXrjFwl4AUr5olyZLPofNg2c+lY/6ildwbm0+sB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JtiCJtXA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722478665;
+	bh=fVyxYzqCMvMG8pzOm61KDyWcw8LoxCEnu+X5OHBVRFs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=JtiCJtXAWEttwW280hQZ9s1N24Vr4Xt4fiw/7jNFRGMPihztKS9ehiWEOqKc+9A1Q
+	 rtbMrP8g8gX6U4cI6QCEaMkzvPcYoHdjKw12hKyLlI6Bjb3mNPBqqzK6GdRj4Dj1Yc
+	 iKofo3fKNvv4VmibXC9Oou6DYebZkfWJzgwci+v3nJoVO80jtM5nuoRU6Jae1DJcbW
+	 ZLJeauwQRhsfyMw2cChjTncmu6DDgsE6tpTax7MqqxLHQnYW8Fi0EU3jDOkFbhTkkp
+	 GNk4qk1yaCfxv2o+pnMDXO0kblegMDOewgq6AW4BdFpc3Tl1Do5+vUnqe52w9P5hdn
+	 Uzsm8RCOUoATg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZCKj0c9Jz4wb0;
+	Thu,  1 Aug 2024 12:17:45 +1000 (AEST)
+Date: Thu, 1 Aug 2024 12:17:44 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Daniel Bristot de Oliveira <bristot@kernel.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the tip tree
+Message-ID: <20240801121744.2756e2d5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731150940.14106-1-aha310510@gmail.com>
+Content-Type: multipart/signed; boundary="Sig_/13r4xTmIENYAR4Qx6jPyBQ0";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Aug 01, 2024 at 12:09:40AM +0900, Jeongjun Park wrote:
-> In do_setlink() , do_set_master() is called when dev->flags does not have
-> the IFF_UP flag set, so 'team->lock' is acquired and dev_open() is called,
-> which generates the NETDEV_UP event. This causes a deadlock as it tries to
-> acquire 'team->lock' again.
-> 
-> To solve this, we need to unlock 'team->lock' before calling dev_open()
-> in team_port_add() and then reacquire the lock when dev_open() returns.
-> Since the implementation acquires the lock in advance when the team
-> structure is used inside dev_open(), data races will not occur even if it
-> is briefly unlocked.
-> 
-> 
-> Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-> Fixes: ec4ffd100ffb ("Revert "net: rtnetlink: Enslave device before bringing it up"")
+--Sig_/13r4xTmIENYAR4Qx6jPyBQ0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The fixes tag shouldn't be ec4ffd100ffb, as the issue exists before
-ec4ffd100ffb. I think it should be
+Hi all,
 
-3d249d4ca7d0 ("net: introduce ethernet teaming device")
+After merging the tip tree, today's linux-next build (arm
+multi_v7_defconfig) produced this warning:
 
-Jiri, what do you think?
+In file included from kernel/sched/build_utility.c:72:
+kernel/sched/debug.c:341:57: warning: integer overflow in expression of typ=
+e 'long int' results in '-100663296' [-Woverflow]
+  341 | static unsigned long fair_server_period_max =3D (1 << 22) * NSEC_PE=
+R_USEC; /* ~4 seconds */
+      |                                                         ^
 
-Thanks
-Hangbin
+Introduced by commit
+
+  d741f297bcea ("sched/fair: Fair server interface")
+
+This is a 32 bit build.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/13r4xTmIENYAR4Qx6jPyBQ0
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaq8EgACgkQAVBC80lX
+0Gy7Cwf+Iuc1/AGMxS/3HRYxyZI5hPUP/gMmsUpwzafP2JSr+meeIcbS2OGTlDVu
+pYg5SYxeeZA0HiTxRTYZ663d0rS3uPZbyzdcl05PcrjrTRtxYenhgwR2UhZEa6E6
+XRoP7C+oFlLrfhL/RoEDeR+/INo2YYwWJJq31M5KiONJeFGZnZAtxurkmA69Cr3k
+tLoxl3G9GV6ElUHejqQXg18fTtc8Dtv0ueNqpS4t2VW0zYBIRiQ0eA26mbQBo05v
+ZJytADq4rbZ/k13b9iQT5BsAuGvSFQf5LkC6H3k1ZqG7VfQS6gOW0M2xvfnINRsN
+XrPZZFaNjJu77jzWdNfsne1ODwoxew==
+=BtfK
+-----END PGP SIGNATURE-----
+
+--Sig_/13r4xTmIENYAR4Qx6jPyBQ0--
 
