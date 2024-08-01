@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-271508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660DB944F36
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:30:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E454944F38
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8ABBE1C239F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:29:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E71728AA7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB49D1B29CF;
-	Thu,  1 Aug 2024 15:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4101B32C9;
+	Thu,  1 Aug 2024 15:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4jA4XyV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKg7xzN0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F9B1B1500;
-	Thu,  1 Aug 2024 15:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3C1B32BA;
+	Thu,  1 Aug 2024 15:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722526174; cv=none; b=cxmch+YSu0whPSZrSjS+5hy97aOb+Zby7B1bcOrs3xkmfx+Osxii8yHQoE9lL8UwsQhSD2tSDB8wVZM9W/crC/v7ISN7VknJ3Ju3Zdc62gX3CYf5n5ccFjGWyFpMEuGqclQxPlg7lUiHnWXktD7DK5A28PkFzxvJ4xUuHfPcC70=
+	t=1722526177; cv=none; b=rosOIRBymfAiwTwjMJoWXxs7bBoalyRegysjaPVR3vNIUn8jQc8gXr8dFDgkMYM0qoXnWUPNbb5nvdTiOkk3YWXcSEJQ37Re1tVhjuoNcv+B26lZcmd4l9LMbZt1MCRK3auCyVaN4BSE0F7bzn4FTPhJ1ocmfsMgvwwc9+RX0CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722526174; c=relaxed/simple;
-	bh=FbmbzTFxN58ftHLh71DWR+4cCKAmUjn7TgMEmB6sFYU=;
+	s=arc-20240116; t=1722526177; c=relaxed/simple;
+	bh=b0dKdpkls/xiHeq62dyi/20Z4CFMsm8c8psfqmbBiF4=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=dheXAunIEnHB3sRtJOcdoKg+GV35tPirL4n7ahdfVb+vUabBW2Nk6pfT2aw39aZB7dTptlq7VG5GqW9p4Byb1FtkDEbRTp04z6TJUJU7s0W6T2r7Hd3tLqxr17ps3GHBSMPy7DN7lCi6WT8yQ7Yon1ejrkZlaWPaCeurhF9Zvgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B4jA4XyV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2204C32786;
-	Thu,  1 Aug 2024 15:29:33 +0000 (UTC)
+	 Message-Id:Subject; b=gX+JyG/Y3Yz3IFouCuWwkTBKlwnpoQDS3s8IPKRhAunTmiKomwRsgtGom/SeW4u5pZF82K8At9dVRFmkQn2pEveE7uyqRjee0UBD5tzbkr74CV4x9X4iNE4QXv0TC7JeUaF18hsUYnmBxfPJd9gptdyD0MumyuzZthTIUHc2Hjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKg7xzN0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE5BFC4AF0C;
+	Thu,  1 Aug 2024 15:29:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722526174;
-	bh=FbmbzTFxN58ftHLh71DWR+4cCKAmUjn7TgMEmB6sFYU=;
+	s=k20201202; t=1722526177;
+	bh=b0dKdpkls/xiHeq62dyi/20Z4CFMsm8c8psfqmbBiF4=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=B4jA4XyVSMZxrVCdqEpkeJYr7xgAe2GkviSKDqmGTOO2NbZD7P3BhqjBJIpeAFInU
-	 dxtoaqibjnmJ41NnBnUEpEhcgxDJmgBGXbH4k7cErcJtBHFYqjG2P5SPCabyKVtkTc
-	 lHUYFhBjU2GbXt0eo1HR5oeR+EwG8lcWohBrSc564ah/nJDYxqzwACQMf4jqaoJ98w
-	 g0ggiQJrp45O+5ai8+ThJeuOlO+Y6OAWJVov+QAaot/W812+spYV38SpZ/92Fxy5nw
-	 Sf8Igz0vP7jOXyj6sSeBEb42e8JRE3vFoE1wM9PEmGNWLyXtvk1zYerBXf3qG5VFRP
-	 2d3CZdTchBmKQ==
-Date: Thu, 01 Aug 2024 09:29:32 -0600
+	b=QKg7xzN0ALkHM98XOiofqigRpBDKQ+VWTKgqk7P4ndlaRxn9zFHZq2Qjvq9aGXS5Q
+	 3c0W8CtiiFOZ90XfItPioJBnv9L9RpvrEMIFudBJg+qgjnn26LwrbqLfiPsGfZXkUx
+	 aWzR4+vo13bTTEmPcMUV6+bRElohC+VKbkXqwu7pobbXHpZ6gMczJduUsYQLPMbUee
+	 UYejgKJKP4UqkNuX3xmUotbtMJeJmhxfiQbx/v3dzSYOAid1FtYopNhcrN05TTADf/
+	 iTsG5nJ2cibd6g4fz93ej+bKdKJHLScB76kABLjSqKgVtAWCSPsf2Zj1fRS23ZLW9x
+	 Tm7llWCtWFV9w==
+Date: Thu, 01 Aug 2024 09:29:35 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,78 +50,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: matthew.gerlach@linux.intel.com
-Cc: conor+dt@kernel.org, lpieralisi@kernel.org, devicetree@vger.kernel.org, 
- bhelgaas@google.com, joyce.ooi@intel.com, linux-kernel@vger.kernel.org, 
- kw@linux.com, dinguyen@kernel.org, krzk+dt@kernel.org, 
- linux-pci@vger.kernel.org
-In-Reply-To: <20240731143946.3478057-1-matthew.gerlach@linux.intel.com>
-References: <20240731143946.3478057-1-matthew.gerlach@linux.intel.com>
-Message-Id: <172252600567.120573.8819016513209910959.robh@kernel.org>
-Subject: Re: [PATCH 0/7] Add PCIe Root Port support for Agilex family of
- chips
+To: Ninad Palsule <ninad@linux.ibm.com>
+Cc: andrew@codeconstruct.com.au, conor+dt@kernel.org, eajames@linux.ibm.com, 
+ robh+dt@kernel.org, linux-kernel@vger.kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, linux-arm-kernel@lists.infradead.org, 
+ joel@jms.id.au, devicetree@vger.kernel.org, linux-aspeed@lists.ozlabs.org
+In-Reply-To: <20240731214737.986010-1-ninad@linux.ibm.com>
+References: <20240731214737.986010-1-ninad@linux.ibm.com>
+Message-Id: <172252600790.120672.12772438670145461296.robh@kernel.org>
+Subject: Re: [PATCH v1 0/1] ARM: dts: aspeed: system1: IBM System1 BMC
+ update
 
 
-On Wed, 31 Jul 2024 09:39:39 -0500, matthew.gerlach@linux.intel.com wrote:
-> From: Matthew Gerlach <matthew.gerlach@linux.intel.com>
+On Wed, 31 Jul 2024 16:47:28 -0500, Ninad Palsule wrote:
+> Hello,
 > 
-> This patch set adds PCIe Root Port support for the Agilex family of FPGA chips.
-> Patches 1 and 2 have been reviewed previously and individually on the mailing
-> list and are included here with their revision history and Reviewed-by: tags
-> for convenience and completeness.
+> This patch only applies to openbmc/linux. The max31785 pmbus driver
+> changes are not available in the upstream yet. I will try to send those
+> changes upstream.
 > 
-> Patch 1:
->   Convert text device tree binding for Altera Root Port PCIe controller to YAML.
+> Ninad Palsule (1):
+>   ARM: dts: aspeed: system1: IBM System1 BMC update
 > 
-> Patch 2:
->   Convert text device tree binding for Altera PCIe MSI controller to YAML.
-> 
-> Patch 3:
->   Add new compatible strings for the three variants of the Agilex PCIe controller IP.
-> 
-> Patch 4:
->   Add a label to the soc@0 device tree node to be used by patch 5.
-> 
-> Patch 5:
->   Add base dtsi for PCIe Root Port support of the Agilex family of chips.
-> 
-> Patch 6:
->   Add dts enabling PCIe Root Port support on an Agilex F-series Development Kit.
-> 
-> Patch 7:
->   Update Altera PCIe controller driver to support the Agilex family of chips.
-> 
-> D M, Sharath Kumar (1):
->   pci: controller: pcie-altera: Add support for Agilex
-> 
-> Matthew Gerlach (6):
->   dt-bindings: PCI: altera: Convert to YAML
->   dt-bindings: PCI: altera: msi: Convert to YAML
->   dt-bindings: PCI: altera: Add binding for Agilex
->   arm64: dts: agilex: add soc0 label
->   arm64: dts: agilex: add dtsi for PCIe Root Port
->   arm64: dts: agilex: add dts enabling PCIe Root Port
-> 
->  .../bindings/pci/altera-pcie-msi.txt          |  27 --
->  .../devicetree/bindings/pci/altera-pcie.txt   |  50 ----
->  .../bindings/pci/altr,msi-controller.yaml     |  65 +++++
->  .../bindings/pci/altr,pcie-root-port.yaml     | 123 +++++++++
->  MAINTAINERS                                   |   4 +-
->  arch/arm64/boot/dts/intel/Makefile            |   1 +
->  arch/arm64/boot/dts/intel/socfpga_agilex.dtsi |   2 +-
->  .../socfpga_agilex7f_socdk_pcie_root_port.dts |  16 ++
->  .../intel/socfpga_agilex_pcie_root_port.dtsi  |  55 ++++
->  drivers/pci/controller/pcie-altera.c          | 260 ++++++++++++++++--
->  10 files changed, 507 insertions(+), 96 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie-msi.txt
->  delete mode 100644 Documentation/devicetree/bindings/pci/altera-pcie.txt
->  create mode 100644 Documentation/devicetree/bindings/pci/altr,msi-controller.yaml
->  create mode 100644 Documentation/devicetree/bindings/pci/altr,pcie-root-port.yaml
->  create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dts
->  create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex_pcie_root_port.dtsi
+>  .../dts/aspeed/aspeed-bmc-ibm-system1.dts     | 96 +++++++++++++++++++
+>  1 file changed, 96 insertions(+)
 > 
 > --
-> 2.34.1
+> 2.43.0
 > 
 > 
 > 
@@ -141,41 +96,15 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y intel/socfpga_agilex7f_socdk_pcie_root_port.dtb' for 20240731143946.3478057-1-matthew.gerlach@linux.intel.com:
+New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-ibm-system1.dtb' for 20240731214737.986010-1-ninad@linux.ibm.com:
 
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /firmware/svc: failed to match any schema with compatible: ['intel,agilex-svc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /firmware/svc/fpga-mgr: failed to match any schema with compatible: ['intel,agilex-soc-fpga-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: cb-intosc-hs-div2-clk: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: cb-intosc-ls-clk: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: f2s-free-clk: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: clock-controller@ffd10000: 'clocks' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/intel,agilex.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/ethernet@ff800000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/ethernet@ff800000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/ethernet@ff802000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/ethernet@ff802000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/ethernet@ff804000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/ethernet@ff804000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/sysmgr@ffd12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/sysmgr@ffd12000: failed to match any schema with compatible: ['altr,sys-mgr-s10', 'altr,sys-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr: failed to match any schema with compatible: ['altr,socfpga-s10-ecc-manager', 'altr,socfpga-a10-ecc-manager']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr: failed to match any schema with compatible: ['altr,socfpga-s10-ecc-manager', 'altr,socfpga-a10-ecc-manager']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/sdramedac: failed to match any schema with compatible: ['altr,sdram-edac-s10']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/ocram-ecc@ff8cc000: failed to match any schema with compatible: ['altr,socfpga-s10-ocram-ecc', 'altr,socfpga-a10-ocram-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/ocram-ecc@ff8cc000: failed to match any schema with compatible: ['altr,socfpga-s10-ocram-ecc', 'altr,socfpga-a10-ocram-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/usb0-ecc@ff8c4000: failed to match any schema with compatible: ['altr,socfpga-s10-usb-ecc', 'altr,socfpga-usb-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/usb0-ecc@ff8c4000: failed to match any schema with compatible: ['altr,socfpga-s10-usb-ecc', 'altr,socfpga-usb-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/emac0-rx-ecc@ff8c0000: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/emac0-rx-ecc@ff8c0000: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/emac0-tx-ecc@ff8c0400: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/emac0-tx-ecc@ff8c0400: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/sdmmca-ecc@ff8c8c00: failed to match any schema with compatible: ['altr,socfpga-s10-sdmmc-ecc', 'altr,socfpga-sdmmc-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: /soc@0/eccmgr/sdmmca-ecc@ff8c8c00: failed to match any schema with compatible: ['altr,socfpga-s10-sdmmc-ecc', 'altr,socfpga-sdmmc-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7f_socdk_pcie_root_port.dtb: bridge@80000000: $nodename:0: 'bridge@80000000' does not match '^([a-z][a-z0-9\-]+-bus|bus|localbus|soc|axi|ahb|apb)(@.+)?$'
-	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@52/fan@0: failed to match any schema with compatible: ['pmbus-fan']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@52/fan@1: failed to match any schema with compatible: ['pmbus-fan']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@52/fan@2: failed to match any schema with compatible: ['pmbus-fan']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@52/fan@3: failed to match any schema with compatible: ['pmbus-fan']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@52/fan@4: failed to match any schema with compatible: ['pmbus-fan']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@54/fan@0: failed to match any schema with compatible: ['pmbus-fan']
+arch/arm/boot/dts/aspeed/aspeed-bmc-ibm-system1.dtb: /ahb/apb/bus@1e78a000/i2c@380/fan-controller@54/fan@1: failed to match any schema with compatible: ['pmbus-fan']
 
 
 
