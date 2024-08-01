@@ -1,104 +1,228 @@
-Return-Path: <linux-kernel+bounces-270161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D891943CE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:45:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D143D9439E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03791F227FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:45:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37F26B20D6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C552139A1;
-	Thu,  1 Aug 2024 00:18:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A420E441F;
+	Thu,  1 Aug 2024 00:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7G/NV8H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TXUJelO7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DF132101B2;
-	Thu,  1 Aug 2024 00:18:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4FEE1113;
+	Thu,  1 Aug 2024 00:06:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722471515; cv=none; b=hxF+RrpbXCzGUpyF9mFok0DMyglPjLRh6HPblQI8zGEjoRue5eErnqXUwuzi4O3vcFj84aBw37RkvTWuKiJsxKzwiQiyzeE5ukoQ/020A0gDDBwiRM1EQ6l34XPYh7Zu39LXtLiE5ZKZAg0yN/21Sx5DvZjNCombX5QLTl2mle0=
+	t=1722470812; cv=none; b=ovoMamErVk3tb0sIX8zVDCj9XPpAt2qhruZiqdv1eYLfp2sRZvVql5vkoZbewARUYw5QQ/6Sh6bpsV5NmuWcd/D8jYfdxhSynA98dnpOZr9Duti4rdRHU5SmMUAk+Eezz7+ob61cU+RaEVm0kM7L67V0K5w0eO+WlZ6z1OpSh6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722471515; c=relaxed/simple;
-	bh=ufngkK1NW5FJJk3y562A9XzeMfpxXgZhI0+V1MKWuaE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tJYnHSjKhHMMc0oXg/za0Sw0YK3QePSS3TYVBXWdN9vYA9zmo7K22cRXK5kBdE2h+prHmzY51MPL2D/Pdsgin4HyeJ0iHL7fscnoFw7Cz4CCvuBJDaQAasX2WCwErcCGqM5T4u6XHJDWDGaspYgulSRITaaZ00xCrrU3Nq9meno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7G/NV8H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4C2C32786;
-	Thu,  1 Aug 2024 00:18:33 +0000 (UTC)
+	s=arc-20240116; t=1722470812; c=relaxed/simple;
+	bh=IRxbzLwh8BnLAQZ/qRxPBDb50SXvHiJg+HVmjPu4N+0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dZ/ZLGwpYnzmbv85qyYxENZd5cTqWvC6SLVZ31+4vs7JV4U5ktoLMnczQU3A/i24J7M5SCVz/6jLhXSMDQfVOfBeAMnEIVdsHov+qeINZOLtsIe69uSqXZ81es3hWywYSotiNMpEIjtXmeUBbOF65nmQelzU9AbeqkR45GsmdjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TXUJelO7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CCDBC116B1;
+	Thu,  1 Aug 2024 00:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722471514;
-	bh=ufngkK1NW5FJJk3y562A9XzeMfpxXgZhI0+V1MKWuaE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=j7G/NV8H0m6pohW4k5M+xOvZY6yUw57KaGchVXGP82P9+mxy0xi+mHoQQBcJfJcCt
-	 rUu0AD4mupo8/kB5XTohgVU4vVjn4ZMC/1xkNY7SKZteerqwebNaLpHzRno0wZDe1K
-	 tcMQqgDsPCCL7BZKmSLXMoD0Wt7qZGOgC9f7qvQ7YwSqr2CpbHX0/2b0nhMcqxbl6c
-	 MXifeW0UlhrIxQ1fuBLaui0p6QYfHp4BeyuWih5ibMKIAub95K9SzCbjpbOB2cMWUh
-	 7v/03cMSSexo8StIKOYHeaJFkT6Ugn6KoaYzuvG8XtnUjVubsW7aTReCm7iJwEWt0J
-	 4NBAx5Mf3Z7CA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Sasha Levin <sashal@kernel.org>,
-	kees@kernel.org,
-	gustavoars@kernel.org,
-	linux-i3c@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.10 121/121] i3c: mipi-i3c-hci: Error out instead on BUG_ON() in IBI DMA setup
-Date: Wed, 31 Jul 2024 20:00:59 -0400
-Message-ID: <20240801000834.3930818-121-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801000834.3930818-1-sashal@kernel.org>
-References: <20240801000834.3930818-1-sashal@kernel.org>
+	s=k20201202; t=1722470812;
+	bh=IRxbzLwh8BnLAQZ/qRxPBDb50SXvHiJg+HVmjPu4N+0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TXUJelO7b8OtoI20SuAqbmQV/LqtOEo8lq2/2feGq7apkml4s2IHHa5ENEPIqkfdz
+	 e5twvtWtJRVKJyFn2mRKfMXD4Vl5y2H0BwSDRprZTjRAMeq8+Hkh6I1JO1I+Vv5gVN
+	 NP+byJIReArdl38kN6/RXgw7GimUynSKtBRNHTN/rphFZZcmlutcINQ82lYPzrPyQi
+	 G0HUfv9Uwm251cjDejh8plkETYDeAcJA7u4Y1/74l/FYlOoqCa1tpQIloKto5uWt+e
+	 wrLJWpThG4j2JVkTudldKKtKIM2YBcabVthknRvOmxeROLu2597KpQ6giJZYusqwob
+	 ku30/KQ8AQUHA==
+From: Danilo Krummrich <dakr@kernel.org>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@samsung.com,
+	aliceryhl@google.com,
+	akpm@linux-foundation.org
+Cc: daniel.almeida@collabora.com,
+	faith.ekstrand@collabora.com,
+	boris.brezillon@collabora.com,
+	lina@asahilina.net,
+	mcanal@igalia.com,
+	zhiw@nvidia.com,
+	acurrid@nvidia.com,
+	cjia@nvidia.com,
+	jhubbard@nvidia.com,
+	airlied@redhat.com,
+	ajanulgu@redhat.com,
+	lyude@redhat.com,
+	linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-mm@kvack.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v3 00/25] Generic `Allocator` support for Rust
+Date: Thu,  1 Aug 2024 02:01:59 +0200
+Message-ID: <20240801000641.1882-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.10.2
 Content-Transfer-Encoding: 8bit
 
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Hi,
 
-[ Upstream commit 8a2be2f1db268ec735419e53ef04ca039fc027dc ]
+This patch series adds generic kernel allocator support for Rust, which so far
+is limited to `kmalloc` allocations.
 
-Definitely condition dma_get_cache_alignment * defined value > 256
-during driver initialization is not reason to BUG_ON(). Turn that to
-graceful error out with -EINVAL.
+In order to abstain from (re-)adding unstable Rust features to the kernel, this
+patch series does not extend the `Allocator` trait from Rust's `alloc` crate,
+nor does it extend the `BoxExt` and `VecExt` extensions.
 
-Signed-off-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-Link: https://lore.kernel.org/r/20240628131559.502822-3-jarkko.nikula@linux.intel.com
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/i3c/master/mipi-i3c-hci/dma.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Instead, this series introduces a kernel specific `Allocator` trait, which is
+implemented by the `Kmalloc`, `Vmalloc` and `KVmalloc` allocators, also
+implemented in the context of this series.
 
-diff --git a/drivers/i3c/master/mipi-i3c-hci/dma.c b/drivers/i3c/master/mipi-i3c-hci/dma.c
-index 4e01a95cc4d0a..1a96bf5a0bf87 100644
---- a/drivers/i3c/master/mipi-i3c-hci/dma.c
-+++ b/drivers/i3c/master/mipi-i3c-hci/dma.c
-@@ -294,7 +294,10 @@ static int hci_dma_init(struct i3c_hci *hci)
- 
- 		rh->ibi_chunk_sz = dma_get_cache_alignment();
- 		rh->ibi_chunk_sz *= IBI_CHUNK_CACHELINES;
--		BUG_ON(rh->ibi_chunk_sz > 256);
-+		if (rh->ibi_chunk_sz > 256) {
-+			ret = -EINVAL;
-+			goto err_out;
-+		}
- 
- 		ibi_status_ring_sz = rh->ibi_status_sz * rh->ibi_status_entries;
- 		ibi_data_ring_sz = rh->ibi_chunk_sz * rh->ibi_chunks_total;
+As a consequence we need our own kernel `Box<T, A>` and `Vec<T, A>` types.
+Additionally, this series adds the following type aliases:
+
+```
+pub type KBox<T> = Box<T, Kmalloc>;
+pub type VBox<T> = Box<T, Vmalloc>;
+pub type KVBox<T> = Box<T, KVmalloc>;
+
+
+pub type KVec<T> = Vec<T, Kmalloc>;
+pub type VVec<T> = Vec<T, Vmalloc>;
+pub type KVVec<T> = Vec<T, KVmalloc>;
+```
+
+With that, we can start using the kernel `Box` and `Vec` types throughout the
+tree and remove the now obolete extensions `BoxExt` and `VecExt`.
+
+For a final cleanup, this series removes the last minor dependencies to Rust's
+`alloc` crate and removes it from the entire kernel build.
+
+The series ensures not to break the `rusttest` make target by implementing the
+`allocator_test` module providing a stub implementation for all kernel
+`Allocator`s.
+
+This patch series passes all KUnit tests, including the ones added by this
+series. Additionally, the tests were run with `kmemleak` and `KASAN` enabled,
+without any issues.
+
+This series is based on [1], which hit -mm/mm-unstable, and is also available
+in [2].
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=mm/krealloc
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/dakr/linux.git/log/?h=rust/mm
+
+Changes in v3:
+ - Box:
+   - minor documentation fixes
+   - removed unnecessary imports in doc tests
+   - dropeed `self` argument from some remaining `Box` methods 
+   - implement `InPlaceInit` for Box<T, A> rather than specifically for `KBox<T>`
+ - Vec:
+   - minor documentation fixes
+   - removed useless `Vec::allocator` method
+   - in `Vec::extend_with` use `Vec::spare_capacity_mut` instead of raw pointer operations
+   - added a few missing safety comments
+   - pass GFP flags to `Vec::collect`
+ - fixed a rustdoc warning in alloc.rs
+ - fixed the allocator_test module to implement the `Allocator` trait correctly
+ - rebased to rust-next
+
+Changes in v2:
+  - preserve `impl GlobalAlloc for Kmalloc` and remove it at the end (Benno)
+  - remove `&self` parameter from all `Allocator` functions (Benno)
+  - various documentation fixes for `Allocator` (Benno)
+  - use `NonNull<u8>` for `Allocator::free` and `Option<NonNull<u8>>` for
+    `Allocator::realloc` (Benno)
+  - fix leak of `IntoIter` in `Vec::collect` (Boqun)
+  - always realloc (try to shrink) in `Vec::collect`, it's up the the
+    `Allocator` to provide a heuristic whether it makes sense to actually shrink
+  - rename `KBox<T, A>` -> `Box<T, A>` and `KVec<T, A>` -> `Vec<T, A>` and
+    provide type aliases `KBox<T>`, `VBox<T>`, `KVBox<T>`, etc.
+    - This allows for much cleaner code and, in combination with removing
+      `&self` parameters from `Allocator`s, gets us rid of the need for
+      `Box::new` and `Box::new_alloc` and all other "_alloc" postfixed
+      functions.
+    - Before: `KBox::new_alloc(foo, Vmalloc)?`
+    - After:  `VBox::new(foo)?`, which resolves to
+              `Box::<Foo,  Vmalloc>::new(foo)?;
+
+Danilo Krummrich (25):
+  rust: alloc: add `Allocator` trait
+  rust: alloc: separate `aligned_size` from `krealloc_aligned`
+  rust: alloc: rename `KernelAllocator` to `Kmalloc`
+  rust: alloc: implement `Allocator` for `Kmalloc`
+  rust: alloc: add module `allocator_test`
+  rust: alloc: implement `Vmalloc` allocator
+  rust: alloc: implement `KVmalloc` allocator
+  rust: types: implement `Unique<T>`
+  rust: alloc: implement kernel `Box`
+  rust: treewide: switch to our kernel `Box` type
+  rust: alloc: remove `BoxExt` extension
+  rust: alloc: add `Box` to prelude
+  rust: alloc: import kernel `Box` type in types.rs
+  rust: alloc: import kernel `Box` type in init.rs
+  rust: alloc: implement kernel `Vec` type
+  rust: alloc: implement `IntoIterator` for `Vec`
+  rust: alloc: implement `collect` for `IntoIter`
+  rust: treewide: switch to the kernel `Vec` type
+  rust: alloc: remove `VecExt` extension
+  rust: alloc: add `Vec` to prelude
+  rust: alloc: remove `GlobalAlloc` and `krealloc_aligned`
+  rust: error: use `core::alloc::LayoutError`
+  rust: str: test: replace `alloc::format`
+  rust: alloc: update module comment of alloc.rs
+  kbuild: rust: remove the `alloc` crate
+
+ rust/Makefile                       |  44 +-
+ rust/exports.c                      |   1 -
+ rust/helpers.c                      |  15 +
+ rust/kernel/alloc.rs                | 101 +++-
+ rust/kernel/alloc/allocator.rs      | 147 +++--
+ rust/kernel/alloc/allocator_test.rs |  21 +
+ rust/kernel/alloc/box_ext.rs        |  56 --
+ rust/kernel/alloc/kbox.rs           | 340 +++++++++++
+ rust/kernel/alloc/kvec.rs           | 847 ++++++++++++++++++++++++++++
+ rust/kernel/alloc/vec_ext.rs        | 185 ------
+ rust/kernel/error.rs                |   2 +-
+ rust/kernel/init.rs                 |  56 +-
+ rust/kernel/init/__internal.rs      |   2 +-
+ rust/kernel/lib.rs                  |   1 -
+ rust/kernel/prelude.rs              |   5 +-
+ rust/kernel/str.rs                  |  78 ++-
+ rust/kernel/sync/arc.rs             |  17 +-
+ rust/kernel/sync/condvar.rs         |   4 +-
+ rust/kernel/sync/lock/mutex.rs      |   2 +-
+ rust/kernel/sync/lock/spinlock.rs   |   2 +-
+ rust/kernel/sync/locked_by.rs       |   2 +-
+ rust/kernel/types.rs                | 192 ++++++-
+ rust/kernel/uaccess.rs              |  15 +-
+ rust/kernel/workqueue.rs            |  20 +-
+ samples/rust/rust_minimal.rs        |   4 +-
+ scripts/Makefile.build              |   7 +-
+ 26 files changed, 1735 insertions(+), 431 deletions(-)
+ create mode 100644 rust/kernel/alloc/allocator_test.rs
+ delete mode 100644 rust/kernel/alloc/box_ext.rs
+ create mode 100644 rust/kernel/alloc/kbox.rs
+ create mode 100644 rust/kernel/alloc/kvec.rs
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
+
+
+base-commit: c0d669a6bbe161a3afa26dea3d8491863e352e59
 -- 
-2.43.0
+2.45.2
 
 
