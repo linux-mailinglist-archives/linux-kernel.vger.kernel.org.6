@@ -1,145 +1,139 @@
-Return-Path: <linux-kernel+bounces-271441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B328944E4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:44:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79723944E4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DB751C2264B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:44:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26C551F24166
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3396A1A57EC;
-	Thu,  1 Aug 2024 14:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75FA91A57F0;
+	Thu,  1 Aug 2024 14:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W36W8q5u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pD3Ln2Os"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7304E1A57DA;
-	Thu,  1 Aug 2024 14:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEDD1A57D9;
+	Thu,  1 Aug 2024 14:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523443; cv=none; b=UkuHs40QuSCR+wnTUq9AFcVosSzx+poLYIGDI7QSetVKF5Y+xxWiSpjHCda4PigsqX/J5vewHzzVndqQQ8xjd35J33WmxNjehqfkGkTIUoPKHlOLq8kFJwv+eIVJRSZbLSno3z/5pVau7H85yYJ6+UgIF2OSQGwuVUW6ItEdn54=
+	t=1722523484; cv=none; b=LXD7i6zVVJ6r47LCpmKVJLByPymGlWHkl4w8zN70ZQseCDkyd2r4h/et4Q6ydD5XIdji4dHSGx5w4UCXgWBxIoi7Hfedn2B8+w6LeQvcm5gpqMJZxPbmlWEkPAqiNJzMLuRUIqTMRCb5AFLh4IdORSAdBGNSVNJMk4ZviTP6MDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523443; c=relaxed/simple;
-	bh=vDLczcoR7zvANqzru7uWQWeq1kHyRayRzYpbJvCETC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EEXRcBqBBxAD5eV3Md09oCxzGEwoB0Ci7baFG/9PRZnARmr4ID0LKTyKoPUG+GuW66ic2da06gLpzmI0mw/EaFcNqdtcoXmrRAOkHAUJ5WgI27ZbqyfrxgUp912YDyH5/W9GpFTTHBSQ74okS1ZyfLPU11noC6stI7Aph2URTLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W36W8q5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 722EBC32786;
-	Thu,  1 Aug 2024 14:43:58 +0000 (UTC)
+	s=arc-20240116; t=1722523484; c=relaxed/simple;
+	bh=yWRzKkA1fAc3LTDx/IyWXZIrXafQjDv+7BkIxVifL8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cn6UtH1XtCyaiVJiHEG17ELjfevSBysUZYSJmZB4X55vKpqSg4sXv0ewTtv/dOhiohJJJv8NA/Uhd7qioLiV9yIpTOhnx0Q12sBr5T+p1x+eisFllZotc7XTfYqD3XmdcX7MMP2OEsAVre4lah1FnzR002DEdPeJiaegVLdVf9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pD3Ln2Os; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D7FC32786;
+	Thu,  1 Aug 2024 14:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722523442;
-	bh=vDLczcoR7zvANqzru7uWQWeq1kHyRayRzYpbJvCETC8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W36W8q5umLgVa9T87tmtG/nbqObvf/3vbXt3SRI8mNfh1bv9GwCZTGZOgNyyALaof
-	 3Fs3N6ZAU95Yi8y6+JNf27EacOqOvnhAgpEQlCaEdnHffI7ZJxrY5Qo/fFLZgIszfQ
-	 /NDnK3QXin6+A/xqBeqsYZTSqP2dXa+ZLUt36+5KRs9ibvuT5W4soZPZiTQp9mKszV
-	 S+h6HAOtblakv7hd2mX7UaAEwjqA58BHPfboPJSlHIfNqBqQV9+2eE0r8cUZecLjtH
-	 R7j1y+GDNDoB7U0q9kLklDdQwd+0TYFkGLtyHuxZeCKzS/sBgQ990HfWmokjwZyv6k
-	 RaxKMG/9HjMpA==
-Message-ID: <85bd5da2-312e-4d25-a4e9-afae4fedbd50@kernel.org>
-Date: Thu, 1 Aug 2024 16:43:56 +0200
+	s=k20201202; t=1722523484;
+	bh=yWRzKkA1fAc3LTDx/IyWXZIrXafQjDv+7BkIxVifL8U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pD3Ln2OspqdH0jh7sCea6e/o0uZY/OzY9jp78ALJQwbP84f1/NaLa8esqwJWL8lPz
+	 p0SpQUSsJnLGtodaKWOMKq4uRkz6cchJWzOfGBqSXeAN6ckRPfDuqDIdROks4VPJmr
+	 ysXKdt50ietfHWLnyKypfra6Eui+eDtEd0DrcdSKv0bFhBsT4UfKRYp7mWMB2YiReQ
+	 ujD8dBFCvf+SB5+KRaoYtj3sbOAhWdDYj5fubIuh65bUTVRgkHRy9hhb4kK/Sp24yg
+	 kT/N00viDth3MmwoqeqhF/83Osa9GWEySwu6v0kPRqMwvRzC8RhUwSLwTOkGKF4cVW
+	 BhKqczRi3uOzQ==
+Date: Thu, 1 Aug 2024 15:44:38 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Andrea Parri <parri.andrea@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>,
+	Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v4 12/13] dt-bindings: riscv: Add Ziccrse ISA extension
+ description
+Message-ID: <20240801-unlighted-senator-cc60d021fe28@spud>
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-13-alexghiti@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] phy: nuvoton: add new driver for the Nuvoton MA35
- SoC USB 2.0 PHY
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>, vkoul@kernel.org,
- kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240801053744.807884-1-hpchen0nvt@gmail.com>
- <20240801053744.807884-3-hpchen0nvt@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240801053744.807884-3-hpchen0nvt@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="vk7KX8IGXHik2sFq"
+Content-Disposition: inline
+In-Reply-To: <20240731072405.197046-13-alexghiti@rivosinc.com>
 
-On 01/08/2024 07:37, Hui-Ping Chen wrote:
-> +	struct regmap *sysreg;
 
-Look here - iomem? No.
+--vk7KX8IGXHik2sFq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +};
+On Wed, Jul 31, 2024 at 09:24:04AM +0200, Alexandre Ghiti wrote:
+> Add description for the Ziccrse ISA extension which was introduced in
+> the riscv profiles specification v0.9.2.
+>=20
+> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Reviewed-by: Guo Ren <guoren@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
+cumentation/devicetree/bindings/riscv/extensions.yaml
+> index a63578b95c4a..22824dd30175 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -289,6 +289,12 @@ properties:
+>              in commit 64074bc ("Update version numbers for Zfh/Zfinx") of
+>              riscv-isa-manual.
+> =20
+> +        - const: ziccrse
+> +          description:
+> +            The standard Ziccrse extension which provides forward progre=
+ss
+> +            guarantee on LR/SC sequences, as introduced in the riscv pro=
+files
+> +            specification v0.9.2.
+
+Do we have a commit hash for this? Also v0.9.2? The profiles spec is a
+crock and the version depends on the specific profile - for example
+there's new tags as of last week with 0.5 in them... The original profiles
+are ratified, so if this definition is in there, please cite that
+instead of a "random" version.
+
+Cheers,
+Conor.
+
 > +
-> +static int ma35_usb_phy_power_on(struct phy *phy)
-> +{
-> +	struct ma35_usb_phy *p_phy = phy_get_drvdata(phy);
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	ret = clk_prepare_enable(p_phy->clk);
-> +	if (ret < 0) {
-> +		dev_err(p_phy->dev, "Failed to enable PHY clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	regmap_read(p_phy->sysreg, MA35_SYS_REG_USBPMISCR, &val);
-> +	if (val & PHY0SUSPEND) {
-> +		/*
-> +		 * USB PHY0 is in operation mode already
-> +		 * make sure USB PHY 60 MHz UTMI Interface Clock ready
-> +		 */
-> +		ret = readl_poll_timeout((void __iomem *)p_phy->sysreg + MA35_SYS_REG_USBPMISCR,
+>          - const: zk
+>            description:
+>              The standard Zk Standard Scalar cryptography extension as ra=
+tified
+> --=20
+> 2.39.2
+>=20
 
-Eh, I responded to v2, not here, so repeating:
+--vk7KX8IGXHik2sFq
+Content-Type: application/pgp-signature; name="signature.asc"
 
-sysreg is a regmap, not io address. How could it possibly work and be
-tested?!? This cannot work. Test your code *before* sending it.
+-----BEGIN PGP SIGNATURE-----
 
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqufVgAKCRB4tDGHoIJi
+0jq/AQDKme9i0ZnDLmCj43Cb8IW/tVrItu1FVtB7WbJMTpoGBwEA+TebmkDz/Bu9
+wFToOnjAf5wH7WupVoZ1Lv3Qh6WEHgs=
+=bzCq
+-----END PGP SIGNATURE-----
 
-Best regards,
-Krzysztof
-
+--vk7KX8IGXHik2sFq--
 
