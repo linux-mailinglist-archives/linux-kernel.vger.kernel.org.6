@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-270932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610AA944735
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:57:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DAD94473C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:58:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BBA3286138
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0478283D69
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBFA4170858;
-	Thu,  1 Aug 2024 08:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FB116EB61;
+	Thu,  1 Aug 2024 08:58:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kWO1OKc4";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rgKW0lkR"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="p64N3HFt"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866FF16F8EB
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1676B16E884
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722502655; cv=none; b=S/AbF0W3SLc790G5kyED5y7+QXJpY4Nl7pd+NDtzNQtUVRnyqBylORaoMOfBOq+TG8v1vj7rKgK5NpBLGUhO8kiMQceyHtpC0bBQgubX5kWG5fN3nAY5RounSKLa3gflfKPJ0mv+YdhhmzGbkwzHVlWigTCbFo0epJcOEVVmdiI=
+	t=1722502711; cv=none; b=dZWe1/oZD2x26zhj3aBUd1JvQ0lluxUnE22Xv/ctngaGXXri31ryzj71TXcyssTcdLk2Ret3cE1yawbMpf6f0PivJ/K1gudU33LNledXIvgzbUoQDtbUGDpM40suf+aYt2sAlV1WcNOsuFvoKtoyaCPrsDNAKsoEBBmZPqRvYn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722502655; c=relaxed/simple;
-	bh=7JTpmPQcCBM3sRPjm9hPcUVHAMOdnycFktlpGCs6Lkg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ee5VJIO19M39ZbASl9dpTfsals6tOVobTo4IQekB4o4R2ipHN4TkZD+H6PlHn5uP2FV7ha9tQAIq+LRhvAbI3mWJfzNC+adKxCDofYwczHvxrOj0kg7YgE4XtjWXtDahoX5EnzbpjZZHdkKRFQELncFnwA8CC49b0hp+D+BA5bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kWO1OKc4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rgKW0lkR; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722502649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xNGtxNJnnru0fB1WEZd0tF/jrKpevqG2aVOElVy9DD0=;
-	b=kWO1OKc4mUeARHuVfj6PBXzwknpjCsAZsrW7fWLvDnvPKpV/aeQjCPN7BLs66z9aCtvdfJ
-	YNxGpGtArSGrQJKphtw1aFuZg1xlEbRbndC3YtqUHNHV0F3BM6sWirdX3BXgP89yjrhfU0
-	iGNpuEF5TqAUlTWgtolVWY9WnAYBzX5KDJ68d1eBxHpWiL/q36/xwTliUXk8/fOmOzRzMH
-	9bs+jF7KH1JegTqCSjDT2wFzoex5fBYvDM+5dMhVu4zkNtcZTtUa7IhSWYwLbd5+oIT0VG
-	RdDg3Ns5J+aARAauXdXX0hrWL0osTtsP6yQktRO1RueFXHNEdVMrwR8nm/5ukA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722502649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xNGtxNJnnru0fB1WEZd0tF/jrKpevqG2aVOElVy9DD0=;
-	b=rgKW0lkRdd8WQmqpz3XDTDj78GIFzvnExDEA7JyVWnuLILctr4mThDuS5RUcnuRZRLY6cr
-	wR4Ukq7qgwrxa3BQ==
-To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
- linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, mingo@kernel.org,
- linux-mm@kvack.org, keith.lucas@oracle.com, jeffxu@chromium.org,
- rick.p.edgecombe@intel.com, jorgelo@chromium.org, keescook@chromium.org,
- sroettger@google.com, jannh@google.com, aruna.ramakrishna@oracle.com
-Subject: Re: [PATCH  v7 2/5] x86/pkeys: Add helper functions to update PKRU
- on the sigframe
-In-Reply-To: <20240801065116.2088582-3-aruna.ramakrishna@oracle.com>
-References: <20240801065116.2088582-1-aruna.ramakrishna@oracle.com>
- <20240801065116.2088582-3-aruna.ramakrishna@oracle.com>
-Date: Thu, 01 Aug 2024 10:57:29 +0200
-Message-ID: <874j844o3q.ffs@tglx>
+	s=arc-20240116; t=1722502711; c=relaxed/simple;
+	bh=tPJsh7QBVoB1jKaglBQmEY/41DSc5GieU4L6EOgzKkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b1YvTeQuf3caMgKbUS+j5F0ruLxJKq9rxWfOzQQv+vIirPnMZJACnTnluNldre7WH+bKQob7Hg3rwFzL/QS1YRKAG+UIgrzSruQbSerMx/JK3zC1LP6qMaOkKuObWZGfjXpGXakkrIYd+p+E0rOXIOsUWNDOx3DN4zyoXKGeeaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=p64N3HFt; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso44945785e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:58:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722502707; x=1723107507; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tPJsh7QBVoB1jKaglBQmEY/41DSc5GieU4L6EOgzKkc=;
+        b=p64N3HFtXalwCrxEXMEylVKebJuxRWLGVkbke7p+xgFyDkqQDk3zl7ECJzFKV3WZd5
+         NgxB+uH7/yNVWQvcijUweaTmmb2HzfKXiVMCwDWY4iS9UTtJGViiae66ISD1PHQue776
+         EWJJXVKSbhbYxFw83Z+nf4iWuvmU/VQGhZ0LhfuOYk5J4TI/50FFVTjPbYNbirKtnqtn
+         7iaipsh5r0bzO+RaOG3eroYctOVIvxdmD6kQzkvIMdfSPuc55pJ5LmQ/Cu7hoPvDic6J
+         MhBerDqPUsX42LpR9mD2w+xv/W6gTH4Qvgx7vvJDq3KV+WrnjSZspIJjluhWGwSUx+a4
+         Gy7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722502707; x=1723107507;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tPJsh7QBVoB1jKaglBQmEY/41DSc5GieU4L6EOgzKkc=;
+        b=OTmd7kU5kI0ChWjKY1DYPkB92l0xtA4qKFebErPpDT0BcI85JFptFIddw7WzUZ5t/y
+         txpYoHzamEaUNfEYujtLRAle02Z7NemOU3kvCO1DY6QLXK6o/epWzw2GXb+3fu1DT6Sh
+         39iVEvd/MPqkKYO9FN2icxj8kYKqQq0NWFi/zEj+qIIyX5tDond/eD2i9sAgbFQxbdRO
+         iWIyzZFnHOn4GHh5O+4g8p0/A2pL7p+ADv83rqI/C3Sy8v00a84LrfIt59m7rgMnQi4+
+         y0KmRmET1xHpim6k8BYLFggh0d/BclWK7rkHEFu+FGZzrl3+PUULN8I/+Gh/jyLL6DdL
+         F2XA==
+X-Forwarded-Encrypted: i=1; AJvYcCWCqpszeaJlRfGmV8KbmYSE5OGCHXfyCVwnfnUNZd2bjeQZrW+VIxvCWXTe1MbOZDW96v9JtyMQGyDPiwgIUl+IvzuXxyS6dQD6xl8L
+X-Gm-Message-State: AOJu0YysV7Oo4oDnXoNqqYqwwtYvl2OT0nt6aew5xKW5lJRAamfNx+rH
+	WbrrmL67abFtD8mnP+Q+pqiDXpX96An2DnXS1VbDju1ET57kf7C6Vxt8znWhzgU=
+X-Google-Smtp-Source: AGHT+IGQRcl/PQtdlPyR7dNajFYBsKSLKzhWoU2XZu5lqGXwUWaZPT4AaFMQt0TtjLnMzLL60itwWQ==
+X-Received: by 2002:a05:600c:56cc:b0:428:2433:1a07 with SMTP id 5b1f17b1804b1-428b8a3a27cmr13137615e9.34.1722502707309;
+        Thu, 01 Aug 2024 01:58:27 -0700 (PDT)
+Received: from localhost ([193.196.194.3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8ad9ddsm49275775e9.17.2024.08.01.01.58.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 01:58:26 -0700 (PDT)
+Date: Thu, 1 Aug 2024 10:58:25 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pwm: lp3943: Use of_property_count_u32_elems() to get
+ property length
+Message-ID: <xz4mlhgxh4fqi3ken5xzam4xzmjbfpmyxs76pthofqathbcobc@3wdrnrca47qh>
+References: <20240731201407.1838385-8-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fzp6gmohfws5ympm"
+Content-Disposition: inline
+In-Reply-To: <20240731201407.1838385-8-robh@kernel.org>
 
-On Thu, Aug 01 2024 at 06:51, Aruna Ramakrishna wrote:
->  
-> +extern void __user *get_xsave_addr_user(struct xregs_state *xsave, int xfeature_nr);
 
-  *xsave lacks __user
+--fzp6gmohfws5ympm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
+Hello Rob,
 
-        tglx
+On Wed, Jul 31, 2024 at 02:14:03PM -0600, Rob Herring (Arm) wrote:
+> Replace of_get_property() with the type specific
+> of_property_count_u32_elems() to get the property length.
+>=20
+> This is part of a larger effort to remove callers of of_get_property()
+> and similar functions. of_get_property() leaks the DT property data
+> pointer which is a problem for dynamically allocated nodes which may
+> be freed.
+
+To understand that right: The problem is that of_get_property() returns
+pp->value, which might be freed. In this driver this isn't problematic
+as the returned value is just used for a NULL check. So this isn't
+urgent and queuing it for the next merge window is fine, right?
+
+Best regards
+Uwe
+
+--fzp6gmohfws5ympm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmarTiUACgkQj4D7WH0S
+/k5C/AgApsuO8eskylvIA6p5E/s67TT2Qp4cv9KULs7QoOgd3BEOMzJMobj53Ox8
+1HgANTWrNaW88h2aMTth+sXWNWFh58AAsqsrpPSZc8qX3TjcHQL9SCbQB2a5QSd8
+vXtXYPU7TSRVOiGZdSrLwJyg6y77YiLhmAQItlET8rktg3/Wkxd0Duh5PWDdA0M+
+Q6SR57HtBC9w611zADJ514wydA3sE0Hmf3qGBUPwspQTTiOQLKLtTYseUzm1zjYo
+//D85WP2UyVkXhpNkZzh/CdSVn17ywtIV8y8ncCxBiK/SmwjwjDB/DIRcJf71Pu3
+gD2xpTTaPyYm3n7Y7d5yZieSkRNhNQ==
+=/DTF
+-----END PGP SIGNATURE-----
+
+--fzp6gmohfws5ympm--
 
