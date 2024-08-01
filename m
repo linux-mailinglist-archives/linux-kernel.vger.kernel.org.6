@@ -1,94 +1,81 @@
-Return-Path: <linux-kernel+bounces-270847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85402944633
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:06:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A764944635
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B60328277A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F3931C2243B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0238216DC18;
-	Thu,  1 Aug 2024 08:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178A3166313;
+	Thu,  1 Aug 2024 08:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IvV3a+1h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mOmx0YdH";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IvV3a+1h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mOmx0YdH"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eQHR7tPx"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246341662E2;
-	Thu,  1 Aug 2024 08:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649B8157488
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722499602; cv=none; b=BwONxcPzBcfxGF/VgMzNI9kd5cIdiESyW8LGt9b9ua7z9IXCBnBWyv9MI+IT5UAopJ+q5Wg7Ff2P9Mt2KzS9LJma+bwSj/OfZwsQSOpTQq0Ftf0q4NgHgJZCmnXegXOr81+QwYykOD8cnRLqxPyOUf82AlKDqsLCGfxi48Wxvhw=
+	t=1722499631; cv=none; b=mXM2WLRPwuhcPD6ZiTpvSvOJZw37/IVHStBbF+PHvmHrmVakfL8fHMrIfULUEpNcnInHzcH7qFo3ejF0+agMq4ITMuvvKR4/TvdjtWpV2UA3AzuT5RtLILcgpKOxAQ1leOQ5ywB0nGaAiPYe27JnQMXJAAal54fMnfx3j3kBvkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722499602; c=relaxed/simple;
-	bh=KXQltPNjga0Igfnq/81KleTMWsF5jL+UuuFf8qMwbSQ=;
+	s=arc-20240116; t=1722499631; c=relaxed/simple;
+	bh=dxRHTEyglWDrXfJF94f67/auBHmkZ/1a94arDukSgTs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t/GUXpVXsti+oZrqLnoqTaYdZm0PiryXJhxJLYWO4K6LI/byXJTW/W7xXaO5uhIvwp6LMpx7+N43fZvHjzpt9eA3esIWyKcvxQtyEhD1ChoHFVH9JwwYeY4ZkljVOk9ycrySpDKPmojNx/lOD0ilNc2fSt2F3QaLTBQd7+Za+w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IvV3a+1h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mOmx0YdH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IvV3a+1h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mOmx0YdH; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 440F11FB3D;
-	Thu,  1 Aug 2024 08:06:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722499598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ceRe+g78mgzXvP7Pn16SKcrYPRGfu9OFsDe8NwfsDx0=;
-	b=IvV3a+1h5kVX300Mc2JiZDFOHSryVZvWX7iQpF9AdxA7uH22t7BuVHVMEimQ5/stJKlkvu
-	SSE6M1g0UPSqi6iFEUpTXtjlCbyEQU+Ss1XPQqHBJqaWODoL4U0GeCu2P0nmGiNXOwGfrk
-	Xv9DNdNFY2dhN6vve5dMn+knlMunvJY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722499598;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ceRe+g78mgzXvP7Pn16SKcrYPRGfu9OFsDe8NwfsDx0=;
-	b=mOmx0YdH6ki0agTW3TUbHfvcXCIewn1wEaVaE/ad8WmIt47Wiuj4bXGiQ/XkaoioVUbbp0
-	3MHfVDjqGfyD0nCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1722499598; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ceRe+g78mgzXvP7Pn16SKcrYPRGfu9OFsDe8NwfsDx0=;
-	b=IvV3a+1h5kVX300Mc2JiZDFOHSryVZvWX7iQpF9AdxA7uH22t7BuVHVMEimQ5/stJKlkvu
-	SSE6M1g0UPSqi6iFEUpTXtjlCbyEQU+Ss1XPQqHBJqaWODoL4U0GeCu2P0nmGiNXOwGfrk
-	Xv9DNdNFY2dhN6vve5dMn+knlMunvJY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1722499598;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ceRe+g78mgzXvP7Pn16SKcrYPRGfu9OFsDe8NwfsDx0=;
-	b=mOmx0YdH6ki0agTW3TUbHfvcXCIewn1wEaVaE/ad8WmIt47Wiuj4bXGiQ/XkaoioVUbbp0
-	3MHfVDjqGfyD0nCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 226DA13946;
-	Thu,  1 Aug 2024 08:06:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZtgRCA5Cq2anDAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 01 Aug 2024 08:06:38 +0000
-Message-ID: <319812ce-a15f-4004-a166-d281b8525616@suse.cz>
-Date: Thu, 1 Aug 2024 10:06:37 +0200
+	 In-Reply-To:Content-Type; b=YKk8fFsvdhmwWt8H8gwV/0SWmaOtMg28fBrms/kvSCoKE6TeWruebCZq26OZKsdFzZ4NyaJ7AwvQ0WIE8bJsBDtEsp31lTIONFeN6jPOGpnV29Qr89+OFnsYdT1osFNTnN9OuUln5jVqgFNXgqt1bXX/Op+BVE6QuAHGxvPZH+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eQHR7tPx; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4716TZk5025652;
+	Thu, 1 Aug 2024 08:06:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=z
+	EJ35kZA6S/kXGZD/9MxIB1NcUqP6U4ESYSerPwyfa8=; b=eQHR7tPxPlEQPCGue
+	pFavgZHzwVk+OcKBpTMeB0eoO7sQpIwFz04kVwAqFZRtrSbEpdYMmhyNrdxvAbMu
+	kge5VxgXc/shTm76iOAgRNCY6hJe/1cJSgXXv2fuZbjrkv5/wZj0VZ1qiYrXbita
+	ZLvrbYAWA+VT9w/tjN9iqGFf0TUzVccacyadWbUuIVMN7O9mkAjrdpw9CMOWtPTK
+	pu3kfQkZHsFgtnnyj7dTsswLkMC4FXS220tNml3kY9bcQwY3BAqxmXrtzTU8XY57
+	KhSzlh+S+EVmg+hPrWh/uJPS35VO/1wG26ieTCz9jb5xO0t1T8N4YU6aMpgFEjsk
+	8rwsg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40r54u06ne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 08:06:55 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47186sN9030950;
+	Thu, 1 Aug 2024 08:06:54 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40r54u06nc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 08:06:54 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47183b9n018969;
+	Thu, 1 Aug 2024 08:06:54 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nc7q0m6j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 08:06:53 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47186oka57344276
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 1 Aug 2024 08:06:52 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 06F2120040;
+	Thu,  1 Aug 2024 08:06:50 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6D22F20043;
+	Thu,  1 Aug 2024 08:06:47 +0000 (GMT)
+Received: from [9.43.79.112] (unknown [9.43.79.112])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  1 Aug 2024 08:06:47 +0000 (GMT)
+Message-ID: <b7a52f5b-df93-476b-a9b1-931fad1474e0@linux.ibm.com>
+Date: Thu, 1 Aug 2024 13:36:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,159 +83,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: list_lru: fix UAF for memory cgroup
+Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
+To: Baoquan He <bhe@redhat.com>
+Cc: Hari Bathini <hbathini@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
+ <Zqs8veRya7v/pXEt@MiWiFi-R3L-srv>
 Content-Language: en-US
-To: Muchun Song <songmuchun@bytedance.com>, akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org, muchun.song@linux.dev, nphamcs@gmail.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Shakeel Butt <shakeel.butt@linux.dev>, stable@vger.kernel.org
-References: <20240801024603.1865-1-songmuchun@bytedance.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240801024603.1865-1-songmuchun@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <Zqs8veRya7v/pXEt@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.09 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[cmpxchg.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,linux.dev:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -4.09
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EmUxLjMbJNMxGW1YDEzR98PdsVJe6uf0
+X-Proofpoint-ORIG-GUID: qj94FuyCbc8v7B-LkClrnY6NYyMkaLDR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_04,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 adultscore=0 clxscore=1015 suspectscore=0 bulkscore=0
+ mlxlogscore=864 phishscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010042
 
-On 8/1/24 04:46, Muchun Song wrote:
-> The mem_cgroup_from_slab_obj() is supposed to be called under rcu
-> lock or cgroup_mutex or others which could prevent returned memcg
-> from being freed. Fix it by adding missing rcu read lock.
-> 
-> Fixes: 0a97c01cd20b ("list_lru: allow explicit memcg and NUMA node selection")
-> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Cc: <stable@vger.kernel.org>
+Hello Baoquan,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+On 01/08/24 13:13, Baoquan He wrote:
+> On 07/31/24 at 08:57pm, Sourabh Jain wrote:
+>> The following errors are observed when kexec is done with SMT=off on
+>> powerpc.
+>>
+>> [  358.458385] Removing IBM Power 842 compression device
+>> [  374.795734] kexec_core: Starting new kernel
+>> [  374.795748] kexec: Waking offline cpu 1.
+>> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+>> [  374.935833] kexec: Waking offline cpu 2.
+>> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+>> snip..
+>> [  375.515823] kexec: Waking offline cpu 6.
+>> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
+>> [  375.695836] kexec: Waking offline cpu 7.
+>>
+>> During kexec, the offline CPUs are brought online, which triggers the
+> Is this a generic action or specific on ppc about the offline CPUs being
+> brought line during kexec?
 
-> ---
-> v2:
->  Only grab rcu lock when necessary (Vlastimil Babka)
-> 
->  mm/list_lru.c | 28 ++++++++++++++++++++++------
->  1 file changed, 22 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/list_lru.c b/mm/list_lru.c
-> index a29d96929d7c7..9b7ff06e9d326 100644
-> --- a/mm/list_lru.c
-> +++ b/mm/list_lru.c
-> @@ -85,6 +85,7 @@ list_lru_from_memcg_idx(struct list_lru *lru, int nid, int idx)
->  }
->  #endif /* CONFIG_MEMCG */
->  
-> +/* The caller must ensure the memcg lifetime. */
->  bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
->  		    struct mem_cgroup *memcg)
->  {
-> @@ -109,14 +110,22 @@ EXPORT_SYMBOL_GPL(list_lru_add);
->  
->  bool list_lru_add_obj(struct list_lru *lru, struct list_head *item)
->  {
-> +	bool ret;
->  	int nid = page_to_nid(virt_to_page(item));
-> -	struct mem_cgroup *memcg = list_lru_memcg_aware(lru) ?
-> -		mem_cgroup_from_slab_obj(item) : NULL;
->  
-> -	return list_lru_add(lru, item, nid, memcg);
-> +	if (list_lru_memcg_aware(lru)) {
-> +		rcu_read_lock();
-> +		ret = list_lru_add(lru, item, nid, mem_cgroup_from_slab_obj(item));
-> +		rcu_read_unlock();
-> +	} else {
-> +		ret = list_lru_add(lru, item, nid, NULL);
-> +	}
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(list_lru_add_obj);
->  
-> +/* The caller must ensure the memcg lifetime. */
->  bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
->  		    struct mem_cgroup *memcg)
->  {
-> @@ -139,11 +148,18 @@ EXPORT_SYMBOL_GPL(list_lru_del);
->  
->  bool list_lru_del_obj(struct list_lru *lru, struct list_head *item)
->  {
-> +	bool ret;
->  	int nid = page_to_nid(virt_to_page(item));
-> -	struct mem_cgroup *memcg = list_lru_memcg_aware(lru) ?
-> -		mem_cgroup_from_slab_obj(item) : NULL;
->  
-> -	return list_lru_del(lru, item, nid, memcg);
-> +	if (list_lru_memcg_aware(lru)) {
-> +		rcu_read_lock();
-> +		ret = list_lru_del(lru, item, nid, mem_cgroup_from_slab_obj(item));
-> +		rcu_read_unlock();
-> +	} else {
-> +		ret = list_lru_del(lru, item, nid, NULL);
-> +	}
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(list_lru_del_obj);
->  
+I think it is powerpc specific.
+Patch that introduced this on powerpc: e8e5c2155b003 ("powerpc/kexec: 
+Fix orphaned offline CPUs across kexec")
+
+- Sourabh Jain
 
 
