@@ -1,109 +1,150 @@
-Return-Path: <linux-kernel+bounces-270991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FAF94481C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:24:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD7A94481E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:25:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775DB1C21108
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:24:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1674D288C5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5C019FA99;
-	Thu,  1 Aug 2024 09:20:51 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0615189529;
-	Thu,  1 Aug 2024 09:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36F7189B96;
+	Thu,  1 Aug 2024 09:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DGajlqK0"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B99C18990E
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504051; cv=none; b=dVlelqPQqiNP875REQjYc5SISm8obnAtoW8d5KxLJ15ywyHf1nr7/milXZzmnz4v4qe8qm3sl+O3Ul5sofSGGReN4NORo961wyeZ3D+TD11wqRyDbpuYEjokiuoPv5oQAo+9u0ZvhvIaOpx4vSn3Q8KChV7Pn2JWAk78RPF0EnA=
+	t=1722504067; cv=none; b=ta45908AJEZUnfEkDeoOBolLGetKghoA+yWooEGUCRPmLiZn7RMMnNdgGCXrm2fSCk8NL7Hy6dyyFZjomdhhMKI/yfQIh3dGH5S1tZEQWTZKO0Cgn+9xFXwfss1ICY1jOj+KFKNJvSUxDAlvV7PKcrRt4TxCe7qj9JOjFUpD+hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504051; c=relaxed/simple;
-	bh=epR/EN6mWshA6mci1TxGN1bWxiILuDwYkacz4MLwldU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V3RXfWf4P7dx4XaCjiK6U0L+y8fKQoNnGgYNN+nIOX90+Gz0Wel3LPj11vllPBL09vNT9LgEnggBb4BTKv2FjTVcurlUbzJRNSeDhA3hXS+ELGToY5qkx4L8uRfuZV764CnGD93iVj0e1gWj+/XEYc0Dg0DOExCKb9ZVt7yYepw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56EB61007;
-	Thu,  1 Aug 2024 02:21:08 -0700 (PDT)
-Received: from [192.168.1.50] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A97AB3F5A1;
-	Thu,  1 Aug 2024 02:20:40 -0700 (PDT)
-Message-ID: <381fd199-640a-4ca0-8d7e-1c4dae11ef7f@arm.com>
-Date: Thu, 1 Aug 2024 10:20:38 +0100
+	s=arc-20240116; t=1722504067; c=relaxed/simple;
+	bh=3Io79nUQn8ypd8PwwL4q+T1yD0diA5Tfaz6TUlMiA8c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=nC6WOyU/W/mrjcsNHKt8nb/80pW/wBvhe3Z6MiSVeeJGu2277UfiaL9G1D7fmPH6ssaKFVrn+DvTMKOK3UXZEESo2VDoG9neZS7DXqGO8MtZSSUNwQqvyd2aEIzPgR+KcSTIAq6aKGTh8IJoiP9UjBmAbJRifW/yHS/LUuAg0Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DGajlqK0; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5a15692b6f6so10312753a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:21:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722504063; x=1723108863; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GQVA9z2jkUPxM3dqZI0KDPVXgKoffaizeXmufcNkJbk=;
+        b=DGajlqK0Gyyn+hPULgUkUgLzFdFHcVAbeY+X9Ca3AuD4/ymatLH6HcO3HTy9H5NHME
+         zOx0sjQGqO01y3smYzWX3bGI2hB8ey4cdvJmQ4czCcKGgs18/hV1O+BExa0tqFSBsZxc
+         IcaGGusT/x4c4DC0Jv++B5VV1Ri1m+kaFDOh7Gi1kolcCKrMdqUWlzK9ex5x1sNLqgji
+         4r7ACboz+24dUCqbYkIUSPJthaQpS0kd6oneYvNmoGmKGXwEIhqiez5/pVgIJm5bVZ7E
+         GfLlo6UUnXNhDRNR7aSIoq9kSLs8qJhVwUt410Fw9s6uzhE5i5iPIHTy49w4GD/a5oFI
+         yORQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722504063; x=1723108863;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GQVA9z2jkUPxM3dqZI0KDPVXgKoffaizeXmufcNkJbk=;
+        b=AUHQRv4gYvN52yB0Zx72AJjciDhf49h0uCTYqjKt7dJHljzMu/vy8MoYg71SjPb2PB
+         etS4JN2Xmgs1YND88PbB5/hVsOGgpeaxmFo2epmlJmS3R383CSraYg2sWmNs6A1WAMeq
+         32oYuov47Ryt3RZ0SpqBkYNqrkRYQB/iA4LExSluNNRrpsmujglwU7uEx1UKAvjHfALL
+         q0fMTGoXud2y/nuZBKS0i91CK9NBOEK75fnsGaDYm4gJhMXd2zgsHdiSi6fjP8IggA3F
+         YqBmqSwf8aHBG9Bvt3ODtH8bgCHUiPnGOoI2OH3vCTpupj8PVzCESSVer5FSUnMs7+Mf
+         o0Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWh/6YxBe3BqdhuGog1gu+zsp/5wa8Z9VpNjnN70tBbh6P8UIpvCwFsq1KL5tuWuOoEBwKdcX6Htf7gnXwhLMscEcbC5667xr4F+P1u
+X-Gm-Message-State: AOJu0YwK+U/a/veUdSpdsrkGLn8vpG/CXlYTnbN+KpFp2klD3tHmNlnH
+	KKgaaJnEgxR6vGRsfrlTRhgIzb4IKxttLB2lgmD5Qradcd/LNQOZgDdWNk0EUHM=
+X-Google-Smtp-Source: AGHT+IG4an2mFFKr4wz3Z9DFgeOmmND21A8Rbh3YvwoLKrs/2dCx443xl5h3j8lRXM2FS1yhxPSg2w==
+X-Received: by 2002:a50:ee82:0:b0:5a3:3062:36d6 with SMTP id 4fb4d7f45d1cf-5b6fe72ddc6mr1090738a12.1.1722504062925;
+        Thu, 01 Aug 2024 02:21:02 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b017787967sm7857844a12.9.2024.08.01.02.21.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 02:21:01 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 51C785F80C;
+	Thu,  1 Aug 2024 10:20:59 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,  Marc Zyngier <maz@kernel.org>,
+  Oliver Upton <oliver.upton@linux.dev>,  Tianrui Zhao
+ <zhaotianrui@loongson.cn>,  Bibo Mao <maobibo@loongson.cn>,  Huacai Chen
+ <chenhuacai@kernel.org>,  Michael Ellerman <mpe@ellerman.id.au>,  Anup
+ Patel <anup@brainfault.org>,  Paul Walmsley <paul.walmsley@sifive.com>,
+  Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
+  Christian Borntraeger <borntraeger@linux.ibm.com>,  Janosch Frank
+ <frankja@linux.ibm.com>,  Claudio Imbrenda <imbrenda@linux.ibm.com>,
+  kvm@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  kvmarm@lists.linux.dev,  loongarch@lists.linux.dev,
+  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
+  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  David Matlack <dmatlack@google.com>,
+  David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 05/84] KVM: Add kvm_release_page_unused() API to put
+ pages that KVM never consumes
+In-Reply-To: <20240726235234.228822-6-seanjc@google.com> (Sean
+	Christopherson's message of "Fri, 26 Jul 2024 16:51:14 -0700")
+References: <20240726235234.228822-1-seanjc@google.com>
+	<20240726235234.228822-6-seanjc@google.com>
+Date: Thu, 01 Aug 2024 10:20:59 +0100
+Message-ID: <87wml0egzo.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] coresight: cti: use device_* to iterate over device
- child nodes
-Content-Language: en-GB
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>,
- Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
- Michal Simek <michal.simek@amd.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>,
- Lee Jones <lee@kernel.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <20240801-device_child_node_access-v1-0-ddfa21bef6f2@gmail.com>
- <20240801-device_child_node_access-v1-1-ddfa21bef6f2@gmail.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240801-device_child_node_access-v1-1-ddfa21bef6f2@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 01/08/2024 07:13, Javier Carrasco wrote:
-> Drop the manual access to the fwnode of the device to iterate over its
-> child nodes. `device_for_each_child_node` macro provides direct access
-> to the child nodes, and given that they are only required within the
-> loop, the scoped variant of the macro can be used.
-> 
-> Use the `device_for_each_child_node_scoped` macro to iterate over the
-> direct child nodes of the device.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Sean Christopherson <seanjc@google.com> writes:
+
+> Add an API to release an unused page, i.e. to put a page without marking
+> it accessed or dirty.  The API will be used when KVM faults-in a page but
+> bails before installing the guest mapping (and other similar flows).
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->   drivers/hwtracing/coresight/coresight-cti-platform.c | 10 +++-------
->   1 file changed, 3 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> index ccef04f27f12..d0ae10bf6128 100644
-> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
-> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
-> @@ -416,20 +416,16 @@ static int cti_plat_create_impdef_connections(struct device *dev,
->   					      struct cti_drvdata *drvdata)
->   {
->   	int rc = 0;
-> -	struct fwnode_handle *fwnode = dev_fwnode(dev);
-> -	struct fwnode_handle *child = NULL;
->   
-> -	if (IS_ERR_OR_NULL(fwnode))
-> +	if (IS_ERR_OR_NULL(dev_fwnode(dev)))
->   		return -EINVAL;
->   
-> -	fwnode_for_each_child_node(fwnode, child) {
-> +	device_for_each_child_node_scoped(dev, child) {
->   		if (cti_plat_node_name_eq(child, CTI_DT_CONNS))
-> -			rc = cti_plat_create_connection(dev, drvdata,
-> -							child);
-> +			rc = cti_plat_create_connection(dev, drvdata, child);
->   		if (rc != 0)
->   			break;
+>  include/linux/kvm_host.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 3d9617d1de41..c5d39a337aa3 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -1201,6 +1201,15 @@ unsigned long gfn_to_hva_prot(struct kvm *kvm, gfn=
+_t gfn, bool *writable);
+>  unsigned long gfn_to_hva_memslot(struct kvm_memory_slot *slot, gfn_t gfn=
+);
+>  unsigned long gfn_to_hva_memslot_prot(struct kvm_memory_slot *slot, gfn_=
+t gfn,
+>  				      bool *writable);
+> +
+> +static inline void kvm_release_page_unused(struct page *page)
+> +{
+> +	if (!page)
+> +		return;
+> +
+> +	put_page(page);
+> +}
 
-Don't we need to fwnode_handle_put(child) here, since we removed the
-outer one ?
+I guess it's unfamiliarity with the mm layout but I was trying to find
+where the get_pages come from to see the full pattern of allocate and
+return. I guess somewhere in the depths of hva_to_pfn() from
+hva_to_pfn_retry()? I think the indirection of the page walking confuses
+me ;-)
 
-Suzuki
+Anyway the API seems reasonable enough given the other kvm_release_
+functions.
 
+Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
+
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
