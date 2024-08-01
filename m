@@ -1,248 +1,168 @@
-Return-Path: <linux-kernel+bounces-270655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 876D69442DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:49:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E01A9442CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 421332835E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37241F22BF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3CD1586C8;
-	Thu,  1 Aug 2024 05:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B00156F5F;
+	Thu,  1 Aug 2024 05:48:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="os5QWxR+"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hsWfpbNk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B781B158542;
-	Thu,  1 Aug 2024 05:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEBE13E03E;
+	Thu,  1 Aug 2024 05:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722491330; cv=none; b=ouNkB7gFD9FO5c96X0cEloiQGb/0xsC8T/1FXWFuYXAvDKGHM8C5tk0gCRzLduakS0W/eBol8UHlgpq2OD9rWQ4Q6JEEUWbJ8FoSVZpgVEt6/n445QuVdWGt8eh1NNSeAcoAtTr8Qoy/Y1HTMthFJL22qgIt8geaOtX7dlJTNvA=
+	t=1722491285; cv=none; b=tiBIc45xmcN+smpiMPZ6SFnoDBXX5UsGV7/UkFYafgybMJ6hJBxsaFR4uwxom0rghorerFwxwc4gecqHTXTbvWRrKVM/7e8WFnB3hkQjYapP14tuxUzRwYzUMpq4z4XYRZRoTIGBId0PR+3/TY4jN4KAdPRfrnXkbEKq+3/RHG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722491330; c=relaxed/simple;
-	bh=IPhahkZ6qy7uRjZHpGdmaK0Lu+Kr00TpXw/OcLHYSfI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H7Egv6XRwbJ+YpekVmTV5deobIAINw68R4uJf0qocHd5D9RVx0vNHVehMHxm/vWVJX3EoUK0Thpx1WiEBsREPZw0ucQxgAVHnUCM7JxeCpRAFuduvUQWu9X6pEHxPTpGBCQQB5+pRCI9aybK6L3oOG+6IBz/pBcaLoFQYyvh42g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=os5QWxR+; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VMxS1A030520;
-	Thu, 1 Aug 2024 05:48:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hGO9keNVUrvs9IXj4FJ+VEBdkTXZ7TVnpLE++TZrl9s=; b=os5QWxR+3BXCMtTN
-	AbMLiIuZNhyp5deKGmK9AefD2SqSwr0EdLGidwSVsNqgbdijxrKLY+pNHpB2AZUR
-	n+UMZ7NIPnEcSNOSaF13g8+IEoekh/JC2gUgr74LtuhZkCw6znEHiviUx1MvGXdA
-	NJmBGgO1/47nWLwIdnnGL1WFyfkkM6OP1CqO6um2eDoTn0fjPs0I9mf7dL+dLS5m
-	Jy06BuuFctVsux7a5NVpP4kAs2HTqTIaKfEA8WyUUGDJUg4uWwcTAbhAFwAXv3hq
-	qDdn7Jnziz2M4ez9rmhlLhKgypaiBnGVOno6P9r6jBbMf6opNsJYVsfmCk3Gj8o+
-	6QKaUA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qm082qxn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 05:48:35 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4715mZ1r011964
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 05:48:35 GMT
-Received: from hu-srichara-blr.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 31 Jul 2024 22:48:30 -0700
-From: Sricharan R <quic_srichara@quicinc.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>
-Subject: [PATCH V7 3/4] arm64: dts: qcom: ipq9574: Enable PCIe PHYs and controllers
-Date: Thu, 1 Aug 2024 11:18:02 +0530
-Message-ID: <20240801054803.3015572-4-quic_srichara@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240801054803.3015572-1-quic_srichara@quicinc.com>
-References: <20240801054803.3015572-1-quic_srichara@quicinc.com>
+	s=arc-20240116; t=1722491285; c=relaxed/simple;
+	bh=P7LaQ8dsnoeFi/TrRvEnBd0x10u1hqJfNA4ljZGmH6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=exMgPMPnUmRFs2Lpdihwtpzitkih/md3MJ7DrPn2tLtRzxiGnf6iwSMwsmpeh24Uujd4GmtS9ijtd6eOEtzvCE1v42dgM1k8RSN7YbfYqrx11x8niGnDEelQxECMkwdalAt7/aR8MaQYXsMPVezLzQ8B0mMB5onVFKLfZQK5HuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hsWfpbNk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE9F0C4AF0C;
+	Thu,  1 Aug 2024 05:48:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722491284;
+	bh=P7LaQ8dsnoeFi/TrRvEnBd0x10u1hqJfNA4ljZGmH6Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hsWfpbNkhVYs94fw4vLg0qZYrVTvZ2tsiTgyQxzHwoywlE9Bxw6J4n+rSfozrnt06
+	 31gRBh2P+6wpQa9a9f+H8ikPlrVK/8gvxoVyYf+Sm+1Skr+cxg0bnBvQq3LmHPmcCz
+	 YUFvDFiEPsygSzM2fGbbuNQ79T6i+4hIa1qOVdPvPf1usZ4A72qPiG/c1CsJY/U/WP
+	 HtmrZ3zxEn1i5eYrTPhgMabBX83I26FW/01IoDGk94e1RVX0T+jpfb6LA87fiS/AcX
+	 JFfS8yiPJ5ic9m1xRoBc4qXeOGicPTH0nGPgbsiYiNeHO8QlQ0IJShZNkeGTYeBj5Q
+	 dSInyn8Ed1XFQ==
+Date: Wed, 31 Jul 2024 22:48:02 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, KP Singh <kpsingh@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	bp@alien8.de, sfr@canb.auug.org.au
+Subject: Re: [PATCH] init/main.c: Do jump_label_init before
+ early_security_init
+Message-ID: <20240801054802.GA2981775@thelio-3990X>
+References: <20240731213429.2244234-1-kpsingh@kernel.org>
+ <CAHC9VhQEYutCiAMitEv0JY4PRY4tdLdqEy76qvY1xB5q8Y13mg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oUrSxAYDY2AM5Dd0FUSsy3HYokUTDhMy
-X-Proofpoint-ORIG-GUID: oUrSxAYDY2AM5Dd0FUSsy3HYokUTDhMy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_02,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
- mlxscore=0 priorityscore=1501 mlxlogscore=941 spamscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010031
+In-Reply-To: <CAHC9VhQEYutCiAMitEv0JY4PRY4tdLdqEy76qvY1xB5q8Y13mg@mail.gmail.com>
 
-From: devi priya <quic_devipriy@quicinc.com>
+On Wed, Jul 31, 2024 at 09:15:04PM -0400, Paul Moore wrote:
+> On Wed, Jul 31, 2024 at 5:34 PM KP Singh <kpsingh@kernel.org> wrote:
+> >
+> > LSM indirect calls being are now replaced by static calls, this requires
+> > a jumpt_table_init before early_security_init where LSM hooks and their
+> > static calls and keys are initialized.
+> >
+> > Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
+> > Signed-off-by: KP Singh <kpsingh@kernel.org>
+> > ---
+> >  init/main.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Does this look okay, static call folks?
 
-Enable the PCIe controller and PHY nodes corresponding to RDP 433.
+For the record, I tested this patch since I noticed the warnings like
+Boris did and it appears to break booting for me with certain ARCH=arm
+configurations in QEMU.
 
-Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
----
- [V7] Fixed review comments from Konrad
+  $ cat arch/arm/configs/repro.config
+  CONFIG_JUMP_LABEL=y
+  CONFIG_SECURITY=y
+  CONFIG_SECURITY_LOCKDOWN_LSM=y
+  CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
 
- arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 113 ++++++++++++++++++++
- 1 file changed, 113 insertions(+)
+  $ make -skj"$(nproc)" ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- mrproper defconfig repro.config zImage
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 1bb8d96c9a82..165ebbb59511 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -8,6 +8,7 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/gpio/gpio.h>
- #include "ipq9574-rdp-common.dtsi"
- 
- / {
-@@ -15,6 +16,45 @@ / {
- 	compatible = "qcom,ipq9574-ap-al02-c7", "qcom,ipq9574";
- };
- 
-+&pcie1_phy {
-+	status = "okay";
-+};
-+
-+&pcie1 {
-+	pinctrl-0 = <&pcie1_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pcie2_phy {
-+	status = "okay";
-+};
-+
-+&pcie2 {
-+	pinctrl-0 = <&pcie2_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 30 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&pcie3_phy {
-+	status = "okay";
-+};
-+
-+&pcie3 {
-+	pinctrl-0 = <&pcie3_default>;
-+	pinctrl-names = "default";
-+
-+	perst-gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 33 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc_default_state>;
- 	pinctrl-names = "default";
-@@ -28,6 +68,79 @@ &sdhc_1 {
- };
- 
- &tlmm {
-+
-+	pcie1_default: pcie1-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio25";
-+			function = "pcie1_clk";
-+			drive-strength = <6>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio26";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-down;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio27";
-+			function = "pcie1_wake";
-+			drive-strength = <6>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	pcie2_default: pcie2-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio28";
-+			function = "pcie2_clk";
-+			drive-strength = <6>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio29";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-down;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio30";
-+			function = "pcie2_wake";
-+			drive-strength = <6>;
-+			bias-pull-up;
-+		};
-+	};
-+
-+	pcie3_default: pcie3-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio31";
-+			function = "pcie3_clk";
-+			drive-strength = <6>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio32";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio33";
-+			function = "pcie3_wake";
-+			drive-strength = <6>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
- 			pins = "gpio5";
--- 
-2.34.1
+  $ qemu-system-arm \
+      -display none \
+      -nodefaults \
+      -no-reboot \
+      -machine virt \
+      -append 'console=ttyAMA0 earlycon' \
+      -kernel arch/arm/boot/zImage \
+      -initrd rootfs.cpio \
+      -m 512m \
+      -serial mon:stdio
+  <hangs with no output>
 
+Without this patch, that same configuration works fine (with the warning
+from before):
+
+  [    0.000000] Booting Linux on physical CPU 0x0
+  [    0.000000] Linux version 6.11.0-rc1-next-20240730 (nathan@m3-large-x86) (arm-linux-gnueabi-gcc (GCC) 14.1.0, GNU ld (GNU Binutils) 2.42) #1 SMP Thu Aug  1 05:44:11 UTC 2024
+  [    0.000000] ------------[ cut here ]------------
+  [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static_key_enable_cpuslocked+0xb8/0xf4
+  [    0.000000] static_key_enable_cpuslocked(): static key '0xc1fb4930' used before call to jump_label_init()
+  [    0.000000] Modules linked in:
+  [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc1-next-20240730 #1
+  [    0.000000] Call trace:
+  [    0.000000]  unwind_backtrace from show_stack+0x10/0x14
+  [    0.000000]  show_stack from dump_stack_lvl+0x54/0x68
+  [    0.000000]  dump_stack_lvl from __warn+0x80/0x114
+  [    0.000000]  __warn from warn_slowpath_fmt+0x124/0x18c
+  [    0.000000]  warn_slowpath_fmt from static_key_enable_cpuslocked+0xb8/0xf4
+  [    0.000000]  static_key_enable_cpuslocked from static_key_enable+0x14/0x1c
+  [    0.000000]  static_key_enable from security_add_hooks+0xc4/0xfc
+  [    0.000000]  security_add_hooks from lockdown_lsm_init+0x18/0x24
+  [    0.000000]  lockdown_lsm_init from initialize_lsm+0x44/0x7c
+  [    0.000000]  initialize_lsm from early_security_init+0x44/0x50
+  [    0.000000]  early_security_init from start_kernel+0x64/0x6bc
+  [    0.000000]  start_kernel from 0x0
+  [    0.000000] ---[ end trace 0000000000000000 ]---
+
+I haven't tried to fire up GDB to figure out why it is exploding early
+since it is late for me but I figured I would get the report out first.
+The rootfs is available from [1] (arm-rootfs.cpio.zst, decompress it
+with zstd first); it just shuts down the machine on boot.
+
+Cheers,
+Nathan
+
+[1]: https://github.com/ClangBuiltLinux/boot-utils/releases/latest
+
+> > diff --git a/init/main.c b/init/main.c
+> > index 206acdde51f5..5bd45af7a49e 100644
+> > --- a/init/main.c
+> > +++ b/init/main.c
+> > @@ -922,6 +922,8 @@ void start_kernel(void)
+> >         boot_cpu_init();
+> >         page_address_init();
+> >         pr_notice("%s", linux_banner);
+> > +       /* LSM and command line parameters use static keys */
+> > +       jump_label_init();
+> >         early_security_init();
+> >         setup_arch(&command_line);
+> >         setup_boot_config();
+> > @@ -933,8 +935,6 @@ void start_kernel(void)
+> >         boot_cpu_hotplug_init();
+> >
+> >         pr_notice("Kernel command line: %s\n", saved_command_line);
+> > -       /* parameters may set static keys */
+> > -       jump_label_init();
+> >         parse_early_param();
+> >         after_dashes = parse_args("Booting kernel",
+> >                                   static_command_line, __start___param,
+> > --
+> > 2.46.0.rc2.264.g509ed76dc8-goog
+> 
+> -- 
+> paul-moore.com
 
