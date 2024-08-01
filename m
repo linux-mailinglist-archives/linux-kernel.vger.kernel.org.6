@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-271241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA02C944B80
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:38:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E435944B61
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802561F235E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:38:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FB3D1C249FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7F1A0703;
-	Thu,  1 Aug 2024 12:38:33 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FB919F49C;
+	Thu,  1 Aug 2024 12:33:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hLPkfTes"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4577415252D;
-	Thu,  1 Aug 2024 12:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B506549641;
+	Thu,  1 Aug 2024 12:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515912; cv=none; b=FbRpoFvbfe1ceynvVpQ/f4hjosaH1K348VvYck8uGh7uA0Bo+Lkgp6gDR16b5CwHYfuNMW7rCYFALjm8XHGeRpcXk+Izsqdl6yJvXxI6jq4NNEv9/yrLZANB7Sm1wsd2pZHcBMQjrZgtNqEEZwstealBAyDStpsSEdZj8DLC7xE=
+	t=1722515605; cv=none; b=tOrjS/1cjm/4LjU3iZ8lmRluvSXMjnaD+bm0ve2wcoyNiz3XRZ5imhAmau1qpJF0fTcJP7Pxn5MFRLLieJ9EncAxnFeFJ/bDn5V2PWo6JqVfGgOzf5FiUm7WrhzG1QDFl1rIx6An1PBbOBCXC6rw3nmeiLGANlxyEAc40cLTzkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515912; c=relaxed/simple;
-	bh=x02eljObgUrujzqWdEVMMHSIGgKeTAl+hcGM7tnLa48=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tSVbfw+/S3GEdpzVWuwPVbeh4GfbqHe0o8PsoZskkhkAblkv633yuS6hvEBr5yy6fOgcae2KPmI59OgdD0VuLiPQCO9F5JLL7k/GV04g8P88hI6aoj36nAOndI1+DYyaPmEyxWMqbO24to751ZSpD9KUUll4z50J5lgxcgvO/9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WZT5d5hNQz1L8rq;
-	Thu,  1 Aug 2024 20:38:13 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 80CDB18006C;
-	Thu,  1 Aug 2024 20:38:26 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 1 Aug 2024 20:38:25 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>, <bvanassche@acm.org>,
-	<nab@risingtidesystems.com>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>,
-	<target-devel@vger.kernel.org>
-Subject: [PATCH v2 for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-Date: Thu, 1 Aug 2024 20:32:53 +0800
-Message-ID: <20240801123253.2908831-1-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1722515605; c=relaxed/simple;
+	bh=ISfTAzbWUkV7/dEVJLW1JPTgrCRjPLNkivoDFJ7g9Qo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sa0AiX6HuJoW1c92Kq75jOtn4meEvX2LddixG4wNuE/cvmtLUmII+w0jYNsdS8P12T6B8tGCOln1ohCt5qiRKIoxQBiplsEA5IdnDqobcHJ5tv/mgnje/z1MgGbrPGB6o+gGOgY38xOoJAwHk4IXr8kgfFtQoc+jc+hWV680o6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hLPkfTes; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=kOJVYxF+5aHy0xm8sHyQfUFrcqHBhYqf0L3Q4EjM3HA=; b=hL
+	PkfTesPsel61q+lmzHyIHBSPAIrn1N0ETU+l4113Ef0lUe4A5IWIIw/JrKWqT+p6nfezqvosGT3Vd
+	rlrx6u3SwLwXVLUcFEIQ5FPjgZteEqrJGdFB7m+CjHkK3hEstMT7hg9oip+c5AyJ7P0LJZtQCYZXP
+	yS0z/LovpI2Oz3o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZUzc-003m2R-Oh; Thu, 01 Aug 2024 14:33:16 +0200
+Date: Thu, 1 Aug 2024 14:33:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next 09/10] net: hibmcge: Add a Makefile and
+ update Kconfig for hibmcge
+Message-ID: <adc486e6-2f09-4438-a86e-f9ec42c88e77@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-10-shaojijie@huawei.com>
+ <49d41bc0-7a9e-4d2a-93c7-4e2bcb6d6987@lunn.ch>
+ <0fe6e62f-a6cf-4a9d-9ccc-004570c3c46e@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+In-Reply-To: <0fe6e62f-a6cf-4a9d-9ccc-004570c3c46e@huawei.com>
 
-Currently cancel_work_sync() is not called when srpt_refresh_port()
-failed in srpt_add_one(). There is a probability that sdev has been
-freed while the previously initiated sport->work is still running,
-leading to a UAF as the log below:
+On Thu, Aug 01, 2024 at 08:15:43PM +0800, Jijie Shao wrote:
+> 
+> on 2024/8/1 9:13, Andrew Lunn wrote:
+> > On Wed, Jul 31, 2024 at 05:42:44PM +0800, Jijie Shao wrote:
+> > > Add a Makefile and update Kconfig to build hibmcge driver.
+> > > 
+> > > Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> > > ---
+> > >   drivers/net/ethernet/hisilicon/Kconfig          | 17 ++++++++++++++++-
+> > >   drivers/net/ethernet/hisilicon/Makefile         |  1 +
+> > >   drivers/net/ethernet/hisilicon/hibmcge/Makefile | 10 ++++++++++
+> > >   3 files changed, 27 insertions(+), 1 deletion(-)
+> > >   create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
+> > > 
+> > > diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
+> > > index 3312e1d93c3b..372854d15481 100644
+> > > --- a/drivers/net/ethernet/hisilicon/Kconfig
+> > > +++ b/drivers/net/ethernet/hisilicon/Kconfig
+> > > @@ -7,7 +7,7 @@ config NET_VENDOR_HISILICON
+> > >   	bool "Hisilicon devices"
+> > >   	default y
+> > >   	depends on OF || ACPI
+> > > -	depends on ARM || ARM64 || COMPILE_TEST
+> > > +	depends on ARM || ARM64 || COMPILE_TEST || X86_64
+> > It is normal to have COMPILE_TEST last.
+> 
+> ok，
+> 
+> > 
+> > Any reason this won't work on S390, PowerPC etc?
+> 
+> I have only compiled and tested on arm or x86.
+> I can't ensure that compile or work ok on other platforms.
 
-[  T880] ib_srpt MAD registration failed for hns_1-1.
-[  T880] ib_srpt srpt_add_one(hns_1) failed.
-[  T376] Unable to handle kernel paging request at virtual address 0000000000010008
-...
-[  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
-...
-[  T376] Call trace:
-[  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
-[  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
-[  T376]  process_one_work+0x1d8/0x4cc
-[  T376]  worker_thread+0x158/0x410
-[  T376]  kthread+0x108/0x13c
-[  T376]  ret_from_fork+0x10/0x18
+It is a sign of quality if it compiles on other platforms. The kernel
+APIs should hide away all the differences, if you are using them
+correctly. So i would take away all the platform depends at this
+level. Toolchains are easy to install apt-get
+c-compiler-s390x-linux-gnu etc. And 0-day will build it for you after
+a while on various platforms.
 
-Add cancel_work_sync() to the exception branch to fix this UAF.
-Besides, exchange the order of INIT_WORK() and srpt_refresh_port()
-in srpt_add_one(), so that when srpt_refresh_port() failed, there
-is no need to cancel the work in this iteration.
 
-Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
- drivers/infiniband/ulp/srpt/ib_srpt.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> > 
+> > > +if ARM || ARM64 || COMPILE_TEST
+> > > +
+> > You would normally express this with a depends on.
+> 
+> Sorry, I can't understand how to convert if to depends on?
 
-diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-index 9632afbd727b..7def231da21a 100644
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -648,6 +648,7 @@ static void srpt_unregister_mad_agent(struct srpt_device *sdev, int port_cnt)
- 			ib_unregister_mad_agent(sport->mad_agent);
- 			sport->mad_agent = NULL;
- 		}
-+		cancel_work_sync(&sport->work);
- 	}
- }
- 
-@@ -3220,7 +3221,6 @@ static int srpt_add_one(struct ib_device *device)
- 		sport->port_attrib.srp_max_rsp_size = DEFAULT_MAX_RSP_SIZE;
- 		sport->port_attrib.srp_sq_size = DEF_SRPT_SQ_SIZE;
- 		sport->port_attrib.use_srq = false;
--		INIT_WORK(&sport->work, srpt_refresh_port_work);
- 
- 		ret = srpt_refresh_port(sport);
- 		if (ret) {
-@@ -3229,6 +3229,8 @@ static int srpt_add_one(struct ib_device *device)
- 			i--;
- 			goto err_port;
- 		}
-+
-+		INIT_WORK(&sport->work, srpt_refresh_port_work);
- 	}
- 
- 	ib_register_event_handler(&sdev->event_handler);
-@@ -3264,13 +3266,9 @@ static void srpt_remove_one(struct ib_device *device, void *client_data)
- 	struct srpt_device *sdev = client_data;
- 	int i;
- 
--	srpt_unregister_mad_agent(sdev, sdev->device->phys_port_cnt);
--
- 	ib_unregister_event_handler(&sdev->event_handler);
- 
--	/* Cancel any work queued by the just unregistered IB event handler. */
--	for (i = 0; i < sdev->device->phys_port_cnt; i++)
--		cancel_work_sync(&sdev->port[i].work);
-+	srpt_unregister_mad_agent(sdev, sdev->device->phys_port_cnt);
- 
- 	if (sdev->cm_id)
- 		ib_destroy_cm_id(sdev->cm_id);
--- 
-2.33.0
+Kconfig is not my speciality, but cannot you using
 
+	depends on ARM || ARM64 || COMPILE_TEST
+
+inside the symbol?
+
+	Andrew
 
