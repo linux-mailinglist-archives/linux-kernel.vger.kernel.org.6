@@ -1,179 +1,132 @@
-Return-Path: <linux-kernel+bounces-271878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FBE945453
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:00:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DECB8945464
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6421628679B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:00:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C26CB22EF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:00:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E061114C5B8;
-	Thu,  1 Aug 2024 22:00:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488E414C583;
+	Thu,  1 Aug 2024 22:00:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKRprEAB"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gVygmp6P"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F73814B956;
-	Thu,  1 Aug 2024 22:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C86514AA9;
+	Thu,  1 Aug 2024 22:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722549604; cv=none; b=AYhHPL6JzggD6JMnQdZ02qF4NAnyoaKS9DKfTiiJocq/JhhSi7rsPefMaRWq9sCtxOllWXf5jfdqG9T0YLgcEwbeuCY4vodWS6fkBTXqJZXADauua5YR1RvqHYUup0Jf5DwUST825rwPjuJj7sa1AerU1umerNV3S67aaq2wL4I=
+	t=1722549637; cv=none; b=mpCmuH0BELqrE1gEfQ/yO6CW37nN2k9Ry3SCzkQ3ZN68J+N3YSlK4079LSOWGNCstnNbGZabZ917Rjc/qgZFSVPzPuqr/Cz4vk/GKtGQPitDRatOPn5WePnYnn1YeLWvsPz/VLLX3+s9kqlVKOlnd9B7PGEJhJWA0tQ6LUXiJhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722549604; c=relaxed/simple;
-	bh=51LgvSDN4Q0xgB1nQGohT2M6YA+WmOi/ZJF+nHCgu9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i8xtQ/SL9j1WrbBG91mdKwnQJLUdWs6uZ2+bke6UhWLjBjZ2qxNSb3Tp0HkbsEwAStm4wp1h9TzD/G4e7qt2f0Y5vGT96RXTxJmclW3PTbsczZQhKGbZEhxqvRKVAYhdqAM1/VlvYSOEA1i+6S9daMegF7fKE/97Rhzi/mhzd3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kKRprEAB; arc=none smtp.client-ip=209.85.208.54
+	s=arc-20240116; t=1722549637; c=relaxed/simple;
+	bh=gy/0hIaEYlhTd4SsHH7PfHqlKSt6muztx/YGqn+EcXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uBSTBQyobw24+2Dcr1JDFFc4Ez+Bd4VbbNE7XSMop2WJPDnzy3BHlq+3ia7+tNC95Dh0es82hl0VzpnmDJHXfVTH7t+36TM6FwQ0eahN4ySeASacs+1nrLbVlVgqoftJIU4nAJ0jgRK1jLIRLS4evfGjHJ/GypJV4crmxhXFe3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gVygmp6P; arc=none smtp.client-ip=209.85.221.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5af51684d52so8524728a12.1;
-        Thu, 01 Aug 2024 15:00:02 -0700 (PDT)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f51551695cso2669523e0c.3;
+        Thu, 01 Aug 2024 15:00:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722549601; x=1723154401; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NEWWzKV7FilEILhztxlLpWzopz9rHwAsQE6OK+zS2H8=;
-        b=kKRprEABZTQXo2b2xwbJbPM7IkQOB0cxMOTYE4P7w4r8Cdwmjgf8C6D2ugKWMMwWH1
-         qksWiCULwkP8Zk/e7mvWsbM3oDEuZigG7m/Nia/bJyR1fszlpfxhIuXK8drqu10+SO8D
-         IjJ62Bp4Xnt8luGOZ1IzGcROeETvWSzUQl70JMLVdNJQNoORpm3aX18DLLzFUZdqOGAh
-         d+lud2SSOXgkJNNGKvuGNmUI/pu30SbKptyHPfWi5DwCOHWCi44Jmcfv0yqXBTpMSrD3
-         Vf/viB3gRVrodYtD6oyfuPnASAPlY1KVCAl6MG2Y6dWGZIlp3uVzjtAcH+fdLinWaiv1
-         HfPQ==
+        d=gmail.com; s=20230601; t=1722549635; x=1723154435; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lMQFOBzX0l/sRNFyFYKbSnj7CF43keIwzBut/4zy+Bs=;
+        b=gVygmp6Pl81AGoHUUtDh91g+NKOgms14+VvESMMiwrU9nWJZ3LPHCTQIH0xoMTho0Y
+         FXR9Ze0b+JBQTDKSzXObd/QGAo+PMgP7A39WzdFtHlg9iLl+b26aoKaetXgJzJRnZvT3
+         PSlJvxDIg6DPiAIuVwKW/f4Hz5EuLouqvgK5Hqc+W8XIsZmxpDLSxTCasqxD7IGwlms1
+         ODNMDZ5XsiKng22YTiiF8PGeAQiYwKOEvvEsamBvJ8+9SCzI1/6v6284mtT/itVn/nk7
+         InZTfR+5C3fsN8Xe4FUO4o9aL1XNjNB+hJSKkl0T4eb+z7K73t6Th1OdkLziWBWOcajN
+         6GDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722549601; x=1723154401;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NEWWzKV7FilEILhztxlLpWzopz9rHwAsQE6OK+zS2H8=;
-        b=aZK45+h9309i4boM4VoO1Wq2tOJtG/rQ15LdFDL1b0kaAkButlOEmNolj66Ns7z3rV
-         Qt6b8mm0xOSWBsj3l1qKd8+PDvL2y8lGCP8obhgqyyI7lo5W3xcHHy3Pcr/+9+YaHtpO
-         LJWXM/oQx3R4WYanHYDrfVW94kCeJmK+lOGcvexDGXyTFmx/cNIpdQ03wmCkomKotCRk
-         PExVcoCdrvMpTYOXVbXJI8HyBrcHNn7VPNVhrgJKEVlDbRn190TnTR1xr2DPF6+n9MdT
-         3+lzgQtabcvl7eP6BFECShjd4FslaaIc2L0unTj8xnnBw2eOvXm/FeKYI0/EZ62ujJuX
-         wUTw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMhYK7sRgWdeI1/JBKEjOoOa2hLIddGBEBL1OjsuVK+32T2VOyxTiU1VlE+ycw6Ychmp8X5/BX9vCS@vger.kernel.org, AJvYcCWpieZ5Chkf7Ef1uldW+JfUobhkDBge+x6gPbD5ht//OP11oB9pMjQ8Rra+vajd+Sg/RsPlLiL2HtYSCv4X@vger.kernel.org, AJvYcCXKD3LArUAVRyb6RX2Uq2RPbJwE64Olhm6Y6wOJey6K5M79b2KRIObaCpNdYFKmAE9OQoiZSlIOd35bulvN@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWQWyA9USzLV1ReqeT4aXTRNJRg1Xu7OPyQrWwKHBhMEP7wp79
-	dHpbK/r9fIexoAgfLkRnqT/y1QEzd7xj+9SPcS1+CPtBIOVps9cm
-X-Google-Smtp-Source: AGHT+IGQ77USyhjHrCLgIMYcXsO5YF2t3I7vQ9r7lkx3P38C4elQidfDjTQQpvKCQxgZ3LPQOLXsmg==
-X-Received: by 2002:aa7:c406:0:b0:5a0:f0c4:aa7b with SMTP id 4fb4d7f45d1cf-5b7f5129461mr977426a12.27.1722549600395;
-        Thu, 01 Aug 2024 15:00:00 -0700 (PDT)
-Received: from mobilestation ([176.213.10.205])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839b2b556sm256336a12.25.2024.08.01.14.59.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 14:59:59 -0700 (PDT)
-Date: Fri, 2 Aug 2024 00:59:57 +0300
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>, 
-	Bjorn Helgaas <helgaas@kernel.org>
-Cc: jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org, 
-	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	quic_mrana@quicinc.com
-Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
- struct dw_pcie
-Message-ID: <j62ox6yeemxng3swlnzkqpl4mos7zj4khui6rusrm7nqcpts6r@vmoddl4lchlt>
-References: <20240724022719.2868490-1-quic_pyarlaga@quicinc.com>
- <20240724022719.2868490-2-quic_pyarlaga@quicinc.com>
- <vbq3ma3xanu4budrrt7iwk7bh7evgmlgckpohqksuamf3odbee@mvox7krdugg3>
- <6d926346-1c24-4aee-85b1-ffb5a0df904b@quicinc.com>
+        d=1e100.net; s=20230601; t=1722549635; x=1723154435;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lMQFOBzX0l/sRNFyFYKbSnj7CF43keIwzBut/4zy+Bs=;
+        b=jSyPkE9ZUTyWRIqhAb7Lf680xYKTrSWm7IKs+zczqb2b2/2xqVuJ5LzhHJ5n4nYAGj
+         2Pzkj+3uOF2M/L+A4hwmTEVTWbO7NCpmiDGwJKt4kU+PPzri7VcLHoIJjvqZjPIj/Knx
+         f+kEThbmlwnt8sKi0qy3yZG3N8bYMY8Za7PfzSpUN5fwTiixCnt3TQBWJM1AbPNdnRJ7
+         wnd4trhk9m1B9rs8I+hz2gp9XVFN1XP3R933xAzGpcNlmqjut0i2E6UySVu3l1bJW9g+
+         BlxYiQfBfF2Gkowh9KWT2ITX921FuQH2HXv+MeidddKODh+snXUTM4ShqAeqSW5lbyKb
+         95Ug==
+X-Forwarded-Encrypted: i=1; AJvYcCV+e2H3oQAt3DzEff+nZj39JggcENMR9Y8iM3cCQyOpjHD5Qv4Hcb4e9urm3EJxxBVsG94KRZWd+QgxcYmJXhbu7LdL1BIoWabllhu4kx87jTkZb/fcOMcPUGmZM//ZIAC7xoFFt2oRRJu3MwMQH35ROxxaF1KeJBQclfUXFxzRMg==
+X-Gm-Message-State: AOJu0YxeODaBfb3KIeizRzk2B8epxDO1gU5iN+ZM7VYHeLs1I89uW9f/
+	8f8V0H9NxKdcr2//mq5QaHdWk9pLR0RNJaXGsZn2y+F94MjE8bqfQswTvfL1lBdtVLCNIjJkMbs
+	PJPZQHv/rydTfZUT1vDSWBaZNE2U=
+X-Google-Smtp-Source: AGHT+IEL93DbcefX/c9OxuxETJKmvwmdOhM++UxGZw+iIajCdCSfGAVN7xSJzVrcKPgcYdQJtbmpQrXcyC4MoB3SpsE=
+X-Received: by 2002:a05:6122:1e03:b0:4ec:f8b1:a34b with SMTP id
+ 71dfb90a1353d-4f89ff93371mr2016277e0c.8.1722549634892; Thu, 01 Aug 2024
+ 15:00:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6d926346-1c24-4aee-85b1-ffb5a0df904b@quicinc.com>
+References: <20240730183403.4176544-1-allen.lkml@gmail.com>
+ <20240730183403.4176544-6-allen.lkml@gmail.com> <20240731190829.50da925d@kernel.org>
+In-Reply-To: <20240731190829.50da925d@kernel.org>
+From: Allen <allen.lkml@gmail.com>
+Date: Thu, 1 Aug 2024 15:00:23 -0700
+Message-ID: <CAOMdWS+HJfjDpQX1yE+2O3nb1qAkQJC_GSiCjrrAJVrRB5r_rg@mail.gmail.com>
+Subject: Re: [net-next v3 05/15] net: cavium/liquidio: Convert tasklet API to
+ new bottom half workqueue mechanism
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, jes@trained-monkey.org, kda@linux-powerpc.org, 
+	cai.huoqing@linux.dev, dougmill@linux.ibm.com, npiggin@gmail.com, 
+	christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org, 
+	naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com, tlfalcon@linux.ibm.com, 
+	cooldavid@cooldavid.org, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
+	stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
+	Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
+	bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
+	louis.peens@corigine.com, richardcochran@gmail.com, 
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acenic@sunsite.dk, linux-net-drivers@amd.com, netdev@vger.kernel.org, 
+	Sunil Goutham <sgoutham@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 01, 2024 at 02:29:49PM -0700, Prudhvi Yarlagadda wrote:
-> Hi Serge,
-> 
-> Thanks for the review comment.
-> 
-> On 8/1/2024 12:25 PM, Serge Semin wrote:
-> > On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
-> >> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
-> >> driver to program the location of DBI and ATU blocks in Qualcomm
-> >> PCIe Controller specific PARF hardware block.
-> >>
-> >> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
-> >> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
-> >> ---
-> >>  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
-> >>  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
-> >>  2 files changed, 4 insertions(+)
-> >>
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-> >> index 1b5aba1f0c92..bc3a5d6b0177 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware.c
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware.c
-> >> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> >>  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
-> >>  		if (IS_ERR(pci->dbi_base))
-> >>  			return PTR_ERR(pci->dbi_base);
-> >> +		pci->dbi_phys_addr = res->start;
-> >>  	}
-> >>  
-> >>  	/* DBI2 is mainly useful for the endpoint controller */
-> >> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
-> >>  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
-> >>  			if (IS_ERR(pci->atu_base))
-> >>  				return PTR_ERR(pci->atu_base);
-> >> +			pci->atu_phys_addr = res->start;
-> >>  		} else {
-> >>  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
-> >>  		}
-> >> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> >> index 53c4c8f399c8..efc72989330c 100644
-> >> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> >> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> >> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
-> >>  struct dw_pcie {
-> >>  	struct device		*dev;
-> >>  	void __iomem		*dbi_base;
-> > 
-> >> +	phys_addr_t		dbi_phys_addr;
-> >>  	void __iomem		*dbi_base2;
-> >>  	void __iomem		*atu_base;
-> >> +	phys_addr_t		atu_phys_addr;
-> > 
-> > What's the point in adding these fields to the generic DW PCIe private
-> > data if they are going to be used in the Qcom glue driver only?
-> > 
-> > What about moving them to the qcom_pcie structure and initializing the
-> > fields in some place of the pcie-qcom.c driver?
-> > 
-> > -Serge(y)
-> > 
-> 
+Jakub,
 
-> These fields were in pcie-qcom.c driver in the v1 patch[1] and
-> Manivannan suggested to move these fields to 'struct dw_pcie' so that duplication
-> of resource fetching code 'platform_get_resource_byname()' can be avoided.
-> 
-> [1] https://lore.kernel.org/linux-pci/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/T/#mf9843386d57e9003de983e24e17de4d54314ff73
+> > -     tasklet_enable(&oct_priv->droq_tasklet);
+> > +     enable_and_queue_work(system_bh_wq, &oct_priv->droq_bh_work);
+> >
+> >       if (atomic_read(&lio->ifstate) & LIO_IFSTATE_REGISTERED)
+> >               unregister_netdev(netdev);
+>
+> >               if (OCTEON_CN23XX_PF(oct))
+> >                       oct->droq[0]->ops.poll_mode = 0;
+> >
+> > -             tasklet_enable(&oct_priv->droq_tasklet);
+> > +             enable_and_queue_work(system_bh_wq, &oct_priv->droq_bh_work);
+>
+> Could you shed some light in the cover letter or this patch why
+> tasklet_enable() is converted to enable_and_queue_work() at
+> the face of it those two do not appear to do the same thing?
 
-Em, polluting the core driver structure with data not being used by
-the core driver but by the glue-code doesn't seem like a better
-alternative to additional platform_get_resource_byname() call in the
-glue-driver. I would have got back v1 version so to keep the core
-driver simpler. Bjorn?
+With the transition to workqueues, the implementation on the workqueue side is:
 
--Serge(y)
+tasklet_enable() -> enable_work() + queue_work()
 
-> 
-> Thanks,
-> Prudhvi
-> >>  	size_t			atu_size;
-> >>  	u32			num_ib_windows;
-> >>  	u32			num_ob_windows;
-> >> -- 
-> >> 2.25.1
-> >>
-> >>
+Ref: https://lore.kernel.org/all/20240227172852.2386358-7-tj@kernel.org/
+
+enable_and_queue_work() is a helper which combines the two calls.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=474a549ff4c989427a14fdab851e562c8a63fe24
+
+Hope this answers your question.
+
+Thanks,
+Allen
+
+>
+> I'll apply patches 1-4 already.
 
