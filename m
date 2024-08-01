@@ -1,190 +1,119 @@
-Return-Path: <linux-kernel+bounces-271247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E8F944B98
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:43:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A555944B9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC3D1B25229
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:43:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 064D02842DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58671A01DB;
-	Thu,  1 Aug 2024 12:43:43 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4B91A070E;
+	Thu,  1 Aug 2024 12:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXP1MsBB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6AE194AE6
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FE80198832;
+	Thu,  1 Aug 2024 12:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722516223; cv=none; b=uTvVSODYin1a/pQBydFIV+3D/LMhyaDIoimYssqsP+w4Gn4pREF0awdwWkwopfOLMQoMvDGxOE1rLuZi0otwVdSBuona1ZZURhNM+r0ZDHKGlzEuV3Qlo+yCp/8Rb62ToL9jVA1CU676rfCcEYEd2w0MtvjA9/fWYkcDej+15QM=
+	t=1722516235; cv=none; b=YnDvBVfUs6aFue9lMeHFGivGdVN7fS4EqI/JCx/tZ2C6Np3CYeRVvFS4QOoWXGlfWyw5ISbPfITDMAmMtkZLI8Q87qhiTJKrjH3x1V2hAtv5bQ6oPSq2PQoUV3AhH+G2OKOUXwb9QTg1q/PxRgdrE/Tw/1OEHpo+/IfmJEv0kfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722516223; c=relaxed/simple;
-	bh=mjtYasuRLEP9prqiXpnjS2+CP++nUycQh8EAJezdesM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QoVv/0MdZtX8aoVsoXCh5WDV7ianW+WL61JIMGLrZF9HF/hMIXNWSh4sJ0QcMXJnuwn2kucz9OYBAOej9AV4pKJ/cAeXtclUpNTBm6LgNygTYzZ4RltIzW+WFbU68YOK8uUaDvftxxJEeZN5M21VybGjBhMso/BZ3wMiAIrdhRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WZTBh6WklzncQd;
-	Thu,  1 Aug 2024 20:42:36 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id 07DA618006C;
-	Thu,  1 Aug 2024 20:43:38 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 20:43:37 +0800
-Message-ID: <5796c9ad-04ba-4226-ad28-75b265a4157b@huawei.com>
-Date: Thu, 1 Aug 2024 20:43:37 +0800
+	s=arc-20240116; t=1722516235; c=relaxed/simple;
+	bh=6H1MVYMTvoQk5bNEBHe4eza6uBQw9ZId3AXRWvWqoZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KLnVh/NltH6fZUzSB96xmoqzTE8AktZcRHuEWwvowjjAyn9q/sgP/219yt/e6TB3jqOBjBgO7CBx6JZ65nd5sH0muPoq6Afl4o+T+cvggzm39jxCxUtGb7apDAVcwmdoVzH8PB0yONf/GtEmlJCVaL2JHAMc3Rg98S9ImPyE4pY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXP1MsBB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 797D3C32786;
+	Thu,  1 Aug 2024 12:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722516235;
+	bh=6H1MVYMTvoQk5bNEBHe4eza6uBQw9ZId3AXRWvWqoZI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rXP1MsBBJdvJVIMG8T14ryJlUDWSxyE8pKT6bS4aWlhrJr8Ex74Ff5Nv6UoEA9ER0
+	 v+L8Ul8gDdrolEOofEXmjK1A24qqtjLSSOTKQ6m10Tb1K8SvTdEDgolaiSwhjSPHYS
+	 EL4FM0F88G6VIHA9KwBXHS5xX7WhmI4I8Dznn/vyHB8PL3RC+e8pQ4D+y61Y3vDDKx
+	 d8dK6qX0WDhHjQ5CUv8UvId3ezMiRYmZi/laYpO8bSTHgiwFrt8cU8CimfDdezq2o2
+	 hNRvFsv48plAKLgskTwYptqKTZ9cIg8uPM5FIeCV2KZ8/qKjqWSmp92qp6OZx884ZG
+	 ag0t4l2SPUoZQ==
+Date: Thu, 1 Aug 2024 13:43:50 +0100
+From: Lee Jones <lee@kernel.org>
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: Rob Herring <robh@kernel.org>, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Subject: Re: [PATCH v2] dt-bindings: mfd: syscon: Add
+ ti,j784s4-acspcie-proxy-ctrl compatible
+Message-ID: <20240801124350.GD6756@google.com>
+References: <20240729064012.1915674-1-s-vadapalli@ti.com>
+ <20240729160453.GA805559-robh@kernel.org>
+ <a98b975d-ec8b-432b-9437-aef07240257b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 2/2] erofs: apply the page cache share feature
-Content-Language: en-US
-To: Hongzhen Luo <hongzhen@linux.alibaba.com>, <linux-erofs@lists.ozlabs.org>
-CC: <linux-kernel@vger.kernel.org>
-References: <20240731080704.678259-1-hongzhen@linux.alibaba.com>
- <20240731080704.678259-3-hongzhen@linux.alibaba.com>
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20240731080704.678259-3-hongzhen@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a98b975d-ec8b-432b-9437-aef07240257b@ti.com>
 
+On Mon, 29 Jul 2024, Siddharth Vadapalli wrote:
 
+> On Mon, Jul 29, 2024 at 10:04:53AM -0600, Rob Herring wrote:
+> > On Mon, Jul 29, 2024 at 12:10:12PM +0530, Siddharth Vadapalli wrote:
+> > > The ACSPCIE_PROXY_CTRL registers within the CTRL_MMR space of TI's J784S4
+> > > SoC are used to drive the reference clock to the PCIe Endpoint device via
+> > > the PAD IO Buffers. Add the compatible for allowing the PCIe driver to
+> > > obtain the regmap for the ACSPCIE_CTRL register within the System
+> > > Controller device-tree node in order to enable the PAD IO Buffers.
+> > > 
+> > > The Technical Reference Manual for J784S4 SoC with details of the
+> > > ASCPCIE_CTRL registers is available at:
+> > > https://www.ti.com/lit/zip/spruj52
+> > > 
+> > > Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> > > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > ---
+> > > 
+> > > Hello,
+> > > 
+> > > This patch is based on linux-next tagged next-20240729.
+> > > v1: https://lore.kernel.org/r/20240715120936.1150314-2-s-vadapalli@ti.com/
+> > > Changes since v1:
+> > > - Rebased patch on next-20240729.
+> > > - Separated this patch from the series.
+> > > - Collected Acked-by tag from:
+> > >   Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > >   https://lore.kernel.org/r/04d94188-5e30-4cab-b534-e97c0b2a61f3@kernel.org/
+> > > 
+> > > NOTE: Though it was mentioned on 25th July 2024 that this patch was applied:
+> > > https://lore.kernel.org/r/172190301400.925833.12525656543896105526.b4-ty@kernel.org/
+> > > since I did not find the commit in the MFD tree and the Linux-Next tree,
+> > > I am reposting this patch.
+> > 
+> > That's because it was in the middle of the merge window and only fixes 
+> > get published during that time. That's now over, so it should get 
+> > published soon. However, maintainers get busy on other work or take 
+> > vacation, so it could be delayed.
+> > 
+> > Unless a maintainer updates their tree with other later patches and your 
+> > patch is not there, no reason to worry and resend.
 
-On 2024/7/31 16:07, Hongzhen Luo wrote:
-> This modifies relevant functions to apply the page cache
-> share feature.
-> 
-> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
-> ---
-> v2: Make adjustments based on the latest implementation.
-> v1: https://lore.kernel.org/all/20240722065355.1396365-5-hongzhen@linux.alibaba.com/
-> ---
->   fs/erofs/inode.c | 23 +++++++++++++++++++++++
->   fs/erofs/super.c | 23 +++++++++++++++++++++++
->   2 files changed, 46 insertions(+)
-> 
-> diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-> index 5f6439a63af7..9f1e7332cff9 100644
-> --- a/fs/erofs/inode.c
-> +++ b/fs/erofs/inode.c
-> @@ -5,6 +5,7 @@
->    * Copyright (C) 2021, Alibaba Cloud
->    */
->   #include "xattr.h"
-> +#include "pagecache_share.h"
->   
->   #include <trace/events/erofs.h>
->   
-> @@ -229,10 +230,22 @@ static int erofs_fill_inode(struct inode *inode)
->   	switch (inode->i_mode & S_IFMT) {
->   	case S_IFREG:
->   		inode->i_op = &erofs_generic_iops;
-> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-> +		erofs_pcs_fill_inode(inode);
-> +#endif
->   		if (erofs_inode_is_data_compressed(vi->datalayout))
->   			inode->i_fop = &generic_ro_fops;
-> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-> +		else {
-If the compress data is not support, the erofs_pcs_fill_inode should 
-fill the fingerprint in this branch only.
-> +			if (vi->fprt_len > 0)
-> +				inode->i_fop = &erofs_pcs_file_fops;
-> +			else
-> +				inode->i_fop = &erofs_file_fops;
-> +		}
-> +#else
->   		else
->   			inode->i_fop = &erofs_file_fops;
-> +#endif
->   		break;
->   	case S_IFDIR:
->   		inode->i_op = &erofs_dir_iops;
-> @@ -325,6 +338,16 @@ struct inode *erofs_iget(struct super_block *sb, erofs_nid_t nid)
->   			return ERR_PTR(err);
->   		}
->   		unlock_new_inode(inode);
-> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-> +		if ((inode->i_mode & S_IFMT) == S_IFREG &&may be S_ISREG macro is better.
+Thanks Rob.
 
-> +		    EROFS_I(inode)->fprt_len > 0) {
-Perhaps this logic need to be enclosed within unlock_new_inode.
-> +			err = erofs_pcs_add(inode);
-> +			if (err) {
-> +				iget_failed(inode);
-> +				return ERR_PTR(err);
-> +			}
-> +		}
-> +#endif
->   	}
->   	return inode;
->   }
-> diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-> index 35268263aaed..a42e65ef7fc7 100644
-> --- a/fs/erofs/super.c
-> +++ b/fs/erofs/super.c
-> @@ -11,6 +11,7 @@
->   #include <linux/fs_parser.h>
->   #include <linux/exportfs.h>
->   #include "xattr.h"
-> +#include "pagecache_share.h"
->   
->   #define CREATE_TRACE_POINTS
->   #include <trace/events/erofs.h>
-> @@ -95,6 +96,10 @@ static struct inode *erofs_alloc_inode(struct super_block *sb)
->   
->   	/* zero out everything except vfs_inode */
->   	memset(vi, 0, offsetof(struct erofs_inode, vfs_inode));
-> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-> +	INIT_LIST_HEAD(&vi->pcs_list);
-> +	init_rwsem(&vi->pcs_rwsem);
-> +#endif
->   	return &vi->vfs_inode;
->   }
->   
-> @@ -108,6 +113,21 @@ static void erofs_free_inode(struct inode *inode)
->   	kmem_cache_free(erofs_inode_cachep, vi);
->   }
->   
-> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-> +static void erofs_destroy_inode(struct inode *inode)
-> +{
-> +	struct erofs_inode *vi = EROFS_I(inode);
-> +
-> +	if ((inode->i_mode & S_IFMT) == S_IFREG &&
-using S_ISREG macro is better.
-> +	    EROFS_I(inode)->fprt_len > 0) {
-> +		if (erofs_pcs_remove(inode))
-> +			erofs_err(inode->i_sb, "pcs: fail to remove inode.");
-> +		kfree(vi->fprt);
-> +		vi->fprt = NULL;
-> +	}
-> +}
-> +#endif
-> +
->   static bool check_layout_compatibility(struct super_block *sb,
->   				       struct erofs_super_block *dsb)
->   {
-> @@ -937,6 +957,9 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
->   const struct super_operations erofs_sops = {
->   	.put_super = erofs_put_super,
->   	.alloc_inode = erofs_alloc_inode,
-> +#ifdef CONFIG_EROFS_FS_PAGE_CACHE_SHARE
-> +	.destroy_inode = erofs_destroy_inode,
-> +#endif
->   	.free_inode = erofs_free_inode,
->   	.statfs = erofs_statfs,
->   	.show_options = erofs_show_options,
+> I was under the assumption that a commit ID is mentioned after the patch
+> gets applied to the Maintainer's tree and is visible publicly. Thank you
+> for clarifying the details regarding the process followed. I will make
+> sure to wait long enough before resending any patches in the future.
+
+Pushed now.
+
+-- 
+Lee Jones [李琼斯]
 
