@@ -1,188 +1,226 @@
-Return-Path: <linux-kernel+bounces-271897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231E694549F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:45:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393E19454AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:47:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 986831F2372B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 476E71C23102
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D2114D294;
-	Thu,  1 Aug 2024 22:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D37B14D451;
+	Thu,  1 Aug 2024 22:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DWo9vuzD"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FikCMHh8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536E714BFBF
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 22:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1CA1D696;
+	Thu,  1 Aug 2024 22:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722552317; cv=none; b=iDB5dHV7p7AHfRT+QY4lFc1CVp2BniRHabtL0ZzNbeD0CMJIen3mN8zOmSzHcAr+sAIJ44YC4pvGVdtULhK4Mk5xTtK0y0sRrh5XgxXriR4RLFIBMkrnEM4poMrnnWr70yNx5/LKy/XXmdrXeKccjiNaJBnzAAOT17eV/J1dgeA=
+	t=1722552424; cv=none; b=dbY0eBEypx6RbsREdtEBcbhCf/HvDfLAOGnrYu9yaeCmeEWncaD/sVVdEfFQ7ECBzaSmP+vd1xpF66XF7H5clubNXZilTAi5MUMO/Yd+rG6phk1YiFlhAti2eCRpF0UR7HqY5/1V13FL5BHuhK8TA4h0FzDeBf8SjqH0oeqm/n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722552317; c=relaxed/simple;
-	bh=px06ln8f03zbfmJaslWzxgpAk22Qif17pX2SjSFhQeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r8lmxXVgufqtqg8tK5G4/YahEzt+M03A+hYWcbs0Umg3h0/Dcxj3xR4DoCCUep9l6s/rzo+sUqEVMFrhnBZVNdkSGkZXBrNyvh5XEF/R+nbLSg6vvTt+sphzq6/REStNKponwZ0rqr/Vpd5YmuKI2YCIcPL712l8iIkvmNE1qbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DWo9vuzD; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a28b61b880so42900a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 15:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722552315; x=1723157115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HpNg5HuVdIrfzzfqVoTf0KzPKFikGceLUb5rAzqj0j8=;
-        b=DWo9vuzDCtGzHLrcVORw3JWJHKvZeP2onfcH7qMCiIRoefhevFGIVa3x37ISNDvYZS
-         LttnxRv+enfhMfUyPsNS9qoX4W6ONVSWtyfs6W4PFRb/QAkzgQFinh/RtaTQhWDp3cP4
-         A2u+7RcwJZ79sb2MVb2Wwwx4ng7U3DCzB8pwWeZlsVN9zZb2N628eQMi0Ue7NoM9OzQp
-         QM11mX+mwvmhB7Pai9KM/0DMxeo8/wxeAPAbd2unM3F5KEXPeVIs3HeJx6mOXypqDAUc
-         blFisoNIiyrvExtpHJHnFV+yKauLPXLF4dVMUS+CgzH+gTcXI7Gfd6Uw5msJWL99sSVq
-         TKiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722552315; x=1723157115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HpNg5HuVdIrfzzfqVoTf0KzPKFikGceLUb5rAzqj0j8=;
-        b=lcWFYKgBIFgzdDxa9SIfUcJjOGlT0AVGVVGRZw/QYmZH41MrPUXVxltBC6IyKdEgVu
-         5c9TjrCryy8uErOcPboB9rH32yZnOWzE2xJMJkJXJ0vFEsLeMwYwnPP6E5e+X6LC6fpO
-         A/7sCHgr7MIkXZClGsoXIsjUk98PhMVV9aRdukF+yLkcLBHGOxjYQHIn4EeEpnsBUrM5
-         1lozelzJIgLxuYATYZv7NpcD/TPQ0sZ78aqoHWn6H/mZ9gJu0NVzXiAoMS0l5zUkcNzz
-         yVFPb6m+zD9DU2bh1vZ4v0dfauSfpH7ycI3Q+Q7ZMr5g9cQhB2DF0j2EjXHsk2g9+s9l
-         P/bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYRQa/Gwy9VhYeGTyFNp0NhQQt76cLTDn1H4oANKbeIRDqW4SymVSDITcli3CYS4LSDVXtxmTqipDRevfIgW/lZHosLJ9b1pXmkAcv
-X-Gm-Message-State: AOJu0YxqNPuvxuzm3XniIdTtVzsIJ32v9YzOcVo2JdW5QqdY07FGbTzn
-	FCtKvka340AyNVrWWdWRpbzeG9u5mGDvB0+YQph2PpjZnwRIM6ur9mxDm+6tb56McfRO7ZeqTzn
-	jFDRXzksMBygX1ocUXMGRSIgyHvcVM0mm1Z1/
-X-Google-Smtp-Source: AGHT+IEU4bu5xxsNW5+2UHYkD8TADiTNSthVu469k4Sq2U0yowJnxuxqrmuAvA9kMCXyFv2TdRSsKQ1vg6RQn5YkczQ=
-X-Received: by 2002:a05:6402:270b:b0:57c:b712:47b5 with SMTP id
- 4fb4d7f45d1cf-5b86bf8eda2mr34536a12.4.1722552314243; Thu, 01 Aug 2024
- 15:45:14 -0700 (PDT)
+	s=arc-20240116; t=1722552424; c=relaxed/simple;
+	bh=P5RJ17VgQD0rdb4AfmznFgpea6IRvLK99WnRa6bhJ2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XuYcUVTFzJK3lB3qMTg501mK2GzY4iA8Dw2qUnngU3TJmaJJ2wL88nV7gCbJSal4/rGmsfjfNuv8De5fUSQknQ6tRtVLTt/2pQHYITCQAkcLk3yEzOISFKgVIv0ggyEpdD2kOflu0+pqziN7VKBhse3UtBxiAcXG1la089ovQos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FikCMHh8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471LaX94010680;
+	Thu, 1 Aug 2024 22:46:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	U/RaJSkJnNgRqrgFrn1075hon6xNaTxYlhP/ArQi0uw=; b=FikCMHh87P5CNiGK
+	RdRMcXoJFyLWlMt1Gv/enQ01wG0VYbDyTKFRRA67Okx5Z8jm/rpoJJhiYskBiafS
+	ldu77Juh+ExaIa5GgAAc0txH608vUNNNZ4q7LGSms2FJbK3u/V6xjYUNbSoOkzok
+	P7j/03bz7tdMQ9EFBJ3X9+8J/9R6bQRd+TvF48fCWkd/RLWXrnUggjU+hZE3BmDG
+	Uwq7DiHCJje8MJjsFshOZ8BM3l0Uq/2bMQMbabuggs1RM5MtCH+NF9v8BTUfE+Hj
+	m93UPP7yY08oKvrzn9HgTTwImYcXKuXr3QdEVB3Rj8k9mL5d+Joo3XPLwnwdqS0k
+	0aYHpQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40rje203mp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 22:46:36 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471MkZfG010067
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 22:46:35 GMT
+Received: from [10.71.115.74] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
+ 15:46:34 -0700
+Message-ID: <8c9eb02d-3669-4e29-b83a-db2c3b15497a@quicinc.com>
+Date: Thu, 1 Aug 2024 15:46:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720043311.git.babu.moger@amd.com> <e04b721a-b5cb-4089-a3ad-125a6247e5b8@intel.com>
- <1c50b589-a738-4ae6-8362-bd1ce0d0dc98@amd.com> <05b4e345-ad14-4ea9-a13f-2c9b3a6eb422@intel.com>
-In-Reply-To: <05b4e345-ad14-4ea9-a13f-2c9b3a6eb422@intel.com>
-From: Peter Newman <peternewman@google.com>
-Date: Thu, 1 Aug 2024 15:45:03 -0700
-Message-ID: <CALPaoCi_TBZnULHQpYns+H+30jODZvyQpUHJRDHNwjQzajrD=A@mail.gmail.com>
-Subject: Re: [PATCH v5 00/20] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: babu.moger@amd.com, corbet@lwn.net, fenghua.yu@intel.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	paulmck@kernel.org, rdunlap@infradead.org, tj@kernel.org, 
-	peterz@infradead.org, yanjiewtw@gmail.com, kim.phillips@amd.com, 
-	lukas.bulwahn@gmail.com, seanjc@google.com, jmattson@google.com, 
-	leitao@debian.org, jpoimboe@kernel.org, rick.p.edgecombe@intel.com, 
-	kirill.shutemov@linux.intel.com, jithu.joseph@intel.com, kai.huang@intel.com, 
-	kan.liang@linux.intel.com, daniel.sneddon@linux.intel.com, 
-	pbonzini@redhat.com, sandipan.das@amd.com, ilpo.jarvinen@linux.intel.com, 
-	maciej.wieczor-retman@intel.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, eranian@google.com, james.morse@arm.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 11/34] ASoC: usb: Fetch ASoC card and pcm device
+ information
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-12-quic_wcheng@quicinc.com>
+ <63c20e7a-f62a-4b6c-8ea1-1608e06e5b58@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <63c20e7a-f62a-4b6c-8ea1-1608e06e5b58@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jBBediAo-Fr_q5pP4S3n5Jai6JCZJ4rO
+X-Proofpoint-ORIG-GUID: jBBediAo-Fr_q5pP4S3n5Jai6JCZJ4rO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_21,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
+ priorityscore=1501 adultscore=0 mlxlogscore=950 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010152
 
-Hi Reinette and Babu,
+Hi Pierre,
 
-On Thu, Aug 1, 2024 at 2:50=E2=80=AFPM Reinette Chatre
-<reinette.chatre@intel.com> wrote:
+On 8/1/2024 1:11 AM, Pierre-Louis Bossart wrote:
 >
-> Hi Babu,
+> On 8/1/24 03:17, Wesley Cheng wrote:
+>> USB SND needs to know how the USB offload path is being routed.  This would
+>> allow for applications to open the corresponding sound card and pcm device
+>> when it wants to take the audio offload path.  This callback should return
+>> the mapped indexes based on the USB SND device information.
+>>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  include/sound/soc-usb.h | 16 ++++++++++++++++
+>>  sound/soc/soc-usb.c     | 28 ++++++++++++++++++++++++++++
+>>  2 files changed, 44 insertions(+)
+>>
+>> diff --git a/include/sound/soc-usb.h b/include/sound/soc-usb.h
+>> index d6b576f971ae..a167e3de0a78 100644
+>> --- a/include/sound/soc-usb.h
+>> +++ b/include/sound/soc-usb.h
+>> @@ -8,6 +8,11 @@
+>>  
+>>  #include <sound/soc.h>
+>>  
+>> +enum snd_soc_usb_kctl {
+>> +	SND_SOC_USB_KCTL_CARD_ROUTE,
+>> +	SND_SOC_USB_KCTL_PCM_ROUTE,
+>> +};
+>> +
+>>  /**
+>>   * struct snd_soc_usb_device
+>>   * @card_idx - sound card index associated with USB device
+>> @@ -32,6 +37,7 @@ struct snd_soc_usb_device {
+>>   * @component - reference to ASoC component
+>>   * @num_supported_streams - number of supported concurrent sessions
+>>   * @connection_status_cb - callback to notify connection events
+>> + * @get_offload_dev - callback to fetch mapped ASoC device
+>>   * @priv_data - driver data
+>>   **/
+>>  struct snd_soc_usb {
+>> @@ -40,6 +46,8 @@ struct snd_soc_usb {
+>>  	unsigned int num_supported_streams;
+>>  	int (*connection_status_cb)(struct snd_soc_usb *usb,
+>>  			struct snd_soc_usb_device *sdev, bool connected);
+>> +	int (*get_offload_dev)(struct snd_soc_component *component,
+>> +				int card, int pcm, enum snd_soc_usb_kctl route);
+>>  	void *priv_data;
+>>  };
+>>  
+>> @@ -51,6 +59,8 @@ void *snd_soc_usb_find_priv_data(struct device *dev);
+>>  int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
+>>  					struct snd_soc_jack *jack);
+>>  int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component);
+>> +int soc_usb_get_offload_device(struct device *dev, int card, int pcm,
+>> +				enum snd_soc_usb_kctl route);
+>>  
+>>  struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
+>>  					      int num_streams, void *data);
+>> @@ -86,6 +96,12 @@ static inline int snd_soc_usb_disable_offload_jack(struct snd_soc_component *com
+>>  	return -ENODEV;
+>>  }
+>>  
+>> +static int soc_usb_get_offload_device(struct device *dev, int card, int pcm,
+>> +					enum snd_soc_usb_kctl route)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>>  static inline struct snd_soc_usb *snd_soc_usb_allocate_port(
+>>  					      struct snd_soc_component *component,
+>>  					      int num_streams, void *data)
+>> diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
+>> index fe2a75a28af4..3c217ac67c57 100644
+>> --- a/sound/soc/soc-usb.c
+>> +++ b/sound/soc/soc-usb.c
+>> @@ -117,6 +117,34 @@ int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component)
+>>  }
+>>  EXPORT_SYMBOL_GPL(snd_soc_usb_disable_offload_jack);
+>>  
+>> +/**
+>> + * soc_usb_get_offload_device - Set active USB offload path
+> get or set?
+Sorry, get.
 >
-> On 7/17/24 10:19 AM, Moger, Babu wrote:
-> > Hi Reinette,
-> >
-> > On 7/12/24 17:03, Reinette Chatre wrote:
-> >> Hi Babu,
-> >>
-> >> On 7/3/24 2:48 PM, Babu Moger wrote:
-> >>> # Linux Implementation
-> >>>
-> >>> Linux resctrl subsystem provides the interface to count maximum of tw=
-o
-> >>> memory bandwidth events per group, from a combination of available to=
-tal
-> >>> and local events. Keeping the current interface, users can enable a m=
-aximum
-> >>> of 2 ABMC counters per group. User will also have the option to enabl=
-e only
-> >>> one counter to the group. If the system runs out of assignable ABMC
-> >>> counters, kernel will display an error. Users need to disable an alre=
-ady
-> >>> enabled counter to make space for new assignments.
-> >>
-> >> The implementation appears to be converging on an interface that can
-> >> be generic enough to be used by other features discussed along the way=
-.
-> >> "Linux implementation" summary can thus add:
-> >>
-> >>      Create a generic interface aimed to support user space assignment
-> >>      of scarce counters used for monitoring. First usage of interface
-> >>      is by ABMC with option to expand usage to "soft-RMID" and MPAM
-> >>      counters in future.
-> >
-> > Sure.
-> >
-> >>
-> >>
-> >>> # Examples
-> >>>
-> >>> a. Check if ABMC support is available
-> >>>      #mount -t resctrl resctrl /sys/fs/resctrl/
-> >>>
-> >>>      #cat /sys/fs/resctrl/info/L3_MON/mbm_mode
-> >>>      [abmc]
-> >>>      legacy
-> >>>
-> >>>      Linux kernel detected ABMC feature and it is enabled.
-> >>
-> >> How about renaming "abmc" to "mbm_cntrs"? This will match the num_mbm_=
-cntrs
-> >> info file and be the final step to make this generic so that another
-> >> architecture
-> >> can more easily support assignining hardware counters without needing =
-to call
-> >> the feature AMD's "abmc".
-> >
-> > I think we aleady settled this with "mbm_cntr_assignable".
-> >
-> > For soft-RMID" it will be mbm_sw_assignable.
->
-> Maybe getting a bit long but how about "mbm_cntr_sw_assignable" to match
-> with the term "mbm_cntr" in accompanying "num_mbm_cntrs"?
+>> + * @dev - USB device to get offload status
+>> + * @card - USB card index
+>> + * @pcm - USB PCM device index
+>> + *> + * Fetch the current status for the USB SND card and PCM device
+> indexes
+Done.
+>> + * specified.
+> the function returns an integer, how does this return the 'mapped indices"?
+Will assume that based on your comments on patch#19, you were able to see what this does.  Will respond accordingly on patch#19, so we don't lose track of things.
+>> + */
+>> +int soc_usb_get_offload_device(struct device *dev, int card, int pcm,
+>> +				enum snd_soc_usb_kctl route)
+> missing route in kernel doc.
 
-My users are pushing for a consistent interface regardless of whether
-counter assignment is implemented in hardware or software, so I would
-like to avoid exposing implementation differences in the interface
-where possible.
+Will add.
 
-The main semantic difference with SW assignments is that it is not
-possible to assign counters to individual events. Because the
-implementation is assigning RMIDs to groups, assignment results in all
-events being counted.
+Thanks
 
-I was considering introducing a boolean mbm_assign_events node to
-indicate whether assigning individual events is supported. If true,
-num_mbm_cntrs indicates the number of events which can be counted,
-otherwise it indicates the number of groups to which counters can be
-assigned and attempting to assign a single event is silently upgraded
-to assigning counters to all events in the group.
+Wesley Cheng
 
-However, If we don't expect to see these semantics in any other
-implementation, these semantics could be implicit in the definition of
-a SW assignable counter.
-
--Peter
+>> +{
+>> +	struct snd_soc_usb *ctx;
+>> +	int ret;
+>> +
+>> +	ctx = snd_soc_find_usb_ctx(dev);
+>> +	if (!ctx)
+>> +		return -ENODEV;
+>> +
+>> +	mutex_lock(&ctx_mutex);
+>> +	if (ctx && ctx->get_offload_dev)
+>> +		ret = ctx->get_offload_dev(ctx->component, card, pcm, route);
+>> +	mutex_unlock(&ctx_mutex);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(soc_usb_get_offload_device);
+>> +
+>>  /**
+>>   * snd_soc_usb_find_priv_data() - Retrieve private data stored
+>>   * @dev: device reference
 
