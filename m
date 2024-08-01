@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-271926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AB9945507
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:53:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00C1B94550A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A531C21843
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:53:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32F441C21532
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF68A14E2DE;
-	Thu,  1 Aug 2024 23:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD5814D71F;
+	Thu,  1 Aug 2024 23:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JQn35Y0z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acQr4igk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5626013E04C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 23:53:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B1313E04C;
+	Thu,  1 Aug 2024 23:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722556422; cv=none; b=eh0tpA5XSbsxkRdhRqDkGycAkLuAD8elRe2IW34n0NmoV2qu2ymuonn4WC/b6MzRhGZz4HEhef0Vb9PlCeIeO3LH2xacYGYvlWZUFdapnDjEjXaQtKyuvnBkieumJ52XNLwrKdnvEYxkD+JPGHi9PkHpnRXwJNHBQ9PUrG9L0HY=
+	t=1722556528; cv=none; b=BUZgeIebbklmjANrt9oKGP/0Hr3zhdEBaEIXu9nzAG+sr3Wt8Mw4zLtgHL6UeVs5lrOpZ9kHufpgNVCnynTRVP0volS3/1MQRQh0UI2xVSZq90rREecn7nDYlgc3uzSgC0fPh4WZFDKh8QwncRI0N2VGeuLiHnY/+ililNZ/OAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722556422; c=relaxed/simple;
-	bh=0bZmjV35Y0DFFdYimWpib0vJhpUru5xOxkDSJHkavgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rg2Gnnb/4TVI7/FVhAJw7M6o7K8IO60Fl16x5IO0dqfJpBcM4HrVJUs6mlSLEEvEKDAuZJZh6nxKVF8jxp4AIiA1A6NagGJ3tjL7gI+xZElQqufFkvXiGwr2C0NkBBgFh8zVhDGNscIZ9XtkuFrVmcQJ6UskgXdjHtGRhJ341y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JQn35Y0z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722556419;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OUSx7yeM//U7xgBRSiunnDzCLJUpTvy9KfWqh4xwHw4=;
-	b=JQn35Y0zCbg4qvTKLp0DRPO6Ag6NGmptLqoDQ6KqOJr72kSkFg+vA+sByxNsgW25YuZryj
-	c38YtOljpNrhafjZ3vHAioGT1PgB1I6JbJcHgiQ1DBMNiyk0C0UiIyESiF/R3GP9MVBEBw
-	mLFLNF18oNHUGRTWerVoTqpnHPFZS8M=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-656-6_0573I0OumFmFTbWlFH-A-1; Thu, 01 Aug 2024 19:53:38 -0400
-X-MC-Unique: 6_0573I0OumFmFTbWlFH-A-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52f00c27b9cso2128596e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 16:53:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722556416; x=1723161216;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OUSx7yeM//U7xgBRSiunnDzCLJUpTvy9KfWqh4xwHw4=;
-        b=panRS0jkY8w6YlmBz/ua3MNv/MZ6sJKElDvSiN1ZvqM9TKbfyT2DNlhyxb/WM6SY+8
-         PuJvwinPEyfW7kZKdKImWVCcKoHNpEXBVp61pujnRmfwVW4ta6UpEan0m/qkmrOMi2cg
-         VsCLM59r1ca+rqATar1juQQ2kbwyuc+TReGCaKejGkqns1eMHGay23N2/LJAuSqhhfm+
-         x7VAshiYX9xDqKRTlIXQZC529O0xCw7ySYflqZj8tTE+EerQSd7LXEzdfGMsbNVNSyFx
-         FoC9+8UfgZCtisqGcb55UYmXhorcMxMUCvKLn7XyYSoGw9b8ly9r5ue3gWT7RVgu0Lry
-         zXDQ==
-X-Gm-Message-State: AOJu0Yz6douuQKwug2tXSPkuH0HYszD5OhXmYtX8qNvAb7eVnx1QiEW2
-	/579WvkLWluj1P6iBvG80Zmu3x+Xc/Whbu9x9gQ3B1yr1b9F5Q9/6YevoMRLsmGp1ykjgLCumQ2
-	Pm/O4m+WgRtGyifg+HE9gvIPyBo8sLw5+jXmUHlirRxX6W9A0cWP/D6qiJlSdymtQv6uEC9Fuhi
-	YRwolqd5wJRA2B44smxFrbG++yreZFESVQFgLI0rATQPJ/bw==
-X-Received: by 2002:a05:6512:2805:b0:52c:dfa7:53a2 with SMTP id 2adb3069b0e04-530bb6c7b28mr976216e87.50.1722556415822;
-        Thu, 01 Aug 2024 16:53:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IExnzW1SZ0twUMkNblcsaDTxDqmZnuFJH/xxGE6TmjBsdB/4VFoq/tSC1skMpS/DYOFOCcPiQ==
-X-Received: by 2002:a05:6512:2805:b0:52c:dfa7:53a2 with SMTP id 2adb3069b0e04-530bb6c7b28mr976202e87.50.1722556415163;
-        Thu, 01 Aug 2024 16:53:35 -0700 (PDT)
-Received: from avogadro.local ([151.95.101.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c58esm32725666b.86.2024.08.01.16.53.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 16:53:34 -0700 (PDT)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: Michael Roth <michael.roth@amd.com>
-Subject: [PATCH] KVM: SEV: allow KVM_SEV_GET_ATTESTATION_REPORT for SNP guests
-Date: Fri,  2 Aug 2024 01:53:33 +0200
-Message-ID: <20240801235333.357075-1-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722556528; c=relaxed/simple;
+	bh=/kOT2ZW0E6g1IHZG0hWnLMP1ClTzTmx1Ik99DYN5zLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=po2LpQUwyXFmOdjs/2267bSkmadv9a4FR3nVH6da8w7kx0W/A6Sntou2fVqU1YoDhEnUS7M0Xn0jjvY2pPzItKNSE2CaKGQcY8ZwPTXfvU+GJh2zESRwjG1fmdLJpGt/Veb7wthlqDL5cJd+1OHKFq3wt8jtyTpJWhQf22e2P0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acQr4igk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4AC0C32786;
+	Thu,  1 Aug 2024 23:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722556528;
+	bh=/kOT2ZW0E6g1IHZG0hWnLMP1ClTzTmx1Ik99DYN5zLQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=acQr4igkIUlJgQgFtrjWtks5FPYSC7y7Tj1HKX691FXExd6O/fCVmdod3ItDfFWsv
+	 2dfPPT7BhjrVocDyvnr5YbRNO2mJXT09Gv79hFTFbP350v0+AZF1xIIORmW4v9evyB
+	 SlTnXUsXf4WM4lwq45OaNMIrJCghRS5h8PRenrPhWlVkXji9RuYQN59FmRoahChOx6
+	 2AEbBafvL3oodYULbrTIumA/14B8zaZGkpq7tNIjhfsdbrpPwNFf0B+KWwQjQaOMKk
+	 UTryedTee2Xi3WaIKXpT+fp9VzhnI6isbzFSEumueRrQ+HIUBFheuFwJOM4bwoD+b7
+	 YhYe5xnuz1bow==
+Date: Thu, 1 Aug 2024 18:55:26 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: David Hunter <david.hunter.linux@gmail.com>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, julia.lawall@inria.fr,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
+	Rob Herring <robh@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: Re: [PATCH] of.c: replace of_node_put with __free improves cleanup
+Message-ID: <20240801235526.GA129068@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240719223805.102929-1-david.hunter.linux@gmail.com>
 
-Even though KVM_SEV_GET_ATTESTATION_REPORT is not one of the commands
-that were added for SEV-SNP guests, it can be applied to them.  Filtering
-it out, for example, makes the QEMU command query-sev-attestation-report
-fail.
+[+cc Rob, Jonathan]
 
-Cc: Michael Roth <michael.roth@amd.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/svm/sev.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On Fri, Jul 19, 2024 at 06:38:05PM -0400, David Hunter wrote:
+> The use of the __free function allows the cleanup to be based on scope
+> instead of on another function called later. This makes the cleanup
+> automatic and less susceptible to errors later.
+> 
+> This code was compiled without errors or warnings.
 
-diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-index 5c125e4c1096..17307257d632 100644
---- a/arch/x86/kvm/svm/sev.c
-+++ b/arch/x86/kvm/svm/sev.c
-@@ -2587,7 +2587,9 @@ int sev_mem_enc_ioctl(struct kvm *kvm, void __user *argp)
- 	 * Once KVM_SEV_INIT2 initializes a KVM instance as an SNP guest, only
- 	 * allow the use of SNP-specific commands.
- 	 */
--	if (sev_snp_guest(kvm) && sev_cmd.id < KVM_SEV_SNP_LAUNCH_START) {
-+	if (sev_snp_guest(kvm) &&
-+	    sev_cmd.id < KVM_SEV_SNP_LAUNCH_START &&
-+	    sev_cmd.id != KVM_SEV_GET_ATTESTATION_REPORT) {
- 		r = -EPERM;
- 		goto out;
- 	}
--- 
-2.45.2
+I *think* this looks OK, but I'm not comfy with all this scope magic
+yet, so would like Jonathan and/or Rob to take a peek too.
 
+And is there some way to include a hint here about how to find the
+implicit of_node_put()?  I think it's this from 9448e55d032d ("of: Add
+cleanup.h based auto release via __free(device_node) markings"):
+
+  +DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+
+but it did take some looking to find it.
+
+If it looks good, I'll tweak the commit log to use imperative mood:
+https://chris.beams.io/posts/git-commit/
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?id=v6.9#n94
+
+since this technically says what *could* happen but not what the patch
+*does*.
+
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
+>  drivers/pci/of.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+> index b908fe1ae951..8b150982f5cd 100644
+> --- a/drivers/pci/of.c
+> +++ b/drivers/pci/of.c
+> @@ -616,16 +616,14 @@ int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge)
+>  
+>  void of_pci_remove_node(struct pci_dev *pdev)
+>  {
+> -	struct device_node *np;
+> +	struct device_node *np __free(device_node) = pci_device_to_OF_node(pdev);
+>  
+> -	np = pci_device_to_OF_node(pdev);
+>  	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
+>  		return;
+>  	pdev->dev.of_node = NULL;
+>  
+>  	of_changeset_revert(np->data);
+>  	of_changeset_destroy(np->data);
+> -	of_node_put(np);
+>  }
+>  
+>  void of_pci_make_dev_node(struct pci_dev *pdev)
+> -- 
+> 2.34.1
+> 
 
