@@ -1,314 +1,136 @@
-Return-Path: <linux-kernel+bounces-271261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A44C2944BBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:53:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B31F944BC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 280941F22B0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:53:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8539DB25783
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B7B19AD87;
-	Thu,  1 Aug 2024 12:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8104D1A01B7;
+	Thu,  1 Aug 2024 12:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jOosIZBZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="JD+n8Gz/";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ReeR2HcB"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC873194125
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D114819AD87
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722516804; cv=none; b=QTmdAtlfi913t+gIysEHRozTUHmv1MLI/aR4Bm2dDlykKTngJChlCBpiu5vMf63ijTNEHYiZe8hCK1MHjdmlqt1HH99adaOiQOD5nBkmBYnlVeYQkj24t7Leoyc1ImfeJ1U0KE06JNy/3FgvcFWP7btzLL3/m1v8GJ+Ig44ESgY=
+	t=1722516827; cv=none; b=JrSeBnRkUSVIWTgX7yiRsrKApKemRcu5B60WTwczbmJA7+JmRLcWwGWwvclk+p2b+qqsl9hP0ZhbM86byL0m9AIy1gWaNfLN0pZkDLKLm/T9praWq8VdCojx8ZBimz4TMaFLd2meEgPC1bfunvnbfc+SlpbZquModOKt0N9vXBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722516804; c=relaxed/simple;
-	bh=RSXa3QrdosMXek03Kn5TJUgAyt9Pgt8CEW3Dz2q5d6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JlhmfdVdXW7KiqaHV/dXTvAvvCzgwwvJWSSgb95CcOnYQuKflcUvK+vPDyPnCA1Kyh64DApZ/ncTOnbUoj+CeCKG6DPCCnZnjb7++EYK02SEa9YYXm/Ven1xD/qP5SU0+P4LKwG4ZWbfLMZRLYqNqiTdnJtHk0zCiZ0Yy5zpxAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jOosIZBZ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722516802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=tY3FTh7vOTxS/LhqhyyExp9r4gGoOfraF1glml6en7Q=;
-	b=jOosIZBZGQTA8l+OiWKwMzhLzigshAK/nV9vhCJNY/NLT+TUtL17ZBj/F3NF9l/AwjmWEf
-	GUH75fVn67N9cKzCJr1tlEBt1K3OsgR3HRXIaxs+6kcv3fNr2TPBNL83AsyU+YefTh/4dk
-	wE5TFOLGG11KwpjnLCCQOfzUIxcdkEw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-413-AQDPj67iMQy82zCUYyzW9w-1; Thu, 01 Aug 2024 08:53:20 -0400
-X-MC-Unique: AQDPj67iMQy82zCUYyzW9w-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36863648335so3221384f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:53:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722516799; x=1723121599;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tY3FTh7vOTxS/LhqhyyExp9r4gGoOfraF1glml6en7Q=;
-        b=L+G6cWAiAg7ggg4UL4y4oarNiw3ZKUy3BpBQS53HFG0yiHnoa7Zi0Xnj7/UDC4BZCd
-         8yulDR5KWrNpYyJWiO+HJKYSUS6X6h1ktEbHxtyb9EzMn+S2yko+ObSjPp1uCHYuC8tA
-         ynIgvsa7/PUmQsB39b/98lRf4GtnFi/pu/1amL6FjAikIndb+zJ3IqI2gmyU36CpGUUE
-         z/GuPzlutfbQvpZUpLNlN7MuU8/2IusoEaIoQnnRGzWiS7kuyrR1Qn65w8llTOwej26e
-         8WeZOTNFT5+3n6Tjt6KrfpgKOJfccFFbvjJuwuHiDKE1uLvYh4z3vcErlSG0Z+qoalf0
-         6J8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVFh+cGlMKWl+/ZhdieEuQDiCVUPkd367s8f5J8j6je6oo1xk2ICj0XIWHBAW/t0yHTho10vd150kftoPfrfLR1O0Uued4ByGC6CP7a
-X-Gm-Message-State: AOJu0YyGJmNzBdCSc351ziedZ1ZCcmFSWTDnWdjQEXQ62EjD4l+ivZ2x
-	dwSY48gzuTP5NxsxzImpAlMhZVwNKA/LhL7Vsnidy/b1yXNezd9DGtT/UW/TivpxZc2TqseE++Z
-	5jIBh/jq2/Y3SGpnguaCwMCoa2IRCW4BHb6Z4y3u5ThU1tHzJ8U6jwogiev4T0g==
-X-Received: by 2002:adf:ed11:0:b0:364:8568:f843 with SMTP id ffacd0b85a97d-36baaf46ff3mr1747179f8f.59.1722516799372;
-        Thu, 01 Aug 2024 05:53:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEXkQzuiBajNhJVSP5UhLjv2gX0jPjX0Kpt2L7st5acq9l3/tBwA4i709DCI0A4Sa8f6WF5tw==
-X-Received: by 2002:adf:ed11:0:b0:364:8568:f843 with SMTP id ffacd0b85a97d-36baaf46ff3mr1747154f8f.59.1722516798788;
-        Thu, 01 Aug 2024 05:53:18 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36858197sm19818391f8f.68.2024.08.01.05.53.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 05:53:18 -0700 (PDT)
-Message-ID: <bffe178c-bd97-4945-898e-97ba203f503e@redhat.com>
-Date: Thu, 1 Aug 2024 14:53:15 +0200
+	s=arc-20240116; t=1722516827; c=relaxed/simple;
+	bh=v9BU2Ym8itRRayZMc51Ys/qzHezRUayDzP4dpbmnsUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fg28cudedGRQJoiJzPf4PgGn8h8IPYGZWnxnjiBPo0NPlELdRNhoa9H0YDmmOH+OT6axqYKCDqhK5KsZiv2K2EpB7fZjrzTaU0MywdRkj7F2daBzISWdKgDZenvDl5taQugW4I7rVmvx3LaWakp3wbqDSzLVj3mXYDada4jo1wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=JD+n8Gz/; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ReeR2HcB reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1722516824; x=1754052824;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=JO4+VX3RecD7tvJ/44espFD0o4ZVH+vHrUDyMVyNI2c=;
+  b=JD+n8Gz/RH4jda/+WGk+unHKqPuhaGPKovwMqdA3pVhyY8ut9LgiU3Ux
+   UtBzqebTbdx1sUMrrDMa55uiqMzZhqDz2pRcUb2Nn9d27A3vWdB9Q39Cc
+   4SBCPUj5shwAgztIoblCUagVqHI3j+UcEw2mpDxWvVcFX4ITgdj9J6qlT
+   g6SH76NvRM/EfBgB5OVou9K0HxV58+eMc6So7L4gMWOKrBJVFNrDdbjL7
+   NS4nsr3NLS8uhS8Jr4D2eq10el6A6piFo5yrvAI9TOu+sNxqpfjlxMTW2
+   c6uD6XEouBLaVDqINf0zivZRKds1NZ5uWaNQ/immMVYnggk2YWPABimih
+   g==;
+X-CSE-ConnectionGUID: R4jLy6u6Q72g/1BWXl0zkA==
+X-CSE-MsgGUID: 4vwozDPUTTi1Xt55UQjKYg==
+X-IronPort-AV: E=Sophos;i="6.09,254,1716242400"; 
+   d="scan'208";a="38198538"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 01 Aug 2024 14:53:41 +0200
+X-CheckPoint: {66AB8555-F-E8EE7C4B-C1098986}
+X-MAIL-CPID: 42072174400B03E93173B808A0A42CB1_5
+X-Control-Analysis: str=0001.0A782F24.66AB8556.0014,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 27B99165FF9;
+	Thu,  1 Aug 2024 14:53:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1722516817;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=JO4+VX3RecD7tvJ/44espFD0o4ZVH+vHrUDyMVyNI2c=;
+	b=ReeR2HcBCaIrVbwR1ZsZwOoFsn52E5tJ7o/atRp4D6AxRBJQUGAAvQVUCZkFlv85oWJdY7
+	oAJSx4X1Hb2GgFb8q7DxP2+yCp67Z2GIxyjmVSW9Un++zJtIAzPFLk8BxljZ76ZYNogMhJ
+	U2VOBEQfHTjws4TNwzS8Pyn18jonFiY76sKRfM2rc78sJ+cBUPFWCt+e6iUhsVRglOfMZg
+	QmF2DgKwCA7/bmOjx+zD0OAScg8oYCv8YavAcumMFJISDnlN20Q0tUMKQ9HgDiwcyEhqXj
+	FKaAIM0UauoUydPIho1rfnI+aNO0BIEqxLlAO0KBLDwStkCW8sTfvPAEmfYaUQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: vkoul@kernel.org, kishon@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, Xu Yang <xu.yang_2@nxp.com>
+Cc: jun.li@nxp.com, xu.yang_2@nxp.com, linux-phy@lists.infradead.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] phy: fsl-imx8mq-usb: fix tuning parameter name
+Date: Thu, 01 Aug 2024 14:53:36 +0200
+Message-ID: <4195136.aeNJFYEL58@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240801124642.1152838-1-xu.yang_2@nxp.com>
+References: <20240801124642.1152838-1-xu.yang_2@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/1] mm: introduce MADV_DEMOTE/MADV_PROMOTE
-To: Zhangrenze <zhang.renze@h3c.com>, "linux-mm@kvack.org"
- <linux-mm@kvack.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc: "arnd@arndb.de" <arnd@arndb.de>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "chris@zankel.net" <chris@zankel.net>,
- "jcmvbkbc@gmail.com" <jcmvbkbc@gmail.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>, "deller@gmx.de" <deller@gmx.de>,
- "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
- "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
- "rdunlap@infradead.org" <rdunlap@infradead.org>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "richard.henderson@linaro.org" <richard.henderson@linaro.org>,
- "ink@jurassic.park.msu.ru" <ink@jurassic.park.msu.ru>,
- "mattst88@gmail.com" <mattst88@gmail.com>,
- "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
- Jiaoxupo <jiaoxupo@h3c.com>, Zhouhaofan <zhou.haofan@h3c.com>
-References: <3a5785661e1b4f3381046aa5e808854c@h3c.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <3a5785661e1b4f3381046aa5e808854c@h3c.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 01.08.24 11:57, Zhangrenze wrote:
->>> Sure, here's the Scalable Tiered Memory Control (STMC)
->>>
->>> **Background**
->>>
->>> In the era when artificial intelligence, big data analytics, and
->>> machine learning have become mainstream research topics and
->>> application scenarios, the demand for high-capacity and high-
->>> bandwidth memory in computers has become increasingly important.
->>> The emergence of CXL (Compute Express Link) provides the
->>> possibility of high-capacity memory. Although CXL TYPE3 devices
->>> can provide large memory capacities, their access speed is lower
->>> than traditional DRAM due to hardware architecture limitations.
->>>
->>> To enjoy the large capacity brought by CXL memory while minimizing
->>> the impact of high latency, Linux has introduced the Tiered Memory
->>> architecture. In the Tiered Memory architecture, CXL memory is
->>> treated as an independent, slower NUMA NODE, while DRAM is
->>> considered as a relatively faster NUMA NODE. Applications allocate
->>> memory from the local node, and Tiered Memory, leveraging memory
->>> reclamation and NUMA Balancing mechanisms, can transparently demote
->>> physical pages not recently accessed by user processes to the slower
->>> CXL NUMA NODE. However, when user processes re-access the demoted
->>> memory, the Tiered Memory mechanism will, based on certain logic,
->>> decide whether to promote the demoted physical pages back to the
->>> fast NUMA NODE. If the promotion is successful, the memory accessed
->>> by the user process will reside in DRAM; otherwise, it will reside in
->>> the CXL NODE. Through the Tiered Memory mechanism, Linux balances
->>> betweenlarge memory capacity and latency, striving to maintain an
->>> equilibrium for applications.
->>>
->>> **Problem**
->>> Although Tiered Memory strives to balance between large capacity and
->>> latency, specific scenarios can lead to the following issues:
->>>
->>>     1. In scenarios requiring massive computations, if data is heavily
->>>        stored in CXL slow memory and Tiered Memory cannot promptly
->>>        promote this memory to fast DRAM, it will significantly impact
->>>        program performance.
->>>     2. Similar to the scenario described in point 1, if Tiered Memory
->>>        decides to promote these physical pages to fast DRAM NODE, but
->>>        due to limitations in the DRAM NODE promote ratio, these physical
->>>        pages cannot be promoted. Consequently, the program will keep
->>>        running in slow memory.
->>>     3. After an application finishes computing on a large block of fast
->>>        memory, it may not immediately re-access it. Hence, this memory
->>>        can only wait for the memory reclamation mechanism to demote it.
->>>     4. Similar to the scenario described in point 3, if the demotion
->>>        speed is slow, these cold pages will occupy the promotion
->>>        resources, preventing some eligible slow pages from being
->>>        immediately promoted, severely affecting application efficiency.
->>>
->>> **Solution**
->>> We propose the **Scalable Tiered Memory Control (STMC)** mechanism,
->>> which delegates the authority of promoting and demoting memory to the
->>> application. The principle is simple, as follows:
->>>
->>>     1. When an application is preparing for computation, it can promote
->>>        the memory it needs to use or ensure the memory resides on a fast
->>>        NODE.
->>>     2. When an application will not use the memory shortly, it can
->>>        immediately demote the memory to slow memory, freeing up valuable
->>>        promotion resources.
->>>
->>> STMC mechanism is implemented through the madvise system call, providing
->>> two new advice options: MADV_DEMOTE and MADV_PROMOTE. MADV_DEMOTE
->>> advises demote the physical memory to the node where slow memory
->>> resides; this advice only fails if there is no free physical memory on
->>> the slow memory node. MADV_PROMOTE advises retaining the physical memory
->>> in the fast memory; this advice only fails if there are no promotion
->>> slots available on the fast memory node. Benefits brought by STMC
->>> include:
->>>
->>>     1. The STMC mechanism is a variant of on-demand memory management
->>>        designed to let applications enjoy fast memory as much as possible,
->>>        while actively demoting to slow memory when not in use, thus
->>>        freeing up promotion slots for the NODE and allowing it to run in
->>>        an optimized Tiered Memory environment.
->>>     2. The STMC mechanism better balances large capacity and latency.
->>>
->>> **Shortcomings of STMC**
->>> The STMC mechanism requires the caller to manage memory demotion and
->>> promotion. If the memory is not promptly demoting after an promotion,
->>> it may cause issues similar to memory leaks
->> Ehm, that sounds scary. Can you elaborate what's happening here and why
->> it is "similar to memory leaks"?
->>
->>
->> Can you also point out why migrate_pages() is not suitable? I would
->> assume demote/promote is in essence simply migrating memory between nodes.
->>
->> -- 
->> Cheers,
->>
->> David / dhildenb
->>
-> 
-> Thank you for the response. Below are my points of view. If there are any
-> mistakes, I appreciate your understanding:
-> 
-> 1. In a tiered memory system, fast nodes and slow nodes act as two common
->     memory pools. The system has a certain ratio limit for promotion. For
->     example, a NODE may stipulate that when the available memory is less
->     than 1GB or 1/4 of the node's memory, promotion are prohibited. If we
->     use migrate_pages at this point, it will unrestrictedly promote slow
->     pages to fast memory, which may prevent other processes’ pages that
->     should have been promoted from being promoted. This is what I mean by
->     occupying promotion resources.
-> 2. As described in point 1, if we use MADV_PROMOTE to temporarily promote
->     a batch of pages and do not demote them immediately after usage, it
->     will occupy many promotion resources. Other hot pages that need promote
->     will not be able to get promote, which will impact the performance of
->     certain processes.
+Hi,
 
-So, you mean, applications can actively consume "fast memory" and 
-"steal" it from other applications? I assume that's what you meant with 
-"memory leak".
+Am Donnerstag, 1. August 2024, 14:46:42 CEST schrieb Xu Yang:
+> According to fsl,imx8mq-usb-phy.yaml, this tuning parameter should be
+> fsl,phy-pcs-tx-deemph-3p5db-attenuation-db.
+>=20
+> Fixes: 63c85ad0cd81 ("phy: fsl-imx8mp-usb: add support for phy tuning")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
 
-I would really suggest to *not* call this "similar to memory leaks", in 
-your own favor ;)
+Look good to me:
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-> 3. MADV_DEMOTE and MADV_PROMOTE only rely on madvise, while migrate_pages
->     depends on libnuma.
+> ---
+> Changes in v2:
+>  - add fixes
+> Changes in v3:
+>  - correct fixes commit
+> ---
+>  drivers/phy/freescale/phy-fsl-imx8mq-usb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/phy/freescale/phy-fsl-imx8mq-usb.c b/drivers/phy/fre=
+escale/phy-fsl-imx8mq-usb.c
+> index 0b9a59d5b8f0..adc6394626ce 100644
+> --- a/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
+> +++ b/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
+> @@ -176,7 +176,7 @@ static void imx8m_get_phy_tuning_data(struct imx8mq_u=
+sb_phy *imx_phy)
+>  		imx_phy->comp_dis_tune =3D
+>  			phy_comp_dis_tune_from_property(imx_phy->comp_dis_tune);
+> =20
+> -	if (device_property_read_u32(dev, "fsl,pcs-tx-deemph-3p5db-attenuation-=
+db",
+> +	if (device_property_read_u32(dev, "fsl,phy-pcs-tx-deemph-3p5db-attenuat=
+ion-db",
+>  				     &imx_phy->pcs_tx_deemph_3p5db))
+>  		imx_phy->pcs_tx_deemph_3p5db =3D PHY_TUNE_DEFAULT;
+>  	else
+>=20
 
-Well, you can trivially call that systemcall also without libnuma ;) So 
-that shouldn't really make a difference and is rather something that can 
-be solved in user space.
 
-> 4. MADV_DEMOTE and MADV_PROMOTE provide a better balance between capacity
->     and latency. They allow hot pages that need promoting to be promoted
->     smoothly and pages that need demoting to be demoted immediately. This
->     helps tiered memory systems to operate more rationally.
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-Can you summarize why something similar could not be provided by a 
-library that builds up on existing functionality, such as migrate_pages? 
-It could easily take a look at memory stats to reason whether a 
-promotion/demotion makes sense (your example above with the memory 
-distribution).
-
- From the patch itself I read
-
-"MADV_DEMOTE can mark a range of memory pages as cold
-pages and immediately demote them to slow memory. MADV_PROMOTE can mark
-a range of memory pages as hot pages and immediately promote them to
-fast memory"
-
-which sounds to me like migrate_pages / MADV_COLD might be able to 
-achieve something similar.
-
-What's the biggest difference that MADV_DEMOTE|MADV_PROMOTE can do better?
-
--- 
-Cheers,
-
-David / dhildenb
 
 
