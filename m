@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-271836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89FA99453C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 028D69453C5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B041B233A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:33:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94E081F23B4E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C2614AD2C;
-	Thu,  1 Aug 2024 20:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFEBD14AD3A;
+	Thu,  1 Aug 2024 20:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1S64wZUr"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="PAfL57iQ"
+Received: from smtp.smtpout.orange.fr (smtp-26.smtpout.orange.fr [80.12.242.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4557C4087C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 20:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BB04087C;
+	Thu,  1 Aug 2024 20:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722544421; cv=none; b=dJL6ozobC5RqqjYgw0kKW9H3Dr4RCUh6GhDWLij8u12P0JoC4tBC93KSBriNiMq+IHp3mK+nX8J3Y7yAs2pZCSBsygTRsiXgs+9pSTPRSoDvJRP+BfK1FCKw5aObfgqcefuBiuNaE1+jpHcNne+YK4nZIiNjNW4mqCYu8RUHiM0=
+	t=1722544511; cv=none; b=AkSEzHvoBHG8oIR0G74rpiM1nTX2ux1wP9nkYN/5t/mZOKxje9GWQpcEIAMqTAhT1PfShgO5wAXW5FssJdhS1cphQ8VwKpDbMTUlO7ihZSOb1lj9B9lwGxI5VN2arMeW+bQRocqI5q7reToSJg0uDYbHJJv9Pkx1dVMwD1Zbtes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722544421; c=relaxed/simple;
-	bh=uj3FPwEIG0xfFR02AOfEaaHGXag/9QLqipufHIU4Zg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6h3nYQvWmm6iyRhss9uDychgyM05j4M/7CotiA9zT6q4EGnrvqyODD99YS3Z/t0aM6cCougc2vWdvAjOIxbIKEDh2HISVV7CElULv63A+/EWYXw8VMkoX5Ih865MwWp7QgoAp2rkY3BYbD9V616whYX9cQW++OysfSjNlBThww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1S64wZUr; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6b7a0ef0e75so42821046d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 13:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722544419; x=1723149219; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a4LGUqfUQLcaI5k3gnfYaAsiGSEmX4XZthqSuVaynW0=;
-        b=1S64wZUrN9QvfqICVzOdMAgivDxNlDPBenaSiM70h6WY/ufwWA8Z04cnOQzQjBlNZz
-         TRhLZoskzQhmYoLIZmzJpiPnIzqij2A1FK/aJqJaBYopn2nZQkEV49OAsknzljZGLGvl
-         IWp1SkMBL4V1/QxDuyZhFtJnE7i6JiyIC8mWua2xFCp3Tht1N8WB8BZXU5BNm/h1rnD7
-         IA6r76Q1RY5X/FhpMZUdGLc+vrkOXnKTALE6vrIJWkFVzb5mkXbyt+YxO5RBAQ0QVoD3
-         wFFJi3u7Q24uPeEX4dQFT/bN6eu1flP0kHpVH6cIiPqW9eWPM6cxp2nXTaAodDtaLA5I
-         x+Aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722544419; x=1723149219;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a4LGUqfUQLcaI5k3gnfYaAsiGSEmX4XZthqSuVaynW0=;
-        b=tWX0WZwPDtZRI2RzG56PeCQNfwAUggToYpxDptZrFTzJR0MmTRAFuxPXEgfD1efcb6
-         /39240xQOXuTI/BysLoNum6DO8G+/kSEPL27FL514dr5M9qvp4RMTLS0R4JBeRtHowFQ
-         Sg3IhEw7KS2jW8D1EIugbuh2l1Lm6RtiKVeWByWBQ5a3p5ZFSnM2YO/Ur5za/4VX3MWC
-         kKwqGKRQWcgz7A9P2e+Z3lUHDe4jqYbUjxwWp9gUm8XYKXPJqvA0dEdKrQDEzO8yDeG3
-         ldR2ltvWy7K5M+wC4e33429IGpKClbmVlTuEvwIajIfwh3wq4F9uuWg0BAMbanjchD+l
-         E8DQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWeIwx70ZCgT7W8wyINQ9ulffrsJFzmFRIvB4G1RPsJek62xFwE7St1oyJtsYfDNEcax6gULnmKI99s6C129pqc2ZO9hDEWgCgicuYu
-X-Gm-Message-State: AOJu0YzJgCVx0VQOsWfW7KqSHiIxMF8YBsIpQD6p//8VJv2M/QyW/BmF
-	wRfV8r8u3dvVn06gbrXCjcHzNJ2NouGZLileLMP+LD4A5EKvdx8uhwHNqVq7AK8bO8dbb0AtXOK
-	inQL/VcNA1m4D3O0JnCTcX1r2FL99Wg5AAkjh
-X-Google-Smtp-Source: AGHT+IHRRf+iCcZWfIUk8eMRP01GYpsdBtZcRDR9lDO2O6lJi8LWaU5YtyCRFpNWDktDnSX3GuCXW/wCS7u9+pP4Sbo=
-X-Received: by 2002:a05:6214:3103:b0:6b7:b08e:e795 with SMTP id
- 6a1803df08f44-6bb9836b891mr13930256d6.25.1722544419100; Thu, 01 Aug 2024
- 13:33:39 -0700 (PDT)
+	s=arc-20240116; t=1722544511; c=relaxed/simple;
+	bh=GijcUiTt68Q96OPRDPIY1ay6L8eOrhzbTBhn72rZnzU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mm3PckaGMEKGdBj8rplSt1582BUP7uuZYncbAnJFjLyffcRjjR93POnOxtfIHxnB/RFp7Kx0VRgqyTnOGlULhX4QxuP35odatph4o+yVebXhIs16gjRn58MR3776wB0DgBdsaMMzvcnhC04L1beJmLdLipgRYF3n7H0m9riJ88M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=PAfL57iQ; arc=none smtp.client-ip=80.12.242.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ZcVmsD1jSGdLxZcVnsXLwg; Thu, 01 Aug 2024 22:34:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1722544499;
+	bh=Xt0EwvNrOXd4uCSAzGoq0YIsCyBB78A5L44qPdMyuXU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=PAfL57iQ0ZLvibrFotWhGKkDVY2G3/37BXsTNpCqDxRURps7ZEsUwvToXKtGVlJ8I
+	 TuRAFWL9YSGx53PF6y3SYahGr3hhKfDV2wXbhdzID/gMmLqdtRhLedSqSwRl9v9mQn
+	 JkFp0ADsHj+c9eZKNZ8Dyi5ib9qxHFHc38GcNcd7lQz9Ajt2gDuETZ1TY8/ou9tMHb
+	 VVVk08XIewv0oWpl1D6aF47B4q8TQbDf62xklc7h0uF5fcATKWzJyIS4UgoIkmh/9n
+	 AQSeUxr+aUl5XH5N93Y1iNjGUU64Ozn8dD/QtUFirnAVLBvhSkDXQN7YZn3qbLKkB6
+	 /cupi8Id6foVQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 01 Aug 2024 22:34:59 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Helge Deller <deller@gmx.de>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-fbdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] fbdev/hpfb: Fix an error handling path in hpfb_dio_probe()
+Date: Thu,  1 Aug 2024 22:34:39 +0200
+Message-ID: <ec4a9fbbff184e40d50e1f12e6df161ff5119f21.1722544445.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801-kcfi-v2-0-c93caed3d121@google.com>
-In-Reply-To: <20240801-kcfi-v2-0-c93caed3d121@google.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 1 Aug 2024 20:33:02 +0000
-Message-ID: <CABCJKue_8S8jJ1b5RRHGjnqpq=u9KYf1SjPTyS0NCWS4TthUQw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Rust KCFI support
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Peter Zijlstra <peterz@infradead.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Alice,
+If an error occurs after request_mem_region(), a corresponding
+release_mem_region() should be called, as already done in the remove
+function.
 
-On Thu, Aug 1, 2024 at 1:35=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> wr=
-ote:
->
-> The control flow integrity (kCFI) sanitizer is an important sanitizer
-> that is often used in production. This patch series makes it possible to
-> use kCFI and Rust together.
->
-> The second patch in this series depends on the next version of [1],
-> which Miguel will send soon. It also depends on [2].
->
-> Link: https://lore.kernel.org/r/20240709160615.998336-12-ojeda@kernel.org=
- [1]
-> Link: https://lore.kernel.org/r/20240730-target-json-arrays-v1-1-2b376fd0=
-ecf4@google.com [2]
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Changes in v2:
-> - Fix for FineIBT.
-> - Add more info to commit messages and config descrptions.
-> - Link to v1: https://lore.kernel.org/r/20240730-kcfi-v1-0-bbb948752a30@g=
-oogle.com
->
-> ---
-> Alice Ryhl (1):
->       cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
->
-> Matthew Maurer (1):
->       rust: cfi: add support for CFI_CLANG with Rust
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+*Not* even compile tested only.
+It is provided as-is
 
-Thanks for sorting this out!
+Changes in v2:
+  - Apply a minimal change   [Helge Deller]
 
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+v1: https://lore.kernel.org/all/dc4fe3d857849ac63131c5620f1bacf1a3d7172e.1722191367.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/video/fbdev/hpfb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sami
+diff --git a/drivers/video/fbdev/hpfb.c b/drivers/video/fbdev/hpfb.c
+index 66fac8e5393e..a1144b150982 100644
+--- a/drivers/video/fbdev/hpfb.c
++++ b/drivers/video/fbdev/hpfb.c
+@@ -345,6 +345,7 @@ static int hpfb_dio_probe(struct dio_dev *d, const struct dio_device_id *ent)
+ 	if (hpfb_init_one(paddr, vaddr)) {
+ 		if (d->scode >= DIOII_SCBASE)
+ 			iounmap((void *)vaddr);
++		release_mem_region(d->resource.start, resource_size(&d->resource));
+ 		return -ENOMEM;
+ 	}
+ 	return 0;
+-- 
+2.45.2
+
 
