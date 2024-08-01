@@ -1,165 +1,241 @@
-Return-Path: <linux-kernel+bounces-270028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D45A943A52
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:13:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 81A04943ABB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED6DAB24FA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:13:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85EC8B22F86
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DE2140E5F;
-	Thu,  1 Aug 2024 00:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA2814F9F3;
+	Thu,  1 Aug 2024 00:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="Dy+Wn1IP"
-Received: from pv50p00im-ztdg10011901.me.com (pv50p00im-ztdg10011901.me.com [17.58.6.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vt2QVlX2"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E1E8130A7C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 00:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B2314F9CA;
+	Thu,  1 Aug 2024 00:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722470922; cv=none; b=ok1pkSDBkkd1PGz5a0Jp7Bzzam1dXcZ0wZ7M3jRRW1kCWkbv4eVAOMK9/Ox9ZY2d01Ke7GY/wQPiYRNjhme1iXYGcR6/FetkOnHNugdgOFVDfJVPBPOqd2BNFoVQ2OGkpDuRUjNpU98EbJDigaQArCmLq5F/lLxdRzdVI7bMEmA=
+	t=1722471014; cv=none; b=Jpp0Fw8iW0OPaRJ5hjKDvtCRuKK4soqULe8y3xkNkLZVy3hMYHv/PAJ6ig93LAIIO2z+d8fy4zjvf/AAnnDxpsvQt1fGnWjGhnAaxef/7mUwyR3AauOJPZEbZII5MF+UHd4a5HKZWti9R15YiCW5GLNLaqYFPHl73qNorMCwJqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722470922; c=relaxed/simple;
-	bh=TQ5F02pgzaKhx2W+byz6nQtmJsKli2V2+Ojs79PYTsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c5JZqU552QHCw0pRb0Wd88XVFPjACUwuxqDtaFEWCpdz4RyAJSnNa/9kTOIVnhOU4DJzWgonMn1f8jS7ZVJenx4emVdGx2rTKs42uQ/ga/1slGY+dHpjyG7092426WNpfZsY5kJp0VYD77GgUi5j05URlltPHu+XqWKro5xlURQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=Dy+Wn1IP; arc=none smtp.client-ip=17.58.6.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1722470919;
-	bh=Kd57aboH9LpqrAUa930J8jmTFRDDcdRa8xOJ7y45jpM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	b=Dy+Wn1IPiY0KxDBc3K9A+74ZiDQG4f/LnB+oJXv2frDFkZMirgyat9inwm6DZhILJ
-	 szgoxDy2SY23v/XVdHgk/1/Bef5eNTqjfVS6CeJPrl0/LT65inf3TtIzziFUPYn66T
-	 OWJwwfJzkXcNinaB/PSq/4FpaCIZol1ThHF8YNYD202BhyO6wUARdhBUzEVr2wZ0b7
-	 kXjeBHKGnMO2V88lHLyHSakLR5UGBcR+scaoX/0KulfFsB7BTC9hYJ0GBVSWA1FNE6
-	 +DjY6A7kTAVKBlHJ46bSEF2IWaEb0zm6jV9ERlZhztLfCM1yWqK+GvF7t8VqecdIRU
-	 wPV4SS9IEh78Q==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011901.me.com (Postfix) with ESMTPSA id 0E9D53A0159;
-	Thu,  1 Aug 2024 00:08:36 +0000 (UTC)
-Message-ID: <b6dcf753-c262-46d9-bbf6-53b25d0e2bff@icloud.com>
-Date: Thu, 1 Aug 2024 08:08:30 +0800
+	s=arc-20240116; t=1722471014; c=relaxed/simple;
+	bh=YbTyWDcu6WrIidnVKXHhfitfKU7aLc0gVfbt7UCbH3Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KSG9dpX1qvLOPJpWIhWUGX5aO4Fcp56LE6O6mOVbOjvjUJ4R502VYmEk2rpjq5l0hGCZi+vbhNTtv1aqBaJcs1Kwcrg/zGSixslpOAjQJmrHMmMD6oEr1W0HKDBVja3cW8eix2X5b8vphaxLu7mBIus1TXZ7ZF6/8UwxbnskQXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vt2QVlX2; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so39759725e9.2;
+        Wed, 31 Jul 2024 17:10:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722471010; x=1723075810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E/mwx5vVIcjnZ4gHpJnA5TwYZW1u+Tk0bqToj01SJqg=;
+        b=Vt2QVlX2aP60DYXQBKJfy0KaG0vN46UCTKkB/un4vFX2GvGZ5IRNxqqRxzOHFuKJ/7
+         U3Ee8mRKcweLWAPM4qcTRRn+Dv1UuL2XuJGr4YHZpU3j4JZvwcsRJB4HVI9qYM80yn1W
+         uQe+HmE9SeZh3FE0PzDOgQb12gWfmv3mnSB1ClMA73PhsnLLuloNQ7sgsIOIHZyO5kQ5
+         P5yXsc8Bi4mnUPkUvJ3/VtrrdqJtM/C5lbZQzlf2K2DMxdGG9xQ5uciJZypOCjDflqpK
+         pPwV1taSWUh8OvyETIpNfNFVJphPoSa81MvAFEvRniqsQr1HdljeXniczWBgP1jlcU8D
+         CwOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722471010; x=1723075810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E/mwx5vVIcjnZ4gHpJnA5TwYZW1u+Tk0bqToj01SJqg=;
+        b=iEQBn1qfpEgMGrm9ctc/jMke0sRt6QYFNu5EhFUd3BDvUBacQaNEBr4pS4L5pFViK9
+         hGa6fBvCXl1fjYue5+Q6ZLBeNj+2i2KvKMtRyhzGq7wW0QDY8xaw/wHSp38aLEWAJHth
+         f6tqyzvdmZgWmPmagmwylYnVzx8ad6y5fxWf5PP4CPgZTTngQJWCVXi0hBP+W/IVAlye
+         uJOqBIkPKakRSgiX8Hf1Dhl7WjogFX5nul137d4i5g9ogs3eN/Y61hzORgQ86cOX0Z7p
+         7Kvxtn10qvIyMQBAdl+r79u4mFiY1pzcS5zYDJt16dFob+W2Au0fT7qYHw7MIf1oihkl
+         n2Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWf+pCBwpP5V+7IeiSZIBwrUqTE3RTVptXZfwWUlxDJy3CRSewS4wYo2C47CZrzbXTnpN2TI5hrbkeaCbOP3yt8FpNJZ8lADWjtS4Pq9DnyfKvDeRSORjuqG8rWZAQ8b9CCno4xAtXA4sx+xMYCesPuOBxLquGI2ZpF7yTAVj3TzUt2
+X-Gm-Message-State: AOJu0YwBDhDm/SQR2OJo+mzt19BNgnpWGs1s5Wo3VUZN5LlHvSNvQDw6
+	LrN09APMKr/Ux/7sMIbQAkmjzna7rd1m/Z/aDYFsIeff4f1cVezDrBzdWPmLvvkXIyGTTjbbH46
+	qDgwTtYdIZg9VXR4cW6x4TZfNaNRXtvaW
+X-Google-Smtp-Source: AGHT+IG0xmlD8VwsCSwQEadG9uz+AqblqGFznxg+UWJp1yu3RfxFFcuiOiIrv2lWQwdCNKkOCtMCRr5DNmdB513G93Y=
+X-Received: by 2002:adf:e286:0:b0:367:9614:fb99 with SMTP id
+ ffacd0b85a97d-36baac9e4a3mr468054f8f.10.1722471010226; Wed, 31 Jul 2024
+ 17:10:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: Simplify driver API
- device_find_child_by_name() implementation
+References: <CO1PR17MB54197F118CBC8783D289B97DE1102@CO1PR17MB5419.namprd17.prod.outlook.com>
+ <2024073122-shakable-photo-67d1@gregkh>
+In-Reply-To: <2024073122-shakable-photo-67d1@gregkh>
+From: Chris Wulff <crwulff@gmail.com>
+Date: Wed, 31 Jul 2024 20:09:59 -0400
+Message-ID: <CAB0kiBK-G3fyaX6TmS008nDyQ+x1zCZpwe_RT-sNdh78gQeOAQ@mail.gmail.com>
+Subject: Re: [PATCH v3] usb: gadget: f_fs: add capability for dfu run-time descriptor
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20240720-simplify_drv_api-v1-1-07c5e028cccf@quicinc.com>
- <2024073128-tinfoil-unaligned-8164@gregkh>
- <917359cc-a421-41dd-93f4-d28937fe2325@icloud.com>
- <2024073119-mortally-ashes-80f0@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2024073119-mortally-ashes-80f0@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: NDrRTp5ovitdIFCkpDOrxu-CEYpngSU7
-X-Proofpoint-ORIG-GUID: NDrRTp5ovitdIFCkpDOrxu-CEYpngSU7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_10,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1015 mlxscore=0
- malwarescore=0 suspectscore=0 mlxlogscore=961 bulkscore=0 spamscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2407310168
+Cc: Chris Wulff <Chris.Wulff@biamp.com>, 
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Paul Cercueil <paul@crapouillou.net>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Dmitry Antipov <dmantipov@yandex.ru>, David Sands <david.sands@biamp.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/8/1 00:21, Greg Kroah-Hartman wrote:
-> On Thu, Aug 01, 2024 at 12:04:40AM +0800, Zijun Hu wrote:
->> On 2024/7/31 20:53, Greg Kroah-Hartman wrote:
->>> On Sat, Jul 20, 2024 at 09:21:50AM +0800, Zijun Hu wrote:
->>>> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>>>
->>>> Simplify device_find_child_by_name() implementation by using present
->>>> driver APIs device_find_child() and device_match_name().
->>>>
->>>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->>>> ---
->>>>  drivers/base/core.c    | 15 +++------------
->>>>  include/linux/device.h |  4 ++++
->>>>  2 files changed, 7 insertions(+), 12 deletions(-)
->>>>
->>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
->>>> index 730cae66607c..22ab4b8a2bcd 100644
->>>> --- a/drivers/base/core.c
->>>> +++ b/drivers/base/core.c
->>>> @@ -4089,18 +4089,9 @@ EXPORT_SYMBOL_GPL(device_find_child);
->>>>  struct device *device_find_child_by_name(struct device *parent,
->>>>  					 const char *name)
->>>>  {
->>>> -	struct klist_iter i;
->>>> -	struct device *child;
->>>> -
->>>> -	if (!parent)
->>>> -		return NULL;
->>>> -
->>>> -	klist_iter_init(&parent->p->klist_children, &i);
->>>> -	while ((child = next_device(&i)))
->>>> -		if (sysfs_streq(dev_name(child), name) && get_device(child))
->>>> -			break;
->>>> -	klist_iter_exit(&i);
->>>> -	return child;
->>>> +	/* TODO: remove type cast after const device_find_child() prototype */
->>>
->>> I do not understand the TODO here.  Why is it needed?  Why not fix it up
->>> now?
->>>
->>
->> i have below findings during trying to simplify this API.
->>
->> there are a type of driver APIs for finding device, for example,
->> (bus|driver|class)_find_device() which all take below type for
->> parameter @match:
->> int (*match)(struct device *, const void *match_data)
->> but device_find_child() take below type with void * for @match_data:
->> int (*match)(struct device *, void *match_data).
->>
->> @match's type of device_find_child() is not good as other finding APIs
->> since nothing will be touched for finding operations normally.
->>
->> i want to introduce a dedicate type for device match.
->> typedef int (*device_match_t)(struct device *dev, const void *data);
-> 
-> Yes, that would be good.
-> 
->> advantages:
->> 1) device_match_t is simpler for finding APIs declarations and definitions
->> 2) maybe stop further driver APIs from using bad match type as
->> device_find_child()
->>
->> TODO:
->> 1) introduce device_match_t and use it for current present APIs
->> (bus|driver|class)_find_device()
->> 2) change API device_find_child() to take device_match_t, more jobs to
->> do since need to touch many drivers
->> 3) correct this change by by remove all TODO inline comments and force cast.
->>
->> not sure if my ideas is good, what is your opinions?
-> 
-> That's great, but evolve it properly, don't add TODO lines here, there's
-> no real need for that.  Should end up with a lot of good cleanup
-> changes, and might not be all that bad overall.
-> 
+On Wed, Jul 31, 2024 at 4:28=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Wed, Apr 24, 2024 at 10:14:58PM +0000, Chris Wulff wrote:
+> > From: David Sands <david.sands@biamp.com>
+> >
+> > Add the ability for FunctionFS driver to be able to create DFU Run-Time
+> > descriptors.
+>
+> Don't you need some userspace documentation for this as well?
 
-okay, thanks for these good suggestions.
+Yes, I will add some.
 
-let me mark this patch as abandoned now since i would like to do it by
-another better way.
+>
+> > --- a/include/uapi/linux/usb/ch9.h
+> > +++ b/include/uapi/linux/usb/ch9.h
+> > @@ -254,6 +254,9 @@ struct usb_ctrlrequest {
+> >  #define USB_DT_DEVICE_CAPABILITY     0x10
+> >  #define USB_DT_WIRELESS_ENDPOINT_COMP        0x11
+> >  #define USB_DT_WIRE_ADAPTER          0x21
+> > +/* From USB Device Firmware Upgrade Specification, Revision 1.1 */
+> > +#define USB_DT_DFU_FUNCTIONAL                0x21
+>
+> So USB_DT_WIRE_ADAPTER and USB_DT_DFU_FUNCTIONAL are the same?  That
+> seems wrong.
+>
+> > +/* these are from the Wireless USB spec */
+>
+> What spec?  What "these"?
 
+
+I inserted the DFU constant in numerical order, splitting the original
+section, so I
+duplicated the comment. (Partly to make it obvious that there were two with=
+ the
+same number.) It looks like possibly wireless usb is a dead spec.
+
+You can find wireless usb v1.0 on usb.org in the wayback machine, but it lo=
+oks
+like most of the references have been purged from the current site, and hav=
+e
+been gone for a few years. There was apparently a v1.1 too, but I never fou=
+nd
+a copy of that anywhere.
+
+https://web.archive.org/web/20090325042850/http://www.usb.org/developers/wu=
+sb/docs/
+
+A few references remain but say the specification is no longer available. E=
+g.
+https://www.usb.org/bos-descriptor-types
+
+The original section of code that I inserted the new constant into was:
+
+/* these are from the Wireless USB spec */
+#define USB_DT_SECURITY 0x0c
+#define USB_DT_KEY 0x0d
+#define USB_DT_ENCRYPTION_TYPE 0x0e
+#define USB_DT_BOS 0x0f
+#define USB_DT_DEVICE_CAPABILITY 0x10
+#define USB_DT_WIRELESS_ENDPOINT_COMP 0x11
+#define USB_DT_WIRE_ADAPTER 0x21
+#define USB_DT_RPIPE 0x22
+#define USB_DT_CS_RADIO_CONTROL 0x23
+/* From the T10 UAS specification */
+
+>
+> >  #define USB_DT_RPIPE                 0x22
+> >  #define USB_DT_CS_RADIO_CONTROL              0x23
+> >  /* From the T10 UAS specification */
+> > @@ -263,6 +266,7 @@ struct usb_ctrlrequest {
+> >  /* From the USB 3.1 spec */
+> >  #define      USB_DT_SSP_ISOC_ENDPOINT_COMP   0x31
+> >
+> > +
+> >  /* Conventional codes for class-specific descriptors.  The convention =
+is
+> >   * defined in the USB "Common Class" Spec (3.11).  Individual class sp=
+ecs
+> >   * are authoritative for their usage, not the "common class" writeup.
+>
+> Unneeded change?
+
+Yeah, I'll clean that up.
+
+>
+> > @@ -329,9 +333,10 @@ struct usb_device_descriptor {
+> >  #define USB_CLASS_USB_TYPE_C_BRIDGE  0x12
+> >  #define USB_CLASS_MISC                       0xef
+> >  #define USB_CLASS_APP_SPEC           0xfe
+> > -#define USB_CLASS_VENDOR_SPEC                0xff
+> > +#define USB_SUBCLASS_DFU                     0x01
+> >
+> > -#define USB_SUBCLASS_VENDOR_SPEC     0xff
+> > +#define USB_CLASS_VENDOR_SPEC                0xff
+> > +#define USB_SUBCLASS_VENDOR_SPEC             0xff
+>
+> Why reorder these?
+
+The subclasses are specific to the class they are under.
+USB_SUBCLASS_DFU is part of USB_CLASS_APP_SPEC
+USB_SUBCLASS_VENDOR_SPEC is part of USB_CLASS_VENDOR_SPEC
+
+>
+> >
+> >  /*--------------------------------------------------------------------=
+-----*/
+> >
+> > diff --git a/include/uapi/linux/usb/functionfs.h b/include/uapi/linux/u=
+sb/functionfs.h
+> > index 9f88de9c3d66..6d2061500184 100644
+> > --- a/include/uapi/linux/usb/functionfs.h
+> > +++ b/include/uapi/linux/usb/functionfs.h
+> > @@ -37,6 +37,31 @@ struct usb_endpoint_descriptor_no_audio {
+> >       __u8  bInterval;
+> >  } __attribute__((packed));
+> >
+> > +/**
+> > + * struct usb_dfu_functional_descriptor - DFU Functional descriptor
+> > + * @bLength:         Size of the descriptor (bytes)
+> > + * @bDescriptorType: USB_DT_DFU_FUNCTIONAL
+> > + * @bmAttributes:    DFU attributes
+> > + * @wDetachTimeOut:  Maximum time to wait after DFU_DETACH (ms, le16)
+> > + * @wTransferSize:   Maximum number of bytes per control-write (le16)
+> > + * @bcdDFUVersion:   DFU Spec version (BCD, le16)
+> > + */
+> > +struct usb_dfu_functional_descriptor {
+> > +     __u8  bLength;
+> > +     __u8  bDescriptorType;
+> > +     __u8  bmAttributes;
+> > +     __le16 wDetachTimeOut;
+> > +     __le16 wTransferSize;
+> > +     __le16 bcdDFUVersion;
+> > +} __attribute__ ((packed));
+> > +
+> > +/* from DFU functional descriptor bmAttributes */
+> > +#define DFU_FUNC_ATT_WILL_DETACH             (1 << 3)
+> > +#define DFU_FUNC_ATT_MANIFEST_TOLERANT               (1 << 2)
+> > +#define DFU_FUNC_ATT_CAN_UPLOAD                      (1 << 1)
+> > +#define DFU_FUNC_ATT_CAN_DOWNLOAD            (1 << 0)
+>
+> Please use proper BIT macros here to make this more obvious.  And in
+> sorted order?
+
+Ok. I'll fix this up
+
+>
 > thanks,
-> 
+>
 > greg k-h
-
+>
 
