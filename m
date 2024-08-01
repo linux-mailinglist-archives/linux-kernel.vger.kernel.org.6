@@ -1,300 +1,210 @@
-Return-Path: <linux-kernel+bounces-270835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC139445FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9949C94460D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F284F1C22197
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:58:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3ADA1C22DFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86AD16C856;
-	Thu,  1 Aug 2024 07:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a/o6HCT6"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3504719478;
-	Thu,  1 Aug 2024 07:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAD916CD0A;
+	Thu,  1 Aug 2024 08:00:31 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3FEEEB3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722499065; cv=none; b=r7HxCePPKIe1a0aGOthq7p6Ck/PjaWaWbOyI6jPKRb53tjtmRh5xika66uq1YszLn3sbsiNO8r38u1/gR1+VMwkZ1RbyxZb9zZbVoVxRjSy4mkjffg+hCYoqSHMz5DfToNqQ9l2wz2enCyMem9taaZhEynNwKADdfm40+FO28U0=
+	t=1722499230; cv=none; b=VgwjrrXcgxj7n75zxIzwuGSeNRcYPzl7+8x74RwgNgXtAhHUc00O3rGfcZ9aoIADIE9pjqA8QW8T0lNTtf9Et5X25U4Pyc87hQnwVsbeHMdyK1zN/2noc43Kb/al2dy84c3FZq/0JNP72ZkhH0HsOlfpg0HEnck8oTe4OCisNS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722499065; c=relaxed/simple;
-	bh=WjopyENnVZGG8BoRkf9D6WdWGKDMbJZhOejX6u3vaig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GqtQz+dHnB3FKumxhQJ+g9ct7peo947nJ2nfJcvijiUG6LMg4FRXoSNO6yCvNcZQ8KkapXaU5Pj7x8b9rgdl4NNSq5ZbQIEd8CEfMP84yFdC8JtY0p1x+MpO8P0nSkL7ccdG8VQHgyVhO6AJoVn6FfaHNqzFLwVCnO/I01bdx7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a/o6HCT6; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-44fdde0c8dcso37245681cf.0;
-        Thu, 01 Aug 2024 00:57:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722499063; x=1723103863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NH9ilRYLYFpvV4bBytWkKj2NHM9xGHTKENKnDvjIGns=;
-        b=a/o6HCT68OF+t2teK5Cz3lq9xWq85hAsdl6J+KGs7+VQ2SJNxZFQgTQlf5JhInV8mY
-         6bYyR1Llsrh87D43BRTw+G422g4hCqK19tXSXjU1i+H0WvW8eVB/nnqWxwPtjsRYCpWI
-         X4Q2B4x9xHXbpdMhKRSdM86OLjym/JPaocrROhvq1uocf3xEcwB35K5fq9oweKpF+fxC
-         MibUzj0I1LSjALXsCOIIImGkOVa2OPwQASV2g6kK0mAtq0FDbT036tAh/BnNXrZZG+3j
-         NVZLSbcZ04aSNu0hmnTpFRZGeRSrhfNPgpyTFr3dHah/0D4aNeLhRrGBJ5WR3vMeeFMZ
-         Qdrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722499063; x=1723103863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NH9ilRYLYFpvV4bBytWkKj2NHM9xGHTKENKnDvjIGns=;
-        b=DqQaAc6RikrgHkxFJyPLSYfxD1KQesyc7ha/FeDjOzXKX0KKvov4kA8dk3+RXsQ3uo
-         WWrEX1Hlm0ub8bOVEFonfrc0o10wPqvFbrbdfymU8ZLv1erHNiMusJBzTlp9lnU4Blti
-         pzbUr16jfWCzn+If13COJvr4EBqnQ+kf61FaSHpcZmMbVBIYZuHWkYYmJgwVrYhRe1k2
-         +Bj7h93cuxOwrEgTblvaWUp/HxL46BZ9buAKbJ/+DSYuTr18ayrVu85a210s5dhjeRfJ
-         Leu4oPew0w2pI9ND3oyV9LQ2Y6J6o19Vp0OPbsIg22yASD5f2vGX30nslvfXULyoCI6h
-         Tn8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTIxMP6s9t7BAWUh7ukBiUjqYBzUOK50fWf79CyV5szH0KE00irpfNaefynP/t0u/1n7WtVTHClX8nbW2vLcmN+dC0JvOnTDrWFAy1bLTX7VjAYwFVAs5r7e5VENcM+oGUTxN6lye27vqeY8rIdCtiY2gWi+CIDVypN41AsfzL0ato9gHo1nS05vFWcN3rcXgfdg4EtTitYjmdsDAMeiU5
-X-Gm-Message-State: AOJu0YzCOIVw+MriBEl3fyKqTCqmoA8u0W9BXH2eUR5JgN8n4vFgmnCH
-	a1bF3d2EmasDzRmrUGsvBKED9OA3nvverXttLQPCPECJ/o9G65tAJrzU4lewy4xpe/sjbl6gfnz
-	bequhfX8thgnOlfj8hl2YWVzS9yA=
-X-Google-Smtp-Source: AGHT+IH9Nqcz96fXlR6qBIfn9oQsygGJT+Br+pnt3kTFU6l5J618DOIfg76qe0W8eUEc1gOKhsxpS78Zox8XqTejuMo=
-X-Received: by 2002:a05:622a:206:b0:446:5787:875f with SMTP id
- d75a77b69052e-451567b4292mr18705541cf.38.1722499062896; Thu, 01 Aug 2024
- 00:57:42 -0700 (PDT)
+	s=arc-20240116; t=1722499230; c=relaxed/simple;
+	bh=IRx6ViHd+hgFWkDpF0kdvEKAfipqLXwSTj1Re4NASyk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=rduSLnaf/BjSV26vIEBEScvXrW3q1g0rNqxu9MJvpNgB/BOvGtXqtrDgcTusO926zdXGmUPyyWsVlgZgbjyKFrLdAeqyg/dYcXEOMFXk8k3cchtjhjRJm+QZSGlZhP+qIXNQJAQA6cshgtNcdnIYUN4cENC6ww9LOla4WMAkC00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Dxh+mYQKtmDK8FAA--.18550S3;
+	Thu, 01 Aug 2024 16:00:24 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMAxRuSUQKtma8EJAA--.48582S3;
+	Thu, 01 Aug 2024 16:00:20 +0800 (CST)
+Subject: Re: [PATCH v4] x86/paravirt: Disable virt spinlock on bare metal
+To: Chen Yu <yu.c.chen@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Juergen Gross <jgross@suse.com>, Nikolay Borisov <nik.borisov@suse.com>,
+ Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Prem Nath Dey <prem.nath.dey@intel.com>,
+ Xiaoping Zhou <xiaoping.zhou@intel.com>
+References: <20240729065236.407758-1-yu.c.chen@intel.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <4d31e1b4-2113-c557-b60a-3a45b2840f26@loongson.cn>
+Date: Thu, 1 Aug 2024 16:00:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731061132.703368-1-jacobe.zang@wesion.com>
- <20240731061132.703368-5-jacobe.zang@wesion.com> <0a78a0fb-0a5e-424f-a801-4a63b9ee1a49@gmail.com>
- <3ded8aea-ee11-43da-9dd7-1259cf931747@broadcom.com> <CABjd4YxiSY0A0iVHGHw9RDey+avxmzUapoLLLyf=80MzVX0yWA@mail.gmail.com>
- <6e34c814-a6dc-4a96-9e46-ca25af67f4f6@broadcom.com> <CABjd4YxdCh7EceYOfcFxKtV0H7Von0oZAMWD=69sM6y4-CoAQw@mail.gmail.com>
- <TYZPR03MB7001889335D58561F86978A780B22@TYZPR03MB7001.apcprd03.prod.outlook.com>
-In-Reply-To: <TYZPR03MB7001889335D58561F86978A780B22@TYZPR03MB7001.apcprd03.prod.outlook.com>
-From: Alexey Charkov <alchark@gmail.com>
-Date: Thu, 1 Aug 2024 10:57:31 +0300
-Message-ID: <CABjd4YwCFpPerXRaR=6zd-61wDE6nH7_s0C6jMRhA4x0L6guLg@mail.gmail.com>
-Subject: Re: [PATCH v6 4/5] wifi: brcmfmac: Add optional lpo clock enable support
-To: Jacobe Zang <jacobe.zang@wesion.com>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "heiko@sntech.de" <heiko@sntech.de>, 
-	"kvalo@kernel.org" <kvalo@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>, 
-	"pabeni@redhat.com" <pabeni@redhat.com>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"efectn@protonmail.com" <efectn@protonmail.com>, "dsimic@manjaro.org" <dsimic@manjaro.org>, 
-	"jagan@edgeble.ai" <jagan@edgeble.ai>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "arend@broadcom.com" <arend@broadcom.com>, 
-	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, 
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "megi@xff.cz" <megi@xff.cz>, 
-	"duoming@zju.edu.cn" <duoming@zju.edu.cn>, "bhelgaas@google.com" <bhelgaas@google.com>, 
-	"minipli@grsecurity.net" <minipli@grsecurity.net>, 
-	"brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>, 
-	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>, Nick Xie <nick@khadas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240729065236.407758-1-yu.c.chen@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMAxRuSUQKtma8EJAA--.48582S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3GrWUGFWfKF4kXr18XF4xAFc_yoW7Ww1xpF
+	W7J3sYqFs5WFy0vrWDuw4Dur17Aws2kw13Wr4UWryDXan8Wr9Igr48tw4Y93WIgan2va4r
+	tF10qr9ruw1DZagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2pVbDU
+	UUU
 
-On Thu, Aug 1, 2024 at 6:53=E2=80=AFAM Jacobe Zang <jacobe.zang@wesion.com>=
- wrote:
->
-> >>On 7/31/2024 2:01 PM, Alexey Charkov wrote:
-> >>> On Wed, Jul 31, 2024 at 2:15=E2=80=AFPM Arend van Spriel
-> >>> <arend.vanspriel@broadcom.com> wrote:
-> >>>>
-> >>>> On 7/31/2024 12:16 PM, Alexey Charkov wrote:
-> >>>>> Hi Jacobe,
-> >>>>>
-> >>>>>
-> >>>>> On 31/07/2024 9:11 am, Jacobe Zang wrote:
-> >>>>>   > WiFi modules often require 32kHz clock to function. Add support=
- to
-> >>>>>   > enable the clock to PCIe driver and move "brcm,bcm4329-fmac" ch=
-eck
-> >>>>>   > to the top of brcmf_of_probe
-> >>>>>   >
-> >>>>>   > Co-developed-by: Ondrej Jirman <megi@xff.cz>
-> >>>>>   > Signed-off-by: Ondrej Jirman <megi@xff.cz>
-> >>>>>   > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
-> >>>>>   > ---
-> >>>>>   >  .../net/wireless/broadcom/brcm80211/brcmfmac/of.c    | 12 ++++=
-+++++++-
-> >>>>>   >  1 file changed, 11 insertions(+), 1 deletion(-)
-> >>>>>   >
-> >>>>>   > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/o=
-f.c
-> >>>>> b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> >>>>>   > index e406e11481a62..7e0a2ad5c7c8a 100644
-> >>>>>   > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> >>>>>   > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
-> >>>>>   > @@ -6,6 +6,7 @@
-> >>>>>   >  #include <linux/of.h>
-> >>>>>   >  #include <linux/of_irq.h>
-> >>>>>   >  #include <linux/of_net.h>
-> >>>>>   > +#include <linux/clk.h>
-> >>>>>   >
-> >>>>>   >  #include <defs.h>
-> >>>>>   >  #include "debug.h"
-> >>>>>   > @@ -70,12 +71,16 @@ void brcmf_of_probe(struct device *dev, enu=
-m
-> >>>>> brcmf_bus_type bus_type,
-> >>>>>   >  {
-> >>>>>   >      struct brcmfmac_sdio_pd *sdio =3D &settings->bus.sdio;
-> >>>>>   >      struct device_node *root, *np =3D dev->of_node;
-> >>>>>   > +    struct clk *clk;
-> >>>>>   >      const char *prop;
-> >>>>>   >      int irq;
-> >>>>>   >      int err;
-> >>>>>   >      u32 irqf;
-> >>>>>   >      u32 val;
-> >>>>>   >
-> >>>>>   > +    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac=
-"))
-> >>>>>   > +        return;
-> >>>>>
-> >>>>> Did you test this? The DTS patch you sent as part of this series do=
-esn't
-> >>>>> list "brcm,bcm4329-fmac" in the compatible, so this will probably r=
-eturn
-> >>>>> right here, skipping over the rest of your patch.
-> >>>>>
-> >>>>> Please test before resending, both with and without the driver for =
-the
-> >>>>> Bluetooth part of the chip (since it also touches clocks).
-> >>>>>
-> >>>>> You are also changing the behavior for other systems by putting thi=
-s
-> >>>>> check further up the probe path, which might break things for no re=
-ason.
-> >>>>> Better put your clk-related addition below where this check was
-> >>>>> originally, rather than reorder stuff you don't have to reorder.
-> >>>>
-> >>>> That was upon my suggestion. That check was originally at the top of=
- the
-> >>>> function, but people added stuff before that. I agree that makes the
-> >>>> compatible "brcm,brcm4329-fmac" required which is what the textual
-> >>>> binding stated before the switch to YAML was made:
-> >>>>
-> >>>> """
-> >>>> Broadcom BCM43xx Fullmac wireless SDIO devices
-> >>>>
-> >>>> This node provides properties for controlling the Broadcom wireless
-> >>>> device. The
-> >>>> node is expected to be specified as a child node to the SDIO control=
-ler that
-> >>>> connects the device to the system.
-> >>>>
-> >>>> Required properties:
-> >>>>
-> >>>>    - compatible : Should be "brcm,bcm4329-fmac".
-> >>>> """
-> >>>>
-> >>>> Not sure whether this is still true for YAML version (poor YAML read=
-ing
-> >>>> skills ;-) ), but it should as the switch from textual to YAML shoul=
-d
-> >>>> not have changed the bindings specification.
-> >>>>
-> >>>>>   > +
-> >>>>>   >      /* Apple ARM64 platforms have their own idea of board type=
-,
-> >>>>> passed in
-> >>>>>   >       * via the device tree. They also have an antenna SKU para=
-meter
-> >>>>>   >       */
-> >>>>>   > @@ -113,8 +118,13 @@ void brcmf_of_probe(struct device *dev, en=
-um
-> >>>>> brcmf_bus_type bus_type,
-> >>>>>   >          of_node_put(root);
-> >>>>>   >      }
-> >>>>>   >
-> >>>>>   > -    if (!np || !of_device_is_compatible(np, "brcm,bcm4329-fmac=
-"))
-> >>>>>   > +    clk =3D devm_clk_get_optional_enabled(dev, "lpo");
-> >>>>>   > +    if (!IS_ERR_OR_NULL(clk)) {
-> >>>>>   > +        brcmf_dbg(INFO, "enabling 32kHz clock\n");
-> >>>>>   > +        clk_set_rate(clk, 32768);
-> >>>>>   > +    } else {
-> >>>>>   >          return;
-> >>>>>
-> >>>>> Why return here? If the clock is optional, a lot of systems will no=
-t
-> >>>>> have it - that shouldn't prevent the driver from probing. And you a=
-re
-> >>>>> still not handling the -EPROBE_DEFER case which was mentioned on yo=
-ur
-> >>>>> previous submission.
-> >>>>
-> >>>> Right. The else statement above could/should be:
-> >>>>
-> >>>> } else if (clk && PTR_ERR(clk) =3D=3D -EPROBE_DEFER) {
-> >>>>           return PTR_ERR(clk);
-> >>>> }
-> >>>
-> >>> ... plus change the function prototype to return int and propagate
-> >>> that error code through brcmf_get_module_param to brcmf_pcie_probe's
-> >>> return value. I guess checking clk for NULL is also redundant in this
-> >>> case?
-> >>
-> >>Only wanted to give the suggestion to get started. Propagating the
-> >>return value seemed obvious to me, but you are absolutely right.
-> >>PTR_ERR(NULL) will probably be something else than -EPROBE_DEFER but it
-> >>seems odd to me. Maybe PTR_ERR_OR_ZERO(clk) is a better option here.
-> >
-> > Indeed. Perhaps something along the lines of:
-> >
-> >        clk =3D devm_clk_get_optional_enabled(dev, "lpo");
-> >        if (!IS_ERR_OR_NULL(clk)) {
-> >                brcmf_dbg(INFO, "enabling 32kHz clock\n");
-> >                return clk_set_rate(clk, 32768);
-> >        } else {
-> >                return PTR_ERR_OR_ZERO(clk);
-> >        }
-> >
-> > ... which should then go at the very end of brcmf_of_probe. And all of
->
-> But before end of brcmf_of_probe is to set interrupt configuration which
-> wifi chip connect via sdio. Like this:
-> ```
->         if (bus_type !=3D BRCMF_BUSTYPE_SDIO)
->                 return;
->
->         if (of_property_read_u32(np, "brcm,drive-strength", &val) =3D=3D =
-0)
->                 sdio->drive_strength =3D val;
->
->         /* make sure there are interrupts defined in the node */
->         if (!of_property_present(np, "interrupts"))
->                 return;
->
->         irq =3D irq_of_parse_and_map(np, 0);
->         if (!irq) {
->                 brcmf_err("interrupt could not be mapped\n");
->                 return;
->         }
->         irqf =3D irqd_get_trigger_type(irq_get_irq_data(irq));
->
->         sdio->oob_irq_supported =3D true;
->         sdio->oob_irq_nr =3D irq;
->         sdio->oob_irq_flags =3D irqf;
-> ```
-> So I think the interrupt should be set in the if statement while
-> bus_type=3D=3DBRCMF_BUSTYPE_SDIO, and add else statement
-> to enable clock(or simply put it at the end as Alexey said). And
-> can also use else-if statement to deal with
-> bus_type =3D=3D BRCMF_BUSTYPE_USB or PCIE in the future.
+Chenyu,
 
-SDIO devices might also want to enable a clock, so I think wrapping
-the drive strength and interrupts handling into an if statement and
-putting the clock-related stuff right after it (but not in the else
-block) is better.
+I do not know much about x86, just give some comments(probably 
+incorrected) from the code.
 
-Best regards,
-Alexey
+On 2024/7/29 下午2:52, Chen Yu wrote:
+> The kernel can change spinlock behavior when running as a guest. But
+> this guest-friendly behavior causes performance problems on bare metal.
+> So there's a 'virt_spin_lock_key' static key to switch between the two
+> modes.
+> 
+> In current code, the static key is always enabled by default when
+> running in guest mode. The key is disabled for bare metal (and in
+> some guests that want native behavior).
+> 
+> Large performance regression is reported when running encode/decode
+> workload and BenchSEE cache sub-workload on the bare metal.
+> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
+> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
+> is disabled, the virt_spin_lock_key is incorrectly set to true on bare
+> metal. The qspinlock degenerates to test-and-set spinlock, which
+> decrease the performance on bare metal.
+> 
+> Set the default value of virt_spin_lock_key to false. If booting in
+> a VM, enable this key. Later during the VM initialization, if other
+> high-efficient spinlock is detected(paravirt-spinlock eg), the
+> virt_spin_lock_key is disabled. According to the description above,
+> the final effect will be as followed:
+> 
+> X86_FEATURE_HYPERVISOR         Y    Y    Y     N
+> CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
+> PV spinlock                    Y    N    N     Y/N
+> 
+> virt_spin_lock_key             N    N    Y     N
+> 
+> To summarize, the virt_spin_lock_key is disabled on the bare metal
+> no matter what other condidtion is. And the virt_spin_lock_key is
+> also disabled when other spinlock mechanism is detected in the VM
+> guest.
+> 
+> Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
+> Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
+> Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
+> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> ---
+> v3->v4:
+>    Refine the commit log.
+>    Added Reviewed-by tag from Nikolay.
+> v2->v3:
+>    Change the default value of virt_spin_lock_key from true to false.
+>    Enable this key when it is in the VM, and disable it when needed.
+>    This makes the code more readable. (Nikolay Borisov)
+>    Dropped Reviewed-by because the code has been changed.
+> v1->v2:
+>    Refine the commit log per Dave's suggestion.
+>    Simplify the fix by directly disabling the virt_spin_lock_key on bare metal.
+>    Collect Reviewed-by from Juergen.
+> ---
+>   arch/x86/include/asm/qspinlock.h | 4 ++--
+>   arch/x86/kernel/paravirt.c       | 7 +++----
+>   2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+> index a053c1293975..a32bd2aabdf9 100644
+> --- a/arch/x86/include/asm/qspinlock.h
+> +++ b/arch/x86/include/asm/qspinlock.h
+> @@ -66,13 +66,13 @@ static inline bool vcpu_is_preempted(long cpu)
+>   
+>   #ifdef CONFIG_PARAVIRT
+>   /*
+> - * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
+> + * virt_spin_lock_key - disables (by default) the virt_spin_lock() hijack.
+>    *
+>    * Native (and PV wanting native due to vCPU pinning) should disable this key.
+>    * It is done in this backwards fashion to only have a single direction change,
+>    * which removes ordering between native_pv_spin_init() and HV setup.
+>    */
+> -DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
+> +DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+
+@@ -87,7 +87,7 @@ static inline bool virt_spin_lock(struct qspinlock *lock)
+  {
+         int val;
+
+-       if (!static_branch_likely(&virt_spin_lock_key))
++       if (!static_branch_unlikely(&virt_spin_lock_key))
+                 return false;
+
+Do we need change it with static_branch_unlikely() if value of key is 
+false by fault?
+>   
+>   /*
+>    * Shortcut for the queued_spin_lock_slowpath() function that allows
+> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+> index 5358d43886ad..fec381533555 100644
+> --- a/arch/x86/kernel/paravirt.c
+> +++ b/arch/x86/kernel/paravirt.c
+> @@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
+>   DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
+>   #endif
+>   
+> -DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
+> +DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
+>   
+>   void __init native_pv_lock_init(void)
+>   {
+> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
+> -	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> -		static_branch_disable(&virt_spin_lock_key);
+> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> +		static_branch_enable(&virt_spin_lock_key);
+>   }
+
+ From my point, the sentence static_branch_disable(&virt_spin_lock_key) 
+can be removed in file arch/x86/xen/spinlock.c and 
+arch/x86/kernel/kvm.c, since function native_smp_prepare_boot_cpu() is 
+already called by xen_smp_prepare_boot_cpu() and kvm_smp_prepare_boot_cpu().
+
+Regards
+Bibo Mao
+
+>   
+>   static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+> 
+
 
