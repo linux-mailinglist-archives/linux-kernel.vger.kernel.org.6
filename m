@@ -1,114 +1,195 @@
-Return-Path: <linux-kernel+bounces-270491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 188FE944156
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:43:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D3F9440A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D5EEB2128D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:12:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC4D1F2272F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDB11A01DB;
-	Thu,  1 Aug 2024 01:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XVZIR7ZC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD9A1A0725;
+	Thu,  1 Aug 2024 01:24:37 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F56613AA2D;
-	Thu,  1 Aug 2024 01:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA45013AA2D;
+	Thu,  1 Aug 2024 01:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722475467; cv=none; b=FfxZGOYU5XiWZn0GvJKDCCvppu2SUZu9eG+Eu4AwEOJzaIaXCo7QJ98qJlOt8HeSpcK6o6B4o6d0PHX/C1/Tduj134Hkx7kQcnzxwyLL7pupUFI2NTRuRJpBijr6B4ztngbvPxIkX3az5xvVEGbmqiqT8ycpG/4687f2+Nwp6Bs=
+	t=1722475476; cv=none; b=SK3OChJDuuGeUS3e5IbooEktrpzDKeURgJQVxjaPbtetFIha4oos1k3vOe83ltoG1+Ts33PbZzEf1rDvZnOvxTNAezH++dnYLe7qa863CWO4VhaoczE4d3p9dg3oXCzUXUlmYia/5nHBMPnBwSybDxfYGpr8kZY5LEDbNw/CobQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722475467; c=relaxed/simple;
-	bh=Pgpqo4RtxVJ1ue8DwjL2l0l2UL9ejI31ZTKHWsBrk4Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dq2OwA7S1jIfir6der6dsrP8L1KAJlTfq6QP4CQ/ucCAkIGdyNRjQFrdDL11ze8csPvFx8GhHGKRDRIwHr0RnNlbohryOEbwvvmLrvEwZbdDB+sICMRjrReigMyUDo7cIfG08PjtbB5JcRzBl9SiDs3cuJE3DuVZ8qjNYtSVJO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XVZIR7ZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FD22C116B1;
-	Thu,  1 Aug 2024 01:24:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722475467;
-	bh=Pgpqo4RtxVJ1ue8DwjL2l0l2UL9ejI31ZTKHWsBrk4Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XVZIR7ZCGTG0w41hQSmLUNL6cZMuc0xp588STEletZW6rGg2Zw5ATIgyJNDcnVReb
-	 B3EfWzjWskItTFqdGEFqKaNkyGttT9TLBlQWyu/w8Tuxs0k3bHkwZd0cu+hd+HJiBM
-	 TLWeLNnPzjvU1idP/yzgeefl8ZzJqv2fdNIoFW2QL9yRXpPiUWdGcYIxH9/tq99yFQ
-	 xlNDkZrz9RPWiLvSDiSFXG1SG7k6RBe2KkK8hixvDn+6BA8ozx+ajPaXfsgWLA8nel
-	 7BEThuYora+MdjBceQZNxXOF5muIGxkG3oYUZNn0HCWNcoz+pncWSlk+9RsOGJ4U29
-	 oEus3plyggpmg==
-Date: Wed, 31 Jul 2024 18:24:24 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: kernel test robot <lkp@intel.com>, Baruch Siach <baruch@tkos.co.il>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, linux-s390@vger.kernel.org,
-	Ramon Fried <ramon@neureality.ai>,
-	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
-	Robin Murphy <robin.murphy@arm.com>, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, Elad Nachman <enachman@marvell.com>,
-	linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/3] dma-mapping: replace zone_dma_bits by
- zone_dma_limit
-Message-ID: <20240801012424.GA1640480@thelio-3990X>
-References: <053fa4806a2c63efcde80caca473a8b670a2701c.1722249878.git.baruch@tkos.co.il>
- <202407300338.oaUo6jtB-lkp@intel.com>
- <20240730021208.GA8272@thelio-3990X>
- <20240730153450.GA30021@lst.de>
+	s=arc-20240116; t=1722475476; c=relaxed/simple;
+	bh=szTeyMQLDM3wAMn9EegK2Gei3FbTHD59zf+v7vtmfII=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ONjNk7Dl1QyJGNZOTrZA3v18595kn+fkBt7HIjVHEbP56S01JgyS1E8g0rVrDREjcUyr62dOfxus3VY5dssoOsbvGepcBay+Z/J312xFYaNnelxznl9b11eHtA95IVSZn33aT0xbZk9QFqjldP6/Enmn9tgthzpI5vPVtC8yVJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WZB801gdkz4f3jHk;
+	Thu,  1 Aug 2024 09:24:16 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 307991A06D7;
+	Thu,  1 Aug 2024 09:24:29 +0800 (CST)
+Received: from [10.174.178.129] (unknown [10.174.178.129])
+	by APP4 (Coremail) with SMTP id gCh0CgCnzYPL46pmPwO0AQ--.21094S2;
+	Thu, 01 Aug 2024 09:24:29 +0800 (CST)
+Subject: Re: [PATCH v3 6/8] ext4: move escape handle to futher improve
+ jbd2_journal_write_metadata_buffer
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+ jack@suse.com
+References: <20240731092910.2383048-1-shikemeng@huaweicloud.com>
+ <20240731092910.2383048-7-shikemeng@huaweicloud.com>
+ <a3fe84d8-62b6-fa5e-a088-15b34fab6063@huaweicloud.com>
+From: Kemeng Shi <shikemeng@huaweicloud.com>
+Message-ID: <a4c6f818-ec38-67a2-35b4-c27726ae0734@huaweicloud.com>
+Date: Thu, 1 Aug 2024 09:24:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730153450.GA30021@lst.de>
+In-Reply-To: <a3fe84d8-62b6-fa5e-a088-15b34fab6063@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCnzYPL46pmPwO0AQ--.21094S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAF13AF18AFykKr45Cr1kAFb_yoW5Kw13pr
+	93KF1fKFWvqr9Fyrn7Ww4DZryYgrWkWr17K3W3Gas3tFZY9wn2gF4jvryrGa4jyrWvka18
+	XFyjqFyxuwnIkFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
+	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
+	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
+	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
+	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
+	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUjuHq7UUUUU==
+X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
 
-On Tue, Jul 30, 2024 at 05:34:50PM +0200, Christoph Hellwig wrote:
-> On Mon, Jul 29, 2024 at 07:12:08PM -0700, Nathan Chancellor wrote:
-> > >          |             ~~~~~~~~~~~~~~                   ^~~~~~~~~~~~~~~~
-> > >    include/linux/dma-mapping.h:77:40: note: expanded from macro 'DMA_BIT_MASK'
-> > >       77 | #define DMA_BIT_MASK(n) (((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-> > >          |                                        ^~~~~
-> > >    2 warnings generated.
-> > 
-> > FWIW, this is likely a false positive due to an issue in Clang with the
-> > control flow graph for global variables:
-> > 
-> > https://github.com/ClangBuiltLinux/linux/issues/92
-> > 
-> > DMA_BIT_MASK() has been the biggest offender :/ If there is any way to
-> > refactor this code to avoid this, that would be great (as that has been
-> > one of our longest outstanding issues and getting it fixed in the
-> > compiler does not seem super easy at this point).
+
+
+on 7/31/2024 8:17 PM, Zhang Yi wrote:
+> The title: "ext4: move escape handle..." should be "jbd2: move escape handle..."
 > 
-> I have no idea what you'd want changed here, but I'll happily take
-> patches.
+Sorry for this, will fix it in next version. Thanks!
+> Thanks,
+> Yi.
+> 
+> On 2024/7/31 17:29, Kemeng Shi wrote:
+>> Move escape handle to futher improve code readability and remove some
+>> repeat check.
+>>
+>> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+>> ---
+>>  fs/jbd2/journal.c | 49 +++++++++++++++++++++++------------------------
+>>  1 file changed, 24 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+>> index f17d05bc61df..85273fb1accb 100644
+>> --- a/fs/jbd2/journal.c
+>> +++ b/fs/jbd2/journal.c
+>> @@ -281,6 +281,16 @@ static void journal_kill_thread(journal_t *journal)
+>>  	write_unlock(&journal->j_state_lock);
+>>  }
+>>  
+>> +static inline bool jbd2_data_needs_escaping(char *data)
+>> +{
+>> +	return *((__be32 *)data) == cpu_to_be32(JBD2_MAGIC_NUMBER);
+>> +}
+>> +
+>> +static inline void jbd2_data_do_escape(char *data)
+>> +{
+>> +	*((unsigned int *)data) = 0;
+>> +}
+>> +
+>>  /*
+>>   * jbd2_journal_write_metadata_buffer: write a metadata buffer to the journal.
+>>   *
+>> @@ -319,7 +329,6 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  				  sector_t blocknr)
+>>  {
+>>  	int do_escape = 0;
+>> -	char *mapped_data;
+>>  	struct buffer_head *new_bh;
+>>  	struct folio *new_folio;
+>>  	unsigned int new_offset;
+>> @@ -350,8 +359,13 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  	if (jh_in->b_frozen_data) {
+>>  		new_folio = virt_to_folio(jh_in->b_frozen_data);
+>>  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+>> -		mapped_data = jh_in->b_frozen_data;
+>> +		do_escape = jbd2_data_needs_escaping(jh_in->b_frozen_data);
+>> +		if (do_escape)
+>> +			jbd2_data_do_escape(jh_in->b_frozen_data);
+>>  	} else {
+>> +		char *tmp;
+>> +		char *mapped_data;
+>> +
+>>  		new_folio = bh_in->b_folio;
+>>  		new_offset = offset_in_folio(new_folio, bh_in->b_data);
+>>  		mapped_data = kmap_local_folio(new_folio, new_offset);
+>> @@ -363,21 +377,13 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  		 */
+>>  		jbd2_buffer_frozen_trigger(jh_in, mapped_data,
+>>  					   jh_in->b_triggers);
+>> -	}
+>> -
+>> -	/*
+>> -	 * Check for escaping
+>> -	 */
+>> -	if (*((__be32 *)mapped_data) == cpu_to_be32(JBD2_MAGIC_NUMBER))
+>> -		do_escape = 1;
+>> -	if (!jh_in->b_frozen_data)
+>> +		do_escape = jbd2_data_needs_escaping(mapped_data);
+>>  		kunmap_local(mapped_data);
+>> -
+>> -	/*
+>> -	 * Do we need to do a data copy?
+>> -	 */
+>> -	if (do_escape && !jh_in->b_frozen_data) {
+>> -		char *tmp;
+>> +		/*
+>> +		 * Do we need to do a data copy?
+>> +		 */
+>> +		if (!do_escape)
+>> +			goto escape_done;
+>>  
+>>  		spin_unlock(&jh_in->b_state_lock);
+>>  		tmp = jbd2_alloc(bh_in->b_size, GFP_NOFS);
+>> @@ -404,17 +410,10 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>>  copy_done:
+>>  		new_folio = virt_to_folio(jh_in->b_frozen_data);
+>>  		new_offset = offset_in_folio(new_folio, jh_in->b_frozen_data);
+>> +		jbd2_data_do_escape(jh_in->b_frozen_data);
+>>  	}
+>>  
+>> -	/*
+>> -	 * Did we need to do an escaping?  Now we've done all the
+>> -	 * copying, we can finally do so.
+>> -	 * b_frozen_data is from jbd2_alloc() which always provides an
+>> -	 * address from the direct kernels mapping.
+>> -	 */
+>> -	if (do_escape)
+>> -		*((unsigned int *)jh_in->b_frozen_data) = 0;
+>> -
+>> +escape_done:
+>>  	folio_set_bh(new_bh, new_folio, new_offset);
+>>  	new_bh->b_size = bh_in->b_size;
+>>  	new_bh->b_bdev = journal->j_dev;
+>>
+> 
+> 
 
-Unfortunately, I am not sure either... I do not see anything obviously,
-so perhaps it could just be avoided with the __diag() infrastructure?
-
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 3dbc0b89d6fb..b58e7eb9c8f1 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -20,7 +20,12 @@
-  * it for entirely different regions. In that case the arch code needs to
-  * override the variable below for dma-direct to work properly.
-  */
-+__diag_push();
-+__diag_ignore(clang, 13, "-Wconstant-conversion",
-+	      "Clang incorrectly thinks the n == 64 case in DMA_BIT_MASK() can happen here,"
-+	      "which would truncate with a 32-bit phys_addr_t");
- phys_addr_t zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);
-+__diag_pop();
- 
- static inline dma_addr_t phys_to_dma_direct(struct device *dev,
- 		phys_addr_t phys)
 
