@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-270656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F8A9442E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:50:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FBF9442CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96F21B23EE8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B601C218AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BBC168C26;
-	Thu,  1 Aug 2024 05:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39EBC156F5F;
+	Thu,  1 Aug 2024 05:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BkY7cwad"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BO2HFfgF"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74051586C7;
-	Thu,  1 Aug 2024 05:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7CFA13E03E;
+	Thu,  1 Aug 2024 05:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722491332; cv=none; b=RisoAZJU3yU/8uRArblRkt24ld3AZ2Jf8gycsyEWQ/IQlFEP0e40/Tm0PI+hUy3B/zDdnbyrX1XbLwIEBiC/b+mxXkSZn7HnN/oeCDBWb/sd6TRLQVK65xGCp/1Ez+mLKX90xswNiIIBtqaFhOlh1/oewqW6bkkvFqayfIh2CDY=
+	t=1722491310; cv=none; b=EAnM+xfZgFrVK8tT4F2Qv0GP+gqgizkQD7KXJ4sC7bMoacIx2xSDcLH+7Ah5cXr/raAydlfImoMnBkBcRE+NEhHAxD6ZGaQtX6/b6cGO2vyJ2voRzupE0bJeTqR4FEB50QrRB3oC0Y3uG7ilgzrs9lSLLQIkoKIV5505kWxXm1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722491332; c=relaxed/simple;
-	bh=4UW2U2Zv+BwmO0Eq2QcY5eB47hRVENjgUnEEp9Kfoys=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DllPnJfnraeOvNg0FxlWxGsWtg6v5vqQgEE3cpifpg9Jvmybo+3i4RbENvoeechIZq1zcB9+VkNYAzideQ3TxnqtWUYEKS6+CQpRcBWO8IzEjNQ7oydkFwd6TXj7jeiYVknCHL6s/JL+XfyWw8XrUnqID9bKraHyQqIbr2Q4xMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BkY7cwad; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4715SD2n017221;
-	Thu, 1 Aug 2024 05:48:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ojv/MW/hnALXIzvv1N4k1DVtpaZISukCEWwmpcR4EOM=; b=BkY7cwad5DgNPGpe
-	FUy4IizyLD5nsLfsfDi0t4Gn2eELXZRj37YtAmE6ajmGogx/UR8nrCbjJ18BHsm+
-	kEdQvlXpKF1DDlKSK1kmly+VvXyPot/4VW1qAkk5VqpHzuWxZn3hLtmxji/an+uX
-	XIMrZhEMxiWOuuZtDZOqsI7+sKw5Qtln4vjy2P0j14fwOZRLc4I1tGnB1DuDJmh6
-	lG/GuWe1R9hBvVy6rOoogAfi+g3XDmRehY5VNg67nMJoupFuZskMKWC69ox7h+gt
-	YB85GbR1Yi+1cLZeemhaHsgKOqKuBqNxnV3Ag4Daz1T+hQFdK9H8rVwZkP26LN8/
-	yQ9M+A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40msnedgp3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 05:48:40 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4715mdHU019632
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 05:48:39 GMT
-Received: from hu-srichara-blr.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 31 Jul 2024 22:48:35 -0700
-From: Sricharan R <quic_srichara@quicinc.com>
-To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <manivannan.sadhasivam@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>
-Subject: [PATCH V7 4/4] PCI: qcom: Add support for IPQ9574
-Date: Thu, 1 Aug 2024 11:18:03 +0530
-Message-ID: <20240801054803.3015572-5-quic_srichara@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240801054803.3015572-1-quic_srichara@quicinc.com>
-References: <20240801054803.3015572-1-quic_srichara@quicinc.com>
+	s=arc-20240116; t=1722491310; c=relaxed/simple;
+	bh=z2A5pzM7jjAUuMokD+IgJ/IvXcqtxEB0CwpBTSvwGr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=jfZyPGebpDY/X0e2ybkzMNhmQ5seeW3zHJcz6FR25MLvvDJelEZOiQ9omxj6EqEenIVfgQOSoPBB/wKQ0BDq8O4O6SNLIHFwjz2SuFB46OOg/WwejEXpP0u0UaWvbW0hquCqmCMZQvw7Gyyc6AwyrT6lRM42Cbg7SvDBGh4Zj5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=BO2HFfgF; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722491304;
+	bh=d4I6pz6iZ9iooNa+8AqRg0tOxyUtpfZHVrW4gjMiYSM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=BO2HFfgFBs1J67CQMiASS3N3xVhFYcilQgt/WcwqYyYufb2UkYbTpCwLuTtp0eM4V
+	 fdwZdcHTzxGGipgHETubsO1Kw6ct7QXcMi8JwdrX74grmvClae21wkI42I22FcGY6f
+	 3/cSBii357Rkz9H2GdzZR4x0M+RsuHKg7Fm5SAvHA77g5iykAbNqWMdvPekcyvuDd0
+	 UPBzEUBsTEh0oSO51Mj7saJhHbZLjXuhyL3n0imW5c21n3zWnmS+ULbZ8VT3PyxN3v
+	 m8ZfOIs6FN9dCdyNrZ1vETpkl1ydpzp1Y71Y/AVqhh0GtTJTnmtWcUsvMwW8tYLXsl
+	 EIB8zK+TrA1sg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZJ0m2ZtPz4wbv;
+	Thu,  1 Aug 2024 15:48:24 +1000 (AEST)
+Date: Thu, 1 Aug 2024 15:48:23 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Tejun Heo <tj@kernel.org>
+Cc: Xavier <xavier_qy@163.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the cgroup tree
+Message-ID: <20240801154823.358ff7b4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ct07kUGBkJfZ_zgcw7dPRZzjn-0M9bgx
-X-Proofpoint-ORIG-GUID: ct07kUGBkJfZ_zgcw7dPRZzjn-0M9bgx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_02,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
- spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010032
+Content-Type: multipart/signed; boundary="Sig_/U4uhjvznJAJV3DQDTv27QKZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: devi priya <quic_devipriy@quicinc.com>
+--Sig_/U4uhjvznJAJV3DQDTv27QKZ
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-The IPQ9574 platform has four Gen3 PCIe controllers:
-two single-lane and two dual-lane based on SNPS core 5.70a.
+Hi all,
 
-QCOM IP rev is 1.27.0 and Synopsys IP rev is 5.80a.
-Reuse all the members of 'ops_2_9_0'.
+After merging the cgroup tree, today's linux-next build (htmdocs)
+produced these warnings:
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
-Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
----
- [V7] Rebased on top of [1] to avoid DBI/ATU mirroring. With that dropped
-      the need for separate ops.
- [1] https://lore.kernel.org/linux-arm-msm/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/
+Documentation/core-api/union_find.rst:22: WARNING: Definition list ends wit=
+hout a blank line; unexpected unindent.
+Documentation/core-api/union_find.rst:66: WARNING: Title underline too shor=
+t.
 
- drivers/pci/controller/dwc/pcie-qcom.c | 1 +
- 1 file changed, 1 insertion(+)
+Initializing union-find
+--------------------
+Documentation/core-api/union_find.rst:74: WARNING: Literal block ends witho=
+ut a blank line; unexpected unindent.
+Documentation/core-api/union_find.rst: WARNING: document isn't included in =
+any toctree
+Documentation/translations/zh_CN/core-api/union_find.rst:6: WARNING: Title =
+overline too short.
 
-diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-index 6976efb8e2f0..e9371f945900 100644
---- a/drivers/pci/controller/dwc/pcie-qcom.c
-+++ b/drivers/pci/controller/dwc/pcie-qcom.c
-@@ -1752,6 +1752,7 @@ static const struct of_device_id qcom_pcie_match[] = {
- 	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
- 	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
- 	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-+	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_2_9_0 },
- 	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
- 	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
- 	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
--- 
-2.34.1
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+Linux=E4=B8=AD=E7=9A=84=E5=B9=B6=E6=9F=A5=E9=9B=86=EF=BC=88Union-Find=EF=BC=
+=89
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+Documentation/translations/zh_CN/core-api/union_find.rst:15: WARNING: Title=
+ underline too short.
 
+=E4=BD=95=E4=B8=BA=E5=B9=B6=E6=9F=A5=E9=9B=86=EF=BC=8C=E5=AE=83=E6=9C=89=E4=
+=BB=80=E4=B9=88=E7=94=A8=EF=BC=9F
+---------------------
+Documentation/translations/zh_CN/core-api/union_find.rst:20: ERROR: Unexpec=
+ted indentation.
+Documentation/translations/zh_CN/core-api/union_find.rst:21: WARNING: Block=
+ quote ends without a blank line; unexpected unindent.
+Documentation/translations/zh_CN/core-api/union_find.rst:40: WARNING: Title=
+ underline too short.
+
+=E5=B9=B6=E6=9F=A5=E9=9B=86=E7=9A=84Linux=E5=AE=9E=E7=8E=B0
+----------------
+Documentation/translations/zh_CN/core-api/union_find.rst:51: WARNING: Liter=
+al block ends without a blank line; unexpected unindent.
+Documentation/translations/zh_CN/core-api/union_find.rst:55: WARNING: Title=
+ underline too short.
+
+=E5=88=9D=E5=A7=8B=E5=8C=96=E5=B9=B6=E6=9F=A5=E9=9B=86
+---------
+Documentation/translations/zh_CN/core-api/union_find.rst:62: WARNING: Liter=
+al block ends without a blank line; unexpected unindent.
+Documentation/translations/zh_CN/core-api/union_find.rst:66: WARNING: Title=
+ underline too short.
+
+=E6=9F=A5=E6=89=BE=E5=B9=B6=E6=9F=A5=E9=9B=86=E7=9A=84=E6=A0=B9=E8=8A=82=E7=
+=82=B9
+----------------
+Documentation/translations/zh_CN/core-api/union_find.rst:81: WARNING: Title=
+ underline too short.
+
+=E5=90=88=E5=B9=B6=E4=B8=A4=E4=B8=AA=E5=B9=B6=E6=9F=A5=E9=9B=86
+-------------
+
+Introduced by commit
+
+  93c8332c8373 ("Union-Find: add a new module in kernel library")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/U4uhjvznJAJV3DQDTv27QKZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmarIacACgkQAVBC80lX
+0GwinAf9G6hfJNPT2rVYWfiZgYuQKx4xFg28s0/uVuJJQYfuwgq2R5NXXbCMx3dC
+ueFMcpz6GDiOP+j2XF3r7jnWsJt5i+RfBwAbbgXJKlYVHpqAOpODeJBbX7TRX9HW
+q0+m16FLerRyV+vx/kRaTla5TktH7ZjzGg8fP6GGtIg0c6sMhBJp6PQ2jol30CHK
+wJ5T00NtSPefQkoK21X2k8iopwpjEV00FLy5c0ssPu5fP+FSSOCjopIC7qZXToS4
+FStKPxYpp/1/sSxg7smxlyOQ2TYNgGgBk9GgzgsioBsF6bIp/4K4HtKmzs7lqWhZ
+ei6ZfzCS5S7WQbgbvtV+6ve6VX/sNQ==
+=56uj
+-----END PGP SIGNATURE-----
+
+--Sig_/U4uhjvznJAJV3DQDTv27QKZ--
 
