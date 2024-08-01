@@ -1,174 +1,111 @@
-Return-Path: <linux-kernel+bounces-271382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43704944D69
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:48:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9096A944D6C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:48:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75AA286321
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:48:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 282EBB22F1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6745D1A3BCD;
-	Thu,  1 Aug 2024 13:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3171A3BB9;
+	Thu,  1 Aug 2024 13:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pjFJSW3C"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7UR5uXY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2718C189B98
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72602189B98;
+	Thu,  1 Aug 2024 13:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520083; cv=none; b=Fse/JGJEK5QczO8gMPB1HtaBd26MXa/Sn0w8Oh8eZqHu9s6t0JFe63AxIcfNHoOMRMoGvX9+vSbm+A6P6oVA3mH+GZatvrqqlaeZISQFARBkboiblq+drZaNyWxz4pmeW+5iHaRIXiSJeGzOYRJ4dFE2P8pfvoF2MKaWPmtK0hk=
+	t=1722520088; cv=none; b=PPDm1Vl5/z5zAHkRGQq6X8YDT0SsEJ/UjmUchtRrCKRKLmgaQEbK8omvT4bMiBkDdTsLFcUBtC1dG9ytCOZnhLx6XfDRsawFBMa2d4USr4qmqFNjuDmIB4z5uysWL7wHed8xXAw0KFdcWNw3/mUl4kWNxU1AzveaWXQgzezJepg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520083; c=relaxed/simple;
-	bh=I8mLr35avLJdYa5i7pz/GhJwCL/IL9MLbct5aeIbHD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tSzn/xhNgOguin2gx4ZSnE0ji26x9n6panuDVs6teSHDx5HoVBJ8QtpHKvi8fmKBdNEXA3wDymAJnzuLtuJm5CrmRIXjWa58R6jPa6Pf56S6Wc1pHU86LcTSymfelcCsNWmEqfFG5BbliHbQ7w6+sSOXvgGDbsy4bBHTRjReK+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pjFJSW3C; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428035c0bb2so12527405e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 06:48:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722520080; x=1723124880; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ce/grfeGfBpe3OOUAK5aLiv0sObRbOqHlQfr8NziK34=;
-        b=pjFJSW3CoNSd9tC1yFgxg94t9xvBgMM/7PRs176m9Ya67NqnNNNJ12B3gccpql3quc
-         wldVNUIlfL5HJA5x7zGYCGV426dFGlltSoJYNnUa1CN5nfhuOJ4elElxWcS5FznlVso7
-         /AwGubqe0jJG64KVS4GtpRldCHXMb1d94WC3drP1mghpiPVgehv+QlLnx6a4/slpK+/6
-         Vr4NJK/12ENPcZcGM8ULoVIYk71khUkGcdVKs/Ke8sywp/PHYelcldguXqs2J362CJtg
-         wuTsH7hFr00Ut7RsYOzVx5t5N5Sc21/EAxvGvLhdpjpwgU5lCezQXjRIMzfVGjUP9QZl
-         m2LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722520080; x=1723124880;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ce/grfeGfBpe3OOUAK5aLiv0sObRbOqHlQfr8NziK34=;
-        b=Lhhu2K9McBNzdH5ahIpABXoBXdsiFybML2T4NqQ1XZUa5VgBhDl+uWuPOuaeWcUxgx
-         9ZsIc0nyqk57yjCdp0Yv0aL/NpLThJ1I/SDXugBBO0+pkebVPVt7YLGPWTXKjI75Uozz
-         bsOX1SxBKWbf+NreUM7nZfJCW/cBJp4oeMlwI67U5wl2LQnyw/xvYsi9lE9MIcYU6N85
-         MO23f6eJyC8pKnpnAq20iwqZxQiBefzVmq7IJDKc2+WcoeyZGgdxWqxS+f6FXBwddiYL
-         hZIrkSRGd3y9qZQ66Me1VcthuWjBKOJFYlxuz7TB1M1j6auUhhhQOqU08zOE1+tbzB68
-         yAsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUauRc4ukXIazIb+nxfdULgPNStZ8KolaYWuFHHp8LVTC7EdWtqId2kh8IU1pLe786vtOxwDXs1gift8Tp9Q+JC4YEojlGkjwPlWRK
-X-Gm-Message-State: AOJu0YyQ+NL4IgsvAsGFY4wrXIBL5rZg1XtY6Fbag6wRlKku0X4jTg1/
-	dGzxKAyO9K1C08G+2lkRSxvHtaSxq8zaJYyt0/ke6jnqEMNul0+vAQrU0dFktBUs3hujV+qna3P
-	WVodOmiJVyzjfUjfMYgbkc8od/azXeTPvW237
-X-Google-Smtp-Source: AGHT+IHDP/ePi7mwq3gsT2tRGQmEKN5QbhPrzmJecK/Cc8Qaxs/dRzG4EdOI5gGc0kmcCKTLxYrUcTJ33iDzFlxzDKk=
-X-Received: by 2002:a05:600c:138e:b0:424:71f7:77f2 with SMTP id
- 5b1f17b1804b1-428e47a0825mr16187465e9.16.1722520080274; Thu, 01 Aug 2024
- 06:48:00 -0700 (PDT)
+	s=arc-20240116; t=1722520088; c=relaxed/simple;
+	bh=v1Ep6fFQZWMoGRw+MSU0AWMNyuB/Z6gj+KXf6mF1Jfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KreptJ+0hEqaAJjb2I/GAWHU5Y3ubu0b4Vtck7ctDaGMJKeEy8W5qAR4IkbqKCyXPSDlEsnubn2tNjqMUDiJPVfhOIW68g1xVExmVw5zvoaQAfhRZI9B2mQ2knowO2FvmRcHq+snawW2cSLUH5s3BXIP3W9SfgqxMzpkgktpadY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7UR5uXY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9067C4AF0A;
+	Thu,  1 Aug 2024 13:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722520088;
+	bh=v1Ep6fFQZWMoGRw+MSU0AWMNyuB/Z6gj+KXf6mF1Jfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y7UR5uXY4Jd+TGm+hIYAM67JruTOhNzL4CtFCMQ/P+sDyuuvMEbnvbDsG+jReJJyX
+	 l8eI+NwGpTfqwAKHgN3GtwxMStWJUCC/jQycDv4Cwng//YwXTeZSghg9UIPybdr7Pl
+	 QLlHCpIlxkZgYF7st8boloSe8JF3kqgdFBHoveUj+NSJUODPLKLo66jche1R6ZELtj
+	 ZRWVstIL7o8cuiuaCyWao59HXPPBxoN11UAWCdqKm9wFQ/XhhRw/O7g2zC/eIB64uf
+	 14q+2NwcLuMDeuxO/iwFTIlngAx4yIKG/uSkKsFBlL2Wg5vlET1VAP27ue3dpfHLOb
+	 FUjozeEi2mqvw==
+Date: Thu, 1 Aug 2024 15:48:02 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Aleksa Sarai <cyphar@cyphar.com>, Tycho Andersen <tandersen@netflix.com>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
+Message-ID: <20240801-clever-mitleid-da9b4142edde@brauner>
+References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
+ <20240731145132.GC16718@redhat.com>
+ <20240801-report-strukturiert-48470c1ac4e8@brauner>
+ <20240801080120.GA4038@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
- <20240723-linked-list-v3-4-89db92c7dbf4@google.com> <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
- <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com>
- <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me> <CAH5fLgjntr81+OFxzVqvb+zL4RqHCap9LZnNxNvN_gzF8AKrRg@mail.gmail.com>
- <ea3ef06b-8c4c-4883-867f-b68f2eb589af@proton.me>
-In-Reply-To: <ea3ef06b-8c4c-4883-867f-b68f2eb589af@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 15:47:47 +0200
-Message-ID: <CAH5fLgg-q6VEsGd7p16ZEkWj6HoydFJKB-jYN6ZT=8sT6FNE7A@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
-	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240801080120.GA4038@redhat.com>
 
-On Thu, Aug 1, 2024 at 3:46=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
-> wrote:
->
-> On 01.08.24 14:51, Alice Ryhl wrote:
-> > On Thu, Aug 1, 2024 at 12:45=E2=80=AFPM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >>
-> >> On 01.08.24 11:42, Alice Ryhl wrote:
-> >>> On Wed, Jul 31, 2024 at 8:41=E2=80=AFPM Benno Lossin <benno.lossin@pr=
-oton.me> wrote:
-> >>>>
-> >>>> On 23.07.24 10:22, Alice Ryhl wrote:
-> >>>>> +/// The prev/next pointers for an item in a linked list.
-> >>>>> +///
-> >>>>> +/// # Invariants
-> >>>>> +///
-> >>>>> +/// The fields are null if and only if this item is not in a list.
-> >>>>> +#[repr(transparent)]
-> >>>>> +pub struct ListLinks<const ID: u64 =3D 0> {
-> >>>>> +    #[allow(dead_code)]
-> >>>>> +    inner: Opaque<ListLinksFields>,
-> >>>>
-> >>>> Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it=
- is
-> >>>> enough and you change this, be aware that `Opaque` is `!Unpin`, so i=
-f
-> >>>> you intend for `ListLinks` to also be `!Unpin`, then you need a
-> >>>> `PhantomPinned`)
-> >>>
-> >>> I need the `!Unpin` part for aliasing.
-> >>
-> >> Oh good point, do you mind adding a comment for that?
-> >>
-> >>>>> +}
-> >>>>> +
-> >>>>> +// SAFETY: The next/prev fields of a ListLinks can be moved across=
- thread boundaries.
-> >>>>
-> >>>> Why? This is not a justification.
-> >>>
-> >>> What would you say?
-> >>
-> >> While trying to come up with a safety comment I thought about the
-> >> following: this impl does not depend on the type that is behind the
-> >> pointer (ie the type containing the `ListLinks`). Thus this `ListLinks=
-`
-> >> will always implement `Send` even if the pointed-to value does not.
-> >> What we could do (and what definitely would be correct) is this:
-> >> `List` can only be used with `Send` types, then we could implement
-> >> `Send` for `ListLinks`. But I haven't actually come up with a problem,
-> >> so there might a more permissive solution.
-> >> Do you have a use-case where you need `!Send` types in a list?
-> >>
-> >> Here is a part of my reasoning: If the pointed-to value is `!Send`, th=
-en
-> >> the `List` item type must also be `!Send`. Thus all list operations ta=
-ke
-> >> place on the same thread (since the `List` will be `!Send`). Therefore
-> >> nobody can access the `prev`/`next` pointers from another thread.
-> >>
-> >> But this does not justify that `ListLinks` can be made `Send`. (althou=
-gh
-> >> there isn't actually a problem)
->
-> I think I confused myself. The paragraph above actually explains why we
-> are allowed to make `ListLinks: Send`. What do you think of the
-> following comment:
->
-> // SAFETY: The only way to access/modify the pointers inside of `ListLink=
-s<ID>` is via holding the
-> // associated `ListArc<T, ID>`. Since that type correctly implements `Sen=
-d`, it is impossible to
-> // move this an instance of this type to a different thread if the pointe=
-es are `!Send`.
+On Thu, Aug 01, 2024 at 10:01:20AM GMT, Oleg Nesterov wrote:
+> OK, I won't argue, but ....
+> 
+> On 08/01, Christian Brauner wrote:
+> >
+> > On Wed, Jul 31, 2024 at 04:51:33PM GMT, Oleg Nesterov wrote:
+> > > On 07/31, Christian Brauner wrote:
+> > > >
+> > > > It's currently possible to create pidfds for kthreads but it is unclear
+> > > > what that is supposed to mean. Until we have use-cases for it and we
+> > > > figured out what behavior we want block the creation of pidfds for
+> > > > kthreads.
+> > >
+> > > Hmm... could you explain your concerns? Why do you think we should disallow
+> > > pidfd_open(pid-of-kthread) ?
+> >
+> > It basically just works now and it's not intentional - at least not on
+> > my part. You can't send signals to them,
+> 
+> Yes, you can't send signals to kthread. So what?
+> 
+> You can't send signals to the normal processes if check_kill_permission()
+> fails. And even if you are root, you can't send an unhandled signal via
+> pidfd = pidfd_open(1).
+> 
+> > you may or may not get notified
+> > via poll when a kthread exits.
+> 
+> Why? the exiting kthread should not differ in this respect?
 
-I will use that, thanks.
+Why do you want to allow it? I see zero reason to get a reference to a
+kthread if there's no use-case for it. kthreads are mostly a kernel
+thing so why give userspace handles to it. And as I said before, there's
+userspace out there that's already confused why they can get references
+to them in the first place.
 
-Alice
+> 
+> > (So imho this causes more confusion then it is actually helpful. If we
+> > add supports for kthreads I'd also like pidfs to gain a way to identify
+> > them via statx() or fdinfo.)
+> 
+> /proc/$pid/status has a "Kthread" field...
+
+Going forward, I don't want to force people to parse basic stuff out of
+procfs. Ideally, they'll be able to mostly rely on pidfd operations
+only.
 
