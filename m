@@ -1,126 +1,92 @@
-Return-Path: <linux-kernel+bounces-271642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11799945101
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C80C945103
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431F91C2577C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D81C1C25831
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE97C1B9B4B;
-	Thu,  1 Aug 2024 16:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MLnbitOs"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588A01B3758
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2003C1B4C57;
+	Thu,  1 Aug 2024 16:42:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767CB1EB4BF;
+	Thu,  1 Aug 2024 16:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530522; cv=none; b=mpLaaqkCNvxdvT3QAr/0zcl3acpgKgw+QBeAzNl6Snqv4/khv4XGs+ohPQl/c8NB8PY85B10ffA8wd2uLdUYW38PKTads65BnrwgBBluRUEV5pyjNT/4HdKUhMOAQeVJJ+O9BizMarqyc6++AZVQtNPe//KMuG4E3mCgB6vQNr0=
+	t=1722530577; cv=none; b=R4d3KDLgiwsdWpC96zbB/STOb2YkrlNMGhHFOtKGy4UYGY5se6dLZPqauYse8wYi9y27Ev60B89EA50yfl8DFJ8avlYQlaq1jvPc2d/oKljEvJhC89bQdTfF/caKWq7QucLn/wGaqoKNvWOlUcIqKvpRzdBNNsLOX7jL0dfW00k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530522; c=relaxed/simple;
-	bh=48L8m1/nqyrVllZo1zjaeI5/Whv8Q8kyuwKNl/y5GOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=DNyX/3/FHiarJvqFmjlXln+iAR6K98nE4Qq1ZhkyigY9JHrrVhErGc0aW9jL1hnwE1+/600ib1M2skVSxmiLnq0n74blyOiU+REQWGkh+Hj4THA7F+UH0SgGp6HjrPPXmLhzM2R45fXUSp03xrVc/gYRjfZ4c5LbQTzxGk5gJDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MLnbitOs; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pg1-f200.google.com (mail-pg1-f200.google.com [209.85.215.200])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id C1283400B1
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1722530517;
-	bh=oH2IxwwaeB32KbPmmlJ7oQ67OtriazyI1RrphFPcsu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type;
-	b=MLnbitOsnDZ0GLCnZjmRHFq2kyvOYurg4hNtGpoN4Mo29hKPg7MD4k99DSL/sGErG
-	 qOjtVq9J8yzRuLZRe78Unouq3xfuFOaCOBlNnLHNnRmZDg6yLn6M1xZzmzv7TvAIcr
-	 oX4n1bk/Oc0AglKaqy+I4fP7Ds5z/ECQ5apeL/wW7aKCHqli+BWNksrrUieKZqQR9d
-	 kYpNAjACdsEDknSMSsYtedtJXr8Up2lqNTyBoD3o8D2KJRjw6wqU0TWJ9hkrpY2iD3
-	 VTt4V0FQ/vJ3XIMLT9XVSccFtbhbhYOk2kRw/kc8QuKgdiTkZSzt0f7rMRrPSsr8Ok
-	 TEDb9Ga0HB6zQ==
-Received: by mail-pg1-f200.google.com with SMTP id 41be03b00d2f7-6fd42bf4316so5060975a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:41:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722530516; x=1723135316;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oH2IxwwaeB32KbPmmlJ7oQ67OtriazyI1RrphFPcsu4=;
-        b=c1o2pO1spj/gDsrTKOuyzLnwt11JhTNH1WJrjIIw9mo54jBjPdTzTFhvgSxZLzukyq
-         I2PaySgLPf9Q6czHz8fyiZTnDQ62IvvzZyD0SvScQPXtgUtXqFmEqH+Ttti31ITv/9Vz
-         yq+smQXuns3hXRtLIYIcKpXSVr7o+fGAiwH3LTtECvqMFxe5rczZNkzSQInfMYuKlh3c
-         hGRtL4Xmcg1fUntCx5pfGqqdhOLIUWSkAntRdBS9Texj9wA3ucLOf20iqEpzDH2MgGim
-         4xnZLw9AQ9l+g8RSraIj5bn8NwBWPuPxXMBBC4FjXFqee37iHL4IbECvHHB1WQNIASYR
-         UIiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFQJ+3Rz6DX0pWvMlliz7bJCau2xQfbc4oqyrCDaz3gLVBoI5eIbZk4Of+j2pNwpSCMlz1F26jrjtAVDaZZltj7PWDy5JVlTMxmequ
-X-Gm-Message-State: AOJu0YyFcWhtUEMjFS27t95KyKvldoqAa76oFH+x7k1iQBh32RgQnx+3
-	BToAqfxS9yh4xolKPzg3vxyhVGP93tv2N/l9fJDrGremYX03a5v/Ua1mdpjMUjMYEC8G/qNWOVs
-	fOoKpUXa7wKlcR5OgLrOMUKs5M7pETdKUkAIphq3xm0yrNo5WaUH+3VQTUo65yNEZtm/QYahsGX
-	BjTrU5CEw8/pA7
-X-Received: by 2002:a17:90b:4b92:b0:2c9:6cf4:8453 with SMTP id 98e67ed59e1d1-2cff952d016mr973450a91.31.1722530515933;
-        Thu, 01 Aug 2024 09:41:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+pG8FFdEdd9i0NyZFDUieVjshTw4yaNRddKN9NBT0wOc4Cc19sa0uEU6/WASWF9LAztSMcQ==
-X-Received: by 2002:a17:90b:4b92:b0:2c9:6cf4:8453 with SMTP id 98e67ed59e1d1-2cff952d016mr973418a91.31.1722530515347;
-        Thu, 01 Aug 2024 09:41:55 -0700 (PDT)
-Received: from capivara ([186.250.11.100])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffb0c681esm145461a91.25.2024.08.01.09.41.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:41:55 -0700 (PDT)
-Date: Thu, 1 Aug 2024 13:41:50 -0300
-From: Pedro Henrique Kopper <pedro.kopper@canonical.com>
-To: rafael@kernel.org, lenb@kernel.org, viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	srinivas.pandruvada@linux.intel.com, pedro.kopper@canonical.com
-Subject: [PATCH] cpufreq: intel_pstate: Update Balance performance EPP for
- Emerald Rapids
-Message-ID: <Zqu6zjVMoiXwROBI@capivara>
+	s=arc-20240116; t=1722530577; c=relaxed/simple;
+	bh=Mq/r6yWF9nhwO1MHUfoDU2pzEZ7xg/BqW/xHQR5wfNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PW7Y0SqqmfmWr2ckZ0DtXztTmeQG5pAzLi8DUVB8+BrGww8aAr0M3xkzMqCk3LfPZUf1LjgA5ApQJtHyLgIM5lT3L3BgYBDLpHgFwRNXHvIYkDM5kllAm8b+MaxoZcgSstrxRnVJtb7+Oei+kzXfaSspTA7vQo+8YyCASp5N7Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B0D715A1;
+	Thu,  1 Aug 2024 09:43:20 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0E8043F5A1;
+	Thu,  1 Aug 2024 09:42:53 -0700 (PDT)
+Message-ID: <6cb4e7db-4ac0-43b4-a823-7d230ff3438b@arm.com>
+Date: Thu, 1 Aug 2024 17:42:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] include: linux: Update gather only if it's not
+ NULL
+To: Ashish Mhetre <amhetre@nvidia.com>, will@kernel.org, joro@8bytes.org
+Cc: linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20240801033432.106837-1-amhetre@nvidia.com>
+ <20240801033432.106837-2-amhetre@nvidia.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240801033432.106837-2-amhetre@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Intel Emerald Rapids machines, we ship the Energy Performance Preference
-(EPP) default for balance_performance as 128. However, during an internal
-investigation together with Intel, we have determined that 32 is a more
-suitable value. This leads to significant improvements in both performance
-and energy:
+On 01/08/2024 4:34 am, Ashish Mhetre wrote:
+> Gather can be NULL when unmap is called for freeing old table while
+> mapping. If it's NULL then there is no need to add page for syncing
+> the TLB.
 
-POV-Ray: 32% faster | 12% less energy
-OpenSSL: 12% faster | energy within 1%
-Build Linux Kernel: 29% faster | 18% less energy
+But that's only because __arm_lpae_unmap() is now choosing to 
+over-invalidate the table entries for simplicity. I think it would make 
+more sense to handle that at the callsite, e.g. "if (gather && 
+!iommu_iotlb_gather_queued(gather))".
 
-Therefore, we should move the default EPP for balance_performance to 32.
-This is in line with what has already been done for Sapphire Rapids.
+Also doesn't this mean that bisection is broken as-is since patch #1 on 
+its own is going to blow up dereferencing NULL->pgsize when it gets here?
 
-Signed-off-by: Pedro Henrique Kopper <pedro.kopper@canonical.com>
----
- drivers/cpufreq/intel_pstate.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
+Robin.
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index 392a8000b238..c0278d023cfc 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -3405,6 +3405,7 @@ static const struct x86_cpu_id intel_epp_default[] = {
- 	 */
- 	X86_MATCH_VFM(INTEL_ALDERLAKE_L, HWP_SET_DEF_BALANCE_PERF_EPP(102)),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
-+	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X, HWP_SET_DEF_BALANCE_PERF_EPP(32)),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L, HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
- 		      179, 64, 16)),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE, HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
--- 
-2.43.0
-
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
+>   include/linux/iommu.h | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+> index 4d47f2c33311..2a28c1ef8517 100644
+> --- a/include/linux/iommu.h
+> +++ b/include/linux/iommu.h
+> @@ -928,6 +928,9 @@ static inline void iommu_iotlb_gather_add_page(struct iommu_domain *domain,
+>   					       struct iommu_iotlb_gather *gather,
+>   					       unsigned long iova, size_t size)
+>   {
+> +	if (!gather)
+> +		return;
+> +
+>   	/*
+>   	 * If the new page is disjoint from the current range or is mapped at
+>   	 * a different granularity, then sync the TLB so that the gather
 
