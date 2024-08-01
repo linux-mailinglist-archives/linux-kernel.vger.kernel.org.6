@@ -1,153 +1,131 @@
-Return-Path: <linux-kernel+bounces-270525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAA0944164
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:47:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF43F9440F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2701EB25A8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:23:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8313F1F28421
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D2413E02D;
-	Thu,  1 Aug 2024 02:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07AF1428E9;
+	Thu,  1 Aug 2024 02:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Lojho8xF"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JVXAorcy"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A5213DB9F;
-	Thu,  1 Aug 2024 02:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2F014264A;
+	Thu,  1 Aug 2024 02:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722477817; cv=none; b=kzP8B2LlfTRGGFgZXOwPsQ3jdKA2SvjLk5S2hgQ0+XDfqlpU+CqwPVJijjC3l1skyoPhpceRtZMGA2SyesMFUnFN5HzA89oDH+k1XP7CRfF3gJW/aNErRIqJBsz6XU0Wjgf2JqTt7c8PKg6TGLnC8Sj7ehFrsiYqV+6wwK/Hu/0=
+	t=1722477979; cv=none; b=WgUuuwxPWKWpR17J8tnfSg6926wSq88P16Vad2S2+LRM0vKMJ1Mh1uDT/z2ts606m0zB8EDURwojAd7LQ4Sw9CfgmonGxhZsxa11JlUeM8F5WKiLM3uipknfd9WdtvJLkyMnWqDrx0evu6CRKzq8vcj9RVEIIVcP0qo7eLZYyMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722477817; c=relaxed/simple;
-	bh=5jVf1oPR7w2V/tyzdze17flhrIPhOs35t0msRPjezaY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OuWPFOZA6plIGEimkmlqQHT/qbXTIj7qMdVRjMrX5uMzH8LeGXEblwm/B2dxI0iXjq9HmIEykKriv+9RG43KsXOODltV/OzCvdUPhtGJsmRuIRJdD1+kD8bFra5umucdVLcmetpgPcHY3BxfStsVxB40PZ2lD3KE5PvUQ2BWOrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Lojho8xF; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1722477812;
-	bh=8adUdvUW737uHA/RqkquHip5HZGx3zcFU9ygzrLxTNw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Lojho8xFX67N2BejJZkXmuky71fNDSqpFlfBXmegPmbrfZom5lbPEK1s31Uvpbi8u
-	 qAqIzrivsyTVNnvQ8FnVOUOKUQNtkHDFoIjrhy4mUKZDsG5map1kezbCfewhgS2hjp
-	 H0ehc3IJP+2FLnz2/BuNrRlKJy9v3Y2M6xYdjR6tbVhlZahtsPcesA9GC9XjA10J7z
-	 wtiI4ZijWRWnUbv7IQ+plaMJwuWRMTPTLhCOSuNSnNu/cEFMe98dvMbe9aP2bKvDUM
-	 VQqV4AxremTPak3mvhMqTFAWWis26wyRofXluqhgkNNEWqjTggMfFG4ZbbyVMSFbsD
-	 ZyzlLqGtsIQbg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1722477979; c=relaxed/simple;
+	bh=8ac2r6zPKGWSHuh+tztXRaB0ZOzFaDNys78QgSc5GpQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=KzH+2IBRcf6xrHOFcXKxeOGMIpIKZ4XMRByMCZqlWgu4Kkw0uJidlkRULwmAaH7Tf4xDgZ39no+l88ocaaJdlg5O4O4LMQVJWsj2Q0XX8Rx3JWcagXwE0TZ4T4OD/XL8LaL1ts+ivlYADDCNM8QWmSH5sZ2a62tdl3tGPcTv1ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JVXAorcy; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722477973;
+	bh=8ac2r6zPKGWSHuh+tztXRaB0ZOzFaDNys78QgSc5GpQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=JVXAorcyrS7ElLGDbx4UY8CBn5IOFXY75Y03rOjYsrxkbEgX5R/5y06idDTEZbrqd
+	 myr2PvY8DUVOw+BrDhLveWANdg3ch4nNkRFNldVXviCXB0ZNztQOBGCGd5FK5lRSGn
+	 Plcp+yjbouRtQE7oZbfH+8ybOJd1qlS6a3GnGdwkdHzmNMfTC8sUo2B3WcT7xBaSJR
+	 H++RhyUvfteit7MSF2DP6Ci8ncvxS/ikbHqQEGBCI27PTvsdSdXG18waE2n7ydNatC
+	 9a3YwTTLEd+2CLQQwwW5MztS+ub3s91febTskdQ7kcGMfjHwGzJkHohJQYhg63GLE0
+	 4UQoxy+gnIgjA==
+Received: from localhost (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZC1H32JZz4x0C;
-	Thu,  1 Aug 2024 12:03:31 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, James Houghton
- <jthoughton@google.com>, stable@vger.kernel.org, Oscar Salvador
- <osalvador@suse.de>, Muchun Song <muchun.song@linux.dev>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-In-Reply-To: <2b0131cf-d066-44ba-96d9-a611448cbaf9@redhat.com>
-References: <20240731122103.382509-1-david@redhat.com>
- <ZqpQILQ7A_7qTvtq@x1n> <2b0131cf-d066-44ba-96d9-a611448cbaf9@redhat.com>
-Date: Thu, 01 Aug 2024 12:03:30 +1000
-Message-ID: <871q39ov7x.fsf@mail.lhotse>
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 06B003780BDB;
+	Thu,  1 Aug 2024 02:06:13 +0000 (UTC)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH 0/2] Initial support for Synopsys DW HDMI QP TX Controller
+Date: Thu, 01 Aug 2024 05:05:13 +0300
+Message-Id: <20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFrtqmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCwND3ZRy3YyU3EzdwgLdkgpdSxNjS0sjc2NDU3MDJaCegqLUtMwKsHn
+ RsbW1AG+VgSlfAAAA
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, Alexandre ARNOUD <aarnoud@me.com>, 
+ Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
+X-Mailer: b4 0.14.1
 
-David Hildenbrand <david@redhat.com> writes:
-> On 31.07.24 16:54, Peter Xu wrote:
-...
->> 
->> The other nitpick is, I didn't yet find any arch that use non-zero order
->> page for pte pgtables.  I would give it a shot with dropping the mask thing
->> then see what explodes (which I don't expect any, per my read..), but yeah
->> I understand we saw some already due to other things, so I think it's fine
->> in this hugetlb path (that we're removing) we do a few more math if you
->> think that's easier for you.
->
-> I threw
-> 	BUILD_BUG_ON(PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
-> into pte_lockptr() and did a bunch of cross-compiles.
->
-> And for some reason it blows up for powernv (powernv_defconfig) and
-> pseries (pseries_defconfig).
->
->
-> In function 'pte_lockptr',
->      inlined from 'pte_offset_map_nolock' at mm/pgtable-generic.c:316:11:
-> ././include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_291' declared with attribute error: BUILD_BUG_ON failed: PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE
->    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->        |                                             ^
-> ././include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
->    491 |                         prefix ## suffix();                             \
->        |                         ^~~~~~
-> ././include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
->    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
->        |         ^~~~~~~~~~~~~~~~~~~
-> ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
->     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
->        |                                     ^~~~~~~~~~~~~~~~~~
-> ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
->     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
->        |         ^~~~~~~~~~~~~~~~
-> ./include/linux/mm.h:2926:9: note: in expansion of macro 'BUILD_BUG_ON'
->   2926 |         BUILD_BUG_ON(PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
->        |         ^~~~~~~~~~~~
-...
->
-> pte_alloc_one() ends up calling pte_fragment_alloc(mm, 0). But there we always
-> end up calling pagetable_alloc(, 0).
->
-> And fragments are supposed to be <= a single page.
->
-> Now I'm confused what's wrong here ... am I missing something obvious?
->
-> CCing some powerpc folks. Is this some pte_t oddity?
+The Synopsys DesignWare HDMI 2.1 Quad-Pixel (QP) TX Controller IP can
+found on the Rockchip RK3588 SoC family and supports the following
+features, among others:
 
-It will be because PTRS_PER_PTE is not a compile time constant :(
+* Fixed Rate Link (FRL)
+* Display Stream Compression (DSC)
+* 4K@120Hz and 8K@60Hz video modes
+* Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
+* Fast Vactive (FVA)
+* Multi-stream audio
+* Enhanced Audio Return Channel (EARC)
 
-  $ git grep "define PTRS_PER_PTE" arch/powerpc/include/asm/book3s/64
-  arch/powerpc/include/asm/book3s/64/pgtable.h:#define PTRS_PER_PTE        (1 << PTE_INDEX_SIZE)
-  
-  $ git grep "define PTE_INDEX_SIZE" arch/powerpc/include/asm/book3s/64
-  arch/powerpc/include/asm/book3s/64/pgtable.h:#define PTE_INDEX_SIZE  __pte_index_size
-  
-  $ git grep __pte_index_size arch/powerpc/mm/pgtable_64.c
-  arch/powerpc/mm/pgtable_64.c:unsigned long __pte_index_size;
+This patch series provides just the basic support, i.e. RGB output up to
+4K@60Hz, without audio, CEC or any HDMI 2.1 related functionality.
 
-Which is because the pseries/powernv (book3s64) kernel supports either
-the HPT or Radix MMU at runtime, and they have different page table
-geometry.
+Please note it is a reworked version of [1], which relied on a
+commonized dw-hdmi approach.  Since the overall consensus was to handle
+it as an entirely new IP, I dropped all references and dependencies to
+the existing dw-hdmi driver code.
 
-If you change it to use MAX_PTRS_PER_PTE it should work (that's defined
-for all arches).
+This has been submitted as a separate patchset, as suggested by Neil;
+the Rockchip platform specific glue code enabling HDMI output for RK3588
+will be send as v2 of the initial patch series [2].
 
-cheers
+Some additional changes worth mentioning:
+* Making use of the new bridge HDMI helpers indicated by Dmitry
+* Dropped connector creation to ensure driver does only support
+  DRM_BRIDGE_ATTACH_NO_CONNECTOR
+* Updated I2C segment handling to properly handle connected DVI displays
+  (reported and fixed by Heiko)
 
+[1]: https://lore.kernel.org/lkml/20240601-b4-rk3588-bridge-upstream-v1-13-f6203753232b@collabora.com/
+[2]: https://lore.kernel.org/lkml/20240601-b4-rk3588-bridge-upstream-v1-0-f6203753232b@collabora.com/
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 381750f41767..1fd9c296c0b6 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2924,6 +2924,8 @@ static inline spinlock_t *ptlock_ptr(struct ptdesc *ptdesc)
- static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pte_t *pte)
- {
-        /* PTE page tables don't currently exceed a single page. */
-+       BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
-+
-        return ptlock_ptr(virt_to_ptdesc(pte));
- }
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Cristian Ciocaltea (2):
+      dt-bindings: display: bridge: Add schema for Synopsys DW HDMI QP TX IP
+      drm/bridge: synopsys: Add DW HDMI QP TX Controller driver
+
+ .../display/bridge/synopsys,dw-hdmi-qp.yaml        |  66 ++
+ drivers/gpu/drm/bridge/synopsys/Kconfig            |   8 +
+ drivers/gpu/drm/bridge/synopsys/Makefile           |   2 +
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c       | 748 ++++++++++++++++++
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.h       | 834 +++++++++++++++++++++
+ include/drm/bridge/dw_hdmi_qp.h                    |  37 +
+ 6 files changed, 1695 insertions(+)
+---
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+change-id: 20240801-dw-hdmi-qp-tx-943992731570
+
 
