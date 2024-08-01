@@ -1,155 +1,216 @@
-Return-Path: <linux-kernel+bounces-271388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E509E944D78
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:52:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07781944D7C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0F88282832
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6D51C2339A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3DE1A38E7;
-	Thu,  1 Aug 2024 13:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3BF1A3BD2;
+	Thu,  1 Aug 2024 13:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cq9+AXpy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fM/DYDY/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD5C16EB57
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602C016EB57
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520339; cv=none; b=DRyzYummlqTiFOuliEF50vL5Xeq0V9e3qvLXq8KKN447kOdOI0NHu7tgGcVfOFubm7XGRjbPzSIIDLNdlAYxl1Tj0fjM9chVQ1HPU2CMSI7s3gS1vNnm0jniMTf+DHCRwzhiwwYskwAkk+hjhqjqsLc6RzBWztzRYUWYELh2Q5s=
+	t=1722520358; cv=none; b=DWKJt6jmqzNecwK4pMwCdBQGjgtXBP0WjvEWiD97BFusjBeRlbVNQTVu/8W892XwVggrWIR8fLsuNhFnnYaJHxGuf2AaN/gn1mM42H/3GB/cWeoCpGBr3Ma3hlDisPAx035uBRRQeYpSDK+ei4DdA98YHCtvahW/8z2VqzKzrA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520339; c=relaxed/simple;
-	bh=RHCAEvU+qLJa+XG+OFQXDDhBRYJFqFnK5UxeTXMV6Pw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=dCpNokEjCpPURKi0I7p432szMLGIIYTe3zhed51jb7wo8MOWDxS/hmTKcS+gln5k1T2Eu3hrTAX5efgKfgVJMzgKXoX/vzcv1aw/mb2LwRoqiyz/b28h+273AxNuttcqDu7RhYbMfqW867Ms8O7ff3Xb4mgvCXQW9nwyE3nbG1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cq9+AXpy; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1722520358; c=relaxed/simple;
+	bh=1YP6AD5SUeV0h3ytVf6TeAyLyYSUZPrknb5L7NmapjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVk8b+V2U+5trlwp8BWsZnmBtSIG8J7wEK4e9VACDiLkHxqgja4qYg6vUYCRNWoo92Y11LTGRxI9AYRxs+ge3kKVJd+8eFoOlBj0O/xTlVGe1FIUSkTNnQF8Z+PqIf3myVXtCanU2/p6cCDDevU+fz1K29T0MN2yc0RTfL0DUw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fM/DYDY/; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722520336;
+	s=mimecast20190719; t=1722520355;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hd+rnQJd3iP+kYdmOOscahOzGscif18AjgksANysyBg=;
-	b=cq9+AXpy7GIHo5vivoeYgdpdF36rBoE4HG+V/UwH/mXkTVkP1TxzlYDwD14DOVYqPWuAtN
-	GLNvGBgwAJQnRVyOv5KB6UEklBgoiWytSO/al3K/gPzt8jyG2Rx6TURF9qYzkvVn52zARB
-	lJgLFIFmRmgp4JZtrqCqwNHGwlCmtIE=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=k6+M5lxqWFd3gMZ3w6UL7CO9WtUAKE4v1JrMS05eUKA=;
+	b=fM/DYDY/iRtyCsNPgmoy7tGGDLOSwCQnF0fBzR9ZeJnQ3d2BvgImKNmNxidYQDF8at2Ft/
+	T8gyJGKQjgtwtrq6QgEsOHYEiKq0MXRsqpnERE2mMr9j3IGfAzajGLh+NUSNPQEWk9qEgE
+	JDQM4o5VY9w2Xva6YkBvzZhtFJGEYIo=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-665-bBT6j6PJOHq9OxfQWpPygw-1; Thu, 01 Aug 2024 09:52:15 -0400
-X-MC-Unique: bBT6j6PJOHq9OxfQWpPygw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-428040f49f9so41545765e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 06:52:15 -0700 (PDT)
+ us-mta-584-jwg9sdcePoSCmM6wif9Yaw-1; Thu, 01 Aug 2024 09:52:34 -0400
+X-MC-Unique: jwg9sdcePoSCmM6wif9Yaw-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b7a47a271cso15907346d6.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 06:52:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722520334; x=1723125134;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hd+rnQJd3iP+kYdmOOscahOzGscif18AjgksANysyBg=;
-        b=QKlW7921y3DSdWlOVRHbZxxnFHa8ociLPQkP4blILDP5UU+D7L/07e6P76ipjo2Fmv
-         FC7arxsNylYtxa1jP7hOoHbYx16oKS2esq3Pd33799itW807BiSJ2a/Nbfk6vYtQ1UzA
-         Rq5uz8ClmHymqXLvtuCVCNzeyhSYCXakbvOJSkE+NbRtSJUJjzREUgc/lKyw56TZusIg
-         TCzFDJYywkZLxtgSUjs3ZxXOFmUeu82Q6HjLuIhXnWvg7yaeNrV62m8zcXV4SjF2+AG8
-         J1onrCdW0/CUEnNiJx2z7BSdNg2+xd3/Ndg9BOPb1QwpDDsYy+DPQXDJvlAzTfYsu3rC
-         UCVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSVWuehmT33ndVBwa4+bR5m/ryM98lN5VvqJFuL3h2VvVGgHw/0Q+DTDlzjdyUeElmXzjkipo6O97Opv7s0ONglBfrAcEPdsWHVJAC
-X-Gm-Message-State: AOJu0YxKVr8qnkrV3SMUVzAO73ckhlzxTlt01NxIDKtlh60wp7Qil6zt
-	7nlZg10+HC+90np8Bc/KCT7bCCAxmrqeEeKJCCwI1nhVYUCl5UaIVUfslsWLOFfv3SIDkHVys9O
-	Jmg8JS2h8v5bzo0PNg6BEU+BARBY+hRv9lpiqt/fxnA1S7qrC5GM1tq2Ob6vNuA==
-X-Received: by 2002:adf:fa4a:0:b0:367:9d82:8370 with SMTP id ffacd0b85a97d-36baaf56d69mr1478948f8f.45.1722520334252;
-        Thu, 01 Aug 2024 06:52:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHm12m+Y9C9l9phe/+0YdpfEMjw0LYrQqwMVj1Q67GpYNuD/k/eIOyJsQ3IN0oM9cnpLl+0Vg==
-X-Received: by 2002:adf:fa4a:0:b0:367:9d82:8370 with SMTP id ffacd0b85a97d-36baaf56d69mr1478927f8f.45.1722520333690;
-        Thu, 01 Aug 2024 06:52:13 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:d5:a000:d3ea:62cf:3052:fac6? ([2a01:e0a:d5:a000:d3ea:62cf:3052:fac6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b36857db6sm19546600f8f.73.2024.08.01.06.52.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 06:52:13 -0700 (PDT)
-Message-ID: <d4412d54-41b1-4671-9733-34ba1423404c@redhat.com>
-Date: Thu, 1 Aug 2024 15:52:12 +0200
+        d=1e100.net; s=20230601; t=1722520353; x=1723125153;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k6+M5lxqWFd3gMZ3w6UL7CO9WtUAKE4v1JrMS05eUKA=;
+        b=CCsDv4J3gsU6W5A48DqWWvRPIWUeBvQTlpppjjgtliafZZBN+FcbbaJlrpB3iJIwy1
+         ly6d0SKunh/tfgaMNcY78w+T9UDvMPJon3/Byifw0ouX5N4FWiqn8s5995tBGopYJ2G4
+         1AFri8Y/F5szgQ6O9cdH8J0RqoU1wLGdPGseUPqggO18/RFK8PEHG0iHTULHPnTQqeQ1
+         G8njXoJ150iZwhw4EjWJVMyidI26Zxj/NY1IitWXqN85iu+LcXI1mYjdQqSmYy0lWrN/
+         xyuLPVbeDr2ZGhgeYqt+2RkphE4ETo/CjPTQAic2slALQL8jrAuarxIEcKqvhbPe4tps
+         Yyag==
+X-Gm-Message-State: AOJu0YwcLUyZpqsA4o0SnFCTZ4I4MZwtxt+2yauLlNEKyMLAECzN0khH
+	2VMTfhqEd2+MwseG6SmllJg/26US9CRjrxOcMxUxABvzXBdrEheBpg4VGvo2fJ2dJS6tEe//PJ9
+	MMkvK4I4k6BC7aynPJSUxn/Z9yeYYCMFK0jtsEo/X7f4QyVLkHpbk6m+tf15tEPQCjMBl7Q==
+X-Received: by 2002:a05:620a:1aa7:b0:79f:af4:66e8 with SMTP id af79cd13be357-7a34ee96b5emr2432385a.2.1722520353523;
+        Thu, 01 Aug 2024 06:52:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6sKK7x0m2Ws2ix0NAwD4CGdu/V5JvqWQLttEjLrMQ0dCRu8cILfqpCGlY3ZlJ/ZSmBWXrpw==
+X-Received: by 2002:a05:620a:1aa7:b0:79f:af4:66e8 with SMTP id af79cd13be357-7a34ee96b5emr2431385a.2.1722520353070;
+        Thu, 01 Aug 2024 06:52:33 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1fafec133sm353312585a.94.2024.08.01.06.52.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 06:52:32 -0700 (PDT)
+Date: Thu, 1 Aug 2024 09:52:30 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	James Houghton <jthoughton@google.com>, stable@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>,
+	Muchun Song <muchun.song@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: Re: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+Message-ID: <ZquTHvK0Rc0xBA4y@x1n>
+References: <20240731122103.382509-1-david@redhat.com>
+ <541f6c23-77ad-4d46-a8ed-fb18c9b635b3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/3] drm/log: Introduce a new boot logger to draw the
- kmsg on the screen
-To: John Ogness <john.ogness@linutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Javier Martinez Canillas <javierm@redhat.com>,
- "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20240801100640.462606-1-jfalempe@redhat.com>
- <20240801100640.462606-4-jfalempe@redhat.com>
- <87o76czfb2.fsf@jogness.linutronix.de>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <87o76czfb2.fsf@jogness.linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <541f6c23-77ad-4d46-a8ed-fb18c9b635b3@redhat.com>
 
+On Thu, Aug 01, 2024 at 10:50:18AM +0200, David Hildenbrand wrote:
+> On 31.07.24 14:21, David Hildenbrand wrote:
+> > We recently made GUP's common page table walking code to also walk hugetlb
+> > VMAs without most hugetlb special-casing, preparing for the future of
+> > having less hugetlb-specific page table walking code in the codebase.
+> > Turns out that we missed one page table locking detail: page table locking
+> > for hugetlb folios that are not mapped using a single PMD/PUD.
+> 
+> James, Peter,
+> 
+> the following seems to get the job done. Thoughts?
 
-On 01/08/2024 12:51, John Ogness wrote:
-> On 2024-08-01, Jocelyn Falempe <jfalempe@redhat.com> wrote:
->>   * It uses a circular buffer so the console->write() callback is very
->>     quick, and will never stall.
->>   * Drawing is done asynchronously using a workqueue.
-> 
-> For CON_NBCON, neither of the above points are necessary. You can draw
-> directly from the write_thread() callback. See below:
-> 
->> +static bool drm_log_work_draw(void)
->> +{
->> +	unsigned int len;
->> +	char buf[512];
->> +
->> +	len = drm_log_buf_read(buf, sizeof(buf));
->> +	if (len)
->> +		drm_log_draw_all(buf, len);
->> +	return len != 0;
->> +}
-> 
-> For CON_NBCON, this is essentially your write_thread() callback:
-> 
-> void drm_log_write_thread(struct console *con,
-> 			  struct nbcon_write_context *wctxt)
-> {
-> 	drm_log_draw_all(wctxt->outbuf, wctxt->len);
-> }
-> 
-> You cannot implement a write_atomic() callback because the console must
-> be able to print directly in NMI context and must not defer. But
-> write_atomic() is optional, so you should be fine there.
-> 
-> Disclaimer: Only in PREEMPT_RT patchset at the moment.
-
-Thanks, so that means the circular buffer and workqueue are only 
-necessary until write_thread() is merged in mainline. It will be a nice 
-simplification.
-I think I can also register one console for each drm driver, which will 
-simplify drm_log even further. (currently it would mean having a 
-circular buffer and work function for each driver which is a bit too much).
-Do you know if there is a chance to have write_thread() in 6.12 or 6.13 ?
+OK to me, so my A-b can keep, but let me still comment; again, all
+nitpicks.
 
 > 
-> John Ogness >
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 8e462205400d..776dc3914d9e 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -938,10 +938,40 @@ static inline bool htlb_allow_alloc_fallback(int reason)
+>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>  					   struct mm_struct *mm, pte_t *pte)
+>  {
+> -	if (huge_page_size(h) == PMD_SIZE)
+> +	unsigned long size = huge_page_size(h);
+> +
+> +	VM_WARN_ON(size == PAGE_SIZE);
+> +
+> +	/*
+> +	 * hugetlb must use the exact same PT locks as core-mm page table
+> +	 * walkers would. When modifying a PTE table, hugetlb must take the
+> +	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
+> +	 * PT lock etc.
+> +	 *
+> +	 * The expectation is that any hugetlb folio smaller than a PMD is
+> +	 * always mapped into a single PTE table and that any hugetlb folio
+> +	 * smaller than a PUD (but at least as big as a PMD) is always mapped
+> +	 * into a single PMD table.
+> +	 *
+> +	 * If that does not hold for an architecture, then that architecture
+> +	 * must disable split PT locks such that all *_lockptr() functions
+> +	 * will give us the same result: the per-MM PT lock.
+> +	 *
+> +	 * Note that with e.g., CONFIG_PGTABLE_LEVELS=2 where
+> +	 * PGDIR_SIZE==P4D_SIZE==PUD_SIZE==PMD_SIZE, we'd use the MM PT lock
+> +	 * directly with a PMD hugetlb size, whereby core-mm would call
+> +	 * pmd_lockptr() instead. However, in such configurations split PMD
+> +	 * locks are disabled -- split locks don't make sense on a single
+> +	 * PGDIR page table -- and the end result is the same.
+> +	 */
+> +	if (size >= P4D_SIZE)
+> +		return &mm->page_table_lock;
 
-Best regards
+I'd drop this so the mm lock fallback will be done below (especially in
+reality the pud lock is always mm lock for now..).  Also this line reads
+like there can be P4D size huge page but in reality PUD is the largest
+(nopxx doesn't count).  We also same some cycles in most cases if removed.
+
+> +	else if (size >= PUD_SIZE)
+> +		return pud_lockptr(mm, (pud_t *) pte);
+> +	else if (size >= PMD_SIZE || IS_ENABLED(CONFIG_HIGHPTE))
+
+I thought this HIGHPTE can also be dropped? Because in HIGHPTE it should
+never have lower-than-PMD huge pages or we're in trouble.  That's why I
+kept one WARN_ON() in my pesudo code but only before trying to take the pte
+lockptr.
+
+>  		return pmd_lockptr(mm, (pmd_t *) pte);
+> -	VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
+> -	return &mm->page_table_lock;
+> +	/* pte_alloc_huge() only applies with !CONFIG_HIGHPTE */
+> +	return ptep_lockptr(mm, pte);
+>  }
+>  #ifndef hugepages_supported
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index a890a1731c14..bd219ac9c026 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2869,6 +2869,13 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+>  	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+>  }
+> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+> +{
+> +	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+> +	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
+> +	return ptlock_ptr(virt_to_ptdesc(pte));
+> +}
+
+Great to know we can drop the mask..
+
+Thanks,
+
+> +
+>  static inline bool ptlock_init(struct ptdesc *ptdesc)
+>  {
+>  	/*
+> @@ -2893,6 +2900,10 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+>  {
+>  	return &mm->page_table_lock;
+>  }
+> +static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
+> +{
+> +	return &mm->page_table_lock;
+> +}
+>  static inline void ptlock_cache_init(void) {}
+>  static inline bool ptlock_init(struct ptdesc *ptdesc) { return true; }
+>  static inline void ptlock_free(struct ptdesc *ptdesc) {}
+> -- 
+> 2.45.2
+> 
+> 
+> -- 
+> Cheers,
+> 
+> David / dhildenb
+> 
 
 -- 
-
-Jocelyn
+Peter Xu
 
 
