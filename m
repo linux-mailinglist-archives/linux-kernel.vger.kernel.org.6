@@ -1,138 +1,215 @@
-Return-Path: <linux-kernel+bounces-271445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B124B944E5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:45:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEAD3944E5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DA1028962D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:45:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD751F2529E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D762CD272;
-	Thu,  1 Aug 2024 14:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5859A137745;
+	Thu,  1 Aug 2024 14:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ml2iEl/q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="wQnLtger"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2048A1EB48B;
-	Thu,  1 Aug 2024 14:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE891EB48B;
+	Thu,  1 Aug 2024 14:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523548; cv=none; b=s4hJezmJdnlFYDbcKvtSZWQ5hH/G0vR4rcfAKmTrileYw+PXsNO2bsnYW/WRf2LU0i8Hxa/J50AH2fCxy4+1j0qsFQisEAjnFJJGB94mCtJnuScyEGtUYLI13gPCrDBFJXk2+j7irzkVaMyxqchKl7sm+w5XcRSVbsEonE7vViM=
+	t=1722523592; cv=none; b=BsdPWAh+OP3n3nh6x3XP+G42eWaSrcKscNEXmHZiH9+2cMFu4a3oQcLIk/SSLSxmcM0TbTWc93DpWsW/+B0Z9QYx3KzTbBveQ5THF/ypCgsYm4gedmr2PQzVtcbtynqD27z4RT6ZdxB+bfoI+FDiJlCqjwfpx/H77FU+brVOSbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523548; c=relaxed/simple;
-	bh=ynD7QXa6nbck1NM7QRDpNGZa/07oVXF4giE0qGLrMBM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n/tmaKvd8LRmm0NBsgdivw5Ik65hwoPAVJ7tE4yF2u9qQ06j7Rflb96sjL8cjlCdjlGDfaLxze4kYcca7PQUGFU15RcZNhQxT/7qI8114X++aV6UFBkLGIHuQPHgcr6xoCXUVRvoo0t3eM0h7Kjh3+ZZxzr2heKGjeGv2qSZIHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ml2iEl/q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9D5EC32786;
-	Thu,  1 Aug 2024 14:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722523547;
-	bh=ynD7QXa6nbck1NM7QRDpNGZa/07oVXF4giE0qGLrMBM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ml2iEl/qrUF+tU3f8mqi/xDrO0HgBiI00zoJCF/IXfrbRQVBSwrHc6SCD0dcGuGbx
-	 824TddCt25PLx/abt6g+oObHBwAel56iW83eIttgL0jpLGNxvzRleUyhLrnFkyeQH3
-	 r7Q9elQqm4pDcYQkkpCqT/izvujZ8958Evf2mSiR8cogAzJx42FEnI6jbrhpevs6Cy
-	 5nqpT9+xvR2TxZwuap3WnnV/b0wmsIowAB6aj1nMuJhN7DuuWrNi45lYWZLdWuqW6l
-	 3EP5l3hGYGrpWry84B9ZfyAUUBLszpnlrMpvVtlGDQvTIHi1K2dz0eC9H75ZaPtFJE
-	 +wsL0fagBswBg==
-Message-ID: <fe49a89e-324c-4755-8350-cb6f7b3323d9@kernel.org>
-Date: Thu, 1 Aug 2024 16:45:36 +0200
+	s=arc-20240116; t=1722523592; c=relaxed/simple;
+	bh=ruElIYvVXuXWlHz/2qpyprt+UXztEzONYjZnkuwty04=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=awGY0GLmhsiv++wCofNkfsG2USMYwGYo66ufdDyv3m3/Qu08KTTu6PRUX/fMm/q0rwxGB1EYrlsk5nTIh3lCbEekkchTW+Jh2YgokkZeYQZGbBhPRHQPOPyXp8GexJ/49vzByBuMKS1VifdEEaKHfLcPvNmQIpTzkFygjYeG9Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=wQnLtger; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:169b:0:640:faad:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id DAB1161CD0;
+	Thu,  1 Aug 2024 17:46:20 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JkYaPQ0PmuQ0-CX18t2uF;
+	Thu, 01 Aug 2024 17:46:20 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1722523580; bh=N8CW5XzoORMtlNIZsYqpZaVQshBSKhGqzo22PeVF58I=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=wQnLtger8UgV8kknPfrR832Ume74Nxb1xF+nFRVKdBVDpd8rF7KR4hWtqrJIcYwD+
+	 cgvNkNUWaHh1RIa/0WE5V6ehQAicu7OuyYF8gKxQqf3MaSzFUzl0VpGT7Q8LeX8/0G
+	 LjMMjmIWv5kzGcRPPdcFJznMdrxUSgit+5Ms+Y38=
+Authentication-Results: mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <ead8c4fcded5a1341a9ce0ca6aa471a52f6d0051.camel@yandex.ru>
+Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
+ load
+From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
+To: Bryan Gurney <bgurney@redhat.com>
+Cc: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
+ linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>, "yukuai (C)"
+ <yukuai3@huawei.com>,  dm-devel@lists.linux.dev, Matthew Sakai
+ <msakai@redhat.com>
+Date: Thu, 01 Aug 2024 17:46:18 +0300
+In-Reply-To: <CAHhmqcTomcMEooe-mtZ5n1Gm_OfJ+bVssk54oXz84=Au75+Tag@mail.gmail.com>
+References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
+	 <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
+	 <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
+	 <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
+	 <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
+	 <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
+	 <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
+	 <37df66ec9cf1a0570a86ec0b9f17ae18ed11b832.camel@yandex.ru>
+	 <CAHhmqcTomcMEooe-mtZ5n1Gm_OfJ+bVssk54oXz84=Au75+Tag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] drm/rockchip: Explicitly include bits header
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sandy Huang <hjc@rock-chips.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?=
- <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, kernel@collabora.com,
- Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>
-References: <20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com>
- <20240801-b4-rk3588-bridge-upstream-v2-2-9fa657a4e15b@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240801-b4-rk3588-bridge-upstream-v2-2-9fa657a4e15b@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 01/08/2024 04:25, Cristian Ciocaltea wrote:
-> Driver makes use of the BIT() macro, but relies on the bits header being
-> implicitly included.
-> 
-> Explicitly pull the header in to avoid potential build failures in some
-> configurations.
-> 
-> While at it, reorder include directives alphabetically.
-> 
-> Fixes: 8c8546546f25 ("drm/rockchip: move output interface related definition to rockchip_drm_drv.h")
+On Wed, 2024-07-31 at 16:41 -0400, Bryan Gurney wrote:
+> Hi Konstantin,
+>
+> This sounds a lot like something that I encountered with md, back in
+> 2019, on the old vdo-devel mailing list:
+>
+> https://listman.redhat.com/archives/vdo-devel/2019-August/000171.html
+>
+> Basically, I had a RAID-5 md array that was in the process of
+> recovery:
+>
+> $ cat /proc/mdstat
+> Personalities : [raid0] [raid6] [raid5] [raid4]
+> md0 : active raid5 sde[4] sdd[2] sdc[1] sdb[0]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2929890816 blocks super 1.2 level 5, 512k =
+chunk, algorithm 2
+> [4/3] [UUU_]
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [=3D>...................]=C2=A0 recovery =
+=3D=C2=A0 9.1% (89227836/976630272)
+> finish=3D85.1min speed=3D173727K/sec
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 0/8 pages [0KB], 65536KB chunk
+>
+> Note that the speed of the recovery is 173,727 KB/sec, which is less
+> than the sync_speed_max value:
+>
+> $ grep . /sys/block/md0/md/sync_speed*
+> /sys/block/md0/md/sync_speed:171052
+> /sys/block/md0/md/sync_speed_max:200000 (system)
+> /sys/block/md0/md/sync_speed_min:1000 (system)
+>
+> ...And when I decreased "sync_speed_max" to "65536", I stopped seeing
+> hung task timeouts.
+>
+> There's a similar setting in dm-raid: the "--maxrecoveryrate" option
+> of lvchange.=C2=A0 So, to set the maximum recovery rate to 64 MiB per
+> second per device, this would be the command, for an example VG/LV of
+> "p_r5/testdmraid5"
+>
+> # lvchange --maxrecoveryrate 64M p_r5/testdmraid5
+>
+> (Older hard disk drives may not have a sequential read / write speed
+> of more than 100 MiB/sec; this meant that md's default of 200 MiB/sec
+> was "too fast", and would result in the recovery I/O starving the VDO
+> volume from being able to service I/O.)
+>
+> The current value of max_recovery_rate for dm-raid can be displayed
+> with "lvs -a -o +raid_max_recovery_rate".
+>
+> By reducing the maximum recovery rate for the dm-raid RAID-5 logical
+> volume, does this result in the hung task timeouts for the
+> "dm-vdo0-bioQ*" to not appear, and for the fio job to continue
+> writing?
 
-There is no bug here to be fixed. Drop. Especially bugfixes should not
-be combined with cleanups.
+Thank you, so, I'm trying this out, and it doesn't seem to be working that =
+well
+(unless perhaps something changed in the userspace LVM since the 2.03.11 I =
+am
+using?).
 
-Best regards,
-Krzysztof
+So, after having executed the original steps-to-reproduce I have these two =
+volumes:
 
+    $ lvs
+      LV                    VG   Attr       LSize   Pool                  O=
+rigin Data%  Meta%  Move Log Cpy%Sync Convert
+      deco_vol              p_r5 vwi-XXv-X- 100.00g vdo_internal_deco_vol
+      vdo_internal_deco_vol p_r5 dwi-XX--X-  20.00g
+
+Executing the suggested lvchange command does nothing on them:
+
+    $ lvchange --maxrecoveryrate 64M p_r5/deco_vol
+      Command on LV p_r5/deco_vol uses options that require LV types raid .
+      Command not permitted on LV p_r5/deco_vol.
+    $ lvchange --maxrecoveryrate 64M p_r5/vdo_internal_deco_vol
+      Command on LV p_r5/vdo_internal_deco_vol uses options that require LV=
+ types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol.
+
+Also, executing a `lvs -a -o +raid_max_recovery_rate` shows emptiness in pl=
+ace of
+that field. However, this command shows various internal volumes:
+
+    $ lvs -a -o +raid_max_recovery_rate
+      LV                                     VG   Attr       LSize   Pool  =
+                Origin Data%  Meta%  Move Log Cpy%Sync Convert MaxSync
+      deco_vol                               p_r5 vwi-XXv-X- 100.00g vdo_in=
+ternal_deco_vol
+      vdo_internal_deco_vol                  p_r5 dwi-XX--X-  20.00g
+      [vdo_internal_deco_vol_vdata]          p_r5 rwi-aor---  20.00g       =
+                                              100.00
+      [vdo_internal_deco_vol_vdata_rimage_0] p_r5 iwi-aor---  10.00g
+      [vdo_internal_deco_vol_vdata_rimage_1] p_r5 iwi-aor---  10.00g
+      [vdo_internal_deco_vol_vdata_rimage_2] p_r5 iwi-aor---  10.00g
+      [vdo_internal_deco_vol_vdata_rmeta_0]  p_r5 ewi-aor---   4.00m
+      [vdo_internal_deco_vol_vdata_rmeta_1]  p_r5 ewi-aor---   4.00m
+      [vdo_internal_deco_vol_vdata_rmeta_2]  p_r5 ewi-aor---   4.00m
+
+So I tried executing the command on them:
+
+    $ lvchange --maxrecoveryrate 64M p_r5/{vdo_internal_deco_vol_vdata,vdo_=
+internal_deco_vol_vdata_rimage_0,vdo_internal_deco_vol_vdata_rimage_1,vdo_i=
+nternal_deco_vol_vdata_rimage_2,vdo_internal_deco_vol_vdata_rmeta_0,vdo_int=
+ernal_deco_vol_vdata_rmeta_1,vdo_internal_deco_vol_vdata_rmeta_2}
+      Command on LV p_r5/vdo_internal_deco_vol_vdata_rimage_0 uses options =
+that require LV types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rimage_0=
+.
+      Command on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_0 uses options t=
+hat require LV types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_0.
+      Command on LV p_r5/vdo_internal_deco_vol_vdata_rimage_1 uses options =
+that require LV types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rimage_1=
+.
+      Command on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_1 uses options t=
+hat require LV types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_1.
+      Command on LV p_r5/vdo_internal_deco_vol_vdata_rimage_2 uses options =
+that require LV types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rimage_2=
+.
+      Command on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_2 uses options t=
+hat require LV types raid .
+      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_2.
+      Logical volume p_r5/vdo_internal_deco_vol_vdata changed.
+
+This resulted in exactly one volume having changed its speed: the `[vdo_int=
+ernal_deco_vol_vdata]`.
+
+With that done, I tried removing a disk while there's load, and it results =
+in same
+old lockup reports:
+
+-----------------------
+
+So to sum up: the lvchange command only managed to change speed on a single=
+ internal
+volume, but that didn't make the lockup go away.
 
