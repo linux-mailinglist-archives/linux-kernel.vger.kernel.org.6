@@ -1,168 +1,168 @@
-Return-Path: <linux-kernel+bounces-270557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E11B94415F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:46:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC54944176
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA3D283A85
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:46:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 619DBB21E4A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3B913D276;
-	Thu,  1 Aug 2024 02:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE9413C677;
+	Thu,  1 Aug 2024 02:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PBtsDEaN"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hZkOmvBq"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6017A13C9D4;
-	Thu,  1 Aug 2024 02:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB0F13BAC3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 02:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722480350; cv=none; b=PblVR8dCnMgS5/AIYxWRV/RYiO+w8YBwpSziGl5qVZuIVWwL9sXdixfj7ip0ZdYFHwgDyMcpFSPfQQJBpavf6NqCZws5XbI0n4VZv/idtHO/hMofJb7lDoZfKSQXuWj9yxo5hvD39zf2fr9dsG30fHodPb0oig71CqW+V96OG4Y=
+	t=1722480764; cv=none; b=hs18dgt6zHBMnW2+sv96uGQPYUSgIQns0xo2XW2k60xp7j9np4FtYHE3sSAMcQ11/XvEdoKiXavM7XB6Op9Nhko+h970pZR+AXBY8Yx/bEBkX898qJ+w+yxzPEp9H4l/34ozWt6K4Gw3Sa34nBGjRZIsWxhk+HaBvjS5X+XfXxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722480350; c=relaxed/simple;
-	bh=bSYKN9IhoHbR2enQm+8mYnt1ZNIDtvJ8P1GPrpJ4qRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=O5EPkAssBRWN8ufIS6o9+UIF8f4+Mb/D4EJsW0npTvxZ4YqoGywhntqbYuo21EgiZYI43tg4yP9/jUlsfJL3oo3WWc8DQuJWT7fJyunidRCKV6YWm4yc1emghicQaGm+yVVQcyWSFTxcWXm7Aq3mWfVExh1rOdAKxzRxQuVdZAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PBtsDEaN; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722480346;
-	bh=GkzZcFk6U/7i7+BM6fLsy4RhuZ9Th3FuF1F1svVeTXw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PBtsDEaNzgtvUFffRVbCI+V6V5ylG6HKSd6Ack3moG9lsd4r8nV05pKjeGxfdAKqZ
-	 5y5jIM8XJ2G/Bu/JMFzsBbaHOxXhsxaLJxbJCLThE4n0bdbg0e68uxo9JA2Y7ug/lG
-	 ddldTm3kGdvJ3tfUEBawo8I8RmEdlloFIEYttkl+yaiQYrIVawXeVw6JzLy4XeR+8Q
-	 9xt35DMw31U7yKU+MI7HiMiTl+nPhAJy3/smw+kn3YnR51HEUbQqfGEtVTasWN/JAW
-	 283pKBMWdJf9P47q2p+opLmkLlfArg9lexe5VyHSs10jJgI/1XTkcFac1y7p3sFonx
-	 AJWmE6lOP0Dng==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZCy23NHWz4x7H;
-	Thu,  1 Aug 2024 12:45:46 +1000 (AEST)
-Date: Thu, 1 Aug 2024 12:45:45 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Tejun Heo <tj@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: "Joel Fernandes (Google)" <joel@joelfernandes.org>, Daniel Bristot de
- Oliveira <bristot@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Yang Yingliang <yangyingliang@huawei.com>
-Subject: linux-next: manual merge of the sched-ext tree with the tip tree
-Message-ID: <20240801124545.43e3a455@canb.auug.org.au>
+	s=arc-20240116; t=1722480764; c=relaxed/simple;
+	bh=jdh5QL8IAPjC5hwY1uxfbyge2t1ate/DN9AIY7RnTmw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l0QR8/mGMBHJumcVVqXMxcHKgbr22uQqHewXyc66FJtA1ObgKF1ggrLK+CiFYPJh6X0TCv0mnLnu7gtVyuyDz7m8k/6PQEXR/KvPUtChm3830lproy3MalB5xYsbmg5i0cA2Tz1AZbRq8bSs/Bd0vpwtEq2gGFfp/jFQFRcLHqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hZkOmvBq; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd6ed7688cso51550045ad.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1722480761; x=1723085561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MO67bKN71emtFnIdYufuYQuueaGz+jJ9f99zlg6P9GY=;
+        b=hZkOmvBqvvApsh6CfHv/euLDrMB4eW5EAqpOM4BpSgA0wCBjKMkieSheugXNv27pGJ
+         xv7abBUZ98GfyKV+vEtaOyVJUP1JaTyRMSshTczXciatvVh1KDIdOL7pE4z6ehSDc9v5
+         AzazYpLsDvMoUFPjXU+K4NmL4Xhll/9wl3M5jJIrPK+p36a/RrGVPjWeceWoEbpRLwMz
+         s899886ep8PyrpTXk7knnoWiFz50VMohxSq/pkojpDpLLfhfprIlWd35kYaXqWSkXoo7
+         vyzc//SrMJ0u6iCrisjovjs+hWoa1gqse7vcBWHOxEnZxLwPzfG+qvqPmwU7CYkkL43X
+         P70Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722480761; x=1723085561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MO67bKN71emtFnIdYufuYQuueaGz+jJ9f99zlg6P9GY=;
+        b=ow7Nxs/PQ/3YQnh8chidwa/obN7cHxF4gFdsc07V4t27+TXhwbDRtw2Y21mn2FHIki
+         OoU8ieCj6s1lC2ULQZV3WKMcSPjvyU6Cp04oTIGyVGRBxfI+A3+BS4n5UuzM19PlqJmI
+         06bH01XAwhrAdC3GKFLwTwAl+oUQ6xiVS93SQc7O5BpszWrMHf+6Zo/Dfa2jTMLhUvzr
+         50eBy3l3qC43sQW9yJOHLtWk9l6zrnq6glqsZj03GVsczk8hp1KApEG44w+snh1r/We2
+         1tgQN6BfEfBGW7webjRpI2oveud1kovUfXVXpfcqrJDCeATQpKyHkAPH+3YPIqAIRAhD
+         Ak+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUVF5E0ZpAawzTS0dQswHS//+yUY/pEUPJkO+U+QF6w/aJSQf60bJhS4E7ztE5HxUk5HZttRjno0FqH8UgJnKEGeU3Zqph5MXjEHZ6O
+X-Gm-Message-State: AOJu0Yy4oxCZOMA21OG2MphADxaCX09dDoiGpIAwG7pDVeFYm8cfBPPf
+	r+U4zP4zcA7QJrghjEHFGu54vQVURSvkN1qF4vxsOltNfUmSrCwrQtdtVJt+300=
+X-Google-Smtp-Source: AGHT+IHUUI2hJklTanphWfjhEVjpkQn8/7G1hpxN+PZYzcg0FnUHpugBQX6p1CwTxCTIR0lX05VE4Q==
+X-Received: by 2002:a17:902:f691:b0:1fd:d5b8:a4be with SMTP id d9443c01a7336-1ff4d242db4mr15825825ad.53.1722480761112;
+        Wed, 31 Jul 2024 19:52:41 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.10])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee4b0asm128018165ad.176.2024.07.31.19.52.37
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 31 Jul 2024 19:52:40 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org,
+	muchun.song@linux.dev,
+	nphamcs@gmail.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	vbabka@kernel.org,
+	Muchun Song <songmuchun@bytedance.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] mm: list_lru: fix UAF for memory cgroup
+Date: Thu,  1 Aug 2024 10:46:03 +0800
+Message-Id: <20240801024603.1865-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Z/esKeD2Z9YnzlxEsIKUQZ5";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/Z/esKeD2Z9YnzlxEsIKUQZ5
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+The mem_cgroup_from_slab_obj() is supposed to be called under rcu
+lock or cgroup_mutex or others which could prevent returned memcg
+from being freed. Fix it by adding missing rcu read lock.
 
-Hi all,
+Fixes: 0a97c01cd20b ("list_lru: allow explicit memcg and NUMA node selection")
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: <stable@vger.kernel.org>
+---
+v2:
+ Only grab rcu lock when necessary (Vlastimil Babka)
 
-Today's linux-next merge of the sched-ext tree got a conflict in:
+ mm/list_lru.c | 28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
-  kernel/sched/core.c
+diff --git a/mm/list_lru.c b/mm/list_lru.c
+index a29d96929d7c7..9b7ff06e9d326 100644
+--- a/mm/list_lru.c
++++ b/mm/list_lru.c
+@@ -85,6 +85,7 @@ list_lru_from_memcg_idx(struct list_lru *lru, int nid, int idx)
+ }
+ #endif /* CONFIG_MEMCG */
+ 
++/* The caller must ensure the memcg lifetime. */
+ bool list_lru_add(struct list_lru *lru, struct list_head *item, int nid,
+ 		    struct mem_cgroup *memcg)
+ {
+@@ -109,14 +110,22 @@ EXPORT_SYMBOL_GPL(list_lru_add);
+ 
+ bool list_lru_add_obj(struct list_lru *lru, struct list_head *item)
+ {
++	bool ret;
+ 	int nid = page_to_nid(virt_to_page(item));
+-	struct mem_cgroup *memcg = list_lru_memcg_aware(lru) ?
+-		mem_cgroup_from_slab_obj(item) : NULL;
+ 
+-	return list_lru_add(lru, item, nid, memcg);
++	if (list_lru_memcg_aware(lru)) {
++		rcu_read_lock();
++		ret = list_lru_add(lru, item, nid, mem_cgroup_from_slab_obj(item));
++		rcu_read_unlock();
++	} else {
++		ret = list_lru_add(lru, item, nid, NULL);
++	}
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(list_lru_add_obj);
+ 
++/* The caller must ensure the memcg lifetime. */
+ bool list_lru_del(struct list_lru *lru, struct list_head *item, int nid,
+ 		    struct mem_cgroup *memcg)
+ {
+@@ -139,11 +148,18 @@ EXPORT_SYMBOL_GPL(list_lru_del);
+ 
+ bool list_lru_del_obj(struct list_lru *lru, struct list_head *item)
+ {
++	bool ret;
+ 	int nid = page_to_nid(virt_to_page(item));
+-	struct mem_cgroup *memcg = list_lru_memcg_aware(lru) ?
+-		mem_cgroup_from_slab_obj(item) : NULL;
+ 
+-	return list_lru_del(lru, item, nid, memcg);
++	if (list_lru_memcg_aware(lru)) {
++		rcu_read_lock();
++		ret = list_lru_del(lru, item, nid, mem_cgroup_from_slab_obj(item));
++		rcu_read_unlock();
++	} else {
++		ret = list_lru_del(lru, item, nid, NULL);
++	}
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(list_lru_del_obj);
+ 
+-- 
+2.20.1
 
-between commits:
-
-  c245910049d0 ("sched/core: Add clearing of ->dl_server in put_prev_task_b=
-alance()")
-  31b164e2e4af ("sched/smt: Introduce sched_smt_present_inc/dec() helper")
-
-from the tip tree and commits:
-
-  60c27fb59f6c ("sched_ext: Implement sched_ext_ops.cpu_online/offline()")
-  a7a9fc549293 ("sched_ext: Add boilerplate for extensible scheduler class")
-
-from the sched-ext tree.
-
-I fixed it up (I think, see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/sched/core.c
-index 73fa0290fd8f,22f86d5e9231..000000000000
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@@ -5878,10 -5901,23 +5947,15 @@@ __pick_next_task(struct rq *rq, struct=20
-  restart:
-  	put_prev_task_balance(rq, prev, rf);
- =20
-- 	for_each_class(class) {
- -	/*
- -	 * We've updated @prev and no longer need the server link, clear it.
- -	 * Must be done before ->pick_next_task() because that can (re)set
- -	 * ->dl_server.
- -	 */
- -	if (prev->dl_server)
- -		prev->dl_server =3D NULL;
- -
-+ 	for_each_active_class(class) {
-  		p =3D class->pick_next_task(rq);
-- 		if (p)
-+ 		if (p) {
-+ 			const struct sched_class *prev_class =3D prev->sched_class;
-+=20
-+ 			if (class !=3D prev_class && prev_class->switch_class)
-+ 				prev_class->switch_class(rq, p);
-  			return p;
-+ 		}
-  	}
- =20
-  	BUG(); /* The idle class should always have a runnable task. */
-@@@ -8040,8 -8056,16 +8122,10 @@@ int sched_cpu_deactivate(unsigned int c
-  	 */
-  	synchronize_rcu();
- =20
- -	rq_lock_irqsave(rq, &rf);
- -	if (rq->rd) {
- -		BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
- -		set_rq_offline(rq);
- -	}
- -	rq_unlock_irqrestore(rq, &rf);
- +	sched_set_rq_offline(rq, cpu);
- =20
-+ 	scx_rq_deactivate(rq);
-+=20
- -#ifdef CONFIG_SCHED_SMT
-  	/*
-  	 * When going down, decrement the number of cores with SMT present.
-  	 */
-
---Sig_/Z/esKeD2Z9YnzlxEsIKUQZ5
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaq9tkACgkQAVBC80lX
-0GyO2Qf+N7ccZ/n/Fdf4273hdyp3uNqpXG6Y+yqnJqycYGOqzHkoj0uM24MGoPuy
-7+0kV+T+AWjccX7TzA5q5EiekoZPwI17I4ND2q6YvN8UeFy2xgCGWunFvQlor4Ai
-IpeysFPrcVNu1cLECYG7pFvoEQRfFJZPG6jNElb/ZLMbGkQ5osshVpIaBh7IZciR
-c9OMiiuX2hnNV62XdJCosOUfp3LzHGp/3Za+zIukcCZeoRmq0bZovy0H71DbGQwo
-BJdGr8SJ1ZKW+/X1u1pb8NjPSw1mqFkvJOke6xz7f/FKLDQR1KpdI12xC+VDRmaz
-T+o/EwKM2qugsHgh19Gt4cjZEAQ2Gw==
-=Lzg9
------END PGP SIGNATURE-----
-
---Sig_/Z/esKeD2Z9YnzlxEsIKUQZ5--
 
