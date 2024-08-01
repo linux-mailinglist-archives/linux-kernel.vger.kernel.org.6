@@ -1,109 +1,111 @@
-Return-Path: <linux-kernel+bounces-270534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A2094410D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:25:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D25F944115
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FBE1F216C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A198C1F21714
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7830414AD23;
-	Thu,  1 Aug 2024 02:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9218EEAE;
+	Thu,  1 Aug 2024 02:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JtiCJtXA"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0NGMFz1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A301370;
-	Thu,  1 Aug 2024 02:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F151210E0;
+	Thu,  1 Aug 2024 02:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722478670; cv=none; b=Eqcg3WuBPtzJs/BAU4K1lHylNyXwfVPbHQyCBq6lX/UPrrUI/UqLZ7LNqWkVJrK30SetSscICl1s3L0xHzQjFiQ9JuXiKeDZbz1nVCJdYxQyZA0u8V57fghdn4FBICDMmB/D7p1nH56TIkJnvMhzLsBxH47bVU2m4jF+/wgTnpE=
+	t=1722478933; cv=none; b=PBz8SnWJim5cPpoeZSuHnQvwXgHAOX1eozuAnlQxugsJwGchZTzkGZdIo+Nl2O+6n93aXpfGH8v60RzHqgNYRnO1ohitZjEACKXKioRat4dHeOtyp7MWJ80FYuFZ2xyTbYtAMkBdIQapM8NpdaEXPx9nrHtYbVoVrgwnOGWaoq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722478670; c=relaxed/simple;
-	bh=oS1RMgLwMHL2Dhqmo7GBAdxNlz2oCF2eZsjIxTf9OW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=goVjILhRua7bf0gMksIcDj5J0ldpkaRp5qiC/wJ1sZN1fUQ4SZOpl/y3sX/ZFhfYYqSLrsBY6clgGH30Iuf2SJgf9UKBjf5kUwtG354IiOKFidSpMkNTFU8r5Z8xzdZzqS0eXrjFwl4AUr5olyZLPofNg2c+lY/6ildwbm0+sB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=JtiCJtXA; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722478665;
-	bh=fVyxYzqCMvMG8pzOm61KDyWcw8LoxCEnu+X5OHBVRFs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=JtiCJtXAWEttwW280hQZ9s1N24Vr4Xt4fiw/7jNFRGMPihztKS9ehiWEOqKc+9A1Q
-	 rtbMrP8g8gX6U4cI6QCEaMkzvPcYoHdjKw12hKyLlI6Bjb3mNPBqqzK6GdRj4Dj1Yc
-	 iKofo3fKNvv4VmibXC9Oou6DYebZkfWJzgwci+v3nJoVO80jtM5nuoRU6Jae1DJcbW
-	 ZLJeauwQRhsfyMw2cChjTncmu6DDgsE6tpTax7MqqxLHQnYW8Fi0EU3jDOkFbhTkkp
-	 GNk4qk1yaCfxv2o+pnMDXO0kblegMDOewgq6AW4BdFpc3Tl1Do5+vUnqe52w9P5hdn
-	 Uzsm8RCOUoATg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZCKj0c9Jz4wb0;
-	Thu,  1 Aug 2024 12:17:45 +1000 (AEST)
-Date: Thu, 1 Aug 2024 12:17:44 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Daniel Bristot de Oliveira <bristot@kernel.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the tip tree
-Message-ID: <20240801121744.2756e2d5@canb.auug.org.au>
+	s=arc-20240116; t=1722478933; c=relaxed/simple;
+	bh=cgxg4rbo4fUOa9zSmibfWqsv00PQFdhsSeKcX4HAPjg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=RkzC5IkxQSimb3+/2li3tiijvMReY6TVbgS/R5sCsu1tUyj9PKrZ6QEmoGDHWvASoXP+yJuSyva83v+rmj4XGlMDGUGgzaegR9A2dtkDXwx2sIdWPqtJdKjihSLpojWSRDDrz4VyHWYvx+h6Cif83YlvkLRag0m3dI82bo/em0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0NGMFz1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24934C116B1;
+	Thu,  1 Aug 2024 02:22:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722478932;
+	bh=cgxg4rbo4fUOa9zSmibfWqsv00PQFdhsSeKcX4HAPjg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=g0NGMFz1HOD7/T0s35VIIArFp5yKZQqK2zn5bgOKLqFQWsYd2iG92tRhhtE2CpZQF
+	 QBuD9G/910Q7Mw1q+xOpDWtVsZ4sszv644qjVVhmFSml9jrzsiCclJE25xEyWcDc/W
+	 SHfoGtCNOu/yzzmspyvZOkdZN9+ockI+hBATMnlbH2aszcTagPa1fHk/Wr6X05VvgQ
+	 h9ToZZi1ciswwXnPVXqurmNQFmlwQzwRE7FgzaiyAkcQRK6d+h6WdzlTs73VNxDx9l
+	 pm1zKgvDDqkWBF5H/iUyc6pJ3msqajhP+PoFAptHCJkmRki/JKN1Cm2NsjlT3cxxnY
+	 0VUev0OBhuy5g==
+Date: Wed, 31 Jul 2024 20:22:10 -0600
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/13r4xTmIENYAR4Qx6jPyBQ0";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Wesley Cheng <quic_wcheng@quicinc.com>
+Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org, 
+ Thinh.Nguyen@synopsys.com, krzk+dt@kernel.org, 
+ srinivas.kandagatla@linaro.org, linux-doc@vger.kernel.org, 
+ bgoswami@quicinc.com, linux-arm-msm@vger.kernel.org, tiwai@suse.com, 
+ lgirdwood@gmail.com, alsa-devel@alsa-project.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, corbet@lwn.net, 
+ perex@perex.cz, gregkh@linuxfoundation.org, conor+dt@kernel.org, 
+ linux-sound@vger.kernel.org, broonie@kernel.org
+In-Reply-To: <20240801011730.4797-14-quic_wcheng@quicinc.com>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-14-quic_wcheng@quicinc.com>
+Message-Id: <172247893082.2670643.17763625549296585780.robh@kernel.org>
+Subject: Re: [PATCH v24 13/34] ASoC: dt-bindings: Update example for
+ enabling USB offload on SM8250
 
---Sig_/13r4xTmIENYAR4Qx6jPyBQ0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, 31 Jul 2024 18:17:09 -0700, Wesley Cheng wrote:
+> Add an example on enabling of USB offload for the Q6DSP.  The routing can
+> be done by the mixer, which can pass the multimedia stream to the USB
+> backend.
+> 
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> ---
+>  .../devicetree/bindings/sound/qcom,sm8250.yaml    | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
 
-After merging the tip tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-In file included from kernel/sched/build_utility.c:72:
-kernel/sched/debug.c:341:57: warning: integer overflow in expression of typ=
-e 'long int' results in '-100663296' [-Woverflow]
-  341 | static unsigned long fair_server_period_max =3D (1 << 22) * NSEC_PE=
-R_USEC; /* ~4 seconds */
-      |                                                         ^
+yamllint warnings/errors:
 
-Introduced by commit
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/sound/qcom,sm8250.example.dts:97.44-45 syntax error
+FATAL ERROR: Unable to parse input tree
+make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
 
-  d741f297bcea ("sched/fair: Fair server interface")
+doc reference errors (make refcheckdocs):
 
-This is a 32 bit build.
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240801011730.4797-14-quic_wcheng@quicinc.com
 
---=20
-Cheers,
-Stephen Rothwell
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
---Sig_/13r4xTmIENYAR4Qx6jPyBQ0
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
------BEGIN PGP SIGNATURE-----
+pip3 install dtschema --upgrade
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaq8EgACgkQAVBC80lX
-0Gy7Cwf+Iuc1/AGMxS/3HRYxyZI5hPUP/gMmsUpwzafP2JSr+meeIcbS2OGTlDVu
-pYg5SYxeeZA0HiTxRTYZ663d0rS3uPZbyzdcl05PcrjrTRtxYenhgwR2UhZEa6E6
-XRoP7C+oFlLrfhL/RoEDeR+/INo2YYwWJJq31M5KiONJeFGZnZAtxurkmA69Cr3k
-tLoxl3G9GV6ElUHejqQXg18fTtc8Dtv0ueNqpS4t2VW0zYBIRiQ0eA26mbQBo05v
-ZJytADq4rbZ/k13b9iQT5BsAuGvSFQf5LkC6H3k1ZqG7VfQS6gOW0M2xvfnINRsN
-XrPZZFaNjJu77jzWdNfsne1ODwoxew==
-=BtfK
------END PGP SIGNATURE-----
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
---Sig_/13r4xTmIENYAR4Qx6jPyBQ0--
 
