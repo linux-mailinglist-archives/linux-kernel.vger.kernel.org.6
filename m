@@ -1,112 +1,174 @@
-Return-Path: <linux-kernel+bounces-271381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02EE2944D68
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:47:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43704944D69
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31533B22525
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:47:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75AA286321
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170911A3BB9;
-	Thu,  1 Aug 2024 13:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6745D1A3BCD;
+	Thu,  1 Aug 2024 13:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeNigTw8"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pjFJSW3C"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EDA1A0711;
-	Thu,  1 Aug 2024 13:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2718C189B98
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:48:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520061; cv=none; b=F7Oga23v3Bf/7G4nM/1U36QaQcHXnChmAWG805zjZZZzOhczGxlbekDEFkQDa8Xvhsrkh+2CyGcOIJmUKPhFtZ3ZPbOqnfONXeDEsUCZAMvS4+0Rxdl1BhjVwh1TjVAsl7HTIbr2xbgjq4lVWJDc1CrJFltLQOVF3fPCcSzrpT4=
+	t=1722520083; cv=none; b=Fse/JGJEK5QczO8gMPB1HtaBd26MXa/Sn0w8Oh8eZqHu9s6t0JFe63AxIcfNHoOMRMoGvX9+vSbm+A6P6oVA3mH+GZatvrqqlaeZISQFARBkboiblq+drZaNyWxz4pmeW+5iHaRIXiSJeGzOYRJ4dFE2P8pfvoF2MKaWPmtK0hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520061; c=relaxed/simple;
-	bh=vjGy2uwfzEZ97a+3aof+3SKng4NXWemh1/vsxGXJlzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GM2XMW37S6gswVLdwK8jilMvLjGrioKJkTYs/hfEobmOwa/UtJiy1yjIaeqPpq4J+M48M1fv7m3TJztmyfGz9mzCxPKqSFpMaY4kzKLyC+X9oVeHQthoKBEoKvLbC4rS/V7iDb1SiQXnfGfrcVmXHCERjZ3EIKcYvp5J1ZQDSa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jeNigTw8; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fec34f94abso54591965ad.2;
-        Thu, 01 Aug 2024 06:47:39 -0700 (PDT)
+	s=arc-20240116; t=1722520083; c=relaxed/simple;
+	bh=I8mLr35avLJdYa5i7pz/GhJwCL/IL9MLbct5aeIbHD8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tSzn/xhNgOguin2gx4ZSnE0ji26x9n6panuDVs6teSHDx5HoVBJ8QtpHKvi8fmKBdNEXA3wDymAJnzuLtuJm5CrmRIXjWa58R6jPa6Pf56S6Wc1pHU86LcTSymfelcCsNWmEqfFG5BbliHbQ7w6+sSOXvgGDbsy4bBHTRjReK+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pjFJSW3C; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428035c0bb2so12527405e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 06:48:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722520059; x=1723124859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6oyUrXiQ5KRnBrLzW15m3SL4jVMTbgLQ6TAxlm3G9Hc=;
-        b=jeNigTw8W2C/hBosgxV7JWLMspnKat8okY3ZseaD/QyxTTXuyrX7JmIBT3PjIbPsES
-         4AnANsgIbA5+mXk7i6f+chQKUlBwAUYPkQq1jb/SEx0LUF5ho7D53GE3STVP1WRIwSNN
-         lPB8jElp9EHNZe0j9viD5m9FihDrva3JeO9rghTrfSDKv4I8+8t7VZm8bzmEzFVT6MV+
-         mzqPpSdCj0TxgIscQu71LhvmTjwU5/hwX5ca8xBXpaO6H9p+v7ronqkOZTynEAW5Shmq
-         iCx+UoXif/a09IeKhyagN2jC09IWW/GvljX+XJaojQw7zrvdwBIKIaKZLvoeTpJhelyv
-         DJzw==
+        d=google.com; s=20230601; t=1722520080; x=1723124880; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ce/grfeGfBpe3OOUAK5aLiv0sObRbOqHlQfr8NziK34=;
+        b=pjFJSW3CoNSd9tC1yFgxg94t9xvBgMM/7PRs176m9Ya67NqnNNNJ12B3gccpql3quc
+         wldVNUIlfL5HJA5x7zGYCGV426dFGlltSoJYNnUa1CN5nfhuOJ4elElxWcS5FznlVso7
+         /AwGubqe0jJG64KVS4GtpRldCHXMb1d94WC3drP1mghpiPVgehv+QlLnx6a4/slpK+/6
+         Vr4NJK/12ENPcZcGM8ULoVIYk71khUkGcdVKs/Ke8sywp/PHYelcldguXqs2J362CJtg
+         wuTsH7hFr00Ut7RsYOzVx5t5N5Sc21/EAxvGvLhdpjpwgU5lCezQXjRIMzfVGjUP9QZl
+         m2LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722520059; x=1723124859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6oyUrXiQ5KRnBrLzW15m3SL4jVMTbgLQ6TAxlm3G9Hc=;
-        b=mtGZb2bX/Aah1I2+snErGpcLB1kLhR5tBhgUpDog+VtJiw7BD80hqRC6Bvy0dyXP6h
-         RCpm0Byeo99tYFnWjQlZrmHQBTFzx+LQAVJeo49qYYyvaXdArkHNBBSu3Zjw/FK+HzgH
-         BCdfUu62Tmb0fipqcpmQlc1jYG7Eo3MHDRT2C/ujcWidrKNoZGmWJZWsBUucHIquYfGR
-         LuFlC+bRfH9czFwcJfVyCMy/hfE3VTYvHy1mX/7gZ61ZcWtkfd/CT0Ev4Ynnj4DLJqvt
-         c5etlrjoCRXGeBGQ8KYpDrszolZMgYZKZ7CeicnDgz9+8IZZ9Xd16vApJmEPEHxaRZgf
-         QQGg==
-X-Forwarded-Encrypted: i=1; AJvYcCV90A+Dl5og9QXPFtjFjmgxAQwj8xUuoWRw3QpeTIOPVqpfLU02kpZ2ajIDeMc0HESqcZa3IXfwoqvYgToQG8htnBJivpzFGIUePk8p
-X-Gm-Message-State: AOJu0YzIbGf2vJzNc3Ms5gUsjLIeHJ50GReDja4LSWOEdFAr3NW3WIfC
-	UhOTetpzhfoiO8a8Pf9Eq5us8f+FCLTk4QWvBiG0v/ZhzH8+Ndg/
-X-Google-Smtp-Source: AGHT+IFfeAhrEmDM6jOnfL5ofrZr5WaVDCLtKFEqLNQlj0uawfZtGGNywhT+ed6VYVqPvDXKX6TqSQ==
-X-Received: by 2002:a17:90a:8d18:b0:2c9:6278:27c9 with SMTP id 98e67ed59e1d1-2cff95405a9mr245888a91.38.1722520059292;
-        Thu, 01 Aug 2024 06:47:39 -0700 (PDT)
-Received: from mythos-cloud.. ([211.46.174.173])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4aa0c2sm3302534a91.46.2024.08.01.06.47.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 06:47:38 -0700 (PDT)
-From: Moon Yeounsu <yyyynoom@gmail.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	Moon Yeounsu <yyyynoom@gmail.com>
-Subject: [PATCH] e1000e: use ip_hdrlen() instead of bit shift
-Date: Thu,  1 Aug 2024 22:47:10 +0900
-Message-ID: <20240801134709.1737190-2-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1722520080; x=1723124880;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ce/grfeGfBpe3OOUAK5aLiv0sObRbOqHlQfr8NziK34=;
+        b=Lhhu2K9McBNzdH5ahIpABXoBXdsiFybML2T4NqQ1XZUa5VgBhDl+uWuPOuaeWcUxgx
+         9ZsIc0nyqk57yjCdp0Yv0aL/NpLThJ1I/SDXugBBO0+pkebVPVt7YLGPWTXKjI75Uozz
+         bsOX1SxBKWbf+NreUM7nZfJCW/cBJp4oeMlwI67U5wl2LQnyw/xvYsi9lE9MIcYU6N85
+         MO23f6eJyC8pKnpnAq20iwqZxQiBefzVmq7IJDKc2+WcoeyZGgdxWqxS+f6FXBwddiYL
+         hZIrkSRGd3y9qZQ66Me1VcthuWjBKOJFYlxuz7TB1M1j6auUhhhQOqU08zOE1+tbzB68
+         yAsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUauRc4ukXIazIb+nxfdULgPNStZ8KolaYWuFHHp8LVTC7EdWtqId2kh8IU1pLe786vtOxwDXs1gift8Tp9Q+JC4YEojlGkjwPlWRK
+X-Gm-Message-State: AOJu0YyQ+NL4IgsvAsGFY4wrXIBL5rZg1XtY6Fbag6wRlKku0X4jTg1/
+	dGzxKAyO9K1C08G+2lkRSxvHtaSxq8zaJYyt0/ke6jnqEMNul0+vAQrU0dFktBUs3hujV+qna3P
+	WVodOmiJVyzjfUjfMYgbkc8od/azXeTPvW237
+X-Google-Smtp-Source: AGHT+IHDP/ePi7mwq3gsT2tRGQmEKN5QbhPrzmJecK/Cc8Qaxs/dRzG4EdOI5gGc0kmcCKTLxYrUcTJ33iDzFlxzDKk=
+X-Received: by 2002:a05:600c:138e:b0:424:71f7:77f2 with SMTP id
+ 5b1f17b1804b1-428e47a0825mr16187465e9.16.1722520080274; Thu, 01 Aug 2024
+ 06:48:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
+ <20240723-linked-list-v3-4-89db92c7dbf4@google.com> <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
+ <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com>
+ <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me> <CAH5fLgjntr81+OFxzVqvb+zL4RqHCap9LZnNxNvN_gzF8AKrRg@mail.gmail.com>
+ <ea3ef06b-8c4c-4883-867f-b68f2eb589af@proton.me>
+In-Reply-To: <ea3ef06b-8c4c-4883-867f-b68f2eb589af@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 1 Aug 2024 15:47:47 +0200
+Message-ID: <CAH5fLgg-q6VEsGd7p16ZEkWj6HoydFJKB-jYN6ZT=8sT6FNE7A@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
+	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There's no reason to use bit shift to find the UDP header.
-It's not intuitive and it reinvents well-defined functions.
+On Thu, Aug 1, 2024 at 3:46=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
+> wrote:
+>
+> On 01.08.24 14:51, Alice Ryhl wrote:
+> > On Thu, Aug 1, 2024 at 12:45=E2=80=AFPM Benno Lossin <benno.lossin@prot=
+on.me> wrote:
+> >>
+> >> On 01.08.24 11:42, Alice Ryhl wrote:
+> >>> On Wed, Jul 31, 2024 at 8:41=E2=80=AFPM Benno Lossin <benno.lossin@pr=
+oton.me> wrote:
+> >>>>
+> >>>> On 23.07.24 10:22, Alice Ryhl wrote:
+> >>>>> +/// The prev/next pointers for an item in a linked list.
+> >>>>> +///
+> >>>>> +/// # Invariants
+> >>>>> +///
+> >>>>> +/// The fields are null if and only if this item is not in a list.
+> >>>>> +#[repr(transparent)]
+> >>>>> +pub struct ListLinks<const ID: u64 =3D 0> {
+> >>>>> +    #[allow(dead_code)]
+> >>>>> +    inner: Opaque<ListLinksFields>,
+> >>>>
+> >>>> Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it=
+ is
+> >>>> enough and you change this, be aware that `Opaque` is `!Unpin`, so i=
+f
+> >>>> you intend for `ListLinks` to also be `!Unpin`, then you need a
+> >>>> `PhantomPinned`)
+> >>>
+> >>> I need the `!Unpin` part for aliasing.
+> >>
+> >> Oh good point, do you mind adding a comment for that?
+> >>
+> >>>>> +}
+> >>>>> +
+> >>>>> +// SAFETY: The next/prev fields of a ListLinks can be moved across=
+ thread boundaries.
+> >>>>
+> >>>> Why? This is not a justification.
+> >>>
+> >>> What would you say?
+> >>
+> >> While trying to come up with a safety comment I thought about the
+> >> following: this impl does not depend on the type that is behind the
+> >> pointer (ie the type containing the `ListLinks`). Thus this `ListLinks=
+`
+> >> will always implement `Send` even if the pointed-to value does not.
+> >> What we could do (and what definitely would be correct) is this:
+> >> `List` can only be used with `Send` types, then we could implement
+> >> `Send` for `ListLinks`. But I haven't actually come up with a problem,
+> >> so there might a more permissive solution.
+> >> Do you have a use-case where you need `!Send` types in a list?
+> >>
+> >> Here is a part of my reasoning: If the pointed-to value is `!Send`, th=
+en
+> >> the `List` item type must also be `!Send`. Thus all list operations ta=
+ke
+> >> place on the same thread (since the `List` will be `!Send`). Therefore
+> >> nobody can access the `prev`/`next` pointers from another thread.
+> >>
+> >> But this does not justify that `ListLinks` can be made `Send`. (althou=
+gh
+> >> there isn't actually a problem)
+>
+> I think I confused myself. The paragraph above actually explains why we
+> are allowed to make `ListLinks: Send`. What do you think of the
+> following comment:
+>
+> // SAFETY: The only way to access/modify the pointers inside of `ListLink=
+s<ID>` is via holding the
+> // associated `ListArc<T, ID>`. Since that type correctly implements `Sen=
+d`, it is impossible to
+> // move this an instance of this type to a different thread if the pointe=
+es are `!Send`.
 
-Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
----
- drivers/net/ethernet/intel/e1000e/netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will use that, thanks.
 
-diff --git a/drivers/net/ethernet/intel/e1000e/netdev.c b/drivers/net/ethernet/intel/e1000e/netdev.c
-index 360ee26557f7..07c4cf84bdf3 100644
---- a/drivers/net/ethernet/intel/e1000e/netdev.c
-+++ b/drivers/net/ethernet/intel/e1000e/netdev.c
-@@ -5731,7 +5731,7 @@ static int e1000_transfer_dhcp_info(struct e1000_adapter *adapter,
- 		if (ip->protocol != IPPROTO_UDP)
- 			return 0;
- 
--		udp = (struct udphdr *)((u8 *)ip + (ip->ihl << 2));
-+		udp = (struct udphdr *)((u8 *)ip + ip_hdrlen(skb));
- 		if (ntohs(udp->dest) != 67)
- 			return 0;
- 
--- 
-2.45.2
-
+Alice
 
