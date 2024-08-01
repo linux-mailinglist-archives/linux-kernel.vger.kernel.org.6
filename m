@@ -1,54 +1,67 @@
-Return-Path: <linux-kernel+bounces-270777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 336E7944516
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:02:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF965944521
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:05:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 656E71C21DF3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D562828BE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E8C15820C;
-	Thu,  1 Aug 2024 07:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60420157A55;
+	Thu,  1 Aug 2024 07:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eU47yqPY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="NGW1LMRT"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02564647;
-	Thu,  1 Aug 2024 07:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD1A18E0E;
+	Thu,  1 Aug 2024 07:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722495715; cv=none; b=LKlIu4zvPSyu+p13yqHodIJUhBQ+PzR9fCLoEUd2TTmqgMCYte7Aog0eyqHvsfx4BH6ri8ArS9b1o0SnrVoGkYKazG0+rsXzcmq1BUx9Y3q8+1BHHCUKClRMJZAQJjrk5boGpNz8c6XCL0XjfoY1B/3jxgO3E02tgC0EmnSLmak=
+	t=1722495892; cv=none; b=AtH9LZTwETB2kh8IClqPM2XLBidmn9bT3UGmRnB9cdubiddB5df0FytHBpMd57pvWWOdsJGEdE3lhtHyGJ2PcyPll1YqqmiEvSrT23lo7OfYw5y3irMyY+k4tY2lln3XwTCMJtNNED2HXzuthHsZ78crue0MMi5BK9b8pboDt7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722495715; c=relaxed/simple;
-	bh=flfXUv/3ndsjEa5AIWI0hZIUfe5vN7TapMsXCJiWNkw=;
+	s=arc-20240116; t=1722495892; c=relaxed/simple;
+	bh=BaVlJRN/6hPJp9l19L8ToU280ekcfomw2D+4NZlM194=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a1X/FG2Xz4AHosnxpXbU5jA+s0c3p1K2s7TQEuANhAvIf/YBFosH4a7VPf8yzQdOAUfunCBsApOFBpSfKfOS4fOSpm22NxEh2DeogyfMF/fye9dVgxfCmuroex/P/d1t3wRcn5SQFYaU9n22jMoAvc2q/wiDvKcOjRqKob2w2a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eU47yqPY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 677ECC4AF09;
-	Thu,  1 Aug 2024 07:01:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722495714;
-	bh=flfXUv/3ndsjEa5AIWI0hZIUfe5vN7TapMsXCJiWNkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eU47yqPYjqFlLSWxL6G9w1Rm19s0UNkX8J3CHNrI7MkgKCZy7RsSG67nVBntw+Gp/
-	 hcK+FUT459CzoFA7L1ZCb2gxePArPMUE8RfEXEjdBdbEwWHlyiA4Srm38wPBZITRUp
-	 gJAixTQ9BKhY+ru0H4oEfDasZ/ItJfnIZTzAYK2FCzpMcK63Dhao3FMGK0e/lHIaob
-	 o7mXUqO68LCIioXzgFy0hl7L+EVP8L0+DJyGHfau+ZQ+TvIYHBUMiiw0UBAegsl8nN
-	 brW2duhskhSP8CbKe1BN9pnJhOHqDYvVhvQPabp9KqbtGKn0yD+xj8ZInN5iBfm77w
-	 uZ6ojlGI7SB1A==
-Date: Thu, 1 Aug 2024 09:01:50 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the vfs-brauner
- tree
-Message-ID: <20240801-quintessenz-beinhalten-661f1965f03e@brauner>
-References: <20240801080323.7b91964f@canb.auug.org.au>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qT8/MEbysTMb0M5/qScjCKM8/3tGZzqX60lYSzFySv5SV8BQBPG8AkQI14zJvcidmIbiIOk4y2Utz7TNItURD6xHfy11qufTeZsEA52TrvJdDMNYSFfuIFYKeSaQf31gziAyQpQcf/tjO2xB3aK8GQDpt2R2XObjdL/avq2xfmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=fjasle.eu; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=NGW1LMRT; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fjasle.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=fjasle.eu;
+	s=ds202307; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=61UZKpDQzaF9GUCZxf/tmbLRyDF/Ip+EC4Mbam9rse8=; b=NGW1LMRTNP+8JbP8ljr89Daoqp
+	FeZQCOKnWc74tPRBET6YrJYarkgVly2uJckeL6nSiN+LMPUDXy4TLjDep2JtZHERzhxSL1Kzw84fd
+	s9zEFZJDdb2pEbT8UwZODl1Q45OKMiBRx0SxwcOe5jEN6tEyYCIG3fj0lT7Mx5f9Pzb2uGlRtuSxy
+	Q2reyXVpy1uLnU/DzHhni0YGOvw5r5P1VaDj3OeFsDysmqcowBoaZ0QDhGiLntjlI7P3DIX4lBa3Q
+	RXEyO2MbACcKAX8FBOHKDXzKk5gbGYU/FoRwlNLHHleouzZc1s4KbTfXKFFt+Km1jJislEO3DFuzE
+	69o5xB/g==;
+Received: from [2001:9e8:9df:2b01:3235:adff:fed0:37e6] (port=51948 helo=lindesnes.fjasle.eu)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <nicolas@fjasle.eu>)
+	id 1sZPra-00AnRX-R9;
+	Thu, 01 Aug 2024 09:04:39 +0200
+Date: Thu, 1 Aug 2024 09:04:33 +0200
+From: Nicolas Schier <nicolas@fjasle.eu>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+	Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when
+ possible
+Message-ID: <20240801-peculiar-soft-oarfish-acc596@lindesnes>
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-5-masahiroy@kernel.org>
+ <20240731-soft-kittiwake-of-election-a1dfa0@lindesnes>
+ <CAK7LNASR4KtTnP5sq32DNsbauFwMrtw8Q800ZyjCiqetFooYdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,17 +70,115 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240801080323.7b91964f@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNASR4KtTnP5sq32DNsbauFwMrtw8Q800ZyjCiqetFooYdQ@mail.gmail.com>
 
-On Thu, Aug 01, 2024 at 08:03:23AM GMT, Stephen Rothwell wrote:
-> Hi all,
+On Thu, Aug 01, 2024 at 11:37:30AM +0900, Masahiro Yamada wrote:
+> On Thu, Aug 1, 2024 at 6:10 AM Nicolas Schier <nicolas@fjasle.eu> wrote:
+> >
+> > On Sat, Jul 27, 2024 at 04:42:04PM +0900, Masahiro Yamada wrote:
+> > > A long standing issue in the upstream kernel packaging is that the
+> > > linux-headers package is not cross-compiled.
+> > >
+> > > For example, you can cross-build Debian packages for arm64 by running
+> > > the following command:
+> > >
+> > >   $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+> > >
+> > > However, the generated linux-headers-*_arm64.deb is useless because the
+> > > host programs in it were built for your build machine architecture
+> > > (likely x86), not arm64.
+> > >
+> > > The Debian kernel maintains its own Makefiles to cross-compile host
+> > > tools without relying on Kbuild. [1]
+> > >
+> > > Instead of adding such full custom Makefiles, this commit adds a small
+> > > piece of code to cross-compile host programs located under the scripts/
+> > > directory.
+> > >
+> > > A straightforward solution is to pass HOSTCC=${CROSS_COMPILE}gcc, but it
+> > > would also cross-compile scripts/basic/fixdep, which needs to be native
+> > > to process the if_changed_dep macro. (This approach may work under some
+> > > circumstances; you can execute foreign architecture programs with the
+> > > help of binfmt_misc because Debian systems enable CONFIG_BINFMT_MISC,
+> > > but it would require installing QEMU and libc for that architecture.)
+> > >
+> > > A trick is to use the external module build (KBUILD_EXTMOD=), which
+> > > does not rebuild scripts/basic/fixdep. ${CC} needs to be able to link
+> > > userspace programs (CONFIG_CC_CAN_LINK=y).
+> > >
+> > > There are known limitations:
+> > >
+> > >  - GCC plugins
+> > >
+> > >    It would possible to rebuild GCC plugins for the target architecture
+> > >    by passing HOSTCXX=${CROSS_COMPILE}g++ with necessary packages
+> > >    installed, but gcc on the installed system emits
+> > >    "cc1: error: incompatible gcc/plugin versions". I did not find a
+> > >    solution for this because 'gcc' on a foreign architecture is a
+> > >    different compiler after all.
+> > >
+> > >  - objtool and resolve_btfids
+> > >
+> > >    These are built by the tools build system. They are not covered by
+> > >    the current solution.
+> > >
+> > > I only tested this with Debian, but it should work for other package
+> > > systems as well.
+> > >
+> > > [1]: https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/rules.real#L586
+> > >
+> > > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > > ---
+> > >
+> > >  scripts/package/install-extmod-build | 34 ++++++++++++++++++++++++++++
+> > >  1 file changed, 34 insertions(+)
+> > >
+> > > diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+> > > index cc335945dfbc..0b56d3d7b48f 100755
+> > > --- a/scripts/package/install-extmod-build
+> > > +++ b/scripts/package/install-extmod-build
+> > > @@ -43,4 +43,38 @@ mkdir -p "${destdir}"
+> > >       fi
+> > >  } | tar -c -f - -T - | tar -xf - -C "${destdir}"
+> > >
+> > > +# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
+> > > +# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
+> > > +# the case for package building. It does not cross-compile when CC=clang.
+> > > +#
+> > > +# This caters to host programs that participate in Kbuild. objtool and
+> > > +# resolve_btfids are out of scope.
+> >
+> > Just for clarification: Why do you call both "out of scope" here?
+> > Because they're not being built by kbuild, or because they will never be
+> > needed for building oot kmods?
 > 
-> Commit
 > 
->   43b158d40393 ("ufs: Convert ufs_check_page() to ufs_check_folio()")
+> I meant the former.
 > 
-> is missing a Signed-off-by from its author.
+> 
+> Debian applies a tricky patch to the tools build system
+> in order to cross-compile objtool:
+> 
+> https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/patches/debian/fixdep-allow-overriding-hostcc-and-hostld.patch
+> 
+> It is not an elegant solution, though.
+> 
+> 
+> I still believe the right thing to do is
+> converting Makefiles for objtool and resolve_btfids into Kbuild style.
+> 
+> 
+> objtool and resolve_btfids are necessary for building external modules,
+> when CONFIG_OBJTOOL=y and CONFIG_DEBUG_INFO_BTF=y, respectively.
+> If these comments are confusing, I can delete them.
 
-Same thing: I already fixed that but didn't push out a new tree yet because my test
-machine wasn't available.
+I think it's good to mention that cross-built linux-headers package is
+still broken for CONFIG_OBJTOOL=y and CONFIG_DEBUG_INFO_BTF=y.  I think
+I'd add a sentence to the commit message and keep the comment here as it
+is.
+
+Kind regards,
+Nicolas
+
 
