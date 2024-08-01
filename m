@@ -1,185 +1,149 @@
-Return-Path: <linux-kernel+bounces-271622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF759450DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:39:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 418FD9450E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7132D1C22AF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77771F2A2FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 262861BC9EB;
-	Thu,  1 Aug 2024 16:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E41BD035;
+	Thu,  1 Aug 2024 16:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uSottXwt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="crO/vnAL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ByPNioin"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902421BC091;
-	Thu,  1 Aug 2024 16:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EF01BD011
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530135; cv=none; b=J2Yc2ogxr0SpDtWb/FsH+Y9uiIykRnwyRiV08DfDTAnEJkXvdIZS3ZVRDWZIHEognQadWjnI4ZKrDDBaDNHqVxKgg4Jy9vmf/PvZy4ZWdDxn+r1oT9qsjVi1iidu1Dm93qo83hO+TCNQFSZzr/qiROUHCkB9hsV6l8kX4g8VZT8=
+	t=1722530165; cv=none; b=AjlW5Gi0oQMIztZyFeTumodpfg8c1rhJBIufbAfQ13ha+ZhH/oH+1Isi446oSY3Ajz7MGB6oV8LOHuatKuRXfHzBY9H7jT1RLjZJ7Z2tNXhbkXm7ulfdn3CFKhf9EozeKAEsmcINjcbMazwXMnRlkOk1dFLzbYsYB10UNuEKuR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530135; c=relaxed/simple;
-	bh=0Lfx1WVgwRxf1gQh7kwV7t7BdlI9ig0l0ULy/fkNVLw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Wfi21NzIBKZ0x6KS50AJoUjCA3lceqRahjwr1e/O+rhXusmvZsySk+G0cHumy4frtuBtZ3UxE3mBr0t6r08vdIYC/mKbBbUJiRzV5jCyaHVOVdOouND1utIoZGh3tf+6wSy0LAlzAwPAL1G1LJa5iIZHY0IEyy5JPqboohq6Pu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uSottXwt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=crO/vnAL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 01 Aug 2024 16:35:31 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722530131;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tMS6Rh4AdYXsJAxbP/xam9UWNoPS5vyVFd5JLNmBres=;
-	b=uSottXwtkajH6kaNob23dNRPoTDx5L4v7XwVzL8I47zECFOsNxKs05Mx0S07Kb6QmyYFio
-	S2gaRCftlob2hgQ6zD6aGqncA3jI5Fdl8KBGzp/BHThFqIUq1vJldrvoTDPqsLTZTc7fxN
-	8HI6sS1H4E2CnNbVWFCzhK51pV1ldsxnpgL4FBkft6mHEKvH+2dk+EOQMIrcGtI+fKyq+J
-	uNlNrgseCZ2jIiSU8JMFUhloZB2FLtqDXctgC8M0+pP+BpHUTUUZMPB1jHDmOCGwLgHvyG
-	IVy+tBoZ8Msxjb6gsp3eO093Q7SIKgDdh32Smgq3Q0uX2Vt+xzCilMXGrGu7iQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722530131;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tMS6Rh4AdYXsJAxbP/xam9UWNoPS5vyVFd5JLNmBres=;
-	b=crO/vnALldNmzddUdNYeNkdQr5SiX6wzZcPqoFv+HzQ+j+e0pLzof5s6WvjsGu3AVP6GvN
-	bPfi8EBn+7xoB7CQ==
-From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce: Define mce_prep_record() helpers for common
- and per-CPU fields
-Cc: Yazen Ghannam <yazen.ghannam@amd.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240730182958.4117158-3-yazen.ghannam@amd.com>
-References: <20240730182958.4117158-3-yazen.ghannam@amd.com>
+	s=arc-20240116; t=1722530165; c=relaxed/simple;
+	bh=5ZB90r+pHV9yVwJHQmZRzPSlgknTBF1ajbZuNTFiPAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OlZ5i7t0FQgyRFbFaGsvLPHLG9Me1WITS/AdQono0fJOhJY5y3/QZ06PBv87ePltRAlkdCG7H9elnckThyaMyZyJbTtkD7j8qY57U0rMHIm8dHFMwUhDH8D8aoQsVE0sz7SOc636lJhtWu7PypmyoJodZRLxMQFTmHVaohvTWTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ByPNioin; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc692abba4so53823575ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722530163; x=1723134963; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=atZpvsXspSbpncJOqsxwY4AP8Ik7TANHCt+zaS4EnHk=;
+        b=ByPNioinVMbtgBXekuFVTYnvH2JNinHuI8K8dYKCbd4eKwwZEPtZvPuRJ6PnWVjTVZ
+         9IauFaURCf7NATFiRO7z/9tQL9msbjXIidEHrDPYbEqB6EgBno2e/RrQm+wRi2B8/+vZ
+         MF58fRuG7uNcIsUJRQftcQDhC55ly/jmu6l5M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722530163; x=1723134963;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=atZpvsXspSbpncJOqsxwY4AP8Ik7TANHCt+zaS4EnHk=;
+        b=gAhrcKpI2uF23fLcZhAAJUDgNNLg1+1xTaajnKmNl33mpG9QZ9BqkKsw01ihF1HSAy
+         eKyIlpPn2Bx9VQoxuF/IW7Y6du2EhcYrT/JauF5gHgvHQWlKGklV/aNHQBq9aXW5eIYY
+         WCFytxhjzE5u7VKZoSm4Th2osOkUfh4lm/epiUEy8dUhL8fBbro41PzZ1noJQv1hyKV/
+         OfZATmHRsIhpfKIzWcJYu7ueqfNyHNc5L79l+iT+it9dLE+PLqNWk4l6rDUFBkTWbVl8
+         gjbl6JReM46iDh8EBzw1SGYLf7+LvniB+1MkvKwY1Czgyvo8f02U/1WmnRUHLywAievw
+         KUpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV809aKhFgH+4CXKX4MNeYSm5bJP04Ja5jLAVCbb36dxP6NTz6FjeLam+GTefHE8o398Ijvclq8hfBO2embu/P8cRx30afV3485s6Ya
+X-Gm-Message-State: AOJu0Yx3h19B5On+b+Hl8U+VFwQQNW29JxIc7B7L9MA26kJK3a5bkrro
+	oXDKpq7xpXiUcqv7K+BOfPeM+dQCVckNSPv6afrB1tZFkrzPaJyJN93j5+6ceQ==
+X-Google-Smtp-Source: AGHT+IEV0K6EvVI+Tw4uQvCY+qNqO6h7fg7Kg6s+Vxrl1cuiYMx85QJ8Ay0rI1ohVbOt5/2nS6s1Sg==
+X-Received: by 2002:a17:903:1207:b0:1fd:66fd:4dae with SMTP id d9443c01a7336-1ff57262a3fmr11457695ad.3.1722530162751;
+        Thu, 01 Aug 2024 09:36:02 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19ec5sm820775ad.20.2024.08.01.09.35.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 09:36:02 -0700 (PDT)
+Message-ID: <20f9a0f6-fff7-4eeb-8197-4bc9fdc147e2@broadcom.com>
+Date: Thu, 1 Aug 2024 09:35:50 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172253013144.2215.3708689740044304266.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
+ add 7712 SoC
+To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
+ Nicolas Saenz Julienne <nsaenz@kernel.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+ Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
+ <linux-rpi-kernel@lists.infradead.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-2-james.quinlan@broadcom.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20240731222831.14895-2-james.quinlan@broadcom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the ras/core branch of tip:
+On 7/31/24 15:28, Jim Quinlan wrote:
+> o Change order of the compatible strings to be alphabetical
+> o Use "maxItems" where needed.
+> o Change maintainer: Nicolas has not been active for a while.  It also
+>    makes sense for a Broadcom employee to be the maintainer as many of the
+>    details are privy to Broadcom.
+> 
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
 
-Commit-ID:     f9bbb8ad0c8b2f37e3d474b8693f563e4a29e92e
-Gitweb:        https://git.kernel.org/tip/f9bbb8ad0c8b2f37e3d474b8693f563e4a29e92e
-Author:        Yazen Ghannam <yazen.ghannam@amd.com>
-AuthorDate:    Tue, 30 Jul 2024 13:29:57 -05:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 01 Aug 2024 18:20:25 +02:00
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
-x86/mce: Define mce_prep_record() helpers for common and per-CPU fields
-
-Generally, MCA information for an error is gathered on the CPU that
-reported the error. In this case, CPU-specific information from the
-running CPU will be correct.
-
-However, this will be incorrect if the MCA information is gathered while
-running on a CPU that didn't report the error. One example is creating
-an MCA record using mce_prep_record() for errors reported from ACPI.
-
-Split mce_prep_record() so that there is a helper function to gather
-common, i.e. not CPU-specific, information and another helper for
-CPU-specific information.
-
-Leave mce_prep_record() defined as-is for the common case when running
-on the reporting CPU.
-
-Get MCG_CAP in the global helper even though the register is per-CPU.
-This value is not already cached per-CPU like other values. And it does
-not assist with any per-CPU decoding or handling.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Link: https://lore.kernel.org/r/20240730182958.4117158-3-yazen.ghannam@amd.com
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/kernel/cpu/mce/core.c     | 34 +++++++++++++++++++----------
- arch/x86/kernel/cpu/mce/internal.h |  2 ++-
- 2 files changed, 25 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index dd5192e..2a938f4 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -117,20 +117,32 @@ static struct irq_work mce_irq_work;
-  */
- BLOCKING_NOTIFIER_HEAD(x86_mce_decoder_chain);
- 
--/* Do initial initialization of a struct mce */
--void mce_prep_record(struct mce *m)
-+void mce_prep_record_common(struct mce *m)
- {
- 	memset(m, 0, sizeof(struct mce));
--	m->cpu = m->extcpu = smp_processor_id();
-+
-+	m->cpuid	= cpuid_eax(1);
-+	m->cpuvendor	= boot_cpu_data.x86_vendor;
-+	m->mcgcap	= __rdmsr(MSR_IA32_MCG_CAP);
- 	/* need the internal __ version to avoid deadlocks */
--	m->time = __ktime_get_real_seconds();
--	m->cpuvendor = boot_cpu_data.x86_vendor;
--	m->cpuid = cpuid_eax(1);
--	m->socketid = cpu_data(m->extcpu).topo.pkg_id;
--	m->apicid = cpu_data(m->extcpu).topo.initial_apicid;
--	m->mcgcap = __rdmsr(MSR_IA32_MCG_CAP);
--	m->ppin = cpu_data(m->extcpu).ppin;
--	m->microcode = boot_cpu_data.microcode;
-+	m->time		= __ktime_get_real_seconds();
-+}
-+
-+void mce_prep_record_per_cpu(unsigned int cpu, struct mce *m)
-+{
-+	m->cpu		= cpu;
-+	m->extcpu	= cpu;
-+	m->apicid	= cpu_data(cpu).topo.initial_apicid;
-+	m->microcode	= cpu_data(cpu).microcode;
-+	m->ppin		= topology_ppin(cpu);
-+	m->socketid	= topology_physical_package_id(cpu);
-+}
-+
-+/* Do initial initialization of a struct mce */
-+void mce_prep_record(struct mce *m)
-+{
-+	mce_prep_record_common(m);
-+	mce_prep_record_per_cpu(smp_processor_id(), m);
- }
- 
- DEFINE_PER_CPU(struct mce, injectm);
-diff --git a/arch/x86/kernel/cpu/mce/internal.h b/arch/x86/kernel/cpu/mce/internal.h
-index 01f8f03..43c7f3b 100644
---- a/arch/x86/kernel/cpu/mce/internal.h
-+++ b/arch/x86/kernel/cpu/mce/internal.h
-@@ -261,6 +261,8 @@ enum mca_msr {
- 
- /* Decide whether to add MCE record to MCE event pool or filter it out. */
- extern bool filter_mce(struct mce *m);
-+void mce_prep_record_common(struct mce *m);
-+void mce_prep_record_per_cpu(unsigned int cpu, struct mce *m);
- 
- #ifdef CONFIG_X86_MCE_AMD
- extern bool amd_filter_mce(struct mce *m);
 
