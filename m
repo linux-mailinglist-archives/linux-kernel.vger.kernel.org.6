@@ -1,670 +1,223 @@
-Return-Path: <linux-kernel+bounces-271107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F3A9449A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:47:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCB99449AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C2641C260C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:47:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A041F26B1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0086918950D;
-	Thu,  1 Aug 2024 10:46:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AA0183CC4
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2E5183CB7;
+	Thu,  1 Aug 2024 10:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="usKRXty0"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0549183CC4
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509191; cv=none; b=YbPEfZyowrzEoEnPy6u0BeKXGD/LKMcNcjD7NUzoW4PxP8JZsta7v0orhqcK9YKIuqm2jD9HWa3bOEp7RotMyqfudIu/gXYsTlVeM0UuTjYwfWc8DA0vhOQrosvBijWNS1NtwNNxnq838p1ZW4IEFBpJBIPyWSot+zTFBOJBixA=
+	t=1722509265; cv=none; b=O4fs9X7Z569j1BkZFMu36RNuDA/V2CjJ2jxw66vCb0Bl4x5NRnCdNvm5jhwia0wQSMcK2Vn5TBt0pViezoGcSy7PlW3Hgj5+/stej+6Q36UafCgCKCAnDHDAQNgu6IJvpj4M57frtlp+P/V7WbW07AtguXtAb1tmrEzKzMxg3fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509191; c=relaxed/simple;
-	bh=ygHwOj6pdGYHoaElzgefmef1wCC54a/cmBCbRmEUr0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BJnbDSMFcuNILgsNLY/hHZeyE4ceQvOJfxwbTG5JulA5/4ZyxHgOlXe6EVECSVruAhbOTd9toQ8Ea/1eHd6V91Gdd5KHeccfcx1whfXu1FqtW57QL8uJ08x21QpTA0P3ipTaK6b9DI85A2XMbfaqu/Qj8m98heRghXW+8m1ss2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B60EF15A1;
-	Thu,  1 Aug 2024 03:46:53 -0700 (PDT)
-Received: from [10.163.56.112] (unknown [10.163.56.112])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 657C73F5A1;
-	Thu,  1 Aug 2024 03:46:24 -0700 (PDT)
-Message-ID: <c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
-Date: Thu, 1 Aug 2024 16:16:22 +0530
+	s=arc-20240116; t=1722509265; c=relaxed/simple;
+	bh=hSVSRrz3fsl8s+TtTum1SWINf7gjHKl5ODNPOppJJBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abc4a8OI4LRAxouIZpNkTNIx+ROwIHYo802+Oa/oTZjJH4gWK3at4ngrGChvg85Eg5BSdhWP9N1skEPkuxG9v03h61viYKhJSZzJ0QyUXsTY6VG29D8sBd2N3JYQ/DD/Qh/iQXD/KNhjGfhjOfDfhBrADF5M0sraXL6rWEicukQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=usKRXty0; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a3b866ebc9so9560424a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:47:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722509262; x=1723114062; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z85y/g+9vb81jKmcafP4dvn4vFmY5QR0yXRNZFSsnR8=;
+        b=usKRXty0Tl6DGc7zqv6nzKvz6NXTR2yK4G6w+Qhkb6VvyZpihOrUc6d3CE8KInBXZ7
+         NQJqMihbz+C2pkIQXkbJ49VSxKRQTsW1KQxRb9K0XGjrQFq0Tmf88cMK7IBqfUpuxFWI
+         UtJn5yzXU5+ysu2LfLcX0skhzPgMakqCveB4CMwlrpYc93rR9wFF9VUleuUlO4w7S/B3
+         NQM7rpLrhGZ2dJb1k18KeBaD1q5Snbst6W7JSfqKqf7XQPi3Fkv4iPY85u2YoXnXDefo
+         B2nwUwWh1/99fQ976EROMLXSEvsP6EGjWn6Pog7vuWVNkPBAyvmoIQZW4TILWlXf3DRq
+         8ZXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722509262; x=1723114062;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z85y/g+9vb81jKmcafP4dvn4vFmY5QR0yXRNZFSsnR8=;
+        b=aDYLP8COecVW5R5u0kA6sQ27nz41KZePkijRu5Qp8MkwqcBBSeXFmmEBZiKOF2zTWQ
+         UKBVy3CV9Lutbhil3EveL6l0jlcbCcCViSaPKKPNAv6DHk5o83ODID9WgeoOqydkjXrw
+         EXTP/6gp5nEHDSw+g42EJ5RcvrOKw3JS8R4sqyjj8AmG514d5hjhN9bB3EGjtki4c2LM
+         r6c4tsq5rcisB5t33QItw6Mj5WZlf95eEq++UbfDedNfEUV2Ws+89VzE9bOUEDuqQoS7
+         JJ1m9w/38M4ETS5MjjFmKzgYV6PXYqwJXe53L/PScMwtZHSWtkG0DkueI9/pzA6f2KY/
+         Drww==
+X-Forwarded-Encrypted: i=1; AJvYcCU6AuwrSAees8EIVhz/+gJimZQLOFNNqTbIXSqTVafjKky7WyzLlsUgyqTjDFIqVE8UI0dQNA0HdDT0oMTMm7ctv0DA2HP6GotASkdL
+X-Gm-Message-State: AOJu0Yx72FRHI6JOiHMx9hr7mqaDEttbFIhF9rSXpc+Z7RP+IaAymSut
+	CsSm99T15Ri3KMkKN1OTihGDStjx1C5w4QbDPNo3hUng8EnBQDxQpAf04n432bE=
+X-Google-Smtp-Source: AGHT+IETKes+z6wG81VpgxVv6mHim0SINXPJ9ewGaBVr6boePMQ9az0QkbZ1hzXP5XqyWc05zbL4WA==
+X-Received: by 2002:a17:906:c108:b0:a7d:391f:17af with SMTP id a640c23a62f3a-a7daf65a227mr145607566b.51.1722509261910;
+        Thu, 01 Aug 2024 03:47:41 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff1f:b280:31d2:aeb1:18cd:e482])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab4de7asm880932766b.66.2024.08.01.03.47.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 03:47:41 -0700 (PDT)
+Date: Thu, 1 Aug 2024 12:47:37 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Adam Skladowski <a39.skl@gmail.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Banajit Goswami <bgoswami@quicinc.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>, alsa-devel@alsa-project.org,
+	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Vladimir Lypak <vladimir.lypak@gmail.com>
+Subject: Re: [PATCH v3 6/8] ASoC: qcom: apq8016_sbc: Add support for msm8953
+ SoC
+Message-ID: <ZqtnyWAXTsSGAg0i@linaro.org>
+References: <20240731-msm8953-msm8976-asoc-v3-0-163f23c3a28d@gmail.com>
+ <20240731-msm8953-msm8976-asoc-v3-6-163f23c3a28d@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP &
- HDFGRTR2_GROUP based FGU handling
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
- <20240620065807.151540-11-anshuman.khandual@arm.com>
- <865xu3kh4r.wl-maz@kernel.org> <4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
- <878qyy35e5.wl-maz@kernel.org> <47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
- <86tthhi0nz.wl-maz@kernel.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <86tthhi0nz.wl-maz@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-6-163f23c3a28d@gmail.com>
 
-
-
-On 6/25/24 19:28, Marc Zyngier wrote:
-> On Tue, 25 Jun 2024 10:03:29 +0100,
-> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>
->>>>>> +#define __HDFGRTR2_EL2_nMASK	~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
->>>>>
->>>>> Note the *nMASK* here. 'n' is for *negative*. Just look at how
->>>>> __HDFGRTR_EL2_MASK and __HDFGRTR_EL2_nMASK are written.
->>>>
->>>> Still trying to understand what does these three masks represent
->>>> for a given FGT register XXXX
->>>>
->>>> 	- __XXXX_RES0
->>>
->>> RES0 bits.
->>>
->>>> 	- __XXXX_MASK
->>>
->>> Positive trap bits.
->>>
->>>> 	- __XXXX_nMASK
->>>
->>> Negative trap bits.
->>
->> Right, figured that eventually but these were not very clear at
->> first.
+On Wed, Jul 31, 2024 at 05:25:30PM +0200, Adam Skladowski wrote:
+> From: Vladimir Lypak <vladimir.lypak@gmail.com>
 > 
-> I keep hearing I'm not clear. But at this stage, I don't know what to
-> do to make it (or myself) clearer.
+> Introduce support for audio card on MSM8953 platform.
+> Main difference between MSM8953 and MSM8916 is Q6AFE CLK API
+> supported by firmware which influence way we set codec clocks.
+> SoCs shipping on at least msm-3.18 should use v2 clocks.
 > 
->>
->>>
->>>>
->>>> But from the mentioned example for HDFGRTR_EL2.
->>>>
->>>> #define __HDFGRTR_EL2_RES0      HDFGRTR_EL2_RES0
->>>> #define __HDFGRTR_EL2_MASK      (BIT(63) | GENMASK(58, 50) | GENMASK(48, 43) | \
->>>>                                  GENMASK(41, 40) | GENMASK(37, 22) | \
->>>>                                  GENMASK(19, 9) | GENMASK(7, 0))
->>>> #define __HDFGRTR_EL2_nMASK     ~(__HDFGRTR_EL2_RES0 | __HDFGRTR_EL2_MASK)
->>>>
->>>> Looking at HDFGRTR_EL2 definition inside arch/arm64/tools/sysreg
->>>>
->>>> HDFGRTR_EL2_RES0 = BIT(49) | GENMASK(39, 38) | GENMASK(21, 20) | BIT(8)
->>>>
->>>> is representing the entire mask in the register which are RES0. But then what
->>>> does __HDFGRTR_EL2_MASK signify ? Positive trap bits mask ?
->>>>
->>>> The following bits belong in __HDFGRTR_EL2_MASK
->>>>
->>>> HDFGRTR_EL2.PMBIDR_EL1    (63)
->>>> HDFGRTR_EL2.PMCEIDn_EL0   (58)
->>>>
->>>> Where as the following bits belong in __HDFGRTR_EL2_nMASK
->>>>
->>>> HDFGRTR_EL2.nPMSNEVFR_EL1 (61)
->>>> HDFGRTR_EL2.nBRBCTL	  (60) 
->>>>
->>>> Reworking proposed HDFGRTR2_EL2 and HDFGWTR2_EL2. 
->>>>
->>>> #define __HDFGRTR2_EL2_RES0     HDFGRTR2_EL2_RES0
->>>> #define __HDFGRTR2_EL2_MASK     0
->>>> #define __HDFGRTR2_EL2_nMASK    ~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
->>>>
->>>> #define __HDFGWTR2_EL2_RES0     HDFGWTR2_EL2_RES0
->>>> #define __HDFGWTR2_EL2_MASK     0
->>>> #define __HDFGWTR2_EL2_nMASK    ~(__HDFGWTR2_EL2_RES0 | __HDFGWTR2_EL2_MASK)
->>>>
->>>> Please note that all trap bits in both these registers are negative ones
->>>> hence __HDFGRTR2_EL2_MASK/__HDFGWTR2_EL2_MASK should be 0.
->>>
->>> That's because you're looking at the XML, and not the ARM ARM this was
->>> written against.
->>
->> Did not follow that. Both in ddi0601/2024-03 XML and ARM ARM DDI 0487K.a
->> there are no positive trap bits, either in HDFGRTR2_EL2 or HDFGWTR2_EL2.
->> OR did I miss something here.
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> [Adam: rename functions, add msg]
+> Co-developed-by: Adam Skladowski <a39.skl@gmail.com>
+> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
+> ---
+>  sound/soc/qcom/apq8016_sbc.c | 43 +++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 41 insertions(+), 2 deletions(-)
 > 
->>From this very file:
-> 
-> <quote>
-> /*
->  * FGT register definitions
->  *
->  * RES0 and polarity masks as of DDI0487J.a, to be updated as needed.
->  * We're not using the generated masks as they are usually ahead of
->  * the published ARM ARM, which we use as a reference.
->  *
->  * Once we get to a point where the two describe the same thing, we'll
->  * merge the definitions. One day.
->  */
-> </quote>
-> 
-> In case it wasn't written *CLEARLY* enough.
-> 
->> Sure, will add the following new registers in arch/arm64/tools/sysreg format
->> except for the ones that require a formula based enumeration. Those will be
->> added into arch/arm64/include/asm/sysreg.h directly e.g
->>
->> +#define SYS_SPMEVCNTR_EL0(m)           sys_reg(2, 3, 14, (0 | (m >> 3)), (m & 7))
->> +#define SYS_SPMEVTYPER_EL0(m)          sys_reg(2, 3, 14, (2 | (m >> 3)), (m & 7))
->> +#define SYS_SPMEVFILTR_EL0(m)          sys_reg(2, 3, 14, (4 | (m >> 3)), (m & 7))
->> +#define SYS_SPMEVFILT2R_EL0(m)         sys_reg(2, 3, 14, (6 | (m >> 3)), (m & 7))
->>
->> 9d93fc432f1a arm64/sysreg: Add remaining debug registers affected by HDFGxTR2_EL2
->> 56b8830f0a5e arm64/sysreg: Add register fields for SPMCGCR1_EL1
->> ad674ae52178 arm64/sysreg: Add register fields for SPMCGCR0_EL1
->> 8538a282d208 arm64/sysreg: Add register fields for PMZR_EL0
->> c88f0b8d898e arm64/sysreg: Add register fields for PMSSCR_EL1
->> 8788ad49b7b6 arm64/sysreg: Add register fields for SPMCFGR_EL1
->> 142de2bc3d7b arm64/sysreg: Add register fields for SPMDEVARCH_EL1
->> 3d903ba35e8c arm64/sysreg: Add register fields for SPMIIDR_EL1
->> 1a4db0b8b100 arm64/sysreg: Add register fields for PMICNTSVR_EL1
->> 6bee8f139ba5 arm64/sysreg: Add register fields for SPMSELR_EL0
->> b208ab4cd54d arm64/sysreg: Add register fields for SPMCNTENSET_EL0
->> 644abf522c8a arm64/sysreg: Add register fields for SPMCNTENCLR_EL0
->> fad9b7751359 arm64/sysreg: Add register fields for SPMINTENSET_EL1
->> c28299b8df76 arm64/sysreg: Add register fields for SPMINTENCLR_EL1
->> b9c283b27980 arm64/sysreg: Add register fields for SPMOVSSET_EL0
->> 03dd01a26c46 arm64/sysreg: Add register fields for SPMOVSCLR_EL0
->> c8a2f1b688de arm64/sysreg: Add register fields for SPMCR_EL0
->> 422ca4026aa7 arm64/sysreg: Add register fields for SPMACCESSR_EL1
->> d790b2570461 arm64/sysreg: Add register fields for SPMSCR_EL1
->> c2cdd0fecdcb arm64/sysreg: Add register fields for PMCCNTSVR_EL1
->> 3b793f3f07b8 arm64/sysreg: Add register fields for PMUACR_EL1
->> a1804742ee8c arm64/sysreg: Add register fields for PMICFILTR_EL0
->> c88476b9c52c arm64/sysreg: Add register fields for PMICNTR_EL0
->> 6d1520f3477b arm64/sysreg: Add register fields for PMECR_EL1
->> 257ea3ec7950 arm64/sysreg: Add register fields for PMIAR_EL1
->> a29f787102f0 arm64/sysreg: Add register fields for SPMDEVAFF_EL1
->> 3b7c4d4cf0eb arm64/sysreg: Add register fields for PMSDSFR_EL1
->> 2a14e5dc1903 arm64/sysreg: Add register fields for TRBMPAM_EL1
-> 
-> Have you done this by hand? Or have you used an automated generator
-> that parses the XML?  If it's the former, please do the latter and
-> compare the results.
-> 
-> [...]
-> 
->>>
->>>>>> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
->>>>>> index f921af014d0c..8029f408855d 100644
->>>>>> --- a/arch/arm64/kvm/sys_regs.c
->>>>>> +++ b/arch/arm64/kvm/sys_regs.c
->>>>>> @@ -4110,6 +4110,51 @@ void kvm_init_sysreg(struct kvm_vcpu *vcpu)
->>>>>>  		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
->>>>>>  						  HAFGRTR_EL2_RES1);
->>>>>>  
->>>>>> +	/* FEAT_TRBE_MPAM is not exposed to the guest */
->>>>>> +	kvm->arch.fgu[HDFGRTR2_GROUP] |= ~(HDFGRTR2_EL2_nTRBMPAM_EL1);
->>>>>
->>>>> Same thing about dynamic configuration.
->>>>>
->>>>> But more importantly, you are disabling anything *but* MPAM.  Does it
->>>>> seem right to you?
->>>>
->>>> Did not get that, should the inverse ~ be dropped here and also for all
->>>> other negative trap bits across the register ?
->>>
->>> Look at the way FGU works. A bit set to 1 means that if we have
->>> trapped because of this bit (as per the FGT table), we inject an
->>> UNDEF.
->>
->> Seems like positive and negative trap bits do not make any difference
->> here, while setting respective bits in kvm->arch.fgu[HDFGRTR2_GROUP]. 
->> In this case the inverse should be dropped for all bits.
-> 
-> Yup, that's what "A bit set to 1" means here. We don't need to follow
-> the convolutions of the HW here.
-> 
->>
->> Should the lone trap bit (nPMZR_EL0) which is present in HDFGWTR2_EL2
->> but not in HDFGRTR2_EL2, be set in kvm->arch.fgu[HDFGWTR2_GROUP] as
->> well ?
->>
->> if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9)) {
->> 	kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMUACR_EL1;
->> 	kvm->arch.fgu[HDFGWTR2_GROUP] |= HDFGWTR2_EL2_nPMZR_EL0;
->> }
-> 
-> Possibly. At the time this code was written, ARMv8.9 wasn't in the ARM
-> ARM.
-Hello Marc,
+> diff --git a/sound/soc/qcom/apq8016_sbc.c b/sound/soc/qcom/apq8016_sbc.c
+> index 5a29adbd3f82..3ed35beb671a 100644
+> --- a/sound/soc/qcom/apq8016_sbc.c
+> +++ b/sound/soc/qcom/apq8016_sbc.c
+> @@ -22,6 +22,11 @@
+>  
+>  #define MI2S_COUNT  (MI2S_QUINARY + 1)
+>  
+> +enum afe_clk_api {
+> +	Q6AFE_CLK_V1,
+> +	Q6AFE_CLK_V2
+> +};
+> +
+>  struct apq8016_sbc_data {
+>  	struct snd_soc_card card;
+>  	void __iomem *mic_iomux;
+> @@ -29,6 +34,7 @@ struct apq8016_sbc_data {
+>  	void __iomem *quin_iomux;
+>  	struct snd_soc_jack jack;
+>  	bool jack_setup;
+> +	enum afe_clk_api q6afe_clk_ver;
+>  	int mi2s_clk_count[MI2S_COUNT];
+>  };
+>  
+> @@ -192,6 +198,28 @@ static int qdsp6_dai_get_lpass_id(struct snd_soc_dai *cpu_dai)
+>  	}
+>  }
+>  
+> +static int qdsp6_get_clk_id(struct apq8016_sbc_data *data, int mi2s_id)
+> +{
+> +	if (data->q6afe_clk_ver == Q6AFE_CLK_V2) {
+> +		switch (mi2s_id) {
+> +		case MI2S_PRIMARY:
+> +			return Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT;
+> +		case MI2S_SECONDARY:
+> +			return Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT;
+> +		case MI2S_TERTIARY:
+> +			return Q6AFE_LPASS_CLK_ID_TER_MI2S_IBIT;
+> +		case MI2S_QUATERNARY:
+> +			return Q6AFE_LPASS_CLK_ID_QUAD_MI2S_IBIT;
+> +		case MI2S_QUINARY:
+> +			return Q6AFE_LPASS_CLK_ID_QUI_MI2S_IBIT;
+> +		default:
+> +			break;
+> +		}
+> +	}
+> +	/* If AFE CLK isn't V2 return V1 */
+> +	return LPAIF_BIT_CLK;
+> +}
+> +
+>  static int msm8916_qdsp6_dai_init(struct snd_soc_pcm_runtime *rtd)
+>  {
+>  	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
+> @@ -215,7 +243,7 @@ static int msm8916_qdsp6_startup(struct snd_pcm_substream *substream)
+>  	if (++data->mi2s_clk_count[mi2s] > 1)
+>  		return 0;
+>  
+> -	ret = snd_soc_dai_set_sysclk(cpu_dai, LPAIF_BIT_CLK, MI2S_BCLK_RATE, 0);
+> +	ret = snd_soc_dai_set_sysclk(cpu_dai, qdsp6_get_clk_id(data, mi2s), MI2S_BCLK_RATE, 0);
+>  	if (ret)
+>  		dev_err(card->dev, "Failed to enable LPAIF bit clk: %d\n", ret);
+>  	return ret;
+> @@ -236,7 +264,7 @@ static void msm8916_qdsp6_shutdown(struct snd_pcm_substream *substream)
+>  	if (--data->mi2s_clk_count[mi2s] > 0)
+>  		return;
+>  
+> -	ret = snd_soc_dai_set_sysclk(cpu_dai, LPAIF_BIT_CLK, 0, 0);
+> +	ret = snd_soc_dai_set_sysclk(cpu_dai, qdsp6_get_clk_id(data, mi2s), 0, 0);
+>  	if (ret)
+>  		dev_err(card->dev, "Failed to disable LPAIF bit clk: %d\n", ret);
+>  }
+> @@ -265,10 +293,12 @@ static int msm8916_qdsp6_be_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+>  static void msm8916_qdsp6_add_ops(struct snd_soc_card *card)
+>  {
+>  	struct snd_soc_dai_link *link;
+> +	struct apq8016_sbc_data *pdata = snd_soc_card_get_drvdata(card);
+>  	int i;
+>  
+>  	/* Make it obvious to userspace that QDSP6 is used */
+>  	card->components = "qdsp6";
+> +	pdata->q6afe_clk_ver = Q6AFE_CLK_V1;
+>  
+>  	for_each_card_prelinks(card, i, link) {
+>  		if (link->no_pcm) {
+> @@ -279,6 +309,14 @@ static void msm8916_qdsp6_add_ops(struct snd_soc_card *card)
+>  	}
+>  }
+>  
+> +static void msm8953_qdsp6_add_ops(struct snd_soc_card *card)
+> +{
+> +	struct apq8016_sbc_data *pdata = snd_soc_card_get_drvdata(card);
+> +
+> +	msm8916_qdsp6_add_ops(card);
+> +	pdata->q6afe_clk_ver = Q6AFE_CLK_V2;
+> +}
 
-As you had suggested to avoid posting the entire series (which now consists
-of around ~30 patches just for all required sysregs update) to get the core
-part of FGT2 reviewed, please find the updated last patch here. I will post
-the entire series once there is some agreement on this patch. Thank you.
+Is there a particular reason why you decided to hardcode the
+q6afe_clk_ver for the SoCs rather than finishing up the dynamic
+detection Otto proposed [1]?
 
-Changes from RFC V1:
+This works for MSM8953 but there are a few SoCs like MSM8909 where
+both clock API versions exist (depending on the firmware versions).
+If we want to support them at some point, we will need the dynamic
+detection anyway. It would be nice to finish up that patch set.
 
-- Updated positive and negative masks for HDFGRTR2_EL2 and HDFGWTR2_EL2
-	- Both register's positive masks are 0 (all bits are nFormat)
-	- Both register's negative masks are all bits but the RES0 ones
-	- Please note that sysreg field definitions for both registers
-	  were added into tools are from 2024-06 XML not ARM DDI 0487K.a
-	- Even if ARM DDI 0487K.a gets used instead of the above XML,
-	  there are no positive mask bits, only RES0 mask will expand.
+Thanks,
+Stephan
 
-- Only nPMZR_EL0 gets added for HDFGWTR2_EL2 in encoding_to_fgt()
-	- Follows the same pattern as in HDFGWTR_EL2/HDFGWTR_EL2
-	- All other entries are for HDFGRTR2_EL2
-
-- Used indirect features check for FEAT_TRBE_MPAM and FEAT_SPE_FDS
-- Updated kvm_init_nv_sysregs() as required
-- Updated kvm_calculate_traps() as required
-
-- Anshuman
-
--------->8----------------------------------------------------------------
-From c1e648dcdb603ad182bcd522ca489f7deee58e86 Mon Sep 17 00:00:00 2001
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-Date: Mon, 8 Apr 2024 12:15:35 +0530
-Subject: [PATCH] KVM: arm64: nv: Add new HDFGRTR2_GROUP & HDFGRTR2_GROUP based
- FGU handling
-
-This adds new HDFGRTR2_GROUP and HDFGWTR2_GROUP groups in enum fgt_group_id
-for FGU handling managed with HDFGRTR2_EL2 and HDFGWTR2_EL2 registers.
-
-Cc: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>
-Cc: James Morse <james.morse@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: kvmarm@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
- arch/arm64/include/asm/kvm_arm.h        |   8 ++
- arch/arm64/include/asm/kvm_host.h       |   2 +
- arch/arm64/kvm/emulate-nested.c         | 158 ++++++++++++++++++++++++
- arch/arm64/kvm/hyp/include/hyp/switch.h |  10 ++
- arch/arm64/kvm/nested.c                 |  38 ++++++
- arch/arm64/kvm/sys_regs.c               |  49 ++++++++
- 6 files changed, 265 insertions(+)
-
-diff --git a/arch/arm64/include/asm/kvm_arm.h b/arch/arm64/include/asm/kvm_arm.h
-index d81cc746e0eb..66ebb2f8e0fa 100644
---- a/arch/arm64/include/asm/kvm_arm.h
-+++ b/arch/arm64/include/asm/kvm_arm.h
-@@ -353,6 +353,14 @@
- #define __HFGRTR_EL2_MASK	GENMASK(49, 0)
- #define __HFGRTR_EL2_nMASK	~(__HFGRTR_EL2_RES0 | __HFGRTR_EL2_MASK)
- 
-+#define __HDFGRTR2_EL2_RES0	HDFGRTR2_EL2_RES0
-+#define __HDFGRTR2_EL2_MASK	0
-+#define __HDFGRTR2_EL2_nMASK	~(__HDFGRTR2_EL2_RES0 | __HDFGRTR2_EL2_MASK)
-+
-+#define __HDFGWTR2_EL2_RES0	HDFGWTR2_EL2_RES0
-+#define __HDFGWTR2_EL2_MASK	0
-+#define __HDFGWTR2_EL2_nMASK	~(__HDFGWTR2_EL2_RES0 | __HDFGWTR2_EL2_MASK)
-+
- /*
-  * The HFGWTR bits are a subset of HFGRTR bits. To ensure we don't miss any
-  * future additions, define __HFGWTR* macros relative to __HFGRTR* ones.
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 696bb07b4722..edf78ddb099f 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -266,6 +266,8 @@ enum fgt_group_id {
- 	HDFGWTR_GROUP = HDFGRTR_GROUP,
- 	HFGITR_GROUP,
- 	HAFGRTR_GROUP,
-+	HDFGRTR2_GROUP,
-+	HDFGWTR2_GROUP = HDFGRTR2_GROUP,
- 
- 	/* Must be last */
- 	__NR_FGT_GROUP_IDS__
-diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
-index 05166eccea0a..bbeeb0ab758e 100644
---- a/arch/arm64/kvm/emulate-nested.c
-+++ b/arch/arm64/kvm/emulate-nested.c
-@@ -1828,6 +1828,153 @@ static const struct encoding_to_trap_config encoding_to_fgt[] __initconst = {
- 	SR_FGT(SYS_AMEVCNTR0_EL0(2),	HAFGRTR, AMEVCNTR02_EL0, 1),
- 	SR_FGT(SYS_AMEVCNTR0_EL0(1),	HAFGRTR, AMEVCNTR01_EL0, 1),
- 	SR_FGT(SYS_AMEVCNTR0_EL0(0),	HAFGRTR, AMEVCNTR00_EL0, 1),
-+
-+	/*
-+	 * HDFGWTR_EL2
-+	 *
-+	 * Although HDFGRTR2_EL2 and HDFGWTR2_EL2 registers largely
-+	 * overlap in their bit assignment, there are a number of bits
-+	 * that are RES0 on one side, and an actual trap bit on the
-+	 * other.  The policy chosen here is to describe all the
-+	 * read-side mappings, and only the write-side mappings that
-+	 * differ from the read side, and the trap handler will pick
-+	 * the correct shadow register based on the access type.
-+	 */
-+	SR_FGT(SYS_PMZR_EL0,		HDFGWTR2, nPMZR_EL0, 0),
-+
-+	/* HDFGRTR2_EL2 */
-+	SR_FGT(SYS_MDSTEPOP_EL1,	HDFGRTR2, nMDSTEPOP_EL1, 0),
-+	SR_FGT(SYS_TRBMPAM_EL1,		HDFGRTR2, nTRBMPAM_EL1, 0),
-+	SR_FGT(SYS_TRCITECR_EL1,	HDFGRTR2, nTRCITECR_EL1, 0),
-+	SR_FGT(SYS_PMSDSFR_EL1,		HDFGRTR2, nPMSDSFR_EL1, 0),
-+	SR_FGT(SYS_SPMDEVAFF_EL1,	HDFGRTR2, nSPMDEVAFF_EL1, 0),
-+
-+	SR_FGT(SYS_SPMCGCR0_EL1,	HDFGRTR2, nSPMID, 0),
-+	SR_FGT(SYS_SPMCGCR1_EL1,	HDFGRTR2, nSPMID, 0),
-+	SR_FGT(SYS_SPMIIDR_EL1,		HDFGRTR2, nSPMID, 0),
-+	SR_FGT(SYS_SPMDEVARCH_EL1,	HDFGRTR2, nSPMID, 0),
-+	SR_FGT(SYS_SPMCFGR_EL1,		HDFGRTR2, nSPMID, 0),
-+
-+	SR_FGT(SYS_SPMSCR_EL1,		HDFGRTR2, nSPMSCR_EL1, 0),
-+	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
-+	SR_FGT(SYS_SPMCR_EL0,		HDFGRTR2, nSPMCR_EL0, 0),
-+	SR_FGT(SYS_SPMOVSCLR_EL0,	HDFGRTR2, nSPMOVS, 0),
-+	SR_FGT(SYS_SPMOVSSET_EL0,	HDFGRTR2, nSPMOVS, 0),
-+	SR_FGT(SYS_SPMINTENCLR_EL1,	HDFGRTR2, nSPMINTEN, 0),
-+	SR_FGT(SYS_SPMINTENSET_EL1,	HDFGRTR2, nSPMINTEN, 0),
-+	SR_FGT(SYS_SPMCNTENCLR_EL0,	HDFGRTR2, nSPMCNTEN, 0),
-+	SR_FGT(SYS_SPMCNTENSET_EL0,	HDFGRTR2, nSPMCNTEN, 0),
-+	SR_FGT(SYS_SPMSELR_EL0,		HDFGRTR2, nSPMSELR_EL0, 0),
-+
-+	SR_FGT(SYS_SPMEVTYPER_EL0(0),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(1),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(2),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(3),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(4),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(5),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(6),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(7),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(8),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(9),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(10),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(11),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(12),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(13),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(14),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVTYPER_EL0(15),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+
-+	SR_FGT(SYS_SPMEVFILTR_EL0(0),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(1),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(2),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(3),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(4),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(5),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(6),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(7),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(8),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(9),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(10),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(11),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(12),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(13),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(14),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILTR_EL0(15),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(0),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(1),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(2),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(3),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(4),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(5),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(6),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(7),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(8),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(9),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(10),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(11),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(12),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(13),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(14),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+	SR_FGT(SYS_SPMEVFILT2R_EL0(15),	HDFGRTR2, nSPMEVTYPERn_EL0, 0),
-+
-+	SR_FGT(SYS_SPMEVCNTR_EL0(0),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(1),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(2),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(3),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(4),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(5),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(6),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(7),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(8),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(9),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(10),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(11),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(12),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(13),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(14),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+	SR_FGT(SYS_SPMEVCNTR_EL0(15),	HDFGRTR2, nSPMEVCNTRn_EL0, 0),
-+
-+	SR_FGT(SYS_PMSSCR_EL1,		HDFGRTR2, nPMSSCR_EL1, 0),
-+	SR_FGT(SYS_PMCCNTSVR_EL1,	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMICNTSVR_EL1,	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(0),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(1),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(2),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(3),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(4),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(5),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(6),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(7),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(8),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(9),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(10),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(11),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(12),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(13),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(14),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(15),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(16),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(17),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(18),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(19),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(20),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(21),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(22),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(23),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(24),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(25),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(26),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(27),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(28),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(29),	HDFGRTR2, nPMSSDATA, 0),
-+	SR_FGT(SYS_PMEVCNTSVR_EL1(30),	HDFGRTR2, nPMSSDATA, 0),
-+
-+	SR_FGT(SYS_MDSELR_EL1,		HDFGRTR2, nMDSELR_EL1, 0),
-+	SR_FGT(SYS_PMUACR_EL1,		HDFGRTR2, nPMUACR_EL1, 0),
-+	SR_FGT(SYS_PMICFILTR_EL0,	HDFGRTR2, nPMICFILTR_EL0, 0),
-+	SR_FGT(SYS_PMICNTR_EL0,		HDFGRTR2, nPMICNTR_EL0, 0),
-+	SR_FGT(SYS_PMIAR_EL1,		HDFGRTR2, nPMIAR_EL1, 0),
-+	SR_FGT(SYS_PMECR_EL1,		HDFGRTR2, nPMECR_EL1, 0),
- };
- 
- static union trap_config get_trap_config(u32 sysreg)
-@@ -2083,6 +2230,10 @@ static bool check_fgt_bit(struct kvm *kvm, bool is_read,
- 		sr = is_read ? HDFGRTR_EL2 : HDFGWTR_EL2;
- 		break;
- 
-+	case HDFGRTR2_GROUP:
-+		sr = is_read ? HDFGRTR2_EL2 : HDFGWTR2_EL2;
-+		break;
-+
- 	case HAFGRTR_GROUP:
- 		sr = HAFGRTR_EL2;
- 		break;
-@@ -2157,6 +2308,13 @@ bool triage_sysreg_trap(struct kvm_vcpu *vcpu, int *sr_index)
- 			val = __vcpu_sys_reg(vcpu, HDFGWTR_EL2);
- 		break;
- 
-+	case HDFGRTR2_GROUP:
-+		if (is_read)
-+			val = __vcpu_sys_reg(vcpu, HDFGRTR2_EL2);
-+		else
-+			val = __vcpu_sys_reg(vcpu, HDFGWTR2_EL2);
-+		break;
-+
- 	case HAFGRTR_GROUP:
- 		val = __vcpu_sys_reg(vcpu, HAFGRTR_EL2);
- 		break;
-diff --git a/arch/arm64/kvm/hyp/include/hyp/switch.h b/arch/arm64/kvm/hyp/include/hyp/switch.h
-index f59ccfe11ab9..af6c774d9202 100644
---- a/arch/arm64/kvm/hyp/include/hyp/switch.h
-+++ b/arch/arm64/kvm/hyp/include/hyp/switch.h
-@@ -89,6 +89,10 @@ static inline void __activate_traps_fpsimd32(struct kvm_vcpu *vcpu)
- 		case HDFGWTR_EL2:					\
- 			id = HDFGRTR_GROUP;				\
- 			break;						\
-+		case HDFGRTR2_EL2:					\
-+		case HDFGWTR2_EL2:					\
-+			id = HDFGRTR2_GROUP;				\
-+			break;						\
- 		case HAFGRTR_EL2:					\
- 			id = HAFGRTR_GROUP;				\
- 			break;						\
-@@ -160,6 +164,8 @@ static inline void __activate_traps_hfgxtr(struct kvm_vcpu *vcpu)
- 	CHECK_FGT_MASKS(HDFGWTR_EL2);
- 	CHECK_FGT_MASKS(HAFGRTR_EL2);
- 	CHECK_FGT_MASKS(HCRX_EL2);
-+	CHECK_FGT_MASKS(HDFGRTR2_EL2);
-+	CHECK_FGT_MASKS(HDFGWTR2_EL2);
- 
- 	if (!cpus_have_final_cap(ARM64_HAS_FGT))
- 		return;
-@@ -171,6 +177,8 @@ static inline void __activate_traps_hfgxtr(struct kvm_vcpu *vcpu)
- 	update_fgt_traps(hctxt, vcpu, kvm, HFGITR_EL2);
- 	update_fgt_traps(hctxt, vcpu, kvm, HDFGRTR_EL2);
- 	update_fgt_traps(hctxt, vcpu, kvm, HDFGWTR_EL2);
-+	update_fgt_traps(hctxt, vcpu, kvm, HDFGRTR2_EL2);
-+	update_fgt_traps(hctxt, vcpu, kvm, HDFGWTR2_EL2);
- 
- 	if (cpu_has_amu())
- 		update_fgt_traps(hctxt, vcpu, kvm, HAFGRTR_EL2);
-@@ -200,6 +208,8 @@ static inline void __deactivate_traps_hfgxtr(struct kvm_vcpu *vcpu)
- 	__deactivate_fgt(hctxt, vcpu, kvm, HFGITR_EL2);
- 	__deactivate_fgt(hctxt, vcpu, kvm, HDFGRTR_EL2);
- 	__deactivate_fgt(hctxt, vcpu, kvm, HDFGWTR_EL2);
-+	__deactivate_fgt(hctxt, vcpu, kvm, HDFGRTR2_EL2);
-+	__deactivate_fgt(hctxt, vcpu, kvm, HDFGWTR2_EL2);
- 
- 	if (cpu_has_amu())
- 		__deactivate_fgt(hctxt, vcpu, kvm, HAFGRTR_EL2);
-diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-index de789e0f1ae9..32ac5342d340 100644
---- a/arch/arm64/kvm/nested.c
-+++ b/arch/arm64/kvm/nested.c
-@@ -1146,6 +1146,44 @@ int kvm_init_nv_sysregs(struct kvm *kvm)
- 		res0 |= HDFGRTR_EL2_nPMSNEVFR_EL1;
- 	set_sysreg_masks(kvm, HDFGRTR_EL2, res0 | HDFGRTR_EL2_RES0, res1);
- 
-+	/* HDFG[RW]TR2_EL2 */
-+	res0 = res1 = 0;
-+
-+	if (!kvm_has_feat_enum(kvm, ID_AA64DFR0_EL1, ExtTrcBuff, IMP))
-+		res1 |= HDFGRTR2_EL2_nTRBMPAM_EL1;
-+
-+	if (!kvm_has_feat_enum(kvm, ID_AA64DFR0_EL1, PMSVer, V1P4))
-+		res1 |= HDFGRTR2_EL2_nPMSDSFR_EL1;
-+
-+	if (!kvm_has_feat_enum(kvm, ID_AA64DFR2_EL1, STEP, IMP))
-+		res1 |= HDFGRTR2_EL2_nMDSTEPOP_EL1;
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, ITE, IMP))
-+		res1 |= HDFGRTR2_EL2_nTRCITECR_EL1;
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, SPMU, IMP))
-+		res1 |= (HDFGRTR2_EL2_nSPMDEVAFF_EL1 | HDFGRTR2_EL2_nSPMID |
-+			 HDFGRTR2_EL2_nSPMSCR_EL1 | HDFGRTR2_EL2_nSPMACCESSR_EL1 |
-+			 HDFGRTR2_EL2_nSPMCR_EL0 | HDFGRTR2_EL2_nSPMOVS |
-+			 HDFGRTR2_EL2_nSPMINTEN | HDFGRTR2_EL2_nSPMCNTEN |
-+			 HDFGRTR2_EL2_nSPMSELR_EL0 | HDFGRTR2_EL2_nSPMEVTYPERn_EL0 |
-+			 HDFGRTR2_EL2_nSPMEVCNTRn_EL0);
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
-+		res1 |=	(HDFGRTR2_EL2_nPMSSCR_EL1 | HDFGRTR2_EL2_nPMSSDATA);
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, DebugVer, V8P9))
-+		res1 |= HDFGRTR2_EL2_nMDSELR_EL1;
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9))
-+		res1 |= HDFGRTR2_EL2_nPMUACR_EL1;
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP))
-+		res1 |= (HDFGRTR2_EL2_nPMICFILTR_EL0 | HDFGRTR2_EL2_nPMICNTR_EL0);
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, SEBEP, IMP))
-+		res1 |= HDFGRTR2_EL2_nPMIAR_EL1;
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, EBEP, IMP) &&
-+	    !kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
-+		res1 |= HDFGRTR2_EL2_nPMECR_EL1;
-+	set_sysreg_masks(kvm, HDFGRTR2_EL2, res0 | HDFGRTR2_EL2_RES0, res1 | HDFGRTR2_EL2_RES1);
-+	set_sysreg_masks(kvm, HDFGWTR2_EL2, res0 | HDFGWTR2_EL2_RES0, res1 | HDFGWTR2_EL2_RES1);
-+
- 	/* Reuse the bits from the read-side and add the write-specific stuff */
- 	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, IMP))
- 		res0 |= (HDFGWTR_EL2_PMCR_EL0 | HDFGWTR_EL2_PMSWINC_EL0);
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 4ea714dcb660..c971febcafab 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -4610,6 +4610,55 @@ void kvm_calculate_traps(struct kvm_vcpu *vcpu)
- 		kvm->arch.fgu[HAFGRTR_GROUP] |= ~(HAFGRTR_EL2_RES0 |
- 						  HAFGRTR_EL2_RES1);
- 
-+	if (!kvm_has_feat_enum(kvm, ID_AA64DFR0_EL1, ExtTrcBuff, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nTRBMPAM_EL1;
-+
-+	if (!kvm_has_feat_enum(kvm, ID_AA64DFR0_EL1, PMSVer, V1P4))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMSDSFR_EL1;
-+
-+	if (!kvm_has_feat_enum(kvm, ID_AA64DFR2_EL1, STEP, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nMDSTEPOP_EL1;
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, ITE, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nTRCITECR_EL1;
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, SPMU, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nSPMDEVAFF_EL1	|
-+						 HDFGRTR2_EL2_nSPMID		|
-+						 HDFGRTR2_EL2_nSPMSCR_EL1	|
-+						 HDFGRTR2_EL2_nSPMACCESSR_EL1	|
-+						 HDFGRTR2_EL2_nSPMCR_EL0	|
-+						 HDFGRTR2_EL2_nSPMOVS		|
-+						 HDFGRTR2_EL2_nSPMINTEN		|
-+						 HDFGRTR2_EL2_nSPMCNTEN		|
-+						 HDFGRTR2_EL2_nSPMSELR_EL0	|
-+						 HDFGRTR2_EL2_nSPMEVTYPERn_EL0	|
-+						 HDFGRTR2_EL2_nSPMEVCNTRn_EL0;
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMSSCR_EL1	|
-+						 HDFGRTR2_EL2_nPMSSDATA;
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, DebugVer, V8P9))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nMDSELR_EL1;
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMUVer, V3P9)) {
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMUACR_EL1;
-+		kvm->arch.fgu[HDFGWTR2_GROUP] |= HDFGWTR2_EL2_nPMZR_EL0;
-+	}
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, PMICNTR, IMP)) {
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMICFILTR_EL0;
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMICNTR_EL0;
-+	}
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR0_EL1, SEBEP, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMIAR_EL1;
-+
-+	if (!kvm_has_feat(kvm, ID_AA64DFR1_EL1, EBEP, IMP) &&
-+	    !kvm_has_feat(kvm, ID_AA64DFR0_EL1, PMSS, IMP))
-+		kvm->arch.fgu[HDFGRTR2_GROUP] |= HDFGRTR2_EL2_nPMECR_EL1;
-+
- 	set_bit(KVM_ARCH_FLAG_FGU_INITIALIZED, &kvm->arch.flags);
- out:
- 	mutex_unlock(&kvm->arch.config_lock);
--- 
-2.25.1
+[1]: https://lore.kernel.org/linux-arm-msm/20231029165716.69878-1-otto.pflueger@abscue.de/
 
