@@ -1,47 +1,80 @@
-Return-Path: <linux-kernel+bounces-270914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B48944700
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:50:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2454944703
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48C381C24128
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:50:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9571F2322F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A7816E871;
-	Thu,  1 Aug 2024 08:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA4616E871;
+	Thu,  1 Aug 2024 08:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPltwjIz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DEDo3vE1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C987B4503A;
-	Thu,  1 Aug 2024 08:50:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C94BB157469
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722502211; cv=none; b=QVWnuL7N9msGIIrzWSKjq2I1dCwbKhbkvQOuk7YO/Coun/UsxNAEkacNHRFG8CGf45pgmRBDq+0qu+Ag2SJDqswS0ukiBbCbyd4Gef63Th0X8rLISOSbg+m8wPmgb2EzSxCViYiCnVXHTorS/zkSppZmKsYGnA/9BLXNxG28OGQ=
+	t=1722502226; cv=none; b=UH2hbkr57hRVO2yb24bDPg6zv9+0G9vhnJrb79BwNyr4Ri07wNLU0qjlVfeYxKU+k5v8FDJsUo/1xTnZT+h3FYn5kj0MpmlA5h1ZJiNXeYlSzr5aaQJIepYZS0zz880oLkM/ynagoJ3ztnn+3a1GCLj8Agf8ma0zRyvghL8xsmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722502211; c=relaxed/simple;
-	bh=4xRBTXq8N/pmzYVE7TN0WSksZl9f9QBtzNTMTVv2YH4=;
+	s=arc-20240116; t=1722502226; c=relaxed/simple;
+	bh=ouxwYyhcm6jhKBX44wNx6bi9KEpKO+V6mnvxb5oHiSg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oj1P3v5bpW0yn5XoQj1eg1k9H1X+u4ZF2Plikycf6jZEfeLof4Io1nRr9euPERPyvsy72kLZ+DLedkhw8R53PNBcXIhfzCb6NgqY/W47k4pIJtdu+OEqqiLI4RurDxzfO73JFNlwvn4uRojHf8cLlXbgnjrShA98uV+3fOPYX3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPltwjIz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CBC1C32786;
-	Thu,  1 Aug 2024 08:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722502211;
-	bh=4xRBTXq8N/pmzYVE7TN0WSksZl9f9QBtzNTMTVv2YH4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nPltwjIz0LWbTG9btopSk5RCurhTnQyvuNUuuatQgkvrlC6zAfAOd9mMDUS8f6M9y
-	 C++xrBePjFW3kSnnQhsteFYnehxwX1ret9ZnSXghVoYC25Vpv1KQYneGtdiFo6v89O
-	 IRmWJknIYOFZxK2z2lPw/9WZBmDeWr97AkkYB/Q31oh6KC8EJ8MRTwugjnge0miFnr
-	 f7C3ZpEYLs10/myPxVNl47fgVc07nQ7qmOLsm0j3LR67qkpQ/u3Vs0tSbgzOVNini/
-	 PaPgEFwjcBYF/AkYrouGaJE27pzS7lb904OvX5OHD6qHYIwWmylKQn1Lyf+10kh93d
-	 lSm41HA9MCU9Q==
-Message-ID: <19af747f-0911-4896-afba-b63c585554d4@kernel.org>
-Date: Thu, 1 Aug 2024 10:50:02 +0200
+	 In-Reply-To:Content-Type; b=Slm+VH/Po4GUMc5gqjjYID6QSK/sQ+y8YkLTVE+zNKQK+a5HNuFZj4c0qk0CBYspvOZ3KyE7Z1aMPzlg0dGut7/6k8MfXYovyGyKyYikgVwBDmiE7cpqU5soac+qQmlzHWun85MFqWjdMt5gNmksAj3BrIbtDasZEPu6oD8Z2bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DEDo3vE1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722502222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=clzayXSw0T9Pink1HUicNm+MIZ3TP2gz+wqmLrsBXaU=;
+	b=DEDo3vE1ZZlzevu7XxjKL1CzWzlfP8DKkgnEFNJnTrRQ/90OQqHszq6bb0G7nlMUn6ESeq
+	eyBabF1zVj1P+pXanqjAxYz5IRo2Tu8Ps49RghRrgeRtHHByl8wOg0YW3YO1OE3wId3HLF
+	eJ0JjZTrsLU5PicJqwudohTdbEzHC7U=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-600-M5RFxgV0NCaSl_oavIw5Fw-1; Thu, 01 Aug 2024 04:50:21 -0400
+X-MC-Unique: M5RFxgV0NCaSl_oavIw5Fw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-36873ed688dso3032385f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:50:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722502220; x=1723107020;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=clzayXSw0T9Pink1HUicNm+MIZ3TP2gz+wqmLrsBXaU=;
+        b=tP+LDLqhHGgLwfT9+iaQD8wFINuYKt9s5k+JTI3mmHo67UB4a9AjiWC5BMjEApbhlR
+         FJvPbd4qqvQnbzEhmvsRaZ/jilCzOSXSf420USAeKTYDdUvgkvRY20Z2zVTMdnzEz/sA
+         hhOarpVyP1Ygb6LLcsRVuEBFpEuYXn5ke8erS/3aIfDwL3WLNINwI9KumxVRmDRtZ3gD
+         9Han8p88LUU7fKwMJXyZRkuXONzYifU2cFHXr3F5KR8OTm0HIPHxhGv96LaitebHXOiB
+         QEwy6TgNEkOgtd/V43zIJryZBMtIrvzEgvQ68y3G8OA1R4uRs3zOHn0ljykgdOpRzCGZ
+         p78Q==
+X-Gm-Message-State: AOJu0YwVbb763pEjVPWHF+MDuEeTVWE5vWL95O420UTJ2NC9TusbZKmi
+	QVT4QyitlTsagPINn0TvoooANbETM2yATonW+8F/cd9IeLA34fHzAeGRCi8GI1sVwg13t98+2/d
+	/O7EEO21Vo8ysSL7mS9NvFH0++he8FyUSDHcVfdckUMOfbNV7eFdXkj6Uw16C5l5qNBwzAOVgCo
+	15D4ZA4o04NeTLvc3HmRjVaw8wwDEN+Ln7rgqmPHOSpw==
+X-Received: by 2002:a5d:6046:0:b0:368:4638:add0 with SMTP id ffacd0b85a97d-36baaee6a08mr1057730f8f.35.1722502220116;
+        Thu, 01 Aug 2024 01:50:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHbxlsN1Q/32e+LZJga1SOQCPV4S5aIJTLoE5J2Z5dJwTMAydx5HcZxt2teUWtnH/PZ1/wMPw==
+X-Received: by 2002:a5d:6046:0:b0:368:4638:add0 with SMTP id ffacd0b85a97d-36baaee6a08mr1057697f8f.35.1722502219530;
+        Thu, 01 Aug 2024 01:50:19 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367fd071sm18902825f8f.62.2024.08.01.01.50.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 01:50:19 -0700 (PDT)
+Message-ID: <541f6c23-77ad-4d46-a8ed-fb18c9b635b3@redhat.com>
+Date: Thu, 1 Aug 2024 10:50:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,112 +82,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/bridge: synopsys: Add DW HDMI QP TX Controller
- driver
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>, Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>, Algea Cao <algea.cao@rock-chips.com>
-References: <20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com>
- <20240801-dw-hdmi-qp-tx-v1-2-148f542de5fd@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, James Houghton <jthoughton@google.com>,
+ stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+ Oscar Salvador <osalvador@suse.de>, Muchun Song <muchun.song@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20240731122103.382509-1-david@redhat.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240801-dw-hdmi-qp-tx-v1-2-148f542de5fd@collabora.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240731122103.382509-1-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 01/08/2024 04:05, Cristian Ciocaltea wrote:
-> The Synopsys DesignWare HDMI 2.1 Quad-Pixel (QP) TX Controller supports
-> the following features, among others:
+On 31.07.24 14:21, David Hildenbrand wrote:
+> We recently made GUP's common page table walking code to also walk hugetlb
+> VMAs without most hugetlb special-casing, preparing for the future of
+> having less hugetlb-specific page table walking code in the codebase.
+> Turns out that we missed one page table locking detail: page table locking
+> for hugetlb folios that are not mapped using a single PMD/PUD.
 
-...
+James, Peter,
 
-> +
-> +void dw_hdmi_qp_unbind(struct dw_hdmi_qp *hdmi)
-> +{
-> +}
-> +EXPORT_SYMBOL_GPL(dw_hdmi_qp_unbind);
+the following seems to get the job done. Thoughts?
 
-This looks like quite useless export. Drop.
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 8e462205400d..776dc3914d9e 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -938,10 +938,40 @@ static inline bool htlb_allow_alloc_fallback(int reason)
+  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+  					   struct mm_struct *mm, pte_t *pte)
+  {
+-	if (huge_page_size(h) == PMD_SIZE)
++	unsigned long size = huge_page_size(h);
++
++	VM_WARN_ON(size == PAGE_SIZE);
++
++	/*
++	 * hugetlb must use the exact same PT locks as core-mm page table
++	 * walkers would. When modifying a PTE table, hugetlb must take the
++	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
++	 * PT lock etc.
++	 *
++	 * The expectation is that any hugetlb folio smaller than a PMD is
++	 * always mapped into a single PTE table and that any hugetlb folio
++	 * smaller than a PUD (but at least as big as a PMD) is always mapped
++	 * into a single PMD table.
++	 *
++	 * If that does not hold for an architecture, then that architecture
++	 * must disable split PT locks such that all *_lockptr() functions
++	 * will give us the same result: the per-MM PT lock.
++	 *
++	 * Note that with e.g., CONFIG_PGTABLE_LEVELS=2 where
++	 * PGDIR_SIZE==P4D_SIZE==PUD_SIZE==PMD_SIZE, we'd use the MM PT lock
++	 * directly with a PMD hugetlb size, whereby core-mm would call
++	 * pmd_lockptr() instead. However, in such configurations split PMD
++	 * locks are disabled -- split locks don't make sense on a single
++	 * PGDIR page table -- and the end result is the same.
++	 */
++	if (size >= P4D_SIZE)
++		return &mm->page_table_lock;
++	else if (size >= PUD_SIZE)
++		return pud_lockptr(mm, (pud_t *) pte);
++	else if (size >= PMD_SIZE || IS_ENABLED(CONFIG_HIGHPTE))
+  		return pmd_lockptr(mm, (pmd_t *) pte);
+-	VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
+-	return &mm->page_table_lock;
++	/* pte_alloc_huge() only applies with !CONFIG_HIGHPTE */
++	return ptep_lockptr(mm, pte);
+  }
+  
+  #ifndef hugepages_supported
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a890a1731c14..bd219ac9c026 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2869,6 +2869,13 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+  	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+  }
+  
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
++	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
++	return ptlock_ptr(virt_to_ptdesc(pte));
++}
++
+  static inline bool ptlock_init(struct ptdesc *ptdesc)
+  {
+  	/*
+@@ -2893,6 +2900,10 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+  {
+  	return &mm->page_table_lock;
+  }
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++	return &mm->page_table_lock;
++}
+  static inline void ptlock_cache_init(void) {}
+  static inline bool ptlock_init(struct ptdesc *ptdesc) { return true; }
+  static inline void ptlock_free(struct ptdesc *ptdesc) {}
+-- 
+2.45.2
 
 
-> +
-> +void dw_hdmi_qp_resume(struct device *dev, struct dw_hdmi_qp *hdmi)
-> +{
-> +	dw_hdmi_qp_init_hw(hdmi);
-> +}
-> +EXPORT_SYMBOL_GPL(dw_hdmi_qp_resume);
-> +
-> +MODULE_AUTHOR("Algea Cao <algea.cao@rock-chips.com>");
-> +MODULE_AUTHOR("Cristian Ciocaltea <cristian.ciocaltea@collabora.com>");
-> +MODULE_DESCRIPTION("DW HDMI QP transmitter driver");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:dw-hdmi-qp");
+-- 
+Cheers,
 
-That's not a platform driver. That does not look like driver at all,
-just some helper code without any user
-
-1. Drop alias.
-2. Provide users for this code. You cannot add some helper functions
-which nothing uses.
-3. Fix subject, commit msg, module description - there is no driver
-here, but helper functions. Otherwise how does it bind?
-
-Best regards,
-Krzysztof
+David / dhildenb
 
 
