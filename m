@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-271571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E3C945036
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:10:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92065945035
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4901B1C21102
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3EFB1C20E67
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E792E1B4C30;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76711B4C2E;
 	Thu,  1 Aug 2024 16:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9ZLEHG+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DlDrhQqq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253A113D2B7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2536213C3D5;
 	Thu,  1 Aug 2024 16:10:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528634; cv=none; b=MYzsYqmXbzTTznfrObzibmuaT3gFDwIy/bxvB46CrvwMH7xV3XhCoEznArQuO3moX/goGoVteh+vrVio140Ig/Tcwtw17ZT35GETMF0wiA9xWuv+Vw4lge80ewAEpvioT8gCE6G4CTK/KSYTZXttDeVQOcjpz4kcw9rvX4GhSr4=
+	t=1722528634; cv=none; b=tR7KC5N9+loR4f3JzxS2tsqPdfe9o7Zs/4J3nHsGlLK0Y14BaudH2ECsNzGkN0hdflnumMqsJBDwiZWRb+E0rZIvZRJYXhwa3/jnV6RM335oIl5ENntnYUiL/OC6tD99YftO4k+qzS+3c6UAdieW9XkiSIYffvC2yxaRU6KixGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722528634; c=relaxed/simple;
-	bh=SKNVY1pGpUiuxHoYtnVcTNVtUPGQji5HRvtNZEn9TR0=;
+	bh=LQhUqFrwh8HIxQ9lXjnQQAlt76m7witeGbVDCLVWIOU=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=pCskuTyrSfwliO1bZWO1nwa4vxfHaLRjt48ZmhencXykrjm21DBDQx9I/2yX51B0B5BM2g3AzhUAzYayY5xNWJkGjYsTwmSXUmtonOZNPWkcHq+GFWb1rEW4jDo0pFYJQD90nVvmRCCQO33QyK36MQMk2hTXC9pYqmfJ9lg7qQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9ZLEHG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id B19BCC4AF0E;
+	 In-Reply-To:To:Cc; b=VaWeTKaZo+gru4BkDSBtP+PjnGWdB26+jvTgQhflm8gYoSIj4hcU6TpaOTsxHnyHZESxKyY1XonNVxtYw0abUCyU4+zm94YJaziUk+NEmejRzebJnv5ghEso6AM+t+2jj1CUy03SrgbYHSx6u4w5Rf9Pj5bW5cEaFQAK6cH9MYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DlDrhQqq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C3704C4AF0F;
 	Thu,  1 Aug 2024 16:10:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722528633;
-	bh=SKNVY1pGpUiuxHoYtnVcTNVtUPGQji5HRvtNZEn9TR0=;
+	bh=LQhUqFrwh8HIxQ9lXjnQQAlt76m7witeGbVDCLVWIOU=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=E9ZLEHG+nKAzwqcbL3U/mEhcOfJ2msFQGubiZHw2K/cIMgIV8i4SLzmFV05DK2w56
-	 ql8gnZMmVo+7xAO6xt4mu7o75wN9w6bGtNNWNeauOf4ILfKcBj/H/T6lHIU4kC5Kc+
-	 Lbz1R/237laOyuCR+ONiNAIpxT6G2EcSO/fFEvm0tjNOZtbkR0+PMuFB0BxToGCda6
-	 qUEXgHkaX2b02l6sJKCuclZJ9GclS+bUZEmOwtykTrCejamaQYPkuElBzZcwflCZxG
-	 /Dt3RiLF2/8nkyTYiyzSfvoyG7VoCpmBSY5pPdxhzA3b9RfLc+xDtLxmlybqIOmRGM
-	 d3rd707HnI6CA==
+	b=DlDrhQqqGVRmW9nMfOrDzOhP0AgrS4VAaXxNr7E+msK5d8QLF0ZayutAbiszaS+E1
+	 Hl8QG6o/0SmPhLhz6CMccAD8SdMMlsb/ExiMY7BUhHLxQPBjxkzTcK7aapjTazUMWM
+	 M5ZW7yoFtJJmZ/4NRXIcR/e6SlvCkmQDH+rsTKJX8nUFwyjgHJMcujL+sqTk5OBLDl
+	 ri2kunsSZovjD7O7IZvHX0DayAdaOel12HhzbidsOMAXa8crp8gTzSlYr9p0VQPws3
+	 +cK+yiqT5iecludHqS22n06FwGFLPu/DYtxGKZtgZ5SvAFTREnZSlGUEzdY5UDkYqv
+	 0gLbLQDHVxNCA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9C92FC3274E;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B29E2E8877A;
 	Thu,  1 Aug 2024 16:10:33 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,40 +51,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v3] net: ethernet: mtk_eth_soc: drop clocks unused
- by Ethernet driver
+Subject: Re: [PATCH net-next] RDS: IB: Remove unused declarations
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <172252863363.25785.16861658663358543639.git-patchwork-notify@kernel.org>
+ <172252863372.25785.1423371386220625221.git-patchwork-notify@kernel.org>
 Date: Thu, 01 Aug 2024 16:10:33 +0000
-References: <b5faaf69b5c6e3e155c64af03706c3c423c6a1c9.1722335682.git.daniel@makrotopia.org>
-In-Reply-To: <b5faaf69b5c6e3e155c64af03706c3c423c6a1c9.1722335682.git.daniel@makrotopia.org>
-To: Daniel Golle <daniel@makrotopia.org>
-Cc: nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
- lorenzo@kernel.org, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, andrew@lunn.ch,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20240731063630.3592046-1-yuehaibing@huawei.com>
+In-Reply-To: <20240731063630.3592046-1-yuehaibing@huawei.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-rdma@vger.kernel.org, rds-devel@oss.oracle.com,
+ linux-kernel@vger.kernel.org
 
 Hello:
 
 This patch was applied to netdev/net-next.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Tue, 30 Jul 2024 11:36:42 +0100 you wrote:
-> Clocks for SerDes and PHY are going to be handled by standalone drivers
-> for each of those hardware components. Drop them from the Ethernet driver.
+On Wed, 31 Jul 2024 14:36:30 +0800 you wrote:
+> Commit f4f943c958a2 ("RDS: IB: ack more receive completions to improve performance")
+> removed rds_ib_recv_tasklet_fn() implementation but not the declaration.
+> And commit ec16227e1414 ("RDS/IB: Infiniband transport") declared but never implemented
+> other functions.
 > 
-> The clocks which are being removed for this patch are responsible for
-> the for the SerDes PCS and PHYs used for the 2nd and 3rd MAC which are
-> anyway not yet supported. Hence backwards compatibility is not an issue.
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> Reviewed-by: Simon Horman <horms@kernel.org>
 > 
 > [...]
 
 Here is the summary with links:
-  - [net-next,v3] net: ethernet: mtk_eth_soc: drop clocks unused by Ethernet driver
-    https://git.kernel.org/netdev/net-next/c/887b1d1adb2e
+  - [net-next] RDS: IB: Remove unused declarations
+    https://git.kernel.org/netdev/net-next/c/f9c141fc3339
 
 You are awesome, thank you!
 -- 
