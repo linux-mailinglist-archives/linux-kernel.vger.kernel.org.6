@@ -1,150 +1,137 @@
-Return-Path: <linux-kernel+bounces-271132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 763879449F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:01:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA20D9449F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322AD288E30
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:01:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C15A3B20CD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00174170A29;
-	Thu,  1 Aug 2024 11:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638B7188007;
+	Thu,  1 Aug 2024 11:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIPTLMv1"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="guHNDVh2"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EEB516D4F3
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270CE170A29
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722510103; cv=none; b=MwEd+yiZbOGk9ir/35Ya/+OF2XtK/eiL2OYbV0jP5Dnrc1c5JNYk3HrZ2PMII6wZw+x09hyy/A2UPmdXWLe4S8LW/dCveS0bMds24tPwTwNyFv0yyeLuBiquDXKtvUZARBKs0yePSeV5y3o6j/hvdbwuPmoWCcJekySnMdC2SGM=
+	t=1722510109; cv=none; b=PhMszmfVuFVm2MkQEiuixE3BVIBaK1XW6Xm7QBA3UM08BD2syS3yFEF4fSAlm2y25hLVMPLW+2NVicPx9dfv9q/V6qMorebJ1MzyAd2DXhW6BSJk0x+0biT2JajVZ2dIhm5ZSI+EODGexblmNnpQt6EwlrGYzhJrfJzvK/QnVR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722510103; c=relaxed/simple;
-	bh=R05DKqS1w9uIVMFcvpKFDclE86k9lkrCoWmX9bfJe1Y=;
+	s=arc-20240116; t=1722510109; c=relaxed/simple;
+	bh=o3DMQQxGo3x39I7djsSUQeIpjlb4LUUbCkAOfJFGf1E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bjyxndHqGZP7zONW7rwTa3olnp2ficFyPgp/mHzov4sWSXxSxE8Aj20xKK/VweieEupzcRHZr6MTJdAtBltZOZyGFL8Hbsg3Zu/MB/v7U5iUZEayPO6h2F1ZSoauK6vl6pnam92MSYRafv4Jp7x4lEbVquY2zBLECE09S6l4cL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UIPTLMv1; arc=none smtp.client-ip=209.85.219.181
+	 To:Cc:Content-Type; b=u7mmdqkUVJwivL3FmmwWj9icr64t8Tfl6ftOSOQXbr2fk9JxjGRxhlRds7rQbtk/xaxQEMRmEgS5uspajJphvYGpnpQYZriISmE1iIGIXkB/KB7OUqCU3T888VdPnG4FPpBLbQ7560qukCu58RzSJNRbzTv/8H7vSbtKPJums7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=guHNDVh2; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e05e94a979eso1623983276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:01:40 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso5336793276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:01:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722510099; x=1723114899; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722510107; x=1723114907; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hvEVInb3XjDTInVG42ARV/26R6ebE2gUOo+RJ8/4wBc=;
-        b=UIPTLMv13scF61MazmIeN3uyvRfzpFNDGGju0d60AEmK17qr3p+FZ8cSyN8+0/Ta6w
-         fI4UwhdxfJCQNhPPPJQtescLMDR9j9TOPQv6H/SmoKQmuZm3JMaxUPSNiX8iJttEmIIq
-         5ODOIePiPbxkEnoDknaA7awyC1J9z5Ri0P7e8RxAMnjZE0iUatwsEYr8J50nbAVzFZ2l
-         DA7OK1xBJejpL04ovA11VxV4MvIQIixNKQGmAxG4gieH7+8MO8q7AkkWLf35zLiJKfdR
-         PuNR5OUPKIOAj8pbDAEod0vWPe+q1MjXCuUi4Mr43uVMO3DeAB/db05QjIPJSAZdd2WJ
-         oSRw==
+        bh=m/lBUEuHtZhYH9hMMltxd6FYM94een14SRBxxIIu5uM=;
+        b=guHNDVh2d+8xwoK5wKYC/qmSDhV47aQFbaYcr5OE+wD0dEbADgpfGTWClpKyIChpMY
+         ct6LU4Ib6SnPWw8niFnl6AYLwwjM3n0yG+uuGgIcHnWv0FQsG8fdOafq0qnNGygHoxjS
+         SYMjNoMI1NLjqDFZ87ED5Uhb5c/65OXRBuG061P7Aj7Z16PRISing8OyzyBxRf6gbcR+
+         wVbwpgAnEuTCBD3GBV+36kySo9+J0vptSFL3r1ZXTpgrswEQVdf9clANi5S0eK9b9vFF
+         mniW3kz38ZDs6Bt8OCsGNC8K00JmSuCTu7V8dPAZEWei36/wjKhL5cTBkH4dCAtr9U3v
+         vnSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722510099; x=1723114899;
+        d=1e100.net; s=20230601; t=1722510107; x=1723114907;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hvEVInb3XjDTInVG42ARV/26R6ebE2gUOo+RJ8/4wBc=;
-        b=XhqJwPuGoUUwElYJRt9MVsokjiQmJW9hcziYkLO/kRxdTBCu34hw2BbhcstywGLhM9
-         YpPiLOqctekknX/KhTIq0R9iC9fd1RTYA1UBP6ezYe/cH/hapj3OWNJE6bI7HQ18ekSk
-         lwDa0VXKcmw49h8FkSiJ/E/rX447WWkf2MZQEChHBNQKO26VsDEPwzvNEWPBY3u2ioD9
-         tO3L9abAT5Lf5D+39UgiTcXWW5j1EntJdBs3b+snglcLlp5+yfSPatSpJEFo4PJ2vuuN
-         cYs2GK6oXV8BXzkG0lLTTPgPDwbXDCZbUxaZrW+SFC/howlREwDXYsH0DiqmuQieB//1
-         rKUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQkFNk1ZhYulvkKmIdfvCjRWWtZJSuFg77at5unkjFWtwPiE7X4tjfVLIKS8iKk0STTJCTi3E6D5USSsiGS9gxUPEdIF3kQC0qPcoR
-X-Gm-Message-State: AOJu0YxNpSHO4DFiH+bMyhRv8VEwbxxctIZED3zfxoNL0VKVYklSwjZr
-	LuO0lYCCTkT1Y6GQl06uFtrnnsD4YldZYoqVvao8LaR9wIaMvC7y01ZounccgQeKIRJALv1NvbD
-	8SQE2z4C5u9yZbk3cCZ0XdciH3r6H8+HZ0xkHvQ==
-X-Google-Smtp-Source: AGHT+IEMWWDuLSCLxVuVMb2OSeIqnvFCckIeIsKnFAFjoQOPspTTLeiCkBU/fF7EcmInj8+0rp1IhGoCa55ZCvPHsDo=
-X-Received: by 2002:a25:90f:0:b0:e0b:bc8f:293 with SMTP id 3f1490d57ef6-e0bd5420f5bmr615793276.0.1722510099291;
- Thu, 01 Aug 2024 04:01:39 -0700 (PDT)
+        bh=m/lBUEuHtZhYH9hMMltxd6FYM94een14SRBxxIIu5uM=;
+        b=a0/+cTMsuL8G8YD1rSfFtcSNDEbjauamlq9BzJ997rT4UVvQ7w8uIb901ZNmtojtJl
+         3gmlWv97QULvnBR2why+jAy5R+tTNsr13cvAXYfcZR+GxDSnsNjPB5yPyeZoxjVhde7t
+         5ZNqOc1Upv8D8D47Qs/iVrbJrY3twDJJoo2p1cvz8BcOtDVGYLFyY/4um8QqrfS77I2b
+         slKS3qAKMJ222bjVNHUcmoAgqSo5qaKkUa1jHO/yJgSqFhn4f6mFn78qpepigkrG8SAq
+         8ZI1UnZZpUuy9//NsXn7mmmlRywH67Lgr4gcLeEGqhw1UG+oY9DDBtQszc/h2BStoX1b
+         BZJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUB3056r9m1AlyzNttuwpBdzxuacNR8djBxuHG5eEjR3eZ10YzFOsMBTHI/iK2KG3fg7jgi+V7bCqEkoFf6vOdQgqJgfNWRZtc76kb0
+X-Gm-Message-State: AOJu0YzuXR+r4ki4vQmklMdJhenKQfQxftnRn7zOsa5xZHD5byCabF99
+	Hc96/eoQHcPEoalrZBxP4UdBJAtps7u3yrmBzy9OcfofGvc1JLYmkY5ghy6HZF7ucGuTTpQRwVr
+	jtDc5Eo8nXBcZqb3FMLS60zqaML2Uo8PGBZnMTg==
+X-Google-Smtp-Source: AGHT+IFNMTUyuraUOe17RSwLCsQl2Heh5eaqrtk7oyS7ocUH1DnCdcUeW8y+TayZq1Ii/rIMs7hczcO3KQE8rJP/Pyk=
+X-Received: by 2002:a05:6902:1209:b0:e08:6055:9f3c with SMTP id
+ 3f1490d57ef6-e0bcd2b587amr2051515276.31.1722510107179; Thu, 01 Aug 2024
+ 04:01:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240716004527.20378-1-shanchun1218@gmail.com>
-In-Reply-To: <20240716004527.20378-1-shanchun1218@gmail.com>
+References: <20240716013704.10578-1-mengqi.zhang@mediatek.com>
+In-Reply-To: <20240716013704.10578-1-mengqi.zhang@mediatek.com>
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 1 Aug 2024 13:01:03 +0200
-Message-ID: <CAPDyKFreG39wJ85Mz=9MnkG-u=hDFCppsgfmv_mzpPbT3rxpmw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add support for Nuvoton MA35D1 SDHCI
-To: Shan-Chun Hung <shanchun1218@gmail.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	adrian.hunter@intel.com, p.zabel@pengutronix.de, pbrobinson@gmail.com, 
-	serghox@gmail.com, mcgrof@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	forbidden405@outlook.com, tmaimon77@gmail.com, andy.shevchenko@gmail.com, 
-	linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ychuang3@nuvoton.com, schung@nuvoton.com
+Date: Thu, 1 Aug 2024 13:01:11 +0200
+Message-ID: <CAPDyKFqK7CwGF2CitFtHUE_8hRxMr92KmWQzdO4kWRa7kYqHuQ@mail.gmail.com>
+Subject: Re: [v1, 1/1] mmc: mtk-sd: receive cmd8 data when hs400 tuning fail
+To: Mengqi Zhang <mengqi.zhang@mediatek.com>
+Cc: chaotian.jing@mediatek.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, wenbin.mei@mediatek.com, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.stable.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 16 Jul 2024 at 02:45, Shan-Chun Hung <shanchun1218@gmail.com> wrote:
+On Tue, 16 Jul 2024 at 03:37, Mengqi Zhang <mengqi.zhang@mediatek.com> wrote:
 >
-> This patch adds the SDHCI driver and DT binding documentation
-> for the Nuvoton MA35D1 platform.
+> When we use cmd8 as the tuning command in hs400 mode, the command
+> response sent back by some eMMC devices cannot be correctly sampled
+> by MTK eMMC controller at some weak sample timing. In this case,
+> command timeout error may occur. So we must receive the following
+> data to make sure the next cmd8 send correctly.
 >
-> This MA35D1 SDHCI driver has been tested on the MA35D1 SOM board with
-> Linux 6.10
->
-> v5:
->   - Update to nuvoton,ma35d1-sdhci.yaml
->     - Fixing the same orders as in the list of properties.
->   - Update ma35d1 sdhci driver
->     - Fixing the error path syntax to err = dev_err_probe().
->
-> v4:
->   - Update to nuvoton,ma35d1-sdhci.yaml
->     - Fixing overlooked issues.
->
-> v3:
->   - Update ma35d1 sdhci driver
->     - Fixing "Alignment" and "spaces preferred around".
->     - Fixing style for multi-line comments.
->     - Fixing double call to sdhci_pltfm_free().
->
-> v2:
->   - Update to nuvoton,ma35d1-sdhci.yaml
->     - Remove some redundant descriptions.
->     - Replace 'minitem' with 'maxitem' in the clock settings.
->     - Make corrections to nuvoton,sys description.
->     - Add sdhci-common.yaml.
->     - Remove '|' except where necessary to be preserved.
->     - Keeping one example is sufficient.
->     - Add regulators in the example.
->   - Update ma35d1 sdhci driver
->     - Refer to 'include what you use' to modify included header files.
->     - Replace the number 8 with sizeof(u8), and similarly for others.
->     - Use "dev" instead of "&pdev->dev".
->     - Use the min() macro to improve the code.
->     - Use dev_err_probe() instead of dev_err().
->     - Implement an error reset check mechanism.
->     - Add devm_add_action_or_reset() to help with sdhci_pltfm_free().
->     - Use devm_reset_control_get_exclusive() instead of devm_reset_control_get().
->
-> Shan-Chun Hung (2):
->   dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document MA35D1 SDHCI
->     controller
->   mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
->
->  .../bindings/mmc/nuvoton,ma35d1-sdhci.yaml    |  87 +++++
->  drivers/mmc/host/Kconfig                      |  12 +
->  drivers/mmc/host/Makefile                     |   1 +
->  drivers/mmc/host/sdhci-of-ma35d1.c            | 314 ++++++++++++++++++
->  4 files changed, 414 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
->  create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
->
-> --
-> 2.25.1
+> Signed-off-by: Mengqi Zhang <mengqi.zhang@mediatek.com>
+> Fixes: c4ac38c6539b ("mmc: mtk-sd: Add HS400 online tuning support")
+> Cc: stable@vger.stable.com
 
-Applied for next, thanks!
+Applied for fixes, thanks!
 
 Kind regards
 Uffe
+
+
+> ---
+>  drivers/mmc/host/mtk-sd.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
+> index a94835b8ab93..e386f78e3267 100644
+> --- a/drivers/mmc/host/mtk-sd.c
+> +++ b/drivers/mmc/host/mtk-sd.c
+> @@ -1230,7 +1230,7 @@ static bool msdc_cmd_done(struct msdc_host *host, int events,
+>         }
+>
+>         if (!sbc_error && !(events & MSDC_INT_CMDRDY)) {
+> -               if (events & MSDC_INT_CMDTMO ||
+> +               if ((events & MSDC_INT_CMDTMO && !host->hs400_tuning) ||
+>                     (!mmc_op_tuning(cmd->opcode) && !host->hs400_tuning))
+>                         /*
+>                          * should not clear fifo/interrupt as the tune data
+> @@ -1323,9 +1323,9 @@ static void msdc_start_command(struct msdc_host *host,
+>  static void msdc_cmd_next(struct msdc_host *host,
+>                 struct mmc_request *mrq, struct mmc_command *cmd)
+>  {
+> -       if ((cmd->error &&
+> -           !(cmd->error == -EILSEQ &&
+> -             (mmc_op_tuning(cmd->opcode) || host->hs400_tuning))) ||
+> +       if ((cmd->error && !host->hs400_tuning &&
+> +            !(cmd->error == -EILSEQ &&
+> +            mmc_op_tuning(cmd->opcode))) ||
+>             (mrq->sbc && mrq->sbc->error))
+>                 msdc_request_done(host, mrq);
+>         else if (cmd == mrq->sbc)
+> --
+> 2.25.1
+>
 
