@@ -1,131 +1,132 @@
-Return-Path: <linux-kernel+bounces-270613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDFD0944219
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:57:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A2D694421B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:59:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FFC7B215E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85A92283BA1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170F913D889;
-	Thu,  1 Aug 2024 03:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA5D13D63A;
+	Thu,  1 Aug 2024 03:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=penguintechs.org header.i=@penguintechs.org header.b="MGrGm2pF"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="hoYWaL5e"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040DB13D60B
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 03:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFD0136E3E
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 03:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722484628; cv=none; b=qjnaF78Cu8VwhbQACm9vNpvp8kb3Mceia372FTOu8dAr3XCRbOBNp5573FeyYzYCz+zGRVFNlUCLuKwdpsHf7f5kQ2wpTPhK9/j39AdYi0T8ORMhg6w7dXsL9lzY9cI41brdsZPpFrL3Vi+GtwrTXBYFNH5DiJ3l9tFJZ1deB4k=
+	t=1722484759; cv=none; b=lRt4HG1h/ezg/M1xlS7uThYhps49GYKnfRvAxBP29hGZ56kzUyWbUU00YDqJoTpi0OSBoYyTQrUfiSH6FtfZhYtUn7iunCRHmQ8jLKplOkrWok+czDUsY7aGuaS3XU9ox2MYVqMafwlO87Zo6Qj7uuEstJfpN+GvAU0lTWaObJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722484628; c=relaxed/simple;
-	bh=9z+DUe19MXcVwhPiCcg1jBIb6j+CrevqhI1KdsX/zG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f7JHPe1UhrUlFIkHv39IrDZPGqKEDt+MIfr57lvcJdrlRxmdlhWBtGW3x5o/hczRgy8ZItjSOAvJ3zjGFuwXRZ6nTbrMfQAA/bS3Is7xApIijOtGt29BqxMIYNbCq6jdrdcJpeP2d71yvSK9MvI9ZIvr7MZsVMLCTqPjdd8MyPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=penguintechs.org; spf=pass smtp.mailfrom=penguintechs.org; dkim=pass (1024-bit key) header.d=penguintechs.org header.i=@penguintechs.org header.b=MGrGm2pF; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=penguintechs.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=penguintechs.org
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70b703eda27so4148633b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:57:05 -0700 (PDT)
+	s=arc-20240116; t=1722484759; c=relaxed/simple;
+	bh=hTW7/qaGaSx8Jr6wZx1L/SQr2TqooH2RhG2KstErLdU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OveMTdivYMf843iidg3yfdKfuYbUF2rCj1zMukzwK/SbHRCVsgfPe7KdA63LZVUnlm5IXEzgZVCumyTxAQ0LvDR+LLjSmeoNILhZQWObh3InP1aPpmenIb9hYcYN+L17UnvPPrVCq/kFGNFK/k2eD2Xx3YObCY5nG3OmhftscYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=hoYWaL5e; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7a1d48e0a5fso3835685a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:59:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=penguintechs.org; s=google; t=1722484625; x=1723089425; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=E3c0jDeg9jATLBjz8MH1N0Oj6qwqnRYEeVc2HEf4DB4=;
-        b=MGrGm2pFRyQjizS4KN/++6GMaqvkhvmwFREh86hWbwtUsKAcOI0ypVIpeJqwAVxPek
-         mvBNIPEiuiUSEaxVAVWT9QLwgVG3Zm4hamN2O3/kHtS0g0rvERyzEUCKGr99aqqktBNK
-         04DzQxxcE0UDwKOwQ3j3KsmqzC407zcvwhDSg=
+        d=bytedance.com; s=google; t=1722484756; x=1723089556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zlFsn6l+3Fw1Z+6xexOiYMZvAqIxw3ZeiJB/ncw02d8=;
+        b=hoYWaL5es81WLP7XG9GcARfukmriNnSKO4NHku+IG65tb7Q3NDab1A/oJ3hQp56wEd
+         d7X+3YgAMtrDWH24Cs0bgC7w3gbvMSwocZmygXLcYwhKREsIOapGeVxBycadqXnqlu0C
+         tq6pKH/BIVJZcM03TvX8OhaGpnu+FRhfGWSB4VVgQ0pQr4VjZC0r1QIAf8OPIvGJO1XF
+         DWQQguhbB7k8R6pGCTozWBB6ARA8wYd6Eum5Sqvm70Y8/XAnV/2KpDpCOWWfW7THGdee
+         x6Gcc+sQfb4bJh+Vsdj+4jTBrWqUljhgBsVPJT1RjjZ7WoP9xWlCxSY7e4wPre83vPgA
+         FBxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722484625; x=1723089425;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E3c0jDeg9jATLBjz8MH1N0Oj6qwqnRYEeVc2HEf4DB4=;
-        b=HbEDD6Rla2IJf3zFtZcb46Cxkumn2El5IuSOI8rl/AiXa+QTW3Ycs/AifgE5VOtVlk
-         tModE//IicJ9vY46xq6Vcbos3ws0PAOTlnKw9TJ34QgC9eItgIVYSxkbmNDFLPq0nkin
-         /2mJn20GwFFNpGlLW7UeCDT4qShXdzuzIbK0n6LGKOnZYEDHENEetyIiYRopCREcgLmE
-         Nyj8kMQ6B7Bf8BozKXoIJERq+npMuCBR/g8ZDo7aUS0ixIZqNu47ETGkck9IiuXTZ7nw
-         NrWNdSutgaORuWE07rln8lEZpJNHLfUi5Gyb7xfyQRNnjuGiTCV3G/vK3Oi9D8g1mAZe
-         36tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUq/kSe+zpJyxwVH1icuGXpQm+SXa46lrRyw2p0tZ6RmGKKQMeZe0pHHMeo7pn7uKCMVqm+8cSfbdgVLZ7gO1a6Q7+bF3TQ6AKC2Xjt
-X-Gm-Message-State: AOJu0Yz7s8XgLRTLDvhh4AA6pICXDyMrmB12jqRKuer3BjzjfZKnhLJO
-	rA0pQAP1zAobXd/cPy2qKr0pgkrko6UnX3raEjnz0iyrEdoeKFeagnyc0AxVaA==
-X-Google-Smtp-Source: AGHT+IEFdP76UW/IZ+sC2v4ImHKOP3FcwGDmZrqokrJHVTrqdDNiXNJhqK0SPMMBLeC7lZGGATEBbA==
-X-Received: by 2002:a05:6a20:9f86:b0:1c1:61a9:de4a with SMTP id adf61e73a8af0-1c68cf22b8amr1895142637.24.1722484625007;
-        Wed, 31 Jul 2024 20:57:05 -0700 (PDT)
-Received: from [172.16.102.95] (c-98-45-34-39.hsd1.ca.comcast.net. [98.45.34.39])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc430fa2sm2150004a91.13.2024.07.31.20.57.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 20:57:04 -0700 (PDT)
-Message-ID: <721b286c-7143-40c7-84cf-c77986009895@penguintechs.org>
-Date: Wed, 31 Jul 2024 20:57:02 -0700
+        d=1e100.net; s=20230601; t=1722484756; x=1723089556;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zlFsn6l+3Fw1Z+6xexOiYMZvAqIxw3ZeiJB/ncw02d8=;
+        b=OH1BOQHHLXBfaPNXuEjAn1Trz5T/ePULviJoCadIWrcgpZav+LF6A2hIDbtn/bnHkg
+         JrmGzmLeDcI+ue3sUvROQ+o/fA46yr1weWWLhIRejGg2rooF9EJUvQxusTngTzdL3cdu
+         JC1PcpTegO8RjeYFLtO2GTbQrrrV11KiHkEr1HXD1ArPDrbxH5kweMmAc+oAedju8T2f
+         eqzTBl/6Mzp5VfGyMJT3eySQvNsh+0eAUObz9FM+beDPyejNwC3jnrnvWlqsZYPMF6MD
+         rbTYYUUVi5caI9Roml15fwqtgi54RM43pa4hkehELJwJIq0G56UQNQwckb6J0ToSj+89
+         DIBg==
+X-Gm-Message-State: AOJu0Yy0NGmc2Hkm95/0HUWNH7so+UY9vi+oJHVRndyx2pst4MWWbjGa
+	xMjs5JACZ2D/KpRXsGmUEa43339spymKrsJdKUT2Y4MkZXrBUsMXwI+QZwDSVTo=
+X-Google-Smtp-Source: AGHT+IFVwI4lrdMlXNtQoIhzQyIzVNXkP9XqiMecRTWO6wxITB54/wCZujw8XUU2e3ywar1nkq8Rbw==
+X-Received: by 2002:a05:6a21:a4c1:b0:1c4:19d0:4a0e with SMTP id adf61e73a8af0-1c68cec8fbbmr1537314637.14.1722484756346;
+        Wed, 31 Jul 2024 20:59:16 -0700 (PDT)
+Received: from localhost.localdomain ([203.208.167.151])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4cf7d0sm2162273a91.45.2024.07.31.20.59.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 20:59:16 -0700 (PDT)
+From: Hao Jia <jiahao.os@bytedance.com>
+To: mingo@redhat.com,
+	peterz@infradead.org,
+	mingo@kernel.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com,
+	rostedt@goodmis.org,
+	bsegall@google.com,
+	mgorman@suse.de,
+	bristot@redhat.com,
+	vschneid@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	Hao Jia <jiahao.os@bytedance.com>
+Subject: [PATCH] sched/eevdf: Fixed se->deadline possibly being refilled twice in yield_task_fair()
+Date: Thu,  1 Aug 2024 11:59:06 +0800
+Message-Id: <20240801035906.72603-1-jiahao.os@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Bluetooth: hci_qca: fix post merge window regressions
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
- <CABBYNZ+dvLGos9oLi6euFkmiU9OReJ5F3qsA6WrhW29yeZ-jWQ@mail.gmail.com>
-Content-Language: en-US
-From: Wren Turkal <wt@penguintechs.org>
-In-Reply-To: <CABBYNZ+dvLGos9oLi6euFkmiU9OReJ5F3qsA6WrhW29yeZ-jWQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Luiz and Bartosz,
+We call update_deadline() in yield_task_fair(), if se->deadline has been
+refilled in update_deadline(). We should avoid filling se->deadline again
+in yield_task_fair().
 
-On 7/31/24 9:32 AM, Luiz Augusto von Dentz wrote:
-> Hi Wren,
-> 
-> On Wed, Jul 31, 2024 at 11:21 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->>
->> Here are the fixes for regressions reported by Wren and Dmitry. I could
->> reproduce the crash on db820c and so I was able to test it but patch 2/3
->> could use a Tested-by from Wren on QCA6390.
-> 
-> Can you give this set a try and report back?
+Fixes: 5e963f2bd465 ("sched/fair: Commit to EEVDF")
+Signed-off-by: Hao Jia <jiahao.os@bytedance.com>
+---
+ kernel/sched/fair.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-I'll give it a shot tonight or tomorrow and report back.
-
-Bartosz, thanks for looking into this.
-
->> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->> ---
->> Bartosz Golaszewski (3):
->>        Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
->>        Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
->>        Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
->>
->>   drivers/bluetooth/hci_qca.c | 19 +++++++++----------
->>   1 file changed, 9 insertions(+), 10 deletions(-)
->> ---
->> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
->> change-id: 20240731-hci_qca_fixes-8e7a8ed3ad83
->>
->> Best regards,
->> --
->> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->>
-> 
-> 
-
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 795ceef5e7e1..b0949e670bc4 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -8695,6 +8695,7 @@ static void yield_task_fair(struct rq *rq)
+ 	struct task_struct *curr = rq->curr;
+ 	struct cfs_rq *cfs_rq = task_cfs_rq(curr);
+ 	struct sched_entity *se = &curr->se;
++	u64 deadline_snap = se->deadline;
+ 
+ 	/*
+ 	 * Are we the only task in the tree?
+@@ -8716,6 +8717,14 @@ static void yield_task_fair(struct rq *rq)
+ 	 */
+ 	rq_clock_skip_update(rq);
+ 
++	/*
++	 * If se->deadline has been refilled in
++	 * update_curr()->update_deadline(),
++	 * skip updating again.
++	 */
++	if (READ_ONCE(se->deadline) != deadline_snap)
++		return;
++
+ 	se->deadline += calc_delta_fair(se->slice, se);
+ }
+ 
 -- 
-You're more amazing than you think!
+2.20.1
 
 
