@@ -1,75 +1,58 @@
-Return-Path: <linux-kernel+bounces-271661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AACF945145
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:04:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0806945143
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:04:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBEFB284FD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45D61F23F60
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C341B9B2C;
-	Thu,  1 Aug 2024 17:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B019D1B4C3F;
+	Thu,  1 Aug 2024 17:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FGQFD6PH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKIGiMer"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47703A1DA
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86F41B29AF;
+	Thu,  1 Aug 2024 17:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722531850; cv=none; b=MnWe5OZerhKPE2rboE0Rr7tdGZ4w/PfxdU/SRF4KMomRutP5lihJRou3ccx1K1f2QH9lGrlP0kvmTCnN9082gEhPlyxzFe/jGlsMlvy7Q7L/9ZmmevmgMzfX/rjQRmC7krAQQMhg8kci3oNVeDKtDtvOyuFeMZcAQhTYxI4AnjY=
+	t=1722531848; cv=none; b=l1ZnNRufzUK0tVd0adFyP0zhUjDN+AfZISyxWS5kiMTSNrkq3OcBWe6aYpGNGNKg4kNfKBpzHduPwOiqgCoTjgTCa+Y9I/kcJCBBdtvKxrKXWB0PCv6eqL5H09hNbSwhoucyYA8CZqCWOS0kXTZASBAeilEO2qM9uMr9IxVHF2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722531850; c=relaxed/simple;
-	bh=MLmprcZyVDLDR7X34VpLPzVJs3GttAZM4v7jyvirOiU=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gCOIsAhiWKUX9BoKHOvw4Pn5mWdT74jrpanUtq20DJtVaqFh66vA56QVIoy2o4ULjqIXK1zjLL9BTy3rcJ6U0JE08/FjPUoKcDNhc6UzwXIgMJxX384RI6RhB+WOMyBBd1rbnj9TsKUD+IQ9wUo2xjr74su4uH3xDUU/QAfPtRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FGQFD6PH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722531847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=BVu+TyGnqswgeJMSXlcBDfSQmVXi12Uf1VERdb2hIew=;
-	b=FGQFD6PHHOp5nAaP/IM2H79/N4W5bOX6JtHBOa5v0tHbOoIclB6tosmQJ05NsJpK965vVE
-	FY9ox33Xel9bjR2F0LCFKDF6aXCwVK3NPNy58mAlkm3mz/MVIetk2RIQ44F3eilWqGdAvH
-	sk/v7hpfbL5TklYtNz2O6JfaPz7tNsY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-iAqqGs6HMZ2yBwFccAKtIQ-1; Thu,
- 01 Aug 2024 13:04:04 -0400
-X-MC-Unique: iAqqGs6HMZ2yBwFccAKtIQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB51019560A2;
-	Thu,  1 Aug 2024 17:04:01 +0000 (UTC)
-Received: from localhost (unknown [10.22.34.81])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1377719560AE;
-	Thu,  1 Aug 2024 17:03:59 +0000 (UTC)
-Date: Thu, 1 Aug 2024 14:03:58 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: LKML <linux-kernel@vger.kernel.org>,
-	linux-rt-users <linux-rt-users@vger.kernel.org>,
-	stable-rt <stable-rt@vger.kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Carsten Emde <C.Emde@osadl.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Daniel Wagner <daniel.wagner@suse.com>,
-	Tom Zanussi <tom.zanussi@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
-	Jeff Brady <jeffreyjbrady@gmail.com>,
-	Luis Goncalves <lgoncalv@redhat.com>
-Subject: [ANNOUNCE] 5.10.222-rt114
-Message-ID: <Zqu__oYh42j4dY0M@uudg.org>
+	s=arc-20240116; t=1722531848; c=relaxed/simple;
+	bh=ctBYTvcSoyXQzBR+EgWwQU7XaNzi5QtXFTkUFSCB0Ms=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=EcHBuXqhbzD0Wna0Y6XyiwrtiMRmHK4Rx9SXaIJRj1+04eaeGVya8US5U9RyHQW7H01SeEfnWWF0yRSaTqt2DA3Ghvz5m1BLUNk0B/0ZLUOmrlrr6FiQqJhgi1qNgHtgejYvzsjlsi3HyRmaHzSZDOaGrfUE0XDMrK6hl14+IFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKIGiMer; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42318C32786;
+	Thu,  1 Aug 2024 17:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722531848;
+	bh=ctBYTvcSoyXQzBR+EgWwQU7XaNzi5QtXFTkUFSCB0Ms=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LKIGiMerh5HpOdwwADCsnTv2T1lWQHFG1qAosPxRGNY55J5YKzJO4b3ARVmKyGdsU
+	 ZmOz5qabrtR4f9MBw7fPpHxIzUqCG9AhGl9KKVjUY4Jhnys6zSePj2kAELHIwxBeiP
+	 uv5yk21451aYP5C9d70Bu0X6mdvfgdQON7qZHj2i29NtRvs6YHJIq/HK1c/UEwwpdF
+	 1FKrZT6zpkTQZsrWiiu6y8SB4XlDhwuXYt7Udk6XJQWX+Itcufmfjzmeve5CP1XR1k
+	 AvR6lrhh/arQ0rRcMaeFGxnY/x4VbYZQ5QS3HCYlpGCHOyYCx5jMO9NPcmSFibqktx
+	 nTHjlmMvZxnhg==
+Date: Thu, 1 Aug 2024 12:04:05 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH 0/2] Use pcim_request_region() in vboxvideo
+Message-ID: <20240801170405.GA107618@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,40 +61,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+In-Reply-To: <20240729093625.17561-2-pstanner@redhat.com>
 
-Hello RT-list!
+On Mon, Jul 29, 2024 at 11:36:24AM +0200, Philipp Stanner wrote:
+> Hi everyone,
+> 
+> Now that we've got the simplified PCI devres API available we can slowly
+> start using it in drivers and step by step phase the more problematic
+> API out.
+> 
+> vboxvideo currently does not have a region request, so it is a suitable
+> first user.
+> 
+> P.
+> 
+> Philipp Stanner (2):
+>   PCI: Make pcim_request_region() a public function
+>   drm/vboxvideo: Add PCI region request
+> 
+>  drivers/gpu/drm/vboxvideo/vbox_main.c | 4 ++++
+>  drivers/pci/devres.c                  | 1 +
+>  drivers/pci/pci.h                     | 2 --
+>  include/linux/pci.h                   | 1 +
+>  4 files changed, 6 insertions(+), 2 deletions(-)
 
-I'm pleased to announce the 5.10.222-rt114 stable release.
-
-This release is just an update to the new stable 5.10.222 version and
-no RT specific changes have been made.
-
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v5.10-rt
-  Head SHA1: 22b07fa4133af0ef5ed5661e0534afabf9abc535
-
-Or to build 5.10.222-rt114 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.222.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.222-rt114.patch.xz
-
-Signing key fingerprint:
-
-  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
-
-All keys used for the above files and repositories can be found on the
-following git repository:
-
-   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
-
-Enjoy!
-Luis
-
+Applied with Hans' ack to pci/devres for v6.12, thanks!
 
