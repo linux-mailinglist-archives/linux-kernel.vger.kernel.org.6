@@ -1,120 +1,159 @@
-Return-Path: <linux-kernel+bounces-271080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99F1F94493D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:23:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E6DC944940
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:24:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30B8B281024
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:23:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 505371F22E91
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69FC5170A37;
-	Thu,  1 Aug 2024 10:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47A46183CD0;
+	Thu,  1 Aug 2024 10:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+vHRPNR"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECi9NtrR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 557B7446A1
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E15F446A1;
+	Thu,  1 Aug 2024 10:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722507825; cv=none; b=NJLSwNDX471kXLiKQq/JgWUI6lDL0PBypQjTOh28guoFCgJZpJLrC2UiPNGBJA+LbxfMHzOKeI5FdWl9epv2uQzNkuJR0dKu/3a5opkHlgTnZ5VCmY0bIpFNzUrLJE05+1cyrBT/5OF4BIAj8JdS1eScYk65OMq8HXyQ7AeBUE8=
+	t=1722507843; cv=none; b=VwH2QtJw3VmWluFn43THqA8s/5VKqpwLmVOOnmziJcaSnApf72f0t7cL7v7oei5qQ8VGQFEUha7G61Xu2fSko/NzvGEvgyvriLlREqXJCb+NlXlNu5En85806D9niN7KI1o30F7xjAr5CT3pQKR4s4lkMjxrHIs9JTYS8V5CJkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722507825; c=relaxed/simple;
-	bh=4dPukRyItOSIobx4WPsZvXe+nhAZ38RPLUln1mL7Ljw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ls6D2p9p7ljXzgKCQrpDtaGy6h2lMc7jUi/xhbcW4uUbMA3o58ecZ+GmvVz/wBMbq/hBUMaKinGTpxaNf9EQl40ZMcnhY/06VSXYjOi0+B2rUJucsaVWBNClBjlXsKmHhIpS4iQNny/eNbGv3EsvKlQAuoo4eEIe6kKVbgMlYNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+vHRPNR; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7093f6adc4aso2600734a34.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:23:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722507823; x=1723112623; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Xy+YnBW0pTnJouWOqXyQ4NXMUNDJSPyAsk2GdSuKUs=;
-        b=K+vHRPNRHe+GjnrnWhINVzYiVyWGQApULUAur8I5s8hmnqif9/i2jvOHpYsS4qo6Og
-         9c+jmSxMiUUlM4ktGbu0/5h+6An2sDwNl8XTgDylR1nQ2o0Ika7jqdVPdmvROyGgZo2b
-         4+1g6nA+93Oz49JQHHRFSsniymmsTusI6QX2ox+p4Ix1EOFqcDdl682iRGTZVefetUbM
-         3Vww0offez6Ytd1zcZYcjpWZPoEuW8TVFMEbTetkD7bO0nT1a6uCTrzKCKdO/d4lYuqS
-         gqr6c/Emm8EKe1Fvdz1vwLXn0GDuNCmYrIF/n/QAyztBB1nQj8E2uHcrDuni6R/T+JYb
-         opsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722507823; x=1723112623;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7Xy+YnBW0pTnJouWOqXyQ4NXMUNDJSPyAsk2GdSuKUs=;
-        b=OLJ3W8DkjxEivAWAlLffQyElAvC0ytLTZz6C3ulLbtRwdwxFiVUHf50d8GVNhdpx5l
-         JzxW4Kb1XhNmb+69iw3ZEDjDrPXNLYgkPJanNysAB2lDUqFroSgqMLbOjXULykVSeoN6
-         5yzOFrT1pk222JowtEia1ZTdonal9on/L3s6XNffpf9JZ5j7wcXzcmaGuWCFSFOYndMR
-         teo/Wlj7uWZx3ThzZ6VGdQAOj24EfR/IffxVXLKOe3V8rL6hcyO18d4QxY2+2pBRR1Kk
-         GtNyKWEMF4pB31uzKi7FLR6XcrY6W8j1yFIuegRNO4flFCfbN0jR+oAtwWBDX3xM1CeK
-         AxPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUtHahzueapm8wMs5ZKYVaSkULIclTR6I2FqeqPADfUpx052TgZVoU+pSDaSD8VJMHn5dK8KKgCyQh6NYZadgyASzM7J4m6aneGjnM3
-X-Gm-Message-State: AOJu0Yw9LsPySPu+CV8+rdrhpFqW8ORnch3IYtVaXmTI2r0V4b7wNAhc
-	9AcJYqQH4uQSD0RmtRSOufeB/kaE7g1HANiK0djpFWVN9Sbr5lJK
-X-Google-Smtp-Source: AGHT+IGIxxlyoDeUzX/z3mgluxeTtIsYQBu/I+K7lGL6G4vz4LFvH0ndqW0M6bE//iHQUiAIGFmFMA==
-X-Received: by 2002:a05:6830:699a:b0:709:4936:d8fd with SMTP id 46e09a7af769-7096b882b33mr1996037a34.29.1722507823183;
-        Thu, 01 Aug 2024 03:23:43 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:1cb4:cece:78f6:191b:3e2f:ac7d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8a105bsm11186351b3a.194.2024.08.01.03.23.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 03:23:42 -0700 (PDT)
-From: abid-sayyad <sayyad.abid16@gmail.com>
-To: airlied@gmail.com
-Cc: daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	abid-sayyad <sayyad.abid16@gmail.com>
-Subject: [PATCH] drm: Add documentation for struct drm_pane_size_hint
-Date: Thu,  1 Aug 2024 15:52:39 +0530
-Message-Id: <20240801102239.572718-1-sayyad.abid16@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722507843; c=relaxed/simple;
+	bh=2qqKLa49EvzmM19MRf9Bcfq/xYYI+V8D6kv7dmOhKVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JmZR2ZaAmGuvcFmTDddjcUyyT7LrVeRWeDg6BwBsiS4GTzscCO1Yb0X71Mj4R3VK4gIPey/ntGy9HsRgYWrWqZBr4wNGySmbxGT7gk9qtFxiWpY+Z/K5F/kfE/45QNxZhdSETCY6mHGuQ2BPG623y8Lp/mPSDd/DTCywWFSLyqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECi9NtrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 055C8C4AF0E;
+	Thu,  1 Aug 2024 10:24:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722507843;
+	bh=2qqKLa49EvzmM19MRf9Bcfq/xYYI+V8D6kv7dmOhKVY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ECi9NtrRXeYu40pM7Jmh/4wt2ajtq7MPUdnzean5RfI3hBLLw/von4XF8eMTiCj/b
+	 kcRZie+561VzfExlC6A1o/AQYT7im8AWqGf1CTN+8RdMjTxvHtUOZFPz71so3ZDClc
+	 BrObgHuabYbANJ8jpgQF7I3D7FkoE7hYt6nW3XrvKfbQcs6EJ0oIBlPg86TsQZfiNN
+	 LR96QFYXWXRefSh5u5l6FuVOLxl612AAkaY1hIzhIGa4+3+9GKk5sSN+G+1ItQHMm1
+	 ow0sb6iYdomI+aefOmvne3dTnzxXeFiLMgcZc8xE23Nss1+Dx8nV5Y35mRvjoxWm/g
+	 /FBmS3Ax/zk0A==
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3db3763e924so309075b6e.2;
+        Thu, 01 Aug 2024 03:24:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUy9TqmrxaIKlz2jiEgpNngXFey/RssqfmzJjS1mWZ/BjwY4T65Z9tXMbc/yHyXZyjXnGsENNtXTw==@vger.kernel.org, AJvYcCVWM0AdqiLbT12hrQT7gpfMNLrnKm2lVCFKEDIZs/xSoYnHPGQjrtqnrTHs31nLUkIRUU+RKS5s@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIlEnFuLQRMebU4WYpvDk5YrwtSetTcSCRccI9h5eIN7qIFCWn
+	SLQS4d0afJsuiYdEmxzAGEsMaIDA8JzVvnBrcRkhh7XCQZeHl39Ke4utW75IkDmemUUWyUkC3XW
+	F9n+HcaHVXmyO2CxAQU3I5AiXSE4=
+X-Google-Smtp-Source: AGHT+IFSc0QSvBW/YVrvyVouC9aOFYfVQ5CbvNkJfU37sydbsMcTetupYjsIJy8Su3F3gmHoo8mJXk5LjGMR4RHSaio=
+X-Received: by 2002:a05:6871:3329:b0:258:476d:a781 with SMTP id
+ 586e51a60fabf-2687a3cee76mr1163991fac.3.1722507842262; Thu, 01 Aug 2024
+ 03:24:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240801000834.3930818-1-sashal@kernel.org> <20240801000834.3930818-69-sashal@kernel.org>
+In-Reply-To: <20240801000834.3930818-69-sashal@kernel.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 1 Aug 2024 12:23:51 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hPDBWZA4zwrnkam=6a5APjviccoEh6gEHEQegpjpnAtA@mail.gmail.com>
+Message-ID: <CAJZ5v0hPDBWZA4zwrnkam=6a5APjviccoEh6gEHEQegpjpnAtA@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.10 069/121] thermal: trip: Use READ_ONCE() for
+ lockless access to trip properties
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, rafael@kernel.org, daniel.lezcano@linaro.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Fixed warning for the following:
-./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member
-				'width' not described in 'drm_plane_size_hint'
-./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member
-				'height' not described in 'drm_plane_size_hint'
+On Thu, Aug 1, 2024 at 2:15=E2=80=AFAM Sasha Levin <sashal@kernel.org> wrot=
+e:
+>
+> From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+>
+> [ Upstream commit a52641bc6293a24f25956a597e7f32148b0e2bb8 ]
+>
+> When accessing trip temperature and hysteresis without locking, it is
+> better to use READ_ONCE() to prevent compiler optimizations possibly
+> affecting the read from being applied.
+>
+> Of course, for the READ_ONCE() to be effective, WRITE_ONCE() needs to
+> be used when updating their values.
+>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
----
- include/uapi/drm/drm_mode.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+This is more of a matter of annotation than practical issue.  That's
+why I haven't even added a Fixes: tag to it.
 
-diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-index d390011b89b4..b581d384d4b5 100644
---- a/include/uapi/drm/drm_mode.h
-+++ b/include/uapi/drm/drm_mode.h
-@@ -864,7 +864,13 @@ struct drm_color_lut {
-  * array of struct drm_plane_size_hint.
-  */
- struct drm_plane_size_hint {
-+	/**
-+	 * @width : width of the plane in pixels.
-+	 */
- 	__u16 width;
-+	/**
-+	 * @height : height of the plane in pixels.
-+	 */
- 	__u16 height;
- };
- 
--- 
-2.39.2
+Whether or not to take it into "stable" is up to you.  It certainly is
+low-risk in any case.
 
+> ---
+>  drivers/thermal/thermal_sysfs.c | 6 +++---
+>  drivers/thermal/thermal_trip.c  | 2 +-
+>  2 files changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sy=
+sfs.c
+> index 88211ccdfbd62..5be6113e7c80f 100644
+> --- a/drivers/thermal/thermal_sysfs.c
+> +++ b/drivers/thermal/thermal_sysfs.c
+> @@ -150,7 +150,7 @@ trip_point_temp_show(struct device *dev, struct devic=
+e_attribute *attr,
+>         if (sscanf(attr->attr.name, "trip_point_%d_temp", &trip_id) !=3D =
+1)
+>                 return -EINVAL;
+>
+> -       return sprintf(buf, "%d\n", tz->trips[trip_id].trip.temperature);
+> +       return sprintf(buf, "%d\n", READ_ONCE(tz->trips[trip_id].trip.tem=
+perature));
+>  }
+>
+>  static ssize_t
+> @@ -174,7 +174,7 @@ trip_point_hyst_store(struct device *dev, struct devi=
+ce_attribute *attr,
+>         trip =3D &tz->trips[trip_id].trip;
+>
+>         if (hyst !=3D trip->hysteresis) {
+> -               trip->hysteresis =3D hyst;
+> +               WRITE_ONCE(trip->hysteresis, hyst);
+>
+>                 thermal_zone_trip_updated(tz, trip);
+>         }
+> @@ -194,7 +194,7 @@ trip_point_hyst_show(struct device *dev, struct devic=
+e_attribute *attr,
+>         if (sscanf(attr->attr.name, "trip_point_%d_hyst", &trip_id) !=3D =
+1)
+>                 return -EINVAL;
+>
+> -       return sprintf(buf, "%d\n", tz->trips[trip_id].trip.hysteresis);
+> +       return sprintf(buf, "%d\n", READ_ONCE(tz->trips[trip_id].trip.hys=
+teresis));
+>  }
+>
+>  static ssize_t
+> diff --git a/drivers/thermal/thermal_trip.c b/drivers/thermal/thermal_tri=
+p.c
+> index 49e63db685172..b4e7411b2fe74 100644
+> --- a/drivers/thermal/thermal_trip.c
+> +++ b/drivers/thermal/thermal_trip.c
+> @@ -152,7 +152,7 @@ void thermal_zone_set_trip_temp(struct thermal_zone_d=
+evice *tz,
+>         if (trip->temperature =3D=3D temp)
+>                 return;
+>
+> -       trip->temperature =3D temp;
+> +       WRITE_ONCE(trip->temperature, temp);
+>         thermal_notify_tz_trip_change(tz, trip);
+>
+>         if (temp =3D=3D THERMAL_TEMP_INVALID) {
+> --
+> 2.43.0
+>
 
