@@ -1,150 +1,160 @@
-Return-Path: <linux-kernel+bounces-271179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2984944A70
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:32:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BA9944A76
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629D51F21603
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567721C21840
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CDD18E045;
-	Thu,  1 Aug 2024 11:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FA0O5HeL"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43AFE18E058;
+	Thu,  1 Aug 2024 11:34:46 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE4F16DC2F;
-	Thu,  1 Aug 2024 11:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752AE18DF6B;
+	Thu,  1 Aug 2024 11:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511926; cv=none; b=YRQD7K0upKN6uBVh4wBv6/eMsmVBq2g8GEXUS2s7NB4oYeY0BQl+4efUI6S06qJZfHN0jvS6aiLJYD3PaBzUB+DU/0RxXEnjKaBeiCdJ0rmxQL2+lJcScyudWXOiymOP71BDv1GFqu+3F8n9x161C31RDT0bQYaQew9ZkChSZ3c=
+	t=1722512085; cv=none; b=OZWEeWqIyMxi2iwFg4ApYiyR/KvQgWCo8whnVw34NjKX1Qs+j8yS+DN8Zkc8YinOukQLLHp7eQBbkNjK6L2TKvaFsFuFWECMBsj1s7BHd/E/C1WBJ8aAWakevhWaqPEdeTe5hdYLlN3pJdFiaTwBSr4kRshjgRRM7Drr4sw+zsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722511926; c=relaxed/simple;
-	bh=VDgbkzSy6pdn7BBt+7W3T6jN6xudBS9RtTDaoEzS1yQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOqsrIuQk0Li1pjOtC0BAIj+ef5C9jRYP6L8TK4FF4T+MBth9K/wexirGlsEVtbgDYIdjJiWvQoxB16snhcaHMkHeZ0phzia4zRoeU8kmmWAxuX9IiHYma0nK48XfX8xP/AI5kybMpAY4OAz9/rg88ACOTEQOldkpcJeCVtg4Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FA0O5HeL; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so3643538a12.0;
-        Thu, 01 Aug 2024 04:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722511924; x=1723116724; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gwgt/ZE+D10zyyktrtFq6cZQwEQSNzuYzBpK2SkBtZ8=;
-        b=FA0O5HeLnSNj93WM9KO+yIVYkkuAKygn88mb7gaUEydHvptLEsDotKypwcIVM1t9Cc
-         QRsP1nLdyoVq2Tqh/9+UI3Lq/x4VeDRyAYVzLr8vVq5f0XZcdr3RAb+avX2das7Eo0IT
-         7hgSMJQ53EMDhTjSVnwrt3Z4pEx4FluDLcwXZyBPcl76ZRrkdekwB436CjuKz3sLxqVE
-         GTNphgxKpKylmU94qHL2L9BjneKoeYCZR23lzaJNcNF2VxCoJLkqhicw8ocU+4r8Up3U
-         36ZmGRYaHoGvkB1MsaHWyA8cKQ+9UCcvxHZsSWkoHPxzbp3/fHc5rdKV+2d4AS1Te7Q4
-         lUWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722511924; x=1723116724;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gwgt/ZE+D10zyyktrtFq6cZQwEQSNzuYzBpK2SkBtZ8=;
-        b=HS/MenCtiQvCuloozj0Hl0YoMBQWOHrSMzqePgS4tMX4g1m7Q0VEnOo6OLT5YidU2k
-         B5F8bYy1XwAEhKtrxaOdaBb0RTwA0QSw59YYxosSGj//JeGRJ3A1B7+M/mF7CbiVhMk3
-         HrhgBKaQ2iHKK7jDN3aAwPdkN7Xz+hRWgKyzIWyg5hXB9sZ89KI6mM2JJwMb+iQltH4z
-         V/m1v3QMcPFeyF01pZ4vOlfMrP4NE6uytbmQhmWqzHKnUzd1Swl4Fr6Cby5sZHRxsxbk
-         N+MItCs876qXwR3+hL5kQ60LpERWp3ggmIj2Jr7/4A4pF3MOSjiZXD8IPtuaDsHQsq0E
-         adPw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxYiA4fQdG3Y7DjVRf2Ikn66H0WgTX3wdD564KKdGsCk7GvclnCNfkWmoKJ/hR5DMVfyWMOZdREEUhiKoLFvNi967h9pqof+rkLMNUmEDLa4FzN06Qi6Nh9j6ADwdWyCCnkiZYBAFuvnI+LM9ME9FS
-X-Gm-Message-State: AOJu0YwhZn/Abw0x5srZZaEUXN01JmbQesTxU7Zm+PzrwNFjNjLbenl2
-	CtFKaNGHDj7/OKbCicBc5GWNdx/Enfot1EoZhNzOg6OcV47stSjb
-X-Google-Smtp-Source: AGHT+IGsA4jWSMwcA0vhxehDG6CkxNwbXoJAz1NwOzbIbMvlHmBQCYZwHqy2J3Kgg/H9/iu2yoo7rQ==
-X-Received: by 2002:a17:907:3fa9:b0:a7a:bcbc:f7f4 with SMTP id a640c23a62f3a-a7dbcbe50bdmr100814266b.14.1722511923294;
-        Thu, 01 Aug 2024 04:32:03 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad9d41esm883366766b.154.2024.08.01.04.32.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 04:32:03 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 1 Aug 2024 13:32:01 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org,
-	peterz@infradead.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
- uprobe *
-Message-ID: <ZqtyMTyu3uneHZDJ@krava>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134535.GA12332@redhat.com>
- <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+	s=arc-20240116; t=1722512085; c=relaxed/simple;
+	bh=ZBGPGAnnSSo4MaKa7rOByKAwviaiY9jt7YJtmwzw2MM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QvNkvfi4Lpma8hyB7LApL0FYVZjszZ0Ecpr9AD/XigKCH8h2N1BsSleWy1vpSaYtAp1BQlmvKcRRewGy4WSOr2Xz9IByCmmyvMhnKUEkVCXvZFjWrztOnblXrXL0/5+aKLOirN2IAjwLKv+7B06usTPthBkyGzy4eUVBa1e/e5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZRh36H8hzxVHV;
+	Thu,  1 Aug 2024 19:34:27 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id CD90914041B;
+	Thu,  1 Aug 2024 19:34:40 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 1 Aug 2024 19:34:40 +0800
+Message-ID: <f5da09d7-30f9-198f-84ac-5c73e2925f6f@hisilicon.com>
+Date: Thu, 1 Aug 2024 19:34:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
+Content-Language: en-US
+To: Leon Romanovsky <leon@kernel.org>
+CC: <jgg@ziepe.ca>, <bvanassche@acm.org>, <nab@risingtidesystems.com>,
+	<linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <target-devel@vger.kernel.org>
+References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
+ <20240801103712.GG4209@unreal>
+ <bcbc57ba-3e54-cfe5-60b8-8f3990f40000@hisilicon.com>
+ <20240801113055.GH4209@unreal>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <20240801113055.GH4209@unreal>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-On Wed, Jul 31, 2024 at 09:18:00AM -0700, Andrii Nakryiko wrote:
 
-SNIP
 
-> diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> index 5f152afdec2f..73a6b041bcce 100644
-> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> @@ -431,6 +431,7 @@ uprobe_ret_handler(struct uprobe_consumer *self,
-> unsigned long func,
->  }
+On 2024/8/1 19:30, Leon Romanovsky wrote:
+> On Thu, Aug 01, 2024 at 07:02:41PM +0800, Junxian Huang wrote:
+>>
+>>
+>> On 2024/8/1 18:37, Leon Romanovsky wrote:
+>>> On Thu, Aug 01, 2024 at 03:44:15PM +0800, Junxian Huang wrote:
+>>>> Currently cancel_work_sync() is not called when srpt_refresh_port()
+>>>> failed in srpt_add_one(). There is a probability that sdev has been
+>>>> freed while the previously initiated sport->work is still running,
+>>>> leading to a UAF as the log below:
+>>>>
+>>>> [  T880] ib_srpt MAD registration failed for hns_1-1.
+>>>> [  T880] ib_srpt srpt_add_one(hns_1) failed.
+>>>> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
+>>>> ...
+>>>> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
+>>>> ...
+>>>> [  T376] Call trace:
+>>>> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
+>>>> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
+>>>> [  T376]  process_one_work+0x1d8/0x4cc
+>>>> [  T376]  worker_thread+0x158/0x410
+>>>> [  T376]  kthread+0x108/0x13c
+>>>> [  T376]  ret_from_fork+0x10/0x18
+>>>>
+>>>> Add cancel_work_sync() to the exception branch to fix this UAF.
+>>>>
+>>>> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
+>>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+>>>> ---
+>>>>  drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
+>>>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+>>>> index 9632afbd727b..244e5c115bf7 100644
+>>>> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
+>>>> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+>>>> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
+>>>>  {
+>>>>  	struct srpt_device *sdev;
+>>>>  	struct srpt_port *sport;
+>>>> +	u32 i, j;
+>>>>  	int ret;
+>>>> -	u32 i;
+>>>>  
+>>>>  	pr_debug("device = %p\n", device);
+>>>>  
+>>>> @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
+>>>>  		if (ret) {
+>>>>  			pr_err("MAD registration failed for %s-%d.\n",
+>>>>  			       dev_name(&sdev->device->dev), i);
+>>>> -			i--;
+>>>>  			goto err_port;
+>>>>  		}
+>>>>  	}
+>>>> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
+>>>>  	return 0;
+>>>>  
+>>>>  err_port:
+>>>> +	for (j = i, i--; j > 0; j--)a
+>>>> +		cancel_work_sync(&sdev->port[j - 1].work);
+>>>
+>>> There is no need in extra variable, the following code will do the same:
+>>>
+>>> 	while (i--)
+>>> 		cancel_work_sync(&sdev->port[i].work);
+>>>
+>>>>  	srpt_unregister_mad_agent(sdev, i);
+>>
+>> i is also used here.
 > 
->  struct testmod_uprobe {
-> +       struct uprobe *uprobe;
->         struct path path;
->         loff_t offset;
->         struct uprobe_consumer consumer;
-> @@ -458,12 +459,14 @@ static int testmod_register_uprobe(loff_t offset)
->         if (err)
->                 goto out;
+> So put cancel_work_sync() there.
 > 
-> -       err = uprobe_register(d_real_inode(uprobe.path.dentry),
-> -                             offset, 0, &uprobe.consumer);
-> -       if (err)
-> +       uprobe.uprobe = uprobe_register(d_real_inode(uprobe.path.dentry),
-> +                                       offset, 0, &uprobe.consumer);
-> +       if (IS_ERR(uprobe.uprobe)) {
->                 path_put(&uprobe.path);
-> -       else
-> +               uprobe.uprobe = NULL;
-> +       } else {
->                 uprobe.offset = offset;
-> +       }
+> Thanks
 > 
->  out:
->         mutex_unlock(&testmod_uprobe_mutex);
-> @@ -474,10 +477,10 @@ static void testmod_unregister_uprobe(void)
->  {
->         mutex_lock(&testmod_uprobe_mutex);
-> 
-> -       if (uprobe.offset) {
-> -               uprobe_unregister(d_real_inode(uprobe.path.dentry),
-> -                                 uprobe.offset, &uprobe.consumer);
-> +       if (uprobe.uprobe) {
-> +               uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
->                 uprobe.offset = 0;
-> +               uprobe.uprobe = NULL;
 
-ugh, I think we leak &uprobe.path.. I can send follow up fix if needed
+Sure.
 
-jirka
+Junxian
 
->         }
-> 
->         mutex_unlock(&testmod_uprobe_mutex);
-> 
-> 
-> [...]
+>>
+>> Junxian
+>>
+>>>>  err_cm:
+>>>>  	if (sdev->cm_id)
+>>>> -- 
+>>>> 2.33.0
+>>>>
+>>>
+>>
 
