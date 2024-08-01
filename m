@@ -1,136 +1,138 @@
-Return-Path: <linux-kernel+bounces-270802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C008F944573
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:30:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC83C94456D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A231C22D16
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:30:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2CC11C2214B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:27:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E377016D9BE;
-	Thu,  1 Aug 2024 07:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828C116C87B;
+	Thu,  1 Aug 2024 07:27:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jukcYLVt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESmb5FwD"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A69B158529;
-	Thu,  1 Aug 2024 07:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2E1157493;
+	Thu,  1 Aug 2024 07:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722497418; cv=none; b=XEqap9z+ZsaPKPPk8i8dCjbTHAzFsiaG9Kd6ZvO9UtueHkv7s13d/9MhLPQo4F3zdmAB/GxuudnH/TZyLdi5gIGkbWEU51JWghHq9H1p45KbAUymkt9+kjuL49BgrmHtJwby/xNQn9ldS7FiJY1Ro9OjMveqxS8mG4ZcjUpWo/A=
+	t=1722497240; cv=none; b=kKnjCF6Cz/GNST8ZvH7fcVZqFWeXeSEnniO+73Gdr+qJ0GBmiahe/2MB3uaH+YJ+ksRjVVI99cgNGVqYcf5ZyP1oYjDNOILmwKgX3vqkrwvcI5gNSm8/rX7GAwF1Fnhm++tHm4LiSdiX+fVlrZhomZakTihFZ1bnxjJax2LWL+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722497418; c=relaxed/simple;
-	bh=WzBD7IMujxoOrTLMylUbrnQpAGsXY6JVI23pi1Z1PkI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W1gVDKXNrJvkvU7RL1cpDKmroPOGuJQun13qecZbiNLNQZURd1lcVoMCLZWSjGMv+Cn3Wku/39zGEJsa9BmIeB118ftrdmZWuTIC93CEUIS46//9WemkV6i5fDauIBb2YGxWMO4GkR9kGweZZvR7EzsfJzwF/gG7+w3F41luBDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jukcYLVt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CE09C4AF0A;
-	Thu,  1 Aug 2024 07:30:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722497417;
-	bh=WzBD7IMujxoOrTLMylUbrnQpAGsXY6JVI23pi1Z1PkI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jukcYLVtOi9LIv2gj0gl9XwGfAEC28HOav2+AeGJ3J5KdJDQrD+NIMDsIWQXtGJQk
-	 DW65asz/5fiPWSvZTR2UAoQvuNYP2I+RwhVYgnUI20XCj8aEjnk5Vc2ktQl1glZXZm
-	 Q37TVZU5U8NurGvlmUwNLrc9tmsZkwsjxbEhfoEpM/eVWkrdMZmbePjLuYwPiUu1kL
-	 aPaY7fZMp7owGCecDgyo0kjyYK7OC9j7MTy/qj1vH/5j11airUkYcMiaOqhxm+405h
-	 kVaE9p3dTxP4IWqEcAJn43qQ0enM7neb6Oyz5XJgYTpbyFuqvp++MsoeOch76ON5ev
-	 nrXUtL73v+TWw==
-Date: Thu, 1 Aug 2024 09:30:13 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Elad Yifee <eladwf@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Daniel Golle <daniel@makrotopia.org>,
-	Joe Damato <jdamato@fastly.com>
-Subject: Re: [PATCH net-next v2 0/2] net: ethernet: mtk_eth_soc: improve RX
- performance
-Message-ID: <Zqs5hcFMx1g42Zrd@lore-desk>
-References: <20240729183038.1959-1-eladwf@gmail.com>
- <ZqfpGVhBe3zt0x-K@lore-desk>
- <CA+SN3soFwyPs2YhvY+x33B6WsHHahu6hbKM-0TpdkquJwzD7Gw@mail.gmail.com>
- <20240731183718.1278048e@kernel.org>
- <CA+SN3srMPLcmQ4h_iNst71OkQPFcCYxBRL0Q9hR=7LjJ86TFFA@mail.gmail.com>
+	s=arc-20240116; t=1722497240; c=relaxed/simple;
+	bh=VQncXqaDcXbENEjX/CAKjfBcbGdtFbzJO3FhAhpP9sc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=NNyzpC2mpOyJBJ4YykiZwQW4qxgmvC24u0QuDxQHivRRYNRwmmSnMEIVWKvTwxfqP6hDctPn1z933ScCx2kpR6kglfFOK05FJMiA1wTESvsUFRKMq4BrzzGUjkq5yn4Gr4yjZYKNtJee5RQAH00TKjBiT4zfJiPlEZtZt04eXlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ESmb5FwD; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a728f74c23dso873652366b.1;
+        Thu, 01 Aug 2024 00:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722497237; x=1723102037; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VDaQ/XLqFOxVKm2NIkUI8ZRKKv0IjyT6x4eynWB+efQ=;
+        b=ESmb5FwDvLGbd2EfNDGGij73eP0Rt4+psj2m5iqTP0tH0G5i/B4KBKkwcH+Gtf0ur2
+         HmXTIpwlKsaOpH6LNcn6orK6FbvhpEmD/i/YTM7R8jcWMmqcFXECgF8OXdgS44pVTwCm
+         5edBxC+z7nvETNYAffrHt0td0RHvdhICNiBGcKCTF653QOKnuBpP6mLlVOE06wnna5gQ
+         nD1OjrhXBmeSejGm/tXJFptugCcQeaH/cgQTkXnWmh4vNHGKLIm86RTu/HKhnILPGCxE
+         a8rY0FEKFuF0lXukjuohNcARZPC4O5o+Wpp3R97KBOEuRhX/+ThpxcajZVeJ1V/d54Ba
+         ZJaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722497237; x=1723102037;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VDaQ/XLqFOxVKm2NIkUI8ZRKKv0IjyT6x4eynWB+efQ=;
+        b=Fc3Gv1uKg6LlqgwmU7fVWbljKipoqzLnW95M09MjwNg0QO7L2m6GRUDCFdTGrDZBWD
+         a4bUykZp6UAQGrtzKc9xVFBN4vVpq9u64Oxr3FOpp/qjyTMUC9amuHffvI3Anw3xquh0
+         P9xIYRx7mUuuWJQQYt/LZbbMNPvTC9KCsImmznIwHT5WlG7ybi6eD2bbKneSqqbl2Rh+
+         j2tdWBrdav8y5cRRazCYVvGPF9SXX0oMs3fIiUcBGl2wp8B51haGgzxBW/Jafd8Jo0/N
+         ud5E52dLraxwOVifXGeIG/xPHAIBoRMcl57P3lPrJKiSiypeHNqXKhH33bTz6DDU38xq
+         Gvfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKpEC/yFYWqVxvOFkm1hR9wkY/bs9RadexsGsgn2QNC7FAFyWDqrs0xmJ2t9vEDivrnstT58vlnsLqo3jqH3x/BWlqyVGviAle69kCoFYTi99ZUCYVDcccrznSIObgGDWDgfxW/DMAU+yrAj0pLkvRgCmgzBwT8J17IyZJkvgt925BMA==
+X-Gm-Message-State: AOJu0YwVDUEtCBAmopYkmKDQ4uI2n3fSGwIxwXJ+CdIl9ihRdOhG2Fr4
+	7OlDKud+ie22JcJOE4I/c0+ihD/+rbtiC7281iMEF8p1J5QdMt8r
+X-Google-Smtp-Source: AGHT+IH/70r1yEd0ZRNC82j7r32/G4ScQiEWhCT0rp8swngQe3uZ6EiGp/nlrRbIK397TZc47zc4BA==
+X-Received: by 2002:a17:907:e9f:b0:a77:c824:b4c5 with SMTP id a640c23a62f3a-a7daf9b165fmr100435966b.18.1722497237264;
+        Thu, 01 Aug 2024 00:27:17 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7d23e8bd62sm802293166b.73.2024.08.01.00.27.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 00:27:16 -0700 (PDT)
+Message-ID: <02bda6f37ac5ed171429a980b9a3ac69cd4efcf9.camel@gmail.com>
+Subject: Re: [PATCH 2/4] iio: adc: ad7768-1: use device_* to iterate over
+ device child nodes
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>, Mike Leach <mike.leach@linaro.org>, James Clark
+ <james.clark@linaro.org>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Michael Hennerich
+ <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+ Jonathan Cameron <jic23@kernel.org>, Anand Ashok Dumbre
+ <anand.ashok.dumbre@xilinx.com>,  Michal Simek <michal.simek@amd.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>, 
+ Lee Jones <lee@kernel.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-leds@vger.kernel.org
+Date: Thu, 01 Aug 2024 09:31:16 +0200
+In-Reply-To: <20240801-device_child_node_access-v1-2-ddfa21bef6f2@gmail.com>
+References: <20240801-device_child_node_access-v1-0-ddfa21bef6f2@gmail.com>
+	 <20240801-device_child_node_access-v1-2-ddfa21bef6f2@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5rYSnn6hAqwxzEyp"
-Content-Disposition: inline
-In-Reply-To: <CA+SN3srMPLcmQ4h_iNst71OkQPFcCYxBRL0Q9hR=7LjJ86TFFA@mail.gmail.com>
 
-
---5rYSnn6hAqwxzEyp
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-> On Thu, Aug 1, 2024 at 4:37=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> w=
-rote:
-> >
-> > On Tue, 30 Jul 2024 08:29:58 +0300 Elad Yifee wrote:
-> > > Since it's probably the reason for the performance hit,
-> > > allocating full pages every time, I think your suggestion would impro=
-ve the
-> > > performance and probably match it with the napi_alloc_frag path.
-> > > I'll give it a try when I have time.
-> >
-> > This is a better direction than disabling PP.
-> > Feel free to repost patch 1 separately.
-> > --
-> > pw-bot: cr
-> In this driver, the existence of PP is the condition to execute all
-> XDP-related operations which aren't necessary
-> on this hot path, so we anyway wouldn't want that. on XDP program
-> setup the rings are reallocated and the PP
-> would be created.
-
-nope, I added page_pool support even for non-XDP mode for hw that does
-not support HW-LRO. I guess mtk folks can correct me if I am wrong but
-IIRC there were some hw limirations on mt7986/mt7988 for HW-LRO, so I am
-not sure if it can be supported.
-
-> Other than that, for HWLRO we need contiguous pages of different order
-> than the PP, so the creation of PP
-> basically prevents the use of HWLRO.
-> So we solve this LRO problem and get a performance boost with this
-> simple change.
+On Thu, 2024-08-01 at 08:13 +0200, Javier Carrasco wrote:
+> Drop the manual access to the fwnode of the device to iterate over its
+> child nodes. `device_for_each_child_node` macro provides direct access
+> to the child nodes, and given that they are only required within the
+> loop, the scoped variant of the macro can be used.
 >=20
-> Lorenzo's suggestion would probably improve the performance of the XDP
-> path and we should try that nonetheless.
+> Use the `device_for_each_child_node_scoped` macro to iterate over the
+> direct child nodes of the device.
+>=20
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
 
-nope, I mean to improve peformances even for non-XDP case with page_pool fr=
-ag
-APIs.
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
-Regards,
-Lorenzo
+> =C2=A0drivers/iio/adc/ad7768-1.c | 5 +----
+> =C2=A01 file changed, 1 insertion(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index 70a25949142c..721672fe84ab 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -544,13 +544,10 @@ static int ad7768_set_channel_label(struct iio_dev
+> *indio_dev,
+> =C2=A0{
+> =C2=A0	struct ad7768_state *st =3D iio_priv(indio_dev);
+> =C2=A0	struct device *device =3D indio_dev->dev.parent;
+> -	struct fwnode_handle *fwnode;
+> -	struct fwnode_handle *child;
+> =C2=A0	const char *label;
+> =C2=A0	int crt_ch =3D 0;
+> =C2=A0
+> -	fwnode =3D dev_fwnode(device);
+> -	fwnode_for_each_child_node(fwnode, child) {
+> +	device_for_each_child_node_scoped(device, child) {
+> =C2=A0		if (fwnode_property_read_u32(child, "reg", &crt_ch))
+> =C2=A0			continue;
+> =C2=A0
+>=20
 
---5rYSnn6hAqwxzEyp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZqs5hQAKCRA6cBh0uS2t
-rNZrAP0eoKULRJ3mk5g+ma9i4CaSGMfF3dbb7VK1e4BzjNQvzQD/W6jl6gOfuYuJ
-K3hcqA1i0ABxgAdLVpxeoE6H4UBzzwA=
-=7+zW
------END PGP SIGNATURE-----
-
---5rYSnn6hAqwxzEyp--
 
