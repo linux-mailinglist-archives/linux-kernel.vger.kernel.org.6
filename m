@@ -1,272 +1,237 @@
-Return-Path: <linux-kernel+bounces-271185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16AC944A87
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:41:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9218E944A8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9DF1F23CAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:41:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E26A283191
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803991917CD;
-	Thu,  1 Aug 2024 11:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVKlo7I+"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79521917DB;
+	Thu,  1 Aug 2024 11:41:39 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0620718E051;
-	Thu,  1 Aug 2024 11:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2097F18E051;
+	Thu,  1 Aug 2024 11:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722512451; cv=none; b=loVtCbbbvjN/X/QNIcbH8vCCpD22OurkHCTP1iVDDpBuzK0Nz05lB7f3QazoyesSoncnP/K/lJzJfz5dbZ8H4wKeuA0Tdtrbod4zmTtFsbGYbluswo6C7egvqjmQR2SAcdjFQV3Pqu0tGEjsz6kmKYawAch7AGklYbumJkHuuhE=
+	t=1722512499; cv=none; b=uF1iXbE25PS1/ufQqFtgCaltTXCrQ3nE3YFiFTnQ6geUQ9RKvERSP78d7H47XY93qX7I4Eh24enR26PzxG1tPxPC+mWeiJjVugOkO3LdHso6CYvz376ATPPofsPdh6oczagruO10oDxVxkNxO4ddKhCWRt2uJILPMweYaeen29w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722512451; c=relaxed/simple;
-	bh=mz53Znxhu4njp0b5GbjEvsbrkbMH+RLvtS17yyEemDY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J1bScslDHrsArmUV86ZJn0FTfsAsT+9q5VA91/yCTo+HKr6PbwKD8ojbVHSPuQS01iYiv5TRliNKkaHtjSaV+Bm3z7JTtZhOVkJ32s/4epp44WzQsUC2+PsIJuz1DLxw4NU677Z1h+eSiD2KAaIa/SEb0lQi/BI28lakuONXun8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVKlo7I+; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a91cdcc78so409934366b.3;
-        Thu, 01 Aug 2024 04:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722512448; x=1723117248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k4h0C3m16RHauZJhat03rjfnW666/JF+l3iulFI7afA=;
-        b=YVKlo7I+6A+suqSPMNy+L5WufvNXwLG7QyuJOenMZDhMz4o86uTsbaN3hSSG5TmUE+
-         gi/vUwvwQZeTrxzQqi/xiZHYBUHwWdu0OypNE3gz4ro3hzqs8A2Oki7wFVV2KynHUN+f
-         baDjjdAD55CX051SW/FdwUmsMMzwcAR6r3Fpo3xSXb1HySg6i5cx+crZRswCOVBsuIv5
-         /w2FptqirKTqSYW+T5Jm3RFiySKLPebrmtRK3MHrfYkE7MoM77wrUx5I/BGoYRIkNBwB
-         cj4pzFtfIX/iFSupW43DNCVyaMG++9ehZqJxKl0KkiokoxBH+U3bM1mx3AwZzFFT4TQt
-         mQ4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722512448; x=1723117248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k4h0C3m16RHauZJhat03rjfnW666/JF+l3iulFI7afA=;
-        b=oBwVAWLsDSq51iju2JC04tk+iqC0vt9vRV0vfSpZN+6V6tuf8iDLuxxktQWc9U+wNz
-         kOXrSMCODbQbw5/qdlNVaGKVnYfFB2nW/D0Ko5awrGCnXH4v3Cx4kAiMNu1F4vy7qptE
-         1LT/zd+dNo6NLxvtklctCkAQ8gY0SaXKIrNAoIj23ZTOAxpp9RfoFEXi4mRw68Lk7tVa
-         KR8XuQaFpUPhkSSjNQmFcT6nv4lTnZuybCi+yjd7Ex6lqN49ICv0+MbyUcSUVI+jkkUw
-         vUdqUQMPfNqGQx0VDabyRbBSGdO4pnipDIuZyfemWdXu16mt/kHnfTtAxmOuemE7yVRZ
-         3WVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWCdD6L96tMrsqAR2jrPaVBkfkX6QjMEdwziOayTuQ53nt8/1/s0wfKy98SA4VyL5zOQOuIiijdT97HmuKgydaj14mlVvNKPeCr2eJusTAZL4wBHixgjk91h+1jj6BlURgbcdN//w==
-X-Gm-Message-State: AOJu0Yww2KKt8/514CKPUNOkpZVX1tQWGG7Bb0NQ7aXX2lzWQa8IMh4F
-	7eAGZlBRg3nmf/pqI2fbaGv1RhyfsFXVZxcrDK7Dz5KTbhq2yGuADpda8kl4zpl5mNvfmg5eXZr
-	VfYKivndwWPNv8exhYjj3IIrYyos=
-X-Google-Smtp-Source: AGHT+IGvq30QUdJ2Ae3lQEO36wJYwLrAji75UF3q3P+jQkl895vx2DLPN9vA1jIrFJbik/B0ppK5WjmLrJ6gbLUaeTw=
-X-Received: by 2002:a05:6402:14d0:b0:5a1:5692:b5f9 with SMTP id
- 4fb4d7f45d1cf-5b700f8a256mr1773662a12.38.1722512447847; Thu, 01 Aug 2024
- 04:40:47 -0700 (PDT)
+	s=arc-20240116; t=1722512499; c=relaxed/simple;
+	bh=VA4aajdQYA4BZmq2fOh1ASOrzA+FLFY/ZnhHV2ByOUk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HRQ90DMy/6CVAn6tryBoDXx+xMESwM/BFPE1EZ4sbQS4y0Uwg9IFno2vlL2V7c8l7QnxzKejtiBvnaUxsjI7XUkVAE0Hmo2RamPsfH+5XxXCQDU8bY/LrCBtkxdmcFiBo5/fuozC+cqGPnJ28QQL2NF0hglGHlfPrirHSk5qPvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WZRnq6Gc4z6K5Wh;
+	Thu,  1 Aug 2024 19:39:27 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id BA858140B33;
+	Thu,  1 Aug 2024 19:41:28 +0800 (CST)
+Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 1 Aug
+ 2024 12:41:28 +0100
+Date: Thu, 1 Aug 2024 12:41:26 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <admiyo@os.amperecomputing.com>
+CC: Sudeep Holla <sudeep.holla@arm.com>, Jassi Brar
+	<jassisinghbrar@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, "Len
+ Brown" <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jeremy Kerr
+	<jk@codeconstruct.com.au>, Matt Johnston <matt@codeconstruct.com.au>, "David
+ S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Huisong Li
+	<lihuisong@huawei.com>
+Subject: Re: [PATCH v5 1/3] mctp pcc: Check before sending MCTP PCC response
+ ACK
+Message-ID: <20240801124126.00007a57@Huawei.com>
+In-Reply-To: <20240712023626.1010559-2-admiyo@os.amperecomputing.com>
+References: <20240712023626.1010559-1-admiyo@os.amperecomputing.com>
+	<20240712023626.1010559-2-admiyo@os.amperecomputing.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801045430.48694-1-ioworker0@gmail.com> <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
-In-Reply-To: <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 1 Aug 2024 19:40:10 +0800
-Message-ID: <CAK1f24knBez71sEvcfFoFuyvap+=3LzsRrmW-+fLsqV3WkyMBA@mail.gmail.com>
-Subject: Re: [BUG] mm/cgroupv2: memory.min may lead to an OOM error
-To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-Cc: akpm@linux-foundation.org, 21cnbao@gmail.com, ryan.roberts@arm.com, 
-	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
-	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Cgroups <cgroups@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
 
-Hi Vlastimil,
+On Thu, 11 Jul 2024 22:36:24 -0400
+admiyo@os.amperecomputing.com wrote:
 
-Thanks a lot for paying attention!
+> From: Adam Young <admiyo@os.amperecomputing.com>
+> 
+> Type 4 PCC channels have an option to send back a response
+> to the platform when they are done processing the request.
+> The flag to indicate whether or not to respond is inside
+> the message body, and thus is not available to the pcc
+> mailbox.
+Hi Adam,
 
-On Thu, Aug 1, 2024 at 6:35=E2=80=AFPM Vlastimil Babka (SUSE) <vbabka@kerne=
-l.org> wrote:
->
-> On 8/1/24 06:54, Lance Yang wrote:
-> > Hi all,
-> >
-> > It's possible to encounter an OOM error if both parent and child cgroup=
-s are
-> > configured such that memory.min and memory.max are set to the same valu=
-es, as
-> > is practice in Kubernetes.
->
-> Is it a practice in Kubernetes since forever or a recent one? Did it work
-> differently before?
+I've been meaning to look at this for a while, but finally
+getting time for review catchup.
 
-The memory.min is only applied when the Kubernetes memory QoS feature gate
-is enabled, which is disabled by default.
+Would be good to have an explicit specification reference to
+make it easy for reviewers to find the bit to compare with.
 
->
-> > Hmm... I'm not sure that whether this behavior is a bug or an expected =
-aspect of
-> > the kernel design.
->
-> Hmm I'm not a memcg expert, so I cc'd some.
->
-> > To reproduce the bug, we can follow these command-based steps:
-> >
-> > 1. Check Kernel Version and OS release:
-> >
-> >     ```
-> >     $ uname -r
-> >     6.10.0-rc5+
->
-> Were older kernels behaving the same?
+> 
+> In order to read the flag, this patch maps the shared
+> buffer to virtual memory.
+> 
+> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+> ---
+>  drivers/mailbox/pcc.c | 32 ++++++++++++++++++++++++--------
+>  include/acpi/pcc.h    |  8 ++++++++
+>  2 files changed, 32 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index 94885e411085..4a588f1b6ec2 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -90,6 +90,7 @@ struct pcc_chan_reg {
+>   * @cmd_complete: PCC register bundle for the command complete check register
+>   * @cmd_update: PCC register bundle for the command complete update register
+>   * @error: PCC register bundle for the error status register
+> + * @shmem_base_addr: the virtual memory address of the shared buffer
 
-I tested another machine and it behaved the same way.
+If you are only going to map this from this pointer for the
+initiator/responder shared memory region, maybe it would benefit
+from a more specific name?
 
-# uname -r
-5.14.0-427.24.1.el9_4.x86_64
+>   * @plat_irq: platform interrupt
+>   * @type: PCC subspace type
+>   * @plat_irq_flags: platform interrupt flags
+> @@ -107,6 +108,7 @@ struct pcc_chan_info {
+>  	struct pcc_chan_reg cmd_complete;
+>  	struct pcc_chan_reg cmd_update;
+>  	struct pcc_chan_reg error;
+> +	void __iomem *shmem_base_addr;
+>  	int plat_irq;
+>  	u8 type;
+>  	unsigned int plat_irq_flags;
+> @@ -269,6 +271,24 @@ static bool pcc_mbox_cmd_complete_check(struct pcc_chan_info *pchan)
+>  	return !!val;
+>  }
+>  
+> +static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
+> +{
+> +	struct pcc_extended_type_hdr pcc_hdr;
 
-# cat /etc/os-release
-NAME=3D"Rocky Linux"
-VERSION=3D"9.4 (Blue Onyx)"
-...
+I'd avoid name pcc_hdr, as it's only the header on a paricular type
+of pcc subspace.  Either go super generic with hdr or
+pcc_rsp_subspc_hdr or something along those lines.
 
->
-> Anyway memory.min documentations says "Hard memory protection. If the mem=
-ory
-> usage of a cgroup is within its effective min boundary, the cgroup=E2=80=
-=99s memory
-> won=E2=80=99t be reclaimed under any conditions. If there is no unprotect=
-ed
-> reclaimable memory available, OOM killer is invoked."
->
-> So to my non-expert opinion this behavior seems valid. if you set min to =
-the
-> same value as max and then reach the max, you effectively don't allow any
-> reclaim, so the memcg OOM kill is the only option AFAICS?
+> +
+> +	if (pchan->type != ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
+> +		return;
 
-I completely agree that this behavior seems valid ;)
+I'd put a blank line here. Next bit is unrelated to the error check
+so white space will help with readability (a little bit anyway!)
 
-However, if the child cgroup doesn't exist and we add a process to the 'tes=
-t'
-cgroup, then attempt to create a large file(2GB) using dd, we won't encount=
-er
-an OOM error; everything works as expected.
+> +	memcpy_fromio(&pcc_hdr, pchan->shmem_base_addr,
+> +		      sizeof(struct pcc_extended_type_hdr));
 
-Hmm... I'm a bit confused about that.
+sizeof(pcc_hdr)
 
-Thanks,
-Lance
+> +	/*
+> +	 * The PCC slave subspace channel needs to set the command complete bit
+> +	 * and ring doorbell after processing message.
+> +	 *
+> +	 * The PCC master subspace channel clears chan_in_use to free channel.
+> +	 */
+> +	if (le32_to_cpup(&pcc_hdr.flags) & PCC_ACK_FLAG_MASK)
+> +		pcc_send_data(chan, NULL);
+> +}
+> +
+>  /**
+>   * pcc_mbox_irq - PCC mailbox interrupt handler
+>   * @irq:	interrupt number
+> @@ -306,14 +326,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>  
+>  	mbox_chan_received_data(chan, NULL);
+>  
+> -	/*
+> -	 * The PCC slave subspace channel needs to set the command complete bit
+> -	 * and ring doorbell after processing message.
+> -	 *
+> -	 * The PCC master subspace channel clears chan_in_use to free channel.
+> -	 */
+> -	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_SLAVE_SUBSPACE)
+> -		pcc_send_data(chan, NULL);
+> +	check_and_ack(pchan, chan);
+>  	pchan->chan_in_use = false;
+>  
+>  	return IRQ_HANDLED;
+> @@ -352,6 +365,9 @@ pcc_mbox_request_channel(struct mbox_client *cl, int subspace_id)
+>  	if (rc)
+>  		return ERR_PTR(rc);
+>  
+> +	pchan->shmem_base_addr = devm_ioremap(chan->mbox->dev,
+> +					      pchan->chan.shmem_base_addr,
+> +					      pchan->chan.shmem_size);
 
->
-> >     $ cat /etc/os-release
-> >     PRETTY_NAME=3D"Ubuntu 24.04 LTS"
-> >     NAME=3D"Ubuntu"
-> >     VERSION_ID=3D"24.04"
-> >     VERSION=3D"24.04 LTS (Noble Numbat)"
-> >     VERSION_CODENAME=3Dnoble
-> >     ID=3Dubuntu
-> >     ID_LIKE=3Ddebian
-> >     HOME_URL=3D"<https://www.ubuntu.com/>"
-> >     SUPPORT_URL=3D"<https://help.ubuntu.com/>"
-> >     BUG_REPORT_URL=3D"<https://bugs.launchpad.net/ubuntu/>"
-> >     PRIVACY_POLICY_URL=3D"<https://www.ubuntu.com/legal/terms-and-polic=
-ies/privacy-policy>"
-> >     UBUNTU_CODENAME=3Dnoble
-> >     LOGO=3Dubuntu-logo
-> >
-> >     ```
-> >
-> > 2. Navigate to the cgroup v2 filesystem, create a test cgroup, and set =
-memory settings:
-> >
-> >     ```
-> >     $ cd /sys/fs/cgroup/
-> >     $ stat -fc %T /sys/fs/cgroup
-> >     cgroup2fs
-> >     $ mkdir test
-> >     $ echo "+memory" > cgroup.subtree_control
-> >     $ mkdir test/test-child
-> >     $ echo 1073741824 > memory.max
-> >     $ echo 1073741824 > memory.min
-> >     $ cat memory.max
-> >     1073741824
-> >     $ cat memory.min
-> >     1073741824
-> >     $ cat memory.low
-> >     0
-> >     $ cat memory.high
-> >     max
-> >     ```
-> >
-> > 3. Set up and check memory settings in the child cgroup:
-> >
-> >     ```
-> >     $ cd test-child
-> >     $ echo 1073741824 > memory.max
-> >     $ echo 1073741824 > memory.min
-> >     $ cat memory.max
-> >     1073741824
-> >     $ cat memory.min
-> >     1073741824
-> >     $ cat memory.low
-> >     0
-> >     $ cat memory.high
-> >     max
-> >     ```
-> >
-> > 4. Add process to the child cgroup and verify:
-> >
-> >     ```
-> >     $ echo $$ > cgroup.procs
-> >     $ cat cgroup.procs
-> >     1131
-> >     1320
-> >     $ ps -ef|grep 1131
-> >     root        1131    1014  0 10:45 pts/0    00:00:00 -bash
-> >     root        1321    1131 99 11:06 pts/0    00:00:00 ps -ef
-> >     root        1322    1131  0 11:06 pts/0    00:00:00 grep --color=3D=
-auto 1131
-> >     ```
-> >
-> > 5. Attempt to create a large file using dd and observe the process bein=
-g killed:
-> >
-> >     ```
-> >     $ dd if=3D/dev/zero of=3D/tmp/2gbfile bs=3D10M count=3D200
-> >     Killed
-> >     ```
-> >
-> > 6. Check kernel messages related to the OOM event:
-> >
-> >     ```
-> >     $ dmesg
-> >     ...
-> >     [ 1341.112388] oom-kill:constraint=3DCONSTRAINT_MEMCG,nodemask=3D(n=
-ull),cpuset=3D/,mems_allowed=3D0,oom_memcg=3D/test,task_memcg=3D/test/test-=
-child,task=3Ddd,pid=3D1324,uid=3D0
-> >     [ 1341.112418] Memory cgroup out of memory: Killed process 1324 (dd=
-) total-vm:15548kB, anon-rss:10240kB, file-rss:1764kB, shmem-rss:0kB, UID:0=
- pgtables:76kB oom_score_adj:0
-> >     ```
-> >
-> > 7. Reduce the `memory.min` setting in the child cgroup and attempt the =
-same large file creation, and then this issue is resolved.
-> >
-> >     ```
-> >     # echo 107374182 > memory.min
-> >     # dd if=3D/dev/zero of=3D/tmp/2gbfile bs=3D10M count=3D200
-> >     200+0 records in
-> >     200+0 records out
-> >     2097152000 bytes (2.1 GB, 2.0 GiB) copied, 1.8713 s, 1.1 GB/s
-> >     ```
-> >
-> > Thanks,
-> > Lance
-> >
->
+devm doesn't seem appropriate here given we have manual management
+of other resources, so the ordering will be different in remove
+vs probe.
+
+So I'd handle release of this manually in mbox_free_channel()
+
+
+>  	return &pchan->chan;
+>  }
+>  EXPORT_SYMBOL_GPL(pcc_mbox_request_channel);
+> diff --git a/include/acpi/pcc.h b/include/acpi/pcc.h
+> index 9b373d172a77..0bcb86dc4de7 100644
+> --- a/include/acpi/pcc.h
+> +++ b/include/acpi/pcc.h
+> @@ -18,6 +18,13 @@ struct pcc_mbox_chan {
+>  	u16 min_turnaround_time;
+>  };
+>  
+> +struct pcc_extended_type_hdr {
+Spec reference would be useful for this.
+Looks to be Table 14.12 in acpi 6.5.
+I can't remember convention in this file for whether you need
+to find earliest spec for references or not.
+
+> +	__le32 signature;
+> +	__le32 flags;
+> +	__le32 length;
+> +	char command[4];
+> +};
+> +
+>  /* Generic Communications Channel Shared Memory Region */
+>  #define PCC_SIGNATURE			0x50434300
+>  /* Generic Communications Channel Command Field */
+> @@ -31,6 +38,7 @@ struct pcc_mbox_chan {
+>  #define PCC_CMD_COMPLETION_NOTIFY	BIT(0)
+>  
+>  #define MAX_PCC_SUBSPACES	256
+> +#define PCC_ACK_FLAG_MASK	0x1
+
+Maybe this should be something like
+PCC_EXT_FLAGS_ACK_MASK
+to give a hint of where it applies.
+Also, can we keep name closer to the spec (even though it's
+meaning is that we must ack the command when done)
+
+PCC_EXT_FLAGS_NOTIFY_ON_COMPLETION_MASK
+
+
+>  
+>  #ifdef CONFIG_PCC
+>  extern struct pcc_mbox_chan *
+
 
