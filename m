@@ -1,59 +1,67 @@
-Return-Path: <linux-kernel+bounces-271344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5035944D15
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:23:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23EFD944D20
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:27:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E171F22456
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:23:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B403BB20E62
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:26:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE26E1A0B06;
-	Thu,  1 Aug 2024 13:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A08A1A257B;
+	Thu,  1 Aug 2024 13:26:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eHZ6ODzM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="To0JB6xw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF2816DC02
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351541946C7
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722518612; cv=none; b=W/V/HWTlSw8JF7v2FlhpU+e++y29cApoHdxbmZPwPQPsQL4miksegFAtlYt9s1XfoMhrZvx0B2CgXkCkcYiRTVSAHqAfIvGY1VNHxImvC0iuGjFrhWBIkWJvs03w2nHR1l8Er15VbQxss7wc5OoQOMZoueOU7x7Lqj85pIq9WlU=
+	t=1722518812; cv=none; b=byyXUQPLE8a/WO1l+CIrn+4MTHfCkjWLo64y3rX7u1ZSt8onUyaSQ0eL3eyUaLzvuo/zL42qUxR+4DBd2biZCTuKeQPhh3NqXp81K+VfU0qkYq5mII4IJogTO2jremjW7e0963Or0/wSGcMyB5aoExag3Amj8fRhWJ34qtZGltc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722518612; c=relaxed/simple;
-	bh=rX7rb9hXMhlm2xmHKvLXykMAxNBBTXGZ3WbXhR4Q1zY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJ60Iy4krjtKiiSH9aIfY5Ouyd1RCHFGDVih2F+xplv3bV8dc/JaMf61bIBi+Lv61ly0wmOwQu2MAXsKvvnv0yJAAsr1fgyRgpGb3+/TXVMHYk9iYVenNieaGrOqhAchiQBWZp2I+3EHOn3ABqbzQS4hh5lVEAEmwqtkvTOxZXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eHZ6ODzM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DF64C4AF0A;
-	Thu,  1 Aug 2024 13:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722518611;
-	bh=rX7rb9hXMhlm2xmHKvLXykMAxNBBTXGZ3WbXhR4Q1zY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eHZ6ODzMEz6vXABGsnmbdiF4B5FK05z6tLlhyOkPeYDrBYaxUVCwUcPEq6Xx84A3A
-	 7JcrH6c4x+CDR36JQ1fI+1WXLKUOCP3UgD2jI4zyyRylqnkQHLJn1oyVTidVAQs9OU
-	 BtB4P00y6LevFsPyiFKVmeWBitOy8b5hqaLe7CRHixO7+/TZHT5A8Ubrchgm5L8AfY
-	 X/MBL7zrEPhw8JScqyYq1g2pBIVR7aFFlj5MvYbWEtJCvqZqp93Iu3XUr02JYqBTcj
-	 SqyxHBN0aWNAkTjuk+/6gqAe6t+qbhoHW6kKPhMVVQSl4OpszSPdZTuSajjGSnqlHx
-	 2D3xZItiFI7WQ==
-Date: Thu, 1 Aug 2024 14:23:27 +0100
-From: Will Deacon <will@kernel.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/mm: Avoid direct referencing page table enties in
- map_range()
-Message-ID: <20240801132326.GA4794@willie-the-truck>
-References: <20240725091052.314750-1-anshuman.khandual@arm.com>
- <3e82687a-0183-42f3-b32c-6d99dbd4fe49@arm.com>
- <20240801113440.GB4476@willie-the-truck>
- <c65c0bcc-149e-4f30-9bab-e5377230d2cd@arm.com>
+	s=arc-20240116; t=1722518812; c=relaxed/simple;
+	bh=hWsYFooRQcoP2Bz07kAvGISR9ZLpTUwI4zwlWdXj3iQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Ykw3qpUL/k/xVLmmjlGPPHWa35YU3rzx9jlv+xIAr4jfN0foAbjjhP0tpNLnXpw7JvdXmVIDTc5kil2Zt6wpobjiq9zyPC+Acz/q2OMnsC0AP/RrZA/ntTQl+yFMKvYDty4F10QmeiDCexvtTbkzWCjhvejCzYyLmj/G7kmCRXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=To0JB6xw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722518810;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=yfCti4AmwEcsX6LuFMa3GXv/+hDYeVMmSmtqgkUuKSQ=;
+	b=To0JB6xwkLGj7fhZ8j5lzG+K8qbxXRgY5ZqT9JjYVDYTATtAqy1Q1uXiHRUdFcJY8RraKP
+	248T7ZzR3iaTtVt7RJgLotp2EdQET+C9n9CO6b8aMGlZ6TgFrzImWt6eiDz1FqdZZEAtWK
+	BbD+lqI22J7BMn2ALSSNS8FzUjpMv80=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-gaOQMd0MPGei-zTuwwtcBg-1; Thu,
+ 01 Aug 2024 09:26:45 -0400
+X-MC-Unique: gaOQMd0MPGei-zTuwwtcBg-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 659BD1955D61;
+	Thu,  1 Aug 2024 13:26:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.183])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5BAC519560AE;
+	Thu,  1 Aug 2024 13:26:40 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  1 Aug 2024 15:26:43 +0200 (CEST)
+Date: Thu, 1 Aug 2024 15:26:38 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: andrii@kernel.org, mhiramat@kernel.org, peterz@infradead.org
+Cc: jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v4 0/9] uprobes: misc cleanups/simplifications
+Message-ID: <20240801132638.GA8759@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,42 +70,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c65c0bcc-149e-4f30-9bab-e5377230d2cd@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Thu, Aug 01, 2024 at 01:48:17PM +0100, Ryan Roberts wrote:
-> On 01/08/2024 12:34, Will Deacon wrote:
-> > On Thu, Jul 25, 2024 at 11:36:56AM +0100, Ryan Roberts wrote:
-> >> On 25/07/2024 10:10, Anshuman Khandual wrote:
-> >>> Like else where in arm64 platform, use WRITE_ONCE() in map_range() while
-> >>> creating page table entries. This avoids referencing page table entries
-> >>> directly.
-> >>
-> >> I could be wrong, but I don't think this code is ever operating on live
-> >> pgtables? So there is never a potential to race with the HW walker and therefore
-> >> no need to guarrantee copy atomicity? As long as the correct barriers are placed
-> >> at the point where you load the pgdir into the TTBRx there should be no problem?
-> >>
-> >> If my assertion is correct, I don't think there is any need for this change.
-> > 
-> > Agreed.
-> 
-> I think I need to row back on this. It looks like map_range() does act on live
-> pgtables; see map_kernel() where twopass == true. init_pg_dir is populated then
-> installed in TTBR1, then permissions are modified with 3 [un]map_segment()
-> calls, which call through to map_range().
+(Andrii, I'll try to look at your new series on Weekend).
 
-I think the permission part is fine, but I hadn't spotted that
-unmap_segment() uses map_range() to zap the ptes mapping the text. That
-*does* need single-copy atomicity, so should probably use
-__set_pte_nosync().
+Changes:
 
-> So on that basis, I think the WRITE_ONCE() calls are warranted. And to be
-> consistent, I'd additionally recommend adding a READ_ONCE() around the:
-> 
-> if (pte_none(*tbl)) {
+	- added the acks I got from Andrii, Masami, and Jiri
+	- new 4/9 patch from Jiri, fixes the unrelated bug in bpf_testmod
+	- adapt tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+	  to the API changes in 5/9 an 6/9
 
-Why? I don't think we need that.
+see the interdiff below.
 
-Will
+Oleg.
+---
+
+ include/linux/uprobes.h                            |  22 ++--
+ kernel/events/uprobes.c                            | 137 +++++++++------------
+ kernel/trace/bpf_trace.c                           |  25 ++--
+ kernel/trace/trace_uprobe.c                        |  31 ++---
+ .../selftests/bpf/bpf_testmod/bpf_testmod.c        |  26 ++--
+ 5 files changed, 103 insertions(+), 138 deletions(-)
+
+-------------------------------------------------------------------------------
+
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+@@ -432,7 +432,7 @@ uprobe_ret_handler(struct uprobe_consumer *self, unsigned long func,
+ 
+ struct testmod_uprobe {
+ 	struct path path;
+-	loff_t offset;
++	struct uprobe *uprobe;
+ 	struct uprobe_consumer consumer;
+ };
+ 
+@@ -446,25 +446,25 @@ static int testmod_register_uprobe(loff_t offset)
+ {
+ 	int err = -EBUSY;
+ 
+-	if (uprobe.offset)
++	if (uprobe.uprobe)
+ 		return -EBUSY;
+ 
+ 	mutex_lock(&testmod_uprobe_mutex);
+ 
+-	if (uprobe.offset)
++	if (uprobe.uprobe)
+ 		goto out;
+ 
+ 	err = kern_path("/proc/self/exe", LOOKUP_FOLLOW, &uprobe.path);
+ 	if (err)
+ 		goto out;
+ 
+-	err = uprobe_register_refctr(d_real_inode(uprobe.path.dentry),
+-				     offset, 0, &uprobe.consumer);
+-	if (err)
++	uprobe.uprobe = uprobe_register(d_real_inode(uprobe.path.dentry),
++					offset, 0, &uprobe.consumer);
++	if (IS_ERR(uprobe.uprobe)) {
++		err = PTR_ERR(uprobe.uprobe);
+ 		path_put(&uprobe.path);
+-	else
+-		uprobe.offset = offset;
+-
++		uprobe.uprobe = NULL;
++	}
+ out:
+ 	mutex_unlock(&testmod_uprobe_mutex);
+ 	return err;
+@@ -474,10 +474,10 @@ static void testmod_unregister_uprobe(void)
+ {
+ 	mutex_lock(&testmod_uprobe_mutex);
+ 
+-	if (uprobe.offset) {
+-		uprobe_unregister(d_real_inode(uprobe.path.dentry),
+-				  uprobe.offset, &uprobe.consumer);
+-		uprobe.offset = 0;
++	if (uprobe.uprobe) {
++		uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
++		path_put(&uprobe.path);
++		uprobe.uprobe = NULL;
+ 	}
+ 
+ 	mutex_unlock(&testmod_uprobe_mutex);
+
 
