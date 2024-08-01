@@ -1,103 +1,172 @@
-Return-Path: <linux-kernel+bounces-271680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF69945194
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:38:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709B0945197
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB09E1F236DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:38:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF903B22C1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:39:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC951B9B28;
-	Thu,  1 Aug 2024 17:38:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D391B9B2E;
+	Thu,  1 Aug 2024 17:39:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="io79+YZv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C4c+QS51"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2088.outbound.protection.outlook.com [40.107.243.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828DD182D8
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533916; cv=none; b=B3cayiBIizmbRwqKphbI0nEc5E6Y/8vLvDoyaSvulQ6FaLERIKgd6/NUc/vIY/c7xhFWbFxkDI++ukIKGa0tpeJ3NBjVyXbmvh9MFSyKLjbZvUyL7KrlKUgp/xjoeezVbaiO7Op+7e6ZMoJg4qKjWgbF8bZ4x/SUYHYVhhm3vH4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533916; c=relaxed/simple;
-	bh=RAvj/gF93jOqzP4GL/lSwxlRywzRFQiXo/RpNNJdT3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h/3OjhEviQTI1g1TJqjkLxLzkGo3IXsgsGdm+5q2+nIUkXtVV/+ccjghnZXwnEgRH51neR025mtijZPmnMBuYDvS1irxeBVmDEPJGt6bhPSpPAZESFFnJ65PdJEuaU48NtoRT+uP5OIqNkQyQY8WIA7b0beke6P4LW97wWGpjJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=io79+YZv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA171C32786;
-	Thu,  1 Aug 2024 17:38:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722533916;
-	bh=RAvj/gF93jOqzP4GL/lSwxlRywzRFQiXo/RpNNJdT3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=io79+YZv2SL7kMus3yFshjkRLpYratoUxh8wgJnTSQqRIrgv0ObxMkabbrrByaZac
-	 fCStYZvWJRIwp3b/erIXpaYMjGyqawY4RSmx9Tpom4oNiP64eEDKULp7CNcxl2DVin
-	 gZoR074rTdAU0ShM5o2VWPGS5AboortYNo0w30iaY/iZfpSP3fLbaFYx97XhFUawqA
-	 vvA+DY1nMjDLL1KznuikDRpj/WzxTkbhmIBQiCVZ1LipHSW2BAZ4LmWuBK06GHOLes
-	 XghC92uos44mIBsdC7a8k1Bv49c1WLKgLOPR7DcfaO64tnVbbE8zfSVq1VsGmDnda3
-	 JEjDIAxmEgyAw==
-Date: Thu, 1 Aug 2024 14:38:32 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>, Song Liu <song@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf bpf: Move BPF disassembly routines to separate
- file to avoid clash with capstone bpf headers
-Message-ID: <ZqvIGLQNAtYqjo7u@x1>
-References: <ZqpUSKPxMwaQKORr@x1>
- <CAM9d7cgTrDEdAn=dv9ciRZfpMdYwdmDrAAvsYEYE=GssPS_aWw@mail.gmail.com>
- <ZqqHnlgG0YS4DRAt@x1>
- <CAP-5=fVH-YG65AmFz-N0uSXg2OcGJrmkw5tQtuEuFY=h_4K8_g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F8E182D8
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722533977; cv=fail; b=J0haquuxJDOE3dm2JUlPerQgj1mA8lfxFPVW40zcQ7Kykc2otYZHjr6SATFtAiaZOgEbLWMDnIW+r73YnNszgrM583xXMcNe+0Z9FKQmlteQcrrq3EM4CN0etXRid6xy474mMr13OnQwg04gT8fXdnEDVjHQrhFGvddBw58Um3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722533977; c=relaxed/simple;
+	bh=r5QldzcQTDuSJqbbQD/IfSq7d19bW9S2u4CwyJ8WbOQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgxIPL4QVk12KHC7UCgGug41Nt83FFCw48m3Us1IcQp9afd1qM+I4vdvCrL/nBE3SXmqD6J6ZtL1ifnECH3j5LszVKFWmUwoD1k2HMyHdDZP2BSDeVwohZeuhTJyX53t0GVev6xbfi09FdPV134Ku1e81gdTDfLQAGRnYXicKfw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C4c+QS51; arc=fail smtp.client-ip=40.107.243.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lN6dRzHKZ2WZY08z3VNYbTPovzbUyxp0bxfcu3KvN1ykqyMKO6DIhu3zDNv3BAi5u1dukCUmIeILoG97BYGBPl3BNoHPWHp9k3id5b12oYrHZ1sfinOne9i2odork0Qi4vYXEvVLKkgYZ2iIc7fUGOryxsZ1GQojQcttDaIIEOo4578hr+wiX4nriPN6nI5AvBjgN9LrHR1DqeqvZT+sTu4dnN7oZbBmCaWEFYyLkTDuYQi3mQjNWSKYK/50+HnzL9fHvroNM3IDWFMFA53P6+bbvyhJkq4cmMStVlA0JUDmB/BNjF/pVp9lGQZQPZIDf7uTnxtsD+YBmMMstwB6hA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5vowPd/TbdfsMi3QnWdyVj+5UqfXqs2trqvbSbUr4Vw=;
+ b=btXt5hWbqmK3fKEDHppisBbKmSxd64AKUShBN0yTGS/fuZVlNC6VCBO00IjOMJ/LMS402fx2CdvonrXUIeo+VXaJVcYz1VdF96Q6wxRcU8+DBctmjASJ1UF/iMdsDzafy10b+Frv4pdhYRknjKnE6G1pjq3uPtuVOZhRI5RsoJEOshB3SOf/fAFSZN8on19OH9vPxnJxSK3rVYvAfPnW98ZtxZ+Zud0A9r00Fvf857QKQICVBR/3ZJZb9HmkhG5fDJ/ZlRBfscDCqrX/VKMOQa88JbgSvoOhrlJyadeSwM4G6kMTg6PshRr+fUJ8IASOfuogiwb6vjKLIAwxHdBx3Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5vowPd/TbdfsMi3QnWdyVj+5UqfXqs2trqvbSbUr4Vw=;
+ b=C4c+QS51ElQcKA9CjYnKgQaGBn+Ok1qq68FN4+03OUuzCoNuKhkmsA+XQyv4TE7mfAz0kFKHV5ksiLnw+rIIDjms0DbqPip9U70nHl4tapqQE6q7poYD/LwCzxlwuVcLq+VuqDiULuLeFDyW1F0c6drds+DxGho7TVFU3nkZDej+QLFzK5YUmjoSLu7J+E234SZ4xf6UJT3mORaTFSkubEkCNjcLiC5A/I9SugCUEmRDTf0cs5N+gUh7jGfM9TInXV5V59ff31BMjQbcuwdGW6o8s0fupr+SV8cejs8G8/JGD9VpiiofSl6PAe6lBdmnttQ2nDIC3AnuKTfD9oZg1Q==
+Received: from MN2PR16CA0052.namprd16.prod.outlook.com (2603:10b6:208:234::21)
+ by SJ1PR12MB6361.namprd12.prod.outlook.com (2603:10b6:a03:455::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.19; Thu, 1 Aug
+ 2024 17:39:31 +0000
+Received: from BL6PEPF00022570.namprd02.prod.outlook.com
+ (2603:10b6:208:234:cafe::e0) by MN2PR16CA0052.outlook.office365.com
+ (2603:10b6:208:234::21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22 via Frontend
+ Transport; Thu, 1 Aug 2024 17:39:31 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ BL6PEPF00022570.mail.protection.outlook.com (10.167.249.38) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 17:39:30 +0000
+Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 1 Aug 2024
+ 10:39:15 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 1 Aug 2024 10:39:14 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.180)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 1 Aug 2024 10:39:14 -0700
+Date: Thu, 1 Aug 2024 10:39:12 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: "Tian, Kevin" <kevin.tian@intel.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
+ allocation
+Message-ID: <ZqvIQFsgUGjqqjmF@Asurada-Nvidia>
+References: <20240728235106.2435208-1-nicolinc@nvidia.com>
+ <20240729182446.GH3371438@nvidia.com>
+ <Zqf2HFUf/75hRcUU@Asurada-Nvidia>
+ <BN9PR11MB5276B125671FEC70EDAFF50C8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <ZqqBHKEJCm4XXFq5@Asurada-Nvidia>
+ <20240801132848.GE2809814@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVH-YG65AmFz-N0uSXg2OcGJrmkw5tQtuEuFY=h_4K8_g@mail.gmail.com>
+In-Reply-To: <20240801132848.GE2809814@nvidia.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF00022570:EE_|SJ1PR12MB6361:EE_
+X-MS-Office365-Filtering-Correlation-Id: de6f4b34-ec39-440c-71a7-08dcb250e656
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ryx/rqkqj3l8tAlZpWdEk3/9FheWWm/mDBKrZ52YylogtpEHwINHokPUsHTh?=
+ =?us-ascii?Q?t/PdVlAeQhor26ftNpgRldl0A2rXy1EuqAFjL1YG7QuLmsxtFYr5/cpAiNSw?=
+ =?us-ascii?Q?S9SgKUQljdcXsKLFha8rPj9hTW9Xn93NTGJWwqT1xUosX1TZDFwLvuk0/kSH?=
+ =?us-ascii?Q?8B15mYuiWC/a+lbeQBTgcdwbKYE2TC2D4On+9AazgaPUqavWwvv9Hi3UZ7jv?=
+ =?us-ascii?Q?eNEBP+4XDMw193ZSTx8KcmELzVxigLPNitkJqwmZbIhWLMXb9WCsoLZCjzaT?=
+ =?us-ascii?Q?VsGPBpt9r5DcG6PztUeld5v6EzxdppgeQHDrda5zhuphxm2JrAR1421kalkE?=
+ =?us-ascii?Q?Dk3iqFq5c30rvfUNYiF1Md9PUX0t19s33ixrIyrHKMAUT0Bxq2SvT1wK5Y6F?=
+ =?us-ascii?Q?CNue3T6N/Z7A8YtmucedADIAZ5LZ8w4DIn4ISbvatZderuSrpMYD2qM01OK+?=
+ =?us-ascii?Q?kLFpAYsdM5mb5MOsVEK/j3v/b/yjokEBX8Si6/TjXUF+IDYWjNQNLIvICze4?=
+ =?us-ascii?Q?Qu8ggDO209Nhn9bbspA0Q2CQ26JtJvrp7KFvpa1+Rbur48tR3kQdf/lcFVjG?=
+ =?us-ascii?Q?SZXW1cPP6O7res8tVNNaA5X2dcYNQbmTlIuGeeucBR/7qICHO6z7bHLS71WO?=
+ =?us-ascii?Q?XKL+/xICWsNJksTT52/RGyL93yzKe1Q482A87ip5W3qPFn494GNxbP5ggHsY?=
+ =?us-ascii?Q?aAUJsD6YizpaSe1UTrnDI6LpU+vMtqPRIOuYpAu5O12WT8sOZWbul8NHtQH6?=
+ =?us-ascii?Q?j+kRWOwJpa3Fa2qB/oR4NGI1skAGI3zWgFYoGnyANT8f43Ua/Qs6iPNufhi7?=
+ =?us-ascii?Q?/MCrMJxynW5BbIVo4dmp/c1cY230SZn+EDM0DiiXlXcbNlPhzmvVzfGT6bUq?=
+ =?us-ascii?Q?ppzy8Csvoik39hwep3LGD0oFphHIxdc4U0chMdTqTLON6Yq+QyA0E35omTb7?=
+ =?us-ascii?Q?+ZJZdnOI+tU9vPQ5BZbqOAxw9Xti56ZTYTUNDp0OIF2qR06wEI06E4mjOuSC?=
+ =?us-ascii?Q?D/8LM0l1MMTDwyxTtdY4QYwwvoRm5be3v37zV50GLVlJin1m3K1JeNO1YGz+?=
+ =?us-ascii?Q?zfq0M6+2P2Fl2pdoabHr3u+BTKI5Ctn19QbKn3QN9q1DyE7we3v1N6CyTvcS?=
+ =?us-ascii?Q?nP/3knGsEwczhaDo0tYAB67/XGkESkjULI8lxBZrqdBrXA4cCKoeUs3qSvws?=
+ =?us-ascii?Q?LXOkZP1hccKVrGzbG9104X4McYwhJoaO+ana2BGgCDl6QINP275jZDNle6is?=
+ =?us-ascii?Q?HSrH9+uXn1PqZbfG2eV9beMJBmslji3ypAWjM1FTbeHvoeYDRIqVRaY3JBOU?=
+ =?us-ascii?Q?AF1c9aTy+MRaACh76pYmQ4TGZK1Co20QaePJcKYO7V9b1Y1SSnIGKlLH7fUW?=
+ =?us-ascii?Q?YbfY8GaUpkoqc7iEo4bMEyvC1gddx1WsUzFrhoni/DNfyZiHkDEnBtoNSile?=
+ =?us-ascii?Q?eKkRug3vCgYPsH6etOLRhjdE7590g7Vg?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 17:39:30.9132
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: de6f4b34-ec39-440c-71a7-08dcb250e656
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF00022570.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6361
 
-On Thu, Aug 01, 2024 at 08:18:23AM -0700, Ian Rogers wrote:
-> On Wed, Jul 31, 2024 at 11:51 AM Arnaldo Carvalho de Melo
-> <acme@kernel.org> wrote:
-> >
-> > On Wed, Jul 31, 2024 at 10:07:50AM -0700, Namhyung Kim wrote:
-> > > On Wed, Jul 31, 2024 at 8:12 AM Arnaldo Carvalho de Melo
-> [snip]
-> > > I think this can be gated by LIBBFD and LIBBPF config, but not sure
-> > > it can express the both requirements easily.
-> >
-> > It is possible, but as discussed with Ian in another message, the
-> > cheapest way to do it was, I think, like I did, in the end it is just a
-> > stub returning an error when those libraries are not linked with perf.
-> >
-> > When we manage to implement the disassembly of BPF using something other
-> > than libbfd we can spend more time in this area, I think.
+On Thu, Aug 01, 2024 at 10:28:48AM -0300, Jason Gunthorpe wrote:
+> On Wed, Jul 31, 2024 at 11:23:24AM -0700, Nicolin Chen wrote:
+> > > If we really want to go this route I wonder whether a per-IOMMU
+> > > get_resv_regions() API should first exist then there is a clear definition
+> > > what types are per-IOMMU and what are not.
+> > 
+> > Probably it'd be necessary.
 > 
-> Not following this, can you show an example perf command. There is a
-> BPF disassembler already in the kernel tree:
-> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/kernel/bpf/disasm.c?h=perf-tools-next
-> and in use in bpftool that we use in the perf build.
+> But domains can cross IOMMU's as well, it is not per-iommu you are
+> after but hardwired per-IOMMU driver type.
+> 
+> What was the issue with trying to fix this on the nesting attach side?
 
-Well, looking at the files in this patch shows it, here, more precisely:
+No, seems that we all agreed on enforcing IOVAs to the parent 
+HWPT, so we will Just go on the nesting attach side.
 
-
-tools/perf/util/disasm_bpf.c
-
-#else // defined(HAVE_LIBBFD_SUPPORT) && defined(HAVE_LIBBPF_SUPPORT)
-int symbol__disassemble_bpf(struct symbol *sym __maybe_unused, struct annotate_args *args __maybe_unused)
-{
-        return SYMBOL_ANNOTATE_ERRNO__NO_LIBOPCODES_FOR_BPF;
-}
-#endif // defined(HAVE_LIBBFD_SUPPORT) && defined(HAVE_LIBBPF_SUPPORT)
-
-- Arnaldo
+Thanks
+Nicolin
 
