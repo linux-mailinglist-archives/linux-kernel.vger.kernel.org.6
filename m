@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-270995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8C0944827
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:26:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E84A2944836
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6002885BE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9A551C209A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A11170A04;
-	Thu,  1 Aug 2024 09:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B6D170A16;
+	Thu,  1 Aug 2024 09:24:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Djddsdsp"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b="sWclGiG+"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A003518CC02;
-	Thu,  1 Aug 2024 09:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11747184540;
+	Thu,  1 Aug 2024 09:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504122; cv=none; b=QEf342O4AqBA7csNIVsxq4RjLj/ae+J0RHFWIx8jeWOTHvs7FPxGEHpG+BYcAB2C1rOGC41SxIcDyGSbYOndun9XBdsCXKT8yBvl7BVfupjkQoRYIVVoxnRkU/ZWN4LfH/lhzeDbS9d/nktaJXcB3s7blZvf0R9hAFiOkQnGPtw=
+	t=1722504254; cv=none; b=Nzhb7x16ri5ouARBzVrBsGulbo3/0YNfVF27dyXeKS4FpV0TEe8X/t0QDwACBRMqNLAV2p2siUXs0ocKBbsLMJKuIxTqZdNBymYz8uvbFx8iCrFZ/xGIL1vALdkT4VGfIS9eE3OWHSlu/QzUaXKFXJ6IHBCP3TSSr2b/7s6El7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504122; c=relaxed/simple;
-	bh=bOHazO1XNo3FPxooGFmMDZ+MXhbTOZyFzvhcpFLZfJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C2MC+Vo/bYZ9ugA4taPkcNnsbuPNoOrCVqJBaKCm/Gd9WNX3C9r5+jeArKznfop5909+CVe9UDc9lV4bNmAAdyfnFmyprht2qLbMRy06jK5QA7RWVSpI5dOwD3OKLDiBrsuzrpR0HRCQn23grqx1PtjPVO6DOinMPD7Vs6uOx3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Djddsdsp; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8B27E1C0006;
-	Thu,  1 Aug 2024 09:21:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722504112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=X4HCIO0dVyT6eaJvZvPYVXNvArOemmorRP26fyTuZAA=;
-	b=DjddsdspWYB0DChHguhWDTHeyQaFSDfUlb8h4Ci/d1q+/Gv2Ka9NUEZj7pj6Wh+NPIeg2G
-	ehGXEQ8YB5iC4OZZ9fLdhEhx8R6jd3J2kVv4kLxf21Yd33bH6k0z3Z+NvZPcKEMtwR7Fma
-	GLfrWAOAEoVvWQsqNennXuIuu48U2wA6/K/7HPsYHvvQ7dRdnsTkeawBqn4Fo89nXAqtAQ
-	Zh5BHyS9GQVG8YbKqJCyI39y5iCQOC3S47bqftkBZjbh4LLAJRd8pjZ4rhUBcFcAMAuqvb
-	1ri/Z7XDBeHTwM/pDbG9NE/j3xpEYL9KUBlY5k5VnjDrpgSNNRbrbnvoaTE4vA==
-Message-ID: <40683bcd-14df-40b6-9110-ce5c61e543af@bootlin.com>
-Date: Thu, 1 Aug 2024 11:21:11 +0200
+	s=arc-20240116; t=1722504254; c=relaxed/simple;
+	bh=gy+1SJ7LKRchbuurwZ6K9qa1t2fPMXsZCG1sdumE7xM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=pD1zoG9pTPq9Gf2NDbTktJeuBqB8t+o7VTxoKvKff0hKt72FEnsbh2HrRzSTchrWwfaLZo7D/el8Dwe2FJoqSECAncplQLWIHEYL1ZLDgIi+DkqaXiwHZaoRodTH3nTkmJ2y6Uj5S1MWKeW/CzIurTqn/F0Dlg2QNugIaN2VIZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=frank.scheiner@web.de header.b=sWclGiG+; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722504222; x=1723109022; i=frank.scheiner@web.de;
+	bh=M/O8i2ZhmAtuCeZ0w9M2qWBIAu61DhuhrRUTTjUV/FI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=sWclGiG++gHXYGe7Td3KTkAYOOBDlgoPLlPygV6MP36eN5sYF2qxC5S2ICjYTaFK
+	 M1w0H58lH7kC6UFzcabkgp0Y7RCfL7xCnb7sTAGQTsw4jOAtfK3uXm0A5xwV2pjmj
+	 l5UDxW9qqGDiRC2xywLHjUpMsNjPtzfTncQgL5lzk0UHyk5Y4WoNkq5pDR9h6TaCv
+	 hiX16SY++Ryz9QEpbSYQH074PTtpuVL6fxwgZfTpI8p0ldI9Pvwa2F/Axcg7rFopZ
+	 vTLQHVNwxWio73N/4FiKwbzirxdSXYxMAD4PWamJLVdfYrauQsxntnc5zy/FFj54b
+	 qBdusUtsK5Sf9r7FdA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.30] ([79.200.215.229]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N3oyy-1s99n40vnU-014Q5H; Thu, 01
+ Aug 2024 11:23:42 +0200
+Message-ID: <2269aca0-29dc-4968-8cb2-de798408a9ca@web.de>
+Date: Thu, 1 Aug 2024 11:23:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,94 +56,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: convert test_cgroup_storage
- to test_progs
-To: Alan Maguire <alan.maguire@oracle.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240731-convert_cgroup_tests-v1-0-14cbc51b6947@bootlin.com>
- <20240731-convert_cgroup_tests-v1-2-14cbc51b6947@bootlin.com>
- <295cb8d1-89cc-4528-b255-f7d815f20a24@oracle.com>
-From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org, allen.lkml@gmail.com, broonie@kernel.org,
+ conor@kernel.org, f.fainelli@gmail.com, jonathanh@nvidia.com,
+ linux-kernel@vger.kernel.org, linux@roeck-us.net,
+ lkft-triage@lists.linaro.org, patches@kernelci.org, patches@lists.linux.dev,
+ pavel@denx.de, rwarsow@gmx.de, shuah@kernel.org, srw@sladewatkins.net,
+ stable@vger.kernel.org, sudipm.mukherjee@gmail.com,
+ torvalds@linux-foundation.org
+References: <20240731100057.990016666@linuxfoundation.org>
+Subject: Re: [PATCH 6.1 000/440] 6.1.103-rc3 review
 Content-Language: en-US
-In-Reply-To: <295cb8d1-89cc-4528-b255-f7d815f20a24@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alexis.lothore@bootlin.com
+From: Frank Scheiner <frank.scheiner@web.de>
+In-Reply-To: <20240731100057.990016666@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ygsQwcEyzlFHO00Fj5Bj0BacckmXHPZuqY5WIR/uRBV3R5Py7sN
+ MYczILA38ndDO+IdBlc8FTtPq1PH8XZtyA/RTFIMSTz3Wq7wLGMQL3lpgNvLCnEDQo0DW+i
+ VlVX5u23A7DLmDfYSKKHia55H36TgXCPJobXIUl9NKbfNfwDspEUjX6hSc47RA+pTVGsbf6
+ fCkkbx824OR4eLZKCaO5g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KchN4cz3j3c=;Az+3Q4LsEmwuoT4MTTUwCa6N2S5
+ YnSBXPd6Z4tGXQTQoVzTVjo+EImYT5ApEb/oJ5ebJJSqUNERbYzfmVQbYG7U6h4ZgToyss/zZ
+ 9HfnnntZaQ99rmEUe12WDiQ4VpxqBxcYwYnYZ8aRf/GxP8YMy9pGVDd/Wwuesab+D6Rzm+vnZ
+ XLFLa/MgUhDqd2zL5gh+9tPr5K9vOQ2ybVNlCSQaNMP51Dc2Wyvv7WIypE7mw1hsNR+dFO7rv
+ DMId8/LES0uWDQO3zj341JV8gU5vyMzuimplOXCu4pRfPufsb7FlwMTTyQhQreo1aZsMwnJC+
+ di+8v3iH23QDcVZ/UVPqUZWnNhx3xXATvS3kpXsUc/eEGMPcPyfZGQgCUblfZz0DhLRRE0r31
+ 3ysvUpZSwu1b8crTILBa6ASra3j2jQATUJBJ/opwjSNbIFWK7VsKOdPHdS16E68nJixGuj3v7
+ ZkW1X3PpYmoX7AphdZKkjO+7Sg5DEjujtZB9WBQbcT+w/vS2Z/AVuic0uUVZEMrsaHFINWE8e
+ oPhFBLwbMOo1QQRyEx8cTjBQIYOLcjPYI4Htm7mWmRxm2/hco4QHBlznLtPFkfntUKJJlETYF
+ RoZ5cJ9Tn/ObYVOTG+DFKiM4LSORyLgIbrXMxzxBlVOf7GLB0m66jlFx47AVDLU4y4AmwLoVA
+ 1l7hPNk92MTCQhBDYwRLp97lXvj4n1Dmgz3uFY+ykcnIroYPviIwZAOmGCnn3mYRR9In5x6Li
+ fc4EgpZyD9USKZqfUXYz26oC3xJ9M5wvpkwzcO8VIsuRtd18zr2jYrQuL1ZUW/MKnLLd//4hW
+ pyBET5GCZHEMSyYeWp7VwsvA==
 
-On 8/1/24 10:27, Alan Maguire wrote:
-> On 31/07/2024 11:38, Alexis Lothoré (eBPF Foundation) wrote:
->> test_cgroup_storage is currently a standalone program which is not run
->> when executing test_progs.
->>
->> Convert it to the test_progs framework so it can be automatically executed
->> in CI. The conversion led to the following changes:
->> - converted the raw bpf program in the userspace test file into a dedicated
->>   test program in progs/ dir
->> - reduced the scope of cgroup_storage test: the content from this test
->>   overlaps with some other tests already present in test_progs, most
->>   notably netcnt and cgroup_storage_multi*. Those tests already check
->>   extensively local storage, per-cpu local storage, cgroups interaction,
->>   etc. So the new test only keep the part testing that the program return
->>   code (based on map content) properly leads to packet being passed or
->>   dropped.
->>
->> Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
-> 
-> Two small things below, but
-> 
-> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+> This is the start of the stable review cycle for the 6.1.103 release.
+> There are 440 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 02 Aug 2024 09:59:35 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.10=
+3-rc3.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.gi=
+t linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-[...]
+Cross-builds for ia64/hp-sim and runs fine in ski ([1]).
 
->> +#define PING_CMD "ping localhost -c 1 -W 1 -q"
-> 
-> other tests seem to redirect ping stdout output to /dev/null ; might be
-> worth doing that too.
+[1]:
+https://github.com/linux-ia64/linux-stable-rc/actions/runs/10191315715#sum=
+mary-28192715031
 
-That's in fact performed automatically by SYS_NOFAIL :)
+Tested-by: Frank Scheiner <frank.scheiner@web.de>
 
-#define SYS_NOFAIL(fmt, ...)						\
-	({								\
-		char cmd[1024];						\
-		int n;							\
-		n = snprintf(cmd, sizeof(cmd), fmt, ##__VA_ARGS__);	\
-		if (n < sizeof(cmd) && sizeof(cmd) - n >= sizeof(ALL_TO_DEV_NULL)) \
-			strcat(cmd, ALL_TO_DEV_NULL);			\
-		system(cmd);						\
-	})
+****
 
-[...]
+Thanks for fixing the issue with rc1.
 
->> +{
->> +	__u64 *counter;
->> +
->> +	counter = bpf_get_local_storage(&cgroup_storage, 0);
-> 
-> don't we need a NULL check for counter here? Or does the verifier know
-> bpf_get_local_storage never fails?
-
-Good question. Since the verifier accepted the prog during my tests, I indeed
-assume that the returned pointer is always valid. Amongst all calls to this
-function in progs involved in selftests, I found only one performing a check
-before using the value (lsm_cgroup.c). So I guess it is fine ?
-
-Thanks for the review !
-
-Alexis
-
--- 
-Alexis Lothoré, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+Cheers,
+Frank
 
