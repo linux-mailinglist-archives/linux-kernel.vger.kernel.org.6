@@ -1,121 +1,127 @@
-Return-Path: <linux-kernel+bounces-271152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B827C944A2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:14:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E643A944A32
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73107283079
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:14:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8B31C246D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20384189525;
-	Thu,  1 Aug 2024 11:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61A6618951F;
+	Thu,  1 Aug 2024 11:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FUUCegfa"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kuroa.me header.i=@kuroa.me header.b="UkE/GelL"
+Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ED313D24D
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52BA187861
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722510850; cv=none; b=szLiqEjoJZkVdYFk5yurt9YriSYBSHsqMOg8uz/k7Ol3rm32lIPdybBG9lACRwDLp8wipqNZb/HPrRRERtJTEanygezcGAhqEEyLmGdNykNAGHEouFxdL9IYNDoauX9Cn/0xalxFtJVjXbHt+t8AuKiQVOaW/7SHt8idEK0euP4=
+	t=1722511065; cv=none; b=ty6ehIZCaaOVljMekjBkqnS9ACYbsjEPQE5C6nj+vl6CDwfIa8MWJQ/hZjEoXM7p2AMjA4CdRNx2B9eUr3fxUcXd6wLEHNxOwFhw9veNjX6aHiknGVJSOkQiZWpb9BIo6OH4939Yz1bpGmkXWUMEg2rGeUtz9DIarhQ+c4NxQ9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722510850; c=relaxed/simple;
-	bh=6DYUWyLVmKcg1VgyRdUByoU1wdW8WA65O99hCIRsLbA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=NsagNNPeXdjeP/5mqaNjuDX5HVp3zTZNR4ehiDa7/HbR77IWT4WDmxTTaFTcVm3sYo+zVAzKrHkMOCHdF7ojdDCAQGEwCmQSMFQLbO37uu4/HvBJ2dmZcK8crneGZXiuQQQtCWxkyI2hk156HYO4rp6hsMgIltgI2VbukbLDxOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FUUCegfa; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f040733086so79127161fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722510847; x=1723115647; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/AImUD+QPcEp27+UY62mj5/c2+FU0r6hvbsaspRuyks=;
-        b=FUUCegfazF00olHxmYckRNPDkkXo8e7MYfsTq8oKy7OWyl0r1jSDITf4q7C3dAq5Cb
-         w2p8pumNeMXgHUnj75njZCn7YInaRDuyk+JF4YrmCH8nHBOcwRjfOgONK5+G9Z8Igzid
-         ZMnMeOVYbCcOVBvIfxIgVQoM84GZTER0DIZRQ4G1T2gLy9L4BRwlUTWgTipQX1lTdyw+
-         clUriWdGhAsBN1bk7PACAN4Zh43aO1bHlLdqjWGvn13HXbDDCEjs9Eta8xjlEnKUabJf
-         xUdZj/WatoaKnI6vv9kdf+YyuTyb9n7/gCl8SRk543+Wt94hw/PIioXz3r9ACWWOy2ll
-         c8qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722510847; x=1723115647;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/AImUD+QPcEp27+UY62mj5/c2+FU0r6hvbsaspRuyks=;
-        b=hbiVhLJYVNWzJ9omPyqksB/d+ubALO4oEXlGgDowsxyNQN5Bm7/aggESjL1fVuKgKG
-         xma703tbNI/9T0Ri4ounRkHnXza47eEYvqAuLmiOesz3x2OLIeRi+O6T/GxKoV0/I9Cp
-         HfwEagM8izgBepD9HbYUHGLYkB9xVTxDY1o7Zres2NZaHXePEf+z6QUgppBHMF7TNHXr
-         e5yOI2NzZru06ebgTB/qfh8he6lPk1z4nTrn3EznMoOhgd0B4aOxju/3kjA/5WL9/g4F
-         H6cguCFDUuxFdoBTKg/0vIKOWu7MLaKs+K3SsFjjAgEfuOdgMvwfnk5eXeNSA+kBerFh
-         kw/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWQImm0z933gyiew5ZhmLAuN5MJrrDmScR48UgU41YTHw+py6Q9OXdC3z7iN4HyUF8vQJ0J/bKHzg75q81Oe9erARS64yvaMj4Ro7VW
-X-Gm-Message-State: AOJu0YylCo8+tcnFKLJlKV8NMA0KlmVUR0L1pRCs0l9oahN1irswG4kO
-	/WBPmZRH5n2dkrR7npAVGbQ45Qb6opVd74Hho4cw2hg/vdsRVRD1KtT7LRp8Fag=
-X-Google-Smtp-Source: AGHT+IHoqN9siHGzx2PErZ6ySMd5YwTj/nGbNmvJYtXIDVhQLKxwiGn0mDVq+yG3K1PkplijNm0gvQ==
-X-Received: by 2002:a05:651c:1988:b0:2ef:2617:8952 with SMTP id 38308e7fff4ca-2f1530ec05amr18159041fa.18.1722510846510;
-        Thu, 01 Aug 2024 04:14:06 -0700 (PDT)
-Received: from [192.168.0.25] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baa9071sm53607045e9.13.2024.08.01.04.14.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 04:14:06 -0700 (PDT)
-Message-ID: <4cd4ff3a-5d90-4a5d-aae1-6017199e00c3@linaro.org>
-Date: Thu, 1 Aug 2024 12:14:04 +0100
+	s=arc-20240116; t=1722511065; c=relaxed/simple;
+	bh=6Rjdv9cN+C1x828yRZnFLhlrKUpcUdBdEsHE08HCOI0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=siBCk3yNczH/YG9Ebd7TnzcANLssXqFUFPoUKT0pzW6dGn/Ke61ok/JTr8IucW0OBzbmD71EUwecLyYcpzizf0d1zZJKHop8cXQX67kQOOFZznTkKGNNoBLc3HVMcMgE/N9Liqew6selmmyiVmDOuwnW/KRJ6F6pZd5ZFmC70zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuroa.me; spf=pass smtp.mailfrom=kuroa.me; dkim=pass (2048-bit key) header.d=kuroa.me header.i=@kuroa.me header.b=UkE/GelL; arc=none smtp.client-ip=17.58.6.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kuroa.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kuroa.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kuroa.me; s=sig1;
+	t=1722511063; bh=nafx2xZo5f/3TQNO/oXcNrVdUT6Ohz4/FtnM/r3zZKM=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=UkE/GelLlYo9LcjDYeQue9O2wrPolsBdq+Um60k/fkcL8rmVaeK0GP1kN3yCNAdOg
+	 YIdAvgdt2+y0Hmncupxhid2y676AZNBxDBuR8KHV6QurIVzA8wxUkNutD+k598Flae
+	 R0+oObwh84MWIBXBnhvRDvl4UjLBBgXLzYOclovXfMvydGhHqDAMl1xXkcDJ07Soap
+	 ORSM8A0mbcLEr+01Ofkxe0I2AJ3F+fjp0xlNyhUYJ3oug45Yq3SBrXCmY3lJEhWu+9
+	 Vuzcj+c7bEj2iAvAMLrMCwY192/4D45J+QSHYNUFMANf/cFpTd7Xkkhye+UIWcvhZw
+	 yA7uY7mlKG66w==
+Received: from tora.kuroa.me (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id CD07768030E;
+	Thu,  1 Aug 2024 11:17:36 +0000 (UTC)
+From: Xueming Feng <kuro@kuroa.me>
+To: "David S . Miller" <davem@davemloft.net>,
+	netdev@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Yuchung Cheng <ycheng@google.com>,
+	Soheil Hassas Yeganeh <soheil@google.com>,
+	David Ahern <dsahern@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Xueming Feng <kuro@kuroa.me>
+Subject: [PATCH net] tcp: fix forever orphan socket caused by tcp_abort
+Date: Thu,  1 Aug 2024 19:16:11 +0800
+Message-Id: <20240801111611.84743-1-kuro@kuroa.me>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
- SM8550
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Depeng Shao <quic_depengs@quicinc.com>,
- Krzysztof Kozlowski <krzk@kernel.org>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com,
- Yongsheng Li <quic_yon@quicinc.com>
-References: <20240709160656.31146-1-quic_depengs@quicinc.com>
- <20240709160656.31146-10-quic_depengs@quicinc.com>
- <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
- <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
- <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
- <3011c561-d39e-4ce5-a544-33f24ca7a67c@quicinc.com>
- <bd6f3613-5a96-438a-a2df-cb2728e30c29@linaro.org>
- <30d56910-df7b-4459-b557-effc21ffa132@quicinc.com>
- <ff128062-5c1f-4abe-8582-543063d5e526@linaro.org>
-Content-Language: en-US
-In-Reply-To: <ff128062-5c1f-4abe-8582-543063d5e526@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: sY5AdWyyhAf90taChUuqDIlPf_TtDWME
+X-Proofpoint-GUID: sY5AdWyyhAf90taChUuqDIlPf_TtDWME
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_08,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 phishscore=0 clxscore=1030
+ malwarescore=0 spamscore=0 adultscore=0 suspectscore=0 mlxlogscore=509
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2408010071
 
-On 01/08/2024 11:59, Bryan O'Donoghue wrote:
-> for preference every single patch applies and builds warning free.
+We have some problem closing zero-window fin-wait-1 tcp sockets in our 
+environment. This patch come from the investigation.
 
-Oops mistyped
+Previously tcp_abort only sends out reset and calls tcp_done when the 
+socket is not SOCK_DEAD aka. orphan. For orphan socket, it will only 
+purging the write queue, but not close the socket and left it to the 
+timer.
 
-- Every patch must apply cleanly
-- You could make an argument for some specific cases that
-   a patch can generate a warning provided
-- By the end of your set everything must be warning free
+While purging the write queue, tp->packets_out and sk->sk_write_queue 
+is cleared along the way. However tcp_retransmit_timer have early 
+return based on !tp->packets_out and tcp_probe_timer have early 
+return based on !sk->sk_write_queue.
 
-In this case though, I don't believe you need to make that case since, 
-the problem you describe about probe() isn't a problem at all as you 
-have no upstream dts that can drive the probe() at this point.
+This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched 
+and socket not being killed by the timers. Converting a zero-windowed
+orphan to a forever orphan.
 
-Just do the dts at the end and no problem.
+This patch removes the SOCK_DEAD check in tcp_abort, making it send 
+reset to peer and close the socket accordingly. Preventing the 
+timer-less orphan from happening.
 
+Fixes: e05836ac07c7 ("tcp: purge write queue upon aborting the connection")
+Fixes: bffd168c3fc5 ("tcp: clear tp->packets_out when purging write queue")
+Signed-off-by: Xueming Feng <kuro@kuroa.me>
 ---
-bod
+ net/ipv4/tcp.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index e03a342c9162..65e8d28d15b1 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -4646,12 +4646,10 @@ int tcp_abort(struct sock *sk, int err)
+ 	local_bh_disable();
+ 	bh_lock_sock(sk);
+ 
+-	if (!sock_flag(sk, SOCK_DEAD)) {
+-		if (tcp_need_reset(sk->sk_state))
+-			tcp_send_active_reset(sk, GFP_ATOMIC,
+-					      SK_RST_REASON_NOT_SPECIFIED);
+-		tcp_done_with_error(sk, err);
+-	}
++	if (tcp_need_reset(sk->sk_state))
++		tcp_send_active_reset(sk, GFP_ATOMIC,
++					SK_RST_REASON_NOT_SPECIFIED);
++	tcp_done_with_error(sk, err);
+ 
+ 	bh_unlock_sock(sk);
+ 	local_bh_enable();
+-- 
+2.39.2
+
 
