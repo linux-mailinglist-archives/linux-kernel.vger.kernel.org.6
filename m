@@ -1,241 +1,344 @@
-Return-Path: <linux-kernel+bounces-270051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81A04943ABB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D55943B2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85EC8B22F86
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:18:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3526B1F231F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CA2814F9F3;
-	Thu,  1 Aug 2024 00:10:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5F158879;
+	Thu,  1 Aug 2024 00:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vt2QVlX2"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6qm1Ajp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B2314F9CA;
-	Thu,  1 Aug 2024 00:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F627158A1E;
+	Thu,  1 Aug 2024 00:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722471014; cv=none; b=Jpp0Fw8iW0OPaRJ5hjKDvtCRuKK4soqULe8y3xkNkLZVy3hMYHv/PAJ6ig93LAIIO2z+d8fy4zjvf/AAnnDxpsvQt1fGnWjGhnAaxef/7mUwyR3AauOJPZEbZII5MF+UHd4a5HKZWti9R15YiCW5GLNLaqYFPHl73qNorMCwJqQ=
+	t=1722471170; cv=none; b=Svk5xI9/CE6Anu0E3m6jp9kwdBN5trUWeUY9IIdzjOPNwVLsIgFcY2QSyk5XUcUBlEgkQrIqsIkri7a2TtMg9vGAKep1pcTGaoR+P6ZHsfUa50Q6eegcONlo0oHrLoiqOxN5LGRlqybzmqqKd6HPzb1u7VUWtLeozxE5f4a6gHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722471014; c=relaxed/simple;
-	bh=YbTyWDcu6WrIidnVKXHhfitfKU7aLc0gVfbt7UCbH3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KSG9dpX1qvLOPJpWIhWUGX5aO4Fcp56LE6O6mOVbOjvjUJ4R502VYmEk2rpjq5l0hGCZi+vbhNTtv1aqBaJcs1Kwcrg/zGSixslpOAjQJmrHMmMD6oEr1W0HKDBVja3cW8eix2X5b8vphaxLu7mBIus1TXZ7ZF6/8UwxbnskQXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vt2QVlX2; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so39759725e9.2;
-        Wed, 31 Jul 2024 17:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722471010; x=1723075810; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E/mwx5vVIcjnZ4gHpJnA5TwYZW1u+Tk0bqToj01SJqg=;
-        b=Vt2QVlX2aP60DYXQBKJfy0KaG0vN46UCTKkB/un4vFX2GvGZ5IRNxqqRxzOHFuKJ/7
-         U3Ee8mRKcweLWAPM4qcTRRn+Dv1UuL2XuJGr4YHZpU3j4JZvwcsRJB4HVI9qYM80yn1W
-         uQe+HmE9SeZh3FE0PzDOgQb12gWfmv3mnSB1ClMA73PhsnLLuloNQ7sgsIOIHZyO5kQ5
-         P5yXsc8Bi4mnUPkUvJ3/VtrrdqJtM/C5lbZQzlf2K2DMxdGG9xQ5uciJZypOCjDflqpK
-         pPwV1taSWUh8OvyETIpNfNFVJphPoSa81MvAFEvRniqsQr1HdljeXniczWBgP1jlcU8D
-         CwOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722471010; x=1723075810;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E/mwx5vVIcjnZ4gHpJnA5TwYZW1u+Tk0bqToj01SJqg=;
-        b=iEQBn1qfpEgMGrm9ctc/jMke0sRt6QYFNu5EhFUd3BDvUBacQaNEBr4pS4L5pFViK9
-         hGa6fBvCXl1fjYue5+Q6ZLBeNj+2i2KvKMtRyhzGq7wW0QDY8xaw/wHSp38aLEWAJHth
-         f6tqyzvdmZgWmPmagmwylYnVzx8ad6y5fxWf5PP4CPgZTTngQJWCVXi0hBP+W/IVAlye
-         uJOqBIkPKakRSgiX8Hf1Dhl7WjogFX5nul137d4i5g9ogs3eN/Y61hzORgQ86cOX0Z7p
-         7Kvxtn10qvIyMQBAdl+r79u4mFiY1pzcS5zYDJt16dFob+W2Au0fT7qYHw7MIf1oihkl
-         n2Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCWf+pCBwpP5V+7IeiSZIBwrUqTE3RTVptXZfwWUlxDJy3CRSewS4wYo2C47CZrzbXTnpN2TI5hrbkeaCbOP3yt8FpNJZ8lADWjtS4Pq9DnyfKvDeRSORjuqG8rWZAQ8b9CCno4xAtXA4sx+xMYCesPuOBxLquGI2ZpF7yTAVj3TzUt2
-X-Gm-Message-State: AOJu0YwBDhDm/SQR2OJo+mzt19BNgnpWGs1s5Wo3VUZN5LlHvSNvQDw6
-	LrN09APMKr/Ux/7sMIbQAkmjzna7rd1m/Z/aDYFsIeff4f1cVezDrBzdWPmLvvkXIyGTTjbbH46
-	qDgwTtYdIZg9VXR4cW6x4TZfNaNRXtvaW
-X-Google-Smtp-Source: AGHT+IG0xmlD8VwsCSwQEadG9uz+AqblqGFznxg+UWJp1yu3RfxFFcuiOiIrv2lWQwdCNKkOCtMCRr5DNmdB513G93Y=
-X-Received: by 2002:adf:e286:0:b0:367:9614:fb99 with SMTP id
- ffacd0b85a97d-36baac9e4a3mr468054f8f.10.1722471010226; Wed, 31 Jul 2024
- 17:10:10 -0700 (PDT)
+	s=arc-20240116; t=1722471170; c=relaxed/simple;
+	bh=Fy8XJo46oUm48yce0+7UYQt99s2mqOhUCwrIB7eiB+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+rHX0/hMFGgXXymGA2c5mFBGRWDQy2A+fwveTiOFwKbPeJnPBznGmwVOJu43PptnQ0l/RY61x4oIfbxa5d+dvGZmch5NMkb07HrBNEy3/732JtVU805HoQ6bcHVTMr0wWu2n28PaHoYmWX/o/ntFPg0dZe/k7djRBio3+4xiME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6qm1Ajp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70246C116B1;
+	Thu,  1 Aug 2024 00:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722471169;
+	bh=Fy8XJo46oUm48yce0+7UYQt99s2mqOhUCwrIB7eiB+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d6qm1AjpTwSGt99mFSq2ecEzUsq4bx9A79o2bAxdIYlnfa0MNrHlSGmtLLTSEkxHw
+	 RdN216olm+I8wchBEGoTjPhTAAU5/sBcg3VkhlrJBt/dK5SnuA7dSY7EMF6103kHcV
+	 YLhHAHMIAsoOQPpi5w+QAghJIZVHPfcik63BtnJj8RP+mNjz3b9QGDqmZ4XROMAWVs
+	 Z8N5bzwoKEILdjNNKKPq+KY5hz/M4FluTbfYcCYBoopC229gQo8MC8ub9K6/1zXf06
+	 O5zkdNcvrlAss+Sb+9evPUDr1/yQKeIF7EbR24EqfgvUHw74Zq63/SdUJaq0u+c2iS
+	 hnWYPS2mS/A0Q==
+Date: Wed, 31 Jul 2024 17:12:47 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
+	Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH v3 8/8] perf test: Update sample filtering test
+Message-ID: <ZqrS_80S91EvnQE0@google.com>
+References: <20240703223035.2024586-1-namhyung@kernel.org>
+ <20240703223035.2024586-9-namhyung@kernel.org>
+ <ZqpFvxFcZMHeAdqp@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CO1PR17MB54197F118CBC8783D289B97DE1102@CO1PR17MB5419.namprd17.prod.outlook.com>
- <2024073122-shakable-photo-67d1@gregkh>
-In-Reply-To: <2024073122-shakable-photo-67d1@gregkh>
-From: Chris Wulff <crwulff@gmail.com>
-Date: Wed, 31 Jul 2024 20:09:59 -0400
-Message-ID: <CAB0kiBK-G3fyaX6TmS008nDyQ+x1zCZpwe_RT-sNdh78gQeOAQ@mail.gmail.com>
-Subject: Re: [PATCH v3] usb: gadget: f_fs: add capability for dfu run-time descriptor
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Chris Wulff <Chris.Wulff@biamp.com>, 
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Paul Cercueil <paul@crapouillou.net>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Dmitry Antipov <dmantipov@yandex.ru>, David Sands <david.sands@biamp.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZqpFvxFcZMHeAdqp@x1>
 
-On Wed, Jul 31, 2024 at 4:28=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Apr 24, 2024 at 10:14:58PM +0000, Chris Wulff wrote:
-> > From: David Sands <david.sands@biamp.com>
-> >
-> > Add the ability for FunctionFS driver to be able to create DFU Run-Time
-> > descriptors.
->
-> Don't you need some userspace documentation for this as well?
+On Wed, Jul 31, 2024 at 11:10:07AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Wed, Jul 03, 2024 at 03:30:35PM -0700, Namhyung Kim wrote:
+> > Now it can run the BPF filtering test with normal user if the BPF
+> > objects are pinned by 'sudo perf record --setup-filter pin'.  Let's
+> > update the test case to verify the behavior.  It'll skip the test if the
+> > filter check is failed from a normal user, but it shows a message how to
+> > set up the filters.
+> > 
+> > First, run the test as a normal user and it fails.
+> > 
+> >   $ perf test -vv filtering
+> >    95: perf record sample filtering (by BPF) tests:
+> >   --- start ---
+> >   test child forked, pid 425677
+> >   Checking BPF-filter privilege
+> >   try 'sudo perf record --setup-filter pin' first.       <<<--- here
+> >   bpf-filter test [Skipped permission]
+> >   ---- end(-2) ----
+> >    95: perf record sample filtering (by BPF) tests                     : Skip
+> > 
+> > According to the message, run the perf record command to pin the BPF
+> > objects.
+> > 
+> >   $ sudo perf record --setup-filter pin
+> > 
+> > And re-run the test as a normal user.
+> > 
+> >   $ perf test -vv filtering
+> >    95: perf record sample filtering (by BPF) tests:
+> >   --- start ---
+> >   test child forked, pid 424486
+> >   Checking BPF-filter privilege
+> >   Basic bpf-filter test
+> >   Basic bpf-filter test [Success]
+> >   Failing bpf-filter test
+> >   Error: task-clock event does not have PERF_SAMPLE_CPU
+> >   Failing bpf-filter test [Success]
+> >   Group bpf-filter test
+> >   Error: task-clock event does not have PERF_SAMPLE_CPU
+> >   Error: task-clock event does not have PERF_SAMPLE_CODE_PAGE_SIZE
+> >   Group bpf-filter test [Success]
+> >   ---- end(0) ----
+> >    95: perf record sample filtering (by BPF) tests                     : Ok
+> 
+> Ok, so I tested one of the examples you provide as a root user:
+> 
+> root@number:~# perf record -o- -e cycles:u --filter 'period < 10' perf test -w noploop | perf script -i-
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.024 MB - ]
+>        perf-exec  228020 53029.825757:          1 cpu_core/cycles/u:      7fe361d1cc11 [unknown] ([unknown])
+>        perf-exec  228020 53029.825760:          1 cpu_core/cycles/u:      7fe361d1cc11 [unknown] ([unknown])
+>             perf  228020 53029.826313:          1 cpu_atom/cycles/u:      7fd80d7ba040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228020 53029.826316:          1 cpu_atom/cycles/u:      7fd80d7ba040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228020 53029.838051:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228020 53029.838054:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228020 53029.838055:          9 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228020 53029.844137:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+>             perf  228020 53029.844139:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> root@number:~# perf record -o- -e cycles:u --filter 'period < 100000' perf test -w noploop | perf script -i-
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.025 MB - ]
+>        perf-exec  228084 53076.760776:          1 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+>        perf-exec  228084 53076.760779:          1 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+>        perf-exec  228084 53076.760779:         10 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+>        perf-exec  228084 53076.760780:        497 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+>        perf-exec  228084 53076.760781:      27924 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
+>             perf  228084 53076.761318:          1 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.761320:          1 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.761321:         14 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.761322:        518 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.761322:      20638 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.768070:          1 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.768072:          1 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.768073:         17 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.768073:        836 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.768074:      44346 cpu_core/cycles/u:      7f317056e89b _dl_relocate_object+0x1db (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228084 53076.843976:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+>             perf  228084 53076.843978:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+>             perf  228084 53076.843979:         13 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+>             perf  228084 53076.843979:        563 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+>             perf  228084 53076.843980:      26519 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+>             perf  228084 53077.482090:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228084 53077.482092:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228084 53077.482093:         15 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228084 53077.482093:        746 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
+>             perf  228084 53077.482094:      38315 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
+> root@number:~#
+> 
+> Filtering by period works as advertised, now I have done as root;
+> 
+> root@number:~# perf record --setup-filter pin
+> root@number:~# ls -la /sys/fs/bpf/perf_filter/
+> total 0
+> drwxr-xr-x. 2 root root 0 Jul 31 10:43 .
+> drwxr-xr-t. 3 root root 0 Jul 31 10:43 ..
+> -rw-rw-rw-. 1 root root 0 Jul 31 10:43 dropped
+> -rw-rw-rw-. 1 root root 0 Jul 31 10:43 filters
+> -rwxrwxrwx. 1 root root 0 Jul 31 10:43 perf_sample_filter
+> -rw-rw-rw-. 1 root root 0 Jul 31 10:43 pid_hash
+> -rw-------. 1 root root 0 Jul 31 10:43 sample_f_rodata
+> root@number:~# ls -la /sys/fs/bpf/perf_filter/perf_sample_filter 
+> -rwxrwxrwx. 1 root root 0 Jul 31 10:43 /sys/fs/bpf/perf_filter/perf_sample_filter
+> root@number:~#
+> 
+> And as a normal user I try:
+> 
+> acme@number:~$ perf record -o- -e cycles:u perf test -w noploop | perf script -i- | head
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.204 MB - ]
+>             perf  228218 53158.670585:          1 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.670590:          1 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.670592:          7 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.670593:        117 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.670595:       2152 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.670604:      38977 cpu_atom/cycles/u:  ffffffff99201280 [unknown] ([unknown])
+>             perf  228218 53158.670650:     167064 cpu_atom/cycles/u:      7f2fb1b67d7c intel_check_word.constprop.0+0x16c (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.671472:     232830 cpu_atom/cycles/u:      7f2fb1b75d98 strcmp+0x78 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.672710:     191183 cpu_atom/cycles/u:      7f2fb1b59311 _dl_map_object_from_fd+0xea1 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  228218 53158.673461:     158125 cpu_atom/cycles/u:      7f2fb1b77148 strcmp+0x1428 (/usr/lib64/ld-linux-x86-64.so.2)
+> acme@number:~$
+> 
+> Ok, no filtering, bot samples, lets try to use filtering as with root:
+> 
+> acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.019 MB - ]
+> acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.019 MB - ]
+> acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.019 MB - ]
+> acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.019 MB - ]
+> acme@number:~$
 
-Yes, I will add some.
+Hmm.. strange.  The above command works well for me.
 
->
-> > --- a/include/uapi/linux/usb/ch9.h
-> > +++ b/include/uapi/linux/usb/ch9.h
-> > @@ -254,6 +254,9 @@ struct usb_ctrlrequest {
-> >  #define USB_DT_DEVICE_CAPABILITY     0x10
-> >  #define USB_DT_WIRELESS_ENDPOINT_COMP        0x11
-> >  #define USB_DT_WIRE_ADAPTER          0x21
-> > +/* From USB Device Firmware Upgrade Specification, Revision 1.1 */
-> > +#define USB_DT_DFU_FUNCTIONAL                0x21
->
-> So USB_DT_WIRE_ADAPTER and USB_DT_DFU_FUNCTIONAL are the same?  That
-> seems wrong.
->
-> > +/* these are from the Wireless USB spec */
->
-> What spec?  What "these"?
+> 
+> acme@number:~$ perf record -v -e cycles:u --filter 'period < 10000000' perf test -w noploop 
+> Using CPUID GenuineIntel-6-B7-1
+> DEBUGINFOD_URLS=
+> nr_cblocks: 0
+> affinity: SYS
+> mmap flush: 1
+> comp level: 0
+> Problems creating module maps, continuing anyway...
+> pid hash: 228434 -> 13
+> pid hash: 228434 -> 14
+
+This part is a little strange as it's using two entries.  Hmm, are you
+using a hybrid machine?  Anyway I think it should work there too..
+
+Also the number is too high.. I expect 1 or 2.  Maybe it didn't release
+all the entries.  Let me think about the case.
+
+Thanks,
+Namhyung
 
 
-I inserted the DFU constant in numerical order, splitting the original
-section, so I
-duplicated the comment. (Partly to make it obvious that there were two with=
- the
-same number.) It looks like possibly wireless usb is a dead spec.
-
-You can find wireless usb v1.0 on usb.org in the wayback machine, but it lo=
-oks
-like most of the references have been purged from the current site, and hav=
-e
-been gone for a few years. There was apparently a v1.1 too, but I never fou=
-nd
-a copy of that anywhere.
-
-https://web.archive.org/web/20090325042850/http://www.usb.org/developers/wu=
-sb/docs/
-
-A few references remain but say the specification is no longer available. E=
-g.
-https://www.usb.org/bos-descriptor-types
-
-The original section of code that I inserted the new constant into was:
-
-/* these are from the Wireless USB spec */
-#define USB_DT_SECURITY 0x0c
-#define USB_DT_KEY 0x0d
-#define USB_DT_ENCRYPTION_TYPE 0x0e
-#define USB_DT_BOS 0x0f
-#define USB_DT_DEVICE_CAPABILITY 0x10
-#define USB_DT_WIRELESS_ENDPOINT_COMP 0x11
-#define USB_DT_WIRE_ADAPTER 0x21
-#define USB_DT_RPIPE 0x22
-#define USB_DT_CS_RADIO_CONTROL 0x23
-/* From the T10 UAS specification */
-
->
-> >  #define USB_DT_RPIPE                 0x22
-> >  #define USB_DT_CS_RADIO_CONTROL              0x23
-> >  /* From the T10 UAS specification */
-> > @@ -263,6 +266,7 @@ struct usb_ctrlrequest {
-> >  /* From the USB 3.1 spec */
-> >  #define      USB_DT_SSP_ISOC_ENDPOINT_COMP   0x31
-> >
-> > +
-> >  /* Conventional codes for class-specific descriptors.  The convention =
-is
-> >   * defined in the USB "Common Class" Spec (3.11).  Individual class sp=
-ecs
-> >   * are authoritative for their usage, not the "common class" writeup.
->
-> Unneeded change?
-
-Yeah, I'll clean that up.
-
->
-> > @@ -329,9 +333,10 @@ struct usb_device_descriptor {
-> >  #define USB_CLASS_USB_TYPE_C_BRIDGE  0x12
-> >  #define USB_CLASS_MISC                       0xef
-> >  #define USB_CLASS_APP_SPEC           0xfe
-> > -#define USB_CLASS_VENDOR_SPEC                0xff
-> > +#define USB_SUBCLASS_DFU                     0x01
-> >
-> > -#define USB_SUBCLASS_VENDOR_SPEC     0xff
-> > +#define USB_CLASS_VENDOR_SPEC                0xff
-> > +#define USB_SUBCLASS_VENDOR_SPEC             0xff
->
-> Why reorder these?
-
-The subclasses are specific to the class they are under.
-USB_SUBCLASS_DFU is part of USB_CLASS_APP_SPEC
-USB_SUBCLASS_VENDOR_SPEC is part of USB_CLASS_VENDOR_SPEC
-
->
-> >
-> >  /*--------------------------------------------------------------------=
------*/
-> >
-> > diff --git a/include/uapi/linux/usb/functionfs.h b/include/uapi/linux/u=
-sb/functionfs.h
-> > index 9f88de9c3d66..6d2061500184 100644
-> > --- a/include/uapi/linux/usb/functionfs.h
-> > +++ b/include/uapi/linux/usb/functionfs.h
-> > @@ -37,6 +37,31 @@ struct usb_endpoint_descriptor_no_audio {
-> >       __u8  bInterval;
-> >  } __attribute__((packed));
-> >
-> > +/**
-> > + * struct usb_dfu_functional_descriptor - DFU Functional descriptor
-> > + * @bLength:         Size of the descriptor (bytes)
-> > + * @bDescriptorType: USB_DT_DFU_FUNCTIONAL
-> > + * @bmAttributes:    DFU attributes
-> > + * @wDetachTimeOut:  Maximum time to wait after DFU_DETACH (ms, le16)
-> > + * @wTransferSize:   Maximum number of bytes per control-write (le16)
-> > + * @bcdDFUVersion:   DFU Spec version (BCD, le16)
-> > + */
-> > +struct usb_dfu_functional_descriptor {
-> > +     __u8  bLength;
-> > +     __u8  bDescriptorType;
-> > +     __u8  bmAttributes;
-> > +     __le16 wDetachTimeOut;
-> > +     __le16 wTransferSize;
-> > +     __le16 bcdDFUVersion;
-> > +} __attribute__ ((packed));
-> > +
-> > +/* from DFU functional descriptor bmAttributes */
-> > +#define DFU_FUNC_ATT_WILL_DETACH             (1 << 3)
-> > +#define DFU_FUNC_ATT_MANIFEST_TOLERANT               (1 << 2)
-> > +#define DFU_FUNC_ATT_CAN_UPLOAD                      (1 << 1)
-> > +#define DFU_FUNC_ATT_CAN_DOWNLOAD            (1 << 0)
->
-> Please use proper BIT macros here to make this more obvious.  And in
-> sorted order?
-
-Ok. I'll fix this up
-
->
-> thanks,
->
-> greg k-h
->
+> mmap size 528384B
+> Control descriptor is not initialized
+> Couldn't start the BPF side band thread:
+> BPF programs starting from now on won't be annotatable
+> [ perf record: Woken up 1 times to write data ]
+> failed to write feature CPU_PMU_CAPS
+> [ perf record: Captured and wrote 0.009 MB perf.data ]
+> acme@number:~$
+> 
+> I also tried with task-clock:
+> 
+> acme@number:~$ perf record -o- -e task-clock -c 10000 perf test -w noploop | perf script -i- | head
+>             perf  229784 54146.473644:      10000 task-clock:u:      7faf38f1c622 get_common_indices.constprop.0+0xa2 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473654:      10000 task-clock:u:      7faf38f1d323 update_active.constprop.0+0x383 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473664:      10000 task-clock:u:      7faf38f1cd32 intel_check_word.constprop.0+0x122 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473674:      10000 task-clock:u:      7faf38f1cd7c intel_check_word.constprop.0+0x16c (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473684:      10000 task-clock:u:      7faf38f19de5 __tunable_get_val+0x75 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473704:      10000 task-clock:u:      7faf38f190d0 rtld_mutex_dummy+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473754:      10000 task-clock:u:      7faf38f1a80e _dl_cache_libcmp+0xe (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473864:      10000 task-clock:u:      7faf38f2adb9 strcmp+0x99 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.473954:      10000 task-clock:u:      7faf38f1aa02 search_cache+0x112 (/usr/lib64/ld-linux-x86-64.so.2)
+>             perf  229784 54146.474024:      10000 task-clock:u:      7faf38f0de38 _dl_map_object_from_fd+0x9c8 (/usr/lib64/ld-linux-x86-64.so.2)
+> acme@number:~$ 
+> acme@number:~$ perf record -o- -e task-clock -c 10000 --filter 'ip < 0xffffffff00000000' perf test -w noploop | perf script -i- 
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.127 MB - ]
+> acme@number:~$
+> 
+> Ideas?
+> 
+> I'm keeping it in my local tree so that I run it through the container
+> build tests meanwhile we try to understand this, what am I missing?
+> 
+> - Arnaldo
+> 
+> ⬢[acme@toolbox perf-tools-next]$ uname -a
+> Linux toolbox 6.9.10-200.fc40.x86_64 #1 SMP PREEMPT_DYNAMIC Thu Jul 18 21:39:30 UTC 2024 x86_64 GNU/Linux
+> ⬢[acme@toolbox perf-tools-next]$ perf -vv
+> perf version 6.11.rc1.g77a71e434cf4
+>                  dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+>     dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+>          syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+>                 libbfd: [ OFF ]  # HAVE_LIBBFD_SUPPORT
+>             debuginfod: [ on  ]  # HAVE_DEBUGINFOD_SUPPORT
+>                 libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+>                libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+> numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+>                libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+>              libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+>               libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+>              libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+>              libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+>     libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+>            libcapstone: [ on  ]  # HAVE_LIBCAPSTONE_SUPPORT
+>                   zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+>                   lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+>              get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+>                    bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+>                    aio: [ on  ]  # HAVE_AIO_SUPPORT
+>                   zstd: [ on  ]  # HAVE_ZSTD_SUPPORT
+>                libpfm4: [ on  ]  # HAVE_LIBPFM
+>          libtraceevent: [ on  ]  # HAVE_LIBTRACEEVENT
+>          bpf_skeletons: [ on  ]  # HAVE_BPF_SKEL
+>   dwarf-unwind-support: [ on  ]  # HAVE_DWARF_UNWIND_SUPPORT
+>             libopencsd: [ on  ]  # HAVE_CSTRACE_SUPPORT
+> ⬢[acme@toolbox perf-tools-next]$ git log --oneline -10
+> 2a24133dc55000b3 (HEAD -> perf-tools-next) perf test: Update sample filtering test
+> d6fed13469889202 perf record: Add --setup-filter option
+> d8a2ec627150b7a4 perf record: Fix a potential error handling issue
+> b0313e52f43035b5 perf bpf-filter: Support separate lost counts for each filter
+> eb29dacbaf215fda perf bpf-filter: Support pin/unpin BPF object
+> 086e7d06af7ce4eb perf bpf-filter: Split per-task filter use case
+> d3453d1bb80cdbb2 perf bpf-filter: Pass 'target' to perf_bpf_filter__prepare()
+> 736cd1c7a7105e1d perf bpf-filter: Make filters map a single entry hashmap
+> 96ff640908b9808e perf jevents: Don't stop at the first matched pmu when searching a events table
+> 379fe1f78ed5ceaf perf jevents: Use name for special find value (PMU_EVENTS__NOT_FOUND)
+> ⬢[acme@toolbox perf-tools-next]$
+>  
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/tests/shell/record_bpf_filter.sh | 13 +++++++------
+> >  1 file changed, 7 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/tools/perf/tests/shell/record_bpf_filter.sh b/tools/perf/tests/shell/record_bpf_filter.sh
+> > index 31c593966e8c..c5882d620db7 100755
+> > --- a/tools/perf/tests/shell/record_bpf_filter.sh
+> > +++ b/tools/perf/tests/shell/record_bpf_filter.sh
+> > @@ -22,15 +22,16 @@ trap trap_cleanup EXIT TERM INT
+> >  test_bpf_filter_priv() {
+> >    echo "Checking BPF-filter privilege"
+> >  
+> > -  if [ "$(id -u)" != 0 ]
+> > -  then
+> > -    echo "bpf-filter test [Skipped permission]"
+> > -    err=2
+> > -    return
+> > -  fi
+> >    if ! perf record -e task-clock --filter 'period > 1' \
+> >  	  -o /dev/null --quiet true 2>&1
+> >    then
+> > +    if [ "$(id -u)" != 0 ]
+> > +    then
+> > +      echo "try 'sudo perf record --setup-filter pin' first."
+> > +      echo "bpf-filter test [Skipped permission]"
+> > +      err=2
+> > +      return
+> > +    fi
+> >      echo "bpf-filter test [Skipped missing BPF support]"
+> >      err=2
+> >      return
+> > -- 
+> > 2.45.2.803.g4e1b14247a-goog
+> > 
 
