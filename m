@@ -1,163 +1,134 @@
-Return-Path: <linux-kernel+bounces-271708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B473945247
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:51:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A616945249
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F2471C2103C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:51:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B950E28954B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:52:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8011BC9F6;
-	Thu,  1 Aug 2024 17:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F35C1B9B4A;
+	Thu,  1 Aug 2024 17:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="cXiMsT1o"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SnH4tzec"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C461B4C49;
-	Thu,  1 Aug 2024 17:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418B01B4C49
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722534617; cv=none; b=cPufW6gkEETvVtA0y+JwvaCElVy2B8Wd+YmZe44hPviDVCVyU15OjRimvkN5ra79xiXIYfHwUwLyrdRui3fKRrE1rhh3c+/BZrgkJqWwA2t5XsMyVOOz1C0y55a7VZ1PRpxXLRvuCH+/bCI9uTP477nxZY0K5g/VJeMbUPRTJXg=
+	t=1722534763; cv=none; b=HScw8LFqP8xwSqLYAAkV3OqcTWzooMXOW+V7N2Hd1X2CD64gHt6I2j1/vP381QqVR7yu3Wt+iQkhSmrK1SCzEcWxaMfBjgpw00XF1fEdJbNKxBkN9f9n2ycld8GxYB3fYZF3dlfUEwBwnN0H0T5vnCC8tldIq83m+NMNt6vsF+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722534617; c=relaxed/simple;
-	bh=VUjBkOTLLEenOZBbD9TlAxfiFafmMMHYA38GkifZpd0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjnHtFcG9C+Q5hg70/wgXymDVx7QtO3K1amTfzGMKhEqz5ZF8WSwwe0kwLt6q+XlwXskDoP2jdfuea/Zkw1TQeusnn7EBu3gS+oZnlQn7Ww21jEKVMmUKicOZdMjNZCIVJh0ioOwBEK1/FNOjVYW0KApP5VE0qlWRaGoYEXS8MY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=cXiMsT1o; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 471HnjUx124005;
-	Thu, 1 Aug 2024 12:49:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722534585;
-	bh=VeX6B6WBQ46KXMvyCe3WTGgD7pbQWfOlU3CB4tfqfFk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=cXiMsT1oAhuDaT67rE/hUcBmv7a5/9+mWcaW4VvTOAqY4Zg02fajH3m7TGqGXzZ0q
-	 VxGI3x7mrLX2CWRWEkASkqg7xT8B/NdHPhI5hOiYRJdmRXP4OArehBNKtZmv+argft
-	 7ifCRvlekhZ1sCaRpdOw/z8JQJqm2ZGf6uKXH0Kw=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 471Hni3e027462
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 1 Aug 2024 12:49:44 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
- Aug 2024 12:49:44 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 1 Aug 2024 12:49:44 -0500
-Received: from localhost.localdomain ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 471Hngkk067627;
-	Thu, 1 Aug 2024 12:49:44 -0500
-From: Andrew Davis <afd@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Jonathan Humphreys <j-humphreys@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 4/4] arm64: dts: ti: k3-j784s4: Include entire FSS region in ranges
-Date: Thu, 1 Aug 2024 12:49:41 -0500
-Message-ID: <20240801174941.41002-5-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240801174941.41002-1-afd@ti.com>
-References: <20240801174941.41002-1-afd@ti.com>
+	s=arc-20240116; t=1722534763; c=relaxed/simple;
+	bh=M6InQaB0T4wGw9r+y0hXi5/zJ5LG2nNysefOOnv+iAE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hk+OV7kP0fZryrnrbouWd7cLgVYUTgNE/alGGGgb0+LljJXj8p34xhmetQRcxsihMD09kazB9QIy9RZeRDzERKEtk4HAXWoabQ8sbgOiBWkK7IagNguUYUeGzo+pUfmrvBrhARnwCXIkgIQB5T6E6LMjxlJtPC2I8Jrny8h+Fl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SnH4tzec; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso46357a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722534760; x=1723139560; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8qly8JbOiDlnwa/iIbG3/fk35NDbFwt36/SaFwD82+4=;
+        b=SnH4tzecDrlXkBbAcaxl6O8zZ9PBNLWq+CpnGQqkLQSRY4HHtXxV5oMljMv7J9E+tn
+         r0Ln/A6XxDg9oUqe3eIjQrPJjpfT1dBmDLSORdGOW+Rdewz1Fh9nDwg/lfzbsl8lEo/s
+         otKCGZIgefaogjqJL7AJ+nUizKbuImYCuwG/WAjq7fiX55bx8iUxhBYKyNuU0KBcvojg
+         U9yKO8rip9WoT6+okQ5dGxooU0wUHavd0AQ5uec67dEkJZ9eGPXTxvXy+amGsBiDuq87
+         n1CM/T9DNuAb/cB8aS0KWgghf4KszatqvWk/QSacjsa9sL2N0A3fBYvcXH//H2RFWENX
+         RirQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722534760; x=1723139560;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8qly8JbOiDlnwa/iIbG3/fk35NDbFwt36/SaFwD82+4=;
+        b=LczOP9QLyRVoOuFE3gcPcU3FfpP8ARnPvjrSkqFsQYdB3JwAPId0kEU8kJ7K1da5iK
+         cXr25+4Y4RadB0OwoqsFfGfhzE4M26CPIe4ztW+xYMsGMa5yALF/UZHxWcEKomiTO5K6
+         VG6sJNJvD29wn1QZ7g/ljU81WR9Pt1jPPuXY49Q4EpjMQsFXZyKY6YLqZq7DCFgAxgVa
+         VZOf2ozmsNNWgi26LzVI7XBVR/74mIvAjcNM94s6/uURl1iH7d3TqUDr8D6yE3Kj7NpR
+         gH9HpRVDcWW2c2IIiqb8G8FECK00uf3JN5KDerHeTov4AAlQL02k+8uSDQidWYb1eyHi
+         y3+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGQNlg/9WJd2lvVHZeZ416LnR8dFZsUGzHBglPfWp1C371u407BPrRYanuGM4e8L0AIM+C/bQOeWfSbd3T+P8Tc8GM3/WDqIe7LaPd
+X-Gm-Message-State: AOJu0Yy5zoCKv31j2sWkWz7l6I/ddqPFsJ9RY3waOQ3rnd6OY5qpPekF
+	PHTG7NKCDFdh4Y5JnI3mk7lsG6k/6hUYjDJ/GdiSpHcEcBTWBoX15fjSpkdz/0LWs1XJ/aZicxc
+	fE0TRR6WsCMwXzf3r16oEa5cmNGS8MEQeA+8q
+X-Google-Smtp-Source: AGHT+IHB5CJxc6Tc3CjWDacX26l9/cA+t+kvTF1TdZijWQEEpgYdyhxFzFFAkvLyaqV8sqPcAn0lgEDa7UlZziEV+W4=
+X-Received: by 2002:a05:6402:2689:b0:58b:15e4:d786 with SMTP id
+ 4fb4d7f45d1cf-5b844f86d28mr690a12.5.1722534760180; Thu, 01 Aug 2024 10:52:40
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240801-upstream-net-next-20240801-tcp-limit-wake-up-x-syn-v1-1-3a87f977ad5f@kernel.org>
+In-Reply-To: <20240801-upstream-net-next-20240801-tcp-limit-wake-up-x-syn-v1-1-3a87f977ad5f@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 1 Aug 2024 19:52:26 +0200
+Message-ID: <CANn89iK6PxVuPu_nwTBiHy8JLuX+RTvnNGC3m64nBN7j1eENxQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: limit wake-up for crossed SYN cases with SYN-ACK
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>, 
+	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add FSS regions at 0x50000000, 0x400000000, and 0x600000000. Although
-not used currently by the Linux FSS driver, these regions belong to
-the FSS and should be included in the ranges mapping.
+On Thu, Aug 1, 2024 at 6:39=E2=80=AFPM Matthieu Baerts (NGI0)
+<matttbe@kernel.org> wrote:
+>
+> In TCP_SYN_RECV states, sk->sk_socket will be assigned in case of
+> marginal crossed SYN, but also in other cases, e.g.
+>
+>  - With TCP Fast Open, if the connection got accept()'ed before
+>    receiving the 3rd ACK ;
+>
+>  - With MPTCP, when accepting additional subflows to an existing MPTCP
+>    connection.
+>
+> In these cases, the switch to TCP_ESTABLISHED is done when receiving the
+> 3rd ACK, without the SYN flag then.
+>
+> To properly restrict the wake-up to crossed SYN cases as expected there,
+> it is then required to also limit the check to packets containing the
+> SYN-ACK flags.
+>
+> Without this modification, it looks like the wake-up was not causing any
+> visible issue with TFO and MPTCP, apart from not being needed. That's
+> why this patch doesn't contain a Cc to stable, and a Fixes tag.
+>
+> While at it, the attached comment has also been updated: sk->sk_sleep
+> has been removed in 2010, and replaced by sk->sk_wq in commit
+> 43815482370c ("net: sock_def_readable() and friends RCU conversion").
+>
+> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> ---
+> Notes:
+>   - This is the same patch as the one suggested earlier in -net as part
+>     of another series, but targeting net-next (Eric), and with an
+>     updated commit message. The previous version was visible there:
+>     https://lore.kernel.org/20240718-upstream-net-next-20240716-tcp-3rd-a=
+ck-consume-sk_socket-v2-2-d653f85639f6@kernel.org/
+> ---
 
-While here, a couple of these numbers had missing zeros which was
-hidden by odd alignments, fix both these issues.
+Note: I am not aware of any tests using FASYNC
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi | 14 +++++++-------
- arch/arm64/boot/dts/ti/k3-j784s4.dtsi            |  8 +++-----
- 2 files changed, 10 insertions(+), 12 deletions(-)
+sock_wake_async() / kill_fasync() are sending signals, not traditional wake=
+ups.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
-index f3a6ed1c979d0..ad199ce2edacb 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-mcu-wakeup.dtsi
-@@ -678,16 +678,16 @@ fss: bus@47000000 {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
--		ranges = <0x0 0x47000000 0x0 0x47000000 0x0 0x100>, /* FSS Control */
--			 <0x0 0x47040000 0x0 0x47040000 0x0 0x100>, /* OSPI0 Control */
--			 <0x0 0x47050000 0x0 0x47050000 0x0 0x100>, /* OSPI1 Control */
--			 <0x5 0x00000000 0x5 0x00000000 0x1 0x0000000>, /* OSPI0 Memory */
--			 <0x7 0x00000000 0x7 0x00000000 0x1 0x0000000>; /* OSPI1 Memory */
-+		ranges = <0x00 0x47000000 0x00 0x47000000 0x00 0x00000100>, /* FSS Control */
-+			 <0x00 0x47040000 0x00 0x47040000 0x00 0x00000100>, /* OSPI0 Control */
-+			 <0x00 0x47050000 0x00 0x47050000 0x00 0x00000100>, /* OSPI1 Control */
-+			 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>, /* OSPI0/1 Memory Region 1 */
-+			 <0x04 0x00000000 0x04 0x00000000 0x04 0x00000000>; /* OSPI0/1 Memory Region 0/3 */
- 
- 		ospi0: spi@47040000 {
- 			compatible = "ti,am654-ospi", "cdns,qspi-nor";
- 			reg = <0x00 0x47040000 0x00 0x100>,
--			      <0x05 0x0000000 0x01 0x0000000>;
-+			      <0x05 0x00000000 0x01 0x00000000>;
- 			interrupts = <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>;
- 			cdns,fifo-depth = <256>;
- 			cdns,fifo-width = <4>;
-@@ -705,7 +705,7 @@ ospi0: spi@47040000 {
- 		ospi1: spi@47050000 {
- 			compatible = "ti,am654-ospi", "cdns,qspi-nor";
- 			reg = <0x00 0x47050000 0x00 0x100>,
--			      <0x07 0x0000000 0x01 0x0000000>;
-+			      <0x07 0x00000000 0x01 0x00000000>;
- 			interrupts = <GIC_SPI 841 IRQ_TYPE_LEVEL_HIGH>;
- 			cdns,fifo-depth = <256>;
- 			cdns,fifo-width = <4>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4.dtsi
-index 73cc3c1fec08d..f3f57da6cefa8 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4.dtsi
-@@ -271,8 +271,7 @@ cbass_main: bus@100000 {
- 			 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>,
- 			 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>,
- 			 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>,
--			 <0x05 0x00000000 0x05 0x00000000 0x01 0x00000000>,
--			 <0x07 0x00000000 0x07 0x00000000 0x01 0x00000000>;
-+			 <0x04 0x00000000 0x04 0x00000000 0x04 0x00000000>;
- 
- 		cbass_mcu_wakeup: bus@28380000 {
- 			bootph-all;
-@@ -289,9 +288,8 @@ cbass_mcu_wakeup: bus@28380000 {
- 				 <0x00 0x45100000 0x00 0x45100000 0x00 0x00c24000>, /* MMRs, remaining NAVSS */
- 				 <0x00 0x46000000 0x00 0x46000000 0x00 0x00200000>, /* CPSW */
- 				 <0x00 0x47000000 0x00 0x47000000 0x00 0x00068400>, /* OSPI register space */
--				 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>, /* FSS OSPI0/1 data region 0 */
--				 <0x05 0x00000000 0x05 0x00000000 0x01 0x00000000>, /* FSS OSPI0 data region 3 */
--				 <0x07 0x00000000 0x07 0x00000000 0x01 0x00000000>; /* FSS OSPI1 data region 3*/
-+				 <0x00 0x50000000 0x00 0x50000000 0x00 0x10000000>, /* FSS OSPI0/1 data region 1 */
-+				 <0x04 0x00000000 0x04 0x00000000 0x04 0x00000000>; /* FSS OSPI0/1 data region 0/3 */
- 		};
- 	};
- 
--- 
-2.39.2
+Do we really want to potentially break some applications still using
+pre-multi-thread era async io ?
 
+Not that I really care, but I wonder why you care :)
 
