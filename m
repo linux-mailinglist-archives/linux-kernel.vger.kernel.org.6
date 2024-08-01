@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-271724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BF5945299
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:12:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15479452A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:15:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1682F1C21560
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24D8C1F247A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:15:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388F91448FB;
-	Thu,  1 Aug 2024 18:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999991494B4;
+	Thu,  1 Aug 2024 18:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vX21halW"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iz5l7dUK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E8213D897;
-	Thu,  1 Aug 2024 18:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D6414884E;
+	Thu,  1 Aug 2024 18:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722535963; cv=none; b=CIDRU5fld++q9RtzD8LFR9A7Si5/qwT+UqOWzrbz9pfnxV/VXitDYPbO0K1yYYZO5Ss6mrZ0LP4+BcvcmEzMZvD/fypxrZH1O+YmnY9xmVZROg/WIoRgsZUADKRuevZpH8qupbpiUdh0Ykd5hTeZMMszLGz62nPcSZjOgZ6TlCQ=
+	t=1722536117; cv=none; b=tPqP8vTy/0JOhNEtymbtP+/bN43lRuRNUTnK5r9ZErXLEPlo/uCFXK+CwPQF+duXU2zP2o5JgMXryYRQroLcLhfmBXCQ3mSgz4vuumYqFyaEuG3/ZrRqv+Bwc8193JxiDVMfMIXIfDxle9sc3IKMRWxhzJqNsptLt105jQGspSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722535963; c=relaxed/simple;
-	bh=8eg79dl+iJRxHoM3XQVoOrW2GQzl3urHuVklmxE7fcY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cBhVs3eAs37HdpUhryepTPQmGhqezCCLQudPPe6/AsAO4VzY0prhdjtvey8JLtxg2hEcukYSNsWT/fuRFiK/cTS6dCjWmRE4P+wslk159LIxLU03L67h4ugyKzPX+P5RPHiO3EHVh3rfGjaYfYCK6t8mQ5axQmeJ/eA99tOkVu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vX21halW; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 471ICY2Y089862;
-	Thu, 1 Aug 2024 13:12:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722535955;
-	bh=RViuKsyJiFfiweuuhKUPoYal4sITNrm3/muQ30HBX3o=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=vX21halWm2T7sbzyOzvj+C6C+rX+PIfpKZEpHWg0NZ3WjQrtBN9LgasxtvuKVyzuq
-	 aWWLqWYxXrSUO0STzlJ41ZmwUvEryib3oUSeAcL8zZPbtPv0QZNqkXU7B9xW6dJ6TS
-	 KwJRky68N/jnUAtw0asashvRW5EhCoabcZzDIGxE=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 471ICYcH041563
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 1 Aug 2024 13:12:34 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 1
- Aug 2024 13:12:34 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 1 Aug 2024 13:12:34 -0500
-Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 471ICXkG059498;
-	Thu, 1 Aug 2024 13:12:34 -0500
-From: Andrew Davis <afd@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Andrew Davis <afd@ti.com>
-Subject: [PATCH 2/2] arm64: dts: ti: k3-j721e-beagleboneai64: Fix reversed C6x carveout locations
-Date: Thu, 1 Aug 2024 13:12:32 -0500
-Message-ID: <20240801181232.55027-2-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240801181232.55027-1-afd@ti.com>
-References: <20240801181232.55027-1-afd@ti.com>
+	s=arc-20240116; t=1722536117; c=relaxed/simple;
+	bh=5znrj0EhunF6k3XbmNw8kPtsm/aXgUILrMyz5SSUYe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OqPQcaZKUo2udbCajRdMPX/8D68DY4qLst4yaLEjPBtJMf+2aVe8sxoH6RgM1bLKyc7rHApS/6DquHu2ZPxuFRLnWtC2qsz45DyepqP8YODGNv7sWr6mUITLIHEM1BACVXfVqxfyfKCGUbKrLnjalycyEa3jOaFV4UGA7mRV7sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iz5l7dUK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0412AC4AF0D;
+	Thu,  1 Aug 2024 18:15:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722536117;
+	bh=5znrj0EhunF6k3XbmNw8kPtsm/aXgUILrMyz5SSUYe4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=iz5l7dUKFHc1K8g+lB3hienFaMQE36/5Z4RCxgi2wzFvq0+Jtx7ng/mCBg+df63Ou
+	 mUkzte9ScFCEIYmeCox1Njx0Ji40KTvUIh+FaTKQ0/QS8LMnLdBvI/TykPBOMBy4H1
+	 NPMft2xmslMwgsBBXplLp+MD7rLEEV7yzplaxJaMHn/0aFOWdwussQ7Yj+kE140v56
+	 quGSEULuY32e/Vy9ScQ3oZ/z/H3RcSCF42LeHiHkOtiXQ6kyx8TPE2tzUBkroYqD0o
+	 asDqIIAxqpIfOGD2NP9boZgMKIVjoMsGb912RjvSS5Y9F36UDA/0byrweyw2IPaSQ6
+	 EQPo3BQkPaI7A==
+Date: Thu, 1 Aug 2024 13:15:14 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Blazej Kucman <blazej.kucman@intel.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Subject: [GIT PULL] PCI fixes for v6.11
+Message-ID: <20240801181514.GA112131@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The DMA carveout for the C6x core 0 is at 0xa6000000 and core 1 is at
-0xa7000000. These are reversed in DT. While both C6x can access either
-region, so this is not normally a problem, but if we start restricting
-the memory each core can access (such as with firewalls) the cores
-accessing the regions for the wrong core will not work. Fix this here.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Fixes: fae14a1cb8dd ("arm64: dts: ti: Add k3-j721e-beagleboneai64")
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-index a2925555fe818..fb899c99753ec 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-beagleboneai64.dts
-@@ -123,7 +123,7 @@ main_r5fss1_core1_memory_region: r5f-memory@a5100000 {
- 			no-map;
- 		};
- 
--		c66_1_dma_memory_region: c66-dma-memory@a6000000 {
-+		c66_0_dma_memory_region: c66-dma-memory@a6000000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0xa6000000 0x00 0x100000>;
- 			no-map;
-@@ -135,7 +135,7 @@ c66_0_memory_region: c66-memory@a6100000 {
- 			no-map;
- 		};
- 
--		c66_0_dma_memory_region: c66-dma-memory@a7000000 {
-+		c66_1_dma_memory_region: c66-dma-memory@a7000000 {
- 			compatible = "shared-dma-pool";
- 			reg = <0x00 0xa7000000 0x00 0x100000>;
- 			no-map;
--- 
-2.39.2
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-fixes-1
+
+for you to fetch changes up to 5560a612c20d3daacbf5da7913deefa5c31742f4:
+
+  PCI: pciehp: Retain Power Indicator bits for userspace indicators (2024-08-01 12:58:03 -0500)
+
+N.B. These have been in linux-next since July 26; I updated the commit logs
+today to add a Tested-by and an error message.
+
+----------------------------------------------------------------
+- Fix a pci_intx() regression that caused driver reload to fail with
+  "Resources present before probing" (Philipp Stanner)
+
+- Fix a pciehp regression that clobbered the upper bits of RAID status LEDs
+  on NVMe devices behind an Intel VMD (Blazej Kucman)
+
+----------------------------------------------------------------
+Blazej Kucman (1):
+      PCI: pciehp: Retain Power Indicator bits for userspace indicators
+
+Philipp Stanner (1):
+      PCI: Fix devres regression in pci_intx()
+
+ drivers/pci/hotplug/pciehp_hpc.c |  4 +++-
+ drivers/pci/pci.c                | 15 ++++++++-------
+ 2 files changed, 11 insertions(+), 8 deletions(-)
 
