@@ -1,675 +1,452 @@
-Return-Path: <linux-kernel+bounces-270751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A23A9444CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:52:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427929444D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BA7D1C221E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 376BD1F2103A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3ED416D4EF;
-	Thu,  1 Aug 2024 06:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E15715855B;
+	Thu,  1 Aug 2024 06:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Gco/XGbW"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lNMAKy5P"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17646158547
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922822747B
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722495116; cv=none; b=h/RYDOPf9/k4uV/cm8ZdPNflxQvZqdgJWv0NBNOB71RIzefUBaFTItdU516/q0wp/wicVADpBaUav3nxB+zASUGjF1d9lhgF4zkQH7PBNl+qpTHb/Juk7qrW0jSJ4O+PkBW/0tf4cztzvGbtQCHYqA8gZwC69mT4ao2kdHplznQ=
+	t=1722495201; cv=none; b=Z7SYYVGFxOY3TVJIgh/oAlVJhSZZm1u2FsKkQWQmkqyHCyjBPebnzBDZcZxyxBRtanCXrjyCmpHhHfZVurQuWHDgAxuIv+ITFu8v2WfNtgX8pXU8aicm5MvessDiKA1s6cZYI/niMrV9Pa4WP16mjGpxT0QT9yuOYaROGddcgkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722495116; c=relaxed/simple;
-	bh=DKoFpqyjGRxBZWPEJu4YtK+RL2v97rWAdBaVr77UsEY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Q3qJ48/tFBhyxfDB9lhYRetM3meM5WUVREIAUmQWtOYQIqYgL0ldtwy0FnXrbltTc2QF9Bc1TnUKj/8rkIIFMJ8KPaix+XcEKXzQzBPUMzKVUyKhLLPA55vsLtnCtOc46ppPTk4j2D11tn6mo4aOi0eXixbsfUjDSqVLw7u8nGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Gco/XGbW; arc=none smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VLHBdA028335;
-	Thu, 1 Aug 2024 06:51:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=I
-	jUdlPOb1E7Q+iz0SVeqCKwYttFwvKwhUlSnaNmML3o=; b=Gco/XGbWH7B8ewHVc
-	JeyrBnpd5BG38BbGh47LUfD48c/I9KIcwpVaJfDs6KEKXhxcSRxSvmtgv3kQn+E7
-	BORTgsFtLJuap7Db/PYalUe0LBbAlK7B4NfhTbyrJD9xz9iEA/KjP/1yTF1ZduV/
-	BfoivlWSQbG/689FzFBH7d86L6joST7bIXpRDjtL3WcvUxiWMV3GEXCAnr9wzAw1
-	L82+j1YKyZlXFQsdHLmUA1CUrzmQAeSoxEXACdUM4zc701ydyHk2YUMMYOS+QgBi
-	GMM4Dw6GFuDicnU2pmGGK4UR5EstQtYmlrRUPvJVtgWiJiUUYWL43ZvC2180+/Ir
-	figRA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40mqacs21y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 01 Aug 2024 06:51:21 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47152vFx030993;
-	Thu, 1 Aug 2024 06:51:20 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40nehveh85-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 01 Aug 2024 06:51:20 +0000
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4716pHNM033596;
-	Thu, 1 Aug 2024 06:51:19 GMT
-Received: from aruramak-dev.osdevelopmeniad.oraclevcn.com (aruramak-dev.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.253.155])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 40nehveh6x-6;
-	Thu, 01 Aug 2024 06:51:19 +0000
-From: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, dave.hansen@linux.intel.com, tglx@linutronix.de,
-        mingo@kernel.org, linux-mm@kvack.org, keith.lucas@oracle.com,
-        jeffxu@chromium.org, rick.p.edgecombe@intel.com, jorgelo@chromium.org,
-        keescook@chromium.org, sroettger@google.com, jannh@google.com,
-        aruna.ramakrishna@oracle.com
-Subject: [PATCH  v7 5/5] selftests/mm: Add new testcases for pkeys
-Date: Thu,  1 Aug 2024 06:51:16 +0000
-Message-Id: <20240801065116.2088582-6-aruna.ramakrishna@oracle.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240801065116.2088582-1-aruna.ramakrishna@oracle.com>
-References: <20240801065116.2088582-1-aruna.ramakrishna@oracle.com>
+	s=arc-20240116; t=1722495201; c=relaxed/simple;
+	bh=ELRDpOX7iQZaXmAGlS1lYFWEvSr7nDDizEwqaP2kcSE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eA9Dcaud7AiVtZ8eDEU3RbXi808PVLlYvhvQ5CKVRlwhKEJ1EQw11JevUbipp0Qq372iAIkd+rd38j2ErvwZWq+soj6OTJ/8YC71dHdSx4+UiVRam17Peq1+nqVaiMUVi/hTyQ6tlHEvWjXZxK/5mn1qO1go1BplDiZLtXmLk6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lNMAKy5P; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a843bef98so695479566b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:53:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722495198; x=1723099998; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vHAsVfbdJrFts1avj4zdTyj/Mnf36OuWegU8jQ/euug=;
+        b=lNMAKy5P+lR7mybvx1aD1bQn6zNQumc5JWj483+XtJL5QdTrJsz9iYMGWXiyRBC5jA
+         ZkfgSoZM91gSqse60b0acyqpRCapVlcd/AiOzTuHnbpjOPBmoLG01Wv7V4pkJHG+zE9g
+         +Gv7NhADQHiPcK7eBOeBdT7MMKMTwXbYzMzIeA8vQiTfNQOgjgI/IPGKvMlusNd1QoCM
+         QEEAMzNDHVM8BY1naME4pU03e44YgsVUUezF4N+824ylp0pyhiX0UQUxPhL7GySdZU0s
+         BU+kQdD2SMNH6suhQIToTeGDCoFL23ysubX55EjfDgLIjo4rgG5iVnp1hTBtOPstz2ea
+         4flg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722495198; x=1723099998;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vHAsVfbdJrFts1avj4zdTyj/Mnf36OuWegU8jQ/euug=;
+        b=ar5KfCTFTiPJmLoXK8gclZ9As/BABQv03W4lAaZxH5w2KDYyfpjPnQ3zpVo/Dw+T6D
+         YJBIpenmhtnTOVFtEQvf7Ml01i2kolRcWiXa9X2HTeX+RtYcySTDToDbTAizht7eMyp7
+         50rPIjgXhCUMyFmqJBODnx4xjCDprAyJwY/uEYGwhb6bO4uPXPy66Eq+hL1Pb6Mnnj8b
+         iQq+WtyuhMR7FRiL/usVnJZ3O1fLfiMXVc9DdW6WDcsp+XnFX/Vtx2c/fZoH/aJTd6wH
+         igAHAPeeUkZ3QFx8hO0dakeqi7ZoHIADsPEcuhUFVLdmsV2qYot0iLJry0FO0sxOxaeR
+         +6tA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZCFAiqvrolj1HXCS1Y4x8pMlOd9k5bTo3RRNrGkpIsfeAv6XTRFzkhg1DuSnPIumD8Hd7LJQgAJBs4LTFcmp41eY7orRTMQRCkP4f
+X-Gm-Message-State: AOJu0Yx25zOvKgXGLnaR8TSH15v4sGG8TIUSIUancSwUUqOS6ruO0DWI
+	wVXPBIxOP3X1Pr4FFd/e5Ks96gBA7VycmjBTdhHvyLDOtv9aWWmgpztk+IyaAJDFYW+9ULmdkKB
+	gNTY/FUPCxy+KWUyY4hpeAxXhpoRTgu33qxMXNg==
+X-Google-Smtp-Source: AGHT+IEOG7hj3X1Q5Uvcw41YT16N5nNW/goXfjRZDN+4mN7YOeKiEhliKN6ktMwfEWdRTwIVkMqwH+bf7/LNC5aemU0=
+X-Received: by 2002:a17:906:6a1a:b0:a77:b784:deba with SMTP id
+ a640c23a62f3a-a7daf793b1bmr80420666b.6.1722495197613; Wed, 31 Jul 2024
+ 23:53:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_04,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- mlxlogscore=999 suspectscore=0 bulkscore=0 mlxscore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408010038
-X-Proofpoint-ORIG-GUID: htciDwK-qd_GyG0-8HizUIytNuwGMWVm
-X-Proofpoint-GUID: htciDwK-qd_GyG0-8HizUIytNuwGMWVm
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-14-alexghiti@rivosinc.com> <20240731-ce25dcdc5ce9ccc6c82912c0@orel>
+In-Reply-To: <20240731-ce25dcdc5ce9ccc6c82912c0@orel>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Thu, 1 Aug 2024 08:53:06 +0200
+Message-ID: <CAHVXubgtD_nDBL2H-MYb9V+3jLBoszz8HAZ2NTTsiS2wR6aPDQ@mail.gmail.com>
+Subject: Re: [PATCH v4 13/13] riscv: Add qspinlock support
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Keith Lucas <keith.lucas@oracle.com>
+On Wed, Jul 31, 2024 at 5:29=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
+om> wrote:
+>
+> On Wed, Jul 31, 2024 at 09:24:05AM GMT, Alexandre Ghiti wrote:
+> > In order to produce a generic kernel, a user can select
+> > CONFIG_COMBO_SPINLOCKS which will fallback at runtime to the ticket
+> > spinlock implementation if Zabha or Ziccrse are not present.
+> >
+> > Note that we can't use alternatives here because the discovery of
+> > extensions is done too late and we need to start with the qspinlock
+> > implementation because the ticket spinlock implementation would pollute
+> > the spinlock value, so let's use static keys.
+> >
+> > This is largely based on Guo's work and Leonardo reviews at [1].
+> >
+> > Link: https://lore.kernel.org/linux-riscv/20231225125847.2778638-1-guor=
+en@kernel.org/ [1]
+> > Signed-off-by: Guo Ren <guoren@kernel.org>
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >  .../locking/queued-spinlocks/arch-support.txt |  2 +-
+> >  arch/riscv/Kconfig                            | 29 +++++++++++++
+> >  arch/riscv/include/asm/Kbuild                 |  4 +-
+> >  arch/riscv/include/asm/spinlock.h             | 43 +++++++++++++++++++
+> >  arch/riscv/kernel/setup.c                     | 38 ++++++++++++++++
+> >  include/asm-generic/qspinlock.h               |  2 +
+> >  include/asm-generic/ticket_spinlock.h         |  2 +
+> >  7 files changed, 118 insertions(+), 2 deletions(-)
+> >  create mode 100644 arch/riscv/include/asm/spinlock.h
+> >
+> > diff --git a/Documentation/features/locking/queued-spinlocks/arch-suppo=
+rt.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> > index 22f2990392ff..cf26042480e2 100644
+> > --- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> > +++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+> > @@ -20,7 +20,7 @@
+> >      |    openrisc: |  ok  |
+> >      |      parisc: | TODO |
+> >      |     powerpc: |  ok  |
+> > -    |       riscv: | TODO |
+> > +    |       riscv: |  ok  |
+> >      |        s390: | TODO |
+> >      |          sh: | TODO |
+> >      |       sparc: |  ok  |
+> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> > index ef55ab94027e..c9ff8081efc1 100644
+> > --- a/arch/riscv/Kconfig
+> > +++ b/arch/riscv/Kconfig
+> > @@ -79,6 +79,7 @@ config RISCV
+> >       select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
+> >       select ARCH_WANTS_NO_INSTR
+> >       select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
+> > +     select ARCH_WEAK_RELEASE_ACQUIRE if ARCH_USE_QUEUED_SPINLOCKS
+>
+> Why do we need this? Also, we presumably would prefer not to have it
+> when we end up using ticket spinlocks when combo spinlocks is selected.
+> Is there no way to avoid it?
 
-Add a few new tests to exercise the signal handler flow,
-especially with pkey 0 disabled.
+I'll let Andrea answer this as he asked for it.
 
-There are 5 new tests added:
-- test_sigsegv_handler_with_pkey0_disabled
-- test_sigsegv_handler_cannot_access_stack
-- test_sigsegv_handler_with_different_pkey_for_stack
-- test_pkru_preserved_after_sigusr1
-- test_pkru_sigreturn
+>
+> >       select BINFMT_FLAT_NO_DATA_START_OFFSET if !MMU
+> >       select BUILDTIME_TABLE_SORT if MMU
+> >       select CLINT_TIMER if RISCV_M_MODE
+> > @@ -488,6 +489,34 @@ config NODES_SHIFT
+> >         Specify the maximum number of NUMA Nodes available on the targe=
+t
+> >         system.  Increases memory reserved to accommodate various table=
+s.
+> >
+> > +choice
+> > +     prompt "RISC-V spinlock type"
+> > +     default RISCV_COMBO_SPINLOCKS
+> > +
+> > +config RISCV_TICKET_SPINLOCKS
+> > +     bool "Using ticket spinlock"
+> > +
+> > +config RISCV_QUEUED_SPINLOCKS
+> > +     bool "Using queued spinlock"
+> > +     depends on SMP && MMU && NONPORTABLE
+> > +     select ARCH_USE_QUEUED_SPINLOCKS
+> > +     help
+> > +       The queued spinlock implementation requires the forward progres=
+s
+> > +       guarantee of cmpxchg()/xchg() atomic operations: CAS with Zabha=
+ or
+> > +       LR/SC with Ziccrse provide such guarantee.
+> > +
+> > +       Select this if and only if Zabha or Ziccrse is available on you=
+r
+> > +       platform.
+>
+> Maybe some text recommending combo spinlocks here? As it stands it sounds
+> like enabling queued spinlocks is a bad idea for anybody that doesn't kno=
+w
+> what platforms will run the kernel they're building, which is all distros=
+.
 
-[ Aruna: Adapted to upstream ]
+That's NONPORTABLE, so people enabling this config are supposed to
+know that right?
 
-Signed-off-by: Keith Lucas <keith.lucas@oracle.com>
-Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
----
- tools/testing/selftests/mm/Makefile           |   2 +
- tools/testing/selftests/mm/pkey-helpers.h     |  11 +-
- .../selftests/mm/pkey_sighandler_tests.c      | 479 ++++++++++++++++++
- tools/testing/selftests/mm/protection_keys.c  |  10 -
- 4 files changed, 491 insertions(+), 11 deletions(-)
- create mode 100644 tools/testing/selftests/mm/pkey_sighandler_tests.c
+>
+> > +
+> > +config RISCV_COMBO_SPINLOCKS
+> > +     bool "Using combo spinlock"
+> > +     depends on SMP && MMU
+> > +     select ARCH_USE_QUEUED_SPINLOCKS
+> > +     help
+> > +       Embed both queued spinlock and ticket lock so that the spinlock
+> > +       implementation can be chosen at runtime.
+>
+> nit: Add a blank line here
 
-diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-index 901e0d07765b..0123a3a0bb17 100644
---- a/tools/testing/selftests/mm/Makefile
-+++ b/tools/testing/selftests/mm/Makefile
-@@ -88,6 +88,7 @@ CAN_BUILD_X86_64 := $(shell ./../x86/check_cc.sh "$(CC)" ../x86/trivial_64bit_pr
- CAN_BUILD_WITH_NOPIE := $(shell ./../x86/check_cc.sh "$(CC)" ../x86/trivial_program.c -no-pie)
- 
- VMTARGETS := protection_keys
-+VMTARGETS := pkey_sighandler_tests
- BINARIES_32 := $(VMTARGETS:%=%_32)
- BINARIES_64 := $(VMTARGETS:%=%_64)
- 
-@@ -106,6 +107,7 @@ else
- 
- ifneq (,$(findstring $(ARCH),powerpc))
- TEST_GEN_FILES += protection_keys
-+TEST_GEN_FILES += pkey_sighandler_tests
- endif
- 
- endif
-diff --git a/tools/testing/selftests/mm/pkey-helpers.h b/tools/testing/selftests/mm/pkey-helpers.h
-index 1af3156a9db8..2b1189c27167 100644
---- a/tools/testing/selftests/mm/pkey-helpers.h
-+++ b/tools/testing/selftests/mm/pkey-helpers.h
-@@ -12,6 +12,7 @@
- #include <stdlib.h>
- #include <ucontext.h>
- #include <sys/mman.h>
-+#include <linux/compiler.h>
- 
- #include "../kselftest.h"
- 
-@@ -79,7 +80,15 @@ extern void abort_hooks(void);
- 	}					\
- } while (0)
- 
--__attribute__((noinline)) int read_ptr(int *ptr);
-+noinline int read_ptr(int *ptr)
-+{
-+	/*
-+	 * Keep GCC from optimizing this away somehow
-+	 */
-+	barrier();
-+	return *ptr;
-+}
-+
- void expected_pkey_fault(int pkey);
- int sys_pkey_alloc(unsigned long flags, unsigned long init_val);
- int sys_pkey_free(unsigned long pkey);
-diff --git a/tools/testing/selftests/mm/pkey_sighandler_tests.c b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-new file mode 100644
-index 000000000000..c43030c7056d
---- /dev/null
-+++ b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-@@ -0,0 +1,479 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Tests Memory Protection Keys (see Documentation/core-api/protection-keys.rst)
-+ *
-+ * The testcases in this file exercise various flows related to signal handling,
-+ * using an alternate signal stack, with the default pkey (pkey 0) disabled.
-+ *
-+ * Compile with:
-+ * gcc -mxsave      -o pkey_sighandler_tests -O2 -g -std=gnu99 -pthread -Wall pkey_sighandler_tests.c -I../../../../tools/include -lrt -ldl -lm
-+ * gcc -mxsave -m32 -o pkey_sighandler_tests -O2 -g -std=gnu99 -pthread -Wall pkey_sighandler_tests.c -I../../../../tools/include -lrt -ldl -lm
-+ */
-+#define _GNU_SOURCE
-+#define __SANE_USERSPACE_TYPES__
-+#include <errno.h>
-+#include <sys/syscall.h>
-+#include <string.h>
-+#include <stdio.h>
-+#include <stdint.h>
-+#include <stdbool.h>
-+#include <signal.h>
-+#include <assert.h>
-+#include <stdlib.h>
-+#include <sys/mman.h>
-+#include <sys/types.h>
-+#include <sys/stat.h>
-+#include <unistd.h>
-+#include <pthread.h>
-+#include <limits.h>
-+
-+#include "pkey-helpers.h"
-+
-+#define STACK_SIZE PTHREAD_STACK_MIN
-+
-+void expected_pkey_fault(int pkey) {}
-+
-+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-+siginfo_t siginfo = {0};
-+
-+/*
-+ * We need to use inline assembly instead of glibc's syscall because glibc's
-+ * syscall will attempt to access the PLT in order to call a library function
-+ * which is protected by MPK 0 which we don't have access to.
-+ */
-+static inline __always_inline
-+long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
-+{
-+	unsigned long ret;
-+#ifdef __x86_64__
-+	register long r10 asm("r10") = a4;
-+	register long r8 asm("r8") = a5;
-+	register long r9 asm("r9") = a6;
-+	asm volatile ("syscall"
-+		      : "=a"(ret)
-+		      : "a"(n), "D"(a1), "S"(a2), "d"(a3), "r"(r10), "r"(r8), "r"(r9)
-+		      : "rcx", "r11", "memory");
-+#elif defined __i386__
-+	asm volatile ("int $0x80"
-+		      : "=a"(ret)
-+		      : "a"(n), "b"(a1), "c"(a2), "d"(a3), "S"(a4), "D"(a5)
-+		      : "memory");
-+#endif
-+	return ret;
-+}
-+
-+static void sigsegv_handler(int signo, siginfo_t *info, void *ucontext)
-+{
-+	pthread_mutex_lock(&mutex);
-+
-+	memcpy(&siginfo, info, sizeof(siginfo_t));
-+
-+	pthread_cond_signal(&cond);
-+	pthread_mutex_unlock(&mutex);
-+
-+	syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+}
-+
-+static void sigusr1_handler(int signo, siginfo_t *info, void *ucontext)
-+{
-+	pthread_mutex_lock(&mutex);
-+
-+	memcpy(&siginfo, info, sizeof(siginfo_t));
-+
-+	pthread_cond_signal(&cond);
-+	pthread_mutex_unlock(&mutex);
-+}
-+
-+static void sigusr2_handler(int signo, siginfo_t *info, void *ucontext)
-+{
-+	/*
-+	 * pkru should be the init_pkru value which enabled MPK 0 so
-+	 * we can use library functions.
-+	 */
-+	printf("%s invoked.\n", __func__);
-+}
-+
-+static void raise_sigusr2(void)
-+{
-+	pid_t tid = 0;
-+
-+	tid = syscall_raw(SYS_gettid, 0, 0, 0, 0, 0, 0);
-+
-+	syscall_raw(SYS_tkill, tid, SIGUSR2, 0, 0, 0, 0);
-+
-+	/*
-+	 * We should return from the signal handler here and be able to
-+	 * return to the interrupted thread.
-+	 */
-+}
-+
-+static void *thread_segv_with_pkey0_disabled(void *ptr)
-+{
-+	/* Disable MPK 0 (and all others too) */
-+	__write_pkey_reg(0x55555555);
-+
-+	/* Segfault (with SEGV_MAPERR) */
-+	*(int *) (0x1) = 1;
-+	return NULL;
-+}
-+
-+static void *thread_segv_pkuerr_stack(void *ptr)
-+{
-+	/* Disable MPK 0 (and all others too) */
-+	__write_pkey_reg(0x55555555);
-+
-+	/* After we disable MPK 0, we can't access the stack to return */
-+	return NULL;
-+}
-+
-+static void *thread_segv_maperr_ptr(void *ptr)
-+{
-+	stack_t *stack = ptr;
-+	int *bad = (int *)1;
-+
-+	/*
-+	 * Setup alternate signal stack, which should be pkey_mprotect()ed by
-+	 * MPK 0. The thread's stack cannot be used for signals because it is
-+	 * not accessible by the default init_pkru value of 0x55555554.
-+	 */
-+	syscall_raw(SYS_sigaltstack, (long)stack, 0, 0, 0, 0, 0);
-+
-+	/* Disable MPK 0.  Only MPK 1 is enabled. */
-+	__write_pkey_reg(0x55555551);
-+
-+	/* Segfault */
-+	*bad = 1;
-+	syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	return NULL;
-+}
-+
-+/*
-+ * Verify that the sigsegv handler is invoked when pkey 0 is disabled.
-+ * Note that the new thread stack and the alternate signal stack is
-+ * protected by MPK 0.
-+ */
-+static void test_sigsegv_handler_with_pkey0_disabled(void)
-+{
-+	struct sigaction sa;
-+	pthread_attr_t attr;
-+	pthread_t thr;
-+
-+	sa.sa_flags = SA_SIGINFO;
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	pthread_attr_init(&attr);
-+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-+
-+	pthread_create(&thr, &attr, thread_segv_with_pkey0_disabled, NULL);
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	ksft_test_result(siginfo.si_signo == SIGSEGV &&
-+			 siginfo.si_code == SEGV_MAPERR &&
-+			 siginfo.si_addr == (void *)1,
-+			 "%s\n", __func__);
-+}
-+
-+/*
-+ * Verify that the sigsegv handler is invoked when pkey 0 is disabled.
-+ * Note that the new thread stack and the alternate signal stack is
-+ * protected by MPK 0, which renders them inaccessible when MPK 0
-+ * is disabled. So just the return from the thread should cause a
-+ * segfault with SEGV_PKUERR.
-+ */
-+static void test_sigsegv_handler_cannot_access_stack(void)
-+{
-+	struct sigaction sa;
-+	pthread_attr_t attr;
-+	pthread_t thr;
-+
-+	sa.sa_flags = SA_SIGINFO;
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	pthread_attr_init(&attr);
-+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
-+
-+	pthread_create(&thr, &attr, thread_segv_pkuerr_stack, NULL);
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	ksft_test_result(siginfo.si_signo == SIGSEGV &&
-+			 siginfo.si_code == SEGV_PKUERR,
-+			 "%s\n", __func__);
-+}
-+
-+/*
-+ * Verify that the sigsegv handler that uses an alternate signal stack
-+ * is correctly invoked for a thread which uses a non-zero MPK to protect
-+ * its own stack, and disables all other MPKs (including 0).
-+ */
-+static void test_sigsegv_handler_with_different_pkey_for_stack(void)
-+{
-+	struct sigaction sa;
-+	static stack_t sigstack;
-+	void *stack;
-+	int pkey;
-+	int parent_pid = 0;
-+	int child_pid = 0;
-+
-+	sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
-+
-+	sa.sa_sigaction = sigsegv_handler;
-+
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	stack = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+
-+	assert(stack != MAP_FAILED);
-+
-+	/* Allow access to MPK 0 and MPK 1 */
-+	__write_pkey_reg(0x55555550);
-+
-+	/* Protect the new stack with MPK 1 */
-+	pkey = pkey_alloc(0, 0);
-+	pkey_mprotect(stack, STACK_SIZE, PROT_READ | PROT_WRITE, pkey);
-+
-+	/* Set up alternate signal stack that will use the default MPK */
-+	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-+			      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	sigstack.ss_flags = 0;
-+	sigstack.ss_size = STACK_SIZE;
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	/* Use clone to avoid newer glibcs using rseq on new threads */
-+	long ret = syscall_raw(SYS_clone,
-+			       CLONE_VM | CLONE_FS | CLONE_FILES |
-+			       CLONE_SIGHAND | CLONE_THREAD | CLONE_SYSVSEM |
-+			       CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID |
-+			       CLONE_DETACHED,
-+			       (long) ((char *)(stack) + STACK_SIZE),
-+			       (long) &parent_pid,
-+			       (long) &child_pid, 0, 0);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		perror("clone");
-+	} else if (ret == 0) {
-+		thread_segv_maperr_ptr(&sigstack);
-+		syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	}
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	ksft_test_result(siginfo.si_signo == SIGSEGV &&
-+			 siginfo.si_code == SEGV_MAPERR &&
-+			 siginfo.si_addr == (void *)1,
-+			 "%s\n", __func__);
-+}
-+
-+/*
-+ * Verify that the PKRU value set by the application is correctly
-+ * restored upon return from signal handling.
-+ */
-+static void test_pkru_preserved_after_sigusr1(void)
-+{
-+	struct sigaction sa;
-+	unsigned long pkru = 0x45454544;
-+
-+	sa.sa_flags = SA_SIGINFO;
-+
-+	sa.sa_sigaction = sigusr1_handler;
-+	sigemptyset(&sa.sa_mask);
-+	if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	memset(&siginfo, 0, sizeof(siginfo));
-+
-+	__write_pkey_reg(pkru);
-+
-+	raise(SIGUSR1);
-+
-+	pthread_mutex_lock(&mutex);
-+	while (siginfo.si_signo == 0)
-+		pthread_cond_wait(&cond, &mutex);
-+	pthread_mutex_unlock(&mutex);
-+
-+	/* Ensure the pkru value is the same after returning from signal. */
-+	ksft_test_result(pkru == __read_pkey_reg() &&
-+			 siginfo.si_signo == SIGUSR1,
-+			 "%s\n", __func__);
-+}
-+
-+static noinline void *thread_sigusr2_self(void *ptr)
-+{
-+	/*
-+	 * A const char array like "Resuming after SIGUSR2" won't be stored on
-+	 * the stack and the code could access it via an offset from the program
-+	 * counter. This makes sure it's on the function's stack frame.
-+	 */
-+	char str[] = {'R', 'e', 's', 'u', 'm', 'i', 'n', 'g', ' ',
-+		'a', 'f', 't', 'e', 'r', ' ',
-+		'S', 'I', 'G', 'U', 'S', 'R', '2',
-+		'.', '.', '.', '\n', '\0'};
-+	stack_t *stack = ptr;
-+
-+	/*
-+	 * Setup alternate signal stack, which should be pkey_mprotect()ed by
-+	 * MPK 0. The thread's stack cannot be used for signals because it is
-+	 * not accessible by the default init_pkru value of 0x55555554.
-+	 */
-+	syscall(SYS_sigaltstack, (long)stack, 0, 0, 0, 0, 0);
-+
-+	/* Disable MPK 0.  Only MPK 2 is enabled. */
-+	__write_pkey_reg(0x55555545);
-+
-+	raise_sigusr2();
-+
-+	/* Do something, to show the thread resumed execution after the signal */
-+	syscall_raw(SYS_write, 1, (long) str, sizeof(str) - 1, 0, 0, 0);
-+
-+	/*
-+	 * We can't return to test_pkru_sigreturn because it
-+	 * will attempt to use a %rbp value which is on the stack
-+	 * of the main thread.
-+	 */
-+	syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	return NULL;
-+}
-+
-+/*
-+ * Verify that sigreturn is able to restore altstack even if the thread had
-+ * disabled pkey 0.
-+ */
-+static void test_pkru_sigreturn(void)
-+{
-+	struct sigaction sa = {0};
-+	static stack_t sigstack;
-+	void *stack;
-+	int pkey;
-+	int parent_pid = 0;
-+	int child_pid = 0;
-+
-+	sa.sa_handler = SIG_DFL;
-+	sa.sa_flags = 0;
-+	sigemptyset(&sa.sa_mask);
-+
-+	/*
-+	 * For this testcase, we do not want to handle SIGSEGV. Reset handler
-+	 * to default so that the application can crash if it receives SIGSEGV.
-+	 */
-+	if (sigaction(SIGSEGV, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
-+	sa.sa_sigaction = sigusr2_handler;
-+	sigemptyset(&sa.sa_mask);
-+
-+	if (sigaction(SIGUSR2, &sa, NULL) == -1) {
-+		perror("sigaction");
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	stack = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE,
-+		     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+
-+	assert(stack != MAP_FAILED);
-+
-+	/*
-+	 * Allow access to MPK 0 and MPK 2. The child thread (to be created
-+	 * later in this flow) will have its stack protected by MPK 2, whereas
-+	 * the current thread's stack is protected by the default MPK 0. Hence
-+	 * both need to be enabled.
-+	 */
-+	__write_pkey_reg(0x55555544);
-+
-+	/* Protect the stack with MPK 2 */
-+	pkey = pkey_alloc(0, 0);
-+	pkey_mprotect(stack, STACK_SIZE, PROT_READ | PROT_WRITE, pkey);
-+
-+	/* Set up alternate signal stack that will use the default MPK */
-+	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-+			      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-+	sigstack.ss_flags = 0;
-+	sigstack.ss_size = STACK_SIZE;
-+
-+	/* Use clone to avoid newer glibcs using rseq on new threads */
-+	long ret = syscall_raw(SYS_clone,
-+			       CLONE_VM | CLONE_FS | CLONE_FILES |
-+			       CLONE_SIGHAND | CLONE_THREAD | CLONE_SYSVSEM |
-+			       CLONE_PARENT_SETTID | CLONE_CHILD_CLEARTID |
-+			       CLONE_DETACHED,
-+			       (long) ((char *)(stack) + STACK_SIZE),
-+			       (long) &parent_pid,
-+			       (long) &child_pid, 0, 0);
-+
-+	if (ret < 0) {
-+		errno = -ret;
-+		perror("clone");
-+	}  else if (ret == 0) {
-+		thread_sigusr2_self(&sigstack);
-+		syscall_raw(SYS_exit, 0, 0, 0, 0, 0, 0);
-+	}
-+
-+	child_pid =  ret;
-+	/* Check that thread exited */
-+	do {
-+		sched_yield();
-+		ret = syscall_raw(SYS_tkill, child_pid, 0, 0, 0, 0, 0);
-+	} while (ret != -ESRCH && ret != -EINVAL);
-+
-+	ksft_test_result_pass("%s\n", __func__);
-+}
-+
-+void (*pkey_tests[])(void) = {
-+	test_sigsegv_handler_with_pkey0_disabled,
-+	test_sigsegv_handler_cannot_access_stack,
-+	test_sigsegv_handler_with_different_pkey_for_stack,
-+	test_pkru_preserved_after_sigusr1,
-+	test_pkru_sigreturn
-+};
-+
-+int main(int argc, char *argv[])
-+{
-+	int i;
-+
-+	ksft_print_header();
-+	ksft_set_plan(ARRAY_SIZE(pkey_tests));
-+
-+	for (i = 0; i < ARRAY_SIZE(pkey_tests); i++)
-+		(*pkey_tests[i])();
-+
-+	ksft_finished();
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/mm/protection_keys.c b/tools/testing/selftests/mm/protection_keys.c
-index eaa6d1fc5328..cc6de1644360 100644
---- a/tools/testing/selftests/mm/protection_keys.c
-+++ b/tools/testing/selftests/mm/protection_keys.c
-@@ -950,16 +950,6 @@ void close_test_fds(void)
- 	nr_test_fds = 0;
- }
- 
--#define barrier() __asm__ __volatile__("": : :"memory")
--__attribute__((noinline)) int read_ptr(int *ptr)
--{
--	/*
--	 * Keep GCC from optimizing this away somehow
--	 */
--	barrier();
--	return *ptr;
--}
--
- void test_pkey_alloc_free_attach_pkey0(int *ptr, u16 pkey)
- {
- 	int i, err;
--- 
-2.39.3
+Done
 
+>
+> > +endchoice
+> > +
+> >  config RISCV_ALTERNATIVE
+> >       bool
+> >       depends on !XIP_KERNEL
+> > diff --git a/arch/riscv/include/asm/Kbuild b/arch/riscv/include/asm/Kbu=
+ild
+> > index 5c589770f2a8..1c2618c964f0 100644
+> > --- a/arch/riscv/include/asm/Kbuild
+> > +++ b/arch/riscv/include/asm/Kbuild
+> > @@ -5,10 +5,12 @@ syscall-y +=3D syscall_table_64.h
+> >  generic-y +=3D early_ioremap.h
+> >  generic-y +=3D flat.h
+> >  generic-y +=3D kvm_para.h
+> > +generic-y +=3D mcs_spinlock.h
+> >  generic-y +=3D parport.h
+> > -generic-y +=3D spinlock.h
+> >  generic-y +=3D spinlock_types.h
+> > +generic-y +=3D ticket_spinlock.h
+> >  generic-y +=3D qrwlock.h
+> >  generic-y +=3D qrwlock_types.h
+> > +generic-y +=3D qspinlock.h
+> >  generic-y +=3D user.h
+> >  generic-y +=3D vmlinux.lds.h
+> > diff --git a/arch/riscv/include/asm/spinlock.h b/arch/riscv/include/asm=
+/spinlock.h
+> > new file mode 100644
+> > index 000000000000..503aef31db83
+> > --- /dev/null
+> > +++ b/arch/riscv/include/asm/spinlock.h
+> > @@ -0,0 +1,43 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +
+> > +#ifndef __ASM_RISCV_SPINLOCK_H
+> > +#define __ASM_RISCV_SPINLOCK_H
+> > +
+> > +#ifdef CONFIG_RISCV_COMBO_SPINLOCKS
+> > +#define _Q_PENDING_LOOPS     (1 << 9)
+> > +
+> > +#define __no_arch_spinlock_redefine
+> > +#include <asm/ticket_spinlock.h>
+> > +#include <asm/qspinlock.h>
+> > +#include <asm/alternative.h>
+>
+> We need asm/jump_label.h instead of asm/alternative.h, but...
+>
+> > +
+> > +DECLARE_STATIC_KEY_TRUE(qspinlock_key);
+> > +
+> > +#define SPINLOCK_BASE_DECLARE(op, type, type_lock)                   \
+> > +static __always_inline type arch_spin_##op(type_lock lock)           \
+> > +{                                                                    \
+> > +     if (static_branch_unlikely(&qspinlock_key))                     \
+> > +             return queued_spin_##op(lock);                          \
+> > +     return ticket_spin_##op(lock);                                  \
+> > +}
+>
+> ...do you know what impact this inlined static key check has on the
+> kernel size?
+
+No, I'll check, thanks.
+
+>
+> Actually, why not use ALTERNATIVE with any nonzero cpufeature value.
+> Then add code to riscv_cpufeature_patch_check() to return true when
+> qspinlocks should be enabled (based on the value of some global set
+> during riscv_spinlock_init)?
+
+As discussed with Guo in the previous iteration, the patching of the
+alternatives intervenes far after the first use of the spinlocks and
+the ticket spinlock implementation pollutes the spinlock value, so
+we'd have to unconditionally start with the qspinlock implementation
+and after switch to the ticket implementation if not supported by the
+platform. It works but it's dirty, I really don't like this hack.
+
+We could though:
+- add an initial value to the alternatives (not sure it's feasible though)
+- make the patching of alternatives happen sooner by parsing the isa
+string sooner, either in DT or ACPI (I have a working PoC for very
+early parsing of ACPI).
+
+I intend to do the latter as I think we should be aware of the
+extensions sooner in the boot process, so I'll change that to the
+alternatives when it's done. WDYT, any other idea?
+
+
+>
+> > +
+> > +SPINLOCK_BASE_DECLARE(lock, void, arch_spinlock_t *)
+> > +SPINLOCK_BASE_DECLARE(unlock, void, arch_spinlock_t *)
+> > +SPINLOCK_BASE_DECLARE(is_locked, int, arch_spinlock_t *)
+> > +SPINLOCK_BASE_DECLARE(is_contended, int, arch_spinlock_t *)
+> > +SPINLOCK_BASE_DECLARE(trylock, bool, arch_spinlock_t *)
+> > +SPINLOCK_BASE_DECLARE(value_unlocked, int, arch_spinlock_t)
+> > +
+> > +#elif defined(CONFIG_RISCV_QUEUED_SPINLOCKS)
+> > +
+> > +#include <asm/qspinlock.h>
+> > +
+> > +#else
+> > +
+> > +#include <asm/ticket_spinlock.h>
+> > +
+> > +#endif
+> > +
+> > +#include <asm/qrwlock.h>
+> > +
+> > +#endif /* __ASM_RISCV_SPINLOCK_H */
+> > diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
+> > index a2cde65b69e9..b811fa331982 100644
+> > --- a/arch/riscv/kernel/setup.c
+> > +++ b/arch/riscv/kernel/setup.c
+> > @@ -244,6 +244,43 @@ static void __init parse_dtb(void)
+> >  #endif
+> >  }
+> >
+> > +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+> > +DEFINE_STATIC_KEY_TRUE(qspinlock_key);
+> > +EXPORT_SYMBOL(qspinlock_key);
+> > +#endif
+> > +
+> > +static void __init riscv_spinlock_init(void)
+> > +{
+> > +     char *using_ext =3D NULL;
+> > +
+> > +     if (IS_ENABLED(CONFIG_RISCV_TICKET_SPINLOCKS)) {
+> > +             pr_info("Ticket spinlock: enabled\n");
+> > +             return;
+> > +     }
+> > +
+> > +     if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&
+> > +         IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&
+> > +         riscv_isa_extension_available(NULL, ZABHA) &&
+> > +         riscv_isa_extension_available(NULL, ZACAS)) {
+> > +             using_ext =3D "using Zabha";
+> > +     } else if (riscv_isa_extension_available(NULL, ZICCRSE)) {
+> > +             using_ext =3D "using Ziccrse";
+> > +     }
+> > +#if defined(CONFIG_RISCV_COMBO_SPINLOCKS)
+> > +     else {
+>
+> else if (IS_ENABLED(CONFIG_RISCV_COMBO_SPINLOCKS))
+>
+> > +             static_branch_disable(&qspinlock_key);
+> > +             pr_info("Ticket spinlock: enabled\n");
+> > +
+>
+> nit: remove this blank line
+>
+> > +             return;
+> > +     }
+> > +#endif
+> > +
+> > +     if (!using_ext)
+> > +             pr_err("Queued spinlock without Zabha or Ziccrse");
+> > +     else
+> > +             pr_info("Queued spinlock %s: enabled\n", using_ext);
+> > +}
+> > +
+> >  extern void __init init_rt_signal_env(void);
+> >
+> >  void __init setup_arch(char **cmdline_p)
+> > @@ -297,6 +334,7 @@ void __init setup_arch(char **cmdline_p)
+> >       riscv_set_dma_cache_alignment();
+> >
+> >       riscv_user_isa_enable();
+> > +     riscv_spinlock_init();
+> >  }
+> >
+> >  bool arch_cpu_is_hotpluggable(int cpu)
+> > diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspi=
+nlock.h
+> > index 0655aa5b57b2..bf47cca2c375 100644
+> > --- a/include/asm-generic/qspinlock.h
+> > +++ b/include/asm-generic/qspinlock.h
+> > @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct q=
+spinlock *lock)
+> >  }
+> >  #endif
+> >
+> > +#ifndef __no_arch_spinlock_redefine
+>
+> I'm not sure what's better/worse, but instead of inventing this
+> __no_arch_spinlock_redefine thing we could just name all the functions
+> something like __arch_spin* and then add defines for both to asm/spinlock=
+.h,
+> i.e.
+>
+> #define queued_spin_lock(l) __arch_spin_lock(l)
+> ...
+>
+> #define ticket_spin_lock(l) __arch_spin_lock(l)
+> ...
+>
+> Besides not having to touch asm-generic/qspinlock.h and
+> asm-generic/ticket_spinlock.h it allows one to find the implementations
+> a bit easier as following a tag to arch_spin_lock() will take them to
+> queued_spin_lock() which will then take them to
+> arch/riscv/include/asm/spinlock.h and there they'll figure out how
+> __arch_spin_lock() was defined.
+>
+> >  /*
+> >   * Remapping spinlock architecture specific functions to the correspon=
+ding
+> >   * queued spinlock functions.
+> > @@ -146,5 +147,6 @@ static __always_inline bool virt_spin_lock(struct q=
+spinlock *lock)
+> >  #define arch_spin_lock(l)            queued_spin_lock(l)
+> >  #define arch_spin_trylock(l)         queued_spin_trylock(l)
+> >  #define arch_spin_unlock(l)          queued_spin_unlock(l)
+> > +#endif
+> >
+> >  #endif /* __ASM_GENERIC_QSPINLOCK_H */
+> > diff --git a/include/asm-generic/ticket_spinlock.h b/include/asm-generi=
+c/ticket_spinlock.h
+> > index cfcff22b37b3..325779970d8a 100644
+> > --- a/include/asm-generic/ticket_spinlock.h
+> > +++ b/include/asm-generic/ticket_spinlock.h
+> > @@ -89,6 +89,7 @@ static __always_inline int ticket_spin_is_contended(a=
+rch_spinlock_t *lock)
+> >       return (s16)((val >> 16) - (val & 0xffff)) > 1;
+> >  }
+> >
+> > +#ifndef __no_arch_spinlock_redefine
+> >  /*
+> >   * Remapping spinlock architecture specific functions to the correspon=
+ding
+> >   * ticket spinlock functions.
+> > @@ -99,5 +100,6 @@ static __always_inline int ticket_spin_is_contended(=
+arch_spinlock_t *lock)
+> >  #define arch_spin_lock(l)            ticket_spin_lock(l)
+> >  #define arch_spin_trylock(l)         ticket_spin_trylock(l)
+> >  #define arch_spin_unlock(l)          ticket_spin_unlock(l)
+> > +#endif
+> >
+> >  #endif /* __ASM_GENERIC_TICKET_SPINLOCK_H */
+> > --
+> > 2.39.2
+> >
+>
+> Thanks,
+> drew
 
