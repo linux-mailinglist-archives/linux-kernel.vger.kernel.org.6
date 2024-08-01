@@ -1,60 +1,75 @@
-Return-Path: <linux-kernel+bounces-271659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82475945137
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:00:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AACF945145
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:04:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FC4283F5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBEFB284FD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91D91B9B2B;
-	Thu,  1 Aug 2024 17:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C341B9B2C;
+	Thu,  1 Aug 2024 17:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe+u7jtr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FGQFD6PH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65D1B4C5D;
-	Thu,  1 Aug 2024 17:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47703A1DA
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722531602; cv=none; b=PHugBsWE81zPiLaAXbDqVA+L67Ug9/iWnDMfMNhim6hxvbHf6V391E17S9rU5MgjerkDVlMEJf91bSSmR1ARL64XHKRpQXTDUON9bJgBDrs0iPC3p9lDFfyCTaemTY8tKPUAAzXQgFc+h7VU7Rvgw2XkeYGezv5TeRvbU1IT9pI=
+	t=1722531850; cv=none; b=MnWe5OZerhKPE2rboE0Rr7tdGZ4w/PfxdU/SRF4KMomRutP5lihJRou3ccx1K1f2QH9lGrlP0kvmTCnN9082gEhPlyxzFe/jGlsMlvy7Q7L/9ZmmevmgMzfX/rjQRmC7krAQQMhg8kci3oNVeDKtDtvOyuFeMZcAQhTYxI4AnjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722531602; c=relaxed/simple;
-	bh=A/7RObg8Tzl1vD90LuvoQOcriMT+2Jss1+r/SM4KW0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=tGIzfrj0CXPCYcQNTyf5dDB5rHoFpy7OiZ0cDZSl1jrEkYXScFPZ9JWsU9q6CAoHdG6aripeZCI5L/98+V6Wv24ZROgeyziE9+vwiZ9KZp1YUSAjDGDESLrB/DjIXsaDyJ/3+8+Nuxuzv80oXbQjXnMv8P9MHB30+1AFCjEKuew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe+u7jtr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53023C32786;
-	Thu,  1 Aug 2024 17:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722531601;
-	bh=A/7RObg8Tzl1vD90LuvoQOcriMT+2Jss1+r/SM4KW0Y=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Xe+u7jtrOH5CGdYNy2kTw9DpuDLkwzzEi5EoDbbYjhQAmwGUvgkhctGYRLFQq3n1a
-	 CKml7FNT0Z1wEvu1CbY49ZfYjvC6ruVi79mfuhk9pobGvJJtyFNqpOZbnptU/hVHbF
-	 YSqBHCKqs6P9O2cBEGAX0nbJd9M/1nJSSAADfSMJpQf//WZiPyftLXWipsyK5BFcq6
-	 68uxzeyZYYjn6+tnhkC7j2owaEh7uQ8lynHBq5dCIIVB9cG12OI0OMwkE3d8lRpkdG
-	 N9pEIAw9PaUIB73n0jPrtI0tJgmyxh+tVymu3sT50X9f0qElnLelskrA3bk7yySKF2
-	 c16XipuV6gfYg==
-Date: Thu, 1 Aug 2024 11:59:59 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Gerd Bayer <gbayer@linux.ibm.com>, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH] PCI: s390: Handle ARI on bus without associated struct
- pci_dev
-Message-ID: <20240801165959.GA83976@bhelgaas>
+	s=arc-20240116; t=1722531850; c=relaxed/simple;
+	bh=MLmprcZyVDLDR7X34VpLPzVJs3GttAZM4v7jyvirOiU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gCOIsAhiWKUX9BoKHOvw4Pn5mWdT74jrpanUtq20DJtVaqFh66vA56QVIoy2o4ULjqIXK1zjLL9BTy3rcJ6U0JE08/FjPUoKcDNhc6UzwXIgMJxX384RI6RhB+WOMyBBd1rbnj9TsKUD+IQ9wUo2xjr74su4uH3xDUU/QAfPtRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FGQFD6PH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722531847;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=BVu+TyGnqswgeJMSXlcBDfSQmVXi12Uf1VERdb2hIew=;
+	b=FGQFD6PHHOp5nAaP/IM2H79/N4W5bOX6JtHBOa5v0tHbOoIclB6tosmQJ05NsJpK965vVE
+	FY9ox33Xel9bjR2F0LCFKDF6aXCwVK3NPNy58mAlkm3mz/MVIetk2RIQ44F3eilWqGdAvH
+	sk/v7hpfbL5TklYtNz2O6JfaPz7tNsY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-iAqqGs6HMZ2yBwFccAKtIQ-1; Thu,
+ 01 Aug 2024 13:04:04 -0400
+X-MC-Unique: iAqqGs6HMZ2yBwFccAKtIQ-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EB51019560A2;
+	Thu,  1 Aug 2024 17:04:01 +0000 (UTC)
+Received: from localhost (unknown [10.22.34.81])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1377719560AE;
+	Thu,  1 Aug 2024 17:03:59 +0000 (UTC)
+Date: Thu, 1 Aug 2024 14:03:58 -0300
+From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+To: LKML <linux-kernel@vger.kernel.org>,
+	linux-rt-users <linux-rt-users@vger.kernel.org>,
+	stable-rt <stable-rt@vger.kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Carsten Emde <C.Emde@osadl.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Daniel Wagner <daniel.wagner@suse.com>,
+	Tom Zanussi <tom.zanussi@linux.intel.com>,
+	Clark Williams <williams@redhat.com>,
+	Mark Gross <markgross@kernel.org>, Pavel Machek <pavel@denx.de>,
+	Jeff Brady <jeffreyjbrady@gmail.com>,
+	Luis Goncalves <lgoncalv@redhat.com>
+Subject: [ANNOUNCE] 5.10.222-rt114
+Message-ID: <Zqu__oYh42j4dY0M@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,101 +78,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b06e8e396d64d7202f9a8aae91e0c556b344cc5b.camel@linux.ibm.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Tue, Jul 30, 2024 at 09:59:13PM +0200, Niklas Schnelle wrote:
-> On Tue, 2024-07-30 at 21:36 +0200, Niklas Schnelle wrote:
-> > On s390 PCI busses are virtualized and the downstream ports are
-> > invisible to the OS and struct pci_bus::self is NULL. This associated
-> > struct pci_dev is however relied upon in pci_ari_enabled() to check
-> > whether ARI is enabled for the bus. ARI is therefor always detected as
-> > disabled.
-> > 
-> > At the same time firmware on s390 always enables and relies upon ARI
-> > thus causing a mismatch. Moreover with per-PCI function pass-through
-> > there may exist busses with no function with devfn 0. For example
-> > a SR-IOV capable device with two PFs may have separate function
-> > dependency link chains for each of the PFs and their child VFs. In this
-> > case the OS may only see the second PF and its child VFs on a bus
-> > without a devfn 0 function. A situation which is also not supported by
-> > the common pci_configure_ari() code.
-> > 
-> > Dispite simply being a mismatch this causes problems as some PCI devices
-> > present a different SR-IOV topology depending on PCI_SRIOV_CTRL_ARI.
-> > 
-> > A similar mismatch may occur with SR-IOV when virtfn_add_bus() creates new
-> > busses with no associated struct pci_dev. Here too pci_ari_enabled()
-> > on these busses would return false even if ARI is actually used.
-> > 
-> > Prevent both mismatches by moving the ari_enabled flag from struct
-> > pci_dev to struct pci_bus making it independent from struct pci_bus::
-> > self. Let the bus inherit the ari_enabled state from its parent bus when
-> > there is no bridge device such that busses added by virtfn_add_bus()
-> > match their parent. For s390 set ari_enabled when the device supports
-> > ARI in the awareness that all PCIe ports on s390 systems are ARI
-> > capable.
-> > 
-> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> > ---
-> >  arch/s390/pci/pci_bus.c | 12 ++++++++++++
-> >  drivers/pci/pci.c       |  4 ++--
-> >  drivers/pci/probe.c     |  1 +
-> >  include/linux/pci.h     |  4 ++--
-> >  4 files changed, 17 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
-> > index daa5d7450c7d..021319438dad 100644
-> > --- a/arch/s390/pci/pci_bus.c
-> > +++ b/arch/s390/pci/pci_bus.c
-> > @@ -278,6 +278,18 @@ void pcibios_bus_add_device(struct pci_dev *pdev)
-> >  {
-> >  	struct zpci_dev *zdev = to_zpci(pdev);
-> >  
-> > +	/*
-> > +	 * On s390 PCI busses are virtualized and the bridge
-> > +	 * devices are invisible to the OS. Furthermore busses
-> > +	 * may exist without a devfn 0 function. Thus the normal
-> > +	 * ARI detection does not work. At the same time fw/hw
-> > +	 * has always enabled ARI when possible. Reflect the actual
-> > +	 * state by setting ari_enabled whenever a device on the bus
-> > +	 * supports it.
-> > +	 */
-> > +	if (pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ARI))
-> > +		zdev->zbus->bus->ari_enabled = 1;
-> > +
-> 
-> @Bjorn unstead of adding the above code to s390 specific code an
-> alternative I considered would be to modify pci_configure_ari() like
-> below. I tested this as well but wasn't sure if it is too much churn
-> especially the handling of the dev->devfn != 0 case. Then again it
-> might be nice to have this in common code.
-> 
-> @@ -3523,12 +3524,18 @@ void pci_configure_ari(struct pci_dev *dev)
->         u32 cap;
->         struct pci_dev *bridge;
-> 
-> -       if (pcie_ari_disabled || !pci_is_pcie(dev) || dev->devfn)
-> +       if (pcie_ari_disabled || !pci_is_pcie(dev))
-> +               return;
-> +
-> +       if (dev->devfn && !hypervisor_isolated_pci_functions())
->                 return;
-> 
->         bridge = dev->bus->self;
-> -       if (!bridge)
-> +       if (!bridge) {
-> +               if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ARI))
-> +                       dev->bus->ari_enabled = 1;
+Hello RT-list!
 
-In the generic case here, how do we know whether the invisible bridge
-leading here has ARI enabled?  If that's known to always be the case
-for s390, I understand that, but I don't understand the other cases
-(jailhouse, passthrough, etc).
+I'm pleased to announce the 5.10.222-rt114 stable release.
 
->                 return;
-> +       }
-> 
->         pcie_capability_read_dword(bridge, PCI_EXP_DEVCAP2, &cap);
->         if (!(cap & PCI_EXP_DEVCAP2_ARI))
-> 
+This release is just an update to the new stable 5.10.222 version and
+no RT specific changes have been made.
+
+You can get this release via the git tree at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v5.10-rt
+  Head SHA1: 22b07fa4133af0ef5ed5661e0534afabf9abc535
+
+Or to build 5.10.222-rt114 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.10.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.10.222.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/5.10/older/patch-5.10.222-rt114.patch.xz
+
+Signing key fingerprint:
+
+  9354 0649 9972 8D31 D464  D140 F394 A423 F8E6 7C26
+
+All keys used for the above files and repositories can be found on the
+following git repository:
+
+   git://git.kernel.org/pub/scm/docs/kernel/pgpkeys.git
+
+Enjoy!
+Luis
+
 
