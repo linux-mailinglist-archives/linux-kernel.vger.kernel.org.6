@@ -1,165 +1,130 @@
-Return-Path: <linux-kernel+bounces-271672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2979945171
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:27:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A5B945172
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:27:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D8CB22D66
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:27:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C85B1C22551
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E20D1B4C39;
-	Thu,  1 Aug 2024 17:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629E81B8EA6;
+	Thu,  1 Aug 2024 17:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="dT7XNEeJ"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IJGaUuyZ"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6FE713D617
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79981B4C27
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533246; cv=none; b=LvlFIJvgjZZlKq9oyae4vo3S9EVZ39mtMIe9YluPUXDrAr1zNhiEZz0Oj3qtai77ElSo45Z5fFEKvMNRQuUJvHa8YTS98yH88k1BiITJLWZAdqYjKkHwfZvHvwwxDVRadcFCbPGGczuX347tUbYbTopw2KZtWEJ1BLly6BjH6t4=
+	t=1722533257; cv=none; b=CR4/Vp60+4c3pqJZMdvMOYg8WqHoHWXAN7oQ4uRpQpbWIFSUroAW9YF2WakEpRmSlAqWPcsTws4EwhDdkLTtZYWJvzxA8FhKOFcQ4ks1av/dkahWtodW9JsV8TIT6LxxLgypQU+GrGtWzj/vM7eNEnHiPl+SGodgBHfxBte6aWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533246; c=relaxed/simple;
-	bh=SKTikEQiPWenoi6jsn9PESQsQpi1Q5M5JeYBJDwQhL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnVPgZ79qTKgcvk8TFryfnFknE471seGoXuuO037TH9A+csd7QKgxBRNkG/mwSBDVBR7fCE3QXmQixYXxEJY5QG1wkMca+UvOWdx0WeV31/5ZZd30Tg1R00rJSCXAnmp3G3IU/x2vjqmsOgwBZAlGuX6405vPAgAtXqv3KIslfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=dT7XNEeJ; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cd5e3c27c5so4987013a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:27:23 -0700 (PDT)
+	s=arc-20240116; t=1722533257; c=relaxed/simple;
+	bh=bId7gP/loV8FGzON4JBMqgbZPdmQa1LIMF2T+0984KI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PYF05nOtS/D3BMyAZOdTDElY9hq2wM1r9TOM/xOmXzkPyCPkKKSFP/8alTcboZL8DWvZE1WnHev9nZJc58XNnwG/FufPozXGHjuRXOAGpHINdOdSFymx6ULr3jIWf0aGoEZEynBbvRYO7NvZYqfXsvceEyLk/1BKGVIm1abhlsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IJGaUuyZ; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3748ec0cae2so2557365ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:27:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722533243; x=1723138043; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eqfEz+HJ51esTeFjGcuq9d9pgxM3+keTReLtTqI2sYw=;
-        b=dT7XNEeJNZz1ElaYNzHLYO0vJK+PcDaHT2e0jOCwu0sR6YYqV4NDyxKqrY9MGX3YMb
-         Im8x/lCn521dWPOegCXLBh8fzioQeczXViIr4sezS+TkBEvesCulGBMrEdVoygBPbGIA
-         XOF37FyTGS14MlfFQ4JsIZbsTiQe8mz8rKwUsyHQItXjIQjD4t+sSLfaAZqqTVDMdcg2
-         xoXeaOfWPlRfWEEM9MCAa2OFKgfYnbYPeafpbUa7Z+62/joa5jyL4tqTLkKmmkD/N0/L
-         aIt3io+i/vIXWmGOapd+znNbNOUmoVaW2QYpZz/MVefwdU0HxRo0onqeTSQ7LEtTEHBZ
-         KpVg==
+        d=linuxfoundation.org; s=google; t=1722533255; x=1723138055; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XvjXd9+buzfO11kaj0Ak+01IPu1cm6eWry4DAzKlnvU=;
+        b=IJGaUuyZd2rqLFTKOcA2lbAAHSfOhEXPScvVhScQLDXemUhVtCzXXFekitjZvVE4pA
+         vWn+W+jgcX7biqSmj0ighn79jZmHizgF7WdF77jUNjjLfUyc39+vx2nwyMdOOf8hA1HJ
+         4V8dKlemAGu3fPw9xaR6JwaA3WL2QTq90d3uU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722533243; x=1723138043;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eqfEz+HJ51esTeFjGcuq9d9pgxM3+keTReLtTqI2sYw=;
-        b=Wo9DcoeosSNlx+szMUgfhqMDuNmcVMf2QICyp1r9Z8QTmBcl9GqSB7BrYoGUjU/Bg5
-         c+IoymS/75QMb7+ZSTuY6Tt6gCtiJx3JSvVAWRGMrhGLT8b4gbI1+dB8r0VpguySLb03
-         F+n9roW/xayyuBJQ7thXZFKYYDpqkS+YZibH6OT5dmola05zPWod7shN7vD1y0p9afDj
-         fpnpdXZAqZhOkcgY6HCSl8+8vJ5KVn/o4V+yUg2B2fZp1ZlugPgsPI345lg6A+PVny7i
-         sPvk0GsMT91YQnMbjSMhBqEk8GXOwKu03XF8VcTGs4Up4rSasMylUNtTbaPPMcDZ0izK
-         3tew==
-X-Gm-Message-State: AOJu0YybjtSGVOmmQhIcswq7f3t6U/rHIQa7Cfh6tQq0Fg0HgK3rb811
-	8uMunEt1/rkof2YNFLNPTdGM4WYCtErYUo2b1oJp8AGP0YvSPLwpDQIvKCl/3s8=
-X-Google-Smtp-Source: AGHT+IEBSL6psp8uqwX7WC0XSgw8iBQcOzO0q+abKTudQIxbfRflqktoR6lOfpGvOhqrMQh2mFtLog==
-X-Received: by 2002:a17:90a:c70c:b0:2c9:7803:1cf6 with SMTP id 98e67ed59e1d1-2cff94478a8mr1104445a91.20.1722533242940;
-        Thu, 01 Aug 2024 10:27:22 -0700 (PDT)
-Received: from ghost ([2601:647:6700:2d90:35dc:9596:26a6:873f])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffaf69a58sm206667a91.4.2024.08.01.10.27.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 10:27:22 -0700 (PDT)
-Date: Thu, 1 Aug 2024 10:27:20 -0700
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] cpumask: de-duplicate assign_cpu() API
-Message-ID: <ZqvFeJVy4BpwcOjm@ghost>
-References: <20240731195355.97488-1-yury.norov@gmail.com>
+        d=1e100.net; s=20230601; t=1722533255; x=1723138055;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XvjXd9+buzfO11kaj0Ak+01IPu1cm6eWry4DAzKlnvU=;
+        b=tclbxG4GMKSUyfrFF3G0qR95FIL2HKbsYFuuK6KcsPAuHhRifnccV0CAdF/0uxDGc3
+         LlXzGZ4AsB1R4KjlrIK7h8KsKCQHyvbLP9tmWHg+GyEHNEEuPOJMUZUElq2vygilBCr3
+         NZuR29Yu1u+Uhow0f7lnncopP9f2OekB1HCS5g9+EhJ5msDBiHCBMmwKX+zVGbrPsMz5
+         OIk9TnzDWtBpVBuTHYMaIA1UBDT1J+B14yMv72VFTWV9LoMuLNC83e+nL02qw1oCQK7t
+         waD7aU7CEug0d7mh/jyIwgOCqom5jAptXCcQaGZ9M9c2BQ6FnYDnkPSVAs+9y/jaohds
+         q57w==
+X-Forwarded-Encrypted: i=1; AJvYcCUoRBgyrO1ZY5DDFzgEidHbgkUTVat5KmMa8jI/Rycr7KYgd+qsoNmlQgKbL7XjlOy6Hs48DOnGWVrdHtk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgtXGHoaFIxJGhkye5PRGC8BEqD42tWlm9QLeMcwgqqHuCEW+J
+	UdPuMQF6zGv0oh6zlJVT2tSJRKGPF9PU0ml4JPOLzxeHeThAnfupNmyJt0HHtxQ=
+X-Google-Smtp-Source: AGHT+IGUyTv6tUwJDPzdWwPYOqHK6HoT9ZZPInrajbxk2JZzM0qb5kO4EbasMUvOyEOAZf5vkTAOww==
+X-Received: by 2002:a05:6602:4613:b0:81f:86e1:5a84 with SMTP id ca18e2360f4ac-81fd43981demr71759239f.2.1722533254768;
+        Thu, 01 Aug 2024 10:27:34 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a3e3casm20125173.147.2024.08.01.10.27.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 10:27:34 -0700 (PDT)
+Message-ID: <2e1509f5-2a10-4876-8619-6a6b9c29d269@linuxfoundation.org>
+Date: Thu, 1 Aug 2024 11:27:33 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731195355.97488-1-yury.norov@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: openat2: don't print total number of tests
+ and then skip
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: Aleksa Sarai <cyphar@cyphar.com>, kernel@collabora.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240731133951.404933-1-usama.anjum@collabora.com>
+ <c1414d9d-61b1-4f92-bc8a-333679362283@linuxfoundation.org>
+ <d30aa38c-5dbd-4c18-b20f-a6eb9e9e722b@collabora.com>
+ <f560819b-3a3c-4999-ad63-422ca31e9b08@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <f560819b-3a3c-4999-ad63-422ca31e9b08@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 12:53:54PM -0700, Yury Norov wrote:
-> We've got cpumask_assign_cpu() function and assign_cpu() macro, both
-> doing the same thing. We need to drop one to avoid unneeded duplicatioon.
+On 8/1/24 10:27, Shuah Khan wrote:
+> On 8/1/24 02:42, Muhammad Usama Anjum wrote:
+>> On 7/31/24 9:57 PM, Shuah Khan wrote:
+>>> On 7/31/24 07:39, Muhammad Usama Anjum wrote:
+>>>> Don't print that 88 sub-tests are going to be executed, but then skip.
+>>>> This is against TAP compliance. Instead check pre-requisites first
+>>>> before printing total number of tests.
+>>>
+>>> Does TAP clearly mention this?
+>> Yes from https://testanything.org/tap-version-13-specification.html
+>>
+>> Skipping everything
+>> This listing shows that the entire listing is a skip. No tests were run.
+>>
+>> TAP version 13
+>> 1..0 # skip because English-to-French translator isn't installed
 > 
-> Now that underlying assign_bit() implemented as a macro, it would make
-> sense to keep assign_cpu() which is also implemented as a macro, in sake
-> of unification.
-> 
-> This patch also removes __cpumask_assign_cpu() as the function is
-> unused.
-> 
-> Signed-off-by: Yury Norov <yury.norov@gmail.com>
-> ---
->  arch/riscv/mm/cacheflush.c |  2 +-
->  include/linux/cpumask.h    | 16 ----------------
->  2 files changed, 1 insertion(+), 17 deletions(-)
-> 
-> diff --git a/arch/riscv/mm/cacheflush.c b/arch/riscv/mm/cacheflush.c
-> index a03c994eed3b..fa136627ccaa 100644
-> --- a/arch/riscv/mm/cacheflush.c
-> +++ b/arch/riscv/mm/cacheflush.c
-> @@ -171,7 +171,7 @@ static void set_icache_stale_mask(void)
->  	stale_cpu = cpumask_test_cpu(smp_processor_id(), mask);
->  
->  	cpumask_setall(mask);
-> -	cpumask_assign_cpu(smp_processor_id(), mask, stale_cpu);
-> +	assign_cpu(smp_processor_id(), mask, stale_cpu);
->  }
->  #endif
->  
-> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-> index 801a7e524113..f896c6ffa78e 100644
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -534,22 +534,6 @@ static __always_inline void __cpumask_clear_cpu(int cpu, struct cpumask *dstp)
->  	__clear_bit(cpumask_check(cpu), cpumask_bits(dstp));
->  }
->  
-> -/**
-> - * cpumask_assign_cpu - assign a cpu in a cpumask
-> - * @cpu: cpu number (< nr_cpu_ids)
-> - * @dstp: the cpumask pointer
-> - * @bool: the value to assign
-> - */
-> -static __always_inline void cpumask_assign_cpu(int cpu, struct cpumask *dstp, bool value)
-> -{
-> -	assign_bit(cpumask_check(cpu), cpumask_bits(dstp), value);
-> -}
-> -
-> -static __always_inline void __cpumask_assign_cpu(int cpu, struct cpumask *dstp, bool value)
-> -{
-> -	__assign_bit(cpumask_check(cpu), cpumask_bits(dstp), value);
-> -}
 
-This deletion is the wrong way around. cpumask_assign_cpu already
-existed when assign_cpu was added. cpumask_assign_cpu uses the same
-naming convention as all of the other cpumask functions, so it is
-inconsistent with the other defines in this file to drop the "cpumask"
-prefix.
+One more thing on TAP compliance - we don't strive to be TAP compliant
+as it doesn't meet our special needs.
 
-__cpumask_assign_cpu is not currently used but all of the other cpumask
-functions have a "__" alternative so that's why I added it.
+It is important to keep the how many tests could be run to improve testing
+coverage.
 
-- Charlie
+Refer to: https://www.kernel.org/doc/html/latest/dev-tools/ktap.html
 
-> -
->  /**
->   * cpumask_test_cpu - test for a cpu in a cpumask
->   * @cpu: cpu number (< nr_cpu_ids)
-> -- 
+"The Linux Kernel largely uses TAP output for test results. However, Kernel
+testing frameworks have special needs for test results which don’t align with
+the original TAP specification. Thus, a “Kernel TAP” (KTAP) format is specified
+to extend and alter TAP to support these use-cases. This specification describes
+the generally accepted format of KTAP as it is currently used in the kernel."
 
-> 2.43.0
-> 
+I appreciate the effort you are putting into improving the reports. I request
+that you refer to the above document and also keep in mind what would help us
+improve our testing over focusing just on reports and compliance.
+
+thanks,
+-- Shuah
 
