@@ -1,172 +1,258 @@
-Return-Path: <linux-kernel+bounces-271806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9A994536E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:39:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3035945375
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:41:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 800721C231D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:39:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83A822881A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A88A14A4D4;
-	Thu,  1 Aug 2024 19:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97741494C3;
+	Thu,  1 Aug 2024 19:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BG8ShvbD"
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="EIn+j/yB"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10olkn2108.outbound.protection.outlook.com [40.92.41.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484BA140E5F
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722541146; cv=none; b=Kn/uEPsKUXK2QjH5KNzBHx7X813NQs+7d64TjTerqvbrl6Iof3EQF3SrgMETyGy++hD1xqa91bHFmKoF9xjlHAANMj+/U2jWuz9BlW5R5n8v632S67hin5EFNnb/ZkPwlUn9wRU3S0aZ3yZYhR/t1tVqOHyhW7vqHW/avkcH+OU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722541146; c=relaxed/simple;
-	bh=594P5XzwskbETUT36Fts+eHHT1pKYXxLK7ITeT54cLY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J6f8jSZ+6bRbCDK1LUalRI4K+RZjDFDIFROc/9fId7lv/xUrR4ZHovPkhtpMSQP/TcYbb3hOfsO/FHN5m4ZV97oNxSR9E3rcZ1Z/2pXfot6CxXuURc5rnNk14AuFrk5MqX41133k3nZ9JK6f5byurVacpaEhLMpzZSSfBcaNmZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BG8ShvbD; arc=none smtp.client-ip=209.85.210.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-70943b07c2cso3903981a34.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 12:39:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722541144; x=1723145944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=594P5XzwskbETUT36Fts+eHHT1pKYXxLK7ITeT54cLY=;
-        b=BG8ShvbDl4zHA87oCytrBdg9fZ2uQlv77o5+kM8nTWoPfHBG/BzYfSum8olne2kLOT
-         Z5lVpdRXGb5kYlB7KQziTd/YTn4LvYV0PiGy6R85t+InK60FbWz4wZKt8WJSVFrA3rfY
-         44ug7kglZFZMTCmkI/Ltn3/PbBAS5p2rC2+PZ4UAyzaSbTOEI9LLU+srfafC8iUTDpix
-         k6o3MHDxyfY0muNwrayAfWW7Srr7WdgKkPmH9oOPRAZ7yQmcEg727gkUAEx2QVPRs+sh
-         0iJEFlt6orxTkSjD5IQbfMy1N06SohOmZZmYHKro/+2P8uZnCjv3HI0GvbL6Pi887ZqM
-         WYrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722541144; x=1723145944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=594P5XzwskbETUT36Fts+eHHT1pKYXxLK7ITeT54cLY=;
-        b=ABElc1xinHkEMqC5F0PDlE3JHCfo3DoYJ9cmRywG6TXZ6vnRIW5Pru6CHWEQRJ6nIt
-         CkAY+svvIgRpg3Gi3TblPbDNNv/vP7ghdVarCfuYN6su9i4DGcAUiwgkWsyVgwS9ybCW
-         aErHQbNU7nG/YhChoWS4+6bKWFCU1sp6Ep/rXg1n0K14xd7w8ETFApXHB24bPcdq0iqI
-         V6YqBRj5fj9FYasewyBg5Tvi14ititb12bp9U+TeAF+TADEkoTQzcv0cYEXheHvYfxyx
-         AWRzluPlo7t6mypU37hfTTPdccXBCn+Km+Raxwp4bNcz62Vr6/pKbmqzmj6Y8Em1TvT1
-         aa4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVricBrDx2G83wu1mej8NP+cOa2WLeF1Wx0pn824PDz/s2aHyxWDFaZ9WZeuxDlog16psZR33AGtm+bJ+OWozu05Nnqac3HdEam3ES2
-X-Gm-Message-State: AOJu0YyfNBevbbvbb+Kpi1h0vDiaOjjPuKi0NBt9JJT7nVKLPA+n3Hwg
-	BvBtQVALfifkSPNLEmCIP8WFASrZXCDZem6t2is0c/ZwcAaZaq6uchQw/AVBc778rUUNcPq/hl4
-	VQJIdurgWHGGQY7W/mHcDhvxbC0HxxKNd30es
-X-Google-Smtp-Source: AGHT+IFc3YHkqxrwEoxXwpgLm2CQXNdMsNg3Ac2IO/Rh0opRhVly3THqWe+FTE/9DxHlnE0bTmB/pcYqRJ3qaEuuNto=
-X-Received: by 2002:a05:6358:50c3:b0:1aa:b7fa:4f59 with SMTP id
- e5c5f4694b2df-1af3bac330bmr106834155d.30.1722541144062; Thu, 01 Aug 2024
- 12:39:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C243D1494A0
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.41.108
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722541274; cv=fail; b=DGPGiFTOYazTGADtte53ujdkj/0qKFEjDFY6E6bPM3CI7/8Z46I52vlhAxrNjvnXRsBFZa+r9F9XMX6N6wtBPROYu8S/oFS47tVwDCeCiaMoBL3byJnfMqoFZ7o1ptl+lwWxIcg0uT9W2TbYCkOUiVy2VDqq163g5a3nZwRV37Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722541274; c=relaxed/simple;
+	bh=G8DFmht74OSZK/z9Htr8RCyaiHj251W0486cWU1s5cY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=kYNv2/+DYXREMdNhTMMZk4NZPuOgTUrBjgcDt3Hl8hUCVFuu0YqWMCfkHf0dv3VSdORDrTJJHz/jt5zlhKskNSI8Loy298ggcA562WO4iDkYtWk42xt1td6IAKIk0Ty07FiN/dWmAhiFOXQbwgw3D6liRY3SskwWrDRky9Og5YQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=EIn+j/yB; arc=fail smtp.client-ip=40.92.41.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kiIasUu1Kix1612L2HhyE46/UaNK8S0Brt78SsZ2NxM/CJuXM5hu+g5Wmj+HOTbZK3+er73KIwqaJ/4fjTYyH/MVW+cNIEDgJ1SIIgqe91P5uen2/0ZyrjK/4L7769lZCnkU0FLa0jSkMj7UAIKEYfghQvq4ytbUlSGvvKrJkPVf5UflmAZTncwUY4ET5swYOq0bOag7GF0m2iWML0vNteWdqDUbnfRWLkQ/irVGqOWAbjPb51/YLLcKbcrSoQMH0aNEDMNGH+My7Rdk8GsiXVLV9w2TNAIHJypAlKDUzZ+2+gcB7wbbXL6UsRKmB9rwSSBq5FV67FWXOmVUnMrn5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SmlELIznoUESuNPEXWTovKEwkHJv3Zzqyx76e/Bb9Ug=;
+ b=bzb94V8uL8+7pdf0YSnyNriPMuoPraebjLwSixyjLtVKkQTdoNierS8LdXk+jTcRhoqqtyYJ461yqvNVN2a9RC384oRcc+RKbkKjhnArPrBP8BgxEa7R/SGatrXQfJJqlJWuj59q8WQo8NiJYe9IdejtmwNctTBHkzTKYUiyZohbWh/AymBfu6xQFPZUD4BirsIUSvFB0dgWVcjD/Gb1FkZobfFytoWqz0qrwwzcernoiFJKttUUnIiGtiB8rqzMqVdDxZH/TUM4s62uCgjdZhq0fV9GITDpBrxrdoq6Yd5AnPAuGYeU6hj1PMD0b1z5SLgv6PQAfjuzogT0goZrKg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SmlELIznoUESuNPEXWTovKEwkHJv3Zzqyx76e/Bb9Ug=;
+ b=EIn+j/yBm8CaO9NswHt7udFDkLyUIq28P8YktYbhEh6G9ww57QyNBvPtNNXId+YvH4wC11ybfA25fTj2kBWnRypbyKOA8KBQBNNH2t30YCWjRexlbhVc8WHRBZRxI9Iz+4jZPZdVsNEr+kTMf4W/vPw5q/7efIbWV+wZ5kauT6iwVvXS+WVp/1FR4TPTnaOteki2TB1Gt4NwozSQBtf3Kf6OhZXjfsQ4H/AN8lM6aUU+W49icjkgH3HGNNHagav4y79w6E9csakebsC1jLf8xmEinmyeaw1b5MKMfbrW8LwK1cSoVrl4XtchdAoU1Bvrr09ycNBMOVjDhO6jDzaYqA==
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM (2603:10b6:a03:570::8)
+ by PH7P223MB0620.NAMP223.PROD.OUTLOOK.COM (2603:10b6:510:1ae::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Thu, 1 Aug
+ 2024 19:41:09 +0000
+Received: from SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd]) by SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ ([fe80::b5cd:c37a:bd3e:e3fd%2]) with mapi id 15.20.7828.021; Thu, 1 Aug 2024
+ 19:41:09 +0000
+From: Steven Davis <goldside000@outlook.com>
+To: akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Steven Davis <goldside000@outlook.com>
+Subject: [PATCH] Add memlogger utility and update MAINTAINERS
+Date: Thu,  1 Aug 2024 15:40:33 -0400
+Message-ID:
+ <SJ2P223MB10261D3FCC3D949DA7DA4565F7B22@SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.46.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [qkqS6fThwLJ1u4oPbvb0mjCaFe9OrpCy]
+X-ClientProxiedBy: CH5PR02CA0017.namprd02.prod.outlook.com
+ (2603:10b6:610:1ed::19) To SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:a03:570::8)
+X-Microsoft-Original-Message-ID:
+ <20240801194033.5196-1-goldside000@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617175818.58219-17-samitolvanen@google.com>
- <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com> <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
- <00714a65-953f-4885-9229-1990543c4154@suse.com> <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
- <f08678b1-260f-4200-889b-a4ec016fc7e1@suse.com>
-In-Reply-To: <f08678b1-260f-4200-889b-a4ec016fc7e1@suse.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Thu, 1 Aug 2024 19:38:27 +0000
-Message-ID: <CABCJKueScjymx3TR-DCVynfgSg93-17cKC0s0b3A5KpiFEOiEA@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2P223MB1026:EE_|PH7P223MB0620:EE_
+X-MS-Office365-Filtering-Correlation-Id: dae236fe-750c-45a3-f5ff-08dcb261e403
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5072599009|8060799006|19110799003|461199028|3412199025|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	2PIkOCdgAkYVehtWto8PvStZ4dVjZbYSipNbOw1nT3KosYDPD+nspTmh0xfOnVuyPcehFvknsIwhi5D1rC03Ntx6XZZFkSVbL9s8HisRTncUT57JZDrrWpf9wKUjRdDNd1LBY0rRCrW8UaZwNfC/+E7H9809LVvJZL946HL3i1M/YeS6kyBKF0ycbSvDp1gkal5HlBkMMxdrmAY42NAMgKBLGkvmeONMO7fxB5oyzNr9SRZPesrT4xJEKSRROwSJEe64N/yV6mN2IK1zGN+ByMbunmsagC62SL3Yq8NLTwP2Bx6U15bqNnDH6UJx1kSUac62Yy43xZor+xK9VZdWQFq9ul9oEc11W8JNGHvXkrXOo23zbMKmNhpOplu2/hSmK5uzYOcWouY0uJF5WZcsb5BFjveqmpwm61tqW2MbD3DSFjcYlFNN/nYDIjczkM0hWTVdLz8aoEGYKZZfVA6zhdnrlHzDaaQ5JtPe0tq5FrTpKBWr4SdxCegL4xNW30m8V/drBjfDwJ8pODFWjNGZFofyw3Tm0C58x9uWGcW83nYIwXTzi1w0T4+cXnZi1IPs5YbqOSFAUAIF7WCHWAFcifIVyJR2nDNyUJAkiMbdKqd3Bgj0MK9WMGKBoh2G5FCvDueIWxfQktTr19QlYYbj1vkuhkjxlubrLZoFat7TO57y+HjWUZ3kgPNrMvaQiZVDBJbQMSMKq4WEH14wytsp7Q==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?81dGhP96DhtMkHZ1RzBPojaJx04r1UMnf6YPnpkMxRTa4up0E9Zwjz8sFVUO?=
+ =?us-ascii?Q?WbkQJy1mYcPK3c0T3Jq4vPE2j3D+06gSoOTIYu/t6zPRVEvpFiHYLhEuWXw8?=
+ =?us-ascii?Q?SC3vBuWUzZ6oTZuIBeNrESspDKp3wKiSUYYfBz48JGXj9v4KyTa3F4PVqrvz?=
+ =?us-ascii?Q?pAT/Zy9xzknkqqeBfgvf0us58pZo0TmD2DWNHq2nxiuruQPpXmW85k5eDZ/U?=
+ =?us-ascii?Q?GQNjLo0v7v43OvPc99uP6tHo8sLX42Ha+i9+C9UZsrs+DpdDjrnBheZOTv2v?=
+ =?us-ascii?Q?GFi0hr1gTz5b+MMzUWOVx72zEdBX3Jcnw0sYZWNJ93iKkDVb5mFh94i41YQM?=
+ =?us-ascii?Q?OMqXIOaPEkQQpRDMMOnWc2sDcdLK0I3gxVnGY8PCxo56cNx5uC9Zq0HKSLp3?=
+ =?us-ascii?Q?8UXGz+6XdfVZ/VGG0GB9ohKiVR8d3hklz2v6d6AABOlNdvWJra9/ugLYk0W0?=
+ =?us-ascii?Q?9NbY3TiqBG7S++E5SEM0+/yIn0vy/Ix5ra3wWPAOtKbp79qktZrAI5pg4Er9?=
+ =?us-ascii?Q?12W5kNhvs9nSp1ktCI/kv0cOMavhZc6Ntkobu2uItgN4GlMe1E8Ezo36j+HP?=
+ =?us-ascii?Q?Cugvhj7erQv4lrpt/LzUnWPMPae7MBfBSuj7L5PN70TL2CMWmuvdn7DzkY1i?=
+ =?us-ascii?Q?RlFu+dL7BIpdOR/PSnAYpyPwsy9hYR5/O3Jmhrk9Ma02TmpnHgt5UPbnpR/c?=
+ =?us-ascii?Q?AuNTDwIXBZaOFz8Twb1zHTk0i+kGT8LnsXKI00/RY+D4QexpXCMihb54gykc?=
+ =?us-ascii?Q?ImTZEnFr/L6kR1x1ssn5jmKt/rl79QYcQEt4Vm/pvtjxr8Y1W1QTX6vCShF/?=
+ =?us-ascii?Q?8hmbubgcFuoRwrsDcvR5woGFeM03xCx8oO+uBRSywSarPIJ50ASbjHVSOeyY?=
+ =?us-ascii?Q?nsijo0U5JxzN2xba5dV5g0BsY70BQmma57gCw1B2SwQ3sAJ6rVQUAy8U578h?=
+ =?us-ascii?Q?nlvZT+Oqy3H/M4N1wqr1uqK+y5PkkhbMcWG3fOU6n+KSHELbhcLgyofDgA6b?=
+ =?us-ascii?Q?UuZfhAdO1/JsjqLk/ncAhVeEGBGLZXys+zNBHxvoDQjkOYZxcODTjO/skWpp?=
+ =?us-ascii?Q?Q/gIC/4DJt4bwZ0jNxhbxpM3WVrmtxCbH5yobkJTKbjbXE8fcKd8N7sAkjtd?=
+ =?us-ascii?Q?Y2Vj5irE52bRWA09zU4ZoPj1Z/fkr4W1jWgufr6wv0hWQ7Dv8m5Y4qj/J8Ov?=
+ =?us-ascii?Q?l3U4TIQzsgg8kOI1gmoaeEquJmuc2MyzzmHaM2dsuz0s3GochMsPnsWHtW4?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dae236fe-750c-45a3-f5ff-08dcb261e403
+X-MS-Exchange-CrossTenant-AuthSource: SJ2P223MB1026.NAMP223.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 19:41:09.1057
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7P223MB0620
 
-Hi Petr,
+This adds memlogger, a module that can be both used in critical
+situations and learned from. When making a patch, the kernel
+can be confusing. Memlogger uses simpler components of the kernel
+to provide an easy learning environment for new developers.
 
-On Thu, Aug 1, 2024 at 4:22=E2=80=AFAM Petr Pavlu <petr.pavlu@suse.com> wro=
-te:
->
-> STG is an interesting tool. I've played with it a bit last year. To be
-> frank, I was surprised to see a new tool being proposed by Google to
-> generate modversion CRCs from DWARF instead of potentially extending
-> your STG project for this purpose. I'm not sure if it is something that
-> you folks have considered and evaluated.
+It can also be used to debug memory related issues.
+For example, if there were an issue where something was gradually
+consuming memory, memlogger would easily catch that.
 
-Yes. STG is fairly large and written in C++, so it didn't seem like a
-great candidate for inclusion in the kernel tree, and it's presumably
-not shipped by most distributions, so it's not really ideal as a
-dependency either.
+MAINTAINERS was also updated to recognize the creation of the
+memloggers directory.
 
-> Sure, it might be necessary to extend the symtypes format a bit, for
-> example, by allowing spaces in type names. What other problems do you
-> see?
->
-> The example I showed preserves the DWARF tag names in type descriptions.
-> Cross-references and the target type names use the s# prefix as they
-> they need to be distinguished from other tokens.
+Signed-off-by: Steven Davis <goldside000@outlook.com>
+---
+ MAINTAINERS                         |  6 +++
+ samples/memlogger/Makefile          |  7 ++++
+ samples/memlogger/get_memory_info.h |  4 ++
+ samples/memlogger/memlogger.c       | 64 +++++++++++++++++++++++++++++
+ 4 files changed, 81 insertions(+)
+ create mode 100644 samples/memlogger/Makefile
+ create mode 100644 samples/memlogger/get_memory_info.h
+ create mode 100644 samples/memlogger/memlogger.c
 
-What I meant is that genksyms output is basically preprocessed C with
-references scattered in, so if you want something that's fully
-backwards compatible, that might not be possible. However, if you're
-happy with just the same database structure and don't care about the
-exact type description format beyond that, that should be doable, but
-like you said, still requires extending the format to support more
-complex type names.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8766f3e5e87e..a140e2714b3d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14633,6 +14633,12 @@ F:	mm/memblock.c
+ F:	mm/mm_init.c
+ F:	tools/testing/memblock/
+ 
++MEMLOGGER
++M:	Steven Davis <goldside000@outlook.com>
++L:	linux-kernel@vger.kernel.org
++S:	Maintained
++F:	samples/memlogger/
++
+ MEMORY ALLOCATION PROFILING
+ M:	Suren Baghdasaryan <surenb@google.com>
+ M:	Kent Overstreet <kent.overstreet@linux.dev>
+diff --git a/samples/memlogger/Makefile b/samples/memlogger/Makefile
+new file mode 100644
+index 000000000000..bc130c1c8ede
+--- /dev/null
++++ b/samples/memlogger/Makefile
+@@ -0,0 +1,7 @@
++obj-m += memlogger.o
++
++all:
++	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
++
++clean:
++	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+diff --git a/samples/memlogger/get_memory_info.h b/samples/memlogger/get_memory_info.h
+new file mode 100644
+index 000000000000..5fdc47d58a75
+--- /dev/null
++++ b/samples/memlogger/get_memory_info.h
+@@ -0,0 +1,4 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++#ifndef GET_MEMORY_INFO_H
++void get_memory_info(struct timer_list *t);
++#endif // GET_MEMORY_INFO_H
+diff --git a/samples/memlogger/memlogger.c b/samples/memlogger/memlogger.c
+new file mode 100644
+index 000000000000..196bdf53fd91
+--- /dev/null
++++ b/samples/memlogger/memlogger.c
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * This module logs memory information to dmesg every 5 minutes.
++ * Useful for seeing how memory logging works and how timers work in the Linux kernel.
++ *
++ * Copyright (C) 2024 Steven Davis <goldside000@outlook.com>
++ */
++
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/mm.h>
++#include <linux/timer.h>
++#include "get_memory_info.h"
++
++#define TIMER_INTERVAL (5 * 60 * HZ) // 5 minutes
++
++static struct timer_list mem_timer;
++static unsigned int interval = TIMER_INTERVAL / HZ; // Default interval in seconds
++
++module_param(interval, uint, 0644);
++MODULE_PARM_DESC(interval, "Timer interval in seconds for memory info logging");
++
++void get_memory_info(struct timer_list *t)
++{
++struct sysinfo si;
++
++si_meminfo(&si);
++
++pr_info("Memory Info:\n");
++pr_info("Total RAM: %lu kB\n", si.totalram * si.mem_unit / 1024);
++pr_info("Free RAM: %lu kB\n", si.freeram * si.mem_unit / 1024);
++pr_info("Shared RAM: %lu kB\n", si.sharedram * si.mem_unit / 1024);
++pr_info("Buffered RAM: %lu kB\n", si.bufferram * si.mem_unit / 1024);
++
++    // Re-schedule the timer
++mod_timer(&mem_timer, jiffies + interval * HZ);
++}
++
++static int __init mem_info_init(void)
++{
++pr_info("Memory Info Module Loaded\n");
++
++    // Initialize the timer
++timer_setup(&mem_timer, get_memory_info, 0);
++
++    // Schedule the timer for the first time
++mod_timer(&mem_timer, jiffies + interval * HZ);
++
++return 0;
++}
++
++static void __exit mem_info_exit(void)
++{
++del_timer(&mem_timer);
++pr_info("Memory Info Module Unloaded\n");
++}
++
++module_init(mem_info_init);
++module_exit(mem_info_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Steven Davis <goldside000@outlook.com>");
++MODULE_DESCRIPTION("A module that outputs memory information periodically.");
+-- 
+2.46.0
 
-> What I think is needed is the ability to compare an updated kernel with
-> some previous reference and have an output that clearly and accurately
-> shows why CRCs of some symbols changed. The previous reference should be
-> possible to store in Git together with the kernel source. It means it
-> should be ideally some text format and limited in size. This is what
-> distributions that care about stable kABI do in some form currently.
->
-> This functionality would be needed if some distribution wants to
-> maintain stable Rust kABI (not sure if it is actually feasible), or if
-> the idea is for gendwarfksyms to be a general tool that could replace
-> genksyms. I assume for the sake of argument that this is the case.
->
-> Gendwarfksyms could implement this functionality on its own, or as
-> discussed, I believe it could provide a symtypes-like dump and a second
-> tool could be used to work with this format and for comparing it.
->
-> From my point of view, the current --debug format is not suitable for
-> this purpose because its expanded and unstructured form means it is
-> bloated and hard to compare with a previous reference.
-
-I do see your point, there's a ton of duplication in the --debug
-output as each symbol expands all the types it uses.
-
-> I'm also not quite yet sold on using separate DWARF tooling, such as
-> libabigail or STG, to actually understand why gendwarfksyms produced
-> a different CRC for some symbol. Using these tools makes sense in the
-> genksyms world, where genksyms operates on the source code level and
-> this additional tooling can only work on debug data.
->
-> With gendwarfksyms working directly with DWARF data, it doesn't seem
-> appealing to me to first run gendwarfksyms to produce CRCs, compare them
-> with their reference, and if they are different, use a second tool to
-> process the same DWARF data again and with some luck hopefully get an
-> actual answer why the CRCs changed. I'm worried that users might
-> encounter inaccurate answers if the two tools interpret the input data
-> differently.
-
-I agree, there might be other DWARF changes that we don't care about,
-but that nevertheless make it harder to figure out what caused the
-actual CRC to change.
-
-My initial thought was that simply running a diff between the --debug
-output would be sufficient, as it would directly tell you what
-changed, but I didn't consider that the size of the output dump would
-be of concern as well. I'll look into adding a symtypes-style output
-format in the next version. Thanks again for the feedback!
-
-Sami
 
