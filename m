@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-271004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26181944840
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:28:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A569944843
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3BBFB28E9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 012531F2951E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102C7189BA8;
-	Thu,  1 Aug 2024 09:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AA0170A27;
+	Thu,  1 Aug 2024 09:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="By6oS7pB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="j/3GgWr8"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56493D97F;
-	Thu,  1 Aug 2024 09:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D123D97F
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504359; cv=none; b=mbUFHmPWueEn+80ZoqykXWAUdyteMAbso3UfNNawliukIivWQcz51Ykjc+pQTCIAgIdzvgUKbzZgFVQI0sNvjPbR/DWHTZ7qzQj9bKr59m1clQIO+JkAiiNMItamqkVtGhdnAGsnuXFTWg63LfCmPG7twL4q9NtWlYU9R03LJOU=
+	t=1722504390; cv=none; b=leWeIq6KqHPf2OsqWVwDfLGdeSHesJ0S6Wd0ZV+bGPlbgXbnxSm/L5UtI7ZXSTRvyf5WCsn5OYpyUahkSxbuSuocg/z4GvnMA3iBW2tRD5rWLmBFR8f0gwTHLRhWbL588TudieSwYrdtq+uUMo8hKh2QBPEOBA4GvM6yL7cd1sM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504359; c=relaxed/simple;
-	bh=P5c2DBuXZQLakzngPvXJxZTsAUm4GoxmPr4cJ5PWTMA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=sFCfyOX8mQ8lMvypVCWNsFm+hb0ZBeqnF+hpMOPsN8bxy/3qFSY3pvmaGnIlRL1SE5oO7Yehg5/3UpwhPKoDoZQ3PWT/VSFqtOdaC50UFmZEQT3OJsvmtdzpttexXmctjPNCtgV2kNJ5kdTK3E9/5q/7rXUDJ/rVpUDXGyMfwe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=By6oS7pB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47191XY9010027;
-	Thu, 1 Aug 2024 09:25:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	N0VbP550rL2fJ64uytjW+POfX0XXkOB0jyiRKZOwwKA=; b=By6oS7pB1aUCrbro
-	YLTIatbkbuUXNLE7K5FpOHzWJUgW34zxVofOdZeI2V9k94f9q5AFNbslFseEI6ds
-	uYvMy5fonAf6Htbt0oXTeyV90fTY9TNemp3l+5TmHwWXQfyo8hBRfSt8mT1YpM5d
-	JK2Eo6ngbwxV++CSMJXlN22sQp1Mkp/JqLNIL1E939im/UatEzht6fLNahPtQJVi
-	L3gOapZZOfAveduoh7/dMUVGSwU13BUmk+FkvP70j3sFItk17DBXhdpjFmy6bqf9
-	phNcrOUKn9r/Ds2PThk2KABeveaTfsD4aqg8e26X/KBtvmqzoO3u4CUXa7/tMfiX
-	GoCcdA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qnbabce0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 09:25:41 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4719Pd72028085
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 09:25:40 GMT
-Received: from [10.217.217.229] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
- 02:25:34 -0700
-Message-ID: <d2009fca-57db-49e6-a874-e8291c3e27f5@quicinc.com>
-Date: Thu, 1 Aug 2024 14:55:31 +0530
+	s=arc-20240116; t=1722504390; c=relaxed/simple;
+	bh=yc27dtpWweaXQh+fHjdx54N4dlVP+eR3XGm152K/xkk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LCj0hmoSfSbffkTbnc9DPhuJXEOxRj4TW73yTkyZ61p9lhD2PByGbOhDahjy1Tenofw5lSHo+W7ZyhlxVIGaA7I3m8+E8BJHJqNYPD5DQHGNuzm3aah+4qrtP0FPuiV7R+2++510sjebWmdIeSfVJgVuFB7U6jR2+TRXg9BmwmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=j/3GgWr8; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so5782543a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:26:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722504385; x=1723109185; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3JZO8ZSFVuF+hnQnOqfsoJXypTyECUCeoc6zZyCuAc=;
+        b=j/3GgWr8ZNAUE8EpJTkozRJd8HFKgi68oQXRCCf4BAXTUOyTPcLiwLzy9tw+fMkBk0
+         eb1qy9VGNTVw3Pjy/iD+DgwZvH7v1InkIv79TqXNDM4DtJ3mxJa8KyyFPX/8oFr9+/Sp
+         cBLlupdcu0EUBaqjZeDvYKb0b7JBkXW97I4XT0zRp930PjQ9OfKLaiUGiGoPSrcnF4V7
+         qFUtwPyLtZaORRxESmXvstS38IhpKSfR2D4xhMtTKPTxkTBporWB7ksYYFQc6VftLoed
+         uIr6ximBMJppnfBzRYIc0e1w9KpPXw4cG8IaTgsulyI4ZppkJyiHN+5eSahrZ6XdNjUR
+         mB9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722504385; x=1723109185;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g3JZO8ZSFVuF+hnQnOqfsoJXypTyECUCeoc6zZyCuAc=;
+        b=JVqo5+SS/ytAXVyCHZzcuwbCk/EJFwGMIklGF1MP271hYgW7J1Baw6/AlKVDe+9M+X
+         t01SsC20nS0sxL6jm83hKdTnGbVw1PtIueU09PlOAdV3utfZiwtVBWGSkoXA+pCCV0YJ
+         GOPIa4BmVKilEtnO9HU9sTYcK3PnGkJYnww8LTKqXZ2yVT2ih5CLIZImQFx3wYh+1WyP
+         NJxT1IlmNVqiyFVTFb9Y13MtKdIFIyFzFRpaBnr/WsjhGOu27eBcAMO99fVDYgwYwNQ9
+         YuNJwJjmoVjG4EUBrtwq1cwOsSsoGX/Ys2Zk7YqcgOMnWwrGmZfTtaBjPg3d31OMsPOE
+         k+xw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+uqHx+oVjvosGqJmSe/607N2Yvnn3qZnGH8dlv5su7288RTswm3+bjVWRRbAPLG1YtBRrelKi3goo3uprTeQTSZ6lXPDDoGRwNufk
+X-Gm-Message-State: AOJu0YwGmi6NM4fqVyjSwLPnAaR75U98Mz8zNyAoz3lJX2QY7AqGfCZE
+	ddaAcNddBgXZn7IxpkX/MZctzsond3ikqcXZAhUOdyPQcbxGf9b7eZBL23s78Oc=
+X-Google-Smtp-Source: AGHT+IEVYXao/o41Djqdn17wcaP7RJtqK8n/QFbWtaCDyvUeQykgiFPJr+pTJuMhEJEC6R2BaL6qyg==
+X-Received: by 2002:aa7:c74a:0:b0:58b:2d93:ad83 with SMTP id 4fb4d7f45d1cf-5b6ff2f48d9mr1187110a12.21.1722504384678;
+        Thu, 01 Aug 2024 02:26:24 -0700 (PDT)
+Received: from localhost ([193.196.194.3])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6377d005sm9821822a12.38.2024.08.01.02.26.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 02:26:24 -0700 (PDT)
+Date: Thu, 1 Aug 2024 11:26:22 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: 
+	Martin =?utf-8?Q?Kepplinger-Novakovi=C4=87?= <martin.kepplinger-novakovic@ginzinger.com>
+Cc: lee@kernel.org, daniel.thompson@linaro.org, jingoohan1@gmail.com, 
+	linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: pwm_bl: print errno for probe errors
+Message-ID: <fjke5js43aqxdxmoau2l275a26o52sq7hyjgzwxnnsrptqlcvs@mohkvblfqkhg>
+References: <20240801091255.1410027-1-martin.kepplinger-novakovic@ginzinger.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-From: MANISH PANDEY <quic_mapa@quicinc.com>
-To: <qyousef@layalina.io>
-CC: <axboe@kernel.dk>, <mingo@kernel.org>, <peterz@infradead.org>,
-        <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <linux-block@vger.kernel.org>, <sudeep.holla@arm.com>,
-        Jaegeuk Kim
-	<jaegeuk@kernel.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Christoph Hellwig
-	<hch@infradead.org>, <kailash@google.com>,
-        <tkjos@google.com>, <dhavale@google.com>, <bvanassche@google.com>,
-        <quic_nitirawa@quicinc.com>, <quic_cang@quicinc.com>,
-        <quic_rampraka@quicinc.com>, <quic_narepall@quicinc.com>,
-        <linux-kernel@vger.kernel.org>
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: f9kALu7khQB3Z2Zt08f4aCJuybUt-OBN
-X-Proofpoint-GUID: f9kALu7khQB3Z2Zt08f4aCJuybUt-OBN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_06,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- impostorscore=0 clxscore=1011 suspectscore=0 adultscore=0 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010058
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o3qvcdtm3cmcqg2x"
+Content-Disposition: inline
+In-Reply-To: <20240801091255.1410027-1-martin.kepplinger-novakovic@ginzinger.com>
 
-++ adding linux-kernel group
 
-On 7/31/2024 7:16 PM, MANISH PANDEY wrote:
-> Hi Qais Yousef,
-> Recently we observed below patch has been merged
-> https://lore.kernel.org/all/20240223155749.2958009-3-qyousef@layalina.io
-> 
-> This patch is causing performance degradation ~20% in Random IO along 
-> with significant drop in Sequential IO performance. So we would like to 
-> revert this patch as it impacts MCQ UFS devices heavily. Though Non MCQ 
-> devices are also getting impacted due to this.
-> 
-> We have several concerns with the patch
-> 1. This patch takes away the luxury of affining best possible cpus from 
->    device drivers and limits driver to fall in same group of CPUs.
-> 
-> 2. Why can't device driver use irq affinity to use desired CPUs to 
-> complete the IO request, instead of forcing it from block layer.
-> 
-> 3. Already CPUs are grouped based on LLC, then if a new categorization 
-> is required ?
-> 
->> big performance impact if the IO request
->> was done from a CPU with higher capacity but the interrupt is serviced
->> on a lower capacity CPU.
-> 
-> This patch doesn't considers the issue of contention in submission path 
-> and completion path. Also what if we want to complete the request of 
-> smaller capacity CPU to Higher capacity CPU?
-> Shouldn't a device driver take care of this and allow the vendors to use 
-> the best possible combination they want to use?
-> Does it considers MCQ devices and different SQ<->CQ mappings?
-> 
->> Without the patch I see the BLOCK softirq always running on little cores
->> (where the hardirq is serviced). With it I can see it running on all
->> cores.
-> 
-> why we can't use echo 2 > rq_affinity to force complete on the same
-> group of CPUs from where request was initiated?
-> Also why to force vendors to always use SOFTIRQ for completion?
-> We should be flexible to either complete the IO request via IPI, HARDIRQ 
-> or SOFTIRQ.
-> 
-> 
-> An SoC can have different CPU configuration possible and this patch 
-> forces a restriction on the completion path. This problem is more worse 
-> in MCQ devices as we can have different SQ<->CQ mapping.
-> 
-> So we would like to revert the patch. Please let us know if any concerns?
-> 
-> Regards
-> Manish Pandey
+--o3qvcdtm3cmcqg2x
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hello Martin,
+
+On Thu, Aug 01, 2024 at 11:12:55AM +0200, Martin Kepplinger-Novakovi=C4=87 =
+wrote:
+> This makes debugging often easier.
+>=20
+> Signed-off-by: Martin Kepplinger-Novakovi=C4=87 <martin.kepplinger-novako=
+vic@ginzinger.com>
+> ---
+>  drivers/video/backlight/pwm_bl.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/p=
+wm_bl.c
+> index f1005bd0c41e3..cc7e7af71891f 100644
+> --- a/drivers/video/backlight/pwm_bl.c
+> +++ b/drivers/video/backlight/pwm_bl.c
+> @@ -502,7 +502,8 @@ static int pwm_backlight_probe(struct platform_device=
+ *pdev)
+>  						  GPIOD_ASIS);
+>  	if (IS_ERR(pb->enable_gpio)) {
+>  		ret =3D dev_err_probe(&pdev->dev, PTR_ERR(pb->enable_gpio),
+> -				    "failed to acquire enable GPIO\n");
+> +				    "failed to acquire enable GPIO: %ld\n",
+> +				    PTR_ERR(pb->enable_gpio));
+
+AFAIK dev_err_probe already emits the error code passed as 2nd
+parameter. So I wonder about this patch's benefit.
+
+Best regards
+Uwe
+
+--o3qvcdtm3cmcqg2x
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmarVLwACgkQj4D7WH0S
+/k4/3QgAiFoRKzJukU86K6iZEdrgbKL22xCsLB7W/ia/eBkBsscxYJG42UY3+WR8
+j2mf2vRqS3G80eP/KK04dxbGrlsAkM7HubO8KxMMS9CZKz7BwfTOyP93alHUhrZ1
+TUdMfceaT+dSkyha+cbucRYgZDW1BEEP9R5vy9+9SSdMZc/CsLMWU92MMA26wcye
+t3BbMMvP5CGsnvcoWd8oCk7rdaD2pnbdLEYsR9bVsEr/g6dQooRBPsOoBkX7a1Au
+06peYq525VSe9CLNWUFziGB+A31LPaSMzgWu9bdyG/7nxiHhMEwNMdXXT3x4PZtd
+ILzQY1JcBlYzwMSNG30jtTNb9exWQg==
+=U2oR
+-----END PGP SIGNATURE-----
+
+--o3qvcdtm3cmcqg2x--
 
