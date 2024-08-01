@@ -1,66 +1,65 @@
-Return-Path: <linux-kernel+bounces-271393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81500944D92
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58076944D99
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E961C22E89
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:02:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6172C1C24B60
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F019014A601;
-	Thu,  1 Aug 2024 14:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3749D1A38C1;
+	Thu,  1 Aug 2024 14:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqMD1JAH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pCt6pcKk"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3925E1A38C1;
-	Thu,  1 Aug 2024 14:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F332261FF2
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520954; cv=none; b=Q12sam2prTSS3M8RHPoryonrkZhMSpoZuPg8D1HzIi8IIrNeDTko8DIXXFqq3nRM5MJVdCLggJM8YDbu7gTXCWLJIQ11w8ZeutIugCHdR55+DNVyRBV0Lg4oRjhUdA+EUaRSocs68jtnVSgA5S6m3wZtjO/km1qo68xpqz8T2uE=
+	t=1722521030; cv=none; b=C9JSNXOy8fazq3q3lw5cBWywGK7ki/aXaJrQTk0C1bHAKIYCKsHnm4EV7CtVmqpqrC7mQiz3WniR5YCWkQ6SfgVubxMWqbJBNVLJgp8SCFPT1la1Nza+AiZ/F62Prq201uAJHWKBa9AfM2FCirti6gyg7nDBqbRN2YpTwnapz+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520954; c=relaxed/simple;
-	bh=VdiINaxnbnaYhSdTjoFb4By0McAamaV/qtatA2bkCFQ=;
+	s=arc-20240116; t=1722521030; c=relaxed/simple;
+	bh=AiR58spUCKAeKiapW34WMroMEZBz19iTKNbDsLys2q0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2KWNP7uDsUD7ltQfu/t07SQovThU8MKft7sRdcqNhBIviWWYgclLAHyz76I1Yarmkoh9IcoyfBo/POPZ4w4JJNDBiscLBjkv7KjaGL77vM+V96LbCaVaf0aoFIcvCNLmsVvH5XCHZrVU4KDcN3VGqO5YCGPqCxCW8YLm61yPic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqMD1JAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34783C32786;
-	Thu,  1 Aug 2024 14:02:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722520953;
-	bh=VdiINaxnbnaYhSdTjoFb4By0McAamaV/qtatA2bkCFQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dqMD1JAHCRf4bPp4ekUD0sWbvUCOfESxAU37GVTDioDHOXUAm0FoaszYBPq9gvUP2
-	 BPpqNQQuSeJw7oK9RNbSc4FUX1H/8jBMwMp2kVPLLozn6afueYG5x4iQink6vb0gzF
-	 x4mqERJc8lnrImgMwEZLiYf9njYy1KHSgYRp7vaAZunybAcEwQg9t6G8rB16K6E24B
-	 Eb1Qn9nl18SXnQC2X9wTwI8AqG+InYOfQ/cytcFgtFg0vQbuRpBtFzCHRK5XUxUD/8
-	 4qrc40E29sCk11PY2i7ddsM8f1SkE2dKq4APw8DDc5T18KFJ7sgqAW4fm+ANVcTM8T
-	 wKfMqhpUsCCyg==
-Date: Thu, 1 Aug 2024 16:02:27 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and
- vm_area_struct
-Message-ID: <ZquVcyeLqGGRbgx-@pollux>
-References: <20240801-vma-v3-1-db6c1c0afda9@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gRmQ5CmvnXCAhFcHb6YyO4rRg+JtzACKudNzNQITHzEaKR3oTk7XAegbsQiX03dB0bb8E9lYq8YJhS7mM9ndUHVkARefNAzYznLtSdk9AgRMRHL2PQcgc3HSt9nfWoFYypBdPDuZMwHXR+wFF9NmG1QPWZ3PNHrqZAGd4gL20vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pCt6pcKk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=aCT+mZb2Cy+A6isJ8OBSDVk7ibeJ8B2eQ7qPANWY5Kc=; b=pCt6pcKkJq9GkUvMRkL+RXnmm4
+	cjidJ7J4ela1NbzhP9SpFFrGXawTyd+wZwmPCD/afEtsdiKDknsiIEjKIYkmQoQXq2oLx0RnyFQ/G
+	YJUnAruH60X8qW0r4pFg8tPpT3zfXxIyrgdozZVWGMOIMl434KP1uIs5Suh4U1xkx+qgi41w8N6V5
+	jgrFIBtrIVVthbYBsby8pl8t4otgmlDw8NYVd2JBmn8xg+FeAEk45K+7ZjByTkcb2I+zgrcNZrLVQ
+	kqoJnfx4mqbChzvbgLOq0nW1YW9unVw/Iv4bjTnNIxh0PywFafruqVx6k/AZqIsJ7KymQ2zdojkcU
+	jDk7MfFw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZWP7-0000000HX0W-0Gv9;
+	Thu, 01 Aug 2024 14:03:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5137330074E; Thu,  1 Aug 2024 16:03:40 +0200 (CEST)
+Date: Thu, 1 Aug 2024 16:03:40 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: kan.liang@linux.intel.com
+Cc: mingo@kernel.org, acme@kernel.org, namhyung@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
+	ak@linux.intel.com, eranian@google.com,
+	Sandipan Das <sandipan.das@amd.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	silviazhao <silviazhao-oc@zhaoxin.com>
+Subject: Re: [PATCH V4 1/5] perf/x86: Extend event update interface
+Message-ID: <20240801140340.GF37996@noisy.programming.kicks-ass.net>
+References: <20240731143835.771618-1-kan.liang@linux.intel.com>
+ <20240731143835.771618-2-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,106 +68,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801-vma-v3-1-db6c1c0afda9@google.com>
+In-Reply-To: <20240731143835.771618-2-kan.liang@linux.intel.com>
 
-On Thu, Aug 01, 2024 at 12:58:45PM +0000, Alice Ryhl wrote:
-> This is a follow-up to the page abstractions [1] that were recently
-> merged in 6.11. Rust Binder will need these abstractions to manipulate
-> the vma in its implementation of the mmap fop on the Binder file.
+On Wed, Jul 31, 2024 at 07:38:31AM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> This patch is based on Wedson's implementation on the old rust branch,
-> but has been changed significantly. All mistakes are Alice's.
+> The current event update interface directly reads the values from the
+> counter, but the values may not be the accurate ones users require. For
+> example, the sample read feature wants the counter value of the member
+> events when the leader event is overflow. But with the current
+> implementation, the read (event update) actually happens in the NMI
+> handler. There may be a small gap between the overflow and the NMI
+> handler.
+
+This...
+
+> The new Intel PEBS counters snapshotting feature can provide
+> the accurate counter value in the overflow. The event update interface
+> has to be updated to apply the given accurate values.
 > 
-> Link: https://lore.kernel.org/r/20240528-alice-mm-v7-4-78222c31b8f4@google.com [1]
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
-> Changes in v3:
-> - Reorder entries in mm.rs.
-> - Use ARef for mmput_async helper.
-> - Clarify that VmArea requires you to hold the mmap read or write lock.
-> - Link to v2: https://lore.kernel.org/r/20240727-vma-v2-1-ab3e5927dc3a@google.com
-> 
-> Changes in v2:
-> - mm.rs is redesigned from scratch making use of AsRef
-> - Add notes about whether destructors may sleep
-> - Rename Area to VmArea
-> - Link to v1: https://lore.kernel.org/r/20240723-vma-v1-1-32ad5a0118ee@google.com
-> ---
->  rust/helpers.c         |  61 +++++++++
->  rust/kernel/lib.rs     |   1 +
->  rust/kernel/mm.rs      | 337 +++++++++++++++++++++++++++++++++++++++++++++++++
->  rust/kernel/mm/virt.rs | 204 ++++++++++++++++++++++++++++++
->  rust/kernel/types.rs   |   9 ++
->  5 files changed, 612 insertions(+)
-> 
-> diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
-> new file mode 100644
-> index 000000000000..ed2db893fb79
-> --- /dev/null
-> +++ b/rust/kernel/mm.rs
-> @@ -0,0 +1,337 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! Memory management.
-> +//!
-> +//! C header: [`include/linux/mm.h`](../../../../include/linux/mm.h)
+> Pass the accurate values via the event update interface. If the value is
+> not available, still directly read the counter.
 
-NIT: srctree
-
-> +
-> +    /// Returns a raw pointer to the inner `mm_struct`.
-> +    #[inline]
-> +    pub fn as_raw(&self) -> *mut bindings::mm_struct {
-> +        self.mm.get()
-> +    }
-> +
-> +    /// Obtain a reference from a raw pointer.
-> +    ///
-> +    /// # Safety
-> +    ///
-> +    /// The caller must ensure that `ptr` points at an `mm_struct`, and that it is not deallocated
-> +    /// during the lifetime 'a.
-> +    #[inline]
-> +    pub unsafe fn from_raw_mm<'a>(ptr: *const bindings::mm_struct) -> &'a Mm {
-
-I'd just call this `from_raw`, like you call the counterpart `as_raw` above.
-Same goes for `MmWithUser` and `VmArea`.
-
-> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-> index bd189d646adb..143a2bf06941 100644
-> --- a/rust/kernel/types.rs
-> +++ b/rust/kernel/types.rs
-> @@ -366,6 +366,15 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
->              _p: PhantomData,
->          }
->      }
-> +
-> +    /// Pass ownership of the refcount to a raw pointer.
-> +    pub fn into_raw(self) -> NonNull<T> {
-> +        let ptr = self.ptr;
-> +        // Skip the destructor.
-> +        core::mem::forget(self);
-> +
-> +        ptr
-> +    }
-
-I think this should be a separate patch.
-
->  }
+> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+> index 12f2a0c14d33..07a56bf71160 100644
+> --- a/arch/x86/events/core.c
+> +++ b/arch/x86/events/core.c
+> @@ -112,7 +112,7 @@ u64 __read_mostly hw_cache_extra_regs
+>   * Can only be executed on the CPU where the event is active.
+>   * Returns the delta events processed.
+>   */
+> -u64 x86_perf_event_update(struct perf_event *event)
+> +u64 x86_perf_event_update(struct perf_event *event, u64 *val)
+>  {
+>  	struct hw_perf_event *hwc = &event->hw;
+>  	int shift = 64 - x86_pmu.cntval_bits;
+> @@ -131,7 +131,10 @@ u64 x86_perf_event_update(struct perf_event *event)
+>  	 */
+>  	prev_raw_count = local64_read(&hwc->prev_count);
+>  	do {
+> -		rdpmcl(hwc->event_base_rdpmc, new_raw_count);
+> +		if (!val)
+> +			rdpmcl(hwc->event_base_rdpmc, new_raw_count);
+> +		else
+> +			new_raw_count = *val;
+>  	} while (!local64_try_cmpxchg(&hwc->prev_count,
+>  				      &prev_raw_count, new_raw_count));
 >  
->  impl<T: AlwaysRefCounted> Clone for ARef<T> {
-> 
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20240723-vma-f80119f9fb35
-> 
-> Best regards,
-> -- 
-> Alice Ryhl <aliceryhl@google.com>
-> 
-> 
+
+Does that mean the following is possible?
+
+Two counters: C0 and C1, where C0 is a PEBS counter that also samples
+C1.
+
+  C0: overflow-with-PEBS-assist -> PEBS entry with counter value A
+      (DS buffer threshold not reached)
+
+  C1: overflow -> PMI -> x86_perf_event_update(C1, NULL)
+      rdpmcl reads value 'A+d', and sets prev_raw_count
+
+  C0: more assists, hit DS threshold -> PMI
+      PEBS processing does x86_perf_event_update(C1, A)
+      and sets prev_raw_count *backwards*
+
+How is that sane?
 
