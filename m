@@ -1,143 +1,211 @@
-Return-Path: <linux-kernel+bounces-271410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86576944DD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:18:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44970944DDA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:21:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BF1FB25FE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:18:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55001F24388
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973851A487C;
-	Thu,  1 Aug 2024 14:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B801A487C;
+	Thu,  1 Aug 2024 14:21:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwvhNJSp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dQkaNtkh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HD78aHQF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C660016EB7A;
-	Thu,  1 Aug 2024 14:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B80E16DECD;
+	Thu,  1 Aug 2024 14:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722521925; cv=none; b=Iq2UIiNzduB1ve2ax93RY/rf5AKLjLJfm3onLLkSfo1olIkEuS6BS4HQ9o04XE8PYbHIJ38Asfdr/CTxY9L0bc+asVe9g2yPq0qifq3sWp3RW6KFnQy0pLnymXNx/oXaL25E5Rc/+pZk2NX4aci1r3ANbtRXmBv7WFlXkCQUdbE=
+	t=1722522075; cv=none; b=p17TYEhRBR1FXqeC4BRdV9XXgXn6lIdiKfGsuoiGSOTbkV6C8uAz8YvL7JQit/Pz4l+5NOReC+IIsHWGwmPpAs1lvfbrRT4PTwxLxAzs6L53OhjMgVSmbuk9mryGxL8cf7ZM+1HNriD6hrOZqMSDqCUI9WMhAs64BJ5n8l+H6Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722521925; c=relaxed/simple;
-	bh=puYGDeVzX+toRNj9EO9NrRRwpz9Fykp7F5J1qOScRbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7yVIlQ09yggn26wAOnhary44my7bdcbWRiX0Jy3r/bW2oZD5Pp/NtXFCOz45RRcmWEdUpHdV+KYSo/yMDEedF9hvgd35s7jSMThssU4mW6eMbr8xI0m0Xh5SVsyUbKME3KXUJIzWyv1yokYd8Gz5XbWiebtWV3Zi/X9O4yMRcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwvhNJSp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A1FEC32786;
-	Thu,  1 Aug 2024 14:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722521925;
-	bh=puYGDeVzX+toRNj9EO9NrRRwpz9Fykp7F5J1qOScRbU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uwvhNJSpUBgHZH/tR/pDDK77ENIKcz+f7V7Fux+zulGmeaAF21NZv3g33w0AVqGAd
-	 lzXM9qGOovpsoOI9KGBVDpAnau0gYH9m0pUrpfTpVbDLdPoE8/jO4mODAz+r83tog9
-	 RllGhsRlPN6oNhs2LCd3ccrZ7+zvL2Rw8Ez176A1riX7Gui0T+Z4NWxBCg0K7tQfnQ
-	 1JNhYk+wiAEitEHRNKTGSYHfQMY8vOUtxUhaTzxzlXYeAEceUAJMd2mLxyKQlTFHtJ
-	 m1yt9pxT6CRH5D9xVM2nfshupkm+3SWFvpxMpwv5qxC+nHCvruJijmBVwRDBjAHP33
-	 fswyp2T0Caadg==
-Message-ID: <bb6e21b6-d7b0-43d7-9dc7-7a78a11dfca1@kernel.org>
-Date: Thu, 1 Aug 2024 16:18:34 +0200
+	s=arc-20240116; t=1722522075; c=relaxed/simple;
+	bh=66DldeezUXbnzndN81lPVl07zQL+s3SPThLGy8JIpCU=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OKLwyPi5BLuuRsLMrnfeRkd8aJqhIW0s+YVe9B+Abb+NRdOU1+s3GuLpnG5xGsmv1/+KT0SjzCnRW0r0pffk5Evgxkpz2f0d1EtI0avWzuUHkYPAVrnl7PZzKiolXvR1v3j68zCNY8VbKwHlkHaGhe4XGLEuNP639BsVOh94TOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dQkaNtkh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HD78aHQF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722522069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/rt3z7nmsAy1iVRNu1qoH0jivbksGRZkXgLeIxLHG+Y=;
+	b=dQkaNtkhf+eC8Fsr2vcVE0tQeIUEmTHbEH1szqytac97B46ZHSfycsEpOgV+1ieDS12W3g
+	WlAMOPt9+GaXHu9aOGhqw6ROajxUuGUd1J8ZTCSmbm4qYrjbh1d6L+81Ufdg+FeAsNHVD2
+	rcNRINzkKyHCyfnioGsSeBBeRBq6gVfS2PDySWtr+vQeCV29Qug/nEmBwaPeYtewYjjKL9
+	G7rZYUI+65HLZg0NGfXEsDaLrt57f8PR2PMyO5DhTI9sPsuadbFxPPhLgZx+ezxRUfvCQI
+	T8Nz75pmjGpiYiotuobL/Q6CeOPdzbNCzqWoGbF0JtLnJ5yOM6NAhm30Mi689w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722522069;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/rt3z7nmsAy1iVRNu1qoH0jivbksGRZkXgLeIxLHG+Y=;
+	b=HD78aHQFHPsxsif4t7hY9exPdUNsZ0iOvTiTYitsp3CVzH3SSIvXW/d+Y1n7JZfITkJf7c
+	x1/nCmNpBXqBtjCQ==
+To: lirongqing@baidu.com, seanjc@google.com, kys@microsoft.com,
+ haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clockevents/drivers/i8253: Do not zero timer counter in
+ shutdown
+In-Reply-To: <1675732476-14401-1-git-send-email-lirongqing@baidu.com>
+References: <1675732476-14401-1-git-send-email-lirongqing@baidu.com>
+Date: Thu, 01 Aug 2024 16:21:09 +0200
+Message-ID: <87ttg42uju.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: Add schema for Synopsys
- DW HDMI QP TX IP
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Andy Yan <andy.yan@rock-chips.com>, Alexandre ARNOUD <aarnoud@me.com>,
- Luis de Arquer <ldearquer@gmail.com>
-References: <20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com>
- <20240801-dw-hdmi-qp-tx-v1-1-148f542de5fd@collabora.com>
- <ba957155-7a0d-4c88-8326-a1d4d20e4656@kernel.org>
- <e3ce055d-13c9-4e25-a039-dd4a58c8dd7a@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e3ce055d-13c9-4e25-a039-dd4a58c8dd7a@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 01/08/2024 11:29, Cristian Ciocaltea wrote:
-> On 8/1/24 11:38 AM, Krzysztof Kozlowski wrote:> On 01/08/2024 04:05, Cristian Ciocaltea wrote:
->>> Add dt-binding schema containing the common properties for the Synopsys
->>> DesignWare HDMI QP TX controller.
->>>
->>> Note this is not a full dt-binding specification, but is meant to be
->>> referenced by platform-specific bindings for this IP core.
->>
->> Please provide an user for this binding. Otherwise it is a no-op.
-> 
-> The first user of this is RK3588 HDMI TX Controller [1].
+On Tue, Feb 07 2023 at 09:14, lirongqing@baidu.com wrote:
+> @@ -117,11 +110,6 @@ static int pit_shutdown(struct clock_event_device *evt)
+>  
+>  	outb_p(0x30, PIT_MODE);
+>  
+> -	if (i8253_clear_counter_on_shutdown) {
+> -		outb_p(0, PIT_CH0);
+> -		outb_p(0, PIT_CH0);
+> -	}
+> -
 
-Patchsets do not work like this. Splitting things causes that your other
-patch simply cannot even be tested because you introduced dependency.
+The stop sequence is wrong:
 
-Combine patches so bindings referencing common properties can properly
-be tested by automation.
+    When there is a count in progress, writing a new LSB before the
+    counter has counted down to 0 and rolled over to FFFFh, WILL stop
+    the counter.  However, if the LSB is loaded AFTER the counter has
+    rolled over to FFFFh, so that an MSB now exists in the counter, then
+    the counter WILL NOT stop.
 
-Best regards,
-Krzysztof
+The original i8253 datasheet says:
 
+    1) Write 1st byte stops the current counting
+    2) Write 2nd byte starts the new count
+
+The above does not make sure it actually has not rolled over and it
+obviously is initiating the new count by writing the MSB too. So it does
+not work on real hardware either.
+
+The proper sequence is:
+
+         // Switch to mode 0
+         outb_p(0x30, PIT_MODE);
+         // Load the maximum value to ensure there is no rollover
+         outb_p(0xff, PIT_CH0);
+         // Writing MSB starts the counter from 0xFFFF and clears rollover
+         outb_p(0xff, PIT_CH0);
+         // Stop the counter by writing only LSB
+         outb_p(0xff, PIT_CH0);
+
+That works on real hardware and fails on KVM... So much for the claim
+that KVM follows the spec :)
+
+So yes, the code is buggy, but instead of deleting it, we rather fix it,
+no?
+
+User space test program below.
+
+Thanks,
+
+        tglx
+---
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/io.h>
+
+typedef unsigned char	u8;
+typedef unsigned short	u16;
+
+#define BUILDIO(bwl, bw, type)						\
+static __always_inline void __out##bwl(type value, u16 port)		\
+{									\
+	asm volatile("out" #bwl " %" #bw "0, %w1"			\
+		     : : "a"(value), "Nd"(port));			\
+}									\
+									\
+static __always_inline type __in##bwl(u16 port)				\
+{									\
+	type value;							\
+	asm volatile("in" #bwl " %w1, %" #bw "0"			\
+		     : "=a"(value) : "Nd"(port));			\
+	return value;							\
+}
+
+BUILDIO(b, b, u8)
+
+#define inb __inb
+#define outb __outb
+
+#define PIT_MODE	0x43
+#define PIT_CH0		0x40
+#define PIT_CH2		0x42
+
+static int is8254;
+
+static void dump_pit(void)
+{
+	if (is8254) {
+		// Latch and output counter and status
+		outb(0xC2, PIT_MODE);
+		printf("%02x %02x %02x\n", inb(PIT_CH0), inb(PIT_CH0), inb(PIT_CH0));
+	} else {
+		// Latch and output counter
+		outb(0x0, PIT_MODE);
+		printf("%02x %02x\n", inb(PIT_CH0), inb(PIT_CH0));
+	}
+}
+
+int main(int argc, char* argv[])
+{
+	if (argc > 1)
+		is8254 = 1;
+
+	if (ioperm(0x40, 4, 1) != 0)
+		return 1;
+
+	dump_pit();
+
+	printf("Set periodic\n");
+	outb(0x34, PIT_MODE);
+	outb(0x00, PIT_CH0);
+	outb(0x0F, PIT_CH0);
+
+	dump_pit();
+	usleep(1000);
+	dump_pit();
+
+	printf("Set oneshot\n");
+	outb(0x38, PIT_MODE);
+	outb(0x00, PIT_CH0);
+	outb(0x0F, PIT_CH0);
+
+	dump_pit();
+	usleep(1000);
+	dump_pit();
+
+	printf("Set stop\n");
+	outb(0x30, PIT_MODE);
+	outb(0xFF, PIT_CH0);
+	outb(0xFF, PIT_CH0);
+	outb(0xFF, PIT_CH0);
+
+	dump_pit();
+	usleep(100000);
+	dump_pit();
+	usleep(100000);
+	dump_pit();
+
+	return 0;
+}
 
