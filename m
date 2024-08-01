@@ -1,147 +1,235 @@
-Return-Path: <linux-kernel+bounces-270546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F5D994413D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:34:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B24D944152
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50B711C202CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:34:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7350EB23C25
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93EE51849;
-	Thu,  1 Aug 2024 02:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77569132111;
+	Thu,  1 Aug 2024 02:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="FVItAq7M"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/d59b/a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57263F50F
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 02:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956D91311B6;
+	Thu,  1 Aug 2024 02:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722479655; cv=none; b=HeBW88FVVU9f9YvbmqCVKWCHp1gisn96GzIwUNZEabAJ6qnWT7BOrgzvuCrOgdbfU2thOkV/CuXl4B/n6C8obBUUCmUDrcd/5ao9N1RxS55M9Ar0AahWHYcSv48/M0OA6jV5ro3PClwBb8SKIP9HB/rzXuYiEzgnMAH2sQmOKCo=
+	t=1722479888; cv=none; b=nSIVcSR4f0bykx+BiYZDfyZbkX62RfJE97toWd4+UIfWfE9ubmakA5y+mk9b8uMlnWQmSqmtx87xlxPPZVwPU01jiTerSgDyv+lPKZoWY1iXKNf6x2bmuhkKrZugzdpTXgcYknPd9X6o7XF5xR+LRA7xKJUbK/LiOugkMx7udZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722479655; c=relaxed/simple;
-	bh=i3lFGt9HIu2kCNSU5TswVW9Fb89qstU1DaWWX98FTc4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Mw9b6vzH8EpKOfrJt6tgjOHZGmqyw6rIwLUTqtE4apCq/LCPDEeBOz1w00dzCwTbBLpVoTJM3ZpQbM29QmVCroMZzlitrde/PO7JMHjJemGY5rS/sg0sL0pF4DyRYHAKJJqBYRA3snTFLwmu9wfDSbkjaKMogDxw4TYmPMpKMQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=FVItAq7M; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1722479650;
-	bh=Gu2oyGDEAOsWLaCjYmOjBBoAxVuypoP0T7mtfNUrOe0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=FVItAq7My3D+6l6w5F3oHYc0k/3sDN59MWvfcvkBTPwR3I7RuQEHaarKI6eeQi6BU
-	 VNgqhNcym8wNRNd+j+ELofxI5vnpmW2pKeizWjBFbsfeUP+BnA3tFNV3eV2O50QgJb
-	 sJCABPs3XXemxvf13dvkurBg7v+bRc2Rsl5cbEAVbOKSnlf3E0N26IoLkcJJLyuTsR
-	 le81sMw7Boden5CLaQwdCc/Z0zbRoArk69fLqP5YH420VQyngkAi6BgoTHE6Io31/g
-	 iTE6qiEV+almyOg7vxWGzOudUSS1u33Kt+KlLnlz3YU9V9qNAi6VmiQaee+bNcowiG
-	 ym2XE9POb+QIg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZChf4Bkyz4x6r;
-	Thu,  1 Aug 2024 12:34:10 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Sourabh Jain <sourabhjain@linux.ibm.com>, bhe@redhat.com
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>, Hari Bathini
- <hbathini@linux.ibm.com>, kexec@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-Subject: Re: [PATCH] kexec/crash: no crash update when kexec in progress
-In-Reply-To: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
-References: <20240731152738.194893-1-sourabhjain@linux.ibm.com>
-Date: Thu, 01 Aug 2024 12:34:10 +1000
-Message-ID: <87v80lnf8d.fsf@mail.lhotse>
+	s=arc-20240116; t=1722479888; c=relaxed/simple;
+	bh=5m/hS6cOEhFI+tzG7atgJ9SF0x3k7JCimxBeStgZMeY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mQvUgCgDgafYpqhtGQIQk8UwvyDSCVR/te8eGfVh3Hu44pNsKlaULEX6vFjELenOErKQEF+K9mAtqlBVEmvsptZQJnbwbeerrZCiU+Ey3oVy6WobWhph9v7s9SO0I6Dd/cVeF+pvWiqTxc+C8M65BMtaYwwBr3rJANdPKNLYJQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/d59b/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 201E5C4AF0C;
+	Thu,  1 Aug 2024 02:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722479888;
+	bh=5m/hS6cOEhFI+tzG7atgJ9SF0x3k7JCimxBeStgZMeY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j/d59b/axARJgDPbb+3wdmLqI+usr32xs+vxf2sIoLu1u0UvtC+CSrxmnfPNcgeKx
+	 hiejQ0l1aq33XLYc1UTbFnCooB62Y0g9qnDpT6/m7pCvQhBW23WL7hPut8pf3pRncn
+	 3aaU4c01uTcR71TLUfwn3y0UaMKXMnnS6eh1Cd0ybiQ2OOEakSREjRvw7Gcc2Dj1kQ
+	 +VBaihm2qUIV4XS36ji6+NdxTMRn4HF2SlROMrhqVYmDEYKs2VP9nbytdlLzSSLw5A
+	 J5AysqGCt7/tYXv8gYLGQKNhZP0CPGVF2FBGFQnWD3u2ImrKOpYwGlU7erFaFisBOm
+	 G6414zbld7xFA==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f0277daa5so10104327e87.0;
+        Wed, 31 Jul 2024 19:38:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8BeAi+Ef9AiWnbrYFeWYBqGtV5xCGlRiT7tocgSxT+HDiekEekDGZT2lpvMVEY0uRfDcE3y2WJLpQos7eJogu7aSUOZsr19ooN8yu
+X-Gm-Message-State: AOJu0YzJ1iQwsEPatyOKSFBl6ZDLCyXgVHkqDEjh0CwDWs6Ta+jIkK1v
+	sukgEuM0nD3kfIR610fmbvu1cdscuaJ01N6n71Op1KWDSGxTS/daxq/m9Q+TqhMLmPsI08cZ2Ke
+	bfo20VubfFWLOuKrY8UsYUj9nvCo=
+X-Google-Smtp-Source: AGHT+IH9k7sDeNPu7pkSfvgDn1Ot0CyvDmWqJDJ5PKpjsGLIVMeueT51YqJDeb9pR3JNPDCAjriFXubi9frzsv83u2o=
+X-Received: by 2002:a05:6512:1597:b0:52c:f3fa:86c with SMTP id
+ 2adb3069b0e04-530b61aec7amr605261e87.18.1722479886770; Wed, 31 Jul 2024
+ 19:38:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-5-masahiroy@kernel.org> <20240731-soft-kittiwake-of-election-a1dfa0@lindesnes>
+In-Reply-To: <20240731-soft-kittiwake-of-election-a1dfa0@lindesnes>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 1 Aug 2024 11:37:30 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASR4KtTnP5sq32DNsbauFwMrtw8Q800ZyjCiqetFooYdQ@mail.gmail.com>
+Message-ID: <CAK7LNASR4KtTnP5sq32DNsbauFwMrtw8Q800ZyjCiqetFooYdQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when possible
+To: Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Ben Hutchings <ben@decadent.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Sourabh Jain <sourabhjain@linux.ibm.com> writes:
-> The following errors are observed when kexec is done with SMT=off on
-> powerpc.
+On Thu, Aug 1, 2024 at 6:10=E2=80=AFAM Nicolas Schier <nicolas@fjasle.eu> w=
+rote:
 >
-> [  358.458385] Removing IBM Power 842 compression device
-> [  374.795734] kexec_core: Starting new kernel
-> [  374.795748] kexec: Waking offline cpu 1.
-> [  374.875695] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
-> [  374.935833] kexec: Waking offline cpu 2.
-> [  375.015664] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
-> snip..
-> [  375.515823] kexec: Waking offline cpu 6.
-> [  375.635667] crash hp: kexec_trylock() failed, elfcorehdr may be inaccurate
-> [  375.695836] kexec: Waking offline cpu 7.
+> On Sat, Jul 27, 2024 at 04:42:04PM +0900, Masahiro Yamada wrote:
+> > A long standing issue in the upstream kernel packaging is that the
+> > linux-headers package is not cross-compiled.
+> >
+> > For example, you can cross-build Debian packages for arm64 by running
+> > the following command:
+> >
+> >   $ make ARCH=3Darm64 CROSS_COMPILE=3Daarch64-linux-gnu- bindeb-pkg
+> >
+> > However, the generated linux-headers-*_arm64.deb is useless because the
+> > host programs in it were built for your build machine architecture
+> > (likely x86), not arm64.
+> >
+> > The Debian kernel maintains its own Makefiles to cross-compile host
+> > tools without relying on Kbuild. [1]
+> >
+> > Instead of adding such full custom Makefiles, this commit adds a small
+> > piece of code to cross-compile host programs located under the scripts/
+> > directory.
+> >
+> > A straightforward solution is to pass HOSTCC=3D${CROSS_COMPILE}gcc, but=
+ it
+> > would also cross-compile scripts/basic/fixdep, which needs to be native
+> > to process the if_changed_dep macro. (This approach may work under some
+> > circumstances; you can execute foreign architecture programs with the
+> > help of binfmt_misc because Debian systems enable CONFIG_BINFMT_MISC,
+> > but it would require installing QEMU and libc for that architecture.)
+> >
+> > A trick is to use the external module build (KBUILD_EXTMOD=3D), which
+> > does not rebuild scripts/basic/fixdep. ${CC} needs to be able to link
+> > userspace programs (CONFIG_CC_CAN_LINK=3Dy).
+> >
+> > There are known limitations:
+> >
+> >  - GCC plugins
+> >
+> >    It would possible to rebuild GCC plugins for the target architecture
+> >    by passing HOSTCXX=3D${CROSS_COMPILE}g++ with necessary packages
+> >    installed, but gcc on the installed system emits
+> >    "cc1: error: incompatible gcc/plugin versions". I did not find a
+> >    solution for this because 'gcc' on a foreign architecture is a
+> >    different compiler after all.
+> >
+> >  - objtool and resolve_btfids
+> >
+> >    These are built by the tools build system. They are not covered by
+> >    the current solution.
+> >
+> > I only tested this with Debian, but it should work for other package
+> > systems as well.
+> >
+> > [1]: https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/d=
+ebian/rules.real#L586
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> > ---
+> >
+> >  scripts/package/install-extmod-build | 34 ++++++++++++++++++++++++++++
+> >  1 file changed, 34 insertions(+)
+> >
+> > diff --git a/scripts/package/install-extmod-build b/scripts/package/ins=
+tall-extmod-build
+> > index cc335945dfbc..0b56d3d7b48f 100755
+> > --- a/scripts/package/install-extmod-build
+> > +++ b/scripts/package/install-extmod-build
+> > @@ -43,4 +43,38 @@ mkdir -p "${destdir}"
+> >       fi
+> >  } | tar -c -f - -T - | tar -xf - -C "${destdir}"
+> >
+> > +# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebu=
+ild host
+> > +# programs using ${CC}. This assumes CC=3D${CROSS_COMPILE}gcc, which i=
+s usually
+> > +# the case for package building. It does not cross-compile when CC=3Dc=
+lang.
+> > +#
+> > +# This caters to host programs that participate in Kbuild. objtool and
+> > +# resolve_btfids are out of scope.
+>
+> Just for clarification: Why do you call both "out of scope" here?
+> Because they're not being built by kbuild, or because they will never be
+> needed for building oot kmods?
 
-Are they actually errors though? Do they block the actual kexec from
-happening? Or are they just warnings in dmesg?
 
-Because the fix looks like it could be racy.
+I meant the former.
 
-cheers
 
-> During kexec, the offline CPUs are brought online, which triggers the
-> crash hotplug handler `crash_handle_hotplug_event()` to update the kdump
-> image. Given that the system is on the kexec path and the kexec lock is
-> taken, the `crash_handle_hotplug_event()` function fails to take the
-> same lock to update the kdump image, resulting in the above error
-> messages.
+Debian applies a tricky patch to the tools build system
+in order to cross-compile objtool:
+
+https://salsa.debian.org/kernel-team/linux/-/blob/debian/6.9.9-1/debian/pat=
+ches/debian/fixdep-allow-overriding-hostcc-and-hostld.patch
+
+It is not an elegant solution, though.
+
+
+I still believe the right thing to do is
+converting Makefiles for objtool and resolve_btfids into Kbuild style.
+
+
+objtool and resolve_btfids are necessary for building external modules,
+when CONFIG_OBJTOOL=3Dy and CONFIG_DEBUG_INFO_BTF=3Dy, respectively.
+If these comments are confusing, I can delete them.
+
+
+
+
+
+
+
 >
-> To fix this, let's return from `crash_handle_hotplug_event()` if kexec
-> is in progress.
+> > +if [ "${CC}" !=3D "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
+> > +     echo "Rebuilding host programs with ${CC}..."
+> > +
+> > +     cat <<-'EOF' >  "${destdir}/Kbuild"
+> > +     subdir-y :=3D scripts
+> > +     EOF
+> > +
+> > +     # HOSTCXX is not overridden. The C++ compiler is used to build:
+> > +     # - scripts/kconfig/qconf, which is unneeded for external module =
+builds
+> > +     # - GCC plugins, which will not work on the installed system even=
+ with
+> > +     #   being rebuilt.
+> > +     #
+> > +     # Use the single-target build to avoid the modpost invocation, wh=
+ich
+> > +     # would overwrite Module.symvers.
+> > +     "${MAKE}" HOSTCC=3D"${CC}" KBUILD_EXTMOD=3D"${destdir}" scripts/
+> > +
+> > +     cat <<-'EOF' >  "${destdir}/scripts/Kbuild"
+> > +     subdir-y :=3D basic
+> > +     hostprogs-always-y :=3D mod/modpost
+> > +     mod/modpost-objs :=3D $(addprefix mod/, modpost.o file2alias.o su=
+mversion.o symsearch.o)
+> > +     EOF
+> > +
+> > +     # Run once again to rebuild scripts/basic/ and scripts/mod/modpos=
+t.
+> > +     "${MAKE}" HOSTCC=3D"${CC}" KBUILD_EXTMOD=3D"${destdir}" scripts/
+> > +
+> > +     rm -f "${destdir}/Kbuild" "${destdir}/scripts/Kbuild"
+> > +fi
+> > +
+> >  find "${destdir}" \( -name '.*.cmd' -o -name '*.o' \) -delete
+> > --
+> > 2.43.0
+> >
+> >
 >
-> The same applies to the `crash_check_hotplug_support()` function.
-> Return 0 if kexec is in progress.
+> Thanks for fixing this; looks good to me.
 >
-> Cc: Hari Bathini <hbathini@linux.ibm.com>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: kexec@lists.infradead.org
-> Cc: linuxppc-dev@ozlabs.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: x86@kernel.org
-> Reported-by: Sachin P Bappalige <sachinpb@linux.vnet.ibm.com>
-> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
-> ---
->  kernel/crash_core.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
 >
-> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-> index 63cf89393c6e..d37a16d5c3a1 100644
-> --- a/kernel/crash_core.c
-> +++ b/kernel/crash_core.c
-> @@ -502,6 +502,9 @@ int crash_check_hotplug_support(void)
->  {
->  	int rc = 0;
->  
-> +	if (kexec_in_progress)
-> +		return 0;
-> +
->  	crash_hotplug_lock();
->  	/* Obtain lock while reading crash information */
->  	if (!kexec_trylock()) {
-> @@ -537,6 +540,9 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
->  {
->  	struct kimage *image;
->  
-> +	if (kexec_in_progress)
-> +		return;
-> +
->  	crash_hotplug_lock();
->  	/* Obtain lock while changing crash information */
->  	if (!kexec_trylock()) {
-> -- 
-> 2.45.2
->
->
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
