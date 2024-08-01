@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-271222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D0A944B3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:26:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD2A944B3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2D4F1C22DFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:26:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D78F1C22AED
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216D41A01AD;
-	Thu,  1 Aug 2024 12:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0EB17084F;
+	Thu,  1 Aug 2024 12:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I24DOEja"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hiDNtaYG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1BB17084F
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:26:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CEB1A01D2
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515205; cv=none; b=o7z3HptID6xoOBRUqPIARuRilW4NOUKokqX1E80vX/VdCyYo6r4/jY3ARLMhNir4jb3Uwtj4SvVKyQM7p3y/w2r/no/MFH3J4v5J1WBlUxe87rbZIoe/d2E4RHO05017jInSV/3ub+vQIP2z/nQTysn6eEG0DDIzuk0Voqf9/2I=
+	t=1722515218; cv=none; b=Rr4u/DYBK/Og1qG1zMHOK4IZr3b/y4CbDRpJKmlmE10LNBwY+IgGT5IbiQWMHI51MNemkZtxFgKC6WhBFw7hzzO7H1okEuR7XanIUC4tR25F3HgGPls/FAjzvoLsm6ruBMyqfoBqZli1tKHlfsuR+OEgwJKFGvhPvVMe74VxmUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515205; c=relaxed/simple;
-	bh=tutIS9+Btwjy7UhxN2n6pzzlKIfeT4C2s+joCe5F14M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=r6dWEWvtAP2UAH6q0+o8xEQHjbLSRb41uIS/k9bquOHuCVreLezOQ2INRj2JZboUEsQULGvLfis+uYFClG8InwmQblHO5dTpsSpO6W4BBWfbEruyitmB18OWPS0r8n4EHyE2P4r7Qfyefx9cq4t+0jDTk7BUk9Flqk6j9AMu0KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I24DOEja; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70eaf5874ddso5271428b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:26:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722515203; x=1723120003; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BzW25HOmDgu3PFYeFf46/aEJDlCqCkDxgxEWomrUeUU=;
-        b=I24DOEjakpWIWkZ0PfjTPKy3FNX05DzR+L9k00KnI9dGZz7sL2AB3dwhU0B9D1BJ6x
-         8tfHxB3109TXW1ZgZCEeA4Qa9NiRogV0iR7R8K+D65CVTqhcHiC33EGIZEznq1kKop/y
-         CYJthK28sOE9iPkI/6hB2Em5NGLmYwwwtOeaGPXysA9t4eW08LwyeAUX5EVTN5ySY5ux
-         PdfY5+2wSw/b6PKMcUC3JDh5dJk/qSLPyP+5XqmncOtVcEIsubicKRU9CUiVXv0MdPPj
-         6z3YUsW17xAv0NPIZ3ChPAibTJR+a6rt2znoXK6JWFN4Y6wxpu+cwPnU+eBYLgcrGgT1
-         UJ1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722515203; x=1723120003;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BzW25HOmDgu3PFYeFf46/aEJDlCqCkDxgxEWomrUeUU=;
-        b=adKFWc79OxQf/9szULKvXnzMNM5+6SeOjbE35zl9XEbgCr2Liu8vp0qWWKQMeZ/V8E
-         VVXKY3wJ+NSPHyJNphPhoQImPWEiy1acIfc9Ed96J0/9FVtf/a2e3KhZMjT2tC4m9vHs
-         5zfDozqc7KeGIy2QqfYr7lcBitETiFG8ngtsX3xqWd5WW/qy1NN3PZuM+vNc7abHbmmO
-         vjg5HeBJkQy9UlKqNwsoXScWnJ6kpKiH4TyMl9oKc8wzreFVm/dpSFo6rs16GiG62+r4
-         HPz0INyhNcq47cByFv2sugeJyvNExdPq6v5hYUj2BRCrhjRy8a8Nl5E8+nAEHmY/NGIv
-         pm0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ+NEYJQgLNXRox8FUevHPBECUehk+J5iCeMtEZOK5ih8xpHSRBaYLgaz9Sx1frxFFRfGgBQY6XRXSFuEvfGQAYc/gyY41dEteMFCZ
-X-Gm-Message-State: AOJu0YxUoOc7MLx6EaSlWFKAg0/RkmtX7WPAvhVbxbWwJ6SINdhiheHj
-	1pZ/8bkocPHnyyqrHXZuZJsxwPgOGAwuZp1sGRuqLwp3LuIhuq1V
-X-Google-Smtp-Source: AGHT+IFwicjwGeuVIdR66gMdzrlUa/EEPeQWIAuXIp9B6xqMrPvT9RnTWtob2tlFVuJCWCRAEtPYCw==
-X-Received: by 2002:a05:6a20:7f93:b0:1c4:8dc0:8520 with SMTP id adf61e73a8af0-1c6993eaa83mr136017637.0.1722515203122;
-        Thu, 01 Aug 2024 05:26:43 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:1cb4:cece:78f6:191b:3e2f:ac7d])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead6e0b76sm11407939b3a.36.2024.08.01.05.26.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 05:26:42 -0700 (PDT)
-From: abid-sayyad <sayyad.abid16@gmail.com>
-To: airlied@gmail.com
-Cc: daniel@ffwll.ch,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	abid-sayyad <sayyad.abid16@gmail.com>
-Subject: [PATCH] [PATCH v2] drm: Add documentation for struct drm_pane_size_hint
-Date: Thu,  1 Aug 2024 17:55:53 +0530
-Message-Id: <20240801122552.1151747-1-sayyad.abid16@gmail.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722515218; c=relaxed/simple;
+	bh=XcvLHNXX85VbbLkLPMKUf8AGF87ba8yNC/NMs+hya9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5QE+koCjLTTmDkX70UMaT9G2bIZ8LO8sklcprgDWfv9GCNZq5CbGS2LTmIE3e8rH0SRY0x79srV3/kSQX4K/dvCpp6otvXdd3fnfnE2mA0c3ZDXf4eEL7qBcFhhCFPAkUctSpSCjWZSI6exx88Cx7wcFHEHE2zcAWEcMQXnw74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hiDNtaYG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722515215;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=I556GNNSFTcruYrde4O22fNzoauDeX94dYOFtVAsxjM=;
+	b=hiDNtaYGNmIL6+f/2sTmOmZZA7rhs/t+vvV4eyMlJ9+pSxNfnDdk1AUkIvB9wy4bERI9/F
+	n7iLZG2NQvxVXvrprFBHUdaABfUgQY/0jtRbGx/fmLrHyN6BJTOxfXwuXZLFIpD3vYqYi9
+	KYwGBZbJXe3riynvOre99PUFtKpBrDs=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-649-0_IwIwDlNE20avF-0sBnng-1; Thu,
+ 01 Aug 2024 08:26:51 -0400
+X-MC-Unique: 0_IwIwDlNE20avF-0sBnng-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3ECF219541AE;
+	Thu,  1 Aug 2024 12:26:50 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.183])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id CA5BF195605A;
+	Thu,  1 Aug 2024 12:26:46 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  1 Aug 2024 14:26:49 +0200 (CEST)
+Date: Thu, 1 Aug 2024 14:26:45 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, andrii@kernel.org,
+	mhiramat@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
+ uprobe *
+Message-ID: <20240801122644.GC4038@redhat.com>
+References: <20240729134444.GA12293@redhat.com>
+ <20240729134535.GA12332@redhat.com>
+ <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
+ <ZqtyMTyu3uneHZDJ@krava>
+ <20240801120018.GB4038@redhat.com>
+ <Zqt8UPBC7zAWDMHD@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zqt8UPBC7zAWDMHD@krava>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Fixed warning for the following:
-./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member
-				'width' not described in 'drm_plane_size_hint'
-./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member
-				'height' not described in 'drm_plane_size_hint'
+On 08/01, Jiri Olsa wrote:
+>
+> > Note the additional path_put() in testmod_unregister_uprobe(). Does it need
+> > a separate patch or can it come with 5/5 ?
+>
+> I think it'd be better to have it separately, the test is already
+> released.. so people might want to backport just the fix
 
-Signed-off-by: abid-sayyad <sayyad.abid16@gmail.com>
+OK, I'll rebase and add the patch below to v4. OK?
+
+Oleg.
 ---
-Changes in v2:
-- Adress review feedback regarding indentation in the fix
-- Link to v1
-https://lore.kernel.org/all/20240801102239.572718-1-sayyad.abid16@gmail.com/
 
- include/uapi/drm/drm_mode.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+From f6bf42015048938d826880e3bf4a318bb64a05b4 Mon Sep 17 00:00:00 2001
+From: Oleg Nesterov <oleg@redhat.com>
+Date: Thu, 1 Aug 2024 14:21:47 +0200
+Subject: [PATCH] selftests/bpf: fix uprobe.path leak in bpf_testmod
 
-diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
-index d390011b89b4..9d398335d871 100644
---- a/include/uapi/drm/drm_mode.h
-+++ b/include/uapi/drm/drm_mode.h
-@@ -864,7 +864,13 @@ struct drm_color_lut {
-  * array of struct drm_plane_size_hint.
-  */
- struct drm_plane_size_hint {
-+	/**
-+	 * @width: width of the plane in pixels.
-+	 */
- 	__u16 width;
-+	/**
-+	 * @height: height of the plane in pixels.
-+	 */
- 	__u16 height;
- };
+From: Jiri Olsa <olsajiri@gmail.com>
 
---
-2.39.2
+testmod_unregister_uprobe() forgets to path_put(&uprobe.path).
+
+Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+---
+ tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+index 86babdd6f850..55f6905de743 100644
+--- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
++++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+@@ -477,6 +477,7 @@ static void testmod_unregister_uprobe(void)
+ 	if (uprobe.offset) {
+ 		uprobe_unregister(d_real_inode(uprobe.path.dentry),
+ 				  uprobe.offset, &uprobe.consumer);
++		path_put(&uprobe.path);
+ 		uprobe.offset = 0;
+ 	}
+ 
+-- 
+2.25.1.362.g51ebf55
+
 
 
