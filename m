@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-270810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49691944592
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:36:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36623944581
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02DB1F2350E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:36:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7471C223AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A92158845;
-	Thu,  1 Aug 2024 07:36:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9D5158554;
+	Thu,  1 Aug 2024 07:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="NXyolnfo"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YKPSPer6"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3674158529
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866AE49626;
+	Thu,  1 Aug 2024 07:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722497766; cv=none; b=S+O62KWOTntAPTj25bwTN8bbFMWJX3mngph6ioGn9o7pgY9y5f3SpGalSCKtmz3BWTb/8DsIE4lPQYckr2Yn1oyHaNhU4kOoOkh+0shBaEUoZAfFCkxNtAxcc/aM73e8t5iCYEvWBp+gANUABerXxSsp3R3YePrXceCSLNkkSE8=
+	t=1722497666; cv=none; b=sG4JVWrvnkoar6ERklXCoLX2Avgk5pJnZMM+zqZa/ILin9xjZHzdVdc4t/qAn6zBOQURONVcM/nNW6hDUVxrMSJ/2gjCPRacfpbJs9oq5UcKpO5eDoxKpHFLCflYAvyiZXwyaKJmuneRgb2Fjg3rOi5iMWGzXQnfxW908Ami+mI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722497766; c=relaxed/simple;
-	bh=A4AKCYMcPD//5sUlxAklpQ3ZunN5gmERCZFpy7xQlN0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=WB/fVLH0QOMR5glHvCUI0JhsAwO29QacIZdu87yl8xIgsFXFyV2AGeTUY4i8u6yQp61V5LqCG7hBtZmlySO0hQ6kM6q3RGWV6ZW2pP3PJeKNJbuuIFr+MWT851c/WCmFqcajMib9DA3o01T9Y3pWVGDWEmHOByFDMMVyzdRYpMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=NXyolnfo; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240801073602epoutp0185e79a9fa0e7ec5747d1c47a8aa9d73a~nipafaShl2023520235epoutp01T
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:36:02 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240801073602epoutp0185e79a9fa0e7ec5747d1c47a8aa9d73a~nipafaShl2023520235epoutp01T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722497762;
-	bh=A4AKCYMcPD//5sUlxAklpQ3ZunN5gmERCZFpy7xQlN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=NXyolnfopC12gcl5dsWhuK9oIlt+FalSXZQOUQAil+3CvLSmOD8Kk7anGr+Of4C+b
-	 9bZAc/wC2EhU+CoKVyXapwPip1wD7YWrFf0VyRhaHJlNJxUNnyJlpywuE7eTkHlSIt
-	 audx8EfwwdaIHgxNfmd38nSy5MtyLUxRul1KK5mU=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240801073601epcas5p299094a7085dc9aba03cddbb03f2206ab~nipaIfiCw0569105691epcas5p2J;
-	Thu,  1 Aug 2024 07:36:01 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.182]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WZLNv6g61z4x9Pt; Thu,  1 Aug
-	2024 07:35:59 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C0.7A.09642.FDA3BA66; Thu,  1 Aug 2024 16:35:59 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240801073424epcas5p22be96bbc4dd0fbaaf0b214e37b0a1b02~nin-omxdz0379103791epcas5p2M;
-	Thu,  1 Aug 2024 07:34:24 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240801073424epsmtrp2d2be8c6c85ddf09030b57bae2944d59d~nin-n3mPR1227012270epsmtrp2t;
-	Thu,  1 Aug 2024 07:34:24 +0000 (GMT)
-X-AuditID: b6c32a4b-613ff700000025aa-9b-66ab3adfd790
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	70.33.07567.08A3BA66; Thu,  1 Aug 2024 16:34:24 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240801073423epsmtip1f8aae8f40e46b7af5de0e6c8f3d7458a~nin_ggwu01454014540epsmtip19;
-	Thu,  1 Aug 2024 07:34:23 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7] io_uring: releasing CPU resources when polling
-Date: Thu,  1 Aug 2024 15:34:03 +0800
-Message-Id: <20240801073403.2046300-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240724075929.19647-1-xue01.he@samsung.com>
+	s=arc-20240116; t=1722497666; c=relaxed/simple;
+	bh=0YwQJ5ThTZNAVt0ddJBrt23yhEWYjACirqP1N7cQOXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAR8JQTzmVR79fJOhlh3o8mJD5PNEwgobewL89tJ6nANAcZYQ2+zlYsVM36HL76zEZn2wR+924y6ZXaBZw7ieCJsB8D1K+Z7nUESuLbq69bi85HDlhSI6dnjMdMJUiTmXDzERRf0BS0LyUlOBuRZordyDdR71W4/892MuugCsIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YKPSPer6; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3FC9740E01A2;
+	Thu,  1 Aug 2024 07:34:21 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 9G9iyM70FQaN; Thu,  1 Aug 2024 07:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1722497658; bh=MuU0oaXSSlkWAyimXIs19Uqw04sE/qBAdKEgaL6rnxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YKPSPer62OwiBMhvW11IigfgpFOKM58FX7qtrzXR9N8LOw8/UhtOisYzPKK06ZMgz
+	 0c1NAq4EY54UA7r1R6VJkiHjcDMM0JzuyOKajQi+bKIFRIMk5vA3NLAWcPKrlnDCl5
+	 IsCFaG4VmEzdEeXLHs58ZufSUlOmVTa9lUPhAKuWMcyo9YphPXHVLVA4PLcPZ39zs1
+	 dolyh5hfaa9h+bno0rig15rBHz2KC8o5uuxFgoJh/JTemotfC0+r0Gu0pwEFLOpcVi
+	 SYhOJ4c9rmMtTz+2FzykbnkHYmmf+30srT+CyQMD0l+Xns4xId1cefjeC72W6JJ5Uq
+	 vSM3Hul5BHErDJcv85hqUVtfg54nibJ0oqlAMLUlm7UkCREShjEZh1k8xLGOkXtOot
+	 ZClGa4ceRIszdaJ2i9HfZoH5kqRFx12XmUbuPOlsyjAAVRygaOUg3q7eKyg5Pbe+Rq
+	 cmwSuzgqBmJ1OiAWqzKrpsjo54mzB9eXednZL8b7MvGvy7JxRAqH3Fb7GWHzUcHzwj
+	 7BQJHxgNtMYbskuxUOu5f3lY5CeIvVoXqYZcoMZhEf1H4fIEBU9Gq2VhHCVtC7t1pc
+	 WeFVNvpJE5GmFUiAjpfgfzLsfCckuFsrMY+iQDvlqmbZGEHneMEBONEr3MXYE0gi9T
+	 DOCg5hvDC2uJPjNbfZWyA+5k=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0102240E026B;
+	Thu,  1 Aug 2024 07:34:12 +0000 (UTC)
+Date: Thu, 1 Aug 2024 09:34:06 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: KP Singh <kpsingh@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	paul@paul-moore.com, sfr@canb.auug.org.au
+Subject: Re: [PATCH] init/main.c: Do jump_label_init before
+ early_security_init
+Message-ID: <20240801073406.GAZqs6biPeFEG-0wPF@fat_crate.local>
+References: <20240731213429.2244234-1-kpsingh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdlhTS/e+1eo0g33XjSzmrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliism0yUhNTUosU
-	UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgHYrKZQl5pQChQISi4uV
-	9O1sivJLS1IVMvKLS2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzJt04z1Kwkqli
-	/ZYGtgbG94xdjJwcEgImEntbzjB3MXJxCAnsZpT4ePwHO4TziVFi1/6PUM43Rom95xrZYVr6
-	v8xmgUjsZZSY3beKDcL5wShxaHoH2GA2ASWJ/Vs+gNkiAsIS+ztagTo4OJgFQiRunokAMYUF
-	3CROfbAGMVkEVCWev04FKeYVsJaYcu4T1HXyEje79jOD2JwCVhKXlt5mgagRlDg58wmYzQxU
-	07x1NtgHEgLX2CU6N+5khmh2kfjUNZMJwhaWeHV8C9T9UhKf3+1lg7DzJSZ/Xw+1rEZi3eZ3
-	LBC2tcS/K3ugLtaUWL9LHyIsKzH11DomiL18Er2/n0CN55XYMQ/GVpJYcmQF1EgJid8TFrFC
-	2B4Si/smg60VEuhllFi3TWwCo8IsJO/MQvLOLITNCxiZVzFKphYU56anFpsWGOellsOjODk/
-	dxMjODFqee9gfPTgg94hRiYOxkOMEhzMSiK8QidXpgnxpiRWVqUW5ccXleakFh9iNAUG90Rm
-	KdHkfGBqziuJNzSxNDAxMzMzsTQ2M1QS533dOjdFSCA9sSQ1OzW1ILUIpo+Jg1Oqgak39Mr6
-	L4oH3h5zn9VyOUHjlfHBtc7WlTXO3HNuck6ZxX/3g9uegjdVmdyrXYvv6rhVBveZ/jW0Np+R
-	Yzr7vulGG8WIzHBPL8lJ1w3W7Y3NC3t7J+Jqwen+S/bXZlwOThbinN/lduFfVsqPfbuK1Bw5
-	im1kDdaYBBUxNq4PaZtaFPPP7WxfUt3kxRMed8/gLz9z7vNGSevdeUrXTA29Jt+0KHx38kT2
-	0dIFgWuEz7ttOnjn9uUt3mFbz4k8v34r8q6X7IrtlyYwvkz7/KXpQup6bg+H3dIhOWbLtbe6
-	rTiz2PL6k+0eehaH7ytca+xp/G2ieEFvn0ZVUnr6Yas791bcWaR77NWmfd139Xti35QosRRn
-	JBpqMRcVJwIAwgsMZxUEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFLMWRmVeSWpSXmKPExsWy7bCSnG6D1eo0gz3PxS3mrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliiuGxSUnMyy1KL
-	9O0SuDIm3TjPUrCSqWL9lga2Bsb3jF2MnBwSAiYS/V9ms3QxcnEICexmlLj2fDtUQkJix6M/
-	rBC2sMTKf8/ZIYq+MUp8+bKVGSTBJqAksX/LB7AGEaCi/R2tLCA2s0CYRNeOM0DNHBzCAm4S
-	pz5Yg5gsAqoSz1+nglTwClhLTDn3CWqVvMTNrv1gEzkFrCQuLb0NNkVIwFLi6tTHbBD1ghIn
-	Zz6Bmi4v0bx1NvMERoFZSFKzkKQWMDKtYpRMLSjOTc9NNiwwzEst1ytOzC0uzUvXS87P3cQI
-	Dl4tjR2M9+b/0zvEyMTBeIhRgoNZSYRX6OTKNCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8hjNm
-	pwgJpCeWpGanphakFsFkmTg4pRqYaper7pmjq53tlX71nH6m8MM9x3ze/j1kWb77/LpV0/wb
-	6rmWns18sWSaybJt864q6z7cuNSDgcf1Qe636zlJwo0FnTeSr4h96531ddL1i+tOtHUX7lzT
-	W/nc2Te9/rnp1XBtsb3LeVvY33zc1Wb32Ffgb4VzwuwzP268dngcuSDm+oUfXeWTWuZxFek0
-	nTmqUK1j5PzsUsHe1vtsxjFRacfr95zu15iyRuJP5sLtp6JiTOdNcheLrtyxfduRI6/3lIta
-	6vY23uibatn1c8F5BcOLrX94T+iZnZGrZWnfkhh3adJDt8z6GR+WLOLRSD59XMRcgev96caL
-	lxiucry/s9Tjg+jN4ANvu8Lr8q4u9VJiKc5INNRiLipOBADdNmUuzQIAAA==
-X-CMS-MailID: 20240801073424epcas5p22be96bbc4dd0fbaaf0b214e37b0a1b02
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240801073424epcas5p22be96bbc4dd0fbaaf0b214e37b0a1b02
-References: <20240724075929.19647-1-xue01.he@samsung.com>
-	<CGME20240801073424epcas5p22be96bbc4dd0fbaaf0b214e37b0a1b02@epcas5p2.samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240731213429.2244234-1-kpsingh@kernel.org>
 
-On 24/07/24 7:59AM, hexue wrote:
->This patch add a new hybrid poll at io_uring level, it also set a signal
->"IORING_SETUP_HY_POLL" to application, aim to provide a interface for users
->to enable use new hybrid polling flexibly.
+On Wed, Jul 31, 2024 at 11:34:29PM +0200, KP Singh wrote:
+> LSM indirect calls being are now replaced by static calls, this requires
+> a jumpt_table_init before early_security_init where LSM hooks and their
+> static calls and keys are initialized.
+> 
+> Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
+> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> ---
+>  init/main.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/init/main.c b/init/main.c
+> index 206acdde51f5..5bd45af7a49e 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -922,6 +922,8 @@ void start_kernel(void)
+>  	boot_cpu_init();
+>  	page_address_init();
+>  	pr_notice("%s", linux_banner);
+> +	/* LSM and command line parameters use static keys */
+> +	jump_label_init();
+>  	early_security_init();
+>  	setup_arch(&command_line);
+>  	setup_boot_config();
+> @@ -933,8 +935,6 @@ void start_kernel(void)
+>  	boot_cpu_hotplug_init();
+>  
+>  	pr_notice("Kernel command line: %s\n", saved_command_line);
+> -	/* parameters may set static keys */
+> -	jump_label_init();
+>  	parse_early_param();
+>  	after_dashes = parse_args("Booting kernel",
+>  				  static_command_line, __start___param,
+> -- 
 
-Hi, just a gentle ping. Any coments on this patch?
---
-hexue
+I was gonna be very surprised if you could simply change the boot ordering
+like that and it would simply work. The early boot order is a nightmare so
+without proper audit of what uses which facilities when, you won't be really
+successful, I'd say.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
