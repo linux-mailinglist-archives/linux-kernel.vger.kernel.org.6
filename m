@@ -1,45 +1,54 @@
-Return-Path: <linux-kernel+bounces-270943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743B494476C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:05:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523D794476F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:06:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7652811D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:05:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 080261F2189C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EC516EBF7;
-	Thu,  1 Aug 2024 09:05:36 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED5D16EBF7;
+	Thu,  1 Aug 2024 09:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iZp9GoyW"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06C03D97F;
-	Thu,  1 Aug 2024 09:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B935481DD;
+	Thu,  1 Aug 2024 09:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503136; cv=none; b=bCabkA7NPmxLgKHXdlLEfvGrLyWKzWykXpjs48RnrkjlNWQGtAdrNu7VvEdsQ89tbZFtzscr6iPZx0Uq9RQXbiUJcz4BVpV4z+otu/C4rBwYYN7N5fZNhJuayZPvUvgCd6P9q4SJeXW1DHNaTHg+uNtaCrknJiqop7StJ+qYDC4=
+	t=1722503209; cv=none; b=aDh9798BqlPzSXJ9FQih/Uw/pAcnVADUep0RuUFKf4IWKvrwkvsW1tKOL0AQkulqsxPQ6gEHm2oc7Hf7fsPyiYL5cA8MVCUFFdKuXDkwCuLwp5YXZTbWx5TNk/9GRUF3KE00vZ0dlgY1WZItjZbND+rOSMeW/H16JnkU9cdnKmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503136; c=relaxed/simple;
-	bh=MgekXSOV33uwcZnygUQD9uUFA/ojL3D04dsV2DL5OZY=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kfazttK+W7N8dgjWbH++xS46loAKBVZD3tEc4f+EVUbdPnOg7ss8j0Q/noCU4SE9WxXj8Lu+dQfyC8Rs9jzY9YEv+wHQ7DOKWdV+rfZnaH6CFReaCsmcJZgvj+io88WJ6pNz+Z9N5zIbEO6bGbOa8lr8YmjFCmv4t6m8+WnpDT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4WZNJ434XVz1HFmL;
-	Thu,  1 Aug 2024 17:01:56 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 63AB11A016C;
-	Thu,  1 Aug 2024 17:04:46 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 17:04:45 +0800
-Message-ID: <746dfc27-f880-4bbe-b9bd-c8bb82303ffe@huawei.com>
-Date: Thu, 1 Aug 2024 17:04:44 +0800
+	s=arc-20240116; t=1722503209; c=relaxed/simple;
+	bh=9eAeiRz1Uoe7RhsN2YxOUZbv1JD239rzy7icMS+vujw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=Nq7lmF7VPLlIAEfPd4+ULkkbd4UhtN5nhDL2bK/dXHt39oPpgTFZJE33+kwvw3kin5IH0w5IjHjzVL47dIGg49+HbysHliMgh2AutqsUjlae9QsFxyBrcN8fRn0BQvdJMsqV+L6wDE8rDcRbykHmcPpuDjZdcJFt05kmMz4VmFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iZp9GoyW; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1722503182; x=1723107982; i=markus.elfring@web.de;
+	bh=H1qeNadCSH/lJd7w//ysMiO5jE1nOgWC2onDSyEJdJ8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=iZp9GoyWT3jJtox6YIvkeZ1DRU6J9TbSmM73lTebtLTdpBoMJrQo6V2xAkdkC0lp
+	 jGjXkPqLBDN222/MnLyD2bxaZhs5ofwD5g70dUjGJ/dOOOIGp7pmZ/PGej/zF1sTF
+	 TYd903/VjN5GYBjfNqK5kY0GlkLabuEFuVDEh8O1rDhOgIYjqEjfb6MU3kyqUqlzq
+	 hXn1MuNx/4WUf2t6tsJzwULBgdT3Jv7kTT2OVKR5p6uJZ6/M3pOPm2xZTf9C/HwDv
+	 2jWeSiskEU0YZN9mdaLBzxhDvsdwpUNWLydBcvkCxU00QRLEk4Ccy95ko6ruupGlH
+	 a1Dan+w66fu+ehx1vA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.88.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzCEB-1sLTif1wax-00tFVo; Thu, 01
+ Aug 2024 11:06:22 +0200
+Message-ID: <910f96b4-509d-445e-8749-ee4240849b0b@web.de>
+Date: Thu, 1 Aug 2024 11:06:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,150 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
-	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH net-next 03/10] net: hibmcge: Add mdio and hardware
- configuration supported in this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-4-shaojijie@huawei.com>
- <ba5b8b48-64b7-417d-a000-2e82e242c399@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <ba5b8b48-64b7-417d-a000-2e82e242c399@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+To: James Chiang <cpchiang1@nuvoton.com>, Stanley Chu <yschu@nuvoton.com>,
+ linux-i3c@lists.infradead.org, openbmc@lists.ozlabs.org,
+ devicetree@vger.kernel.org, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Joseph Liu <kwliu@nuvoton.com>,
+ Tomer Maimon <tomer.maimon@nuvoton.com>
+References: <20240801071946.43266-3-yschu@nuvoton.com>
+Subject: Re: [PATCH 2/2] i3c: master: Add Nuvoton npcm845 i3c master driver
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240801071946.43266-3-yschu@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:cv1GejkDpGglUQJHRpjeZ/Lyh4VjytkKH29sJnL6xwtkrklUbmg
+ rz34ZyrkbnO71Fl+Ryg6xj/j/CKo+YKc8nB9JsbQlBwP+xGN3Ni10jJHaORjHx9radPbJE3
+ 9yf1hqqs+QxzxvJV+I3HLqxY7RoFLDlYr8n4dF+JxhyiIIdxc5yYI2bAO3NeLFMMC3pjZYZ
+ RDu5WYRToRIFl4QDeyIhw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:XCX5bElp9yc=;llUWJOUHi/eBMuE2SjC8YPKvOAI
+ WakZfsGMV5d/3NetHrU7cmtG0BIrzsJ7aOKs66jQTvfpZQXBv7CUlunPMSNRhGASBh0QqqQFj
+ wr+wMubfeRkfhr8WwxGf63huYT70qJsY3q3Tm9elbu35fYBheSu8mE9FJUn103vBdJsD3zCLc
+ /TKh5YkYhUtKl0eHhhtDcweQNdf+qMCoQ466OX6WFDhm537HODpgEYX6jV8z7gbc2h1GJzgLz
+ UTlF5B4B+Y4BYMkifZ86y709STwUAmxl+ueoIZsaSTa4q7ePeZMbAGJBa4VoZLF1wXFJwhO7n
+ HgO8nLd8y6wQJ36b+6CGVxnag4MdN7VUhwAQD4JSHRlpzdkP78WQAFTazpIHa2JZxpJAy6mO1
+ qXlax29sjw639DPdPbU8DjhtA8ZNu359/DMML8Rif90+19+LSAtkkg0spxynahhPDAKsojSAb
+ KE0LDaGtCT3UuDxO/hG4dgm93m7bUfxPLtU1/wGMEGUMqqVFVuLt6hhjuYmHiscyu0JDLkq6S
+ DWipx7R1fkmrNXQ6MW878YuFNOrGcW4CwD5Gjz/Nag5Vm0gyB/vBnca+50emg8ghxlMUVoKw8
+ d6YzgP99C/2le87Upi2dfwll3itVTE/VL3Hcci007cz8aSu7KJWlnRaOgvxyCrClCv+EJy2Ff
+ Zw5Jn/IsNks4Yq5+NlOuRcQ8VGLJCkOeXEwS0oWyc9k0KBH2fp+kLx5zibDbwfQRHloKBl26Y
+ QvN4gX97lsNeDjI47iw61zcrfiU2hgshAJfqhON5m14GtYxboNQBURoCRzCWHPampdIz2qC/t
+ mfuD94XnjXMy2pGDoTeWnrdQ==
 
-Thanks for reviewing
+=E2=80=A6
+> +++ b/drivers/i3c/master/npcm845-i3c-master.c
+> @@ -0,0 +1,2364 @@
+=E2=80=A6
+> +static int npcm_i3c_master_probe(struct platform_device *pdev)
+> +{
+=E2=80=A6
+> +	return 0;
+> +
+> +	debugfs_remove_recursive(master->debugfs);
+> +
+> +err_disable_clks:
+=E2=80=A6
 
-on 2024/8/1 8:42, Andrew Lunn wrote:
->> +int hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
->> +{
->> +	if (speed != HBG_PORT_MODE_SGMII_10M &&
->> +	    speed != HBG_PORT_MODE_SGMII_100M &&
->> +	    speed != HBG_PORT_MODE_SGMII_1000M)
->> +		return -EOPNOTSUPP;
->> +
->> +	if (duplex != DUPLEX_FULL && duplex != DUPLEX_HALF)
->> +		return -EOPNOTSUPP;
->> +
->> +	if (speed == HBG_PORT_MODE_SGMII_1000M && duplex == DUPLEX_HALF)
->> +		return -EOPNOTSUPP;
-> If you tell phylib you don't support 1G/Half, this will not happen.
+Please avoid non-reachable code here.
 
-ok, I will delete it in V2
-
->
->> +/* sgmii autoneg always enable */
->> +int hbg_hw_sgmii_autoneg(struct hbg_priv *priv)
->> +{
->> +	wait_time = 0;
->> +	do {
->> +		msleep(HBG_HW_AUTONEG_TIMEOUT_STEP);
->> +		wait_time += HBG_HW_AUTONEG_TIMEOUT_STEP;
->> +
->> +		an_state.bits = hbg_reg_read(priv, HBG_REG_AN_NEG_STATE_ADDR);
->> +		if (an_state.an_done)
->> +			break;
->> +	} while (wait_time < HBG_HW_AUTONEG_TIMEOUT_MS);
-> include/linux/iopoll.h
-
-Thanks for the guide. These macros will simplify the code.
-
->
->> +static const u32 hbg_mode_ability[] = {
->> +	ETHTOOL_LINK_MODE_1000baseT_Full_BIT,
->> +	ETHTOOL_LINK_MODE_100baseT_Full_BIT,
->> +	ETHTOOL_LINK_MODE_100baseT_Half_BIT,
->> +	ETHTOOL_LINK_MODE_10baseT_Full_BIT,
->> +	ETHTOOL_LINK_MODE_10baseT_Half_BIT,
->> +	ETHTOOL_LINK_MODE_Autoneg_BIT,
->> +	ETHTOOL_LINK_MODE_TP_BIT,
->> +};
->> +
->> +static int hbg_mac_init(struct hbg_priv *priv)
->> +{
->> +	struct hbg_mac *mac = &priv->mac;
->> +	u32 i;
->> +
->> +	for (i = 0; i < ARRAY_SIZE(hbg_mode_ability); i++)
->> +		linkmode_set_bit(hbg_mode_ability[i], mac->supported);
-> Humm, odd. Where is this leading...
->
->> +#define HBG_MDIO_FREQUENCE_2_5M		0x1
-> I assume it supports other frequencies. You might want to implement
-> the DT property 'clock-frequency'. Many modern PHY will work faster
-> than 2.5Mhz.
-
-it's a good idea,
-
->
->> +static int hbg_phy_connect(struct hbg_priv *priv)
->> +{
->> +	struct phy_device *phydev = priv->mac.phydev;
->> +	struct hbg_mac *mac = &priv->mac;
->> +	int ret;
->> +
->> +	linkmode_copy(phydev->supported, mac->supported);
->> +	linkmode_copy(phydev->advertising, mac->supported);
-> And here it is. Why? Do you see any other MAC driver doing this?
->
-> What you probably want is:
->
-> phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_100baseT_Half_BIT);
->
-> which is what other MAC drivers do.
-
-Yeah， using phy_remove_link_mode, the hbg_mode_ability[] and linkmode_set_bit
-of the previous code can be removed together.
-
-Thank you.
-
->
->> +
->> +	phy_connect_direct(priv->netdev, mac->phydev, hbg_phy_adjust_link,
->> +			   PHY_INTERFACE_MODE_SGMII);
->> +	ret = devm_add_action_or_reset(&priv->pdev->dev,
->> +				       hbg_phy_disconnect, mac->phydev);
->> +	if (ret)
->> +		return ret;
->> +
->> +	phy_attached_info(phydev);
->> +	return 0;
->> +}
->> +
->> +/* include phy link and mac link */
->> +u32 hbg_get_link_status(struct hbg_priv *priv)
->> +{
->> +	struct phy_device *phydev = priv->mac.phydev;
->> +	int ret;
->> +
->> +	if (!phydev)
->> +		return HBG_LINK_DOWN;
->> +
->> +	phy_read_status(phydev);
->> +	if ((phydev->state != PHY_UP && phydev->state != PHY_RUNNING) ||
->> +	    !phydev->link)
->> +		return HBG_LINK_DOWN;
->> +
->> +	ret = hbg_hw_sgmii_autoneg(priv);
->> +	if (ret)
->> +		return HBG_LINK_DOWN;
->> +
->> +	return HBG_LINK_UP;
->> +}
-> There should not be any need for this. So why do you have it?
-
-I'll move this to another patch where it's more appropriate.
-
->
-> 	Andrew
-
-Thanks, Jijie
-
+Regards,
+Markus
 
