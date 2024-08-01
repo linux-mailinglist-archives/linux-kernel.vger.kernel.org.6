@@ -1,179 +1,136 @@
-Return-Path: <linux-kernel+bounces-271031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0219448B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:46:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB6E9448A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF6E0B22ED6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:41:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA0F1F22904
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A56A170A15;
-	Thu,  1 Aug 2024 09:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FE2170A02;
+	Thu,  1 Aug 2024 09:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="IakteuaK"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="otWyfblC"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8636A163A9B
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44819EEB3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722505304; cv=none; b=VAKznzzhMPROAZZ36BTGC6brIwU1pn1lNoSi6ULlCRgbXkiW8XCvJ3PnVXBdH0h7cT1UlmNAuVednXM89yunMM+16cmuZ88TSHwueuHlI7WsYEqTXas369LnmQ/+KGEgX4nvgHv4Ry+Yg19TPlPF4yxUrtCDtmRvDTyrFFUNHbQ=
+	t=1722505383; cv=none; b=LXvzmjipQwvNgArPdsvTW7FYI03NtEvsrejC00fZbKiAg6q+jcnsN8e8F35mXGlbvncEXVJiwhRkp70CvGV5dh7sY5zyEHFLF0YSRV3zu2IV/WqfQfl/xVg2fH4ZA9GgDLMMvHN4Z+KebJJ7UYRdBhfDEGpXOHGgaeLFWTV7A0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722505304; c=relaxed/simple;
-	bh=v0AVe0r+dwhCKEy6pQ2jOBWb4fsIeIajF8UDcc12wiQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SxcrP+43ArDdA2ZRrCckiZ/pxOUxmO0Go2xLUhbp/oxKgAKs8X7mTvcm/+KU0bblXEpPkRbFZR+EsxarNI6gHJ/es7H6g8nixBDh+qP1T/eVxxeOEMoAsuEpIqO7SVF2vD+OdwZ9Yyt7XLy1oyEkZTCU3WBGBXi/CIdk2AVE7kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=IakteuaK; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1722505298; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ut2mlJa3eT5yCkT86Q9XqP5YYx53IhPFa+rrSTzSnLI=;
-	b=IakteuaKRs5DBUzvO1RUi//xmoAof9+nQAsAVqV48zB4Dtv8xr0wYdfV4JE9KF4Na1MjruYdX8Ux8NAPBbrj4Kul2N0apqssfDxEWBa+zM6o8VVZ4r9Gq8v4uhL+ar0Z8ITatxzVRjCe3hLrC+QQlQ+wQr1x5XQISDSFflRnrq0=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033032019045;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0WBrP6oh_1722505296;
-Received: from 30.97.48.193(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBrP6oh_1722505296)
-          by smtp.aliyun-inc.com;
-          Thu, 01 Aug 2024 17:41:38 +0800
-Message-ID: <2efe4f60-5d4d-4a89-8fbf-5001e013298d@linux.alibaba.com>
-Date: Thu, 1 Aug 2024 17:41:36 +0800
+	s=arc-20240116; t=1722505383; c=relaxed/simple;
+	bh=/fZmHLIz4tMUPuqgb1xpJQYqGHHk61hfOq+SQhBPq18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=baxe7HEa9h4grAI/TtuYoTQIhwrPKEqrQM7CfTgomEobI+gJZnnVfmJQY/9ygfUCjRpz2N5AoZXC+M27yYD9MfiMzQfhOgCDdPmJpqIorckJ665Ww0pjBfISvAkqqYMwLn2F3FLPw9I0MUcYhElTFs/ClSCCSuft1Sw/G1VIPKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=otWyfblC; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428243f928cso22571975e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:43:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722505380; x=1723110180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xH+fBgRnwsthPgYi/oe0eH8RjLbFhVP+C/hiF5wcIOg=;
+        b=otWyfblC6ZuR8tCt72hCEvM66lSu5qS2HPbSI0Lzp6M/yZnqGQa4SSKP/YJOzG+PLt
+         v3NJ/qiIlM8lMo87PEx1Q07pRUGjHUUq3UOFPte9IXDIsppQpN/d7mjnlg94yq9DdKQv
+         3T4X0SOdllZ2l86igLzArPmMenAAVPPHZDS6uddPepjIMB9hvOx6H5hxuTlhWw7oe0+6
+         FNhh07X9pxBw2QVAo73VErDvVIW9TdoNiaFR1ROkOljPo2feOZnql8/rTqLlIH6lDOiF
+         zR7dja0IkSvC5giJBmpMTCLVBz3HXLxNehfZ1LAoi8NvkjijpdE44Eql7lSii94sGlqo
+         /3bA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722505380; x=1723110180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xH+fBgRnwsthPgYi/oe0eH8RjLbFhVP+C/hiF5wcIOg=;
+        b=gGhkLr72VGmygugmclgseaCgvRZwZsLnhDjDNkrznzxvcJp5Jc647fx6nsgHLnyHZJ
+         8oHJNLQ0bib4JYmF4a8jRpknECwUE8hOpW1PmreWrU+0sWH+5tMTaVfPxTqcDSopgpwU
+         wMbQ97DxiFC/+YFFAZjXCTWZbQJClR2cCabd7ucjYfyBOmSnLGxA4bMC95OHlk11KTGY
+         hXQAbhaeTPnyLPcXf+9XzEJdAO/lpf93DnMfCNdEZXR97ewkp9W9f+4yEYW4Mc4E36qb
+         5sIVKfqq2NUSEYGY4NpdnEStCwV040FDfYp1QZcYMePkxSinsMXR4qr+ks/G7nzIV+/Y
+         gBMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtswX8SDi5/zcuAZ640pkgRwqsb/11iUXiUPMxwrr9w0dEQwyWQaI9zvlxWG2ISwoXeKQbUvaw7mlShj105Nyi6EkOqrVQZjr4dWcN
+X-Gm-Message-State: AOJu0YyxNqMSiFWmRXscn2DplN+dTpB6rCrDTSIhmzc3LZMuoSpoDNO6
+	H/oB62bY6NA6oYYPdLr2bLts6/McFBY8H+XMF0WzfbZOHSGN9+DHEKMFTwuUXcftzP8XRodAauH
+	Uw8DlB/sMsh/AOP07lFYqTA7SBgeEnbZbVQN2
+X-Google-Smtp-Source: AGHT+IGNxLdpK9yDQuPbeyIoE//94sKUHY6JfjA9T49ykZfGDutE/O2sKVvnl7fm5s8QibFPdq2rJbE+Sj07FBblOmU=
+X-Received: by 2002:a5d:67cc:0:b0:368:3789:1a2 with SMTP id
+ ffacd0b85a97d-36baacc9cd9mr1270766f8f.21.1722505380296; Thu, 01 Aug 2024
+ 02:43:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] erofs: simplify readdir operation
-To: Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20cbea9c-3b3f-40f7-be01-bd9de52e3134@linux.alibaba.com>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <20cbea9c-3b3f-40f7-be01-bd9de52e3134@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
+ <20240723-linked-list-v3-4-89db92c7dbf4@google.com> <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
+In-Reply-To: <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 1 Aug 2024 11:42:48 +0200
+Message-ID: <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com>
+Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
+	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
+	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 31, 2024 at 8:41=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
+e> wrote:
+>
+> On 23.07.24 10:22, Alice Ryhl wrote:
+> > +/// The prev/next pointers for an item in a linked list.
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// The fields are null if and only if this item is not in a list.
+> > +#[repr(transparent)]
+> > +pub struct ListLinks<const ID: u64 =3D 0> {
+> > +    #[allow(dead_code)]
+> > +    inner: Opaque<ListLinksFields>,
+>
+> Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it is
+> enough and you change this, be aware that `Opaque` is `!Unpin`, so if
+> you intend for `ListLinks` to also be `!Unpin`, then you need a
+> `PhantomPinned`)
 
+I need the `!Unpin` part for aliasing.
 
-On 2024/8/1 11:02, Hongzhen Luo wrote:
->   - Use i_size instead of i_size_read() due to immutable fses;
-> 
->   - Get rid of an unneeded goto since erofs_fill_dentries() also works;
-> 
->   - Remove unnecessary lines.
-> 
-> Signed-off-by: Hongzhen Luo<hongzhen@linux.alibaba.com>
-> ---
+> > +}
+> > +
+> > +// SAFETY: The next/prev fields of a ListLinks can be moved across thr=
+ead boundaries.
+>
+> Why? This is not a justification.
 
+What would you say?
 
-BTW, can you send any "kernel" patch to LKML <linux-kernel@vger.kernel.org>
-too?  Also you'd better to use "scripts/get_maintainers.pl".
+> > +unsafe impl<const ID: u64> Send for ListLinks<ID> {}
+> > +// SAFETY: The type is opaque so immutable references to a ListLinks a=
+re useless. Therefore, it's
+> > +// okay to have immutable access to a ListLinks from several threads a=
+t once.
+>
+> You don't need to argue via `Opaque`, the type doesn't expose any
+> `&self` functions, so there are no functions to consider.
 
+I'm not arguing via the `Opaque` type. I'm just using "opaque" as a
+normal english word with its normal meaning.
 
->   fs/erofs/dir.c      | 35 ++++++++++++-----------------------
->   fs/erofs/internal.h |  2 +-
->   2 files changed, 13 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
-> index 2193a6710c8f..c3b90abdee37 100644
-> --- a/fs/erofs/dir.c
-> +++ b/fs/erofs/dir.c
-> @@ -8,19 +8,15 @@
-> 
->   static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
->                      void *dentry_blk, struct erofs_dirent *de,
-> -                   unsigned int nameoff, unsigned int maxsize)
-> +                   unsigned int nameoff0, unsigned int maxsize)
->   {
-> -    const struct erofs_dirent *end = dentry_blk + nameoff;
-> +    const struct erofs_dirent *end = dentry_blk + nameoff0;
-> 
->       while (de < end) {
-> -        const char *de_name;
-> +        unsigned char d_type = fs_ftype_to_dtype(de->file_type);
-> +        unsigned int nameoff = le16_to_cpu(de->nameoff);
-> +        const char *de_name = (char *)dentry_blk + nameoff;
->           unsigned int de_namelen;
-> -        unsigned char d_type;
-> -
-> -        d_type = fs_ftype_to_dtype(de->file_type);
-> -
-> -        nameoff = le16_to_cpu(de->nameoff);
-> -        de_name = (char *)dentry_blk + nameoff;
-> 
->           /* the last dirent in the block? */
->           if (de + 1 >= end)
-> @@ -52,21 +48,20 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
->       struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
->       struct super_block *sb = dir->i_sb;
->       unsigned long bsz = sb->s_blocksize;
-> -    const size_t dirsize = i_size_read(dir);
-> -    unsigned int i = erofs_blknr(sb, ctx->pos);
->       unsigned int ofs = erofs_blkoff(sb, ctx->pos);
->       int err = 0;
->       bool initial = true;
-> 
->       buf.mapping = dir->i_mapping;
-> -    while (ctx->pos < dirsize) {
-> +    while (ctx->pos < dir->i_size) {
-> +        erofs_off_t dbstart = ctx->pos - ofs;
->           struct erofs_dirent *de;
->           unsigned int nameoff, maxsize;
-> 
-> -        de = erofs_bread(&buf, erofs_pos(sb, i), EROFS_KMAP);
-> +        de = erofs_bread(&buf, dbstart, EROFS_KMAP);
->           if (IS_ERR(de)) {
->               erofs_err(sb, "fail to readdir of logical block %u of nid %llu",
-> -                  i, EROFS_I(dir)->nid);
-> +                  erofs_blknr(sb, dbstart), EROFS_I(dir)->nid);
->               err = PTR_ERR(de);
->               break;
->           }
-> @@ -79,25 +74,19 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
->               break;
->           }
-> 
-> -        maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, bsz);
-> -
-> +        maxsize = min_t(unsigned int, dir->i_size - dbstart, bsz);
->           /* search dirents at the arbitrary position */
->           if (initial) {
->               initial = false;
-> -
->               ofs = roundup(ofs, sizeof(struct erofs_dirent));
-> -            ctx->pos = erofs_pos(sb, i) + ofs;
-> -            if (ofs >= nameoff)
-> -                goto skip_this;
-> +            ctx->pos = dbstart + ofs;
->           }
-> 
->           err = erofs_fill_dentries(dir, ctx, de, (void *)de + ofs,
->                         nameoff, maxsize);
->           if (err)
->               break;
-> -skip_this:
-> -        ctx->pos = erofs_pos(sb, i) + maxsize;
-> -        ++i;
-> +        ctx->pos = dbstart + maxsize;
->           ofs = 0;
->       }
->       erofs_put_metabuf(&buf);
-> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-> index 736607675396..45dc15ebd870 100644
-> --- a/fs/erofs/internal.h
-> +++ b/fs/erofs/internal.h
-> @@ -220,7 +220,7 @@ struct erofs_buf {
->   };
->   #define __EROFS_BUF_INITIALIZER    ((struct erofs_buf){ .page = NULL })
-> 
-> -#define erofs_blknr(sb, addr)    ((addr) >> (sb)->s_blocksize_bits)
-> +#define erofs_blknr(sb, addr)    ((erofs_blk_t)((addr) >> (sb)->s_blocksize_bits))
->   #define erofs_blkoff(sb, addr)    ((addr) & ((sb)->s_blocksize - 1))
->   #define erofs_pos(sb, blk)    ((erofs_off_t)(blk) << (sb)->s_blocksize_bits)
->   #define erofs_iblks(i)    (round_up((i)->i_size, i_blocksize(i)) >> (i)->i_blkbits)
-> -- 2.43.5
+Alice
 
