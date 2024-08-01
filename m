@@ -1,266 +1,86 @@
-Return-Path: <linux-kernel+bounces-271482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 733A2944ED1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:11:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CC8944ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C56CAB243D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:11:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F5A6B239E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9356F3A1DA;
-	Thu,  1 Aug 2024 15:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="Qvwtcq5F"
-Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B065213C3CD;
+	Thu,  1 Aug 2024 15:11:08 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1B413B5A5
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5E822064
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525081; cv=none; b=fejzP4qORwU0X3KaEFivS9VmoL3rsLoCADwXxJmaMBDz6DgoIWjmC2AoXBiSc0j2zGyK1gPMQFD9HQ2pQN4utpv+28Nk3Oz6ZufxlEDaCvu9UAqK+NeuBx2U4Zo1TeJJg2IwIl63NkW6sKAK9LRq5sDsO8sw3yoRjXBcNZBsOFo=
+	t=1722525068; cv=none; b=C8ibB3oZa5qLjg93ejaV2Csn6IabqHqar/zSCNaRoh7lKBoLN7z26yDEoafojvSzQsvXPotNvUBdDT9tdB1fEuXv6iV9GhO9WC2L2qqZR0sZxEeB7OTI9F0XSW0EnQlS8O0crb54NXUQlCzXLCOTSXqT6fxG/bRrPMSpfqSp0nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525081; c=relaxed/simple;
-	bh=po4KKyWk2XPjGMJDoL8LvhzcBLOhc3qdZPdYG13W3R8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GxsEPrVVodN5xm1/XW6F1pZ8ZG+XBZMOnWIByy5tM3Y5AovEEzutfE/iqLamdcwx1du7n5S41h5naQpcYhpCAm+JeXBwThcXs9gw8twigIDl+ywXpGFDf1URQFqGCfYYLuGG6QZNwWjMCyaUrlpXYVH5AsMoHE8QqXJL8lLqixs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=Qvwtcq5F; arc=none smtp.client-ip=185.70.40.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
-	s=protonmail; t=1722525068; x=1722784268;
-	bh=VIr0D/xjfsfSnd+r7NPz1sStBC+cKDUSfeuSBTUQoN8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Qvwtcq5FzFDHUu2fL96i6t5o3tNF06p1WPO4RbOiuTWn7mQ0TQEQ4IiSP0L7PJ1Uf
-	 rlq+8il6Jz7tbWdPORjcUqtK8H3iuI/CykxIF4Dk3IVlCnHK7QbYukiqyO5MlZ1MEd
-	 mRxFWbWUu03GkFr92J9ncwYe38sYsaq4mablMrxVApdunCU0fq+4jLLFrcyAjpAz0y
-	 FbxSyyDmWf00tPoZErzVOZzCyDe+MyZVCVUHDDz+mGYxsx4HxufRuJerDCDvdthO8q
-	 PmKNilAVpH2gD+lCf6KV9G+hczxn03JmrrVf3ML1n4x+BpKCcOhjrrqNet5Oq6XraH
-	 faYnVTZD+lMig==
-Date: Thu, 01 Aug 2024 15:11:04 +0000
-To: Benno Lossin <benno.lossin@proton.me>
-From: Andreas Hindborg <nmi@metaspace.dk>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-Message-ID: <874j84nurn.fsf@metaspace.dk>
-In-Reply-To: <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me>
-References: <20240705111455.142790-1-nmi@metaspace.dk> <2838cf2e-936c-45de-bb19-af9da66fbe00@proton.me> <87plqso50o.fsf@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me> <878qxgnyzd.fsf@metaspace.dk> <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me>
-Feedback-ID: 113830118:user:proton
-X-Pm-Message-ID: 4f6c9e89d02fd7d4c6ef2a1a9b1d2f162195b1c2
+	s=arc-20240116; t=1722525068; c=relaxed/simple;
+	bh=X0gV25enG43TJIbZzQE+1PQuve2gQDaP/sVqtao+vkQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CHh53a2Ls3fsvPfYRYIeRqIrDSIG356QXm5ql644eSP8UsejKYX10yLMd8/0P5PJo6q80/wPOeEm4+JWB4dA6sjKsekl/a+o9QokonvLlkKOWUPZW7K18Yso7IJRUtNR5JfJgNtKfHVYC38ThFHKWFSsm6gP9QTo2LGCd/KbnhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f86fc9fdaso1027917039f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 08:11:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722525066; x=1723129866;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CnQz1ISpSV5mSTinLI0vXUTO6lR97It81nLS1lNoxLM=;
+        b=UIn3/UvI10r5l19IR8jgudZy7r2KS+k+xWPDc8wMr6NjszP78R/nhFDvRat1lWCVsW
+         3NgBq5XUGtWYEtUHXsQixoNQhnHzX3xR+gVAoaUtnwRzsB36ucTS+JfCyvPdedEOeBML
+         7P9nX6JAKkfeXMCkUFR2PHxptGnIBvwHhibVYRnhqcunV+ddtH5P52jin3A2qV8RSqQr
+         Nh+1kQk9MvZIM6Ej8vifx1hpTeC6MofabfPmwpKQtyG7PqM8JCFAtK0FGTRDAjWGki9k
+         gZiBFIX3SugTPXzYiJm/1tlFHhij65RWjCy+JVzt9Kciy0zBAVgycLpG8bPE8zPP9Gm6
+         fQIw==
+X-Gm-Message-State: AOJu0YwjhuJjhwn+ecshw5tInO6lQ0zOHCZRrJlrZmOlTLSP73V3CVZ9
+	+4EHQfXa0VkPOtQnLf2lzvHyYvlrlXdzzkkL6vP/kFI2TrFJ/SWYa3xA+HZK5Lnbgdd1rZ6HBMg
+	2XfAguojs6hnEJJ7BkVTP4u+xQXdl8CBLIMN7+/i2WHlqVtSG0tMR64k=
+X-Google-Smtp-Source: AGHT+IEK2e6laXFKINXJWRxNPtSkXx4YZz7LiFK2NxUMW+jzfSBP3q3B1528OBso/TiCzof3wSN0tyodKZfiYSGVfXcCVadmdf47
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6602:2cc9:b0:7fb:ff2b:5116 with SMTP id
+ ca18e2360f4ac-81fd43edd24mr1616239f.4.1722525065939; Thu, 01 Aug 2024
+ 08:11:05 -0700 (PDT)
+Date: Thu, 01 Aug 2024 08:11:05 -0700
+In-Reply-To: <20240801143944.78059-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ac1d11061ea09e68@google.com>
+Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hello,
 
-> On 01.08.24 15:40, Andreas Hindborg wrote:
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>> On 01.08.24 13:29, Andreas Hindborg wrote:
->>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>> On 05.07.24 13:15, Andreas Hindborg wrote:
->>>>>> +
->>>>>> +/// Types that can be used for module parameters.
->>>>>> +///
->>>>>> +/// Note that displaying the type in `sysfs` will fail if
->>>>>> +/// [`core::str::from_utf8`] (as implemented through the [`core::fm=
-t::Display`]
->>>>>> +/// trait) writes more than [`PAGE_SIZE`] bytes (including an addit=
-ional null
->>>>>> +/// terminator).
->>>>>> +///
->>>>>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
->>>>>> +pub trait ModuleParam: core::fmt::Display + core::marker::Sized {
->>>>>> +    /// The `ModuleParam` will be used by the kernel module through=
- this type.
->>>>>> +    ///
->>>>>> +    /// This may differ from `Self` if, for example, `Self` needs t=
-o track
->>>>>> +    /// ownership without exposing it or allocate extra space for o=
-ther possible
->>>>>> +    /// parameter values. This is required to support string parame=
-ters in the
->>>>>> +    /// future.
->>>>>> +    type Value: ?Sized;
->>>>>> +
->>>>>> +    /// Whether the parameter is allowed to be set without an argum=
-ent.
->>>>>> +    ///
->>>>>> +    /// Setting this to `true` allows the parameter to be passed wi=
-thout an
->>>>>> +    /// argument (e.g. just `module.param` instead of `module.param=
-=3Dfoo`).
->>>>>> +    const NOARG_ALLOWED: bool;
->>>>>
->>>>> I think, there is a better way of doing this. Instead of this bool, w=
-e
->>>>> do the following:
->>>>> 1. have a `const DEFAULT: Option<Self>`
->>>>> 2. change the type of the argument of `try_from_param_arg` to
->>>>>    `&'static [u8]`
->>>>>
->>>>> That way we don't have the weird behavior of `try_from_param_arg` tha=
-t
->>>>> for params that don't have a default value.
->>>>
->>>> Since we have no parameter types for which `NOARG_ALLOWED` is true in
->>>> this patch set, it is effectively dead code. I will remove it.
->>>
->>> Hmm what parameters actually are optional? I looked at the old rust
->>> branch and only `bool` is marked as optional. Are there others?
->>>
->>> If it is used commonly for custom parameters (I could imagine that Rust
->>> modules have enums as parameters and specifying nothing could mean the
->>> default value), then it might be a good idea to just include it now.
->>> (otherwise we might forget the design later)
->>=20
->> As far as I can tell from the C code, all parameters are able to have
->> the `NOARG` flag set. We get a null pointer in the callback in that
->> case.
->>=20
->> If we want to handle this now, we could drop the `default` field
->> in the Rust module macro. There is no equivalent in the C macros.
->> And then use an `Option<Option<_>>` to represent the value. `None` would
->> be an unset parameter. `Some(None)` would be a parameter without a
->> value. `Some(Some(_))` would be a set parameter with a value. We could
->> probably fix the types so that only parameters with the `NOARG` flag use
->> the double option, others use a single option.
->
-> What did you think of my approach that I detailed above? I would like to
-> avoid `Option<Option<_>>` if we can.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-How would you represent the case when the parameter is passed without a
-value and a default is given in `module!`?
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
 
-I think we need to drop the default value if we adopt the arg without
-value scheme.
+Tested on:
 
->
->> Or we could just not adopt this feature in the Rust abstractions.
->
-> Depends on how common this is and if people need to use it. I think that
-> what I proposed above isn't that complex, so it should be easy to
-> implement.
+commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1121afad980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12f6f94b980000
 
-Rust modules would just force people to add "my_module.param=3D1" instead
-of just "my_module.param". I think that is reasonable.
-
->
->>>>>> +                    param_type.to_string(),
->>>>>> +                    param_ops_path(&param_type).to_string(),
->>>>>> +                );
->>>>>> +
->>>>>> +                self.emit_param("parmtype", &param_name, &param_ker=
-nel_type);
->>>>>
->>>>> Is the spelling intentional? "parmtype"?
->>>>
->>>> This is intentional. I don't think the kernel is ever parsing this, bu=
-t
->>>> it is parsed by the `modinfo` tool.
->>>
->>> Hmm, why is it not `paramtype`? Does that conflict with something?
->>=20
->> You would have to take that up with the maintainer(s) of the `modinfo`
->> tool. The name is externally dictated [1].
->
-> Thanks for the pointer that's what I wanted to know (is it given from
-> somewhere else? or is it a name that we came up with), then it's fine :)
->
->>>>>> +                            // Note: when we enable r/w parameters,=
- we need to lock here.
->>>>>> +
->>>>>> +                            // SAFETY: Parameters do not need to be=
- locked because they are
->>>>>> +                            // read only or sysfs is not enabled.
->>>>>> +                            unsafe {{
->>>>>> +                                <{param_type_internal} as kernel::m=
-odule_param::ModuleParam>::value(
->>>>>> +                                    &__{name}_{param_name}_value
->>>>>> +                                )
->>>>>> +                            }}
->>>>>> +                        }}
->>>>>> +                    ",
->>>>>> +                    name =3D info.name,
->>>>>> +                    param_name =3D param_name,
->>>>>> +                    param_type_internal =3D param_type_internal,
->>>>>> +                );
->>>>>> +
->>>>>> +                let kparam =3D format!(
->>>>>> +                    "
->>>>>> +                    kernel::bindings::kernel_param__bindgen_ty_1 {{
->>>>>> +                        // SAFETY: Access through the resulting poi=
-nter is
->>>>>> +                        // serialized by C side and only happens be=
-fore module
->>>>>> +                        // `init` or after module `drop` is called.
->>>>>> +                        arg: unsafe {{ &__{name}_{param_name}_value=
- }}
->>>>>> +                            as *const _ as *mut core::ffi::c_void,
->>>>>
->>>>> Here you should use `addr_of[_mut]!` instead of taking a reference.
->>>>
->>>> This is a static initializer, so it would be evaluated in const contex=
-t.
->>>> At that time, this is going to be the only reference to
->>>> `&__{name}_{param_name}_value` which would be const. So it should be
->>>> fine?
->>>
->>> When compiling this [1] with a sufficiently new Rust version, you will
->>> get an error:
->>>
->>>     warning: creating a shared reference to mutable static is discourag=
-ed
->>>      --> src/main.rs:4:22
->>>       |
->>>     4 |     let x =3D unsafe { &foo };
->>>       |                      ^^^^ shared reference to mutable static
->>>       |
->>>       =3D note: for more information, see issue #114447 <https://github=
-.com/rust-lang/rust/issues/114447>
->>>       =3D note: this will be a hard error in the 2024 edition
->>>       =3D note: this shared reference has lifetime `'static`, but if th=
-e static ever gets mutated, or a mutable reference is created, then any fur=
-ther use of this shared reference is Undefined Behavior
->>>       =3D note: `#[warn(static_mut_refs)]` on by default
->>>     help: use `addr_of!` instead to create a raw pointer
->>>       |
->>>     4 |     let x =3D unsafe { addr_of!(foo) };
->>>       |                      ~~~~~~~~~~~~~
->>>
->>> [1]: https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=
-=3D2021&gist=3Dc914a438938be6f5fc643ee277efa1d1
->>>
->>> So I think we should start using `addr_of!` for mutable static now.
->>=20
->> Oh. Thanks for the pointer.
->>=20
->> Hmm, `addr_of_mut!` still requires the unsafe block. Hopefully that goes
->> away as well with the feature you linked as well.
->
-> I think that will take some time until it is gone.
->
->> This also requires `const_mut_refs`, but as I recall that is going to be
->> stabilized soon.
->
-> That should only be needed if you need `addr_of_mut!`, but IIUC, you
-> only need `addr_of!`, right?
-
-The pointer we create here is the one passed to `free` in
-module_param.rs, so it will eventually be used as `&mut T`.
-
-
-Best regards,
-Andreas
-
-
+Note: testing is done by a robot and is best-effort only.
 
