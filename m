@@ -1,81 +1,49 @@
-Return-Path: <linux-kernel+bounces-271570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEECE94502E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E3C945036
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:10:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64241F21F64
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:10:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4901B1C21102
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:10:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF4BB1B372C;
-	Thu,  1 Aug 2024 16:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E792E1B4C30;
+	Thu,  1 Aug 2024 16:10:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQSSnFX8"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E9ZLEHG+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A2413D2B7;
-	Thu,  1 Aug 2024 16:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 253A113D2B7;
+	Thu,  1 Aug 2024 16:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528614; cv=none; b=AS/nOEszG7coGcCRJqIJYS8Syc5U27gI2ij9VhbR650aG/ACgemeZ1NGwh2zbYsg4liDbmDXivsHJj8lf93oHc6+OayxyKM6mkpPTZPAe0dtqXc7ZQ2eQfcN9yRabwlL+l6DzZD0uYQqXdzsfAjTZSxvduFM7XAPVf+Kwa5eZg8=
+	t=1722528634; cv=none; b=MYzsYqmXbzTTznfrObzibmuaT3gFDwIy/bxvB46CrvwMH7xV3XhCoEznArQuO3moX/goGoVteh+vrVio140Ig/Tcwtw17ZT35GETMF0wiA9xWuv+Vw4lge80ewAEpvioT8gCE6G4CTK/KSYTZXttDeVQOcjpz4kcw9rvX4GhSr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528614; c=relaxed/simple;
-	bh=4pChm78yzUZYkBODR25icmBnQyjSdqC0ovXtf4wASkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=egBJu+a99JdwcJ48VLzb2kpxbImmAJlZN14WWYlMcg3Cra6nQl+pcdLi5r+nY3LpK1e8tl6pS24vLJhMPYT3z/ppzahkexujR42Bn4TjKuZWACsJWf7mLt3KrIhN2fkHKOypX7Vl35BjylUbCeyCf4R28ZI76LHsuCJiINlzdUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQSSnFX8; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so89916691fa.1;
-        Thu, 01 Aug 2024 09:10:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722528610; x=1723133410; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bSqxnB1qj3oa3BzlEabSl4i4FnXyObTkkpAcKedzajw=;
-        b=JQSSnFX8tkEklThQD+jbJtEG0CRXEa8S7s6uY+FW90VSFfpsyEOLDSHpH+vUa8DoO9
-         cGoGLRSN3adQWXXRr/m9ng9xnXVxcAmO8YyeWl3Lqz6NCUb6zuHdX4MYkO/HjuqsUE34
-         svRpJAgf8Bju2qcLZaG8Cn7fN2Ip72k2i9QGyEF8domYijxhSNlcK7FxNbTnQOjj0k6B
-         CciS47HXsAvJSUuryyT7g53a1SqjhfMDOGbuWu4zwqHZp/zadz+HiDPfJTvwh2sO5Prv
-         GUQvCY3grniJpigYgI4Kdnzsi1c+93oCy/neouDWNyfoffxO5UHOC8kdvZMvd/azGClU
-         k86A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722528610; x=1723133410;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bSqxnB1qj3oa3BzlEabSl4i4FnXyObTkkpAcKedzajw=;
-        b=pWMuvID5o4PMeIVttZ2912dQLJ1hs6qCLGVnz5/8ENnhysvCD21dwOZzS7UGfVu9HC
-         WP1PaDlPXPdMe/1CiLZ06AZ0zX6cKXoZyQUWz5eFkqyLMQkKiaSoErCVl2lOJfeD9WRF
-         mjVmh1gvatiM1KOblaX5KvGOMxHvgbz39653of37Mau88VjLHtLDhjhMubmGAiuWJo8c
-         KhUHLnYPzCHwGOlk1gNkzNROmSstW4rvSWC1PZgh/G3B+nb2IAR2aZzniGdetOI0Xe5f
-         vDiIyclza6Y7ZfNBFEUXcxMkqF2IpY5eTSEZHsfifeugaL949/Lsu5ypK/ZMNgXU5R5k
-         x3KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5YFBYrG2LHRfzMkkhlagadnUB4L0dsLhW5/vs/d+7TY4XlFm3uKyZfKpCo5gAsceK7wMoiKtIyp+lk8scmK8HdY+WMiOcjerH1Is952Rcli5mQomst029gc5Tn2JMqG/mjzGPpw0iog==
-X-Gm-Message-State: AOJu0YzvMUuKy6/GX8BTMGo69I3rTJNFdoZlZ5QECZJG+2XZ+zTuy/uw
-	6Vz84r8LZqmtcnX2tSg8tlvQDW573LU15NWnsSrrqJVCk3skirFP+izDsDkr
-X-Google-Smtp-Source: AGHT+IEbew2cwVmwwv6Avkf3QcG+viNoQjIS6yMKDzwv225YfGUt3hJqGwAJeQOTpTAhbjViqmLdMQ==
-X-Received: by 2002:a2e:b048:0:b0:2ef:2b38:8796 with SMTP id 38308e7fff4ca-2f15ab03fcbmr6220731fa.32.1722528609821;
-        Thu, 01 Aug 2024 09:10:09 -0700 (PDT)
-Received: from alessandro-pc.station (net-37-119-36-202.cust.vodafonedsl.it. [37.119.36.202])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e7d615sm1802005e9.29.2024.08.01.09.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:10:09 -0700 (PDT)
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	skhan@linuxfoundation.org
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] dt-bindings: edac: Add Altera SOCFPGA SDRAM EDAC binding
-Date: Thu,  1 Aug 2024 18:10:02 +0200
-Message-ID: <20240801161005.120111-1-alessandro.zanni87@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722528634; c=relaxed/simple;
+	bh=SKNVY1pGpUiuxHoYtnVcTNVtUPGQji5HRvtNZEn9TR0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pCskuTyrSfwliO1bZWO1nwa4vxfHaLRjt48ZmhencXykrjm21DBDQx9I/2yX51B0B5BM2g3AzhUAzYayY5xNWJkGjYsTwmSXUmtonOZNPWkcHq+GFWb1rEW4jDo0pFYJQD90nVvmRCCQO33QyK36MQMk2hTXC9pYqmfJ9lg7qQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E9ZLEHG+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B19BCC4AF0E;
+	Thu,  1 Aug 2024 16:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722528633;
+	bh=SKNVY1pGpUiuxHoYtnVcTNVtUPGQji5HRvtNZEn9TR0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=E9ZLEHG+nKAzwqcbL3U/mEhcOfJ2msFQGubiZHw2K/cIMgIV8i4SLzmFV05DK2w56
+	 ql8gnZMmVo+7xAO6xt4mu7o75wN9w6bGtNNWNeauOf4ILfKcBj/H/T6lHIU4kC5Kc+
+	 Lbz1R/237laOyuCR+ONiNAIpxT6G2EcSO/fFEvm0tjNOZtbkR0+PMuFB0BxToGCda6
+	 qUEXgHkaX2b02l6sJKCuclZJ9GclS+bUZEmOwtykTrCejamaQYPkuElBzZcwflCZxG
+	 /Dt3RiLF2/8nkyTYiyzSfvoyG7VoCpmBSY5pPdxhzA3b9RfLc+xDtLxmlybqIOmRGM
+	 d3rd707HnI6CA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 9C92FC3274E;
+	Thu,  1 Aug 2024 16:10:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,93 +51,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v3] net: ethernet: mtk_eth_soc: drop clocks unused
+ by Ethernet driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172252863363.25785.16861658663358543639.git-patchwork-notify@kernel.org>
+Date: Thu, 01 Aug 2024 16:10:33 +0000
+References: <b5faaf69b5c6e3e155c64af03706c3c423c6a1c9.1722335682.git.daniel@makrotopia.org>
+In-Reply-To: <b5faaf69b5c6e3e155c64af03706c3c423c6a1c9.1722335682.git.daniel@makrotopia.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: nbd@nbd.name, sean.wang@mediatek.com, Mark-MC.Lee@mediatek.com,
+ lorenzo@kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, matthias.bgg@gmail.com,
+ angelogioacchino.delregno@collabora.com, andrew@lunn.ch,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 
-Convert the device tree bindings for the Altera PCIe MSI controller
+Hello:
 
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
----
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Notes:
-    v3: moved yaml file from arm/altera to the edac folder, removed items keys, added general node names
+On Tue, 30 Jul 2024 11:36:42 +0100 you wrote:
+> Clocks for SerDes and PHY are going to be handled by standalone drivers
+> for each of those hardware components. Drop them from the Ethernet driver.
+> 
+> The clocks which are being removed for this patch are responsible for
+> the for the SerDes PCS and PHYs used for the 2nd and 3rd MAC which are
+> anyway not yet supported. Hence backwards compatibility is not an issue.
+> 
+> [...]
 
- .../arm/altera/socfpga-sdram-edac.txt         | 15 -------
- .../bindings/edac/altr,sdram-edac.yaml        | 44 +++++++++++++++++++
- 2 files changed, 44 insertions(+), 15 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
- create mode 100644 Documentation/devicetree/bindings/edac/altr,sdram-edac.yaml
+Here is the summary with links:
+  - [net-next,v3] net: ethernet: mtk_eth_soc: drop clocks unused by Ethernet driver
+    https://git.kernel.org/netdev/net-next/c/887b1d1adb2e
 
-diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
-deleted file mode 100644
-index f5ad0ff69fae..000000000000
---- a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.txt
-+++ /dev/null
-@@ -1,15 +0,0 @@
--Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
--The EDAC accesses a range of registers in the SDRAM controller.
--
--Required properties:
--- compatible : should contain "altr,sdram-edac" or "altr,sdram-edac-a10"
--- altr,sdr-syscon : phandle of the sdr module
--- interrupts : Should contain the SDRAM ECC IRQ in the
--	appropriate format for the IRQ controller.
--
--Example:
--	sdramedac {
--		compatible = "altr,sdram-edac";
--		altr,sdr-syscon = <&sdr>;
--		interrupts = <0 39 4>;
--	};
-diff --git a/Documentation/devicetree/bindings/edac/altr,sdram-edac.yaml b/Documentation/devicetree/bindings/edac/altr,sdram-edac.yaml
-new file mode 100644
-index 000000000000..31bcee4274fa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/edac/altr,sdram-edac.yaml
-@@ -0,0 +1,44 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/edac/altr,sdram-edac.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Altera SOCFPGA SDRAM Error Detection & Correction [EDAC]
-+
-+maintainers:
-+  - Dinh Nguyen <dinguyen@kernel.org>
-+
-+description:
-+  The EDAC accesses a range of registers in the SDRAM controller.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - altr,sdram-edac
-+      - altr,sdram-edac-a10
-+
-+  altr,sdr-syscon:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: 
-+      Phandle of the sdr module
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - altr,sdr-syscon
-+  - interrupts
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    memory-controller {
-+      compatible = "altr,sdram-edac";
-+      altr,sdr-syscon = <&sdr>;
-+      interrupts = <0 39 4>;
-+    };
-+
-+...
+You are awesome, thank you!
 -- 
-2.43.0
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
