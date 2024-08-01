@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-271556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ED85944FFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:05:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 054B6945001
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B55BB27474
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:05:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4B21285366
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E77F1B3F16;
-	Thu,  1 Aug 2024 16:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945021B9B59;
+	Thu,  1 Aug 2024 16:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VzRSVj3F"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SaUmPW1r"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9F51B9B59;
-	Thu,  1 Aug 2024 16:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D121BA87E;
+	Thu,  1 Aug 2024 16:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528239; cv=none; b=cQeo3ec5khbMYPu6asEuV2O+ycRKxa1gIYz3cacl+5hmsHDiPyjmywj7zPveHu9LYtpY3zRz1CW8YsHA0CaBuSx1ftNyPzizw+jvUtEn7l0Isrc0ijHVUxoSjIzGNlDlqb8MdFdZNyu7tDxMhgDZfkEL91XyR1veP+nFKab02s0=
+	t=1722528241; cv=none; b=spGCOgv780plDHq/yRWD9VHET9LoPesF/o5MMy3AhakFmtxwMYJ2D+Gs8Al8zvtomMUxXmO7/H5USSu2OduC3Is9YO1UvCxw5M2s7Ca9Drck/5bjx0v03S90vlJ3pyjco90Mv/G/fRc5SqJP6pzRqA6S2q19g281stzuHs9Kc3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528239; c=relaxed/simple;
-	bh=TN/b/VHX6EXvmp4zVKSMP3spReApYVkmps71pTjjR/s=;
+	s=arc-20240116; t=1722528241; c=relaxed/simple;
+	bh=bfwB7l32/AgZaNPMn/Nei/WF/fGBbyodyqzQyhiw4MA=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZcjW+nUD71hHdwMffBiQ48g6XRdZyNjZhW0UguPySWiMQ4GdLhTT8DLKTux0CMxFXnq+XtB0oFHHv/js1WaYXw1mvO+ayTpA2C2sVrvOpfwXK9J2ZTinh0WD9yhS+wGNToszxfL42290gN3/zOwKdKoAvN24VV8FL61jheuL6VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VzRSVj3F; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version; b=PffKJ05SWmqKb7mAwTLGp/UFKTo6qi2uG4QJxtcWouOI0aO+M0oH6hbl+KDOJLkaHM75YMjOQRmJ5x4afCsm/P33Cluh0BtJdVODu7uDHYq4Ml23lLmhS8WXlGWHez1fIZjcoOaTLZ+UOLZ7r1vG3mDtlmkNS237UUNjgRQG6xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SaUmPW1r; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb52e2cb33so4816495a91.0;
-        Thu, 01 Aug 2024 09:03:57 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb4c4de4cbso4807908a91.1;
+        Thu, 01 Aug 2024 09:04:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722528237; x=1723133037; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722528240; x=1723133040; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ajViM2jGRh1ABanPLV3vCUCQ26Ko5QKn2UQG+HIRUz0=;
-        b=VzRSVj3Fm5RQOAx4j5tbVJnjZlQGO9S6dzbsjqIqAi2UvkpG5QwX6JW7sXfHsbhgCM
-         XQTJ5Jwf/T3pz+YxJL3Pntf55DPgoXH8pa1t4TpVDF686sQn5AY4ajtSSecxpGOq2yNw
-         A9+wm8V0pnQ6QmQDwgT+78BdPBKGKDrpHkYWh0BFQeY0cmp86EDxz8e09BJ5G7ZqCB+i
-         FL/cqP46IcAhJfy1vhAaGwCTmxb3AVIwjbZwgYKVgYGyeBjYs5eiuE/GtWYOvdX/ahtX
-         MzBy0ubzRQ3bCusVHIcUglKmbhV55PCYrapD9z9npcXcs3fcvwaUzZtzwUbipWFv3ZGd
-         7ASg==
+        bh=lMUkek2hVzU0p0l016s6b0CKb/s4GTG52EiEP4PKD44=;
+        b=SaUmPW1r51aYVkF+elYIu4Y2X3pfnGw3Ojvux1E3y2QVq69UdwdAdYHO1RU9Whcm33
+         MoZNQ6MD2lzas6XB3qE65MCQWKj1bwGaH2qm71c2511quC0+9IW9EWU16yIMayHRESDD
+         kC1xM7uu9l/3SjSQ7IfgrB86gB1mVk9j9aYL7fY8yDb9X+djKgWFBUQJxkXwfP3INbAc
+         9S0Y0yT2hn8zh+nmk5AIImqgzDQsXIfd19V1FpWOl5qRksgIibOTmxzH2gsbVEwOAQkq
+         d5d4ci6dLt/sOGwemccwShF6DupRI28MiFm2ruzAhfAa6Vhi4YCbF47XH3H+OjSYFA1u
+         iGZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722528237; x=1723133037;
+        d=1e100.net; s=20230601; t=1722528240; x=1723133040;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ajViM2jGRh1ABanPLV3vCUCQ26Ko5QKn2UQG+HIRUz0=;
-        b=YroynCGmjIK/dhP7pbinprSa/kMLYbAm3/klFq/I0F5kaSvgIhYNvimkS4x+3ZJaT8
-         1Le3I8nIzz3hQjetJAfx0a5/voG6V9/qLXvuJz3PonPZkI0p9XNmVZp86fakL6vNy5nn
-         JK/tpF4CAkIhJWrcoJRhFYkPCO17NaS8Zg2Rp+FXF2TRLCJpawSh3A9yDnS4KL9WBBd8
-         pgmVkInWFxT95Lt/0pi+DM2A3htlWIUjELipdELjf5BRXhwWyYkZ1GFr95QsICdiLcRq
-         kdFkkDfdZcL3P7BRnt3KZYf106XHGnNiLnCTsZrATNDz/tR7HrpLsEhkXCHUaCclf4t4
-         BzSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNKQXODBnZGJpguHqnEDfUPr0a/+LCmQVPM6seDrYcX9Fzdjx4T1PZ350O9mrCZcBECenoJ4t9xbb77X7rTikkXCVo9aMu5tIrzMJngQhTB0KEl/ZmaQVjHRxMT4tnnWOdqFJWsihpmA==
-X-Gm-Message-State: AOJu0Yz3uJfDswAq7HoWQyPbof2TNDeqZbC5NH5aXW1vMbyqax7O0OdZ
-	rnmHqqFYFIkf9P2eX4sFjpyCcqNUBeN630ERCuiaWgbWVvtNIzo+
-X-Google-Smtp-Source: AGHT+IFPb9PeJdPoYShorYa0WgTFplfuAl/P62poHQZvyFWCRtV2xKyxZ4mK+zBEpL9ulATY7qrOnA==
-X-Received: by 2002:a17:90b:33ca:b0:2c9:61ad:dcd9 with SMTP id 98e67ed59e1d1-2cff952d0e2mr842725a91.27.1722528237119;
-        Thu, 01 Aug 2024 09:03:57 -0700 (PDT)
+        bh=lMUkek2hVzU0p0l016s6b0CKb/s4GTG52EiEP4PKD44=;
+        b=c3SYNzjxA8vgCjj218AjOd7MA65d9Ms7MufPmQISRlAHEXyHeZ7UOZ2UOHPut2t8Ux
+         EkqpYbtKvvS6z4RyQc8kkbesk0lO71eWfxxBVzel56wQgxmgH5VOepSSfMjYi61BOp/l
+         CJZz1Oy+/qvD6csY9I85LG0qlJYdoq7Jdl4ITw9cu+NYbNIpHuHCH1mIamac1uwAPm16
+         DUQPtnWFb1EkYKGTBm3rgIEyKAtY26idosC2v0eL0uLms6rqPpwW4E9JLc5789uxee5E
+         h8+f6bEkwUHRsPHXlJRqid/UsyM2k0W/AaTHhwbd5dngPDgFrPZn4OLpflGLqYI/k4b3
+         HH6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUSiXwaf9UJzTyeUOLeJC/nhUzZYWhOPk/2fav/f4zRgcAYl6cuC1ZntT2kzijAGTnfLPvA8koVzTk3ZKo2Ff18lP0zaLLfQiCehx2ksmf7EjfQG5uR4fvHTeYzjHNAEjBhOHJ/+Fx8Ow==
+X-Gm-Message-State: AOJu0YwM2crCHKwvp5FuuwwwWd3e0bxmmXcPvwwcIBnu1zxaKAUggs9W
+	IqdBuPXQdZ+Lmepg45ZveaIHG0ycj3l/OTzWptqiB8gp1kgTEF9+
+X-Google-Smtp-Source: AGHT+IH0JtqqECKHnudAUXqhOjRTWHB80HJL81jyDNQofXWGUg5tNgWs/U7hOX2Nsy2Ud8Tz78eT4w==
+X-Received: by 2002:a17:90b:4c05:b0:2c8:85c:750b with SMTP id 98e67ed59e1d1-2cff952f21emr765328a91.34.1722528239873;
+        Thu, 01 Aug 2024 09:03:59 -0700 (PDT)
 Received: from peter-bmc.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4cf181sm3535268a91.37.2024.08.01.09.03.55
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4cf181sm3535268a91.37.2024.08.01.09.03.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:03:56 -0700 (PDT)
+        Thu, 01 Aug 2024 09:03:59 -0700 (PDT)
 From: Peter Yin <peteryin.openbmc@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -76,9 +76,9 @@ To: Rob Herring <robh@kernel.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 06/11] ARM: dts: aspeed: Harma: remove multi-host property
-Date: Fri,  2 Aug 2024 00:01:30 +0800
-Message-Id: <20240801160136.1281291-7-peteryin.openbmc@gmail.com>
+Subject: [PATCH v3 07/11] ARM: dts: aspeed: Harma: add fru device
+Date: Fri,  2 Aug 2024 00:01:31 +0800
+Message-Id: <20240801160136.1281291-8-peteryin.openbmc@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240801160136.1281291-1-peteryin.openbmc@gmail.com>
 References: <20240801160136.1281291-1-peteryin.openbmc@gmail.com>
@@ -90,25 +90,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Harma is single host, so remove multi-host property
+Add Aegis fru device and gpio expander device in bus 11.
 
 Signed-off-by: Peter Yin <peteryin.openbmc@gmail.com>
 ---
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts | 1 -
- 1 file changed, 1 deletion(-)
+ .../dts/aspeed/aspeed-bmc-facebook-harma.dts  | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-index 77eaa89b5eb5..e10ee54fe472 100644
+index e10ee54fe472..f55ffe9c4d89 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-harma.dts
-@@ -137,7 +137,6 @@ &mac3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_rmii4_default>;
- 	use-ncsi;
--	mellanox,multi-host;
+@@ -427,6 +427,31 @@ eeprom@52 {
+ 
+ &i2c11 {
+ 	status = "okay";
++
++	gpio@30 {
++		compatible = "nxp,pca9555";
++		reg = <0x30>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++	gpio@31 {
++		compatible = "nxp,pca9555";
++		reg = <0x31>;
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		gpio-line-names =
++		"","","","",
++		"","","presence-cmm","",
++		"","","","",
++		"","","","";
++	};
++
++	// Aegis FRU
++	eeprom@52 {
++		compatible = "atmel,24c64";
++		reg = <0x52>;
++	};
  };
  
- &rtc {
+ &i2c12 {
 -- 
 2.25.1
 
