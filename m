@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-270957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 464CA9447BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:15:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A654F9446CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C48CF1F27C7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C8F1F252B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B722B18B482;
-	Thu,  1 Aug 2024 09:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC6B16EB71;
+	Thu,  1 Aug 2024 08:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zgz2dlHr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zvai3/yy"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25DB18951C;
-	Thu,  1 Aug 2024 09:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201B316DC35
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503526; cv=none; b=nI1+bPRURalqMwRLBwu9diT+jchLZKGqP6WiC7P3xdc9g+5t4HyEZsDqNLT13Ahn4bTpEY3M/TSp3spYDrX6yoeH2b+f5we1w/CySew0H3HEIWdAFZhIk8g++YDJsaJSEzCe8zTFeIfBZ96dGz9KjgdP7fy0VITj2Gd3lIuOOcg=
+	t=1722501710; cv=none; b=ryy1D15XYBl5CqVkedlBU2BpPucD+AM+EvFJVrAOWGFaBWBK5gWH4rrt75uVfzXXNQo6kwu4VXl/Oei0orWsxmdYDbMVQkoZil5hQd03xm4aOqZgPSDaM9FcXf3pefxXTpI7ufdrxbL+vToFRxBPbmCCorZvWrtuXTt0q4nA5ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503526; c=relaxed/simple;
-	bh=OziTlghW/wlMQZK0K9+wYZg1uMjzZ8EsjYPZDOViGlo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QadoQ+S7XtZzWQ9gw+iujkDFQG5Clo5xAo8y0FP9qDIejNIhW6JpSrkwApIAfZGiw7EiIOKgIlogEkwtW0RKnRmvCUF/ixRdmO5hakKGPu/HaB5stnO9lsLzzfhLHvX/VEAjhJCP/lCNPx3s1zr5ux3XSsEXijwz2o+DjHvVPDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zgz2dlHr; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722503525; x=1754039525;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OziTlghW/wlMQZK0K9+wYZg1uMjzZ8EsjYPZDOViGlo=;
-  b=Zgz2dlHrdoWS3aE0aJhPmuHk7fkclfHoFk4GyMnJK/VW4ceQ69A5jYKq
-   QJnN5RYw4j2Wz8zpqvfxFREyAhRvoMo7HxzHhe1XqTXe+RhuXodna4Wzp
-   jKJFhBVHlbac/ahGL/dj4dfINr+RS9MMxhP/WtoG8h/79RMnErDNh8qQG
-   37wO/ftf3ptWFokCb56vQqY7jdsfeVHOdV5acdvT4jR+y0B4+WK4X/Z/X
-   TfINh3HrMRvd9yej+TXs9s2gJNm+L180IE1YEisJLCqU9GGfqnTo2Iu8O
-   0NF5Kqbb+H/5EF+s51E2Lu8JlnLcI2Dp6TBwqPS10X+oVqNLPr+p0EKzw
-   w==;
-X-CSE-ConnectionGUID: dtHe+PwnTgCqtZ7Wweu3cw==
-X-CSE-MsgGUID: Lhyx2c0rQTCQSxf6zwYOew==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383575"
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="20383575"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:50 -0700
-X-CSE-ConnectionGUID: BHajjV1SQTOmkqgtPprL1g==
-X-CSE-MsgGUID: wBaSr/dKTH29cbTi2Z2zog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="59089939"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:43 -0700
-Message-ID: <5f37c04d-f564-40b9-a9f3-d071ea0a6f19@linux.intel.com>
-Date: Thu, 1 Aug 2024 10:40:20 +0200
+	s=arc-20240116; t=1722501710; c=relaxed/simple;
+	bh=G5o0gieOI7GSRfpNXdAJMUhhBFmAG4ayqOej5guUNxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukUy6KFwRMAxv6tJYHeDpqTd8SKGiicOUGWc6kmvN1q+VsIqM+wfWLa3PQZdhCJpRkjPxOPiZfv9iLDPnJrdaP03LIHOGzv0z3CZBfUvuOf3vadZ8yW/+Ff+/kH3WHloDXH3CL59w+rKnUTxwSH0nd9i0xr5hF5mL/HLkhYwRLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Zvai3/yy; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so77128211fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722501707; x=1723106507; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G5o0gieOI7GSRfpNXdAJMUhhBFmAG4ayqOej5guUNxo=;
+        b=Zvai3/yySxveutLJBv21CJFTiNOdOM5xv9N6pb8Pd8TfnHsmDl1DXQtgb+3zgFCzCn
+         jAC3zMrnOsCPwhIOYhygHAAh39DubTeJk3WGSuicZDOz6O/9AiYSSfA+KxmqKXInTE/t
+         vogHPWVyACz1NidGCh0Bq3KO2gLcM05SbmZov4xDKzi7wI8L2/ySEbU604CLUeCg7A/F
+         x6zBkn0nrewjChIu38Zq0JZdJcwnD/YgoU3Q2SkihPmrFWti1sG9isTLofgm5JYVGM2h
+         ryOt/7/KK/+QG9dBeehLkeMFwBnmhdeR+/Piwspis8Wh+GQ4PC0tSmzH4/z5cISsLWt0
+         d4+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722501707; x=1723106507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G5o0gieOI7GSRfpNXdAJMUhhBFmAG4ayqOej5guUNxo=;
+        b=hL0sxD35bQMZpZ9oaANMzkYP3xh8C5dk5/Il2LkCOBylyUt0nK5zuDV8vsWk3hczo5
+         iGRA4Sl6aGF0EpFbwIN+zeHmXD8DZCiQuPtnECfCeW5bKiWBtmPuenRgPBbXM1l/2dk6
+         GkbYiUumJ83HPCvszBEEWx/50myBhzV0P3n9ELSicNf+TWfobRy5GHiC7obI9yw7L57b
+         fm85EYvvpPkHhGAlKUuUg07owkyhrdEvQfmcVRiVlIormGHkqcSPPiHkUlInH+ZJd5PZ
+         7S8kz/jF65LPHWwC1juocVSRnU4d9cohfVX0ctbOTTLdVmECmbfzhD95LFp3T5DOBwNQ
+         0KGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKF7r1XaEdq/lzpZjBEz3J8W1BLGCzUWoRp7VZf+oG2NwVRetX62YizI2MDQcIxbidSQ3FZuVGym9YXjysT6d4z0xh9Y8c6ZkrdMBE
+X-Gm-Message-State: AOJu0YwvtZXo3E5gF7n4WupRoZfz3Aquz6PY+7urIUgZE6psONvDhuFS
+	6ps5pr0QfcCrprnBV2xroqjNAxOHoXIjHjx7VMghfUcloG/wdvUO4GXuCzNa1SxkxNvxakGwyad
+	PiQXhsCROnwirUnYoSvE8BWUTEnWQz8IFeSMB
+X-Google-Smtp-Source: AGHT+IGGjLaK0GazvDZrXYaX2cU6ePRSRcv3SIi8d/MTy6x0q+/5UL0G8UvR6vKEinaAsfVHH406Wg/NK0/H4dNssLg=
+X-Received: by 2002:a2e:8011:0:b0:2ef:2525:be90 with SMTP id
+ 38308e7fff4ca-2f1532db0ccmr13126801fa.31.1722501706893; Thu, 01 Aug 2024
+ 01:41:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 17/34] ASoC: qcom: qdsp6: Add USB backend ASoC driver
- for Q6
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-18-quic_wcheng@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240801011730.4797-18-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240801000641.1882-1-dakr@kernel.org> <20240801000641.1882-6-dakr@kernel.org>
+In-Reply-To: <20240801000641.1882-6-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 1 Aug 2024 10:41:34 +0200
+Message-ID: <CAH5fLggRZUj8Ogc+5QzKEX63oQUB=1mZCTLB6OZf=stnTohNbw@mail.gmail.com>
+Subject: Re: [PATCH v3 05/25] rust: alloc: add module `allocator_test`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@samsung.com, akpm@linux-foundation.org, 
+	daniel.almeida@collabora.com, faith.ekstrand@collabora.com, 
+	boris.brezillon@collabora.com, lina@asahilina.net, mcanal@igalia.com, 
+	zhiw@nvidia.com, acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, 
+	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 1, 2024 at 2:07=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> w=
+rote:
+>
+> `Allocator`s, such as `Kmalloc`, will be used by e.g. `Box` and `Vec` in
+> subsequent patches, and hence this dependency propagates throughout the
+> whole kernel.
+>
+> Add the `allocator_test` module that provides an empty implementation
+> for all `Allocator`s in the kernel, such that we don't break the
+> `rusttest` make target in subsequent patches.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
+Ah, yes, the rusttest target ...
 
-
-> +static int q6usb_hw_params(struct snd_pcm_substream *substream,
-> +			   struct snd_pcm_hw_params *params,
-> +			   struct snd_soc_dai *dai)
-> +{
-> +	struct q6usb_port_data *data = dev_get_drvdata(dai->dev);
-> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-> +	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-> +	struct q6afe_port *q6usb_afe;
-> +	struct snd_soc_usb_device *sdev;
-> +	int ret;
-> +
-> +	/* No active chip index */
-> +	if (list_empty(&data->devices))
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&data->mutex);
-> +	sdev = list_last_entry(&data->devices, struct snd_soc_usb_device, list);
-> +
-> +	q6usb_afe = q6afe_port_get_from_id(cpu_dai->dev, USB_RX);
-> +	if (IS_ERR(q6usb_afe))
-> +		goto out;
-> +
-> +	/* Notify audio DSP about the devices being offloaded */
-> +	ret = afe_port_send_usb_dev_param(q6usb_afe, sdev->card_idx,
-> +						sdev->pcm_idx);
-> +
-> +out:
-> +	mutex_unlock(&data->mutex);
-> +
-> +	return ret;
-> +}
-
-Humm, multiple questions here
-
-a) is this intentional that the params are not used in a hw_params routine?
-
-b) if yes, could this be replaced by a .prepare callback
-
-c) along the same lines as b), is suspend-resume during playback
-supported? Usually this is handled with a .prepare callback to restore
-connections.
-> +
-> +static const struct snd_soc_dai_ops q6usb_ops = {
-> +	.hw_params = q6usb_hw_params,
-> +};
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
