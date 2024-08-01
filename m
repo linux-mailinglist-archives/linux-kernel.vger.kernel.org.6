@@ -1,59 +1,61 @@
-Return-Path: <linux-kernel+bounces-270759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130959444E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:55:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E3639444E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:55:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2514281762
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2D49281762
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC62158851;
-	Thu,  1 Aug 2024 06:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3BC16D302;
+	Thu,  1 Aug 2024 06:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9kiV361"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kIj8rlMK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B683915854E;
-	Thu,  1 Aug 2024 06:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA31158557;
+	Thu,  1 Aug 2024 06:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722495304; cv=none; b=W1rBrIU/7/v0kfN6W35MqCRIPaLU1+opRGGecZ6KsErgq5GsuMXVgqD6GpNy8ZtsAgbjRya+YWrS2X8ob6Fv6Cg5XdVt085LqI7PKquNI+BP1mdpJ0Y/f+QlncJ6oclPNHALw73CsW27j8YaE0VFzfcCSxoTYe+iIQAWYH5HiIg=
+	t=1722495309; cv=none; b=FEw3bK6A+1BhPloeHB/9UDTIDNMbI//oRbVyw0ZmTzU9DN4nH/lpL11+aR85xfSbOuOQzJh+TE50bZdWmK2ORs41Xp6rd063SPstyRCvHjC237jAsL9HIHSrenN1oz+84vjYAcTEzk4A6nv00l3D9HyNmzK4G/sRlQ6TbBmexR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722495304; c=relaxed/simple;
-	bh=HOKNNnybr8vVI+CenbuRHSy81M/wqIhPpxRQv9NWUoY=;
+	s=arc-20240116; t=1722495309; c=relaxed/simple;
+	bh=yBHTc+YfefDNuFZSbdUt+ev72AY1+QGyX9tR7wDxkJU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=t9iYNj7e/G/3n2NQUj0/dTTAWYfX7QcDZY/bOudVu+jqUKI9KiFeyGjJkCwr6WfGGoWlNuCs2gjCAQHv5FKqi59qWQDy6Cbat0OC2b/MbX6xq6Wn5OSLTgq5Nlx2VLAldsEI4mPr/6jHpOKJrF/2LFWNkjyA50h4w9PdubJqMTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9kiV361; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71DFC4AF0A;
-	Thu,  1 Aug 2024 06:55:00 +0000 (UTC)
+	 MIME-Version:Content-Type; b=AwuvHPm85QfBR9budR6APcKjKlwuV830wzXjpWT3EK+siU4qx6QiBo7TkI059vcLpP7OFk/Ybvk8qkV81RL8cIBqPRN7tEzHEbkIS/iH3aDzbiq5mflWnf+s7o/v2wkedwVca9N/AGn08JdkA21a7N9HrB+7ejCFlJZuAQFbae4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kIj8rlMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 031C5C4AF0A;
+	Thu,  1 Aug 2024 06:55:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722495304;
-	bh=HOKNNnybr8vVI+CenbuRHSy81M/wqIhPpxRQv9NWUoY=;
+	s=k20201202; t=1722495308;
+	bh=yBHTc+YfefDNuFZSbdUt+ev72AY1+QGyX9tR7wDxkJU=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=d9kiV361GzPZKR5XC0GAwJInrK5PlMk4VKb6GpKn61lZtw/FdY8aVZZVg+i7zk+O8
-	 KOo1FJZwsDy1cXt1znBqm6pqjlYnQ9dRsEaJy9S1KzxxMkU/AXpoX5Uw/dxVcUnTVn
-	 YT554rTNpJvU/kg8JRJpSOSe0kLJPvAbSe0nppGwdEPWNLyaSn/VuOK8R+ePvZxdm2
-	 9z97fPncxIhLi9IHPotLj80NaatGpOF/eOmTxZ6b2ubG5oJUyKFfIc4gNlckpxYnvC
-	 2+AUmGvn0fiDTyIOFjtsUxo3xBRjmIqssK63kzus/in1zrLVEhv/xldS8pAlTwMXZp
-	 D2HxiqXgiIExg==
+	b=kIj8rlMKohw4/Q+qvxeFSj9uvdCa5Cxu8EY16CjddrZsUXZGVoq06TwfsRA52KDHx
+	 MZZu6LQq2vdn7MFkvRAymI2iJTky/Kws++70s9pwojJaB1/ybOe2S8XLERdeZZ3i9c
+	 XlBVf3aj1iggoVd38wYDWCbdG3M7POvRex4adM5ohU4fBSs54HQ6H3I4WcBL8Av/0Q
+	 kR4yYYpS8VTLStj1sML45EQT3Z9zWdZl63m+G5vkMPYk2XKFEqzhRCUWLrb+Aj6T1q
+	 nIj77xYrzE/SQlV4d1vVQ0Gl84PUQ484a7eVTHzim07KMcfIpK9fze7KuGpTBYBaBo
+	 UUKZVrdzbUg7w==
 From: Vinod Koul <vkoul@kernel.org>
-To: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-phy@lists.infradead.org, Rob Herring <robh@kernel.org>
-In-Reply-To: <20240715130854.53501-1-rayyan.ansari@linaro.org>
-References: <20240715130854.53501-1-rayyan.ansari@linaro.org>
-Subject: Re: [PATCH 0/2] Convert Qualcomm SATA PHY bindings to dtschema
-Message-Id: <172249530042.256913.13518178288820179470.b4-ty@kernel.org>
-Date: Thu, 01 Aug 2024 12:25:00 +0530
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org>
+References: <20240710-phy-field-prep-v1-1-2fa3f7dc4fc7@linaro.org>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST()
+ to FIELD_PREP()
+Message-Id: <172249530458.256913.1079769256598597448.b4-ty@kernel.org>
+Date: Thu, 01 Aug 2024 12:25:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,28 +63,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.13.0
 
 
-On Mon, 15 Jul 2024 14:01:05 +0100, Rayyan Ansari wrote:
-> The following patches:
-> - Convert the old apq8064 and ipq806x text bindings, to a new unified
->   qcom,sata-phy binding in yaml.
-> - Remove reg-names from the SATA PHY node in apq8064.dtsi to conform to
->   the bindings
+On Wed, 10 Jul 2024 07:45:07 +0100, André Draszik wrote:
+> Use of FIELD_PREP_CONST() was a thinko - it's meant to be used for
+> (constant) initialisers, not constant values.
 > 
-> Thanks,
-> Rayyan
+> Use FIELD_PREP() where possible. It has better error checking and is
+> therefore the preferred macro to use in those cases.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: phy: qcom,sata-phy: convert to dtschema
-      commit: 4bf8b462f84dd81c5938341a5468c3b669dbb1af
-[2/2] ARM: dts: qcom: apq8064: drop reg-names on sata-phy node
-      (no commit info)
+[1/1] phy: exynos5-usbdrd: convert some FIELD_PREP_CONST() to FIELD_PREP()
+      commit: 7e6c2ffe6c2284a10f77079670e3b26b43df4443
 
 Best regards,
 -- 
