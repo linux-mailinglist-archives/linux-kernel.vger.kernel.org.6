@@ -1,225 +1,151 @@
-Return-Path: <linux-kernel+bounces-270879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87AA944692
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:27:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72170944696
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 696DC1F263CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:27:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E3F1F265C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2099C16DC3A;
-	Thu,  1 Aug 2024 08:27:27 +0000 (UTC)
-Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D952116EB57;
+	Thu,  1 Aug 2024 08:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0zaNRWD"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D66216DC1A
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E88C12E1D9
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722500846; cv=none; b=B7OpSPtxuUw9fHRZ5u5FH8zXdLM9x2wVuad+2vTXvyfi6peUCP7wBlWXdOwvhAluljuCtiRZTtaaDQfrArxSc5I8ZOn3zH1nwQn7q2C0aQUHeMTG1G9k5lCcT8dbstyQnRMNMDG82Sp7ERiOovDjrxzruKZhg1kYajj3niyEfrE=
+	t=1722500854; cv=none; b=Oz8uVAsP1HWqJ2JxScZwcdOYNK91cbhQ3tWjf6T00iEGNAs0vaEDHJOWEZk3izTUy4UlYvEB7lT2aebkd+ix91cynDlXfTc4O5AyCJdVfz2rbj3xTgkcn4XAq4KpZm+6el4kUey0kHlbLmlnXt/B/XmAkDLa4Qb4OKPGwAnDW04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722500846; c=relaxed/simple;
-	bh=bwQrI43NqaW12FyO/KdLKo2sVaxzLYiyS7gEzeAG22s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AMIib3JGVseEzXBLiiRUiQ9IRCdGlMIutduKtROf5HBOszuNMwSyPVmyxRGvr32Jo5bdRfkU/50McjE6f119A9iXHuZFkt/U5/4M1tKwcXVBrMh8I/FvhxKo7Urw2hyVe6SmZAizooWaMmS3NTvbUqdmTpyc6MHBcISSsFxKJnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
-Received: from localhost (localhost [127.0.0.1])
-	by mail.valinux.co.jp (Postfix) with ESMTP id 4D2B5A9DA8;
-	Thu,  1 Aug 2024 17:27:22 +0900 (JST)
-X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
-Received: from mail.valinux.co.jp ([127.0.0.1])
-	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id vgWTJz909g3Y; Thu,  1 Aug 2024 17:27:22 +0900 (JST)
-Received: from DESKTOP-NBGHJ1C.local.valinux.co.jp (vagw.valinux.co.jp [210.128.90.14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.valinux.co.jp (Postfix) with ESMTPSA id 21FC6A9DA6;
-	Thu,  1 Aug 2024 17:27:22 +0900 (JST)
-From: takakura@valinux.co.jp
-To: pmladek@suse.com,
-	john.ogness@linutronix.de
-Cc: akpm@linux-foundation.org,
-	bhe@redhat.com,
-	feng.tang@intel.com,
-	j.granados@samsung.com,
-	linux-kernel@vger.kernel.org,
-	lukas@wunner.de,
-	nishimura@valinux.co.jp,
-	rostedt@goodmis.org,
-	senozhatsky@chromium.org,
-	stephen.s.brennan@oracle.com,
-	taka@valinux.co.jp,
-	takakura@valinux.co.jp,
-	ubizjak@gmail.com,
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH] printk: CPU backtrace not printing on panic
-Date: Thu,  1 Aug 2024 17:27:21 +0900
-Message-Id: <20240801082721.62935-1-takakura@valinux.co.jp>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <ZqjZMIxgm46qVgjL@pathway.suse.cz>
-References: <ZqjZMIxgm46qVgjL@pathway.suse.cz>
+	s=arc-20240116; t=1722500854; c=relaxed/simple;
+	bh=jvsobS85OVCahF1SQTwtsolA3mYyFo9+mVdQPSBBk8I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ijS2daOpxDOTrgZVJl+dNqorq7Dr+tZbjh2bk2fl+Grhhdv0T7y72g0XA41ViZWd8Tr9CshfKj3HvqzOYZEmiYGC5FiYGX9X+WnvgLrwJq9BUnNt2/tzcDK6Qj7Lwl7mOK3sNslS7Ncey2oOJ8ZD13Yqu5UHGaWUyQatusjygxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0zaNRWD; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f01b8738dso6841198e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:27:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722500850; x=1723105650; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OD9G/3mCVlkVRRCgF4YN9knfhI9XiLKaZwoXUSFER6s=;
+        b=q0zaNRWDIFzhheLn+2EVfa5HNVN1/5kX9eVmIs9wl2I0pNPoE1RPBkTBZVyqkec3q0
+         nX141WpEfRCeeswMYL7MMYS+iIZ+TaFkkEhWKC0pX/mZI8zNKHtV72xsJOz/YhNfnO+6
+         /BHpzLul7dr0nqd+LSK1K/jhH5UruJc+njhwwet2F1OXXyegm+9lZzhKAzjddwczBnKG
+         kD4I0emKBqRwLf0YaQUNCotxkIH5q+U9kwknL2VCwblBHxwZ3FAT6/peaUVM7WOKxgH1
+         2VzAOR5LwDitsCkPAkAm0H93tiMoQwDI+GWZDnSlLLemrrC27FEMUCDaX4T+uRTXdkOX
+         PQlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722500850; x=1723105650;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OD9G/3mCVlkVRRCgF4YN9knfhI9XiLKaZwoXUSFER6s=;
+        b=Afq9h6nPRYcesnQK4McabsIzQqKxEprZU8/kkfaGD5g94e8H6TIwuvnMzwusZ11Grh
+         I7QUqTtyqMzhkNCHEX93TnTHAR64MDhjf0tG6lP1SY6R6U1Z7cbNV1sOApIk8YCS/lK1
+         h+AYGZSzWvwm0QSrTJohXQ/ndmEcTVYyiK/7nggZV7wS/3QDfFiubVUDZ6XYuOv0+yJb
+         xwhinxihQipcMLDJMPfmTsbedT/RtSZIScw7CZeAMKwOxn3SUG8IvJkEEFVkerLsHSo+
+         pvsO+pUx1XCu4mAnV75GBtUL2pIilSUcvdSb5eyZ7BNsoz8OKWJcBwM3rginIh5KufaA
+         gcJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxjDRLjNSyDttlNDAZ58tWihQxTDfyHKu56NCALNnKL+KiWbH8GDfaAaS8cRbYrw6590cX6kFHo4dWRikIcUo5axIlKLCkLY8cFieK
+X-Gm-Message-State: AOJu0YxojqoEU7YP6q3jNS5jAawG0J3ugM0PSQmDuvLY0nCCrM0OujB1
+	XIRerTmIQb9e+HmvD+x3Ld9J3wPVZka4Vj/RN5+Q7RgUuchzSc28iZXmq6pvZCw=
+X-Google-Smtp-Source: AGHT+IFMDpzmXM0CWf5tfKiNvDCH2OumQvacpGxa6JDE2TzEZY8ZGmaMFzWYonjhfvNnmFKelVat9g==
+X-Received: by 2002:a05:6512:1296:b0:52e:f2e8:1646 with SMTP id 2adb3069b0e04-530b6214eb8mr1091075e87.58.1722500849604;
+        Thu, 01 Aug 2024 01:27:29 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2bfaasm2520775e87.256.2024.08.01.01.27.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 01:27:29 -0700 (PDT)
+Date: Thu, 1 Aug 2024 11:27:27 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
+	vkoul@kernel.org, vladimir.zapolskiy@linaro.org, quic_jkona@quicinc.com, 
+	konradybcio@kernel.org, quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@mainlining.org
+Subject: Re: [PATCH 08/10] clk: qcom: videocc-sm8450: Add SM8475 support
+Message-ID: <zs6fwvt4fcd25wnvepcj3reh6or5xcljcuusj6xmyppsgaimxi@py54xfhrwr3v>
+References: <20240731175919.20333-1-danila@jiaxyga.com>
+ <20240731175919.20333-9-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731175919.20333-9-danila@jiaxyga.com>
 
-Hi Petr and John,
+On Wed, Jul 31, 2024 at 08:59:17PM GMT, Danila Tikhonov wrote:
+> Add support to the SM8475 video clock controller by extending the
+> SM8450 video clock controller, which is almost identical but has some
+> minor differences.
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>  drivers/clk/qcom/Kconfig          |  2 +-
+>  drivers/clk/qcom/videocc-sm8450.c | 31 ++++++++++++++++++++++++++++---
+>  2 files changed, 29 insertions(+), 4 deletions(-)
+> 
+> @@ -420,6 +421,30 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
+>  		return PTR_ERR(regmap);
+>  	}
+>  
+> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8475-videocc")) {
+> +		/* Update VideoCC PLL0 Config */
+> +		video_cc_pll0_config.l = 0x1e;
+> +		video_cc_pll0_config.config_ctl_hi1_val = 0x82aa299c;
+> +		video_cc_pll0_config.test_ctl_val = 0x00000000;
+> +		video_cc_pll0_config.test_ctl_hi_val = 0x00000003;
+> +		video_cc_pll0_config.test_ctl_hi1_val = 0x00009000;
+> +		video_cc_pll0_config.test_ctl_hi2_val = 0x00000034;
+> +		video_cc_pll0_config.user_ctl_hi_val = 0x00000005;
 
-On 2024-07-30, Petr Mladek <pmladek@suse.com> wrote:
->On Fri 2024-07-26 16:02:45, John Ogness wrote:
->> On 2024-07-26, Petr Mladek <pmladek@suse.com> wrote:
->> > I would do it the other way and enable printing from other CPUs only
->> > when triggring the backtrace. We could do it because
->> > trigger_all_cpu_backtrace() waits until all backtraces are
->> > printed.
->> >
->> > Something like:
->> >
->> > diff --git a/include/linux/panic.h b/include/linux/panic.h
->> > index 3130e0b5116b..980bacbdfcfc 100644
->> > --- a/include/linux/panic.h
->> > +++ b/include/linux/panic.h
->> > @@ -16,6 +16,7 @@ extern void oops_enter(void);
->> >  extern void oops_exit(void);
->> >  extern bool oops_may_print(void);
->> >  
->> > +extern int panic_triggering_all_cpu_backtrace;
->> >  extern int panic_timeout;
->> >  extern unsigned long panic_print;
->> >  extern int panic_on_oops;
->> > diff --git a/kernel/panic.c b/kernel/panic.c
->> > index f861bedc1925..7e9e97d59b1e 100644
->> > --- a/kernel/panic.c
->> > +++ b/kernel/panic.c
->> > @@ -64,6 +64,8 @@ unsigned long panic_on_taint;
->> >  bool panic_on_taint_nousertaint = false;
->> >  static unsigned int warn_limit __read_mostly;
->> >  
->> > +int panic_triggering_all_cpu_backtrace;
->> > +
->> >  int panic_timeout = CONFIG_PANIC_TIMEOUT;
->> >  EXPORT_SYMBOL_GPL(panic_timeout);
->> >  
->> > @@ -253,8 +255,12 @@ void check_panic_on_warn(const char *origin)
->> >   */
->> >  static void panic_other_cpus_shutdown(bool crash_kexec)
->> >  {
->> > -	if (panic_print & PANIC_PRINT_ALL_CPU_BT)
->> > +	if (panic_print & PANIC_PRINT_ALL_CPU_BT) {
->> > +		/* Temporary allow printing messages on non-panic CPUs. */
->> > +		panic_triggering_all_cpu_backtrace = true;
->> >  		trigger_all_cpu_backtrace();
->> > +		panic_triggering_all_cpu_backtrace = false;
->> 
->> Note, here we should also add
->> 
->> 		nbcon_atomic_flush_pending();
->> 
->> Your suggestion allows the other CPUs to dump their backtrace into the
->> ringbuffer, but they are still forbidden from acquiring the nbcon
->> console contexts for printing. That is a necessary requirement of
->> nbcon_waiter_matches().
->
->Great catch!
->
->I would prefer to solve this in a separate patch. This problem existed
->even before the commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
->to ringbuffer"). In fact, the problem existed very long time even for
->the legacy consoles.
->
+Maybe it would be better to define new PLL configs rather than to patch
+the existing ones?
 
-Good point! I guess the problem existed since the commit 51a1d258e50e 
-("printk: Keep non-panic-CPUs out of console lock") as it forbade the 
-acquisition of console lock for non-panic cpus?
+> +
+> +		video_cc_pll0.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
+> +
+> +		/* Update VideoCC PLL1 Config */
+> +		video_cc_pll1_config.l = 0x2b;
+> +		video_cc_pll1_config.config_ctl_hi1_val = 0x82aa299c;
+> +		video_cc_pll1_config.test_ctl_val = 0x00000000;
+> +		video_cc_pll1_config.test_ctl_hi_val = 0x00000003;
+> +		video_cc_pll1_config.test_ctl_hi1_val = 0x00009000;
+> +		video_cc_pll1_config.test_ctl_hi2_val = 0x00000034;
+> +		video_cc_pll1_config.user_ctl_hi_val = 0x00000005;
+> +
+> +		video_cc_pll1.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
+> +	}
+> +
+>  	clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+>  	clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
+>  
+> @@ -445,5 +470,5 @@ static struct platform_driver video_cc_sm8450_driver = {
+>  
+>  module_platform_driver(video_cc_sm8450_driver);
+>  
+> -MODULE_DESCRIPTION("QTI VIDEOCC SM8450 Driver");
+> +MODULE_DESCRIPTION("QTI VIDEOCC SM8450 / SM8475 Driver");
+>  MODULE_LICENSE("GPL");
+> -- 
+> 2.45.2
+> 
 
->It is pity that we need to handle both consoles separately. IMHO,
->we could get the same job done by calling
->
->	console_flush_on_panic(CONSOLE_FLUSH_PENDING);
->
->It flushes both nbcon and legacy consoles.
->
->> Or since the cpu_sync is held while printing the backtrace, we could
->> allow the non-panic CPUs to print by modifying the check in
->> nbcon_context_try_acquire_direct():
->> 
->> ----- BEGIN -----
->> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
->> index ef6e76db0f5a..cd8724840edc 100644
->> --- a/kernel/printk/nbcon.c
->> +++ b/kernel/printk/nbcon.c
->> @@ -241,7 +241,7 @@ static int nbcon_context_try_acquire_direct(struct nbcon_context *ctxt,
->>  	struct nbcon_state new;
->>  
->>  	do {
->> -		if (other_cpu_in_panic())
->> +		if (other_cpu_in_panic() && !__printk_cpu_sync_owner())
->
->Interesting idea. I am not completely against it.
->
->Well, this would be the only situation when nmi_cpu_backtrace() would
->be allowed to flush the messages directly. Also it would be yet
->another exception.
->
->I would probably keep it simple and just flush the messages from
->the panic-CPU (using console_flush_on_panic(CONSOLE_FLUSH_PENDING).
->
->
->>  			return -EPERM;
->>  
->>  		if (ctxt->prio <= cur->prio || ctxt->prio <= cur->req_prio)
->> > --- a/kernel/printk/printk.c
->> > +++ b/kernel/printk/printk.c
->> > @@ -2316,7 +2316,7 @@ asmlinkage int vprintk_emit(int facility, int level,
->> >  	 * non-panic CPUs are generating any messages, they will be
->> >  	 * silently dropped.
->> >  	 */
->> > -	if (other_cpu_in_panic())
->> > +	if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
->> >  		return 0;
->> 
->> I wonder if it is enough to check if it is holding the cpu_sync. Then we
->> would not need @panic_triggering_all_cpu_backtrace.
->
->I prefer to keep panic_triggering_all_cpu_backtrace. I know, it is an
->ugly long name. But it clearly defines what we want to achieve.
->And it limits the exception to printing the backtraces.
->
->The check of the cpu_owner would work now because it is used basically
->only for the backtraces. But it might change anytime in the future.
->cpu_owner is a "generic" lock. I guess that it will be used
->in more situations in the future. Any change might break this
->scenario again...
->
-
-I agree that the checking of cpu_owner can be insufficient in the future and 
-the use of panic_triggering_all_cpu_backtrace is more reliable in that sense.
-
->Summary:
->
->I prefer two patches:
->
->  1st patch would allow storing the backtraces using the variable
->     panic_triggering_all_cpu_backtrace (better name appreciated).
->
->  2nd patch would cause flushing the backtraces. And I would use
->     console_flush_on_panic(CONSOLE_FLUSH_PENDING) as a variant
->     which can be backported to stable kernels. It might later
->     be updated by the upcoming printk rework.
->
->Best Regards,
->Petr
-
-Thanks! I'll prepare another patch based on it!
-
-Sincerely,
-Ryo Takakura
+-- 
+With best wishes
+Dmitry
 
