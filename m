@@ -1,123 +1,89 @@
-Return-Path: <linux-kernel+bounces-271094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57852944970
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:37:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D879449A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:47:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192F4280FA2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92399286A5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB06184531;
-	Thu,  1 Aug 2024 10:36:43 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D445183CC4;
+	Thu,  1 Aug 2024 10:46:47 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0138A183CC7;
-	Thu,  1 Aug 2024 10:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B13170A32
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722508603; cv=none; b=aQpiynYPsEtSOLI09UV5etzG4m6NeN+ebGlDklHbFNa0rQC89LgHWtjqPvgBIALgiqe2pzELiNosbzxGOuXyOkSzcMqrXbFaYLEEncMHZYUX6bgFx+fZWGzBq66rbFezNtClso5vXGmHTNx6aGO5EzWweSkUg+D5ZYixqgs20Sk=
+	t=1722509207; cv=none; b=Nnz2LaUrJzRr1UmGgKEB/OUb7wK2hitwQTAdcVTrQ6zZOYyRncdM0mOwM6QetJmLQq/l0R07K4IZ4oWbXfhsFbBd67MJ6EdA/gUUYp20bLdvruqYPN0mNcsA0QtQejrkAxCsYrkrZi1jLpiQv3ok/gFeyjbWhkJ28vcI/k9H6sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722508603; c=relaxed/simple;
-	bh=DL+vKZw4y5x8U/Jw2V7jmbA9F+BlmJ66B3Ipe2bD0RQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D20crcSyOFnXl0FTzwdRnczWgMa/Xnn5I4lgho7OpKtr+22VYcDdNPZ8LcPlPKROFXqim1BTiXKTwMtEFQzaZnB+u9Z0MV6GCqQ/KFqfClWtbE4J3FT1jO9LSx4uHQTUDGAEUuZBnrZ0aoV6lBKxmtKpYNK6QNKCyVZcVxc8lF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e86192c.versanet.de ([94.134.25.44] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sZTAb-0005uf-Nz; Thu, 01 Aug 2024 12:36:29 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>
-Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Alex Bee <knaerzche@gmail.com>,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 1/3] dt-bindings: media: rockchip,vpu: Document RK3128 compatible
-Date: Thu, 01 Aug 2024 12:36:28 +0200
-Message-ID: <23279441.ssLaC8jLEa@diego>
-In-Reply-To: <20240528083747.z55laxnmioorzaru@basti-XPS-13-9310>
-References:
- <20240523185633.71355-1-knaerzche@gmail.com> <3639993.hdfAi7Kttb@diego>
- <20240528083747.z55laxnmioorzaru@basti-XPS-13-9310>
+	s=arc-20240116; t=1722509207; c=relaxed/simple;
+	bh=SMF4GpAWvqM7jjOnDV18CS82I3uuCdBzjY/QozGLIX4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hqahU8V9THZncwVvspZZqlkODNAMsrOBJf8m+UwTjhRMIWKAu0YCR1E7ZAKMApantg/9fuKWxkFkcRHVlVL5ylgOLQuusmOsKvFGF0T+wQdCDNl6eD8vKunz1Gfla1ZcApNabWJOTkglsCP/PFlqgEpGuyFXx7VtViFYNeo5mu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.64.72])
+	by sina.com (10.185.250.24) with ESMTP
+	id 66AB654800003730; Thu, 1 Aug 2024 18:36:58 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 69488110748372
+X-SMAIL-UIID: 0949200B840345B2AC416BC36058EF96-20240801-183658-1
+From: Hillf Danton <hdanton@sina.com>
+To: Liju-clr Chen <liju-clr.chen@mediatek.com>
+Cc: Will Deacon <will@kernel.org>,
+	Yingshiuan Pan <Yingshiuan.Pan@mediatek.com>,
+	linux-kernel@vger.kernel.org,
+	Ze-yu Wang <Ze-yu.Wang@mediatek.com>
+Subject: Re: [PATCH v12 03/24] dt-bindings: hypervisor: Add MediaTek GenieZone hypervisor
+Date: Thu,  1 Aug 2024 18:36:47 +0800
+Message-Id: <20240801103647.2480-1-hdanton@sina.com>
+In-Reply-To: <20240730082436.9151-4-liju-clr.chen@mediatek.com>
+References: <20240730082436.9151-1-liju-clr.chen@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
 
-Hey,
+On Tue, 30 Jul 2024 16:24:15 +0800 Liju-clr Chen <liju-clr.chen@mediatek.com>
+> +description:
+> +  GenieZone is a proprietary type-II hypervisor firmware developed by MediaTek,
 
-Am Dienstag, 28. Mai 2024, 10:37:47 CEST schrieb Sebastian Fricke:
-> On 28.05.2024 10:19, Heiko St=FCbner wrote:
-> >Am Donnerstag, 23. Mai 2024, 20:56:31 CEST schrieb Alex Bee:
-> >> The integration for this SoC is similar to RK3066/RK3188.
-> >>
-> >> Document it's compatible.
-> >>
-> >> Signed-off-by: Alex Bee <knaerzche@gmail.com>
-> >
-> >Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> >
-> >Media people, can you apply this patch alone from the series?
->=20
-> Yes, will do got this on my list already :).
+Given type-I [1], confused by type-II. Which one is correct?
 
-as I'm going through my list of "waiting for ..." patches,
-is this still on the radar?
+> +  providing an isolated execution environment for mTEE (MediaTek Trusted
+> +  Execution Environment) and AVF (Android Virtualization Framework) virtual
+> +  machines. This binding facilitates the integration of GenieZone into the
+> +  Android Virtualization Framework (AVF) with Crosvm as the VMM. The driver
+> +  exposes hypervisor control interfaces to the VMM for managing virtual
+> +  machine lifecycles and assisting virtual device emulation.
 
-As far as I can tell, it didn't make it into 6.11-rc1, but 6.12 would be
-nice :-)
-
-
-Thanks a lot
-Heiko
-
-
-
-> >> ---
-> >>  Documentation/devicetree/bindings/media/rockchip-vpu.yaml | 4 +++-
-> >>  1 file changed, 3 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml=
- b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
-> >> index c57e1f488895..d1b47b14ca57 100644
-> >> --- a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
-> >> +++ b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
-> >> @@ -26,7 +26,9 @@ properties:
-> >>            - rockchip,rk3568-vpu
-> >>            - rockchip,rk3588-av1-vpu
-> >>        - items:
-> >> -          - const: rockchip,rk3188-vpu
-> >> +          - enum:
-> >> +              - rockchip,rk3128-vpu
-> >> +              - rockchip,rk3188-vpu
-> >>            - const: rockchip,rk3066-vpu
-> >>        - items:
-> >>            - const: rockchip,rk3228-vpu
-> >>
-> >
-> >
-> >
-> >
-> >
->=20
-
-
-
-
+[1] https://lore.kernel.org/lkml/20240730082436.9151-3-liju-clr.chen@mediatek.com/
++++ b/Documentation/virt/geniezone/introduction.rst
+@@ -0,0 +1,87 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++======================
++GenieZone Introduction
++======================
++
++Overview
++========
++GenieZone hypervisor (gzvm) is a type-1 hypervisor that supports various virtual
++machine types and provides security features such as TEE-like scenarios and
++secure boot.
 
