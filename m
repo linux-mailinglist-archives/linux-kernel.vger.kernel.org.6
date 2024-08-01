@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-271636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05B99450FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:44:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F5F9450FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:43:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCB22B23572
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 868E2289759
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5541AAE0B;
-	Thu,  1 Aug 2024 16:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E763C1BE233;
+	Thu,  1 Aug 2024 16:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpwKZWD8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGIHvkW9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108B91B580F;
-	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40FDC1BC066
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530438; cv=none; b=NmhTnRg5GNKKSBsU7MsGFX9vNP4k34clwysrERy1dUH1TgFWsy/YuBMtTlLIKhbVYif44Cp2WZAaoNwq2vhZj/+1yNQqQTjpPW7GRHTRtxEH3074H7D2HfD4GzvbenHC0TtSU0OOPymPQe40KI6AHzQz/iu6+sdkw1MO+eGFAqY=
+	t=1722530438; cv=none; b=gkbGiH7xyCmkEgjx7upswe+0eGXxXNv2dXivTvfsqqKuZYzc2kWlIZuJx/iArwmloqHbYoZtFKd33BVoZr2kJuI7oYhC1pzeFz52bmtfvia34DBdqtEwJJTl2e21T/6n96ILjOz7odD1aYeWnrlAwBwCnVmG8vmO+Pvl50P/rrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722530438; c=relaxed/simple;
-	bh=cm88tP/Dp1Y8OMyog3ReSR+5U6PYD1gdvoFDyAqqrGA=;
+	bh=Qf7CsUZ7Mp3HUtb2ngmsj4kwcF27UTC845pBKzaaids=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PzNCt/VH0IzJxsYE7maVEiHnYbSimjVzGeCQfAmw3JfVfDIs9h3OAjY8DkVb/3pai+hkBWBkGWCpM4b9tglkeeHq1bLizNSdcEe3ZlHcH+S+1Y9svUPxykc+U+lwTDPybS8lmVmmxai7fsZffIlHAIK10DrMUp+yESkUdvv3b+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpwKZWD8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id A3617C4AF0B;
+	 In-Reply-To:To:Cc; b=QnJOmxAEIVEhVmxNCFlWscznibVv+V1H5CnIsNqo0QaNRxBN4K0nSkfafhCFpdL6JQTzUhK3FAirWW7tdTDvJDWRau3DwcSwUYqevxrUXqK3KpSm/rhqV20quDcamzZ6DO34Yeg/rKIYrQN8HrMN8U5WEt07hD9xdsD90PGJgdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGIHvkW9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E3824C32786;
 	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722530437;
-	bh=cm88tP/Dp1Y8OMyog3ReSR+5U6PYD1gdvoFDyAqqrGA=;
+	s=k20201202; t=1722530438;
+	bh=Qf7CsUZ7Mp3HUtb2ngmsj4kwcF27UTC845pBKzaaids=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=NpwKZWD8xlDHvM5Wr5EP1TritZv5c6YBqI41ANcluQfaNqMZgP2bF/3b0soGyJwnf
-	 xgXdD4NP07UVbKqvmPeVJkirKzbRHllIyy/EGRUgXvzRAmBLXZppM0uu2OYn4STrhP
-	 XhTLNOP/lqNP7ZYXaXvbXzLot9zB0HHTTSb7F19z+VZ1tACt1Hx/mO45hqhOEg9smh
-	 MTh3hnls60Spof2JUZVbUeGKy34bgUPhFjNvYetOR7idjb7RgUeuUL6hBUePfyQB2A
-	 0iaH/vFKbw8Nd9Ss3OvvkcFB7ckTeN++mKLwwMWmwd/SRi9aJNOJh2Zx0WIBSja5Kg
-	 42CLMj3LnEqwA==
+	b=VGIHvkW9pm4tSmx6J5sp7tQHJlJVPsD1h3vPy5N/Nja9Va9NQZbPXUbS/SmN3oQ1/
+	 52v+14H02XzrEEK3jYk84UGohxTLTG3wZVdee4cd3KREyJh4iEM2LAy5PpH4PewKTg
+	 m3iCvKTkpTN5mYmnuwhGpsX0S3hG1BT5ob9sYm20wNJ+DQW6AMsPUf+GRCFHpdMBmr
+	 sUOFJrsjDROJQQMeOHkmtoyufG2H9+eGptiT8QNH+GyURI2SCZvvem+o0GjbPrg6yu
+	 wU2Ik0fnfzpv/qp+aFxUPFWq/6Nvz/hGlh0lJnc4nfYjkMIGBbPGxqW23o8i7m2B02
+	 UsJDIGQ9gn49Q==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 85C93E8877A;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id D7E05E8877A;
 	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,41 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] perf arch events: Fix duplicate RISC-V SBI firmware event
- name
+Subject: Re: [PATCH v2] RISC-V: Enable the IPI before workqueue_online_cpu()
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172253043753.13740.1828763400860823722.git-patchwork-notify@kernel.org>
+ <172253043788.13740.11553891732223082482.git-patchwork-notify@kernel.org>
 Date: Thu, 01 Aug 2024 16:40:37 +0000
-References: <20240719115018.27356-1-eric.lin@sifive.com>
-In-Reply-To: <20240719115018.27356-1-eric.lin@sifive.com>
-To: Eric Lin <eric.lin@sifive.com>
-Cc: linux-riscv@lists.infradead.org, peterz@infradead.org, mingo@redhat.com,
- acme@kernel.org, namhyung@kernel.org, alexander.shishkin@linux.intel.com,
- jolsa@kernel.org, irogers@google.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, peterlin@andestech.com, dminus@andestech.com,
- locus84@andestech.com, jisheng.teoh@starfivetech.com, inochiama@outlook.com,
- n.shubin@yadro.com, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, samuel.holland@sifive.com
+References: <20240717031714.1946036-1-nick.hu@sifive.com>
+In-Reply-To: <20240717031714.1946036-1-nick.hu@sifive.com>
+To: Nick Hu <nick.hu@sifive.com>
+Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, tglx@linutronix.de,
+ peterz@infradead.org, anup@brainfault.org, samuel.holland@sifive.com,
+ tj@kernel.org, alexghiti@rivosinc.com, linux-kernel@vger.kernel.org,
+ greentime.hu@sifive.com, zong.li@sifive.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Fri, 19 Jul 2024 19:50:18 +0800 you wrote:
-> Currently, the RISC-V firmware JSON file has duplicate event name
-> "FW_SFENCE_VMA_RECEIVED". According to the RISC-V SBI PMU extension[1],
-> the event name should be "FW_SFENCE_VMA_ASID_SENT".
+On Wed, 17 Jul 2024 11:17:14 +0800 you wrote:
+> Sometimes the hotplug cpu stalls at the arch_cpu_idle() for a while after
+> workqueue_online_cpu(). When cpu stalls at the idle loop, the reschedule
+> IPI is pending. However the enable bit is not enabled yet so the cpu stalls
+> at WFI until watchdog timeout. Therefore enable the IPI before the
+> workqueue_online_cpu() to fix the issue.
 > 
-> Before this patch:
-> $ perf list
+> Fixes: 63c5484e7495 ("workqueue: Add multiple affinity scopes and interface to select them")
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2] perf arch events: Fix duplicate RISC-V SBI firmware event name
-    https://git.kernel.org/riscv/c/63ba5b0fb4f5
+  - [v2] RISC-V: Enable the IPI before workqueue_online_cpu()
+    https://git.kernel.org/riscv/c/3908ba2e0b24
 
 You are awesome, thank you!
 -- 
