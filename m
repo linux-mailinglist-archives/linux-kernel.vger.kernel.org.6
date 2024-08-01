@@ -1,150 +1,108 @@
-Return-Path: <linux-kernel+bounces-271896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C239194549D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:44:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECD1945497
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F370D1C23319
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7A03285542
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5853914D439;
-	Thu,  1 Aug 2024 22:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F86614D28F;
+	Thu,  1 Aug 2024 22:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lfF305o6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Lfo7KuAV"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CBD14D6E9;
-	Thu,  1 Aug 2024 22:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BCF146D73
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 22:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722552261; cv=none; b=czsa3bABwSprzLvxDGJP9JPoJU3IGiAJKY4AL1OEm0uPAoSG2Wdf4EUYJ49p25H107ONmhYuKbmz11yB4rQU4ytxr9vW8g0hMVmg3o9a8Vg6uUPSHuRSzvostl2b9dvQWVu5EOR1+9pOYzBwb2FutigzXlhTCxkRsdI8VHbL1dc=
+	t=1722552245; cv=none; b=ZNhXumrUAAtJq0Xao1HhFiClkKtlII2H+LCPL0FAcx15tdINmPxpxJftGXJOxSPwRSuBvWaFFXeAGe4QD9Bcd7cwTWVSi1V2UVzJJATYyN3n8XblCv5DiBd8dBMo2o03M8pIKFAzODZVy8QsY3dAirmpqMV//F2vbZC63/9nqHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722552261; c=relaxed/simple;
-	bh=YgcMeHbecvcwAZcMU2fEaHUgFYpRhsPXQb6yZzvX9Mg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V0878T3ONHCcbxjJxOjpc/nF5pAnuVLp3OSd4l5zfBQQtdGGpa19VFlGnucoJgEOxio4YHevbuQtCDUfeDXlu7AxvbFibMJRJrJAJX/FAtdhqcSR3anUu1bODH+wCMrM5GPZCDzOhuLlEDraLNpMljVSikaOuxS8/iVpE4seAvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lfF305o6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471LajVc024593;
-	Thu, 1 Aug 2024 22:43:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xGG1xu/Ws5ZdwYrfCVjBOTjooBbgHwtQA2Br32FjgVM=; b=lfF305o6k0ZUPcjF
-	xQE4GP+uieLUOfwU/0EURArLd0ql2Kk6uvVxiIcGMyVAa24SwZvRB3li6fN90iji
-	beLTmNS/KORCWwbXVwmuCahg/+Hr8vrPY+xCAu2UmVjSXDl4k1E0dw8WFStplj/Y
-	kQHH2Je/H6q4DxblHgepb4U7X76/mmLqP3fHpDnP3iK2Uu2cE4uMRJPYF551aiZX
-	8G/u4d4IA+Bo9/BS9gNfOV9aHJ6BSmvxWqCyUI7f6T5rol3fW1sBzlAYJHBm+fAO
-	8d//hvPKCdsNEUxVGOJsRHwns38tZW//3Is3UfDP3gV040FBVexg4++ytQn44aHc
-	8LXX/A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40rje303h8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 22:43:18 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471MhHdQ023311
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 22:43:17 GMT
-Received: from [10.71.115.74] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
- 15:43:16 -0700
-Message-ID: <2141c04d-953b-47a5-a105-8a60ec370371@quicinc.com>
-Date: Thu, 1 Aug 2024 15:43:16 -0700
+	s=arc-20240116; t=1722552245; c=relaxed/simple;
+	bh=lq3VBorsI74MMj3Lqck3lrsi3fdGR/6G+iOUm2eJ8wc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gBrwBtLauGbDkIJIuYzt45ENTeKB5E+oOpp9aVnInpA446FfL3s/D3zujEdx8bhW/Xk8uPisu3FUUIEwu/fk73gKRvyRtcpZ7MFuLyWZKj55vNXOa+o1reL3/zqXjkqz84JqsqN5ar5WhcyCD7kFYzbusjcDfdcjDs0e72mTHjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Lfo7KuAV; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70e9ea89b42so6743774b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 15:44:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722552244; x=1723157044; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p85cwU83Btirpz320PiS8rUe0YP6eP6Qw8YmMGvdQno=;
+        b=Lfo7KuAVtk8v5trLNAAwaMual7t21JwO/W8EvOKU0ZqhtOygG0AUDcpCSM3HC7eesx
+         9oeyN1l6cjjUqIlTsXVIt9RBveR4Va0r6NaEj+VMXqdLisWKGlJsYbgrCgeUqMIWfzt1
+         vnt9dXXpVEt3/yjMiVQHjUXLQJerWv2YA2FqYdTY3AAEMSmsXm4Ar0ksVIKgbQ5/+8sh
+         BSJyfc+hiIHE+diwGIR3csT0a1WrbefL1hQGJBtgIZO/8fpC/g5bx56NUWetJqOp/GWe
+         YG9h+kGK6MkaOL1Zjl58JBgilVbOqydbpvitAQvN1pXIUOpGPIyqSejOUWDRXzmlvL1Z
+         g3mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722552244; x=1723157044;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=p85cwU83Btirpz320PiS8rUe0YP6eP6Qw8YmMGvdQno=;
+        b=AOrev0MbyGV1khZxjC0cwt0ZmhYpCGfDGhwrXHVcCF1XWpp5KMYD0T9rRPqZs7iQmW
+         hAeMem8FRm7D6cXb03XvirKh8xM5aaaMx/1BjyL5xo4jSz3B9zfA7Dzafqwg5yW/POcc
+         TWYOtnoYWh2Icca28q7G0GzeT7gsGqn1L4KxF8Z1BIVphnWCqCLRmDXz/pVCa5JZk+8f
+         vhmeyyZR7zgIo/U2tWE2eak/LuOPFY9kK5Pn/hoJD2DcEv0aL1hsb0N5SIEDqFBK76en
+         3gpvl/ditFp7DIrT84E9ltxqaFp0T921urf9iiXUkAX0+MX+YGjC+X4hsycWT7etFTd2
+         04RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWHCgp4l1JFW92GdS3KJhrDTDuPmeCGbzLQxNpk+IWsoTvZGsJ+jDXSDk+6ZiK0j/HflhnZrTFwdtpz8uhveZva5jiRHJREcuxyJGng
+X-Gm-Message-State: AOJu0YwOg5YO67viVYs4AED7acWVcufBft+Dlb/ZbN/pr51p6z4e34H0
+	TInbp76zPIo1ax6AeCep49WZJzjA9AdO+xpJ2gnv34iYBBkqRnBSAuz9Z+sV8cxtAAnfsa2ZhrT
+	xcA==
+X-Google-Smtp-Source: AGHT+IEmR7D4g/Tw8EyfOWI7dF5c0FZtLAEI5aDeLZlNzohQhY4pE4dwXTrp2wXUEy2kRsQwoPrBvaSEB/8=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:949c:b0:705:ca19:2d08 with SMTP id
+ d2e1a72fcca58-7106d0ca7camr10974b3a.6.1722552243470; Thu, 01 Aug 2024
+ 15:44:03 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu,  1 Aug 2024 15:43:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 10/34] ASoC: usb: Create SOC USB SND jack kcontrol
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-11-quic_wcheng@quicinc.com>
- <89b10ddb-9d0e-480e-846f-64f2a4592f6f@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <89b10ddb-9d0e-480e-846f-64f2a4592f6f@linux.intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
+Message-ID: <20240801224349.25325-1-seanjc@google.com>
+Subject: [ANNOUNCE] PUCK Agenda - 2024.08.07 - KVM userfault
+ (guest_memfd/HugeTLB postcopy)
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Xu <peterx@redhat.com>, James Houghton <jthoughton@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Axel Rasmussen <axelrasmussen@google.com>, David Matlack <dmatlack@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gXHq5d8kZnKKMYYfVok95REoRv2uhT8d
-X-Proofpoint-ORIG-GUID: gXHq5d8kZnKKMYYfVok95REoRv2uhT8d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_21,2024-08-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=966
- phishscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 impostorscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010152
 
-Hi Pierre,
+Early warning for next week's PUCK since there's actually a topic this time.
+James is going to lead a discussion on KVM userfault[*](name subject to change).
 
-On 8/1/2024 1:07 AM, Pierre-Louis Bossart wrote:
->
->
->> +static inline int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
->> +						 struct snd_soc_jack *jack)
->> +{
->> +	return -ENODEV;
->> +}
->> +
->> +static inline int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component)
->> +{
->> +	return -ENODEV;
->> +}
-> usually fallback functions return 0, is the error code intentional?
-ACK.
->
->> +int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
->> +					struct snd_soc_jack *jack)
->> +{
->> +	int ret;
->> +
->> +	ret = snd_soc_card_jack_new(component->card, "USB Offload Playback Jack",
-> do we need the reference to Playback?
-No, will remove.
->> +					SND_JACK_HEADPHONE, jack);
-> wondering if there would be any merit in defining a new type of jack,
-> e.g. SND_JACK_USB since here the purpose is to notify that there's a USB
-> device connected. The type of device does not really matter, does it?
->
-Not as of now, but I think we discussed in the past that maybe depending on if playback and capture is supported, we can notify SND_JACK_HEADSET?  That is something I will need to change depending on how we want to handle the comments on patch#9
+I Cc'd folks a few folks that I know are interested, please forward this on
+as needed.
 
-Thanks
+Early warning #2, PUCK is canceled for August 14th, as I'll be traveling, though
+y'all are welcome to meet without me.
 
-Wesley Cheng
+[*] https://lore.kernel.org/all/20240710234222.2333120-1-jthoughton@google.com
 
->> +	if (ret < 0) {
->> +		dev_err(component->card->dev, "Unable to add USB offload jack\n");
->> +		return ret;
->> +	}
->> +
->> +	ret = snd_soc_component_set_jack(component, jack, NULL);
->> +	if (ret) {
->> +		dev_err(component->card->dev, "Failed to set jack: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	return 0;
+Time:     6am PDT
+Video:    https://meet.google.com/vdb-aeqo-knk
+Phone:    https://tel.meet/vdb-aeqo-knk?pin=3003112178656
+
+Calendar: https://calendar.google.com/calendar/u/0?cid=Y182MWE1YjFmNjQ0NzM5YmY1YmVkN2U1ZWE1ZmMzNjY5Y2UzMmEyNTQ0YzVkYjFjN2M4OTE3MDJjYTUwOTBjN2Q1QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20
+Drive:    https://drive.google.com/drive/folders/1aTqCrvTsQI9T4qLhhLs_l986SngGlhPH?resourcekey=0-FDy0ykM3RerZedI8R-zj4A&usp=drive_link
+
+Future Schedule:
+Augst   7th - KVM userfault
+August 14th - Canceled (Sean unavailable)
+August 21st - Available
+August 28th - Available
 
