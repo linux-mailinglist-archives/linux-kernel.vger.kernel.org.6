@@ -1,173 +1,130 @@
-Return-Path: <linux-kernel+bounces-271068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EBB944917
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:09:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1230C94491A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:10:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA926283116
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50B4282EBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C1D183CAB;
-	Thu,  1 Aug 2024 10:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD5B183CBF;
+	Thu,  1 Aug 2024 10:10:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fYfYrChN"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="PQFqD95+"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F39183CDE
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:09:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16D116D33D
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722506958; cv=none; b=e2bYK/KPyt9x89gbJZC2kA+FnWmo1YCC0UcUSZpQkvI/9/Xk3KkBTpc3p220UTW8D7/UKb7M2N/2p5ou/0lL5gC/59liSk+4uo4voqgzdP23CaLbyJR2PpeSTTVkVr8pRqLYOsYUYiOFUgPkkhBa8ro1HHxhZnDSJ85Ov0iv/OY=
+	t=1722507011; cv=none; b=StVKlevx2L24RLQsiubcop9aCtHFNnHhYAO6y15z5ELpVMo/njGYmFEY0tO5jl1/YWnokvTHDPgZWCBMhnYnRLAx2Fmj0S3BRDWrUCdlOYaesMRPJK+iPUj7ExfZk/ba0jwINjvIi5mFWfF987fv+B2CpRNWwG+TJLMMFxbfWX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722506958; c=relaxed/simple;
-	bh=P6OMtUrQn4UZTjmQjF4bUCRTsCT8RkFp+l8NrubderE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUaZ3/aibN1WHaZrlSzhQVggR5NmD/rl4xDXfJGzMdNFTFf7kg5d9ZYh5WYWBQGZynA2k50x3cB+5dYbv0tMY2fHUpSDYrq6ktymi5xYAnxLMNlW5bwJi5Ptffm4NUNBc2PUMp0GNyrq4QsGIStx8KhgpKpM9riUN02TxYoA6Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fYfYrChN; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428085a3ad1so45172815e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:09:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722506954; x=1723111754; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P6OMtUrQn4UZTjmQjF4bUCRTsCT8RkFp+l8NrubderE=;
-        b=fYfYrChNJzpd/NDsCu+vJQ+cNcY0BDd7Sae43pYHV25I10lIPCDImhmzoU3abyWbLD
-         Bpn3Ulo8VhfmoI5RcWpmn3q8srlkHyT3NwF/V6JjeRSyY7ueBF6qFLteOFzv6Ds4dGEW
-         PHuE+0Y88FL6fsxtwhIz6fmMav86wy7pxCmdWYbptcwzaKxwfcFSEWtJUMPfe2uGGfOq
-         F/4iuaxPehYNxJomgZpEuZiLu4lmZIVWRLFJCL/aGHIAgDHk97gR2mb5ieJsDzYRv89W
-         VBwFuRYUWjVNL5axBA7kNmeOtZowgk7tuezcZoGhddxQN8qlwiKjRc//ZpejDtd+wPng
-         9fEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722506954; x=1723111754;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P6OMtUrQn4UZTjmQjF4bUCRTsCT8RkFp+l8NrubderE=;
-        b=YMJ2Je0QbXhnqn7+O/1nm/+I+L/XzLvPk6AtAIpLCpoFgPrLpUKtsN1JMk52NgMFMf
-         i7bewTutnNifQKzhc9hZwQLFI10Y8xp1tIbJb7+mSp3p1gkQRDxdBYvbXfYi1mN2zIxS
-         QZmzbQk/SzALbBMgC6wnMRHve4s8AETECEjkuDzon7k6ibOAPvIA7GSGhqN/I1TwOgOT
-         rG2RSQODZRgrIipxlXEgrNhooSPWTt7CIfPv3Nb2vWm1BSu3F3EgOJv++vgv8UekY7Ja
-         j6RAGsLyH1SfsjTM7xe9iElzplEAoKrtSToQ0/n39cwvSOU6y+IiHKyWvszd30NvZ5Yd
-         280w==
-X-Forwarded-Encrypted: i=1; AJvYcCW++5iZWoZlhohv+U8RuwQLotPszSu12LOw67ovUNGDEKfngwCyLylH9w4ligDVmnY4JQD+1vPEYOgs2naPKviHWtRSmDDJuyKBI372
-X-Gm-Message-State: AOJu0YzsEiAeq0HEaO34o0iMs0O6kq2ss/YeuJithoxWz08I6+2MFMXt
-	9mugQnDTW1NthaSQEkAQ4c0Uu87zqSkpA806Gy8pnml2EYEFhb6NoAI3ezHaUvc=
-X-Google-Smtp-Source: AGHT+IFD9Huqf9ehqE/yx/c33T4hC67DXyZNzDd7aRkxvgUynfl/kCK9JGFNCBCC68t+y1XFHOnwRg==
-X-Received: by 2002:a05:600c:354e:b0:426:5b3a:96c with SMTP id 5b1f17b1804b1-428b4ad2353mr15186275e9.28.1722506954102;
-        Thu, 01 Aug 2024 03:09:14 -0700 (PDT)
-Received: from localhost ([193.196.194.3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b867146fdsm6868598f8f.101.2024.08.01.03.09.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 03:09:13 -0700 (PDT)
-Date: Thu, 1 Aug 2024 12:09:12 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: 
-	Kepplinger-Novakovic Martin <Martin.Kepplinger-Novakovic@ginzinger.com>
-Cc: "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>, 
-	"lee@kernel.org" <lee@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, 
-	"jingoohan1@gmail.com" <jingoohan1@gmail.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH] backlight: pwm_bl: print errno for probe errors
-Message-ID: <3ghsuulqhfqvktfqbo7hfewpgu2nbyxahjxmoqfkvpceepmqih@axneh72aegog>
-References: <20240801091255.1410027-1-martin.kepplinger-novakovic@ginzinger.com>
- <fjke5js43aqxdxmoau2l275a26o52sq7hyjgzwxnnsrptqlcvs@mohkvblfqkhg>
- <00f4f77151de3c3a4964fe697a7d1841c670284b.camel@ginzinger.com>
+	s=arc-20240116; t=1722507011; c=relaxed/simple;
+	bh=pmjSn+q1ifOaA2k5eqF/tfKE/88jqEPD7cjG9zacuzk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PW4U5Ct2q4ZtmG9sNAKhuCrzGRGniQl3Kp/F1i1kvqawk6AoJr2FbNK4pXiO3UDcqj8O9FmL4frSwKG0avXzgKsWsylmD7Vq6QV0M0f0f0EkrjlrgPJUXK99FUS+P6YGbela3SwgMShQxtdQIqOD3uT4jXUfofk1VMecGUlRZrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=PQFqD95+; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722507006; x=1722766206;
+	bh=G7Oj40FNMrtAiodcL8qUhrfYw1p13xTbvDkgvmXeYHU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=PQFqD95+kFneOfJeAgAJ2z7XDwDXjK7H1Fwpw6XqIVzom/ghqp2gyaRIfO2c0bdBm
+	 7XBLxhE5kKDAG6HfVIZUBXK5GD4hVaaxbSVSIucYMi+rNmFOWQ/cjufwGIghWW8LMH
+	 zYHyT1pXQEwzlSH176kPna9/oSdtDncQFNngK6JyMQsiXTzU2WTwouRy2B+GxDYGUx
+	 41xDzAzWLyqk7k6oyZF0Te/Iv+3mxSh3zapks1buFXbGBbTXpniguZLjMG+/Twat9B
+	 2M6UgDMdvcVj9aQHcKlrBLyNe0m/5X35mP/4EGljxhvmLpWXQ38MyjZQ0DtVqRbrr0
+	 1DFsvUASOSNfA==
+Date: Thu, 01 Aug 2024 10:10:00 +0000
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Aakash Sen Sharma <aakashsensharma@gmail.com>, Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] rust: Introduce irq module
+Message-ID: <5e449ae3-d858-45a2-ace8-28d9040b83a7@proton.me>
+In-Reply-To: <fadbccec-a51e-47ff-9c96-0aab043048c8@proton.me>
+References: <20240731224027.232642-1-lyude@redhat.com> <20240731224027.232642-2-lyude@redhat.com> <fadbccec-a51e-47ff-9c96-0aab043048c8@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b46114ba15369938a35b39b1cdffe0aba3e8bcde
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7rid6e4qsgbmshkc"
-Content-Disposition: inline
-In-Reply-To: <00f4f77151de3c3a4964fe697a7d1841c670284b.camel@ginzinger.com>
-
-
---7rid6e4qsgbmshkc
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hello Martin,
-
-On Thu, Aug 01, 2024 at 09:52:01AM +0000, Kepplinger-Novakovic Martin wrote:
-> Am Donnerstag, dem 01.08.2024 um 11:26 +0200 schrieb Uwe Kleine-K=C3=B6ni=
-g:
-> > On Thu, Aug 01, 2024 at 11:12:55AM +0200, Martin Kepplinger-Novakovi=C4=
-=87
-> > wrote:
-> > > diff --git a/drivers/video/backlight/pwm_bl.c
-> > > b/drivers/video/backlight/pwm_bl.c
-> > > index f1005bd0c41e3..cc7e7af71891f 100644
-> > > --- a/drivers/video/backlight/pwm_bl.c
-> > > +++ b/drivers/video/backlight/pwm_bl.c
-> > > @@ -502,7 +502,8 @@ static int pwm_backlight_probe(struct
-> > > platform_device *pdev)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- GPIOD_ASIS);
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (IS_ERR(pb->enable=
-_gpio)) {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0ret =3D dev_err_probe(&pdev->dev, PTR_ERR(pb-
-> > > >enable_gpio),
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "failed to =
-acquire enable
-> > > GPIO\n");
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "failed to =
-acquire enable GPIO:
-> > > %ld\n",
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PTR_ERR(pb-=
->enable_gpio));
-> >=20
-> > AFAIK dev_err_probe already emits the error code passed as 2nd
-> > parameter. So I wonder about this patch's benefit.
-> >=20
+On 01.08.24 11:51, Benno Lossin wrote:
+> On 01.08.24 00:35, Lyude Paul wrote:
+>> +/// Run the closure `cb` with interrupts disabled on the local CPU.
+>> +///
+>> +/// This creates an [`IrqDisabled`] token, which can be passed to funct=
+ions that must be run
+>> +/// without interrupts.
+>> +///
+>> +/// # Examples
+>> +///
+>> +/// Using [`with_irqs_disabled`] to call a function that can only be ca=
+lled with interrupts
+>> +/// disabled:
+>> +///
+>> +/// ```
+>> +/// use kernel::irq::{IrqDisabled, with_irqs_disabled};
+>> +///
+>> +/// // Requiring interrupts be disabled to call a function
+>> +/// fn dont_interrupt_me(_irq: IrqDisabled<'_>) {
+>> +///     /* When this token is available, IRQs are known to be disabled.=
+ Actions that rely on this
+>> +///      * can be safely performed
+>> +///      */
+>> +/// }
+>> +///
+>> +/// // Disabling interrupts. They'll be re-enabled once this closure co=
+mpletes.
+>> +/// with_irqs_disabled(|irq| dont_interrupt_me(irq));
+>> +/// ```
+>> +#[inline]
+>> +pub fn with_irqs_disabled<'a, T, F>(cb: F) -> T
+>> +where
+>> +    F: FnOnce(IrqDisabled<'a>) -> T,
 >=20
-> It does. Other messages only take the deferred_probe_reason without the
-> error code. It's actually fine if users properly enable debugging after
-> seeing an error and then this change is not needed :)
+> You can use this as the signature:
+>=20
+>     pub fn with_irqs_disabled<'a, T>(cb: impl FnOnce(IrqDisabled<'a>) -> =
+T) -> T
 
-I'm unsure what you intend to say here. Do you agree that this patch
-doesn't need to be applied as it doesn't add any information to the
-emitted messages? Or do you think there is a value because "users don't
-need to enable debugging" then. In the latter case I don't see where
-users would see "failed to acquire enable GPIO" before, but not the
-value of the error code.
+I just noticed that this and the version above are wrong, since they
+allow `T` to depend on `'a` ie you can do the following:
 
-Best regards
-Uwe
+    pub fn cheat() -> IrqDisabled<'static> {
+        with_irqs_disabled(|irq| irq)
+    }
 
---7rid6e4qsgbmshkc
-Content-Type: application/pgp-signature; name="signature.asc"
+And thus obtain an `IrqDisabled` token without IRQs being disabled.
 
------BEGIN PGP SIGNATURE-----
+To fix this, you must use the `for<'a>` notation, so either
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmarXsUACgkQj4D7WH0S
-/k6l9Af/QvYMJbj5q+H1Wto4fcvjCBdCY5CVt+pMDOClbcj6r7dlMGxySz03mxdf
-z8RSJeTXzShCNn8MTn07U90Xeip39HaubUQsNgxcRwPhUlnyvEu3Vyv4+hsFayIF
-4CZpVXbG/yX3/xP7oj5cMeb3J7neOMn2Dq2wFSxcnum8jcEM95jEzIhnnw6C2LvH
-u529HfA6RNKM/M/aUm4RYHjx+VcpRIUuiYXqmWm7x1kAXwxfMe2PRpG/u2gUOopW
-THrzdZDFP/MJ8bjSl0dylfe1AmFBJMedleJhSDNiXLT+PMIXZp+PQGCtdJBV99R+
-YUoAqBv0roilGt6tJ/qRNdZx+f8c0Q==
-=VOJH
------END PGP SIGNATURE-----
+    pub fn with_irqs_disabled<T>(cb: impl for<'a> FnOnce(IrqDisabled<'a>) -=
+> T) -> T
 
---7rid6e4qsgbmshkc--
+or
+
+    pub fn with_irqs_disabled<T, F>(cb: F) -> T
+    where
+        F: for<'a> FnOnce(IrqDisabled<'a>) -> T,
+
+This ensures that the callback works for any lifetime and thus `T` is
+not allowed to depend on it.
+
+---
+Cheers,
+Benno
+
 
