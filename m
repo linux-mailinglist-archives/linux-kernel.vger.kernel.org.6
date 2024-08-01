@@ -1,129 +1,87 @@
-Return-Path: <linux-kernel+bounces-271769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9146F945310
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:57:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F5D945313
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C34841C23D4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:57:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A568B244E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB1B1494A0;
-	Thu,  1 Aug 2024 18:57:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EA01494A7;
+	Thu,  1 Aug 2024 18:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X7uomi6q";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NvIcvdWU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sckkLcPN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BAB14388E;
-	Thu,  1 Aug 2024 18:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B96149C5B;
+	Thu,  1 Aug 2024 18:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722538630; cv=none; b=E2QFHrLU5rJUaDuILkMhaKwoi0njrPYedWz7UIhYMmzctaeyecdIXufTyQc5qj8/19H3id160IMThACRahlPfESPJLHsiUOhLUQLbGmyX45FvFr2Zo9ELqdVzFY5O1wd2vHscsYzK0qXxZBmkL1pXE2qqKX0uPVRoLbqOFD6Po0=
+	t=1722538654; cv=none; b=cDCojqCaCVXGAk3uQonDjtZ2tK8ytSdWHvaDREv981blSO/YxiDrVjFA4QOttL7vnGGVaUUUA1JU8Y9pGiklMLxHD/XG29Ul+Mpi3HTvs8hvY1MfRj9ajYTrBRRQgT3QLcApulRy2/D8gg6HxYMlytbldbauOzsXwkfEGHLprWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722538630; c=relaxed/simple;
-	bh=FmrTjJfZRJeOeksSetKsZeX8pmXxLUoNvXSzWv3VKRg=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oTjaDYGr/Gs5rclpNMs2cyJSjxyXlcluQq5XUw5Ctn615Cr2hbAG3Ruyr9nDSNvum1LPUtlO3pRL3LHwvkqxCyQIFjQduqSEvdsOQCkzNFH6tVY0WtDI1VPr02KDpN8zZEDaZ15XckAMFOcBuvGSvoT1k0ensOiy0+lulqBB6Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X7uomi6q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NvIcvdWU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722538626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Qtvx6UnoUyoSWHMXwIOA4ijYHSyk+SaZyONVTD97zM=;
-	b=X7uomi6q3hLASo35HE776F+PpcjV8RgqjVLyGxakOYdAVj1NReqyif33JIQy86hTowZpiq
-	s4w23BBQrjFpERRJiLYzGccDmZoqRee7RN1wTDqzEkV9rhk5T3lXX7+x0S0gOFdRis5NaT
-	Ivq3Nldba9Kb9c7NoT1YbI4YjLvupwkMbB5dFYD6Q2nq8V4xQdOutJMia6ULSFUfl2omhr
-	Hk8Rd42QhHAixHltVBsgugmforRhUpBkR7dHmLg/EsLfLLdY26IdLY9cR9+BQM2A6rZaZs
-	H2wnkLUm7ZWYNfg1SP1y1WGr/G2DbkjbownuZotugiaPt9ACbxrdK1RoKVCtSA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722538626;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6Qtvx6UnoUyoSWHMXwIOA4ijYHSyk+SaZyONVTD97zM=;
-	b=NvIcvdWUQDvyRVpEmX699azWn8Q/4GGaDmsTDbOIkTz10dz6fDSkJZj0bodPKoaIi+zIke
-	VopjK9ATxqlZsCBg==
-To: David Woodhouse <dwmw2@infradead.org>, lirongqing@baidu.com,
- seanjc@google.com, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clockevents/drivers/i8253: Do not zero timer counter in
- shutdown
-In-Reply-To: <b781a3f94e7ff1c2b49101255d382ab9d8d74035.camel@infradead.org>
-References: <1675732476-14401-1-git-send-email-lirongqing@baidu.com>
- <87ttg42uju.ffs@tglx>
- <e9a9fb03a4fd47ebddc3bf984726c0f789d94489.camel@infradead.org>
- <b781a3f94e7ff1c2b49101255d382ab9d8d74035.camel@infradead.org>
-Date: Thu, 01 Aug 2024 20:57:06 +0200
-Message-ID: <87le1g2hrx.ffs@tglx>
+	s=arc-20240116; t=1722538654; c=relaxed/simple;
+	bh=ESTm2u01Xsh4vYF2KoXB7xfioIZDNUAM2fpcoXzOAzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m4HVqb8YPxbWW4VgalrsOgZkbgubqBj3xof9JNlulWTZXgZbzHUk+/EEJpDxnskggvBnOVKi5YTyzWyJV6+rX7uaeH2yLFq8UIqkgPuaO0dcJHzJmCXRkKUjrNvkra2WR7aM7b2lmjwh8bUhjOMGGfey/fWcK6jKOYS/rQ3KchA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sckkLcPN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1916DC32786;
+	Thu,  1 Aug 2024 18:57:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722538654;
+	bh=ESTm2u01Xsh4vYF2KoXB7xfioIZDNUAM2fpcoXzOAzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sckkLcPN/By5o/yXDmyXaqy9G6osCUgoHDsPhkHA2xC7Og/onDUB5C1o19bPnBVNY
+	 y+Xidcnqg//p8O+Kt0ze8tn4t9Hck3WgOrzOKDpfbtyW17Y49X+DXQSMWkJdbIKEKu
+	 PVjrV9RpphgQq6DoryMPY11/7+72ZPGuCyPoskg2Hw3JsPZBh4vnEiY7T3grFHCT7H
+	 +sxtNoqqMUaHZP2ShTdzK8Zr3677cTxC5yIfmDXpr1i03H58bfmmFrcQ66EE6mAfXO
+	 2VdXbdK5hVjY4OmfJShIJLaKDVmKrAeDBy6mcEs8hQZJlufqkJzDySgMSc5wkXiZbV
+	 dOEjphWLB+gcw==
+Date: Thu, 1 Aug 2024 19:57:29 +0100
+From: Simon Horman <horms@kernel.org>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: phy: vitesse: implement downshift in
+ vsc73xx phys
+Message-ID: <20240801185729.GB1967603@kernel.org>
+References: <20240801050909.584460-1-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801050909.584460-1-paweldembicki@gmail.com>
 
-On Thu, Aug 01 2024 at 19:25, David Woodhouse wrote:
-> On Thu, 2024-08-01 at 18:49 +0100, David Woodhouse wrote:
->> > The stop sequence is wrong:
->> >=20
->> > =C2=A0=C2=A0=C2=A0 When there is a count in progress, writing a new LS=
-B before the
->> > =C2=A0=C2=A0=C2=A0 counter has counted down to 0 and rolled over to FF=
-FFh, WILL stop
->> > =C2=A0=C2=A0=C2=A0 the counter.=C2=A0 However, if the LSB is loaded AF=
-TER the counter has
->> > =C2=A0=C2=A0=C2=A0 rolled over to FFFFh, so that an MSB now exists in =
-the counter, then
->> > =C2=A0=C2=A0=C2=A0 the counter WILL NOT stop.
->> >=20
->> > The original i8253 datasheet says:
->> >=20
->> > =C2=A0=C2=A0=C2=A0 1) Write 1st byte stops the current counting
->> > =C2=A0=C2=A0=C2=A0 2) Write 2nd byte starts the new count
->>=20
->
-> It also prefixes that with "Rewriting a counter register during
-> counting results in the following:".
->
-> But after you write the MODE register, is it actually supposed to be
-> counting? Just a little further up, under 'Counter Loading', it says:
+On Thu, Aug 01, 2024 at 07:09:10AM +0200, Pawel Dembicki wrote:
+> This commit implements downshift feature in vsc73xx family phys.
+> 
+> By default downshift was enabled with maximum tries.
+> 
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> 
+> ---
+> This patch came from net-next patch series[0] which was splitted.
+> It's simplified as Russell King requested.
+> 
+> [0] https://patchwork.kernel.org/project/netdevbpf/patch/20240729210615.279952-10-paweldembicki@gmail.com/
 
-It's not counting right out of reset. But once it started counting it's
-tedious to stop :)
+Hi Pawel,
 
-> "The count register is not loaded until the count value is written (one
-> or two bytes, depending on the mode selected by the RL bits), followed
-> by a rising edge and a falling edge of the clock. Any read of the
-> counter prior to that falling clock edge may yield invalid data".
->
-> OK, but what *triggers* that invalid state? Given that it explicitly
-> says that a one-byte counter write ends that state, it isn't the first
-> of two bytes. Surely that means that from the time the MODE register is
-> written, any read of the counter may yield invalid data, until the
-> counter is written?
+Unfortunately this patch does not appear to apply on top of net-next.
+Please rebase and repost with Russell's tag.
 
-It seems to keep ticking with the old value.
-
-> I suspect there are as many implementations (virt and hardware) as
-> there are reasonable interpretations of the spec... and then some.
-
-Indeed.
-
-Thanks,
-
-        tglx
+-- 
+pw-bot: cr
 
