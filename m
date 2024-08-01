@@ -1,216 +1,110 @@
-Return-Path: <linux-kernel+bounces-271488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE885944EEB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:17:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9778E944EF6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27D21C20FC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:17:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7F01F2380B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DEE13C3EE;
-	Thu,  1 Aug 2024 15:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFansC8g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA5913C80C;
+	Thu,  1 Aug 2024 15:18:09 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4777B1EB4B5;
-	Thu,  1 Aug 2024 15:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D2F1EB4AC;
+	Thu,  1 Aug 2024 15:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525427; cv=none; b=qvkzhW9wnOmeXpT/5duVhO0ohspssKw/8REWle507Cxu7mRcOff4FVvEHY/ctzpIcNaFW5TiUjSj6ZRURFKoOikq8W9MqvlP1Map7kyPto4pBqWG3E1wu+5wSZj4PnkBNLMYM5AD5CVN65ASZNsfk1sxwveo2NZdIeI2l0twhno=
+	t=1722525488; cv=none; b=O6XGIYTmc75ZH5S6ME9046yanWPvzxeQlzGlQ6zP3pJuRZSBH5739VLhuHapTtMtMiq5Kpl0lNLCNd/yihvb14gS5nioGudxs/sOfZGXpNAg3Zg+32acQSQNICTC2cLGqWGxVDLoRAScRffxtHTmIGIDrLoogsSFiW45b/hEXS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525427; c=relaxed/simple;
-	bh=jyVbta1mUuxwm3u5mh3uM5NIXWN+tTgIG8i6Fx9mbGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kysF4Enk/GkMXC8+rhky4aV2l/s8cA8bpaLDZ3x0kwI6Z+2R+QzA8xFpjCuw0Sa8C50hsX7muNF8d8brO1KVBAqTvk1psq6kE2xs9RMuSRV1wTyKDe9KBmX8WwODMSwHxMmZMOxz5LX+ldksb5r6nqRkTfvowrf6/SynGml4jjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFansC8g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07F37C32786;
-	Thu,  1 Aug 2024 15:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722525426;
-	bh=jyVbta1mUuxwm3u5mh3uM5NIXWN+tTgIG8i6Fx9mbGo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZFansC8gaySRnEUbwCH9es1MlvqgFSrTHWUf56BGCUF7djkabx8LfT+ZAEnuE8nca
-	 m75hY2YBWwXMMmfOQIiHl/y42Xr3aKyKZmMeiu5PEDM70mpoIpKi/Yu9HONVIjgeHB
-	 ZpQKYSP41L6SDXP6KLTnmtyZkNMe7NKGWK0zGMP1xyOeZATCHg+7Y9RglNzmV3eb7Y
-	 l5Cb7p2dh05ngOvKfT3x+PG4x5OzjSyKCcpS7aqVZVv/91d1R3BkXmelpFHlrdVeXE
-	 qo2ICTY3B8hQKbMAF7OdhNLgG5YmTqkvHjlf2XK0aG6htALLhCX6bhYS7V8rOBbWnY
-	 5XCMyflA+eavg==
-Date: Thu, 1 Aug 2024 16:17:01 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Pankaj Gupta <pankaj.gupta@nxp.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add imx-se-fw
- binding doc
-Message-ID: <20240801-most-greeter-2932bee3879a@spud>
-References: <20240722-imx-se-if-v6-2-ee26a87b824a@nxp.com>
- <20240722-popper-comfort-7538ea70c77b@spud>
- <AM9PR04MB8604123E065315093347F66C95A92@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20240723-smitten-shower-1d15c0f3cf97@spud>
- <AM9PR04MB86043E4B4B2FB206BF9223C695AA2@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <20240724-huddling-neatly-88813c0b1f1d@spud>
- <DU2PR04MB85990A0AB8AF8ABFCDA4CBD995AB2@DU2PR04MB8599.eurprd04.prod.outlook.com>
- <20240725-filled-outscore-24149588d958@spud>
- <AM9PR04MB8604E23D34326C32B76D6F2995B42@AM9PR04MB8604.eurprd04.prod.outlook.com>
- <AM9PR04MB8604087289C777F0F0C7597B95B22@AM9PR04MB8604.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1722525488; c=relaxed/simple;
+	bh=3WBfOH1ud3f8afsbsqBlfOilHhJAvvgVu0/bTsQmips=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZrjbwN1Wy+AmFpxn7aR9rfygIlFkqslbs39Ljc8aRtZzDQY2jq/bR7YGXlUeWaTq8GGuARG7oQCCikpdC7k7w125u2wJlBR4mUv9kYLsCXX1uMrNt77Y6+ENb6wuQqmfKHH9VPvOk4FZZFVyWRXkgdVZm4NTVIqJi+ed5Eb184w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471Ca1bm018700;
+	Thu, 1 Aug 2024 08:17:44 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40mv61d5je-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 01 Aug 2024 08:17:44 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 08:17:43 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 08:17:41 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: [PATCH V2] squashfs: Add length check in squashfs_symlink_read_folio
+Date: Thu, 1 Aug 2024 23:17:40 +0800
+Message-ID: <20240801151740.339272-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801124220.GP5334@ZenIV>
+References: <20240801124220.GP5334@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HV45wl+UslN0ZSE8"
-Content-Disposition: inline
-In-Reply-To: <AM9PR04MB8604087289C777F0F0C7597B95B22@AM9PR04MB8604.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: y8kMAY6nMZhi_1AstwZU_3jsk_A8TCUx
+X-Proofpoint-ORIG-GUID: y8kMAY6nMZhi_1AstwZU_3jsk_A8TCUx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_13,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0
+ bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408010099
 
+syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+squashfs_symlink_read_folio did not check the length, resulting in folio
+not being initialized and did not return the corresponding error code.
 
---HV45wl+UslN0ZSE8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The incorrect value of length is due to the incorrect value of inode->i_size.
 
-On Thu, Aug 01, 2024 at 08:52:48AM +0000, Pankaj Gupta wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Pankaj Gupta
-> > Sent: Friday, July 26, 2024 6:06 PM
-> > To: Conor Dooley <conor@kernel.org>
-> > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
-> > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
-> > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
-> > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; devicetree@vger.kernel.org; imx@lists.linux.dev;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: RE: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add imx-se=
--fw
-> > binding doc
+Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/squashfs/symlink.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Every single mail I am pointing out your broken mail client, and every
-single time you both ignore me and fail to fix it. Fix it.
+diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+index 6ef735bd841a..d5fa5165ddd6 100644
+--- a/fs/squashfs/symlink.c
++++ b/fs/squashfs/symlink.c
+@@ -61,6 +61,12 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+ 		}
+ 	}
+ 
++	if (length < 0) {
++		ERROR("Unable to read symlink, wrong length [%d]\n", length);
++		error = -EINVAL;
++		goto out;
++	}
++
+ 	/*
+ 	 * Read length bytes from symlink metadata.  Squashfs_read_metadata
+ 	 * is not used here because it can sleep and we want to use
+-- 
+2.43.0
 
-> > > -----Original Message-----
-> > > From: Conor Dooley <conor@kernel.org>
-> > > Sent: Thursday, July 25, 2024 8:09 PM
-> > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring <robh@kernel.org>;
-> > > Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor Dooley
-> > > <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>; Sascha Hauer
-> > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
-> > > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
-> > > kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
-> > > Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add
-> > > imx-se-fw binding doc
-> > >
-> > > On Thu, Jul 25, 2024 at 07:06:30AM +0000, Pankaj Gupta wrote:
-> > > >
-> > > >
-> > > > > -----Original Message-----
-> > > > > From: Conor Dooley <conor@kernel.org>
-> > > > > Sent: Wednesday, July 24, 2024 9:00 PM
-> > > > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring
-> > > > > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>; Conor
-> > > > > Dooley <conor+dt@kernel.org>; Shawn Guo <shawnguo@kernel.org>;
-> > > > > Sascha
-> > > Hauer
-> > > > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > > > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>; Rob
-> > > > > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org; linux-
-> > > > > kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> > > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
-> > > > > Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl: add
-> > > > > imx-se-fw binding doc
-> > >
-> > > For the third time, please fix your mail client so it stops inserting=
- this garbage.
-> > >
-> > > > >
-> > > > > On Wed, Jul 24, 2024 at 11:02:21AM +0000, Pankaj Gupta wrote:
-> > > > > >
-> > > > > >
-> > > > > > > -----Original Message-----
-> > > > > > > From: Conor Dooley <conor@kernel.org>
-> > > > > > > Sent: Tuesday, July 23, 2024 7:38 PM
-> > > > > > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > > > > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring
-> > > > > > > <robh@kernel.org>; Krzysztof Kozlowski <krzk+dt@kernel.org>;
-> > > > > > > Conor Dooley <conor+dt@kernel.org>; Shawn Guo
-> > > > > > > <shawnguo@kernel.org>; Sascha
-> > > > > Hauer
-> > > > > > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > > > > > > <kernel@pengutronix.de>; Fabio Estevam <festevam@gmail.com>;
-> > > Rob
-> > > > > > > Herring <robh+dt@kernel.org>; linux-doc@vger.kernel.org;
-> > > > > > > linux- kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> > > > > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
-> > > > > > > Subject: Re: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl:
-> > > > > > > add imx-se-fw binding doc
-> > > > >
-> > > > > Please fix this ^
-> > > > >
-> > > > > > > On Tue, Jul 23, 2024 at 09:28:31AM +0000, Pankaj Gupta wrote:
-> > > > > > > >
-> > > > > > > > > -----Original Message-----
-> > > > > > > > > From: Conor Dooley <conor@kernel.org>
-> > > > > > > > > Sent: Monday, July 22, 2024 10:20 PM
-> > > > > > > > > To: Pankaj Gupta <pankaj.gupta@nxp.com>
-> > > > > > > > > Cc: Jonathan Corbet <corbet@lwn.net>; Rob Herring
-> > > > > > > > > <robh@kernel.org>; Krzysztof Kozlowski
-> > > > > > > > > <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>;
-> > > > > > > > > Shawn Guo <shawnguo@kernel.org>; Sascha
-> > > > > > > Hauer
-> > > > > > > > > <s.hauer@pengutronix.de>; Pengutronix Kernel Team
-> > > > > > > > > <kernel@pengutronix.de>; Fabio Estevam
-> > > > > > > > > <festevam@gmail.com>; Rob Herring <robh+dt@kernel.org>;
-> > > > > > > > > linux-doc@vger.kernel.org;
-> > > > > > > > > linux- kernel@vger.kernel.org; devicetree@vger.kernel.org;
-> > > > > > > > > imx@lists.linux.dev; linux-arm-kernel@lists.infradead.org
-> > > > > > > > > Subject: [EXT] Re: [PATCH v6 2/5] dt-bindings: arm: fsl:
-> > > > > > > > > add imx-se-fw binding doc
-> > > > > > >
-> > > > > > > Please fix this ^
-
-> Will use "secure-enclave" as the node name, in the v7 patch.
-> Will post the V7 patch-set, by end of the next week.
->=20
-> Please reply if anyone think otherwise.
-
-Sure, go for it :+1: And please actually read the comments I have left
-on every mail about your mail client being broken. I don't want to see
-20 lines of to and cc lists on every response :(
-
-
---HV45wl+UslN0ZSE8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqum7QAKCRB4tDGHoIJi
-0i1fAQDARVLAUyl/noJ9pPy4aKx9io7tbLbY8MzHpfH8IY9sUAD8DF0JwpvUr3+S
-KT4+8O1kZsRm07SEpIhTNCbOxgYTwAk=
-=SbFS
------END PGP SIGNATURE-----
-
---HV45wl+UslN0ZSE8--
 
