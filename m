@@ -1,165 +1,139 @@
-Return-Path: <linux-kernel+bounces-271466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A778D944E97
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:56:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA88944E9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:58:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E5852833C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:56:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D1781C215ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1506D1AAE09;
-	Thu,  1 Aug 2024 14:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCA91A99D1;
+	Thu,  1 Aug 2024 14:57:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W8V3pXiP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l65UzgQS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D1C1A57D4;
-	Thu,  1 Aug 2024 14:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A48F1A57D4;
+	Thu,  1 Aug 2024 14:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722524165; cv=none; b=Xk7tRh1t9UUTv469gyCoDSn+CXvh2dl8z+Reu8HO3hcIHS4fv5RhZ4r3w7xOVTIGsQk9TAYdCTdG87X+2VIS8Kfjz88ZGlo6eSMh1UBHiXC3cbuD6rDk7ezMDPaHoT1f49k6oSgAE+ZlFhJeSJ8D7HHAUczcYZ3fyuEgCpHb2/g=
+	t=1722524275; cv=none; b=AKdCVHok8WcdMuXjub0yqI5iI4L2ImwbObiRz3VNf1CAp+RoDkxi5/J8ouHqLq8WWGdqX8nUEyVQj3LK5h3u1bXGjZHTsCirKwhjmGO7367xolwUeoXowREAR3iV6jqpTJQ9CBPJNpk4LVhCfMaZBEF2irTL75O5cNGHWEWCtkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722524165; c=relaxed/simple;
-	bh=SG3RYJhX3+jiM/X52pwZqY4Sh+L93Ivw4rMUMnZXjVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLJ5eQZkHqSFSlZhjkXZcuDPk5ALT4Z+5+oM585jIa5W5PcIPKTB05bMWsoysROiTAQNRPblC8FMmi8yFIYmXfN98/9lIUpwKTdlqSzvzdwKZiMF3kflKCjKAXC7iYSbwzRkMrtY/fc7rZiqNCtv+UOBSW+2rGeb0I1bPRYqcSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W8V3pXiP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C121C32786;
-	Thu,  1 Aug 2024 14:56:04 +0000 (UTC)
+	s=arc-20240116; t=1722524275; c=relaxed/simple;
+	bh=ggO7Zt73dnoIwfAFu+f6RKUYCGa8AzY90DOvjMLjl0s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rzGaM9QtSOVhAR0EsamGyPv/8fKFp4u7IduPWDJnQF2+u8atw1wN7uWAN7jLQD82+sG4EobjbdlVlGUgD5CvH/SrAxCrFcyKic85poKLkAhTRNTu5atI+94OrburKu4kyHE4tIqCST8PQV7v2eMc3XDlI4avRvZJIGjdVV6JNkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l65UzgQS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32461C32786;
+	Thu,  1 Aug 2024 14:57:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722524164;
-	bh=SG3RYJhX3+jiM/X52pwZqY4Sh+L93Ivw4rMUMnZXjVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W8V3pXiPGedzN8ETgDuURnhyKs0g5HAmzvhEkbZI6oriOoncq6/Angg8c6Z45J7X0
-	 6ru52lpcT/I3qePAKAkE5Eg/B1SuLuGqLlBbGDUQvYucloDH/5k2RF67P466n7nmk9
-	 ulhEz1DAW4vbL7V8gPjEKVLPZY0gmieGq3jen+a9TDBdOHeze9hi176IRrcvUpv/1F
-	 q3aUrqEpYw8p2EyPU3eICJ4YvuIP0uXCrOHTAssGKdsRoLWWSC4nTWztrDkkct4xTa
-	 MDumtLCc0kuzPrEEUQdWtsLY78qLS84v2Vf3P6yAjsjVSYCK1juUcjuO2t8393vg9e
-	 CTRgZ5ALRWU6g==
-Date: Thu, 1 Aug 2024 11:56:01 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: kajoljain <kjain@linux.ibm.com>
-Cc: Ian Rogers <irogers@google.com>, namhyung@kernel.org,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
-	maddy@linux.ibm.com, atrajeev@linux.vnet.ibm.com,
-	hbathini@linux.ibm.com, disgoel@linux.vnet.ibm.com
-Subject: Re: [PATCH] perf vendor events power10: Update JSON/events
-Message-ID: <ZquiAS74kQQ-TCtv@x1>
-References: <20240723052154.96202-1-kjain@linux.ibm.com>
- <CAP-5=fWsQbA-h=_Y_q7z1E7GjCkHE3w-9h-OXu4jLBM3Fag6ag@mail.gmail.com>
- <ZqOt9G9e-AIN6hY-@x1>
- <ZqqULZ5pSojnixUh@x1>
- <ZqqbO54hbW5Tzk9Y@x1>
- <ac3ce4aa-146b-4be9-9edc-1533d0b7dc98@linux.ibm.com>
+	s=k20201202; t=1722524275;
+	bh=ggO7Zt73dnoIwfAFu+f6RKUYCGa8AzY90DOvjMLjl0s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=l65UzgQSX28OOM0FNiia0jPULDzx0Rc8RSABPM5MUgTYOFbu0MZ8zr7X2kodpREDQ
+	 7K0OwCshN27ufCPd8/2YJ1812i7n5w8a13tCY+pIWhRM6x70xDqip5pTibFrj3fMZ9
+	 wxomkE/RaQFHO/D6cyakneNPlIj49y0XzYrtIYlgnHaoZybwcGe6LKYbLVrRUoYvSp
+	 CtyinQwbTpVJHFzIwaDUk8jfyMLbZcZ9HRqVxO2d3wEwVuOnOdV2O2+B4mU5L6FgIR
+	 gMb3sKOBHA2taPizCs2vy/SZrGgoE1I/38SGpYag5pBI7QXPFSNzxsUEYIyZnqNDex
+	 IFD88MZQvOnlA==
+Message-ID: <1590bd20-0140-4960-8af4-f1c1d55cda27@kernel.org>
+Date: Thu, 1 Aug 2024 16:57:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ac3ce4aa-146b-4be9-9edc-1533d0b7dc98@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: i3c: Add NPCM845 i3c controller
+To: Stanley Chu <stanley.chuys@gmail.com>, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, linux-i3c@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ openbmc@lists.ozlabs.org, tomer.maimon@nuvoton.com, kwliu@nuvoton.com,
+ yschu@nuvoton.com, cpchiang1@nuvoton.com
+References: <20240801071946.43266-1-yschu@nuvoton.com>
+ <20240801071946.43266-2-yschu@nuvoton.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240801071946.43266-2-yschu@nuvoton.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 01:03:44PM +0530, kajoljain wrote:
+On 01/08/2024 09:19, Stanley Chu wrote:
+> The npcm845 i3c devicetree binding follows the basic i3c bindings
+> and add the properties for allowing to adjust the SDA/SCL timing
+> to meet different requirements.
 > 
-> 
-> On 8/1/24 01:44, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Jul 31, 2024 at 04:44:49PM -0300, Arnaldo Carvalho de Melo wrote:
-> >> On Fri, Jul 26, 2024 at 11:08:55AM -0300, Arnaldo Carvalho de Melo wrote:
-> >>> On Tue, Jul 23, 2024 at 09:02:23AM -0700, Ian Rogers wrote:
-> >>>> On Mon, Jul 22, 2024 at 10:27 PM Kajol Jain <kjain@linux.ibm.com> wrote:
-> >>>>>
-> >>>>> Update JSON/events for power10 platform with additional events.
-> >>>>> Also move PM_VECTOR_LD_CMPL event from others.json to
-> >>>>> frontend.json file.
-> >>>>>
-> >>>>> Signed-off-by: Kajol Jain <kjain@linux.ibm.com>
-> >>>>
-> >>>> Reviewed-by: Ian Rogers <irogers@google.com>
-> >>>
-> >>> Thanks, applied to tmp.perf-tools-next,
-> >>
-> >> This seems to be causing this:
-> >>
-> >> Exception processing pmu-events/arch/powerpc/power10/others.json
-> >> Traceback (most recent call last):
-> >>   File "pmu-events/jevents.py", line 1309, in <module>
-> >>     main()
-> >>   File "pmu-events/jevents.py", line 1291, in main
-> >>     ftw(arch_path, [], preprocess_one_file)
-> >>   File "pmu-events/jevents.py", line 1241, in ftw
-> >>     ftw(item.path, parents + [item.name], action)
-> >>   File "pmu-events/jevents.py", line 1239, in ftw
-> >>     action(parents, item)
-> >>   File "pmu-events/jevents.py", line 623, in preprocess_one_file
-> >>     for event in read_json_events(item.path, topic):
-> >>   File "pmu-events/jevents.py", line 440, in read_json_events
-> >>     events = json.load(open(path), object_hook=JsonEvent)
-> >>   File "/usr/lib/python3.6/json/__init__.py", line 296, in load
-> >>   CC      /tmp/build/perf/bench/evlist-open-close.o
-> >>     return loads(fp.read(),
-> >>   File "/usr/lib/python3.6/encodings/ascii.py", line 26, in decode
-> >>     return codecs.ascii_decode(input, self.errors)[0]
-> >> UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 9231: ordinal not in range(128)
-> >> pmu-events/Build:35: recipe for target '/tmp/build/perf/pmu-events/pmu-events.c' failed
-> >> make[3]: *** [/tmp/build/perf/pmu-events/pmu-events.c] Error 1
-> >> make[3]: *** Deleting file '/tmp/build/perf/pmu-events/pmu-events.c'
-> >> Makefile.perf:763: recipe for target '/tmp/build/perf/pmu-events/pmu-events-in.o' failed
-> >> make[2]: *** [/tmp/build/perf/pmu-events/pmu-events-in.o] Error 2
-> >> make[2]: *** Waiting for unfinished jobs....
-> >>   CC      /tmp/build/perf/tests/hists_cumulate.o
-> >>   CC      /tmp/build/perf/arch/powerpc/util/event.o
-> >>   CC      /tmp/build/perf/bench/breakpoint.o
-> >>   CC      /tmp/build/perf/builtin-data.o
-> >>
-> >>
-> >> This happened in the past, I'm now trying to figure this out :-\
-> >>
-> >> This was in:
-> >>
-> >> toolsbuilder@five:~$ cat dm.log/ubuntu:18.04-x-powerpc
-> >>
-> >>
-> >> So 32-bit powerpc, ubuntu 18.04
-> > 
-> > This did the trick, so I fixed it in my repo, please ack, just replacing
-> > ’ with ' :-\
-> > 
-> > - Arnaldo
-> > 
-> 
-> Hi Arnaldo,
->   Thanks for fixing it. I will make sure in next series of patches, we
-> are also checking for this combination to avoid ascii issue.
-> 
-> Change looks fine to me.
+> Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+> Signed-off-by: James Chiang <cpchiang1@nuvoton.com>
 
-Thanks for checking,
+:
+> +    description: |
+> +      The i3c open drain frequency is 1MHz by default.
+> +      If need to use different frequency, specify the clock high/low period directly.
+> +      i3c-od-scl-hi-perios-ns specifies the high period ns of the SCL clock cycle in open drain mode.
+> +      When i3c-od-scl-hi-period-ns and i3c-od-scl-lo-period-ns are specified, the i3c od frequency is
+> +      decided by these two properties.
+> +      i3c-od-scl-hi-period-ns should be equal to i3c-pp-scl-hi-period-ns or i3c-od-scl-lo-period-ns.
+> +
+> +  i3c-od-scl-lo-period-ns:
+> +    description: |
+> +      The low period ns of the SCL clock cycle in open drain mode. i3c-od-scl-lo-period-ns should be
+> +      multiple of i3c-pp-scl-hi-period-ns.
+> +
+> +  enable-hj:
 
-- Arnaldo
- 
-> Thanks,
-> Kajol Jain
-> 
-> > 
-> > diff --git a/tools/perf/pmu-events/arch/powerpc/power10/others.json b/tools/perf/pmu-events/arch/powerpc/power10/others.json
-> > index 53ca610152faa237..3789304cb363bbb7 100644
-> > --- a/tools/perf/pmu-events/arch/powerpc/power10/others.json
-> > +++ b/tools/perf/pmu-events/arch/powerpc/power10/others.json
-> > @@ -197,6 +197,6 @@
-> >    {
-> >      "EventCode": "0x0B0000026880",
-> >      "EventName": "PM_L2_SNP_TLBIE_SLBIE_DELAY",
-> > -    "BriefDescription": "Cycles when a TLBIE/SLBIEG/SLBIAG that targets this thread's LPAR was in flight while in a hottemp condition. Multiply this count by 1000 to obtain the total number of cycles. This can be divided by PM_L2_SNP_TLBIE_SLBIE_START to obtain the overall efficiency. Note: ’inflight’ means SnpTLB has been sent to core(ie doesn’t include when SnpTLB is in NCU waiting to be launched serially behind different SnpTLB). The NCU Snooper gets in a ’hottemp’ delay window when it detects it is above its TLBIE/SLBIE threshold for process SnpTLBIE/SLBIE with this core. Event count should be multiplied by 2 since the data is coming from a 2:1 clock domain and the data is time sliced across all 4 threads."
-> > +    "BriefDescription": "Cycles when a TLBIE/SLBIEG/SLBIAG that targets this thread's LPAR was in flight while in a hottemp condition. Multiply this count by 1000 to obtain the total number of cycles. This can be divided by PM_L2_SNP_TLBIE_SLBIE_START to obtain the overall efficiency. Note: 'inflight' means SnpTLB has been sent to core(ie doesn't include when SnpTLB is in NCU waiting to be launched serially behind different SnpTLB). The NCU Snooper gets in a 'hottemp' delay window when it detects it is above its TLBIE/SLBIE threshold for process SnpTLBIE/SLBIE with this core. Event count should be multiplied by 2 since the data is coming from a 2:1 clock domain and the data is time sliced across all 4 threads."
-> >    }
-> >  ]
-> > 
+Missing vendor prefix.
+
+
+Best regards,
+Krzysztof
+
 
