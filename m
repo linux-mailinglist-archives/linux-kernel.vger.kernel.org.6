@@ -1,223 +1,140 @@
-Return-Path: <linux-kernel+bounces-271167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826F6944A45
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:22:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BFC0944A4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A600A1C20E98
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:22:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92EEA282F89
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E3A189534;
-	Thu,  1 Aug 2024 11:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79642189BA0;
+	Thu,  1 Aug 2024 11:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QV5uuEkL"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JXEciysd"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F92189531
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167FF183CC8;
+	Thu,  1 Aug 2024 11:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511347; cv=none; b=FruVzC3/ghnsVVcNoiURwHOAKUzLPthdb9RT9LYgtlF5vBc+3/sSb7/GBjUeWpy10t3JY9EEIKdr+nC5CjqbFDzo3q7lcZwBwymrA4FXMT4zbGEfDGrWvypBomzCIDvlrV7ZXaROKZC+egMAioRmi4qBtLMQ+qrDWHfOMF7iHqk=
+	t=1722511560; cv=none; b=FCrWjIc5manFIMqWnnOaHss8uQHgygt0M24QMxomhdw7LC+7YxdOb8dV1M51D/iwot9fAFM6LTm/F89UPNtfdANNBdlP/aFlicKpaVDOvtSFfShVKj9KJD/rSBtCSxFUa/RgIGUHC/QDxnlygGjg3w/s3gkULJ6Du2Lsnx5tieI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722511347; c=relaxed/simple;
-	bh=wT1WeQtWSF4pKg/aqyS1PtzbeURzHustn4W7PgKlu/s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jDUU57Ov7HdCpdRaxLUitySVIRwOD8xywXrOvitw14o1LF1N4Md+hrdVL9Stz4+bht2yYSQKezMO2ymenbQG6vVy/eod2SvFOB8i4JMEXmq6Uh3jjyXLkST1wybCLX0oOnsFhKfmW2VYSiKNNztKnZmcc11+MNs2cP8nY7UAibs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QV5uuEkL; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aada2358fso336029366b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:22:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1722511342; x=1723116142; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2qlZj/baYl2pbc9LuE7Qbzb/56dqo6s6gnzipMfbe3g=;
-        b=QV5uuEkLlhu0v3M2uPfkYKSaz6GZaHbVnu102+7axKQdD4l8dQLcds3JLNFXbZVCLD
-         kFpkil7+YE8t1NCKM8OqTHgKGlan1i8Z2FYmB7eFijfR1uYLzRJ67n04PBn5GSP2f0q+
-         r0PcCG/0xY6tuXSDjOeC43cVTekKxpYu+WhNj985Yq3RmupPV4Pj4RDJu06tu/sDX+gR
-         pQ5Muea2WHTE0H2st0UlBopKKt9DtEU1Ef/XLj2usTlvmK12nHnxHZVtxGUhqaMTg1vw
-         Ja3G5MHKm+QQkb+mamMMoTmX5n8Qowhn1AyEstPOpoA7+AAGLTsltSSPAJ6wYja4qbri
-         fHwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722511342; x=1723116142;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2qlZj/baYl2pbc9LuE7Qbzb/56dqo6s6gnzipMfbe3g=;
-        b=Gt4OieTPEUfQJTgCR+dYIBKrz6ATsSZo3V+hXPCapx887AzwJzCHExYGTDFHqCXBF9
-         tEBVgM6wUfdbQhf2Ik71pEXobNCTiwKRWucqYKxbRYUTvbIyi9v88TAFBuR/Ie66TEbu
-         iwsY450UdvSIPruLTqLJJj0OSpRsYTYZj6hCOVvw9TOtgiHRARt514OVdf2ch8iWoRMF
-         IkczSupiIAdU3VkUHqD3890ZcUDmCnt6aCbIqxVMm1bPZIWMjbdvVZQXTsy6fu55o82X
-         Y4AV2omnFQMMJ0HnJDZPt4uFx/GzI6ktierZSReL811U+u6TwNQ6EkgaLLOYZfRNgIwV
-         UjSg==
-X-Forwarded-Encrypted: i=1; AJvYcCVzBqGphxBIdA/izhsjIxQoSkL0bTJ2n8jbDUxxblP2Q9dU1SWX9dHDNmbnoN0VikDr0DVUkZpSMpFa5Hx/f+s2yKtmjYmW75gdHnp+
-X-Gm-Message-State: AOJu0YwjY6NGCrvmImNKJnTd/BLB6JkzoLvv2KjsrlHTX+nJe2U+IZW8
-	VhxITWeF+5RsmKV8WLMr9EvzcfYOTKrG0MlRBOfHPAYFV6pnoKe+P9EP37Vzsko=
-X-Google-Smtp-Source: AGHT+IHSi4OBNzaU+B2LgJN8/gLfHe2x6D+r2Bobw+i8XhnHPuZjnSs85LOFa27DBHA9NywFZOhCkA==
-X-Received: by 2002:a17:907:1608:b0:a7a:bae8:f2b5 with SMTP id a640c23a62f3a-a7dbcd4b357mr54629866b.36.1722511342367;
-        Thu, 01 Aug 2024 04:22:22 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab23624sm885445266b.20.2024.08.01.04.22.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 04:22:22 -0700 (PDT)
-Message-ID: <f08678b1-260f-4200-889b-a4ec016fc7e1@suse.com>
-Date: Thu, 1 Aug 2024 13:22:21 +0200
+	s=arc-20240116; t=1722511560; c=relaxed/simple;
+	bh=JNchXePlzqkPMmlcRfiSZulgcHMk/yG4yFYtv683y6k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J5+FZxmzLRZoayhl98DfwsSD1w3G7WawpUeLFlv/LHEautiDhui3m142VV2jtbKotztGdUfdrKZypcx+TqIbtaxo/Ux0/uGXymcvbJ7768O3DIrotO8CfgjdypqVNVk3F4LrcwbsH8v5/VJtnErat68u2fKqh49zEOWEZK1ramw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JXEciysd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471BKpOn004202;
+	Thu, 1 Aug 2024 11:25:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=rvAyAM97Q57EqiEOuf3wItRHsx
+	XsuyfgLDiE1HeJZhQ=; b=JXEciysdWClSkg07BVo2xi3Or78AcAqVMpaQDhSvt8
+	cLH6WFC3Dq5GEoorb3uRqYg4zR2xgAQ1VgUEcOaFCc+xcs1ObLaAoPozZM0TZvUD
+	bk0+1H3+G1Sd31OXmUFQ0soOxgecm5+crRwnenXbU3STjtmuniIlMGGQwikArjcq
+	QkqTKE99bd9EDN2rsLcUwwsu1VTS9Q2sNnLOdvo+33bZyegE9ooJVaXvyYMOj8i+
+	SCEadRAdLkM8FQeTLQLASAydWUiz9CYKzykcZS1kxvaeWJ1cn+tC5XgdsDtlUV3S
+	HB5sBd91kqrjjpVBNIIgSf9JjdN2jY7y9dUy+m5cEadA==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40r3tprtwm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 11:25:55 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47192MIi003776;
+	Thu, 1 Aug 2024 11:25:54 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40ndems5fj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 11:25:54 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 471BPna835259010
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 1 Aug 2024 11:25:51 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 44DD320049;
+	Thu,  1 Aug 2024 11:25:49 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18FFE20040;
+	Thu,  1 Aug 2024 11:25:49 +0000 (GMT)
+Received: from p-imbrenda.boeblingen.de.ibm.com (unknown [9.152.224.66])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  1 Aug 2024 11:25:49 +0000 (GMT)
+From: Claudio Imbrenda <imbrenda@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org, linux-s390@vger.kernel.org, hca@linux.ibm.com,
+        agordeev@linux.ibm.com, gor@linux.ibm.com, borntraeger@de.ibm.com,
+        svens@linux.ibm.com, frankja@linux.ibm.com, seiden@linux.ibm.com,
+        nsg@linux.ibm.com, nrb@linux.ibm.com
+Subject: [PATCH v1 1/1] s390/uv: Panic if the security of the system cannot be guaranteed.
+Date: Thu,  1 Aug 2024 13:25:48 +0200
+Message-ID: <20240801112548.85303-1-imbrenda@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/15] Implement MODVERSIONS for Rust
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Gary Guo <gary@garyguo.net>,
- linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-modules@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20240617175818.58219-17-samitolvanen@google.com>
- <0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com>
- <CABCJKueGRBdFfGW-cvOvqxc-a85GpxtwPmLdE_1RiAkNLrEg+g@mail.gmail.com>
- <00714a65-953f-4885-9229-1990543c4154@suse.com>
- <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <CABCJKucj7zjc4=EiFdSnzNDBvQmaWBBt_KJsTq1ybp=Vegp5eQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2f1zp06cB4bi18ff_exhR03wOVvk5xmr
+X-Proofpoint-ORIG-GUID: 2f1zp06cB4bi18ff_exhR03wOVvk5xmr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_08,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ mlxlogscore=303 malwarescore=0 adultscore=0 spamscore=0 priorityscore=1501
+ bulkscore=0 clxscore=1015 impostorscore=0 lowpriorityscore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408010072
 
-On 7/26/24 23:05, Sami Tolvanen wrote:
-> On Mon, Jul 22, 2024 at 8:20 AM Petr Pavlu <petr.pavlu@suse.com> wrote:
->>
->> From my perspective, I'm okay if gendwarfksyms doesn't provide
->> functionality to compare a new object file with its reference symtypes
->> file.
->>
->> As mentioned, genksyms has this functionality but I actually think the
->> way it works is not ideal. Its design is to operate on one compilation
->> unit at the time. This has the advantage that a comparison of each file
->> is performed in parallel during the build, simply because of the make
->> job system. On the other hand, it has two problems.
->>
->> The first one is that genksyms doesn't provide a comparison of the
->> kernel as a whole. This means that the tool gives rather scattered and
->> duplicated output about changed structs in the build log. Ideally, one
->> would like to see a single compact report about what changed at the end
->> of the build.
-> 
-> Sure, that makes sense. Android uses STG for this, which might be
-> useful to other folks too:
-> 
-> https://android.googlesource.com/platform/external/stg/
-> https://android.googlesource.com/platform/external/stg/+/refs/heads/main/doc/stgdiff.md#output-formats
+The return value uv_set_shared() and uv_remove_shared() (which are
+wrappers around the share() function) is not always checked. The system
+integrity of a protected guest depends on the Share and Unshare UVCs
+being successful. This means that any caller that fails to check the
+return value will compromise the security of the protected guest.
 
-STG is an interesting tool. I've played with it a bit last year. To be
-frank, I was surprised to see a new tool being proposed by Google to
-generate modversion CRCs from DWARF instead of potentially extending
-your STG project for this purpose. I'm not sure if it is something that
-you folks have considered and evaluated.
+No code path that would lead to such violation of the security
+guarantees is currently exercised, since all the areas that are shared
+never get unshared during the lifetime of the system. This might
+change and become an issue in the future.
 
->> A few months ago, I also started working on a tool inspired by this
->> script. The goal is to have similar functionality but hopefully with
->> a much faster implementation. Hence, this tool is written in a compiled
->> language (Rust at the moment) and should also become multi-threaded. I'm
->> hoping to find some time to make progress on it and make the code
->> public. It could later be added to the upstream kernel to replace the
->> comparison functionality implemented by genksyms, if there is interest.
->>
->> So as mentioned, I'm fine if gendwarfksyms doesn't have this
->> functionality. However, for distributions that rely on the symtypes
->> format, I'd be interested in having gendwarfksyms output its dump data
->> in this format as well.
-> 
-> We can definitely tweak the output format, but I'm not sure if making
-> it fully compatible with the genksyms symtypes format is feasible,
-> especially for Rust code. I also intentionally decided to use DWARF
-> tag names in the output instead of shorthands like s# etc. to make it
-> a bit more readable.
+The Share and Unshare UVCs can only fail in case of hypervisor
+misbehaviour (either a bug or malicious behaviour). In such cases there
+is no reasonable way forward, and the system needs to panic.
 
-Sure, it might be necessary to extend the symtypes format a bit, for
-example, by allowing spaces in type names. What other problems do you
-see?
+This patch replaces the return at the end of the share() function with
+a panic, to guarantee system integrity.
 
-The example I showed preserves the DWARF tag names in type descriptions.
-Cross-references and the target type names use the s# prefix as they
-they need to be distinguished from other tokens.
+Fixes: 5abb9351dfd9 ("s390/uv: introduce guest side ultravisor code")
+Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+---
+ arch/s390/include/asm/uv.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
->> For example, instead of producing:
->>
->> gendwarfksyms: process_exported_symbols: _some_mangled_func_name (@ XYZ)
->> subprogram(
->>    [formal parameters...]
->> )
->> -> structure_type core::result::Result<(), core::fmt::Error> {
->>    [a description of the structure...]
->> };
->>
->> .. the output could be something like this:
->>
->> S#'core::result::Result<(), core::fmt::Error>' structure_type core::result::Result<(), core::fmt::Error> { [a description of the structure...] }
->> _some_mangled_func_name subprogram _some_mangled_func_name ( [formal parameters...] ) -> S#'core::result::Result<(), core::fmt::Error>'
-> 
-> This wouldn't be enough to make the output format compatible with
-> symtypes though. genksyms basically produces a simple key-value pair
-> database while gendwarfksyms currently outputs the fully expanded type
-> string for each symbol. If you need the tool to produce a type
-> database, it might also be worth discussing if we should use a bit
-> less ad hoc format in that case.
+diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
+index 0b5f8f3e84f1..153d93468b77 100644
+--- a/arch/s390/include/asm/uv.h
++++ b/arch/s390/include/asm/uv.h
+@@ -441,7 +441,10 @@ static inline int share(unsigned long addr, u16 cmd)
+ 
+ 	if (!uv_call(0, (u64)&uvcb))
+ 		return 0;
+-	return -EINVAL;
++	pr_err("%s UVC failed (rc: 0x%x, rrc: 0x%x), possible hypervisor bug.\n",
++	       uvcb.header.cmd == UVC_CMD_SET_SHARED_ACCESS ? "Share" : "Unshare",
++	       uvcb.header.rc, uvcb.header.rrc);
++	panic("System security cannot be guaranteed unless the system panics now.\n");
+ }
+ 
+ /*
+-- 
+2.45.2
 
-What I think is needed is the ability to compare an updated kernel with
-some previous reference and have an output that clearly and accurately
-shows why CRCs of some symbols changed. The previous reference should be
-possible to store in Git together with the kernel source. It means it
-should be ideally some text format and limited in size. This is what
-distributions that care about stable kABI do in some form currently.
-
-This functionality would be needed if some distribution wants to
-maintain stable Rust kABI (not sure if it is actually feasible), or if
-the idea is for gendwarfksyms to be a general tool that could replace
-genksyms. I assume for the sake of argument that this is the case.
-
-Gendwarfksyms could implement this functionality on its own, or as
-discussed, I believe it could provide a symtypes-like dump and a second
-tool could be used to work with this format and for comparing it.
-
-From my point of view, the current --debug format is not suitable for
-this purpose because its expanded and unstructured form means it is
-bloated and hard to compare with a previous reference.
-
-I'm also not quite yet sold on using separate DWARF tooling, such as
-libabigail or STG, to actually understand why gendwarfksyms produced
-a different CRC for some symbol. Using these tools makes sense in the
-genksyms world, where genksyms operates on the source code level and
-this additional tooling can only work on debug data.
-
-With gendwarfksyms working directly with DWARF data, it doesn't seem
-appealing to me to first run gendwarfksyms to produce CRCs, compare them
-with their reference, and if they are different, use a second tool to
-process the same DWARF data again and with some luck hopefully get an
-actual answer why the CRCs changed. I'm worried that users might
-encounter inaccurate answers if the two tools interpret the input data
-differently.
-
-> 
-> One more thing to note about the current --debug output is that it
-> directly correlates with the debugging information and thus may not
-> contain all aliases. For example, the Rust compiler deduplicates
-> identical function implementations (e.g. Deref::deref and
-> DerefMut::deref_mut etc.), but only one of the symbol names appears in
-> DWARF. We use symbol addresses to print out #SYMVERs also for the
-> aliases, but they don't show up in the debugging output right now.
-
-Thanks,
-Petr
 
