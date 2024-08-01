@@ -1,109 +1,128 @@
-Return-Path: <linux-kernel+bounces-271832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49A29453AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:19:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B20B9453AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708D91F243A2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9600286395
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD18E14A4DE;
-	Thu,  1 Aug 2024 20:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E2114A60A;
+	Thu,  1 Aug 2024 20:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="46SWz0n/";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/SWkC2PP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K1YrYa3D"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54DA15AF6
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 20:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B763513C832;
+	Thu,  1 Aug 2024 20:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722543538; cv=none; b=L4+1PZkUKypHWxUnQ0OQM1QgCjKkYRB5pH/dRUNnwH/ahNGJfm7Y8oZSBTv6TN4o4ZSFHB1lYeAsbi+PGt2Ft8+gF36TT2WY0sj0TlLTt7NmDxLTq3LwgeY5w1AZOeMyFJoSyJBa3TFr0U3OigItV9NXsYEiI+vatCsTrSRHC/0=
+	t=1722543856; cv=none; b=OhFGBlWBOEb0ngKVodn7YtdT7pLRaNty43ApIxqjP27g9qLQIHNv8fxBpWBGok4mjGrWExhTpzoSnPmjz2G3GyOhjk0zV+rh/5t5l7BMX895fuEvwPl1jpe0p0OpOhoSY5w5L+lA6SB/DUgKaMSjnnG7AF7CUrse/oWvyBwAfWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722543538; c=relaxed/simple;
-	bh=7wv5ErQ8JikJgjkcsWWbnT7qIFDEAArMo7mHCIX/rso=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=vAneea2B8JhvaAeQORXtAG2UAaENJsmmLWFqk88xPlNrfjbJOEXPnJ5U12nUXCBBmb6WnAI2LfEX536f5gvNx0GHpwPq5A1xJkVZu8WcTOmpSFVNSyXBIeWgDd1C2YmNqtp7FKVkWJvVpZqQwqb2NFJRmXDd8i9dUZEassZEcF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=46SWz0n/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/SWkC2PP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722543535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9brb0g5cHyHLjZZ88SgjMpAtNZQfiLpqo2Zn3LJIxJA=;
-	b=46SWz0n/qHoheH1igvZp3Fk8J8jwjtMUmW9lT4ZM6n5ISglwvNQEDy1AZDiyxyhvhVWUPU
-	owQylw3oMGYO4P1icQzlQPYSVHSvcLk3KOE31TZqy3ayEHeeDzAIfXIuVYZCb8J6ffqg8C
-	EguK+Y9elgpt459sC3z0iMKIdPBDk1PqYG7S7h7syn4N8659AdAHoRt13mbydMBHJXthW4
-	eJdnvQ4+e3cUFpmdqbS5vfG2VY3+qIyPRD2/s3epMOeWVKr2rYVtqETb5t9/+19Z9UiCn8
-	zOARgEHdcL7IIzMfi0zwtlupmbdJCPS0RDSTDkjSbEqbHT+Bk8OdXutH/7jQ/Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722543535;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9brb0g5cHyHLjZZ88SgjMpAtNZQfiLpqo2Zn3LJIxJA=;
-	b=/SWkC2PP+lnx4oMKJ5VMvEwhp559g29hFh+kIsSydpZphym7c6R/12X8nK7R1UwhJb2grm
-	KRYDdQUJmNQaUCBw==
-To: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>, "dave.hansen@linux.intel.com"
- <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@kernel.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>, Keith Lucas
- <keith.lucas@oracle.com>, Jeff Xu <jeffxu@chromium.org>,
- "rick.p.edgecombe@intel.com" <rick.p.edgecombe@intel.com>, Jorge Lucangeli
- Obes <jorgelo@chromium.org>, Kees Cook <keescook@chromium.org>,
- "sroettger@google.com" <sroettger@google.com>, "jannh@google.com"
- <jannh@google.com>
-Subject: Re: [PATCH  v7 2/5] x86/pkeys: Add helper functions to update PKRU
- on the sigframe
-In-Reply-To: <BB4AA839-1CF6-4C48-B3ED-24F9E425837D@oracle.com>
-References: <20240801065116.2088582-1-aruna.ramakrishna@oracle.com>
- <20240801065116.2088582-3-aruna.ramakrishna@oracle.com>
- <874j844o3q.ffs@tglx> <BB4AA839-1CF6-4C48-B3ED-24F9E425837D@oracle.com>
-Date: Thu, 01 Aug 2024 22:18:54 +0200
-Message-ID: <877cd02dzl.ffs@tglx>
+	s=arc-20240116; t=1722543856; c=relaxed/simple;
+	bh=A/KB5IRwkJDTrHSUZs6fZR2LDhW7gYVhgR6xoOA+07E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OArpi0VtONkaaB6rh8KU/kFOIUMxk49wCPk2BwkZhUCnBnbsDsdl9zoC72XDAiFzES6sDhcoV8fY/UX+SgOUrVq8UlwlAzaxfHK09evPjMRKPbKMaoUsBUoDY4gpnAoAXJe/68lREsG7jv1ViKoJ5JuwjkdGi1vgACjUZM0vr/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K1YrYa3D; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so16203025e87.0;
+        Thu, 01 Aug 2024 13:24:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722543853; x=1723148653; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xog2N/WyrIaPwtXz/O9Ydne6Hz6difkElo2MkclaQ70=;
+        b=K1YrYa3Dd/Nr7Mq6gVJP+N4lCfgUmbrQKwfEavHUGefG89xV0XdNvFtFNvVOfVPWnf
+         VoJH2LQAZA7evbmuWBCH6Ysd7euQyllzO3/fZm2DwYq2ZalUxtv8Hhok6doD90iJD0pE
+         lmRRf/bpRgsw46DG4HB1cqWtI96GgWZzRwX4jXxWf0gLsXqBGSd+TZDMP2OFIcSGvT2K
+         gsAG0QX2R74rXhUJ5+RyMqwqQ62K82TKYYOmIO1TIDFixv1IkFXw1CKa9ED6t5TJoIAX
+         EW9tR+6CJ2nrH9Q3jalhXoWv0ggZN/txVq5FR6L3kDr0iod5uyZOgzZcXiqmSTAhNLxw
+         xOwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722543853; x=1723148653;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xog2N/WyrIaPwtXz/O9Ydne6Hz6difkElo2MkclaQ70=;
+        b=f3lY+q/T8iC0S8ROwRD+TtzZ0gRGdZyZc4R14AfAgHifgTArycNYdHff2seK8KYwED
+         KB2zzEy6rz1WGVyjaL2/oOK9ZjY2qIF/lvs7SNbksTJNX0d6davKCHdY4VKWJl4DR2ik
+         NptBWh/praZzSpMS4ce3KfnQxHomU9df8Mk698BTikT6x52DUqROyQIi5XsNBQ9imuVv
+         6nXs9QlIbE+ZyS6oQjUFEXqpyXhEOZTtFAWk3803pQEM+cWrWyfmXWRNv1O62LFV7SoC
+         cFfebvOlBxAMvFeKHKJCIkFNnb02tFL0CSG/JOVMCZkO8AJdiGMOrWXmNxTEqhEemVgO
+         MfqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDurYo5zapNfnwByQIfQxRzNCI2w7Fqb+8EjI1XNgDSIc3vHIgCvqbLtbU50xZ/CGfq/OCBRlrt2m4QedNnSJPePuqLt5tl7XvcH5kwD8sMexMOnU5zmCY4lJSl3Ex8DD1cL3ybSMhvsRcI5w=
+X-Gm-Message-State: AOJu0YycdqG99KYE5NdtboaCeYIKW0Gpa9W7RAljfpvvz0ULXPtScaKI
+	6PaSLaRvUjvmnKf4gKSjRV3O1WQSYksRLNF4EXPBWF/GoC3Ymw4=
+X-Google-Smtp-Source: AGHT+IGuH1rYF73S/Bhb5uCYyJyEuO0qZ+m9zZ21jCjFdn/JPw6sm/sQWhH+c9Ry+bzHk9aTTkJB4A==
+X-Received: by 2002:a05:6512:1110:b0:52f:cd03:a823 with SMTP id 2adb3069b0e04-530bb3b46cfmr1151722e87.45.1722543852246;
+        Thu, 01 Aug 2024 13:24:12 -0700 (PDT)
+Received: from frutis-latitude7490.lan (public-gprs367134.centertel.pl. [37.47.65.95])
+        by smtp.googlemail.com with ESMTPSA id 2adb3069b0e04-530bba29fcesm45662e87.155.2024.08.01.13.24.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 13:24:11 -0700 (PDT)
+From: =?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>
+To: 
+Cc: =?UTF-8?q?Pawe=C5=82=20Owoc?= <frut3k7@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>,
+	linux-wireless@vger.kernel.org,
+	ath10k@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: ath10k: add channel 177 for 5 GHz band
+Date: Thu,  1 Aug 2024 22:23:53 +0200
+Message-ID: <20240801202359.794035-1-frut3k7@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 01 2024 at 20:14, Aruna Ramakrishna wrote:
->> On Aug 1, 2024, at 1:57=E2=80=AFAM, Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->> On Thu, Aug 01 2024 at 06:51, Aruna Ramakrishna wrote:
->>>=20
->>> +extern void __user *get_xsave_addr_user(struct xregs_state *xsave, int=
- xfeature_nr);
->>=20
->>  *xsave lacks __user
->>=20
-> Did you get a chance to review the rest of the patchset? If you have any
-> additional comments/suggestions, I can batch those fixes into v8.
+Add support for channel 177 (5885 MHz ) for the 5 GHz band.
 
-I did not find anything problematic.
+Tested-on: qca988x hw2.0 firmware ver 10.2.4-1.0-00047
 
-If you spin up a V8 you could polish your changelogs a bit and give them
-some structure. They mostly consist of one big lump. See:
+Signed-off-by: Paweł Owoc <frut3k7@gmail.com>
+---
+ drivers/net/wireless/ath/ath10k/core.h | 4 ++--
+ drivers/net/wireless/ath/ath10k/mac.c  | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#change=
-log
+diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
+index 446dca74f06a..3dff8c028526 100644
+--- a/drivers/net/wireless/ath/ath10k/core.h
++++ b/drivers/net/wireless/ath/ath10k/core.h
+@@ -39,8 +39,8 @@
+ #define WMI_READY_TIMEOUT (5 * HZ)
+ #define ATH10K_FLUSH_TIMEOUT_HZ (5 * HZ)
+ #define ATH10K_CONNECTION_LOSS_HZ (3 * HZ)
+-#define ATH10K_NUM_CHANS 41
+-#define ATH10K_MAX_5G_CHAN 173
++#define ATH10K_NUM_CHANS 42
++#define ATH10K_MAX_5G_CHAN 177
+ 
+ /* Antenna noise floor */
+ #define ATH10K_DEFAULT_NOISE_FLOOR -95
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index a5da32e87106..aabe70fcd065 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -9543,6 +9543,7 @@ static const struct ieee80211_channel ath10k_5ghz_channels[] = {
+ 	CHAN5G(165, 5825, 0),
+ 	CHAN5G(169, 5845, 0),
+ 	CHAN5G(173, 5865, 0),
++	CHAN5G(177, 5885, 0),
+ 	/* If you add more, you may need to change ATH10K_MAX_5G_CHAN */
+ 	/* And you will definitely need to change ATH10K_NUM_CHANS in core.h */
+ };
+-- 
+2.45.2
 
-for some examples.
-
-Thanks,
-
-        tglx
 
