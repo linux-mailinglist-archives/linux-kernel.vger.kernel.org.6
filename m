@@ -1,238 +1,244 @@
-Return-Path: <linux-kernel+bounces-271487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2205E944EE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1000D944EF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF22A1C23B84
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:15:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8301C1F2337E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C37F1A3BCE;
-	Thu,  1 Aug 2024 15:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC111A2C0C;
+	Thu,  1 Aug 2024 15:18:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mhP3Amu3"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="HdUNd1PS"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260801A01C3
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525334; cv=fail; b=S3jDSNPUpG2Fb1/jeA734wzpvQfUfOKNGuAFdvT6HyGd0velwtxqbg8RHPqJcBpX87DCXnN2ZVeWlYmIVjWdpRIxZhXTraGqrrHUD9IMER5cb+gLrUl1Bs4sW2PvJ9wkfNIXVTrJ6VZYht9X0toyXVNqIjc+NXwzs+Xq+nZS2oI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525334; c=relaxed/simple;
-	bh=0smV+qNxn0tEuGs2ku1qqJ/CC/CBRpgxH/4wtZjIGc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=MJjkSSlU6jEb/jgtzfzm145SetZaNydl/zpkVOfb1HfvE2CmtAe52ZdIaXHqyZezBnrMDFeNOcuDUFCYOoduiyRTOjQWNDvfFrDV9ZccVQtZ6WYIhkH4ZkhZLzrzEYS9cnW97GENKsMjcso4DI2fDKZu2cgQNb1OJ0xRs71Rxw0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mhP3Amu3; arc=fail smtp.client-ip=40.107.20.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q3eolg663GZf5XqaPtf/hXLS/1DvV+pZIWRqySdAn7WloMd65dx5pQP4CBfhqmB15+CBqAy7UkDazzEy7Zk/pn9lrqTHudPUWuB0z3SIu1YADhwKYda403vyx48FcORPUkOpRAVTkIIw41CzsbU7abL1hSToSech+2Ot+FgIM8pUhy/b7hjbl2k9OR/HFPkfmbo7aCE5xbal/sTXtXpouL/Ln57IV+kXQYOnU9lqM9AeO1wa3bGKgUAI+UJ4wOgki3rGKz6VNAl8cHRKJYd8wS/k+h70H67piNmCznwOz1OKOShxWY0GlC2UA2L9GB8uf8jkRA33xzAbSo/rFgorHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/3v7oxyl6GJJNVEXsknK44jt2JvNuCMwqxOkZxdqrxU=;
- b=l0oOUGJfnOC67K6JRsjq62AuryOmJ26UzVNbh066cWdK2Fx1l9x6/NsBDXkHM1t1LqlHh/Sgqz7orunJZMGdH0eIe57qBKJbeeegCJx06ZGR+TXWFN+Yoa87wFiDt++4EvveGiZfVWFKouJDFq4+1lR3ZQdy1GgwsKgSBb4MBYObshZNvvPJ+qm8WjK8bbJ7R1tjMKAiQpPznmERoycmo+7gLOAmWV1UHzGuvYETANEvcUIb/Ea98z5nAS83XOQg1etKxZcC/wGkfOhrd5fzD/tYtGreBBMcbbkKEMXT9kuV4rOgzjOOSWCTcGgoqyClc9tviwK0fmvfFaT4RWF2ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/3v7oxyl6GJJNVEXsknK44jt2JvNuCMwqxOkZxdqrxU=;
- b=mhP3Amu35GuLu4+pRPyCv4xHpZuS2/uTShtuEdiuvt8kiowLWrmxnKh9ZYp0YwYY6UsTBkXTS1KcX++xfSV5GFtHh+R6m7Tn0EdGg7LuxAWprDr+RVsGlPjNmMJvzv2IOTcgTbBsHSk4ZHi7o0/D2r69kS8hQn48C5yqwwNaddsYXnRl+vRYCNONQyb3ldQvhl4I3rVj6a2huxPBBajzliiG729sOmmbLUx1Z2ah5R0P2GauUBOHOZ9p6YhsW5TGoZqCHKLTf2IWoxY5wfsEB+WoCUlFjIRAFxwmXQx+vJ5yzvKOfD1+xl69GsSK/gMkTkrL7Wrk4zp/to4de1QdLw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM0PR04MB6882.eurprd04.prod.outlook.com (2603:10a6:208:184::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Thu, 1 Aug
- 2024 15:15:28 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7828.021; Thu, 1 Aug 2024
- 15:15:28 +0000
-Date: Thu, 1 Aug 2024 11:15:18 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] linux/io.h: Add cleanup defination for iounmap() and
- memunmap()
-Message-ID: <ZqumhgZ5heh0OYuA@lizhi-Precision-Tower-5810>
-References: <20240731233145.2485874-1-Frank.Li@nxp.com>
- <969fb014-682e-4984-ad1b-7ab4f068ed85@app.fastmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <969fb014-682e-4984-ad1b-7ab4f068ed85@app.fastmail.com>
-X-ClientProxiedBy: BY5PR04CA0019.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF111EB4AC;
+	Thu,  1 Aug 2024 15:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722525496; cv=none; b=Jl7urUOXXkOjd1UCmFBMdUnJnvLMovKmIb+4TA9PThfPtGY+7+B1GLIjpgDhWfZ3ARpj25l30/gaT1zUF0FCquX/4xWgGrNW2m70lMQgKzBMx1+FCqaTBWMwtSJeroItfZexZfJtH3jmHbe855ikjL/fNrZSXFQwM+kGCS8U07A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722525496; c=relaxed/simple;
+	bh=FWVp8HMBYaZKLCorqfkr9VeFARih3v6eHDwyYW1O8ZU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g5/4fbATmZs3u06l1spOpeluOVhplCuMQNwzC7TqLJdCa4gLqr3xds7GX8Qsl6w9qfGJjQoylttMLVE06HMiOpd4IpcN7gdjOPT6HysHDIZNfaDLa/k633JAW8cavlJj0IQfb1Ud6E7SlOgCBZU9cGsA38F6Il9pQM5aEhAPjR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=HdUNd1PS; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4714r7S6022188;
+	Thu, 1 Aug 2024 10:16:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=EmYIzwLForKzJx7Y
+	XNCfis/wH2kFPFRDxiAOWpEYPQ0=; b=HdUNd1PSw48DxEQk5NVpmtW1us3T45G1
+	lPtA6rUPqmwmE+x7qIju2HXVe0al9DQRwuQ+d6qXX+Bu4egTTyTeGepp8iLs9co2
+	zBYBwIj3X4FJupqzoio6JmY7OD73krMk9PKMvK+nnSK4xd8FDjyJV0c8Ulqk5auV
+	Ff1YiMzNlFNMV2dZJgJpmDhvhJPcaLol6NB/s3Vi0Lqu7BcyECjNDVTNf8wRY6Qb
+	PSDs81cxpPDX2L4I+BLZ5tldjJ1nitCC2w0rzjTB43E1vK4sY73UhXqxJKw8AdWq
+	gH4JS5DyHCauccQhaGGhYVNfIKK+MuHOt97m/iuyM6n5g0P7f5Q5eQ==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 40qjw9afhy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 10:16:11 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
+ 16:16:10 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Thu, 1 Aug 2024 16:16:10 +0100
+Received: from lonswws01.ad.cirrus.com (lonswws01.ad.cirrus.com [198.90.188.26])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id DB44B820244;
+	Thu,  1 Aug 2024 15:16:09 +0000 (UTC)
+From: Simon Trimmer <simont@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        "Simon
+ Trimmer" <simont@opensource.cirrus.com>
+Subject: [PATCH] ALSA: hda/realtek: Add support for new HP G12 laptops
+Date: Thu, 1 Aug 2024 15:16:05 +0000
+Message-ID: <20240801151605.76347-1-simont@opensource.cirrus.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB6882:EE_
-X-MS-Office365-Filtering-Correlation-Id: c1f1bf4e-34d6-4e28-5e64-08dcb23cc69e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?neIEaIdXOyH6al25/YmSAKUrtMUjcBdIMD5SDMdtqDq3fbd7T+Dn9hthkiSy?=
- =?us-ascii?Q?YV78r10xp4QVJgAkx+qo5yD8YH2HgqNFf24lKxs6AksO8Iwq8CCo50SbipBl?=
- =?us-ascii?Q?oan7de72WiL6q9kcTpRAV0vAv79IHyZVp62UfCZnmTU0WGVcNvJdj5KafGKl?=
- =?us-ascii?Q?6Oa3tsHsSkx2eNago1kr2Wy84c0JQq60KM3crd3zKsFolABnHf8ppjLNMKHz?=
- =?us-ascii?Q?3AqPkgZwn0TC77KmjKoIdtVRJab+DflGU12W0A6/P280I/JXn8uZfeKwS5nl?=
- =?us-ascii?Q?Ovs6yaqAK8sZqhjKwwnC2M+4TFhZq+I2HED9qUljssemIzg6+0VzIAOKPW4V?=
- =?us-ascii?Q?2muDZy30eL3F00DD7iwYU+LamJM0BRrYbcWtjOJhmk2D7dJR9Dw8JiNlHdOK?=
- =?us-ascii?Q?AAdHav05cf3C+iC/t7TSHh4eKtJ8H+cJY8ifUOhl7EUrSKbWKd541BjK0zia?=
- =?us-ascii?Q?J2r0WUIf4MSP1PMCDnHEpEkGRchkgKvicG0s/k6GLoe3ee6nBxKCWxHK0QcB?=
- =?us-ascii?Q?9mCbCUniO0Z+PHbXLZiJ2mvDc2hf3parLmA4szItylZjPnO2YrjIDlewod7R?=
- =?us-ascii?Q?WPYeFUewXXn8OcPoKnI1rSQIMEkKGD4IbwCKROOhblmK+IMG7G8hh6wYCwyU?=
- =?us-ascii?Q?4VrTXN6Q1/8IVvGlALTJR64IEy7HMYZ85Fcn5vEsNF+du3FJgV8dkOvr2XDK?=
- =?us-ascii?Q?NlRBPalyDq0WSd9DBKJgzHc+/BlUjeRnf4vG9dh53fG4JqhIRnGPwcA1bcsP?=
- =?us-ascii?Q?9f1oQqP+VjuuczwwCq8IYnZCmzAJr/+2KmLirMvL6Gc/MQ6Z5xHhWflKD2Tg?=
- =?us-ascii?Q?VQVIO3Lj1B/iDpp+uNDxliZdd+8rsINQahWpd23fCCz4L6t5feivQXbnLnA6?=
- =?us-ascii?Q?76nM2v1kKcOWNTF3tT+w4A7DEXtgV4QBPu2D22pplAVhQvRBLELUjCH5dzKV?=
- =?us-ascii?Q?deuh6njvvYRj1oDLvZR175eT+eajX384k/aD5Jq20WVHfGdhCdabJ0I54G3r?=
- =?us-ascii?Q?i5h4PIv4zRSXg6mWLMxWxAidrVnN+grN7PIGk1dKJ1Z0IKMgOIw9rfQnI9WU?=
- =?us-ascii?Q?JI/jRyOWPnZLOWGh10S7tmON5mmZc9mVbb81BqXYr7wmAfYIC3PucNmSHuoR?=
- =?us-ascii?Q?0kcaVWnX9OFMXO1YJScWR3qhH5F9d0Xcfs/Dwnw32THPZ7Xbs+D60ewZP3iK?=
- =?us-ascii?Q?xILro4OhdRBuzBi6bsH3MtKqpHPTmyThGUc3ZWUVf0DbjVcZFJzvzjscy/0O?=
- =?us-ascii?Q?fJzqwAiqiDrf51LC/Efp3HvUAeAyFekmVtITWHwhVNex1tAnmYZDx5BgqoRb?=
- =?us-ascii?Q?CYw7QEPXq+ypTc8KK5HedghAP9qRMEP+Ml8BU7omtXZp7Tq6Pn7Dd4fHeut2?=
- =?us-ascii?Q?YvItSLWU+4D/VtTh8nnthSBVz8Gk5f7R/UaFZ+3YjE3a50XTkQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?PFbz8l0IFv0MG/MjA6OrJ7k5YxMuBXNgtGrCnAdyYJ9/PZe2FSTU3ws8fUcL?=
- =?us-ascii?Q?eF67SBgHer30WNOvSpH3lBEiuwgkbDtxcGxT7RQ3VAHIM3o7/n/tb0WYC6wU?=
- =?us-ascii?Q?50jnC6QPyyL8YFNDteqbL5XWkd0/2ex8qBiHP5hYzjOap5fx5ZhzWTRfR75i?=
- =?us-ascii?Q?CyVDfvPb+Cpt+GvHDMQtogL38QkWyJNnIO7dGe/OZZSnN2wSczRH/0C5em0C?=
- =?us-ascii?Q?/2vZ+yqmaFhNHfrVoFwZ3Rx4terJchOvk2tFaofeNtqDsI4LlmlbRGuSRN9U?=
- =?us-ascii?Q?6PDWO9mVd1rvZVRQ8YOYaPhZk/EvJpacM9AE2BcCMQQ0kffLY5p0WKS/vUxq?=
- =?us-ascii?Q?5bV6CXiOoXsjir7qsfBHvqz+L1y/fxgVtW6bzZED6qPWBKsrwMfIjVg8d1SY?=
- =?us-ascii?Q?uaxNcnKvAhVX8RfblB+Wo7PGujhrfHrERzrlrSxjMSZNzDPRgDoOqpkAlpHf?=
- =?us-ascii?Q?bvcO9wlZYAa2QNBtAbug6BBr52BzumoRZQ0m17GMszkMZR+69nwBlJMnztBn?=
- =?us-ascii?Q?Z9uwhMRS3HreHrxgAYWFlZ6kNfEoW2+RQFtlvF8sy357lxNeo9EH9Lah0Ast?=
- =?us-ascii?Q?u3lARQxsSSou2DAyMUFdKWZmEVqbd8EkRuB9hKBLGHQbrYbsHRaM7tZh1qD6?=
- =?us-ascii?Q?rerLw5aZGKjSU2lnmPUfKGKdf1+v2sWEQ5mGHZkI/a+sSY+By+/0KMB8jpxI?=
- =?us-ascii?Q?pws2tXtdlhaplH0j+5gSMjHHMzQQPSIiRpId7kKON3jTVsRKqg98v1oEfs44?=
- =?us-ascii?Q?IDG69jDmEAFJYUKKN2CfdkcafIDwiw+Jf4up8QzacD8ZIfLOJX6c+K9UhPo9?=
- =?us-ascii?Q?LAgqzX0mPzgY3PzhIOn7CdCIvAvr3GnAUFVxXi8amrqBVAdiZTgEnteyhSBn?=
- =?us-ascii?Q?amanRw5M1u0j83++s3Sht/gZz+RMmhy0fJ/4ZUE71qMLf+ATT5jYMEszNtyP?=
- =?us-ascii?Q?shVjdRYPs24XUPsY+ngRelJlyThaDcIzTSZY9lgxVLstXJ/d/oI1bets2P4y?=
- =?us-ascii?Q?sbrEm0ifBSNSGC3lYGl7sbXgfZAvJydE67PLgRLY+Jy+oOil6NgtjzB/epN1?=
- =?us-ascii?Q?JXvxqfe/aPGEMu/QnJfrTPMkj3iWfWTcFt1hvrBuMSed/XknBab/99qZV7a4?=
- =?us-ascii?Q?Xx69Cx3aZqFejoI4F6T+ZXS9wtSAC6LDOkQe5Ax6XlwbhsHd9ZezsAzw5zUs?=
- =?us-ascii?Q?8Zk7CqkmZ24t/vFvxKSSHhm71g2sd9SdKTAJuKBelrmyLot4P16O8b5Ys01s?=
- =?us-ascii?Q?JkRw2NuGXvdam+2x3D3dQHebW55I94d6abmAjp7WlHOzfrGwFo/sptViyZak?=
- =?us-ascii?Q?Ndk/BSBuKa4qEFgI9PyujLvZSEVi0qZ1aWUyUJaOOW6jHu9k5oDRYltVULln?=
- =?us-ascii?Q?cXiWxe2nO22ecqIZR1ch/6m73A99jCqx+I2KbktX3sR4oyCRPwXqNftqNVB7?=
- =?us-ascii?Q?JZdfZwJDSolmSO5FS1ra3EKxvTVH3vNWF+rSlu8AuBIMUl9ywFlZIw+/U83s?=
- =?us-ascii?Q?BJyi/ut1nTQ+XyJ0kr7ZwKX5Ci73Zf5lHM7Qb5EE0lAeyEE13gWlavZeK3wY?=
- =?us-ascii?Q?thwr4D5hSGg+nAkaUOQIDNk/+ukrGrmeqNgk6jP0?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c1f1bf4e-34d6-4e28-5e64-08dcb23cc69e
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 15:15:28.1473
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MD1l6n/DOhi8siWxaeYdinKEaGUOTxarnK17eM57UOdNzlOS32ymYMoPmp4NzC2P/BLUgp3xAnn6JBsFM4i7Og==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6882
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: B48m9LocTL3nObv4mEEt_6GQQdJF_qQ5
+X-Proofpoint-ORIG-GUID: B48m9LocTL3nObv4mEEt_6GQQdJF_qQ5
+X-Proofpoint-Spam-Reason: safe
 
-On Thu, Aug 01, 2024 at 09:27:40AM +0200, Arnd Bergmann wrote:
-> On Thu, Aug 1, 2024, at 01:31, Frank Li wrote:
-> > Add DEFINE_FREE for iounmap() and memunmap() to support scope based
-> > cleanup.
-> >
-> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> >  include/linux/io.h | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/include/linux/io.h b/include/linux/io.h
-> > index 59ec5eea696c4..7695d7973c8ff 100644
-> > --- a/include/linux/io.h
-> > +++ b/include/linux/io.h
-> > @@ -163,6 +163,9 @@ enum {
-> >  void *memremap(resource_size_t offset, size_t size, unsigned long flags);
-> >  void memunmap(void *addr);
-> >
-> > +DEFINE_FREE(iounmap, void __iomem *, if (!IS_ERR_OR_NULL(_T)) iounmap(_T))
-> > +DEFINE_FREE(memunmap, void *, if (!IS_ERR_OR_NULL(_T)) memunmap(_T))
->
-> I don't like the use of IS_ERR_OR_NULL(), which tends
-> to indicate a problem in the interface design.
+Some of these laptop models have quirk IDs that are identical but have
+different amplifier parts fitted, this difference is described in the
+ACPI information.
 
-Just !(_T) ? I just refer kfree()'s implementation.
+The solution introduced for this product family can derive the required
+component binding information from ACPI instead of hardcoding it,
+supports the new variants of the CS35L56 being used and has generalized
+naming that makes it applicable to other ALC+amp combinations.
 
->
-> In which cases do you expect to need scope based cleanup
-> on an error pointer here? The only interfaces I see that
-> returns an __iomem error pointer are the devm_* ones, but
-> those have their own cleanup method.
+Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
+---
+ sound/pci/hda/patch_realtek.c | 99 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 1645d21d422f..1a05c647f08c 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -11,15 +11,18 @@
+  */
+ 
+ #include <linux/acpi.h>
++#include <linux/cleanup.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/pci.h>
+ #include <linux/dmi.h>
+ #include <linux/module.h>
++#include <linux/i2c.h>
+ #include <linux/input.h>
+ #include <linux/leds.h>
+ #include <linux/ctype.h>
++#include <linux/spi/spi.h>
+ #include <sound/core.h>
+ #include <sound/jack.h>
+ #include <sound/hda_codec.h>
+@@ -6856,6 +6859,86 @@ static void comp_generic_fixup(struct hda_codec *cdc, int action, const char *bu
+ 	}
+ }
+ 
++static void cs35lxx_autodet_fixup(struct hda_codec *cdc,
++				  const struct hda_fixup *fix,
++				  int action)
++{
++	struct device *dev = hda_codec_dev(cdc);
++	struct acpi_device *adev;
++	struct fwnode_handle *fwnode __free(fwnode_handle) = NULL;
++	const char *bus = NULL;
++	static const struct {
++		const char *hid;
++		const char *name;
++	} acpi_ids[] = {{ "CSC3554", "cs35l54-hda" },
++			{ "CSC3556", "cs35l56-hda" },
++			{ "CSC3557", "cs35l57-hda" }};
++	char *match;
++	int i, count = 0, count_devindex = 0;
++
++	switch (action) {
++	case HDA_FIXUP_ACT_PRE_PROBE:
++		for (i = 0; i < ARRAY_SIZE(acpi_ids); ++i) {
++			adev = acpi_dev_get_first_match_dev(acpi_ids[i].hid, NULL, -1);
++			if (adev)
++				break;
++		}
++		if (!adev) {
++			dev_err(dev, "Failed to find ACPI entry for a Cirrus Amp\n");
++			return;
++		}
++
++		count = i2c_acpi_client_count(adev);
++		if (count > 0) {
++			bus = "i2c";
++		} else {
++			count = acpi_spi_count_resources(adev);
++			if (count > 0)
++				bus = "spi";
++		}
++
++		fwnode = fwnode_handle_get(acpi_fwnode_handle(adev));
++		acpi_dev_put(adev);
++
++		if (!bus) {
++			dev_err(dev, "Did not find any buses for %s\n", acpi_ids[i].hid);
++			return;
++		}
++
++		if (!fwnode) {
++			dev_err(dev, "Could not get fwnode for %s\n", acpi_ids[i].hid);
++			return;
++		}
++
++		/*
++		 * When available the cirrus,dev-index property is an accurate
++		 * count of the amps in a system and is used in preference to
++		 * the count of bus devices that can contain additional address
++		 * alias entries.
++		 */
++		count_devindex = fwnode_property_count_u32(fwnode, "cirrus,dev-index");
++		if (count_devindex > 0)
++			count = count_devindex;
++
++		match = devm_kasprintf(dev, GFP_KERNEL, "-%%s:00-%s.%%d", acpi_ids[i].name);
++		if (!match)
++			return;
++		dev_info(dev, "Found %d %s on %s (%s)\n", count, acpi_ids[i].hid, bus, match);
++		comp_generic_fixup(cdc, action, bus, acpi_ids[i].hid, match, count);
++
++		break;
++	case HDA_FIXUP_ACT_FREE:
++		/*
++		 * Pass the action on to comp_generic_fixup() so that
++		 * hda_component_manager functions can be called in just once
++		 * place. In this context the bus, hid, match_str or count
++		 * values do not need to be calculated.
++		 */
++		comp_generic_fixup(cdc, action, NULL, NULL, NULL, 0);
++		break;
++	}
++}
++
+ static void cs35l41_fixup_i2c_two(struct hda_codec *cdc, const struct hda_fixup *fix, int action)
+ {
+ 	comp_generic_fixup(cdc, action, "i2c", "CSC3551", "-%s:00-cs35l41-hda.%d", 2);
+@@ -7528,6 +7611,7 @@ enum {
+ 	ALC256_FIXUP_CHROME_BOOK,
+ 	ALC287_FIXUP_LENOVO_14ARP8_LEGION_IAH7,
+ 	ALC287_FIXUP_LENOVO_SSID_17AA3820,
++	ALCXXX_FIXUP_CS35LXX,
+ };
+ 
+ /* A special fixup for Lenovo C940 and Yoga Duet 7;
+@@ -9857,6 +9941,10 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc287_fixup_lenovo_ssid_17aa3820,
+ 	},
++	[ALCXXX_FIXUP_CS35LXX] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = cs35lxx_autodet_fixup,
++	},
+ };
+ 
+ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+@@ -10271,6 +10359,17 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8cdf, "HP SnowWhite", ALC287_FIXUP_CS35L41_I2C_2_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8ce0, "HP SnowWhite", ALC287_FIXUP_CS35L41_I2C_2_HP_GPIO_LED),
+ 	SND_PCI_QUIRK(0x103c, 0x8cf5, "HP ZBook Studio 16", ALC245_FIXUP_CS35L41_SPI_4_HP_GPIO_LED),
++	SND_PCI_QUIRK(0x103c, 0x8d01, "HP ZBook Power 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d08, "HP EliteBook 1045 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d85, "HP EliteBook 1040 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d86, "HP Elite x360 1040 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d8c, "HP EliteBook 830 13 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d8d, "HP Elite x360 830 13 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d8e, "HP EliteBook 840 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d8f, "HP EliteBook 840 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d90, "HP EliteBook 860 16 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d91, "HP ZBook Firefly 14 G12", ALCXXX_FIXUP_CS35LXX),
++	SND_PCI_QUIRK(0x103c, 0x8d92, "HP ZBook Firefly 16 G12", ALCXXX_FIXUP_CS35LXX),
+ 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+-- 
+2.43.0
 
-devm_* can help much especial in probe() function. but scope base cleanup
-also useful.
-
-Give a existed example:
-
-drivers/clocksource/timer-fsl-ftm.c
-
-static int __init ftm_timer_init(struct device_node *np) {
-	...
-	priv->clksrc_base = of_iomap(np, 1);
-        if (!priv->clksrc_base) {
-                pr_err("ftm: unable to map source timer registers\n");
-                goto err_clksrc;
-        }
-	...
-
-err_clksrc:
-        iounmap(priv->clkevt_base);
-}
-
-If use scoped base cleanup it will be simple.
-ftm_timer_init()
-{
-	base __free(ioumap) =  of_iomap(np, 1);
-
-	...
-	priv->clksrc_base = no_free_ptr(base);
-	return 0;
-}
-
-drivers/clocksource/arm_arch_timer.c
-Some example need map and unmap in function such as:
-arch_timer_mem_frame_get_cntfrq()
-{
-	base = ioremap(frame->cntbase, frame->size);
-	...
-	iounmap(base);
-}
-
-of course this example is too simple. If there are many error branch
-between ioremap() and iounmap(), scoped based clean up make code simple.
-
-Frank
-
->
->     Arnd
 
