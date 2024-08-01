@@ -1,139 +1,151 @@
-Return-Path: <linux-kernel+bounces-271495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6D10944F0A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:22:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5981C944F18
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8B1D1C21C8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:22:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8826B249D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9AC01AE842;
-	Thu,  1 Aug 2024 15:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="rUfvYyZs"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E031B32BB;
+	Thu,  1 Aug 2024 15:22:56 +0000 (UTC)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9C113B5AF;
-	Thu,  1 Aug 2024 15:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DA661B013F;
+	Thu,  1 Aug 2024 15:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525749; cv=none; b=LVXluBh8jefw0dDq67qYzglHiPZCDCXUFl4fiQ2szLrbmjV7YsGFvFL/7LcKwUF2NI0jDwgGUFbAl7NafZOYspnDtR663buqOCf0Enf5ll6gndCmbWAXMGA/txv3OSpY7cErnMQrEDTNq/yS7rfhCkVz6oOOTjODMc0Zoov1gj0=
+	t=1722525775; cv=none; b=ZpPSL1ixnTJ8z2zYJmh1j35y1MRr+PC5NIzyuFj/UD4KQIWMsG9messPoSC0iPV44p76rj60WXYf2roLYkjidK2NiJxvekqVHEotpaB/FvmUldK+MgJIUVDi8Og7M3tclaf/brPSyPeHAu8qkLZOkgPjJNT+HV2a4xCS2351U14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525749; c=relaxed/simple;
-	bh=zWV9fwEvLkpA9pAeJ3oXXYHMJLMCa0NehNRH5O/nh8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XaXE+O7IXUppGctMtziI1JAPJz5x+SPfAQUq9HJ4Oowqf9ixfyBkcg3UKWJGzBLP/+ZEcOgbl310AXeD/gGS4mWQtSjETzRssmi8z/HiO5FWrFLa3z998vexMEmQPy2fpiGOwAZskokpTC2QedzgL9oMQ5zuxhhORvc7syfG67o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=rUfvYyZs; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722525744;
-	bh=zWV9fwEvLkpA9pAeJ3oXXYHMJLMCa0NehNRH5O/nh8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rUfvYyZsOxApkTth73GusmRQGJN5JbQZgYt/0D1/aWxoQ3Nt+bKxILAE34nC8yFxW
-	 YrmqkM9sIUv152l8ePXuya1qxFIQvHalvOAPjyC3T/Tls0ckcaS/BzS+gH1mDnaQoN
-	 JhFeoA4PyVB7brI689Ndzi7PU0gQQbzoo6ERWQgq0iNIALzmegacW2yM6k3msYRnCl
-	 1FZbjC25KfTJvt/xIQL/8oPgoa1i31vTnX+DH6SoWNlz0B8ypmS0FtfDtScp6peiOD
-	 Rbtuu+0FRrvFBH2ZTefICx0CtY55HwS3Vw8Ur+FFWByq3Hm9VBvNY4TeCP5vcpugM2
-	 bxmGdQFEG1GXA==
-Received: from mercury (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sre)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id C6BF73782167;
-	Thu,  1 Aug 2024 15:22:24 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id 70DF5106097C; Thu, 01 Aug 2024 17:22:24 +0200 (CEST)
-Date: Thu, 1 Aug 2024 17:22:24 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Lee Jones <lee@kernel.org>
-Cc: Dmitrii Osipenko <dmitry.osipenko@collabora.com>, 
-	Mark Brown <broonie@kernel.org>, Urja <urja@urja.dev>, Heiko Stuebner <heiko@sntech.de>, 
-	linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel@collabora.com, stable@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] mfd: rk8xx: Fix shutdown handler
-Message-ID: <ih7hiojzuvqzpyipj66mgu5pmcderltabim7s5dnfzm6qpztbh@jqkst5tfw5ra>
-References: <20240730180903.81688-1-sebastian.reichel@collabora.com>
- <20240801131823.GB1019230@google.com>
+	s=arc-20240116; t=1722525775; c=relaxed/simple;
+	bh=VEcaGB9JhrX6r2iLab6nrkJZCg4diAR5tkxJzfjgTjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cWPFDdVGCjM2XhbsgJ4HeNv9QfTz+xKgILZgDrQhaMIKLTt0nc9j6CmdO7unsxQtZ2kVDaDaPwNVtjxxGWfDkc2pxOgB96z00zZkd9pd7VyJOvCKTV8SsbkRO+qzRNRyUMCXZrZBSM3yINC7/u0LL7J0hOSybDHghCITFrjGKkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2f03df8c8cdso23924791fa.1;
+        Thu, 01 Aug 2024 08:22:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722525769; x=1723130569;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Utqgbq+ns727DDPMponi3tkeUNp+6Bq/5OauBcszmLI=;
+        b=o4VHNKl+Sc3gdaXkYwtIg8WXLWoDolW7+3zP8worezHI69G8ZO3/bHpPtDEqdNC6hl
+         Q2Lv37sIwEiaFknHsL8Dv+0TyOO+AUEBLVzi8J+t/tKPsiqACCt28EM+Moje9ID5NwuH
+         791nC0CkcTI+w42PI3/jmOYXAgmMvFx0ifq9UMNfybuuAMKJSJL79Q1TdyS91G/DbpZ2
+         R5o1GUfq74hO6q1NFKfKNw1DA5zBnE1TufhlKAiotzTlRHQkmOhd+jCDx+7CJrteBtvY
+         CbqjEVqs1T/Wo8ipCtk63rB3yKfvStwJwlSyZY6+nWzzFbHiqTwvn+NG6tuvrw59kJjp
+         QASA==
+X-Forwarded-Encrypted: i=1; AJvYcCWt/bfDU82gI/cMR0MzILesvuISqY+kcTCU5dkiyVvBtfhL0P9odJD6IjUF1Vbo0f5P+3c2+zFYbxEom8oHWW1WfCSJNFY0TJTVR1JNo3QsWdIebrZbDcunbCZtup/QvysKeyGzNhDtTw==
+X-Gm-Message-State: AOJu0YynKHe5pI01h3YGB9/axrslo3dnk+r8eUsLQFo8Am4yYVDRBrJ3
+	GFy7JV86lPW5QdL7a7HwEn8P87c0OdH1a4AVAGTvBY6QBA+bvVhc1tjy43lq
+X-Google-Smtp-Source: AGHT+IE/Z31TKRQPQFhGnNud62ztSo1QNtnYru3Igrehf+8MxYtQEwrXS24COuhCQmg94r+IuwRoGw==
+X-Received: by 2002:a2e:30a:0:b0:2ef:2768:619d with SMTP id 38308e7fff4ca-2f15760846fmr5362081fa.5.1722525769076;
+        Thu, 01 Aug 2024 08:22:49 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03d04e166sm23867201fa.81.2024.08.01.08.22.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 08:22:48 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef25511ba9so17953161fa.0;
+        Thu, 01 Aug 2024 08:22:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhToIU6Pvsn4t93HqHrZnZYtCkKuEtGoJ//RA61ZdiDH8DkqeKhe/8q7VHfuVxeOSZcYOW7X4z1b0EetMofHOykkhEnB1k8Rm1y7FGyfQiLwXTJAd46XK/+7kuxiuSkx30T/aazj3gGQ==
+X-Received: by 2002:a2e:be07:0:b0:2ee:df8f:652d with SMTP id
+ 38308e7fff4ca-2f1576089fdmr8111941fa.2.1722525768415; Thu, 01 Aug 2024
+ 08:22:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="5ij2xz22fzghfnfr"
-Content-Disposition: inline
-In-Reply-To: <20240801131823.GB1019230@google.com>
-
-
---5ij2xz22fzghfnfr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240418000736.24338-1-andre.przywara@arm.com>
+In-Reply-To: <20240418000736.24338-1-andre.przywara@arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 1 Aug 2024 23:22:35 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64DLez_FwH=Na=swQ30BdZa8JPaueFkM=ozjU56=f1DXQ@mail.gmail.com>
+Message-ID: <CAGb2v64DLez_FwH=Na=swQ30BdZa8JPaueFkM=ozjU56=f1DXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] regulator: Fix AXP717 PMIC support
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Ryan Walklin <ryan@testtoast.com>, Chris Morgan <macroalpha82@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello Lee,
+Hi,
 
-On Thu, Aug 01, 2024 at 02:18:23PM GMT, Lee Jones wrote:
-> > +	/*
-> > +	 * Currently the Rockchip SPI driver always sleeps when doing SPI
-> > +	 * transfers. This is not allowed in the SYS_OFF_MODE_POWER_OFF
-> > +	 * handler, so we are using the prepare handler as a workaround.
-> > +	 * This should be removed once the Rockchip SPI driver has been
-> > +	 * adapted.
-> > +	 */
->=20
-> So why not just adapt the SPI driver now?
+On Thu, Apr 18, 2024 at 8:07=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> This is v2 of the fixes to the AXP717 PMIC support series. Lee put the
+> original patches in an immutable branch already, so these here go on top.
+> Patch 1 is new in v2, and adds the IRQ status and acknowledge registers
+> to the writable range. Thanks to Chris for pointing this out.
+> Patch 2 contains fixes to the regulator descriptions: the LDOs had the
+> wrong supply source, and two numbers were wrong. The datasheet describes
+> the voltage ranges and register values differently from what our macros
+> expect, in a way that literally begs for off-by-ones, so here you go.
+> Also there is an actual wrong number in the datasheet, add a comment to
+> document this.
+> I don't know if that's still feasible, but those two patches would be a
+> good candidate to squash into the patches that they fix.
+>
+> The other three patches add the "boost" regulator, which is meant to
+> provide the 5V USB VBUS power when operating from the battery. It's the
+> usual trinity of binding/mfd/regulator patches.
+> Again this could be squashed into the respective patches from the
+> original series, if people agree.
+>
+> Please have a look and test!
+>
+> Based on mfd/ib-mfd-regulator-6.10, as detailed below.
+>
+> Cheers,
+> Andre
+>
+> Changelog v1 .. v2:
+> - add tags
+> - add patch to add missing IRQ ack register range
+> - add comment to document bug in datasheet
+>
+> Andre Przywara (5):
+>   mfd: axp20x: AXP717: Fix missing IRQ status registers range
+>   regulator: axp20x: AXP717: fix LDO supply rails and off-by-ones
+>   dt-bindings: mfd: x-powers,axp152: add boost regulator
+>   mfd: axp20x: AXP717: Add support for boost regulator
+>   regulator: axp20x: AXP717: Add boost regulator
 
-This patch is simple and thus can easily be backported, so that the
-Acer Chromebook shutdown is fixed in the stable kernels. SPI based
-rkxx has been using SYS_OFF_MODE_POWER_OFF_PREPARE from the start,
-so it's not a regression.
+The latter three patches still haven't been merged.
 
-As far as I could see the SPI framework does not have something
-comparable to the I2C .xfer_atomic handler. So fixing up the
-Rockchip SPI driver probably involves creating some SPI core
-helpers. I'm not yet sure about the best way to deal with this.
-But I guess it will be better not having to backport all of the
-requires changes to stable.
+Andre, can you resend them for Lee or Mark to merge? Otherwise I
+can't take the RG35XXSP DT patches.
 
-In any case I think the next step in this direction is discussing
-how to handle this in general for SPI.
 
-> What's the bet that if accepted, this hack is still here in 5 years time?
+Thanks
+ChenYu
 
-Even if I don't work on this now, I would expect somebody to have
-issues with broken shutdown on RK3588 boards before 5 years are
-over :)
-
-Greetings,
-
--- Sebastian
-
---5ij2xz22fzghfnfr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmarqCsACgkQ2O7X88g7
-+prvRA//QpziJs2zje1Qs5sT0QdiKwVULJnHSVmN2UsJp8Nw8PlCA7Mroafv8j9l
-rrWa+8tAEtNgwOrjqKJQRt3wDg5kIK/w1MOJ+JN1Du+miRL1Wa8c2TB51E8dLjZC
-gFPg5jZMcqon5+36cDEOn7x8nNv5rZyWcYf6PKtdtz1/88KhFPX55J9uX7rR9WGR
-hRci+TllwouFpCAXe5CI2TSUWE69Bma3hrzpuFC8iqTesC6K42qqaV74JkuKMRLx
-uoJ3zwBMChMZsrPjf8sFQpl/DQc3/kGOJsf19QjvYa+IOyDYUAWsxDDURyyifiXG
-dQhXNyWe93tXKtqwqO1aQ9n/faqMvfN22mpUM/9/XRy7E9OZ62x4pW7CgspIDRUD
-DN5CntPyOdGOAvY0v87PwwGo17LMH5BHP/TycsCAjBV1Euld8JAwK5VXBdZehYs0
-Wf3TJ32Vu6dNugbXthA5p+l+auW8cFw9mYujAo5N++ao0VoVRYh8XdzUj6EcuYDn
-v38wN8S8nzqoH9qgrjsopJ5e936s7uw5soeLnjtHPZmXxopFaXo82ky1MUBLeQeW
-1gjeYMSqwicmW/XruQy5mm+8SCzI95d9l9GiJXavEmyBWBC1R2J1cory+m2KOvEZ
-IZACNzdWQwXOyjzKtG0wLkxqB+6UsNg2NUebLYUO5div78AcDnQ=
-=6MRC
------END PGP SIGNATURE-----
-
---5ij2xz22fzghfnfr--
+>
+>  .../bindings/mfd/x-powers,axp152.yaml         |  2 +-
+>  drivers/mfd/axp20x.c                          |  3 ++
+>  drivers/regulator/axp20x-regulator.c          | 37 ++++++++++++-------
+>  include/linux/mfd/axp20x.h                    |  3 ++
+>  4 files changed, 30 insertions(+), 15 deletions(-)
+>
+>
+> base-commit: 4cece764965020c22cff7665b18a012006359095
+> prerequisite-patch-id: 2b5fb10f68e0994071fc4c7dce73db7047c23220
+> prerequisite-patch-id: 5d0735de888d155b2c1cdb814e852a5852a17ec7
+> prerequisite-patch-id: 29c30894b4bf0b9e1e71de065cabbd842505e248
+> prerequisite-patch-id: 0ab87cbf7362b6dc2d577d2264eb9574be47b5f6
+> --
+> 2.35.8
+>
 
