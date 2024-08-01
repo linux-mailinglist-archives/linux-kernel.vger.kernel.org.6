@@ -1,116 +1,92 @@
-Return-Path: <linux-kernel+bounces-271821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1105F945395
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:56:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23A9945394
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:56:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA4C281385
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:56:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DBC01F240FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:56:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4BF14A62E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3772314A612;
 	Thu,  1 Aug 2024 19:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ao8k8DKO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E3K/7i//"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Nw/I0cmj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7315C14A4F1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B71614A4ED
 	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722542154; cv=none; b=YKF6NNi58akpQ99v22ciyRuakw+VAi+ha2bjjz/iNUgqQYnXdDTWFdf3nGL0dulUtoR8/n+SWFMJEe9lTvyepzzOxrWU+YkU49vj1uJ8ZL4NczgASCW6EPcEkaZAmn4GhE0/kBePjLy9LgpBuDu90gwJFRiqKrXGnEwJHP9OT24=
+	t=1722542154; cv=none; b=HENBYlrupfXcdoRzT70o0sk3B5DY5DcMtSDcCvp0wBHHw7a7T19fZfW+55hwu9zBQYrq7LGAobnGOjQDlV9j1THnjctgloJdvYAumOEyr1yypWQuRJHFx/0Vtma65lbEUA2JhjmKxENHXpc+BqU3xOJRTz834B1k7A2j99YIrjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722542154; c=relaxed/simple;
-	bh=Xm+RIH3o/oAev6b3ur+FbTQ+m5+zrNQ+kKqfyeqO5Gs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rOxcIYnPcGzSnlCR8HF8Vbzv3BxGGPvNNElaKkvmaTz3X04tk2SBTmdc1POsBDnzxqARs23iKUwei34AjeFEMbeg+xCTwH/j9U4a5buOXsrbc5DGWHHBUqSyKRR6EEtW5U+qxSPAIsrgkkRGacXLf4xpb4rIvq+O8SWMxuDyVQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ao8k8DKO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E3K/7i//; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722542151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GXlr2Hk/7CZiJk17gyVFRfPqgP74hvjJ1UM0KwpwIOo=;
-	b=ao8k8DKODblAhmvrQeoqDNvoyEZQGSk3Of62vW9o9NK/jO0+8Gy0ncv6fjcOaYLB0YlPFy
-	ejXUeWyOuYH2MUgMmUkWwAOrhdp0XItKdXWlatw1z2Oi/r24+JpLbrStzuAAtXD/ZHj95N
-	vvuT0KFdxXBxOkSrlWBpKGUwNpWYCz/mWGJ1gIONExc9rtQa3SGfP9zNTnvlcigzIPtQyD
-	zVgzcShHMDGI20jWFxOEfJk800LW9pC4BGmxeNL4692czYLdxMABYkh42Hvsx4CdKS31BN
-	2qfzR2wwx59PinRVPRsjX5cniN/FFgBuGN8m0HCbxl3AXTmcH9xrOIKBJZY2mw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722542151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GXlr2Hk/7CZiJk17gyVFRfPqgP74hvjJ1UM0KwpwIOo=;
-	b=E3K/7i//DnvyCw6hAyu5sZJn/RYEYMdX+3a4bm62Uf6U2Jpf0zOkvkYpuDR0HFlR+So/Cf
-	2vVhSnFNjY53ubDA==
-To: Andi Kleen <ak@linux.intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v4] x86/mtrr: Check if fixed MTRRs exist before saving them
-In-Reply-To: <20240607194437.52939-1-ak@linux.intel.com>
-References: <20240607194437.52939-1-ak@linux.intel.com>
-Date: Thu, 01 Aug 2024 21:55:51 +0200
-Message-ID: <87cyms2f20.ffs@tglx>
+	bh=hvG2IaT/irZIdJ2c+z07bjwA9zbf73XRgNBNvBw4bW8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FKPF1TECQBVfG29URaX2vIUMLFete2M2ZuVuNO/rAMelN6UGN0TopuvaqyMBavGXvqWaaDz+uQME127RHkEgejvz6YTufvjhZaWuJ6FOFkAZCRfHqOdAA3yzQJ+XmQ7vHlpekvrN8Ipl/zareJZmFLAvnL69XjmmPB32scbTnFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Nw/I0cmj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696DEC4AF0B;
+	Thu,  1 Aug 2024 19:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1722542153;
+	bh=hvG2IaT/irZIdJ2c+z07bjwA9zbf73XRgNBNvBw4bW8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Nw/I0cmji9Zl94+2UQWkdbSontHJnY5+ax1eBnLcXsRKSggj7MBEWEIVx1If9RWCH
+	 anf+Th58N7QLLPs+ffiyOgXyc08o+xfQA2viU/J7SDKM80xSIZJLfpiSWAJ6vUPn8b
+	 3PJJ5m6dyvxezZV6nBE7OjODaCwsZo3Y3h41c+wk=
+Date: Thu, 1 Aug 2024 12:55:52 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Kefeng Wang <wangkefeng.wang@huawei.com>, Barry Song
+ <21cnbao@gmail.com>, hughd@google.com, willy@infradead.org,
+ david@redhat.com, ryan.roberts@arm.com, ziy@nvidia.com, gshan@redhat.com,
+ ioworker0@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: shmem: avoid allocating huge pages larger than
+ MAX_PAGECACHE_ORDER for shmem
+Message-Id: <20240801125552.12dc70cbe7220205a4a1a9ce@linux-foundation.org>
+In-Reply-To: <bf97923f-b59a-4d91-95b5-67e555fb4cd3@linux.alibaba.com>
+References: <117121665254442c3c7f585248296495e5e2b45c.1722404078.git.baolin.wang@linux.alibaba.com>
+	<CAGsJ_4xmHY06VAKzXxCFcovPkrR0WOR28jXbaeD5VyUBHWzn_w@mail.gmail.com>
+	<c55d7ef7-78aa-4ed6-b897-c3e03a3f3ab7@linux.alibaba.com>
+	<87769ae8-b6c6-4454-925d-1864364af9c8@huawei.com>
+	<ba3e3dfa-d019-4991-9e3a-d73ffa83bb36@linux.alibaba.com>
+	<20240731134802.00541e78813997f3c59df36c@linux-foundation.org>
+	<bf97923f-b59a-4d91-95b5-67e555fb4cd3@linux.alibaba.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 07 2024 at 12:44, Andi Kleen wrote:
-> MTRRs have a obsolete fixed variant for fine grained
-> caching control of the 640K-1MB region. This fixed variant has a
-> separate capability bit in the MTRR capability MSR. Most of the MTRR code
-> checks this capability bit before trying to access the fixed MTRR MSRs,
-> except in one place. This patch fixes this place to also
-> check the capability.
+On Thu, 1 Aug 2024 08:06:59 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
 
-I don't know how many times I have told you that "This patch ..." has no
-place in change logs. Just in case you can't find the reference:
+> 
+> 
+> On 2024/8/1 04:48, Andrew Morton wrote:
+> > On Wed, 31 Jul 2024 18:22:17 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
+> > 
+> >> (Hope Andrew can help to squash these changes :))
+> > 
+> > I'm seeing some rejects against, amongst other things, your own "Some
+> > cleanups for shmem" series.
+> > 
+> > So... v2, please?
+> 
+> These two bugfix patches are based on the mm-hotfixes-unstable branch 
+> and need to be merged into 6.11-rcX, so they should be queued first.
 
-  git grep 'This patch' Documentation/process/
+OK.
 
-While at it you might also hit the format shortcut in your favourite
-editor to actually make the above paragraph properly justified.
+> For the 'Some cleanups for shmem' series, I can send a new V4 version to 
+> you after resolving conflicts with the shmem bugfix patches. Sorry for 
+> the inconvenience.
 
-Also the content of this "changelog" is close to word salad. It's not
-that hard to follow the documented expectations of change logs:
-
-  "It=E2=80=99s also useful to structure the changelog into several paragra=
-phs
-   and not lump everything together into a single one. A good structure
-   is to explain the context, the problem and the solution in separate
-   paragraphs and this order."
-
-It's irrelevant whether most code checks the bit, what's relevant is
-that a particular piece of code does NOT check it. It's also interesting
-what the resulting problem is, i.e. reading gunk, #GP or whatever and
-why this suddenly matters and did not explode in decades, but that's
-nowhere explained. So why does this patch matter?
-
-It's really not rocket science to write a coherent changelog.
-
-Thanks,
-
-        tglx
-
-
-
-
-
-
-
-
+I fixed things up.
 
