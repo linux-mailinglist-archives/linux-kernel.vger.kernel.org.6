@@ -1,92 +1,137 @@
-Return-Path: <linux-kernel+bounces-270493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D2E1944124
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:27:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D009440A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:13:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B29B4B2A72A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:13:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 469711F22934
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBCE14B06E;
-	Thu,  1 Aug 2024 01:25:38 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C4314B94B;
+	Thu,  1 Aug 2024 01:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sa8qnex8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0213665F;
-	Thu,  1 Aug 2024 01:25:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29DB28370;
+	Thu,  1 Aug 2024 01:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722475538; cv=none; b=m3aZNBy0O90TQJQVLjOtQjNnUA9HSDlsFxq8HhGVojxVx2Gb7MBLQZq+F8KyBC6h3CwQ9RwQ13rKU+Z5YV5sFJ0ykBYpZlUjYGQkcwyx1Wc5JbOFck/V98okWz0t6cWym2r964mK/o4hQbxpxvY5CHOW7mH0c3WjSKtt5b8uhEg=
+	t=1722475616; cv=none; b=KjmsR0ojRfw3SheojcRMO2dG84joG7HWGeJOGn68uF2hdD65rnddQkMvGtPaky1MifafHP4p71lCexlTreDOq0yB5/f4sPLjH9WzBDda4rv1I2beWbiwX9KlMBZmabcMhTQuO6K5GMn+T0CZhYlrlCPkBZGm4j/mnqmMDlvgyKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722475538; c=relaxed/simple;
-	bh=to+7SQt9WbFxX26DnU30VnCw3qf/eqdeKPr/AaIivF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gTlStDuKHlBIoAk4YV7ZiFKH4NDsXpy+J/hrd9Kq3W42lJXk1yGDxuvF5ZjtbqcYCHzC/Rhuv8Qdy/GV5LEFuShJ0V9gmvf2myJwiLF49mdQ5ohHn0towKWY7y7KblCw6sRdJHge35mZ14tIC7MPNz9aDTJw81RMj0pXDxYpRYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WZB7S17cJz17MyL;
-	Thu,  1 Aug 2024 09:23:48 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 916641A0188;
-	Thu,  1 Aug 2024 09:25:33 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 09:25:33 +0800
-Message-ID: <765b4384-ab4d-c202-9efd-1138bc42e9e7@huawei.com>
-Date: Thu, 1 Aug 2024 09:25:32 +0800
+	s=arc-20240116; t=1722475616; c=relaxed/simple;
+	bh=dJULF9u1UbKIHK6/B73pmGXfgRNh02RSUeuIW6GysmM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XybpVjFdeoHTUFgkL7pOqV0NIcNZ3kE7vNACI6/ar89OtFxcyiSwRYDjxdEQ2OCE9LFbwL04zdY6zG6JLTXHKnJBjaycBg2UsRD6RfLkmTHkDJVsEK6Q88ZyjrJniMTfyMmGX84L7sVmfh+OksSVhyY3FkipfxOxp1y9nLI9biE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=sa8qnex8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722475612;
+	bh=3+b6rMgl+NJQI1+PnuBqTbcxPeciIVa3QXZNYf8AnZ0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=sa8qnex8b4os+/wv/WnaY6ccwkRy0JeS+wUuVvDsw2i0iZaNoUhNUBnFCjqOHy/5T
+	 jW8tFLw0/sm2PHjT94Q5dWyH9E26u1FT60FxnIZKt+9njvD6IO10PuSBEgnWThxad7
+	 e9qrfr31h3en0lH8yqjFYvoHoW650ZojNyM+uDwHQvTO6Yq+L8JV0DeC/L3Lq8SyLT
+	 FBFOJCuW7zBXU7+dOOJzjixfJF7/v1hGtof2gHk5ELo2D5Ya3KUij5n/cAMmEv+zs8
+	 oRRI/kLcCcZw8lb5a+I+cEJVWJE0WsIC+t+QJJS/CjB6k1KEaFwB/eWi2sCu8e8zBd
+	 aWjGTwu4665eg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZBBz2Hh6z4x0C;
+	Thu,  1 Aug 2024 11:26:51 +1000 (AEST)
+Date: Thu, 1 Aug 2024 11:26:50 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lucas De Marchi <lucas.demarchi@intel.com>, Thomas =?UTF-8?B?SGVsbHN0?=
+ =?UTF-8?B?csO2bQ==?= <thomas.hellstrom@linux.intel.com>, Daniel Vetter
+ <daniel.vetter@ffwll.ch>
+Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, DRM XE List
+ <intel-xe@lists.freedesktop.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Umesh Nerlige Ramappa
+ <umesh.nerlige.ramappa@intel.com>
+Subject: linux-next: manual merge of the drm-xe tree with the drm-misc tree
+Message-ID: <20240801112650.30b8d53d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] audit: Use strscpy instead of memcpy when copying comm
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>
-CC: <eparis@redhat.com>, <audit@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240731075225.617792-1-ruanjinjie@huawei.com>
- <CAHC9VhR9MC9GhGZi_1ftycfGyeuCQ=BXgAs+v+9D-nXWg+eu=A@mail.gmail.com>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <CAHC9VhR9MC9GhGZi_1ftycfGyeuCQ=BXgAs+v+9D-nXWg+eu=A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: multipart/signed; boundary="Sig_/vNhWEgUKXHB297s8XXMWJXk";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/vNhWEgUKXHB297s8XXMWJXk
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/7/31 23:51, Paul Moore wrote:
-> On Wed, Jul 31, 2024 at 3:46 AM Jinjie Ruan <ruanjinjie@huawei.com> wrote:
->>
->> There may be random garbage beyond a string's null terminator, memcpy might
->> use the entire comm array. so avoid that possibility by using strscpy
->> instead of memcpy.
->>
->> Link: https://github.com/KSPP/linux/issues/90
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->>  kernel/auditsc.c | 6 +++---
->>  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> If you look at audit_log_pid_context() you'll see that we don't record
-> the entire task::comm field, we only record up the NUL byte, so any
-> garbage present after the end of the string should not make it into
-> the audit record.  We use memcpy(), as opposed to any of the string
-> based copy functions, as the task::comm field is relatively short and
-> having to count the length of the string in addition to copying the
-> string is likely more expensive than simply copying the full buffer.
+Today's linux-next merge of the drm-xe tree got a conflict in:
 
-Thank you very much, You're right, sorry I didn't read the code
-carefully enough.
+  drivers/gpu/drm/xe/xe_vm.c
 
-> 
+between commit:
+
+  4c44f89c5dae ("drm/ttm, drm/amdgpu, drm/xe: Consider hitch moves within b=
+ulk sublist moves")
+
+from the drm-misc tree and commit:
+
+  a2387e69493d ("drm/xe: Take a ref to xe file when user creates a VM")
+
+from the drm-xe tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/xe/xe_vm.c
+index c3bdb6362fe9,f225107bdd65..000000000000
+--- a/drivers/gpu/drm/xe/xe_vm.c
++++ b/drivers/gpu/drm/xe/xe_vm.c
+@@@ -1604,7 -1670,10 +1673,11 @@@ static void vm_destroy_work_func(struc
+  		XE_WARN_ON(vm->pt_root[id]);
+ =20
+  	trace_xe_vm_free(vm);
+ +	ttm_lru_bulk_move_fini(&xe->ttm, &vm->lru_bulk_move);
++=20
++ 	if (vm->xef)
++ 		xe_file_put(vm->xef);
++=20
+  	kfree(vm);
+  }
+ =20
+
+--Sig_/vNhWEgUKXHB297s8XXMWJXk
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaq5FoACgkQAVBC80lX
+0Gw7+Af/a263s5qrAfruejH6cvM7gSin/ndV6J8n0743hIUeZVlD7jHXySuhyg3b
+4VjsiOhWqa9yjZUX9oqIyTKulPGJoUO3BUlcHahP+kflJTbaLfQ1G4wf0/tJ7a1R
+AiLmLY/8QAOB0Wimml3/+KDzQiUfirkWC8QeaaaV/cg2kVNN5EqI8MYln/tWJuhI
+IaxNGQkxZiDQQHzMGQYX7xMnk9sLN71xYlKv25U4KVQY4TTm2loBnheWAsHDemVx
+SUJYb2P5FZZq3wJI7xNdCYn4eO29zxi+6/foLGqKqIxjqDidl3LcPIpk4hKe2DFf
+OVGxbtFQg/rjybSBuz+5rKnGIRw2wQ==
+=5M9J
+-----END PGP SIGNATURE-----
+
+--Sig_/vNhWEgUKXHB297s8XXMWJXk--
 
