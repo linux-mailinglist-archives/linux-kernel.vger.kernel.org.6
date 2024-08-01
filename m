@@ -1,102 +1,113 @@
-Return-Path: <linux-kernel+bounces-270146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8913943CBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:41:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B425943D2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67C431F27DC6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:41:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E501F20C34
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A3D1CB31E;
-	Thu,  1 Aug 2024 00:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DCE1C2D74;
+	Thu,  1 Aug 2024 00:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="b3H4//d9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fO94J4Ug"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05ADE1C9EB9;
-	Thu,  1 Aug 2024 00:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3044C1C2D65;
+	Thu,  1 Aug 2024 00:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722471487; cv=none; b=kCCx4GYDIpB1e4jGrdeMm+PbEutOj2B/0AHqSS0QI62IYcQl2I3FXFddKIqZVYE8UsrE98D1Kr87z3Iibqj7NIDOtKvzuVTCmsXE0ey/kymmYEZ7VYGeFklOfNy0Wr6KJQiNv85qmzvwdK8ufU2OkgIJnlFdlz9t9/awLcFprzI=
+	t=1722471824; cv=none; b=rliPQkrJeWYskuf73pChXpi0AR8K4tZS511hy1JVo+y+mSCUbSSWcfRbqrwwGfqL/fe6lVXQnegd5RoldHa4R8tvnkfRH1S1/TyKdR84RL6t1LD8sFfxuPve5kjmYcICLpMIvbU/fw9fjVmy9GwRyQy3DEgkp7S+jI8E8Mm2LD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722471487; c=relaxed/simple;
-	bh=EzrHojQbHayY1rc4Q/zx5hfkqvcJ3zN/wIqGJ5/06xU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NqAl1btv7obiIlVsdKJ5JXUbA93KKIKnrDT6eSmgYeQBNJjt8AYYR5ujV/+LDKZYBu0npLfZn8dPRHeLqF3p+TxWpjdLrwfTuRylf1nHUNwxDYJE1VWHwko0JYTFFlTvsRz+TIRBXizF7kmTZ8EflRrQD2MOW5hUNYRKDz0vxOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=b3H4//d9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=AuM3/GrAXMsIi+A6go0Z7DzaZf+OKFjJLl1R8WuyiaQ=; b=b3H4//d9d9Sj9u8/iuUX6VS8hJ
-	itlx2ImLOk1GIbcKJysTVZN8bH/N5E8cd0RMt/WLQ0iJ9tjJfuuWT5yAJPd7kIdFGKJajB0vQeOaG
-	LYN5nVREqSuvMjHn4Y5qidUDtq4bnAAilU8lsPp8kHwn18fk3gOrVAV6B7whjF1BYodo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sZJVq-003isF-Os; Thu, 01 Aug 2024 02:17:46 +0200
-Date: Thu, 1 Aug 2024 02:17:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Swathi K S <swathi.ks@samsung.com>
-Cc: krzk@kernel.org, robh@kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	conor+dt@kernel.org, richardcochran@gmail.com,
-	mcoquelin.stm32@gmail.com, alim.akhtar@samsung.com,
-	linux-fsd@tesla.com, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, alexandre.torgue@foss.st.com,
-	peppe.cavallaro@st.com, joabreu@synopsys.com, rcsekar@samsung.com,
-	ssiddha@tesla.com, jayati.sahu@samsung.com,
-	pankaj.dubey@samsung.com, ravi.patel@samsung.com,
-	gost.dev@samsung.com
-Subject: Re: [PATCH v4 3/4] arm64: dts: fsd: Add Ethernet support for FSYS0
- Block of FSD SoC
-Message-ID: <62872c29-0032-4ad8-b771-d57469950c75@lunn.ch>
-References: <20240730091648.72322-1-swathi.ks@samsung.com>
- <CGME20240730092907epcas5p1b81eaf13a57535e32e11709602aeee06@epcas5p1.samsung.com>
- <20240730091648.72322-4-swathi.ks@samsung.com>
- <1090d2c2-196f-4635-90a0-c73ded00cead@lunn.ch>
- <00b301dae303$d065caf0$713160d0$@samsung.com>
+	s=arc-20240116; t=1722471824; c=relaxed/simple;
+	bh=PC3A9X0FTnF9C7DORI0L8z6V+PNhSju4nSquBPefFt8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=jMdSV4qT+7chAMtvyYSRInG3EfDhaCSMmWpo9YLZx2MXDzdQiPqcDNFOWCsVsSvm45ABBO0INQx9W5ySu/dSJ6ELgZaPHkohHjhnySgmvd2jhBq5uGgUw9GiCwzhM4j1NJ9zhCDde30PVQIr3SJbN4doPbKBgp7g07fqe8UiHsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fO94J4Ug; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6962C32786;
+	Thu,  1 Aug 2024 00:23:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722471824;
+	bh=PC3A9X0FTnF9C7DORI0L8z6V+PNhSju4nSquBPefFt8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fO94J4UghT+N1qMNYs7SpeqgDdnGeMynFmmSsFaxtA1XvD0baJzvQ7P0VUSkCpxmQ
+	 O6n0m43k1VIReib89FM96gQX9HIIzZEgBrqRpARq7raNQ556yofYrTT+nQvM4G7AQn
+	 XLqRtvPeh55bO2BC9OFLW9H1ikYaGYP8cxNxu3ZH4w0t1uqL7eDC27406WQfPB1oay
+	 +1L+P22rHFtgmvVcBmcgxyLeRdwjvowsPd/t4VY6F+IDeqkmu9pu+8E1iGnlF2mugk
+	 ogRr+R3+hYYpFpneQFTCTq/9qUmQYM1yDk3XHE8s5NQwlWhqLR/BMkXeHrAxcJJ7uI
+	 3dnWlJe35S1pg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Jesse Zhang <jesse.zhang@amd.com>,
+	Jesse Zhang <Jesse.Zhang@amd.com>,
+	Lijo Lazar <lijo.lazar@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Sasha Levin <sashal@kernel.org>,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	Hawking.Zhang@amd.com,
+	asad.kamal@amd.com,
+	James.Zhu@amd.com,
+	rajneesh.bhardwaj@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 6.6 31/83] drm/amdgpu: Fix the warning division or modulo by zero
+Date: Wed, 31 Jul 2024 20:17:46 -0400
+Message-ID: <20240801002107.3934037-31-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801002107.3934037-1-sashal@kernel.org>
+References: <20240801002107.3934037-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00b301dae303$d065caf0$713160d0$@samsung.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.43
+Content-Transfer-Encoding: 8bit
 
-> > What is the interface connected to? A switch?
-> 
-> Hi Andrew, 
-> Thanks for the quick review. AFAIK, this has been discussed earlier. I am
-> providing the links to the same here for quick reference. 
-> 
-> [1] https://lkml.org/lkml/2024/7/29/419
-> [2] https://lkml.org/lkml/2024/6/6/817
-> [3] https://lkml.org/lkml/2024/6/6/507
-> [4] https://lkml.org/lkml/2023/8/14/1341
-> 
-> Please let us know if you have any further queries on this.
+From: Jesse Zhang <jesse.zhang@amd.com>
 
-Ah, O.K.
+[ Upstream commit 1a00f2ac82d6bc6689388c7edcd2a4bd82664f3c ]
 
-It would make sense to add to the commit message something like:
+Checks the partition mode and returns an error for an invalid mode.
 
-The Ethernet interface is connected to a switch, which Linux is not
-managing.
+Signed-off-by: Jesse Zhang <Jesse.Zhang@amd.com>
+Suggested-by: Lijo Lazar <lijo.lazar@amd.com>
+Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Part of the purpose of the commit message is to answer questions
-reviewers might have. This is one such question.
+diff --git a/drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c b/drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c
+index 0284c9198a04a..6c6f9d9b5d897 100644
+--- a/drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c
++++ b/drivers/gpu/drm/amd/amdgpu/aqua_vanjaram.c
+@@ -500,6 +500,12 @@ static int aqua_vanjaram_switch_partition_mode(struct amdgpu_xcp_mgr *xcp_mgr,
+ 
+ 	if (mode == AMDGPU_AUTO_COMPUTE_PARTITION_MODE) {
+ 		mode = __aqua_vanjaram_get_auto_mode(xcp_mgr);
++		if (mode == AMDGPU_UNKNOWN_COMPUTE_PARTITION_MODE) {
++			dev_err(adev->dev,
++				"Invalid config, no compatible compute partition mode found, available memory partitions: %d",
++				adev->gmc.num_mem_partitions);
++			return -EINVAL;
++		}
+ 	} else if (!__aqua_vanjaram_is_valid_mode(xcp_mgr, mode)) {
+ 		dev_err(adev->dev,
+ 			"Invalid compute partition mode requested, requested: %s, available memory partitions: %d",
+-- 
+2.43.0
 
-	  Andrew
 
