@@ -1,149 +1,91 @@
-Return-Path: <linux-kernel+bounces-271624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 418FD9450E0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B5E9450E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77771F2A2FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF3DE2824C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E41BD035;
-	Thu,  1 Aug 2024 16:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65EF1BD502;
+	Thu,  1 Aug 2024 16:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ByPNioin"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="cddZt4X2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98EF01BD011
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3051BB686
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530165; cv=none; b=AjlW5Gi0oQMIztZyFeTumodpfg8c1rhJBIufbAfQ13ha+ZhH/oH+1Isi446oSY3Ajz7MGB6oV8LOHuatKuRXfHzBY9H7jT1RLjZJ7Z2tNXhbkXm7ulfdn3CFKhf9EozeKAEsmcINjcbMazwXMnRlkOk1dFLzbYsYB10UNuEKuR0=
+	t=1722530181; cv=none; b=kIzBCADjMXiJp11vQMUmxKXFmsnvuhh3ZB5hWGN0qh8GljWMgPubo5Zscev9WECL6unrc4wtGmVAbTLDpmn/mGjNyCNFR5klYiK8HYexXq59y4Fnjsr7y3MOaftm+mdihGwpOhzizDv0l67XRN+1GGmKp6WBXCqijzYhJSMPO3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530165; c=relaxed/simple;
-	bh=5ZB90r+pHV9yVwJHQmZRzPSlgknTBF1ajbZuNTFiPAY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OlZ5i7t0FQgyRFbFaGsvLPHLG9Me1WITS/AdQono0fJOhJY5y3/QZ06PBv87ePltRAlkdCG7H9elnckThyaMyZyJbTtkD7j8qY57U0rMHIm8dHFMwUhDH8D8aoQsVE0sz7SOc636lJhtWu7PypmyoJodZRLxMQFTmHVaohvTWTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ByPNioin; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fc692abba4so53823575ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:36:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722530163; x=1723134963; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=atZpvsXspSbpncJOqsxwY4AP8Ik7TANHCt+zaS4EnHk=;
-        b=ByPNioinVMbtgBXekuFVTYnvH2JNinHuI8K8dYKCbd4eKwwZEPtZvPuRJ6PnWVjTVZ
-         9IauFaURCf7NATFiRO7z/9tQL9msbjXIidEHrDPYbEqB6EgBno2e/RrQm+wRi2B8/+vZ
-         MF58fRuG7uNcIsUJRQftcQDhC55ly/jmu6l5M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722530163; x=1723134963;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=atZpvsXspSbpncJOqsxwY4AP8Ik7TANHCt+zaS4EnHk=;
-        b=gAhrcKpI2uF23fLcZhAAJUDgNNLg1+1xTaajnKmNl33mpG9QZ9BqkKsw01ihF1HSAy
-         eKyIlpPn2Bx9VQoxuF/IW7Y6du2EhcYrT/JauF5gHgvHQWlKGklV/aNHQBq9aXW5eIYY
-         WCFytxhjzE5u7VKZoSm4Th2osOkUfh4lm/epiUEy8dUhL8fBbro41PzZ1noJQv1hyKV/
-         OfZATmHRsIhpfKIzWcJYu7ueqfNyHNc5L79l+iT+it9dLE+PLqNWk4l6rDUFBkTWbVl8
-         gjbl6JReM46iDh8EBzw1SGYLf7+LvniB+1MkvKwY1Czgyvo8f02U/1WmnRUHLywAievw
-         KUpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV809aKhFgH+4CXKX4MNeYSm5bJP04Ja5jLAVCbb36dxP6NTz6FjeLam+GTefHE8o398Ijvclq8hfBO2embu/P8cRx30afV3485s6Ya
-X-Gm-Message-State: AOJu0Yx3h19B5On+b+Hl8U+VFwQQNW29JxIc7B7L9MA26kJK3a5bkrro
-	oXDKpq7xpXiUcqv7K+BOfPeM+dQCVckNSPv6afrB1tZFkrzPaJyJN93j5+6ceQ==
-X-Google-Smtp-Source: AGHT+IEV0K6EvVI+Tw4uQvCY+qNqO6h7fg7Kg6s+Vxrl1cuiYMx85QJ8Ay0rI1ohVbOt5/2nS6s1Sg==
-X-Received: by 2002:a17:903:1207:b0:1fd:66fd:4dae with SMTP id d9443c01a7336-1ff57262a3fmr11457695ad.3.1722530162751;
-        Thu, 01 Aug 2024 09:36:02 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff58f19ec5sm820775ad.20.2024.08.01.09.35.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 09:36:02 -0700 (PDT)
-Message-ID: <20f9a0f6-fff7-4eeb-8197-4bc9fdc147e2@broadcom.com>
-Date: Thu, 1 Aug 2024 09:35:50 -0700
+	s=arc-20240116; t=1722530181; c=relaxed/simple;
+	bh=6MYtvNwqzr89kuMijj7dj05YG0cddZdYGXuIn2AaA/k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnqeF0fSD9Iao4Jyea3GrihQb0vH6O5ou+dGl/SuSYhJZ3qYaEM9/lOzZPrSq3DDoTKa6hNXSg7rPAU5vjBAfyim8Rzte+bRPVYmeIBCw+xjh0vTicrmNvHMojxhn+JMQ81SMC19gO8lQTHgmseJCSO+RL6URNvlwcJony2QijY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=cddZt4X2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SaIPytHxWcAaYza32KmNAPXihLWLj5CDb3e50E+sMRQ=; b=cddZt4X2EOKhHMr2SS7Oecnifx
+	oGjj4+9YuXZMQi4YdWfEX0j4UPccH3G9E5JzTCDEBoMRBFwNoSsQ302iKdPkZJRknC9vcMxcyXkG4
+	QYfxVOJZbFZfqbAm5/lxLGoawvXH8rJbDYQ8W0WXd91IMuof5olo9xZwkLdlK+WNEpdfmpT8GaRDM
+	n9wMctRP9JawI+VOOb5vqOLhdnyBEe1BR4FMYQbFU0ZfRSy32Zlwb6sGVIzKX3o8/XhfqyxMaIFgD
+	a1PU3J7EB1zt8RVNoF6QSILWEGqkg9gGwNXEx5dwoNFQi6Vfcprmm4gqPLJKcAplRdxGLGhnDbOys
+	Sm1GZFMQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36698)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZYmV-0003Wu-3C;
+	Thu, 01 Aug 2024 17:36:00 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZYmY-0007EW-5x; Thu, 01 Aug 2024 17:36:02 +0100
+Date: Thu, 1 Aug 2024 17:36:02 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: dianders@chromium.org, mhocko@suse.com, akpm@linux-foundation.org,
+	maz@kernel.org, vschneid@redhat.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: smp: Fix missing backtrace IPI statics
+Message-ID: <Zqu5ck+Ik8KlzE0O@shell.armlinux.org.uk>
+References: <20240801094022.1402616-1-ruanjinjie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Jim Quinlan <james.quinlan@broadcom.com>, linux-pci@vger.kernel.org,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
- Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- "moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
- <linux-rpi-kernel@lists.infradead.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-2-james.quinlan@broadcom.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240731222831.14895-2-james.quinlan@broadcom.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801094022.1402616-1-ruanjinjie@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On 7/31/24 15:28, Jim Quinlan wrote:
-> o Change order of the compatible strings to be alphabetical
-> o Use "maxItems" where needed.
-> o Change maintainer: Nicolas has not been active for a while.  It also
->    makes sense for a Broadcom employee to be the maintainer as many of the
->    details are privy to Broadcom.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+On Thu, Aug 01, 2024 at 05:40:22PM +0800, Jinjie Ruan wrote:
+> It is similar to ARM64 commit 916b93f4e865 ("arm64: smp: Fix missing IPI
+> statistics"), commit 56afcd3dbd19 ("ARM: Allow IPIs to be handled as normal
+> interrupts") set CPU_BACKTRACE IPI "IRQ_HIDDEN" flag but not show it in
+> show_ipi_list(), which cause the interrupt kstat_irqs accounting
+> is missing in display.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+I don't see why this needs to be included. If this IPI fires, it means
+that the kernel has suffered a lockup and is probably not very useful.
+So the chances of being able to read out from /proc/interrupts a non-
+zero "CPU backtrace interrupts" figure is highly unlikely.
+
+So, I don't see much point to this change.
+
 -- 
-Florian
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
