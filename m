@@ -1,63 +1,100 @@
-Return-Path: <linux-kernel+bounces-271885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E52945479
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE4D94547B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:23:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3D7B284BEA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:22:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCB3D283305
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC3C14C5A3;
-	Thu,  1 Aug 2024 22:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA5D714B08E;
+	Thu,  1 Aug 2024 22:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLRbpe5V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YcHiOrBC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61726145352;
-	Thu,  1 Aug 2024 22:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 192DC14AD32
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 22:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722550949; cv=none; b=Q0CprLZT2kkj3R2jj0IxXxlkfdvqqcbQt1gXe+WNx33LcK5H3SqeDpHy5u4za1PqXVTR6eg683CCwj/+UqufooQ++OKNWVdjGvilt3iw/0CAyXU8PIoy6OOc03+GJjPVmvo5nasgbXYHCArh88h8LcD282o9VvAvY8uh8kgTigg=
+	t=1722550981; cv=none; b=lrU1ir+9PzlOGBqGdVfQTgRSC5TYYtVoE532bAUFB1VYE2MQUZJzl5iQF7UiZJyfrgD7aegPhcvdwrprQdMxa+tWYy8Zj02EZTrHrxEC44GAVRhFnPvwmGNuM1fRLH9wlNWoFK36llNxLu7/y9xampaDuLMv2dSR+tL/nPlMO48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722550949; c=relaxed/simple;
-	bh=l5u3lUTgXMYP2PHhcTr2ciMaIUga+HNMya4jSM+s2A4=;
+	s=arc-20240116; t=1722550981; c=relaxed/simple;
+	bh=83y5jcISbGVgHhdSye9Ayo9+ylHkjQBs4zkhSX1JibY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WUAvS59LawvYIucZfhYnRtT2q/7pBvHOoHJZBe1MXR+eSgf+YVS6AqCw9u9Yx4scrbL1a07iLYBqbwYokMRM/KeZJuK171HNqp/n4oM8X4j58EcJNwmHdbSFU015NkpUz/bLYDiPzzljF12b1qXCM7BNRPbiBjVYC9B2dvL/JQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLRbpe5V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 861CEC32786;
-	Thu,  1 Aug 2024 22:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722550949;
-	bh=l5u3lUTgXMYP2PHhcTr2ciMaIUga+HNMya4jSM+s2A4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KLRbpe5V+mhOuQa+wrzDnfe34cu+ZxOI98tLYyzXKTHPHIaLeW6T4+xl4a5ORTjGH
-	 /4YNqcEuP32VOXy4W3PR64gfME/LJ/lB+VrD1GCM8E0sDpJSh+nXX/fb08hp8Z77jU
-	 BxNxplR39aE47/mOWuRiugtIlUbihx2RfJ3/QK2kx25n+w8rlkn1s5bdazkKzzQtzf
-	 2lRKT4GxVhSqbi0iGDjkL/I5Y7GjLxNqziP/3i1luvT+HodfZeCOMcjx6w9yVUst60
-	 dRnLpzeR/0CzbfCUz3BVT2OqernvWIBtjVlVczZpzFD985P4T8B/ktJY87R9r2HLFn
-	 0QmaUSqy75vUQ==
-Date: Thu, 1 Aug 2024 15:22:25 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, KP Singh <kpsingh@kernel.org>,
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: Re: [PATCH v3 8/8] perf test: Update sample filtering test
-Message-ID: <ZqwKoWpBN9G3u-K0@google.com>
-References: <20240703223035.2024586-1-namhyung@kernel.org>
- <20240703223035.2024586-9-namhyung@kernel.org>
- <ZqpFvxFcZMHeAdqp@x1>
- <ZqrS_80S91EvnQE0@google.com>
- <ZqukTsjWqbx-xZ7L@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CIjXf9WDcPNSfUEJE3eRey9LrLG2/LescfgbYtWUpiZLDAOmR7kWfcF34HcKaVu9tRrx/JkJsTfDOiMTK9Xfqe78007TF/JDHI8q9Wt75HhW3ON6JYpsMGYSS+PwnSaszpAPpfMmXt6wFnAdhWH1+1GEJ0I4FD0t8PUqHcK34a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YcHiOrBC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722550977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=acXEWndKlCVnwDNwF3qRu8zmTJbIkY9TPABZaKHwjrc=;
+	b=YcHiOrBCvlEvZM+k67juJ6Wfl0Wniq8Bm9YIES/uPc79fdHT7uPcHrDy7pYoxAYKh3PGhc
+	oxCrF9MdldafEdUTGKfi0cGML89LHdvZNe64DkFgSYOPIt1o4FZnDTplabCjpWqaLx1Wb0
+	cY+nQbD93vxPYf1K9I8397seCrTEL0o=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-07VxWXlPOIeiwbbTxjmDYA-1; Thu, 01 Aug 2024 18:22:55 -0400
+X-MC-Unique: 07VxWXlPOIeiwbbTxjmDYA-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7a1d5ee7762so27884385a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 15:22:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722550975; x=1723155775;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=acXEWndKlCVnwDNwF3qRu8zmTJbIkY9TPABZaKHwjrc=;
+        b=Eel991jSzDj6JDG/HL5/FPoWmYmFS4sK+viWcoRLrZb+Jg3MCteMpcGKQU+EYNWy9v
+         SEg18eYCPKqyud1R/sRXxfqAB3uQQ4ofgQuAZN2P/Ii6g3yQGl6INcfSZc6bhwciJSIz
+         gFE4IDLGd7dbnm9Xticea9J0anK29/RadYugB6ZFkmxbVk1ASQWrPtsH5aWeg0fZEc0F
+         9ktn55/ScRxDOYaMO4pQHtKOjAe8aMDtp0gBbC+Gsm/0CXc85DblxrGyMHi0E0J3Bx8p
+         r3MDFSe+tCDk2dVFprJ+/UMVrr1psUhuvyNbyXSQuN8ABYnQxpaeG1SDnmV4wwZrPS/s
+         aD0w==
+X-Forwarded-Encrypted: i=1; AJvYcCVqEeAftx7y7+y4NPL4dwukjgbHTsG8wxaxraJjk18deZnFu5QMC6kbz40dT9brZLTqJZ2Gc7JfXpVz/Tg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ80+Z1k95RoZTvGS6jeDt/fLOudWMNcxP+6MsXCjrBSuzbTae
+	xtvRKzjaTjHWoF2JRWWXItIoEO0i971VbOAnko6iaFHNI1V5qsB+Ag3rcT0op7ed/j/gvYkDyaB
+	jr4woBpdc9KDfQl1OlcKFC3MkXrNY1MmBOQWYnxMwqHIKCXFxLzqia6pq/LVp7w==
+X-Received: by 2002:a05:620a:3902:b0:79f:78a:f7d6 with SMTP id af79cd13be357-7a34ef0f061mr104413685a.1.1722550975313;
+        Thu, 01 Aug 2024 15:22:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEepfEQvZgBRjF0n6c40OJFUnxDJginkdVQ49bHtnVFZ0KbqFVRZ0T0eM1Jvx3otgOTXKNadw==
+X-Received: by 2002:a05:620a:3902:b0:79f:78a:f7d6 with SMTP id af79cd13be357-7a34ef0f061mr104411785a.1.1722550974882;
+        Thu, 01 Aug 2024 15:22:54 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a34f787aa6sm31839085a.103.2024.08.01.15.22.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 15:22:54 -0700 (PDT)
+Date: Thu, 1 Aug 2024 18:22:51 -0400
+From: Peter Xu <peterx@redhat.com>
+To: James Houghton <jthoughton@google.com>
+Cc: kalyazin@amazon.com, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	roypat@amazon.co.uk, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [RFC PATCH 14/18] KVM: Add asynchronous userfaults,
+ KVM_READ_USERFAULT
+Message-ID: <ZqwKuzfAs7pvdHAN@x1n>
+References: <20240710234222.2333120-1-jthoughton@google.com>
+ <20240710234222.2333120-15-jthoughton@google.com>
+ <4e5c2904-f628-4391-853e-37b7f0e132e8@amazon.com>
+ <CADrL8HUn-A+k-+A8WvreKtvxW-b9zZvgAGMkkaR7gCLsPr3XPg@mail.gmail.com>
+ <4cd16922-2373-4894-b888-83a6bb3978e7@amazon.com>
+ <CADrL8HVuvBAMcuoifhjuSBpVOA3Av+_k4e=waD81ajKX4gXPHw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,175 +103,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZqukTsjWqbx-xZ7L@x1>
+In-Reply-To: <CADrL8HVuvBAMcuoifhjuSBpVOA3Av+_k4e=waD81ajKX4gXPHw@mail.gmail.com>
 
-On Thu, Aug 01, 2024 at 12:05:50PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Jul 31, 2024 at 05:12:47PM -0700, Namhyung Kim wrote:
-> > On Wed, Jul 31, 2024 at 11:10:07AM -0300, Arnaldo Carvalho de Melo wrote:
-> > > On Wed, Jul 03, 2024 at 03:30:35PM -0700, Namhyung Kim wrote:
-> > > > Now it can run the BPF filtering test with normal user if the BPF
-> > > > objects are pinned by 'sudo perf record --setup-filter pin'.  Let's
-> > > > update the test case to verify the behavior.  It'll skip the test if the
-> > > > filter check is failed from a normal user, but it shows a message how to
-> > > > set up the filters.
-> > > > 
-> > > > First, run the test as a normal user and it fails.
-> > > > 
-> > > >   $ perf test -vv filtering
-> > > >    95: perf record sample filtering (by BPF) tests:
-> > > >   --- start ---
-> > > >   test child forked, pid 425677
-> > > >   Checking BPF-filter privilege
-> > > >   try 'sudo perf record --setup-filter pin' first.       <<<--- here
-> > > >   bpf-filter test [Skipped permission]
-> > > >   ---- end(-2) ----
-> > > >    95: perf record sample filtering (by BPF) tests                     : Skip
-> > > > 
-> > > > According to the message, run the perf record command to pin the BPF
-> > > > objects.
-> > > > 
-> > > >   $ sudo perf record --setup-filter pin
-> > > > 
-> > > > And re-run the test as a normal user.
-> > > > 
-> > > >   $ perf test -vv filtering
-> > > >    95: perf record sample filtering (by BPF) tests:
-> > > >   --- start ---
-> > > >   test child forked, pid 424486
-> > > >   Checking BPF-filter privilege
-> > > >   Basic bpf-filter test
-> > > >   Basic bpf-filter test [Success]
-> > > >   Failing bpf-filter test
-> > > >   Error: task-clock event does not have PERF_SAMPLE_CPU
-> > > >   Failing bpf-filter test [Success]
-> > > >   Group bpf-filter test
-> > > >   Error: task-clock event does not have PERF_SAMPLE_CPU
-> > > >   Error: task-clock event does not have PERF_SAMPLE_CODE_PAGE_SIZE
-> > > >   Group bpf-filter test [Success]
-> > > >   ---- end(0) ----
-> > > >    95: perf record sample filtering (by BPF) tests                     : Ok
-> > > 
-> > > Ok, so I tested one of the examples you provide as a root user:
-> > > 
-> > > root@number:~# perf record -o- -e cycles:u --filter 'period < 10' perf test -w noploop | perf script -i-
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.024 MB - ]
-> > >        perf-exec  228020 53029.825757:          1 cpu_core/cycles/u:      7fe361d1cc11 [unknown] ([unknown])
-> > >        perf-exec  228020 53029.825760:          1 cpu_core/cycles/u:      7fe361d1cc11 [unknown] ([unknown])
-> > >             perf  228020 53029.826313:          1 cpu_atom/cycles/u:      7fd80d7ba040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228020 53029.826316:          1 cpu_atom/cycles/u:      7fd80d7ba040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228020 53029.838051:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228020 53029.838054:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228020 53029.838055:          9 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228020 53029.844137:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > >             perf  228020 53029.844139:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > > root@number:~# perf record -o- -e cycles:u --filter 'period < 100000' perf test -w noploop | perf script -i-
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.025 MB - ]
-> > >        perf-exec  228084 53076.760776:          1 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
-> > >        perf-exec  228084 53076.760779:          1 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
-> > >        perf-exec  228084 53076.760779:         10 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
-> > >        perf-exec  228084 53076.760780:        497 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
-> > >        perf-exec  228084 53076.760781:      27924 cpu_core/cycles/u:      7f7e7691cc11 [unknown] ([unknown])
-> > >             perf  228084 53076.761318:          1 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.761320:          1 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.761321:         14 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.761322:        518 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.761322:      20638 cpu_atom/cycles/u:      7f317057d040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.768070:          1 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.768072:          1 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.768073:         17 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.768073:        836 cpu_core/cycles/u:      7f317056e898 _dl_relocate_object+0x1d8 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.768074:      44346 cpu_core/cycles/u:      7f317056e89b _dl_relocate_object+0x1db (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228084 53076.843976:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > >             perf  228084 53076.843978:          1 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > >             perf  228084 53076.843979:         13 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > >             perf  228084 53076.843979:        563 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > >             perf  228084 53076.843980:      26519 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > >             perf  228084 53077.482090:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228084 53077.482092:          1 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228084 53077.482093:         15 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228084 53077.482093:        746 cpu_core/cycles/u:            53b062 noploop+0x62 (/home/acme/bin/perf)
-> > >             perf  228084 53077.482094:      38315 cpu_core/cycles/u:            53b05c noploop+0x5c (/home/acme/bin/perf)
-> > > root@number:~#
-> > > 
-> > > Filtering by period works as advertised, now I have done as root;
-> > > 
-> > > root@number:~# perf record --setup-filter pin
-> > > root@number:~# ls -la /sys/fs/bpf/perf_filter/
-> > > total 0
-> > > drwxr-xr-x. 2 root root 0 Jul 31 10:43 .
-> > > drwxr-xr-t. 3 root root 0 Jul 31 10:43 ..
-> > > -rw-rw-rw-. 1 root root 0 Jul 31 10:43 dropped
-> > > -rw-rw-rw-. 1 root root 0 Jul 31 10:43 filters
-> > > -rwxrwxrwx. 1 root root 0 Jul 31 10:43 perf_sample_filter
-> > > -rw-rw-rw-. 1 root root 0 Jul 31 10:43 pid_hash
-> > > -rw-------. 1 root root 0 Jul 31 10:43 sample_f_rodata
-> > > root@number:~# ls -la /sys/fs/bpf/perf_filter/perf_sample_filter 
-> > > -rwxrwxrwx. 1 root root 0 Jul 31 10:43 /sys/fs/bpf/perf_filter/perf_sample_filter
-> > > root@number:~#
-> > > 
-> > > And as a normal user I try:
-> > > 
-> > > acme@number:~$ perf record -o- -e cycles:u perf test -w noploop | perf script -i- | head
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.204 MB - ]
-> > >             perf  228218 53158.670585:          1 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.670590:          1 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.670592:          7 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.670593:        117 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.670595:       2152 cpu_atom/cycles/u:      7f2fb1b6e040 _start+0x0 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.670604:      38977 cpu_atom/cycles/u:  ffffffff99201280 [unknown] ([unknown])
-> > >             perf  228218 53158.670650:     167064 cpu_atom/cycles/u:      7f2fb1b67d7c intel_check_word.constprop.0+0x16c (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.671472:     232830 cpu_atom/cycles/u:      7f2fb1b75d98 strcmp+0x78 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.672710:     191183 cpu_atom/cycles/u:      7f2fb1b59311 _dl_map_object_from_fd+0xea1 (/usr/lib64/ld-linux-x86-64.so.2)
-> > >             perf  228218 53158.673461:     158125 cpu_atom/cycles/u:      7f2fb1b77148 strcmp+0x1428 (/usr/lib64/ld-linux-x86-64.so.2)
-> > > acme@number:~$
-> > > 
-> > > Ok, no filtering, bot samples, lets try to use filtering as with root:
-> > > 
-> > > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.019 MB - ]
-> > > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.019 MB - ]
-> > > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.019 MB - ]
-> > > acme@number:~$ perf record -o- -e cycles:u --filter 'period < 10000000' perf test -w noploop | perf script -i-
-> > > [ perf record: Woken up 1 times to write data ]
-> > > [ perf record: Captured and wrote 0.019 MB - ]
-> > > acme@number:~$
-> > 
-> > Hmm.. strange.  The above command works well for me.
-> > 
-> > > 
-> > > acme@number:~$ perf record -v -e cycles:u --filter 'period < 10000000' perf test -w noploop 
-> > > Using CPUID GenuineIntel-6-B7-1
-> > > DEBUGINFOD_URLS=
-> > > nr_cblocks: 0
-> > > affinity: SYS
-> > > mmap flush: 1
-> > > comp level: 0
-> > > Problems creating module maps, continuing anyway...
-> > > pid hash: 228434 -> 13
-> > > pid hash: 228434 -> 14
-> > 
-> > This part is a little strange as it's using two entries.  Hmm, are you
-> > using a hybrid machine?  Anyway I think it should work there too..
+On Mon, Jul 29, 2024 at 02:09:16PM -0700, James Houghton wrote:
+> > A more general question is, it looks like Userfaultfd's main purpose was
+> > to support the postcopy use case [2], yet it fails to do that
+> > efficiently for large VMs. Would it be ideologically better to try to
+> > improve Userfaultfd's performance (similar to how it was attempted in
+> > [3]) or is that something you have already looked into and reached a
+> > dead end as a part of [4]?
 > 
-> Yes, I'll try it again on a 5950x since it isn't hybrid.
+> My end goal with [4] was to take contention out of the vCPU +
+> userfault path completely (so, if we are taking a lock exclusively, we
+> are the only one taking it). I came to the conclusion that the way to
+> do this that made the most sense was Anish's memory fault exits idea.
+> I think it's possible to make userfaults scale better themselves, but
+> it's much more challenging than the memory fault exits approach for
+> KVM (and I don't have a good way to do it in mind).
 > 
-> > Also the number is too high.. I expect 1 or 2.  Maybe it didn't release
-> > all the entries.  Let me think about the case.
-> 
-> I'm inclined for now to keep this series merged and then take fixes on
-> top, please advise if this isn't ok with you.
+> > [1] https://lore.kernel.org/lkml/4AEFB823.4040607@redhat.com/T/
+> > [2] https://lwn.net/Articles/636226/
+> > [3] https://lore.kernel.org/lkml/20230905214235.320571-1-peterx@redhat.com/
+> > [4]
+> > https://lore.kernel.org/linux-mm/CADrL8HVDB3u2EOhXHCrAgJNLwHkj2Lka1B_kkNb0dNwiWiAN_Q@mail.gmail.com/
 
-No objections, I'll investigate why it failed on your machine..
+Thanks for the link here on [3].  Just to mention I still remember I have
+more thoughts on userfault-generic optimizations on top of this one at that
+time, like >1 queues rather than one.  Maybe that could also help, maybe
+not.
+
+Even with that I think it'll be less-scalable than vcpu exits for
+sure.. but still, I am always not yet convinced those "speed" are extremely
+necessary, because postcopy overhead should be page movements, IMHO.  Maybe
+there's scalability on the locks with userfault right now, but maybe that's
+fixable?
+
+I'm not sure whether I'm right, but IMHO the perf here isn't the critical
+part.  Now IMHO it's about guest_memfd is not aligned to how userfault is
+defined (with a mapping first, if without fd-extension), I think it indeed
+can make sense, or say, have choice on implementing that in KVM if that's
+easier.  So maybe other things besides the perf point here matters more.
 
 Thanks,
-Namhyung
+
+-- 
+Peter Xu
 
 
