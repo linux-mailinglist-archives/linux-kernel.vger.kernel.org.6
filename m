@@ -1,188 +1,238 @@
-Return-Path: <linux-kernel+bounces-270726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF5A944485
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:32:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 447A3944474
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41027282D96
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:32:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62051F21743
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:28:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D751C158556;
-	Thu,  1 Aug 2024 06:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5215815747D;
+	Thu,  1 Aug 2024 06:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FPPLQfcf"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MBmy231d"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DED158534;
-	Thu,  1 Aug 2024 06:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5DE158528
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722493918; cv=none; b=SLduTQ5I3IyrVTOJ2RZhI8L1EbgFovgDBU97VcXyMrPqO9Bl6XFXfVB2J+mz1r0VbzbYKx3kSIRaa8EyqIV0Ijf6Arzgy7TXaDpvAEq/1PzktffMcGXeVBhPt79mwMSyZLWQg3EeFB0cAC0NCmMfu6rsLE04j+dIos/PaajEvDs=
+	t=1722493715; cv=none; b=l35AWuITbKO0PELcqe0+pN3nlA0bC8npBsit98cgYjCglBth+YlJQrrkIlliVG14mczL9ydznHqBaPNIHpXkWGzEVR1gBjwMrstFgERM5nQC5k7WFE3E/qWEbU5IF4uOzlD72bERfwV7hXYKSZolvw0X8MRGCm24aOSCku+SsOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722493918; c=relaxed/simple;
-	bh=dlaZQXwlgCuRvMLHXO6Q5mUOphL7QTLBwat9U1z8Mt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dTA4Xi21kMtz2Xj5H/ir6Kx5O7CzcFhLgTgBKku690pc5c7cLs7R9qe3hfw0t4l0QxRMNrErcBGCnpfMtksEE/DXQ58CeMoPpvXP7JM/OcY3n9hYWMec1vg2W+xXUyjRtYHOQ00GcHrK+K8IlE+H9rMc8sPb7Q3o3ANaKuYdw8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FPPLQfcf; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4712l7lZ006223;
-	Thu, 1 Aug 2024 06:26:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:content-transfer-encoding:in-reply-to; s=pp1; bh=c
-	GCcsoQpvk1hY1Y1fok3ylEXbYOA+YxUbZ1OnekV30k=; b=FPPLQfcfW8VkHpjvX
-	qMCtfIWfK9qzPyL3YLO4cA64lSY+auUytRW2COLUSiek56WH533yDmR7QR6XJgtf
-	JywKD4jvZlY3XMxCfFV3Ll8nGsnqXOuXORBvlNR4KGWRHd1HOjV3rwl0w1NcI88i
-	AiyCEPCXa2EAr5BZwBJp2xM7eaZh+CrmWDc78nO45WCRSM52v4t65ttWuyLZ319+
-	1SeYDplOcj2k89tpaUXHmn1bA0Jnfy7WSNVZVol0RsOGl2laKCg38URFcnFiIEIy
-	2m9lM/iDBVVvnb5ivCRJi3lTfbz8tC0vCFKGHA53rD6Lg3oov8F5JJDxhIES/HHo
-	kokwA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qyup8q56-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 06:26:27 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4716NdHb012280;
-	Thu, 1 Aug 2024 06:26:26 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qyup8q53-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 06:26:26 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4713eESV029103;
-	Thu, 1 Aug 2024 06:26:25 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nbm10c9m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 06:26:25 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4716QLtI55116252
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 1 Aug 2024 06:26:23 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B3D7520043;
-	Thu,  1 Aug 2024 06:26:21 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A55F20040;
-	Thu,  1 Aug 2024 06:26:12 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.43.15])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  1 Aug 2024 06:26:12 +0000 (GMT)
-Date: Thu, 1 Aug 2024 11:56:07 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Baokun Li <libaokun@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>, stable@kernel.org
-Subject: Re: [PATCH 03/20] ext4: fix double brelse() the buffer of the
- extents path
-Message-ID: <ZqsqZP2Hgx8xTa2i@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-4-libaokun@huaweicloud.com>
- <ZqOMQ6cIHd0hZqhY@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <4147a862-df2c-457c-8ebd-4c04f121b93e@huaweicloud.com>
+	s=arc-20240116; t=1722493715; c=relaxed/simple;
+	bh=CX0OvbedDWrepXq5Ff+fVTBJovH97z9Wq3vfLFVXQ3o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WDXd6klCWvuXT/j84HCDfSlaBcsqFrjPwJwq/MGpl7aw9E5vLL7Fu4mkV6cDlygIlCFp6Abi1/IYkEU6/ug9quNpxzs3r9hkPwmJJqO4KiVn9Umpzi9BpYPigzw+HRvAr0bWmAQyJLEjhAWFP4ZdrIHwbcqPXBfFoE21GDscIHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MBmy231d; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso28807a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:28:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722493712; x=1723098512; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QYXNdhUYAatsrfG4+QxkF3cxgEI8kD4jOZrGXfLxMPg=;
+        b=MBmy231d2iFxGqTOBOiKgtFfrUXqqfeLG8qD26yszCIOaZVweUcmkWdtUerINfUI4q
+         TFXpu3lgZ8yy1JGhPW7TFlGH9X5U5KA0lhGHwmdGxkQGMRfeC+jOx/XM4vN3WoHxJKWq
+         0Xlh/0eddEU2Xlulke1PPQj75fvvFBFZ2XwUhXE6Wqmgb5pRNZk6ZuB6PcES4HuAjD8c
+         KhETl68CI2lb/ypp9+yCvQQ6QG4FxB2dp148yYJqKynCz1Mz8K61ZDM6NMPiNSa7CCbj
+         cS0OqBBLu3njc5sVIhEFpdnKwoCCW9rEMSTJWhdf1nd2Vd3zm3lmlM6FFOzRJXiz1gra
+         YCzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722493712; x=1723098512;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QYXNdhUYAatsrfG4+QxkF3cxgEI8kD4jOZrGXfLxMPg=;
+        b=BHCRohktYA5a/oEkfB68bnRYOyq1/AyMfFvwGcapHQFtCXuhi30EL4XWzh7cCKYLby
+         U6qYXCCy2x5MaGysRlgQ836GDAm/hmp9VMlsLu/PCbLY4ByKmnW4WGN+IVjPV5/DoO20
+         imzR8i49pLuQ0ElmOZT4zGnQ3qVQLa5mJRtGgVsW68kGGxBD3QsNZL/ZH4vjIgW/ZtYM
+         weNzDD36aaoR5arSs4Et0OITolWCzIAFuFJimwDkfDFI+K7G0TLAHvnHhKQNhdAE91+C
+         XpWh6qLLEpVCUxfFhGDJw3lWVbbNkhrRMqBKx/lUWX3IofMUr9sK1/SVUvlEdv/dH+sx
+         uYVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzozUq2ThctFJuNggCEjSYiCAZfuEBwq8x9Xhcw7LHh1jZmxki3Sdx2J2B1sHWWlNSv9kTsenj3bueNHuDQu7QjD4HBqWqn8p2VSIK
+X-Gm-Message-State: AOJu0YzqgS4SufwFZiPrdChVSagKZxCBeJYRrp9al/S4NhZJ7ZVcN71I
+	JI5hs9vfSXJpP8lSDS6LVnGHMCHMRxzgElhj3qLuOGY4ebypTQ9iqjF1JHncc/vzJ2rgfwpyphi
+	ozFoS+LqkrI1vTgLmEFnGku+eLgcgqJlOuGx+
+X-Google-Smtp-Source: AGHT+IGeek4iZJETeidEv6O9lsAf47eIgvMdLrc9dZm6w3qTHSWzn95bdAV5OmXcUnhZU3W7t+DmM0qV4hBHYAh5Gos=
+X-Received: by 2002:a05:6402:40c4:b0:57c:b712:47b5 with SMTP id
+ 4fb4d7f45d1cf-5b71bbd2aacmr79959a12.4.1722493711462; Wed, 31 Jul 2024
+ 23:28:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4147a862-df2c-457c-8ebd-4c04f121b93e@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vowL40WOO5G9DSBaPl2myDG3_C-n8NPe
-X-Proofpoint-ORIG-GUID: r7yw8rdL_IrweGnCeE8xNRnCbfC6LE9C
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_03,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- impostorscore=0 suspectscore=0 mlxlogscore=634 mlxscore=0 clxscore=1015
- bulkscore=0 priorityscore=1501 malwarescore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010035
+References: <20240731150940.14106-1-aha310510@gmail.com>
+In-Reply-To: <20240731150940.14106-1-aha310510@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 1 Aug 2024 08:28:20 +0200
+Message-ID: <CANn89iJn8XT86yyvqD6ZZvjV7eAxBjUd6rddL6NNaXVRimOXhg@mail.gmail.com>
+Subject: Re: [PATCH net,v2] rtnetlink: fix possible deadlock in team_port_change_check
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: jiri@resnulli.us, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	nicolas.dichtel@6wind.com, liuhangbin@gmail.com, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com, 
+	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 30, 2024 at 04:47:56PM +0800, Baokun Li wrote:
-> On 2024/7/26 19:45, Ojaswin Mujoo wrote:
-> > On Wed, Jul 10, 2024 at 12:06:37PM +0800, libaokun@huaweicloud.com wrote:
-> > > From: Baokun Li <libaokun1@huawei.com>
-> > >  snip
-> > Hi Baokun,
-> > 
-> > If i'm not wrong, in this trace, we'll enter ext4_ext_insert_extent() with
-> > gb_flags having EXT4_GET_BLOCKS_PRE_IO so we won't actually go for a
-> > merge_up.
-> > 
-> > That being said, there seems to be a few places where we follow the
-> > split-insert pattern and it might be possible that one of those call
-> > sites might not be passing EXT4_GET_BLOCKS_PRE_IO and we'll the double
-> > free issue you mentioned. I'll check and update if I see anything.
-> Hi Ojaswin,
-> 
-> You're right. I am very sorry for the confusion.
-> 
-> The trace here is wrong, this patch should actually be placed after the two
-> UAF patches. Here ext4_ext_try_to_merge() is called when trying zeroout in
-> ext4_split_extent_at(). It is called when trying zeroout with or without
-> EXT4_GET_BLOCKS_PRE_IO.The correct trace is as follows:
-> 
->   split2    map    split1
-> |--------|-------|--------|
-> 
-> ext4_ext_map_blocks
->  ext4_ext_handle_unwritten_extents
->   ext4_split_convert_extents
->    // path->p_depth == 0
->    ext4_split_extent
->      // 1. do split1
->      ext4_split_extent_at
->        |ext4_ext_insert_extent
->        |  ext4_ext_create_new_leaf
->        |    ext4_ext_grow_indepth
->        |      le16_add_cpu(&neh->eh_depth, 1)
->        |    ext4_find_extent
->        |      // return -ENOMEM
->        |// get error and try zeroout
->        |path = ext4_find_extent
->        |  path->p_depth = 1
->        |ext4_ext_try_to_merge
->        |  ext4_ext_try_to_merge_up
->        |    path->p_depth = 0
->        |    brelse(path[1].p_bh)  ---> not set to NULL here
->        |// zeroout success
->      // 2. update path
->      ext4_find_extent
->      // 3. do split2
->      ext4_split_extent_at
->        ext4_ext_insert_extent
->          ext4_ext_create_new_leaf
->            ext4_ext_grow_indepth
->              le16_add_cpu(&neh->eh_depth, 1)
->            ext4_find_extent
->              path[0].p_bh = NULL;
->              path->p_depth = 1
->              read_extent_tree_block  ---> return err
->              // path[1].p_bh is still the old value
->  ext4_free_ext_path
->   ext4_ext_drop_refs
->    // path->p_depth == 1
->    brelse(path[1].p_bh)  ---> brelse a buffer twice
-> 
-> I'll adjust the order of the patches and correct the trace in the next
-> version.
+On Wed, Jul 31, 2024 at 5:10=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
+ wrote:
+>
+> In do_setlink() , do_set_master() is called when dev->flags does not have
+> the IFF_UP flag set, so 'team->lock' is acquired and dev_open() is called=
+,
+> which generates the NETDEV_UP event. This causes a deadlock as it tries t=
+o
+> acquire 'team->lock' again.
+>
+> To solve this, we need to unlock 'team->lock' before calling dev_open()
+> in team_port_add() and then reacquire the lock when dev_open() returns.
+> Since the implementation acquires the lock in advance when the team
+> structure is used inside dev_open(), data races will not occur even if it
+> is briefly unlocked.
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> WARNING: possible recursive locking detected
+> 6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0 Not tainted
+> --------------------------------------------
+> syz.0.15/5889 is trying to acquire lock:
+> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_port_chang=
+e_check drivers/net/team/team_core.c:2950 [inline]
+> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_device_eve=
+nt+0x2c7/0x770 drivers/net/team/team_core.c:2973
+>
+> but task is already holding lock:
+> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+=
+0x9c/0x20e0 drivers/net/team/team_core.c:1975
+>
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+>
+>        CPU0
+>        ----
+>   lock(team->team_lock_key#2);
+>   lock(team->team_lock_key#2);
+>
+>  *** DEADLOCK ***
+>
+>  May be due to missing lock nesting notation
+>
+> 2 locks held by syz.0.15/5889:
+>  #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rt=
+netlink.c:79 [inline]
+>  #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x3=
+72/0xea0 net/core/rtnetlink.c:6644
+>  #1: ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_s=
+lave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
+>
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 5889 Comm: syz.0.15 Not tainted 6.11.0-rc1-syzkaller-g=
+e4fc196f5ba3-dirty #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
+16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:93 [inline]
+>  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+>  check_deadlock kernel/locking/lockdep.c:3061 [inline]
+>  validate_chain kernel/locking/lockdep.c:3855 [inline]
+>  __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
+>  lock_acquire kernel/locking/lockdep.c:5759 [inline]
+>  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+>  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>  __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+>  team_port_change_check drivers/net/team/team_core.c:2950 [inline]
+>  team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
+>  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+>  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+>  call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+>  call_netdevice_notifiers net/core/dev.c:2046 [inline]
+>  __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
+>  dev_change_flags+0x10c/0x160 net/core/dev.c:8914
+>  vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
+>  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
+>  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
+>  call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
+>  call_netdevice_notifiers net/core/dev.c:2046 [inline]
+>  dev_open net/core/dev.c:1515 [inline]
+>  dev_open+0x144/0x160 net/core/dev.c:1503
+>  team_port_add drivers/net/team/team_core.c:1216 [inline]
+>  team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
+>  do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
+>  do_setlink+0x306d/0x4060 net/core/rtnetlink.c:2907
+>  __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
+>  rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
+>  rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
+>  netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
+>  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+>  netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
+>  netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+>  sock_sendmsg_nosec net/socket.c:730 [inline]
+>  __sock_sendmsg net/socket.c:745 [inline]
+>  ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
+>  ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
+>  __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fc07ed77299
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fc07fb7f048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 00007fc07ef05f80 RCX: 00007fc07ed77299
+> RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
+> RBP: 00007fc07ede48e6 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 000000000000000b R14: 00007fc07ef05f80 R15: 00007ffeb5c0d528
+>
+> Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+> Fixes: ec4ffd100ffb ("Revert "net: rtnetlink: Enslave device before bring=
+ing it up"")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> ---
+>  drivers/net/team/team_core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
+> index ab1935a4aa2c..ee595c3c6624 100644
+> --- a/drivers/net/team/team_core.c
+> +++ b/drivers/net/team/team_core.c
+> @@ -1212,8 +1212,9 @@ static int team_port_add(struct team *team, struct =
+net_device *port_dev,
+>                            portname);
+>                 goto err_port_enter;
+>         }
+> -
+> +       mutex_unlock(&team->lock);
 
-Hey Baokun,
+Why would this be safe ?
 
-The corrected trace looks good, thanks.
+All checks done in team_port_add() before this point would need to be
+redone after mutex_lock() ?
 
-Regards,
-Ojaswin
+If another mutex (rtnl ?) is already protecting this path, this would
+suggest team->lock should be removed,
+and RTNL should be used in all needed paths.
+
+>         err =3D dev_open(port_dev, extack);
+> +       mutex_lock(&team->lock);
+
+
+
+>         if (err) {
+>                 netdev_dbg(dev, "Device %s opening failed\n",
+>                            portname);
+> --
 
