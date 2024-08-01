@@ -1,255 +1,201 @@
-Return-Path: <linux-kernel+bounces-271016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A022944866
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:31:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48ADA94484F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E0B81C242E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:31:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A743C1F26FC5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CABEE170A14;
-	Thu,  1 Aug 2024 09:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3EA16FF26;
+	Thu,  1 Aug 2024 09:29:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SScFg9g8"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="yBiRkp4J"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52232170A19;
-	Thu,  1 Aug 2024 09:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CC115884A;
+	Thu,  1 Aug 2024 09:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504648; cv=none; b=VGFjiGv8QB2trblsvbr4CXipypqMzm8I12T5/3IR/Gu65WZ2tave4tNbR8lm6R8WkvXIsjsb9uvHxmMsgd9YBIAeIfer/Vm7+37AcYF+JkFnApEOrjwk8P8+dCw5hbkCvG/LjYsdXalknPDaty1YWaklv66khKjiQV5K3ibg8sM=
+	t=1722504598; cv=none; b=fhHA1U3UxCDngTNFdQh+o/AQnML5WKWhr3sz+cvgJZWl4R9lhTCckjdDRy0t7iy/2e2WH7OnM9IdHY5R5LTy/ugA1eRcasjxmeWlNXVw3XMlYuzlgNYnJ3wujWU5GoYmBSsu/ngy3TVs9oZGmfRldcKrA7iS03TodVGTkFd1E1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504648; c=relaxed/simple;
-	bh=PX65zImO8CLqNSApoaeZjS06rnXUzZD1nETT3UKtGPk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XgwReXmSFtiTfKRm3YQ+3ZMwefRCTHwDjjjWEXT/UFpD6d7o0MsIx8U4o1BycmY63RwV0Lb22JFPAQzS8i5WI552ye5W9L6UtWpecjtEGzZPkT9sHVd7aD9n6/H0J6MgTvga3MOPKpuWqDOdB1MbCl0V3plc59ujpIiKpaFsDdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SScFg9g8; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1dd2004e1so422139985a.3;
-        Thu, 01 Aug 2024 02:30:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722504645; x=1723109445; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nCc7UbyUb1V+brVeE0JjFcUR4GaQ3xLrgZXR+G5rkko=;
-        b=SScFg9g8yWk6idYE/MNeaHVBwuTrn9aMo7+2P/0L1VZrBifUgn78qNQl7M5+TktZdf
-         BpBl72elJwXchZ/BTNPGNqIQXudlc/8A63RusS+HZNI746xmrCjnK3GIeeG+a/YAEC5z
-         kI+ei5tucJzVZLbzHiDfCMw96+5qmM7mp+hLgKpED8P8nqf28nEOOe9micVJQ1H08CvR
-         aVqJr+R0fLIG0e5hTZEd1d4adhx7sOOCLlw8NXrgxrKdmdHaYsktLI0AnU+8Wy5QCq93
-         5pGxJyAfZ0MSKR9QJZg0KGgPJqW3+AbrBXe2SZgPW6KrtfSSd1lFvyPqrx4IUnTZc9zm
-         gtDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722504645; x=1723109445;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nCc7UbyUb1V+brVeE0JjFcUR4GaQ3xLrgZXR+G5rkko=;
-        b=KhoUMwfI8h9gcBJCeCDQKTO8oGjrIEZJPOO7EYsWqPugyHj8Mq3sOR/mPkE8fyYLxl
-         haODYjdZNLGjkZFNNxNuONxqg4qK5XpE3909/+EsC0QK3u1HBz4ubMaXUUMnnweqx5SO
-         v6Md0CihaTLdXWbgg/m8omosC+N8fVQlEJcE2uSVxf/c6Gmsl6zGRlDfLPhPSRwd99WL
-         3tFPKnyxjirsTX32Y9e89Rk95R2xr74uXJ52LL8lcNopitR8qLaPZ5dv9zmOKEZI8Pbc
-         ZaoKBNs5RbJE3FI5hMUWhmvpJuRGqHx6ernrb/TciemJSnzK7XrVNquNqhMVqQhH0hFb
-         bcxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXh72jUpgTIXRdiI7LE4NT4B16BA2QEOqJwUXeGIFI7PSIp/GkvLVOrlEUvUtyp9SzW22q1utpexPepW+XGuVZgbbfF6K++7MFhYdQg0s9Vf7foBsQ0ml6RKKarXvjMeXTufn1SVz1kMcQqep9U
-X-Gm-Message-State: AOJu0YyC5t2FshQFE2J8DyDKrr6IOdy6DrbibGLpyCgUTWocKNpgI4lX
-	hIy+jYT0IKJ3zcIRTh4jz8FfLJ57EvtOUhQ7Ixq1wS7+7X54qAiL
-X-Google-Smtp-Source: AGHT+IEH3meYUgNnRxhmPnTAl4v3zUyK5B2f2N2co6m9kDAaIiOz7o9ck6UpGcCRvNcxd1fhTA4mFw==
-X-Received: by 2002:a05:620a:1a8f:b0:79e:f78e:c554 with SMTP id af79cd13be357-7a30c637452mr224793885a.3.1722504645116;
-        Thu, 01 Aug 2024 02:30:45 -0700 (PDT)
-Received: from [127.0.1.1] ([2607:fea8:bad7:5400:599f:c23b:9cb3:8075])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a1d73efffdsm833285985a.69.2024.08.01.02.30.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 02:30:44 -0700 (PDT)
-From: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-Date: Thu, 01 Aug 2024 05:29:52 -0400
-Subject: [PATCH v4] selftest: acct: Add selftest for the acct() syscall
+	s=arc-20240116; t=1722504598; c=relaxed/simple;
+	bh=0VScPE/3zoud5ZD9VHOgJa0/AEOuXX/NwbQRuIpUShQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dFx/bTfPUmNtOn3CY+H1xuYMMjT/sHI2V4PuQcOM/fmwlZoXzVzNj1SN0QkCUeqKAj2+UHu44NvI8ku7k0ojCnCyYvbT+h51Pg0YybIeaPp20Z8Rveqd7aRgCvo3lsOqbhEHbsu/wOE2nHJ9l/LhDN4sLu5E1yjCxpeJYiP01b0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=yBiRkp4J; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722504594;
+	bh=0VScPE/3zoud5ZD9VHOgJa0/AEOuXX/NwbQRuIpUShQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=yBiRkp4JNCkn4lnDZXQ5wg3WsFUWvDXpdrk00+0wMHLoSAiMBhjAj4L+B0jd6sSln
+	 pnI8VbY4vIMPefaQIbWLVNJhXarPsmKMeHjrQNllgla1XDbKioaFFVptByrhknj+fS
+	 46qn7C1jv4xzJVQXWM2gA7QGryBbunUCS5u6VSZuiJ7J+9mwNkqhH5FTi0p4xnxd2g
+	 JWYXHugwUft3fMvak6CuIDNRlp6FsS/lIcWcTdp6FpqL0HQJDKQ5dPj4RBw+kn8dHC
+	 NSUizEfWf6FSEKwwla3ft2TnNc96BBBYbusaRUoLxdz/BC8Y59LXYdNttVnsCd7/BP
+	 BrpBZq9IBNOTA==
+Received: from [100.115.223.179] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1711A3781144;
+	Thu,  1 Aug 2024 09:29:53 +0000 (UTC)
+Message-ID: <e3ce055d-13c9-4e25-a039-dd4a58c8dd7a@collabora.com>
+Date: Thu, 1 Aug 2024 12:29:52 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: display: bridge: Add schema for Synopsys
+ DW HDMI QP TX IP
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Andy Yan <andy.yan@rock-chips.com>, Alexandre ARNOUD <aarnoud@me.com>,
+ Luis de Arquer <ldearquer@gmail.com>
+References: <20240801-dw-hdmi-qp-tx-v1-0-148f542de5fd@collabora.com>
+ <20240801-dw-hdmi-qp-tx-v1-1-148f542de5fd@collabora.com>
+ <ba957155-7a0d-4c88-8326-a1d4d20e4656@kernel.org>
+Content-Language: en-US
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+In-Reply-To: <ba957155-7a0d-4c88-8326-a1d4d20e4656@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240801-kselftest-acct-syscall-v4-1-3e072d9b3691@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAI9Vq2YC/4XNywqDMBCF4VeRrJuSTGzUrvoepYtcRg31UhKRi
- vjujW4qBenyPzDfzCSgdxjINZmJx9EF13cx0lNCTK26CqmzsQkwSJkEoM+ATTlgGKgyZqBhCkY
- 1DQVbsDKTUmqOJB6/PJbuvcH3R+zahaH30/Zn5Ov6lxw55dRCxvRFY25Fdqta5Zqz6VuykiPsG
- MEOGYiMFkxrBCULY38Z8WUyEIeMiAyXpRCQFrkqcM8sy/IBmG5qUkoBAAA=
-To: Shuah Khan <shuah@kernel.org>
-Cc: javiercarrascocruz@gmail.com, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-X-Mailer: b4 0.14-dev-0bd45
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722504643; l=4403;
- i=abdulrasaqolawani@gmail.com; s=20240613; h=from:subject:message-id;
- bh=PX65zImO8CLqNSApoaeZjS06rnXUzZD1nETT3UKtGPk=;
- b=gxomvQY6BicD7nz/7cXdjKY1yo1Qp5I2511iFqLAnFHCGoXeR+/ORq2YZwLHJUn3XGa/tjmzU
- 12UwiijcJtMAlcVb+ySdReZzPDM9WAF9QrV3kxRS+mmN7vtPPHMZ3Ra
-X-Developer-Key: i=abdulrasaqolawani@gmail.com; a=ed25519;
- pk=cUqfinPW5pkopFB8ShBc0ZTNgYvSW5ZTa8aLIFPGp/w=
 
-The acct() system call enables or disables process accounting.
-If accounting is turned on, records for each terminating process
-are appended to a specified filename as it terminates. An argument of NULL
-causes accounting to be turned off.
+On 8/1/24 11:38 AM, Krzysztof Kozlowski wrote:> On 01/08/2024 04:05, Cristian Ciocaltea wrote:
+>> Add dt-binding schema containing the common properties for the Synopsys
+>> DesignWare HDMI QP TX controller.
+>>
+>> Note this is not a full dt-binding specification, but is meant to be
+>> referenced by platform-specific bindings for this IP core.
+> 
+> Please provide an user for this binding. Otherwise it is a no-op.
 
-This patch will add a test for the acct() syscall.
+The first user of this is RK3588 HDMI TX Controller [1].
 
-Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
----
-Changes in v4:
-- Add SPDX License identifier to test Makefile
-- Link to v3: https://lore.kernel.org/r/20240723-kselftest-acct-syscall-v3-1-16f332498a9e@gmail.com
+>>
+>> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> ---
+>>  .../display/bridge/synopsys,dw-hdmi-qp.yaml        | 66 ++++++++++++++++++++++
+>>  1 file changed, 66 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml b/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml
+>> new file mode 100644
+>> index 000000000000..d8aee12b121d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi-qp.yaml
+>> @@ -0,0 +1,66 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/bridge/synopsys,dw-hdmi-qp.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Common Properties for Synopsys DesignWare HDMI QP TX Controller IP
+>> +
+>> +maintainers:
+>> +  - Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+>> +
+>> +description: |
+>> +  This document defines device tree properties for the Synopsys DesignWare
+>> +  HDMI 2.1 Quad-Pixel (QP) TX controller IP core.
+>> +  It doesn't constitute a device tree binding specification by itself, but
+>> +  is meant to be referenced by platform-specific device tree bindings.
+>> +
+>> +  When referenced from platform device tree bindings, the properties defined
+>> +  in this document are defined as follows. The platform device tree bindings
+>> +  are responsible for defining whether each property is required or optional.
+> 
+> Drop this all description and re-write it not to say what bindings are
+> or are not. Describe the hardware.
 
-Changes in v3:
-- Add geteuid to check if test is ran as root.
-- Simplify error conditions for acct function.
-- Remove unecessary messages.
-- Add more informative messages. 
-- Update commit message.
-- Add error test case for file creation failure.
-- Link to v2: https://lore.kernel.org/r/20240630-kselftest-acct-syscall-v2-1-b30bbe2a69cd@gmail.com
+I just tried to keep it similar with synopsys,dw-hdmi.yaml. 
 
-Changes in v2:
-Add testcases to test error conditions.
-Add kselftest function for reporting results.
+> 
+>> +
+>> +properties:
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    minItems: 4
+>> +    maxItems: 6
+>> +    items:
+>> +      - description: Peripheral/APB bus clock
+>> +      - description: EARC RX biphase clock
+>> +      - description: Reference clock
+>> +      - description: Audio interface clock
+>> +    additionalItems: true
+> 
+> ??? What's the point of such common schema if it is not common at all?
 
-- Link to v1: https://lore.kernel.org/r/20240622-kselftest-acct-syscall-v1-1-d270b5be8d37@gmail.com
----
- tools/testing/selftests/Makefile            |  1 +
- tools/testing/selftests/acct/.gitignore     |  3 ++
- tools/testing/selftests/acct/Makefile       |  5 ++
- tools/testing/selftests/acct/acct_syscall.c | 78 +++++++++++++++++++++++++++++
- 4 files changed, 87 insertions(+)
+The schema is referenced by [1].
+ 
+>> +
+>> +  clock-names:
+>> +    minItems: 4
+>> +    maxItems: 6
+>> +    items:
+>> +      - const: pclk
+>> +      - const: earc
+>> +      - const: ref
+>> +      - const: aud
+>> +    additionalItems: true
+>> +
+>> +  interrupts:
+>> +    minItems: 4
+>> +    maxItems: 5
+>> +    items:
+>> +      - description: AVP Unit interrupt
+>> +      - description: CEC interrupt
+>> +      - description: eARC RX interrupt
+>> +      - description: Main Unit interrupt
+>> +    additionalItems: true
+>> +
+>> +  interrupt-names:
+>> +    minItems: 4
+>> +    maxItems: 5
+>> +    items:
+>> +      - const: avp
+>> +      - const: cec
+>> +      - const: earc
+>> +      - const: main
+>> +    additionalItems: true
+> 
+> Sorry, there is no user of this and nothing here is actually common
+> except first entries in clocks and interrupts properties.
+> 
+> I don't see any benefit of this.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 9039f3709aff..45a58ef5ad92 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -1,4 +1,5 @@
- # SPDX-License-Identifier: GPL-2.0
-+TARGETS += acct
- TARGETS += alsa
- TARGETS += amd-pstate
- TARGETS += arm64
-diff --git a/tools/testing/selftests/acct/.gitignore b/tools/testing/selftests/acct/.gitignore
-new file mode 100644
-index 000000000000..7e78aac19038
---- /dev/null
-+++ b/tools/testing/selftests/acct/.gitignore
-@@ -0,0 +1,3 @@
-+acct_syscall
-+config
-+process_log
-\ No newline at end of file
-diff --git a/tools/testing/selftests/acct/Makefile b/tools/testing/selftests/acct/Makefile
-new file mode 100644
-index 000000000000..7e025099cf65
---- /dev/null
-+++ b/tools/testing/selftests/acct/Makefile
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+TEST_GEN_PROGS := acct_syscall
-+CFLAGS += -Wall
-+
-+include ../lib.mk
-\ No newline at end of file
-diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-new file mode 100644
-index 000000000000..e44e8fe1f4a3
---- /dev/null
-+++ b/tools/testing/selftests/acct/acct_syscall.c
-@@ -0,0 +1,78 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/* kselftest for acct() system call
-+ *  The acct() system call enables or disables process accounting.
-+ */
-+
-+#include <stdio.h>
-+#include <errno.h>
-+#include <string.h>
-+#include <sys/wait.h>
-+
-+#include "../kselftest.h"
-+
-+int main(void)
-+{
-+	char filename[] = "process_log";
-+	FILE *fp;
-+	pid_t child_pid;
-+	int sz;
-+
-+	// Setting up kselftest framework
-+	ksft_print_header();
-+	ksft_set_plan(1);
-+
-+	// Check if test is run a root
-+	if (geteuid()) {
-+		ksft_test_result_skip("This test needs root to run!\n");
-+		return 1;
-+	}
-+
-+	// Create file to log closed processes
-+	fp = fopen(filename, "w");
-+
-+	if (!fp) {
-+		ksft_test_result_error("%s.\n", strerror(errno));
-+		ksft_finished();
-+		return 1;
-+	}
-+
-+	acct(filename);
-+
-+	// Handle error conditions
-+	if (errno) {
-+		ksft_test_result_error("%s.\n", strerror(errno));
-+		fclose(fp);
-+		ksft_finished();
-+		return 1;
-+	}
-+
-+	// Create child process and wait for it to terminate.
-+
-+	child_pid = fork();
-+
-+	if (child_pid < 0) {
-+		ksft_test_result_error("Creating a child process to log failed\n");
-+		acct(NULL);
-+		return 1;
-+	} else if (child_pid > 0) {
-+		wait(NULL);
-+		fseek(fp, 0L, SEEK_END);
-+		sz = ftell(fp);
-+
-+		acct(NULL);
-+
-+		if (sz <= 0) {
-+			ksft_test_result_fail("Terminated child process not logged\n");
-+			ksft_exit_fail();
-+			return 1;
-+		}
-+
-+		ksft_test_result_pass("Successfully logged terminated process.\n");
-+		fclose(fp);
-+		ksft_exit_pass();
-+		return 0;
-+	}
-+
-+	return 1;
-+}
+Sorry, I should have better indicated this is part of a larger changeset -
+the cover mentions this is a reworked version of an initial (larger) series
+and the split has been explicitly suggested during the review.
 
----
-base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-change-id: 20240622-kselftest-acct-syscall-2d90f7666b1e
+> Best regards,
+> Krzysztof
 
-Best regards,
--- 
-Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
+Thanks for reviewing,
+Cristian
 
+[1]: https://lore.kernel.org/lkml/20240801-b4-rk3588-bridge-upstream-v2-1-9fa657a4e15b@collabora.com/
 
