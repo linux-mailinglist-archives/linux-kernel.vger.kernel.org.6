@@ -1,177 +1,126 @@
-Return-Path: <linux-kernel+bounces-271024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FAF944895
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:36:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114DA944898
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:37:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB0B21C2242E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:36:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 479EF2814D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C61170A20;
-	Thu,  1 Aug 2024 09:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AE016F8EB;
+	Thu,  1 Aug 2024 09:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WRSdpF5n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="AtZrTeRN"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F97EEB3
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF4B13D53A
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504982; cv=none; b=unTIJXwEVru2D0xCkuPRyqTnr7YdZmICDcEzOpkT+Brk/Uat/y6qYCi+43znr+ICmRff1Y7vmCMn5+kDE3YplOItV/cO3swJ3XUqP6p0AlWc2gcAWQXSSw8hgRYjKelrLjJh5zxe/1F1akb1/RUsCq8/lgp7ae0m0WvxxBRHWjY=
+	t=1722505016; cv=none; b=QKjZ3mmB7okx5iVKKjaKTLeAAQG9RJb/oTkcKMeXpoVgii9aFwid2HrpoKzzIlw7mlKByNUO/xnLvhrI0xkBkvHB5QAOb/Vlg/7GsSpAHhF57FSnyIWt0SU0kkT8zCXkYBNxfT7mHYwxd09kqaXmZrBeQQGr/EOVdePlsX3M/9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504982; c=relaxed/simple;
-	bh=RQAbB+4xwgd8rgrT5Xo97jqhsVqqGwZd4S+HhvCqU10=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UgFTMKFWRFF/oA61ia26gaHJDITgczDlDC3fiwyXFVWX/bvUeGXirGmEAZS7QedyOn6XoBajexYeNFtErWIdk1gP5P9xVWtUd8hUc6vfEOZQaNOjf4oTd9eBm9el+y6g6vja39FMDLDp7RbHPy8kV8RspNLG9bdqPpbwmXR2u78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WRSdpF5n; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722504980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=KJ/HMyeCTpAdrNibsjz2nmyKmky95K7l5NS86QU5jXI=;
-	b=WRSdpF5nIlH3YQJR5Pax8xPkCgS67DZr2oAvxXFlc9hA2+N/GtgrsMB9BwtLhUIMkaGEIe
-	mi11qs8253xusQGcFDtSMrbvImiWJgrvaFlxEOY5kEuePQKaiEDju8yrU1p1cmDY+hTbSy
-	NKkuRXx+/OTSZlixwgHSTvN/t3jCEC4=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-299-dC-ZZY70MoyG0JGFL26Frg-1; Thu, 01 Aug 2024 05:36:18 -0400
-X-MC-Unique: dC-ZZY70MoyG0JGFL26Frg-1
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-52efcb739adso1164625e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:36:18 -0700 (PDT)
+	s=arc-20240116; t=1722505016; c=relaxed/simple;
+	bh=2pFSZePm5imeViEcMGI7WlPjZ1zbEj/0iCfEhR5qquk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SERUPSIxSvm6fYb1IG6Hx+sE3A2PnCN422T8XkkgDsM0WYVD4S03C+nmVwtQAe5ULgMM9gCndPi4VdOyuWtQhvUbQizV1xq0uDorstBWgyidqP4dBI85HhOkE8svYoiESuUwWffFcF5aRdXpvgIl3OrMd/b1x2hnjmE9T50JZs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=AtZrTeRN; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52efbb55d24so10173104e87.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722505012; x=1723109812; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=s85JscaV+aZDXIp1yykm1ORhzd3iUt3SkG/vQrR0vt0=;
+        b=AtZrTeRNH/QC3V63Z1ZOv6b7Qop1QQPmB8N/EDMntjc4VbQwvURiBxdFZYyexWLyUy
+         QK+UX9gXr13dVhC9HHijhs2Flqpj8DYGOjrjhzShT0z93lkaormW5U5JXl2Al3stZQEr
+         Tj0L6buLm9ImJVDjIGixF+7WztPnbOBE57ifkrb7wSI2Wpgnvj/CsGZ7yUzJdRVGgqor
+         fNPh+AW3zrSu0Ac2kIFeENohAk3EF00RSpPzH69gWRLL7GhhL8Za3+84szvYWaOnm83g
+         bz7fWbOR5qo0bsseNd5JPnzPi7IQSaMOJpJhNsRY6C2h4vYlgfSp34k5ePNEP2eOAqQX
+         NOZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722504977; x=1723109777;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KJ/HMyeCTpAdrNibsjz2nmyKmky95K7l5NS86QU5jXI=;
-        b=X03X+Z9uYHSbNNNZWB37ggRAXYWQTcLfdDMuwJdPpAaVRlwxTufoFqvC6lDMrq6ye6
-         AEvqnDmJk75KpVmBbg3+3l/2ZMUDG1cFY0Pa27X3uS08YNoiu4ZEUhz34YEyb7m+oSG8
-         6pfH9j1PfsSO4lut7JPETOvA9/tkvhg70P79hRbWQtXt66YXwbWEwTOw4mvBIccswecv
-         fRV7TqLcyoi+3YYroDdXYZFQ85fe+DBwwegRuwDOj4l1ZR4ShnH0tjCDGta3u6WYX+1S
-         uD7sR+/vFOQgaUNjgYkV3ll1Vl6iRx6tRkOX2JL/LtAakia8qi1xLZ0F/8vp35scKCGv
-         iuXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGEVz4fEPiMlz1mZak5i1iuWZR4vH1CQhohnpxbaW16Lywv9RPl7oJXh7lUspTkGLbGiEz+ljuDL/INwkj1xy5x2SZ1++NsbeQHsmb
-X-Gm-Message-State: AOJu0Yz0B7U3kvS3jTrz3D+6GxyzEjP5n9GTJRIe/+aIeQFFMwIv3+t1
-	RbdKrIzl+ondBf+hY3Q0o0gVpVdeCNCkgowNWMigMDV3Ipn25fai+xuzKa7MgFd9l2ue9bZbL1w
-	tr+blU1mJgw81+qatOdlys73CW5mS2RvH8DJq7+nF/1xqJIlWIIS3NPS0tnpbsA==
-X-Received: by 2002:ac2:46ef:0:b0:530:ae0a:ab7a with SMTP id 2adb3069b0e04-530b61aa918mr892620e87.17.1722504977094;
-        Thu, 01 Aug 2024 02:36:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBu+QMo4gAEWvVK7f3J31mT8lTsS1wPjplRZ9rVb/L5dLtT7Zpo/p40oBB0gNZnxzN3H/cdw==
-X-Received: by 2002:ac2:46ef:0:b0:530:ae0a:ab7a with SMTP id 2adb3069b0e04-530b61aa918mr892597e87.17.1722504976510;
-        Thu, 01 Aug 2024 02:36:16 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282baccccfsm50752385e9.29.2024.08.01.02.36.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 02:36:16 -0700 (PDT)
-Message-ID: <37ae59f2-777a-4a58-ae58-4a20066364dd@redhat.com>
-Date: Thu, 1 Aug 2024 11:36:14 +0200
+        d=1e100.net; s=20230601; t=1722505012; x=1723109812;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s85JscaV+aZDXIp1yykm1ORhzd3iUt3SkG/vQrR0vt0=;
+        b=SWqlhNxgCnkTD5YrgDEUKVyirkDbk/JJXhxZbN9rz7wtGIsHhvageBCLqA1kpOQzxR
+         cR+y4BaO0FZUoOgn1FiVXr+T1PjI5TXKbaW455KBE+/8VAwq0aJIJKYqdlwAoTOsxMCW
+         zYmCdtWhHScWw3FdGTdJC21zCHJm7sVMJ5Uz4s5rCGrImLkwat35xy8Gr1aE6+DEhxUz
+         HMU0ltMc6P+YhypHsGzply2AW03nLloxtRHUKVwvTwrjpKzVH6t8I/fhtRrIEJfdRLg2
+         YddH2vgparKrrobEVjkHsjqglTIkaxBBgMoDGIhJRuBDDp9+7hXi4EMqIh4CLk6BD/xk
+         kpWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxJQEILbrgMim35LCSZ9JzGfV4RGNKynvxH0m5PFB/RNJqze9fHiTAr0HmfdynNS5R/p9cqAWbLjuSjnHhv1SNNMGlL/dIgaTIsQSV
+X-Gm-Message-State: AOJu0Yxf5h+8VeilD1m4X0bIPFwS4RYJ03Ntwua5pWhQ7gI8H+jYOawu
+	uC0bgwAa38AUOS5T0/W5Y4Ed7uNHkkme0kqz5xIPTYti2ZDTOplSVv3EsOXHsuw=
+X-Google-Smtp-Source: AGHT+IFrpthAL9+o4cMO4mKYhvRY/c7Brmc22WN19QVDffvfdAbkmj/BUMfyB0GTp/9nlO4d3EVHzw==
+X-Received: by 2002:a05:6512:2521:b0:530:ae35:be42 with SMTP id 2adb3069b0e04-530b61aaf4dmr1670824e87.7.1722505012166;
+        Thu, 01 Aug 2024 02:36:52 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad92fd8sm863512866b.159.2024.08.01.02.36.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 02:36:51 -0700 (PDT)
+Date: Thu, 1 Aug 2024 11:36:50 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v3 11/19] printk: nbcon: Rely on kthreads for
+ normal operation
+Message-ID: <ZqtXMiv0ES5r91ua@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-12-john.ogness@linutronix.de>
+ <ZqpE9urpKZxv4Ks3@pathway.suse.cz>
+ <87plqtlh2p.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 05/11] mm: Add fast_only bool to test_young and
- clear_young MMU notifiers
-To: James Houghton <jthoughton@google.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Paolo Bonzini <pbonzini@redhat.com>
-Cc: Ankit Agrawal <ankita@nvidia.com>,
- Axel Rasmussen <axelrasmussen@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>,
- James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>,
- Raghavendra Rao Ananta <rananta@google.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson
- <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>,
- Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>,
- Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20240724011037.3671523-1-jthoughton@google.com>
- <20240724011037.3671523-6-jthoughton@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240724011037.3671523-6-jthoughton@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87plqtlh2p.fsf@jogness.linutronix.de>
 
-On 24.07.24 03:10, James Houghton wrote:
-> For implementers, the fast_only bool indicates that the age information
-> needs to be harvested such that we do not slow down other MMU operations,
-> and ideally that we are not ourselves slowed down by other MMU
-> operations.  Usually this means that the implementation should be
-> lockless.
+On Wed 2024-07-31 17:31:02, John Ogness wrote:
+> On 2024-07-31, Petr Mladek <pmladek@suse.com> wrote:
+> >> @@ -4102,8 +4139,10 @@ static bool __pr_flush(struct console *con, int timeout_ms, bool reset_on_progre
+> >>  			 * that they make forward progress, so only increment
+> >>  			 * @diff for usable consoles.
+> >>  			 */
+> >> -			if (!console_is_usable(c, flags, true))
+> >> +			if (!console_is_usable(c, flags, true) &&
+> >> +			    !console_is_usable(c, flags, false)) {
+> >
+> > This looks weird. nbcon console can't make progress when
+> > "write_atomic" is not implemented and the kthreads are not
+> > running.
+> >
+> > I should be:
+> >
+> > 			if (!((console_is_usable(c, flags, true)) ||
+> > 			      (console_is_usable(c, flags, false) && printk_kthreads_running))) {
+> 
+> I would prefer to have the printk_kthreads_running check within
+> console_is_usable() for the !use_atomic case.
 
-But what are the semantics if "fast_only" cannot be achieved by the 
-implementer?
+Makes sense.
 
-Can we add some documentation to the new functions that explain what 
-this mysterious "fast_only" is and what the expected semantics are? 
-Please? :)
+> > That said. Do we really want to support nbcon consoles without
+> > @write_atomic() callback?
+> 
+> We must. Graphic consoles will not be able to implement
+> write_atomic(). Network and USB consoles probably will not be able to
+> implement it either.
 
--- 
-Cheers,
+I see.
 
-David / dhildenb
-
+Best Regards,
+Petr
 
