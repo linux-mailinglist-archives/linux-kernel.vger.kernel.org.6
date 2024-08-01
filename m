@@ -1,143 +1,99 @@
-Return-Path: <linux-kernel+bounces-271717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C632494527C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:01:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AAC945283
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:04:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CFDAB26114
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:01:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ADD31C22FF3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9694F144D00;
-	Thu,  1 Aug 2024 18:01:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74130143897;
+	Thu,  1 Aug 2024 18:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GiWQMw0D"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65842143744
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="fn7RUN8W"
+Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5950A182D8;
+	Thu,  1 Aug 2024 18:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722535293; cv=none; b=Fgr38E84Gce5jj7QGQD6TIIusLDOCaHzTjjVtdd4c2DRN05N9T7MtrNr4vKbMlI3S1Mg3N+GqvE5jWLEoX7kWpY5NCDTvlSqlwfuNWWr4sGwKSIonp83+RR7RrQLlLy0/Rv15C56bDoryj0vVkRYysU+waisK0etEskvE53JL0U=
+	t=1722535478; cv=none; b=MXXUtokZGx1yh7Oxkq13KcWouxOsb726VR5q5T1Ha3Zvg12BOG8bpOic70EyY6qM29pbGtG8CdxYUCIRsFPdnURW3AiE7EwXks/uF3gvnMDeiSqC/nCIcAW67aR9W2m56ZWfP+y6UM7MC3vwh05Ycuf8+gu9zQFRmQB8S6g11vE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722535293; c=relaxed/simple;
-	bh=B4USJ3DcoEtC2grgJaNeehMjrX/R6yyLoOz0nwuEw9c=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=l0k0OL8vfQ35wGGh1ihbntGpF+JYYIeCAH5o1H+I8wNYZ3Lg3BMLwFTzoQPULjNR70eO4hERXthg4Q+v7YVIKrSoKWVo0La/w0Aso2PpYMTD3R7sruTo6slGwHjPZCmix2Z2ouxfuyffU2XxM5SE4eIvozvg89pKv2wGRdOUAls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GiWQMw0D; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a23a0fb195so7397200a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:01:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722535292; x=1723140092; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xl2Pju3NY9Fnm1xajnPNr4ZOFDET+sfv7XV8JXyIerc=;
-        b=GiWQMw0D++CU3TjETx4tWGapTpULxvaI7JV6Y8bd9exHIvcVe2KloKaCc3sl+3L6Tr
-         whnLzZIhzEez/vMO/EbpvHmq2wAgGJ4BG7oR6m6qaFWee2Z3VYCc2MgzVvBjWx0iICfw
-         nZJ2uXfG1mZU5NCb98GEcsgaV5BQ1TqtHNsVSOT2VTUCyt4pZ1J7vd37da6yjBlA3a/L
-         mU0Uxp+3lg8sOhDEfbThyyiskc0dco8Lp+UcfcgVENf11NBLbyPVCLIYm3d+74/+wk1+
-         szSkSkwBii8fJgyIYuhcHHQLyaXYegcbx8WIUKUe7Q1/CPGjkNJdQheQCVyL4TGy5rZS
-         6CPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722535292; x=1723140092;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xl2Pju3NY9Fnm1xajnPNr4ZOFDET+sfv7XV8JXyIerc=;
-        b=pRjkbZRumGJZvxq28yl00MzXdP0+NVK6wOHJalmxjCbbO8OGK4Tc+dBnvTHnIftaaY
-         nicvyo9JmGRGQkgXoTddt89FijAwv4LMCO0o9Nx8Z+wmd1m4T92/1F66A0t22r3KlA53
-         DMWi+zGI+Xwfy8LlwAof8wnJ4Y7Kxa3r++dz5effawj131HusF6E4t7hZahnvXl+qLhx
-         MoPP2C0mPgoPM2ZRP+CqWVkxWtg38ILe/phH858hkxnjNZTPuF6EPGSK6wVtdaOfib++
-         3uyD4yacnvbgAoXxNBINKw3oEP24OZulXRXIiWyveOVmiMVbR0cjOs2f62Fk0U57bQEj
-         KmUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiIbkO2/mmvvLI2ZhUU4qRyMBedLio/eKcDwhuraymabzRUiau8n/Tcp1FCDYAOCmocwc7qf/Y17CEm1g11jNWTKNjiHB3riQVwkrP
-X-Gm-Message-State: AOJu0Yw4hfhb6lPBYGPT+/IeTVmkOSdH6TNEI7Ba6ahjVH/5daGwBWay
-	1CNDBF2QcHf7ONJw33AcINmipxk8Z5/2Jjb1tEoi/6MR5+L2rm1gQmTlBtdKmaZJDrqcgtMpcYE
-	nCA==
-X-Google-Smtp-Source: AGHT+IF64U8Ib+bNIe3iPxoSzJOvvilQGXPjPZq7Y/8acNPwlcg0hACHnvmYPGnFv3dx9aufX4l27GJDySU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a65:6252:0:b0:75a:b299:85b6 with SMTP id
- 41be03b00d2f7-7b74669c7b3mr1534a12.2.1722535291408; Thu, 01 Aug 2024 11:01:31
- -0700 (PDT)
-Date: Thu, 1 Aug 2024 11:01:30 -0700
-In-Reply-To: <yq5aikwku25o.fsf@kernel.org>
+	s=arc-20240116; t=1722535478; c=relaxed/simple;
+	bh=S8SOjPDnVl4S4IZS+WyLCAPdAOuYOZjE2Y+Wj+Q++cA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dTgUD02WIL5NI3OzUo2rli9q2kdAUWEZuOlaGkCmnAfbICLuTYL+jdYBx7d+7UbZqRHUqfmdhDPAHBtNtuVaynTHVb45xxX1kz0QldMQkgtEma0ouWAOYkVTj7H+Xvye2tQxt9/MGH6qlutizf/aN7jardzBWnYJP3/lbpYXU3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=fn7RUN8W; arc=none smtp.client-ip=198.44.140.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
+Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
+	id 504BE40460CC; Thu,  1 Aug 2024 17:58:07 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su 504BE40460CC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
+	s=default; t=1722535087;
+	bh=S8SOjPDnVl4S4IZS+WyLCAPdAOuYOZjE2Y+Wj+Q++cA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=fn7RUN8W37Hny2b6u76N3fbEnKUjH58VQndE1TMCMrguwC4RUXin9vaNKP+JwY3Be
+	 cGumPMHmjO37yUiVufBr5tLYgjAAKoIBt032I4uBooFQKcIthwYRWx5dM90z4j1pCJ
+	 D59Fwf/nWQZ/ljND40iOJHz52rVb0cwFThrqdEocZauLFsdreJZSWBTO4IyfwZFK9i
+	 RPWggfKXYphV3OG6HWSFRrcUiCvCJ/vSzYPWS1stpAXKPcO81+f+SbpKWG/zuIwmf3
+	 BVkwh76feFNZnzBoTjJO8mOKTwt99KJDHwobdvVkX7Kxphlthw18QluGpBA35VQa+c
+	 yx01ng+MuUdtA==
+From: Sergey Bostandzhyan <jin@mediatomb.cc>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de
+Cc: devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sergey Bostandzhyan <jin@mediatomb.cc>
+Subject: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
+Date: Thu,  1 Aug 2024 17:57:34 +0000
+Message-Id: <20240801175736.16591-1-jin@mediatomb.cc>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org>
+References: <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-3-seanjc@google.com>
- <yq5aikwku25o.fsf@kernel.org>
-Message-ID: <ZqvNekQAjs-SN-se@google.com>
-Subject: Re: [PATCH v12 02/84] KVM: arm64: Disallow copying MTE to guest
- memory while KVM is dirty logging
-From: Sean Christopherson <seanjc@google.com>
-To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 01, 2024, Aneesh Kumar K.V wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > Disallow copying MTE tags to guest memory while KVM is dirty logging, as
-> > writing guest memory without marking the gfn as dirty in the memslot could
-> > result in userspace failing to migrate the updated page.  Ideally (maybe?),
-> > KVM would simply mark the gfn as dirty, but there is no vCPU to work with,
-> > and presumably the only use case for copy MTE tags _to_ the guest is when
-> > restoring state on the target.
-> >
-> > Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/arm64/kvm/guest.c | 5 +++++
-> >  1 file changed, 5 insertions(+)
-> >
-> > diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> > index e1f0ff08836a..962f985977c2 100644
-> > --- a/arch/arm64/kvm/guest.c
-> > +++ b/arch/arm64/kvm/guest.c
-> > @@ -1045,6 +1045,11 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
-> >  
-> >  	mutex_lock(&kvm->slots_lock);
-> >  
-> > +	if (write && atomic_read(&kvm->nr_memslots_dirty_logging)) {
-> > +		ret = -EBUSY;
-> > +		goto out;
-> > +	}
-> > +
-> >
-> 
-> is this equivalent to kvm_follow_pfn() with kfp->pin = 1 ?
+Hi,
 
-No, gfn_to_pfn_prot() == FOLL_GET, kfp->pin == FOLL_PIN.  But that's not really
-relevant.
+as requested, I am resending the patch series, now with hopefully all
+relevant addresses on To/Cc.
 
-> Should all those pin request fail if kvm->nr_memslots_dirty_logging != 0? 
+I noticed, that a DTS for the R2S Plus is not yet available, while the
+R2S is already there. The only difference is, that the Plus version has an
+eMMC, so we can reuse the R2S definitions and only add an eMMC block, which
+I copied from the DTS in the friendlyarm/uboot-rockchip repo.
 
-No, the conflict with dirty logging is specifically that this code doesn't invoke
-mark_page_dirty().  And it can't easily do that, because there's no loaded ("running")
-vCPU, i.e. doing so would trip this WARN:
+I applied the same DTS changes to u-boot and tested u-boot 2024.04 with
+kernel 6.6.35 on an R2S Plus which I have here and the eMMC became visible
+and usable.
 
-#ifdef CONFIG_HAVE_KVM_DIRTY_RING
-	if (WARN_ON_ONCE(vcpu && vcpu->kvm != kvm))
-		return;
+Kind regards,
+Sergey
 
-	WARN_ON_ONCE(!vcpu && !kvm_arch_allow_write_without_running_vcpu(kvm)); <====
-#endif
+
+Sergey Bostandzhyan (2):
+  arm64: dts: rockchip: Add DTS for FriendlyARM NanoPi R2S Plus
+  dt-bindings: arm: rockchip: Add NanoPi R2S Plus
+
+ .../devicetree/bindings/arm/rockchip.yaml     |  1 +
+ arch/arm64/boot/dts/rockchip/Makefile         |  1 +
+ .../dts/rockchip/rk3328-nanopi-r2s-plus.dts   | 31 +++++++++++++++++++
+ 3 files changed, 33 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-plus.dts
+
+-- 
+2.20.1
+
 
