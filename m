@@ -1,166 +1,109 @@
-Return-Path: <linux-kernel+bounces-271567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12292945020
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:08:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D1E94501E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BC228A4C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99FF728A0C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:08:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D848C1BB686;
-	Thu,  1 Aug 2024 16:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="m/BAis2F"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E981A4F30;
+	Thu,  1 Aug 2024 16:06:29 +0000 (UTC)
+Received: from mail-oo1-f46.google.com (mail-oo1-f46.google.com [209.85.161.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C590A1B9B59;
-	Thu,  1 Aug 2024 16:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C107C1B3F31;
+	Thu,  1 Aug 2024 16:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528403; cv=none; b=hDZcGQtpVrJWoCMAyBP3JYTBOzFNls0++oaoJAtg3FGr+h4904ZHgoOGKn1t0dziwoSn9zoYInCZiIURSZkdZp7ZLwX+Rskwpek6fGdhPUHwChzwJSWixjg2HbTzGxYlrzvVcSWvGW5GcDOSfr4yYb5Qzpg3UHKZqFPSwdFcZhw=
+	t=1722528389; cv=none; b=mwXi4xrsLQAO63nWy9HVVhP+HIPmszQVg60G9dEMPY015FuAX6P9YwOLBXiHtAzYFmg+u4BQVTanwWJhPKprirNmAZQ8EoS0bBtWCNpVafWqtjJb0BFTA5rjnU0J9ODL0gFA/iC4V0S1wQjRbqvD/Z2CcWMCjSe6yJ/UYjhQuTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528403; c=relaxed/simple;
-	bh=DK9tWdz/0iSJkJT5x7sqs/bLGa54vj+NBpGI/VPp5gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qu5a6XIpZ0nrKI7BDf892ksMgV+OhfkMPXcv2t8gi1+HyxdOhTDkh+xoijTDT6FfxnXIyQdTZDSNCiQGJSAuxKY3CM/j8z6PJipPnVSb5AGmKRZQlKBWHFhcYN7OsGsWXJsBGI25XP3+9gSgJD+t5W0uLsFFbaimItzmn/xBcXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=m/BAis2F; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id C0819842;
-	Thu,  1 Aug 2024 18:05:44 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1722528345;
-	bh=DK9tWdz/0iSJkJT5x7sqs/bLGa54vj+NBpGI/VPp5gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/BAis2FeetJ8Yd9EIMbkHlbRtKVOYWR6wQoO8lx5euCS0oPA+N3XzB9EUdTxwvUt
-	 5ATESrc1Ab6ffMWPUn07zVB0XSsVOsc1A/Ww0CNuDaPEftsvNupdlyM27KXiHMX+Qh
-	 0DOaka4qvdFJNF38MBi3oeeQYy59RvA/uLb0wIyY=
-Date: Thu, 1 Aug 2024 19:06:12 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: yuji2.ishikawa@toshiba.co.jp
-Cc: hverkuil@xs4all.nl, mchehab@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, broonie@kernel.org,
-	sakari.ailus@linux.intel.com, nobuhiro1.iwamatsu@toshiba.co.jp,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 5/6] documentation: media: add documentation for
- Toshiba Visconti Video Input Interface driver
-Message-ID: <20240801160612.GA18732@pendragon.ideasonboard.com>
-References: <20240709000848.1108788-1-yuji2.ishikawa@toshiba.co.jp>
- <20240709000848.1108788-6-yuji2.ishikawa@toshiba.co.jp>
- <20240722180251.GP13497@pendragon.ideasonboard.com>
- <OSZPR01MB942787AD2A406D91BB08B0EC92B22@OSZPR01MB9427.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1722528389; c=relaxed/simple;
+	bh=WTvmxAUSQOJQNm1qQg6JVs25focSaJq5Ruw7UmSLsn4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gpa2tkj1GCw7N5F5PNKIsxOYblq77YDBypKlgCJI4X9JhCNL+Q8c7Jf6cRv9SXpYqMMhehF0c/pT0/+8C6aR/fK5ebzjNkKz+s9FTLRjvyj9dGHl/nUUME4P+g6EEF6WfVnVvDym0+IkydjuCJPYcFMAj+jr7VFxtTRhERIHGcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5d5bb03fe42so3841589eaf.3;
+        Thu, 01 Aug 2024 09:06:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722528386; x=1723133186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kIiBHUVSVQyeAx1VP1+X4MP/YScMCPDDrn+HcO4ZZKA=;
+        b=gOxFkw9/cqXJFXKv+HVSURbl62G9ggRQMvA+WJOLt9x3Y9bKzBa0h0sOF2NRHJ3YPO
+         shFhXeR6b6kXBLBcLzCfDlrvTo19/H7KXZi8LzoNPey3ml/jWGyns/N9ib8UKbTCye6j
+         YQyUkuQvxZhUUL+eDu0oqYy2TSHnTeiOJ9pfSBT3eVxqgP6pGiDtqoSkNzw976qq0v1J
+         szI/USxb93EIJ4aOOEsdFNK5CaxGWah8Qr5A3lZYYDoppW8TQUQ0tayhYiJfCHe8jbKi
+         djtzeADNPKBWF9HW4WX/fRYDb1mrv5wT7QIkyUZ7bAzvz4Nx/mgtlzDkVSrRWlXtjP6t
+         +LkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkhD7Yy47m6WkZhLmRpBOnDG07GKtgJP8Ss6/kakv2SZ5ZBU57CNDmmsB0H5aBcEOfoqpne67qUa1RqtmlYOkRByHirNXF2kOR8BUo01WRf0Mp6OL9AIyqa6z8qnI5Vu6tF8SIpMb/rSsX0Y3EZXrZ+Zizp6xtLr7F/hyok2mOiFhloJ3JW7/qAPua34Bvse60r1d6F6lhVqn6mO5D8Wrm86CERa4uo0bhhCHJUIbeYktVqJcilPojBPZusbPqrLrs
+X-Gm-Message-State: AOJu0YwbP2jeCUdWM8tmACfODvbAyK/3aFjCtIGOea7cQtbjdSI7Z79I
+	xlrjdiVBD7c9Mkzzf3fyeQoGd9DPVgKTMeX42mx27QHYRIRHjPxM9uRvo970
+X-Google-Smtp-Source: AGHT+IF2JbBm6I4mR51gQXeaNLd+KpJcmIcD08dGHLVWebHdn9zXCYoUlIeYEBo9ONowN9YBffMnxg==
+X-Received: by 2002:a05:6820:810:b0:5d5:a69c:fe68 with SMTP id 006d021491bc7-5d6636e24f2mr737243eaf.4.1722528385917;
+        Thu, 01 Aug 2024 09:06:25 -0700 (PDT)
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com. [209.85.210.52])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5d76261b9absm8625eaf.44.2024.08.01.09.06.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 09:06:25 -0700 (PDT)
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-7093705c708so7284545a34.1;
+        Thu, 01 Aug 2024 09:06:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWR7eIPMZx1a44ZEKFPq18GOhMa4o38AslDrKFPnIdtatlN6oQoaZBx4RCWEyw8nG66PiGS2OGgsV6AjhvzgXdmTFfTKwrLBIPMFMp6qvlbD5P7CBesAaKNUpRxalsqbRZYw/j3T6CBO1GDLb0O8eQE4TWmv1yxeUEkMILPCVWntR7QRLEpGy9Mi5qB1xZdDG7t9dQ3G2U/3y74BotGaNXFw0BKiew2WQUKE3WHDWTZbddHonGz50ZMdrz7vgoeNtqk
+X-Received: by 2002:a05:6830:390b:b0:709:49fe:5a31 with SMTP id
+ 46e09a7af769-709b3214010mr769422a34.13.1722528385150; Thu, 01 Aug 2024
+ 09:06:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <OSZPR01MB942787AD2A406D91BB08B0EC92B22@OSZPR01MB9427.jpnprd01.prod.outlook.com>
+References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com> <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Aug 2024 18:06:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWerchdsjuhHn+Pr59UKGLmjNVSPFbD7jBK6G1XTaFwmg@mail.gmail.com>
+Message-ID: <CAMuHMdWerchdsjuhHn+Pr59UKGLmjNVSPFbD7jBK6G1XTaFwmg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
+	biju.das.jz@bp.renesas.com, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Ishikawa-san,
+On Thu, Jul 11, 2024 at 2:34=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Document the Renesas RZ/G3S DMAC block. This is identical to the one foun=
+d
+> on the RZ/G2L SoC.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Thu, Aug 01, 2024 at 09:23:43AM +0000, yuji2.ishikawa@toshiba.co.jp wrote:
-> On Tuesday, July 23, 2024 3:03 AM, Laurent Pinchart wrote:
-> > On Tue, Jul 09, 2024 at 09:08:47AM +0900, Yuji Ishikawa wrote:
-> > > Added description of Video Input Interface driver of Toshiba Visconti
-> > > architecture.
-> > > It includes hardware organization, structure of the driver and
-> > > metadata format for embedded image signal processor.
-> > >
-> > > Signed-off-by: Yuji Ishikawa <yuji2.ishikawa@toshiba.co.jp>
-> > > ---
-> > > Changelog v3:
-> > > - Newly add documentation to describe SW and HW
-> > >
-> > > Changelog v4:
-> > > - no change
-> > >
-> > > Changelog v5:
-> > > - no change
-> > >
-> > > Changelog v6:
-> > > - add description of CSI2RX subdevice
-> > > - add ordering of ioctl(S_FMT) and ioctl(S_EXT_CTRLS)
-> > >
-> > > Changelog v7:
-> > > - no change
-> > >
-> > > Changelog v8:
-> > > - add usage of V4L2_CTRL_TYPE_VISCONTI_ISP
-> > >
-> > > Changelog v9:
-> > > - fix warning: set reference target for keyword
-> > > V4L2_CTRL_TYPE_VISCONTI_ISP
-> > >
-> > > Changelog v10:
-> > > - use parameter buffers instead of compound control
-> > >   - removed description of vendor specific compound control
-> > >   - add description of parameter buffers for ISP control
-> > > - update directory structure
-> > >   - remove documents under driver-api
-> > >   - add documents to admin-guide, userspace-api
-> > >
-> > > Changelog v11:
-> > > - update usage of the driver
-> > >
-> > >  .../admin-guide/media/v4l-drivers.rst         |   1 +
-> > >  .../admin-guide/media/visconti-viif.dot       |  18 ++
-> > >  .../admin-guide/media/visconti-viif.rst       | 255 ++++++++++++++++++
-> > >  .../userspace-api/media/v4l/meta-formats.rst  |   1 +
-> > >  .../media/v4l/metafmt-visconti-viif.rst       |  48 ++++
-> > >  5 files changed, 323 insertions(+)
-> > >  create mode 100644 Documentation/admin-guide/media/visconti-viif.dot
-> > >  create mode 100644 Documentation/admin-guide/media/visconti-viif.rst
-> > >  create mode 100644 Documentation/userspace-api/media/v4l/metafmt-visconti-viif.rst
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[snip]
+Gr{oetje,eeting}s,
 
-> > > diff --git a/Documentation/admin-guide/media/visconti-viif.rst b/Documentation/admin-guide/media/visconti-viif.rst
-> > > new file mode 100644
-> > > index 0000000000..4ef676754c
-> > > --- /dev/null
-> > > +++ b/Documentation/admin-guide/media/visconti-viif.rst
-> > > @@ -0,0 +1,255 @@
+                        Geert
 
-[snip]
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-> > > +viif_capture_sub - Raw Image Capture Video Node
-> > > +-----------------------------------------------
-> > > +
-> > > +This video node is used for capturing bayer image from the sensor.
-> > > +The output picture has exactly the same resolution and format as the sensor input.
-> > > +The following depth of bayer format is supported:
-> > > +
-> > > +- 8bit
-> > > +- 10bit
-> > > +- 12bit
-> > > +- 14bit
-> > 
-> > Does the hardware support capturing embedded data from the sensor ?
-> 
-> The hardware supports capturing embdded data, however the software is
-> not fully tested for that feature.
-
-OK. Support for this can be added later. I recommend already checking
-what it would imply in terms of changes to the media graph. Changing the
-media graph later in a way that could break userspace won't be allowed,
-so it's worth it preparing for embedded data support in the media graph
-design already. Adding new pads to existing entities and adding new
-entities later are fine, but renumbering existing pads or inserting new
-entities between two existing entities could break userspace.
-
-[snip]
-
--- 
-Regards,
-
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
