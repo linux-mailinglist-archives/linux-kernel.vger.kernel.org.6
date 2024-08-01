@@ -1,128 +1,296 @@
-Return-Path: <linux-kernel+bounces-270559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2188994416D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:51:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB18A9441D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAFE11F222F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D557B21B30
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F092313BC2F;
-	Thu,  1 Aug 2024 02:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ch6x012e"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B57D13D89A;
+	Thu,  1 Aug 2024 03:20:48 +0000 (UTC)
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E8E647
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 02:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D56F13D62A;
+	Thu,  1 Aug 2024 03:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722480658; cv=none; b=TOVvtpRyGrqz3Obe0oNYa2lhXAYzpb1ffwtN+IS9qnB+p3TjWt6ADoivwTQOU+qK+tKX9vVAaKI/yku++3HgWjMYOsr9UdZcd4yvyfc2E24qIre9L0O7PYirwM/SvUaoj52ix7ajFAXn5syQ3DQzT4joSEl3oy2UwNpTHNhhuuM=
+	t=1722482447; cv=none; b=d+s8BStRu1wjqBBlo7Q3jG40x28P364FrhS74WyCR8EyFOEXNdBd/u39AGOusqcrNDCsSbJlEMprWqN4VGwXQSIesWcq8gcEXF7oyvoFfjA8wJ91/RM9z2x3zDHxwvIKj4Ty6oZ1obHVkNMxwknpV9jT5XGqLetaynqrTA/v4WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722480658; c=relaxed/simple;
-	bh=thhJIa1tvJ+ZAMG3SnWlSBYJdLugX8gLdZhTtvroAV0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Yz0FTV+yuifz3E6g1uTa7HXfwRV+PR6xMIDNXpSkwlWstttdAkmMmrn1Yz390q90wlTRMplWhfSTsCdovJ3w5SucCWphBApVj1a4JPVYPKPhV7JGK2UVx8rTG5Nd4keVVv0/yyahXuuid1CmkxRVkIqre3PaKIRJ+Zdq7pXY4TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ch6x012e; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-66c7aeac627so53890407b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 19:50:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722480656; x=1723085456; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=thhJIa1tvJ+ZAMG3SnWlSBYJdLugX8gLdZhTtvroAV0=;
-        b=Ch6x012e8G/OURSM4qtQxo4/D7ApwqR8fGlSDyssrlbUkzUwI2idpVhQipduRvCCS0
-         J2KyKecTK4Aw6kSf0bY82MYWxWrI4rzhDtX9AuwTnCQS5ihWaXwwH+OtbX7lQzBFFAS2
-         FDT+wWaxXBA/KE0TYSC/USmLxq+VCS29NDvhDysZRqay6kPmqh5sDcWAa9Dx+yARtstS
-         JT9TTBzaVjD36jMLRiQGl3zQzK3MD+aeNwp0sAW3PbIJfr5xrK6TvOnhyBo2iFNaDJV4
-         RHwV7Fv3pI1mdOPTmjrjsoy/bjscNK2V8fG8IaSjBS+crA94OWIob0E0V0SfFaYgGbVz
-         qk8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722480656; x=1723085456;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=thhJIa1tvJ+ZAMG3SnWlSBYJdLugX8gLdZhTtvroAV0=;
-        b=hpsI5MisSJcqiAhzkbKPNzOJcRelIq7BkiYb5gBHd4lSFljLwVUsfpLyUPIiX2HqTL
-         nucG8sJIQosWrF7mtCdfsT1aWkKX0szdylvFHUhIH/3an0YoBZz7WqqE+Y1m2C13TMyC
-         qmKSnjgiO5SPwj4fY2ca3nrM1jQ5YUUFaREqZINUF6rvVy6Yz22Fnu+piM6GNTirgISH
-         3lsyVftV8Ykqz7UVl/xF+vaQO8jJV7N/mxq124yrxlr2WvBzZhSlZ+VjgFbo9qIyECn0
-         4puqynC2W0U3Lj0Y66dlm2kjwD20nsMC6jTH4hQ3NCPMebOxMiF+lNfcU7K6fcjy99Kd
-         0M3g==
-X-Forwarded-Encrypted: i=1; AJvYcCXlWgNEkdioXecSrcL64xC2nfNcendPI+Ap2UVeU+Jgr1/2gaRroLHasJXyFoEU+n1lIpyWwTMAuNVCzKp+O8ynTjP4JCfUVLSMO8YL
-X-Gm-Message-State: AOJu0Yw+LIhPXgQijouYZHzAY28oj1w7y/DoYorcdW6UiqUyT/vYVTMR
-	3tjdTaECoSi2zd/ztkpsJqnfcECKUWMaVtDpnHXhiCcXl7jYv4guoCqoqL/x
-X-Google-Smtp-Source: AGHT+IGKfDRo6TT6kt2wYj/clUBXE38hQkXb47g0Ao3eezvW4tpUjhpDjsequShxyhD1CYHp8Zjw5A==
-X-Received: by 2002:a0d:f4c3:0:b0:618:2381:2404 with SMTP id 00721157ae682-6875047a2camr4195967b3.44.1722480655683;
-        Wed, 31 Jul 2024 19:50:55 -0700 (PDT)
-Received: from ?IPV6:2600:6c56:7d00:582f::64e? ([2600:6c56:7d00:582f::64e])
-        by smtp.googlemail.com with ESMTPSA id d75a77b69052e-44fe8126979sm63935711cf.7.2024.07.31.19.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 19:50:55 -0700 (PDT)
-Message-ID: <97e39177-f9f3-4fb4-b598-ba10fc6a8125@gmail.com>
-Date: Wed, 31 Jul 2024 21:50:54 -0500
+	s=arc-20240116; t=1722482447; c=relaxed/simple;
+	bh=kWjDjYWdH6KO9iUhYLSwSXoRYfcwQFwK7ilqkN3T0E0=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=HHBwxZmW9OYaNUwyypv2HUPMpdk880NbwKzfBgj/8j2wGMaTnTOKmMJyloh44vP2MX+c8XLhGvvRkkLbPb1ec/AYdfImaPxU62l3iVZ7giDtneBj4XgD8yvcQv03YCKQEmCgymy5dmrwwxIAz4lnovVw/un+5/c8mKz00CAJ47Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:49932)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sZLvw-002zLX-5G; Wed, 31 Jul 2024 20:52:52 -0600
+Received: from ip68-227-165-127.om.om.cox.net ([68.227.165.127]:40402 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1sZLvu-00GLbI-Q8; Wed, 31 Jul 2024 20:52:51 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Brian Mak <makb@juniper.net>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
+ <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Kees Cook
+ <kees@kernel.org>,  "linux-fsdevel@vger.kernel.org"
+ <linux-fsdevel@vger.kernel.org>,  "linux-mm@kvack.org"
+ <linux-mm@kvack.org>,  "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>
+References: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net>
+Date: Wed, 31 Jul 2024 21:52:07 -0500
+In-Reply-To: <CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net> (Brian Mak's
+	message of "Wed, 31 Jul 2024 22:14:15 +0000")
+Message-ID: <877cd1ymy0.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: qyousef@layalina.io
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com,
- peterz@infradead.org, tj@kernel.org, torvalds@linux-foundation.org,
- vincent.guittot@linaro.org, void@manifault.com
-References: <20240725011907.3f5ropfai3xoy3l3@airbuntu>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Content-Language: en-US
-From: Russell Haley <yumpusamongus@gmail.com>
-In-Reply-To: <20240725011907.3f5ropfai3xoy3l3@airbuntu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1sZLvu-00GLbI-Q8;;;mid=<877cd1ymy0.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.165.127;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+ZIrQkpc0EQZzhQN6PC7iJUidyY4UMcOc=
+X-SA-Exim-Connect-IP: 68.227.165.127
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Brian Mak <makb@juniper.net>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 768 ms - load_scoreonly_sql: 0.07 (0.0%),
+	signal_user_changed: 15 (2.0%), b_tie_ro: 13 (1.6%), parse: 2.2 (0.3%),
+	 extract_message_metadata: 28 (3.6%), get_uri_detail_list: 6 (0.8%),
+	tests_pri_-2000: 40 (5.3%), tests_pri_-1000: 4.5 (0.6%),
+	tests_pri_-950: 1.95 (0.3%), tests_pri_-900: 1.56 (0.2%),
+	tests_pri_-90: 100 (13.0%), check_bayes: 92 (12.0%), b_tokenize: 26
+	(3.3%), b_tok_get_all: 16 (2.1%), b_comp_prob: 6 (0.8%),
+	b_tok_touch_all: 37 (4.8%), b_finish: 1.54 (0.2%), tests_pri_0: 551
+	(71.8%), check_dkim_signature: 1.22 (0.2%), check_dkim_adsp: 3.9
+	(0.5%), poll_dns_idle: 1.09 (0.1%), tests_pri_10: 2.7 (0.3%),
+	tests_pri_500: 14 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC PATCH] binfmt_elf: Dump smaller VMAs first in ELF cores
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 
-> We really shouldn't change how schedutil works. The governor is supposed to
-> behave in a certain way, and we need to ensure consistency. I think you should
-> look on how you make your scheduler compatible with it. Adding hooks to say
-> apply this perf value that I want is a recipe for randomness.
+Brian Mak <makb@juniper.net> writes:
 
-If schedutil's behavior is perfect as-is, then why does cpu.uclamp.max
-not work with values between 81-100%, which is the part of the CPU
-frequency range where one pays the least in performance per Joule saved?
-Why does cpu.uclamp.min have to be set all the way up and down the
-cgroup hierarchy, from root to leaf, to actually affect frequency
-selection? Why is sugov notorious for harming video encoding
-performance[1], which is a CPU-saturating workload? Why do intel_pstate
-and amd-pstate both bypass it on modern hardware?
+> Large cores may be truncated in some scenarios, such as daemons with stop
+> timeouts that are not large enough or lack of disk space. This impacts
+> debuggability with large core dumps since critical information necessary to
+> form a usable backtrace, such as stacks and shared library information, are
+> omitted. We can mitigate the impact of core dump truncation by dumping
+> smaller VMAs first, which may be more likely to contain memory for stacks
+> and shared library information, thus allowing a usable backtrace to be
+> formed.
 
-It appears that without Android's very deeply integrated userspace
-uclamp controls telling sugov what to do, it's native behavior is less
-than awe-inspring. Futhermore, uclamp doesn't work especially well on
-systems that violate the big.LITTLE assumption that only clamping << max
-saves meaningful energy[2]. Non-Android users widely scorn sugov when
-they become aware of it. Web forums are full of suggestions to switch to
-perfgov, or to switch to "conservative" or disable turbo for those who
-want efficiency.
+This sounds theoretical.  Do you happen to have a description of a
+motivating case?  A situtation that bit someone and resulted in a core
+file that wasn't usable?
 
-That said, given how long the the PELT time constant is, a bpf scheduler
-that wanted to override sugov could probably cooperate with a userspace
-daemon to set min and max uclamps to the same value to control frequency
-selection without too much overhead, as long as it doesn't mind the
-81-100% hole.
+A concrete situation would help us imagine what possible caveats there
+are with sorting vmas this way.
 
-[1] https://www.phoronix.com/review/schedutil-quirky-2023
+The most common case I am aware of is distributions setting the core
+file size to 0 (ulimit -c 0).
 
-[2] Does that still hold on high-end Android devices with one or two
-hot-rodded prime cores?
+One practical concern with this approach is that I think the ELF
+specification says that program headers should be written in memory
+order.  So a comment on your testing to see if gdb or rr or any of
+the other debuggers that read core dumps cares would be appreciated.
 
-Thanks,
 
---
-Russell Haley
+> We implement this by sorting the VMAs by dump size and dumping in that
+> order.
+
+Since your concern is about stacks, and the kernel has information about
+stacks it might be worth using that information explicitly when sorting
+vmas, instead of just assuming stacks will be small.
+
+I expect the priorities would look something like jit generated
+executable code segments, stacks, and then heap data.
+
+I don't have enough information what is causing your truncated core
+dumps, so I can't guess what the actual problem is your are fighting,
+so I could be wrong on priorities.
+
+Though I do wonder if this might be a buggy interaction between
+core dumps and something like signals, or io_uring.  If it is something
+other than a shortage of storage space causing your truncated core
+dumps I expect we should first debug why the coredumps are being
+truncated rather than proceed directly to working around truncation.
+
+Eric
+
+> Signed-off-by: Brian Mak <makb@juniper.net>
+> ---
+>
+> Hi all,
+>
+> My initial testing with a program that spawns several threads and allocates heap
+> memory shows that this patch does indeed prioritize information such as stacks,
+> which is crucial to forming a backtrace and debugging core dumps.
+>
+> Requesting for comments on the following:
+>
+> Are there cases where this might not necessarily prioritize dumping VMAs
+> needed to obtain a usable backtrace?
+>
+> Thanks,
+> Brian Mak
+>
+>  fs/binfmt_elf.c | 64 +++++++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 62 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 19fa49cd9907..d45240b0748d 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/module.h>
+>  #include <linux/kernel.h>
+>  #include <linux/fs.h>
+> +#include <linux/debugfs.h>
+>  #include <linux/log2.h>
+>  #include <linux/mm.h>
+>  #include <linux/mman.h>
+> @@ -37,6 +38,7 @@
+>  #include <linux/elf-randomize.h>
+>  #include <linux/utsname.h>
+>  #include <linux/coredump.h>
+> +#include <linux/sort.h>
+>  #include <linux/sched.h>
+>  #include <linux/sched/coredump.h>
+>  #include <linux/sched/task_stack.h>
+> @@ -1990,6 +1992,22 @@ static void fill_extnum_info(struct elfhdr *elf, struct elf_shdr *shdr4extnum,
+>  	shdr4extnum->sh_info = segs;
+>  }
+>  
+> +static int cmp_vma_size(const void *vma_meta_lhs_ptr, const void *vma_meta_rhs_ptr)
+> +{
+> +	const struct core_vma_metadata *vma_meta_lhs = *(const struct core_vma_metadata **)
+> +		vma_meta_lhs_ptr;
+> +	const struct core_vma_metadata *vma_meta_rhs = *(const struct core_vma_metadata **)
+> +		vma_meta_rhs_ptr;
+> +
+> +	if (vma_meta_lhs->dump_size < vma_meta_rhs->dump_size)
+> +		return -1;
+> +	if (vma_meta_lhs->dump_size > vma_meta_rhs->dump_size)
+> +		return 1;
+> +	return 0;
+> +}
+> +
+> +static bool sort_elf_core_vmas = true;
+> +
+>  /*
+>   * Actual dumper
+>   *
+> @@ -2008,6 +2026,7 @@ static int elf_core_dump(struct coredump_params *cprm)
+>  	struct elf_shdr *shdr4extnum = NULL;
+>  	Elf_Half e_phnum;
+>  	elf_addr_t e_shoff;
+> +	struct core_vma_metadata **sorted_vmas = NULL;
+>  
+>  	/*
+>  	 * The number of segs are recored into ELF header as 16bit value.
+> @@ -2071,11 +2090,27 @@ static int elf_core_dump(struct coredump_params *cprm)
+>  	if (!dump_emit(cprm, phdr4note, sizeof(*phdr4note)))
+>  		goto end_coredump;
+>  
+> +	/* Allocate memory to sort VMAs and sort if needed. */
+> +	if (sort_elf_core_vmas)
+> +		sorted_vmas = kvmalloc_array(cprm->vma_count, sizeof(*sorted_vmas), GFP_KERNEL);
+> +
+> +	if (!ZERO_OR_NULL_PTR(sorted_vmas)) {
+> +		for (i = 0; i < cprm->vma_count; i++)
+> +			sorted_vmas[i] = cprm->vma_meta + i;
+> +
+> +		sort(sorted_vmas, cprm->vma_count, sizeof(*sorted_vmas), cmp_vma_size, NULL);
+> +	}
+> +
+>  	/* Write program headers for segments dump */
+>  	for (i = 0; i < cprm->vma_count; i++) {
+> -		struct core_vma_metadata *meta = cprm->vma_meta + i;
+> +		struct core_vma_metadata *meta;
+>  		struct elf_phdr phdr;
+>  
+> +		if (ZERO_OR_NULL_PTR(sorted_vmas))
+> +			meta = cprm->vma_meta + i;
+> +		else
+> +			meta = sorted_vmas[i];
+> +
+>  		phdr.p_type = PT_LOAD;
+>  		phdr.p_offset = offset;
+>  		phdr.p_vaddr = meta->start;
+> @@ -2111,7 +2146,12 @@ static int elf_core_dump(struct coredump_params *cprm)
+>  	dump_skip_to(cprm, dataoff);
+>  
+>  	for (i = 0; i < cprm->vma_count; i++) {
+> -		struct core_vma_metadata *meta = cprm->vma_meta + i;
+> +		struct core_vma_metadata *meta;
+> +
+> +		if (ZERO_OR_NULL_PTR(sorted_vmas))
+> +			meta = cprm->vma_meta + i;
+> +		else
+> +			meta = sorted_vmas[i];
+>  
+>  		if (!dump_user_range(cprm, meta->start, meta->dump_size))
+>  			goto end_coredump;
+> @@ -2128,10 +2168,26 @@ static int elf_core_dump(struct coredump_params *cprm)
+>  end_coredump:
+>  	free_note_info(&info);
+>  	kfree(shdr4extnum);
+> +	kvfree(sorted_vmas);
+>  	kfree(phdr4note);
+>  	return has_dumped;
+>  }
+>  
+> +#ifdef CONFIG_DEBUG_FS
+> +
+> +static struct dentry *elf_core_debugfs;
+> +
+> +static int __init init_elf_core_debugfs(void)
+> +{
+> +	elf_core_debugfs = debugfs_create_dir("elf_core", NULL);
+> +	debugfs_create_bool("sort_elf_core_vmas", 0644, elf_core_debugfs, &sort_elf_core_vmas);
+> +	return 0;
+> +}
+> +
+> +fs_initcall(init_elf_core_debugfs);
+> +
+> +#endif		/* CONFIG_DEBUG_FS */
+> +
+>  #endif		/* CONFIG_ELF_CORE */
+>  
+>  static int __init init_elf_binfmt(void)
+> @@ -2144,6 +2200,10 @@ static void __exit exit_elf_binfmt(void)
+>  {
+>  	/* Remove the COFF and ELF loaders. */
+>  	unregister_binfmt(&elf_format);
+> +
+> +#if defined(CONFIG_ELF_CORE) && defined(CONFIG_DEBUG_FS)
+> +	debugfs_remove(elf_core_debugfs);
+> +#endif
+>  }
+>  
+>  core_initcall(init_elf_binfmt);
+>
+> base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
 
