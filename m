@@ -1,173 +1,217 @@
-Return-Path: <linux-kernel+bounces-270500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3015C9440CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:18:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4AE9440B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:14:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97928B2D23E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25D8D2822BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:14:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ACD1A3BCE;
-	Thu,  1 Aug 2024 01:36:26 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B9136E37;
+	Thu,  1 Aug 2024 01:35:05 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AED11A38F5
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 01:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526A813D51E;
+	Thu,  1 Aug 2024 01:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722476186; cv=none; b=DLJSi3GJ5Lw4FEKrbG8pNjU/bQJTyLfeHzgNabfLE+I3re9qQebAdAzT/MzNOpO++a29kZYYM5cuOnZBe3LSbh2AmMtn7LmWEHX/7ul+FEWy46apSiSBT94aMjZquifSeJROtS53j7kmuW3DE2ZZxt86BUhN+8KqqS2eVqT3NHo=
+	t=1722476105; cv=none; b=Yz2AlbWH9yKPJ6ls+2PT9m5WLzWFvfS7Mn3SmFMRPESL81Ldvllxod57RpS1Q/qBVRJ+J7ndtcMmWMf9AFNBbmu2/p8mYCXYM1nZNrXJF0I38s6XZe0c0XZFWY6QFA0pBXwo0q0Ffv2/OSHKtgrns/qQyd2iDfHfjRwbp4nMg2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722476186; c=relaxed/simple;
-	bh=697mVutHsKW1pMq0+PVbYa6Uyloscwt9252oykAczQU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SEbxX3tMxYOaQBjf2PlRGn6KYeLCxDX/9Nn1XxOrqIYrJi9tAaThlyer1KX8l62tFTAcdomgdCgs45CSznBSLvbyiKxnTv6U/t0sC1VRj83nyLrlgoILA5dq/w4LVT46LXPaUbLCrWnsmuT6+O+fTL84SUdQheXPnmsUzsT0a6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4711YTAU036418;
-	Thu, 1 Aug 2024 09:34:29 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WZBDz2gzhz2M40TH;
-	Thu,  1 Aug 2024 09:28:35 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Thu, 1 Aug 2024 09:34:26 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>
-Subject: [PATCH] f2fs: clean up val{>>,<<}F2FS_BLKSIZE_BITS
-Date: Thu, 1 Aug 2024 09:33:51 +0800
-Message-ID: <1722476031-22106-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1722476105; c=relaxed/simple;
+	bh=OTctEdVmE9ePZfx9ef7wplwiI5URhWRMOI7lkcfON3M=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=jn/9ZlQcrKTqehipFDdZ+XYchkmDJM9WwLZORu2mFGnBZ2/rByGCwryP9Foa4O0RgWUndKisnm++k/bhXbNpf8oQHa9UJs/ERtwxvbd+mN+TbODbAChN/jzOZuWPUuGS/3hcFtQQISTkizuDVTVB0tSFF48sUErPgEw6gTG+TIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WZBH33NPLz2Clgw;
+	Thu,  1 Aug 2024 09:30:23 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id 392C514013B;
+	Thu,  1 Aug 2024 09:34:58 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Thu, 1 Aug
+ 2024 09:34:57 +0800
+Message-ID: <823a5926-4ed9-4784-b9ae-ee0d0eb8ebf8@huawei.com>
+Date: Thu, 1 Aug 2024 09:34:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 4711YTAU036418
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -v2] cgroup: fix deadlock caused by cgroup_mutex and
+ cpu_hotplug_lock
+From: chenridong <chenridong@huawei.com>
+To: <martin.lau@linux.dev>, <ast@kernel.org>, <daniel@iogearbox.net>,
+	<andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
+	<yonghong.song@linux.dev>, <john.fastabend@gmail.com>, <kpsingh@kernel.org>,
+	<sdf@google.com>, <haoluo@google.com>, <jolsa@kernel.org>, <tj@kernel.org>,
+	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>, <roman.gushchin@linux.dev>,
+	=?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
+CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240719025232.2143638-1-chenridong@huawei.com>
+ <a0d22f13-ac54-49b7-b22a-b319cb542cae@huawei.com>
+Content-Language: en-US
+In-Reply-To: <a0d22f13-ac54-49b7-b22a-b319cb542cae@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-Use F2FS_BYTES_TO_BLK(bytes) and F2FS_BLK_TO_BYTES(blk) for cleanup
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
- fs/f2fs/checkpoint.c    | 2 +-
- fs/f2fs/debug.c         | 2 +-
- fs/f2fs/file.c          | 6 +++---
- fs/f2fs/node.c          | 4 ++--
- fs/f2fs/super.c         | 2 +-
- include/linux/f2fs_fs.h | 2 +-
- 6 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index bdd9632..f3d22b8 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -1551,7 +1551,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 		blk = start_blk + BLKS_PER_SEG(sbi) - nm_i->nat_bits_blocks;
- 		for (i = 0; i < nm_i->nat_bits_blocks; i++)
- 			f2fs_update_meta_page(sbi, nm_i->nat_bits +
--					(i << F2FS_BLKSIZE_BITS), blk + i);
-+					F2FS_BLK_TO_BYTES(i), blk + i);
- 	}
- 
- 	/* write out checkpoint buffer at block 0 */
-diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
-index 8b0e1e7..546b8ba 100644
---- a/fs/f2fs/debug.c
-+++ b/fs/f2fs/debug.c
-@@ -275,7 +275,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
- 	/* build nm */
- 	si->base_mem += sizeof(struct f2fs_nm_info);
- 	si->base_mem += __bitmap_size(sbi, NAT_BITMAP);
--	si->base_mem += (NM_I(sbi)->nat_bits_blocks << F2FS_BLKSIZE_BITS);
-+	si->base_mem += F2FS_BLK_TO_BYTES(NM_I(sbi)->nat_bits_blocks);
- 	si->base_mem += NM_I(sbi)->nat_blocks *
- 				f2fs_bitmap_size(NAT_ENTRY_PER_BLOCK);
- 	si->base_mem += NM_I(sbi)->nat_blocks / 8;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 41ef3ad..7709aed 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2984,9 +2984,9 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
- 	}
- 
- 	f2fs_lock_op(sbi);
--	ret = __exchange_data_block(src, dst, pos_in >> F2FS_BLKSIZE_BITS,
--				pos_out >> F2FS_BLKSIZE_BITS,
--				len >> F2FS_BLKSIZE_BITS, false);
-+	ret = __exchange_data_block(src, dst, F2FS_BYTES_TO_BLK(pos_in),
-+				F2FS_BYTES_TO_BLK(pos_out),
-+				F2FS_BYTES_TO_BLK(len), false);
- 
- 	if (!ret) {
- 		if (dst_max_i_size)
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 2fe182f..9e7a6e2 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -3166,7 +3166,7 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 
- 	nm_i->nat_bits_blocks = F2FS_BLK_ALIGN((nat_bits_bytes << 1) + 8);
- 	nm_i->nat_bits = f2fs_kvzalloc(sbi,
--			nm_i->nat_bits_blocks << F2FS_BLKSIZE_BITS, GFP_KERNEL);
-+			F2FS_BLK_TO_BYTES(nm_i->nat_bits_blocks), GFP_KERNEL);
- 	if (!nm_i->nat_bits)
- 		return -ENOMEM;
- 
-@@ -3185,7 +3185,7 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 		if (IS_ERR(page))
- 			return PTR_ERR(page);
- 
--		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
-+		memcpy(nm_i->nat_bits + F2FS_BLK_TO_BYTES(i),
- 					page_address(page), F2FS_BLKSIZE);
- 		f2fs_put_page(page, 1);
- 	}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 4d2f3bb..977f038 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -3317,7 +3317,7 @@ loff_t max_file_blocks(struct inode *inode)
- 	 * fit within U32_MAX + 1 data units.
- 	 */
- 
--	result = min(result, (((loff_t)U32_MAX + 1) * 4096) >> F2FS_BLKSIZE_BITS);
-+	result = min(result, F2FS_BYTES_TO_BLK(((loff_t)U32_MAX + 1) * 4096));
- 
- 	return result;
- }
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index 01bee2b..f17f89a 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -19,7 +19,6 @@
- #define F2FS_BLKSIZE_BITS		PAGE_SHIFT /* bits for F2FS_BLKSIZE */
- #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
- #define F2FS_EXTENSION_LEN		8	/* max size of extension */
--#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) >> F2FS_BLKSIZE_BITS)
- 
- #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
- #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
-@@ -28,6 +27,7 @@
- #define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
- #define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
- #define F2FS_BLK_END_BYTES(blk)		(F2FS_BLK_TO_BYTES(blk + 1) - 1)
-+#define F2FS_BLK_ALIGN(x)			(F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
- 
- /* 0, 1(node nid), 2(meta nid) are reserved node id */
- #define F2FS_RESERVED_NODE_NUM		3
--- 
-1.9.1
-
+On 2024/7/24 8:53, chenridong wrote:
+> 
+> 
+> On 2024/7/19 10:52, Chen Ridong wrote:
+>> We found a hung_task problem as shown below:
+>>
+>> INFO: task kworker/0:0:8 blocked for more than 327 seconds.
+>> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>> task:kworker/0:0     state:D stack:13920 pid:8     ppid:2       
+>> flags:0x00004000
+>> Workqueue: events cgroup_bpf_release
+>> Call Trace:
+>>   <TASK>
+>>   __schedule+0x5a2/0x2050
+>>   ? find_held_lock+0x33/0x100
+>>   ? wq_worker_sleeping+0x9e/0xe0
+>>   schedule+0x9f/0x180
+>>   schedule_preempt_disabled+0x25/0x50
+>>   __mutex_lock+0x512/0x740
+>>   ? cgroup_bpf_release+0x1e/0x4d0
+>>   ? cgroup_bpf_release+0xcf/0x4d0
+>>   ? process_scheduled_works+0x161/0x8a0
+>>   ? cgroup_bpf_release+0x1e/0x4d0
+>>   ? mutex_lock_nested+0x2b/0x40
+>>   ? __pfx_delay_tsc+0x10/0x10
+>>   mutex_lock_nested+0x2b/0x40
+>>   cgroup_bpf_release+0xcf/0x4d0
+>>   ? process_scheduled_works+0x161/0x8a0
+>>   ? trace_event_raw_event_workqueue_execute_start+0x64/0xd0
+>>   ? process_scheduled_works+0x161/0x8a0
+>>   process_scheduled_works+0x23a/0x8a0
+>>   worker_thread+0x231/0x5b0
+>>   ? __pfx_worker_thread+0x10/0x10
+>>   kthread+0x14d/0x1c0
+>>   ? __pfx_kthread+0x10/0x10
+>>   ret_from_fork+0x59/0x70
+>>   ? __pfx_kthread+0x10/0x10
+>>   ret_from_fork_asm+0x1b/0x30
+>>   </TASK>
+>>
+>> This issue can be reproduced by the following methods:
+>> 1. A large number of cpuset cgroups are deleted.
+>> 2. Set cpu on and off repeatly.
+>> 3. Set watchdog_thresh repeatly.
+>>
+>> The reason for this issue is cgroup_mutex and cpu_hotplug_lock are
+>> acquired in different tasks, which may lead to deadlock.
+>> It can lead to a deadlock through the following steps:
+>> 1. A large number of cgroups are deleted, which will put a large
+>>     number of cgroup_bpf_release works into system_wq. The max_active
+>>     of system_wq is WQ_DFL_ACTIVE(256). When cgroup_bpf_release can not
+>>     get cgroup_metux, it may cram system_wq, and it will block work
+>>     enqueued later.
+>> 2. Setting watchdog_thresh will hold cpu_hotplug_lock.read and put
+>>     smp_call_on_cpu work into system_wq. However it may be blocked by
+>>     step 1.
+>> 3. Cpu offline requires cpu_hotplug_lock.write, which is blocked by 
+>> step 2.
+>> 4. When a cpuset is deleted, cgroup release work is placed on
+>>     cgroup_destroy_wq, it will hold cgroup_metux and acquire
+>>     cpu_hotplug_lock.read. Acquiring cpu_hotplug_lock.read is blocked by
+>>     cpu_hotplug_lock.write as mentioned by step 3. Finally, it forms a
+>>     loop and leads to a deadlock.
+>>
+>> cgroup_destroy_wq(step4)    cpu offline(step3)        
+>> WatchDog(step2)            system_wq(step1)
+>>                                                 ......
+>>                                 __lockup_detector_reconfigure:
+>>                                 P(cpu_hotplug_lock.read)
+>>                                 ...
+>>                 ...
+>>                 percpu_down_write:
+>>                 P(cpu_hotplug_lock.write)
+>>                                                 ...256+ works
+>>                                                 cgroup_bpf_release:
+>>                                                 P(cgroup_mutex)
+>>                                 smp_call_on_cpu:
+>>                                 Wait system_wq
+>> ...
+>> css_killed_work_fn:
+>> P(cgroup_mutex)
+>> ...
+>> cpuset_css_offline:
+>> P(cpu_hotplug_lock.read)
+>>
+>> To fix the problem, place cgroup_bpf_release works on cgroup_destroy_wq,
+>> which can break the loop and solve the problem. System wqs are for misc
+>> things which shouldn't create a large number of concurrent work items.
+>> If something is going to generate >WQ_DFL_ACTIVE(256) concurrent work
+>> items, it should use its own dedicated workqueue.
+>>
+>> Fixes: 4bfc0bb2c60e ("bpf: decouple the lifetime of cgroup_bpf from 
+>> cgroup itself")
+>> Link: 
+>> https://lore.kernel.org/cgroups/e90c32d2-2a85-4f28-9154-09c7d320cb60@huawei.com/T/#t
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+>> ---
+>>   kernel/bpf/cgroup.c             | 2 +-
+>>   kernel/cgroup/cgroup-internal.h | 1 +
+>>   kernel/cgroup/cgroup.c          | 2 +-
+>>   3 files changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
+>> index 8ba73042a239..a611a1274788 100644
+>> --- a/kernel/bpf/cgroup.c
+>> +++ b/kernel/bpf/cgroup.c
+>> @@ -334,7 +334,7 @@ static void cgroup_bpf_release_fn(struct 
+>> percpu_ref *ref)
+>>       struct cgroup *cgrp = container_of(ref, struct cgroup, bpf.refcnt);
+>>       INIT_WORK(&cgrp->bpf.release_work, cgroup_bpf_release);
+>> -    queue_work(system_wq, &cgrp->bpf.release_work);
+>> +    queue_work(cgroup_destroy_wq, &cgrp->bpf.release_work);
+>>   }
+>>   /* Get underlying bpf_prog of bpf_prog_list entry, regardless if 
+>> it's through
+>> diff --git a/kernel/cgroup/cgroup-internal.h 
+>> b/kernel/cgroup/cgroup-internal.h
+>> index 520b90dd97ec..9e57f3e9316e 100644
+>> --- a/kernel/cgroup/cgroup-internal.h
+>> +++ b/kernel/cgroup/cgroup-internal.h
+>> @@ -13,6 +13,7 @@
+>>   extern spinlock_t trace_cgroup_path_lock;
+>>   extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
+>>   extern void __init enable_debug_cgroup(void);
+>> +extern struct workqueue_struct *cgroup_destroy_wq;
+>>   /*
+>>    * cgroup_path() takes a spin lock. It is good practice not to take
+>> diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+>> index e32b6972c478..3317e03fe2fb 100644
+>> --- a/kernel/cgroup/cgroup.c
+>> +++ b/kernel/cgroup/cgroup.c
+>> @@ -124,7 +124,7 @@ DEFINE_PERCPU_RWSEM(cgroup_threadgroup_rwsem);
+>>    * destruction work items don't end up filling up max_active of 
+>> system_wq
+>>    * which may lead to deadlock.
+>>    */
+>> -static struct workqueue_struct *cgroup_destroy_wq;
+>> +struct workqueue_struct *cgroup_destroy_wq;
+>>   /* generate an array of cgroup subsystem pointers */
+>>   #define SUBSYS(_x) [_x ## _cgrp_id] = &_x ## _cgrp_subsys,
+> 
+> Friendly ping.
+> 
+Hi, Tejun,Roman,and Michal, do you have any opinion? Can this patch be 
+merged?
 
