@@ -1,197 +1,372 @@
-Return-Path: <linux-kernel+bounces-270703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533EC944454
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:22:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6701944458
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2ECD2875FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:22:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9DFD1C22301
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493CC158540;
-	Thu,  1 Aug 2024 06:15:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4665516E877;
+	Thu,  1 Aug 2024 06:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TSfb759i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="r6eLdYUY"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4A713F456;
-	Thu,  1 Aug 2024 06:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7C216DEDB
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:15:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722492939; cv=none; b=rCJedX93GXHWtzyYhSrXDM47d7y+qEzlABXlWnjq4KAmgaV1eEUF90hmjS1gbpEjn9GFrWwp8c8U3zv5s0itSNk42mYZjoKoDop0gA7jhXfBVuxiys4gUkeOFeA9vUAsBdA3M0wHDBl8WT9rOkKr6dF7BAHFLloz3Nwh3M1XerI=
+	t=1722492961; cv=none; b=PyEIlkUrjPjnCCN2U48yhF0MPjblsmD9f7WYn34sVR1XxmX8t6Km+mZBd5ibfDB1AoZ3z+SQSbjKmg1vClEWxf1JbvFa/d4UZvlCLkbIpiK3qeKkKe2ESnpwsh6rFWRc7QCTZX6qUTzrmhWeqzt38WRdo1vV0U4uywhwsJ3E2KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722492939; c=relaxed/simple;
-	bh=UsUWr/4WbD2jnKP/Vn46wHrKb89vFqivDWjJvtbLhjk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=t4nnFDH4U8zGL4jNV7YdTiqR6HzWHGEBlfcYH5US+2Ts8KPH8BlSgybYoQrfdW+SEKXERxSjoZik2paCg2Tn9zWwwkgM/F0n1+UHnX86duSly0mzfm6cA8Ka23JP579RiGF/FA6G24MwJde7wZAn3vWwv1HmNui1OYm5CjPE6Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TSfb759i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VNohPd024782;
-	Thu, 1 Aug 2024 06:15:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	YhrdK/Kb4g25+74l2tEHOzdEyNnQXoJu08Wq8JCuAmU=; b=TSfb759iMCzNpia+
-	pawV1m63tBbYp8EJmVFVNs6fAbPS2+UCF0we8PKiZVFvXwdbbqMajVioFQ6Tu7Wx
-	tfhx+leqVuIMYTZSov0ceBW+G8tha+LmskZOhbXWacvVSfsByik2iQqL4tw38cog
-	EoqwzgUzEHApzyRz0SWretivkRXl7OPyd4h76mDFfDGwdqKzam/V4Htrc11G+RgB
-	7tuy4EZO4gDSbss54MgU063AzqwhOeRLd6n2T2c8L1vL49APx0U2Yg3/ED+/XqSU
-	jq+88RoBZLug22k13sySYBpNg2gpd+7PWGD9vuInXzlr7ve3OrEoNvck3uXf9a3L
-	fG/KZA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pw457501-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 06:15:30 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4716FT3O031914
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 06:15:29 GMT
-Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
- 2024 23:15:22 -0700
-Message-ID: <07d9e1f4-201f-47dc-b692-b1aa14511420@quicinc.com>
-Date: Thu, 1 Aug 2024 11:45:01 +0530
+	s=arc-20240116; t=1722492961; c=relaxed/simple;
+	bh=9Hit3GZVy03y5ECFUjmuxKBdJ1aMcQtSoZjSR/huxy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YRY+0DOP7peMfaD5tVomACm7o4VhXKwA7ezXIwPWeNe9lj+qzOlKDTbqxujNN0PW5SRMG0O1Neq+FFDSe+mkWr4LINVZLPzJueotgtdf9DlAoCB4VOrKzXXmdABYf7XN8UsQt7Fl98m//hV56AJzScs1sWemshQE8fBbty+wvHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=r6eLdYUY; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7d89bb07e7so353087266b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:15:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722492957; x=1723097757; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7D5gKOznJOTNQHwMW9C42N1QaXKl3TkxQNfKNVo1FNs=;
+        b=r6eLdYUYOUQf9J05rFlm3SC44y25YQYwGvwNCn9dwmndYoqCoIzIbGAUCnnklgTlSz
+         b5PvMz5OsQ71H6jHBz89atDKi4AHALMAH0BmfirwVsmU61HGKzKey2/hT5og3ByMsTkl
+         Kirc0L+rApjKhs3pf6vcD5m3q9UQGgJnqnxxVMwEPgNPrsk+8s5LyrCqob+kX81I4UNL
+         ZwXiK4w7i5XpOUQmbt6gaJBP7V8LbSO/yMLvZMJsJUnqLO8LkO6X2Xhn70jsFJC4Fdoo
+         3iE15jOf6RXxgUewqhMveZITLHoRRUw7XdFfDMqcnkUq9F14R2BZubWmvRLTz5PKGqOh
+         6jiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722492957; x=1723097757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7D5gKOznJOTNQHwMW9C42N1QaXKl3TkxQNfKNVo1FNs=;
+        b=Tjh49Zk2kBxfH6SfFsXon8N7ULb5Ft2nuaGqENu/E/SmGBEczkiSeuVfuWh0tur71D
+         JR6YjqrJ/uzT3SlYgwclC+qXrgvWWkQE16BHaS4DxHNG1xCA7mglT4s8gFPiSvbbUDHb
+         bzr39XVCcIPlh8hnE6HOVker9XzDtnr+HINMEMf93LUlyLNvV7ZBSH+3RMe/mQRErpQy
+         6Yo6NEmLY3uk5bDCh98jGoetafBtDrIPDdDfiHYsnmVU6yYZKdkRtMXACD4tuLGMYxYT
+         ExnUrLMiBjqxh3MdQv7M5f6kRbDCqW6ypvMjuDMBf4TSvUyP7CSJFEo8uX9AG3QZR7fu
+         F2xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkJdIB61fboIrpi/DkDnee+lEsE9FwUw9V6bKoI8d6ZGuuJl4ddRIzNmJuzH36D4+EKL3Vudyd1KZs/Qwv5z5Y+0Cz1YSQLaFyc94I
+X-Gm-Message-State: AOJu0YynR9vt33vsoFToQxy2omKptzlc6jahrW9Xk6eJqCKPYAXPoC5T
+	3ic8YYw/DzeaITstZAzoDTa7anHFXyLHH0KNEPyxdq71cgwcajnckkOy9pMK14WT2WrA9rGrG4o
+	FfULEwKJST9igsweKoIYy7tfWoYtKNR9pbosk3g==
+X-Google-Smtp-Source: AGHT+IHMADwJ7pbEhGFzZzwtTQCfgBbEZTipMi+5FXJWpSeItFe/XwnEeH5T8MqLnA39QCJBDQo2HHkwaR9ngmGWsJ0=
+X-Received: by 2002:a17:907:da2:b0:a77:cca9:b21c with SMTP id
+ a640c23a62f3a-a7daf57ed34mr96903466b.34.1722492956858; Wed, 31 Jul 2024
+ 23:15:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] usb: gadget: uvc: Add H264 frame format support
-Content-Language: en-US
-From: AKASH KUMAR <quic_akakum@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Daniel Scally
-	<dan.scally@ideasonboard.com>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>
-CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
-        Jack Pham <quic_jackp@quicinc.com>, <kernel@quicinc.com>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>,
-        Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>,
-        Daniel Scally
-	<dan.scally@ideasonboard.com>,
-        Vijayavardhan Vennapusa
-	<quic_vvreddy@quicinc.com>,
-        Krishna Kurapati <quic_kriskura@quicinc.com>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240711082304.1363-1-quic_akakum@quicinc.com>
- <2024071126-napped-cobbler-4693@gregkh>
- <0f3fe4b4-5451-480e-a9e4-11ee921521b9@quicinc.com>
-In-Reply-To: <0f3fe4b4-5451-480e-a9e4-11ee921521b9@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BAwODJNQtGnJyC7Wj_LReSDoNDxxDp_r
-X-Proofpoint-ORIG-GUID: BAwODJNQtGnJyC7Wj_LReSDoNDxxDp_r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_03,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=910 phishscore=0 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408010035
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-7-alexghiti@rivosinc.com> <20240731-260cce60e1a6cd06670d1b24@orel>
+In-Reply-To: <20240731-260cce60e1a6cd06670d1b24@orel>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Thu, 1 Aug 2024 08:15:45 +0200
+Message-ID: <CAHVXubgtuiH4sTCv23xwSh-=rsr-V=Hyt6TMts4RrM6x8Kupig@mail.gmail.com>
+Subject: Re: [PATCH v4 06/13] riscv: Improve zacas fully-ordered cmpxchg()
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, 
+	linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org, Andrea Parri <andrea@rivosinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Greg,Daniel,Laurent,
+Hi Drew,
 
-On 7/11/2024 3:13 PM, AKASH KUMAR wrote:
+On Wed, Jul 31, 2024 at 11:59=E2=80=AFAM Andrew Jones <ajones@ventanamicro.=
+com> wrote:
 >
-> On 7/11/2024 2:37 PM, Greg Kroah-Hartman wrote:
->> On Thu, Jul 11, 2024 at 01:53:04PM +0530, Akash Kumar wrote:
->>> Add support for framebased frame format which can be used to support
->>> multiple formats like H264 or H265 other than mjpeg and YUV frames.
->>>
->>> Framebased format is set to H264 by default, which can be updated to
->>> other formats by updating the GUID through guid configfs attribute.
->>> Using Different structures for all 3 formats as H264 has different
->>> structure than mjpeg and uncompressed which will be paased to
->>> frame make func based on active format instead of common frame
->>> structure, have updated all apis in driver accordingly.
->>> h264 is not recognized by hosts machine during enumeration
->>> with common frame structure, so we need to pass h264 frame
->>> structure separately.
->>>
->>> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
->>> ---
->>>   .../ABI/testing/configfs-usb-gadget-uvc       |  88 ++-
->>>   drivers/usb/gadget/function/uvc_configfs.c    | 570 
->>> +++++++++++++++---
->>>   drivers/usb/gadget/function/uvc_configfs.h    |  34 +-
->>>   drivers/usb/gadget/function/uvc_v4l2.c        |  80 ++-
->>>   include/uapi/linux/usb/video.h                |  62 ++
->>>   5 files changed, 714 insertions(+), 120 deletions(-)
->>>
->>> Changes for v2:
->>> - Added H264 frame format Details in Documentation/ABI/
->>>    and new configsfs attribute path for mjpeg and
->>>    uncompresseed formats.
->>>
->>> diff --git a/Documentation/ABI/testing/configfs-usb-gadget-uvc 
->>> b/Documentation/ABI/testing/configfs-usb-gadget-uvc
->>> index 4feb692c4c1d..2580083cdcc5 100644
->>> --- a/Documentation/ABI/testing/configfs-usb-gadget-uvc
->>> +++ b/Documentation/ABI/testing/configfs-usb-gadget-uvc
->>> @@ -224,13 +224,13 @@ Description:    Additional color matching 
->>> descriptors
->>>                         white
->>>           ======================== 
->>> ======================================
->>>   -What: /config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg
->>> -Date:        Dec 2014
->>> +What: 
->>> /config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg/name
->> You are changing an existing api, how will all existing code handle 
->> this? Will it not break? What is ensuring that this will work as-is ok?
->> I have modified all existing apis in kernel and have handled it and 
->> all existing formats
-> are working along with H264 in this change. Only user needs to change 
-> configfs parameter
-> path according to updated path in documentation in Userspace.Currently 
-> H264 doesn't work with same
-> structure and we need add it differently as a result these configfs 
-> paths are getting updated.
-> Daniel and Laurent can you suggest if it ok?
->>> -#define UVCG_FRAME_ATTR(cname, aname, bits) \
->>> -static ssize_t uvcg_frame_##cname##_show(struct config_item *item, 
->>> char *page)\
->>> +#define UVCG_FRAME_ATTR(cname, fname, bits) \
->>> +static ssize_t uvcg_frame_##fname##_##cname##_show(struct 
->>> config_item *item, char *page)\
->>>   {                                    \
->>>       struct uvcg_frame *f = to_uvcg_frame(item);            \
->>>       struct f_uvc_opts *opts;                    \
->>> @@ -1936,14 +1941,14 @@ static ssize_t 
->>> uvcg_frame_##cname##_show(struct config_item *item, char *page)\
->>>       opts = to_f_uvc_opts(opts_item);                \
->>>                                       \
->>>       mutex_lock(&opts->lock);                    \
->>> -    result = sprintf(page, "%u\n", f->frame.cname);            \
->>> +    result = scnprintf(page, PAGE_SIZE, "%u\n", 
->>> f->frame.fname.cname);\
->> sysfs_emit() is made for this.
+> On Wed, Jul 31, 2024 at 09:23:58AM GMT, Alexandre Ghiti wrote:
+> > The current fully-ordered cmpxchgXX() implementation results in:
+> >
+> >   amocas.X.rl     a5,a4,(s1)
+> >   fence           rw,rw
+> >
+> > This provides enough sync but we can actually use the following better
+> > mapping instead:
+> >
+> >   amocas.X.aqrl   a5,a4,(s1)
 >
-> Sure, will change.
+> We won't get release semantics if the exchange fails. Does that matter?
 >
+> >
+> > Suggested-by: Andrea Parri <andrea@rivosinc.com>
+> > Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> > ---
+> >  arch/riscv/include/asm/cmpxchg.h | 72 +++++++++++++++++++-------------
+> >  1 file changed, 44 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/arch/riscv/include/asm/cmpxchg.h b/arch/riscv/include/asm/=
+cmpxchg.h
+> > index ebcd4a30ae60..391730367213 100644
+> > --- a/arch/riscv/include/asm/cmpxchg.h
+> > +++ b/arch/riscv/include/asm/cmpxchg.h
+> > @@ -107,8 +107,10 @@
+> >   * store NEW in MEM.  Return the initial value in MEM.  Success is
+> >   * indicated by comparing RETURN with OLD.
+> >   */
+> > -
+> > -#define __arch_cmpxchg_masked(sc_sfx, cas_sfx, prepend, append, r, p, =
+o, n)  \
+> > +#define __arch_cmpxchg_masked(sc_sfx, cas_sfx,                        =
+               \
+> > +                           sc_prepend, sc_append,                     =
+       \
+> > +                           cas_prepend, cas_append,                   =
+       \
+> > +                           r, p, o, n)                                =
+       \
+> >  ({                                                                    =
+       \
+> >       if (IS_ENABLED(CONFIG_RISCV_ISA_ZABHA) &&                        =
+       \
+> >           IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&                        =
+       \
+> > @@ -117,9 +119,9 @@
+> >               r =3D o;                                                 =
+         \
+> >                                                                        =
+       \
+> >               __asm__ __volatile__ (                                   =
+       \
+> > -                     prepend                                          =
+       \
+> > +                     cas_prepend                                      =
+               \
+> >                       "       amocas" cas_sfx " %0, %z2, %1\n"         =
+       \
+> > -                     append                                           =
+       \
+> > +                     cas_append                                       =
+               \
+> >                       : "+&r" (r), "+A" (*(p))                         =
+       \
+> >                       : "rJ" (n)                                       =
+       \
+> >                       : "memory");                                     =
+       \
+> > @@ -134,7 +136,7 @@
+> >               ulong __rc;                                              =
+       \
+> >                                                                        =
+       \
+> >               __asm__ __volatile__ (                                   =
+       \
+> > -                     prepend                                          =
+       \
+> > +                     sc_prepend                                       =
+               \
+> >                       "0:     lr.w %0, %2\n"                           =
+       \
+> >                       "       and  %1, %0, %z5\n"                      =
+       \
+> >                       "       bne  %1, %z3, 1f\n"                      =
+       \
+> > @@ -142,7 +144,7 @@
+> >                       "       or   %1, %1, %z4\n"                      =
+       \
+> >                       "       sc.w" sc_sfx " %1, %1, %2\n"             =
+       \
+> >                       "       bnez %1, 0b\n"                           =
+       \
+> > -                     append                                           =
+       \
+> > +                     sc_append                                        =
+               \
+> >                       "1:\n"                                           =
+       \
+> >                       : "=3D&r" (__retx), "=3D&r" (__rc), "+A" (*(__ptr=
+32b))      \
+> >                       : "rJ" ((long)__oldx), "rJ" (__newx),            =
+       \
+> > @@ -153,16 +155,19 @@
+> >       }                                                                =
+       \
+> >  })
+> >
+> > -#define __arch_cmpxchg(lr_sfx, sc_cas_sfx, prepend, append, r, p, co, =
+o, n)  \
+> > +#define __arch_cmpxchg(lr_sfx, sc_sfx, cas_sfx,                       =
+       \
+> > +                    sc_prepend, sc_append,                           \
+> > +                    cas_prepend, cas_append,                         \
+> > +                    r, p, co, o, n)                                  \
+> >  ({                                                                   \
+> >       if (IS_ENABLED(CONFIG_RISCV_ISA_ZACAS) &&                       \
+> >           riscv_has_extension_unlikely(RISCV_ISA_EXT_ZACAS)) {        \
+> >               r =3D o;                                                 =
+ \
+> >                                                                       \
+> >               __asm__ __volatile__ (                                  \
+> > -                     prepend                                         \
+> > -                     "       amocas" sc_cas_sfx " %0, %z2, %1\n"     \
+> > -                     append                                          \
+> > +                     cas_prepend                                     \
+> > +                     "       amocas" cas_sfx " %0, %z2, %1\n"        \
+> > +                     cas_append                                      \
+> >                       : "+&r" (r), "+A" (*(p))                        \
+> >                       : "rJ" (n)                                      \
+> >                       : "memory");                                    \
+> > @@ -170,12 +175,12 @@
+> >               register unsigned int __rc;                             \
+> >                                                                       \
+> >               __asm__ __volatile__ (                                  \
+> > -                     prepend                                         \
+> > +                     sc_prepend                                      \
+> >                       "0:     lr" lr_sfx " %0, %2\n"                  \
+> >                       "       bne  %0, %z3, 1f\n"                     \
+> > -                     "       sc" sc_cas_sfx " %1, %z4, %2\n"         \
+> > +                     "       sc" sc_sfx " %1, %z4, %2\n"             \
 >
-can you suggest how to support H264 format without changing userspace nodes,
-as H264 format structure is different from mjpeg and uncompressed format 
-and
-using same structure show issue as host is not able to recognize H264 
-format frames.
+> nit: If patch3 hadn't renamed sc_sfx to sc_cas_sfx then we wouldn't
+> need to rename it again now.
+
+You're right, if you don't mind I'll leave it as is though as it makes
+the previous patch more consistent.
+
+>
+> >                       "       bnez %1, 0b\n"                          \
+> > -                     append                                          \
+> > +                     sc_append                                       \
+> >                       "1:\n"                                          \
+> >                       : "=3D&r" (r), "=3D&r" (__rc), "+A" (*(p))       =
+   \
+> >                       : "rJ" (co o), "rJ" (n)                         \
+> > @@ -183,7 +188,9 @@
+> >       }                                                               \
+> >  })
+> >
+> > -#define _arch_cmpxchg(ptr, old, new, sc_cas_sfx, prepend, append)    \
+> > +#define _arch_cmpxchg(ptr, old, new, sc_sfx, cas_sfx,                 =
+       \
+> > +                   sc_prepend, sc_append,                            \
+> > +                   cas_prepend, cas_append)                          \
+> >  ({                                                                   \
+> >       __typeof__(ptr) __ptr =3D (ptr);                                 =
+ \
+> >       __typeof__(*(__ptr)) __old =3D (old);                            =
+ \
+> > @@ -192,22 +199,28 @@
+> >                                                                       \
+> >       switch (sizeof(*__ptr)) {                                       \
+> >       case 1:                                                         \
+> > -             __arch_cmpxchg_masked(sc_cas_sfx, ".b" sc_cas_sfx,      \
+> > -                                     prepend, append,                \
+> > -                                     __ret, __ptr, __old, __new);    \
+> > +             __arch_cmpxchg_masked(sc_sfx, ".b" cas_sfx,             \
+> > +                                   sc_prepend, sc_append,            \
+> > +                                   cas_prepend, cas_append,          \
+> > +                                   __ret, __ptr, __old, __new);      \
+> >               break;                                                  \
+> >       case 2:                                                         \
+> > -             __arch_cmpxchg_masked(sc_cas_sfx, ".h" sc_cas_sfx,      \
+> > -                                     prepend, append,                \
+> > -                                     __ret, __ptr, __old, __new);    \
+> > +             __arch_cmpxchg_masked(sc_sfx, ".h" cas_sfx,             \
+> > +                                   sc_prepend, sc_append,            \
+> > +                                   cas_prepend, cas_append,          \
+> > +                                   __ret, __ptr, __old, __new);      \
+> >               break;                                                  \
+> >       case 4:                                                         \
+> > -             __arch_cmpxchg(".w", ".w" sc_cas_sfx, prepend, append,  \
+> > -                             __ret, __ptr, (long), __old, __new);    \
+> > +             __arch_cmpxchg(".w", ".w" sc_sfx, ".w" cas_sfx,         \
+> > +                            sc_prepend, sc_append,                   \
+> > +                            cas_prepend, cas_append,                 \
+> > +                            __ret, __ptr, (long), __old, __new);     \
+> >               break;                                                  \
+> >       case 8:                                                         \
+> > -             __arch_cmpxchg(".d", ".d" sc_cas_sfx, prepend, append,  \
+> > -                             __ret, __ptr, /**/, __old, __new);      \
+> > +             __arch_cmpxchg(".d", ".d" sc_sfx, ".d" cas_sfx,         \
+> > +                            sc_prepend, sc_append,                   \
+> > +                            cas_prepend, cas_append,                 \
+> > +                            __ret, __ptr, /**/, __old, __new);       \
+> >               break;                                                  \
+> >       default:                                                        \
+> >               BUILD_BUG();                                            \
+> > @@ -216,16 +229,19 @@
+> >  })
+> >
+> >  #define arch_cmpxchg_relaxed(ptr, o, n)                               =
+       \
+> > -     _arch_cmpxchg((ptr), (o), (n), "", "", "")
+> > +     _arch_cmpxchg((ptr), (o), (n), "", "", "", "", "", "")
+> >
+> >  #define arch_cmpxchg_acquire(ptr, o, n)                               =
+       \
+> > -     _arch_cmpxchg((ptr), (o), (n), "", "", RISCV_ACQUIRE_BARRIER)
+> > +     _arch_cmpxchg((ptr), (o), (n), "", "",                          \
+> > +                   "", RISCV_ACQUIRE_BARRIER, "", RISCV_ACQUIRE_BARRIE=
+R)
+> >
+> >  #define arch_cmpxchg_release(ptr, o, n)                               =
+       \
+> > -     _arch_cmpxchg((ptr), (o), (n), "", RISCV_RELEASE_BARRIER, "")
+> > +     _arch_cmpxchg((ptr), (o), (n), "", "",                          \
+> > +                   RISCV_RELEASE_BARRIER, "", RISCV_RELEASE_BARRIER, "=
+")
+> >
+> >  #define arch_cmpxchg(ptr, o, n)                                       =
+       \
+> > -     _arch_cmpxchg((ptr), (o), (n), ".rl", "", "     fence rw, rw\n")
+> > +     _arch_cmpxchg((ptr), (o), (n), ".rl", ".aqrl",                  \
+> > +                   "", RISCV_FULL_BARRIER, "", "")
+>
+> These aren't the easiest things to read, but I can't think of a way to
+> improve it other than maybe some macro annotations. E.g.
+>
+>  #define SC_SFX(x)      x
+>  #define CAS_SFX(x)     x
+>  #define SC_PREPEND(x)  x
+>  #define SC_APPEND(x)   x
+>  #define CAS_PREPEND(x) x
+>  #define CAS_APPEND(x)  x
+>
+>  #define arch_cmpxchg(ptr, o, n)                        \
+>      _arch_cmpxchg(ptr, o, n,                           \
+>          SC_SFX(".rl"), CAS_SFX(".aqrl"),               \
+>          SC_PREPEND(""), SC_APPEND(RISCV_FULL_BARRIER), \
+>          CAS_PREPEND(""), CAS_APPEND(""))
+
+That's a very good idea, it's been hard to review even for me :)
+
+I could add comments too, but I like your solution, so unless I find
+something better in the next 30min, I'll implement that.
 
 Thanks,
-Akash
+
+Alex
+
+>
+> >
+> >  #define arch_cmpxchg_local(ptr, o, n)                                 =
+       \
+> >       arch_cmpxchg_relaxed((ptr), (o), (n))
+> > --
+> > 2.39.2
+> >
+>
+> Thanks,
+> drew
 
