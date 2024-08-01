@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-271638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD0B9450F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:43:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05B99450FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC15028A4C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:43:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DCB22B23572
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15451BC9E7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5541AAE0B;
 	Thu,  1 Aug 2024 16:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iyEHzMtg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpwKZWD8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345721BBBDD
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108B91B580F;
+	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530438; cv=none; b=MlvpNsOJB/mVr2UtPmGEqneBQrUCbxbvtaPc02SeJ86yCyWBwZwzqxPT5kFkC6I6tEFrfuy+hZ0h1fpC5/IvDOfLfqdXdgf+vuuwHU/12fqw0stkY73HFT3hHB+gXJNLtaHwEFM7RmR7estYrcKrHcqLt066LmBwSaHKuSvww1o=
+	t=1722530438; cv=none; b=NmhTnRg5GNKKSBsU7MsGFX9vNP4k34clwysrERy1dUH1TgFWsy/YuBMtTlLIKhbVYif44Cp2WZAaoNwq2vhZj/+1yNQqQTjpPW7GRHTRtxEH3074H7D2HfD4GzvbenHC0TtSU0OOPymPQe40KI6AHzQz/iu6+sdkw1MO+eGFAqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722530438; c=relaxed/simple;
-	bh=d+0w/utyCeOUAJB0faml6J6Fo1KVfysprXdgsrmI0gY=;
+	bh=cm88tP/Dp1Y8OMyog3ReSR+5U6PYD1gdvoFDyAqqrGA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=aPUyOS2UqlRokn8Ky+aizafe41ge2eTe+H8c65i5fmbk7G2hQBOQGQCUMqjeJWBd3vDhpYn/5NA1QJLzP05UG+80tuAWcM4xteS/AkBZHDYLFppbU5vd09eVmLuKuZs2/xOR7czjK4IdmQvLajmEFlg0cKXLlytuGjzAmIJpE+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iyEHzMtg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C4129C4AF0E;
+	 In-Reply-To:To:Cc; b=PzNCt/VH0IzJxsYE7maVEiHnYbSimjVzGeCQfAmw3JfVfDIs9h3OAjY8DkVb/3pai+hkBWBkGWCpM4b9tglkeeHq1bLizNSdcEe3ZlHcH+S+1Y9svUPxykc+U+lwTDPybS8lmVmmxai7fsZffIlHAIK10DrMUp+yESkUdvv3b+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpwKZWD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id A3617C4AF0B;
 	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722530437;
-	bh=d+0w/utyCeOUAJB0faml6J6Fo1KVfysprXdgsrmI0gY=;
+	bh=cm88tP/Dp1Y8OMyog3ReSR+5U6PYD1gdvoFDyAqqrGA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=iyEHzMtgm0NvIQ74RjpgOupB/46iT959lYS7ymDJRAYBuWh3U4AxFqUVRzL6CpWwI
-	 iSUEdMCg1WFvGhPZmEpqtkP3RMvjPn+N4SXNtK+Qay3HdPzUQN/u3cTEF8vLFyfw4h
-	 bQeFDPUkBw+hVaOBiWOozXjZsGSuYNA41lGtD9eV2OS/gK9g7K/fo7mfQP38lMJVww
-	 XdaGbStyJbzXCf4KiMg/5Zwc1IcX4yYd6DjzzU2grDC9KHPa4e+PQe9oz6zHJF7iNQ
-	 APvyGlX1XUpiRbNb83lgaw//eb4/kxMXMNsL6WGePpPyZ4H4xB2R0uIGnjC4r/H2TR
-	 NER1moyfX0gjw==
+	b=NpwKZWD8xlDHvM5Wr5EP1TritZv5c6YBqI41ANcluQfaNqMZgP2bF/3b0soGyJwnf
+	 xgXdD4NP07UVbKqvmPeVJkirKzbRHllIyy/EGRUgXvzRAmBLXZppM0uu2OYn4STrhP
+	 XhTLNOP/lqNP7ZYXaXvbXzLot9zB0HHTTSb7F19z+VZ1tACt1Hx/mO45hqhOEg9smh
+	 MTh3hnls60Spof2JUZVbUeGKy34bgUPhFjNvYetOR7idjb7RgUeuUL6hBUePfyQB2A
+	 0iaH/vFKbw8Nd9Ss3OvvkcFB7ckTeN++mKLwwMWmwd/SRi9aJNOJh2Zx0WIBSja5Kg
+	 42CLMj3LnEqwA==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id A91B8E8876D;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 85C93E8877A;
 	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,38 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH V2] riscv/mm: Add handling for VM_FAULT_SIGSEGV in
- mm_fault_error()
+Subject: Re: [PATCH v2] perf arch events: Fix duplicate RISC-V SBI firmware event
+ name
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172253043768.13740.17412211332901181883.git-patchwork-notify@kernel.org>
+ <172253043753.13740.1828763400860823722.git-patchwork-notify@kernel.org>
 Date: Thu, 01 Aug 2024 16:40:37 +0000
-References: <20240731084547.85380-1-qiaozhe@iscas.ac.cn>
-In-Reply-To: <20240731084547.85380-1-qiaozhe@iscas.ac.cn>
-To: Zhe Qiao <qiaozhe@iscas.ac.cn>
-Cc: linux-riscv@lists.infradead.org, paul.walmsley@sifive.com,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alexghiti@rivosinc.com,
- surenb@google.com, akpm@linux-foundation.org, wangkefeng.wang@huawei.com,
- willy@infradead.org, linux-kernel@vger.kernel.org
+References: <20240719115018.27356-1-eric.lin@sifive.com>
+In-Reply-To: <20240719115018.27356-1-eric.lin@sifive.com>
+To: Eric Lin <eric.lin@sifive.com>
+Cc: linux-riscv@lists.infradead.org, peterz@infradead.org, mingo@redhat.com,
+ acme@kernel.org, namhyung@kernel.org, alexander.shishkin@linux.intel.com,
+ jolsa@kernel.org, irogers@google.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, peterlin@andestech.com, dminus@andestech.com,
+ locus84@andestech.com, jisheng.teoh@starfivetech.com, inochiama@outlook.com,
+ n.shubin@yadro.com, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, samuel.holland@sifive.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Wed, 31 Jul 2024 16:45:47 +0800 you wrote:
-> Handle VM_FAULT_SIGSEGV in the page fault path so that we correctly
-> kill the process and we don't BUG() the kernel.
+On Fri, 19 Jul 2024 19:50:18 +0800 you wrote:
+> Currently, the RISC-V firmware JSON file has duplicate event name
+> "FW_SFENCE_VMA_RECEIVED". According to the RISC-V SBI PMU extension[1],
+> the event name should be "FW_SFENCE_VMA_ASID_SENT".
 > 
-> Fixes: 07037db5d479 ("RISC-V: Paging and MMU")
-> Signed-off-by: Zhe Qiao <qiaozhe@iscas.ac.cn>
-> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+> Before this patch:
+> $ perf list
 > 
 > [...]
 
 Here is the summary with links:
-  - [V2] riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fault_error()
-    https://git.kernel.org/riscv/c/0c710050c47d
+  - [v2] perf arch events: Fix duplicate RISC-V SBI firmware event name
+    https://git.kernel.org/riscv/c/63ba5b0fb4f5
 
 You are awesome, thank you!
 -- 
