@@ -1,142 +1,186 @@
-Return-Path: <linux-kernel+bounces-271690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40FA9451CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:46:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063EB9451D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:46:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BA82B22C0C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:46:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E798284276
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D341BA86F;
-	Thu,  1 Aug 2024 17:45:52 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CDF1BA873;
+	Thu,  1 Aug 2024 17:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dRFX/tPV"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5A313C8E8;
-	Thu,  1 Aug 2024 17:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B511B9B4C
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722534352; cv=none; b=DkOvUvHJrewurC/FYbllXqDUj2ocE5Pbh7pnV6H8M0jjTLDR8wURbfiRmLWHGIxNI6k2aEe4emxNEpLzwBo3sVI7wuEdH5Txz8+sGthXfN9J6rSp3ndxQdY1yv1Hf9fnTUXHKTd6e78w2mC9gFJFJGqs9BnJwauDLUAsMpE8Pyg=
+	t=1722534391; cv=none; b=B0duoWCnDocCJPvGoNuehU+KMMcTicn7OWW2g1RlBjxd9D+FqAOnwWtpM8hTYVeIcODIbf4bMT+A4e06dshlL5dOCgr8WdxwImK5CpW/Ka2aI9sITreEsGFvHik0EqW6MD0+VoIgqpNNxoF/W6QNqJigJqRR6MrNomVmBUKdDCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722534352; c=relaxed/simple;
-	bh=L0lKgzFenYknPcjmMm2DsPSlveu6ZCz/RN3IH34o0N0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QBfWh723Ec32dn7UcoajAyGvkKqENVKz/sNMjz3CEmO3dPbTxFZPchRov1epXlU6+HKLdCvvpQIbBAWef1glIHsWTkFjY3kn4zKmKyv5TaYhRXjwL+wjXtkYcCbpgTQ3Ih7WP2z38dEFCIgOvaQ0d162dma2RZERMGlFd+siulA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WZbsX1GyPz6K6Y1;
-	Fri,  2 Aug 2024 01:43:12 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41BE0140A86;
-	Fri,  2 Aug 2024 01:45:48 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 1 Aug
- 2024 18:45:46 +0100
-Date: Thu, 1 Aug 2024 18:45:46 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Mike Rapoport <rppt@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Alexander Gordeev
-	<agordeev@linux.ibm.com>, Andreas Larsson <andreas@gaisler.com>, "Andrew
- Morton" <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, "Borislav
- Petkov" <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Dan Williams <dan.j.williams@intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, David Hildenbrand
-	<david@redhat.com>, "David S. Miller" <davem@davemloft.net>, Davidlohr Bueso
-	<dave@stgolabs.net>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, Heiko
- Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, Ingo
- Molnar <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, "John Paul
- Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>, Jonathan Corbet
-	<corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring
-	<robh@kernel.org>, Samuel Holland <samuel.holland@sifive.com>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Thomas Gleixner
-	<tglx@linutronix.de>, "Vasily Gorbik" <gor@linux.ibm.com>, Will Deacon
-	<will@kernel.org>, Zi Yan <ziy@nvidia.com>, <devicetree@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-mips@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
-	<linux-s390@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <loongarch@lists.linux.dev>,
-	<nvdimm@lists.linux.dev>, <sparclinux@vger.kernel.org>, <x86@kernel.org>
-Subject: Re: [PATCH v3 04/26] MIPS: sgi-ip27: drop
- HAVE_ARCH_NODEDATA_EXTENSION
-Message-ID: <20240801184546.00000ba6@Huawei.com>
-In-Reply-To: <20240801060826.559858-5-rppt@kernel.org>
-References: <20240801060826.559858-1-rppt@kernel.org>
-	<20240801060826.559858-5-rppt@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722534391; c=relaxed/simple;
+	bh=lqUBCglzn3f4G/USTNUZWIqwmTKyh9NTx5PNNci0oUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gDKolvPcQGGH2+33B0p2Bsmzvf2uXol/sJGHggzQ4AEIUkK1kEaX1c/qZ1qQoLTpF3Q6R4wFG3dsWI+e96bWozeEJvWTcP0j0RM2egtl3KlbhgT4rOvFXvft2jZ9WbT0jCEthNz95JXgiJouATu7n41Qu9FC/hB5uhMuY10l0h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dRFX/tPV; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722534388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IdydxZIGJr3ghOK2fEzH68i3FlzUyX1ZkiOar1Iub4w=;
+	b=dRFX/tPV4f6iP2XtdCy/ukBmKmFOsf/rz/SADRumAgOr9H0HCnPfxlO8rMHOHyWKe2DVq4
+	oJV5GKZfQuaEs9mmtcbiQCHYJd/XGP27CxQF99lvzoHUB+J0i1v44Ev4HuMtnSTuDtgKQv
+	5h8YN/oHMfra7PxVEG8DAwmFm7wX5kA=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-wUOPwDjyNDyw7ePI7Cic7g-1; Thu, 01 Aug 2024 13:46:27 -0400
+X-MC-Unique: wUOPwDjyNDyw7ePI7Cic7g-1
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-58b1fe1cd9eso1317505a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:46:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722534386; x=1723139186;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IdydxZIGJr3ghOK2fEzH68i3FlzUyX1ZkiOar1Iub4w=;
+        b=SWWAHD+jsp5MNk1T3L4myZTULBqNbfcyUZRyPGOoEkEWeMcjXH7I97cjxRVQJdxATN
+         eTXY9ck8DMQG2FmW/Q6pSiTnl1K2bTqrknA8+Cm07jeq9JUYJ/3INKQQJjFXU541gyck
+         rPTwCixis2B8CGGfsHo9GzkQDglA+7Njnv59k7h/VN1X6IT+uUrN9HP4qkVOhC4tmOyH
+         54ENYoHXiA+AWee0cepviuXxbFMZSp/54lK1hmXLhPtcU4NUTCbN/DcdvUY/AUQ9Y9O8
+         kCHPSKP00Cik5se2F3HrMLcg368A8ijeYt0KpJ4e2qLniAKTDZwETDerwLxyOupdU1ud
+         fWxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfySKcg8x1qqaqyhu+wMgjwOa8AhvmnaBs3VoRpqQOPzPruGKY1aTKHyOj4bAl/3WRMCKfOYN7xHgdQxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG8C39D3PgPt2/K7ljfT7e5x0MJmk0p4DjWQIN6JURwbF5Q8py
+	MDme7Jhex7oFfPVIRDrlHUVh3UX/slIe6+JWbXyZ8kEKiUVW1jEQqo5ky0frgdEo0FwfSFe599N
+	aPr8gBc1A6VOZaLfba1jAahT0dO/0U/8Hwz7dwSf8YWZZk8mBPBSixvPWVuVy1Q==
+X-Received: by 2002:a17:907:3da7:b0:a7d:a4d2:a2a7 with SMTP id a640c23a62f3a-a7dc4e50c01mr44422566b.3.1722534386296;
+        Thu, 01 Aug 2024 10:46:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5Km5jd9cOTYruluysPjH0y6sNbWlr0amJSpmaneqU1ki99pbWjXrxV2Pr+1gBC+OPuM4UGw==
+X-Received: by 2002:a17:907:3da7:b0:a7d:a4d2:a2a7 with SMTP id a640c23a62f3a-a7dc4e50c01mr44419866b.3.1722534385669;
+        Thu, 01 Aug 2024 10:46:25 -0700 (PDT)
+Received: from eisenberg.fritz.box ([2001:16b8:3d4b:3000:1a1d:18ca:1d82:9859])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e83848sm5339066b.177.2024.08.01.10.46.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 10:46:25 -0700 (PDT)
+From: Philipp Stanner <pstanner@redhat.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Srujana Challa <schalla@marvell.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Kevin Cernekee <cernekee@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Jie Wang <jie.wang@intel.com>,
+	Adam Guerin <adam.guerin@intel.com>,
+	Shashank Gupta <shashank.gupta@intel.com>,
+	Damian Muszynski <damian.muszynski@intel.com>,
+	Nithin Dabilpuram <ndabilpuram@marvell.com>,
+	Bharat Bhushan <bbhushan2@marvell.com>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Gregory Greenman <gregory.greenman@intel.com>,
+	Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+	Yedidya Benshimol <yedidya.ben.shimol@intel.com>,
+	Breno Leitao <leitao@debian.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	qat-linux@intel.com,
+	linux-crypto@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH 00/10] Remove pcim_iomap_regions_request_all()
+Date: Thu,  1 Aug 2024 19:45:58 +0200
+Message-ID: <20240801174608.50592-1-pstanner@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Transfer-Encoding: 8bit
 
-On Thu,  1 Aug 2024 09:08:04 +0300
-Mike Rapoport <rppt@kernel.org> wrote:
+Hi all,
 
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
-> 
-> Commit f8f9f21c7848 ("MIPS: Fix build error for loongson64 and
-> sgi-ip27") added HAVE_ARCH_NODEDATA_EXTENSION to sgi-ip27 to silence a
-> compilation error that happened because sgi-ip27 didn't define array of
-> pg_data_t as node_data like most other architectures did.
-> 
-> After addition of node_data array that matches other architectures and
-> after ensuring that offline nodes do not appear on node_possible_map, it
-> is safe to drop arch_alloc_nodedata() and HAVE_ARCH_NODEDATA_EXTENSION
-> from sgi-ip27.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+the PCI subsystem is currently working on cleaning up its devres API. To
+do so, a few functions will be replaced with better alternatives.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+This series removes pcim_iomap_regions_request_all(), which has been
+deprecated already, and accordingly replaces the calls to
+pcim_iomap_table() (which were only necessary because of
+pcim_iomap_regions_request_all() in the first place) with calls to
+pcim_iomap().
 
-> ---
->  arch/mips/Kconfig                |  1 -
->  arch/mips/sgi-ip27/ip27-memory.c | 10 ----------
->  2 files changed, 11 deletions(-)
-> 
-> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-> index 60077e576935..ea5f3c3c31f6 100644
-> --- a/arch/mips/Kconfig
-> +++ b/arch/mips/Kconfig
-> @@ -735,7 +735,6 @@ config SGI_IP27
->  	select WAR_R10000_LLSC
->  	select MIPS_L1_CACHE_SHIFT_7
->  	select NUMA
-> -	select HAVE_ARCH_NODEDATA_EXTENSION
->  	help
->  	  This are the SGI Origin 200, Origin 2000 and Onyx 2 Graphics
->  	  workstations.  To compile a Linux kernel that runs on these, say Y
-> diff --git a/arch/mips/sgi-ip27/ip27-memory.c b/arch/mips/sgi-ip27/ip27-memory.c
-> index c30ef6958b97..eb6d2fa41a8a 100644
-> --- a/arch/mips/sgi-ip27/ip27-memory.c
-> +++ b/arch/mips/sgi-ip27/ip27-memory.c
-> @@ -426,13 +426,3 @@ void __init mem_init(void)
->  	memblock_free_all();
->  	setup_zero_pages();	/* This comes from node 0 */
->  }
-> -
-> -pg_data_t * __init arch_alloc_nodedata(int nid)
-> -{
-> -	return memblock_alloc(sizeof(pg_data_t), SMP_CACHE_BYTES);
-> -}
-> -
-> -void arch_refresh_nodedata(int nid, pg_data_t *pgdat)
-> -{
-> -	__node_data[nid] = (struct node_data *)pgdat;
-> -}
+Would be great if you can take a look whether this behaves as you
+intended for your respective component.
+
+Cheers,
+Philipp
+
+Philipp Stanner (10):
+  PCI: Make pcim_request_all_regions() a public function
+  ata: ahci: Replace deprecated PCI functions
+  crypto: qat - replace deprecated PCI functions
+  crypto: marvell - replace deprecated PCI functions
+  intel_th: pci: Replace deprecated PCI functions
+  wifi: iwlwifi: replace deprecated PCI functions
+  ntb: idt: Replace deprecated PCI functions
+  serial: rp2: Remove deprecated PCI functions
+  ALSA: korg1212: Replace deprecated PCI functions
+  PCI: Remove pcim_iomap_regions_request_all()
+
+ .../driver-api/driver-model/devres.rst        |  1 -
+ drivers/ata/acard-ahci.c                      |  6 +-
+ drivers/ata/ahci.c                            |  6 +-
+ drivers/crypto/intel/qat/qat_420xx/adf_drv.c  | 11 +++-
+ drivers/crypto/intel/qat/qat_4xxx/adf_drv.c   | 11 +++-
+ .../marvell/octeontx2/otx2_cptpf_main.c       | 14 +++--
+ .../marvell/octeontx2/otx2_cptvf_main.c       | 13 ++--
+ drivers/hwtracing/intel_th/pci.c              |  9 ++-
+ .../net/wireless/intel/iwlwifi/pcie/trans.c   | 16 ++---
+ drivers/ntb/hw/idt/ntb_hw_idt.c               | 13 ++--
+ drivers/pci/devres.c                          | 59 +------------------
+ drivers/tty/serial/rp2.c                      | 12 ++--
+ include/linux/pci.h                           |  3 +-
+ sound/pci/korg1212/korg1212.c                 |  6 +-
+ 14 files changed, 76 insertions(+), 104 deletions(-)
+
+-- 
+2.45.2
 
 
