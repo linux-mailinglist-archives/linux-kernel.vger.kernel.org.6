@@ -1,107 +1,188 @@
-Return-Path: <linux-kernel+bounces-271620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D1359450D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BEDD9450DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB2D4B29754
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1821D1F29C46
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBB61BBBE7;
-	Thu,  1 Aug 2024 16:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B591BC9FA;
+	Thu,  1 Aug 2024 16:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUylvfyb"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cP6jbr9K";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="X5b/kltB"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5A113C9A3;
-	Thu,  1 Aug 2024 16:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF8F1BC060;
+	Thu,  1 Aug 2024 16:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530120; cv=none; b=aEqWwZf1rwKtOIBZWYO1PcR6PteCUBEm5jlY+g6HoZh0G5fTaGOTvjN8LqBUlEd/IfwvrMSN1dx3y8TTk51NwY6xp7PIa435EN+l0vv+bKhJukJ4DiUlCcTSBf9q0MJ1oco+lbYb5gV4r0cPPbMbiZmy2BiJB4MrU2gO2ppL2hk=
+	t=1722530136; cv=none; b=nYfqVK1FbsJdb6ZRZtf8B+oQmwaXNEwozlfWw5Po2eeR7YRJCdtKehmQ2Y2xIpj8N2QanwZv4mFO03uOsYNOrXOCARsAe92ZGb1GZyZZvilcQ3XtV7IfhpSwSLE9qjclx5I0W8LFp5gd1X6JNUFLxDfoJn9YGxBwl+aufcAdc64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530120; c=relaxed/simple;
-	bh=epQcZml1KFHD/cAYF1EPI6sbtGZHn6QCLdxUDPlEPdk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RkcGwLMgSnNdHM5lkd4kdhadZhPSykXyvFQQNrgP+oZWe77t7Iy17akndFpQIa0svLwwG55imZj4WXgEuzlNnn5b8ofE93WjQ71xY7tNqhPLQ2YxWTOUKL9B7jFNWydfq1mrx3tR95+b5J2mcOpx80i1h+EvWOCm6Er9pvdiRbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QUylvfyb; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2cb55ff1007so4798843a91.0;
-        Thu, 01 Aug 2024 09:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722530118; x=1723134918; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J/T4t3jzF+nFkAWEOEP+qO2FrWc+IPdqT2e1MH6ST1k=;
-        b=QUylvfyb8XAnyKXaEd2MIERZ62ltDf7QeKrzVfo4nroX8iAM5+W/dRkzk9x4blEfH/
-         V+yw5LJPUrQ9eMTu3Xjf73tgwOzI95OLLZRJD6Tq9ImiL4wcSvUUVeekkSvCteVA8dFd
-         Zxdicn/90qCGGo82d1zIayIjnc234ZTTxAP+TTSKqNM8OE/ZVUGJsTLGsnUTWmirRuAN
-         azsmHIWEbx+5YqTuGQh8yElfFKA5LYtWZGbANlgLiave7dFfTvUcLxp3Q/svuYH2e95j
-         9tc69xI7gxRifciW+RelXSa+aUYeM3joduoX2HDwp20fcDGJ8F35IxgpIVx1e1SSsWKA
-         ZB1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722530118; x=1723134918;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J/T4t3jzF+nFkAWEOEP+qO2FrWc+IPdqT2e1MH6ST1k=;
-        b=kf+arfJSWHSauaZ7Eff4UfCd9qbGWOf/EwUecAVofmXOx+PMDFYku2iiQMMgsF7HBd
-         HVG50qQXlN8NcUZRyYgC3u0Yi7S+oQnw2gFwc5No/wNfE1piEgjdGIzR81kZwgdIDdoY
-         /bywOGGS+g/WvWHKZDJ5AAY2dbLx1+PxW4JpvQgNgHKiBZn5Ht3hcceBbGm+XLdR4DE8
-         ydQRhzpHb7Rqc3x0MNXegljzMD4wC/NjnSkHUnhia6EteOG19Sj+GVvfd2saUwlrNFkV
-         JYBfjGOb6e5HDv2u0yeoC1YrVxN9E9ERvi7jja0MWeQZsLNsByn0QhNUrEHI85H0s5Y5
-         jIRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOfUADt4SHN8UpCjMy2ERu7bZJepkuBJrvq4MeEWERyV0nnUP+CBe376FCUbSJs9oYwYXd3ESVlJI/JBtZ5pXZDSpl3YwfMDgM2Y/NLuEA9LXUYgOLEnUPsEEgbe5wXsjAKAOgScOzjguVHX9L+0edMUAzhq0USK5L
-X-Gm-Message-State: AOJu0YwOqf9ld+XCiEg0RA9x+Z++Yq1K8lOwr/3R+yEeENa/4cLWPtVF
-	caKCOcMzutxlwzN6Soxt+7wriCg7xz40oXMnryh9AUgsVQ0nxltQ
-X-Google-Smtp-Source: AGHT+IFPzIKAAGtrIboS0JIgBIcn/RCGQZX+i6sR6dJvOvCnViybU/zZEgesDQpsFrg3VVwYreSuHA==
-X-Received: by 2002:a17:90a:d34c:b0:2c9:80fd:a111 with SMTP id 98e67ed59e1d1-2cff941b716mr996111a91.18.1722530118409;
-        Thu, 01 Aug 2024 09:35:18 -0700 (PDT)
-Received: from localhost ([2601:647:6881:9060:dc43:fce:b051:e6e8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc42f9d3sm3599577a91.18.2024.08.01.09.35.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:35:17 -0700 (PDT)
-Date: Thu, 1 Aug 2024 09:35:16 -0700
-From: Cong Wang <xiyou.wangcong@gmail.com>
-To: luigi.leonardi@outlook.com
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-	Daan De Meyer <daan.j.demeyer@gmail.com>
-Subject: Re: [PATCH net-next v4 0/3] ioctl support for AF_VSOCK and
- virtio-based transports
-Message-ID: <Zqu5RHO2x+1uLmeD@pop-os.localdomain>
-References: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
+	s=arc-20240116; t=1722530136; c=relaxed/simple;
+	bh=WXn7pOenmYmXNoEcz3FhCvEWXffdAen5E7ABGq4QHfg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qY/HLYRnaeyqnO/tti/CRyOaZbsiY88K0PaAUolcUkGpt4lfjvFA2AsbYKl3JT4prKUN/S3EyiJenw6ENwV78jqDCijyoTpUabPtvebr/3A4DHYFZS43tTN0zdpWNoVzj9voT2YkSjJrDJ/mIxvpIRp+KvwyQh+G6Kq1r6OUBC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cP6jbr9K; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=X5b/kltB; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 01 Aug 2024 16:35:31 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722530132;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANfngnPqKOP1wy0WOpKzHct1SOebYBS90PN5GKa40V4=;
+	b=cP6jbr9KYdF31NtLyPpJnPtvZ6CSZYes870uqXY2hNfLDr61NxGdDoWuv5rVkba77svcpL
+	VWCX63fPE+uMOZIZ2SRfbLGQsLB3SiAwaEf39c7myMy5apYjlNIV1ZHvVpQ8jtfM/CpUqO
+	Q0kbvLRgsUhBTWVvQRUI4jSIGa3GTnMkKr2GJ7IKmecQ93lWauvrUaGtVmVBFCANpkZitg
+	xtDRcBRk9f5tqzTNOqw2IxhPyLu0+sn65rwnLqZ2dZfKulA6reHhQGe8w43irRKFJjybiP
+	JYfmPPhcTQFHEkmQLYUQA3T2trLuKZHs5Bq24lKJVxWX5bNBKLu6ZK2CBb8jew==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722530132;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ANfngnPqKOP1wy0WOpKzHct1SOebYBS90PN5GKa40V4=;
+	b=X5b/kltBgLLuMog4Or9vZISiNKbvDO7pXZrR0MWUO9H0EJ36pkw+RKvblYuz1qIzff+aBj
+	dTLD/BRyNIzmy5Aw==
+From: "tip-bot2 for Yazen Ghannam" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: ras/core] x86/mce: Rename mce_setup() to mce_prep_record()
+Cc: Borislav Petkov <bp@alien8.de>, Yazen Ghannam <yazen.ghannam@amd.com>,
+ Nikolay Borisov <nik.borisov@suse.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240730182958.4117158-2-yazen.ghannam@amd.com>
+References: <20240730182958.4117158-2-yazen.ghannam@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730-ioctl-v4-0-16d89286a8f0@outlook.com>
+Message-ID: <172253013173.2215.13005247955088150446.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 30, 2024 at 09:43:05PM +0200, Luigi Leonardi via B4 Relay wrote:
-> This patch series introduce the support for ioctl(s) in AF_VSOCK.
-> The only ioctl currently available is SIOCOUTQ, which returns
-> the number of unsent or unacked packets. It is available for
-> SOCK_STREAM, SOCK_SEQPACKET and SOCK_DGRAM.
-> 
+The following commit has been merged into the ras/core branch of tip:
 
-Why not using sock diag to dump it? Like ->idiag_wqueue for TCP.
+Commit-ID:     5ad21a2497329c2b090d5b02b95394a1316bef53
+Gitweb:        https://git.kernel.org/tip/5ad21a2497329c2b090d5b02b95394a1316bef53
+Author:        Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate:    Tue, 30 Jul 2024 13:29:56 -05:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Thu, 01 Aug 2024 18:20:24 +02:00
 
-Thanks.
+x86/mce: Rename mce_setup() to mce_prep_record()
+
+There is no MCE "setup" done in mce_setup(). Rather, this function initializes
+and prepares an MCE record.
+
+Rename the function to highlight what it does.
+
+No functional change is intended.
+
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Link: https://lore.kernel.org/r/20240730182958.4117158-2-yazen.ghannam@amd.com
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/include/asm/mce.h     | 2 +-
+ arch/x86/kernel/cpu/mce/amd.c  | 2 +-
+ arch/x86/kernel/cpu/mce/apei.c | 4 ++--
+ arch/x86/kernel/cpu/mce/core.c | 6 +++---
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 3ad29b1..3b99701 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -221,7 +221,7 @@ static inline int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info,
+ 					     u64 lapic_id) { return -EINVAL; }
+ #endif
+ 
+-void mce_setup(struct mce *m);
++void mce_prep_record(struct mce *m);
+ void mce_log(struct mce *m);
+ DECLARE_PER_CPU(struct device *, mce_device);
+ 
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index 9a0133e..14bf8c2 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -780,7 +780,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
+ {
+ 	struct mce m;
+ 
+-	mce_setup(&m);
++	mce_prep_record(&m);
+ 
+ 	m.status = status;
+ 	m.misc   = misc;
+diff --git a/arch/x86/kernel/cpu/mce/apei.c b/arch/x86/kernel/cpu/mce/apei.c
+index 7f7309f..8f509c8 100644
+--- a/arch/x86/kernel/cpu/mce/apei.c
++++ b/arch/x86/kernel/cpu/mce/apei.c
+@@ -44,7 +44,7 @@ void apei_mce_report_mem_error(int severity, struct cper_sec_mem_err *mem_err)
+ 	else
+ 		lsb = PAGE_SHIFT;
+ 
+-	mce_setup(&m);
++	mce_prep_record(&m);
+ 	m.bank = -1;
+ 	/* Fake a memory read error with unknown channel */
+ 	m.status = MCI_STATUS_VAL | MCI_STATUS_EN | MCI_STATUS_ADDRV | MCI_STATUS_MISCV | 0x9f;
+@@ -97,7 +97,7 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
+ 	if (ctx_info->reg_arr_size < 48)
+ 		return -EINVAL;
+ 
+-	mce_setup(&m);
++	mce_prep_record(&m);
+ 
+ 	m.extcpu = -1;
+ 	m.socketid = -1;
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index b85ec7a..dd5192e 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -118,7 +118,7 @@ static struct irq_work mce_irq_work;
+ BLOCKING_NOTIFIER_HEAD(x86_mce_decoder_chain);
+ 
+ /* Do initial initialization of a struct mce */
+-void mce_setup(struct mce *m)
++void mce_prep_record(struct mce *m)
+ {
+ 	memset(m, 0, sizeof(struct mce));
+ 	m->cpu = m->extcpu = smp_processor_id();
+@@ -436,11 +436,11 @@ static noinstr void mce_wrmsrl(u32 msr, u64 v)
+ static noinstr void mce_gather_info(struct mce *m, struct pt_regs *regs)
+ {
+ 	/*
+-	 * Enable instrumentation around mce_setup() which calls external
++	 * Enable instrumentation around mce_prep_record() which calls external
+ 	 * facilities.
+ 	 */
+ 	instrumentation_begin();
+-	mce_setup(m);
++	mce_prep_record(m);
+ 	instrumentation_end();
+ 
+ 	m->mcgstatus = mce_rdmsrl(MSR_IA32_MCG_STATUS);
 
