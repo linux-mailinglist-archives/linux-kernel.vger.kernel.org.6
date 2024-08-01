@@ -1,133 +1,138 @@
-Return-Path: <linux-kernel+bounces-271676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FEA945182
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B067945187
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C86501C22A27
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8A51F232FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680381B9B43;
-	Thu,  1 Aug 2024 17:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 603E21B9B31;
+	Thu,  1 Aug 2024 17:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UH8cbPIT"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DuO94Ghj"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71871465A7
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1190D143743;
+	Thu,  1 Aug 2024 17:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533427; cv=none; b=niXf2mdlYqtC9QGF2mmXxK/7Fi3Z0c0mRBZfrazjOcQfjROhvZ1C2E3hYazPXO8QRSt+Otc6NrAktMjkb3WuCWZYwNFoD/Fi/iXpdLWDCsDLzTsL5fS/MmjEdd2Ze8i4+X/mZH9bPR/ENBLeK0dIS6ytAfIBbaynzbCrwP18dTE=
+	t=1722533451; cv=none; b=m8IqKO53wDGRFFsdkmxp0pERV9V34OsSpbfb+MON9Sf7VrEVlW2XQtUZuIUeWSuB/IoaBTkixtaoqHEedsaJhzzyBZAWo6RX801H4KrUct60We2v4w/QdJqtmYXD68P+isq32BmEaPh90xz5thy8fun/xn+ZYWX2MgrNyobEJhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533427; c=relaxed/simple;
-	bh=/fUgmK9Gu4vJ7gtf9Uwd95qIKPDXf8jzzp6n2YLhY1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=je+4aM0fZ1xIkSDUBw9hmFR9sVSQymRAHKMLtrhgY3K/Lvn9EJlnoZB4vjgc8qZbqj5O9x9BjBpyvBxfqDo2DqBgBkNd2fn0eB19u31sixz9QOtvvTuAwwI4D1/N5LOBQ7qqc4EpJoj9NR67bd3ovwiQQaZifKeELx8Ud0MyZnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UH8cbPIT; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso45490045e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:30:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1722533424; x=1723138224; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c1S/NlVwEFkZswb6EjZlJWrnVb2z/0QNSVhH+7F6wi4=;
-        b=UH8cbPITQAJcH+25OYzB3QPkJVO5LcU8lJxWpD42Nd+THfyBF8l3l0wrg8YFg2qpHz
-         eMB5bjocbDdQLJEqJ6nTRufuNsebaShpPXqdM7xtC8s434V+C1BbjierqO4N9imBANoT
-         Ja3TNvua5bape0ZbRv8yk9HLRpmTOpXioMRHQzT8iqsQ07lV3k39j90r/FRFEK+KjQsr
-         gespgsj6YLqA9os4JXzSXXMKSnrw1I+3AQiegThIqNryJ5FeXCzoxLbzhOMmJAWZROXL
-         qau7l+f8rLdwFfhdu4VON+AtoSuS8z2KrIZH1qRfGkx1H862UVh8uNFjZR7ZxraEdPjV
-         FGvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722533424; x=1723138224;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c1S/NlVwEFkZswb6EjZlJWrnVb2z/0QNSVhH+7F6wi4=;
-        b=azI1fAnVQER/dZlpYOiV343O23zyG6djdJhrYElYQKtxzuUuQRl+Ro9EurXFAx6nQr
-         l+UwJb4Lw9r7MSzRr6wclIqWnSRzzWdEkDkxRMsv7KhyEFuYGQtoA6OlRgoF2noDQiNb
-         5jhBYNNyHS+O3hPE3UxnPCdaozUGQqkbUmVoguIgRByYexrvbMpPuMnTB0CNwhaqnOmB
-         NXhvLoiTbECf4KUNcj1T+2uSUqUC9lwS65t+gX6KBzwuAEltLEvkLsF/hOeZbHo6Ee+f
-         gxJASU2ORYscJbjgl/SEy4c/95uoVSHv0wq4iIeCmueLEYcgV3NPhxU3g9bVxO9/oVtT
-         txmA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4842zhg0W1kh9jEd9GCjer90tHagsTXQ/mXWd7ZqgYqLQtZAphJ8T6jkoq41+353ctgkbKnXAyW//9jDhnzS/TYIzRcOioM5BrcnY
-X-Gm-Message-State: AOJu0YzwWXctUGGaFJaQJ/MIQjgD00Em/WOgooIAiseWgqPoJKqn6eTS
-	8HJQBlyhmtKWxsDIJqq4gtsTwJH9xy8JAfdhLQ4xVvn40Jpmm/JHBKW5Zwf0mx4=
-X-Google-Smtp-Source: AGHT+IG94ZE4tjZfrkwC8a7+TJTJGffEWVrCsNnStDS6gDpPa28xGx43QNeVDk0gNocTArRCz6CJ5g==
-X-Received: by 2002:a05:600c:524f:b0:428:17b6:bcf1 with SMTP id 5b1f17b1804b1-428e6b0a2bcmr4750555e9.22.1722533423582;
-        Thu, 01 Aug 2024 10:30:23 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6405csm65736205e9.34.2024.08.01.10.30.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 10:30:23 -0700 (PDT)
-Message-ID: <1145bd6f-fee4-4c3a-bd71-543127f89fc8@tuxon.dev>
-Date: Thu, 1 Aug 2024 20:30:21 +0300
+	s=arc-20240116; t=1722533451; c=relaxed/simple;
+	bh=55DhPcRDuHS5ZpJARG/nkE7q25pYrGpOdf2s6UK6Pxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sBoEpjnKT0dIebvoqCZhj0yx98vdo3fi5YRW76Q4B4u9kqTlq2G1vMY9FAhMM1P0hkibeSyhf9erkxbMWwWifiUs6Gew7SLEyl0duM/HmdjP0guF+lvMq8nXW1ROKyjy9Hu7dk6d+fPfUMd58XvIdmZSTIGv5qovV5LA6oFuksQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=DuO94Ghj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 408D1667;
+	Thu,  1 Aug 2024 19:29:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1722533399;
+	bh=55DhPcRDuHS5ZpJARG/nkE7q25pYrGpOdf2s6UK6Pxs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DuO94GhjJoHXRM+sCAEccIi2c9T2/6OGnRjs0Aav44GhSzzHJMHLANynwEmfd1cE4
+	 IlJ8v0+PMvu6GdVJKBj8AENST4iqD0iZ3NsgZk8OwCa0wWyNgfQyEuAvDCn17ugNfA
+	 PXeHqO+Cp3uzVQj5sZkj/KZg5tS5ZmmdicJp+/JI=
+Date: Thu, 1 Aug 2024 20:30:26 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Ricard Wanderlof <ricardw@axis.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH] drm: bridge: adv7511: Accept audio sample widths of 32
+ bits via I2S
+Message-ID: <20240801173026.GC18732@pendragon.ideasonboard.com>
+References: <91472c14-3aeb-766a-1716-8219af6e8782@axis.com>
+ <dad42efe-7895-50f5-6bba-9b8abb97f34a@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r9a08g045: Add DMAC node
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, biju.das.jz@bp.renesas.com, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <dad42efe-7895-50f5-6bba-9b8abb97f34a@axis.com>
 
-Hi, Geert,
+On Mon, Jul 29, 2024 at 10:15:55AM +0200, Ricard Wanderlof wrote:
+> 
+> Hi,
+> 
+> I submitted the patch below a while ago (two months) but as far as I can 
+> make out it has not been included. There was an initial concern from 
+> Dmitry Baryshkov which was subsequently addressed but no other objections. 
+> 
+> On Tue, 28 May 2024, Ricard Wanderlof wrote:
+> 
+> > 
+> > Even though data is truncated to 24 bits, the I2S interface does
+> > accept 32 bit data (the slot widths according to the data sheet
+> > can be 16 or 32 bits) so let the hw_params callback reflect this,
+> > even if the lowest 8 bits are not used when 32 bits are specified.
+> > 
+> > This is normally how 24 bit audio data is handled (i.e. as 32 bit
+> > data, with the LSB:s unused) and this is also reflected in other
+> > bridge drivers which handle audio, for instance sii902x.c and
+> > synopsis/dw-hdmi-i2s-audio.c .
+> > 
+> > Signed-off-by: Ricard Wanderlof <ricard.wanderlof@axis.com>
+> > ---
+> >  drivers/gpu/drm/bridge/adv7511/adv7511_audio.c | 11 +++++++----
+> >  1 file changed, 7 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+> > index 61f4a38e7d2b..4563f5d8136f 100644
+> > --- a/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+> > +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_audio.c
+> > @@ -101,11 +101,14 @@ static int adv7511_hdmi_hw_params(struct device *dev, void *data,
+> >  	case 20:
+> >  		len = ADV7511_I2S_SAMPLE_LEN_20;
+> >  		break;
+> > -	case 32:
+> > -		if (fmt->bit_fmt != SNDRV_PCM_FORMAT_IEC958_SUBFRAME_LE)
+> > -			return -EINVAL;
+> > -		fallthrough;
+> >  	case 24:
+> > +	case 32:
+> > +		/*
+> > +		 * 32 bits are handled like 24 bits, except that the lowest
+> > +		 * 8 bits are discarded. In fact, the accepted I2S slot widths
+> > +		 * are 16 and 32 bits, so the chip is fully compatible with
+> > +		 * 32 bit data.
+> > +		 */
+> >  		len = ADV7511_I2S_SAMPLE_LEN_24;
+> >  		break;
+> >  	default:
+> 
+> I recently discovered that the maintainer for the ADV7511 driver (in the 
+> I2C) framework is not included by the get_maintainers script, so perhaps 
+> this is the reason?
+> 
+> Otherwise, please enlighten me on what I need to do to get this patch 
+> accepted!
 
-On 01.08.2024 19:29, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Thu, Jul 11, 2024 at 2:34 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Add DMAC node.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v6.12.
-> 
->> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
->> @@ -363,6 +363,44 @@ irqc: interrupt-controller@11050000 {
->>                         resets = <&cpg R9A08G045_IA55_RESETN>;
->>                 };
->>
->> +               dmac: dma-controller@11820000 {
-> 
->> +                       power-domains = <&cpg>;
-> 
-> Updating to " <&cpg R9A08G045_PD_DMAC>" while applying.
+I have no experience with HDMI audio, so I didn't comment on your patch.
 
-FTR: please don't as the watchdog fixes are still under discussion. Only
-RZ/G3S watchdog support was merged.
+Hans, is this within your area of expertise ?
 
-Thank you,
-Claudiu Beznea
+-- 
+Regards,
 
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Laurent Pinchart
 
