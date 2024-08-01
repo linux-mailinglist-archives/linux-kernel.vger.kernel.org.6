@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-270019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0DA943A23
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D5772943A27
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 375F7B23085
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:10:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EA71B248A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9317F3A8F9;
-	Thu,  1 Aug 2024 00:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD6B13C838;
+	Thu,  1 Aug 2024 00:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IRYFZy1h"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYxUKb4V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43CD2E634;
-	Thu,  1 Aug 2024 00:07:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089A92E634;
+	Thu,  1 Aug 2024 00:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722470879; cv=none; b=bQVgd03BqPjXi4GKZU1WWX8bSXn7mgorOUIFhpqRQMxjxnV2skH5a6YaIcWTOWuIlkQg+xvS/CYi0rgtYWO2+lCDbtu3eiUW8dbKH1c/Ma9RoE7XQF6P2AoU9YC5BHRaQ9t8FpWamt3FFoUROR3i15pd69CLrseQFOYZeGwW0QU=
+	t=1722470884; cv=none; b=la9oLG4nj/hC2beoIsa4MTiig+buF5GOio2vFXLfm4TvYfVEWX46xs3LvctqRUCSH1lT7Vfthvd0C86kpgf7mCR9IVHlXyVvzGePBlyEbQGPNTMMSSH4n75uVXmzbOtzD3XfMbboiGpQIzj0Bj9EQdT3GxpUV6iN6i2yLmXwgoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722470879; c=relaxed/simple;
-	bh=IsegupDL6dNouhj9LI4K0JPI4QQWWwWlwU04wMc/SwI=;
+	s=arc-20240116; t=1722470884; c=relaxed/simple;
+	bh=w6PgALWiEZslFA5r/x2p08ONTo0/JO09gDNDQem/zbs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EyuevJhi5az1uypynZ6GcXb9M0FENocOQU5cl2BwacIfR0ftb8B8bUKKNR7Mn9DIPODG2uP9qZY2/vNC8p8YTsQ2t9UQCW4j/xyCqF3j3uaix0cpCZGviM9aCKPHk4I/AdYL0CtW6+v4uy7QOs04cGAuF4fVNeXtl0i2V5bfl10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IRYFZy1h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54438C116B1;
-	Thu,  1 Aug 2024 00:07:53 +0000 (UTC)
+	 MIME-Version; b=Zh7tKQzz9Z+gS+3bLKMxzCVRF8SeB7PzgDqzchdqIOamPEeXxNdo9IQLSoRkT9muRrqufS+vY3uzWktnNKq66ic6dn+STUoUMDQHnM+5ZoyEH/K6r8+Da/Liu8fjyxol/br/3bNfNjJLqPED2mUk6BQQxzClGb50ZV2vpo0zajo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYxUKb4V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4A4EC4AF0E;
+	Thu,  1 Aug 2024 00:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722470878;
-	bh=IsegupDL6dNouhj9LI4K0JPI4QQWWwWlwU04wMc/SwI=;
+	s=k20201202; t=1722470883;
+	bh=w6PgALWiEZslFA5r/x2p08ONTo0/JO09gDNDQem/zbs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IRYFZy1hq3Z3+PX8qgT+MsS8OA/+Rxv4P/v6eqnDklPF9QlxvTVw0QxCzrF60YK+t
-	 ySR1ELEfYvaH39ogVK5IQdBjcFG+z9sefH6R5KwlG1JH4XYUXn67HpuYSN+vxGVn8W
-	 uAX/A0jAJkhjzp8cC/km6NDyVe3iG3db4GQt6IOEUH4ZyNXS/bqFJh0hSCOwYWZh0M
-	 l6KlEaCB3/4qJnnD6h7cRsQ48FvJcxnODhWrnwxpJWj6fgo5Br7lDc9KlElgVC4oGv
-	 zFLiG84rkDETV9+CFCjwCLxY7isa79gI/y9Nf+hADVfGhRT5TJWblFWc67BVMx+7gv
-	 eE4FT6aWXJmHQ==
+	b=AYxUKb4V1+mWLyMLbmg/lrmQ/MpwgoFzMkBm5upnFiq0uNUepCersNXThbHOs+Ej4
+	 vlt/uoEQ7BsgNjHg2m7bp+LWIoqeYyHeSFLzgioWidQeDHftOPwdv7rilxyAOS+WoO
+	 BGLdSDI7hLHpTiUtKzhWc+LxhbdrB1WEze5I2Vx7e0u518+fkzkgUwvnIa9MiTORkq
+	 o4iTRGGS69IqkRbQf+f7qsmMiSu3EDq3jLAcbTodaoS1v/AH00kGKq0CCJxtwr6+8X
+	 hJJXfsPN9BEBUDkmHG7lLcfbpSCl30d5gtzLttCAw1a8OZMyIXgUJEYM78Hcuy3oI1
+	 2xs7GpyVzkJqw==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -67,9 +67,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v3 12/25] rust: alloc: add `Box` to prelude
-Date: Thu,  1 Aug 2024 02:02:11 +0200
-Message-ID: <20240801000641.1882-13-dakr@kernel.org>
+Subject: [PATCH v3 13/25] rust: alloc: import kernel `Box` type in types.rs
+Date: Thu,  1 Aug 2024 02:02:12 +0200
+Message-ID: <20240801000641.1882-14-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240801000641.1882-1-dakr@kernel.org>
 References: <20240801000641.1882-1-dakr@kernel.org>
@@ -82,26 +82,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 Now that we removed `BoxExt` and the corresponding includes in
-prelude.rs, add the new kernel `Box` type instead.
+types.rs, add the new kernel `Box` type instead.
 
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/prelude.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ rust/kernel/types.rs | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index a8018ef2e691..6bf77577eae7 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -14,7 +14,7 @@
- #[doc(no_inline)]
- pub use core::pin::Pin;
+diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+index 2aadf715b336..809653b9d945 100644
+--- a/rust/kernel/types.rs
++++ b/rust/kernel/types.rs
+@@ -2,7 +2,7 @@
  
--pub use crate::alloc::{flags::*, vec_ext::VecExt, KBox, KVBox, VBox};
-+pub use crate::alloc::{flags::*, vec_ext::VecExt, Box, KBox, KVBox, VBox};
+ //! Kernel types.
  
- #[doc(no_inline)]
- pub use alloc::vec::Vec;
+-use crate::alloc::Allocator;
++use crate::alloc::{Allocator, Box};
+ use crate::init::{self, PinInit};
+ use core::{
+     cell::UnsafeCell,
+@@ -67,14 +67,14 @@ unsafe fn try_from_foreign(ptr: *const core::ffi::c_void) -> Option<Self> {
+     }
+ }
+ 
+-impl<T: 'static, A> ForeignOwnable for crate::alloc::Box<T, A>
++impl<T: 'static, A> ForeignOwnable for Box<T, A>
+ where
+     A: Allocator,
+ {
+     type Borrowed<'a> = &'a T;
+ 
+     fn into_foreign(self) -> *const core::ffi::c_void {
+-        crate::alloc::Box::into_raw(self) as _
++        Box::into_raw(self) as _
+     }
+ 
+     unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> &'a T {
+@@ -88,7 +88,7 @@ unsafe fn borrow<'a>(ptr: *const core::ffi::c_void) -> &'a T {
+     unsafe fn from_foreign(ptr: *const core::ffi::c_void) -> Self {
+         // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
+         // call to `Self::into_foreign`.
+-        unsafe { crate::alloc::Box::from_raw(ptr as _) }
++        unsafe { Box::from_raw(ptr as _) }
+     }
+ }
+ 
 -- 
 2.45.2
 
