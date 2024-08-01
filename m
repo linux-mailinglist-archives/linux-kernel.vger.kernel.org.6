@@ -1,111 +1,122 @@
-Return-Path: <linux-kernel+bounces-271127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD619449DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C0B9449E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EED921C21C35
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:58:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 460ED1C20CB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49496170A32;
-	Thu,  1 Aug 2024 10:58:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D291184539;
-	Thu,  1 Aug 2024 10:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C11187FFB;
+	Thu,  1 Aug 2024 10:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yHILWnvf"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A261184541
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509911; cv=none; b=IpvS0Fn0J6X1qXXMLCMr/pNSgoWwTHuZmiLnZX8bLFnbo6QKJY69gCk91peglS/0EgF9TcZJAmSouxVeA50myRMGJE65IfuPPYFSJBqr7Z1T8j1U5mPapjJ/Buuhot8/0C7I67S599SS4jNln1HNjTSM8s0bCFIb23e4wVT1W6E=
+	t=1722509983; cv=none; b=iW0MchANhKFoc6339j9H6j9rV6DSZ/8vknqrXLlKlepvkCZtn6vQgvTqzwDtYuf0LUrhLTMqj3NdQTrwGTtSHv941bnpD5HNcNYrtBxqx8yPPrM0V6EgS5X0z/pAKkDcTt2VQe656Eanwy5tp/HRZzxAJqGjsg078BBOlWEOY1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509911; c=relaxed/simple;
-	bh=JJYikZEL8AnvPrDlYn2U2M4TGX/ljPjOx2L/WwH4qj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ijcS0JwgQ9wh1h7QsP86+LF8KlqQZ8MbFCTU6RxukJJShTqDmSP9RlqpQlJs7VzF1A3mxzyKT0fhNcIx6etVYcFIpeaxoD4VgQ8at61YPcd19Nkvuim8OLK8NE+tOMboZawvkPJpXEiJ0d3qzzvU1q8R/zZCPEAu80kTYN1/rKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF97F15A1;
-	Thu,  1 Aug 2024 03:58:55 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31AD63F5A1;
-	Thu,  1 Aug 2024 03:58:29 -0700 (PDT)
-Date: Thu, 1 Aug 2024 11:58:19 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Etienne Carriere <etienne.carriere@foss.st.com>,
-	linux-kernel@vger.kernel.org,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] firmware: arm_scmi: fix voltage description in failure
- cases
-Message-ID: <ZqtqS9x65zs4qXdt@pluto>
-References: <20240725065317.3758165-1-etienne.carriere@foss.st.com>
- <ZqO9s9YzYjaCHSap@bogus>
+	s=arc-20240116; t=1722509983; c=relaxed/simple;
+	bh=YKPDhjykZWTiLQ4BdU5LEqOhz/OiBVwyn8GVVMK1hpk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rgVdaDcAuiYf6telrQXxR7nCC2XyADCik0rYhsQ7VuTw2cm6/qv3fcFRiqO/uNTCapfAfJBY++8XnIoUBilo0h8g5WiWBmVaiwT9RkSUKUO8496Fh/rveZ0xnc01NYZppa4cuqnqllhVbBE7uCns+0e38tlsl5QJzWypK4wJ4vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yHILWnvf; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-368f92df172so3330263f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:59:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722509980; x=1723114780; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=676OcPqCb4rfQJ1Nn7v/M7+nKgEgRlJqleLPojZqtAs=;
+        b=yHILWnvfPpHevXXyJGdH0hEH5TRKbqAPZ5Rvv5UX8SRb23VLlpKOhxXyOw5IxY7kUb
+         S8hGDIyJWeqBx6iKHJWQVGVtMmozmxeF+92TFM1u4KYNkvRdi5mruPbLw2NIRSes/Wsh
+         U79shsygdW0CH3NMeQXclyJFwR3N/SSZ5Tij2xPoy38atK+KQ94o5Q3CIQxErzo3Arx9
+         4ZWQ8pvbVGqpZMfm+syg2NHaULUH/xP4w7bUUWz1DCu4Gv2P1kf17sb/3QnGuRcBvLxN
+         GPbPE+QLk/BKv2jVaAZ4ZEH0a6uYbHLmR37utzmq3+LR1I9nGV88lq1SmtjzEijSTHw6
+         ImrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722509980; x=1723114780;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=676OcPqCb4rfQJ1Nn7v/M7+nKgEgRlJqleLPojZqtAs=;
+        b=giVUJ+nPPNIbATmz3lx/zSo/31p9MzaVGZMmIwIaGhlwRpDWOaIZMihFm8q7x0A4bX
+         75IHR29sMrkL60c3VNSY5WMHeCLHj7T4CeRQh8vH7xtSxFno3jrGer59QPvLChQk6Gyb
+         8wvvKvfuwb1UVCMTmJpbCcvXYuzsU4lh5diBX4Zrij0gJsNqM3OPOK7ncheJD019HVo1
+         ni9LRQMl92wjQTXYtdzHxdK7hPt5ZZSBkXBvjpw1nlkc8spP5ESt7XCiO3mNW9WAPVlB
+         KswAVaOH3M+nfRjaNekfMvm9eioLwqhW5J3pXkwkBvuukMY9eJJKXwdbFxYVLR5OEUdL
+         8B5A==
+X-Forwarded-Encrypted: i=1; AJvYcCXUtKwk5syxv3zYjNzPvLcUdl9xjLMNYRZYtTSFiJb0fY0SkvAPFoKL6/+aDKYTtgcXK1QiYVUCobC/D6nKzYcpJrP3uz6Q9QXaFo+6
+X-Gm-Message-State: AOJu0Yz5lVspjczr75g67aTRWYpbYMq63uDstKzawuJikANujJEzvwHU
+	7qDykSJm1m2QKw+i1+WIIGHKFHF2uYgghROFmesBMSzv7h8Lb3zLcHlmKNzEnEc=
+X-Google-Smtp-Source: AGHT+IEVV9QJo3MhOKRs8LhMPNaeGzvm9ODYgj/prSpydjCWDj8boJfit754xLQyeTPEPNCRqFp4jA==
+X-Received: by 2002:adf:fc01:0:b0:368:117c:84fd with SMTP id ffacd0b85a97d-36baacbd5a7mr1430870f8f.3.1722509979651;
+        Thu, 01 Aug 2024 03:59:39 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b3686194esm19069104f8f.90.2024.08.01.03.59.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 03:59:39 -0700 (PDT)
+Message-ID: <ff128062-5c1f-4abe-8582-543063d5e526@linaro.org>
+Date: Thu, 1 Aug 2024 11:59:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqO9s9YzYjaCHSap@bogus>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/13] media: qcom: camss: Add CSID Gen3 support for
+ SM8550
+To: Depeng Shao <quic_depengs@quicinc.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-10-quic_depengs@quicinc.com>
+ <1da50dd1-b170-4775-94fc-19a10b7f9c47@kernel.org>
+ <4c8095dd-4f96-4b0e-9282-8bdfb5badbc3@quicinc.com>
+ <9255b3e4-874c-4919-b50a-919cf0f42f75@kernel.org>
+ <3011c561-d39e-4ce5-a544-33f24ca7a67c@quicinc.com>
+ <bd6f3613-5a96-438a-a2df-cb2728e30c29@linaro.org>
+ <30d56910-df7b-4459-b557-effc21ffa132@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <30d56910-df7b-4459-b557-effc21ffa132@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jul 26, 2024 at 04:16:03PM +0100, Sudeep Holla wrote:
-> On Thu, Jul 25, 2024 at 08:53:17AM +0200, Etienne Carriere wrote:
-> > Reset the reception buffer max size when a voltage domain description
-> > request fails, for example when the voltage domain returns an access
-> > permission error (SCMI_ERR_ACCESS) unless what only a single 32bit
-> > word is read back for the remaining voltage description requests
-> > responses leading to invalid information. The side effect of this
-> > issue is that the voltage regulators registered from those remaining
-> > SCMI voltage domain were assigned a wrong regulator name.
-> > 
-> > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-> > ---
-> >  drivers/firmware/arm_scmi/voltage.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/voltage.c b/drivers/firmware/arm_scmi/voltage.c
-> > index 2175ffd6cef5..f1a7c04ae820 100644
-> > --- a/drivers/firmware/arm_scmi/voltage.c
-> > +++ b/drivers/firmware/arm_scmi/voltage.c
-> > @@ -229,8 +229,10 @@ static int scmi_voltage_descriptors_get(const struct scmi_protocol_handle *ph,
-> >  		/* Retrieve domain attributes at first ... */
-> >  		put_unaligned_le32(dom, td->tx.buf);
-> >  		/* Skip domain on comms error */
-> > -		if (ph->xops->do_xfer(ph, td))
-> > +		if (ph->xops->do_xfer(ph, td)) {
-> > +			ph->xops->reset_rx_to_maxsz(ph, td);
-> 
-> I am fine with this to keep it simple, but thought I will check my thoughts.
-> We usually use reset_rx_to_maxsz in iterators as we don't know the expected
-> size of the response, whereas here it must be max sizeof(*resp_dom).
-> 
-> That said, we don't have any helpers and changing xfer->rx.len directly
-> doesn't looks good ? Or may be it is OK ? Thoughts ?
+On 01/08/2024 02:53, Depeng Shao wrote:
+> but the issue is that the sm8550 can be probed once having patch set 1, 
+> but the sm8550_resources isn't complete in patch set 1.
 
-We do not access those xfer internal field explicitly from the protocol layer
-(beside once in Base)...and surely not on write....in the past I was even
-tempted to try to make these internal stuff untouchable by the protocol layer...
-...that's the reason of course for the existence of reset_rx_to_maxsz() helpers
-....not sure if it is worth adding another helper for this, given that the
-using the maxsz should have any adverse effect (unless I am missing
-something of course :P).
+Doesn't matter until you _upstream_ a dts that operates on it.
 
-This kind of 'issues' are really common whenever in the SCMI stack we
-reuse the same allocated xfer across multiple do_xfers in a loop
-(reusing seq_nums is another thing...) since we wanted to avoid the
-penalty of resetting some of these automatically on each do_xfer()...
+Its not a massive deal if you start at patch #1 and and patch #1+n and a 
+there are a few warnings in between as you add stuff in but, for 
+preference every single patch applies and builds warning free.
 
-....we could think of some mechanism to transparently reset/fill such xfer
-fields automatically if the core detects a 'reuse'....got to check first,
-though, if this does not break some of the current usage patterns...and
-I would not say it is a high prio thing to explore as of now...
+If you
 
-Thanks,
-Cristian
+- Add bindings
+- Do driver stuff
+- Then do dts stuff
+
+You don't need to worry about probe() doing mad things.
+
+---
+bod
 
