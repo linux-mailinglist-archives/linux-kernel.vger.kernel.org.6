@@ -1,133 +1,150 @@
-Return-Path: <linux-kernel+bounces-271178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75C2944A6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:32:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2984944A70
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346CEB22B6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:32:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 629D51F21603
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB71318C324;
-	Thu,  1 Aug 2024 11:32:06 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98CDD18E045;
+	Thu,  1 Aug 2024 11:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FA0O5HeL"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D52C67406D;
-	Thu,  1 Aug 2024 11:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DE4F16DC2F;
+	Thu,  1 Aug 2024 11:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511926; cv=none; b=K+Q+n7zvG5w0frsLLzlj+N8FumfkJFy7g410zgH8HAjbOYOjGR/68Mor+Q/AfY8QpTsvvErUqBptNjb5fY4uM29yUPo6qsM30MVLJ7nkhdRq0/23pncnkPFEVSibqFchfVYveJYjJSPOaXkigGOnxMFEDdaB/oLymUaz8APO8A0=
+	t=1722511926; cv=none; b=YRQD7K0upKN6uBVh4wBv6/eMsmVBq2g8GEXUS2s7NB4oYeY0BQl+4efUI6S06qJZfHN0jvS6aiLJYD3PaBzUB+DU/0RxXEnjKaBeiCdJ0rmxQL2+lJcScyudWXOiymOP71BDv1GFqu+3F8n9x161C31RDT0bQYaQew9ZkChSZ3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722511926; c=relaxed/simple;
-	bh=1tFBMpBuaz4D1xd4zx5KEXv274bi6VF574KwmepU3MM=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=VYHGsb6/UElC6hxSU5Y3lI7m1Eovte3BAbPrc10q/NwTNMn9TTPe5OJxtjD4gI/2ZmryP2UOdAjBmp9tY4HjN7VN6L1GrQil0HjGgyzyiECGKEFIozPDvZ3Q6qCzzWAayZ8e08hWJtNkTr2cFL63VDbmZRAFThGM7bDiMNsvBZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZRWR1yvNzyPKF;
-	Thu,  1 Aug 2024 19:26:59 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id B788014041B;
-	Thu,  1 Aug 2024 19:31:58 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 19:31:57 +0800
-Message-ID: <c99f9d0b-876b-478b-9acc-7961d442497c@huawei.com>
-Date: Thu, 1 Aug 2024 19:31:57 +0800
+	bh=VDgbkzSy6pdn7BBt+7W3T6jN6xudBS9RtTDaoEzS1yQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOqsrIuQk0Li1pjOtC0BAIj+ef5C9jRYP6L8TK4FF4T+MBth9K/wexirGlsEVtbgDYIdjJiWvQoxB16snhcaHMkHeZ0phzia4zRoeU8kmmWAxuX9IiHYma0nK48XfX8xP/AI5kybMpAY4OAz9/rg88ACOTEQOldkpcJeCVtg4Uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FA0O5HeL; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so3643538a12.0;
+        Thu, 01 Aug 2024 04:32:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722511924; x=1723116724; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gwgt/ZE+D10zyyktrtFq6cZQwEQSNzuYzBpK2SkBtZ8=;
+        b=FA0O5HeLnSNj93WM9KO+yIVYkkuAKygn88mb7gaUEydHvptLEsDotKypwcIVM1t9Cc
+         QRsP1nLdyoVq2Tqh/9+UI3Lq/x4VeDRyAYVzLr8vVq5f0XZcdr3RAb+avX2das7Eo0IT
+         7hgSMJQ53EMDhTjSVnwrt3Z4pEx4FluDLcwXZyBPcl76ZRrkdekwB436CjuKz3sLxqVE
+         GTNphgxKpKylmU94qHL2L9BjneKoeYCZR23lzaJNcNF2VxCoJLkqhicw8ocU+4r8Up3U
+         36ZmGRYaHoGvkB1MsaHWyA8cKQ+9UCcvxHZsSWkoHPxzbp3/fHc5rdKV+2d4AS1Te7Q4
+         lUWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722511924; x=1723116724;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gwgt/ZE+D10zyyktrtFq6cZQwEQSNzuYzBpK2SkBtZ8=;
+        b=HS/MenCtiQvCuloozj0Hl0YoMBQWOHrSMzqePgS4tMX4g1m7Q0VEnOo6OLT5YidU2k
+         B5F8bYy1XwAEhKtrxaOdaBb0RTwA0QSw59YYxosSGj//JeGRJ3A1B7+M/mF7CbiVhMk3
+         HrhgBKaQ2iHKK7jDN3aAwPdkN7Xz+hRWgKyzIWyg5hXB9sZ89KI6mM2JJwMb+iQltH4z
+         V/m1v3QMcPFeyF01pZ4vOlfMrP4NE6uytbmQhmWqzHKnUzd1Swl4Fr6Cby5sZHRxsxbk
+         N+MItCs876qXwR3+hL5kQ60LpERWp3ggmIj2Jr7/4A4pF3MOSjiZXD8IPtuaDsHQsq0E
+         adPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxYiA4fQdG3Y7DjVRf2Ikn66H0WgTX3wdD564KKdGsCk7GvclnCNfkWmoKJ/hR5DMVfyWMOZdREEUhiKoLFvNi967h9pqof+rkLMNUmEDLa4FzN06Qi6Nh9j6ADwdWyCCnkiZYBAFuvnI+LM9ME9FS
+X-Gm-Message-State: AOJu0YwhZn/Abw0x5srZZaEUXN01JmbQesTxU7Zm+PzrwNFjNjLbenl2
+	CtFKaNGHDj7/OKbCicBc5GWNdx/Enfot1EoZhNzOg6OcV47stSjb
+X-Google-Smtp-Source: AGHT+IGsA4jWSMwcA0vhxehDG6CkxNwbXoJAz1NwOzbIbMvlHmBQCYZwHqy2J3Kgg/H9/iu2yoo7rQ==
+X-Received: by 2002:a17:907:3fa9:b0:a7a:bcbc:f7f4 with SMTP id a640c23a62f3a-a7dbcbe50bdmr100814266b.14.1722511923294;
+        Thu, 01 Aug 2024 04:32:03 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad9d41esm883366766b.154.2024.08.01.04.32.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 04:32:03 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 1 Aug 2024 13:32:01 +0200
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org,
+	peterz@infradead.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
+ uprobe *
+Message-ID: <ZqtyMTyu3uneHZDJ@krava>
+References: <20240729134444.GA12293@redhat.com>
+ <20240729134535.GA12332@redhat.com>
+ <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>
-Subject: Re: [RFC PATCH net-next 04/10] net: hibmcge: Add interrupt supported
- in this module
-To: Joe Damato <jdamato@fastly.com>, <yisen.zhuang@huawei.com>,
-	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-5-shaojijie@huawei.com> <Zqo4mGq88BajjLk_@LQ3V64L9R2>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <Zqo4mGq88BajjLk_@LQ3V64L9R2>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
 
+On Wed, Jul 31, 2024 at 09:18:00AM -0700, Andrii Nakryiko wrote:
 
-on 2024/7/31 21:14, Joe Damato wrote:
->> +		dev_err(&priv->pdev->dev,
->> +			"failed to allocate MSI vectors, vectors = %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	if (ret != HBG_VECTOR_NUM) {
->> +		dev_err(&priv->pdev->dev,
->> +			"requested %u MSI, but allocated %d MSI\n",
->> +			HBG_VECTOR_NUM, ret);
->> +		ret = -EINVAL;
->> +		goto free_vectors;
->> +	}
->> +
->> +	vectors->irqs = devm_kcalloc(&priv->pdev->dev, HBG_VECTOR_NUM,
->> +				     sizeof(struct hbg_irq), GFP_KERNEL);
->> +	if (!vectors->irqs) {
->> +		ret = -ENOMEM;
->> +		goto free_vectors;
->> +	}
->> +
->> +	/* mdio irq not request */
->> +	vectors->irq_count = HBG_VECTOR_NUM - 1;
-> Here the comment says mdio is not requested? But it does seem like
-> the IRQ is allocated above, it's just unused?
+SNIP
 
-Yes, not request_irq only alloc
+> diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> index 5f152afdec2f..73a6b041bcce 100644
+> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
+> @@ -431,6 +431,7 @@ uprobe_ret_handler(struct uprobe_consumer *self,
+> unsigned long func,
+>  }
+> 
+>  struct testmod_uprobe {
+> +       struct uprobe *uprobe;
+>         struct path path;
+>         loff_t offset;
+>         struct uprobe_consumer consumer;
+> @@ -458,12 +459,14 @@ static int testmod_register_uprobe(loff_t offset)
+>         if (err)
+>                 goto out;
+> 
+> -       err = uprobe_register(d_real_inode(uprobe.path.dentry),
+> -                             offset, 0, &uprobe.consumer);
+> -       if (err)
+> +       uprobe.uprobe = uprobe_register(d_real_inode(uprobe.path.dentry),
+> +                                       offset, 0, &uprobe.consumer);
+> +       if (IS_ERR(uprobe.uprobe)) {
+>                 path_put(&uprobe.path);
+> -       else
+> +               uprobe.uprobe = NULL;
+> +       } else {
+>                 uprobe.offset = offset;
+> +       }
+> 
+>  out:
+>         mutex_unlock(&testmod_uprobe_mutex);
+> @@ -474,10 +477,10 @@ static void testmod_unregister_uprobe(void)
+>  {
+>         mutex_lock(&testmod_uprobe_mutex);
+> 
+> -       if (uprobe.offset) {
+> -               uprobe_unregister(d_real_inode(uprobe.path.dentry),
+> -                                 uprobe.offset, &uprobe.consumer);
+> +       if (uprobe.uprobe) {
+> +               uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
+>                 uprobe.offset = 0;
+> +               uprobe.uprobe = NULL;
 
->
-> Maybe above you should remove mdio completely if its not in use?
->
-> Or is it used later in some other patch or something?
+ugh, I think we leak &uprobe.path.. I can send follow up fix if needed
 
-MDIO is required because the PHY is used.
+jirka
 
-However, the mdio interrupt provided by the hardware is not used.
-
-
-If only 3 interrupts are alloc, an error is reported
-when the driver is loaded and unloaded again,
-
-log:
-     insmod hibmcge.ko
-     Generic PHY mii-0000:83:00.1:02: attached PHY driver (mii_bus:phy_addr=mii-0000:83:00.1:02, irq=POLL)
-     hibmcge 0000:83:00.1 enp131s0f1: renamed from eth0
-     IPv6: ADDRCONF(NETDEV_CHANGE): enp131s0f1: link becomes ready
-     hibmcge 0000:83:00.1: link up!
-
-     rmmod hibmcge.ko
-     insmod hibmcge.ko
-     hibmcge 0000:83:00.1: failed to allocate MSI vectors, vectors = -28
-     hibmcge: probe of 0000:83:00.1 failed with error -28
-
->
->> +	for (i = 0; i < vectors->irq_count; i++) {
-
-Therefore, only three interrupts are requested by request_irq
-because "vectors->irq_count = HBG_VECTOR_NUM - 1"
-
-
-Thanks,
-
-Jijie Shao
-
+>         }
+> 
+>         mutex_unlock(&testmod_uprobe_mutex);
+> 
+> 
+> [...]
 
