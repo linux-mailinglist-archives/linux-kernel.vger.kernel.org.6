@@ -1,139 +1,177 @@
-Return-Path: <linux-kernel+bounces-271398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F15944DA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:07:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3612944DAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73F241C23038
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:07:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1255BB23805
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6851A4875;
-	Thu,  1 Aug 2024 14:07:39 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19A516DECD
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E2961FF2;
+	Thu,  1 Aug 2024 14:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Bx9fEMFZ"
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4610B1A487E
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:07:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722521259; cv=none; b=emM1TBTm2XeCBThLR7uvOS5r/JtqeTcbYpP8XxI6qu25AVBLmkK9Tj6L3Pmpecvnjq2EvN0WQp4MZJTN1ICqzjNXnqD1N/RRdHeNbEe/WEej9oWCHFVpPwsxS7Qh1Wgtli6YnavgpwQtddLntbESncL8iaPDznsKNA7JibXW3NA=
+	t=1722521263; cv=none; b=ZJ9hJT3E6vqEo1w5HbkShLhY/j8u6MMo59e9UzrB1RvnZ27VT0dZvQlxB5HqgDiunoUmImu8stMA3J1c5q9x+fE2qFJOVTy2ECebFn7IhqsmgHLcKXreuK5P1caHWSfnbWkOTjupXgzDC8qJLX6ZVqCTi2wSIAdb9lP50y+if+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722521259; c=relaxed/simple;
-	bh=51a62OkD3auz+ui0Ndei3bZFmYLN0yT07KuYiU9gbMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lp7CU21Kn/UJhz747QPABLxm2ZHbeGFgFbhpiISj4Endwi1+XFJhudNZFbcZEwVxFy5WMd5450oA49jM9ZazmnP+VC73FtpkJDpdfgm+m31PZmJGfLg+CBMfDMRNhWd9b3wC1YCN75Mh0KHH1W4/wUG+Ca6HhFrrY8n76F2CG5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82DEB15A1;
-	Thu,  1 Aug 2024 07:07:59 -0700 (PDT)
-Received: from [10.1.28.152] (XHFQ2J9959.cambridge.arm.com [10.1.28.152])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18E2E3F766;
-	Thu,  1 Aug 2024 07:07:32 -0700 (PDT)
-Message-ID: <b0a34ffa-5a5e-4048-8b44-ff2c9510ec9a@arm.com>
-Date: Thu, 1 Aug 2024 15:07:31 +0100
+	s=arc-20240116; t=1722521263; c=relaxed/simple;
+	bh=XNHhHRpvgY/MqyKnsrIUaLqoMu3SwbPwhO/IWu1UhSo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fz9cw9DQZDNJ9u/+/Iyd0Zj7SE09w/aPvqDlHkRMzLUCLL7z26SOZdAmfjAnS8yio5O1zJszzEmUfuRfePY3QOEItzVa9HgaxK8rijg/BTTSHW5nVD8OBw1a8Mm7h9t64a6PHviKJXmdL9BvG2RFvUZ0g2F7W3wcpR5/n4T3jO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Bx9fEMFZ; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6518f8bc182so16928427b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1722521261; x=1723126061; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ySdl7cV1sMC+f6fyOoZuuvhfWYrH1jWG25mq2cl1h0I=;
+        b=Bx9fEMFZVW1OnU4y4jE25+U5/FeDQnjwcHJ+OULK4lqR5SjGULm9nbCPt1l+Gph/4N
+         d3oGggtqkxU1Q6NaEay/PFHuPeNOLivrTgPzltYfO09FWun/Fv5FjJ8ULomfZ9sKTgqX
+         Y57GMItELHJSPtzUIFVS4NKPB10iRDpuIK1cjYc+OK1gT6oA3tuhg3KKfdDwSUp89iGs
+         xKEO625UFp6u2xWvT6t9m4M6FnbeuoEhHXYzXyysoTLL6ATIL0HYli6PdGqtAV8CzVKk
+         JFN7z/GKN87IiVd81FUFQLf0NKzHL85+ZQEMhZD4GauotYss1qhLaUeiMKQ9+lL0v5Cm
+         Tbmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722521261; x=1723126061;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ySdl7cV1sMC+f6fyOoZuuvhfWYrH1jWG25mq2cl1h0I=;
+        b=BqVaGKAd39zIpNOnQCvC5f0K8+kDSaTjm4n2AGudnFjk7iJ5k2LslcWnoB5pt+neXl
+         6bYpDSYIVk8WzWsVZQ7c4QUaQR9CrcFGapcFV8lpxur40H2mlqNNskVU/WA/TUdvEwP5
+         NyVaitp6B62y/kE37+JUYAgsDBS5Aj+iYgJEwVj0tQ3lznnCPz2JH1SOA1lF9iAEGt8I
+         CH/m2tzIZbaxhRu2ggHIQbk91qk4PdkGNTejUTTWnH3jj260Cz/8rXqovMrA7M+oW05n
+         cuHRw+5e59rfNQc3+QrdI7ygGtZ+q8EA5X5jFKCnV/vq+yGkQnqhlc/Ks6xUpZyMnjme
+         ahWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOwtGZ8GmGnumsNFsBeMNQxkZg9vg0G3i9/5d+RWAVOVXIhvG4IAtoyip0oqm53gb22I4AscZmgrFCVGA7lVDlnuYBgN1qRT7pXSO1
+X-Gm-Message-State: AOJu0YyLAIsV0D2K6OYdJ+c1lGZNDp/LSvERf99keGFmjNcckjJ5dZ/p
+	t/g1acZWkbsVXU3PsIeGvl+uILmMgmO7tX1LMKU8P5xqD9F32YAQEzSltmrRccQ=
+X-Google-Smtp-Source: AGHT+IFqO6la4nVOpFgnsMqcwdnRljSzCYeEa1I3zo/c1Q5/y+I5cm5d7JvT7/VkK7ye+J990oMgpQ==
+X-Received: by 2002:a0d:c383:0:b0:64b:16ed:7c86 with SMTP id 00721157ae682-6895f12132cmr1193407b3.4.1722521260890;
+        Thu, 01 Aug 2024 07:07:40 -0700 (PDT)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bab3d6csm33405877b3.110.2024.08.01.07.07.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 07:07:40 -0700 (PDT)
+Date: Thu, 1 Aug 2024 10:07:39 -0400
+From: Josef Bacik <josef@toxicpanda.com>
+To: Wojciech =?utf-8?Q?G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	ebiederm@xmission.com, kees@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kernel/fs: last check for exec credentials on NOEXEC
+ mount
+Message-ID: <20240801140739.GA4186762@perftesting>
+References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Avoid direct referencing page table enties in
- map_range()
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org,
- Catalin Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org
-References: <20240725091052.314750-1-anshuman.khandual@arm.com>
- <3e82687a-0183-42f3-b32c-6d99dbd4fe49@arm.com>
- <20240801113440.GB4476@willie-the-truck>
- <c65c0bcc-149e-4f30-9bab-e5377230d2cd@arm.com>
- <20240801132326.GA4794@willie-the-truck>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20240801132326.GA4794@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
 
-On 01/08/2024 14:23, Will Deacon wrote:
-> On Thu, Aug 01, 2024 at 01:48:17PM +0100, Ryan Roberts wrote:
->> On 01/08/2024 12:34, Will Deacon wrote:
->>> On Thu, Jul 25, 2024 at 11:36:56AM +0100, Ryan Roberts wrote:
->>>> On 25/07/2024 10:10, Anshuman Khandual wrote:
->>>>> Like else where in arm64 platform, use WRITE_ONCE() in map_range() while
->>>>> creating page table entries. This avoids referencing page table entries
->>>>> directly.
->>>>
->>>> I could be wrong, but I don't think this code is ever operating on live
->>>> pgtables? So there is never a potential to race with the HW walker and therefore
->>>> no need to guarrantee copy atomicity? As long as the correct barriers are placed
->>>> at the point where you load the pgdir into the TTBRx there should be no problem?
->>>>
->>>> If my assertion is correct, I don't think there is any need for this change.
->>>
->>> Agreed.
->>
->> I think I need to row back on this. It looks like map_range() does act on live
->> pgtables; see map_kernel() where twopass == true. init_pg_dir is populated then
->> installed in TTBR1, then permissions are modified with 3 [un]map_segment()
->> calls, which call through to map_range().
+On Thu, Aug 01, 2024 at 02:07:45PM +0200, Wojciech Gładysz wrote:
+> Test case: thread mounts NOEXEC fuse to a file being executed.
+> WARN_ON_ONCE is triggered yielding panic for some config.
+> Add a check to security_bprm_creds_for_exec(bprm).
 > 
-> I think the permission part is fine, but I hadn't spotted that
-> unmap_segment() uses map_range() to zap the ptes mapping the text. That
-> *does* need single-copy atomicity, so should probably use
-> __set_pte_nosync().
 
-Yes, nice.
+Need more detail here, a script or something to describe the series of events
+that gets us here, I can't quite figure out how to do this.
 
+> Stack trace:
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 2736 at fs/exec.c:933 do_open_execat+0x311/0x710 fs/exec.c:932
+> Modules linked in:
+> CPU: 0 PID: 2736 Comm: syz-executor384 Not tainted 5.10.0-syzkaller #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:do_open_execat+0x311/0x710 fs/exec.c:932
+> Code: 89 de e8 02 b1 a1 ff 31 ff 89 de e8 f9 b0 a1 ff 45 84 ff 75 2e 45 85 ed 0f 8f ed 03 00 00 e8 56 ae a1 ff eb bd e8 4f ae a1 ff <0f> 0b 48 c7 c3 f3 ff ff ff 4c 89 f7 e8 9e cb fe ff 49 89 de e9 2d
+> RSP: 0018:ffffc90008e07c20 EFLAGS: 00010293
+> RAX: ffffffff82131ac6 RBX: 0000000000000004 RCX: ffff88801a6611c0
+> RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
+> RBP: ffffc90008e07cf0 R08: ffffffff8213173f R09: ffffc90008e07aa0
+> R10: 0000000000000000 R11: dffffc0000000001 R12: ffff8880115810e0
+> R13: dffffc0000000000 R14: ffff88801122c040 R15: ffffc90008e07c60
+> FS:  00007f9e283ce6c0(0000) GS:ffff888058a00000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f9e2848600a CR3: 00000000139de000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  bprm_execve+0x60b/0x1c40 fs/exec.c:1939
+>  do_execveat_common+0x5a6/0x770 fs/exec.c:2077
+>  do_execve fs/exec.c:2147 [inline]
+>  __do_sys_execve fs/exec.c:2223 [inline]
+>  __se_sys_execve fs/exec.c:2218 [inline]
+>  __x64_sys_execve+0x92/0xb0 fs/exec.c:2218
+>  do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
+>  entry_SYSCALL_64_after_hwframe+0x61/0xcb
+> RIP: 0033:0x7f9e2842f299
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f9e283ce218 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
+> RAX: ffffffffffffffda RBX: 00007f9e284bd3f8 RCX: 00007f9e2842f299
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000400
+> RBP: 00007f9e284bd3f0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9e2848a134
+> R13: 0030656c69662f2e R14: 00007ffc819a23d0 R15: 00007f9e28488130
 > 
->> So on that basis, I think the WRITE_ONCE() calls are warranted. And to be
->> consistent, I'd additionally recommend adding a READ_ONCE() around the:
->>
->> if (pte_none(*tbl)) {
+> Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
+> ---
+>  fs/exec.c | 42 +++++++++++++++++++-----------------------
+>  1 file changed, 19 insertions(+), 23 deletions(-)
 > 
-> Why? I don't think we need that.
+> diff --git a/fs/exec.c b/fs/exec.c
+> index a126e3d1cacb..0cc6a7d033a1 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -953,8 +953,6 @@ EXPORT_SYMBOL(transfer_args_to_stack);
+>   */
+>  static struct file *do_open_execat(int fd, struct filename *name, int flags)
+>  {
+> -	struct file *file;
+> -	int err;
+>  	struct open_flags open_exec_flags = {
+>  		.open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
+>  		.acc_mode = MAY_EXEC,
+> @@ -969,26 +967,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+>  	if (flags & AT_EMPTY_PATH)
+>  		open_exec_flags.lookup_flags |= LOOKUP_EMPTY;
+>  
+> -	file = do_filp_open(fd, name, &open_exec_flags);
+> -	if (IS_ERR(file))
+> -		goto out;
+> -
+> -	/*
+> -	 * may_open() has already checked for this, so it should be
+> -	 * impossible to trip now. But we need to be extra cautious
+> -	 * and check again at the very end too.
+> -	 */
+> -	err = -EACCES;
+> -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
+> -			 path_noexec(&file->f_path)))
+> -		goto exit;
+> -
 
-I Agree its not technically required. I was suggesting it just for consistency with the other change. So perhaps __ptep_get()?
+This still needs to be left here to catch any bad actors in the future.  Thanks,
 
-
-diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-index 5410b2cac5907..3f6c5717ff782 100644
---- a/arch/arm64/kernel/pi/map_range.c
-+++ b/arch/arm64/kernel/pi/map_range.c
-@@ -55,13 +55,14 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
-                         * This chunk needs a finer grained mapping. Create a
-                         * table mapping if necessary and recurse.
-                         */
--                       if (pte_none(*tbl)) {
--                               *tbl = __pte(__phys_to_pte_val(*pte) |
--                                            PMD_TYPE_TABLE | PMD_TABLE_UXN);
-+                       if (pte_none(__ptep_get(tbl))) {
-+                               __set_pte_nosync(tbl,
-+                                            __pte(__phys_to_pte_val(*pte) |
-+                                            PMD_TYPE_TABLE | PMD_TABLE_UXN));
-                                *pte += PTRS_PER_PTE * sizeof(pte_t);
-                        }
-                        map_range(pte, start, next, pa, prot, level + 1,
--                                 (pte_t *)(__pte_to_phys(*tbl) + va_offset),
-+                                 (pte_t *)(__pte_to_phys(__ptep_get(tbl)) + va_offset),
-                                  may_use_cont, va_offset);
-                } else {
-                        /*
-@@ -79,7 +80,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
-                                protval &= ~PTE_CONT;
- 
-                        /* Put down a block or page mapping */
--                       *tbl = __pte(__phys_to_pte_val(pa) | protval);
-+                       __set_pte_nosync(tbl, __pte(__phys_to_pte_val(pa) | protval));
-                }
-                pa += next - start;
-                start = next;
-
-
-> 
-> Will
-
+Josef
 
