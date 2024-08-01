@@ -1,101 +1,148 @@
-Return-Path: <linux-kernel+bounces-270442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1343943FDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:54:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DD92943FE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EA2C1C22B9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:54:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F2061C22BD3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725AA143733;
-	Thu,  1 Aug 2024 01:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1184146D7E;
+	Thu,  1 Aug 2024 01:10:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSpq9c+7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="0HxnOME3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B1B13DDC6;
-	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B60B13DDC6;
+	Thu,  1 Aug 2024 01:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722474637; cv=none; b=sInsHPsFtAl/qAxQ2VHsLxXc/9NKH9Q1gHvZ/7KVlptGF5Fn7DS8m5Qmj3NWJqwj7bytwHUQ8spk3ORjHs9K525ksJRvO4t6MgH7AbpTMHuQXDfpqxssOIEPmqOaUOu2fGysttVRSOrTWnmJ9BlP7sIo8DIWjvAPXsRpqfHTxu0=
+	t=1722474654; cv=none; b=hUZKN4bNQf9/epYzdrT5OZlBbL0WF8VkbnW6jjDUCr1hDFi+9aZ0ArZ/9LtlVJm/fykf2bvghzOpWodB8de8KEl1+D7oa9p3dIzWtv+i9wxcEOZhOZtRokdSw/Fz5KAQQuqWqFDV6FMdJyfvj5MYpJoIKNEy0VYTq9Xq5pq35+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722474637; c=relaxed/simple;
-	bh=iJtqiAXqX0LwxAhBTKTJEZ3kteVZpRMr4hNaCqlp3Z0=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PKazESFVwcPWXJAzza418/Mw1dcoVlk1yhPrvOCsWIpYb73yeCutbCdnK/s2K6MTskEzrpFktajGqhNvHeAZAdUWY8P2UkKabpnVHZJcMaSCWktN1/O1pAD/JSOvYuLH2tIKc2YsfYwLUXlIgQ3wDmoUAtYAcx1SH+JvxhRjOmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSpq9c+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 44D88C4AF0C;
-	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722474637;
-	bh=iJtqiAXqX0LwxAhBTKTJEZ3kteVZpRMr4hNaCqlp3Z0=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hSpq9c+7ucTqqSamea53A4yOmCM0BtaeXgsKY7gCYPqzUCBIJ9xLMyUO+15GxxKf1
-	 2D2Ovvzj5jTWMTuVqRZqjOsTnFjhnSAxE38s2mHeYjDsvVWBhKSLiWs0LvaAPo1//w
-	 G9XWDUDl8aCqLMmKpJEbZymEEtBsk0gLMPvshv5OUhNYE08UEwIvrZZbP6TQOhUKtS
-	 UlToWm1qXqQF6vCapVJp51OlMFndXIXwxDcgZ2m+7nXXKeFzO3LZiV0hnlCN5LjN1W
-	 uzP7m3usl/fnk3CvIzbj8DBd5BESdeXW8ymDR5mVGVKM90kAyoKW6zk2r/PlQwACX5
-	 q8eqW9dwoPqjQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 2E43AC6E396;
-	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1722474654; c=relaxed/simple;
+	bh=CAJJgmIakQYNVPki7gaEEI+Ck1Xo4hCVjFbvhPu982g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cnXxVG7G+aJFA8btq1Lt1GeZX1bxhqnlwmSLBjz3X8e7u45XfLSahH1U/qCtv9PsOtTzf7tBLj/2K6VIFoHM8E8OYTO6E2oKesA6L9mrFyVd7ZfLsNu8kZsTiBelb42zdtl6X/5GToDmQetOMc0zUrIImk0LNUzUhnqRUX7cg2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=0HxnOME3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=x0erb+7biLuDSDsPYnc54prG9SaFPCLd+R+sOW39uF4=; b=0HxnOME3H0a8NEJQDPxWX69CwY
+	LX8ddzg2HW46JS2Txy4WCPoDOdTtJeRKa3X3HLd2gh/ZGgM6BxiE4p5iXheU1gt7jIkFJ1EKbKjyr
+	cZBMLr/h3r5KQykz0eHFxm0CLkHrhOROeh3W03gy/Idga6GM/QuF2kqJWwmz8M+TnFb4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZKL3-003j3k-KF; Thu, 01 Aug 2024 03:10:41 +0200
+Date: Thu, 1 Aug 2024 03:10:41 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next 08/10] net: hibmcge: Implement workqueue and
+ some ethtool_ops functions
+Message-ID: <b20b5d68-2dab-403c-b37b-084218e001bc@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-9-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v1] net: wan: fsl_qmc_hdlc: Convert carrier_lock spinlock
- to a mutex
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172247463718.20901.3118468784661815872.git-patchwork-notify@kernel.org>
-Date: Thu, 01 Aug 2024 01:10:37 +0000
-References: <20240730063104.179553-1-herve.codina@bootlin.com>
-In-Reply-To: <20240730063104.179553-1-herve.codina@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andriy.shevchenko@linux.intel.com,
- christophe.leroy@csgroup.eu, netdev@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731094245.1967834-9-shaojijie@huawei.com>
 
-Hello:
+> +static void hbg_ethtool_get_drvinfo(struct net_device *netdev,
+> +				    struct ethtool_drvinfo *drvinfo)
+> +{
+> +	strscpy(drvinfo->version, HBG_MOD_VERSION, sizeof(drvinfo->version));
+> +	drvinfo->version[sizeof(drvinfo->version) - 1] = '\0';
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+A version is pointless, it tells you nothing useful. If you don't
+touch version, the core will fill it with the uname, so you know
+exactly what kernel this is, which is useful.
 
-On Tue, 30 Jul 2024 08:31:04 +0200 you wrote:
-> The carrier_lock spinlock protects the carrier detection. While it is
-> hold, framer_get_status() is called witch in turn takes a mutex.
-> This is not correct and can lead to a deadlock.
-> 
-> A run with PROVE_LOCKING enabled detected the issue:
->   [ BUG: Invalid wait context ]
->   ...
->   c204ddbc (&framer->mutex){+.+.}-{3:3}, at: framer_get_status+0x40/0x78
->   other info that might help us debug this:
->   context-{4:4}
->   2 locks held by ifconfig/146:
->   #0: c0926a38 (rtnl_mutex){+.+.}-{3:3}, at: devinet_ioctl+0x12c/0x664
->   #1: c2006a40 (&qmc_hdlc->carrier_lock){....}-{2:2}, at: qmc_hdlc_framer_set_carrier+0x30/0x98
-> 
-> [...]
+> +static u32 hbg_ethtool_get_link(struct net_device *netdev)
+> +{
+> +	struct hbg_priv *priv = netdev_priv(netdev);
+> +
+> +	return priv->mac.link_status;
+> +}
+> +
+> +static int hbg_ethtool_get_ksettings(struct net_device *netdev,
+> +				     struct ethtool_link_ksettings *ksettings)
+> +{
+> +	struct hbg_priv *priv = netdev_priv(netdev);
+> +
+> +	phy_ethtool_ksettings_get(priv->mac.phydev, ksettings);
 
-Here is the summary with links:
-  - [net,v1] net: wan: fsl_qmc_hdlc: Convert carrier_lock spinlock to a mutex
-    https://git.kernel.org/netdev/net/c/c4d6a347ba7b
+You can avoid this wrapper since phy_attach_direct sets netdev->phydev
+to phydev. You can then call phy_ethtool_get_link_ksettings() etc.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> +static int hbg_ethtool_set_ksettings(struct net_device *netdev,
+> +				     const struct ethtool_link_ksettings *cmd)
+> +{
+> +	struct hbg_priv *priv = netdev_priv(netdev);
+> +
+> +	if (cmd->base.speed == SPEED_1000 && cmd->base.duplex == DUPLEX_HALF)
+> +		return -EINVAL;
 
+So long as you have told phylib about not supporting 1000Base/Half,
+phy_ethtool_set_link_ksettings() will return an error for you.
 
+> +static const struct ethtool_ops hbg_ethtool_ops = {
+> +	.get_drvinfo		= hbg_ethtool_get_drvinfo,
+> +	.get_link		= hbg_ethtool_get_link,
+
+Why not ethtool_op_get_link() ?
+
+> +	.get_link_ksettings	= hbg_ethtool_get_ksettings,
+> +	.set_link_ksettings	= hbg_ethtool_set_ksettings,
+> +};
+> +static void hbg_update_link_status(struct hbg_priv *priv)
+> +{
+> +	u32 link;
+> +
+> +	link = hbg_get_link_status(priv);
+> +	if (link == priv->mac.link_status)
+> +		return;
+> +
+> +	priv->mac.link_status = link;
+> +	if (link == HBG_LINK_DOWN) {
+> +		netif_carrier_off(priv->netdev);
+> +		netif_tx_stop_all_queues(priv->netdev);
+> +		dev_info(&priv->pdev->dev, "link down!");
+> +	} else {
+> +		netif_tx_wake_all_queues(priv->netdev);
+> +		netif_carrier_on(priv->netdev);
+> +		dev_info(&priv->pdev->dev, "link up!");
+> +	}
+> +}
+
+Why do you need this? phylib will poll the PHY once per second and
+call the adjust_link callback whenever the link changes state.
+
+> @@ -177,12 +226,17 @@ static int hbg_init(struct net_device *netdev)
+>  	ret = hbg_irq_init(priv);
+>  	if (ret)
+>  		return ret;
+> -
+>  	ret = devm_add_action_or_reset(&priv->pdev->dev, hbg_irq_uninit, priv);
+
+This white space change does not belong here.
+
+     Andrew
 
