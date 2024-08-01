@@ -1,112 +1,122 @@
-Return-Path: <linux-kernel+bounces-270955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D7E9447AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:14:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 224299446A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A398C1C23245
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B192EB23404
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F060189536;
-	Thu,  1 Aug 2024 09:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9868616E88C;
+	Thu,  1 Aug 2024 08:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZPkOyuJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="owbB2t/g"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C82187FF1;
-	Thu,  1 Aug 2024 09:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABCE1396
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:31:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503523; cv=none; b=edqbMKvXbp637py7ehqO4XWRtNZ+YkbNgLAAeej/SwIjkVfI0pvN516zIEqfiWyxEuwp4iWU10lytRePmj3lf4MWOduUdTGF3+/emJQiIfqP+gzVqi6IJb50W1hrGHlRBSLN8uxmyqOAflMuNoL41IjD6QOJBQ7Ey2WXXphov9A=
+	t=1722501083; cv=none; b=Ej+e5qi6SzGXsmh1NYl19fpY9rnVZLTBYqARA8O6WrvW8JkjZwnwB1o5MoLrrJeQ7BwwtgSAPj7dzyA6izZbMwUT8lM0eg5Qu7fRsRoudhUecj6nRx05v30lw9ZocE+7/9QLJBOeosi+d8XPqEdKZIYsPlr5kP2n6xpZakTKqe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503523; c=relaxed/simple;
-	bh=5toF+PsLMmG3nsBrKM94Rd7v4kxGJrsS2p+u19WypBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ISsOXyaaJpjTHqaPanfvBVbpmQlsLfQQiN+SyDMmWD/nFt2eMQCx2GnDlifPGUk8iZl5oku2DYp6DoBb19If5b9qDZ01KTFAUY1is70jkXKgWv0x985Cwwt1D/9q5NTcbFKMup6hgGxLX1U5i8r4Qeg0gNp3Jz6b5EYFTA9IqUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZPkOyuJ; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722503523; x=1754039523;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=5toF+PsLMmG3nsBrKM94Rd7v4kxGJrsS2p+u19WypBE=;
-  b=OZPkOyuJCejcT0W3AQXp+JOCUHDmmLzp9KZj834wl3tEWuroa3KuyNu6
-   5rFB4EF1dW+2MRLulXkvMetBv5Gx/ZLaApe2Zf/htL2gQ28hxexKjSyUR
-   ijJ0rrQi4czDNh/KaMonqVGahtdcTyR3cm7EnA67InH/iidgMjrrzqvFW
-   Jb8RC4bd1ccQqxD+1wkX+w7FBCKRWa0kncPTvBx/lxC/XjsLSLv/Wnyz8
-   bDh2CdftJOoqj5/hwL9JsPwVlLshIzXAkdNPL2H0/SHgmGVhyyeBfKstf
-   kcAyvsvZbu0HyorW9QMvU2KWdyhrNN7D0at9Ych/GY0sa2TjZtFv4PXPK
-   w==;
-X-CSE-ConnectionGUID: whdhqU3bScGMxtSG9Gn/Bg==
-X-CSE-MsgGUID: tDz3r9zxRUWs7S4lFeXj2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383532"
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="20383532"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:36 -0700
-X-CSE-ConnectionGUID: wcqSdmgMTj+f0XjaXEriKA==
-X-CSE-MsgGUID: qPY3CEHgSiuP5J8I3USl0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="59089896"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:29 -0700
-Message-ID: <33f0e72e-aff8-4733-bf71-dd592a99de97@linux.intel.com>
-Date: Thu, 1 Aug 2024 10:30:39 +0200
+	s=arc-20240116; t=1722501083; c=relaxed/simple;
+	bh=j35qK7hgEdLDisIrenEFMd9EiCzNO2JfnVmaHQ9kMZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WyIu4ksimnJLQaqCScldhDamCSKbiDhB0Cmw5gS0BYHMxDAjkfderwHDoNX5KiQ5P/DFjaFjx0NlqckXdWuDC0+H98MOWxYe5vEcpeJWsx4g10dcs7wleIcMZjfjOHuqCWYf1eoStp6rtiaBAoIszK2uk7CR3QSLFz4143/sSM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=owbB2t/g; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc6a017abdso44281895ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:31:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722501082; x=1723105882; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T6DIqP6SgLThiqKeTL1B0jqC1r/AlJW+EfZyuiDXv98=;
+        b=owbB2t/glVjqOjT80UWdn7BCkEPQhsD4j+QhoASp+8XZ4JQsPwTDBXgq1H1Tj8gHN0
+         i1F1KQL/9qbEwuRT6kKbpLORO5YstPxaDszLSDvtEW93fL5idhq7dLwGHdf3AtOaL5G4
+         NwAR5XeZe+7srAcbTKr+PKd5AIBT4FvZWx/jKnxu3JyVlSvM6zyDNQfS7uIjBcMX5NGN
+         lZ2Oqkcq5+t+XEBI8Fz8sJRY5+AazQvBMZzrYj8nHUa6mfX+TCZ3ABANG8v2gbNgC1th
+         lsXM5mqdJG6LmhvhVu1RernN7e0bseS9SC9Yyb1ftAkYX226V/ZQnXG8eKmRluOgCbfy
+         zAuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722501082; x=1723105882;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T6DIqP6SgLThiqKeTL1B0jqC1r/AlJW+EfZyuiDXv98=;
+        b=gbTsWpnuoLMfvrjm8XP0FkhqkmHCWEZG8jZAIwPYcT/KCPMGjadsQdhtuxLLatmyje
+         02w/mmKj3KZ4RGt7Vxz8eFSsiFDtxKG560FmQmdoMuM9gIXZE4cqj+cEqCTF8wURI5tN
+         mXGzal72iA0LrnhQOSp3BNOtX7+iLtAzjJEev3R0A+Km/Qq+0Kq3vh/nqmBrOp2C4QhG
+         GZJ+zhcSzHdzwGIQ804p6i3lhmBbjB/ZJ29cCe5GmJAr9H1BU/JwEVd5szeJWLkD1cNM
+         Tki3rp3BbkW2PVu9DF1ItbqVOWNbY8dODm1MC2/86k9VpkN9YDckPlK3rxDH2pNrZfze
+         cJUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAzHoD8B0HRHuzjVznVxuxH5XZDF47fmtpaeqzOs2vfpd50Yj63ulhc2siC51nBmbVv6FYO0iO2za2zim+w0LkduoMadxd4+jE7n26
+X-Gm-Message-State: AOJu0Yx4khA6eC7QozPApSekQJyaUZ4kcLYnD9tD9nzs/UqcZpaaZOAr
+	Ewo9xvuohnMOnVLsrhwdXk84gCE0PfSxJUwPvrbQXFfncyP7j5Szp6+l8t6rdu0=
+X-Google-Smtp-Source: AGHT+IEFbcz8UfvSIGynalkuH6rlmXwWqz3KVvNjKxzROzhzmV0ozLRqPOZ3mGMQ5a9sLQ4urpd9tw==
+X-Received: by 2002:a17:902:da8f:b0:1fd:6b87:2147 with SMTP id d9443c01a7336-1ff4ce57f02mr20721685ad.6.1722501081886;
+        Thu, 01 Aug 2024 01:31:21 -0700 (PDT)
+Received: from localhost ([122.172.84.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee1482sm133790605ad.155.2024.08.01.01.31.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 01:31:21 -0700 (PDT)
+Date: Thu, 1 Aug 2024 14:01:19 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Danilo Krummrich <dakr@redhat.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, linux-pm@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+	rust-for-linux@vger.kernel.org,
+	Manos Pitsidianakis <manos.pitsidianakis@linaro.org>,
+	Erik Schilling <erik.schilling@linaro.org>,
+	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Joakim Bech <joakim.bech@linaro.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 8/8] cpufreq: Add Rust based cpufreq-dt driver
+Message-ID: <20240801083119.bwd6k6vimwyhv6cl@vireshk-i7>
+References: <cover.1722334569.git.viresh.kumar@linaro.org>
+ <e0df2db1caa49f15628aa18779b94899dcf37880.1722334569.git.viresh.kumar@linaro.org>
+ <CAL_Jsq+SxdPyb3qQyce7u8Ur=WCd1p+pQxJ+yJrTyS2xk3BF0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 15/34] ASoC: qcom: qdsp6: Introduce USB AFE port to
- q6dsp
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-16-quic_wcheng@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240801011730.4797-16-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+SxdPyb3qQyce7u8Ur=WCd1p+pQxJ+yJrTyS2xk3BF0w@mail.gmail.com>
 
+On 31-07-24, 15:14, Rob Herring wrote:
+> We don't want anything in Rust based on of_find_property() which this
+> is. That function assumes a device node and its properties are never
+> freed which is no longer a valid assumption (since OF_DYNAMIC and then
+> overlays). There's some work starting to address that, and my plan is
+> using of_find_property() on dynamic nodes will start warning. The
+> of_property_* API mostly avoids that issue (string types are an issue)
 
+Okay. Migrated to of_property_present() now. Thanks.
 
-On 8/1/24 03:17, Wesley Cheng wrote:
-> The QC ADSP is able to support USB playback endpoints, so that the main
-> application processor can be placed into lower CPU power modes.  This adds
-> the required AFE port configurations and port start command to start an
-> audio session.
-> 
-> Specifically, the QC ADSP can support all potential endpoints that are
-> exposed by the audio data interface.  This includes, feedback endpoints
-> (both implicit and explicit) as well as the isochronous (data) endpoints.
-> The size of audio samples sent per USB frame (microframe) will be adjusted
-> based on information received on the feedback endpoint.
-> 
-> Some pre-requisites are needed before issuing the AFE port start command,
-> such as setting the USB AFE dev_token.  This carries information about the
-> available USB SND cards and PCM devices that have been discovered on the
-> USB bus.  The dev_token field is used by the audio DSP to notify the USB
-> offload driver of which card and PCM index to enable playback on.
+> Also, it's probably the device property API we want to build Rust
+> bindings on top of rather than DT and ACPI. OTOH, the device property
+> API may be missing some features needed with OPP bindings.
 
-It's just fine if the AFE stuff relies on the 'port' definition/concept,
-but I don't think it needs to pop-up at the ASoC/USB level.
+I am not sure which device properties are you talking about. Are there
+any OF related examples available there ?
 
-
+-- 
+viresh
 
