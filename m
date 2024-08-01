@@ -1,290 +1,144 @@
-Return-Path: <linux-kernel+bounces-271760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20FFF9452F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:46:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE6C9452F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4344282526
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F5028436B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32816143897;
-	Thu,  1 Aug 2024 18:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BBF143897;
+	Thu,  1 Aug 2024 18:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CzxBbPco"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="fdfMBAsl"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B0C1EB489;
-	Thu,  1 Aug 2024 18:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C087E1EB489
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:47:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722537988; cv=none; b=fck1h1K1CQLQ7mpGEwRxD4mOotrrlXWmfowz3nDSi3XWktMrDZAaoUCZRtWytXtZVWu7PEfz7tyrMI0c3ldT+1Hfg1G9be1gzCEgkiik2HznS0KXCrqDE3MRfo7RPBq+Wzj6fdAqCdokqFVCKtsY+PmKBkkW6hjXTAk16tW95Lo=
+	t=1722538050; cv=none; b=pjrYtoPuVWEBzq22OlzKTsFj6oaaI77iBSrT2OMPZg1d+MJa//2Oskr1MTQuJUW1wPiXPuKDRX8O9KCzuI4WEElLK8gyFrJ8FMDSY81uGHFo+/zHu8buo1UyshBj9NXdFQaiC5ZEVfz+rj/ryw/FQ3T5LeDoojuAYz1dQRRYuZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722537988; c=relaxed/simple;
-	bh=h55ZDndrVYZv/NBdtvXMW7U0TnI0qzfGkJYm36DIKVk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CyGgwJYdwHGmU7RrTH09SJwHvQxucJhr9UK8NSMtxxXcNQdNooqkJ6P9d1VwfV8wSijtaY+c1gvyD59om6y7ilME1V5D0vyaXornu4VXI67uphPYORL/1VI8NQ2bKsQPXMYe/D5bnCc5NO4CMzLiY6/Mg183youjWI5UCWR/YKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CzxBbPco; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471Daape002870;
-	Thu, 1 Aug 2024 18:46:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	tihh+e/49TMpVKOyQ8UzRIYko0sxTzZC6LYMLbQXlNI=; b=CzxBbPco0G/uQ+TK
-	lFBWF44Eai10LxDi33r1aVVLm4yji2BbgYnSr/5Obv2LTpFIuY/S7gmvLkAqVdWo
-	Ety96fYEibex1fWO4UO6iO1NwVFtP6U0DebbFpfJrAZ69BrJ8pnZ9OldVxQAedbr
-	7+hQSNydr4mbWvwEjkKv/VRy5k6B4ubb1aE3VwclyrOG0lCpPnlMDlMTXe+lmWJF
-	7MIlOGFMM6eGuYlNDzh8UmMb2TlbRWgwWIniEocfyHE5vINBFcGUEUCzKlbdjkCP
-	IOV/fG4y4G22lgbM3K/mTWNz5esDF1BlJ1dcdOmTCgKdBJaqmmrXQLeNY3C24Sej
-	BknSXw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms43fxcq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 18:46:04 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471Ik42N017979
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 18:46:04 GMT
-Received: from [10.110.73.139] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
- 11:46:03 -0700
-Message-ID: <04d0cf9a-dca8-4952-88fd-f7979a22602f@quicinc.com>
-Date: Thu, 1 Aug 2024 11:46:03 -0700
+	s=arc-20240116; t=1722538050; c=relaxed/simple;
+	bh=szztjeP1MU/nnmgTvNRpcAGEUfX89yNhdtBaJwncAls=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=PbCnMIsKBPV5GVU9gAzEA5zxJSTivBWTYS9qmFvZVmhT6TVU4ZCOYYRRFcG1TCMyB26O2iQpeUEu91jeQMucDRj1eOWviwdwV8zG+v3oZ7h7YRnyQtT04RY23mBlH5Oo0Kij4+VOnYMJxh20aEUrdFDRycQIdCmub/d/9F6Xdlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=fdfMBAsl; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-7105043330aso1740477b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:47:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1722538048; x=1723142848; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J7Tgg9cuzRhQime+MvrA+O4z2pgv3NTD6cHJUCBgHjQ=;
+        b=fdfMBAslQyCs1mtGtTPnV5otpmD3J3+ekoKU2Z/a9VavY/uu6R6pP+XkaqeaVV2KSO
+         BkZBsDhcNa0YRCyZusGYdZ1oNRYQEdyr6T6oZ8HHOEFR217jWVUBMnv1agyTKAxN/f6R
+         HZ3ZUGl3MTNxDdl4VK7W5PoIl7DZjRY7OS+kY/bqp6xMqeLKcHg2HRUFGpU4fMCYRzi3
+         iiWHKVLgJi/QG6qzZpw09A6Z+gt51qSPOdY4LgOdw5QR/TuzHaqM8OAmEVVpeTNnE6rI
+         SSDgXvWJTRMddB1wdl3LjTP6tlDxHgAuoTJr1M2h6tyaIm0KTfPzZof4cDyuP8wiCn7Y
+         vxnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722538048; x=1723142848;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J7Tgg9cuzRhQime+MvrA+O4z2pgv3NTD6cHJUCBgHjQ=;
+        b=UqxC8gcdBV+dJ1PJh6fe/RkECFyDqVkUB0GWbCK19McDIuzoDK0QjcOnYEAXtpNvGM
+         P6PsxiRNV+OT86zMmwJ537QEtS8Q+A5KXnvgAsCpAl1DtM58Qst12EGMmFnwnnr1ZbiD
+         CR4JzcThDT+tbHhRdt4k4p//W/KWo8EMlMFAGjKD4FNzjQJ5m8xx93eghovDYZWDMVBY
+         2GHm38p6OiwejOrf3klkC8ZvdjJPtMssvk778xj/jRnBdeCtiOabwwamXqGueceR9zSC
+         kf9qKFTC3asNB4WSMqSyszF6Qrl0ixvKml2OxcDDOU2TS7jIqJzuiPI7ZZK15L62G98O
+         JwDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1c11IUl3Ho2WLm0EL/CQUAOuu8KOXvfBRC9RP9Y42ttbefbrKuaWw57TJn3MXo4H3WkbS9h7Wz7v0F6dTN74rgRrEuiOCRjhFeGqZ
+X-Gm-Message-State: AOJu0YzvoTibW/mO3VvE72MS8Gy6ENgBke0TwxPR69biD6Y35eT9Al6h
+	6FQhfDhWagcz6j53PP31ZrKIohrvXtsbXiAIev5xL6Bvmnp6sMo3owGC7th74C0=
+X-Google-Smtp-Source: AGHT+IGGuihy01UVG9qtEpMnoM6jrsoEqBueNqLxQZUmecP8v5t35MiWuJCPX37Fz6yDIzLQLBwF4Q==
+X-Received: by 2002:a05:6300:668b:b0:1c4:98f8:9ccb with SMTP id adf61e73a8af0-1c699620ef3mr1315223637.34.1722538047805;
+        Thu, 01 Aug 2024 11:47:27 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7106ecfaf1asm147821b3a.142.2024.08.01.11.47.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 11:47:27 -0700 (PDT)
+Date: Thu, 01 Aug 2024 11:47:27 -0700 (PDT)
+X-Google-Original-Date: Thu, 01 Aug 2024 11:47:25 PDT (-0700)
+Subject:     Re: [PATCH -fixes] riscv: Re-introduce global icache flush in patch_text_XXX()
+In-Reply-To: <0719e155-0a07-4878-87e3-cd96fed7a1dd@sifive.com>
+CC: alexghiti@rivosinc.com, Paul Walmsley <paul.walmsley@sifive.com>,
+  aou@eecs.berkeley.edu, andy.chiu@sifive.com, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: samuel.holland@sifive.com
+Message-ID: <mhng-b8350c55-39e7-4502-b797-2b4a2c4dd758@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/9] firmware: arm_scmi: Make SMC transport a
- standalone driver
-Content-Language: en-US
-To: Cristian Marussi <cristian.marussi@arm.com>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <arm-scmi@vger.kernel.org>
-CC: <sudeep.holla@arm.com>, <james.quinlan@broadcom.com>,
-        <f.fainelli@gmail.com>, <vincent.guittot@linaro.org>,
-        <etienne.carriere@st.com>, <peng.fan@oss.nxp.com>,
-        <michal.simek@amd.com>, <quic_sibis@quicinc.com>, <ptosi@google.com>,
-        <dan.carpenter@linaro.org>, <souvik.chakravarty@arm.com>,
-        Peng Fan <peng.fan@nxp.com>
-References: <20240730133318.1573765-1-cristian.marussi@arm.com>
- <20240730133318.1573765-7-cristian.marussi@arm.com>
-From: Nikunj Kela <quic_nkela@quicinc.com>
-In-Reply-To: <20240730133318.1573765-7-cristian.marussi@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: yfCj9enVeh-HR22aNmaTXZZc9flUxNaz
-X-Proofpoint-ORIG-GUID: yfCj9enVeh-HR22aNmaTXZZc9flUxNaz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_17,2024-08-01_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010124
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-On 7/30/2024 6:33 AM, Cristian Marussi wrote:
-> Make SCMI SMC transport a standalone driver that can be optionally
-> loaded as a module.
+On Thu, 01 Aug 2024 10:32:28 PDT (-0700), samuel.holland@sifive.com wrote:
+> Hi Alex,
 >
-> CC: Peng Fan <peng.fan@nxp.com>
-> CC: Nikunj Kela <quic_nkela@quicinc.com>
-> Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> ---
-
-Tested-by: Nikunj Kela <quic_nkela@quicinc.com>
-
-Tested this series on Qualcomm SA8255p(to be upstreamed) platform that
-uses Qualcomm SMC transport.
-
-> v2 --> v3
-> - fixed spacing in Kconfig and Copyright
-> - use new params in DEFINE_SCMI_TRANSPORT_DRIVER
-> v1 --> v2
-> - make scmi_smc_desc static
-> ---
->  drivers/firmware/arm_scmi/Kconfig             |  4 ++-
->  drivers/firmware/arm_scmi/Makefile            |  2 +-
->  drivers/firmware/arm_scmi/common.h            |  3 --
->  drivers/firmware/arm_scmi/driver.c            |  5 ---
->  .../arm_scmi/{smc.c => scmi_transport_smc.c}  | 32 +++++++++++++++----
->  5 files changed, 30 insertions(+), 16 deletions(-)
->  rename drivers/firmware/arm_scmi/{smc.c => scmi_transport_smc.c} (88%)
+> On 2024-07-30 8:59 AM, Alexandre Ghiti wrote:
+>> commit edf2d546bfd6 ("riscv: patch: Flush the icache right after
+>> patching to avoid illegal insns") mistakenly removed the global icache
+>> flush in patch_text_nosync() and patch_text_set_nosync() functions, so
+>> reintroduce them.
+>>
+>> Fixes: edf2d546bfd6 ("riscv: patch: Flush the icache right after patching to avoid illegal insns")
+>> Reported-by: Samuel Holland <samuel.holland@sifive.com>
+>> Closes: https://lore.kernel.org/linux-riscv/CAHVXubh8Adb4=-vN4cSh0FrZ16TeOKJbLj4AF09QC241bRk1Jg@mail.gmail.com/T/#m800757c26f72a1d45c240cb815650430166c82ea
 >
-> diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
-> index f03875169215..f634c5af1912 100644
-> --- a/drivers/firmware/arm_scmi/Kconfig
-> +++ b/drivers/firmware/arm_scmi/Kconfig
-> @@ -102,7 +102,7 @@ config ARM_SCMI_TRANSPORT_OPTEE
->  	  transport based on OP-TEE SCMI service, answer Y.
->  
->  config ARM_SCMI_TRANSPORT_SMC
-> -	bool "SCMI transport based on SMC"
-> +	tristate "SCMI transport based on SMC"
->  	depends on HAVE_ARM_SMCCC_DISCOVERY
->  	select ARM_SCMI_HAVE_TRANSPORT
->  	select ARM_SCMI_HAVE_SHMEM
-> @@ -112,6 +112,8 @@ config ARM_SCMI_TRANSPORT_SMC
->  
->  	  If you want the ARM SCMI PROTOCOL stack to include support for a
->  	  transport based on SMC, answer Y.
-> +	  This driver can also be built as a module. If so, the module
-> +	  will be called scmi_transport_smc.
->  
->  config ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE
->  	bool "Enable atomic mode support for SCMI SMC transport"
-> diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
-> index 121612d75f0b..6868a47fa4ab 100644
-> --- a/drivers/firmware/arm_scmi/Makefile
-> +++ b/drivers/firmware/arm_scmi/Makefile
-> @@ -5,7 +5,6 @@ scmi-core-objs := $(scmi-bus-y)
->  scmi-driver-y = driver.o notify.o
->  scmi-driver-$(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
->  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
-> -scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += smc.o
->  scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
->  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
->  scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_OPTEE) += optee.o
-> @@ -13,6 +12,7 @@ scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o system.o vol
->  scmi-protocols-y += pinctrl.o
->  scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
->  
-> +obj-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += scmi_transport_smc.o
->  obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
->  
->  obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
-> diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-> index abaf7ce6fbab..f44763bfec16 100644
-> --- a/drivers/firmware/arm_scmi/common.h
-> +++ b/drivers/firmware/arm_scmi/common.h
-> @@ -286,9 +286,6 @@ int scmi_xfer_raw_inflight_register(const struct scmi_handle *handle,
->  int scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info *cinfo,
->  					    struct scmi_xfer *xfer,
->  					    unsigned int timeout_ms);
-> -#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
-> -extern const struct scmi_desc scmi_smc_desc;
-> -#endif
->  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
->  extern const struct scmi_desc scmi_virtio_desc;
->  #endif
-> diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-> index 9d869ab2d003..c4d0195f0fdb 100644
-> --- a/drivers/firmware/arm_scmi/driver.c
-> +++ b/drivers/firmware/arm_scmi/driver.c
-> @@ -3254,11 +3254,6 @@ static const struct of_device_id scmi_of_match[] = {
->  #ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
->  	{ .compatible = "linaro,scmi-optee", .data = &scmi_optee_desc },
->  #endif
-> -#ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
-> -	{ .compatible = "arm,scmi-smc", .data = &scmi_smc_desc},
-> -	{ .compatible = "arm,scmi-smc-param", .data = &scmi_smc_desc},
-> -	{ .compatible = "qcom,scmi-smc", .data = &scmi_smc_desc},
-> -#endif
->  #ifdef CONFIG_ARM_SCMI_TRANSPORT_VIRTIO
->  	{ .compatible = "arm,scmi-virtio", .data = &scmi_virtio_desc},
->  #endif
-> diff --git a/drivers/firmware/arm_scmi/smc.c b/drivers/firmware/arm_scmi/scmi_transport_smc.c
-> similarity index 88%
-> rename from drivers/firmware/arm_scmi/smc.c
-> rename to drivers/firmware/arm_scmi/scmi_transport_smc.c
-> index 4cb86386c490..1c203a68acd4 100644
-> --- a/drivers/firmware/arm_scmi/smc.c
-> +++ b/drivers/firmware/arm_scmi/scmi_transport_smc.c
-> @@ -16,6 +16,7 @@
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
->  #include <linux/limits.h>
-> +#include <linux/platform_device.h>
->  #include <linux/processor.h>
->  #include <linux/slab.h>
->  
-> @@ -69,12 +70,14 @@ struct scmi_smc {
->  	unsigned long cap_id;
->  };
->  
-> +static struct scmi_transport_core_operations *core;
-> +
->  static irqreturn_t smc_msg_done_isr(int irq, void *data)
->  {
->  	struct scmi_smc *scmi_info = data;
->  
-> -	scmi_rx_callback(scmi_info->cinfo,
-> -			 scmi_shmem_ops.read_header(scmi_info->shmem), NULL);
-> +	core->rx_callback(scmi_info->cinfo,
-> +			  core->shmem->read_header(scmi_info->shmem), NULL);
->  
->  	return IRQ_HANDLED;
->  }
-> @@ -141,7 +144,7 @@ static int smc_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
->  	if (!scmi_info)
->  		return -ENOMEM;
->  
-> -	scmi_info->shmem = scmi_shmem_ops.setup_iomap(cinfo, dev, tx, &res);
-> +	scmi_info->shmem = core->shmem->setup_iomap(cinfo, dev, tx, &res);
->  	if (IS_ERR(scmi_info->shmem))
->  		return PTR_ERR(scmi_info->shmem);
->  
-> @@ -226,7 +229,7 @@ static int smc_send_message(struct scmi_chan_info *cinfo,
->  	 */
->  	smc_channel_lock_acquire(scmi_info, xfer);
->  
-> -	scmi_shmem_ops.tx_prepare(scmi_info->shmem, xfer, cinfo);
-> +	core->shmem->tx_prepare(scmi_info->shmem, xfer, cinfo);
->  
->  	if (scmi_info->cap_id != ULONG_MAX)
->  		arm_smccc_1_1_invoke(scmi_info->func_id, scmi_info->cap_id, 0,
-> @@ -250,7 +253,7 @@ static void smc_fetch_response(struct scmi_chan_info *cinfo,
->  {
->  	struct scmi_smc *scmi_info = cinfo->transport_info;
->  
-> -	scmi_shmem_ops.fetch_response(scmi_info->shmem, xfer);
-> +	core->shmem->fetch_response(scmi_info->shmem, xfer);
->  }
->  
->  static void smc_mark_txdone(struct scmi_chan_info *cinfo, int ret,
-> @@ -270,7 +273,7 @@ static const struct scmi_transport_ops scmi_smc_ops = {
->  	.fetch_response = smc_fetch_response,
->  };
->  
-> -const struct scmi_desc scmi_smc_desc = {
-> +static const struct scmi_desc scmi_smc_desc = {
->  	.ops = &scmi_smc_ops,
->  	.max_rx_timeout_ms = 30,
->  	.max_msg = 20,
-> @@ -286,3 +289,20 @@ const struct scmi_desc scmi_smc_desc = {
->  	.sync_cmds_completed_on_ret = true,
->  	.atomic_enabled = IS_ENABLED(CONFIG_ARM_SCMI_TRANSPORT_SMC_ATOMIC_ENABLE),
->  };
-> +
-> +static const struct of_device_id scmi_of_match[] = {
-> +	{ .compatible = "arm,scmi-smc" },
-> +	{ .compatible = "arm,scmi-smc-param" },
-> +	{ .compatible = "qcom,scmi-smc" },
-> +	{ /* Sentinel */ },
-> +};
-> +
-> +DEFINE_SCMI_TRANSPORT_DRIVER(scmi_smc, scmi_smc_driver, scmi_smc_desc,
-> +			     scmi_of_match, core);
-> +module_platform_driver(scmi_smc_driver);
-> +
-> +MODULE_ALIAS("scmi-transport-smc");
-> +MODULE_AUTHOR("Peng Fan <peng.fan@nxp.com>");
-> +MODULE_AUTHOR("Nikunj Kela <quic_nkela@quicinc.com>");
-> +MODULE_DESCRIPTION("SCMI SMC Transport driver");
-> +MODULE_LICENSE("GPL");
+> Shouldn't this use the permalink for the specific message, not the thread?
+>
+>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>> ---
+>>  arch/riscv/kernel/patch.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
+>> index ab03732d06c4..91edfd764ed9 100644
+>> --- a/arch/riscv/kernel/patch.c
+>> +++ b/arch/riscv/kernel/patch.c
+>> @@ -205,6 +205,9 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)
+>>
+>>  	ret = patch_insn_set(tp, c, len);
+>>
+>> +	if (!ret)
+>> +		flush_icache_range((uintptr_t)tp, (uintptr_t)tp + len);
+>
+> This patch was based on an old tree from before
+> https://git.kernel.org/riscv/c/47742484ee16 removed the "tp" variable. While it
+> still compiles because flush_icache_range() is a macro that discards its
+> arguments, it will be confusing to anyone reading the code.
+
+Thanks.  Alex is going to spin a new one, so I dropped this.
+
+>
+> Regards,
+> Samuel
+>
+>> +
+>>  	return ret;
+>>  }
+>>  NOKPROBE_SYMBOL(patch_text_set_nosync);
+>> @@ -237,6 +240,9 @@ int patch_text_nosync(void *addr, const void *insns, size_t len)
+>>
+>>  	ret = patch_insn_write(tp, insns, len);
+>>
+>> +	if (!ret)
+>> +		flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
+>> +
+>>  	return ret;
+>>  }
+>>  NOKPROBE_SYMBOL(patch_text_nosync);
 
