@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-270535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D25F944115
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:26:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A05D944118
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A198C1F21714
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A6D287559
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:26:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9218EEAE;
-	Thu,  1 Aug 2024 02:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A5451EB493;
+	Thu,  1 Aug 2024 02:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g0NGMFz1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SzI/CSx4"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F151210E0;
-	Thu,  1 Aug 2024 02:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BEBA10E0;
+	Thu,  1 Aug 2024 02:23:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722478933; cv=none; b=PBz8SnWJim5cPpoeZSuHnQvwXgHAOX1eozuAnlQxugsJwGchZTzkGZdIo+Nl2O+6n93aXpfGH8v60RzHqgNYRnO1ohitZjEACKXKioRat4dHeOtyp7MWJ80FYuFZ2xyTbYtAMkBdIQapM8NpdaEXPx9nrHtYbVoVrgwnOGWaoq0=
+	t=1722479031; cv=none; b=P86ANebRUEAFFZkhoZF4rcHN50fx6xWe8ZPFA5JEFLppma5j4Labd1+RdgJA8od5jRHdJUw2PoPGLgCkyZk6pCtoZPTyI66XvjTO7EihK8wCrLZWW745v1w2YFa7NvoqBLtTkQoLpZuJ8Zlze4zMn2UriQ0grsYqT3JPvourCgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722478933; c=relaxed/simple;
-	bh=cgxg4rbo4fUOa9zSmibfWqsv00PQFdhsSeKcX4HAPjg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=RkzC5IkxQSimb3+/2li3tiijvMReY6TVbgS/R5sCsu1tUyj9PKrZ6QEmoGDHWvASoXP+yJuSyva83v+rmj4XGlMDGUGgzaegR9A2dtkDXwx2sIdWPqtJdKjihSLpojWSRDDrz4VyHWYvx+h6Cif83YlvkLRag0m3dI82bo/em0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g0NGMFz1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24934C116B1;
-	Thu,  1 Aug 2024 02:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722478932;
-	bh=cgxg4rbo4fUOa9zSmibfWqsv00PQFdhsSeKcX4HAPjg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=g0NGMFz1HOD7/T0s35VIIArFp5yKZQqK2zn5bgOKLqFQWsYd2iG92tRhhtE2CpZQF
-	 QBuD9G/910Q7Mw1q+xOpDWtVsZ4sszv644qjVVhmFSml9jrzsiCclJE25xEyWcDc/W
-	 SHfoGtCNOu/yzzmspyvZOkdZN9+ockI+hBATMnlbH2aszcTagPa1fHk/Wr6X05VvgQ
-	 h9ToZZi1ciswwXnPVXqurmNQFmlwQzwRE7FgzaiyAkcQRK6d+h6WdzlTs73VNxDx9l
-	 pm1zKgvDDqkWBF5H/iUyc6pJ3msqajhP+PoFAptHCJkmRki/JKN1Cm2NsjlT3cxxnY
-	 0VUev0OBhuy5g==
-Date: Wed, 31 Jul 2024 20:22:10 -0600
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1722479031; c=relaxed/simple;
+	bh=Awnf47VbdBqBCnqt1VRab2i0AW4HMqbmXA6P4toHOnk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pydpCYd1kLKtUyZJwTULhy0vUAL8cMoqr8IwqR02QK4Z8pFVS5g/+vFaP8QIjhxCJe8D1tdVhL7tUpFV7UrIuV/8g6BBHYtEzz6zwHiacQ2LH4lN7C4Y0muGHnd7IdW2r3I4byHthPqn1UzOR7xf03qENZ3oHag/NqPrde0h738=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SzI/CSx4; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc65329979so53372265ad.0;
+        Wed, 31 Jul 2024 19:23:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722479029; x=1723083829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zLnDPRKgknaGZzCCd3XmpPWrPrYVFYC91ZcyCfkqBq8=;
+        b=SzI/CSx464OF11ut49ihM8WSmcjtb/eax0EBkSUaCKPPO5xb8jRqzHLrq8oF2FLTRq
+         juM/J2BeysnkIAL+IOyOzNBtR96+Rg2Nk2Wp0uOV5TeCinAxEQPWczZoPCiAAe83qI7a
+         Y4kwGREjrUSifTDUeCnTOC/mfO/+WfMfR+hLX+mTwtvbI3g3MxYq4489ns1Cto8fWN8l
+         s9DgVcMiF5AgZ20ysEAA1Q2FvUmObWuPjQZtbFBuId0rzW4pYXjYWYbk7HmY09tmua/u
+         bEPg/Aaou4dBKlsQ3Swq+PK0VIgcOJEjsgwfYXVKrwszbD7GNxNmU3EDfPilPNkzkDLA
+         5HIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722479029; x=1723083829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zLnDPRKgknaGZzCCd3XmpPWrPrYVFYC91ZcyCfkqBq8=;
+        b=qhZmCNekcsMU7/iY2AbDr1n8MUPpSOeDuNy2zW5zPb2k5fdsnh96p7Rn9L7WoYxOtJ
+         IZW6rgM9mkaGiQ0Z0aFTkf+AUS6AFepEfGtQQxCgCeDf9bTtFRQkxdCNjdOwJK2iEjsR
+         3gIEbkUPnz1JRp3cSxMZeJ4IbOv90d/O+kS4NVrCZZ2cHwZNi//yNoDobBbx8pMN9sEL
+         PXg54MmxWUQ0dX2R++NFsGEnB7aA2QvvVIKLWJDY+13ohZodIbwXMQPt+i8FNzSBZTXf
+         iuxSQ+3pjjw4ywVPT93AsuUcXoiueKrmWpVZs2BgX1Px0wN3pVodxRlKeKmgvL7myUbs
+         aIVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSLyJ8/ReZuULTpB4bJyw+1OaOBW80eR20BlLDJnDt3AswUXykcF6/qtkWtE3kr9ginNwAno+cleaP/gE40IrNkeLNNIoSA/PV5b06siqa3F9Mo3fsm9OQFljsNYXkdSdtQBy2
+X-Gm-Message-State: AOJu0Ywic1CLI+FjmeN8w8Kp62BOp5rehEM5zuW5X/quy9X4kTOXiNTq
+	XRz5RkL/fevyEx6pHfDaggzJTbCpf2fZbAUCAF1M22IoGpmwRrmb
+X-Google-Smtp-Source: AGHT+IFwgek8Wdri83/0mtz8JOXnQt9sIHUFS9pUuUs75DiejE7twn0Ovyy3B+236EKilu0z4WQmzA==
+X-Received: by 2002:a17:902:ecc1:b0:1fd:acd1:b638 with SMTP id d9443c01a7336-1ff4d25c905mr16809785ad.54.1722479029232;
+        Wed, 31 Jul 2024 19:23:49 -0700 (PDT)
+Received: from localhost.localdomain ([159.196.197.79])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7ee1364sm126956075ad.136.2024.07.31.19.23.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 19:23:48 -0700 (PDT)
+From: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Johannes Berg <johannes@sipsolutions.net>,
+	Shigeru Yoshida <syoshida@redhat.com>,
+	Jamie Bainbridge <jamie.bainbridge@gmail.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net v3] net-sysfs: check device is present when showing duplex
+Date: Thu,  1 Aug 2024 12:22:50 +1000
+Message-Id: <52e9404d1ef3b11b1b5675b20242d3dc98a3e4bb.1722478820.git.jamie.bainbridge@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org, 
- Thinh.Nguyen@synopsys.com, krzk+dt@kernel.org, 
- srinivas.kandagatla@linaro.org, linux-doc@vger.kernel.org, 
- bgoswami@quicinc.com, linux-arm-msm@vger.kernel.org, tiwai@suse.com, 
- lgirdwood@gmail.com, alsa-devel@alsa-project.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, corbet@lwn.net, 
- perex@perex.cz, gregkh@linuxfoundation.org, conor+dt@kernel.org, 
- linux-sound@vger.kernel.org, broonie@kernel.org
-In-Reply-To: <20240801011730.4797-14-quic_wcheng@quicinc.com>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-14-quic_wcheng@quicinc.com>
-Message-Id: <172247893082.2670643.17763625549296585780.robh@kernel.org>
-Subject: Re: [PATCH v24 13/34] ASoC: dt-bindings: Update example for
- enabling USB offload on SM8250
+Content-Transfer-Encoding: 8bit
 
+A sysfs reader can race with a device reset or removal, attempting to
+read device state when the device is not actuall present.
 
-On Wed, 31 Jul 2024 18:17:09 -0700, Wesley Cheng wrote:
-> Add an example on enabling of USB offload for the Q6DSP.  The routing can
-> be done by the mixer, which can pass the multimedia stream to the USB
-> backend.
-> 
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> ---
->  .../devicetree/bindings/sound/qcom,sm8250.yaml    | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
+This is the same sort of panic as observed in commit 4224cfd7fb65
+("net-sysfs: add check for netdevice being present to speed_show"):
 
-My bot found errors running 'make dt_binding_check' on your patch:
+     [exception RIP: qed_get_current_link+17]
+  #8 [ffffb9e4f2907c48] qede_get_link_ksettings at ffffffffc07a994a [qede]
+  #9 [ffffb9e4f2907cd8] __rh_call_get_link_ksettings at ffffffff992b01a3
+ #10 [ffffb9e4f2907d38] __ethtool_get_link_ksettings at ffffffff992b04e4
+ #11 [ffffb9e4f2907d90] duplex_show at ffffffff99260300
+ #12 [ffffb9e4f2907e38] dev_attr_show at ffffffff9905a01c
+ #13 [ffffb9e4f2907e50] sysfs_kf_seq_show at ffffffff98e0145b
+ #14 [ffffb9e4f2907e68] seq_read at ffffffff98d902e3
+ #15 [ffffb9e4f2907ec8] vfs_read at ffffffff98d657d1
+ #16 [ffffb9e4f2907f00] ksys_read at ffffffff98d65c3f
+ #17 [ffffb9e4f2907f38] do_syscall_64 at ffffffff98a052fb
 
-yamllint warnings/errors:
+ crash> struct net_device.state ffff9a9d21336000
+   state = 5,
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/sound/qcom,sm8250.example.dts:97.44-45 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/sound/qcom,sm8250.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
+state 5 is __LINK_STATE_START (0b1) and __LINK_STATE_NOCARRIER (0b100).
+The device is not present, note lack of __LINK_STATE_PRESENT (0b10).
 
-doc reference errors (make refcheckdocs):
+Resolve by adding the same netif_device_present() check to duplex_show.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240801011730.4797-14-quic_wcheng@quicinc.com
+Fixes: d519e17e2d01 ("net: export device speed and duplex via sysfs")
+Signed-off-by: Jamie Bainbridge <jamie.bainbridge@gmail.com>
+---
+v2: Restrict patch to just required path and describe problem in more
+    detail as suggested by Johannes Berg. Improve commit message format
+    as suggested by Shigeru Yoshida.
+v3: Use earlier Fixes commit as suggested by Paolo Abeni.
+---
+ net/core/net-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
+index 0e2084ce7b7572bff458ed7e02358d9258c74628..22801d165d852a6578ca625b9674090519937be5 100644
+--- a/net/core/net-sysfs.c
++++ b/net/core/net-sysfs.c
+@@ -261,7 +261,7 @@ static ssize_t duplex_show(struct device *dev,
+ 	if (!rtnl_trylock())
+ 		return restart_syscall();
+ 
+-	if (netif_running(netdev)) {
++	if (netif_running(netdev) && netif_device_present(netdev)) {
+ 		struct ethtool_link_ksettings cmd;
+ 
+ 		if (!__ethtool_get_link_ksettings(netdev, &cmd)) {
+-- 
+2.39.2
 
 
