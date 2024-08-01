@@ -1,116 +1,159 @@
-Return-Path: <linux-kernel+bounces-271502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1D0944F25
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:26:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3FA5944F26
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C166283D74
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:26:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C020B21DF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DFC1AE87B;
-	Thu,  1 Aug 2024 15:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CD21AED30;
+	Thu,  1 Aug 2024 15:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j9xFhMFt"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HlNKZDGy"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7427213B5B9
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636851A8C11
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525969; cv=none; b=p3RTXJ+fFXL7HLSNuYAhbimeiZDCYU6oV0Eh/RqxPsOgXGFzUEjv2xzeJjnXadtwGthB4TlnB6aLbEzpJcdcibEGtCJxS2z2gYTI0zlxNqNxo22DcQY1xttMFYlBGpIHXhVFyatyZnPaqI0fn8j7/X3yXiOVPPxRtIjeQSBmqGU=
+	t=1722526000; cv=none; b=b1Xy8OZRzBqU48YH47esbGp4C/RJl/TYwWUuU7ou93vdRAwESQuogoLP2DTtOgyJIIz5cTmgMCGyzJ7CVX9xfU4Pd7ErS7Hl7zqIkKdB9U4uzapVMrtbbnURHd03aPw+xfwfwTriVD9pI/rBWTU0yernLTXoZ1RcD7pnR4Bn1Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525969; c=relaxed/simple;
-	bh=R93pHP072SK7QJJ7HyWepTn6TkGT3M0R9Ju9YpXM1jo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3nwwHy94JmeHtXMvDv+nOZBs6BUBaL8QLE80yLU10QzjDFtB+rTYsFnFd4n3PFffM+QZZPSrkMvVcfb0mbQX7N1VwDMTx2vffyE+Nn1I7NMXi/wa39r3M5z1imXOisWsG2UhK9d48chvqkyUHkEXnc9oHWUzWoohGNTcerEctU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j9xFhMFt; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3db51133978so700012b6e.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 08:26:08 -0700 (PDT)
+	s=arc-20240116; t=1722526000; c=relaxed/simple;
+	bh=/Jl6PB4Wp3ANrgC68CItsuYKxii3v6mf1G+8fRnnZTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FaBaB+6xrimyPy582kVDAQJ/pNJO8+sJ7FL5xooyLQqe43hOtHBX1kIR9wZqtl7J6MFY0E//TJaAtcd+OD4e8nJt1yGJWqrd2J0Ue1SZAAEtUujB9ZKOS0tPIjZyK+4+fHfMBmT7csv8EU4r5parWDKPuEeTqSBRrgA++kXpg/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HlNKZDGy; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-44fee2bfd28so777681cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 08:26:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722525967; x=1723130767; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NdZF/DtZnBoYnBkdCQ2kKbzbppoVZ6B+UZkFoAdo3p8=;
-        b=j9xFhMFt5uhF5ACPaApTfITtug3AU+9rXBtgxf2FmCRLFXFIlfXSyRV8a6LLjseV5R
-         9aKq9wsjKG7mr/whNb9lRbUYnfv+bUNycxOfQmEDmTzBnR2s+ugIc18XiiJh66lwU0m2
-         PFJrz8FRsin8Upy2/o1GyI6oWYhtsEL632bBupA93OAB+IPO1reF6Zlz0YG1iCoDTkDz
-         H1LNKYWEZ2Y7y2yp37BE+TRmBhVIyA0Ey1LObE56kLKgmaOch11o5VyMTd5QeDLt7UI5
-         5s6vOFwxV547m6qlyzsQ4NrA/gLkJYtACtB5smsoxH5vdLOykQGdbSOXikMX+f+afme8
-         aV/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722525967; x=1723130767;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1722525996; x=1723130796; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NdZF/DtZnBoYnBkdCQ2kKbzbppoVZ6B+UZkFoAdo3p8=;
-        b=kaJLmJy5ijOWM7/hQ4aeaGIRkLKUGEJ+EZEwU/E6zIgouokD0si7hoQebce3XFxCW1
-         olCeOaBbFv8HRsmCIBd9UaXUvYE4koCjKiZkdq7miVLJMGz5t5tE9PMcLSQ9Wjb0omBc
-         R0AxeFMuPJP5X7Tus/sNoVTeg+QI+YJ3gPz6xrFC3n0xP6xNLHPamLbq4i+yWcAbuxBu
-         VNifY4RRVuwhD1nSy1LoFCKjLgdrFSpt/wAhaOMBs92aQeBWrVJi7aIYszaLSfo+MGL+
-         pKOjxPo1M2U49aHogntJdn75i1Ep03jd5h2qlIlDGK0SxgHGQcaCsGic5lPeJWRgEtaS
-         v4TQ==
-X-Gm-Message-State: AOJu0Yym0RxlNPDQIHthUlKnLW/gn/jTqWV4RRXLpJwxUD4D5gy+34Z3
-	oKK6s+LNtnQpJCP6jMMphJGaWHa9wq+WY2FrjodKTY6TXqdE8h+sRXY5nBREWUI=
-X-Google-Smtp-Source: AGHT+IHBMeZxdmaY1Tz4aYl0ORJfyOwbMMZr65eQOrL9+mRM2tod3ckdr6LKuPfBXK+OG2tKVdeSAA==
-X-Received: by 2002:a05:6808:1a06:b0:3d9:33d0:cc4b with SMTP id 5614622812f47-3db5577bd58mr724105b6e.0.1722525967524;
-        Thu, 01 Aug 2024 08:26:07 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:920b:58f5:7792:ff2c])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-3db41805faesm1144700b6e.30.2024.08.01.08.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 08:26:07 -0700 (PDT)
-Date: Thu, 1 Aug 2024 10:26:05 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Daniel Bristot de Oliveira <bristot@kernel.org>
-Cc: open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	Linux Regressions <regressions@lists.linux.dev>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: i386: kernel/sched/debug.c:341:57: error: integer overflow in
- expression of type 'long int' results in '-100663296' [-Werror=overflow]
-Message-ID: <e11ca9f9-d780-4d92-b9be-d549f97b4e67@suswa.mountain>
-References: <CA+G9fYtE2GAbeqU+AOCffgo2oH0RTJUxU+=Pi3cFn4di_KgBAQ@mail.gmail.com>
+        bh=kJsisVlXsYheO37snVaNoupjzpA6f699hMvkHk44PW0=;
+        b=HlNKZDGy2NMA6cFCJQIHJln4JOUhRG7G1krUj5XRXiGYi/tLztPlhD+Y0upMSmtr2D
+         G2pGSx3F4y4s4eemlhBjSA0HRzK7uw0a70ih1z1Ll0pplUnTOsqdfeh7FrAPj64tYxfN
+         Cc4TPvGhcxuLVOTja6hxbAavfvmB5cTUu7Zp+grkbT0BaPzJzwpIWSvBUDk2uAwFK6+2
+         zRqhjzg/HCZWLrT5aDQ+nO+/Aq4TTJhpKoGEDy+koOT6uAPtxRfwJXYjaJVxYdg4FHmZ
+         35GB5JrAPiDXWh4K8c2vTwOy913g5Ad1jG57r1cKZYPHYrDHfjqZDLfVWpPbPzb9z6N8
+         Hz+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722525996; x=1723130796;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kJsisVlXsYheO37snVaNoupjzpA6f699hMvkHk44PW0=;
+        b=FjZn+IkHNV/6kIV85F0p0h7zL8Q4I6zBkcneHwqDF25c0MBiOtLKrK8bZyEsa4HNxr
+         OMhAe0loufrb+fVqEmno8X2yeUnSL2KV5RjsdrsRRHyBqTUoAikXb1+49SNdsdpa9jQ8
+         0JfOh8h4UknCYXJxldEZ/5zPtS5j+VBb5DGdceueO4To1K01dMrC1hXHPZXoNt9fBVu1
+         R1X38hicQ2z1+S3dU4vYSPYcdFJsVYy7xnwGDuJIJXgziJRwlDKRZf0Lb2CmGXgTm3bT
+         chvQQ6vqBBf3v0i8zixPH6OjS5soZ6kz3dD5lNA0l+QUxB7967kzxkdSl1Cr2nzyH+8K
+         FN2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/vV8VRhwVEOSbZp432GUDqG1PB74GSXbYtb2GxQCmBSLzEKmL82GO8ukansofWlt+xImS1UWkYCoFmFMX7DEELnP9pHE+O4TQYf38
+X-Gm-Message-State: AOJu0Yw4sLHxtl+/5XO+vG1DGTxUYk2JPcrFYxlwJUmgsNppzTWDMtAo
+	jUfyk39mqJqYzL/D50yFAMQO9hpVpNCCEqdPs1WNjpSSyarfDEOzlLMae5EZ8ZlAdBRxCj9EwLd
+	F9tHb/Mrr8J0oIvCHkUxzsut8uPuCk5/SLoEn
+X-Google-Smtp-Source: AGHT+IFMASjGXKSuF0FnLFzbAgMwMf9+e1XvKKegyCNSTZDeHUACfQPHE9S5FaA15pCyPsL9NbtKplB7rSftZhJoQzg=
+X-Received: by 2002:ac8:7d8c:0:b0:447:d7ff:961d with SMTP id
+ d75a77b69052e-45181e6e4f1mr2046151cf.9.1722525996159; Thu, 01 Aug 2024
+ 08:26:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtE2GAbeqU+AOCffgo2oH0RTJUxU+=Pi3cFn4di_KgBAQ@mail.gmail.com>
+References: <20240719115018.27356-1-eric.lin@sifive.com> <20240729181927.1712841-1-atishp@rivosinc.com>
+In-Reply-To: <20240729181927.1712841-1-atishp@rivosinc.com>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 1 Aug 2024 08:26:24 -0700
+Message-ID: <CAP-5=fUJh6zzpiFcYwxMjxk7O3eOZWTVvzOB_zt+twcbnZMYXA@mail.gmail.com>
+Subject: Re: [v2] perf arch events: Fix duplicate RISC-V SBI firmware event name
+To: Atish Patra <atishp@rivosinc.com>
+Cc: eric.lin@sifive.com, peterz@infradead.org, mingo@redhat.com, 
+	acme@kernel.org, namhyung@kernel.org, alexander.shishkin@linux.intel.com, 
+	jolsa@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
+	peterlin@andestech.com, dminus@andestech.com, locus84@andestech.com, 
+	jisheng.teoh@starfivetech.com, inochiama@outlook.com, n.shubin@yadro.com, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2024 at 08:42:07PM +0530, Naresh Kamboju wrote:
-> The i386 kselftest merge config build failed due to following warnings / errors
-> on today's Linux next-20240801 tag with gcc-13.
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> Build log:
-> --------
-> In file included from kernel/sched/build_utility.c:72:
-> kernel/sched/debug.c:341:57: error: integer overflow in expression of
-> type 'long int' results in '-100663296' [-Werror=overflow]
->   341 | static unsigned long fair_server_period_max = (1 << 22) *
-> NSEC_PER_USEC; /* ~4 seconds */
->       |                                                         ^
-> cc1: all warnings being treated as errors
+On Mon, Jul 29, 2024 at 11:19=E2=80=AFAM Atish Patra <atishp@rivosinc.com> =
+wrote:
+>
+> > Currently, the RISC-V firmware JSON file has duplicate event name
+> > "FW_SFENCE_VMA_RECEIVED". According to the RISC-V SBI PMU extension[1],
+> > the event name should be "FW_SFENCE_VMA_ASID_SENT".
+> >
+> > Before this patch:
+> > $ perf list
+> >
+> > firmware:
+> >   fw_access_load
+> >        [Load access trap event. Unit: cpu]
+> >   fw_access_store
+> >        [Store access trap event. Unit: cpu]
+> > ....
+> >  fw_set_timer
+> >        [Set timer event. Unit: cpu]
+> >   fw_sfence_vma_asid_received
+> >        [Received SFENCE.VMA with ASID request from other HART event. Un=
+it: cpu]
+> >   fw_sfence_vma_received
+> >        [Sent SFENCE.VMA with ASID request to other HART event. Unit: cp=
+u]
+> >
+> > After this patch:
+> > $ perf list
+> >
+> > firmware:
+> >   fw_access_load
+> >        [Load access trap event. Unit: cpu]
+> >   fw_access_store
+> >        [Store access trap event. Unit: cpu]
+> > .....
+> >   fw_set_timer
+> >        [Set timer event. Unit: cpu]
+> >   fw_sfence_vma_asid_received
+> >        [Received SFENCE.VMA with ASID request from other HART event. Un=
+it: cpu]
+> >   fw_sfence_vma_asid_sent
+> >        [Sent SFENCE.VMA with ASID request to other HART event. Unit: cp=
+u]
+> >   fw_sfence_vma_received
+> >        [Received SFENCE.VMA request from other HART event. Unit: cpu]
+> >
+> > Link: https://github.com/riscv-non-isa/riscv-sbi-doc/blob/master/src/ex=
+t-pmu.adoc#event-firmware-events-type-15 [1]
+> > Fixes: 8f0dcb4e7364 ("perf arch events: riscv sbi firmware std event fi=
+les")
+> > Fixes: c4f769d4093d ("perf vendor events riscv: add Sifive U74 JSON fil=
+e")
+> > Fixes: acbf6de674ef ("perf vendor events riscv: Add StarFive Dubhe-80 J=
+SON file")
+> > Fixes: 7340c6df49df ("perf vendor events riscv: add T-HEAD C9xx JSON fi=
+le")
+> > Fixes: f5102e31c209 ("riscv: andes: Support specifying symbolic firmwar=
+e and hardware raw event")
+> > Signed-off-by: Eric Lin <eric.lin@sifive.com>
+> > Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> > Reviewed-by: Nikita Shubin <n.shubin@yadro.com>
+> > ---
+> > Changes since V1:
+> >  - Add "Fixes:" tag for every patch that copied firmware.json
+> Reviewed-by: Atish Patra <atishp@rivosinc.com>
 
-It needs to be 1U << 22.  It's probably more traditional to write it as
-1UL << 22, although they equivalent here.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-I can send a patch for that.
-
-regards,
-dan carpenter
-
-
+Thanks,
+Ian
 
