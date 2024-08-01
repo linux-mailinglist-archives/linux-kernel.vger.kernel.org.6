@@ -1,448 +1,133 @@
-Return-Path: <linux-kernel+bounces-271105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7FEA9449A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:46:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A05EE9449A5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:47:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB6BC1C25A79
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:46:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55BEF1F266A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B666B18B48A;
-	Thu,  1 Aug 2024 10:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9801187FFE;
+	Thu,  1 Aug 2024 10:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="kb0Epgu8"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2087.outbound.protection.outlook.com [40.107.255.87])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Ni9i99QM"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8CF189B9F;
-	Thu,  1 Aug 2024 10:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509143; cv=fail; b=Ad5B5geC2cCCe2X5R0v+LS8tseavcGkUDL+GGSjmOIAjN8KhX+YITg0w2ou7cIvyaXy77SW1B6frpKkMX6G4+1HbXbSSjzSzcZFVEOPZ99TeL/ME24iSLV+INm29oEizMPAoD1Cx8MP9DvNfy9CDTZM2sT2M+Zvy3z+S6dOnB2o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509143; c=relaxed/simple;
-	bh=5w6MDAJS5rD/AwkXO/2W6RwLG7qnwSyNNIufeQ6ggio=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DRiJ8xZOGO+lSipcpi06h/krEHeHIO1yX/zLe8e8hL2I/91KUn4mzG57AVs2UJeReRYbqKDuFdWge1t0G5sDjfvmuHIXCbcWJX6ID749fhkdQJg4CdhJI2WE3siZsGc8mRdygG5Pvf8mtuqoD2f8SFRSRs87/MVWNbQVmvnFlQA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=kb0Epgu8; arc=fail smtp.client-ip=40.107.255.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lirBDIr6xwMWyvzTpS4u3DvoCoaAXekgRRO/dALDraUo8pCq3vmy+1vShVJW278BCudtslxLzC98/RRvekH6plUm9TYwywm8VTe+6tRNomO5mP8JOQMpxe+6Z4MTG66A3KZOrA8B1cLXXByMujM2oygiLlK4ya2URbSem5wc5pNaQ+cAUOe846rdTVYkUhiIRGs3jwnEu9EnjK2m8XUf8e9coORqvgbn4/b+405ODP2gQ54KsQb5fBkdDnN9NeDRSwFWPTZXwKESMvQ6pXAs/4Xuk10qsm0K7EQfVUovRM8rktCgSixqJJ53MkYH0Wejky5/bouAxiK7vrMgtcLilg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mI0gpVfBwy2PG4XtWWDhnXZeLqC3mjTemls4sGgVBLY=;
- b=P/aYQ8s31pYIRZqDgdV+SXkGKH9e7XiCOQM+E8c3RyfOJMBgbV+4B1rbXK7KQebatUBvRkka19noY1BdlhaMZ+4mCHiSZ4mXoaEks+rue4M+aw18xZgZAJlwMm7lBTlRXGsfppsS4jzyJopY2wIJe1kvE+k2T1SaBTpCFZxb9ucU/0nddsXHJIa+DQvZTzxc4sAJNhseXQc+P8SpVI6eE7LEMKaj0J7zmLlilLlQU8KTqReWmrUBKl/NwCiWECH5Z9ojG9j/teQVDonrFRCdB2Rppf5utS1FY9ihfsjGFTQCEyJEUMIytX7loS0xjPzPjhxT+tj5O+KOVZu8KpU79w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mI0gpVfBwy2PG4XtWWDhnXZeLqC3mjTemls4sGgVBLY=;
- b=kb0Epgu8W5NxEIPigM34o+j/ZF0nNQQDAGsEtxn9a7q03ybT4QUZXy5upj2CeEgXpXENy1eu/J8Xkn7e/cSFXI2J2bGeV3e14vJEZ3n4xHm54JHS3DyV1QoD82KZZSi+tsspq0RWtlj17aDonfCnbAQuWFRlWrUWNX9E02Qqhg21wknwwFrarofpLz84YdV1hTUhMXpbJCD+xTNl7h7lvd2AZfXhCj+4hYtppoinbRLtCovP5FBEz8ZsQ445v3/TLxOQRc9HWroQcTQWxuDg+W3192pCHUxdymloPaX7NLJpEwkEyx2FImxz0uvgbNwPIs8gX1CRC70hkr8F50R54g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by SEZPR06MB6304.apcprd06.prod.outlook.com (2603:1096:101:10d::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Thu, 1 Aug
- 2024 10:45:34 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%4]) with mapi id 15.20.7828.021; Thu, 1 Aug 2024
- 10:45:34 +0000
-From: Huan Yang <link@vivo.com>
-To: Gerd Hoffmann <kraxel@redhat.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-media@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org,
-	linux-kernel@vger.kernel.org
-Cc: opensource.kernel@vivo.com,
-	Huan Yang <link@vivo.com>
-Subject: [PATCH 5/5] udmabuf: remove folio pin list
-Date: Thu,  1 Aug 2024 18:45:09 +0800
-Message-ID: <20240801104512.4056860-6-link@vivo.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240801104512.4056860-1-link@vivo.com>
-References: <20240801104512.4056860-1-link@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0209.apcprd06.prod.outlook.com
- (2603:1096:4:68::17) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1862187FF4
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722509157; cv=none; b=oTG/bE1Sc5Bjf6eIQj3pba5MOeXirEfU/sx8OFWBIMEsUZXFqNxVeKIvrHi6DUN+I464+1+bStngv/XzCzXY36IsS0k7Fb2vGmfQA4P+OpkD9TkI/J4GZXkdQ62A/mUCp+EIcV/orhf0qnqcAPwHbghz6Ntqj1wP/bmvZUyBO7c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722509157; c=relaxed/simple;
+	bh=OJkyzqx3t2GYinRJNuHGE+/bKdbTJ2jz9M4I0r0WeJA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=egxpTTwNKQ5+/65slMDLxUxPTWb8SF2+7+bOlL79aY28yEtTWeKLht4e6ln4ZsuqUYRvC7nflwKLdEtQNBqC/Vxj1+7Sy4ylaccLBVJeF1XFF9WShDiX79svJB9dGEr8HnAaFFRgw96tXME+Ykisrmi4EauiCl+CtcM0DEpBl1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Ni9i99QM; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722509152; x=1722768352;
+	bh=BhLH0JV4jQRV3Mkf3cPdmRoDQ862eb/6hIEDVcpjNRs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Ni9i99QMuHCnpBa/k4F7kX9pm1KT0JzyYWJNnUpV5GDJLkE1HMoek0a8w6Xzwj3Zm
+	 SL8q2HJFUD4+HJ8rBoriTaG4CNjz46YoC4rXq0hSySbrsKLUqOPnFEF4AdVMcrxV9I
+	 j1lC2Q1dGqpyuGpDR1w5lxR71vscA8xFVeJRKVos/NoZgd8ByryDBm12EAwTcD5btv
+	 4LOi3iSvzBbKKWk26TQmKpHMQZemoLSuCpO0UG6roiFNEDeEcJch6oLf0G4akkQQbw
+	 437uztPAPyjSrF2HyL1JWD5w01zAQgjiVIQOa8k9ho5a0Z2ENZJlGShGDeDXmIlP1U
+	 Hp2+IpjeuQUmg==
+Date: Thu, 01 Aug 2024 10:45:49 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
+Message-ID: <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me>
+In-Reply-To: <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com>
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-4-89db92c7dbf4@google.com> <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me> <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e842064c9be3211abfa42f4b108cfb15b7b56416
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|SEZPR06MB6304:EE_
-X-MS-Office365-Filtering-Correlation-Id: 695854b1-ffc2-46cd-d71a-08dcb2171248
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|366016|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?9kUOPAsfPTn1uCTgCV4uhSX47XZ97GDF2hkh+fSEy6JVvU277BoB/ZkDwfRS?=
- =?us-ascii?Q?sHeFjedHnAAgeE5+uw/jfVb2kJxkptwzVxjfR7oI5+QFCnge0yLQi5kdrUrn?=
- =?us-ascii?Q?Ax3w5lY4r3IdP5PmbMNp6s+eCnXEnsF1eTXmdXDnQDxil0+IUiMTyj0XA5dW?=
- =?us-ascii?Q?GlvIv2vc7f6Zj+g3kSGMS/12JXKus/uR1YAAGHdXqhNuzBCeDPfi2NFYvb68?=
- =?us-ascii?Q?qHp5lX9jUP/zENsSZ7TPSbEEmOo1FKXknnhI27xjQJ3TG2AAYCqpf801B2zG?=
- =?us-ascii?Q?xqqNUkOUZSNRw8Ioy1DTEEVhlZhS1bL3UGAyph2racIVGjT66DvM63LSVsRs?=
- =?us-ascii?Q?Zk1nYdEJZkZAT/kfsyDJLhHSIgJku63wjNsLWD0YntIK+6nEhjA+I9kR9Yfg?=
- =?us-ascii?Q?6HLOSE8Opf4pM4E/daA7kJj7IjkaxHGE34tRt43OoubRrD9vsacPMWQVHjCL?=
- =?us-ascii?Q?ndWSE+WlNdlUjKGnFZXiL0WCUoNUsCZ6Qxl7+dGH6TIYqiAtzQo2/iFE9V+H?=
- =?us-ascii?Q?wZ5/804oTbkSCFhNkOhTRDln9mEjt4/wD5WY2ZZQBFuG1yIINSEXjEDIn9SW?=
- =?us-ascii?Q?ba5q3q23dNluNsGWfn7OJLHwxHr+gHDT4q2vsKk0NRu6+WpK31j3cpNgZBFG?=
- =?us-ascii?Q?6R3dcmb4y+NWGQoduKwuRZCKz/r9ih2d0hPvflbfvauRDdpZYxm0/NI6uHVJ?=
- =?us-ascii?Q?vwpdWnr+Nskm1UrdZWSaomMQK3/GhG4u7PFq4uBVjmeoSo9f2DwuUHAHpIGj?=
- =?us-ascii?Q?uo5hmrqnJpMHv170y5zIk0PXtkUlqRZZxMLKZs7Zbf2rwrKP723uS6ynmfV2?=
- =?us-ascii?Q?cGtODc1EmIgvbssXhmoWsJjsaIg7w0mt+AFD+HBCZs1DSIVBHVVNvEgf2eHj?=
- =?us-ascii?Q?F6O+JaGBmajtamXQ/aFqFSSVL49Xb4utViLqDVXdyPKIfcOBHBvAgTHXUfCX?=
- =?us-ascii?Q?+OzVHsLCALAHfpG0mzx1W2CeJgj73tEb02scLKFXjJU4tS5ZgOq7cPwIc2D2?=
- =?us-ascii?Q?AoTaR1Rrn0XTns6Vw+ogDLuBjqnfTaDrQTox0xjJ94x9U/g1hoAh76qiYH0h?=
- =?us-ascii?Q?ciS6h3fuKW48ecrZVv97kS+g+0Efw26D9Wwd0Ttfh/nhNCsk6aaOA22tbxvh?=
- =?us-ascii?Q?KihbUji4BxhkHZSMmb0azZyEWWpPMLmsxUz+EBb64rifQZ1J1lZL1U6QROP0?=
- =?us-ascii?Q?tBk+lj5b0ZcnP6hRasfn9t1BVDedV9Y2NW6w1RI6eFLNIBByvI6kJUR3+3hn?=
- =?us-ascii?Q?PMB6/weZX9DpndQzMYGF0/to8Kn7ILx810jp70yon+KknjUWzq5J/nW7d1xn?=
- =?us-ascii?Q?A2pFUrYuUxJz0IjT5zJrX9ZOPQl1esR20JcQraku60Bp0QKoxK4GDsrKxAoR?=
- =?us-ascii?Q?Kez/j19+EeSGHYsnWwgPOv1OcyAj6fbIZg23hbXQz6XHkngJFw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(366016)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6dMfQAsa2Ri2zx0N8TLizqDWm60R9/lHx2nZuAk8Bqb4oEekIINS77R5p9oe?=
- =?us-ascii?Q?hstiiC2KPjz0IK54Tyo0I9E7bu9D+C4d9G1gADSuj1VeCx4tWTU0LjIKHMfE?=
- =?us-ascii?Q?Ds94rA8AffTTbVpqH6G9GHPuJzdKKYtHFkT6SqLDA8XZzr1L4fgg3Hgt7z/R?=
- =?us-ascii?Q?Sy5LYEzKKNwUGE4kPPeL8i53bf6PBoHqfOv2HIFo/5LpAkcUXogtI64n0Y9l?=
- =?us-ascii?Q?8yKpDbHRgUHGhJD1KfVTLksajIVdgZ+4ogO/PsGBqvr3qKIMKyeybZGG6bPP?=
- =?us-ascii?Q?DmCy58wh230BBHM4RKv+tczpe5oFHFR+Y4SjwfUEj7wpjDP3ssaKgpFoIoAU?=
- =?us-ascii?Q?VYujVrZgmZxZimHqIHXJFc6RvDu04Kj1+qnazUy06vlupCwOH9tUbMKgh4qW?=
- =?us-ascii?Q?NFJtB8m9cWhGaZOWHfREnocfu2Tr53WoN7r7NzDzBoG27CV8nN9R+2NU7IIg?=
- =?us-ascii?Q?EKA5gWRnjKw6Bt8yKrZ/LtznTYgSAt0HzSdMe7uctL0W5SeReGvpToh22QTh?=
- =?us-ascii?Q?q/VJqqCAhJTaHR/R3C36iHbwEsfvgKBmnwEQ9wzjqubdOCj7cqXr4gbbs5V7?=
- =?us-ascii?Q?TageigF7/vYWm3nY+ipvTTTIoHXTW8Z717AtxXFoWXasM14QSV4UGORHHMQx?=
- =?us-ascii?Q?2SXCJBbGFce7rQvxpdiHUfCEiajRCseiT3jaw0IOawbLK4gKLyvP4fvMJj+w?=
- =?us-ascii?Q?nLJ/14WtxXfVzRyZfDjRU3+iCHUbP8Z3M645iXikw3+5nc6+uT20pBh/h5n7?=
- =?us-ascii?Q?Sokw5fea/GcvSJEalj52jqWnHHuhHVMXpF2DEoUUopqtvj3QGSG2dZcI52I7?=
- =?us-ascii?Q?278ruS5+kJoxHj0dkze8S8YUh45Nj7JHWv1oVRcs8nxLYGof9OqQondsNLmK?=
- =?us-ascii?Q?Cs/NYQy/qCPX79zxiwAi9xQRSy2A0Oj4ARx//8jZ4CfOffYQHb1014SbyvQW?=
- =?us-ascii?Q?RjUfJTtX6UnH9chu/q0igZaX2uxPM4JIBVof0q9Y3VWJ+9Jhloh/I3d9GpN3?=
- =?us-ascii?Q?9GryjU4ApSAb9fLFGfI+Ae+OPtUbC3WTWCrC0hOBPzqZ1ZwJpvhWlou0v6qf?=
- =?us-ascii?Q?6dQBf8Ky9yb0T3/5gAqMdRS984DKL+cwsZpb4wQ1IMqeiWWXkUIztFuPXB91?=
- =?us-ascii?Q?UOyN/oyJx9hw4/6PR2jVa9r1mtCdM663JgbP99qly7VgCOsEaXDWYqbKPQ0h?=
- =?us-ascii?Q?iqC8X1aEZh1JS0vvbr+ZZKzSwOtJiGVY6zrMSBh/jAgQ3I3RNEIRwYGQTPie?=
- =?us-ascii?Q?5i5GtWzuliP5vw2s9yIhYYYvIMJCq2XISnYT5CWEDXGLO+lpvjULG4V6wAJ6?=
- =?us-ascii?Q?2r+y+n2IkeexbVDH9WxCaEfFNrOyDyLNylf8x7lH4Ik3IanR44Jq8uzIogaC?=
- =?us-ascii?Q?QNmMPGZbR3kEnnuxCcELkpUUN8PRNJUiSobGCeeq8wtGCm+hY9c+Sor76O7H?=
- =?us-ascii?Q?ay9G8zz7me1axW3O1LNEmJKwXRGcPzRNvu1Vlp9MF07rGXjvB3K2jLUH4YeC?=
- =?us-ascii?Q?uvYPUfEvVe64vtiSoG2W4wNrsRGeiNvpeRmlg0wDAgyz3WDUEH7N6/DR2Ubr?=
- =?us-ascii?Q?Pc/fprtZT6bJuEZQVlLRyPbxub+f4YDpxFJd08W/?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 695854b1-ffc2-46cd-d71a-08dcb2171248
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 10:45:34.1825
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: uS6Tan53xdYHYJi6M9CDMUS8wJNzXWev6Z04NfMsjqol0ijQ8VXYZVr6vIt8k3Fu03ji3c9S7xKxBFOOJ/SqoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB6304
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Currently, udmabuf handles folio by creating an unpin list to record
-each folio obtained from the list and unpinning them when released. To
-maintain this approach, many data structures have been established.
+On 01.08.24 11:42, Alice Ryhl wrote:
+> On Wed, Jul 31, 2024 at 8:41=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>
+>> On 23.07.24 10:22, Alice Ryhl wrote:
+>>> +/// The prev/next pointers for an item in a linked list.
+>>> +///
+>>> +/// # Invariants
+>>> +///
+>>> +/// The fields are null if and only if this item is not in a list.
+>>> +#[repr(transparent)]
+>>> +pub struct ListLinks<const ID: u64 =3D 0> {
+>>> +    #[allow(dead_code)]
+>>> +    inner: Opaque<ListLinksFields>,
+>>
+>> Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it is
+>> enough and you change this, be aware that `Opaque` is `!Unpin`, so if
+>> you intend for `ListLinks` to also be `!Unpin`, then you need a
+>> `PhantomPinned`)
+>=20
+> I need the `!Unpin` part for aliasing.
 
-However, maintaining this type of data structure requires a significant
-amount of memory and traversing the list is a substantial overhead,
-which is not friendly to the CPU cache, TLB, and so on.
+Oh good point, do you mind adding a comment for that?
 
-Therefore, this patch removes the relationship between the folio and its
-offset in the linear address mapping.
+>>> +}
+>>> +
+>>> +// SAFETY: The next/prev fields of a ListLinks can be moved across thr=
+ead boundaries.
+>>
+>> Why? This is not a justification.
+>=20
+> What would you say?
 
-As an alternative, udmabuf only tracks all folio structures and splits
-them into individual pages when needed by traversing them in the
-required locations.(mmap/vmap, sg table.)
+While trying to come up with a safety comment I thought about the
+following: this impl does not depend on the type that is behind the
+pointer (ie the type containing the `ListLinks`). Thus this `ListLinks`
+will always implement `Send` even if the pointed-to value does not.
+What we could do (and what definitely would be correct) is this:
+`List` can only be used with `Send` types, then we could implement
+`Send` for `ListLinks`. But I haven't actually come up with a problem,
+so there might a more permissive solution.
+Do you have a use-case where you need `!Send` types in a list?
 
-So, udmabuf's folios_array only save the folio struct, add nr_folios to
-point how many folio saved in it.
+Here is a part of my reasoning: If the pointed-to value is `!Send`, then
+the `List` item type must also be `!Send`. Thus all list operations take
+place on the same thread (since the `List` will be `!Send`). Therefore
+nobody can access the `prev`/`next` pointers from another thread.
 
-offset is removed, and add item's offset and size to replace, due to
-memfd create may have offset, we must set correctly page in folio.
+But this does not justify that `ListLinks` can be made `Send`. (although
+there isn't actually a problem)
 
-So, when setup sg_table, we must start correct offset in each item at
-begin, and then set each folio's page into sgtable.
+>>> +unsafe impl<const ID: u64> Send for ListLinks<ID> {}
+>>> +// SAFETY: The type is opaque so immutable references to a ListLinks a=
+re useless. Therefore, it's
+>>> +// okay to have immutable access to a ListLinks from several threads a=
+t once.
+>>
+>> You don't need to argue via `Opaque`, the type doesn't expose any
+>> `&self` functions, so there are no functions to consider.
+>=20
+> I'm not arguing via the `Opaque` type. I'm just using "opaque" as a
+> normal english word with its normal meaning.
 
-Both item's offset and size number just the create list number, so,
-memory size will not too large.
+Oh I see, then it's fine.
 
-By doing this, we can accept the overhead of the udmabuf_folio structure
-and the performance loss of traversing the list during unpinning.
-
-Signed-off-by: Huan Yang <link@vivo.com>
 ---
- drivers/dma-buf/udmabuf.c | 149 +++++++++++++++++---------------------
- 1 file changed, 66 insertions(+), 83 deletions(-)
-
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index 677ebb2d462f..1106e0b1e746 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -25,17 +25,19 @@ module_param(size_limit_mb, int, 0644);
- MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes. Default is 64.");
- 
- struct udmabuf {
-+	// all page's count, pagecount * PAGE_SIZE is the udmabuf's size
- 	pgoff_t pagecount;
-+
-+	// folios array only point to each folio, do not duplicate set.
- 	struct folio **folios;
-+	// folios array's number
-+	pgoff_t nr_folios;
-+
- 	struct sg_table *sg;
- 	struct miscdevice *device;
--	pgoff_t *offsets;
--	struct list_head unpin_list;
--};
- 
--struct udmabuf_folio {
--	struct folio *folio;
--	struct list_head list;
-+	pgoff_t *item_offset;
-+	size_t *item_size;
- };
- 
- static struct sg_table *udmabuf_get_sg_table(struct device *dev,
-@@ -118,7 +120,10 @@ static struct sg_table *get_sg_table(struct device *dev, struct dma_buf *buf,
- 	struct udmabuf *ubuf = buf->priv;
- 	struct sg_table *sg;
- 	struct scatterlist *sgl;
--	unsigned int i = 0;
-+	struct folio *folio = NULL;
-+	size_t fsize, foffset;
-+	unsigned int i = 0, item_idx = 0, findex = 0;
-+	size_t cur_size, item_size;
- 	int ret;
- 
- 	sg = kzalloc(sizeof(*sg), GFP_KERNEL);
-@@ -129,9 +134,33 @@ static struct sg_table *get_sg_table(struct device *dev, struct dma_buf *buf,
- 	if (ret < 0)
- 		goto err_alloc;
- 
--	for_each_sg(sg->sgl, sgl, ubuf->pagecount, i)
--		sg_set_folio(sgl, ubuf->folios[i], PAGE_SIZE,
--			     ubuf->offsets[i]);
-+	cur_size = 0;
-+	item_size = ubuf->item_size[0];
-+	foffset = ubuf->item_offset[0];
-+	folio = ubuf->folios[0];
-+	fsize = folio_size(folio);
-+
-+	for_each_sg(sg->sgl, sgl, ubuf->pagecount, i) {
-+		sg_set_folio(sgl, folio, PAGE_SIZE, foffset);
-+		foffset += PAGE_SIZE;
-+		cur_size += PAGE_SIZE;
-+
-+		// move to next folio.
-+		if (foffset == fsize) {
-+			++findex;
-+			folio = ubuf->folios[findex];
-+			fsize = folio_size(folio);
-+			foffset = 0;
-+		}
-+
-+		// if reach to next item, must check the start offset.
-+		if (cur_size == item_size) {
-+			++item_idx;
-+			foffset = ubuf->item_offset[item_idx];
-+			item_size = ubuf->item_size[item_idx];
-+			cur_size = 0;
-+		}
-+	}
- 
- 	// if dev is NULL, no need to sync.
- 	if (!dev)
-@@ -203,34 +232,6 @@ static void unmap_udmabuf(struct dma_buf_attachment *at,
- 	return put_sg_table(at->dev, sg, direction);
- }
- 
--static void unpin_all_folios(struct list_head *unpin_list)
--{
--	struct udmabuf_folio *ubuf_folio;
--
--	while (!list_empty(unpin_list)) {
--		ubuf_folio = list_first_entry(unpin_list,
--					      struct udmabuf_folio, list);
--		unpin_folio(ubuf_folio->folio);
--
--		list_del(&ubuf_folio->list);
--		kfree(ubuf_folio);
--	}
--}
--
--static int add_to_unpin_list(struct list_head *unpin_list,
--			     struct folio *folio)
--{
--	struct udmabuf_folio *ubuf_folio;
--
--	ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
--	if (!ubuf_folio)
--		return -ENOMEM;
--
--	ubuf_folio->folio = folio;
--	list_add_tail(&ubuf_folio->list, unpin_list);
--	return 0;
--}
--
- static void release_udmabuf(struct dma_buf *buf)
- {
- 	struct udmabuf *ubuf = buf->priv;
-@@ -239,8 +240,9 @@ static void release_udmabuf(struct dma_buf *buf)
- 	if (ubuf->sg)
- 		put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
- 
--	unpin_all_folios(&ubuf->unpin_list);
--	kvfree(ubuf->offsets);
-+	unpin_folios(ubuf->folios, ubuf->nr_folios);
-+	kfree(ubuf->item_offset);
-+	kfree(ubuf->item_size);
- 	kvfree(ubuf->folios);
- 	kfree(ubuf);
- }
-@@ -338,19 +340,18 @@ static long udmabuf_create(struct miscdevice *device,
- 			   struct udmabuf_create_list *head,
- 			   struct udmabuf_create_item *list)
- {
--	pgoff_t pgoff, pgcnt, pglimit, pgbuf = 0;
-+	pgoff_t pgoff, pgcnt, pglimit;
- 	long nr_folios, ret = -EINVAL;
- 	struct file *memfd = NULL;
- 	struct folio **folios;
- 	struct udmabuf *ubuf;
--	u32 i, j, k, flags;
-+	u32 i, flags;
- 	loff_t end;
- 
- 	ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
- 	if (!ubuf)
- 		return -ENOMEM;
- 
--	INIT_LIST_HEAD(&ubuf->unpin_list);
- 	pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
- 	for (i = 0; i < head->count; i++) {
- 		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
-@@ -365,20 +366,27 @@ static long udmabuf_create(struct miscdevice *device,
- 	if (!ubuf->pagecount)
- 		goto err;
- 
--	ubuf->folios = kvmalloc_array(ubuf->pagecount, sizeof(*ubuf->folios),
--				      GFP_KERNEL);
--	if (!ubuf->folios) {
-+	ubuf->item_size =
-+		kmalloc_array(head->count, sizeof(size_t), GFP_KERNEL);
-+	if (!ubuf->item_size)
-+		return -ENOMEM;
-+
-+	ubuf->item_offset =
-+		kmalloc_array(head->count, sizeof(pgoff_t), GFP_KERNEL);
-+	if (!ubuf->item_offset) {
- 		ret = -ENOMEM;
- 		goto err;
- 	}
--	ubuf->offsets =
--		kvcalloc(ubuf->pagecount, sizeof(*ubuf->offsets), GFP_KERNEL);
--	if (!ubuf->offsets) {
-+
-+	ubuf->folios = kvmalloc_array(ubuf->pagecount, sizeof(*ubuf->folios),
-+				      GFP_KERNEL);
-+	if (!ubuf->folios) {
- 		ret = -ENOMEM;
- 		goto err;
- 	}
-+	folios = ubuf->folios;
- 
--	pgbuf = 0;
-+	nr_folios = 0;
- 	for (i = 0; i < head->count; i++) {
- 		memfd = fget(list[i].memfd);
- 		ret = check_memfd_seals(memfd);
-@@ -386,49 +394,24 @@ static long udmabuf_create(struct miscdevice *device,
- 			goto err;
- 
- 		pgcnt = list[i].size >> PAGE_SHIFT;
--		folios = kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
--		if (!folios) {
--			ret = -ENOMEM;
--			goto err;
--		}
- 
- 		end = list[i].offset + (pgcnt << PAGE_SHIFT) - 1;
- 		ret = memfd_pin_folios(memfd, list[i].offset, end,
- 				       folios, pgcnt, &pgoff);
- 		if (ret <= 0) {
--			kvfree(folios);
--			if (!ret)
--				ret = -EINVAL;
-+			ret = ret ?: -EINVAL;
- 			goto err;
- 		}
-+		ubuf->item_size[i] = list[i].size;
-+		ubuf->item_offset[i] = pgoff;
- 
--		nr_folios = ret;
--		pgoff >>= PAGE_SHIFT;
--		for (j = 0, k = 0; j < pgcnt; j++) {
--			ubuf->folios[pgbuf] = folios[k];
--			ubuf->offsets[pgbuf] = pgoff << PAGE_SHIFT;
--
--			if (j == 0 || ubuf->folios[pgbuf-1] != folios[k]) {
--				ret = add_to_unpin_list(&ubuf->unpin_list,
--							folios[k]);
--				if (ret < 0) {
--					kfree(folios);
--					goto err;
--				}
--			}
--
--			pgbuf++;
--			if (++pgoff == folio_nr_pages(folios[k])) {
--				pgoff = 0;
--				if (++k == nr_folios)
--					break;
--			}
--		}
-+		nr_folios += ret;
-+		folios += ret;
- 
--		kvfree(folios);
- 		fput(memfd);
- 		memfd = NULL;
- 	}
-+	ubuf->nr_folios = nr_folios;
- 
- 	flags = head->flags & UDMABUF_FLAGS_CLOEXEC ? O_CLOEXEC : 0;
- 	ret = export_udmabuf(ubuf, device, flags);
-@@ -440,8 +423,8 @@ static long udmabuf_create(struct miscdevice *device,
- err:
- 	if (memfd)
- 		fput(memfd);
--	unpin_all_folios(&ubuf->unpin_list);
--	kvfree(ubuf->offsets);
-+	kfree(ubuf->item_size);
-+	kfree(ubuf->item_offset);
- 	kvfree(ubuf->folios);
- 	kfree(ubuf);
- 	return ret;
--- 
-2.45.2
+Cheers,
+Benno
 
 
