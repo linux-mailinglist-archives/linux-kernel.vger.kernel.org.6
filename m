@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-271709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A616945249
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:52:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7943F94524B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:53:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B950E28954B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257041F2AFC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F35C1B9B4A;
-	Thu,  1 Aug 2024 17:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEBF1B9B45;
+	Thu,  1 Aug 2024 17:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SnH4tzec"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="G/bhEbg1"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418B01B4C49
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C6B1B3742;
+	Thu,  1 Aug 2024 17:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722534763; cv=none; b=HScw8LFqP8xwSqLYAAkV3OqcTWzooMXOW+V7N2Hd1X2CD64gHt6I2j1/vP381QqVR7yu3Wt+iQkhSmrK1SCzEcWxaMfBjgpw00XF1fEdJbNKxBkN9f9n2ycld8GxYB3fYZF3dlfUEwBwnN0H0T5vnCC8tldIq83m+NMNt6vsF+Y=
+	t=1722534781; cv=none; b=NYgzQu3+8V3LxkjbKKTunaNfdN9mmQF8SPWN5Apk9TMJnUVLReAxUy1uRZGVEYYEn4W3+MFdTrap9EfH+n0l1r7908fTY9JJDuNR16/w+b90qLEp5IeP1xpT3zueZ7fB12hhDK2yfZ0OmbBdZ7sFw76DPUrp664OWRX2/PaQPd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722534763; c=relaxed/simple;
-	bh=M6InQaB0T4wGw9r+y0hXi5/zJ5LG2nNysefOOnv+iAE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hk+OV7kP0fZryrnrbouWd7cLgVYUTgNE/alGGGgb0+LljJXj8p34xhmetQRcxsihMD09kazB9QIy9RZeRDzERKEtk4HAXWoabQ8sbgOiBWkK7IagNguUYUeGzo+pUfmrvBrhARnwCXIkgIQB5T6E6LMjxlJtPC2I8Jrny8h+Fl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SnH4tzec; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso46357a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722534760; x=1723139560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8qly8JbOiDlnwa/iIbG3/fk35NDbFwt36/SaFwD82+4=;
-        b=SnH4tzecDrlXkBbAcaxl6O8zZ9PBNLWq+CpnGQqkLQSRY4HHtXxV5oMljMv7J9E+tn
-         r0Ln/A6XxDg9oUqe3eIjQrPJjpfT1dBmDLSORdGOW+Rdewz1Fh9nDwg/lfzbsl8lEo/s
-         otKCGZIgefaogjqJL7AJ+nUizKbuImYCuwG/WAjq7fiX55bx8iUxhBYKyNuU0KBcvojg
-         U9yKO8rip9WoT6+okQ5dGxooU0wUHavd0AQ5uec67dEkJZ9eGPXTxvXy+amGsBiDuq87
-         n1CM/T9DNuAb/cB8aS0KWgghf4KszatqvWk/QSacjsa9sL2N0A3fBYvcXH//H2RFWENX
-         RirQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722534760; x=1723139560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8qly8JbOiDlnwa/iIbG3/fk35NDbFwt36/SaFwD82+4=;
-        b=LczOP9QLyRVoOuFE3gcPcU3FfpP8ARnPvjrSkqFsQYdB3JwAPId0kEU8kJ7K1da5iK
-         cXr25+4Y4RadB0OwoqsFfGfhzE4M26CPIe4ztW+xYMsGMa5yALF/UZHxWcEKomiTO5K6
-         VG6sJNJvD29wn1QZ7g/ljU81WR9Pt1jPPuXY49Q4EpjMQsFXZyKY6YLqZq7DCFgAxgVa
-         VZOf2ozmsNNWgi26LzVI7XBVR/74mIvAjcNM94s6/uURl1iH7d3TqUDr8D6yE3Kj7NpR
-         gH9HpRVDcWW2c2IIiqb8G8FECK00uf3JN5KDerHeTov4AAlQL02k+8uSDQidWYb1eyHi
-         y3+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUGQNlg/9WJd2lvVHZeZ416LnR8dFZsUGzHBglPfWp1C371u407BPrRYanuGM4e8L0AIM+C/bQOeWfSbd3T+P8Tc8GM3/WDqIe7LaPd
-X-Gm-Message-State: AOJu0Yy5zoCKv31j2sWkWz7l6I/ddqPFsJ9RY3waOQ3rnd6OY5qpPekF
-	PHTG7NKCDFdh4Y5JnI3mk7lsG6k/6hUYjDJ/GdiSpHcEcBTWBoX15fjSpkdz/0LWs1XJ/aZicxc
-	fE0TRR6WsCMwXzf3r16oEa5cmNGS8MEQeA+8q
-X-Google-Smtp-Source: AGHT+IHB5CJxc6Tc3CjWDacX26l9/cA+t+kvTF1TdZijWQEEpgYdyhxFzFFAkvLyaqV8sqPcAn0lgEDa7UlZziEV+W4=
-X-Received: by 2002:a05:6402:2689:b0:58b:15e4:d786 with SMTP id
- 4fb4d7f45d1cf-5b844f86d28mr690a12.5.1722534760180; Thu, 01 Aug 2024 10:52:40
- -0700 (PDT)
+	s=arc-20240116; t=1722534781; c=relaxed/simple;
+	bh=plPRch7khvdAriYZO0F9005i5wgrSxJb/YiEPJWYkFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ohOSFy/artks2sJVKWtBrptz2loUegFyNrKdTA5TpHH5VgnrH6DPqHf75DOlJbmdVIFPMKoN9hHoyxSEYv50JJtyQ8Py6mF4v6KPq6NkN+Dioxb0G/rWGqMEwTOlAgRpfm5byl+8jq/dMuMzlwO7Ywt83DyXp/zF2a7ilD/7gBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=G/bhEbg1; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722534777;
+	bh=plPRch7khvdAriYZO0F9005i5wgrSxJb/YiEPJWYkFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/bhEbg1eVN3rqNZzOh80+QsuKt9VtBremwQMBtx5urDTORG4Fx6F+wMCDpMIZfIc
+	 2mkejcpQInq1yKR6XbpgR5WIKQ132JPwAvpRH1ZXzXOejsBqq0gl0f4buhLs3+rbQ2
+	 uigzrA4eqyWpY1KdbucqiM+jUYI3DTLQX4v0BkikCVI2vAPTjaJaQOh8YIqpyJGfcW
+	 TAdC84s5F7klp5+rTwp9avBKKJC7z9JG8rKzQ5Z7iyxpNJmDh4NT83xqVBrB8AsXZD
+	 /dbEQw3imsPrqJniqsXZdW21lnYjiKDX9pAu/v2skFrgUmeX96TAdCfhZPMjbLJntf
+	 FZC/DElIEujjw==
+Received: from mercury (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sre)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 95623378000B;
+	Thu,  1 Aug 2024 17:52:57 +0000 (UTC)
+Received: by mercury (Postfix, from userid 1000)
+	id 3E709106097C; Thu, 01 Aug 2024 19:52:57 +0200 (CEST)
+Date: Thu, 1 Aug 2024 19:52:57 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: Lee Jones <lee@kernel.org>, 
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>, Mark Brown <broonie@kernel.org>, Urja <urja@urja.dev>, 
+	linux-rockchip@lists.infradead.org, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com, stable@vger.kernel.org
+Subject: Re: [PATCH v1 1/1] mfd: rk8xx: Fix shutdown handler
+Message-ID: <wad5fdqxwoq2wy35wbhwk5jinpgyz6xmxnt5aqddci777qctsd@qay2lr2ubkws>
+References: <20240730180903.81688-1-sebastian.reichel@collabora.com>
+ <c4d6da27-3b23-4a96-bad0-17f2392287ef@collabora.com>
+ <22969419.5W6oEpyPa8@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801-upstream-net-next-20240801-tcp-limit-wake-up-x-syn-v1-1-3a87f977ad5f@kernel.org>
-In-Reply-To: <20240801-upstream-net-next-20240801-tcp-limit-wake-up-x-syn-v1-1-3a87f977ad5f@kernel.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 1 Aug 2024 19:52:26 +0200
-Message-ID: <CANn89iK6PxVuPu_nwTBiHy8JLuX+RTvnNGC3m64nBN7j1eENxQ@mail.gmail.com>
-Subject: Re: [PATCH net-next] tcp: limit wake-up for crossed SYN cases with SYN-ACK
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>, 
-	David Ahern <dsahern@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sjgkp6qu6zakxj2y"
+Content-Disposition: inline
+In-Reply-To: <22969419.5W6oEpyPa8@diego>
+
+
+--sjgkp6qu6zakxj2y
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 1, 2024 at 6:39=E2=80=AFPM Matthieu Baerts (NGI0)
-<matttbe@kernel.org> wrote:
->
-> In TCP_SYN_RECV states, sk->sk_socket will be assigned in case of
-> marginal crossed SYN, but also in other cases, e.g.
->
->  - With TCP Fast Open, if the connection got accept()'ed before
->    receiving the 3rd ACK ;
->
->  - With MPTCP, when accepting additional subflows to an existing MPTCP
->    connection.
->
-> In these cases, the switch to TCP_ESTABLISHED is done when receiving the
-> 3rd ACK, without the SYN flag then.
->
-> To properly restrict the wake-up to crossed SYN cases as expected there,
-> it is then required to also limit the check to packets containing the
-> SYN-ACK flags.
->
-> Without this modification, it looks like the wake-up was not causing any
-> visible issue with TFO and MPTCP, apart from not being needed. That's
-> why this patch doesn't contain a Cc to stable, and a Fixes tag.
->
-> While at it, the attached comment has also been updated: sk->sk_sleep
-> has been removed in 2010, and replaced by sk->sk_wq in commit
-> 43815482370c ("net: sock_def_readable() and friends RCU conversion").
->
-> Suggested-by: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-> ---
-> Notes:
->   - This is the same patch as the one suggested earlier in -net as part
->     of another series, but targeting net-next (Eric), and with an
->     updated commit message. The previous version was visible there:
->     https://lore.kernel.org/20240718-upstream-net-next-20240716-tcp-3rd-a=
-ck-consume-sk_socket-v2-2-d653f85639f6@kernel.org/
-> ---
+Hi,
 
-Note: I am not aware of any tests using FASYNC
+On Thu, Aug 01, 2024 at 07:41:44PM GMT, Heiko St=FCbner wrote:
+> Am Donnerstag, 1. August 2024, 17:31:33 CEST schrieb Dmitry Osipenko:
+> > On 7/30/24 21:05, Sebastian Reichel wrote:
+> > > +	/*
+> > > +	 * Currently the Rockchip SPI driver always sleeps when doing SPI
+> > > +	 * transfers. This is not allowed in the SYS_OFF_MODE_POWER_OFF
+> > > +	 * handler, so we are using the prepare handler as a workaround.
+> > > +	 * This should be removed once the Rockchip SPI driver has been
+> > > +	 * adapted.
+> > > +	 */
+> > > +	if (is_spi)
+> > > +		pwr_off_mode =3D SYS_OFF_MODE_POWER_OFF_PREPARE;
+> >=20
+> > This prevents the syscore_shutdown() step from execution. Is it better
+> > than not powering off?
+> >=20
+> > I'd rather skip registration of the power-off handlers in a case of SPI=
+ :)
+>=20
+> Or blasphemous thought, we could live with the warning-splash for a bit.
+>=20
+> From Sebastian's log I assume the WARNING comes from the
+> wait_for_completion() in spi_transfer_wait(), and I guess the transfer
+> with the poweroff command itself will already have happened then?
+>=20
+> So the device is most likely still powered off in that case?
+> Not sure how much of "bad taste" that thought is though ;-)
 
-sock_wake_async() / kill_fasync() are sending signals, not traditional wake=
-ups.
+Yes, as far as I could see it works fine (the splash from the commit
+message is from exactly this solution running on RK3588 EVB1 and the
+board was powered off properly as far as I can tell). But it felt a
+bit strange to knowingly introduce an error splash in a fix intended
+for being backported to the stable trees, so I switched to the current
+version before sending.
 
-Do we really want to potentially break some applications still using
-pre-multi-thread era async io ?
+-- Sebastian
 
-Not that I really care, but I wonder why you care :)
+--sjgkp6qu6zakxj2y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmary3QACgkQ2O7X88g7
++prEYA//Uzr1RcaVsc7UcEd+nR7XbTVEUENkCiIRu3A94zcGi/bF5oS11QxvbLvY
+3LaPGcAdLg9goCYf4umh/k4lUNrFrlPA5733nLg6XTl3IWoeLTSLrpsLOWLGELre
+usMKLB+ZbJsmWY9h0YBD6x8tru8d30Zi6DU90oVq4bJXUFLyfVxoFunUwD2pp1Zo
+59FU6xPMsncOf/1tecfIIXTYUfREjBU+mzoY7GRaHhk0H4hSZ5Ubn9xw3kOoPeE4
+55sQnmjWUWHI6CSpdDtnbGIDR0p2pQfpbEpJNyR+exvQWj/QlWvCJ1/VfoQpiCXC
+LHXQeq9QiXcdHM/u39yZIhrVD7CokAyM/DDKnYCnV7T41vLeYB/+LE01HQpnIYyq
+pcGM/BlLgOer/BLuwgkNYxshmqE75+BLaJxfA6Weh4Lkd1V3QtIxn6PKL4cFAdtS
+c2FHk3qhHHdKhX2Ruy0WEiB96zCaBITsQm9EAiUrin7VzrYxxq69FA2LFRiJcRpH
+PihEXDhRFYe7qEmIXzOa1vhsKvH7FFqfjTUY+dbPFzyMXwSI5iOX4FKYBvS3iNtj
+b+UY2HpaWLs/vlaCiDGJT6q656KcShB0dQkZKNmfNL5XM2S8pAzGqbjpAdt2IYlL
+5kyFxnwWs268HZ7epaey/dRkajBiUI2WJGsOIvg9L0d0LrL4T+Q=
+=taLl
+-----END PGP SIGNATURE-----
+
+--sjgkp6qu6zakxj2y--
 
