@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-270846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D21B944630
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1E4944634
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98DAB1C2224D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:06:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1EA31C22010
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 757B812EBE1;
-	Thu,  1 Aug 2024 08:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCE816DEAF;
+	Thu,  1 Aug 2024 08:06:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EpyhvPbn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j81OKJuy"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7814EEB3
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:06:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F5C1EB490
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:06:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722499599; cv=none; b=MWEUOC/ccMFExTxOjO20U+OE/poxIST7f8n4HVtHLfFIc39vHXy0s83NHCGQ0c/ykC8bVC+rHcDfehtuky6MXdUsXdZJa+jqPNkVViCelt668xMvUF6NdXfU2XmzfqllhPwGAuNKO5oSKGzar5Q2kF3ldmX75AQsYfdrxMe+gXA=
+	t=1722499603; cv=none; b=F8lpfTJR1V4mTFsVRBNvOtLd2Sqh4VLqFbh3SkYzeohgvCpqJR2RUDySikFP5BZJJJmv94xvTl6ezdWoCceR4+pusMii4tWuCH09cHhHrgvzCYbPrF8oc98sH7gzb+aSxVeQBUM5iXwzMfIs5nzxeODsM/uUhE11Wbvv3BTOM8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722499599; c=relaxed/simple;
-	bh=6BYvKLNb6BV3URZIk1kh02MAmESjQqs+BlrBJ4CDJrY=;
+	s=arc-20240116; t=1722499603; c=relaxed/simple;
+	bh=2UQaTyl+e4aUx3eXNpUXmhySHng2WsfhWsk90vQMGtg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XwQu9PT8Z+2+60fF3+ig8F/5coSdhlXEJJzygQBk1qDQjPBM1o3UBAMSDt4k91uvMqytYbVf2YchXBrTfUP/pO3oocbmrWskKqrk3InJ5od1URP8MqKtDK20wIY+CrcSBaN2ljec8QRx8uDSV7KJmzbKzOTFGqQgRz6zGqvZDvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EpyhvPbn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722499596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=fSbKvwYBQ6IDwLVCp8S4T0F+fvx1pgc6qaCobZqxwZs=;
-	b=EpyhvPbnjhJWOHHu5ToorsICCuPHWuEx9hBbxgHxdrT5eshjwAs9PpigrGFdrWngaR6DvP
-	G40Cu4SZ6rychvmOtifjt4+c1yhAyMK7XOOXtNI0PtZb5TPmVteDgj0f0rAx42YATmT3IZ
-	1DcU/5EO2gFEsvGF/QFSflbV7KIejLo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-280-7oQ1VaWhMHmqUtz18ZO41A-1; Thu, 01 Aug 2024 04:06:35 -0400
-X-MC-Unique: 7oQ1VaWhMHmqUtz18ZO41A-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-368448dfe12so865203f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:06:35 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=VI1W8I/dYeMTOTTtguYmIjAWqy/6uSrouIenVQ5QCUBj0Zygi8kjGvewvew8Mnj2rwL5Y1mZvvMO2pA/S1gEVVvJdg86HizHqapWciABjoG0MwRLSoMu6rQF6MGXAC7awdeUu+L2solabCApC1Wgx9Pxi8Q2jjVYIYg4ZxWOwfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j81OKJuy; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso4888402b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:06:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722499601; x=1723104401; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3NqmfobhM9Iu7Hq/oR4TLKO0+O0Au9Wt4MOTa5p04eQ=;
+        b=j81OKJuy/32AMQrC3sV2vH7777wCpdbYhmsu83JLGB6euXPssa5j7F/nUDFxwf/aw+
+         VAeloCVyucvmIyQvMieclld7BSUH263gPbbpcXawE293dyX1MwQh5nZU5K49SbM9uB6s
+         X9WPX8zukU9dhHkXwBzupizIeML9H9nBEKm+1NSqdi2/+kJ1xs8hmyW1bMvZWjlrQ4//
+         PRjvCa5PrbfoICKDdsDH//3Z1L5I6AVkpnsNvlg0by+blFSGSa2ttsee4xTIoACkZZkm
+         yAHr+gdp6svLY8OrnLs93rsyeXOPMJNJ5hpHlCReHnI76rjX0Twk4vF5+NGSnBEK0tJF
+         7PBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722499594; x=1723104394;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fSbKvwYBQ6IDwLVCp8S4T0F+fvx1pgc6qaCobZqxwZs=;
-        b=H7r2jzUEwkO4iL2NCTd8FiXXJLhun6KlAygJddYdtiER8fZVK+pW8oD+tk/9krS+ST
-         +wbGzR1YFI2SaMt5fEorv4w2jcAU8waH6rTbgsNXjI7qgIcI9pswzJgXkd/RNurTj2ci
-         I3i64V6THVvbujmkluEbG7IIF/f49L0bfyYg1+x++RlZk8TQvSK5NeUp9mty/FU8cSv1
-         +e4dZ15Ht6hp2KzuFNN1r1dVKtd2mJ66+5XHGQcEzdOyuvyrHEJFXzSHNaUB4tQyTOaK
-         Wjub5Jg1Q8L8c8scuqiNncV3Q9no2+ui4MtfywhEWVTEq2l8wEbHhM909vkAQUy5zwZV
-         VtUg==
-X-Forwarded-Encrypted: i=1; AJvYcCWXsmp/upjMI8UwJKYTtomnh0GCN6yfkxlo29jiL6LUEHf9EHVdoJgBmRc6eW0xP9YqCMJKSArfTJHF48ZHWJarzSGi0yfwtdLkXlIo
-X-Gm-Message-State: AOJu0YxlCRzLpd0TX74niAGuUW50MWeTBAAWBMwMiCMZyTv6M/4+oX8F
-	7appKiTeq3xNRnRDkl6YdgXGcZ3UYNuFWF0XltKacfghsHRGypF6ENpAp7qcKnxMjp8Zr4XTc+/
-	5NYIDNXgx1F0YYduKgD4kHXcQTgcjoWPbFQCtjISITInOtO7g+23c2AbX6DXHqg==
-X-Received: by 2002:adf:f689:0:b0:362:d7ac:ae70 with SMTP id ffacd0b85a97d-36bb358fd39mr544339f8f.5.1722499594258;
-        Thu, 01 Aug 2024 01:06:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdQkA9Thfc/zZtwRGa6zF8YZ/zBF7A8+btq9cjaLSxpyF6gczDx4HontSXF8Yig0G3FrgBDA==
-X-Received: by 2002:adf:f689:0:b0:362:d7ac:ae70 with SMTP id ffacd0b85a97d-36bb358fd39mr544300f8f.5.1722499593669;
-        Thu, 01 Aug 2024 01:06:33 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c0113sm18763970f8f.14.2024.08.01.01.06.32
+        d=1e100.net; s=20230601; t=1722499601; x=1723104401;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3NqmfobhM9Iu7Hq/oR4TLKO0+O0Au9Wt4MOTa5p04eQ=;
+        b=aH22xE+hVdUVU6hRpifS0tHqI1h9Q/kq85Idu4q3A79J4nqTjVa+Qpr2xMHdHNoOR+
+         JmrYkOKo99naDsVsvarFpDYAJ7gqHDuwob2ItifJ2bqYUvNLgww0KytQoStZnPczsez5
+         hAz86Ir03KHOsf0ocSEdEg53uNaxni5JadW3Labg1n8omvPwc54tDDNEEyhlVS0EFpNJ
+         28w+59ewyr6MSpH6duWI5JahQOVTvH3cP8VqyRAfm4mG0BlR4PBjAFq5A8rCZCBEPsTh
+         qxVgDXVyZIa5RNdopYy4G3zhDJTZgtLk/xSHIBKU8xdX3H5CSuy4iZOSWznfC1vwQsXx
+         4ddg==
+X-Forwarded-Encrypted: i=1; AJvYcCW019b8K+0EchVZEsLfbUQKke3VipYtfoPN7KsQvy3dVLhd+Gh0mytmJEQwydgu/uUKdA1QoxyL88PFXYsARKkTN8F4kcfdQPGFLkKF
+X-Gm-Message-State: AOJu0Yxh7wKTpVbyfeUXGin8ezDOh1GzGcmtoU4405cJbQuqepiNHJAq
+	rLPycSuLlhNdfeBk01u3/2UvShpkYDVfyhonZqv06Rdef5QfiNVB
+X-Google-Smtp-Source: AGHT+IGxbCIWJgX57nzkzOiLmk1Eab1BOgmf2e8Msr8QfKK1U3/hCG7G68yLq2ntqW11hVx+v/P7Dw==
+X-Received: by 2002:a05:6a00:2388:b0:70e:98e3:1b9d with SMTP id d2e1a72fcca58-7105d716163mr2034390b3a.18.1722499600614;
+        Thu, 01 Aug 2024 01:06:40 -0700 (PDT)
+Received: from [192.168.255.10] ([43.132.141.25])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8215b3sm10965617b3a.121.2024.08.01.01.06.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 01:06:33 -0700 (PDT)
-Message-ID: <a530a614-41a3-4bd1-a2df-40ade7eca002@redhat.com>
-Date: Thu, 1 Aug 2024 10:06:30 +0200
+        Thu, 01 Aug 2024 01:06:40 -0700 (PDT)
+Message-ID: <0a88242c-f549-479c-9430-3b580629ca5f@gmail.com>
+Date: Thu, 1 Aug 2024 16:06:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,161 +75,221 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/1] mm: introduce MADV_DEMOTE/MADV_PROMOTE
-To: BiscuitOS Broiler <zhang.renze@h3c.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-Cc: arnd@arndb.de, linux-arch@vger.kernel.org, chris@zankel.net,
- jcmvbkbc@gmail.com, James.Bottomley@HansenPartnership.com, deller@gmx.de,
- linux-parisc@vger.kernel.org, tsbogend@alpha.franken.de,
- rdunlap@infradead.org, bhelgaas@google.com, linux-mips@vger.kernel.org,
- richard.henderson@linaro.org, ink@jurassic.park.msu.ru, mattst88@gmail.com,
- linux-alpha@vger.kernel.org, jiaoxupo@h3c.com, zhou.haofan@h3c.com
-References: <20240801075610.12351-1-zhang.renze@h3c.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v4 22/22] mm/zsmalloc: update comments for page->zpdesc
+ changes
+To: Matthew Wilcox <willy@infradead.org>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: alexs@kernel.org, Vitaly Wool <vitaly.wool@konsulko.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Andrew Morton
+ <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, minchan@kernel.org, david@redhat.com,
+ 42.hyeyoo@gmail.com, Yosry Ahmed <yosryahmed@google.com>, nphamcs@gmail.com
+References: <20240729112534.3416707-1-alexs@kernel.org>
+ <20240729112534.3416707-23-alexs@kernel.org>
+ <20240730093726.GB16599@google.com>
+ <8fc7939b-416a-4328-9df2-488f17783543@gmail.com>
+ <20240731021619.GD16599@google.com>
+ <c614ec0c-ff5c-4ef6-8542-53ee5308f62a@gmail.com>
+ <20240801031304.GF16599@google.com> <ZqsClTYNqR5wYlJ6@casper.infradead.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240801075610.12351-1-zhang.renze@h3c.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <ZqsClTYNqR5wYlJ6@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01.08.24 09:56, BiscuitOS Broiler wrote:
-> Sure, here's the Scalable Tiered Memory Control (STMC)
-> 
-> **Background**
-> 
-> In the era when artificial intelligence, big data analytics, and
-> machine learning have become mainstream research topics and
-> application scenarios, the demand for high-capacity and high-
-> bandwidth memory in computers has become increasingly important.
-> The emergence of CXL (Compute Express Link) provides the
-> possibility of high-capacity memory. Although CXL TYPE3 devices
-> can provide large memory capacities, their access speed is lower
-> than traditional DRAM due to hardware architecture limitations.
-> 
-> To enjoy the large capacity brought by CXL memory while minimizing
-> the impact of high latency, Linux has introduced the Tiered Memory
-> architecture. In the Tiered Memory architecture, CXL memory is
-> treated as an independent, slower NUMA NODE, while DRAM is
-> considered as a relatively faster NUMA NODE. Applications allocate
-> memory from the local node, and Tiered Memory, leveraging memory
-> reclamation and NUMA Balancing mechanisms, can transparently demote
-> physical pages not recently accessed by user processes to the slower
-> CXL NUMA NODE. However, when user processes re-access the demoted
-> memory, the Tiered Memory mechanism will, based on certain logic,
-> decide whether to promote the demoted physical pages back to the
-> fast NUMA NODE. If the promotion is successful, the memory accessed
-> by the user process will reside in DRAM; otherwise, it will reside in
-> the CXL NODE. Through the Tiered Memory mechanism, Linux balances
-> betweenlarge memory capacity and latency, striving to maintain an
-> equilibrium for applications.
-> 
-> **Problem**
-> Although Tiered Memory strives to balance between large capacity and
-> latency, specific scenarios can lead to the following issues:
-> 
->    1. In scenarios requiring massive computations, if data is heavily
->       stored in CXL slow memory and Tiered Memory cannot promptly
->       promote this memory to fast DRAM, it will significantly impact
->       program performance.
->    2. Similar to the scenario described in point 1, if Tiered Memory
->       decides to promote these physical pages to fast DRAM NODE, but
->       due to limitations in the DRAM NODE promote ratio, these physical
->       pages cannot be promoted. Consequently, the program will keep
->       running in slow memory.
->    3. After an application finishes computing on a large block of fast
->       memory, it may not immediately re-access it. Hence, this memory
->       can only wait for the memory reclamation mechanism to demote it.
->    4. Similar to the scenario described in point 3, if the demotion
->       speed is slow, these cold pages will occupy the promotion
->       resources, preventing some eligible slow pages from being
->       immediately promoted, severely affecting application efficiency.
-> 
-> **Solution**
-> We propose the **Scalable Tiered Memory Control (STMC)** mechanism,
-> which delegates the authority of promoting and demoting memory to the
-> application. The principle is simple, as follows:
-> 
->    1. When an application is preparing for computation, it can promote
->       the memory it needs to use or ensure the memory resides on a fast
->       NODE.
->    2. When an application will not use the memory shortly, it can
->       immediately demote the memory to slow memory, freeing up valuable
->       promotion resources.
-> 
-> STMC mechanism is implemented through the madvise system call, providing
-> two new advice options: MADV_DEMOTE and MADV_PROMOTE. MADV_DEMOTE
-> advises demote the physical memory to the node where slow memory
-> resides; this advice only fails if there is no free physical memory on
-> the slow memory node. MADV_PROMOTE advises retaining the physical memory
-> in the fast memory; this advice only fails if there are no promotion
-> slots available on the fast memory node. Benefits brought by STMC
-> include:
-> 
->    1. The STMC mechanism is a variant of on-demand memory management
->       designed to let applications enjoy fast memory as much as possible,
->       while actively demoting to slow memory when not in use, thus
->       freeing up promotion slots for the NODE and allowing it to run in
->       an optimized Tiered Memory environment.
->    2. The STMC mechanism better balances large capacity and latency.
-> 
-> **Shortcomings of STMC**
-> The STMC mechanism requires the caller to manage memory demotion and
-> promotion. If the memory is not promptly demoting after an promotion,
-> it may cause issues similar to memory leaks
-Ehm, that sounds scary. Can you elaborate what's happening here and why 
-it is "similar to memory leaks"?
 
 
-Can you also point out why migrate_pages() is not suitable? I would 
-assume demote/promote is in essence simply migrating memory between nodes.
+On 8/1/24 11:35 AM, Matthew Wilcox wrote:
+> On Thu, Aug 01, 2024 at 12:13:04PM +0900, Sergey Senozhatsky wrote:
+>> On (24/07/31 12:14), Alex Shi wrote:
+>>>> A bit of a different thing, still documentation related tho: do
+>>>> we want to do something about comments that mention page_lock in
+>>>> zsmalloc.c?
+>>>
+>>> Good question!
+>>>
+>>> There are some comments mentioned about the page_lock in the file, but missed
+>>> in the header of file, so how about the following adding:
+>>
+>> And e.g. things like
+>>
+>> `The page locks trylock_zspage got will be released by __free_zspage.`
+>>
+>> Should this (and the rest) spell "zpdesc locks" or something? Or do
+>> we still want to refer to it as "page lock"?
+> 
+> pages do not have locks.  folios have locks.  zpdesc sounds like it has
+> a lock too.
 
+Thanks willy and Sergey's suggestion! If I understand right, we'd better to update
+all subpages calling in the file by zpdesc? 
+Yes that's a bit more fit the code. So, is the following new patch fine?
+
+=========
+From 6699da8d62a22e9cba4ee4452b2805fc66920395 Mon Sep 17 00:00:00 2001
+From: Alex Shi <alexs@kernel.org>
+Date: Mon, 8 Jul 2024 20:26:20 +0800
+Subject: [PATCH] mm/zsmalloc: update comments for page->zpdesc changes
+
+Thanks for Sergey and Willy's suggestion!
+After the page to zpdesc conversion, there still left few comments or
+function named with page not zpdesc, let's update the comments and
+rename function create_page_chain() as create_zpdesc_chain().
+
+Signed-off-by: Alex Shi <alexs@kernel.org>
+---
+ mm/zsmalloc.c | 47 ++++++++++++++++++++++++++---------------------
+ 1 file changed, 26 insertions(+), 21 deletions(-)
+
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 1543a339b7f4..490cecea72f6 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -17,14 +17,16 @@
+  *
+  * Usage of struct zpdesc fields:
+  *	zpdesc->zspage: points to zspage
+- *	zpdesc->next: links together all component pages of a zspage
++ *	zpdesc->next: links together all component zpdescs of a zspage
+  *		For the huge page, this is always 0, so we use this field
+  *		to store handle.
+  *	zpdesc->first_obj_offset: PG_zsmalloc, lower 16 bit locate the first
+  *		object offset in a subpage of a zspage
+  *
+  * Usage of struct zpdesc(page) flags:
+- *	PG_private: identifies the first component page
++ *	PG_private: identifies the first component zpdesc
++ *	PG_lock: lock all component zpdescs for a zspage free, serialize with
++ *		 migration
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+@@ -191,7 +193,10 @@ struct size_class {
+ 	 */
+ 	int size;
+ 	int objs_per_zspage;
+-	/* Number of PAGE_SIZE sized pages to combine to form a 'zspage' */
++	/*
++	 * Number of PAGE_SIZE sized zpdescs/pages to combine to
++	 * form a 'zspage'
++	 */
+ 	int pages_per_zspage;
+ 
+ 	unsigned int index;
+@@ -913,7 +918,7 @@ static void free_zspage(struct zs_pool *pool, struct size_class *class,
+ 
+ 	/*
+ 	 * Since zs_free couldn't be sleepable, this function cannot call
+-	 * lock_page. The page locks trylock_zspage got will be released
++	 * lock_page. The zpdesc locks trylock_zspage got will be released
+ 	 * by __free_zspage.
+ 	 */
+ 	if (!trylock_zspage(zspage)) {
+@@ -970,7 +975,7 @@ static void init_zspage(struct size_class *class, struct zspage *zspage)
+ 	set_freeobj(zspage, 0);
+ }
+ 
+-static void create_page_chain(struct size_class *class, struct zspage *zspage,
++static void create_zpdesc_chain(struct size_class *class, struct zspage *zspage,
+ 				struct zpdesc *zpdescs[])
+ {
+ 	int i;
+@@ -979,9 +984,9 @@ static void create_page_chain(struct size_class *class, struct zspage *zspage,
+ 	int nr_zpdescs = class->pages_per_zspage;
+ 
+ 	/*
+-	 * Allocate individual pages and link them together as:
+-	 * 1. all pages are linked together using zpdesc->next
+-	 * 2. each sub-page point to zspage using zpdesc->zspage
++	 * Allocate individual zpdescs and link them together as:
++	 * 1. all zpdescs are linked together using zpdesc->next
++	 * 2. each sub-zpdesc point to zspage using zpdesc->zspage
+ 	 *
+ 	 * we set PG_private to identify the first zpdesc (i.e. no other zpdesc
+ 	 * has this flag set).
+@@ -1039,7 +1044,7 @@ static struct zspage *alloc_zspage(struct zs_pool *pool,
+ 		zpdescs[i] = zpdesc;
+ 	}
+ 
+-	create_page_chain(class, zspage, zpdescs);
++	create_zpdesc_chain(class, zspage, zpdescs);
+ 	init_zspage(class, zspage);
+ 	zspage->pool = pool;
+ 	zspage->class = class->index;
+@@ -1366,7 +1371,7 @@ static unsigned long obj_malloc(struct zs_pool *pool,
+ 		/* record handle in the header of allocated chunk */
+ 		link->handle = handle | OBJ_ALLOCATED_TAG;
+ 	else
+-		/* record handle to page->index */
++		/* record handle to zpdesc->handle */
+ 		zspage->first_zpdesc->handle = handle | OBJ_ALLOCATED_TAG;
+ 
+ 	kunmap_atomic(vaddr);
+@@ -1699,19 +1704,19 @@ static int putback_zspage(struct size_class *class, struct zspage *zspage)
+ #ifdef CONFIG_COMPACTION
+ /*
+  * To prevent zspage destroy during migration, zspage freeing should
+- * hold locks of all pages in the zspage.
++ * hold locks of all component zpdesc in the zspage.
+  */
+ static void lock_zspage(struct zspage *zspage)
+ {
+ 	struct zpdesc *curr_zpdesc, *zpdesc;
+ 
+ 	/*
+-	 * Pages we haven't locked yet can be migrated off the list while we're
++	 * Zpdesc we haven't locked yet can be migrated off the list while we're
+ 	 * trying to lock them, so we need to be careful and only attempt to
+-	 * lock each page under migrate_read_lock(). Otherwise, the page we lock
+-	 * may no longer belong to the zspage. This means that we may wait for
+-	 * the wrong page to unlock, so we must take a reference to the page
+-	 * prior to waiting for it to unlock outside migrate_read_lock().
++	 * lock each zpdesc under migrate_read_lock(). Otherwise, the zpdesc we
++	 * lock may no longer belong to the zspage. This means that we may wait
++	 * for the wrong zpdesc to unlock, so we must take a reference to the
++	 * zpdesc prior to waiting for it to unlock outside migrate_read_lock().
+ 	 */
+ 	while (1) {
+ 		migrate_read_lock(zspage);
+@@ -1786,7 +1791,7 @@ static void replace_sub_page(struct size_class *class, struct zspage *zspage,
+ 		idx++;
+ 	} while ((zpdesc = get_next_zpdesc(zpdesc)) != NULL);
+ 
+-	create_page_chain(class, zspage, zpdescs);
++	create_zpdesc_chain(class, zspage, zpdescs);
+ 	first_obj_offset = get_first_obj_offset(oldzpdesc);
+ 	set_first_obj_offset(newzpdesc, first_obj_offset);
+ 	if (unlikely(ZsHugePage(zspage)))
+@@ -1797,8 +1802,8 @@ static void replace_sub_page(struct size_class *class, struct zspage *zspage,
+ static bool zs_page_isolate(struct page *page, isolate_mode_t mode)
+ {
+ 	/*
+-	 * Page is locked so zspage couldn't be destroyed. For detail, look at
+-	 * lock_zspage in free_zspage.
++	 * Page/zpdesc is locked so zspage couldn't be destroyed. For detail,
++	 * look at lock_zspage in free_zspage.
+ 	 */
+ 	VM_BUG_ON_PAGE(PageIsolated(page), page);
+ 
+@@ -1825,7 +1830,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
+ 	/* We're committed, tell the world that this is a Zsmalloc page. */
+ 	__zpdesc_set_zsmalloc(newzpdesc);
+ 
+-	/* The page is locked, so this pointer must remain valid */
++	/* The zpdesc/page is locked, so this pointer must remain valid */
+ 	zspage = get_zspage(zpdesc);
+ 	pool = zspage->pool;
+ 
+@@ -1898,7 +1903,7 @@ static const struct movable_operations zsmalloc_mops = {
+ };
+ 
+ /*
+- * Caller should hold page_lock of all pages in the zspage
++ * Caller should hold zpdesc locks of all in the zspage
+  * In here, we cannot use zspage meta data.
+  */
+ static void async_free_zspage(struct work_struct *work)
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
