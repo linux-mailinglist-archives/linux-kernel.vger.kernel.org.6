@@ -1,221 +1,197 @@
-Return-Path: <linux-kernel+bounces-270702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6C30944451
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 533EC944454
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794A92871D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2ECD2875FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BC316DEAA;
-	Thu,  1 Aug 2024 06:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493CC158540;
+	Thu,  1 Aug 2024 06:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbDqstCd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TSfb759i"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7A616DC26;
-	Thu,  1 Aug 2024 06:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4A713F456;
+	Thu,  1 Aug 2024 06:15:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722492883; cv=none; b=rF0Rqbuoihw3S7xzGbwSeQ4/JSgdewQB5ymwSWIFnpOzmfNdo7P+gbDqVGLpedF2QVQbCs2szUXFqK7dNFwZrKO9c8930eAzl45nLlP8K4zke469slarWmAzqlr6h7bsXhi2fT7DLr4JFYCGJ91caqdLhNFLxiyk+1qmNkomZds=
+	t=1722492939; cv=none; b=rCJedX93GXHWtzyYhSrXDM47d7y+qEzlABXlWnjq4KAmgaV1eEUF90hmjS1gbpEjn9GFrWwp8c8U3zv5s0itSNk42mYZjoKoDop0gA7jhXfBVuxiys4gUkeOFeA9vUAsBdA3M0wHDBl8WT9rOkKr6dF7BAHFLloz3Nwh3M1XerI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722492883; c=relaxed/simple;
-	bh=1/LkbCzWs7IPH0fuAhmtMESKc8nxEAc9nXP5PcNCCbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EES7AcX28sgL5L4/jMDa6G7J474lSl0JwOQLPvj5HW+puWP/18Qy1gzWznYcMSnD75DgVzy1B9ru5HUpOQ3VYBqMogBcuGcnsuTN48bpFxKHKTjF+srWjRf7n1+/H0uL+rzvcE8ivEXn3eR1hSvGCwiWJw8co4fZiuqmd6Djnj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbDqstCd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB138C4AF09;
-	Thu,  1 Aug 2024 06:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722492883;
-	bh=1/LkbCzWs7IPH0fuAhmtMESKc8nxEAc9nXP5PcNCCbg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bbDqstCdZvS3ZS2Lt7pVBXfe9EwTWH1ZGgLVtTeSoBpzB3HNaHdUEnQzMUOR4u+yB
-	 R6CJQCprTSu3MRyty6O7toT0ofJEYbb/MchoaK0Xj5y9LX+WFS7lAqetuAUFeE+ri0
-	 IonSIUzRAtZcEaDqMrml9IybNJWihkmsdOINoVTVk2t/uy/jxNPH0cObe2erVwS2MQ
-	 dPHkEq9JSISgrdtDxZIKPz/OHssCa03T0vu0Gkv39Y3UpQYnx+epRNtand5eDPliEy
-	 UGiaPbIUHJHlmYlqXaMUKfSln5SXOnHASp6P47hPY/ZaeH7tmoTetfnleoc2/CEkQc
-	 IOSMr14tA27Eg==
-Date: Wed, 31 Jul 2024 23:14:41 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, KP Singh <kpsingh@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	bp@alien8.de, sfr@canb.auug.org.au
-Subject: Re: [PATCH] init/main.c: Do jump_label_init before
- early_security_init
-Message-ID: <20240801061441.GB2981775@thelio-3990X>
-References: <20240731213429.2244234-1-kpsingh@kernel.org>
- <CAHC9VhQEYutCiAMitEv0JY4PRY4tdLdqEy76qvY1xB5q8Y13mg@mail.gmail.com>
- <20240801054802.GA2981775@thelio-3990X>
+	s=arc-20240116; t=1722492939; c=relaxed/simple;
+	bh=UsUWr/4WbD2jnKP/Vn46wHrKb89vFqivDWjJvtbLhjk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=t4nnFDH4U8zGL4jNV7YdTiqR6HzWHGEBlfcYH5US+2Ts8KPH8BlSgybYoQrfdW+SEKXERxSjoZik2paCg2Tn9zWwwkgM/F0n1+UHnX86duSly0mzfm6cA8Ka23JP579RiGF/FA6G24MwJde7wZAn3vWwv1HmNui1OYm5CjPE6Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TSfb759i; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VNohPd024782;
+	Thu, 1 Aug 2024 06:15:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YhrdK/Kb4g25+74l2tEHOzdEyNnQXoJu08Wq8JCuAmU=; b=TSfb759iMCzNpia+
+	pawV1m63tBbYp8EJmVFVNs6fAbPS2+UCF0we8PKiZVFvXwdbbqMajVioFQ6Tu7Wx
+	tfhx+leqVuIMYTZSov0ceBW+G8tha+LmskZOhbXWacvVSfsByik2iQqL4tw38cog
+	EoqwzgUzEHApzyRz0SWretivkRXl7OPyd4h76mDFfDGwdqKzam/V4Htrc11G+RgB
+	7tuy4EZO4gDSbss54MgU063AzqwhOeRLd6n2T2c8L1vL49APx0U2Yg3/ED+/XqSU
+	jq+88RoBZLug22k13sySYBpNg2gpd+7PWGD9vuInXzlr7ve3OrEoNvck3uXf9a3L
+	fG/KZA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pw457501-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 06:15:30 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4716FT3O031914
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 06:15:29 GMT
+Received: from [10.217.219.148] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
+ 2024 23:15:22 -0700
+Message-ID: <07d9e1f4-201f-47dc-b692-b1aa14511420@quicinc.com>
+Date: Thu, 1 Aug 2024 11:45:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] usb: gadget: uvc: Add H264 frame format support
+Content-Language: en-US
+From: AKASH KUMAR <quic_akakum@quicinc.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>
+CC: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Felipe Balbi <balbi@kernel.org>,
+        Jack Pham <quic_jackp@quicinc.com>, <kernel@quicinc.com>,
+        Wesley Cheng
+	<quic_wcheng@quicinc.com>,
+        Laurent Pinchart
+	<laurent.pinchart@ideasonboard.com>,
+        Daniel Scally
+	<dan.scally@ideasonboard.com>,
+        Vijayavardhan Vennapusa
+	<quic_vvreddy@quicinc.com>,
+        Krishna Kurapati <quic_kriskura@quicinc.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240711082304.1363-1-quic_akakum@quicinc.com>
+ <2024071126-napped-cobbler-4693@gregkh>
+ <0f3fe4b4-5451-480e-a9e4-11ee921521b9@quicinc.com>
+In-Reply-To: <0f3fe4b4-5451-480e-a9e4-11ee921521b9@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240801054802.GA2981775@thelio-3990X>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BAwODJNQtGnJyC7Wj_LReSDoNDxxDp_r
+X-Proofpoint-ORIG-GUID: BAwODJNQtGnJyC7Wj_LReSDoNDxxDp_r
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_03,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=910 phishscore=0 bulkscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408010035
 
-On Wed, Jul 31, 2024 at 10:48:06PM -0700, Nathan Chancellor wrote:
-> On Wed, Jul 31, 2024 at 09:15:04PM -0400, Paul Moore wrote:
-> > On Wed, Jul 31, 2024 at 5:34 PM KP Singh <kpsingh@kernel.org> wrote:
-> > >
-> > > LSM indirect calls being are now replaced by static calls, this requires
-> > > a jumpt_table_init before early_security_init where LSM hooks and their
-> > > static calls and keys are initialized.
-> > >
-> > > Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
-> > > Signed-off-by: KP Singh <kpsingh@kernel.org>
-> > > ---
-> > >  init/main.c | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > Does this look okay, static call folks?
-> 
-> For the record, I tested this patch since I noticed the warnings like
-> Boris did and it appears to break booting for me with certain ARCH=arm
-> configurations in QEMU.
-> 
->   $ cat arch/arm/configs/repro.config
->   CONFIG_JUMP_LABEL=y
->   CONFIG_SECURITY=y
->   CONFIG_SECURITY_LOCKDOWN_LSM=y
->   CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=y
-> 
->   $ make -skj"$(nproc)" ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- mrproper defconfig repro.config zImage
-> 
->   $ qemu-system-arm \
->       -display none \
->       -nodefaults \
->       -no-reboot \
->       -machine virt \
->       -append 'console=ttyAMA0 earlycon' \
->       -kernel arch/arm/boot/zImage \
->       -initrd rootfs.cpio \
->       -m 512m \
->       -serial mon:stdio
->   <hangs with no output>
-> 
-> Without this patch, that same configuration works fine (with the warning
-> from before):
-> 
->   [    0.000000] Booting Linux on physical CPU 0x0
->   [    0.000000] Linux version 6.11.0-rc1-next-20240730 (nathan@m3-large-x86) (arm-linux-gnueabi-gcc (GCC) 14.1.0, GNU ld (GNU Binutils) 2.42) #1 SMP Thu Aug  1 05:44:11 UTC 2024
->   [    0.000000] ------------[ cut here ]------------
->   [    0.000000] WARNING: CPU: 0 PID: 0 at kernel/jump_label.c:199 static_key_enable_cpuslocked+0xb8/0xf4
->   [    0.000000] static_key_enable_cpuslocked(): static key '0xc1fb4930' used before call to jump_label_init()
->   [    0.000000] Modules linked in:
->   [    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc1-next-20240730 #1
->   [    0.000000] Call trace:
->   [    0.000000]  unwind_backtrace from show_stack+0x10/0x14
->   [    0.000000]  show_stack from dump_stack_lvl+0x54/0x68
->   [    0.000000]  dump_stack_lvl from __warn+0x80/0x114
->   [    0.000000]  __warn from warn_slowpath_fmt+0x124/0x18c
->   [    0.000000]  warn_slowpath_fmt from static_key_enable_cpuslocked+0xb8/0xf4
->   [    0.000000]  static_key_enable_cpuslocked from static_key_enable+0x14/0x1c
->   [    0.000000]  static_key_enable from security_add_hooks+0xc4/0xfc
->   [    0.000000]  security_add_hooks from lockdown_lsm_init+0x18/0x24
->   [    0.000000]  lockdown_lsm_init from initialize_lsm+0x44/0x7c
->   [    0.000000]  initialize_lsm from early_security_init+0x44/0x50
->   [    0.000000]  early_security_init from start_kernel+0x64/0x6bc
->   [    0.000000]  start_kernel from 0x0
->   [    0.000000] ---[ end trace 0000000000000000 ]---
-> 
-> I haven't tried to fire up GDB to figure out why it is exploding early
-> since it is late for me but I figured I would get the report out first.
-> The rootfs is available from [1] (arm-rootfs.cpio.zst, decompress it
-> with zstd first); it just shuts down the machine on boot.
-> 
-> Cheers,
-> Nathan
-> 
-> [1]: https://github.com/ClangBuiltLinux/boot-utils/releases/latest
+Hi Greg,Daniel,Laurent,
 
-Also, looking at my build logs, this patch does not appear to resolve
-the static call warning I see with certain x86_64 distribution
-configurations such as Fedora's (not sure if it was or not):
+On 7/11/2024 3:13 PM, AKASH KUMAR wrote:
+>
+> On 7/11/2024 2:37 PM, Greg Kroah-Hartman wrote:
+>> On Thu, Jul 11, 2024 at 01:53:04PM +0530, Akash Kumar wrote:
+>>> Add support for framebased frame format which can be used to support
+>>> multiple formats like H264 or H265 other than mjpeg and YUV frames.
+>>>
+>>> Framebased format is set to H264 by default, which can be updated to
+>>> other formats by updating the GUID through guid configfs attribute.
+>>> Using Different structures for all 3 formats as H264 has different
+>>> structure than mjpeg and uncompressed which will be paased to
+>>> frame make func based on active format instead of common frame
+>>> structure, have updated all apis in driver accordingly.
+>>> h264 is not recognized by hosts machine during enumeration
+>>> with common frame structure, so we need to pass h264 frame
+>>> structure separately.
+>>>
+>>> Signed-off-by: Akash Kumar <quic_akakum@quicinc.com>
+>>> ---
+>>>   .../ABI/testing/configfs-usb-gadget-uvc       |  88 ++-
+>>>   drivers/usb/gadget/function/uvc_configfs.c    | 570 
+>>> +++++++++++++++---
+>>>   drivers/usb/gadget/function/uvc_configfs.h    |  34 +-
+>>>   drivers/usb/gadget/function/uvc_v4l2.c        |  80 ++-
+>>>   include/uapi/linux/usb/video.h                |  62 ++
+>>>   5 files changed, 714 insertions(+), 120 deletions(-)
+>>>
+>>> Changes for v2:
+>>> - Added H264 frame format Details in Documentation/ABI/
+>>>    and new configsfs attribute path for mjpeg and
+>>>    uncompresseed formats.
+>>>
+>>> diff --git a/Documentation/ABI/testing/configfs-usb-gadget-uvc 
+>>> b/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>> index 4feb692c4c1d..2580083cdcc5 100644
+>>> --- a/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>> +++ b/Documentation/ABI/testing/configfs-usb-gadget-uvc
+>>> @@ -224,13 +224,13 @@ Description:    Additional color matching 
+>>> descriptors
+>>>                         white
+>>>           ======================== 
+>>> ======================================
+>>>   -What: /config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg
+>>> -Date:        Dec 2014
+>>> +What: 
+>>> /config/usb-gadget/gadget/functions/uvc.name/streaming/mjpeg/name
+>> You are changing an existing api, how will all existing code handle 
+>> this? Will it not break? What is ensuring that this will work as-is ok?
+>> I have modified all existing apis in kernel and have handled it and 
+>> all existing formats
+> are working along with H264 in this change. Only user needs to change 
+> configfs parameter
+> path according to updated path in documentation in Userspace.Currently 
+> H264 doesn't work with same
+> structure and we need add it differently as a result these configfs 
+> paths are getting updated.
+> Daniel and Laurent can you suggest if it ok?
+>>> -#define UVCG_FRAME_ATTR(cname, aname, bits) \
+>>> -static ssize_t uvcg_frame_##cname##_show(struct config_item *item, 
+>>> char *page)\
+>>> +#define UVCG_FRAME_ATTR(cname, fname, bits) \
+>>> +static ssize_t uvcg_frame_##fname##_##cname##_show(struct 
+>>> config_item *item, char *page)\
+>>>   {                                    \
+>>>       struct uvcg_frame *f = to_uvcg_frame(item);            \
+>>>       struct f_uvc_opts *opts;                    \
+>>> @@ -1936,14 +1941,14 @@ static ssize_t 
+>>> uvcg_frame_##cname##_show(struct config_item *item, char *page)\
+>>>       opts = to_f_uvc_opts(opts_item);                \
+>>>                                       \
+>>>       mutex_lock(&opts->lock);                    \
+>>> -    result = sprintf(page, "%u\n", f->frame.cname);            \
+>>> +    result = scnprintf(page, PAGE_SIZE, "%u\n", 
+>>> f->frame.fname.cname);\
+>> sysfs_emit() is made for this.
+>
+> Sure, will change.
+>
+>
+can you suggest how to support H264 format without changing userspace nodes,
+as H264 format structure is different from mjpeg and uncompressed format 
+and
+using same structure show issue as host is not able to recognize H264 
+format frames.
 
-https://src.fedoraproject.org/rpms/kernel/raw/rawhide/f/kernel-x86_64-fedora.config
-
-[    0.000000] Linux version 6.11.0-rc1-next-20240730-dirty (nathan@m3-large-x86) (x86_64-linux-gcc (GCC) 14.1.0, GNU ld (GNU Binutils) 2.42) #1 SMP PREEMPT_DYNAMIC Thu Aug  1 06:09:54 UTC 2024
-[    0.000000] ------------[ cut here ]------------
-[    0.000000] WARNING: CPU: 0 PID: 0 at kernel/static_call_inline.c:153 __static_call_update+0x18c/0x1f0
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc1-next-20240730-dirty #1
-[    0.000000] RIP: 0010:__static_call_update+0x18c/0x1f0
-[    0.000000] Code: 80 3d b6 7b 49 02 00 0f 85 7b ff ff ff 4c 89 f6 48 c7 c7 90 3b bc 8b c6 05 9f 7b 49 02 01 e8 2b 5c da ff 0f 0b e9 5e ff ff ff <0f> 0b 48 c7 c7 40 f2 5f 8c e8 36 72 e4 00 48 8b 44 24 28 65 48 2b
-[    0.000000] RSP: 0000:ffffffff8c403e28 EFLAGS: 00010046 ORIG_RAX: 0000000000000000
-[    0.000000] RAX: 0000000000000000 RBX: ffffffff8b19cd60 RCX: 000000005e199be9
-[    0.000000] RDX: 0000000000000000 RSI: ffffffff8d302a70 RDI: ffffffff8c472500
-[    0.000000] RBP: ffffffff8c6a01a0 R08: 00000000ff5e199b R09: fffffffffffbf82b
-[    0.000000] R10: 0000000000000000 R11: 0000000000013f90 R12: ffffffff8b4d0cb0
-[    0.000000] R13: 0000000000000001 R14: ffffffff8a77e700 R15: 00000000000147d0
-[    0.000000] FS:  0000000000000000(0000) GS:ffffffff8ce3e000(0000) knlGS:0000000000000000
-[    0.000000] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    0.000000] CR2: ffff8880000147d0 CR3: 000000000af46000 CR4: 00000000000000b0
-[    0.000000] Call Trace:
-[    0.000000]  <TASK>
-[    0.000000]  ? __static_call_update+0x18c/0x1f0
-[    0.000000]  ? __warn.cold+0x93/0xed
-[    0.000000]  ? __static_call_update+0x18c/0x1f0
-[    0.000000]  ? report_bug+0xff/0x140
-[    0.000000]  ? __pfx_lockdown_is_locked_down+0x10/0x10
-[    0.000000]  ? early_fixup_exception+0x5d/0xb0
-[    0.000000]  ? __SCT__lsm_static_call_bpf_token_capable_7+0x8/0x8
-[    0.000000]  ? early_idt_handler_common+0x2f/0x3a
-[    0.000000]  ? __pfx_lockdown_is_locked_down+0x10/0x10
-[    0.000000]  ? __SCT__lsm_static_call_bpf_token_capable_7+0x8/0x8
-[    0.000000]  ? __static_call_update+0x18c/0x1f0
-[    0.000000]  ? __static_call_update+0x7e/0x1f0
-[    0.000000]  ? sort_r+0x112/0x390
-[    0.000000]  ? __pfx_lockdown_is_locked_down+0x10/0x10
-[    0.000000]  ? security_add_hooks+0xb8/0x120
-[    0.000000]  ? lockdown_lsm_init+0x21/0x30
-[    0.000000]  ? initialize_lsm+0x34/0x60
-[    0.000000]  ? early_security_init+0x3d/0x50
-[    0.000000]  ? start_kernel+0x6b/0xa00
-[    0.000000]  ? x86_64_start_reservations+0x24/0x30
-[    0.000000]  ? x86_64_start_kernel+0xed/0xf0
-[    0.000000]  ? common_startup_64+0x13e/0x141
-[    0.000000]  </TASK>
-[    0.000000] ---[ end trace 0000000000000000 ]---
-
-Seems like the same problem.
-
-> > > diff --git a/init/main.c b/init/main.c
-> > > index 206acdde51f5..5bd45af7a49e 100644
-> > > --- a/init/main.c
-> > > +++ b/init/main.c
-> > > @@ -922,6 +922,8 @@ void start_kernel(void)
-> > >         boot_cpu_init();
-> > >         page_address_init();
-> > >         pr_notice("%s", linux_banner);
-> > > +       /* LSM and command line parameters use static keys */
-> > > +       jump_label_init();
-> > >         early_security_init();
-> > >         setup_arch(&command_line);
-> > >         setup_boot_config();
-> > > @@ -933,8 +935,6 @@ void start_kernel(void)
-> > >         boot_cpu_hotplug_init();
-> > >
-> > >         pr_notice("Kernel command line: %s\n", saved_command_line);
-> > > -       /* parameters may set static keys */
-> > > -       jump_label_init();
-> > >         parse_early_param();
-> > >         after_dashes = parse_args("Booting kernel",
-> > >                                   static_command_line, __start___param,
-> > > --
-> > > 2.46.0.rc2.264.g509ed76dc8-goog
-> > 
-> > -- 
-> > paul-moore.com
+Thanks,
+Akash
 
