@@ -1,135 +1,134 @@
-Return-Path: <linux-kernel+bounces-271235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9B5944B64
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:34:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25B36944B67
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48DB2B25052
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1B91B25818
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04881A0704;
-	Thu,  1 Aug 2024 12:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D2eX01At"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D924D1A2C3A;
+	Thu,  1 Aug 2024 12:33:46 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C471A01D5
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220B21A2C14;
+	Thu,  1 Aug 2024 12:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515614; cv=none; b=A/ohD3G9DKi8tVJOCfJUBslSGOMXl0CqdXm1e1RqA0WaBF5RUaK6G16eROOe2G2V7svGgVVH7dkaxqotznjcRn6MT+KDtK5j+dJiuixllrGttaYbmjtryJK548AJDrrW7ORotBllakKRtDdCQqmbSLtFlJUZr1tdVSnKApaEjkI=
+	t=1722515626; cv=none; b=Elrz4rkNcN9Z1QDy7bSXue0108yW2eqqji2C/pGksX42UBXZ0iMTpBThgs8+QBdVpmRFf+P3ZoxDuhmxEA8dqH+uXImFdnoXy0kg7/jak5r7mtwihMIQ6Q8dsn+RsIVEd13WFxVB56Kj/yCURTumpAOCWsWvHevrI8LahccHXpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515614; c=relaxed/simple;
-	bh=6xY5STH7eWH9a4U8sSqLcDaevZ8D3eDsy02tRk6YEVk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u9b/EsMsvxGZ7SP9QHGERueoLZmVXeNtgDYG7WIRUlJr/vpIgr2nfZ9KwIQHLNYUuklxdp4fOUtMgGP9GVmbOYoFwCPnM8cChCIJjl+BRSiTh+CrwDyTQq+0gZY7+KqtQaYRItACae7/MDw66LQaOnVEO5xEnqi3MTTprRxS998=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D2eX01At; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52fc14d6689so7319824e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:33:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722515611; x=1723120411; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I8m23gCfGpYyuhlXZdyZEdOK2nVX60DO5EEWoQsvedo=;
-        b=D2eX01AtU1REBAQhbY03IrGs47qwSVSrs1yK0dXyoUEF3vDobC7tNjJr38lk79sT+J
-         hJzrfgXr2D32fbbwdBdoxEC7YgolHiwP3jsgx17SMo3Jj0Z227zEmTGBZt1DzNJHGqgy
-         WF4ME/TZmmuQhqA1JYcCxk85KmVQLHlTCcOHK3JCfLsTluUZmG9qZRD7VHayxTR/U+n4
-         Gq7+aCJsdBiemom4pEtc5pBRfa+2j8ACR9eIkwjpGBEKAyFFjrCkLPGfuenwGrH3U0XF
-         aT+1b2qc/njx8Uee24CBkVoi7+tTuQ7YxcfUlnF3Hi6G2nqVNem03SwxrMxdKeTRY0WJ
-         OXEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722515611; x=1723120411;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I8m23gCfGpYyuhlXZdyZEdOK2nVX60DO5EEWoQsvedo=;
-        b=trH+Z4N2MchwDu0tBjeUhc1jDzP4tLN9gtq+sqCVt+fmcbMjIuUu8OawUUPEIvL3Aa
-         KAUC7+r8cFICkQXhzdjTkSJ8Lh8TpumilOT+ZLFm5t5N+cRuOsQ7ihmsL+mSmajITSGA
-         3SDn6OaTFnzHjxw+G88aHYI1BodMuDsC4RltQsh/gwnekoOdupqQOsWqFolmEf3atVTe
-         14Cji823T2K62OXbBmxPal1mPJ81Kkmd8p3a6u7FSPfzkFggtL57HGNLS3/k7TY8IjYr
-         DOfIucJfdFjgrYuPCSk3lugsI8ogPK+cmeKWaz0Uoj3gnpjVR/IWM6HSfWh0LEO0vJ8W
-         zDLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFjFbj+QKZQrUCcRnwKKNtdvlyV2Sgq4OO24SdwMUKNOtOc3JGomwF4i6XD6x3oBAih6F2x6LCa2NYxDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk0jsZdcaGMza8+HnkXYZwYQ90J3ilRi5oxiC+ka0QsuxqbJXl
-	q3NAY2KhwmlK7KhES5ZMTtWmUqTEYHWkL6+C2ENhZOyyeQ6grsNlXrhHZICyNY2a9Qi6R/yEiCx
-	blyMvt39iTFL5vwoiVyHR247rKtWj8LWjpNP9
-X-Google-Smtp-Source: AGHT+IEui3NccP3Nyd1+5eWJDMqRcmvKlbT4XKAqqlJpBpTH5c9HdHNpFLDJj6IvKL85z0QegnQzET6zAtpfyQH26rU=
-X-Received: by 2002:a19:9147:0:b0:52c:a0b8:4dc0 with SMTP id
- 2adb3069b0e04-530b61b7e97mr1267800e87.28.1722515610268; Thu, 01 Aug 2024
- 05:33:30 -0700 (PDT)
+	s=arc-20240116; t=1722515626; c=relaxed/simple;
+	bh=oK5VaTjSO4mG0bsKvJPQ7P/12LWBIbxTN80yhfTWCcg=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pWpVTWAWuIF93dAjvPzS73Hj7HuVtnEK2XyiqFO3rjBHHEE+BOEXy0u0A1q0jUnIhKGtLW+X6KFMbEhg/zIg4VZVioDs+Cm2T0CNTL6kHbqkvskYlDSmyUiz7bI7zi/ZNd9n25oLM35xKOMleOxBJC7RVe3wjE0/AUh5L5yO8D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WZSyF3NfQzfZGH;
+	Thu,  1 Aug 2024 20:31:49 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 791F21800A0;
+	Thu,  1 Aug 2024 20:33:40 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 20:33:39 +0800
+Message-ID: <d5e9f50a-c3bd-4071-9de8-cc22cd0f5cfc@huawei.com>
+Date: Thu, 1 Aug 2024 20:33:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
- <20240723-linked-list-v3-9-89db92c7dbf4@google.com> <2b548226-e323-466d-9f6d-762f6cbb5474@proton.me>
- <CAH5fLghkPgj560a2b_1oRnvuurEugT4TNj+o-fYhGsuSGpywPg@mail.gmail.com> <4af5a8fa-c27c-4ee5-9d2f-67a46bd34635@proton.me>
-In-Reply-To: <4af5a8fa-c27c-4ee5-9d2f-67a46bd34635@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 14:33:17 +0200
-Message-ID: <CAH5fLghdOYt-an=Scic4g4tYvU8WMdvwqt4nHP0j8QybaPPp6w@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] rust: list: support heterogeneous lists
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
-	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
+	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next 05/10] net: hibmcge: Implement some .ndo
+ functions
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-6-shaojijie@huawei.com>
+ <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
+ <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
+ <ffd2d708-60fb-4049-8c1b-fcfe43a78d57@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <ffd2d708-60fb-4049-8c1b-fcfe43a78d57@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Thu, Aug 1, 2024 at 12:50=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
+
+on 2024/8/1 20:18, Andrew Lunn wrote:
+> On Thu, Aug 01, 2024 at 05:13:33PM +0800, Jijie Shao wrote:
+>> on 2024/8/1 8:51, Andrew Lunn wrote:
+>>>> +static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
+>>>> +{
+>>>> +	struct hbg_priv *priv = netdev_priv(dev);
+>>>> +	u8 *mac_addr;
+>>>> +
+>>>> +	mac_addr = ((struct sockaddr *)addr)->sa_data;
+>>>> +	if (ether_addr_equal(dev->dev_addr, mac_addr))
+>>>> +		return 0;
+>>>> +
+>>>> +	if (!is_valid_ether_addr(mac_addr))
+>>>> +		return -EADDRNOTAVAIL;
+>>> How does the core pass you an invalid MAC address?
+>> According to my test,
+>> in the 6.4 rc4 kernel version, invalid mac address is allowed to be configured.
+>> An error is reported only when ifconfig ethx up.
+> Ah, interesting.
 >
-> On 01.08.24 11:38, Alice Ryhl wrote:
-> > On Thu, Aug 1, 2024 at 11:24=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >>
-> >> On 23.07.24 10:22, Alice Ryhl wrote:
-> >>> @@ -181,6 +185,47 @@ unsafe fn from_fields(me: *mut ListLinksFields) =
--> *mut Self {
-> >>>      }
-> >>>  }
-> >>>
-> >>> +/// Similar to [`ListLinks`], but also contains a pointer to the ful=
-l value.
-> >>> +///
-> >>> +/// This type can be used instead of [`ListLinks`] to support lists =
-with trait objects.
-> >>> +#[repr(C)]
-> >>> +pub struct ListLinksSelfPtr<T: ?Sized, const ID: u64 =3D 0> {
-> >>> +    /// The `ListLinks` field inside this value.
-> >>> +    ///
-> >>> +    /// This is public so that it can be used with `impl_has_list_li=
-nks!`.
-> >>> +    pub inner: ListLinks<ID>,
-> >>> +    self_ptr: UnsafeCell<MaybeUninit<*const T>>,
-> >>
-> >> Why do you need `MaybeUninit`?
-> >
-> > Right now the constructor initializes it to MaybeUninit::zeroed().
-> > What would you initialize it to without MaybeUninit? Remember that the
-> > vtable pointer in a fat pointer has strict validity requirements.
+> I see a test in __dev_open(), which is what you are saying here. But i
+> would also expect a test in rtnetlink, or maybe dev_set_mac_address().
+> We don't want every driver having to repeat this test in their
+> .ndo_set_mac_address, when it could be done once in the core.
 >
-> Oh... I forgot about that, can you add a comment about that? Also why
-> not use `Opaque` in that case then?
+> 	Andrew
 
-It used to just be UnsafeCell, but then I tried it in miri and found
-out about the issue and added MaybeUninit. But I can make it use
-Opaque instead.
+Hi:
+I did the following test on my device:
 
-Alice
+insmod hibmcge.ko
+hibmcge: no symbol version for module_layout
+hibmcge: loading out-of-tree module taints kernel.
+hibmcge: module verification failed: signature and/or required key missing - tainting kernel
+hibmcge 0000:83:00.1: enabling device (0140 -> 0142)
+Generic PHY mii-0000:83:00.1:02: attached PHY driver (mii_bus:phy_addr=mii-0000:83:00.1:02, irq=POLL)
+hibmcge 0000:83:00.1 enp131s0f1: renamed from eth0
+IPv6: ADDRCONF(NETDEV_CHANGE): enp131s0f1: link becomes ready
+hibmcge 0000:83:00.1: link up!
+
+ifconfig enp131s0f1 hw ether FF:FF:FF:FF:FF:FF
+
+ip a
+6: enp131s0f1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+     link/ether ff:ff:ff:ff:ff:ff brd ff:ff:ff:ff:ff:ff permaddr 08:02:00:00:08:08
+     
+ifconfig enp131s0f1 up
+ifconfig enp131s0f1 down up
+SIOCSIFFLAGS: Cannot assign requested address
+hibmcge 0000:83:00.1: link down!
+
+uname -a
+Linux localhost.localdomain 6.4.0+ #1 SMP Fri Mar 15 14:44:20 CST 2024 aarch64 aarch64 aarch64 GNU/Linux
+
+
+
+So I'm not sure what's wrong. I also implemented ndo_validate_addr by eth_validate_addr.
+
+Thanks
+
+Jijie Shao
+
 
