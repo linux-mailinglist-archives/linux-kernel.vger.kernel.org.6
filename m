@@ -1,119 +1,131 @@
-Return-Path: <linux-kernel+bounces-270612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C72D944218
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:54:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFD0944219
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:57:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA7AAB21652
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:54:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FFC7B215E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E94113EFE3;
-	Thu,  1 Aug 2024 03:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170F913D889;
+	Thu,  1 Aug 2024 03:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMIR2LZl"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (1024-bit key) header.d=penguintechs.org header.i=@penguintechs.org header.b="MGrGm2pF"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDEA13D285;
-	Thu,  1 Aug 2024 03:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040DB13D60B
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 03:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722484417; cv=none; b=NXKK3V1bHEoayZ8qgZqznmO/ZX0syuSee9FZH2ofZ/EbNPNyWeFwrCcIYYVHk7t7269BKWa/47qAxUG3af+69TNlYrIr2BpT3Q2ghOaK8L/YQeemJdPBv/UIbkZuJFwnkR50V+IDbqsTCaR7WJ0AgPJRf5ByTAUHhgosRXLcPdg=
+	t=1722484628; cv=none; b=qjnaF78Cu8VwhbQACm9vNpvp8kb3Mceia372FTOu8dAr3XCRbOBNp5573FeyYzYCz+zGRVFNlUCLuKwdpsHf7f5kQ2wpTPhK9/j39AdYi0T8ORMhg6w7dXsL9lzY9cI41brdsZPpFrL3Vi+GtwrTXBYFNH5DiJ3l9tFJZ1deB4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722484417; c=relaxed/simple;
-	bh=TlyRKcLPmQI/GuMlXIqsUsFwwg15w/4JZugy36RWLbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LjQ9fZ93dhu+6yIkiBfKYEXtMschtIt27xI8hF0zlBQ9Hb/U52mRopGmDQ0qIB26YBf2FIEhMBBJW4A5GAydYxVNtMVIUS5avUZLjmcXUvHxJhr1m3ozwjka6W7kcX0yaGIjmGMVF/J2Ljvx2u4A3OyQ7brSOrAf1ibFNYSYrVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMIR2LZl; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3685b3dbcdcso3596042f8f.3;
-        Wed, 31 Jul 2024 20:53:35 -0700 (PDT)
+	s=arc-20240116; t=1722484628; c=relaxed/simple;
+	bh=9z+DUe19MXcVwhPiCcg1jBIb6j+CrevqhI1KdsX/zG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f7JHPe1UhrUlFIkHv39IrDZPGqKEDt+MIfr57lvcJdrlRxmdlhWBtGW3x5o/hczRgy8ZItjSOAvJ3zjGFuwXRZ6nTbrMfQAA/bS3Is7xApIijOtGt29BqxMIYNbCq6jdrdcJpeP2d71yvSK9MvI9ZIvr7MZsVMLCTqPjdd8MyPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=penguintechs.org; spf=pass smtp.mailfrom=penguintechs.org; dkim=pass (1024-bit key) header.d=penguintechs.org header.i=@penguintechs.org header.b=MGrGm2pF; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=penguintechs.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=penguintechs.org
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-70b703eda27so4148633b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722484414; x=1723089214; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TlyRKcLPmQI/GuMlXIqsUsFwwg15w/4JZugy36RWLbA=;
-        b=KMIR2LZlqRD+1tSFXpnKVrTPDxZiRdo5VDDjI3PBuiXltMZe1yLNYosI9snNpy/JXu
-         DMCyCY0P0FSevhgC3JFvcgCGRjOFDkE3V4Qm8ZnTA1spsC0vOO6TqdpWWKKfOJTkdsy3
-         89Ja1/fg4uLsqDnBq0OlrB0aXMfp5T+gfGw5N9srJSPnlYDiCIuXRo0kIoJ7V9ixsytt
-         /2uMABo3c4vkvZ08YxfIgnLc5Ee/0O9wC511DKBWnGbYuvRChPD+x8bZzims0+nDtOUf
-         ncq+Tw3XzYrhkCIwNtrcK74+zucch/3Uue5NVuLo8vC970FpaB8N68wl6qQvvLpzykGc
-         MxRA==
+        d=penguintechs.org; s=google; t=1722484625; x=1723089425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=E3c0jDeg9jATLBjz8MH1N0Oj6qwqnRYEeVc2HEf4DB4=;
+        b=MGrGm2pFRyQjizS4KN/++6GMaqvkhvmwFREh86hWbwtUsKAcOI0ypVIpeJqwAVxPek
+         mvBNIPEiuiUSEaxVAVWT9QLwgVG3Zm4hamN2O3/kHtS0g0rvERyzEUCKGr99aqqktBNK
+         04DzQxxcE0UDwKOwQ3j3KsmqzC407zcvwhDSg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722484414; x=1723089214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TlyRKcLPmQI/GuMlXIqsUsFwwg15w/4JZugy36RWLbA=;
-        b=KwmxAptxgPYAGJGn/9rHqYvp5f+p3/jPMtircU4f43k+DK+vXB5t1zkBHLlXcCI82v
-         6ywdjmVpNx35geD54IQbtt95blOi2ZtcYxOszfE+12iTHjXCC0voL8VNJ2R/gV/J5gwO
-         LHfbDeZR64wPMg27AV+HK2WeZJ0hRutq4KlKrUJ0ubHa8JbnYTdZe+Geg1B/BdscdNJx
-         4un4n2x+JRoogIlAj1Ug+yCS3zFeKC9GSXNmcvfkfP11T01UVYDtiwfNaq5+ZKO+czCP
-         jxgXBL63QYKNMalgryAGYDdlKNTE6no6ru4dvLrrDMMNSE1e62bb3uQRqcSIfEJksq3R
-         vTEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqggAR3ldn/OdPFZMGhmBhFaOZvA3cuq5sdP8Wp1TnlWeTwKZIIgvYsYRNxUlG2khf3xonQifrraae4VaMWD+XGeBU3dB+OoDsuxJOEvIGmXU/zi7i2s1UNpjqQSC2gIdiOlYt
-X-Gm-Message-State: AOJu0Yx/77AvsgyVPS4fm9utHYiUB+gddUsM7sne6HtAbk8Joh328vkX
-	AGzhPKFcvk/1R+dqTA4kTE2mDLWzEqJQmJxENtYUT/QX/wj9AbnDPau15aTOYm149Q4TRAUVK+T
-	RU4sHOgwIPxLKTYdN6GmLqu0ulUk=
-X-Google-Smtp-Source: AGHT+IEs0THMbA0sF4obneu0+dmcKI40YGhrl7j05k/acZ3+a8Pia7WokWkm4hxOH6DCTgtLunHntz23diVKez52CcY=
-X-Received: by 2002:a05:6000:cca:b0:367:89fd:1e06 with SMTP id
- ffacd0b85a97d-36baaddd1admr769970f8f.36.1722484413831; Wed, 31 Jul 2024
- 20:53:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722484625; x=1723089425;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3c0jDeg9jATLBjz8MH1N0Oj6qwqnRYEeVc2HEf4DB4=;
+        b=HbEDD6Rla2IJf3zFtZcb46Cxkumn2El5IuSOI8rl/AiXa+QTW3Ycs/AifgE5VOtVlk
+         tModE//IicJ9vY46xq6Vcbos3ws0PAOTlnKw9TJ34QgC9eItgIVYSxkbmNDFLPq0nkin
+         /2mJn20GwFFNpGlLW7UeCDT4qShXdzuzIbK0n6LGKOnZYEDHENEetyIiYRopCREcgLmE
+         Nyj8kMQ6B7Bf8BozKXoIJERq+npMuCBR/g8ZDo7aUS0ixIZqNu47ETGkck9IiuXTZ7nw
+         NrWNdSutgaORuWE07rln8lEZpJNHLfUi5Gyb7xfyQRNnjuGiTCV3G/vK3Oi9D8g1mAZe
+         36tw==
+X-Forwarded-Encrypted: i=1; AJvYcCUq/kSe+zpJyxwVH1icuGXpQm+SXa46lrRyw2p0tZ6RmGKKQMeZe0pHHMeo7pn7uKCMVqm+8cSfbdgVLZ7gO1a6Q7+bF3TQ6AKC2Xjt
+X-Gm-Message-State: AOJu0Yz7s8XgLRTLDvhh4AA6pICXDyMrmB12jqRKuer3BjzjfZKnhLJO
+	rA0pQAP1zAobXd/cPy2qKr0pgkrko6UnX3raEjnz0iyrEdoeKFeagnyc0AxVaA==
+X-Google-Smtp-Source: AGHT+IEFdP76UW/IZ+sC2v4ImHKOP3FcwGDmZrqokrJHVTrqdDNiXNJhqK0SPMMBLeC7lZGGATEBbA==
+X-Received: by 2002:a05:6a20:9f86:b0:1c1:61a9:de4a with SMTP id adf61e73a8af0-1c68cf22b8amr1895142637.24.1722484625007;
+        Wed, 31 Jul 2024 20:57:05 -0700 (PDT)
+Received: from [172.16.102.95] (c-98-45-34-39.hsd1.ca.comcast.net. [98.45.34.39])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc430fa2sm2150004a91.13.2024.07.31.20.57.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 20:57:04 -0700 (PDT)
+Message-ID: <721b286c-7143-40c7-84cf-c77986009895@penguintechs.org>
+Date: Wed, 31 Jul 2024 20:57:02 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729183038.1959-1-eladwf@gmail.com> <ZqfpGVhBe3zt0x-K@lore-desk>
- <CA+SN3soFwyPs2YhvY+x33B6WsHHahu6hbKM-0TpdkquJwzD7Gw@mail.gmail.com> <20240731183718.1278048e@kernel.org>
-In-Reply-To: <20240731183718.1278048e@kernel.org>
-From: Elad Yifee <eladwf@gmail.com>
-Date: Thu, 1 Aug 2024 06:53:22 +0300
-Message-ID: <CA+SN3srMPLcmQ4h_iNst71OkQPFcCYxBRL0Q9hR=7LjJ86TFFA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 0/2] net: ethernet: mtk_eth_soc: improve RX performance
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
-	Mark Lee <Mark-MC.Lee@mediatek.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>, 
-	Joe Damato <jdamato@fastly.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Bluetooth: hci_qca: fix post merge window regressions
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+ Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Marcel Holtmann <marcel@holtmann.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+ linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240731-hci_qca_fixes-v1-0-59dad830b243@linaro.org>
+ <CABBYNZ+dvLGos9oLi6euFkmiU9OReJ5F3qsA6WrhW29yeZ-jWQ@mail.gmail.com>
+Content-Language: en-US
+From: Wren Turkal <wt@penguintechs.org>
+In-Reply-To: <CABBYNZ+dvLGos9oLi6euFkmiU9OReJ5F3qsA6WrhW29yeZ-jWQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 1, 2024 at 4:37=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wro=
-te:
->
-> On Tue, 30 Jul 2024 08:29:58 +0300 Elad Yifee wrote:
-> > Since it's probably the reason for the performance hit,
-> > allocating full pages every time, I think your suggestion would improve=
- the
-> > performance and probably match it with the napi_alloc_frag path.
-> > I'll give it a try when I have time.
->
-> This is a better direction than disabling PP.
-> Feel free to repost patch 1 separately.
-> --
-> pw-bot: cr
-In this driver, the existence of PP is the condition to execute all
-XDP-related operations which aren't necessary
-on this hot path, so we anyway wouldn't want that. on XDP program
-setup the rings are reallocated and the PP
-would be created.
-Other than that, for HWLRO we need contiguous pages of different order
-than the PP, so the creation of PP
-basically prevents the use of HWLRO.
-So we solve this LRO problem and get a performance boost with this
-simple change.
+Luiz and Bartosz,
 
-Lorenzo's suggestion would probably improve the performance of the XDP
-path and we should try that nonetheless.
+On 7/31/24 9:32 AM, Luiz Augusto von Dentz wrote:
+> Hi Wren,
+> 
+> On Wed, Jul 31, 2024 at 11:21 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+>>
+>> Here are the fixes for regressions reported by Wren and Dmitry. I could
+>> reproduce the crash on db820c and so I was able to test it but patch 2/3
+>> could use a Tested-by from Wren on QCA6390.
+> 
+> Can you give this set a try and report back?
+
+I'll give it a shot tonight or tomorrow and report back.
+
+Bartosz, thanks for looking into this.
+
+>> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> ---
+>> Bartosz Golaszewski (3):
+>>        Bluetooth: hci_qca: don't call pwrseq_power_off() twice for QCA6390
+>>        Bluetooth: hci_qca: fix QCA6390 support on non-DT platforms
+>>        Bluetooth: hci_qca: fix a NULL-pointer derefence at shutdown
+>>
+>>   drivers/bluetooth/hci_qca.c | 19 +++++++++----------
+>>   1 file changed, 9 insertions(+), 10 deletions(-)
+>> ---
+>> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
+>> change-id: 20240731-hci_qca_fixes-8e7a8ed3ad83
+>>
+>> Best regards,
+>> --
+>> Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>>
+> 
+> 
+
+-- 
+You're more amazing than you think!
+
 
