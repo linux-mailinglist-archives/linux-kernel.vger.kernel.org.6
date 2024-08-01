@@ -1,269 +1,288 @@
-Return-Path: <linux-kernel+bounces-271582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CC7945054
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:16:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4403194503C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CA371F26ED2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED16D2814B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A0F1BB6B9;
-	Thu,  1 Aug 2024 16:14:11 +0000 (UTC)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5721B3F04;
+	Thu,  1 Aug 2024 16:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ut9hH4gH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86D51BA89F;
-	Thu,  1 Aug 2024 16:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C17E13B79F;
+	Thu,  1 Aug 2024 16:12:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722528851; cv=none; b=ELcA2ifPWUhpY27B5SlrhHnnXshVzEgfcjQ0+5kD69vDdUQnkPgZVMcTgiyB5AoQScnsisb0NMNr78SP6m1ZY0dJhKlMJlgeK6ktbA/l+wcs319n/XyImUlMR5xngvJs9jlXhonsOwe6z8uoWhNfoJRTr0xxHMB9OFNlQPDnBpQ=
+	t=1722528770; cv=none; b=eBwiHZ5dpKBiAvkF4EHaEptelilb2c/TkEQaxEAdXC5eRt71WWIhxFmO3XWQK9NWHMwYipXUagaxkF5lNQmXEuHhi201s0wHjx8bArahBXnNWA4oKZeyQvlPSaDabvJ/rjkJom0P0ybb6VJyiHqO55lV9qlklB2ijMV8NuDcVsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722528851; c=relaxed/simple;
-	bh=7e3efhcv9TBwyQynz9QMmq8QAaAjHIGnXvuyE+brDnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TM1xgYNCX5H8FT5wgzxzXKOPLWe1EEcFuvc/occaeFAPya/QwGn+uSaMKfURwm8Ml8fjNXMkbX4RxmMvC825aorkgjEK3aBo05neKLpy+8xI32jKATmDZHquGm1EdYqiU8AdnHN8tDlnrc0Bsz5BiKGo6io21LwN6Bm7TYKdP7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-595856e2336so3807186a12.1;
-        Thu, 01 Aug 2024 09:14:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722528844; x=1723133644;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0fwJ9sjtEm+K2Uygni9ol7IUWm5RqiSMgqK4WJO8Gac=;
-        b=UuwDzSxR9llqTx84X9BGJ70J0PlC3geXJC3gM452fWtxJcmQF/J3YKi3MoCMAuoCYh
-         y2IKrZPeTylxteZKFAWetRKXvX3FYzgJSOjtkYhnZjjVlLuROqLW1wAZAu3HEfChIc8Y
-         DYcLEgam0eOJrMpy5M63LTnA4yu7nVwdu3c0R+XNwt5FKleADNZ1Hm6/kcjda/6tDM01
-         i4C6ziOw/FIrA3FtgKqsXaGBYbz/t4KVESfOQ+6VLvvmKwQCBQpA/fEJWVHhQ3+8sRez
-         +uxt4snid+qFJs4n9iV4n/+bJW1Y91PAKi+pMs1kHC3GV+L+psCMErJWy3w4TD32sbKB
-         xuFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNTp+m0+anPCHzkjVAJ1HTkHF2z+ct5SqZmfXRbdseY42no11jLTL0Omo7osISYy6HKPfWvfhASzBTH78uATD5qZTtApLq8liu/dq8lDEgQZf0AL4s7RPkhWWh1QE64r/UfV35
-X-Gm-Message-State: AOJu0YyDs3SpkEfKwzhBD0mjW+bSLqNKFQvrQvuu0O6AAjirJZdxgxnR
-	SXlMqC6Jl31sCCLOkoJe7PJLLphnNm2cJOpPJ601euU8HsQ8DF0A
-X-Google-Smtp-Source: AGHT+IF7er/XmpWbI0le/WS2rWWF6sCS6psERpQnYNgAPU5ZQUrM+3Dj4MSYUnTmN6FyQp5+PkeJ4A==
-X-Received: by 2002:a05:6402:1a42:b0:5a1:5c0c:cbd6 with SMTP id 4fb4d7f45d1cf-5b80acb9ba2mr479182a12.8.1722528843964;
-        Thu, 01 Aug 2024 09:14:03 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac63590d81sm10482172a12.23.2024.08.01.09.14.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 09:14:03 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: kuba@kernel.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com
-Cc: thevlad@fb.com,
-	thepacketgeek@gmail.com,
-	riel@surriel.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	paulmck@kernel.org,
-	davej@codemonkey.org.uk
-Subject: [PATCH net-next 6/6] net: netconsole: Defer netpoll cleanup to avoid lock release during list traversal
-Date: Thu,  1 Aug 2024 09:12:03 -0700
-Message-ID: <20240801161213.2707132-7-leitao@debian.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801161213.2707132-1-leitao@debian.org>
-References: <20240801161213.2707132-1-leitao@debian.org>
+	s=arc-20240116; t=1722528770; c=relaxed/simple;
+	bh=2Ie04mSHgFdn3r8Q7k1jYkG+oGrFLofZ+lysI1ZWPOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rSu2CVXFzGFJ6Z2vZNHPIIkI6YmfCOxDJ3Zhi1Y+Bfwjp7quEHdXyi9AkPOUWvhpnpFYACb1OQYIkoQBKyIf5DO/2VqAcZeyCXqP9LKhNsjtrIqn6eRSFbM9V77CJqUGiIGoYhutahKim60lpdzLkj6RXaYli1HklGwzdAnw50Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ut9hH4gH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1146C4AF0C;
+	Thu,  1 Aug 2024 16:12:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722528769;
+	bh=2Ie04mSHgFdn3r8Q7k1jYkG+oGrFLofZ+lysI1ZWPOQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ut9hH4gHjPyq5vDMGhVWueCxfwZezELn8OEFXLVb/NUb5exmVb9gKIMoZpyMqS9Iu
+	 fIUvQNfCd5Q3ZO6dbEIGOPwzYxrhqDav4D050DZqJNCRYzcwW+1KCwd7xnZipjNeX6
+	 fza3Q6zvlmVsSbMmTNdX8++eweR2xNw2ALuzd34opRkD8oT6YaTumlXp0JPIKTJZOv
+	 xdaSmnus8Iqbyz61keFQniAdw/noOBCwQHERXA9bMDGXJWy9ORHz3CK5dme8kkqeMZ
+	 +/nGZwredybhVLxneYBGN24rwGIF4XasDEV/JLdp/Mm8Z3jOTDjAadJVTVls97nGx2
+	 EwD6lV1UoaiSw==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f035ae0fd1so82577871fa.2;
+        Thu, 01 Aug 2024 09:12:49 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUDTFE0koV4BF/H0dDafN2a8Qf2l+bPxmrmsDw0UNRIWTGnvPnKMHeNLYA3P5Su5SSWvRMAYzscnXkX@vger.kernel.org, AJvYcCX/EAGPNya+iwgvtNMGHzl1vUVmxCOsraDEFb/z4A3WgMzgO5P/CLwzw5aGJAONfQg16dcSxqEOIEJD8GZt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUztT85Vzvi39qZ4mTQWBMQ+bNWbFGPnnbHL7Ok5AcQH4bKlE6
+	TuDw8g5zkblS6zA64w+Cjnrn9AOBcc5JJnC636tNxS3KJI6U61/1nyB1linSgpkZADD/h4vGUJa
+	1o+pwiyANwgVX9me0WO2UptNN1g==
+X-Google-Smtp-Source: AGHT+IGncQu6neIyJIzYRmFRoi4mAUStoczccHBnCM7t9chOdIKJaL1uoXvQ/+Sivukw+eV00ecVLPXJOtrZ7y8gFZA=
+X-Received: by 2002:a2e:8718:0:b0:2ef:21e5:1f01 with SMTP id
+ 38308e7fff4ca-2f15aa888ecmr5842651fa.20.1722528768109; Thu, 01 Aug 2024
+ 09:12:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240801051402.584652-1-paweldembicki@gmail.com>
+In-Reply-To: <20240801051402.584652-1-paweldembicki@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Thu, 1 Aug 2024 10:12:34 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+YMHAv312PQoSCRpgGedhg3OYJnDC9=YHWg6nJkQSaLQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+YMHAv312PQoSCRpgGedhg3OYJnDC9=YHWg6nJkQSaLQ@mail.gmail.com>
+Subject: Re: [PATCH] powerpc: dtc: update P2020RDB dts
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: linuxppc-dev@lists.ozlabs.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Current issue:
-- The `target_list_lock` spinlock is held while iterating over
-  target_list() entries.
-- Mid-loop, the lock is released to call __netpoll_cleanup(), then
-  reacquired.
-- This practice compromises the protection provided by
-  `target_list_lock`.
+On Wed, Jul 31, 2024 at 11:14=E2=80=AFPM Pawel Dembicki <paweldembicki@gmai=
+l.com> wrote:
+>
 
-Reason for current design:
-1. __netpoll_cleanup() may sleep, incompatible with holding a spinlock.
-2. target_list_lock must be a spinlock because write_msg() cannot sleep.
-   (See commit b5427c27173e ("[NET] netconsole: Support multiple logging
-    targets"))
+On the subject, every patch is an 'update'. Please make it more
+specific. If you have a hard time coming up with something specific,
+that's a sign your patch is making too many separate changes.
 
-Defer the cleanup of the netpoll structure to outside the
-target_list_lock() protected area. Create another list
-(target_cleanup_list) to hold the entries that need to be cleaned up,
-and clean them using a mutex (target_cleanup_list_lock).
+> P2020RDB contains multiple peripherals, which isn't added to
+> devicetree:
+>   - Switch: Microchip VSC7385
+>   - PMIC: Renesas ZL2006
+>   - Temperature sensor: Analog Devices ADT7461
+>   - Two eeproms: 24C256 and 24C01
+>   - GPIO expander: NXP PCA9557
+>   - reset gpios of Ethernet PHYs
+>
+> This commit adds it.
+>
+> Some refreshments was done:
+>   - fixed link in ethernet-node
+>   - platform drivers nodes names
+>   - added 'gpio0' label in pq3-gpio-0.dtsi
+>
+> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+> ---
+>  arch/powerpc/boot/dts/fsl/p2020rdb.dts    | 85 +++++++++++++++++++++--
+>  arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi |  2 +-
+>  2 files changed, 81 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/powerpc/boot/dts/fsl/p2020rdb.dts b/arch/powerpc/boot/d=
+ts/fsl/p2020rdb.dts
+> index 3acd3890b397..d563d37b91f1 100644
+> --- a/arch/powerpc/boot/dts/fsl/p2020rdb.dts
+> +++ b/arch/powerpc/boot/dts/fsl/p2020rdb.dts
+> @@ -6,6 +6,7 @@
+>   */
+>
+>  /include/ "p2020si-pre.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+>
+>  / {
+>         model =3D "fsl,P2020RDB";
+> @@ -33,7 +34,7 @@ lbc: localbus@ffe05000 {
+>                           0x1 0x0 0x0 0xffa00000 0x00040000
+>                           0x2 0x0 0x0 0xffb00000 0x00020000>;
+>
+> -               nor@0,0 {
+> +               nor@0 {
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
- drivers/net/netconsole.c | 83 ++++++++++++++++++++++++++++++++--------
- 1 file changed, 67 insertions(+), 16 deletions(-)
+Make these clean-ups a separate patch.
 
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index eb9799edb95b..dd984ee4a564 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -37,6 +37,7 @@
- #include <linux/configfs.h>
- #include <linux/etherdevice.h>
- #include <linux/utsname.h>
-+#include <linux/rtnetlink.h>
- 
- MODULE_AUTHOR("Maintainer: Matt Mackall <mpm@selenic.com>");
- MODULE_DESCRIPTION("Console driver for network interfaces");
-@@ -72,9 +73,16 @@ __setup("netconsole=", option_setup);
- 
- /* Linked list of all configured targets */
- static LIST_HEAD(target_list);
-+/* target_cleanup_list is used to track targets that need to be cleaned outside
-+ * of target_list_lock. It should be cleaned in the same function it is
-+ * populated.
-+ */
-+static LIST_HEAD(target_cleanup_list);
- 
- /* This needs to be a spinlock because write_msg() cannot sleep */
- static DEFINE_SPINLOCK(target_list_lock);
-+/* This needs to be a mutex because netpoll_cleanup might sleep */
-+static DEFINE_MUTEX(target_cleanup_list_lock);
- 
- /*
-  * Console driver for extended netconsoles.  Registered on the first use to
-@@ -210,6 +218,46 @@ static struct netconsole_target *alloc_and_init(void)
- 	return nt;
- }
- 
-+/* Clean up every target in the cleanup_list and move the clean targets back to
-+ * the main target_list.
-+ */
-+static void netconsole_process_cleanups_core(void)
-+{
-+	struct netconsole_target *nt, *tmp;
-+	unsigned long flags;
-+
-+	/* The cleanup needs RTNL locked */
-+	ASSERT_RTNL();
-+
-+	mutex_lock(&target_cleanup_list_lock);
-+	list_for_each_entry_safe(nt, tmp, &target_cleanup_list, list) {
-+		/* all entries in the cleanup_list needs to be disabled */
-+		WARN_ON_ONCE(nt->enabled);
-+		do_netpoll_cleanup(&nt->np);
-+		/* moved the cleaned target to target_list. Need to hold both
-+		 * locks
-+		 */
-+		spin_lock_irqsave(&target_list_lock, flags);
-+		list_move(&nt->list, &target_list);
-+		spin_unlock_irqrestore(&target_list_lock, flags);
-+	}
-+	WARN_ON_ONCE(!list_empty(&target_cleanup_list));
-+	mutex_unlock(&target_cleanup_list_lock);
-+}
-+
-+/* Do the list cleanup with the rtnl lock hold.  rtnl lock is necessary because
-+ * netdev might be cleaned-up by calling __netpoll_cleanup(),
-+ */
-+static void netconsole_process_cleanups(void)
-+{
-+	/* rtnl lock is called here, because it has precedence over
-+	 * target_cleanup_list_lock mutex and target_cleanup_list
-+	 */
-+	rtnl_lock();
-+	netconsole_process_cleanups_core();
-+	rtnl_unlock();
-+}
-+
- #ifdef	CONFIG_NETCONSOLE_DYNAMIC
- 
- /*
-@@ -376,13 +424,20 @@ static ssize_t enabled_store(struct config_item *item,
- 		 * otherwise we might end up in write_msg() with
- 		 * nt->np.dev == NULL and nt->enabled == true
- 		 */
-+		mutex_lock(&target_cleanup_list_lock);
- 		spin_lock_irqsave(&target_list_lock, flags);
- 		nt->enabled = false;
-+		/* Remove the target from the list, while holding
-+		 * target_list_lock
-+		 */
-+		list_move(&nt->list, &target_cleanup_list);
- 		spin_unlock_irqrestore(&target_list_lock, flags);
--		netpoll_cleanup(&nt->np);
-+		mutex_unlock(&target_cleanup_list_lock);
- 	}
- 
- 	ret = strnlen(buf, count);
-+	/* Deferred cleanup */
-+	netconsole_process_cleanups();
- out_unlock:
- 	mutex_unlock(&dynamic_netconsole_mutex);
- 	return ret;
-@@ -942,7 +997,7 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 				   unsigned long event, void *ptr)
- {
- 	unsigned long flags;
--	struct netconsole_target *nt;
-+	struct netconsole_target *nt, *tmp;
- 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
- 	bool stopped = false;
- 
-@@ -950,9 +1005,9 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 	      event == NETDEV_RELEASE || event == NETDEV_JOIN))
- 		goto done;
- 
-+	mutex_lock(&target_cleanup_list_lock);
- 	spin_lock_irqsave(&target_list_lock, flags);
--restart:
--	list_for_each_entry(nt, &target_list, list) {
-+	list_for_each_entry_safe(nt, tmp, &target_list, list) {
- 		netconsole_target_get(nt);
- 		if (nt->np.dev == dev) {
- 			switch (event) {
-@@ -962,25 +1017,16 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 			case NETDEV_RELEASE:
- 			case NETDEV_JOIN:
- 			case NETDEV_UNREGISTER:
--				/* rtnl_lock already held
--				 * we might sleep in __netpoll_cleanup()
--				 */
- 				nt->enabled = false;
--				spin_unlock_irqrestore(&target_list_lock, flags);
--
--				__netpoll_cleanup(&nt->np);
--
--				spin_lock_irqsave(&target_list_lock, flags);
--				netdev_put(nt->np.dev, &nt->np.dev_tracker);
--				nt->np.dev = NULL;
-+				list_move(&nt->list, &target_cleanup_list);
- 				stopped = true;
--				netconsole_target_put(nt);
--				goto restart;
- 			}
- 		}
- 		netconsole_target_put(nt);
- 	}
- 	spin_unlock_irqrestore(&target_list_lock, flags);
-+	mutex_unlock(&target_cleanup_list_lock);
-+
- 	if (stopped) {
- 		const char *msg = "had an event";
- 
-@@ -999,6 +1045,11 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 			dev->name, msg);
- 	}
- 
-+	/* Process target_cleanup_list entries. By the end, target_cleanup_list
-+	 * should be empty
-+	 */
-+	netconsole_process_cleanups_core();
-+
- done:
- 	return NOTIFY_DONE;
- }
--- 
-2.43.0
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+>                         compatible =3D "cfi-flash";
+> @@ -79,7 +80,7 @@ partition@f00000 {
+>                         };
+>                 };
+>
+> -               nand@1,0 {
+> +               nand@1 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+>                         compatible =3D "fsl,p2020-fcm-nand",
+> @@ -128,11 +129,49 @@ partition@1100000 {
+>                         };
+>                 };
+>
+> -               L2switch@2,0 {
+> +               ethernet-switch@2 {
+>                         #address-cells =3D <1>;
+>                         #size-cells =3D <1>;
+> -                       compatible =3D "vitesse-7385";
+> +                       compatible =3D "vitesse,vsc7385";
 
+There are 7 occurrences of this. Please fix them all. (And again,
+separate patch).
+
+>                         reg =3D <0x2 0x0 0x20000>;
+> +                       reset-gpios =3D <&gpio0 12 GPIO_ACTIVE_LOW>;
+> +
+> +                       ports {
+> +                               #address-cells =3D <1>;
+> +                               #size-cells =3D <0>;
+> +
+> +                               port@1 {
+> +                                       reg =3D <1>;
+> +                                       label =3D "lan1";
+> +                               };
+> +                               port@2 {
+> +                                       reg =3D <2>;
+> +                                       label =3D "lan2";
+> +                               };
+> +                               port@3 {
+> +                                       reg =3D <3>;
+> +                                       label =3D "lan3";
+> +                               };
+> +                               port@4 {
+> +                                       reg =3D <4>;
+> +                                       label =3D "lan4";
+> +                               };
+> +                               vsc: port@6 {
+> +                                       reg =3D <6>;
+> +                                       label =3D "cpu";
+> +                                       ethernet =3D <&enet0>;
+> +                                       phy-mode =3D "rgmii";
+> +                                       rx-internal-delay-ps =3D <1400>;
+> +                                       tx-internal-delay-ps =3D <2000>;
+> +
+> +                                       fixed-link {
+> +                                               speed =3D <1000>;
+> +                                               full-duplex;
+> +                                               pause;
+> +                                       };
+> +                               };
+> +                       };
+> +
+>                 };
+>
+>         };
+> @@ -141,12 +180,39 @@ soc: soc@ffe00000 {
+>                 ranges =3D <0x0 0x0 0xffe00000 0x100000>;
+>
+>                 i2c@3000 {
+> +                       temperature-sensor@4c {
+> +                               compatible =3D "adi,adt7461";
+> +                               reg =3D <0x4c>;
+> +                       };
+> +
+> +                       eeprom@50 {
+> +                               compatible =3D "atmel,24c256";
+> +                               reg =3D <0x50>;
+> +                       };
+> +
+>                         rtc@68 {
+>                                 compatible =3D "dallas,ds1339";
+>                                 reg =3D <0x68>;
+>                         };
+>                 };
+>
+> +               i2c@3100 {
+> +                       pmic@11 {
+> +                               compatible =3D "zl2006";
+
+Missing vendor prefix.
+
+> +                               reg =3D <0x11>;
+> +                       };
+> +
+> +                       gpio@18 {
+> +                               compatible =3D "nxp,pca9557";
+> +                               reg =3D <0x18>;
+> +                       };
+> +
+> +                       eeprom@52 {
+> +                               compatible =3D "atmel,24c01";
+> +                               reg =3D <0x52>;
+> +                       };
+> +               };
+> +
+>                 spi@7000 {
+>                         flash@0 {
+>                                 #address-cells =3D <1>;
+> @@ -200,11 +266,15 @@ mdio@24520 {
+>                         phy0: ethernet-phy@0 {
+>                                 interrupts =3D <3 1 0 0>;
+>                                 reg =3D <0x0>;
+> +                               reset-gpios =3D <&gpio0 14 GPIO_ACTIVE_LO=
+W>;
+>                         };
+> +
+>                         phy1: ethernet-phy@1 {
+>                                 interrupts =3D <3 1 0 0>;
+>                                 reg =3D <0x1>;
+> +                               reset-gpios =3D <&gpio0 6 GPIO_ACTIVE_LOW=
+>;
+>                         };
+> +
+>                         tbi-phy@2 {
+>                                 device_type =3D "tbi-phy";
+>                                 reg =3D <0x2>;
+> @@ -232,8 +302,13 @@ ptp_clock@24e00 {
+>                 };
+>
+>                 enet0: ethernet@24000 {
+> -                       fixed-link =3D <1 1 1000 0 0>;
+>                         phy-connection-type =3D "rgmii-id";
+> +
+> +                       fixed-link {
+> +                               speed =3D <1000>;
+> +                               full-duplex;
+> +                               pause;
+> +                       };
+>                 };
+>
+>                 enet1: ethernet@25000 {
+> diff --git a/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi b/arch/powerpc/boo=
+t/dts/fsl/pq3-gpio-0.dtsi
+> index a1b48546b02d..5181117ea6b5 100644
+> --- a/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi
+> +++ b/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi
+> @@ -32,7 +32,7 @@
+>   * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+>   */
+>
+> -gpio-controller@fc00 {
+> +gpio0: gpio-controller@fc00 {
+>         #gpio-cells =3D <2>;
+>         compatible =3D "fsl,pq3-gpio";
+>         reg =3D <0xfc00 0x100>;
+> --
+> 2.34.1
+>
 
