@@ -1,67 +1,108 @@
-Return-Path: <linux-kernel+bounces-271392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44889944D91
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81500944D92
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 671F21C22BBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E961C22E89
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:02:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DBE1A4870;
-	Thu,  1 Aug 2024 14:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F019014A601;
+	Thu,  1 Aug 2024 14:02:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="B6EY1Z51"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dqMD1JAH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDB414A601
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3925E1A38C1;
+	Thu,  1 Aug 2024 14:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722520932; cv=none; b=WppjWypnNtAAeRPkIGdyHWrw1YKL1hfWrlyjm4eRza1UE6fYKac9iynzV3Bky4CbHfRPG6U8hfEZHyT1MP/dcIh67wGa+zmJyzqxHeGzWpSZT1tw/DrLMEER7/jGo+X0eFjgcrjusaC3K+JELqMjvCxt3ejjVIORPh1R6g+arW0=
+	t=1722520954; cv=none; b=Q12sam2prTSS3M8RHPoryonrkZhMSpoZuPg8D1HzIi8IIrNeDTko8DIXXFqq3nRM5MJVdCLggJM8YDbu7gTXCWLJIQ11w8ZeutIugCHdR55+DNVyRBV0Lg4oRjhUdA+EUaRSocs68jtnVSgA5S6m3wZtjO/km1qo68xpqz8T2uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722520932; c=relaxed/simple;
-	bh=3rDFTnKrFTVelFXBWY8Fla6t5KNytE4LmE+lo4BsHZE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cn2rsmFqGJmymS2wKjLNGjHqeisrTP/uLAwzpta2+vuHPrd/Oa4ssp9IuSeyS+DxKnvUSrOc/uZ/2SyQXrQC3T4oUP6o/B4NkFP3y2wE62xU7kjO9ThnLMm8D6fPQgsrir8vxtg0nG9sptBKPO29i/7LbOku6T0lZgfaM0X+fIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=B6EY1Z51; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722520924; x=1722780124;
-	bh=sr4WeHf3fgnQqbWXVbnaeKVIjMkwrY2mcG/IiWbhHvk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=B6EY1Z514XkP1xCh7HFWOPDR6AIbBoD9RS9Tosoy3rr0QxTWaQd9s79qogyE1Omtn
-	 h4RLrLYnTyFKrN+pV3rVd43Xg9n1HrxvUGNO4Gd8EyMiEg++nQ+bsl8b24BT39bnlO
-	 8HvhnsiQrtyyXssh2ZxujaSZuRphpOUhrBH/FgrA8inQvO4c0SAyNKmvDPF9GnWz6X
-	 VLTcRrdkvkwMSDYfkiA8O8TDmywa3oRIxZX47ULJd2mf++V3wAh11zCFrVpmf6cbzk
-	 0eSK9z5pzpZCpqOcMsngcBQgZRaXCXMdzK//KNhmPhIUO6DRQWNpYX4GMWnaleUuV0
-	 CGYH553uw2jOw==
-Date: Thu, 01 Aug 2024 14:01:45 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Matthew Wilcox <willy@infradead.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and vm_area_struct
-Message-ID: <82e4816c-cada-46f3-bebf-882ae8ded118@proton.me>
-In-Reply-To: <20240801-vma-v3-1-db6c1c0afda9@google.com>
+	s=arc-20240116; t=1722520954; c=relaxed/simple;
+	bh=VdiINaxnbnaYhSdTjoFb4By0McAamaV/qtatA2bkCFQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z2KWNP7uDsUD7ltQfu/t07SQovThU8MKft7sRdcqNhBIviWWYgclLAHyz76I1Yarmkoh9IcoyfBo/POPZ4w4JJNDBiscLBjkv7KjaGL77vM+V96LbCaVaf0aoFIcvCNLmsVvH5XCHZrVU4KDcN3VGqO5YCGPqCxCW8YLm61yPic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dqMD1JAH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34783C32786;
+	Thu,  1 Aug 2024 14:02:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722520953;
+	bh=VdiINaxnbnaYhSdTjoFb4By0McAamaV/qtatA2bkCFQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dqMD1JAHCRf4bPp4ekUD0sWbvUCOfESxAU37GVTDioDHOXUAm0FoaszYBPq9gvUP2
+	 BPpqNQQuSeJw7oK9RNbSc4FUX1H/8jBMwMp2kVPLLozn6afueYG5x4iQink6vb0gzF
+	 x4mqERJc8lnrImgMwEZLiYf9njYy1KHSgYRp7vaAZunybAcEwQg9t6G8rB16K6E24B
+	 Eb1Qn9nl18SXnQC2X9wTwI8AqG+InYOfQ/cytcFgtFg0vQbuRpBtFzCHRK5XUxUD/8
+	 4qrc40E29sCk11PY2i7ddsM8f1SkE2dKq4APw8DDc5T18KFJ7sgqAW4fm+ANVcTM8T
+	 wKfMqhpUsCCyg==
+Date: Thu, 1 Aug 2024 16:02:27 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and
+ vm_area_struct
+Message-ID: <ZquVcyeLqGGRbgx-@pollux>
 References: <20240801-vma-v3-1-db6c1c0afda9@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 26750703ee0fd483967e00faa06470dcd6368aaa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801-vma-v3-1-db6c1c0afda9@google.com>
 
-On 01.08.24 14:58, Alice Ryhl wrote:
+On Thu, Aug 01, 2024 at 12:58:45PM +0000, Alice Ryhl wrote:
+> This is a follow-up to the page abstractions [1] that were recently
+> merged in 6.11. Rust Binder will need these abstractions to manipulate
+> the vma in its implementation of the mmap fop on the Binder file.
+> 
+> This patch is based on Wedson's implementation on the old rust branch,
+> but has been changed significantly. All mistakes are Alice's.
+> 
+> Link: https://lore.kernel.org/r/20240528-alice-mm-v7-4-78222c31b8f4@google.com [1]
+> Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+> Changes in v3:
+> - Reorder entries in mm.rs.
+> - Use ARef for mmput_async helper.
+> - Clarify that VmArea requires you to hold the mmap read or write lock.
+> - Link to v2: https://lore.kernel.org/r/20240727-vma-v2-1-ab3e5927dc3a@google.com
+> 
+> Changes in v2:
+> - mm.rs is redesigned from scratch making use of AsRef
+> - Add notes about whether destructors may sleep
+> - Rename Area to VmArea
+> - Link to v1: https://lore.kernel.org/r/20240723-vma-v1-1-32ad5a0118ee@google.com
+> ---
+>  rust/helpers.c         |  61 +++++++++
+>  rust/kernel/lib.rs     |   1 +
+>  rust/kernel/mm.rs      | 337 +++++++++++++++++++++++++++++++++++++++++++++++++
+>  rust/kernel/mm/virt.rs | 204 ++++++++++++++++++++++++++++++
+>  rust/kernel/types.rs   |   9 ++
+>  5 files changed, 612 insertions(+)
+> 
 > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
 > new file mode 100644
 > index 000000000000..ed2db893fb79
@@ -75,185 +116,9 @@ On 01.08.24 14:58, Alice Ryhl wrote:
 > +//! Memory management.
 > +//!
 > +//! C header: [`include/linux/mm.h`](../../../../include/linux/mm.h)
-> +
-> +use crate::{
-> +    bindings,
-> +    types::{ARef, AlwaysRefCounted, Opaque},
-> +};
-> +
-> +use core::{
-> +    ops::Deref,
-> +    ptr::{self, NonNull},
-> +};
-> +
-> +pub mod virt;
-> +
-> +/// A wrapper for the kernel's `struct mm_struct`.
-> +///
-> +/// Since `mm_users` may be zero, the associated address space may not e=
-xist anymore. You must use
 
-Can it also be the case that the space never existed to begin with? Then
-I would write "the associated address space may not exist."
+NIT: srctree
 
-Also I think it makes more sense to use "You can use [`mmget_not_zero`]
-to be able to access the address space." instead of the second sentence.
-
-> +/// [`mmget_not_zero`] before accessing the address space.
-> +///
-> +/// The `ARef<Mm>` smart pointer holds an `mmgrab` refcount. Its destruc=
-tor may sleep.
-> +///
-> +/// # Invariants
-> +///
-> +/// Values of this type are always refcounted.
-
-Would be good to record the refcount used in the invariant.
-
-> +///
-> +/// [`mmget_not_zero`]: Mm::mmget_not_zero
-> +pub struct Mm {
-> +    mm: Opaque<bindings::mm_struct>,
-> +}
-> +
-> +// SAFETY: It is safe to call `mmdrop` on another thread than where `mmg=
-rab` was called.
-> +unsafe impl Send for Mm {}
-> +// SAFETY: All methods on `Mm` can be called in parallel from several th=
-reads.
-> +unsafe impl Sync for Mm {}
-> +
-> +// SAFETY: By the type invariants, this type is always refcounted.
-> +unsafe impl AlwaysRefCounted for Mm {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: The pointer is valid since self is a reference.
-> +        unsafe { bindings::mmgrab(self.as_raw()) };
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: The caller is giving up their refcount.
-> +        unsafe { bindings::mmdrop(obj.cast().as_ptr()) };
-> +    }
-> +}
-> +
-> +/// A wrapper for the kernel's `struct mm_struct`.
-> +///
-> +/// This type is used only when `mm_users` is known to be non-zero at co=
-mpile-time. It can be used
-
-I find the "This type is used only when" a bit weird, what about "Like
-an [`Mm`], but with non-zero `mm_users`."?
-
-> +/// to access the associated address space.
-> +///
-> +/// The `ARef<MmWithUser>` smart pointer holds an `mmget` refcount. Its =
-destructor may sleep.
-> +///
-> +/// # Invariants
-> +///
-> +/// Values of this type are always refcounted. The value of `mm_users` i=
-s non-zero.
-> +#[repr(transparent)]
-> +pub struct MmWithUser {
-> +    mm: Mm,
-> +}
-> +
-> +// SAFETY: It is safe to call `mmput` on another thread than where `mmge=
-t` was called.
-> +unsafe impl Send for MmWithUser {}
-> +// SAFETY: All methods on `MmWithUser` can be called in parallel from se=
-veral threads.
-> +unsafe impl Sync for MmWithUser {}
-> +
-> +// SAFETY: By the type invariants, this type is always refcounted.
-> +unsafe impl AlwaysRefCounted for MmWithUser {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: The pointer is valid since self is a reference.
-> +        unsafe { bindings::mmget(self.as_raw()) };
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: The caller is giving up their refcount.
-> +        unsafe { bindings::mmput(obj.cast().as_ptr()) };
-> +    }
-> +}
-> +
-> +// Make all `Mm` methods available on `MmWithUser`.
-> +impl Deref for MmWithUser {
-> +    type Target =3D Mm;
-> +
-> +    #[inline]
-> +    fn deref(&self) -> &Mm {
-> +        &self.mm
-> +    }
-> +}
-> +
-> +/// A wrapper for the kernel's `struct mm_struct`.
-> +///
-> +/// This type is identical to `MmWithUser` except that it uses `mmput_as=
-ync` when dropping a
-> +/// refcount. This means that the destructor of `ARef<MmWithUserAsync>` =
-is safe to call in atomic
-> +/// context.
-
-Missing Invariants.
-
-> +#[repr(transparent)]
-> +pub struct MmWithUserAsync {
-> +    mm: MmWithUser,
-> +}
-> +
-> +// SAFETY: It is safe to call `mmput_async` on another thread than where=
- `mmget` was called.
-> +unsafe impl Send for MmWithUserAsync {}
-> +// SAFETY: All methods on `MmWithUserAsync` can be called in parallel fr=
-om several threads.
-> +unsafe impl Sync for MmWithUserAsync {}
-> +
-> +// SAFETY: By the type invariants, this type is always refcounted.
-> +unsafe impl AlwaysRefCounted for MmWithUserAsync {
-> +    fn inc_ref(&self) {
-> +        // SAFETY: The pointer is valid since self is a reference.
-> +        unsafe { bindings::mmget(self.as_raw()) };
-> +    }
-> +
-> +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> +        // SAFETY: The caller is giving up their refcount.
-> +        unsafe { bindings::mmput_async(obj.cast().as_ptr()) };
-> +    }
-> +}
-> +
-> +// Make all `MmWithUser` methods available on `MmWithUserAsync`.
-> +impl Deref for MmWithUserAsync {
-> +    type Target =3D MmWithUser;
-> +
-> +    #[inline]
-> +    fn deref(&self) -> &MmWithUser {
-> +        &self.mm
-> +    }
-> +}
-> +
-> +// These methods are safe to call even if `mm_users` is zero.
-> +impl Mm {
-> +    /// Call `mmgrab` on `current.mm`.
-> +    #[inline]
-> +    pub fn mmgrab_current() -> Option<ARef<Mm>> {
-> +        // SAFETY: It's safe to get the `mm` field from current.
-> +        let mm =3D unsafe {
-> +            let current =3D bindings::get_current();
-> +            (*current).mm
-> +        };
-> +
-> +        let mm =3D NonNull::new(mm)?;
-> +
-> +        // SAFETY: We just checked that `mm` is not null.
-> +        unsafe { bindings::mmgrab(mm.as_ptr()) };
-> +
-> +        // SAFETY: We just created an `mmgrab` refcount. Layouts are com=
-patible due to
-> +        // repr(transparent).
-> +        Some(unsafe { ARef::from_raw(mm.cast()) })
-> +    }
 > +
 > +    /// Returns a raw pointer to the inner `mm_struct`.
 > +    #[inline]
@@ -265,23 +130,45 @@ patible due to
 > +    ///
 > +    /// # Safety
 > +    ///
-> +    /// The caller must ensure that `ptr` points at an `mm_struct`, and =
-that it is not deallocated
+> +    /// The caller must ensure that `ptr` points at an `mm_struct`, and that it is not deallocated
 > +    /// during the lifetime 'a.
 > +    #[inline]
-> +    pub unsafe fn from_raw_mm<'a>(ptr: *const bindings::mm_struct) -> &'=
-a Mm {
+> +    pub unsafe fn from_raw_mm<'a>(ptr: *const bindings::mm_struct) -> &'a Mm {
 
-Why not just `from_raw`?
+I'd just call this `from_raw`, like you call the counterpart `as_raw` above.
+Same goes for `MmWithUser` and `VmArea`.
 
----
-Cheers,
-Benno
-
-> +        // SAFETY: Caller promises that the pointer is valid for 'a. Lay=
-outs are compatible due to
-> +        // repr(transparent).
-> +        unsafe { &*ptr.cast() }
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index bd189d646adb..143a2bf06941 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -366,6 +366,15 @@ pub unsafe fn from_raw(ptr: NonNull<T>) -> Self {
+>              _p: PhantomData,
+>          }
+>      }
+> +
+> +    /// Pass ownership of the refcount to a raw pointer.
+> +    pub fn into_raw(self) -> NonNull<T> {
+> +        let ptr = self.ptr;
+> +        // Skip the destructor.
+> +        core::mem::forget(self);
+> +
+> +        ptr
 > +    }
 
+I think this should be a separate patch.
+
+>  }
+>  
+>  impl<T: AlwaysRefCounted> Clone for ARef<T> {
+> 
+> ---
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> change-id: 20240723-vma-f80119f9fb35
+> 
+> Best regards,
+> -- 
+> Alice Ryhl <aliceryhl@google.com>
+> 
+> 
 
