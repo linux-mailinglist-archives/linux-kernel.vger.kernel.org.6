@@ -1,159 +1,128 @@
-Return-Path: <linux-kernel+bounces-270245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE7B943DAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:05:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59CEA943E11
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:16:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01AE1C20E14
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:05:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BA2D1C21175
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1D1CD66F;
-	Thu,  1 Aug 2024 00:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39ED51D27A8;
+	Thu,  1 Aug 2024 00:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iRxRnx3w"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kS6gH3cW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E92A1CD657
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 00:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68068132111;
+	Thu,  1 Aug 2024 00:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722471972; cv=none; b=B9z3Q42BLyQKyIT/APM/RayF4MaIUjCuzN2OnoYBNmX+L+UXne5q9ceNUK04YvNASKdVZ5ZgEXz5ANCdGF4NVxSeSLCM6JpQn2c9Tnla7WYj4X6irDYlfMvN8bOb+2FMYv1KiNzp5ooz1EfFZKI0oDjYW19qdS/2uZkXCfnbSgk=
+	t=1722472250; cv=none; b=eCRAGwOXipFR7jesSLtK0leBCdT71Rv3GMj/JdAWq8WCJ3YP5NOCfQz+KqZN58ADmZlfqP958QX5kE56/10tFcOxQOotFq0wsdYS8EYTTzHKNLiwbyQYq91LDYvWOhpaVvTVgtzsMe0z+YjDZi2b2vY8Cru4GEHsrs5lCEwmZNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722471972; c=relaxed/simple;
-	bh=wJdiZfJDsWswP13NeAvM4KqYSTlIFDzmpZyEFchDtd0=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=HLTsN5NQQYcFore0LPdEg0Q/1SUTwfynDHZTPR99EyA/y+qttofsmguhxCM2/n3nwjodYeJWIGUmAK72453kY0nEdxsdlJMlogN0Xwy63raOj/phRbzvSrcjI/hYRMuIJWaIwR/4yHj721DWD2XxDqVbIK29KaT6KUIP2TfSN24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iRxRnx3w; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722471970; x=1754007970;
-  h=date:from:to:cc:subject:message-id;
-  bh=wJdiZfJDsWswP13NeAvM4KqYSTlIFDzmpZyEFchDtd0=;
-  b=iRxRnx3w4yeateiqWkmo5bLJ2k7/bN7MKzo/404TjIqU6Mco5zaRNCb8
-   Ma6gRwOrwX+gKLCmiLlZvvBjlwmebiCceiuUZyg1JR7Nto594zNP5dGj5
-   GjK1XMQD8ZWPMV1KIemxcrgxa8TpWkhM/DZUxHtWLtZxqJ1FuBFpOp2ny
-   HuVY1d/zOu90gyTSb9e1aKIlkSM9jqp8EmawVBZwX3wj8cNndtGY4oIkK
-   j0x5W+/Dbp70PfK3+HU+wS6vuxBKM8tfcDDWidtOYa8Wuc1KpcV5xG6P5
-   0q7iRm7IH/B4/o3Pg13razG7PV/hmtYD5R5u2Sol7vE1Vd4ZcaoFDsZny
-   A==;
-X-CSE-ConnectionGUID: ce+0f3HvRNiuRhAKb8d2+Q==
-X-CSE-MsgGUID: LWu/rhWtTWitfLZY4+kKrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="37904784"
-X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
-   d="scan'208";a="37904784"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 17:26:10 -0700
-X-CSE-ConnectionGUID: +tgyV/vsTkeweYFec/pBvw==
-X-CSE-MsgGUID: hDrMI2hFQ4es72A6gxkYfQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
-   d="scan'208";a="59902417"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 31 Jul 2024 17:26:09 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZJdu-000v1J-1d;
-	Thu, 01 Aug 2024 00:26:06 +0000
-Date: Thu, 01 Aug 2024 08:26:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:perf/urgent] BUILD SUCCESS
- f73cefa3b72eaa90abfc43bf6d68137ba059d4b1
-Message-ID: <202408010857.dfzwtcwV-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1722472250; c=relaxed/simple;
+	bh=dA6SUaOM8ZUdtfmX8iKTHsOdPq/3dC4vnr1HvU3RJbc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=bu8ghO2xVoGpM6RaSDM+P9IdJGaLLmHaUz/B9wCqhdlGx/wK/Wh79RdLa3Xl/hkFG2KyST/2+UJ0iKVDKrW2tYz4X64ayl4DRaohiNQDlyqTFknBVdLCJzp+oQag5gI66USHTX8vghIRHeJ29/zVFwrFTC/XRE6c8efvOSenXRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kS6gH3cW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6691C116B1;
+	Thu,  1 Aug 2024 00:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722472250;
+	bh=dA6SUaOM8ZUdtfmX8iKTHsOdPq/3dC4vnr1HvU3RJbc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kS6gH3cWZX71nJFCpFig1ZtPSqVjRpWLkHWGLtT2qPIi/cTPk8JlwyiHudZYceb1T
+	 sLCZ2hixOK1iFxNFEFidpDVSiHAD5bB9FeHYmVlqJtnX1Oe3/w2M3jyKcU4lGdphZ8
+	 mRGlquAutPaSEeL3ViFWCh1MRqRbcbukS1e3XsQsBeUvJ/Em5rkfgAkohZhWdjHswf
+	 9Gve5w23MLEl8BdlodX+UGE1PbHWluDfMcJoXWYnZVvvmpmcu4Pg/Cr4hHDyUF982a
+	 FZ1Mhzwxvb/rQt4GxNj+L9Y7WirLSfHfcSj1khg4GIcXTSkWqNfFbKexQ6d8ntLveX
+	 yYoKBPYwlVKXQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Mark Brown <broonie@kernel.org>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Sasha Levin <sashal@kernel.org>,
+	tiwai@suse.com,
+	cujomalainey@chromium.org,
+	linux-sound@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 43/61] ALSA: control: Apply sanity check of input values for user elements
+Date: Wed, 31 Jul 2024 20:26:01 -0400
+Message-ID: <20240801002803.3935985-43-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801002803.3935985-1-sashal@kernel.org>
+References: <20240801002803.3935985-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.102
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
-branch HEAD: f73cefa3b72eaa90abfc43bf6d68137ba059d4b1  perf/x86: Fix smp_processor_id()-in-preemptible warnings
+From: Takashi Iwai <tiwai@suse.de>
 
-elapsed time: 736m
+[ Upstream commit 50ed081284fe2bfd1f25e8b92f4f6a4990e73c0a ]
 
-configs tested: 67
-configs skipped: 145
+Although we have already a mechanism for sanity checks of input values
+for control writes, it's not applied unless the kconfig
+CONFIG_SND_CTL_INPUT_VALIDATION is set due to the performance reason.
+Nevertheless, it still makes sense to apply the same check for user
+elements despite of its cost, as that's the only way to filter out the
+invalid values; the user controls are handled solely in ALSA core
+code, and there is no corresponding driver, after all.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+This patch adds the same input value validation for user control
+elements at its put callback.  The kselftest will be happier with this
+change, as the incorrect values will be bailed out now with errors.
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                               defconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arm                               allnoconfig   gcc-13.2.0
-arm                                 defconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                               defconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                                defconfig   gcc-13.2.0
-i386                             allmodconfig   gcc-13
-i386                              allnoconfig   gcc-13
-i386                             allyesconfig   gcc-13
-i386         buildonly-randconfig-001-20240801   gcc-9
-i386         buildonly-randconfig-002-20240801   clang-18
-i386         buildonly-randconfig-002-20240801   gcc-9
-i386         buildonly-randconfig-003-20240801   gcc-7
-i386         buildonly-randconfig-003-20240801   gcc-9
-i386         buildonly-randconfig-004-20240801   clang-18
-i386         buildonly-randconfig-004-20240801   gcc-9
-i386         buildonly-randconfig-005-20240801   clang-18
-i386         buildonly-randconfig-005-20240801   gcc-9
-i386         buildonly-randconfig-006-20240801   clang-18
-i386         buildonly-randconfig-006-20240801   gcc-9
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240801   gcc-13
-i386                  randconfig-001-20240801   gcc-9
-i386                  randconfig-002-20240801   clang-18
-i386                  randconfig-002-20240801   gcc-9
-i386                  randconfig-003-20240801   clang-18
-i386                  randconfig-003-20240801   gcc-9
-i386                  randconfig-004-20240801   clang-18
-i386                  randconfig-004-20240801   gcc-9
-i386                  randconfig-005-20240801   gcc-13
-i386                  randconfig-005-20240801   gcc-9
-i386                  randconfig-006-20240801   gcc-13
-i386                  randconfig-006-20240801   gcc-9
-i386                  randconfig-011-20240801   gcc-13
-i386                  randconfig-011-20240801   gcc-9
-i386                  randconfig-012-20240801   clang-18
-i386                  randconfig-012-20240801   gcc-9
-i386                  randconfig-013-20240801   gcc-13
-i386                  randconfig-013-20240801   gcc-9
-i386                  randconfig-014-20240801   gcc-13
-i386                  randconfig-014-20240801   gcc-9
-i386                  randconfig-015-20240801   gcc-12
-i386                  randconfig-015-20240801   gcc-9
-i386                  randconfig-016-20240801   clang-18
-i386                  randconfig-016-20240801   gcc-9
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                           defconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                                defconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                               defconfig   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                             allyesconfig   clang-20
-sh                                allnoconfig   gcc-13.2.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   gcc-13
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
+For other normal controls, the check is applied still only when
+CONFIG_SND_CTL_INPUT_VALIDATION is set.
 
+Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Closes: https://lore.kernel.org/r/1d44be36-9bb9-4d82-8953-5ae2a4f09405@molgen.mpg.de
+Reviewed-by: Jaroslav Kysela <perex@perex.cz>
+Reviewed-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Link: https://lore.kernel.org/20240616073454.16512-4-tiwai@suse.de
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/core/control.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/sound/core/control.c b/sound/core/control.c
+index 82aa1af1d1d87..92266c97238da 100644
+--- a/sound/core/control.c
++++ b/sound/core/control.c
+@@ -1477,12 +1477,16 @@ static int snd_ctl_elem_user_get(struct snd_kcontrol *kcontrol,
+ static int snd_ctl_elem_user_put(struct snd_kcontrol *kcontrol,
+ 				 struct snd_ctl_elem_value *ucontrol)
+ {
+-	int change;
++	int err, change;
+ 	struct user_element *ue = kcontrol->private_data;
+ 	unsigned int size = ue->elem_data_size;
+ 	char *dst = ue->elem_data +
+ 			snd_ctl_get_ioff(kcontrol, &ucontrol->id) * size;
+ 
++	err = sanity_check_input_values(ue->card, ucontrol, &ue->info, false);
++	if (err < 0)
++		return err;
++
+ 	change = memcmp(&ucontrol->value, dst, size) != 0;
+ 	if (change)
+ 		memcpy(dst, &ucontrol->value, size);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
