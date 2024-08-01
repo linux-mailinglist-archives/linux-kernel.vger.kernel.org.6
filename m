@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-271334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFCA944CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:17:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F241A944CFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13AD284E5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:17:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD6D1F24EBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E16C1A4F27;
-	Thu,  1 Aug 2024 13:15:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45DF1A08CE;
+	Thu,  1 Aug 2024 13:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzclRxhr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TTjh5UDy"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05441A2542
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8939C1A0722;
+	Thu,  1 Aug 2024 13:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722518150; cv=none; b=q6Te8GZ7BjP+UoVwjhSLMVNvz9gsl2+aUyu2eaA6G2EoAQubJk4Qs4oHjZvcV2WJFNAUj/dgGCSw3jDa/7QNMXdTVlZSrf6VXviiA0yL5Xm5eppwk9tUHyOKKvbybogwgC+eQaA9CtJk8ZHVSnO8/2GiuR7UY3JOBzbYIR1/I1c=
+	t=1722518190; cv=none; b=X0ayo7QFzesKfX+PEwkBOlVwxkwD5PHRc3VbMlZKZAbeKVr8RCDyEeoWGRVv7cF2nI9HQrd7wH9LsN77qm+lZ7+ymQ2R7O/Cl6LVZgOzW+ezecjmoJ44fpzNNqXIst2Q0TEKX/GfeEXT4aYZ+W1VTYcsK9X5F6oLP2FAgJPxjuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722518150; c=relaxed/simple;
-	bh=/ynuOET3kqXPxIs7OTQjFHflicpksvorsX2OImbJQXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rg8XfySBDtulmsJxgL8d/fzI8XCvQ12JdCBB28QLNdfA+uBVXYW3cx55iCMK/QcMY4tKUZEUH9cBgRyQdlhzPmAUUwAs3zaxan1C2z+94IOCzH2Gb3xhvFuGSPJDKJCw94kJeGwbJrv/5J99dWSmliGEYlSn4ZSEdE3v0adtNwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzclRxhr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1840EC32786;
-	Thu,  1 Aug 2024 13:15:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722518150;
-	bh=/ynuOET3kqXPxIs7OTQjFHflicpksvorsX2OImbJQXQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DzclRxhrP1lTsQq9QJqhnAOyyl1UR+j+M8xVPNUAwklNL+E/9AJ0EbloztWcn9oeg
-	 DTn5fUH1AaD/aFKaGtFvGgyPWrsN+tsbOm3ORrQVLrtNm9fXebQmhklGL/lqKrlvvX
-	 ZH+vE+8TBf591YEJ8xbjKY6EUfKgVKmGyqUrRlm4ctN5WyC1oZTF2ptyo4q0PkLtC0
-	 5Wj8DCjn72GChw54Br/o+QcCSddlM/TKmrRIZThxH2n3dKU1OvZAxvzGR6lPve1Omr
-	 ltZneqv8/FzN/kXYFFCSGS8UVEyvVt2uaUhSaeHo3IHT3+m85yM27PjSsOthW9wmGE
-	 RGQjgHDUSPwtw==
-Date: Thu, 1 Aug 2024 15:15:44 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Igor Mammedov <imammedo@redhat.com>
-Cc: Peter Maydell <peter.maydell@linaro.org>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Shiju Jose <shiju.jose@huawei.com>, "Michael
- S. Tsirkin" <mst@redhat.com>, Ani Sinha <anisinha@redhat.com>, Shannon Zhao
- <shannon.zhaosl@gmail.com>, linux-kernel@vger.kernel.org,
- qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v3 1/7] arm/virt: place power button pin number on a
- define
-Message-ID: <20240801151544.2f315598@foz.lan>
-In-Reply-To: <20240730132620.46cca4ce@imammedo.users.ipa.redhat.com>
-References: <cover.1721630625.git.mchehab+huawei@kernel.org>
-	<bf8367bddfdc95e378b5725c732533c3ba20d388.1721630625.git.mchehab+huawei@kernel.org>
-	<20240730092549.6898ff3c@imammedo.users.ipa.redhat.com>
-	<CAFEAcA8VWc3eQZqfJP9k5LYF-9aLChHQ+uS9UBfGV6nvybDxqQ@mail.gmail.com>
-	<20240730132620.46cca4ce@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1722518190; c=relaxed/simple;
+	bh=5en9m8Gs1jsdpjDgOpeb6mVbrcUigrewBe3vDCyMapc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O4JCx0p1D0exHyTcBPpb2fxalVVv6Ia4YXa4YcFJ4ubJpB39lpur+Q44oQ9AliHpY1WD+KXx76NUuUMSZLj/ok3g3J0q3dK7sexF9+j9Ply3On81GS9qOpYy44g0tKqPGaS2fV+uv6otIpR6L23zHfrnEks2KaqgsS6fHS54I7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TTjh5UDy; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4718MmXr031823;
+	Thu, 1 Aug 2024 13:16:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=+jGFwM0q9oTRR/HiOXDvxvPJ
+	1ZWki6pE7NEMpFnUJ+8=; b=TTjh5UDyfbjYk5/SytU8c1CJt7ZCvsN8fwtJsOis
+	6aWv1SkN/5zgkpZ1BSXUJIDDBaXI8Eq97T0Wa2Q5e2LfrjbPUzqgFKx2EWRCd4qU
+	qsXdWl9fTzA11srE0i1uff6H+fKTKzO1DaH2fbTIOA4cTMFiOUzIvbo+BxBLq1Qy
+	0ulDt/rzXK+Yq6sT+lXPh0w3AFVZrmHsuNUn0GUqjyFuQk3liQ3Ofeg+AVm+ykuy
+	9bq60bnrcjy4+ptmtSVmhTzX/UdTM+QiT3fET0Pqp6h2VfyTdcNQRFX8R5qwocR5
+	rLcEcEOC6ibfi22EofrJkuCp+N4IOZkCxhU546fMcbijRA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms43f1un-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 13:16:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471DGI1s019059
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 13:16:18 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 1 Aug 2024 06:16:14 -0700
+Date: Thu, 1 Aug 2024 18:46:10 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Vladimir Lypak <vladimir.lypak@gmail.com>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+        Jordan Crouse
+	<jordan@cosmicpenguin.net>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/4] drm/msm/a5xx: properly clear preemption records on
+ resume
+Message-ID: <20240801131610.jtcpo5l2gd34uqbf@hu-akhilpo-hyd.qualcomm.com>
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
+ <20240711100038.268803-3-vladimir.lypak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240711100038.268803-3-vladimir.lypak@gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: SubwBaCb1ii2FIuBNsf4-AUBeHL5kqKU
+X-Proofpoint-ORIG-GUID: SubwBaCb1ii2FIuBNsf4-AUBeHL5kqKU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_10,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010086
 
-Em Tue, 30 Jul 2024 13:26:20 +0200
-Igor Mammedov <imammedo@redhat.com> escreveu:
-
-> On Tue, 30 Jul 2024 09:29:37 +0100
-> Peter Maydell <peter.maydell@linaro.org> wrote:
+On Thu, Jul 11, 2024 at 10:00:19AM +0000, Vladimir Lypak wrote:
+> Two fields of preempt_record which are used by CP aren't reset on
+> resume: "data" and "info". This is the reason behind faults which happen
+> when we try to switch to the ring that was active last before suspend.
+> In addition those faults can't be recovered from because we use suspend
+> and resume to do so (keeping values of those fields again).
 > 
-> > On Tue, 30 Jul 2024 at 08:26, Igor Mammedov <imammedo@redhat.com> wrote:  
-> > >
-> > > On Mon, 22 Jul 2024 08:45:53 +0200
-> > > Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> > >    
-> > > > Having magic numbers inside the code is not a good idea, as it
-> > > > is error-prone. So, instead, create a macro with the number
-> > > > definition.
-> > > >
-> > > > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> > > > Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>    
-> >   
-> > > > diff --git a/hw/arm/virt.c b/hw/arm/virt.c
-> > > > index b0c68d66a345..c99c8b1713c6 100644
-> > > > --- a/hw/arm/virt.c
-> > > > +++ b/hw/arm/virt.c
-> > > > @@ -1004,7 +1004,7 @@ static void virt_powerdown_req(Notifier *n, void *opaque)
-> > > >      if (s->acpi_dev) {
-> > > >          acpi_send_event(s->acpi_dev, ACPI_POWER_DOWN_STATUS);
-> > > >      } else {
-> > > > -        /* use gpio Pin 3 for power button event */
-> > > > +        /* use gpio Pin for power button event */
-> > > >          qemu_set_irq(qdev_get_gpio_in(gpio_key_dev, 0), 1);    
-> > >
-> > > /me confused, it was saying Pin 3 but is passing 0 as argument where as elsewhere
-> > > you are passing 3. Is this a bug?    
-> > 
-> > No. The gpio_key_dev is a gpio-key device which has one
-> > input (which you assert to "press the key") and one output,
-> > which goes high when the key is pressed and then falls
-> > 100ms later. The virt board wires up the output of the
-> > gpio-key device to input 3 on the PL061 GPIO controller.
-> > (This happens in create_gpio_keys().) So the code is correct
-> > to assert input 0 on the gpio-key device and the comment
-> > isn't wrong that this results in GPIO pin 3 being asserted:
-> > the link is just indirect.  
+> Fixes: b1fc2839d2f9 ("drm/msm: Implement preemption for A5XX targets")
+> Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a5xx_preempt.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> it's likely obvious to ARM folks, but maybe comment should
-> clarify above for unaware.
+> diff --git a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> index f58dd564d122..67a8ef4adf6b 100644
+> --- a/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> +++ b/drivers/gpu/drm/msm/adreno/a5xx_preempt.c
+> @@ -204,6 +204,8 @@ void a5xx_preempt_hw_init(struct msm_gpu *gpu)
+>  		return;
+>  
+>  	for (i = 0; i < gpu->nr_rings; i++) {
+> +		a5xx_gpu->preempt[i]->data = 0;
+> +		a5xx_gpu->preempt[i]->info = 0;
 
-Not sure if a comment here with the pin number is a good idea.
-After all, this patch was originated because we were using
-Pin 6 for GPIO error, while the comment was outdated (stating
-that it was pin 8 instead) :-)
+I don't see this bit in the downstream driver. Just curious, do we need
+to clear both fields to avoid the gpu faults?
 
-After this series, there will be two GPIO pins used inside arm/virt,
-both defined at arm/virt.h:
-
-	/* GPIO pins */
-	#define GPIO_PIN_POWER_BUTTON  3
-	#define GPIO_PIN_GENERIC_ERROR 6
-
-Those macros are used when GPIOs are created:
-
-	static void create_gpio_keys(char *fdt, DeviceState *pl061_dev,
-	                             uint32_t phandle)
-	{
-	    gpio_key_dev = sysbus_create_simple("gpio-key", -1,
-	                                        qdev_get_gpio_in(pl061_dev,
-                                                         GPIO_PIN_POWER_BUTTON));
-	    gpio_error_dev = sysbus_create_simple("gpio-key", -1,
-	                                          qdev_get_gpio_in(pl061_dev,
-	                                                           GPIO_PIN_GENERIC_ERROR));
-So, at least for me, it is clear that gpio_key_dev is using pin 3.
-
-Thanks,
-Mauro
+-Akhil
+>  		a5xx_gpu->preempt[i]->wptr = 0;
+>  		a5xx_gpu->preempt[i]->rptr = 0;
+>  		a5xx_gpu->preempt[i]->rbase = gpu->rb[i]->iova;
+> -- 
+> 2.45.2
+> 
 
