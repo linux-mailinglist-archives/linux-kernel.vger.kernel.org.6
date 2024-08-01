@@ -1,147 +1,145 @@
-Return-Path: <linux-kernel+bounces-271323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2FC944CD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:14:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2071944CD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAEE71C2635D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:14:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AFA1289993
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBB21A4B5E;
-	Thu,  1 Aug 2024 13:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcN/X0aX"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743A11A38EE;
+	Thu,  1 Aug 2024 13:09:00 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BCA16EBE9;
-	Thu,  1 Aug 2024 13:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887541946C7;
+	Thu,  1 Aug 2024 13:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722517682; cv=none; b=CW0564HTa4+HxMIWxS25lij6avuXamFKTZ8tz+da1jKnlOe4QH7QMSKOiszmiMNLfgqZ8kAT5jT/TqX9oPVTMvP65vSFO4Fx3lkn5G+WDQPJune/ucwHgDJaq0LCK21C3X1OwsSZvPlt1jW4PK8n6E0JbLisL8XGYgMlkqwVpkY=
+	t=1722517740; cv=none; b=TAHrNpUS5UwB0pZlnxzAGBLR68uA1rkWkYKbPsgXxcxMcmHdmae8OdTUCIumCS2koQi8URackYqGzPeavxm2N5bF+s6ZdM616iCzKPU5VUOJPtvITro8j9nZHwkXkUpxjn/BF7Fbn9J+0okgkpxVv6d0AVfpDzl/f1DcEh3owIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722517682; c=relaxed/simple;
-	bh=+vSiC2EuaGeftoWu6D0aWBGXxMkoI5tHAyU15Iaw/zU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C9XtA7vcsiP4mYj7pp6L7HGoCYjClRNQEN+S7OtNA1RbRPz6gshK/iyI8XkwSAP1GAgt6D7ik2hZNR4MFh/OPiqSUbhu+asX9TOK7wc/z6ioLdvXWJFR/DOSOESvtUgqIKy33FzcPxIAF8lfbpBJYcvIicXtNJz4E01s3SL8sE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RcN/X0aX; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so3813016a12.0;
-        Thu, 01 Aug 2024 06:08:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722517679; x=1723122479; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5WdEdlsOxaw/zqPrb6T0qC6gusGe6x4iFHSUDE2k3bY=;
-        b=RcN/X0aXE7bmjfAFXNiFLr0AVMk8nNGdW8Rg1X8QNw23nRJybUa5WBHgwp30XDVBaa
-         PLuJCi1Fko9Jq/PYZ+9gNCJE8ltfMa5PTFMdx/OJdyUbRpTUETua7EBY+aBM4oJkY8n4
-         9ah20zgWkVqnROvTX6GlnesaAZko+j4C1x559H1kBM+tModqaJ275EurRyHz4A14IEOz
-         T2JlvhB41Bv+KhSJsBJ/uEZM85lf3LQyBiTrTAu9sjPNVvFz3ktdOQeoRkAy3e4U9f/t
-         6RXkOisWuAOSQ5s8Mcqfg/1aDCowor0iIRI/PLPFpuJ6kO3IW9QN3Ff1mIJFrMZ4dXdu
-         V+Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722517679; x=1723122479;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5WdEdlsOxaw/zqPrb6T0qC6gusGe6x4iFHSUDE2k3bY=;
-        b=fDT1FVWi5khGYwR6yiKuvJ+CUoNwNWaB+CyoNVlY7r11YV18iCSzyjkFupiFlrXDfN
-         F/KgpT977s3yR5nguhapqadILf6LByHUBl+Sa10d7JtioZ4T7N6iyrJaxozZJLf3FwkT
-         V5jn9sjpn9VUlTyCqOHVVMZ0TW6SbYLt/o+ZX4ELG8o+NIEWX4zxZgGdH6U6xLELCHyx
-         A+StC6bT3bUa7lwzL6zWkBBShEZSccJrGaFpZUqrXC+h9pyZxRBPeYbgpiAylT7G600D
-         AYdowtuxPWJN2afqK0oo05nywGFvftE1kg+cnqdvSOnVXYdZFbAtbfjZOc63T9MfKxqX
-         rYow==
-X-Forwarded-Encrypted: i=1; AJvYcCVmXFH2F76BLiglA/6Gy2CYuXgUNekNFQAlk/jVWwPhmu/BqLmelThYzsongLT2EVqPobz7M0wzqOBYoXtOgx8as1mmuJ1q983ZBQwTv2uJsAWTMouyr2m87+53FTQ1KbGZ3quqSW21JJW8YnKgsqAI
-X-Gm-Message-State: AOJu0YxsBB9FJe+dNhjNFnbJI917RBbGTXrY/WD+1aKmV3BQJXDZKdWX
-	U6doRzwhUQ2SSF5eApudyKXdIS9LPohtOxbE64Rea3dqEOGTgAho
-X-Google-Smtp-Source: AGHT+IGOD9z3H+UjoRiuhiYAtXfwXvsp1ukvfQ1FKdLtM5oHWJDkTolO2xVdP2nX4oxie4uxwtpmWQ==
-X-Received: by 2002:a50:ec8d:0:b0:59f:9f59:b034 with SMTP id 4fb4d7f45d1cf-5b77cf6b5c5mr1163406a12.13.1722517678383;
-        Thu, 01 Aug 2024 06:07:58 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6377d005sm10102124a12.38.2024.08.01.06.07.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 06:07:57 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 1 Aug 2024 15:07:55 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, andrii@kernel.org,
-	mhiramat@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
- uprobe *
-Message-ID: <ZquIq7h_TQgjBERC@krava>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134535.GA12332@redhat.com>
- <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
- <ZqtyMTyu3uneHZDJ@krava>
- <20240801120018.GB4038@redhat.com>
- <Zqt8UPBC7zAWDMHD@krava>
- <20240801122644.GC4038@redhat.com>
+	s=arc-20240116; t=1722517740; c=relaxed/simple;
+	bh=um34ECxnIZ9riGOj26DqiFuzPJczktCd+BdMvHVDKNg=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lF1UnbV7J+vGkdfaFVZ0qTjutOnI9EkBAeLrnUjZe6UfubU0OTxJLi4D/3qtoWu2fpserOJG6Fn22uZfNl73xTVLGoJzKVpeB5gjR0UHleZrhZamsFsqZKImimRL9VDLdbG5FeDFlLcjyHixXnJ7/9MK3HS+fmGQNd/VTKtMu6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZTgH6n2QzyPFW;
+	Thu,  1 Aug 2024 21:03:55 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 7B378180101;
+	Thu,  1 Aug 2024 21:08:55 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 21:08:54 +0800
+Message-ID: <ec6dce47-0e6f-46b3-85ab-075851385f75@huawei.com>
+Date: Thu, 1 Aug 2024 21:08:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801122644.GC4038@redhat.com>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
+	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next 05/10] net: hibmcge: Implement some .ndo
+ functions
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-6-shaojijie@huawei.com>
+ <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
+ <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
+ <ffd2d708-60fb-4049-8c1b-fcfe43a78d57@lunn.ch>
+ <d5e9f50a-c3bd-4071-9de8-cc22cd0f5cfc@huawei.com>
+ <e57e3748-6ee5-42d5-8715-ec652fc6310f@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <e57e3748-6ee5-42d5-8715-ec652fc6310f@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Thu, Aug 01, 2024 at 02:26:45PM +0200, Oleg Nesterov wrote:
-> On 08/01, Jiri Olsa wrote:
-> >
-> > > Note the additional path_put() in testmod_unregister_uprobe(). Does it need
-> > > a separate patch or can it come with 5/5 ?
-> >
-> > I think it'd be better to have it separately, the test is already
-> > released.. so people might want to backport just the fix
-> 
-> OK, I'll rebase and add the patch below to v4. OK?
 
-heh, suggested-by would have been fine, but sure ;-)
+on 2024/8/1 20:36, Andrew Lunn wrote:
+> On Thu, Aug 01, 2024 at 08:33:38PM +0800, Jijie Shao wrote:
+>> on 2024/8/1 20:18, Andrew Lunn wrote:
+>>> On Thu, Aug 01, 2024 at 05:13:33PM +0800, Jijie Shao wrote:
+>>>> on 2024/8/1 8:51, Andrew Lunn wrote:
+>>>>>> +static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
+>>>>>> +{
+>>>>>> +	struct hbg_priv *priv = netdev_priv(dev);
+>>>>>> +	u8 *mac_addr;
+>>>>>> +
+>>>>>> +	mac_addr = ((struct sockaddr *)addr)->sa_data;
+>>>>>> +	if (ether_addr_equal(dev->dev_addr, mac_addr))
+>>>>>> +		return 0;
+>>>>>> +
+>>>>>> +	if (!is_valid_ether_addr(mac_addr))
+>>>>>> +		return -EADDRNOTAVAIL;
+>>>>> How does the core pass you an invalid MAC address?
+>>>> According to my test,
+>>>> in the 6.4 rc4 kernel version, invalid mac address is allowed to be configured.
+>>>> An error is reported only when ifconfig ethx up.
+>>> Ah, interesting.
+>>>
+>>> I see a test in __dev_open(), which is what you are saying here. But i
+>>> would also expect a test in rtnetlink, or maybe dev_set_mac_address().
+>>> We don't want every driver having to repeat this test in their
+>>> .ndo_set_mac_address, when it could be done once in the core.
+>>>
+>>> 	Andrew
+>> Hi:
+>> I did the following test on my device:
+>>
+>> insmod hibmcge.ko
+>> hibmcge: no symbol version for module_layout
+>> hibmcge: loading out-of-tree module taints kernel.
+>> hibmcge: module verification failed: signature and/or required key missing - tainting kernel
+>> hibmcge 0000:83:00.1: enabling device (0140 -> 0142)
+>> Generic PHY mii-0000:83:00.1:02: attached PHY driver (mii_bus:phy_addr=mii-0000:83:00.1:02, irq=POLL)
+>> hibmcge 0000:83:00.1 enp131s0f1: renamed from eth0
+>> IPv6: ADDRCONF(NETDEV_CHANGE): enp131s0f1: link becomes ready
+>> hibmcge 0000:83:00.1: link up!
+>>
+>> ifconfig enp131s0f1 hw ether FF:FF:FF:FF:FF:FF
+>>
+>> ip a
+>> 6: enp131s0f1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+>>      link/ether ff:ff:ff:ff:ff:ff brd ff:ff:ff:ff:ff:ff permaddr 08:02:00:00:08:08
+>> ifconfig enp131s0f1 up
+>> ifconfig enp131s0f1 down up
+>> SIOCSIFFLAGS: Cannot assign requested address
+>> hibmcge 0000:83:00.1: link down!
+>>
+>> uname -a
+>> Linux localhost.localdomain 6.4.0+ #1 SMP Fri Mar 15 14:44:20 CST 2024 aarch64 aarch64 aarch64 GNU/Linux
+>>
+>>
+>>
+>> So I'm not sure what's wrong. I also implemented ndo_validate_addr by eth_validate_addr.
+> I agree. I don't see a test. Please could you include a patch to
+> dev_set_mac_address() to validate the address there before calling
+> into the driver. It might also be worth a search to see if anybody
+> else has tried this before, and failed. There might be a good reason
+> you cannot validate it.
+>
+> 	Andrew
 
-thanks,
-jirka
+sure, I will include that in V2
 
-> 
-> Oleg.
-> ---
-> 
-> From f6bf42015048938d826880e3bf4a318bb64a05b4 Mon Sep 17 00:00:00 2001
-> From: Oleg Nesterov <oleg@redhat.com>
-> Date: Thu, 1 Aug 2024 14:21:47 +0200
-> Subject: [PATCH] selftests/bpf: fix uprobe.path leak in bpf_testmod
-> 
-> From: Jiri Olsa <olsajiri@gmail.com>
-> 
-> testmod_unregister_uprobe() forgets to path_put(&uprobe.path).
-> 
-> Signed-off-by: Jiri Olsa <olsajiri@gmail.com>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-> ---
->  tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> index 86babdd6f850..55f6905de743 100644
-> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> @@ -477,6 +477,7 @@ static void testmod_unregister_uprobe(void)
->  	if (uprobe.offset) {
->  		uprobe_unregister(d_real_inode(uprobe.path.dentry),
->  				  uprobe.offset, &uprobe.consumer);
-> +		path_put(&uprobe.path);
->  		uprobe.offset = 0;
->  	}
->  
-> -- 
-> 2.25.1.362.g51ebf55
-> 
-> 
+Thanks，
+
+Jijie Shao
+
 
