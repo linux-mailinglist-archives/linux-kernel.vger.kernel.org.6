@@ -1,97 +1,55 @@
-Return-Path: <linux-kernel+bounces-271729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DD179452AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:23:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E759452B2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A031F24081
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:23:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C67432850DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:24:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6F51474B7;
-	Thu,  1 Aug 2024 18:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC071487E2;
+	Thu,  1 Aug 2024 18:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="b2BdOvzG"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuiH6RiT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E64182D8;
-	Thu,  1 Aug 2024 18:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722536610; cv=pass; b=EjNXtf7hCRerz7lzOp9KOaqzOuFeSd9tH0g4dRcQbU/KWLDZ4ORc4oUNo58w9NOz2uibxKCDXbUKcDqSEu0tbi70rkYTM8JZ389cAJVdiLf97mak44KQl08I8b/CoH9Jl/JGVb5Ju6ipdhyz+FDvFBidPtTheRn8psOFwdaf4YA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722536610; c=relaxed/simple;
-	bh=4wRXXMehBGRDb/6aL/BZckBsPVOqICCy6SwZj15ywqE=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF251E4A6;
+	Thu,  1 Aug 2024 18:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722536691; cv=none; b=reIA9Yeyd350aw4rWdewjb7Omlj1l35/JBISFyEuaqtQc8NzSw4pNNRyqF55qNuhNSUZuUx/ikZDRQ+3fSI3DyATYOQS2SGgT4kS8RBdNpsL5gn+jyfh9Npucq66fe5piM1Agha6l2IGEi9T01T+5FBVYoQjryQ9F2/NzPKerDk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722536691; c=relaxed/simple;
+	bh=PJNNC8ODOP8B8hNWHK7KIAUSZhZ0ElFSNwJ1lz5J/RI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DTrPUkWgyYik+DDHJd6GbknSx6QHJm998aiKs5OfeEnFcqr+7M5+ErUBQXc01hxrAGar7sgAfb2dlclMKikt82zahdVcZd91oizf1fI6npNf7NO/IhfsprqnvNt9I5vOqZ49Nipyaxe3vw3IF4uvGqByLp5e4F5hlwLPW0DW8SA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=b2BdOvzG; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from darkstar.musicnaut.iki.fi (85-76-100-193-nat.elisa-mobile.fi [85.76.100.193])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: aaro.koskinen)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4WZcll3Bw7zyTm;
-	Thu,  1 Aug 2024 21:23:15 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1722536600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQ1qrq1jrt4jr96yddGi/XxkrM81q9qc+13oI7Z3kUk=;
-	b=b2BdOvzGALoWHnyvxL3tYp82UwiNU7ICLb2rOAGKRTZniaXBFCRQMTUjckytek0V0eSfLe
-	evs/K6FN3LtpNW/8pBdueQyu6TDA2D1kpuYrku2jUvKuIRZnSK7g7n3sQH93iIg4Xs2mqo
-	0uTLSs6JNDHYi3/3XxIcJQuGUMKajMg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1722536600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yQ1qrq1jrt4jr96yddGi/XxkrM81q9qc+13oI7Z3kUk=;
-	b=cr8B6ebMedsHZogHn6KaGlvFM7mfsREXwcTBmCYtJEME1qjpuDvV5o5rTc6gVAPr98uYyC
-	2RIg/lg34X5xgNP7xDB1eOAgXmfxjHqSfPFHdt5SM9XgF171tQO3TP3myvGC2F8xzByfRb
-	ruQHgbCACBfsiOdYDaKPEBfx+VhB3+c=
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1722536600; a=rsa-sha256; cv=none;
-	b=eitN2X/lAagvt1JHcwHwjoN77StVkh/G0LS11puePxp3dXmL0NybO8SH3pKg1+e9Wtj5ux
-	kmC5nvDziWIlbHptP8O6idOqYVgQReZW6u3x70+WLnNQAFSUE+cvHBDpD7edx5HjzyYMIR
-	DEn8MAHYhG33fu9HbTshQfBkzDWBbVM=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=aaro.koskinen smtp.mailfrom=aaro.koskinen@iki.fi
-Date: Thu, 1 Aug 2024 21:23:13 +0300
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Richard Earnshaw <richard.earnshaw@arm.com>,
-	Richard Sandiford <richard.sandiford@arm.com>,
-	Ramana Radhakrishnan <ramanara@nvidia.com>,
-	Nicolas Pitre <nico@fluxnic.net>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Kristoffer Ericson <kristoffer.ericson@gmail.com>,
-	Robert Jarzmik <robert.jarzmik@free.fr>,
-	Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Linux-OMAP <linux-omap@vger.kernel.org>,
-	Nikita Shubin <nikita.shubin@maquefel.me>,
-	linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	"Jeremy J. Peper" <jeremy@jeremypeper.com>,
-	debian-arm@lists.debian.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Message-ID: <20240801182313.GD47080@darkstar.musicnaut.iki.fi>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
- <ea475f27-af7c-4060-bff7-a78389174236@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZaUWbw03phXVzhir0q8+puYlmoqCb4z+mym+D1YBKY1+jY+OvkF6FdqqDDG1kJl1JqxRpjKiA/q9/28Mk/e1P0Sn7DHtV0fmtTU07VG6y54AK42spQb/S5WGBccpos9npfrKBRDkwrJwdeVBKdIduNbzwz/27wfK/GkXnu8sPms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuiH6RiT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FA12C32786;
+	Thu,  1 Aug 2024 18:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722536690;
+	bh=PJNNC8ODOP8B8hNWHK7KIAUSZhZ0ElFSNwJ1lz5J/RI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UuiH6RiTTMN3rvJ4LEBQSPuqM2zs2KOQ8G8az+xzVVpNJ6I8GQ13TCoY/jxhJmKRl
+	 JwA1OoEs7+6ODuRm4MXzb7kAsuxa2faV/ny86N6NczX7g/Cikap3xRNH9EQ/mzQ3Wq
+	 8tdkrSDk4k7xloOSPOk/xK4vRfPEK1R+vuD2giyMn4fNtL3nCLZhP9kam4qm/KpbvH
+	 hQH0K/RF0bEQI7Ibw/PofD9p1JI/dm/6HpcU/i4njk1qf9mXKVZeR9++ehPcPJlpBX
+	 TuBL7dK28ZPA3+Ka5DCDLnzaHeSzCl+DzCERSYcFJ2fv7x6a5P6xHSA5aFTBW3AoGz
+	 s44wAngqtY1og==
+Date: Thu, 1 Aug 2024 19:24:46 +0100
+From: Simon Horman <horms@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests: tc-testing: Fixed Typo error
+Message-ID: <20240801182446.GZ1967603@kernel.org>
+References: <Zqp9asVA-q_OzDP-@Emma>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,68 +58,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ea475f27-af7c-4060-bff7-a78389174236@app.fastmail.com>
+In-Reply-To: <Zqp9asVA-q_OzDP-@Emma>
 
-Hi,
-
-On Thu, Aug 01, 2024 at 10:59:38AM +0200, Arnd Bergmann wrote:
-> > These tablets are not very attractive for hobbyists anymore as the display
-> > support got broken and eventually deleted due to bitrot. There has been
-> > some out-of-tree patches/interest to regain display and other features,
-> > but no major progress really in 10 years or so. The last major mainline
-> > feature was adding Retu watchdog support that allowed the device to stay
-> > on longer than 30 seconds after the boot (the hardware watchdog cannot
-> > be disabled).
-> >
-> > I guess in OMAP-land N8x0 is one of the least used/active boards, so if
-> > it causes "a lot of pain" then maybe could be a candidate for deprecation.
-> > But with custom kernel config, the board has been pretty stable overall
-> > between the releases for limited use cases.
+On Wed, Jul 31, 2024 at 06:07:38PM +0000, Karan Sanghavi wrote:
+> Corrected the typographical of the word  "different"
+> in the "name" field of the JSON object with ID "4319".
 > 
-> Yes, I think it would help a lot to deprecate it, at least this
-> would save me the work of moving ARMv6 into an ARMv5 compatible
-> option (I have done the patches, but they are entirely untested
-> on real hardware and probably incorrect).
-> 
-> Would the timing make any difference to you? I.e. does it help
-> to keep another year or two, or would dropping it in early 2025
-> be the same?
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
 
-Early 2025 could come too soon, but anyway during 2025 sounds OK. Let's
-see if anyone else has comments. At least one more LTS release where it
-has been tested would be nice.
+Thanks,
 
-> We'd also want to coordinate this with the i.MX31 maintainers,
-> since dropping both together is the only way to remove
-> ARM1136r0 support.
-> 
-> >> === OMAP1 ===
-> >> 
-> >> This is now the only ARMv4T/ARMv5 platform with no
-> >> DT support, making it a target for removal at some
-> >> point. Unlike PXA, there are still users, but it seems
-> >> there are no current plans for a DT conversion.
-> >> 
-> >> I would suggest going through the five boards
-> >> individually to see which ones we can remove in 2025
-> >> and keep the remaining ones for the moment.
-> >
-> > Here situation hasn't changed - all of the boards are equally
-> > important/useful, at least from a maintainer point of view. The routine
-> > I use to test/debug kernel releases relies on all of them.
-> 
-> Ok, noted. Since you are doing the testing, that at least means
-> we have a chance of cleaning up the code gradually towards using
-> DT. Dmitry has started a migration of platform_data towards
-> DT compatible device properties, which can be done gradually
-> for the 22 platform drivers you use. This unfortunately still
-> leaves the nonstandard dmaengine interface (for UDC), but we
-> can deal with that later.
+I checked an this is the item flagged by codespell in this file.
 
-I have some plans to work on that. There's a long-standing bug with 15xx
-DMA, but I have gotten that working, just need send those fixes out. After
-that the conversion to new dmaengine should be more straightforward,
-as we have a working testable reference for both boards using the UDC.
-
-A.
+...
 
