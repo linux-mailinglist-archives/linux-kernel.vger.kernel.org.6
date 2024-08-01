@@ -1,229 +1,189 @@
-Return-Path: <linux-kernel+bounces-271182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3D3944A7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:35:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901B2944A7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3356A1F236E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3AA51C2545F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3818418E04D;
-	Thu,  1 Aug 2024 11:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B9218E04D;
+	Thu,  1 Aug 2024 11:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l83NJdSh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FHRHOdGZ"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47FB318DF6B
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC9718E03B
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722512133; cv=none; b=BTYPzUQz5Aqg2sb20u3vo3vedav7nZqqU6HQQAxcz5e8gu4diyBaF94TenZhVj4vBYFCzLV7xmc/GREAc+G0NGXWeQ5+PCe8lmx5b5C+oJsp8IIYBCvF5K7CC3FFDxxoeXzwjbIRnb6ztL5+W1mGMoLmQpc0y952wtsqXmPXmU4=
+	t=1722512147; cv=none; b=YfjKqhM0iMcA0GJdHU3/qq2UJ7+/lo41yphOiE/N8ACytICNt3M/9lj2ngbmKLoDvPVDNXwQEYjy5hnEkhDm08i6QANW6K06fHUW4Iam4SM5R2ynyhaUrSnSTDLmuebmPWx5n6M+NoqtT1tanJ98d4SX6r8Wf9FtT+MkHsrVxW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722512133; c=relaxed/simple;
-	bh=qhdqmMNrGaKh+6q/FW281omFfqWYlK8TRFPg+zf3Qss=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=noum3Ki0gTV6jRFrgONqYPxrBhmu8o1lxD9N+V51P719kdhFHjHbBgU/8kTttSFw5KMcAMiE25v9RyLmLTC7JrsTmLq1HZoW0KIS345WGJEUPZJq8LF5V5Aj5gLH7LmMtxpH8fsrgS8KZ/c8tEYqpqCUz1SnoN6eSK4JN554Od8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l83NJdSh; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722512132; x=1754048132;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=qhdqmMNrGaKh+6q/FW281omFfqWYlK8TRFPg+zf3Qss=;
-  b=l83NJdShNxWruXx9WLV+IHcPEgya3ZI2mo9hAG26wufS1G1hNGIMZA1u
-   cQ4sThOzhILFTmWqkAMJUnzpIFxQvmNBKMINbvRGCvNk6rIXxnDwAr/yb
-   pcsw2u3/UuEpbzsMBxn5dC577SuBNB0hmKSRVfIynZxtoxCCxGe+r6y7F
-   PCgOv26bSm0mbBaW1rtsiQ2hy4AJOw0kQ7WdhKh1QM+6fKxmLqxecYhT7
-   5MAOmlxpAiiLIaUkAEHcm184EjYp9+1mNOxyLx0V3080uNsN9leHNklCO
-   nLiWPmX0ygcdesW81E8/ZZ88MLtT6bqIQrDR9udWvHiZwo1OevFueQMTg
-   g==;
-X-CSE-ConnectionGUID: O58Iu3dCSYaNvwj5L87kfQ==
-X-CSE-MsgGUID: 99qhgiyRQoG/JW4be9cOmQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="42982781"
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="42982781"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 04:35:31 -0700
-X-CSE-ConnectionGUID: Kl7rpbVgTDWJf6a6rQ2ilg==
-X-CSE-MsgGUID: wzOpMSq5T/agRDfGIpk21w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="54978926"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 01 Aug 2024 04:35:29 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZU5e-000vXY-2V;
-	Thu, 01 Aug 2024 11:35:26 +0000
-Date: Thu, 1 Aug 2024 19:35:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
- include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
- requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
- sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of
- struct_group_tagged()
-Message-ID: <202408011956.wscyBwq6-lkp@intel.com>
+	s=arc-20240116; t=1722512147; c=relaxed/simple;
+	bh=d/VvdUhxDppDVauYxah6czaEzq90f+a/YDmt6AEWgi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pvk+DZCAyYnF8zp5zVc2A4EpStUfpoaC8Oa0qOBdUoeM6sIU/pW1sI7x1tqD21yhW4OXgs2w2Zs2Cax4qIK3dcSBPUnVhC2/YMiN3eXQ+tOIVKzSOZ/FQqIUB71LdAcQOqfsAiJlhtGJF88G2NjRWrbm3Po2S7FRwYPHb61K+oc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FHRHOdGZ; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1722512142; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=G/YsuSle6DMFGCtRQo7viufzsspiEbdDHRyz4kG9u3s=;
+	b=FHRHOdGZGmDZpWIB3z4MnYKbK/CCErIlKTQgYtFuM0yMUD0i4cufUWElp7PSIb5Qv8meIuckn1CQ/CCyAdLuw+Ww2UMDWPgMYytDQgHpyFyHwCep5JA9K0ycs2CjxpVWzVHJ8olZw+BTOk9OlpuGnrh+uXIX/JRhEVseQ+kV5uY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=hongzhen@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0WBsdoCk_1722512141;
+Received: from 30.221.131.84(mailfrom:hongzhen@linux.alibaba.com fp:SMTPD_---0WBsdoCk_1722512141)
+          by smtp.aliyun-inc.com;
+          Thu, 01 Aug 2024 19:35:41 +0800
+Message-ID: <0f83044e-5024-4c99-a7f8-323cc2b2abe0@linux.alibaba.com>
+Date: Thu, 1 Aug 2024 19:35:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240729-cbc-2
-head:   df15c862c1b93b6e1f6c90b0d7971f7a6ad66751
-commit: e7cd9f429a852fb7e37a706c7d08fc36e7863e06 [11/18] RDMA/uverbs: Use static_assert() to check struct sizes
-config: hexagon-randconfig-001-20240801 (https://download.01.org/0day-ci/archive/20240801/202408011956.wscyBwq6-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 430b90f04533b099d788db2668176038be38c53b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240801/202408011956.wscyBwq6-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408011956.wscyBwq6-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-   In file included from drivers/infiniband/core/uverbs.h:46:
-   In file included from include/rdma/ib_verbs.h:15:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:10:
-   In file included from include/linux/mm.h:2228:
-   include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-   In file included from drivers/infiniband/core/uverbs.h:46:
-   In file included from include/rdma/ib_verbs.h:15:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-   In file included from drivers/infiniband/core/uverbs.h:46:
-   In file included from include/rdma/ib_verbs.h:15:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-   In file included from drivers/infiniband/core/uverbs.h:46:
-   In file included from include/rdma/ib_verbs.h:15:
-   In file included from include/linux/ethtool.h:18:
-   In file included from include/linux/if_ether.h:19:
-   In file included from include/linux/skbuff.h:17:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:12:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-   In file included from drivers/infiniband/core/uverbs.h:49:
-   In file included from include/rdma/uverbs_std_types.h:10:
->> include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of struct_group_tagged()
-     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-         | ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     644 |               "struct member likely outside of struct_group_tagged()");
-         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-      16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-         |                                 ^
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   include/rdma/uverbs_ioctl.h:643:58: note: expression evaluates to '56 == 52'
-     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     644 |               "struct member likely outside of struct_group_tagged()");
-         |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-         |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-         |                                                        ^~~~
-   7 warnings and 1 error generated.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: simplify readdir operation
+To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240801112622.2164029-1-hongzhen@linux.alibaba.com>
+ <6c91643e-f55b-4998-b2b2-8eaa3ad747f3@linux.alibaba.com>
+From: Hongzhen Luo <hongzhen@linux.alibaba.com>
+In-Reply-To: <6c91643e-f55b-4998-b2b2-8eaa3ad747f3@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
-vim +643 include/rdma/uverbs_ioctl.h
+On 2024/8/1 19:31, Gao Xiang wrote:
+>
+>
+> On 2024/8/1 19:26, Hongzhen Luo wrote:
+>>   - Use i_size instead of i_size_read() due to immutable fses;
+>>
+>>   - Get rid of an unneeded goto since erofs_fill_dentries() also works;
+>>
+>>   - Remove unnecessary lines.
+>>
+>> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+>> ---
+>
+> What's the difference from the previous version? why not marking
+> it as v2?
+>
+> Thanks,
+> Gao Xiang
+>
+The previous version was corrupted and couldn't apply the patch using 
+`git am`. Sorry, I didn't write a changelog. I will provide a version 
+with the changelog added...
 
-   630	
-   631	struct uverbs_attr_bundle {
-   632		/* New members MUST be added within the struct_group() macro below. */
-   633		struct_group_tagged(uverbs_attr_bundle_hdr, hdr,
-   634			struct ib_udata driver_udata;
-   635			struct ib_udata ucore;
-   636			struct ib_uverbs_file *ufile;
-   637			struct ib_ucontext *context;
-   638			struct ib_uobject *uobject;
-   639			DECLARE_BITMAP(attr_present, UVERBS_API_ATTR_BKEY_LEN);
-   640		);
-   641		struct uverbs_attr attrs[];
-   642	};
- > 643	static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-   644		      "struct member likely outside of struct_group_tagged()");
-   645	
+Thanks,
+Hongzhen Luo
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>>   fs/erofs/dir.c      | 35 ++++++++++++-----------------------
+>>   fs/erofs/internal.h |  2 +-
+>>   2 files changed, 13 insertions(+), 24 deletions(-)
+>>
+>> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+>> index 2193a6710c8f..c3b90abdee37 100644
+>> --- a/fs/erofs/dir.c
+>> +++ b/fs/erofs/dir.c
+>> @@ -8,19 +8,15 @@
+>>     static int erofs_fill_dentries(struct inode *dir, struct 
+>> dir_context *ctx,
+>>                      void *dentry_blk, struct erofs_dirent *de,
+>> -                   unsigned int nameoff, unsigned int maxsize)
+>> +                   unsigned int nameoff0, unsigned int maxsize)
+>>   {
+>> -    const struct erofs_dirent *end = dentry_blk + nameoff;
+>> +    const struct erofs_dirent *end = dentry_blk + nameoff0;
+>>         while (de < end) {
+>> -        const char *de_name;
+>> +        unsigned char d_type = fs_ftype_to_dtype(de->file_type);
+>> +        unsigned int nameoff = le16_to_cpu(de->nameoff);
+>> +        const char *de_name = (char *)dentry_blk + nameoff;
+>>           unsigned int de_namelen;
+>> -        unsigned char d_type;
+>> -
+>> -        d_type = fs_ftype_to_dtype(de->file_type);
+>> -
+>> -        nameoff = le16_to_cpu(de->nameoff);
+>> -        de_name = (char *)dentry_blk + nameoff;
+>>             /* the last dirent in the block? */
+>>           if (de + 1 >= end)
+>> @@ -52,21 +48,20 @@ static int erofs_readdir(struct file *f, struct 
+>> dir_context *ctx)
+>>       struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+>>       struct super_block *sb = dir->i_sb;
+>>       unsigned long bsz = sb->s_blocksize;
+>> -    const size_t dirsize = i_size_read(dir);
+>> -    unsigned int i = erofs_blknr(sb, ctx->pos);
+>>       unsigned int ofs = erofs_blkoff(sb, ctx->pos);
+>>       int err = 0;
+>>       bool initial = true;
+>>         buf.mapping = dir->i_mapping;
+>> -    while (ctx->pos < dirsize) {
+>> +    while (ctx->pos < dir->i_size) {
+>> +        erofs_off_t dbstart = ctx->pos - ofs;
+>>           struct erofs_dirent *de;
+>>           unsigned int nameoff, maxsize;
+>>   -        de = erofs_bread(&buf, erofs_pos(sb, i), EROFS_KMAP);
+>> +        de = erofs_bread(&buf, dbstart, EROFS_KMAP);
+>>           if (IS_ERR(de)) {
+>>               erofs_err(sb, "fail to readdir of logical block %u of 
+>> nid %llu",
+>> -                  i, EROFS_I(dir)->nid);
+>> +                  erofs_blknr(sb, dbstart), EROFS_I(dir)->nid);
+>>               err = PTR_ERR(de);
+>>               break;
+>>           }
+>> @@ -79,25 +74,19 @@ static int erofs_readdir(struct file *f, struct 
+>> dir_context *ctx)
+>>               break;
+>>           }
+>>   -        maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, bsz);
+>> -
+>> +        maxsize = min_t(unsigned int, dir->i_size - dbstart, bsz);
+>>           /* search dirents at the arbitrary position */
+>>           if (initial) {
+>>               initial = false;
+>> -
+>>               ofs = roundup(ofs, sizeof(struct erofs_dirent));
+>> -            ctx->pos = erofs_pos(sb, i) + ofs;
+>> -            if (ofs >= nameoff)
+>> -                goto skip_this;
+>> +            ctx->pos = dbstart + ofs;
+>>           }
+>>             err = erofs_fill_dentries(dir, ctx, de, (void *)de + ofs,
+>>                         nameoff, maxsize);
+>>           if (err)
+>>               break;
+>> -skip_this:
+>> -        ctx->pos = erofs_pos(sb, i) + maxsize;
+>> -        ++i;
+>> +        ctx->pos = dbstart + maxsize;
+>>           ofs = 0;
+>>       }
+>>       erofs_put_metabuf(&buf);
+>> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+>> index 736607675396..45dc15ebd870 100644
+>> --- a/fs/erofs/internal.h
+>> +++ b/fs/erofs/internal.h
+>> @@ -220,7 +220,7 @@ struct erofs_buf {
+>>   };
+>>   #define __EROFS_BUF_INITIALIZER    ((struct erofs_buf){ .page = 
+>> NULL })
+>>   -#define erofs_blknr(sb, addr)    ((addr) >> (sb)->s_blocksize_bits)
+>> +#define erofs_blknr(sb, addr)    ((erofs_blk_t)((addr) >> 
+>> (sb)->s_blocksize_bits))
+>>   #define erofs_blkoff(sb, addr)    ((addr) & ((sb)->s_blocksize - 1))
+>>   #define erofs_pos(sb, blk)    ((erofs_off_t)(blk) << 
+>> (sb)->s_blocksize_bits)
+>>   #define erofs_iblks(i)    (round_up((i)->i_size, i_blocksize(i)) >> 
+>> (i)->i_blkbits)
 
