@@ -1,119 +1,135 @@
-Return-Path: <linux-kernel+bounces-271243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0928B944B87
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10738944B8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8F70288A63
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:39:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2262887B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:41:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F0B1A0719;
-	Thu,  1 Aug 2024 12:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB3B1A0709;
+	Thu,  1 Aug 2024 12:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nCn4DhID"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FQ8LR14Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4D615252D;
-	Thu,  1 Aug 2024 12:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FEE1194AE6;
+	Thu,  1 Aug 2024 12:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515949; cv=none; b=bA3NowNrJ9b/LPZQKN+Pp7s2EI/QXSW5WucG/hRrp1LpcAVhuDxcDMou4oM8h6Sm3DHyT68l/QhPKJJ2r+DRrIM47hsfUU4arUxCWrrkPueiHEbLLKZqb4/a6ib0QJigIwjHIiNXiz6CQg95XpnCagRWsKziQmDNhfUDgBuHVJQ=
+	t=1722516097; cv=none; b=QgoBEBXvmV0bDsws3jt9Z1xCEbB+rNLEq2SDs4aSfbQ+KA4ygBL0DS33EDZwgHjWnZ+Ajqg6VHfqWa7yu0aE1p/MP7A1dp9s8Dor1R3arW+CF3cRFVTVFPrFzNeD6IU7D4TQ0LNG7FBYldBWtavC2TXqGsKRY5h5Tr0EvkX2dUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515949; c=relaxed/simple;
-	bh=HBLGXJAA56+z2j8DW+eYMm1UK33BW0xzkvU79F0+rlk=;
+	s=arc-20240116; t=1722516097; c=relaxed/simple;
+	bh=dgSN2qX2pMdRfPMVfoDkmamauFtZYMSKVUq5U/yUdzc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M35jFUluXIC0RCnT5mfEvBWAX2jeCZRVGNI/VLUkEXMRF/vKCyAzaUtcMBg94KuvxseuVcRHRZolzNW8UXvroB11rr/DLA46e4L38FC4/+lG5plRBJc9P+CfCiBWGVTfLAXRW4fK6gLXlJFMRZE2PBWXcU35a/ugRPAXSWJA5So=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nCn4DhID; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B04C32786;
-	Thu,  1 Aug 2024 12:39:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdBMH23citerGAO8mOwiA7Q3gRN2ZxEqvYrfbrP9EUcDZWLEmEL/s66qatDz36VGJ1Rba43MMoWxirocqEpaktDtocIkHWeTwN3mc1gImCr0qpiXIjJ3Y6QmAwnHq45YEbPIXpqPXrAM6uowEZTkR1WI2jrmazCwWL/g3IL6Jv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FQ8LR14Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 862D8C32786;
+	Thu,  1 Aug 2024 12:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722515948;
-	bh=HBLGXJAA56+z2j8DW+eYMm1UK33BW0xzkvU79F0+rlk=;
+	s=k20201202; t=1722516097;
+	bh=dgSN2qX2pMdRfPMVfoDkmamauFtZYMSKVUq5U/yUdzc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nCn4DhIDkkEjOtwKn+8KB/FH9Bq93/RvdjSoKKVEk2sTX0poiVs6zed4NrpceWj3B
-	 ud97PfOJ3obUOkUfrmF4sIsCEYQ4fxL6Ep04la58Eoi9XhIf/YvI0EVFzNx7oEf/xu
-	 JHD3wnLR877SRn2kRzwZ7KSIeM0c2r/j/IGEIDRHHJhTCNfebXj12JTs6rR3zKL5Q5
-	 dRKOPRr5nPzlLNVk1RRgQvfPkVrdcBr0Ua5ilKSmuFshMUCgZUwZJ978c5nvFWKlrG
-	 JZKLc3E2cxqUBFEV8FxYQoDg3YhR40H6n3eJc8z1jKQ0iup/V+7T52xPKLkhhshkwK
-	 /iLdAEM5iLwHA==
-Date: Thu, 1 Aug 2024 13:39:01 +0100
-From: Lee Jones <lee@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, Pavel Machek <pavel@ucw.cz>,
-	Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andreas Kemnade <andreas@kemnade.info>, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: (subset) [PATCH v2 0/6] use device_for_each_child_node() to
- access device child nodes
-Message-ID: <20240801123901.GC6756@google.com>
-References: <20240721-device_for_each_child_node-available-v2-0-f33748fd8b2d@gmail.com>
- <172192488125.1053789.17350723750885690064.b4-ty@kernel.org>
- <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
+	b=FQ8LR14YNInTkJXFMl+0hgu5LWIWY+Fze0XvqA7ZVeNmWTY5qyqqgKqeoWbVdwtPB
+	 hLyn3uL9x2RowiG86NXtK++pnQZFDFuWa3zJ88dm5mHqcC/psfpkMkH68mh8LAoRuW
+	 FkNb9UObRILrJD6O1aiYAVqGHL3h3F7Bq6J9phZnzrBIxpeMxCwPu2Z6VwQr1NwRId
+	 6Jpu8r2q0XvBOclh4x33862RZ/YD97RttQD33ycYRWlzCOKi6njl5lasOfs/qJRTaM
+	 eY52HhvKRaKIrOYPcV3PnBzkQywD1fG8+3TIIUE1TLLrWrpt4hhFTVN3x1cX+eF0+e
+	 Sqs4R1duVeclQ==
+Date: Thu, 1 Aug 2024 13:41:32 +0100
+From: Will Deacon <will@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Michal Luczaj <mhal@rbox.co>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH] KVM: Fix error path in kvm_vm_ioctl_create_vcpu() on
+ xa_store() failure
+Message-ID: <20240801124131.GA4730@willie-the-truck>
+References: <20240730155646.1687-1-will@kernel.org>
+ <ccd40ae1-14aa-454e-9620-b34154f03e53@rbox.co>
+ <Zql3vMnR86mMvX2w@google.com>
+ <20240731133118.GA2946@willie-the-truck>
+ <3e5f7422-43ce-44d4-bff7-cc02165f08c0@rbox.co>
+ <Zqpj8M3xhPwSVYHY@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <094c7d7f-749f-4d8f-9254-f661090e4350@gmail.com>
+In-Reply-To: <Zqpj8M3xhPwSVYHY@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, 29 Jul 2024, Javier Carrasco wrote:
-
-> On 25/07/2024 18:28, Lee Jones wrote:
-> > On Sun, 21 Jul 2024 17:19:00 +0200, Javier Carrasco wrote:
-> >> This series aims to clarify the use cases of:
-> >>
-> >> - device_for_each_child_node[_scoped]()
-> >> - fwnode_for_each_available_child_node[_scoped]()
-> >>
-> >> to access firmware nodes.
-> >>
-> >> [...]
+On Wed, Jul 31, 2024 at 09:18:56AM -0700, Sean Christopherson wrote:
+> On Wed, Jul 31, 2024, Michal Luczaj wrote:
+> > On 7/31/24 15:31, Will Deacon wrote:
+> > > On Tue, Jul 30, 2024 at 04:31:08PM -0700, Sean Christopherson wrote:
+> > >> On Tue, Jul 30, 2024, Michal Luczaj wrote:
+> > >>> On 7/30/24 17:56, Will Deacon wrote:
+> > >>>> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > >>>> index d0788d0a72cc..b80dd8cead8c 100644
+> > >>>> --- a/virt/kvm/kvm_main.c
+> > >>>> +++ b/virt/kvm/kvm_main.c
+> > >>>> @@ -4293,7 +4293,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+> > >>>>  
+> > >>>>  	if (KVM_BUG_ON(xa_store(&kvm->vcpu_array, vcpu->vcpu_idx, vcpu, 0), kvm)) {
+> > >>>>  		r = -EINVAL;
+> > >>>> -		goto kvm_put_xa_release;
+> > >>>> +		goto err_xa_release;
+> > >>>>  	}
+> > >>>>  
+> > >>>>  	/*
+> > >>>> @@ -4310,6 +4310,7 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+> > >>>>  
+> > >>>>  kvm_put_xa_release:
+> > >>>>  	kvm_put_kvm_no_destroy(kvm);
+> > >>>> +err_xa_release:
+> > >>>>  	xa_release(&kvm->vcpu_array, vcpu->vcpu_idx);
+> > >>>>  unlock_vcpu_destroy:
+> > >>>>  	mutex_unlock(&kvm->lock);
+> > >>>
+> > >>> My bad for neglecting the "impossible" path. Thanks for the fix.
+> > >>>
+> > >>> I wonder if it's complete. If we really want to consider the possibility of
+> > >>> this xa_store() failing, then keeping vCPU fd installed and calling
+> > >>> kmem_cache_free(kvm_vcpu_cache, vcpu) on the error path looks wrong.
+> > >>
+> > >> Yeah, the vCPU is exposed to userspace, freeing its assets will just cause
+> > >> different problems.  KVM_BUG_ON() will prevent _new_ vCPU ioctl() calls (and kick
+> > >> running vCPUs out of the guest), but it doesn't interrupt other CPUs, e.g. if
+> > >> userspace is being sneaking and has already invoked a vCPU ioctl(), KVM will hit
+> > >> a use-after-free (several of them).
+> > > 
+> > > Damn, yes. Just because we haven't returned the fd yet, doesn't mean
+> > > userspace can't make use of it.
+> > >
+> > >> As Michal alluded to, it should be impossible for xa_store() to fail since KVM
+> > >> pre-allocates/reserves memory.  Given that, deliberately leaking the vCPU seems
+> > >> like the least awful "solution".
+> > > 
+> > > Could we actually just move the xa_store() before the fd creation? I
+> > > can't immediately see any issues with that...
 > > 
-> > Applied, thanks!
-> > 
-> > [3/6] leds: bd2606mvv: fix device child node usage in bd2606mvv_probe()
-> >       commit: 75d2a77327c4917bb66163eea0374bb749428e9c
-> > [4/6] leds: is31fl319x: use device_for_each_child_node_scoped() to access child nodes
-> >       commit: 0f5a3feb60aba5d74f0b655cdff9c35aca03e81b
-> > [5/6] leds: pca995x: use device_for_each_child_node() to access device child nodes
-> >       (no commit info)
-> > 
-> > --
-> > Lee Jones [李琼斯]
-> > 
+> > Hah, please see commit afb2acb2e3a3 :) Long story short: create_vcpu_fd()
+> > can legally fail, which must be handled gracefully, which would involve
+> > destruction of an already xa_store()ed vCPU, which is racy.
 > 
-> Hi Lee,
-> 
-> could you please tell me where you applied them? I rebased onto
-> linux-next to prepare for v3, and these patches are still added on top
-> of it. Can I find them in some leds/ branch? Thank you.
+> Ya, the basic problem is that we have two ways of publishing the vCPU, fd and
+> vcpu_array, with no way of setting both atomically.  Given that xa_store() should
+> never fail, I vote we do the simple thing and deliberately leak the memory.
 
-Sorry, I was side-tracked before pushing.
+I'm inclined to agree. This conversation did momentarily get me worried
+about the window between the successful create_vcpu_fd() and the
+xa_store(), but it looks like 'kvm->online_vcpus' protects that.
 
-Pushed now.  They should be in -next tomorrow.
+I'll spin a v2 leaking the vCPU, then.
 
--- 
-Lee Jones [李琼斯]
+Will
 
