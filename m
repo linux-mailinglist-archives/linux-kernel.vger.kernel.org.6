@@ -1,94 +1,64 @@
-Return-Path: <linux-kernel+bounces-270948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B313594477E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:08:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6343594478B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359281F24B4E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:08:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A391C2167A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98B316F910;
-	Thu,  1 Aug 2024 09:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D2D170A01;
+	Thu,  1 Aug 2024 09:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qXD2DlSz";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Ew0Q+oj";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0C9b4pU3";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="u47VYPgM"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZ4wP0Fa"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6EA16E89C;
-	Thu,  1 Aug 2024 09:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D8916EB54;
+	Thu,  1 Aug 2024 09:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503316; cv=none; b=fRiyBwG9vuzeD9b9DhLGKE6wBG28E75iO1gK6F7NfPQDruMqWTVKcRpkUxb+2XQpNtsI8efHExW7F+jJ6QawqG+YcBdGE3dz7qkUDZGloRXxVLwli3hRL2lLteiq03p427y6pYTWb58yUP7/XME/1a20NcBW25grFD7sJ6D0WAA=
+	t=1722503516; cv=none; b=UIXhwMMJ5BBZU6z0kyaa/cxHeqAk4yosMzHuJUAS6PuOA8xyXRAiK9DTGMETFiBiLgFYo8DszMOiITNmPhpKyVkRDu9LsT0csBab4eTZ6rSuZ+3K0Vv16s8XurSrGXxL+NqnURj2sD4O9JEQlYnYbfk8QUVWLL1w4DLloR2Eb0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503316; c=relaxed/simple;
-	bh=Ll5hdcBf8no8SlVg677r241ga9uBSvYhCvouT5OgjCw=;
+	s=arc-20240116; t=1722503516; c=relaxed/simple;
+	bh=bWXEw8TFjsKa/Hb4/Eb5rG16j7U/8Z24Kda92N1MJ4I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JVJgsCOPW+yuh5rKVgA3LMF0RXUiZv7PJBbCr6aw75w1o4qQuN8IQLW91kXTiFnfPWS45/GrP+a5/UAnCmRCanxw/kyjBGuVz8nXDWLqVrLXr0QW9Lr8C5NHAHfAgcCYFRn1BefaKXt8eponvDXlselMxgGm24o+VLB+k1uv+Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qXD2DlSz; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Ew0Q+oj; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0C9b4pU3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=u47VYPgM; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E64FB1F7D2;
-	Thu,  1 Aug 2024 09:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722503313; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8CLGoz52zKPxxoWPDdh/ixZ43op1lXLpYfCTNUCzfSY=;
-	b=qXD2DlSzzFWUgMio7zZWFMELsmA2PSy8X8hXcAFTxBc5CoxScwkzoaKMwZW1uTzSnN2L9w
-	rr7iuffb5Zw7QmGPMKcDHSwMijLRdwEJbdshmyhM2ShEC6DKAfhn7ESGaqKpbQH6SfAC+W
-	+VXBNUZlFMEmCrIkEcWacCZF6MdR+PU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722503313;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8CLGoz52zKPxxoWPDdh/ixZ43op1lXLpYfCTNUCzfSY=;
-	b=0Ew0Q+ojsmKR2aJnwkB7JvH5fHokyjzh7ThkUmFqRlLxYdNnwHOrePQ3UX0IMHOYBK0QRK
-	0wR1KpxoNaGsHDBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1722503312; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8CLGoz52zKPxxoWPDdh/ixZ43op1lXLpYfCTNUCzfSY=;
-	b=0C9b4pU3dJxYHGf3YbdFnjHYmOdas7PPJ/u/86ZU2q4P3K4FWhhw/vUtJ/GZvgpey+f6L+
-	2hx6eaCUtEHHr0vrp3RskaDmwbGqMbkzcJhMLYYZVNqh754df6c4VZdpmDx0DDVCPqPema
-	DqHPRu69gWCtXzq0oEEPXEhwx5B0T5c=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1722503312;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8CLGoz52zKPxxoWPDdh/ixZ43op1lXLpYfCTNUCzfSY=;
-	b=u47VYPgMu7mWYeQJm6pnxUbYZsLq6IkQG9TnUNmcNdbaS9jshsz+yFaCuunJRmT1esjAJR
-	4M/ec3zktzIFKiAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53DF2136CF;
-	Thu,  1 Aug 2024 09:08:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kSc4E5BQq2aqHwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Thu, 01 Aug 2024 09:08:32 +0000
-Message-ID: <5934b4b2-3a99-4b6b-b3e3-e57eb82b9b16@suse.de>
-Date: Thu, 1 Aug 2024 11:08:31 +0200
+	 In-Reply-To:Content-Type; b=ZQX+GiaYsGObg4COBU+B65/A37k0cGi8TkC/AueGvNLimyA6tiYEkk8MQ7l706bCnaIxFIBIlMEqzsZrb0N0wN0kpXMkXxxQQhjVPnhP7VAjpoF2a0OkShq7uKhDqyen3MVWqo2hxC3TY0FKG1qLlLEC6XapZ7a4u3xiCUYipH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZ4wP0Fa; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722503515; x=1754039515;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=bWXEw8TFjsKa/Hb4/Eb5rG16j7U/8Z24Kda92N1MJ4I=;
+  b=XZ4wP0FaKD5reUwjC6TZKxcatdSha69HUEBb2bdXNzAxDRB+wg0Cqnzh
+   8D1xVAegpOe9T1L+r0SApD9rI20/oS1IapsnqortRGhU3WHm2UQKwP3lt
+   x/b9tivoMHcFnTuwsKeyAynRziTCbgqkbMBrancZluCzog7JNOehc8RJ7
+   VDSF5fIVqrg+UjReDsnfs37QygoJbvYQaZ77Ka30fkqRDgTc12K3mmhWm
+   T3iaoHk/PQEv+FDZDL8BcTsBiEmnerLJ6Sac3zuCChn657JbO4Lmc73LN
+   mFV9XYkSlPRvoaqhPBG1iqr9ivm+Jg1pUDAYH9CZy8b/Kl+Tl0bpCihd8
+   Q==;
+X-CSE-ConnectionGUID: RiYsEug7SjW+ViCl7F3biQ==
+X-CSE-MsgGUID: pu1B2tb+Ra2RgRJ+UN6gJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383378"
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="20383378"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:10:59 -0700
+X-CSE-ConnectionGUID: wD2mZchpQ2uK+zw06fP8TQ==
+X-CSE-MsgGUID: 2y4A7VElRRC8qWG3k+0cRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="59089784"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:10:53 -0700
+Message-ID: <f70b6f65-fd8f-4d2c-ba41-fa814d0b5154@linux.intel.com>
+Date: Thu, 1 Aug 2024 11:10:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,211 +66,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 01/29] drm/connector: Introduce an HDMI connector
- initialization function
-To: Maxime Ripard <mripard@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Jonathan Corbet <corbet@lwn.net>, Sandy Huang <hjc@rock-chips.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>,
- Sebastian Wick <sebastian.wick@redhat.com>,
- =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-sunxi@lists.linux.dev, Dave Stevenson
- <dave.stevenson@raspberrypi.com>, Sui Jingfeng <sui.jingfeng@linux.dev>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
- <20240527-kms-hdmi-connector-state-v15-1-c5af16c3aae2@kernel.org>
+Subject: Re: [PATCH v24 00/34] Introduce QC USB SND audio offloading support
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240527-kms-hdmi-connector-state-v15-1-c5af16c3aae2@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.59 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[kernel.org,linux.intel.com,gmail.com,ffwll.ch,lwn.net,rock-chips.com,sntech.de,csie.org,sholland.org];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[24];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,xs4all.nl];
-	FREEMAIL_CC(0.00)[xs4all.nl,redhat.com,linux.intel.com,lists.freedesktop.org,lists.infradead.org,vger.kernel.org,lists.linux.dev,raspberrypi.com,linux.dev,linaro.org];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linaro.org:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -2.59
 
-Hi
 
-Am 27.05.24 um 15:57 schrieb Maxime Ripard:
-> A lot of the various HDMI drivers duplicate some logic that depends on
-> the HDMI spec itself and not really a particular hardware
-> implementation.
->
-> Output BPC or format selection, infoframe generation are good examples
-> of such areas.
->
-> This creates a lot of boilerplate, with a lot of variations, which makes
-> it hard for userspace to rely on, and makes it difficult to get it right
-> for drivers.
->
-> In the next patches, we'll add a lot of infrastructure around the
-> drm_connector and drm_connector_state structures, which will allow to
-> abstract away the duplicated logic. This infrastructure comes with a few
-> requirements though, and thus we need a new initialization function.
->
-> Hopefully, this will make drivers simpler to handle, and their behaviour
-> more consistent.
->
-> Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Reviewed-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->   drivers/gpu/drm/drm_connector.c | 39 +++++++++++++++++++++++++++++++++++++++
->   include/drm/drm_connector.h     |  5 +++++
->   2 files changed, 44 insertions(+)
->
-> diff --git a/drivers/gpu/drm/drm_connector.c b/drivers/gpu/drm/drm_connector.c
-> index b0516505f7ae..d9961cce8245 100644
-> --- a/drivers/gpu/drm/drm_connector.c
-> +++ b/drivers/gpu/drm/drm_connector.c
-> @@ -450,10 +450,49 @@ int drmm_connector_init(struct drm_device *dev,
->   
->   	return 0;
->   }
->   EXPORT_SYMBOL(drmm_connector_init);
->   
-> +/**
-> + * drmm_connector_hdmi_init - Init a preallocated HDMI connector
-> + * @dev: DRM device
-> + * @connector: A pointer to the HDMI connector to init
-> + * @funcs: callbacks for this connector
-> + * @connector_type: user visible type of the connector
-> + * @ddc: optional pointer to the associated ddc adapter
-> + *
-> + * Initialises a preallocated HDMI connector. Connectors can be
-> + * subclassed as part of driver connector objects.
-> + *
-> + * Cleanup is automatically handled with a call to
-> + * drm_connector_cleanup() in a DRM-managed action.
-> + *
-> + * The connector structure should be allocated with drmm_kzalloc().
-> + *
-> + * Returns:
-> + * Zero on success, error code on failure.
-> + */
-> +int drmm_connector_hdmi_init(struct drm_device *dev,
-> +			     struct drm_connector *connector,
-> +			     const struct drm_connector_funcs *funcs,
-> +			     int connector_type,
-> +			     struct i2c_adapter *ddc)
 
-I know I'm late to the review.
+On 8/1/24 03:16, Wesley Cheng wrote:
+> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
 
-Wouldn't it be better to make a separate HDMI-setup helper instead of 
-yet another init function? The type of init function to use is mostly 
-about memory management within the driver, while the new HDMI state is 
-about features.
+I find this update a lot easier to review than previous versions, thanks
+for this. That said, there are still quite a few confusing parts in the
+documentation and implementation - specifically the get_offload_dev()
+stuff makes sense at a high-level but the details can be improved a
+great deal.
 
-Maybe rather add something like drm_connector_init_hdmi_state(), which 
-takes an initialized connector and sets all the values coming the other 
-patches. Drivers would not have to subscribe to a certain way of memory 
-management. AFAICT this would also allow to protect the helper and the 
-new drm_connector.hdmi field behind DRM_DISPLAY_HDMI_STATE_HELPER. Best 
-regards Thomas
-> +{
-> +	int ret;
-> +
-> +	if (!(connector_type == DRM_MODE_CONNECTOR_HDMIA ||
-> +	      connector_type == DRM_MODE_CONNECTOR_HDMIB))
-> +		return -EINVAL;
-> +
-> +	ret = drmm_connector_init(dev, connector, funcs, connector_type, ddc);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(drmm_connector_hdmi_init);
-> +
->   /**
->    * drm_connector_attach_edid_property - attach edid property.
->    * @connector: the connector
->    *
->    * Some connector types like DRM_MODE_CONNECTOR_VIRTUAL do not get a
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index fe88d7fc6b8f..4491c4c2fb6e 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -1902,10 +1902,15 @@ int drm_connector_init_with_ddc(struct drm_device *dev,
->   int drmm_connector_init(struct drm_device *dev,
->   			struct drm_connector *connector,
->   			const struct drm_connector_funcs *funcs,
->   			int connector_type,
->   			struct i2c_adapter *ddc);
-> +int drmm_connector_hdmi_init(struct drm_device *dev,
-> +			     struct drm_connector *connector,
-> +			     const struct drm_connector_funcs *funcs,
-> +			     int connector_type,
-> +			     struct i2c_adapter *ddc);
->   void drm_connector_attach_edid_property(struct drm_connector *connector);
->   int drm_connector_register(struct drm_connector *connector);
->   void drm_connector_unregister(struct drm_connector *connector);
->   int drm_connector_attach_encoder(struct drm_connector *connector,
->   				      struct drm_encoder *encoder);
->
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+It's encouraging though, there aren't any major conceptual issues IMHO,
+it shouldn't be too hard to make the patches clearer/cleaner.
 
 
