@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-270615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387C894421F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:01:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9018D944220
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:01:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0E8B284201
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37DD61F2215E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4719313D602;
-	Thu,  1 Aug 2024 04:01:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A4EEC2;
+	Thu,  1 Aug 2024 04:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1IVWHEyG"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gn6MOnz2"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5415EC2
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 04:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBAD13957E
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 04:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722484888; cv=none; b=DJJB/FUcB9xldtZoOku3DS3DEXlnTB/5MiGyRCDov3x6Fg6Xb+Ms0+rUD1WoRnKHYq8lU+gWgK/s+D1uQ0FVnk5nlM99CqYc4IUdT5S5bDhR5TFS2+CQW67Sq8bxIQQaFU8AoIWewN8p20KmJrO3AEJDzhxRV4rGMRBUk744KMo=
+	t=1722484905; cv=none; b=hZvFqgg4a2YCYytklZsuvCdwmypVnxjNdDlP8s7S4r3mKt4kmJHA3yixrN4TA9A6LzgIiR/PPb/VsrCPkKxe5po5LwY/I7Ko0sw7GJrlN8U2cDVFj6P+YYZGhgM+W2OiEPxDgdByfoAlw9qh32avLskIXFDzw8kG7outDLP3uz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722484888; c=relaxed/simple;
-	bh=F5nJtKJrLxUxIGvK1xcaaMf6f/RRrSbUA+M9Om6vegQ=;
+	s=arc-20240116; t=1722484905; c=relaxed/simple;
+	bh=QJ3afN6yfO4Nhj/2k39dSxyb7w1Xy4bYsyPhJGKXyzw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JNFgJ/jNGov69clipZotqOotbe8OY677gQgZDCaZVgWDW71lvwseRGIastbhYINjgarvfIwBeaNVtR0U6lbR90BBrQhPM/lYFS69CXxNhoU0bFBh7CJbjXXNFBFhAjlEFehFre1TtJXp/23kAITfsOvyrOUZmCy0DslWyxx/mh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1IVWHEyG; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so27794a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:01:26 -0700 (PDT)
+	 To:Cc:Content-Type; b=fW6VT/y1Wol5K+F+2pOu20xVITh9qKo/GUFtSDolEwD65pIJCIfQ5dz/aMLf+p64NWYFlFssrv3vj261uz8NHhvXYMddL63DYxa/kDQ/IbBhaxq53a7bj5j9sb0oU45FuXwindKHlIQdY4FxQfTzkHXVnAvq2MLJUxhXbRgWTb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Gn6MOnz2; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52efa9500e0so7905119e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 21:01:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722484885; x=1723089685; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1722484902; x=1723089702; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NT9JA8dx+64cxrNGE7PfVbIZYCFMvXqZQ2Ueee7W7a4=;
-        b=1IVWHEyGuMpPeJB8en+2aAXbmMRUO9xsYaweRkQ9moG7/NBog8oVBTAI47iAGQi8Rl
-         0PU8D/eeR/Xm5VwtJDgF+o7fh+r/h8uOnT61iN+eJKVMaEPVT+c1gIHt46nOXsZAIIVJ
-         3bnUJTcCqc9dulZUyiu+gansAERqJCCjettV7XAAV4ArsLdVMo3MC6a3MZoWOXoACrgD
-         8pINB/fkcKvJhTB9lWPh7ycAohrMJgifIztYC395l5+YTphZLJ8FWMtlRak9VBVFGoeN
-         +K0mKi13MGBfy86XGziAPl2mN4j1bwZhopMg3X8fQF1i8M4ujWp6vbZJFsGaMxo6JCwS
-         lmvw==
+        bh=9ZhzJQ+a9Kym4MWHHdIYItKXwrHniaEz0NXbkAmGBpk=;
+        b=Gn6MOnz2/2uPn029qZfzXXl0tjBbgEs5RCe2C9BbXxZMgJ5i0f8Hool2IWSmexdOmN
+         90S+RG/lyPrSMF7ON9pJpaJPmh31ocs0qd442RzvrE2QQq6oBwxTarKWG2f4uc3C1u6A
+         pjtldJpJQi0E3XpZXg3gs8sXypZ8bQeUUXHlM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722484885; x=1723089685;
+        d=1e100.net; s=20230601; t=1722484902; x=1723089702;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NT9JA8dx+64cxrNGE7PfVbIZYCFMvXqZQ2Ueee7W7a4=;
-        b=fPGxx6FRrSsK4IT0SZ1IxNLO2vJ4LYeGehqwfZ0ErG6IF82ByicbIExJqSeTIt52Bv
-         ZkbOlT58it/ilLTNFeYMj80UAEvMfv1mWNaT5eodny6cvqslLpuyhkUhZEkPt4V3sDDM
-         ccbtfSNR9ckyvQZuTFnhyYwi0CfCYr2O66Lvff0B9yt1GghXigxrhR5xuH4DzNpU4p8w
-         0XNz4A0icukqAr7sH9KGMUyC2x2/NNt7/a+3nYV56LkmVBXUTOdkg2+d6YFgMNWP2lcG
-         qnl3jaJoWG1Z5R14+wRkclwlLOZTrPk+Te2Ho5VHfOMJkUJ6ZNhVJssYMCb6QL8Vdbny
-         v1hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPocCHbUH34EefyNoZpPYNckhN8Pf4JYz6lOCC+EXiFTzXXf7/zAlslrCFuMYCr5bdWvyPCh29M2xPkatqUMkRFIfHV/5E7lGFicTU
-X-Gm-Message-State: AOJu0Yw+FC8qlQ0QYkd5pWAArN/xBsCTGCNEveFFsYbJuwvI621fBPvt
-	z3GT27NTwxT1VZVsF7MMJqYSlqasXi554dAhamU03moVWAKjagZ8uxwEl2kG9KDVUa10PFek+hQ
-	FkvWGCko3tgk1GgIVsn8EH09YRtSfs+FS7WqX
-X-Google-Smtp-Source: AGHT+IHTwjSg9+MIXLuiJLBz0eSMeFs2h8fWwePQsUN7qDGET4IqBmqp79U1QYzfUCOS1JwtDSqCkax9U8EJWq1jF8o=
-X-Received: by 2002:a05:6402:4301:b0:58b:15e4:d786 with SMTP id
- 4fb4d7f45d1cf-5b740990c57mr35420a12.5.1722484884423; Wed, 31 Jul 2024
- 21:01:24 -0700 (PDT)
+        bh=9ZhzJQ+a9Kym4MWHHdIYItKXwrHniaEz0NXbkAmGBpk=;
+        b=V1WngjcE3qzSuvfM/3hIuZ+TbO3UahVSqjYf4AMqzVUsDwPLkHbXUKyW3ps3qyhIAu
+         spHfGRPT4drLfU0+O1oCnwzY+80yJqZeSOmshxKb6jU67kqE8R5GNCDfzNJ2sekcXvaM
+         HbhXfoC2s/w1ZQ79dSANovkLerwkIOkSR5laIHmN3tGbLkpec37MUTv/y10yhCn2GpJ5
+         jEEyRkVDnRzEJ9Agsxd3Ppfb91tRJKW/Og4SCRAwuYyl6wNBCoWKG5yUQ9vqY6nvVPPN
+         CRGZLluGKLpLWi12TRDlYiW5UzAlYxS+dbqWDWxIfbm3fLow3WJ5bBO+ObAYte+qJP07
+         Dgcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfLf7squ2m+ufQG9FFyP4lTx6RB1UYSQTg8QEF8t7RNf+GfJV9vEtgItPNgFHvcuO+i0Se8kDKqdW/UxhJB7eEaJX+i/tpOEZ66uJP
+X-Gm-Message-State: AOJu0YzMVOxBz27SKAp4XU3Scv8eem28XSr36atYg53gCzeKxxHP0t9W
+	UNAIUsSXXxRx+b5cpuRNeTdBBkhOsAgcNZEcXAXNtKywioL8w1rsvBQdNJSlvFW0/ujbt4SsoZP
+	To/1Wyri6DD53t10bH2354aUrK5tLIzJJL8GE
+X-Google-Smtp-Source: AGHT+IFbtjXGKr6OpFxpL2naXVX3atufbKENiq30EYD5eQDXV5YXSmf+M0f6uFAMeZOGG4Sdlo5YmT711IgA5wFEMPY=
+X-Received: by 2002:a05:6512:251f:b0:52e:a60e:3a08 with SMTP id
+ 2adb3069b0e04-530b61a607fmr640260e87.11.1722484901244; Wed, 31 Jul 2024
+ 21:01:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730-kasan-tsbrcu-v5-0-48d3cbdfccc5@google.com>
- <20240730-kasan-tsbrcu-v5-1-48d3cbdfccc5@google.com> <CA+fCnZfURBYNM+o6omuTJyCtL4GpeudpErEd26qde296ciVYuQ@mail.gmail.com>
-In-Reply-To: <CA+fCnZfURBYNM+o6omuTJyCtL4GpeudpErEd26qde296ciVYuQ@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 1 Aug 2024 06:00:48 +0200
-Message-ID: <CAG48ez12CMh2wM90EjF45+qvtRB41eq0Nms9ykRuf5-n7iBevg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] kasan: catch invalid free before SLUB
- reinitializes the object
-To: Andrey Konovalov <andreyknvl@gmail.com>, Marco Elver <elver@google.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
-	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240801031030.31114-1-yr.yang@mediatek.com>
+In-Reply-To: <20240801031030.31114-1-yr.yang@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Thu, 1 Aug 2024 12:01:30 +0800
+Message-ID: <CAGXv+5EYMgeNnQ3BU8cxy0a5aH8e+GbO=-OFVysU2MqBy+yQFQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] ASoC: mediatek: mt8188: add register to volatile_register
+To: "yr.yang" <yr.yang@mediatek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-(I'll address the other feedback later)
+Hi,
 
-On Thu, Aug 1, 2024 at 2:23=E2=80=AFAM Andrey Konovalov <andreyknvl@gmail.c=
-om> wrote:
->
-> On Tue, Jul 30, 2024 at 1:06=E2=80=AFPM Jann Horn <jannh@google.com> wrot=
+On Thu, Aug 1, 2024 at 11:11=E2=80=AFAM yr.yang <yr.yang@mediatek.com> wrot=
 e:
-> >
-> > Currently, when KASAN is combined with init-on-free behavior, the
-> > initialization happens before KASAN's "invalid free" checks.
-> >
-> > More importantly, a subsequent commit will want to RCU-delay the actual
-> > SLUB freeing of an object, and we'd like KASAN to still validate
-> > synchronously that freeing the object is permitted. (Otherwise this
-> > change will make the existing testcase kmem_cache_invalid_free fail.)
-> >
-> > So add a new KASAN hook that allows KASAN to pre-validate a
-> > kmem_cache_free() operation before SLUB actually starts modifying the
-> > object or its metadata.
-[...]
-> > @@ -503,15 +509,22 @@ bool __kasan_mempool_poison_object(void *ptr, uns=
-igned long ip)
-> >                 kasan_poison(ptr, folio_size(folio), KASAN_PAGE_FREE, f=
-alse);
-> >                 return true;
-> >         }
-> >
-> >         if (is_kfence_address(ptr))
-> >                 return false;
-> > +       if (!kasan_arch_is_ready())
-> > +               return true;
 >
-> Hm, I think we had a bug here: the function should return true in both
-> cases. This seems reasonable: if KASAN is not checking the object, the
-> caller can do whatever they want with it.
+> From: YR Yang <yr.yang@mediatek.com>
+>
+> Add AFE Control Register 0 to volatile_register.
+> AFE_DAC_CON0 can be modified by both SOF and ALSA driver.
+> If this register read & write by cache mode,
+> the cached value may be not the real value
+> when the register modified by other side.
+> It will cause playback or capture fail.
+> Need add AFE_DAC_CON0 to volatile register.
 
-But if the object is a kfence allocation, we maybe do want the caller
-to free it quickly so that kfence can catch potential UAF access? So
-"return false" in that case seems appropriate. Or maybe we don't
-because that makes the probability of catching an OOB access much
-lower if the mempool is going to always return non-kfence allocations
-as long as the pool isn't empty? Also I guess whether kfence vetoes
-reuse of kfence objects probably shouldn't depend on whether the
-kernel is built with KASAN... so I guess it would be more consistent
-to either put "return true" there or change the !KASAN stub of this to
-check for kfence objects or something like that? Honestly I think the
-latter would be most appropriate, though then maybe the hook shouldn't
-have "kasan" in its name...
+You should mention this specific register in the patch subject.
+Something like:
 
-Either way, I agree that the current situation wrt mempools and kfence
-is inconsistent, but I think I should probably leave that as-is in my
-series for now, and the kfence mempool issue can be addressed
-separately afterwards? I also would like to avoid changing kfence
-behavior as part of this patch.
+ASoC: mediatek: mt8188: Mark AFE_DAC_CON0 register as volatile
 
-If you want, I can add a comment above the "if (is_kfence_address())"
-that notes the inconsistency?
+
+ChenYu
+
+> Signed-off-by: YR Yang <yr.yang@mediatek.com>
+>
+> ---
+>  sound/soc/mediatek/mt8188/mt8188-afe-pcm.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c b/sound/soc/media=
+tek/mt8188/mt8188-afe-pcm.c
+> index ccb6c1f3adc7..73e5c63aeec8 100644
+> --- a/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
+> +++ b/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
+> @@ -2748,6 +2748,7 @@ static bool mt8188_is_volatile_reg(struct device *d=
+ev, unsigned int reg)
+>         case AFE_ASRC12_NEW_CON9:
+>         case AFE_LRCK_CNT:
+>         case AFE_DAC_MON0:
+> +       case AFE_DAC_CON0:
+>         case AFE_DL2_CUR:
+>         case AFE_DL3_CUR:
+>         case AFE_DL6_CUR:
+> --
+> 2.34.1
+>
+>
 
