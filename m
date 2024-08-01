@@ -1,138 +1,97 @@
-Return-Path: <linux-kernel+bounces-270640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FA29442B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:24:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E78B79442B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E16E71F22AFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:24:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7938728450D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F11140E38;
-	Thu,  1 Aug 2024 05:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCZ9XhUt"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A3A1422CE;
+	Thu,  1 Aug 2024 05:29:05 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E620C13D62C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 05:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423D7132114;
+	Thu,  1 Aug 2024 05:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722489859; cv=none; b=Aafuvy3qInWYfJFuRz7thT1haHJL8h2uIzVhWifW9+3BTQvjvPoKL91K0PrO8oyEbxjWDfxr1+7mjokn8ZSq7drFkfzJ15BB2bpKnDv3pD6NoFWql92YM9B7PT/O3E8fxTL6/uj21o9692JZ34YOQwlaZEbtwWQgN8zxx21qdhE=
+	t=1722490144; cv=none; b=V7h+Ti6XTN3Z29pG1UK7nD/EzdrV/yc8mrXnrUuyThjpdNbj2bGBBmwjS9IHNdbW5q+U+UM0Z58fWJR+rCw+WvHwqlcKNL8cb7Ti5aLM0oYh87SQkKCz1G7epmHyVYA5t98e8dJou5fKtJYswdqxnZx19YoDtE2rfOSh/1Bl+8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722489859; c=relaxed/simple;
-	bh=Yomr5iZ2RYuI8MiommezWCszl7V/zyy4FImaVpWSAJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=krJnRFSFA1HoiLqT3V5W529VziD9Ho1KNnCWgiy/srmaLkxEv7xKwloNlR4NHmBtnanrPhR3GK6LvOhpVBs6f3Ip4RhmO7olgIZfWfYygHtVZfhWwhiutsYYtjgmlckOqOvT9k2mUjmwwkHH1w+iEp758DsBNqa8U0OszL2nTJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCZ9XhUt; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7aa74d1ab8so65558566b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 22:24:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722489856; x=1723094656; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eTCkhYC110sy/G2TV66FBtBgbpExBLZ3KMUjKZM4qT4=;
-        b=TCZ9XhUtzAESfh7RrWUJqM1I7wIYFBZIryPuzLKmDwOi0rKkybii0hRtBfYeEZTJnI
-         E0C9FVEXjbSsbyPmKL2UcwtPnqPUWxj8xIp8WRi9co8Ik8ZgwW5O0w2XlTZsyc5Y9tsY
-         EDhL24tmMuvdmD11lD8g0EAokCITJxJoPFf01zP+Z+CnOQpLAUGFOikahPzbgx9hh0gY
-         aoAu7R5gcAODn5EgL+utPw1ad0JQEUBlctIVy2RRRIivCX613myVwPthWZoaV5SfJN9a
-         3NnwhrolnXRD8gXTnLmP3nQ1coW0q53UPFUMHMFz1KZPaUHSgDDeCdrsyXGOddYGLKWu
-         2SPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722489856; x=1723094656;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eTCkhYC110sy/G2TV66FBtBgbpExBLZ3KMUjKZM4qT4=;
-        b=TEXLhIHMDU5WprL+1c2DmiOg82oHVUNA3VQxNTPNrIzhPkI/4CZffY2+uVCTHn/6sS
-         caWGMRK6DWIphlEjD6jcu3Gax0AXndo8LqmH0l+ybpv6M7xLJfgYPOKzlSEjeqrVRuvr
-         tks3oPB7AEeoTO2wDcN7p4+05MAke2XazTi7WndoDQsRJl1w3v5ZZLC+orOG/al4VJRc
-         7USUKFliTf+5a+w++eaxCDIJNOlT7TZfOPrr+pLyQ0I1gJsMoVKnfvrFKweNzxSl2oi9
-         i/ihGN7MV92xFkYN8mZRdIF5pO2C84Lx9bFE8VMsXVsg+h8SYiPn34jBMaWBWtAmFzwe
-         1r9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVAOEr/NIpx22tA2s5uuOhMD/oQwHRfkns8XEkHvXi0hHS/8AS2wN99pXzgsSuxGbvpDCdq9UdHYY47Ja4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8n21BNazudNTpGdMXxWU7BdqTepaDh3/KbKpuTUHEq8SJG8tZ
-	25+lHFnyUW34vQjSb7LE0SIfoia5t1ccYidiVNTUrsGOyYXcx/vc
-X-Google-Smtp-Source: AGHT+IFlZr68ijykOhEFF19rgRm12fwRwHIyPsAwN+nI1o5ek8oPATxR4OnCVtRqFblnAWDqocOA1A==
-X-Received: by 2002:a50:c181:0:b0:5aa:19b1:ffd6 with SMTP id 4fb4d7f45d1cf-5b70159020fmr445985a12.4.1722489855721;
-        Wed, 31 Jul 2024 22:24:15 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8500:57d2:826:6de3:1237? (p200300c78f2a850057d208266de31237.dip0.t-ipconnect.de. [2003:c7:8f2a:8500:57d2:826:6de3:1237])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ac6377d724sm9628385a12.40.2024.07.31.22.24.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 31 Jul 2024 22:24:15 -0700 (PDT)
-Message-ID: <fd2dc636-762f-4fd4-acd0-a473097406ff@gmail.com>
-Date: Thu, 1 Aug 2024 07:24:14 +0200
+	s=arc-20240116; t=1722490144; c=relaxed/simple;
+	bh=8Ou5pjMJRb/zPenDD4SvV1s3OIKkG5QxAahKkyvdLYE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bwG32RGMr/qGs8zxYhURsqP1cd+xOjjLcygq/IppDT8QSpWr3G9DzlDWeSTQVLwd4UIXCPWE51zUMU60U5plKI3avUjWgV5Sr53tu9ZSjtbPnGp30CfJ/M16m9N1r7yi/zTNJHcdNBGA8qhL2IIVo5qOQBhexufKpb1Dv+inhgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4714de6S025011;
+	Thu, 1 Aug 2024 05:28:42 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40mqv64uv2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 01 Aug 2024 05:28:42 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 31 Jul 2024 22:28:40 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Wed, 31 Jul 2024 22:28:38 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
+Date: Thu, 1 Aug 2024 13:28:37 +0800
+Message-ID: <20240801052837.3388478-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801025842.GM5334@ZenIV>
+References: <20240801025842.GM5334@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5] staging: rtl8723bs: Improve clarity of MAR usage
-To: Manjae Cho <manjae.cho@samsung.com>, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <CGME20240731225631epcas1p2658d1e469ff9339c90542f6dd947746e@epcas1p2.samsung.com>
- <20240731225134.917542-1-manjae.cho@samsung.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240731225134.917542-1-manjae.cho@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: Dox2R5LnC4_w5BtVKI5x6p1Qg0i9Vu6x
+X-Proofpoint-ORIG-GUID: Dox2R5LnC4_w5BtVKI5x6p1Qg0i9Vu6x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_02,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=793 clxscore=1015 suspectscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 spamscore=0 priorityscore=1501 lowpriorityscore=0 adultscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408010030
 
-On 8/1/24 00:51, Manjae Cho wrote:
-> This patch improves the readability of the code related to the Multicast
-> Address Register (REG_MAR) in the rtl8723bs driver. It adds comments to
-> clarify the purpose and offset of the register, making the code more
-> self-documenting without introducing new macros.
+> > syzbot report KMSAN: uninit-value in pick_link, this is because the
+> > corresponding folio was not found from the mapping, and the memory was
+> > not initialized when allocating a new folio for the filemap.
+> >
+> > To avoid the occurrence of kmsan report uninit-value, initialize the
+> > newly allocated folio memory to 0.
 > 
-> Signed-off-by: Manjae Cho <manjae.cho@samsung.com>
-> ---
+> NAK.
 > 
-> v5:
-> - Maintain consistent patch versioning
-> - Add change history
+> You are papering over the real bug here.
+Did you see the splat? I think you didn't see that.
 > 
-> v4:
-> - Refine commit message
-> - Adjust comment wording
+> That page either
+> 	* has been returned by find_get_page(), cached, uptodate and
+> with uninitialized contents or
+> 	* has been returned by successful read_mapping_page() - and
+> left with uninitialized contents or
+> 	* had inode->i_size in excess of initialized contents.
 > 
-> v3:
-> - Remove MAR0 and MAR4 definitions
-> - Add comments for clarity instead of new macros
-> - Maintain existing REG_MAR usage
-> 
-> v2:
-> - Update patch title
-> - Improve commit message
-> 
-> v1:
-> - Initial version: Introduce MAR0 and MAR4 definitions
-> 
->   drivers/staging/rtl8723bs/hal/sdio_halinit.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/hal/sdio_halinit.c b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-> index c9cd6578f7f8..535cd439121d 100644
-> --- a/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-> +++ b/drivers/staging/rtl8723bs/hal/sdio_halinit.c
-> @@ -380,8 +380,8 @@ static void _InitWMACSetting(struct adapter *padapter)
->   	rtw_write32(padapter, REG_RCR, pHalData->ReceiveConfig);
->   
->   	/*  Accept all multicast address */
-> -	rtw_write32(padapter, REG_MAR, 0xFFFFFFFF);
-> -	rtw_write32(padapter, REG_MAR + 4, 0xFFFFFFFF);
-> +	rtw_write32(padapter, REG_MAR, 0xFFFFFFFF);	/* Offset 0x0620-0x0623 */
-> +	rtw_write32(padapter, REG_MAR + 4, 0xFFFFFFFF);	/* Offset 0x0624-0x0627 */
->   
->   	/*  Accept all data frames */
->   	value16 = 0xFFFF;
-
-Reviewed-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+> I'd suggest bisecting that.
 
