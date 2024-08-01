@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-270951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C313944791
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:12:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22588944629
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3014C1C21BBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:12:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D861F23492
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695AD171E7C;
-	Thu,  1 Aug 2024 09:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88A0166313;
+	Thu,  1 Aug 2024 08:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8aPMFxv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCE0LAKE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8956816FF37;
-	Thu,  1 Aug 2024 09:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2378BE0;
+	Thu,  1 Aug 2024 08:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503518; cv=none; b=ATrhm2BXvrWZTsAiA/5savlnmwlqf2h2qPs7p8r0siO0qrn1Bdv1I0u3HFQsCSXFkFBiaZnkQr70Cu31lYeVIiqBw3K7kLo9Pe3dwxYMefNpQNVQ3r8eNuBJjJBvA2bvt/E+KIhkqaCFQKI3FW7o8i6Gmjv+I8sBdBpuHzurtmU=
+	t=1722499459; cv=none; b=Uh5+whMlHkIMQWvkZ5+NK2JagZ5mJAomXYNModeFDFVE/yd+xDu2UHvqKCC3gbsXBG3CcWqcloxsumX0qgpAweUZOuNG6tzRjCT6SrGz0NL4M3WytgQU81plPK/2/79DCLESPrFUnqhKWkIh99KWfgF+aiUaldpV74T1cpuQdPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503518; c=relaxed/simple;
-	bh=LUc7gpjBS/NHhnn5BVc97L0Im6/kGFGbOYcyzShbHlE=;
+	s=arc-20240116; t=1722499459; c=relaxed/simple;
+	bh=mmv79naFxibF9Te2hX+j/d0ubjLkPOmqzoUx5PXhplo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FJ2nYj84uXB6liU1bX5kR52OcmrF41WwsMdc7gNym0Y+gHNYyAPFmdKVJYnDLH9arr6DYKF68DBnDIKC8oB1tM1EO4ducRvzhQE4P2JHaAiIQBBXhqDm3VkEEx63I52W/8/b7IGHDVjkVazI2q19br2UgrS0X7/P1mknDS2l6fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8aPMFxv; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722503517; x=1754039517;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LUc7gpjBS/NHhnn5BVc97L0Im6/kGFGbOYcyzShbHlE=;
-  b=m8aPMFxv2UYw89uixAnSwrXzbXyd4ONIq+afukwkEANYLA0cfOPnxojn
-   OxICBVGYBvYoM/EWYvNrMs4XfE4RJn08ZPEK+u7Kb/+tE+kgRkuRYp/xa
-   z1bK3PC91h4qIw93aEN3NQ16MHkAcL3ERWSRxawkZLw6aZgrfo+oxi02d
-   Bms5zEDoGMlCs2ZszQIpXB6Mo4Q6GoH5Xa+mAGo+S9GBHTPi5TyIyfnIE
-   MjgwppQSllUqYHTzlLBbj3FC6O9HdZfpg+gtZ/7qfUkBDifjJav26oST8
-   f+YiFvAIx+hrzJqkftVj4WoX6HQRDakguHHxLUUbLPa+W+cPesGFyfpRF
-   w==;
-X-CSE-ConnectionGUID: +ZFTUlFNSX6LMGnzTS1NUA==
-X-CSE-MsgGUID: RgeD8EKSRb2zpAus24aD2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383432"
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="20383432"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:08 -0700
-X-CSE-ConnectionGUID: ++Bdj5q4TKqwVVZ9HpXbgw==
-X-CSE-MsgGUID: C6b4ZdPESPW+h8z2Bw+jtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="59089790"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:01 -0700
-Message-ID: <09fde4e6-c3be-484d-a7a5-bd653dc42094@linux.intel.com>
-Date: Thu, 1 Aug 2024 10:02:12 +0200
+	 In-Reply-To:Content-Type; b=KuaGphV6exiLI89Y+jci3RPMsV1qmlfBwObclHclKk7iApJFc7jYKMbNN+4pRVqCG/8YiziTX+DGzjsF5AMxjOxHM/VY8C3sp6gsfheYgy7j+ruhdLHO4ML6pWBpHhGj7R0QBmTYBEpMKGdqWlhWr6sr7eeZ8zEzgH7vcjzHnHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCE0LAKE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F8BC4AF0A;
+	Thu,  1 Aug 2024 08:04:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722499458;
+	bh=mmv79naFxibF9Te2hX+j/d0ubjLkPOmqzoUx5PXhplo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hCE0LAKEvabPVigEDzCpRsKMPYLSoWaYYT95fjHjDDmOYjowQvYg4X3bPQC7qZL50
+	 Y8fEor74Y66ueoYppcKP71Ov17yVOow3um1RKRWx7ql7LRkfC8keAT8zpos541qg99
+	 MWl5wrFH51ZIBkTbI0lhKqwgbbdCnaeNbu0Atq9zCxY+8RtD9umHnWQrEQHOaASV2D
+	 byzTDjosHvbNtfnOblZXg0+EaBoZmIHFtHaQiWbEGxTq0tMu4GIKcICHNQbXtlP32Z
+	 ClrFK1eCOYtqqUmHVS9F9OX1T2zMqS8ZXCet5NrMOMHnAOukgsxChkF2MueigyZSH5
+	 Zt3R4VJMH9iOg==
+Message-ID: <f5e8b8ca-33c7-4725-b751-fc9d76959423@kernel.org>
+Date: Thu, 1 Aug 2024 10:04:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,159 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 09/34] ASoC: Add SOC USB APIs for adding an USB
- backend
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-10-quic_wcheng@quicinc.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Richard Earnshaw <richard.earnshaw@arm.com>,
+ Richard Sandiford <richard.sandiford@arm.com>,
+ Ramana Radhakrishnan <ramanara@nvidia.com>, Nicolas Pitre
+ <nico@fluxnic.net>, Mark Brown <broonie@kernel.org>,
+ Kristoffer Ericson <kristoffer.ericson@gmail.com>,
+ Robert Jarzmik <robert.jarzmik@free.fr>, Aaro Koskinen
+ <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+ Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+ Nikita Shubin <nikita.shubin@maquefel.me>,
+ linux-samsung-soc@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240801011730.4797-10-quic_wcheng@quicinc.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 31/07/2024 19:29, Arnd Bergmann wrote:
+> We removed a lot of the unused board files at the beginning of
+> 2023, and I'd like to plan ahead for other hardware and feature
+> support that can be removed after the next stable kernel
+> (linux-6.12).
+> 
+> TL;DR: I think we can deprecate toolchain support for ARMv4
+> (pre-thumb), iWMMXt, BE32 and OABI (-mabi=apcs-gnu) *if* that
+> helps gcc-15, as we'll likely not need those any more after
+> gcc-14 will be too old to build new kernels (ca. 2030).
+> 
+> I hope we can keep reducing the number of non-DT board files a
+> lot further, but I still expect this to take several more years
+> before it is DT-only. Please reply here if you are using any
+> of them so we can spare them once more.
 
+All this (and what was below the quote) looks reasonable to me,
+including Samsung S3C64xx and keeping support for RPi 1 (I was using it
+till ~3 years ago).
 
+Best regards,
+Krzysztof
 
-> +/**
-> + * struct snd_soc_usb_device
-> + * @card_idx - sound card index associated with USB device
-> + * @pcm_idx - PCM device index associated with USB device
-> + * @chip_idx - USB sound chip array index
-> + * @num_playback - number of playback streams
-> + * @num_capture - number of capture streams
-
-so here we have a clear separation between playback and capture...
-
-> + * @list - list head for SoC USB devices
-> + **/
-> +struct snd_soc_usb_device {
-> +	int card_idx;
-> +	int pcm_idx;
-> +	int chip_idx;
-> +	int num_playback;
-> +	int num_capture;
-> +	struct list_head list;
-> +};
-> +
-> +/**
-> + * struct snd_soc_usb
-> + * @list - list head for SND SOC struct list
-> + * @component - reference to ASoC component
-> + * @num_supported_streams - number of supported concurrent sessions
-
-... but here we don't. And it's not clear what the working 'sessions'
-means in the comment.
-
-> + * @connection_status_cb - callback to notify connection events
-> + * @priv_data - driver data
-> + **/
-> +struct snd_soc_usb {
-> +	struct list_head list;
-> +	struct snd_soc_component *component;
-> +	unsigned int num_supported_streams;
-> +	int (*connection_status_cb)(struct snd_soc_usb *usb,
-> +			struct snd_soc_usb_device *sdev, bool connected);
-> +	void *priv_data;
-> +};
-
-> +/**
-> + * snd_soc_usb_allocate_port() - allocate a SOC USB device
-
-USB port?
-
-> + * @component: USB DPCM backend DAI component
-> + * @num_streams: number of offloading sessions supported
-
-same comment, is this direction-specific or not?
-
-> + * @data: private data
-> + *
-> + * Allocate and initialize a SOC USB device.  This will populate parameters that
-> + * are used in subsequent sequences.
-> + *
-> + */
-> +struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
-> +					      int num_streams, void *data)
-> +{
-> +	struct snd_soc_usb *usb;
-> +
-> +	usb = kzalloc(sizeof(*usb), GFP_KERNEL);
-> +	if (!usb)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	usb->component = component;
-> +	usb->priv_data = data;
-> +	usb->num_supported_streams = num_streams;
-> +
-> +	return usb;
-> +}
-> +EXPORT_SYMBOL_GPL(snd_soc_usb_allocate_port);
-> +
-> +/**
-> + * snd_soc_usb_free_port() - free a SOC USB device
-> + * @usb: allocated SOC USB device
-> +
-> + * Free and remove the SOC USB device from the available list of devices.
-
-Now I am lost again on the device:port relationship. I am sure you've
-explained this before but I forget things and the code isn't
-self-explanatory.
-
-
-> + *
-> + */
-> +void snd_soc_usb_free_port(struct snd_soc_usb *usb)
-> +{
-> +	snd_soc_usb_remove_port(usb);
-> +	kfree(usb);
-> +}
-> +EXPORT_SYMBOL_GPL(snd_soc_usb_free_port);
-> +
-> +/**
-> + * snd_soc_usb_add_port() - Add a USB backend port
-> + * @usb: soc usb device to add
-> + *
-> + * Register a USB backend device to the SND USB SOC framework.  Memory is
-> + * allocated as part of the USB backend device.
-> + *
-> + */
-> +void snd_soc_usb_add_port(struct snd_soc_usb *usb)
-> +{
-> +	mutex_lock(&ctx_mutex);
-> +	list_add_tail(&usb->list, &usb_ctx_list);
-> +	mutex_unlock(&ctx_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(snd_soc_usb_add_port);
-> +
-> +/**
-> + * snd_soc_usb_remove_port() - Remove a USB backend port
-> + * @usb: soc usb device to remove
-> + *
-> + * Remove a USB backend device from USB SND SOC.  Memory is freed when USB
-> + * backend is removed.
-> + *
-> + */
-> +void snd_soc_usb_remove_port(struct snd_soc_usb *usb)
-> +{
-> +	struct snd_soc_usb *ctx, *tmp;
-> +
-> +	mutex_lock(&ctx_mutex);
-> +	list_for_each_entry_safe(ctx, tmp, &usb_ctx_list, list) {
-> +		if (ctx == usb) {
-> +			list_del(&ctx->list);
-> +			break;
-> +		}
-> +	}
-> +	mutex_unlock(&ctx_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(snd_soc_usb_remove_port);
 
