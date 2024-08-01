@@ -1,106 +1,150 @@
-Return-Path: <linux-kernel+bounces-271894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05514945490
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:39:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C239194549D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1021F22E82
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:39:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F370D1C23319
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FFA14B941;
-	Thu,  1 Aug 2024 22:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5853914D439;
+	Thu,  1 Aug 2024 22:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EJo0agEs"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lfF305o6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3081C38DD6;
-	Thu,  1 Aug 2024 22:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CBD14D6E9;
+	Thu,  1 Aug 2024 22:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722551959; cv=none; b=j66Q8oe4QgjUkIDXcReJhTqkUCmc7fzHfZqI6uCv3/9Eu+t1IO4HA6hQFbrS1vhzu9BtyNS5UAQ54qdxHD5USjfVLcNIeF7cah1GMOtssLzTcvLgvF3q6hGy5dUKNinI/x5OBXVMhR4rmH2jewFb6g+tt4t61Vfbr+MHoIh3mdA=
+	t=1722552261; cv=none; b=czsa3bABwSprzLvxDGJP9JPoJU3IGiAJKY4AL1OEm0uPAoSG2Wdf4EUYJ49p25H107ONmhYuKbmz11yB4rQU4ytxr9vW8g0hMVmg3o9a8Vg6uUPSHuRSzvostl2b9dvQWVu5EOR1+9pOYzBwb2FutigzXlhTCxkRsdI8VHbL1dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722551959; c=relaxed/simple;
-	bh=/4isdzAb9LbuZ+Bj/X23RxdmkVGkL9cB0N8hv37DtN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AWhABtmevrv9WR/mXrHm8vTu0VT42MBVtWkE93f4FuJA0GRUX4jbZ2olC+njKku2Wzh/fkvItD1OqaBQrk+JUfeuQIZJS54AisW/2/SfmjxLKQBZu+8w3evx+CbP8DG+U/b+yaoRbfySUDTa0P3FL2ZqOOn0F+ggElsqzUZYXwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EJo0agEs; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Rs60foqmM4vSIN2IoIAjWC3FQ7KsUgwgRo39yiV4cPg=; b=EJo0agEs7S9v/G1tmCqqqCVwcq
-	hOSuH6jxsm/rhhaymwRqmW7fPOXUjw8+ut2R9F97rRVDPwHCQlVF/XYMgN7YSiRVp+bSDmF5rd9Ez
-	Jf1ROG3RF4LnHrhKnweMpeX5glIAhpi4Ec+pTEmdF/0Ldio67PWy4aRX7lql+w29LUTkANX5Gwo/4
-	QOMhTrRDaTE/g+9xU+cKuOn9u+r+u10p5le9uyVp+A2/RP+cwmiJOqA0VUBRE12lH68RrvkRBZd/P
-	Cde0t++EQwcugnOeChU480VKx7kceQKnJzJ4JpbaPok0gXzqCHTIpsYQANF+e9JYnFHkTvw0SpUC+
-	bNA9Zjfw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZeRz-00000000NHO-2X9H;
-	Thu, 01 Aug 2024 22:39:11 +0000
-Date: Thu, 1 Aug 2024 23:39:11 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Paluri, PavanKumar" <papaluri@amd.com>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Giani, Dhaval" <Dhaval.Giani@amd.com>
-Subject: Re: [PATCH 0/2] "nosnp" sev command line support
-Message-ID: <ZqwOjxRAfhjNw5Vs@casper.infradead.org>
-References: <20240801205638.6603-1-papaluri@amd.com>
- <Zqv2_wQbCLN_AOfy@casper.infradead.org>
- <12829169-2484-8e98-c489-570dade578bd@amd.com>
+	s=arc-20240116; t=1722552261; c=relaxed/simple;
+	bh=YgcMeHbecvcwAZcMU2fEaHUgFYpRhsPXQb6yZzvX9Mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V0878T3ONHCcbxjJxOjpc/nF5pAnuVLp3OSd4l5zfBQQtdGGpa19VFlGnucoJgEOxio4YHevbuQtCDUfeDXlu7AxvbFibMJRJrJAJX/FAtdhqcSR3anUu1bODH+wCMrM5GPZCDzOhuLlEDraLNpMljVSikaOuxS8/iVpE4seAvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lfF305o6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471LajVc024593;
+	Thu, 1 Aug 2024 22:43:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xGG1xu/Ws5ZdwYrfCVjBOTjooBbgHwtQA2Br32FjgVM=; b=lfF305o6k0ZUPcjF
+	xQE4GP+uieLUOfwU/0EURArLd0ql2Kk6uvVxiIcGMyVAa24SwZvRB3li6fN90iji
+	beLTmNS/KORCWwbXVwmuCahg/+Hr8vrPY+xCAu2UmVjSXDl4k1E0dw8WFStplj/Y
+	kQHH2Je/H6q4DxblHgepb4U7X76/mmLqP3fHpDnP3iK2Uu2cE4uMRJPYF551aiZX
+	8G/u4d4IA+Bo9/BS9gNfOV9aHJ6BSmvxWqCyUI7f6T5rol3fW1sBzlAYJHBm+fAO
+	8d//hvPKCdsNEUxVGOJsRHwns38tZW//3Is3UfDP3gV040FBVexg4++ytQn44aHc
+	8LXX/A==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40rje303h8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 22:43:18 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471MhHdQ023311
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 22:43:17 GMT
+Received: from [10.71.115.74] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
+ 15:43:16 -0700
+Message-ID: <2141c04d-953b-47a5-a105-8a60ec370371@quicinc.com>
+Date: Thu, 1 Aug 2024 15:43:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <12829169-2484-8e98-c489-570dade578bd@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 10/34] ASoC: usb: Create SOC USB SND jack kcontrol
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-11-quic_wcheng@quicinc.com>
+ <89b10ddb-9d0e-480e-846f-64f2a4592f6f@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <89b10ddb-9d0e-480e-846f-64f2a4592f6f@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: gXHq5d8kZnKKMYYfVok95REoRv2uhT8d
+X-Proofpoint-ORIG-GUID: gXHq5d8kZnKKMYYfVok95REoRv2uhT8d
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_21,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxlogscore=966
+ phishscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 adultscore=0 spamscore=0 impostorscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010152
 
-On Thu, Aug 01, 2024 at 05:23:29PM -0500, Paluri, PavanKumar wrote:
-> Hi Matthew,
-> 
-> On 8/1/2024 3:58 PM, Matthew Wilcox wrote:
-> > On Thu, Aug 01, 2024 at 03:56:36PM -0500, Pavan Kumar Paluri wrote:
-> >> Provide "nosnp" boot option via "sev=nosnp" kernel command line to
-> >> prevent SNP-capable host kernel from enabling SEV-SNP and initializing
-> >> RMP table.
-> > 
-> > Congratulations on using three acronyms multiple times and defining none
-> > of them.
-> 
-> I apologize for not defining the acronyms, I had wrongly assumed they
-> were well understood by the reviewers/maintainers. I can fix that up
-> going forward. In the meantime:
+Hi Pierre,
 
-You cc'd linux-doc.  That's going to people who have no idea what
-specialist part of the kernel you're working on.
+On 8/1/2024 1:07 AM, Pierre-Louis Bossart wrote:
+>
+>
+>> +static inline int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
+>> +						 struct snd_soc_jack *jack)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>> +static inline int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component)
+>> +{
+>> +	return -ENODEV;
+>> +}
+> usually fallback functions return 0, is the error code intentional?
+ACK.
+>
+>> +int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
+>> +					struct snd_soc_jack *jack)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = snd_soc_card_jack_new(component->card, "USB Offload Playback Jack",
+> do we need the reference to Playback?
+No, will remove.
+>> +					SND_JACK_HEADPHONE, jack);
+> wondering if there would be any merit in defining a new type of jack,
+> e.g. SND_JACK_USB since here the purpose is to notify that there's a USB
+> device connected. The type of device does not really matter, does it?
+>
+Not as of now, but I think we discussed in the past that maybe depending on if playback and capture is supported, we can notify SND_JACK_HEADSET?  That is something I will need to change depending on how we want to handle the comments on patch#9
 
-> RMP: Reverse Map Table
-> SEV: Secure Encrypted Virtualization
-> SNP: Secure Nested Paging
-> 
-> These definitions are also available in AMD-APM vol 2: Chapter 15 [1]
-> 
-> [1]:
-> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf
-> 
-> Thanks,
-> Pavan
+Thanks
+
+Wesley Cheng
+
+>> +	if (ret < 0) {
+>> +		dev_err(component->card->dev, "Unable to add USB offload jack\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = snd_soc_component_set_jack(component, jack, NULL);
+>> +	if (ret) {
+>> +		dev_err(component->card->dev, "Failed to set jack: %d\n", ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return 0;
 
