@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-271110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B8FE9449AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:48:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0BE59449AC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC020B29028
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D05491C20D2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A701218453A;
-	Thu,  1 Aug 2024 10:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9411F184546;
+	Thu,  1 Aug 2024 10:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XRRm4+Z2"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="PXjIONh8"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D85761FD7;
-	Thu,  1 Aug 2024 10:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DCA61FD7
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509317; cv=none; b=i66prL73JzcRBKaTRLYD61tzNPyGUPiEupPYVTL4FKKMjx8HLykjwFJ3XfPoUiQz4frjAc8oK2ei833m113/6wwcBZW6PYFLQ5tPE+M7CH/XjKnD1M8vaAJ3tdX0gTsRq+o2HQH8IPLtadnEcKT15DndkDLD5dDIA9gFTG9bbVw=
+	t=1722509416; cv=none; b=dWYIJG78qRfDkTq2Dn3rtjcaMqBD2yhwTtwcCIMC49WHHFJRylyBRGk3cXCLeqXfpKLj+OzfjoL27X19XghCSIcwh1M9g8VdUpy/goSgyioKNErVl++IXOQUb3uj8eNBft1z9ZhOUyfAU5SAlBh3zkho9mt79HbbcBy3DCthf9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509317; c=relaxed/simple;
-	bh=zMj2kaT0XKsS7rrqSElo8aaZ9plwjhN+xqQDheijjKc=;
+	s=arc-20240116; t=1722509416; c=relaxed/simple;
+	bh=FzX9Oi8w1rb7TAtfeMJIxj7qYb3gZnjoJj39P4abMxM=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gleK/P4mLej/b8GqhSty7GCUf6fY2i733L/Hq3MT0kzl+PU0rF0Elvy8lP/sU3S8FCojw+KQ/Tq2H9n5iRXO2X73wUDGzLl12joHmvRczNsxywCTQlCIJUCNWecPAMzeqhEhjClPCR1dRb0jhxRJOmERqDvg7x5mSu05Caq6Sds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XRRm4+Z2; arc=none smtp.client-ip=185.70.40.133
+	 MIME-Version:Content-Type; b=WNqmGKFNm5wjAvGiBGiMrSQBWldg26E0cLll860aV5SnrgsyHJYBoQaLweY6qWprGqYSEotlg/NMYqW9/Zr4KJmgvfelJe92wDGiA1mClld6Tmv4rLrqvs8ZpJbKEpQ/akOls4yH0wAzlmSAu5tlmX1IAYDQMBaQY3kus5fgN+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=PXjIONh8; arc=none smtp.client-ip=185.70.40.134
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722509314; x=1722768514;
-	bh=lWoM4Uz32+QjRNv6Qi2IgDlBu29MBNkhXDzxAE4VsL4=;
+	s=protonmail; t=1722509412; x=1722768612;
+	bh=gMdZocEy01zU7HSY4Jv0StclRtNQ2rOH9J2qCOvUQpg=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=XRRm4+Z20OuyFz9Qn2mTNc6lEwkbkHOj1NkEaYimZWVpIbEnvVmJKo+fsnU4hsBTS
-	 QGZWT0ZmfmN0Gw3pndD2LQenC+0MoyQRacuiEVR+/KygBQ/nGl4iJuC7v3l0e5wjV3
-	 EF2DhL0fDsI/CQ03u6S/qj2V29mjXOO3lhN+0vPfMCc5zwgU+AnVmbEKEAhtfFHJIa
-	 QIlHw2m3pG6kYltPMI1no6cliIlutLOAVtbmlknnr0gLuGxmI7fNgybPAkbMV6H4nK
-	 +TanZcRwz3n0+0CBJTq8NipYwMRsXysw8Om7N8ACwU1c+WmCD5D8PodOgKBfvP2hVj
-	 iPmdp0bfNc9sg==
-Date: Thu, 01 Aug 2024 10:48:29 +0000
+	b=PXjIONh8Kto9reGwq1qKvJxpdLNXG6+YJGSTPM0hkI8x6hnAGkal6M3w+pOY08trk
+	 a7tJETI3Z7ADOP9extEIdOR4i7/g9Wqf4snplZ3zD+rO7tSRk1nSYIk1jQBC/WgYQw
+	 P8oLR60X/Sdb8onIbnW5t9FUTWfSrsHUw4vdaKl1mlBv9I7L6+cJoNb5LsuV98BtRm
+	 pL1XyZOgDu4/+309UsZ0mdJJ2IX8nFEVNv4SDDY75gMAsX8Pjin38/RNQIdLmEAB06
+	 yQyB3qAlaI/dNbg9osTkrdEIWj+QXhFcQvVAImYseAojVe8b7k9PBc7Y2PGRVPe0E2
+	 zhyh/ishbRSBA==
+Date: Thu, 01 Aug 2024 10:50:06 +0000
 To: Alice Ryhl <aliceryhl@google.com>
 From: Benno Lossin <benno.lossin@proton.me>
 Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v3 06/10] rust: list: add List
-Message-ID: <f94ec0db-9504-447d-8432-b3dc7015e63a@proton.me>
-In-Reply-To: <CAH5fLgjNCXwhUaHh7dxm-5LmFe-TtiizK2cWscSp9bkdknRywQ@mail.gmail.com>
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-6-89db92c7dbf4@google.com> <3e6a37d1-2460-42ce-8bc3-0b210759efa8@proton.me> <CAH5fLgjNCXwhUaHh7dxm-5LmFe-TtiizK2cWscSp9bkdknRywQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/10] rust: list: support heterogeneous lists
+Message-ID: <4af5a8fa-c27c-4ee5-9d2f-67a46bd34635@proton.me>
+In-Reply-To: <CAH5fLghkPgj560a2b_1oRnvuurEugT4TNj+o-fYhGsuSGpywPg@mail.gmail.com>
+References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-9-89db92c7dbf4@google.com> <2b548226-e323-466d-9f6d-762f6cbb5474@proton.me> <CAH5fLghkPgj560a2b_1oRnvuurEugT4TNj+o-fYhGsuSGpywPg@mail.gmail.com>
 Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 6e482b44ff1c2a8fd13b02dea0f1282d1ed39457
+X-Pm-Message-ID: e0c106a5abae8caf3adbab48a7e800a6c0333dfe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,100 +61,114 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On 01.08.24 11:40, Alice Ryhl wrote:
-> On Thu, Aug 1, 2024 at 11:11=E2=80=AFAM Benno Lossin <benno.lossin@proton=
+On 01.08.24 11:38, Alice Ryhl wrote:
+> On Thu, Aug 1, 2024 at 11:24=E2=80=AFAM Benno Lossin <benno.lossin@proton=
 .me> wrote:
 >>
 >> On 23.07.24 10:22, Alice Ryhl wrote:
->>> +    /// Add the provided item to the back of the list.
->>> +    pub fn push_back(&mut self, item: ListArc<T, ID>) {
->>> +        let raw_item =3D ListArc::into_raw(item);
->>> +        // SAFETY:
->>> +        // * We just got `raw_item` from a `ListArc`, so it's in an `A=
-rc`.
->>> +        // * If this requirement is violated, then the previous caller=
- of `prepare_to_insert`
->>> +        //   violated the safety requirement that they can't give up o=
-wnership of the `ListArc`
->>> +        //   until they call `post_remove`.
+>>> @@ -181,6 +185,47 @@ unsafe fn from_fields(me: *mut ListLinksFields) ->=
+ *mut Self {
+>>>      }
+>>>  }
+>>>
+>>> +/// Similar to [`ListLinks`], but also contains a pointer to the full =
+value.
+>>> +///
+>>> +/// This type can be used instead of [`ListLinks`] to support lists wi=
+th trait objects.
+>>> +#[repr(C)]
+>>> +pub struct ListLinksSelfPtr<T: ?Sized, const ID: u64 =3D 0> {
+>>> +    /// The `ListLinks` field inside this value.
+>>> +    ///
+>>> +    /// This is public so that it can be used with `impl_has_list_link=
+s!`.
+>>> +    pub inner: ListLinks<ID>,
+>>> +    self_ptr: UnsafeCell<MaybeUninit<*const T>>,
 >>
->> I don't like this negative phrasing, what about "Since we have ownership
->> of the `ListArc`, `post_remove` must have been called after each
->> previous call to `prepare_to_insert`."?
+>> Why do you need `MaybeUninit`?
 >=20
-> I think we just need to argue about the most recent call to
-> prepare_to_insert but ok.
+> Right now the constructor initializes it to MaybeUninit::zeroed().
+> What would you initialize it to without MaybeUninit? Remember that the
+> vtable pointer in a fat pointer has strict validity requirements.
 
-I would argue that's exactly what my version does. Maybe "Since we have
-ownership of the `ListArc`, the most recent call to `prepare_to_insert`
-must have had a matching `post_remove` call afterwards."
-But I liked the above version more.
+Oh... I forgot about that, can you add a comment about that? Also why
+not use `Opaque` in that case then?
 
->>> +        // * We own the `ListArc`.
->>> +        // * Removing items from this list is always done using `remov=
-e_internal_inner`, which
->>> +        //   calls `post_remove` before giving up ownership.
->>> +        let list_links =3D unsafe { T::prepare_to_insert(raw_item) };
->>> +        // SAFETY: We have not yet called `post_remove`, so `list_link=
-s` is still valid.
->>> +        let item =3D unsafe { ListLinks::fields(list_links) };
+>>> +}
 >>> +
->>> +        if self.first.is_null() {
->>> +            self.first =3D item;
->>> +            // SAFETY: The caller just gave us ownership of these fiel=
-ds.
->>> +            // INVARIANT: A linked list with one item should be cyclic=
-.
->>> +            unsafe {
->>> +                (*item).next =3D item;
->>> +                (*item).prev =3D item;
->>> +            }
->>> +        } else {
->>> +            let next =3D self.first;
->>> +            // SAFETY: By the type invariant, this pointer is valid or=
- null. We just checked that
->>> +            // it's not null, so it must be valid.
->>> +            let prev =3D unsafe { (*next).prev };
->>> +            // SAFETY: Pointers in a linked list are never dangling, a=
-nd the caller just gave us
->>> +            // ownership of the fields on `item`.
->>> +            // INVARIANT: This correctly inserts `item` between `prev`=
- and `next`.
->>> +            unsafe {
->>> +                (*item).next =3D next;
->>> +                (*item).prev =3D prev;
->>> +                (*prev).next =3D item;
->>> +                (*next).prev =3D item;
->>> +            }
+>>> +// SAFETY: The fields of a ListLinksSelfPtr can be moved across thread=
+ boundaries.
+>>> +unsafe impl<T: ?Sized + Send, const ID: u64> Send for ListLinksSelfPtr=
+<T, ID> {}
+>>> +// SAFETY: The type is opaque so immutable references to a ListLinksSe=
+lfPtr are useless. Therefore,
+>>> +// it's okay to have immutable access to a ListLinks from several thre=
+ads at once.
+>>> +//
+>>> +// Note that `inner` being a public field does not prevent this type f=
+rom being opaque, since
+>>> +// `inner` is a opaque type.
+>>> +unsafe impl<T: ?Sized + Sync, const ID: u64> Sync for ListLinksSelfPtr=
+<T, ID> {}
 >>
->> You have this pattern several times, maybe make a function for this?
->=20
-> It's just two times. I think it's fine.
-
-Sure, it seemed more in my mind.
-
->>> +        if !next.is_null() {
->>> +            // This is really a no-op, but this ensures that `item` is=
- a raw pointer that was
->>> +            // obtained without going through a pointer->reference->po=
-inter conversion rountrip.
->>> +            // This ensures that the list is valid under the more rest=
-rictive strict provenance
->>> +            // ruleset.
+>> [...]
+>>
+>>> @@ -135,5 +178,91 @@ unsafe fn post_remove(me: *mut $crate::list::ListL=
+inks<$num>) -> *const Self {
+>>>              }
+>>>          }
+>>>      };
+>>> +
+>>> +    (
+>>> +        impl$({$($generics:tt)*})? ListItem<$num:tt> for $t:ty {
+>>> +            using ListLinksSelfPtr;
+>>> +        } $($rest:tt)*
+>>> +    ) =3D> {
+>>> +        // SAFETY: See GUARANTEES comment on each method.
+>>> +        unsafe impl$(<$($generics)*>)? $crate::list::ListItem<$num> fo=
+r $t {
+>>> +            // GUARANTEES:
+>>> +            // This implementation of `ListItem` will not give out exc=
+lusive access to the same
+>>> +            // `ListLinks` several times because calls to `prepare_to_=
+insert` and `post_remove`
+>>> +            // must alternate and exclusive access is given up when `p=
+ost_remove` is called.
 >>> +            //
->>> +            // SAFETY: We just checked that `next` is not null, and it=
-'s not dangling by the
->>> +            // list invariants.
->>> +            unsafe {
->>> +                debug_assert_eq!(item, (*next).prev);
->>> +                item =3D (*next).prev;
->>> +            }
+>>> +            // Other invocations of `impl_list_item!` also cannot give=
+ out exclusive access to the
+>>> +            // same `ListLinks` because you can only implement `ListIt=
+em` once for each value of
+>>> +            // `ID`, and the `ListLinks` fields only work with the spe=
+cified `ID`.
+>>> +            unsafe fn prepare_to_insert(me: *const Self) -> *mut $crat=
+e::list::ListLinks<$num> {
+>>> +                // SAFETY: The caller promises that `me` points at a v=
+alid value of type `Self`.
+>>> +                let links_field =3D unsafe { <Self as $crate::list::Li=
+stItem<$num>>::view_links(me) };
+>>> +
+>>> +                let spoff =3D $crate::list::ListLinksSelfPtr::<Self, $=
+num>::LIST_LINKS_SELF_PTR_OFFSET;
+>>> +                // SAFETY: The constant is equal to `offset_of!(ListLi=
+nksSelfPtr, self_ptr)`, so
+>>> +                // the pointer stays in bounds of the allocation.
+>>> +                let self_ptr =3D unsafe { (links_field as *const u8).a=
+dd(spoff) }
+>>> +                    as *const ::core::cell::UnsafeCell<*const Self>;
 >>
->> How bad do you reckon is this for performance?
+>> A bit confused why you need to do it this way, can't you just do this?:
+>>
+>>     let links_self_field =3D links_field.cast::<$crate::list::ListLinksS=
+elfPtr>();
+>>     // SAFETY: ...
+>>     let self_ptr =3D unsafe { ::core::ptr::addr_of_mut!((*links_self_fie=
+ld).self_ptr) };
 >=20
-> I don't think it's a problem at all.
+> If nothing else, the field is not public. I can't remember if there
+> was another reason.
 
-Sounds good.
+Oh yeah that's true, then you have to go via the offset.
 
 ---
 Cheers,
