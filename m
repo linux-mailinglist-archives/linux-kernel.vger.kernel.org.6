@@ -1,315 +1,256 @@
-Return-Path: <linux-kernel+bounces-271839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC0D9453CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:45:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C139453D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:48:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2043B22C22
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547DF287777
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:48:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D907F14A60E;
-	Thu,  1 Aug 2024 20:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FE214A60F;
+	Thu,  1 Aug 2024 20:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="TDKAyXJl"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pc7fF7tH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B7713DDA3;
-	Thu,  1 Aug 2024 20:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBFF13DDA3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 20:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722545147; cv=none; b=AT+dkMZz+fQtjPAgp+YTzeUMqQaAwngAFnlOMocSBEml6UDC4I3VRyLJyYuhC26nc0oy2Lks4wVvA2lr3CShf2S84R7somrMMCAWntbOh/MOjwGD5nfRCF07QvSJBkM0dQnlyTaJbHGkeJa3Daxlxre9zVeKE2xWmjbtk3KcTew=
+	t=1722545283; cv=none; b=mHArDh+AJYeHzEZ+JZvddtDdEU6hRzk9Wco+Qhml/gKSj7iFsax1Y+wwV0kKI5lFWGu9cXSGO2PknFZ2lNmG8TxHTXjHyNP+LmWS6tOlWNFXQGWBkv9L4T6U0vZ6jqB/XdtAf8NGURic6BAGKxdsmu9kw0avV8ryprOdgmMomOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722545147; c=relaxed/simple;
-	bh=mRCJoLNo/ClGYp9kqKLcGGQ71Wf0XCz0964N2mkdT48=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nyo/Gndr0aCtDlMmDfm8v+Ew4v58GynuoMa3d70l30kHkyuwNt8W8BLFgzoASxAhPiGEvcuKpWplJbmGhRfX1zs1CAb8YB3hbpR0qFU/SwnRReJd6nl8fCNoIIhHTyuSlSUFzyt8LTWulV0XdbpqNfP8k2KRdtjs3dZxsKH4FyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=TDKAyXJl; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1722545132; x=1723149932; i=deller@gmx.de;
-	bh=Val38mT4EFBf83cRJQQiOok/CpEe6U7DASQ5SF4Q5Kc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=TDKAyXJlZduayWRqQPQA1wZM5Qa0HKKF3Jw6vQCv8FVpP4frBJX5tbkJPeghtw0z
-	 xanlDrZjr3GXmLH7eiNj7Ui075/uoHXZBpjTxrn793kjiB1eqX+g/O7xPfoym43JY
-	 mGhs3Xqnv7IQVjoGOq01AiOoCJw3DSQNbLRQ4yS1BG9cr5mwvRIxUivD8p0VymF1w
-	 K65DxPJ09prmsgD7RpDZlQwQj/yngXjyrgbZkfFzuRD/1MNzaWb9rFQte7sFlGhPM
-	 DqK3OGrvSSfaiKOXreSu/As5HpfOm5D3OupYGJ++EbKM7hyKqMKWVU+y7g61bl0/x
-	 Lk14Ac9+OfBxUqClhw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.33]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1McpJg-1rzjd03GUM-00lfVL; Thu, 01
- Aug 2024 22:45:32 +0200
-Message-ID: <a7a1b5b7-9d98-4c3f-a5c4-36c692c12418@gmx.de>
-Date: Thu, 1 Aug 2024 22:45:32 +0200
+	s=arc-20240116; t=1722545283; c=relaxed/simple;
+	bh=f/ta1V5inV1zpc12uKgbtmXjcGVloY+Vkw4P+YRfXcE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z43mZI7N6oY5xg9aG5qytIojnC4patlZM1wyHuG5JU3l8Wet0BgMOiq5UyMaNgiDlgfNyfnoB8U6DP9dtfUP5CdcH7+BSh4ZgBzsKR3Kkbjs1WLQq7iZ97Qy6NmNB3Rm6OSDuTJ5toD1LG6WmccniXqOYKy7DMPRUoUcSj+Uyd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pc7fF7tH; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722545279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Em9QXh7s0f8Gn7XuNBOkOXxpgK+MAGfwo3YiJhSDOFc=;
+	b=Pc7fF7tH2zPV4WB5becZqS7HstISpKm3ZZiHP0Jo9VbnGHiXZ+4c9KFGvDrqOFU57d8BPF
+	Y7kNB/xxriMGaGZOKX/nVx5WwjCqp/KZEfksZcq/NRBetm7ouEBgsKnJViv6OUHV7KjkkP
+	nVoUzNCm0DyS1sZIiCsNZ+rGRgN219A=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-226-B3EKHJcyNv-z5L-25fzwYw-1; Thu,
+ 01 Aug 2024 16:47:55 -0400
+X-MC-Unique: B3EKHJcyNv-z5L-25fzwYw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DE0C61955D48;
+	Thu,  1 Aug 2024 20:47:53 +0000 (UTC)
+Received: from t14s.redhat.com (unknown [10.39.192.46])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id D526819560AA;
+	Thu,  1 Aug 2024 20:47:49 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>,
+	Peter Xu <peterx@redhat.com>,
+	stable@vger.kernel.org,
+	Oscar Salvador <osalvador@suse.de>,
+	Muchun Song <muchun.song@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>
+Subject: [PATCH v4] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+Date: Thu,  1 Aug 2024 22:47:48 +0200
+Message-ID: <20240801204748.99107-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] video: Handle HAS_IOPORT dependencies
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- Arnd Bergmann <arnd@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- linux-kernel@vger.kernel.org
-References: <20240410142329.3567824-1-schnelle@linux.ibm.com>
- <20240410142329.3567824-2-schnelle@linux.ibm.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- xsFNBF3Ia3MBEAD3nmWzMgQByYAWnb9cNqspnkb2GLVKzhoH2QD4eRpyDLA/3smlClbeKkWT
- HLnjgkbPFDmcmCz5V0Wv1mKYRClAHPCIBIJgyICqqUZo2qGmKstUx3pFAiztlXBANpRECgwJ
- r+8w6mkccOM9GhoPU0vMaD/UVJcJQzvrxVHO8EHS36aUkjKd6cOpdVbCt3qx8cEhCmaFEO6u
- CL+k5AZQoABbFQEBocZE1/lSYzaHkcHrjn4cQjc3CffXnUVYwlo8EYOtAHgMDC39s9a7S90L
- 69l6G73lYBD/Br5lnDPlG6dKfGFZZpQ1h8/x+Qz366Ojfq9MuuRJg7ZQpe6foiOtqwKym/zV
- dVvSdOOc5sHSpfwu5+BVAAyBd6hw4NddlAQUjHSRs3zJ9OfrEx2d3mIfXZ7+pMhZ7qX0Axlq
- Lq+B5cfLpzkPAgKn11tfXFxP+hcPHIts0bnDz4EEp+HraW+oRCH2m57Y9zhcJTOJaLw4YpTY
- GRUlF076vZ2Hz/xMEvIJddRGId7UXZgH9a32NDf+BUjWEZvFt1wFSW1r7zb7oGCwZMy2LI/G
- aHQv/N0NeFMd28z+deyxd0k1CGefHJuJcOJDVtcE1rGQ43aDhWSpXvXKDj42vFD2We6uIo9D
- 1VNre2+uAxFzqqf026H6cH8hin9Vnx7p3uq3Dka/Y/qmRFnKVQARAQABzRxIZWxnZSBEZWxs
- ZXIgPGRlbGxlckBnbXguZGU+wsGRBBMBCAA7AhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
- FiEERUSCKCzZENvvPSX4Pl89BKeiRgMFAl3J1zsCGQEACgkQPl89BKeiRgNK7xAAg6kJTPje
- uBm9PJTUxXaoaLJFXbYdSPfXhqX/BI9Xi2VzhwC2nSmizdFbeobQBTtRIz5LPhjk95t11q0s
- uP5htzNISPpwxiYZGKrNnXfcPlziI2bUtlz4ke34cLK6MIl1kbS0/kJBxhiXyvyTWk2JmkMi
- REjR84lCMAoJd1OM9XGFOg94BT5aLlEKFcld9qj7B4UFpma8RbRUpUWdo0omAEgrnhaKJwV8
- qt0ULaF/kyP5qbI8iA2PAvIjq73dA4LNKdMFPG7Rw8yITQ1Vi0DlDgDT2RLvKxEQC0o3C6O4
- iQq7qamsThLK0JSDRdLDnq6Phv+Yahd7sDMYuk3gIdoyczRkXzncWAYq7XTWl7nZYBVXG1D8
- gkdclsnHzEKpTQIzn/rGyZshsjL4pxVUIpw/vdfx8oNRLKj7iduf11g2kFP71e9v2PP94ik3
- Xi9oszP+fP770J0B8QM8w745BrcQm41SsILjArK+5mMHrYhM4ZFN7aipK3UXDNs3vjN+t0zi
- qErzlrxXtsX4J6nqjs/mF9frVkpv7OTAzj7pjFHv0Bu8pRm4AyW6Y5/H6jOup6nkJdP/AFDu
- 5ImdlA0jhr3iLk9s9WnjBUHyMYu+HD7qR3yhX6uWxg2oB2FWVMRLXbPEt2hRGq09rVQS7DBy
- dbZgPwou7pD8MTfQhGmDJFKm2jvOwU0EXchrcwEQAOsDQjdtPeaRt8EP2pc8tG+g9eiiX9Sh
- rX87SLSeKF6uHpEJ3VbhafIU6A7hy7RcIJnQz0hEUdXjH774B8YD3JKnAtfAyuIU2/rOGa/v
- UN4BY6U6TVIOv9piVQByBthGQh4YHhePSKtPzK9Pv/6rd8H3IWnJK/dXiUDQllkedrENXrZp
- eLUjhyp94ooo9XqRl44YqlsrSUh+BzW7wqwfmu26UjmAzIZYVCPCq5IjD96QrhLf6naY6En3
- ++tqCAWPkqKvWfRdXPOz4GK08uhcBp3jZHTVkcbo5qahVpv8Y8mzOvSIAxnIjb+cklVxjyY9
- dVlrhfKiK5L+zA2fWUreVBqLs1SjfHm5OGuQ2qqzVcMYJGH/uisJn22VXB1c48yYyGv2HUN5
- lC1JHQUV9734I5cczA2Gfo27nTHy3zANj4hy+s/q1adzvn7hMokU7OehwKrNXafFfwWVK3OG
- 1dSjWtgIv5KJi1XZk5TV6JlPZSqj4D8pUwIx3KSp0cD7xTEZATRfc47Yc+cyKcXG034tNEAc
- xZNTR1kMi9njdxc1wzM9T6pspTtA0vuD3ee94Dg+nDrH1As24uwfFLguiILPzpl0kLaPYYgB
- wumlL2nGcB6RVRRFMiAS5uOTEk+sJ/tRiQwO3K8vmaECaNJRfJC7weH+jww1Dzo0f1TP6rUa
- fTBRABEBAAHCwXYEGAEIACAWIQRFRIIoLNkQ2+89Jfg+Xz0Ep6JGAwUCXchrcwIbDAAKCRA+
- Xz0Ep6JGAxtdEAC54NQMBwjUNqBNCMsh6WrwQwbg9tkJw718QHPw43gKFSxFIYzdBzD/YMPH
- l+2fFiefvmI4uNDjlyCITGSM+T6b8cA7YAKvZhzJyJSS7pRzsIKGjhk7zADL1+PJei9p9idy
- RbmFKo0dAL+ac0t/EZULHGPuIiavWLgwYLVoUEBwz86ZtEtVmDmEsj8ryWw75ZIarNDhV74s
- BdM2ffUJk3+vWe25BPcJiaZkTuFt+xt2CdbvpZv3IPrEkp9GAKof2hHdFCRKMtgxBo8Kao6p
- Ws/Vv68FusAi94ySuZT3fp1xGWWf5+1jX4ylC//w0Rj85QihTpA2MylORUNFvH0MRJx4mlFk
- XN6G+5jIIJhG46LUucQ28+VyEDNcGL3tarnkw8ngEhAbnvMJ2RTx8vGh7PssKaGzAUmNNZiG
- MB4mPKqvDZ02j1wp7vthQcOEg08z1+XHXb8ZZKST7yTVa5P89JymGE8CBGdQaAXnqYK3/yWf
- FwRDcGV6nxanxZGKEkSHHOm8jHwvQWvPP73pvuPBEPtKGLzbgd7OOcGZWtq2hNC6cRtsRdDx
- 4TAGMCz4j238m+2mdbdhRh3iBnWT5yPFfnv/2IjFAk+sdix1Mrr+LIDF++kiekeq0yUpDdc4
- ExBy2xf6dd+tuFFBp3/VDN4U0UfG4QJ2fg19zE5Z8dS4jGIbLg==
-In-Reply-To: <20240410142329.3567824-2-schnelle@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lzYvjcjDyDNxEaHtrDlJ0rIuzfB/w2Ev8lE30ZhORoaIL1jTTo2
- WDuOrQkwWQcwBm71GpUHs7kTE5nQpoMP8wNnBda3FotxwQ9YZG6Uahzur+1iOuzT3LO5bY+
- svWo1mySdZKnoAxgO6JVy6mA53kaYjqAK5e7N16QlY/tktEBm10Ko9yvLxPe0LkkJrue95Y
- SGYxdsw/pDGuHnIJl0Vew==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/JHtuh+UIs0=;wLU1+TfU5Egd/kMuFonftWx3N52
- stXkP4Wzdoi3LaKPEQAfmDoAKlXT3rCQH6k4Q80BGVottqaFGfYJnL6o+Y9zgSZUg6t7XtneY
- J+Tj0OJCqNBTw1Z/Um5n7wYuD4gUtKtj9SVqFYnkxFaz0SDeNW7W+bu01lotppDxSQOrhWHVK
- IViq4cNsLUCQpIY6SsJEb0WKJRvzyX9Q05BfMVo10mI4U6iKhAtbt70Jaoz++Xfp4giGizR+1
- jwhzVsZo3xLUhm1lrIPYcuJbomzXwM7Bou9Ytr0fo3tlYDNrT+rpixRjlilOR2aiLGF0pigVD
- TEoK3hUxy3lAU9HHYY+XfiIxXW0YQjS5MB4yCgmlkIW6JHSw/Z+T7HlLfeUifFKqYLgtk4Il6
- yqarvNQsAhmGD1W2k4KR8uwYBc/yHpeoHzb9VuKn5mEM0CAdd9Spij9/JqIsK6aTTFQMgqq+q
- 7sk5ZumFCjISV4MbMejlHPMxaYQM4c5Q2S95jL9CZSDEVDV254VWlNM2SGLiX5tgh7N55SRRN
- QF668h4gZJWIqD9Qp6TVfz3RrpueHBt/zzC/ssEiPTKwb4m9AAgwp8ugbGq5ifjfFOHlpazHo
- uH6MAKX0ArH9Ihf3S4pcQiVraVH+rFxRhGeC2rkE6Ya2aBEx08n00YyDq2xnGWcAj/g8075mi
- gx2kppZfk9gt4vP62neoY5+3fFaw8jbmjOEB0i62oPguphL6AcBxF9Xp8USvR1yJEZRoH7p3m
- LjrU3JeExPwrrf587cCbEwJ3ug/m+LaAYB6lZtZJmSZdrvovB3K20nCdytmTBJXzsrXhwN4cF
- yXbSngScbkjlMOmrTaYbGcyQ==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On 4/10/24 16:23, Niklas Schnelle wrote:
-> In a future patch HAS_IOPORT=3Dn will disable inb()/outb() and friends a=
-t
-> compile time. We thus need to #ifdef functions and their callsites which
-> unconditionally use these I/O accessors. In the include/video/vga.h
-> these are conveniently all those functions with the vga_io_* prefix.
->
-> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+We recently made GUP's common page table walking code to also walk hugetlb
+VMAs without most hugetlb special-casing, preparing for the future of
+having less hugetlb-specific page table walking code in the codebase.
+Turns out that we missed one page table locking detail: page table locking
+for hugetlb folios that are not mapped using a single PMD/PUD.
 
-I've applied this patch now to the for-next fbdev git tree.
+Assume we have hugetlb folio that spans multiple PTEs (e.g., 64 KiB
+hugetlb folios on arm64 with 4 KiB base page size). GUP, as it walks the
+page tables, will perform a pte_offset_map_lock() to grab the PTE table
+lock.
 
-Please let me know if you prefer another patch....
+However, hugetlb that concurrently modifies these page tables would
+actually grab the mm->page_table_lock: with USE_SPLIT_PTE_PTLOCKS, the
+locks would differ. Something similar can happen right now with hugetlb
+folios that span multiple PMDs when USE_SPLIT_PMD_PTLOCKS.
 
-Thanks!
-Helge
+This issue can be reproduced [1], for example triggering:
 
+[ 3105.936100] ------------[ cut here ]------------
+[ 3105.939323] WARNING: CPU: 31 PID: 2732 at mm/gup.c:142 try_grab_folio+0x11c/0x188
+[ 3105.944634] Modules linked in: [...]
+[ 3105.974841] CPU: 31 PID: 2732 Comm: reproducer Not tainted 6.10.0-64.eln141.aarch64 #1
+[ 3105.980406] Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-4.fc40 05/24/2024
+[ 3105.986185] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+[ 3105.991108] pc : try_grab_folio+0x11c/0x188
+[ 3105.994013] lr : follow_page_pte+0xd8/0x430
+[ 3105.996986] sp : ffff80008eafb8f0
+[ 3105.999346] x29: ffff80008eafb900 x28: ffffffe8d481f380 x27: 00f80001207cff43
+[ 3106.004414] x26: 0000000000000001 x25: 0000000000000000 x24: ffff80008eafba48
+[ 3106.009520] x23: 0000ffff9372f000 x22: ffff7a54459e2000 x21: ffff7a546c1aa978
+[ 3106.014529] x20: ffffffe8d481f3c0 x19: 0000000000610041 x18: 0000000000000001
+[ 3106.019506] x17: 0000000000000001 x16: ffffffffffffffff x15: 0000000000000000
+[ 3106.024494] x14: ffffb85477fdfe08 x13: 0000ffff9372ffff x12: 0000000000000000
+[ 3106.029469] x11: 1fffef4a88a96be1 x10: ffff7a54454b5f0c x9 : ffffb854771b12f0
+[ 3106.034324] x8 : 0008000000000000 x7 : ffff7a546c1aa980 x6 : 0008000000000080
+[ 3106.038902] x5 : 00000000001207cf x4 : 0000ffff9372f000 x3 : ffffffe8d481f000
+[ 3106.043420] x2 : 0000000000610041 x1 : 0000000000000001 x0 : 0000000000000000
+[ 3106.047957] Call trace:
+[ 3106.049522]  try_grab_folio+0x11c/0x188
+[ 3106.051996]  follow_pmd_mask.constprop.0.isra.0+0x150/0x2e0
+[ 3106.055527]  follow_page_mask+0x1a0/0x2b8
+[ 3106.058118]  __get_user_pages+0xf0/0x348
+[ 3106.060647]  faultin_page_range+0xb0/0x360
+[ 3106.063651]  do_madvise+0x340/0x598
 
-> ---
-> Note: This patch does not depend any not-yet-mainline HAS_IOPORT changes
-> and may be merged via subsystem specific trees at your earliest
-> convenience.
->
->   include/video/vga.h | 35 +++++++++++++++++++++++++----------
->   1 file changed, 25 insertions(+), 10 deletions(-)
->
-> diff --git a/include/video/vga.h b/include/video/vga.h
-> index 947c0abd04ef..ed89295941c4 100644
-> --- a/include/video/vga.h
-> +++ b/include/video/vga.h
-> @@ -201,6 +201,7 @@ extern int restore_vga(struct vgastate *state);
->    * generic VGA port read/write
->    */
->
-> +#ifdef CONFIG_HAS_IOPORT
->   static inline unsigned char vga_io_r (unsigned short port)
->   {
->   	return inb_p(port);
-> @@ -210,12 +211,12 @@ static inline void vga_io_w (unsigned short port, =
-unsigned char val)
->   {
->   	outb_p(val, port);
->   }
-> -
->   static inline void vga_io_w_fast (unsigned short port, unsigned char r=
-eg,
->   				  unsigned char val)
->   {
->   	outw(VGA_OUT16VAL (val, reg), port);
->   }
-> +#endif /* CONFIG_HAS_IOPORT */
->
->   static inline unsigned char vga_mm_r (void __iomem *regbase, unsigned =
-short port)
->   {
-> @@ -235,28 +236,34 @@ static inline void vga_mm_w_fast (void __iomem *re=
-gbase, unsigned short port,
->
->   static inline unsigned char vga_r (void __iomem *regbase, unsigned sho=
-rt port)
->   {
-> -	if (regbase)
-> -		return vga_mm_r (regbase, port);
-> -	else
-> +#ifdef CONFIG_HAS_IOPORT
-> +	if (!regbase)
->   		return vga_io_r (port);
-> +	else
-> +#endif /* CONFIG_HAS_IOPORT */
-> +		return vga_mm_r (regbase, port);
->   }
->
->   static inline void vga_w (void __iomem *regbase, unsigned short port, =
-unsigned char val)
->   {
-> -	if (regbase)
-> -		vga_mm_w (regbase, port, val);
-> -	else
-> +#ifdef CONFIG_HAS_IOPORT
-> +	if (!regbase)
->   		vga_io_w (port, val);
-> +	else
-> +#endif /* CONFIG_HAS_IOPORT */
-> +		vga_mm_w (regbase, port, val);
->   }
->
->
->   static inline void vga_w_fast (void __iomem *regbase, unsigned short p=
-ort,
->   			       unsigned char reg, unsigned char val)
->   {
-> -	if (regbase)
-> -		vga_mm_w_fast (regbase, port, reg, val);
-> -	else
-> +#ifdef CONFIG_HAS_IOPORT
-> +	if (!regbase)
->   		vga_io_w_fast (port, reg, val);
-> +	else
-> +#endif /* CONFIG_HAS_IOPORT */
-> +		vga_mm_w_fast (regbase, port, reg, val);
->   }
->
->
-> @@ -280,6 +287,7 @@ static inline void vga_wcrt (void __iomem *regbase, =
-unsigned char reg, unsigned
->   #endif /* VGA_OUTW_WRITE */
->   }
->
-> +#ifdef CONFIG_HAS_IOPORT
->   static inline unsigned char vga_io_rcrt (unsigned char reg)
->   {
->           vga_io_w (VGA_CRT_IC, reg);
-> @@ -295,6 +303,7 @@ static inline void vga_io_wcrt (unsigned char reg, u=
-nsigned char val)
->           vga_io_w (VGA_CRT_DC, val);
->   #endif /* VGA_OUTW_WRITE */
->   }
-> +#endif /* CONFIG_HAS_IOPORT */
->
->   static inline unsigned char vga_mm_rcrt (void __iomem *regbase, unsign=
-ed char reg)
->   {
-> @@ -333,6 +342,7 @@ static inline void vga_wseq (void __iomem *regbase, =
-unsigned char reg, unsigned
->   #endif /* VGA_OUTW_WRITE */
->   }
->
-> +#ifdef CONFIG_HAS_IOPORT
->   static inline unsigned char vga_io_rseq (unsigned char reg)
->   {
->           vga_io_w (VGA_SEQ_I, reg);
-> @@ -348,6 +358,7 @@ static inline void vga_io_wseq (unsigned char reg, u=
-nsigned char val)
->           vga_io_w (VGA_SEQ_D, val);
->   #endif /* VGA_OUTW_WRITE */
->   }
-> +#endif /* CONFIG_HAS_IOPORT */
->
->   static inline unsigned char vga_mm_rseq (void __iomem *regbase, unsign=
-ed char reg)
->   {
-> @@ -385,6 +396,7 @@ static inline void vga_wgfx (void __iomem *regbase, =
-unsigned char reg, unsigned
->   #endif /* VGA_OUTW_WRITE */
->   }
->
-> +#ifdef CONFIG_HAS_IOPORT
->   static inline unsigned char vga_io_rgfx (unsigned char reg)
->   {
->           vga_io_w (VGA_GFX_I, reg);
-> @@ -400,6 +412,7 @@ static inline void vga_io_wgfx (unsigned char reg, u=
-nsigned char val)
->           vga_io_w (VGA_GFX_D, val);
->   #endif /* VGA_OUTW_WRITE */
->   }
-> +#endif /* CONFIG_HAS_IOPORT */
->
->   static inline unsigned char vga_mm_rgfx (void __iomem *regbase, unsign=
-ed char reg)
->   {
-> @@ -434,6 +447,7 @@ static inline void vga_wattr (void __iomem *regbase,=
- unsigned char reg, unsigned
->           vga_w (regbase, VGA_ATT_W, val);
->   }
->
-> +#ifdef CONFIG_HAS_IOPORT
->   static inline unsigned char vga_io_rattr (unsigned char reg)
->   {
->           vga_io_w (VGA_ATT_IW, reg);
-> @@ -445,6 +459,7 @@ static inline void vga_io_wattr (unsigned char reg, =
-unsigned char val)
->           vga_io_w (VGA_ATT_IW, reg);
->           vga_io_w (VGA_ATT_W, val);
->   }
-> +#endif /* CONFIG_HAS_IOPORT */
->
->   static inline unsigned char vga_mm_rattr (void __iomem *regbase, unsig=
-ned char reg)
->   {
+Let's make huge_pte_lockptr() effectively use the same PT locks as any
+core-mm page table walker would. Add ptep_lockptr() to obtain the PTE
+page table lock using a pte pointer -- unfortunately we cannot convert
+pte_lockptr() because virt_to_page() doesn't work with kmap'ed page
+tables we can have with CONFIG_HIGHPTE.
+
+Handle CONFIG_PGTABLE_LEVELS correctly by checking in reverse order,
+such that when e.g., CONFIG_PGTABLE_LEVELS==2 with
+PGDIR_SIZE==P4D_SIZE==PUD_SIZE==PMD_SIZE will work as expected.
+Document why that works.
+
+There is one ugly case: powerpc 8xx, whereby we have an 8 MiB hugetlb
+folio being mapped using two PTE page tables.  While hugetlb wants to take
+the PMD table lock, core-mm would grab the PTE table lock of one of both
+PTE page tables.  In such corner cases, we have to make sure that both
+locks match, which is (fortunately!) currently guaranteed for 8xx as it
+does not support SMP and consequently doesn't use split PT locks.
+
+[1] https://lore.kernel.org/all/1bbfcc7f-f222-45a5-ac44-c5a1381c596d@redhat.com/
+
+Fixes: 9cb28da54643 ("mm/gup: handle hugetlb in the generic follow_page_mask code")
+Acked-by: Peter Xu <peterx@redhat.com>
+Cc: <stable@vger.kernel.org>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: Oscar Salvador <osalvador@suse.de>
+Cc: Muchun Song <muchun.song@linux.dev>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+
+@James, I dropped your RB.
+
+Retested on arm64 and x86-64. Cross-compiled on a bunch of others.
+
+v3 -> v4:
+* Replace PTE pointer alignment by BUILD_BUG_ON()
+* Simplify lock lookup by looking up in reverse
+* Adjust comment and patch description
+
+v2 -> v3:
+* Handle CONFIG_PGTABLE_LEVELS oddities as good as possible. It's a mess.
+  Remove the size >= P4D_SIZE check and simply default to the
+  &mm->page_table_lock.
+* Align the PTE pointer to the start of the page table to handle PTE page
+  tables bigger than a single page (unclear if this could currently trigger).
+* Extend patch description
+
+v1 -> 2:
+* Extend patch description
+* Drop "mm: let pte_lockptr() consume a pte_t pointer"
+* Introduce ptep_lockptr() in this patch
+
+---
+ include/linux/hugetlb.h | 33 ++++++++++++++++++++++++++++++---
+ include/linux/mm.h      | 11 +++++++++++
+ 2 files changed, 41 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 8e462205400d..ac3ea8596f93 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -938,10 +938,37 @@ static inline bool htlb_allow_alloc_fallback(int reason)
+ static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+ 					   struct mm_struct *mm, pte_t *pte)
+ {
+-	if (huge_page_size(h) == PMD_SIZE)
++	const unsigned long size = huge_page_size(h);
++
++	VM_WARN_ON(size == PAGE_SIZE);
++
++	/*
++	 * hugetlb must use the exact same PT locks as core-mm page table
++	 * walkers would. When modifying a PTE table, hugetlb must take the
++	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
++	 * PT lock etc.
++	 *
++	 * The expectation is that any hugetlb folio smaller than a PMD is
++	 * always mapped into a single PTE table and that any hugetlb folio
++	 * smaller than a PUD (but at least as big as a PMD) is always mapped
++	 * into a single PMD table.
++	 *
++	 * If that does not hold for an architecture, then that architecture
++	 * must disable split PT locks such that all *_lockptr() functions
++	 * will give us the same result: the per-MM PT lock.
++	 *
++	 * Note that with e.g., CONFIG_PGTABLE_LEVELS=2 where
++	 * PGDIR_SIZE==P4D_SIZE==PUD_SIZE==PMD_SIZE, we'd use pud_lockptr()
++	 * and core-mm would use pmd_lockptr(). However, in such configurations
++	 * split PMD locks are disabled -- they don't make sense on a single
++	 * PGDIR page table -- and the end result is the same.
++	 */
++	if (size >= PUD_SIZE)
++		return pud_lockptr(mm, (pud_t *) pte);
++	else if (size >= PMD_SIZE || IS_ENABLED(CONFIG_HIGHPTE))
+ 		return pmd_lockptr(mm, (pmd_t *) pte);
+-	VM_BUG_ON(huge_page_size(h) == PAGE_SIZE);
+-	return &mm->page_table_lock;
++	/* pte_alloc_huge() only applies with !CONFIG_HIGHPTE */
++	return ptep_lockptr(mm, pte);
+ }
+ 
+ #ifndef hugepages_supported
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a890a1731c14..bd219ac9c026 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2869,6 +2869,13 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+ 	return ptlock_ptr(page_ptdesc(pmd_page(*pmd)));
+ }
+ 
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++	BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
++	BUILD_BUG_ON(MAX_PTRS_PER_PTE * sizeof(pte_t) > PAGE_SIZE);
++	return ptlock_ptr(virt_to_ptdesc(pte));
++}
++
+ static inline bool ptlock_init(struct ptdesc *ptdesc)
+ {
+ 	/*
+@@ -2893,6 +2900,10 @@ static inline spinlock_t *pte_lockptr(struct mm_struct *mm, pmd_t *pmd)
+ {
+ 	return &mm->page_table_lock;
+ }
++static inline spinlock_t *ptep_lockptr(struct mm_struct *mm, pte_t *pte)
++{
++	return &mm->page_table_lock;
++}
+ static inline void ptlock_cache_init(void) {}
+ static inline bool ptlock_init(struct ptdesc *ptdesc) { return true; }
+ static inline void ptlock_free(struct ptdesc *ptdesc) {}
+-- 
+2.45.2
 
 
