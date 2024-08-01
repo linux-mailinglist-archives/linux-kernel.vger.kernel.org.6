@@ -1,133 +1,97 @@
-Return-Path: <linux-kernel+bounces-271066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4764794490D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:08:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89C56944914
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:09:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F45C1C21FE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:08:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33C681F2470D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A927183CA8;
-	Thu,  1 Aug 2024 10:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXl6XfVw"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C56913D24D;
+	Thu,  1 Aug 2024 10:09:12 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9497B174EEB;
-	Thu,  1 Aug 2024 10:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0EF1607A5;
+	Thu,  1 Aug 2024 10:09:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722506875; cv=none; b=ZmExBWe5zAR+cOGlD15LpPLHtdtwyCr2eziKpeXPsQXpO3LFwGDoJrAGKevmrCpspPjalQ1jx9h9/HFkiRDBMQ+5e28ncU3CdJP/2NfU66WPw7n6L4slDCggakecQmsgvz1klbeut+mIoNWePWB2lOcOl6jntmwcs4IrEBiHgW0=
+	t=1722506952; cv=none; b=J9Ez2IHvBFDo4NdEwv4OTdV8UrHW5CBgtQI8DPN7NrXrKzCA5JBRokBwJjDhkW/gYotcryayMlfG6FTS5NJ4ewIPE9uodPy4nCwYvdNzRdeFhENjOjqM6/XYGe20r/6ziRJmdK3x5JYawrn2iM+DtRdDN4GM1pDXT9hSafVJ1gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722506875; c=relaxed/simple;
-	bh=1omcIl0ySlr8+5216FhuGPRNQkd7nfMr+PkPp6A7HmE=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IIKOpcMyG9xy3Fj9vvkPaF3lDgbgN9Qjk1MNP7rz35ILJcWhVPtcOv9B+vjmJzt2+I+dwCQcQWXYCOYA6CIih2vioIrx+eO+V+/KQ4kaQQHwmZwDSOwSKsLqvN9weqigqU17pn1+9Nu00xrU7EmnhvTaZPI5zaEpA50GaX//ito=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXl6XfVw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F19EC32786;
-	Thu,  1 Aug 2024 10:07:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722506875;
-	bh=1omcIl0ySlr8+5216FhuGPRNQkd7nfMr+PkPp6A7HmE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dXl6XfVwOB9GlSLpifm4SQnLN1SxN9WD5f/MTtx+7gzr1ecINtOADxIOmr8sjVBL0
-	 DVMXHY/qfYmEhNan55mGOmG6D7THyLOPd70VPVKIpK/4MAQ5E5HS45NyBgeC5R48+X
-	 z9v7rywzNiMJ0Y3pLiLCJmKABr+FNbRPJFAyTyruso3jShF040qqp9MpwrWDsAtHKt
-	 fWTz+yRtpK8TbmWmQV9Ovzo1U3O3+yf5d0a9Gg2dNbSlY68eZRNVapCcFH1FcVxKAs
-	 Ludh8f3lr4RMdR6f7qJHOWB6bVOFl8ZRUulSkXqf7CV6Gn2MFS6IIw7ZvAl4rbJ8vr
-	 zHK3gmvw2IfAQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sZSiv-00HLX2-08;
-	Thu, 01 Aug 2024 11:07:53 +0100
-Date: Thu, 01 Aug 2024 11:07:52 +0100
-Message-ID: <86plqs1rpj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sean Christopherson <seanjc@google.com>,
-    Steven Price <steven.price@arm.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Anup Patel <anup@brainfault.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Janosch Frank <frankja@linux.ibm.com>,
-	Claudio Imbrenda <imbrenda@linux.ibm.com>,
-	kvm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	loongarch@lists.linux.dev,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	kvm-riscv@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	David Matlack <dmatlack@google.com>,
-	David Stevens <stevensd@chromium.org>
-Subject: Re: [PATCH v12 01/84] KVM: arm64: Release pfn, i.e. put page, if copying MTE tags hits ZONE_DEVICE
-In-Reply-To: <20240726235234.228822-2-seanjc@google.com>
-References: <20240726235234.228822-1-seanjc@google.com>
-	<20240726235234.228822-2-seanjc@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.3
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1722506952; c=relaxed/simple;
+	bh=lEGW+kdJEkCoozNDdKuFRerDnO0MoGrNtEtUI3sBXhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBIjTqMHMissCPBxZPBDmWGgCTP792VTWyvoNzh83sEbHvbXRNSo8iVm3IvVcZOUOU3PgPpXqpw8wbtzoQPZzpp4iggDjhIoQKY638eXvKq7s3DxdBsHpoGX7aI2Xd7ycibVvQYgXwszvGIu0G5WnH5oeMutDsnbcByPfYzZvlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AF65C32786;
+	Thu,  1 Aug 2024 10:09:09 +0000 (UTC)
+Date: Thu, 1 Aug 2024 11:09:07 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH v4 2/2] dma: replace zone_dma_bits by zone_dma_limit
+Message-ID: <Zqtew0ra4opFgl9l@arm.com>
+References: <cover.1722499975.git.baruch@tkos.co.il>
+ <f05178048096908a13379a61ca56f0035a5cdb2d.1722499975.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: seanjc@google.com, steven.price@arm.com, pbonzini@redhat.com, oliver.upton@linux.dev, zhaotianrui@loongson.cn, maobibo@loongson.cn, chenhuacai@kernel.org, mpe@ellerman.id.au, anup@brainfault.org, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, borntraeger@linux.ibm.com, frankja@linux.ibm.com, imbrenda@linux.ibm.com, kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, loongarch@lists.linux.dev, linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, dmatlack@google.com, stevensd@chromium.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f05178048096908a13379a61ca56f0035a5cdb2d.1722499975.git.baruch@tkos.co.il>
 
-+ Steven Price for this patch (and the following one), as this really
-is his turf.
+On Thu, Aug 01, 2024 at 11:25:07AM +0300, Baruch Siach wrote:
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 9b5ab6818f7f..c45e2152ca9e 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -115,35 +115,35 @@ static void __init arch_reserve_crashkernel(void)
+>  }
+>  
+>  /*
+> - * Return the maximum physical address for a zone accessible by the given bits
+> - * limit. If DRAM starts above 32-bit, expand the zone to the maximum
+> + * Return the maximum physical address for a zone given its limit.
+> + * If DRAM starts above 32-bit, expand the zone to the maximum
+>   * available memory, otherwise cap it at 32-bit.
+>   */
+> -static phys_addr_t __init max_zone_phys(unsigned int zone_bits)
+> +static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
+>  {
+> -	phys_addr_t zone_mask = DMA_BIT_MASK(zone_bits);
+>  	phys_addr_t phys_start = memblock_start_of_DRAM();
+>  
+>  	if (phys_start > U32_MAX)
+> -		zone_mask = PHYS_ADDR_MAX;
+> -	else if (phys_start > zone_mask)
+> -		zone_mask = U32_MAX;
+> +		zone_limit = PHYS_ADDR_MAX;
+> +	else if (phys_start > zone_limit)
+> +		zone_limit = U32_MAX;
+>  
+> -	return min(zone_mask, memblock_end_of_DRAM() - 1) + 1;
+> +	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
+>  }
 
-On Sat, 27 Jul 2024 00:51:10 +0100,
-Sean Christopherson <seanjc@google.com> wrote:
-> 
-> Put the page reference acquired by gfn_to_pfn_prot() if
-> kvm_vm_ioctl_mte_copy_tags() runs into ZONE_DEVICE memory.  KVM's less-
-> than-stellar heuristics for dealing with pfn-mapped memory means that KVM
-> can get a page reference to ZONE_DEVICE memory.
-> 
-> Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/arm64/kvm/guest.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
-> index 11098eb7eb44..e1f0ff08836a 100644
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@ -1059,6 +1059,7 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
->  		page = pfn_to_online_page(pfn);
->  		if (!page) {
->  			/* Reject ZONE_DEVICE memory */
-> +			kvm_release_pfn_clean(pfn);
->  			ret = -EFAULT;
->  			goto out;
->  		}
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
-> 
-> 
+OK, so no functional change here which is good. But isn't this series
+missing some additional patches to limit ZONE_DMA? For you platform, the
+above function expands ZONE_DMA to the whole RAM which IIUC it's not
+what you want eventually.
 
 -- 
-Without deviation from the norm, progress is not possible.
+Catalin
 
