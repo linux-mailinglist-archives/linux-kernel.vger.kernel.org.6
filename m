@@ -1,127 +1,118 @@
-Return-Path: <linux-kernel+bounces-270925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC5A944721
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:55:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB4F594471D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:55:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCF911C2416B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 758761F26D62
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D1316EC1B;
-	Thu,  1 Aug 2024 08:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845B616EB5B;
+	Thu,  1 Aug 2024 08:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KcsIaeTf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N5zaQu2B"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3598D4503A;
-	Thu,  1 Aug 2024 08:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F919157469
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722502544; cv=none; b=CgJ/06d3jcyO886c4Xp9kYvbuun2pyTerayji+dOdI9/YtssuU6tw+s+7M5fblpGkIdABOjxdVVpJMbQVeDBEkxOCA8s+2zIJ3gh+qKmpNxcHZoOplxyAU/UzvAda6gw6ra1o9RsaN1pKouB5S/BVZrQuH12E1pgu5Ro+LCXNZ4=
+	t=1722502494; cv=none; b=RwadJ2mAgIlE1D6puMrkyj5hZS36Mb0Kcb1kX8lsAa9dGYy+2GMhtb7Jzyq2XetNNfXlcO6mKo1TCHzZPazcDWMFzVsB4Mz4OWXadZZLEBhW7LzCYqstn9hFQviQcNgdrmgAZdOIZI6kLNn6LdwIhKgMoWjpPtOXC/ntwQqgtts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722502544; c=relaxed/simple;
-	bh=kLw8gwzeVqHhp6F81uYID+qGAj/tTUkFxHEGFmalbkM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=I8r+s2YtcB6fjXAx8Y8gbhcs7HwV79ZXLtH/XbW2KeuzJF28ung4+C0EmLdIgAB9VdAaYM36dzAGQV7P0nwPBPDSpOSrZEtKuDB3ATTDkxvGrI+jboAa3p7TDXLLIm9Mshtu/3JDH0tfyprofTJ3EfYWc5pb+cbJxGJpUC3e7cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KcsIaeTf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47184Wdq022460;
-	Thu, 1 Aug 2024 08:55:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	m79gI7m04yvUGwDVELrOtKwh58hpY35nRX81dk/STpQ=; b=KcsIaeTfckjB2L2T
-	4MKF23UDoDWp4hM1s2Y3xgdpQBZB3Bt9cBCq0i3dPM5tbBZ+hWGzMYhPmSeNMjl1
-	hKYp7zuMhut77HOJtnQHekIFeyfxQD6iUfAF4iUKQA8P8UNsGpVOfCEtIxZrQ9dM
-	LkEXhK8B6EcMYdZkJE9L5tR9rGFQiyB5Wk7NiCOWbuxmsIHCePW6SoeywyAvrQRl
-	ALnH9+q+BSZPoLMxjBnUhbstbGN3gUqVegYKLwzxoFCm/Rm/HIhyxyUo4yoxwp/T
-	/pMiDNvsqUp8yyLw0hGOxYqJadxeDTZReCGZ1kmE2psQKwFcnsMctvTaQ56IcnH6
-	tqx1uA==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qkv0ud9r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 08:55:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4718tMkP003282
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 08:55:22 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 1 Aug 2024 01:55:17 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Thu, 1 Aug 2024 16:54:38 +0800
-Subject: [PATCH v3 3/3] arm64: defconfig: Enable interconnect for SM4450
+	s=arc-20240116; t=1722502494; c=relaxed/simple;
+	bh=ELV8yhQ3TxrJXNL7GNabK8kZ9yHlPm2Vud4wYk8Bk2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtPXNrmc7cAbGU4jiSQ2sBCIIO7Cc5+8C2339pI1DUihhQ4xCBlbsUn6MjVrACvQdg+vh2OhT9bObGDYzGDwnAAM13GOrYIj0HZfVPpWjrjTrM8TbLJnnRyrpnW/KZnEN1LjlglE9J27978MjlXtDqg+MM5gMX2Lhi8ExF1ixgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N5zaQu2B; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xRMLmj9qlDqy9loOkVGrrbLQIpp1pJzJMWgVhDvT3VA=; b=N5zaQu2BTClhZyvu1Q1xMWnrHU
+	W394OdHVO4mens/WLCTFtnYvWKOJFHtPSZXREX5ij1a8w28OgrRH2cok/QDWONE3agmOIUHq73pMb
+	LVDmXaggGRDNQeIncVjCH+Iz82Te7qU1Vb+Q04pXZJTN3m0+AhJArlS5ZdD6W3gZ+DFlJjOc3X4YR
+	JmzVo1r4c5WVQbExhS+NIZ0G+S93XYUwHYYrv1ae9mpUmK2vkyOdoPHH176Gyu6tRjTvci1EHsQ9l
+	W2VXADEj78TbGkGvGi5+n/k1qlgkLVX/eJlLBc+AdKUgmoF0yr8svZfkEvA9ZeHJMVVYtV1wy8FP7
+	sKZp3G4w==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZRaD-00000005Pu9-2mCc;
+	Thu, 01 Aug 2024 08:54:50 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4FA1E30074E; Thu,  1 Aug 2024 10:54:49 +0200 (CEST)
+Date: Thu, 1 Aug 2024 10:54:49 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: Linux 6.11-rc1
+Message-ID: <20240801085449.GM33588@noisy.programming.kicks-ass.net>
+References: <daef7867-b548-4acb-b8bf-0bdeb057d6a4@roeck-us.net>
+ <20240731122002.GE33588@noisy.programming.kicks-ass.net>
+ <87mslx67dm.ffs@tglx>
+ <20240731155551.GF33588@noisy.programming.kicks-ass.net>
+ <CAHk-=wjhQ-TTg40xSP5dP0a1_90LMbxhvX0bsVBdv3wpQN2xQQ@mail.gmail.com>
+ <20240731163105.GG33588@noisy.programming.kicks-ass.net>
+ <20240731165108.GH33588@noisy.programming.kicks-ass.net>
+ <87bk2d5v83.ffs@tglx>
+ <20240731212007.GW26599@noisy.programming.kicks-ass.net>
+ <d01798a0-5817-4645-8c8c-d61dcf668c25@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240801-sm4450_interconnect-v3-3-8e364d0faa99@quicinc.com>
-References: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
-In-Reply-To: <20240801-sm4450_interconnect-v3-0-8e364d0faa99@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Tengfei Fan <quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722502505; l=696;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=kLw8gwzeVqHhp6F81uYID+qGAj/tTUkFxHEGFmalbkM=;
- b=odIhgcJeG86BcBqEYh3yjvSdC7bnZXlD9ZehphyUSLFOA0wx7Ymbki3V5HM+JLmsGUCy/hbca
- 3zlKnRaMtzpD2L/Z8YtS52IJZP3P0n8Lq0Jq8i9DUGFoOeealIB+ulp
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KWtzgwFAb6TsnmcAC6zzQ4o32fIKdofM
-X-Proofpoint-GUID: KWtzgwFAb6TsnmcAC6zzQ4o32fIKdofM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_06,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=695 clxscore=1011
- adultscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
- lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010053
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d01798a0-5817-4645-8c8c-d61dcf668c25@roeck-us.net>
 
-Add the SM4450 interconnect driver as built-in.
+On Wed, Jul 31, 2024 at 03:22:53PM -0700, Guenter Roeck wrote:
+> On 7/31/24 14:20, Peter Zijlstra wrote:
+> > On Wed, Jul 31, 2024 at 07:26:04PM +0200, Thomas Gleixner wrote:
+> > > On Wed, Jul 31 2024 at 18:51, Peter Zijlstra wrote:
+> > > > On Wed, Jul 31, 2024 at 06:31:05PM +0200, Peter Zijlstra wrote:
+> > > > Thomas, this all still relies on the full text section being PMD mapped,
+> > > > and since we don't have ALIGN_ENTRY_TEXT_END and _etext has PAGE_SIZE
+> > > > alignment, can't have a PAGE mapped tail which then doesn't get cloned?
+> > > > 
+> > > > Do we want to make pto_clone_entry_text() use PTI_LEVEL_KERNEL_IMAGE
+> > > > such that it will clone whatever it has?
+> > > 
+> > > Yes, I think so.
+> > 
+> > The alternative is ripping that level thing out entirely, and simply
+> > duplicate anything we find in the page-tables.
+> > 
+> 
+> The patch below (on top of the previous one, because otherwise it doesn't
+> apply) causes qemu to bail out hard, with
+> 
+> ...
+> [    3.658327] sr 2:0:0:0: Attached scsi generic sg0 type 5
+> [    3.858040] sched_clock: Marking stable (3834034034, 23728553)->(3865222956, -7460369)
+> [    3.861469] registered taskstats version 1
+> [    3.861584] Loading compiled-in X.509 certificates
+> [    4.082031] Btrfs loaded, zoned=no, fsverity=no
+> [    4.096034] cryptomgr_test (69) used greatest stack depth: 6136 bytes left
+> 
+> No backtrace or other message, it just exits immediately.
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Ha, I hadn't even compiled the thing :-) I was just wondering alound and
+in patch form if the whole level thing was worth having in the first
+place.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 831aa314bc9c..d6f50d31568e 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1623,6 +1623,7 @@ CONFIG_INTERCONNECT_QCOM_SC8180X=y
- CONFIG_INTERCONNECT_QCOM_SC8280XP=y
- CONFIG_INTERCONNECT_QCOM_SDM845=y
- CONFIG_INTERCONNECT_QCOM_SDX75=y
-+CONFIG_INTERCONNECT_QCOM_SM4450=y
- CONFIG_INTERCONNECT_QCOM_SM6115=y
- CONFIG_INTERCONNECT_QCOM_SM8150=y
- CONFIG_INTERCONNECT_QCOM_SM8250=y
+If it lives, I'll make sure to test it.
 
--- 
-2.25.1
-
+Thanks!
 
