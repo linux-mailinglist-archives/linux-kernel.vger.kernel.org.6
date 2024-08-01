@@ -1,108 +1,92 @@
-Return-Path: <linux-kernel+bounces-270440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 494C2943FD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:53:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC20943FDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00790280FA3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C4D21C22CC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F234713DB9F;
-	Thu,  1 Aug 2024 01:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD1C14372E;
+	Thu,  1 Aug 2024 01:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AffpXN67"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AfrhSHla"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FF8200A3;
-	Thu,  1 Aug 2024 01:09:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AC3200A3;
+	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722474595; cv=none; b=HhfamAEKzlvopxum+gphajU4c/BaFW84w5PJnedu4fqJ5MJXisx3ul8xoatB68EXpbclsxD6y+Hj98Laq6HAFf+BEZEyAm0xUfpLYfaDmU94n2wP99BPnvdDdWC9cFTCp/I/lE5ofvQwHQSZaP5DS7uK5MMbQcg4uad60t35+AU=
+	t=1722474637; cv=none; b=pZdqdshmYOJ6Gh98RNyEXzhWkyFiyhyS94tAJdeea6WXrD4fvt/J7hahO32qs0qsvcn+Zjup2kDqa6R+amG1YJM7LG4rTUv1FjFy+afApaJKHJ1XBV/rS1ivHT/FddVFX2z1Dp7P77OIF5TFzJ9FYHPIIFyOXgIMAn3hK92NokA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722474595; c=relaxed/simple;
-	bh=qhsAo2ibH7djtNeXhPFIuXx4A0vb5UzzHc/vePKTiLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OnsOHNf8xDy29zUyUsEqJbNqR7+sLr4D/6CIy54r+2q1iCGjY4XfvOjOTav9wmmDWgsW0fTzujdhATw6Hd84/ukwKowEgguPdboix8UGpxlIpWAh2tn1swTJBA4CZWWkliNhWBcJ276r60gEpD0NYjpOjIPupj0dB3pBwM4c6OA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AffpXN67; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F288C116B1;
-	Thu,  1 Aug 2024 01:09:54 +0000 (UTC)
+	s=arc-20240116; t=1722474637; c=relaxed/simple;
+	bh=5pekV9wyOQzuoUdRu/1idacnuxzW9pNNfb3AKHrb9fI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=XBf3/ul28jbo6h+zfzWPkc20W59CDeToPkVNedHsUygyrtWEiZx6uulf/0L5GusXP4pN8JWSox5ESw9S64Vu4jEyjjJjjm0DFAkU8MjRy7QQYFqMoAueH8CVwHG3fULWcDKNr+DCm3XlpMvm1v1eiH/hur5MxhuK9vM5Hfj0s94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AfrhSHla; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 52A54C32786;
+	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722474594;
-	bh=qhsAo2ibH7djtNeXhPFIuXx4A0vb5UzzHc/vePKTiLE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AffpXN67+pPQRqJDhAIkSoZgijCKAAGva0tLUoypSgL6XS7H0cpF770wqaIexgCe0
-	 Lt5SYdy8RXCjcu3bIUeUJ2tsbhECHddD2nWAewBY2qzeBGgC6XVJ1fNWNURXJq4fLK
-	 VzyHwZARjs1DAh3776Angzju5NkVSuIKnN+L1D5UDxl+4zsIpiB6xasLxC4nt4nZ4t
-	 kV9lYT2QHXDmUGq+mPijY9HfDZR1F5ynsdAuyEGJ/2xRxWL10PcQg5ABe0arCIsUl5
-	 T8tbTlsLZ+eKt02R2Bk6P9QpLQYqTbvIqIovRzuv1VDpXL/O3Hp7O95J4DV6XtoLWS
-	 Pi8Hrd51H0G2A==
-Date: Thu, 1 Aug 2024 01:09:53 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Richard Fung <richardfung@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] fuse: fs-verity: aoid out-of-range comparison
-Message-ID: <20240801010953.GA1835661@google.com>
-References: <20240730142802.1082627-1-arnd@kernel.org>
+	s=k20201202; t=1722474637;
+	bh=5pekV9wyOQzuoUdRu/1idacnuxzW9pNNfb3AKHrb9fI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=AfrhSHlal6LeY43VCU92LVPU5ALrvZ4oGFem3VUR+dKX3kJA4Dxp2EgVvk4dWLzXx
+	 Sc9i4BtY2QfUUDXbHKAqa82a7B/35YMXOKvEajgVRAvBFBrtwKdahIqATgV+aKvLHg
+	 zZkF/z20nxfNJvzlX9lEUtqxFvNIinda0RZtFdtG7EZjk6Vk1WfpWGft7aeGbW5UnY
+	 W34a6UgYLBPynPQ9EyOY3zO564D/5jzRzYjD0py3oNg0C86HM51/tElJ6pffvuUIy+
+	 kX/qNlOaN/FZ+PCvek5bVK4QPpylYbYuNqrEmQYMN1f4Z/CtCR6AK8FOTHr71L3RHg
+	 qw/JHzO/oyuyw==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 40736C6E39B;
+	Thu,  1 Aug 2024 01:10:37 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240730142802.1082627-1-arnd@kernel.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] net: Add skbuff.h to MAINTAINERS
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172247463726.20901.13788765479950503016.git-patchwork-notify@kernel.org>
+Date: Thu, 01 Aug 2024 01:10:37 +0000
+References: <20240730161404.2028175-1-leitao@debian.org>
+In-Reply-To: <20240730161404.2028175-1-leitao@debian.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ horms@kernel.org
 
-On Tue, Jul 30, 2024 at 04:27:52PM +0200, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> clang points out that comparing the 16-bit size of the digest against
-> SIZE_MAX is not a helpful comparison:
-> 
-> fs/fuse/ioctl.c:130:18: error: result of comparison of constant 18446744073709551611 with expression of type '__u16' (aka 'unsigned short') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
->         if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
->             ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> 
-> This either means tha tthe check can be removed entirely, or that the
-> intended comparison was for the 16-bit range. Assuming the latter was
-> intended, compare against U16_MAX instead.
-> 
-> Fixes: 9fe2a036a23c ("fuse: Add initial support for fs-verity")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  fs/fuse/ioctl.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
-> index 572ce8a82ceb..5711d86c549d 100644
-> --- a/fs/fuse/ioctl.c
-> +++ b/fs/fuse/ioctl.c
-> @@ -127,7 +127,7 @@ static int fuse_setup_measure_verity(unsigned long arg, struct iovec *iov)
->  	if (copy_from_user(&digest_size, &uarg->digest_size, sizeof(digest_size)))
->  		return -EFAULT;
->  
-> -	if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
-> +	if (digest_size > U16_MAX - sizeof(struct fsverity_digest))
->  		return -EINVAL;
->  
->  	iov->iov_len = sizeof(struct fsverity_digest) + digest_size;
+Hello:
 
-I think this was just defensive coding to ensure that the assignment to iov_len
-can't overflow regardless of the type of digest_size.  You can remove the check
-if you want to, though isn't the tautological comparison warning disabled by the
-kernel build system anyway?  Anyway, it does not make sense to use U16_MAX here.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-- Eric
+On Tue, 30 Jul 2024 09:14:03 -0700 you wrote:
+> The network maintainers need to be copied if the skbuff.h is touched.
+> 
+> This also helps git-send-email to figure out the proper maintainers when
+> touching the file.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v2] net: Add skbuff.h to MAINTAINERS
+    https://git.kernel.org/netdev/net/c/8f73ef829858
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
