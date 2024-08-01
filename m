@@ -1,89 +1,130 @@
-Return-Path: <linux-kernel+bounces-271108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D879449A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:47:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CF15944975
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92399286A5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:47:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183F22854E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D445183CC4;
-	Thu,  1 Aug 2024 10:46:47 +0000 (UTC)
-Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FAF184526;
+	Thu,  1 Aug 2024 10:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sX5h59JE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B13170A32
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D553BBE5;
+	Thu,  1 Aug 2024 10:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509207; cv=none; b=Nnz2LaUrJzRr1UmGgKEB/OUb7wK2hitwQTAdcVTrQ6zZOYyRncdM0mOwM6QetJmLQq/l0R07K4IZ4oWbXfhsFbBd67MJ6EdA/gUUYp20bLdvruqYPN0mNcsA0QtQejrkAxCsYrkrZi1jLpiQv3ok/gFeyjbWhkJ28vcI/k9H6sA=
+	t=1722508636; cv=none; b=t5Y7GPmpNLWHr6Qohm6H6k0Fhgh+NlUu2tb0xESB1xw6+2znLiBhAq4VnRZzEGXaVvyLT/OhitksL6Hic9d3DWp1Y0gvdzucpCR9yOygm8cwBPEOGX5xMLZ3BHNDDb/Uga4kfuuHHuTpTEg+dWYGGUBv455PQ6Oo757bEWZVDto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509207; c=relaxed/simple;
-	bh=SMF4GpAWvqM7jjOnDV18CS82I3uuCdBzjY/QozGLIX4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hqahU8V9THZncwVvspZZqlkODNAMsrOBJf8m+UwTjhRMIWKAu0YCR1E7ZAKMApantg/9fuKWxkFkcRHVlVL5ylgOLQuusmOsKvFGF0T+wQdCDNl6eD8vKunz1Gfla1ZcApNabWJOTkglsCP/PFlqgEpGuyFXx7VtViFYNeo5mu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.64.72])
-	by sina.com (10.185.250.24) with ESMTP
-	id 66AB654800003730; Thu, 1 Aug 2024 18:36:58 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 69488110748372
-X-SMAIL-UIID: 0949200B840345B2AC416BC36058EF96-20240801-183658-1
-From: Hillf Danton <hdanton@sina.com>
-To: Liju-clr Chen <liju-clr.chen@mediatek.com>
-Cc: Will Deacon <will@kernel.org>,
-	Yingshiuan Pan <Yingshiuan.Pan@mediatek.com>,
-	linux-kernel@vger.kernel.org,
-	Ze-yu Wang <Ze-yu.Wang@mediatek.com>
-Subject: Re: [PATCH v12 03/24] dt-bindings: hypervisor: Add MediaTek GenieZone hypervisor
-Date: Thu,  1 Aug 2024 18:36:47 +0800
-Message-Id: <20240801103647.2480-1-hdanton@sina.com>
-In-Reply-To: <20240730082436.9151-4-liju-clr.chen@mediatek.com>
-References: <20240730082436.9151-1-liju-clr.chen@mediatek.com>
+	s=arc-20240116; t=1722508636; c=relaxed/simple;
+	bh=UCt5jpURNEyg0oe9cMK8/kEXK1xMb37OAQuqoadAUrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mKJpmhIv2mH3Q68FC8ugRhytGIWiWb7q3nXzHH8EQAk3+Xn6/52CZIX7M8QGex8nq2yjzJVT5DFbuz/bvwicvLEXkn4xM0BYqupXK9Wias0cdkOoWVA6W+CU/H4SFrL+D6NLhl0Nmov6r3p5Q03G8jZXo6Wni7SUXbeVZuQBBTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sX5h59JE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8C3C4AF09;
+	Thu,  1 Aug 2024 10:37:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722508636;
+	bh=UCt5jpURNEyg0oe9cMK8/kEXK1xMb37OAQuqoadAUrM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sX5h59JEeqq2okR7Voc6Nr1JArW+mJQD0HbII9OWvj9X7zBNjWJYTs97sHWqdzx5E
+	 JodiY+ggZzJShIq2DVeD2SjAw+B4w9PZIDzTSYg7zsohkVCwf4F2CdLpaRMbfBxiU3
+	 D8Rp8OWfAho4u24WVcW4f2S0OgbM0LjKtDTm5fVnIR7lSfZvRMBQeFJ11Uk6gE1kHe
+	 ZuYgaVAmru1p7Bo5yFPlqnp3vTLriXbzyr6ua7sZtzzMd+zi6XSnwcgxDCyozRTZuV
+	 wW+7IvAefXj8Q9gJQYJHxGNgt0yPK9H5RJTBAkagu73zjLeWwLTY8SC/bh+wipoEJE
+	 5abEzGBqyY6kQ==
+Date: Thu, 1 Aug 2024 13:37:12 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Junxian Huang <huangjunxian6@hisilicon.com>
+Cc: jgg@ziepe.ca, bvanassche@acm.org, nab@risingtidesystems.com,
+	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+	linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
+Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
+Message-ID: <20240801103712.GG4209@unreal>
+References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
 
-On Tue, 30 Jul 2024 16:24:15 +0800 Liju-clr Chen <liju-clr.chen@mediatek.com>
-> +description:
-> +  GenieZone is a proprietary type-II hypervisor firmware developed by MediaTek,
+On Thu, Aug 01, 2024 at 03:44:15PM +0800, Junxian Huang wrote:
+> Currently cancel_work_sync() is not called when srpt_refresh_port()
+> failed in srpt_add_one(). There is a probability that sdev has been
+> freed while the previously initiated sport->work is still running,
+> leading to a UAF as the log below:
+> 
+> [  T880] ib_srpt MAD registration failed for hns_1-1.
+> [  T880] ib_srpt srpt_add_one(hns_1) failed.
+> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
+> ...
+> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
+> ...
+> [  T376] Call trace:
+> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
+> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
+> [  T376]  process_one_work+0x1d8/0x4cc
+> [  T376]  worker_thread+0x158/0x410
+> [  T376]  kthread+0x108/0x13c
+> [  T376]  ret_from_fork+0x10/0x18
+> 
+> Add cancel_work_sync() to the exception branch to fix this UAF.
+> 
+> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
+> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> ---
+>  drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+> index 9632afbd727b..244e5c115bf7 100644
+> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
+> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
+>  {
+>  	struct srpt_device *sdev;
+>  	struct srpt_port *sport;
+> +	u32 i, j;
+>  	int ret;
+> -	u32 i;
+>  
+>  	pr_debug("device = %p\n", device);
+>  
+> @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
+>  		if (ret) {
+>  			pr_err("MAD registration failed for %s-%d.\n",
+>  			       dev_name(&sdev->device->dev), i);
+> -			i--;
+>  			goto err_port;
+>  		}
+>  	}
+> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
+>  	return 0;
+>  
+>  err_port:
+> +	for (j = i, i--; j > 0; j--)a
+> +		cancel_work_sync(&sdev->port[j - 1].work);
 
-Given type-I [1], confused by type-II. Which one is correct?
+There is no need in extra variable, the following code will do the same:
 
-> +  providing an isolated execution environment for mTEE (MediaTek Trusted
-> +  Execution Environment) and AVF (Android Virtualization Framework) virtual
-> +  machines. This binding facilitates the integration of GenieZone into the
-> +  Android Virtualization Framework (AVF) with Crosvm as the VMM. The driver
-> +  exposes hypervisor control interfaces to the VMM for managing virtual
-> +  machine lifecycles and assisting virtual device emulation.
+	while (i--)
+		cancel_work_sync(&sdev->port[i].work);
 
-[1] https://lore.kernel.org/lkml/20240730082436.9151-3-liju-clr.chen@mediatek.com/
-+++ b/Documentation/virt/geniezone/introduction.rst
-@@ -0,0 +1,87 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+======================
-+GenieZone Introduction
-+======================
-+
-+Overview
-+========
-+GenieZone hypervisor (gzvm) is a type-1 hypervisor that supports various virtual
-+machine types and provides security features such as TEE-like scenarios and
-+secure boot.
+>  	srpt_unregister_mad_agent(sdev, i);
+>  err_cm:
+>  	if (sdev->cm_id)
+> -- 
+> 2.33.0
+> 
 
