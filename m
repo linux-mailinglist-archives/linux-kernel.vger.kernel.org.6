@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-270395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D79943F6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:40:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 634C8943F12
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F296228115A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:40:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94AC71C21894
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E621E4F1A;
-	Thu,  1 Aug 2024 00:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3EF1DF67F;
+	Thu,  1 Aug 2024 00:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWB9ltp2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JsTjT4KL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDCB41E4EFE;
-	Thu,  1 Aug 2024 00:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E491DF670;
+	Thu,  1 Aug 2024 00:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722472726; cv=none; b=maQMi+utzM2qAsfXfVNWLEBF4wTfDeMJ3CA9xYuDPvkiAJHk9LZXpAhkOPJnB7QzAFtn17+EZcYrBXSMI8Ktz7gW7cpgHcRP2mlCE9WHbZYokbnlXB1NH9S4NmeakLjuxKQ5UKQVWYpdhOKrjLaplX/Hv+Waq6RDeqG12zb/+So=
+	t=1722472547; cv=none; b=Wbu1W1fr9vUu158aX7qDcHN4QJfn0OHxTv5WQ1+xu2WoVC9MOs/CYxd+zpKdhhlDsrt3vgC2yLiLv3jZVeuIatK+T5ekIjmlOu9RDXqXx71l5ffHfJanK+YDOVDCO3MsRjptt+rcWgnHToKH+RvKa/b6NSu13+LjWkVPP7yFyDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722472726; c=relaxed/simple;
-	bh=ASK0R6WhsZLnJDYmu57syN4fShPd6cBH2o0eR4UoDwc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=msfyitPWb5UbqTF9oFr4tBkF03R+1xqt1oUerXSzPwkEJhtOm6jIZ5OpQboyBN8ccHP9/y7elM59w5vZVPE6LpdGp7z/amHNdjzhf7SLMpTw4tJ7SgRjhsaKzPKCmSKGRUI6uPzeQCKyEfeiAbVdvbVtBVQtozNtPpmegAM0d6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWB9ltp2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A517C4AF0C;
-	Thu,  1 Aug 2024 00:38:45 +0000 (UTC)
+	s=arc-20240116; t=1722472547; c=relaxed/simple;
+	bh=jt2M6uKlVM+6D9K08NlH1Z0lyga8uYkwNRpGb5zPdYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKoS6hND4DIs+WMmIN7fhdas6I28tdVrxsaH04OI9qmJ+7oVO/nsY6D/pJJKrTbb9LnvaycRZEiccKdfUDowJ4U9QnxgsiPbry2Nyut+6Ji9q4D7m4I4NYmq4hZfEz+UQIqHO3gFiOc8YatgUkhfVqkGjAhwUqYMsSleShT3eMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JsTjT4KL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 000E0C116B1;
+	Thu,  1 Aug 2024 00:35:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722472726;
-	bh=ASK0R6WhsZLnJDYmu57syN4fShPd6cBH2o0eR4UoDwc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tWB9ltp2j1Pj320QaUxb+vYoNMtlOEfuXk4FJK87Cw9iOYNGpaj1gjuy7ahJR/KIU
-	 B1VtKVrd/qNbCq3LWpU91B7U8eM1xw2XrTA3HsqCgoHAyf1mjiyxCuS/wHqE6DHFvg
-	 SaRrC4042CtN3vfbztxPp7f0H/wmwMThI4LhqLmqRP1/Ghxaavn0gfG+PdQlXg9nvo
-	 7WRNd0OKTfTgBcZZmFFh69El+mQjJil+NxGSlRGgS/x2fgnzqaFrSu72pF5MY/bdi3
-	 vK357cQF7Uf7nem/UGJJcmbP/U1bNh8wzsU4QTbgBZvO7Y7tA3dESfkrtGzFsyxQ5p
-	 S0WuUVfk5LVng==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Andreas Ziegler <ziegler.andreas@siemens.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Sasha Levin <sashal@kernel.org>,
-	ast@kernel.org,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 37/38] libbpf: Add NULL checks to bpf_object__{prev_map,next_map}
-Date: Wed, 31 Jul 2024 20:35:43 -0400
-Message-ID: <20240801003643.3938534-37-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801003643.3938534-1-sashal@kernel.org>
-References: <20240801003643.3938534-1-sashal@kernel.org>
+	s=k20201202; t=1722472546;
+	bh=jt2M6uKlVM+6D9K08NlH1Z0lyga8uYkwNRpGb5zPdYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JsTjT4KLOri/dPK+jcxFdX0lJ4rd6GimJhHyURvpow3NXHc+2MlyzsVIBLBY7pNyf
+	 zZozU2xv50qCbNv+9rK/iLY8xi/oYIsBXYem/KKWu11px5wyeC5Fp+ce7sTgHjq4pi
+	 8Dv3tQt0ckokEhMj9KuPIr3mT4XRoj4L/skfiMs9TZTVs2r4XSRiC1U3x79ASJLq7S
+	 ea+0PHBZdm8RYog4Iwz1IZsSuGUzfXElYwcy7/5Ht2gTbLPJgSCKS32nVYzt+TcrYY
+	 BpVtwyzI+opzkM2vfAv0wNdXg16KF5MaxUVdtdOP/AgA/LIYcz5Y+aFvpsP70A10aN
+	 BzNNDkZweot5A==
+Date: Wed, 31 Jul 2024 17:35:44 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Richard Fung <richardfung@google.com>,
+	Eric Biggers <ebiggers@google.com>, Arnd Bergmann <arnd@arndb.de>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] fuse: fs-verity: aoid out-of-range comparison
+Message-ID: <20240801003544.GA468777@thelio-3990X>
+References: <20240730142802.1082627-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.223
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730142802.1082627-1-arnd@kernel.org>
 
-From: Andreas Ziegler <ziegler.andreas@siemens.com>
+On Tue, Jul 30, 2024 at 04:27:52PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> clang points out that comparing the 16-bit size of the digest against
+> SIZE_MAX is not a helpful comparison:
+> 
+> fs/fuse/ioctl.c:130:18: error: result of comparison of constant 18446744073709551611 with expression of type '__u16' (aka 'unsigned short') is always false [-Werror,-Wtautological-constant-out-of-range-compare]
+>         if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
+>             ~~~~~~~~~~~ ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 
+> This either means tha tthe check can be removed entirely, or that the
+> intended comparison was for the 16-bit range. Assuming the latter was
+> intended, compare against U16_MAX instead.
 
-[ Upstream commit cedc12c5b57f7efa6dbebfb2b140e8675f5a2616 ]
+Presumably this check was added because of the addition in the
+assignment to iov_len, which is size_t, but I don't see how that
+expression could realistically overflow? It seems like this whole check
+could just be removed?
 
-In the current state, an erroneous call to
-bpf_object__find_map_by_name(NULL, ...) leads to a segmentation
-fault through the following call chain:
-
-  bpf_object__find_map_by_name(obj = NULL, ...)
-  -> bpf_object__for_each_map(pos, obj = NULL)
-  -> bpf_object__next_map((obj = NULL), NULL)
-  -> return (obj = NULL)->maps
-
-While calling bpf_object__find_map_by_name with obj = NULL is
-obviously incorrect, this should not lead to a segmentation
-fault but rather be handled gracefully.
-
-As __bpf_map__iter already handles this situation correctly, we
-can delegate the check for the regular case there and only add
-a check in case the prev or next parameter is NULL.
-
-Signed-off-by: Andreas Ziegler <ziegler.andreas@siemens.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Link: https://lore.kernel.org/bpf/20240703083436.505124-1-ziegler.andreas@siemens.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/lib/bpf/libbpf.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
-index 015ed8253f739..33cdcfe106344 100644
---- a/tools/lib/bpf/libbpf.c
-+++ b/tools/lib/bpf/libbpf.c
-@@ -9005,7 +9005,7 @@ __bpf_map__iter(const struct bpf_map *m, const struct bpf_object *obj, int i)
- struct bpf_map *
- bpf_map__next(const struct bpf_map *prev, const struct bpf_object *obj)
- {
--	if (prev == NULL)
-+	if (prev == NULL && obj != NULL)
- 		return obj->maps;
- 
- 	return __bpf_map__iter(prev, obj, 1);
-@@ -9014,7 +9014,7 @@ bpf_map__next(const struct bpf_map *prev, const struct bpf_object *obj)
- struct bpf_map *
- bpf_map__prev(const struct bpf_map *next, const struct bpf_object *obj)
- {
--	if (next == NULL) {
-+	if (next == NULL && obj != NULL) {
- 		if (!obj->nr_maps)
- 			return NULL;
- 		return obj->maps + obj->nr_maps - 1;
--- 
-2.43.0
-
+> Fixes: 9fe2a036a23c ("fuse: Add initial support for fs-verity")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  fs/fuse/ioctl.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/fuse/ioctl.c b/fs/fuse/ioctl.c
+> index 572ce8a82ceb..5711d86c549d 100644
+> --- a/fs/fuse/ioctl.c
+> +++ b/fs/fuse/ioctl.c
+> @@ -127,7 +127,7 @@ static int fuse_setup_measure_verity(unsigned long arg, struct iovec *iov)
+>  	if (copy_from_user(&digest_size, &uarg->digest_size, sizeof(digest_size)))
+>  		return -EFAULT;
+>  
+> -	if (digest_size > SIZE_MAX - sizeof(struct fsverity_digest))
+> +	if (digest_size > U16_MAX - sizeof(struct fsverity_digest))
+>  		return -EINVAL;
+>  
+>  	iov->iov_len = sizeof(struct fsverity_digest) + digest_size;
+> -- 
+> 2.39.2
+> 
 
