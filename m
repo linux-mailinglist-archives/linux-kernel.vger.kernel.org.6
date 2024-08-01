@@ -1,238 +1,154 @@
-Return-Path: <linux-kernel+bounces-270716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447A3944474
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:28:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E720944488
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:32:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62051F21743
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:28:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CFE28499E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5215815747D;
-	Thu,  1 Aug 2024 06:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C06713D509;
+	Thu,  1 Aug 2024 06:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MBmy231d"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q5p/Rlda"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5DE158528
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE32156F54;
+	Thu,  1 Aug 2024 06:32:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722493715; cv=none; b=l35AWuITbKO0PELcqe0+pN3nlA0bC8npBsit98cgYjCglBth+YlJQrrkIlliVG14mczL9ydznHqBaPNIHpXkWGzEVR1gBjwMrstFgERM5nQC5k7WFE3E/qWEbU5IF4uOzlD72bERfwV7hXYKSZolvw0X8MRGCm24aOSCku+SsOM=
+	t=1722493954; cv=none; b=h24huzx7DynH8yrTAHfuEwx3aqYUN7OCyPu638o6hu23TDlOPv8iX7+DZAnjFlCiO4dV/IqHMcczWZB8LixZWESn0u93Y+DWYjW7yOaoZhV5Skf+AIEl50KrwaMHIJ57T5a1+uBe7CsFILu6u5NNDQ83EKkh4ZGnAgS8xAbaiyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722493715; c=relaxed/simple;
-	bh=CX0OvbedDWrepXq5Ff+fVTBJovH97z9Wq3vfLFVXQ3o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WDXd6klCWvuXT/j84HCDfSlaBcsqFrjPwJwq/MGpl7aw9E5vLL7Fu4mkV6cDlygIlCFp6Abi1/IYkEU6/ug9quNpxzs3r9hkPwmJJqO4KiVn9Umpzi9BpYPigzw+HRvAr0bWmAQyJLEjhAWFP4ZdrIHwbcqPXBfFoE21GDscIHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MBmy231d; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a869e3e9dfso28807a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:28:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722493712; x=1723098512; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QYXNdhUYAatsrfG4+QxkF3cxgEI8kD4jOZrGXfLxMPg=;
-        b=MBmy231d2iFxGqTOBOiKgtFfrUXqqfeLG8qD26yszCIOaZVweUcmkWdtUerINfUI4q
-         TFXpu3lgZ8yy1JGhPW7TFlGH9X5U5KA0lhGHwmdGxkQGMRfeC+jOx/XM4vN3WoHxJKWq
-         0Xlh/0eddEU2Xlulke1PPQj75fvvFBFZ2XwUhXE6Wqmgb5pRNZk6ZuB6PcES4HuAjD8c
-         KhETl68CI2lb/ypp9+yCvQQ6QG4FxB2dp148yYJqKynCz1Mz8K61ZDM6NMPiNSa7CCbj
-         cS0OqBBLu3njc5sVIhEFpdnKwoCCW9rEMSTJWhdf1nd2Vd3zm3lmlM6FFOzRJXiz1gra
-         YCzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722493712; x=1723098512;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QYXNdhUYAatsrfG4+QxkF3cxgEI8kD4jOZrGXfLxMPg=;
-        b=BHCRohktYA5a/oEkfB68bnRYOyq1/AyMfFvwGcapHQFtCXuhi30EL4XWzh7cCKYLby
-         U6qYXCCy2x5MaGysRlgQ836GDAm/hmp9VMlsLu/PCbLY4ByKmnW4WGN+IVjPV5/DoO20
-         imzR8i49pLuQ0ElmOZT4zGnQ3qVQLa5mJRtGgVsW68kGGxBD3QsNZL/ZH4vjIgW/ZtYM
-         weNzDD36aaoR5arSs4Et0OITolWCzIAFuFJimwDkfDFI+K7G0TLAHvnHhKQNhdAE91+C
-         XpWh6qLLEpVCUxfFhGDJw3lWVbbNkhrRMqBKx/lUWX3IofMUr9sK1/SVUvlEdv/dH+sx
-         uYVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzozUq2ThctFJuNggCEjSYiCAZfuEBwq8x9Xhcw7LHh1jZmxki3Sdx2J2B1sHWWlNSv9kTsenj3bueNHuDQu7QjD4HBqWqn8p2VSIK
-X-Gm-Message-State: AOJu0YzqgS4SufwFZiPrdChVSagKZxCBeJYRrp9al/S4NhZJ7ZVcN71I
-	JI5hs9vfSXJpP8lSDS6LVnGHMCHMRxzgElhj3qLuOGY4ebypTQ9iqjF1JHncc/vzJ2rgfwpyphi
-	ozFoS+LqkrI1vTgLmEFnGku+eLgcgqJlOuGx+
-X-Google-Smtp-Source: AGHT+IGeek4iZJETeidEv6O9lsAf47eIgvMdLrc9dZm6w3qTHSWzn95bdAV5OmXcUnhZU3W7t+DmM0qV4hBHYAh5Gos=
-X-Received: by 2002:a05:6402:40c4:b0:57c:b712:47b5 with SMTP id
- 4fb4d7f45d1cf-5b71bbd2aacmr79959a12.4.1722493711462; Wed, 31 Jul 2024
- 23:28:31 -0700 (PDT)
+	s=arc-20240116; t=1722493954; c=relaxed/simple;
+	bh=oxxFndBMVvEyHDztT3sIU4U429uaxVcLaKdlXlUsKYY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XCic14TYR21W4U5tv8EGyhcVck0wVDf3wwoYmJPAuoWDLMZZjUi1Y1NZjpysa9Tg/1T91F/ShbHsVPV/A23Jih4hbYgt1icJ28TpDM/i18Kw0CECOM8FziLgXpcdAWnSdGr+QXyB37yzVp1/0+3Us3SWYbjCmg4gEbbK0KkhRb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q5p/Rlda; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722493952; x=1754029952;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=oxxFndBMVvEyHDztT3sIU4U429uaxVcLaKdlXlUsKYY=;
+  b=Q5p/RldaU4jQhbh9s6E+ibAbZHG+3S5Th560JanL0A7x23hj7n6Zx6Mn
+   Ctc5qp2yZc7yEjxpGmsOySZ0A+Dj/ixg+IicCBwYw9A6VI0QHcq44pgX9
+   mre59/aJvR8D4j1h5a8p5fs0lkSX2mTa+NObZOmCH4OKP8RYiYP6OXlni
+   Q59/YwVh4zKLo49EsFEiGPJo9R661AXkv0MN4wjEfKCkmolDfzGhEbNNw
+   yaZE/NqlNJVVB86MeUlThTqaOLqFYM7n/Dwj37SMYWkZ/y878wajo3nFe
+   05xDF107C36aIGTCDJ2jUgC7555Y9v9KyyGJah/Gc1mkd+wGDwWuexhdq
+   g==;
+X-CSE-ConnectionGUID: PTGc0m2bSIqRNHwndfPZtQ==
+X-CSE-MsgGUID: 00rOjEorRnq+eE6cjUH21Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="12822778"
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="12822778"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 23:32:31 -0700
+X-CSE-ConnectionGUID: Kaek4QVbRyumC9/bnjvXHg==
+X-CSE-MsgGUID: CpheZxaUQZ+hd3QdiUN5hw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="85844250"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 23:32:29 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Alison Schofield <alison.schofield@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,  Dave Jiang
+ <dave.jiang@intel.com>,  <linux-cxl@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  Davidlohr Bueso <dave@stgolabs.net>,
+  "Jonathan Cameron" <jonathan.cameron@huawei.com>,  Vishal Verma
+ <vishal.l.verma@intel.com>,  Ira Weiny <ira.weiny@intel.com>,  Alejandro
+ Lucero <alucerop@amd.com>
+Subject: Re: [PATCH 2/3] cxl: Set target type of region with that of root
+ decoder
+In-Reply-To: <ZqrmeC8nKVR3Tksz@aschofie-mobl2> (Alison Schofield's message of
+	"Wed, 31 Jul 2024 18:35:52 -0700")
+References: <20240729084611.502889-1-ying.huang@intel.com>
+	<20240729084611.502889-3-ying.huang@intel.com>
+	<ZqrmeC8nKVR3Tksz@aschofie-mobl2>
+Date: Thu, 01 Aug 2024 14:28:55 +0800
+Message-ID: <87o76ckb88.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731150940.14106-1-aha310510@gmail.com>
-In-Reply-To: <20240731150940.14106-1-aha310510@gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 1 Aug 2024 08:28:20 +0200
-Message-ID: <CANn89iJn8XT86yyvqD6ZZvjV7eAxBjUd6rddL6NNaXVRimOXhg@mail.gmail.com>
-Subject: Re: [PATCH net,v2] rtnetlink: fix possible deadlock in team_port_change_check
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: jiri@resnulli.us, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	nicolas.dichtel@6wind.com, liuhangbin@gmail.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	syzbot+44623300f057a28baf1e@syzkaller.appspotmail.com, 
-	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 
-On Wed, Jul 31, 2024 at 5:10=E2=80=AFPM Jeongjun Park <aha310510@gmail.com>=
- wrote:
->
-> In do_setlink() , do_set_master() is called when dev->flags does not have
-> the IFF_UP flag set, so 'team->lock' is acquired and dev_open() is called=
-,
-> which generates the NETDEV_UP event. This causes a deadlock as it tries t=
-o
-> acquire 'team->lock' again.
->
-> To solve this, we need to unlock 'team->lock' before calling dev_open()
-> in team_port_add() and then reacquire the lock when dev_open() returns.
-> Since the implementation acquires the lock in advance when the team
-> structure is used inside dev_open(), data races will not occur even if it
-> is briefly unlocked.
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> WARNING: possible recursive locking detected
-> 6.11.0-rc1-syzkaller-ge4fc196f5ba3-dirty #0 Not tainted
-> --------------------------------------------
-> syz.0.15/5889 is trying to acquire lock:
-> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_port_chang=
-e_check drivers/net/team/team_core.c:2950 [inline]
-> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_device_eve=
-nt+0x2c7/0x770 drivers/net/team/team_core.c:2973
->
-> but task is already holding lock:
-> ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_slave+=
-0x9c/0x20e0 drivers/net/team/team_core.c:1975
->
-> other info that might help us debug this:
->  Possible unsafe locking scenario:
->
->        CPU0
->        ----
->   lock(team->team_lock_key#2);
->   lock(team->team_lock_key#2);
->
->  *** DEADLOCK ***
->
->  May be due to missing lock nesting notation
->
-> 2 locks held by syz.0.15/5889:
->  #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock net/core/rt=
-netlink.c:79 [inline]
->  #0: ffffffff8fa1f4e8 (rtnl_mutex){+.+.}-{3:3}, at: rtnetlink_rcv_msg+0x3=
-72/0xea0 net/core/rtnetlink.c:6644
->  #1: ffff8880231e4d40 (team->team_lock_key#2){+.+.}-{3:3}, at: team_add_s=
-lave+0x9c/0x20e0 drivers/net/team/team_core.c:1975
->
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 5889 Comm: syz.0.15 Not tainted 6.11.0-rc1-syzkaller-g=
-e4fc196f5ba3-dirty #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.=
-16.3-2~bpo12+1 04/01/2014
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:93 [inline]
->  dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
->  check_deadlock kernel/locking/lockdep.c:3061 [inline]
->  validate_chain kernel/locking/lockdep.c:3855 [inline]
->  __lock_acquire+0x2167/0x3cb0 kernel/locking/lockdep.c:5142
->  lock_acquire kernel/locking/lockdep.c:5759 [inline]
->  lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
->  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
->  __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
->  team_port_change_check drivers/net/team/team_core.c:2950 [inline]
->  team_device_event+0x2c7/0x770 drivers/net/team/team_core.c:2973
->  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
->  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
->  call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
->  call_netdevice_notifiers net/core/dev.c:2046 [inline]
->  __dev_notify_flags+0x12d/0x2e0 net/core/dev.c:8876
->  dev_change_flags+0x10c/0x160 net/core/dev.c:8914
->  vlan_device_event+0xdfc/0x2120 net/8021q/vlan.c:468
->  notifier_call_chain+0xb9/0x410 kernel/notifier.c:93
->  call_netdevice_notifiers_info+0xbe/0x140 net/core/dev.c:1994
->  call_netdevice_notifiers_extack net/core/dev.c:2032 [inline]
->  call_netdevice_notifiers net/core/dev.c:2046 [inline]
->  dev_open net/core/dev.c:1515 [inline]
->  dev_open+0x144/0x160 net/core/dev.c:1503
->  team_port_add drivers/net/team/team_core.c:1216 [inline]
->  team_add_slave+0xacd/0x20e0 drivers/net/team/team_core.c:1976
->  do_set_master+0x1bc/0x230 net/core/rtnetlink.c:2701
->  do_setlink+0x306d/0x4060 net/core/rtnetlink.c:2907
->  __rtnl_newlink+0xc35/0x1960 net/core/rtnetlink.c:3696
->  rtnl_newlink+0x67/0xa0 net/core/rtnetlink.c:3743
->  rtnetlink_rcv_msg+0x3c7/0xea0 net/core/rtnetlink.c:6647
->  netlink_rcv_skb+0x16b/0x440 net/netlink/af_netlink.c:2550
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg net/socket.c:745 [inline]
->  ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
->  ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
->  __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fc07ed77299
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fc07fb7f048 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007fc07ef05f80 RCX: 00007fc07ed77299
-> RDX: 0000000000000000 RSI: 0000000020000600 RDI: 0000000000000012
-> RBP: 00007fc07ede48e6 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 000000000000000b R14: 00007fc07ef05f80 R15: 00007ffeb5c0d528
->
-> Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-> Fixes: ec4ffd100ffb ("Revert "net: rtnetlink: Enslave device before bring=
-ing it up"")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> ---
->  drivers/net/team/team_core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/team/team_core.c b/drivers/net/team/team_core.c
-> index ab1935a4aa2c..ee595c3c6624 100644
-> --- a/drivers/net/team/team_core.c
-> +++ b/drivers/net/team/team_core.c
-> @@ -1212,8 +1212,9 @@ static int team_port_add(struct team *team, struct =
-net_device *port_dev,
->                            portname);
->                 goto err_port_enter;
->         }
-> -
-> +       mutex_unlock(&team->lock);
+Alison Schofield <alison.schofield@intel.com> writes:
 
-Why would this be safe ?
+> On Mon, Jul 29, 2024 at 04:46:10PM +0800, Ying Huang wrote:
+>> Now, the target type of region is hard-coded to HOSTONLYMEM, because
+>> only type3 expanders are supported.  To support type2 accelerators,
+>> set the target type of region root decoder with that of the root
+>> decoder.
+>
+> Hi Ying,
+>
+> If the target type of a region is always the same as it's root decoder,
+> (is it?)
 
-All checks done in team_port_add() before this point would need to be
-redone after mutex_lock() ?
+IIUC, it is.  Do you know when they may be different?
 
-If another mutex (rtnl ?) is already protecting this path, this would
-suggest team->lock should be removed,
-and RTNL should be used in all needed paths.
+> why do we store it as an attribute of the region. Can we look
+> it up when needed?
 
->         err =3D dev_open(port_dev, extack);
-> +       mutex_lock(&team->lock);
+Yes.  This is possible via to_cxl_root_decoder().  It's just
+a little inconvenient.
 
+> A bit more below -
+>
+>> 
+>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+>> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+>> Cc: Davidlohr Bueso <dave@stgolabs.net>
+>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+>> Cc: Dave Jiang <dave.jiang@intel.com>
+>> Cc: Alison Schofield <alison.schofield@intel.com>
+>> Cc: Vishal Verma <vishal.l.verma@intel.com>
+>> Cc: Ira Weiny <ira.weiny@intel.com>
+>> Cc: Alejandro Lucero <alucerop@amd.com>
+>> ---
+>>  drivers/cxl/core/region.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+>> index 21ad5f242875..9a483c8a32fd 100644
+>> --- a/drivers/cxl/core/region.c
+>> +++ b/drivers/cxl/core/region.c
+>> @@ -2545,7 +2545,8 @@ static struct cxl_region *__create_region(struct cxl_root_decoder *cxlrd,
+>>  		return ERR_PTR(-EBUSY);
+>>  	}
+>>  
+>> -	return devm_cxl_add_region(cxlrd, id, mode, CXL_DECODER_HOSTONLYMEM);
+>> +	return devm_cxl_add_region(cxlrd, id, mode,
+>> +				   cxlrd->cxlsd.cxld.target_type);
+>>  }
+>
+> Passing the 'cxlrd' and then a piece of the cxlrd (.target_type) looks
+> redundant.
 
+Yes.  We can remove the parameter.  Will change this if we still need
+cxlr->type.  Thanks!
 
->         if (err) {
->                 netdev_dbg(dev, "Device %s opening failed\n",
->                            portname);
-> --
+--
+Best Regards,
+Huang, Ying
+
+>
+> -- Alison
+>
+>>  
+>>  static ssize_t create_pmem_region_store(struct device *dev,
+>> -- 
+>> 2.39.2
+>> 
 
