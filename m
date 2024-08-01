@@ -1,117 +1,159 @@
-Return-Path: <linux-kernel+bounces-270289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 141C5943E0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:16:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE7B943DAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45BAB1C20914
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:16:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D01AE1C20E14
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7177B1D4176;
-	Thu,  1 Aug 2024 00:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E1D1CD66F;
+	Thu,  1 Aug 2024 00:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4TiB2/H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iRxRnx3w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6D71D4169;
-	Thu,  1 Aug 2024 00:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E92A1CD657
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 00:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722472246; cv=none; b=GdueRIVFAM3gH/YS8F+pS3BmNTyUNfhIDZK8AQd63pvyMIAiqXWiDn98lbzYLlylTvmueY5OW0ff0RQVtXztEogFDz+d8aRLqDo3p6unVY5wPPoKXExUKi73LOnvXQLSDdkau2qdgh+bsyg5drZ/PoXwkVnupDNtXCAQ27SPcVo=
+	t=1722471972; cv=none; b=B9z3Q42BLyQKyIT/APM/RayF4MaIUjCuzN2OnoYBNmX+L+UXne5q9ceNUK04YvNASKdVZ5ZgEXz5ANCdGF4NVxSeSLCM6JpQn2c9Tnla7WYj4X6irDYlfMvN8bOb+2FMYv1KiNzp5ooz1EfFZKI0oDjYW19qdS/2uZkXCfnbSgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722472246; c=relaxed/simple;
-	bh=zea6lzRx4uDEN6AQ26mHTJ1keGNuC+w2mmC3WzU+Rds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YEE3jDl+awvkT/NVKDpz7hMfnAb1qOz1PIb52tiixAz4+hqvQ2nd5fn9lI/m0V57B+VZJiEixutapZOFzAWfP95Uh9kBngi9NPX5B4HhidoojmG407s8I2k809i4KJXp7qVqz5v7RG0LoYbP/gwbhNxjC9UQQFFi0CpjIK0FNzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4TiB2/H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95D25C4AF0E;
-	Thu,  1 Aug 2024 00:30:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722472246;
-	bh=zea6lzRx4uDEN6AQ26mHTJ1keGNuC+w2mmC3WzU+Rds=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g4TiB2/HlO9+audh5WklgYjQukMxcg8X3J9FtxOIyn/WFLa0da+4z3Am2y66m6lU9
-	 5WIadf28HvKzBW78TmMZp8zGpZQUBKvc/hMBn5Pi9c025qUMsYHH/yzrJaY7iuc9nC
-	 PtYHQN2kNr7KI04Kwsm9QCHl4wtu7CXddmeJTPzCM/Ql4XBI9pv2yXLMjZdpbr7fDq
-	 B/QdXZZyE8FagS3QQ8vVUhbQB6STtJ8K0jyA0Db7/Qsz+PmM9Lu3bv4ByXiVKVknmp
-	 12QHfN6iXkZokKQ9uYCqfMf6OxsJuxBaYi8ZMtWgD8UDW4qXVIk4OnGrjekbJ8TfnU
-	 +BqToI3CL96Bg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Sasha Levin <sashal@kernel.org>,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 42/61] ALSA: vmaster: Return error for invalid input values
-Date: Wed, 31 Jul 2024 20:26:00 -0400
-Message-ID: <20240801002803.3935985-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240801002803.3935985-1-sashal@kernel.org>
-References: <20240801002803.3935985-1-sashal@kernel.org>
+	s=arc-20240116; t=1722471972; c=relaxed/simple;
+	bh=wJdiZfJDsWswP13NeAvM4KqYSTlIFDzmpZyEFchDtd0=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=HLTsN5NQQYcFore0LPdEg0Q/1SUTwfynDHZTPR99EyA/y+qttofsmguhxCM2/n3nwjodYeJWIGUmAK72453kY0nEdxsdlJMlogN0Xwy63raOj/phRbzvSrcjI/hYRMuIJWaIwR/4yHj721DWD2XxDqVbIK29KaT6KUIP2TfSN24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iRxRnx3w; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722471970; x=1754007970;
+  h=date:from:to:cc:subject:message-id;
+  bh=wJdiZfJDsWswP13NeAvM4KqYSTlIFDzmpZyEFchDtd0=;
+  b=iRxRnx3w4yeateiqWkmo5bLJ2k7/bN7MKzo/404TjIqU6Mco5zaRNCb8
+   Ma6gRwOrwX+gKLCmiLlZvvBjlwmebiCceiuUZyg1JR7Nto594zNP5dGj5
+   GjK1XMQD8ZWPMV1KIemxcrgxa8TpWkhM/DZUxHtWLtZxqJ1FuBFpOp2ny
+   HuVY1d/zOu90gyTSb9e1aKIlkSM9jqp8EmawVBZwX3wj8cNndtGY4oIkK
+   j0x5W+/Dbp70PfK3+HU+wS6vuxBKM8tfcDDWidtOYa8Wuc1KpcV5xG6P5
+   0q7iRm7IH/B4/o3Pg13razG7PV/hmtYD5R5u2Sol7vE1Vd4ZcaoFDsZny
+   A==;
+X-CSE-ConnectionGUID: ce+0f3HvRNiuRhAKb8d2+Q==
+X-CSE-MsgGUID: LWu/rhWtTWitfLZY4+kKrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="37904784"
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="37904784"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2024 17:26:10 -0700
+X-CSE-ConnectionGUID: +tgyV/vsTkeweYFec/pBvw==
+X-CSE-MsgGUID: hDrMI2hFQ4es72A6gxkYfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="59902417"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 31 Jul 2024 17:26:09 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sZJdu-000v1J-1d;
+	Thu, 01 Aug 2024 00:26:06 +0000
+Date: Thu, 01 Aug 2024 08:26:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:perf/urgent] BUILD SUCCESS
+ f73cefa3b72eaa90abfc43bf6d68137ba059d4b1
+Message-ID: <202408010857.dfzwtcwV-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.102
-Content-Transfer-Encoding: 8bit
 
-From: Takashi Iwai <tiwai@suse.de>
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/urgent
+branch HEAD: f73cefa3b72eaa90abfc43bf6d68137ba059d4b1  perf/x86: Fix smp_processor_id()-in-preemptible warnings
 
-[ Upstream commit 10457f5042b4890a667e2f15a2e783490dda44d2 ]
+elapsed time: 736m
 
-So far the vmaster code has been tolerant about the input values and
-accepts any values by correcting internally.  But now our own selftest
-starts complaining about this behavior, so let's be picky and change
-the behavior to return -EINVAL for invalid input values instead.
+configs tested: 67
+configs skipped: 145
 
-Reported-by: Paul Menzel <pmenzel@molgen.mpg.de>
-Closes: https://lore.kernel.org/r/1d44be36-9bb9-4d82-8953-5ae2a4f09405@molgen.mpg.de
-Reviewed-by: Jaroslav Kysela <perex@perex.cz>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Link: https://lore.kernel.org/20240616073454.16512-2-tiwai@suse.de
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- sound/core/vmaster.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-diff --git a/sound/core/vmaster.c b/sound/core/vmaster.c
-index d0f11f37889b5..4f1b208576a34 100644
---- a/sound/core/vmaster.c
-+++ b/sound/core/vmaster.c
-@@ -204,6 +204,12 @@ static int follower_put(struct snd_kcontrol *kcontrol,
- 	err = follower_init(follower);
- 	if (err < 0)
- 		return err;
-+	for (ch = 0; ch < follower->info.count; ch++) {
-+		if (ucontrol->value.integer.value[ch] < follower->info.min_val ||
-+		    ucontrol->value.integer.value[ch] > follower->info.max_val)
-+			return -EINVAL;
-+	}
-+
- 	for (ch = 0; ch < follower->info.count; ch++) {
- 		if (follower->vals[ch] != ucontrol->value.integer.value[ch]) {
- 			changed = 1;
-@@ -344,6 +350,8 @@ static int master_put(struct snd_kcontrol *kcontrol,
- 	new_val = ucontrol->value.integer.value[0];
- 	if (new_val == old_val)
- 		return 0;
-+	if (new_val < master->info.min_val || new_val > master->info.max_val)
-+		return -EINVAL;
- 
- 	err = sync_followers(master, old_val, new_val);
- 	if (err < 0)
+tested configs:
+alpha                             allnoconfig   gcc-13.2.0
+alpha                               defconfig   gcc-13.2.0
+arc                               allnoconfig   gcc-13.2.0
+arc                                 defconfig   gcc-13.2.0
+arm                               allnoconfig   gcc-13.2.0
+arm                                 defconfig   gcc-13.2.0
+arm64                             allnoconfig   gcc-13.2.0
+arm64                               defconfig   gcc-13.2.0
+csky                              allnoconfig   gcc-13.2.0
+csky                                defconfig   gcc-13.2.0
+i386                             allmodconfig   gcc-13
+i386                              allnoconfig   gcc-13
+i386                             allyesconfig   gcc-13
+i386         buildonly-randconfig-001-20240801   gcc-9
+i386         buildonly-randconfig-002-20240801   clang-18
+i386         buildonly-randconfig-002-20240801   gcc-9
+i386         buildonly-randconfig-003-20240801   gcc-7
+i386         buildonly-randconfig-003-20240801   gcc-9
+i386         buildonly-randconfig-004-20240801   clang-18
+i386         buildonly-randconfig-004-20240801   gcc-9
+i386         buildonly-randconfig-005-20240801   clang-18
+i386         buildonly-randconfig-005-20240801   gcc-9
+i386         buildonly-randconfig-006-20240801   clang-18
+i386         buildonly-randconfig-006-20240801   gcc-9
+i386                                defconfig   clang-18
+i386                  randconfig-001-20240801   gcc-13
+i386                  randconfig-001-20240801   gcc-9
+i386                  randconfig-002-20240801   clang-18
+i386                  randconfig-002-20240801   gcc-9
+i386                  randconfig-003-20240801   clang-18
+i386                  randconfig-003-20240801   gcc-9
+i386                  randconfig-004-20240801   clang-18
+i386                  randconfig-004-20240801   gcc-9
+i386                  randconfig-005-20240801   gcc-13
+i386                  randconfig-005-20240801   gcc-9
+i386                  randconfig-006-20240801   gcc-13
+i386                  randconfig-006-20240801   gcc-9
+i386                  randconfig-011-20240801   gcc-13
+i386                  randconfig-011-20240801   gcc-9
+i386                  randconfig-012-20240801   clang-18
+i386                  randconfig-012-20240801   gcc-9
+i386                  randconfig-013-20240801   gcc-13
+i386                  randconfig-013-20240801   gcc-9
+i386                  randconfig-014-20240801   gcc-13
+i386                  randconfig-014-20240801   gcc-9
+i386                  randconfig-015-20240801   gcc-12
+i386                  randconfig-015-20240801   gcc-9
+i386                  randconfig-016-20240801   clang-18
+i386                  randconfig-016-20240801   gcc-9
+loongarch                         allnoconfig   gcc-13.2.0
+loongarch                           defconfig   gcc-13.2.0
+m68k                              allnoconfig   gcc-13.2.0
+m68k                                defconfig   gcc-13.2.0
+microblaze                        allnoconfig   gcc-13.2.0
+microblaze                          defconfig   gcc-13.2.0
+mips                              allnoconfig   gcc-13.2.0
+nios2                             allnoconfig   gcc-13.2.0
+nios2                               defconfig   gcc-13.2.0
+parisc64                            defconfig   gcc-13.2.0
+s390                             allmodconfig   clang-20
+s390                             allyesconfig   clang-20
+sh                                allnoconfig   gcc-13.2.0
+x86_64                            allnoconfig   clang-18
+x86_64                           allyesconfig   clang-18
+x86_64                              defconfig   gcc-13
+x86_64                          rhel-8.3-rust   clang-18
+xtensa                            allnoconfig   gcc-13.2.0
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
