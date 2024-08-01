@@ -1,266 +1,120 @@
-Return-Path: <linux-kernel+bounces-270601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E635C9441F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:37:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4F69441F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2472284302
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:37:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A455C1C22ACB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50AC413DDC6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0B313E898;
 	Thu,  1 Aug 2024 03:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="AnKZ0mpl"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cYKyRRsa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF89413D60B
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 03:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E94013DBAD;
+	Thu,  1 Aug 2024 03:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722483453; cv=none; b=n0LKWF8w4gAKXOrFFCxkXGIfUJqkzs5VdA3pYw71K54tlI2drjYMep0PcKtArNHs0JzFpwwa7Tq2fRIbRMf7MwMVrlFKY/HPgXIaiqsfGiJc/BFRGK4ur4bLAUqbovYAJ0FlvyQKIuHb2v5vQ4yOoy/cpaSr/+SrXSBFgg3yEME=
+	t=1722483454; cv=none; b=VaapGn+tM2v5JxrePgybCMmgls0O/tzCoi8F98fFuMz79mjc3Wt+uQ3mHguCFwW2Y4txV2WH1OnK3XT0a4ot8P4Ho5i5RaFnvpQ77HulRYjBYmfHvqU7HzhBHzxQ47sihlDS0MMgO24gCA74MHUIOQUgPh3uSELc9XZINebfL2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722483453; c=relaxed/simple;
-	bh=6wCU6BSNF4M973kE1vh030crOI9lGgN6DTdeCXfjRro=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qwyA5n1EvN3ph5tXksmzFM5ia3WzvdBNf/Wogj4xbQrnY3KWPyyj8W8axo9N6dRlLsSYYJgbDGA+m7+Z0uoUsP2/IdqcJs7a1bA/3YYH3+xgr5nS1Qlg0DOYvHTJnyxY8dvYxCCWhKwINbXVKQUPJ3Vq36kuK/BaEvZFH41Qs/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=AnKZ0mpl; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7093d565310so5185736a34.2
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 20:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1722483450; x=1723088250; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=msVGAs2Ent9MgPGCzZ9Uq7gVj0jWgfLK/XRk8zdKP5o=;
-        b=AnKZ0mplWNl1fFngI/qoApOzuEcdtxW7dtnFvxrb7zhzVlAXw9UdN5vMX7Azd4MkQN
-         4lxRHC/nyiPEQ4+Cx8ubQX+Vr8zRqcTUSzCgqM25aDWIsT0kKp8+3oJ+6k8A0rQMG5AY
-         VsOBaJQW36Q2zGaw4Jp58HLAZt45PxrDwv3ltI/WBe5GTfe98oz9YvmgNDWM8uuRIcDu
-         7a9qnf9eX9XLfkzlCECimjJ0w6ROeOR44XE0hsmptIE5nzABaQe0fbvRNo2WPAJsrjoZ
-         DgVl8xMgJoKWVXz+BaX2kWaa1exgb/QhxVwbbCOSgGF+YnnZOcZW0enWrKFy7qQ0J97/
-         Aufw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722483450; x=1723088250;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=msVGAs2Ent9MgPGCzZ9Uq7gVj0jWgfLK/XRk8zdKP5o=;
-        b=FAkUiMG2Y8z0EPnJMbwFKA8gQ2xtJvm2CY9dScpiB/RHPTebS8Muy+qBewSb+lrUIr
-         kLDZIyAj0aEj5KdHkK4OKVcVxUyPhe9T6XepiS5MtLlGllAj+uudGNDTTQDF9h/LZJa0
-         8wT9XRdQ1Xu0CVNK7BYdYZJlZf7X0WW3djA0ACxsqBpHX4ENSi6wbMTut2Qt4/cdJME9
-         wDqh8AhDkamW67+S/LTk0Mx1V7YuUNjV5It/xJeRBUuQEmTQkpTDzSYkFGVDUDsSOwui
-         mK13FrRGWcJb2KldKMF3XgjxLrXdrCte3YE/HUSNQpe+wGHwvpWcEqN7Ex/fIqxbuOyz
-         OtRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOMCoh15mrD8AjguZMiKNj4piQiNANggLdUfNtknWzourYZyDV6OJO8uKdeR/z0rwfE20ncUG/LuDowBx7c9Kn7GY2/dcnJf3+IyRy
-X-Gm-Message-State: AOJu0YzKBN04D587woisGiqrOjaWpHtlpceH4AbOJ13xb6kJPBlHqmPv
-	fY5YUBEdmVTJiztVNri9GloU7XkN+gFN19haxcheolCjK+zUV8xx5dNKIkYsHbo=
-X-Google-Smtp-Source: AGHT+IGP40Ax3lzWFlCGU0aTP1HPnWbwedEDfA5dMJhXTXtH06+s5sdbGtwoQDQnLakNYH4zfh8i/Q==
-X-Received: by 2002:a05:6830:6189:b0:702:1dec:c8a0 with SMTP id 46e09a7af769-7096b7ae351mr1395710a34.6.1722483450554;
-        Wed, 31 Jul 2024 20:37:30 -0700 (PDT)
-Received: from sw06.internal.sifive.com ([4.53.31.132])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead72ae3asm10954457b3a.91.2024.07.31.20.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 20:37:30 -0700 (PDT)
-From: Samuel Holland <samuel.holland@sifive.com>
-To: Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	linux-kernel@vger.kernel.org,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: [PATCH 2/2] riscv: Enable bitops instrumentation
-Date: Wed, 31 Jul 2024 20:37:00 -0700
-Message-ID: <20240801033725.28816-3-samuel.holland@sifive.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240801033725.28816-1-samuel.holland@sifive.com>
-References: <20240801033725.28816-1-samuel.holland@sifive.com>
+	s=arc-20240116; t=1722483454; c=relaxed/simple;
+	bh=Vp0WRXh6a99JG+/ezGQ5ywVjgLg1EA2TbMiWufFAhyY=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=TREQxMwTXPuyrfD312yYBNdMDRjtQNF8mVQqgA9Ayk0XFjWrOAb7vnMvfbH238GKDFaMktT222SRov5FHnoV9zYsFGnIZQkVJ34XznK9cU5bVxF3JvrcbQeI8h4YKE1t12nC6z3wjL0dhuEfR7ZF+S0o9Kyu8SCUF1u4iDoX+Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cYKyRRsa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5258FC4AF12;
+	Thu,  1 Aug 2024 03:37:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722483453;
+	bh=Vp0WRXh6a99JG+/ezGQ5ywVjgLg1EA2TbMiWufFAhyY=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=cYKyRRsaeRsQ+vhTxImq00tcnxZdtguLo+p1yishEBW957kN/WnCAs86A3sa4FO5b
+	 fznqqsk/HmFVZSZgPzjqCXgIidlgW6FKiDlNtWCwaPKRvrxb4zYj3/PoixfyNU/eeY
+	 yJAXUvrbnDKr0FdMywkEY5tYDmd+QbkuH/TXP5dwLplej8NzyVIuBzhAcVIQ7m3621
+	 fU6fcXG4LnNiWq1noxeAJGInlscL/a8YT+Q4PlSgOm0Hv6zl2KeaOZ08izcvr3JFpI
+	 7sv+RVZ8CmSq8eafJLXtLWCk4hNwRfRGqcjbUNs12F8dh+RPlW+KtIII/nC0T+K2F5
+	 7PfJ9q9ecsrBA==
+Date: Wed, 31 Jul 2024 21:37:32 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: Andy Yan <andy.yan@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Luis de Arquer <ldearquer@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ David Airlie <airlied@gmail.com>, Alexandre ARNOUD <aarnoud@me.com>, 
+ Robert Foss <rfoss@kernel.org>, devicetree@vger.kernel.org, 
+ Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ linux-rockchip@lists.infradead.org, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, Mark Yao <markyao0591@gmail.com>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, Jonas Karlman <jonas@kwiboo.se>, 
+ Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, 
+ Sandy Huang <hjc@rock-chips.com>, linux-kernel@vger.kernel.org, 
+ kernel@collabora.com, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>
+In-Reply-To: <20240801-b4-rk3588-bridge-upstream-v2-1-9fa657a4e15b@collabora.com>
+References: <20240801-b4-rk3588-bridge-upstream-v2-0-9fa657a4e15b@collabora.com>
+ <20240801-b4-rk3588-bridge-upstream-v2-1-9fa657a4e15b@collabora.com>
+Message-Id: <172248345225.2862796.6921035362248469311.robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: rockchip: Add schema for
+ RK3588 HDMI TX Controller
 
-Instead of implementing the bitops functions directly in assembly,
-provide the arch_-prefixed versions and use the wrappers from
-asm-generic to add instrumentation. This improves KASAN coverage and
-fixes the kasan_bitops_generic() unit test.
 
-Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
----
+On Thu, 01 Aug 2024 05:25:52 +0300, Cristian Ciocaltea wrote:
+> Rockchip RK3588 SoC integrates the Synopsys DesignWare HDMI 2.1
+> Quad-Pixel (QP) TX controller IP.
+> 
+> Since this is a new IP block, quite different from those used in the
+> previous generations of Rockchip SoCs, add a dedicated binding file.
+> 
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> ---
+>  .../display/rockchip/rockchip,dw-hdmi-qp.yaml      | 188 +++++++++++++++++++++
+>  1 file changed, 188 insertions(+)
+> 
 
- arch/riscv/include/asm/bitops.h | 43 ++++++++++++++++++---------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
-index 71af9ecfcfcb..fae152ea0508 100644
---- a/arch/riscv/include/asm/bitops.h
-+++ b/arch/riscv/include/asm/bitops.h
-@@ -222,44 +222,44 @@ static __always_inline int variable_fls(unsigned int x)
- #define __NOT(x)	(~(x))
- 
- /**
-- * test_and_set_bit - Set a bit and return its old value
-+ * arch_test_and_set_bit - Set a bit and return its old value
-  * @nr: Bit to set
-  * @addr: Address to count from
-  *
-  * This operation may be reordered on other architectures than x86.
-  */
--static inline int test_and_set_bit(int nr, volatile unsigned long *addr)
-+static inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
- {
- 	return __test_and_op_bit(or, __NOP, nr, addr);
- }
- 
- /**
-- * test_and_clear_bit - Clear a bit and return its old value
-+ * arch_test_and_clear_bit - Clear a bit and return its old value
-  * @nr: Bit to clear
-  * @addr: Address to count from
-  *
-  * This operation can be reordered on other architectures other than x86.
-  */
--static inline int test_and_clear_bit(int nr, volatile unsigned long *addr)
-+static inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
- {
- 	return __test_and_op_bit(and, __NOT, nr, addr);
- }
- 
- /**
-- * test_and_change_bit - Change a bit and return its old value
-+ * arch_test_and_change_bit - Change a bit and return its old value
-  * @nr: Bit to change
-  * @addr: Address to count from
-  *
-  * This operation is atomic and cannot be reordered.
-  * It also implies a memory barrier.
-  */
--static inline int test_and_change_bit(int nr, volatile unsigned long *addr)
-+static inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
- {
- 	return __test_and_op_bit(xor, __NOP, nr, addr);
- }
- 
- /**
-- * set_bit - Atomically set a bit in memory
-+ * arch_set_bit - Atomically set a bit in memory
-  * @nr: the bit to set
-  * @addr: the address to start counting from
-  *
-@@ -270,13 +270,13 @@ static inline int test_and_change_bit(int nr, volatile unsigned long *addr)
-  * Note that @nr may be almost arbitrarily large; this function is not
-  * restricted to acting on a single-word quantity.
-  */
--static inline void set_bit(int nr, volatile unsigned long *addr)
-+static inline void arch_set_bit(int nr, volatile unsigned long *addr)
- {
- 	__op_bit(or, __NOP, nr, addr);
- }
- 
- /**
-- * clear_bit - Clears a bit in memory
-+ * arch_clear_bit - Clears a bit in memory
-  * @nr: Bit to clear
-  * @addr: Address to start counting from
-  *
-@@ -284,13 +284,13 @@ static inline void set_bit(int nr, volatile unsigned long *addr)
-  * on non x86 architectures, so if you are writing portable code,
-  * make sure not to rely on its reordering guarantees.
-  */
--static inline void clear_bit(int nr, volatile unsigned long *addr)
-+static inline void arch_clear_bit(int nr, volatile unsigned long *addr)
- {
- 	__op_bit(and, __NOT, nr, addr);
- }
- 
- /**
-- * change_bit - Toggle a bit in memory
-+ * arch_change_bit - Toggle a bit in memory
-  * @nr: Bit to change
-  * @addr: Address to start counting from
-  *
-@@ -298,40 +298,40 @@ static inline void clear_bit(int nr, volatile unsigned long *addr)
-  * Note that @nr may be almost arbitrarily large; this function is not
-  * restricted to acting on a single-word quantity.
-  */
--static inline void change_bit(int nr, volatile unsigned long *addr)
-+static inline void arch_change_bit(int nr, volatile unsigned long *addr)
- {
- 	__op_bit(xor, __NOP, nr, addr);
- }
- 
- /**
-- * test_and_set_bit_lock - Set a bit and return its old value, for lock
-+ * arch_test_and_set_bit_lock - Set a bit and return its old value, for lock
-  * @nr: Bit to set
-  * @addr: Address to count from
-  *
-  * This operation is atomic and provides acquire barrier semantics.
-  * It can be used to implement bit locks.
-  */
--static inline int test_and_set_bit_lock(
-+static inline int arch_test_and_set_bit_lock(
- 	unsigned long nr, volatile unsigned long *addr)
- {
- 	return __test_and_op_bit_ord(or, __NOP, nr, addr, .aq);
- }
- 
- /**
-- * clear_bit_unlock - Clear a bit in memory, for unlock
-+ * arch_clear_bit_unlock - Clear a bit in memory, for unlock
-  * @nr: the bit to set
-  * @addr: the address to start counting from
-  *
-  * This operation is atomic and provides release barrier semantics.
-  */
--static inline void clear_bit_unlock(
-+static inline void arch_clear_bit_unlock(
- 	unsigned long nr, volatile unsigned long *addr)
- {
- 	__op_bit_ord(and, __NOT, nr, addr, .rl);
- }
- 
- /**
-- * __clear_bit_unlock - Clear a bit in memory, for unlock
-+ * arch___clear_bit_unlock - Clear a bit in memory, for unlock
-  * @nr: the bit to set
-  * @addr: the address to start counting from
-  *
-@@ -345,13 +345,13 @@ static inline void clear_bit_unlock(
-  * non-atomic property here: it's a lot more instructions and we still have to
-  * provide release semantics anyway.
-  */
--static inline void __clear_bit_unlock(
-+static inline void arch___clear_bit_unlock(
- 	unsigned long nr, volatile unsigned long *addr)
- {
--	clear_bit_unlock(nr, addr);
-+	arch_clear_bit_unlock(nr, addr);
- }
- 
--static inline bool xor_unlock_is_negative_byte(unsigned long mask,
-+static inline bool arch_xor_unlock_is_negative_byte(unsigned long mask,
- 		volatile unsigned long *addr)
- {
- 	unsigned long res;
-@@ -369,6 +369,9 @@ static inline bool xor_unlock_is_negative_byte(unsigned long mask,
- #undef __NOT
- #undef __AMO
- 
-+#include <asm-generic/bitops/instrumented-atomic.h>
-+#include <asm-generic/bitops/instrumented-lock.h>
-+
- #include <asm-generic/bitops/non-atomic.h>
- #include <asm-generic/bitops/le.h>
- #include <asm-generic/bitops/ext2-atomic.h>
--- 
-2.45.1
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi-qp.example.dtb: hdmi@fde80000: False schema does not allow {'compatible': ['rockchip,rk3588-dw-hdmi-qp'], 'reg': [[0, 4259840000, 0, 131072]], 'clocks': [[4294967295, 528], [4294967295, 529], [4294967295, 530], [4294967295, 564], [4294967295, 594], [4294967295, 717]], 'clock-names': ['pclk', 'earc', 'ref', 'aud', 'hdp', 'hclk_vo1'], 'interrupts': [[0, 169, 4, 0], [0, 170, 4, 0], [0, 171, 4, 0], [0, 172, 4, 0], [0, 360, 4, 0]], 'interrupt-names': ['avp', 'cec', 'earc', 'main', 'hpd'], 'phys': [[4294967295]], 'phy-names': ['hdmi'], 'power-domains': [[4294967295, 26]], 'resets': [[4294967295, 462], [4294967295, 560]], 'reset-names': ['ref', 'hdp'], 'rockchip,grf': [[4294967295]], 'rockchip,vo1_grf': [[4294967295]], '#sound-dai-cells': 0, 'ports': {'#address-cells': 1, '#size-cells': 0, 'port@0': {'reg': [[0]], 'endpoint': {'remote-endpoint': [[4294967295]]}}, 'port@1': {'reg': [[1]]
+ , 'endpoint': {'remote-endpoint': [[4294967295]]}}}, '$nodename': ['hdmi@fde80000']}
+	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-hdmi-qp.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi-qp.example.dtb: hdmi@fde80000: Unevaluated properties are not allowed ('reg' was unexpected)
+	from schema $id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-hdmi-qp.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240801-b4-rk3588-bridge-upstream-v2-1-9fa657a4e15b@collabora.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
