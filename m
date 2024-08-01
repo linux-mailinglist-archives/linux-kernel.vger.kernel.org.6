@@ -1,198 +1,179 @@
-Return-Path: <linux-kernel+bounces-271877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1173945446
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:58:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FBE945453
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:00:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25201C22239
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6421628679B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318AB14B96E;
-	Thu,  1 Aug 2024 21:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E061114C5B8;
+	Thu,  1 Aug 2024 22:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QWpTAJgA"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kKRprEAB"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD3A4594D
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 21:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F73814B956;
+	Thu,  1 Aug 2024 22:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722549490; cv=none; b=n92ZOJFlEOsxAj7M33TUpIWs70/8Z2KWvzHG2UGtxre5HTiCK1OgrqlTXBZi5O/RtR704cj0jTDFh36FZikO9ty7FvXtxH5kb9AQR5R4G2GnZq+2pmRR6ebrOZoSRcJJ3Yrhv3Jh1ec5TdY4N48OyH6oIMCTy4STsksdAtWOZ7g=
+	t=1722549604; cv=none; b=AYhHPL6JzggD6JMnQdZ02qF4NAnyoaKS9DKfTiiJocq/JhhSi7rsPefMaRWq9sCtxOllWXf5jfdqG9T0YLgcEwbeuCY4vodWS6fkBTXqJZXADauua5YR1RvqHYUup0Jf5DwUST825rwPjuJj7sa1AerU1umerNV3S67aaq2wL4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722549490; c=relaxed/simple;
-	bh=RQYItWZwH4Ql8qW2fpp1u02We7daZKEImfw/+wWYyWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OBBxZnEqRcAIcBlTG+jZs0edWprzYDOMUEkm7pF7zSFZIxV/QwuIjQ6DNt8tQK45ElsBrbAZ6bYaP298mCqvhGMrKQ1q2UGa5Ft14jZM2VfJ6/mQRzFdXv/lPWKmQlHEAmvfbrIav+fjOMD6wVlhjSr0LOR23yePQW8fjDucbJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QWpTAJgA; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-81f86cebca3so47672839f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 14:58:08 -0700 (PDT)
+	s=arc-20240116; t=1722549604; c=relaxed/simple;
+	bh=51LgvSDN4Q0xgB1nQGohT2M6YA+WmOi/ZJF+nHCgu9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i8xtQ/SL9j1WrbBG91mdKwnQJLUdWs6uZ2+bke6UhWLjBjZ2qxNSb3Tp0HkbsEwAStm4wp1h9TzD/G4e7qt2f0Y5vGT96RXTxJmclW3PTbsczZQhKGbZEhxqvRKVAYhdqAM1/VlvYSOEA1i+6S9daMegF7fKE/97Rhzi/mhzd3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kKRprEAB; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5af51684d52so8524728a12.1;
+        Thu, 01 Aug 2024 15:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722549488; x=1723154288; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NO6nbx+9tiNIKrfqJCv4GTpw+kRZXI/h31Bka4korBg=;
-        b=QWpTAJgAQGyI/VM4HAAqp/5e5TwJNsYfrPhGmfNXceWMaehXFo5+CpGOMd/1t0Y0JF
-         xNEUxpNyGr0oN4z3BRqQ466UI7ltsTfA+/ZoG8V0buKu1uImxWktcxSrAjdhg3QIxElE
-         lv5DxDgeI23jMA4ucdn01k2/WxywihaueDQrU=
+        d=gmail.com; s=20230601; t=1722549601; x=1723154401; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NEWWzKV7FilEILhztxlLpWzopz9rHwAsQE6OK+zS2H8=;
+        b=kKRprEABZTQXo2b2xwbJbPM7IkQOB0cxMOTYE4P7w4r8Cdwmjgf8C6D2ugKWMMwWH1
+         qksWiCULwkP8Zk/e7mvWsbM3oDEuZigG7m/Nia/bJyR1fszlpfxhIuXK8drqu10+SO8D
+         IjJ62Bp4Xnt8luGOZ1IzGcROeETvWSzUQl70JMLVdNJQNoORpm3aX18DLLzFUZdqOGAh
+         d+lud2SSOXgkJNNGKvuGNmUI/pu30SbKptyHPfWi5DwCOHWCi44Jmcfv0yqXBTpMSrD3
+         Vf/viB3gRVrodYtD6oyfuPnASAPlY1KVCAl6MG2Y6dWGZIlp3uVzjtAcH+fdLinWaiv1
+         HfPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722549488; x=1723154288;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NO6nbx+9tiNIKrfqJCv4GTpw+kRZXI/h31Bka4korBg=;
-        b=U/dYUmXTkWK1BDgzzr7eqEnmJK0/wq7xwt0LrYdsRGjulu7Vfi2W3bEa4EsQN+JH3T
-         ftv3JpM2vOCftYOndwNtyCqsrYRFGgJxQ4AApDu650A9Xr/XZvcJVWffefnCPutmvAVL
-         BYcH1cYU8Az3N5fHsOQCVOkyrUdmE0KCd0kKVNJniEE5RR9BkTUQo0doeb9n/nJx6Cb0
-         Huhg6K+5H4r+v+aJGs06tu9cm3mpVUuVdK9qXsjQoUUoLl38Lmvg46LLFC1aKbvl9V4u
-         +mqtEikehhARk6jjfDrtkM92g6NIR0UZtcoJUO4tYDDp0dlaCi2lq/YO9vtKokKdO6Dv
-         gDYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkn0fgymCjnEPMR3KgSsb0V/iMDaTK7xOetsK6nvjGfaMOwZbPf/GJ+9oEcgsskLOixjWPD2qv9r7MrkafYCOTir2f6aAM3r3pkI2O
-X-Gm-Message-State: AOJu0Yyx2+LtUsaxAxx1V6m5uDEnV2IeezoXbJVwSiqtTdfT2OAEkpyS
-	HMeUuV+rqfJWP6SUJG053wZlmPxvCgQRkedQilkcfB4isfgikOVYZPKvqQOo30E=
-X-Google-Smtp-Source: AGHT+IH7ya7vdahb7Fg38dGONaREdXofSfWrUYIw0guOf2OCWQESsTl4qSlWseOFrxzw38bCJqnXJQ==
-X-Received: by 2002:a92:ca47:0:b0:376:3918:c50 with SMTP id e9e14a558f8ab-39b1f780a14mr12601795ab.0.1722549487874;
-        Thu, 01 Aug 2024 14:58:07 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20ae3423sm2395595ab.68.2024.08.01.14.58.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 14:58:07 -0700 (PDT)
-Message-ID: <928fd388-e714-4e84-bde3-bf684c1ccff0@linuxfoundation.org>
-Date: Thu, 1 Aug 2024 15:58:06 -0600
+        d=1e100.net; s=20230601; t=1722549601; x=1723154401;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NEWWzKV7FilEILhztxlLpWzopz9rHwAsQE6OK+zS2H8=;
+        b=aZK45+h9309i4boM4VoO1Wq2tOJtG/rQ15LdFDL1b0kaAkButlOEmNolj66Ns7z3rV
+         Qt6b8mm0xOSWBsj3l1qKd8+PDvL2y8lGCP8obhgqyyI7lo5W3xcHHy3Pcr/+9+YaHtpO
+         LJWXM/oQx3R4WYanHYDrfVW94kCeJmK+lOGcvexDGXyTFmx/cNIpdQ03wmCkomKotCRk
+         PExVcoCdrvMpTYOXVbXJI8HyBrcHNn7VPNVhrgJKEVlDbRn190TnTR1xr2DPF6+n9MdT
+         3+lzgQtabcvl7eP6BFECShjd4FslaaIc2L0unTj8xnnBw2eOvXm/FeKYI0/EZ62ujJuX
+         wUTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWMhYK7sRgWdeI1/JBKEjOoOa2hLIddGBEBL1OjsuVK+32T2VOyxTiU1VlE+ycw6Ychmp8X5/BX9vCS@vger.kernel.org, AJvYcCWpieZ5Chkf7Ef1uldW+JfUobhkDBge+x6gPbD5ht//OP11oB9pMjQ8Rra+vajd+Sg/RsPlLiL2HtYSCv4X@vger.kernel.org, AJvYcCXKD3LArUAVRyb6RX2Uq2RPbJwE64Olhm6Y6wOJey6K5M79b2KRIObaCpNdYFKmAE9OQoiZSlIOd35bulvN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWQWyA9USzLV1ReqeT4aXTRNJRg1Xu7OPyQrWwKHBhMEP7wp79
+	dHpbK/r9fIexoAgfLkRnqT/y1QEzd7xj+9SPcS1+CPtBIOVps9cm
+X-Google-Smtp-Source: AGHT+IGQ77USyhjHrCLgIMYcXsO5YF2t3I7vQ9r7lkx3P38C4elQidfDjTQQpvKCQxgZ3LPQOLXsmg==
+X-Received: by 2002:aa7:c406:0:b0:5a0:f0c4:aa7b with SMTP id 4fb4d7f45d1cf-5b7f5129461mr977426a12.27.1722549600395;
+        Thu, 01 Aug 2024 15:00:00 -0700 (PDT)
+Received: from mobilestation ([176.213.10.205])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839b2b556sm256336a12.25.2024.08.01.14.59.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 14:59:59 -0700 (PDT)
+Date: Fri, 2 Aug 2024 00:59:57 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>, 
+	Bjorn Helgaas <helgaas@kernel.org>
+Cc: jingoohan1@gmail.com, manivannan.sadhasivam@linaro.org, 
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, bhelgaas@google.com, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	quic_mrana@quicinc.com
+Subject: Re: [PATCH v3 1/2] PCI: dwc: Add dbi_phys_addr and atu_phys_addr to
+ struct dw_pcie
+Message-ID: <j62ox6yeemxng3swlnzkqpl4mos7zj4khui6rusrm7nqcpts6r@vmoddl4lchlt>
+References: <20240724022719.2868490-1-quic_pyarlaga@quicinc.com>
+ <20240724022719.2868490-2-quic_pyarlaga@quicinc.com>
+ <vbq3ma3xanu4budrrt7iwk7bh7evgmlgckpohqksuamf3odbee@mvox7krdugg3>
+ <6d926346-1c24-4aee-85b1-ffb5a0df904b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] kselftest: devices: Add test to detect missing
- devices
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Shuah Khan <shuah@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Bird, Tim" <Tim.Bird@sony.com>, Laura Nao <laura.nao@collabora.com>,
- Saravana Kannan <saravanak@google.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- kernel@collabora.com, kernelci@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240724-kselftest-dev-exist-v1-1-9bc21aa761b5@collabora.com>
- <9d0b73ce-704c-4633-bb11-06ca4cb7a9a1@linuxfoundation.org>
- <f9a457c8-f558-4c45-96e0-baa97d143c7b@notapiano>
- <41a912af-4f59-4d54-a072-3de9ee912dee@linuxfoundation.org>
- <22688e55-b611-41b3-9bf0-06691454e3b1@notapiano>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <22688e55-b611-41b3-9bf0-06691454e3b1@notapiano>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6d926346-1c24-4aee-85b1-ffb5a0df904b@quicinc.com>
 
-On 8/1/24 15:03, Nícolas F. R. A. Prado wrote:
-> On Thu, Aug 01, 2024 at 02:13:05PM -0600, Shuah Khan wrote:
->> On 8/1/24 13:15, Nícolas F. R. A. Prado wrote:
->>> On Wed, Jul 31, 2024 at 05:19:45PM -0600, Shuah Khan wrote:
->>>> On 7/24/24 15:40, Nícolas F. R. A. Prado wrote:
->>>>> Introduce a new test to identify regressions causing devices to go
->>>>> missing on the system.
->>>>>
->>>>> For each bus and class on the system the test checks the number of
->>>>> devices present against a reference file, which needs to have been
->>>>> generated by the program at a previous point on a known-good kernel, and
->>>>> if there are missing devices they are reported.
->>>>
->>>> Can you elaborate on how to generate reference file? It isn't clear.
->>>
->>> Indeed, I'll make that information clearer in future versions.
->>>
->>> The reference file is generated by passing the --generate-reference flag to the
->>> test:
->>>
->>> ./exist.py --generate-reference
->>>
->>> It will be printed as standard output.
->>
->> How about adding an option to generate file taking filename?
->> Makes it easier to use.
+On Thu, Aug 01, 2024 at 02:29:49PM -0700, Prudhvi Yarlagadda wrote:
+> Hi Serge,
 > 
-> Sure, we can do that. Another option would be to write it to the filename that
-> would be looked for by default. So for your machine just calling
+> Thanks for the review comment.
 > 
->    ./exist.py --generate-reference
+> On 8/1/2024 12:25 PM, Serge Semin wrote:
+> > On Tue, Jul 23, 2024 at 07:27:18PM -0700, Prudhvi Yarlagadda wrote:
+> >> Both DBI and ATU physical base addresses are needed by pcie_qcom.c
+> >> driver to program the location of DBI and ATU blocks in Qualcomm
+> >> PCIe Controller specific PARF hardware block.
+> >>
+> >> Signed-off-by: Prudhvi Yarlagadda <quic_pyarlaga@quicinc.com>
+> >> Reviewed-by: Mayank Rana <quic_mrana@quicinc.com>
+> >> ---
+> >>  drivers/pci/controller/dwc/pcie-designware.c | 2 ++
+> >>  drivers/pci/controller/dwc/pcie-designware.h | 2 ++
+> >>  2 files changed, 4 insertions(+)
+> >>
+> >> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> >> index 1b5aba1f0c92..bc3a5d6b0177 100644
+> >> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> >> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> >> @@ -112,6 +112,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
+> >>  		pci->dbi_base = devm_pci_remap_cfg_resource(pci->dev, res);
+> >>  		if (IS_ERR(pci->dbi_base))
+> >>  			return PTR_ERR(pci->dbi_base);
+> >> +		pci->dbi_phys_addr = res->start;
+> >>  	}
+> >>  
+> >>  	/* DBI2 is mainly useful for the endpoint controller */
+> >> @@ -134,6 +135,7 @@ int dw_pcie_get_resources(struct dw_pcie *pci)
+> >>  			pci->atu_base = devm_ioremap_resource(pci->dev, res);
+> >>  			if (IS_ERR(pci->atu_base))
+> >>  				return PTR_ERR(pci->atu_base);
+> >> +			pci->atu_phys_addr = res->start;
+> >>  		} else {
+> >>  			pci->atu_base = pci->dbi_base + DEFAULT_DBI_ATU_OFFSET;
+> >>  		}
+> >> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> >> index 53c4c8f399c8..efc72989330c 100644
+> >> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> >> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> >> @@ -407,8 +407,10 @@ struct dw_pcie_ops {
+> >>  struct dw_pcie {
+> >>  	struct device		*dev;
+> >>  	void __iomem		*dbi_base;
+> > 
+> >> +	phys_addr_t		dbi_phys_addr;
+> >>  	void __iomem		*dbi_base2;
+> >>  	void __iomem		*atu_base;
+> >> +	phys_addr_t		atu_phys_addr;
+> > 
+> > What's the point in adding these fields to the generic DW PCIe private
+> > data if they are going to be used in the Qcom glue driver only?
+> > 
+> > What about moving them to the qcom_pcie structure and initializing the
+> > fields in some place of the pcie-qcom.c driver?
+> > 
+> > -Serge(y)
+> > 
 > 
-> could write the reference to ./LENOVO,20XH005JUS.yaml.
 
-You could. Do mention this as the default option and to the
-help message.
+> These fields were in pcie-qcom.c driver in the v1 patch[1] and
+> Manivannan suggested to move these fields to 'struct dw_pcie' so that duplication
+> of resource fetching code 'platform_get_resource_byname()' can be avoided.
+> 
+> [1] https://lore.kernel.org/linux-pci/a01404d2-2f4d-4fb8-af9d-3db66d39acf7@quicinc.com/T/#mf9843386d57e9003de983e24e17de4d54314ff73
 
->
->>>
->>> No, that repository would just be a place where people could find pre-generated
->>> reference files (which we'll be using when running this test in KernelCI), but
->>> anyone can always generate their own reference files and store them wherever
->>> they want.
->>>
->>
->> Thanks for the clarification. This might be good addition to the document.
->> I think this test could benefit from a README or howto
-> 
-> Sure, I can add a README in the next revision.
-> 
->>
->>>>
->>>> This is what I see when I run the test on my system:
->>>>
->>>> make -C tools/testing/selftests/devices/exist/ run_tests
->>>> make: Entering directory '/linux/linux_6.11/tools/testing/selftests/devices/exist'
->>>> TAP version 13
->>>> 1..1
->>>> # timeout set to 45
->>>> # selftests: devices/exist: exist.py
->>>> # TAP version 13
->>>> # # No matching reference file found (tried './LENOVO,20XH005JUS.yaml')
->>>
->>> First generate the reference file for your system like so:
->>>
->>> tools/testing/selftests/devices/exist/exist.py --generate-reference > tools/testing/selftests/devices/exist/LENOVO,20XH005JUS.yaml
->>>
->>
->> Worked - I see
->>
->> TAP version 13
->> # Using reference file: ./LENOVO,20XH005JUS.yaml
->> 1..76
->>
->> ---
->> # Totals: pass:76 fail:0 xfail:0 xpass:0 skip:0 error:0
->>
->>
->> Things to improve:
->>
->> - Have the script take a file instead of assuming that the reference file
->>    is in the current directory.
->>    e.g: exist.py -f reference_file
-> 
-> The script also has another parameter to specify a different directory to look
-> for the reference file: --reference-dir
-> 
-> But the file name is currently fixed and determined from the system's ID (DMI or
-> Devicetree compatible).
-> 
-> We can definitely have another flag to force a different file name if that's
-> useful. In theory it shouldn't be needed given the machine name is used as
-> filename, but might come in handy if there are machine name clashes or if you
-> want to have references for different kernel stable versions for the same
-> machine in the same directory.
+Em, polluting the core driver structure with data not being used by
+the core driver but by the glue-code doesn't seem like a better
+alternative to additional platform_get_resource_byname() call in the
+glue-driver. I would have got back v1 version so to keep the core
+driver simpler. Bjorn?
 
-Providing an option to force is good.
+-Serge(y)
 
-thanks,
--- Shuah
+> 
+> Thanks,
+> Prudhvi
+> >>  	size_t			atu_size;
+> >>  	u32			num_ib_windows;
+> >>  	u32			num_ob_windows;
+> >> -- 
+> >> 2.25.1
+> >>
+> >>
 
