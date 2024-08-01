@@ -1,96 +1,120 @@
-Return-Path: <linux-kernel+bounces-271435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59F87944E35
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D7C944E37
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 044351F26F25
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C9E0B26D1B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365731A57C7;
-	Thu,  1 Aug 2024 14:39:52 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 953471A57E8;
+	Thu,  1 Aug 2024 14:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qK70hOfP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67A851A4F38
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB7C1A4F35;
+	Thu,  1 Aug 2024 14:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523191; cv=none; b=Nr9gOIGecm0jhtZrEId58CrWB9OB+0gECVuE2MCy34wv6+hKKzCXEMEQelev15EO/YrxyZsCAVt/J1bc7mXUpPKOn7M8sZ4g/J84FoAFMG6FIx1+xe2A951DY7HtNN8TlikSMnXvjpRsgjXsc0LA/K4252NhazYfALDp9//IXao=
+	t=1722523212; cv=none; b=rTBoZaTIn68dDbAwYjsHaAT6KYyDLiON11ou6HJWTkctUHlQ9i5DxdNQhcxMK/cGjEyqX8VmQ7bYbXEViOtMrNm7MXEWhznbjvl8xGWwLR0mkgS72n4RQOD3zUvR2uBRyX3rynRAOLU9cR3Sp9i2qXfsf7jCez2bstk8TJhZjts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523191; c=relaxed/simple;
-	bh=3yi1Lhs4nG2UwrvlA4B+tV591LMpUQXa2zkYbgKQ4Uc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uF1/ce59ZzVG6tTeqix+aZrdONbyAizM5LWhLN0KgbuMFKUP1vn7X7ehuuXnzNeX6sW9Yle2m2j3QkuomMHloFLvwl1K2CYfVN5KluQHNbxUrWm1FCtIxtd5gVAXjg3TWNN3zyPSQSpbOGWmvuDH3sVBBqNASdFL1+IWlZv9U8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3971269bf67so104483655ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:39:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722523189; x=1723127989;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KGnfHLgS6zEexKjr13IGzCFLUlnirn+nRnBK9/AtDbk=;
-        b=QuywR0DX2KzojNqaK9edDW8d1b0YNXUQHuquhVgbNxsAPxAABxZPCBwUklt8K5qOiz
-         enV1yQu4yl1m9FkfudW0PoVyYoPBCuaMwYPYJEWUTRc9DrzrNE3gpyFO/uCvFjSSQFHg
-         OhcWEcCkmEbMRDe4+JiXR0RAdhP2lBJbHPD+Vnl/LHQ5vK5do1yyUeEFWNI06a2OkkOy
-         HJhHVjTf1k2SoEJxqsmBWTO2cjb8Y2hQs3ycRaoozBsOiWuAdNy1/f+SYdpVx3pOhnSS
-         n/5agR5XathwEfaCoj4SoYVQ/3GbZJlV63GeZxQi0Vxw6V4EBqV/8/nbwa+h9fGimYYX
-         J0Gw==
-X-Gm-Message-State: AOJu0YyviWXwBhmUWrH5gwkbSwNngFzpFvfC7CEKkJKEm0jNoKDkE4rL
-	xdUIxw3Og8vqTkLrk93XyKW/LlRQarwwqEB3KwvwRvQLXlzI2Yw5yl/YVm/r1djELvyztvSHCKa
-	eArGN1xrewCQY1wzaxstVXASG2+42B/anLcK9s0i99J0FIJpLOFJymFc=
-X-Google-Smtp-Source: AGHT+IGULwNDT/Zhaqz5zqpxWpz0BM91hfIb9brto++XCG9ibxYTw6qHwS30dyccJMm15PSqyizLtp4he2WEzp0H1FbS0uQrUUO0
+	s=arc-20240116; t=1722523212; c=relaxed/simple;
+	bh=9k7FCglnqA03s5bC9C+ZSVPftWfWSWQDHBTABy/Weao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O5nXV75em4dmcU/MqUUF1LDDh1WHri4C8UW6HlH0wJPOp3GPohQcC9ngpiw/XEI3dP7I6hGuu2rS/VYaVRFjCGyWBhlFsfsjMNiUm50arm5ySV6iQwwhYMDB9f1Zsa9CdnGG98rJ/z6/5+AlnUa9CUd4lCntwmbcdI29UEX2a8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qK70hOfP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF92EC32786;
+	Thu,  1 Aug 2024 14:40:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722523212;
+	bh=9k7FCglnqA03s5bC9C+ZSVPftWfWSWQDHBTABy/Weao=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qK70hOfP5loYsDvcOFcyzojSjLbINSViTXe1YHxOajh+IYdwbL3KCjRNfMwRjCcua
+	 Sa9rcJi0VRF+ZOj93HvDQHlqrA6UDAVQ+6kcoenukd3mlZBfO4IZLvTtWGF1Eh8Flb
+	 ZK8m5YCUtMRcumOOu2xRYuAVaJcga+wJe8pCv13mYX9mAGRbLoj9Iu7BGoSxsT67wT
+	 0KdiMN4hWqS3dbuvfR75p24Ozm0/ZNtcz0VOrcwXcoWhbOSQiwLcXBGtfON7Bh6DSv
+	 WtIM53Nxs+9Hjbg/6Quijta9sBLVxbZM4SEPaGd+7k8Ph9znUlpWUsGcGYzq76LM/0
+	 Yj2WwPpg67jjg==
+Message-ID: <31b72731-277c-4e57-9cc0-d646f154845b@kernel.org>
+Date: Thu, 1 Aug 2024 16:40:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1561:b0:397:2946:c83c with SMTP id
- e9e14a558f8ab-39b1fc4cdf8mr277475ab.4.1722523189622; Thu, 01 Aug 2024
- 07:39:49 -0700 (PDT)
-Date: Thu, 01 Aug 2024 07:39:49 -0700
-In-Reply-To: <000000000000a90e8c061e86a76b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d5cc9b061ea02e62@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: phy: nuvoton,ma35-usb2-phy: add new
+ bindings
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>, vkoul@kernel.org,
+ kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240801053744.807884-1-hpchen0nvt@gmail.com>
+ <20240801053744.807884-2-hpchen0nvt@gmail.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240801053744.807884-2-hpchen0nvt@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 01/08/2024 07:37, Hui-Ping Chen wrote:
+> Add dt-bindings for USB2 PHY found on the Nuvoton MA35 SoC.
+> 
+> Signed-off-by: Hui-Ping Chen <hpchen0nvt@gmail.com>
+> ---
 
-***
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-Author: lizhi.xu@windriver.com
+Best regards,
+Krzysztof
 
-why folio not inited?
-
-#syz test: upstream 2f8c4f506285
-
-diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
-index 6ef735bd841a..7cffc1059c42 100644
---- a/fs/squashfs/symlink.c
-+++ b/fs/squashfs/symlink.c
-@@ -49,6 +49,11 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
- 	/*
- 	 * Skip index bytes into symlink metadata.
- 	 */
-+	if (length < 0) {
-+		error = -EINVAL;
-+		goto out;
-+	}
-+
- 	if (index) {
- 		bytes = squashfs_read_metadata(sb, NULL, &block, &offset,
- 								index);
-}
 
