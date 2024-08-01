@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-271095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF15944975
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 75AAA94497E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 183F22854E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:37:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CAA6284D49
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FAF184526;
-	Thu,  1 Aug 2024 10:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACE6183CDB;
+	Thu,  1 Aug 2024 10:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sX5h59JE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mhR1bT/T"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D553BBE5;
-	Thu,  1 Aug 2024 10:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E23BBE5;
+	Thu,  1 Aug 2024 10:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722508636; cv=none; b=t5Y7GPmpNLWHr6Qohm6H6k0Fhgh+NlUu2tb0xESB1xw6+2znLiBhAq4VnRZzEGXaVvyLT/OhitksL6Hic9d3DWp1Y0gvdzucpCR9yOygm8cwBPEOGX5xMLZ3BHNDDb/Uga4kfuuHHuTpTEg+dWYGGUBv455PQ6Oo757bEWZVDto=
+	t=1722508681; cv=none; b=DKV66gn6C52NDk/T7KEHwJAAcdc2E+PTaOdGHF3TuxLiKPmcLKSvw0TcBMZ8dKVEcXDlDD2l31fo13hZug3cOm+1S4mwwkba0OfwtDNZEbLm114ES/MTmDT/98l4xCJ+dy9mVfm+R8Dr2GR0L3yAvlj5f48zhSytF4HRBqI92Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722508636; c=relaxed/simple;
-	bh=UCt5jpURNEyg0oe9cMK8/kEXK1xMb37OAQuqoadAUrM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mKJpmhIv2mH3Q68FC8ugRhytGIWiWb7q3nXzHH8EQAk3+Xn6/52CZIX7M8QGex8nq2yjzJVT5DFbuz/bvwicvLEXkn4xM0BYqupXK9Wias0cdkOoWVA6W+CU/H4SFrL+D6NLhl0Nmov6r3p5Q03G8jZXo6Wni7SUXbeVZuQBBTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sX5h59JE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA8C3C4AF09;
-	Thu,  1 Aug 2024 10:37:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722508636;
-	bh=UCt5jpURNEyg0oe9cMK8/kEXK1xMb37OAQuqoadAUrM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sX5h59JEeqq2okR7Voc6Nr1JArW+mJQD0HbII9OWvj9X7zBNjWJYTs97sHWqdzx5E
-	 JodiY+ggZzJShIq2DVeD2SjAw+B4w9PZIDzTSYg7zsohkVCwf4F2CdLpaRMbfBxiU3
-	 D8Rp8OWfAho4u24WVcW4f2S0OgbM0LjKtDTm5fVnIR7lSfZvRMBQeFJ11Uk6gE1kHe
-	 ZuYgaVAmru1p7Bo5yFPlqnp3vTLriXbzyr6ua7sZtzzMd+zi6XSnwcgxDCyozRTZuV
-	 wW+7IvAefXj8Q9gJQYJHxGNgt0yPK9H5RJTBAkagu73zjLeWwLTY8SC/bh+wipoEJE
-	 5abEzGBqyY6kQ==
-Date: Thu, 1 Aug 2024 13:37:12 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: jgg@ziepe.ca, bvanassche@acm.org, nab@risingtidesystems.com,
-	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
-Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-Message-ID: <20240801103712.GG4209@unreal>
-References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
+	s=arc-20240116; t=1722508681; c=relaxed/simple;
+	bh=HC/LAOMr7oeiXvzLAuHjUYrXFkJQ1pTg0sWwTGxaGxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FIz9w5lfTL7vxAh/lA2ptON61+KqHUUdr4RF2Fmb6gkqRw7JQ52nwvemhofy04aUbMl2HyeFuafOkAa09HwWPayzCk/siwPJZVh64MLlN4dRREbRsQi374um7YWb714ZwXyGPhGh7pcebtT7wlwwFhdeIq3L5PgHxrAReHSJck4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mhR1bT/T; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efaae7edfso7089495e87.2;
+        Thu, 01 Aug 2024 03:37:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722508678; x=1723113478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6auF9SihaRv0NHeZgPwWgcp87LY5pPO2A6cg+JnSinA=;
+        b=mhR1bT/TgbkBquW41ErqqBRF2NByflhqDwECgEMywjhKx5fI5VxyyYmE9awnHulkPJ
+         VuI4E7CtH7/luqgekQEXgdfjMpavyFMFOYQhF8giYm8Tjerk1/YJ2G1h/AAnnF0+C/SY
+         qZ7SMlMn06EOYrN7W97lTE+qTE7Qv6NiTAZA/BwRdBL/sw7O7ogyffYW7OHKtnKkCc/4
+         wR0Uvji+54ZBz+n419zbThW+droLgtZevP1/xtPWAn1MQAQh8LrpNmkAhBT2Wh4FqKuL
+         B3XYFGP1Lq0HiXe8ldRRvl97SCQ17jb0ybKQKrS+bkJtRzdGxxoA1VzmmhKHayi5udVZ
+         qebw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722508678; x=1723113478;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6auF9SihaRv0NHeZgPwWgcp87LY5pPO2A6cg+JnSinA=;
+        b=fH4EmSFZfKT26ARrTV5N3PW6DCuVlFG8a6Jp7l4813Zoqi1FuFBrpAKjglZeprLhCk
+         K1tLqmSmdVWMoH2c5cPckvowudAOCmk87V53ausdAhu0wMrI6hVlL1QPgVJO0emD7vkw
+         dG6CZvIGKHWuWDEGDcoYDMNX8P12xga/FMvxEzYtuICv0NLWd8mfR5zmNi8xqgd0OHdt
+         DIz99Dcz9nXGEjXxycUJoWGjL6M7CivWHiv8cKAtOOkCoazLVa1MfjLvb01arLSLiSZh
+         ziD6tXWaVYuPcZN/fR3tXMCG5mZogY/vgV5KA/sByvb1M4gJ80yH38vAsA92l6GDDHNx
+         6HQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUt2/UzpKpyaP0A7dtA62Ic5s6c0e/mSwe29l1qj2GdvZsjfWUNHoFoRhdZ/GFYi+lrDoimNks1RAmobJUoSh0LfqGQtd4Uuuap5kPIOXVv9Cduwhupfv7Jg9Jw7gzyWYTAW6hBhn+zQR57LXjYtv9Ua2n3882bLx0GAlil6ktXGlLGWw==
+X-Gm-Message-State: AOJu0YwbdVT3N+HYlq/FbnRYAKXd+EoWgRRa6TCxP1pml5/STP3nAJvu
+	b9hShW4So7+JdUlyPtPf4Z9tS0uBNrzSJsjN2vdSCkJ+xB5TbPpP
+X-Google-Smtp-Source: AGHT+IHUQDe91xXDzoxuK90Fn56g8aZCSk7RPm/BkRWjmCrRl2zyPkAPw1H4PF0CTu3AaisIzJvq9w==
+X-Received: by 2002:a05:6512:b96:b0:52c:88d7:ae31 with SMTP id 2adb3069b0e04-530b61ebe2emr1506606e87.48.1722508677700;
+        Thu, 01 Aug 2024 03:37:57 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad416d0sm875712766b.101.2024.08.01.03.37.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 03:37:57 -0700 (PDT)
+Message-ID: <e7a4fdeb-e83b-4e0d-adb8-7ea58d6b1b7d@gmail.com>
+Date: Thu, 1 Aug 2024 12:37:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] coresight: cti: use device_* to iterate over device
+ child nodes
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>,
+ Anand Ashok Dumbre <anand.ashok.dumbre@xilinx.com>,
+ Michal Simek <michal.simek@amd.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>, Pavel Machek <pavel@ucw.cz>,
+ Lee Jones <lee@kernel.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-leds@vger.kernel.org
+References: <20240801-device_child_node_access-v1-0-ddfa21bef6f2@gmail.com>
+ <20240801-device_child_node_access-v1-1-ddfa21bef6f2@gmail.com>
+ <381fd199-640a-4ca0-8d7e-1c4dae11ef7f@arm.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <381fd199-640a-4ca0-8d7e-1c4dae11ef7f@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 01, 2024 at 03:44:15PM +0800, Junxian Huang wrote:
-> Currently cancel_work_sync() is not called when srpt_refresh_port()
-> failed in srpt_add_one(). There is a probability that sdev has been
-> freed while the previously initiated sport->work is still running,
-> leading to a UAF as the log below:
+On 01/08/2024 11:20, Suzuki K Poulose wrote:
+> On 01/08/2024 07:13, Javier Carrasco wrote:
+>> Drop the manual access to the fwnode of the device to iterate over its
+>> child nodes. `device_for_each_child_node` macro provides direct access
+>> to the child nodes, and given that they are only required within the
+>> loop, the scoped variant of the macro can be used.
+>>
+>> Use the `device_for_each_child_node_scoped` macro to iterate over the
+>> direct child nodes of the device.
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-cti-platform.c | 10 +++-------
+>>   1 file changed, 3 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-cti-platform.c b/
+>> drivers/hwtracing/coresight/coresight-cti-platform.c
+>> index ccef04f27f12..d0ae10bf6128 100644
+>> --- a/drivers/hwtracing/coresight/coresight-cti-platform.c
+>> +++ b/drivers/hwtracing/coresight/coresight-cti-platform.c
+>> @@ -416,20 +416,16 @@ static int
+>> cti_plat_create_impdef_connections(struct device *dev,
+>>                             struct cti_drvdata *drvdata)
+>>   {
+>>       int rc = 0;
+>> -    struct fwnode_handle *fwnode = dev_fwnode(dev);
+>> -    struct fwnode_handle *child = NULL;
+>>   -    if (IS_ERR_OR_NULL(fwnode))
+>> +    if (IS_ERR_OR_NULL(dev_fwnode(dev)))
+>>           return -EINVAL;
+>>   -    fwnode_for_each_child_node(fwnode, child) {
+>> +    device_for_each_child_node_scoped(dev, child) {
+>>           if (cti_plat_node_name_eq(child, CTI_DT_CONNS))
+>> -            rc = cti_plat_create_connection(dev, drvdata,
+>> -                            child);
+>> +            rc = cti_plat_create_connection(dev, drvdata, child);
+>>           if (rc != 0)
+>>               break;
 > 
-> [  T880] ib_srpt MAD registration failed for hns_1-1.
-> [  T880] ib_srpt srpt_add_one(hns_1) failed.
-> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
-> ...
-> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
-> ...
-> [  T376] Call trace:
-> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
-> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
-> [  T376]  process_one_work+0x1d8/0x4cc
-> [  T376]  worker_thread+0x158/0x410
-> [  T376]  kthread+0x108/0x13c
-> [  T376]  ret_from_fork+0x10/0x18
+> Don't we need to fwnode_handle_put(child) here, since we removed the
+> outer one ?
 > 
-> Add cancel_work_sync() to the exception branch to fix this UAF.
+> Suzuki
 > 
-> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->  drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> index 9632afbd727b..244e5c115bf7 100644
-> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
->  {
->  	struct srpt_device *sdev;
->  	struct srpt_port *sport;
-> +	u32 i, j;
->  	int ret;
-> -	u32 i;
->  
->  	pr_debug("device = %p\n", device);
->  
-> @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
->  		if (ret) {
->  			pr_err("MAD registration failed for %s-%d.\n",
->  			       dev_name(&sdev->device->dev), i);
-> -			i--;
->  			goto err_port;
->  		}
->  	}
-> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
->  	return 0;
->  
->  err_port:
-> +	for (j = i, i--; j > 0; j--)a
-> +		cancel_work_sync(&sdev->port[j - 1].work);
 
-There is no need in extra variable, the following code will do the same:
+Hi Suzuki,
 
-	while (i--)
-		cancel_work_sync(&sdev->port[i].work);
+No, we don't need fwnode_handle_put(child) anymore because the scoped
+variant of the macro is used.
 
->  	srpt_unregister_mad_agent(sdev, i);
->  err_cm:
->  	if (sdev->cm_id)
-> -- 
-> 2.33.0
-> 
+Best regards,
+Javier Carrasco
 
