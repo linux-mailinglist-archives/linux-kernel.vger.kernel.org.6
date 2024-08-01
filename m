@@ -1,73 +1,121 @@
-Return-Path: <linux-kernel+bounces-271654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFF6E945121
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:53:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096D6945125
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88A591F21B9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B13D1C22F5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62B01B8EAD;
-	Thu,  1 Aug 2024 16:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2421B4C4D;
+	Thu,  1 Aug 2024 16:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHmueRdv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjMxs2Nl"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19131B374E;
-	Thu,  1 Aug 2024 16:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D7313C9A3;
+	Thu,  1 Aug 2024 16:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722531204; cv=none; b=LkwutekOLcQpX/pgydly9Y2alYvw7iRb0rZ6j87yVDs+JNGwwFkkS3sdUsQ/I5QqqpfkCNjT613UPOgv/8dM2deHMhYNvHkdqF9SF+fed+cb8EDSqad83Mz4chNAARI2oLdbNxKU/kWHEZvCCB+8yChnMk4qzieRwTvoSFYC+OE=
+	t=1722531436; cv=none; b=NQD6ho/2hv4GIKaF7lJvnKJkXkeIkccTGfvXpj80ka9y1w+GZwjDalcmyWw1pVli+N3m2O0rmiL1LLxLIEmE3ZuJpLk+B9alWNuw8zUMufzTXJz9SAAudQvG8DM1npFq8BkXzbKA/aj8rpKteGC/qjOOlsXcIJTMSd898foqmVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722531204; c=relaxed/simple;
-	bh=1ss2wVjTFPPXETnvk+EhTKM7LAhw3I+hKkedtEmd0nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mruOdpesX3sbVP4Qs3LKJQRLj2ZuqUxXbCYGqSmkprYUu2y6NLAQjKkKm/A0rX/stCwYtf17hYkvhBcn5fJSotU+xP+lXIMJArE3W1bjUXFfxbqaTxg+e1NOwqFdo8wL1C5yuF2jHN0Qa7Pt8x5MVEbM/OvgoTnJEiMXYBUmZBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHmueRdv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28692C32786;
-	Thu,  1 Aug 2024 16:53:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722531203;
-	bh=1ss2wVjTFPPXETnvk+EhTKM7LAhw3I+hKkedtEmd0nc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uHmueRdv6Dj6D6c5n+5OxpgIs2mQjqFDXIUaKANRQ2XSP5GePJVutgQDBuS19C90y
-	 1DZcIB5RHOTR6p7ZpOMUMc6H6UuBul2G0uxV6fYhwwD5NhA45vWCAk/cXSvX/+b45X
-	 STOAcdYkCqdRfOjP4wsKHiaGH83MM+s/8qv8z6V2yMISWbDfDtyHb9MsO2bF7KHKHr
-	 wGqQdrVUvn2Tfvi/Nv760KQkpebwvXOe2NR2lzbDRgvvaSPVZCRJmmLF/UJO51vnb2
-	 rY1rTGX0tQ8wbkCdeC0uc/jkoNzNOOA5EfqFWqlsrkfHos7hDOl9Luo82QZvDlxG66
-	 njNBOUII+/L+Q==
-Date: Thu, 1 Aug 2024 09:53:22 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, Shuah Khan
- <shuah@kernel.org>, thevlad@fb.com, thepacketgeek@gmail.com,
- riel@surriel.com, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, paulmck@kernel.org, davej@codemonkey.org.uk,
- linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
-Subject: Re: [PATCH net-next 1/6] net: netconsole: selftests: Create a new
- netconsole selftest
-Message-ID: <20240801095322.6d9dec9c@kernel.org>
-In-Reply-To: <20240801161213.2707132-2-leitao@debian.org>
-References: <20240801161213.2707132-1-leitao@debian.org>
-	<20240801161213.2707132-2-leitao@debian.org>
+	s=arc-20240116; t=1722531436; c=relaxed/simple;
+	bh=RR9wmfLhWBXimo8mBOQnILnGDNzFHTkQco+PprDb4HE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=loQ3t080W2khxZaVSsaNehOaqmMsokfcpdVsToZff84brqbGz77QkUZHfmGyBUbPQ3dfAiBEagk0UbhLelwe/nFDKjMSmVaOCgzjlJsMwDkAyJmpDpw87nQQjJmadEz/8DGeXIPvUaJoKrprZ2uaHgIBI0nJK6oVmR3vjVIAGO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjMxs2Nl; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f00ad303aso11107825e87.2;
+        Thu, 01 Aug 2024 09:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722531433; x=1723136233; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7qmz+OO9XTkVCd+ercQ9i3PIjGoG29eQh1VoMeLordk=;
+        b=fjMxs2NllDx/+gAd0Yw+urSbfORaAA9GUjfdqnSqDn9bzoz/vBgM58otWoSMoi5M3y
+         RxkXVxl0oFynmWkatPqOtEwTLxGVv8QYIochqeyOh54aNy0+kIDqIslrwKzhFlfT5nao
+         3xx6Aoo2o5DfPnrxZwI3xCrT7+hzp1X+mYVGPPKQmmU11LuzTWcJEOaujpMzLK8e448N
+         AQA000mA/rrA7evblzu7ANZ5fxA/fb7eFoDp8lJzltJdLk3wmxiVijNCylGdNicgGYPZ
+         tRpWm7GQz+Vwl+9a6/9BjKbkzLftdipySJjvN8cwfxLVjCMn/xWqbKDrI/KgSkChqu44
+         8/7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722531433; x=1723136233;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7qmz+OO9XTkVCd+ercQ9i3PIjGoG29eQh1VoMeLordk=;
+        b=ef7Q9148NzNtwUEd1Me1467TNV9lPkkTIjBbbr8dOpM6Ybxa8inNcrXp3T/IJI4Mgl
+         2YbQKV11OGz9Vxn5jrUXvJHG/robxbOFPbUUmautjCg6YT39hl61EWRULJAtYT9B38YH
+         GcaWydSA0YbGueVD5TaPKOyzbxO+qFzhStjABZI0BL4a/YmqgS0MqXCPkb+jTK932aSf
+         MWJfekBHKleKU+DPvE/9iIzcn2q4LH/1f3/kYkJShlwrPUFuv24NcKM6yoPwjfrIIkMN
+         kjFTUYx/ivyFv7u5+cxhDPvX4HP5EfOoErN/W/liIyR+nMeTMc3LJiSb4JY3rmepM9mW
+         OfAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBGevFB7aA3UTW43BhutCMzxa1j3jnR717LB4bKty6ePfYps32/85HWF9Lckpw8WfvruCMPmX1EaZpYwWAIWOwyNi5FkNWtWx21J3hvQDyEm28W+JqYCJka/JvuqNDuBcI
+X-Gm-Message-State: AOJu0YxeO1ZkwkCfSthvNe0LXIEsve2hMAlifOlq7oEx2pr2c2uKT1Pk
+	yHADTZP0R2RIu6+anI6U9kyJnVkWjbY96Qfq0O+aKA4Z8GwK3B02
+X-Google-Smtp-Source: AGHT+IE7+BdRzS3eKsjshSCy+rOCph2VExOchT69wvgVsdfLQxkmTg0IpMCYch+9eyyPQtgZNKcKQA==
+X-Received: by 2002:a05:6512:3d94:b0:52c:dfa7:9f43 with SMTP id 2adb3069b0e04-530bb3a2886mr369788e87.34.1722531432513;
+        Thu, 01 Aug 2024 09:57:12 -0700 (PDT)
+Received: from pc636 (host-90-235-1-92.mobileonline.telia.com. [90.235.1.92])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba1107fsm6724e87.100.2024.08.01.09.57.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 09:57:12 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 1 Aug 2024 18:57:09 +0200
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH] rcu/kvfree: Add kvfree_rcu_barrier() API
+Message-ID: <Zqu-ZTpksvqxFt0l@pc636>
+References: <20240801111039.79656-1-urezki@gmail.com>
+ <df34226c-38fc-4cd7-a33c-44a1f714c3da@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df34226c-38fc-4cd7-a33c-44a1f714c3da@suse.cz>
 
-On Thu,  1 Aug 2024 09:11:58 -0700 Breno Leitao wrote:
->  .../net/netconsole/basic_integration_test.sh  | 153 ++++++++++++++++++
+On Thu, Aug 01, 2024 at 04:28:18PM +0200, Vlastimil Babka wrote:
+> On 8/1/24 13:10, Uladzislau Rezki (Sony) wrote:
+> > Add a kvfree_rcu_barrier() function. It waits until all
+> > in-flight pointers are freed over RCU machinery. It does
+> > not wait any GP completion and it is within its right to
+> > return immediately if there are no outstanding pointers.
+> > 
+> > This function is useful when there is a need to guarantee
+> > that a memory is fully freed before destroying memory caches.
+> > For example, during unloading a kernel module.
+> > 
+> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> 
+> Thanks a lot, Ulad! Locally it makde the kunit test stop failing and for now
+> I've pushed it as part of my series for bots to test:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slab-kfree_rcu-destroy-v2r0
+> 
+> I hope after RCU folks review I can carry this in my series and later the
+> slab git tree so we don't have inter-tree dependencies. Thanks!
+> 
+You are welcome :)
 
-It needs to be included in a Makefile
-If we only have one script I'd put it directly in .../net/, 
-or drivers/netdevsim/? each target should technically have
-a Kconfig, Makefile, settings, no point for a single script.
+Yep, if we need to update it i will send out a new version!
+
+--
+Uladzislau Rezki
 
