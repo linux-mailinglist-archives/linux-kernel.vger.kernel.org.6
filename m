@@ -1,155 +1,171 @@
-Return-Path: <linux-kernel+bounces-271814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F032094538B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CB5E94538E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3599EB22702
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8067E1C2343D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D0914A4F9;
-	Thu,  1 Aug 2024 19:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C352E14A60E;
+	Thu,  1 Aug 2024 19:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b="wXEMXIDI"
-Received: from kozue.soulik.info (kozue.soulik.info [108.61.200.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hXBl8tqK"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EAE14AA9;
-	Thu,  1 Aug 2024 19:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.61.200.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E291E4A6
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722541981; cv=none; b=aC2CJ4tYapAt8QJIRu+JtkcvS5lwuUQwEDKwa76SS7YehAdu+Hl61poSO7GO3GZMwa7w78bxJsNWkO1pcOeSVxQQsYX6DVtRaewUDpgBK/8ByMR3IHbBypXk9XYInHg/4f1cUOYj488fttyXai/VZIKnLiquXu6SkxfNR76RgxQ=
+	t=1722542028; cv=none; b=fHdsMjawhToP4xLxgBXa+ZTCd04NWpHKHc31z7oN6uDwe1AWX3DcidJNtZl7FeeHtRRMy2iBj2hPvXJttuQc4BwnE2IgDRyixaIQsbzuKuTHJY/bC7O/w74mAYtdO2/oFIoYaCaj73Pbb28EAQHGBjEAZCiSMwoZoClWS0Zm0qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722541981; c=relaxed/simple;
-	bh=nuIZYtjden9cPAxi6LWM1j1FEht2xIVi2QT+VN7bgG4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d+4vt5Emym+2zPJ0sfjXu05SQ1PlRPErRc1xLCijEMcAUoKD5+LsLX6qZ2Uv5t/zrONW8ISXxvTAcxm2psHg7gU3QglNjPgLf+/zj3YSKAYXf7AdihBtIvGeswzjZuqdsW76eSwnOkPnNPPRPb2zjh5Aeslao0HZ3GGglFJzrws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info; spf=pass smtp.mailfrom=soulik.info; dkim=pass (1024-bit key) header.d=soulik.info header.i=@soulik.info header.b=wXEMXIDI; arc=none smtp.client-ip=108.61.200.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soulik.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soulik.info
-Received: from [192.168.10.7] (unknown [10.0.12.132])
-	by kozue.soulik.info (Postfix) with ESMTPSA id DE3A62FE3F0;
-	Fri,  2 Aug 2024 04:53:23 +0900 (JST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 kozue.soulik.info DE3A62FE3F0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=soulik.info; s=mail;
-	t=1722542004; bh=LQs02GgnJTubPIcXTKpXwjp7GLB8clNv1VWhPwPjiOM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wXEMXIDIS177aAwnAgCgI66dVvLYCvASMAGgPKi3IQXBf84eXPokvU+g6ZjBVn8PA
-	 eH2FJFUlktGdSGfLgyEC0pAznUV4ZJizkQ6sTUjGisGGwYZN5ZYcE+9k+R4JzfiMEP
-	 DuZNC/Pv2H8BtENLCPc1Upyk4xIhOVUa+UdGUzRg=
-Message-ID: <328c71e7-17c7-40f4-83b3-f0b8b40f4730@soulik.info>
-Date: Fri, 2 Aug 2024 03:52:57 +0800
+	s=arc-20240116; t=1722542028; c=relaxed/simple;
+	bh=wLC+wyAvBIDqZxxTL+OJUZIAzsd6IEPTdtsg8MlEoSw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XPviU+PtXvP9AF3ibK+ORwdwPqhAs7jqXDku22SXItDxk2oA3RLKomWpV5xw9/G3mPunMNfgKKQtMKkvuC7nTDjPHIBKFKtcDwFGXjVh/0KcuaIvSfIvKLEKE6VisQ3VaYGE0APFCesZz9aVAALlrkxtdEmW+B2ncAa23Gu/C60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hXBl8tqK; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso107799801fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 12:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722542024; x=1723146824; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wLC+wyAvBIDqZxxTL+OJUZIAzsd6IEPTdtsg8MlEoSw=;
+        b=hXBl8tqK6+q8HtOQyXmmrw/17FjrB8IX7CLMpa59IxPqFtSmFp5MHGuGO0rRDESTjf
+         kTtXYyIsN5yNambBWKBwvv+ksi4ujZvB8igRGpIKzZJrYZ19QVa0PTQ8PJl9JTc8nVM4
+         7AYWeWfuBWYRJTnYIFk/ZzLXPODSFX8bv6+JfuW96n15hzamyMvpP5YAP9d/30beeBwA
+         rnx7H2EFqmN1husdFoif68Bfcq0e4ZHn3VVDvznSyIj2sQCzaLXVA2nKcrJ4KC7CoL4i
+         j3jdTNsfoNMx8Lt7HaKfNtzX4uMNPxzUxLgmSEECnWLq8yOQwq5soaOBAgT1q9H+UQJ0
+         I5pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722542024; x=1723146824;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wLC+wyAvBIDqZxxTL+OJUZIAzsd6IEPTdtsg8MlEoSw=;
+        b=l+HTNFQfmlOfVKFmADmOe85l+xFWZ1TYyh7QdrC125NoG/KdokqNkz/HiButnsVTIR
+         5Ii7TKlO8NbFnz8Ljjf4iSYk+cauD3Mrw9ZXg2FGASM2lfeTNDb2MbYS+KmzfkozgulO
+         J5ChQvzvd9XFi/TdIb4sa6WWj2WK/KhJWrTGiWOHyqAHJBEw4QlLHZDw3yQPGd3j1tep
+         6XNzdT2r562EoyXcupQk9EiRB/zFmfsOvO9FaTd99n2QQKeSNPamIE/kNrmmM5lOK7/V
+         IZgId7Ii/SoMxRRZmIC+6zx8Z51rC7x1jAhnBx0duR9vQWzzjAgMxrPOIlsG1QtGz9Vo
+         Lbrg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3ulWYrDBu7vi7nSWGoXRKCaLdaWhHJwoT9uSRceXGmnajTr62eWs1wWf7fbTIe2+G8jViWeuJUVvJmkYxruDdcmiJ05/rzWqhH+OL
+X-Gm-Message-State: AOJu0Yy8jcYvnnYpPf1QedlR+tzmFlgPkcVSO46gSHDunJbsO8kFdcb0
+	MQEUsMFV5sSc19KWkPvRC9YquwmbW0K4al4EhB7mO85VGLTPmTCXcRqCtCWV2fwP+vhEtR4+42e
+	9zqcPTro/VYS1EwoKl9EWLGC0Tt7VNTYf5xHNtQ==
+X-Google-Smtp-Source: AGHT+IF5LKvLdZzdAViTxk7RViSTqKC2qm/6JryMX1R7EgHQYJw06oODfHSJfpAYnXNH4vquVf5Gn6dslXjcCQDSgGo=
+X-Received: by 2002:a2e:9203:0:b0:2ef:2dfd:15db with SMTP id
+ 38308e7fff4ca-2f15aaacf0cmr11335671fa.19.1722542024234; Thu, 01 Aug 2024
+ 12:53:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue
- index
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, jasowang@redhat.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
-References: <20240731111940.8383-1-ayaka@soulik.info>
- <66aa463e6bcdf_20b4e4294ea@willemb.c.googlers.com.notmuch>
- <bd69202f-c0da-4f46-9a6c-2375d82a2579@soulik.info>
- <66aab3614bbab_21c08c29492@willemb.c.googlers.com.notmuch>
- <3d8b1691-6be5-4fe5-aa3f-58fd3cfda80a@soulik.info>
- <66ab87ca67229_2441da294a5@willemb.c.googlers.com.notmuch>
- <343bab39-65c5-4f02-934b-84b6ceed1c20@soulik.info>
- <66ab99162673_246b0d29496@willemb.c.googlers.com.notmuch>
-Content-Language: en-US
-From: Randy Li <ayaka@soulik.info>
-In-Reply-To: <66ab99162673_246b0d29496@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+In-Reply-To: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Thu, 1 Aug 2024 21:53:32 +0200
+Message-ID: <CACRpkdYUHtfjL2jfGxjV1eMZGkk6NXaArbHpc5mhrY7C9rSi6g@mail.gmail.com>
+Subject: Re: [RFC} arm architecture board/feature deprecation timeline
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Russell King <linux@armlinux.org.uk>, Richard Earnshaw <richard.earnshaw@arm.com>, 
+	Richard Sandiford <richard.sandiford@arm.com>, Ramana Radhakrishnan <ramanara@nvidia.com>, 
+	Nicolas Pitre <nico@fluxnic.net>, Krzysztof Kozlowski <krzk@kernel.org>, Mark Brown <broonie@kernel.org>, 
+	Kristoffer Ericson <kristoffer.ericson@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Janusz Krzysztofik <jmkrzyszt@gmail.com>, 
+	Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, 
+	Nikita Shubin <nikita.shubin@maquefel.me>, linux-samsung-soc@vger.kernel.org, 
+	Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
+	Gregory Clement <gregory.clement@bootlin.com>, "Jeremy J. Peper" <jeremy@jeremypeper.com>, 
+	debian-arm@lists.debian.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 31, 2024 at 7:29=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wrote=
+:
 
-On 2024/8/1 22:17, Willem de Bruijn wrote:
-> Randy Li wrote:
->> On 2024/8/1 21:04, Willem de Bruijn wrote:
->>> Randy Li wrote:
->>>> On 2024/8/1 05:57, Willem de Bruijn wrote:
->>>>> nits:
->>>>>
->>>>> - INDX->INDEX. It's correct in the code
->>>>> - prefix networking patches with the target tree: PATCH net-next
->>>> I see.
->>>>> Randy Li wrote:
->>>>>> On 2024/7/31 22:12, Willem de Bruijn wrote:
->>>>>>> Randy Li wrote:
->>>>>>>> We need the queue index in qdisc mapping rule. There is no way to
->>>>>>>> fetch that.
->>>>>>> In which command exactly?
->>>>>> That is for sch_multiq, here is an example
->>>>>>
->>>>>> tc qdisc add dev  tun0 root handle 1: multiq
->>>>>>
->>>>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst
->>>>>> 172.16.10.1 action skbedit queue_mapping 0
->>>>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst
->>>>>> 172.16.10.20 action skbedit queue_mapping 1
->>>>>>
->>>>>> tc filter add dev tun0 parent 1: protocol ip prio 1 u32 match ip dst
->>>>>> 172.16.10.10 action skbedit queue_mapping 2
->>>>> If using an IFF_MULTI_QUEUE tun device, packets are automatically
->>>>> load balanced across the multiple queues, in tun_select_queue.
->>>>>
->>>>> If you want more explicit queue selection than by rxhash, tun
->>>>> supports TUNSETSTEERINGEBPF.
->>>> I know this eBPF thing. But I am newbie to eBPF as well I didn't figure
->>>> out how to config eBPF dynamically.
->>> Lack of experience with an existing interface is insufficient reason
->>> to introduce another interface, of course.
->> tc(8) was old interfaces but doesn't have the sufficient info here to
->> complete its work.
-> tc is maintained.
+> =3D=3D=3D ARMv4 =3D=3D=3D
 >
->> I think eBPF didn't work in all the platforms? JIT doesn't sound like a
->> good solution for embeded platform.
->>
->> Some VPS providers doesn't offer new enough kernel supporting eBPF is
->> another problem here, it is far more easy that just patching an old
->> kernel with this.
-> We don't add duplicative features because they are easier to
-> cherry-pick to old kernels.
-I was trying to say the tc(8) or netlink solution sound more suitable 
-for general deploying.
->> Anyway, I would learn into it while I would still send out the v2 of
->> this patch. I would figure out whether eBPF could solve all the problem
->> here.
-> Most importantly, why do you need a fixed mapping of IP address to
-> queue? Can you explain why relying on the standard rx_hash based
-> mapping is not sufficient for your workload?
+> This is used for both StrongARM and FA526 CPUs, which are still
+> used on a small number of boards. Even the newest chips (moxa
+> art, ) are close to 20 years olds but were still in use a few years
+> ago. The last Debian release for these was Lenny (5.0).
+>
+> Dropping compiler support now would be appropriate IMHO, and
+> we can drop kernel support in a few years.
 
-Server
+I am actively using the Gemini as my NAS with OpenWrt and there
+are several users of it in the OpenWrt community.
 
-   |
+I don't know if there are enough of us to keep ARMv4 support in
+GCC, but ARMv4 support has been added to CLANG (along
+with ARMv4t), and I have tested to compile kernels for these
+devices with CLANG (for testing CFI!) and they work fine, so if
+GCC drops it, we can still build them with CLANG where it apparently
+isn't a maintenance burden given that it was recently added.
 
-   |------ tun subnet (e.x. 172.16.10.0/24) ------- peer A (172.16.10.1)
+Maybe CLANG has a more adaptive backend?
 
-|------ peer B (172.16.10.3)
+> =3D=3D=3D Highmem =3D=3D=3D
+>
+> Most Arm machines are fine without highmem support and can
+> use something like CONFIG_VMSPLIT_2GB to address up to 2GB
+> of physical memory. Machines larger than only popped up
+> around the time of the Cortex-A15 in 2012 and for the most
+> part got replaced by 64-bit chips within a short time.
+> In addition, there are also a handful of Cortex-A9 and
+> Marvell CPU based machines that have either more than 2GB
+> of RAM or a very sparse memory map that requires highmem
+> support.
+>
+> Linus Walleij has done some work towards being able to use
+> up to 4GB of RAM with LPAE (Cortex-A7/A15 and later)
+> machines, which I think still needs to be finished before
+> we can remove support for highmem.
 
-|------  peer C (172.16.10.20)
+This is either really hard, or I'm a bad developer. But I keep
+churning it.
 
-I am not even sure the rx_hash could work here, the server here acts as 
-a router or gateway, I don't know how to filter the connection from the 
-external interface based on rx_hash. Besides, VPN application didn't 
-operate on the socket() itself.
+> =3D=3D=3D Gemini, Moxart =3D=3D=3D
+>
+> These both use the Faraday FA526 CPU core that like
+> StrongARM implements ARMv4 rather than ARMv4T with thumb.
+>
+> The chips are also over 20 years old, but the kernel
+> code has been updated and is not a maintenance burden
+> by itself, so there is no value in removing these
+> machines until StrongARM is also gone.
+>
+> On the other hand, removing both FA526 and StrongARM
+> platforms means we can probably remove ARMv4 (non-T),
+> OABI and NWFPE support more quickly if we want, or
+> we can wait until a few years after gcc drops ARMv4.
+>
+> OpenWRT lists the gemini platform as supported in
+> https://openwrt.org/docs/techref/targets/gemini, but
+> none of the individual machines have builds for the
+> current release.
+>
+> Need input from Linus Walleij.
 
-I think this question is about why I do the filter in the kernel not the 
-userspace?
+Yeah we use these devices. I don't know what counts as big
+enough community to be considered, it's at least not just
+me.
 
-It would be much more easy to the dispatch work in kernel, I only need 
-to watch the established peer with the help of epoll(). Kernel could 
-drop all the unwanted packets. Besides, if I do the filter/dispatcher 
-work in the userspace, it would need to copy the packet's data to the 
-userspace first, even decide its fate by reading a few bytes from its 
-beginning offset. I think we can avoid such a cost.
+Gemini builds are in the official OpenWrt repos:
+https://downloads.openwrt.org/releases/23.05.4/targets/gemini/generic/
 
+Yours,
+Linus Walleij
 
