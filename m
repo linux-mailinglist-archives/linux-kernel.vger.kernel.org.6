@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-271259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A18944BB3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:51:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281EF944BCA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:55:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FFE3288B91
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:51:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7311F21825
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA011A01DE;
-	Thu,  1 Aug 2024 12:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fDuouXDk"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436511A01CD;
+	Thu,  1 Aug 2024 12:55:21 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDD418A6B0
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5E8B208D1;
+	Thu,  1 Aug 2024 12:55:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722516691; cv=none; b=ZlxJAlFv0sYBOKyi7CuUAldwETvJd4q4xnIB/KDGIoFsPd6z8h9AUCz13QpZ9HCXfWept4PWioAXbjd9PnRBvWdOY7ZbJ694HzglJ88JuRD3DNAOhfk3LPuL29F7TDG7NQXKf08sXH6G0zh808H9DInQ22NiGQqoqslkK21eCnU=
+	t=1722516920; cv=none; b=ffAYF9H05etyuUrXKzdcKHfJYl8d+PpNPMTDdseWJxbHYq3Mdy956z2jtxb3KtTg9My2TwOAH+OWdwfTezC0nUoMCt0t99Erp6cvM/URllPk8p205/QEmkib484YsSAWg0l7fS22bSJQfGrtSLklmYDdtLENyu8M9+jv3apQ3co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722516691; c=relaxed/simple;
-	bh=fSBUkzUUkWt107EAs69kOFAPLO3pyAPRIAczRvrIq5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sLK6duQmWXpbuzOkTGRVeMjH+SDBEVnYjPjmeFz7lAaMMGv2UQe7AxP6kTThQ0FwlzSQbOe37vOYgGR9F3ZImjGQ6uiL9LGBZBlaEKN+MHJA6G8qlv6qUZz6gdp18q9w5t/DJIuEJZZvnzVx8CJ9n1eYw758tzE/hrGFNnZ5N6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fDuouXDk; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281faefea9so33824795e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:51:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722516688; x=1723121488; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QMpYiaUKnQGePeyncUAsOyGyvo4sFuaZoIKakgcqds=;
-        b=fDuouXDkFEUNSWEtlelIisa8gBO3deekZ5oIOg2n3ZOVTfZBNtC+ThQ20SzprMx7tZ
-         SplvP8QdSfmK1PHCH2tvVO74mJa6/YGBp5zZb+Zt5me4WQWPCGDd6ueJlBvTo9jW91Vd
-         nnIOesXV/nTmLx9c2FhbigsBrdqOuLXq92UfkEuKPmD4pTScjzXlOtyxLy8XKO0BL3H2
-         NsyMk/kseMN4tAoAr1u/Kfcdq9CSKLo5mAYC8Nbub6pptICtraVonmOtxiHgnh9vG1vS
-         GlZU9S8jHg/Qsn96q2R4mrQPFSqgljutl85ur/bM/usw13zyqTogIJ3NQMOLBQIvtZXv
-         mQLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722516688; x=1723121488;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6QMpYiaUKnQGePeyncUAsOyGyvo4sFuaZoIKakgcqds=;
-        b=Xg4v/vlJBnT5zHZVzvTuQwM56wCMvBQuEj0EWoU5ghKb5Eqkvxp/otU9mkGd2CoGUI
-         IHGRgl66vvtkbnhmMJy1SPCK+Hb/KFQwirI/HVmpmJTY3v/h7y/rXJmpEnZmMkMfAg2Z
-         Wg0pStx0Pc/YmWSSiF8yW3b2HWOxZ3Q+SVWew13zhqOMfFD//uYXp9WkJTJXKOKPQ5KM
-         I5aYeqff8KfIhw8E4gTOKoeRPXjb2QAxbwoBq74MJc1+gwjEuixu1joCZinsJNBd4g1w
-         gRKRY+mxZhoHZvewwdFAYM3wEP4A904+zcVvX7CRhCsPAIKtRxCS74ogZ4Xnbx3kuAxW
-         hhVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuYKKdbJjFA7XfxQaeq9t4+9z5PSk8c5T+8pRmTppJx/9RCqrgn8R+zIDF/BxfxPlYH/F+bQ0HTZb3PdTjEE3bI9gukBbHmggX7Z1D
-X-Gm-Message-State: AOJu0Yyy7d63/xZkgdXaDt7QzF/mZLvfclF//jKzRCj9K3D3EzutTFkG
-	HsdiJRpZP1SnzP1BMe4KE8SGvFlOmxJF8ysGVhiqTBAjj2d1vGzhyB03IrFpqJpyeEHGUfvFFVL
-	NcDoIm6VvYsvYY7KSB3cHCXORcq7Rx9nrS6lM
-X-Google-Smtp-Source: AGHT+IGFMbQ6YBajivuDZ1k5rIS4yW0tNO+NYuNxc00k9ljQGThK75whHTQu91KdxYsCWAj62TVJQLL+OJJJ8D283gQ=
-X-Received: by 2002:a05:600c:46d5:b0:428:e140:88c4 with SMTP id
- 5b1f17b1804b1-428e14088d2mr12744765e9.33.1722516687702; Thu, 01 Aug 2024
- 05:51:27 -0700 (PDT)
+	s=arc-20240116; t=1722516920; c=relaxed/simple;
+	bh=7bZHFJJarhJ+jA0T5T9PA81+5VAjSAfGdGrOFRuQm38=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HfZ3dJgeui7qmK4uVjZJEdXrjktXyaNR/s+bjQI4vk+eiqgfcd8+jqM6lngNQMIDOC3nHnfN4HOKdWw6dIR4OCRJwlbUUVH63fViKJOixGcQCl0VFNHI1+6PsdCUNfF/l/16hQ20rMNjJMejKpBZJOdvwT7nT/2X6yMHA9PQoYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WZTT15HDrz4f3jJ3;
+	Thu,  1 Aug 2024 20:55:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B3BF21A0568;
+	Thu,  1 Aug 2024 20:55:14 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCHr4Wxhatm5YDhAQ--.33488S4;
+	Thu, 01 Aug 2024 20:55:14 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH -next] md: wake up mdmon after setting badblocks
+Date: Thu,  1 Aug 2024 20:51:48 +0800
+Message-Id: <20240801125148.251986-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com>
- <20240723-linked-list-v3-4-89db92c7dbf4@google.com> <1b2078d8-d93b-4626-a73f-edc5616a2357@proton.me>
- <CAH5fLggKphE3f=Jv+pfXc+_qjsGBVpXw_F4fOJiAi6vNtJ5x+Q@mail.gmail.com> <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me>
-In-Reply-To: <5b13793c-3ec8-40c2-b0c6-e7b10883d0cb@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 14:51:16 +0200
-Message-ID: <CAH5fLgjntr81+OFxzVqvb+zL4RqHCap9LZnNxNvN_gzF8AKrRg@mail.gmail.com>
-Subject: Re: [PATCH v3 04/10] rust: list: add struct with prev/next pointers
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, 
-	Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, 
-	Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, 
-	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHr4Wxhatm5YDhAQ--.33488S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gw13CF1ktw4DGw4kGr1kGrg_yoWkuFgEgr
+	ZrZrW8JryxJws0kr15tryxZrWF9F1DKw1xuFyS9r4jvrn8XFykKr1kuw45Grs5ua4xJ3Z8
+	Cr1jgr1avw4rKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUG0PhUUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Aug 1, 2024 at 12:45=E2=80=AFPM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 01.08.24 11:42, Alice Ryhl wrote:
-> > On Wed, Jul 31, 2024 at 8:41=E2=80=AFPM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >>
-> >> On 23.07.24 10:22, Alice Ryhl wrote:
-> >>> +/// The prev/next pointers for an item in a linked list.
-> >>> +///
-> >>> +/// # Invariants
-> >>> +///
-> >>> +/// The fields are null if and only if this item is not in a list.
-> >>> +#[repr(transparent)]
-> >>> +pub struct ListLinks<const ID: u64 =3D 0> {
-> >>> +    #[allow(dead_code)]
-> >>> +    inner: Opaque<ListLinksFields>,
-> >>
-> >> Do you really need `Opaque`? Or would `UnsafeCell` be enough? (If it i=
-s
-> >> enough and you change this, be aware that `Opaque` is `!Unpin`, so if
-> >> you intend for `ListLinks` to also be `!Unpin`, then you need a
-> >> `PhantomPinned`)
-> >
-> > I need the `!Unpin` part for aliasing.
->
-> Oh good point, do you mind adding a comment for that?
->
-> >>> +}
-> >>> +
-> >>> +// SAFETY: The next/prev fields of a ListLinks can be moved across t=
-hread boundaries.
-> >>
-> >> Why? This is not a justification.
-> >
-> > What would you say?
->
-> While trying to come up with a safety comment I thought about the
-> following: this impl does not depend on the type that is behind the
-> pointer (ie the type containing the `ListLinks`). Thus this `ListLinks`
-> will always implement `Send` even if the pointed-to value does not.
-> What we could do (and what definitely would be correct) is this:
-> `List` can only be used with `Send` types, then we could implement
-> `Send` for `ListLinks`. But I haven't actually come up with a problem,
-> so there might a more permissive solution.
-> Do you have a use-case where you need `!Send` types in a list?
->
-> Here is a part of my reasoning: If the pointed-to value is `!Send`, then
-> the `List` item type must also be `!Send`. Thus all list operations take
-> place on the same thread (since the `List` will be `!Send`). Therefore
-> nobody can access the `prev`/`next` pointers from another thread.
->
-> But this does not justify that `ListLinks` can be made `Send`. (although
-> there isn't actually a problem)
+From: Yu Kuai <yukuai3@huawei.com>
 
-I don't think there's any reason to forbid lists with !Send types. The
-List just becomes !Send too.
+For external super_block, mdmon rely on "mddev->sysfs_state" to update
+super_block. However, rdev_set_badblocks() will set sb_flags without
+waking up mdmon, which might cauing IO hang due to suepr_block can't be
+updated.
 
-Alice
+This problem is found by code review.
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/md/md.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/md/md.c b/drivers/md/md.c
+index 23cc77d51676..06d6ee8cd543 100644
+--- a/drivers/md/md.c
++++ b/drivers/md/md.c
+@@ -9831,10 +9831,12 @@ int rdev_set_badblocks(struct md_rdev *rdev, sector_t s, int sectors,
+ 		/* Make sure they get written out promptly */
+ 		if (test_bit(ExternalBbl, &rdev->flags))
+ 			sysfs_notify_dirent_safe(rdev->sysfs_unack_badblocks);
+-		sysfs_notify_dirent_safe(rdev->sysfs_state);
+ 		set_mask_bits(&mddev->sb_flags, 0,
+ 			      BIT(MD_SB_CHANGE_CLEAN) | BIT(MD_SB_CHANGE_PENDING));
+ 		md_wakeup_thread(rdev->mddev->thread);
++
++		sysfs_notify_dirent_safe(rdev->sysfs_state);
++		sysfs_notify_dirent_safe(mddev->sysfs_state);
+ 		return 1;
+ 	} else
+ 		return 0;
+-- 
+2.39.2
+
 
