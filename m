@@ -1,160 +1,107 @@
-Return-Path: <linux-kernel+bounces-271331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFB4944CF6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:16:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE38944CF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A36FC288A19
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:16:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 887B02832CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 904AB1A38DD;
-	Thu,  1 Aug 2024 13:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AF21A4881;
+	Thu,  1 Aug 2024 13:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bqH+0J3a"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ao+jgg/v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21AB516C69C;
-	Thu,  1 Aug 2024 13:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01747198A03;
+	Thu,  1 Aug 2024 13:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722518099; cv=none; b=tzwjBN7NE/gmhj/j2RGxgSFDjGJk3hWRZSjR7JlLbRql7GxITMkItodxOr4jU4WZuU+007hrnYRoffNXvp1pl2JW+lr4pd3mJxytN44ZsDHnAiNb7ZLjI1fP/WvY62v/ZjyM+Ygtk4i//mNoE8SEw1w6b5symQK3g3uwhXPsmq0=
+	t=1722518116; cv=none; b=TqBGmnTHL0EsAbzEq1awA8xGxBCVm1pUd2KUouPXgtpcoe3+vhbmnA1rEvo2xE44LvGCH75+og8df/8RIDveTsEQ1wPG6cTonyN0v/gPx9ABa8hukK5XGsoEchCxVpJzWDf6SMzEAwu4AUFSaAXEhxVT1mPqnKr6/C9IkAGwpIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722518099; c=relaxed/simple;
-	bh=OdXOKkDswjlP+UFeRn2SsByeLLOTwk/n2MQ4Wdycm+M=;
+	s=arc-20240116; t=1722518116; c=relaxed/simple;
+	bh=E5FgTnZHCL2l+39RU3tM6nSD8InX3sTbyvIxsySytoo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=acVO0SuLwRicLGcJyRSrV2xY9g3d8jlFGpPcSk57AqzR4LBsFeRsQvLsM5GhC+fFras66KpfISDhy7WHKaGtFH8yajOztYe3+DZdxBIpBnxyO06XEmwGezmK472WSLx3ZNJGjBbyPxSchcG8mPpMFRsb1RtkoIVmN6ljti6NHNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bqH+0J3a; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=X3EDPtGj4na0Janyf1KgLMMD+IWYat2co2bZNkXChms=; b=bqH+0J3at9ZorWMHecDjQZe8q+
-	drrWuMsDMyhW67BQ/R7lv98hlICsWZDzOE1G3DTw/rOPSBGqsWTjuLISX0iHGvYnzIimuBrOqlBZh
-	VW9Q+IMyKqpta0PoBYuEoa8+oLvgoX7vPwV51aU6UgXsLabT7t8CaKy8Tuf9UWim4r3k=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sZVdm-003mMD-Pt; Thu, 01 Aug 2024 15:14:46 +0200
-Date: Thu, 1 Aug 2024 15:14:46 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Frank.Sae" <Frank.Sae@motor-comm.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, hkallweit1@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux@armlinux.org.uk, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuanlai.cui@motor-comm.com, hua.sun@motor-comm.com,
-	xiaoyong.li@motor-comm.com, suting.hu@motor-comm.com,
-	jie.han@motor-comm.com
-Subject: Re: [PATCH 1/2] dt-bindings: net: motorcomm: Add chip mode cfg
-Message-ID: <e9d9c67d-e113-4a10-bd18-0d013fe7ea92@lunn.ch>
-References: <20240727092009.1108640-1-Frank.Sae@motor-comm.com>
- <ac84b12f-ae91-4a2f-a5f7-88febd13911c@kernel.org>
- <f18fa949-b217-4373-82c4-7981872446b4@motor-comm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uRutslkeee6zjMPyVhrDP/7OpqvDsxPRLEtiU70yzzLtWpod/ilCY2cvcv1M5Q4bbLUlgtX1YsBM/j8Ryi06huHMKO1OCuA8lmcvb79eN4HIarlvdZmA+YtWAgVDaqII6txUZLrdNDYeu4nuBXPHbGFb0v9Bz4wvQt76mJkvaa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ao+jgg/v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCB56C4AF0A;
+	Thu,  1 Aug 2024 13:15:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722518115;
+	bh=E5FgTnZHCL2l+39RU3tM6nSD8InX3sTbyvIxsySytoo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ao+jgg/vxyNUl4IAmcDXWifB9Tv/t4vuQlsgrgjf0vF1a3KZzwXYq8yOVH+59eQfP
+	 6gdQWKiMEp6OKm922trFFmvhEioPdmA6+6Cxh+z9m/ZYfAi336GmbA+Rvb5QlvSA5a
+	 /5obzCA2HL7xEYXAJPtOWVGZMYuWpUUSeIndefUkOr5RCgmIj+0+EukzUySqeSnp8b
+	 VAjwIvfZ8x3gMjN1qeu5KdIu0QV63LuGr4dMeUKVJ1BLwjzl4r5RkhqBBfAlsvZyzv
+	 mw45FkbxHw4LsdbmGbJk9i0ez0t7i/1KP2r5rz7FN3WGVHZyMWj3iNHV2uYrvYDdeH
+	 X7uexRxD+1JWA==
+Date: Thu, 1 Aug 2024 14:15:11 +0100
+From: Lee Jones <lee@kernel.org>
+To: Jack Chen <zenghuchen@google.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Mark Brown <broonie@kernel.org>,
+	Vadim Pasternak <vadimp@nvidia.com>,
+	Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-leds@vger.kernel.org
+Subject: Re: [PATCH] leds: lm3601x: reset led controller during init
+Message-ID: <20240801131511.GA1019230@google.com>
+References: <20240729204054.2269031-1-zenghuchen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f18fa949-b217-4373-82c4-7981872446b4@motor-comm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240729204054.2269031-1-zenghuchen@google.com>
 
-On Thu, Aug 01, 2024 at 02:49:12AM -0700, Frank.Sae wrote:
-> 
-> On 7/27/24 02:25, Krzysztof Kozlowski wrote:
-> 
->     On 27/07/2024 11:20, Frank.Sae wrote:
-> 
->          The motorcomm phy (yt8821) supports the ability to
->          config the chip mode of serdes.
->          The yt8821 serdes could be set to AUTO_BX2500_SGMII or
->          FORCE_BX2500.
->          In AUTO_BX2500_SGMII mode, SerDes
->          speed is determined by UTP, if UTP link up
->          at 2.5GBASE-T, SerDes will work as
->          2500BASE-X, if UTP link up at
->          1000BASE-T/100BASE-Tx/10BASE-T, SerDes will work
->          as SGMII.
->          In FORCE_BX2500, SerDes always works
->          as 2500BASE-X.
-> 
->     Very weird wrapping.
-> 
->     Please wrap commit message according to Linux coding style / submission
->     process (neither too early nor over the limit):
->     https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-> 
-> 
->         Signed-off-by: Frank.Sae <Frank.Sae@motor-comm.com>
-> 
->     Didn't you copy user-name as you name?
-> 
-> sorry, not understand your mean.
-> 
->         ---
->          .../bindings/net/motorcomm,yt8xxx.yaml          | 17 +++++++++++++++++
->          1 file changed, 17 insertions(+)
-> 
->     Also, your threading is completely broken. Use git send-email or b4.
-> 
-> sorry, not understand your mean of threading broken. the patch used git
-> send-email.
+Nit: Subject line descriptions start with an uppercase char in LED.
 
-Your indentation of replies it also very odd!
+> LED controller should be reset during initialization to avoid abnormal
+> behaviors. For example, when power to SoC is recycled but power to LED
+> controller is not, LED controller should not presume to be in original
+> state.
+> 
+> Signed-off-by: Jack Chen <zenghuchen@google.com>
+> ---
+>  drivers/leds/flash/leds-lm3601x.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/leds/flash/leds-lm3601x.c b/drivers/leds/flash/leds-lm3601x.c
+> index 7e93c447fec5..978256310540 100644
+> --- a/drivers/leds/flash/leds-lm3601x.c
+> +++ b/drivers/leds/flash/leds-lm3601x.c
+> @@ -434,6 +434,10 @@ static int lm3601x_probe(struct i2c_client *client)
+>  		return ret;
+>  	}
+>  
+> +	ret = regmap_write(led->regmap, LM3601X_DEV_ID_REG, LM3601X_SW_RESET);
 
-> 
->         +      0: AUTO_BX2500_SGMII
->         +      1: FORCE_BX2500
->         +      In AUTO_BX2500_SGMII mode, serdes speed is determined by UTP,
->         +      if UTP link up at 2.5GBASE-T, serdes will work as 2500BASE-X,
->         +      if UTP link up at 1000BASE-T/100BASE-Tx/10BASE-T, serdes will
->         +      work as SGMII.
->         +      In FORCE_BX2500 mode, serdes always works as 2500BASE-X.
-> 
-> 
->     Explain why this is even needed and why "auto" is not correct in all
->     cases. In commit msg or property description.
-> 
-> yt8821 phy does not support strapping to config the serdes mode, so config the
-> serdes mode by dts instead.
+So this controller is reset via the ID register?
 
-Strapping does not matter. You can set it on probe.
+> +	if (ret)
+> +		dev_warn(&client->dev, "led controller is failed to reset\n");
 
-> even if auto 2500base-x serdes mode is default mode after phy hard reset, and
-> auto as default must be make sense, but from most our customers's feedback,
-> force 2500base-x serdes mode is used in project usually to adapt to mac's serdes
-> settings. for customer's convenience and use simplicity, force 2500base-x serdes
-> mode selected as default here.
- 
-If you are using phylink correctly, the customer should never
-know. Both the MAC and the PHY enumerate the capabilities and phylink
-will tell you what mode to change to.
+"LED controller failed to reset"
 
-I still think this property should be removed, default to auto, and
-let phylink tell you if something else should be used.
+Or
 
-> 
->         +    $ref: /schemas/types.yaml#/definitions/uint8
-> 
->     Make it a string, not uint8.
+"Failed to reset the LED controller"
+
+>  	mutex_init(&led->lock);
+>  
+>  	return lm3601x_register_leds(led, fwnode);
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
 > 
 > 
-> why do you suggest string, the property value(uint8) will be wrote to phy
-> register.
 
-Device tree is not a list of values to poke into registers. It is a
-textual description of the hardware. The driver probably needs to
-apply conversions to get register values. e.g. delay are in ns,
-voltages are in millivolts, but register typically don't use such
-units.
-
-	Andrew
+-- 
+Lee Jones [李琼斯]
 
