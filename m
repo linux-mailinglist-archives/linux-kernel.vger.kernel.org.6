@@ -1,211 +1,252 @@
-Return-Path: <linux-kernel+bounces-271813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855BE945386
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:47:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D638194537F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:46:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A971F1C23440
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:47:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6552A1F23F9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C0C14B941;
-	Thu,  1 Aug 2024 19:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D048714A60F;
+	Thu,  1 Aug 2024 19:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="ISwaPs8U"
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2049.outbound.protection.outlook.com [40.107.215.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ly2BxRyZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6363C062;
-	Thu,  1 Aug 2024 19:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722541606; cv=fail; b=M62CnLt3JchVQsWR/SMyoBw+h5HcO+Z7UtcONnYnMjjseKjeg7tU42qkP0H/yeLhLt9TYoTwGu2f6eDRvM2duWniWWE72OcTpdOj0GpxKCeTqmhCt1AL2V8l7cL7LsZyZkkEb+EkmohAWEA3m8e2bGmaDf4AqIVToQpYIme/0Ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722541606; c=relaxed/simple;
-	bh=qFqGHgEyyN8yUWr0qjApPEVs20oo7ZhAYqawZjFsLxk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pNAXQN5HjZzTA1b4PS2QqcVX9US6UqT0FXlEZkvAQaaCD6lTVbTYavMLg60djWgmhD4FhzilqA2m7W0jrShvVAfbRTSbaYlvys5eCUdUpmsG5ioH/+FAHwfl8oO8X7tJ60X19spW8RuPxVTP/O6NfeLXt2VvVSeixaaBovaFFeM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=nuvoton.com; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=ISwaPs8U; arc=fail smtp.client-ip=40.107.215.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nuvoton.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IrIFSXhG2ObA8lDyoozIXS8K28c/8q6FC7fpU8qTPxZCnyAbtgWALVIiQyEnmxTGOH/mqWuiT8d8yxd2NyFmdXj9GYqgUve4saIg+MQOx6dbqC+WNAaZ0gMhkCntNlUiElqtmQmsVuMErwZ3VAsdVNUQsFlmUXmg3P0qqEWi9KayDoo8j4UOp9CuDGX0LVLDccw0NW0ns4pBNZ5DgfR/nTdWLkIN1jijZ894jfc6Ozgv1RAQGC5EYcWtAI1E9KpQVS+MvAwCybmgXFhO1VS0rsJxMFnL+Yto795u6q3FoSgcpUaG89oWj7Q2zzC2USOVMfHX6ucMQGZoGVlsaFtvIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Bsp6Fu2EwmNWI4JUeaL8+uK9d/eheOZNExD2CIqLPZk=;
- b=RTCu1SgLTztUKYc+9Kai81gTNX+bjjKOw3WV8GHO143EZVgW74On2q6V8fYLdx7qvuR0OupwnubxkgttNtQ6aK8l4qDcpHKdsXiCAeJUGhPsGwe6lvwGD/P/mSsEmD+3D6/OIbutfvyMb75I4w5R7zIQEOj03gZ3/xXjkgU0AA68lRI6+bJRw0GZQgCL38LLnHCBDUjeAa45Eu04mJyFtmydRaVAygfBj3U3KC1lj2exhOWgSDbntlk7/oCpFZiszdb+bFEpuzyYVQyrvu2JHjmdRcyqSrDGVDFt4E1iNVUhQ/HAZt22/qwA4nwhEJJN3CWlgIV5PDiUDW5Rb7T5xw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 211.75.126.7) smtp.rcpttodomain=baylibre.com
- smtp.mailfrom=taln60.nuvoton.co.il; dmarc=fail (p=none sp=quarantine pct=100)
- action=none header.from=gmail.com; dkim=none (message not signed); arc=none
- (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Bsp6Fu2EwmNWI4JUeaL8+uK9d/eheOZNExD2CIqLPZk=;
- b=ISwaPs8Uk0OkXfOXjpGdP+cuCZfaUQVSbfJreX5S/nL/6+nRVJ1rT+dOnSkrJCavrXq/jPJaFJsxSEb+502kJxU/EKK4UiMFYeVGv2fiWisE+ixXEsv7CQS8hH0QIng7r5ZwXTSVnwFgfRZmWc1dXaibYGRqDEUMUxsGtjArhLY=
-Received: from SI1PR02CA0019.apcprd02.prod.outlook.com (2603:1096:4:1f4::15)
- by SEYPR03MB7216.apcprd03.prod.outlook.com (2603:1096:101:da::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Thu, 1 Aug
- 2024 19:46:38 +0000
-Received: from HK2PEPF00006FB0.apcprd02.prod.outlook.com
- (2603:1096:4:1f4:cafe::f5) by SI1PR02CA0019.outlook.office365.com
- (2603:1096:4:1f4::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23 via Frontend
- Transport; Thu, 1 Aug 2024 19:46:37 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 211.75.126.7) smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not
- signed) header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of taln60.nuvoton.co.il: DNS Timeout)
-Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
- HK2PEPF00006FB0.mail.protection.outlook.com (10.167.8.6) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 19:46:36 +0000
-Received: from NTHCML01B.nuvoton.com (10.1.8.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 2 Aug
- 2024 03:46:36 +0800
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCML01B.nuvoton.com
- (10.1.8.178) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 2 Aug
- 2024 03:46:35 +0800
-Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Fri, 2 Aug 2024 03:46:35 +0800
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id ECD6B5F64C;
-	Thu,  1 Aug 2024 22:46:34 +0300 (IDT)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id DF08BDC1CEE; Thu,  1 Aug 2024 22:46:34 +0300 (IDT)
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
-	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<tali.perry1@gmail.com>, <joel@jms.id.au>, <venture@google.com>,
-	<yuenn@google.com>, <benjaminfair@google.com>
-CC: <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
-	<tmaimon77@gmail.com>, Rob Herring <robh@kernel.org>
-Subject: [PATCH v27 1/3] dt-bindings: reset: npcm: add clock properties
-Date: Thu, 1 Aug 2024 22:46:30 +0300
-Message-ID: <20240801194632.742006-2-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240801194632.742006-1-tmaimon77@gmail.com>
-References: <20240801194632.742006-1-tmaimon77@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B639D3C062;
+	Thu,  1 Aug 2024 19:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722541597; cv=none; b=kCjkz51GTeOToNh7DfXQ1wd5Uqxt8TL/Nrxl2AegHyH+F8Q+KHJ5ku1XnOvMAXOgADIjK6qPXBrQQ6D4M0GxjYEMw4NflzxBUb0yugyEQVaSQUqwWNrdA2NN81lVld/suhVU1I9lg+fGbrmqIwuCSNK5UL9nt2n5ZpvyoXif6ME=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722541597; c=relaxed/simple;
+	bh=cvgVp/KFbBa9VY7EcJnmpHK375fkBr0I622XMeQskDI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rNN+g4OeZhnunhNaQ9LwP80FP54jzkcC71d2aBuxk1HPk5xV14JQ4JMgtEjMOPAqYnD++IjdJdMugrojlFDEBrbn/AYjno7DHIbOXkKZF9GVlRo1JqcjXvkwNe9mrtDhmzerKO5w6VECyB34sACWOIhQBgie12bs+uadmH+CGjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ly2BxRyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D92EC4AF0B;
+	Thu,  1 Aug 2024 19:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722541597;
+	bh=cvgVp/KFbBa9VY7EcJnmpHK375fkBr0I622XMeQskDI=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=ly2BxRyZPEA2WhuS5aeULjLcrVRgIQiQ/DX4zYpvRGtul/Be966RQUjgTIKVTzUqN
+	 DKGC8UcuiIv1V6A1Wgg+GOSo/+ZbxonDM+wbUOhM2/bNOtwZN176t2tozyaQ2hqaTB
+	 E2ycr4r9RSY2YSp1QodQC3/MhtVi1oca+LPEM+7wL3vArGY17OT7FMsSrlCbgGHO4c
+	 F5VxBygl3fncV/270frR2Kj7cgqZGpOYiSkmVFUcfhRdLac4ZkRdeCLo5LbJ/ldpEc
+	 e4EVoEWZn/4ofmD15/yELMcWCB1Sl+Ffch/8EpY/6i2YdCdQCpzsvKyckO5pv0SUAR
+	 mTd89DDib68tw==
+Message-ID: <9290a079840812e1e8616484ba0a9910d15fe730.camel@kernel.org>
+Subject: Re: [PATCH RFC v3 2/2] fhandle: expose u64 mount id to
+ name_to_handle_at(2)
+From: Jeff Layton <jlayton@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>, Alexander Viro
+ <viro@zeniv.linux.org.uk>,  Christian Brauner <brauner@kernel.org>, Jan
+ Kara <jack@suse.cz>, Chuck Lever <chuck.lever@oracle.com>, Amir Goldstein
+ <amir73il@gmail.com>, Alexander Aring <alex.aring@gmail.com>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Arnaldo
+ Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Date: Thu, 01 Aug 2024 15:46:34 -0400
+In-Reply-To: <20240801-exportfs-u64-mount-id-v3-2-be5d6283144a@cyphar.com>
+References: <20240801-exportfs-u64-mount-id-v3-0-be5d6283144a@cyphar.com>
+	 <20240801-exportfs-u64-mount-id-v3-2-be5d6283144a@cyphar.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NotSetDelaration: True
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB0:EE_|SEYPR03MB7216:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9c26a85-d108-4ad7-34ba-08dcb262a771
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|61400799027|7093399012|35950700016|48200799018|82310400026|921020|35450700002;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?HrYA8mahlmYEqevC+ytWeG1/Chmp51/HT+REcRF3ZV+02xlnrktzOM/70L7Y?=
- =?us-ascii?Q?xfHp/1gDT6LGxq6RlFl/sz2MOkA96SM6JSApsr1RhEivwTt1E45oglQiTkLD?=
- =?us-ascii?Q?tTcNvoe8PM4b28vD+lnnyIIcg5YD/OmOGS2YJJAf3ae5zPZ3Myj5hZiricC9?=
- =?us-ascii?Q?3SDiwpe4l0naOIreTwa4WfTlhhF0M4ODNvsNIn7ODmcCoDbHBice24pKfNmu?=
- =?us-ascii?Q?w7aEL+JslOfegIELbcU4BtTuYD0FHktS3/A8fGClRLyGtxbGUddIGt6mY9Q3?=
- =?us-ascii?Q?t+nc8DS9uylkMSnuK+vxTXMFARaRBlaupZCsuIfaoU2MUShm0VRVCVj3UNQ0?=
- =?us-ascii?Q?RuMifhiZsqbb/jNXIIpTUgTCEizxBEkhoN5mHyXQHnNgGRnvYzKnVheFpST5?=
- =?us-ascii?Q?FJZ2VJQzsvw1PVNRavuC+eTH7KYh1jqTLZz90fmZNRwLcZM+nlNkXp09Ulu8?=
- =?us-ascii?Q?G8jbM9ehXJRJewaNEyZkv1OPMbeJJfl3zvlia/MuZwHw6QU34MtpcPOJgyrU?=
- =?us-ascii?Q?ci6P0SVKcmmo5KUQoWrPJVIKr4M8GUdY/wvVNN5sWTATI6wkv5Lrmq8ToRck?=
- =?us-ascii?Q?tcKXhYDRCz6dq7O2mci6PHtuqrAMcb0msPCVJJJHncCMGxlvrJhQj/OERxLC?=
- =?us-ascii?Q?RCnOm4RMk5VYMmcIV65jwxwxvF4U3QBh3NTOz6XscDwlm6UQOIhyGvyJKAm9?=
- =?us-ascii?Q?KxgY/FZwldzkZVJ8bR/nhsHf8Ogz9W3LXCIWePkg34FpZ5BTCRlDKOuSvgud?=
- =?us-ascii?Q?WDU6ladibxRFc78+vw1ZUKeX/dwgX55xlZNPiO8OMg5cQJZsXgoIo8X8td9K?=
- =?us-ascii?Q?hGIr2mufUuOr/tgm0XWf2Wrij28+il6cxgWXDXHmRDKhZ9F9HqpfpUDEdNUl?=
- =?us-ascii?Q?UAwWXxrZ5v7b1Mg0n1eSSQrPq6t+Lhs0WY4xBzfmA26ywHlDHBkMst5YDPdO?=
- =?us-ascii?Q?NiciN8PtHvN4BEd9b3Qvr2rZ7+7cvjBhRNU4xtB859yV6D9ETXS8iVLZN5a7?=
- =?us-ascii?Q?Wn3P0Qe2MO1ho6JjYgdwXNykpyTlszvuyPkzhq73cCzuH+OdWzv9LeShPw+e?=
- =?us-ascii?Q?F0tP8sHKkn1FHhilDX3Xc7OMP2V9e+ENr9UkMotYNuXkvLLfJLqADD/x73+x?=
- =?us-ascii?Q?9uAvCQXEEbRyKLMv6yYm/UM8ivgFFyq4SbcQ8iUDdpkGEj/6uC4fQkd2WBeI?=
- =?us-ascii?Q?KkbJxzJPjLTBVvkAJv928IpyxIQAyl51xpB1ZyO073xpLfpw7g+1P0GEUMJV?=
- =?us-ascii?Q?10Nk0GhJ/mQLg0E3Hs8UCDk+ghqAQcO3SzvS9THjN4sgSVKLdcik5J5oU9WO?=
- =?us-ascii?Q?wAP/QB6uTVPrrvwN9IId2XVkR+6mQ/Dv7CMNMIQuSP+RMIDgD0mGu4fWrDV9?=
- =?us-ascii?Q?MaWh44SDJfwEteRPU3DR/VJKD/1RbuqktTyVTyyJx1mMBKhQxe1ZPb6KxXrL?=
- =?us-ascii?Q?9zqt758pBop01lBBYBct/evDedQuZBNBX9syKW698GFA+SxHGoMrAv6RyFRp?=
- =?us-ascii?Q?88iPTeFl9nZClmY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(7416014)(376014)(61400799027)(7093399012)(35950700016)(48200799018)(82310400026)(921020)(35450700002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: nuvoton.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 19:46:36.5208
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9c26a85-d108-4ad7-34ba-08dcb262a771
-X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	HK2PEPF00006FB0.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7216
 
-This commit adds a 25MHz reference clock and clock-cell properties to
-the NPCM reset document. The addition is necessitated by the integration
-of the NPCM8xx clock auxiliary bus device into the NPCM reset driver.
+On Thu, 2024-08-01 at 13:52 +1000, Aleksa Sarai wrote:
+> Now that we provide a unique 64-bit mount ID interface in statx(2), we
+> can now provide a race-free way for name_to_handle_at(2) to provide a
+> file handle and corresponding mount without needing to worry about
+> racing with /proc/mountinfo parsing or having to open a file just to do
+> statx(2).
+>=20
+> While this is not necessary if you are using AT_EMPTY_PATH and don't
+> care about an extra statx(2) call, users that pass full paths into
+> name_to_handle_at(2) need to know which mount the file handle comes from
+> (to make sure they don't try to open_by_handle_at a file handle from a
+> different filesystem) and switching to AT_EMPTY_PATH would require
+> allocating a file for every name_to_handle_at(2) call, turning
+>=20
+> =C2=A0 err =3D name_to_handle_at(-EBADF, "/foo/bar/baz", &handle, &mntid,
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 AT_HANDLE_MNT_ID_UNIQUE);
+>=20
+> into
+>=20
+> =C2=A0 int fd =3D openat(-EBADF, "/foo/bar/baz", O_PATH | O_CLOEXEC);
+> =C2=A0 err1 =3D name_to_handle_at(fd, "", &handle, &unused_mntid, AT_EMPT=
+Y_PATH);
+> =C2=A0 err2 =3D statx(fd, "", AT_EMPTY_PATH, STATX_MNT_ID_UNIQUE, &statxb=
+uf);
+> =C2=A0 mntid =3D statxbuf.stx_mnt_id;
+> =C2=A0 close(fd);
+>=20
+> Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> ---
+> =C2=A0fs/fhandle.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 | 29 ++++++++++++++++------
+> =C2=A0include/linux/syscalls.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 2 +-
+> =C2=A0include/uapi/linux/fcntl.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> =C2=A0tools/perf/trace/beauty/include/uapi/linux/fcntl.h |=C2=A0 1 +
+> =C2=A04 files changed, 25 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/fs/fhandle.c b/fs/fhandle.c
+> index 6e8cea16790e..8cb665629f4a 100644
+> --- a/fs/fhandle.c
+> +++ b/fs/fhandle.c
+> @@ -16,7 +16,8 @@
+> =C2=A0
+> =C2=A0static long do_sys_name_to_handle(const struct path *path,
+> =C2=A0				=C2=A0 struct file_handle __user *ufh,
+> -				=C2=A0 int __user *mnt_id, int fh_flags)
+> +				=C2=A0 void __user *mnt_id, bool unique_mntid,
+> +				=C2=A0 int fh_flags)
+> =C2=A0{
+> =C2=A0	long retval;
+> =C2=A0	struct file_handle f_handle;
+> @@ -69,9 +70,19 @@ static long do_sys_name_to_handle(const struct path *p=
+ath,
+> =C2=A0	} else
+> =C2=A0		retval =3D 0;
+> =C2=A0	/* copy the mount id */
+> -	if (put_user(real_mount(path->mnt)->mnt_id, mnt_id) ||
+> -	=C2=A0=C2=A0=C2=A0 copy_to_user(ufh, handle,
+> -			 struct_size(handle, f_handle, handle_bytes)))
+> +	if (unique_mntid) {
+> +		if (put_user(real_mount(path->mnt)->mnt_id_unique,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 (u64 __user *) mnt_id))
+> +			retval =3D -EFAULT;
+> +	} else {
+> +		if (put_user(real_mount(path->mnt)->mnt_id,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 (int __user *) mnt_id))
+> +			retval =3D -EFAULT;
+> +	}
+> +	/* copy the handle */
+> +	if (retval !=3D -EFAULT &&
+> +		copy_to_user(ufh, handle,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 struct_size(handle, f_handle, handle_bytes))=
+)
+> =C2=A0		retval =3D -EFAULT;
+> =C2=A0	kfree(handle);
+> =C2=A0	return retval;
+> @@ -83,6 +94,7 @@ static long do_sys_name_to_handle(const struct path *pa=
+th,
+> =C2=A0 * @name: name that should be converted to handle.
+> =C2=A0 * @handle: resulting file handle
+> =C2=A0 * @mnt_id: mount id of the file system containing the file
+> + *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (u64 if AT_HAND=
+LE_MNT_ID_UNIQUE, otherwise int)
+> =C2=A0 * @flag: flag value to indicate whether to follow symlink or not
+> =C2=A0 *=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 and whether a decodabl=
+e file handle is required.
+> =C2=A0 *
+> @@ -92,7 +104,7 @@ static long do_sys_name_to_handle(const struct path *p=
+ath,
+> =C2=A0 * value required.
+> =C2=A0 */
+> =C2=A0SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const char __user *, n=
+ame,
+> -		struct file_handle __user *, handle, int __user *, mnt_id,
+> +		struct file_handle __user *, handle, void __user *, mnt_id,
+> =C2=A0		int, flag)
+> =C2=A0{
+> =C2=A0	struct path path;
+> @@ -100,7 +112,8 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const ch=
+ar __user *, name,
+> =C2=A0	int fh_flags;
+> =C2=A0	int err;
+> =C2=A0
+> -	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID))
+> +	if (flag & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH | AT_HANDLE_FID |
+> +		=C2=A0=C2=A0=C2=A0=C2=A0 AT_HANDLE_MNT_ID_UNIQUE))
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> =C2=A0	lookup_flags =3D (flag & AT_SYMLINK_FOLLOW) ? LOOKUP_FOLLOW : 0;
+> @@ -109,7 +122,9 @@ SYSCALL_DEFINE5(name_to_handle_at, int, dfd, const ch=
+ar __user *, name,
+> =C2=A0		lookup_flags |=3D LOOKUP_EMPTY;
+> =C2=A0	err =3D user_path_at(dfd, name, lookup_flags, &path);
+> =C2=A0	if (!err) {
+> -		err =3D do_sys_name_to_handle(&path, handle, mnt_id, fh_flags);
+> +		err =3D do_sys_name_to_handle(&path, handle, mnt_id,
+> +					=C2=A0=C2=A0=C2=A0 flag & AT_HANDLE_MNT_ID_UNIQUE,
+> +					=C2=A0=C2=A0=C2=A0 fh_flags);
+> =C2=A0		path_put(&path);
+> =C2=A0	}
+> =C2=A0	return err;
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index 4bcf6754738d..5758104921e6 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -870,7 +870,7 @@ asmlinkage long sys_fanotify_mark(int fanotify_fd, un=
+signed int flags,
+> =C2=A0#endif
+> =C2=A0asmlinkage long sys_name_to_handle_at(int dfd, const char __user *n=
+ame,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct file_handle __user *handl=
+e,
+> -				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int __user *mnt_id, int flag);
+> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 void __user *mnt_id, int flag);
+> =C2=A0asmlinkage long sys_open_by_handle_at(int mountdirfd,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct file_handle __user *handl=
+e,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int flags);
+> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> index 38a6d66d9e88..87e2dec79fea 100644
+> --- a/include/uapi/linux/fcntl.h
+> +++ b/include/uapi/linux/fcntl.h
+> @@ -152,6 +152,7 @@
+> =C2=A0#define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+> =C2=A0					=C2=A0=C2=A0 object identity and may not be
+> =C2=A0					=C2=A0=C2=A0 usable with open_by_handle_at(2). */
+> +#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID.=
+ */
+> =C2=A0
+> =C2=A0#if defined(__KERNEL__)
+> =C2=A0#define AT_GETATTR_NOSEC	0x80000000
+> diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/p=
+erf/trace/beauty/include/uapi/linux/fcntl.h
+> index 38a6d66d9e88..87e2dec79fea 100644
+> --- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> +++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+> @@ -152,6 +152,7 @@
+> =C2=A0#define AT_HANDLE_FID		0x200	/* File handle is needed to compare
+> =C2=A0					=C2=A0=C2=A0 object identity and may not be
+> =C2=A0					=C2=A0=C2=A0 usable with open_by_handle_at(2). */
+> +#define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID.=
+ */
+> =C2=A0
+> =C2=A0#if defined(__KERNEL__)
+> =C2=A0#define AT_GETATTR_NOSEC	0x80000000
+>=20
 
-The inclusion of the NPCM8xx clock properties in the reset document is
-crucial as the reset block also serves as a clock provider for the
-NPCM8xx clock. This enhancement is intended to facilitate the use of the
-NPCM8xx clock driver.
-
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/reset/nuvoton,npcm750-reset.yaml  | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
-index d82e65e37cc0..72523f1bbc18 100644
---- a/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
-+++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
-@@ -21,6 +21,13 @@ properties:
-   '#reset-cells':
-     const: 2
- 
-+  '#clock-cells':
-+    const: 1
-+
-+  clocks:
-+    items:
-+      - description: specify external 25MHz reference clock.
-+
-   nuvoton,sysgcr:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description: a phandle to access GCR registers.
-@@ -39,6 +46,17 @@ required:
-   - '#reset-cells'
-   - nuvoton,sysgcr
- 
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - nuvoton,npcm845-reset
-+then:
-+  required:
-+    - '#clock-cells'
-+    - clocks
-+
- additionalProperties: false
- 
- examples:
--- 
-2.34.1
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
