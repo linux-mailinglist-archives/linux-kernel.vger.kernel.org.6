@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-271506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FF5A944F2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:28:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB336944F33
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB03B1C23069
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53FA21F26769
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A4D1AE87B;
-	Thu,  1 Aug 2024 15:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CB8B1A4F30;
+	Thu,  1 Aug 2024 15:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YKbKC4fJ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8w4TCGhM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="id/m5uFl"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E8519F48D
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3762C19F48D
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:29:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722526127; cv=none; b=XimJQ1sXzT27MH5gXTrorvo9f34JeXLSWMIsT8t8mLW4njxUi2+e7X+Yb7QpJ1hRSddhMBkiqWIC6FXI01XtNPV+N2Kwf7UkQ5Q7c9MmnuaJO+NvpR0H7+c6GYFHL/1xTXdb9mvqDT163ca3un8BYKW23TaPRkbG6UGTmmjPH/g=
+	t=1722526173; cv=none; b=coK6HJa540qKELDdtjTPeJIheP6rjTgjqBOFR3HAdZmh6wAoguALIOgH6HwxLneT64rapr+fNbaOWSGYvSscNFOhJKqrwuuuKFjCNAiE+4WnZ+QpvnQ5CaSZLA6YaIt5FhpY05oNUQDJRCF3Q6SyokhfX+GBdyWtjo7kFaGNfjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722526127; c=relaxed/simple;
-	bh=49/WMBsPjnKTpfp0dXsLbwNli6+OQl4a0z6rQ3OdGEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=iKsS1frU2S6eD1zAld8h+L+96OmHDNO1XSQ1vMaSINyafScXUs+IOccANi3NfpQjTlWfDdWAYspXrqZVDfu1wb8kRaevaNeuqNE6Juo9/utdqdVHtmhhZpwwxgmXDpcOn2dy49E9ilOEIt0Gq3J2tswXp/ishy8URq9Z+ZTgygc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YKbKC4fJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8w4TCGhM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 1 Aug 2024 17:28:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722526118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=1fkaG1f8lTsaLbUwdzOTX3astMr3rS1HhR0Oy5cox4c=;
-	b=YKbKC4fJt3mqyfiO9b6JMsFNq++lF1hqEd2QsBRQuKy3ERtK+MAKgpJDAoo6ibnWaGmP6n
-	i5oerLRIR/icXL6x4j6ri4gu0dq7mubLT2ti6ba+tkgmOKB8NHJCAjqR47sSwuScMySpNA
-	xKEEvu8tlKHeWY81i6SEenk6hfZXBnq/fh+VDR9POjBaX+FoDGfgCxHJlSdTThL/X/sTMc
-	Ohd5JG1AJweaAKdmmw75vHQ3p2r3+FoIZXxQnblZPaSCDhEHmC3y6ajrpJ2Uq7dDNTVPmV
-	teIr1lUEAi7gXMfr6K4obccd0dat/g31Px7BV77uAJcaDq6lTzk9scQVXmbnFA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722526118;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=1fkaG1f8lTsaLbUwdzOTX3astMr3rS1HhR0Oy5cox4c=;
-	b=8w4TCGhMGXrA1UMuymzX3qFkXn7nvx/BZrePETkuoH763Yj5A6sCuQQhZEqXg0BI8VqluG
-	pXZdAFbA4rkyy6AQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: x86@kernel.org, linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [FYI] objtool: =?utf-8?Q?=2Eexport=5Fsymbo?= =?utf-8?B?bOKApjo=?=
- data relocation to !ENDBR: stpcpy
-Message-ID: <20240801152836.xOJc9iaY@linutronix.de>
+	s=arc-20240116; t=1722526173; c=relaxed/simple;
+	bh=HCOnPqaXJWD5QUVRR2HlizPpmXk4B0IZp//1F4LRrEk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mjPJKQKD64Wr01CmFML2AKDJnFCqp3yvfYfLalcNVKotWMib4zF2Y2vEckH8Y+RmzBF9YH7QPOQWpAYXkZ/zFci3FYhxBxYANc53EzfqQtJ2D15rw7du2qcqSPeK7mR+5zpYczdWZc9vgB5m6I9NXUUKd51lBFafCHzhhrUxyVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=id/m5uFl; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1722526169; x=1722785369;
+	bh=HCOnPqaXJWD5QUVRR2HlizPpmXk4B0IZp//1F4LRrEk=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=id/m5uFlPUW/5b4qXUPL3jqUvhlDA1dFqyEHKZkgiVw32HfZ0icpiK4lCnLZyq9tA
+	 mGmnrzVzkvsjJr6pXiSDIujeXxZ7IiPkcEuRm9csm+OofirV1t/BaOjryYebTuxkM9
+	 t0E908OaTvZV9SOknG6xCMy+XGivrSQmST2sNpsjkCe9hDRQWBmTB8P+LzL3eCMwq8
+	 /ztstmxvSLG9M/3Qg1YUw9RS/RzuMNWgIt9t//EVxdfVIhfaQcx4wefCCKOrX3XfHO
+	 iCScpmrUN9FNFfg2Pz08HRwZ9e9FPO7M267T0l1S3OjdCvGKIBOMo/yzk9w1aJvGzV
+	 FQKmk3CF45qqg==
+Date: Thu, 01 Aug 2024 15:29:15 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Matthew Wilcox <willy@infradead.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and vm_area_struct
+Message-ID: <79ce2394-25af-469f-88f1-5de31b9f48f6@proton.me>
+In-Reply-To: <CAH5fLgi__fgLnifj3ON9iNyugnUzm82VWWduO3Ds6Hz54H1ZWQ@mail.gmail.com>
+References: <20240801-vma-v3-1-db6c1c0afda9@google.com> <82e4816c-cada-46f3-bebf-882ae8ded118@proton.me> <CAH5fLgi__fgLnifj3ON9iNyugnUzm82VWWduO3Ds6Hz54H1ZWQ@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 1f9acde3ca9b22fbb275d5a0943a3b4977e57bd5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,37 +59,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On 01.08.24 16:37, Alice Ryhl wrote:
+> On Thu, Aug 1, 2024 at 4:02=E2=80=AFPM Benno Lossin <benno.lossin@proton.=
+me> wrote:
+>> On 01.08.24 14:58, Alice Ryhl wrote:
+>>> +/// A wrapper for the kernel's `struct mm_struct`.
+>>> +///
+>>> +/// This type is identical to `MmWithUser` except that it uses `mmput_=
+async` when dropping a
+>>> +/// refcount. This means that the destructor of `ARef<MmWithUserAsync>=
+` is safe to call in atomic
+>>> +/// context.
+>>
+>> Missing Invariants.
+>=20
+> Hmm. Structs will inherit invariants from their fields, no?
 
-defconfig on x86-64 with gcc-14 I get this:
-| vmlinux.o: warning: objtool: .export_symbol+0x26980: data relocation to !ENDBR: stpcpy+0x0
+No, usually the fields handle their invariants on their own, eg NonNull
+can only be constructed if the pointer is not null. But Refcounted
+structs are somewhat special in this regard, since you cannot construct
+them by-value. Thus if you build a new struct that contains them, then
+that also needs to be refcounted and have its own invariant to guarantee
+that the field still is refcounted.
 
-objdump ->
+---
+Cheers,
+Benno
 
-| 0000000000000110 <stpcpy>:
-|  110:   66 66 2e 0f 1f 84 00    data16 cs nopw 0x0(%rax,%rax,1)
-|  117:   00 00 00 00 
-|  11b:   0f 1f 44 00 00          nopl   0x0(%rax,%rax,1)
-|  120:   f3 0f 1e fa             endbr64
-
-okay, no endbr64 on entry label.
-
-| $ make lib/string.s
-->
-|         .type   stpcpy, @function
-| stpcpy:
-|         .p2align 5
-|         endbr64
-| .L30:
-| # lib/string.c:193:  while ((*dest++ = *src++) != '\0')
-|         movzbl  (%rsi), %eax    # MEM[(const char *)src_8 + -1B], _1
-
-an alignment request after the function label before endbr64 which gets
-expanded into NOP_11+NOP_5.
-I don't see this with gcc-13.
-Reported as https://gcc.gnu.org/PR116174
-
-Sebastian
 
