@@ -1,193 +1,113 @@
-Return-Path: <linux-kernel+bounces-271210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05A0944B17
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4620944B1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:15:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DE2DB23DFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:15:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 218011C244A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AF319E7E0;
-	Thu,  1 Aug 2024 12:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wewu8Jtk"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B5419F460;
+	Thu,  1 Aug 2024 12:15:50 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DD8208D1;
-	Thu,  1 Aug 2024 12:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552F216D9A8;
+	Thu,  1 Aug 2024 12:15:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722514523; cv=none; b=gEuw67+9ZT7Vs82nraycgc6fkaXIZ0af8WfAnJFrJEu9WV0kPQIq5LS5N5GdJLSbZ9D0M9KGK/cJjL0puVoKv8srM7TiA96L73K39hWmhGoS0/aX2jVOK5n7D6lu1U+gXT3wC3Qn+vEtsALAy/fNBQs/llIOYJUFVJWApX8nxnQ=
+	t=1722514549; cv=none; b=eyzIIUYLK+QHFi3YJ3j2ukMoB8r/aHotSwZrPznsWxT+CYUUCqJB+fwvAKzaVksvssDFGFre1mEltfSR1eto+ezdSGKSKI1t18qXLMe+GvopWY8clbgBJwJGxeC9bKURas3lwMxXdJMIxDzM9+TUmPOcjt2wuzIMdwlXtL2TCF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722514523; c=relaxed/simple;
-	bh=ZhDXFoWGL7ldV6IXscVG+ltF8RcH1d1vHZjv0xlIMgE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ft1N5GQc0iQ9c+QqRntO9R9Y5CmxpKNAzfOTmogA2Uddmc3BahdDPe4558hYNHu2SgH7WFBCavxWeCMUprV5Svl/+EvR9a69+SnruN7IOsmwgP4MQxOvwQDtL0XnWmDDA7W0AjlwYqx2+DMOkV7fhefV4BofS8xb3B3PJfa8iQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wewu8Jtk; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-368440b073bso1359297f8f.0;
-        Thu, 01 Aug 2024 05:15:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722514520; x=1723119320; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b0fgVgtgp3VowMbctHofO6wvaDHqLlJ1QMN9hMj2Y0g=;
-        b=Wewu8Jtk6c2Y/JtKDI3iCxoC/1DiyZJP2WJoScVw/170abM/pSH4CZvJzhh9/99T8W
-         2XT4c24qEq6jkqpAccQzM2wmvV9lOs1dx5WSF00xN+i3WwTfvkAT62gK2+R95m4ggPgw
-         tP2aijFaos6E0B3XcxK0VFCfcfVtaRJO79bOvXCkxHxLG9zQTk9JLdOOqbMTj93/uU+v
-         yjIEUZTHrB1WWyQbIuaIxlNnJmLctcszHZXmF6fr5vBLQKh1oHfIiUBOPxL594yFpTIy
-         LlHcSGV1EDtOoFG5FDfJvXT94jXTH2eUJ7z2PZr74oo0lpX32aJoD5eEd8cq5038LT23
-         L/4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722514520; x=1723119320;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b0fgVgtgp3VowMbctHofO6wvaDHqLlJ1QMN9hMj2Y0g=;
-        b=RXXIbPjRtbpJpFmeLCVr0GIuVlTOznKQiMHvi4EUJzHJJxHGZ44C/Jpn4ysxUSCGoy
-         94GnEphqFlxDIyUM5SGfN4JjsMH8Uof7cavb4eWmb4PH1GK33yhtOCY0N6av+vxo+Arc
-         Mv0isNpEFqiZBTB5FwO04yYxrVrCBbH5D/mH6ss2V4lbykskV0Bwngaot3gNvceIvEc/
-         AMgOwj/wS3U6LLSoBggHd3dpoEmokxzvcwAn50KWpcZe6oQZjrwC/KdQu8RbC8ptayfN
-         A1CMSNC9I1ZbHcLX6GLC3xxBri9Oa4AvhIhDERcb+QpT18+Wd7dQ9aYxZrDAisoeKf7n
-         fDAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVW8MpFd/Fc05kVHG9FEB0TRAkpQw3k2DY7yuJh0wPpUP1Zj4UvrjeAEQdBMjZMTfRuNZJk4rZfryeBS6i82V+2ZIDhgVx1Mm4xd/4e3G00X2DzYkaud8+yewhhSG/wa2GGVTMcslmhFBiaiadKF6aw
-X-Gm-Message-State: AOJu0YyFU8falwvNrR5R6jGKDu7DjcBTxasnhgb/UTG/2dGb0mRqWsvn
-	RiJX84zbuTtdxTZjrgui06L4JocQkRBEUQ+YvMMpPGC/945rVeLU
-X-Google-Smtp-Source: AGHT+IGj9T8mNOenYa8uRUCT84vz4mhyC0en9nQRFJltfA5evn91A0hEm5jMhnF/XAszR2xuVY8Jxw==
-X-Received: by 2002:adf:978f:0:b0:367:8fd9:db6b with SMTP id ffacd0b85a97d-36bb35a0ac8mr1242484f8f.9.1722514519984;
-        Thu, 01 Aug 2024 05:15:19 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367d9859sm19234433f8f.28.2024.08.01.05.15.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 05:15:19 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 1 Aug 2024 14:15:12 +0200
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>, andrii@kernel.org,
-	mhiramat@kernel.org, peterz@infradead.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] uprobes: make uprobe_register() return struct
- uprobe *
-Message-ID: <Zqt8UPBC7zAWDMHD@krava>
-References: <20240729134444.GA12293@redhat.com>
- <20240729134535.GA12332@redhat.com>
- <CAEf4Bza1_njsVUad8so9EFxy8VmJsTfzaaAahBYFtOqdF1HAjA@mail.gmail.com>
- <ZqtyMTyu3uneHZDJ@krava>
- <20240801120018.GB4038@redhat.com>
+	s=arc-20240116; t=1722514549; c=relaxed/simple;
+	bh=O+BxKiCKiBGfIj52DaS1mJTMubjl9In0/BtaRzJnESo=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZcAvPtGq+JstlJVepMlDcPo266+p79dEVxK+fEfpZ8UAj6G1qgczDOAcurLhR/7gsfaWVbb3cL/pwmlwCX980+YLB+KOUw+77r1rKVJAdv+OZP+vLpQ9R1SCoAEJa4byyNtot2970GBgOg0gbhraSlrxGioEA2MGU2n0cWNMCMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZSbR4pNCzxW90;
+	Thu,  1 Aug 2024 20:15:31 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id A35FF14041B;
+	Thu,  1 Aug 2024 20:15:44 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 20:15:43 +0800
+Message-ID: <0fe6e62f-a6cf-4a9d-9ccc-004570c3c46e@huawei.com>
+Date: Thu, 1 Aug 2024 20:15:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801120018.GB4038@redhat.com>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
+	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH net-next 09/10] net: hibmcge: Add a Makefile and
+ update Kconfig for hibmcge
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-10-shaojijie@huawei.com>
+ <49d41bc0-7a9e-4d2a-93c7-4e2bcb6d6987@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <49d41bc0-7a9e-4d2a-93c7-4e2bcb6d6987@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Thu, Aug 01, 2024 at 02:00:18PM +0200, Oleg Nesterov wrote:
-> On 08/01, Jiri Olsa wrote:
-> >
-> > > @@ -474,10 +477,10 @@ static void testmod_unregister_uprobe(void)
-> > >  {
-> > >         mutex_lock(&testmod_uprobe_mutex);
-> > >
-> > > -       if (uprobe.offset) {
-> > > -               uprobe_unregister(d_real_inode(uprobe.path.dentry),
-> > > -                                 uprobe.offset, &uprobe.consumer);
-> > > +       if (uprobe.uprobe) {
-> > > +               uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
-> > >                 uprobe.offset = 0;
-> > > +               uprobe.uprobe = NULL;
-> >
-> > ugh, I think we leak &uprobe.path.. I can send follow up fix if needed
-> 
-> Yeah, with or without this change. And with this change we do not need uprobe.offset.
-> 
-> Please see the patch below, this is what I've added to 5/5.
-> 
-> Do you see any problems?
 
-looks good, thanks!
+on 2024/8/1 9:13, Andrew Lunn wrote:
+> On Wed, Jul 31, 2024 at 05:42:44PM +0800, Jijie Shao wrote:
+>> Add a Makefile and update Kconfig to build hibmcge driver.
+>>
+>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+>> ---
+>>   drivers/net/ethernet/hisilicon/Kconfig          | 17 ++++++++++++++++-
+>>   drivers/net/ethernet/hisilicon/Makefile         |  1 +
+>>   drivers/net/ethernet/hisilicon/hibmcge/Makefile | 10 ++++++++++
+>>   3 files changed, 27 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
+>>
+>> diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
+>> index 3312e1d93c3b..372854d15481 100644
+>> --- a/drivers/net/ethernet/hisilicon/Kconfig
+>> +++ b/drivers/net/ethernet/hisilicon/Kconfig
+>> @@ -7,7 +7,7 @@ config NET_VENDOR_HISILICON
+>>   	bool "Hisilicon devices"
+>>   	default y
+>>   	depends on OF || ACPI
+>> -	depends on ARM || ARM64 || COMPILE_TEST
+>> +	depends on ARM || ARM64 || COMPILE_TEST || X86_64
+> It is normal to have COMPILE_TEST last.
 
-> 
-> Note the additional path_put() in testmod_unregister_uprobe(). Does it need
-> a separate patch or can it come with 5/5 ?
+ok，
 
-I think it'd be better to have it separately, the test is already
-released.. so people might want to backport just the fix
+>
+> Any reason this won't work on S390, PowerPC etc?
 
-thanks,
-jirka
+I have only compiled and tested on arm or x86.
+I can't ensure that compile or work ok on other platforms.
 
-> 
-> Oleg.
-> 
-> --- a/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> +++ b/tools/testing/selftests/bpf/bpf_testmod/bpf_testmod.c
-> @@ -432,7 +432,7 @@ uprobe_ret_handler(struct uprobe_consumer *self, unsigned long func,
->  
->  struct testmod_uprobe {
->  	struct path path;
-> -	loff_t offset;
-> +	struct uprobe *uprobe;
->  	struct uprobe_consumer consumer;
->  };
->  
-> @@ -446,25 +446,25 @@ static int testmod_register_uprobe(loff_t offset)
->  {
->  	int err = -EBUSY;
->  
-> -	if (uprobe.offset)
-> +	if (uprobe.uprobe)
->  		return -EBUSY;
->  
->  	mutex_lock(&testmod_uprobe_mutex);
->  
-> -	if (uprobe.offset)
-> +	if (uprobe.uprobe)
->  		goto out;
->  
->  	err = kern_path("/proc/self/exe", LOOKUP_FOLLOW, &uprobe.path);
->  	if (err)
->  		goto out;
->  
-> -	err = uprobe_register(d_real_inode(uprobe.path.dentry),
-> -			      offset, 0, &uprobe.consumer);
-> -	if (err)
-> +	uprobe.uprobe = uprobe_register(d_real_inode(uprobe.path.dentry),
-> +					offset, 0, &uprobe.consumer);
-> +	if (IS_ERR(uprobe.uprobe)) {
-> +		err = PTR_ERR(uprobe.uprobe);
->  		path_put(&uprobe.path);
-> -	else
-> -		uprobe.offset = offset;
-> -
-> +		uprobe.uprobe = NULL;
-> +	}
->  out:
->  	mutex_unlock(&testmod_uprobe_mutex);
->  	return err;
-> @@ -474,10 +474,10 @@ static void testmod_unregister_uprobe(void)
->  {
->  	mutex_lock(&testmod_uprobe_mutex);
->  
-> -	if (uprobe.offset) {
-> -		uprobe_unregister(d_real_inode(uprobe.path.dentry),
-> -				  uprobe.offset, &uprobe.consumer);
-> -		uprobe.offset = 0;
-> +	if (uprobe.uprobe) {
-> +		uprobe_unregister(uprobe.uprobe, &uprobe.consumer);
-> +		path_put(&uprobe.path);
-> +		uprobe.uprobe = NULL;
->  	}
->  
->  	mutex_unlock(&testmod_uprobe_mutex);
-> 
+>
+>> +if ARM || ARM64 || COMPILE_TEST
+>> +
+> You would normally express this with a depends on.
+
+Sorry, I can't understand how to convert if to depends on?
+
+Thanks，
+
+Jijie shao
+
 
