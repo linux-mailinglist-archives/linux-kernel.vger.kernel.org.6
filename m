@@ -1,61 +1,90 @@
-Return-Path: <linux-kernel+bounces-271905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAAE69454C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B9D9454C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14D79B22F08
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:08:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B061C230A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:07:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DE814E2E8;
-	Thu,  1 Aug 2024 23:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E5114D6F6;
+	Thu,  1 Aug 2024 23:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g1LJb/p0"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MK696Q+o"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89C114D45E;
-	Thu,  1 Aug 2024 23:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08B81482E2;
+	Thu,  1 Aug 2024 23:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722553662; cv=none; b=STDfHKQETEp+e30JMb5zJSgkzxjfSc1QLsC3aQofSY5cH996fyTY5aoqVKxUVwx5xhwe5EpyXHMpnnzTaVc7OKkDaCh5VO2COPb/t8BzIFfDHbop5E6Z8GPj8YsYnDBLJnaBi2JMqLm6TkeSINKVXktP4fjkT10Y501U/1FNR7o=
+	t=1722553658; cv=none; b=oZxdzp9QWV6F09LRr7sqs1spwWvLQKW37aB/UzMzXzBSpqDgvmFQtW256V1u0keBtznB8pPMZSLMpjjd3++WeMjonHBo3+6wkAn95n5rPIb3NeYjVy9fHqXICNw0vTkPI3/aEAYGI9iBV0bHuAUlte8zhvA71YxHy5syW66RZHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722553662; c=relaxed/simple;
-	bh=tWVcs94ZZ3i843a/CC6NxTkMJYubXim8vPyJ0ylRe4o=;
+	s=arc-20240116; t=1722553658; c=relaxed/simple;
+	bh=PtIa2QtTSywr4ng8EMKGCX2UJ1Jj3D83kU099Jn6C/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kx4HgwrwVrL7DF7LR8SKSnPGHAL8v3ikmKzib6jrsxouScR+/+uARkmKvDKuiScv8o+WiiuObvIK0xqL7nOeNlpE8KviWDOKmwnuCMxB54rdZAonVelKKDIHUHcaDKOodG+0A3QVnk/Ur7hk92+mP46zoPauPYtzvNF6dVxg1Ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g1LJb/p0; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 46BCCC0003;
-	Thu,  1 Aug 2024 23:07:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722553651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4awUVwG37LseNs27BJI5me6lqTMbdYGn9CDQNcfZPk8=;
-	b=g1LJb/p0yD6SgP3eDyE9mw2oVj7wCol0tEc3HqCjkEU5R/2QPtKYabNUgLEgC8E91cg4Ev
-	mPc2Obd0gKBUh7cgU7ooiysO+KFpyGCIdIekXOvTKrfFsPFjG9014nexl8rz80AXe/mkOF
-	3QgRb5Lrpfm67nXj4pR0Nx4mHApPU/MNUj8pCaxuGdOHxRSJ97vLdBbMPwyeDHEBnOeL5d
-	DlScwlT7k2caemmpGghwyMmPTO2i/RWypSR44V4299LptiPKX5mfTt0aBrmxe9s39XwXCE
-	tMplR5Eriatc+oUuTrsswrhQPhPj3nu+rRxIEfs17URyNtlwbZg5jD/YCp/BNw==
-Date: Fri, 2 Aug 2024 01:06:31 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Stanley Chu <stanley.chuys@gmail.com>, robh@kernel.org,
-	krzk+dt@kernel.org, linux-i3c@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	openbmc@lists.ozlabs.org, tomer.maimon@nuvoton.com,
-	kwliu@nuvoton.com, yschu@nuvoton.com, cpchiang1@nuvoton.com
-Subject: Re: [PATCH v1 1/2] dt-bindings: i3c: Add NPCM845 i3c controller
-Message-ID: <202408012306316257ee23@mail.local>
-References: <20240801071946.43266-1-yschu@nuvoton.com>
- <20240801071946.43266-2-yschu@nuvoton.com>
- <c3ee7783-6891-4917-9935-21d46d8ac9a7@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fepwmcIIdT0flXZEbQnFkaoqT1RxZx3QG9zlibts+nfguonE8ZhdwneMxU29+rZ2QKBOoMxuP66PlxvlFFVLJZpWu0CzKARLZaWpoHLnBywZOQtXX277IG9R5vRz4N8TRPM91UPPMAwP7hMgEcH2y4sMvhE8WHa3x8pdPkcwgO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MK696Q+o; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so11012699a12.3;
+        Thu, 01 Aug 2024 16:07:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722553649; x=1723158449; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTzwkxXMjCnXxGPm8SS63wasgARHwPjwYcFLo4i11LY=;
+        b=MK696Q+oH+Gg86qGd8cJwuY1I3b58ttOhKmMGUtXP8wnceDU/An4Pj35q8S+FN6rmZ
+         oWXZ89MARGPSuhRm2BKCKEZio6HyAVUu3g3gy0Vsz9FSNIbU6MvIHd8OXTDpp+uwV38r
+         fVLeJf3nWnlTKToKuMs4j8nR+oCY8o5D0bOJiwchENHO8lDklIbj24+BvLUZTSRCN8CF
+         V3jU4vIDWWnumsx3BOrB1AYSdfJpv9og3RYKINCjNypa19NxX2rfwiOdtxfxqtYZgpxv
+         jmq+uBT8shtGg1xW6T2e90e3wTrEs7sDQgbSnO5uGSvZSJdrq9KuIYNKdjcZKzUdkdRx
+         UFwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722553649; x=1723158449;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cTzwkxXMjCnXxGPm8SS63wasgARHwPjwYcFLo4i11LY=;
+        b=DbXsvyWxcFv4jC99DkRQdjZZN9kzQXcA9isFEAkdzP+QS+qe1k/Oetgker47GFPBtR
+         mlPEXTsCUSzmcjKquIuPNMQRCpG6uNjFNJ/oP7Y0YUNZZpChX/bOz7g0toROM047QUV+
+         ncLF13/vd+Wp27Vv2zb4vZGqb2ZkIMw/atpNXIiLdW8snPU8Xvggu+ONk/+72PSAhtMC
+         h/8jjH78ziZoitA12QZaIBhoaYHlU/vpDwvAHN/9ZiQX0AEe0fLqacltGvy5UNfQtRas
+         NgOD8gUWMLTYRHiV75uieLVRFIzFFAImqNTICF0EeIB6hxBjm/pVSQe5dfcnoBaseqpK
+         l6yw==
+X-Forwarded-Encrypted: i=1; AJvYcCW98mElQB9DZbDMKWL2wFag1h1YFZGRupSPo/l/oBBCb5iwnfeObLKI5ccJd6gd0/GCxGVW3llvqht1KkTSQepsilkjv6BAXwJ6Ia/6rQ8yWSm64ydFbFDbErfS8KtWVy44pvTs
+X-Gm-Message-State: AOJu0Yws+2lkM6Kjy7lD454Ve7pBOFxHO+9Dyj8h253fm0SzdLfyYt0E
+	g31IXU6YvnFoiKkeBQiW+Y1eDLV7q2rTy9fSoe7r890CsMwrrqfcMW8rBmrQ
+X-Google-Smtp-Source: AGHT+IFv2aAGzMN11Iigqz0ZSdZXSz3c8So7Yv+NTGX6LRfrYtmGi031rLkNH9XJUmYnnVE03dMx+g==
+X-Received: by 2002:a17:906:7956:b0:a7a:b8f1:fd69 with SMTP id a640c23a62f3a-a7dc4e4ae17mr140198966b.18.1722553648600;
+        Thu, 01 Aug 2024 16:07:28 -0700 (PDT)
+Received: from skbuf ([188.25.135.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0b6besm30094266b.52.2024.08.01.16.07.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 16:07:27 -0700 (PDT)
+Date: Fri, 2 Aug 2024 02:07:25 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: Furong Xu <0x1207@gmail.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	xfr@outlook.com, rock.xu@nio.com
+Subject: Re: [PATCH net-next v1 2/5] net: stmmac: support fp parameter of
+ tc-mqprio
+Message-ID: <20240801230725.nllk7n3veqwplfpo@skbuf>
+References: <cover.1722421644.git.0x1207@gmail.com>
+ <cover.1722421644.git.0x1207@gmail.com>
+ <df005cc6b2f97e7ea373dcc356fb6a693f33263a.1722421644.git.0x1207@gmail.com>
+ <df005cc6b2f97e7ea373dcc356fb6a693f33263a.1722421644.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,150 +93,180 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c3ee7783-6891-4917-9935-21d46d8ac9a7@kernel.org>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <df005cc6b2f97e7ea373dcc356fb6a693f33263a.1722421644.git.0x1207@gmail.com>
+ <df005cc6b2f97e7ea373dcc356fb6a693f33263a.1722421644.git.0x1207@gmail.com>
 
-On 01/08/2024 16:53:52+0200, Krzysztof Kozlowski wrote:
-> On 01/08/2024 09:19, Stanley Chu wrote:
-> > The npcm845 i3c devicetree binding follows the basic i3c bindings
-> > and add the properties for allowing to adjust the SDA/SCL timing
-> > to meet different requirements.
-> > 
-> > Signed-off-by: Stanley Chu <yschu@nuvoton.com>
-> > Signed-off-by: James Chiang <cpchiang1@nuvoton.com>
-> > ---
-> >  .../bindings/i3c/nuvoton,i3c-master.yaml      | 123 ++++++++++++++++++
+On Wed, Jul 31, 2024 at 06:43:13PM +0800, Furong Xu wrote:
+> tc-mqprio can select whether traffic classes are express or preemptible.
 > 
-> Use compatible as filename. Anyway word "master" was dropped.
+> Tested on DWMAC CORE 5.10a
 > 
-> >  1 file changed, 123 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/i3c/nuvoton,i3c-master.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/i3c/nuvoton,i3c-master.yaml b/Documentation/devicetree/bindings/i3c/nuvoton,i3c-master.yaml
-> > new file mode 100644
-> > index 000000000000..a40b37b16872
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/i3c/nuvoton,i3c-master.yaml
-> > @@ -0,0 +1,123 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/i3c/nuvoton,i3c-master.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Nuvoton NPCM845 I3C master
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
+>  .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  2 +
+>  drivers/net/ethernet/stmicro/stmmac/dwmac5.c  | 12 ++++
+>  drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  2 +
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h    |  8 +++
+>  .../net/ethernet/stmicro/stmmac/stmmac_main.c |  2 +
+>  .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 61 +++++++++++++++++++
+>  6 files changed, 87 insertions(+)
 > 
-> Use new terminology. Since 2021 there was a change... three years ago.
-> 
-> > +
-> > +maintainers:
-> > +  - Stanley Chu <yschu@nuvoton.com>
-> > +  - James Chiang <cpchiang1@nuvoton.com>
-> > +
-> > +allOf:
-> > +  - $ref: i3c.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: nuvoton,npcm845-i3c
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description: I3C registers
-> > +      - description: GDMA registers
-> > +      - description: GDMA request control register
-> > +
-> > +  reg-names:
-> > +    items:
-> > +      - const: i3c
-> > +      - const: dma
-> > +      - const: dma_ctl
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: system clock
-> > +      - description: bus clock
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: pclk
-> > +      - const: fast_clk
-> > +
-> > +  resets:
-> > +    maxItems: 1
-> > +
-> > +  i3c-pp-scl-hi-period-ns:
-> > +    description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
-> 
-> > +      If need to configure SCL with required duty cycle, specify the clock high/low period directly.
-> > +      i3c-pp-scl-hi-perios-ns specifies the high period ns of the SCL clock cycle in push pull mode
-> > +      When i3c-pp-scl-hi-period-ns and i3c-pp-scl-lo-period-ns are specified, the i3c pp frequency is
-> > +      decided by these two properties.
-> 
-> Wrap according to Linux Coding Style (and read coding style to figure
-> the proper wrapping...).
-> 
-> > +
-> > +  i3c-pp-scl-lo-period-ns:
-> > +    description: |
-> > +      The low period ns of the SCL clock cycle in push pull mode. i3c-pp-scl-lo-period-ns should not
-> > +      be less than i3c-pp-scl-hi-period-ns and the maximal value is i3c-pp-scl-hi-period-ns + 150.
-> 
-> Everywhere: defaults, constraints.
-> 
-> > +
-> > +  i3c-pp-sda-rd-skew:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: |
-> > +      The number of MCLK clock periods to delay the SDA transition from the SCL clock edge at push
-> > +      pull operation when transfers i3c private read.
-> > +    maximum: 7
-> > +    default: 0
-> > +
-> > +  i3c-pp-sda-wr-skew:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description: |
-> > +      The number of MCLK clock periods to delay the SDA transition from the SCL clock edge at push
-> > +      pull operation when transfers i3c private write.
-> > +    maximum: 7
-> > +    default: 0
-> > +
-> > +  i3c-od-scl-hi-period-ns:
-> > +    description: |
-> > +      The i3c open drain frequency is 1MHz by default.
-> > +      If need to use different frequency, specify the clock high/low period directly.
-> > +      i3c-od-scl-hi-perios-ns specifies the high period ns of the SCL clock cycle in open drain mode.
-> > +      When i3c-od-scl-hi-period-ns and i3c-od-scl-lo-period-ns are specified, the i3c od frequency is
-> > +      decided by these two properties.
-> > +      i3c-od-scl-hi-period-ns should be equal to i3c-pp-scl-hi-period-ns or i3c-od-scl-lo-period-ns.
-> > +
-> > +  i3c-od-scl-lo-period-ns:
-> > +    description: |
-> > +      The low period ns of the SCL clock cycle in open drain mode. i3c-od-scl-lo-period-ns should be
-> > +      multiple of i3c-pp-scl-hi-period-ns.
-> > +
-> > +  enable-hj:
-> > +    type: boolean
-> > +    description: |
-> > +      Enable SLVSTART interrupt for receiving hot-join request.
-> 
-> You described the desired Linux feature or behavior, not the actual
-> hardware. The bindings are about the latter, so instead you need to
-> rephrase the property and its description to match actual hardware
-> capabilities/features/configuration etc.
-> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+> index 5d132bada3fe..068859284691 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac5.c
+> @@ -655,3 +655,15 @@ void dwmac5_fpe_set_add_frag_size(void __iomem *ioaddr, u32 add_frag_size)
+>  
+>  	writel(value, ioaddr + MTL_FPE_CTRL_STS);
+>  }
+> +
+> +void dwmac5_fpe_set_preemptible_tcs(void __iomem *ioaddr, unsigned long tcs)
+> +{
+> +	u32 value;
+> +
+> +	value = readl(ioaddr + MTL_FPE_CTRL_STS);
+> +
+> +	value &= ~PEC;
+> +	value |= FIELD_PREP(PEC, tcs);
+> +
+> +	writel(value, ioaddr + MTL_FPE_CTRL_STS);
+> +}
 
-This has to be runtime configurable, see hotjoin in
-https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-bus-i3c
+Watch out here. I think the MTL_FPE_CTRL_STS[PEC] field is per TXQ, but
+input from user space is per TC. There's a difference between the 2, that I'll
+try to clarify below. But even ignoring the case of multiple TXQs per TC,
+there's also the case of reverse TC:TXQ mappings: "num_tc 4 map 0 1 2 3
+queues 1@3 1@2 1@1 1@0". When the user then says he wants TC 0 to be
+preemptible, he really means TXQ 3. That's how this should be treated.
 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> index 9b1cf81c50ea..a5e3316bc410 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+> @@ -6256,6 +6256,8 @@ static int stmmac_setup_tc(struct net_device *ndev, enum tc_setup_type type,
+>  	switch (type) {
+>  	case TC_QUERY_CAPS:
+>  		return stmmac_tc_query_caps(priv, priv, type_data);
+> +	case TC_SETUP_QDISC_MQPRIO:
+> +		return stmmac_tc_setup_mqprio(priv, priv, type_data);
+>  	case TC_SETUP_BLOCK:
+>  		return flow_block_cb_setup_simple(type_data,
+>  						  &stmmac_block_cb_list,
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> index 996f2bcd07a2..494fe2f68300 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+> @@ -1198,6 +1198,13 @@ static int tc_query_caps(struct stmmac_priv *priv,
+>  			 struct tc_query_caps_base *base)
+>  {
+>  	switch (base->type) {
+> +	case TC_SETUP_QDISC_MQPRIO: {
+> +		struct tc_mqprio_caps *caps = base->caps;
+> +
+> +		caps->validate_queue_counts = true;
+> +
+> +		return 0;
+> +	}
+>  	case TC_SETUP_QDISC_TAPRIO: {
+>  		struct tc_taprio_caps *caps = base->caps;
+>  
+> @@ -1214,6 +1221,59 @@ static int tc_query_caps(struct stmmac_priv *priv,
+>  	}
+>  }
+>  
+> +static void stmmac_reset_tc_mqprio(struct net_device *ndev)
+> +{
+> +	struct stmmac_priv *priv = netdev_priv(ndev);
+> +
+> +	netdev_reset_tc(ndev);
+> +	netif_set_real_num_tx_queues(ndev, priv->plat->tx_queues_to_use);
+> +
+> +	stmmac_fpe_set_preemptible_tcs(priv, priv->ioaddr, 0);
+> +}
+> +
+> +static int tc_setup_mqprio(struct stmmac_priv *priv,
+> +			   struct tc_mqprio_qopt_offload *mqprio)
+> +{
+> +	struct tc_mqprio_qopt *qopt = &mqprio->qopt;
+> +	struct net_device *ndev = priv->dev;
+> +	int num_stack_tx_queues = 0;
+> +	int num_tc = qopt->num_tc;
+> +	int offset, count;
+> +	int tc, err;
+> +
+> +	if (!num_tc) {
+> +		stmmac_reset_tc_mqprio(ndev);
+> +		return 0;
+> +	}
+> +
+> +	err = netdev_set_num_tc(ndev, num_tc);
+> +	if (err)
+> +		return err;
+> +
+> +	for (tc = 0; tc < num_tc; tc++) {
+> +		offset = qopt->offset[tc];
+> +		count = qopt->count[tc];
+> +		num_stack_tx_queues += count;
+> +
+> +		err = netdev_set_tc_queue(ndev, tc, count, offset);
+> +		if (err)
+> +			goto err_reset_tc;
+> +	}
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+We might have a problem here, and I don't know if I'm well enough
+equipped with DWMAC knowledge to help you solve it.
+
+The way I understand mqprio is that it groups TX queues into traffic
+classes. All traffic classes are in strict priority relative to each
+other (TC 0 having the smallest priority). If multiple TX queues go to
+the same traffic class, it is expected that the NIC performs round robin
+dequeuing out of them. Then there's a prio_tc_map[], which maps
+skb->priority values to traffic classes. On xmit, netdev_pick_tx()
+chooses a random TX queue out of those assigned to the computed traffic
+class for the packet. This skb_tx_hash() is the software enqueue
+counterpart to what the NIC is expected to do in terms of scheduling.
+Much of this is said in newer versions of "man tc-mqprio".
+https://man7.org/linux/man-pages/man8/tc-mqprio.8.html
+
+Where I was trying to get is that you aren't programming the TC to TXQ
+mapping to hardware in any way, and you are accepting any mapping that
+the user requests. This isn't okay.
+
+I believe that the DWMAC TX scheduling algorithm is strict priority by
+default, with plat->tx_sched_algorithm being configurable through device
+tree properties to other values. Then, individual TX queues have the
+"snps,priority" device tree property for configuring their scheduling
+priority. All of that can go out of sync with what the user thinks he
+configures through tc-mqprio, and badly.
+
+Consider "num_tc 2 queues 3@0 2@3". The stack will think that TXQs 0, 1, 2
+have one priority, and TXQs 3 and 4 another. But in reality, each TXQ
+(say by default) has a priority equal to its index. netdev_pick_tx()
+will think it's okay, for a packet belonging to TC0, to select a TXQ
+based on hashing between indices 0, 1, 2. But in hardware, the packets
+will get sent through TXQs with different priorities, based on nothing
+more than pure chance. That is a disaster, and especially noticeable
+when the mqprio mapping is applied through taprio, and there is a Qbv
+schedule on the port. Some packets will be scheduled on the right time
+slots, and some won't.
+
+So the idea here is that you'll either have to experiment with
+reprogramming the scheduling algorithm and TXQ priorities on mqprio
+offload, or refuse offloading anything that doesn't match what the
+hardware was pre-programmed with (through device tree, likely).
+
+> +
+> +	err = netif_set_real_num_tx_queues(ndev, num_stack_tx_queues);
+> +	if (err)
+> +		goto err_reset_tc;
+> +
+> +	stmmac_fpe_set_preemptible_tcs(priv, priv->ioaddr, mqprio->preemptible_tcs);
+> +
+> +	return 0;
+> +
+> +err_reset_tc:
+> +	stmmac_reset_tc_mqprio(ndev);
+> +
+> +	return err;
+> +}
 
