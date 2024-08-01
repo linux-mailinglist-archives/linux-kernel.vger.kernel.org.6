@@ -1,63 +1,50 @@
-Return-Path: <linux-kernel+bounces-270960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E7CB9447D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:16:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BFE944739
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD116B2603C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:16:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31B0F1C22155
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC321946A9;
-	Thu,  1 Aug 2024 09:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CECB170A15;
+	Thu,  1 Aug 2024 08:57:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BK0PFaeo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FTGlziMh"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F114B18E059;
-	Thu,  1 Aug 2024 09:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295DE170A04;
+	Thu,  1 Aug 2024 08:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503531; cv=none; b=Rxed/kcDTGmfX7/ZA5znKYivDKrJtwVfCRJXmXo70gyOrq1/nCVIKuNMkgT+VA3hoJx4Yr2EAQ0TBC9wQIX/ILH8XZVmh0EAs2ovTUvuwdmbt+sRERMU6xN+menzEjRCq9mxw7a9sDl5BrF81LvK2zh/Oh57uhqLzRbj6qPTE8A=
+	t=1722502659; cv=none; b=Yb4N82TbnFhKhlrMIWzoU6DmZpeM4vj4vnHk4j0JWPA/WLNvdZCU5v4sp2No7juqutwR5eP9Ta/XuGZm9Cpdm7w229mPGFG0UhCkSzE+dkhOPQ+reALeHYqArWTUXU6pvkGkI0/xUVV2cFX8htxrg8ydgnmLuOBGy0rnd5hevcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503531; c=relaxed/simple;
-	bh=N/O38cSPMC8Lgjj4zxdXeCxlRhlPgDYWQiNhJMimuAc=;
+	s=arc-20240116; t=1722502659; c=relaxed/simple;
+	bh=k5VaIutaAbdCNTUxxxN3B3JYAkNM71+Jpw/ngo+ftNQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mzz2JEw9/3bWnoKEeqTHsiIihVQfS4FmFeI1710tFXpUsuLnYlRFQI/FeL/8GOcQy4riaxe08Dd4La8lxZfC66aAiNYdHN5lbtrL1Xjre4DkfpU1Cmk8lGaN9y2LXKYORkntTbGhKXXfx4V9PbHcgyIURaoCGHxTrS52Vz3wVs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BK0PFaeo; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722503531; x=1754039531;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=N/O38cSPMC8Lgjj4zxdXeCxlRhlPgDYWQiNhJMimuAc=;
-  b=BK0PFaeonQpHCaM6/LzNLXHCKkmK2uJtFCXingfO+sIfrJIYn6rTbhoF
-   WXty/rFrOlIc6s83s3Lh9twPse/pCV5nL395Fawz2PNOEfUi+FA2YUz/W
-   qh+i4WCimEY/lx/+7aH9qjH70+y98XCppcc7HW6mBT9RbIwWBf+PIFF6B
-   wyf+aqq8WYyPOVSbHiYWZcasEJ0Jd0VzE51ZMz5NZ8LFgjdg14wcAEPuY
-   Mee9yve9uRPg9LRXgbwek5ke2wLJvjeIrVWTWX2K1wb8jHfJERZbwvxqS
-   un0yk3BT5CnmhScJSabbTeS4NbsHTru6anAldYOASqpL+XVn6Xu7VB0ij
-   Q==;
-X-CSE-ConnectionGUID: V+DRZ2BuSg2hlYR8H8XEMw==
-X-CSE-MsgGUID: 7enpbqYbShKyeo9z0AI83A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383656"
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="20383656"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:12:10 -0700
-X-CSE-ConnectionGUID: ppEKMHUATh6ElntSYpl8FQ==
-X-CSE-MsgGUID: 3Lh38z4lTkG8C3M6/pNUTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="59090171"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:12:04 -0700
-Message-ID: <c2ab91ed-a2e5-437e-bbdb-84988a052778@linux.intel.com>
+	 In-Reply-To:Content-Type; b=Bg8Mxd7gTsV1WAoMEbioDPrcmFYIn8CvGyav2d4kZl/pyPqxjRc2nJ5gDdkO1zs4m0cf05iW5Mf7zXbnqlK4f9zZzdrSfnCWZT1kAP97kuy8av8EIgawJ/oPRAlo4FkTTfGSbvC5RfP0TCLDil0B0JOpQ4QTkhvDeLJosbfJzos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FTGlziMh; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EDFD040009;
+	Thu,  1 Aug 2024 08:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722502654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3WsXu4DF188KRUc+keQqY5t0HhVNNFj4+qllkduf6go=;
+	b=FTGlziMhNOYWsG4wO3LrWRbe59v6obLoRgt0K7Dk7eP6bEB6xiwoBgqwmm0JCPLBhTkTD6
+	MrH7/pZ/enn4PFdja31VufJ0kekMOUusqzNZ3+l2MJYXFdliwwul1Yj1Am/pok1q1qpdXk
+	22UX13wMhKuHnhUQ6R83B3OlqBkktutK0+skgMOafEMfffGFGvSqFF7NBGc8jnN0qoSAaF
+	aD4mauoyrntX443wXXaCpjdcC3EP6W5xN0b8butXab818/kYzFjkr37hHqV0d/DpUe7bRp
+	aIgcbVH027sxjaJYEsxAJvE8JmlqW3Ub3D4SgCsWhZMbBFLchW1O7GCWDGp4Uw==
+Message-ID: <aa7a0a5e-7dc7-4f72-8bfc-75aafc768dbf@bootlin.com>
 Date: Thu, 1 Aug 2024 10:57:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -66,88 +53,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 26/34] ALSA: usb-audio: qcom: Don't allow USB offload
- path if PCM device is in use
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-27-quic_wcheng@quicinc.com>
+Subject: Re: [PATCH bpf-next 1/4] selftests/bpf: convert
+ get_current_cgroup_id_user to test_progs
+To: Alan Maguire <alan.maguire@oracle.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+ Shuah Khan <shuah@kernel.org>
+Cc: ebpf@linuxfoundation.org, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240731-convert_cgroup_tests-v1-0-14cbc51b6947@bootlin.com>
+ <20240731-convert_cgroup_tests-v1-1-14cbc51b6947@bootlin.com>
+ <f54ddf95-a5ab-4c56-966f-9bff37f50364@oracle.com>
+ <f60d47cc-84ff-4031-a9e6-244954af901e@bootlin.com>
+ <c5a9033b-8f47-4ae8-97ca-75c70bce88cd@oracle.com>
+From: =?UTF-8?Q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
 Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240801011730.4797-27-quic_wcheng@quicinc.com>
+In-Reply-To: <c5a9033b-8f47-4ae8-97ca-75c70bce88cd@oracle.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alexis.lothore@bootlin.com
 
+Hello Alan,
 
-
-On 8/1/24 03:17, Wesley Cheng wrote:
-> Add proper checks and updates to the USB substream once receiving a USB QMI
-> stream enable request.  If the substream is already in use from the non
-> offload path, reject the stream enable request.  In addition, update the
-> USB substream opened parameter when enabling the offload path, so the
-> non offload path can be blocked.
-
-It's a bit weird that the mutual exclusion between the standard path and
-the offloaded path is handled at the vendor level. I would think this
-needs to be handled in the soc_usb framework, no?
-
-
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> ---
->  sound/usb/qcom/qc_audio_offload.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
+On 8/1/24 10:17, Alan Maguire wrote:
+> On 31/07/2024 19:53, Alexis Lothoré wrote:
+>> Hello Alan,
+>>
+>> On 7/31/24 19:23, Alan Maguire wrote:
+>>> On 31/07/2024 11:38, Alexis Lothoré (eBPF Foundation) wrote:
+>>
+>> [...]
+>>
+>>>> +	pid = getpid();
+>>>> +	if (!ASSERT_OK(bpf_map__update_elem(skel->maps.pidmap, &key,
+>>>> +					    sizeof(key), &pid, sizeof(pid), 0),
+>>>> +		       "write pid"))
+>>>> +		goto cleanup_progs;
+>>>> +
+>>>
+>>> I think it would be worth using a global variable in the BPF program
+>>> my_pid, and setting skel->bss->my_pid here as other more up-to-date
+>>> tests do (example progs/test_usdt.c, prog_tests/usdt.c). No need for a
+>>> separate map anymore.
+>>
+>> That sounds like a good improvement, thanks for the hint and the example :) I'll
+>> spin a new revision with this, and make sure to use it in my next test
+>> conversion patches too when relevant.
+>>
+>> TBH I am not familiar with global variables usage in ebpf/libbpf, so it is not
+>> clear for me when I should prefer it over classic maps. From some quick search I
+>> feel like it should be the default choice when needing basic controls
+>> knobs/feedback on a bpf program from userspace ? Or maybe it should be used even
+>> more broadly by default ?
+>>
 > 
-> diff --git a/sound/usb/qcom/qc_audio_offload.c b/sound/usb/qcom/qc_audio_offload.c
-> index 8b0913b7256b..3b46d05f1421 100644
-> --- a/sound/usb/qcom/qc_audio_offload.c
-> +++ b/sound/usb/qcom/qc_audio_offload.c
-> @@ -1460,12 +1460,17 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->  		goto response;
->  	}
->  
-> +	mutex_lock(&chip->mutex);
->  	if (req_msg->enable) {
-> -		if (info_idx < 0 || chip->system_suspend) {
-> +		if (info_idx < 0 || chip->system_suspend || subs->opened) {
->  			ret = -EBUSY;
-> +			mutex_unlock(&chip->mutex);
-> +
->  			goto response;
->  		}
-> +		subs->opened = 1;
->  	}
-> +	mutex_unlock(&chip->mutex);
->  
->  	if (req_msg->service_interval_valid) {
->  		ret = get_data_interval_from_si(subs,
-> @@ -1487,6 +1492,11 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->  		if (!ret)
->  			ret = prepare_qmi_response(subs, req_msg, &resp,
->  					info_idx);
-> +		if (ret < 0) {
-> +			mutex_lock(&chip->mutex);
-> +			subs->opened = 0;
-> +			mutex_unlock(&chip->mutex);
-> +		}
->  	} else {
->  		info = &uadev[pcm_card_num].info[info_idx];
->  		if (info->data_ep_pipe) {
-> @@ -1510,6 +1520,9 @@ static void handle_uaudio_stream_req(struct qmi_handle *handle,
->  		}
->  
->  		disable_audio_stream(subs);
-> +		mutex_lock(&chip->mutex);
-> +		subs->opened = 0;
-> +		mutex_unlock(&chip->mutex);
->  	}
->  
->  response:
+> Yeah, it's certainly what I use by default, unless I need multiple
+> instances of an object. Under the hood, the BPF skeleton creates
+> single-element array maps for .bss, .data and .rodata sections which
+> contain all the initialized, uninitialized and constant globals in the
+> BPF object and mmaps() them so you can read/update the values in
+> userspace via skel->bss/skel->data without needing a map-related syscalls.
+
+Thanks a lot for the additional details, much appreciated :)
+
+-- 
+Alexis Lothoré, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
