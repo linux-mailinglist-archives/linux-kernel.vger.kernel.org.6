@@ -1,319 +1,260 @@
-Return-Path: <linux-kernel+bounces-271431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C4F944E2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:38:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB60944E30
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABFB1C21123
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FBD71C217EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16771A57C7;
-	Thu,  1 Aug 2024 14:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7DA1A57D5;
+	Thu,  1 Aug 2024 14:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yQTYGI36"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="rIjEeupL"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C501DA58
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D12D1A0AFF
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523080; cv=none; b=r0se45d/XFKZEAPSFkXdr4xWtzOtKOEbqJbHVuSs7FFOkZihcLwB0cbpRfmuCqVxdlaBxnRrDWtOKdxt2/I9+5c01amOQik0pPyswpl9UM9Zt4A/71zA1SEw/YAMnRI9JrMlUpvPb3j3qg8a4O6ZOwcYHr8M43klR/FyecCH8h4=
+	t=1722523150; cv=none; b=QiRAxd7XbaBaLYhWe2yCLo13EFiHTnI8E8/cq7wid4L2eH+j+qE+wAmxX0hT4CdhJcFKS9b13NifzjmjdZ4fSzW18SUemSEacYNi8MNcGMGRGVOnYFHCEyKw99M91fgScm+W9S4SFEAP7JZp9bsNaM4/fKMH9TZu237/jns4HhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523080; c=relaxed/simple;
-	bh=f0ugnK1TIOoTp3DdXXhgdOoXgyAgb/Sqc2fmFnzgHZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lHqs1RPn0JoIO+DnTVVMWU7qU8RYbDxUXirVGrvHc2h+6yxFTWwVruBj15Zza6gjrMrTXhDrxLjy/yqT6Dw2fBY3+CdR8My8VG+mQN83JXXGlDZGxufeS3bsLKXy4Q580e38epII0BDi1lLi8TDphvjK1iBWyc+7D3ynsUcHaCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yQTYGI36; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7a1be7b7bb5so5337413a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:37:59 -0700 (PDT)
+	s=arc-20240116; t=1722523150; c=relaxed/simple;
+	bh=cxb0uqdh31axH/cKN4VDKaqd5OG9AK2gmKD/3foMa5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NA9Y6qmB+GuNpkkwDiZhm1zcRFg3YuITIkGBaiiB2KhhYnOwz4Xx087KT+VeT/XpcdVvq3gbCmChG9ryfXYFzmq/1iZsEN5lDHMGKSXTmD8sGZl9X/2nkrcBLHo4zgF687YNNJ1gu7JDBih7JQV9T9ZsuSGe+7J07wyZtop+YMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=rIjEeupL; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a9a7af0d0so923442766b.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 07:39:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722523078; x=1723127878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AYrfw+mQ2Y9ZAJL6SkIKQchY5Op0ff4hPWkSjHPxYXQ=;
-        b=yQTYGI36Ja1KzemzXkiNHO92or9KEijeG/hU/qrBoVhWzK07XU+xOvdV6pcDpayBU2
-         9FQzx3KbYHhyzsvo6E12QWING34o0QjC1A31m57d8qqsMHClBHNoEe496CPDI8/dW/k3
-         NHQbUTSdKlQyS+hIqQ+c9H0132Rp7oAU8NM8jTIEQL4so076HIkTKNvgupTVFiX8CwJF
-         QzlhqrdOqCZRFDsIcUaTzvkV8eYrlFSStywO666AOMmY+USHTQXxK04DrQUSXcirnqLp
-         DijjnKmLNSeXuM9uzKNngp824NlNukljBbb+SgxI2R9QLCL9qN8sAL5yZiTY1ud/ortb
-         WpEA==
+        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1722523145; x=1723127945; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HG2f4Kd2K4/9MIJAaucwbOj4OuPoS6yz1qIeQtu+inU=;
+        b=rIjEeupLHv9fwX9pMGgxpsAo5iYm5CpvnKReQFpZpZOk2xx6et2L/21v6sxRbJmzrB
+         JnN3IxW1GXk9zyIuB7zpNGhAY6FNNEGMPlbOqN31SwEXNI+GBKltHk0BPkXTgJj2ANGt
+         K1iojNMjFHfRyYcWH3xNeVEFh7uIQT0iWH5thvYzStads7nUbg3UaYniDcV2TqRDrfMe
+         lXsLS/ltQtDvOhkYo0GZSHiUgdnIU2uxyeFPGcgK539Q9N4TGBShnAFIOiOt1l1lodsl
+         TzHZUiwaJwp9mej0dwUKnwx+TMcXtnLU5Et3+ZJ7UH8rHo60dfsrfaccfVHzvws790KM
+         L04w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722523078; x=1723127878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AYrfw+mQ2Y9ZAJL6SkIKQchY5Op0ff4hPWkSjHPxYXQ=;
-        b=dAZl72A0G7XwisvRKshxjLqbgxpKx2kSJe5ynnFEwDuHsCPBkOjooLzJrBSw30gGZx
-         L/h5lCMd7ykqpPfiT1UcTshUIaouqONYpNgy9tXA0rPgSfkNjHcXGXXi/ey3ByfAI29A
-         uRwppXeTpTHWV5xjiMMgZ7NJnalPADW2xTpiK6b/NWYhfVFKIHkBsJrvRdJrBjMHOjoP
-         BDfzeg9uBjL/pBwU1R2NF95jrX+L0aePhr+1Dbysd0ryIs+tW5u3w8U0hgsqk+3inRfV
-         CDxO9ACISlXKEpo1cj9y95EM21H5izmGAksTAP0wVbpYbHgOEepaH0hJj9PDEPZaaEzs
-         IFFg==
-X-Forwarded-Encrypted: i=1; AJvYcCU5boWzIUsFnKu2i715bVA+PhKXOr//iYXBv3JZCkSR2T6uzur8zoCKsc9bgO7fO8vik4OP4g7p7HAQp2rION6JrF9akiodkJFGMcQN
-X-Gm-Message-State: AOJu0YyUwJe32SlyP/fGwzCSFnV/c7whpU8CTUKh5bmK7UR6bjIzngGH
-	4nydGjpcYxJL9OfjBI6dCgTQk9gqZEecB+IosD2THVOMg304Z3gm7LvgtPOskwuZImJpcbjORQV
-	7vjbNX4XUeogPuWANsR5yzRj7oO4X8IbC605H
-X-Google-Smtp-Source: AGHT+IGM5tes2Q681ojbEa3ua0VZNkscR8OWXhPYOXiLRwQM1msyp12e3tEEXA8kn5ispLVIwVd36W3PDg6lAjJIyQs=
-X-Received: by 2002:a17:90b:1652:b0:2cb:55f9:b7c5 with SMTP id
- 98e67ed59e1d1-2cff9415bbfmr467895a91.12.1722523078128; Thu, 01 Aug 2024
- 07:37:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722523145; x=1723127945;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HG2f4Kd2K4/9MIJAaucwbOj4OuPoS6yz1qIeQtu+inU=;
+        b=hQa7AgFJ6N5yIGEY7cEaTLaLGDMRAQPafNaHZnxm9M170LSy6UWIGjbJCsS3WvCTHc
+         fcGrSApT48sOlboTaA4Ejw9xOzKQvc2Z9ditb5RwqN0Ph90N6sjSNFcQ+jX0dnetfnQq
+         uFzjQvzNfldn7CyHFCxr/yktFCgLYBoQ9CP5gt9i7ze/5O8NjAXHOx8TMOLOWBTkOG7V
+         +Jcd8KrPGCJ3/9MWQuB2F+InucG2nXzqs3kLMdjnNxSThA0S4gpEckSKIx1VnQqxENdb
+         wHQ9rxRvMqt5oWaif0VoN4bDZfttcOAJ0lHq+5ZUcJ1eSokiKv+IxKHo4DVVczoHisLz
+         cIIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXME1FVJfIGfIzMpiivREvWIUgu5ChH5koUAkJrnjeYhfyQRq77VRT/enTiNEdiB3hMPT5SQGuL38lpQzGXt8LYmNHYfwGlhEMxy8kZ
+X-Gm-Message-State: AOJu0YxgqBpMwme/hY+hRuJCS9iE1S539Qi5A2kMQ/dOOZD6JHQ3Ppjk
+	O0/F2Xb2knM/Cv6eXGObqyhHsjz58Qlf6Kji95iiR0HkOKFpn07jKc41vQPW+yU=
+X-Google-Smtp-Source: AGHT+IEYU+xzrcCJWLNpoBtj9pA19ybmUUKWgMMJqzDfViG3QzROmIlMFS1nzgzWerpKk2VDCIaW7g==
+X-Received: by 2002:a17:907:d86:b0:a7a:a30b:7b94 with SMTP id a640c23a62f3a-a7dc4fa95ccmr32488266b.28.1722523144746;
+        Thu, 01 Aug 2024 07:39:04 -0700 (PDT)
+Received: from localhost.localdomain (apn-31-0-3-137.dynamic.gprs.plus.pl. [31.0.3.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad418f1sm902067666b.135.2024.08.01.07.39.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 07:39:04 -0700 (PDT)
+From: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+To: tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+Subject: [PATCH] kernel/ext4: nested locking for xattr inode
+Date: Thu,  1 Aug 2024 16:38:27 +0200
+Message-Id: <20240801143827.19135-1-wojciech.gladysz@infogain.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801-vma-v3-1-db6c1c0afda9@google.com> <82e4816c-cada-46f3-bebf-882ae8ded118@proton.me>
-In-Reply-To: <82e4816c-cada-46f3-bebf-882ae8ded118@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 16:37:44 +0200
-Message-ID: <CAH5fLgi__fgLnifj3ON9iNyugnUzm82VWWduO3Ds6Hz54H1ZWQ@mail.gmail.com>
-Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and vm_area_struct
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Matthew Wilcox <willy@infradead.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 1, 2024 at 4:02=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
-> wrote:
->
-> On 01.08.24 14:58, Alice Ryhl wrote:
-> > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
-> > new file mode 100644
-> > index 000000000000..ed2db893fb79
-> > --- /dev/null
-> > +++ b/rust/kernel/mm.rs
-> > @@ -0,0 +1,337 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +// Copyright (C) 2024 Google LLC.
-> > +
-> > +//! Memory management.
-> > +//!
-> > +//! C header: [`include/linux/mm.h`](../../../../include/linux/mm.h)
-> > +
-> > +use crate::{
-> > +    bindings,
-> > +    types::{ARef, AlwaysRefCounted, Opaque},
-> > +};
-> > +
-> > +use core::{
-> > +    ops::Deref,
-> > +    ptr::{self, NonNull},
-> > +};
-> > +
-> > +pub mod virt;
-> > +
-> > +/// A wrapper for the kernel's `struct mm_struct`.
-> > +///
-> > +/// Since `mm_users` may be zero, the associated address space may not=
- exist anymore. You must use
->
-> Can it also be the case that the space never existed to begin with? Then
-> I would write "the associated address space may not exist."
->
-> Also I think it makes more sense to use "You can use [`mmget_not_zero`]
-> to be able to access the address space." instead of the second sentence.
+Add nested locking with I_MUTEX_XATTR subclass to avoid lockdep warning
+while handling xattr inode on file open syscall at ext4_xattr_inode_iget.
 
-I'm not sure if it can be the case that the space never existed, but
-I'll reword.
+Backtrace
+EXT4-fs (loop0): Ignoring removed oldalloc option
+======================================================
+WARNING: possible circular locking dependency detected
+5.10.0-syzkaller #0 Not tainted
+------------------------------------------------------
+syz-executor543/2794 is trying to acquire lock:
+ffff8880215e1a48 (&ea_inode->i_rwsem#7/1){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:782 [inline]
+ffff8880215e1a48 (&ea_inode->i_rwsem#7/1){+.+.}-{3:3}, at: ext4_xattr_inode_iget+0x42a/0x5c0 fs/ext4/xattr.c:425
 
-> > +/// [`mmget_not_zero`] before accessing the address space.
-> > +///
-> > +/// The `ARef<Mm>` smart pointer holds an `mmgrab` refcount. Its destr=
-uctor may sleep.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// Values of this type are always refcounted.
->
-> Would be good to record the refcount used in the invariant.
+but task is already holding lock:
+ffff8880215e3278 (&ei->i_data_sem/3){++++}-{3:3}, at: ext4_setattr+0x136d/0x19c0 fs/ext4/inode.c:5559
 
-Ok.
+which lock already depends on the new lock.
 
-> > +///
-> > +/// [`mmget_not_zero`]: Mm::mmget_not_zero
-> > +pub struct Mm {
-> > +    mm: Opaque<bindings::mm_struct>,
-> > +}
-> > +
-> > +// SAFETY: It is safe to call `mmdrop` on another thread than where `m=
-mgrab` was called.
-> > +unsafe impl Send for Mm {}
-> > +// SAFETY: All methods on `Mm` can be called in parallel from several =
-threads.
-> > +unsafe impl Sync for Mm {}
-> > +
-> > +// SAFETY: By the type invariants, this type is always refcounted.
-> > +unsafe impl AlwaysRefCounted for Mm {
-> > +    fn inc_ref(&self) {
-> > +        // SAFETY: The pointer is valid since self is a reference.
-> > +        unsafe { bindings::mmgrab(self.as_raw()) };
-> > +    }
-> > +
-> > +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> > +        // SAFETY: The caller is giving up their refcount.
-> > +        unsafe { bindings::mmdrop(obj.cast().as_ptr()) };
-> > +    }
-> > +}
-> > +
-> > +/// A wrapper for the kernel's `struct mm_struct`.
-> > +///
-> > +/// This type is used only when `mm_users` is known to be non-zero at =
-compile-time. It can be used
->
-> I find the "This type is used only when" a bit weird, what about "Like
-> an [`Mm`], but with non-zero `mm_users`."?
+the existing dependency chain (in reverse order) is:
 
-Will reword.
+-> #1 (&ei->i_data_sem/3){++++}-{3:3}:
+       lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
+       down_write+0x93/0x180 kernel/locking/rwsem.c:1564
+       ext4_update_i_disksize fs/ext4/ext4.h:3267 [inline]
+       ext4_xattr_inode_write fs/ext4/xattr.c:1390 [inline]
+       ext4_xattr_inode_lookup_create fs/ext4/xattr.c:1538 [inline]
+       ext4_xattr_set_entry+0x331a/0x3d80 fs/ext4/xattr.c:1662
+       ext4_xattr_ibody_set+0x124/0x390 fs/ext4/xattr.c:2228
+       ext4_xattr_set_handle+0xc27/0x14e0 fs/ext4/xattr.c:2385
+       ext4_xattr_set+0x219/0x390 fs/ext4/xattr.c:2498
+       ext4_xattr_user_set+0xc9/0xf0 fs/ext4/xattr_user.c:40
+       __vfs_setxattr+0x404/0x450 fs/xattr.c:177
+       __vfs_setxattr_noperm+0x11d/0x4f0 fs/xattr.c:208
+       __vfs_setxattr_locked+0x1f9/0x210 fs/xattr.c:266
+       vfs_setxattr+0x112/0x2c0 fs/xattr.c:283
+       setxattr+0x1db/0x3e0 fs/xattr.c:548
+       path_setxattr+0x15a/0x240 fs/xattr.c:567
+       __do_sys_setxattr fs/xattr.c:582 [inline]
+       __se_sys_setxattr fs/xattr.c:578 [inline]
+       __x64_sys_setxattr+0xc5/0xe0 fs/xattr.c:578
+       do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
+       entry_SYSCALL_64_after_hwframe+0x61/0xcb
 
-> > +/// to access the associated address space.
-> > +///
-> > +/// The `ARef<MmWithUser>` smart pointer holds an `mmget` refcount. It=
-s destructor may sleep.
-> > +///
-> > +/// # Invariants
-> > +///
-> > +/// Values of this type are always refcounted. The value of `mm_users`=
- is non-zero.
-> > +#[repr(transparent)]
-> > +pub struct MmWithUser {
-> > +    mm: Mm,
-> > +}
-> > +
-> > +// SAFETY: It is safe to call `mmput` on another thread than where `mm=
-get` was called.
-> > +unsafe impl Send for MmWithUser {}
-> > +// SAFETY: All methods on `MmWithUser` can be called in parallel from =
-several threads.
-> > +unsafe impl Sync for MmWithUser {}
-> > +
-> > +// SAFETY: By the type invariants, this type is always refcounted.
-> > +unsafe impl AlwaysRefCounted for MmWithUser {
-> > +    fn inc_ref(&self) {
-> > +        // SAFETY: The pointer is valid since self is a reference.
-> > +        unsafe { bindings::mmget(self.as_raw()) };
-> > +    }
-> > +
-> > +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> > +        // SAFETY: The caller is giving up their refcount.
-> > +        unsafe { bindings::mmput(obj.cast().as_ptr()) };
-> > +    }
-> > +}
-> > +
-> > +// Make all `Mm` methods available on `MmWithUser`.
-> > +impl Deref for MmWithUser {
-> > +    type Target =3D Mm;
-> > +
-> > +    #[inline]
-> > +    fn deref(&self) -> &Mm {
-> > +        &self.mm
-> > +    }
-> > +}
-> > +
-> > +/// A wrapper for the kernel's `struct mm_struct`.
-> > +///
-> > +/// This type is identical to `MmWithUser` except that it uses `mmput_=
-async` when dropping a
-> > +/// refcount. This means that the destructor of `ARef<MmWithUserAsync>=
-` is safe to call in atomic
-> > +/// context.
->
-> Missing Invariants.
+-> #0 (&ea_inode->i_rwsem#7/1){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:2988 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3113 [inline]
+       validate_chain+0x1695/0x58f0 kernel/locking/lockdep.c:3729
+       __lock_acquire+0x12fd/0x20d0 kernel/locking/lockdep.c:4955
+       lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
+       down_write+0x93/0x180 kernel/locking/rwsem.c:1564
+       inode_lock include/linux/fs.h:782 [inline]
+       ext4_xattr_inode_iget+0x42a/0x5c0 fs/ext4/xattr.c:425
+       ext4_xattr_inode_get+0x138/0x410 fs/ext4/xattr.c:485
+       ext4_xattr_move_to_block fs/ext4/xattr.c:2580 [inline]
+       ext4_xattr_make_inode_space fs/ext4/xattr.c:2682 [inline]
+       ext4_expand_extra_isize_ea+0xe70/0x1bb0 fs/ext4/xattr.c:2774
+       __ext4_expand_extra_isize+0x304/0x3f0 fs/ext4/inode.c:5898
+       ext4_try_to_expand_extra_isize fs/ext4/inode.c:5941 [inline]
+       __ext4_mark_inode_dirty+0x591/0x810 fs/ext4/inode.c:6018
+       ext4_setattr+0x1400/0x19c0 fs/ext4/inode.c:5562
+       notify_change+0xbb6/0xe60 fs/attr.c:435
+       do_truncate+0x1de/0x2c0 fs/open.c:64
+       handle_truncate fs/namei.c:2970 [inline]
+       do_open fs/namei.c:3311 [inline]
+       path_openat+0x29f3/0x3290 fs/namei.c:3425
+       do_filp_open+0x20b/0x450 fs/namei.c:3452
+       do_sys_openat2+0x124/0x460 fs/open.c:1207
+       do_sys_open fs/open.c:1223 [inline]
+       __do_sys_open fs/open.c:1231 [inline]
+       __se_sys_open fs/open.c:1227 [inline]
+       __x64_sys_open+0x221/0x270 fs/open.c:1227
+       do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
+       entry_SYSCALL_64_after_hwframe+0x61/0xcb
 
-Hmm. Structs will inherit invariants from their fields, no?
+other info that might help us debug this:
 
-> > +#[repr(transparent)]
-> > +pub struct MmWithUserAsync {
-> > +    mm: MmWithUser,
-> > +}
-> > +
-> > +// SAFETY: It is safe to call `mmput_async` on another thread than whe=
-re `mmget` was called.
-> > +unsafe impl Send for MmWithUserAsync {}
-> > +// SAFETY: All methods on `MmWithUserAsync` can be called in parallel =
-from several threads.
-> > +unsafe impl Sync for MmWithUserAsync {}
-> > +
-> > +// SAFETY: By the type invariants, this type is always refcounted.
-> > +unsafe impl AlwaysRefCounted for MmWithUserAsync {
-> > +    fn inc_ref(&self) {
-> > +        // SAFETY: The pointer is valid since self is a reference.
-> > +        unsafe { bindings::mmget(self.as_raw()) };
-> > +    }
-> > +
-> > +    unsafe fn dec_ref(obj: NonNull<Self>) {
-> > +        // SAFETY: The caller is giving up their refcount.
-> > +        unsafe { bindings::mmput_async(obj.cast().as_ptr()) };
-> > +    }
-> > +}
-> > +
-> > +// Make all `MmWithUser` methods available on `MmWithUserAsync`.
-> > +impl Deref for MmWithUserAsync {
-> > +    type Target =3D MmWithUser;
-> > +
-> > +    #[inline]
-> > +    fn deref(&self) -> &MmWithUser {
-> > +        &self.mm
-> > +    }
-> > +}
-> > +
-> > +// These methods are safe to call even if `mm_users` is zero.
-> > +impl Mm {
-> > +    /// Call `mmgrab` on `current.mm`.
-> > +    #[inline]
-> > +    pub fn mmgrab_current() -> Option<ARef<Mm>> {
-> > +        // SAFETY: It's safe to get the `mm` field from current.
-> > +        let mm =3D unsafe {
-> > +            let current =3D bindings::get_current();
-> > +            (*current).mm
-> > +        };
-> > +
-> > +        let mm =3D NonNull::new(mm)?;
-> > +
-> > +        // SAFETY: We just checked that `mm` is not null.
-> > +        unsafe { bindings::mmgrab(mm.as_ptr()) };
-> > +
-> > +        // SAFETY: We just created an `mmgrab` refcount. Layouts are c=
-ompatible due to
-> > +        // repr(transparent).
-> > +        Some(unsafe { ARef::from_raw(mm.cast()) })
-> > +    }
-> > +
-> > +    /// Returns a raw pointer to the inner `mm_struct`.
-> > +    #[inline]
-> > +    pub fn as_raw(&self) -> *mut bindings::mm_struct {
-> > +        self.mm.get()
-> > +    }
-> > +
-> > +    /// Obtain a reference from a raw pointer.
-> > +    ///
-> > +    /// # Safety
-> > +    ///
-> > +    /// The caller must ensure that `ptr` points at an `mm_struct`, an=
-d that it is not deallocated
-> > +    /// during the lifetime 'a.
-> > +    #[inline]
-> > +    pub unsafe fn from_raw_mm<'a>(ptr: *const bindings::mm_struct) -> =
-&'a Mm {
->
-> Why not just `from_raw`?
+ Possible unsafe locking scenario:
 
-See response to Danilo.
+       CPU0                    CPU1
+       ----                    ----
+  lock(&ei->i_data_sem/3);
+                               lock(&ea_inode->i_rwsem#7/1);
+                               lock(&ei->i_data_sem/3);
+  lock(&ea_inode->i_rwsem#7/1);
 
-Alice
+ *** DEADLOCK ***
+
+5 locks held by syz-executor543/2794:
+ #0: ffff888026fbc448 (sb_writers#4){.+.+}-{0:0}, at: mnt_want_write+0x4a/0x2a0 fs/namespace.c:365
+ #1: ffff8880215e3488 (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: inode_lock include/linux/fs.h:782 [inline]
+ #1: ffff8880215e3488 (&sb->s_type->i_mutex_key#7){++++}-{3:3}, at: do_truncate+0x1cf/0x2c0 fs/open.c:62
+ #2: ffff8880215e3310 (&ei->i_mmap_sem){++++}-{3:3}, at: ext4_setattr+0xec4/0x19c0 fs/ext4/inode.c:5519
+ #3: ffff8880215e3278 (&ei->i_data_sem/3){++++}-{3:3}, at: ext4_setattr+0x136d/0x19c0 fs/ext4/inode.c:5559
+ #4: ffff8880215e30c8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_write_trylock_xattr fs/ext4/xattr.h:162 [inline]
+ #4: ffff8880215e30c8 (&ei->xattr_sem){++++}-{3:3}, at: ext4_try_to_expand_extra_isize fs/ext4/inode.c:5938 [inline]
+ #4: ffff8880215e30c8 (&ei->xattr_sem){++++}-{3:3}, at: __ext4_mark_inode_dirty+0x4fb/0x810 fs/ext4/inode.c:6018
+
+stack backtrace:
+CPU: 1 PID: 2794 Comm: syz-executor543 Not tainted 5.10.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x177/0x211 lib/dump_stack.c:118
+ print_circular_bug+0x146/0x1b0 kernel/locking/lockdep.c:2002
+ check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2123
+ check_prev_add kernel/locking/lockdep.c:2988 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3113 [inline]
+ validate_chain+0x1695/0x58f0 kernel/locking/lockdep.c:3729
+ __lock_acquire+0x12fd/0x20d0 kernel/locking/lockdep.c:4955
+ lock_acquire+0x197/0x480 kernel/locking/lockdep.c:5566
+ down_write+0x93/0x180 kernel/locking/rwsem.c:1564
+ inode_lock include/linux/fs.h:782 [inline]
+ ext4_xattr_inode_iget+0x42a/0x5c0 fs/ext4/xattr.c:425
+ ext4_xattr_inode_get+0x138/0x410 fs/ext4/xattr.c:485
+ ext4_xattr_move_to_block fs/ext4/xattr.c:2580 [inline]
+ ext4_xattr_make_inode_space fs/ext4/xattr.c:2682 [inline]
+ ext4_expand_extra_isize_ea+0xe70/0x1bb0 fs/ext4/xattr.c:2774
+ __ext4_expand_extra_isize+0x304/0x3f0 fs/ext4/inode.c:5898
+ ext4_try_to_expand_extra_isize fs/ext4/inode.c:5941 [inline]
+ __ext4_mark_inode_dirty+0x591/0x810 fs/ext4/inode.c:6018
+ ext4_setattr+0x1400/0x19c0 fs/ext4/inode.c:5562
+ notify_change+0xbb6/0xe60 fs/attr.c:435
+ do_truncate+0x1de/0x2c0 fs/open.c:64
+ handle_truncate fs/namei.c:2970 [inline]
+ do_open fs/namei.c:3311 [inline]
+ path_openat+0x29f3/0x3290 fs/namei.c:3425
+ do_filp_open+0x20b/0x450 fs/namei.c:3452
+ do_sys_openat2+0x124/0x460 fs/open.c:1207
+ do_sys_open fs/open.c:1223 [inline]
+ __do_sys_open fs/open.c:1231 [inline]
+ __se_sys_open fs/open.c:1227 [inline]
+ __x64_sys_open+0x221/0x270 fs/open.c:1227
+ do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
+ entry_SYSCALL_64_after_hwframe+0x61/0xcb
+RIP: 0033:0x7f0cde4ea229
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd81d1c978 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 0030656c69662f30 RCX: 00007f0cde4ea229
+RDX: 0000000000000089 RSI: 00000000000a0a00 RDI: 00000000200001c0
+RBP: 2f30656c69662f2e R08: 0000000000208000 R09: 0000000000208000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffd81d1c9c0
+R13: 00007ffd81d1ca00 R14: 0000000000080000 R15: 0000000000000003
+EXT4-fs error (device loop0): ext4_expand_extra_isize_ea:2730: inode #13: comm syz-executor543: corrupted in-inode xattr
+
+Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
+---
+ fs/ext4/xattr.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 46ce2f21fef9..a6bc9a22a8af 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -458,7 +458,7 @@ static int ext4_xattr_inode_iget(struct inode *parent, unsigned long ea_ino,
+ 		ext4_set_inode_state(inode, EXT4_STATE_LUSTRE_EA_INODE);
+ 		ext4_xattr_inode_set_ref(inode, 1);
+ 	} else {
+-		inode_lock(inode);
++		inode_lock_nested(inode, I_MUTEX_XATTR);
+ 		inode->i_flags |= S_NOQUOTA;
+ 		inode_unlock(inode);
+ 	}
+@@ -1039,7 +1039,7 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
+ 	s64 ref_count;
+ 	int ret;
+ 
+-	inode_lock(ea_inode);
++	inode_lock_nested(ea_inode, I_MUTEX_XATTR);
+ 
+ 	ret = ext4_reserve_inode_write(handle, ea_inode, &iloc);
+ 	if (ret)
+-- 
+2.35.3
+
 
