@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-271114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103689449B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:51:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D769449B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F1201C25633
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:51:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 033122874EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21BB184548;
-	Thu,  1 Aug 2024 10:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79D8183CC4;
+	Thu,  1 Aug 2024 10:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECGKPem3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cagmzj07";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/t4N75zz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C14183CC4;
-	Thu,  1 Aug 2024 10:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65F216FF48
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509490; cv=none; b=A0FSfDLnx7hZp8f8NZjouVoIUfLaFSX57PxhKtQocqAZQi36nHuawfasOd2nmtYcntkVKWV5Rzq4iyI9HzhrwO5qaP8m7wQUAxlNWsAOrUHSZqcZUnBe2rfREOJ26WqbhosxBA5typTvnjU2HPSF/n2rAYveveFpI9H2HURi5yo=
+	t=1722509509; cv=none; b=jNC3EBSbJDK2CbGRlQORjVeJ+yUWPJnFGajOCmaNNs1w7/NCRUBQ8yl2z7joFgdiC7PS2oaiT0NaBipzIb6qFk5fRpXJFkch24yEdBivCSzA7f2LSfu+J+oYuOWHdXLogpkzRNDFVCrxeIs6LkYjNlezan2qG3KMMY4pkGUTWOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509490; c=relaxed/simple;
-	bh=nQfFDUQSVv8HuknkBtK4lXJBt8rvP0e3um6yBQSVNUg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OY062rNcGPglJU/IAIGFUqsJYf+OnhT8nEklgvUKIyrg7xi/yEWnUC/SUGZrtabZkORM3h1bVbtqz5GC9A2RrG6qHXGR2UlTAROXQFlaQ0+wWiYG7+V09RnWI1tHAmeWYxn0TuUG7pWAoOyJQiDJxW1EMcOPCwRL9wumF/TrWYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECGKPem3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ACB5C32786;
-	Thu,  1 Aug 2024 10:51:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722509489;
-	bh=nQfFDUQSVv8HuknkBtK4lXJBt8rvP0e3um6yBQSVNUg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ECGKPem3M5JyBbM6Wa57DV81aZXAJGeESobxoiAkrN3aoc6ENYorjhVbDq4/RLRTs
-	 8tUHuRsYnO7ZHEKb8dgAcWo5H0J4nZ2QRK57KlxDruvF4NQm+15fmlZRc2lLfPsvMq
-	 H++KLQMa+MemQrhKSvg0miKUWEqR+oubASngarcs3Pg41tQkgpV42xqi+vCTVGK1nf
-	 tZddURAeiHA1YOTceVFOds5mIJacNM4SgrxGfxuWwMqauGPQlcRGD1EWQbMvVUTGrG
-	 xha4s2E5R8VJDADJkS5ZWLPzEg7YPoNzT9vBaGViGiEF8jDDIXmqSNTRm3kTNjQWye
-	 xmWVyNGgEjwpQ==
-From: Jeff Layton <jlayton@kernel.org>
-To: brauner@kernel.org
-Cc: sfr@canb.auug.org.au,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: clean up warnings for multigrain timestamp docs
-Date: Thu,  1 Aug 2024 06:51:27 -0400
-Message-ID: <20240801105127.25048-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722509509; c=relaxed/simple;
+	bh=T8eD1W7WVKXjhMCF+YU9xd0Rm+hfrj0/t4kwxqoiZ8M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pug67jRO37lDrJ26ITqTqxS32k9GHX9PyW0fyAS4KemIC5kh1lRR3/d3xphTuEvWcgWsL9D8IGAQv/zwbUCVtA2kijhAElTPPgPev9SEI1mS+yKgocvk8VViv3SO6PyO/vWT9mZ4MuxEUdHLdXuhFGDBSzUYWt87C3vtDRrBjPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cagmzj07; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/t4N75zz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722509505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+ZKTOOlZVI+YrqeoR4euLdbDErwrHIjykpDdt+xf1z8=;
+	b=cagmzj07Lcs7RLrazer5vQvdhLoWMu5sPBJqjyTR5FHZtZH5bmXGUzPKj0AQUYgzWh06BQ
+	BVUttSh1PgZrCOa4n0xlYyZJ9GqLFG9pWSVEYgtqsN7acD+LpccmOnvHgwJK540MXLbK+J
+	JZD2iGQ8D5eUvuSGUivRwUCBoQXSLjw26IY//7J+35AiHb6Iu/bQxXaKGTwLqLZEkbRR0e
+	xLSPOlcDE/GTM/JGLqiYkBc5gfcrGMDIkA32G+kH2Otmnh8SXPfhb9G3PNbpafPoUHwgBc
+	q6ZS4v0QzVaDsejBXQ5OPqAFXUAesIo+ykfTodG1H7ogUcRc/Gb89IawmAvAXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722509505;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+ZKTOOlZVI+YrqeoR4euLdbDErwrHIjykpDdt+xf1z8=;
+	b=/t4N75zzBw+EuLRI2I7Nan98hfqU5E7CSvATRHZlXPvMN8V/nH0FXf8zY6minxvxYBaABV
+	jp5JmZtFUvHsK4CA==
+To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Javier Martinez Canillas
+ <javierm@redhat.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
+ bluescreen_avenger@verizon.net, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [RFC PATCH 3/3] drm/log: Introduce a new boot logger to draw
+ the kmsg on the screen
+In-Reply-To: <20240801100640.462606-4-jfalempe@redhat.com>
+References: <20240801100640.462606-1-jfalempe@redhat.com>
+ <20240801100640.462606-4-jfalempe@redhat.com>
+Date: Thu, 01 Aug 2024 12:57:45 +0206
+Message-ID: <87o76czfb2.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Stephen Rothwell reported seeing a couple of warnings when building
-htmldocs:
+On 2024-08-01, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>  * It uses a circular buffer so the console->write() callback is very
+>    quick, and will never stall.
+>  * Drawing is done asynchronously using a workqueue.
 
-/home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst:83: WARNING: duplicate label filesystems/multigrain-ts:multigrain timestamps, other instance in /home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst
-/home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst: WARNING: document isn't included in any toctree
+For CON_NBCON, neither of the above points are necessary. You can draw
+directly from the write_thread() callback. See below:
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- Documentation/filesystems/index.rst         | 1 +
- Documentation/filesystems/multigrain-ts.rst | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+> +static bool drm_log_work_draw(void)
+> +{
+> +	unsigned int len;
+> +	char buf[512];
+> +
+> +	len = drm_log_buf_read(buf, sizeof(buf));
+> +	if (len)
+> +		drm_log_draw_all(buf, len);
+> +	return len != 0;
+> +}
 
-Christian,
+For CON_NBCON, this is essentially your write_thread() callback:
 
-It may be best to fold this patch into f9cb86069bad (Documentation: add a
-new file documenting multigrain timestamps)
+void drm_log_write_thread(struct console *con,
+			  struct nbcon_write_context *wctxt)
+{
+	drm_log_draw_all(wctxt->outbuf, wctxt->len);
+}
 
-diff --git a/Documentation/filesystems/index.rst b/Documentation/filesystems/index.rst
-index e8e496d23e1d..44e9e77ffe0d 100644
---- a/Documentation/filesystems/index.rst
-+++ b/Documentation/filesystems/index.rst
-@@ -29,6 +29,7 @@ algorithms work.
-    fiemap
-    files
-    locks
-+   multigrain-ts
-    mount_api
-    quota
-    seq_file
-diff --git a/Documentation/filesystems/multigrain-ts.rst b/Documentation/filesystems/multigrain-ts.rst
-index f58c14c53b0f..97877ab3d933 100644
---- a/Documentation/filesystems/multigrain-ts.rst
-+++ b/Documentation/filesystems/multigrain-ts.rst
-@@ -79,8 +79,8 @@ is no such guarantee, and the second file may appear to have been modified
- before, after or at the same time as the first, regardless of which one was
- submitted first.
- 
--Multigrain Timestamps
--=====================
-+Multigrain Timestamp Implementation
-+===================================
- Multigrain timestamps are aimed at ensuring that changes to a single file are
- always recognizable, without violating the ordering guarantees when multiple
- different files are modified. This affects the mtime and the ctime, but the
--- 
-2.45.2
+You cannot implement a write_atomic() callback because the console must
+be able to print directly in NMI context and must not defer. But
+write_atomic() is optional, so you should be fine there.
 
+Disclaimer: Only in PREEMPT_RT patchset at the moment.
+
+John Ogness
 
