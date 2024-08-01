@@ -1,141 +1,213 @@
-Return-Path: <linux-kernel+bounces-271592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0096C945073
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:24:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C01945076
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:25:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59D58B25E4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:24:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F08228226A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:25:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A239C1B3F0A;
-	Thu,  1 Aug 2024 16:24:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BE21B3F23;
+	Thu,  1 Aug 2024 16:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AFF16Cjn"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BFGRPGHR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6EFA1A4881
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE011A4881
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722529465; cv=none; b=RLcOy2cd0QzK8dImi8H7fLxYHxvPZgM8+1o3smvRxsEsSnca1Ym1JCIcciJIZ/d9a6+znHtMxMQQx9DMXMv8EvpQ5aT7if2qLQJPg13T0F0mqltk+mUjLfF8B9s+lir/F9IEmvfW+Z3l+fG366bQ6Yg8xeTy8W3O+hDTZyhKrhw=
+	t=1722529500; cv=none; b=aJEo3dcd8H1j5jhV4CMBnNZ3D34ooZ+NB5AxWQ0l2elrswVnMvmbzFCN1zorLrnRgN6pTxGPH/oA7up+sQAGnuxfJEfTxH62M9rBC+Me9bcZivnI22VyM4R1ovxpKXQlpUA2myhASzwSWljkUXmU/o6nT/uwN2gpR8ItOuubSMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722529465; c=relaxed/simple;
-	bh=zTWC/ZIJIXaqN4KKGvBXaRMV9OKzsQD4VWeY9YvZ9hU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ym8s3oL+qBGMLC/gnmiHkVX1/I2UhScdWSRAxa7ChtN7ARhLjw1rMC7kppUlcaNc+SgzJCkhsR9rNHz/kL8ucZUenqIRM8VAlS94U8G0aVbEZGL3kxqJ3v9pmANfbaY1X0UA/I5UirBTajYYJ+c/d4b6WTjBZDAPDQMLlvelad0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AFF16Cjn; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so15721481e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1722529461; x=1723134261; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=unOmqjTlmyqIRULF34AzgYdC8GCPxqjK8N3N5rddgiY=;
-        b=AFF16Cjna8klgTAMF+YIKSGe6fEQ84yaBPzYTQkSV047rGPv1Us9ulFy1BWxaSTVmU
-         ep6uNSFLQfxY4UHvWd7OVu9qPgnnuSocxgRpif1CeXdUt6Y/w6X+gLLTTFdtxOBw1qUo
-         evSGZ2975JMQPFA7t1rA3Gocbt/w7QT5OPEUE=
+	s=arc-20240116; t=1722529500; c=relaxed/simple;
+	bh=2ELs703CL/0NY9BPIdHEydpSa7yuGw+agEEZ+mFR5JA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PYFYF7y1vbs3bI8iaICYettaxIu5QB5tmERxLAlzukOozZRmmXPIWtjlKH7wOqHAwieROmtXm/Kk8vDW3DFCGrd1H778c+ZU7HjlvGKmcp8ke+A1R5VDkQxSdrOfmMDMYFUtAsRiC3es/7QRm/lsh1ShqvJNWUxkz4DN46gap5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BFGRPGHR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722529498;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=XFJbBcXlBHpS4nW4qWAr2psaRpKUFfF+QCupervOmU0=;
+	b=BFGRPGHR015njN1RmAOplUlEZONQD2XcvnH6gEilgLvi5ltg9sPnFVmJ1XjXS77KEHX1cd
+	ohG6Vt5a1f/Hirzk0J8/SwTrcMpC60tLO5vw420xbHeBfy4Kf+YoVShsHAUWc3mI4EmTB4
+	qZhCY40qxrJacLzQqJDonYzA8o3DdWo=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-639-6HVbIXlyODOz7ewqoYBZIA-1; Thu, 01 Aug 2024 12:24:56 -0400
+X-MC-Unique: 6HVbIXlyODOz7ewqoYBZIA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4280a434147so45230325e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:24:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722529461; x=1723134261;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=unOmqjTlmyqIRULF34AzgYdC8GCPxqjK8N3N5rddgiY=;
-        b=iQLRYz95fKAGjrdh8VImAiKU/9h+RN1b/O2nyphc4MROEpVCa1xQszch6JsWWBm64W
-         bJDdlBoCWqFVKXbOh7G23pnjw769NubdhovzmPPKprCqPi3qBmmahYv0Fd22HiDAfBzH
-         x6kzeJSW2N4wn+2F5Hv9EQB3NJXm9fxnh7BJEXyqd7ssYuPkJCTEvVpxEqXEKhla/Bnr
-         DbEeNYpBg5QCOCGSP0m0YqRSSZyaN5gtKbUQgoSWyKZmvNk/VaJN7aaq5tWh/U7E6ws0
-         3X3qp6iXJNY3g7M6t9wBkl5aDjf2yxKfdCo5KgZyx8N6lFGtEBgCKGRUWVs4KookJn+b
-         lDnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCQZ7AOLcqdI8FOZ3xUjtsX9yI2B0Nally+RWbVW8y7P3AEZEUb7w8gDbkMFgNrq7rBx8iZC9E6R4tIQdPTldi90RwzAD0FnAZKHeb
-X-Gm-Message-State: AOJu0YzT83EBwbyuRoHTC7kGWM9IqLieWT1NUYmmWoYVUNEuq1KZu0qs
-	0ROeNjXwC9JdGUcKAHcAizr8AF9yBSqLOaTUjmNYKzbgdzYDbL4+JCErFUnydeVCGRzO/c8VZUH
-	kxd70Ag==
-X-Google-Smtp-Source: AGHT+IGhhSSEs7QWxYUSQ9/8lmopfuCuUV7V8kKZCrSLc5Yup+QezztLXuPhBaeXZyfnATAxTQ9EsA==
-X-Received: by 2002:a05:6512:b8d:b0:52e:8071:e89d with SMTP id 2adb3069b0e04-530bb3b45f5mr410476e87.40.1722529461212;
-        Thu, 01 Aug 2024 09:24:21 -0700 (PDT)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bc419csm2683609e87.47.2024.08.01.09.24.20
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1722529495; x=1723134295;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XFJbBcXlBHpS4nW4qWAr2psaRpKUFfF+QCupervOmU0=;
+        b=SDU45IONm0R1T32Zg7gjWEXxRqaXGwmL3NTzHqm/EGCJXYkIO5ZbD3sG3gWvMkQ6g/
+         1Z9nt7PFHpGdEFMbZljM2Cmjk6HNMEOoakYkEtynx2Ba1xZeeCydaAgyMhMhcxdzQTVW
+         5qNbZxjkwTZlmks6kwRojHlsb+zC4EZjDl8U+zp37Y+D3ZwdttGeVssSnYPDr1nXNI3b
+         tAgytUpaP0vSPPLdvqTS1i1mFOGRd4BecYJTYCd6ZVgi0KhkR51BdsoQjJrUDBBLz1eG
+         UTRrvUoKqUxhbYeSP3zzrsGcnqA1bDHvnhFOftCm4Ki0vIf510AAkIlfteI4Dv+rqp24
+         m40Q==
+X-Gm-Message-State: AOJu0Yz7X6h1oLclDOT+ZK/6YyQwV4QBXuZBbGyA+7RSSlXEN13WHYE7
+	IkL/Y1AIwst7VvDh853imepUFLz4kCp35aiyK9j9XShPhjl6NcAZieGBLmhaF5StKCSyWb2umz9
+	m/p3zO5+Vbqj9bjhXLBjOC3TPN9MIeoWQKPh+6kcGUR8y//m0JZC3OjhQ82Pq1w==
+X-Received: by 2002:a05:600c:1d04:b0:426:6353:4b7c with SMTP id 5b1f17b1804b1-428e6ae0069mr3474315e9.8.1722529495460;
+        Thu, 01 Aug 2024 09:24:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGcBHQ5w690BMvZwXjhN/NXKdFYYgT0IoingmGcp8yVg7PSZ5XdC4JQa4Zt6D00jN47WvkTzg==
+X-Received: by 2002:a05:600c:1d04:b0:426:6353:4b7c with SMTP id 5b1f17b1804b1-428e6ae0069mr3474105e9.8.1722529494961;
+        Thu, 01 Aug 2024 09:24:54 -0700 (PDT)
+Received: from [192.168.3.141] (p4ff235e4.dip0.t-ipconnect.de. [79.242.53.228])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e0357asm2331665e9.12.2024.08.01.09.24.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 09:24:20 -0700 (PDT)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-530ae4ef29dso4510059e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 09:24:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXrZzuOng+889cQvUsRz2LDs8Mu8nwKygTCwF31LQP5fvjkUcb6iSP7fc5Whdkaq0Kluuck4BliXQJ6gTg2l5FQBq2G+5iWs57Y0+3s
-X-Received: by 2002:a05:6512:1092:b0:52e:976a:b34b with SMTP id
- 2adb3069b0e04-530bb381012mr352849e87.15.1722529459947; Thu, 01 Aug 2024
- 09:24:19 -0700 (PDT)
+        Thu, 01 Aug 2024 09:24:54 -0700 (PDT)
+Message-ID: <8cc5b94c-f861-4ca1-b339-704140ad9255@redhat.com>
+Date: Thu, 1 Aug 2024 18:24:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wgPD+=Wi8T0A59muq46LxquhsWQSyPV6KM5xa8V1UPK=Q@mail.gmail.com>
- <20240801063442.553090-2-davidgow@google.com>
-In-Reply-To: <20240801063442.553090-2-davidgow@google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 1 Aug 2024 09:24:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj40jGrTES8SL69EVdtUwauL+C_12KGMpapdkDZEgjhiw@mail.gmail.com>
-Message-ID: <CAHk-=wj40jGrTES8SL69EVdtUwauL+C_12KGMpapdkDZEgjhiw@mail.gmail.com>
-Subject: Re: [PATCH] x86/uaccess: Zero the 8-byte get_range case on failure
-To: David Gow <davidgow@google.com>
-Cc: Kees Cook <kees@kernel.org>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
+To: Peter Xu <peterx@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ James Houghton <jthoughton@google.com>, stable@vger.kernel.org,
+ Oscar Salvador <osalvador@suse.de>, Muchun Song <muchun.song@linux.dev>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>
+References: <20240731122103.382509-1-david@redhat.com>
+ <541f6c23-77ad-4d46-a8ed-fb18c9b635b3@redhat.com> <ZquTHvK0Rc0xBA4y@x1n>
+ <934885c5-512b-41bf-8501-b568ece34e18@redhat.com> <ZquyrTTUgvFF65ov@x1n>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <ZquyrTTUgvFF65ov@x1n>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 31 Jul 2024 at 23:35, David Gow <davidgow@google.com> wrote:
->
-> The 486 seemed to treat the wraparound a bit differently: it's triggering
-> a General Protection Fault, and so giving the WARN() normally reserved
-> for non-canonical addresses.
+On 01.08.24 18:07, Peter Xu wrote:
+> On Thu, Aug 01, 2024 at 05:35:20PM +0200, David Hildenbrand wrote:
+>> Hi Peter,
+> 
+> [...]
+> 
+>>>> +	else if (size >= PUD_SIZE)
+>>>> +		return pud_lockptr(mm, (pud_t *) pte);
+>>>> +	else if (size >= PMD_SIZE || IS_ENABLED(CONFIG_HIGHPTE))
+>>>
+>>> I thought this HIGHPTE can also be dropped? Because in HIGHPTE it should
+>>> never have lower-than-PMD huge pages or we're in trouble.  That's why I
+>>> kept one WARN_ON() in my pesudo code but only before trying to take the pte
+>>> lockptr.
+>>
+>> Then the compiler won't optimize out the ptep_lockptr() call and we'll run
+>> into a build error. And I think the HIGHPTE builderror serves good purpose.
+>>
+>> In file included from <command-line>:
+>> In function 'ptep_lockptr',
+>>      inlined from 'huge_pte_lockptr' at ./include/linux/hugetlb.h:974:9,
+>>      inlined from 'huge_pte_lock' at ./include/linux/hugetlb.h:1248:8,
+>>      inlined from 'pagemap_scan_hugetlb_entry' at fs/proc/task_mmu.c:2581:8:
+>> ././include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_256' declared with attribute error: BUILD_BUG_ON failed: IS_ENABLED(CONFIG_HIGHPTE)
+>>    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>>        |                                             ^
+>> ././include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
+>>    491 |                         prefix ## suffix();                             \
+>>        |                         ^~~~~~
+>> ././include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
+>>    510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
+>>        |         ^~~~~~~~~~~~~~~~~~~
+>> ./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
+>>     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
+>>        |                                     ^~~~~~~~~~~~~~~~~~
+>> ./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
+>>     50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
+>>        |         ^~~~~~~~~~~~~~~~
+>> ./include/linux/mm.h:2874:9: note: in expansion of macro 'BUILD_BUG_ON'
+>>   2874 |         BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
+> 
+> Ahh.. this is in "ifdef USE_SPLIT_PTE_PTLOCKS" section.  I'm thinking maybe
+> we should drop this BUILD_BUG_ON - it says "HIGHPTE shouldn't co-exist with
+> USE_SPLIT_PTE_PTLOCKS", but I think it can?
+> 
+> Said that, I think I can also understand your point, where you see
+> ptep_lockptr() a hugetlb-only function, in that case the BUILD_BUG_ON would
+> make sense in hugetlb world.
+> 
+> So.. per my previous nitpick suggestion, IIUC we'll need to drop this
+> BUILD_BUG_ON, just to say "USE_SPLIT_PTE_PTLOCKS can work with HIGHPTE" and
+> perhaps slightly more readable; we'll rely on the WARN_ON to guard HIGHPTE
+> won't use pte lock.
 
-Ahh, yes. Old i386 machines (that we no longer support) did the same.
-You hit the segment limit, not the page fault.
+I really don't want to  drop the BUILD_BUG_ON. The function cannot 
+possibly work with HIGHPTE, especially once used in other context by 
+accident.
 
-And we had something very similar when we did the whole 64-bit address
-range checking relaxation (to avoid all the crazy LAM noise in the
-access_ok() code).
+So I'll leave it like that. Feel free to optimize the hugetlb code 
+further once the fix has landed (e.g., really optimize it out if we 
+cannot possibly have such hugetlb sizes).
 
-See commit 6014bc27561f ("x86-64: make access_ok() independent of
-LAM") and the extable.c parts in particular
+Thanks!
 
-That wasn't because of segment limits, but the whole "non-canonical
-address range" ends up having a very similar situation, and also
-causes #GP before the page fault.
+-- 
+Cheers,
 
-So yeah, the same way x86-64 no longer warns for #GP in the user
-address range and the point where the sign wraps, the 32-bit warning
-for this #GP would have to be suppressed.
+David / dhildenb
 
-In fact, it's the exact same gp_fault_address_ok() logic, it would
-just get a 32-bit case for "#GP at the end of the address range is
-ok".
-
-> So I'm a little worried that there might be more cases where this works
-> differently. Does anyone know for sure if it's worth risking it?
-
-I don't think the address wrap-around is a risk per se.
-
-As far as I know the "undefined behavior" is not some kind of subtle
-thing where things have gone wrong in the past - it's just that later
-microarchitectures just ended up special-casing the flat segment setup
-and no longer do any segment limit checks (or base additions) at all.
-
-But I'm also not going to argue that this is really worth pursuing on
-32-bit if anybody is in the least worried.
-
-It's on life support, not like it's actively maintained. Your original
-patch may not be exactly "pretty", but it clearly fixes the problem
-without playing any games.
-
-          Linus
 
