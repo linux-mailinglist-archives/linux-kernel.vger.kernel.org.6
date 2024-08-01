@@ -1,101 +1,173 @@
-Return-Path: <linux-kernel+bounces-270495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6353B9440A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:13:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3015C9440CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CBDE282379
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:13:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97928B2D23E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03021A257B;
-	Thu,  1 Aug 2024 01:27:04 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ACD1A3BCE;
+	Thu,  1 Aug 2024 01:36:26 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A9C1A2562;
-	Thu,  1 Aug 2024 01:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AED11A38F5
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 01:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722475624; cv=none; b=bWh4c1PdvIV1O9KFqlmzsBhpVbVE+e/Bz2sLuPY/y6CvBhp7BiXksqT6QdSES0JlRo8T1lfNUz2OpwNKnIU6LQajchnxR8Sb1pBcnyDYLJR0hqkn9wIaGyTcmlc0oPy8lXW4Sst0k2uE4j/URAK8XM/81AlAujTLjqB46tabuNY=
+	t=1722476186; cv=none; b=DLJSi3GJ5Lw4FEKrbG8pNjU/bQJTyLfeHzgNabfLE+I3re9qQebAdAzT/MzNOpO++a29kZYYM5cuOnZBe3LSbh2AmMtn7LmWEHX/7ul+FEWy46apSiSBT94aMjZquifSeJROtS53j7kmuW3DE2ZZxt86BUhN+8KqqS2eVqT3NHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722475624; c=relaxed/simple;
-	bh=NyUJU5qt9KOZ5V2FlZXxo9KiqYr69JBvG75ao6KughU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jz7Ib3XCggv5WLCqqTdVn2jiiOHi1iXuaqxWXCr/44I3kNRZWipJCN1pWRVoWf2QLBsIcFoHOlG3DG52iswSjoJuLwBrGBpWDKffEfcS4AyKqweF+gdaS2zrH7wy6Ffud6jguaNRwVTG72uXwvM7xare17FzmlRFiuOjSJxxUQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WZBBv2kjRz1L927;
-	Thu,  1 Aug 2024 09:26:47 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 799C718009B;
-	Thu,  1 Aug 2024 09:26:59 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 09:26:58 +0800
-Message-ID: <3855e3a4-769b-5162-0747-cf72b94f7089@huawei.com>
-Date: Thu, 1 Aug 2024 09:26:58 +0800
+	s=arc-20240116; t=1722476186; c=relaxed/simple;
+	bh=697mVutHsKW1pMq0+PVbYa6Uyloscwt9252oykAczQU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SEbxX3tMxYOaQBjf2PlRGn6KYeLCxDX/9Nn1XxOrqIYrJi9tAaThlyer1KX8l62tFTAcdomgdCgs45CSznBSLvbyiKxnTv6U/t0sC1VRj83nyLrlgoILA5dq/w4LVT46LXPaUbLCrWnsmuT6+O+fTL84SUdQheXPnmsUzsT0a6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 4711YTAU036418;
+	Thu, 1 Aug 2024 09:34:29 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4WZBDz2gzhz2M40TH;
+	Thu,  1 Aug 2024 09:28:35 +0800 (CST)
+Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Thu, 1 Aug 2024 09:34:26 +0800
+From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+To: <jaegeuk@kernel.org>, <chao@kernel.org>
+CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
+        <Hao_hao.Wang@unisoc.com>
+Subject: [PATCH] f2fs: clean up val{>>,<<}F2FS_BLKSIZE_BITS
+Date: Thu, 1 Aug 2024 09:33:51 +0800
+Message-ID: <1722476031-22106-1-git-send-email-zhiguo.niu@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH] ARM: support PREEMPT_DYNAMIC
-Content-Language: en-US
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <arnd@arndb.de>, <afd@ti.com>, <akpm@linux-foundation.org>,
-	<linus.walleij@linaro.org>, <eric.devolder@oracle.com>, <robh@kernel.org>,
-	<vincent.whitchurch@axis.com>, <bhe@redhat.com>, <nico@fluxnic.net>,
-	<ardb@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arch@vger.kernel.org>
-References: <20240620090028.729373-1-ruanjinjie@huawei.com>
- <79a3de7c-21da-12ce-8372-9c9029c237ac@huawei.com>
- <Zqn0wL5iScf455O5@shell.armlinux.org.uk>
- <034499ea-2cd6-8775-ee94-771cbecd4cdb@huawei.com>
- <ZqoOoUPDIeJX5M0e@shell.armlinux.org.uk>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <ZqoOoUPDIeJX5M0e@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 4711YTAU036418
 
+Use F2FS_BYTES_TO_BLK(bytes) and F2FS_BLK_TO_BYTES(blk) for cleanup
 
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ fs/f2fs/checkpoint.c    | 2 +-
+ fs/f2fs/debug.c         | 2 +-
+ fs/f2fs/file.c          | 6 +++---
+ fs/f2fs/node.c          | 4 ++--
+ fs/f2fs/super.c         | 2 +-
+ include/linux/f2fs_fs.h | 2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
 
-On 2024/7/31 18:14, Russell King (Oracle) wrote:
-> On Wed, Jul 31, 2024 at 06:03:11PM +0800, Jinjie Ruan wrote:
->> On 2024/7/31 16:24, Russell King (Oracle) wrote:
->>> On Wed, Jul 31, 2024 at 10:07:53AM +0800, Jinjie Ruan wrote:
->>>>>  #ifdef CONFIG_PREEMPTION
->>>>> +#ifdef CONFIG_PREEMPT_DYNAMIC
->>>>> +	bl	need_irq_preemption
->>>>> +	cmp	r0, #0
->>>>> +	beq	2f
->>>>> +#endif
->>>
->>> Depending on the interrupt rate, this can be regarded as a fast path,
->>> it would be nice if we could find a way to use static branches in
->>> assembly code.
->> It seems to be hard to use static keys in assembly code.
->>
->> By the way, currently, most architectures have simplified assembly code
->> and implemented its most functions in C functions. Does arm32 have this
->> plan?
-> 
-> arm32 is effectively in maintenance mode; very little active development
-> is occuring. So, there are no plans to change the code without good
-> reason (as code changes without reason will needlessly affect its
-> stability.)
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index bdd9632..f3d22b8 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1551,7 +1551,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 		blk = start_blk + BLKS_PER_SEG(sbi) - nm_i->nat_bits_blocks;
+ 		for (i = 0; i < nm_i->nat_bits_blocks; i++)
+ 			f2fs_update_meta_page(sbi, nm_i->nat_bits +
+-					(i << F2FS_BLKSIZE_BITS), blk + i);
++					F2FS_BLK_TO_BYTES(i), blk + i);
+ 	}
+ 
+ 	/* write out checkpoint buffer at block 0 */
+diff --git a/fs/f2fs/debug.c b/fs/f2fs/debug.c
+index 8b0e1e7..546b8ba 100644
+--- a/fs/f2fs/debug.c
++++ b/fs/f2fs/debug.c
+@@ -275,7 +275,7 @@ static void update_mem_info(struct f2fs_sb_info *sbi)
+ 	/* build nm */
+ 	si->base_mem += sizeof(struct f2fs_nm_info);
+ 	si->base_mem += __bitmap_size(sbi, NAT_BITMAP);
+-	si->base_mem += (NM_I(sbi)->nat_bits_blocks << F2FS_BLKSIZE_BITS);
++	si->base_mem += F2FS_BLK_TO_BYTES(NM_I(sbi)->nat_bits_blocks);
+ 	si->base_mem += NM_I(sbi)->nat_blocks *
+ 				f2fs_bitmap_size(NAT_ENTRY_PER_BLOCK);
+ 	si->base_mem += NM_I(sbi)->nat_blocks / 8;
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 41ef3ad..7709aed 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2984,9 +2984,9 @@ static int f2fs_move_file_range(struct file *file_in, loff_t pos_in,
+ 	}
+ 
+ 	f2fs_lock_op(sbi);
+-	ret = __exchange_data_block(src, dst, pos_in >> F2FS_BLKSIZE_BITS,
+-				pos_out >> F2FS_BLKSIZE_BITS,
+-				len >> F2FS_BLKSIZE_BITS, false);
++	ret = __exchange_data_block(src, dst, F2FS_BYTES_TO_BLK(pos_in),
++				F2FS_BYTES_TO_BLK(pos_out),
++				F2FS_BYTES_TO_BLK(len), false);
+ 
+ 	if (!ret) {
+ 		if (dst_max_i_size)
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 2fe182f..9e7a6e2 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -3166,7 +3166,7 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+ 
+ 	nm_i->nat_bits_blocks = F2FS_BLK_ALIGN((nat_bits_bytes << 1) + 8);
+ 	nm_i->nat_bits = f2fs_kvzalloc(sbi,
+-			nm_i->nat_bits_blocks << F2FS_BLKSIZE_BITS, GFP_KERNEL);
++			F2FS_BLK_TO_BYTES(nm_i->nat_bits_blocks), GFP_KERNEL);
+ 	if (!nm_i->nat_bits)
+ 		return -ENOMEM;
+ 
+@@ -3185,7 +3185,7 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+ 		if (IS_ERR(page))
+ 			return PTR_ERR(page);
+ 
+-		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
++		memcpy(nm_i->nat_bits + F2FS_BLK_TO_BYTES(i),
+ 					page_address(page), F2FS_BLKSIZE);
+ 		f2fs_put_page(page, 1);
+ 	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 4d2f3bb..977f038 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -3317,7 +3317,7 @@ loff_t max_file_blocks(struct inode *inode)
+ 	 * fit within U32_MAX + 1 data units.
+ 	 */
+ 
+-	result = min(result, (((loff_t)U32_MAX + 1) * 4096) >> F2FS_BLKSIZE_BITS);
++	result = min(result, F2FS_BYTES_TO_BLK(((loff_t)U32_MAX + 1) * 4096));
+ 
+ 	return result;
+ }
+diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
+index 01bee2b..f17f89a 100644
+--- a/include/linux/f2fs_fs.h
++++ b/include/linux/f2fs_fs.h
+@@ -19,7 +19,6 @@
+ #define F2FS_BLKSIZE_BITS		PAGE_SHIFT /* bits for F2FS_BLKSIZE */
+ #define F2FS_MAX_EXTENSION		64	/* # of extension entries */
+ #define F2FS_EXTENSION_LEN		8	/* max size of extension */
+-#define F2FS_BLK_ALIGN(x)	(((x) + F2FS_BLKSIZE - 1) >> F2FS_BLKSIZE_BITS)
+ 
+ #define NULL_ADDR		((block_t)0)	/* used as block_t addresses */
+ #define NEW_ADDR		((block_t)-1)	/* used as block_t addresses */
+@@ -28,6 +27,7 @@
+ #define F2FS_BYTES_TO_BLK(bytes)	((bytes) >> F2FS_BLKSIZE_BITS)
+ #define F2FS_BLK_TO_BYTES(blk)		((blk) << F2FS_BLKSIZE_BITS)
+ #define F2FS_BLK_END_BYTES(blk)		(F2FS_BLK_TO_BYTES(blk + 1) - 1)
++#define F2FS_BLK_ALIGN(x)			(F2FS_BYTES_TO_BLK((x) + F2FS_BLKSIZE - 1))
+ 
+ /* 0, 1(node nid), 2(meta nid) are reserved node id */
+ #define F2FS_RESERVED_NODE_NUM		3
+-- 
+1.9.1
 
-Thank you for helping me with my question.
-
-> 
 
