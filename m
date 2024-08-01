@@ -1,54 +1,53 @@
-Return-Path: <linux-kernel+bounces-271617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D529450D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:38:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF9299450D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4F27B29269
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:38:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64AB61F292A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F8B1BB687;
-	Thu,  1 Aug 2024 16:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB591BF317;
+	Thu,  1 Aug 2024 16:33:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VplTZmmM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ozkel2S6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040601B3F25
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 117AA1BB68E
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530002; cv=none; b=eDERZovnWzAHAFvCyjeeSuls62j0Ci+5QFez4/gNJr3FBNUSwh+tjBO/naNtS6TwEou/+WDzxYYau15tlc4dp9AgB2AT9SWESJBC39fcvGppfJ15OVKHaci1x7CT5WfszZi+ZO2ddFYWGgYrKX6/Ky7QIXlesicxjeDA0Au/bfQ=
+	t=1722530003; cv=none; b=XLV521HToeNhM4nz1tl7NS1y5PvlgneUV4U190h1Zhdbrq0CN+d7SuwoMygfN18sh4ivPTGBUSKH/WlA7pnu3CJ3mGMUEQiz+Z3HvnAwY5NsdH4nCFvfosc5YUYbdhhcLXnNA3jc+8zx6pcv8wVNq6fh/3cShQ0qxS3p0jZelDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722530002; c=relaxed/simple;
-	bh=rDcRQCzJZ2mCEZpGMXnDCcMMgmbroud4ghtR7h4PHpY=;
+	s=arc-20240116; t=1722530003; c=relaxed/simple;
+	bh=pFyWkElnb5VKupDVDS7I/n9Dbtq1YkeyTlFJiJRjpvM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=H1oGZnS16Zf1PEbWv4gMPBIdSSoB7wyEoWPq/kesMzu4yeK9Z8eJtxjkFuo0SoIfdvm7pv3a7R3O+CcttS3OuFB09Nuh8LArplLS/0P5DHZ2cYH0MRKUK56nOkVkgUnGAuGcWPgwYPW8tXUJ9FgI183tTxNsfcZ3+Md+0LL+RFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VplTZmmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AF99C32786;
-	Thu,  1 Aug 2024 16:33:20 +0000 (UTC)
+	 MIME-Version:Content-Type; b=UwRRpgadd4Znz+0PJ4ou5ELC6bMPaUdVE2eLUYpJumkmKpOm02eNDcyVbrPC0EBQpvNntw1HeW5mHTkdEjrc5lmt4QCRz8sYiUu2635XCS50fFVl4swfMy5Je5nzlyUEWis3OEHLAQd5OOMbKfCKEkVomFHG8lmVbfQnJlzj8iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ozkel2S6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC3E9C4AF0B;
+	Thu,  1 Aug 2024 16:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722530001;
-	bh=rDcRQCzJZ2mCEZpGMXnDCcMMgmbroud4ghtR7h4PHpY=;
+	s=k20201202; t=1722530002;
+	bh=pFyWkElnb5VKupDVDS7I/n9Dbtq1YkeyTlFJiJRjpvM=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VplTZmmMXoqHcT0yDSxG2DfcLyqClz6aW6U2mQ/s9eEpcR4MKR5q31ej12Aj4t5sl
-	 sifmdA5dpYiUjtKklRrhTSXg/XoXuyTv5Pp5Tf9/mc7TsFFRgcO8HoGdBjJthSZzD1
-	 IyDH/i5XXUaBwiIie9FB++a2ejrP+wYseDBf/yjx/W5UKsSSijprp2wXinYD7EhqdO
-	 4w2SIkVDe34OEiznAlx3leNG8i7JKd1zhQQg21XFguGKz3ImysdU6Ypk4sd9EyGaGw
-	 lliID9itkgIRXgASjyr8dV6lDaejly7oOr59fDxNc+dnSTSAM+/VW7gNs//3o1NhWp
-	 evRjuHGKSW95w==
+	b=Ozkel2S6hJb4Kbn2yycAb0oRASHjkXODZN6WuGqjIyWbIdlv5gVJyVGPYpCOw1xUo
+	 kGmgUSbH/lJTxwemcY7mIoe5FtUQWK8gW+n//B/y+LksYEeVarfPwOJgmpOfjTqeEI
+	 gy9jeb5fLL/gE9sR8DaUs9kkr4cd9sfNhWf6ZtRfH1cIE7NW6EaTCK1MOLUqlqqU8p
+	 P5Cqv3c+deRP3yOh4opdre6tiFbMj1e0zXtmbv8+Cg5ho8ZsjmHBePQTa8P7+5PPl9
+	 fMupAkgrf3AOhPshRCO8rSvoqwnvf0ab4r0Og9GrQALipZQyaYEvR3ejCFejuKHh1M
+	 721mgkrs7CCLA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
+To: lgirdwood@gmail.com, Yue Haibing <yuehaibing@huawei.com>
 Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20240731191312.1710417-24-robh@kernel.org>
-References: <20240731191312.1710417-24-robh@kernel.org>
-Subject: Re: [PATCH] regulator: Use of_property_read_bool()
-Message-Id: <172253000014.113778.10106415856412035973.b4-ty@kernel.org>
-Date: Thu, 01 Aug 2024 17:33:20 +0100
+In-Reply-To: <20240801114536.472796-1-yuehaibing@huawei.com>
+References: <20240801114536.472796-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] regulator: max77857: Make max77857_id static
+Message-Id: <172253000169.113778.18182813662701868220.b4-ty@kernel.org>
+Date: Thu, 01 Aug 2024 17:33:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,15 +58,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Wed, 31 Jul 2024 13:13:02 -0600, Rob Herring (Arm) wrote:
-> Use of_property_read_bool() to read boolean properties rather than
-> of_get_property(). This is part of a larger effort to remove callers
-> of of_get_property() and similar functions. of_get_property() leaks
-> the DT property data pointer which is a problem for dynamically
-> allocated nodes which may be freed.
+On Thu, 01 Aug 2024 19:45:36 +0800, Yue Haibing wrote:
+> Fix sparse warning:
+> drivers/regulator/max77857-regulator.c:430:28: warning: symbol 'max77857_id' was not declared. Should it be static?
+> 
+> max77857_id is not used outside the source file. Make it static.
 > 
 > 
-> [...]
 
 Applied to
 
@@ -75,8 +72,8 @@ Applied to
 
 Thanks!
 
-[1/1] regulator: Use of_property_read_bool()
-      commit: b03695d95213121719f05cbf6f3baa1ad3667e7f
+[1/1] regulator: max77857: Make max77857_id static
+      commit: cd7d47c5762997a2b1de57a47cd48a1cdad38d96
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
