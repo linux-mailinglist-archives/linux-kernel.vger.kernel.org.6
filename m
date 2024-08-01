@@ -1,55 +1,54 @@
-Return-Path: <linux-kernel+bounces-270764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179E89444F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:56:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EFFB9444F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD6BF1F26790
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9C3281970
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E856416EBFA;
-	Thu,  1 Aug 2024 06:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E05516F29A;
+	Thu,  1 Aug 2024 06:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2Vrx0hw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tM/+asj5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC64158A2C;
-	Thu,  1 Aug 2024 06:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91E6716EC19;
+	Thu,  1 Aug 2024 06:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722495318; cv=none; b=a9wwbNaUJ/FuXSqfivGuqw1ELsOknRVUVUziNOXPztQxxJ1KwEyDnM9ZXb/d0yyz1TKgNG6wy+WYscnhSa7ApVWSb4SS0NaTwcNlJkpqpVEzJ1LIJJcNYDMD4ms77OgO3pd2fujKxGIVQHK3yIWslthnh2v4brgID4D84ww+5w4=
+	t=1722495320; cv=none; b=doOTyB1E45B5KhZ3ZPa897EocxjEVCe3F52bDXHQm1VVyoVVAkLqXyF9LbkTUv/1Gj+alsXgB0JxF2ZNKFz+K9TosWfA8vr0IlosH9mXuR8zdAJdrxIAtXv01mMWJ+vnzfgBzyCRKmRpdUQgkWvljRQZbqFxXJWRSLJi3CoGcsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722495318; c=relaxed/simple;
-	bh=PW1fmd0yFchGP2DLz+NRdDx4udpU1rOUDGXgTeYD+z4=;
+	s=arc-20240116; t=1722495320; c=relaxed/simple;
+	bh=4C6VDEfz65u+c8AGnTvZyieOGwvSu376DqNaJtC/1aE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PZ4qu0fqsiEAH6wP/mIVDC+ffymCq5r/O44wg8LVxMCfEkXR20jf04pusd23dFikQO/B7sI22TZQA8Xe62amOOqkUS1F9CqAqUspfikdGE3zz5zjN475i9gAgJpYBFJEk8f1J6TPs8X6HDpEsYPc8x1+H2jw3sKte5SZe6e6JcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2Vrx0hw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18BB9C4AF09;
-	Thu,  1 Aug 2024 06:55:15 +0000 (UTC)
+	 MIME-Version:Content-Type; b=adsEu1uCXBGJi65JAyWGoMLpeVrezCJXKZcxRDSfH0xrCRzn+7KH8cRxo3t75tKb95titS2Fae6bHVixG3mUYBB1RB6SQ5jRJi33Qpb3RtT6o1ctcVBU1kU35CTmnK8tTTdXtwUwAIyynTCPhZgH0JO+0CUe0IzXW+IQJOJ5P90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tM/+asj5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B7CAC4AF09;
+	Thu,  1 Aug 2024 06:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722495317;
-	bh=PW1fmd0yFchGP2DLz+NRdDx4udpU1rOUDGXgTeYD+z4=;
+	s=k20201202; t=1722495320;
+	bh=4C6VDEfz65u+c8AGnTvZyieOGwvSu376DqNaJtC/1aE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=L2Vrx0hwjGVTr98Q0F30tc8oNm21dncEGnWTPPgHsCqAbFZla1BicwBQ8kwJVKZxI
-	 sbJGX4u/cHAV1VfQD/wX+NQnFPDHUxThaPfjQ5MKYUKTnqGjg8WdwzCdILe7BxHYuu
-	 byDL/3WzwtgE23YyHfB01rciFu55jK0gldxsIYcGJ75iie+osIVq9kjLu91oyyLU1u
-	 Zxl7Gcp7Gur+byCkuRZOICmwABbo7i0V4G+xrPrS1frcEFCTfWNZ6hgw9zwd+lJHL7
-	 VARmVlYucs3wYhXblgfWNybH5skS9W/dioG9xmd2UKYzTPCQvdG/2+RZ5kLQ5gvTe+
-	 CvXCmm4Vl9dDA==
+	b=tM/+asj5ZpWv7EUwOHLSEZ/N2STm4RMTBD+MeUAwcCp7IdUQA+KCuwYg5OBRziNjK
+	 cUIxWYiW00TwcoivhBDkgTRrz5fTG49Gj+RpI5s2G8FJD7wOGqAEx15BKQhXUBNLA7
+	 NpRV5QjX1wGVJVWBGYTcK844hELu2cahIqXWSLxqC7OsVBf7byFay6C5iWgGvsjOxQ
+	 LYNqXlVI6FBWW0VOvOXgnYebWj8OlY2TORgv2Mvboka3YYUAG1/ivPcNRmDu2xb27w
+	 yK5h3yT6pLtKUorvfMcBoSqk/DEHE8hJqLM88IPSeoIZzJYiHkghn2utYiMo87XqDS
+	 TSB40XzNML5gA==
 From: Vinod Koul <vkoul@kernel.org>
 To: kishon@kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
  kernel-janitors@vger.kernel.org
-In-Reply-To: <cover.1720718240.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1720718240.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 0/4] phy: cadence-torrent: Constify struct
- cdns_reg_pairs
-Message-Id: <172249531567.256913.10505517208895735918.b4-ty@kernel.org>
-Date: Thu, 01 Aug 2024 12:25:15 +0530
+In-Reply-To: <cover.1720723132.git.christophe.jaillet@wanadoo.fr>
+References: <cover.1720723132.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH 0/3] phy: cadence: Sierra: Constify some structs
+Message-Id: <172249531801.256913.2609944254797993813.b4-ty@kernel.org>
+Date: Thu, 01 Aug 2024 12:25:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,28 +60,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.13.0
 
 
-On Thu, 11 Jul 2024 19:31:05 +0200, Christophe JAILLET wrote:
-> This series is just abour constification of some structs.
-> 
-> It turns about 15 ko of data in ro section:
+On Thu, 11 Jul 2024 21:34:51 +0200, Christophe JAILLET wrote:
+> This series is just about constification of some structs.
 > 
 > Before:
 > ======
 >    text	   data	    bss	    dec	    hex	filename
->   78154	  20222	     16	  98392	  18058	drivers/phy/cadence/phy-cadence-torrent.o
+>   60489	   4342	     16	  64847	   fd4f	drivers/phy/cadence/phy-cadence-sierra.o
 > 
 > [...]
 
 Applied, thanks!
 
-[1/4] phy: cadence-torrent: Constify struct cdns_reg_pairs
-      commit: ad3654812f2cf937679128f18a146d25db9d3a0e
-[2/4] phy: cadence-torrent: Constify struct cdns_torrent_vals_entry
-      commit: 1d7eb113f1f0d368afbadf56ffef91d615b1cf41
-[3/4] phy: cadence-torrent: Constify struct cdns_torrent_vals
-      commit: 86946f25cb23b71d3ebdc3dd5bbb8ec5155c03ce
-[4/4] phy: cadence-torrent: Constify a u32[]
-      commit: ceb6e0435075ad8b44c78a12dbdc3ec1fb4ec301
+[1/3] phy: cadence: Sierra: Constify struct cdns_reg_pairs
+      commit: 29f33f0b442c092d7180b511d8bef871f3be9fed
+[2/3] phy: cadence: Sierra: Constify struct cdns_sierra_vals
+      commit: da41bac5c89720f9fb8289a03e30ec0b3cb1cc9c
+[3/3] phy: cadence: Sierra: Constify a u32[]
+      commit: f75999c525a1d7d6c4425a6a225cabae40ab1721
 
 Best regards,
 -- 
