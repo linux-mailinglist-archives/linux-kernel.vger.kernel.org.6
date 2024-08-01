@@ -1,210 +1,204 @@
-Return-Path: <linux-kernel+bounces-270839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9949C94460D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:00:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F321D94460B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:00:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3ADA1C22DFA
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:00:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62437B210B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAD916CD0A;
-	Thu,  1 Aug 2024 08:00:31 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C3FEEEB3
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:00:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C73C3CF74;
+	Thu,  1 Aug 2024 08:00:28 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C651EB490
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722499230; cv=none; b=VgwjrrXcgxj7n75zxIzwuGSeNRcYPzl7+8x74RwgNgXtAhHUc00O3rGfcZ9aoIADIE9pjqA8QW8T0lNTtf9Et5X25U4Pyc87hQnwVsbeHMdyK1zN/2noc43Kb/al2dy84c3FZq/0JNP72ZkhH0HsOlfpg0HEnck8oTe4OCisNS8=
+	t=1722499227; cv=none; b=Yz9kJPctmzxgkwT1RJ4ii0qvdx+j8+4gGV/LVEi02Ce14HlvSly9BcSDER9UVC47Popy8LPSWD2lZEJobHHjEYLaDDJVDcXvWJDtUJy6b12sLE3MoW49RLdzFrjeHZjoBJNEalQmWlenj7xTUVvXHBdJ8KMH/4Z/SaacFL4twME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722499230; c=relaxed/simple;
-	bh=IRx6ViHd+hgFWkDpF0kdvEKAfipqLXwSTj1Re4NASyk=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=rduSLnaf/BjSV26vIEBEScvXrW3q1g0rNqxu9MJvpNgB/BOvGtXqtrDgcTusO926zdXGmUPyyWsVlgZgbjyKFrLdAeqyg/dYcXEOMFXk8k3cchtjhjRJm+QZSGlZhP+qIXNQJAQA6cshgtNcdnIYUN4cENC6ww9LOla4WMAkC00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Dxh+mYQKtmDK8FAA--.18550S3;
-	Thu, 01 Aug 2024 16:00:24 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMAxRuSUQKtma8EJAA--.48582S3;
-	Thu, 01 Aug 2024 16:00:20 +0800 (CST)
-Subject: Re: [PATCH v4] x86/paravirt: Disable virt spinlock on bare metal
-To: Chen Yu <yu.c.chen@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
- virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
- Juergen Gross <jgross@suse.com>, Nikolay Borisov <nik.borisov@suse.com>,
- Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Prem Nath Dey <prem.nath.dey@intel.com>,
- Xiaoping Zhou <xiaoping.zhou@intel.com>
-References: <20240729065236.407758-1-yu.c.chen@intel.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <4d31e1b4-2113-c557-b60a-3a45b2840f26@loongson.cn>
-Date: Thu, 1 Aug 2024 16:00:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1722499227; c=relaxed/simple;
+	bh=64iKqXM75gYGE43kjtUoHcvc8mtCN9A+M0czMJK0zNE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=OrpVifmR8QI1SkKcYpXXiplhYVfOLB7s/rLxOwHk7VsRxGPJ/SgUMq3KQHArFmNpTa61W2J/8woTls4UPZUUSNTIMiRlDHsryIw5zJETrNlzyVgTFrKBfrDyqgUdN7nzceArjvnYg6HHP615YpA2GR2f8QKCWmfUs0YTReb0r7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f81da0972so1034347739f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:00:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722499225; x=1723104025;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JyjHsay8ROhwgYEY/QeRYJF0oiADIhn4jc5sMzILhoM=;
+        b=YJp/Sq6yMUuEWJeqPXqBeNsmNomQnKwTStomiSVZZCI5JqJGzzH4yxZZHxUmQOH+53
+         aHsVrf5kWdv8VI84YOqFP2Ul5la9XxufaQFEi25l4KoQGuEXJEhbTSonCkAaP/EbVwIk
+         tZ7cueRvLfZ3jgY+luNyfVahFJe0FKWKXP660IT3HdatLEdAs6rxwRR8xU/O2vlUd3LC
+         lZ4wXTD4LB5Tk+aD7qfYODTSsLxCUJEpvDRgCN8aNzUh/mgcftGmWi9h3GVFoLqhyAOt
+         GEADcT9KI8QWBhLFwFF6Ow6qbq5EfXwSJUpKmqvbAnfMQR6exmzGEWg4lNyVr+ovuGRq
+         uxHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV06j0Xw03MgoUbzvQ5BcF2b1s8N2s80Ldq/wN12pPgRoy5CU1Z0z2QdyRC5yCY8z5JVqOPOEVO7CpNK5Ym4x9eEwaiwTIpZqQY5Z4s
+X-Gm-Message-State: AOJu0Yy30i2rCzZcoMgRqj6zan2xeiLVCbxPIIjxK1EUcPwNtPD0bAqs
+	khyVnT5p4DS3fTRFlJTsGYhAMOedn4G5ENaNrIeQrC5yOxbV5FLJTGHz0QrfgffDCrU9/Z1DhKb
+	oyiuIJM7TV+UcMzf7TXGNMSWZxy7ACic05HxAhDc3SAmMKxXmC/2Frac=
+X-Google-Smtp-Source: AGHT+IHPrqW+Wi60H+CQF7pbJ0wOaMpA0v8nw3E/bgYR8JIEUbn7ysExNxcU+HobysWQRYHU3bNt5gDb2yA2NfhTkWMrYVl95/k3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240729065236.407758-1-yu.c.chen@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMAxRuSUQKtma8EJAA--.48582S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3GrWUGFWfKF4kXr18XF4xAFc_yoW7Ww1xpF
-	W7J3sYqFs5WFy0vrWDuw4Dur17Aws2kw13Wr4UWryDXan8Wr9Igr48tw4Y93WIgan2va4r
-	tF10qr9ruw1DZagCm3ZEXasCq-sJn29KB7ZKAUJUUUUD529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2pVbDU
-	UUU
+X-Received: by 2002:a05:6602:6418:b0:80c:5215:8a55 with SMTP id
+ ca18e2360f4ac-81fcc1d86e9mr3458939f.2.1722499225027; Thu, 01 Aug 2024
+ 01:00:25 -0700 (PDT)
+Date: Thu, 01 Aug 2024 01:00:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006f16a0061e9a9aa7@google.com>
+Subject: [syzbot] [jfs?] general protection fault in dbFree
+From: syzbot <syzbot+ecafa838512962d7d7f6@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, axboe@kernel.dk, 
+	jfs-discussion@lists.sourceforge.net, kristian@klausen.dk, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Chenyu,
+Hello,
 
-I do not know much about x86, just give some comments(probably 
-incorrected) from the code.
+syzbot found the following issue on:
 
-On 2024/7/29 下午2:52, Chen Yu wrote:
-> The kernel can change spinlock behavior when running as a guest. But
-> this guest-friendly behavior causes performance problems on bare metal.
-> So there's a 'virt_spin_lock_key' static key to switch between the two
-> modes.
-> 
-> In current code, the static key is always enabled by default when
-> running in guest mode. The key is disabled for bare metal (and in
-> some guests that want native behavior).
-> 
-> Large performance regression is reported when running encode/decode
-> workload and BenchSEE cache sub-workload on the bare metal.
-> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
-> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
-> is disabled, the virt_spin_lock_key is incorrectly set to true on bare
-> metal. The qspinlock degenerates to test-and-set spinlock, which
-> decrease the performance on bare metal.
-> 
-> Set the default value of virt_spin_lock_key to false. If booting in
-> a VM, enable this key. Later during the VM initialization, if other
-> high-efficient spinlock is detected(paravirt-spinlock eg), the
-> virt_spin_lock_key is disabled. According to the description above,
-> the final effect will be as followed:
-> 
-> X86_FEATURE_HYPERVISOR         Y    Y    Y     N
-> CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
-> PV spinlock                    Y    N    N     Y/N
-> 
-> virt_spin_lock_key             N    N    Y     N
-> 
-> To summarize, the virt_spin_lock_key is disabled on the bare metal
-> no matter what other condidtion is. And the virt_spin_lock_key is
-> also disabled when other spinlock mechanism is detected in the VM
-> guest.
-> 
-> Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
-> Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
-> Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
-> Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> ---
-> v3->v4:
->    Refine the commit log.
->    Added Reviewed-by tag from Nikolay.
-> v2->v3:
->    Change the default value of virt_spin_lock_key from true to false.
->    Enable this key when it is in the VM, and disable it when needed.
->    This makes the code more readable. (Nikolay Borisov)
->    Dropped Reviewed-by because the code has been changed.
-> v1->v2:
->    Refine the commit log per Dave's suggestion.
->    Simplify the fix by directly disabling the virt_spin_lock_key on bare metal.
->    Collect Reviewed-by from Juergen.
-> ---
->   arch/x86/include/asm/qspinlock.h | 4 ++--
->   arch/x86/kernel/paravirt.c       | 7 +++----
->   2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-> index a053c1293975..a32bd2aabdf9 100644
-> --- a/arch/x86/include/asm/qspinlock.h
-> +++ b/arch/x86/include/asm/qspinlock.h
-> @@ -66,13 +66,13 @@ static inline bool vcpu_is_preempted(long cpu)
->   
->   #ifdef CONFIG_PARAVIRT
->   /*
-> - * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
-> + * virt_spin_lock_key - disables (by default) the virt_spin_lock() hijack.
->    *
->    * Native (and PV wanting native due to vCPU pinning) should disable this key.
->    * It is done in this backwards fashion to only have a single direction change,
->    * which removes ordering between native_pv_spin_init() and HV setup.
->    */
-> -DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
-> +DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+HEAD commit:    910bfc26d16d Merge tag 'rust-6.11' of https://github.com/R..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12ffeda1980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=b698a1b2fcd7ef5f
+dashboard link: https://syzkaller.appspot.com/bug?extid=ecafa838512962d7d7f6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14af8cd9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15a426f9980000
 
-@@ -87,7 +87,7 @@ static inline bool virt_spin_lock(struct qspinlock *lock)
-  {
-         int val;
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/863d9befadf0/disk-910bfc26.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/431d0c4adec0/vmlinux-910bfc26.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/5be5e371ff13/bzImage-910bfc26.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/39d480966a2c/mount_0.gz
 
--       if (!static_branch_likely(&virt_spin_lock_key))
-+       if (!static_branch_unlikely(&virt_spin_lock_key))
-                 return false;
+The issue was bisected to:
 
-Do we need change it with static_branch_unlikely() if value of key is 
-false by fault?
->   
->   /*
->    * Shortcut for the queued_spin_lock_slowpath() function that allows
-> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-> index 5358d43886ad..fec381533555 100644
-> --- a/arch/x86/kernel/paravirt.c
-> +++ b/arch/x86/kernel/paravirt.c
-> @@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
->   DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
->   #endif
->   
-> -DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
-> +DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
->   
->   void __init native_pv_lock_init(void)
->   {
-> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
-> -	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> -		static_branch_disable(&virt_spin_lock_key);
-> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +		static_branch_enable(&virt_spin_lock_key);
->   }
+commit 2b9ac22b12a266eb4fec246a07b504dd4983b16b
+Author: Kristian Klausen <kristian@klausen.dk>
+Date:   Fri Jun 18 11:51:57 2021 +0000
 
- From my point, the sentence static_branch_disable(&virt_spin_lock_key) 
-can be removed in file arch/x86/xen/spinlock.c and 
-arch/x86/kernel/kvm.c, since function native_smp_prepare_boot_cpu() is 
-already called by xen_smp_prepare_boot_cpu() and kvm_smp_prepare_boot_cpu().
+    loop: Fix missing discard support when using LOOP_CONFIGURE
 
-Regards
-Bibo Mao
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11660f0d980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=13660f0d980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=15660f0d980000
 
->   
->   static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ecafa838512962d7d7f6@syzkaller.appspotmail.com
+Fixes: 2b9ac22b12a2 ("loop: Fix missing discard support when using LOOP_CONFIGURE")
 
+loop0: detected capacity change from 0 to 32768
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 5215 Comm: syz-executor143 Not tainted 6.10.0-syzkaller-12857-g910bfc26d16d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:dbFree+0x10f/0x680 fs/jfs/jfs_dmap.c:368
+Code: 17 4d 4e fe 31 ff 4c 89 e6 e8 6d dd 72 fe 4d 85 e4 0f 84 e2 04 00 00 4c 89 f1 4f 8d 74 25 00 48 8b 14 24 48 89 d0 48 c1 e8 03 <80> 3c 08 00 74 0d 48 8b 3c 24 e8 92 eb d6 fe 48 8b 14 24 48 8b 1a
+RSP: 0018:ffffc90003bc7bb0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88802a22a2a0 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
+RBP: ffff888025086000 R08: ffffffff8320a9f3 R09: 1ffff1100f474141
+R10: dffffc0000000000 R11: ffffed100f474142 R12: 0000000000000100
+R13: 0000000000000100 R14: 0000000000000200 R15: ffff88807a3a2000
+FS:  00007f47de10c6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f47de0ebd58 CR3: 00000000799c8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ dbDiscardAG+0x8a9/0xa20 fs/jfs/jfs_dmap.c:1650
+ jfs_ioc_trim+0x433/0x670 fs/jfs/jfs_discard.c:100
+ jfs_ioctl+0x2d0/0x3e0 fs/jfs/ioctl.c:131
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f47de156789
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f47de10c218 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f47de1e36c8 RCX: 00007f47de156789
+RDX: 0000000020000080 RSI: 00000000c0185879 RDI: 0000000000000004
+RBP: 00007f47de1e36c0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f47de1b0084
+R13: 00007f47de1aa07e R14: 0037656c69662f2e R15: 3333222211110000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:dbFree+0x10f/0x680 fs/jfs/jfs_dmap.c:368
+Code: 17 4d 4e fe 31 ff 4c 89 e6 e8 6d dd 72 fe 4d 85 e4 0f 84 e2 04 00 00 4c 89 f1 4f 8d 74 25 00 48 8b 14 24 48 89 d0 48 c1 e8 03 <80> 3c 08 00 74 0d 48 8b 3c 24 e8 92 eb d6 fe 48 8b 14 24 48 8b 1a
+RSP: 0018:ffffc90003bc7bb0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff88802a22a2a0 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: 0000000000000100 RDI: 0000000000000000
+RBP: ffff888025086000 R08: ffffffff8320a9f3 R09: 1ffff1100f474141
+R10: dffffc0000000000 R11: ffffed100f474142 R12: 0000000000000100
+R13: 0000000000000100 R14: 0000000000000200 R15: ffff88807a3a2000
+FS:  00007f47de10c6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f47de192190 CR3: 00000000799c8000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess), 1 bytes skipped:
+   0:	4d                   	rex.WRB
+   1:	4e fe                	rex.WRX (bad)
+   3:	31 ff                	xor    %edi,%edi
+   5:	4c 89 e6             	mov    %r12,%rsi
+   8:	e8 6d dd 72 fe       	call   0xfe72dd7a
+   d:	4d 85 e4             	test   %r12,%r12
+  10:	0f 84 e2 04 00 00    	je     0x4f8
+  16:	4c 89 f1             	mov    %r14,%rcx
+  19:	4f 8d 74 25 00       	lea    0x0(%r13,%r12,1),%r14
+  1e:	48 8b 14 24          	mov    (%rsp),%rdx
+  22:	48 89 d0             	mov    %rdx,%rax
+  25:	48 c1 e8 03          	shr    $0x3,%rax
+* 29:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
+  2d:	74 0d                	je     0x3c
+  2f:	48 8b 3c 24          	mov    (%rsp),%rdi
+  33:	e8 92 eb d6 fe       	call   0xfed6ebca
+  38:	48 8b 14 24          	mov    (%rsp),%rdx
+  3c:	48 8b 1a             	mov    (%rdx),%rbx
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
