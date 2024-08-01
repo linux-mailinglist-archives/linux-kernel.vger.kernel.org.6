@@ -1,181 +1,139 @@
-Return-Path: <linux-kernel+bounces-271755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E87199452E9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:40:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E4F9452EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F38B28975A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315F61F251FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C837614D435;
-	Thu,  1 Aug 2024 18:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97F914A619;
+	Thu,  1 Aug 2024 18:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="qbrmKhMn"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="e2Oel1Nu"
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B54D14C599
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B222014A4F8;
+	Thu,  1 Aug 2024 18:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722537511; cv=none; b=TJunfrlPNPTocHCxwsY1gC0GznoXIllC0UM8w4BK/NZittCK6fA3JeUMcW/SmR1yXZGqIR1CL2+ueosbb3aPzmiBUwXz1bci3r0KiTVPOpBUcHRZeWjr+nVSTS8NOvA1iUNu3y+CqBoqQPHRuUEduGuXMyaSNMQs7J80GGUo0oY=
+	t=1722537523; cv=none; b=W3GaD6/FGzTxuguVTnE9Z/AHrfw2m2Nga0gxcSjmL5h7N9xRR6O/rPvsWXoo5A1d5DHhEHsWJDFnEJIWdufr4d993gYMdw7g2yRR5/P3gbymuX4uNyaU2cmfFAGxGBjlyWOTjB3qXqEouPNwclWVuuV9p+3aTgyixeyYgtVw57A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722537511; c=relaxed/simple;
-	bh=EYJYIiAEAfD7NH+H9HMoYZqrRMCnEO9dgrADRI9Gx0E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ND3+dt2HeIYQyAWvT9HgmLAVxmWZSQygMwIwpyktLBU31pxe+qPBx1GH7UNhNXZJIZxfadBGzSh7dhLXrTf3F/UmhyLAgLWzPsHYez9uyJwDHhtCW+VLp+wdUS/qXpvTK2Z0353v+RIx1YPiSlBPebGkgljYsPvzvw3ypo3T0PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=qbrmKhMn; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7a1be7b5d70so1842458a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:38:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1722537509; x=1723142309; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V5ZHzEhK/iqIbovaWXtYghu86qtEZ1UEP6cVND/8xFY=;
-        b=qbrmKhMnzIky2ze8p/kvf4PGE9tBu82IgyUQk5rUbUjeEK/yUi46oncC/68C5Z1fq8
-         hR4HCCXKQqAv3Nvymygf4VqXkKu2YUeE6y4U14PFEggIt80ixs6HTYaJWLa1DxIeVnkA
-         HfsBW5/iIArNFQQXFFeR2cghnr2D1B6t8ZBEvTUb02Fkcoxxp0NdQ+oJl9h1UUk1pm1q
-         Gb7uJ0CdeqQSqn9rELdE6Srk1mcl4SJEoyFrxVGxSY12weHxeVP2X4rDnl3PrwWjHcbw
-         Tb5h0QTlX59i0SX8svzYqxRn9A8TiLjkSTyz4H6RmXbNYGM+06Ap9MKEl6EI/MXFpSKv
-         e4yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722537509; x=1723142309;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V5ZHzEhK/iqIbovaWXtYghu86qtEZ1UEP6cVND/8xFY=;
-        b=wCJ+ooUrLmpkfUN1ac6n61hSAJ4TCbw062WbS8nD7ADyYsspvrjr7U32WwJQ8mYXQr
-         pyCQz8OiNGBYL9t3JP8u+vy96qMp2nXGOduwoPKAXoWWBBLPZCacI6A637JJ4+VAX421
-         jqIq9vpKxkLgqZyEikNpUKg7M5Un+zZE9PNJNyqbO1dkxnPig7N+w8N5pWD5PxWJIOJP
-         PVX4vdfmQbgPQ8Ixp8/aK1tjnARmHkvgqcmQP4mqgpp4N7qpDFv7E9fE6/oq9UR7OqIO
-         xSPH1bU+ZfjZibMnSYImW7im4PRbFUyMbdJ7TEZ2+iL7+BUxnIM9j8Oj0J23xp9rG9pr
-         1msA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2jBLPbhsPqyTj/0+jdWXkDFhsWMyx0hgBSiNVTjRZyO/9Z4t6nQxjfUP94y8ZCoOLtxjntdbIIKvQ0W1GhzDjH2RG7B4f/LhaLB2/
-X-Gm-Message-State: AOJu0YxUwODsXqlchFz+ckMQ9JvAxa023jC2pahFd0ogZeqhOjB9PK1R
-	96P4BiewqBVvuIA49InRNgDuL+DMdoglNGhpuukR2KO0He7tWBbruz7v+EHR5DE=
-X-Google-Smtp-Source: AGHT+IE7euEhKw9ZvLGZgoJ3nB4r1T+YCPL1oMKPqsmgOUjr5Pfy6QWgZSIFTVenufI1eR46X4W9Ag==
-X-Received: by 2002:a17:90b:1a86:b0:2c2:d590:808e with SMTP id 98e67ed59e1d1-2cffa200df2mr1270706a91.13.1722537508634;
-        Thu, 01 Aug 2024 11:38:28 -0700 (PDT)
-Received: from [127.0.1.1] ([2601:1c2:1802:170:dfa1:41a7:9478:9d47])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cffaf69d54sm279728a91.12.2024.08.01.11.38.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 11:38:27 -0700 (PDT)
-From: Drew Fustini <drew@pdp7.com>
-Date: Thu, 01 Aug 2024 11:38:10 -0700
-Subject: [PATCH 6/6] riscv: dts: thead: change TH1520 SPI node to use clock
- controller
+	s=arc-20240116; t=1722537523; c=relaxed/simple;
+	bh=0wA1I5pw5uMJ7CwgBZx+Bkz88j+ObQ2NSGu6oAhojPM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EsVRZHmx9G8LcuNHh1lVEgZOR3UKyLeMHwqBv3pAYjZ17gp/ctTHIa+C+zaVt8n6m+4JtgW2+i5l6tM2L5E6wvlxJ5kVqwCGP4IUvnRJPNeEzoZee7LzFXj3CuyKXNSiXEayPIYQ3MMjCWVke0xZqyJOhx1DSa7cdpYwx0khtfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=e2Oel1Nu; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=tpusvpg7arbntd277skf5e4uz4.protonmail; t=1722537518; x=1722796718;
+	bh=msNfM+n09dyreTa6/jFHnrjM2fYU7OZAlqKTBUbkzBA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=e2Oel1NuX6s7aIzvYSsdw8ob9WFjL2sa2tub3LArGS4lnHBJuWt5niUllUS84DsLJ
+	 WttCHlEkkxYb0To/5iKo3gEHb5QeAqRo2I4TUZnN13KAIaaWJITGNgQfhAOM/4n4dx
+	 ypu7Fda/19BLRBYSEY9igf5tflK2zVsozP/ZDzVHgxP+53pJpSHMnffIxCHEHFjpTh
+	 BSViOfP2oOCxH9sbhavyY/0fmuDv3hnXkzET5FDR7YppBiY/iBuaU8zpxZVi6DqX9I
+	 Ggvs4eatMPUjZ210UAL3YGrAnk+akZOXXPAvWpfngKJfWHfyj8a1xio0MQXXLLGpen
+	 E7XKcmTwGTOng==
+Date: Thu, 01 Aug 2024 18:38:35 +0000
+To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] rust: sync: Add SpinLockIrq
+Message-ID: <0117ba2d-75f6-4291-9108-35607aab0f1b@proton.me>
+In-Reply-To: <028a84fded53be13d1b2d53e877a958f6f08c24a.camel@redhat.com>
+References: <20240731224027.232642-1-lyude@redhat.com> <20240731224027.232642-4-lyude@redhat.com> <991a7dd2-f8a8-402d-a651-eafd857c540d@proton.me> <028a84fded53be13d1b2d53e877a958f6f08c24a.camel@redhat.com>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e9cd9f11c106d26650f4faa8ff12ecf207845322
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240801-th1520-clk-dts-v1-6-71077a0614b8@pdp7.com>
-References: <20240801-th1520-clk-dts-v1-0-71077a0614b8@pdp7.com>
-In-Reply-To: <20240801-th1520-clk-dts-v1-0-71077a0614b8@pdp7.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
- Kanak Shilledar <kanakshilledar@gmail.com>, 
- Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Drew Fustini <drew@pdp7.com>, 
- Drew Fustini <dfustini@tenstorrent.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2303; i=drew@pdp7.com;
- h=from:subject:message-id; bh=GEkmEzaBBCWW5dvp0uJoNHGIioeJZ823d7ZJt1ChQBI=;
- b=owGbwMvMwCF2+43O4ZsaG3kYT6slMaStvibFWr3h3cwewfTJzWvni31U2PSlSjEs/s+V9QuVA
- u9svnPmW0cpC4MYB4OsmCLLpg95F5Z4hX5dMP/FNpg5rEwgQxi4OAVgItc6GRl2PzSIMtz8ppXt
- /dRsHlW5y+9/nrgXM/Gl8X2zvlIB09QnjAy3hfVYV025nBKU4268Y9LKjvjFFRc3OrW/kBd5fir
- tVjg3AA==
-X-Developer-Key: i=drew@pdp7.com; a=openpgp;
- fpr=1B6F948213EA489734F3997035D5CD577C1E6010
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Drew Fustini <dfustini@tenstorrent.com>
+On 01.08.24 19:10, Lyude Paul wrote:
+> On Thu, 2024-08-01 at 10:29 +0000, Benno Lossin wrote:
+>> On 01.08.24 00:35, Lyude Paul wrote:
+>>> +unsafe impl super::Backend for SpinLockIrqBackend {
+>>> +    type State =3D bindings::spinlock_t;
+>>> +    type GuardState =3D ();
+>>> +    type Context<'a> =3D IrqDisabled<'a>;
+>>> +
+>>> +    unsafe fn init(
+>>> +        ptr: *mut Self::State,
+>>> +        name: *const core::ffi::c_char,
+>>> +        key: *mut bindings::lock_class_key,
+>>> +    ) {
+>>> +        // SAFETY: The safety requirements ensure that `ptr` is valid =
+for writes, and `name` and
+>>> +        // `key` are valid for read indefinitely.
+>>> +        unsafe { bindings::__spin_lock_init(ptr, name, key) }
+>>> +    }
+>>> +
+>>> +    unsafe fn lock(ptr: *mut Self::State) -> Self::GuardState {
+>>> +        // SAFETY: The safety requirements of this function ensure tha=
+t `ptr` points to valid
+>>> +        // memory, and that it has been initialised before.
+>>> +        unsafe { bindings::spin_lock(ptr) }
+>>
+>> Should this really be the same function as `SpinLock`? (ie is there not
+>> a special version that expects IRQ to already be disabled? eg this could
+>> add additional debug calls)
+>=20
+> Yes, unless there's some spinlock API function I missed (I checked right
+> before sending this response) we don't really have a variant of spin_lock=
+*()
+> that assumes IRQs are disabled. You really just have:
+>=20
+> spin_lock() - Grab lock, no IRQ changes
+>=20
+> spin_lock_irq() - Grab lock, unconditionally disable IRQs (regardless of
+> current flags) until spin_unlock_irq()
+>=20
+> spin_lock_irqsave() - Grab lock, save IRQ flags and restore upon
+> spin_unlock_irqrestore()
 
-Change the clock property in the TH1520 SPI controller node to a clock
-provided by AP_SYS clock controller.
+I see, I have very limited knowledge of the C side and using the same
+function for both seemed strange.
 
-Remove spi_clk fixed clock reference from BeagleV Ahead and LPI4a dts.
+> Usually lockdep is the one to actually warn about the interrupt state bei=
+ng
+> incorrect, as it will throw up a warning if you grab a spinlock in both a=
+n
+> interrupt enabled and disabled context (which means you are forgetting to
+> disable interrupts before lock acquisition somewhere).
 
-Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+Cool.
+
+> As well, I think having further debug calls would be unneeded? As of righ=
+t now
+> there's only really two entrypoints for getting IrqDisabled:
+> with_irqs_disabled(), and IrqDisabled::new(). And since IrqDisabled::new(=
+) now
+> has a debug assertion for disabled interrupts, that means all paths to
+> creating IrqDisabled are either already guaranteed to disable interrupts =
+- or
+> would be making use of the debug assertion for verifying interrupt state.
+
+Yes, but if you eg call some FFI function in the meantime it might
+re-enable IRQs (or just a plain old bug in the Rust side). I don't know
+how expensive this will be for debug builds, if it is too much, we could
+try to introduce different levels of debugging.
+But as you already said above, we don't need it for `SpinLockIrq`, since
+lockdep should take care of that.
+
 ---
- arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts     | 4 ----
- arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi | 4 ----
- arch/riscv/boot/dts/thead/th1520.dtsi                  | 8 +-------
- 3 files changed, 1 insertion(+), 15 deletions(-)
-
-diff --git a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-index 425f07d73b32..497d961456f3 100644
---- a/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-+++ b/arch/riscv/boot/dts/thead/th1520-beaglev-ahead.dts
-@@ -45,10 +45,6 @@ &osc_32k {
- 	clock-frequency = <32768>;
- };
- 
--&spi_clk {
--	clock-frequency = <396000000>;
--};
--
- &dmac0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-index 077dbbe4abb6..78977bdbbe3d 100644
---- a/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520-lichee-module-4a.dtsi
-@@ -25,10 +25,6 @@ &osc_32k {
- 	clock-frequency = <32768>;
- };
- 
--&spi_clk {
--	clock-frequency = <396000000>;
--};
--
- &dmac0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 5f4f94ca9cc7..6992060e6a54 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -216,12 +216,6 @@ osc_32k: 32k-oscillator {
- 		#clock-cells = <0>;
- 	};
- 
--	spi_clk: spi-clock {
--		compatible = "fixed-clock";
--		clock-output-names = "spi_clk";
--		#clock-cells = <0>;
--	};
--
- 	soc {
- 		compatible = "simple-bus";
- 		interrupt-parent = <&plic>;
-@@ -256,7 +250,7 @@ spi0: spi@ffe700c000 {
- 			compatible = "thead,th1520-spi", "snps,dw-apb-ssi";
- 			reg = <0xff 0xe700c000 0x0 0x1000>;
- 			interrupts = <54 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&spi_clk>;
-+			clocks = <&clk CLK_SPI>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-
--- 
-2.34.1
+Cheers,
+Benno
 
 
