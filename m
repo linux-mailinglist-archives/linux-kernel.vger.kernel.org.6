@@ -1,316 +1,189 @@
-Return-Path: <linux-kernel+bounces-271513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C460C944F44
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:31:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D24944F46
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E71F28BB72
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:31:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 448331C243FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9504D1B4C46;
-	Thu,  1 Aug 2024 15:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61781B32D9;
+	Thu,  1 Aug 2024 15:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXb/ZzH+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sLjKJ6ic";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XcmTlJ+0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OTHjQfXU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rot/6YPe"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E4413CA81;
-	Thu,  1 Aug 2024 15:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06DC11EB4BA;
+	Thu,  1 Aug 2024 15:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722526208; cv=none; b=rMxtEAT8k2Z3SbRFENsI5GDblDXQPM/3upFG9VTS6rKK85qSfEk3yaQfoeOHrh4idgPtG/eeXgdK+nQrdU5Os5v5E43aquaZ5PnflgaRfP9b+bsLEN95jnlGvmyxefRZNKn6Qi1KbyJEmOVl18NOp7qTsHTF/P4aOXT6I9vk2FM=
+	t=1722526249; cv=none; b=LPOxS3Ya9vWsI8zt1Rl0A0PvwljUaGkmAQc7OkPWAG57SU1BePPihie+LA6gGuk/2Nzhb1Ob2Jb9sJJiFq3GOOvbsNgVpIceER6ApyUGo5kF1BmEny2iA1FqBXiBQYoCH00lvdiCHwlLlcuBPfcpAusHDdXl1JHgatZs559/wGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722526208; c=relaxed/simple;
-	bh=0PQbDS0wuvLYars5FMo32gpzSiRNyt2BJDuRhnjMKBc=;
+	s=arc-20240116; t=1722526249; c=relaxed/simple;
+	bh=Zjje1dsw86/XFnd6IoKFXuCS2tuvK+qHefycMLmHQQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BboOldYjZGvCz8XHKK1BPij8STVp46Hy3Z16vwtnTDksZiqlLGNkZbAp456JNVNYWRQlHDv+ktE4nxjE843XLMNg7UjUZZkwOQI50Qd+Jbi0/DdxG4TOAulk2S6+SPGstLF1RnYas8vQw+w2T15rr6OUtgybCdgPr6U8b4wF6H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXb/ZzH+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 533BAC4AF09;
-	Thu,  1 Aug 2024 15:30:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722526208;
-	bh=0PQbDS0wuvLYars5FMo32gpzSiRNyt2BJDuRhnjMKBc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dXb/ZzH+0ytsrhg6eRGvKJral/3oOCt1JVJCjYgcYnHKfgfqBV24thiE/g+Fdg7z3
-	 4ViwdfjP7GsG2zZD39PIOalW5KGPhkWJ7uoeH39FlT0ezjZG6+vbQ4X14hHVYM7lXl
-	 TiKKbY3Bj3BAkooWElV6fyOGm3dIQgbdFyQ28YeoJWxO08sJOsuIl38s1IUgi433UL
-	 iimsORy5FluP+raDPookaJafu0333TsD6yuZ1WIvBY735OMF/I24kcBvU6Z5XSkHH8
-	 ZNwCiKX5vKRLlKOzmCnkbCNKqT+vvea5j7iU846S3G0VTGzKMEQ22TFTQjF8Jee/RP
-	 OES/3Sgx520jw==
-Date: Thu, 1 Aug 2024 17:30:00 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 16/25] rust: alloc: implement `IntoIterator` for `Vec`
-Message-ID: <Zqup-PDGUe_mF2Mo@pollux>
-References: <20240801000641.1882-1-dakr@kernel.org>
- <20240801000641.1882-17-dakr@kernel.org>
- <CAH5fLgg+_8dpDh8A+0gW=rxXyhEF1b9za5tNapbODkKW=hjhKQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUkbcGqks+1LK0ZrKeBIXimjfo6OEHXnJvk6jEKkTgahA9N/NJ36nYNvBJXkO7obOfinDHyanhyO3fV8+MyXw8YcsEVzd4JLirhmxKG8SBYx+R38ppeGUN6RmU6BVRhrSd2WwTR22v2OVd1UtKm2BXgIanwJIdwDq67mt22WdDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sLjKJ6ic; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XcmTlJ+0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OTHjQfXU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rot/6YPe; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B13041FB60;
+	Thu,  1 Aug 2024 15:30:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722526244; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m9YSBDQ+YbfO1lnAnahQ9OcUcmCOX9004ClcBxBpHW4=;
+	b=sLjKJ6icTGMf85COLUjjSSQyPfH3bwr7PCUbbeArYqKL995abNtT2vmljzWzdEWvjClNNH
+	0DvJSpryvXU/wIAUvGHkDFQEt3cpztpgW0UnkCxMqKfAOux0VH17tz3oT+eRaZ73cIqUat
+	uDnIm4ABer9jTuRkDmcyUICZgOZlmWE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722526244;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m9YSBDQ+YbfO1lnAnahQ9OcUcmCOX9004ClcBxBpHW4=;
+	b=XcmTlJ+0i7lHB4RZyAOKiWfWiefRzPvYXTA5JdaI6rPOD1puI+XKT88Y65wvaSEoBckEpr
+	pKsjP04dYGUqPkBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OTHjQfXU;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="rot/6YPe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1722526242; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m9YSBDQ+YbfO1lnAnahQ9OcUcmCOX9004ClcBxBpHW4=;
+	b=OTHjQfXUWsfYe1KxfMFevJWoGNGCOe5gF+WYQBlR7yXoAd/1FRWEBKFW71sRrmEItUSwIF
+	PUQseqYNwv5JZZZF1H2Qm9rSk+MEF1JANbGedBaX19yi7ChOTsFFUb76XnzqLEDNowNs1h
+	zU969Pa82cZ18MG8CCHBnbOqqu0etAY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1722526242;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m9YSBDQ+YbfO1lnAnahQ9OcUcmCOX9004ClcBxBpHW4=;
+	b=rot/6YPeZ7Ed+EVrWeyf3ua0nAznswMzlZ0SwToMo81x82uqCRCbbIqBjo3GbDvRHolsqj
+	1pSJJHQ5g1H7rSBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 964FA136CF;
+	Thu,  1 Aug 2024 15:30:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id apxoJCKqq2bJFQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 01 Aug 2024 15:30:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1B153A08CB; Thu,  1 Aug 2024 17:30:42 +0200 (CEST)
+Date: Thu, 1 Aug 2024 17:30:42 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	phillip@squashfs.org.uk, squashfs-devel@lists.sourceforge.net,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] squashfs: Add length check in
+ squashfs_symlink_read_folio
+Message-ID: <20240801153042.prhbovbuys4zmprv@quack3>
+References: <20240801124220.GP5334@ZenIV>
+ <20240801151740.339272-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgg+_8dpDh8A+0gW=rxXyhEF1b9za5tNapbODkKW=hjhKQ@mail.gmail.com>
+In-Reply-To: <20240801151740.339272-1-lizhi.xu@windriver.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Rspamd-Queue-Id: B13041FB60
+X-Spam-Score: -2.31
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-2.31 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TAGGED_RCPT(0.00)[24ac24ff58dc5b0d26b9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
 
-On Thu, Aug 01, 2024 at 05:07:48PM +0200, Alice Ryhl wrote:
-> On Thu, Aug 1, 2024 at 2:08 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > Implement `IntoIterator` for `Vec`, `Vec`'s `IntoIter` type, as well as
-> > `Iterator` for `IntoIter`.
-> >
-> > `Vec::into_iter` disassembles the `Vec` into its raw parts; additionally,
-> > `IntoIter` keeps track of a separate pointer, which is incremented
-> > correspondingsly as the iterator advances, while the length, or the count
-> > of elements, is decremented.
-> >
-> > This also means that `IntoIter` takes the ownership of the backing
-> > buffer and is responsible to drop the remaining elements and free the
-> > backing buffer, if it's dropped.
-> >
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  rust/kernel/alloc.rs      |   1 +
-> >  rust/kernel/alloc/kvec.rs | 186 ++++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 187 insertions(+)
-> >
-> > diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> > index bd93140f3094..f2998ad57456 100644
-> > --- a/rust/kernel/alloc.rs
-> > +++ b/rust/kernel/alloc.rs
-> > @@ -19,6 +19,7 @@
-> >  pub use self::kbox::KVBox;
-> >  pub use self::kbox::VBox;
-> >
-> > +pub use self::kvec::IntoIter;
-> >  pub use self::kvec::KVVec;
-> >  pub use self::kvec::KVec;
-> >  pub use self::kvec::VVec;
-> > diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-> > index 04cc85f7d92c..50e7705e5686 100644
-> > --- a/rust/kernel/alloc/kvec.rs
-> > +++ b/rust/kernel/alloc/kvec.rs
-> > @@ -12,6 +12,8 @@
-> >      ops::DerefMut,
-> >      ops::Index,
-> >      ops::IndexMut,
-> > +    ptr,
-> > +    ptr::NonNull,
-> >      slice,
-> >      slice::SliceIndex,
-> >  };
-> > @@ -581,3 +583,187 @@ fn eq(&self, other: &$rhs) -> bool { self[..] == other[..] }
-> >  __impl_slice_eq! { [A: Allocator] [T], Vec<U, A> }
-> >  __impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, [U; N] }
-> >  __impl_slice_eq! { [A: Allocator, const N: usize] Vec<T, A>, &[U; N] }
-> > +
-> > +impl<'a, T, A> IntoIterator for &'a Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Item = &'a T;
-> > +    type IntoIter = slice::Iter<'a, T>;
-> > +
-> > +    fn into_iter(self) -> Self::IntoIter {
-> > +        self.iter()
-> > +    }
-> > +}
-> > +
-> > +impl<'a, T, A: Allocator> IntoIterator for &'a mut Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Item = &'a mut T;
-> > +    type IntoIter = slice::IterMut<'a, T>;
-> > +
-> > +    fn into_iter(self) -> Self::IntoIter {
-> > +        self.iter_mut()
-> > +    }
-> > +}
-> > +
-> > +/// An iterator that moves out of a vector.
-> > +///
-> > +/// This `struct` is created by the `into_iter` method on [`Vec`] (provided by the [`IntoIterator`]
-> > +/// trait).
-> > +///
-> > +/// # Examples
-> > +///
-> > +/// ```
-> > +/// let v = kernel::kvec![0, 1, 2]?;
-> > +/// let iter = v.into_iter();
-> > +///
-> > +/// # Ok::<(), Error>(())
-> > +/// ```
-> > +pub struct IntoIter<T, A: Allocator> {
-> > +    ptr: *mut T,
-> > +    buf: NonNull<T>,
-> > +    len: usize,
-> > +    cap: usize,
-> > +    _p: PhantomData<A>,
-> > +}
-> > +
-> > +impl<T, A> IntoIter<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    fn as_raw_mut_slice(&mut self) -> *mut [T] {
-> > +        ptr::slice_from_raw_parts_mut(self.ptr, self.len)
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Iterator for IntoIter<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Item = T;
-> > +
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let v = kernel::kvec![1, 2, 3]?;
-> > +    /// let mut it = v.into_iter();
-> > +    ///
-> > +    /// assert_eq!(it.next(), Some(1));
-> > +    /// assert_eq!(it.next(), Some(2));
-> > +    /// assert_eq!(it.next(), Some(3));
-> > +    /// assert_eq!(it.next(), None);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    fn next(&mut self) -> Option<T> {
-> > +        if self.len == 0 {
-> > +            return None;
-> > +        }
-> > +
-> > +        let ptr = self.ptr;
-> > +        if !Vec::<T, A>::is_zst() {
-> > +            // SAFETY: We can't overflow; `end` is guaranteed to mark the end of the buffer.
-> > +            unsafe { self.ptr = self.ptr.add(1) };
-> > +        } else {
-> > +            // For ZST `ptr` has to stay where it is to remain aligned, so we just reduce `self.len`
-> > +            // by 1.
-> > +        }
-> > +        self.len -= 1;
-> > +
-> > +        // SAFETY: `ptr` is guaranteed to point at a valid element within the buffer.
-> > +        Some(unsafe { ptr.read() })
-> > +    }
-> > +
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let v: KVec<u32> = kernel::kvec![1, 2, 3]?;
-> > +    /// let mut iter = v.into_iter();
-> > +    /// let size = iter.size_hint().0;
-> > +    ///
-> > +    /// iter.next();
-> > +    /// assert_eq!(iter.size_hint().0, size - 1);
-> > +    ///
-> > +    /// iter.next();
-> > +    /// assert_eq!(iter.size_hint().0, size - 2);
-> > +    ///
-> > +    /// iter.next();
-> > +    /// assert_eq!(iter.size_hint().0, size - 3);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    fn size_hint(&self) -> (usize, Option<usize>) {
-> > +        (self.len, Some(self.len))
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> Drop for IntoIter<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    fn drop(&mut self) {
-> > +        // SAFETY: Drop the remaining vector's elements in place, before we free the backing
-> > +        // memory.
-> > +        unsafe { ptr::drop_in_place(self.as_raw_mut_slice()) };
-> > +
-> > +        // If `cap == 0` we never allocated any memory in the first place.
-> > +        if self.cap != 0 {
-> > +            // SAFETY: `self.buf` was previously allocated with `A`.
-> > +            unsafe { A::free(self.buf.cast()) };
-> > +        }
+On Thu 01-08-24 23:17:40, Lizhi Xu wrote:
+> syzbot report KMSAN: uninit-value in pick_link, the root cause is that
+> squashfs_symlink_read_folio did not check the length, resulting in folio
+> not being initialized and did not return the corresponding error code.
 > 
-> Is this ok for ZST?
+> The incorrect value of length is due to the incorrect value of inode->i_size.
+> 
+> Reported-and-tested-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+> ---
+>  fs/squashfs/symlink.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/fs/squashfs/symlink.c b/fs/squashfs/symlink.c
+> index 6ef735bd841a..d5fa5165ddd6 100644
+> --- a/fs/squashfs/symlink.c
+> +++ b/fs/squashfs/symlink.c
+> @@ -61,6 +61,12 @@ static int squashfs_symlink_read_folio(struct file *file, struct folio *folio)
+>  		}
+>  	}
+>  
+> +	if (length < 0) {
 
-Yes, for ZST `self.cap` is always zero.
+OK, so this would mean that (int)inode->i_size is a negative number.
+Possible. Perhaps we should rather better validate i_size of symlinks in
+squashfs_read_inode()? Otherwise it would be a whack-a-mole game of
+catching places that get confused by bogus i_size...
 
+								Honza
+
+> +		ERROR("Unable to read symlink, wrong length [%d]\n", length);
+> +		error = -EINVAL;
+> +		goto out;
+> +	}
+> +
+>  	/*
+>  	 * Read length bytes from symlink metadata.  Squashfs_read_metadata
+>  	 * is not used here because it can sleep and we want to use
+> -- 
+> 2.43.0
 > 
-> > +    }
-> > +}
-> > +
-> > +impl<T, A> IntoIterator for Vec<T, A>
-> > +where
-> > +    A: Allocator,
-> > +{
-> > +    type Item = T;
-> > +    type IntoIter = IntoIter<T, A>;
-> > +
-> > +    /// Creates a consuming iterator, that is, one that moves each value out of
-> > +    /// the vector (from start to end). The vector cannot be used after calling
-> > +    /// this.
-> > +    ///
-> > +    /// # Examples
-> > +    ///
-> > +    /// ```
-> > +    /// let v = kernel::kvec![1, 2]?;
-> > +    /// let mut v_iter = v.into_iter();
-> > +    ///
-> > +    /// let first_element: Option<u32> = v_iter.next();
-> > +    ///
-> > +    /// assert_eq!(first_element, Some(1));
-> > +    /// assert_eq!(v_iter.next(), Some(2));
-> > +    /// assert_eq!(v_iter.next(), None);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    ///
-> > +    /// ```
-> > +    /// let v = kernel::kvec![];
-> > +    /// let mut v_iter = v.into_iter();
-> > +    ///
-> > +    /// let first_element: Option<u32> = v_iter.next();
-> > +    ///
-> > +    /// assert_eq!(first_element, None);
-> > +    ///
-> > +    /// # Ok::<(), Error>(())
-> > +    /// ```
-> > +    #[inline]
-> > +    fn into_iter(self) -> Self::IntoIter {
-> > +        let (ptr, len, cap) = self.into_raw_parts();
-> > +
-> > +        IntoIter {
-> > +            ptr,
-> > +            // SAFETY: `ptr` is either a dangling pointer or a pointer to a valid memory
-> > +            // allocation, allocated with `A`.
-> > +            buf: unsafe { NonNull::new_unchecked(ptr) },
-> > +            len,
-> > +            cap,
-> > +            _p: PhantomData::<A>,
-> > +        }
-> > +    }
-> > +}
-> > --
-> > 2.45.2
-> >
-> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
