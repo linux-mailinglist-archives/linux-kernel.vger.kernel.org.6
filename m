@@ -1,206 +1,115 @@
-Return-Path: <linux-kernel+bounces-270953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4BF94479C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:13:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86D2944712
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5242C1F27AE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9720128474E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797C6184540;
-	Thu,  1 Aug 2024 09:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O9imaoEt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3753316F0C6;
+	Thu,  1 Aug 2024 08:52:25 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3DF170A34;
-	Thu,  1 Aug 2024 09:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19082161326;
+	Thu,  1 Aug 2024 08:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503520; cv=none; b=Y0JejNcru6HTqRjanqVx7nvmxsN9fQQG3xFZFq7IsnIFNLYoDRmydyulCP3hToD8vTwasCgczqwpeaTV6XSuWlmmgSG0U9igc1FEybpwWP1ObkTTGSSNcKsM+dmjfv+A/RqmvhhMAjkvdUOR2+PwaYT6R9QFU3bEox79ExHx9sQ=
+	t=1722502344; cv=none; b=Dr0KyEnCqLykec4BLZEZtCuuGMNdsdUjeNNlc3Ql2Fx2kr31EeZPuob0RGxDVLErVJM/poxSP2fz30MIGIFSJhdSabCU0LznNTAiNsazjKDnZgVV1IHbqZsvNPBBFnGtYwkmnxLOrVMI62eSUMU8Tzdc+uM8aueEaczFQvZjwsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503520; c=relaxed/simple;
-	bh=YyMMtwwfLvF7XbN3Hd27FU6gmaTz5OzC5jyQFcvLAO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pH6//PXD/3dYsZFRAbzeItcXx2lcmGI+vtriw2gVImVv5fFwHTzL+XeMeP32CQ1O/vJhpbDYt2W9YlqmuTEfzjWu/4L2FFBpGaXTrsl5r0BUUSQ5N/VC4aJXYFDMJ/TUe0X0cBXz3G3GINUKDZTXma8WgH3/cbhNbjhWwzOWQCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O9imaoEt; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722503519; x=1754039519;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=YyMMtwwfLvF7XbN3Hd27FU6gmaTz5OzC5jyQFcvLAO4=;
-  b=O9imaoEtsvrnILyp4ZsiMg3UAccO//SL7xjzq7HKgx88PHeFOatLHSDw
-   fIV7tfnrKCG6gJER4JQUUn8uAsi2tbtltbGJocohONUuBatoC0xjt/zjB
-   8JyRFN+MrO/th8vNlUS6wiv0CrwCLHDR8rUWcH8mlT7HVhk59E8umVP3A
-   0SiAnykYLksxs1MgEm8zkB94CGAqVCLOBjWflk5CflET1E46LwKQhm+VM
-   6gtG0QqLUfejXSU82oumWNMAGuRDWojmdHGSgLZA/Io8AzcRyLQ1D2qFU
-   Ji3JIk/Du2U6g/KihmrScFwtP4Ym4J7Cr0uxE7nqExaFb7JOyF2UEShUt
-   w==;
-X-CSE-ConnectionGUID: 0usLmvSVTKeoU76GHYtmpw==
-X-CSE-MsgGUID: yxNdqo/8Tu6uDuYoegDxxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383480"
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="20383480"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:21 -0700
-X-CSE-ConnectionGUID: ELbweMuJSkOz6l0VdhQiCQ==
-X-CSE-MsgGUID: BARAQ/IiRXWsmTikx+x+nA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="59089817"
-Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:15 -0700
-Message-ID: <63c20e7a-f62a-4b6c-8ea1-1608e06e5b58@linux.intel.com>
-Date: Thu, 1 Aug 2024 10:11:43 +0200
+	s=arc-20240116; t=1722502344; c=relaxed/simple;
+	bh=pUi9pGHk3hkbw6N8AbNReAqAjSKpToNv3GdDcSz0WtE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oiB2F3rnIRdUaI3ME28fMMY7c4UuZ8c/nwVb/X+yau8TjjLORUC8/z7sgtqaOqUGi1JcrjznONKdPwPLbZAXWpAKQ4H01geoNwB9SD8HZ6MwiiWAmyBYM5XSr9sEL11hzJmH8MhUpncrQ1maIS3cJsA5UIMKVa9MC0MKifPmhzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4715sK0d016242;
+	Thu, 1 Aug 2024 01:12:28 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40n0dfvmky-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 01 Aug 2024 01:12:28 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 01:12:27 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 01:12:25 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <viro@zeniv.linux.org.uk>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <phillip@squashfs.org.uk>, <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>
+Subject: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
+Date: Thu, 1 Aug 2024 16:12:24 +0800
+Message-ID: <20240801081224.1252836-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801071016.GN5334@ZenIV>
+References: <20240801071016.GN5334@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v24 11/34] ASoC: usb: Fetch ASoC card and pcm device
- information
-To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
- mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
- corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
- Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
- gregkh@linuxfoundation.org, robh@kernel.org
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
- alsa-devel@alsa-project.org
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
- <20240801011730.4797-12-quic_wcheng@quicinc.com>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <20240801011730.4797-12-quic_wcheng@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: aeu4VXTKAxAVyBGFas6fMwPTGQQDqb18
+X-Proofpoint-ORIG-GUID: aeu4VXTKAxAVyBGFas6fMwPTGQQDqb18
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_05,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 phishscore=0 mlxscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 priorityscore=1501 suspectscore=0 adultscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408010048
 
-
-
-On 8/1/24 03:17, Wesley Cheng wrote:
-> USB SND needs to know how the USB offload path is being routed.  This would
-> allow for applications to open the corresponding sound card and pcm device
-> when it wants to take the audio offload path.  This callback should return
-> the mapped indexes based on the USB SND device information.
+On Thu, 1 Aug 2024 08:10:16 +0100, Al Viro wrote:
+> > > > syzbot report KMSAN: uninit-value in pick_link, this is because the
+> > > > corresponding folio was not found from the mapping, and the memory was
+> > > > not initialized when allocating a new folio for the filemap.
+> > > >
+> > > > To avoid the occurrence of kmsan report uninit-value, initialize the
+> > > > newly allocated folio memory to 0.
+> > >
+> > > NAK.
+> > >
+> > > You are papering over the real bug here.
+> > Did you see the splat? I think you didn't see that.
 > 
-> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
-> ---
->  include/sound/soc-usb.h | 16 ++++++++++++++++
->  sound/soc/soc-usb.c     | 28 ++++++++++++++++++++++++++++
->  2 files changed, 44 insertions(+)
+> Sigh...  It is stepping into uninitialized data in pick_link(), and by
+> the look of traces it's been created by page_get_link().
 > 
-> diff --git a/include/sound/soc-usb.h b/include/sound/soc-usb.h
-> index d6b576f971ae..a167e3de0a78 100644
-> --- a/include/sound/soc-usb.h
-> +++ b/include/sound/soc-usb.h
-> @@ -8,6 +8,11 @@
->  
->  #include <sound/soc.h>
->  
-> +enum snd_soc_usb_kctl {
-> +	SND_SOC_USB_KCTL_CARD_ROUTE,
-> +	SND_SOC_USB_KCTL_PCM_ROUTE,
-> +};
-> +
->  /**
->   * struct snd_soc_usb_device
->   * @card_idx - sound card index associated with USB device
-> @@ -32,6 +37,7 @@ struct snd_soc_usb_device {
->   * @component - reference to ASoC component
->   * @num_supported_streams - number of supported concurrent sessions
->   * @connection_status_cb - callback to notify connection events
-> + * @get_offload_dev - callback to fetch mapped ASoC device
->   * @priv_data - driver data
->   **/
->  struct snd_soc_usb {
-> @@ -40,6 +46,8 @@ struct snd_soc_usb {
->  	unsigned int num_supported_streams;
->  	int (*connection_status_cb)(struct snd_soc_usb *usb,
->  			struct snd_soc_usb_device *sdev, bool connected);
-> +	int (*get_offload_dev)(struct snd_soc_component *component,
-> +				int card, int pcm, enum snd_soc_usb_kctl route);
->  	void *priv_data;
->  };
->  
-> @@ -51,6 +59,8 @@ void *snd_soc_usb_find_priv_data(struct device *dev);
->  int snd_soc_usb_setup_offload_jack(struct snd_soc_component *component,
->  					struct snd_soc_jack *jack);
->  int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component);
-> +int soc_usb_get_offload_device(struct device *dev, int card, int pcm,
-> +				enum snd_soc_usb_kctl route);
->  
->  struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
->  					      int num_streams, void *data);
-> @@ -86,6 +96,12 @@ static inline int snd_soc_usb_disable_offload_jack(struct snd_soc_component *com
->  	return -ENODEV;
->  }
->  
-> +static int soc_usb_get_offload_device(struct device *dev, int card, int pcm,
-> +					enum snd_soc_usb_kctl route)
-> +{
-> +	return -ENODEV;
-> +}
-> +
->  static inline struct snd_soc_usb *snd_soc_usb_allocate_port(
->  					      struct snd_soc_component *component,
->  					      int num_streams, void *data)
-> diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-> index fe2a75a28af4..3c217ac67c57 100644
-> --- a/sound/soc/soc-usb.c
-> +++ b/sound/soc/soc-usb.c
-> @@ -117,6 +117,34 @@ int snd_soc_usb_disable_offload_jack(struct snd_soc_component *component)
->  }
->  EXPORT_SYMBOL_GPL(snd_soc_usb_disable_offload_jack);
->  
-> +/**
-> + * soc_usb_get_offload_device - Set active USB offload path
+> What page_get_link() does is reading from page cache of symlink;
+> the contents should have come from ->read_folio() (if it's really
+> a symlink on squashfs, that would be squashfs_symlink_read_folio()).
+> 
+> Uninit might have happened if
+> 	* ->read_folio() hadn't been called at all (which is an obvios
+> bug - that's what should've read the symlink contents) or
+> 	* ->read_folio() had been called, it failed and yet we are
+> still trying to use the resulting page.  Again, an obvious bug - if
+> trying to read fails, we should _not_ use the results or leave it
+> in page cache for subsequent callers.
+> 	* ->read_folio() had been called, claimed to have succeeded and
+> yet it had left something in range 0..inode->i_size-1 uninitialized.
+> Again, a bug, this time in ->read_folio() instance.
+read_folio, have you noticed that the file value was passed to read_folio is NULL? 
+fs/namei.c
+const char *page_get_link(struct dentry *dentry, struct inode *inode
+...
+5272  read_mapping_page(mapping, 0, NULL);
 
-get or set?
-
-> + * @dev - USB device to get offload status
-> + * @card - USB card index
-> + * @pcm - USB PCM device index
-> + *> + * Fetch the current status for the USB SND card and PCM device
-indexes
-> + * specified.
-
-the function returns an integer, how does this return the 'mapped indices"?
-
-> + */
-> +int soc_usb_get_offload_device(struct device *dev, int card, int pcm,
-> +				enum snd_soc_usb_kctl route)
-
-missing route in kernel doc.
-
-> +{
-> +	struct snd_soc_usb *ctx;
-> +	int ret;
-> +
-> +	ctx = snd_soc_find_usb_ctx(dev);
-> +	if (!ctx)
-> +		return -ENODEV;
-> +
-> +	mutex_lock(&ctx_mutex);
-> +	if (ctx && ctx->get_offload_dev)
-> +		ret = ctx->get_offload_dev(ctx->component, card, pcm, route);
-> +	mutex_unlock(&ctx_mutex);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(soc_usb_get_offload_device);
-> +
->  /**
->   * snd_soc_usb_find_priv_data() - Retrieve private data stored
->   * @dev: device reference
-
+So, Therefore, no matter what, the value of folio will not be initialized by file
+in read_folio. 
 
