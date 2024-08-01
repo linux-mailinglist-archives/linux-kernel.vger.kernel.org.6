@@ -1,114 +1,133 @@
-Return-Path: <linux-kernel+bounces-271802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8695D94535F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:27:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55383945361
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95221C20C5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:27:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D04C1B22618
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:27:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAE414A0A7;
-	Thu,  1 Aug 2024 19:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D9C14A4F1;
+	Thu,  1 Aug 2024 19:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L25Vj7Nl"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BctJWv/G"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D971487E9
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF90B149C68
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722540432; cv=none; b=pQHTZUe6IhHVnfXkj6SiaiMl+ls6kUCKGzNKJnc4bHmh15/3BUxeNNryvTJ/5IxODD8TmG7QTPFujx7jZnSU0GLMLY5Mjc3fHnkirm0U+c1dl1Xb1gWQ54ofRWjSXTIfbDvUW5GvJri131l9KUnhGdJLX0UxvHReuTXyDLbuiTA=
+	t=1722540439; cv=none; b=t8bV0DoZpcN5/EimO083eW3tr5DYgIqsFL43scLP6x62fHnG8SC1kOZxhodcP9VAk03m/b+XFA3qTTYa2aXU4yVw3yuA7GsscIAuic7kNXDbctecOEA3U56YrtobTr1u6eF7ez1PMEo1WkwOigRd6Fae5+mM5ZC233vRpcBV4zk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722540432; c=relaxed/simple;
-	bh=wkOZCY9N+tEWf9xzIT9PoKCpQBLabjsUfn7YGlJsLAk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G0IY6tHHXOT3t0HWcpldPs/O30tbm2tJ6qGZq7ByItX9yulUJ1tTc077vffjnioNDFY509lx9rX3GnD1PE6Bsiq/IqDhFGrbhk8b5BG1erMBukG03Egy2a+F2yPOL62BPPqhHBgHOi+G1r6iWofjpxxRJoQQ9Lkyjf5bh4LteaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L25Vj7Nl; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso107464021fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 12:27:10 -0700 (PDT)
+	s=arc-20240116; t=1722540439; c=relaxed/simple;
+	bh=tywakX45M1InnvuZ/1MtoJOyWN5YWGbgUz3ZqaFBEcA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EDkM3pJAVXG1P96QMK6RbJNVx/Qu/hqYgsK1zWoCaD8WVWjmCf5ov4ufsV4QiPeZf2F9w88zknkVqCDcgamvoNBeJjffA4gfHhzjswKjXX72EjYYmkj+YPIb3isrj8OYCnJn8dJY5yxo0Q4MsAsx3nuB9QbRvprejq2A+vuHklY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BctJWv/G; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-81f902e94e6so33482239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 12:27:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722540429; x=1723145229; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xDiQzKV7V2fFU3bp2HZ8kCtvzTR2/LI8LX+WVgvxAC8=;
-        b=L25Vj7Nl6ixJbAgxZZ2oYe1mHK0DsOj/uFkg4Yd9NstNUvxcAw6lPmD5MXsIq7ZhMN
-         ETtYpvOH7YgwzNEk+I8CeEIuSpLDtl95j61VOUieuPaNcJtc+Xu4aE3k3aiJD1yNCNbS
-         1JQY6bi7x1u+8JPg3CPoT8jSsO8s3MOui+9bLjzJUq597sG7Vi7iuzxALJZK9J3FUoLQ
-         yQ+4tyExDn4fSgll5GYIPh+j2okSgXhjjiPuR9WgQGcuj8pIWNxNtnSXP39j0VnoaZbW
-         U05GJrTFUXfZnQN2wyfYqfesGoZ7Ccol92rEDZ8ww07p3vu/Lgdv/IKHQmVb81ohl02s
-         ZRJQ==
+        d=linuxfoundation.org; s=google; t=1722540437; x=1723145237; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=t8iCP5X47UzqYC6qlEo1ldBtwUGspd9bUTugmBKJccM=;
+        b=BctJWv/Gtywp29aDAKzJq/uKSG4kqNuzP/k0kuZc0eoJBhyFn+s+cKuJ8YwO/pVRRs
+         SSFrBasnyUFYIJ9PSftK4Vua+zN5ey+EHzkdYuGDM3kNaN+YN3xitgR2x4fDiB6Jyy8g
+         byleyLjhj41zPugFM+HOGJdTze/LhUDdSP5fk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722540429; x=1723145229;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xDiQzKV7V2fFU3bp2HZ8kCtvzTR2/LI8LX+WVgvxAC8=;
-        b=hmZTZfeGtffhYin06GG2uZc5Kwo06EE927z8ygx3jBo0j0ZHfEyF5ki3F+K92JatFr
-         6A+k+bK7/oacFEFBWWhEVHf2HjyCYOhftAgKY8St/A5SAoeZnKKhyiXVnuCSufXCBwkn
-         sshYou0kcCbf/nXSPchH8Jk8z7IagUvZdm1/+wXs7Jf8yH9Ku62Uyl75nLo/ssAag9FV
-         om2WgOAIOSRgUcxeyLaD6dBosGhcL7CqKKrZEPiLSw6SSM5gqZb3zu8u+3eWZYhFMXjh
-         W1tYIbeZCXMr4aCro+1R8YzSay6xr5txjz3L9KSZFxrs/0APmRJGl5WAwXCXr16qCW84
-         Lrgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFheP3hX3xBjrWno1uiGZ2774uwuzhlrN2nITUSOotmZUCVYganQUwvW95LZyTaKq+HXRKpdapGeFdlrIAYZi+Y3ZRsZ1LF2Q6O4fe
-X-Gm-Message-State: AOJu0Ywx2Ng00A08Tl+ggMi4LqMLGNvOboSQX4a+NerRDQA8dQeeThzT
-	Re+TEcRtcfk+yNxe1RawAq10IcwZA7jLKik99aZZusoQAXMDUeDZje9x+mwCm7Q=
-X-Google-Smtp-Source: AGHT+IHKqGnemhTJWJyNS+fY4snJ4ynvhZOVxkj5ompO665PXfS0Z2yTSf0YbR0e5lrQvkeMNSvYGA==
-X-Received: by 2002:a2e:b70a:0:b0:2f1:561e:c329 with SMTP id 38308e7fff4ca-2f15aac4fb2mr11233151fa.26.1722540428301;
-        Thu, 01 Aug 2024 12:27:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15c45062csm301111fa.109.2024.08.01.12.27.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 12:27:07 -0700 (PDT)
-Date: Thu, 1 Aug 2024 22:27:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Qiang Yu <quic_qianyu@quicinc.com>
-Subject: Re: [PATCH v2] phy: qcom: qmp-pcie: Configure all tables on port B
- PHY
-Message-ID: <37id2c7h33sj7p3vlo3tiv35qta7utee6aswieyy2b64get4bk@eqjjakr743fx>
-References: <20240801-phy-qcom-qmp-pcie-write-all-tbls-second-port-v2-1-6e53c701e87e@linaro.org>
+        d=1e100.net; s=20230601; t=1722540437; x=1723145237;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t8iCP5X47UzqYC6qlEo1ldBtwUGspd9bUTugmBKJccM=;
+        b=QeqNfWS5bxPx7ShVeSrgtpeNmfDwOlhHNtcFXiKtCcunFkpWdhQ8O1pQKroR34Dlfy
+         y21sU6uePqUzpdi8VVMJtOp1TiugyLDXJh3guBvZBjgwRtr0Wc9deDHYTj/uP+1reM0M
+         68bicsqhvaOFsqQGgLjqIlHYNKIMiFAycZ99EK4hHbkxAQ+ZxkAHtmRynsVOvkL9p+4a
+         +3Bf7WsXkCQT625kCkQAOZGsVY1zpnCNitaIFV5T5W0RWxoZKwXLcyPkgkQRmhcBsY/O
+         VpdeFqqS8Kz9tqK0LgC9GPMyVqtIWWkbq3uBQUe9WMRkoufqm1GgS7HG0EbbTHEEcmXk
+         agwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFW6JmWlxs7YSW7znnEJKvkajbOuCzm1TQoQKSaqE0+4PxgJssjbY+kKLmAYjysW5UVnCRa+y8E76wxxFKRw9Er7kChjWl+6e2SEAa
+X-Gm-Message-State: AOJu0YzTaoAV1HIDq1qyM0uKjvklIa5XdEg/DcBFLwqwv4PwrokKD9dF
+	2fKxMY+yKrggR9AayvdPatk2vwI3007/HnxeTRogxIUgQNZw6JmvRvT08wu4Fac=
+X-Google-Smtp-Source: AGHT+IG+QhYotam1Zq0uZwDDVTTlIRWPmDDMs/QX6rzhcqHTGs2NgsqWN4Uu2eTVDnnUaXffRnlmYA==
+X-Received: by 2002:a5e:da04:0:b0:81f:9748:7376 with SMTP id ca18e2360f4ac-81fd42b73admr90684839f.0.1722540436687;
+        Thu, 01 Aug 2024 12:27:16 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6987e98sm78792173.29.2024.08.01.12.27.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 12:27:16 -0700 (PDT)
+Message-ID: <a32a8cdf-b488-4b6f-a0d9-d709b9beb769@linuxfoundation.org>
+Date: Thu, 1 Aug 2024 13:27:15 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-phy-qcom-qmp-pcie-write-all-tbls-second-port-v2-1-6e53c701e87e@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Add selftests/x86 entry
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, kernel@collabora.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240610052810.1488793-1-usama.anjum@collabora.com>
+ <83d0c57a-dd87-42eb-935a-e4104c17a5ed@collabora.com>
+ <3518e3ef-3444-419d-94ce-331f4e7fb391@collabora.com>
+ <257c9106-c33a-46c1-9761-111505309176@linuxfoundation.org>
+ <20240731212325.GY40213@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240731212325.GY40213@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 06:54:53PM GMT, Abel Vesa wrote:
-> From: Qiang Yu <quic_qianyu@quicinc.com>
+On 7/31/24 15:23, Peter Zijlstra wrote:
+> On Wed, Jul 31, 2024 at 12:14:16PM -0600, Shuah Khan wrote:
+>> On 7/31/24 07:42, Muhammad Usama Anjum wrote:
+>>> Kind reminder
+>>>
+>>> On 7/2/24 3:17 PM, Muhammad Usama Anjum wrote:
+>>>> Kind reminder
+>>
+>> Top post ???
+>>
+>>>>
+>>>> On 6/10/24 10:28 AM, Muhammad Usama Anjum wrote:
+>>>>> There are no maintainers specified for tools/testing/selftests/x86.
+>>>>> Shuah has mentioned [1] that the patches should go through x86 tree or
+>>>>> in special cases directly to Shuah's tree after getting ack-ed from x86
+>>>>> maintainers. Different people have been confused when sending patches as
+>>>>> correct maintainers aren't found by get_maintainer.pl script. Fix
+>>>>> this by adding entry to MAINTAINERS file.
+>>>>>
+>>>>> [1] https://lore.kernel.org/all/90dc0dfc-4c67-4ea1-b705-0585d6e2ec47@linuxfoundation.org
+>>>>>
+>>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+>>>>> ---
+>>>>>    MAINTAINERS | 1 +
+>>>>>    1 file changed, 1 insertion(+)
+>>>>>
+>>
+>> Applied to linux-kselftest next for Linux 6.12-rc1.
 > 
-> Currently, only the RX and TX tables are written to the second PHY
-> (port B) when the 4-lanes mode is configured, but according to Qualcomm
-> internal documentation, the pcs, pcs_misc, serdes and ln_shrd tables need
-> to be written as well.
-> 
-> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
-> Changes in v2:
-> - Reordered tables as Johan has suggested
-> - Link to v1: https://lore.kernel.org/r/20240726-phy-qcom-qmp-pcie-write-all-tbls-second-port-v1-1-751b9ee01184@linaro.org
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
+> You are applying things for the x86 entry, without an x86 ack, srsly?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+People are having problems with s86 selftests not making it to x86 lists.
+I figured it will make it easier for the x86 team.
 
+I don't have issues dropping this patch.
 
--- 
-With best wishes
-Dmitry
+thanks,
+-- Shuah
+
 
