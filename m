@@ -1,100 +1,96 @@
-Return-Path: <linux-kernel+bounces-270449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384B9943FF0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:56:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62063943FF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AA4A1C20D9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:56:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016411F22005
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6BE61514F5;
-	Thu,  1 Aug 2024 01:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BB315218F;
+	Thu,  1 Aug 2024 01:13:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Qhpd+P5f"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FRykYGsp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25B71514DC;
-	Thu,  1 Aug 2024 01:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A73A1514F2
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 01:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722474823; cv=none; b=HzST3KEVyIoIkRyOXX149pofXOneNYIQF0aSrsaTsrk3OXlmMjhs7IHwMQCHBH2iavgJDi3FJ0ou7HJKZaoPMUDM+BHAufxeMWk96oU0+rBSbVpmKbPdQQAasOa1begbBD0w1+9NS/D+/OZFpWKvR71ynoqrISG5iz3THKFp56M=
+	t=1722474824; cv=none; b=p8mAGsqcxiM5CqalGYV+3z8OM+T+YtC4UwA4Ir5B2aVeemVjvSY8JFTD1Xh8MtY45A7cEUFXbsaP7BkldyHSXMTQcv1pnGXwNkQQHRrLTbXtqXwLN7Xy09Ko+utnHMypNPFdKlWM42sfTzkhQri2PEJ3jYXhbdJ4J7rqoKrAv1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722474823; c=relaxed/simple;
-	bh=Sc2L9FmvJUOj/vSm51/hIH353apQq4db3uUU3zSvBoM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I4jpmx03KZOioLDwR2BcGjpxb4/rDJy1oVINZktbMNcX5NiymobIHB/CtCV8bZV8DSXzoNfxhGM1QoKhIO4eBTifP/Oxvs0NmeZ+9jW0xXT82YBJmJ8Pe4AEIuaOqD50KCycvP45h9yIQq/DIVTr2tzKYcaX+WYRxxXeq5lYcC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Qhpd+P5f; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=ARbD44MpDD7+Kxfy/q9fBBwtFNS3dL+GrbSVVXS2AZk=; b=Qhpd+P5fQcY31LHSHXYzaW91Uc
-	m9Mv05nw4KQWw2Zyg9LTsURDIfPcWgqg6Yx5vAIt8IW3TaR+Idp/T6ABgFC1ffrmMZPloZ5ni3wic
-	cQTdU8Yaj/+hSEfweQNKGSJ7RQb8rLLk3WIQNZFJ8oB27eWQfKQc88VJe16KxwcEMI1E=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sZKNn-003j4O-QP; Thu, 01 Aug 2024 03:13:31 +0200
-Date: Thu, 1 Aug 2024 03:13:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 09/10] net: hibmcge: Add a Makefile and
- update Kconfig for hibmcge
-Message-ID: <49d41bc0-7a9e-4d2a-93c7-4e2bcb6d6987@lunn.ch>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-10-shaojijie@huawei.com>
+	s=arc-20240116; t=1722474824; c=relaxed/simple;
+	bh=iCaY9gvrzLDG4TQIuFc0e8gdyx5az7aETYFhapG+6hM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kHTBNrW3EUYCigDsgHj5pNCFh07XwqU8mJoGAe0TgBpeOLE3MyZaJUzERY9nIlnJ1IjwWrnXsYdwdOI7i7zom3jleAKGhfVckH9YmSD5s2woysgRfMGdXzzRiq4Cqpfy6FJSYoRpGB/uPb6htVUWmSjr7NjKZViVY/14YpI/yuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FRykYGsp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65AD7C116B1;
+	Thu,  1 Aug 2024 01:13:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722474823;
+	bh=iCaY9gvrzLDG4TQIuFc0e8gdyx5az7aETYFhapG+6hM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FRykYGspBkyvG+rqUcywUTjNX3prk4q2/jRufiOKTukRhyAowsZ0phbLGSeYyjixy
+	 BX0cG3ZfFMJ4Auf71b9NJ2z32isp0mtkUVkN/9ejwjwhxrs1TzZ9HDqePyFiAx6wzt
+	 h3Kqp3wpne08KlcuEMEH2qoIbAT0aSZRIuBpxJicUopYGXq5ItCcyf6rqjz7CmoQMC
+	 BApx8h/FX4C0pvBhjZIVXKiAXuzgHdFtm+IyiKgNv5bu5a9MbFeys/DAcIAxj3ebF+
+	 PGeQHpnLxD+gOlUBgNe3VA46BKvQvYiH6R2JdKQZcw7S5GKonnVLLMV8bqnrlmWzn0
+	 /kMJgbbHW3H+Q==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>
+Subject: [PATCH v3 3/4] f2fs: atomic: fix to truncate pagecache before on-disk metadata truncation
+Date: Thu,  1 Aug 2024 09:13:37 +0800
+Message-Id: <20240801011337.3772536-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731094245.1967834-10-shaojijie@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 05:42:44PM +0800, Jijie Shao wrote:
-> Add a Makefile and update Kconfig to build hibmcge driver.
-> 
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> ---
->  drivers/net/ethernet/hisilicon/Kconfig          | 17 ++++++++++++++++-
->  drivers/net/ethernet/hisilicon/Makefile         |  1 +
->  drivers/net/ethernet/hisilicon/hibmcge/Makefile | 10 ++++++++++
->  3 files changed, 27 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/Makefile
-> 
-> diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/hisilicon/Kconfig
-> index 3312e1d93c3b..372854d15481 100644
-> --- a/drivers/net/ethernet/hisilicon/Kconfig
-> +++ b/drivers/net/ethernet/hisilicon/Kconfig
-> @@ -7,7 +7,7 @@ config NET_VENDOR_HISILICON
->  	bool "Hisilicon devices"
->  	default y
->  	depends on OF || ACPI
-> -	depends on ARM || ARM64 || COMPILE_TEST
-> +	depends on ARM || ARM64 || COMPILE_TEST || X86_64
+We should always truncate pagecache while truncating on-disk data.
 
-It is normal to have COMPILE_TEST last.
+Fixes: a46bebd502fe ("f2fs: synchronize atomic write aborts")
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v3:
+- check dirty page before truncation
+- use invalidate_mapping_pages() instead of truncate_inode_pages()
+- set i_size to zero after truncation
+ fs/f2fs/file.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Any reason this won't work on S390, PowerPC etc?
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index ac61c88f7688..a316c21539d1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2199,11 +2199,17 @@ static int f2fs_ioc_start_atomic_write(struct file *filp, bool truncate)
+ 		F2FS_I(fi->cow_inode)->atomic_inode = inode;
+ 	} else {
+ 		/* Reuse the already created COW inode */
++		f2fs_bug_on(sbi, get_dirty_pages(fi->cow_inode));
++
++		invalidate_mapping_pages(fi->cow_inode->i_mapping, 0, -1);
++
+ 		ret = f2fs_do_truncate_blocks(fi->cow_inode, 0, true);
+ 		if (ret) {
+ 			f2fs_up_write(&fi->i_gc_rwsem[WRITE]);
+ 			goto out;
+ 		}
++
++		i_size_write(fi->cow_inode, 0);
+ 	}
+ 
+ 	f2fs_write_inode(inode, NULL);
+-- 
+2.40.1
 
-> +if ARM || ARM64 || COMPILE_TEST
-> +
-
-You would normally express this with a depends on.
-
-	Andrew
 
