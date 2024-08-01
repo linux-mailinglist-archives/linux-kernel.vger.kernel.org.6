@@ -1,127 +1,133 @@
-Return-Path: <linux-kernel+bounces-270471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FD79944048
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:03:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E07D943FF9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D28881F23764
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:03:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3275E1C219A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 01:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613CF18DF8B;
-	Thu,  1 Aug 2024 01:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E975A14A0A3;
+	Thu,  1 Aug 2024 01:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QCrL/2X2"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Lm2uO4v7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4547E189523;
-	Thu,  1 Aug 2024 01:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7705149C6D;
+	Thu,  1 Aug 2024 01:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722475124; cv=none; b=FU2xpPNXsD+4P7seV/TceldwnOadOtAgWyaUCscVFQaLnv222lL2jbqISVFBoT0dDYYo41UY+CPD4qxPY8lzOf7Tst/U6lvZuDw8BkcKg6uRMNNqP4ahCGVCH2iYdjdXcG7CopCP06UveVrbjQxhMat4QxMAgz5vAG4zeLQ2ix4=
+	t=1722475092; cv=none; b=TcLgmGHYAUbvS15L3HBcKOx6TBQCaWbMD0ZtUbgPTxJkBqNxjeZZux97g1n2yiAYhKU81cybbrsAnTYYyAM9DJF09nl31QOlO9Wd9Gcns6Yg/DNRuBLRPRS0X1SNT3F2lAuYBUK7FHjWf1HBOYvPzotb28jcCuk/qODVYnSxakc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722475124; c=relaxed/simple;
-	bh=zXJYxoowjLCGGs/moXG9k9H4KOG3qRzqvJSx6i1jyIo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E6PMjIlAHyo0IGvsK1HyVrPGdixVMOCSzh3xTZhqW6BJFZmBE6PJOjpnj/aZTaHZOZIZeBaBOsgeARmDjWPwPB60IIy3KttghVzbXCw81DOJ/CHwPv3KF5YeHT6Hnt+qWLzdgmlpA1LCW9N3YVAmTKgkr1LY88QyBfBntpV84Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QCrL/2X2; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46VLAJRX006082;
-	Thu, 1 Aug 2024 01:17:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=0YyrBOfLud+dH9tBesRDPfRK
-	DGs1gz1i/U8ghzKbd2E=; b=QCrL/2X26/TttjkdVba8u7UWZ/eIR4QHx57yZWVN
-	3izM0hmOOoYt+JBp8jlRlxHwJ+idRD1XSs7CU/F25tQM1jbdOT+LWuPiEk0xmIv0
-	WNYaADRaL90O+c3HJNlEefLNfh4dAKifqG6c93VHYefyfKKu+fHq6y9onQ3+gzHZ
-	5TZSq74wI6xQPxGXM31osGtYuosZgkT0SfVMrrrR+Om+neCWsLYDCzrIMAyCZY3q
-	eM72P5L6wgG3qav83q2pAl/Wtd09MfIpQi9vL/1+YdOpEuUTXYl70yknjxKzGspk
-	zEm3v7hqzifExoTj4h1l+kLHW2QSOhOgc/w78cScudErpg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pq5278fm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 01:17:52 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4711HpNI026929
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 1 Aug 2024 01:17:51 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 31 Jul 2024 18:17:50 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
-        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
-        <gregkh@linuxfoundation.org>, <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>, Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: [PATCH v24 34/34] ASoC: qcom: qdsp6: Ensure PCM format is supported by USB audio device
-Date: Wed, 31 Jul 2024 18:17:30 -0700
-Message-ID: <20240801011730.4797-35-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240801011730.4797-1-quic_wcheng@quicinc.com>
-References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1722475092; c=relaxed/simple;
+	bh=eG0d2A8LGbY0khAvkudvgWKfframij3BMS7C7EZ2tyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UwZPwhtOAk4dsZcN6/LT/TPGD7h2HuGJI2y5y7+twsv5VTN/ND5o1VB2IlaXR9+b+RMIvH95GT/EuG6o+w+PTeBR1NaFIR6VEbaqHM15w8kS/4hzX2U011/uqDIE5J2UDTqYtXAvAfGQ6WJxie1p8PxKFGK4Pzm2o8myIMsqKD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Lm2uO4v7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722475084;
+	bh=tW1zyvH/+6rUIbk5j37lWHaekfpVhhTK6eHLoZm/4/s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lm2uO4v7fTcHRevDxyMxdQu+GY2ebNGU5bHwdbc42y7ghNo511pJ/FjkCWAAUUdzC
+	 4GzxseVNmpeEkBjfgwdClfce/vyhlceik1jEjYBhU8s07SyGdncuLkxUCcW7wZqv30
+	 PTEuw7TKiMDR+8bZnYUzGfpmh9+W3NhLJRJyIGKD85rAHFXY0hvAA8QZiNERPOK/Da
+	 w1nvr6rCj+ADbjqMaHoEca705hmcWiEDwIfgMcCR3wg2jnSNGOdVGIPQcGB4Rg1zWH
+	 2axnKB0LCXr/LiTZBaYnsa0hYymJfZ+TIViYhJn59xG7eZHgs45Qalhm+Vyn84pZ1c
+	 qmq38hoyxGqGA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZB0q4cg6z4wZx;
+	Thu,  1 Aug 2024 11:18:03 +1000 (AEST)
+Date: Thu, 1 Aug 2024 11:18:02 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Subject: linux-next: manual merge of the drm-misc tree with the
+ drm-misc-fixes tree
+Message-ID: <20240801111802.3723a203@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9LmxEnlmigDKbRJHAXQqAhHAThcfJJS3
-X-Proofpoint-ORIG-GUID: 9LmxEnlmigDKbRJHAXQqAhHAThcfJJS3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_11,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 clxscore=1015 malwarescore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010004
+Content-Type: multipart/signed; boundary="Sig_/l3o_30aUQRg51Gmy=WMn7mu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Check for if the PCM format is supported during the hw_params callback.  If
-the profile is not supported then the userspace ALSA entity will receive an
-error, and can take further action.
+--Sig_/l3o_30aUQRg51Gmy=WMn7mu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
----
- sound/soc/qcom/qdsp6/q6usb.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Hi all,
 
-diff --git a/sound/soc/qcom/qdsp6/q6usb.c b/sound/soc/qcom/qdsp6/q6usb.c
-index d8f1bb4ec497..9a3fb3cb32b2 100644
---- a/sound/soc/qcom/qdsp6/q6usb.c
-+++ b/sound/soc/qcom/qdsp6/q6usb.c
-@@ -52,6 +52,7 @@ static int q6usb_hw_params(struct snd_pcm_substream *substream,
- 	struct q6usb_port_data *data = dev_get_drvdata(dai->dev);
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
-+	int direction = substream->stream;
- 	struct q6afe_port *q6usb_afe;
- 	struct snd_soc_usb_device *sdev;
- 	int ret;
-@@ -63,6 +64,10 @@ static int q6usb_hw_params(struct snd_pcm_substream *substream,
- 	mutex_lock(&data->mutex);
- 	sdev = list_last_entry(&data->devices, struct snd_soc_usb_device, list);
- 
-+	ret = snd_soc_usb_find_supported_format(sdev->chip_idx, params, direction);
-+	if (ret < 0)
-+		goto out;
-+
- 	q6usb_afe = q6afe_port_get_from_id(cpu_dai->dev, USB_RX);
- 	if (IS_ERR(q6usb_afe))
- 		goto out;
+Today's linux-next merge of the drm-misc tree got a conflict in:
+
+  drivers/gpu/drm/ast/ast_drv.h
+
+between commit:
+
+  0ce91928ec62 ("drm/ast: astdp: Wake up during connector status detection")
+
+from the drm-misc-fixes tree and commit:
+
+  c91d75a3c6a2 ("drm/ast: astdp: Test firmware status once during probing")
+
+from the drm-misc tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/ast/ast_drv.h
+index 47bab5596c16,b54a89676e9f..000000000000
+--- a/drivers/gpu/drm/ast/ast_drv.h
++++ b/drivers/gpu/drm/ast/ast_drv.h
+@@@ -471,9 -471,9 +471,10 @@@ void ast_init_3rdtx(struct drm_device *
+  /* aspeed DP */
+  bool ast_astdp_is_connected(struct ast_device *ast);
+  int ast_astdp_read_edid(struct drm_device *dev, u8 *ediddata);
+- void ast_dp_launch(struct drm_device *dev);
++ int ast_dp_launch(struct ast_device *ast);
+ +bool ast_dp_power_is_on(struct ast_device *ast);
+  void ast_dp_power_on_off(struct drm_device *dev, bool no);
++ void ast_dp_link_training(struct ast_device *ast);
+  void ast_dp_set_on_off(struct drm_device *dev, bool no);
+  void ast_dp_set_mode(struct drm_crtc *crtc, struct ast_vbios_mode_info *v=
+bios_mode);
+ =20
+
+--Sig_/l3o_30aUQRg51Gmy=WMn7mu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmaq4koACgkQAVBC80lX
+0GxA2Af/cbNs2BlwTCMCerVN8tIWLM0msFK9LFtdyB0zCfl+8Gm/Irj+65HHRss5
++lkLZ+ioNnmIOmHWgztZ6aKaw0YEHHHKukg9wYiUH+fG99m83/1axl7pO3V5SjRY
+I92L5jEPjlqLGxjGLZ62m8CXJoaZuL6DyGYCfJ6HwXrDoYoq+gQJIU/cdw+0HZO0
+xJM6jWlUjDDiwbzLkGLxw5VHKtZeLV7CwjwpBpnvikNKIPqH5iyf5og9XxC8JtaG
+zkOErxxoUyj+8BKWFoWYukTrKSqjnsG1wzqoIQAgn2znixBLZg4fVMXtwCK1Q1uS
+etNwUEiLyxVp3LtFJsnLtWnOHXeB5w==
+=Eaeh
+-----END PGP SIGNATURE-----
+
+--Sig_/l3o_30aUQRg51Gmy=WMn7mu--
 
