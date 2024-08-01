@@ -1,98 +1,115 @@
-Return-Path: <linux-kernel+bounces-271213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8C2944B26
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:19:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B515E944B69
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AEC01F23F6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E55B91C24B03
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 629CE1A01AB;
-	Thu,  1 Aug 2024 12:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1u5ggvQk"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA8B1A01C6;
+	Thu,  1 Aug 2024 12:34:11 +0000 (UTC)
+Received: from mail.actia.se (mail.actia.se [212.181.117.226])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9651216D9A8;
-	Thu,  1 Aug 2024 12:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34E01A00FF;
+	Thu,  1 Aug 2024 12:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.181.117.226
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722514717; cv=none; b=FIC5e41hlxY+Iim1GpvB2DN7SVcPwFf1iRLUnNtl/lfUtqcPs8QkY7N/UYQtvRjBbliiciSVnWZJ0Qf6Rxl+kxMEmIv/VsvdfmXAfAT6g9nfmhm8i+Mo/WQQmQpbohhoK9cs1ANZmotM0OyATiJpuob2yMiieEeAZ2OyF4gqqyQ=
+	t=1722515651; cv=none; b=Zc0d8vxSiQz0Ch9LPXCgWnuCVA709QP/xJ7uydkQAO+BB2egH6fHBTXw9gVnN5jql/Lw9ZphncmAdiyidWPtX4LvJDaVl34OaQqqoxGHwnI5S67W+xaHW/4Fr6ddlD2JR/v3uBtkXxAuU0KWrz2HMisnwvg0VXhhzhvgR2hJOXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722514717; c=relaxed/simple;
-	bh=LDwo6GVqWa/fMrKei3jSRz8/DP92yapme6+4Dyf05Cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uLZDU9woV2lUAGboatg5R9bEabQTtEha+Y+r5QjURNdEyuCfa9c9ZljaKpXYvZwItQXe2wJZHlQBOOElM/ZMbvmz2MmvK0pMIH2qXzSTAavAfJQFjS3zXnl236XqEDfbNLqRCpBJc4hOCk587lSiVEgqDOjm/aFLOn/XghGdlEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1u5ggvQk; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=joj3wlE+8kLlOIDEtqDoGzBKrGN3QgIw67ksAUCM460=; b=1u5ggvQkWSApQIv38XoXUlDawO
-	RliSRywn3ZKN9sCFJ9j6Y5esrScVkTUiRgJ2XdSaQtbF7JAYtPj4BPjmn9f9a2XiplKtOjfswGcSL
-	4M1OhozsZWQKzS4SSdNc50fmEx+S9hdub8V8cchRY8IGB5GY1fYY5R/AO7WuhmyhG0w4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sZUlG-003lw1-5J; Thu, 01 Aug 2024 14:18:26 +0200
-Date: Thu, 1 Aug 2024 14:18:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 05/10] net: hibmcge: Implement some .ndo
- functions
-Message-ID: <ffd2d708-60fb-4049-8c1b-fcfe43a78d57@lunn.ch>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-6-shaojijie@huawei.com>
- <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
- <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
+	s=arc-20240116; t=1722515651; c=relaxed/simple;
+	bh=GO1DNXLAxTGpiXqICxbOvHwvsT/RQZKA4vGlrgQvLvI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HhFRS75Tzv/d8LpAT2lhpSuYSjMuR9HGtH1O4nJfkwpzYdq4rteEzd0THyfsDR5xSMkhqm9/JmSeJ6kJL/2DPxBGwHH8cZwVwUiL1ZZmzXW+oAvCw8tR6wd+jlZKjsEol7MzAFJQyVdkmeg784Dvn6mrJbZHqDP8c4cJDDrisxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=actia.se; spf=pass smtp.mailfrom=actia.se; arc=none smtp.client-ip=212.181.117.226
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=actia.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=actia.se
+Received: from W388ANL.actianordic.se (10.12.12.26) by S035ANL.actianordic.se
+ (10.12.31.116) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 1 Aug
+ 2024 14:18:56 +0200
+From: Jonas Blixt <jonas.blixt@actia.se>
+To: <wim@linux-watchdog.org>, <linux@roeck-us.net>, <shawnguo@kernel.org>,
+	<s.hauer@pengutronix.de>, <kernel@pengutronix.de>, <festevam@gmail.com>,
+	<linux-watchdog@vger.kernel.org>, <imx@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <john.ernberg@actia.se>, Jonas Blixt <jonas.blixt@actia.se>, Anson Huang
+	<anson.huang@nxp.com>
+Subject: [PATCH] watchdog: imx_sc_wdt: Don't disable WDT in suspend
+Date: Thu, 1 Aug 2024 14:18:45 +0200
+Message-ID: <20240801121845.1465765-1-jonas.blixt@actia.se>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2956B14454667063
 
-On Thu, Aug 01, 2024 at 05:13:33PM +0800, Jijie Shao wrote:
-> 
-> on 2024/8/1 8:51, Andrew Lunn wrote:
-> > > +static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
-> > > +{
-> > > +	struct hbg_priv *priv = netdev_priv(dev);
-> > > +	u8 *mac_addr;
-> > > +
-> > > +	mac_addr = ((struct sockaddr *)addr)->sa_data;
-> > > +	if (ether_addr_equal(dev->dev_addr, mac_addr))
-> > > +		return 0;
-> > > +
-> > > +	if (!is_valid_ether_addr(mac_addr))
-> > > +		return -EADDRNOTAVAIL;
-> > How does the core pass you an invalid MAC address?
-> 
-> According to my test,
-> in the 6.4 rc4 kernel version, invalid mac address is allowed to be configured.
-> An error is reported only when ifconfig ethx up.
+Parts of the suspend and resume chain is left unprotected if we disable
+the WDT here.
 
-Ah, interesting.
+From experiments we can see that the SCU disables and re-enables the WDT
+when we enter and leave suspend to ram. By not touching the WDT here we
+are protected by the WDT all the way to the SCU.
 
-I see a test in __dev_open(), which is what you are saying here. But i
-would also expect a test in rtnetlink, or maybe dev_set_mac_address().
-We don't want every driver having to repeat this test in their
-.ndo_set_mac_address, when it could be done once in the core.
+CC: Anson Huang <anson.huang@nxp.com>
+Fixes: 986857acbc9a ("watchdog: imx_sc: Add i.MX system controller watchdog support")
+Signed-off-by: Jonas Blixt <jonas.blixt@actia.se>
+---
+ drivers/watchdog/imx_sc_wdt.c | 24 ------------------------
+ 1 file changed, 24 deletions(-)
 
-	Andrew
+diff --git a/drivers/watchdog/imx_sc_wdt.c b/drivers/watchdog/imx_sc_wdt.c
+index e51fe1b78518..d73076b686d8 100644
+--- a/drivers/watchdog/imx_sc_wdt.c
++++ b/drivers/watchdog/imx_sc_wdt.c
+@@ -216,29 +216,6 @@ static int imx_sc_wdt_probe(struct platform_device *pdev)
+ 	return devm_watchdog_register_device(dev, wdog);
+ }
+ 
+-static int __maybe_unused imx_sc_wdt_suspend(struct device *dev)
+-{
+-	struct imx_sc_wdt_device *imx_sc_wdd = dev_get_drvdata(dev);
+-
+-	if (watchdog_active(&imx_sc_wdd->wdd))
+-		imx_sc_wdt_stop(&imx_sc_wdd->wdd);
+-
+-	return 0;
+-}
+-
+-static int __maybe_unused imx_sc_wdt_resume(struct device *dev)
+-{
+-	struct imx_sc_wdt_device *imx_sc_wdd = dev_get_drvdata(dev);
+-
+-	if (watchdog_active(&imx_sc_wdd->wdd))
+-		imx_sc_wdt_start(&imx_sc_wdd->wdd);
+-
+-	return 0;
+-}
+-
+-static SIMPLE_DEV_PM_OPS(imx_sc_wdt_pm_ops,
+-			 imx_sc_wdt_suspend, imx_sc_wdt_resume);
+-
+ static const struct of_device_id imx_sc_wdt_dt_ids[] = {
+ 	{ .compatible = "fsl,imx-sc-wdt", },
+ 	{ /* sentinel */ }
+@@ -250,7 +227,6 @@ static struct platform_driver imx_sc_wdt_driver = {
+ 	.driver		= {
+ 		.name	= "imx-sc-wdt",
+ 		.of_match_table = imx_sc_wdt_dt_ids,
+-		.pm	= &imx_sc_wdt_pm_ops,
+ 	},
+ };
+ module_platform_driver(imx_sc_wdt_driver);
+-- 
+2.34.1
+
 
