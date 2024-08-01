@@ -1,314 +1,172 @@
-Return-Path: <linux-kernel+bounces-271200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFBE944AC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:01:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B57A944AC1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D186A1F2324C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:01:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F0901C25C02
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD681A0703;
-	Thu,  1 Aug 2024 12:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDA319E7D0;
+	Thu,  1 Aug 2024 12:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mvRorhY5"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2044.outbound.protection.outlook.com [40.107.243.44])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="id7vIxuG"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D18A19E81F;
-	Thu,  1 Aug 2024 12:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722513654; cv=fail; b=l7MApF5akf8mn5Ge7YuqwoJnGAsRYHxjNHcx8CDv/xLoiGROExlC25ILbcGtkX27VolXvRn8aDyxABrzQXnMUXaWHA4JRHHVzyIxbBk5zov1hezNu7rljxqFHIOFNgdZ3ZvYKGS62nfZRxO57G3NTSjseZQmWNcAI524+jxsDKI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722513654; c=relaxed/simple;
-	bh=0EBtVRHt4serazTpODaBBzbM1CQWFB581YXNockqjIo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=izplJABrc1BNcSAaHRiqsYMeAcXHldtBqdvBmPDdFjKExmbwt0hLtJa4gTGn8XuQtk4xDPDj2yObq6LTiChJoLCQoUavRMfziQfOAtrK445fGiviSEs6kSdczjY9xodAGSyJ5W1JYjfvkys/86KH58fCepv/K3FkITXuaD/sjwA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mvRorhY5; arc=fail smtp.client-ip=40.107.243.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rWhp5MKLty5tdG0I4TUEzio5OOeyUozBVRnfFD5ag4pfkFm2Rs+bLsYSRXIduHhywHYEVm8wtumbKBtdjC5MJx8CraEeuM439Qa1qbWT34MLrFRzJt7SF4zhIg4XHzijjIyJdA5TOnC5ykqszrtLUQ+nbtxallqXlh804M5r3bJ4MowD/sZ9c2OsbgLg80nTRWbQNIMiCxLzESwUdKwZcVrQfv5s55iXTivTFG8huI/TWlA7Kk9UGQQ+2lxI4sBzOJhQ925p68G2yuRJ3w5v5vCiwyzyQW6ggMgRYviLjso0IqLQKAjNgCKbGGEsO8pa/LwG90UWJBrVbneRAZjN9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/mgQnQujlDRhyvJfjgDxSZYbzQSOlQeubMM4Tmo472w=;
- b=QDcepiJkYSHvopIpiuoYNHcT7aAgqlie2tlV1PyA8BeGdqoiKHHRP/rJibAvQs1+YqrCVvGWaLpcmmbaty619IORMoIWEbWYWf5gmjCz/+qbBQMwZviw7dJo311GpOBpfJP4KSRUvvypSCNX9O2wK59okqoZwBekJGT0IK9aW7y6pMrpwwIf6kVGLeS0i0bOWzl/42ry9Bx4/U+1q4iOmS6NiReEr+GGf727LT2++cbCYxZ+qwWFgnhqrxYIYUQ084tk9MVone8+DjiUQSX/RhOpzeCReq9kagSzfYgPADVL5ieJNnjFTw4XzC1pfKnRjIF4gV/ifWqm3YlLnxNCtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linaro.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/mgQnQujlDRhyvJfjgDxSZYbzQSOlQeubMM4Tmo472w=;
- b=mvRorhY5AuuzyLVT0iUkZbuEnUUitoRj2jHUfYt6tn15i8pf47v8M24SIyHpSsZ5xm95BmGdrrx41nSIG3UDwoqEJ3gVmciHK1stoJd0VXnvZvHV+8BykqeE3X/1IhIS6ldvfcMVlIMtjGr5mHFFAb2A+jTVseViOOkkpvyglQI=
-Received: from DM5PR08CA0054.namprd08.prod.outlook.com (2603:10b6:4:60::43) by
- BL1PR12MB5827.namprd12.prod.outlook.com (2603:10b6:208:396::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Thu, 1 Aug
- 2024 12:00:48 +0000
-Received: from DS2PEPF00003440.namprd02.prod.outlook.com
- (2603:10b6:4:60:cafe::be) by DM5PR08CA0054.outlook.office365.com
- (2603:10b6:4:60::43) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23 via Frontend
- Transport; Thu, 1 Aug 2024 12:00:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS2PEPF00003440.mail.protection.outlook.com (10.167.18.43) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 12:00:47 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 1 Aug
- 2024 07:00:46 -0500
-Received: from xhdlakshmis40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 1 Aug 2024 07:00:43 -0500
-From: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
-To: Linus Walleij <linus.walleij@linaro.org>, Michal Simek
-	<michal.simek@amd.com>, Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, "Jay
- Buddhabhatti" <jay.buddhabhatti@amd.com>, Praveen Teja Kundanala
-	<praveen.teja.kundanala@amd.com>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<saikrishna12468@gmail.com>, <git@amd.com>, Sai Krishna Potthuri
-	<sai.krishna.potthuri@amd.com>
-Subject: [PATCH v3 3/3] pinctrl: pinctrl-zynqmp: Add support for Versal platform
-Date: Thu, 1 Aug 2024 17:30:29 +0530
-Message-ID: <20240801120029.1807180-4-sai.krishna.potthuri@amd.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240801120029.1807180-1-sai.krishna.potthuri@amd.com>
-References: <20240801120029.1807180-1-sai.krishna.potthuri@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67C7C196DA1
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722513669; cv=none; b=Io72j7LeGkkQwzbFaS0SrLF+LvxQVB7F5/8MgeACI9eaFn2FhoZw21ouFLfxyO3bX0FpcOAtOYj9V99b/vc6+KqkDYVHknIKmHVpMhFA/3qhSPY9dtJBe/ST7e+olhaqqka2IU32gFUaWzxwdgugvTbdbEfNm6kAlngbAW+fpA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722513669; c=relaxed/simple;
+	bh=wQMVKFvI0wEAdcNShHStxBQkuySTWHo9KALl2KgeK5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=GIFsrJP0TdwbN+sZOoPaz2gkvkUCpbcZyxLCmCg7mt04orDvCq7d8oJ9OBGrjETBBs6Q3B95t7lsevuFq556el4T24iX7BR9OkAmbppjNvu8ngUDdk5tO+3JUh0GyUpUQ/bDKLq2ECWWT29afEu323Xp3NwgyER4/egQ5o0LdTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=id7vIxuG; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240801120058euoutp02e770a05af0709f417b20d3fab8c52420~nmQu9TE352873728737euoutp02I
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:00:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240801120058euoutp02e770a05af0709f417b20d3fab8c52420~nmQu9TE352873728737euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722513658;
+	bh=kjW/axZWCmhXZjymH//wwAFqqKZRkQUfK5yHOQ5BNEo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=id7vIxuGmBVaxNPJgZiC7Riqc/H3IKP+aq5x3dXdHWNQRvXvEcLW22UNgU1FQgLbA
+	 IvprcbpA/iULRKCHZCo/xnmu8d+fg+0QQ/7oEa6G3MaDxOtib0oyyqNlrnBcTIWs0m
+	 QviuKFpswNWwGId8PgJy74O8tR6Rm/QUkTmyvtvQ=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240801120058eucas1p2b6bdd16c5407aaf3ca9791ba09b11210~nmQu0NkeI2791827918eucas1p2o;
+	Thu,  1 Aug 2024 12:00:58 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id B7.E2.09875.9F87BA66; Thu,  1
+	Aug 2024 13:00:57 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240801120057eucas1p18ac6d3634881e66f089eede5b2a3439f~nmQucMjJ42297922979eucas1p12;
+	Thu,  1 Aug 2024 12:00:57 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240801120057eusmtrp26424c3b0a67c3261bacbd96cd6f5331c~nmQubYLUt1706517065eusmtrp2m;
+	Thu,  1 Aug 2024 12:00:57 +0000 (GMT)
+X-AuditID: cbfec7f4-131ff70000002693-ec-66ab78f9870f
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id E6.F5.09010.9F87BA66; Thu,  1
+	Aug 2024 13:00:57 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240801120057eusmtip1915f2fa26dd4e9f73f5478c4bee8dc38~nmQt-oE3q2547325473eusmtip1m;
+	Thu,  1 Aug 2024 12:00:57 +0000 (GMT)
+Message-ID: <5895603b-945f-4b05-991c-76b590094354@samsung.com>
+Date: Thu, 1 Aug 2024 14:00:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB04.amd.com: sai.krishna.potthuri@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS2PEPF00003440:EE_|BL1PR12MB5827:EE_
-X-MS-Office365-Filtering-Correlation-Id: f83ba7c8-3c2c-4c67-9be3-08dcb22194db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5wQ4OLRrbiVV+Gn/ew3oYWQRzid7DO35l2dKYISsL5HkbpWodrgE8MtTY73X?=
- =?us-ascii?Q?lKi9xLHenEO/FePp/d7IBIe5scJ+//nl569qi+0j/5huw/wjXJ5OYEiCc4J8?=
- =?us-ascii?Q?ekBLgxDWk2k4GMgyyRHVWcH+tHU1ZkIB7438OOY0LLA+DLdKhje7SQsAdGvo?=
- =?us-ascii?Q?JDvU8fbVKZF+us9g5g+w4gQe5nUsxtSA6taC2MNgiK16f1oUkdUBZajcUE3U?=
- =?us-ascii?Q?pSVHTDwcZo05oX66IrobEA3LTUMe31F15l6g09Kse/2tnDORAB8ZRCLlkKts?=
- =?us-ascii?Q?+QoBtouYPXoHbd+/FiCQUol2Li1PU3CUImXmnq77I/WMlaq894am2Hemb9rD?=
- =?us-ascii?Q?CVqsjTtGcr7OiIYSxECkxv0nFFn6HYhZMOy2mUnyAey/aUBcVwTr0xiFs8ez?=
- =?us-ascii?Q?bw9sN7eB0QkeBheb3Ml7FCs5zgTJ66zAkTV3iutmx9uc1Qo/5xkTlUyv4lNk?=
- =?us-ascii?Q?KM1f4DwneQ5CPxNWsaZOUscMmggazf26iJBRZhCS+ub/Yh5kXpousXMS0Y6q?=
- =?us-ascii?Q?7HUNin3rQEaKQ0Qh/A+02MiSgyDZP+BWp+MEVCUvRBQVWlaLz44PbaBAlbmM?=
- =?us-ascii?Q?ztbGJHh68PJGdmLW9MulbvuLo2b6rbHaNk/yndA4k3UK9Qtn1TJ7gjwarh0k?=
- =?us-ascii?Q?ES+UxGwKQmdGcmHAB1FIDBArebUtx42L9QNKG+LEvBsV6sY8CA/yOSDMlXxE?=
- =?us-ascii?Q?gnj+IFPL86WZ4PO4HE29vztFlja8TaqNTYpQ6n6rEnnuKEB4widhO/6Em1Pd?=
- =?us-ascii?Q?LSDSEU/W1lSfniVupDGgn2F6yCZb1+ySpFPEPgqlY+YWor3LGPzzTxYZQ4yd?=
- =?us-ascii?Q?D9O6r7x8xedrwQEBd+7sfYvap9+xoJDzimhMFJPGOTbE5tT8AV2rPpx04ltx?=
- =?us-ascii?Q?R5/BD4F4tj0e1vP6Uli/mYgwZWSYgOR7qd0njyNg2zF1ikm0ITLu8epT+gMX?=
- =?us-ascii?Q?kah79zlgjtGa3iB3Fg2APuZdp3pFkBPXPFICVy/0KrdXXpfhzqXkcRyxWjo5?=
- =?us-ascii?Q?nHwstHS3OfH5oImxSZVdwp/FIX+2gG73ZhrLi0onD2piV7U41KhnStMlZkzK?=
- =?us-ascii?Q?LofXQGwX4z++iVjW6bZ6qQlF1x8kA7TlyGPIzHR9YBhWSyC/8w6LbM8Icz70?=
- =?us-ascii?Q?4UsJM/mOrzugGgRLGqgaKq5fJ44nKME0l1EaLsIfwwgiYbh82tMDqVmydZjC?=
- =?us-ascii?Q?f6eHiIElEnMUecW7i9hiVe1EMHf7bTRqbJiE02caz47w3TAI63mH+uORHAdF?=
- =?us-ascii?Q?84/xknmXw+0pqo03otTlJprF2ktNgA6F/MSaxiYYYVe82rVcyIeEwditxY28?=
- =?us-ascii?Q?TUCEopZOVJV5OXiZxA2K/A9rQOje/T3frBgAvvKV21ZYKl5mdNZQmVxnBihk?=
- =?us-ascii?Q?RFYVIfZLG29gkzNcgYsmtxXce1QlsOZGaFHqlbalaFUSGYXvCQZXeRjXaJZe?=
- =?us-ascii?Q?dWlVYH30bdvYa0SB/ggOzBqbVSU0V85N?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 12:00:47.9915
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f83ba7c8-3c2c-4c67-9be3-08dcb22194db
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS2PEPF00003440.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR12MB5827
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dma-mapping: don't return errors from
+ dma_set_seg_boundary
+To: Christoph Hellwig <hch@lst.de>, Robin Murphy <robin.murphy@arm.com>
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <20240723000604.241443-3-hch@lst.de>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleLIzCtJLcpLzFFi42LZduzned2fFavTDL5OsLRYufook8WvLxYW
+	l3fNYbM4+OEJqwOLx5p5axg9Xmyeyeix+2YDm8fnTXIBLFFcNimpOZllqUX6dglcGSuW3GAv
+	mMNb8WPJL+YGxpdcXYycHBICJhJrLn9h62Lk4hASWMEo0Xj8BQuE84VRYteBtSwgVUICnxkl
+	2o/bw3TsvHEKqmg5o8S0+13sEM5HRokPL3ewg1TxCthJTF/6mhHEZhFQkdj7dQMrRFxQ4uTM
+	J2BTRQXkJe7fmgFUz8EhLBAqcfiNEUhYRMBdYlnvMbByZgFziaPTjzND2OISt57MZwKx2QQM
+	JbredrGB2JxA9pW7cxghauQltr+dwwxyj4TAHg6JSx+PMkFc7SLRdfMQlC0s8er4FnYIW0bi
+	/06QoSAN7YwSC37fh3ImMEo0PL/FCFFlLXHn3C82kEuZBTQl1u/Shwg7SjReu8AKEpYQ4JO4
+	8VYQ4gg+iUnbpjNDhHklOtqEIKrVJGYdXwe39uCFS8wTGJVmIYXKLCRvzkLyziyEvQsYWVYx
+	iqeWFuempxYb5aWW6xUn5haX5qXrJefnbmIEJpbT/45/2cG4/NVHvUOMTByMhxglOJiVRHiF
+	Tq5ME+JNSaysSi3Kjy8qzUktPsQozcGiJM6rmiKfKiSQnliSmp2aWpBaBJNl4uCUamBivrKj
+	zc/iw37Ty8uSF3M3GM24dd2kl/mc5Mosg/ezu48J6xqtkzrCf/epirNc9tU+k7yXZ7ztJvaw
+	LuhIZo0+Eb47andFkuhyZY6JE8wltxRkpZ85+yp0/ivXvFSn5WJxcsWKixgX+Vboe9v1XXU+
+	djxz4Z0z6xpMW+pmrTxwcI7//aSNP118JFT0hfepH1n0z+zFD/u7dzc9OMfmrNojvmfpoiPK
+	vIeDxLduOC6d5bP69aFzU85+luj7kmHsvev5S75rRy6Lr2Z1uN7Z9y8iexbzoYcuh7tdVl5Z
+	sOy82UHj6XN4FnUIv97oMmfp+beaE9i58rMez4yyOmW8/+Gl1EZPpdhbQdW/6rKTLxtdVGIp
+	zkg01GIuKk4EAD2HAN2bAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprNIsWRmVeSWpSXmKPExsVy+t/xu7o/K1anGczfKG+xcvVRJotfXyws
+	Lu+aw2Zx8MMTVgcWjzXz1jB6vNg8k9Fj980GNo/Pm+QCWKL0bIryS0tSFTLyi0tslaINLYz0
+	DC0t9IxMLPUMjc1jrYxMlfTtbFJSczLLUov07RL0MlYsucFeMIe34seSX8wNjC+5uhg5OSQE
+	TCR23jjF0sXIxSEksJRRonf9LCaIhIzEyWkNrBC2sMSfa11sEEXvGSVe7TzNApLgFbCTmL70
+	NSOIzSKgIrH36wZWiLigxMmZT8BqRAXkJe7fmsHexcjBISwQKnH4jRFIWETAXWJZ7zGwcmYB
+	c4mj048zQ8xfzSjxbes5FoiEuMStJ/PBDmITMJToegtyBCcHJ5B95e4cRogaM4murV1QtrzE
+	9rdzmCcwCs1CcsYsJKNmIWmZhaRlASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMBY2nbs
+	55YdjCtffdQ7xMjEwXiIUYKDWUmEV+jkyjQh3pTEyqrUovz4otKc1OJDjKbAsJjILCWanA+M
+	5rySeEMzA1NDEzNLA1NLM2MlcV7Pgo5EIYH0xJLU7NTUgtQimD4mDk6pBqb9HC/qStYz8DdL
+	SW/aZ7C/T/38u/nc6+UWthhOdC885fBaXXpF+HObiDL/S9NnlWl+Yjh4MzD/JP9nkxoe1fPM
+	J6XPnNSJcC1RnFK3cnuXnFzS+qexkfuOB7bv1U6vMK9c9Srl9HILvd46w7JdrB5qnv6d/1bv
+	DLFbHSL/OEvfPuyZks+POqlJG+oKbr9YmHTJ7PiL47vs3HRuvD341E9OeeYD4/gF4kkpsccP
+	Hz4TeX4z/4XMZxLtllzlVx0933Ku12Tc1L3qSLFekvjtrzeu/omtXPvy+TLrPeU/lvdEXpY2
+	SGgKjs0U72FN+rD+6bHoJxMDcltEao5Gixv+lrp5X2pVFlfpoR/aQQWOC5VYijMSDbWYi4oT
+	Af3I0bMuAwAA
+X-CMS-MailID: 20240801120057eucas1p18ac6d3634881e66f089eede5b2a3439f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240723000611eucas1p10986fd51e848a1ee948e71608c26192b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240723000611eucas1p10986fd51e848a1ee948e71608c26192b
+References: <20240723000604.241443-1-hch@lst.de>
+	<CGME20240723000611eucas1p10986fd51e848a1ee948e71608c26192b@eucas1p1.samsung.com>
+	<20240723000604.241443-3-hch@lst.de>
 
-Add Pinctrl support for Xilinx Versal platform.
-Driver checks for firmware support to retrieve the Pin information, if it
-is supported then proceed further otherwise it returns error saying
-operation not supported. Latest Xilinx Platform Management Firmware must
-be used to make use of the Pinctrl driver for Versal platform.
+On 23.07.2024 02:05, Christoph Hellwig wrote:
+> If dev->dma_parms is not allocate that indicates a grave bug in the
+> implementation of a DMA-capable bus.  There isn't much the driver can
+> do in terms of error handling, so just warn and continue as DMA
+> operations will fail anyway.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Signed-off-by: Sai Krishna Potthuri <sai.krishna.potthuri@amd.com>
----
- drivers/pinctrl/pinctrl-zynqmp.c | 97 ++++++++++++++++++++++++++++++--
- 1 file changed, 92 insertions(+), 5 deletions(-)
+What about devices on platform or usb bus and subsystems calling this 
+unconditionally, like scsi_init_limits()? With today's linux-next I got 
+a bunch of warnings from this call for various USB storage devices. 
+Before this patch, the errors from dma_set_seg_boundary() were silently 
+ignored.
 
-diff --git a/drivers/pinctrl/pinctrl-zynqmp.c b/drivers/pinctrl/pinctrl-zynqmp.c
-index 3c6d56fdb8c9..2b9f8db49a15 100644
---- a/drivers/pinctrl/pinctrl-zynqmp.c
-+++ b/drivers/pinctrl/pinctrl-zynqmp.c
-@@ -10,6 +10,7 @@
- 
- #include <dt-bindings/pinctrl/pinctrl-zynqmp.h>
- 
-+#include <linux/bitfield.h>
- #include <linux/bitmap.h>
- #include <linux/init.h>
- #include <linux/module.h>
-@@ -44,6 +45,12 @@
- #define DRIVE_STRENGTH_8MA	8
- #define DRIVE_STRENGTH_12MA	12
- 
-+#define VERSAL_LPD_PIN_PREFIX		"LPD_MIO"
-+#define VERSAL_PMC_PIN_PREFIX		"PMC_MIO"
-+
-+#define VERSAL_PINCTRL_ATTR_NODETYPE_MASK	GENMASK(19, 14)
-+#define VERSAL_PINCTRL_NODETYPE_LPD_MIO		BIT(0)
-+
- /**
-  * struct zynqmp_pmux_function - a pinmux function
-  * @name:	Name of the pin mux function
-@@ -93,6 +100,8 @@ struct zynqmp_pctrl_group {
- };
- 
- static struct pinctrl_desc zynqmp_desc;
-+static u32 family_code;
-+static u32 sub_family_code;
- 
- static int zynqmp_pctrl_get_groups_count(struct pinctrl_dev *pctldev)
- {
-@@ -596,8 +605,12 @@ static int zynqmp_pinctrl_prepare_func_groups(struct device *dev, u32 fid,
- 			if (!groups[resp[i]].name)
- 				return -ENOMEM;
- 
--			for (pin = 0; pin < groups[resp[i]].npins; pin++)
--				__set_bit(groups[resp[i]].pins[pin], used_pins);
-+			for (pin = 0; pin < groups[resp[i]].npins; pin++) {
-+				if (family_code == ZYNQMP_FAMILY_CODE)
-+					__set_bit(groups[resp[i]].pins[pin], used_pins);
-+				else
-+					__set_bit((u8)groups[resp[i]].pins[pin] - 1, used_pins);
-+			}
- 		}
- 	}
- done:
-@@ -873,6 +886,70 @@ static int zynqmp_pinctrl_prepare_pin_desc(struct device *dev,
- 	return 0;
- }
- 
-+static int versal_pinctrl_get_attributes(u32 pin_idx, u32 *response)
-+{
-+	struct zynqmp_pm_query_data qdata = {0};
-+	u32 payload[PAYLOAD_ARG_CNT];
-+	int ret;
-+
-+	qdata.qid = PM_QID_PINCTRL_GET_ATTRIBUTES;
-+	qdata.arg1 = pin_idx;
-+
-+	ret = zynqmp_pm_query_data(qdata, payload);
-+	if (ret)
-+		return ret;
-+
-+	memcpy(response, &payload[1], sizeof(*response));
-+
-+	return 0;
-+}
-+
-+static int versal_pinctrl_prepare_pin_desc(struct device *dev,
-+					   const struct pinctrl_pin_desc **zynqmp_pins,
-+					   unsigned int *npins)
-+{
-+	u32 lpd_mio_pins = 0, attr, nodetype;
-+	struct pinctrl_pin_desc *pins, *pin;
-+	int ret, i;
-+
-+	ret = zynqmp_pm_is_function_supported(PM_QUERY_DATA, PM_QID_PINCTRL_GET_ATTRIBUTES);
-+	if (ret)
-+		return ret;
-+
-+	ret = zynqmp_pinctrl_get_num_pins(npins);
-+	if (ret)
-+		return ret;
-+
-+	pins = devm_kzalloc(dev, sizeof(*pins) * *npins, GFP_KERNEL);
-+	if (!pins)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < *npins; i++) {
-+		ret = versal_pinctrl_get_attributes(i, &attr);
-+		if (ret)
-+			return ret;
-+
-+		pin = &pins[i];
-+		pin->number = attr;
-+		nodetype = FIELD_GET(VERSAL_PINCTRL_ATTR_NODETYPE_MASK, attr);
-+		if (nodetype == VERSAL_PINCTRL_NODETYPE_LPD_MIO) {
-+			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
-+						   VERSAL_LPD_PIN_PREFIX, i);
-+			lpd_mio_pins++;
-+		} else {
-+			pin->name = devm_kasprintf(dev, GFP_KERNEL, "%s%d",
-+						   VERSAL_PMC_PIN_PREFIX, i - lpd_mio_pins);
-+		}
-+
-+		if (!pin->name)
-+			return -ENOMEM;
-+	}
-+
-+	*zynqmp_pins = pins;
-+
-+	return 0;
-+}
-+
- static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- {
- 	struct zynqmp_pinctrl *pctrl;
-@@ -882,9 +959,18 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 	if (!pctrl)
- 		return -ENOMEM;
- 
--	ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev,
--					      &zynqmp_desc.pins,
--					      &zynqmp_desc.npins);
-+	ret = zynqmp_pm_get_family_info(&family_code, &sub_family_code);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (family_code == ZYNQMP_FAMILY_CODE) {
-+		ret = zynqmp_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
-+						      &zynqmp_desc.npins);
-+	} else {
-+		ret = versal_pinctrl_prepare_pin_desc(&pdev->dev, &zynqmp_desc.pins,
-+						      &zynqmp_desc.npins);
-+	}
-+
- 	if (ret) {
- 		dev_err(&pdev->dev, "pin desc prepare fail with %d\n", ret);
- 		return ret;
-@@ -907,6 +993,7 @@ static int zynqmp_pinctrl_probe(struct platform_device *pdev)
- 
- static const struct of_device_id zynqmp_pinctrl_of_match[] = {
- 	{ .compatible = "xlnx,zynqmp-pinctrl" },
-+	{ .compatible = "xlnx,versal-pinctrl" },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, zynqmp_pinctrl_of_match);
+> ---
+>   include/linux/dma-mapping.h | 10 ++++------
+>   1 file changed, 4 insertions(+), 6 deletions(-)
+>
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index cfd6bafec3f944..6bd1333dbacb9b 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -559,13 +559,11 @@ static inline unsigned long dma_get_seg_boundary_nr_pages(struct device *dev,
+>   	return (dma_get_seg_boundary(dev) >> page_shift) + 1;
+>   }
+>   
+> -static inline int dma_set_seg_boundary(struct device *dev, unsigned long mask)
+> +static inline void dma_set_seg_boundary(struct device *dev, unsigned long mask)
+>   {
+> -	if (dev->dma_parms) {
+> -		dev->dma_parms->segment_boundary_mask = mask;
+> -		return 0;
+> -	}
+> -	return -EIO;
+> +	if (WARN_ON_ONCE(!dev->dma_parms))
+> +		return;
+> +	dev->dma_parms->segment_boundary_mask = mask;
+>   }
+>   
+>   static inline unsigned int dma_get_min_align_mask(struct device *dev)
+
+Best regards
 -- 
-2.25.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
 
