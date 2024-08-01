@@ -1,87 +1,93 @@
-Return-Path: <linux-kernel+bounces-271374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0105D944D54
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FB2944D5C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D91283FCB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:41:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B30CA285090
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394A51A3BD4;
-	Thu,  1 Aug 2024 13:41:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA191A3BC3;
+	Thu,  1 Aug 2024 13:43:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EBE4tdKp"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuIV0fzL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2321A38D1;
-	Thu,  1 Aug 2024 13:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B157F61FF2;
+	Thu,  1 Aug 2024 13:43:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722519691; cv=none; b=M7yeaFI1p55ca8JlC3LfakW3b7v3Q9mtY6ze6/kUkKjFgsWk0FGMwin/Cm8ZQ/wnX3wqF4QZntgpWB7s2N5gapJEID+xCdX0QBSgijYfYxHGa8jPQ2EC2S+FeANRUNQAiYf9cCmdey6hB88pNeUXPRKdZT9kz0a4jS2M8HDXOtc=
+	t=1722519783; cv=none; b=jQdY5JCoLoSvjA7NTaXb3EvcuY+e1nSAgeoeMBpSabP6JdQjf67Cq9FHNYk8rJDEnqhvUtBCfvxuPkHh9HMxB1ymsFWWK0WQtyMKFhUu3L/cr+x1AdchW478etMvQ7xd2qOESE8lU2J3ctkMSgOp/0iBGbni026nSSE1ehSSJTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722519691; c=relaxed/simple;
-	bh=uYY8zDsyz82/IltzUwmXwBdiv13AL9CcrOTjQuiM3eE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N4h+7qLpz0O06fUr8M5Nx6SClXybeT9agMOpCzLHu4KofCjU5bp22kEq91k645ubaPJVSMPOsogApqAUqXhlI1vHq0umElUntJpIB22Uu7v05GTsV+wPRlqhO4shsgpMiXBkrTzkm3ngEZBF3WhBK0wqAihDR45oG3DCjxiAH7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EBE4tdKp; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SX310Kfz9F1LeUqNyAu30/YcWRhCZpZMe1PAqRFcLtQ=; b=EBE4tdKp6jD8SukAL4JzcFiWV/
-	xcRSpCePbRWeE8VOlxdil0P30skt+D5IE8iSPjvd41RXYaAjQqOWOsqfatymR6wpnE/E5/FuGM22L
-	q3sMMPbzx+ebd2//UEpH0Je7UwtcPnxBsqatfF3moqQY506o+537fIeQ1gUO9q57CKLi8qwywvxT6
-	13rxzNCoq4MFN+nSDbycht2EbxSkEzbJ4S1rCtZmxjYtfd/gkTC4R/RHZdAEqHd+htHiDj5yPRQRi
-	fXdDFzfE2bng/9DYG9Z4Z8wfq3LAtzIw0SJLhg23Yg4GgPfLO/GiqTXeMiyfYMiec8VeL1DFmuJqY
-	WC+V6ESQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZW3U-00000005TiG-1Qna;
-	Thu, 01 Aug 2024 13:41:20 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7B73130074E; Thu,  1 Aug 2024 15:41:19 +0200 (CEST)
-Date: Thu, 1 Aug 2024 15:41:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Matthew Maurer <mmaurer@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Rust KCFI support
-Message-ID: <20240801134119.GB39708@noisy.programming.kicks-ass.net>
-References: <20240801-kcfi-v2-0-c93caed3d121@google.com>
+	s=arc-20240116; t=1722519783; c=relaxed/simple;
+	bh=0BEluha7ZRHJFlfSVvNdZ811dnk97HBDCx8iQM824GY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SI96x2rPhC3HxLGYbZHtT2aAz+DnV7rve5b1KX6dHFXPOt5qQe8IcjyHwM0+hzQfdLZorx7QeARfk7z9qTdc35ItIhmw/ZB06QRb8KRMY/7c3MSj4M3nq3IrbpE+nseXzZod6obLzF+/6hQJc9CElewarho/piMbsv+M2CmYp6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuIV0fzL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA698C32786;
+	Thu,  1 Aug 2024 13:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722519783;
+	bh=0BEluha7ZRHJFlfSVvNdZ811dnk97HBDCx8iQM824GY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SuIV0fzLn4viuCqdn4I1+/PkRsZKH8HEn2RdrXFMPPlaDoaeOdupH8/BR2nvk0fuo
+	 QdzRE0AKlJFpgqGuuSfBdKj8aD4KXrQ5Jb69Kb8o39cmiItUWjIcZgKFAygLTm7laH
+	 f7uxoAM0W6yn2DnFWBgzfqbcg7w6QhjlUWWU+v4VoLjvQrFvH8xgeboUE6/k15xf8S
+	 6h42SGrGDiDMeiG4rDtMvtZgYEz5skguMd7CxBWv+RSdaxgsPi37wo9gfF1jCovuSN
+	 qqVEWeCly05KGzKTRVh7xDpxVomSUq/9Ydo5Vyks/A8dp5xayio8h1m57qgo1lOT4q
+	 ioN1efJ16MvXg==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	sfr@canb.auug.org.au,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Documentation: clean up warnings for multigrain timestamp docs
+Date: Thu,  1 Aug 2024 15:42:54 +0200
+Message-ID: <20240801-schuhe-tragweite-7afecbc5d48a@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801105127.25048-1-jlayton@kernel.org>
+References: <20240801105127.25048-1-jlayton@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801-kcfi-v2-0-c93caed3d121@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1284; i=brauner@kernel.org; h=from:subject:message-id; bh=0BEluha7ZRHJFlfSVvNdZ811dnk97HBDCx8iQM824GY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaStnvDwwM/fyqaZFu9fdr7YH1z6MDy4a+a6X/FvGk3bL ZbvWFB4vqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAi0+YwMnTETY+8Z3zAMVHP 6kzOdUWmA5K/rPerPnhe28Seuf7CYWWGvyISCj851bI1pzgmHP3xJf6jQZiLygFxEzFXp7dN29o f8gMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 01, 2024 at 01:35:16PM +0000, Alice Ryhl wrote:
-
-> Alice Ryhl (1):
->       cfi: add CONFIG_CFI_ICALL_NORMALIZE_INTEGERS
+On Thu, 01 Aug 2024 06:51:27 -0400, Jeff Layton wrote:
+> Stephen Rothwell reported seeing a couple of warnings when building
+> htmldocs:
 > 
-> Matthew Maurer (1):
->       rust: cfi: add support for CFI_CLANG with Rust
+> /home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst:83: WARNING: duplicate label filesystems/multigrain-ts:multigrain timestamps, other instance in /home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst
+> /home/jlayton/git/linux/Documentation/filesystems/multigrain-ts.rst: WARNING: document isn't included in any toctree
+> 
+> 
+> [...]
 
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Applied to the mgtime branch of the vfs/vfs.git tree.
+Patches in the mgtime branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: mgtime
+
+[1/1] Documentation: clean up warnings for multigrain timestamp docs
+      https://git.kernel.org/vfs/vfs/c/d48cd6da24a9
 
