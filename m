@@ -1,142 +1,199 @@
-Return-Path: <linux-kernel+bounces-271090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641BF94495C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:34:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85F2594495E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0341F24ECC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444D3283124
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C741D18454B;
-	Thu,  1 Aug 2024 10:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D98183CC5;
+	Thu,  1 Aug 2024 10:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IDatmGVa"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPeoJ5zb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C4818452C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112B93BBE5;
+	Thu,  1 Aug 2024 10:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722508422; cv=none; b=mXDcjnoPiSTFMdx7SXzjes3MAPLujgFP9PO5q+zxwglAkFGxPI74Mvv6ZWT7fhdc2FFap5OE9KlipgV19LX6JP49zfCyqB1KtAralUSoSpbwdIeg3QpHWeW/M9Pl7u0Angcf8qCdUKJ6ZhjdSL22Fwd3+9tqyWFmid1zPmV4z3w=
+	t=1722508534; cv=none; b=uHdW3ctsOOPeec1xN32Ynaq9UMqqiI8AdA7HtDnT1d9IFkTkWHrkRG3ny18CoRTBkO69sAYbtAfyzV8F+H71dbNCSZ6T8BLWKIIobfLrIF6k8lrCHSvM+AKIB5aSciyulmX4k7ztq4l3uwgWJ2tzKznuymj8Ak/up/fcRU7aYOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722508422; c=relaxed/simple;
-	bh=bjhQLQz9r+qgUE5nGLyvNJrXOF+KlCK1fhgEuPnhK74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aiTwOKCaMIw+Zl+WcXS7H73ga1LwiTTigdVBgQs1tpDOo31MLoN1kgR9Mx1ls5t5Tc+8cE4Grmu1hE2sgp+HOb1ipFQaw+cM3Mq+Kkp2AHOzjC95bKLGPSjec1cbafQMrEmB8Cddc1/RfYxq65VhqOgSgt7ecBaOMgsq+fkCZdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IDatmGVa; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42808071810so44876335e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:33:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722508419; x=1723113219; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2DZ9JRnL0e7KpbgL/FSZ6b64iFFZz5Rvxbediv3ijJ8=;
-        b=IDatmGVaUic9Og7PO9OwK4tO/hOQhNPY/gJBcOtKopo7LHq3Dfsq1/mYqztxYr+Wfx
-         44V8fY4ds+G9hMfZ4G7x/kLWffWRjV462lFbPxH+Ct23I6ftofUfnjTjf2hT/IaNeCNE
-         OTeOuXpBochlU2ygo7fl59npq3PzlqOksCBXCiKsXlkfrHzWeW/WSuMguqxgDcjAyzA8
-         Chr0JxwDETjMpKFiqoOHNPeJuYQLkjt7dU0H8gn/bl1yCg+aR40rMthG0IVj/dCEiSNU
-         q/JanwOAIoj/dSJSB79rSaLEUb1wvraZQNkuXgylf8ELspW3Gr2Z9hd9yJ6H1TrHW0xS
-         pqww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722508419; x=1723113219;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2DZ9JRnL0e7KpbgL/FSZ6b64iFFZz5Rvxbediv3ijJ8=;
-        b=MHgLq5PtjnyAacUWpi4emYK/JwaUtk0IkCM9/jHGP+3cmtg6luv3FvG7q1TFh0VJVg
-         Besbd6VW+vtRl33e/CedK0OvWQbdQ1N07skb//7Y2S9ZQYRpyCuZ4sqGzDzf4ltxktCP
-         bMLzM94TQXylH05o+V4eBbOccp7fzjXT8++FOLB91PtlrRl9Y/d56fVHeuDSXo43CdUL
-         VVV58GrkPNpGyv5TOV5nEyKasqcn6C7RxEhPM+LlRrAucZNmpEHw4A5ypmP0S408zfpE
-         9cizDrLs//7zUJBpf3lIUg8KOeSCm510r6OTTev1zOiBDYGv4FYQR2cumlu4DINhGXDL
-         d1GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXeUOU7V53A2SQwRiSo9ocFkETGTazqN7loRs77UDuLhlyPTFSxmQV7eUUBTg/YT1saRDlUdfcNe3ntPmQmmIaft+x1EviIn1hkTGMe
-X-Gm-Message-State: AOJu0YzNh/wOw7rE0YczKR5OyORAp0fUlrm2DlA8V+ZiyZDFgEqS+PkP
-	dWWuyt0qjrotjx+96fGJFmQLkp1QGD9S+lgBU5oFZUCAUEiWfCCmja5rfQ2k/Nk=
-X-Google-Smtp-Source: AGHT+IEQgVTcNKj105V6VOej2nknnx4vup+h7CU4av90EuoPVBm6nZUMtPvjq53uwkUNQcyJVXl21g==
-X-Received: by 2002:a05:600c:3ca7:b0:428:150e:4f13 with SMTP id 5b1f17b1804b1-428b4ae2222mr14059125e9.33.1722508418390;
-        Thu, 01 Aug 2024 03:33:38 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428240b2d65sm44538315e9.0.2024.08.01.03.33.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 03:33:37 -0700 (PDT)
-Date: Thu, 1 Aug 2024 13:33:36 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] phy: qcom-qmp-pcie: Fix X1E80100 PCIe Gen4 PHY
- initialisation
-Message-ID: <ZqtkgPf+JOP+im1s@linaro.org>
-References: <20240726-x1e80100-phy-qmp-pcie-fix-config-v1-1-b569f03c0c48@linaro.org>
- <ZqOysDk0LqwxG4OF@hovoldconsulting.com>
+	s=arc-20240116; t=1722508534; c=relaxed/simple;
+	bh=FTOFv8FAFGdvJC8md3mZcio/JkgfWJnUswLaH3sTGG0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O/wm5VS2IXlMWz+quBxQu/r8m2buOGeoF4k5tZAw115yv/XO/LC1/tpZ7+tpl+fgVCdNfrWU+Uijh6bvlkJkqZPu0Lxdv2/1pPEdlGbKbcTz/1WxZo1RDykye+xeReFJi5VUH11MBFRCLonuWwBsr7IeqEU2ndRt9E8DVMpYaec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPeoJ5zb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A51DC4AF09;
+	Thu,  1 Aug 2024 10:35:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722508533;
+	bh=FTOFv8FAFGdvJC8md3mZcio/JkgfWJnUswLaH3sTGG0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CPeoJ5zbd6feDjrEsdIAG+7qGMeInbIcjgdlQxJFPuN4hOsN9eV0wsEWFph65UyLb
+	 0QG0mI8FAQ2tb6U6xzg8Fgaj38jAVg5V+c561skLABCbS/ALjgWlh+1A8i4VdlFqHY
+	 +kozrCY1KafV9AZV8g2QEQXX3CeddCM3TwO3GYv36uNnQSH+FIOrP7LjYxLrUuCdZ+
+	 ciL/QzPxwqoln7f6MA2EOuQKU6n++6AzRfDduzZ+NfhcRXuKcp6Y+MLD6frTbVJJ1I
+	 iYOY+mkhhAcFZZU6/aMQEJE8nOE66NIGSJBKdcSHz640rDxHO1KcYObGgvfuicxISR
+	 3Ku1tpzSnCztA==
+Message-ID: <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
+Date: Thu, 1 Aug 2024 12:35:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZqOysDk0LqwxG4OF@hovoldconsulting.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] mm/cgroupv2: memory.min may lead to an OOM error
+Content-Language: en-US
+To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
+Cc: 21cnbao@gmail.com, ryan.roberts@arm.com, david@redhat.com,
+ shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com,
+ baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
+ Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
+ Cgroups <cgroups@vger.kernel.org>
+References: <20240801045430.48694-1-ioworker0@gmail.com>
+From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+In-Reply-To: <20240801045430.48694-1-ioworker0@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 24-07-26 16:29:04, Johan Hovold wrote:
-> On Fri, Jul 26, 2024 at 10:16:56AM +0300, Abel Vesa wrote:
-> > Update the PCIe Gen4 PHY init sequence with the latest based on internal
-> > Qualcomm documentation.
+On 8/1/24 06:54, Lance Yang wrote:
+> Hi all,
 > 
-> Any hints about what these updates imply?
+> It's possible to encounter an OOM error if both parent and child cgroups are
+> configured such that memory.min and memory.max are set to the same values, as
+> is practice in Kubernetes.
 
-Usually, there is an updated variant of the same document.
-I've been told that this values are fine-tuned over time.
-I'm assuming these updates should help with link stability, but it's
-just a guess.
+Is it a practice in Kubernetes since forever or a recent one? Did it work
+differently before?
 
-> 
-> > Fixes: 606060ce8fd0 ("phy: qcom-qmp-pcie: Add support for X1E80100 g3x2 and g4x2 PCIE")
-> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> > ---
-> >  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c | 23 ++++++++++++++++-------
-> >  1 file changed, 16 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> > index 5b36cc7ac78b..8b624afbf014 100644
-> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-pcie.c
-> 
-> >  static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x2_pcie_tx_tbl[] = {
-> > @@ -1286,12 +1287,15 @@ static const struct qmp_phy_init_tbl x1e80100_qmp_gen4x2_pcie_rx_tbl[] = {
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_DFE_1, 0x01),
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_DFE_2, 0x01),
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_DFE_3, 0x45),
-> > -	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_VGA_CAL_MAN_VAL, 0x0b),
-> > +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_20_RX_VGA_CAL_MAN_VAL, 0x0A, 1),
-> > +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_20_RX_VGA_CAL_MAN_VAL, 0x0B, 2),
-> 
-> Please use lower-case hex consistently.
+> Hmm... I'm not sure that whether this behavior is a bug or an expected aspect of
+> the kernel design.
 
-Sure. Will fix in v2.
+Hmm I'm not a memcg expert, so I cc'd some.
 
+> To reproduce the bug, we can follow these command-based steps:
 > 
-> > +	QMP_PHY_INIT_CFG(QSERDES_V6_20_VGA_CAL_CNTRL1, 0x00),
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_GM_CAL, 0x0d),
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_EQU_ADAPTOR_CNTRL4, 0x0b),
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_SIGDET_ENABLES, 0x1c),
-> >  	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_PHPRE_CTRL, 0x20),
-> > -	QMP_PHY_INIT_CFG(QSERDES_V6_20_RX_DFE_CTLE_POST_CAL_OFFSET, 0x38),
-> > +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_20_RX_DFE_CTLE_POST_CAL_OFFSET, 0x3A, 1),
-> > +	QMP_PHY_INIT_CFG_LANE(QSERDES_V6_20_RX_DFE_CTLE_POST_CAL_OFFSET, 0x38, 2),
+> 1. Check Kernel Version and OS release:
+>     
+>     ```
+>     $ uname -r
+>     6.10.0-rc5+
+
+Were older kernels behaving the same?
+
+Anyway memory.min documentations says "Hard memory protection. If the memory
+usage of a cgroup is within its effective min boundary, the cgroup’s memory
+won’t be reclaimed under any conditions. If there is no unprotected
+reclaimable memory available, OOM killer is invoked."
+
+So to my non-expert opinion this behavior seems valid. if you set min to the
+same value as max and then reach the max, you effectively don't allow any
+reclaim, so the memcg OOM kill is the only option AFAICS?
+
+>     $ cat /etc/os-release
+>     PRETTY_NAME="Ubuntu 24.04 LTS"
+>     NAME="Ubuntu"
+>     VERSION_ID="24.04"
+>     VERSION="24.04 LTS (Noble Numbat)"
+>     VERSION_CODENAME=noble
+>     ID=ubuntu
+>     ID_LIKE=debian
+>     HOME_URL="<https://www.ubuntu.com/>"
+>     SUPPORT_URL="<https://help.ubuntu.com/>"
+>     BUG_REPORT_URL="<https://bugs.launchpad.net/ubuntu/>"
+>     PRIVACY_POLICY_URL="<https://www.ubuntu.com/legal/terms-and-policies/privacy-policy>"
+>     UBUNTU_CODENAME=noble
+>     LOGO=ubuntu-logo
+>     
+>     ```
+>     
+> 2. Navigate to the cgroup v2 filesystem, create a test cgroup, and set memory settings:
+>     
+>     ```
+>     $ cd /sys/fs/cgroup/
+>     $ stat -fc %T /sys/fs/cgroup
+>     cgroup2fs
+>     $ mkdir test
+>     $ echo "+memory" > cgroup.subtree_control
+>     $ mkdir test/test-child
+>     $ echo 1073741824 > memory.max
+>     $ echo 1073741824 > memory.min
+>     $ cat memory.max
+>     1073741824
+>     $ cat memory.min
+>     1073741824
+>     $ cat memory.low
+>     0
+>     $ cat memory.high
+>     max
+>     ```
+>     
+> 3. Set up and check memory settings in the child cgroup:
+>     
+>     ```
+>     $ cd test-child
+>     $ echo 1073741824 > memory.max
+>     $ echo 1073741824 > memory.min
+>     $ cat memory.max
+>     1073741824
+>     $ cat memory.min
+>     1073741824
+>     $ cat memory.low
+>     0
+>     $ cat memory.high
+>     max
+>     ```
+>     
+> 4. Add process to the child cgroup and verify:
+>     
+>     ```
+>     $ echo $$ > cgroup.procs
+>     $ cat cgroup.procs
+>     1131
+>     1320
+>     $ ps -ef|grep 1131
+>     root        1131    1014  0 10:45 pts/0    00:00:00 -bash
+>     root        1321    1131 99 11:06 pts/0    00:00:00 ps -ef
+>     root        1322    1131  0 11:06 pts/0    00:00:00 grep --color=auto 1131
+>     ```
+>     
+> 5. Attempt to create a large file using dd and observe the process being killed:
+>     
+>     ```
+>     $ dd if=/dev/zero of=/tmp/2gbfile bs=10M count=200
+>     Killed
+>     ```
+>     
+> 6. Check kernel messages related to the OOM event:
+>     
+>     ```
+>     $ dmesg
+>     ...
+>     [ 1341.112388] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/test,task_memcg=/test/test-child,task=dd,pid=1324,uid=0
+>     [ 1341.112418] Memory cgroup out of memory: Killed process 1324 (dd) total-vm:15548kB, anon-rss:10240kB, file-rss:1764kB, shmem-rss:0kB, UID:0 pgtables:76kB oom_score_adj:0
+>     ```
+>     
+> 7. Reduce the `memory.min` setting in the child cgroup and attempt the same large file creation, and then this issue is resolved.
+>     
+>     ```
+>     # echo 107374182 > memory.min
+>     # dd if=/dev/zero of=/tmp/2gbfile bs=10M count=200
+>     200+0 records in
+>     200+0 records out
+>     2097152000 bytes (2.1 GB, 2.0 GiB) copied, 1.8713 s, 1.1 GB/s
+>     ```
 > 
-> Ditto.
+> Thanks,
+> Lance
 > 
-> Johan
+
 
