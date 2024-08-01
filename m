@@ -1,101 +1,98 @@
-Return-Path: <linux-kernel+bounces-271173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44261944A5C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:28:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02535944A60
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1637B24C52
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:28:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6131F2427D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:29:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE830189B9B;
-	Thu,  1 Aug 2024 11:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ACEA189B93;
+	Thu,  1 Aug 2024 11:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XxEXGGlk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCJmJVc0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CD5183CC8
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFCA16D4F3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511699; cv=none; b=ESipCYc0r7/XhVGjmdaiZ8ldyaJzkkEQoFp72lXx0UR++C4O26LzNlBxDtRAYcEHKQ7Xb7Cj1CF6joKB5iLHRHDqUywbKmBlEczhMG07AuvYFMBcqeM0DH/6ZlD1HMAILrQ2u/DHRD2lHxGcSQ/e67dQB9fHaVswCFpnju83UHU=
+	t=1722511769; cv=none; b=emLWJOxiBNfS070G/6dZF7nrlArb0N42Fn6MNkqZl9cXMt++4CEzoe5sEcevKQzUom+JuDFuOlhj8Gwdq1rNld+kA2YtumXmwHqxQS1bid5HKO2AdAtxHc7NmrgSc52SNv6DkSjAiNekf06eO42q8I38Hx9F91Ys4loXfqxWyIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722511699; c=relaxed/simple;
-	bh=mZM8ShDKFN03JigDL5TNPjn3F1g+jShmFXjhR3yjiGg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ni7/jVv8a8H4UAI3OUJw7bSDOY17dpj6u+Qrwj5N1LqO4llrz+tmKUh2n7Jvm5YHHJT8u0z2d+6YWv07yOCSiXzEjpVSqWyP59bWsgEnkc5BImhmlsYFNxuMKASXMepU3DGOAlAhA7eYyg8Rep6IrkPcGFn8qxg2DgnjYC0Wq40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XxEXGGlk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722511695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=gvGF3Ef4dkikJ/Hli43T5ir+KPPgKqAfpvG3aCiZZik=;
-	b=XxEXGGlkY9tMwRmsSCiEBoLsF+fRUn02ADVOOa73kao+WSbsB35C000X5wwaL61iYRAXIn
-	iYK1JHu29PTQJtz7tki6IbQ9xkT8LaGxbDWbxQxKJiks6lv8TfQGCv4fTIQEW6RSoEGRWS
-	Rl48Fd8ovTcMZke1QuOKCccJ1TmpV30=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-266-eCFFAnTQNLSudFPLefCy_w-1; Thu,
- 01 Aug 2024 07:28:12 -0400
-X-MC-Unique: eCFFAnTQNLSudFPLefCy_w-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1908D19560B6;
-	Thu,  1 Aug 2024 11:28:11 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (unknown [10.45.224.28])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2F79F1955E80;
-	Thu,  1 Aug 2024 11:28:07 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>, Catalin Marinas <catalin.marinas@arm.com>
-Subject: syscall.tbl refactoring seems to have dropped definition of
- __NR_newfstatat on arm64 and riscv (64-bit) at least
-Date: Thu, 01 Aug 2024 13:28:04 +0200
-Message-ID: <87sevoqy7v.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1722511769; c=relaxed/simple;
+	bh=+v6bnfy/JkUEptzDmMNSw8VfmjHMTBPhSIEfPCVBBKs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBdBSQPR+YxZHQw/TKHWGC5OlbF5+MpKMJ+mtBbPkDkD7ZmXI7yZu7oAtuFFm5NM/XG2j23BV5034mDuOCEGjLJcq/D5qx3pO77zXygFTWQv7bbEYzv5IoW7pv40x9qWjkiZyhkM8+2docv/I0pTOKErwypbuYqV9DajbhVJC9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCJmJVc0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDCEEC32786;
+	Thu,  1 Aug 2024 11:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722511768;
+	bh=+v6bnfy/JkUEptzDmMNSw8VfmjHMTBPhSIEfPCVBBKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hCJmJVc0VLSivIDaUoyBk9TvA4Vpc01tGHzKGyScfwE+66RtG24Glw2++orizWuCb
+	 4aZp/v33kN0T6CfFQ8JF7yijuPAZHZRxFw09Hf8Wb+XH8YT3X9c4Zqj+huRxnOrYlf
+	 dLYTRjRZKo3+KfD8R4+yVSYDZ2BWr2PMX8O3wlmmLb89WeZZwdGIJA0uTH9I+tE6gU
+	 rX0fz7r9dbteaL12aedUaJPAK869GonIM3wM+wtG1TxjjP5Lh73PwKdt6GSsKxzxYr
+	 pnLliQ1l2b/XIys+rjZ/8ovOknftcCuRVZFKVK8r+Z86HA6noKUfcXH75qtOC/2HmB
+	 A28icfRAQMs+w==
+Date: Thu, 1 Aug 2024 12:29:24 +0100
+From: Will Deacon <will@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>, catalin.marinas@arm.com
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm_pmuv3: Fix chained event check for cycle
+ counter
+Message-ID: <20240801112923.GA4476@willie-the-truck>
+References: <20240710182357.3701635-1-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710182357.3701635-1-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-It's been repported that __NR_newfstatat has gone missing from the UAPI
-headers.
+On Wed, Jul 10, 2024 at 12:23:56PM -0600, Rob Herring (Arm) wrote:
+> Since commit b7e89b0f5bd7 ("perf: arm_pmu: Remove event index to
+> counter remapping"), armv8pmu_event_is_chained() is incorrectly
+> returning that the cycle counter is chained, but the cycle counter has
+> always been 64-bit. The result is trying to configure counter #30 which
+> typically doesn't exist.
+> 
+> As ARMV8_PMU_MAX_GENERAL_COUNTERS is the number of counters (31), the
+> comparison to the counter index needs to be '<' rather than '<='.
+> 
+> Fixes: b7e89b0f5bd7 ("perf: arm_pmu: Remove event index to counter remapping")
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  drivers/perf/arm_pmuv3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
+> index 3b3a3334cc3f..0e22c68fb804 100644
+> --- a/drivers/perf/arm_pmuv3.c
+> +++ b/drivers/perf/arm_pmuv3.c
+> @@ -482,7 +482,7 @@ static bool armv8pmu_event_is_chained(struct perf_event *event)
+>  	return !armv8pmu_event_has_user_read(event) &&
+>  	       armv8pmu_event_is_64bit(event) &&
+>  	       !armv8pmu_has_long_event(cpu_pmu) &&
+> -	       (idx <= ARMV8_PMU_MAX_GENERAL_COUNTERS);
+> +	       (idx < ARMV8_PMU_MAX_GENERAL_COUNTERS);
+>  }
 
-  [sanitizer] __NR_newfstatat not defined in linux kernel headers in
-  aarch64
-  <https://github.com/llvm/llvm-project/issues/100098>
+Acked-by: Will Deacon <will@kernel.org>
 
-  __NR_newfstatat no longer defined on aarch64
-  <https://bugzilla.redhat.com/show_bug.cgi?id=2301919>
+Catalin -- please can you pick this up as a fix?
 
-I suspect that's related to the syscall.tbl refactoring around these
-commits:
+Cheers,
 
-commit e632bca07c8eef1de9dc50f4e4066c56e9d68b07
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Thu Jul 4 14:33:34 2024 +0200
-
-    arm64: generate 64-bit syscall.tbl
-
-commit 3db80c999debbadd5d627fb30f8b06fee331ffb6
-Author: Arnd Bergmann <arnd@arndb.de>
-Date:   Wed Apr 24 09:14:39 2024 +0200
-
-    riscv: convert to generic syscall table
-
-Thanks,
-Florian
-
+Will
 
