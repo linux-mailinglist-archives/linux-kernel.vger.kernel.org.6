@@ -1,55 +1,80 @@
-Return-Path: <linux-kernel+bounces-270771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A0B944504
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:58:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1F48944506
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:58:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2159E281853
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:58:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FAA51F28100
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69729158851;
-	Thu,  1 Aug 2024 06:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D281586C6;
+	Thu,  1 Aug 2024 06:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkQQwUTJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FP810te6"
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A149A158554;
-	Thu,  1 Aug 2024 06:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADADB15854D
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722495491; cv=none; b=jwaHASXCRTyhICRgJjCE0krLpCUWVsNMQ4oqXNAdF1YxmcjqmDSty7LG9VGRnSMaTVZOcdUJP1cqdbtfpocXZ6cTpGrlMskhtxyyB1jMaSHmFMQrSNZ+3xVitoBAtd8zrbSYBJwmJsnI+JJTYpJfV7VsDbMLTKcWGKIo3+TvLHs=
+	t=1722495507; cv=none; b=CjtPKZuGSEHZz0JQCBncpTnZzr0Qze13LOTqSqmFzZty696bpYtOSwSkxM0H7baK6ZFpHnisgA6EECsDuLK8ZJ0xPKq0NbIBY2QNpVT7mSe7YEItP2c/ncQ6lp7TVVskmQBJEKdT2jAqaoxKbbNabn5/fnWHqWzlmMgZUerEY84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722495491; c=relaxed/simple;
-	bh=X5/nIHI6eSt6inS+c/hwkA36ObfofUnYr2d5oV0hHoI=;
+	s=arc-20240116; t=1722495507; c=relaxed/simple;
+	bh=xRpns8Z1kTkYGAw219DqBCRKDHyqKxM9xgdFPGqLpp4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cFIBCJqJMDdCJoXrNLsJD8YAJgm7QdFFLnI+owgB9ndF16kzW25Yr9REmVUwiQ432jnUP9DwmiwslrqUn+z2Zd9WoNnFyOmZzhhkOv7pnS9TfJnppcsc4/M6LHGYnjRwfJ6dHYRXt0/gm60hVxRAMpAb4laMcKe08HfWQp97C1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkQQwUTJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD3BC4AF09;
-	Thu,  1 Aug 2024 06:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722495491;
-	bh=X5/nIHI6eSt6inS+c/hwkA36ObfofUnYr2d5oV0hHoI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZkQQwUTJverPhMso19gcLwM8l9Rx9EkzC3s2uCCB/DPdWMFXTMeXKBbK/+/2XB/KG
-	 r3vF5BWys9vxHtQIWuTDi2eZVSerscTF3yhCbOchsnnYqGdFKgzdlAx2xG2lZ+Csza
-	 zl65GC5CS9zYWEoqI4jKwNamzqq20LJ4eoR/k5MuYZ1HxkI5YEkbWWR0RhFlNnh0Vr
-	 yn1An6LURyglPIQ7NhyBa1P+KfiJn5615IfCFw/vupWuCNr8dWwIpG5z4tKcZK8gc9
-	 NnuRnKohHqlnQWoJL56lhueuhhCLl5iC+EbUA4DYdvHRSLp1Qu+TCRfiKSFjSZttfp
-	 1TIdikt4VGn6A==
-Date: Thu, 1 Aug 2024 08:58:05 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Aleksa Sarai <cyphar@cyphar.com>, Tycho Andersen <tandersen@netflix.com>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Tejun Heo <tj@kernel.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] pidfd: prevent creation of pidfds for kthreads
-Message-ID: <20240801-report-strukturiert-48470c1ac4e8@brauner>
-References: <20240731-gleis-mehreinnahmen-6bbadd128383@brauner>
- <20240731145132.GC16718@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YvL0MOH8+L+VbmWtYNlvG8KRsN+FRE8ADC71I3WizJs3XXaGXSfkm5x5ECpvaQejSbNndaGuRsiaFlbGc6dsv+BOHHVcmN2ZNUTiTK8L42x/JiC6uJvKqe+VnJAieqV8sBvOYP5AnPpoCRmMQYR2jiQ8xq0Voo+4c9Kk8mZslOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FP810te6; arc=none smtp.client-ip=209.85.167.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3db2315d7ceso3739812b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:58:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722495504; x=1723100304; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b80CEDH1AWD7dRM9ZkzDS0U0qYNdNBA0wVmoesZ+ivU=;
+        b=FP810te6ipT3/mSkZiXGjwnJTzyewaz5+/K6dNViVBLDt6Yt4LGCH85KYzJRlvutN2
+         FKz9QU8o/hc53gRL8MR4tG/XQPzJ+4Nyd5MHYtTd195sy2ZUuSrx4dFKcD7BmmbYKkUj
+         /1fEvFxSZK8sQCNcCP3dck7XZUQqVTxf5dnBCjM9SQS8AVVUTlvyuvqyZYyqKmvUEXNw
+         LhGNPM5VATvdPpL6g53E4q4btSvd8bx9iJRGFyWJ7IYZwFB2kUJrT1z0TN7VRBB77CNq
+         xqZasQ8mCLJPRjlOMcE+1yCisihNRwr9bkJmGJDmzri0IKTZZGTzbmfskqELvIbg8PE/
+         rm7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722495504; x=1723100304;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b80CEDH1AWD7dRM9ZkzDS0U0qYNdNBA0wVmoesZ+ivU=;
+        b=Afth2dJ5UBT6aR9rExMikALRHe2eqIHIMYlPBhLM31vi9cs+LpYXUoLE1hnxEMYEc3
+         xMRpjaAcqlak7dPSMghqblQe7u32Tas32OR3kxH5uEJm/spEvcZzHV8yknLPMUsdHTJ+
+         vaxEciBFK7OeQANkv2+dMCLaq9IaNyHR96C0JAGKZjzVCjnTglc2sWx/3ewkHiwnOGfk
+         8C+j5vRNBkte6EtVT9+7TOfvtdVeoxvdmnPhgpBMyAvP7urJrAxaQVerjzcLKEAt6ReF
+         yFESaTfB5IEk+Gvs0gKScvWcWblX2oaYIemdVQkmCRVfiOV91GL5ANJ+xHmbVglyNosB
+         mhHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJo/Ub94+BmaeIXWXA2yUNaawG8skVjPNbOuNIuaLjys4uszSZfenMCVnrUssvJhiDzDPTQQUHScSS5+sZ5zGoU1LONn8nLynEquri
+X-Gm-Message-State: AOJu0YwpuPoA2+nBObbc9X8QLhuovOtMFm48X7s2tRrXVVtQIZYF7/In
+	83wB89vN29HdYFpDBGE7bZ35rq6FkXGQ67ENj4D/qvURRHb+4wL2ZLw5oIInyQ==
+X-Google-Smtp-Source: AGHT+IEAZToGJkTgcxaM2rLESmbJojcIECRtbj2ajP/I4aD7kMYijhp0v1pTxUNit5zec6JnLqQU5w==
+X-Received: by 2002:a05:6870:8a22:b0:25e:b999:d24 with SMTP id 586e51a60fabf-26879d81d10mr1705185fac.0.1722495504609;
+        Wed, 31 Jul 2024 23:58:24 -0700 (PDT)
+Received: from thinkpad ([120.60.66.23])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead81234dsm10912944b3a.115.2024.07.31.23.58.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 23:58:24 -0700 (PDT)
+Date: Thu, 1 Aug 2024 12:28:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] phy: qcom: qmp: Add debug prints for register writes
+Message-ID: <20240801065814.GA3705@thinkpad>
+References: <20240731115637.90351-1-manivannan.sadhasivam@linaro.org>
+ <nkfrtuxv4ueow66bnazyb4ul3pz3z3wo6zsptu6wnw7hflxerx@pkwn7sx6gfqi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,47 +83,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240731145132.GC16718@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <nkfrtuxv4ueow66bnazyb4ul3pz3z3wo6zsptu6wnw7hflxerx@pkwn7sx6gfqi>
 
-On Wed, Jul 31, 2024 at 04:51:33PM GMT, Oleg Nesterov wrote:
-> On 07/31, Christian Brauner wrote:
-> >
-> > It's currently possible to create pidfds for kthreads but it is unclear
-> > what that is supposed to mean. Until we have use-cases for it and we
-> > figured out what behavior we want block the creation of pidfds for
-> > kthreads.
+On Wed, Jul 31, 2024 at 09:26:27PM -0500, Bjorn Andersson wrote:
+> On Wed, Jul 31, 2024 at 05:26:37PM GMT, Manivannan Sadhasivam wrote:
+> > These register prints are useful to validate the init sequence against the
+> > Qcom internal documentation and also to share with the Qcom hw engineers to
+> > debug issues related to PHY.
+> > 
 > 
-> Hmm... could you explain your concerns? Why do you think we should disallow
-> pidfd_open(pid-of-kthread) ?
+> I've written this patch every time I've touched one of these PHYs, so I
+> certainly like this.
+> 
 
-It basically just works now and it's not intentional - at least not on
-my part. You can't send signals to them, you may or may not get notified
-via poll when a kthread exits. If we ever want this to be useful I would
-like to enable it explicitly.
+Me too :) I've been carrying this as an out-of-tree patch ever since I started
+bringing up Qcom chipsets.
 
-Plus, this causes confusion in userspace. When you have qemu running
-with kvm support then kvm creates several kthreads (that inherit the
-cgroup of the calling process). If you try to kill those instances via
-systemctl kill or systemctl stop then pidfds for these kthreads are
-opened but sending a signal to them is meaningless.
+> > Sample debug prints:
+> > 
+> > QMP PHY: Writing Reg: QSERDES_V5_COM_SYSCLK_EN_SEL Offset: 0x0094 Val: 0xd9
+> > QMP PHY: Writing Reg: QSERDES_V5_COM_HSCLK_SEL Offset: 0x0158 Val: 0x11
+> 
+> That said, with multiple instances of PHYs being configured at about the
+> same time it seems this would benefit greatly from something identifying
+> which PHY instance the write relates to?
+> 
+> dev_dbg() would certainly be nice...
+> 
 
-(So imho this causes more confusion then it is actually helpful. If we
-add supports for kthreads I'd also like pidfs to gain a way to identify
-them via statx() or fdinfo.)
+I understood that after comments from Dmitry. So v4 has this:
 
-> > @@ -2403,6 +2416,12 @@ __latent_entropy struct task_struct *copy_process(
-> >  	if (clone_flags & CLONE_PIDFD) {
-> >  		int flags = (clone_flags & CLONE_THREAD) ? PIDFD_THREAD : 0;
+qcom-qmp-pcie-phy 1c0e000.phy: Writing Reg: QSERDES_V5_COM_SYSCLK_EN_SEL Offset: 0x0094 Val: 0xd9
+
+- Mani
+
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> > 
+> > Changes in v2:
+> > 
+> > * Modifed the debug print to include reg offset
+> > 
+> >  drivers/phy/qualcomm/phy-qcom-qmp-common.h | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-common.h b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
+> > index 799384210509..40beb413328f 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-qmp-common.h
+> > +++ b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
+> > @@ -9,6 +9,7 @@
+> >  struct qmp_phy_init_tbl {
+> >  	unsigned int offset;
+> >  	unsigned int val;
+> > +	char *name;
+> 
+> const?
+> 
+> Regards,
+> Bjorn
+> 
+> >  	/*
+> >  	 * mask of lanes for which this register is written
+> >  	 * for cases when second lane needs different values
+> > @@ -20,6 +21,7 @@ struct qmp_phy_init_tbl {
+> >  	{				\
+> >  		.offset = o,		\
+> >  		.val = v,		\
+> > +		.name = #o,		\
+> >  		.lane_mask = 0xff,	\
+> >  	}
 > >  
-> > +		/* Don't create pidfds for kernel threads for now. */
-> > +		if (args->kthread) {
-> > +			retval = -EINVAL;
-> > +			goto bad_fork_free_pid;
-> 
-> Do we really need this check? Userspace can't use args->kthread != NULL,
-> the kernel users should not use CLONE_PIDFD.
+> > @@ -27,6 +29,7 @@ struct qmp_phy_init_tbl {
+> >  	{				\
+> >  		.offset = o,		\
+> >  		.val = v,		\
+> > +		.name = #o,		\
+> >  		.lane_mask = l,		\
+> >  	}
+> >  
+> > @@ -45,6 +48,8 @@ static inline void qmp_configure_lane(void __iomem *base,
+> >  		if (!(t->lane_mask & lane_mask))
+> >  			continue;
+> >  
+> > +		pr_debug("QMP PHY: Writing Reg: %s Offset: 0x%04x Val: 0x%02x\n",
+> > +			t->name, t->offset, t->val);
+> >  		writel(t->val, base + t->offset);
+> >  	}
+> >  }
+> > -- 
+> > 2.25.1
+> > 
+> > 
 
-Yeah, I know. That's really just proactive so that user of e.g.,
-copy_process() such as vhost or so on don't start handing out pidfds for
-stuff without requring changes to the helper itself.
+-- 
+மணிவண்ணன் சதாசிவம்
 
