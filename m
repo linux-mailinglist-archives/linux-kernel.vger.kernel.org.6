@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-270718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2387B944476
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:29:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4774F944477
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 845721F21BD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:29:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7546B23DE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F26E15748B;
-	Thu,  1 Aug 2024 06:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0814A157492;
+	Thu,  1 Aug 2024 06:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lEg1Ildw"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2086.outbound.protection.outlook.com [40.107.102.86])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="whMjaqNE"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0BF157488;
-	Thu,  1 Aug 2024 06:29:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72296157465;
+	Thu,  1 Aug 2024 06:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722493756; cv=fail; b=CLMHez18OE29A/E/t/mIxrbNPzMEyeeyp7hWl8ZO0r2allj8NRw/GFKCPjpdQCgYibCNUUkHublr/n4Arc2ltvejsLVbUHl5EBb4M0rAJpKQI10cuAKIFTl56MiZkwz13Kb4mTmOOdikmYxuH6FeOOmzsFPLy4Ap2GBNzIIUVwI=
+	t=1722493783; cv=fail; b=LAardh41MXgu7LEMSNI2sGP1p+mzKfyYpJwaKjVNaI4uDEZeTF8Mn6EF/qBXcLlA4dCvphI9pj+NcEuRKsVLg2kpM95yydCoH+dpZImTFfEpiYrDYegG1TdZLz4I51sq/2xc+ynu+omkD94ddvsnUhgowUQOZ5gDF7Hu87DpUoE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722493756; c=relaxed/simple;
-	bh=nelUTE3UCSrTjZfAXz+ulsgjGceDQrtX87jFBIIf/U4=;
+	s=arc-20240116; t=1722493783; c=relaxed/simple;
+	bh=S2ST/oiY44ugBEXzrBU0fyAlgGAV1t9LSEzykBOMz4c=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jj0DAEKCM7NJfQtUY87cmJh8zQmL8ZyPLjXgglf2yir9WUUILxA9AC6cYPbTr7+9wBDvRDZvmF7XCaqBCgswt373c0b4hUbPebaN3qrN5cmv19YTX4KRfKwrQJW9B5VvJMfnl9VMTuF5CDg7YtC5IcoTT4SaAPKdubY8n39IJSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lEg1Ildw; arc=fail smtp.client-ip=40.107.102.86
+	 MIME-Version:Content-Type; b=n7yXLx3io+cpsQImd4aHKSfuPNlX+F5oxfybltINq0mnriKr7CaXKQMY9/cwwZ9i9Siz10XEdx6XmL3uRHcYDEvSoKOQTfUuqVFmhIHgwQAZSIuK3OtZ4yLtvLxWEGbSg/NK3NluWolAZNZYGzdYplTxnC2/vCs2YImAwzqOvcM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=whMjaqNE; arc=fail smtp.client-ip=40.107.244.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sPis+2mriMgZ91Fe0dQvJGq3RrmmR11OP9M7MMAoddnG8El6NOvm5fhzK7WLX31tiKN/ZH6Zsfdm3hMUCwiY1AoZjNpr3OeA73bFpBBUtZ+Wx4cVL0XJvH7Ro9iq86fUrD5lQRfORRrXwEFviRc2wdfm74ueMmMTOIYIBSCpk8DSGyzTDnIb683lWf26j+wFf6uJwHX6M+mDa+TeaDV8QnQja5BkWSll2h9MpywggWzWWmzDrkaFnWD/PBWx0B2cK5yQygkOXWnPieWkatW5kRatluFvmz8QbgUWg0jG7OyVatrEXLrM9DsQ58Qhr24TA9FmMpdw8g+ViDvuGWgwLw==
+ b=hL8gxgA3y6MX/jlhni/bxlNUf2PLSfOqcWehrK2O8nCQH6+jLaLez4crWGZBYDi14IbNLHDpdGFgtd0aWVflisfBD3vfcGb8fZN6udeJpPMPFcmiXTdtSWV8xaO18rpYGry9Q02U7g2L/MBnfUiQhNfxTxDlMERTT2PGPV5+l1yXV/JXWDUG3c+T0vcbVW3BG3OzsU6Dwmh84+dqnBJkQa+2NYLOGlbePIRN/R0Cq9J+Olwv1BI3Kuxf3AgVvjwx1riJSNrm21zrVJeCmsYN9iRQpMv02+r1TrY9KktVBctZ/vTbYZJvubOzHxl9uffm5SYL+IpyEVsUk+FEnqeGrw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3h/1p+WbV/j7E5Ukqg9CVqE+GidDOg+hifcmtgW1fCc=;
- b=OeJvDV00Aw+nmZfZi2uLsM1GVaAcAdyfTrW/r0I15ZIOYesBUXJabKk/6qW3aGcx3U6z123UxmPW1Sjt2vcW4MhD3vN2Nh9WrPRyjX+NWUWS84wYl21D6wTcTpAM59l1vbUJ1ZWQTaQVCp4kisqaqBsEYufv9jCX1Jyj+x3vjbcIZhjNUkdfAWos6KhRG+aMi84dhrWdhs6r8FIfHn4QzpVqXpriuvigZocHzadecGHLE6Jba8kdvFB1VghP3hwoCXzgk5D9AZZecwMxdTvpheD3OdTO61nc25PVKrtztu17WoZtmxPh2s+uZrX0Okxp2Wzde4GCBaBZRQGmletpVg==
+ bh=J1hnEfkIC+ghzF+oVLNepXM9R2KLwrnFBZkn4np8uO0=;
+ b=YCG9o/Mru/dXBXa4XSGGb8GoJubp7O6OOHG/eNXfBd/O/e5WrwFTYLdE5gX2eyLzsfOoU8KB3tSG1tuoXWLcfqm1KqLiuVsUqRHoWGzaB4NXMyFlw7tjZw6zYy2zAFNnxbizMdTlB6SzX6VgRbhc1DHiN/p6wBcF/xc3NX63dpJ0D1IaJKLredlxbHZL+68Tw2f07+6U1D+S4/JdDIzoyX4Pb7VwkH0jpvSz1x6kNbeQS/iqFcWS087qAV0V6uDMilTLiRCG0WB3vFXCk5Iam7KBY/TYM5syE34JMr1I5RlHSsggYm61YReFSU7nX2tYIOY9PNqMIcYPmGnn/rrJOw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3h/1p+WbV/j7E5Ukqg9CVqE+GidDOg+hifcmtgW1fCc=;
- b=lEg1IldwV/J6bsbXZhLjj5pzDbEMtGh7bEpe1gZzY/7HCF3JUq8l1mY6+86D62W5bxjpCPtj8/smKu42RGmYM34cOIyQelX+aMJNqPfvIn9rebhOPq65HBHW9JdtrY+ZzW1WGGSRBbI1kgKpXv2f+gGzflh4k3scGlS9/dYuCq8=
-Received: from BY5PR03CA0022.namprd03.prod.outlook.com (2603:10b6:a03:1e0::32)
- by CYYPR12MB8939.namprd12.prod.outlook.com (2603:10b6:930:b8::10) with
+ bh=J1hnEfkIC+ghzF+oVLNepXM9R2KLwrnFBZkn4np8uO0=;
+ b=whMjaqNEg836Pi+MBMTfoZGGjBTKTlP4nhQ37iWPukTbwA5MPzvyOeIRRzS4T7fJ5jpPXUQT2ci03GfxaDDM/HgegHh7XGr9z0APGh6XMYvoWS2pGqJzIA7LQ/NWi73RFzOpAfmo1Fjl3OU7plXK9m0brHlAMCur5Vo15YmBeUs=
+Received: from BY3PR03CA0020.namprd03.prod.outlook.com (2603:10b6:a03:39a::25)
+ by SJ0PR12MB6806.namprd12.prod.outlook.com (2603:10b6:a03:478::7) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.28; Thu, 1 Aug
- 2024 06:29:12 +0000
-Received: from SJ5PEPF00000209.namprd05.prod.outlook.com
- (2603:10b6:a03:1e0:cafe::51) by BY5PR03CA0022.outlook.office365.com
- (2603:10b6:a03:1e0::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Thu, 1 Aug
+ 2024 06:29:37 +0000
+Received: from SJ5PEPF00000208.namprd05.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::c7) by BY3PR03CA0020.outlook.office365.com
+ (2603:10b6:a03:39a::25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22 via Frontend
- Transport; Thu, 1 Aug 2024 06:29:12 +0000
+ Transport; Thu, 1 Aug 2024 06:29:37 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,16 +62,20 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
 Received: from SATLEXMB03.amd.com (165.204.84.17) by
- SJ5PEPF00000209.mail.protection.outlook.com (10.167.244.42) with Microsoft
+ SJ5PEPF00000208.mail.protection.outlook.com (10.167.244.41) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 06:29:12 +0000
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB03.amd.com
+ 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 06:29:37 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
  (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 1 Aug
- 2024 01:29:10 -0500
+ 2024 01:29:36 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 1 Aug
+ 2024 01:29:35 -0500
 Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
  SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
- via Frontend Transport; Thu, 1 Aug 2024 01:29:04 -0500
+ via Frontend Transport; Thu, 1 Aug 2024 01:29:28 -0500
 From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 To: <broonie@kernel.org>
 CC: <alsa-devel@alsa-project.org>, <yung-chuan.liao@linux.intel.com>,
@@ -85,11 +89,12 @@ CC: <alsa-devel@alsa-project.org>, <yung-chuan.liao@linux.intel.com>,
 	<kai.vehmanen@linux.intel.com>, Brent Lu <brent.lu@intel.com>, Charles Keepax
 	<ckeepax@opensource.cirrus.com>, Maciej Strozek
 	<mstrozek@opensource.cirrus.com>, Chao Song <chao.song@linux.intel.com>,
-	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..."
-	<linux-sound@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 11/31] ASoC: intel/sdw_utils: move rtk dmic helper functions
-Date: Thu, 1 Aug 2024 11:53:56 +0530
-Message-ID: <20240801062416.2203673-12-Vijendar.Mukunda@amd.com>
+	Rander Wang <rander.wang@intel.com>, "open list:SOUND - SOC LAYER / DYNAMIC
+ AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH 12/31] ASoC: intel/sdw_utils: move rt712 sdca helper functions
+Date: Thu, 1 Aug 2024 11:53:57 +0530
+Message-ID: <20240801062416.2203673-13-Vijendar.Mukunda@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240801062416.2203673-1-Vijendar.Mukunda@amd.com>
 References: <20240801062416.2203673-1-Vijendar.Mukunda@amd.com>
@@ -101,150 +106,151 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: Vijendar.Mukunda@amd.com does not
+Received-SPF: None (SATLEXMB05.amd.com: Vijendar.Mukunda@amd.com does not
  designate permitted sender hosts)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF00000209:EE_|CYYPR12MB8939:EE_
-X-MS-Office365-Filtering-Correlation-Id: 67ccd2dd-7bb2-42fd-4cba-08dcb1f341ff
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000208:EE_|SJ0PR12MB6806:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e7257f9-04ee-4b5e-7a1e-08dcb1f350ef
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|36860700013;
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ssm70Fi486mU1oXFQJXq3SlevZ8nCOzuXCKcz5/Bb2s9TPnuC6BTK3cYABCp?=
- =?us-ascii?Q?6S7hHxqWB1ub74rvUR5h0j/BWPbOoKOPdFstyX98Ruo5SgFSt4J9YQ4h6OtN?=
- =?us-ascii?Q?gDAZ8lCewNWDPXHH/FtyV9QULC66Jq9Ym26fhDNoclTT3NNyXVy0YQspC2p8?=
- =?us-ascii?Q?kBIU0ifHRHiKcDwjAUkSvkcwRH5sDMsgHmaF4nuj7nO6mKkDnvkcMlPWhbNx?=
- =?us-ascii?Q?m75QVU9PEwr38iawsaxnsjCazSRn+f8cxQWfWD8J1Y5NZyubJwmG3bEsu9GM?=
- =?us-ascii?Q?TGiew0tWhHRRumtPX+HFn1NfpSWOUK69/aAP51av4FUOhJfOviVd0GgGLFGP?=
- =?us-ascii?Q?2qTIfRsKCffsvxaDeBEaTQdjAB+4DyerwWyhsfP7NdRI+WBwgMBMuGs6Q4PW?=
- =?us-ascii?Q?XnTp2ZqpYUI15+JLsC36Hbx0VYodiVsN7G9zxo+8us6pkNqbCYlZFsCQQieK?=
- =?us-ascii?Q?/kgbLxPMygvHQi/YUW2bS2ATxNEN3qvGjCVAXDSxl+mFGu8YDG2WwX2614nw?=
- =?us-ascii?Q?+fv3qr6GDeUGvFL8YFiXkSB8Xr6R+LnBE8pCZGmtqYPdkLEHBIMsnXWMjF0b?=
- =?us-ascii?Q?GPeJ4fEc2S24v9a5rrDOF1R7q+byQS/kcyrPkF8cPv4DRGg8ojVNKKFGysof?=
- =?us-ascii?Q?eSZpOwOBXdUosx6N/cBIwRvwxgJv96ipsW2qxdV/ouI//+5ZS34rLM6mbY28?=
- =?us-ascii?Q?Z3pydQtiFOIB3DtOWpBR8Ms4U1eiEh7mcyUs0ik0wcJJv47RCdWE04RQVCe7?=
- =?us-ascii?Q?qViXzdtxj6Hq8oerMO2n2etmJV0lLKoKoJbu1xNLPEJ0oeqENm9s67dQVW82?=
- =?us-ascii?Q?NbUFwH+MMn/R66/c85VbL2Jm657zOWnW2mLJU4K+ZkuReZH4pPh879mos9vA?=
- =?us-ascii?Q?Pu/Ueme5Oma5simk55rvhrFuTJGLEsKuTKC8AQq5aTLKd7FDAjZBTKeengxG?=
- =?us-ascii?Q?pEqGePdBq/zKGEYHYZ3C3IAlkF9ujWn/veQy4NTki6/B4EG3glT5JQOgMi4f?=
- =?us-ascii?Q?6qvwd0BiB35YANN/i1jo/UoJlC2d+wzrNw9xSXJRWvnKjuTqrR8offrrzKJE?=
- =?us-ascii?Q?Jntr5wtJT0OMuYjgmZkPCqS3HRVCrglSfoZiCbidtRpErHhV38/FFsp87Fxt?=
- =?us-ascii?Q?x704OUuER36V2YECeSh8VCWMJ3b0d+SrPmomp1ruIpCAOV9UdzB46IKGIKIg?=
- =?us-ascii?Q?A0eupNPV3CqnIgdPjhJr7tgtDO0iBBauo2Mp7reJ3HIqINrLMCiyRch4LDLr?=
- =?us-ascii?Q?lY4va4XQY+THLFPdzlC0oSFByxaRJezLb8K6cOL0u8SpRffwwjFOMRMSTb8D?=
- =?us-ascii?Q?sGGOmhVG9yXc5+gse5VJsH6eaKqolPbzpe/anM3U315zhCiD7iuQ9Df57XuB?=
- =?us-ascii?Q?40gFAGo2Y95HDtjksgvjBxq83lDZLxqiZuFcBB45K9I6GjVfUw=3D=3D?=
+	=?us-ascii?Q?DwdC90z2KccsoC0qzDsbc6NimKCCn+vgJVgAEn4rjGcKusPb1JwsovmnnzNQ?=
+ =?us-ascii?Q?F+CvV574uUVDe+kPJna012/qrU0Yek1f/HD2vONOIaci1pxWA8yagYT9FsZK?=
+ =?us-ascii?Q?tWEArq9F4txc6FnXGyxortXn9rHQWaXhBzCMB3UjRiMNfSJAcKAWIniKOD83?=
+ =?us-ascii?Q?vQ5J/V9wgg8dSmwe2BJ3IFVSJrHglielegyI1+jvSIHdSuqVGE64/LHkmy7y?=
+ =?us-ascii?Q?+L7wDpHdM5gsFnqNufhJGMuW5vjl40XS0/CzOlZhnPqWjAYczzESLzNeGKY1?=
+ =?us-ascii?Q?UQKlHk7AYjyiZWU4u/Zok0xbxbxyh3THt1lpGaouePEGCmeZP65at0ZLmO/B?=
+ =?us-ascii?Q?9/jo1wTvKsYUXiUViWuQY8/jfPeqf2liXEfdii2Ua6q40cwAISws8E4FCeIR?=
+ =?us-ascii?Q?bcJlPTHqAM+sFT9jJ4tSY9HPUIhG+6OpJNBu7MR/cPtrtiCd2GgKG4n+2uCM?=
+ =?us-ascii?Q?607ufNhvOuDxiuS36FDb3Rt3vfhZdQwGFXfHjhsWo3yHoBQ/fU5bfJYsEaMj?=
+ =?us-ascii?Q?CtjaJlWKx8kC5m40KjUcTJfiDOxt8jHoXgBlPg+z1sFMKGd/XmOvkpzJMwkz?=
+ =?us-ascii?Q?CPHTXCPp3mKRQDm0HbkcGpiDaZ/PpzmyTZHrKonutaKGbvT7xofBVbpM369G?=
+ =?us-ascii?Q?sS40D1nzIs7yqwdYAtHge1ISb3R8ENZmqn8d302LF5ueTYu6GWp+Y9bJ0DjB?=
+ =?us-ascii?Q?s8dJbYEMhgnRffQRKduFug3kd7f+3d0DKIEyJrj+4Xvqk00dZmjAeZqk1uuD?=
+ =?us-ascii?Q?GN4fol4m1yqu84PW+yi6gE/HHoddWlV3ZVb0z5ZKTtooBrVD7C4amiJdUR4g?=
+ =?us-ascii?Q?3R4Mc8+gxUfZUCLcD7t8A7rRjR1LgTsPEn961OCdi57I32TlS1cOYtyIU8pA?=
+ =?us-ascii?Q?bel1LwKj7fp/NdN38YXDpTFFz4GHK+STgTHY2WUKecdiIiQmI0XBDMKpsEuI?=
+ =?us-ascii?Q?YhNF93kCyKp9ATYssvYpmcT2puIxQMm3KrpB+eiqJNGs0xlevAnY6tYaC+XB?=
+ =?us-ascii?Q?djGmeefce8t7JM3avyqmJfMwWeA1CjDoqCZCIVsC5Ka1y7IA/I1KIh6yYQTH?=
+ =?us-ascii?Q?WNvAmSouiTIU8PJSfURW4hQ9vCx7xER7cavzUqZ6fEbuqiqk7vVRFtnzgfhO?=
+ =?us-ascii?Q?6ZoHlJOt9FcxYz7TPxZ24V/3fAlVRrc+qKvVYYfMQyZYHv7w8qS+3TRhf6Uw?=
+ =?us-ascii?Q?/qEljpCyprcJPjJy416IDZwa428ESvLNzYZNYpfoIvWtwiwubiH5KTYbe+qW?=
+ =?us-ascii?Q?64JzxsLULLP/q2boglpWYShGV4IHM1GxBFnOlXvARnO7cBblZ30DbiJYqeET?=
+ =?us-ascii?Q?/AzUzdkxBMlxCH+bSgWFl6RWkgQRKOtHp0EQ1UELF7PZkXizs3auqQ84rM7C?=
+ =?us-ascii?Q?MwYz4CYPkmX+SgC/zsZ3gVrBbagv2WCUqPtkaVlYyGlcd+epGA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 06:29:12.0624
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 06:29:37.1402
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67ccd2dd-7bb2-42fd-4cba-08dcb1f341ff
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e7257f9-04ee-4b5e-7a1e-08dcb1f350ef
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF00000209.namprd05.prod.outlook.com
+	SJ5PEPF00000208.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8939
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6806
 
-Move rtk SoundWire dmic helper functions implementation to sdw_utils
-folder to make it generic.
+Move RT712 SDCA codec helper file to sdw_utils folder so that these
+helper functions can be used by other platform machine drivers.
 
 Link: https://github.com/thesofproject/linux/pull/5068
 Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- include/sound/soc_sdw_utils.h                            | 3 +++
- sound/soc/intel/boards/Makefile                          | 1 -
- sound/soc/intel/boards/sof_sdw_common.h                  | 1 -
- sound/soc/sdw_utils/Makefile                             | 2 +-
- .../sof_sdw_rt_dmic.c => sdw_utils/soc_sdw_rt_dmic.c}    | 9 +++++----
- 5 files changed, 9 insertions(+), 7 deletions(-)
- rename sound/soc/{intel/boards/sof_sdw_rt_dmic.c => sdw_utils/soc_sdw_rt_dmic.c} (77%)
+ include/sound/soc_sdw_utils.h                             | 1 +
+ sound/soc/intel/boards/Makefile                           | 2 +-
+ sound/soc/intel/boards/sof_sdw_common.h                   | 1 -
+ sound/soc/sdw_utils/Makefile                              | 3 ++-
+ .../soc_sdw_rt712_sdca.c}                                 | 8 +++++---
+ 5 files changed, 9 insertions(+), 6 deletions(-)
+ rename sound/soc/{intel/boards/sof_sdw_rt712_sdca.c => sdw_utils/soc_sdw_rt712_sdca.c} (80%)
 
 diff --git a/include/sound/soc_sdw_utils.h b/include/sound/soc_sdw_utils.h
-index 0ffbd9847532..9fa102fc03c3 100644
+index 9fa102fc03c3..6fd305253e2a 100644
 --- a/include/sound/soc_sdw_utils.h
 +++ b/include/sound/soc_sdw_utils.h
-@@ -72,4 +72,7 @@ const char *asoc_sdw_get_codec_name(struct device *dev,
- /* DMIC support */
- int asoc_sdw_dmic_init(struct snd_soc_pcm_runtime *rtd);
+@@ -74,5 +74,6 @@ int asoc_sdw_dmic_init(struct snd_soc_pcm_runtime *rtd);
  
-+/* dai_link init callbacks */
-+int asoc_sdw_rt_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
-+
+ /* dai_link init callbacks */
+ int asoc_sdw_rt_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
++int asoc_sdw_rt712_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
+ 
  #endif
 diff --git a/sound/soc/intel/boards/Makefile b/sound/soc/intel/boards/Makefile
-index 8ac6f7b5fbee..dca8eecfa820 100644
+index dca8eecfa820..3bc9d25fc9bb 100644
 --- a/sound/soc/intel/boards/Makefile
 +++ b/sound/soc/intel/boards/Makefile
-@@ -40,7 +40,6 @@ snd-soc-sof-sdw-y += sof_sdw.o				\
+@@ -39,7 +39,7 @@ snd-soc-sof-sdw-y += sof_sdw.o				\
+ 			bridge_cs35l56.o			\
  			sof_sdw_rt5682.o sof_sdw_rt700.o	\
  			sof_sdw_rt711.o sof_sdw_rt_sdca_jack_common.o	\
- 			sof_sdw_rt712_sdca.o sof_sdw_rt722_sdca.o	\
--			sof_sdw_rt_dmic.o			\
+-			sof_sdw_rt712_sdca.o sof_sdw_rt722_sdca.o	\
++			sof_sdw_rt722_sdca.o			\
  			sof_sdw_cs42l42.o sof_sdw_cs42l43.o	\
  			sof_sdw_cs_amp.o			\
  			sof_sdw_hdmi.o
 diff --git a/sound/soc/intel/boards/sof_sdw_common.h b/sound/soc/intel/boards/sof_sdw_common.h
-index 81b654407651..73227ebf8e7b 100644
+index 73227ebf8e7b..b190aae1e093 100644
 --- a/sound/soc/intel/boards/sof_sdw_common.h
 +++ b/sound/soc/intel/boards/sof_sdw_common.h
-@@ -162,7 +162,6 @@ int asoc_sdw_rt700_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai
+@@ -160,7 +160,6 @@ int asoc_sdw_maxim_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_
+ int asoc_sdw_rt5682_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
+ int asoc_sdw_rt700_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
  int asoc_sdw_rt711_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
- int asoc_sdw_rt712_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
+-int asoc_sdw_rt712_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
  int asoc_sdw_rt722_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
--int asoc_sdw_rt_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
  int asoc_sdw_rt_amp_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
  int asoc_sdw_rt_sdca_jack_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
- 
 diff --git a/sound/soc/sdw_utils/Makefile b/sound/soc/sdw_utils/Makefile
-index de8aff8744d8..2c8f70465a12 100644
+index 2c8f70465a12..f9a2baa49617 100644
 --- a/sound/soc/sdw_utils/Makefile
 +++ b/sound/soc/sdw_utils/Makefile
-@@ -1,3 +1,3 @@
+@@ -1,3 +1,4 @@
  # SPDX-License-Identifier: GPL-2.0-only
--snd-soc-sdw-utils-y := soc_sdw_utils.o soc_sdw_dmic.o
-+snd-soc-sdw-utils-y := soc_sdw_utils.o soc_sdw_dmic.o soc_sdw_rt_dmic.o
+-snd-soc-sdw-utils-y := soc_sdw_utils.o soc_sdw_dmic.o soc_sdw_rt_dmic.o
++snd-soc-sdw-utils-y := soc_sdw_utils.o soc_sdw_dmic.o soc_sdw_rt_dmic.o \
++		       soc_sdw_rt712_sdca.o
  obj-$(CONFIG_SND_SOC_SDW_UTILS) += snd-soc-sdw-utils.o
-diff --git a/sound/soc/intel/boards/sof_sdw_rt_dmic.c b/sound/soc/sdw_utils/soc_sdw_rt_dmic.c
-similarity index 77%
-rename from sound/soc/intel/boards/sof_sdw_rt_dmic.c
-rename to sound/soc/sdw_utils/soc_sdw_rt_dmic.c
-index 64960b059834..7f24806d809d 100644
---- a/sound/soc/intel/boards/sof_sdw_rt_dmic.c
-+++ b/sound/soc/sdw_utils/soc_sdw_rt_dmic.c
-@@ -1,16 +1,17 @@
+diff --git a/sound/soc/intel/boards/sof_sdw_rt712_sdca.c b/sound/soc/sdw_utils/soc_sdw_rt712_sdca.c
+similarity index 80%
+rename from sound/soc/intel/boards/sof_sdw_rt712_sdca.c
+rename to sound/soc/sdw_utils/soc_sdw_rt712_sdca.c
+index bb09d1ddafd2..5127210b9a03 100644
+--- a/sound/soc/intel/boards/sof_sdw_rt712_sdca.c
++++ b/sound/soc/sdw_utils/soc_sdw_rt712_sdca.c
+@@ -1,8 +1,10 @@
  // SPDX-License-Identifier: GPL-2.0-only
 +// This file incorporates work covered by the following copyright notice:
- // Copyright (c) 2024 Intel Corporation
+ // Copyright (c) 2023 Intel Corporation
 +// Copyright (c) 2024 Advanced Micro Devices, Inc.
  
  /*
-- * sof_sdw_rt_dmic - Helpers to handle Realtek SDW DMIC from generic machine driver
-+ * soc_sdw_rt_dmic - Helpers to handle Realtek SDW DMIC from generic machine driver
+- *  sof_sdw_rt712_sdca - Helpers to handle RT712-SDCA from generic machine driver
++ *  soc_sdw_rt712_sdca - Helpers to handle RT712-SDCA from generic machine driver
   */
  
  #include <linux/device.h>
- #include <linux/errno.h>
+@@ -13,7 +15,7 @@
  #include <sound/soc.h>
  #include <sound/soc-acpi.h>
--#include "sof_board_helpers.h"
+ #include <sound/soc-dapm.h>
 -#include "sof_sdw_common.h"
 +#include <sound/soc_sdw_utils.h>
  
- int asoc_sdw_rt_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai)
- {
-@@ -39,4 +40,4 @@ int asoc_sdw_rt_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_da
+ /*
+  * dapm routes for rt712 spk will be registered dynamically according
+@@ -43,4 +45,4 @@ int asoc_sdw_rt712_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_
  
- 	return 0;
+ 	return ret;
  }
--MODULE_IMPORT_NS(SND_SOC_INTEL_SOF_BOARD_HELPERS);
-+EXPORT_SYMBOL_NS(asoc_sdw_rt_dmic_rtd_init, SND_SOC_SDW_UTILS);
+-
++EXPORT_SYMBOL_NS(asoc_sdw_rt712_spk_rtd_init, SND_SOC_SDW_UTILS);
 -- 
 2.34.1
 
