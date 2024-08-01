@@ -1,145 +1,129 @@
-Return-Path: <linux-kernel+bounces-271678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61F3945188
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:32:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A94294518E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5DAD1F2368C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:32:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED73B23431
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5024C1B4C25;
-	Thu,  1 Aug 2024 17:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="RFPnmUO2"
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D49811B9B2E;
+	Thu,  1 Aug 2024 17:34:23 +0000 (UTC)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F315F13D62B
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF1913D62B;
+	Thu,  1 Aug 2024 17:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533552; cv=none; b=gArXHjV13oTVKfupyW4qdPoIsMOk9WsEkwg40jJxW/cAyML4l00nHuwIIDmmDHJMS+oE3PAbWKvAveb3y/hc2LnP+fflOsS2+0djanul0I3VEZDHyEoZ7bqBE5lllBz1oQOmchEBkaYwBTHwIRmJCAo7Naez76gDCixlzQStrTw=
+	t=1722533663; cv=none; b=t5QOlEufSg7hCvg4B+BomDwYntYPEvg3It1aUWbzj5sOvqGpZFt13mZzI2Cd9t0yzpxnH2cug6jnvQq4QYAUv4FPdniJq6o81WjzWibjNiwz14lrFW/JdQn37g5StNZxFwQ5Oh+umBv0sYobahOJ8ZQAmucuvZPhgrunBRIyzJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533552; c=relaxed/simple;
-	bh=TjMDSHWY5Igoffs0sPVEqbTSyCYscpk6athICFQ4/Gc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=T0d6I8FiUwVmSfv7DMPqP5tJsi5yPnFoAECfJNpBHHfpxKcr+VVFo4HAyev2ewhyK0GW0abfLtc9anCPHcuw+sm85WgMDIdK8KigiGa7Pb+LKPnZt7lMkb3j5OozQkY7SrOGnGxq6S0mr5SJL3zkhZMooNpD43rW5akgYr61Uz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=RFPnmUO2; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-81f96ea9ff7so248705739f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:32:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1722533550; x=1723138350; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=bS2/f0MUierH/zQOzYcFrgW7IacC2rV2Pf3VZgOc8QA=;
-        b=RFPnmUO2AWrQplaw4WptW/q+1M83XxUGNc42WdJlsdA1cjOwAPFwJ92OTROMU2hBwd
-         zDBRyJZjjPlIqBT+b4RLq508cmufnFODCHFBHeEn/tY6YQXIomrGzyGMsQH8qAGbbRh+
-         c1VlO3TBelvyvFYhAbx3Qxb958aCKJVrAiGHyZFso+lNIfuMfGyxBQlgv3bQiEPVqJGf
-         Ob7eAMx1ms95veQa1fjUOd+OYvqfxoghlnGPSWI++6Ak0cMmiNzXiRZ9IZKXld6Y9EW5
-         fuvJdC/pWTdvRQJJQCdzGKNced8OesioNO7RdlIzk/aWIITnQT3viECtn4eU5am+Tq32
-         lhBg==
+	s=arc-20240116; t=1722533663; c=relaxed/simple;
+	bh=QGfv6Mwl2jnbBI5jZ5Gi7DAKze67LLzTrgAtwyJNyr8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=riBDZX4jX/4SAoFTsm6P0ozSp9BXrWF30mfC/dri7VRf0fSlcH7MALSe0FWqqopGEG7dEkpd624hx5JxL41HjAyF9o69/MgoL8/UvpUvvKtxez+/6J3r28fIYc0RM7y9IvPUyvgLNw/AcS+Ul7xvIZ6rGQOUOdqSsaA5WTnPPXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-65f7bd30546so19669137b3.1;
+        Thu, 01 Aug 2024 10:34:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722533550; x=1723138350;
-        h=content-transfer-encoding:in-reply-to:cc:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bS2/f0MUierH/zQOzYcFrgW7IacC2rV2Pf3VZgOc8QA=;
-        b=MCHxbsdV+h/LE6JOeKUw+16lXVEkMoRP5qbpI8bY4s/38sI3h0Y9e31pMLIdqtExC4
-         MAdYsQSMpvaBXK6tNPOx4ePiX5K7059ioHjxjjMJNtnW/7mVlf6bGpLnxHb7m7F3Xmrg
-         lq22ShiS9ZOENeMuhE0UuDGK9vHQcS6qjadrPhXnuVeLGYDBfnpx2TycOonLD4ICJzyM
-         NZDZQChTErJNkVHYALpv1SKJQP5oYny9sfiLVwoVEKwSDh3WMvVJGWP1kVtfBecTOGJq
-         cgQAg7qygcMrWrvrm17o254BRcIeUz2mLDCtjiRSwMPzDb6Xf413/58FhnVngPk/H7S4
-         8XKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUX3FD5iicRXaMOoH2UYv1CtA+kfvQF+Mf7XETdBbrYNjqGy94SL9sGQwCuWq67rj3vu1thQlpuEBl/jpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8MW0om3pu67mdowNEnDyjY6n3yVqlNX32eQDntuR7fni1oAga
-	BNoUlZaOiMVDLK5e2nrmC93lrAtmfwsOasXHERRb/ZDUNBfTP/ehR0uU4yssY3I=
-X-Google-Smtp-Source: AGHT+IEW29DvT927BXE65AEWASyCF+zwd6XCxK7iEu1GTTZ94NlmL1vnW2UIMzI/7NaHio7Cnzi6DA==
-X-Received: by 2002:a05:6602:6d10:b0:7fb:790c:a317 with SMTP id ca18e2360f4ac-81fd4367709mr110631939f.6.1722533549872;
-        Thu, 01 Aug 2024 10:32:29 -0700 (PDT)
-Received: from [100.64.0.1] ([147.124.94.167])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a3e19asm21674173.127.2024.08.01.10.32.28
+        d=1e100.net; s=20230601; t=1722533659; x=1723138459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b7RLlBjK6VYDjExx9r5TpBCz781pCBuMFrVQOrMhhBk=;
+        b=rOS26AfyhoiHWFlBodif68+WU/tWDEcOxcT/Y8bT1UCpefpFPdzkY4IimGw+SdsVEU
+         tJGdKDN9xJrc4aI9B9i6GD8aY7XZOq1f2074VZC+69qm8wEmHxAEux68q1j8yIanXzoJ
+         4hzHlA5rEcaQDVUnI6shZ/wZtr/seoiCR5rIs4ZoCjZJWoLqwY4uSrJy9qfDJwlhLj1G
+         HYw0OCCrHl0TJlhea4wwAzbwaUiUbKsW3joi1kkvy/BiaMach5+YVW6vwcxvd/1yFDDt
+         DxF6WgduZw9iogy+7r3J+PSGlhxq7j1R7OB/67k0H8rRXQRfoXmQunqqjCt8M8QJkCSX
+         YlEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW+Hj7SIcGXclvsRxLOcoSn+3aviRApbDc3CiImBe7dFaH/2s/DT4ikzExrkkijIg1ZulSA2/gqPPZ6G5gMOuUERduY6HpvMr1EyzhIqvpk35M5joDAq+J1b7l9XlY0q/dqLZ86++kkKAnV6XpljBNlHxuyqUvrMILEP+q2AXPbCederLfeSl3X2mcLnz+SFKvNbcvQAvE6V0P32kobq6NLLoejcr98lSJcmoncxhVDyIDo9oc7rDiyBqMPoFdYSpY=
+X-Gm-Message-State: AOJu0Yx9wOSwOOGIK/v7BZD2sl7Rxg+eX+qDb6YIv5qjUeeSGon5Vbzq
+	CNO64FOySkm6ybYeZE7IlVn16debbOT+zm/BQsjUCyLAVhogx3bLFyWWlGMU
+X-Google-Smtp-Source: AGHT+IEpDNT2ogMgupDB98BwUhJQZQ61IZB1mOGnyGEmEAwT8R54mpFr8XrFoOgraWpkDIuZTzeI0A==
+X-Received: by 2002:a81:7755:0:b0:66b:c28b:f234 with SMTP id 00721157ae682-689638f35f5mr7412837b3.21.1722533659002;
+        Thu, 01 Aug 2024 10:34:19 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-689af65b26dsm214667b3.7.2024.08.01.10.34.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 10:32:29 -0700 (PDT)
-Message-ID: <0719e155-0a07-4878-87e3-cd96fed7a1dd@sifive.com>
-Date: Thu, 1 Aug 2024 12:32:28 -0500
+        Thu, 01 Aug 2024 10:34:18 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-661d7e68e89so20248157b3.0;
+        Thu, 01 Aug 2024 10:34:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVelEtnSLsTPOcBQ4H6g7FJBEakHBGLnpo+bKfhSbq9eqpnKZ2o3kSrKpQhcljb8kF73fYoD+sCEHJAbDRgUIev8LU4PhWCbm2I4XiuO5eC6/kFPSxTEZ1CGuqYMT07FnIcxTVGzfWCEcUETS7K8HfV+vP0RsGepFvI2IlXqV1QLOYhBrJDArzoelGlA8RiL5P78nhtKxAseEVtfxyHO2AJP8TBQvp7TfWkNgaQsLX9TtJWrNqnQqKL1VuRdatrBuQ=
+X-Received: by 2002:a81:7755:0:b0:66b:c28b:f234 with SMTP id
+ 00721157ae682-689638f35f5mr7412527b3.21.1722533658194; Thu, 01 Aug 2024
+ 10:34:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -fixes] riscv: Re-introduce global icache flush in
- patch_text_XXX()
-To: Alexandre Ghiti <alexghiti@rivosinc.com>,
- Palmer Dabbelt <palmer@dabbelt.com>
-References: <20240730135921.156508-1-alexghiti@rivosinc.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Andy Chiu <andy.chiu@sifive.com>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240730135921.156508-1-alexghiti@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240422105355.1622177-9-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com> <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
+In-Reply-To: <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Aug 2024 19:34:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
+Message-ID: <CAMuHMdXOztsoKp=9-TDXirJN8voRy0O5mYXcVy=Uz-GX0B2N_Q@mail.gmail.com>
+Subject: Re: [PATCH v4 8/8] arm64: dts: renesas: r9a08g045: Update
+ #power-domain-cells = <1>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, magnus.damm@gmail.com, ulf.hansson@linaro.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alex,
+Hi Claudiu,
 
-On 2024-07-30 8:59 AM, Alexandre Ghiti wrote:
-> commit edf2d546bfd6 ("riscv: patch: Flush the icache right after
-> patching to avoid illegal insns") mistakenly removed the global icache
-> flush in patch_text_nosync() and patch_text_set_nosync() functions, so
-> reintroduce them.
-> 
-> Fixes: edf2d546bfd6 ("riscv: patch: Flush the icache right after patching to avoid illegal insns")
-> Reported-by: Samuel Holland <samuel.holland@sifive.com>
-> Closes: https://lore.kernel.org/linux-riscv/CAHVXubh8Adb4=-vN4cSh0FrZ16TeOKJbLj4AF09QC241bRk1Jg@mail.gmail.com/T/#m800757c26f72a1d45c240cb815650430166c82ea
+On Thu, Aug 1, 2024 at 7:28=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxon=
+.dev> wrote:
+> On 01.08.2024 19:13, Geert Uytterhoeven wrote:
+> > On Mon, Apr 22, 2024 at 12:54=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.=
+dev> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> Update CPG #power-domain-cells =3D <1> and move all the IPs to be part=
+ of the
+> >> IP specific power domain as the driver has been modified to support
+> >> multiple power domains.
+> >>
+> >> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Now the watchdog fixes are in v6.11-rc1, I will queue this in
+> > renesas-devel for v6.12.
+>
+> Only the RZ/G3S support has been merged.
+>
+> The watchdog fixes that allows us to use this patch were submitted as RFC
+> but got no input from Ulf, yet.
 
-Shouldn't this use the permalink for the specific message, not the thread?
+Oops, postponing.
 
-> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
-> ---
->  arch/riscv/kernel/patch.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
-> index ab03732d06c4..91edfd764ed9 100644
-> --- a/arch/riscv/kernel/patch.c
-> +++ b/arch/riscv/kernel/patch.c
-> @@ -205,6 +205,9 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)
->  
->  	ret = patch_insn_set(tp, c, len);
->  
-> +	if (!ret)
-> +		flush_icache_range((uintptr_t)tp, (uintptr_t)tp + len);
+> [1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.u=
+j@bp.renesas.com/
 
-This patch was based on an old tree from before
-https://git.kernel.org/riscv/c/47742484ee16 removed the "tp" variable. While it
-still compiles because flush_icache_range() is a macro that discards its
-arguments, it will be confusing to anyone reading the code.
+Gr{oetje,eeting}s,
 
-Regards,
-Samuel
+                        Geert
 
-> +
->  	return ret;
->  }
->  NOKPROBE_SYMBOL(patch_text_set_nosync);
-> @@ -237,6 +240,9 @@ int patch_text_nosync(void *addr, const void *insns, size_t len)
->  
->  	ret = patch_insn_write(tp, insns, len);
->  
-> +	if (!ret)
-> +		flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
-> +
->  	return ret;
->  }
->  NOKPROBE_SYMBOL(patch_text_nosync);
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
