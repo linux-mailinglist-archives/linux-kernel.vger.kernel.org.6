@@ -1,90 +1,123 @@
-Return-Path: <linux-kernel+bounces-271092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 644CB944964
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:36:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57852944970
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 886761C20F6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:36:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192F4280FA2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FA1170A33;
-	Thu,  1 Aug 2024 10:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YZDDq0Ye";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vH2A30OZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB06184531;
+	Thu,  1 Aug 2024 10:36:43 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A73BBE5
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0138A183CC7;
+	Thu,  1 Aug 2024 10:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722508581; cv=none; b=krabKzmTgjzgqpxL5ea2iBsCkkW+1Z1XDrxRdF+Y3cihwMD8Hcbz0qbGiWLYaAjLxoqIGd0eoGaolJPfC7dnydDmEbMI8clvXntG1i1RGRCnxy6l+KV5E+BCxYeUnA03xCJH1oR03JPdvFx29YYXPmmNi1KKWW/SIvEgkpd18Gs=
+	t=1722508603; cv=none; b=aQpiynYPsEtSOLI09UV5etzG4m6NeN+ebGlDklHbFNa0rQC89LgHWtjqPvgBIALgiqe2pzELiNosbzxGOuXyOkSzcMqrXbFaYLEEncMHZYUX6bgFx+fZWGzBq66rbFezNtClso5vXGmHTNx6aGO5EzWweSkUg+D5ZYixqgs20Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722508581; c=relaxed/simple;
-	bh=5wXmqN7cEw8KxW7zGPiqdIYQ6j409CQOBB1zUcyNIoI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ggxkZLTZJad0DcPtQ7MZyHY9KUPgAfIhBZt/KAWvFs4CR5YOmrlvd5CKhLgHua6LF7+Flq8eCMTVshcpk7sGVvuHoYFoFwcMH/oszFQNW9BNtGTw+JrBDCndK8+CaBE/lz8ZsV73s8Af2/BnaW7TsimsXsmGc9kA7IHv8iXAifU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YZDDq0Ye; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vH2A30OZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722508577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pSGdedTnrKHyGVkygnUytyWdZqoA6ccx0V5Arx0A2o=;
-	b=YZDDq0YeYlcFlFz8zgHfnLJpNr4EDCzlGLaWR4lm985l5vuDRRvnIkcI6rP8/pF75pJU3D
-	OFcHyyP7xBI+TtoLud3ZUqWlulyRHRGc56oHNHOpt8XFQZWMgl7rKxoGOX3kWAA8nE0/Of
-	stQ+p9ZDXUwMGj8qCgpPUWyQU6zeqeN2r0OdilmiwdFIiJbmcF7IrUvWx9mF1fEIiA3M+7
-	JOJSK25ZH1jn2OP4YdWybzZEoK19W0VyNe6aV3GHf6fnwzjNBE+jv4csFrhu+pSWTPAJrx
-	IYFWSkbD93B/U38hLGAnoKzYJ6MovRvmBm9LMS/gbOetpvax5aU9gkq//Umxbg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722508577;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7pSGdedTnrKHyGVkygnUytyWdZqoA6ccx0V5Arx0A2o=;
-	b=vH2A30OZZV7ITVYUpIAF2gS72r5BOxeA8JZgDoC+UfePCVPovEM2vegvtBuH1at0vGrlqT
-	r6msIPD3wksROgAg==
-To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Javier Martinez Canillas
- <javierm@redhat.com>, "Guilherme G . Piccoli" <gpiccoli@igalia.com>,
- bluescreen_avenger@verizon.net, dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1722508603; c=relaxed/simple;
+	bh=DL+vKZw4y5x8U/Jw2V7jmbA9F+BlmJ66B3Ipe2bD0RQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D20crcSyOFnXl0FTzwdRnczWgMa/Xnn5I4lgho7OpKtr+22VYcDdNPZ8LcPlPKROFXqim1BTiXKTwMtEFQzaZnB+u9Z0MV6GCqQ/KFqfClWtbE4J3FT1jO9LSx4uHQTUDGAEUuZBnrZ0aoV6lBKxmtKpYNK6QNKCyVZcVxc8lF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e86192c.versanet.de ([94.134.25.44] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sZTAb-0005uf-Nz; Thu, 01 Aug 2024 12:36:29 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alex Bee <knaerzche@gmail.com>,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: Re: [RFC PATCH 0/3] drm/log: Introduce a new boot logger to draw
- the kmsg on the screen
-In-Reply-To: <20240801100640.462606-1-jfalempe@redhat.com>
-References: <20240801100640.462606-1-jfalempe@redhat.com>
-Date: Thu, 01 Aug 2024 12:42:17 +0206
-Message-ID: <87r0b8zg0u.fsf@jogness.linutronix.de>
+Subject:
+ Re: [PATCH 1/3] dt-bindings: media: rockchip,vpu: Document RK3128 compatible
+Date: Thu, 01 Aug 2024 12:36:28 +0200
+Message-ID: <23279441.ssLaC8jLEa@diego>
+In-Reply-To: <20240528083747.z55laxnmioorzaru@basti-XPS-13-9310>
+References:
+ <20240523185633.71355-1-knaerzche@gmail.com> <3639993.hdfAi7Kttb@diego>
+ <20240528083747.z55laxnmioorzaru@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-On 2024-08-01, Jocelyn Falempe <jfalempe@redhat.com> wrote:
->  * I tried to use the new nbcon interface, but didn't get any message
->  from the write_atomic() callback, but the goal is to use that when
->  it's ready.
+Hey,
 
-Be aware that the write_atomic() callback _must_ also print from NMI
-context. write_thread() may be the callback you are interested
-instead. Note that for CON_NBCON, write_atomic() is optional,
-write_thread() is mandatory.
+Am Dienstag, 28. Mai 2024, 10:37:47 CEST schrieb Sebastian Fricke:
+> On 28.05.2024 10:19, Heiko St=FCbner wrote:
+> >Am Donnerstag, 23. Mai 2024, 20:56:31 CEST schrieb Alex Bee:
+> >> The integration for this SoC is similar to RK3066/RK3188.
+> >>
+> >> Document it's compatible.
+> >>
+> >> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+> >
+> >Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> >
+> >Media people, can you apply this patch alone from the series?
+>=20
+> Yes, will do got this on my list already :).
 
-Disclaimer: All of this currently only available in the PREEMPT_RT
-patchset. So until it hits mainline, semantics may yet change.
+as I'm going through my list of "waiting for ..." patches,
+is this still on the radar?
 
-John Ogness
+As far as I can tell, it didn't make it into 6.11-rc1, but 6.12 would be
+nice :-)
+
+
+Thanks a lot
+Heiko
+
+
+
+> >> ---
+> >>  Documentation/devicetree/bindings/media/rockchip-vpu.yaml | 4 +++-
+> >>  1 file changed, 3 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml=
+ b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
+> >> index c57e1f488895..d1b47b14ca57 100644
+> >> --- a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
+> >> +++ b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
+> >> @@ -26,7 +26,9 @@ properties:
+> >>            - rockchip,rk3568-vpu
+> >>            - rockchip,rk3588-av1-vpu
+> >>        - items:
+> >> -          - const: rockchip,rk3188-vpu
+> >> +          - enum:
+> >> +              - rockchip,rk3128-vpu
+> >> +              - rockchip,rk3188-vpu
+> >>            - const: rockchip,rk3066-vpu
+> >>        - items:
+> >>            - const: rockchip,rk3228-vpu
+> >>
+> >
+> >
+> >
+> >
+> >
+>=20
+
+
+
+
 
