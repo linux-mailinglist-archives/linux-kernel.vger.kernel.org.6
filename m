@@ -1,280 +1,281 @@
-Return-Path: <linux-kernel+bounces-270812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4134094459E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C17B09445A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:38:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59B47B22713
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:37:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 433E31F238B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D985F16DC12;
-	Thu,  1 Aug 2024 07:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3020416DC1A;
+	Thu,  1 Aug 2024 07:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BEILie34"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qyc+vtbN"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3B158529;
-	Thu,  1 Aug 2024 07:37:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722497827; cv=none; b=JE0eeckkPZemnAcC+Noi3BLAYk2N39YKqF19GpGA4+UZDWA9FH86RKM+i2pEj9fdRVY/N++i6vhXl04jjVLssaVBTnBzhGX41Ave7pCvTsaVGYXQrylwXT5MvgmVotdV3yxDS2BRcFOQPZ8rSsVwjs/A9QYVuXO7E5i6fCpBics=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722497827; c=relaxed/simple;
-	bh=WaUR4hy93i4Ek9LDJ+97SoWsUtXnI8FAu3DXyuoQc5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQ+uNheu8NkdkAFtU7UAuzQWmIpKZSx8lUXHffcPj+/gmYMhBcrRQtJpsBiHzED1njgFnCZubq/iAqbVu6BuyvnHLON1mBH7HDAWdayVGgBrLJGdno35Go3HtQ6LHYvQ53gQPfMUgmdzdZxABO7Wa18mnX4oeo2+jRzVFF0RuHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BEILie34; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-492a8333cb1so1699631137.3;
-        Thu, 01 Aug 2024 00:37:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722497825; x=1723102625; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sfuN7vtcTfjCBA2br92dqKx97adSDLYFKLRcwy0cyB8=;
-        b=BEILie34Xgjoz5OdPq5k722hSaPBOw5DH2xGASRzjkRkOB9GYpIj3JJrMutHTNsnj3
-         iemj5lLKWRGrYAfptvLYfVlr0TH/9nTpAsudM09irbf/X0f8LurIcc1DoQNFtUnGhq8U
-         3gcTxzIctGzuqWBBWlVs+J4utI5wmsj+z3w8qTMyAdgyk14aLU4ln4Mc+gOiQAHdV+vp
-         F1x0jBzXDC/XE6PIDRaG+vlYzwiUkeNxJcAsX256uZ0PPCVVuiuTMxj0MxIZu2bgxFX0
-         M0iQhAtvogDiKrC9pp//OmNtnG+x132nO0ydBNOuxkWEE/5tUbynWvTvdygWcO7J1Id+
-         SxEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722497825; x=1723102625;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sfuN7vtcTfjCBA2br92dqKx97adSDLYFKLRcwy0cyB8=;
-        b=KOg4rNAOU4oTjlhPGi4PnY9Www6YP9lys76+1iZgy+u1KW976q2HHD1bDOg0zuGQeH
-         zews7JnjZlLkGkQuzlLtC1cF68xsK0UhSf5is1qijX3O9RDlvN53m0RyY+s/ozWw5V/H
-         aykx1ERZKLw9Gy2Q5gBe05ZSxUJS7rL4E97LNDG4fEaIBliTQmp7CgXz49t9NEh73M+r
-         HqSqqNeVPyA6u4J1xLPNgFohlonk+2YboSYkrEtIrRvpCB3XC3aNgLJYlE45XfaJFJre
-         cPwkwj1GhN1+y5vIJLnzppwIIrhnIbvCY9k1q/Lt2h8UomurWyrbgvFkwXVx/NAKm+mP
-         Fr0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUu7ORTNBFknVszSy8d6GZh8ZG/IHVdl5j+UHTUyLUg6OFfH0ZL1/k7pK7JxL2uzd89NoVDdSu0k5GVwHmz@vger.kernel.org, AJvYcCVNriCBXX0mpY8cNSixKW6aJ7DXQgEoTyFQZhROI/yMwfunj4pTuthRewKJPVeMHwIJN+myCkjY@vger.kernel.org, AJvYcCVdjLazOgBXA2CD1D6WzCnajomIvbFyk+AKlFMEKxEJ/TXCxSrYbjbnDW4PGDd83GSzErQPPu9DzQBqNQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJWtDhU33WOZiBU2ZdkI9gcLC0O6BQodjVgn0L+5Cdu3NFwNV2
-	TJwX32X56LYbTwfzloZVR1KhZAgaCASs7hjNUgTi5xFzAliDqgGl1Lw5YhX2goB0qbd4R3HM9er
-	Xxfuk8+lAKLkdJKK78nlRbBSCmXM=
-X-Google-Smtp-Source: AGHT+IGx04si4V8GDZUMjmPGLAJNMLD/FLSH9iT4JiQeGnLtSZxzfZoLY2gFZ+CbFpGugwviVfBE/7dkB9wixnRK3ZY=
-X-Received: by 2002:a05:6102:3f51:b0:493:bf46:7f00 with SMTP id
- ada2fe7eead31-4945069ca67mr2432377137.5.1722497824850; Thu, 01 Aug 2024
- 00:37:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E4A101EE;
+	Thu,  1 Aug 2024 07:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722497889; cv=fail; b=o4uffuZJJQNBcuHqYM5XJUa5ohYYMOjzoJmwpL/gWUNu0Z60HmW5vv9Cx2E8aK8vAoMwWOuEqHKkf8ObQF6SRM4QH8tKMDkvNZo9s+hATx/2LLDjc+lfVPU+C9U+io6V25Ep5rs2ZMcZuIu3jFKB9YjKDoyt3MGvDXilAFpr4cA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722497889; c=relaxed/simple;
+	bh=Dsdg9dTUjuXiO4BoFKIowRdUq9fTILh42kX2Tc0aPUg=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=E98qbjTGcxQUW1ygaGzws+uKIqRu4mOIBu0pfjyBbFYVbckpNs3hqdiQgYAnVshbcLYRnZ4nAwFS+tB4YjyBqzp/ZHKV0G+g6rMHGyVcDJG/SYHLxW6lj+5mlSoTz50m0ayRvs/KqNjedulUru+wSM4ZzMfvzsxKPEkuYLO6zPg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qyc+vtbN; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722497887; x=1754033887;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Dsdg9dTUjuXiO4BoFKIowRdUq9fTILh42kX2Tc0aPUg=;
+  b=Qyc+vtbNBsfRS4Bs9dQK75EfDWlpEnZTt59iDmSh37O+ZQDRivH2jeUg
+   ByUZIXtGgwlEgO+/xmHs2hvfT2wSHZpyM/vE9ZF1C4P+I9j2/4UhRG4xx
+   yCFh9q+97ZrRqF2erH/OSPUC9ilUD6IAfHT8Uwu0oFiAt5mkrNXXE4qQ3
+   mxfc7yBk3xbj2AowkJ/PWSCFuNwoqxutBj+Itl9DgUoV+MzYhu/I0X8pV
+   m/WT8rFlhK2WJrA5AffRclKbnwDDlD5WooOs4junCOFSSilFVzrUFdYsz
+   WPCnLUNEScwl/poBqxN9AzUYbfOVFCLPZ/XTI6/joirmth3pNUyYQxJ4M
+   Q==;
+X-CSE-ConnectionGUID: SN+u1hzmRhiQKm1Bxq6jsA==
+X-CSE-MsgGUID: DKdrTsn/SRumNqQei04dAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20612906"
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="20612906"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 00:38:07 -0700
+X-CSE-ConnectionGUID: CZhZ+OeyR5GE3aT3Mo0g3g==
+X-CSE-MsgGUID: Sp9LkkjcRp2ukSbvrHIojA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,253,1716274800"; 
+   d="scan'208";a="59270923"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Aug 2024 00:38:06 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 00:38:05 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 00:38:05 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.44) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 00:38:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jee/8x293VlqRYZWyX3ZLvvEe2DT6MPWMBpd4u6vLyPD5oxMDuhNvy1K+ORrnlAYqSJypKSbFdS6luiXPJuXjmp3DfIxSOoRErwdqqCH4HgTrBCmAWrSN0Y5ZHsyLHt+ihdfZrP8D6NxdfVQmY1GLG+BCcob9pHb9GXMEHsJgh1U7F71JADJV9agg+wbIuAkiK+9UGfuzCRc6A3bv5me3T95ALW6COGboa6JlPJxvysiAxjtTTYmjJ6kicU02ys20naUQo90Z5DAXKsHNCY1Yv1yIW5APmOKo40H06BGzPcLImnzMr+ujx7G2bgXCFGYgKBGrvlFreeeYT0ZThdzYA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=H0ds/KVuodfPtvaDrEmqJFKUaJnvcGqEN3KvudTyDkE=;
+ b=jiBlsXcX55oHjrUgKO/uHw5vB+S1Gwes06IGiqVRM4yYOcwU9VUBIAKBNCr4EcNBym+KDD79lxOiQ7dKZrVjGS2qHznsGQiN0RJKDAe/IPchXviyqX7w9y7iFuesl8EFIW8LhufrVsGhyy8wQEtZ2k92faHIE4Wya0oWqVE0XZH9uFWtLLl9+cb8qDVdYzwQKkoh9SBgCa/u9YpN0cFpXZt7PragIFvhlB+ATyJGf5z5K83ELhEahJLHVSAC3mGL/UtzVH1zK1RlqNNX/2z6RSZbjyps95q11V2u4F2gU+hSkxc7pHGy/iK7JDeT3MpVFRPYmljea3IlBGUQ2xkoVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB5803.namprd11.prod.outlook.com (2603:10b6:806:23e::8)
+ by DM4PR11MB7301.namprd11.prod.outlook.com (2603:10b6:8:10a::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Thu, 1 Aug
+ 2024 07:38:01 +0000
+Received: from SA1PR11MB5803.namprd11.prod.outlook.com
+ ([fe80::e976:5d63:d66e:7f9a]) by SA1PR11MB5803.namprd11.prod.outlook.com
+ ([fe80::e976:5d63:d66e:7f9a%4]) with mapi id 15.20.7828.016; Thu, 1 Aug 2024
+ 07:38:00 +0000
+Message-ID: <86d138e9-0d1d-4547-839d-29d428aa58f1@intel.com>
+Date: Thu, 1 Aug 2024 10:37:53 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Intel-wired-lan] [PATCH iwl-net v2 3/3] igc: Fix qbv tx latency
+ by setting gtxoffset
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>, "David S . Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jesse Brandeburg
+	<jesse.brandeburg@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>, Simon Horman
+	<horms@kernel.org>, Richard Cochran <richardcochran@gmail.com>, Paul Menzel
+	<pmenzel@molgen.mpg.de>, Sasha Neftin <sasha.neftin@intel.com>
+CC: <netdev@vger.kernel.org>, <intel-wired-lan@lists.osuosl.org>,
+	<linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+References: <20240707125318.3425097-1-faizal.abdul.rahim@linux.intel.com>
+ <20240707125318.3425097-4-faizal.abdul.rahim@linux.intel.com>
+Content-Language: en-US
+From: Mor Bar-Gabay <morx.bar.gabay@intel.com>
+In-Reply-To: <20240707125318.3425097-4-faizal.abdul.rahim@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TL2P290CA0029.ISRP290.PROD.OUTLOOK.COM
+ (2603:1096:950:3::19) To SA1PR11MB5803.namprd11.prod.outlook.com
+ (2603:10b6:806:23e::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731133318.527-1-justinjiang@vivo.com> <20240731091715.b78969467c002fa3a120e034@linux-foundation.org>
- <dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com>
-In-Reply-To: <dbead7ca-e9a4-4ee8-9247-4e1ba9f6695c@vivo.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 1 Aug 2024 15:36:52 +0800
-Message-ID: <CAGsJ_4xv--92w+hOVWtMtYK-0TsR6z67xiHEXCvuRNvXx71b2A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] mm: tlb swap entries batch async release
-To: zhiguojiang <justinjiang@vivo.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>, 
-	"Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, Nick Piggin <npiggin@gmail.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, linux-arch@vger.kernel.org, cgroups@vger.kernel.org, 
-	kernel test robot <lkp@intel.com>, opensource.kernel@vivo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB5803:EE_|DM4PR11MB7301:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57f1e5c2-8efa-4949-c95c-08dcb1fcdeb7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?YllhYytISlh5bkUyMWRHR2xsOTlYQkVDSi9GK2Y0QitZRno4dFhJVDVtR24r?=
+ =?utf-8?B?WWt0TlByL1VmOWdwblVaa0xTdWJnNGJ3b2l3cmpUWTI3ZGYxbHN1RjRKeTdn?=
+ =?utf-8?B?M3BxVTJZWm5nL1V1RWx4R1Y3c25IWDZnU0FBQW1oeGtXR3hSNXUzUnpZQTJM?=
+ =?utf-8?B?ODNWMWFabWJ3bzZwQk8xYlh3OVdRZnJ0b01pNjdlaUZNalczQWgvTkVEbjFu?=
+ =?utf-8?B?c0ZQbjdWV3RqMVhIa3BNNVBEem1Kb1BSckN1VlNRbUxlUUJrZ1hrNzZlK2Zh?=
+ =?utf-8?B?bFhOTExJQWxGZTZPSFVsdFQvUFo2SUs1OC9hUDJIMkZMQmplMWw2Y3duVGgz?=
+ =?utf-8?B?V0VxZjZMRWNtMmRJOW1xeURTZ3dlTkU1YWV4OExoQkptZHd6eEM1T0tiU0sz?=
+ =?utf-8?B?SEpuajR0UVZRck82c0QwcjZMNkxaVUZKbWk0cUsxZGZZNnJscUsxVjE4MklT?=
+ =?utf-8?B?SS9hVTJyZFRSN21RWHhrOXlkeTdXL2lBZXRrN3JrWEYxN2JsZTlKRjlMcmJQ?=
+ =?utf-8?B?R3JQRTQyNGhVUzJXK0RSbDRtWmpQQ0Ntc3lGSk5rSFdrU0FoUFF4TzFacmtx?=
+ =?utf-8?B?VEVLR0YrdWIwa3Z1UlJLNEoyNE5YRldNeFhMWmRVbnIrRUZLOXphcXRhdlgz?=
+ =?utf-8?B?U0phbmhNcFRZRGQvdlNiTGwweDBPMTVJaGRjU3doTnkydTd5L240MVRqbEJl?=
+ =?utf-8?B?MnhyOFpaZjBJRWhQWUpVb3ROVWlhcnZXZE5KNUo4VzNFR0RIdTRKQ2Jaa1JT?=
+ =?utf-8?B?ODFBeXNITUNPZUhlNmt3b2hXb1JWUGp0NWtwVFlMRlFuUVcrOHVnQWZZeVM2?=
+ =?utf-8?B?NE5VMU5JM0hTcVRQbmpjbEdNZkNkLzVsS2pBaWlyUm94Vnhqc1c5RE9ndkxv?=
+ =?utf-8?B?RXc2M1pyRDl3ZWFyT2lNVXU1Q3RrOS9WQytFUVAvVzNDd3ZvMy9HWUJwSkpj?=
+ =?utf-8?B?c3VSRmVEZFlGNW1DcTl0VFNwWTgrTlI5QkJ0ZGJWUHRBeUpUdzd5akZPV25z?=
+ =?utf-8?B?cGp5amh5NWRmVzVvdExaZjhHM2RhZUtkZGNZOHNlWGxYMFVxUjJLQzRONURY?=
+ =?utf-8?B?WEFGbDJyN040bnl4UXhUcHFLVnJlMGFxZGJIdk1uR1dTMWRBMnVTYTFUdFJO?=
+ =?utf-8?B?eDYzdkk3NVlVM0tMcVZuSms5NmpnakhpZk9sNnkvMWFYSklnRWtaYkovSG1J?=
+ =?utf-8?B?b29KMFBBcnd0ajZqSTBYK2VXOVZuTEg4R0V5bTQraFJIZmtmcS9waXFTYnUz?=
+ =?utf-8?B?TVBkWitVeUpqYkxjOU0vRGhJYXlPclZnQnhKaW9PN0NlWXYvL0RLRjFqU3Vp?=
+ =?utf-8?B?Z3JEenkzVmZRNXdPRms1REo3VTcvU2laUEs4aHJvTmJvMEt1RDcrQmxSb1Bu?=
+ =?utf-8?B?dmJYVWRTUWxtRDU2V1hKb1g3UittTllqVFJPZCtLQlVjMElmYWx6Zlo2Wklp?=
+ =?utf-8?B?Wm1HM2J5elpocFIwUXROZFB1S0F4ajNHVCtvc1hBbWRNVmpaMmozVDFwSlQ1?=
+ =?utf-8?B?MDhZQVVQM3ZISGFaNDR3bkQ2U3hHVDVJOXk4R1JsTkxVQlJaOUVYbjFYamkz?=
+ =?utf-8?B?K05oRENqb0xFT09odHNZMWF0RDZqOEZoVjREcE53MmlIM2VuakNYMjl4TVJK?=
+ =?utf-8?B?OEdUci9mZFZJYmVxRFVFZGREdnlsUDlrM2RFRWdweEwyM2xnbVN3NGJJcFJQ?=
+ =?utf-8?B?d2pvSmcxS04xTlpyWWdxci9GNlZNV1ZZUnk1NHBKQktzdTdvMnI3RlJWdU1U?=
+ =?utf-8?B?MjZCSmFlbnJEeC9JREJDVnpVc0xML0paN2xKK09zSXpSYjNwRXFVWEp4U24r?=
+ =?utf-8?B?RVJjb3Y5V051S1hWTnlGOFQ0L3dHT0lsTjdCUUZWMXNXWTlkdjZxNEZFWVpX?=
+ =?utf-8?Q?j2bdU/L2JREo4?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB5803.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?YlNqdkVsd0N1eVB3WFk5VmdlTUJsNVdVUklFYlc5T2NjbUhDTFJGYmZXZUh6?=
+ =?utf-8?B?Z25VQnlKRUg1RVBIVllwZDM2cFNZcEZsKzNTTHI2K1VtaDRxNjF5c2FOdFpL?=
+ =?utf-8?B?dnJJTkp3bElVNitmdEFyUldscU90OEJ0QUhtbGs1UFM5U2pWZXdxa0F4UzZy?=
+ =?utf-8?B?Q21mYTVCekNtODB1OE16ODRhMWhwdytiOGtrNGZzckhseHhaaWVpa3F4TWsv?=
+ =?utf-8?B?aGhqSUwyWGhad3R4VEZIS3BFNnZGc1JXSTEzamF2NXRCWkVoejN3MUdTNGhk?=
+ =?utf-8?B?RG1sK3VIdFBuV0Job3R2WG9VRWwwZlJSNWN6SmpmWDl3ZnpRNnRjMnIxRWFG?=
+ =?utf-8?B?U1NpY3Q4emZCUm92dVdMZ2JkRUxZODlGK2VjMWpXOXBBVXBXZHhOTnNHZEZJ?=
+ =?utf-8?B?NU1FWTlTS0Npb3dSaFVUdXFZQzhvSGxHd1U1K2tIblM1N3NPdzllK1NDYjVN?=
+ =?utf-8?B?Sk9NNFRRME4xMUN0MUo1MmRiYlp3bzNKN3NKUHVXOUFjTEpMTXR2WThDM2tD?=
+ =?utf-8?B?UFhzN3VaSkpOSzFydjNJUmM1YlZHVVFDQ1ZSOS90aVo3ZUljeWZrdnptWXlH?=
+ =?utf-8?B?WG93dWJKd1pwYWM5YnM1dzZGaUdEYitUMmVLR202ODJOTDNYUXhhV05JaWhH?=
+ =?utf-8?B?UVFmZFlCdVI2NjJpTWpFUUFWbU9qZ2FaQVJNTGJRUG5NSkh4UVpjRmZqRWdC?=
+ =?utf-8?B?dEtBdXd4L1VxTm41cHNrbUNmaTJFOHdYZ2hYTGFMTnFMNlk1bmFueEE3d3V6?=
+ =?utf-8?B?OUtLVzYzTkl1TjdDTENSejRaZ0FuMU1ieng5VnJuakpCbHlWZXFOMGRueDJ6?=
+ =?utf-8?B?dmRldFZnODJMa2REL2tlemRsQllIME8ydFRIb0ZXcW1IZHkzSnQrOUlVRE1C?=
+ =?utf-8?B?K1B4Mk5UVm11aHNzZTRQN1R6VkJ3MjdtYzA2bEpjVFgraHhhL1ErZFRWU3R5?=
+ =?utf-8?B?dEt5emxsa3JGOEJkZ0FLMnlaRm9NYjRmNXQrWit4QktJUEFBR2xaZklmZk5y?=
+ =?utf-8?B?REk2WXNhRklPcEE5M0VyMmlBRVdZN3BMWVk0VXdvZ1V2MWExYlBqc0JFcXhX?=
+ =?utf-8?B?YWhERHZxUWZvWjV1QnNRY2IybDM3cUM2TjNHTm5vdnl3R1NtMXZRd1VuaDZG?=
+ =?utf-8?B?YjlaY0pVWnlORWwvMDJPR0hEYmovbURBVXNsazhVYTBSNlczcjcyQTRQZ1Vz?=
+ =?utf-8?B?MjlmclFRUk42a2hZMVJaSHV3TG5scVpjUmE2N1RRZ085YUt2ZDE0RzZ3VGlD?=
+ =?utf-8?B?TFcxRkM4Uk5UYS9pS1V2ekFsNTZZYkw4dDJ0eWJnOHk5bWpSWkZ1ZlMxaW9N?=
+ =?utf-8?B?RUxxWjVpSi9DallvUGNMczBlS0lJRHJ3QnBPazFSRVdNMjFXREpNZnBDMUFp?=
+ =?utf-8?B?NGJkMWtRcnhGVHdlSFJXaWVCSml4eVpURnJmR2xKUU11d2JyWldOUFdZQ1Vm?=
+ =?utf-8?B?elV2cktwUjhHN3gvaGFBaUExLzNwNisxaEVWWHlEd0lYZ1ZIRFE0dVAyZmpr?=
+ =?utf-8?B?YjRiTU9aa0RxN3RiR3g2VERka2Z0VkJ1bHFjaWhCYTY4dEJmNUlUL0Vxd09P?=
+ =?utf-8?B?bTJ3ZHBoaFVVT0luRlFPeUNDVUNPWlp6aXRRQVdHN3ZTZ3hzKy93dmpMNmFq?=
+ =?utf-8?B?NmJ0YXRMRWZsbVVidXl2NUFWbk1qdWtnbGc5Tjk2eHlUcDJ3M2U4VWFQS2tI?=
+ =?utf-8?B?VVcvdVRQanF5WkZGZVJaa2hudWJZb2g5VGgwem4yMG5ST29zNy9aMmpLQXor?=
+ =?utf-8?B?bE9MNDhjQzFEQzhhR21zTTRhNnN1OGY1aTRHVkw3TitxMVVXcWs2TkNZeXpV?=
+ =?utf-8?B?YlNpYURMZWRrMEpEclZ5SFZwdE04L0FSR1p4WFI4ek9KeHF6dWZPRFhwVWdI?=
+ =?utf-8?B?OE9RU0NMaDQrVDZQUmtFeDdKQ1hsTjRTaElWU2tXTzdMQjZlK2xZMWRYMTdS?=
+ =?utf-8?B?dzVrM0wrZFFmbkF4VFZDVnRsM3YxNFRURStYdDlJY0d4ckhISkhZbFRwcjBJ?=
+ =?utf-8?B?ZVVWYzlNSU4zczl0bjA3MXlTbVVDaHNnY1E5eEc3ekhzaUZLS0FLYXVqd014?=
+ =?utf-8?B?SzlyYlJrWGF4YUcwVndjcklRczIvUm1wQ1hXNGw1NjdNSUFwUVlxS0N0T1Nl?=
+ =?utf-8?B?SlNvRkNkVmRCN05NbC9oZmllYnI2TkFYTURUakJRanV6eUtzMDVQNkxMZjl6?=
+ =?utf-8?B?eVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57f1e5c2-8efa-4949-c95c-08dcb1fcdeb7
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB5803.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 07:38:00.8551
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PTdAONSRM7FrUvSbk6By6N5vnJTDkrmRQlPmKMpG9KCc8I1/4YwKkI67qyOzsdRwsTaIo01aWRDvNOdbxCak5AFXLf62a2c6lAQebBkI4O0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB7301
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 1, 2024 at 2:31=E2=80=AFPM zhiguojiang <justinjiang@vivo.com> w=
-rote:
->
->
->
-> =E5=9C=A8 2024/8/1 0:17, Andrew Morton =E5=86=99=E9=81=93:
-> > [Some people who received this message don't often get email from akpm@=
-linux-foundation.org. Learn why this is important at https://aka.ms/LearnAb=
-outSenderIdentification ]
-> >
-> > On Wed, 31 Jul 2024 21:33:14 +0800 Zhiguo Jiang <justinjiang@vivo.com> =
-wrote:
-> >
-> >> The main reasons for the prolonged exit of a background process is the
-> > The kernel really doesn't have a concept of a "background process".
-> > It's a userspace concept - perhaps "the parent process isn't waiting on
-> > this process via wait()".
-> >
-> > I assume here you're referring to an Android userspace concept?  I
-> > expect that when Android "backgrounds" a process, it does lots of
-> > things to that process.  Perhaps scheduling priority, perhaps
-> > alteration of various MM tunables, etc.
-> >
-> > So rather than referring to "backgrounding" it would be better to
-> > identify what tuning alterations are made to such processes to bring
-> > about this behavior.
-> Hi Andrew Morton,
->
-> Thank you for your review and comments.
->
-> You are right. The "background process" here refers to the process
-> corresponding to an Android application switched to the background.
-> In fact, this patch is applicable to any exiting process.
->
-> The further explaination the concept of "multiple exiting processes",
-> is that it refers to different processes owning independent mm rather
-> than sharing the same mm.
->
-> I will use "mm" to describe process instead of "background" in next
-> version.
-> >
-> >> time-consuming release of its swap entries. The proportion of swap mem=
-ory
-> >> occupied by the background process increases with its duration in the
-> >> background, and after a period of time, this value can reach 60% or mo=
-re.
-> > Again, what is it about the tuning of such processes which causes this
-> > behavior?
-> When system is low memory, memory recycling will be trigged, where
-> anonymous folios in the process will be continuously reclaimed, resulting
-> in an increase of swap entries occupies by this process. So when the
-> process is killed, it takes more time to release it's swap entries over
-> time.
->
-> Testing datas of process occuping different physical memory sizes at
-> different time points:
-> Testing Platform: 8GB RAM
-> Testing procedure:
-> After booting up, start 15 processes first, and then observe the
-> physical memory size occupied by the last launched process at
-> different time points.
->
-> Example:
-> The process launched last: com.qiyi.video
-> |  memory type  |  0min  |  1min  | BG 5min | BG 10min | BG 15min |
-> -------------------------------------------------------------------
-> |     VmRSS(KB) | 453832 | 252300 |  204364 |   199944 |  199748  |
-> |   RssAnon(KB) | 247348 |  99296 |   71268 |    67808 |   67660  |
-> |   RssFile(KB) | 205536 | 152020 |  132144 |   131184 |  131136  |
-> |  RssShmem(KB) |   1048 |    984 |     952 |     952  |     952  |
-> |    VmSwap(KB) | 202692 | 334852 |  362880 |   366340 |  366488  |
-> | Swap ratio(%) | 30.87% | 57.03% |  63.97% |   64.69% |  64.72%  |
-> min - minute.
->
-> Based on the above datas, we can know that the swap ratio occupied by
-> the process gradually increases over time.
-
-If I understand correctly, during zap_pte_range(), if 64.72% of the anonymo=
-us
-pages are actually swapped out, you end up zapping 100 PTEs but only freein=
-g
-36.28 pages of memory. By doing this asynchronously, you prevent the
-swap_release operation from blocking the process of zapping normal
-PTEs that are mapping to memory.
-
-Could you provide data showing the improvements after implementing
-asynchronous freeing of swap entries?
-
-
-> >
-> >> Additionally, the relatively lengthy path for releasing swap entries
-> >> further contributes to the longer time required for the background pro=
-cess
-> >> to release its swap entries.
-> >>
-> >> In the multiple background applications scenario, when launching a lar=
-ge
-> >> memory application such as a camera, system may enter a low memory sta=
-te,
-> >> which will triggers the killing of multiple background processes at th=
-e
-> >> same time. Due to multiple exiting processes occupying multiple CPUs f=
-or
-> >> concurrent execution, the current foreground application's CPU resourc=
-es
-> >> are tight and may cause issues such as lagging.
-> >>
-> >> To solve this problem, we have introduced the multiple exiting process
-> >> asynchronous swap memory release mechanism, which isolates and caches
-> >> swap entries occupied by multiple exit processes, and hands them over
-> >> to an asynchronous kworker to complete the release. This allows the
-> >> exiting processes to complete quickly and release CPU resources. We ha=
-ve
-> >> validated this modification on the products and achieved the expected
-> >> benefits.
-> > Dumb question: why can't this be done in userspace?  The exiting
-> > process does fork/exit and lets the child do all this asynchronous free=
-ing?
-> The logic optimization for kernel releasing swap entries cannot be
-> implemented in userspace. The multiple exiting processes here own
-> their independent mm, rather than parent and child processes share the
-> same mm. Therefore, when the kernel executes multiple exiting process
-> simultaneously, they will definitely occupy multiple CPU core resources
-> to complete it.
-> >> It offers several benefits:
-> >> 1. Alleviate the high system cpu load caused by multiple exiting
-> >>     processes running simultaneously.
-> >> 2. Reduce lock competition in swap entry free path by an asynchronous
-> >>     kworker instead of multiple exiting processes parallel execution.
-> > Why is lock contention reduced?  The same amount of work needs to be
-> > done.
-> When multiple CPU cores run to release the different swap entries belong
-> to different exiting processes simultaneously, cluster lock or swapinfo
-> lock may encounter lock contention issues, and while an asynchronous
-> kworker that only occupies one CPU core is used to complete this work,
-> it can reduce the probability of lock contention and free up the
-> remaining CPU core resources for other non-exiting processes to use.
-> >
-> >> 3. Release memory occupied by exiting processes more efficiently.
-> > Probably it's slightly less efficient.
-> We observed that using an asynchronous kworker can result in more free
-> memory earlier. When multiple processes exit simultaneously, due to CPU
-> core resources competition, these exiting processes remain in a
-> runnable state for a long time and cannot release their occupied memory
-> resources timely.
-> >
-> > There are potential problems with this approach of passing work to a
-> > kernel thread:
-> >
-> > - The process will exit while its resources are still allocated.  But
-> >    its parent process assumes those resources are now all freed and the
-> >    parent process then proceeds to allocate resources.  This results in
-> >    a time period where peak resource consumption is higher than it was
-> >    before such a change.
-> - I don't think this modification will cause such a problem. Perhaps I
->    haven't fully understood your meaning yet. Can you give me a specific
->    example?
-
-Normally, after completing zap_pte_range, your swap slots are returned to
-the swap file, except for a few slot caches. However, with the asynchronous
-approach, it means that even after your process has completely exited,
- some swap slots might still not be released to the system. This could
-potentially starve other processes waiting for swap slots to perform
-swap-outs. I assume this isn't a critical issue for you because, in the
-case of killing processes, freeing up memory is more important than
-releasing swap entries?
-
-
-> > - If all CPUs are running in userspace with realtime policy
-> >    (SCHED_FIFO, for example) then the kworker thread will not run,
-> >    indefinitely.
-> - In my clumsy understanding, the execution priority of kernel threads
->    should not be lower than that of the exiting process, and the
->    asynchronous kworker execution should only be triggered when the
->    process exits. The exiting process should not be set to SCHED_LFO,
->    so when the exiting process is executed, the asynchronous kworker
->    should also have opportunity to get timely execution.
-> > - Work which should have been accounted to the exiting process will
-> >    instead go unaccounted.
-> - You are right, the statistics of process exit time may no longer be
->    complete.
-> > So please fully address all these potential issues.
-> Thanks
-> Zhiguo
->
-
-Thanks
-Barry
+On 07/07/2024 15:53, Faizal Rahim wrote:
+> A large tx latency issue was discovered during testing when only QBV was
+> enabled. The issue occurs because gtxoffset was not set when QBV is
+> active, it was only set when launch time is active.
+> 
+> The patch "igc: Correct the launchtime offset" only sets gtxoffset when
+> the launchtime_enable field is set by the user. Enabling launchtime_enable
+> ultimately sets the register IGC_TXQCTL_QUEUE_MODE_LAUNCHT (referred to as
+> LaunchT in the SW user manual).
+> 
+> Section 7.5.2.6 of the IGC i225/6 SW User Manual Rev 1.2.4 states:
+> "The latency between transmission scheduling (launch time) and the
+> time the packet is transmitted to the network is listed in Table 7-61."
+> 
+> However, the patch misinterprets the phrase "launch time" in that section
+> by assuming it specifically refers to the LaunchT register, whereas it
+> actually denotes the generic term for when a packet is released from the
+> internal buffer to the MAC transmit logic.
+> 
+> This launch time, as per that section, also implicitly refers to the QBV
+> gate open time, where a packet waits in the buffer for the QBV gate to
+> open. Therefore, latency applies whenever QBV is in use. TSN features such
+> as QBU and QAV reuse QBV, making the latency universal to TSN features.
+> 
+> Discussed with i226 HW owner (Shalev, Avi) and we were in agreement that
+> the term "launch time" used in Section 7.5.2.6 is not clear and can be
+> easily misinterpreted. Avi will update this section to:
+> "When TQAVCTRL.TRANSMIT_MODE = TSN, the latency between transmission
+> scheduling and the time the packet is transmitted to the network is listed
+> in Table 7-61."
+> 
+> Fix this issue by using igc_tsn_is_tx_mode_in_tsn() as a condition to
+> write to gtxoffset, aligning with the newly updated SW User Manual.
+> 
+> Tested:
+> 1. Enrol taprio on talker board
+>     base-time 0
+>     cycle-time 1000000
+>     flags 0x2
+>     index 0 cmd S gatemask 0x1 interval1
+>     index 0 cmd S gatemask 0x1 interval2
+> 
+>     Note:
+>     interval1 = interval for a 64 bytes packet to go through
+>     interval2 = cycle-time - interval1
+> 
+> 2. Take tcpdump on listener board
+> 
+> 3. Use udp tai app on talker to send packets to listener
+> 
+> 4. Check the timestamp on listener via wireshark
+> 
+> Test Result:
+> 100 Mbps: 113 ~193 ns
+> 1000 Mbps: 52 ~ 84 ns
+> 2500 Mbps: 95 ~ 223 ns
+> 
+> Note that the test result is similar to the patch "igc: Correct the
+> launchtime offset".
+> 
+> Fixes: 790835fcc0cb ("igc: Correct the launchtime offset")
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> Acked-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> ---
+>   drivers/net/ethernet/intel/igc/igc_tsn.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+Tested-by: Mor Bar-Gabay <morx.bar.gabay@intel.com>
 
