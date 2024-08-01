@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-271240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C22D944B6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:37:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138A5944B82
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:39:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC1C1F220ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:37:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ABBAB22EDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8811A01DB;
-	Thu,  1 Aug 2024 12:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF701A0702;
+	Thu,  1 Aug 2024 12:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sudF5UQ/"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BUG1Y6Zb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F17187FFD;
-	Thu,  1 Aug 2024 12:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0D315252D;
+	Thu,  1 Aug 2024 12:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515818; cv=none; b=U2HDsQiw++iwfV3rCOLuYkV+ztiOyY+N7LqtTjJMxFT/9Wp7TRqHZqJPEUTNQs4EktGg+2lfqpqz9rRcWPlvVtd7HEObw4/14crdHoEPDME3sT3zje7lnDFO3hKIPPJkWMRMylCWcwA537WC/ksYtWWODEOEldIgyobTvPcPUPY=
+	t=1722515922; cv=none; b=Zfl1y94G6md8XUjkrA6dCoSGNvb474GvmZruHQTHKzuX40F2Xbnn8NnHbNWm7JMcR4+NWDda+LR++TVMKf0vRcLbQzaBzEGq+/qZHs847PURxAiRUIXgA/D7FBn7nBL0RctAsV7BsQly3TlBjcUSs4pAUc2nRzSFsdc332V0CRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515818; c=relaxed/simple;
-	bh=8y68VOu62Sd+8tUqQsxtJirVhBoDa7wrm3eIzLEYWdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eb8Iw1etTcE6XarQNiuPGV7PYuK/EQVi+aqSx8gcwTmCiD7kNsT6IHjru0Wx0lR0+/QrLRFLFiyDb1uFhlE/DFSozTUsVXPbuxJeiYuiQWfEoT3vCKDOjp6N6d4X240DzZvohsaalMEyJQ1ZNvQPGuifUu5WsnO04LgYYWC6ZJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sudF5UQ/; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=l6VKD7CEKUflJtsFY+ry8bBY+bZfcfkQ/rtFhvXEGno=; b=sudF5UQ/ATZEqEsORqsB48JYd3
-	eEFE6Ab2Ua06XdZhe1Fd7yNtxeHKlcYsRnw4kZjtgzc7rZ7/sjBr0NNk0Y7Whe7Gf0Vx4K3DR7Ngj
-	jy/whLW31gj2CuPST1s6wJL5dKzrCI/WG1Bnc7t4XwXdYtbouttKRnjZ7WpczUmh6P30=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sZV33-003m4h-Rc; Thu, 01 Aug 2024 14:36:49 +0200
-Date: Thu, 1 Aug 2024 14:36:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, sudongming1@huawei.com,
-	xujunsheng@huawei.com, shiyongbang@huawei.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH net-next 05/10] net: hibmcge: Implement some .ndo
- functions
-Message-ID: <e57e3748-6ee5-42d5-8715-ec652fc6310f@lunn.ch>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-6-shaojijie@huawei.com>
- <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
- <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
- <ffd2d708-60fb-4049-8c1b-fcfe43a78d57@lunn.ch>
- <d5e9f50a-c3bd-4071-9de8-cc22cd0f5cfc@huawei.com>
+	s=arc-20240116; t=1722515922; c=relaxed/simple;
+	bh=qMfKCQlV8Rw5iOQMrAPWoP4mWDS25cA9Rwa3hGAEjgw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NCMObTWtbC2CSiFLLScniG7lef30whImtCacn5slp3wjq6QFyhyvIhkaMFCKIljbgNI1qQsiUMP+L+bdlRWNZQWQmMkdhg1Y8dHLcSiw/wRQt87Fo1duIYNgJq/6YvM2Sdd0SIvp1kS1Me0+ZX8N/6wfVVAi0kcoryipTcK8XkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BUG1Y6Zb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4717KRDf006305;
+	Thu, 1 Aug 2024 12:38:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VYCw6YwUEX891kBKIdfEmI1nZ+u8bjnlBY6X3MIqy/M=; b=BUG1Y6ZbxLzG7zJd
+	ijC3wgkV1NiLUkzcvH5JmYXKej3KLbQjvPLnUj5TPSCqF0wdRonmvn0XRDCRx4AZ
+	B8Z/5SUEKkwqQEBN2PkZbXEEAL/OmZMOlayhi1nuzKEq0TlAD115BzKFDAHsBK/u
+	SS31BOVc5Rrmqjdtlnyyu96vU7o30Ldn3KJt2F1R12yABBdSHwWqwTCc1vNvXZw8
+	Edl3CT6jwGXgjYiaoQudEBgZiDPpZZyunn1siz0dyKj2rclHPyghpRT7CrFlRtz/
+	aEn++mJY9LQ2FQpzFs+8k6b6gzpIj5nfSSOt2IKUoYsxQr0xSZhuQYr81Rui9nal
+	HZKQrg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40qjpjcenp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 12:38:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471CcVrL029477
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 12:38:31 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 1 Aug 2024 05:38:27 -0700
+Date: Thu, 1 Aug 2024 18:08:23 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>
+CC: Vladimir Lypak <vladimir.lypak@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        Jordan Crouse
+	<jordan@cosmicpenguin.net>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] drm/msm/a5xx: disable preemption in submits by
+ default
+Message-ID: <20240801123823.geauowjux6r2ao72@hu-akhilpo-hyd.qualcomm.com>
+References: <20240711100038.268803-1-vladimir.lypak@gmail.com>
+ <20240711100038.268803-2-vladimir.lypak@gmail.com>
+ <CAF6AEGsyhQfsfyNwZQa99HSKxy6uXQvf=ikEijjLOBnkXJ=-2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <d5e9f50a-c3bd-4071-9de8-cc22cd0f5cfc@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGsyhQfsfyNwZQa99HSKxy6uXQvf=ikEijjLOBnkXJ=-2g@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wnLHomIJUi7DfauNRmCHQ1nL4fNCY4Aq
+X-Proofpoint-ORIG-GUID: wnLHomIJUi7DfauNRmCHQ1nL4fNCY4Aq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_10,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 malwarescore=0 bulkscore=0 phishscore=0 priorityscore=1501
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010082
 
-On Thu, Aug 01, 2024 at 08:33:38PM +0800, Jijie Shao wrote:
+On Mon, Jul 15, 2024 at 02:00:10PM -0700, Rob Clark wrote:
+> On Thu, Jul 11, 2024 at 3:02 AM Vladimir Lypak <vladimir.lypak@gmail.com> wrote:
+> >
+> > Fine grain preemption (switching from/to points within submits)
+> > requires extra handling in command stream of those submits, especially
+> > when rendering with tiling (using GMEM). However this handling is
+> > missing at this point in mesa (and always was). For this reason we get
+> > random GPU faults and hangs if more than one priority level is used
+> > because local preemption is enabled prior to executing command stream
+> > from submit.
+> > With that said it was ahead of time to enable local preemption by
+> > default considering the fact that even on downstream kernel it is only
+> > enabled if requested via UAPI.
+> >
+> > Fixes: a7a4c19c36de ("drm/msm/a5xx: fix setting of the CP_PREEMPT_ENABLE_LOCAL register")
+> > Signed-off-by: Vladimir Lypak <vladimir.lypak@gmail.com>
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a5xx_gpu.c | 8 ++++++--
+> >  1 file changed, 6 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> > index c0b5373e90d7..6c80d3003966 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a5xx_gpu.c
+> > @@ -150,9 +150,13 @@ static void a5xx_submit(struct msm_gpu *gpu, struct msm_gem_submit *submit)
+> >         OUT_PKT7(ring, CP_SET_PROTECTED_MODE, 1);
+> >         OUT_RING(ring, 1);
+> >
+> > -       /* Enable local preemption for finegrain preemption */
+> > +       /*
+> > +        * Disable local preemption by default because it requires
+> > +        * user-space to be aware of it and provide additional handling
+> > +        * to restore rendering state or do various flushes on switch.
+> > +        */
+> >         OUT_PKT7(ring, CP_PREEMPT_ENABLE_LOCAL, 1);
+> > -       OUT_RING(ring, 0x1);
+> > +       OUT_RING(ring, 0x0);
 > 
-> on 2024/8/1 20:18, Andrew Lunn wrote:
-> > On Thu, Aug 01, 2024 at 05:13:33PM +0800, Jijie Shao wrote:
-> > > on 2024/8/1 8:51, Andrew Lunn wrote:
-> > > > > +static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
-> > > > > +{
-> > > > > +	struct hbg_priv *priv = netdev_priv(dev);
-> > > > > +	u8 *mac_addr;
-> > > > > +
-> > > > > +	mac_addr = ((struct sockaddr *)addr)->sa_data;
-> > > > > +	if (ether_addr_equal(dev->dev_addr, mac_addr))
-> > > > > +		return 0;
-> > > > > +
-> > > > > +	if (!is_valid_ether_addr(mac_addr))
-> > > > > +		return -EADDRNOTAVAIL;
-> > > > How does the core pass you an invalid MAC address?
-> > > According to my test,
-> > > in the 6.4 rc4 kernel version, invalid mac address is allowed to be configured.
-> > > An error is reported only when ifconfig ethx up.
-> > Ah, interesting.
-> > 
-> > I see a test in __dev_open(), which is what you are saying here. But i
-> > would also expect a test in rtnetlink, or maybe dev_set_mac_address().
-> > We don't want every driver having to repeat this test in their
-> > .ndo_set_mac_address, when it could be done once in the core.
-> > 
-> > 	Andrew
-> 
-> Hi:
-> I did the following test on my device:
-> 
-> insmod hibmcge.ko
-> hibmcge: no symbol version for module_layout
-> hibmcge: loading out-of-tree module taints kernel.
-> hibmcge: module verification failed: signature and/or required key missing - tainting kernel
-> hibmcge 0000:83:00.1: enabling device (0140 -> 0142)
-> Generic PHY mii-0000:83:00.1:02: attached PHY driver (mii_bus:phy_addr=mii-0000:83:00.1:02, irq=POLL)
-> hibmcge 0000:83:00.1 enp131s0f1: renamed from eth0
-> IPv6: ADDRCONF(NETDEV_CHANGE): enp131s0f1: link becomes ready
-> hibmcge 0000:83:00.1: link up!
-> 
-> ifconfig enp131s0f1 hw ether FF:FF:FF:FF:FF:FF
-> 
-> ip a
-> 6: enp131s0f1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
->     link/ether ff:ff:ff:ff:ff:ff brd ff:ff:ff:ff:ff:ff permaddr 08:02:00:00:08:08
-> ifconfig enp131s0f1 up
-> ifconfig enp131s0f1 down up
-> SIOCSIFFLAGS: Cannot assign requested address
-> hibmcge 0000:83:00.1: link down!
-> 
-> uname -a
-> Linux localhost.localdomain 6.4.0+ #1 SMP Fri Mar 15 14:44:20 CST 2024 aarch64 aarch64 aarch64 GNU/Linux
-> 
-> 
-> 
-> So I'm not sure what's wrong. I also implemented ndo_validate_addr by eth_validate_addr.
+> From a quick look at the a530 pfp fw, it looks like
+> CP_PREEMPT_ENABLE_LOCAL is allowed in IB1/IB2 (ie. not restricted to
+> kernel RB).  So we should just disable it in the kernel, and let
+> userspace send a CP_PREEMPT_ENABLE_LOCAL to enable local preemption.
 
-I agree. I don't see a test. Please could you include a patch to
-dev_set_mac_address() to validate the address there before calling
-into the driver. It might also be worth a search to see if anybody
-else has tried this before, and failed. There might be a good reason
-you cannot validate it.
+Ack. AFAIU about a5x preemption, this should work.
 
-	Andrew
+-Akhil
+
+> 
+> BR,
+> -R
+> 
+> >         /* Allow CP_CONTEXT_SWITCH_YIELD packets in the IB2 */
+> >         OUT_PKT7(ring, CP_YIELD_ENABLE, 1);
+> > --
+> > 2.45.2
+> >
 
