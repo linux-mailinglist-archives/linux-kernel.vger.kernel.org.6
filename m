@@ -1,118 +1,143 @@
-Return-Path: <linux-kernel+bounces-271716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9DC94526F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:00:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C632494527C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CEE0282AF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:00:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CFDAB26114
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD87144D00;
-	Thu,  1 Aug 2024 18:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9694F144D00;
+	Thu,  1 Aug 2024 18:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rVrCivwS"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GiWQMw0D"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2BC13D63A
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65842143744
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722535217; cv=none; b=Q4kM03yAsWxJHoQ4Z8tzKRqJfPTkrALSmuSh0fUoRBaEBwI+JLZjVNKF8nXXwPgmV9mYbM8TxnNONO9wlIJBSHU99PGr36cQQETyEjXSbdo09y1HRJ/CU2kHDX9G/kqHsfas9OGEC6oosRgdnonhOz28vfb+7dWbr+sBkjuOWYY=
+	t=1722535293; cv=none; b=Fgr38E84Gce5jj7QGQD6TIIusLDOCaHzTjjVtdd4c2DRN05N9T7MtrNr4vKbMlI3S1Mg3N+GqvE5jWLEoX7kWpY5NCDTvlSqlwfuNWWr4sGwKSIonp83+RR7RrQLlLy0/Rv15C56bDoryj0vVkRYysU+waisK0etEskvE53JL0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722535217; c=relaxed/simple;
-	bh=jhGbP7nHvLdw8c3N8ItR7ROW4JPxGIcyfk2Yqpfr4Sw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FdIwoos1WOK28F9gkEMtLoGvE/uMCYVyIpMoakKjszowZdaecokQe2epFLmsZIo0FhuOcJjrQ2ZYx6+9a3I0q3jMH3TyQyC+L9AhEwN42x/2XP94r2kJXkfJjl1goqTJph/n0mckjnrE6/InNUKyr01n/jw6IgVWYgUPWmDrOTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rVrCivwS; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1722535293; c=relaxed/simple;
+	bh=B4USJ3DcoEtC2grgJaNeehMjrX/R6yyLoOz0nwuEw9c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=l0k0OL8vfQ35wGGh1ihbntGpF+JYYIeCAH5o1H+I8wNYZ3Lg3BMLwFTzoQPULjNR70eO4hERXthg4Q+v7YVIKrSoKWVo0La/w0Aso2PpYMTD3R7sruTo6slGwHjPZCmix2Z2ouxfuyffU2XxM5SE4eIvozvg89pKv2wGRdOUAls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GiWQMw0D; arc=none smtp.client-ip=209.85.215.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7aac70e30dso36530266b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:00:15 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a23a0fb195so7397200a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722535214; x=1723140014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jhGbP7nHvLdw8c3N8ItR7ROW4JPxGIcyfk2Yqpfr4Sw=;
-        b=rVrCivwS3O3AjHMv/89tuTSUEKAwyo0iffsyvAy2tU2t53KjmHheWBK5K+pm75TeOC
-         v5fDzpZEkclzFeAQJQRwBhhqFWt12VHfdm2DykqgTmv/zWPBMxBWHAZxHzWNL2C17lsk
-         ntNVUdROMXFim1l7+98DNtBBwyihgYr1In9y8BAHD4zmkmN9ebD4sbhMTEjo9vIN4B+4
-         mF5mUFGOp2ihp4cfPgETTEvjlc7n26i5/zQSpMEmVs7VMFRe2e24+K+S7VnKleBtOpwm
-         QC57HKMdkcHhazA764bJ45dyD067QVM2OPouNGKNzcI2jm/gSnqhORnWl04/x2bEsQg0
-         6/7A==
+        d=google.com; s=20230601; t=1722535292; x=1723140092; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xl2Pju3NY9Fnm1xajnPNr4ZOFDET+sfv7XV8JXyIerc=;
+        b=GiWQMw0D++CU3TjETx4tWGapTpULxvaI7JV6Y8bd9exHIvcVe2KloKaCc3sl+3L6Tr
+         whnLzZIhzEez/vMO/EbpvHmq2wAgGJ4BG7oR6m6qaFWee2Z3VYCc2MgzVvBjWx0iICfw
+         nZJ2uXfG1mZU5NCb98GEcsgaV5BQ1TqtHNsVSOT2VTUCyt4pZ1J7vd37da6yjBlA3a/L
+         mU0Uxp+3lg8sOhDEfbThyyiskc0dco8Lp+UcfcgVENf11NBLbyPVCLIYm3d+74/+wk1+
+         szSkSkwBii8fJgyIYuhcHHQLyaXYegcbx8WIUKUe7Q1/CPGjkNJdQheQCVyL4TGy5rZS
+         6CPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722535214; x=1723140014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jhGbP7nHvLdw8c3N8ItR7ROW4JPxGIcyfk2Yqpfr4Sw=;
-        b=c73pnuvnzXJIYbwmgJLroKLQBdkL/fnmuyxqOEp41sWOQvFSMxEc+gHdL1r0cl9zyc
-         qzWo7f9rNKM5+3G8wN3aVAe6MeKuWPX2dqarDoJq4804wyIq8VXBO5p/fOjcWEvQCq5k
-         i8qEn9vXXqMtvC/KSJfO/7FkDWxtpnowA2QnB96aaefbXJcCDDjluphMQ1JrCjKADdx/
-         NrfjxTtgMhzj3MQksiqmmbB20d74WFrsnRh8Qv1mfNOQV3hlopJVIFDX2LIy5hHuzHS9
-         GBPOb9tD9HwpRpoMTbijIgxdNEhgYUG00Ff5qINX2I3HFc4dykphduJD5vDW4pcSR8uo
-         3Ncw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoTX8x8FRsyQmFVb8+kYfDJrXGIKWSwgdjvrPGihaeQRnBl6FrS3+5t/zp12oCoABplKgTdDvAsYudxFmEvD6U1uIS0vbOwr9f2UB9
-X-Gm-Message-State: AOJu0YxUZ25oH53pF9SRz333G0xqtzrNUT/xHKdSSguscon/+2fq23LH
-	/KWS+XZVGhlC48BwADNmKenpOrZBzLhSfDjDC2PxZuKjG5kaMoZw6Z6yQPjp8O9RKlEc2j9b/SC
-	fuSHwP4VHazJFE1qAY4hBIMQIuCPWzsNHcPKq
-X-Google-Smtp-Source: AGHT+IFE0cLdxL3ym8WvsUt9Le3O2EWwnFz8MqEAbRvWcP10izGVT6YQWPv3mZsvMOJaaXqsRYFpmW2RSv8fqGG8Ilw=
-X-Received: by 2002:a17:907:3f0b:b0:a7a:a2b7:93ff with SMTP id
- a640c23a62f3a-a7dc51bd262mr73976866b.57.1722535213273; Thu, 01 Aug 2024
- 11:00:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722535292; x=1723140092;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xl2Pju3NY9Fnm1xajnPNr4ZOFDET+sfv7XV8JXyIerc=;
+        b=pRjkbZRumGJZvxq28yl00MzXdP0+NVK6wOHJalmxjCbbO8OGK4Tc+dBnvTHnIftaaY
+         nicvyo9JmGRGQkgXoTddt89FijAwv4LMCO0o9Nx8Z+wmd1m4T92/1F66A0t22r3KlA53
+         DMWi+zGI+Xwfy8LlwAof8wnJ4Y7Kxa3r++dz5effawj131HusF6E4t7hZahnvXl+qLhx
+         MoPP2C0mPgoPM2ZRP+CqWVkxWtg38ILe/phH858hkxnjNZTPuF6EPGSK6wVtdaOfib++
+         3uyD4yacnvbgAoXxNBINKw3oEP24OZulXRXIiWyveOVmiMVbR0cjOs2f62Fk0U57bQEj
+         KmUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUiIbkO2/mmvvLI2ZhUU4qRyMBedLio/eKcDwhuraymabzRUiau8n/Tcp1FCDYAOCmocwc7qf/Y17CEm1g11jNWTKNjiHB3riQVwkrP
+X-Gm-Message-State: AOJu0Yw4hfhb6lPBYGPT+/IeTVmkOSdH6TNEI7Ba6ahjVH/5daGwBWay
+	1CNDBF2QcHf7ONJw33AcINmipxk8Z5/2Jjb1tEoi/6MR5+L2rm1gQmTlBtdKmaZJDrqcgtMpcYE
+	nCA==
+X-Google-Smtp-Source: AGHT+IF64U8Ib+bNIe3iPxoSzJOvvilQGXPjPZq7Y/8acNPwlcg0hACHnvmYPGnFv3dx9aufX4l27GJDySU=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a65:6252:0:b0:75a:b299:85b6 with SMTP id
+ 41be03b00d2f7-7b74669c7b3mr1534a12.2.1722535291408; Thu, 01 Aug 2024 11:01:31
+ -0700 (PDT)
+Date: Thu, 1 Aug 2024 11:01:30 -0700
+In-Reply-To: <yq5aikwku25o.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240501085210.2213060-3-michael.roth@amd.com>
- <20240801173955.1975034-1-ackerleytng@google.com> <ZqvMnz8203fJYr5L@google.com>
-In-Reply-To: <ZqvMnz8203fJYr5L@google.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Thu, 1 Aug 2024 10:59:35 -0700
-Message-ID: <CAJD7tkZM8o=B5mGedFpqNL46RRNdmq8FcTVXzS78BrHjGHBzEA@mail.gmail.com>
-Subject: Re: [PATCH] Fixes: f32fb32820b1 ("KVM: x86: Add hook for determining
- max NPT mapping level")
-To: Sean Christopherson <seanjc@google.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, michael.roth@amd.com, ak@linux.intel.com, 
-	alpergun@google.com, ardb@kernel.org, ashish.kalra@amd.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, dovmurik@linux.ibm.com, hpa@zytor.com, 
-	jarkko@kernel.org, jmattson@google.com, vannapurve@google.com, 
-	erdemaktas@google.com, jroedel@suse.de, kirill@shutemov.name, 
-	kvm@vger.kernel.org, liam.merwick@oracle.com, linux-coco@lists.linux.dev, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, luto@kernel.org, mingo@redhat.com, 
-	nikunj.dadhania@amd.com, pankaj.gupta@amd.com, pbonzini@redhat.com, 
-	peterz@infradead.org, pgonda@google.com, rientjes@google.com, 
-	sathyanarayanan.kuppuswamy@linux.intel.com, slp@redhat.com, 
-	srinivas.pandruvada@linux.intel.com, tglx@linutronix.de, 
-	thomas.lendacky@amd.com, tobin@ibm.com, tony.luck@intel.com, vbabka@suse.cz, 
-	vkuznets@redhat.com, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20240726235234.228822-1-seanjc@google.com> <20240726235234.228822-3-seanjc@google.com>
+ <yq5aikwku25o.fsf@kernel.org>
+Message-ID: <ZqvNekQAjs-SN-se@google.com>
+Subject: Re: [PATCH v12 02/84] KVM: arm64: Disallow copying MTE to guest
+ memory while KVM is dirty logging
+From: Sean Christopherson <seanjc@google.com>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	loongarch@lists.linux.dev, linux-mips@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	David Matlack <dmatlack@google.com>, David Stevens <stevensd@chromium.org>
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Aug 1, 2024 at 10:58=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
->
-> On Thu, Aug 01, 2024, Ackerley Tng wrote:
-> > The `if (req_max_level)` test was meant ignore req_max_level if
-> > PG_LEVEL_NONE was returned. Hence, this function should return
-> > max_level instead of the ignored req_max_level.
+On Thu, Aug 01, 2024, Aneesh Kumar K.V wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+> > Disallow copying MTE tags to guest memory while KVM is dirty logging, as
+> > writing guest memory without marking the gfn as dirty in the memslot could
+> > result in userspace failing to migrate the updated page.  Ideally (maybe?),
+> > KVM would simply mark the gfn as dirty, but there is no vCPU to work with,
+> > and presumably the only use case for copy MTE tags _to_ the guest is when
+> > restoring state on the target.
 > >
->
-> Fixes: ?
+> > Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
+> > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > ---
+> >  arch/arm64/kvm/guest.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> > index e1f0ff08836a..962f985977c2 100644
+> > --- a/arch/arm64/kvm/guest.c
+> > +++ b/arch/arm64/kvm/guest.c
+> > @@ -1045,6 +1045,11 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
+> >  
+> >  	mutex_lock(&kvm->slots_lock);
+> >  
+> > +	if (write && atomic_read(&kvm->nr_memslots_dirty_logging)) {
+> > +		ret = -EBUSY;
+> > +		goto out;
+> > +	}
+> > +
+> >
+> 
+> is this equivalent to kvm_follow_pfn() with kfp->pin = 1 ?
 
-I think it's in the subject :)
+No, gfn_to_pfn_prot() == FOLL_GET, kfp->pin == FOLL_PIN.  But that's not really
+relevant.
 
->
-> > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> > Change-Id: I403898aacc379ed98ba5caa41c9f1c52f277adc2
->
-> Bad gerrit, bad!
->
+> Should all those pin request fail if kvm->nr_memslots_dirty_logging != 0? 
+
+No, the conflict with dirty logging is specifically that this code doesn't invoke
+mark_page_dirty().  And it can't easily do that, because there's no loaded ("running")
+vCPU, i.e. doing so would trip this WARN:
+
+#ifdef CONFIG_HAVE_KVM_DIRTY_RING
+	if (WARN_ON_ONCE(vcpu && vcpu->kvm != kvm))
+		return;
+
+	WARN_ON_ONCE(!vcpu && !kvm_arch_allow_write_without_running_vcpu(kvm)); <====
+#endif
 
