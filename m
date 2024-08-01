@@ -1,132 +1,90 @@
-Return-Path: <linux-kernel+bounces-270873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F15944681
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:23:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E532944683
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:24:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4679D1C22D36
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:23:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4578D1F2525F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:24:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2235416DECA;
-	Thu,  1 Aug 2024 08:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A83D16DC3A;
+	Thu,  1 Aug 2024 08:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pLPPm9tY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="4cpvwBuX"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A35E16C856;
-	Thu,  1 Aug 2024 08:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A3B13D891
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722500605; cv=none; b=SbSEKg6nsQZSL8ykh0FUsZLrlgKb1FfEn+AoBv32T0dvFm0efTxig98k6P+twbNce9OpPEQBZ9RjH8XudB+LOP5Ou7EtBcy4ULYYFOG5vb9vPUBEuIMRHRs/xoxYZ5DhSC4bwyLAhHDKmCEJZ0n+elHFuLxF6uyRNnJHzyrMSrE=
+	t=1722500639; cv=none; b=EEScUHV3P7cZS20Pp4h68hSeJheWeJ1vduC0ELG37te8hGiFM0eJgtASCT9NkAGNaSqJrRoiEsg2X7sS2dc0MfkukU8mcmAFBAjiOF4FPENHnr5AhoWRupOs4GEmoFB0sQOm98oLwu2Ai0TK9IXw/QwyV/yGDhMAskHsqIfbWNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722500605; c=relaxed/simple;
-	bh=Z51j2yPPzqzqUbfDzj+Co7O6I0fAkjzKGVvNCuTWfG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NfVPw3iMrhWkZSKF8PYkpkwUckK8yQGFuXCfbkn5Cs10ZMVqQlwT73A+3+ktzBpzSTnL0ZDV3wdX5PW6HdLp6bqew9LRqfgk+21lbgkaKcPINSd1gPyekyNn5Adeigj37WLFJNfkjrECq5vc3jI/Xny3ETgPOm3666zRENZLVUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pLPPm9tY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67EE0C4AF09;
-	Thu,  1 Aug 2024 08:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722500604;
-	bh=Z51j2yPPzqzqUbfDzj+Co7O6I0fAkjzKGVvNCuTWfG0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pLPPm9tY25L0+aND/5OqSFFujF5t/EgH5zvh599BAyny/hYainjuQBiogHSNCgAGO
-	 Y7kzwEXsRDNBjv54Y/EEqw4BYKXaEFCn7v8OjHApMbOQHaqfcokUckHAbLhZHpKJe5
-	 hd3tMOKqmpZDVv1s9l/YmjAwOMeZjPTUNRJQ8L7MZhaA5CUl2Xi2pKuygsj4hNtTxg
-	 4pvoVD8Y9Q30b4LU+wzujooBFZ1aBPO2sHxy2t1ySYeoom2lG7hyga67Rpkh3+fR+A
-	 rNWCSOBwmn/R7rA9x0qk8d9C7fR34HD8VujJRj+ZEbiHZzhonhHNAlXzDLw+9fMPxZ
-	 5tbr1xSKq7UDw==
-Date: Thu, 1 Aug 2024 10:23:22 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Jonathan Corbet <corbet@lwn.net>, 
-	Sandy Huang <hjc@rock-chips.com>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, 
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Andy Yan <andy.yan@rock-chips.com>, 
-	Sebastian Wick <sebastian.wick@redhat.com>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Sui Jingfeng <sui.jingfeng@linux.dev>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Andy Yan <andyshrk@163.com>
-Subject: Re: [PATCH v15 00/29] drm/connector: Create HDMI Connector
- infrastructure
-Message-ID: <20240801-fluffy-cuttlefish-of-abracadabra-389feb@houat>
-References: <20240527-kms-hdmi-connector-state-v15-0-c5af16c3aae2@kernel.org>
- <e33dc3c4-9d7d-4c85-97db-b6fd94142131@xs4all.nl>
+	s=arc-20240116; t=1722500639; c=relaxed/simple;
+	bh=suyOYv7hGoiKkqAOfnYjT40wA9uY4wMwWjlg+hdAcxE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ry6dbvyErc6g6XxFDMctssAtxujQ16/fgW8hvmEnAB+mWJwuz4KX8wFhkLEJO+eqONZlOjlXg65L9Jn2CpUyoEdNLUc7SkhKgMESyz6nBshlMFDtNAv1KSbAbSB+Vf5tuTYmTFYZzUpMsbSNLqGUSNes7NwtTM6yBXKzG4HMk/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=4cpvwBuX; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722500635;
+	bh=suyOYv7hGoiKkqAOfnYjT40wA9uY4wMwWjlg+hdAcxE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=4cpvwBuXeiF1IJKFI61G5oN7nxTdHUhz/ATQiukTCYP7ygTEAJEViNVhCBO8d/I4B
+	 QpDNmQU6A8v5JCUALTlaeg7a/JIQZPxpkPfKTfWltlQWWGhd8kJgEtBXHYAVQbLJuw
+	 vgZjJsdn6wfXzGYwM0nwbPlvwo6LYk4pft6wc4xpGB1Q+sm6V/a38TjGWfLQLhiLyp
+	 pkw8tHVzQLMaO1f/IryRxW+S9Le7pBxrISaruD+P9bGK2VB4W9lyMOT5kmMBjPf/Fc
+	 hJkrduG+PbIKam7blYf+oMx4L7HCyPmfGPTXNroZT7rHu9I3RtvtVTAXLP+HpEqdvk
+	 HsjxrUu0ONiag==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 46888378220A;
+	Thu,  1 Aug 2024 08:23:55 +0000 (UTC)
+Message-ID: <9b983add-45a4-497d-ab95-188f8ca1c0d1@collabora.com>
+Date: Thu, 1 Aug 2024 10:23:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="2k5tde7ytku6vb3x"
-Content-Disposition: inline
-In-Reply-To: <e33dc3c4-9d7d-4c85-97db-b6fd94142131@xs4all.nl>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: mediatek: Drop unnecessary check for property
+ presence
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240731201407.1838385-1-robh@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240731201407.1838385-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Il 31/07/24 22:13, Rob Herring (Arm) ha scritto:
+> of_property_read_u32() returns -EINVAL if a property is not present, so
+> the preceeding check for presence with of_find_property() can be
+> dropped. Really, what the errno is shouldn't matter. Either the property
+> can be read and used or it can't and is ignored.
+> 
+> This is part of a larger effort to remove callers of of_find_property()
+> and similar functions. of_find_property() leaks the DT struct property
+> and data pointers which is a problem for dynamically allocated nodes
+> which may be freed.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
---2k5tde7ytku6vb3x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Hans,
-
-On Wed, Jul 31, 2024 at 04:56:16PM GMT, Hans Verkuil wrote:
-> Hi Maxime,
->=20
-> On 27/05/2024 15:57, Maxime Ripard wrote:
-> <snip>
->=20
-> > Hans Verkuil also expressed interest in implementing a mechanism in v4l2
-> > to retrieve infoframes from HDMI receiver and implementing a tool to
-> > decode (and eventually check) infoframes. His current work on
-> > edid-decode to enable that based on that series can be found here:
-> > https://git.linuxtv.org/hverkuil/edid-decode.git/log/?h=3Dhverkuil
->=20
-> Since this patch series is now merged in mainline I also pushed support
-> for parsing InfoFrames to the edid-decode git repo.
->=20
-> I believe the parsing part of the InfoFrames is complete, but the conform=
-ity
-> checks for the AVI and HDMI InfoFrames are still work-in-progress. But it
-> should be easier to develop this now that is merged.
->=20
-> The git repo for edid-decode is here: https://git.linuxtv.org/edid-decode=
-=2Egit/
->=20
-> I added test files to the test/if directory, and if you run:
->=20
-> edid-decode -I audio.test -I avi.test -I vendor.test -I spd.test edid.tes=
-t -c
->=20
-> you'll get the output below.
-
-That's awesome to hear, I'll send a patch for the KMS documentation to
-mention it=20
-
-Thanks!
-Maxime
-
---2k5tde7ytku6vb3x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZqtF9QAKCRAnX84Zoj2+
-dgiBAX4lptP5eciLgerJmky6HFfb4t9iXMA0gMwf454GyprB/6H1qL24e8eHqpXe
-LgfVUI8BfRJ6NBLAdSH0nE87Xf5l/pBV5IacFmB10VRbZ+YSt/9xWQ37E0U2KJAl
-R21moyCKpQ==
-=3fHv
------END PGP SIGNATURE-----
-
---2k5tde7ytku6vb3x--
 
