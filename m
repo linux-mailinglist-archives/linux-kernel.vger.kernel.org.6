@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-270617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B4C944224
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:11:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E2994422C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB5D528335D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992C1282C51
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6AF13D891;
-	Thu,  1 Aug 2024 04:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="oTO0hQNO"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE0513D8A6;
+	Thu,  1 Aug 2024 04:16:06 +0000 (UTC)
+Received: from hkg.router.rivoreo (45.78.32.129.16clouds.com [45.78.32.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6DA1EB491;
-	Thu,  1 Aug 2024 04:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0D91EB485;
+	Thu,  1 Aug 2024 04:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.78.32.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722485456; cv=none; b=JL5S+9XnD52Fuq3nTF+MSvvxKuGwTHd1kCcsE4S0A5NDLWuzIRKUOEtMk5SRMOxNZcfSZn2q9lM8Sb9HyPg0Yxp2PX4JEkECBmdkCiS5FmegjnOmsKsmmPBwdJY3PBU41Q9sJyzhk8an50AseumYoB8LtMHSvgndXitxBCJc7Kc=
+	t=1722485766; cv=none; b=ETocADd4UfPCQPvax+GvqgkmqIz3Vf0JhYXqzPePQGZHGQsyLFt0APRLaDGRxvIa5LegyBxYCQKZAwuRQYItusPWtQEn+YsJuaskhb6j0m6hSrn9Bg5u0sOuUv8wTx/91GxSysKvB4/99VijIgCw4yEMCwaDcmyUisIxeJTFb9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722485456; c=relaxed/simple;
-	bh=F3qxceTA8BNt5iCB1b3Nh9G2BNolkb4+V/qtx55hCuI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nZP9sGdAd5r0X158mI8L9j8RTmQyYFiWGdzstxuU1htdBD027GUX8HnONG7+H3AbfNtiErp7uff1IOd6drwnPLjULzmhNUHDQ21p4ysL6pd5mZ6LVmvxPZeGconMCQGsCKePxRUMBvvz/DkfNHKFPuXqHirrShMVBtEAGu0dQPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=oTO0hQNO; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722485449;
-	bh=QMbl7tTrCcI1Rusy8f5wIoMw/fVQ0Pg72X0sAannVC0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=oTO0hQNOx/uRXitJ1mz69FUv/b/tLZJFcrZWZdSQ6aTUp4VcUft3BAELCU2/7uQOF
-	 PT4foYW8Q5VZD+w5zZpXrDri4/7XyTq6vFz9C1bxRSMM1pJcX04yrbP8Xw6uYpo9t/
-	 UiyW3IE13UaruMJ/ynwFB4sriaZVwS4e3IMlJN/0E/3f0tnplAur1N0mRMIN09UBXc
-	 kQTYnkvCN/VOX7/dOSLNEPoc3W//bBYZEwmphqu6N7QATAHEcJNg1sM4eem7o+k6Lo
-	 wChlsStRHzpStndgt6BsaKIJlSbh2jxAYUM4pC9+ExteCnJuaGA/wjhOPRiaT3e8lG
-	 lsG6fKvIVE3ug==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZFr868Mjz4wc1;
-	Thu,  1 Aug 2024 14:10:48 +1000 (AEST)
-Date: Thu, 1 Aug 2024 14:10:47 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mike Rapoport <rppt@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Wei Yang <richard.weiyang@gmail.com>
-Subject: linux-next: manual merge of the memblock tree with the mm tree
-Message-ID: <20240801141047.07940cd3@canb.auug.org.au>
+	s=arc-20240116; t=1722485766; c=relaxed/simple;
+	bh=YD3HyOBoKOyPQMt777seW1EDazfNA+9gsCp7WKOR49w=;
+	h=Message-ID:In-Reply-To:References:Date:Subject:From:To:Cc:
+	 MIME-Version:Content-Type; b=ZGo4Qmzi8q9pz+PczWxaotGvGKf2E+2zaNLCOwDYbwQGGOfDueaFnwbM/nvLB9JViJoUKEK2JnMPRTU6xlK9MsG9eb/x/rgDzSe5I8qu9ej1Zqa0RI79+w5UJL4bGxhk3Wrc6WFoTGc9HUTEDh60EPwJ8JaOV9PbP9ccglPG78A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one; spf=pass smtp.mailfrom=rivoreo.one; arc=none smtp.client-ip=45.78.32.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivoreo.one
+Received: from tianjin2.rivoreo.one (unknown [10.100.1.128])
+	by hkg.router.rivoreo (Postfix) with ESMTPS id 6772111CEEF;
+	Thu,  1 Aug 2024 04:15:57 +0000 (UTC)
+Received: from [10.1.105.1] (localhost [127.0.0.1])
+	by tianjin2.rivoreo.one (Postfix) with ESMTP id 527906A909;
+	Thu,  1 Aug 2024 12:14:29 +0800 (CST)
+Received: from 10.1.107.31
+        (SquirrelMail authenticated user whr)
+        by _ with HTTP;
+        Thu, 1 Aug 2024 04:14:29 -0000
+Message-ID: <0425beae71b2214e8e160b3c0c91ad99.squirrel@_>
+In-Reply-To: <CAL_JsqKpTKv-fthwD9bFHiVESJyNP6uMg7Px7Rh+-k583oz76g@mail.gmail.com>
+References: <2046da39e53a8bbca5166e04dfe56bd5.squirrel@_>
+    <CAL_JsqKpTKv-fthwD9bFHiVESJyNP6uMg7Px7Rh+-k583oz76g@mail.gmail.com>
+Date: Thu, 1 Aug 2024 04:14:29 -0000
+Subject: Re: [PATCH v2] of/irq: Make sure to update out_irq->np to the new
+ parent in of_irq_parse_raw
+From: "WHR" <whr@rivoreo.one>
+To: "Rob Herring" <robh@kernel.org>
+Cc: "Saravana Kannan" <saravanak@google.com>,
+ devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+User-Agent: SquirrelMail/1.4.23 [Rivoreo]
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/VInwpX3vo.XFmxww6=Ym10A";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain;charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Priority: 3 (Normal)
+Importance: Normal
 
---Sig_/VInwpX3vo.XFmxww6=Ym10A
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Jul 29, 2024 at 11:54 PM WHR <whr@rivoreo.one> wrote:
+>>
+>> Commit 935df1bd40d43c4ee91838c42a20e9af751885cc has removed an
+>> assignment statement for 'out_irq->np' right after label 'skiplevel',
+>> causing the new parent acquired from function of_irq_find_parent didn't
+>> being stored to 'out_irq->np' as it supposed to. Under some conditions
+>> this can resuit in multiple corruptions and leakages to device nodes.
+> 
+> Under what conditions? Please provide a specific platform and DT.
 
-Hi all,
+I have a previous email sent to you before I came up with the fix. The kernel
+log for debugging and the device tree blob are attached again.
 
-Today's linux-next merge of the memblock tree got a conflict in:
+> Honestly, I think the DT is wrong if you get to this point. We'd have
+> to have the initial interrupt parent with #interrupt-cells, but not an
+> interrupt-controller nor interrupt-map property to get here. Maybe
+> that happens in some ancient platform, but if so, I want to know which
+> one and what exactly we need to handle.
 
-  tools/testing/shared/linux/init.h
+So you suggest the #interrupt-cells is erroneous in that node, and should be
+removed?
 
-between commit:
+This is a device vendor-provided DT, so any issue in it will have to be fixed
+locally.
 
-  265291d604a6 ("tools: separate out shared radix-tree components")
 
-from the mm-unstable branch of the mm tree and commit:
-
-  f56de2214554 ("tools/testing: abstract two init.h into common include dir=
-ectory")
-
-from the memblock tree.
-
-I fixed it up (I removed the file) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/VInwpX3vo.XFmxww6=Ym10A
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmarCscACgkQAVBC80lX
-0GzUmAf/bdzekCaJ8LBF19yZoxw+znOck3JYEbPxKfYbI4uo+zBGw27sS860DV81
-dBONz63YBkYGcDSSrsPV2jkpK8qMXT4LwMgrgofrOxyDMfDwjgIu5QShs+8M6B6j
-arl9ii8t5A933q5nti9MpxSO6F9pDM/Nzlo9KwGzK+tUjyX1QyjEeqybKQYUa+ar
-K74RW3UA1ILhHUit3r8QaEtinqAuyGeAIVktMLfr26KfQD38I8wdaIHnlUEo1CFD
-/oZQtHbWsQS0d0ZTMP6uKzgi1xLdC3Bjth4TBOst7MkVNa6t/quKsgu8uoKNq2s4
-XUGYtDCML8xtCksbqGMRE4caUqokPA==
-=Ja4H
------END PGP SIGNATURE-----
-
---Sig_/VInwpX3vo.XFmxww6=Ym10A--
 
