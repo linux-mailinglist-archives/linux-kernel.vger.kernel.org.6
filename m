@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-271639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAF49450FB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:43:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4869450F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4637D1F2782F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:43:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6685A28A548
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:43:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75FA1BE230;
-	Thu,  1 Aug 2024 16:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007631BC9E8;
+	Thu,  1 Aug 2024 16:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dw514SYO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cG0R6guX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFCF1BC065
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349001BBBFE
 	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 16:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722530438; cv=none; b=uUpIUCRDqbIliVDNF5mbPbGcacEhDbw/7ZzMIkyucjg3O26EUS0HBzElTu09Hoo1jqIPFToI+zBaFaT2A/1nfGMs+orIgPRJ42Ion/5+khegjJNGRXcu3FyBTzOMBWdtPZJDSM10mDi5AH+nqVYYhBeJ0Q6I+VpUIBAhldo7Qok=
+	t=1722530438; cv=none; b=UaxtS3P8l96dzAGy+zoDl8MdD4A5hPZi7sc9yEyraHnO8fKWcXIkLYJUgO5gKiJBuJ8kGPTCqxhMEnpKfLkbE3dS98ODf0s2cDt/aboHCq2wNRTsTrG1iIbQIdzh6+rF1z9UecSvYpBZs3z4oNs/AUMCmhuLj4nvqPMOUdhoMO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722530438; c=relaxed/simple;
-	bh=UnU0PcJkTz7cc/UhgE+UHGawejA3Ev86arXcn5fJvjs=;
+	bh=c2FO/XwZs3Khz94ER4bhUWQv+QFkKk0f7Rg9kF93AO4=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fyCygEBQIF6mT6axt0nI35qusTJnQrHmfhz9ccmMfU53hBXfTFbNAFnmYb96qSpy3yCl+Tlbqp0BPkWFnJjsIwUL+0f+mcoBWsZGwOiPTeMxyHIsGmbAdjbV6VhCGTVMDkYkcmhBP4d5sm/LudhHSOTMPh01QEbNWH1R7x7IVuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dw514SYO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DF67AC4AF16;
+	 In-Reply-To:To:Cc; b=OfnWhO4l0qhbqXK2zA35WbF/Flvpzy0rB/hTKvEDoSN9fUoRA2E1WLlp4FoXtbR+W+Hzyz+rGOYL6KmRVE1l073mldT2S1YB6w7koU8yxOxm4BKNVqNePbV9TQAvV8nuYwjz/v1Ww85Lby7VgsgJkjlR8uDIlri46zAqiZ3cP5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cG0R6guX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C8548C4AF14;
 	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722530438;
-	bh=UnU0PcJkTz7cc/UhgE+UHGawejA3Ev86arXcn5fJvjs=;
+	s=k20201202; t=1722530437;
+	bh=c2FO/XwZs3Khz94ER4bhUWQv+QFkKk0f7Rg9kF93AO4=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=dw514SYO10HSU4S2KN37Up2qlHI6vk6ytedOFarXOZRly+IMAd9pRz72GDdLwhBWi
-	 R+lf88ijiC5aRLJVcmfB85Ji92VAN/tc66Fmzbq+eZGs4ePA5CcNJz7E9v6e57wpfS
-	 VQ5v4ZpzB4fRt6c21oqx2OlSBPut8caQd+v+xgkz0VMDoJ94h1tObTmtNTeV7LdI/6
-	 gIQumVEs7Zxl2/ZyQ4mZa8Fr3qSYybc4vk+XAGSdOJxmYu1DDeQue4t+2qb3HpcoEa
-	 7dAsoONg75R/16HL59dFCOUv8l0y8+JFKXq1RKkeheRjaErEPraODgIW9XSx9JCIep
-	 txVSWHb2Tu+ag==
+	b=cG0R6guXz6WO3xwIFGUTP5Fj3oWN7D9oJnkbelpgpsjJBCblesZe4Cf/swTrJ3w1o
+	 1i0uZ48Mw6+5GpCoF1gtF3Hnd0baiP0IrmrOvrBcDor7kIYG45vA7K/bUUA/P7v/GU
+	 aUGzzClFr0Y2Ifq0P/sFaH5W6+2va7KQICSuJoZqT6wlrW5KtVmBksBBlv3Btioy/c
+	 XNdW9oYS2h4nAjj85X3CT8Z9GNfX5PPJmN23rYZLBA5LT15PgPnNFwG2HaBFg361S6
+	 lnhbr/c8huwb+A6Kb7E1877NBNCaFvBTtKVaqio68HBkl0QqeKnkDOAGE+heLL9M7D
+	 4BUJyB/0Sdb5w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id CC884C3274E;
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id B30CEE8877D;
 	Thu,  1 Aug 2024 16:40:37 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
@@ -51,39 +51,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v2] cache: StarFive: Require a 64-bit system
+Subject: Re: [PATCH] perf: riscv: Fix selecting counters in legacy mode
 From: patchwork-bot+linux-riscv@kernel.org
 Message-Id: 
- <172253043783.13740.5911748203881194794.git-patchwork-notify@kernel.org>
+ <172253043772.13740.4519514649255072983.git-patchwork-notify@kernel.org>
 Date: Thu, 01 Aug 2024 16:40:37 +0000
-References: <20240722154519.25375-2-palmer@rivosinc.com>
-In-Reply-To: <20240722154519.25375-2-palmer@rivosinc.com>
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, conor@kernel.org,
- emil.renner.berthing@canonical.com, linux-kernel@vger.kernel.org,
- conor.dooley@microchip.com
+References: <20240729125858.630653-1-dmitry.shifrin@syntacore.com>
+In-Reply-To: <20240729125858.630653-1-dmitry.shifrin@syntacore.com>
+To: Dmitry Shifrin <dmitry.shifrin@syntacore.com>
+Cc: linux-riscv@lists.infradead.org, atishp@atishpatra.org,
+ anup@brainfault.org, will@kernel.org, mark.rutland@arm.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ alexghiti@rivosinc.com
 
 Hello:
 
 This patch was applied to riscv/linux.git (fixes)
 by Palmer Dabbelt <palmer@rivosinc.com>:
 
-On Mon, 22 Jul 2024 08:45:20 -0700 you wrote:
-> From: Palmer Dabbelt <palmer@rivosinc.com>
+On Mon, 29 Jul 2024 15:58:58 +0300 you wrote:
+> It is required to check event type before checking event config.
+> Events with the different types can have the same config.
+> This check is missed for legacy mode code
 > 
-> This has a bunch of {read,write}q() calls, so it won't work on 32-bit
-> systems.  I don't think there's any 32-bit StarFive systems, so for now
-> just require 64-bit.
-> 
-> Fixes: cabff60ca77d ("cache: Add StarFive StarLink cache management")
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> For such perf usage:
+>     sysctl -w kernel.perf_user_access=2
+>     perf stat -e cycles,L1-dcache-loads --
+> driver will try to force both events to CYCLE counter.
 > 
 > [...]
 
 Here is the summary with links:
-  - [v2] cache: StarFive: Require a 64-bit system
-    https://git.kernel.org/riscv/c/57e5c814e915
+  - perf: riscv: Fix selecting counters in legacy mode
+    https://git.kernel.org/riscv/c/941a8e9b7a86
 
 You are awesome, thank you!
 -- 
