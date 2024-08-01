@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-271822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F828945396
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:57:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F43294539C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EC671C20E78
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:57:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B7B281EFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D816D14A4FF;
-	Thu,  1 Aug 2024 19:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A800C14A4D6;
+	Thu,  1 Aug 2024 20:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TeA60Ndj"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eHCAQSg7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ol4smeQN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57330149005
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D2014A0A4;
+	Thu,  1 Aug 2024 20:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722542235; cv=none; b=lk8LfRifRIuCo8k0fAQ7o9WCavI5v8D7zAj9buEhfWCUi9DdGvdU0mdggUXGHaDAq/m13akz2dNusRlpJZYcSJwuYDH9OqkxkYA6a0kizanhn6PpO83T2zghrRIkuCCn7TTpVIeiIM7umPnXbKlSjtwGCJ8h15RC9TIcWzwIYvE=
+	t=1722542429; cv=none; b=cgkochAXAnjVkjqJri3oTjwHq4QgycOt5Jl2gvM2BNM+UqTZ7MRqTf4jZxCoc9iemX7hudmRc11dwn9rlFZHap09yi3le0MfzosgB9RQVS+sPTLilY16wf8MN/iRbbtFHwCuu5TGvgPp69+M3Vxo2KgCer25Gk53Ngb7HGsRd/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722542235; c=relaxed/simple;
-	bh=VfRggyGIBzKBJ9AABP1WIR6ZJX3zg2RU1KS/LjIGzXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=otc9mFSkq79EVZzftK7Ro6OR9GO52M2THAEZaC/9ar+XH5gCNJkclFKBciy40ruHSExW8ProGh6DYmizLHcJBlvyA+8c3D+zt2AeZuc9AR4vq8SgKnmGMYOfr+tH2RQNqexjZkF1C42Xia3VGKDJgIrmyoUXvxJVmef9CK3NlGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TeA60Ndj; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-81f8bc5af74so44702139f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 12:57:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1722542232; x=1723147032; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gRUG/+szalZ1Dtn2W2ib+B4QSFmDogip9WPagZdhULc=;
-        b=TeA60NdjzfwR4zACqD82jwr9N1hBr0yXI7Ub+I7nuvhocRkyJp5Ws30P3+T8/6EuMv
-         d99OVvOrVJN09cVqW+PUGHF43wBRgciM6sHLx6w8Shqs8H4CfOONdza48W+4wjNgltOc
-         8NtSaKLIOY85D2i4lN4xSdOd4lILyPFx7E7ek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722542232; x=1723147032;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRUG/+szalZ1Dtn2W2ib+B4QSFmDogip9WPagZdhULc=;
-        b=OULwP7pB6u64H39HbJqxwy5QkHokuGX0xyZW8T0JnJV9hM2zuuU4Li3CIAMKDZVDrc
-         2PXwBewyuIDgZkrpEAH+6ruARjD+R0quPoVCnyWdbNkNUyGQRh3IV9RPeC735sNMmydf
-         vVNjAiXmyY6J786C9pl9HrOhPsnysdwyqhB89SfdfgFBKWl3RjFso0z+OtdDy0jqrP8e
-         ythFK6RISeQevqArfnRpLDHwebZMCBumFjz2Iayimwqn+v1x7V3GOoFCywA2JfpLiL77
-         TUhLHRLHhn/8gB5VHF5YNk1n5qGUr+drx4jHhT8ogKWemI+wdpd57YH2WmiCdkEJ1PRw
-         +Qbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbmDkqy+Dt8MY8863bpePc5T3c28Kz8LJXNoZkE1z2zMEUl9bpMuxKlnLLeiU7Jay7XErEdtgVXTab0aFJsT++mssWMMgISN7Ozk1Y
-X-Gm-Message-State: AOJu0YwfcLgLnx+re1casHd/frA+ekYMJaUEtePCPMnEsWP/kmSPQoPi
-	zHOjtCryIfJY+j0FpgCwHP53DojA9uECgyu2zVLt1vZhID188+ieLZmqL7TC7RA=
-X-Google-Smtp-Source: AGHT+IFsxENrq11/dXSM1og7GcrNwd2Jfjtj7nddGSwMMIPtERTjp96wBjG64b7g2K2vekcseFaUnQ==
-X-Received: by 2002:a5d:8185:0:b0:80a:9c66:3842 with SMTP id ca18e2360f4ac-81fd43d5bf1mr89031639f.3.1722542232301;
-        Thu, 01 Aug 2024 12:57:12 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a59c89sm87300173.168.2024.08.01.12.57.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 12:57:11 -0700 (PDT)
-Message-ID: <e03c9a30-bddd-4620-bd4f-024dc29d6328@linuxfoundation.org>
-Date: Thu, 1 Aug 2024 13:57:11 -0600
+	s=arc-20240116; t=1722542429; c=relaxed/simple;
+	bh=57EJTOjAG2CCv5iwKQY355abCkcD+2IiP69Qu6dRAZA=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YF5gmgSBGaJZpzE9gaMPK4Yw6a/z7aWSr6hVcPXc+cHd26MHCWb4Jt00rP0cIXWx3LCOTIQbfRH82NlD4uhvxghx8/dL8BZW3YyHcUnR9fCWkU0WniXlQb9mCaFnjqwrTYqNGUGNpzCAp2+LFwZyVLCS4g60pmNtyG5YWSWyArA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eHCAQSg7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ol4smeQN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722542424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7w0LSn9RHL7firFQ1xlYkaaoKMRvQdGnUpV8g/FWGxo=;
+	b=eHCAQSg7fJdmYSiPtOCaWP73YRJJt9UriF1H1B2t5c9YfTgGsovzTUJB3nf6QCH/QPs6Ib
+	50q2Hs2JoSKy1olnY03jqgYJcBgUdLdrpzvpq3e27IsFD0h/+8kc0Lz6S8kB4h3xK/iBg6
+	ApqSCAQztKN/QflVCsE3WUgPX11MrsIFQjxnhxNO90e30VGtQb6seLJz6fz6F46BfhpJYY
+	lzZW/JKZfaV4LZM4vn9iZv/V8akcZUIpk9oipwVIArOR06Y4Lvr1J4+zy9LisxXoTdmeEK
+	E0fiGkr5omSJCP3bCQLJDQV2fQXwLFKZDnJNTOYLQ7pVwSbL925dF0BxV7kNoA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722542424;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7w0LSn9RHL7firFQ1xlYkaaoKMRvQdGnUpV8g/FWGxo=;
+	b=Ol4smeQN1U3tKUrck3s99PfjjEOlbLF0o77GR4+V7xHNlrTYVUssWcNo4YpBaR2Q97Xndm
+	eoZkUnK3BUxqJmDg==
+To: David Woodhouse <dwmw2@infradead.org>, lirongqing@baidu.com,
+ seanjc@google.com, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, linux-hyperv@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clockevents/drivers/i8253: Do not zero timer counter in
+ shutdown
+In-Reply-To: <cf5bf4eec7cb36eec0b673353ff027bee853dd48.camel@infradead.org>
+References: <1675732476-14401-1-git-send-email-lirongqing@baidu.com>
+ <87ttg42uju.ffs@tglx>
+ <e9a9fb03a4fd47ebddc3bf984726c0f789d94489.camel@infradead.org>
+ <87ikwk2hcs.ffs@tglx>
+ <cf5bf4eec7cb36eec0b673353ff027bee853dd48.camel@infradead.org>
+Date: Thu, 01 Aug 2024 22:00:24 +0200
+Message-ID: <87a5hw2euf.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] MAINTAINERS: Add selftests/x86 entry
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, kernel@collabora.com,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240610052810.1488793-1-usama.anjum@collabora.com>
- <83d0c57a-dd87-42eb-935a-e4104c17a5ed@collabora.com>
- <3518e3ef-3444-419d-94ce-331f4e7fb391@collabora.com>
- <257c9106-c33a-46c1-9761-111505309176@linuxfoundation.org>
- <20240731212325.GY40213@noisy.programming.kicks-ass.net>
- <a32a8cdf-b488-4b6f-a0d9-d709b9beb769@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <a32a8cdf-b488-4b6f-a0d9-d709b9beb769@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 8/1/24 13:27, Shuah Khan wrote:
-> On 7/31/24 15:23, Peter Zijlstra wrote:
->> On Wed, Jul 31, 2024 at 12:14:16PM -0600, Shuah Khan wrote:
->>> On 7/31/24 07:42, Muhammad Usama Anjum wrote:
->>>> Kind reminder
->>>>
->>>> On 7/2/24 3:17 PM, Muhammad Usama Anjum wrote:
->>>>> Kind reminder
->>>
->>> Top post ???
->>>
->>>>>
->>>>> On 6/10/24 10:28 AM, Muhammad Usama Anjum wrote:
->>>>>> There are no maintainers specified for tools/testing/selftests/x86.
->>>>>> Shuah has mentioned [1] that the patches should go through x86 tree or
->>>>>> in special cases directly to Shuah's tree after getting ack-ed from x86
->>>>>> maintainers. Different people have been confused when sending patches as
->>>>>> correct maintainers aren't found by get_maintainer.pl script. Fix
->>>>>> this by adding entry to MAINTAINERS file.
->>>>>>
->>>>>> [1] https://lore.kernel.org/all/90dc0dfc-4c67-4ea1-b705-0585d6e2ec47@linuxfoundation.org
->>>>>>
->>>>>> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
->>>>>> ---
->>>>>>    MAINTAINERS | 1 +
->>>>>>    1 file changed, 1 insertion(+)
->>>>>>
->>>
->>> Applied to linux-kselftest next for Linux 6.12-rc1.
->>
->> You are applying things for the x86 entry, without an x86 ack, srsly?
-> 
-> People are having problems with s86 selftests not making it to x86 lists.
-> I figured it will make it easier for the x86 team.
-> 
-> I don't have issues dropping this patch.
-> 
+On Thu, Aug 01 2024 at 20:21, David Woodhouse wrote:
+> On Thu, 2024-08-01 at 21:06 +0200, Thomas Gleixner wrote:
+>> Yes. So the sequence should stop KVM from trying to inject
+>> interrupts. Maybe someone fixes it to actually stop fiddling with the
+>> counter too :)
+>
+> I don't think we care about the counter value, as that's *calculated*
+> on demand when the guest tries to read from it. Or, more to the point,
+> *if* the guest tries to read from it.
+>
+> As opposed to the interrupt, which is a timer in the VMM which takes a
+> CPU out of guest mode and incurs steal time, just to waggle a pin on
+> the emulated PICs for no good reason.
 
-Dropped from my tree
+Well, if the implementation still arms the timer in the background, then
+it matters because that has to be processed too. I haven't looked at
+that code at all, so what do I know.
 
-thanks,
--- Shuah
+>> > I'm glad I decided to export a function from the clocksource driver and
+>> > just *call* it from pit_timer_init() though. Means we can bikeshed the
+>> > shutdown sequence in *one* place and it isn't duplicated.
+>> 
+>> Right. Though we don't have to make this conditional on hypervisor I
+>> think.
+>
+> Right, we don't *have* to. I vacillated about that and almost ripped it
+> out before sending the patch, but came down on the side of "hardware is
+> a steaming pile of crap and if I don't *have* to change its behaviour,
+> let's not touch it".
+>
+> I justify my cowardice on the basis that it doesn't *matter* if a
+> hardware implementation is still toggling the IRQ pin; in that case
+> it's only a few irrelevant transistors which are busy, and it doesn't
+> translate to steal time.
 
+On real hardware it translates to power...
+
+Thanks,
+
+        tglx
 
