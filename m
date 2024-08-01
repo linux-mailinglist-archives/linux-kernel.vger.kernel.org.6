@@ -1,278 +1,126 @@
-Return-Path: <linux-kernel+bounces-270841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 941C8944611
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:01:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95550944613
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49551284268
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:01:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA6B31C2150E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DE93E47B;
-	Thu,  1 Aug 2024 08:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1BD16CD09;
+	Thu,  1 Aug 2024 08:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="nd/SMveF"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xyw+iU1C"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3CC1BDC8
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 08:01:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7F85158A1E;
+	Thu,  1 Aug 2024 08:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722499311; cv=none; b=LUOnEXuS4M76pzjJqBc6j6TXCxhilN9NQdycX01FF3mN70I5JWowglzKVpAob2k3eOtiGn8+AeNoB63xVnmdtZPvjui35pmxx7gCi64TgRUiPUXzcyo/wstskfXku06ou2QqwiR4L4exO/RgBoxuJ2BxS92Wn8ScHqmnoNHozrw=
+	t=1722499316; cv=none; b=kB4j3oWWYJ3W+STTU/3FaWSWGWaJlMA48h7WYGFZNJmC8oAAMV6JkZSDjl4cRwIJpz3stfcLkOIMGR/BxbduFJCE3jqCqah6QFQZ60pbpGQg8+vdQ+Sxhir7wbTb8iRogvPB07qdzi4ayEebbW2nexfsa68OMDyouWCP/Pl9IOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722499311; c=relaxed/simple;
-	bh=sJgLXmCKFpWtiKLUzC0PZ28csdpabuzHr7uDPxQsJUE=;
+	s=arc-20240116; t=1722499316; c=relaxed/simple;
+	bh=pss0ZUVkQ9llcafFVFt33upaXuS98JMtSIUAnIUxRGo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iQvofTUFEP+cL5sM2SrrTNs/n3wdNe4stG2vuSyOQaiZT1j6MtLQvYnTS8JT83jiuW5h6KIfsKyNXUdI9G/EsDvBE5VdqNrd164A4QFZ1+KiMisu2sfyo7kEYQaqllqJgQCRTyb8VlyeFk8AKWyktMVfgGVG0pZTWI/VApojH8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=nd/SMveF; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a975fb47eso925810466b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 01:01:48 -0700 (PDT)
+	 To:Cc:Content-Type; b=fzak+eMLUCwrIme+Z0lkXHwxn0d5zgUgS2+FkmC9fHnw+e9ViIw/tZlucqt3ocpcVnsAKi2oJs34xh4n6LyQ+K80irug57diFHCOUzYigtELVoRyJwsmticiVBfzpJczjKBlgzbaMMeHhTHBZBoZYAKno1IW3r2Evxy1XYh3ess=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xyw+iU1C; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-36865a516f1so4649785f8f.0;
+        Thu, 01 Aug 2024 01:01:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722499307; x=1723104107; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722499313; x=1723104113; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a5nyBMzKFgDD9FVTBeC5OJZVCX8FHmRFRo/UWwDjEZ4=;
-        b=nd/SMveF0CBrIgpyw/ji6GudGoj9l6E6mbNP34rIQJY3XcP6bzPBvBTUOKYKHlY004
-         5KjFaU/GGsbiRLNcgvh9qH+37f/6Aeg3w2fPWE8tt5pl+Agz0lEyccWYzsxb/uqdl4DO
-         xkxgq+vBGV5/3/Qr9jzNcw3Gn2Ju1CnzOnW5rKLzha3sN/3j0SuWYdEGRRNO1QQA6ZNh
-         HVWp+yJYn0PjX1CuM3+06U5Ftz/ZxTzb8TDk2j4UX3GZHOtXMYkZdOE5wG7KRvxvhaks
-         VBa6fGgJEuiW/G83o54xUOO4E06fAQ+K5KE26hKGnZrLMZzrJphPaEUFwWCBMiENDjIG
-         ecfA==
+        bh=pss0ZUVkQ9llcafFVFt33upaXuS98JMtSIUAnIUxRGo=;
+        b=Xyw+iU1Cc6vLwAbhv79zPd6zC3RDBw5J77ynq4xnGfmtDFWxHqkK3FVmKGMRA7SpIa
+         T9J4bTA3ewNrC7gecehliAtBUKajizaSDe1Ja65pYWh1TttPzqe5cvVmqCmbb3JW/yzx
+         VjJyJ/PAcIx3BzJePFleOmtnKCCzv+SUuf9tk7o9gTR0/VtgP3iUixaxjC/j28cqR1Xt
+         RDeuz6E1HJg4mQYJb6QnemxHN28fKp2T+SkFnnNCSwAKFMsnpBPdIh/mXik/nUcX2P4s
+         HhNDzMfg3/gjvgKxKjnFCYqTXThkna8kRn1iJ8vd2elcEqUR6LBrwhvh5XJyhfaanIlj
+         55kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722499307; x=1723104107;
+        d=1e100.net; s=20230601; t=1722499313; x=1723104113;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a5nyBMzKFgDD9FVTBeC5OJZVCX8FHmRFRo/UWwDjEZ4=;
-        b=gsbVUHts59Hv8LBx86+Kp0VtV3ehsadi9yAQFGU8YhThkb8Ckim8txIQ+ZERyA5c5v
-         YjgrIt5/mg7yyCyyWvsUrNvrrInSxUoo+Awew5Xxe9XLDSY0MuwT7+EK9DTQrAjAxeoT
-         1hnUKmvkSwTSYws1r7Ml2AzWihSU45p70zsej0etGSr2Q0Y7O1LYvq9JxPgIWF1oh3p6
-         FftIYeXzJUZ6aM81XnNxAtvtYbY1e+/LYkSt68g4YaiD/cCmvEQ0v5uTenuqHoZtdeZs
-         rFs7UGucd9yvcb7dbhDnZB3MwHpoUMrMzHVWHI6LzV3lQZrJXPinBZFQCV9SMEdgZKPY
-         Ldgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUpdjMioOkDq6rCcaL2yvLRBh6nqFQ0SyVtWTHhqcjt8fa1cavfaF8Lkx+u7w6XNaZXKvNEFsM9OjKqwDtq+V0SRDBktN+rLDDWVHZ/
-X-Gm-Message-State: AOJu0YycjbMJl7x3qI2In02KCKd+IWCcRRe/rmhQi0rJH9WiYPADP58t
-	mZCzMqjFYPgGPN9YEJYH9enpoDfjyxirOLKW8BHNXAnSqSOQNloUUkhomHw8GvWkDBPKn1uMbZ0
-	6kk3RPcwz2zbl9p+qZRD442BiFKSkQtYEpLQYwg==
-X-Google-Smtp-Source: AGHT+IFXllK+Nz9VsYx2QJczd1lfjpXOVBZEnpS/FAo0EIeJ75GoHMILePAAcc33Zb/9eZIY/jB6o+J/imVJ2gGybYI=
-X-Received: by 2002:a17:906:7315:b0:a7a:c083:8579 with SMTP id
- a640c23a62f3a-a7dafd5e73bmr122064166b.62.1722499307293; Thu, 01 Aug 2024
- 01:01:47 -0700 (PDT)
+        bh=pss0ZUVkQ9llcafFVFt33upaXuS98JMtSIUAnIUxRGo=;
+        b=IX5Jms0ZulY4Pe/TRjuYI6/fzfasHtXW43bYzVeIffQJVyVhefSJob2fScJGHvUe5u
+         X8/66kDtA23O1L1jEM/mQc1iru5n48RS+r7Re2jy/ilIXPk4MU3JrUm4Fw/POf7vfRr1
+         MiMSlo3KJACCOlUAmvnl3h+JSI6DoJt2as+JsVVuLJv0LjO9SrXf7kSmRyLrXyNwWELH
+         tjdHdt3E9c2Zcgi/rTnwXNBLhYq2+qfos7WdrD77WdqwtAnbxAv+gqxd0IxWYw8G60Ep
+         j3t05cXl/99pOEcGUlfaPB2JFZneXa0fdo9NxIyw8TJy6VKxYeihAyTGV7/OZyJLOsv6
+         HQ5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU0P6JqoKengu/3VanK58sunVTjWzllDA9jLd0g3dv8YbXayCV1rLZOwL5QXCkMO2ibIZn270hN@vger.kernel.org, AJvYcCXeWmpdfYn1ZEgOWMi3nrddOyzd2+63hc7bNohLfso51yPXnym0ErqCTu/2cAQC9cidjlZzpWJ+Rk8yhh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVbNksA7KdGoB/JhqSOVCZrqwOtDJ+TT5etbgJDZamPpgYKgge
+	5cZwvIjmMjCWJDPgz7XThTCmrczB2hf+H+Xe3cHDmpYcP6S37FP9SeWD3XMdfZdo+ASMvLzZvHN
+	kSsJwSp6WW1uYRUUjS5R90MUY3FM=
+X-Google-Smtp-Source: AGHT+IGzDGxYPAK57oqfHSlsGd9K7iuasFxGLFx2h2cYTdeTQgCLNXKoUee/un1WO6hbM0z6aFcsf6cq/8chOwD4G2I=
+X-Received: by 2002:adf:ffd0:0:b0:368:4910:8f43 with SMTP id
+ ffacd0b85a97d-36baacbcfcamr1417384f8f.3.1722499312787; Thu, 01 Aug 2024
+ 01:01:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725074155.20565-1-cuiyunhui@bytedance.com>
-In-Reply-To: <20240725074155.20565-1-cuiyunhui@bytedance.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Thu, 1 Aug 2024 10:01:36 +0200
-Message-ID: <CAHVXubiyJtmiquZ+vmAa+T-nP-pXbAAvf2S=DSCZMk99wuhhpg@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: mm: add paging_check() before paging_init()
-To: Yunhui Cui <cuiyunhui@bytedance.com>
-Cc: punit.agrawal@bytedance.com, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, samitolvanen@google.com, gregkh@linuxfoundation.org, 
-	suagrfillet@gmail.com, akpm@linux-foundation.org, shikemeng@huaweicloud.com, 
-	willy@infradead.org, charlie@rivosinc.com, xiao.w.wang@intel.com, 
-	conor.dooley@microchip.com, chenjiahao16@huawei.com, guoren@kernel.org, 
-	jszhang@kernel.org, ajones@ventanamicro.com, bhe@redhat.com, 
-	vishal.moola@gmail.com, ndesaulniers@google.com, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240729183038.1959-1-eladwf@gmail.com> <ZqfpGVhBe3zt0x-K@lore-desk>
+ <CA+SN3soFwyPs2YhvY+x33B6WsHHahu6hbKM-0TpdkquJwzD7Gw@mail.gmail.com>
+ <20240731183718.1278048e@kernel.org> <CA+SN3srMPLcmQ4h_iNst71OkQPFcCYxBRL0Q9hR=7LjJ86TFFA@mail.gmail.com>
+ <Zqs5hcFMx1g42Zrd@lore-desk>
+In-Reply-To: <Zqs5hcFMx1g42Zrd@lore-desk>
+From: Elad Yifee <eladwf@gmail.com>
+Date: Thu, 1 Aug 2024 11:01:43 +0300
+Message-ID: <CA+SN3spwT1hrXQRmk8TkDOfBwp66WWqEAczvNCS7QaTe_eM=Vg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 0/2] net: ethernet: mtk_eth_soc: improve RX performance
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Jakub Kicinski <kuba@kernel.org>, Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
+	Mark Lee <Mark-MC.Lee@mediatek.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, Daniel Golle <daniel@makrotopia.org>, 
+	Joe Damato <jdamato@fastly.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yunhui,
+On Thu, Aug 1, 2024 at 10:30=E2=80=AFAM Lorenzo Bianconi <lorenzo@kernel.or=
+g> wrote:
+>
+> nope, I added page_pool support even for non-XDP mode for hw that does
+> not support HW-LRO. I guess mtk folks can correct me if I am wrong but
+> IIRC there were some hw limirations on mt7986/mt7988 for HW-LRO, so I am
+> not sure if it can be supported.
+I know, but if we want to add support for HWLRO alongside XDP on NETSYS2/3,
+we need to prevent the PP use (for HWLRO allocations) and enable it
+only when there's
+an XDP program.
+I've been told HWLRO works on the MTK SDK version.
 
-On Thu, Jul 25, 2024 at 9:42=E2=80=AFAM Yunhui Cui <cuiyunhui@bytedance.com=
-> wrote:
+> > Other than that, for HWLRO we need contiguous pages of different order
+> > than the PP, so the creation of PP
+> > basically prevents the use of HWLRO.
+> > So we solve this LRO problem and get a performance boost with this
+> > simple change.
+> >
+> > Lorenzo's suggestion would probably improve the performance of the XDP
+> > path and we should try that nonetheless.
 >
-> When establishing a linear mapping, the virtual address is obtained
-> through __va(). If the physical address is too large, such as 1TB, then
-> the virtual address will overflow in the address space of sv39.
-> The log is as follows:
-> [    0.000000] Unable to handle kernel paging request at virtual address =
-000000d97fdf7ad8
-> [    0.000000] [000000d97fdf7ad8] pgd=3D000000407ff7e801, p4d=3D000000407=
-ff7e801, pud=3D000000407ff7e801
-> [    0.000000] Unable to handle kernel paging request at virtual address =
-000000d97fdfaff0
-> [    0.000000] [000000d97fdfaff0] pgd=3D000000407ff7e801, p4d=3D000000407=
-ff7e801, pud=3D000000407ff7e801
-> ...
-> [    0.000000] Insufficient stack space to handle exception!
-> [    0.000000] Task stack:     [0xffffffff81400000..0xffffffff81404000]
-> [    0.000000] Overflow stack: [0xffffffff80c67370..0xffffffff80c68370]
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G        W          6=
-.6.3-00133-g60497fad461d-dirty #71
-> [    0.000000] epc : die_kernel_fault+0x158/0x1c8
-> [    0.000000]  ra : die_kernel_fault+0x12a/0x1c8
-> [    0.000000] epc : ffffffff808cde36 ra : ffffffff808cde08 sp : ffffffff=
-813fff80
-> [    0.000000]  gp : ffffffff815a1678 tp : 0000000000000000 t0 : 00000031=
-30386537
-> [    0.000000]  t1 : 0000000000000031 t2 : 6537666637303430 s0 : ffffffff=
-813fffc0
-> [    0.000000]  s1 : ffffffff815b0b28 a0 : 0000000000000016 a1 : ffffffff=
-81495298
-> [    0.000000]  a2 : 0000000000000010 a3 : ffffffff81495298 a4 : 00000000=
-000001fe
-> [    0.000000]  a5 : 000000d97fdfa000 a6 : ffffffff814250d0 a7 : 00000000=
-00000030
-> [    0.000000]  s2 : 000000d97fdfaff0 s3 : ffffffff81400040 s4 : 000000d9=
-7fdfaff0
-> [    0.000000]  s5 : ffffffff815a0ed0 s6 : 0000000000000000 s7 : 00000000=
-8f604390
-> [    0.000000]  s8 : 0000000000000000 s9 : ffffffffffffffff s10: 00000000=
-00000000
-> [    0.000000]  s11: 0000000000000000 t3 : ffffffff815baa9b t4 : ffffffff=
-815baa9b
-> [    0.000000]  t5 : ffffffff815baa88 t6 : ffffffff813ffda8
-> [    0.000000] status: 0000000200000100 badaddr: 000000d97fdfaff0 cause: =
-000000000000000d
-> [    0.000000] Kernel panic - not syncing: Kernel stack overflow
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Tainted: G        W          6=
-.6.3-00133-g60497fad461d-dirty #71
-> [    0.000000] Call Trace:
-> [    0.000000] [<ffffffff800066bc>] dump_backtrace+0x28/0x30
-> [    0.000000] [<ffffffff808cdac8>] show_stack+0x38/0x44
-> [    0.000000] [<ffffffff808d9d40>] dump_stack_lvl+0x44/0x5c
-> [    0.000000] [<ffffffff808d9d70>] dump_stack+0x18/0x20
-> [    0.000000] [<ffffffff808cdfb6>] panic+0x110/0x2f2
-> [    0.000000] [<ffffffff80006532>] walk_stackframe+0x0/0x120
-> [    0.000000] [<ffffffff808cde08>] die_kernel_fault+0x12a/0x1c8
-> [    0.000000] ---[ end Kernel panic - not syncing: Kernel stack overflow=
- ]---
+> nope, I mean to improve peformances even for non-XDP case with page_pool =
+frag
+> APIs.
 >
-> In other words, the maximum value of the physical address needs to meet
-> Documentation/riscv/vm-layout.rst to ensure that there is no overflow.
-> For sv48/57, the actual virtual address space is huge, so this problem
-> is generally not triggered, but it is also checked in the code.
->
-> We give a warning for the overflowed physical address region and reverve =
-it
-> so that the kernel can bringup successfully.
->
-> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
-> ---
->  arch/riscv/include/asm/page.h    |  9 +++++++++
->  arch/riscv/include/asm/pgtable.h |  1 +
->  arch/riscv/kernel/setup.c        |  1 +
->  arch/riscv/mm/init.c             | 30 ++++++++++++++++++++++++++++++
->  4 files changed, 41 insertions(+)
->
-> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.=
-h
-> index 57e887bfa34c..f6c0f6e14ecb 100644
-> --- a/arch/riscv/include/asm/page.h
-> +++ b/arch/riscv/include/asm/page.h
-> @@ -38,6 +38,15 @@
->   */
->  #define PAGE_OFFSET_L4         _AC(0xffffaf8000000000, UL)
->  #define PAGE_OFFSET_L3         _AC(0xffffffd800000000, UL)
-> +
-> +/*
-> + * See vm-layout.rst, the size of L3 direct mapping of all physical
-> + * memory 124GB, L4 is 64TB, L5 is 32PB.
-> + */
-> +#define MAX_PFN_MEM_ADDR_L5    (0x80000000000000ULL)
-> +#define MAX_PFN_MEM_ADDR_L4    (0x400000000000ULL)
-> +#define MAX_PFN_MEM_ADDR_L3    (0x1F00000000ULL)
-> +
->  #else
->  #define PAGE_OFFSET            _AC(CONFIG_PAGE_OFFSET, UL)
->  #endif /* CONFIG_64BIT */
-> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pg=
-table.h
-> index c8e8867c42f6..e4835de5a743 100644
-> --- a/arch/riscv/include/asm/pgtable.h
-> +++ b/arch/riscv/include/asm/pgtable.h
-> @@ -915,6 +915,7 @@ extern uintptr_t _dtb_early_pa;
->  #endif /* CONFIG_XIP_KERNEL */
->  extern u64 satp_mode;
->
-> +void paging_check(void);
->  void paging_init(void);
->  void misc_mem_init(void);
->
-> diff --git a/arch/riscv/kernel/setup.c b/arch/riscv/kernel/setup.c
-> index 2a79d4ed2660..366918578544 100644
-> --- a/arch/riscv/kernel/setup.c
-> +++ b/arch/riscv/kernel/setup.c
-> @@ -273,6 +273,7 @@ void __init setup_arch(char **cmdline_p)
->         parse_early_param();
->
->         efi_init();
-> +       paging_check();
->         paging_init();
->
->         /* Parse the ACPI tables for possible boot-time configuration */
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index b0cc28f7595f..aa25dcf8a0ff 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -1482,6 +1482,36 @@ static void __init reserve_crashkernel(void)
->         crashk_res.end =3D crash_base + crash_size - 1;
->  }
->
-> +static void __init phymem_addr_overflow(void)
-> +{
-> +       phys_addr_t end =3D memblock_end_of_DRAM();
-> +
-> +       if (pgtable_l5_enabled) {
-> +               if (end > MAX_PFN_MEM_ADDR_L5) {
-> +                       memblock_reserve(MAX_PFN_MEM_ADDR_L5, end - MAX_P=
-FN_MEM_ADDR_L5);
-> +                       WARN(true, "Phymem addr 0x%llx overflowed, reserv=
-e [0x%llx-0x%llx] directly.",
-> +                            end, MAX_PFN_MEM_ADDR_L5, end);
-> +               }
-> +       }
-> +       if (pgtable_l4_enabled) {
-> +               if (end > MAX_PFN_MEM_ADDR_L4) {
-> +                       memblock_reserve(MAX_PFN_MEM_ADDR_L4, end - MAX_P=
-FN_MEM_ADDR_L4);
-> +                       WARN(true, "Phymem addr 0x%llx overflowed, reserv=
-e [0x%llx-0x%llx] directly.",
-> +                            end, MAX_PFN_MEM_ADDR_L4, end);
-> +               }
-> +       }
-> +       if (end > MAX_PFN_MEM_ADDR_L3) {
-> +               memblock_reserve(MAX_PFN_MEM_ADDR_L3, end - MAX_PFN_MEM_A=
-DDR_L3);
-> +               WARN(true, "Phymem addr 0x%llx overflowed, reserve [0x%ll=
-x-0x%llx] directly.",
-> +                    end, MAX_PFN_MEM_ADDR_L3, end);
-> +       }
-> +}
-> +
-> +void __init paging_check(void)
-> +{
-> +       phymem_addr_overflow();
-> +}
-> +
->  void __init paging_init(void)
->  {
->         setup_bootmem();
-> --
-> 2.39.2
->
-
-So the following patch should fix your issue and was posted some time
-ago https://lore.kernel.org/linux-riscv/bdfbed9b-ea04-4415-8416-d6e9d0a643a=
-3@ghiti.fr/T/#me26a82cf32f46cae12e2ea8892a3bc16d4fc37e3.
-I prefer this solution as it does not introduce a bunch of hardcoded
-defines and relies on the already existing memblock API.
-
-Let me know if that's not the case!
-
-Thanks,
-
-Alex
+> Regards,
+> Lorenzo
+Yes of course it would improve it for non-XDP case if we still use PP
+for non-XDP,
+but my point is we shouldn't, mainly because of HWLRO, but also the
+extra unnecessary code.
 
