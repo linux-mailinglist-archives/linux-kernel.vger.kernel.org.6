@@ -1,272 +1,402 @@
-Return-Path: <linux-kernel+bounces-271001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C268D944838
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:28:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45E594483B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:28:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD3128784B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01099B26AF8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09295189525;
-	Thu,  1 Aug 2024 09:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2146D17084F;
+	Thu,  1 Aug 2024 09:25:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kNBqTYLs"
-Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b="PzdeRxfi"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A28187FF1
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:24:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0DC187FEF
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504292; cv=none; b=iZCp5ej0pSbm3e3tWdzRCwuKC+5ERgbkkASdFqTgbmhiRXQcEe6prXUQUuk6G6vknVjNiOdEMM9ZFX4pCcwyAzWQe71D5HP61/amrlrEpgkm9VnjwnTCiuQHsNEA1yFl8AYfrOGO0tMs9P2LV23MlnLuI9evePMpgUONcUMvkIs=
+	t=1722504327; cv=none; b=XxPCjSIiBlQAfFxNYv5mLLdIT5dvPMPcvJC9n8qFxXeVVCJm6PuTPZpZ7/CRoohS9O1HGKXflyH+by9ImkRFFwXa/rxJxgSJvO2OvcrgJsZqwxYoUoZGK5U9yVv3DwF00eDUkrkX8oKeP7GmwWscaCprKjermZMpsP3HPiG3d6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504292; c=relaxed/simple;
-	bh=d4ri9VfNgOiIrNVI1mCsreFc8GM8GpdEhbrZ+wzLFdU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S9pMqcnDGLw/+LCzvl8TRAf/Bv9Vs+BRvGZ3beDJZzmMyflS9WtYHDjwPa94V3XRV+Cln8IomAhASBHQ5h4FP9CmaQUHSIdnuD1hTUl6zsJs69wsMTVndLedLPndrPyaSy4nsyDqKYsSdtSZmfh/XIUI+7drJou+IVQCjFn7F1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kNBqTYLs; arc=none smtp.client-ip=51.77.79.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722504285; x=1722763485;
-	bh=TbpqkHCw4lSda76FTheLHxuqma8moDcQD3e3Tnu05W0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=kNBqTYLsCQO5X8OAHsXsa240Ow150ROzeJ+JPeRpl497PcCYtB8B4cS8aKXYaMPqz
-	 b6c/Z71Q5htytWJN1o8hVhO1HTIHWiJJm4Fm0JNQJGLo3NR9GsH8gVfH1vIhvFfQDy
-	 i3zjr4PLbrHxNrtB/GvISVe4BM9JHXTGqr7j/YDfCRnWvNdvBYD5V7P4uz8PaliCwy
-	 1C81TZXLr3SZejjLdk87Gyz4D5dM2Q9IIy8CWN7e1d43r6ut+OdOQeeddnlaz8jnTo
-	 roWYGaEcUrMM8p40QnQcDQuGQt2Mnb7IvuL3n58FuFULZm7AQwshCiV4HexCM0j4DW
-	 +F0fnamftCMAw==
-Date: Thu, 01 Aug 2024 09:24:40 +0000
-To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Marco Elver <elver@google.com>, Coly Li <colyli@suse.de>, Paolo Abeni <pabeni@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>, Ingo Molnar <mingo@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Wei Yang <richard.weiyang@gmail.com>, Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v3 09/10] rust: list: support heterogeneous lists
-Message-ID: <2b548226-e323-466d-9f6d-762f6cbb5474@proton.me>
-In-Reply-To: <20240723-linked-list-v3-9-89db92c7dbf4@google.com>
-References: <20240723-linked-list-v3-0-89db92c7dbf4@google.com> <20240723-linked-list-v3-9-89db92c7dbf4@google.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 6d7728b66dbd427ed3379353002f5530636f60ad
+	s=arc-20240116; t=1722504327; c=relaxed/simple;
+	bh=lbglg/Mpx3pX8ZICFqAdxoB5ICUG9AEOHbFvgEIw740=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jU2+iBwQtM64FwxCuz0waKOKEjzYBHvOdFQYS5c7wGNMwejgJ8qf3Gomb70KShfamFcOzRB7d5FHjwvOhTNUF6vCSu0FL/UMHzU83MwGq5VzgMqafNKNaVpSn7G46zCXZr00LSrCMFaSl25wagNO0L4cxC6KCAGUSBmAFixALYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com; spf=fail smtp.mailfrom=infogain.com; dkim=pass (2048-bit key) header.d=infogain-com.20230601.gappssmtp.com header.i=@infogain-com.20230601.gappssmtp.com header.b=PzdeRxfi; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=infogain.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=infogain.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso44460425e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:25:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=infogain-com.20230601.gappssmtp.com; s=20230601; t=1722504323; x=1723109123; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=H0CHF4pps4YreqwHY67zaT5Ce2XnYtQmLVn1IuYuhb4=;
+        b=PzdeRxfiZKs/joITKuUkxkDnzelEgmaM9Lqn13VwmoRg9AMrIAb0v6F30NCkLOGi+q
+         beJA4OeO2RHaam62H7CoRi66BdZnliouT+C5tdBluw0D4N8HThfMORNG+rZJJM/rrvBu
+         jcKbbLeoDvYoZPiUSosWX7ETJSJ4zpjbsAgfiJbNiO+Cp9C0VBKpOVwB13xQSWVHCKqi
+         IJxyXyxhXXaw3/JNczt46/eg2rzkrJwEbAkb0MteRc6vLXeafLazbXElFpmnI8mZDJES
+         53gYJpC8dtrRgxzy+0atpV1euYNaINZkspYArmHRG+fq4hOoOKhV6QekncphtidfwTAx
+         PGMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722504323; x=1723109123;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=H0CHF4pps4YreqwHY67zaT5Ce2XnYtQmLVn1IuYuhb4=;
+        b=ZKHZtlvPOmhFgYmJGxjjfeonwi0ocEMv1TsUvu1ANyXZMVsyVu0EVO2kguBSqRg3OG
+         p9SQC78bvhNtXWW4vDjiJDKTm5YlieSHCoX+7lMxrhUULBe5mrm0GETpEMfjzGfQlpxk
+         7r1eEfWF24fDNQrCy7IMkHQoQRVz19r7MT01ARfmQgansiJGuZ+k/Leql06XIQJVWy/V
+         LLQJeJEEYkUFt7NM9Ejhi04+2jJCN/a4HUcNLUlCZlLzQo8LUCYetHlcSCdheqI9k30j
+         CtE9qWNuNhPeQmZbrgjq+kuoQQqL6M0quxZRq8gKCEikZpbQaQNfBTyZCzsjy1Rzlbuz
+         /FQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOq5SOMsfPa8lHzrG61n6DyAr+NK5xfYo9oy+fKgetlKpquPxByqO6Fs9MCjY7s/WCkXUS9NOciBHnJfJvjJ/NQVpUWHQ29WA1obnc
+X-Gm-Message-State: AOJu0YzNU/QL3cXR91/0Uil6sa989Hca93TQOOfvRI0HoncMteB3OVpl
+	/twlhoDuf1YCYriRdlkADXBdob4X6qTLgjPuSYvUjaBFO5+9jDWWL7iTu0HjjCaHLYb9KghIRKJ
+	/Aug=
+X-Google-Smtp-Source: AGHT+IGUq9zsQoTDKSMx9QjPsandly5EZ2Mjoq6zYR2DwvYXRwsVUxNlCYAi/h9STkCgbhNcAg3cwg==
+X-Received: by 2002:a05:600c:6c4e:b0:426:6a53:e54f with SMTP id 5b1f17b1804b1-428b032c05cmr11669725e9.33.1722504322337;
+        Thu, 01 Aug 2024 02:25:22 -0700 (PDT)
+Received: from localhost.localdomain (apn-31-0-3-137.dynamic.gprs.plus.pl. [31.0.3.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb1dfd6sm49105465e9.42.2024.08.01.02.25.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 02:25:21 -0700 (PDT)
+From: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+To: linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	dmitry.torokhov@gmail.com
+Cc: =?UTF-8?q?Wojciech=20G=C5=82adysz?= <wojciech.gladysz@infogain.com>
+Subject: [PATCH] kernel/evdev: suppress irq bad dependency lockdep report
+Date: Thu,  1 Aug 2024 11:24:57 +0200
+Message-Id: <20240801092457.9982-1-wojciech.gladysz@infogain.com>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 23.07.24 10:22, Alice Ryhl wrote:
-> @@ -181,6 +185,47 @@ unsafe fn from_fields(me: *mut ListLinksFields) -> *=
-mut Self {
->      }
->  }
->=20
-> +/// Similar to [`ListLinks`], but also contains a pointer to the full va=
-lue.
-> +///
-> +/// This type can be used instead of [`ListLinks`] to support lists with=
- trait objects.
-> +#[repr(C)]
-> +pub struct ListLinksSelfPtr<T: ?Sized, const ID: u64 =3D 0> {
-> +    /// The `ListLinks` field inside this value.
-> +    ///
-> +    /// This is public so that it can be used with `impl_has_list_links!=
-`.
-> +    pub inner: ListLinks<ID>,
-> +    self_ptr: UnsafeCell<MaybeUninit<*const T>>,
+Lockdep connects soft irq (keyboard tasklet injecting led events)
+and vfs started (lease break) locking chains. In the test scenario
+the chains do not connect due to event type/code and client->fasync.
 
-Why do you need `MaybeUninit`?
+commit 45a3e24f65e9 ("Linux 6.4-rc7")
+Backtrace
+=====================================================
+WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+5.10.0-syzkaller #0 Not tainted
+-----------------------------------------------------
+syz-executor175/2640 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+ffffffff8720b458 (tasklist_lock){.+.+}-{2:2}, at: send_sigio+0xdc/0x340
 
-> +}
-> +
-> +// SAFETY: The fields of a ListLinksSelfPtr can be moved across thread b=
-oundaries.
-> +unsafe impl<T: ?Sized + Send, const ID: u64> Send for ListLinksSelfPtr<T=
-, ID> {}
-> +// SAFETY: The type is opaque so immutable references to a ListLinksSelf=
-Ptr are useless. Therefore,
-> +// it's okay to have immutable access to a ListLinks from several thread=
-s at once.
-> +//
-> +// Note that `inner` being a public field does not prevent this type fro=
-m being opaque, since
-> +// `inner` is a opaque type.
-> +unsafe impl<T: ?Sized + Sync, const ID: u64> Sync for ListLinksSelfPtr<T=
-, ID> {}
+and this task is already holding:
+ffff88800bc0e978 (&f->f_owner.lock){....}-{2:2}, at: send_sigio+0x31/0x340
+which would create a new lock dependency:
+ (&f->f_owner.lock){....}-{2:2} -> (tasklist_lock){.+.+}-{2:2}
 
-[...]
+but this new dependency connects a SOFTIRQ-irq-safe lock:
+ (&client->buffer_lock){..-.}-{2:2}
 
-> @@ -135,5 +178,91 @@ unsafe fn post_remove(me: *mut $crate::list::ListLin=
-ks<$num>) -> *const Self {
->              }
->          }
->      };
-> +
-> +    (
-> +        impl$({$($generics:tt)*})? ListItem<$num:tt> for $t:ty {
-> +            using ListLinksSelfPtr;
-> +        } $($rest:tt)*
-> +    ) =3D> {
-> +        // SAFETY: See GUARANTEES comment on each method.
-> +        unsafe impl$(<$($generics)*>)? $crate::list::ListItem<$num> for =
-$t {
-> +            // GUARANTEES:
-> +            // This implementation of `ListItem` will not give out exclu=
-sive access to the same
-> +            // `ListLinks` several times because calls to `prepare_to_in=
-sert` and `post_remove`
-> +            // must alternate and exclusive access is given up when `pos=
-t_remove` is called.
-> +            //
-> +            // Other invocations of `impl_list_item!` also cannot give o=
-ut exclusive access to the
-> +            // same `ListLinks` because you can only implement `ListItem=
-` once for each value of
-> +            // `ID`, and the `ListLinks` fields only work with the speci=
-fied `ID`.
-> +            unsafe fn prepare_to_insert(me: *const Self) -> *mut $crate:=
-:list::ListLinks<$num> {
-> +                // SAFETY: The caller promises that `me` points at a val=
-id value of type `Self`.
-> +                let links_field =3D unsafe { <Self as $crate::list::List=
-Item<$num>>::view_links(me) };
-> +
-> +                let spoff =3D $crate::list::ListLinksSelfPtr::<Self, $nu=
-m>::LIST_LINKS_SELF_PTR_OFFSET;
-> +                // SAFETY: The constant is equal to `offset_of!(ListLink=
-sSelfPtr, self_ptr)`, so
-> +                // the pointer stays in bounds of the allocation.
-> +                let self_ptr =3D unsafe { (links_field as *const u8).add=
-(spoff) }
-> +                    as *const ::core::cell::UnsafeCell<*const Self>;
+... which became SOFTIRQ-irq-safe at:
+  lock_acquire+0x197/0x480
+  _raw_spin_lock+0x2a/0x40
+  evdev_pass_values+0xef/0xaf0
+  evdev_events+0x1ba/0x2f0
+  input_pass_values+0x87e/0x1200
+  input_handle_event+0xc17/0x1500
+  input_inject_event+0x1eb/0x2f0
+  kbd_update_leds_helper+0xfd/0x130
+  input_handler_for_each_handle+0xdc/0x1a0
+  kbd_bh+0x180/0x250
+  tasklet_action_common+0x2e1/0x3d0
+  tasklet_action+0x1d/0x20
+  __do_softirq+0x3e6/0x94e
+  run_ksoftirqd+0x96/0xf0
+  smpboot_thread_fn+0x557/0x900
+  kthread+0x374/0x3f0
+  ret_from_fork+0x3a/0x50
 
-A bit confused why you need to do it this way, can't you just do this?:
+to a SOFTIRQ-irq-unsafe lock:
+ (tasklist_lock){.+.+}-{2:2}
 
-    let links_self_field =3D links_field.cast::<$crate::list::ListLinksSelf=
-Ptr>();
-    // SAFETY: ...
-    let self_ptr =3D unsafe { ::core::ptr::addr_of_mut!((*links_self_field)=
-.self_ptr) };
+... which became SOFTIRQ-irq-unsafe at:
+...
+  lock_acquire+0x197/0x480
+  _raw_read_lock+0x32/0x50
+  do_wait+0x356/0xc80
+  kernel_wait+0xe5/0x240
+  call_usermodehelper_exec_work+0xb7/0x220
+  process_one_work+0x857/0xfd0
+  worker_thread+0xafa/0x1550
+  kthread+0x374/0x3f0
+  ret_from_fork+0x3a/0x50
 
-> +                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
-f_ptr);
-> +
-> +                // SAFETY: This value is not accessed in any other place=
-s than `prepare_to_insert`,
-> +                // `post_remove`, or `view_value`. By the safety require=
-ments of those methods,
-> +                // none of these three methods may be called in parallel=
- with this call to
-> +                // `prepare_to_insert`, so this write will not race with=
- any other access to the
-> +                // value.
-> +                unsafe { ::core::ptr::write(cell_inner, me) };
-> +
-> +                links_field
-> +            }
-> +
-> +            // GUARANTEES:
-> +            // * This returns the same pointer as `prepare_to_insert` be=
-cause `prepare_to_insert`
-> +            //   returns the return value of `view_links`.
-> +            // * By the type invariants of `ListLinks`, the `ListLinks` =
-has two null pointers when
-> +            //   this value is not in a list.
-> +            unsafe fn view_links(me: *const Self) -> *mut $crate::list::=
-ListLinks<$num> {
-> +                // SAFETY: The caller promises that `me` points at a val=
-id value of type `Self`.
-> +                unsafe { <Self as HasListLinks<$num>>::raw_get_list_link=
-s(me.cast_mut()) }
-> +            }
-> +
-> +            // This function is also used as the implementation of `post=
-_remove`, so the caller
-> +            // may choose to satisfy the safety requirements of `post_re=
-move` instead of the safety
-> +            // requirements for `view_value`.
+other info that might help us debug this:
 
-This almost sounds like a magic card :)
+Chain exists of:
+  &client->buffer_lock --> &f->f_owner.lock --> tasklist_lock
 
-> +            //
-> +            // GUARANTEES:
+ Possible interrupt unsafe locking scenario:
 
-Can you also put in "()" here that this satisfies the guarantees of
-`post_remove`?
+       CPU0                    CPU1
+       ----                    ----
+  lock(tasklist_lock);
+                               local_irq_disable();
+                               lock(&client->buffer_lock);
+                               lock(&f->f_owner.lock);
+  <Interrupt>
+    lock(&client->buffer_lock);
 
-> +            // * This returns the same pointer as the one passed to the =
-most recent call to
-> +            //   `prepare_to_insert` since that call wrote that pointer =
-to this location. The value
-> +            //   is only modified in `prepare_to_insert`, so it has not =
-been modified since the
-> +            //   most recent call.
-> +            //
-> +            // GUARANTEES: (when using the `view_value` safety requireme=
-nts)
-> +            // * The pointer remains valid until the next call to `post_=
-remove` because the caller
-> +            //   of the most recent call to `prepare_to_insert` promised=
- to retain ownership of the
-> +            //   `ListArc` containing `Self` until the next call to `pos=
-t_remove`. The value cannot
-> +            //   be destroyed while a `ListArc` reference exists.
-> +            unsafe fn view_value(links_field: *mut $crate::list::ListLin=
-ks<$num>) -> *const Self {
-> +                let spoff =3D $crate::list::ListLinksSelfPtr::<Self, $nu=
-m>::LIST_LINKS_SELF_PTR_OFFSET;
-> +                // SAFETY: The constant is equal to `offset_of!(ListLink=
-sSelfPtr, self_ptr)`, so
-> +                // the pointer stays in bounds of the allocation.
-> +                let self_ptr =3D unsafe { (links_field as *const u8).add=
-(spoff) }
-> +                    as *const ::core::cell::UnsafeCell<*const Self>;
-> +                let cell_inner =3D ::core::cell::UnsafeCell::raw_get(sel=
-f_ptr);
-> +                // SAFETY: This is not a data race, because the only fun=
-ction that writes to this
-> +                // value is `prepare_to_insert`, but by the safety requi=
-rements the
-> +                // `prepare_to_insert` method may not be called in paral=
-lel with `view_value` or
-> +                // `post_remove`.
-> +                unsafe { ::core::ptr::read(cell_inner) }
-> +            }
-> +
-> +            // GUARANTEES:
-> +            // The first guarantee of `view_value` is exactly what `post=
-_remove` guarantees.
-> +            unsafe fn post_remove(me: *mut $crate::list::ListLinks<$num>=
-) -> *const Self {
-> +                // SAFETY: This specific implementation of `view_value` =
-allows the caller to
-> +                // promise the safety requirements of `post_remove` inst=
-ead of the safety
-> +                // requirements for `view_value`.
+ *** DEADLOCK ***
 
-I like this solution better than what you have for `impl_list_item`
-"using ListLinks;"
+5 locks held by syz-executor175/2640:
+ #0: ffffffff879b7bf0 (file_rwsem){.+.+}-{0:0}, at: __break_lease+0x186/0x1300
+ #1: ffff88800f2d2dd8 (&ctx->flc_lock){+.+.}-{2:2}, at: __break_lease+0x193/0x1300
+ #2: ffffffff8784ba80 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0x9/0x40
+ #3: ffff88800ea3d9f0 (&new->fa_lock){....}-{2:2}, at: kill_fasync+0x15f/0x480
+ #4: ffff88800bc0e978 (&f->f_owner.lock){....}-{2:2}, at: send_sigio+0x31/0x340
 
+the dependencies between SOFTIRQ-irq-safe lock and the holding lock:
+  -> (&client->buffer_lock){..-.}-{2:2} {
+     IN-SOFTIRQ-W at:
+                        lock_acquire+0x197/0x480
+                        _raw_spin_lock+0x2a/0x40
+                        evdev_pass_values+0xef/0xaf0
+                        evdev_events+0x1ba/0x2f0
+                        input_pass_values+0x87e/0x1200
+                        input_handle_event+0xc17/0x1500
+                        input_inject_event+0x1eb/0x2f0
+                        kbd_update_leds_helper+0xfd/0x130
+                        input_handler_for_each_handle+0xdc/0x1a0
+                        kbd_bh+0x180/0x250
+                        tasklet_action_common+0x2e1/0x3d0
+                        tasklet_action+0x1d/0x20
+                        __do_softirq+0x3e6/0x94e
+                        run_ksoftirqd+0x96/0xf0
+                        smpboot_thread_fn+0x557/0x900
+                        kthread+0x374/0x3f0
+                        ret_from_fork+0x3a/0x50
+     INITIAL USE at:
+                       lock_acquire+0x197/0x480
+                       _raw_spin_lock+0x2a/0x40
+                       evdev_pass_values+0xef/0xaf0
+                       evdev_events+0x1ba/0x2f0
+                       input_pass_values+0x87e/0x1200
+                       input_handle_event+0xc17/0x1500
+                       input_inject_event+0x1eb/0x2f0
+                       evdev_write+0x37b/0x580
+                       vfs_write+0x287/0xc90
+                       ksys_write+0x17e/0x2a0
+                       __x64_sys_write+0x7b/0x90
+                       do_syscall_64+0x4f/0x60
+                       entry_SYSCALL_64_after_hwframe+0x61/0xc6
+   }
+   ... key      at: [<ffffffff895f5640>] evdev_open.__key.17+0x0/0x20
+ -> (&new->fa_lock){....}-{2:2} {
+    INITIAL READ USE at:
+                          lock_acquire+0x197/0x480
+                          _raw_read_lock_irqsave+0xb8/0x100
+                          kill_fasync+0x15f/0x480
+                          evdev_pass_values+0x5b9/0xaf0
+                          evdev_events+0x1ba/0x2f0
+                          input_pass_values+0x87e/0x1200
+                          input_handle_event+0xc17/0x1500
+                          input_inject_event+0x1eb/0x2f0
+                          evdev_write+0x37b/0x580
+                          vfs_write+0x287/0xc90
+                          ksys_write+0x17e/0x2a0
+                          __x64_sys_write+0x7b/0x90
+                          do_syscall_64+0x4f/0x60
+                          entry_SYSCALL_64_after_hwframe+0x61/0xc6
+  }
+  ... key      at: [<ffffffff8943f5e0>] fasync_insert_entry.__key+0x0/0x20
+  ... acquired at:
+   lock_acquire+0x197/0x480
+   _raw_read_lock_irqsave+0xb8/0x100
+   kill_fasync+0x15f/0x480
+   evdev_pass_values+0x5b9/0xaf0
+   evdev_events+0x1ba/0x2f0
+   input_pass_values+0x87e/0x1200
+   input_handle_event+0xc17/0x1500
+   input_inject_event+0x1eb/0x2f0
+   evdev_write+0x37b/0x580
+   vfs_write+0x287/0xc90
+   ksys_write+0x17e/0x2a0
+   __x64_sys_write+0x7b/0x90
+   do_syscall_64+0x4f/0x60
+   entry_SYSCALL_64_after_hwframe+0x61/0xc6
+
+-> (&f->f_owner.lock){....}-{2:2} {
+   INITIAL USE at:
+                   lock_acquire+0x197/0x480
+                   _raw_write_lock_irq+0xab/0xf0
+                   f_modown+0x3b/0x350
+                   do_fcntl+0x139b/0x1750
+                   __se_sys_fcntl+0xe3/0x1c0
+                   __x64_sys_fcntl+0x7b/0x90
+                   do_syscall_64+0x4f/0x60
+                   entry_SYSCALL_64_after_hwframe+0x61/0xc6
+   INITIAL READ USE at:
+                        lock_acquire+0x197/0x480
+                        _raw_read_lock_irqsave+0xb8/0x100
+                        send_sigio+0x31/0x340
+                        kill_fasync+0x1fb/0x480
+                        evdev_pass_values+0x5b9/0xaf0
+                        evdev_events+0x1ba/0x2f0
+                        input_pass_values+0x87e/0x1200
+                        input_handle_event+0xc17/0x1500
+                        input_inject_event+0x1eb/0x2f0
+                        evdev_write+0x37b/0x580
+                        vfs_write+0x287/0xc90
+                        ksys_write+0x17e/0x2a0
+                        __x64_sys_write+0x7b/0x90
+                        do_syscall_64+0x4f/0x60
+                        entry_SYSCALL_64_after_hwframe+0x61/0xc6
+ }
+ ... key      at: [<ffffffff8943e960>] __alloc_file.__key+0x0/0x10
+ ... acquired at:
+   lock_acquire+0x197/0x480
+   _raw_read_lock_irqsave+0xb8/0x100
+   send_sigio+0x31/0x340
+   kill_fasync+0x1fb/0x480
+   evdev_pass_values+0x5b9/0xaf0
+   evdev_events+0x1ba/0x2f0
+   input_pass_values+0x87e/0x1200
+   input_handle_event+0xc17/0x1500
+   input_inject_event+0x1eb/0x2f0
+   evdev_write+0x37b/0x580
+   vfs_write+0x287/0xc90
+   ksys_write+0x17e/0x2a0
+   __x64_sys_write+0x7b/0x90
+   do_syscall_64+0x4f/0x60
+   entry_SYSCALL_64_after_hwframe+0x61/0xc6
+
+the dependencies between the lock to be acquired
+ and SOFTIRQ-irq-unsafe lock:
+-> (tasklist_lock){.+.+}-{2:2} {
+   HARDIRQ-ON-R at:
+                    lock_acquire+0x197/0x480
+                    _raw_read_lock+0x32/0x50
+                    do_wait+0x356/0xc80
+                    kernel_wait+0xe5/0x240
+                    call_usermodehelper_exec_work+0xb7/0x220
+                    process_one_work+0x857/0xfd0
+                    worker_thread+0xafa/0x1550
+                    kthread+0x374/0x3f0
+                    ret_from_fork+0x3a/0x50
+   SOFTIRQ-ON-R at:
+                    lock_acquire+0x197/0x480
+                    _raw_read_lock+0x32/0x50
+                    do_wait+0x356/0xc80
+                    kernel_wait+0xe5/0x240
+                    call_usermodehelper_exec_work+0xb7/0x220
+                    process_one_work+0x857/0xfd0
+                    worker_thread+0xafa/0x1550
+                    kthread+0x374/0x3f0
+                    ret_from_fork+0x3a/0x50
+   INITIAL USE at:
+                   lock_acquire+0x197/0x480
+                   _raw_write_lock_irq+0xab/0xf0
+                   copy_process+0x2192/0x3880
+                   kernel_clone+0x220/0x7a0
+                   kernel_thread+0x147/0x1c0
+                   rest_init+0x24/0x300
+                   arch_call_rest_init+0xe/0x11
+                   start_kernel+0x469/0x512
+                   x86_64_start_reservations+0x2a/0x2d
+                   x86_64_start_kernel+0x60/0x64
+                   secondary_startup_64_no_verify+0xac/0xbb
+   INITIAL READ USE at:
+                        lock_acquire+0x197/0x480
+                        _raw_read_lock+0x32/0x50
+                        do_wait+0x356/0xc80
+                        kernel_wait+0xe5/0x240
+                        call_usermodehelper_exec_work+0xb7/0x220
+                        process_one_work+0x857/0xfd0
+                        worker_thread+0xafa/0x1550
+                        kthread+0x374/0x3f0
+                        ret_from_fork+0x3a/0x50
+ }
+ ... key      at: [<ffffffff8720b458>] tasklist_lock+0x18/0x40
+ ... acquired at:
+   lock_acquire+0x197/0x480
+   _raw_read_lock+0x32/0x50
+   send_sigio+0xdc/0x340
+   kill_fasync+0x1fb/0x480
+   lease_break_callback+0x26/0x30
+   __break_lease+0x4d1/0x1300
+   do_dentry_open+0x6ac/0xf40
+   vfs_open+0x73/0x80
+   path_openat+0x26c5/0x3290
+   do_filp_open+0x20b/0x450
+   do_sys_openat2+0x124/0x460
+   __x64_sys_open+0x221/0x270
+   do_syscall_64+0x4f/0x60
+   entry_SYSCALL_64_after_hwframe+0x61/0xc6
+
+stack backtrace:
+CPU: 2 PID: 2640 Comm: syz-executor175 Not tainted 5.10.0-syzkaller #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.14.0-2 04/01/2014
+Call Trace:
+ dump_stack+0x183/0x226
+ validate_chain+0x4cca/0x5870
+ __lock_acquire+0x12fd/0x20d0
+ lock_acquire+0x197/0x480
+ _raw_read_lock+0x32/0x50
+ send_sigio+0xdc/0x340
+ kill_fasync+0x1fb/0x480
+ lease_break_callback+0x26/0x30
+ __break_lease+0x4d1/0x1300
+ do_dentry_open+0x6ac/0xf40
+ vfs_open+0x73/0x80
+ path_openat+0x26c5/0x3290
+ do_filp_open+0x20b/0x450
+ do_sys_openat2+0x124/0x460
+ __x64_sys_open+0x221/0x270
+ do_syscall_64+0x4f/0x60
+ entry_SYSCALL_64_after_hwframe+0x61/0xc6
+RIP: 0033:0x7f65eb366509
+Code: 28 c3 e8 1a 15 00 00 66 2e 0f 1f 84 00 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fffac3b94b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f65eb3d3ed0 RCX: 00007f65eb366509
+RDX: 0000000000000000 RSI: 0000000000004c01 RDI: 0000000020000240
+RBP: 00007fffac3b94c8 R08: 00007f65eb3d3e40 R09: 00007f65eb3d3e40
+R10: 00007f65eb3d3e40 R11: 0000000000000246 R12: 00007fffac3b94d0
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
 ---
-Cheers,
-Benno
+ drivers/input/evdev.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-> +                unsafe { <Self as $crate::list::ListItem<$num>>::view_va=
-lue(me) }
-> +            }
-> +        }
-> +    };
->  }
->  pub use impl_list_item;
->=20
-> --
-> 2.45.2.1089.g2a221341d9-goog
->=20
+diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
+index a8ce3d140722..e579e5b98757 100644
+--- a/drivers/input/evdev.c
++++ b/drivers/input/evdev.c
+@@ -257,8 +257,13 @@ static void evdev_pass_values(struct evdev_client *client,
+ 	event.input_event_sec = ts.tv_sec;
+ 	event.input_event_usec = ts.tv_nsec / NSEC_PER_USEC;
+ 
+-	/* Interrupts are disabled, just acquire the lock. */
+-	spin_lock(&client->buffer_lock);
++	/*
++	 * Disable lockdep chain connecting with subclass based on fasync
++	 * to suppress lockdep report. No further locking for NULL fasync
++	 * (keybord_tasklet injecting input events).
++	 * Interrupts are disabled, just acquire the lock.
++	 */
++	spin_lock_nested(&client->buffer_lock, !client->fasync);
+ 
+ 	for (v = vals; v != vals + count; v++) {
+ 		if (__evdev_is_filtered(client, v->type, v->code))
+-- 
+2.35.3
 
 
