@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-271924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD2D945505
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA8DA945506
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE98F1C211EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12AE1C212D7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6539F14D451;
-	Thu,  1 Aug 2024 23:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7659E14EC78;
+	Thu,  1 Aug 2024 23:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PW/gi4Ha"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+Jc7iz6"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C81813E04C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 23:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F8A14EC57
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 23:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722556286; cv=none; b=F2huHtVvIAT31DnV+RtEeTqpsW9i8tJs48O7Eq0zEIQNmsSOvSkW/I34xP+L6THF/PusThB7V7koAM922aX/IoGD9VE2gFW0EqYB6f1HJOxOmqFDuvvH+EaIJ55Ubj498RvcavNhZiCR6Kb63QRmx8tQegZVDmS5MFLCBkUvA0A=
+	t=1722556295; cv=none; b=P9MFu36rR5nB+Ld8p0CITP3m5wfBa3wnlNK2pctQgCMZq/i/+3VzidX3+m12DZpgk+nj0p0vlWZPHqgVbjnUbwBnb0vjM2NccVHejD36vLjp8vepbxdxfqtMKH2fj1gAT+Bz07S+9frg/c+QB39v7oWB0yt7zz36YTvA0OeY6a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722556286; c=relaxed/simple;
+	s=arc-20240116; t=1722556295; c=relaxed/simple;
 	bh=eQxlU8eev6jnNRcfA4wEA1+aQibw5bEMR3sThiTngOY=;
 	h=From:Subject:To:Cc:In-Reply-To:References:MIME-Version:
-	 Content-Type:Date:Message-ID; b=bNqPuPDpzPcnCm9jGte3lL1rLzpF1SEGFhCku499gfH62Kd2iQz8XYxByYDYoPS2ENlKWwLiiz+IwXmB7SZnbJKGcR8hlxcdi52Usy7z23Nw9+qxJ5tlfsDFMNeGOdDduPASTS2G8Nz1mR0R9DMh9TH3w7PGxg3XYKiJmZvahJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PW/gi4Ha; arc=none smtp.client-ip=209.85.167.172
+	 Content-Type:Date:Message-ID; b=dRxDPUiPnl6CkNHXvUZFjr95XfQieY+8Rq/QwsGMdiJSsZdlbFrK4IdB/F0QSbANH9fT1mwHoZugOuC15ZkdJUL3t4soq1Fwcp7jSg3Y/n/aGvxoZov3QYLvu04u8FRcKLfyPFFMlZO/uBFQ2Kh9NTouDkMPWIPKp1epJDomiPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+Jc7iz6; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3db15b4243dso4685003b6e.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 16:51:25 -0700 (PDT)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc611a0f8cso57106965ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 16:51:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722556284; x=1723161084; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1722556294; x=1723161094; darn=vger.kernel.org;
         h=message-id:date:content-id:mime-version:references:in-reply-to:cc
          :to:subject:from:from:to:cc:subject:date:message-id:reply-to;
         bh=CFvxalt/XnEivZ3koHVdSp/ZabV80Phmkm5THmVQQjw=;
-        b=PW/gi4HaNbtOa2x/dOWB0Q/L9Nd+u4FxRG11O3xfx315aaXI6bBTmV1WXtyPV7hFny
-         nlePURhuzmZWQUCeZxn4yJ0EgEfp+8QsDqWAMT4NYjVxb//ACH5rpjysiG+MJvV4UWcd
-         oIiyNSO1WXR8TVCtLpsW7bvorA+zwDnjyif8xXvCK3BAu8VqqWQhFUvMZwXjsouYWCDm
-         jvZmt1MLT1GjseKdf/J5TzF/CGZwALt1tSlMOihXd64SYvfX5zlkc34ofGLS7FBsEVvx
-         rjnD2Te7MROB//YzjyhLbzbgnbXK9+U/Bk/qwNe+24QalRSDr5TELrnkYQUTV764rHfg
-         ElTg==
+        b=X+Jc7iz6oubRyOl15n4YwNVla8Ch8J8rdoZhit1vPn00xsrRXdG7ZQagl6yONezhBw
+         VkNLk4YeK1ZvPHKOgCHHeD1ShgwYeKsiUI8PBVsZlOHsVrwnQHG/upSGvf/U11W2uoIP
+         QB8DVH3n4GFx1rKjjvySxybyfXRNCt7EZF3A+m3j9FjmTwCt2szhcUeIKWdy78YR8PM6
+         iQjOlnZSRpOKeHFgsKdFQaR4Jk+qpwEy46SAABqEsQEQkLJjl8tiND0YmuX2FIibRAy+
+         Ll0YEYaK/VE4oB9pfYsQiRlRFvfMI6/aRh/jAy9NoLEjbCiP2Hf6cX6Hib+4ItBJUeLF
+         6qvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722556284; x=1723161084;
+        d=1e100.net; s=20230601; t=1722556294; x=1723161094;
         h=message-id:date:content-id:mime-version:references:in-reply-to:cc
          :to:subject:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
         bh=CFvxalt/XnEivZ3koHVdSp/ZabV80Phmkm5THmVQQjw=;
-        b=iYe2QRFN/nfhzT7DCmOkUlj6kGr0kwsDDZNJ6G7ehxb27DIBaPfkkK629UYPXQRBaa
-         yvGr7eHYWW+htXYVPm84RNnQvLRYQvWYEdFRQf/SA0+IotoZZU8OncnAiB+oCyTLlDpC
-         inLZASckZhHW2+gWKocUo/WpxFWgm8/OnyQyI6qLCt+BwKFQ2Ms07IhoIRPLpMTyoFhg
-         HA1Qtd/CD0Q9HGuPqnXnng1DWIra8HL8BozbBDGs5N/P/LkYKjR9eDQVnRS68L3H2f3v
-         nfnC60qAn3q8Yo10gW7gM9qmlOnf01+oALww1F5ufN+CiAr6K3SMHEKkxCDrEcTlhWB1
-         aLuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuposnlZpeJdDN3jXcy3t+xAdTZJEGgw86Dje/lpHxbgxUuLF5Pl4Zbwzg7A+PTTEWIieVYm2VCUbvEzDhL8sV1xwiJJEY3NSz5vJV
-X-Gm-Message-State: AOJu0YxmhVhcDhqU05YOjpiiYpdUlFKOqEzATwSyI7sbOjcrsXgNbRQU
-	zWq2BoQ6ioYTOZqe3YAoH3vPgi0mKequyHwA26lElCFRHZFkLspb
-X-Google-Smtp-Source: AGHT+IFp+HAXtD80ma1JW7fWpZEAfu1UxylcH/V8Gkor3GmgdWTjRnkqijderz6r7js15Ahq4tepFw==
-X-Received: by 2002:a05:6808:1b06:b0:3d9:dabc:7b76 with SMTP id 5614622812f47-3db5580ed1cmr2073787b6e.23.1722556284261;
-        Thu, 01 Aug 2024 16:51:24 -0700 (PDT)
+        b=IhEzmCFIF3jjZGE0L4ajbUoE7gRaaVgPGEsDvQtz9s9WH4Hkv8cx3iWuUmNYjrnAsi
+         1XRKrO4ONBANhmX13YG2Go+QxvclwFiBgHobndLTFMz3CPLA9o/zAlIojty7FmThZwHi
+         QejgJ9l+Wp3NDrc6MmrOGQpH9bpTIjZzzsb4kpOsuN/kW4WSn8m4jpAOe1o/x3SARITi
+         YkdcdTl2kzuD0uETp1aDA53vbYnhsrYC6yK8xZmljNZMIqS3tdmude2GgvzEIOTE9B0b
+         /LXm/KZZfz8OHGLwCazoV8JgQc2OlMGl3+trYMWEM6aXPiuK1mM14hyI/ZPlKU6OpGtl
+         uA7g==
+X-Forwarded-Encrypted: i=1; AJvYcCWXr1gn9D9Mu4y4PvVxRBFxqUYZutIQxq1dIFcZkajNs7RWoulpNpZKgED/fyiPPz26trzu34Ow/J5NtS/ZXFx6z6jSW6wj950Lou2s
+X-Gm-Message-State: AOJu0YxJeLdA59DWdf4LzIiz84M18v5RfuRfpyRVANR0zmTHv30DJSxv
+	pi0Gb3QRKFcIFXqBCzpEvAGpHXtUBTx/EJJGp/akAkY+oUtx0/wD
+X-Google-Smtp-Source: AGHT+IGhKCk3TzDExgt5EpDOgW6N5/0tNjpEVbX4YXp6hYZyxPbAxlbt8jTBZJGThk70AA3uv819cQ==
+X-Received: by 2002:a17:902:d503:b0:1fb:6616:9cd4 with SMTP id d9443c01a7336-1ff5735b795mr25553445ad.38.1722556293582;
+        Thu, 01 Aug 2024 16:51:33 -0700 (PDT)
 Received: from jromail.nowhere (h219-110-241-048.catv02.itscom.jp. [219.110.241.48])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7b763945c05sm308998a12.49.2024.08.01.16.51.23
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff5917829esm4622965ad.215.2024.08.01.16.51.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 16:51:23 -0700 (PDT)
+        Thu, 01 Aug 2024 16:51:33 -0700 (PDT)
 Received: from jro by jrotkm2 id 1sZfZq-0001LY-0W ;
 	Fri, 02 Aug 2024 08:51:22 +0900
 From: "J. R. Okajima" <hooanon05g@gmail.com>
