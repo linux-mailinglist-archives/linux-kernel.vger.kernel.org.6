@@ -1,161 +1,113 @@
-Return-Path: <linux-kernel+bounces-270542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D588F94412A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:28:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C562944135
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139A61C230C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:28:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D61F2B339C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0D7E574;
-	Thu,  1 Aug 2024 02:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD82224D6;
+	Thu,  1 Aug 2024 02:27:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="fAe3eAHL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IRx12KAb"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1NzOZIG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9843512DD95
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 02:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A22461E4AB;
+	Thu,  1 Aug 2024 02:27:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722479196; cv=none; b=PTqNSzkTSR1jv5qT0S/ZNUTYgQpFYNwGznlegne4mNQgLKBy/9zYuu8EIB1hNXRXQ1g7xCxt9tyAtEJi3xpTxXI8dJgfRQp/BtzI+DqzYt8khRFauDM2eDm8vpuqvEek2qaTY/03bLexxUJBD4ZT7JUFPlHwK3YYy2ybCE/A/lk=
+	t=1722479248; cv=none; b=f3q4VXDaiZtkCWrxAC6yJzi6EgtxrIQzbZNj7HVQMrbBakHrGAjMLVfPbCU9Hu/+98QtoTeUkFV7lD3CuMIT93yDVxu/n2jN2n5jRT/1xi66thGxD4F1idwrSy5H+UTDw1NRSbkbiMmLCT67x31VRhEARiKtmZm//cfSk6f41fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722479196; c=relaxed/simple;
-	bh=jY+SeGMwyBpNmE3iBFvhyoQLcGovdl2KLaIBzojQdAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFY0AO+1SOBeHmpNrvA0pgdrEu32V+5XhTX7ACZSsLMvphLAd0TUknSU0gcUedtRV89MlZmqA//lHr0TE/8091Y9o6jC4TpOLEOSYmePcvAR5ZYIxlxPt2P4TyG55yJYAw8vhvq3HBA4M6volFBMijJc7mJ4QDgeTVawmBp9j0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=fAe3eAHL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IRx12KAb; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8ED091147B6A;
-	Wed, 31 Jul 2024 22:26:33 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Wed, 31 Jul 2024 22:26:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to; s=fm3; t=1722479193; x=1722565593; bh=/eeK0enPou
-	wqRh3ub6FMhUqsaktHD2IwdZMpOOh5Krc=; b=fAe3eAHLmgtLqLp6ADpXEuZyhL
-	vdiM/u3/cM2QoenO0prhqioSBxLOAo5VA2BJp0pRsf1AVjb+DLyd5Vm8rAEQV3kJ
-	LS4Gl1/4yiMew57o4b8Ph9XXsPIW3XLNWWU6NnJl253zbi+ClT8RdDQGVmzcB8RC
-	8TyOe8STbDmSpxkrsG31RCLH0CujlFKislB06ysCbnjSP4e7PkgskoEogpDCGhq3
-	yLE0sex3JEb7tVCapZZkon4AbpxJFcXFb2Dnxg49muVzmWmCEglFdKVnE35KKCjd
-	p37volMIUMqNtCKWizRhE8JzKcgIWt+PywLX3C7nzg9350/LEnTtTKfOTvzg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1722479193; x=1722565593; bh=/eeK0enPouwqRh3ub6FMhUqsaktH
-	D2IwdZMpOOh5Krc=; b=IRx12KAb4qrqaIRQIR+jnGqqcfaACEueEm9VySVDrtwv
-	B3+ERRsaKb75fh4Ki7UjDLpLRLvS56tKbsxK0ng1+YMDbgvQegHObz7uDAQzgNmV
-	ehEJeRwkqmjc2z04ETbJoBCFFacdmzUm7862lJ5FJIsVGqDjFlFroxN99mmeN5fI
-	l3HHtCp4hPaQi68pbhYchntxc0BhBZuVqdeP9FiXWO9M4oF4Xa9LSN7PiosuL9Of
-	++hIown30U+AG8Oc/vSy1gDhSXAVMdrTEXWqv08a0q2fbmCkFy0Wx9WO3Q58fhVn
-	jwkRBBhEF4HetqHipWU2DKjsK2M18OyLKgWctDIhiA==
-X-ME-Sender: <xms:WfKqZkl6ZCOzuMIBh8J26jfQoOCge50u-5GyGgdlEkOisDHe9L7M5Q>
-    <xme:WfKqZj3D56jfMRqgE4wTUJtObY4Ve-iqyHr_l5RIF9YovC2djNfIxEGj8xL5AMWj2
-    CHukzrINvVCeXEXLgs>
-X-ME-Received: <xmr:WfKqZipHs_3BOwQEFh9s0EcuEBs-jIN78GBuUogZmb9w-Iq9lHHSkCvojH4AW_3P02SgnceYS_-Dih2bzBoIlPRUBaTMKMCCC2lyj3s9OLe71AE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeejgdeitdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtre
-    dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
-    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevke
-    duhfetjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfu
-    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
-    grmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
-X-ME-Proxy: <xmx:WfKqZgl14GKQ1CCKh6u9p4uDp2UNBxj0KDiBPJayCO58-VOVhLnWCg>
-    <xmx:WfKqZi2vR7H7Nbd6uMPthwTPdNKUfYFoEtNa3LN-lmJJyMeBpL4UJA>
-    <xmx:WfKqZnugSufcw1kC7yuRGQiB1O6R8EdQTkJulPy7-6UdoanvZuJ-Cw>
-    <xmx:WfKqZuVn9pTyBdlg0oE7WoYB_rUaNN2gLiZDdXYac20rojqBTe6EMg>
-    <xmx:WfKqZgCVVmH_zjslXUuaYwPQIYbe06esJ1RJUVSu-uB-ZkTJ-GKlWOeI>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 31 Jul 2024 22:26:32 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] firewire: core: utilize kref to maintain fw_node with reference counting
-Date: Thu,  1 Aug 2024 11:26:29 +0900
-Message-ID: <20240801022629.31857-1-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1722479248; c=relaxed/simple;
+	bh=yFcrZhj0VkexDX1C2kvWAWJfbG/Sjjm/3SWECp7+MFU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BrgmJGpT9QmxRp7+u1YpkSZcJWdMcHoYHksRi/GcYPZ7k/2WEGqNytK074256FFONekiMYzQORy8WTZD+NopFp7xFVA04kybcZSrfWIMFz9OFKFuRein58SjkoXuyG2BtyvB8kvFvHvgIVvpMQAtsy4M07LS6UBxoMm8jtKR5cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1NzOZIG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39AC8C4AF0C;
+	Thu,  1 Aug 2024 02:27:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722479248;
+	bh=yFcrZhj0VkexDX1C2kvWAWJfbG/Sjjm/3SWECp7+MFU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=o1NzOZIGLKbIXogc4kRnpTrvIBoQL/nZWOTKsbAUw8jdaFmMIw6jIxKGAex/nZaJV
+	 sAckBc6sZkLAqywESsH9sbSH18ectp1kgYMEzvR4yXwgPbm6R2zxO7o6OMQ7I6HcHN
+	 xLYCxeqXRrRu0Y/Qw03CJ6NMifZZ6pXNPIa4MliytO03dT0emvgGsXoFWo/pFc/Z5X
+	 sZ7e/frKQbBrRw15jOIGtuL2JbNfaHTQ3Llw1tc3OT6/U94ChCh6/wdd1RR2WSmcSn
+	 q8k/BxJZTasw1oj6LfYB7ieq0/6hEfhZHrl8VugyIy6ov8F7vJ/FUloRjRfUwxhAUp
+	 dTOfJ88h0Y60Q==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52efd8807aaso9651103e87.3;
+        Wed, 31 Jul 2024 19:27:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4KQy9mZrV+VVZ1AslSoyvIPxkNLASVCSiF5eTah3KXYxEWJ98iVF65svj7gNqNuk2r6eRXeZ+4hp6Txf8v4EaErAo8zr/44274rbZ
+X-Gm-Message-State: AOJu0YzYMcqQuJdsdf7u5AIFBKVNKST1j+pHn6SskdHuZizef0AAjjQo
+	WpkfYYF8Y+wfm1UoR7/cb7kTpeEbAWfE+7psKTEiOiYYkhClk9QfH+BD0RnR47hEcZLCjsTbhsS
+	tS3axreM0UFF1HD2EwDr8zXN0Wrw=
+X-Google-Smtp-Source: AGHT+IE3GnfbOLJ3T+CoN9IxrOmZJpbe0PHk+HYS37DkErXKuJeNkp66TdLX7kvrDUMEkjw67U3mjMWnKgd40jGqWZA=
+X-Received: by 2002:ac2:5682:0:b0:52c:812b:6e72 with SMTP id
+ 2adb3069b0e04-530b61a5d1cmr439887e87.1.1722479246935; Wed, 31 Jul 2024
+ 19:27:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240727074526.1771247-1-masahiroy@kernel.org>
+ <20240727074526.1771247-5-masahiroy@kernel.org> <202407291757.BE6D847803@keescook>
+In-Reply-To: <202407291757.BE6D847803@keescook>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 1 Aug 2024 11:26:50 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQcV2v9ooOYhkj-Kqx9RACZ==GO9z2cepL5Jx_gxJWXKQ@mail.gmail.com>
+Message-ID: <CAK7LNAQcV2v9ooOYhkj-Kqx9RACZ==GO9z2cepL5Jx_gxJWXKQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] kbuild: cross-compile linux-headers package when possible
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Ben Hutchings <ben@decadent.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Current implementation directly uses refcount_t to maintain the life time
-of fw_node, while kref is available for the same purpose.
+On Tue, Jul 30, 2024 at 10:03=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
+>
+> On Sat, Jul 27, 2024 at 04:42:04PM +0900, Masahiro Yamada wrote:
+> > There are known limitations:
+> >
+> >  - GCC plugins
+> >
+> >    It would possible to rebuild GCC plugins for the target architecture
+> >    by passing HOSTCXX=3D${CROSS_COMPILE}g++ with necessary packages
+> >    installed, but gcc on the installed system emits
+> >    "cc1: error: incompatible gcc/plugin versions". I did not find a
+> >    solution for this because 'gcc' on a foreign architecture is a
+> >    different compiler after all.
+>
+> Do you mean having a plugins as part of a distro package? Does anyone do
+> this?
 
-This commit replaces the implementation with kref.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
----
- drivers/firewire/core-topology.c |  2 +-
- drivers/firewire/core.h          | 15 +++++++++++----
- 2 files changed, 12 insertions(+), 5 deletions(-)
+I think the use of GCC plugins is not so common in distributions,
+presumably due to its strong limitation.
 
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
-index b4e637aa6932..46e6eb287d24 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -39,7 +39,7 @@ static struct fw_node *fw_node_create(u32 sid, int port_count, int color)
- 	node->initiated_reset = phy_packet_self_id_zero_get_initiated_reset(sid);
- 	node->port_count = port_count;
- 
--	refcount_set(&node->ref_count, 1);
-+	kref_init(&node->kref);
- 	INIT_LIST_HEAD(&node->link);
- 
- 	return node;
-diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
-index 7c36d2628e37..189e15e6ba82 100644
---- a/drivers/firewire/core.h
-+++ b/drivers/firewire/core.h
-@@ -183,7 +183,8 @@ struct fw_node {
- 			 * local node to this node. */
- 	u8 max_depth:4;	/* Maximum depth to any leaf node */
- 	u8 max_hops:4;	/* Max hops in this sub tree */
--	refcount_t ref_count;
-+
-+	struct kref kref;
- 
- 	/* For serializing node topology into a list. */
- 	struct list_head link;
-@@ -196,15 +197,21 @@ struct fw_node {
- 
- static inline struct fw_node *fw_node_get(struct fw_node *node)
- {
--	refcount_inc(&node->ref_count);
-+	kref_get(&node->kref);
- 
- 	return node;
- }
- 
-+static void release_node(struct kref *kref)
-+{
-+	struct fw_node *node = container_of(kref, struct fw_node, kref);
-+
-+	kfree(node);
-+}
-+
- static inline void fw_node_put(struct fw_node *node)
- {
--	if (refcount_dec_and_test(&node->ref_count))
--		kfree(node);
-+	kref_put(&node->kref, release_node);
- }
- 
- void fw_core_handle_bus_reset(struct fw_card *card, int node_id,
--- 
-2.43.0
+In my quick research,
+Debian, Ubuntu, Fedora disable CONFIG_GCC_PLUGINS.
+Arch Linux enables CONFIG_GCC_PLUGINS.
 
+
+
+
+
+
+
+> --
+> Kees Cook
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
