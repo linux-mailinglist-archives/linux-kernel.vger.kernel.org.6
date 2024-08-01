@@ -1,228 +1,91 @@
-Return-Path: <linux-kernel+bounces-271775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7090D94531D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:08:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EF2294531E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4413B22C58
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553C01C229EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BBE1494C1;
-	Thu,  1 Aug 2024 19:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897F41494D1;
+	Thu,  1 Aug 2024 19:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUbO4zWo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="onMTodDX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J47zcBmQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17889143897;
-	Thu,  1 Aug 2024 19:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8361B143897
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 19:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722539296; cv=none; b=UlrKDm/dxOTuviKjD0VSXdpk/eGVE99sjC/km4YzMKr3TZX+SvO6CDSX3b1sxTT78z3qb8cegC29w9O0Ac3OTesnc/6r/eXLDbQBZW8pKh7JbgkCa3/wri9zBgu6NOFL9a/jbwbeQXcjwCylu5zLLMYGmrBBuRJP1pNZ4f0iq/k=
+	t=1722539306; cv=none; b=Khe/DTzoJckkR0bqTBbh15qnPykUmuizBY3RadY+8mRY4EprrNZbfEVdyH/knLJHxifyZaHFvUoa+FbD8rBEdqxXw7DoPyFirJhWPjMrrSHgYpgvn8I4vIEPWkQ33qF9fF3Fy0HD731UjjC4clqHGs9gN9P//epVAtT1jnvV29M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722539296; c=relaxed/simple;
-	bh=douCBZT7gMRGfuZXdxkKdoEJWupbLquDYpQTE3MSQTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qLLH8jnlfUG1cTJki29asthxBzOjZ+pvZzcUQ/u9cMvk97efJ+ThaYN/1agVZNCAnusgmAyrp8UlntIkorb8/4OoSlmaAmNMVZ1yvOXuIZ1Ma/CwxkgXds3hNe5FxHvWjR0NiE4Tz075yng7TJrOy1eVLtAA0+MQgPq2cWBjC+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUbO4zWo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A314C32786;
-	Thu,  1 Aug 2024 19:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722539295;
-	bh=douCBZT7gMRGfuZXdxkKdoEJWupbLquDYpQTE3MSQTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PUbO4zWoyZ/d+l1GTTi1R6B/2ylzeFQvNX07yZDxInSY7vdtgslWeyyLx7kBU2LvC
-	 Y1QRkmDI5Y9XfY9fFffSB66sqFLyGfhZSTZSXjcGTDnMrwtn4Mb8FWhH60cpk5/YsP
-	 PZ6S/qRJfiC2Wtb7OwD4HUYb4d/zMvJNg5D9SsF7SrJX2ODVUCQnrEMTTyWaj0h77/
-	 cdUjMad6stI0AsUfYU5yub7ST1YYG7+vmXPwWnRamowsrwfqpOhNTtB4R1f+utAlig
-	 Wwi8N9vf9mCqGTPMPoZrjpHuAL9K1cfp+nbKWNHDPHqyad0H50fGkq2xuEC1bkpDed
-	 S2ubx/NOKVrnQ==
-Date: Thu, 1 Aug 2024 12:08:13 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: kernel test robot <lkp@intel.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
- include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
- requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
- sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of
- struct_group_tagged()
-Message-ID: <20240801190813.GC122261@thelio-3990X>
-References: <202408011956.wscyBwq6-lkp@intel.com>
- <138da3e5-0e24-41a6-bb35-df5d07045eb3@embeddedor.com>
+	s=arc-20240116; t=1722539306; c=relaxed/simple;
+	bh=VFQ6vc7m2LcMWbo83coD+PFYONi2nTZuiz1vFUAQoSs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=SBNsa66I6ZMxXH9X22nR7wh61caYv92QeuUQePwGo0eq64R0onfggxOKelTsLwzBm5EkpdpFMMr1ibSeSE6brXYbnFVPD10ctJjv+qzsEyHJ+E+hqVOt+OT4eVv+3uwMZHc2iKdTzqTBN/NeGjwC774b+Cln34n5ENDhi5DDcwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=onMTodDX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J47zcBmQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722539303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7rFecauNrUJNv4kCU5uw04s4iBRr3/U9tBY9AZZrRmk=;
+	b=onMTodDXidhdmWrMSTTFcc+l4BcdIiPrQtndgl1mByyHD9M3PQHW048XwTzfGFJNQIViKQ
+	X5h9Qpaoy6boTMagw5bw/beRgjvy5wz/3lAlODZLgs54eFjDWEauNeIjbXbWuF1Z2SiZI4
+	pkm/hTNkTgFvePfi/Od8p2XiR4I9OxEx3SeDfGtIHYdXWIok+jPXz4mDvzUgZy0ZFeQNGd
+	H0ubf++zpiDBBY/JWUNSRDCWoykVMkr+yItIgz6EBw1BSTky+cwkIns78+lsGL0d7jCYrL
+	YzkARi0cMlMNW4Y3NqDeaeNz2BU4syQuU+Kutd+i35B/23oFBU1P2E2dX5H5LQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722539303;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7rFecauNrUJNv4kCU5uw04s4iBRr3/U9tBY9AZZrRmk=;
+	b=J47zcBmQQS+NtpGqMjcn8mdgm6Ygvp4UnCQiFKl82CHwSZforU3lhU2XABuZ8O2UnY4Ihh
+	WGR7loC2EmvBbdAA==
+To: Linus Torvalds <torvalds@linux-foundation.org>, David Gow
+ <davidgow@google.com>
+Cc: Kees Cook <kees@kernel.org>, Borislav Petkov <bp@alien8.de>, Ingo Molnar
+ <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, Peter
+ Zijlstra <peterz@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>, "H . Peter Anvin" <hpa@zytor.com>,
+ x86@kernel.org, kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/uaccess: Zero the 8-byte get_range case on failure
+In-Reply-To: <CAHk-=wj40jGrTES8SL69EVdtUwauL+C_12KGMpapdkDZEgjhiw@mail.gmail.com>
+References: <CAHk-=wgPD+=Wi8T0A59muq46LxquhsWQSyPV6KM5xa8V1UPK=Q@mail.gmail.com>
+ <20240801063442.553090-2-davidgow@google.com>
+ <CAHk-=wj40jGrTES8SL69EVdtUwauL+C_12KGMpapdkDZEgjhiw@mail.gmail.com>
+Date: Thu, 01 Aug 2024 21:08:23 +0200
+Message-ID: <87frro2h94.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <138da3e5-0e24-41a6-bb35-df5d07045eb3@embeddedor.com>
+Content-Type: text/plain
 
-On Thu, Aug 01, 2024 at 06:47:58AM -0600, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 01/08/24 05:35, kernel test robot wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240729-cbc-2
-> > head:   df15c862c1b93b6e1f6c90b0d7971f7a6ad66751
-> > commit: e7cd9f429a852fb7e37a706c7d08fc36e7863e06 [11/18] RDMA/uverbs: Use static_assert() to check struct sizes
-> > config: hexagon-randconfig-001-20240801 (https://download.01.org/0day-ci/archive/20240801/202408011956.wscyBwq6-lkp@intel.com/config)
-> > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 430b90f04533b099d788db2668176038be38c53b)
-> 
-> 
-> Clang 20.0.0?? (thinkingface)
+On Thu, Aug 01 2024 at 09:24, Linus Torvalds wrote:
+> On Wed, 31 Jul 2024 at 23:35, David Gow <davidgow@google.com> wrote:
+> But I'm also not going to argue that this is really worth pursuing on
+> 32-bit if anybody is in the least worried.
+>
+> It's on life support, not like it's actively maintained. Your original
+> patch may not be exactly "pretty", but it clearly fixes the problem
+> without playing any games.
 
-Indeed, Clang 19 branched and main is now 20 :)
+I queue that oe up and if someone really cares, then it can be updated,
+but I doubt it's worth the trouble.
 
-https://github.com/llvm/llvm-project/commit/8f701b5df0adb3a2960d78ca2ad9cf53f39ba2fe
+Thanks,
 
-Cheers,
-Nathan
-
-> --
-> Gustavo
-> 
-> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240801/202408011956.wscyBwq6-lkp@intel.com/reproduce)
-> > 
-> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202408011956.wscyBwq6-lkp@intel.com/
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >     In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-> >     In file included from drivers/infiniband/core/uverbs.h:46:
-> >     In file included from include/rdma/ib_verbs.h:15:
-> >     In file included from include/linux/ethtool.h:18:
-> >     In file included from include/linux/if_ether.h:19:
-> >     In file included from include/linux/skbuff.h:17:
-> >     In file included from include/linux/bvec.h:10:
-> >     In file included from include/linux/highmem.h:10:
-> >     In file included from include/linux/mm.h:2228:
-> >     include/linux/vmstat.h:514:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-> >       514 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-> >           |                               ~~~~~~~~~~~ ^ ~~~
-> >     In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-> >     In file included from drivers/infiniband/core/uverbs.h:46:
-> >     In file included from include/rdma/ib_verbs.h:15:
-> >     In file included from include/linux/ethtool.h:18:
-> >     In file included from include/linux/if_ether.h:19:
-> >     In file included from include/linux/skbuff.h:17:
-> >     In file included from include/linux/bvec.h:10:
-> >     In file included from include/linux/highmem.h:12:
-> >     In file included from include/linux/hardirq.h:11:
-> >     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-> >     In file included from include/asm-generic/hardirq.h:17:
-> >     In file included from include/linux/irq.h:20:
-> >     In file included from include/linux/io.h:14:
-> >     In file included from arch/hexagon/include/asm/io.h:328:
-> >     include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >       548 |         val = __raw_readb(PCI_IOBASE + addr);
-> >           |                           ~~~~~~~~~~ ^
-> >     include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >       561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-> >           |                                                         ~~~~~~~~~~ ^
-> >     include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-> >        37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-> >           |                                                   ^
-> >     In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-> >     In file included from drivers/infiniband/core/uverbs.h:46:
-> >     In file included from include/rdma/ib_verbs.h:15:
-> >     In file included from include/linux/ethtool.h:18:
-> >     In file included from include/linux/if_ether.h:19:
-> >     In file included from include/linux/skbuff.h:17:
-> >     In file included from include/linux/bvec.h:10:
-> >     In file included from include/linux/highmem.h:12:
-> >     In file included from include/linux/hardirq.h:11:
-> >     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-> >     In file included from include/asm-generic/hardirq.h:17:
-> >     In file included from include/linux/irq.h:20:
-> >     In file included from include/linux/io.h:14:
-> >     In file included from arch/hexagon/include/asm/io.h:328:
-> >     include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >       574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-> >           |                                                         ~~~~~~~~~~ ^
-> >     include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-> >        35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-> >           |                                                   ^
-> >     In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-> >     In file included from drivers/infiniband/core/uverbs.h:46:
-> >     In file included from include/rdma/ib_verbs.h:15:
-> >     In file included from include/linux/ethtool.h:18:
-> >     In file included from include/linux/if_ether.h:19:
-> >     In file included from include/linux/skbuff.h:17:
-> >     In file included from include/linux/bvec.h:10:
-> >     In file included from include/linux/highmem.h:12:
-> >     In file included from include/linux/hardirq.h:11:
-> >     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-> >     In file included from include/asm-generic/hardirq.h:17:
-> >     In file included from include/linux/irq.h:20:
-> >     In file included from include/linux/io.h:14:
-> >     In file included from arch/hexagon/include/asm/io.h:328:
-> >     include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >       585 |         __raw_writeb(value, PCI_IOBASE + addr);
-> >           |                             ~~~~~~~~~~ ^
-> >     include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >       595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-> >           |                                                       ~~~~~~~~~~ ^
-> >     include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-> >       605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-> >           |                                                       ~~~~~~~~~~ ^
-> >     In file included from drivers/infiniband/core/ib_core_uverbs.c:8:
-> >     In file included from drivers/infiniband/core/uverbs.h:49:
-> >     In file included from include/rdma/uverbs_std_types.h:10:
-> > > > include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of struct_group_tagged()
-> >       643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-> >           | ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >       644 |               "struct member likely outside of struct_group_tagged()");
-> >           |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >     include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-> >        16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-> >           |                                 ^
-> >     include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-> >        77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-> >           |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >     include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-> >        78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-> >           |                                                        ^~~~
-> >     include/rdma/uverbs_ioctl.h:643:58: note: expression evaluates to '56 == 52'
-> >       643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-> >           | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >       644 |               "struct member likely outside of struct_group_tagged()");
-> >           |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >     include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-> >        77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-> >           |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >     include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-> >        78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-> >           |                                                        ^~~~
-> >     7 warnings and 1 error generated.
-> > 
-> > 
-> > vim +643 include/rdma/uverbs_ioctl.h
-> > 
-> >     630	
-> >     631	struct uverbs_attr_bundle {
-> >     632		/* New members MUST be added within the struct_group() macro below. */
-> >     633		struct_group_tagged(uverbs_attr_bundle_hdr, hdr,
-> >     634			struct ib_udata driver_udata;
-> >     635			struct ib_udata ucore;
-> >     636			struct ib_uverbs_file *ufile;
-> >     637			struct ib_ucontext *context;
-> >     638			struct ib_uobject *uobject;
-> >     639			DECLARE_BITMAP(attr_present, UVERBS_API_ATTR_BKEY_LEN);
-> >     640		);
-> >     641		struct uverbs_attr attrs[];
-> >     642	};
-> >   > 643	static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-> >     644		      "struct member likely outside of struct_group_tagged()");
-> >     645	
-> > 
-> 
+        tglx
 
