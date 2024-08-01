@@ -1,183 +1,163 @@
-Return-Path: <linux-kernel+bounces-271658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E4E945132
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82475945137
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414CAB25E9E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FC4283F5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9D71B8EB6;
-	Thu,  1 Aug 2024 16:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C91D91B9B2B;
+	Thu,  1 Aug 2024 17:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jITEccrr"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xe+u7jtr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419B113C9A3;
-	Thu,  1 Aug 2024 16:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A65D1B4C5D;
+	Thu,  1 Aug 2024 17:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722531558; cv=none; b=VS+zdeYMuFh6PC3UYjRh7czlVJ+piXU4oprEZh2+t3b/YwiowPD6acfADE4oDFsFEfpCvKc6NrPp53kSxDiZRQMw+5/isVmykudkN1Ggxy2sd64rh/UKXBUmcJV9gayKTX/TM9MXP9c9ex/nhKOvfBKvKh6v+OgzLcoJEraFdps=
+	t=1722531602; cv=none; b=PHugBsWE81zPiLaAXbDqVA+L67Ug9/iWnDMfMNhim6hxvbHf6V391E17S9rU5MgjerkDVlMEJf91bSSmR1ARL64XHKRpQXTDUON9bJgBDrs0iPC3p9lDFfyCTaemTY8tKPUAAzXQgFc+h7VU7Rvgw2XkeYGezv5TeRvbU1IT9pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722531558; c=relaxed/simple;
-	bh=p4Qq9uIdJs58wMaAl65FJLXAPV2TDD3znAAl5VsvGOo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jBBC0v6933RF66Xx+v+939eDNYJlNgTfeYHCxowcx0PoSTNn2P7aNPLGxRFEdBCKBxmUe3RHnCA6V3iDrAYo6t3Ylzp0kfCm0h+VR+E4P0WyeUhQoizhBqDqpg/scNexCENeyNUyY5VQhTGg28GwfiQJagwSiNSSWViRlnSHucQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jITEccrr; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7a18ba4143bso5241559a12.2;
-        Thu, 01 Aug 2024 09:59:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722531556; x=1723136356; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p4Qq9uIdJs58wMaAl65FJLXAPV2TDD3znAAl5VsvGOo=;
-        b=jITEccrrTVMWLw+43QhrZn5uU4INzerx+qCpGt0jPKMWYadKMNu2veM96xmBzAZCuA
-         sFFqPE9U01xN81nlsk8lvdTObXsU2XcVfDAB2njBG6z8epg9U5MHWGc57JGkGwBHvVi0
-         XuqudfNSDaBb/wFa7k2cZCdQYSIhoiMQFllNo8eSDwuF3gBwLQEOALovV+/l7/x6bcdp
-         qFuazzSlwvYhf3K6MzViznRPiUHg8vNsmPUjoih9O9itgm3NHGhm7DcKgw7WozogmYsx
-         SHO01lzyJeU8mXLLpaJwJz9/fo63RQqy/EeK4aYQI/Iz7O/UsBGLZiAZ93HkSbuEgDlh
-         wh9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722531556; x=1723136356;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p4Qq9uIdJs58wMaAl65FJLXAPV2TDD3znAAl5VsvGOo=;
-        b=wulwXtYbsWdVgYFua/GAYSNhsQ9za+lZe4cYrmMpxs2IA7CKAP5wQSEDqlJF2nF/J5
-         dPoDL4HumigEDiI0B5BYcs34yF+NuDOS5HnFYcibZvOkRB2Mg8JRcGeJmEAtkvdZK9Z0
-         b29KsRtGeM79VKs7BpjNB7pnd+5rF9JwfOUZKmOBGJ9Xv2/u0lDOH4fD0awGda2ijxAh
-         87fSN1OE+vBf7UBy0zdq69oeLJhxONOY58iAyPQIEQK+DFY33jPZNVhdGQcJ72DZyrTa
-         pZOUx1OoH6OzFuFtHiO8bRVzoVMpE/MWopA3DnuGkJREbMdgJpHKtULI/Ip0fo3yJ+35
-         1Izw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYzLX8+TxVu8YSQoeo+JffrFTkQ/x9K5AtlXR/E6HuzMrWsjAnFjo2YEG5EcbOOYJe6Eeajd2x5mLFeo3UOx1xuxtXbtIdzmKK/sY1YnCpi8a886YOdl3FZjXVGS7IcpIj
-X-Gm-Message-State: AOJu0YxhdhtfH/goJpUObR+GOB5oGD2UGQAzubXNf+sHUnu/rn7B3R86
-	CHjVcBdJbdDwBziFK2bAPhpKkWOnzrHfqTqSb5FnEacQhQZv2dsJSAGn9RddnjY3WmKjHW8Uv1h
-	V5if6lZFno+oI3djPGNNoBhSF4Pw=
-X-Google-Smtp-Source: AGHT+IFYrmd+B21iaow8sKxHkD1/et3H5KLzOxaPPiErENaGVRkdY0kckkQCWolbNyf+XCPVKJB2+xBREM3dfowFXUo=
-X-Received: by 2002:a17:90b:4ac7:b0:2ca:8684:401a with SMTP id
- 98e67ed59e1d1-2cff952809fmr937025a91.32.1722531556385; Thu, 01 Aug 2024
- 09:59:16 -0700 (PDT)
+	s=arc-20240116; t=1722531602; c=relaxed/simple;
+	bh=A/7RObg8Tzl1vD90LuvoQOcriMT+2Jss1+r/SM4KW0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=tGIzfrj0CXPCYcQNTyf5dDB5rHoFpy7OiZ0cDZSl1jrEkYXScFPZ9JWsU9q6CAoHdG6aripeZCI5L/98+V6Wv24ZROgeyziE9+vwiZ9KZp1YUSAjDGDESLrB/DjIXsaDyJ/3+8+Nuxuzv80oXbQjXnMv8P9MHB30+1AFCjEKuew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xe+u7jtr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53023C32786;
+	Thu,  1 Aug 2024 17:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722531601;
+	bh=A/7RObg8Tzl1vD90LuvoQOcriMT+2Jss1+r/SM4KW0Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Xe+u7jtrOH5CGdYNy2kTw9DpuDLkwzzEi5EoDbbYjhQAmwGUvgkhctGYRLFQq3n1a
+	 CKml7FNT0Z1wEvu1CbY49ZfYjvC6ruVi79mfuhk9pobGvJJtyFNqpOZbnptU/hVHbF
+	 YSqBHCKqs6P9O2cBEGAX0nbJd9M/1nJSSAADfSMJpQf//WZiPyftLXWipsyK5BFcq6
+	 68uxzeyZYYjn6+tnhkC7j2owaEh7uQ8lynHBq5dCIIVB9cG12OI0OMwkE3d8lRpkdG
+	 N9pEIAw9PaUIB73n0jPrtI0tJgmyxh+tVymu3sT50X9f0qElnLelskrA3bk7yySKF2
+	 c16XipuV6gfYg==
+Date: Thu, 1 Aug 2024 11:59:59 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Niklas Schnelle <schnelle@linux.ibm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Gerd Bayer <gbayer@linux.ibm.com>, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: s390: Handle ARI on bus without associated struct
+ pci_dev
+Message-ID: <20240801165959.GA83976@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725051511.57112-1-me@manjusaka.me> <08e180da-e841-427d-bed6-3ba8d73e8519@linux.dev>
- <c7952df9-5830-45d3-89bb-b45f2b030e24@gmail.com> <6511ce2a-1c7d-497c-aeb6-d4f0b17271ed@linux.dev>
- <2c6b1737-0a96-44ed-afe9-655444121984@gmail.com> <CAEf4BzbL0xfdCEYmzfQ4qCWQxKJAK=TwsdS3k=L58AoVyObL3Q@mail.gmail.com>
- <0f5b7717-fad3-4c89-bacf-7a11baf7a9df@gmail.com> <CAEf4BzZCz+sLuAUF65SaHqPUemsUb0WBhAhLYoaAs54VfH1V2w@mail.gmail.com>
- <a1ba10df-b521-40f7-941f-ab94b1bf9890@gmail.com> <CAEf4BzZhsQeDn8biUnt9WXt6RVcW_PPX76YFyZo6CjEXGKTdDg@mail.gmail.com>
- <9f68005d-511f-4223-af8f-69fb885024a1@gmail.com> <CAEf4BzbzM85_946eB95e9U6stknBh4ucLMKVo5SEqUsihe4K1A@mail.gmail.com>
- <951159c7-08b1-4b15-9dd7-e1a6589ce2ce@gmail.com>
-In-Reply-To: <951159c7-08b1-4b15-9dd7-e1a6589ce2ce@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 1 Aug 2024 09:59:04 -0700
-Message-ID: <CAEf4BzbbyojuFSS7xQ3+jZb=dHzOaZfMbtT+WnypW2LPwOUwRw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2] bpf: Add bpf_check_attach_target_with_klog
- method to output failure logs to kernel
-To: Leon Hwang <hffilwlqm@gmail.com>
-Cc: Yonghong Song <yonghong.song@linux.dev>, Zheao Li <me@manjusaka.me>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b06e8e396d64d7202f9a8aae91e0c556b344cc5b.camel@linux.ibm.com>
 
-On Tue, Jul 30, 2024 at 8:31=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com> wr=
-ote:
->
->
->
-> On 31/7/24 01:28, Andrii Nakryiko wrote:
-> > On Mon, Jul 29, 2024 at 8:32=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.com=
-> wrote:
-> >>
-> >>
-> >>
-> >> On 30/7/24 05:01, Andrii Nakryiko wrote:
-> >>> On Fri, Jul 26, 2024 at 9:04=E2=80=AFPM Leon Hwang <hffilwlqm@gmail.c=
-om> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 2024/7/27 08:12, Andrii Nakryiko wrote:
-> >>>>> On Thu, Jul 25, 2024 at 7:57=E2=80=AFPM Leon Hwang <hffilwlqm@gmail=
-.com> wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>>
-> >>
-> >> [...]
-> >>
-> >>>>>>
-> >>>>>> Is it OK to add a tracepoint here? I think tracepoint is more gene=
-ric
-> >>>>>> than retsnoop-like way.
-> >>>>>
-> >>>>> I personally don't see a problem with adding tracepoint, but how wo=
-uld
-> >>>>> it look like, given we are talking about vararg printf-style functi=
-on
-> >>>>> calls? I'm not sure how that should be represented in such a way as=
- to
-> >>>>> make it compatible with tracepoints and not cause any runtime
-> >>>>> overhead.
-> >>>>
-> >>>> The tracepoint is not about vararg printf-style function calls.
-> >>>>
-> >>>> It is to trace the reason why it fails to bpf_check_attach_target() =
-at
-> >>>> attach time.
-> >>>>
-> >>>
-> >>> Oh, that changes things. I don't think we can keep adding extra
-> >>> tracepoints for various potential reasons that BPF prog might be
-> >>> failing to verify.
-> >>>
-> >>> But there is usually no need either. This particular code already
-> >>> supports emitting extra information into verifier log, you just have
-> >>> to provide that. This is done by libbpf automatically, can't your
-> >>> library of choice do the same (if BPF program failed).
-> >>>
-> >>> Why go to all this trouble if we already have a facility to debug
-> >>> issues like this. Note every issue is logged into verifier log, but i=
-n
-> >>> this case it is.
-> >>>
-> >>
-> >> Yeah, it is unnecessary to add tracepoint here, as we are able to trac=
-e
-> >> the log message in bpf_log() arguments with retsnoop.
-> >
-> > My point was that you don't even need retsnoop, you can just ask for
-> > verifier log directly, that's the main way to understand and debug BPF
-> > program verification/load failures.
-> >
->
-> Nope. It is not about BPF program verification/load failures. It is
-> about freplace program attach failures instead.
+On Tue, Jul 30, 2024 at 09:59:13PM +0200, Niklas Schnelle wrote:
+> On Tue, 2024-07-30 at 21:36 +0200, Niklas Schnelle wrote:
+> > On s390 PCI busses are virtualized and the downstream ports are
+> > invisible to the OS and struct pci_bus::self is NULL. This associated
+> > struct pci_dev is however relied upon in pci_ari_enabled() to check
+> > whether ARI is enabled for the bus. ARI is therefor always detected as
+> > disabled.
+> > 
+> > At the same time firmware on s390 always enables and relies upon ARI
+> > thus causing a mismatch. Moreover with per-PCI function pass-through
+> > there may exist busses with no function with devfn 0. For example
+> > a SR-IOV capable device with two PFs may have separate function
+> > dependency link chains for each of the PFs and their child VFs. In this
+> > case the OS may only see the second PF and its child VFs on a bus
+> > without a devfn 0 function. A situation which is also not supported by
+> > the common pci_configure_ari() code.
+> > 
+> > Dispite simply being a mismatch this causes problems as some PCI devices
+> > present a different SR-IOV topology depending on PCI_SRIOV_CTRL_ARI.
+> > 
+> > A similar mismatch may occur with SR-IOV when virtfn_add_bus() creates new
+> > busses with no associated struct pci_dev. Here too pci_ari_enabled()
+> > on these busses would return false even if ARI is actually used.
+> > 
+> > Prevent both mismatches by moving the ari_enabled flag from struct
+> > pci_dev to struct pci_bus making it independent from struct pci_bus::
+> > self. Let the bus inherit the ari_enabled state from its parent bus when
+> > there is no bridge device such that busses added by virtfn_add_bus()
+> > match their parent. For s390 set ari_enabled when the device supports
+> > ARI in the awareness that all PCIe ports on s390 systems are ARI
+> > capable.
+> > 
+> > Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> > ---
+> >  arch/s390/pci/pci_bus.c | 12 ++++++++++++
+> >  drivers/pci/pci.c       |  4 ++--
+> >  drivers/pci/probe.c     |  1 +
+> >  include/linux/pci.h     |  4 ++--
+> >  4 files changed, 17 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+> > index daa5d7450c7d..021319438dad 100644
+> > --- a/arch/s390/pci/pci_bus.c
+> > +++ b/arch/s390/pci/pci_bus.c
+> > @@ -278,6 +278,18 @@ void pcibios_bus_add_device(struct pci_dev *pdev)
+> >  {
+> >  	struct zpci_dev *zdev = to_zpci(pdev);
+> >  
+> > +	/*
+> > +	 * On s390 PCI busses are virtualized and the bridge
+> > +	 * devices are invisible to the OS. Furthermore busses
+> > +	 * may exist without a devfn 0 function. Thus the normal
+> > +	 * ARI detection does not work. At the same time fw/hw
+> > +	 * has always enabled ARI when possible. Reflect the actual
+> > +	 * state by setting ari_enabled whenever a device on the bus
+> > +	 * supports it.
+> > +	 */
+> > +	if (pci_find_ext_capability(pdev, PCI_EXT_CAP_ID_ARI))
+> > +		zdev->zbus->bus->ari_enabled = 1;
+> > +
+> 
+> @Bjorn unstead of adding the above code to s390 specific code an
+> alternative I considered would be to modify pci_configure_ari() like
+> below. I tested this as well but wasn't sure if it is too much churn
+> especially the handling of the dev->devfn != 0 case. Then again it
+> might be nice to have this in common code.
+> 
+> @@ -3523,12 +3524,18 @@ void pci_configure_ari(struct pci_dev *dev)
+>         u32 cap;
+>         struct pci_dev *bridge;
+> 
+> -       if (pcie_ari_disabled || !pci_is_pcie(dev) || dev->devfn)
+> +       if (pcie_ari_disabled || !pci_is_pcie(dev))
+> +               return;
+> +
+> +       if (dev->devfn && !hypervisor_isolated_pci_functions())
+>                 return;
+> 
+>         bridge = dev->bus->self;
+> -       if (!bridge)
+> +       if (!bridge) {
+> +               if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ARI))
+> +                       dev->bus->ari_enabled = 1;
 
-Ah, my bad, it's at an attach time. Still, I don't think a tracepoint
-for every possible failure will ever work. Perhaps the right approach
-is to wire up bpf_log into attach commands (LINK_CREATE, at least), so
-that the kernel can report back what's the reason for declining
-attachment?
+In the generic case here, how do we know whether the invisible bridge
+leading here has ARI enabled?  If that's known to always be the case
+for s390, I understand that, but I don't understand the other cases
+(jailhouse, passthrough, etc).
 
->
-> As for freplace program, it can attach to a different target from the
-> target at load time, since commit 4a1e7c0c63e0 ("bpf: Support attaching
-> freplace programs to multiple attach points").
->
-
-[...]
+>                 return;
+> +       }
+> 
+>         pcie_capability_read_dword(bridge, PCI_EXP_DEVCAP2, &cap);
+>         if (!(cap & PCI_EXP_DEVCAP2_ARI))
+> 
 
