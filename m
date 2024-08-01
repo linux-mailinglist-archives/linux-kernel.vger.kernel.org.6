@@ -1,120 +1,178 @@
-Return-Path: <linux-kernel+bounces-271899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC9B9454AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:51:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E29A29454B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:58:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B791C22F71
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:51:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AD1E1F24241
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 22:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B584614D420;
-	Thu,  1 Aug 2024 22:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AD514D42C;
+	Thu,  1 Aug 2024 22:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d/QYKaR1"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="X/xYmjcz";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="X/xYmjcz"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42171D696;
-	Thu,  1 Aug 2024 22:51:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFAC14A4DE;
+	Thu,  1 Aug 2024 22:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722552693; cv=none; b=vAY5dV8j69KCouDFYLwKAqxF9YH6pqo47u5DH3k2vVNHHM+Xc89wmXeFEW7XWh3sFNk4LDNJqamHvgHf2o10xhxB5dIgwT6mCDAopJRYSaLWf8UkcVUEQZwvAjzBVijpIeXFjYGc7glRhQ0icQmDfj6LPS61YK8491m3EW2dV7Q=
+	t=1722553088; cv=none; b=Ujv+MCrQZBnqLLZVfOklcVo4YME4tLtaDWZgHVkQ8toWfh/v0bE9NUXQZ6uxIgfGPGlAllFnynFTkMTp2mI+MZGQMLSGRI3SE3oG/raiboOaNCJD8eq/qa/sH+l/etxrodpd/LGJwGD7bDfmVpxc6XvCkzEi7LpAjXpa2UHcRHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722552693; c=relaxed/simple;
-	bh=naBe7n9SWJKcD3/+j3xRwKxcVyO8dX0yhYhJsoGkREM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=URBP9pCC9LVyRKTGcnA3jTfGX/IdGqen7u2Tkam1jgepSZLZu19zytfbx0Lyf7INuxSri2E0UMPAyUkbfy4iM6KL8FS/jYURoz+yNxdvuxNo1n1ibk+GaKIDVS5OjPDaNjMhGJLN9dSI48Mlj4C5AK9MclxdWhHHD0qJOn7VDBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d/QYKaR1; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb5e0b020eso5768656a91.2;
-        Thu, 01 Aug 2024 15:51:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722552691; x=1723157491; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e19UYp+ljud6ZcskAvvX1iEQ4cPZmGuXxIiRolrtGhQ=;
-        b=d/QYKaR1xrcj0jS3LU9mCoyBSwGYVmIdX0YJ245RLFmPjzNKMlTgLKOUlYpMIoZTU8
-         fQ9IFvqF4YYmbEWJKRF+VvUIc/iMPUaVjSUlZtl//aHIFQ8zkTzwjZ9huabdB9H93TyN
-         NiCIVFouygxcaHXOi6tgOb10E3nLnM8hEzIlA3zWdH4ZlvgYSCUbsqYh+2rc2zvtBpPV
-         4eHym8a/OmrfNzbppcPsEh7N06wmxTEgqm7ZBL7yQmq1my5PDwTbPrG8OztwebaiBlNd
-         1reZJDeoMoIlAIUVgq2cIGKosze4GNg71NI5B8w+nSKJC4jO7gGtCr/pizJuA05enAJZ
-         yc2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722552691; x=1723157491;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e19UYp+ljud6ZcskAvvX1iEQ4cPZmGuXxIiRolrtGhQ=;
-        b=I/QKfB+4zpbcxbWUU0QCJoswOxemWYPbei1eJZfLVyeKTECEFnkTPFinv0jDcAkGp/
-         CzpNMxCg4THME2GxFPefoAhe5wQzKKN43VIve7hKMeLYLTPqTC/irjeaQzyoleKfu+UK
-         /UEQyjruxTL2Sbno2yOA0T/nzao794RwgZ26m4kCoPTKPhl7yR/hriKIIK93wsZW8azr
-         KgfybjqlCOU30G3zEBHTKhjU6klBLBW6Y1WYM8jVwxkb5hjxg83LBqOip2OiqmCkV1yb
-         Xuw+uueS3L9aOjz+lsk5jx1A8KA9T+OBGThhzU7hB4ARgYK+4oBa4MC/9IF/JJgAN3Ku
-         SBwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzmzbyc9qVGAtJzrxLE/LJVFtBiVNqIsEiayx38GD4l0zt1USnDQKcCYZIO9oTQqdmKQQl7ILztDZLlDeq/yJ6zq+E65NibdFydvkPA57z6NarCpOQisBatYrfZvbx2FY0xooe
-X-Gm-Message-State: AOJu0Yz2h0mX0GhKIgqP2Offl9GmfU3nNfH9c5ZHsbI9T7F7wgHYRZqW
-	Yehx82HRxKA3qeEuLx4lfJDvQ9YyzLSrZ3zZsvzLe5Ynz6UfprTNxcYTi2iYLhMWbxIT8iG8ihf
-	VmXaeno2+7YomULMXyRvT0E5KgoM=
-X-Google-Smtp-Source: AGHT+IHj+u6/jrC8H8jYf5x0OWqnjFHLFuNJN2Tbq5H4mnsv8oxnqHcVitBFze1pwXVeMgljA8ptmmrXdabe+KfrNZs=
-X-Received: by 2002:a17:90b:4a08:b0:2c9:9fcd:aa51 with SMTP id
- 98e67ed59e1d1-2cff9419a1fmr2105089a91.5.1722552690859; Thu, 01 Aug 2024
- 15:51:30 -0700 (PDT)
+	s=arc-20240116; t=1722553088; c=relaxed/simple;
+	bh=Qn8maADFXO+bT5IiTIRKCfikENUxTp3PLAQL+m7ZeA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aa1M4ShSTR6kF1jmQIXe8Qy6JFZkUwbae9gTMTsNNhQ6RRh/WzOvZ33PFSdYZXemFv8OdacHONeUHpc6ZpiEqat58ABRhsllxqlDzUBa+q0/R8tBQGDRg5ZmiRtI4AzRpIBuWCBrh14YwQwxyqUDHUj2JPZJBwL6TuNnNOyLzcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=X/xYmjcz; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=X/xYmjcz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D2C1B219BB;
+	Thu,  1 Aug 2024 22:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722553084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrfpBRx2OlghlnQUP396vQ52rxWepmoXbexqsA06Cq8=;
+	b=X/xYmjcz12jbl5/3YVMkSKTgLyyEi3dLakZekRU8pFzCqX1AOhXVox/8GvaguOEXbiMwRj
+	h2f0lbQ0vn3co70X6VS421xoReKL7V1xM/g6zmOAUHINYcMX4M3iD9Htr8Yt71Maer3tB/
+	bFxqQMIy9bbVuDBYQOWGWAhSsO2DTKA=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1722553084; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LrfpBRx2OlghlnQUP396vQ52rxWepmoXbexqsA06Cq8=;
+	b=X/xYmjcz12jbl5/3YVMkSKTgLyyEi3dLakZekRU8pFzCqX1AOhXVox/8GvaguOEXbiMwRj
+	h2f0lbQ0vn3co70X6VS421xoReKL7V1xM/g6zmOAUHINYcMX4M3iD9Htr8Yt71Maer3tB/
+	bFxqQMIy9bbVuDBYQOWGWAhSsO2DTKA=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F17F13946;
+	Thu,  1 Aug 2024 22:58:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id IyJLIvwSrGYICwAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Thu, 01 Aug 2024 22:58:04 +0000
+Date: Fri, 2 Aug 2024 00:58:03 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Lance Yang <ioworker0@gmail.com>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
+	akpm@linux-foundation.org, 21cnbao@gmail.com, ryan.roberts@arm.com, david@redhat.com, 
+	shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
+	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Cgroups <cgroups@vger.kernel.org>
+Subject: Re: [BUG] mm/cgroupv2: memory.min may lead to an OOM error
+Message-ID: <iedonwzoqj75yeaykgovdufi53cu3ddsrqfhdfui5kgwlal6pq@mdeue6pc6byz>
+References: <20240801045430.48694-1-ioworker0@gmail.com>
+ <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
+ <CAK1f24knBez71sEvcfFoFuyvap+=3LzsRrmW-+fLsqV3WkyMBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801111842.50031-1-aha310510@gmail.com> <20240801072842.69b0cc57@kernel.org>
-In-Reply-To: <20240801072842.69b0cc57@kernel.org>
-From: Jeongjun Park <aha310510@gmail.com>
-Date: Fri, 2 Aug 2024 07:51:19 +0900
-Message-ID: <CAO9qdTHJKMzOTRJB_N1VPjh2=Z=qLkpzu8eL5mcAr6hnFfiHXQ@mail.gmail.com>
-Subject: Re: [PATCH net] team: fix possible deadlock in team_port_change_check
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: jiri@resnulli.us, davem@davemloft.net, edumazet@google.com, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="z3wr2ynnu36cbovk"
+Content-Disposition: inline
+In-Reply-To: <CAK1f24knBez71sEvcfFoFuyvap+=3LzsRrmW-+fLsqV3WkyMBA@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.70 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,gmail.com,arm.com,redhat.com,nvidia.com,antgroup.com,linux.alibaba.com,vger.kernel.org,kvack.org,cmpxchg.org,linux.dev];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -5.70
 
-Jakub Kicinski wrote:
->
-> On Thu,  1 Aug 2024 20:18:42 +0900 Jeongjun Park wrote:
-> >       struct team *team = port->team;
-> > +     bool flag = true;
-> >
-> > -     mutex_lock(&team->lock);
-> > +     if (mutex_is_locked(&team->lock)){
-> > +             unsigned long owner, curr = (unsigned long)current;
-> > +             owner = atomic_long_read(&team->lock.owner);
-> > +             if (owner != curr)
-> > +                     mutex_lock(&team->lock);
-> > +             else
-> > +                     flag = false;
-> > +     }
-> > +     else{
-> > +             mutex_lock(&team->lock);
-> > +     }
-> >       __team_port_change_check(port, linkup);
-> > -     mutex_unlock(&team->lock);
-> > +     if (flag)
-> > +             mutex_unlock(&team->lock);
->
-> You didn't even run this thru checkpatch, let alone the fact that its
-> reimplementing nested locks (or trying to) :(
->
-> Some of the syzbot reports are not fixed because they are either hard
-> or because there is a long standing disagreement on how to solve them.
-> Please keep that in mind.
 
-Okay, but I have a question. Is it true that team devices can also be
-protected through rtnl? As far as I know, rtnl only protects net_device,
-so I didn't think about removing the lock for team->lock.
+--z3wr2ynnu36cbovk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Regards,
-Jeongjun Park
+Hello.
+
+On Thu, Aug 01, 2024 at 07:40:10PM GMT, Lance Yang <ioworker0@gmail.com> wrote:
+> However, if the child cgroup doesn't exist and we add a process to the 'test'
+> cgroup, then attempt to create a large file(2GB) using dd, we won't encounter
+> an OOM error; everything works as expected.
+
+That's due to the way how effective protections are calculated, see [1].
+If reclaim target is cgroup T, then it won't enjoy protection configured
+on itself, whereas the child of T is subject of ancestral reclaim hence
+the protection applies.
+
+That would mean that in your 1st demo, it is test/memory.max that
+triggers reclaim and then failure to reclaim from test/test-child causes
+OOM in test.
+That's interesting since the (same) limit of test-child/memory.max
+should be evaluated first. I guess it is in your example there are
+actually two parallel processes (1321 and 1324) so some charges may
+randomly propagate to the upper test/memory.max limit.
+
+As explained above, the 2nd demo has same reclaim target but due to no
+nesting, protection is moot.
+I believe you could reproduce with merely
+
+	test/memory.max
+	test-child/memory.min
+
+> Hmm... I'm a bit confused about that.
+
+I agree, the calculation of effective protection wrt reclaim target can
+be confusing.
+
+The effects you see are documented for memory.min:
+
+> Putting more memory than generally available under this
+> protection is discouraged and may lead to constant OOMs.
+
+HTH,
+Michal
+
+[1] https://lore.kernel.org/all/20200729140537.13345-2-mkoutny@suse.com/
+
+--z3wr2ynnu36cbovk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZqwS+AAKCRAt3Wney77B
+SdQ9AP9aLMnZx3/4HGSUidBokh2k5NVbAqtBX6zPkBFpe48eSgEA8zZyvtnuUPW8
+Y0FKs+Gg7CewHbz21JQzAJSjT6d77Qw=
+=ij7V
+-----END PGP SIGNATURE-----
+
+--z3wr2ynnu36cbovk--
 
