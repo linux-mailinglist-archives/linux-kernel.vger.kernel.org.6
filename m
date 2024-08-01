@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-271699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D8B4945217
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:49:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5F1945228
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11ED1F28ED1
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:49:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F55E284BF1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331571BBBEF;
-	Thu,  1 Aug 2024 17:46:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2CB1C0DE7;
+	Thu,  1 Aug 2024 17:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kfs87WY9"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KwLFpqjr"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F031BE22C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:46:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122EA1BE871
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722534408; cv=none; b=Y28WImAjxND61JwVzBaDCVHL2bjHhQorcJtzeRQKNo65+n+L9xqwdb6yvvmHQIEduz4QFPIr61N2ZDnzuBmfRanmk/ExeDN0t+4Q/jwCePzd8a7J9GtHF/JMwO81SubwMBN/Eqq6nTcrU9YraXM8DkhfzQW8r0Y8uykKP+LIJPw=
+	t=1722534412; cv=none; b=lwH5tPaHi1ie36uco5LqkIFLs1MbI3b0lJhiDkh3Im9muEPIhB5rngFUtFThYlo+oxGeOTPhMV8kUNnQx5FoBVWYrMOUkfBsOvDPmt5olVsnCmY/8CA3CFMPmlaiz3R89tECrL/cfsn+f+/iJtv79kzauyrduF0ZBPgyBXM2fCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722534408; c=relaxed/simple;
-	bh=4GexEWYmB++TVKtf95ojSGSSevwi4ufn2RVpQzXAHG8=;
+	s=arc-20240116; t=1722534412; c=relaxed/simple;
+	bh=PowKNNK7ntiN8fDRwJEfgWzFgO0JzDMOq63Tm65TlRE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lW9GYPifZuBpzejPnmvKupa4+sfMR18ROFHXzlxMGmstDSI57UEG+e6RlG9CGBLVWcsHUnL6j8jpCfAFNVNj2PuyXGM7WnqkAkaalBqb2E/6mbIZQZwfXYuUq+pOMwNcJUxq9dOVeEfGQIT9P7ItS6lIp7Y0V0dX0m+mlnJmnr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kfs87WY9; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=Mq9lCZyBSa+kqVRMtqLDzPvBQtX4x67u5SuU6dw8ojQqn6qrI8sIlW0a37lhaJoBdYQqmp++BG0wr/veBgNxzGHoL8KxXs6T3xBOvXFiCxkDrtPpKdIJIDdlVVafc7lLuTf6J/UAYmJceb/K4xuPpUuSG4oui4KLX8d//NW1iBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KwLFpqjr; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722534405;
+	s=mimecast20190719; t=1722534410;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=n5hpd+G0LExVaxl+UI//CFwTq02L8uYAsSV7qLlWbdA=;
-	b=Kfs87WY9Vb6wvOCN6m1yhyQjWjrgggKllyUikSRNJPMALVeBpqR8kfc7OEVDmDx1FQk4mW
-	VHbsXmtvxqMIDOJkEwSHOEv5EJLPiyetXSVZt95+HfxQaHGosO/hDPo+F/6W1PS4QlHtcb
-	3ivXHTHypCLI3I/6A8vmdonKbZqVThw=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=4T8HAVKVFIndb0epInGCIUNTvqCq3Yx0Jxliq8oDWAI=;
+	b=KwLFpqjr2DPAtafckguQlN8Ql1gbRmUtg/dh/AD5ohN2xSFkZ8bWOuIeQoS5WicK0ojBTX
+	tmRQ8BeO7psRzDc0IYHdTWnx8V0yqh+UpiBAZ74QxqWZOPCml6aDeEOS4Ra97nFAr1y5HV
+	isWLOql6lfUQ+5N3IbTZ4hI37FHgSWQ=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-303-sNUihTbOO9KSLhtBXf0z-w-1; Thu, 01 Aug 2024 13:46:43 -0400
-X-MC-Unique: sNUihTbOO9KSLhtBXf0z-w-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-5a0f73ff43cso1109913a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:46:43 -0700 (PDT)
+ us-mta-501-MHWBg9y7MG2dcOJdDI_nng-1; Thu, 01 Aug 2024 13:46:45 -0400
+X-MC-Unique: MHWBg9y7MG2dcOJdDI_nng-1
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-5a0f73ff43cso1109931a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:46:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722534402; x=1723139202;
+        d=1e100.net; s=20230601; t=1722534404; x=1723139204;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n5hpd+G0LExVaxl+UI//CFwTq02L8uYAsSV7qLlWbdA=;
-        b=LXFsJqwv//sxkC0R9yJukMqiV1nUCdo8f1ksno6jW9dDb67hsQG/KREHbGZP+FK4c7
-         6Sbh5vReEhVIawD2dLI94oFrA48rPN8R6taUxRdpfrIkt6/dXWVccTtZO5P+m8do6uKy
-         VZHs805gkZ838ftGz7fqnHf6xoZUG3XQeC71xGm/uMgUP65ivUon386zenSjVtTQ/+R4
-         D030zuEuqFAS3bwFDG5f+qujqSOElpC9MuDFz7hKkZQ5N9qlp4WETIEhMVS3hFAenDrq
-         xOVWdbm25gJmMyxRgemHmkNbxMgUivSS//mY4anXl2Ro1peIYqZ0B8GT/0c0IdejU473
-         yMrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWep8FffAj+KRzkPJ6Vrl+vjgLXrkOF6vgb+xJhf+FbidaZxur5pjXSSkmWRSKkAjQr5yKIbc2MtFVOqXw3nC5e9C6EpBpg3U6+Ckht
-X-Gm-Message-State: AOJu0YxeUjVdziZ4Eu8BryVNQn6iwrsMy8rk80QGI7UxayMe2UXq9s3h
-	u/icTRcI5YrRw1gBBqyGhOhPs9WU7/hpXtPpG6db1o3thpgH9XAIXcmjrCXDWWduiwypEWJRXvL
-	sRmJZHdJrWPNgcq1lXA5VFHgBZAx1j/XjCYDtpwf8dWbzgndAykZt4gcMf0zEQA==
-X-Received: by 2002:a17:906:cad7:b0:a7a:ac5f:bbeb with SMTP id a640c23a62f3a-a7dc4d9510emr40295466b.1.1722534402517;
-        Thu, 01 Aug 2024 10:46:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFAz8VECBqGLuxnHbBqNGh97d2AXukf5BmEUdwoQf65+BgJnzGGIwfvlOLLLnXxYF4IguemOQ==
-X-Received: by 2002:a17:906:cad7:b0:a7a:ac5f:bbeb with SMTP id a640c23a62f3a-a7dc4d9510emr40289566b.1.1722534402107;
-        Thu, 01 Aug 2024 10:46:42 -0700 (PDT)
+        bh=4T8HAVKVFIndb0epInGCIUNTvqCq3Yx0Jxliq8oDWAI=;
+        b=TUUeckQaa7kbsOgViUebwk9JG+7nQbBuns4hAY7hGLIse8OUE4p2Hz6mJJG6MxXCj2
+         IIxhQoqCb21e5qMMnRFewvkCjpwTLGuUVZxGJK2GWMDgA2b9k5qj4nDYFF0f6Nry8gZ5
+         nTwGv3dDZ+9pkGk1FYTn3DbaX6iPcMXsCre0hy6vfPSbvNg+cR3r/fCbEY3edv2aG2pq
+         1x7Hkc21ssH0JmJ3QJPQ1Qb0jqvJ2TxvZSdsSaIv4qAuxb26vMAFjjYWux8ci3B+Uq34
+         ZA82WpN8c6jspDmsw+jS6G3l63GNbZRIjusHrFbgjzlYBIIkJ/Ky2vQiitzuWPOZpAo1
+         CNlA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/JhRlbLXIj9E+bPku9xvo4Q1Elccg6+z68OH1fJXlSpvr+AbyK8VdLWSAC3EaB/SvgvDLMVLgXfk7NiRKA2XXBluffJTRExfe/IVa
+X-Gm-Message-State: AOJu0YxxX2A6kQg77dG4zheKDAwenQmRRNZA8OWiw+CRxI65bv0h0/4D
+	2PJFL5ouy0t7tRcxs087YsVS57NoxJ19Ym7J+ixiCcVXZdJZwie1zDrI7lOEc0rcmwfg3ZzAH6i
+	XTgkpxql/AOrj1eneLCZHWdsH8HV2J/53mLJcFHoz0Xf7Y1NW9UOL0Z7n8leZRw==
+X-Received: by 2002:a17:906:d551:b0:a7a:acae:341b with SMTP id a640c23a62f3a-a7dc511b140mr44581266b.9.1722534404438;
+        Thu, 01 Aug 2024 10:46:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWw7p0vbE3J4abjSBrxyeauGvjPs9Iiwjk4nqGQ0MahZpjO/0TmVoD8LvCLea8dznFqsew5g==
+X-Received: by 2002:a17:906:d551:b0:a7a:acae:341b with SMTP id a640c23a62f3a-a7dc511b140mr44575866b.9.1722534403935;
+        Thu, 01 Aug 2024 10:46:43 -0700 (PDT)
 Received: from eisenberg.fritz.box ([2001:16b8:3d4b:3000:1a1d:18ca:1d82:9859])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e83848sm5339066b.177.2024.08.01.10.46.40
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e83848sm5339066b.177.2024.08.01.10.46.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 10:46:41 -0700 (PDT)
+        Thu, 01 Aug 2024 10:46:43 -0700 (PDT)
 From: Philipp Stanner <pstanner@redhat.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Damien Le Moal <dlemoal@kernel.org>,
@@ -125,9 +125,9 @@ Cc: linux-doc@vger.kernel.org,
 	linux-pci@vger.kernel.org,
 	linux-serial@vger.kernel.org,
 	linux-sound@vger.kernel.org
-Subject: [PATCH 08/10] serial: rp2: Remove deprecated PCI functions
-Date: Thu,  1 Aug 2024 19:46:06 +0200
-Message-ID: <20240801174608.50592-9-pstanner@redhat.com>
+Subject: [PATCH 09/10] ALSA: korg1212: Replace deprecated PCI functions
+Date: Thu,  1 Aug 2024 19:46:07 +0200
+Message-ID: <20240801174608.50592-10-pstanner@redhat.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240801174608.50592-1-pstanner@redhat.com>
 References: <20240801174608.50592-1-pstanner@redhat.com>
@@ -148,42 +148,33 @@ pcim_request_all_regions()
 
 Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 ---
- drivers/tty/serial/rp2.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ sound/pci/korg1212/korg1212.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/rp2.c b/drivers/tty/serial/rp2.c
-index 4132fcff7d4e..b6b30bb956fa 100644
---- a/drivers/tty/serial/rp2.c
-+++ b/drivers/tty/serial/rp2.c
-@@ -698,7 +698,6 @@ static int rp2_probe(struct pci_dev *pdev,
- 	const struct firmware *fw;
- 	struct rp2_card *card;
- 	struct rp2_uart_port *ports;
--	void __iomem * const *bars;
- 	int rc;
+diff --git a/sound/pci/korg1212/korg1212.c b/sound/pci/korg1212/korg1212.c
+index 5c2cac201a28..b5428ac34d3b 100644
+--- a/sound/pci/korg1212/korg1212.c
++++ b/sound/pci/korg1212/korg1212.c
+@@ -2106,7 +2106,7 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci)
+         for (i=0; i<kAudioChannels; i++)
+                 korg1212->volumePhase[i] = 0;
  
- 	card = devm_kzalloc(&pdev->dev, sizeof(*card), GFP_KERNEL);
-@@ -711,13 +710,16 @@ static int rp2_probe(struct pci_dev *pdev,
- 	if (rc)
- 		return rc;
+-	err = pcim_iomap_regions_request_all(pci, 1 << 0, "korg1212");
++	err = pcim_request_all_regions(pci, "korg1212");
+ 	if (err < 0)
+ 		return err;
  
--	rc = pcim_iomap_regions_request_all(pdev, 0x03, DRV_NAME);
-+	rc = pcim_request_all_regions(pdev, DRV_NAME);
- 	if (rc)
- 		return rc;
+@@ -2128,7 +2128,9 @@ static int snd_korg1212_create(struct snd_card *card, struct pci_dev *pci)
+ 		   korg1212->iomem2, iomem2_size,
+ 		   stateName[korg1212->cardState]);
  
--	bars = pcim_iomap_table(pdev);
--	card->bar0 = bars[0];
--	card->bar1 = bars[1];
-+	card->bar0 = pcim_iomap(pdev, 0, 0);
-+	if (!card->bar0)
+-	korg1212->iobase = pcim_iomap_table(pci)[0];
++	korg1212->iobase = pcim_iomap(pci, 0, 0);
++	if (!korg1212->iobase)
 +		return -ENOMEM;
-+	card->bar1 = pcim_iomap(pdev, 1, 0);
-+	if (!card->bar1)
-+		return -ENOMEM;
- 	card->pdev = pdev;
  
- 	rp2_decode_cap(id, &card->n_ports, &card->smpte);
+ 	err = devm_request_irq(&pci->dev, pci->irq, snd_korg1212_interrupt,
+                           IRQF_SHARED,
 -- 
 2.45.2
 
