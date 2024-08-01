@@ -1,211 +1,332 @@
-Return-Path: <linux-kernel+bounces-271216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73DCA944B2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:23:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5224B944B30
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958D81C228A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:23:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C47601F259A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EAF194C61;
-	Thu,  1 Aug 2024 12:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b="BUF1CdTk"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B679C1A00FA;
+	Thu,  1 Aug 2024 12:23:25 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8F516D9A8
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D0017084F;
+	Thu,  1 Aug 2024 12:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722514980; cv=none; b=Dcz7eQsGT+lkG/0hk95jB/9wfnmmchvwYTZgT05VzTzw14T0D4anZq2yIS/pC3UeiHZ9wY9jwxyDG7qZbi0sdjOAH9kIbSccFBwm/NSAWnR285A+vKhaokXw21IxreEjpEVz9GJNvXGDo6xT0xdNiKL+fIQSyJOSHdvf+nU4bQg=
+	t=1722515005; cv=none; b=EaH2qJteNwTkk+hz+wcwMf2mh0Ttae2FU2w2gNauQ8l+BaeGNtjkPj4K2heMdUUXRMC6F0CAyMztavR8hxOjfo2vqNzGQm5mHltuw6Oq4p2CHynG2GYIFXam/TnwWXKWqWghm2xbnWxl4d74dN0ioYQ/VDpWugGGdubLVwL5hMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722514980; c=relaxed/simple;
-	bh=g5DHu5RJMTLuFdQ44MEmo0o/uTW9ufErsvnXI/72fvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJOi141tzBk5jhGpbgWj61sCZe10yn/24aC6McEaSxJ8QRDTriXC4MNa5GnQ6rvFBQRnfD2u/BxrGyBcCoRxlyIVeG2Yat35eL8glDejBmoe1Rw3bv4zPnjo7PnZ72MUySq05pvR8jz+8lzSKeUHmmP785mACNFkjoOmZv6nHjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io; spf=pass smtp.mailfrom=layalina.io; dkim=pass (2048-bit key) header.d=layalina-io.20230601.gappssmtp.com header.i=@layalina-io.20230601.gappssmtp.com header.b=BUF1CdTk; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=layalina.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=layalina.io
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so60263955e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 05:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=layalina-io.20230601.gappssmtp.com; s=20230601; t=1722514977; x=1723119777; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RqX8odwP8AmztIj6m+TamXbMYW2RHtH3tk3d8dZAmKA=;
-        b=BUF1CdTk93fQQPceWU7u8QDiily4dPM9idD9ftRCr7bPoubkNrhu82skN2JeCkWPSo
-         lCXEZQVgqNWWSPVEfNpYSS+O7W5JLfcl87F0GuP05jXeNIP0qR4GaE/9W1B+L7chdwp/
-         /Cy3tivtNth1HPdvRxZt6jXkVAZxqWs9wU+fpEN9cnW16g72eg0Zl1sbIMPlg+04V94P
-         Be9HIQ0euL4lxl+Pz6Edq3msPPLYb14cQyK7WPZse7/OWoW67r2LTv4rj3cPQp6LEu07
-         XQrPXXZtsazcv76tYk765C37a4IsEV7v7dLfJvDPrU/NuzaYX3YTXCdpHCxXf0vMO8M/
-         30CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722514977; x=1723119777;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RqX8odwP8AmztIj6m+TamXbMYW2RHtH3tk3d8dZAmKA=;
-        b=QfHDJLvV8hTJDovWXy6MpgxY0+r2jcoAIszGzF1EzKBQh8hCVBO1rfNypduuCETdAk
-         VPPx05yRGBRiznOLzUi6PvVruDgssOllaTG/j0LvLpM0AToELHUaqW6SFovuYpa5lXTK
-         Skd8sbqi/J3TQl2AZlJHn+BRxoi86Shkp/kCZVmEL71j6QmdEI2Kk5x4+mY4u7B8u+5Z
-         aDbuR3mo2gpvR2DB+lTAaq+/CE7BACXMhHCm2dqc7XzgKODBcb2bT4JlhhiAqQDahyC0
-         UqkxgvINTaCAyXIJfWfXYd5nK9/hpRe9sESkYX5RzcX07AbqB/We1AOAyjla7O5cB4fu
-         c4UQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+oXjlMNLhPFXrtAJaOUaYpA0wUbvojt9iQEaSzxeEZgqPxAhj0d6MP/VI0LbMXVNZ/TW5pa9BCc4NY+wd3EE6a0DV7tFokFlbPV1
-X-Gm-Message-State: AOJu0YxCIRFuJsK5TW4ofepT8nhZx7+LCddaMS0CsMlXYVtqCwDJVT1+
-	UR6W98Cuoz51tsIyMrP0KHYlGtRzuQ72POYNwrV5lzHVP71k3Lw47KJ3ay1FyKQ=
-X-Google-Smtp-Source: AGHT+IGeiC3fh5i9LeMzD5ltOB9+hyMcxT83VGY3ayL1RdjKTYMPQQxqGUDgDPhduntC3Ms8FJGumQ==
-X-Received: by 2002:a05:600c:512a:b0:426:6fd2:e14b with SMTP id 5b1f17b1804b1-428a9bdc8e7mr23716115e9.11.1722514976913;
-        Thu, 01 Aug 2024 05:22:56 -0700 (PDT)
-Received: from airbuntu (host81-157-90-255.range81-157.btcentralplus.com. [81.157.90.255])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282babaa2esm57062665e9.25.2024.08.01.05.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 05:22:56 -0700 (PDT)
-Date: Thu, 1 Aug 2024 13:22:55 +0100
-From: Qais Yousef <qyousef@layalina.io>
-To: Metin Kaya <metin.kaya@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Hongyan Xia <hongyan.xia2@arm.com>,
-	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
-Message-ID: <20240801122255.2vtvx3pwqgbcnefq@airbuntu>
-References: <20240728184551.42133-1-qyousef@layalina.io>
- <315f8c55-9368-4f2a-81ee-2d7dcb05bc14@arm.com>
+	s=arc-20240116; t=1722515005; c=relaxed/simple;
+	bh=l0eLHzPxT1YwLiSkUcWOVh4i1X5x+NsdGhOM2SEb9Cs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WX6xdWap0CJaNfttbV6W8JyCeh+Sy8EKdXHBCPNffjpr7XhqP43vNDEAEJcBXQZJGctoi8Bw+7cDvLuGySzOb54e/yGMPVOIGkP2uJ/Mre+33vq5UlU6/n/HmvpTyPAK0n7GB51MOGJVc61mtGo936I7hedI3ZtNYbsMbejA6PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZSfh1dmqzyPSc;
+	Thu,  1 Aug 2024 20:18:20 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id B742214041B;
+	Thu,  1 Aug 2024 20:23:19 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 1 Aug 2024 20:23:18 +0800
+Message-ID: <5cf9866c-28bc-8654-07c2-269a95219ada@huawei.com>
+Date: Thu, 1 Aug 2024 20:23:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <315f8c55-9368-4f2a-81ee-2d7dcb05bc14@arm.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.2
+Subject: Re: [PATCH 3/8] uprobes: protected uprobe lifetime with SRCU
+To: Andrii Nakryiko <andrii@kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+	<peterz@infradead.org>, <oleg@redhat.com>, <rostedt@goodmis.org>,
+	<mhiramat@kernel.org>
+CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <jolsa@kernel.org>,
+	<paulmck@kernel.org>
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240731214256.3588718-4-andrii@kernel.org>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <20240731214256.3588718-4-andrii@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 07/29/24 17:01, Metin Kaya wrote:
-> On 28/07/2024 7:45 pm, Qais Yousef wrote:
-> > Improve the interaction with cpufreq governors by making the
-> > cpufreq_update_util() calls more intentional.
-> 
-> [snip]
-> 
-> > We also ensure to ignore cpufreq udpates for sugov workers at context
-> 
-> Nit: s/udpates/updates/
-> 
-> > switch if it was prev task.
-> 
-> [snip]
-> 
-> > +static __always_inline void
-> > +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> > +{
-> > +#ifdef CONFIG_CPU_FREQ
-> > +	if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
-> > +		/* Sugov just did an update, don't be too aggressive */
-> > +		return;
-> > +	}
-> > +
-> > +	/*
-> > +	 * RT and DL should always send a freq update. But we can do some
-> > +	 * simple checks to avoid it when we know it's not necessary.
-> > +	 *
-> > +	 * iowait_boost will always trigger a freq update too.
-> > +	 *
-> > +	 * Fair tasks will only trigger an update if the root cfs_rq has
-> > +	 * decayed.
-> > +	 *
-> > +	 * Everything else should do nothing.
-> > +	 */
-> > +	switch (current->policy) {
-> > +	case SCHED_NORMAL:
-> > +	case SCHED_BATCH:
-> > +	case SCHED_IDLE:
-> > +		if (unlikely(current->in_iowait)) {
-> > +			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-> > +			return;
-> > +		}
-> > +
-> > +#ifdef CONFIG_SMP
-> > +		/*
-> > +		 * Send an update if we switched from RT or DL as they tend to
-> > +		 * boost the CPU and we are likely able to reduce the freq now.
-> > +		 */
-> > +		rq->cfs.decayed |= prev && (rt_policy(prev->policy) || dl_policy(prev->policy));
-> > +
-> > +		if (unlikely(rq->cfs.decayed)) {
-> > +			rq->cfs.decayed = false;
-> > +			cpufreq_update_util(rq, 0);
-> > +			return;
-> > +		}
-> > +#else
-> > +		cpufreq_update_util(rq, 0);
-> > +#endif
-> > +		return;		/* ! */
-> > +	case SCHED_FIFO:
-> > +	case SCHED_RR:
-> > +		if (prev && rt_policy(prev->policy)) {
-> > +#ifdef CONFIG_UCLAMP_TASK
-> > +			unsigned long curr_uclamp_min = uclamp_eff_value(current, UCLAMP_MIN);
-> > +			unsigned long prev_uclamp_min = uclamp_eff_value(prev, UCLAMP_MIN);
-> > +
-> > +			if (curr_uclamp_min == prev_uclamp_min)
-> > +#endif
-> > +				return;
-> > +		}
-> > +#ifdef CONFIG_SMP
-> > +		/* Stopper task masquerades as RT */
-> > +		if (unlikely(current->sched_class == &stop_sched_class))
-> > +			return;
-> > +#endif
-> > +		cpufreq_update_util(rq, SCHED_CPUFREQ_FORCE_UPDATE);
-> > +		return;		/* ! */
-> > +	case SCHED_DEADLINE:
-> > +		/*
-> > +		 * This is handled at enqueue to avoid breaking DL bandwidth
-> > +		 * rules when multiple DL tasks are running on the same CPU.
-> > +		 * Deferring till context switch here could mean the bandwidth
-> > +		 * calculations would be broken to ensure all the DL tasks meet
-> > +		 * their deadlines.
-> > +		 */
-> > +		return;		/* ! */
-> > +	default:
-> > +		return;		/* ! */
-> > +	}
-> 
-> Nit: would it be more conventional to replace marked `return` statements
-> above with `break`s?
 
-Thanks Metin. I think return and break are both fine here.
 
+在 2024/8/1 5:42, Andrii Nakryiko 写道:
+> To avoid unnecessarily taking a (brief) refcount on uprobe during
+> breakpoint handling in handle_swbp for entry uprobes, make find_uprobe()
+> not take refcount, but protect the lifetime of a uprobe instance with
+> RCU. This improves scalability, as refcount gets quite expensive due to
+> cache line bouncing between multiple CPUs.
 > 
-> > +#endif
-> > +}
-> > +
-> > +/*
-> > + * Call when currently running task had an attribute change that requires
-> > + * an immediate cpufreq update.
-> > + */
-> > +void update_cpufreq_current(struct rq *rq)
-> > +{
-> > +	__update_cpufreq_ctx_switch(rq, NULL);
-> > +}
-> > +
+> Specifically, we utilize our own uprobe-specific SRCU instance for this
+> RCU protection. put_uprobe() will delay actual kfree() using call_srcu().
 > 
-> [snip]
+> For now, uretprobe and single-stepping handling will still acquire
+> refcount as necessary. We'll address these issues in follow up patches
+> by making them use SRCU with timeout.
 > 
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 93 ++++++++++++++++++++++++-----------------
+>  1 file changed, 55 insertions(+), 38 deletions(-)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 23dde3ec5b09..6d5c3f4b210f 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -41,6 +41,8 @@ static struct rb_root uprobes_tree = RB_ROOT;
+>  
+>  static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
+>  
+> +DEFINE_STATIC_SRCU(uprobes_srcu);
+> +
+>  #define UPROBES_HASH_SZ	13
+>  /* serialize uprobe->pending_list */
+>  static struct mutex uprobes_mmap_mutex[UPROBES_HASH_SZ];
+> @@ -59,6 +61,7 @@ struct uprobe {
+>  	struct list_head	pending_list;
+>  	struct uprobe_consumer	*consumers;
+>  	struct inode		*inode;		/* Also hold a ref to inode */
+> +	struct rcu_head		rcu;
+>  	loff_t			offset;
+>  	loff_t			ref_ctr_offset;
+>  	unsigned long		flags;
+> @@ -612,6 +615,13 @@ static inline bool uprobe_is_active(struct uprobe *uprobe)
+>  	return !RB_EMPTY_NODE(&uprobe->rb_node);
+>  }
+>  
+> +static void uprobe_free_rcu(struct rcu_head *rcu)
+> +{
+> +	struct uprobe *uprobe = container_of(rcu, struct uprobe, rcu);
+> +
+> +	kfree(uprobe);
+> +}
+> +
+>  static void put_uprobe(struct uprobe *uprobe)
+>  {
+>  	if (!refcount_dec_and_test(&uprobe->ref))
+> @@ -632,6 +642,8 @@ static void put_uprobe(struct uprobe *uprobe)
+>  	mutex_lock(&delayed_uprobe_lock);
+>  	delayed_uprobe_remove(uprobe, NULL);
+>  	mutex_unlock(&delayed_uprobe_lock);
+> +
+> +	call_srcu(&uprobes_srcu, &uprobe->rcu, uprobe_free_rcu);
+>  }
+>  
+>  static __always_inline
+> @@ -673,33 +685,25 @@ static inline int __uprobe_cmp(struct rb_node *a, const struct rb_node *b)
+>  	return uprobe_cmp(u->inode, u->offset, __node_2_uprobe(b));
+>  }
+>  
+> -static struct uprobe *__find_uprobe(struct inode *inode, loff_t offset)
+> +/*
+> + * Assumes being inside RCU protected region.
+> + * No refcount is taken on returned uprobe.
+> + */
+> +static struct uprobe *find_uprobe_rcu(struct inode *inode, loff_t offset)
+>  {
+>  	struct __uprobe_key key = {
+>  		.inode = inode,
+>  		.offset = offset,
+>  	};
+> -	struct rb_node *node = rb_find(&key, &uprobes_tree, __uprobe_cmp_key);
+> -
+> -	if (node)
+> -		return try_get_uprobe(__node_2_uprobe(node));
+> +	struct rb_node *node;
+>  
+> -	return NULL;
+> -}
+> -
+> -/*
+> - * Find a uprobe corresponding to a given inode:offset
+> - * Acquires uprobes_treelock
+> - */
+> -static struct uprobe *find_uprobe(struct inode *inode, loff_t offset)
+> -{
+> -	struct uprobe *uprobe;
+> +	lockdep_assert(srcu_read_lock_held(&uprobes_srcu));
+>  
+>  	read_lock(&uprobes_treelock);
+> -	uprobe = __find_uprobe(inode, offset);
+> +	node = rb_find(&key, &uprobes_tree, __uprobe_cmp_key);
+>  	read_unlock(&uprobes_treelock);
+>  
+> -	return uprobe;
+> +	return node ? __node_2_uprobe(node) : NULL;
+>  }
+>  
+>  /*
+> @@ -1073,10 +1077,10 @@ register_for_each_vma(struct uprobe *uprobe, struct uprobe_consumer *new)
+>  			goto free;
+>  		/*
+>  		 * We take mmap_lock for writing to avoid the race with
+> -		 * find_active_uprobe() which takes mmap_lock for reading.
+> +		 * find_active_uprobe_rcu() which takes mmap_lock for reading.
+>  		 * Thus this install_breakpoint() can not make
+> -		 * is_trap_at_addr() true right after find_uprobe()
+> -		 * returns NULL in find_active_uprobe().
+> +		 * is_trap_at_addr() true right after find_uprobe_rcu()
+> +		 * returns NULL in find_active_uprobe_rcu().
+>  		 */
+>  		mmap_write_lock(mm);
+>  		vma = find_vma(mm, info->vaddr);
+> @@ -1885,9 +1889,13 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+>  		return;
+>  	}
+>  
+> +	/* we need to bump refcount to store uprobe in utask */
+> +	if (!try_get_uprobe(uprobe))
+> +		return;
+> +
+>  	ri = kmalloc(sizeof(struct return_instance), GFP_KERNEL);
+>  	if (!ri)
+> -		return;
+> +		goto fail;
+>  
+>  	trampoline_vaddr = uprobe_get_trampoline_vaddr();
+>  	orig_ret_vaddr = arch_uretprobe_hijack_return_addr(trampoline_vaddr, regs);
+> @@ -1914,11 +1922,7 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+>  		}
+>  		orig_ret_vaddr = utask->return_instances->orig_ret_vaddr;
+>  	}
+> -	 /*
+> -	  * uprobe's refcnt is positive, held by caller, so it's safe to
+> -	  * unconditionally bump it one more time here
+> -	  */
+> -	ri->uprobe = get_uprobe(uprobe);
+> +	ri->uprobe = uprobe;
+>  	ri->func = instruction_pointer(regs);
+>  	ri->stack = user_stack_pointer(regs);
+>  	ri->orig_ret_vaddr = orig_ret_vaddr;
+> @@ -1929,8 +1933,9 @@ static void prepare_uretprobe(struct uprobe *uprobe, struct pt_regs *regs)
+>  	utask->return_instances = ri;
+>  
+>  	return;
+> - fail:
+> +fail:
+>  	kfree(ri);
+> +	put_uprobe(uprobe);
+>  }
+>  
+>  /* Prepare to single-step probed instruction out of line. */
+> @@ -1945,9 +1950,14 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+>  	if (!utask)
+>  		return -ENOMEM;
+>  
+> +	if (!try_get_uprobe(uprobe))
+> +		return -EINVAL;
+> +
+>  	xol_vaddr = xol_get_insn_slot(uprobe);
+> -	if (!xol_vaddr)
+> -		return -ENOMEM;
+> +	if (!xol_vaddr) {
+> +		err = -ENOMEM;
+> +		goto err_out;
+> +	}
+>  
+>  	utask->xol_vaddr = xol_vaddr;
+>  	utask->vaddr = bp_vaddr;
+> @@ -1955,12 +1965,15 @@ pre_ssout(struct uprobe *uprobe, struct pt_regs *regs, unsigned long bp_vaddr)
+>  	err = arch_uprobe_pre_xol(&uprobe->arch, regs);
+>  	if (unlikely(err)) {
+>  		xol_free_insn_slot(current);
+> -		return err;
+> +		goto err_out;
+>  	}
+>  
+>  	utask->active_uprobe = uprobe;
+>  	utask->state = UTASK_SSTEP;
+>  	return 0;
+> +err_out:
+> +	put_uprobe(uprobe);
+> +	return err;
+>  }
+>  
+>  /*
+> @@ -2044,7 +2057,8 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+>  	return is_trap_insn(&opcode);
+>  }
+>  
+> -static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+> +/* assumes being inside RCU protected region */
+> +static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swbp)
+>  {
+>  	struct mm_struct *mm = current->mm;
+>  	struct uprobe *uprobe = NULL;
+> @@ -2057,7 +2071,7 @@ static struct uprobe *find_active_uprobe(unsigned long bp_vaddr, int *is_swbp)
+>  			struct inode *inode = file_inode(vma->vm_file);
+>  			loff_t offset = vaddr_to_offset(vma, bp_vaddr);
+>  
+> -			uprobe = find_uprobe(inode, offset);
+> +			uprobe = find_uprobe_rcu(inode, offset);
+>  		}
+>  
+>  		if (!uprobe)
+> @@ -2201,13 +2215,15 @@ static void handle_swbp(struct pt_regs *regs)
+>  {
+>  	struct uprobe *uprobe;
+>  	unsigned long bp_vaddr;
+> -	int is_swbp;
+> +	int is_swbp, srcu_idx;
+>  
+>  	bp_vaddr = uprobe_get_swbp_addr(regs);
+>  	if (bp_vaddr == uprobe_get_trampoline_vaddr())
+>  		return uprobe_handle_trampoline(regs);
+>  
+> -	uprobe = find_active_uprobe(bp_vaddr, &is_swbp);
+> +	srcu_idx = srcu_read_lock(&uprobes_srcu);
+> +
+> +	uprobe = find_active_uprobe_rcu(bp_vaddr, &is_swbp);
+>  	if (!uprobe) {
+>  		if (is_swbp > 0) {
+>  			/* No matching uprobe; signal SIGTRAP. */
+> @@ -2223,6 +2239,7 @@ static void handle_swbp(struct pt_regs *regs)
+>  			 */
+>  			instruction_pointer_set(regs, bp_vaddr);
+>  		}
+> +		srcu_read_unlock(&uprobes_srcu, srcu_idx);
+>  		return;
+>  	}
+>  
+> @@ -2258,12 +2275,12 @@ static void handle_swbp(struct pt_regs *regs)
+>  	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+>  		goto out;
+>  
+> -	if (!pre_ssout(uprobe, regs, bp_vaddr))
+> -		return;
+> +	if (pre_ssout(uprobe, regs, bp_vaddr))
+> +		goto out;
+>  
+
+Regardless what pre_ssout() returns, it always reach the label 'out', so the
+if block is unnecessary.
+
+
+> -	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
+>  out:
+> -	put_uprobe(uprobe);
+> +	/* arch_uprobe_skip_sstep() succeeded, or restart if can't singlestep */
+> +	srcu_read_unlock(&uprobes_srcu, srcu_idx);
+>  }
+>  
+>  /*
+
+-- 
+BR
+Liao, Chang
 
