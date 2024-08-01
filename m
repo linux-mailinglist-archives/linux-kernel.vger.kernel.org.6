@@ -1,327 +1,122 @@
-Return-Path: <linux-kernel+bounces-270888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3EF9446A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:32:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084A79447B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 498C8282DA4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:32:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8519DB25587
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468F416E885;
-	Thu,  1 Aug 2024 08:32:21 +0000 (UTC)
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA16189B9A;
+	Thu,  1 Aug 2024 09:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XDEZAyHz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A4621396;
-	Thu,  1 Aug 2024 08:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB62188015;
+	Thu,  1 Aug 2024 09:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722501140; cv=none; b=RLKKOu89JbON1WYatYBdlsKv1LHYmYwDrpHj8YWaYEavOqDe6MFPX36OfFzYGJwwLfgT0QEtePwM9jkgKvGBQbQtvm0647p/CMknBfIC8TWhW9BU4xM+ADwYKsWcSvL3hfPUfMeMnbUYt9KvRTWNSKqX/+xEMke6cNFJ2lKYusE=
+	t=1722503524; cv=none; b=oaLpcpQNXv/4DQJY+bXGZlp4+dXW76u/B/lKRI1CjOpWBhewYzumqA+u1zu+AjrkYZ1qi0T2nxzhKVGZQ3q6U4EKZKvFZ/LgTHFeJL5g2f6+7058j8jJc0qvYMFGjiOm8yo9OJQD9EdAkRpf9ogiwXABAgDl3oe9LRw6nK+O+go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722501140; c=relaxed/simple;
-	bh=2PJMnmiY0foq0p7zL2SpmDLMW72Ys7eTZYZxEyHF8Eg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DZfOfV/kBZFJM89SaYzCp/k+xGxyeJehV/6HQar7H3grER2wUYZpuVatcoub2p5TTYtDsu7AfYJg1dTDec4kf1BJY7SyLKPqeozCtzUEZPIXIwCyAhOQ0kj9Nua/K9pSPFSoJCSY1XN2zGYOL7Egsex/DB/wsXlYhnvoC49A9zk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1fc4fcbb131so59046695ad.3;
-        Thu, 01 Aug 2024 01:32:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722501138; x=1723105938;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XCq1orT8o9b0MZo32P366JKaOeFvtNO9/K9vJiTqSy8=;
-        b=U6W3W/sIKjHs2HPQ+dsPJfWFMuM8SGR1+c/kLu2E/Rwjf9Z+h0PWUflZ/C9/sCdFIg
-         ta9F286qu7oOC7yimckYxYNQnJy/0Jcg70ug3s3WPLw9AAITBlDqd90lSOGzeUtZ4E8+
-         gzdzouRIWlZb/zAAsFvKGXLNIOG7XNcdmboXYrjZ8L4HAymKw7zhrFPiiBbPbLMTWsfp
-         f8wyLnDMVMP4ZvrWavT1J3BV2nHpEDsxl/zSnGegPbRnX3CgnDukzUxJ0byNTZUKP61C
-         E4onm8Pnr5TwRjuC3tzv95dvA9b8ZjAyQeOcX+HcafDCf+Y6+7rszdkoC95gdFNCR9Mz
-         KzHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjhyrIPhZ6KpWtSTYRq8gFkjTWf6TCYWJudBqo0vkc+7BgOoxWl+qoBH7N1v4l/PUptwCs5ouhF6CT8mw+1/ifCkpZJlQp5wO7l/gC
-X-Gm-Message-State: AOJu0YwDyvbAXeJjv4ixsHgTRCBFW1dMJTCtCuMK9Ua9xTJFvV0YG7nB
-	n8G3DkGYJ2WI64dt3U0JYinkBGwND6tV46kgx2EzyxJLBrNlsFgDZv7t74rAGgw=
-X-Google-Smtp-Source: AGHT+IHMK9O1lRU2nMPY/V5XcDos4bau2+dJ2hzHxnOLeIuBJVeCTE6Of4+zudXAGqkfoGwANBfplA==
-X-Received: by 2002:a17:903:2304:b0:1fd:93d2:fb76 with SMTP id d9443c01a7336-1ff4cea5725mr22495915ad.31.1722501137825;
-        Thu, 01 Aug 2024 01:32:17 -0700 (PDT)
-Received: from localhost.localdomain ([111.48.58.10])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fb0fsm133288365ad.7.2024.08.01.01.32.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 01:32:17 -0700 (PDT)
-From: Xueqin Luo <luoxueqin@kylinos.cn>
-To: rafael@kernel.org,
-	pavel@ucw.cz,
-	len.brown@intel.com
-Cc: linux-pm@vger.kernel.org,
-	xiongxin@kylinos.cn,
-	linux-kernel@vger.kernel.org,
-	Xueqin Luo <luoxueqin@kylinos.cn>
-Subject: [PATCH v3 2/2] PM: Use sysfs_emit() and sysfs_emit_at() in "show" functions
-Date: Thu,  1 Aug 2024 16:31:56 +0800
-Message-Id: <20240801083156.2513508-3-luoxueqin@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240801083156.2513508-1-luoxueqin@kylinos.cn>
-References: <20240801083156.2513508-1-luoxueqin@kylinos.cn>
+	s=arc-20240116; t=1722503524; c=relaxed/simple;
+	bh=SOc8glK77E54IHi0aYmi1becvJHvdKsCHlBtpj4BVg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TKOTKo0CcD4T/dN6ycOxp5qiaUI33VlgADHAx0IzoTftW3G+nZmxCgQsghpRKMDVfZPy0UxK1milyosFRogHRnT5YiIFQmApyvDfQwEsWLzbHEDayiphgKX3ETOGhk6LgW4ssjTygQClG3dBgIfbz4/wUxO2fQGDU6pPD5TM+1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XDEZAyHz; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722503524; x=1754039524;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=SOc8glK77E54IHi0aYmi1becvJHvdKsCHlBtpj4BVg4=;
+  b=XDEZAyHz+U1OzWJjrf/uz6lLh0kxEu1LzZ1+NisO6C3fZo7VVCtG1Ut7
+   e0FvpvxrvJWAJa2jhrylUkXZD/rCrxMp7aR42X1SBgGcMvrx/0Ev6CRUQ
+   w4XeGCbBXLAsCf0fXoL0zEXxe8B5vOlFf3VhHDfioQdHd9b93sBGpvs+8
+   OApxiP2DUyOqKLkMb3pSO5qt2+JwoOadCjuJLWBNYNf6CvRpKrzohCD1C
+   pGTBTi6wWmt6c6dxu7Azzd+i973m11CGUB4Aja5a4Xx9ozAP7eVEcTPTd
+   Lx/RZu0Rdad9MIf1vmmmwgPBF4nmhGKX2sqX3hULjJGUceCq7iFwrS/aM
+   A==;
+X-CSE-ConnectionGUID: OXG1RadZRayaCcV9XaIeOw==
+X-CSE-MsgGUID: FJHr1kMcSYyGD+PoMqLv6w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383558"
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="20383558"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:50 -0700
+X-CSE-ConnectionGUID: 5bTR/KBmSv+7VMJZROiJzw==
+X-CSE-MsgGUID: W4mT9NNxSUOjFGSViYJGBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="59089923"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:36 -0700
+Message-ID: <abc9f2b9-06c6-4df7-8db8-c2c6e8aaee59@linux.intel.com>
+Date: Thu, 1 Aug 2024 10:33:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 16/34] ASoC: qcom: qdsp6: q6afe: Increase APR timeout
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-17-quic_wcheng@quicinc.com>
+Content-Language: en-US
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240801011730.4797-17-quic_wcheng@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-As Documentation/filesystems/sysfs.rst suggested,
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
 
-No functional change intended.
 
-Signed-off-by: Xueqin Luo <luoxueqin@kylinos.cn>
----
- kernel/power/main.c | 76 +++++++++++++++++++++++----------------------
- 1 file changed, 39 insertions(+), 37 deletions(-)
+On 8/1/24 03:17, Wesley Cheng wrote:
+> For USB offloading situations, the AFE port start command will result in a
+> QMI handshake between the Q6DSP and the main processor.  Depending on if
+> the USB bus is suspended, this routine would require more time to complete,
+> as resuming the USB bus has some overhead associated with it.  Increase the
+> timeout to 3s to allow for sufficient time for the USB QMI stream enable
+> handshake to complete.
+> 
+> Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> ---
+>  sound/soc/qcom/qdsp6/q6afe.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/sound/soc/qcom/qdsp6/q6afe.c b/sound/soc/qcom/qdsp6/q6afe.c
+> index 948007955934..452d7e8b9b30 100644
+> --- a/sound/soc/qcom/qdsp6/q6afe.c
+> +++ b/sound/soc/qcom/qdsp6/q6afe.c
+> @@ -366,7 +366,7 @@
+>  #define AFE_API_VERSION_SLOT_MAPPING_CONFIG	1
+>  #define AFE_API_VERSION_CODEC_DMA_CONFIG	1
+>  
+> -#define TIMEOUT_MS 1000
+> +#define TIMEOUT_MS 3000
 
-diff --git a/kernel/power/main.c b/kernel/power/main.c
-index a9e0693aaf69..6254814d4817 100644
---- a/kernel/power/main.c
-+++ b/kernel/power/main.c
-@@ -115,7 +115,7 @@ int pm_async_enabled = 1;
- static ssize_t pm_async_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
--	return sprintf(buf, "%d\n", pm_async_enabled);
-+	return sysfs_emit(buf, "%d\n", pm_async_enabled);
- }
- 
- static ssize_t pm_async_store(struct kobject *kobj, struct kobj_attribute *attr,
-@@ -139,7 +139,7 @@ power_attr(pm_async);
- static ssize_t mem_sleep_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			      char *buf)
- {
--	char *s = buf;
-+	ssize_t count = 0;
- 	suspend_state_t i;
- 
- 	for (i = PM_SUSPEND_MIN; i < PM_SUSPEND_MAX; i++) {
-@@ -149,17 +149,17 @@ static ssize_t mem_sleep_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			const char *label = mem_sleep_states[i];
- 
- 			if (mem_sleep_current == i)
--				s += sprintf(s, "[%s] ", label);
-+				count += sysfs_emit_at(buf, count, "[%s] ", label);
- 			else
--				s += sprintf(s, "%s ", label);
-+				count += sysfs_emit_at(buf, count, "%s ", label);
- 		}
- 	}
- 
- 	/* Convert the last space to a newline if needed. */
--	if (s != buf)
--		*(s-1) = '\n';
-+	if (count > 0)
-+		buf[count - 1] = '\n';
- 
--	return (s - buf);
-+	return count;
- }
- 
- static suspend_state_t decode_suspend_state(const char *buf, size_t n)
-@@ -220,7 +220,7 @@ bool sync_on_suspend_enabled = !IS_ENABLED(CONFIG_SUSPEND_SKIP_SYNC);
- static ssize_t sync_on_suspend_show(struct kobject *kobj,
- 				   struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%d\n", sync_on_suspend_enabled);
-+	return sysfs_emit(buf, "%d\n", sync_on_suspend_enabled);
- }
- 
- static ssize_t sync_on_suspend_store(struct kobject *kobj,
-@@ -257,22 +257,22 @@ static const char * const pm_tests[__TEST_AFTER_LAST] = {
- static ssize_t pm_test_show(struct kobject *kobj, struct kobj_attribute *attr,
- 				char *buf)
- {
--	char *s = buf;
-+	ssize_t count = 0;
- 	int level;
- 
- 	for (level = TEST_FIRST; level <= TEST_MAX; level++)
- 		if (pm_tests[level]) {
- 			if (level == pm_test_level)
--				s += sprintf(s, "[%s] ", pm_tests[level]);
-+				count += sysfs_emit_at(buf, count, "[%s] ", pm_tests[level]);
- 			else
--				s += sprintf(s, "%s ", pm_tests[level]);
-+				count += sysfs_emit_at(buf, count, "%s ", pm_tests[level]);
- 		}
- 
--	if (s != buf)
--		/* convert the last space to a newline */
--		*(s-1) = '\n';
-+	/* Convert the last space to a newline if needed. */
-+	if (count > 0)
-+		buf[count - 1] = '\n';
- 
--	return (s - buf);
-+	return count;
- }
- 
- static ssize_t pm_test_store(struct kobject *kobj, struct kobj_attribute *attr,
-@@ -390,7 +390,7 @@ static const char * const suspend_step_names[] = {
- static ssize_t _name##_show(struct kobject *kobj,		\
- 		struct kobj_attribute *attr, char *buf)		\
- {								\
--	return sprintf(buf, format_str, suspend_stats._name);	\
-+	return sysfs_emit(buf, format_str, suspend_stats._name);\
- }								\
- static struct kobj_attribute _name = __ATTR_RO(_name)
- 
-@@ -404,7 +404,7 @@ suspend_attr(max_hw_sleep, "%llu\n");
- static ssize_t _name##_show(struct kobject *kobj,		\
- 		struct kobj_attribute *attr, char *buf)		\
- {								\
--	return sprintf(buf, "%u\n",				\
-+	return sysfs_emit(buf, "%u\n",				\
- 		       suspend_stats.step_failures[step-1]);	\
- }								\
- static struct kobj_attribute _name = __ATTR_RO(_name)
-@@ -428,7 +428,7 @@ static ssize_t last_failed_dev_show(struct kobject *kobj,
- 	index %= REC_FAILED_NUM;
- 	last_failed_dev = suspend_stats.failed_devs[index];
- 
--	return sprintf(buf, "%s\n", last_failed_dev);
-+	return sysfs_emit(buf, "%s\n", last_failed_dev);
- }
- static struct kobj_attribute last_failed_dev = __ATTR_RO(last_failed_dev);
- 
-@@ -442,7 +442,7 @@ static ssize_t last_failed_errno_show(struct kobject *kobj,
- 	index %= REC_FAILED_NUM;
- 	last_failed_errno = suspend_stats.errno[index];
- 
--	return sprintf(buf, "%d\n", last_failed_errno);
-+	return sysfs_emit(buf, "%d\n", last_failed_errno);
- }
- static struct kobj_attribute last_failed_errno = __ATTR_RO(last_failed_errno);
- 
-@@ -456,7 +456,7 @@ static ssize_t last_failed_step_show(struct kobject *kobj,
- 	index %= REC_FAILED_NUM;
- 	step = suspend_stats.failed_steps[index];
- 
--	return sprintf(buf, "%s\n", suspend_step_names[step]);
-+	return sysfs_emit(buf, "%s\n", suspend_step_names[step]);
- }
- static struct kobj_attribute last_failed_step = __ATTR_RO(last_failed_step);
- 
-@@ -571,7 +571,7 @@ bool pm_print_times_enabled;
- static ssize_t pm_print_times_show(struct kobject *kobj,
- 				   struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%d\n", pm_print_times_enabled);
-+	return sysfs_emit(buf, "%d\n", pm_print_times_enabled);
- }
- 
- static ssize_t pm_print_times_store(struct kobject *kobj,
-@@ -604,7 +604,7 @@ static ssize_t pm_wakeup_irq_show(struct kobject *kobj,
- 	if (!pm_wakeup_irq())
- 		return -ENODATA;
- 
--	return sprintf(buf, "%u\n", pm_wakeup_irq());
-+	return sysfs_emit(buf, "%u\n", pm_wakeup_irq());
- }
- 
- power_attr_ro(pm_wakeup_irq);
-@@ -620,7 +620,7 @@ EXPORT_SYMBOL_GPL(pm_debug_messages_should_print);
- static ssize_t pm_debug_messages_show(struct kobject *kobj,
- 				      struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%d\n", pm_debug_messages_on);
-+	return sysfs_emit(buf, "%d\n", pm_debug_messages_on);
- }
- 
- static ssize_t pm_debug_messages_store(struct kobject *kobj,
-@@ -668,21 +668,23 @@ struct kobject *power_kobj;
- static ssize_t state_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			  char *buf)
- {
--	char *s = buf;
-+	ssize_t count = 0;
- #ifdef CONFIG_SUSPEND
- 	suspend_state_t i;
- 
- 	for (i = PM_SUSPEND_MIN; i < PM_SUSPEND_MAX; i++)
- 		if (pm_states[i])
--			s += sprintf(s,"%s ", pm_states[i]);
-+			count += sysfs_emit_at(buf, count, "%s ", pm_states[i]);
- 
- #endif
- 	if (hibernation_available())
--		s += sprintf(s, "disk ");
--	if (s != buf)
--		/* convert the last space to a newline */
--		*(s-1) = '\n';
--	return (s - buf);
-+		count += sysfs_emit_at(buf, count, "disk ");
-+
-+	/* Convert the last space to a newline if needed. */
-+	if (count > 0)
-+		buf[count - 1] = '\n';
-+
-+	return count;
- }
- 
- static suspend_state_t decode_state(const char *buf, size_t n)
-@@ -782,7 +784,7 @@ static ssize_t wakeup_count_show(struct kobject *kobj,
- 	unsigned int val;
- 
- 	return pm_get_wakeup_count(&val, true) ?
--		sprintf(buf, "%u\n", val) : -EINTR;
-+		sysfs_emit(buf, "%u\n", val) : -EINTR;
- }
- 
- static ssize_t wakeup_count_store(struct kobject *kobj,
-@@ -824,17 +826,17 @@ static ssize_t autosleep_show(struct kobject *kobj,
- 	suspend_state_t state = pm_autosleep_state();
- 
- 	if (state == PM_SUSPEND_ON)
--		return sprintf(buf, "off\n");
-+		return sysfs_emit(buf, "off\n");
- 
- #ifdef CONFIG_SUSPEND
- 	if (state < PM_SUSPEND_MAX)
--		return sprintf(buf, "%s\n", pm_states[state] ?
-+		return sysfs_emit(buf, "%s\n", pm_states[state] ?
- 					pm_states[state] : "error");
- #endif
- #ifdef CONFIG_HIBERNATION
--	return sprintf(buf, "disk\n");
-+	return sysfs_emit(buf, "disk\n");
- #else
--	return sprintf(buf, "error");
-+	return sysfs_emit(buf, "error\n");
- #endif
- }
- 
-@@ -903,7 +905,7 @@ int pm_trace_enabled;
- static ssize_t pm_trace_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			     char *buf)
- {
--	return sprintf(buf, "%d\n", pm_trace_enabled);
-+	return sysfs_emit(buf, "%d\n", pm_trace_enabled);
- }
- 
- static ssize_t
-@@ -940,7 +942,7 @@ power_attr_ro(pm_trace_dev_match);
- static ssize_t pm_freeze_timeout_show(struct kobject *kobj,
- 				      struct kobj_attribute *attr, char *buf)
- {
--	return sprintf(buf, "%u\n", freeze_timeout_msecs);
-+	return sysfs_emit(buf, "%u\n", freeze_timeout_msecs);
- }
- 
- static ssize_t pm_freeze_timeout_store(struct kobject *kobj,
--- 
-2.25.1
+Surprising that 1s is not enough to resume a bus, and conversely is 3s
+enough then if the overhead is so significant?
+It looks like either too much or too little...
+
+>  #define AFE_CMD_RESP_AVAIL	0
+>  #define AFE_CMD_RESP_NONE	1
+>  #define AFE_CLK_TOKEN		1024
 
 
