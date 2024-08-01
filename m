@@ -1,232 +1,114 @@
-Return-Path: <linux-kernel+bounces-270788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF7E394454A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:18:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBED94454B
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E4B9B22628
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:17:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4822B1F216CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5B7F166313;
-	Thu,  1 Aug 2024 07:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qLT3he8/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1D416DC18;
+	Thu,  1 Aug 2024 07:17:38 +0000 (UTC)
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0CC45014;
-	Thu,  1 Aug 2024 07:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BCE016D4DD
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722496644; cv=none; b=UmTuzjM0pBAF69yLmi/MCHmzzIblwQOIVdcieYUvoGIlBaRkfSEZaoiGRmXgG1//7o16iHfBGST/en4vgYV3FTzTb+kwIcEjKEqEGL1YH3BEHA6vbTAyRRs86RFrZt4djkVPHUPyG6zmUrB0lR9NJsXw8QYAydcu4mMNjmyPMgA=
+	t=1722496657; cv=none; b=fCQpvuw+dDBIDpYbATBCGquMsuxcViIWg9rDmurzpfcIrbUMIVbNJwVT8bNDfn08L+YCw6lv0kBv2OQfkoDB5XQ9v16P8sCN9JtCfFFQwtLdoBykULXuTaZTHVUQKXpZVXq28Ostt1L/zIi7c94/tNXiU5hP6cF2GILzdTO+PqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722496644; c=relaxed/simple;
-	bh=Xg5mlr03dB9zqorap7MmuQiw/39hKt+kzBCI4fK8CbY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m8hjOIB1PAftSYHqM+YrXOXwIMQwGtpsqYPQDmK/EKTVV/u6+Dx/oAZjtNoB3SdbqIvxgA6Bpc3ChIgbs/ONS/ijoYeao1cQAT3cpFu1rsA/n1pfTTfdpVDN4ib+C4CbGLuJ7c44DmvZKJ7fRVZ+8q1b4L5IC92rIKaHWSx4jqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qLT3he8/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47160FRb015738;
-	Thu, 1 Aug 2024 07:17:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=Iy96R6YPlYX6sX54505MS550vCt
-	DrxElTTXW961xGBc=; b=qLT3he8/H5+aF/XAREFn1tr+WF/nb8IeYEjKxMYkZJ7
-	5KtAwdH1uoBD335BwUcd19dKAL0RjePMz8L5TTacWXWKHNbhrhnS8ZDz2ZD2vIhe
-	WI85qlIBOfUtjPyuPhpBhZlCy1kXngHrBaKe+L+mrujYtB6uvwSR/JiQpYSLPTAH
-	KrLDoVEsRngGrgf2H582LA1G/NoRzwvJqHFnQhbm7ATNwC5TU/KGXye56j2XkiwY
-	aMSaNzNA1NUakBLrtZzGpYJFNXdB243IgNnUvABwIiCmt6Ts+VFeXfvNHWQaXjnO
-	ltF4+jI7MKs0GbUPkMUJjMd/jxG/PUXMszsZjR8kJuQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qyumrtun-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 07:17:00 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4717Gxwx017259;
-	Thu, 1 Aug 2024 07:16:59 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40qyumrtuk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 07:16:59 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47151JPw018770;
-	Thu, 1 Aug 2024 07:16:58 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nc7q0dj3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 07:16:58 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4717GsIO43647248
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 1 Aug 2024 07:16:56 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E5B62004E;
-	Thu,  1 Aug 2024 07:16:54 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4449E20040;
-	Thu,  1 Aug 2024 07:16:52 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu,  1 Aug 2024 07:16:52 +0000 (GMT)
-Date: Thu, 1 Aug 2024 12:46:49 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
-        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
-        yi.zhang@huawei.com, yangerkun@huawei.com,
-        Baokun Li <libaokun1@huawei.com>
-Subject: Re: [PATCH 09/20] ext4: get rid of ppath in get_ext_path()
-Message-ID: <Zqs2YYSZ2fPBAUw1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
- <20240710040654.1714672-10-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1722496657; c=relaxed/simple;
+	bh=dLkW0E/ybwTjAaGBfgZp74Utqgah0iGpllA3fNq0MK8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qeL7D5yaLvvrfvMmf3+AoPlfUZFz70We26QFjlNLjlrIjNnu2ggFWW4Z/Q5Qrq/QneJn2v+ZazLu2d7AclHmzzuazP9C/G5jEubjg+DTqec9Xl5L5pjz4vXbwyIWyjjWIrG3VlUMbd9tbES2KrlQT3PXP50BIRlImf0PRfWmJck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
+Received: from inp1wst083.omp.ru (81.22.207.138) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 1 Aug
+ 2024 10:17:19 +0300
+From: Roman Smirnov <r.smirnov@omp.ru>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC: Roman Smirnov <r.smirnov@omp.ru>,
+	<linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>, Karina Yankevich <k.yankevich@omp.ru>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH] f2fs: file: add checks to f2fs_ioc_flush_device()
+Date: Thu, 1 Aug 2024 10:17:07 +0300
+Message-ID: <20240801071707.8296-1-r.smirnov@omp.ru>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710040654.1714672-10-libaokun@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: IT_Ofd4M_5xu2Xhk3nDkz0Djvt9DL_6b
-X-Proofpoint-ORIG-GUID: pWZmXY75zTV71JsFeXh7adJ8rZl2mEsb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-01_04,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- mlxlogscore=682 spamscore=0 mlxscore=0 suspectscore=0 phishscore=0
- adultscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010038
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 08/01/2024 06:59:26
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 0
+X-KSE-AntiSpam-Info: Lua profiles 186817 [Jul 31 2024]
+X-KSE-AntiSpam-Info: Version: 6.1.0.4
+X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 24 0.3.24
+ 186c4d603b899ccfd4883d230c53f273b80e467f
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info:
+	omp.ru:7.1.1;inp1wst083.omp.ru:7.1.1;81.22.207.138:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2
+X-KSE-AntiSpam-Info: ApMailHostAddress: 81.22.207.138
+X-KSE-AntiSpam-Info: Rate: 0
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 08/01/2024 07:03:00
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 8/1/2024 5:04:00 AM
+X-KSE-Attachment-Filter-Triggered-Rules: Clean
+X-KSE-Attachment-Filter-Triggered-Filters: Clean
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
 
-On Wed, Jul 10, 2024 at 12:06:43PM +0800, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The use of path and ppath is now very confusing, so to make the code more
-> readable, pass path between functions uniformly, and get rid of ppath.
-> 
-> After getting rid of ppath in get_ext_path(), its caller may pass an error
-> pointer to ext4_free_ext_path(), so it needs to teach ext4_free_ext_path()
-> and ext4_ext_drop_refs() to skip the error pointer. No functional changes.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
->  fs/ext4/extents.c     |  5 +++--
->  fs/ext4/move_extent.c | 34 +++++++++++++++++-----------------
->  2 files changed, 20 insertions(+), 19 deletions(-)
-> 
-> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
-> index 5217e6f53467..6dfb5d03e197 100644
-> --- a/fs/ext4/extents.c
-> +++ b/fs/ext4/extents.c
-> @@ -116,7 +116,7 @@ static void ext4_ext_drop_refs(struct ext4_ext_path *path)
->  {
->  	int depth, i;
->  
-> -	if (!path)
-> +	if (IS_ERR_OR_NULL(path))
->  		return;
->  	depth = path->p_depth;
->  	for (i = 0; i <= depth; i++, path++)
-> @@ -125,6 +125,8 @@ static void ext4_ext_drop_refs(struct ext4_ext_path *path)
->  
->  void ext4_free_ext_path(struct ext4_ext_path *path)
->  {
-> +	if (IS_ERR_OR_NULL(path))
-> +		return;
->  	ext4_ext_drop_refs(path);
->  	kfree(path);
->  }
-> @@ -4191,7 +4193,6 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
->  	path = ext4_find_extent(inode, map->m_lblk, NULL, 0);
->  	if (IS_ERR(path)) {
->  		err = PTR_ERR(path);
-> -		path = NULL;
->  		goto out;
->  	}
->  
-> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-> index b0ab19a913bf..a7186d63725a 100644
-> --- a/fs/ext4/move_extent.c
-> +++ b/fs/ext4/move_extent.c
-> @@ -17,27 +17,23 @@
->   * get_ext_path() - Find an extent path for designated logical block number.
->   * @inode:	inode to be searched
->   * @lblock:	logical block number to find an extent path
-> - * @ppath:	pointer to an extent path pointer (for output)
-> + * @path:	pointer to an extent path
->   *
-> - * ext4_find_extent wrapper. Return 0 on success, or a negative error value
-> - * on failure.
-> + * ext4_find_extent wrapper. Return an extent path pointer on success,
-> + * or an error pointer on failure.
->   */
-> -static inline int
-> +static inline struct ext4_ext_path *
->  get_ext_path(struct inode *inode, ext4_lblk_t lblock,
-> -		struct ext4_ext_path **ppath)
-> +	     struct ext4_ext_path *path)
->  {
-> -	struct ext4_ext_path *path = *ppath;
-> -
-> -	*ppath = NULL;
->  	path = ext4_find_extent(inode, lblock, path, EXT4_EX_NOCACHE);
->  	if (IS_ERR(path))
-> -		return PTR_ERR(path);
-> +		return path;
->  	if (path[ext_depth(inode)].p_ext == NULL) {
->  		ext4_free_ext_path(path);
-> -		return -ENODATA;
-> +		return ERR_PTR(-ENODATA);
->  	}
-> -	*ppath = path;
-> -	return 0;
-> +	return path;
->  }
->  
->  /**
-> @@ -95,9 +91,11 @@ mext_check_coverage(struct inode *inode, ext4_lblk_t from, ext4_lblk_t count,
->  	int ret = 0;
->  	ext4_lblk_t last = from + count;
->  	while (from < last) {
-> -		*err = get_ext_path(inode, from, &path);
-> -		if (*err)
-> -			goto out;
-> +		path = get_ext_path(inode, from, path);
-> +		if (IS_ERR(path)) {
-> +			*err = PTR_ERR(path);
-> +			return ret;
-> +		}
->  		ext = path[ext_depth(inode)].p_ext;
->  		if (unwritten != ext4_ext_is_unwritten(ext))
->  			goto out;
-> @@ -624,9 +622,11 @@ ext4_move_extents(struct file *o_filp, struct file *d_filp, __u64 orig_blk,
->  		int offset_in_page;
->  		int unwritten, cur_len;
->  
-> -		ret = get_ext_path(orig_inode, o_start, &path);
-> -		if (ret)
-> +		path = get_ext_path(orig_inode, o_start, path);
-> +		if (IS_ERR(path)) {
-> +			ret = PTR_ERR(path);
->  			goto out;
-> +		}
->  		ex = path[path->p_depth].p_ext;
->  		cur_blk = le32_to_cpu(ex->ee_block);
->  		cur_len = ext4_ext_get_actual_len(ex);
-> -- 
-> 2.39.2
-Looks good Baokun, feel free to add:
+If invalid data is copied from user space and if GET_SEGNO()
+returns NULL_SEGNO an overflow is possible.
 
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Add checks for invalid values.
 
-Regards,
-ojaswin
-> 
+Found by Linux Verification Center (linuxtesting.org) with Svace.
+
+Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
+---
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 168f08507004..1b9c4fee9db1 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -3093,6 +3093,9 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
+ 		start_segno = dev_start_segno;
+ 	end_segno = min(start_segno + range.segments, dev_end_segno);
+ 
++	if (start_segno > F2FS_MAX_SEGMENT - range.segments || end_segno == NULL_SEGNO)
++		return -EINVAL;
++
+ 	while (start_segno < end_segno) {
+ 		if (!f2fs_down_write_trylock(&sbi->gc_lock)) {
+ 			ret = -EBUSY;
+-- 
+2.43.0
+
 
