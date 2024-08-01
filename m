@@ -1,136 +1,495 @@
-Return-Path: <linux-kernel+bounces-271370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56706944D45
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:38:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60854944D4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CC331F21A4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84A611C23759
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 844951A38C4;
-	Thu,  1 Aug 2024 13:38:06 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB7D1A3BC3;
+	Thu,  1 Aug 2024 13:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b="WcbV8lGu"
+Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFD81A2C03
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 13:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59755183CC5;
+	Thu,  1 Aug 2024 13:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722519486; cv=none; b=IvI5/YrVQDTihOhzbrt3/ypUVaWm+qxC/kuJbUW+B2FYhXNgaKKS3apHSxtSjwH3QRIxGCXjjPJ9XZdsPH93hbNdeDR9mXFMRQ3adkUM43o7tHCPr3iqjF4jLlrmaLP+PHG442auX/ssYzApRuvaQ+MWNZg18ncvt0ddGplOwfk=
+	t=1722519614; cv=none; b=aM9QLHGsPobhPObh0TQGPqKtSMCVBP8psu8VVdKgQB1iONFsew8lOCbTT77DoHz3chgWoix7x1OGlgbtA5ROqr70IEP51Sen+z+O/X/Uw1AHAOH3Y9TR2h7/iMvoKOuhPqdASVTEiuUBJWZBKGyWhZ/R0RuzmNGMki/9+hvg48k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722519486; c=relaxed/simple;
-	bh=46++KIrsEnYZcs0HLq8C2YF+vOwH7WgdlPb1A/2DPCo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=X9SS7bxW/iH+zbZh+itdVhWCmDleUUthoCm5xtgZ+wGqcA+sBWTjczoxoLnvMYyIA/GruF7m2RPtOr1hmlDThT+f5H7wrL+Hv+NhPShH09Zs+LcsQQycQwa8ZJry5ZGyq5haaCtarI0FK6zKnnnhn+SIr52qtMJerc7HEFJ8kLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f93601444so990675139f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 06:38:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722519483; x=1723124283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xa3daMPEc4UafLdYf5eErxcO2bh5GPkwwkty4AiZj8M=;
-        b=vwflIMPk4EPwmfPrmsdVj5fRmEdz2psN6QBy3yWjG9kiXdDFigmHLHsScbPLMEy04o
-         0IjlxB5b63ERQiFSTBFHX0uzkO7MbDEMG8U0TUUj3FGzC0yRxQgI4glhT9aHBmdOUJPB
-         CdyZ52V58NEHKebCzQ2RrPDSdgTWcKSoOpg0TQAhrcCIYFBOiABTrUq/FHt0a8Wzjy5X
-         x1/jFVZvSGXjhEO5Fiw9yNZmYr7qefKmtmRhE2XnaXZpiSp6iB5KVh0vIf4pRxK2MBPc
-         f//IWLpR4DOeT9uwQJI3Rl2M34LfrIfVkHcZFRFZCPVJ+FX/j9+YJx8XXJp0OuVmaavi
-         46Kg==
-X-Gm-Message-State: AOJu0YxuoMVNoL+38O1PNXdWRWHRQ8JBfmbW7Rv6cgQHgAK7Le9CL+ab
-	5DvLqQ55xmqN5VC4fmLPJOCHa1a2fCT31fe3/PhXLx1cssSRjRJ8oA0YiygDkxJ2NLG2a8VTv38
-	dDGx5JIFy2DObvEFAlpgUwXlXbNuy7brM+MDNdq5zTZktXwdb+dpZAkA=
-X-Google-Smtp-Source: AGHT+IHZdm+d5Lui3EPNuFWaGyZ/blBY4xW7XvDDD8RWtfyBVP6i507QgQX78cKv6DeGJ/+Ea+ux3nAOrgiAQDvk9MPLmk58FdUO
+	s=arc-20240116; t=1722519614; c=relaxed/simple;
+	bh=21jbxK8qXzuWbgRIcyHIMeHKEgLWlkmdiFPZ/uCSQxs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nfXkOSkyefwiTr1OfeLekGdfjh5mMcAFztd4WPrvLEZu4SGeDSxM8BfK5pafBUk6/5T6OjSkR4N4juM2js9tKwvSWoOt+mLPreo3ktdjRy9vSvoQRwrAyCGoKZvi3SPpWIW/0N33iAareo0pe3LODqY9XW6751JXznJSgzk+AMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk; spf=pass smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace.dk header.i=@metaspace.dk header.b=WcbV8lGu; arc=none smtp.client-ip=185.70.43.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=metaspace.dk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=metaspace.dk;
+	s=protonmail; t=1722519607; x=1722778807;
+	bh=rhX0FLpXsXnWn/EdgAIVtYtsDx6edczeM0/GqGYIcyw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=WcbV8lGuax6d9yJDhDh8l/3HE7SGVm8ylYRrL/Tg0g+1FiikET8cqynXErxH7j6+v
+	 o8nJevJEcz5hel2xSoSADjAxccvzf9hyaWE1z73wuHR0AgyW5rjAPXeqm1S6K5CouV
+	 dEvwqCrgJrHQ+jcF/n3KXfOfmaP9iaw+ibsdiinb/L5IZ3WKwxzsxdLu54/evfOpHf
+	 rFitiowQUuaS7apUNHA/5EPG8dxTxi4zanmQ2gEsVcMcauSFvZDkfL9i/HwZLHMjna
+	 7nRDkrX5piD2/LGIklWzzXzFsekR19kXBvTTbnimLE1KtRSWoliXdDeswWgJSLgVMw
+	 4rvdHH3IpSq0A==
+Date: Thu, 01 Aug 2024 13:40:03 +0000
+To: Benno Lossin <benno.lossin@proton.me>
+From: Andreas Hindborg <nmi@metaspace.dk>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
+Subject: Re: [PATCH] rust: add `module_params` macro
+Message-ID: <878qxgnyzd.fsf@metaspace.dk>
+In-Reply-To: <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me>
+References: <20240705111455.142790-1-nmi@metaspace.dk> <2838cf2e-936c-45de-bb19-af9da66fbe00@proton.me> <87plqso50o.fsf@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me>
+Feedback-ID: 113830118:user:proton
+X-Pm-Message-ID: 02ebcc38c7b50d253a01dd0e01a6e5f1b61e2983
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1cae:b0:397:5d37:61fa with SMTP id
- e9e14a558f8ab-39b1fb79788mr105495ab.2.1722519483617; Thu, 01 Aug 2024
- 06:38:03 -0700 (PDT)
-Date: Thu, 01 Aug 2024 06:38:03 -0700
-In-Reply-To: <20240801130611.3460940-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f0aac5061e9f5168@google.com>
-Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
-From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KMSAN: uninit-value in pick_link
+> On 01.08.24 13:29, Andreas Hindborg wrote:
+>>=20
+>> Hi Benno,
+>>=20
+>> Thanks for the comments!
+>>=20
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>=20
+>>> On 05.07.24 13:15, Andreas Hindborg wrote:
+>>=20
+>> [...]
+>>=20
+>>>> +
+>>>> +/// Types that can be used for module parameters.
+>>>> +///
+>>>> +/// Note that displaying the type in `sysfs` will fail if
+>>>> +/// [`core::str::from_utf8`] (as implemented through the [`core::fmt:=
+:Display`]
+>>>> +/// trait) writes more than [`PAGE_SIZE`] bytes (including an additio=
+nal null
+>>>> +/// terminator).
+>>>> +///
+>>>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
+>>>> +pub trait ModuleParam: core::fmt::Display + core::marker::Sized {
+>>>> +    /// The `ModuleParam` will be used by the kernel module through t=
+his type.
+>>>> +    ///
+>>>> +    /// This may differ from `Self` if, for example, `Self` needs to =
+track
+>>>> +    /// ownership without exposing it or allocate extra space for oth=
+er possible
+>>>> +    /// parameter values. This is required to support string paramete=
+rs in the
+>>>> +    /// future.
+>>>> +    type Value: ?Sized;
+>>>> +
+>>>> +    /// Whether the parameter is allowed to be set without an argumen=
+t.
+>>>> +    ///
+>>>> +    /// Setting this to `true` allows the parameter to be passed with=
+out an
+>>>> +    /// argument (e.g. just `module.param` instead of `module.param=
+=3Dfoo`).
+>>>> +    const NOARG_ALLOWED: bool;
+>>>
+>>> I think, there is a better way of doing this. Instead of this bool, we
+>>> do the following:
+>>> 1. have a `const DEFAULT: Option<Self>`
+>>> 2. change the type of the argument of `try_from_param_arg` to
+>>>    `&'static [u8]`
+>>>
+>>> That way we don't have the weird behavior of `try_from_param_arg` that
+>>> for params that don't have a default value.
+>>=20
+>> Since we have no parameter types for which `NOARG_ALLOWED` is true in
+>> this patch set, it is effectively dead code. I will remove it.
+>
+> Hmm what parameters actually are optional? I looked at the old rust
+> branch and only `bool` is marked as optional. Are there others?
+>
+> If it is used commonly for custom parameters (I could imagine that Rust
+> modules have enums as parameters and specifying nothing could mean the
+> default value), then it might be a good idea to just include it now.
+> (otherwise we might forget the design later)
 
-loop0: detected capacity change from 0 to 8
-err: 0, folio: ffffea0001294400, in: ffff888017408878, read_folio: ffffffff82fd66b0 do_read_cache_folio
-folio: ffffea0001294400, isize: -419430361, idx: 0, squashfs_symlink_read_folio
-error: 0, squashfs_symlink_read_folio
-err: 0, folio: ffffea0001294400, folio uptod: 1, do_read_cache_folio
-=====================================================
-BUG: KMSAN: uninit-value in pick_link+0xd8c/0x1690 fs/namei.c:1850
- pick_link+0xd8c/0x1690 fs/namei.c:1850
- step_into+0x156f/0x1640 fs/namei.c:1909
- open_last_lookups fs/namei.c:3674 [inline]
- path_openat+0x39da/0x6100 fs/namei.c:3883
- do_filp_open+0x20e/0x590 fs/namei.c:3913
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
- x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+As far as I can tell from the C code, all parameters are able to have
+the `NOARG` flag set. We get a null pointer in the callback in that
+case.
 
-Uninit was created at:
- __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
- alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
- alloc_pages_noprof mm/mempolicy.c:2343 [inline]
- folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
- filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
- do_read_cache_folio+0x11e/0x1260 mm/filemap.c:3753
- do_read_cache_page mm/filemap.c:3857 [inline]
- read_cache_page+0x63/0x1d0 mm/filemap.c:3866
- read_mapping_page include/linux/pagemap.h:907 [inline]
- page_get_link+0x76/0xf90 fs/namei.c:5272
- pick_link+0xd6c/0x1690
- step_into+0x156f/0x1640 fs/namei.c:1909
- open_last_lookups fs/namei.c:3674 [inline]
- path_openat+0x39da/0x6100 fs/namei.c:3883
- do_filp_open+0x20e/0x590 fs/namei.c:3913
- do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
- x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+If we want to handle this now, we could drop the `default` field
+in the Rust module macro. There is no equivalent in the C macros.
+And then use an `Option<Option<_>>` to represent the value. `None` would
+be an unset parameter. `Some(None)` would be a parameter without a
+value. `Some(Some(_))` would be a set parameter with a value. We could
+probably fix the types so that only parameters with the `NOARG` flag use
+the double option, others use a single option.
 
-CPU: 1 UID: 0 PID: 5944 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-=====================================================
+Or we could just not adopt this feature in the Rust abstractions.
+
+>
+>>>> +
+>>>> +    /// Convert a parameter argument into the parameter value.
+>>>> +    ///
+>>>> +    /// `None` should be returned when parsing of the argument fails.
+>>>> +    /// `arg =3D=3D None` indicates that the parameter was passed wit=
+hout an
+>>>> +    /// argument. If `NOARG_ALLOWED` is set to `false` then `arg` is =
+guaranteed
+>>>> +    /// to always be `Some(_)`.
+>
+> [...]
+>
+>>>> diff --git a/rust/macros/helpers.rs b/rust/macros/helpers.rs
+>>>> index 563dcd2b7ace..dc0b47879a8c 100644
+>>>> --- a/rust/macros/helpers.rs
+>>>> +++ b/rust/macros/helpers.rs
+>>>> @@ -107,6 +107,14 @@ pub(crate) struct Generics {
+>>>>      pub(crate) ty_generics: Vec<TokenTree>,
+>>>>  }
+>>>>
+>>>> +pub(crate) fn get_string(it: &mut token_stream::IntoIter, expected_na=
+me: &str) -> String {
+>>>
+>>> This name is rather weird, `get_field` makes more sense IMO.
+>>=20
+>> Looking at this, the `get` prefix is not aligned with other helpers. How
+>> about `expect_string_field` ?
+>
+> SGTM
+>
+>>>> +    assert_eq!(expect_ident(it), expected_name);
+>>>> +    assert_eq!(expect_punct(it), ':');
+>>>> +    let string =3D expect_string(it);
+>>>> +    assert_eq!(expect_punct(it), ',');
+>>>
+>>> Why do we require a trailing comma?
+>>=20
+>> For consistency with existing module macro. All keys must be terminated
+>> with comma.
+>
+> Hmm I think that might be a bit unexpected, since everywhere else in
+> Rust you are allowed to omit the trailing comma. But I guess if the
+> entire `module!` macro does that currently, then we can change that when
+> we move to `syn`.
+
+Yes, I agree.
+
+>
+> [...]
+>
+>>>> +                    param_type.to_string(),
+>>>> +                    param_ops_path(&param_type).to_string(),
+>>>> +                );
+>>>> +
+>>>> +                self.emit_param("parmtype", &param_name, &param_kerne=
+l_type);
+>>>
+>>> Is the spelling intentional? "parmtype"?
+>>=20
+>> This is intentional. I don't think the kernel is ever parsing this, but
+>> it is parsed by the `modinfo` tool.
+>
+> Hmm, why is it not `paramtype`? Does that conflict with something?
+
+You would have to take that up with the maintainer(s) of the `modinfo`
+tool. The name is externally dictated [1].
+
+>
+>>>> +                self.emit_param("parm", &param_name, &param_descripti=
+on);
+>>>> +                let param_type_internal =3D param_type.clone();
+>>>> +
+>>>> +                let read_func =3D format!(
+>>>> +                    "
+>>>> +                        pub(crate) fn read(&self)
+>>>> +                            -> &<{param_type_internal}
+>>>> +                               as kernel::module_param::ModuleParam>:=
+:Value {{
+>>>
+>>> Please add a `::` in front of `kernel::module_param::ModuleParam`. Ther=
+e
+>>> are more instances below.
+>>=20
+>> Thanks.
+>>=20
+>>>
+>>>> +                            // Note: when we enable r/w parameters, w=
+e need to lock here.
+>>>> +
+>>>> +                            // SAFETY: Parameters do not need to be l=
+ocked because they are
+>>>> +                            // read only or sysfs is not enabled.
+>>>> +                            unsafe {{
+>>>> +                                <{param_type_internal} as kernel::mod=
+ule_param::ModuleParam>::value(
+>>>> +                                    &__{name}_{param_name}_value
+>>>> +                                )
+>>>> +                            }}
+>>>> +                        }}
+>>>> +                    ",
+>>>> +                    name =3D info.name,
+>>>> +                    param_name =3D param_name,
+>>>> +                    param_type_internal =3D param_type_internal,
+>>>> +                );
+>>>> +
+>>>> +                let kparam =3D format!(
+>>>> +                    "
+>>>> +                    kernel::bindings::kernel_param__bindgen_ty_1 {{
+>>>> +                        // SAFETY: Access through the resulting point=
+er is
+>>>> +                        // serialized by C side and only happens befo=
+re module
+>>>> +                        // `init` or after module `drop` is called.
+>>>> +                        arg: unsafe {{ &__{name}_{param_name}_value }=
+}
+>>>> +                            as *const _ as *mut core::ffi::c_void,
+>>>
+>>> Here you should use `addr_of[_mut]!` instead of taking a reference.
+>>=20
+>> This is a static initializer, so it would be evaluated in const context.
+>> At that time, this is going to be the only reference to
+>> `&__{name}_{param_name}_value` which would be const. So it should be
+>> fine?
+>
+> When compiling this [1] with a sufficiently new Rust version, you will
+> get an error:
+>
+>     warning: creating a shared reference to mutable static is discouraged
+>      --> src/main.rs:4:22
+>       |
+>     4 |     let x =3D unsafe { &foo };
+>       |                      ^^^^ shared reference to mutable static
+>       |
+>       =3D note: for more information, see issue #114447 <https://github.c=
+om/rust-lang/rust/issues/114447>
+>       =3D note: this will be a hard error in the 2024 edition
+>       =3D note: this shared reference has lifetime `'static`, but if the =
+static ever gets mutated, or a mutable reference is created, then any furth=
+er use of this shared reference is Undefined Behavior
+>       =3D note: `#[warn(static_mut_refs)]` on by default
+>     help: use `addr_of!` instead to create a raw pointer
+>       |
+>     4 |     let x =3D unsafe { addr_of!(foo) };
+>       |                      ~~~~~~~~~~~~~
+>
+> [1]: https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&edition=3D=
+2021&gist=3Dc914a438938be6f5fc643ee277efa1d1
+>
+> So I think we should start using `addr_of!` for mutable static now.
+
+Oh. Thanks for the pointer.
+
+Hmm, `addr_of_mut!` still requires the unsafe block. Hopefully that goes
+away as well with the feature you linked as well.
+
+This also requires `const_mut_refs`, but as I recall that is going to be
+stabilized soon.
+
+>
+>> The safety comment is wrong though.
+>>=20
+>>> Also
+>>> will this pointer be used to write to the static, in that case you need
+>>> `_mut!`.
+>>=20
+>> Not in this version of the patch set, but potentially in future iteratio=
+ns.
+>
+> All the more reason to use `addr_of!` IMO.
+>
+>>>> +                    }},
+>>>> +                ",
+>>>> +                    name =3D info.name,
+>>>> +                    param_name =3D param_name,
+>>>> +                );
+>>>
+>>> What is the reason for putting `kparam` and `read_func` outside of the
+>>> `write!` below? I think it would be easier to read if they are inlined.
+>>=20
+>> It had different shapes based on other options in the original patch
+>> set. I guess I can just inline it in this version.
+>>=20
+>>>
+>>>> +                write!(
+>>>> +                    self.param_buffer,
+>>>> +                    "
+>>>> +                static mut __{name}_{param_name}_value: {param_type_i=
+nternal} =3D {param_default};
+>>>> +
+>>>> +                pub(crate) struct __{name}_{param_name};
+>>>> +
+>>>> +                impl __{name}_{param_name} {{ {read_func} }}
+>>>> +
+>>>> +                pub(crate) const {param_name}: __{name}_{param_name} =
+=3D __{name}_{param_name};
+>>>
+>>> Why do we need a unit struct as a constant? I think it would make more
+>>> sense to have a unit struct/empty enum as the type and the `read`
+>>> function be without a receiver.
+>>=20
+>> To be able to call `module_parameters::my_parameter.read()`. Other
+>> options would be `module_parameters::my_parameter::read()` or
+>> `module_parameters::my_parameter_read()`.
+>>=20
+>> I don't think there will be a difference in the generated machine code.
+>> I also don't have any particular preference. Probably
+>> `module_parameters::my_parameter::read()` is the most idiomatic one.
+>
+> Yeah, I would prefer if we can avoid having both a constant and a type.
+> The type then also can be an empty enum, so no value can be constructed.
+
+Nice trick =F0=9F=91=8D
+
+>
+>>>> +
+>>>> +                // Note: the C macro that generates the static struct=
+s for the `__param` section
+>>>> +                // asks for them to be `aligned(sizeof(void *))`. How=
+ever, that was put in place
+>>>> +                // in 2003 in commit 38d5b085d2a0 (\"[PATCH] Fix over=
+-alignment problem on x86-64\")
+>>>> +                // to undo GCC over-alignment of static structs of >3=
+2 bytes. It seems that is
+>>>> +                // not the case anymore, so we simplify to a transpar=
+ent representation here
+>>>> +                // in the expectation that it is not needed anymore.
+>>>> +                // TODO: Revisit this to confirm the above comment an=
+d remove it if it happened.
+>>>
+>>> Should this TODO be fixed before this is merged? Or do you intend for i=
+t
+>>> to stay?
+>>> If this is indeed correct, should this also be changed in the C side (o=
+f
+>>> course a different patch)?
+>>=20
+>> I dug into this. The original code in this patch must be quite old,
+>> because that the code the comment refers to was changed in Nov 2020 from
+>> `aligned(sizeof(void *))` to `__aligned(__alignof__(struct
+>> kernel_param))`. The commit message says that the rationale for not
+>> removing the alignment completely is to prevent the compiler from
+>> increasing the alignment, as this would mess up the array stride used in
+>> the `__param` section.
+>>=20
+>> So I think we can remove the comment and keep `repr(transparent)`, right=
+?
+>> I think `rustc` would not increase the alignment of a `repr(C)` struct
+>> for optimization purposes?
+>
+> I don't know that, maybe Gary or someone else knows how this works.
+>
+>>>> +                /// Newtype to make `bindings::kernel_param` `Sync`.
+>>>> +                #[repr(transparent)]
+>>>> +                struct __{name}_{param_name}_RacyKernelParam(kernel::=
+bindings::kernel_param);
+>>>> +
+>>>> +                // SAFETY: C kernel handles serializing access to thi=
+s type. We
+>>>> +                // never access from Rust module.
+>>>> +                unsafe impl Sync for __{name}_{param_name}_RacyKernel=
+Param {{
+>>>> +                }}
+>>>
+>>> Any reason to put the `}` on the next line?
+>>=20
+>> No. Do you have any tricks for formatting multi line strings of code lik=
+e this?
+>
+> Not really, I don't think that this is a big deal, since this will
+> eventually be replaced by `syn`, which can be formatted more easily.
+>
+>>>> +
+>>>> +                #[cfg(not(MODULE))]
+>>>> +                const __{name}_{param_name}_name: *const core::ffi::c=
+_char =3D
+>>>> +                    b\"{name}.{param_name}\\0\" as *const _ as *const=
+ core::ffi::c_char;
+>>>> +
+>>>> +                #[cfg(MODULE)]
+>>>> +                const __{name}_{param_name}_name: *const core::ffi::c=
+_char =3D
+>>>> +                    b\"{param_name}\\0\" as *const _ as *const core::=
+ffi::c_char;
+>>>> +
+>>>> +                #[link_section =3D \"__param\"]
+>>>> +                #[used]
+>>>> +                static __{name}_{param_name}_struct: __{name}_{param_=
+name}_RacyKernelParam =3D
+>>>> +                    __{name}_{param_name}_RacyKernelParam(kernel::bin=
+dings::kernel_param {{
+>>>> +                        name: __{name}_{param_name}_name,
+>>>> +                        // SAFETY: `__this_module` is constructed by =
+the kernel at load time
+>>>> +                        // and will not be freed until the module is =
+unloaded.
+>>>> +                        #[cfg(MODULE)]
+>>>> +                        mod_: unsafe {{ &kernel::bindings::__this_mod=
+ule as *const _ as *mut _ }},
+>>>> +                        #[cfg(not(MODULE))]
+>>>> +                        mod_: core::ptr::null_mut(),
+>>>> +                        // SAFETY: This static is actually constant a=
+s seen by
+>>>> +                        // module code. But we need a unique address =
+for it, so it
+>>>> +                        // must be static.
+>>>
+>>> This safety comment makes no sense, should it be a normal comment?
+>>=20
+>> I removed the unsafe block and the safety comment as unsafe is not
+>> required here.
+>>=20
+>>>
+>>>> +                        ops: unsafe {{ &{ops} }} as *const kernel::bi=
+ndings::kernel_param_ops,
+>>>
+>>> Why is this `unsafe` block needed, the `make_param_ops` macro declares =
+a
+>>> non-mut static.
+>>>
+>>>> +                        perm: 0, // Will not appear in sysfs
+>>>> +                        level: -1,
+>>>
+>>> Why this value?
+>>=20
+>> The kernel has 8 initcall levels. Parameters can be assigned one of
+>> these levels to have the parameter initialized just before the init
+>> functions for that level are executed. -1 has no effect for loadable mod=
+ules, but
+>> for built-in modules it looks like the args will be initialized just aft=
+er early
+>> boot args (level 0).
+>>=20
+>> At any rate, this is what C side does.
+>
+> I see, I was just wondering where the magic value comes from (especially
+> since the `perm` value has a comment explaining what it does).
+
+I don't think we should add a comment here. The `level` field is not
+well documented on C side. Probably the best thing here is to force
+people to go read the C source.
 
 
-Tested on:
+Best regards,
+Andreas
 
-commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=126e41a1980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16a51be3980000
+[1] https://github.com/kmod-project/kmod/blob/af21689dd0f1ef6f40d6ecc323885=
+026a07486f9/tools/modinfo.c#L118
+
 
 
