@@ -1,303 +1,198 @@
-Return-Path: <linux-kernel+bounces-271002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABA7944839
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8C09447FF
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:20:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FAE6287D1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528C01C24584
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DB4189B82;
-	Thu,  1 Aug 2024 09:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D505114F9C4;
+	Thu,  1 Aug 2024 09:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zmZpvqe2"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2050.outbound.protection.outlook.com [40.107.95.50])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G8M3SMow"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB48A189524;
-	Thu,  1 Aug 2024 09:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504294; cv=fail; b=jSq4/LWLu1jjVErtA8Yxfpf8VT8X8hqO5QbyTg8ngLcoAndWoex86lMh/75AX0kE0f2f+ynwJzSyVUpSRuZHicT/+GdKZ2lrIYRF8rJiMloPFVKMaqIC6dnPz6Hu/LZo2OTCWSAP2Fnbor8iUwymqZ5WfKP6m9JZaqY3wJF3cnU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504294; c=relaxed/simple;
-	bh=wZF5msvkReMqOaD9lENyucelsey8O5TFWxvA5TTaEio=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p54dNvKNiN7oRLvOyXihObV4BCAuV7sMNPJYF37NoMkhSuL1RdawI1Lt4Wl/1RYcTjyn5WF4dI/sc19Mo0bTr5mCiIn653OfZd+v6jU+wIDGv4qIXkJgGYVnfLdNOF4FvK/RtA7RaGePW37YGFhIJlPc+ZlYShCLUumSpV400ZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zmZpvqe2; arc=fail smtp.client-ip=40.107.95.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dzaZeGsZYKvm4GJ8WhcqkO85d2l2Vg82k+S/WSbHr0JYaz7KTLDjf7nnl0C8aCBlg6eLyR+p5n/C35pK8rTL78ttrON+dhIWN4goVst8b8FRoU8r50TbUGOtXDcSSVXOp6i2lgeXRagWz5nurP6ff88s8W45fEklskXi7ag//C+jA/GHrp9aCP8yayBdmGBCW2aLRRxHNVcAmdMXiayxDLeVZmW/qAXM3jeipYVSL2uJ7BEOKBHB8L7h45B2tN7RwnS3vejhMC1LhIqrAIr7N7rE0B3sChAX+AzokkWlTKvaO+L2q3O//iEfJQ97hZAD2N2CbJ3W3XzDYml5zPRV9g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rRwr1M8HYTTJ9pQI1KdXfbC6gSD4Lv3+HS0qRoT2L1s=;
- b=JwPEoWIlpHMOAerYLRUhlYClDBI4bB0pmDJK/3nfCxMd9AGMPerwR6GnHyFLfEvzWtEPwfxb3J4igRtF9DspasYDZHUdkwQ1aQIm3ar905O0w42c1alHfypaI/2zPJeIRBekBDPvL7+4pN6p3xKmiV1H1JU7FlLWVFqycm24COto7act2dvUDHGV1hQjoi1c059So88ECek5YwzbeMp1KIO/OA1FOgjxFnq+9hVg8z2MvL1Jn9QUAWe23GIS7UJ8bzXn7+3UNlmr4zJ4bMSXsey7TGtJmjIVDTyCiaT0sQhEPYJIU4HY7oF0ZacYylaM9GFWxZ4oyXgW0eoPGbU0Tw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rRwr1M8HYTTJ9pQI1KdXfbC6gSD4Lv3+HS0qRoT2L1s=;
- b=zmZpvqe2Yb3o1RWmorwif9C9eMWMmLsIf7DZ/6y7jhOrASySQuCrG4BOCrdaqVaDV1Q18aGI2qMttUQOCZGtw7MPRtVucvH0THt2kLoTfIk8s1pw5NKFV+FvUQ9vF2a1525c57V3yhebZZamgQ0IgNR1DaNeXjsHfQYnc5ZYYZs=
-Received: from DS7P222CA0030.NAMP222.PROD.OUTLOOK.COM (2603:10b6:8:2e::10) by
- SA3PR12MB7781.namprd12.prod.outlook.com (2603:10b6:806:31a::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Thu, 1 Aug
- 2024 09:24:49 +0000
-Received: from DS1PEPF0001708E.namprd03.prod.outlook.com
- (2603:10b6:8:2e:cafe::5b) by DS7P222CA0030.outlook.office365.com
- (2603:10b6:8:2e::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23 via Frontend
- Transport; Thu, 1 Aug 2024 09:24:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0001708E.mail.protection.outlook.com (10.167.17.134) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 09:24:49 +0000
-Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 1 Aug
- 2024 04:24:48 -0500
-Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
- (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 1 Aug
- 2024 04:24:48 -0500
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB03.amd.com (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39
- via Frontend Transport; Thu, 1 Aug 2024 04:24:42 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <pierre-louis.bossart@linux.intel.com>,
-	<yung-chuan.liao@linux.intel.com>, <Basavaraj.Hiregoudar@amd.com>,
-	<Sunil-kumar.Dommati@amd.com>, <venkataprasad.potturu@amd.com>, "Vijendar
- Mukunda" <Vijendar.Mukunda@amd.com>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, "Cezary
- Rojewski" <cezary.rojewski@intel.com>, Peter Ujfalusi
-	<peter.ujfalusi@linux.intel.com>, Ranjani Sridharan
-	<ranjani.sridharan@linux.intel.com>, Kai Vehmanen
-	<kai.vehmanen@linux.intel.com>, Brent Lu <brent.lu@intel.com>, Charles Keepax
-	<ckeepax@opensource.cirrus.com>, Maciej Strozek
-	<mstrozek@opensource.cirrus.com>, Chao Song <chao.song@linux.intel.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, "open list:SOUND - SOC
- LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, "open
- list" <linux-kernel@vger.kernel.org>
-Subject: [PATCH RESEND 20/31] ASoC: intel/sdw_utils: move maxim codec helper functions
-Date: Thu, 1 Aug 2024 14:44:35 +0530
-Message-ID: <20240801091446.10457-21-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240801091446.10457-1-Vijendar.Mukunda@amd.com>
-References: <20240801091446.10457-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC02189518
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722503706; cv=none; b=fCPpAyNzBZ1y/8PhqBBMRol5q1i40Mv5FkFuXF691JHaH/P6PIqAM48W1Eb8szF5rmEXdrYwf0XZQQ0GmNljG/1n7pDoLdNUCG9tq6j76esSOQttGa422DVZ2dB6yZuAc+x3cQwMxdYX8GnUmgALrAocXrjKXpHHghDTWGwwp3I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722503706; c=relaxed/simple;
+	bh=4QLNURbGmj6pPY4/JZEtDEFhGbuLkoYULBp/+uPr5ao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HGy+YIP2AXl2kZK0fEbdH+O9ccJVsb7cd3rK4BT2XYkz8DXWzg4c4Rbpm3VONaAhdV82879JjDAUNjb+mqcJ0p4fKatVGxrWsJiwMhOLl5+/P4x72zTPeqFLkVOg0RGZwNTMutZuQOB8/G2XAzVaqJE8LhKZELV50mLGJbL2Gk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G8M3SMow; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722503703;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MrfY/jv9YmGr6hzqUbjuvzqEnlVAC1NlJvmT30hlOQk=;
+	b=G8M3SMowzKtqcWuOo9VlU625KXoeNXOpkQeYaUkjqMyHVL+m8nByTFqm18kLD5PT4Llqmq
+	bWWBiScOWioeE2zNKrvXDnOZo1UoJbFW/bdROYLJQvRv9JkCeEPUcSrO/T837txck93QC2
+	uVz+1Gdc7Hs14m38StnucSLJweC+j30=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-602-VHdvA-flPHeMKtrTFMpUzA-1; Thu, 01 Aug 2024 05:15:02 -0400
+X-MC-Unique: VHdvA-flPHeMKtrTFMpUzA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36bb24c86d9so188229f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:15:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722503701; x=1723108501;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MrfY/jv9YmGr6hzqUbjuvzqEnlVAC1NlJvmT30hlOQk=;
+        b=oQeKhiMltC3QOo0ql4hitzXwRUocupOofu+FFj6cWshfEKl8/aI25tDfTlIMEvGjU7
+         x6gzfZk74Zp3/qTEJUaiNGIb6DSPXwXjprNr3/dB939SEAWdWt0Jtyhru19ilbaLwPyJ
+         mKJUehR76Ybnul4SAnxN0m1ReElZY8DIqQ+31/U/qDHZ9GpevC970rdgjbAgLDnNXCho
+         BkXrOuC3dIfvI1kJyg2XNLpRGXe5OCzvQ4dCQdCmv3KlvbkUex2hyxuksEcj5uQIvbBz
+         Xr59X/F5H0nY53bZiHDsZOKTWq5mpemCl/VbWK6IZNXgT98bsAaCZudQVGwm3C6j5TYM
+         6Wpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWJDMI2t6s18t/w+2Rm4q4BElr1WUrSCptPKmlFqTZ24kezgBFwUKoqMcPa7YMf3ax9CsG/M45HEknOY/nqJrdoYAZFbpaHSjieZmrb
+X-Gm-Message-State: AOJu0YyKguqZSSepKGGa+p3jnAmFI+wZc7mFYN5F7OOFbNXr5l+2RYpi
+	gP+YIUH+WPsYIx3O3Vc5SpSoOiyWvLkgyfHJz4tO/c7eqhJqLu8DRhGHnfFo0QIGxqBY6MKGm86
+	VPlT2mmfU/5J6361KiVMcT5EjLR6MubIbITzCUxAHR6UUpS3Wfuh6W7+ySGP2gQ==
+X-Received: by 2002:adf:e84d:0:b0:368:5d2:9e58 with SMTP id ffacd0b85a97d-36baa9ed82dmr1314047f8f.0.1722503701024;
+        Thu, 01 Aug 2024 02:15:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQP6VKhFLpPHnc9rVvpn9YN2wwiTFzJNZPK5OEp5YI30gp08OxomYmTJmbIB1gbQHA7Gz+8w==
+X-Received: by 2002:adf:e84d:0:b0:368:5d2:9e58 with SMTP id ffacd0b85a97d-36baa9ed82dmr1314022f8f.0.1722503700470;
+        Thu, 01 Aug 2024 02:15:00 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367e49bdsm19017199f8f.44.2024.08.01.02.14.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 02:15:00 -0700 (PDT)
+Message-ID: <3c79021a-e9a0-4669-a4e7-7060edf12d58@redhat.com>
+Date: Thu, 1 Aug 2024 11:14:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001708E:EE_|SA3PR12MB7781:EE_
-X-MS-Office365-Filtering-Correlation-Id: b290afdc-f814-4ccc-d011-08dcb20bcaab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?o+PsNO+MAFSnzIXXEfL9EaJwrJL1GWa/Xz+EUy2N1OAuVJqOfjpkipuZSeAz?=
- =?us-ascii?Q?OCPOUHl7VuRSEtuRPVJrhWa9AKwa2HWdoAkN/Bx0J5pyoG7LKAnkkRwvwEnG?=
- =?us-ascii?Q?RWinBBsJx212v62H17FsWkwTNfwErpPafCu1Yx2ZlOunrGFn1OjmG1FIZeQf?=
- =?us-ascii?Q?NXIsPGB94XsvEnK9mGBxB6nC7C+V0Kir1taWgHHNXSNClUKmUJLxj1Pxc5zl?=
- =?us-ascii?Q?YKkcG3twSNMJx54uQVKr74Ct0/P2/gUVEkJoiSXFrKXU1UU7m7ckTCY7qISv?=
- =?us-ascii?Q?AuCpC/wcz1GgjAbuaGxMO5y4yW3QO1BXmHWMVXXIMYNr6aW1jx9PQL3IOr+2?=
- =?us-ascii?Q?0d1cK//Vg6pWAnfMiKkz1zdT8V5eJOgipsZTT0zcRhdXTVmIL/xYoQOxTtis?=
- =?us-ascii?Q?Usuy0kFOmxAYWjdX3YBBtdNTk8LO4tcOvTlDBUPDC2kmels+j/f7vj32ATQg?=
- =?us-ascii?Q?eXKZMUQpwwSRrBk1RWrslYNAMKvE+x3vs5+f8K6WhvXLovTWBhC8ktXgI4cF?=
- =?us-ascii?Q?wZcS3m1o/kvCBgj3Q7GypotJxwRbPWaQkJirl0kyLoaGYT5gW9WNfUD+WFbt?=
- =?us-ascii?Q?Li0nlwldkUnojS6m97QtVsZcKDp/21SmGnLIr7YvOExuFJiVE6FBFBe9VcZe?=
- =?us-ascii?Q?3RD5IqZ8UCmlYob2A6/p8Xd6wrTfPqqd56E2PNwA/7fOrGt1szADCPKZmciS?=
- =?us-ascii?Q?HcV3bqmyb9mzdGJZRslG3ormPVzLXgc9wXQccf31p0BfOKGikSUF1nSn9jlp?=
- =?us-ascii?Q?XU9PnRj1Wem2npVIe5LGtMb7g/HBG37T8PD2Qg2YS/Pk1VOIRVOtqxcgave0?=
- =?us-ascii?Q?OX27nLolR7sFG3e/liDGeHTPxIORZQToSVK260scZm3lpvLgD3ERHdxx968W?=
- =?us-ascii?Q?auvlg8cZyqM1BE5WBHIdVkzQkkuy5aNS8jTNi6Nz/e4RPHO5j5uZU1LjW7bQ?=
- =?us-ascii?Q?7m8Svzg+Qg75ab+W2JqugGEtjFbrm1zlwE2xw+0hHkLajFNJpiQrY/H7v0wv?=
- =?us-ascii?Q?8Ksswwmd4a2cDqCqn+5JdJl4e2XwlBmyURC17sC06waOG8fAeqCVPyM3XlZv?=
- =?us-ascii?Q?v+fuunQ6C/fxYx8iekwZ+PaMqm8S+y5DOg+Cl3dWDmD2meH58E0rex68aXSo?=
- =?us-ascii?Q?0H2nbpFlT0sMMQCeeo9rJ4Uo1rUtuR03cBvNzrUjBUSkV87/T1QYadtacdlb?=
- =?us-ascii?Q?WnQIOWT1Z7POvbcpprliwbzGaYcw2gZhHthwYroJEyBITX4j2B6VLYY3iICH?=
- =?us-ascii?Q?Kkrem1ThF+qOo7XyJFwb3/nnOHZzqLNiWpT5kAAYNqijrAhLFlxSXkSMA2Ik?=
- =?us-ascii?Q?tXbM4Sr/SBcaKIPXfTcw+kT+m0x35F9Er5beIJ3BGamdSC3vl/y0oPTM7laM?=
- =?us-ascii?Q?niTOmsXE0502Nbah4iK/qzb5AblTIBriMTsaPq/sLpcI7PiTHg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 09:24:49.3315
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b290afdc-f814-4ccc-d011-08dcb20bcaab
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001708E.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB7781
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/9] mm: swap: mTHP swap allocator base on swap cluster
+ order
+To: Chris Li <chrisl@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Kairui Song <kasong@tencent.com>, Hugh Dickins <hughd@google.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Kalesh Singh <kaleshsingh@google.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Barry Song <baohua@kernel.org>
+References: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240730-swap-allocator-v5-0-cb9c148b9297@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Move maxim codec helper functions to common place holder so that
-it can be used by other platform machine driver.
+On 31.07.24 08:49, Chris Li wrote:
+> This is the short term solutions "swap cluster order" listed
+> in my "Swap Abstraction" discussion slice 8 in the recent
+> LSF/MM conference.
+> 
 
-Link: https://github.com/thesofproject/linux/pull/5068
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Reviewed-by: Bard Liao <yung-chuan.liao@linux.intel.com>
-Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- include/sound/soc_sdw_utils.h                      |  7 +++++++
- sound/soc/intel/boards/Makefile                    |  1 -
- sound/soc/intel/boards/sof_sdw_common.h            | 10 ----------
- sound/soc/sdw_utils/Makefile                       |  3 ++-
- .../sof_sdw_maxim.c => sdw_utils/soc_sdw_maxim.c}  | 14 +++++++++-----
- 5 files changed, 18 insertions(+), 17 deletions(-)
- rename sound/soc/{intel/boards/sof_sdw_maxim.c => sdw_utils/soc_sdw_maxim.c} (86%)
+Running the cow.c selftest on mm/mm-unstable, I get:
 
-diff --git a/include/sound/soc_sdw_utils.h b/include/sound/soc_sdw_utils.h
-index d5dd887b9d15..9e84d1ab6cd0 100644
---- a/include/sound/soc_sdw_utils.h
-+++ b/include/sound/soc_sdw_utils.h
-@@ -144,6 +144,12 @@ int asoc_sdw_cs_amp_init(struct snd_soc_card *card,
- 			 struct asoc_sdw_codec_info *info,
- 			 bool playback);
- 
-+/* MAXIM codec support */
-+int asoc_sdw_maxim_init(struct snd_soc_card *card,
-+			struct snd_soc_dai_link *dai_links,
-+			struct asoc_sdw_codec_info *info,
-+			bool playback);
-+
- /* dai_link init callbacks */
- int asoc_sdw_rt_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
- int asoc_sdw_rt_sdca_jack_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
-@@ -158,5 +164,6 @@ int asoc_sdw_cs42l43_hs_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc
- int asoc_sdw_cs42l43_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
- int asoc_sdw_cs42l43_dmic_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
- int asoc_sdw_cs_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
-+int asoc_sdw_maxim_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
- 
- #endif
-diff --git a/sound/soc/intel/boards/Makefile b/sound/soc/intel/boards/Makefile
-index 1ee903e12249..5bd8dc2d166a 100644
---- a/sound/soc/intel/boards/Makefile
-+++ b/sound/soc/intel/boards/Makefile
-@@ -35,7 +35,6 @@ snd-soc-skl_nau88l25_ssm4567-y := skl_nau88l25_ssm4567.o
- snd-soc-ehl-rt5660-y := ehl_rt5660.o
- snd-soc-sof-ssp-amp-y := sof_ssp_amp.o
- snd-soc-sof-sdw-y += sof_sdw.o				\
--			sof_sdw_maxim.o 		\
- 			sof_sdw_hdmi.o
- obj-$(CONFIG_SND_SOC_INTEL_SOF_RT5682_MACH) += snd-soc-sof_rt5682.o
- obj-$(CONFIG_SND_SOC_INTEL_SOF_CS42L42_MACH) += snd-soc-sof_cs42l42.o
-diff --git a/sound/soc/intel/boards/sof_sdw_common.h b/sound/soc/intel/boards/sof_sdw_common.h
-index b95daa32e343..664c3404eb81 100644
---- a/sound/soc/intel/boards/sof_sdw_common.h
-+++ b/sound/soc/intel/boards/sof_sdw_common.h
-@@ -77,14 +77,4 @@ int sof_sdw_hdmi_init(struct snd_soc_pcm_runtime *rtd);
- 
- int sof_sdw_hdmi_card_late_probe(struct snd_soc_card *card);
- 
--/* MAXIM codec support */
--int asoc_sdw_maxim_init(struct snd_soc_card *card,
--			struct snd_soc_dai_link *dai_links,
--			struct asoc_sdw_codec_info *info,
--			bool playback);
--
--/* dai_link init callbacks */
--
--int asoc_sdw_maxim_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_dai *dai);
--
- #endif
-diff --git a/sound/soc/sdw_utils/Makefile b/sound/soc/sdw_utils/Makefile
-index c15b08f3ab0b..28229ed96ffb 100644
---- a/sound/soc/sdw_utils/Makefile
-+++ b/sound/soc/sdw_utils/Makefile
-@@ -6,5 +6,6 @@ snd-soc-sdw-utils-y := soc_sdw_utils.o soc_sdw_dmic.o soc_sdw_rt_dmic.o \
- 		       soc_sdw_rt_amp.o					\
- 		       soc_sdw_bridge_cs35l56.o 			\
- 		       soc_sdw_cs42l42.o soc_sdw_cs42l43.o 		\
--		       soc_sdw_cs_amp.o
-+		       soc_sdw_cs_amp.o					\
-+		       soc_sdw_maxim.o
- obj-$(CONFIG_SND_SOC_SDW_UTILS) += snd-soc-sdw-utils.o
-diff --git a/sound/soc/intel/boards/sof_sdw_maxim.c b/sound/soc/sdw_utils/soc_sdw_maxim.c
-similarity index 86%
-rename from sound/soc/intel/boards/sof_sdw_maxim.c
-rename to sound/soc/sdw_utils/soc_sdw_maxim.c
-index 9933224fcf68..cdcd8df37e1d 100644
---- a/sound/soc/intel/boards/sof_sdw_maxim.c
-+++ b/sound/soc/sdw_utils/soc_sdw_maxim.c
-@@ -1,7 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0-only
-+// This file incorporates work covered by the following copyright notice:
- // Copyright (c) 2020 Intel Corporation
-+// Copyright (c) 2024 Advanced Micro Devices, Inc.
- //
--// sof_sdw_maxim - Helpers to handle maxim codecs
-+// soc_sdw_maxim - Helpers to handle maxim codecs
- // codec devices from generic machine driver
- 
- #include <linux/device.h>
-@@ -10,7 +12,7 @@
- #include <sound/soc.h>
- #include <sound/soc-acpi.h>
- #include <sound/soc-dapm.h>
--#include "sof_sdw_common.h"
-+#include <sound/soc_sdw_utils.h>
- 
- static int maxim_part_id;
- #define SOC_SDW_PART_ID_MAX98363 0x8363
-@@ -41,8 +43,9 @@ int asoc_sdw_maxim_spk_rtd_init(struct snd_soc_pcm_runtime *rtd, struct snd_soc_
- 
- 	return ret;
- }
-+EXPORT_SYMBOL_NS(asoc_sdw_maxim_spk_rtd_init, SND_SOC_SDW_UTILS);
- 
--static int mx8373_enable_spk_pin(struct snd_pcm_substream *substream, bool enable)
-+static int asoc_sdw_mx8373_enable_spk_pin(struct snd_pcm_substream *substream, bool enable)
- {
- 	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
- 	struct snd_soc_dai *codec_dai;
-@@ -84,7 +87,7 @@ static int asoc_sdw_mx8373_prepare(struct snd_pcm_substream *substream)
- 	if (ret < 0)
- 		return ret;
- 
--	return mx8373_enable_spk_pin(substream, true);
-+	return asoc_sdw_mx8373_enable_spk_pin(substream, true);
- }
- 
- static int asoc_sdw_mx8373_hw_free(struct snd_pcm_substream *substream)
-@@ -96,7 +99,7 @@ static int asoc_sdw_mx8373_hw_free(struct snd_pcm_substream *substream)
- 	if (ret < 0)
- 		return ret;
- 
--	return mx8373_enable_spk_pin(substream, false);
-+	return asoc_sdw_mx8373_enable_spk_pin(substream, false);
- }
- 
- static const struct snd_soc_ops max_98373_sdw_ops = {
-@@ -142,3 +145,4 @@ int asoc_sdw_maxim_init(struct snd_soc_card *card,
- 	}
- 	return 0;
- }
-+EXPORT_SYMBOL_NS(asoc_sdw_maxim_init, SND_SOC_SDW_UTILS);
+# [RUN] Basic COW after fork() with mprotect() optimization ... with swapped-out, PTE-mapped THP (1024 kB)
+[   51.865309] Oops: general protection fault, probably for non-canonical address 0xdead000000000108: 0000 [#1] PREEMPT SMP NOPTI
+[   51.867738] CPU: 21 UID: 0 PID: 282 Comm: kworker/21:1 Not tainted 6.11.0-rc1+ #11
+[   51.869566] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
+[   51.871298] Workqueue: events swap_discard_work
+[   51.872211] RIP: 0010:__free_cluster+0x27/0x90
+[   51.873101] Code: 90 90 90 0f 1f 44 00 00 8b 0d 8d 95 96 01 55 48 89 fd 53 48 89 f3 85 c9 75 3a 48 8b 43 50 48 8b 4b 48 48 8d 53 48 48 83 c5 60 <48> 89 41 08 48 89 08 48 8b 45 08 48 89 55 08 48 89 43 50 48 89 6b
+[   51.876720] RSP: 0018:ffffa3dcc0aafdc8 EFLAGS: 00010286
+[   51.877752] RAX: dead000000000122 RBX: ffff8e7ed9686e00 RCX: dead000000000100
+[   51.879186] RDX: ffff8e7ed9686e48 RSI: ffff8e7ed9686e18 RDI: ffff8e7ec37831c0
+[   51.880577] RBP: ffff8e7ec5d10860 R08: 0000000000000001 R09: 0000000000000028
+[   51.881972] R10: 0000000000000200 R11: 00000000000004cb R12: ffff8e7ed9686e00
+[   51.883393] R13: 0000000000028200 R14: 0000000000028000 R15: 0000000000000000
+[   51.884827] FS:  0000000000000000(0000) GS:ffff8e822f480000(0000) knlGS:0000000000000000
+[   51.886412] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   51.887532] CR2: 00007f37d7e17840 CR3: 0000000335a3a001 CR4: 0000000000770ef0
+[   51.888931] PKRU: 55555554
+[   51.889471] Call Trace:
+[   51.889964]  <TASK>
+[   51.890391]  ? __die_body.cold+0x19/0x27
+[   51.891174]  ? die_addr+0x3c/0x60
+[   51.891824]  ? exc_general_protection+0x14f/0x430
+[   51.892754]  ? asm_exc_general_protection+0x26/0x30
+[   51.893717]  ? __free_cluster+0x27/0x90
+[   51.894483]  ? __free_cluster+0x7e/0x90
+[   51.895245]  swap_do_scheduled_discard+0x142/0x1b0
+[   51.896189]  swap_discard_work+0x26/0x30
+[   51.896958]  process_one_work+0x211/0x5a0
+[   51.897750]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   51.898693]  worker_thread+0x1c9/0x3c0
+[   51.899438]  ? __pfx_worker_thread+0x10/0x10
+[   51.900287]  kthread+0xe3/0x110
+[   51.900913]  ? __pfx_kthread+0x10/0x10
+[   51.901656]  ret_from_fork+0x34/0x50
+[   51.902377]  ? __pfx_kthread+0x10/0x10
+[   51.903114]  ret_from_fork_asm+0x1a/0x30
+[   51.903896]  </TASK>
+
+
+Maybe related to this series?
+
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
