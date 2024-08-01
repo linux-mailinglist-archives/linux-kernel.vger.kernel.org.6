@@ -1,149 +1,91 @@
-Return-Path: <linux-kernel+bounces-270762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F86A9444EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:55:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130959444E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:55:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F3F61F26154
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:55:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2514281762
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 06:55:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E825716DEAA;
-	Thu,  1 Aug 2024 06:55:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC62158851;
+	Thu,  1 Aug 2024 06:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="pySWYoet"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9kiV361"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B50816D9C8
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B683915854E;
+	Thu,  1 Aug 2024 06:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722495314; cv=none; b=QzBzfxsU5gzscwc0+FgN0YiL9ENn2gyt4vaR7XzTy+F23+YGnMPlZFzRfhc6AiOAIaaOfPIZ87LKH8pmKnEqBTl8sFnMgbwQeU4tfwlJ0ND1rSzcLLyNqjnAXsP83DXUmP/M/mLI8f26sHBcAbOylAjlk5kRhyudnnkapT8cIzw=
+	t=1722495304; cv=none; b=W1rBrIU/7/v0kfN6W35MqCRIPaLU1+opRGGecZ6KsErgq5GsuMXVgqD6GpNy8ZtsAgbjRya+YWrS2X8ob6Fv6Cg5XdVt085LqI7PKquNI+BP1mdpJ0Y/f+QlncJ6oclPNHALw73CsW27j8YaE0VFzfcCSxoTYe+iIQAWYH5HiIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722495314; c=relaxed/simple;
-	bh=G6JbqvP+JzPpaqmI1T0/vuWFUnk1MnN+96gN2QgHM+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qXzg2RlfsBd2EklzdrlU0epc9IaHe1CgQ9AuAxNmzARzwCtSRIIdHNFISMvDomj1k3suCen1go1JZqb9VpEFJEUJ3nzOj4jdI3fjKbiG5FgqkZTe14ClP4Mtc8o4JJbapvFQ0Iv1niC51+HDDO5VNWGevjUA6diX4nAfz1nnm0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=pySWYoet; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DE4063F63C
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 06:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1722495303;
-	bh=G6JbqvP+JzPpaqmI1T0/vuWFUnk1MnN+96gN2QgHM+Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=pySWYoety/aIQC10alFsZI7n5dMGuVtfeBvtOtJupffqZJNYApfDDg1Yy+Xlgn1R4
-	 CFf3o2OrpSTes43KQ0qjP3UzNGKCLULXqJ6zd58xNbfKAvL/JRnT7tOGjAo3cyiHa6
-	 SIaj/EM3FHqasZ7POHDWUGkqx2+SjULejniofPK0mFEbKleOX4MHAtylfUQj4cQlk+
-	 kxruIEBqRkJRJfkVAkK1c5CN7Jy2lbjPtz6IzwOicZdmDFHk0EtXNZViAtn8zfItD6
-	 hxLF9rYQ3KxCcrB4RhYYfOB2BUee1fyLuiszAUwlv7iIqtDl7fzZ0rVlTBsk+uh/8C
-	 4rMoIMYo/Qjmw==
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-70e910f309eso7150725b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 23:55:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722495302; x=1723100102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G6JbqvP+JzPpaqmI1T0/vuWFUnk1MnN+96gN2QgHM+Q=;
-        b=OF0++EOSLxSTFrN0SnWcJqxFcC6RrPH7XrPbnX8loWpNU7ennZDuUH/58QEV9dL29z
-         nejnzvJMBaFiKTjcqwPpOAwjTVVCgw/59MjeZb7PrL/G690hNzIBKVOKrDVLjh1BK95d
-         wZ55IR8ZBlPPAl00Zr3QUrUalI8O4FbN7sDp/bJ/au3Hm3QdYWr2vmeXun5et4AGyp/s
-         zYLsfdqAjkw1E/i7f9Ccf4zZ+fC/zdfuCnvL32i8m/c1GzAbBvSuzABTBM1C8sIU5JJv
-         cIgzwTxL69ogWZQn2gcrSEoxs34TFZhcvGNAzBO3EPPO729Z1CM/EI28GOcUyHFtORlp
-         QMQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXdO99mCnDenCrga4KgDTcyDHhDLa+49h/ADdvjiCjtFMoyeHkVCiJXrHVrtMffI9PPhKtWlwx1R2gd3Lf/fo8E0zkYGCbKm+JcmXGg
-X-Gm-Message-State: AOJu0YwK6o7Pn/1qigdvPksWf/DwcQVHPl7XIyqMKNLPq9laT/X0DqXQ
-	ZdafLh4DMbSEJbzPr1RlMd5d6eJ1WIQhOFliCPg8VE2dO0R7S6TCXM61NdB0o52bjwuhevfKRSf
-	WvfJ/63idAD3VDcKWmbvgap5Y+jYzpCct7HcyueO2h/rlnD43EemkNxOIh/3CIP/Vp3DDlz5H9G
-	yS4P0dfEQdsaTW8ueenjcMC1J0AwUVlyNC+MUoI8EA1o2pNuT5AVgb
-X-Received: by 2002:a05:6a00:9189:b0:70d:3420:9309 with SMTP id d2e1a72fcca58-7105d6fb620mr1930242b3a.17.1722495302203;
-        Wed, 31 Jul 2024 23:55:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHxH4U08W48TiLv/0lYDLI+xjjrYJvSMkNbAHFf/lyYnes9cUnLr9AFBs3sy0zZLo9Ov9Y6WXTTMZ/jAfYoWxA=
-X-Received: by 2002:a05:6a00:9189:b0:70d:3420:9309 with SMTP id
- d2e1a72fcca58-7105d6fb620mr1930233b3a.17.1722495301765; Wed, 31 Jul 2024
- 23:55:01 -0700 (PDT)
+	s=arc-20240116; t=1722495304; c=relaxed/simple;
+	bh=HOKNNnybr8vVI+CenbuRHSy81M/wqIhPpxRQv9NWUoY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=t9iYNj7e/G/3n2NQUj0/dTTAWYfX7QcDZY/bOudVu+jqUKI9KiFeyGjJkCwr6WfGGoWlNuCs2gjCAQHv5FKqi59qWQDy6Cbat0OC2b/MbX6xq6Wn5OSLTgq5Nlx2VLAldsEI4mPr/6jHpOKJrF/2LFWNkjyA50h4w9PdubJqMTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9kiV361; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71DFC4AF0A;
+	Thu,  1 Aug 2024 06:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722495304;
+	bh=HOKNNnybr8vVI+CenbuRHSy81M/wqIhPpxRQv9NWUoY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=d9kiV361GzPZKR5XC0GAwJInrK5PlMk4VKb6GpKn61lZtw/FdY8aVZZVg+i7zk+O8
+	 KOo1FJZwsDy1cXt1znBqm6pqjlYnQ9dRsEaJy9S1KzxxMkU/AXpoX5Uw/dxVcUnTVn
+	 YT554rTNpJvU/kg8JRJpSOSe0kLJPvAbSe0nppGwdEPWNLyaSn/VuOK8R+ePvZxdm2
+	 9z97fPncxIhLi9IHPotLj80NaatGpOF/eOmTxZ6b2ubG5oJUyKFfIc4gNlckpxYnvC
+	 2+AUmGvn0fiDTyIOFjtsUxo3xBRjmIqssK63kzus/in1zrLVEhv/xldS8pAlTwMXZp
+	 D2HxiqXgiIExg==
+From: Vinod Koul <vkoul@kernel.org>
+To: devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Rayyan Ansari <rayyan.ansari@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-phy@lists.infradead.org, Rob Herring <robh@kernel.org>
+In-Reply-To: <20240715130854.53501-1-rayyan.ansari@linaro.org>
+References: <20240715130854.53501-1-rayyan.ansari@linaro.org>
+Subject: Re: [PATCH 0/2] Convert Qualcomm SATA PHY bindings to dtschema
+Message-Id: <172249530042.256913.13518178288820179470.b4-ty@kernel.org>
+Date: Thu, 01 Aug 2024 12:25:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726062601.674078-1-kai.heng.feng@canonical.com>
- <2048df524f8be7ed200bc92eb1c6efe106f0ed19.camel@intel.com>
- <CAAd53p5ftAjtfb-uCcVKR8G0JfoGnA_a0Se1E_vPeietgOENOg@mail.gmail.com>
- <CAJZ5v0i9Qt3OFKCbqkd-q4VKYreV2PZZpQ2Km9az2htANG5zxA@mail.gmail.com>
- <CAAd53p4macNjQN3i8vaf1s-5vj_7esKw37nqoUN1h+XqjQk71w@mail.gmail.com> <CAJvTdK=wafegpUB-KD=P9KazWngMNQb_rcbwQX_DDwPBtZ9W7w@mail.gmail.com>
-In-Reply-To: <CAJvTdK=wafegpUB-KD=P9KazWngMNQb_rcbwQX_DDwPBtZ9W7w@mail.gmail.com>
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Date: Thu, 1 Aug 2024 14:54:50 +0800
-Message-ID: <CAAd53p52A7ymkQhFweoy2vRXfkT81pumU6V5Q8tbEBKTnX=ASg@mail.gmail.com>
-Subject: Re: [PATCH] intel_idle: Add Jasper Lake and Elkhart Lake support
-To: Len Brown <lenb@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Zhang, Rui" <rui.zhang@intel.com>, 
-	"jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"artem.bityutskiy@linux.intel.com" <artem.bityutskiy@linux.intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Thu, Aug 1, 2024 at 12:28=E2=80=AFAM Len Brown <lenb@kernel.org> wrote:
->
-> On Wed, Jul 31, 2024 at 2:18=E2=80=AFAM Kai-Heng Feng
-> <kai.heng.feng@canonical.com> wrote:
-> >
-> > The crucial part to make the issue (i.e. slow ethernet) is
-> > ".disable_promotion_to_c1e =3D true".
->
-> Okay, so the problem statement is that on this machine with some
-> ethernet controller and some workload,
-> performance is better when you use just C1 and not C1E (or deeper) states=
-.
->
-> And so you want to have the option of accessing C1 without the overhead o=
-f C1E?
 
-Yes, that's the case here.
+On Mon, 15 Jul 2024 14:01:05 +0100, Rayyan Ansari wrote:
+> The following patches:
+> - Convert the old apq8064 and ipq806x text bindings, to a new unified
+>   qcom,sata-phy binding in yaml.
+> - Remove reg-names from the SATA PHY node in apq8064.dtsi to conform to
+>   the bindings
+> 
+> Thanks,
+> Rayyan
+> 
+> [...]
 
->
-> Presumably you don't care about the power savings of the deeper states,
-> or you are using PM_QOS to avoid deep c-states at run time?
+Applied, thanks!
 
-I tried to use cpu_latency_qos in the network driver's NAPI poll, but
-only saw marginal improvement to around 830Mbps. Hitting the 940Mbps
-is still the goal here.
+[1/2] dt-bindings: phy: qcom,sata-phy: convert to dtschema
+      commit: 4bf8b462f84dd81c5938341a5468c3b669dbb1af
+[2/2] ARM: dts: qcom: apq8064: drop reg-names on sata-phy node
+      (no commit info)
 
->
-> > Can we use that for EHL and JSL?
->
-> Yes.
+Best regards,
+-- 
+Vinod Koul <vkoul@kernel.org>
 
-Is it plausible to disable C1E promotion while using ACPI idle driver?
-Or provide a C-state table in intel_idle and update the states via
-_CST?
-
->
-> You may also have a BIOS option to achieve the same goal, depending on
-> the platform.)
-
-I am seeing three different platforms from different vendors hitting
-the same issue, so it's better to disable C1e for these platforms.
-
-Kai-Heng
-
->
-> --
-> Len Brown, Intel
->
 
