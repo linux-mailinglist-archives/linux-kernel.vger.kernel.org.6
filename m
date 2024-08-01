@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-270807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36623944581
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:34:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 290FE944585
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D7471C223AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:34:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B804EB22494
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9D5158554;
-	Thu,  1 Aug 2024 07:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0AF16D9B4;
+	Thu,  1 Aug 2024 07:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YKPSPer6"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hm6lqGrn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866AE49626;
-	Thu,  1 Aug 2024 07:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D62E49626;
+	Thu,  1 Aug 2024 07:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722497666; cv=none; b=sG4JVWrvnkoar6ERklXCoLX2Avgk5pJnZMM+zqZa/ILin9xjZHzdVdc4t/qAn6zBOQURONVcM/nNW6hDUVxrMSJ/2gjCPRacfpbJs9oq5UcKpO5eDoxKpHFLCflYAvyiZXwyaKJmuneRgb2Fjg3rOi5iMWGzXQnfxW908Ami+mI=
+	t=1722497697; cv=none; b=C0LKgxEEixIvmvrz2Z71vPPn+rE7jB9LdR4DycUbwMvTH06/gu4HiRrcpjk3UmRiYz+Et59qLPerbK/FMgxrX3o8xuc+wbh71TJdCmSMxItWN+D3HxDT67sIfOwtr7+fYM9C0O/OSY2wLnZ5pU2VA4NGbSFTlL1RirBNwXMYR8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722497666; c=relaxed/simple;
-	bh=0YwQJ5ThTZNAVt0ddJBrt23yhEWYjACirqP1N7cQOXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAR8JQTzmVR79fJOhlh3o8mJD5PNEwgobewL89tJ6nANAcZYQ2+zlYsVM36HL76zEZn2wR+924y6ZXaBZw7ieCJsB8D1K+Z7nUESuLbq69bi85HDlhSI6dnjMdMJUiTmXDzERRf0BS0LyUlOBuRZordyDdR71W4/892MuugCsIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YKPSPer6; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3FC9740E01A2;
-	Thu,  1 Aug 2024 07:34:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 9G9iyM70FQaN; Thu,  1 Aug 2024 07:34:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1722497658; bh=MuU0oaXSSlkWAyimXIs19Uqw04sE/qBAdKEgaL6rnxg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YKPSPer62OwiBMhvW11IigfgpFOKM58FX7qtrzXR9N8LOw8/UhtOisYzPKK06ZMgz
-	 0c1NAq4EY54UA7r1R6VJkiHjcDMM0JzuyOKajQi+bKIFRIMk5vA3NLAWcPKrlnDCl5
-	 IsCFaG4VmEzdEeXLHs58ZufSUlOmVTa9lUPhAKuWMcyo9YphPXHVLVA4PLcPZ39zs1
-	 dolyh5hfaa9h+bno0rig15rBHz2KC8o5uuxFgoJh/JTemotfC0+r0Gu0pwEFLOpcVi
-	 SYhOJ4c9rmMtTz+2FzykbnkHYmmf+30srT+CyQMD0l+Xns4xId1cefjeC72W6JJ5Uq
-	 vSM3Hul5BHErDJcv85hqUVtfg54nibJ0oqlAMLUlm7UkCREShjEZh1k8xLGOkXtOot
-	 ZClGa4ceRIszdaJ2i9HfZoH5kqRFx12XmUbuPOlsyjAAVRygaOUg3q7eKyg5Pbe+Rq
-	 cmwSuzgqBmJ1OiAWqzKrpsjo54mzB9eXednZL8b7MvGvy7JxRAqH3Fb7GWHzUcHzwj
-	 7BQJHxgNtMYbskuxUOu5f3lY5CeIvVoXqYZcoMZhEf1H4fIEBU9Gq2VhHCVtC7t1pc
-	 WeFVNvpJE5GmFUiAjpfgfzLsfCckuFsrMY+iQDvlqmbZGEHneMEBONEr3MXYE0gi9T
-	 DOCg5hvDC2uJPjNbfZWyA+5k=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0102240E026B;
-	Thu,  1 Aug 2024 07:34:12 +0000 (UTC)
-Date: Thu, 1 Aug 2024 09:34:06 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	paul@paul-moore.com, sfr@canb.auug.org.au
-Subject: Re: [PATCH] init/main.c: Do jump_label_init before
- early_security_init
-Message-ID: <20240801073406.GAZqs6biPeFEG-0wPF@fat_crate.local>
-References: <20240731213429.2244234-1-kpsingh@kernel.org>
+	s=arc-20240116; t=1722497697; c=relaxed/simple;
+	bh=4fAL4cODCnjl0NV8qGw/Qqudnit/5hoHCsZrciMhbUs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k5YpY4R0L2a3dtzCWqRnB773xA7F7htuHc5vID+7jZnEq6MkxZW+qSQzIdy50YMa4wXUnOP0Qd83IqLfYQwedCPAuQxxrx0/dAeA0CrSriyf1l8EywNnJAEh9BsXuqVJHS70NhnTqxbL1krEWKk+U1xrX6aY0+w7OG2FeyKEoSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hm6lqGrn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C540CC4AF0A;
+	Thu,  1 Aug 2024 07:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722497697;
+	bh=4fAL4cODCnjl0NV8qGw/Qqudnit/5hoHCsZrciMhbUs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hm6lqGrnGLdGUt29ZxrQ9cGwGC5e/My8adr9xG8pGwOWvxzaIy2wVVZecHcsaS7MD
+	 2vhxDp5qw6P6jWSVDdYpSlndt26lYMY/9L3hrdQVP6XL1jiOwA3de3PchwMF07I1N4
+	 2YEHskiwTzLI1+iwXeDgxTjbuc9HN0GjQyrYNiG+t6NhVrrxrlXYCf8VJMbSS/9yNs
+	 oHiP/3JEHHEyg0SbxiUkt+heXZ9wY3Uvo6jOHCc4TGv31tTJIER/7SKgCRJbrwGHtk
+	 ninurOs1MqcQM+fogPcJEhZWkju/RfarTKElxrf4Eq/YQ9RcoW3WZjBJcrAerVNRjv
+	 rukvhfzurLf/A==
+X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Anup Patel <anup@brainfault.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+	David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 02/84] KVM: arm64: Disallow copying MTE to guest
+ memory while KVM is dirty logging
+In-Reply-To: <20240726235234.228822-3-seanjc@google.com>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-3-seanjc@google.com>
+Date: Thu, 01 Aug 2024 13:04:43 +0530
+Message-ID: <yq5aikwku25o.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240731213429.2244234-1-kpsingh@kernel.org>
+Content-Type: text/plain
 
-On Wed, Jul 31, 2024 at 11:34:29PM +0200, KP Singh wrote:
-> LSM indirect calls being are now replaced by static calls, this requires
-> a jumpt_table_init before early_security_init where LSM hooks and their
-> static calls and keys are initialized.
-> 
-> Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
+Sean Christopherson <seanjc@google.com> writes:
+
+> Disallow copying MTE tags to guest memory while KVM is dirty logging, as
+> writing guest memory without marking the gfn as dirty in the memslot could
+> result in userspace failing to migrate the updated page.  Ideally (maybe?),
+> KVM would simply mark the gfn as dirty, but there is no vCPU to work with,
+> and presumably the only use case for copy MTE tags _to_ the guest is when
+> restoring state on the target.
+>
+> Fixes: f0376edb1ddc ("KVM: arm64: Add ioctl to fetch/store tags in a guest")
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 > ---
->  init/main.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/init/main.c b/init/main.c
-> index 206acdde51f5..5bd45af7a49e 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -922,6 +922,8 @@ void start_kernel(void)
->  	boot_cpu_init();
->  	page_address_init();
->  	pr_notice("%s", linux_banner);
-> +	/* LSM and command line parameters use static keys */
-> +	jump_label_init();
->  	early_security_init();
->  	setup_arch(&command_line);
->  	setup_boot_config();
-> @@ -933,8 +935,6 @@ void start_kernel(void)
->  	boot_cpu_hotplug_init();
+>  arch/arm64/kvm/guest.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/arch/arm64/kvm/guest.c b/arch/arm64/kvm/guest.c
+> index e1f0ff08836a..962f985977c2 100644
+> --- a/arch/arm64/kvm/guest.c
+> +++ b/arch/arm64/kvm/guest.c
+> @@ -1045,6 +1045,11 @@ int kvm_vm_ioctl_mte_copy_tags(struct kvm *kvm,
 >  
->  	pr_notice("Kernel command line: %s\n", saved_command_line);
-> -	/* parameters may set static keys */
-> -	jump_label_init();
->  	parse_early_param();
->  	after_dashes = parse_args("Booting kernel",
->  				  static_command_line, __start___param,
+>  	mutex_lock(&kvm->slots_lock);
+>  
+> +	if (write && atomic_read(&kvm->nr_memslots_dirty_logging)) {
+> +		ret = -EBUSY;
+> +		goto out;
+> +	}
+> +
+>
+
+is this equivalent to kvm_follow_pfn() with kfp->pin = 1 ? Should all
+those pin request fail if kvm->nr_memslots_dirty_logging != 0? 
+
+
+>  	while (length > 0) {
+>  		kvm_pfn_t pfn = gfn_to_pfn_prot(kvm, gfn, write, NULL);
+>  		void *maddr;
 > -- 
-
-I was gonna be very surprised if you could simply change the boot ordering
-like that and it would simply work. The early boot order is a nightmare so
-without proper audit of what uses which facilities when, you won't be really
-successful, I'd say.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> 2.46.0.rc1.232.g9752f9e123-goog
 
