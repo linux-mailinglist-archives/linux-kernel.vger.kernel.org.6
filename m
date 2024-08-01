@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-270782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D353E944531
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFB6094453F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55D89B22A4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:10:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779CD1F21DA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378CB16DC07;
-	Thu,  1 Aug 2024 07:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="oS+sPwg8"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD641581F0;
+	Thu,  1 Aug 2024 07:15:22 +0000 (UTC)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCB216D9BD;
-	Thu,  1 Aug 2024 07:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C7E14AA9;
+	Thu,  1 Aug 2024 07:15:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722496223; cv=none; b=kN9lJuxf9RVowb+eBEr9ir4/ZT5xwNnu0rJDpKFoLhb79kMUhjMAPWwA8p39EFXiyPojbyd72g+Eax2Fh1RagQzGsb0jrL+qnhnYYIZCO0dEfcV/rh+k+YLh0awLk4+rjNOMbYwrjmYnOoUYkzC8gEG1BULIEORHF5MiB+xdU3I=
+	t=1722496521; cv=none; b=XISkHM5xYgVmltRUBzTfN2lxuWsI1/6Kvw+2JGaHy2As/jXSZZlLASEeO7Z35/6yCMonCI2YyEOnbqe2h99IVvkguhUmMkHnNDNJV9tbpWjXEz9Dovwq8SuZW+n0mrnk0ejaRWhuxq8FMzbEbtvxdUfHjRsxJ8w0fRv68wdckxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722496223; c=relaxed/simple;
-	bh=aMjfXeXEC6UootsAZyVk/rPsGbBpGhaaxXIkK8HnfN8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RD0RUW3gADANIOh2JEBUg3t8WMq0nLkVYtpK4zf3B3DtOlEkkK/Ho+2ljNx9EDUjFRcsTKypTMnwJm3n4j5K//m81leL6dAvhNpHmhbbX1qiVMQewWeZHaQCu7MlYDZtMoEE40so1r95G46HYNvvq8C1U/H4tJhV8DGJGesXtxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=oS+sPwg8; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3+u/IePx+23HYIcKU4vqAjAChZzr/8w7Kjttwuq7ON4=; b=oS+sPwg8yk6DlU2PKLnTDoBDpE
-	wt23eiQeLPvbFf8haXHNuaZo42UR+bDVMmaXZu+EXueEBCs1k47CPKYXCleoNDeDF72R7Zyca1Eb9
-	PT+XNg2ZhUg8AD8rr34ln8ZPhL0CO6L/HQhORuo/e4RdRYIzWhjrV+af2yh0DEijynryOXd5433Mf
-	vtHjflVSOLaUlfY+/0jbHkKBKmSUI9GPw6YpU9shHR1Qz3KF9a7pAq5NsxAHnMmycZ420hY4lBe0A
-	CDrN2HiGmlWYo5QDPBxjHnd/9Oljl2Z3RIv4lD8u6YMSHdWd+2ROmWRcYSDkVKHAhM8NdggG1mQZ5
-	CwWwv0yw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1sZPx3-00000000f62-07Wa;
-	Thu, 01 Aug 2024 07:10:17 +0000
-Date: Thu, 1 Aug 2024 08:10:16 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, phillip@squashfs.org.uk,
-	squashfs-devel@lists.sourceforge.net,
-	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: Re: [PATCH] filemap: Init the newly allocated folio memory to 0
- for the filemap
-Message-ID: <20240801071016.GN5334@ZenIV>
-References: <20240801025842.GM5334@ZenIV>
- <20240801052837.3388478-1-lizhi.xu@windriver.com>
+	s=arc-20240116; t=1722496521; c=relaxed/simple;
+	bh=dWMNS79lKv+pmMcQtK2n/vi+2G/hwGMu4kXCeiu599c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MOnnXBcqWkbS/TmpYPSVzOz+QG0MICbPs12EcFHUEheByS5Mx04kQoxTilzJRVwmBVJUMnzY4BOJMaC+5z96q2UsAFyY39ZY6QN3KawHJSg6Fr6N1Cdrh7guiy9d7z19vRBFQXFj3prxWfh0iWusvSQZP1Yl4wTxvMAsZzaINvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-66493332ebfso49344867b3.3;
+        Thu, 01 Aug 2024 00:15:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722496518; x=1723101318;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/Dem1J3zNv8iNCExP6wVrNpwG6B+eUcgBpCcCcfiPk8=;
+        b=mEQbdU7ReALWa92g+GkIcKXlyL/zHbliMQjZeIeQsZqhk/ycSXLKyNovtbZqU9uj1k
+         L6IZbewYsMx+pdEbbbbVxzIPVVKUEaRxrQ6Y9P+2+GXwAB0mhXSLl3Em5Y/iojmz86g1
+         YC71+wpspkinjQX/zMGa+GZEvFcZUye2qIb6Zzm4Z5LBr3WRsLIeWMl9ce+poYlz43px
+         ZRX578DkaY9jWE1vgCzoIzMSMta0pw4aG+h7kzPDOlXfKS0UfQ/CZbc5JtNbsrNtmZaf
+         jEhKd/DER/3mX/2l4FNHquu4hHMdmcFxKeSH6Bgx+DeHCVu3zNbpx4P0Pf+pCc4pZflf
+         Wqsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/TvOUKW2IfpNvf4Ea/5Rr8o5PeESiF6rv1/zrbQPzUZPWd0qHhZp0WRWRZfrhB6+0i/rLRbejhz3eF75f2nO0hopvgrSjlrnTd4fQYYZJ65/Hje/Ki0D/FjW6WPbsAwOiCmDnF/1z9CadYgrjwrLICgqTymY3bPA1ZicuOd1L6NLjsfFXmeT+JNo=
+X-Gm-Message-State: AOJu0Yxet0DIv1XUBQKDo3Meund0E8eYGuKZlrx3p93nWn4D6ZeoXDIs
+	PDqWG7cHaeBedDPrGpdPDrs9JxvnOCqi0Yv3VS7PxMQUrjFV3Ue+feUc4eUJ
+X-Google-Smtp-Source: AGHT+IGX4PlOT7KR/j/pJY+L/UV8kVSqfgsQ0+1oKgd/1Dudj1ZU2HQ/EAmjW8djdSxnrThnwCMzDA==
+X-Received: by 2002:a81:6905:0:b0:64a:5493:e0bd with SMTP id 00721157ae682-68750477808mr18516737b3.40.1722496517850;
+        Thu, 01 Aug 2024 00:15:17 -0700 (PDT)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756b024da8sm32425587b3.84.2024.08.01.00.15.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 00:15:16 -0700 (PDT)
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-68537c804feso17311187b3.0;
+        Thu, 01 Aug 2024 00:15:16 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWSMPYewaygWFJAoRZ9Un9FSwTvDOqmDI9iER0lw43H3ARAxuhzFckGm/gB7i00SLZ6MdP6XoAvnBElgl+cjgpEva4i6vJ5SPHibqJnVY2WGpmJJmr5QM/HmvEyjHS0cWaRKng3dFnvxJkRxwFiSm+c8wjGOoDL6qayixk8aSQX9ckxJWjrlAAIukU=
+X-Received: by 2002:a0d:e903:0:b0:63b:d055:6a7f with SMTP id
+ 00721157ae682-687503827dbmr16460057b3.38.1722496516446; Thu, 01 Aug 2024
+ 00:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801052837.3388478-1-lizhi.xu@windriver.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20240731191312.1710417-4-robh@kernel.org>
+In-Reply-To: <20240731191312.1710417-4-robh@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Aug 2024 09:15:03 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXdQv9FXDKvMurTBds+zF2nkYkS=njNKYa_QvgaGpkE2g@mail.gmail.com>
+Message-ID: <CAMuHMdXdQv9FXDKvMurTBds+zF2nkYkS=njNKYa_QvgaGpkE2g@mail.gmail.com>
+Subject: Re: [PATCH] clk: Use of_property_present()
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 01, 2024 at 01:28:37PM +0800, Lizhi Xu wrote:
-> > > syzbot report KMSAN: uninit-value in pick_link, this is because the
-> > > corresponding folio was not found from the mapping, and the memory was
-> > > not initialized when allocating a new folio for the filemap.
-> > >
-> > > To avoid the occurrence of kmsan report uninit-value, initialize the
-> > > newly allocated folio memory to 0.
-> > 
-> > NAK.
-> > 
-> > You are papering over the real bug here.
-> Did you see the splat? I think you didn't see that.
+On Wed, Jul 31, 2024 at 9:13=E2=80=AFPM Rob Herring (Arm) <robh@kernel.org>=
+ wrote:
+> Use of_property_present() to test for property presence rather than
+> of_(find|get)_property(). This is part of a larger effort to remove
+> callers of of_find_property() and similar functions.
+> of_(find|get)_property() leak the DT struct property and data pointers
+> which is a problem for dynamically allocated nodes which may be freed.
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 
-Sigh...  It is stepping into uninitialized data in pick_link(), and by
-the look of traces it's been created by page_get_link().
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-What page_get_link() does is reading from page cache of symlink;
-the contents should have come from ->read_folio() (if it's really
-a symlink on squashfs, that would be squashfs_symlink_read_folio()).
+>  drivers/clk/renesas/clk-mstp.c    | 2 +-
 
-Uninit might have happened if
-	* ->read_folio() hadn't been called at all (which is an obvios
-bug - that's what should've read the symlink contents) or
-	* ->read_folio() had been called, it failed and yet we are
-still trying to use the resulting page.  Again, an obvious bug - if
-trying to read fails, we should _not_ use the results or leave it
-in page cache for subsequent callers.
-	* ->read_folio() had been called, claimed to have succeeded and
-yet it had left something in range 0..inode->i_size-1 uninitialized.
-Again, a bug, this time in ->read_folio() instance.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Your patch is basically "fill the page with zeroes before reading anything
-into it".  It makes KMSAM warning STFU, but it does not fix anything
-in any of those cases.
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
