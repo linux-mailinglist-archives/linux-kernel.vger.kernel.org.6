@@ -1,203 +1,238 @@
-Return-Path: <linux-kernel+bounces-271486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06E93944EE6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:15:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2205E944EE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 926D7282686
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:15:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF22A1C23B84
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12341A57CC;
-	Thu,  1 Aug 2024 15:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C37F1A3BCE;
+	Thu,  1 Aug 2024 15:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/mDbm0w"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mhP3Amu3"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062A313C3CD;
-	Thu,  1 Aug 2024 15:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525320; cv=none; b=MwPlxRNnMc7K8hVrpJwj9yUG1sOHlv/XVeizICekH6iHW+57bror4suyDeH9JpzPn7sn5GoVXH4tB2nK1BOPSv7sugER6fM4jTF+1KSROAXVr5yYUGwlK/bk69356NGfpZpX+p3ZGc8NMMWqX+aCBcOjeC0pu3QJTXW9c7AJAJI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525320; c=relaxed/simple;
-	bh=IT1lteD7ekHREr8wSGlw6BLY61YLvWEiWnAN6g+tCqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJjCgSt+Ke2qwp8v7TTERez0q4GmS62Olu5bcVuOZH2aLVYrjkSSCL1JDd3c0aGR5BJJjBuks8lsVC/laAQW83SzbMS+yP5SsCdK1JQ7kc/41aNGO8UKoCG7/OtGTSM+O9W1SqQZw3jYFflDuPcLRFOvUZpnP/8U87d9Oh5K/YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/mDbm0w; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a81bd549eso677564866b.3;
-        Thu, 01 Aug 2024 08:15:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722525317; x=1723130117; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=kz66FuU/ARttOjZqWZbd30k8H0yCvS1lmutapB6qkKo=;
-        b=e/mDbm0w+a9p3aFa8fcbftlS3eiSj+0rNZI3HlATxJecHUnVT55C5XE3Fuj4ejDrRp
-         27O5/RB2Di7gjNgc5tLEsD5j3s3VrGVjQQSBZbhZUb81X5ZO42JQ1PAK7GqTidQqws6i
-         MJ17EycpieCItKj5fpdxp6YespJLAlZXUV1fU+VMU+DXjwM1reHxFhb9cCP4lF9WNQ55
-         kUgZXNoJxddLSfq1jp1kYHA/Y34HF3Px/wb7AlXDWfy9CocJZwOGJtk1yO/JW6RfU5en
-         boOz4hrw62Lql7Mqzs01uVYJ0nOFmfpc4cZUS0xjk//dIwQnqbxuGpWLgvzgP/lYVAEy
-         5Jbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722525317; x=1723130117;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kz66FuU/ARttOjZqWZbd30k8H0yCvS1lmutapB6qkKo=;
-        b=e0BYv4rjieY0XduwOGebo6VoPBSeODlvDE79YUAwARHet+8yRW0OD64ifNhX2XdJkP
-         pS1BUIH4mMX2GRQ5e+Y/39QNySaX4kQCH0wXP1ugZjNSLA09uYLU3pRGIeWiUSVvMyu8
-         8lcuV53uNU9ExtgFcnGU0zKfh7BA9zMWdXuX0Ru20AeHqURsJclejBw7cXK6Fj3mjfeX
-         qmNtprJdWq7j+qnR0oNlVGYmnML2HD0NqkqsnbYe5XYXZHDZ6bOMIojb2WrI4RswZiH2
-         tOHgZRO7HKBVQclm56C8zonMimyjlQKBNw+bgtLuImoRvYG+i1zn46aaPXDIVjUuNU68
-         VQ1w==
-X-Forwarded-Encrypted: i=1; AJvYcCWz1uSBKyXMmMXH5BgifkyKHVNBu9enq0oV+ut3oYUrobCfthZuzrtsoATiVBPFVCE7ZP1gM21bO4f6+fgm8H8itYRYLDGzNEj95hzCDeh49Rhgzn35LWsjqnKmpCMAtUdeiuSrGYRdJZhb6Q==
-X-Gm-Message-State: AOJu0Yzsf+D4o57RN2KuW18IRKet9H+ai7p59R86CE51//9kE6t+Ripl
-	YNA62yVBL0hzTk0Xk49yTSU/Mon1tASLSNurGGwb1SzF1cHVbP3l
-X-Google-Smtp-Source: AGHT+IEppeybcKSETEZ5zmIwCIBD+KqgNyxaSp2b7YPCA2K65+OU77JOwmEz1c02mFRC9iOAzsvAiw==
-X-Received: by 2002:a17:907:724b:b0:a77:eb34:3b4b with SMTP id a640c23a62f3a-a7dc4dc02a3mr47413266b.11.1722525316792;
-        Thu, 01 Aug 2024 08:15:16 -0700 (PDT)
-Received: from f (cst-prg-90-207.cust.vodafone.cz. [46.135.90.207])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4146dsm907559566b.114.2024.08.01.08.15.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 08:15:16 -0700 (PDT)
-Date: Thu, 1 Aug 2024 17:15:06 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Josef Bacik <josef@toxicpanda.com>
-Cc: Wojciech =?utf-8?Q?G=C5=82adysz?= <wojciech.gladysz@infogain.com>, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, ebiederm@xmission.com, 
-	kees@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kernel/fs: last check for exec credentials on NOEXEC
- mount
-Message-ID: <mtnfw62q32omz5z4ptiivmzi472vd3zgt7bpwx6bmql5jaozgr@5whxmhm7lf3t>
-References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
- <20240801140739.GA4186762@perftesting>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260801A01C3
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722525334; cv=fail; b=S3jDSNPUpG2Fb1/jeA734wzpvQfUfOKNGuAFdvT6HyGd0velwtxqbg8RHPqJcBpX87DCXnN2ZVeWlYmIVjWdpRIxZhXTraGqrrHUD9IMER5cb+gLrUl1Bs4sW2PvJ9wkfNIXVTrJ6VZYht9X0toyXVNqIjc+NXwzs+Xq+nZS2oI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722525334; c=relaxed/simple;
+	bh=0smV+qNxn0tEuGs2ku1qqJ/CC/CBRpgxH/4wtZjIGc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MJjkSSlU6jEb/jgtzfzm145SetZaNydl/zpkVOfb1HfvE2CmtAe52ZdIaXHqyZezBnrMDFeNOcuDUFCYOoduiyRTOjQWNDvfFrDV9ZccVQtZ6WYIhkH4ZkhZLzrzEYS9cnW97GENKsMjcso4DI2fDKZu2cgQNb1OJ0xRs71Rxw0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mhP3Amu3; arc=fail smtp.client-ip=40.107.20.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=q3eolg663GZf5XqaPtf/hXLS/1DvV+pZIWRqySdAn7WloMd65dx5pQP4CBfhqmB15+CBqAy7UkDazzEy7Zk/pn9lrqTHudPUWuB0z3SIu1YADhwKYda403vyx48FcORPUkOpRAVTkIIw41CzsbU7abL1hSToSech+2Ot+FgIM8pUhy/b7hjbl2k9OR/HFPkfmbo7aCE5xbal/sTXtXpouL/Ln57IV+kXQYOnU9lqM9AeO1wa3bGKgUAI+UJ4wOgki3rGKz6VNAl8cHRKJYd8wS/k+h70H67piNmCznwOz1OKOShxWY0GlC2UA2L9GB8uf8jkRA33xzAbSo/rFgorHQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/3v7oxyl6GJJNVEXsknK44jt2JvNuCMwqxOkZxdqrxU=;
+ b=l0oOUGJfnOC67K6JRsjq62AuryOmJ26UzVNbh066cWdK2Fx1l9x6/NsBDXkHM1t1LqlHh/Sgqz7orunJZMGdH0eIe57qBKJbeeegCJx06ZGR+TXWFN+Yoa87wFiDt++4EvveGiZfVWFKouJDFq4+1lR3ZQdy1GgwsKgSBb4MBYObshZNvvPJ+qm8WjK8bbJ7R1tjMKAiQpPznmERoycmo+7gLOAmWV1UHzGuvYETANEvcUIb/Ea98z5nAS83XOQg1etKxZcC/wGkfOhrd5fzD/tYtGreBBMcbbkKEMXT9kuV4rOgzjOOSWCTcGgoqyClc9tviwK0fmvfFaT4RWF2ew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/3v7oxyl6GJJNVEXsknK44jt2JvNuCMwqxOkZxdqrxU=;
+ b=mhP3Amu35GuLu4+pRPyCv4xHpZuS2/uTShtuEdiuvt8kiowLWrmxnKh9ZYp0YwYY6UsTBkXTS1KcX++xfSV5GFtHh+R6m7Tn0EdGg7LuxAWprDr+RVsGlPjNmMJvzv2IOTcgTbBsHSk4ZHi7o0/D2r69kS8hQn48C5yqwwNaddsYXnRl+vRYCNONQyb3ldQvhl4I3rVj6a2huxPBBajzliiG729sOmmbLUx1Z2ah5R0P2GauUBOHOZ9p6YhsW5TGoZqCHKLTf2IWoxY5wfsEB+WoCUlFjIRAFxwmXQx+vJ5yzvKOfD1+xl69GsSK/gMkTkrL7Wrk4zp/to4de1QdLw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM0PR04MB6882.eurprd04.prod.outlook.com (2603:10a6:208:184::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Thu, 1 Aug
+ 2024 15:15:28 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7828.021; Thu, 1 Aug 2024
+ 15:15:28 +0000
+Date: Thu, 1 Aug 2024 11:15:18 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] linux/io.h: Add cleanup defination for iounmap() and
+ memunmap()
+Message-ID: <ZqumhgZ5heh0OYuA@lizhi-Precision-Tower-5810>
+References: <20240731233145.2485874-1-Frank.Li@nxp.com>
+ <969fb014-682e-4984-ad1b-7ab4f068ed85@app.fastmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <969fb014-682e-4984-ad1b-7ab4f068ed85@app.fastmail.com>
+X-ClientProxiedBy: BY5PR04CA0019.namprd04.prod.outlook.com
+ (2603:10b6:a03:1d0::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240801140739.GA4186762@perftesting>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB6882:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1f1bf4e-34d6-4e28-5e64-08dcb23cc69e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?neIEaIdXOyH6al25/YmSAKUrtMUjcBdIMD5SDMdtqDq3fbd7T+Dn9hthkiSy?=
+ =?us-ascii?Q?YV78r10xp4QVJgAkx+qo5yD8YH2HgqNFf24lKxs6AksO8Iwq8CCo50SbipBl?=
+ =?us-ascii?Q?oan7de72WiL6q9kcTpRAV0vAv79IHyZVp62UfCZnmTU0WGVcNvJdj5KafGKl?=
+ =?us-ascii?Q?6Oa3tsHsSkx2eNago1kr2Wy84c0JQq60KM3crd3zKsFolABnHf8ppjLNMKHz?=
+ =?us-ascii?Q?3AqPkgZwn0TC77KmjKoIdtVRJab+DflGU12W0A6/P280I/JXn8uZfeKwS5nl?=
+ =?us-ascii?Q?Ovs6yaqAK8sZqhjKwwnC2M+4TFhZq+I2HED9qUljssemIzg6+0VzIAOKPW4V?=
+ =?us-ascii?Q?2muDZy30eL3F00DD7iwYU+LamJM0BRrYbcWtjOJhmk2D7dJR9Dw8JiNlHdOK?=
+ =?us-ascii?Q?AAdHav05cf3C+iC/t7TSHh4eKtJ8H+cJY8ifUOhl7EUrSKbWKd541BjK0zia?=
+ =?us-ascii?Q?J2r0WUIf4MSP1PMCDnHEpEkGRchkgKvicG0s/k6GLoe3ee6nBxKCWxHK0QcB?=
+ =?us-ascii?Q?9mCbCUniO0Z+PHbXLZiJ2mvDc2hf3parLmA4szItylZjPnO2YrjIDlewod7R?=
+ =?us-ascii?Q?WPYeFUewXXn8OcPoKnI1rSQIMEkKGD4IbwCKROOhblmK+IMG7G8hh6wYCwyU?=
+ =?us-ascii?Q?4VrTXN6Q1/8IVvGlALTJR64IEy7HMYZ85Fcn5vEsNF+du3FJgV8dkOvr2XDK?=
+ =?us-ascii?Q?NlRBPalyDq0WSd9DBKJgzHc+/BlUjeRnf4vG9dh53fG4JqhIRnGPwcA1bcsP?=
+ =?us-ascii?Q?9f1oQqP+VjuuczwwCq8IYnZCmzAJr/+2KmLirMvL6Gc/MQ6Z5xHhWflKD2Tg?=
+ =?us-ascii?Q?VQVIO3Lj1B/iDpp+uNDxliZdd+8rsINQahWpd23fCCz4L6t5feivQXbnLnA6?=
+ =?us-ascii?Q?76nM2v1kKcOWNTF3tT+w4A7DEXtgV4QBPu2D22pplAVhQvRBLELUjCH5dzKV?=
+ =?us-ascii?Q?deuh6njvvYRj1oDLvZR175eT+eajX384k/aD5Jq20WVHfGdhCdabJ0I54G3r?=
+ =?us-ascii?Q?i5h4PIv4zRSXg6mWLMxWxAidrVnN+grN7PIGk1dKJ1Z0IKMgOIw9rfQnI9WU?=
+ =?us-ascii?Q?JI/jRyOWPnZLOWGh10S7tmON5mmZc9mVbb81BqXYr7wmAfYIC3PucNmSHuoR?=
+ =?us-ascii?Q?0kcaVWnX9OFMXO1YJScWR3qhH5F9d0Xcfs/Dwnw32THPZ7Xbs+D60ewZP3iK?=
+ =?us-ascii?Q?xILro4OhdRBuzBi6bsH3MtKqpHPTmyThGUc3ZWUVf0DbjVcZFJzvzjscy/0O?=
+ =?us-ascii?Q?fJzqwAiqiDrf51LC/Efp3HvUAeAyFekmVtITWHwhVNex1tAnmYZDx5BgqoRb?=
+ =?us-ascii?Q?CYw7QEPXq+ypTc8KK5HedghAP9qRMEP+Ml8BU7omtXZp7Tq6Pn7Dd4fHeut2?=
+ =?us-ascii?Q?YvItSLWU+4D/VtTh8nnthSBVz8Gk5f7R/UaFZ+3YjE3a50XTkQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PFbz8l0IFv0MG/MjA6OrJ7k5YxMuBXNgtGrCnAdyYJ9/PZe2FSTU3ws8fUcL?=
+ =?us-ascii?Q?eF67SBgHer30WNOvSpH3lBEiuwgkbDtxcGxT7RQ3VAHIM3o7/n/tb0WYC6wU?=
+ =?us-ascii?Q?50jnC6QPyyL8YFNDteqbL5XWkd0/2ex8qBiHP5hYzjOap5fx5ZhzWTRfR75i?=
+ =?us-ascii?Q?CyVDfvPb+Cpt+GvHDMQtogL38QkWyJNnIO7dGe/OZZSnN2wSczRH/0C5em0C?=
+ =?us-ascii?Q?/2vZ+yqmaFhNHfrVoFwZ3Rx4terJchOvk2tFaofeNtqDsI4LlmlbRGuSRN9U?=
+ =?us-ascii?Q?6PDWO9mVd1rvZVRQ8YOYaPhZk/EvJpacM9AE2BcCMQQ0kffLY5p0WKS/vUxq?=
+ =?us-ascii?Q?5bV6CXiOoXsjir7qsfBHvqz+L1y/fxgVtW6bzZED6qPWBKsrwMfIjVg8d1SY?=
+ =?us-ascii?Q?uaxNcnKvAhVX8RfblB+Wo7PGujhrfHrERzrlrSxjMSZNzDPRgDoOqpkAlpHf?=
+ =?us-ascii?Q?bvcO9wlZYAa2QNBtAbug6BBr52BzumoRZQ0m17GMszkMZR+69nwBlJMnztBn?=
+ =?us-ascii?Q?Z9uwhMRS3HreHrxgAYWFlZ6kNfEoW2+RQFtlvF8sy357lxNeo9EH9Lah0Ast?=
+ =?us-ascii?Q?u3lARQxsSSou2DAyMUFdKWZmEVqbd8EkRuB9hKBLGHQbrYbsHRaM7tZh1qD6?=
+ =?us-ascii?Q?rerLw5aZGKjSU2lnmPUfKGKdf1+v2sWEQ5mGHZkI/a+sSY+By+/0KMB8jpxI?=
+ =?us-ascii?Q?pws2tXtdlhaplH0j+5gSMjHHMzQQPSIiRpId7kKON3jTVsRKqg98v1oEfs44?=
+ =?us-ascii?Q?IDG69jDmEAFJYUKKN2CfdkcafIDwiw+Jf4up8QzacD8ZIfLOJX6c+K9UhPo9?=
+ =?us-ascii?Q?LAgqzX0mPzgY3PzhIOn7CdCIvAvr3GnAUFVxXi8amrqBVAdiZTgEnteyhSBn?=
+ =?us-ascii?Q?amanRw5M1u0j83++s3Sht/gZz+RMmhy0fJ/4ZUE71qMLf+ATT5jYMEszNtyP?=
+ =?us-ascii?Q?shVjdRYPs24XUPsY+ngRelJlyThaDcIzTSZY9lgxVLstXJ/d/oI1bets2P4y?=
+ =?us-ascii?Q?sbrEm0ifBSNSGC3lYGl7sbXgfZAvJydE67PLgRLY+Jy+oOil6NgtjzB/epN1?=
+ =?us-ascii?Q?JXvxqfe/aPGEMu/QnJfrTPMkj3iWfWTcFt1hvrBuMSed/XknBab/99qZV7a4?=
+ =?us-ascii?Q?Xx69Cx3aZqFejoI4F6T+ZXS9wtSAC6LDOkQe5Ax6XlwbhsHd9ZezsAzw5zUs?=
+ =?us-ascii?Q?8Zk7CqkmZ24t/vFvxKSSHhm71g2sd9SdKTAJuKBelrmyLot4P16O8b5Ys01s?=
+ =?us-ascii?Q?JkRw2NuGXvdam+2x3D3dQHebW55I94d6abmAjp7WlHOzfrGwFo/sptViyZak?=
+ =?us-ascii?Q?Ndk/BSBuKa4qEFgI9PyujLvZSEVi0qZ1aWUyUJaOOW6jHu9k5oDRYltVULln?=
+ =?us-ascii?Q?cXiWxe2nO22ecqIZR1ch/6m73A99jCqx+I2KbktX3sR4oyCRPwXqNftqNVB7?=
+ =?us-ascii?Q?JZdfZwJDSolmSO5FS1ra3EKxvTVH3vNWF+rSlu8AuBIMUl9ywFlZIw+/U83s?=
+ =?us-ascii?Q?BJyi/ut1nTQ+XyJ0kr7ZwKX5Ci73Zf5lHM7Qb5EE0lAeyEE13gWlavZeK3wY?=
+ =?us-ascii?Q?thwr4D5hSGg+nAkaUOQIDNk/+ukrGrmeqNgk6jP0?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1f1bf4e-34d6-4e28-5e64-08dcb23cc69e
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 15:15:28.1473
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: MD1l6n/DOhi8siWxaeYdinKEaGUOTxarnK17eM57UOdNzlOS32ymYMoPmp4NzC2P/BLUgp3xAnn6JBsFM4i7Og==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6882
 
-On Thu, Aug 01, 2024 at 10:07:39AM -0400, Josef Bacik wrote:
-> On Thu, Aug 01, 2024 at 02:07:45PM +0200, Wojciech Gładysz wrote:
-> > Test case: thread mounts NOEXEC fuse to a file being executed.
-> > WARN_ON_ONCE is triggered yielding panic for some config.
-> > Add a check to security_bprm_creds_for_exec(bprm).
-> > 
-> 
-> Need more detail here, a script or something to describe the series of events
-> that gets us here, I can't quite figure out how to do this.
-> 
-> > Stack trace:
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 0 PID: 2736 at fs/exec.c:933 do_open_execat+0x311/0x710 fs/exec.c:932
-> > Modules linked in:
-> > CPU: 0 PID: 2736 Comm: syz-executor384 Not tainted 5.10.0-syzkaller #0
-> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > RIP: 0010:do_open_execat+0x311/0x710 fs/exec.c:932
-> > Code: 89 de e8 02 b1 a1 ff 31 ff 89 de e8 f9 b0 a1 ff 45 84 ff 75 2e 45 85 ed 0f 8f ed 03 00 00 e8 56 ae a1 ff eb bd e8 4f ae a1 ff <0f> 0b 48 c7 c3 f3 ff ff ff 4c 89 f7 e8 9e cb fe ff 49 89 de e9 2d
-> > RSP: 0018:ffffc90008e07c20 EFLAGS: 00010293
-> > RAX: ffffffff82131ac6 RBX: 0000000000000004 RCX: ffff88801a6611c0
-> > RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000000
-> > RBP: ffffc90008e07cf0 R08: ffffffff8213173f R09: ffffc90008e07aa0
-> > R10: 0000000000000000 R11: dffffc0000000001 R12: ffff8880115810e0
-> > R13: dffffc0000000000 R14: ffff88801122c040 R15: ffffc90008e07c60
-> > FS:  00007f9e283ce6c0(0000) GS:ffff888058a00000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f9e2848600a CR3: 00000000139de000 CR4: 0000000000352ef0
-> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > Call Trace:
-> >  bprm_execve+0x60b/0x1c40 fs/exec.c:1939
-> >  do_execveat_common+0x5a6/0x770 fs/exec.c:2077
-> >  do_execve fs/exec.c:2147 [inline]
-> >  __do_sys_execve fs/exec.c:2223 [inline]
-> >  __se_sys_execve fs/exec.c:2218 [inline]
-> >  __x64_sys_execve+0x92/0xb0 fs/exec.c:2218
-> >  do_syscall_64+0x6d/0xa0 arch/x86/entry/common.c:62
-> >  entry_SYSCALL_64_after_hwframe+0x61/0xcb
-> > RIP: 0033:0x7f9e2842f299
-> > Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-> > RSP: 002b:00007f9e283ce218 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
-> > RAX: ffffffffffffffda RBX: 00007f9e284bd3f8 RCX: 00007f9e2842f299
-> > RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000400
-> > RBP: 00007f9e284bd3f0 R08: 0000000000000000 R09: 0000000000000000
-> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9e2848a134
-> > R13: 0030656c69662f2e R14: 00007ffc819a23d0 R15: 00007f9e28488130
-> > 
-> > Signed-off-by: Wojciech Gładysz <wojciech.gladysz@infogain.com>
+On Thu, Aug 01, 2024 at 09:27:40AM +0200, Arnd Bergmann wrote:
+> On Thu, Aug 1, 2024, at 01:31, Frank Li wrote:
+> > Add DEFINE_FREE for iounmap() and memunmap() to support scope based
+> > cleanup.
+> >
+> > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > > ---
-> >  fs/exec.c | 42 +++++++++++++++++++-----------------------
-> >  1 file changed, 19 insertions(+), 23 deletions(-)
-> > 
-> > diff --git a/fs/exec.c b/fs/exec.c
-> > index a126e3d1cacb..0cc6a7d033a1 100644
-> > --- a/fs/exec.c
-> > +++ b/fs/exec.c
-> > @@ -953,8 +953,6 @@ EXPORT_SYMBOL(transfer_args_to_stack);
-> >   */
-> >  static struct file *do_open_execat(int fd, struct filename *name, int flags)
-> >  {
-> > -	struct file *file;
-> > -	int err;
-> >  	struct open_flags open_exec_flags = {
-> >  		.open_flag = O_LARGEFILE | O_RDONLY | __FMODE_EXEC,
-> >  		.acc_mode = MAY_EXEC,
-> > @@ -969,26 +967,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
-> >  	if (flags & AT_EMPTY_PATH)
-> >  		open_exec_flags.lookup_flags |= LOOKUP_EMPTY;
-> >  
-> > -	file = do_filp_open(fd, name, &open_exec_flags);
-> > -	if (IS_ERR(file))
-> > -		goto out;
-> > -
-> > -	/*
-> > -	 * may_open() has already checked for this, so it should be
-> > -	 * impossible to trip now. But we need to be extra cautious
-> > -	 * and check again at the very end too.
-> > -	 */
-> > -	err = -EACCES;
-> > -	if (WARN_ON_ONCE(!S_ISREG(file_inode(file)->i_mode) ||
-> > -			 path_noexec(&file->f_path)))
-> > -		goto exit;
-> > -
-> 
-> This still needs to be left here to catch any bad actors in the future.  Thanks,
-> 
+> >  include/linux/io.h | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/include/linux/io.h b/include/linux/io.h
+> > index 59ec5eea696c4..7695d7973c8ff 100644
+> > --- a/include/linux/io.h
+> > +++ b/include/linux/io.h
+> > @@ -163,6 +163,9 @@ enum {
+> >  void *memremap(resource_size_t offset, size_t size, unsigned long flags);
+> >  void memunmap(void *addr);
+> >
+> > +DEFINE_FREE(iounmap, void __iomem *, if (!IS_ERR_OR_NULL(_T)) iounmap(_T))
+> > +DEFINE_FREE(memunmap, void *, if (!IS_ERR_OR_NULL(_T)) memunmap(_T))
+>
+> I don't like the use of IS_ERR_OR_NULL(), which tends
+> to indicate a problem in the interface design.
 
-This check is fundamentally racy.
+Just !(_T) ? I just refer kfree()'s implementation.
 
-path_noexec expands to the following:
-        return (path->mnt->mnt_flags & MNT_NOEXEC) ||
-               (path->mnt->mnt_sb->s_iflags & SB_I_NOEXEC);
+>
+> In which cases do you expect to need scope based cleanup
+> on an error pointer here? The only interfaces I see that
+> returns an __iomem error pointer are the devm_* ones, but
+> those have their own cleanup method.
 
-An exec racing against remount setting the noexec flag can correctly
-conclude the file can be execed and then trip over the check later if
-the flag showed up in the meantime.
 
-This is not fuse-specific and I disagree with the posted patch as well.
+devm_* can help much especial in probe() function. but scope base cleanup
+also useful.
 
-The snippet here tries to validate that permissions were correctly checked
-at some point, but it fails that goal in 2 ways:
-- the inode + fs combo might just happen to be fine for exec, even if
-  may_open *was not issued*
-- there is the aforementioned race
+Give a existed example:
 
-If this thing here is supposed to stay, it instead needs to be
-reimplemented with may_open setting a marker "checking for exec was
-performed and execing is allowed" somewhere in struct file.
+drivers/clocksource/timer-fsl-ftm.c
 
-I'm not confident this is particularly valuable, but if it is, it
-probably should hide behind some debug flags.
+static int __init ftm_timer_init(struct device_node *np) {
+	...
+	priv->clksrc_base = of_iomap(np, 1);
+        if (!priv->clksrc_base) {
+                pr_err("ftm: unable to map source timer registers\n");
+                goto err_clksrc;
+        }
+	...
+
+err_clksrc:
+        iounmap(priv->clkevt_base);
+}
+
+If use scoped base cleanup it will be simple.
+ftm_timer_init()
+{
+	base __free(ioumap) =  of_iomap(np, 1);
+
+	...
+	priv->clksrc_base = no_free_ptr(base);
+	return 0;
+}
+
+drivers/clocksource/arm_arch_timer.c
+Some example need map and unmap in function such as:
+arch_timer_mem_frame_get_cntfrq()
+{
+	base = ioremap(frame->cntbase, frame->size);
+	...
+	iounmap(base);
+}
+
+of course this example is too simple. If there are many error branch
+between ioremap() and iounmap(), scoped based clean up make code simple.
+
+Frank
+
+>
+>     Arnd
 
