@@ -1,131 +1,198 @@
-Return-Path: <linux-kernel+bounces-271876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C825945443
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:55:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1173945446
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C281C2323F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:55:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E25201C22239
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 21:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D411214B962;
-	Thu,  1 Aug 2024 21:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318AB14B96E;
+	Thu,  1 Aug 2024 21:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tvEbr43A"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QWpTAJgA"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6831487F1
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 21:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD3A4594D
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 21:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722549340; cv=none; b=BW9kxEmANkJkN7kfVJcOvIiHJj8OhokEp5sYT06sePOm2MKeIbZ6atUybC5BWby2bTHoQ6iccwnFJpLxQDzIVhE5aRgdWmdHx1zIY4qOT5pSSjAcFabeHjulC7uSdu3qy4u2BjqnfcK1+gbYndkdktkEqra6sablSfLl+wiqtKI=
+	t=1722549490; cv=none; b=n92ZOJFlEOsxAj7M33TUpIWs70/8Z2KWvzHG2UGtxre5HTiCK1OgrqlTXBZi5O/RtR704cj0jTDFh36FZikO9ty7FvXtxH5kb9AQR5R4G2GnZq+2pmRR6ebrOZoSRcJJ3Yrhv3Jh1ec5TdY4N48OyH6oIMCTy4STsksdAtWOZ7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722549340; c=relaxed/simple;
-	bh=hpjXuBkpFMgQOYNMrQr8GIa7k5MgBbs6MBxuziGzuqw=;
+	s=arc-20240116; t=1722549490; c=relaxed/simple;
+	bh=RQYItWZwH4Ql8qW2fpp1u02We7daZKEImfw/+wWYyWM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YAPzZAMR7ufQ1NN8V0QJ+kfj+cTMQkRk9oy5js0lhBgJEgHPu/PtjhBHS+P93IdV2gkX+8+BdYXz+kRVQaFWuDzzZXx+ERrDm0Y9hALiRb3YXQDnT9zxzOwLtgigRtT9dWWCKIuPlPHAX0+DNBtcTgBCu0mSzmrX9xBHK7p9bJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tvEbr43A; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <02f7cfc8-0495-485d-9849-b5a9514f6110@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722549335;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=22trdYbMHmtRm4bhtYQlLInAL9M2HQInv3qUMD+3ga8=;
-	b=tvEbr43AKk9tHTYjephznY1RSml5L8OFRCqpWoG5SS6rn8Xw2KDbzjPAVOaD1s1hsXqwhm
-	44fJ8xKYoQqj2FtziuG1JIYRGCg60jPiHuOKL1DqRG0rEa9BRUg8TUZZWjWZPBiWV+JrkD
-	VPqAyCFl7JU6xAr6xbLoCxokQarEpZg=
-Date: Fri, 2 Aug 2024 05:55:24 +0800
+	 In-Reply-To:Content-Type; b=OBBxZnEqRcAIcBlTG+jZs0edWprzYDOMUEkm7pF7zSFZIxV/QwuIjQ6DNt8tQK45ElsBrbAZ6bYaP298mCqvhGMrKQ1q2UGa5Ft14jZM2VfJ6/mQRzFdXv/lPWKmQlHEAmvfbrIav+fjOMD6wVlhjSr0LOR23yePQW8fjDucbJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QWpTAJgA; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-81f86cebca3so47672839f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 14:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722549488; x=1723154288; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NO6nbx+9tiNIKrfqJCv4GTpw+kRZXI/h31Bka4korBg=;
+        b=QWpTAJgAQGyI/VM4HAAqp/5e5TwJNsYfrPhGmfNXceWMaehXFo5+CpGOMd/1t0Y0JF
+         xNEUxpNyGr0oN4z3BRqQ466UI7ltsTfA+/ZoG8V0buKu1uImxWktcxSrAjdhg3QIxElE
+         lv5DxDgeI23jMA4ucdn01k2/WxywihaueDQrU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722549488; x=1723154288;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NO6nbx+9tiNIKrfqJCv4GTpw+kRZXI/h31Bka4korBg=;
+        b=U/dYUmXTkWK1BDgzzr7eqEnmJK0/wq7xwt0LrYdsRGjulu7Vfi2W3bEa4EsQN+JH3T
+         ftv3JpM2vOCftYOndwNtyCqsrYRFGgJxQ4AApDu650A9Xr/XZvcJVWffefnCPutmvAVL
+         BYcH1cYU8Az3N5fHsOQCVOkyrUdmE0KCd0kKVNJniEE5RR9BkTUQo0doeb9n/nJx6Cb0
+         Huhg6K+5H4r+v+aJGs06tu9cm3mpVUuVdK9qXsjQoUUoLl38Lmvg46LLFC1aKbvl9V4u
+         +mqtEikehhARk6jjfDrtkM92g6NIR0UZtcoJUO4tYDDp0dlaCi2lq/YO9vtKokKdO6Dv
+         gDYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXkn0fgymCjnEPMR3KgSsb0V/iMDaTK7xOetsK6nvjGfaMOwZbPf/GJ+9oEcgsskLOixjWPD2qv9r7MrkafYCOTir2f6aAM3r3pkI2O
+X-Gm-Message-State: AOJu0Yyx2+LtUsaxAxx1V6m5uDEnV2IeezoXbJVwSiqtTdfT2OAEkpyS
+	HMeUuV+rqfJWP6SUJG053wZlmPxvCgQRkedQilkcfB4isfgikOVYZPKvqQOo30E=
+X-Google-Smtp-Source: AGHT+IH7ya7vdahb7Fg38dGONaREdXofSfWrUYIw0guOf2OCWQESsTl4qSlWseOFrxzw38bCJqnXJQ==
+X-Received: by 2002:a92:ca47:0:b0:376:3918:c50 with SMTP id e9e14a558f8ab-39b1f780a14mr12601795ab.0.1722549487874;
+        Thu, 01 Aug 2024 14:58:07 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-39b20ae3423sm2395595ab.68.2024.08.01.14.58.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 14:58:07 -0700 (PDT)
+Message-ID: <928fd388-e714-4e84-bde3-bf684c1ccff0@linuxfoundation.org>
+Date: Thu, 1 Aug 2024 15:58:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca,
- leon@kernel.org, bvanassche@acm.org, nab@risingtidesystems.com
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
- linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
-References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] kselftest: devices: Add test to detect missing
+ devices
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Shuah Khan <shuah@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Bird, Tim" <Tim.Bird@sony.com>, Laura Nao <laura.nao@collabora.com>,
+ Saravana Kannan <saravanak@google.com>, "Rafael J. Wysocki"
+ <rafael@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ kernel@collabora.com, kernelci@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240724-kselftest-dev-exist-v1-1-9bc21aa761b5@collabora.com>
+ <9d0b73ce-704c-4633-bb11-06ca4cb7a9a1@linuxfoundation.org>
+ <f9a457c8-f558-4c45-96e0-baa97d143c7b@notapiano>
+ <41a912af-4f59-4d54-a072-3de9ee912dee@linuxfoundation.org>
+ <22688e55-b611-41b3-9bf0-06691454e3b1@notapiano>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <22688e55-b611-41b3-9bf0-06691454e3b1@notapiano>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2024/8/1 15:44, Junxian Huang 写道:
-> Currently cancel_work_sync() is not called when srpt_refresh_port()
-> failed in srpt_add_one(). There is a probability that sdev has been
-> freed while the previously initiated sport->work is still running,
-> leading to a UAF as the log below:
+On 8/1/24 15:03, Nícolas F. R. A. Prado wrote:
+> On Thu, Aug 01, 2024 at 02:13:05PM -0600, Shuah Khan wrote:
+>> On 8/1/24 13:15, Nícolas F. R. A. Prado wrote:
+>>> On Wed, Jul 31, 2024 at 05:19:45PM -0600, Shuah Khan wrote:
+>>>> On 7/24/24 15:40, Nícolas F. R. A. Prado wrote:
+>>>>> Introduce a new test to identify regressions causing devices to go
+>>>>> missing on the system.
+>>>>>
+>>>>> For each bus and class on the system the test checks the number of
+>>>>> devices present against a reference file, which needs to have been
+>>>>> generated by the program at a previous point on a known-good kernel, and
+>>>>> if there are missing devices they are reported.
+>>>>
+>>>> Can you elaborate on how to generate reference file? It isn't clear.
+>>>
+>>> Indeed, I'll make that information clearer in future versions.
+>>>
+>>> The reference file is generated by passing the --generate-reference flag to the
+>>> test:
+>>>
+>>> ./exist.py --generate-reference
+>>>
+>>> It will be printed as standard output.
+>>
+>> How about adding an option to generate file taking filename?
+>> Makes it easier to use.
 > 
-> [  T880] ib_srpt MAD registration failed for hns_1-1.
-> [  T880] ib_srpt srpt_add_one(hns_1) failed.
-> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
-> ...
-> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
-> ...
-> [  T376] Call trace:
-> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
-> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
-> [  T376]  process_one_work+0x1d8/0x4cc
-> [  T376]  worker_thread+0x158/0x410
-> [  T376]  kthread+0x108/0x13c
-> [  T376]  ret_from_fork+0x10/0x18
+> Sure, we can do that. Another option would be to write it to the filename that
+> would be looked for by default. So for your machine just calling
 > 
-> Add cancel_work_sync() to the exception branch to fix this UAF.
-
-Can you share the method to reproduce this problem?
-I am interested in this problem.
-
-Thanks,
-Zhu Yanjun
-
+>    ./exist.py --generate-reference
 > 
-> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->   drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
->   1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> index 9632afbd727b..244e5c115bf7 100644
-> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
->   {
->   	struct srpt_device *sdev;
->   	struct srpt_port *sport;
-> +	u32 i, j;
->   	int ret;
-> -	u32 i;
->   
->   	pr_debug("device = %p\n", device);
->   
-> @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
->   		if (ret) {
->   			pr_err("MAD registration failed for %s-%d.\n",
->   			       dev_name(&sdev->device->dev), i);
-> -			i--;
->   			goto err_port;
->   		}
->   	}
-> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
->   	return 0;
->   
->   err_port:
-> +	for (j = i, i--; j > 0; j--)
-> +		cancel_work_sync(&sdev->port[j - 1].work);
->   	srpt_unregister_mad_agent(sdev, i);
->   err_cm:
->   	if (sdev->cm_id)
+> could write the reference to ./LENOVO,20XH005JUS.yaml.
 
+You could. Do mention this as the default option and to the
+help message.
+
+>
+>>>
+>>> No, that repository would just be a place where people could find pre-generated
+>>> reference files (which we'll be using when running this test in KernelCI), but
+>>> anyone can always generate their own reference files and store them wherever
+>>> they want.
+>>>
+>>
+>> Thanks for the clarification. This might be good addition to the document.
+>> I think this test could benefit from a README or howto
+> 
+> Sure, I can add a README in the next revision.
+> 
+>>
+>>>>
+>>>> This is what I see when I run the test on my system:
+>>>>
+>>>> make -C tools/testing/selftests/devices/exist/ run_tests
+>>>> make: Entering directory '/linux/linux_6.11/tools/testing/selftests/devices/exist'
+>>>> TAP version 13
+>>>> 1..1
+>>>> # timeout set to 45
+>>>> # selftests: devices/exist: exist.py
+>>>> # TAP version 13
+>>>> # # No matching reference file found (tried './LENOVO,20XH005JUS.yaml')
+>>>
+>>> First generate the reference file for your system like so:
+>>>
+>>> tools/testing/selftests/devices/exist/exist.py --generate-reference > tools/testing/selftests/devices/exist/LENOVO,20XH005JUS.yaml
+>>>
+>>
+>> Worked - I see
+>>
+>> TAP version 13
+>> # Using reference file: ./LENOVO,20XH005JUS.yaml
+>> 1..76
+>>
+>> ---
+>> # Totals: pass:76 fail:0 xfail:0 xpass:0 skip:0 error:0
+>>
+>>
+>> Things to improve:
+>>
+>> - Have the script take a file instead of assuming that the reference file
+>>    is in the current directory.
+>>    e.g: exist.py -f reference_file
+> 
+> The script also has another parameter to specify a different directory to look
+> for the reference file: --reference-dir
+> 
+> But the file name is currently fixed and determined from the system's ID (DMI or
+> Devicetree compatible).
+> 
+> We can definitely have another flag to force a different file name if that's
+> useful. In theory it shouldn't be needed given the machine name is used as
+> filename, but might come in handy if there are machine name clashes or if you
+> want to have references for different kernel stable versions for the same
+> machine in the same directory.
+
+Providing an option to force is good.
+
+thanks,
+-- Shuah
 
