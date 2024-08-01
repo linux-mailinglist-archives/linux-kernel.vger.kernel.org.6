@@ -1,239 +1,224 @@
-Return-Path: <linux-kernel+bounces-271524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F711944F68
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:35:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F049F944F75
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFF68B2444C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:35:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E78C1F2404F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C35951B0111;
-	Thu,  1 Aug 2024 15:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B281B3722;
+	Thu,  1 Aug 2024 15:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N2ed3l3A"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s2idSab8"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016D721A0B
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 15:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722526527; cv=none; b=hv83ulTGfguVFgCEufVSUu9HufxTZW14N1S2z271pdMky7g/3Heoj6h+/Ife7R3jVi2qY8r/uLsa9vQkj7Bs03eVyy5Wy/HoM+iyIUkI+VWIm0n0L4BSW9p4mqYhT2NerisVxYL1yqKgJDzMzYuq2Zsy/mQ8ZPY5ukT+f+SdR84=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722526527; c=relaxed/simple;
-	bh=dZ5+3OyYBXk4vMl3A+qwDkERG7+OkWxAKh5vaq2B/hQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d33mR1axGng5YkbBtvLt5NfS01K1iL0l+1i/SvX/w+HDVe14eJ3o9QKccWOlrZxr7+UXrjOM8d8HgofHk5lZP//lOoSRkaNlCm3jFiIXX/Jpv8lpMUdkTKwIrFSxk0WyUhJV4H8GpooyaHYWuHgfir6RqJAw9kJNNofBNpmpaLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N2ed3l3A; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722526525;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=bxHd67g8QE4/irwnJReh3lj340LNkEJq3nJucVFKn8c=;
-	b=N2ed3l3A/jpiQs6pPYkA+Ut5Y+YdQJWiFlyqkJQvz/e1XfP97iK7/HetY9pz36cWGrXEin
-	gFDJ1NzlYJrWuZhZZBkxpzOalv0U1Ls80GMtxHNdLS1ouVe4sQZ3qvcD1gm5WOlxPyOya6
-	m9rExZ6dKkjP8CQIJVl2Rej0dLHfaz4=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-295-rogOb-VEOqiRi6WYxl4Rdg-1; Thu, 01 Aug 2024 11:35:23 -0400
-X-MC-Unique: rogOb-VEOqiRi6WYxl4Rdg-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4280f233115so45579905e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 08:35:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722526522; x=1723131322;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bxHd67g8QE4/irwnJReh3lj340LNkEJq3nJucVFKn8c=;
-        b=Fce1WJ6dab4yNn0NugPcSgxLmKRpJqovcHh8wUwYHzzltNTvP9JdZPULmFuf3ZPN/C
-         f8vOnj5UOP/fPIyRt8FCEX8QYuO64Q6dIVncQaDrgQDl/8M9ENYJq2RouDf660pvSLi/
-         6g8uIgjMN8fGZdw0ndsdJlMl0eb5wiilir2aU5XjB5IJQq8JjQXirErDuqwS/p5a5kyI
-         frHXMp1pHb4cK/ateMMnnuuNhxzamFfeK0xUgpWneWM/B6mcGPtSRhiiotw0pynLED/i
-         Jqj/MJJVBiyvHxDCyWgJ+s0x2Ib/e9Br0vg62yEOQKk3Ps9o0MsjXnBr24YrFLP38o86
-         4qBQ==
-X-Gm-Message-State: AOJu0Yy4MspdlgOgOwRfDccgc+Cl2aFJP+jj2+dhIeoD84FnmtRTc+sp
-	yH51LryjYFNi1I2vbknsuWgRE7tWvQdhst0PBQXmibSckp+U81sNPZA6d2vtVEQh8E55GUw/nlB
-	N40n1eTyL/ulBeEK/qmQnv+bwhmW+eZD8f8yeCNXsgp/9CxDWafT8EVNm3pOFbw==
-X-Received: by 2002:a05:600c:4e90:b0:428:314:f08e with SMTP id 5b1f17b1804b1-428e6af4c75mr2083815e9.5.1722526522309;
-        Thu, 01 Aug 2024 08:35:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9LYRGdwSXLVTsgo1QyvkIvyA52WmWe8W15IZpd4pfL+707kYosP/uCOB+TcLEyF2rYl3G6g==
-X-Received: by 2002:a05:600c:4e90:b0:428:314:f08e with SMTP id 5b1f17b1804b1-428e6af4c75mr2083565e9.5.1722526521768;
-        Thu, 01 Aug 2024 08:35:21 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8adaadsm63082695e9.12.2024.08.01.08.35.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 08:35:21 -0700 (PDT)
-Message-ID: <934885c5-512b-41bf-8501-b568ece34e18@redhat.com>
-Date: Thu, 1 Aug 2024 17:35:20 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBC81EB4AF;
+	Thu,  1 Aug 2024 15:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722526700; cv=fail; b=Ha+6uvYdjPaDE1SJMpylXYtdHIechR1+6nIm0Ur+SHsQ/294GXiWc4mBWEsPt/oUQNojLZIz6q7cMCpWO9w+JjyZHF17Ybk5ZItvieOBEerTndQHpo8ndFXBju/Q0GY5rHrY77icp+W7iHAvO2HoAXBtH6f0vKRlM4getJJFKi0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722526700; c=relaxed/simple;
+	bh=7HSixOMUq0HFsQlt6+Mx4ZGAji5Wa2qe1rbSTD9Vz8Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A1Q+1cCAGMbsrJeipPEI6nmsvwdEljChiI1o05jVmIcKE6TxRZ8EqXk57geEpjZ39rLvkbY9IiU/5WELqiiPaTUUI1PoJLPZZesFkjjpTuxlT32yoPu3iowqC2X6C6WK54mPkmI2LHz/o4vMTaLSNeRP8N8AH3LY/NA9Wweu918=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s2idSab8; arc=fail smtp.client-ip=40.107.236.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SfRbm8PxNYUU3vnv2VCVZcWTMzz8y3kxvGZWmFzzFoqnUbx9+TGvDRc+N0aiZ4wD+ntI7y3a7ABjzvhne1wDs6bfjGiF21KE7o3OvRWzKXBJYO10cCksh1zZ/d151CxTJ54rc4i+kMExXkz/pR7Bp6BKGlMPww9aKai6Un/UBNeexIKD0csu/CgvcuB+0miyK3n6ftg3FaEwDBOITYxE3QbrgncIjFV7lIc7siyTAADlKMHGPBdHA//D7w8enWxx4LWKHiWs6d1UE/Jx27AWttUQ2vMHYOsMTWa3dL6kfC322nFeUuJkVsqrtjKcOPesAs42Di5S3p5YgdmqTlv1xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QUPH8YQZqhNqhb390PAn6d6Niy7HRnJK8goUEgp+j5s=;
+ b=qvYxwRe+QeE5IsHG2Q1s3sDETj51aUz1ka4JfdX6hOV1T4ux/0JERGPcjbtD6VPsVM1ZyKoeoeMTB4G2Zca2XNBBt1Anpee4KnCOJM0OE+6T+Ox3mmGXfcfezzmx1/L1iHel3qqBaOLvPyQkHLTJ/2WpnIsMUrnYyy/tcLlZL/rk5YbP16l/HItKAEv3Ypig0UbxfEqNeEORbaFlOT6GelyTkQL55ewrFv5hbVjUQ0lXy/HSSGZNYBP5BrS4k0E7QijICWQhDJXsPv1+WrBEECgw+HedB3wc+awzyf5aR9xeRrxBJ7HIrm+TxtzJGk9j4a5uyjwO7CyTskYIVcm1/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QUPH8YQZqhNqhb390PAn6d6Niy7HRnJK8goUEgp+j5s=;
+ b=s2idSab8H+Z+Na0jEdsmmrc6xvmdr17UMgfAtk8ZbCYud/MMPgm5LjqtDbA9bDkr0bTfMnPH1q/Rt4nNxzyBI6ScD/2mTvIbQFG1KYYwzyG5bPnlRPc9UIgcA6Ru85s+dLOvRMCmWoKPTb+74k6YQY3KdyPpzt2ICQb5ylBxsKSV78TIsqdVNFHAkUkq988geJHmEXn0k51zDEPxW5gj8d+6QqQtP8GANC/aQsqGo+R0FTb8YwvN2qUpCEGbBcusbOKFDJ/e2yeW25jXdwwJqwBK/zsJYY5/f8lBmwF4dIGkDAzWo09di+3eT9mYqoac2zRO5TvAWKr1vC+DuFB/0A==
+Received: from CH5P222CA0018.NAMP222.PROD.OUTLOOK.COM (2603:10b6:610:1ee::29)
+ by DS7PR12MB6047.namprd12.prod.outlook.com (2603:10b6:8:84::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.21; Thu, 1 Aug
+ 2024 15:38:11 +0000
+Received: from CH3PEPF00000013.namprd21.prod.outlook.com
+ (2603:10b6:610:1ee:cafe::f4) by CH5P222CA0018.outlook.office365.com
+ (2603:10b6:610:1ee::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23 via Frontend
+ Transport; Thu, 1 Aug 2024 15:38:11 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH3PEPF00000013.mail.protection.outlook.com (10.167.244.118) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.0 via Frontend Transport; Thu, 1 Aug 2024 15:38:11 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 1 Aug 2024
+ 08:37:54 -0700
+Received: from drhqmail201.nvidia.com (10.126.190.180) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 1 Aug 2024 08:37:54 -0700
+Received: from dev-l-177.mtl.labs.mlnx (10.127.8.11) by mail.nvidia.com
+ (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Thu, 1 Aug 2024 08:37:52 -0700
+From: Dragos Tatulea <dtatulea@nvidia.com>
+To: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+CC: Dragos Tatulea <dtatulea@nvidia.com>, <kvm@vger.kernel.org>,
+	<virtualization@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH vhost] vhost-vdpa: Fix invalid irq bypass unregister
+Date: Thu, 1 Aug 2024 18:37:22 +0300
+Message-ID: <20240801153722.191797-2-dtatulea@nvidia.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] mm/hugetlb: fix hugetlb vs. core-mm PT locking
-To: Peter Xu <peterx@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- James Houghton <jthoughton@google.com>, stable@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>, Muchun Song <muchun.song@linux.dev>,
- Baolin Wang <baolin.wang@linux.alibaba.com>
-References: <20240731122103.382509-1-david@redhat.com>
- <541f6c23-77ad-4d46-a8ed-fb18c9b635b3@redhat.com> <ZquTHvK0Rc0xBA4y@x1n>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZquTHvK0Rc0xBA4y@x1n>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000013:EE_|DS7PR12MB6047:EE_
+X-MS-Office365-Filtering-Correlation-Id: 74904c2e-cb39-47c0-d0d8-08dcb23ff37d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?F8g9b0FQsKonG7E8E5cm246c3+A1THMzzoSlwMPoQU3VBe8A4mNAmVIVuRAE?=
+ =?us-ascii?Q?/LZRcd1Xg+ONv7xQ8oAEP2ywJW69wD1GVkxSSfBkbhtA8j5twx5IzXWJX2Uu?=
+ =?us-ascii?Q?f6Zbck8PPJxkcJ4bCs9fzYKbKSUvi3R/gjSHJbwKFdERSBOB3eMSR0tFDHvj?=
+ =?us-ascii?Q?OZ+jjvsDTM3VbQZzcBInaIICiusceLYnyaqFN1uhajw0JjHuH51HV0ktxbrx?=
+ =?us-ascii?Q?NCHIWWQGeXba6zekRVIo/Z3cHZrWck13t+//SQaE10hp4EuXgEOJgqe6AHtW?=
+ =?us-ascii?Q?rVzQ5tDQfigytzMo8OrCYsrhvhWvOes76bmYcgLnKNc4MGqLZQKb5GIeTxHT?=
+ =?us-ascii?Q?Cy5XDdVb25JUWivv5B4y+kBoUzjmImPx1LdWhu45utixP0t1EMNa597f4/xG?=
+ =?us-ascii?Q?vjnufECEQE2qDtaf+jNXk7y7lRkI339hYn2Ng5ETEAvcgjYjVxXO6Ss73/b/?=
+ =?us-ascii?Q?KjeWLHzs14Xe9pYInFnWB89ojJz8OVC2pbGuE/dLA6Pi7zZ+Sk96XT/9btx0?=
+ =?us-ascii?Q?fzE44bS+pqYqcfPmoD0gfaUmc4YwxGdtk7PFsxLti/0HsBAOwCTkCTjYVlyV?=
+ =?us-ascii?Q?Q36X586X9To4ZXh2oMRUyHkxRCIaKkgWKxU83t6WqdlCfQeWJZR4PMSXvTcZ?=
+ =?us-ascii?Q?P6I2vw+8W03tP6QIy1FTBpP52Ls1/AYZnHO0sDzQ0EQF6yUYRysa2GhGwBqN?=
+ =?us-ascii?Q?MIE8pqXRFZNvP4nO3OwNQIsPkKb9fEr7XzpyjZq2EIK0RY/heD9PIt7Buh1D?=
+ =?us-ascii?Q?vwnTqKFkVUxs4gFeow8edNLaECFC5UJp7BYaYiDkIZ24epUYjRmfZI7Fwh76?=
+ =?us-ascii?Q?CeBc0UwVUxR+M1xZmUPQpmwQ6vkvzGx4ZJq0sX19YG2z6ctl6A354WDicM6G?=
+ =?us-ascii?Q?puR/9N+abgaC5cwM1bY3Zl9+asCMgEOfdcDQqa4r2SQNHZHzVTIzO7fMWPi3?=
+ =?us-ascii?Q?T5/rnxB7WYoe/JCqb/XPFunr7xWziLr/Rsv1mJiIjqPtDoz9NjAkEo7mpPro?=
+ =?us-ascii?Q?z8RMRbXV+WpuN2WahyzYY03+YgsjES/ad37jZ771uyP9Kz1R0ef2tOXeT5OZ?=
+ =?us-ascii?Q?CT6NC0T4DOsSUKlDPYI28ojnjDIQl8mL3R2pdVoYXad7t+FtYZx/fJCWF9vI?=
+ =?us-ascii?Q?bqS+HXCEZzxUjsfqLBc5nhxX04AU9o8PTXOAQD6JG5CNqHWK6N91DEcPGbAi?=
+ =?us-ascii?Q?HQqA4jb/PKw5oC+huQQfDPvyqnkqj3Tn+Zlwxi1VLJCwBvcPx3dBIxJofGC1?=
+ =?us-ascii?Q?Q3AjQDrXAAnMuIrsPzi9+GcaGx0jOIi/ADE2MAwGukf0YEkVi8l5Sho9d/2a?=
+ =?us-ascii?Q?cmcjUKYQnZYzShQB4X7oSF/6Xbk5AD2v6ZArjlQLcaZtFlmQE14yo2XsspjA?=
+ =?us-ascii?Q?JV63gQc+ERsZ/wzc4r5CFwcHBADYj5g0lOcOKPHuy+E+BHO6j7omSaKwQb/e?=
+ =?us-ascii?Q?Km0OTYEXoECDHNeTWG+DZUJV5jvh7alh?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 15:38:11.6154
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74904c2e-cb39-47c0-d0d8-08dcb23ff37d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000013.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6047
 
-Hi Peter,
+The following workflow triggers the crash referenced below:
 
->> -	if (huge_page_size(h) == PMD_SIZE)
->> +	unsigned long size = huge_page_size(h);
->> +
->> +	VM_WARN_ON(size == PAGE_SIZE);
->> +
->> +	/*
->> +	 * hugetlb must use the exact same PT locks as core-mm page table
->> +	 * walkers would. When modifying a PTE table, hugetlb must take the
->> +	 * PTE PT lock, when modifying a PMD table, hugetlb must take the PMD
->> +	 * PT lock etc.
->> +	 *
->> +	 * The expectation is that any hugetlb folio smaller than a PMD is
->> +	 * always mapped into a single PTE table and that any hugetlb folio
->> +	 * smaller than a PUD (but at least as big as a PMD) is always mapped
->> +	 * into a single PMD table.
->> +	 *
->> +	 * If that does not hold for an architecture, then that architecture
->> +	 * must disable split PT locks such that all *_lockptr() functions
->> +	 * will give us the same result: the per-MM PT lock.
->> +	 *
->> +	 * Note that with e.g., CONFIG_PGTABLE_LEVELS=2 where
->> +	 * PGDIR_SIZE==P4D_SIZE==PUD_SIZE==PMD_SIZE, we'd use the MM PT lock
->> +	 * directly with a PMD hugetlb size, whereby core-mm would call
->> +	 * pmd_lockptr() instead. However, in such configurations split PMD
->> +	 * locks are disabled -- split locks don't make sense on a single
->> +	 * PGDIR page table -- and the end result is the same.
->> +	 */
->> +	if (size >= P4D_SIZE)
->> +		return &mm->page_table_lock;
-> 
-> I'd drop this so the mm lock fallback will be done below (especially in
-> reality the pud lock is always mm lock for now..).  Also this line reads
-> like there can be P4D size huge page but in reality PUD is the largest
-> (nopxx doesn't count).  We also same some cycles in most cases if removed.
+1) vhost_vdpa_unsetup_vq_irq() unregisters the irq bypass producer
+   but the producer->token is still valid.
+2) vq context gets released and reassigned to another vq.
+3) That other vq registers it's producer with the same vq context
+   pointer as token in vhost_vdpa_setup_vq_irq().
+4) The original vq tries to unregister it's producer which it has
+   already unlinked in step 1. irq_bypass_unregister_producer() will go
+   ahead and unlink the producer once again. That happens because:
+      a) The producer has a token.
+      b) An element with that token is found. But that element comes
+         from step 3.
 
-The compiler should be smart enough to optimize most of that out. But
-I agree that there is no need to be that future-proof here.
+I see 3 ways to fix this:
+1) Fix the vhost-vdpa part. What this patch does. vfio has a different
+   workflow.
+2) Set the token to NULL directly in irq_bypass_unregister_producer()
+   after unlinking the producer. But that makes the API asymmetrical.
+3) Make irq_bypass_unregister_producer() also compare the pointer
+   elements not just the tokens and do the unlink only on match.
 
-These two are interesting:
+Any thoughts?
 
-arch/powerpc/mm/hugetlbpage.c:  if (!mm_pud_folded(mm) && sz >= P4D_SIZE)
-arch/riscv/mm/hugetlbpage.c:    else if (sz >= P4D_SIZE)
+Oops: general protection fault, probably for non-canonical address 0xdead000000000108: 0000 [#1] SMP
+CPU: 8 PID: 5190 Comm: qemu-system-x86 Not tainted 6.10.0-rc7+ #6
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+RIP: 0010:irq_bypass_unregister_producer+0xa5/0xd0
+RSP: 0018:ffffc900034d7e50 EFLAGS: 00010246
+RAX: dead000000000122 RBX: ffff888353d12718 RCX: ffff88810336a000
+RDX: dead000000000100 RSI: ffffffff829243a0 RDI: 0000000000000000
+RBP: ffff888353c42000 R08: ffff888104882738 R09: ffff88810336a000
+R10: ffff888448ab2050 R11: 0000000000000000 R12: ffff888353d126a0
+R13: 0000000000000004 R14: 0000000000000055 R15: 0000000000000004
+FS:  00007f9df9403c80(0000) GS:ffff88852cc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000562dffc6b568 CR3: 000000012efbb006 CR4: 0000000000772ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ? die_addr+0x36/0x90
+ ? exc_general_protection+0x1a8/0x390
+ ? asm_exc_general_protection+0x26/0x30
+ ? irq_bypass_unregister_producer+0xa5/0xd0
+ vhost_vdpa_setup_vq_irq+0x5a/0xc0 [vhost_vdpa]
+ vhost_vdpa_unlocked_ioctl+0xdcd/0xe00 [vhost_vdpa]
+ ? vhost_vdpa_config_cb+0x30/0x30 [vhost_vdpa]
+ __x64_sys_ioctl+0x90/0xc0
+ do_syscall_64+0x4f/0x110
+ entry_SYSCALL_64_after_hwframe+0x4b/0x53
+RIP: 0033:0x7f9df930774f
+RSP: 002b:00007ffc55013080 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000562dfe134d20 RCX: 00007f9df930774f
+RDX: 00007ffc55013200 RSI: 000000004008af21 RDI: 0000000000000011
+RBP: 00007ffc55013200 R08: 0000000000000002 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000562dfe134360
+R13: 0000562dfe134d20 R14: 0000000000000000 R15: 00007f9df801e190
 
-But I assume they are only fordward-looking. (GUP would already be
-pretty broken if that would exist)
+Signed-off-by: Dragos Tatulea <dtatulea@nvidia.com>
+---
+ drivers/vhost/vdpa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
->> +	else if (size >= PUD_SIZE)
->> +		return pud_lockptr(mm, (pud_t *) pte);
->> +	else if (size >= PMD_SIZE || IS_ENABLED(CONFIG_HIGHPTE))
-> 
-> I thought this HIGHPTE can also be dropped? Because in HIGHPTE it should
-> never have lower-than-PMD huge pages or we're in trouble.  That's why I
-> kept one WARN_ON() in my pesudo code but only before trying to take the pte
-> lockptr.
-
-Then the compiler won't optimize out the ptep_lockptr() call and we'll run
-into a build error. And I think the HIGHPTE builderror serves good purpose.
-
-In file included from <command-line>:
-In function 'ptep_lockptr',
-     inlined from 'huge_pte_lockptr' at ./include/linux/hugetlb.h:974:9,
-     inlined from 'huge_pte_lock' at ./include/linux/hugetlb.h:1248:8,
-     inlined from 'pagemap_scan_hugetlb_entry' at fs/proc/task_mmu.c:2581:8:
-././include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_256' declared with attribute error: BUILD_BUG_ON failed: IS_ENABLED(CONFIG_HIGHPTE)
-   510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-       |                                             ^
-././include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
-   491 |                         prefix ## suffix();                             \
-       |                         ^~~~~~
-././include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
-   510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-       |         ^~~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-       |                                     ^~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-    50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-       |         ^~~~~~~~~~~~~~~~
-./include/linux/mm.h:2874:9: note: in expansion of macro 'BUILD_BUG_ON'
-  2874 |         BUILD_BUG_ON(IS_ENABLED(CONFIG_HIGHPTE));
-
-
-
-It would be even better to have a way to know whether an arch even has
-hugetlb < PMD_SIZE (config option?) and use that instead here; but I'll leave
-that as an optimization.
-
-
+diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
+index 478cd46a49ed..d4a7a3918d86 100644
+--- a/drivers/vhost/vdpa.c
++++ b/drivers/vhost/vdpa.c
+@@ -226,6 +226,7 @@ static void vhost_vdpa_unsetup_vq_irq(struct vhost_vdpa *v, u16 qid)
+ 	struct vhost_virtqueue *vq = &v->vqs[qid];
+ 
+ 	irq_bypass_unregister_producer(&vq->call_ctx.producer);
++	vq->call_ctx.producer.token = NULL;
+ }
+ 
+ static int _compat_vdpa_reset(struct vhost_vdpa *v)
 -- 
-Cheers,
-
-David / dhildenb
+2.45.2
 
 
