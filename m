@@ -1,118 +1,286 @@
-Return-Path: <linux-kernel+bounces-271922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2039454FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:48:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D61945504
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:51:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D94C1F22BBF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:48:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213442837C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F0114D702;
-	Thu,  1 Aug 2024 23:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4A714EC4D;
+	Thu,  1 Aug 2024 23:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="l70cKGmr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YAJq9/uq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681A41BC40;
-	Thu,  1 Aug 2024 23:48:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1BC13E04C;
+	Thu,  1 Aug 2024 23:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722556106; cv=none; b=ojhYikl0/l8ly3Z+2wxXaybZC376qq5HDwmixPRoG4w/UUjkoEtuo7jALtlLzJgCfY9M3gy5PqorajH54o0gQ3KHwaAcA7MZnEGLk9JRfGnIihl8zcdIMX5XOEXJLPryvK8vCPx8KZqU6abiXHFmQ1N1tGOhJwCZCuGF6n50qA8=
+	t=1722556273; cv=none; b=pToqZkq7w8u1V+QVWKLXnEtzeqWkr/IJCecX6736B+eNJ7iUcH+BnlHk1N/rJpePio+qNjoAMp0E2Izp/7IqIehGcYWH7PneWYFDWXbagU8ZBd2ya3sZtd+68po4N3AYUcbZTZJwNYscRgKyIAv94YEBBGFXB+h0jgjjuFlrgOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722556106; c=relaxed/simple;
-	bh=j5jqKcRF8t6NjJVRtYDpAFXDs97QL3yn5aiJSpofQXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=grsLFqNMlBdqwHOv8mhurYleP+Ziqou1Cvj/OWHH2WyOWWuHsZwQGx+TXXf0Ddl5Hl1xRdReysg5rOndb9HDuIHhvpFqqnoUu+yuFsuO1e5CkxOjyitcBNWo1Wcp9xRdbe+self3+66leTDizoasnT64hRAmvkeadNepgK/SuBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=l70cKGmr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1722556101;
-	bh=LPQ79eAFXlVAdHqPNXR0ZytThlkkbCOC1ku6pSBJc/Y=;
-	h=Date:From:To:Cc:Subject:From;
-	b=l70cKGmrBIpXikNnJASiVpZ7G2Mq9X3desQjF1lzBsKKcr7uKXq507ul9l1nmQljH
-	 HWHlKdUjrkq8EPR0360NAFKUo5H4EXGcjMBFFL8sY+wowihGk9R6mYH2j07enu+sIZ
-	 MHyZ28wh+NBb63onwbuhfcnx0tQOoK2LjN2qIQoSfzZqj8E0RZbTYIYIsiGkD96f4a
-	 sLMw8OPZYnPXb9x7QEgHlZfq416fkN5zyNX/V/HRa5ZIWrunnq7iVF7u5pPZdZHGhn
-	 0O2EkC3+D2DNOgJnjy3P0wk+YpHHje2MNygi2Yvbmw1tfYpPyVdexYSXNmVrTSqY2u
-	 mwp9DghgpxAog==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZlys01r7z4wc1;
-	Fri,  2 Aug 2024 09:48:20 +1000 (AEST)
-Date: Fri, 2 Aug 2024 09:48:20 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Satya Priya Kakitapalli
- <quic_skakitap@quicinc.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the qcom tree
-Message-ID: <20240802094820.29059653@canb.auug.org.au>
+	s=arc-20240116; t=1722556273; c=relaxed/simple;
+	bh=SRe+HOduI9I/TTc5kqhaTutON7QjmRIiDJcjmvowtzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QbEs1ujZsoXKJBkL7fQTImjDvPv15s7PRtdnYL9OIdgfj8Db0O6CZ+FUC+5egloR6T0tHbPMDiNQ1uGl6UU5e+kIpW5E522mDDv1P2IZFlo9mWRnujujVISa4q8r8QIKnVqLbJ7Gm7Sbhtcs7NeXjrDe4T/pqgkCaYb+cAUwWQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YAJq9/uq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 471Lbj5X028809;
+	Thu, 1 Aug 2024 23:50:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	t+jSJ/zbzuWb9fsjty1sUBSDZFvEM1ajNsop565+wIE=; b=YAJq9/uqMKhHRCFo
+	ZooUxgXjmrpO/Ux9ieZ4HcN5AMR//EI9F1OvSxLL6LpSHJN0iULFFp5D+WTt6izt
+	RJhZ6Qn2r7OgTdqjJNCLdVCWRTe0oEDMVIiMVoX9gZQFNaYkn49w+GSWv2oBGU7Y
+	wZvWQ496CuCv3WFJ/rrIFySIMSoau5d8ai7tVGUIwLnbGGaN7CTDCBxFIEoPf7Ut
+	z71SUGm/zlc7GhD7qgXh66PqcR6R9r08ns+IjGsqhOI0zNFe745bX26VRNZ5CxSY
+	JrAoIPotkVJgbylWZsr1nuXDmG/4Uxzk6am58Ugcu/r04ZvhGHxhSF3W01h6YFr/
+	6T57Ew==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40rjefr6wx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 01 Aug 2024 23:50:34 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471NoDKl004700
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 Aug 2024 23:50:13 GMT
+Received: from [10.71.115.74] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 1 Aug 2024
+ 16:50:12 -0700
+Message-ID: <f621ae59-7a78-4cd2-8eb7-eb02432e4828@quicinc.com>
+Date: Thu, 1 Aug 2024 16:50:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uCj1cmb.S=Ld/l5ysHfm94k";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 12/34] ASoC: doc: Add documentation for SOC USB
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-13-quic_wcheng@quicinc.com>
+ <57c5af3e-3299-47ae-9e13-bfce077f5e23@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <57c5af3e-3299-47ae-9e13-bfce077f5e23@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zEn_n7EfQwr72h4zIsLzjWracdp5xdRR
+X-Proofpoint-ORIG-GUID: zEn_n7EfQwr72h4zIsLzjWracdp5xdRR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_22,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0
+ mlxscore=0 priorityscore=1501 clxscore=1015 spamscore=0 mlxlogscore=579
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010160
 
---Sig_/uCj1cmb.S=Ld/l5ysHfm94k
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Pierre,
 
-Hi all,
+On 8/1/2024 1:26 AM, Pierre-Louis Bossart wrote:
+>> +
+>> +::
+>> +
+>> +               USB                   |            ASoC
+>> +                                     |  _________________________
+>> +                                     | |   ASoC Platform card    |
+>> +                                     | |_________________________|
+>> +                                     |         |           |
+>> +                                     |      ___V____   ____V____
+>> +                                     |     |ASoC BE | |ASoC FE  |
+>> +                                     |     |DAI LNK | |DAI LNK  |
+>> +                                     |     |________| |_________|
+>> +                                     |         ^  ^        ^
+>> +                                     |         |  |________|
+>> +                                     |      ___V____    |
+>> +                                     |     |SOC-USB |   |
+>> +     ________       ________               |        |   |
+>> +    |USB SND |<--->|USBSND  |<------------>|________|   |
+>> +    |(card.c)|     |offld   |<----------                |
+>> +    |________|     |________|___     | |                |
+>> +        ^               ^       |    | |    ____________V_________
+>> +        |               |       |    | |   |IPC                   |
+>> +     __ V_______________V_____  |    | |   |______________________|
+>> +    |USB SND (endpoint.c)     | |    | |              ^
+>> +    |_________________________| |    | |              |
+>> +                ^               |    | |   ___________V___________
+>> +                |               |    | |->|audio DSP              |
+>> +     ___________V_____________  |    |    |_______________________|
+>> +    |XHCI HCD                 |<-    |
+>> +    |_________________________|      |
+>> +
+> It wouldn't hurt to describe what you mean by 'port' in this diagram...
+Sure, as mentioned in my earlier comments, in the USB world, port and device is kind of interchangeable, at least IMO.  I'd like to stick with the "port" term, but if you see otherwise, let me know. 
+>
+>> +SOC USB driver
+>> +==============
+>> +Structures
+>> +----------
+>> +``struct snd_soc_usb``
+>> +
+>> +  - ``list``: list head for SND SOC struct list
+>> +  - ``component``: reference to ASoC component
+>> +  - ``num_supported_streams``: number of supported concurrent sessions
+>> +  - ``connection_status_cb``: callback to notify connection events
+>> +  - ``get_offload_dev``: callback to fetch selected USB sound card/PCM device
+> I think you meant fetch offloaded sound card and PCM device information
+> for a given USB card:device pair?
+Correct, will change.
+>
+>> +Functions
+>> +---------
+>> +.. code-block:: rst
+>> +
+>> +	const char *snd_soc_usb_get_components_tag(bool playback);
+>> +..
+>> +
+>> +  - ``playback``: direction of audio stream
+> why not use the usual direction 0: playback and 1: capture?
+>
+>> +
+>> +**snd_soc_usb_get_components_tag()** returns the tag used for describing if USB
+>> +offloading is supported for appending to a sound card's components string.
+> How does this work if the ASoC part is probe after the USB card? The
+> component string would be modified after the creation of the card?
+>
+> A control is more dynamic by nature, not sure about this component
+> string. Jaroslav?
+Do we actually need to add this?  I think just having the kcontrol is sufficient.
+>> +**snd_soc_usb_add_port()** add an allocated SOC USB device to the SOC USB framework.
+>> +Once added, this device can be referenced by further operations.
+>> +
+>> +.. code-block:: rst
+>> +
+>> +	void snd_soc_usb_remove_port(struct snd_soc_usb *usb);
+>> +..
+>> +
+>> +  - ``usb``: SOC USB device to remove
+>> +
+>> +**snd_soc_usb_remove_port()** removes a SOC USB device from the SOC USB framework.
+>> +After removing a device, any SOC USB operations would not be able to reference the
+>> +device removed.
+> Not clear to me if the notion of 'port' helps, why not just
+> snd_soc_usb_add_device() and remove_device()?
+I'm open to either terms, since both mean the same to me :).
+>
+>> +
+>> +USB Offload Related Kcontrols
+>> +=============================
+>> +Details
+>> +-------
+>> +A set of kcontrols can be utilized by applications to help select the proper sound
+>> +devices to enable USB audio offloading.  SOC USB exposes the get_offload_dev()
+>> +callback that designs can use to ensure that the proper indices are returned to the
+>> +application.
+>> +
+>> +Implementation
+>> +--------------
+>> +
+>> +**Example:**
+>> +
+>> +  **Sound Cards**:
+>> +
+>> +	::
+>> +
+>> +	  0 [SM8250MTPWCD938]: sm8250 - SM8250-MTP-WCD9380-WSA8810-VA-D
+>> +						SM8250-MTP-WCD9380-WSA8810-VA-DMIC
+>> +	  1 [Seri           ]: USB-Audio - Plantronics Blackwire 3225 Seri
+>> +						Plantronics Plantronics Blackwire 3225 Seri at usb-xhci-hcd.1.auto-1.1, full sp
+>> +	  2 [C320M          ]: USB-Audio - Plantronics C320-M
+>> +                      Plantronics Plantronics C320-M at usb-xhci-hcd.1.auto-1.2, full speed
+>> +
+>> +  **USB Sound Card** - card#1:
+>> +
+>> +	::
+>> +
+>> +	  USB Offload Playback Route PCM#0        -1, -1 (range -1->255)
+>> +
+>> +  **USB Sound Card** - card#2:
+>> +
+>> +	::
+>> +
+>> +	  USB Offload Playback Route PCM#0        0, 1 (range -1->255)
+>> +
+>> +The above example shows a scenario where the system has one ASoC platform card
+>> +(card#0) and two USB sound devices connected (card#1 and card#2).  When reading
+>> +the available kcontrols for each USB audio device, the following kcontrol lists
+>> +the mapped offload path for the specific device:
+>> +
+>> +	"USB Offload Playback Route#*"
+>> +
+>> +The kcontrol is indexed, because a USB audio device could potentially have
+>> +several PCM devices.  The above kcontrols are defined as:
+>> +
+>> +  - ``USB Offload Playback Route PCM`` **(R)**: Returns the ASoC platform sound
+>> +	card and PCM device index.  The output "0, 1" (card index, PCM device index)
+>> +	signifies that there is an available offload path for the USB SND device
+>> +	through card#0-PCM device#1.  If "-1, -1" is seen, then no offload path is
+>> +	available for the USB SND device.
+>> +
+>> +USB Offload Playback Route Kcontrol
+>> +-----------------------------------
+>> +In order to allow for vendor specific implementations on audio offloading device
+>> +selection, the SOC USB layer exposes the following:
+>> +
+>> +.. code-block:: rst
+>> +
+>> +	int (*get_offload_dev)(struct snd_kcontrol *kcontrol,
+>> +			      struct snd_ctl_elem_value *ucontrol);
+>> +..
+>> +
+>> +These are specific for the **USB Offload Playback Route PCM#** kcontrol.
+>> +
+>> +When users issue get calls to the kcontrol, the registered SOC USB callbacks will
+>> +execute the registered function calls to the DPCM BE DAI link.
+> Oh man, now I get what 'get_offload_dev" means: it really means
+> "update_offload_info' or 'update_info_kcontrol".
+> The 'get' routines usually provide a handle on something to another part
+> of the kernel.
+> Not here, it's an update of something to be looked-up by userspace...
+>
+I can change the naming for this if its not the right terms used.  As long as you understand how the concept works then the name changing isn't a problem.
 
-After merging the qcom tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+Thanks
 
-drivers/clk/qcom/camcc-sm8150.c: In function 'cam_cc_sm8150_probe':
-drivers/clk/qcom/camcc-sm8150.c:2141:36: error: passing argument 1 of 'qcom=
-_cc_really_probe' from incompatible pointer type [-Werror=3Dincompatible-po=
-inter-types]
- 2141 |         ret =3D qcom_cc_really_probe(pdev, &cam_cc_sm8150_desc, reg=
-map);
-      |                                    ^~~~
-      |                                    |
-      |                                    struct platform_device *
-In file included from drivers/clk/qcom/camcc-sm8150.c:21:
-drivers/clk/qcom/common.h:72:48: note: expected 'struct device *' but argum=
-ent is of type 'struct platform_device *'
-   72 | extern int qcom_cc_really_probe(struct device *dev,
-      |                                 ~~~~~~~~~~~~~~~^~~
-cc1: all warnings being treated as errors
+Wesley Cheng
 
-Caused by commit
-
-  ea73b7aceff6 ("clk: qcom: Add camera clock controller driver for SM8150")
-
-I have used the qcom tree from next-20240801 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uCj1cmb.S=Ld/l5ysHfm94k
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmasHsQACgkQAVBC80lX
-0Gz3VQf8DOy80oYW+eiYoCKumuNLME9aEtpidbflQTu7fcnGNh3GVxZyEAkZoj2T
-lfoTGFj3Yfri5cZLsRCA3en/sOxdHwxaKCMfkHI6nJyUXNE4ol6JVu66FdXeeANi
-luCAH1xkyqypUFgZdB99CKLMBZ/aqc2/yWrJf+k1Fj3FiJDfxdEDuQROpgXC0XUa
-nC3otQjZx7O2Z62c6bC6ydF/kySHdisUlRcWpO2/glm9HTY97XaQQyg+cknD7X2F
-Rrp/chPn6pPHtZKM408hE7aqYFQfMvqf5GwgjEN/OSyOmy5cg/X7Rup9jWct0XfS
-a1lBG82bNst/InoTaiagXST7N0+nbQ==
-=F0WT
------END PGP SIGNATURE-----
-
---Sig_/uCj1cmb.S=Ld/l5ysHfm94k--
+>> +**Callback Registration:**
+>> +
+>> +.. code-block:: rst
+>> +
+>> +	static int q6usb_component_probe(struct snd_soc_component *component)
+>> +	{
+>> +	...
+>> +	usb = snd_soc_usb_allocate_port(component, 1, &data->priv);
+>> +	if (IS_ERR(usb))
+>> +		return -ENOMEM;
+>> +
+>> +	usb->connection_status_cb = q6usb_alsa_connection_cb;
+>> +	usb->get_offload_dev = q6usb_get_offload_dev;
+>> +
+>> +	ret = snd_soc_usb_add_port(usb);
+>> +..
 
