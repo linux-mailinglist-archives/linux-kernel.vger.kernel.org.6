@@ -1,345 +1,670 @@
-Return-Path: <linux-kernel+bounces-270003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8CA39439DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 945609439E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:05:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A5FF285ED3
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:01:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A733284CB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 00:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4792414B083;
-	Thu,  1 Aug 2024 00:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999B115C0;
+	Thu,  1 Aug 2024 00:05:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hkVenUqD"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011026.outbound.protection.outlook.com [52.101.65.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j/x5EGeO"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A089A1494D1;
-	Thu,  1 Aug 2024 00:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.26
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722470451; cv=fail; b=Vj21oCg635cbIaQFIXTV/Eoo01HVmR8J8c0/86yTmec9DQSTPWcx2HoKN91TkPFGUMDf0rMusrYrMBxFJDTGQY+lh3VAwYm6uFji0rdMtdh2LnZCqVlth/SEvaxOFB66w+5G1OV27G4N2YuA7ZJhrE20O2cAyUiW6zNBgPoMhKY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722470451; c=relaxed/simple;
-	bh=IVSQUSfBDeaesbJm52M4rmlYN3OmCbE5ouiCrdgSVOk=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=oKoQk50tQkloaaMfpwCHu8Dh14eIh3E8ErgJjh7n9b91l8faHKUBkV4VmadD2hu/e1/uU9hFQ8jtgu2JPKuFMEeqjIA/Q3j0ILQdWPcLAxH28c8gDmxRQaQS1C3HeFGBjJqoPSDn9575r3IPLxHh/gilKeWszSCb5lQJxyhPskI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hkVenUqD; arc=fail smtp.client-ip=52.101.65.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Q1ulSn3yUytN0Sq2w78oPUYfDV7CRte8Ka6bxQClSHOnmYyz159t+aQpu8o3V9GwGsJ/5Md5u2gVRyqaBmIJvgydGhuiAGhAhZd1TZ8wJ6QTRog4zNpDc5rhs9mrL1nL2tf7JTImQ7ZHt+PbdTQOY8s5HOrHlkx4/0giMba7WlDedSCfSiMB2jBx8EKINufcytipKs/6XkB+NHir0Tm45lWkx6SAZztd58FSIPhwOJ4vmfZ4Q2jyuYNdIH23tNeBgJeqltjtznXQma1U8nR1gIpGs3LpEZhuKW3/W+/ZRG6WRavNDw7ucTMRmr5vK5DdqQ3lgo66LlDf4JUldVKNRA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=St4NJuio65wQSfmzYa86IyNljHrNbq7WpnUr3BaOoQo=;
- b=Jsj+yoeOaDE3K8LwvxZdSYV2SlZACdOW9Un+x7KNDs/x7Vz8eFP4piSA4wbURuBxIlJoqsZriP3aHzQnhfteJ3nMIJdYTH3oXC2TKJNd+lSGg+IwNwQOvv2Zo0A1YClhF9XwYDupN69+tTi9HSASA9uvMsPxbhaLjW6EKh5OF7mXXiLU8Azkvb6DR4Z0ij40TbQlARc1a7NNIem3hib6IKk8LDjTBXbFgSIqSNlwnuyzRS/Myae7QYcG1j2S0UJoc8sgCLxxWcAEOT0YIUnBltrNyki/NjPZ9v7RjxpjoeoxdyviPIEnyXW9LSPUVyYYyZUws4/GXq5tzqjdrCWaZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=St4NJuio65wQSfmzYa86IyNljHrNbq7WpnUr3BaOoQo=;
- b=hkVenUqDhqYfDD96vdZ+iWrNe5PDtEvkhtvfpiQ8+XdV5QKW02m0iD9XP5y3mgoVTlOX+J49E17r83643ttIdp3qWbB6X62uA1h31/PAzZPmNvONH1nmy6YPCWdLoXuo/H70jbhKLkHEqjT4pe3r+0lwvh73oaDvSkxoaO2xXsnaQPCW9Xswn60zLXuUF3YtMobyWLn37eCJ0qnH2L0zydwqLflnNfoFyry0XMBTO/jFgLWMoNPgI6JUy8Qi8SiCC1qkq8BrFh+hPlxhrxQ0QwI7JLc/ynPEpYbjGL66tAraYdQsXStRRKzsP4zV+2VUiRkxxtA4CBGmtazC3IeZoQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GVXPR04MB10406.eurprd04.prod.outlook.com (2603:10a6:150:1e3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.27; Thu, 1 Aug
- 2024 00:00:46 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7807.026; Thu, 1 Aug 2024
- 00:00:46 +0000
-From: Frank Li <Frank.Li@nxp.com>
-Date: Wed, 31 Jul 2024 20:00:26 -0400
-Subject: [PATCH v4 2/2] can: flexcan: add wakeup support for imx95
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240731-flexcan-v4-2-82ece66e5a76@nxp.com>
-References: <20240731-flexcan-v4-0-82ece66e5a76@nxp.com>
-In-Reply-To: <20240731-flexcan-v4-0-82ece66e5a76@nxp.com>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- haibo.chen@nxp.com, imx@lists.linux.dev, han.xu@nxp.com, 
- Frank Li <Frank.Li@nxp.com>
-X-Mailer: b4 0.13-dev-e586c
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722470433; l=6676;
- i=Frank.Li@nxp.com; s=20240130; h=from:subject:message-id;
- bh=DZF8lRBk1z5gCbtmnlwiLvTEP638d+rt+ccnMOssc7U=;
- b=WgyEiLBek2oI95DkWOwlYosG1t33YnBjHQYtg1HnULg/kBaYbREDwlk5VEpY31g7qReUTSFkh
- xXfajy4zZaTBzVBArwtjx0YFQZIiS840kKL2nG1I2sFJqpYSUR4Jpvt
-X-Developer-Key: i=Frank.Li@nxp.com; a=ed25519;
- pk=I0L1sDUfPxpAkRvPKy7MdauTuSENRq+DnA+G4qcS94Q=
-X-ClientProxiedBy: BYAPR06CA0040.namprd06.prod.outlook.com
- (2603:10b6:a03:14b::17) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6A50632
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 00:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722470734; cv=none; b=ucjlLUZesicQcFbJRebWKDs02REnns7hERHYYCdhpYoDOhev0lJ86XsbrP+aWECtOhAf7BxBklGE+GWZyxkulCKDm/5GGzW7Kijh4hxPQuo6BTCeoKt5UTcEoMZwOO4um9CrTGapxilrSaLTcNd3d+FeMW75PS4vGt4GFf9nytE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722470734; c=relaxed/simple;
+	bh=PcSwOaeBNnuWyfGJrlb4vYSUy8kUQ7LYViMOl+jJiTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O0A4ilgJ5K8XD+ERi3bng+0YjNXgq6UFh5g2S3Nnd8Pa0+o8v7hTPly0FAeGlP+qd+GYZOZAsrorVu2Mt8ZtnKVy8RZbzfu9i42QI1nrzvHi0nt+rxmxVzmcAWq857VES0ygu1cWvy1RCq0nV9IfZNk51UAjPdv1r/OJQ74Aeqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j/x5EGeO; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52ef9bc3a64so1022720e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 31 Jul 2024 17:05:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722470730; x=1723075530; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pz5xVu7GfVie1rlwMxXqazxoSkocaQmglWq8ysVH5kw=;
+        b=j/x5EGeOiXwZhdQUH5kluh+sGOOhh7QJwSV5AsMl+BW2Wl1C9CBmSafoIGou+iBDzE
+         aoXxgOI256Scz73spJg6nE+HleA3IjR8ONrrp/G4tUSuRyqDIjWOumgdfjsj73MgYY7g
+         Z0KmjPQGPLfAg0z9EKfENbz0DdStpUN30DzMqBfyXgyg9thnfKOD1DcrGxWP54SHg4ww
+         orOEUP3Rw3vs0ZGtWhWeWuH+lUDf0cZEnHzdsaJU9UEdcRCjcTRO9DRyiM1DEby/krR8
+         GzNMhgYtd5m/YG4G7rnUFjq5hk/yuWuHry50qouVEc8Om+QDO/NBG2wMPZ5roNxoOY2D
+         Qrdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722470730; x=1723075530;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pz5xVu7GfVie1rlwMxXqazxoSkocaQmglWq8ysVH5kw=;
+        b=S6SCcscirokMdzSFxYTa8qm5BXFJdFykhT6VolCxK1v0h3lGkdYl4fI/fb0Wt1wHBg
+         PQj1hnp0r8KGiL0gAk1RSvrWET/hIa3ivvXs70fRVwkOKpeBPE9OzO7vYUS5T2kKzBZ1
+         zvI3gMmNyABMlR4CtaVTQ+/KncQU8ke4ikOYQZHpyQuD7/W4DWx2lPmk2/8VpK8ZnmTA
+         +KbsyIsTJUYggjwm/6SoQseJIr9cPfQNaFc68dmeuScIBUWMHE7HugvEbVN14e+40oV9
+         U0y1oG2STCQXGpfa/MaFF7E6r/hrXxSMqaIajOdLrN68PbPxRVmcfyFsmPr15SIpztzz
+         4BJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ4rD0qZkhoLXDtcLjXQaqNp2Vi9pFAVYvyAI43SRulFbkMBZ2ZLrjh5BUvQ1yWVTXHbKyCStv1v3fGCPXRlKSKAqrCWjP+uspjyUV
+X-Gm-Message-State: AOJu0Yx2ORl5noJ7/3KPWlkPAER9gKzJO8+s3Pm3SiFAU04NqW+4g/Ol
+	fOVrUnSg1AqL/oqE7g9c8phPAfcPub+x0Q0KSrZ5voYN2cMS5DB3UOh9oVuUlFc=
+X-Google-Smtp-Source: AGHT+IH9kyZrP/8NIvkUJ6Vj1dhXFILyMVp4lJb40Zr9svdVbsP49+yH0RTOgbYkkV7lA+cOzDizLA==
+X-Received: by 2002:a05:6512:3b06:b0:52f:4ed2:88f0 with SMTP id 2adb3069b0e04-530b61a9e14mr200959e87.2.1722470729681;
+        Wed, 31 Jul 2024 17:05:29 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2bcefsm2380110e87.246.2024.07.31.17.05.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 17:05:29 -0700 (PDT)
+Message-ID: <f4cb1082-9689-4e09-89ce-bb83b7b485ba@linaro.org>
+Date: Thu, 1 Aug 2024 03:05:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10406:EE_
-X-MS-Office365-Filtering-Correlation-Id: d792edf2-3a7e-4ae3-c973-08dcb1bcfe5a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2dVYW50T1M2clVxTXBSTXdwQmlleEh2REMyenhaVFJmeXIrYVg1NGlndHov?=
- =?utf-8?B?czBpNFlnVjM4Znh1MDMyTDZCSXNmbEZjRTVrSnFHVFVKSTArL05Xd2k5bldM?=
- =?utf-8?B?WVpRQTV4TVNCaFZmb1F3MDN2YUNBbStVbWtjRTI0a0E0NE9LSk5RSWY5aGdM?=
- =?utf-8?B?WFJFSFdKYVhTUTVpemVOakdnL1hWcGpPV21sZjV2THl1amFCQ2ozUG9GYmxi?=
- =?utf-8?B?M0kvNHB2YUxmVlZRYzIveGpLSncyajgxbGxOdnVBei9vaUVtZjZyNU13N2pN?=
- =?utf-8?B?SjNEU0oxeGJaUE5pYUhlNE5uVHlhMFdlY3lmYnZwa3ZCT1B4dG5uSklCcDl2?=
- =?utf-8?B?YUc3ZmlYUXNKdElWZ3BUa2EyUjlxY3hqSXgrTHlob28xNHhqSEdlTU1xSmh3?=
- =?utf-8?B?WjlvSlBQRDdKU2dRR0xaZTBvc0ZBY3B0djlQa3ZYSk5VZnhDRHJvcGlQcVE3?=
- =?utf-8?B?UnVMWEZ0cURMaEtlYlhHYUNvdzIwd2taYjA5RGtvcTMxMXkrcUlmWnBjS1E5?=
- =?utf-8?B?dmdnN0hUY2JFcWRWRERPUFFkdk1yQ1ZveURpUHVNTHdqUVNNMnVDN00yWkor?=
- =?utf-8?B?UWpBNXRWeXJNMjBIek5KUkdCbnZuTkV3SUcram5vdzFFdEVRaVZDSzBHMUpM?=
- =?utf-8?B?WE1wN3RVVWZCU2N1Z0NRTEtXVUVBQS9GTnZ5aWxBelJGQ0EydlpWbVNobnlO?=
- =?utf-8?B?L2VaNW1CL2pxV1VlSG83eUxlMnNuVUJ6OU13ZHA1azNuSHVmRmpyTm96ektH?=
- =?utf-8?B?N0lmUkk3bnZyTmdJSE9LK3lqRTdreVJHdVNjcFgwcmc0NjVwNjNjZ0hQVzQ0?=
- =?utf-8?B?SnppWk5ZTG1pbnVOUkE2RjNYZDJsUnQ5ZElibGdoVTFnWFFFSFFwT3pHeCtB?=
- =?utf-8?B?TDlCalluV1ZjVCtZV2ZWWFhENjB3ZmkvaW5va2xIckVGU1BXQUpxdDlrdzh0?=
- =?utf-8?B?L1BSUjRhUzlqSlcrS3BIanF6SmlTS3llQ2VDVktlUlNVWWhJOUdmMkhIaGZ5?=
- =?utf-8?B?NkhOV0pOS2hmT20wZFUwclFmZWpEV2NRUnR5WEFnTWpmV1VxVVhPazdsZ3Yr?=
- =?utf-8?B?OU9JdmtnYmRkcUhyL3FSLy9zZjlVV0grbXhZZnFOQUlLMGcrZDBkblBuUTY2?=
- =?utf-8?B?ZmdseXRyQVZock9wRk00WC8zYVRkSDF3dS9nZWFJNEY5cUJ4QmRUSDBLUDhG?=
- =?utf-8?B?Z05BQWdlem10OUZzYURiaDFyMnAvb1U0RlNiVHFWK2RHTmE2RlpsbTIrOU5E?=
- =?utf-8?B?Y3ZQL3ovUlJ0cDNsLzltbmZLY0lMcmptTUc3cWZUUUxpeGhadnBIcGNqbWF3?=
- =?utf-8?B?SXIxVUw1aENDSFpSWmEvSGVEaTAvOVpvWjgrc2lHTHRIMVJOcGc3dFZrcHI3?=
- =?utf-8?B?ZnUzU1FSMElQTnBNZEdxeE1wQWFaMTVUL1B6b2EyYXNDT2dIdFcySmZrTy9H?=
- =?utf-8?B?bTlWd0lPKzJnMEdZY0hpYjBhY21ubXUyWHUyZG9uZWZaU2RaTm5HUjFpWGhG?=
- =?utf-8?B?NWtrQUpXSjhjZkpYQk5IcGlDR2JxK05TWjJtZnpQT1graG1WRFUyUXlHaGVY?=
- =?utf-8?B?Uk54eVBYQzF3SEgrcWx6RTc4ZnprYWdSUjdzUG03QmpTdXRVSzZsaWNVWG5j?=
- =?utf-8?B?VDFZUjk5NUpzYlpxUGUwWWdxVzloZVVGemNtbmFzeHhyWkdkVXczV1diQndP?=
- =?utf-8?B?eHZDRDdPWVBBSHNNNGZaUTVUQXR3WU9hSS80ZEFzZEEzS2RGa2d3RFp6ZXN4?=
- =?utf-8?B?MzdqbVFZVktoZzdBS2U2SHQ1TllyZ2FPelZKRWQ4L3N0MXJPQWxuMmxIRzRU?=
- =?utf-8?B?L2VBbUFDb2JKMlJxZVZraStBWDUrZVhXV3J0ZWxiN2w0WnVmdVVQSTZVQlRD?=
- =?utf-8?B?Y0NreGM1VHNTaEFMNEpUN0l0VlFXSVBxcDFVV0h5TUc2VWc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NCsyY011UVhDWTk3ZmNKcGlFT296Qk9RWVZjR0s3K29ISGp1c1hlck0rOEo3?=
- =?utf-8?B?a3ZBdHZFdGtaOE5xcEJYNzRDYmhsOGhGRXkrNlhqNnFwNXUwNDVwbzg3cXBx?=
- =?utf-8?B?aXhPU1ZnK0lGVldhcUU1VlFhbVVYbldLeHpNRUZSNmR6d0ZTNnZIRUh2andH?=
- =?utf-8?B?RVNxUU9xeGd4RUVSamZLa2pvZE5TaHJjeUZwUnp2ZG5TYnVEMjFwamM3Smg4?=
- =?utf-8?B?cmkwdXdmbTllRzR6T0NKamRNTDA2VUNkZWJBNU4zSllMbU5kRVNzalo2UCtY?=
- =?utf-8?B?NnE2Z1IvU3ZiSVdTZ0tvcmRTV1pUbVlUeDlqSHJJTk9LWW8zRVBwcU92QW1P?=
- =?utf-8?B?VDBnZHUrd2puaExSN1JmeHFhWFVaNHREcFFlQkRHbGVmcC9hME9nSStJSFJz?=
- =?utf-8?B?TDczREdvYk1MSVdZald4aDk5aDJnOCtaVy9CV2NOZjg5NTk1TFRJUHdINnli?=
- =?utf-8?B?dmRhNlNlSUJMY0RoMVkwSkJpUXBnSWlZMUsyUjBzWFEvYnJqTkZrbnhyYVpv?=
- =?utf-8?B?dHpNTDA5R2puQTZWSUU3N2FyYmJFV2lZZCtJaE5kZ2tzbnpyL2RQV1lRKzJ4?=
- =?utf-8?B?L2k5NXpldVFsdEs0RytKSmpTZ1MxazVNWElQRHBEL054T25ic2RNRDdoOEpH?=
- =?utf-8?B?bEVnY1dPbmliK1gvVXplb0dXMElBaW9rQ1NmUGZSZWtDd1NxcElKRzlIQ2NS?=
- =?utf-8?B?d1NFamdQRFZxSG5NY2UxOUdSalI2MHlvM0s3eDVGWDludXh6bFBYTkVReFpF?=
- =?utf-8?B?R3hNRVF6c0U0VTBRSHpZaWZGejBlMC9KSlhLdTNSVks3ZzlVWVhGNC93YzV3?=
- =?utf-8?B?Nzl0UHJCRWxjcDVQWUN2ZWRKWjFsbEhycTNrV2tvRmgxQ0hQWkkxY2JsbGFo?=
- =?utf-8?B?MDRINU95WUoxUEh5NlFobXFaVjhtcUVxZklrKzZrZnBrQmRPREtUc3B5TDdB?=
- =?utf-8?B?bGVKNnBFVzJHQzhLdmhJQ1BwVnBpNGJjdHVtcksyQ3ptZVVEblpsakkwUVA3?=
- =?utf-8?B?ajhLZ2h0Q01ZUk5CcExQR1lFNnFWWitXSExaaUp1VnI2N3BvMU05Wm5tdUtX?=
- =?utf-8?B?eERwS05UWnlPSStGUE12eHJmVWREcDMxdlBkRnF5K3FlRTBqY2N6bFFsRlRp?=
- =?utf-8?B?MlZrMnFOYjgySHpNdnNPRCtkSVJZckl3Qm93THcxVEdzSEV6M3ZNNk5MNEpY?=
- =?utf-8?B?NldYYy80ZVhuNElXaHhjM1ZsRFUvaWlwTmdmMG9WaFQ3YlUyYzBZRld1aHYr?=
- =?utf-8?B?bS9MZ01xaUJya1dhaEVMRGw1VkpQSTRzZmxKM2gvZmdtQ2FIZ3lkbXJEaDdt?=
- =?utf-8?B?b0ZiZzVVQkkxUmV4OHQwbWRrcmFGZlloRXV2YUlsRzA2UFZqeklvSE1JV3Zq?=
- =?utf-8?B?aGlUeVphZ2lRWng5dlAwN1liMTNnRUlueHJkQm0yRFV1V0VKZUxDY2Q5ZG53?=
- =?utf-8?B?Uk0wZVB4TmZIRDJIeFVST0dpZjRzbVp3QW9rcFFSbloxTThaT1BJMDhCbk5X?=
- =?utf-8?B?aGRPTklYaWxIVVZiV1JFdXVDWlpscTdadU5oaTEreXdIQjBnbVFFQUVyUGhq?=
- =?utf-8?B?bnRaYVk0RmtoN3lTK2l5K1l1ekFMRnF2VUUzU1k2RVpwbHh4MTlnLzFnalpN?=
- =?utf-8?B?TmZ6aTdoTENaOWMzKyt2WDVyd3NKdVNIaDRjVStWWG5FU1oxVTZxQWZWZitw?=
- =?utf-8?B?RXRIWmdXd2h4UFZBL3FubHhmcE5yaERyNGU3MHBqdnBnQXJxeG9oZXczdmdX?=
- =?utf-8?B?UThKMisvYnhsbXhFck0rTmp1K2Rja042eDdYSXg1NE1xcnJRMTNIaGw2Y1N4?=
- =?utf-8?B?Rzk0MUJLSUY2Z2ZRdHRWRUQrSFhGMS9wVzEyd2NETUYrTStjSGZ0YTNWUThC?=
- =?utf-8?B?dmQ4MVFTYitsSjF6UmhSUnBHUmFCZlVpcXl3Q245TlI2MUtrUmNqaktIYzFM?=
- =?utf-8?B?d2FBY25hc1RFcGthbjh2YmxxK2M5dzdLNkNWMXU4K3RtWWRaV1VxT0RmNkNa?=
- =?utf-8?B?R1Z1VUIzN3I4V3BUR1BRSnQwUkkvLzErUy9UM1F6N05XTm9rTlhBYmdqa25N?=
- =?utf-8?B?Z2xkQkhMcWcyNkxta1ZlZ3ZpZUJ2MjlRcDlYdVV2bEdiSm9pdW9XdzhrQXBu?=
- =?utf-8?Q?goAGd9oLUxkPqeHCq4LklVC6C?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d792edf2-3a7e-4ae3-c973-08dcb1bcfe5a
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 00:00:46.0043
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2YZFRrqE7WJ0Xs5IHKvRyw6JAfZwjmcFuf1g0i2Mlp3Ll8FbqlaXHovOyCthWk5/V+ejFEdcpf7fIb/uQ0OgbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10406
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/13] dt-bindings: media: camss: Add qcom,sm8550-camss
+ binding
+Content-Language: en-US
+To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com,
+ Yongsheng Li <quic_yon@quicinc.com>
+References: <20240709160656.31146-1-quic_depengs@quicinc.com>
+ <20240709160656.31146-8-quic_depengs@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240709160656.31146-8-quic_depengs@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Haibo Chen <haibo.chen@nxp.com>
+On 7/9/24 19:06, Depeng Shao wrote:
+> Add bindings for qcom,sm8550-camss in order to support the camera
+> subsystem for sm8550
+> 
+> Co-developed-by: Yongsheng Li <quic_yon@quicinc.com>
+> Signed-off-by: Yongsheng Li <quic_yon@quicinc.com>
+> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
+> ---
+>   .../bindings/media/qcom,sm8550-camss.yaml     | 545 ++++++++++++++++++
+>   1 file changed, 545 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
+> new file mode 100644
+> index 000000000000..d002b0ff119e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
+> @@ -0,0 +1,545 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,sm8550-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm SM8550 Camera Subsystem (CAMSS)
+> +
+> +maintainers:
+> +  - Depeng Shao <quic_depengs@quicinc.com>
+> +
+> +description: |
+> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sm8550-camss
+> +
+> +  clocks:
+> +    minItems: 47
+> +    maxItems: 47
+> +
+> +  clock-names:
+> +    items:
+> +      - const: cam_ahb_clk
+> +      - const: cam_hf_axi
+> +      - const: cam_sf_axi
+> +      - const: camnoc_axi
+> +      - const: camnoc_axi_src
+> +      - const: core_ahb
+> +      - const: cpas_ahb
+> +      - const: slow_ahb_src
+> +      - const: csiphy0
+> +      - const: csiphy0_timer
+> +      - const: csiphy1
+> +      - const: csiphy1_timer
+> +      - const: csiphy2
+> +      - const: csiphy2_timer
+> +      - const: csiphy3
+> +      - const: csiphy3_timer
+> +      - const: csiphy4
+> +      - const: csiphy4_timer
+> +      - const: csiphy5
+> +      - const: csiphy5_timer
+> +      - const: csiphy6
+> +      - const: csiphy6_timer
+> +      - const: csiphy7
+> +      - const: csiphy7_timer
+> +      - const: csid_src
+> +      - const: csid
+> +      - const: csiphy_rx
+> +      - const: vfe0_fast_ahb
+> +      - const: vfe0_src
+> +      - const: vfe0
+> +      - const: cpas_vfe0
+> +      - const: vfe1_fast_ahb
+> +      - const: vfe1_src
+> +      - const: vfe1
+> +      - const: cpas_vfe2
+> +      - const: vfe2_fast_ahb
+> +      - const: vfe2_src
+> +      - const: vfe2
+> +      - const: cpas_vfe1
+> +      - const: vfe_lite_ahb
+> +      - const: vfe_lite_csid_src
+> +      - const: vfe_lite
+> +      - const: vfe_lite_cphy_rx
+> +      - const: vfe_lite_csid
+> +      - const: cpas_ife_lite
+> +      - const: cpas_fast_ahb_clk
+> +      - const: fast_ahb_src
 
-iMX95 defines a bit in GPR that sets/unsets the IPG_STOP signal to the
-FlexCAN module, controlling its entry into STOP mode. Wakeup should work
-even if FlexCAN is in STOP mode.
+I believe most of *_src clocks should be removed from the list above as
+parent clocks with no need for own separate management.
 
-Due to iMX95 architecture design, the A-Core cannot access GPR; only the
-system manager (SM) can configure GPR. To support the wakeup feature,
-follow these steps:
+> +
+> +  interrupts:
+> +    minItems: 18
+> +    maxItems: 18
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: csiphy5
+> +      - const: csiphy6
+> +      - const: csiphy7
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    minItems: 4
+> +    maxItems: 4
+> +
+> +  interconnect-names:
+> +    items:
+> +      - const: cam_ahb
+> +      - const: cam_hf_0_mnoc
+> +      - const: cam_sf_0_mnoc
+> +      - const: cam_sf_icp_mnoc
+> +
+> +  power-domains:
+> +    items:
+> +      - description: IFE0 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE1 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: IFE2 GDSC - Image Front End, Global Distributed Switch Controller.
+> +      - description: Titan GDSC - Titan ISP Block, Global Distributed Switch Controller.
+> +
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    description:
+> +      CSI input ports.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@2:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@3:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@4:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +      port@5:
+> +        $ref: /schemas/graph.yaml#/$defs/port-base
+> +        unevaluatedProperties: false
+> +        description:
+> +          Input port for receiving CSI data.
+> +
+> +        properties:
+> +          endpoint:
+> +            $ref: video-interfaces.yaml#
+> +            unevaluatedProperties: false
+> +
+> +            properties:
+> +              clock-lanes:
+> +                maxItems: 1
+> +
+> +              data-lanes:
+> +                minItems: 1
+> +                maxItems: 4
+> +
+> +            required:
+> +              - clock-lanes
+> +              - data-lanes
+> +
+> +  reg:
+> +    minItems: 19
+> +    maxItems: 19
+> +
+> +  reg-names:
+> +    items:
+> +      - const: csiphy0
+> +      - const: csiphy1
+> +      - const: csiphy2
+> +      - const: csiphy3
+> +      - const: csiphy4
+> +      - const: csiphy5
+> +      - const: csiphy6
+> +      - const: csiphy7
+> +      - const: csid0
+> +      - const: csid1
+> +      - const: csid2
+> +      - const: csid_lite0
+> +      - const: csid_lite1
+> +      - const: csid_top
+> +      - const: vfe0
+> +      - const: vfe1
+> +      - const: vfe2
+> +      - const: vfe_lite0
+> +      - const: vfe_lite1
+> +
+> +  vdda-phy-supply:
+> +    description:
+> +      Phandle to a regulator supply to PHY core block.
+> +
+> +  vdda-pll-supply:
+> +    description:
+> +      Phandle to 1.2V regulator supply to PHY refclk pll block.
+> +
+> +required:
+> +  - clock-names
+> +  - clocks
+> +  - compatible
 
-- For suspend:
-  1) During Linux suspend, when CAN suspends, do nothing for GPR and keep
-     CAN-related clocks on.
-  2) In ATF, check whether CAN needs to support wakeup; if yes, send a
-     request to SM through the SCMI protocol.
-  3) In SM, configure the GPR and unset IPG_STOP.
-  4) A-Core suspends.
+I would suggest to put 'compatible', 'reg' and 'reg-names' properties as
+the first ones. 'clock-names' should follow 'clocks' property in the list.
 
-- For wakeup and resume:
-  1) A-Core wakeup event arrives.
-  2) In SM, deassert IPG_STOP.
-  3) Linux resumes.
+> +  - interconnects
+> +  - interconnect-names
+> +  - interrupts
+> +  - interrupt-names
+> +  - iommus
+> +  - power-domains
+> +  - reg
+> +  - reg-names
+> +  - vdda-phy-supply
+> +  - vdda-pll-supply
+> +  - ports
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,sm8550-camcc.h>
+> +    #include <dt-bindings/clock/qcom,sm8550-gcc.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #include <dt-bindings/power/qcom-rpmpd.h>
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    #include <dt-bindings/interconnect/qcom,sm8550-rpmh.h>
+> +
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        camss: camss@ace4000 {
+> +            compatible = "qcom,sm8550-camss";
+> +
+> +            reg = <0 0x0ace4000 0 0x2000>,
+> +                  <0 0x0ace6000 0 0x2000>,
+> +                  <0 0x0ace8000 0 0x2000>,
+> +                  <0 0x0acea000 0 0x2000>,
+> +                  <0 0x0acec000 0 0x2000>,
+> +                  <0 0x0acee000 0 0x2000>,
+> +                  <0 0x0acf0000 0 0x2000>,
+> +                  <0 0x0acf2000 0 0x2000>,
+> +                  <0 0x0acb7000 0 0xd00>,
+> +                  <0 0x0acb9000 0 0xd00>,
+> +                  <0 0x0acbb000 0 0xd00>,
+> +                  <0 0x0acca000 0 0xa00>,
+> +                  <0 0x0acce000 0 0xa00>,
+> +                  <0 0x0acb6000 0 0x1000>,
+> +                  <0 0x0ac62000 0 0xf000>,
+> +                  <0 0x0ac71000 0 0xf000>,
+> +                  <0 0x0ac80000 0 0xf000>,
+> +                  <0 0x0acca000 0 0x2800>,
+> +                  <0 0x0acce000 0 0x2800>;
+> +            reg-names = "csiphy0",
+> +                    "csiphy1",
+> +                    "csiphy2",
+> +                    "csiphy3",
+> +                    "csiphy4",
+> +                    "csiphy5",
+> +                    "csiphy6",
+> +                    "csiphy7",
+> +                    "csid0",
+> +                    "csid1",
+> +                    "csid2",
+> +                    "csid_lite0",
+> +                    "csid_lite1",
+> +                    "csid_top",
+> +                    "vfe0",
+> +                    "vfe1",
+> +                    "vfe2",
+> +                    "vfe_lite0",
+> +                    "vfe_lite1";
+> +
+> +            vdda-phy-supply = <&vreg_l1e_0p88>;
+> +            vdda-pll-supply = <&vreg_l3e_1p2>;
+> +
+> +            interrupts = <GIC_SPI 477 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 478 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 479 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 448 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 601 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 603 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 431 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 602 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 688 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH>,
+> +                     <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +            interrupt-names = "csiphy0",
+> +                    "csiphy1",
+> +                    "csiphy2",
+> +                    "csiphy3",
+> +                    "csiphy4",
+> +                    "csiphy5",
+> +                    "csiphy6",
+> +                    "csiphy7",
+> +                    "csid0",
+> +                    "csid1",
+> +                    "csid2",
+> +                    "csid_lite0",
+> +                    "csid_lite1",
+> +                    "vfe0",
+> +                    "vfe1",
+> +                    "vfe2",
+> +                    "vfe_lite0",
+> +                    "vfe_lite1";
+> +
+> +            power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
+> +                    <&camcc CAM_CC_IFE_1_GDSC>,
+> +                    <&camcc CAM_CC_IFE_2_GDSC>,
+> +                    <&camcc CAM_CC_TITAN_TOP_GDSC>;
+> +
+> +            clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+> +                 <&gcc GCC_CAMERA_HF_AXI_CLK>,
+> +                 <&gcc GCC_CAMERA_SF_AXI_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_AXI_CLK>,
+> +                 <&camcc CAM_CC_CAMNOC_AXI_CLK_SRC>,
+> +                 <&camcc CAM_CC_CORE_AHB_CLK>,
+> +                 <&camcc CAM_CC_CPAS_AHB_CLK>,
+> +                 <&camcc CAM_CC_SLOW_AHB_CLK_SRC>,
+> +                 <&camcc CAM_CC_CSIPHY0_CLK>,
+> +                 <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY1_CLK>,
+> +                 <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY2_CLK>,
+> +                 <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY3_CLK>,
+> +                 <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY4_CLK>,
+> +                 <&camcc CAM_CC_CSI4PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY5_CLK>,
+> +                 <&camcc CAM_CC_CSI5PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY6_CLK>,
+> +                 <&camcc CAM_CC_CSI6PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSIPHY7_CLK>,
+> +                 <&camcc CAM_CC_CSI7PHYTIMER_CLK>,
+> +                 <&camcc CAM_CC_CSID_CLK_SRC>,
+> +                 <&camcc CAM_CC_CSID_CLK>,
+> +                 <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
+> +                 <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_IFE_0_CLK_SRC>,
+> +                 <&camcc CAM_CC_IFE_0_CLK>,
+> +                 <&camcc CAM_CC_CPAS_IFE_0_CLK>,
+> +                 <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_IFE_1_CLK_SRC>,
+> +                 <&camcc CAM_CC_IFE_1_CLK>,
+> +                 <&camcc CAM_CC_CPAS_IFE_1_CLK>,
+> +                 <&camcc CAM_CC_IFE_2_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_IFE_2_CLK_SRC>,
+> +                 <&camcc CAM_CC_IFE_2_CLK>,
+> +                 <&camcc CAM_CC_CPAS_IFE_2_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_CSID_CLK_SRC>,
+> +                 <&camcc CAM_CC_IFE_LITE_CSID_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
+> +                 <&camcc CAM_CC_IFE_LITE_CLK>,
+> +                 <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
+> +                 <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
+> +                 <&camcc CAM_CC_FAST_AHB_CLK_SRC>;
+> +
+> +            clock-names = "cam_ahb_clk",
+> +                      "cam_hf_axi",
+> +                      "cam_sf_axi",
+> +                      "camnoc_axi",
+> +                      "camnoc_axi_src",
+> +                      "core_ahb",
+> +                      "cpas_ahb",
+> +                      "slow_ahb_src",
+> +                      "csiphy0",
+> +                      "csiphy0_timer",
+> +                      "csiphy1",
+> +                      "csiphy1_timer",
+> +                      "csiphy2",
+> +                      "csiphy2_timer",
+> +                      "csiphy3",
+> +                      "csiphy3_timer",
+> +                      "csiphy4",
+> +                      "csiphy4_timer",
+> +                      "csiphy5",
+> +                      "csiphy5_timer",
+> +                      "csiphy6",
+> +                      "csiphy6_timer",
+> +                      "csiphy7",
+> +                      "csiphy7_timer",
+> +                      "csid_src",
+> +                      "csid",
+> +                      "csiphy_rx",
+> +                      "vfe0_fast_ahb",
+> +                      "vfe0_src",
+> +                      "vfe0",
+> +                      "cpas_vfe0",
+> +                      "vfe1_fast_ahb",
+> +                      "vfe1_src",
+> +                      "vfe1",
+> +                      "cpas_vfe1",
+> +                      "vfe2_fast_ahb",
+> +                      "vfe2_src",
+> +                      "vfe2",
+> +                      "cpas_vfe2",
+> +                      "vfe_lite_ahb",
+> +                      "vfe_lite_csid_src",
+> +                      "vfe_lite_csid",
+> +                      "vfe_lite_cphy_rx",
+> +                      "vfe_lite",
+> +                      "cpas_ife_lite",
+> +                      "cpas_fast_ahb_clk",
+> +                      "fast_ahb_src";
+> +
+> +            iommus = <&apps_smmu 0x800 0x20>;
+> +
+> +            interconnects =
+> +                    <&gem_noc         MASTER_APPSS_PROC          0 &config_noc SLAVE_CAMERA_CFG  0>,
+> +                    <&mmss_noc        MASTER_CAMNOC_HF           0 &mc_virt SLAVE_EBI1           0>,
+> +                    <&mmss_noc        MASTER_CAMNOC_SF           0 &mc_virt SLAVE_EBI1           0>,
+> +                    <&mmss_noc        MASTER_CAMNOC_ICP          0 &mc_virt SLAVE_EBI1           0>;
+> +            interconnect-names =
+> +                    "cam_ahb",
+> +                    "cam_hf_0_mnoc",
+> +                    "cam_sf_0_mnoc",
+> +                    "cam_sf_icp_mnoc";
+> +
+> +            ports {
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +
+> +                port@0 {
+> +                    reg = <0>;
+> +                    #address-cells = <1>;
+> +                    #size-cells = <0>;
+> +
+> +                    csiphy_ep0: endpoint@0 {
+> +                        reg = <0>;
+> +                        clock-lanes = <7>;
+> +                        data-lanes = <0 1>;
+> +                        remote-endpoint = <&sensor_ep>;
+> +                    };
+> +                };
+> +            };
+> +        };
+> +    };
 
-Add a new fsl_imx95_devtype_data and FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI to
-reflect this.
-
-Reviewed-by: Han Xu <han.xu@nxp.com>
-Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
-Reviewed-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-Change from v1 to v2
-- fsl_imx95_devtype_data keep order by value
-- Add empty line after fsl_imx95_devtype_data
-- suspend/resume code look symmetrical
----
- drivers/net/can/flexcan/flexcan-core.c | 50 +++++++++++++++++++++++++++++-----
- drivers/net/can/flexcan/flexcan.h      |  2 ++
- 2 files changed, 45 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
-index f6e609c388d55..3c98231e25898 100644
---- a/drivers/net/can/flexcan/flexcan-core.c
-+++ b/drivers/net/can/flexcan/flexcan-core.c
-@@ -354,6 +354,14 @@ static struct flexcan_devtype_data fsl_imx93_devtype_data = {
- 		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR,
- };
- 
-+static const struct flexcan_devtype_data fsl_imx95_devtype_data = {
-+	.quirks = FLEXCAN_QUIRK_DISABLE_RXFG | FLEXCAN_QUIRK_ENABLE_EACEN_RRS |
-+		FLEXCAN_QUIRK_DISABLE_MECR | FLEXCAN_QUIRK_USE_RX_MAILBOX |
-+		FLEXCAN_QUIRK_BROKEN_PERR_STATE | FLEXCAN_QUIRK_SUPPORT_FD |
-+		FLEXCAN_QUIRK_SUPPORT_ECC | FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX |
-+		FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR | FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI,
-+};
-+
- static const struct flexcan_devtype_data fsl_vf610_devtype_data = {
- 	.quirks = FLEXCAN_QUIRK_DISABLE_RXFG | FLEXCAN_QUIRK_ENABLE_EACEN_RRS |
- 		FLEXCAN_QUIRK_DISABLE_MECR | FLEXCAN_QUIRK_USE_RX_MAILBOX |
-@@ -548,6 +556,13 @@ static inline int flexcan_enter_stop_mode(struct flexcan_priv *priv)
- 	} else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_GPR) {
- 		regmap_update_bits(priv->stm.gpr, priv->stm.req_gpr,
- 				   1 << priv->stm.req_bit, 1 << priv->stm.req_bit);
-+	} else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI) {
-+		/* For the SCMI mode, driver do nothing, ATF will send request to
-+		 * SM(system manager, M33 core) through SCMI protocol after linux
-+		 * suspend. Once SM get this request, it will send IPG_STOP signal
-+		 * to Flex_CAN, let CAN in STOP mode.
-+		 */
-+		return 0;
- 	}
- 
- 	return flexcan_low_power_enter_ack(priv);
-@@ -559,7 +574,11 @@ static inline int flexcan_exit_stop_mode(struct flexcan_priv *priv)
- 	u32 reg_mcr;
- 	int ret;
- 
--	/* remove stop request */
-+	/* Remove stop request, for FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI,
-+	 * do nothing here, because ATF already send request to SM before
-+	 * linux resume. Once SM get this request, it will deassert the
-+	 * IPG_STOP signal to Flex_CAN.
-+	 */
- 	if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCFW) {
- 		ret = flexcan_stop_mode_enable_scfw(priv, false);
- 		if (ret < 0)
-@@ -1987,6 +2006,9 @@ static int flexcan_setup_stop_mode(struct platform_device *pdev)
- 		ret = flexcan_setup_stop_mode_scfw(pdev);
- 	else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_GPR)
- 		ret = flexcan_setup_stop_mode_gpr(pdev);
-+	else if (priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI)
-+		/* ATF will handle all STOP_IPG related work */
-+		ret = 0;
- 	else
- 		/* return 0 directly if doesn't support stop mode feature */
- 		return 0;
-@@ -2013,6 +2035,7 @@ static const struct of_device_id flexcan_of_match[] = {
- 	{ .compatible = "fsl,imx8qm-flexcan", .data = &fsl_imx8qm_devtype_data, },
- 	{ .compatible = "fsl,imx8mp-flexcan", .data = &fsl_imx8mp_devtype_data, },
- 	{ .compatible = "fsl,imx93-flexcan", .data = &fsl_imx93_devtype_data, },
-+	{ .compatible = "fsl,imx95-flexcan", .data = &fsl_imx95_devtype_data, },
- 	{ .compatible = "fsl,imx6q-flexcan", .data = &fsl_imx6q_devtype_data, },
- 	{ .compatible = "fsl,imx28-flexcan", .data = &fsl_imx28_devtype_data, },
- 	{ .compatible = "fsl,imx53-flexcan", .data = &fsl_imx25_devtype_data, },
-@@ -2314,9 +2337,19 @@ static int __maybe_unused flexcan_noirq_suspend(struct device *device)
- 		if (device_may_wakeup(device))
- 			flexcan_enable_wakeup_irq(priv, true);
- 
--		err = pm_runtime_force_suspend(device);
--		if (err)
--			return err;
-+		/* For FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI, it need ATF to send
-+		 * to SM through SCMI protocol, SM will assert the IPG_STOP
-+		 * signal. But all this works need the CAN clocks keep on.
-+		 * After the CAN module get the IPG_STOP mode, and switch to
-+		 * STOP mode, whether still keep the CAN clocks on or gate them
-+		 * off depend on the Hardware design.
-+		 */
-+		if (!(device_may_wakeup(device) &&
-+		      priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI)) {
-+			err = pm_runtime_force_suspend(device);
-+			if (err)
-+				return err;
-+		}
- 	}
- 
- 	return 0;
-@@ -2330,9 +2363,12 @@ static int __maybe_unused flexcan_noirq_resume(struct device *device)
- 	if (netif_running(dev)) {
- 		int err;
- 
--		err = pm_runtime_force_resume(device);
--		if (err)
--			return err;
-+		if (!(device_may_wakeup(device) &&
-+		      priv->devtype_data.quirks & FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI)) {
-+			err = pm_runtime_force_resume(device);
-+			if (err)
-+				return err;
-+		}
- 
- 		if (device_may_wakeup(device))
- 			flexcan_enable_wakeup_irq(priv, false);
-diff --git a/drivers/net/can/flexcan/flexcan.h b/drivers/net/can/flexcan/flexcan.h
-index 025c3417031f4..4933d8c7439e6 100644
---- a/drivers/net/can/flexcan/flexcan.h
-+++ b/drivers/net/can/flexcan/flexcan.h
-@@ -68,6 +68,8 @@
- #define FLEXCAN_QUIRK_SUPPORT_RX_MAILBOX_RTR BIT(15)
- /* Device supports RX via FIFO */
- #define FLEXCAN_QUIRK_SUPPORT_RX_FIFO BIT(16)
-+/* Setup stop mode with ATF SCMI protocol to support wakeup */
-+#define FLEXCAN_QUIRK_SETUP_STOP_MODE_SCMI BIT(17)
- 
- struct flexcan_devtype_data {
- 	u32 quirks;		/* quirks needed for different IP cores */
-
--- 
-2.34.1
-
+--
+Best wishes,
+Vladimir
 
