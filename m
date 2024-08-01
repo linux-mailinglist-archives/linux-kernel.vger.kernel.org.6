@@ -1,148 +1,144 @@
-Return-Path: <linux-kernel+bounces-271140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0553944A09
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:07:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F05944A00
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173031C2242E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:07:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729501F26E41
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:04:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B782187FFB;
-	Thu,  1 Aug 2024 11:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C971F184529;
+	Thu,  1 Aug 2024 11:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zrs1ICXV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TqxJpTa+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FF83E47B;
-	Thu,  1 Aug 2024 11:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 703D515252D
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722510434; cv=none; b=S68deJimxvJ+LyH6LAvxtJGRho4l5CF6YXlLcb+sS/7ssgv/rPn8E7UhXKbRNRAFFZP4pWhM09Zr6YonIDrzTAy5Kbbv0yiRoXWHmV7uR5V4eQdNqF8Z9xbcUGVZbhSQnJxPbBzEMwNZ81rA5i5u+F6+QiQ/flNb630zgvU1MCQ=
+	t=1722510272; cv=none; b=ubkqqAxz1TYNC17rDO2wgyJfJ2hMCdv2hmDM6a2lVo4KDqJmsvx4TR8Sn79wEgxR2Lv44wRq4fAFyNE11uB8LWQyfddR5r9UgsZw4ie/lJvbVLMeZnz5GvWk3M6gJC/KeIcis/4/1xMf9aSXapLeDb20/2O5FpmIG7nXZcHGwsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722510434; c=relaxed/simple;
-	bh=31mM82ebSebB9a5nveyhbtj2mdaB7JaaiK1wFzqXGf8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSOLqYPZC3D+C0Wl1t1ZfFbQWSfNoWVDrW/FEMCOPFFwr7QP9RZBsddjZ6mDulsLl5lxlHJIBZTi4ZF4cS7yNO1d2I8xRaABLS+Kk9hOtad+4zaqSAJ5RMunDwYQPiKn04B7Oq7dB2KD74AP9ESNhPZ9EPPmHBAvXGH9FpkzHX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zrs1ICXV; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1722510272; c=relaxed/simple;
+	bh=7i7ifXul4m5QUvvFnu0M2IuiBLJQahJmu5jQnpkNNDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ao/Zzu1nL3oacxSk/HmBIhXyhQZ+zrNxGQXjLAkPf6RStHK6mZqVhC3KMMbgQETRmBxGA8SDLcbpt3CWwEPTGSKdJZn/4ai27juccXnx4ZCBSLkgk3ti181eN8+phO6bD9/10nhReS+QRHG3IafLEn5gqo56mqigeqO1y55If/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TqxJpTa+; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1722510432; x=1754046432;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=31mM82ebSebB9a5nveyhbtj2mdaB7JaaiK1wFzqXGf8=;
-  b=zrs1ICXVp1dFUkdNv3ykMg5DO+Ipbn/dYuEXYgzbR3lzTRBpigUGm6JM
-   dGFU+BdBA3jVrg80pC84CH9PpDsTCBtzEJPXDBZP/qjjYL+1o/OMoFFCl
-   52ff4GyhrTPtjmBFCPcvzUoUy8GY/RTshuhFnA05pLlCq4r2Sg8rplIHI
-   B11NuySETwXk/WOaiagVucPL7pvGktIvukqwlsJkPFTCBaAdbS+afGDkF
-   9LwmRsSfqGzmbk0sOSbqsy/+etfS+L2yV8BZi7fTIjSo0CETWphQXS8ka
-   hV3cqG7Hb0TzQhBvqYBxFD+Wm930ruKmGuC/aK5e4mkzwHAWNF6QEBIt9
-   Q==;
-X-CSE-ConnectionGUID: KTsYQVRSSuyctp97GVx0PQ==
-X-CSE-MsgGUID: HNcQmoaaQq2ma9hafXCacQ==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722510270; x=1754046270;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=7i7ifXul4m5QUvvFnu0M2IuiBLJQahJmu5jQnpkNNDY=;
+  b=TqxJpTa+zw8s73DgIUpCGnR1jwWYQH44y3DluCZbSMRUriPP+eFSVMdf
+   zMPq2/8e2KZfdQVaFlTXMvLOYrqBN8S4r6qeavKtAEJXwlntzzZKn6+1i
+   ln+esv/Wem+ASDcHJ2NYZo/8aZStEOUuYIH0+U83v5rxPzdg1Apq5DdT8
+   2nw426EDwZJThl5CthBzurmyK+8gFgqnJDsS0IfjdlOzcbs9LQgUrTrYw
+   XYGyInIYn6KBojsivDEKtfDSNvJ6xLTQU5JXkkwPHAxkNp0FTfTFqgVkd
+   F20a2hNZMayIT3MvdIBkT4QjRF6uphV2fR0jUNs/KMb6rRYa6TTxE2E3S
+   w==;
+X-CSE-ConnectionGUID: pSCxxhp0QruLjEAdcqeWZg==
+X-CSE-MsgGUID: 5QKOUGTzTHm/7/xgrxjsTQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="31107128"
 X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
-   d="scan'208";a="30631010"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Aug 2024 04:07:04 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 1 Aug 2024 04:06:29 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Thu, 1 Aug 2024 04:06:28 -0700
-Date: Thu, 1 Aug 2024 16:33:13 +0530
-From: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: Raju Lakkaraju <Raju.Lakkaraju@microchip.com>, <netdev@vger.kernel.org>,
-	<davem@davemloft.net>, <kuba@kernel.org>, <andrew@lunn.ch>,
-	<horms@kernel.org>, <hkallweit1@gmail.com>, <richardcochran@gmail.com>,
-	<rdunlap@infradead.org>, <Bryan.Whitehead@microchip.com>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<UNGLinuxDriver@microchip.com>
-Subject: Re: [PATCH net-next V3 3/4] net: lan743x: Migrate phylib to phylink
-Message-ID: <ZqtrcRfRVBR6H9Ri@HYD-DK-UNGSW21.microchip.com>
-References: <20240730140619.80650-1-Raju.Lakkaraju@microchip.com>
- <20240730140619.80650-4-Raju.Lakkaraju@microchip.com>
- <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
+   d="scan'208";a="31107128"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 04:04:30 -0700
+X-CSE-ConnectionGUID: 6o7AzIe+QrSPszoXL6ThdA==
+X-CSE-MsgGUID: tfcv6w0kTl2kjJtbMs01Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="54907704"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 01 Aug 2024 04:04:29 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sZTbe-000vVy-09;
+	Thu, 01 Aug 2024 11:04:26 +0000
+Date: Thu, 1 Aug 2024 19:04:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
+ include/linux/build_bug.h:78:41: error: static assertion failed: "struct
+ member likely outside of struct_group_tagged()"
+Message-ID: <202408011909.EVuco9oo-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zqj/Mdoy5rhD2YXx@shell.armlinux.org.uk>
 
-Hi Russell King,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240729-cbc-2
+head:   df15c862c1b93b6e1f6c90b0d7971f7a6ad66751
+commit: e7cd9f429a852fb7e37a706c7d08fc36e7863e06 [11/18] RDMA/uverbs: Use static_assert() to check struct sizes
+config: xtensa-allyesconfig (https://download.01.org/0day-ci/archive/20240801/202408011909.EVuco9oo-lkp@intel.com/config)
+compiler: xtensa-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240801/202408011909.EVuco9oo-lkp@intel.com/reproduce)
 
-Thank you for review the patches.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408011909.EVuco9oo-lkp@intel.com/
 
-The 07/30/2024 15:56, Russell King (Oracle) wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
-> 
-> On Tue, Jul 30, 2024 at 07:36:18PM +0530, Raju Lakkaraju wrote:
-> > +     default:
-> > +             __set_bit(PHY_INTERFACE_MODE_RGMII,
-> > +                       adapter->phylink_config.supported_interfaces);
-> > +             __set_bit(PHY_INTERFACE_MODE_RGMII_ID,
-> > +                       adapter->phylink_config.supported_interfaces);
-> > +             __set_bit(PHY_INTERFACE_MODE_RGMII_RXID,
-> > +                       adapter->phylink_config.supported_interfaces);
-> > +             __set_bit(PHY_INTERFACE_MODE_RGMII_TXID,
-> > +                       adapter->phylink_config.supported_interfaces);
-> 
-> There's a shorter way to write this:
-> 
->                 phy_interface_set_rgmii(adapter->phylink_config.supported_interfaces);
+All errors (new ones prefixed by >>):
 
-Ok. I will change.
+   In file included from include/linux/container_of.h:5,
+                    from include/linux/list.h:5,
+                    from include/linux/module.h:12,
+                    from drivers/infiniband/core/nldev.c:33:
+>> include/linux/build_bug.h:78:41: error: static assertion failed: "struct member likely outside of struct_group_tagged()"
+      78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+         |                                         ^~~~~~~~~~~~~~
+   include/linux/build_bug.h:77:34: note: in expansion of macro '__static_assert'
+      77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+         |                                  ^~~~~~~~~~~~~~~
+   include/rdma/uverbs_ioctl.h:643:1: note: in expansion of macro 'static_assert'
+     643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
+         | ^~~~~~~~~~~~~
 
-> 
-> > +static int lan743x_phylink_connect(struct lan743x_adapter *adapter)
-> > +{
-> > +     struct device_node *dn = adapter->pdev->dev.of_node;
-> > +     struct net_device *dev = adapter->netdev;
-> > +     struct fixed_phy_status fphy_status = {
-> > +             .link = 1,
-> > +             .speed = SPEED_1000,
-> > +             .duplex = DUPLEX_FULL,
-> > +     };
-> > +     struct phy_device *phydev;
-> > +     int ret;
-> > +
-> > +     if (dn)
-> > +             ret = phylink_of_phy_connect(adapter->phylink, dn, 0);
-> > +
-> > +     if (!dn || (ret && !lan743x_phy_handle_exists(dn))) {
-> > +             phydev = phy_find_first(adapter->mdiobus);
-> > +             if (!phydev) {
-> > +                     if (((adapter->csr.id_rev & ID_REV_ID_MASK_) ==
-> > +                           ID_REV_ID_LAN7431_) || adapter->is_pci11x1x) {
-> > +                             phydev = fixed_phy_register(PHY_POLL,
-> > +                                                         &fphy_status,
-> > +                                                         NULL);
-> 
-> I thought something was going to happen with this?
 
-Our SQA confirmed that it's working ping as expected (i.e Speed at 1Gbps
-with full duplex) with Intel I210 NIC as link partner.
+vim +78 include/linux/build_bug.h
 
-Do you suspect any corner case where it's fail?
- 
-> 
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+bc6245e5efd70c Ian Abbott       2017-07-10  60  
+6bab69c65013be Rasmus Villemoes 2019-03-07  61  /**
+6bab69c65013be Rasmus Villemoes 2019-03-07  62   * static_assert - check integer constant expression at build time
+6bab69c65013be Rasmus Villemoes 2019-03-07  63   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  64   * static_assert() is a wrapper for the C11 _Static_assert, with a
+6bab69c65013be Rasmus Villemoes 2019-03-07  65   * little macro magic to make the message optional (defaulting to the
+6bab69c65013be Rasmus Villemoes 2019-03-07  66   * stringification of the tested expression).
+6bab69c65013be Rasmus Villemoes 2019-03-07  67   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  68   * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
+6bab69c65013be Rasmus Villemoes 2019-03-07  69   * scope, but requires the expression to be an integer constant
+6bab69c65013be Rasmus Villemoes 2019-03-07  70   * expression (i.e., it is not enough that __builtin_constant_p() is
+6bab69c65013be Rasmus Villemoes 2019-03-07  71   * true for expr).
+6bab69c65013be Rasmus Villemoes 2019-03-07  72   *
+6bab69c65013be Rasmus Villemoes 2019-03-07  73   * Also note that BUILD_BUG_ON() fails the build if the condition is
+6bab69c65013be Rasmus Villemoes 2019-03-07  74   * true, while static_assert() fails the build if the expression is
+6bab69c65013be Rasmus Villemoes 2019-03-07  75   * false.
+6bab69c65013be Rasmus Villemoes 2019-03-07  76   */
+6bab69c65013be Rasmus Villemoes 2019-03-07  77  #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
+6bab69c65013be Rasmus Villemoes 2019-03-07 @78  #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
+6bab69c65013be Rasmus Villemoes 2019-03-07  79  
+07a368b3f55a79 Maxim Levitsky   2022-10-25  80  
+
+:::::: The code at line 78 was first introduced by commit
+:::::: 6bab69c65013bed5fce9f101a64a84d0385b3946 build_bug.h: add wrapper for _Static_assert
+
+:::::: TO: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+:::::: CC: Linus Torvalds <torvalds@linux-foundation.org>
 
 -- 
-Thanks,                                                                         
-Raju
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
