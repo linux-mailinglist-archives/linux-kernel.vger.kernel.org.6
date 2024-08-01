@@ -1,191 +1,138 @@
-Return-Path: <linux-kernel+bounces-271745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF3789452D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:37:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45999452D8
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BEB6B22C88
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65611C219CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EDF14F9D0;
-	Thu,  1 Aug 2024 18:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD9A1494D1;
+	Thu,  1 Aug 2024 18:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0vlCK4Du"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmSQVc6X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5070214D71F
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2D31E4A6;
+	Thu,  1 Aug 2024 18:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722537314; cv=none; b=XstIDss1ucWN6/hskfhyrPcT1rO8LuUsKi442n40aQcLb0hR++tR0wZDDw22sQKq5HqDvZZBtQpmCDVTlpom+SivVY2NzTMHZKTs84fPmE3bPBiJ+sQ0n0vTWs69XPvEuI6fukUnJfYlMmalsbqWj+ouZ41ghcl0NG15PAn3Z/E=
+	t=1722537399; cv=none; b=N9yeul6xqRSFlM1okHZRs+U+McX5PwzxpB198xcLr50/vJTcpyZYMWIBf/QmpuN0Sa7kHFjMYClgx9eW6RnCXtc+fQXeWsN+84TyDuv2hkcHMuM8+7fMiBogq6kC8KEu3jua/Qc9ulMvchR3HlOu9rZRgStc1AeXJ3l1+SYxZf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722537314; c=relaxed/simple;
-	bh=QjtPf6OwO3F3v2qbeeMqBdAhvi3//8swMm8d6nCHE5E=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ogIraGDKahWmwlLPRlcfyK8kC7C/msJVzHvg0QSMGyC5Ab+m1KUMiZn2UKVwq1l8zgV70jtBRXsP1XFahcZoVJm4J8NVE7la2ZurFNip5WQYvZrN02u2j2PxYRbQhNnO0j4uiqAWMDwn8qdi0zkOzuFGmWD/Xr7i50Alf7PBiWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0vlCK4Du; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70d1469f5e1so6333809b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722537313; x=1723142113; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=pjpYJOfuFfBZxoqHyzYZOHO/aDFDcIHjHTQpaKTRfzU=;
-        b=0vlCK4DuMb/cGY3MjcBI30JIteqLSMLxIDLShEgeDyBjmBo32FiQfYT0z2cRE01Ent
-         LJFmalieCjcyZV5xjEFgd1LvEjVKr1/EMFw6WZLb/H/1Tdcbuk2WIXjP22m+fLM2wtGo
-         /vnsYno5ZhfdjGu+zESkheRexa1pTHDrkWZsrZzUJ+GlEKO82GldDIDd6CLdbShu7BOZ
-         6CFRZcOEzQAZjQodiJUI0iNuHyY69vs70AWWmP1l1IM7O7lBur/1OPyFQ93SKdDC+UDu
-         RFCvQEtCoRHBbGSGinbDRLVPgWtHytidmdSAmNXGuvfVbqzIzFujWkErrN5d2GpMkK7r
-         CE4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722537313; x=1723142113;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pjpYJOfuFfBZxoqHyzYZOHO/aDFDcIHjHTQpaKTRfzU=;
-        b=LsF6f4LaVqRDS2ZoJlS/KBrC1sbwjTgnIKs9jQkgnWFjoIbG9/Kz1CKjV3x4VFNy8c
-         TJIDT6WhPKdTe/Eygl3k6yKMBVRD6peKkIP5XYyIBfh9umuIxTYhmxKneRHsN3s7I2wb
-         WD0sXtYHofo+Pr8Z00XxTftX3panHLnMPSQp68nreacg5lOKXOyJEu9ZyxUtFQsw8yAg
-         r2vWrYXL2PQOWI+7l4sdTFGczIyBul3z678nL6jADbYzn3AC/zqjWj0HHNfktUbNkqOw
-         rKPT4Tgqq3BdT83bJdorTtv8C8p9YUoxkeCkCvRZ/nIgnGGjZULksvsknnWOhSLcNs7G
-         h+CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFgWuitMnEaToDQDc/VXHaQMusQdB8pkidjP+g/QLLHdGbA9lJ/dlZCEhyWW+mb88iVQSIyFgjJPNlZ5H7ZKWA1MmkfEM3p3GrkbTw
-X-Gm-Message-State: AOJu0Yy+XBTNRY9Apskh7UU0k3iClC0M+dlXMdDBTNEaL+VfhqjnDtN2
-	YNvKsc7g65mgdmQCkoTqpDklOEFITauz1mCyrIWIpxVNRKiVcOv1s9MWIarPBuTdCIV2tYiplfc
-	ihw==
-X-Google-Smtp-Source: AGHT+IFcO+Vr6uQpb300nP1wpu6DqsAAMIX15/3LQD4+pSQyjhlaJV4bhz777we1jEIWnrv4DvkpVknRK04=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f13:b0:70e:9e1b:1a83 with SMTP id
- d2e1a72fcca58-7106d01e048mr17749b3a.2.1722537312706; Thu, 01 Aug 2024
- 11:35:12 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu,  1 Aug 2024 11:34:53 -0700
-In-Reply-To: <20240801183453.57199-1-seanjc@google.com>
+	s=arc-20240116; t=1722537399; c=relaxed/simple;
+	bh=PeoHuoxmU9Q/WqbUqsTh9k/g5yBob05K8Y+HgyPeJec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Twz7WCvdlrQHuse5XlGzOA2SVHga8G45TLADNAjsf20og8j5ARUd5TjEGnOFtsDzx9P27eIC8lBAv2s63ZKThYGaa7QKJ6BXJ6PBUYLZd7xCwWW2zxZ8Pl+TApslMlQavjJQTuKzUa9k9Qwui4HDGvhyXs+BNBaw5WyMB9g8QI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmSQVc6X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DCFC4AF0D;
+	Thu,  1 Aug 2024 18:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722537399;
+	bh=PeoHuoxmU9Q/WqbUqsTh9k/g5yBob05K8Y+HgyPeJec=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tmSQVc6XlWxCal5GHsQ6T/EGPozO86XSG/FrX3kCbebBkQZmi34Bg88+LgRIseB+Q
+	 oLLugfbpOeuu77IozWLBZHz/LPqvZ9XqaR08s99Kxxm56iqmyPHs/T0Nk4K4sZfskq
+	 X0/9o0LgeAbJy8PnAtYBfXA0m7774l/QA1Y6sy54jd1hXEkfPXzdUJczpSkhNKd1Je
+	 RDMuhA4zmOzNbUaOA0IIlHjod4c8j1SMr7u0f5xFi1cqpaucIoemEoJM2S5KpJGj7g
+	 0GZXhuGtGQFSNccDjqz7ZQjJL8J43k1F3gbrHlActzHWDLinmaLpRrVN7/hq78Lna0
+	 /XdhBy0/inT9Q==
+Date: Thu, 1 Aug 2024 11:36:37 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Christian Heusel <christian@heusel.eu>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: add debug package to pacman PKGBUILD
+Message-ID: <20240801183637.GB122261@thelio-3990X>
+References: <20240801132945.47963-1-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240801183453.57199-1-seanjc@google.com>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240801183453.57199-10-seanjc@google.com>
-Subject: [RFC PATCH 9/9] KVM: x86/mmu: Track SPTE accessed info across
- mmu_notifier PROT changes
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240801132945.47963-1-jose.fernandez@linux.dev>
 
-Preserve Accessed information when zapping SPTEs in response to an
-mmu_notifier protection change, e.g. if KVM is zapping SPTEs because
-NUMA balancing kicked in.  KVM is not required to fully unmap the SPTE,
-and the core VMA information isn't changing, i.e. the information is
-still fresh and useful.
+Hi Jose,
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/mmu/tdp_mmu.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+On Thu, Aug 01, 2024 at 07:29:40AM -0600, Jose Fernandez wrote:
+> Add a new -debug package to the pacman PKGBUILD that will contain the
+> vmlinux image for debugging purposes. This package depends on the
+> -headers package and will be installed in /usr/src/debug/${pkgbase}.
+> 
+> The vmlinux image is needed to debug core dumps with tools like crash.
+> 
+> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index ac3200ce00f9..780f35a22c05 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -838,7 +838,8 @@ bool kvm_tdp_mmu_zap_sp(struct kvm *kvm, struct kvm_mmu_page *sp)
-  * operation can cause a soft lockup.
-  */
- static bool tdp_mmu_zap_leafs(struct kvm *kvm, struct kvm_mmu_page *root,
--			      gfn_t start, gfn_t end, bool can_yield, bool flush)
-+			      gfn_t start, gfn_t end, bool can_yield,
-+			      bool keep_accessed_bit, bool flush)
- {
- 	struct tdp_iter iter;
- 
-@@ -849,17 +850,29 @@ static bool tdp_mmu_zap_leafs(struct kvm *kvm, struct kvm_mmu_page *root,
- 	rcu_read_lock();
- 
- 	for_each_tdp_pte_min_level(iter, root, PG_LEVEL_4K, start, end) {
-+		u64 new_spte = SHADOW_NONPRESENT_VALUE;
-+
- 		if (can_yield &&
- 		    tdp_mmu_iter_cond_resched(kvm, &iter, flush, false)) {
- 			flush = false;
- 			continue;
- 		}
- 
-+		/*
-+		 * Note, this will fail to clear non-present, accessed SPTEs,
-+		 * but that isn't a functional problem, it can only result in
-+		 * a _potential_ false positive  in the unlikely scenario that
-+		 * the primary MMU zaps an hva, reinstalls a new hva, and ages
-+		 * the new hva, all before KVM accesses the hva.
-+		 */
- 		if (!is_shadow_present_pte(iter.old_spte) ||
- 		    !is_last_spte(iter.old_spte, iter.level))
- 			continue;
- 
--		tdp_mmu_iter_set_spte(kvm, &iter, SHADOW_NONPRESENT_VALUE);
-+		if (keep_accessed_bit)
-+			new_spte |= iter.old_spte & shadow_accessed_mask;
-+
-+		tdp_mmu_iter_set_spte(kvm, &iter, new_spte);
- 
- 		/*
- 		 * Zappings SPTEs in invalid roots doesn't require a TLB flush,
-@@ -889,7 +902,7 @@ bool kvm_tdp_mmu_zap_leafs(struct kvm *kvm, gfn_t start, gfn_t end, bool flush)
- 
- 	lockdep_assert_held_write(&kvm->mmu_lock);
- 	for_each_valid_tdp_mmu_root_yield_safe(kvm, root, -1)
--		flush = tdp_mmu_zap_leafs(kvm, root, start, end, true, flush);
-+		flush = tdp_mmu_zap_leafs(kvm, root, start, end, true, false, flush);
- 
- 	return flush;
- }
-@@ -1180,11 +1193,13 @@ int kvm_tdp_mmu_map(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
- bool kvm_tdp_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range,
- 				 bool flush)
- {
-+	bool keep_a_bit = range->arg.event == MMU_NOTIFY_PROTECTION_VMA ||
-+			  range->arg.event == MMU_NOTIFY_PROTECTION_PAGE;
- 	struct kvm_mmu_page *root;
- 
- 	__for_each_tdp_mmu_root_yield_safe(kvm, root, range->slot->as_id, false)
- 		flush = tdp_mmu_zap_leafs(kvm, root, range->start, range->end,
--					  range->may_block, flush);
-+					  range->may_block, keep_a_bit, flush);
- 
- 	return flush;
- }
-@@ -1201,7 +1216,11 @@ static void kvm_tdp_mmu_age_spte(struct tdp_iter *iter)
- {
- 	u64 new_spte;
- 
--	if (spte_ad_enabled(iter->old_spte)) {
-+	if (spte_ad_enabled(iter->old_spte) ||
-+	    !is_shadow_present_pte(iter->old_spte)) {
-+		KVM_MMU_WARN_ON(!is_shadow_present_pte(iter->old_spte) &&
-+				iter->old_spte != (SHADOW_NONPRESENT_VALUE | shadow_accessed_mask));
-+
- 		iter->old_spte = tdp_mmu_clear_spte_bits(iter->sptep,
- 							 iter->old_spte,
- 							 shadow_accessed_mask,
-@@ -1235,7 +1254,7 @@ static bool __kvm_tdp_mmu_age_gfn_range(struct kvm *kvm,
- 	for_each_valid_tdp_mmu_root(kvm, root, range->slot->as_id) {
- 		rcu_read_lock();
- 
--		tdp_root_for_each_leaf_pte(iter, root, range->start, range->end) {
-+		tdp_root_for_each_pte(iter, root, range->start, range->end) {
- 			if (!is_accessed_spte(iter.old_spte))
- 				continue;
- 
--- 
-2.46.0.rc1.232.g9752f9e123-goog
+This appears to add a non-trivial amount of time to the build when benchmarking
+with Arch Linux's configuration (I measure 9% with hyperfine):
 
+Benchmark 1: pacman-pkg @ 21b136cc63d2 ("minmax: fix up min3() and max3() too")
+  Time (mean ± σ):     579.541 s ±  0.585 s    [User: 22156.731 s, System: 3681.698 s]
+  Range (min … max):   578.894 s … 580.033 s    3 runs
+
+Benchmark 2: pacman-pkg @ c5af4db0563b ("kbuild: add debug package to pacman PKGBUILD")
+  Time (mean ± σ):     633.419 s ±  0.972 s    [User: 22247.886 s, System: 3673.879 s]
+  Range (min … max):   632.302 s … 634.070 s    3 runs
+
+Summary
+  pacman-pkg @ 21b136cc63d2 ("minmax: fix up min3() and max3() too") ran
+    1.09 ± 0.00 times faster than pacman-pkg @ c5af4db0563b ("kbuild: add debug package to pacman PKGBUILD")
+
+It would be nice to add some option to avoid building this package for
+developers who may not want it (I know I personally would not want it
+with that penalty because I do a lot of bisects) or maybe adding a
+target to build this package with the rest like 'pacman-pkg-with-dbg' or
+something? Also, couldn't vmlinux be obtained from vmlinuz that already
+exists in the main package via scripts/extract-vmlinux?
+
+Cheers,
+Nathan
+
+> ---
+>  scripts/package/PKGBUILD | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> index 663ce300dd06..beda3db21863 100644
+> --- a/scripts/package/PKGBUILD
+> +++ b/scripts/package/PKGBUILD
+> @@ -6,6 +6,7 @@ pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+>  pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+>  if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+>  	pkgname+=("${pkgbase}-headers")
+> +	pkgname+=("${pkgbase}-debug")
+>  fi
+>  pkgver="${KERNELRELEASE//-/_}"
+>  # The PKGBUILD is evaluated multiple times.
+> @@ -89,6 +90,15 @@ _package-headers() {
+>  	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
+>  }
+>  
+> +_package-debug(){
+> +    pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
+> +    depends=(${pkgbase}-headers)
+> +
+> +    cd "${objtree}"
+> +    mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
+> +    install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
+> +}
+> +
+>  _package-api-headers() {
+>  	pkgdesc="Kernel headers sanitized for use in userspace"
+>  	provides=(linux-api-headers)
+> -- 
+> 2.46.0
+> 
 
