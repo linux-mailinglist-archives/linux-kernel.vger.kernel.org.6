@@ -1,138 +1,78 @@
-Return-Path: <linux-kernel+bounces-271746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B45999452D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:38:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33E79452DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:38:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65611C219CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 590CB1F241A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD9A1494D1;
-	Thu,  1 Aug 2024 18:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFAB14A4EA;
+	Thu,  1 Aug 2024 18:36:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmSQVc6X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fQa8BHM2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2D31E4A6;
-	Thu,  1 Aug 2024 18:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B9E14A4D6;
+	Thu,  1 Aug 2024 18:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722537399; cv=none; b=N9yeul6xqRSFlM1okHZRs+U+McX5PwzxpB198xcLr50/vJTcpyZYMWIBf/QmpuN0Sa7kHFjMYClgx9eW6RnCXtc+fQXeWsN+84TyDuv2hkcHMuM8+7fMiBogq6kC8KEu3jua/Qc9ulMvchR3HlOu9rZRgStc1AeXJ3l1+SYxZf8=
+	t=1722537406; cv=none; b=BofUrFbLAr0158nMl00VN9pQJGVmj6DSdL0P9MBpn957WMIkQYHzedGbBUlbhg0ceNzMsLfecpyH4M98BHxpR+T5UJ9jtWy/BPXJa2mt+ds8fF5fbkmHrdSSEH9v6mCHbOMGKapB4EhLtntwGwEp0jxUbkgop49oUuKDsOvVKgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722537399; c=relaxed/simple;
-	bh=PeoHuoxmU9Q/WqbUqsTh9k/g5yBob05K8Y+HgyPeJec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Twz7WCvdlrQHuse5XlGzOA2SVHga8G45TLADNAjsf20og8j5ARUd5TjEGnOFtsDzx9P27eIC8lBAv2s63ZKThYGaa7QKJ6BXJ6PBUYLZd7xCwWW2zxZ8Pl+TApslMlQavjJQTuKzUa9k9Qwui4HDGvhyXs+BNBaw5WyMB9g8QI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmSQVc6X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97DCFC4AF0D;
-	Thu,  1 Aug 2024 18:36:38 +0000 (UTC)
+	s=arc-20240116; t=1722537406; c=relaxed/simple;
+	bh=Zlg4721NQS5/+FBXCbu9oVNq/L7l6OkL/o/WjbI8Lj0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=G1CaostSm+qz6Y1mpW64sJIEmZXwxmJGvZBht2qyYPj7OaXiRjGBMwhCqsxFFSmZGE+SYCLmWIPpYxiUZ6lS4AVhptR/8LQSkmf0Upc9pvH6A+dAYe3DCr9MFwscs5VWN+ojZ6VwK3u+icPpvUrmbYRbQzv0vgeaWqlg/IOcMMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fQa8BHM2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4C3EEC4AF0C;
+	Thu,  1 Aug 2024 18:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722537399;
-	bh=PeoHuoxmU9Q/WqbUqsTh9k/g5yBob05K8Y+HgyPeJec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tmSQVc6XlWxCal5GHsQ6T/EGPozO86XSG/FrX3kCbebBkQZmi34Bg88+LgRIseB+Q
-	 oLLugfbpOeuu77IozWLBZHz/LPqvZ9XqaR08s99Kxxm56iqmyPHs/T0Nk4K4sZfskq
-	 X0/9o0LgeAbJy8PnAtYBfXA0m7774l/QA1Y6sy54jd1hXEkfPXzdUJczpSkhNKd1Je
-	 RDMuhA4zmOzNbUaOA0IIlHjod4c8j1SMr7u0f5xFi1cqpaucIoemEoJM2S5KpJGj7g
-	 0GZXhuGtGQFSNccDjqz7ZQjJL8J43k1F3gbrHlActzHWDLinmaLpRrVN7/hq78Lna0
-	 /XdhBy0/inT9Q==
-Date: Thu, 1 Aug 2024 11:36:37 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Christian Heusel <christian@heusel.eu>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: add debug package to pacman PKGBUILD
-Message-ID: <20240801183637.GB122261@thelio-3990X>
-References: <20240801132945.47963-1-jose.fernandez@linux.dev>
+	s=k20201202; t=1722537406;
+	bh=Zlg4721NQS5/+FBXCbu9oVNq/L7l6OkL/o/WjbI8Lj0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=fQa8BHM2HKqzpKXt2MOr1XPHVqZu7iUqjd1n3CDbzn5OEsTy3obPBNbCZ1Kcf1j4E
+	 0/vCcwKdzSOkBmD1MHur4wU3/423sJvQiQXm8z+WqUA8A4RLveKiyN9G5U8dMqIZqN
+	 pkKQeww6uYtWJJhcpA/+Lpoof7E97JSDurX+F65C81J4skfYQ6AEyW7iEKLRSNa7qf
+	 WDkmaZF6xdJyHEN9H81pgK2Y9f6vRvExe+aW6IO0XiYcXtHMAnyJBEK/RT91Qb9nB4
+	 eWygtA/SdWG2wAo9ZXMk3/aVVR54E+BxG5yaEGKpcEYV680YfeHT4zVqwBiT03L7/k
+	 3mSKEOQDbJsYA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3B2D4C43619;
+	Thu,  1 Aug 2024 18:36:46 +0000 (UTC)
+Subject: Re: [GIT PULL] PCI fixes for v6.11
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240801181514.GA112131@bhelgaas>
+References: <20240801181514.GA112131@bhelgaas>
+X-PR-Tracked-List-Id: <linux-pci.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240801181514.GA112131@bhelgaas>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-fixes-1
+X-PR-Tracked-Commit-Id: 5560a612c20d3daacbf5da7913deefa5c31742f4
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c0ecd6388360d930440cc5554026818895199923
+Message-Id: <172253740623.25955.6854334550105069611.pr-tracker-bot@kernel.org>
+Date: Thu, 01 Aug 2024 18:36:46 +0000
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Blazej Kucman <blazej.kucman@intel.com>, Philipp Stanner <pstanner@redhat.com>, Damien Le Moal <dlemoal@kernel.org>, Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240801132945.47963-1-jose.fernandez@linux.dev>
 
-Hi Jose,
+The pull request you sent on Thu, 1 Aug 2024 13:15:14 -0500:
 
-On Thu, Aug 01, 2024 at 07:29:40AM -0600, Jose Fernandez wrote:
-> Add a new -debug package to the pacman PKGBUILD that will contain the
-> vmlinux image for debugging purposes. This package depends on the
-> -headers package and will be installed in /usr/src/debug/${pkgbase}.
-> 
-> The vmlinux image is needed to debug core dumps with tools like crash.
-> 
-> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+> git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.11-fixes-1
 
-This appears to add a non-trivial amount of time to the build when benchmarking
-with Arch Linux's configuration (I measure 9% with hyperfine):
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c0ecd6388360d930440cc5554026818895199923
 
-Benchmark 1: pacman-pkg @ 21b136cc63d2 ("minmax: fix up min3() and max3() too")
-  Time (mean ± σ):     579.541 s ±  0.585 s    [User: 22156.731 s, System: 3681.698 s]
-  Range (min … max):   578.894 s … 580.033 s    3 runs
+Thank you!
 
-Benchmark 2: pacman-pkg @ c5af4db0563b ("kbuild: add debug package to pacman PKGBUILD")
-  Time (mean ± σ):     633.419 s ±  0.972 s    [User: 22247.886 s, System: 3673.879 s]
-  Range (min … max):   632.302 s … 634.070 s    3 runs
-
-Summary
-  pacman-pkg @ 21b136cc63d2 ("minmax: fix up min3() and max3() too") ran
-    1.09 ± 0.00 times faster than pacman-pkg @ c5af4db0563b ("kbuild: add debug package to pacman PKGBUILD")
-
-It would be nice to add some option to avoid building this package for
-developers who may not want it (I know I personally would not want it
-with that penalty because I do a lot of bisects) or maybe adding a
-target to build this package with the rest like 'pacman-pkg-with-dbg' or
-something? Also, couldn't vmlinux be obtained from vmlinuz that already
-exists in the main package via scripts/extract-vmlinux?
-
-Cheers,
-Nathan
-
-> ---
->  scripts/package/PKGBUILD | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> index 663ce300dd06..beda3db21863 100644
-> --- a/scripts/package/PKGBUILD
-> +++ b/scripts/package/PKGBUILD
-> @@ -6,6 +6,7 @@ pkgbase=${PACMAN_PKGBASE:-linux-upstream}
->  pkgname=("${pkgbase}" "${pkgbase}-api-headers")
->  if grep -q CONFIG_MODULES=y include/config/auto.conf; then
->  	pkgname+=("${pkgbase}-headers")
-> +	pkgname+=("${pkgbase}-debug")
->  fi
->  pkgver="${KERNELRELEASE//-/_}"
->  # The PKGBUILD is evaluated multiple times.
-> @@ -89,6 +90,15 @@ _package-headers() {
->  	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
->  }
->  
-> +_package-debug(){
-> +    pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
-> +    depends=(${pkgbase}-headers)
-> +
-> +    cd "${objtree}"
-> +    mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
-> +    install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
-> +}
-> +
->  _package-api-headers() {
->  	pkgdesc="Kernel headers sanitized for use in userspace"
->  	provides=(linux-api-headers)
-> -- 
-> 2.46.0
-> 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
