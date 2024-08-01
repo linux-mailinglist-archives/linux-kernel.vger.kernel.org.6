@@ -1,191 +1,112 @@
-Return-Path: <linux-kernel+bounces-270817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83CBB9445AF
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:40:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23B929445B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:41:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE54C2844EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:40:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3F83B23081
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D7516DC26;
-	Thu,  1 Aug 2024 07:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E3A16DC07;
+	Thu,  1 Aug 2024 07:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a3Y8tU0A"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FU1jtMSU"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3F316E873
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351C158A23
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 07:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722498028; cv=none; b=fn8OWMBfMrE/IprtrtYdeQiYa9s6Hkkbe498DDWb3PKUt8LdEh1ttKlqSvXVdzU8BRB6JJtOxRoV7ADbdmMGmm6Jsq+bR207X/OkgRroBoc8FoPX2OQSpmuqfD3zHygr4usj7McBMo1zhIQu2ZTulwsRRzfdqJdFCFs8yP+qLfA=
+	t=1722498064; cv=none; b=I+7m+ZTOrlMR+nWbHLGS6NIb/jb+2qxhQCwnpWvu9tEu9BkZ9u5aIFSTGgsyFgo6lPubIXb5vw5S2Ym2xXjp7Zx5n71zZLaNJKJHPtjjnHaeJGi5fT0Jolov8HS5SdB2ADqU12kn+ioDeCGgJVY/LmT1ehyX6IS+SOR10gQLpAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722498028; c=relaxed/simple;
-	bh=1Mo170MEqWYE8iXq7EtIicNW3KDkr58Uq1oHYaKH8CE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cpigLiX2JxkKQwOCPkLIZEWN1NixqWmZdDef9TFrk/Cthj7pz2aUXMQvpCfouH2EkQWe4tJd9Lmq6vhGin5sEJVeJwplxGiMkjpMH7RHrOkA4oJ7iLZxvq1b10+abp346cMwQSdfFvQm7TdAbAinwSj0lMGxJTADxpQuug7XB68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a3Y8tU0A; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <1f6b254f-9cb9-412e-b249-8efe1d4157d3@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722498023;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/u+SH4i1Z7tjJAmzXcks2waJHC8XQ7VaoTerFrtHEN0=;
-	b=a3Y8tU0AFKNAPurAuJwvW1gPaQoLKgF4o5a3ubZhr6ExwgDRneIMW/p8t815nAVbWP2oPB
-	CvLQBA2YyuExTus+UPHw1EVawPqCXOWZ07o1n3MwLg3MjcP4TlpVK2z9EFeV6tCMgosJIa
-	VBhzrY02K8sN4mJEzi3MomWKS5V+cD0=
-Date: Thu, 1 Aug 2024 15:40:16 +0800
+	s=arc-20240116; t=1722498064; c=relaxed/simple;
+	bh=krH7ypeUqN8jDA6yfuVAcTiknvkYEg2mDdvvRTl469I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=btW+pj1HTEEQ2gYkgnnotqdfXysd4GwCGAcXZSzwedsdcAXUuDgnaAQlkqhEMWbjtO2d/BYrbix+gDAsB8LRGrW+FalhJQfampzjSuqe+04wVD/alL0y4enjA0xxf0qXYOWQeHS1nXjW8tlPO5KepIhHaAagETQ5dXFDrGdWy54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FU1jtMSU; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so40386585e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 00:41:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1722498061; x=1723102861; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pm3f85uhokoCwnyo8e4JOWvdJx2L5ag+T89tC7r1kfY=;
+        b=FU1jtMSUQDP5TT+cYrUfzPjGj4ms6TGBCiN8CM0N9HWXQoPmkqjl0AG3inyXAFyWk1
+         HmX+hTP2HYa7q5LVYIbcUeq90J1XFYKgWWd1HeHzf4+7OKYywzUURDyqBAesswwg1uva
+         VR3mbFChFdWWVTfW9Lf6he76zPpMfVtSg/nLO5nV2s/+rYfl1lDw/1jwBWjeKuz9Ji3k
+         I6ejCRfHPdDpwbHz7bycYUpzMMix9cUGPiZH8FPDFgjnUHqEp8Yg8mnnZUvk6B5NwPDF
+         kl9podO0HZdBf0kJxa6cCR2WLoX2O9J5eEx3Z1mqVdb3cCJot2ZfrBcQLRh+uwBWpJwK
+         J4mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722498061; x=1723102861;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pm3f85uhokoCwnyo8e4JOWvdJx2L5ag+T89tC7r1kfY=;
+        b=NrgFjseVDCld18s88lS7k0UNVbVgHouJbWAdPdRD94/0tDyWIgXai/KAcephLf+q1W
+         2JZ8rijzGlsoXGq6IG7HhJF5sId1PPrnpO9e4a4KDxVF1jgW/wzRsPpleeGMbJh1f1fH
+         YyyhHCaUjvOUtzOqBxsiAGeRLUouiHiiY0iMbgF+7bQ74athYYQes/BfJOtm2CrkOMiz
+         NS7xTI7WaH+WXnzlgnTC6MTQsbdwovToeGJV92paOGaumDh1M6yEEfI/h30JNcS0ykAe
+         oyQedfbBTnLh0QoZKOZUFJIEmuDewIEQwNw8jxMf5+V3jbrmnPWNBqhqwjp5nbO9/Uol
+         kU/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUr5ohzHrWHQpBLWUvDwnuXqz+eZmGMJrPamI1VAGloLC6GVQC2q4em2ZGRCWyz0kGwHf04zZbGryClBpEfBmBsP8J0UjmJYiltNXqy
+X-Gm-Message-State: AOJu0YwH+b+KZ4BL54w+V3JpPA2JVC/ztf2TNZSm/4mtACbUUQLLEBmr
+	LpPByIOEDjrnoYphqnGZBlMdzSPoSe8CSY6kzYPieKvdCDb67/YYz4fHH10c1Rk=
+X-Google-Smtp-Source: AGHT+IHQHaSYh2jUxkcP/pLad2DAnJ0RUYC8hEpaSIH/fQUOuBzUH5+9XYCdQVAxwK5OOIu75I3Wkg==
+X-Received: by 2002:a05:600c:1551:b0:426:5ef5:bcb1 with SMTP id 5b1f17b1804b1-428a99e36a9mr11537895e9.6.1722498060379;
+        Thu, 01 Aug 2024 00:41:00 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:9895:bf13:f4de:f316])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42824af5410sm63708005e9.1.2024.08.01.00.40.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 00:41:00 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: Use of_property_present()
+Date: Thu,  1 Aug 2024 09:40:58 +0200
+Message-ID: <172249805624.7809.3439731825920419370.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240731191312.1710417-3-robh@kernel.org>
+References: <20240731191312.1710417-3-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v5 2/2] mm: zswap: fix global shrinker error handling
- logic
-To: Takero Funaki <flintglass@gmail.com>, Johannes Weiner
- <hannes@cmpxchg.org>, Yosry Ahmed <yosryahmed@google.com>,
- Nhat Pham <nphamcs@gmail.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240731004918.33182-1-flintglass@gmail.com>
- <20240731004918.33182-3-flintglass@gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <20240731004918.33182-3-flintglass@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 2024/7/31 08:49, Takero Funaki wrote:
-> This patch fixes the zswap global shrinker, which did not shrink the
-> zpool as expected.
-> 
-> The issue addressed is that shrink_worker() did not distinguish between
-> unexpected errors and expected errors, such as failed writeback from an
-> empty memcg. The shrinker would stop shrinking after iterating through
-> the memcg tree 16 times, even if there was only one empty memcg.
-> 
-> With this patch, the shrinker no longer considers encountering an empty
-> memcg, encountering a memcg with writeback disabled, or reaching the end
-> of a memcg tree walk as a failure, as long as there are memcgs that are
-> candidates for writeback. Systems with one or more empty memcgs will now
-> observe significantly higher zswap writeback activity after the zswap
-> pool limit is hit.
-> 
-> To avoid an infinite loop when there are no writeback candidates, this
-> patch tracks writeback attempts during memcg tree walks and limits
-> reties if no writeback candidates are found.
-> 
-> To handle the empty memcg case, the helper function shrink_memcg() is
-> modified to check if the memcg is empty and then return -ENOENT.
-> 
-> Fixes: a65b0e7607cc ("zswap: make shrinking memcg-aware")
-> Signed-off-by: Takero Funaki <flintglass@gmail.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Looks good to me:
 
-Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-
-Thanks.
-
-> ---
->   mm/zswap.c | 40 +++++++++++++++++++++++++++++++++-------
->   1 file changed, 33 insertions(+), 7 deletions(-)
+On Wed, 31 Jul 2024 13:12:41 -0600, Rob Herring (Arm) wrote:
+> Use of_property_present() to test for property presence rather than
+> of_find_property(). This is part of a larger effort to remove callers
+> of of_find_property() and similar functions. of_find_property() leaks
+> the DT struct property and data pointers which is a problem for
+> dynamically allocated nodes which may be freed.
 > 
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 3c16a1192252..d46caa42ed4f 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1287,10 +1287,10 @@ static struct shrinker *zswap_alloc_shrinker(void)
->   
->   static int shrink_memcg(struct mem_cgroup *memcg)
->   {
-> -	int nid, shrunk = 0;
-> +	int nid, shrunk = 0, scanned = 0;
->   
->   	if (!mem_cgroup_zswap_writeback_enabled(memcg))
-> -		return -EINVAL;
-> +		return -ENOENT;
->   
->   	/*
->   	 * Skip zombies because their LRUs are reparented and we would be
-> @@ -1304,21 +1304,34 @@ static int shrink_memcg(struct mem_cgroup *memcg)
->   
->   		shrunk += list_lru_walk_one(&zswap_list_lru, nid, memcg,
->   					    &shrink_memcg_cb, NULL, &nr_to_walk);
-> +		scanned += 1 - nr_to_walk;
->   	}
-> +
-> +	if (!scanned)
-> +		return -ENOENT;
-> +
->   	return shrunk ? 0 : -EAGAIN;
->   }
->   
->   static void shrink_worker(struct work_struct *w)
->   {
->   	struct mem_cgroup *memcg;
-> -	int ret, failures = 0;
-> +	int ret, failures = 0, attempts = 0;
->   	unsigned long thr;
->   
->   	/* Reclaim down to the accept threshold */
->   	thr = zswap_accept_thr_pages();
->   
->   	/*
-> -	 * Global reclaim will select cgroup in a round-robin fashion.
-> +	 * Global reclaim will select cgroup in a round-robin fashion from all
-> +	 * online memcgs, but memcgs that have no pages in zswap and
-> +	 * writeback-disabled memcgs (memory.zswap.writeback=0) are not
-> +	 * candidates for shrinking.
-> +	 *
-> +	 * Shrinking will be aborted if we encounter the following
-> +	 * MAX_RECLAIM_RETRIES times:
-> +	 * - No writeback-candidate memcgs found in a memcg tree walk.
-> +	 * - Shrinking a writeback-candidate memcg failed.
->   	 *
->   	 * We save iteration cursor memcg into zswap_next_shrink,
->   	 * which can be modified by the offline memcg cleaner
-> @@ -1356,9 +1369,14 @@ static void shrink_worker(struct work_struct *w)
->   		spin_unlock(&zswap_shrink_lock);
->   
->   		if (!memcg) {
-> -			if (++failures == MAX_RECLAIM_RETRIES)
-> +			/*
-> +			 * Continue shrinking without incrementing failures if
-> +			 * we found candidate memcgs in the last tree walk.
-> +			 */
-> +			if (!attempts && ++failures == MAX_RECLAIM_RETRIES)
->   				break;
->   
-> +			attempts = 0;
->   			goto resched;
->   		}
->   
-> @@ -1366,8 +1384,16 @@ static void shrink_worker(struct work_struct *w)
->   		/* drop the extra reference */
->   		mem_cgroup_put(memcg);
->   
-> -		if (ret == -EINVAL)
-> -			break;
-> +		/*
-> +		 * There are no writeback-candidate pages in the memcg.
-> +		 * This is not an issue as long as we can find another memcg
-> +		 * with pages in zswap. Skip this without incrementing attempts
-> +		 * and failures.
-> +		 */
-> +		if (ret == -ENOENT)
-> +			continue;
-> +		++attempts;
-> +
->   		if (ret && ++failures == MAX_RECLAIM_RETRIES)
->   			break;
->   resched:
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] gpio: Use of_property_present()
+      commit: b034a90b2745e43b4a85b56dc5fd7a6fa1a21f31
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
