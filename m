@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-271187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08031944A8D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:43:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D60EB944A8F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26881F23B59
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90944284DE2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42EC21917DB;
-	Thu,  1 Aug 2024 11:43:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E3A1917DB;
+	Thu,  1 Aug 2024 11:44:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F51189B95;
-	Thu,  1 Aug 2024 11:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04FD189B95
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722512588; cv=none; b=eee8LPQ+ttN1hcTVVScVdVYuQSXwM1kLtxZY7/NvWiEb144InMvXj7tGTBnq2gyHOPm2zQhpxaULpx3ZSQnmECoKZfLKgNaRk0GogSJ4CF4mFmlu78wn23p9U1P0/JaDq1h93aB+cgYVxbnpJrbAWHxFCf1zYtlN2D6ZO5CSQBI=
+	t=1722512646; cv=none; b=Aw46IW5KGNuYvdO5HXrnNZnLsyrQ2xdvmx1By6dkrtNzmKaCjyJwNBjvrWZifyCMCGOlUZj6d/F46m5MrtKux+MIs5WVE1jYyM/uncx1Zr2t9IhskoTC1qH2/4s+3ShTB7IUHQMsBpRS1MY8HU9lftJ+uIdPhdFBnWq/o9sXQFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722512588; c=relaxed/simple;
-	bh=Y1Qa+XJrdmc4zMG+gQhaBZOIJ+0ogotagu3QPj36hVg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tMANIUh5WPvV1wf9IGLLNUWqgG1UmmVOkwuaIyeNEa1U9DxU72uaDjA1iLvUDRDAyd+VTtr00rPOZDzYt/eGOyBUBsPxRUSxdJ8wZvkdxJl7z7djkyRHYm/XcVMTVS/ww+0mtDu4PfiaiqmHqF40/wgqtym8lEmJnPQNFPxTcDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4WZRq030LGz6K9rl;
-	Thu,  1 Aug 2024 19:40:28 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5CC54140CB1;
-	Thu,  1 Aug 2024 19:43:04 +0800 (CST)
-Received: from localhost (10.203.177.66) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 1 Aug
- 2024 12:43:03 +0100
-Date: Thu, 1 Aug 2024 12:43:03 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <admiyo@os.amperecomputing.com>
-CC: Robert Moore <robert.moore@intel.com>, "Rafael J. Wysocki"
-	<rafael.j.wysocki@intel.com>, Len Brown <lenb@kernel.org>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jeremy Kerr
-	<jk@codeconstruct.com.au>, Matt Johnston <matt@codeconstruct.com.au>, "David
- S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Sudeep Holla
-	<sudeep.holla@arm.com>, Huisong Li <lihuisong@huawei.com>
-Subject: Re: [PATCH v5 2/3] mctp pcc: Allow PCC Data Type in MCTP resource.
-Message-ID: <20240801124303.000040ce@Huawei.com>
-In-Reply-To: <20240712023626.1010559-3-admiyo@os.amperecomputing.com>
-References: <20240712023626.1010559-1-admiyo@os.amperecomputing.com>
-	<20240712023626.1010559-3-admiyo@os.amperecomputing.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1722512646; c=relaxed/simple;
+	bh=3+ImdkhwLyVDnnGq9YkEM+bJ25pPtqdt6AhOle8uago=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=St4iXiUbiihj+K70fCya79Qptg4DIMD4k3ZfUMLGiz/fLUTB/snj3//9oJd3CHT61LophxW5CHH/eFUDy1zUF7Sk9bIROJPyvEZf9TEZzw114Wke4xiCOtkGt5TswpexJKguQNUpkS7uwRjzlTlz6ERiEWYHJ/K3+GMB7MO/oL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-397a7f98808so140458045ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:44:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722512644; x=1723117444;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6hJ9vfNM6KRL/IOW0H4GTKldHeNk39XO/IjMPkJp+Ho=;
+        b=XTMVZ6iCSeBOLd+2irCEC71y/b2zYcK4PQlkK3bpIWG8wzhzVJ+WS/wfN/rTBgI9O6
+         DvWQelW1Dz7hNiQcBStUbi85t5gdG/SG5CHqCUq62nvYYRhC/zAcO29oEXEkJN6EWsFc
+         rjRnsac2+eV4w1bPnSCPjD5kEyuRJYTw4oqJ6ZCrvC+o2RGBaZEpU7Sky8IcR7qD7C6G
+         6u+F7vjN3mIzPXn0zVvuOv1BfzwYgRKI0mefJBoouVl0bM1oTLcfzB5nW7Xt6JiuJqRi
+         XxWqlaSufvNBL0zTek09cPojoU+4ESf29CDUofBwt18esBd0w8XeVKJrJPmde1V8rqmG
+         so1Q==
+X-Gm-Message-State: AOJu0YxXjvEnQRZt0W6kCY5uVS2ZC0vQLDKsbENXaKqgEJlHYXx6JTfc
+	12J+mSiI179bVxTvfOBBI6UmiauSfCaTg94hwyNHSENKBttNKdXga9rct2O1rIgHezmevJGcKto
+	W1b4y9ARl21HtgeC+B3pWu81KVMLtY79zekL4QWaLX/DtJyzjmJsGDV0=
+X-Google-Smtp-Source: AGHT+IHE31Fa4p36oDJoBo4BhxfV+IhE27iN+f4uo73NKFiPw0hD2nqzTu5n89k6A7ezHyfsE2HdNbAorIc92gOxZicUXjDkxloZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+X-Received: by 2002:a05:6e02:1d9a:b0:382:6a83:f4fc with SMTP id
+ e9e14a558f8ab-39b183caca7mr1541825ab.5.1722512644164; Thu, 01 Aug 2024
+ 04:44:04 -0700 (PDT)
+Date: Thu, 01 Aug 2024 04:44:04 -0700
+In-Reply-To: <20240801092733.1243313-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000046def5061e9dba03@google.com>
+Subject: Re: [syzbot] [squashfs?] KMSAN: uninit-value in pick_link
+From: syzbot <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 11 Jul 2024 22:36:25 -0400
-admiyo@os.amperecomputing.com wrote:
+Hello,
 
-> From: Adam Young <admiyo@os.amperecomputing.com>
-> 
-> Note that this patch is for code that will be merged
-> in via ACPICA changes.  The corresponding patch in ACPCA
-Typo in ACPICA
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in pick_link
 
-Add a link to the patch in the acpica tree as then
-its easier to identify exactly what needs pulling in before
-this merges.
+loop0: detected capacity change from 0 to 8
+err: 0, folio: ffffea00057726d0, in: ffff888121ab45b8, do_read_cache_folio
+=====================================================
+BUG: KMSAN: uninit-value in pick_link+0xd8c/0x1690 fs/namei.c:1850
+ pick_link+0xd8c/0x1690 fs/namei.c:1850
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> has already merged. Thus, no changes can be made to this patch.
-> 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
-> ---
->  drivers/acpi/acpica/rsaddr.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/acpi/acpica/rsaddr.c b/drivers/acpi/acpica/rsaddr.c
-> index fff48001d7ef..9f8cfdc51637 100644
-> --- a/drivers/acpi/acpica/rsaddr.c
-> +++ b/drivers/acpi/acpica/rsaddr.c
-> @@ -282,9 +282,10 @@ acpi_rs_get_address_common(struct acpi_resource *resource,
->  
->  	/* Validate the Resource Type */
->  
-> -	if ((address.resource_type > 2) && (address.resource_type < 0xC0)) {
-> +	if (address.resource_type > 2 &&
-> +	    address.resource_type < 0xC0 &&
-> +	    address.resource_type != 0x0A)
->  		return (FALSE);
-> -	}
->  
->  	/* Get the Resource Type and General Flags */
->  
+Uninit was created at:
+ __alloc_pages_noprof+0x9d6/0xe70 mm/page_alloc.c:4719
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2263
+ alloc_pages_noprof mm/mempolicy.c:2343 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2350
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1008
+ do_read_cache_folio+0x134/0x1300 mm/filemap.c:3753
+ do_read_cache_page mm/filemap.c:3860 [inline]
+ read_cache_page+0x63/0x1d0 mm/filemap.c:3869
+ read_mapping_page include/linux/pagemap.h:907 [inline]
+ page_get_link+0x76/0xf90 fs/namei.c:5272
+ pick_link+0xd6c/0x1690
+ step_into+0x156f/0x1640 fs/namei.c:1909
+ open_last_lookups fs/namei.c:3674 [inline]
+ path_openat+0x39da/0x6100 fs/namei.c:3883
+ do_filp_open+0x20e/0x590 fs/namei.c:3913
+ do_sys_openat2+0x1bf/0x2f0 fs/open.c:1416
+ do_sys_open fs/open.c:1431 [inline]
+ __do_sys_openat fs/open.c:1447 [inline]
+ __se_sys_openat fs/open.c:1442 [inline]
+ __x64_sys_openat+0x2a1/0x310 fs/open.c:1442
+ x64_sys_call+0x1fe/0x3c10 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 5981 Comm: syz.0.15 Not tainted 6.10.0-syzkaller-12708-g2f8c4f506285-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+=====================================================
+
+
+Tested on:
+
+commit:         2f8c4f50 Merge tag 'auxdisplay-for-v6.11-tag1' of git:..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=169f9b03980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ea3a063e5f96c3d6
+dashboard link: https://syzkaller.appspot.com/bug?extid=24ac24ff58dc5b0d26b9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14cdd19d980000
 
 
