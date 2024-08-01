@@ -1,148 +1,179 @@
-Return-Path: <linux-kernel+bounces-271176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA849944A6B
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:31:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1E3944A6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AD512821C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:31:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31685281635
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3F3189527;
-	Thu,  1 Aug 2024 11:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41E9E18454B;
+	Thu,  1 Aug 2024 11:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7XsEE3B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a49SNatk"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0431D7406D;
-	Thu,  1 Aug 2024 11:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA417406D
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722511860; cv=none; b=Y7JqwwsilzetpsuaicJ97Lz1eAWjJREA4nRK6cqudsDt+AaO6qSWUQKs4VXCfpjNc+EB3wRuCLVJCEctijUNqyENQXR5Ob/+9eJjdlSi56ULeLeiO4lKl2sIn19nn7HPhoI0ZMMVHjFOGE+BR7AsFQ/2Y13Cswmb3It1aqHO6U8=
+	t=1722511918; cv=none; b=MXhPkvJFz/NZALf8/F5KrWSDrmfHdxOcHEi7iyMVCaytsqPNiLkFui3bg4EN/tFOGG8F8kLjHy78e7JIUDvrkLhOrRSQqxZysAYLAYL+huEZgWlH/QTqHyK3lNEVn7TZfN/9/AM+rYkssYiTsUvVt6iDrNq7/Op8MJ+UugEQtoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722511860; c=relaxed/simple;
-	bh=fbqVFlOK511foaak+99Fgz0L0P/nMuTSt21J2SoqSEo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mX4+aenhXh7n4RMOaEPJMpdThk0CCQStvN0cKSjDpshaWnat8Lk/+SxZs3WRuP/AGcp+rHsaB2CqV14v28NKXmXhC1zrZ4LCbIBat5MVf47mwGwp65hhc+fXu6uvOg4v6kkEZomxQ24hnrAwDjSdEBKBxDVhJLGuUvm6TkhvuDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7XsEE3B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A0E4C32786;
-	Thu,  1 Aug 2024 11:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722511859;
-	bh=fbqVFlOK511foaak+99Fgz0L0P/nMuTSt21J2SoqSEo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g7XsEE3BmtNonBaRCiTNN4/SNIkOez4Gq4khVdq+2ISkPhr91Tfv6T6zo6bWyGVMe
-	 8yw4rU0q6By7k2sM5d667ots28I3rlUKkULBtGZH2njAjpj8Xz4Xu0FBp/laszmewL
-	 6oYhmXCB6lS4VIvmNHwo/336tFp0hCTABy9Ubsb8CNc+JzzYdZWEzhxt8/24FEoXZz
-	 eJW6DlFTGOUJkxS9oNjKZWRRZyiHi91O+MoYc3Sq0bHwGOpj66z0SnWPeNBnRd3ISu
-	 hgD4mXdPbWPMbndTzX0O1wYp0jHsv/T2RsC1C0HdRFznU0ZaDw0tWBenRXYKRklBEk
-	 MHsU2VlKuV6oQ==
-Date: Thu, 1 Aug 2024 14:30:55 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: jgg@ziepe.ca, bvanassche@acm.org, nab@risingtidesystems.com,
-	linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
-Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-Message-ID: <20240801113055.GH4209@unreal>
-References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
- <20240801103712.GG4209@unreal>
- <bcbc57ba-3e54-cfe5-60b8-8f3990f40000@hisilicon.com>
+	s=arc-20240116; t=1722511918; c=relaxed/simple;
+	bh=k8ONnkSlld3HaZxRW334a7ePUXlbx7K4HPoWJSXhyq4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jS3rSPshuL0iUCVEai8dDB4uv90s9XDNigznw3LWF2mxsBVsDFSa/nrP4fnyvM4na+2VfobbUuK3GHF57JySUU+dhUdwXRMl17PLbb54vs7rketqR5YZBcBffzjkUzMLHVIPmAeE/VNs9eWdjoP+tsQj6dMbBauNinfTltNQdCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a49SNatk; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1722511908; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=oMvfutHFMr1ffJ2e0ja61Uj7PJwIKNC7uJu9hEsf6ok=;
+	b=a49SNatkUvHYuVLZmM5IGj0tkzPjGKpNrP2I0kjVx4qudaygq2qwI8uW1E8uslCu0vwzjWR4JJ2naiFzTVXOBqFTe1xHfsAma+ZBcvIdqUAyy0nYtf5N+ubEyWV0Sgfu4Wf+3IaWUUeEZD6Elj3rfnNiz5AcNXKCFb+khy5YLHY=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067109;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0WBsQXy1_1722511906;
+Received: from 30.97.48.193(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBsQXy1_1722511906)
+          by smtp.aliyun-inc.com;
+          Thu, 01 Aug 2024 19:31:47 +0800
+Message-ID: <6c91643e-f55b-4998-b2b2-8eaa3ad747f3@linux.alibaba.com>
+Date: Thu, 1 Aug 2024 19:31:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bcbc57ba-3e54-cfe5-60b8-8f3990f40000@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] erofs: simplify readdir operation
+To: Hongzhen Luo <hongzhen@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org
+References: <20240801112622.2164029-1-hongzhen@linux.alibaba.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <20240801112622.2164029-1-hongzhen@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 07:02:41PM +0800, Junxian Huang wrote:
-> 
-> 
-> On 2024/8/1 18:37, Leon Romanovsky wrote:
-> > On Thu, Aug 01, 2024 at 03:44:15PM +0800, Junxian Huang wrote:
-> >> Currently cancel_work_sync() is not called when srpt_refresh_port()
-> >> failed in srpt_add_one(). There is a probability that sdev has been
-> >> freed while the previously initiated sport->work is still running,
-> >> leading to a UAF as the log below:
-> >>
-> >> [  T880] ib_srpt MAD registration failed for hns_1-1.
-> >> [  T880] ib_srpt srpt_add_one(hns_1) failed.
-> >> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
-> >> ...
-> >> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
-> >> ...
-> >> [  T376] Call trace:
-> >> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
-> >> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
-> >> [  T376]  process_one_work+0x1d8/0x4cc
-> >> [  T376]  worker_thread+0x158/0x410
-> >> [  T376]  kthread+0x108/0x13c
-> >> [  T376]  ret_from_fork+0x10/0x18
-> >>
-> >> Add cancel_work_sync() to the exception branch to fix this UAF.
-> >>
-> >> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-> >> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> >> ---
-> >>  drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
-> >>  1 file changed, 3 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> >> index 9632afbd727b..244e5c115bf7 100644
-> >> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-> >> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-> >> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
-> >>  {
-> >>  	struct srpt_device *sdev;
-> >>  	struct srpt_port *sport;
-> >> +	u32 i, j;
-> >>  	int ret;
-> >> -	u32 i;
-> >>  
-> >>  	pr_debug("device = %p\n", device);
-> >>  
-> >> @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
-> >>  		if (ret) {
-> >>  			pr_err("MAD registration failed for %s-%d.\n",
-> >>  			       dev_name(&sdev->device->dev), i);
-> >> -			i--;
-> >>  			goto err_port;
-> >>  		}
-> >>  	}
-> >> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
-> >>  	return 0;
-> >>  
-> >>  err_port:
-> >> +	for (j = i, i--; j > 0; j--)a
-> >> +		cancel_work_sync(&sdev->port[j - 1].work);
-> > 
-> > There is no need in extra variable, the following code will do the same:
-> > 
-> > 	while (i--)
-> > 		cancel_work_sync(&sdev->port[i].work);
-> > 
-> >>  	srpt_unregister_mad_agent(sdev, i);
-> 
-> i is also used here.
 
-So put cancel_work_sync() there.
 
-Thanks
+On 2024/8/1 19:26, Hongzhen Luo wrote:
+>   - Use i_size instead of i_size_read() due to immutable fses;
+> 
+>   - Get rid of an unneeded goto since erofs_fill_dentries() also works;
+> 
+>   - Remove unnecessary lines.
+> 
+> Signed-off-by: Hongzhen Luo <hongzhen@linux.alibaba.com>
+> ---
 
+What's the difference from the previous version? why not marking
+it as v2?
+
+Thanks,
+Gao Xiang
+
+>   fs/erofs/dir.c      | 35 ++++++++++++-----------------------
+>   fs/erofs/internal.h |  2 +-
+>   2 files changed, 13 insertions(+), 24 deletions(-)
 > 
-> Junxian
-> 
-> >>  err_cm:
-> >>  	if (sdev->cm_id)
-> >> -- 
-> >> 2.33.0
-> >>
-> > 
-> 
+> diff --git a/fs/erofs/dir.c b/fs/erofs/dir.c
+> index 2193a6710c8f..c3b90abdee37 100644
+> --- a/fs/erofs/dir.c
+> +++ b/fs/erofs/dir.c
+> @@ -8,19 +8,15 @@
+>   
+>   static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
+>   			       void *dentry_blk, struct erofs_dirent *de,
+> -			       unsigned int nameoff, unsigned int maxsize)
+> +			       unsigned int nameoff0, unsigned int maxsize)
+>   {
+> -	const struct erofs_dirent *end = dentry_blk + nameoff;
+> +	const struct erofs_dirent *end = dentry_blk + nameoff0;
+>   
+>   	while (de < end) {
+> -		const char *de_name;
+> +		unsigned char d_type = fs_ftype_to_dtype(de->file_type);
+> +		unsigned int nameoff = le16_to_cpu(de->nameoff);
+> +		const char *de_name = (char *)dentry_blk + nameoff;
+>   		unsigned int de_namelen;
+> -		unsigned char d_type;
+> -
+> -		d_type = fs_ftype_to_dtype(de->file_type);
+> -
+> -		nameoff = le16_to_cpu(de->nameoff);
+> -		de_name = (char *)dentry_blk + nameoff;
+>   
+>   		/* the last dirent in the block? */
+>   		if (de + 1 >= end)
+> @@ -52,21 +48,20 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>   	struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+>   	struct super_block *sb = dir->i_sb;
+>   	unsigned long bsz = sb->s_blocksize;
+> -	const size_t dirsize = i_size_read(dir);
+> -	unsigned int i = erofs_blknr(sb, ctx->pos);
+>   	unsigned int ofs = erofs_blkoff(sb, ctx->pos);
+>   	int err = 0;
+>   	bool initial = true;
+>   
+>   	buf.mapping = dir->i_mapping;
+> -	while (ctx->pos < dirsize) {
+> +	while (ctx->pos < dir->i_size) {
+> +		erofs_off_t dbstart = ctx->pos - ofs;
+>   		struct erofs_dirent *de;
+>   		unsigned int nameoff, maxsize;
+>   
+> -		de = erofs_bread(&buf, erofs_pos(sb, i), EROFS_KMAP);
+> +		de = erofs_bread(&buf, dbstart, EROFS_KMAP);
+>   		if (IS_ERR(de)) {
+>   			erofs_err(sb, "fail to readdir of logical block %u of nid %llu",
+> -				  i, EROFS_I(dir)->nid);
+> +				  erofs_blknr(sb, dbstart), EROFS_I(dir)->nid);
+>   			err = PTR_ERR(de);
+>   			break;
+>   		}
+> @@ -79,25 +74,19 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>   			break;
+>   		}
+>   
+> -		maxsize = min_t(unsigned int, dirsize - ctx->pos + ofs, bsz);
+> -
+> +		maxsize = min_t(unsigned int, dir->i_size - dbstart, bsz);
+>   		/* search dirents at the arbitrary position */
+>   		if (initial) {
+>   			initial = false;
+> -
+>   			ofs = roundup(ofs, sizeof(struct erofs_dirent));
+> -			ctx->pos = erofs_pos(sb, i) + ofs;
+> -			if (ofs >= nameoff)
+> -				goto skip_this;
+> +			ctx->pos = dbstart + ofs;
+>   		}
+>   
+>   		err = erofs_fill_dentries(dir, ctx, de, (void *)de + ofs,
+>   					  nameoff, maxsize);
+>   		if (err)
+>   			break;
+> -skip_this:
+> -		ctx->pos = erofs_pos(sb, i) + maxsize;
+> -		++i;
+> +		ctx->pos = dbstart + maxsize;
+>   		ofs = 0;
+>   	}
+>   	erofs_put_metabuf(&buf);
+> diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
+> index 736607675396..45dc15ebd870 100644
+> --- a/fs/erofs/internal.h
+> +++ b/fs/erofs/internal.h
+> @@ -220,7 +220,7 @@ struct erofs_buf {
+>   };
+>   #define __EROFS_BUF_INITIALIZER	((struct erofs_buf){ .page = NULL })
+>   
+> -#define erofs_blknr(sb, addr)	((addr) >> (sb)->s_blocksize_bits)
+> +#define erofs_blknr(sb, addr)	((erofs_blk_t)((addr) >> (sb)->s_blocksize_bits))
+>   #define erofs_blkoff(sb, addr)	((addr) & ((sb)->s_blocksize - 1))
+>   #define erofs_pos(sb, blk)	((erofs_off_t)(blk) << (sb)->s_blocksize_bits)
+>   #define erofs_iblks(i)	(round_up((i)->i_size, i_blocksize(i)) >> (i)->i_blkbits)
 
