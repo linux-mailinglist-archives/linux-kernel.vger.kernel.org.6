@@ -1,117 +1,138 @@
-Return-Path: <linux-kernel+bounces-271239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4CD944B6A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:36:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C22D944B6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:37:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6E70B26764
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:36:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC1C1F220ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB2F1E507;
-	Thu,  1 Aug 2024 12:36:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D57187FFD
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 12:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8811A01DB;
+	Thu,  1 Aug 2024 12:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="sudF5UQ/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F17187FFD;
+	Thu,  1 Aug 2024 12:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515769; cv=none; b=j0VX4PpCbN+ETHoXQ+/M5BCXtj6i6L7C3xpubnwMZ+lW08A15pVD46Q9YqzjQXJIZVm6+aMQFEIUd3xAqfFHAFh52RLkffk1BQoAw5wLTWtc86Jq1n+ojI+ftvpXk0Ok4WPyGgtRiqOEb/uszaKIVR7gQqBU5XbUZjpuLmp7uvo=
+	t=1722515818; cv=none; b=U2HDsQiw++iwfV3rCOLuYkV+ztiOyY+N7LqtTjJMxFT/9Wp7TRqHZqJPEUTNQs4EktGg+2lfqpqz9rRcWPlvVtd7HEObw4/14crdHoEPDME3sT3zje7lnDFO3hKIPPJkWMRMylCWcwA537WC/ksYtWWODEOEldIgyobTvPcPUPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515769; c=relaxed/simple;
-	bh=f4lC5gxhSKoxDTsqkQzDrZ9yawilVopVur2OivHh7XU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDHH/DF6b8TKQTjso18LACU2vMFlWSDGe7oftt665eXXztH0HOma3lFJoT1fdCbYqzpSJ9uyi2uLvzH8LG4UQjb1E8w5pBZj3Ue/iBELpaYTTTfbcCXuCvu1PfifbII75wKiQxxWT4bz9aSIEIJXC5nluOzL3nCKo4QA+15q+8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BED6D1007;
-	Thu,  1 Aug 2024 05:36:32 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73A863F766;
-	Thu,  1 Aug 2024 05:36:06 -0700 (PDT)
-Message-ID: <d54f486d-36ae-4668-b314-27137bc4d832@arm.com>
-Date: Thu, 1 Aug 2024 13:36:01 +0100
+	s=arc-20240116; t=1722515818; c=relaxed/simple;
+	bh=8y68VOu62Sd+8tUqQsxtJirVhBoDa7wrm3eIzLEYWdo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eb8Iw1etTcE6XarQNiuPGV7PYuK/EQVi+aqSx8gcwTmCiD7kNsT6IHjru0Wx0lR0+/QrLRFLFiyDb1uFhlE/DFSozTUsVXPbuxJeiYuiQWfEoT3vCKDOjp6N6d4X240DzZvohsaalMEyJQ1ZNvQPGuifUu5WsnO04LgYYWC6ZJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=sudF5UQ/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=l6VKD7CEKUflJtsFY+ry8bBY+bZfcfkQ/rtFhvXEGno=; b=sudF5UQ/ATZEqEsORqsB48JYd3
+	eEFE6Ab2Ua06XdZhe1Fd7yNtxeHKlcYsRnw4kZjtgzc7rZ7/sjBr0NNk0Y7Whe7Gf0Vx4K3DR7Ngj
+	jy/whLW31gj2CuPST1s6wJL5dKzrCI/WG1Bnc7t4XwXdYtbouttKRnjZ7WpczUmh6P30=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sZV33-003m4h-Rc; Thu, 01 Aug 2024 14:36:49 +0200
+Date: Thu, 1 Aug 2024 14:36:49 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: yisen.zhuang@huawei.com, salil.mehta@huawei.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, shenjian15@huawei.com, wangpeiyang1@huawei.com,
+	liuyonglong@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH net-next 05/10] net: hibmcge: Implement some .ndo
+ functions
+Message-ID: <e57e3748-6ee5-42d5-8715-ec652fc6310f@lunn.ch>
+References: <20240731094245.1967834-1-shaojijie@huawei.com>
+ <20240731094245.1967834-6-shaojijie@huawei.com>
+ <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
+ <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
+ <ffd2d708-60fb-4049-8c1b-fcfe43a78d57@lunn.ch>
+ <d5e9f50a-c3bd-4071-9de8-cc22cd0f5cfc@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dma-mapping: don't return errors from
- dma_set_seg_boundary
-To: Marek Szyprowski <m.szyprowski@samsung.com>,
- Christoph Hellwig <hch@lst.de>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240723000604.241443-1-hch@lst.de>
- <CGME20240723000611eucas1p10986fd51e848a1ee948e71608c26192b@eucas1p1.samsung.com>
- <20240723000604.241443-3-hch@lst.de>
- <5895603b-945f-4b05-991c-76b590094354@samsung.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <5895603b-945f-4b05-991c-76b590094354@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d5e9f50a-c3bd-4071-9de8-cc22cd0f5cfc@huawei.com>
 
-On 01/08/2024 1:00 pm, Marek Szyprowski wrote:
-> On 23.07.2024 02:05, Christoph Hellwig wrote:
->> If dev->dma_parms is not allocate that indicates a grave bug in the
->> implementation of a DMA-capable bus.  There isn't much the driver can
->> do in terms of error handling, so just warn and continue as DMA
->> operations will fail anyway.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
+On Thu, Aug 01, 2024 at 08:33:38PM +0800, Jijie Shao wrote:
 > 
-> What about devices on platform or usb bus and subsystems calling this
-> unconditionally, like scsi_init_limits()? With today's linux-next I got
-> a bunch of warnings from this call for various USB storage devices.
-> Before this patch, the errors from dma_set_seg_boundary() were silently
-> ignored.
-
-Maybe we could suppress the warning if the value being set is equal to 
-the default, but the real point is that DMA-capable buses should be 
-providing dma_parms, while non-DMA-capable devices have no business 
-being here at all - if the caller isn't going to get the 
-restriction/relaxation they requested, and that's not a problem, then 
-why are they requesting it in the first place?
-
-I guess I assumed that the old block layer bodges in this area had been 
-cleaned up already - perhaps it *is* high time for whatever's left to 
-grow a proper understanding of whether a block device actually does its 
-own DMA or not.
-
-Thanks,
-Robin.
-
->> ---
->>    include/linux/dma-mapping.h | 10 ++++------
->>    1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
->> index cfd6bafec3f944..6bd1333dbacb9b 100644
->> --- a/include/linux/dma-mapping.h
->> +++ b/include/linux/dma-mapping.h
->> @@ -559,13 +559,11 @@ static inline unsigned long dma_get_seg_boundary_nr_pages(struct device *dev,
->>    	return (dma_get_seg_boundary(dev) >> page_shift) + 1;
->>    }
->>    
->> -static inline int dma_set_seg_boundary(struct device *dev, unsigned long mask)
->> +static inline void dma_set_seg_boundary(struct device *dev, unsigned long mask)
->>    {
->> -	if (dev->dma_parms) {
->> -		dev->dma_parms->segment_boundary_mask = mask;
->> -		return 0;
->> -	}
->> -	return -EIO;
->> +	if (WARN_ON_ONCE(!dev->dma_parms))
->> +		return;
->> +	dev->dma_parms->segment_boundary_mask = mask;
->>    }
->>    
->>    static inline unsigned int dma_get_min_align_mask(struct device *dev)
+> on 2024/8/1 20:18, Andrew Lunn wrote:
+> > On Thu, Aug 01, 2024 at 05:13:33PM +0800, Jijie Shao wrote:
+> > > on 2024/8/1 8:51, Andrew Lunn wrote:
+> > > > > +static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
+> > > > > +{
+> > > > > +	struct hbg_priv *priv = netdev_priv(dev);
+> > > > > +	u8 *mac_addr;
+> > > > > +
+> > > > > +	mac_addr = ((struct sockaddr *)addr)->sa_data;
+> > > > > +	if (ether_addr_equal(dev->dev_addr, mac_addr))
+> > > > > +		return 0;
+> > > > > +
+> > > > > +	if (!is_valid_ether_addr(mac_addr))
+> > > > > +		return -EADDRNOTAVAIL;
+> > > > How does the core pass you an invalid MAC address?
+> > > According to my test,
+> > > in the 6.4 rc4 kernel version, invalid mac address is allowed to be configured.
+> > > An error is reported only when ifconfig ethx up.
+> > Ah, interesting.
+> > 
+> > I see a test in __dev_open(), which is what you are saying here. But i
+> > would also expect a test in rtnetlink, or maybe dev_set_mac_address().
+> > We don't want every driver having to repeat this test in their
+> > .ndo_set_mac_address, when it could be done once in the core.
+> > 
+> > 	Andrew
 > 
-> Best regards
+> Hi:
+> I did the following test on my device:
+> 
+> insmod hibmcge.ko
+> hibmcge: no symbol version for module_layout
+> hibmcge: loading out-of-tree module taints kernel.
+> hibmcge: module verification failed: signature and/or required key missing - tainting kernel
+> hibmcge 0000:83:00.1: enabling device (0140 -> 0142)
+> Generic PHY mii-0000:83:00.1:02: attached PHY driver (mii_bus:phy_addr=mii-0000:83:00.1:02, irq=POLL)
+> hibmcge 0000:83:00.1 enp131s0f1: renamed from eth0
+> IPv6: ADDRCONF(NETDEV_CHANGE): enp131s0f1: link becomes ready
+> hibmcge 0000:83:00.1: link up!
+> 
+> ifconfig enp131s0f1 hw ether FF:FF:FF:FF:FF:FF
+> 
+> ip a
+> 6: enp131s0f1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+>     link/ether ff:ff:ff:ff:ff:ff brd ff:ff:ff:ff:ff:ff permaddr 08:02:00:00:08:08
+> ifconfig enp131s0f1 up
+> ifconfig enp131s0f1 down up
+> SIOCSIFFLAGS: Cannot assign requested address
+> hibmcge 0000:83:00.1: link down!
+> 
+> uname -a
+> Linux localhost.localdomain 6.4.0+ #1 SMP Fri Mar 15 14:44:20 CST 2024 aarch64 aarch64 aarch64 GNU/Linux
+> 
+> 
+> 
+> So I'm not sure what's wrong. I also implemented ndo_validate_addr by eth_validate_addr.
+
+I agree. I don't see a test. Please could you include a patch to
+dev_set_mac_address() to validate the address there before calling
+into the driver. It might also be worth a search to see if anybody
+else has tried this before, and failed. There might be a good reason
+you cannot validate it.
+
+	Andrew
 
