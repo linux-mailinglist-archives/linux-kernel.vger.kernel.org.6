@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-270970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E8E9447F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:19:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C605F9447FE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:20:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A26CF1C245BD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:19:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E58AB270DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C0B1A255F;
-	Thu,  1 Aug 2024 09:13:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61AE3187FFE;
+	Thu,  1 Aug 2024 09:14:04 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3001A0B12;
-	Thu,  1 Aug 2024 09:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D71170A3B;
+	Thu,  1 Aug 2024 09:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722503619; cv=none; b=FgyYqb7jT3fQF0GQ6lMfANzO75qvCdzR2jhLUiZzN+HFmAtpPksnPfwFJRTdpWlnP1MYRDUpPx2yf7ZReiJZDSdQR6tsX/2bc78j93T0O3S0GM/tQ7njTX2Jv1onbyhIvJcifTQIMJcJoYZNiYCYzTGSyJXMhqfDjb70Eo/6mLs=
+	t=1722503643; cv=none; b=a3xQgMQumwRHi7ccFBRbM0TH7qaArauNZi2DX4TLi1uiOtzQXq4RKGsWK+14zsRHTDe6Qj3TAzHmIWlM8kU4jP5Mvs6zOfDVT/Iut4iRaEqVuEK1zlnWDdcot1Pa4pfqjq9cp7WFeBVYyyi5UM/g4ZERmVvAybA4EWnRuHiXpZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722503619; c=relaxed/simple;
-	bh=tPidg2/aE3kkju9l04+4SSW5PlwDWDWtQnh4jZnd8Zc=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rSQZ/qrFgt/G7zpPQ1ZXem6Gnk5WgBJMHQOA848IjyoK8U5IURH2EIc3/FP/PVxp2k9lG/Hvh2iyncyAf8/IOsXz8VSLSD5Gem5F70x3TXRzHlRKcklSrNao11+3OmsVZDk3xFVkymQgQBZ9QoRwAIE7YOdHeuoArVxr4HbJEJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WZNRl15wNzyPSb;
-	Thu,  1 Aug 2024 17:08:35 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8216D140336;
-	Thu,  1 Aug 2024 17:13:34 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 1 Aug 2024 17:13:33 +0800
-Message-ID: <e8a56b1f-f3f3-4081-8c0d-4b829e659780@huawei.com>
-Date: Thu, 1 Aug 2024 17:13:33 +0800
+	s=arc-20240116; t=1722503643; c=relaxed/simple;
+	bh=Huk9WOkumH8pZG1eFJE2P3LnQQp0668fi6xSMVsYEkk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P/hyW+x/tL0aDHMXwgHK6xWiPUMNGR/GEQT7TvolHnBvS2edtysQ4XxQZ9QiyiYYaML7yEnQlPZwnmvYnghud+CirUFlah6VxIGbcgAKMIKqlx461gtb7LChhyBj6H7uiUw02cIhd8Xw4pJ5r5qbopCXbLsmPN1L/x0in4BOTvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4715U2QJ010067;
+	Thu, 1 Aug 2024 02:13:47 -0700
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 40mv61cub2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 01 Aug 2024 02:13:47 -0700 (PDT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 02:13:46 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 02:13:44 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <lizhi.xu@windriver.com>
+CC: <brauner@kernel.org>, <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <phillip@squashfs.org.uk>,
+        <squashfs-devel@lists.sourceforge.net>,
+        <syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] filemap: Init the newly allocated folio memory to 0 for the filemap
+Date: Thu, 1 Aug 2024 17:13:43 +0800
+Message-ID: <20240801091343.3282053-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240801081224.1252836-1-lizhi.xu@windriver.com>
+References: <20240801081224.1252836-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <yisen.zhuang@huawei.com>,
-	<salil.mehta@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <horms@kernel.org>,
-	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
-	<sudongming1@huawei.com>, <xujunsheng@huawei.com>, <shiyongbang@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH net-next 05/10] net: hibmcge: Implement some .ndo
- functions
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20240731094245.1967834-1-shaojijie@huawei.com>
- <20240731094245.1967834-6-shaojijie@huawei.com>
- <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <0e497b6f-7ab0-4a43-afc6-c5ad205aa624@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain
+X-Proofpoint-GUID: mFvhJLD3O1YDjjqz8rdvAt6xCohf7Cmm
+X-Proofpoint-ORIG-GUID: mFvhJLD3O1YDjjqz8rdvAt6xCohf7Cmm
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-01_06,2024-07-31_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0
+ bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2407110000 definitions=main-2408010056
 
+On Thu, 1 Aug 2024 16:12:24 +0800, Lizhi Xu wrote:
+> > > > > syzbot report KMSAN: uninit-value in pick_link, this is because the
+> > > > > corresponding folio was not found from the mapping, and the memory was
+> > > > > not initialized when allocating a new folio for the filemap.
+> > > > >
+> > > > > To avoid the occurrence of kmsan report uninit-value, initialize the
+> > > > > newly allocated folio memory to 0.
+> > > >
+> > > > NAK.
+> > > >
+> > > > You are papering over the real bug here.
+> > > Did you see the splat? I think you didn't see that.
+> > 
+> > Sigh...  It is stepping into uninitialized data in pick_link(), and by
+> > the look of traces it's been created by page_get_link().
+> > 
+> > What page_get_link() does is reading from page cache of symlink;
+> > the contents should have come from ->read_folio() (if it's really
+> > a symlink on squashfs, that would be squashfs_symlink_read_folio()).
+> > 
+> > Uninit might have happened if
+> > 	* ->read_folio() hadn't been called at all (which is an obvios
+> > bug - that's what should've read the symlink contents) or
+> > 	* ->read_folio() had been called, it failed and yet we are
+> > still trying to use the resulting page.  Again, an obvious bug - if
+> > trying to read fails, we should _not_ use the results or leave it
+> > in page cache for subsequent callers.
+> > 	* ->read_folio() had been called, claimed to have succeeded and
+> > yet it had left something in range 0..inode->i_size-1 uninitialized.
+> > Again, a bug, this time in ->read_folio() instance.
+> read_folio, have you noticed that the file value was passed to read_folio is NULL? 
+> fs/namei.c
+> const char *page_get_link(struct dentry *dentry, struct inode *inode
+> ...
+> 5272  read_mapping_page(mapping, 0, NULL);
+> 
+> So, Therefore, no matter what, the value of folio will not be initialized by file
+> in read_folio. 
+Oh, in read_folio, it will use mapping->host to init folio, I will research
+why not init in do_read_cache_folio.
 
-on 2024/8/1 8:51, Andrew Lunn wrote:
->> +static int hbg_net_set_mac_address(struct net_device *dev, void *addr)
->> +{
->> +	struct hbg_priv *priv = netdev_priv(dev);
->> +	u8 *mac_addr;
->> +
->> +	mac_addr = ((struct sockaddr *)addr)->sa_data;
->> +	if (ether_addr_equal(dev->dev_addr, mac_addr))
->> +		return 0;
->> +
->> +	if (!is_valid_ether_addr(mac_addr))
->> +		return -EADDRNOTAVAIL;
-> How does the core pass you an invalid MAC address?
-
-According to my test,
-in the 6.4 rc4 kernel version, invalid mac address is allowed to be configured.
-An error is reported only when ifconfig ethx up.
-
->
->> +static int hbg_net_change_mtu(struct net_device *dev, int new_mtu)
->> +{
->> +	struct hbg_priv *priv = netdev_priv(dev);
->> +	bool is_opened = hbg_nic_is_open(priv);
->> +	u32 frame_len;
->> +
->> +	if (new_mtu == dev->mtu)
->> +		return 0;
->> +
->> +	if (new_mtu < priv->dev_specs.min_mtu || new_mtu > priv->dev_specs.max_mtu)
->> +		return -EINVAL;
-> You just need to set dev->min_mtu and dev->max_mtu, and the core will
-> do this validation for you.
-
-Thanks, I'll test it，and if it works I'll remove the judgement
-
->
->> +	dev_info(&priv->pdev->dev,
->> +		 "change mtu from %u to %u\n", dev->mtu, new_mtu);
-> dev_dbg() Don't spam the log for normal operations.
-
-okay, Thanks!
-
+--
+Lizhi
 
