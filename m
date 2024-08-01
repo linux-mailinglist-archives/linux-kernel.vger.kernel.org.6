@@ -1,121 +1,100 @@
-Return-Path: <linux-kernel+bounces-271721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D615F94528C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:05:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7F194528E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5901C235EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:05:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73062287638
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B50143758;
-	Thu,  1 Aug 2024 18:05:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B784146D78;
+	Thu,  1 Aug 2024 18:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="HOnLLR9X"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HP1SOrfr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340113D63A;
-	Thu,  1 Aug 2024 18:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2649144D00;
+	Thu,  1 Aug 2024 18:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722535510; cv=none; b=sOt7De1TIxdi2x6vVoNnNC5Ah2Ap2jnZK3IsApWfXO+uPnahsIZOqeYuYVgOXmdqorWLn25PEDkjJ0IdqLZQQMUmzIu6Ias6wV32+pt1I8hKSIgS5Aso+yzejnfIIA3ooh6Zrgv4owQRiBEBhBABcAI8BxA1Q0wwlp5qHofMVAs=
+	t=1722535511; cv=none; b=nNsLR5MMOD95ktnKE30RJDSaUh5vJxFAlFAkeI1p6/B739EnUU35SZ9+tbur+6gjB+PMWLDRMkELFvraBFOxGwaPWOXIanvYyygR0IdudJMaI3Sfs9djNf6bi+17PLxdoQ4BqVG1IWK4KtAMFlQQ1NQaKuy+bTsh1PCdeW8/AQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722535510; c=relaxed/simple;
-	bh=JQaGnDvmk/eH49aIh6Pmq8xbttq3olRoqsnPrZXpSXU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UijWJWpkhgbEiJQDDlqpPfIGgkwLJMgMTySuOB+/UsUfg6fP/+wY7XKNyU5CMgfkgUz2SFWLU2JXflkQ9zg/INEJDYoWmkMoe7SVQrYOr3cG6tZYgBle2SHJdeMf8UnYtdrg4gykzS009OGql3dEczCjlT4wJ+dN2R5nUv+navo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=HOnLLR9X; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722535507;
-	bh=JQaGnDvmk/eH49aIh6Pmq8xbttq3olRoqsnPrZXpSXU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HOnLLR9Xp9B+bYNE4eGIP+B+t7dahIZmxw6U7kafUV/U0g0oMR6q05CRIwB9vq2/D
-	 L2Itl1pYxo4M9x/j0UkIcSgpFvScjnK8cMbnl2sm5LwwtqSGaVxpKvbOjEK2qjtepY
-	 bdoOznSIUUzKsG1YEuDUGawfulvR9Y+0AvMu7olzGpw4wMG5FKp+CufnztS4N52H5I
-	 KBjlvDj1ZlxvvQ/6LgBQqneQVW0T3GXre3xNEIOHwen2emdwbdyt53uZREgw2WMi4Z
-	 CCjf3ESRu+9v9ggMLsEfoOxF5dVLFUk+jTFD1LCAbaQtSXEYt2M7kda3qGzYvHN8dr
-	 5L4kH+UJWuMXA==
-Received: from [100.109.49.129] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dmitry.osipenko)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5F38437804C8;
-	Thu,  1 Aug 2024 18:05:06 +0000 (UTC)
-Message-ID: <20c5ee69-3510-4c15-aa40-6d61c64d8ef1@collabora.com>
-Date: Thu, 1 Aug 2024 21:05:03 +0300
+	s=arc-20240116; t=1722535511; c=relaxed/simple;
+	bh=eo/BtBdhtofDzOVa2d0p8KsqVkh7oOT/ChhgncGIpE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dAq4oz0rP5bRp/0Z9SeJomNQk9p96Y/+eaNEOad1zs/ZK9RDIG1LT2AZYiDAY0MAIt4bjl1tbf7mOAcX2M//84ztI/99YIRFIyI7sfvOyFgAfAB3ozzGEL5zHA9OG9OvIZzh2whOvhujOcm3443FAeDXjU9c1yWvdxqCWk0kgCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HP1SOrfr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F245C4AF0D;
+	Thu,  1 Aug 2024 18:05:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722535511;
+	bh=eo/BtBdhtofDzOVa2d0p8KsqVkh7oOT/ChhgncGIpE4=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=HP1SOrfrVy+i8Ocl/iUVhE6wIMZmDi6L0YmWS0Ljf/4YjyDFOTtQ73vVfKNLLEOnE
+	 6mzv6BDpK9s4ks51d8GyY38tmkd2jOFCzaGiJpqh6oQfiiY79s5bq/pZpfg3h9E/tE
+	 TfPL5PZO8fgVeI96BTMFObzl2AnNnj4iemG2lMlOWgTh/c6b2Bptbxm+BlykSjN6S+
+	 dLGB/qdj7L6GuislzF1vGfnmQCvZyZ2B9kAHMmtm0sz7aP+IMiRqeX8ApSqXvhyjyy
+	 7pPeQIT7XgaSkHX/YrwEyOKpgkoLLl6ygQ/Ok4svWqmyM99Q184Tk0QMRz5XHh3CzV
+	 qORBZQ6q6bdbQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C77D7CE08A5; Thu,  1 Aug 2024 11:05:10 -0700 (PDT)
+Date: Thu, 1 Aug 2024 11:05:10 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
+	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org
+Subject: Re: [PATCH 8/8] uprobes: switch to RCU Tasks Trace flavor for better
+ performance
+Message-ID: <05ff631a-756b-4b6b-814f-413a1f309196@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240731214256.3588718-9-andrii@kernel.org>
+ <20240801093505.GP33588@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] mfd: rk8xx: Fix shutdown handler
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
- =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Lee Jones <lee@kernel.org>, Mark Brown <broonie@kernel.org>,
- Urja <urja@urja.dev>, linux-rockchip@lists.infradead.org,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel@collabora.com, stable@vger.kernel.org
-References: <20240730180903.81688-1-sebastian.reichel@collabora.com>
- <c4d6da27-3b23-4a96-bad0-17f2392287ef@collabora.com>
- <22969419.5W6oEpyPa8@diego>
- <wad5fdqxwoq2wy35wbhwk5jinpgyz6xmxnt5aqddci777qctsd@qay2lr2ubkws>
-Content-Language: en-US
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <wad5fdqxwoq2wy35wbhwk5jinpgyz6xmxnt5aqddci777qctsd@qay2lr2ubkws>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240801093505.GP33588@noisy.programming.kicks-ass.net>
 
-On 8/1/24 20:52, Sebastian Reichel wrote:
-> Hi,
+On Thu, Aug 01, 2024 at 11:35:05AM +0200, Peter Zijlstra wrote:
+> On Wed, Jul 31, 2024 at 02:42:56PM -0700, Andrii Nakryiko wrote:
+> > This patch switches uprobes SRCU usage to RCU Tasks Trace flavor, which
+> > is optimized for more lightweight and quick readers (at the expense of
+> > slower writers, which for uprobes is a fine tradeof) and has better
+> > performance and scalability with number of CPUs.
+> > 
+> > Similarly to baseline vs SRCU, we've benchmarked SRCU-based
+> > implementation vs RCU Tasks Trace implementation.
 > 
-> On Thu, Aug 01, 2024 at 07:41:44PM GMT, Heiko Stübner wrote:
->> Am Donnerstag, 1. August 2024, 17:31:33 CEST schrieb Dmitry Osipenko:
->>> On 7/30/24 21:05, Sebastian Reichel wrote:
->>>> +	/*
->>>> +	 * Currently the Rockchip SPI driver always sleeps when doing SPI
->>>> +	 * transfers. This is not allowed in the SYS_OFF_MODE_POWER_OFF
->>>> +	 * handler, so we are using the prepare handler as a workaround.
->>>> +	 * This should be removed once the Rockchip SPI driver has been
->>>> +	 * adapted.
->>>> +	 */
->>>> +	if (is_spi)
->>>> +		pwr_off_mode = SYS_OFF_MODE_POWER_OFF_PREPARE;
->>>
->>> This prevents the syscore_shutdown() step from execution. Is it better
->>> than not powering off?
->>>
->>> I'd rather skip registration of the power-off handlers in a case of SPI :)
->>
->> Or blasphemous thought, we could live with the warning-splash for a bit.
->>
->> From Sebastian's log I assume the WARNING comes from the
->> wait_for_completion() in spi_transfer_wait(), and I guess the transfer
->> with the poweroff command itself will already have happened then?
->>
->> So the device is most likely still powered off in that case?
->> Not sure how much of "bad taste" that thought is though ;-)
+> Yes, this one can be the trace flavour, the other one for the retprobes
+> must be SRCU because it crosses over into userspace. But you've not yet
+> done that side.
 > 
-> Yes, as far as I could see it works fine (the splash from the commit
-> message is from exactly this solution running on RK3588 EVB1 and the
-> board was powered off properly as far as I can tell). But it felt a
-> bit strange to knowingly introduce an error splash in a fix intended
-> for being backported to the stable trees, so I switched to the current
-> version before sending.
+> Anyway, I think I can make the SRCU read_{,un}lock() smp_mb()
+> conditional, much like we have for percpu_rwsem and trace rcu, but I
+> definitely don't have time to poke at that in the foreseeable future :(
 
-Can you add a busy-wait to the SPI driver TX func for the case where
-it's invoked with a disabled interrupts? That could be a better
-workaround, silencing the warning and keeping power-off working properly.
+You most certainly can, but all of the approaches that I know of have
+sharp edges in one place or another.  There were extensive unrecorded
+and unminuted discussion of this about five years ago, and I have been
+reconstituting those neurons to document what is feasible.  None of which
+were useful for the use cases back then, whose performance requirements
+could not be met by unsafe srcu_read_lock() and srcu_read_unlock() with
+smp_mb() removed, and others of which really wanted CPU stall warnings.
 
--- 
-Best regards,
-Dmitry
+But it is of course possible that newer use cases might benefit.
+Who knows?
 
+I haven't gotten very far, but it is on my list.
+
+							Thanx, Paul
 
