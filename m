@@ -1,150 +1,332 @@
-Return-Path: <linux-kernel+bounces-271732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 656AF9452B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:27:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E87A19452BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:32:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C921B22FA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:27:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95CA02828A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:32:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BAA25757;
-	Thu,  1 Aug 2024 18:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE1F146D7D;
+	Thu,  1 Aug 2024 18:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rM8HMEdn"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mNUMVz2x"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8983214389D
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 18:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722536818; cv=none; b=IIiZwEMsVgHehH9KLLk730O7YF7Y7jD26ZCDpKDOk5EwVBhvjrW5lh1sQQyZ2/ZQ/IF2t5FFNTLPzbZn7DtNa3+zGyxfgseYQPcRAb87MtmC5pqdj8FYC31zkLaEiZnttGz8PU4TnR4t0/Y1A3kLS4hzZWRiqC63QInmTV5bWDU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722536818; c=relaxed/simple;
-	bh=lHbIHLFhtQNciusEsnruiPFrsux+ubJl8cotIGgu9QA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cWZDC/xz06v+fz3koh4M7B+iYhM0EGYoMEo6yU8krv5rNS43TZ2AUfRQ26EBLwxxxnOfzxoOAyktU6tMqwWcEmcGdil1qoMgT7knTddcigHzO/grF6y/1lOu32OHR7GaopUm57OiXR5jPk+S1IdXaZYqgEe8msY3ZOQlZCEbLDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rM8HMEdn; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3686b285969so3656711f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 11:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722536815; x=1723141615; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2GkfD0g8hTHOTE05py9mAwmf1QYzZu9yR2OS6+zzI80=;
-        b=rM8HMEdn29YaHok0uYeb+av22l4a6P6iEOCn7o/LV9v4EdyOHlzN6IHGcd7CIJUX4E
-         JZP78BzADOkLTOY7VGY9mzcY9lR6uv++P+4QzVCV1NtxeUxIG0XyNC1oggfy9WKHqHnr
-         5j0ukVCpF+G0UVmRGOy318RMhnFbdGmIxT5aTPYg2vB+iIs5zRGWaOqVXQWWidujkT9n
-         p+UnahzdH7A75jfvm/FO4wxFf1spK+L7Jy9iIzi8iDGP6RIGgAXcfKIwYo4nSJLI811z
-         NJKXXEYTd53a8/xk+mV8Z6VM27AKDtUwwSE+V3jLZat1FcZ7Akz3iFDWExUDsyrIdUxd
-         MWPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722536815; x=1723141615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2GkfD0g8hTHOTE05py9mAwmf1QYzZu9yR2OS6+zzI80=;
-        b=wDazUHzJY+Lnz4pHod0jtB0y7WBqo9JlM04JLk7czC9n8Ck3h2IJELF9ZELJib2gG3
-         BQX+0tQOdc15+6He8ZAalUbJOoFilks+RrgFiBvY9au82B2lFRkUO3ATWuhIa1rmUIRB
-         IuUH3l2vY7ik8v5rP6q0rle8JhLMjpGPudETW4VaiLdqIebJKei9X4ghlftaMsF/9A2A
-         cl5rpd6YKB1qIVoiv9Kc1nxHAJWwXLZsyfAhkLa9lKlCTvwDKX3G0QrSw+hLuVimgWrX
-         RWE6a3LRW0pV7YLQOqiMXB2yMzYBdA8hzMrx/7CZraTrY4y6gyI9tQKTolkmplhXJqU+
-         8giA==
-X-Forwarded-Encrypted: i=1; AJvYcCVP30FEaHFull3OT3vaDaNInS+9/911+WMgNMGd4YIW37ihICN5YYwwmEkD3tgf4dCA6fHpAeAEJYr6bM4Sd3+7tCLpCkGBqXwdCao/
-X-Gm-Message-State: AOJu0YzggHTsP8Z7DZy6jtyBHb4qIMhR1D7OSYDllkNi4tr2hanHbpuo
-	FeJZqV8qPseL9B9V2ASe9vvuwiqib9iSRkPzVnfMpWjEPK1jLrohrMF7RU3ViBJwUcu4NpAg3HP
-	u1clgjVFwuEfrchq7Df/mgyI/R8QDfQUwjg5E
-X-Google-Smtp-Source: AGHT+IGwaGkw42I/amAH0IQd6LdSV/vkI/phXZAUV/1lm1vKxK6jNhFtpwWWcpoa+ZqQDQpJUtDs/GFofzfYgLUeu2Q=
-X-Received: by 2002:adf:a356:0:b0:368:3895:67d6 with SMTP id
- ffacd0b85a97d-36bbc0cbe69mr533475f8f.20.1722536814320; Thu, 01 Aug 2024
- 11:26:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9DF13BC0C;
+	Thu,  1 Aug 2024 18:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722537159; cv=fail; b=UjjULQWe84E+4dPJfvS+OUniMRcNebllJO7I/tJjFwj5oexhpnMR6OGik5h3vNi5nP37ZJQ451C21HOdCuHMWHuGSOwqQxjk8HzbikVF/+iYTQHv5kwGKf3PAPmCwZOgGhvcgnvePybz/zQ/lY3r3XVJ141esgBEWjefw7m+WII=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722537159; c=relaxed/simple;
+	bh=/pRm8CxDl6Itcr/E48/VgVX553gCT/wu/rj+OgluKRs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=QkiYGU3GiHqWZjsozCWFSawMx3qmOQuIllNnSEfTN0SQLUFsysKaDQU+H49+niiLcL6cCpbk/ZI5g7AOcPonjAAeMX8yDZ1n6LDDzpmkV8uWfdAvmST+CPvtjdh+pJTgfdlU4k5p5r+e2UI2XLEPRBWrb+UOWrQ2W9ry2amBSlM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mNUMVz2x; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722537157; x=1754073157;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/pRm8CxDl6Itcr/E48/VgVX553gCT/wu/rj+OgluKRs=;
+  b=mNUMVz2xRR6Yqe5fa6j9D6b0qLMZaNcQ97xggagkiQx3PAVCBeUJVanZ
+   RBA07MCWZuAhJDD3NN7ZKmNRXU/F1w9nHRIxWQvV5Duan6gGQVaBlqYXI
+   to2m0sXkuxnrs+Etnu5nTRuk/TFdrYLLnntVGx4zhJbNT5kFzMC72vqsK
+   3s2j4K7hzrCHleAbczs6tDeLiBOToLwAQrEec6scZ2aWUob+NLCBsdBob
+   /sXnfVpJ1vicsSUU3guJj2inUtmiq2H9qpK3x9LNORM2+oKXWr+i/1rPA
+   AJntLaG7NwL9jUSQbIwqPDtK+S5iBOBFwUf91N9rmW47YpQw9FDuyY4nL
+   w==;
+X-CSE-ConnectionGUID: Y4xhdKJ/Rd2CizdG3x6x8A==
+X-CSE-MsgGUID: ZmoQHzR7Re6YyNL3GgepFg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="24290504"
+X-IronPort-AV: E=Sophos;i="6.09,255,1716274800"; 
+   d="scan'208";a="24290504"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 11:32:30 -0700
+X-CSE-ConnectionGUID: ftYxphWvTMmfUebLyhaHOQ==
+X-CSE-MsgGUID: Hq0p41wZTQ+S4oTcd4eUDg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,255,1716274800"; 
+   d="scan'208";a="55057681"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 01 Aug 2024 11:32:30 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 11:32:29 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 1 Aug 2024 11:32:29 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 1 Aug 2024 11:32:29 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.40) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 1 Aug 2024 11:32:28 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=e6kValQcX5lPPet90q6RbRejrsDDnDY74liJweZeUbUfnwHpKB9ig6Kihif0cYjTpdVnzd3kPXrOKd05ZheOnGpguQaBJKyaTdMxrRIZJf0VAM0x/0/fmdleySjzCVlm/ODYnkc22nZcbIHlQvyWZJS8hBQKZt18iIa0KX40w3/dz0TyF4KBXQrCLDzLBFNNlE649O/52tNymmXBipzs5ZQdSRb/WXVOgHppD+GiMBd6v2TCKS8y5TR++Jpg4Z2WgGwBekXgLk/PFT6IoD9j7rtfp8RY4d9tbpg3b1GuUdsdgPFjOBfevhYA5s51BvwDAUWSWgr3L8yumnbNqka3KA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5DCppiaJJSG9IIhq4/zxDat/HAuPxhO4r9XdBeKVJOE=;
+ b=JtoVVNSTIOFn6ZKjZIVJaaRiQ/XL2D5Zl/JMHCVVWifJi/U4sC2JKM03KqM15IEN4rK7A/tkyzP4fO3WAUY3dYPG9i4WOgq/kShagSDCSqmN6g7PkhoP3rX6cDcxZCynLpmPaYOy2/pEm9q6SxOXbNZHd4FStkIvVx8hpWNw+Xc+YwcmwgZlL+BHSFB/sgUrHVW/IcHLNEW7ZASGgevDhy4xu1gqV+AqueO8wwtKrO2wOO8qg0HdM2+nrI5dETxbWWRc87rmUrYdYYwnB6DzLZ4beI9s6Yd8l5gNMeP3Ez0PSaOPY58GQLLyPQDcpi8Y+34NhQJ2P4LbNclg5MDIjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
+ by SA2PR11MB4921.namprd11.prod.outlook.com (2603:10b6:806:115::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Thu, 1 Aug
+ 2024 18:32:25 +0000
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b%3]) with mapi id 15.20.7807.032; Thu, 1 Aug 2024
+ 18:32:25 +0000
+From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal
+	<sumit.semwal@linaro.org>, =?iso-8859-1?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH 0/5] udmbuf bug fix and some improvements
+Thread-Topic: [PATCH 0/5] udmbuf bug fix and some improvements
+Thread-Index: AQHa4///5LN9XFZvvk+YHtmHcHOwMbISscug
+Date: Thu, 1 Aug 2024 18:32:25 +0000
+Message-ID: <IA0PR11MB7185EDB259502BC6937CE566F8B22@IA0PR11MB7185.namprd11.prod.outlook.com>
+References: <20240801104512.4056860-1-link@vivo.com>
+In-Reply-To: <20240801104512.4056860-1-link@vivo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|SA2PR11MB4921:EE_
+x-ms-office365-filtering-correlation-id: e8fe3735-f831-4fa0-bb5c-08dcb2584a96
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?3gYBL1Py492iQzCl746MM87t4Lx7HTD4NtemHdPonc30ZlEyCRk2UPJZbC?=
+ =?iso-8859-1?Q?cTyTu/RmHhmdEn0ee9OgY9M5EIz4XTJUKW83Sc0pon5Lqw5g3GWVz4Pkfk?=
+ =?iso-8859-1?Q?u08k4/i4c+CQgwcxmvzKkYh/outMFXiNipDWtoFMM7bPvlszd/OjfNMWj6?=
+ =?iso-8859-1?Q?OOyYBKEb4bpFlZ9hEBu43JLnSepFoT5mDwfgJ/fXtn9J7HLWfeb1j88hJW?=
+ =?iso-8859-1?Q?s1bUO7Gpuwzi1hsNzOHH2pgzhZ3mtQsNVaOIOVyjMC8CxKnQ2LZkJTaDfE?=
+ =?iso-8859-1?Q?wdAXqJs/HD4eW79d1/3rzyNEq1r3BYl3zcA+rq7BMsKdyVIBZsfV+skeJ5?=
+ =?iso-8859-1?Q?7lS7dO5vfXFKFGbWmjKw7fRPGDpnGPHII1kwI9gwYhPq4Rfqt9KSgDCxl/?=
+ =?iso-8859-1?Q?7EoX0xkZkFer4VtaH52yXSaEWqyTM6s+64QEDv6hNwXQH/43eynVAuVCNv?=
+ =?iso-8859-1?Q?3/fdKLXERKNb27bjt+kS6kIjkG97fntoNesdGlXBdYPJ5Le4At0AT2LTFR?=
+ =?iso-8859-1?Q?9LpRaQEDUHdgPfox0j89hv3n/hjqVxP//S9yptPUq6PdSoY1K4sd4rhmP6?=
+ =?iso-8859-1?Q?DGwifJXoSrVs7UqDBbtLLaYnNOCL36dwGTAx0f3/r/4CAEf90JaAJf8fiH?=
+ =?iso-8859-1?Q?72xsv3cPcSFtsj8RPp4ACS9UQ1KyefMXL2SdbtHksOHcfBDrqupawjVUJW?=
+ =?iso-8859-1?Q?ZS0oqMsETZLpIYv26EsaIb7on/lCl+E6zmNnAGqoIR/ebxAS8ye2gCtdDW?=
+ =?iso-8859-1?Q?g8MU4OK90h+5PHt1knsXGjJC/0b4QXX0YhbbOsVH+OuiKwTcE/5TupJwU2?=
+ =?iso-8859-1?Q?BALj8mTWmqamgmfj0ESCGGJ1YLRT7XDoTEtLJLM1I10kK8PSCC3frd5lXd?=
+ =?iso-8859-1?Q?9Ob6+WLpiSOIIlV1WY9lxdKBfCwgpDh23Z/ZgWlmxVc3US5fifeZg7ciZM?=
+ =?iso-8859-1?Q?kFcY8tLnOdsOdVEJdk1ZpvW3R6r9NicMboI1V5RkWa8vV8UIJa+qWEwFgw?=
+ =?iso-8859-1?Q?xQpxoeRN1g7KwL9+3VYWfpM3rIZF+o4sNw148Fl1lgPqxUBDTWCAqmdw+B?=
+ =?iso-8859-1?Q?AkR70kx9J0Iq7UEATwnxs3DSsLlT3PpQ482dswtsCixRRG85FkpM6BGP14?=
+ =?iso-8859-1?Q?tropfZ9yzOxpo4qWGtS6Anz1CcvEKIN3Or5Ejc3WpdDMfwkpbWbmbOuEeJ?=
+ =?iso-8859-1?Q?pVgxlRkmRsU7lql7AoYp/sAbEZYMtAgoCwZkbthXgP2vQyAHdsYV/2hT82?=
+ =?iso-8859-1?Q?szsPHgWBCC+D5O6YWc1UmmW7zEOvfZPl/v5SWQSwRayEr0XHxiPkiQUttX?=
+ =?iso-8859-1?Q?fMNcekX0mLeGQlKlzJvwDeuS94yUPaGEdq9Cb3loSvbxErmpI/NVMqQzwn?=
+ =?iso-8859-1?Q?EGIRVcS27iIGJBm0VCD1A9n6TVx9/m95IQQvKgPSjXN3luSfNldwo=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?RNJrDst0wbkJAyGzA0P/7qYvn5Tu6QVBn+uekK4rk93rQHuYAXpH1eQipB?=
+ =?iso-8859-1?Q?trj3KWs+A4JhXqrA7EfdsyeQSb9qbhX+HH3QGXAcc44fhoBL8nv8qe/6uK?=
+ =?iso-8859-1?Q?+sviSSh0QLR2C6Lz17yLkBF8PTDR2hgj0mYvdTgkA/o2o4wptAFuohB7bh?=
+ =?iso-8859-1?Q?zB8tmikJ7/d32vN9KRcO2L5kSZlHZTS6p+Aj5QBIfOBHX79giDzy7KBKb4?=
+ =?iso-8859-1?Q?WV83kS0DaDIXt+ZF9VWz7XyfYK1fKyJWx/oVzD4gjT1Yv+a71sE275UC4O?=
+ =?iso-8859-1?Q?qjJ5IMmX5zD5toixN2WHZ7xKFTXGjHUMlj5xb1jwK3chwQftpCC0o2lvtJ?=
+ =?iso-8859-1?Q?1+5c8Qk/I+AUd9sQcZXsg4lDbQnvqfAKpArQzys2Y+4B54k8dWTpN6N54I?=
+ =?iso-8859-1?Q?fRoch1ql/fGGvsntyyJqZRJNzLq80BXsj0FqRJCYuNRqKpaxN3ipzthbZk?=
+ =?iso-8859-1?Q?Wm5F+s4xsTHX0wobZRcSJAJQMLhZgW9wcmlKcpZakAKJnkypx0q9U5B4CV?=
+ =?iso-8859-1?Q?Z/6AYz32Igys5XiZO+UY01P1sIwSs/K1YbL/fEnruzN16qyqMWPdqbhTnK?=
+ =?iso-8859-1?Q?rKHCcWa70AAKPEerQ7BOAfQ5FUYPcOi6g/RqQamiBpwHlQLWNogeFJwHey?=
+ =?iso-8859-1?Q?Hv8O/LPyyuikdzdneBG0qlNW+kLaGJKvM0dVBPiwS3+c++iHJvA/j4KQwR?=
+ =?iso-8859-1?Q?/1EThm8TtM8UtfwtqHsOXFCYAo/aTADxWjXEkCCILEKB17MD9HTO4vk+fD?=
+ =?iso-8859-1?Q?tyrXEpW7f0bI0hKFdocam+pwtM0QoC3dE7HpuMjDwckaVHjKCkP834dyca?=
+ =?iso-8859-1?Q?KarwggEgxaIUjshkWrJScHerf+v7BvflUUeiji8WsHlIR08SstCKYmJPR+?=
+ =?iso-8859-1?Q?gXIQl8CJqsiG/jJEHj97mwZLPAhx0POxT6UacTFz8mfKBDwP0nHK/3UveY?=
+ =?iso-8859-1?Q?2AxiCracEeaCYzOze1Ovl5YV6S3oOP0V/hYTd7BmAl4PQVk8kUL+dCvOBj?=
+ =?iso-8859-1?Q?KZQnAkdxx6QITwk/t0OBow9BQ+pAg2WPJBct9o+nRFLpYCxKSeqlgJcmcJ?=
+ =?iso-8859-1?Q?E2g/25mhyNWqHQJw+YqBAkq1Z1PlF0P4sqbZazEDhXdcKZVQIAeBfLfNLx?=
+ =?iso-8859-1?Q?0CnwAVJG4Pax6d3blPjmtBlqrerWyu+TS8jfMGO/m44k0O5TRerbkAyHNA?=
+ =?iso-8859-1?Q?vStEkZRZgbo8rC153KjdHSl+ZNtetAneLKTI+IGbnPkQpeBVTN6fMTVard?=
+ =?iso-8859-1?Q?zpbRFGyVl9ybRwRl7CCkVO8H2zPWjPhWaZZMdN4gWa9H7nNJYNu2/YPiO7?=
+ =?iso-8859-1?Q?CngEV+rY7S1NVHz1rFxliHxFsvGP468F76ha2nmBKGwRvztNWmKqLKCiGt?=
+ =?iso-8859-1?Q?x8d9FmDZomUmBG3/0gqOfZLDEkZAqR5PY/S439sj/SzVUoYvGoxXZV/SFY?=
+ =?iso-8859-1?Q?xkWS7g43Yf3OZ3YKV1vjGOeDJIbRLfyW2Adpycpi88F+Z1ZHvI11RsC5Wq?=
+ =?iso-8859-1?Q?+MdmjUCENf8MAvXTTh1TWiNz5v/8IntDkwBNcICk9L4X6DA1ljvhrKJ6cw?=
+ =?iso-8859-1?Q?dygU9fAwkop9bctmdMTjQWx5EqdVZxJ9KqTcCSYMU3M7y6hW3nCwWNYXq+?=
+ =?iso-8859-1?Q?8s5w08kqEeLTDznrJKVu8230ASTJzl8mio?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240628-tracepoint-v4-0-353d523a9c15@google.com>
- <20240628-tracepoint-v4-1-353d523a9c15@google.com> <20240731170508.GJ33588@noisy.programming.kicks-ass.net>
- <CAH5fLghYodekhH-1A0BWZVwgbqkWbP3WP70-us2FtHqvOqD_Hw@mail.gmail.com> <20240801102804.GQ33588@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240801102804.GQ33588@noisy.programming.kicks-ass.net>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Aug 2024 20:26:42 +0200
-Message-ID: <CAH5fLgiOe1ECCwE1cwczsT13iPyymdUTbV-9ZHeDrp_OGq5FgQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] rust: add static_key_false
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Peter Zijlstra (Intel)" <peterz@infradaed.org>, 
-	Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8fe3735-f831-4fa0-bb5c-08dcb2584a96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2024 18:32:25.7582
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 57QNouegtvDJCEIZG9tT0BWp5rbTjwvuRpxZyj90NRwjrZLxxrv3FGv0dbCXcE3D59HmEm5cUkP3AdVmDztwmMk/fT7cQVpBVoH1Zg6ToSw=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4921
+X-OriginatorOrg: intel.com
 
-On Thu, Aug 1, 2024 at 12:28=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
-g> wrote:
->
-> On Wed, Jul 31, 2024 at 11:34:13PM +0200, Alice Ryhl wrote:
->
-> > > Please work harder to not have to duplicate stuff like this.
-> >
-> > I really didn't want to duplicate it, but it's very hard to find a
-> > performant alternative. Is there any way we could accept duplication
-> > only in the cases where an 'i' parameter is used? I don't have the
-> > choice of using a Rust helper for 'i' parameters.
-> >
-> > Perhaps one option could be to put the Rust code inside jump_label.h
-> > and have the header file evaluate to either C or Rust depending on the
-> > value of some #ifdefs?
-> >
-> > #ifndef RUST_ASM
-> > /* existing C code goes here */
-> > #endif
-> > #ifdef RUST_ASM
-> > // rust code goes here
-> > #endif
-> >
-> > That way the duplication is all in a single file. It would also avoid
-> > the need for duplicating the nop5 string, as the Rust case is still
-> > going through the C preprocessor and can use the existing #define.
->
-> I suppose that is slightly better, but ideally you generate the whole of
-> the Rust thing from the C version. After all, Clang can already parse
-> this.
->
-> That said, with the below patch, I think you should be able to reuse the
-> JUMP_TABLE_ENTRY macro like:
->
->         JUMP_TABLE_ENTRY({0}, {1}, {2} + {3})
+Hi Huan,
 
-Yeah, I think this can work. I will submit a follow-up patch that
-removes the duplication soon.
+> This patchset attempts to fix some errors in udmabuf and remove the
+> upin_list structure.
+>=20
+> Some of this fix just gather the patches which I upload before.
+>=20
+> Patch1
+> =3D=3D=3D
+> Try to remove page fault mmap and direct map it.
+> Due to current udmabuf has already obtained and pinned the folio
+> upon completion of the creation.This means that the physical memory has
+> already been acquired, rather than being accessed dynamically. The
+> current page fault method only saves some page table memory.
+>=20
+> As a result, the page fault mechanism has lost its purpose as a demanding
+> page. Due to the fact that page fault requires trapping into kernel mode
+> and filling in when accessing the corresponding virtual address in mmap,
+> this means that user mode access to virtual addresses needs to trap into
+> kernel mode.
+>=20
+> Therefore, when creating a large size udmabuf, this represents a
+> considerable overhead.
+Just want to mention that for the main use-case the udmabuf driver is desig=
+ned for,
+(sharing Qemu Guest FB with Host for GPU DMA), udmabufs are not created ver=
+y
+frequently. And, I think providing CPU access via mmap is just a backup, ma=
+inly
+intended for debugging purposes.
 
-Alice
+>=20
+> Therefore, the current patch removes the page fault method of mmap and
+> instead fills it directly when mmap is triggered.
+>=20
+> This is achieved by using the scatter-gather table to establish a
+> linear relationship for the page. Calling remap_pfn_range does not cause
+> the previously set VMA flags to become invalid.
+>=20
+> Patch2
+> =3D=3D=3D
+> This is the same to patch:
+> https://lore.kernel.org/all/20240725021349.580574-1-link@vivo.com/
+> I just gather it to this patchset.
+>=20
+> Patch3
+> =3D=3D=3D
+> The current implementation of udmabuf's vmap has issues.
+>=20
+> It does not correctly set each page of the folio to the page structure,
+> so that when vmap is called, all pages are the head page of the folio.
+>=20
+> This implementation is not the same as this patch:
+> https://lore.kernel.org/all/20240731090233.1343559-1-link@vivo.com/
+>=20
+> This reuse sgt table to map all page into vmalloc area.
+>=20
+> Patch4
+> =3D=3D=3D
+> Wrap the repeated calls to get_sg_table, add a helper function to do it.
+> Set to udmabuf->sg use cmpxchg, It should be able to prevent concurrent
+> access situations. (I see mmap do not use lock)
+>=20
+> Patch5
+> =3D=3D=3D
+> Attempt to remove unpin_list and other related data structures.
+>=20
+> In order to adapt to Folio, we established the unpin_list data structure
+> to unpin all folios and maintain the page mapping relationship.
+>=20
+> However, this data structure requires 24 bytes for each page and has low
+> traversal performance for the list. And maintaining the offset structure
+> also consumes a portion of memory.
+>=20
+> This patch attempts to remove these data structures and modify the
+> semantics of some existing data structures.
+>=20
+> udmabuf:
+>   folios -> folios array, which only contain's the folio, org contains
+> duplicate.
+>   add item_offset -> base on create item count, record it's start offset
+> in every memfd.
+>   add item_size -> base on create item count, record it's size in every
+> memfd.
+>   add nr_folios -> folios array number
+I am not sure if these changes improve the readability. Instead, I think it=
+ makes
+sense to add comments to the existing code.
+
+>=20
+> So, when building the sg table, it is necessary to iterate in this way:
+>   if size cross item->size, take care of it's start offset in folio.
+>   if got folio, set each page into sgl until reach into folio size.
+>=20
+> This patch also remove single folios' create on each create item, use it
+> be the ubuf->folios arrays' pointer, slide to fill the corresponding
+> folio under the item into the array.
+>=20
+> After the modification, the various data structures in udmabuf have the
+> following corresponding relationships:
+>   pagecount * PAGESIZE =3D sum(folios_size(folios[i])) i=3D0->nr_folios
+>   pagecount * PAGESIZE =3D sum(item_size[i]) i=3D0, item_count (do not
+> record)
+>   item_offset use to record each memfd offset if exist, else 0.
+>=20
+> Huan Yang (5):
+>   udmabuf: cancel mmap page fault, direct map it
+>   udmabuf: change folios array from kmalloc to kvmalloc
+>   udmabuf: fix vmap_udmabuf error page set
+Do you have a test-case to test this patch?
+
+>   udmabuf: add get_sg_table helper function
+>   udmabuf: remove folio pin list
+Please run the newly added udmabuf selftests to make sure that these
+patches are not causing any regressions. And, we also need to make sure tha=
+t
+the main use-cases (Qemu with memfd + shmem and Qemu with memfd + hugetlb)
+are working as expected given the invasive changes.=20
+
+I'll be able to test and provide more detailed feedback on all patches once=
+ I am back from
+vacation late next week.
+
+Thanks,
+Vivek=20
+
+>=20
+>  drivers/dma-buf/udmabuf.c | 270 +++++++++++++++++++++-----------------
+>  1 file changed, 148 insertions(+), 122 deletions(-)
+>=20
+>=20
+> base-commit: cd19ac2f903276b820f5d0d89de0c896c27036ed
+> --
+> 2.45.2
+
 
