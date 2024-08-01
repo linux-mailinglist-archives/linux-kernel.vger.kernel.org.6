@@ -1,122 +1,188 @@
-Return-Path: <linux-kernel+bounces-270829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4FC9445DE
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:50:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3CCE9445B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27A66284528
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:50:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FF4D1F23606
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065E21586C4;
-	Thu,  1 Aug 2024 07:49:57 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3538B1586C4;
+	Thu,  1 Aug 2024 07:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bajg4sSS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC3C1EB4A2;
-	Thu,  1 Aug 2024 07:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A4019478;
+	Thu,  1 Aug 2024 07:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722498596; cv=none; b=UyNsEhbqyQKzUOLhhw9sNnQxF+AfTDq4HB95u7hcXzXCY1g4WC2VxRLObu8dYKEbX7ix0gBN69NfgL77+4+haRTBS+42ZleUH8K84+zQ+Qees06QP0gx0d7J6Lm6lBTL7M/LII6wGZ9bANZYngcL5k5JFUaQvFD/KvPmEpKLv48=
+	t=1722498313; cv=none; b=c5abO7waF3TQc5otl/Uax7o4actGicehjmMAJIgtVe4utfjchDHknCPWltvM8Ijx+bdhXN7m++rzMXj7z2U4d7Behou1GIOjxD7pqpahdN/TbqsXcEvV4Jc5ejkQwxMkhWk44Xty9khE39pRaDAkyQy0PLmSdzuzCxZBKKaUL6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722498596; c=relaxed/simple;
-	bh=bq+4/0cw8Gb20yjCGjpMMO9FWyT0uGeevUV8NESf4b0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TNwpfP7/uoYCY+YU6ECtNbbaFjKr2POBVWg+FBpJXr/FZ6/wGPT93o0I2SvHmNNLDFLNgyjOAFC9DO+HTxjC4qq3YQrVVFfE2vUVA7wUURBpQ1O2HrfJ+QWHuZMHl7UKKAk+Z3J0LuskabL+rQjKZge4/xF8W7Ggi98ufb7Vm00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WZLhX5Q7Tz1L99f;
-	Thu,  1 Aug 2024 15:49:32 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 38152140384;
-	Thu,  1 Aug 2024 15:49:45 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 1 Aug 2024 15:49:44 +0800
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-To: <jgg@ziepe.ca>, <leon@kernel.org>, <bvanassche@acm.org>,
-	<nab@risingtidesystems.com>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>,
-	<target-devel@vger.kernel.org>
-Subject: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-Date: Thu, 1 Aug 2024 15:44:15 +0800
-Message-ID: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1722498313; c=relaxed/simple;
+	bh=fjFNt30+/BTVslczQO0aZGNQYAxiraVzAPYh/BdndbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fNgZDqeJaYA2qae60pJ7y7r3Z/ztM5zgpP0hEtSyhPYvlD4VsKYo0GVS8HVYdrohFCCvTjoa5vjc8dnrni3xf8bJnxLNVyZorKVAdQuqiOc4bLidrc3AwnSDg+CYfbD8a6DXirhL7yTnzxY4JM/a229sIQGAs6X8DYYZ802o+xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bajg4sSS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8217C4AF0A;
+	Thu,  1 Aug 2024 07:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722498312;
+	bh=fjFNt30+/BTVslczQO0aZGNQYAxiraVzAPYh/BdndbY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bajg4sSSkdkvHKYWr09NWUym5ZJdNpNEWX5SlCD8oobDhwItOHFPTeCyEkwsUsHzG
+	 y+eBWj1Xq6OzE/LcASpNeVhYuqJkxQ6fy/fe2X8ONyhpehcZd6OHeqbkGmAhmKB/Uy
+	 1nDbGUXdwoQWbndhv/1g4oQ0myxWEJPpxR2DjYMgj3q57B0AB4jG69LD7J1a2n1YWh
+	 xZ3mAMc6/dNHKtvfmQ7yiSs5gSo9cqI3pP1L1SrVtaYu0gXbfrg5473msNOiQwlsnQ
+	 KRvJXnGLLUnu0gI8bACC5UIdCHhl+/dy6C6ENYBBr+7PVv0hnNIkceM03v/BamLxCU
+	 0rtcM33fn8ijQ==
+Message-ID: <0b007a32-00be-40ae-9d96-d7a02b4534bf@kernel.org>
+Date: Thu, 1 Aug 2024 09:45:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: soc: qcom: eud: Add phy related bindings
+To: Elson Serrao <quic_eserrao@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, gregkh@linuxfoundation.org
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+References: <20240730222439.3469-1-quic_eserrao@quicinc.com>
+ <20240730222439.3469-2-quic_eserrao@quicinc.com>
+ <63cf3198-fb79-466f-b80a-024e970e400a@kernel.org>
+ <5275651f-4075-4dac-bba0-da88f5836459@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <5275651f-4075-4dac-bba0-da88f5836459@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently cancel_work_sync() is not called when srpt_refresh_port()
-failed in srpt_add_one(). There is a probability that sdev has been
-freed while the previously initiated sport->work is still running,
-leading to a UAF as the log below:
+On 01/08/2024 00:23, Elson Serrao wrote:
+> 
+> 
+> On 7/30/2024 10:33 PM, Krzysztof Kozlowski wrote:
+>> On 31/07/2024 00:24, Elson Roy Serrao wrote:
+>>> Embedded USB Debugger(EUD) being a High-Speed USB  hub needs
+>>> HS-Phy support for it's operation. Hence document phy bindings
+>>> to support this.
+>>>
+>>> Signed-off-by: Elson Roy Serrao <quic_eserrao@quicinc.com>
+>>
+>> A nit, subject: drop second/last, redundant "bindings". The
+>> "dt-bindings" prefix is already stating that these are bindings.
+>> See also:
+>> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+>>
+> Ack
+>>> ---
+>>>  .../devicetree/bindings/soc/qcom/qcom,eud.yaml       | 12 ++++++++++++
+>>>  1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+>>> index f2c5ec7e6437..fca5b608ec63 100644
+>>> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+>>> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,eud.yaml
+>>> @@ -29,6 +29,14 @@ properties:
+>>>      description: EUD interrupt
+>>>      maxItems: 1
+>>>  
+>>> +  phys:
+>>> +    items:
+>>> +      - description: USB2/HS PHY needed for EUD functionality
+>>> +
+>>> +  phy-names:
+>>> +    items:
+>>> +      - const: usb2-phy
+>>> +
+>>>    ports:
+>>>      $ref: /schemas/graph.yaml#/properties/ports
+>>>      description:
+>>> @@ -48,6 +56,8 @@ properties:
+>>>  required:
+>>>    - compatible
+>>>    - reg
+>>> +  - phys
+>>> +  - phy-names
+>>
+>> That's an ABI break and nothing in commit msg justified it.
+>>
+> 
+> Hi Krzysztof
+> 
+> Thank you for the review.
+> I see that the only user for EUD as of now is QC sc7280 SoC where phy property
 
-[  T880] ib_srpt MAD registration failed for hns_1-1.
-[  T880] ib_srpt srpt_add_one(hns_1) failed.
-[  T376] Unable to handle kernel paging request at virtual address 0000000000010008
-...
-[  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
-...
-[  T376] Call trace:
-[  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
-[  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
-[  T376]  process_one_work+0x1d8/0x4cc
-[  T376]  worker_thread+0x158/0x410
-[  T376]  kthread+0x108/0x13c
-[  T376]  ret_from_fork+0x10/0x18
+Did you ask all customers and all users of Linux kernel?
 
-Add cancel_work_sync() to the exception branch to fix this UAF.
+> is missing and EUD node is disabled. As described in my cover letter, HS phy
+> support is needed for EUD functionality and this is applicable to all SoCs
+> where EUD is to be enabled. Hence phy would be a required property.
 
-Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
-Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
----
- drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Nothing in commit msg explained that, but I have a bit hard time to
+believe that this never worked. If that's the case, say it explicitly in
+commit msg - this was always broken.
 
-diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-index 9632afbd727b..244e5c115bf7 100644
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
- {
- 	struct srpt_device *sdev;
- 	struct srpt_port *sport;
-+	u32 i, j;
- 	int ret;
--	u32 i;
- 
- 	pr_debug("device = %p\n", device);
- 
-@@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
- 		if (ret) {
- 			pr_err("MAD registration failed for %s-%d.\n",
- 			       dev_name(&sdev->device->dev), i);
--			i--;
- 			goto err_port;
- 		}
- 	}
-@@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
- 	return 0;
- 
- err_port:
-+	for (j = i, i--; j > 0; j--)
-+		cancel_work_sync(&sdev->port[j - 1].work);
- 	srpt_unregister_mad_agent(sdev, i);
- err_cm:
- 	if (sdev->cm_id)
--- 
-2.33.0
+> Given that the changes in this series are directly applicable to sc7280 as well,
+> I will re-enable/rectify EUD feature on sc7280 SoC first, by adhering it to this binding
+> requirement. That would address the ABI break. 
+
+I don't understand what you are saying here.
+
+> Once the base framework is set I shall extend it to sm8450 SoC.
+
+
+Best regards,
+Krzysztof
 
 
