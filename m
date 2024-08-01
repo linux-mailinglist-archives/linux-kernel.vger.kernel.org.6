@@ -1,215 +1,107 @@
-Return-Path: <linux-kernel+bounces-271446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEAD3944E5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:46:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53EC7944E5E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 16:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FD751F2529E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 832FC1C21861
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5859A137745;
-	Thu,  1 Aug 2024 14:46:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A48170858;
+	Thu,  1 Aug 2024 14:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="wQnLtger"
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JmLkxTzN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE891EB48B;
-	Thu,  1 Aug 2024 14:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7AA13791C
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 14:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722523592; cv=none; b=BsdPWAh+OP3n3nh6x3XP+G42eWaSrcKscNEXmHZiH9+2cMFu4a3oQcLIk/SSLSxmcM0TbTWc93DpWsW/+B0Z9QYx3KzTbBveQ5THF/ypCgsYm4gedmr2PQzVtcbtynqD27z4RT6ZdxB+bfoI+FDiJlCqjwfpx/H77FU+brVOSbw=
+	t=1722523609; cv=none; b=EEJCTmeLpNqVAN7wZBDeXLKzg3USVwC5JmW1AM17S3PcyVJ7ta3I+rGcqbBCls4HWa6nYLqXFOHtoKBtWIgUQMoNldzNgjLAcGyMtDw+R2NxH3ENhypY1+US5DyWkHt6jNzck7tDDOmYj+1Pcr4wEzMKMRaE2/u7O9yIOGWGFnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722523592; c=relaxed/simple;
-	bh=ruElIYvVXuXWlHz/2qpyprt+UXztEzONYjZnkuwty04=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=awGY0GLmhsiv++wCofNkfsG2USMYwGYo66ufdDyv3m3/Qu08KTTu6PRUX/fMm/q0rwxGB1EYrlsk5nTIh3lCbEekkchTW+Jh2YgokkZeYQZGbBhPRHQPOPyXp8GexJ/49vzByBuMKS1VifdEEaKHfLcPvNmQIpTzkFygjYeG9Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=wQnLtger; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net [IPv6:2a02:6b8:c1f:169b:0:640:faad:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id DAB1161CD0;
-	Thu,  1 Aug 2024 17:46:20 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id JkYaPQ0PmuQ0-CX18t2uF;
-	Thu, 01 Aug 2024 17:46:20 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1722523580; bh=N8CW5XzoORMtlNIZsYqpZaVQshBSKhGqzo22PeVF58I=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=wQnLtger8UgV8kknPfrR832Ume74Nxb1xF+nFRVKdBVDpd8rF7KR4hWtqrJIcYwD+
-	 cgvNkNUWaHh1RIa/0WE5V6ehQAicu7OuyYF8gKxQqf3MaSzFUzl0VpGT7Q8LeX8/0G
-	 LjMMjmIWv5kzGcRPPdcFJznMdrxUSgit+5Ms+Y38=
-Authentication-Results: mail-nwsmtp-smtp-production-main-64.vla.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <ead8c4fcded5a1341a9ce0ca6aa471a52f6d0051.camel@yandex.ru>
-Subject: Re: Lockup of (raid5 or raid6) + vdo after taking out a disk under
- load
-From: Konstantin Kharlamov <Hi-Angel@yandex.ru>
-To: Bryan Gurney <bgurney@redhat.com>
-Cc: Yu Kuai <yukuai1@huaweicloud.com>, Song Liu <song@kernel.org>, 
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- "yangerkun@huawei.com" <yangerkun@huawei.com>, "yukuai (C)"
- <yukuai3@huawei.com>,  dm-devel@lists.linux.dev, Matthew Sakai
- <msakai@redhat.com>
-Date: Thu, 01 Aug 2024 17:46:18 +0300
-In-Reply-To: <CAHhmqcTomcMEooe-mtZ5n1Gm_OfJ+bVssk54oXz84=Au75+Tag@mail.gmail.com>
-References: <a6d068a26a90057fb3cdaa59f9d57a2af41a6b22.camel@yandex.ru>
-	 <1f879e67-4d64-4df0-5817-360d84ff8b89@huaweicloud.com>
-	 <29d69e586e628ef2e5f2fd7b9fe4e7062ff36ccf.camel@yandex.ru>
-	 <517243f0-77c5-9d67-a399-78c449f6afc6@huaweicloud.com>
-	 <810a319b846c7e16d85a7f52667d04252a9d0703.camel@yandex.ru>
-	 <9c60881e-d28f-d8d5-099c-b9678bd69db9@huaweicloud.com>
-	 <57241c91337e8fc3257b6d4a35c273af59875eff.camel@yandex.ru>
-	 <37df66ec9cf1a0570a86ec0b9f17ae18ed11b832.camel@yandex.ru>
-	 <CAHhmqcTomcMEooe-mtZ5n1Gm_OfJ+bVssk54oXz84=Au75+Tag@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3 
+	s=arc-20240116; t=1722523609; c=relaxed/simple;
+	bh=bPcFST2ekcj/0v3/PDTDbdq3NIbOxwJ+hdiAsR0MKy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gErnKE1pi+pemW77jQhWxHwJrytWV+iCAd+xE9qk0ZCJJ41KUGv2bHnbCnYTSbvIpa0mY9Kl482QFYEE9dN9IyO8U9zkG6QNeE6FG4cQavoX90xXPNquIPKo3FPUnMIQD9sR2gOjG/PJGnhf2QnBn+pyiykgrEHP5+9nTIOjKHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JmLkxTzN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C21DC32786;
+	Thu,  1 Aug 2024 14:46:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722523608;
+	bh=bPcFST2ekcj/0v3/PDTDbdq3NIbOxwJ+hdiAsR0MKy8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JmLkxTzNBqt4gBpX3zxyLTxZ/eVW2SKiUcxfyw0NRd92KVj52HjXCK8hQnFTf1tpw
+	 ejmB78g3/8lQoXF9/YiL7GTQmrs2uzMbEMgrJlOE4OWpDz/xjNxTFcDkkNZisPm5Ja
+	 sRbUaaKXnTLpqUtY7plE1maySZxJwybt54lo9eVLwwTevUD+U/br2sJWiVXCfP2DXQ
+	 Tt16/z2hsLJWwoH9uXP+uN37naXI96+YhqBc+cwsR2PpQVYS8BCa4AYDpg/laxdPcm
+	 nr/RU1dkIk+CYWwQVbzJmfxn5RRKfbTFlD87EbKDOzVeFutlXTMSAu7UP0IdDA8O9F
+	 B9/w7SrcZ/FOw==
+Date: Thu, 1 Aug 2024 15:46:43 +0100
+From: Will Deacon <will@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/mm: Avoid direct referencing page table enties in
+ map_range()
+Message-ID: <20240801144643.GA4980@willie-the-truck>
+References: <20240725091052.314750-1-anshuman.khandual@arm.com>
+ <3e82687a-0183-42f3-b32c-6d99dbd4fe49@arm.com>
+ <20240801113440.GB4476@willie-the-truck>
+ <c65c0bcc-149e-4f30-9bab-e5377230d2cd@arm.com>
+ <20240801132326.GA4794@willie-the-truck>
+ <b0a34ffa-5a5e-4048-8b44-ff2c9510ec9a@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0a34ffa-5a5e-4048-8b44-ff2c9510ec9a@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, 2024-07-31 at 16:41 -0400, Bryan Gurney wrote:
-> Hi Konstantin,
->
-> This sounds a lot like something that I encountered with md, back in
-> 2019, on the old vdo-devel mailing list:
->
-> https://listman.redhat.com/archives/vdo-devel/2019-August/000171.html
->
-> Basically, I had a RAID-5 md array that was in the process of
-> recovery:
->
-> $ cat /proc/mdstat
-> Personalities : [raid0] [raid6] [raid5] [raid4]
-> md0 : active raid5 sde[4] sdd[2] sdc[1] sdb[0]
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2929890816 blocks super 1.2 level 5, 512k =
-chunk, algorithm 2
-> [4/3] [UUU_]
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 [=3D>...................]=C2=A0 recovery =
-=3D=C2=A0 9.1% (89227836/976630272)
-> finish=3D85.1min speed=3D173727K/sec
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bitmap: 0/8 pages [0KB], 65536KB chunk
->
-> Note that the speed of the recovery is 173,727 KB/sec, which is less
-> than the sync_speed_max value:
->
-> $ grep . /sys/block/md0/md/sync_speed*
-> /sys/block/md0/md/sync_speed:171052
-> /sys/block/md0/md/sync_speed_max:200000 (system)
-> /sys/block/md0/md/sync_speed_min:1000 (system)
->
-> ...And when I decreased "sync_speed_max" to "65536", I stopped seeing
-> hung task timeouts.
->
-> There's a similar setting in dm-raid: the "--maxrecoveryrate" option
-> of lvchange.=C2=A0 So, to set the maximum recovery rate to 64 MiB per
-> second per device, this would be the command, for an example VG/LV of
-> "p_r5/testdmraid5"
->
-> # lvchange --maxrecoveryrate 64M p_r5/testdmraid5
->
-> (Older hard disk drives may not have a sequential read / write speed
-> of more than 100 MiB/sec; this meant that md's default of 200 MiB/sec
-> was "too fast", and would result in the recovery I/O starving the VDO
-> volume from being able to service I/O.)
->
-> The current value of max_recovery_rate for dm-raid can be displayed
-> with "lvs -a -o +raid_max_recovery_rate".
->
-> By reducing the maximum recovery rate for the dm-raid RAID-5 logical
-> volume, does this result in the hung task timeouts for the
-> "dm-vdo0-bioQ*" to not appear, and for the fio job to continue
-> writing?
+On Thu, Aug 01, 2024 at 03:07:31PM +0100, Ryan Roberts wrote:
+> diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
+> index 5410b2cac5907..3f6c5717ff782 100644
+> --- a/arch/arm64/kernel/pi/map_range.c
+> +++ b/arch/arm64/kernel/pi/map_range.c
+> @@ -55,13 +55,14 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+>                          * This chunk needs a finer grained mapping. Create a
+>                          * table mapping if necessary and recurse.
+>                          */
+> -                       if (pte_none(*tbl)) {
+> -                               *tbl = __pte(__phys_to_pte_val(*pte) |
+> -                                            PMD_TYPE_TABLE | PMD_TABLE_UXN);
+> +                       if (pte_none(__ptep_get(tbl))) {
+> +                               __set_pte_nosync(tbl,
+> +                                            __pte(__phys_to_pte_val(*pte) |
+> +                                            PMD_TYPE_TABLE | PMD_TABLE_UXN));
+>                                 *pte += PTRS_PER_PTE * sizeof(pte_t);
+>                         }
+>                         map_range(pte, start, next, pa, prot, level + 1,
+> -                                 (pte_t *)(__pte_to_phys(*tbl) + va_offset),
+> +                                 (pte_t *)(__pte_to_phys(__ptep_get(tbl)) + va_offset),
+>                                   may_use_cont, va_offset);
+>                 } else {
+>                         /*
+> @@ -79,7 +80,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+>                                 protval &= ~PTE_CONT;
+>  
+>                         /* Put down a block or page mapping */
+> -                       *tbl = __pte(__phys_to_pte_val(pa) | protval);
+> +                       __set_pte_nosync(tbl, __pte(__phys_to_pte_val(pa) | protval));
+>                 }
+>                 pa += next - start;
+>                 start = next;
 
-Thank you, so, I'm trying this out, and it doesn't seem to be working that =
-well
-(unless perhaps something changed in the userspace LVM since the 2.03.11 I =
-am
-using?).
+That looks good to me!
 
-So, after having executed the original steps-to-reproduce I have these two =
-volumes:
-
-    $ lvs
-      LV                    VG   Attr       LSize   Pool                  O=
-rigin Data%  Meta%  Move Log Cpy%Sync Convert
-      deco_vol              p_r5 vwi-XXv-X- 100.00g vdo_internal_deco_vol
-      vdo_internal_deco_vol p_r5 dwi-XX--X-  20.00g
-
-Executing the suggested lvchange command does nothing on them:
-
-    $ lvchange --maxrecoveryrate 64M p_r5/deco_vol
-      Command on LV p_r5/deco_vol uses options that require LV types raid .
-      Command not permitted on LV p_r5/deco_vol.
-    $ lvchange --maxrecoveryrate 64M p_r5/vdo_internal_deco_vol
-      Command on LV p_r5/vdo_internal_deco_vol uses options that require LV=
- types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol.
-
-Also, executing a `lvs -a -o +raid_max_recovery_rate` shows emptiness in pl=
-ace of
-that field. However, this command shows various internal volumes:
-
-    $ lvs -a -o +raid_max_recovery_rate
-      LV                                     VG   Attr       LSize   Pool  =
-                Origin Data%  Meta%  Move Log Cpy%Sync Convert MaxSync
-      deco_vol                               p_r5 vwi-XXv-X- 100.00g vdo_in=
-ternal_deco_vol
-      vdo_internal_deco_vol                  p_r5 dwi-XX--X-  20.00g
-      [vdo_internal_deco_vol_vdata]          p_r5 rwi-aor---  20.00g       =
-                                              100.00
-      [vdo_internal_deco_vol_vdata_rimage_0] p_r5 iwi-aor---  10.00g
-      [vdo_internal_deco_vol_vdata_rimage_1] p_r5 iwi-aor---  10.00g
-      [vdo_internal_deco_vol_vdata_rimage_2] p_r5 iwi-aor---  10.00g
-      [vdo_internal_deco_vol_vdata_rmeta_0]  p_r5 ewi-aor---   4.00m
-      [vdo_internal_deco_vol_vdata_rmeta_1]  p_r5 ewi-aor---   4.00m
-      [vdo_internal_deco_vol_vdata_rmeta_2]  p_r5 ewi-aor---   4.00m
-
-So I tried executing the command on them:
-
-    $ lvchange --maxrecoveryrate 64M p_r5/{vdo_internal_deco_vol_vdata,vdo_=
-internal_deco_vol_vdata_rimage_0,vdo_internal_deco_vol_vdata_rimage_1,vdo_i=
-nternal_deco_vol_vdata_rimage_2,vdo_internal_deco_vol_vdata_rmeta_0,vdo_int=
-ernal_deco_vol_vdata_rmeta_1,vdo_internal_deco_vol_vdata_rmeta_2}
-      Command on LV p_r5/vdo_internal_deco_vol_vdata_rimage_0 uses options =
-that require LV types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rimage_0=
-.
-      Command on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_0 uses options t=
-hat require LV types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_0.
-      Command on LV p_r5/vdo_internal_deco_vol_vdata_rimage_1 uses options =
-that require LV types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rimage_1=
-.
-      Command on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_1 uses options t=
-hat require LV types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_1.
-      Command on LV p_r5/vdo_internal_deco_vol_vdata_rimage_2 uses options =
-that require LV types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rimage_2=
-.
-      Command on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_2 uses options t=
-hat require LV types raid .
-      Command not permitted on LV p_r5/vdo_internal_deco_vol_vdata_rmeta_2.
-      Logical volume p_r5/vdo_internal_deco_vol_vdata changed.
-
-This resulted in exactly one volume having changed its speed: the `[vdo_int=
-ernal_deco_vol_vdata]`.
-
-With that done, I tried removing a disk while there's load, and it results =
-in same
-old lockup reports:
-
------------------------
-
-So to sum up: the lvchange command only managed to change speed on a single=
- internal
-volume, but that didn't make the lockup go away.
+Will
 
