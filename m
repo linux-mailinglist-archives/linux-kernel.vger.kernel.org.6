@@ -1,119 +1,134 @@
-Return-Path: <linux-kernel+bounces-271074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC5494492C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:14:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF0EE944930
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF9FA282453
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:14:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28401B273ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70DE1183CD7;
-	Thu,  1 Aug 2024 10:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3827184528;
+	Thu,  1 Aug 2024 10:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG4o7IqR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="Z1ag3YUc"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A086C156F3A;
-	Thu,  1 Aug 2024 10:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77635171099
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722507275; cv=none; b=m6YBCgpl804JUhbHjqVuwFFyE32rlMoxyga0ZL64qPQDNv9AdLy7RimUYwYtRMPfMuuoPfm5rDn3ZI2GRRzsVm72aTFvgWKthaddVblVz4WOnMksDFnQmyUoRCPt2WjRkJi1pkLJFBvvw7L17fVPLZoOBNXyNk3Gamw8jsteFYQ=
+	t=1722507311; cv=none; b=BkmPiy/M9PL0JCQXa5XK3EFdGuRzY1/IOD85YqWXrN0medTUCDqCqKOnlwEV5urlgY0BSrv15y/4cZZxOKKNIdGbzZ28vDr+KXDxkOY4+TUO0fEx14NEsnn06SdjhjZlu+wws/ZHCaz7AIUei4/6qi6Lpv9vQewW6fChSnZndeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722507275; c=relaxed/simple;
-	bh=uVKhVRkoIrz2goRuoc79nnIsvQWUydD4PmjTmszYkxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ED69SwR8UV9sS39vn+V3ZX3zyx9gLLvLeEJhV4jME15tVNLRKgRyVh1FGPp+yqVfJCzZ4XtVlu641xPoBdt9CueVtNkg9L3N3A6TiGAgVlIJCIqhqPHyVs8aQgGZh8tKhpIEyCAXUjqUy+0VR3iBP86St/PlfPTB7Ho97tDQ06U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG4o7IqR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2558EC4AF11;
-	Thu,  1 Aug 2024 10:14:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722507275;
-	bh=uVKhVRkoIrz2goRuoc79nnIsvQWUydD4PmjTmszYkxk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=jG4o7IqRwmlwgprvom0DqaBjrhKzMWdRRRgu6cIHgs2SvXbDPFttIPfHTXA2sBP7Q
-	 iLf/RE14vKd0X1d4wM8qrm6Qd4jt1ZsqZ1dSgcBKL8nA997APWcYCfigvzeYpSfU07
-	 Ie65INfHPMFLXoQ7Pm/yzT6bl1K2DG/25roG4ofkWHqwgEpEAfK4Y70LTJeLrGQ0YK
-	 4PNpw40PBzw5dQF7SNYRZr/FerAkpJkeWh5zU2gtFBZe2RvGU+xXR3Ig7YcWXl9KYH
-	 jTQj+liH6RBi9eHuQYeIwBBFxxPrljtHTX8CWS8z9AbsP28z8q/wRRl4YVJj/d7kk+
-	 GmFj5iPTcPM4g==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-70936124421so381626a34.0;
-        Thu, 01 Aug 2024 03:14:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXsdoWnZlCJc/fj3Tbv9XaDm6OJEDzqr7WJNH41wkwcq2eMpC29q22bBRo5lfyHehoJ5bf7A5veWNGwMTMdPLg/GItsl3Nvx4Pg3IpCXFoMBj8Eqn15B2b5U4bA3Z0pOkJmB4WjfMhqLmleU4hS5Axl85rHsxiaVfsfxYXtfa8asC73xGmnEv0Z6t8lR8WCqKpK38NJYLFD2eyVeRRA2aEOjegtdrIK6g==
-X-Gm-Message-State: AOJu0Yw4m+8/kn/g/mPzciL2aAhBiVsaaec5pFYef+i10jjX5vW4CQR3
-	rvjNw/wjNov3AdkF43rauGZn/rB1nXW2q4ZfSUiuGfssqqABhKWf4bzwZVmtZ29MVp6j+kU/F9Z
-	KVz0XjiPAITVWrWg8pP4US3dkmoI=
-X-Google-Smtp-Source: AGHT+IEU2Ehnp4WZeT8s3RNeZ8eylqxVapnWYUNwQvI230a4Ru6GtFI/HLZyuyUTuqNLHqazPuPaPKzET8b4pWUrXTs=
-X-Received: by 2002:a05:6871:3387:b0:25e:14d9:da27 with SMTP id
- 586e51a60fabf-26879d67454mr1170788fac.0.1722507274373; Thu, 01 Aug 2024
- 03:14:34 -0700 (PDT)
+	s=arc-20240116; t=1722507311; c=relaxed/simple;
+	bh=U9wr7GqkmrMX2vYC7lUvPnIEz6kcUPwaUXveRaPautM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cg5DaDLBWA9rlAWlzS+D+2h3ztfujcpBmnBo7p3/taRzTFkoGCMjk0T9pO4XJy9cs+nNdPnVnIPgqNc3b3v7GpJPPb+CdD9ZsczPCkyuprjfVmjYzi76jDg2vYUEmvBMrPsb0q06/8fjy6EfG6+xGwNUgUdtnMVDk+59dDaXuDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=Z1ag3YUc; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7ab5fc975dso609549166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:15:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1722507308; x=1723112108; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWBquabnZ6kcEWp0IKOcbEM+16+nIy0kpShVIFZJXnM=;
+        b=Z1ag3YUcUcYk9TSMAqv5fTfKBPlGfDNiA/vlDmBFjJuX03VNfqbSZavHdw3z3gpBM8
+         eLuR+hWwVb0t3YkgV/36nsDqVeB60EHvB13IsDVV1LbKL4OQqJ7KQliNgNQnqSjgctzR
+         YLzkEmNWKbawkt8jCDU5bCeUZGs8+ze55xNPL7ScqA6pMsfvozRr0P4I10wGAgOYgTR+
+         wSFuZ2Mkj1cshfOPpzge0jYyDE7cl/bA0LzBEGgSozehzKsz/6R7cX/1ns6Gmksd+feo
+         NCxkvy+iLdg4rwIToZ0jgiX15JQGgu2Xv60LcTn9uh5piMPltE0doldbZVp+MwFGeB4z
+         5M1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722507308; x=1723112108;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWBquabnZ6kcEWp0IKOcbEM+16+nIy0kpShVIFZJXnM=;
+        b=wb57EeLbKKNewhoQZ26+yMyRsSYo1D19RiaBU8fk70NGTxq7H5I95QOS7h3bBGTUur
+         0qDOokzx3+gfoAxdryEUcHhAlG4c5FP9nwAoEpG21JEhbETLWZBbXRK1hu+L8dqK3qOZ
+         SHqagO/+/2wor+vcyNfb6ff2zNPLBuum9ww3F5mbHNl7n0iOCQu5+H54EXkhXDRiBPWN
+         5eDXrf1Ni022TAdiLivh9Y5grlshONk6V9Rkw0UqL7JrKhGgwAghHvceJp5oJICqHboP
+         ujwtmEiPb1VKXRCn9gsjhyvpvm++ql3/lphekM1UC8ReZTRl5f/rxh3ysZoEqI7awwKx
+         HKIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJn3zLVm713v/u6qqKKuPHgenJfQ9aiCJtNoNvyOlCubLSe3jd5bpkRv1fKXNao+bLJXocTCWUqKuBRkeUCVgFt9VwzYXcqbmLg5g6
+X-Gm-Message-State: AOJu0YxE/efQmTn4AaiSsRjqGCb5comt/Sqddtjk6jFDlvLMVJJc1cbF
+	D2muhvnYa8NwQEW1Pni8VW1ZCJOZ+vGtPwUK2fg+JVXgwk5A7Df7EhwrhSZ3qWA=
+X-Google-Smtp-Source: AGHT+IEeTCuavVhswNVgEm2olLofx/pt8cE9Bumon3z0afUonWZ842xMiwTVqZcy8FZzQmEJxlyJMw==
+X-Received: by 2002:a17:907:7da0:b0:a7a:8876:4429 with SMTP id a640c23a62f3a-a7daf65d495mr148745866b.45.1722507307311;
+        Thu, 01 Aug 2024 03:15:07 -0700 (PDT)
+Received: from localhost (2001-1ae9-1c2-4c00-20f-c6b4-1e57-7965.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:20f:c6b4:1e57:7965])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acad4348bsm875471766b.118.2024.08.01.03.15.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 03:15:06 -0700 (PDT)
+Date: Thu, 1 Aug 2024 12:15:00 +0200
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
+	Nathan Chancellor <nathan@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Leonardo Bras <leobras@redhat.com>, Guo Ren <guoren@kernel.org>, linux-doc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v4 13/13] riscv: Add qspinlock support
+Message-ID: <20240801-e773d3752fe8b5484405d404@orel>
+References: <20240731072405.197046-1-alexghiti@rivosinc.com>
+ <20240731072405.197046-14-alexghiti@rivosinc.com>
+ <20240731-ce25dcdc5ce9ccc6c82912c0@orel>
+ <CAHVXubhQefQ6i3Vow_p-uSACQyPcMJNC2UwB99xt_=jDtRUDFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1922131.tdWV9SEqCh@rjwysocki.net> <2242500.C4sosBPzcN@rjwysocki.net>
- <a0c639d1-4f21-47f1-bb66-92f185e828a9@gmail.com>
-In-Reply-To: <a0c639d1-4f21-47f1-bb66-92f185e828a9@gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 1 Aug 2024 12:14:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jDQLJWGCj73DXQe3+k+Zaq9Z71LJbFSvRjcuE85+J+mQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jDQLJWGCj73DXQe3+k+Zaq9Z71LJbFSvRjcuE85+J+mQ@mail.gmail.com>
-Subject: Re: [PATCH v1 12/17] platform/x86: acerhdf: Use the .should_bind()
- thermal zone callback
-To: =?UTF-8?Q?Peter_K=C3=A4stle?= <xypiie@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux ACPI <linux-acpi@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>, Peter Kaestle <peter@piie.net>, 
-	platform-driver-x86@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHVXubhQefQ6i3Vow_p-uSACQyPcMJNC2UwB99xt_=jDtRUDFw@mail.gmail.com>
 
-Hi Peter,
-
-On Wed, Jul 31, 2024 at 10:50=E2=80=AFPM Peter K=C3=A4stle <xypiie@gmail.co=
-m> wrote:
->
-> Hi Rafael,
->
-> On 30.07.24 20:33, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, Aug 01, 2024 at 10:43:03AM GMT, Alexandre Ghiti wrote:
+...
+> > > diff --git a/include/asm-generic/qspinlock.h b/include/asm-generic/qspinlock.h
+> > > index 0655aa5b57b2..bf47cca2c375 100644
+> > > --- a/include/asm-generic/qspinlock.h
+> > > +++ b/include/asm-generic/qspinlock.h
+> > > @@ -136,6 +136,7 @@ static __always_inline bool virt_spin_lock(struct qspinlock *lock)
+> > >  }
+> > >  #endif
+> > >
+> > > +#ifndef __no_arch_spinlock_redefine
 > >
-> > Make the acerhdf driver use the .should_bind() thermal zone
-> > callback to provide the thermal core with the information on whether or
-> > not to bind the given cooling device to the given trip point in the
-> > given thermal zone.  If it returns 'true', the thermal core will bind
-> > the cooling device to the trip and the corresponding unbinding will be
-> > taken care of automatically by the core on the removal of the involved
-> > thermal zone or cooling device.
+> > I'm not sure what's better/worse, but instead of inventing this
+> > __no_arch_spinlock_redefine thing we could just name all the functions
+> > something like __arch_spin* and then add defines for both to asm/spinlock.h,
+> > i.e.
 > >
-> > The previously existing acerhdf_bind() function bound cooling devices
-> > to thermal trip point 0 only, so the new callback needs to return 'true=
-'
-> > for trip point 0.  However, it is straightforward to observe that trip
-> > point 0 is an active trip point and the only other trip point in the
-> > driver's thermal zone is a critical one, so it is sufficient to return
-> > 'true' from that callback if the type of the given trip point is
-> > THERMAL_TRIP_ACTIVE.
+> > #define queued_spin_lock(l) __arch_spin_lock(l)
+> > ...
 > >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > #define ticket_spin_lock(l) __arch_spin_lock(l)
+> > ...
+> 
+> __arch_spin_lock() would use queued_spin_lock() so that would make an
+> "infinite recursive definition" right? And that would override the
+> "real" queued_spin_lock() implementation too.
+> 
+> But maybe I missed something!
 >
-> Thanks for including me on the review.
-> I'm working on it, but unfortunately the refactoring of the thermal layer
-> around gov_bang_bang.c earlier this year broke acerhdf.
 
-Well, sorry about that.
+It depends on where the definition is done. It should work if the
+preprocessor expands the implementation of __arch_spin_* before
+evaluating the #define of queued_spin_*. IOW, we just need to put
+the defines after the static inline constructions.
 
-> This needs some debugging and refactoring.  I think I can finish it on
-> upcoming weekend.
-
-Thank you!
-
-I'll be offline next week, so I'll go back to this material in two
-weeks or so anyway.
+Thanks,
+drew
 
