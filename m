@@ -1,97 +1,126 @@
-Return-Path: <linux-kernel+bounces-270593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A3339441D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:24:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0599441D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:24:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F012816CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:24:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D5C41F21B97
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 03:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C751140E22;
-	Thu,  1 Aug 2024 03:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF03142E62;
+	Thu,  1 Aug 2024 03:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sv+rifGd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ckx+WUcz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962F31EB494;
-	Thu,  1 Aug 2024 03:22:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C9813E898
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 03:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722482558; cv=none; b=OWXXDeNsIxtYFNaVSIK5+Mo8zUaKQTUYWnvAUKS4M2s9hmV2SXUFYAnHiap9U2BshCTzeMpGDfRYtY1kp3jm372CYVCN5M3pHhef86223LUYMAHYaqWfB36jfoiRyx5uneYRrxMLpnvs5ICOV2bHbuVK8sQN0072ZMhLxs+96So=
+	t=1722482575; cv=none; b=YCxTPmHPin867S4RTnvec3bAwlrzPq+dfZLTSM1vvyHhg5JWwuXHhy4uHhAe6qfHBRQa9l3aOK7lnCCiXhVIIqMifgJeo+zPsIb2Vuky9yntdPVvVbtmC7F1KkFCk5ekdYayIHq9o9p/KUvyRgFXoHE2X9zPD/oc4u3nw0Bumk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722482558; c=relaxed/simple;
-	bh=cwZNlFkg/6uwcZmn5bSEtGCnUEUd5RzuUF0gLreCNwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cNzi2DS5bFWNv2BnxBldf675ygnvQP7FZTNEqcUqAQSANMvF5CQYd81uvVTUjdePdK8B+P0GGaxxz6zbUIQ7Vu/4q2ScEyg1Nh04BJK9mC61GzUi+NT5aI/HToTuNb/TJN7ja0AqW3RaijGMQRt9odYHQ6ZtViyih1mlsSt5Y+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sv+rifGd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8026DC116B1;
-	Thu,  1 Aug 2024 03:22:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722482558;
-	bh=cwZNlFkg/6uwcZmn5bSEtGCnUEUd5RzuUF0gLreCNwE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Sv+rifGdffMkhnY2qFffaLJTiAOLVRqb4P/j9gx/xSonU9bN0O2jJNa8DJ5Egblhn
-	 HhmTAfByfPx5ZYnFDLWJgN7yCV1fe9P6dxJI9OsEnstGE1uL60H7+uVA1MzLnZnDT9
-	 q7OXjpCwNa+c+CQetKRHWOUZeVcXoPJnDKlhwyQF/nifcm8M2k2rFMDblP5uWu1jlA
-	 mA+Bx4pcC3AxSwblGA6k0Tol+ohmM7e0iEqchtNH/6dIcPyPz/FOYN1tn3L9xl9f62
-	 f8XROjy1dC7Km6SRk4r+T+XeTnlcyi6ocpCGnNSVrELwqY9rP7xjfPoYh6JeLthYCW
-	 Mb5iqozqkwYpg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Balakrishna Godavarthi <quic_bgodavar@quicinc.com>,
-	Rocky Liao <quic_rjliao@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: (subset) [PATCH v3 0/6] Bluetooth: hci_qca: use the power sequencer for wcn7850
-Date: Wed, 31 Jul 2024 22:22:34 -0500
-Message-ID: <172248255231.320687.3384796233476988761.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
-References: <20240709-hci_qca_refactor-v3-0-5f48ca001fed@linaro.org>
+	s=arc-20240116; t=1722482575; c=relaxed/simple;
+	bh=kaWU0UtEMwQ1O7iXzGFMx10qiNwA/UUpCQN/mZbLUYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PyMo2y+sTWppQ76Lns1yFzPZoEmEL+raTrosrdIg77CFtEhX9zQzMFCuCptjbyzIuVtgPTs0mHARjiCq17eKpYUMBZBNeC8Pb8HJC+zWVvn3/Uj1Jj0Rza5WlOLjWyPMWyLgQDlmdrQpXRHK9Tk5sXRke8ebB6Z7TQCcUWp+4+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ckx+WUcz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722482572;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OSRz3A6ElKt7l6qd6qwvIoB/IVcQJsavNnaNqcf8XME=;
+	b=Ckx+WUcztwmshBrb7HUMgIRG396I4OwvUc+DE/3ETDP2PnOc7xKhGvMhHqIQdrI9yMecVw
+	4E+FVQtYs1zAMHxS4Bdeew8bf1ndWImIufUDAuK0r9RhRqHIjXAqTZ5i/Ynk9p+CwIC0oH
+	746o08UPPQnLXX75vlkuw5EKvYcHfQY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-DZ8zIapOM3CnhW-bjWuYAw-1; Wed,
+ 31 Jul 2024 23:22:49 -0400
+X-MC-Unique: DZ8zIapOM3CnhW-bjWuYAw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B90D719560B0;
+	Thu,  1 Aug 2024 03:22:47 +0000 (UTC)
+Received: from [10.2.16.2] (unknown [10.2.16.2])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ABAD4300019E;
+	Thu,  1 Aug 2024 03:22:45 +0000 (UTC)
+Message-ID: <6a79b50a-ad74-4b1b-a98c-7da8ef341b24@redhat.com>
+Date: Wed, 31 Jul 2024 23:22:44 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] cgroup/cpuset: Do not clear xcpus when clearing
+ cpus
+To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
+ lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
+ sergeh@kernel.org
+Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240731092102.2369580-1-chenridong@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240731092102.2369580-1-chenridong@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
+On 7/31/24 05:21, Chen Ridong wrote:
+> After commit 737bb142a00d ("cgroup/cpuset: Make cpuset.cpus.exclusive
+> independent of cpuset.cpus"), cpuset.cpus.exclusive and cpuset.cpus
+> became independent. However we found that cpuset.cpus.exclusive.effective
+> is cleared when cpuset.cpus is clear. To fix this issue, just remove xcpus
+> clearing when cpuset.cpus is being cleared.
+>
+> It can be reproduced as below:
+> cd /sys/fs/cgroup/
+> mkdir test
+> echo +cpuset > cgroup.subtree_control
+> cd test
+> echo 3 > cpuset.cpus.exclusive
+> cat cpuset.cpus.exclusive.effective
+> 3
+> echo > cpuset.cpus
+> cat cpuset.cpus.exclusive.effective // was cleared
+>
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
+> ---
+>   kernel/cgroup/cpuset.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index a9b6d56eeffa..248c39bebbe9 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -2523,10 +2523,9 @@ static int update_cpumask(struct cpuset *cs, struct cpuset *trialcs,
+>   	 * that parsing.  The validate_change() call ensures that cpusets
+>   	 * with tasks have cpus.
+>   	 */
+> -	if (!*buf) {
+> +	if (!*buf)
+>   		cpumask_clear(trialcs->cpus_allowed);
+> -		cpumask_clear(trialcs->effective_xcpus);
+> -	} else {
+> +	else {
+>   		retval = cpulist_parse(buf, trialcs->cpus_allowed);
+>   		if (retval < 0)
+>   			return retval;
 
-On Tue, 09 Jul 2024 14:18:31 +0200, Bartosz Golaszewski wrote:
-> The following series extend the usage of the power sequencing subsystem
-> in the hci_qca driver.
-> 
-> The end goal is to convert the entire driver to be exclusively pwrseq-based
-> and simplify it in the process. However due to a large number of users we
-> need to be careful and consider every case separately.
-> 
-> [...]
+Yes, that is a corner case bug that has not been properly handled.
 
-Applied, thanks!
+Reviewed-by: Waiman Long <longman@redhat.com>
 
-[6/6] arm64: dts: qcom: sm8650-qrd: use the PMU to power up bluetooth
-      commit: 4e71c38244dbeb6619156b417d469771bba52b83
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
 
