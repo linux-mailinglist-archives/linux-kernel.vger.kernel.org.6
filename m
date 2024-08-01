@@ -1,57 +1,54 @@
-Return-Path: <linux-kernel+bounces-271532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB71944FA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:49:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53174944FA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74853B252CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2B581F2436C
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F081B29C6;
-	Thu,  1 Aug 2024 15:49:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529041B3755;
+	Thu,  1 Aug 2024 15:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIefwQa0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6ZUY1rX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC3013D607;
-	Thu,  1 Aug 2024 15:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FA1C1B32DD;
+	Thu,  1 Aug 2024 15:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722527372; cv=none; b=jDQQxs0SLO8oZZlWhzM8oo3xknLfYOzq6r8rKXzuU8LWVxeHK6p/mRK+7pHWKdRPB1XHpxN052IerZA1dS2Zmh/eTWB6BP0753dOJJjJO0vI9K1mRh/Ea/Tvui4C4BWfyEJZN+9pUCt2kheAp6n9DDajBVdgegdS3CU8T7pKPFE=
+	t=1722527373; cv=none; b=ild0iQV4YzCGZVMYkfPGEr1S62T45v2qOFhmSp22Vf0xIamiAADamZ+in9zQzxBrX/ByPxvU7/22G6yOqXSaZ4mwLm/uy2L6gJIn9Nhx0rldPmBGmLl98IT2SBItt8LgpJBs4hJnwwhXHN3zZqkLxtIdq4UBhYeQCB7ZurPIjjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722527372; c=relaxed/simple;
-	bh=j72P45FMQwBZCanamKLRul+pFSrort7ZdTabz4P2blw=;
+	s=arc-20240116; t=1722527373; c=relaxed/simple;
+	bh=LNYO1qvEsmGHxLOb064EW+izbYTWcGTn/01qCf8lOlk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hK0dU9vBcEWGM3GA7FCLVj23YMxGs5+zgiG25a94vRrJqqTGfiU4AFKivGOG8vEVM2g3tiSp7nUXAYXR2XwokzuVdlSNTF3gy+R24ujPsJJ3fkyeR/dKUvGfp7yB5PnuIRCv7U8XQpaKxVr1is51C4kl0b9ftcNXLHeLmvPkSmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIefwQa0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A415C4AF09;
-	Thu,  1 Aug 2024 15:49:29 +0000 (UTC)
+	 MIME-Version:Content-Type; b=VPIEpI84T4+72B0taXmknm1Ink403Znv+jf/siBWl/fP08LFz7a4gXTfmgvboqK5h+u+GBrGNiIqbznNPgWxPmdakDXC0pzayYLtAjAnKOB1aEb/5jgcPcIjoIDU9GDzUBpt7tvMk433qX2XYktKecroHxudetQqa1pMgizLChA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6ZUY1rX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411C1C32786;
+	Thu,  1 Aug 2024 15:49:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722527371;
-	bh=j72P45FMQwBZCanamKLRul+pFSrort7ZdTabz4P2blw=;
+	s=k20201202; t=1722527373;
+	bh=LNYO1qvEsmGHxLOb064EW+izbYTWcGTn/01qCf8lOlk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gIefwQa0Ju8bA7Bx8mNOPnuW7mY2yBkGFeKrZtadNvCGmD1O9lnCSX32qRMAQVU3b
-	 Qn9ZJfmBI5CLq333pEDsxXk0YZodjbX9nhocueSZHTjfQWwmFBA4EQORjOu4AU8+TR
-	 c4lRxJGAebisvkf7Dyq/AZ4E2VjkL0jfujyE+CED0iaa82b2MkF9ZQlSzUqGiAbkY7
-	 JtsiA7j5VSENM4HF0go7VEqiDF3qvptrga1a0glQO6nr9RzklcqauWLwrtIDGr4orf
-	 ZWd37fbBimv6GdW6O9OFqd/xHMMGKl6kP2mvX2lqYHiKzhceYOHhP2679LX+qJUo86
-	 k7fIojPQ868MQ==
+	b=B6ZUY1rX0xRp9U/WsQrwUGHeCFzpHiKb+ZyGQxg+yz30ZBNCgUSgs1HS2hgqg/bMf
+	 iTb+JOYZuXeXwbo8uu1ZcqlAXLhsZuDlbYa9VfIzNNqayb+m5KKbTLZGe0tfSn8pFD
+	 tDvD/D+609AMYzIwQofmkaTxxt8/AQi3Za0VgK3/KsLImMl8LaVlYusa0oxYdXYXTo
+	 jP3ucVVQC83vYvZlWSkNSahqhm7GRWrbwBKI6x8uXLcC5P+ZHNRbOrVw/6AKk7d5NN
+	 +fEXAxypN40JkrsbeJeHeVqANit9VbL7TjmCvJ8GX1VZ2ScdDtlKFM8IZ/r9VL2Ayp
+	 dGNwjEwpEYCHw==
 From: Mark Brown <broonie@kernel.org>
 To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-tegra@vger.kernel.org
-In-Reply-To: <20240731191312.1710417-19-robh@kernel.org>
-References: <20240731191312.1710417-19-robh@kernel.org>
-Subject: Re: [PATCH] ASoC: Use of_property_present()
-Message-Id: <172252736983.96807.12892152018660162294.b4-ty@kernel.org>
-Date: Thu, 01 Aug 2024 16:49:29 +0100
+ Takashi Iwai <tiwai@suse.com>, "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240731191312.1710417-20-robh@kernel.org>
+References: <20240731191312.1710417-20-robh@kernel.org>
+Subject: Re: [PATCH] ASoC: Use of_property_read_bool()
+Message-Id: <172252737199.96807.15689573616506213528.b4-ty@kernel.org>
+Date: Thu, 01 Aug 2024 16:49:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,8 +59,8 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Wed, 31 Jul 2024 13:12:57 -0600, Rob Herring (Arm) wrote:
-> Use of_property_present() to test for property presence rather than
+On Wed, 31 Jul 2024 13:12:58 -0600, Rob Herring (Arm) wrote:
+> Use of_property_read_bool() to read boolean properties rather than
 > of_get_property(). This is part of a larger effort to remove callers
 > of of_get_property() and similar functions. of_get_property() leaks
 > the DT property data pointer which is a problem for dynamically
@@ -78,8 +75,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: Use of_property_present()
-      commit: a1c8929b0ebbfd7598f038ac74fb0a28f94ade8c
+[1/1] ASoC: Use of_property_read_bool()
+      commit: 69dd15a8ef0ae494179fd15023aa8172188db6b7
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
