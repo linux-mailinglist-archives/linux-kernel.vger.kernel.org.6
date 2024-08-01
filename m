@@ -1,224 +1,134 @@
-Return-Path: <linux-kernel+bounces-271911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9E69454DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:16:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF419454E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75DEC283D0F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:16:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 434181F2363E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 23:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4331914D6E6;
-	Thu,  1 Aug 2024 23:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3A314D6F1;
+	Thu,  1 Aug 2024 23:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5cmHYb3"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CgJBxrfm"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F0E25757;
-	Thu,  1 Aug 2024 23:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CFFE14B94F;
+	Thu,  1 Aug 2024 23:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722554193; cv=none; b=Lc8bLuCJBXwEwo4npOTGEbf1HotfQbgGwQh3S0jxJJEzM++ITYAUm8Xvu9E/TGvU4bAboBLsPyCCQWHgSuEJjs8QhPvekLbPA/7+Rc0CoJvJUlI33sOtswWkhlTAumzlpvw/zGOsYP+ogxiXxMYE77xTJUaa3IC0dSy2LH57N4Y=
+	t=1722554510; cv=none; b=JDxKJFwgXy6NGazZSsMdfTandtNODP5d7xclwxIat9GuL7VzPhR2d4uFvfjhaShQUC50iTDQx0v0sEJclnbqxppaSrFR8d1i6+6RVWfXICO4VbESyRq4JjARV/waUFdmykY+5myGAS/I4vCxSAJrXcqTvQxhd2ZEAN1WrorEOt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722554193; c=relaxed/simple;
-	bh=vXrXSocHPLt5kpPthnb3umqHOKVbJkhNsSwmQrp5ANk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pj2FHeppu09NDSUHqMLrS3GutTBb12AxcY3IaqXd+484JYnYY3Hq2hUuriT64/dL3PCYgkhOjBvQXDzVBXjeRYToaeAEABeaOWPgbLpnjhCI4Bhf0uKkyjCoqrhNhS0Q+h3Bfl4/ebODPHSODad88oz4AIgGBuYvFgI/Qu11C54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e5cmHYb3; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1722554510; c=relaxed/simple;
+	bh=psyqP/Yl+Il9HAgAySc9C3R3e0Ms2wPZSoZqeFsjuME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qvQWRuW1UHMOw+Mws1E4IxhRzTZqVq8ZrV1s6BVJvwIR5ZDwVeFPMbX6dDc5XUZ0JlgRVn7K/vdySKse53lW8lmCm8c+M4/ivpNnkJh0Cp6CZuanKIgIJF0/OC7LidYhQ3Do2S2YiroC+b468Gic+kKh1aiaA+WmzX0UN9dgk7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CgJBxrfm; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a8553db90so1021076966b.2;
-        Thu, 01 Aug 2024 16:16:30 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so977572266b.1;
+        Thu, 01 Aug 2024 16:21:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722554189; x=1723158989; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vRHY8LMAMsDzYIYRh2DEhqf/+ZSkBDumcnyt9s3s3SU=;
-        b=e5cmHYb3TwYC3eJvC/B/V0w4c9jnTJzMhDoWbhJrzAqeTduDXiSWKatdizImU8V2wv
-         lr3fE9woVohtyBpN7dIN0wgu1Crq32eSXzZ6+/yk0J7EkG0TkFLVMkpHIYByk7zBbXf+
-         lo10hqjk7v1vy5KXjHZ8g6LnuKnFDPTV7r9Z9bnVO7H7sg/YCUjKQWQvdq3ejUthwiC5
-         VZZuLmRXUoYW/rAMFN3nvQF54vTkOQubyQPKRAljnw3HMj6R+diPbCerfYjIpY5OzgXF
-         XTYwyIiGPzOeFMUT3dIUJFug+oWKmoRQn/ZCfDVzNdzDx/vfNxicbiIiN7Y3bdms9qEE
-         e+hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722554189; x=1723158989;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722554507; x=1723159307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vRHY8LMAMsDzYIYRh2DEhqf/+ZSkBDumcnyt9s3s3SU=;
-        b=lk5XZQmR6Af7KErqmnVjAz+qg9yWD+tEA+Ed8ZYQVTxoL7CT1A1g+OCPcVVeNzSjjj
-         vMXcXPzLfj3Get/n5RMy25J91WNPPxgyaTXsY8nhoS3fVTxTS0v64DuiHhFdbRqgWvkS
-         87RoDZrrWXIYaiCZGV7APpjNhTbKpmkrH0d2Tmq9n87CBve5mFHOemvUyMX2Z3XdgFPV
-         IFyqaDGYdDquilOgm+m3rQkoOe7p8zOh+Sb+3FcnCceHR72R4y5V8ho/WOgmxjnOfOim
-         5rqfB8kzwE3sUozVZlQ+rh5BpuCLV4tIMwF0jYbtEbmrGJD+mH8yHcuDsczJAW7Kj5vb
-         xyUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRBJDxNAW8oBcj4fkR2GeJWEK7fwuOv3V3D6GYkjdrQg7fxLgKW18F5tZJqZeTCfglWrilQtpAAv/W1z4RhKh22YDFScLNQmVKycC9cFTWbw4AJBND8IyoDEpJi9JUvnjjJGTf
-X-Gm-Message-State: AOJu0YwXrbRwRHqo19Eg5DU5tNRABy3eOYbw34lZ0K2xupywkH3xH2WC
-	RY027ATBNIhvMfsGVWDcO9jhjzuYUwMrWtbR2WxkM3FGqzCP+Em4
-X-Google-Smtp-Source: AGHT+IEsxgfvGijlQDD+0yGHl9Bv4Sl5rFZvFBX00pRtsgyK5toVPnhYX03gaMnFF/r02MjdVSWnNg==
-X-Received: by 2002:a17:907:3f28:b0:a7a:acae:3415 with SMTP id a640c23a62f3a-a7dc4db4b08mr146394566b.10.1722554188713;
-        Thu, 01 Aug 2024 16:16:28 -0700 (PDT)
-Received: from skbuf ([188.25.135.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bcada0sm30237866b.31.2024.08.01.16.16.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 16:16:27 -0700 (PDT)
-Date: Fri, 2 Aug 2024 02:16:25 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Joao Pinto <jpinto@synopsys.com>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	xfr@outlook.com, rock.xu@nio.com
-Subject: Re: [PATCH net-next v1 3/5] net: stmmac: support fp parameter of
- tc-taprio
-Message-ID: <20240801231625.uqa4gq7vokp63dfp@skbuf>
-References: <cover.1722421644.git.0x1207@gmail.com>
- <4603a4f68616ce41aca97bac2f55e5d51c865f53.1722421644.git.0x1207@gmail.com>
+        bh=psyqP/Yl+Il9HAgAySc9C3R3e0Ms2wPZSoZqeFsjuME=;
+        b=CgJBxrfm3gAIXCzd+b/M8hdCW5PHzqmMiGVdeZXT1wdMg9YOz+E/g3IiiuWa1rHunc
+         iad8ieOpxhtm7PmkZ96VvOAjWkZBSBUWYogQj7DxyevSv++ih3/MFpt42uZTaRFYWm53
+         E0gjlpQFvBzi1zTECiuEpJmomVdUoMN/yz9TNqi/HfxlqMdjkLFH5OFlWoUt0scfXekS
+         23qrpHYiKmFZ/3FuXE2GWKM2379OsLHRu3ykgw3RRYmfszh6mQifCc0S6uaWaS+EzEFP
+         nydNrh3bu2BtM+EOtO5rlqEeRbtnMMx8fdAZNWjAurPgHeRV+hMG0/tsdWTTUSVjO217
+         U6gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722554507; x=1723159307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=psyqP/Yl+Il9HAgAySc9C3R3e0Ms2wPZSoZqeFsjuME=;
+        b=Hv4RAPANqUffAKMLtornXnPic1mgkivMdhTtKEweJ3jSbjt7wpGAMvj1gmjQl+OdJi
+         oOr3m2GXSlXcqLxsdNsOyYUzbOpecQdnKKzMuxo+f803nioORZAziUC9XjNFqLgekhFx
+         eui7UM5UsObEsB8H0CfO/fSjQ9fyknVPxYQp11ZZzMDZ9DCZySfavFfuDq+dWm6hxzmy
+         xoQFwjma29q6s+EEb/6mhT3FA3lglhtUkf1+1BsXdVoCuyTKWCXSdwjQvw6EjU/Oo7wa
+         1qW+YmAHwnmKuStwjhGgfpGZVgVh03IreiYwpu5lWqLtWNUP7M5q2YpCFuZ488U9R4wD
+         u4mA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsbLnOBCipPX5vxFDedz8QYAEa4znCmAa9DVKJ2ExqchdpnrmwM/OuDx142hC6uyeiEHhQw7bTJNZsKne9mJV7MSsIlDFFwneQkC/Q3PZ14wk6/H0SZg9DKRtycKT7PLX8aiY7ZtjDhtVVusa1HpD7wJPEHiLLTuKDMsR1k10vPck=
+X-Gm-Message-State: AOJu0YyStV9p/S+OP6odA0u6DHuNzs4j2sbGEfnA35ZZcUY+AU2QsHcf
+	eKOQmuO7jwE5RgqHevtm4zEgteA2xvRvcDrXkhVB6yiR9XHPOuZ0qF5Pv1axQkxYIiORsMQoQNp
+	vnbIufiZb3MfNPYrrOrloFsPjpr8=
+X-Google-Smtp-Source: AGHT+IEtW/qBmI51B7Hfnj94oHwwxVZCxxaiTaEWAE6CvzL5fsAvEqIpySGzx598UrGchK7/EuMJsVWked05rpwf+Pc=
+X-Received: by 2002:a17:907:8692:b0:a7a:9a78:4b59 with SMTP id
+ a640c23a62f3a-a7dc4e579f9mr116053766b.23.1722554507307; Thu, 01 Aug 2024
+ 16:21:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4603a4f68616ce41aca97bac2f55e5d51c865f53.1722421644.git.0x1207@gmail.com>
+References: <20240608141633.2562-1-laurent.pinchart@ideasonboard.com>
+ <20240608141633.2562-5-laurent.pinchart@ideasonboard.com> <ZmcWi08u6-u4MyKu@surfacebook.localdomain>
+ <20240610152833.GW18479@pendragon.ideasonboard.com> <CAHp75VfcTHty-Vzcc+B4iMk33qS_AafvU10Qn3AQftrfQRBebw@mail.gmail.com>
+ <20240719140711.GC637@pendragon.ideasonboard.com>
+In-Reply-To: <20240719140711.GC637@pendragon.ideasonboard.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Fri, 2 Aug 2024 01:21:10 +0200
+Message-ID: <CAHp75VfK0pae+OugD8=5zAhbjw73+mw_uvj-x=_3W9AMWPhNTA@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] pwm: adp5585: Add Analog Devices ADP5585 support
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans De Goede <hdegoede@redhat.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	Clark Wang <xiaoning.wang@nxp.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 06:43:14PM +0800, Furong Xu wrote:
-> tc-taprio can select whether traffic classes are express or preemptible.
-> 
-> After some traffic tests, MAC merge layer statistics are all good.
-> 
-> Local device:
-> ethtool --include-statistics --json --show-mm eth1
-> [ {
->         "ifname": "eth1",
->         "pmac-enabled": true,
->         "tx-enabled": true,
->         "tx-active": true,
->         "tx-min-frag-size": 60,
->         "rx-min-frag-size": 60,
->         "verify-enabled": true,
->         "verify-time": 100,
->         "max-verify-time": 128,
->         "verify-status": "SUCCEEDED",
->         "statistics": {
->             "MACMergeFrameAssErrorCount": 0,
->             "MACMergeFrameSmdErrorCount": 0,
->             "MACMergeFrameAssOkCount": 0,
->             "MACMergeFragCountRx": 0,
->             "MACMergeFragCountTx": 1398,
->             "MACMergeHoldCount": 15783
->         }
->     } ]
-> 
-> Remote device:
-> ethtool --include-statistics --json --show-mm eth1
-> [ {
->         "ifname": "eth1",
->         "pmac-enabled": true,
->         "tx-enabled": true,
->         "tx-active": true,
->         "tx-min-frag-size": 60,
->         "rx-min-frag-size": 60,
->         "verify-enabled": true,
->         "verify-time": 100,
->         "max-verify-time": 128,
->         "verify-status": "SUCCEEDED",
->         "statistics": {
->             "MACMergeFrameAssErrorCount": 0,
->             "MACMergeFrameSmdErrorCount": 0,
->             "MACMergeFrameAssOkCount": 1388,
->             "MACMergeFragCountRx": 1398,
->             "MACMergeFragCountTx": 0,
->             "MACMergeHoldCount": 0
->         }
->     } ]
-> 
-> Tested on DWMAC CORE 5.10a
-> 
-> Signed-off-by: Furong Xu <0x1207@gmail.com>
-> ---
->  .../net/ethernet/stmicro/stmmac/stmmac_tc.c   | 34 ++-----------------
->  1 file changed, 3 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> index 494fe2f68300..eeb5eb453b98 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-> @@ -943,7 +943,6 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
->  	u32 size, wid = priv->dma_cap.estwid, dep = priv->dma_cap.estdep;
->  	struct timespec64 time, current_time, qopt_time;
->  	ktime_t current_time_ns;
-> -	bool fpe = false;
->  	int i, ret = 0;
->  	u64 ctr;
->  
-> @@ -1028,16 +1027,6 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
->  
->  		switch (qopt->entries[i].command) {
->  		case TC_TAPRIO_CMD_SET_GATES:
-> -			if (fpe)
-> -				return -EINVAL;
-> -			break;
-> -		case TC_TAPRIO_CMD_SET_AND_HOLD:
-> -			gates |= BIT(0);
-> -			fpe = true;
-> -			break;
-> -		case TC_TAPRIO_CMD_SET_AND_RELEASE:
-> -			gates &= ~BIT(0);
-> -			fpe = true;
+On Fri, Jul 19, 2024 at 4:07=E2=80=AFPM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Andy,
+>
+> (CC'ing Mark)
+>
+> On Mon, Jun 10, 2024 at 07:31:11PM +0300, Andy Shevchenko wrote:
+> > On Mon, Jun 10, 2024 at 6:28=E2=80=AFPM Laurent Pinchart wrote:
+> > > On Mon, Jun 10, 2024 at 06:06:51PM +0300, Andy Shevchenko wrote:
+> > > > Sat, Jun 08, 2024 at 05:16:33PM +0300, Laurent Pinchart kirjoitti:
+> >
+> > ...
+> >
+> > > Andy, we're reaching a level of nitpicking and yakshaving that even I
+> > > can't deal with. I will have to simply ignore the comments I disagree
+> > > with.
+> >
+> > Do you think using bulk APIs is nit-picking?
+>
+> In this case I do. If we were dealing with more 16-bit registers in this
+> driver I would agree with you. This being said, I'd like to get this
+> driver merged, and I'll burn some of the mental energy I've recovered
+> thanks to the last two weeks of holidays and submit a v5 using the bulk
+> API. It's getting mentally exhausting though.
 
-I don't think these can go.
+OK.
 
-In the DWMAC5 manual, I see:
-"To enable the support of hold and release operations, the format of the
-GCL is slightly changed while configuring and enabling the FPE. The first Queue (Q0) is always programmed to carry preemption
-traffic and therefore it is always Open. The bit corresponding to Q0 is renamed as Release/Hold MAC control. The TX Queues
-whose packets are preemptable are indicated by setting the PEC field of the MTL_FPE_CTRL_STS register. The GCL bit of the
-corresponding Queue are ignored and considered as always "Open". So, even if the software writes a "0" ("C"), it is ignored for
-such queues."
+> Overall, I think it would be nice to improve support for variable-length
+> register maps, in a similar way as done in include/media/v4l2-cci.h.
+> This driver, as well as many other drivers, could really benefit from
+> it. Mark, do you have an opinion, is v4l2-cci something that we could
+> fold in regmap itself ?
 
-It's relatively clear to me that this is what the "gates" variable is
-doing here - it's modulating when preemptible traffic begins to be
-"held", and when it is "released".
++Cc: Hans as he might have even considered this (I'm speculating, but
+considering his quite a wide involvement in v4l2 sensor drivers and
+drivers that use regmap this idea might have come).
 
-Now, the "fpe" variable - that can definitely go.
-
->  			break;
->  		default:
->  			return -EOPNOTSUPP;
-
-Also, this is more general advice. If TC_TAPRIO_CMD_SET_AND_HOLD and
-TC_TAPRIO_CMD_SET_AND_RELEASE used to work as UAPI input into this
-driver, you don't want to break that now by letting those fall into the
-default -EOPNOTSUPP case. What worked must continue to work... somehow.
-
-> @@ -1068,16 +1057,11 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
->  
->  	tc_taprio_map_maxsdu_txq(priv, qopt);
->  
-> -	if (fpe && !priv->dma_cap.fpesel) {
-> +	if (qopt->mqprio.preemptible_tcs && !priv->dma_cap.fpesel) {
->  		mutex_unlock(&priv->est_lock);
->  		return -EOPNOTSUPP;
->  	}
->  
-> -	/* Actual FPE register configuration will be done after FPE handshake
-> -	 * is success.
-> -	 */
-> -	priv->plat->fpe_cfg->enable = fpe;
-> -
->  	ret = stmmac_est_configure(priv, priv, priv->est,
->  				   priv->plat->clk_ptp_rate);
->  	mutex_unlock(&priv->est_lock);
+--=20
+With Best Regards,
+Andy Shevchenko
 
