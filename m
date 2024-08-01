@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-271020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467CF944884
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:34:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3F4944888
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7A121F2800A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF4781C24E99
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53079184533;
-	Thu,  1 Aug 2024 09:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B5B170A3A;
+	Thu,  1 Aug 2024 09:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QdWY0r/n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vek5F/6M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E472F184536
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4DD170A02
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 09:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722504808; cv=none; b=QVGuujLLkWDQDXjK0rVu1qPO8ry8tAv+X0HADz0EpkyBmMePy07ovs7E1ePDM+Um1He+/dGU4ZnHPt8z/pYCd43wENJNNaiaZSq7HZnzgiiGXF2PchuKDh9XD365BmfNTSTG0kcq2EbTi783jpjClhsH8y244XaemA2kbi8+tfQ=
+	t=1722504855; cv=none; b=SZ+gJw6yuQdz+aoueagvf+w5YJ0KSYDgg/9ySRO4oSj7BjrT1ipTrShqSqbHXa3L7161mFedcLMTFEJ3LPsVQ9thdxmQz7Q6R04NTalqV+b8oE3yCRGVTI01oRRoOxpjSnW1EGWyvKatfVt4A3cqObLLT9/V/xM5KzYknALusss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722504808; c=relaxed/simple;
-	bh=qoHo9McR9z6BYuAyhnqNZe9ZuEOxKD6jJkFnnUJKXzY=;
+	s=arc-20240116; t=1722504855; c=relaxed/simple;
+	bh=OtlDzdM4oe21GfBWlTz0hmen8eQS7uEIYayF2mQiqdM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q380AUlSeURwPP0q0mmpaGxksXB1L4KD5vq33wbquLJIH5NckA6NFfvC8xB/Wh/9W6XGXdXro94E4XtCv7k/kRuLUuq53O6aJND1e0kuiy32WS22jaIMyXiT8basRrzKWPQvCrkvLSI3DjSl/oCAC3MTcs8k074oltCKq4ejugk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QdWY0r/n; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=vFr+5gx+j2+B4BK7aFtYmVF9PGLR0HiMcWV7ZndrooMThj/AjJLf2fDfZ+27ExA4PkZwMaWcbMMxpyr/pSbZyHWZ5SXa+AijYt0+Zzp+BJ2cUbLaOol51DKaarFSgLMYRw2fcbRC9z5EVtxqd5qwjKaglaF8VTwPfej0NF7/X7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vek5F/6M; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722504804;
+	s=mimecast20190719; t=1722504852;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sLXqfsBH+7KyNG7/uuZi6mautKAwsxhIgQaoMiRA1p4=;
-	b=QdWY0r/nDjdKPIE0ySmPz884n+9JYiM6/p9qfWyRLjsrUoyNB8DdCeJ4JH7/bL7a+NTz4w
-	oYtGgtGg2Mi0WQnUbcwm4374ooQv4fsYseLwL/GixQV94oH8MgS24rLv/IsTxxbguS//3h
-	OVaXnVhhJclgxOSFnkAR/ybLtMoi/cc=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=4zaTn/YFgotAIGylW43Vgzq+0aYbo1DIlhcwsiRMBu0=;
+	b=Vek5F/6MMQOoOvVqL16YmpJ9PbtHMVnzrmuNKPGFRp3F69mz+w8yy8OO++cI/B3S1mr9I/
+	wmS+mNbtwBkxBhezYQFHBU3QOqPLuVJnr1DsbOPMtlqL6I8iDfmECVsONVKT4m6TFU3+xJ
+	+ULBd5Q3+t3mEDlBOkho60Rp04Lbss8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-117-miyP_QfQMGOgfwqCMjVGKQ-1; Thu, 01 Aug 2024 05:33:23 -0400
-X-MC-Unique: miyP_QfQMGOgfwqCMjVGKQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-368448dfe12so910943f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:33:22 -0700 (PDT)
+ us-mta-112-0INXOwIQMPm-KuGVDJ9b6g-1; Thu, 01 Aug 2024 05:34:11 -0400
+X-MC-Unique: 0INXOwIQMPm-KuGVDJ9b6g-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-426624f4ce3so39873935e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 02:34:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722504802; x=1723109602;
+        d=1e100.net; s=20230601; t=1722504850; x=1723109650;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=sLXqfsBH+7KyNG7/uuZi6mautKAwsxhIgQaoMiRA1p4=;
-        b=L9r6zaWMszPWF2zpTDlMwvuXzoI/bLMvJXJv2DbHPtty7azDSeyC5fcHrWIdS/ZZ3A
-         kQ1/L3eK0gXvl6SOPJ/KIuDfBwHpDbieEiz8Z4pMrsITNf9HF0dM7Ik6+3F8Yi1Kz3SW
-         +IEHEf/C4v018CZ9IZ3OzkQEPvSqmZb2KMPDJ4OPgojgXrinR3UqiljJUT5UQGERBX8X
-         vlEFvHU4/Sx3+I8JhWYQA2mqoHW05F2KLdIxh7Z6tlbxJ3drQ/sx6Z5dS0HSzY7JgBTJ
-         2FHlk045A8z3q/8a7N5m+ixvwj/4H/vDvZrM1h8AMee8tpRtxcYNGuw4+0t8dD8yxbHj
-         GwCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEXrGxNe6nvDN8Wa7BD9bq8QxJsC6BFvoRayMOG/1CKTF7JfEvjffLQRiqSwXqKZRC/oERwGCKpu/6Dr6a4LE7eyx1qAudUQdMbWIJ
-X-Gm-Message-State: AOJu0YzUcLJhCdtJJxjQRjA/sqSnURpRDRDxuXWc5zsTKSnAL8yi2Nos
-	uTnggF1EV4EEDPF46tvcI2Msms72O65JQskxAbXNZgeCu/i9YmFFclmXvqj3pRwSDlteiUG//xC
-	fiQJJIFXmiYrng3kkyJwhSxT79I2/NlRXL7Y7oCCzQXctOLgEaiakMgZ0dbgXXQ==
-X-Received: by 2002:a05:6000:144d:b0:367:895f:619e with SMTP id ffacd0b85a97d-36bb359d1camr815772f8f.11.1722504801994;
-        Thu, 01 Aug 2024 02:33:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/heK2udYQw8AV5R+mx/dv56mwC6hCjVhpsvhsrfIylOeKjaFuFUQERaFi7WvrnS7oyxE4Wg==
-X-Received: by 2002:a05:6000:144d:b0:367:895f:619e with SMTP id ffacd0b85a97d-36bb359d1camr815749f8f.11.1722504801549;
-        Thu, 01 Aug 2024 02:33:21 -0700 (PDT)
+        bh=4zaTn/YFgotAIGylW43Vgzq+0aYbo1DIlhcwsiRMBu0=;
+        b=kzLh96GZa+cd2hmS41PAinJZ8vNZMUev2D9QlSxsLXFJu7CNT3ADK9Avuem5udCzMu
+         jBGtS3cVKY/Jks1/4jQ8D4+2O5UTgpD0NIPqbsB2cVtLpsIszY5eyNIWD6LFBFxRO7RS
+         kUVZbPv+/vVYOo9873m+IbitNa0tcSdMLLXH76AkKOCn9ow71CZmOHXBqYUXfwX+EKCf
+         3HrsBM5yj1wU5D97OI8urCW2FA2QJ3nx4V/HG7qvBJfUWvT6c2uuLPrWYcrmDjBsUV5y
+         p6tAx4PsraqrpGBW5Jr0pV0Q9uiVb7i81vzyb7SZvDkgh8mwFR1M9proV4dD+g4ycmUY
+         X+NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJiUFRWo7eu6DorKjFJcZdpYN6+gSi3b4wCg/Hekxm5jl/dDwdwrl2WHBDVxotQcirPYn9LAcDKCjhSdBFa3+hi7OuwuJR5kBn5WkC
+X-Gm-Message-State: AOJu0Yy8o8OqkxDTRrcW6Jjiawbq3PxNZK3u2crJl1zokxsevHoA+Gx0
+	gj9jHkAdYC6hxZM6TgVY6Y6XdMmsI02V4cTiN5nqpW77ohGgBUeHHW8GnK2eWyonddEtgPLRXxS
+	mNZP6b4KJTCWqQpcn43BvqNK9CaLecgozdCjQkZZ0DEvyote0EFbUaeLbHK3mfg==
+X-Received: by 2002:a05:600c:46d2:b0:427:abf6:f0e6 with SMTP id 5b1f17b1804b1-428a9bdba6dmr16727025e9.9.1722504850113;
+        Thu, 01 Aug 2024 02:34:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGsdIi9cbdhCyGOUOk209ImdY8rj8k70L4gcpiRY4RmZ4B6fxJ3acejCtVHfR5vm+WNgcQG9g==
+X-Received: by 2002:a05:600c:46d2:b0:427:abf6:f0e6 with SMTP id 5b1f17b1804b1-428a9bdba6dmr16726645e9.9.1722504849565;
+        Thu, 01 Aug 2024 02:34:09 -0700 (PDT)
 Received: from ?IPV6:2003:cb:c707:5c00:e650:bcd7:e2a0:54fe? (p200300cbc7075c00e650bcd7e2a054fe.dip0.t-ipconnect.de. [2003:cb:c707:5c00:e650:bcd7:e2a0:54fe])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6405csm50737225e9.34.2024.08.01.02.33.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282dae2f73sm43560015e9.21.2024.08.01.02.34.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 02:33:21 -0700 (PDT)
-Message-ID: <01e36e70-4e3e-464f-a14b-57a892b07f61@redhat.com>
-Date: Thu, 1 Aug 2024 11:33:18 +0200
+        Thu, 01 Aug 2024 02:34:09 -0700 (PDT)
+Message-ID: <6ddd626e-23c3-48aa-9753-ab8d73a5f798@redhat.com>
+Date: Thu, 1 Aug 2024 11:34:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,11 +82,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lib: test_hmm: Use min() to improve dmirror_exclusive()
-To: Thorsten Blum <thorsten.blum@toblux.com>, jglisse@redhat.com,
- akpm@linux-foundation.org
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20240726131245.161695-1-thorsten.blum@toblux.com>
+Subject: Re: [PATCH v6 04/11] mm: Add missing mmu_notifier_clear_young for
+ !MMU_NOTIFIER
+To: James Houghton <jthoughton@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Paolo Bonzini <pbonzini@redhat.com>
+Cc: Ankit Agrawal <ankita@nvidia.com>,
+ Axel Rasmussen <axelrasmussen@google.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ David Matlack <dmatlack@google.com>, David Rientjes <rientjes@google.com>,
+ James Morse <james.morse@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>,
+ Raghavendra Rao Ananta <rananta@google.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Sean Christopherson
+ <seanjc@google.com>, Shaoqin Huang <shahuang@redhat.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Wei Xu <weixugc@google.com>,
+ Will Deacon <will@kernel.org>, Yu Zhao <yuzhao@google.com>,
+ Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240724011037.3671523-1-jthoughton@google.com>
+ <20240724011037.3671523-5-jthoughton@google.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -134,34 +151,55 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240726131245.161695-1-thorsten.blum@toblux.com>
+In-Reply-To: <20240724011037.3671523-5-jthoughton@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 26.07.24 15:12, Thorsten Blum wrote:
-> Use min() to simplify the dmirror_exclusive() function and improve its
-> readability.
+On 24.07.24 03:10, James Houghton wrote:
+> Remove the now unnecessary ifdef in mm/damon/vaddr.c as well.
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> Signed-off-by: James Houghton <jthoughton@google.com>
 > ---
->   lib/test_hmm.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+>   include/linux/mmu_notifier.h | 7 +++++++
+>   mm/damon/vaddr.c             | 2 --
+>   2 files changed, 7 insertions(+), 2 deletions(-)
 > 
-> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
-> index ee20e1f9bae9..056f2e411d7b 100644
-> --- a/lib/test_hmm.c
-> +++ b/lib/test_hmm.c
-> @@ -799,10 +799,7 @@ static int dmirror_exclusive(struct dmirror *dmirror,
->   		unsigned long mapped = 0;
->   		int i;
+> diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+> index d39ebb10caeb..e2dd57ca368b 100644
+> --- a/include/linux/mmu_notifier.h
+> +++ b/include/linux/mmu_notifier.h
+> @@ -606,6 +606,13 @@ static inline int mmu_notifier_clear_flush_young(struct mm_struct *mm,
+>   	return 0;
+>   }
 >   
-> -		if (end < addr + (ARRAY_SIZE(pages) << PAGE_SHIFT))
-> -			next = end;
-> -		else
-> -			next = addr + (ARRAY_SIZE(pages) << PAGE_SHIFT);
-> +		next = min(end, addr + (ARRAY_SIZE(pages) << PAGE_SHIFT));
+> +static inline int mmu_notifier_clear_young(struct mm_struct *mm,
+> +					   unsigned long start,
+> +					   unsigned long end)
+> +{
+> +	return 0;
+> +}
+> +
+>   static inline int mmu_notifier_test_young(struct mm_struct *mm,
+>   					  unsigned long address)
+>   {
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index 381559e4a1fa..a453d77565e6 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -351,11 +351,9 @@ static void damon_hugetlb_mkold(pte_t *pte, struct mm_struct *mm,
+>   		set_huge_pte_at(mm, addr, pte, entry, psize);
+>   	}
+>   
+> -#ifdef CONFIG_MMU_NOTIFIER
+>   	if (mmu_notifier_clear_young(mm, addr,
+>   				     addr + huge_page_size(hstate_vma(vma))))
+>   		referenced = true;
+> -#endif /* CONFIG_MMU_NOTIFIER */
+>   
+>   	if (referenced)
+>   		folio_set_young(folio);
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 
 -- 
 Cheers,
