@@ -1,139 +1,161 @@
-Return-Path: <linux-kernel+bounces-270541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A82D944170
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D588F94412A
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 04:28:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EFD5B2EA31
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:27:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 139A61C230C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 02:28:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47EC42049;
-	Thu,  1 Aug 2024 02:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A0D7E574;
+	Thu,  1 Aug 2024 02:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uHkqHvP+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="fAe3eAHL";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IRx12KAb"
+Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40211EB4A9;
-	Thu,  1 Aug 2024 02:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9843512DD95
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 02:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722479190; cv=none; b=al3B757C5bKhOR5DiB+XPdm4QbN6zNmXhHLHx6T39h8SEiyXy2NcytEH6/5LDlXS/Pj73WLerwf+2JB2Kr8yBIZQAXKrmCwleg51rCzKS28e35/Jv+CPUbTiQQOny0tosSPwyhlR2HFZG30ikuGLLHkTKykxal/BRIfT2E4LUak=
+	t=1722479196; cv=none; b=PTqNSzkTSR1jv5qT0S/ZNUTYgQpFYNwGznlegne4mNQgLKBy/9zYuu8EIB1hNXRXQ1g7xCxt9tyAtEJi3xpTxXI8dJgfRQp/BtzI+DqzYt8khRFauDM2eDm8vpuqvEek2qaTY/03bLexxUJBD4ZT7JUFPlHwK3YYy2ybCE/A/lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722479190; c=relaxed/simple;
-	bh=dOz9CZJAwvcwTM3cno/e4aaYLwlNEIrTcbyLJ2I+nmk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbyKHdCogCVtOGl5s/nKA9ZNzUrLoK3Iippap/6WsfYh6fS1RXtx6BHcc5cEn9qTnKT02opNRKPUKnEel2kY/LxDqtjThOYEI6Fn145JLYfxw8V62DL2rZVruyAtcgGgYGxNJyXBMimIclaxyCMvY6DYh441n4gFbAL8O/oPfcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uHkqHvP+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06A26C4AF10;
-	Thu,  1 Aug 2024 02:26:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722479189;
-	bh=dOz9CZJAwvcwTM3cno/e4aaYLwlNEIrTcbyLJ2I+nmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uHkqHvP+xvPRb7QSZmGyY4+JKZSbz5E+Rr6bMaoJtEzGgfv1C4fHmQrgJDKxpWcRC
-	 700Y+cm9k78zsGNIEoNArxJN9YLrOc/DzplgjHl49xr2S0vhoIpSprKUdCCN707165
-	 5CSX6zaB/AHGA6FcYx/DZijwLwPvoIaGcNiDlzB1kbybNAEpyvBYlPUoTYhIRyusds
-	 4FYsfTUDvIoOJNyPMiYeGvXgbONgeZ/xqmKjieG8ImqZXmu9u4zo7bblvFAhi/5It7
-	 h1UnXYGm3p7y4v9Uqjpaz8GsNWy3yn7tvqW/GlJeI7K8jSsNOmeaYPuAUv9IEb7/JG
-	 vq9w8FkC1QHVQ==
-Date: Wed, 31 Jul 2024 21:26:27 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] phy: qcom: qmp: Add debug prints for register writes
-Message-ID: <nkfrtuxv4ueow66bnazyb4ul3pz3z3wo6zsptu6wnw7hflxerx@pkwn7sx6gfqi>
-References: <20240731115637.90351-1-manivannan.sadhasivam@linaro.org>
+	s=arc-20240116; t=1722479196; c=relaxed/simple;
+	bh=jY+SeGMwyBpNmE3iBFvhyoQLcGovdl2KLaIBzojQdAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFY0AO+1SOBeHmpNrvA0pgdrEu32V+5XhTX7ACZSsLMvphLAd0TUknSU0gcUedtRV89MlZmqA//lHr0TE/8091Y9o6jC4TpOLEOSYmePcvAR5ZYIxlxPt2P4TyG55yJYAw8vhvq3HBA4M6volFBMijJc7mJ4QDgeTVawmBp9j0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=fAe3eAHL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IRx12KAb; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8ED091147B6A;
+	Wed, 31 Jul 2024 22:26:33 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 31 Jul 2024 22:26:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1722479193; x=1722565593; bh=/eeK0enPou
+	wqRh3ub6FMhUqsaktHD2IwdZMpOOh5Krc=; b=fAe3eAHLmgtLqLp6ADpXEuZyhL
+	vdiM/u3/cM2QoenO0prhqioSBxLOAo5VA2BJp0pRsf1AVjb+DLyd5Vm8rAEQV3kJ
+	LS4Gl1/4yiMew57o4b8Ph9XXsPIW3XLNWWU6NnJl253zbi+ClT8RdDQGVmzcB8RC
+	8TyOe8STbDmSpxkrsG31RCLH0CujlFKislB06ysCbnjSP4e7PkgskoEogpDCGhq3
+	yLE0sex3JEb7tVCapZZkon4AbpxJFcXFb2Dnxg49muVzmWmCEglFdKVnE35KKCjd
+	p37volMIUMqNtCKWizRhE8JzKcgIWt+PywLX3C7nzg9350/LEnTtTKfOTvzg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1722479193; x=1722565593; bh=/eeK0enPouwqRh3ub6FMhUqsaktH
+	D2IwdZMpOOh5Krc=; b=IRx12KAb4qrqaIRQIR+jnGqqcfaACEueEm9VySVDrtwv
+	B3+ERRsaKb75fh4Ki7UjDLpLRLvS56tKbsxK0ng1+YMDbgvQegHObz7uDAQzgNmV
+	ehEJeRwkqmjc2z04ETbJoBCFFacdmzUm7862lJ5FJIsVGqDjFlFroxN99mmeN5fI
+	l3HHtCp4hPaQi68pbhYchntxc0BhBZuVqdeP9FiXWO9M4oF4Xa9LSN7PiosuL9Of
+	++hIown30U+AG8Oc/vSy1gDhSXAVMdrTEXWqv08a0q2fbmCkFy0Wx9WO3Q58fhVn
+	jwkRBBhEF4HetqHipWU2DKjsK2M18OyLKgWctDIhiA==
+X-ME-Sender: <xms:WfKqZkl6ZCOzuMIBh8J26jfQoOCge50u-5GyGgdlEkOisDHe9L7M5Q>
+    <xme:WfKqZj3D56jfMRqgE4wTUJtObY4Ve-iqyHr_l5RIF9YovC2djNfIxEGj8xL5AMWj2
+    CHukzrINvVCeXEXLgs>
+X-ME-Received: <xmr:WfKqZipHs_3BOwQEFh9s0EcuEBs-jIN78GBuUogZmb9w-Iq9lHHSkCvojH4AW_3P02SgnceYS_-Dih2bzBoIlPRUBaTMKMCCC2lyj3s9OLe71AE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeejgdeitdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofgggfestdekredtre
+    dttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhh
+    ihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhepffdvueelffevke
+    duhfetjeduffeghfettdfguedtgfdvgfeufeduheevheevkeeknecuvehluhhsthgvrhfu
+    ihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkh
+    grmhhotggthhhirdhjphdpnhgspghrtghpthhtoheptd
+X-ME-Proxy: <xmx:WfKqZgl14GKQ1CCKh6u9p4uDp2UNBxj0KDiBPJayCO58-VOVhLnWCg>
+    <xmx:WfKqZi2vR7H7Nbd6uMPthwTPdNKUfYFoEtNa3LN-lmJJyMeBpL4UJA>
+    <xmx:WfKqZnugSufcw1kC7yuRGQiB1O6R8EdQTkJulPy7-6UdoanvZuJ-Cw>
+    <xmx:WfKqZuVn9pTyBdlg0oE7WoYB_rUaNN2gLiZDdXYac20rojqBTe6EMg>
+    <xmx:WfKqZgCVVmH_zjslXUuaYwPQIYbe06esJ1RJUVSu-uB-ZkTJ-GKlWOeI>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 31 Jul 2024 22:26:32 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] firewire: core: utilize kref to maintain fw_node with reference counting
+Date: Thu,  1 Aug 2024 11:26:29 +0900
+Message-ID: <20240801022629.31857-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731115637.90351-1-manivannan.sadhasivam@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 05:26:37PM GMT, Manivannan Sadhasivam wrote:
-> These register prints are useful to validate the init sequence against the
-> Qcom internal documentation and also to share with the Qcom hw engineers to
-> debug issues related to PHY.
-> 
+Current implementation directly uses refcount_t to maintain the life time
+of fw_node, while kref is available for the same purpose.
 
-I've written this patch every time I've touched one of these PHYs, so I
-certainly like this.
+This commit replaces the implementation with kref.
 
-> Sample debug prints:
-> 
-> QMP PHY: Writing Reg: QSERDES_V5_COM_SYSCLK_EN_SEL Offset: 0x0094 Val: 0xd9
-> QMP PHY: Writing Reg: QSERDES_V5_COM_HSCLK_SEL Offset: 0x0158 Val: 0x11
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+---
+ drivers/firewire/core-topology.c |  2 +-
+ drivers/firewire/core.h          | 15 +++++++++++----
+ 2 files changed, 12 insertions(+), 5 deletions(-)
 
-That said, with multiple instances of PHYs being configured at about the
-same time it seems this would benefit greatly from something identifying
-which PHY instance the write relates to?
+diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-topology.c
+index b4e637aa6932..46e6eb287d24 100644
+--- a/drivers/firewire/core-topology.c
++++ b/drivers/firewire/core-topology.c
+@@ -39,7 +39,7 @@ static struct fw_node *fw_node_create(u32 sid, int port_count, int color)
+ 	node->initiated_reset = phy_packet_self_id_zero_get_initiated_reset(sid);
+ 	node->port_count = port_count;
+ 
+-	refcount_set(&node->ref_count, 1);
++	kref_init(&node->kref);
+ 	INIT_LIST_HEAD(&node->link);
+ 
+ 	return node;
+diff --git a/drivers/firewire/core.h b/drivers/firewire/core.h
+index 7c36d2628e37..189e15e6ba82 100644
+--- a/drivers/firewire/core.h
++++ b/drivers/firewire/core.h
+@@ -183,7 +183,8 @@ struct fw_node {
+ 			 * local node to this node. */
+ 	u8 max_depth:4;	/* Maximum depth to any leaf node */
+ 	u8 max_hops:4;	/* Max hops in this sub tree */
+-	refcount_t ref_count;
++
++	struct kref kref;
+ 
+ 	/* For serializing node topology into a list. */
+ 	struct list_head link;
+@@ -196,15 +197,21 @@ struct fw_node {
+ 
+ static inline struct fw_node *fw_node_get(struct fw_node *node)
+ {
+-	refcount_inc(&node->ref_count);
++	kref_get(&node->kref);
+ 
+ 	return node;
+ }
+ 
++static void release_node(struct kref *kref)
++{
++	struct fw_node *node = container_of(kref, struct fw_node, kref);
++
++	kfree(node);
++}
++
+ static inline void fw_node_put(struct fw_node *node)
+ {
+-	if (refcount_dec_and_test(&node->ref_count))
+-		kfree(node);
++	kref_put(&node->kref, release_node);
+ }
+ 
+ void fw_core_handle_bus_reset(struct fw_card *card, int node_id,
+-- 
+2.43.0
 
-dev_dbg() would certainly be nice...
-
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
-> 
-> Changes in v2:
-> 
-> * Modifed the debug print to include reg offset
-> 
->  drivers/phy/qualcomm/phy-qcom-qmp-common.h | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp-common.h b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-> index 799384210509..40beb413328f 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp-common.h
-> @@ -9,6 +9,7 @@
->  struct qmp_phy_init_tbl {
->  	unsigned int offset;
->  	unsigned int val;
-> +	char *name;
-
-const?
-
-Regards,
-Bjorn
-
->  	/*
->  	 * mask of lanes for which this register is written
->  	 * for cases when second lane needs different values
-> @@ -20,6 +21,7 @@ struct qmp_phy_init_tbl {
->  	{				\
->  		.offset = o,		\
->  		.val = v,		\
-> +		.name = #o,		\
->  		.lane_mask = 0xff,	\
->  	}
->  
-> @@ -27,6 +29,7 @@ struct qmp_phy_init_tbl {
->  	{				\
->  		.offset = o,		\
->  		.val = v,		\
-> +		.name = #o,		\
->  		.lane_mask = l,		\
->  	}
->  
-> @@ -45,6 +48,8 @@ static inline void qmp_configure_lane(void __iomem *base,
->  		if (!(t->lane_mask & lane_mask))
->  			continue;
->  
-> +		pr_debug("QMP PHY: Writing Reg: %s Offset: 0x%04x Val: 0x%02x\n",
-> +			t->name, t->offset, t->val);
->  		writel(t->val, base + t->offset);
->  	}
->  }
-> -- 
-> 2.25.1
-> 
-> 
 
