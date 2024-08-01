@@ -1,282 +1,174 @@
-Return-Path: <linux-kernel+bounces-270631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E06944291
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:14:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122CA944293
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 07:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 965F81C2184F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:14:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62A36B21F3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 05:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D64913E023;
-	Thu,  1 Aug 2024 05:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF8711428F0;
+	Thu,  1 Aug 2024 05:15:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuHI8Kva"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mPVLDIK0"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFCE13D283;
-	Thu,  1 Aug 2024 05:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C30413D896;
+	Thu,  1 Aug 2024 05:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722489283; cv=none; b=aOFJEYT45KIHiU2vwsw2KGOCsQx7n3b4MAAUZdIw1NnLEdKLrhqisSDfVpohve2dhPE6yJnQrYP7z6+XO7q3JlmOgIZINkLmfGv8YF7gA+mXepo2L38fGyo9vUjy0VflnVV71n99xzxNfnvFlkFxhASKaFu0KqyW92oOnYIHMt0=
+	t=1722489303; cv=none; b=fd33K5Y9snlfPZ8R1dnJ/1CIVrvbBHgs3ozaMuO3GZBKhtQ/6VcEySiIG8vV+3tdc5pU6FElK/WwyxAfTwAeeLKwky3ervRtKhq78dP0j/+2VUfqDKO+RypsXv+tamMVf5nC4sNrvYiuTEdm61K3KgdyaG3IF6+7XDo/RHKwbkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722489283; c=relaxed/simple;
-	bh=ZsvwGaGoEAcPO7DkzH/FQcfX3tob/yYcuPjkpB9TDh8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NC/n2e/zvw8ldUw2K9UMN0hL6VZloCqJ8sd4QOY6dTdjV87UVs/Gk+2uGi0l3I78hKqCSEzH0ytSwIeuHpguT0CzaQARCAGqd4ToNZcg+QG9q9SOvgj+U9YOGqKZJf1LGEuuPbWUDffcr3FaVQSWVGFqjJnbsef1o2IjrxjfYB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuHI8Kva; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso10064555e87.2;
-        Wed, 31 Jul 2024 22:14:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722489280; x=1723094080; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dwe1CFr7XDtc90/o/bWkFlT5zGqIJ/h6TtZLaOU7lZo=;
-        b=VuHI8Kvac3EA2OMkoNfF+Q5pZ791POD53o+8j5oDr3uKGPjEha+UPLhn71qLTybq9+
-         oMUNJ99zu2KUlYYWtLkeEbzaBIyp+D2mZKfaBu1ZmaY3dxarY9+6x2tZdBmhQseLgkyV
-         ivKy0JuqurOETG0uX7aLVUBS1b4zM0luBNGKC49EzN0yfOOvy9LxMMCvShD6TvjKDf5j
-         /+41s2nreoHMy2KUzncwLAqibKzDQ18XggdfbqW5SIm6MpZiuC/pewuAis1DGNjgbMHS
-         crpCZITx/nq7356t30kzkpeLhmW7HChf7cTPuR8eCWF0k22UwEGo4jz4cDdVHX9zVPUH
-         Hqzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722489280; x=1723094080;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dwe1CFr7XDtc90/o/bWkFlT5zGqIJ/h6TtZLaOU7lZo=;
-        b=tQzTLC0ZRR3MPOPf7btKKtb2/DmgDaEUqZ/Y0fk/ncn+4ZS420PBzjrKz2Y8MKdFEt
-         7QVi2CGtokgsoVSzSDg9etf6uuG2N4duQlp44/WliGxGrGdS00B3/IEIdsZXEnz3oO9l
-         SHGmBcj3L4eLmFNJinjFNxX5BLQEdess4gBzmA00S3ZaUCl1M9EX4bdTUr8VOcAmfHNq
-         bUq448gw0x60MyEe7nnjeBt9z29ATS8Lj4fwrY5ZiD+vL4GlyJonRji7bCp5wqA3pKYq
-         /yC/d2ovbIjluo9rHFCAsbO1nSADcoaGdDbydb2cgVoFBXm504GkrUCNPGyM6Elx3qDI
-         yqqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUH9PVTnqnativ3wEL9LFCUXqywE0UfWw0uMiI7ZRoRjFAKZ6XqgD4OZzxNvpjAalFi1VuRiXJW3X8J1k0rFcWENp0YdsClUCrctu1Nc6mFliuFwuAxsdQvRFMeC+KEE5LlXOgwI2429g==
-X-Gm-Message-State: AOJu0YxgIkZ8V/E8+x38dWBpjskiJDsy5oQq35JUSNoA3GcA1k9tUseO
-	siqa6D2XUGNULKbAwUpKpnFO3H4MAXtoXZDfW3FOfJWAoeM2TwQ+l4HIihCl
-X-Google-Smtp-Source: AGHT+IGpNCSVm6hYkMRgsT/z/Oa2FjemtIZEfC7W2b0eQB93+x4euJWk0w43mBqDph9ZoRI7njDGeg==
-X-Received: by 2002:a19:2d54:0:b0:52e:fa5f:b6b1 with SMTP id 2adb3069b0e04-530b61f81bamr444856e87.60.1722489279571;
-        Wed, 31 Jul 2024 22:14:39 -0700 (PDT)
-Received: from WBEC325.dom.lan ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd0c4csm2474129e87.72.2024.07.31.22.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 22:14:39 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: linuxppc-dev@lists.ozlabs.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: dtc: update P2020RDB dts
-Date: Thu,  1 Aug 2024 07:14:01 +0200
-Message-Id: <20240801051402.584652-1-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722489303; c=relaxed/simple;
+	bh=NPwyKivif4ervZNNxbD6tU9GTqSY+6P3j0oAvfIDYR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ne9fB+ntf5AeJDaR8EuhsUMGOJr0PQ7WTIzEKhZ0YtVVE9NzqvCu3SnMOprnknEZSY3knjWpqPJDbn9TLvvmwq0xfQcAhFEXob/77pdHJ9+t1bFghm7fnD0Ama0hhmzm4bNMRFNR13iq017YwKbYCrEVvlQklBgGxzlcblQbqR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mPVLDIK0; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1722489297;
+	bh=9ekLAqcHMmW2qzcPBYo8F7ssePw8pSFREMlSsQxjCns=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mPVLDIK0/knKc7ZzmaKymdAd2cboi5nXmomkTZTo9bJwVgDyvHQIcZimJ0PTyv87V
+	 9jAgpgXjxqJv1sGDjKvoVm2M3PX8k/BAewdySI1SGNhKbFAzHkhJ9jYPvhOx/IHeSs
+	 7kqnHBRriNzt2O0hV7Fzw2cCnglwRZCcOJQlr4C4msGzY/2N429CiZvTP3pxWCyfsh
+	 Jo6f1+mBNTM/qlu9WvnzF/jTOHxFEe54Q5U266x4csBI2paTmnpfepa8if616G4iZt
+	 QrY1UG0NiS3ca0Fl07IIYDrDQ/q/FpR6GuIzF4TFniFZNfz2QDF0Kmk1Bef3Agl6pC
+	 I7IYUAdGO2bFg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WZHG860WCz4wbR;
+	Thu,  1 Aug 2024 15:14:56 +1000 (AEST)
+Date: Thu, 1 Aug 2024 15:14:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Michael Ellerman
+ <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>
+Subject: linux-next: runtime warning after merge of the dma-mapping tree
+Message-ID: <20240801151455.01f08778@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/OXXotUFWdVvvUXMOe8InhfD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-P2020RDB contains multiple peripherals, which isn't added to
-devicetree:
-  - Switch: Microchip VSC7385
-  - PMIC: Renesas ZL2006
-  - Temperature sensor: Analog Devices ADT7461
-  - Two eeproms: 24C256 and 24C01
-  - GPIO expander: NXP PCA9557
-  - reset gpios of Ethernet PHYs
+--Sig_/OXXotUFWdVvvUXMOe8InhfD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This commit adds it.
+Hi all,
 
-Some refreshments was done:
-  - fixed link in ethernet-node
-  - platform drivers nodes names
-  - added 'gpio0' label in pq3-gpio-0.dtsi
+After merging the dma-mapping tree, today's linux-next qemu boot test
+(powerpc_pseries_le_defconfig boot) produced this warning:
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
- arch/powerpc/boot/dts/fsl/p2020rdb.dts    | 85 +++++++++++++++++++++--
- arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi |  2 +-
- 2 files changed, 81 insertions(+), 6 deletions(-)
+ipr: IBM Power RAID SCSI Device Driver version: 2.6.4 (March 14, 2017)
+ibmvscsi 71000003: SRP_VERSION: 16.a
+ibmvscsi 71000003: Maximum ID: 64 Maximum LUN: 32 Maximum Channel: 3
+scsi host0: IBM POWER Virtual SCSI Adapter 1.5.9
+ibmvscsi 71000003: partner initialization complete
+ibmvscsi 71000003: host srp version: 16.a, host partition qemu (0), OS 2, m=
+ax io 2097152
+ibmvscsi 71000003: sent SRP login
+ibmvscsi 71000003: SRP_LOGIN succeeded
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1 at include/linux/dma-mapping.h:564 scsi_init_limits+=
+0x12c/0x134
+Modules linked in:
+CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.11.0-rc1-02654-gb095b78c=
+3a3d #1
+Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected) 0x4d0200=
+ 0xf000004 of:SLOF,HEAD pSeries
+NIP:  c000000000c350c0 LR: c000000000c34fd4 CTR: 0000000000000000
+REGS: c00000000498f0c0 TRAP: 0700   Not tainted  (6.11.0-rc1-02654-gb095b78=
+c3a3d)
+MSR:  8000000002029033 <SF,VEC,EE,ME,IR,DR,RI,LE>  CR: 24002240  XER: 00000=
+000
+CFAR: c000000000c35068 IRQMASK: 0=20
+GPR00: 0000000000000005 c00000000498f360 c00000000165af00 c00000000498f3f0=
+=20
+GPR04: 0000000000000000 0000000000000000 c00000000498f498 0000000000000003=
+=20
+GPR08: 0000000000000080 0000000000000000 00000000ffffffff 0000000000002000=
+=20
+GPR12: 0000000000000000 c000000002b60000 c00000000001110c 0000000000000000=
+=20
+GPR16: 0000000000000000 0000000000000000 0000000000000000 c0000000065e1900=
+=20
+GPR20: c000000006445c00 c000000001501e48 c000000006445c48 0000000000000000=
+=20
+GPR24: c00000000498f5b0 0000000000000000 c000000002b40330 c000000006c06c28=
+=20
+GPR28: 0000000000000000 c000000006c06c00 c000000006445c48 c0000000065e1000=
+=20
+NIP [c000000000c350c0] scsi_init_limits+0x12c/0x134
+LR [c000000000c34fd4] scsi_init_limits+0x40/0x134
+Call Trace:
+[c00000000498f360] [c00000000498f390] 0xc00000000498f390 (unreliable)
+[c00000000498f390] [c000000000c3ae94] scsi_alloc_sdev+0x204/0x3c4
+[c00000000498f4d0] [c000000000c3b2a0] scsi_probe_and_add_lun+0x24c/0x354
+[c00000000498f590] [c000000000c3c32c] __scsi_scan_target+0x160/0x294
+[c00000000498f5f0] [c000000000c3c694] scsi_scan_channel+0xa0/0xec
+[c00000000498f640] [c000000000c3c818] scsi_scan_host_selected+0x138/0x198
+[c00000000498f690] [c000000000c3cc2c] scsi_scan_host+0x2c0/0x324
+[c00000000498f730] [c000000000c6e128] ibmvscsi_probe+0x738/0xb74
+[c00000000498f830] [c000000000108ee4] vio_bus_probe+0x9c/0x438
+[c00000000498f8d0] [c000000000ba7dec] really_probe+0x104/0x3d4
+[c00000000498f960] [c000000000ba8170] __driver_probe_device+0xb4/0x1d0
+[c00000000498f9e0] [c000000000ba83dc] driver_probe_device+0x54/0x124
+[c00000000498fa20] [c000000000ba86e8] __driver_attach+0xdc/0x204
+[c00000000498fa60] [c000000000ba4b34] bus_for_each_dev+0xb4/0x138
+[c00000000498fac0] [c000000000ba739c] driver_attach+0x34/0x48
+[c00000000498fae0] [c000000000ba676c] bus_add_driver+0x140/0x2f0
+[c00000000498fb70] [c000000000ba9d98] driver_register+0x8c/0x1c4
+[c00000000498fbe0] [c00000000010a528] __vio_register_driver+0x74/0x98
+[c00000000498fc00] [c000000002088e6c] ibmvscsi_module_init+0x8c/0x110
+[c00000000498fc30] [c000000000010d98] do_one_initcall+0x80/0x2f8
+[c00000000498fd00] [c000000002005c8c] kernel_init_freeable+0x32c/0x520
+[c00000000498fde0] [c000000000011138] kernel_init+0x34/0x26c
+[c00000000498fe50] [c00000000000debc] ret_from_kernel_user_thread+0x14/0x1c
+--- interrupt: 0 at 0x0
+Code: ebe1fff8 7c0803a6 4e800020 60420000 81490000 614a4000 91490000 4bffff=
+b0 38e00000 3900ffff 60e7ffff 4bffff50 <0fe00000> 4bffffc0 3c4c00a2 38425e3=
+8=20
+---[ end trace 0000000000000000 ]---
+scsi 0:0:2:0: CD-ROM            QEMU     QEMU CD-ROM      2.5+ PQ: 0 ANSI: 5
+sr 0:0:2:0: Power-on or device reset occurred
+sr 0:0:2:0: [sr0] scsi3-mmc drive: 16x/50x cd/rw xa/form2 cdda tray
 
-diff --git a/arch/powerpc/boot/dts/fsl/p2020rdb.dts b/arch/powerpc/boot/dts/fsl/p2020rdb.dts
-index 3acd3890b397..d563d37b91f1 100644
---- a/arch/powerpc/boot/dts/fsl/p2020rdb.dts
-+++ b/arch/powerpc/boot/dts/fsl/p2020rdb.dts
-@@ -6,6 +6,7 @@
-  */
- 
- /include/ "p2020si-pre.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "fsl,P2020RDB";
-@@ -33,7 +34,7 @@ lbc: localbus@ffe05000 {
- 			  0x1 0x0 0x0 0xffa00000 0x00040000
- 			  0x2 0x0 0x0 0xffb00000 0x00020000>;
- 
--		nor@0,0 {
-+		nor@0 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			compatible = "cfi-flash";
-@@ -79,7 +80,7 @@ partition@f00000 {
- 			};
- 		};
- 
--		nand@1,0 {
-+		nand@1 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			compatible = "fsl,p2020-fcm-nand",
-@@ -128,11 +129,49 @@ partition@1100000 {
- 			};
- 		};
- 
--		L2switch@2,0 {
-+		ethernet-switch@2 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
--			compatible = "vitesse-7385";
-+			compatible = "vitesse,vsc7385";
- 			reg = <0x2 0x0 0x20000>;
-+			reset-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@1 {
-+					reg = <1>;
-+					label = "lan1";
-+				};
-+				port@2 {
-+					reg = <2>;
-+					label = "lan2";
-+				};
-+				port@3 {
-+					reg = <3>;
-+					label = "lan3";
-+				};
-+				port@4 {
-+					reg = <4>;
-+					label = "lan4";
-+				};
-+				vsc: port@6 {
-+					reg = <6>;
-+					label = "cpu";
-+					ethernet = <&enet0>;
-+					phy-mode = "rgmii";
-+					rx-internal-delay-ps = <1400>;
-+					tx-internal-delay-ps = <2000>;
-+
-+					fixed-link {
-+						speed = <1000>;
-+						full-duplex;
-+						pause;
-+					};
-+				};
-+			};
-+
- 		};
- 
- 	};
-@@ -141,12 +180,39 @@ soc: soc@ffe00000 {
- 		ranges = <0x0 0x0 0xffe00000 0x100000>;
- 
- 		i2c@3000 {
-+			temperature-sensor@4c {
-+				compatible = "adi,adt7461";
-+				reg = <0x4c>;
-+			};
-+
-+			eeprom@50 {
-+				compatible = "atmel,24c256";
-+				reg = <0x50>;
-+			};
-+
- 			rtc@68 {
- 				compatible = "dallas,ds1339";
- 				reg = <0x68>;
- 			};
- 		};
- 
-+		i2c@3100 {
-+			pmic@11 {
-+				compatible = "zl2006";
-+				reg = <0x11>;
-+			};
-+
-+			gpio@18 {
-+				compatible = "nxp,pca9557";
-+				reg = <0x18>;
-+			};
-+
-+			eeprom@52 {
-+				compatible = "atmel,24c01";
-+				reg = <0x52>;
-+			};
-+		};
-+
- 		spi@7000 {
- 			flash@0 {
- 				#address-cells = <1>;
-@@ -200,11 +266,15 @@ mdio@24520 {
- 			phy0: ethernet-phy@0 {
- 				interrupts = <3 1 0 0>;
- 				reg = <0x0>;
-+				reset-gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
- 			};
-+
- 			phy1: ethernet-phy@1 {
- 				interrupts = <3 1 0 0>;
- 				reg = <0x1>;
-+				reset-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>;
- 			};
-+
- 			tbi-phy@2 {
- 				device_type = "tbi-phy";
- 				reg = <0x2>;
-@@ -232,8 +302,13 @@ ptp_clock@24e00 {
- 		};
- 
- 		enet0: ethernet@24000 {
--			fixed-link = <1 1 1000 0 0>;
- 			phy-connection-type = "rgmii-id";
-+
-+			fixed-link {
-+				speed = <1000>;
-+				full-duplex;
-+				pause;
-+			};
- 		};
- 
- 		enet1: ethernet@25000 {
-diff --git a/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi b/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi
-index a1b48546b02d..5181117ea6b5 100644
---- a/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi
-+++ b/arch/powerpc/boot/dts/fsl/pq3-gpio-0.dtsi
-@@ -32,7 +32,7 @@
-  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  */
- 
--gpio-controller@fc00 {
-+gpio0: gpio-controller@fc00 {
- 	#gpio-cells = <2>;
- 	compatible = "fsl,pq3-gpio";
- 	reg = <0xfc00 0x100>;
--- 
-2.34.1
+Exposed by commit
 
+  4d871c2db2fa ("dma-mapping: don't return errors from dma_set_seg_boundary=
+")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OXXotUFWdVvvUXMOe8InhfD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmarGc8ACgkQAVBC80lX
+0Gx+zgf+Jl0ZK6G0Pk6jLKXN4wNwiKFwC+IZWTXeGFj/URjmmSLUjqrUeYLavugS
+UwHrNFXocolKYTjIPg3aXGZNKmKY0o01WJ2T5KvZXfmgN0xqv2Al8YnQUCsC97EB
+q/roKhHxMyS2mmyYUzfX7YuB6PMoCFyK1QKtPPqbnRRb3DsvszdVWtQhLvaJPKhi
+s+ERdXVbArn0ncVJujo/Ry5mNQPY7+8Oc9nJvk9kowMuM04Kj48DxTEWzcGc0aji
+M6E5nrTQhqfJLzZFrdCdl3efs0UNyY8LygAA6lVpsV1AVcdLjXSrXjghgU/LG6tc
+tiUyA3R7YtN6YuZma9/lwsb+0jlKBQ==
+=aQSS
+-----END PGP SIGNATURE-----
+
+--Sig_/OXXotUFWdVvvUXMOe8InhfD--
 
