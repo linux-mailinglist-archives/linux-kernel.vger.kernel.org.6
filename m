@@ -1,165 +1,149 @@
-Return-Path: <linux-kernel+bounces-271227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E1A944B4C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:30:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 546EA944B4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:30:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39AF1C23FC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F591281423
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB3F1A00FF;
-	Thu,  1 Aug 2024 12:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHSKZqva"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3F318A6AC;
-	Thu,  1 Aug 2024 12:30:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 328F5143C42;
+	Thu,  1 Aug 2024 12:30:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9890189BBF;
+	Thu,  1 Aug 2024 12:30:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515410; cv=none; b=rdNuP3sK3B2bYVMnJGxj3r+GaQrj1sIarygJbex2itFh3l2taZeF2rhub/KL4DHkJ0ix3PG/fMXh097IIYfm2iHR+6DTo9tiH0R62H2c7NGDaI6XtZsRFm5ormps7EqlsGyb01XqwP234T47tS5d6GiWith0g1OSX/jm+U5Stfw=
+	t=1722515443; cv=none; b=HY6oPvxiFHu9REtZdE39a7ZjGJrQkZCfpxpC02aZ5+H3dXGQEnFoWcsC7fIxHGP4UEejdGqtVD2+KHCf8ryEiFzHVA90aGgPp/q8msoS/jE/UdPsS/QXqq7O2lW56DuvlYpxJz5JxlzBWQtM+016reX4DZAL41VZ6GTGuRNupSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515410; c=relaxed/simple;
-	bh=6p5xxN4jqmS6heldWZ6mqD4FJ8Kzrt2Vjy/8twVNGdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AmcAzkYPZE6WgsUTGNV5ZFqP0FmUM46XTYdFWzH/OG5nILtSySGLF6H86GxRuS6+O1pkYizlTnR63aZmq6ILXcRVzqdkuS+0F9jHcD7thL9ZA0s93xC4HdzTS2SMC5CyKRq82MDtyE8cW1jmbOuiBDcdmkXgIGNV2klR73+3nRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHSKZqva; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C91E0C32786;
-	Thu,  1 Aug 2024 12:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722515409;
-	bh=6p5xxN4jqmS6heldWZ6mqD4FJ8Kzrt2Vjy/8twVNGdg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tHSKZqvaSaU/vZsgYgrYCkHt+Lf3VicjqVa4khmV29VPQk4fd5sIe9q6y59MoApQ/
-	 YwTIGM/aecr8uXmAk55C5qqzbkbQxzyhE0kFNNyNGI4sPelUtV61VWAXmbCB4erhG5
-	 O2CfvfsDHXqs7LNdSEDoFSfzNlVysZkUMcbkuFk5XMy96q0wJXs3KTJ+1teVadVkai
-	 qoBhK1Wtf8kmlz+rzp6q6sk1iCb1PkvFKlxBqvhrhpaoN0j97m0/+2qrbkjSmkSpjK
-	 7xOaHyG9dcvHz6HGDNAkPuwXj4pIzkImpozSauhuVhldZ7bYmQWxrDt+yvG8Z9es50
-	 MB/Uf/7bzuS3Q==
-Date: Thu, 1 Aug 2024 14:30:01 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	akpm@linux-foundation.org, daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com, boris.brezillon@collabora.com,
-	lina@asahilina.net, mcanal@igalia.com, zhiw@nvidia.com,
-	acurrid@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com,
-	airlied@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v3 04/25] rust: alloc: implement `Allocator` for `Kmalloc`
-Message-ID: <Zqt_yeGPTIYjgCK8@pollux>
-References: <20240801000641.1882-1-dakr@kernel.org>
- <20240801000641.1882-5-dakr@kernel.org>
- <CAH5fLggM5X7M9fTJE7C2afSHehK8b72XGKAgsEcn3Xm632s_Gg@mail.gmail.com>
+	s=arc-20240116; t=1722515443; c=relaxed/simple;
+	bh=KgkbOwFBKw3erB9TVYZLeWgMN272jNom2Oo4VVlnbTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hTXHX3d5jnwTwR0TB5uqHdQWjSW4kbpWMRdKXscBETcWjfaWxnkR+0vZ3iaFWsAf9fgEonpitZiv/qPDqs3x+fbExs3uW2weW/7nzUBDO9l1B6GY6aCcug92K/sf5+QAyJPzSZVIeYrh0p2XE8jDzNVVvKpsYAIX3UR2EbVXnKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DC0A15A1;
+	Thu,  1 Aug 2024 05:31:06 -0700 (PDT)
+Received: from e126817.cambridge.arm.com (e126817.cambridge.arm.com [10.2.3.8])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E06883F766;
+	Thu,  1 Aug 2024 05:30:38 -0700 (PDT)
+From: Ben Gainey <ben.gainey@arm.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: james.clark@arm.com,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ben Gainey <ben.gainey@arm.com>
+Subject: [PATCH v10 0/2] tools/perf: Support PERF_SAMPLE_READ with inherit
+Date: Thu,  1 Aug 2024 13:30:28 +0100
+Message-ID: <20240801123030.3075928-1-ben.gainey@arm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLggM5X7M9fTJE7C2afSHehK8b72XGKAgsEcn3Xm632s_Gg@mail.gmail.com>
 
-On Thu, Aug 01, 2024 at 10:28:09AM +0200, Alice Ryhl wrote:
-> On Thu, Aug 1, 2024 at 2:07 AM Danilo Krummrich <dakr@kernel.org> wrote:
-> > +/// Returns a proper size to alloc a new object aligned to `new_layout`'s alignment.
-> >  fn aligned_size(new_layout: Layout) -> usize {
-> 
-> This comment could potentially be moved to the previous patch that
-> defined the function.
-> 
-> > +struct ReallocFunc(
-> > +    // INVARIANT: One of the following `krealloc`, `vrealloc`, `kvrealloc`.
-> > +    unsafe extern "C" fn(*const core::ffi::c_void, usize, u32) -> *mut core::ffi::c_void,
-> > +);
-> 
-> In this case, the comment would usually be formatted with markdown.
-> 
-> /// # Invariants
-> ///
-> /// Must contain one of the following: `krealloc`, `vrealloc`, `kvrealloc`.
-> 
-> The // INVARIANT: syntax is used when constructing an instance to
-> argue why the documentented invariants are satisfied.
-> 
-> > +impl ReallocFunc {
-> > +    fn krealloc() -> Self {
-> > +        Self(bindings::krealloc)
-> > +    }
-> 
-> Technically this should have an // INVARIANT: explaining why the
-> invariants are satisfied by this new value.
-> 
-> > +
-> > +    // SAFETY: `call` has the exact same safety requirements as `Allocator::realloc`.
-> > +    unsafe fn call(
-> 
-> Similarly to the above, the // SAFETY: syntax is used when arguing why
-> the preconditions are satisfied, but when explaining what the
-> preconditions are, we usually use this syntax instead:
-> 
-> /// # Safety
-> ///
-> /// This method has the same safety requirements as `Allocator::realloc`.
+This revision of this change splits out the tools/perf changes requested 
+by Namhung King for my previous work to enable PERF_SAMPLE READ with inherit (see 
+https://lore.kernel.org/linux-perf-users/20240730084417.7693-1-ben.gainey@arm.com/ ) 
+as the kernel side changes have been picked up by Peter Zijlstra.
 
-Agreed, I will change this one and the above.
+Changes since v9:
+ - Split out tools/perf patches only
+ - Fixed system-wide mode in `perf record` to not set the inherit bit.
 
-> 
-> > +        &self,
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        let size = aligned_size(layout);
-> > +        let ptr = match ptr {
-> > +            Some(ptr) => ptr.as_ptr(),
-> > +            None => ptr::null(),
-> > +        };
-> > +
-> > +        // SAFETY: `ptr` is valid by the safety requirements of this function.
-> > +        let raw_ptr = unsafe {
-> > +            // If `size == 0` and `ptr != NULL` the memory behind the pointer is freed.
-> > +            self.0(ptr.cast(), size, flags.0).cast()
-> > +        };
-> > +
-> > +        let ptr = if size == 0 {
-> > +            NonNull::dangling()
-> > +        } else {
-> > +            NonNull::new(raw_ptr).ok_or(AllocError)?
-> > +        };
-> > +
-> > +        Ok(NonNull::slice_from_raw_parts(ptr, size))
-> > +    }
-> > +}
-> > +
-> > +unsafe impl Allocator for Kmalloc {
-> > +    unsafe fn realloc(
-> > +        ptr: Option<NonNull<u8>>,
-> > +        layout: Layout,
-> > +        flags: Flags,
-> > +    ) -> Result<NonNull<[u8]>, AllocError> {
-> > +        let realloc = ReallocFunc::krealloc();
-> > +
-> > +        // SAFETY: If not `None`, `ptr` is guaranteed to point to valid memory, which was previously
-> > +        // allocated with this `Allocator`.
-> > +        unsafe { realloc.call(ptr, layout, flags) }
-> > +    }
-> > +}
-> > +
-> >  unsafe impl GlobalAlloc for Kmalloc {
-> >      unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
-> >          // SAFETY: `ptr::null_mut()` is null and `layout` has a non-zero size by the function safety
-> > --
-> > 2.45.2
-> >
-> 
+Changes since v8:
+ - Rebase on v6.11-rc1
+
+Changes since v7:
+ - Rebase on v6.10-rc3
+ - Respond to Peter Zijlstra's feedback:
+ - Renamed nr_pending to nr_no_switch_fast and merged in nr_inherit_read
+   which otherwise had overlapping use
+ - Updated some of the commit messages to provide better justifications
+   of usecase, behavioural changes and so on
+ - Cleanup perf_event_count/_cumulative
+ - Make it explicit that the sampling event decides whether or not the
+   per-thread value is given in read_format for PERF_RECORD_SAMPLE and
+   PERF_RECORD_READ; updated tools to account for this.
+
+Changes since v6:
+ - Rebase on v6.10-rc2
+ - Make additional "perf test" tests succeed / skip based on kernel
+   version as per feedback from Namhyung.
+
+Changes since v5:
+ - Rebase on v6.9
+ - Cleanup feedback from Namhyung Kim
+
+Changes since v4:
+ - Rebase on v6.9-rc1
+ - Removed the dependency on inherit_stat that was previously assumed
+   necessary as per feedback from Namhyung Kim.
+ - Fixed an incorrect use of zfree instead of free in the tools leading
+   to an abort on tool shutdown.
+ - Additional test coverage improvements added to perf test.
+ - Cleaned up the remaining bit of irrelevant change missed between v3
+   and v4.
+
+Changes since v3:
+ - Cleaned up perf test data changes incorrectly included into this
+   series from elsewhere.
+
+Changes since v2:
+ - Rebase on v6.8
+ - Respond to James Clarke's feedback; fixup some typos and move some
+   repeated checks into a helper macro.
+ - Cleaned up checkpatch lints.
+ - Updated perf test; fixed evsel handling so that existing tests pass
+   and added new tests to cover the new behaviour.
+
+Changes since v1:
+ - Rebase on v6.8-rc1
+ - Fixed value written into sample after child exists.
+ - Modified handling of switch-out so that context with these events
+   take the slow path, so that the per-event/per-thread PMU state is
+   correctly switched.
+ - Modified perf tools to support this mode of operation.
+
+Ben Gainey (2):
+  tools/perf: Correctly calculate sample period for inherited
+    SAMPLE_READ values
+  tools/perf: Allow inherit + PERF_SAMPLE_READ when opening events
+
+ tools/lib/perf/evsel.c                        | 48 ++++++++++++++
+ tools/lib/perf/include/internal/evsel.h       | 63 ++++++++++++++++++-
+ tools/perf/tests/attr/README                  |  2 +
+ tools/perf/tests/attr/test-record-C0          |  2 +
+ tools/perf/tests/attr/test-record-dummy-C0    |  2 +-
+ .../tests/attr/test-record-group-sampling     |  3 +-
+ .../tests/attr/test-record-group-sampling1    | 51 +++++++++++++++
+ .../tests/attr/test-record-group-sampling2    | 61 ++++++++++++++++++
+ tools/perf/tests/attr/test-record-group2      |  1 +
+ ...{test-record-group2 => test-record-group3} | 10 +--
+ tools/perf/util/evsel.c                       | 21 ++++++-
+ tools/perf/util/evsel.h                       |  1 +
+ tools/perf/util/session.c                     | 25 +++++---
+ 13 files changed, 271 insertions(+), 19 deletions(-)
+ create mode 100644 tools/perf/tests/attr/test-record-group-sampling1
+ create mode 100644 tools/perf/tests/attr/test-record-group-sampling2
+ copy tools/perf/tests/attr/{test-record-group2 => test-record-group3} (81%)
+
+-- 
+2.45.2
+
 
