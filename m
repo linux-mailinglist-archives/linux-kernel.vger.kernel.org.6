@@ -1,498 +1,272 @@
-Return-Path: <linux-kernel+bounces-271184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F1AE944A7F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:36:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16AC944A87
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3529D1C2570D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:36:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D9DF1F23CAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB0A18E05D;
-	Thu,  1 Aug 2024 11:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803991917CD;
+	Thu,  1 Aug 2024 11:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/+odljp"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YVKlo7I+"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC03218E049
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:35:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0620718E051;
+	Thu,  1 Aug 2024 11:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722512159; cv=none; b=hAw1YhlJNa/08+DR3aKBsuLoWkUJPNemX4r086ErjDeclCmjk4yw0E+mbvV4KSsvw1gAWclxjiomL7QjiiielK5CCHtPDkeJrPLTcnxY700+bphm+rxGRI1+n0XEh+zz5bI1YzXcmxaIomvczJhL2rEAVwU/ZTbVC4A0GxnrCeE=
+	t=1722512451; cv=none; b=loVtCbbbvjN/X/QNIcbH8vCCpD22OurkHCTP1iVDDpBuzK0Nz05lB7f3QazoyesSoncnP/K/lJzJfz5dbZ8H4wKeuA0Tdtrbod4zmTtFsbGYbluswo6C7egvqjmQR2SAcdjFQV3Pqu0tGEjsz6kmKYawAch7AGklYbumJkHuuhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722512159; c=relaxed/simple;
-	bh=d/+q9Md9W9Ccsp+MbCbOywiqiCRsNKMi0z7SVcpPO7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qCHnQo5KYvJlydQdtAok3oYoRFjO1l+rIDHKyuxs/l5QwJMRa0mmiMkVxYBQBev4t1g4JLj//KIkr6eMGXMfQqw4FpMmpjWJAOsR8C8J0btP41A4jE7qOy23QfTkFXOkZAOS5SsucGlcKn/dqg/F+S3QtJnqZm8cqU3DOEHZzOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/+odljp; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1722512451; c=relaxed/simple;
+	bh=mz53Znxhu4njp0b5GbjEvsbrkbMH+RLvtS17yyEemDY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J1bScslDHrsArmUV86ZJn0FTfsAsT+9q5VA91/yCTo+HKr6PbwKD8ojbVHSPuQS01iYiv5TRliNKkaHtjSaV+Bm3z7JTtZhOVkJ32s/4epp44WzQsUC2+PsIJuz1DLxw4NU677Z1h+eSiD2KAaIa/SEb0lQi/BI28lakuONXun8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YVKlo7I+; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso5016065b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 04:35:57 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7a91cdcc78so409934366b.3;
+        Thu, 01 Aug 2024 04:40:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722512157; x=1723116957; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ahAduSWWDHc6rTsON2tIDoOGddirMabU3Z6RKqvztKU=;
-        b=E/+odljpt6YAlYhQqi5QJYUUcZojS/XbGCGn0+DUT30Fm7WT57JKGzDa3ctRLfQ/Re
-         bth0Wl5caXuKFuVuY7kppRDs5j0YQ2rGMwMAJQ+zylHFEpInnPme70uMWd9r5xkadhM9
-         EqDa3fKWMei0HzHSMi29WU+LFkQ4dHlUFIDGMqUo+9rpujAVFJ/meH9jZGpx347tpVpX
-         Smbo31wMN9dnCMsldEC5NR6GJMGvuCpMZGPpE++7JMgHVA6N5Uwa6TXbtq0F+voGsNtK
-         TF55iJ8eXBKCB2j8s8qznL9i/Q4P41fXF6mpYLyfIhTEg9tf0SYZB4/0S8m7H/JTemU2
-         QMjw==
+        d=gmail.com; s=20230601; t=1722512448; x=1723117248; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k4h0C3m16RHauZJhat03rjfnW666/JF+l3iulFI7afA=;
+        b=YVKlo7I+6A+suqSPMNy+L5WufvNXwLG7QyuJOenMZDhMz4o86uTsbaN3hSSG5TmUE+
+         gi/vUwvwQZeTrxzQqi/xiZHYBUHwWdu0OypNE3gz4ro3hzqs8A2Oki7wFVV2KynHUN+f
+         baDjjdAD55CX051SW/FdwUmsMMzwcAR6r3Fpo3xSXb1HySg6i5cx+crZRswCOVBsuIv5
+         /w2FptqirKTqSYW+T5Jm3RFiySKLPebrmtRK3MHrfYkE7MoM77wrUx5I/BGoYRIkNBwB
+         cj4pzFtfIX/iFSupW43DNCVyaMG++9ehZqJxKl0KkiokoxBH+U3bM1mx3AwZzFFT4TQt
+         mQ4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722512157; x=1723116957;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahAduSWWDHc6rTsON2tIDoOGddirMabU3Z6RKqvztKU=;
-        b=R2A47Oely6DyfzEMZ060cxKZvhR44lr7IGV0KDaxN+rKD8HrznxhiSVdhtLp32t0gR
-         VKETYhjv9Y54NWDfpIIDieTAaZoArYhfjzx/F5y+C9+Ng3BGk/9y9OlF2CeFp9K42w/g
-         GrZOXUZM4zU5g6VBT16N4eGZ/8R6cAYRFGg2LncBlj8A+RKkrn0c+XP89fwjopQDCIFA
-         FWqALIacnrzexwK7WA+Ql7dmDYy1uExw7jkcRxV2pvvEfYDlxDF9XOW9JEIVyNwt/+PE
-         LnjEiDSZdQ8pCu+WZDAl0TTAevTjgYx9LcWEkWQqmNI7UBJCfGwmumeL7Ov+87GvyRWK
-         lUBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB/YrFOn+INIqIJ1W1U7XX9uFL/0xF1lDxZu0MujY73WJU6rbVMk1MZ8SRFQjeFZwXGI+XSnNvTovpFddGro1Gy6zcFA6Uei2DEwQD
-X-Gm-Message-State: AOJu0YxGjwfyiGEse0T0y1itxnrG6X3ISRS4/aB6TRqOTYw9spN6YRE0
-	ZtwPebrEq5XQEtK+T3RkN72IfK3SAXaa0Aqk444q3Rl1QzS/fh63
-X-Google-Smtp-Source: AGHT+IHRZmtTgr6he6ex/3IxTum2N2nQFsd/76F6cHkWMDcWAlM/FcGS67DN5B0FCDeBvZy3n8DhQA==
-X-Received: by 2002:a05:6a21:9989:b0:1c0:eb1e:868e with SMTP id adf61e73a8af0-1c68cec7a74mr3171675637.19.1722512156787;
-        Thu, 01 Aug 2024 04:35:56 -0700 (PDT)
-Received: from [10.3.80.76] ([59.152.80.69])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2cfdc4513ecsm3072495a91.20.2024.08.01.04.35.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 04:35:56 -0700 (PDT)
-Message-ID: <d1132708-204a-45fc-b14a-6432993cb33a@gmail.com>
-Date: Thu, 1 Aug 2024 17:05:49 +0530
+        d=1e100.net; s=20230601; t=1722512448; x=1723117248;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k4h0C3m16RHauZJhat03rjfnW666/JF+l3iulFI7afA=;
+        b=oBwVAWLsDSq51iju2JC04tk+iqC0vt9vRV0vfSpZN+6V6tuf8iDLuxxktQWc9U+wNz
+         kOXrSMCODbQbw5/qdlNVaGKVnYfFB2nW/D0Ko5awrGCnXH4v3Cx4kAiMNu1F4vy7qptE
+         1LT/zd+dNo6NLxvtklctCkAQ8gY0SaXKIrNAoIj23ZTOAxpp9RfoFEXi4mRw68Lk7tVa
+         KR8XuQaFpUPhkSSjNQmFcT6nv4lTnZuybCi+yjd7Ex6lqN49ICv0+MbyUcSUVI+jkkUw
+         vUdqUQMPfNqGQx0VDabyRbBSGdO4pnipDIuZyfemWdXu16mt/kHnfTtAxmOuemE7yVRZ
+         3WVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCdD6L96tMrsqAR2jrPaVBkfkX6QjMEdwziOayTuQ53nt8/1/s0wfKy98SA4VyL5zOQOuIiijdT97HmuKgydaj14mlVvNKPeCr2eJusTAZL4wBHixgjk91h+1jj6BlURgbcdN//w==
+X-Gm-Message-State: AOJu0Yww2KKt8/514CKPUNOkpZVX1tQWGG7Bb0NQ7aXX2lzWQa8IMh4F
+	7eAGZlBRg3nmf/pqI2fbaGv1RhyfsFXVZxcrDK7Dz5KTbhq2yGuADpda8kl4zpl5mNvfmg5eXZr
+	VfYKivndwWPNv8exhYjj3IIrYyos=
+X-Google-Smtp-Source: AGHT+IGvq30QUdJ2Ae3lQEO36wJYwLrAji75UF3q3P+jQkl895vx2DLPN9vA1jIrFJbik/B0ppK5WjmLrJ6gbLUaeTw=
+X-Received: by 2002:a05:6402:14d0:b0:5a1:5692:b5f9 with SMTP id
+ 4fb4d7f45d1cf-5b700f8a256mr1773662a12.38.1722512447847; Thu, 01 Aug 2024
+ 04:40:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/mipi-dsi: add more multi functions for better
- error handling
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- neil.armstrong@linaro.org, quic_jesszhan@quicinc.com
-Cc: dianders@chromium.org, airlied@gmail.com, daniel@ffwll.ch,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240730060659.455953-1-tejasvipin76@gmail.com>
- <20240730060659.455953-2-tejasvipin76@gmail.com> <87cymswld0.fsf@intel.com>
-Content-Language: en-US
-From: Tejas Vipin <tejasvipin76@gmail.com>
-In-Reply-To: <87cymswld0.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240801045430.48694-1-ioworker0@gmail.com> <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
+In-Reply-To: <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
+From: Lance Yang <ioworker0@gmail.com>
+Date: Thu, 1 Aug 2024 19:40:10 +0800
+Message-ID: <CAK1f24knBez71sEvcfFoFuyvap+=3LzsRrmW-+fLsqV3WkyMBA@mail.gmail.com>
+Subject: Re: [BUG] mm/cgroupv2: memory.min may lead to an OOM error
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: akpm@linux-foundation.org, 21cnbao@gmail.com, ryan.roberts@arm.com, 
+	david@redhat.com, shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com, 
+	baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, Cgroups <cgroups@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Vlastimil,
 
+Thanks a lot for paying attention!
 
-On 8/1/24 4:39 PM, Jani Nikula wrote:
-> On Tue, 30 Jul 2024, Tejas Vipin <tejasvipin76@gmail.com> wrote:
->> Add more functions that can benefit from being multi style and mark
->> older variants as deprecated to eventually convert all mipi_dsi functions
->> to multi style.
-> 
-> What?
-> 
-> Why would a lot of regular DSI commands that are not exclusively used
-> for one time setup need to be deprecated or converted to _multi()?
-> 
+On Thu, Aug 1, 2024 at 6:35=E2=80=AFPM Vlastimil Babka (SUSE) <vbabka@kerne=
+l.org> wrote:
+>
+> On 8/1/24 06:54, Lance Yang wrote:
+> > Hi all,
+> >
+> > It's possible to encounter an OOM error if both parent and child cgroup=
+s are
+> > configured such that memory.min and memory.max are set to the same valu=
+es, as
+> > is practice in Kubernetes.
+>
+> Is it a practice in Kubernetes since forever or a recent one? Did it work
+> differently before?
 
-All of the functions I've marked as deprecated here have a good amount
-of their usage in conjunction with other mipi_dsi functions (an
-exception being mipi_dsi_dcs_get_display_brightness which I have
-realized is not suitable for this type of conversion). Them being
-rewritten as multi style functions saves a lot of early returns and
-errors being repeated over and over again across the codebase.
+The memory.min is only applied when the Kubernetes memory QoS feature gate
+is enabled, which is disabled by default.
 
-In the cases where they are just called by themselves, there is very little
-overhead in replacing them with a multi variant. These functions would
-be better off converted to multi variants, and the old versions removed
-when all the function calls are replaced.
+>
+> > Hmm... I'm not sure that whether this behavior is a bug or an expected =
+aspect of
+> > the kernel design.
+>
+> Hmm I'm not a memcg expert, so I cc'd some.
+>
+> > To reproduce the bug, we can follow these command-based steps:
+> >
+> > 1. Check Kernel Version and OS release:
+> >
+> >     ```
+> >     $ uname -r
+> >     6.10.0-rc5+
+>
+> Were older kernels behaving the same?
 
-> BR,
-> Jani.
-> 
->>
->> Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
->> ---
->>  drivers/gpu/drm/drm_mipi_dsi.c | 226 +++++++++++++++++++++++++++++++++
->>  include/drm/drm_mipi_dsi.h     |  12 ++
->>  2 files changed, 238 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
->> index a471c46f5ca6..05ea7df5dec1 100644
->> --- a/drivers/gpu/drm/drm_mipi_dsi.c
->> +++ b/drivers/gpu/drm/drm_mipi_dsi.c
->> @@ -603,6 +603,8 @@ EXPORT_SYMBOL(mipi_dsi_shutdown_peripheral);
->>   * mipi_dsi_turn_on_peripheral() - sends a Turn On Peripheral command
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_turn_on_peripheral_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_turn_on_peripheral(struct mipi_dsi_device *dsi)
->> @@ -652,6 +654,7 @@ EXPORT_SYMBOL(mipi_dsi_set_maximum_return_packet_size);
->>   * @pps_selector: Select PPS from the table of pre-stored or uploaded PPS entries
->>   *
->>   * Enable or disable Display Stream Compression on the peripheral.
->> + * This function is deprecated. Use mipi_dsi_compression_mode_ext_multi() instead.
->>   *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->> @@ -703,6 +706,7 @@ EXPORT_SYMBOL(mipi_dsi_compression_mode);
->>   * @pps: VESA DSC 1.1 Picture Parameter Set
->>   *
->>   * Transmit the VESA DSC 1.1 Picture Parameter Set to the peripheral.
->> + * This function is deprecated. Use mipi_dsi_picture_parameter_set_multi() instead.
->>   *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->> @@ -1037,6 +1041,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_read);
->>   * mipi_dsi_dcs_nop() - send DCS nop packet
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_nop_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_nop(struct mipi_dsi_device *dsi)
->> @@ -1055,6 +1061,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_nop);
->>   * mipi_dsi_dcs_soft_reset() - perform a software reset of the display module
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_soft_reset_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_soft_reset(struct mipi_dsi_device *dsi)
->> @@ -1124,6 +1132,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_get_pixel_format);
->>   *    display module except interface communication
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_enter_sleep_mode_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_enter_sleep_mode(struct mipi_dsi_device *dsi)
->> @@ -1143,6 +1153,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_enter_sleep_mode);
->>   *    module
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_exit_sleep_mode_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_exit_sleep_mode(struct mipi_dsi_device *dsi)
->> @@ -1162,6 +1174,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_exit_sleep_mode);
->>   *    display device
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_display_off_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_set_display_off(struct mipi_dsi_device *dsi)
->> @@ -1181,6 +1195,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_display_off);
->>   *    display device
->>   * @dsi: DSI peripheral device
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_display_on_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure
->>   */
->>  int mipi_dsi_dcs_set_display_on(struct mipi_dsi_device *dsi)
->> @@ -1202,6 +1218,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_display_on);
->>   * @start: first column of frame memory
->>   * @end: last column of frame memory
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_column_address_multi()
->> + * instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_set_column_address(struct mipi_dsi_device *dsi, u16 start,
->> @@ -1226,6 +1245,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_column_address);
->>   * @start: first page of frame memory
->>   * @end: last page of frame memory
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_page_address_multi()
->> + * instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_set_page_address(struct mipi_dsi_device *dsi, u16 start,
->> @@ -1268,6 +1290,8 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_off);
->>   * @dsi: DSI peripheral device
->>   * @mode: the Tearing Effect Output Line mode
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_tear_on_multi() instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure
->>   */
->>  int mipi_dsi_dcs_set_tear_on(struct mipi_dsi_device *dsi,
->> @@ -1291,6 +1315,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on);
->>   * @dsi: DSI peripheral device
->>   * @format: pixel format
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_pixel_format_multi()
->> + * instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_set_pixel_format(struct mipi_dsi_device *dsi, u8 format)
->> @@ -1334,6 +1361,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_scanline);
->>   * @dsi: DSI peripheral device
->>   * @brightness: brightness value
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_set_display_brightness_multi()
->> + * instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_set_display_brightness(struct mipi_dsi_device *dsi,
->> @@ -1357,6 +1387,9 @@ EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness);
->>   * @dsi: DSI peripheral device
->>   * @brightness: brightness value
->>   *
->> + * This function is deprecated. Use mipi_dsi_dcs_get_display_brightness_multi()
->> + * instead.
->> + *
->>   * Return: 0 on success or a negative error code on failure.
->>   */
->>  int mipi_dsi_dcs_get_display_brightness(struct mipi_dsi_device *dsi,
->> @@ -1639,6 +1672,199 @@ void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
->>  }
->>  EXPORT_SYMBOL(mipi_dsi_dcs_set_tear_on_multi);
->>  
->> +/**
->> + * mipi_dsi_turn_on_peripheral_multi() - sends a Turn On Peripheral command
->> + * @ctx: Context for multiple DSI transactions
->> + *
->> + * Like mipi_dsi_turn_on_peripheral() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_turn_on_peripheral_multi(struct mipi_dsi_multi_context *ctx)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_turn_on_peripheral(dsi);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to turn on peripheral: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_turn_on_peripheral_multi);
->> +
->> +/**
->> + * mipi_dsi_dcs_soft_reset_multi() - perform a software reset of the display module
->> + * @ctx: Context for multiple DSI transactions
->> + *
->> + * Like mipi_dsi_dcs_soft_reset() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_dcs_soft_reset_multi(struct mipi_dsi_multi_context *ctx)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_dcs_soft_reset(dsi);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to mipi_dsi_dcs_soft_reset: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_dcs_soft_reset_multi);
->> +
->> +/**
->> + * mipi_dsi_dcs_set_display_brightness_multi() - sets the brightness value of
->> + *	the display
->> + * @ctx: Context for multiple DSI transactions
->> + * @brightness: brightness value
->> + *
->> + * Like mipi_dsi_dcs_set_display_brightness() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_dcs_set_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
->> +					       u16 brightness)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_dcs_set_display_brightness(dsi, brightness);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to write display brightness: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_dcs_set_display_brightness_multi);
->> +
->> +/**
->> + * mipi_dsi_dcs_set_pixel_format_multi() - sets the pixel format for the RGB image
->> + *	data used by the interface
->> + * @ctx: Context for multiple DSI transactions
->> + * @format: pixel format
->> + *
->> + * Like mipi_dsi_dcs_set_pixel_format() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_dcs_set_pixel_format_multi(struct mipi_dsi_multi_context *ctx,
->> +					 u8 format)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_dcs_set_pixel_format(dsi, format);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to set pixel format: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_dcs_set_pixel_format_multi);
->> +
->> +/**
->> + * mipi_dsi_dcs_set_column_address_multi() - define the column extent of the
->> + *	frame memory accessed by the host processor
->> + * @ctx: Context for multiple DSI transactions
->> + * @start: first column of frame memory
->> + * @end: last column of frame memory
->> + *
->> + * Like mipi_dsi_dcs_set_column_address() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
->> +					   u16 start, u16 end)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_dcs_set_column_address(dsi, start, end);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to set column address: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_dcs_set_column_address_multi);
->> +
->> +/**
->> + * mipi_dsi_dcs_set_page_address_multi() - define the page extent of the
->> + *	frame memory accessed by the host processor
->> + * @ctx: Context for multiple DSI transactions
->> + * @start: first page of frame memory
->> + * @end: last page of frame memory
->> + *
->> + * Like mipi_dsi_dcs_set_page_address() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
->> +					 u16 start, u16 end)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_dcs_set_page_address(dsi, start, end);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to set page address: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_dcs_set_page_address_multi);
->> +
->> +/**
->> + * mipi_dsi_dcs_get_display_brightness_multi() - gets the current brightness value
->> + *    of the display
->> + * @ctx: Context for multiple DSI transactions
->> + * @brightness: brightness value
->> + *
->> + * Like mipi_dsi_dcs_get_display_brightness() but deals with errors in a way that
->> + * makes it convenient to make several calls in a row.
->> + */
->> +void mipi_dsi_dcs_get_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
->> +					       u16 *brightness)
->> +{
->> +	struct mipi_dsi_device *dsi = ctx->dsi;
->> +	struct device *dev = &dsi->dev;
->> +	int ret;
->> +
->> +	if (ctx->accum_err)
->> +		return;
->> +
->> +	ret = mipi_dsi_dcs_get_display_brightness(dsi, brightness);
->> +	if (ret < 0) {
->> +		ctx->accum_err = ret;
->> +		dev_err(dev, "Failed to get display brightness: %d\n",
->> +			ctx->accum_err);
->> +	}
->> +}
->> +EXPORT_SYMBOL(mipi_dsi_dcs_get_display_brightness_multi);
->> +
->> +
->>  static int mipi_dsi_drv_probe(struct device *dev)
->>  {
->>  	struct mipi_dsi_driver *drv = to_mipi_dsi_driver(dev->driver);
->> diff --git a/include/drm/drm_mipi_dsi.h b/include/drm/drm_mipi_dsi.h
->> index 0f520eeeaa8e..7c6239d7b492 100644
->> --- a/include/drm/drm_mipi_dsi.h
->> +++ b/include/drm/drm_mipi_dsi.h
->> @@ -365,6 +365,18 @@ void mipi_dsi_dcs_set_display_off_multi(struct mipi_dsi_multi_context *ctx);
->>  void mipi_dsi_dcs_set_display_on_multi(struct mipi_dsi_multi_context *ctx);
->>  void mipi_dsi_dcs_set_tear_on_multi(struct mipi_dsi_multi_context *ctx,
->>  				    enum mipi_dsi_dcs_tear_mode mode);
->> +void mipi_dsi_turn_on_peripheral_multi(struct mipi_dsi_multi_context *ctx);
->> +void mipi_dsi_dcs_soft_reset_multi(struct mipi_dsi_multi_context *ctx);
->> +void mipi_dsi_dcs_set_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
->> +					       u16 brightness);
->> +void mipi_dsi_dcs_set_pixel_format_multi(struct mipi_dsi_multi_context *ctx,
->> +					 u8 format);
->> +void mipi_dsi_dcs_set_column_address_multi(struct mipi_dsi_multi_context *ctx,
->> +					   u16 start, u16 end);
->> +void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *ctx,
->> +					   u16 start, u16 end);
->> +void mipi_dsi_dcs_get_display_brightness_multi(struct mipi_dsi_multi_context *ctx,
->> +					       u16 *brightness);
->>  
->>  /**
->>   * mipi_dsi_generic_write_seq - transmit data using a generic write packet
-> 
+I tested another machine and it behaved the same way.
 
--- 
-Tejas Vipin
+# uname -r
+5.14.0-427.24.1.el9_4.x86_64
+
+# cat /etc/os-release
+NAME=3D"Rocky Linux"
+VERSION=3D"9.4 (Blue Onyx)"
+...
+
+>
+> Anyway memory.min documentations says "Hard memory protection. If the mem=
+ory
+> usage of a cgroup is within its effective min boundary, the cgroup=E2=80=
+=99s memory
+> won=E2=80=99t be reclaimed under any conditions. If there is no unprotect=
+ed
+> reclaimable memory available, OOM killer is invoked."
+>
+> So to my non-expert opinion this behavior seems valid. if you set min to =
+the
+> same value as max and then reach the max, you effectively don't allow any
+> reclaim, so the memcg OOM kill is the only option AFAICS?
+
+I completely agree that this behavior seems valid ;)
+
+However, if the child cgroup doesn't exist and we add a process to the 'tes=
+t'
+cgroup, then attempt to create a large file(2GB) using dd, we won't encount=
+er
+an OOM error; everything works as expected.
+
+Hmm... I'm a bit confused about that.
+
+Thanks,
+Lance
+
+>
+> >     $ cat /etc/os-release
+> >     PRETTY_NAME=3D"Ubuntu 24.04 LTS"
+> >     NAME=3D"Ubuntu"
+> >     VERSION_ID=3D"24.04"
+> >     VERSION=3D"24.04 LTS (Noble Numbat)"
+> >     VERSION_CODENAME=3Dnoble
+> >     ID=3Dubuntu
+> >     ID_LIKE=3Ddebian
+> >     HOME_URL=3D"<https://www.ubuntu.com/>"
+> >     SUPPORT_URL=3D"<https://help.ubuntu.com/>"
+> >     BUG_REPORT_URL=3D"<https://bugs.launchpad.net/ubuntu/>"
+> >     PRIVACY_POLICY_URL=3D"<https://www.ubuntu.com/legal/terms-and-polic=
+ies/privacy-policy>"
+> >     UBUNTU_CODENAME=3Dnoble
+> >     LOGO=3Dubuntu-logo
+> >
+> >     ```
+> >
+> > 2. Navigate to the cgroup v2 filesystem, create a test cgroup, and set =
+memory settings:
+> >
+> >     ```
+> >     $ cd /sys/fs/cgroup/
+> >     $ stat -fc %T /sys/fs/cgroup
+> >     cgroup2fs
+> >     $ mkdir test
+> >     $ echo "+memory" > cgroup.subtree_control
+> >     $ mkdir test/test-child
+> >     $ echo 1073741824 > memory.max
+> >     $ echo 1073741824 > memory.min
+> >     $ cat memory.max
+> >     1073741824
+> >     $ cat memory.min
+> >     1073741824
+> >     $ cat memory.low
+> >     0
+> >     $ cat memory.high
+> >     max
+> >     ```
+> >
+> > 3. Set up and check memory settings in the child cgroup:
+> >
+> >     ```
+> >     $ cd test-child
+> >     $ echo 1073741824 > memory.max
+> >     $ echo 1073741824 > memory.min
+> >     $ cat memory.max
+> >     1073741824
+> >     $ cat memory.min
+> >     1073741824
+> >     $ cat memory.low
+> >     0
+> >     $ cat memory.high
+> >     max
+> >     ```
+> >
+> > 4. Add process to the child cgroup and verify:
+> >
+> >     ```
+> >     $ echo $$ > cgroup.procs
+> >     $ cat cgroup.procs
+> >     1131
+> >     1320
+> >     $ ps -ef|grep 1131
+> >     root        1131    1014  0 10:45 pts/0    00:00:00 -bash
+> >     root        1321    1131 99 11:06 pts/0    00:00:00 ps -ef
+> >     root        1322    1131  0 11:06 pts/0    00:00:00 grep --color=3D=
+auto 1131
+> >     ```
+> >
+> > 5. Attempt to create a large file using dd and observe the process bein=
+g killed:
+> >
+> >     ```
+> >     $ dd if=3D/dev/zero of=3D/tmp/2gbfile bs=3D10M count=3D200
+> >     Killed
+> >     ```
+> >
+> > 6. Check kernel messages related to the OOM event:
+> >
+> >     ```
+> >     $ dmesg
+> >     ...
+> >     [ 1341.112388] oom-kill:constraint=3DCONSTRAINT_MEMCG,nodemask=3D(n=
+ull),cpuset=3D/,mems_allowed=3D0,oom_memcg=3D/test,task_memcg=3D/test/test-=
+child,task=3Ddd,pid=3D1324,uid=3D0
+> >     [ 1341.112418] Memory cgroup out of memory: Killed process 1324 (dd=
+) total-vm:15548kB, anon-rss:10240kB, file-rss:1764kB, shmem-rss:0kB, UID:0=
+ pgtables:76kB oom_score_adj:0
+> >     ```
+> >
+> > 7. Reduce the `memory.min` setting in the child cgroup and attempt the =
+same large file creation, and then this issue is resolved.
+> >
+> >     ```
+> >     # echo 107374182 > memory.min
+> >     # dd if=3D/dev/zero of=3D/tmp/2gbfile bs=3D10M count=3D200
+> >     200+0 records in
+> >     200+0 records out
+> >     2097152000 bytes (2.1 GB, 2.0 GiB) copied, 1.8713 s, 1.1 GB/s
+> >     ```
+> >
+> > Thanks,
+> > Lance
+> >
+>
 
