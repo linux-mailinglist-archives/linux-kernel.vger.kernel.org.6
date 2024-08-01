@@ -1,84 +1,128 @@
-Return-Path: <linux-kernel+bounces-271189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C79C944A97
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:47:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DBE944A99
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 13:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31F11B212E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:47:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465471F26CEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620F018B489;
-	Thu,  1 Aug 2024 11:47:37 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF18A198A15;
+	Thu,  1 Aug 2024 11:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nvBlzXEa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6Ph/GSOa";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nvBlzXEa";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6Ph/GSOa"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8284161306
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 11:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2EF18FDC0;
+	Thu,  1 Aug 2024 11:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722512857; cv=none; b=twc7xXeLQsFVmVgDM5EY+Kip1uttVn/lCVoFSGBdE6RaYOUUPg2aCgJHJawCFTPLxRMQStnh2EwM5D+Csy9xH2YSSAMmT5hTBpbKCG75dqb6XE/FdgxuQ+8I2wgjg/iK1bFdPIox56Cnw9nOl9FqrizM4YX5VCHfeqxBBB9Zkbs=
+	t=1722512859; cv=none; b=RJEVXABHNr7Ao2x2ZR/l5ulcNTv+fIPucCv/tVoci13vYr+mklcvAmDO7F0062e4jGnkd3aZeSnfjlhuO9ejU1oyalGA/ST8jHR3LREOxer7SB79+oVH/uGe74iyny7mH1/Zgh1xspoK0oGzX7+xh58q60idFFXNuZcVT+9NevI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722512857; c=relaxed/simple;
-	bh=PPW8O0zKxhQp8j92DMFbh5N8gj5AWu95bb2fbOCnf7I=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k30GsBNL0N0MmELnKjzL68pFg65MpE7xuG3PTHvzUShQbEQxgIZQeSxJHYQbUgsuqxTZdWk/N6tTrrsK7PJH09oee+sENxMM4YQXOEpSNEEQ8QLZsd4JIv7+Zc07MFiLudcTCy6BRYS7PUw22joiBHOSAH7EEkk9MWUn2IxBREs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WZRx11R7nzfZ8b;
-	Thu,  1 Aug 2024 19:45:41 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 37D1D180102;
-	Thu,  1 Aug 2024 19:47:32 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 1 Aug
- 2024 19:47:31 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH -next] regulator: max77857: Make max77857_id static
-Date: Thu, 1 Aug 2024 19:45:36 +0800
-Message-ID: <20240801114536.472796-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722512859; c=relaxed/simple;
+	bh=2p66FrIA5VIFp3EMlll6ZjSxDDgX60/Mt0Bi0Djs02I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z7S3Sbkrvr42pDm/2b69CHQ93IzorEVSjcEzOhue9Eoe/JVw6wrfMZow83QuzsVQW6OIJ//yOooEBfweJUM/3CatgaIaAFKZctrSYtVAxJ6qQcElnekp88SW8oFhSGSoJL6Ds2FKVAUdTAh1LqbIhllddArw/mkex8l/eHq2ftE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nvBlzXEa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6Ph/GSOa; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nvBlzXEa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6Ph/GSOa; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from hawking.nue2.suse.org (unknown [10.168.4.11])
+	by smtp-out2.suse.de (Postfix) with ESMTP id B228D1FB4C;
+	Thu,  1 Aug 2024 11:47:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722512855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1V+CVVFrMSoc0AF1TLg4EtDnvPKvuhwL2BSJpc+RBB0=;
+	b=nvBlzXEaIqUuiQDJkBfAV+n2oPVtHK//yr96/GvqozddRN2PDhFTPE7pwB/mbaahOi/V97
+	rpnHZkm5vy+l1XldcsF5F/SIox8ld9iAJkkHOFeFiUyQanJ/B8/8XZuoddAhl4iMsiTLjz
+	fvorecREk3BogxpTMXq2b4Lz2yJVcSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722512855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1V+CVVFrMSoc0AF1TLg4EtDnvPKvuhwL2BSJpc+RBB0=;
+	b=6Ph/GSOa+4my2qscx31XcmuWmXCqO6ZhnI81TsSAqD1yE64L5kIT+dLfLMWqJDG3WHzEtp
+	sWExgwD8r1TI7WDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1722512855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1V+CVVFrMSoc0AF1TLg4EtDnvPKvuhwL2BSJpc+RBB0=;
+	b=nvBlzXEaIqUuiQDJkBfAV+n2oPVtHK//yr96/GvqozddRN2PDhFTPE7pwB/mbaahOi/V97
+	rpnHZkm5vy+l1XldcsF5F/SIox8ld9iAJkkHOFeFiUyQanJ/B8/8XZuoddAhl4iMsiTLjz
+	fvorecREk3BogxpTMXq2b4Lz2yJVcSo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1722512855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1V+CVVFrMSoc0AF1TLg4EtDnvPKvuhwL2BSJpc+RBB0=;
+	b=6Ph/GSOa+4my2qscx31XcmuWmXCqO6ZhnI81TsSAqD1yE64L5kIT+dLfLMWqJDG3WHzEtp
+	sWExgwD8r1TI7WDw==
+Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
+	id 4C8374A051B; Thu,  1 Aug 2024 13:47:35 +0200 (CEST)
+From: Andreas Schwab <schwab@suse.de>
+To: Florian Weimer <fweimer@redhat.com>
+Cc: linux-riscv@lists.infradead.org,  linux-arm-kernel@lists.infradead.org,
+  linux-api@vger.kernel.org,  linux-kernel@vger.kernel.org,  Arnd Bergmann
+ <arnd@arndb.de>,  Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: syscall.tbl refactoring seems to have dropped definition of
+ __NR_newfstatat on arm64 and riscv (64-bit) at least
+In-Reply-To: <87sevoqy7v.fsf@oldenburg.str.redhat.com> (Florian Weimer's
+	message of "Thu, 01 Aug 2024 13:28:04 +0200")
+References: <87sevoqy7v.fsf@oldenburg.str.redhat.com>
+X-Yow: I want a WESSON OIL lease!!
+Date: Thu, 01 Aug 2024 13:47:35 +0200
+Message-ID: <mvmh6c4fors.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-Spamd-Result: default: False [-3.96 / 50.00];
+	BAYES_HAM(-2.96)[99.81%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	RCVD_NO_TLS_LAST(0.10)[];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -3.96
 
-Fix sparse warning:
-drivers/regulator/max77857-regulator.c:430:28: warning: symbol 'max77857_id' was not declared. Should it be static?
+On Aug 01 2024, Florian Weimer wrote:
 
-max77857_id is not used outside the source file. Make it static.
+> It's been repported that __NR_newfstatat has gone missing from the UAPI
+> headers.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- drivers/regulator/max77857-regulator.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It has actually been wrongly renamed to __NR_fstatat.
 
-diff --git a/drivers/regulator/max77857-regulator.c b/drivers/regulator/max77857-regulator.c
-index bc28dc8503a8..1216cc3a6f72 100644
---- a/drivers/regulator/max77857-regulator.c
-+++ b/drivers/regulator/max77857-regulator.c
-@@ -427,7 +427,7 @@ static int max77857_probe(struct i2c_client *client)
- 	return 0;
- }
- 
--const struct i2c_device_id max77857_id[] = {
-+static const struct i2c_device_id max77857_id[] = {
- 	{ "max77831", ID_MAX77831 },
- 	{ "max77857", ID_MAX77857 },
- 	{ "max77859", ID_MAX77859 },
 -- 
-2.34.1
-
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
 
