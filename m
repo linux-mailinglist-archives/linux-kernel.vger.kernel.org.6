@@ -1,65 +1,52 @@
-Return-Path: <linux-kernel+bounces-271233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE739944B5F
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:33:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA02C944B80
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 14:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A1D1F2243C
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:33:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 802561F235E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F0D1A01B7;
-	Thu,  1 Aug 2024 12:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6OvicIN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C7F1A0703;
+	Thu,  1 Aug 2024 12:38:33 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A5349641;
-	Thu,  1 Aug 2024 12:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4577415252D;
+	Thu,  1 Aug 2024 12:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722515598; cv=none; b=rJPlfkUDIkyIyH/ZFu5Y7vq5PdPBYj/k6K5j7XcumfdE7Ee3pudW2fMiiHOXEfIauPDfWupIMFTetFtYvkMlbPzopyIfCNUqzPhL4VJWZFe5piifssAcHxGemvP7Utbo5lqsKd/EmE0wwdfL5Zyh28LgYeF5l+Bz1lcQg8nz5Rs=
+	t=1722515912; cv=none; b=FbRpoFvbfe1ceynvVpQ/f4hjosaH1K348VvYck8uGh7uA0Bo+Lkgp6gDR16b5CwHYfuNMW7rCYFALjm8XHGeRpcXk+Izsqdl6yJvXxI6jq4NNEv9/yrLZANB7Sm1wsd2pZHcBMQjrZgtNqEEZwstealBAyDStpsSEdZj8DLC7xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722515598; c=relaxed/simple;
-	bh=4aOsClOUPnAaG9L0WTgcWPLsN20TbGHJxOPzz8LH9jg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ULeIt1k69n4adPTDZp8N/tXZlX3mmA4juYFMZDFPifLpivtuTQQK4PA3/hNOq0mQkebuuoZXD2wrzPXAwYGGU2iif5TiPI27VSQky5jaAfva8EbyxpFTl3WguFdaKUibGPwk6sbMLIrkws7oQsBii4vGYIxQbP6TLNXGnqWPvgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6OvicIN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A281FC32786;
-	Thu,  1 Aug 2024 12:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722515597;
-	bh=4aOsClOUPnAaG9L0WTgcWPLsN20TbGHJxOPzz8LH9jg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=b6OvicIN5ag2uDECZrMW/7VfkT9HERuTj8qcQQFTP+ojAJ1xLSW9Rl/I6unXUj52n
-	 I+kr2gohM/Nz2uGnehivcWGGW6nP0I9vzQOuT4aJoX9XeZPcYGg9VFmnpbqYUfrSfn
-	 kL0chkz95j8GFJdvYQMjybRNX1poNzWQZQwnv8ISknQfis+9QYYgZ7IyC1RvqVvnH2
-	 ifg4scGA2y9CWR7mAwdvT/OQyLlLEl3YdJR/Guj3s+igv0uix2x2NYAVO0jeZmyPKl
-	 L6j6qGuylIr31wKvq/oI+vpB/3J1ktwTLQS5fNTjRY6v0WyCodIKh6EnEWB2eV8irg
-	 aEUMT332EEFtA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Cc: Andreas Schwab <schwab@suse.de>,
-	Florian Weimer <fweimer@redhat.com>,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-api@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>,
-	WANG Xuerui <kernel@xen0n.name>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev
-Subject: [PATCH] syscalls: fix syscall macros for newfstat/newfstatat
-Date: Thu,  1 Aug 2024 14:32:33 +0200
-Message-Id: <20240801123305.2392874-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1722515912; c=relaxed/simple;
+	bh=x02eljObgUrujzqWdEVMMHSIGgKeTAl+hcGM7tnLa48=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tSVbfw+/S3GEdpzVWuwPVbeh4GfbqHe0o8PsoZskkhkAblkv633yuS6hvEBr5yy6fOgcae2KPmI59OgdD0VuLiPQCO9F5JLL7k/GV04g8P88hI6aoj36nAOndI1+DYyaPmEyxWMqbO24to751ZSpD9KUUll4z50J5lgxcgvO/9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4WZT5d5hNQz1L8rq;
+	Thu,  1 Aug 2024 20:38:13 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 80CDB18006C;
+	Thu,  1 Aug 2024 20:38:26 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 1 Aug 2024 20:38:25 +0800
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+To: <jgg@ziepe.ca>, <leon@kernel.org>, <bvanassche@acm.org>,
+	<nab@risingtidesystems.com>
+CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <huangjunxian6@hisilicon.com>,
+	<target-devel@vger.kernel.org>
+Subject: [PATCH v2 for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
+Date: Thu, 1 Aug 2024 20:32:53 +0800
+Message-ID: <20240801123253.2908831-1-huangjunxian6@hisilicon.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,77 +54,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-From: Arnd Bergmann <arnd@arndb.de>
+Currently cancel_work_sync() is not called when srpt_refresh_port()
+failed in srpt_add_one(). There is a probability that sdev has been
+freed while the previously initiated sport->work is still running,
+leading to a UAF as the log below:
 
-The __NR_newfstat and __NR_newfstatat macros accidentally got renamed
-in the conversion to the syscall.tbl format, dropping the 'new' portion
-of the name.
+[  T880] ib_srpt MAD registration failed for hns_1-1.
+[  T880] ib_srpt srpt_add_one(hns_1) failed.
+[  T376] Unable to handle kernel paging request at virtual address 0000000000010008
+...
+[  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
+...
+[  T376] Call trace:
+[  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
+[  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
+[  T376]  process_one_work+0x1d8/0x4cc
+[  T376]  worker_thread+0x158/0x410
+[  T376]  kthread+0x108/0x13c
+[  T376]  ret_from_fork+0x10/0x18
 
-In an unrelated change, the two syscalls are no longer architecture
-specific but are once more defined on all 64-bit architectures, so the
-'newstat' ABI keyword can be dropped from the table as a simplification.
+Add cancel_work_sync() to the exception branch to fix this UAF.
+Besides, exchange the order of INIT_WORK() and srpt_refresh_port()
+in srpt_add_one(), so that when srpt_refresh_port() failed, there
+is no need to cancel the work in this iteration.
 
-Fixes: Fixes: 4fe53bf2ba0a ("syscalls: add generic scripts/syscall.tbl")
-Closes: https://lore.kernel.org/lkml/838053e0-b186-4e9f-9668-9a3384a71f23@app.fastmail.com/T/#t
-Reported-by: Florian Weimer <fweimer@redhat.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
+Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
 ---
- arch/arm64/kernel/Makefile.syscalls     | 2 +-
- arch/loongarch/kernel/Makefile.syscalls | 3 ++-
- arch/riscv/kernel/Makefile.syscalls     | 2 +-
- scripts/syscall.tbl                     | 4 ++--
- 4 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/infiniband/ulp/srpt/ib_srpt.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/kernel/Makefile.syscalls b/arch/arm64/kernel/Makefile.syscalls
-index 3cfafd003b2d..0542a718871a 100644
---- a/arch/arm64/kernel/Makefile.syscalls
-+++ b/arch/arm64/kernel/Makefile.syscalls
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+index 9632afbd727b..7def231da21a 100644
+--- a/drivers/infiniband/ulp/srpt/ib_srpt.c
++++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+@@ -648,6 +648,7 @@ static void srpt_unregister_mad_agent(struct srpt_device *sdev, int port_cnt)
+ 			ib_unregister_mad_agent(sport->mad_agent);
+ 			sport->mad_agent = NULL;
+ 		}
++		cancel_work_sync(&sport->work);
+ 	}
+ }
  
- syscall_abis_32 +=
--syscall_abis_64 += renameat newstat rlimit memfd_secret
-+syscall_abis_64 += renameat rlimit memfd_secret
+@@ -3220,7 +3221,6 @@ static int srpt_add_one(struct ib_device *device)
+ 		sport->port_attrib.srp_max_rsp_size = DEFAULT_MAX_RSP_SIZE;
+ 		sport->port_attrib.srp_sq_size = DEF_SRPT_SQ_SIZE;
+ 		sport->port_attrib.use_srq = false;
+-		INIT_WORK(&sport->work, srpt_refresh_port_work);
  
- syscalltbl = arch/arm64/tools/syscall_%.tbl
-diff --git a/arch/loongarch/kernel/Makefile.syscalls b/arch/loongarch/kernel/Makefile.syscalls
-index 523bb411a3bc..ab7d9baa2915 100644
---- a/arch/loongarch/kernel/Makefile.syscalls
-+++ b/arch/loongarch/kernel/Makefile.syscalls
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
+ 		ret = srpt_refresh_port(sport);
+ 		if (ret) {
+@@ -3229,6 +3229,8 @@ static int srpt_add_one(struct ib_device *device)
+ 			i--;
+ 			goto err_port;
+ 		}
++
++		INIT_WORK(&sport->work, srpt_refresh_port_work);
+ 	}
  
--syscall_abis_64 += newstat
-+# No special ABIs on loongarch so far
-+syscall_abis_64 +=
-diff --git a/arch/riscv/kernel/Makefile.syscalls b/arch/riscv/kernel/Makefile.syscalls
-index 52087a023b3d..9668fd1faf60 100644
---- a/arch/riscv/kernel/Makefile.syscalls
-+++ b/arch/riscv/kernel/Makefile.syscalls
-@@ -1,4 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
+ 	ib_register_event_handler(&sdev->event_handler);
+@@ -3264,13 +3266,9 @@ static void srpt_remove_one(struct ib_device *device, void *client_data)
+ 	struct srpt_device *sdev = client_data;
+ 	int i;
  
- syscall_abis_32 += riscv memfd_secret
--syscall_abis_64 += riscv newstat rlimit memfd_secret
-+syscall_abis_64 += riscv rlimit memfd_secret
-diff --git a/scripts/syscall.tbl b/scripts/syscall.tbl
-index 797e20ea99a2..4586a18dfe9b 100644
---- a/scripts/syscall.tbl
-+++ b/scripts/syscall.tbl
-@@ -98,9 +98,9 @@
- 77	common	tee				sys_tee
- 78	common	readlinkat			sys_readlinkat
- 79	stat64	fstatat64			sys_fstatat64
--79	newstat	fstatat				sys_newfstatat
-+79	64	newfstatat			sys_newfstatat
- 80	stat64	fstat64				sys_fstat64
--80	newstat	fstat				sys_newfstat
-+80	64	newfstat			sys_newfstat
- 81	common	sync				sys_sync
- 82	common	fsync				sys_fsync
- 83	common	fdatasync			sys_fdatasync
+-	srpt_unregister_mad_agent(sdev, sdev->device->phys_port_cnt);
+-
+ 	ib_unregister_event_handler(&sdev->event_handler);
+ 
+-	/* Cancel any work queued by the just unregistered IB event handler. */
+-	for (i = 0; i < sdev->device->phys_port_cnt; i++)
+-		cancel_work_sync(&sdev->port[i].work);
++	srpt_unregister_mad_agent(sdev, sdev->device->phys_port_cnt);
+ 
+ 	if (sdev->cm_id)
+ 		ib_destroy_cm_id(sdev->cm_id);
 -- 
-2.39.2
+2.33.0
 
 
