@@ -1,222 +1,150 @@
-Return-Path: <linux-kernel+bounces-271764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F43C945306
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:53:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6E9945308
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:54:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359412853AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:53:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E4D8B24D00
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AA014A0A7;
-	Thu,  1 Aug 2024 18:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7472D148FE6;
+	Thu,  1 Aug 2024 18:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaOYwW9B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="EOLgAaFr"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A557C143883;
-	Thu,  1 Aug 2024 18:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D393A143883;
+	Thu,  1 Aug 2024 18:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722538406; cv=none; b=CVp67a1uXZDxy8l2rLXvCv5m6m/Lj4NbMjo0x44NKf3/PC7GPzgps8N1F4kzH8TbivK6gN8CvCQ78qPSRXTp8x4ewFdKyuWObuTBoqMJOKMgVFnp5wMlZjEMecrbg+hn4k7JQj7wJGu9MAjrf1FtAcHeiei/h/XZgjzX4V5SlCA=
+	t=1722538450; cv=none; b=g6n/l6iurajewAJRkidoZ73Dd2qHmQQqxVQ0PeyQBniaAVQaRFRfqXUlgljfc09pUC1BozwC5A7oVSadRmn/3ygXBzc1CVKewepJIGhb1lGXDOoXmHjdR7mVJS35P5UYu9rhfirbuRrRchdc3pPEiN4AljNik2URhQ8RY3su+lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722538406; c=relaxed/simple;
-	bh=8fSyU2sb8kmX3R6gndd/1GgRwRBUKnHGxw9g8uAGMbo=;
+	s=arc-20240116; t=1722538450; c=relaxed/simple;
+	bh=vQ68Tu50ORkbkk0z4U6ZbmxtV7LgErua3b+hp17DI7A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lIDcBiqPdu+eiwvsjLl7w1I1wgvy7J/N5pzaxvTnZNdZHXzSi6SzLJ3hZT7N4f/Rxxs7hxG4MZTy0J95XWcYASrgUHbEe167KGsDOrk+26zdgQMDmY2jEC+pq8hi/moIS7XU/s+GeySWWa6Nl0VBdBfalam86X+xDNW5tfZYUTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaOYwW9B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE6AC32786;
-	Thu,  1 Aug 2024 18:53:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722538404;
-	bh=8fSyU2sb8kmX3R6gndd/1GgRwRBUKnHGxw9g8uAGMbo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=HavhokiSqe4m1tBjG1JyXhDhEoQYhlNxSyOhnFvOt4Ku3yhQC4StDZD8t71mQfA7a+VSL0GSf6LM3jTxupncKbfHckZzXa1FxmET/jMwsWhuIwlLc+2oFy5E62XHp+E1zXsBoQS4jUs+M+KIVgIUBoY2zvyWsyhpQhXCxS6ZFes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=EOLgAaFr; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1722538434;
+	bh=vQ68Tu50ORkbkk0z4U6ZbmxtV7LgErua3b+hp17DI7A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZaOYwW9BfCu9i44CDKEZGhyyXPNNch8oGDnGletL0Un/ouU/aRaMFsLFkmv3lEuCA
-	 +7ja6mmwZph8X7iGE+xEYRD3mNq6ZdnIoJFT4jomwOyfbEBDmUzTmFTH0mXMMNip/R
-	 +cC7yytW8K1ClqfzSE1o2mXpikLIp+I4oTE0sAjOwIlFrdSp79VYgVL/f2ZMw/6xmz
-	 ILYvtEswuHcHI/Jn94fctSTX7WysarchHqvcFLklSEBcoGtNXCh6wBvvk6VL/1kd1y
-	 km1sHZPziIGOyZai3aJNrYlTlJmtXlDnhKVDU3TwqIXepvzZYzfLSAIko0Ar2py1d8
-	 sdzQc78+tt0PQ==
-Date: Thu, 1 Aug 2024 11:53:21 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>,
-	Christian Brauner <christian@brauner.io>
-Cc: Steve French <smfrench@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/24] netfs: Speed up buffered reading
-Message-ID: <20240801185321.GA2534812@thelio-3990X>
-References: <20240729162002.3436763-1-dhowells@redhat.com>
- <20240729162002.3436763-19-dhowells@redhat.com>
- <20240731190742.GS1967603@kernel.org>
+	b=EOLgAaFrh7T1Vwqyl7+3xmT+OhZGCB6u/WYDyjaByBanZXzObHZuNGP1c5pWFNyb7
+	 OMAJcYtpfukDT+voQAGVSvFi+iO5DbMIB1yax2J6Fw9qgLag6k9zh5rt3F9MLO1xye
+	 06q7tzb1KZWivU2gJpaaiojhPrZUeE8q3z6K80og=
+Date: Thu, 1 Aug 2024 20:53:54 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Nathan Chancellor <nathan@kernel.org>, 
+	Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Christian Heusel <christian@heusel.eu>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: add debug package to pacman PKGBUILD
+Message-ID: <ab9f18b2-a27c-4ac8-bffa-390a8960387b@t-8ch.de>
+References: <20240801132945.47963-1-jose.fernandez@linux.dev>
+ <20240801183637.GB122261@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240731190742.GS1967603@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240801183637.GB122261@thelio-3990X>
 
-On Wed, Jul 31, 2024 at 08:07:42PM +0100, Simon Horman wrote:
-> On Mon, Jul 29, 2024 at 05:19:47PM +0100, David Howells wrote:
+On 2024-08-01 11:36:37+0000, Nathan Chancellor wrote:
+> Hi Jose,
 > 
-> ...
+> On Thu, Aug 01, 2024 at 07:29:40AM -0600, Jose Fernandez wrote:
+> > Add a new -debug package to the pacman PKGBUILD that will contain the
+> > vmlinux image for debugging purposes. This package depends on the
+> > -headers package and will be installed in /usr/src/debug/${pkgbase}.
+> > 
+> > The vmlinux image is needed to debug core dumps with tools like crash.
+> > 
+> > Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> > Reviewed-by: Peter Jung <ptr1337@cachyos.org>
 > 
-> > diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-> 
-> ...
-> 
-> > +/*
-> > + * Perform a read to the pagecache from a series of sources of different types,
-> > + * slicing up the region to be read according to available cache blocks and
-> > + * network rsize.
-> > + */
-> > +static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
-> > +{
-> > +	struct netfs_inode *ictx = netfs_inode(rreq->inode);
-> > +	unsigned long long start = rreq->start;
-> > +	ssize_t size = rreq->len;
-> > +	int ret = 0;
-> > +
-> > +	atomic_inc(&rreq->nr_outstanding);
-> > +
-> > +	do {
-> > +		struct netfs_io_subrequest *subreq;
-> > +		enum netfs_io_source source = NETFS_DOWNLOAD_FROM_SERVER;
-> > +		ssize_t slice;
-> > +
-> > +		subreq = netfs_alloc_subrequest(rreq);
-> > +		if (!subreq) {
-> > +			ret = -ENOMEM;
-> > +			break;
-> > +		}
-> > +
-> > +		subreq->start	= start;
-> > +		subreq->len	= size;
-> > +
-> > +		atomic_inc(&rreq->nr_outstanding);
-> > +		spin_lock_bh(&rreq->lock);
-> > +		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
-> > +		subreq->prev_donated = rreq->prev_donated;
-> > +		rreq->prev_donated = 0;
-> > +		trace_netfs_sreq(subreq, netfs_sreq_trace_added);
-> > +		spin_unlock_bh(&rreq->lock);
-> > +
-> > +		source = netfs_cache_prepare_read(rreq, subreq, rreq->i_size);
-> > +		subreq->source = source;
-> > +		if (source == NETFS_DOWNLOAD_FROM_SERVER) {
-> > +			unsigned long long zp = umin(ictx->zero_point, rreq->i_size);
-> > +			size_t len = subreq->len;
-> > +
-> > +			if (subreq->start >= zp) {
-> > +				subreq->source = source = NETFS_FILL_WITH_ZEROES;
-> > +				goto fill_with_zeroes;
-> > +			}
-> > +
-> > +			if (len > zp - subreq->start)
-> > +				len = zp - subreq->start;
-> > +			if (len == 0) {
-> > +				pr_err("ZERO-LEN READ: R=%08x[%x] l=%zx/%zx s=%llx z=%llx i=%llx",
-> > +				       rreq->debug_id, subreq->debug_index,
-> > +				       subreq->len, size,
-> > +				       subreq->start, ictx->zero_point, rreq->i_size);
-> > +				break;
-> > +			}
-> > +			subreq->len = len;
-> > +
-> > +			netfs_stat(&netfs_n_rh_download);
-> > +			if (rreq->netfs_ops->prepare_read) {
-> > +				ret = rreq->netfs_ops->prepare_read(subreq);
-> > +				if (ret < 0) {
-> > +					atomic_dec(&rreq->nr_outstanding);
-> > +					netfs_put_subrequest(subreq, false,
-> > +							     netfs_sreq_trace_put_cancel);
-> > +					break;
-> > +				}
-> > +				trace_netfs_sreq(subreq, netfs_sreq_trace_prepare);
-> > +			}
-> > +
-> > +			slice = netfs_prepare_read_iterator(subreq);
-> > +			if (slice < 0) {
-> > +				atomic_dec(&rreq->nr_outstanding);
-> > +				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
-> > +				ret = slice;
-> > +				break;
-> > +			}
-> > +
-> > +			rreq->netfs_ops->issue_read(subreq);
-> > +			goto done;
-> > +		}
-> > +
-> > +	fill_with_zeroes:
-> > +		if (source == NETFS_FILL_WITH_ZEROES) {
-> > +			subreq->source = NETFS_FILL_WITH_ZEROES;
-> > +			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
-> > +			netfs_stat(&netfs_n_rh_zero);
-> > +			slice = netfs_prepare_read_iterator(subreq);
-> > +			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
-> > +			netfs_read_subreq_terminated(subreq, 0, false);
-> > +			goto done;
-> > +		}
-> > +
-> > +		if (source == NETFS_READ_FROM_CACHE) {
-> > +			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
-> > +			slice = netfs_prepare_read_iterator(subreq);
-> > +			netfs_read_cache_to_pagecache(rreq, subreq);
-> > +			goto done;
-> > +		}
-> > +
-> > +		if (source == NETFS_INVALID_READ)
-> > +			break;
-> 
-> Hi David,
-> 
-> I feel a sense of deja vu here. So apologies if this was already
-> discussed in the past.
-> 
-> If the code ever reaches this line, then slice will be used
-> uninitialised below.
-> 
-> Flagged by W=1 allmodconfig builds on x86_64 with Clang 18.1.8.
+> This appears to add a non-trivial amount of time to the build when benchmarking
+> with Arch Linux's configuration (I measure 9% with hyperfine):
 
-which now breaks the build in next-20240801:
+As nothing more is compiled, I guess this is just the additional
+packaging.
 
-  fs/netfs/buffered_read.c:304:7: error: variable 'slice' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
-    304 |                 if (source == NETFS_INVALID_READ)
-        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  fs/netfs/buffered_read.c:308:11: note: uninitialized use occurs here
-    308 |                 size -= slice;
-        |                         ^~~~~
-  fs/netfs/buffered_read.c:304:3: note: remove the 'if' if its condition is always true
-    304 |                 if (source == NETFS_INVALID_READ)
-        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    305 |                         break;
-  fs/netfs/buffered_read.c:221:16: note: initialize the variable 'slice' to silence this warning
-    221 |                 ssize_t slice;
-        |                              ^
-        |                               = 0
-  1 error generated.
+> Benchmark 1: pacman-pkg @ 21b136cc63d2 ("minmax: fix up min3() and max3() too")
+>   Time (mean ± σ):     579.541 s ±  0.585 s    [User: 22156.731 s, System: 3681.698 s]
+>   Range (min … max):   578.894 s … 580.033 s    3 runs
+> 
+> Benchmark 2: pacman-pkg @ c5af4db0563b ("kbuild: add debug package to pacman PKGBUILD")
+>   Time (mean ± σ):     633.419 s ±  0.972 s    [User: 22247.886 s, System: 3673.879 s]
+>   Range (min … max):   632.302 s … 634.070 s    3 runs
+> 
+> Summary
+>   pacman-pkg @ 21b136cc63d2 ("minmax: fix up min3() and max3() too") ran
+>     1.09 ± 0.00 times faster than pacman-pkg @ c5af4db0563b ("kbuild: add debug package to pacman PKGBUILD")
+> 
+> It would be nice to add some option to avoid building this package for
+> developers who may not want it (I know I personally would not want it
+> with that penalty because I do a lot of bisects) or maybe adding a
+> target to build this package with the rest like 'pacman-pkg-with-dbg' or
+> something? Also, couldn't vmlinux be obtained from vmlinuz that already
+> exists in the main package via scripts/extract-vmlinux?
 
-If source has to be one of these values, perhaps switching to a switch
-statement and having a default with a WARN_ON() or something would
-convey that to the compiler?
+Jose:
 
-Cheers,
-Nathan
+In the vanilla PKGBUILD vmlinux is part of the linux-headers package:
+linux-headers /usr/lib/modules/6.10.2-arch1-1/build/vmlinux
+
+Given that you already gate the new -debug package on CONFIG_MODULES,
+why not add the file to that package?
+
+Then we could still discuss if it makes sense to gate vmlinux on
+CONFIG_MODULES or if -headers should be enabled unconditionally again.
+Or we wait for somebody to show up and ask for it.
+
+> Cheers,
+> Nathan
+> 
+> > ---
+> >  scripts/package/PKGBUILD | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > index 663ce300dd06..beda3db21863 100644
+> > --- a/scripts/package/PKGBUILD
+> > +++ b/scripts/package/PKGBUILD
+> > @@ -6,6 +6,7 @@ pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+> >  pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+> >  if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+> >  	pkgname+=("${pkgbase}-headers")
+> > +	pkgname+=("${pkgbase}-debug")
+> >  fi
+> >  pkgver="${KERNELRELEASE//-/_}"
+> >  # The PKGBUILD is evaluated multiple times.
+> > @@ -89,6 +90,15 @@ _package-headers() {
+> >  	ln -sr "${builddir}" "${pkgdir}/usr/src/${pkgbase}"
+> >  }
+> >  
+> > +_package-debug(){
+> > +    pkgdesc="Non-stripped vmlinux file for the ${pkgdesc} kernel"
+> > +    depends=(${pkgbase}-headers)
+> > +
+> > +    cd "${objtree}"
+> > +    mkdir -p "$pkgdir/usr/src/debug/${pkgbase}"
+> > +    install -Dt "$pkgdir/usr/src/debug/${pkgbase}" -m644 vmlinux
+> > +}
+> > +
+> >  _package-api-headers() {
+> >  	pkgdesc="Kernel headers sanitized for use in userspace"
+> >  	provides=(linux-api-headers)
+> > -- 
+> > 2.46.0
+> > 
 
