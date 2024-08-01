@@ -1,97 +1,159 @@
-Return-Path: <linux-kernel+bounces-271494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7385944F01
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:20:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C70C2944F10
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A6F285C7D
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF71284B84
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED31A99C4;
-	Thu,  1 Aug 2024 15:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD48E13B7B3;
+	Thu,  1 Aug 2024 15:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/Fc2OdP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BB3xU6xq"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF1613D279;
-	Thu,  1 Aug 2024 15:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440C713B5A6;
+	Thu,  1 Aug 2024 15:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525619; cv=none; b=NdLsinIGOZTu77GiuDF9T0u35hoXdIZybzRrbOQu3GLGRR9SpyHu8R5jP3TgSH5AzDphJC6lxUp4YhKldcMKJC9nArwVTqzH0JoVEShb3IqDKdLCxgLUFR1yPeusa55FiCN05Tsf0Wl5v0/Rul5s9XKESfqnbGmX29vY9bCH59w=
+	t=1722525760; cv=none; b=NzfT4qyh7++TenrkXk+HqwMOrhr3dQzKDNhFzwZiKF7xuJlNoN0HhZ4bDnE8R6sqHZ4SXMsR3QdlA5WhMtSkrmS9c9IlkdG1bU1WYvCHmExnq8l4QpcEjci2ZrZmJChJzTAVY7qbNcIq1YCzytl5XozJZ+MkBNSQrpcnzfov8cg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525619; c=relaxed/simple;
-	bh=KTmdwLSd7dG0FEIjDwyIROa5WuqsjKzs6JJZutABvb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NDJ3u67dkfALKdMO95IDwFmhmb17zQmhb6T97AE2OmKHEIeghMp7yZdVNT4HGrZ6ZiGxawB1PL4k1mJ4Ct7+J2zIkOUQFtZ3GpkjrFQgMJrnYEYDveZTALlUGR9RmJb5B/uLEijOM5eg4JzrWAy7rSQ8le/hMHzl/GGZPeqWvLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/Fc2OdP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A75C32786;
-	Thu,  1 Aug 2024 15:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722525619;
-	bh=KTmdwLSd7dG0FEIjDwyIROa5WuqsjKzs6JJZutABvb4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V/Fc2OdPAAOE/HtjfNseosj8qB+goSB4a7trP4gniB5ey4TPseUMMQ8vv4xALywaw
-	 FFbSMlvYIvg62/jVPFzR/tJAmnw3FtlEwN8DX4+n8v9lugYc17Yxv+f/gbpEhbi6Mx
-	 wNXMpdjBGL276oJPUZzDD2rZXmUyPm9G7GKR5vfTLOiLstYOwd9LpTSO3JbTuldBRZ
-	 E/br7tTv9Lo/zeHvGYJr0JnV8YgDhqC1YADGu3c3AvQbcKGOFAKgPmErWsdErPDBc3
-	 aHat4ktdRR3RP3VvN7NfLR88/FtrdrMfDWNsZtgI1EebyT8fOznPSMs465HB38JCzu
-	 /FWh+qI8+95/A==
-Date: Thu, 1 Aug 2024 12:20:16 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Subject: Re: [PATCH 2/6] perf mem: Free the allocated sort string
-Message-ID: <ZqunsJNSeBSldZBB@x1>
-References: <20240731235505.710436-1-namhyung@kernel.org>
- <20240731235505.710436-3-namhyung@kernel.org>
+	s=arc-20240116; t=1722525760; c=relaxed/simple;
+	bh=8Dx2Bv0d2od3Km7MjoXRYzhl1VfhP4WqwsY5gBZHcjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fE28F938iGfEfrdV3ayPQWECxkFMpXRpAzBGiKNtkYo9eJZ6Ygx5s6Th173Pm8FW1UIuKKQQs03VY0Fgmr5njGUiD0iRT58zM/xTkc7L4QU4GlknEXI+U33HdGZaZXYaR5/pCQcK+UhO5/D0mJr9wZop1sdijWtrEpjtc1d6J/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BB3xU6xq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-426526d30aaso46929135e9.0;
+        Thu, 01 Aug 2024 08:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722525756; x=1723130556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Dx2Bv0d2od3Km7MjoXRYzhl1VfhP4WqwsY5gBZHcjc=;
+        b=BB3xU6xqyjIDBDJY6xQRQSs2g+U8g4KWO3GVaMTLDo/c73ZZXKOTjNDNNB77bGcK0x
+         A4rSPtsyYAtviEyI8OHk286hWeeSH5jvzUlZQcWAmPpWApJMvPVAzVMj0JFhGDljkK59
+         DvkXy+ZR8bKlk2+6J2ZEFSmftPM/axmwuYyiRZhrf2DoMRtoI1HJWPYlQZ3PKu2FBWmR
+         XJWe+jDEeulvqlgTl5Caj586Bx53AJBwqt2aJ5s1qcozJN/aK9qQFyHXKTW+j9BmoLU7
+         2CUl+cqw5ZhykD9MtN9TqeesXDIAvJ0Eh59Hf30Soqx7kco0t+utR8G45Wu1/8iJNW9e
+         HVZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722525756; x=1723130556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Dx2Bv0d2od3Km7MjoXRYzhl1VfhP4WqwsY5gBZHcjc=;
+        b=RzoW+fVbzTpYCPrHQklGSuXcgV0fJqNe2AL4UrEjyjDTMNc343lj2CBFFQ7fDOUm7/
+         x0O1kXeEFHQ3FWEKs1aeaqdwqVX0+PYi9Esoi1X4P8YPKG1aRp0LkyXQY1kWXT6DaEfy
+         JeRUVJ2VZ50hOdomFgOJuxx2Saw9NpvDGt3pxP/ApsyYYfnngtTde1sh5zXsZY6G/Mxr
+         MOaILnyxkWF1pXoznz/7dsLS43+RlBMenTPrQszSR/rANU4PYbJl7OuOcml3fZcKcq20
+         TCgKG2w7sFU9OjQUsZznYq6IOl+TqALM7OHJzSO8sO7eMp5NBiaTogiV3Ovrbg2xvGYZ
+         595Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVl01zG6UUQ1XDs0gL9S5A1aEkFb/3Pddyt71VtDHFRi5aSj9UQOxx+j5Xb9dBILHig7HshD/jtyrGvU7oDulqO6ENfiYfXhBzVqcsDNIktT79yi0Cy0aVSu3ysaJ9n1Mw8OKVjhdDo0Sb3F542ToPEF/n3I0gPvsEi7MwNPzw3/XiQ87EvRg5KwU7jvAepJRIYssRZC8ZeUxOjtSvj0rdRkxnrcQIM7h0H
+X-Gm-Message-State: AOJu0YyRpQ9lWZHSGLkixepwVwikJEzEvX7qO/Ozj478Yy4QFqFbDxTZ
+	PHTkvFm1vByaEdG3DzNCRXiVdmAVw0Cb+NXSBjNoRbmP3+9suS3rwlh0WOZZH3Ef1Ox0QybNHwa
+	rM0ppu2HGIH18T3uhIq3UAasX4zE=
+X-Google-Smtp-Source: AGHT+IHJwpMJUuvVBDGd0+iVwndbV1UbEfs+MYBNb+0c/veShsqCR+fklPSjDi/gK00dEDB9UQYZf/nj06+15imHIwM=
+X-Received: by 2002:adf:f14d:0:b0:368:4bc0:9211 with SMTP id
+ ffacd0b85a97d-36bbc0f3459mr125871f8f.17.1722525756248; Thu, 01 Aug 2024
+ 08:22:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731235505.710436-3-namhyung@kernel.org>
+References: <20240731124505.2903877-1-linyunsheng@huawei.com>
+ <20240731124505.2903877-5-linyunsheng@huawei.com> <CAKgT0UcqdeSJdjZ_FfwyCnT927TwOkE4zchHLOkrBEmhGzex9g@mail.gmail.com>
+ <22fda86c-d688-42e7-99e8-e2f8fcf1a5ba@huawei.com>
+In-Reply-To: <22fda86c-d688-42e7-99e8-e2f8fcf1a5ba@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Thu, 1 Aug 2024 08:21:59 -0700
+Message-ID: <CAKgT0UcuGj8wvC87=A+hkarRupfhjGM0BPzLUT2AJc8Ovg_TFg@mail.gmail.com>
+Subject: Re: [PATCH net-next v12 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Subbaraya Sundeep <sbhatta@marvell.com>, Jeroen de Borst <jeroendb@google.com>, 
+	Praveen Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>, 
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham <sgoutham@marvell.com>, 
+	Geetha sowjanya <gakula@marvell.com>, hariprasad <hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, 
+	Sean Wang <sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith Busch <kbusch@kernel.org>, 
+	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+	Chaitanya Kulkarni <kch@nvidia.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, intel-wired-lan@lists.osuosl.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	linux-nvme@lists.infradead.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-mm@kvack.org, bpf@vger.kernel.org, 
+	linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 31, 2024 at 04:55:01PM -0700, Namhyung Kim wrote:
-> The get_sort_order() returns either a new string (from strdup) or NULL
-> but it never gets freed.
+On Thu, Aug 1, 2024 at 6:01=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
+>
+> On 2024/8/1 2:13, Alexander Duyck wrote:
+> > On Wed, Jul 31, 2024 at 5:50=E2=80=AFAM Yunsheng Lin <linyunsheng@huawe=
+i.com> wrote:
+> >>
+> >> Currently the page_frag API is returning 'virtual address'
+> >> or 'va' when allocing and expecting 'virtual address' or
+> >> 'va' as input when freeing.
+> >>
+> >> As we are about to support new use cases that the caller
+> >> need to deal with 'struct page' or need to deal with both
+> >> 'va' and 'struct page'. In order to differentiate the API
+> >> handling between 'va' and 'struct page', add '_va' suffix
+> >> to the corresponding API mirroring the page_pool_alloc_va()
+> >> API of the page_pool. So that callers expecting to deal with
+> >> va, page or both va and page may call page_frag_alloc_va*,
+> >> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
+> >>
+> >> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> >> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> >> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+> >
+> > I am naking this patch. It is a pointless rename that is just going to
+> > obfuscate the git history for these callers.
+>
+> I responded to your above similar comment in v2, and then responded more
+> detailedly in v11, both got not direct responding, it would be good to
+> have more concrete feedback here instead of abstract argument.
+>
+> https://lore.kernel.org/all/74e7259a-c462-e3c1-73ac-8e3f49fb80b8@huawei.c=
+om/
+> https://lore.kernel.org/all/11187fe4-9419-4341-97b5-6dad7583b5b6@huawei.c=
+om/
 
-Applied and added:
+I will make this much more understandable. This patch is one of the
+ones that will permanently block this set in my opinion. As such I
+will never ack this patch as I see no benefit to it. Arguing with me
+on this is moot as you aren't going to change my mind, and I don't
+have all day to argue back and forth with you on every single patch.
 
-Fixes: 2e7f545096f954a9 ("perf mem: Factor out a function to generate sort order")
-
-- Arnaldo
- 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/builtin-mem.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-> index 863fcd735dae..93413cfcd585 100644
-> --- a/tools/perf/builtin-mem.c
-> +++ b/tools/perf/builtin-mem.c
-> @@ -372,6 +372,7 @@ static int report_events(int argc, const char **argv, struct perf_mem *mem)
->  		rep_argv[i] = argv[j];
->  
->  	ret = cmd_report(i, rep_argv);
-> +	free(new_sort_order);
->  	free(rep_argv);
->  	return ret;
->  }
-> -- 
-> 2.46.0.rc1.232.g9752f9e123-goog
+As far as your API extension and naming maybe you should look like
+something like bio_vec and borrow the naming from that since that is
+essentially what you are passing back and forth is essentially that
+instead of a page frag which is normally a virtual address.
 
