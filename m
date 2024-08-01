@@ -1,199 +1,140 @@
-Return-Path: <linux-kernel+bounces-271091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F2594495E
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD900944966
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 12:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444D3283124
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BC0282316
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D98183CC5;
-	Thu,  1 Aug 2024 10:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26FF184549;
+	Thu,  1 Aug 2024 10:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPeoJ5zb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="IaYq7Y7E"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112B93BBE5;
-	Thu,  1 Aug 2024 10:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62078184528
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 10:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722508534; cv=none; b=uHdW3ctsOOPeec1xN32Ynaq9UMqqiI8AdA7HtDnT1d9IFkTkWHrkRG3ny18CoRTBkO69sAYbtAfyzV8F+H71dbNCSZ6T8BLWKIIobfLrIF6k8lrCHSvM+AKIB5aSciyulmX4k7ztq4l3uwgWJ2tzKznuymj8Ak/up/fcRU7aYOM=
+	t=1722508585; cv=none; b=Rur+KptfwqCbVOyOYQVP1vKRao0JF/cQ9yiRmKNqj4HR7W5Z3sONpwRFKKr/tCeX1XaTmAQ0oC3GPV+cDo/5BStBvuiUDKdFfPrlz97bFmw1upLUXX3hXBGSaeiNvILq8aKu55/L9Ti6xSWxq18W64uNHmFHYby4MitVDXd9ios=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722508534; c=relaxed/simple;
-	bh=FTOFv8FAFGdvJC8md3mZcio/JkgfWJnUswLaH3sTGG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O/wm5VS2IXlMWz+quBxQu/r8m2buOGeoF4k5tZAw115yv/XO/LC1/tpZ7+tpl+fgVCdNfrWU+Uijh6bvlkJkqZPu0Lxdv2/1pPEdlGbKbcTz/1WxZo1RDykye+xeReFJi5VUH11MBFRCLonuWwBsr7IeqEU2ndRt9E8DVMpYaec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPeoJ5zb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A51DC4AF09;
-	Thu,  1 Aug 2024 10:35:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722508533;
-	bh=FTOFv8FAFGdvJC8md3mZcio/JkgfWJnUswLaH3sTGG0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CPeoJ5zbd6feDjrEsdIAG+7qGMeInbIcjgdlQxJFPuN4hOsN9eV0wsEWFph65UyLb
-	 0QG0mI8FAQ2tb6U6xzg8Fgaj38jAVg5V+c561skLABCbS/ALjgWlh+1A8i4VdlFqHY
-	 +kozrCY1KafV9AZV8g2QEQXX3CeddCM3TwO3GYv36uNnQSH+FIOrP7LjYxLrUuCdZ+
-	 ciL/QzPxwqoln7f6MA2EOuQKU6n++6AzRfDduzZ+NfhcRXuKcp6Y+MLD6frTbVJJ1I
-	 iYOY+mkhhAcFZZU6/aMQEJE8nOE66NIGSJBKdcSHz640rDxHO1KcYObGgvfuicxISR
-	 3Ku1tpzSnCztA==
-Message-ID: <2527d5a4-de1f-4c93-b7ee-fdd6fbe2a6f0@kernel.org>
-Date: Thu, 1 Aug 2024 12:35:27 +0200
+	s=arc-20240116; t=1722508585; c=relaxed/simple;
+	bh=NRM+kgKwBU8r6cYAcjDNYZlfqQ6UT1sfjavDTYorIco=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XuZL7kwoRMylT0FE988ZWflPi28IiancpThELTF129SkIcpIJgofboBTWOWe5nzMLpw85tFxEdWOsEq/0hnYqE/tPfyzKnk1E3m+Sl3FChveSGlpXZ0bWQqAFW0kh+eArLe/zPERFNz6N0ThZdudwIPogm088U/VErMUPEKYjpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=IaYq7Y7E; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so43051035e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 03:36:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722508582; x=1723113382; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uX4IaEMr1VdJXApOdGT5XxSsfW+jBZ4plMQMTeRKMD4=;
+        b=IaYq7Y7E6DUA1DZJER7ZsByYWfw6r1mJBqmxk8qYOdMNlSgvB1oYMapztO3B9Ynzvq
+         cD7V9NFScfo5XjQFv+Z9G6feSzITneY9+G3ydCo88hm0vRR7WoymjjLL0enAtoOW68Jy
+         WNnj68DCDBOkWEsHW8WRwwZLARydSldXzGImivX5aSV+BbPdAk/FkFENZxjVPBS7300r
+         03TW5zy99trEqUxVEzOCQHTJRveI/u4ChJvsqlrAd2K7jiOOIMPEOjRf6SgBf11nT2Ue
+         cElRsspYTeXXl4viTMpPVHjD3HR7LIiA/R+dSzNp894PS5KMe06AFQuMlgNKW4akkwgj
+         eTKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722508582; x=1723113382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uX4IaEMr1VdJXApOdGT5XxSsfW+jBZ4plMQMTeRKMD4=;
+        b=f7bh9dVQqGZcXP1A2xF7V576xh9x4TD3viGn+KRAc0sQhrIxHO7vu/SGj2LgUP56dr
+         +ahxMF57MzCUABaBOVsxOaNDTg6vvj9q35pNAljyLLZIGdnhhOKbilVIBqP62MMLYsLM
+         +db54Lc6hn2i6ZlDyswqWc9IlnHWwfmZLiApVSDGhhoZMMkjQYo0Utk/n8bHJ1uxkwyc
+         WPrDl4v7OE+e7BTyoaCASBueVw7oYe3QZLqjvS6a8dz2VirCkNSt015RVwA9N/Zkxrqm
+         OXpVtFEzZBYSgJpuFA+ANAEHP/V2IMeszamA88KdrTwcCBuoieT/dU6zk/mqiTRugwEd
+         IfFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWqO/+H4syOO3lKrGjIGLtzTw98morufR5s9Vf8iMuyOzimLzTNisNQe2u4pTB3o2LbOGdDqRP91f32X6O1n362FKMGLBQtEOFWC9Pn
+X-Gm-Message-State: AOJu0YxxVLcdnXy5k2zk2lUkwU6FItL/SoFQaIrjAp45CHK21mdbY5PB
+	zhxWOpjcmxf/ozKoQCUFeDlucM79QOn+lz7V+IltThKacRF22PuFEMUiPaRNl24=
+X-Google-Smtp-Source: AGHT+IHXZzVY2RHPJ7hV/J3clIiaRw2lCC2mSGOOlG4ghfqUb/oWihGNec6dU4R+28d8BMZ9icAykw==
+X-Received: by 2002:a05:600c:314c:b0:427:9dad:e6ac with SMTP id 5b1f17b1804b1-428b032b25bmr15786785e9.34.1722508581377;
+        Thu, 01 Aug 2024 03:36:21 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb64952sm52975625e9.37.2024.08.01.03.36.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 03:36:20 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	erick.archer@gmx.com,
+	gustavoars@kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	christophe.jaillet@wanadoo.fr
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH v2] clk: hisilicon: Remove unnecessary local variable
+Date: Thu,  1 Aug 2024 12:36:16 +0200
+Message-ID: <20240801103616.20430-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] mm/cgroupv2: memory.min may lead to an OOM error
-Content-Language: en-US
-To: Lance Yang <ioworker0@gmail.com>, akpm@linux-foundation.org
-Cc: 21cnbao@gmail.com, ryan.roberts@arm.com, david@redhat.com,
- shy828301@gmail.com, ziy@nvidia.com, libang.li@antgroup.com,
- baolin.wang@linux.alibaba.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Johannes Weiner <hannes@cmpxchg.org>,
- Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Shakeel Butt <shakeel.butt@linux.dev>, Muchun Song <muchun.song@linux.dev>,
- Cgroups <cgroups@vger.kernel.org>
-References: <20240801045430.48694-1-ioworker0@gmail.com>
-From: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
-In-Reply-To: <20240801045430.48694-1-ioworker0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 8/1/24 06:54, Lance Yang wrote:
-> Hi all,
-> 
-> It's possible to encounter an OOM error if both parent and child cgroups are
-> configured such that memory.min and memory.max are set to the same values, as
-> is practice in Kubernetes.
+The local u64 variable refdiv_val has the same value as the local u32
+variable val and can be removed. Remove it and use val directly as the
+divisor to also remove the following Coccinelle/coccicheck warning
+reported by do_div.cocci:
 
-Is it a practice in Kubernetes since forever or a recent one? Did it work
-differently before?
+  WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead
 
-> Hmm... I'm not sure that whether this behavior is a bug or an expected aspect of
-> the kernel design.
+Use the preferred div_u64() function instead of the do_div() macro.
 
-Hmm I'm not a memcg expert, so I cc'd some.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+Changes in v2:
+- Use div_u64() instead of do_div() as suggested by Stephen Boyd
+- Link to v1: https://lore.kernel.org/linux-kernel/20240710201844.710365-2-thorsten.blum@toblux.com/
+---
+ drivers/clk/hisilicon/clk-hi3559a.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-> To reproduce the bug, we can follow these command-based steps:
-> 
-> 1. Check Kernel Version and OS release:
->     
->     ```
->     $ uname -r
->     6.10.0-rc5+
-
-Were older kernels behaving the same?
-
-Anyway memory.min documentations says "Hard memory protection. If the memory
-usage of a cgroup is within its effective min boundary, the cgroup’s memory
-won’t be reclaimed under any conditions. If there is no unprotected
-reclaimable memory available, OOM killer is invoked."
-
-So to my non-expert opinion this behavior seems valid. if you set min to the
-same value as max and then reach the max, you effectively don't allow any
-reclaim, so the memcg OOM kill is the only option AFAICS?
-
->     $ cat /etc/os-release
->     PRETTY_NAME="Ubuntu 24.04 LTS"
->     NAME="Ubuntu"
->     VERSION_ID="24.04"
->     VERSION="24.04 LTS (Noble Numbat)"
->     VERSION_CODENAME=noble
->     ID=ubuntu
->     ID_LIKE=debian
->     HOME_URL="<https://www.ubuntu.com/>"
->     SUPPORT_URL="<https://help.ubuntu.com/>"
->     BUG_REPORT_URL="<https://bugs.launchpad.net/ubuntu/>"
->     PRIVACY_POLICY_URL="<https://www.ubuntu.com/legal/terms-and-policies/privacy-policy>"
->     UBUNTU_CODENAME=noble
->     LOGO=ubuntu-logo
->     
->     ```
->     
-> 2. Navigate to the cgroup v2 filesystem, create a test cgroup, and set memory settings:
->     
->     ```
->     $ cd /sys/fs/cgroup/
->     $ stat -fc %T /sys/fs/cgroup
->     cgroup2fs
->     $ mkdir test
->     $ echo "+memory" > cgroup.subtree_control
->     $ mkdir test/test-child
->     $ echo 1073741824 > memory.max
->     $ echo 1073741824 > memory.min
->     $ cat memory.max
->     1073741824
->     $ cat memory.min
->     1073741824
->     $ cat memory.low
->     0
->     $ cat memory.high
->     max
->     ```
->     
-> 3. Set up and check memory settings in the child cgroup:
->     
->     ```
->     $ cd test-child
->     $ echo 1073741824 > memory.max
->     $ echo 1073741824 > memory.min
->     $ cat memory.max
->     1073741824
->     $ cat memory.min
->     1073741824
->     $ cat memory.low
->     0
->     $ cat memory.high
->     max
->     ```
->     
-> 4. Add process to the child cgroup and verify:
->     
->     ```
->     $ echo $$ > cgroup.procs
->     $ cat cgroup.procs
->     1131
->     1320
->     $ ps -ef|grep 1131
->     root        1131    1014  0 10:45 pts/0    00:00:00 -bash
->     root        1321    1131 99 11:06 pts/0    00:00:00 ps -ef
->     root        1322    1131  0 11:06 pts/0    00:00:00 grep --color=auto 1131
->     ```
->     
-> 5. Attempt to create a large file using dd and observe the process being killed:
->     
->     ```
->     $ dd if=/dev/zero of=/tmp/2gbfile bs=10M count=200
->     Killed
->     ```
->     
-> 6. Check kernel messages related to the OOM event:
->     
->     ```
->     $ dmesg
->     ...
->     [ 1341.112388] oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=/,mems_allowed=0,oom_memcg=/test,task_memcg=/test/test-child,task=dd,pid=1324,uid=0
->     [ 1341.112418] Memory cgroup out of memory: Killed process 1324 (dd) total-vm:15548kB, anon-rss:10240kB, file-rss:1764kB, shmem-rss:0kB, UID:0 pgtables:76kB oom_score_adj:0
->     ```
->     
-> 7. Reduce the `memory.min` setting in the child cgroup and attempt the same large file creation, and then this issue is resolved.
->     
->     ```
->     # echo 107374182 > memory.min
->     # dd if=/dev/zero of=/tmp/2gbfile bs=10M count=200
->     200+0 records in
->     200+0 records out
->     2097152000 bytes (2.1 GB, 2.0 GiB) copied, 1.8713 s, 1.1 GB/s
->     ```
-> 
-> Thanks,
-> Lance
-> 
+diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
+index c79a94f6d9d2..8646e9d352ed 100644
+--- a/drivers/clk/hisilicon/clk-hi3559a.c
++++ b/drivers/clk/hisilicon/clk-hi3559a.c
+@@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct hi3559av100_clk_pll *clk = to_pll_clk(hw);
+-	u64 frac_val, fbdiv_val, refdiv_val;
++	u64 frac_val, fbdiv_val;
+ 	u32 postdiv1_val, postdiv2_val;
+ 	u32 val;
+ 	u64 tmp, rate;
+@@ -435,14 +435,13 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 	val = readl_relaxed(clk->ctrl_reg2);
+ 	val = val >> clk->refdiv_shift;
+ 	val &= ((1 << clk->refdiv_width) - 1);
+-	refdiv_val = val;
+ 
+ 	/* rate = 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
+ 	rate = 0;
+ 	tmp = 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
+ 	rate += tmp;
+-	do_div(rate, refdiv_val);
+-	do_div(rate, postdiv1_val * postdiv2_val);
++	rate = div_u64(rate, val);
++	rate = div_u64(rate, postdiv1_val * postdiv2_val);
+ 
+ 	return rate;
+ }
+-- 
+2.45.2
 
 
