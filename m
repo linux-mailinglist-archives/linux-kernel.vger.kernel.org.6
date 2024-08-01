@@ -1,47 +1,64 @@
-Return-Path: <linux-kernel+bounces-270910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-270958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595F89446F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 10:46:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E25F9447C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 11:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A5111C221A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 08:46:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11B2E287260
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 09:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9665A16DC03;
-	Thu,  1 Aug 2024 08:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F286718E05B;
+	Thu,  1 Aug 2024 09:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWcyzK1L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eED4liwN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45CC13D60F;
-	Thu,  1 Aug 2024 08:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC9B18C336;
+	Thu,  1 Aug 2024 09:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722501978; cv=none; b=t0x5+mYgE7Wf2aSLrO+mmM0D17hToIkK+2doNo8Cd+ww77BT9Miyju++vT76CDMok2AzGY+C4JrqI47iJ8mnS60HuHOSNhxB2s1UkFZlES1G2A62ZAroku37p9TC4LVCg36ULxVb9840ercJXogsthIyPbZa2HMB5bz9cCXiYN4=
+	t=1722503529; cv=none; b=s2BTxs7QsgG80wGrO7+E/PFkSOsNSmrLNVCeL6qklG9ipiClCya6HaNRL5y1Pa1as/c+h8TX/HiOzt6/pwQ1f4Bpv+jkoigaHHWX2/MfQIxs/R/HH6Sl0pcetCSMZm4mhd83DFxJHBqKNIilJvvK2x5N2w9k1QHoq605G+VqKEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722501978; c=relaxed/simple;
-	bh=GW+mWy4LDE8UdkF4zZL+w/ehRXDozRqnqKItD7lE5zE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=oSzoET31aXaYsuSpS1chYrb1yzXqc4Ha8ryPYRPwq+g2CPIne+9cncrkhnL5URU+uWT5C8xR52zsTcOl/yT2eA4zNdtBKd5gpa/haXFAU6gt4jo5yKDVnuX1FZGMeMLGV9I2XdgsurCD2FETziQ8KBJE9UlUKEEqHI7EHo/5VCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWcyzK1L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC69C4AF0D;
-	Thu,  1 Aug 2024 08:46:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722501978;
-	bh=GW+mWy4LDE8UdkF4zZL+w/ehRXDozRqnqKItD7lE5zE=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=JWcyzK1L8SR+GFrEiVHv/OW+sFZXBAmnaj6GXtQfOOT3JSvNI7ASE2lsco5hX4tJ5
-	 HfgOLu2/o3h4RhAa4CEfQNF/hQrvVKF16xMfFnlk6OtoBu5c58c9oK4kuxXF+QARXV
-	 KxKzcgu3o/EpWYt26sPlMZWhn7vW54YKpFR9pjpte8HoXp7M4v9xkUm5EN5GSQM7Lm
-	 CwNI6sOdan2EDBWItTjSSF7FvAO2r58FtyaFrYEEDFi08dsYFXpR8K6j69pbEN5lqG
-	 sspxpt57GBNfatycfn5R5ctjJPwlHfqKWVmfOmda50CSDEK7pIbn4GEl2jlwW8yKZh
-	 51uOh/B4fEb/g==
-Message-ID: <0582fd8a-216a-4569-a1ad-e4aafc926bf1@kernel.org>
-Date: Thu, 1 Aug 2024 10:46:14 +0200
+	s=arc-20240116; t=1722503529; c=relaxed/simple;
+	bh=w0McOUyWwUuqt/eulPkwOwH5rxC2a3weyECk1ou2zkg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ijU6lI81HGowqSIv1cqwO0c3MLJurkVzvBP3CSMlQbpR6s61WrhOOOQtjtA8yee865Ii8Si60hOC/QTdpefq9bqUGI/76vTSKvmO+Qrclc/XnM9qdaX6FIvEErmmjKkN+prt/KE/eiww6YesE/4ZOU7BchqxtbSqQNa4b6aIEvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eED4liwN; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722503528; x=1754039528;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=w0McOUyWwUuqt/eulPkwOwH5rxC2a3weyECk1ou2zkg=;
+  b=eED4liwNEy3IUn9v/gPh8ZEVr5lFRVK0ixKABUUh/AEXcddNe14ZNXRa
+   V71rbGreE0WXa/WdH6oeew5XXPXuTYBNJd6oG3KBJ7pDM+56BtI3uTy8X
+   boLmtmx+og81vJ9kcQZINY4q1eNuY6Bq/VpbFTSDwiijvb4J5H4weRUqd
+   4MahF8TWWSE7xtEwjSTf0eK1KEToRV7qO8uEd4kO+NytrzTp9dVJhHF6l
+   LSG5q4xqjbp1F4ZpFbPcCx2jVvTUoogcW9RXdMlj4nZPGcAM0UqIExNQJ
+   a6+LoVpA+8ieEQM2J9p0q7fGSs7Sj/gUP/vm50rEdhiwb7o0YOY4EiaFs
+   g==;
+X-CSE-ConnectionGUID: 95+f09csTQWz2SupjXjA0A==
+X-CSE-MsgGUID: 3J6R5TRyTl6Rw9H3C0ZeBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11150"; a="20383620"
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="20383620"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:12:00 -0700
+X-CSE-ConnectionGUID: qzka40OKSsyRNpJ1IZoG5w==
+X-CSE-MsgGUID: yQbFYnn9RiivaEUKaMOqXA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,254,1716274800"; 
+   d="scan'208";a="59090084"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO [10.245.246.220]) ([10.245.246.220])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 02:11:50 -0700
+Message-ID: <5b5d06b8-8ada-49dd-a9c5-477258a9a72a@linux.intel.com>
+Date: Thu, 1 Aug 2024 10:46:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,85 +66,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: arm: socfpga: Add Altera SOCFPGA SDRAM EDAS
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alessandro Zanni <alessandro.zanni87@gmail.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, skhan@linuxfoundation.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240731230231.12917-1-alessandro.zanni87@gmail.com>
- <5f9f4062-91e0-43e0-9ef5-48e30ca68ac9@kernel.org>
+Subject: Re: [PATCH v24 19/34] ASoC: qcom: qdsp6: Fetch USB offload mapped
+ card and PCM device
+To: Wesley Cheng <quic_wcheng@quicinc.com>, srinivas.kandagatla@linaro.org,
+ mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
+ corbet@lwn.net, broonie@kernel.org, lgirdwood@gmail.com, krzk+dt@kernel.org,
+ Thinh.Nguyen@synopsys.com, bgoswami@quicinc.com, tiwai@suse.com,
+ gregkh@linuxfoundation.org, robh@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-sound@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org,
+ alsa-devel@alsa-project.org
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-20-quic_wcheng@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <5f9f4062-91e0-43e0-9ef5-48e30ca68ac9@kernel.org>
+From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20240801011730.4797-20-quic_wcheng@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 01/08/2024 10:44, Krzysztof Kozlowski wrote:
-> On 01/08/2024 01:02, Alessandro Zanni wrote:
-> 
-> Thank you for your patch. There is something to discuss/improve.
-> 
-> 
->> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
->> new file mode 100644
->> index 000000000000..78fbe31e4a2b
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-sdram-edac.yaml
-> 
-> Filename like compatible, so altr,sdram-edac.yaml
-> 
-> Fix the placement - arm is only for top-level sutff. This goes to
-> memory-controllers or edac
-> 
 
-So this was a v2? Then version your patches correctly and add
-appropriate and detailed changelog under ---.
 
-See submitting patches.
+> +static int q6usb_get_offload_dev(struct snd_soc_component *component,
+> +				 int card, int pcm, enum snd_soc_usb_kctl route)
+> +{
+> +	struct q6usb_port_data *data = dev_get_drvdata(component->dev);
+> +	struct snd_soc_usb_device *sdev;
+> +	int ret = -1;
+> +
+> +	mutex_lock(&data->mutex);
+> +
+> +	if (list_empty(&data->devices))
+> +		goto out;
+> +
+> +	sdev = list_last_entry(&data->devices, struct snd_soc_usb_device, list);
+> +
+> +	if ((card == sdev->card_idx) && (pcm == sdev->pcm_idx)) {
+> +		if (route == SND_SOC_USB_KCTL_CARD_ROUTE)
+> +			ret = component->card->snd_card->number;
+> +		else if (route == SND_SOC_USB_KCTL_PCM_ROUTE)
+> +			ret = q6usb_get_pcm_id(component);
+> +	}
+> +
+> +out:
+> +	mutex_unlock(&data->mutex);
+> +
+> +	return ret;
+> +}
 
-Best regards,
-Krzysztof
+well I obviously didn't get how this function worked until now, it's
+supposed to be call TWICE with a different argument.
 
+Not sure it's really wise with the locking, why not get both in one shot?
+
+Also how does this update the kcontrol value?
 
