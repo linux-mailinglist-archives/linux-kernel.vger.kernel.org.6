@@ -1,123 +1,182 @@
-Return-Path: <linux-kernel+bounces-271682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078FF94519A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:40:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B9394519D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 19:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B05321F2396A
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 944101C2292F
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAB31B9B40;
-	Thu,  1 Aug 2024 17:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E5B1B9B31;
+	Thu,  1 Aug 2024 17:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OZi04dbC"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jHUzeEGX"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D4E1B8EBB
-	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722534013; cv=none; b=sxjdMVRRvmCasiIviF2LslHdsz4YUGPecrLaAxZYsNZnxwwexjyi2KsT0IJMuKmys6jBjwCNxstLyRvBXAsE38pP8N0GJXZc8VftP8kQLJPVrW8AJ5uhFM9N41jwS0intCuHPnKCghdupxh+/HeIlv9VDWIDyJl77k7CNp+9OcI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722534013; c=relaxed/simple;
-	bh=gFGo8dOk0VJiQQUAK+INl3O/L32blZxmPO2Im/Zhcug=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SUIpqler3lip+4IADiAF4Cwgok52YUJ3zQRb756TKwETjQ+RqqsaC3q5Y+UuG/NkybSPCoP4+2+qAPTzI0vXm+SelykkN3whnA40I3MXwkX+MkaDFmIzXXNH1jbWCURItCTtuv2EhUU+2Bd0cX0h1NrydHcdKgvByWXahIdkl2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OZi04dbC; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cb639aa911so7472498a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 10:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722534011; x=1723138811; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9VNzcyRkgABAvNu7jY6d4RP7mTe7rlkrOwsOOfnmQw=;
-        b=OZi04dbC4YohYTyZFyrDikJQv7t8knE0is19AJqU7c4cCehqJfnQUXQc9IGQ9Ws7/3
-         kdFVv3D1YuUdvz8yYM2V/zearerAwrslg/9IT3+UGZLBEF2TJmTKTWX9QccShrVb3Jv2
-         UTRbeUDHW8zmFbbmqmWpvG7xywxbZxPx0i64CxpnYN2FFoilw3TFcZ0etNFW38FDRjhj
-         DhVjTz/5fKcXkZCM5Uh7QQy2qeLefQR4SqflmfCi25HqASIbMmfuae99GUPRlJZE+h2f
-         HrkZYWHymCzzkBiuHl6qENNgriQk+9QvE74DmLMsKAIhjAOXA9kMOOWbQHzQ3PBmPpTU
-         YR5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722534011; x=1723138811;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L9VNzcyRkgABAvNu7jY6d4RP7mTe7rlkrOwsOOfnmQw=;
-        b=Cq29MAGVX9g+ISkIAbGIG68U3Pj7fpQEAahFVvuBAPhJTuloxgBT7iRc3kRtjxNhAD
-         qb179MuGqxEK243r0blHxXzx7DXnPSlSuBmLsvbBJX9l4qpi3b/seIZLyNtr+zrK3zJg
-         +f6zQSXCM0zNFtqDN5kY9SKOXGdBMhhNSR91gldQAbFRmbqpSMjsAXwK9XmE55WnUB+5
-         EKa+kV6WbFOt34vHEtaaIJG1j+/HrQztyf2kfSstdeObIeK3s97Xe2EzelwKJ5E51NOq
-         o+VOgBkq7KrqSI1qQPrK7flDeb0fLoMbnHmR1AYGmFPDs0bB0qQ6mh4BatCZzUeqIJMS
-         eJ3A==
-X-Forwarded-Encrypted: i=1; AJvYcCW08ZMs8nOz+d024cyyGAdExjxCYct5L/ZWVvZgrRzziUK22VaWpfb9EGwRRtlWgE0y4HUUTVg48SU/cG4ypqUjOCOzB3iXjWJLZXMl
-X-Gm-Message-State: AOJu0Ywe7ru78LZCIkIuUTJwdj3F85GYikMBs7Df7Dizxo+kXFOzAKGn
-	rzW/vODGGzQuuFyF8GgtCx+FXywV3lKSJWwQ0oLkfm6xxoL+7wCholqJ6580ZkUcd4+SErY7OuU
-	i27ZPT+4GASj8s264uLfrfg==
-X-Google-Smtp-Source: AGHT+IGhpTZuKcEDE5QRQXsOfcY0PWgiRoUFns4CRvhbi/uTvBIXM/nvEmpt5cbQN5GWFoFa60I9eNfSq5lwKOiQpw==
-X-Received: from ackerleytng-ctop.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:13f8])
- (user=ackerleytng job=sendgmr) by 2002:a17:90b:e8a:b0:2cf:deef:4261 with SMTP
- id 98e67ed59e1d1-2cff954f844mr31201a91.7.1722534011252; Thu, 01 Aug 2024
- 10:40:11 -0700 (PDT)
-Date: Thu,  1 Aug 2024 17:39:55 +0000
-In-Reply-To: <20240501085210.2213060-3-michael.roth@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3172182D8
+	for <linux-kernel@vger.kernel.org>; Thu,  1 Aug 2024 17:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722534069; cv=fail; b=j05Ip0ydwhX44YfdIQowzo8d/hk4ST4DFM+OaOmFkyHjDZs7FPVTiV85UgzphKxG4eKafNPOYytbyksD17ncBgUfJC6yo6/eMvdiqya08wRVGvYjEmRlPfdUQBXRtSvDdcJYehiNUk/7E+R5h0SVOUEXP27pIg1xyWyuM0zh9KY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722534069; c=relaxed/simple;
+	bh=nSIJn8FM51NXy4cHwjlYIRATCHnwS54vNiQ8BPgJIYs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lhwnFNdrOGsz87XsDWb9Rn/OgFnnVYBxY/v1kxM8RAZJ/2jDBziuu2hAt61ivbylMin6hXjdBsG/HBy9dcWGni7DtPIk3jJ47ynXZxj+KWJl1UV03XdYlkRRxo/ivf4flEgpoI5E20C7smD/mJHr4AjbhYVHSGNjGz702Esrzmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jHUzeEGX; arc=fail smtp.client-ip=40.107.93.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fmlPUqHNWs+ZSkBfMjetxFv0gRTVOhAYYZImhPdahiZn2857d53Jd3SH7DJ+jCGsCz/LmPt6bJxT5ta3Ui0PnyzwQEi8p9fynsBKVTgMymsKG4I43KACETRxXKTxoMx7ArIKcM5k/V/BrJEOJQ+G0NIwEz+gr045phQK3ZLbV3MKpNz00alKiyQT6Yziwf3hreeopvEcEeyzsB62+IJBC1X58j0ZAUqVbgVmyQmn9AN11qo8qvj0WyC1HDQ88BYYOduAuGZFpxcPIRKxi7zrAngwi1ZaifXNtBtSSyoZDvX2NXuO7QWPn228PnieHKnPlU70LcECqyZFIMk7Kbj30w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bW62whnZINl6QE+VYQo7gaasCEWL3AfsZtZhL0jYM9U=;
+ b=nyl1gRse7k4ZdlyHTB8tdE9lowOCYVxUxYJnEsu4NZCoDf+6EcZ4yzEG3qUmq8zMTqf9i7aAujDJU0/838B6m3c/0OsjwQUBK8G6AeayZ2jhQqnAIFB4M1fbAUXGo1ifQ8Wi6mnqjO51o3+n08lW7y/ces/F/taO8zkS6FwKJatNohZOpnJCOWBNDOllIf7IvRmoc60kGuDuOTBbYCueWryMVja5Tq82PpVrgWhkxbzRvkyTS8DxKE1yNcyp5X9s4W4hN0j6WfnzZnoTDkZvLfWpr0sh7kSnY8n3Kpxq8cyPpayfIC2lG+ajHTO/zromdoHLVVfoLojN9Ua9D6eLdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bW62whnZINl6QE+VYQo7gaasCEWL3AfsZtZhL0jYM9U=;
+ b=jHUzeEGXRZ9Q6ekQMQpocg7+6GtUIDiI/pHbuGXYdAJRbqi5tBSG0rspF8XBwIGEVWPl40CeD3PLxnt4GQ3WnhU3UqA5YnETpgiYMQN+Uw/1h2svM4CsAnFp5cDS+fG/KdAitjwu61Lok0XrUxJkJdydaoXE7wgfpKEEFB1O/mAqx4/oJPgjya9W5+/kpwixTbGZAh67+hao06lLrjgVtyUl2n2dvTaifBLuV6CjBF8k8nL5XA+JgUXIoPOwvDXiXQZ7QH98XU2AsqRb3aFrOL6XgBosqlZrMEAnDMIlCtjpbvIiE4ei8liVbCJyj80Bf7ywt71cCg3ZUC4iwLAU0Q==
+Received: from BY3PR03CA0001.namprd03.prod.outlook.com (2603:10b6:a03:39a::6)
+ by DS0PR12MB7704.namprd12.prod.outlook.com (2603:10b6:8:138::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7807.23; Thu, 1 Aug
+ 2024 17:41:04 +0000
+Received: from SJ5PEPF000001F0.namprd05.prod.outlook.com
+ (2603:10b6:a03:39a:cafe::27) by BY3PR03CA0001.outlook.office365.com
+ (2603:10b6:a03:39a::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7784.35 via Frontend
+ Transport; Thu, 1 Aug 2024 17:41:04 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ SJ5PEPF000001F0.mail.protection.outlook.com (10.167.242.68) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.19 via Frontend Transport; Thu, 1 Aug 2024 17:41:04 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 1 Aug 2024
+ 10:40:58 -0700
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Thu, 1 Aug 2024 10:40:57 -0700
+Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.126.190.181)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Thu, 1 Aug 2024 10:40:57 -0700
+Date: Thu, 1 Aug 2024 10:40:55 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Tian, Kevin" <kevin.tian@intel.com>
+CC: "jgg@nvidia.com" <jgg@nvidia.com>, "Liu, Yi L" <yi.l.liu@intel.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iommufd: Enforce IOMMU_RESV_SW_MSI upon hwpt_paging
+ allocation
+Message-ID: <ZqvIp/nEz8jnKaH2@Asurada-Nvidia>
+References: <20240728235106.2435208-1-nicolinc@nvidia.com>
+ <BN9PR11MB5276497781C96415272E6FED8CB12@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <Zqp+sssdo80B7MaB@Asurada-Nvidia>
+ <Zqqq5JYFswS49z2L@Asurada-Nvidia>
+ <BN9PR11MB5276F7ACEBCDAB8C0FF5390E8CB22@BN9PR11MB5276.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240501085210.2213060-3-michael.roth@amd.com>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240801173955.1975034-1-ackerleytng@google.com>
-Subject: [PATCH] Fixes: f32fb32820b1 ("KVM: x86: Add hook for determining max
- NPT mapping level")
-From: Ackerley Tng <ackerleytng@google.com>
-To: michael.roth@amd.com
-Cc: ak@linux.intel.com, alpergun@google.com, ardb@kernel.org, 
-	ashish.kalra@amd.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	dovmurik@linux.ibm.com, hpa@zytor.com, jarkko@kernel.org, jmattson@google.com, 
-	vannapurve@google.com, erdemaktas@google.com, jroedel@suse.de, 
-	kirill@shutemov.name, kvm@vger.kernel.org, liam.merwick@oracle.com, 
-	linux-coco@lists.linux.dev, linux-crypto@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, luto@kernel.org, 
-	mingo@redhat.com, nikunj.dadhania@amd.com, pankaj.gupta@amd.com, 
-	pbonzini@redhat.com, peterz@infradead.org, pgonda@google.com, 
-	rientjes@google.com, sathyanarayanan.kuppuswamy@linux.intel.com, 
-	seanjc@google.com, slp@redhat.com, srinivas.pandruvada@linux.intel.com, 
-	tglx@linutronix.de, thomas.lendacky@amd.com, tobin@ibm.com, 
-	tony.luck@intel.com, vbabka@suse.cz, vkuznets@redhat.com, x86@kernel.org, 
-	Ackerley Tng <ackerleytng@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <BN9PR11MB5276F7ACEBCDAB8C0FF5390E8CB22@BN9PR11MB5276.namprd11.prod.outlook.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F0:EE_|DS0PR12MB7704:EE_
+X-MS-Office365-Filtering-Correlation-Id: a1c84128-1145-4443-28a3-08dcb2511e00
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ThqhXr72jQ2Mhfzhrofy3ZUvvKB3IWvhrm/N3JmsGZyQdQiTj8B0eS36SpLo?=
+ =?us-ascii?Q?yJwlihP9+3zLK6OKGXnwMm4NVRnTAFkoaxHX1ZA9PV0jwqiwV7ovW4viSaGm?=
+ =?us-ascii?Q?Q16RwtOQ7iH4qK6+kppVcjaHrAjokgfkawR8FlI/vMLFs6fi/kwHB2Zxxxhp?=
+ =?us-ascii?Q?s8WvqqyyGMTp88IRV70OrMm/tUBvta1FMZ8g7Sg0eVZqmilbz1MqJ2jzk07a?=
+ =?us-ascii?Q?GuqWRRSum+fM0PWwT2+vUy/8lbB5IRS+wH5Mw/iIy4xpG/L/76VDinoO+OSj?=
+ =?us-ascii?Q?7v2EarMLvkCrMF88FbFCHNmsOzE0EV9/kVvvV6zaQoL3TQETpoeyZ3D7YBk5?=
+ =?us-ascii?Q?th4MojKgEpNF/PGt8mHWBDuvgyd90p6oG0vCQVJajIbtkIomuXDfVkYbi2PP?=
+ =?us-ascii?Q?IOzp/xLe08fZrnwIRVa9k9rUf4ZkkGXts7DiG8f8kDYhlKPZn1ObXJKTzW1b?=
+ =?us-ascii?Q?Z31+sXPP4oDQ+12jUKqG7EBc5OFqcIrnH3GRFRzy/HG4h5rsW40RirxPlxso?=
+ =?us-ascii?Q?1Ex0Cu+UZ/FmW/Qq+0NsRtTBakyEBDgzHYBtRTNhLj+OP3gehCYhwRh/Cd1d?=
+ =?us-ascii?Q?dEY8rNheqIalhNsvjk5VNMnfB8Ax1ZdZ35uXAhIyaJMsfR06jfSvlA8WdmqO?=
+ =?us-ascii?Q?faCMON5UTt+0OxdMgncAh65neA8+4G1oUhwPz4XmHQB7eZhjUZ2rtLVilVWN?=
+ =?us-ascii?Q?x+V6yOCcKJjt74FHYelgbOXe7BbNkhBjiVeYqDd4c84CBnXmpBw4XkxOdb8j?=
+ =?us-ascii?Q?tm4JQIZm1Kru9K2pNcZYNbrVYBxUAXGuUX8ZXRMHE5K8GSvvMdJPpqCxV8+2?=
+ =?us-ascii?Q?PsQDGl53U+jUE2KAMoOPNPnoOWSn30N2jxqEMMGAVAZovFRv9kcZbADHM7Wj?=
+ =?us-ascii?Q?MhNKREab+QUAdF6buJvmssajcyYKiKpvtbBiw6bVkBsl3WkiJ+vu+zP23+Qx?=
+ =?us-ascii?Q?0A7LqzjHsSLew20LFTvXsUKkawXlDwKhjgCQ1CBheDEpfnPO0jXr75Um3/kn?=
+ =?us-ascii?Q?A3zxFYXVaEZ4W7vIwRrtV6PJHee+hzeP9GoKlH2t9/zJ78yZmHm5InbCdLnl?=
+ =?us-ascii?Q?eGhZDhN7QrRoTNPS9VlGyQA1H5p1820omN/oa9ploKZbnsOgfS9qCkd8jWkg?=
+ =?us-ascii?Q?C+VNIL0PGKDCO+veS9b1/dyvKAIARS32+QuSEZnV3j4ZpOHaZBaEZH9dd9PU?=
+ =?us-ascii?Q?PYd+aWu7KW7zaUf+Da8QZ1tKqq8LjDTBEmIdJ64AHrmTbcSQIw8995F0Z1Ms?=
+ =?us-ascii?Q?W8n+hCdUgyIw22paXmaFsw1dzm5WaVav6rP6IW0365fqa7oFWfqMUz7bMz7v?=
+ =?us-ascii?Q?cqjSt5avgrYzpog++oER+iryeIdSBO0doMp6keZNl5H1LxUIopgQNEvP3Wdt?=
+ =?us-ascii?Q?a4hxw97GEm4C4PG6X9RR31R/BbXxpWDZiPmblfpj7Lq03srexVWhPs8H9okK?=
+ =?us-ascii?Q?Is0w/5Xx24zLOGXwlek72Y4nY4ddsJkH?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2024 17:41:04.4877
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a1c84128-1145-4443-28a3-08dcb2511e00
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F0.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7704
 
-The `if (req_max_level)` test was meant ignore req_max_level if
-PG_LEVEL_NONE was returned. Hence, this function should return
-max_level instead of the ignored req_max_level.
+On Thu, Aug 01, 2024 at 08:10:57AM +0000, Tian, Kevin wrote:
+> > From: Nicolin Chen <nicolinc@nvidia.com>
+> > Sent: Thursday, August 1, 2024 5:22 AM
+> >
+> > @@ -316,7 +316,9 @@ static inline bool hwpt_is_paging(struct
+> > iommufd_hw_pagetable *hwpt)
+> >  static inline struct iommufd_hwpt_paging *
+> >  to_hwpt_paging(struct iommufd_hw_pagetable *hwpt)
+> >  {
+> > -     return container_of(hwpt, struct iommufd_hwpt_paging, common);
+> > +     if (hwpt_is_paging(hwpt))
+> > +             return container_of(hwpt, struct iommufd_hwpt_paging,
+> > common);
+> > +     return container_of(hwpt, struct iommufd_hwpt_nested, common)-
+> > >parent;
+> >  }
+> >
+> 
+> hmm this doesn't work with future new hwpt types.
 
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-Change-Id: I403898aacc379ed98ba5caa41c9f1c52f277adc2
----
- arch/x86/kvm/mmu/mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Was trying to make it a smaller change, but short-sighted.
 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 901be9e420a4..e6b73774645d 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4335,7 +4335,7 @@ static u8 kvm_max_private_mapping_level(struct kvm *kvm, kvm_pfn_t pfn,
- 	if (req_max_level)
- 		max_level = min(max_level, req_max_level);
- 
--	return req_max_level;
-+	return max_level;
- }
- 
- static int kvm_faultin_pfn_private(struct kvm_vcpu *vcpu,
--- 
-2.46.0.rc2.264.g509ed76dc8-goog
+> It's clearer to pass hwpt into earlier helpers and then do the type check
+> insided and make it a nop for types other than paging/nesting.
 
+Ack.
+
+Thanks
+Nicolin
 
