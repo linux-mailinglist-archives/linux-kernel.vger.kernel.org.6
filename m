@@ -1,121 +1,97 @@
-Return-Path: <linux-kernel+bounces-271493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F010944F00
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:20:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7385944F01
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 17:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B44B3B273C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:20:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92A6F285C7D
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 15:20:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A808C1A4F30;
-	Thu,  1 Aug 2024 15:19:52 +0000 (UTC)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED31A99C4;
+	Thu,  1 Aug 2024 15:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/Fc2OdP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E7E13C3D6;
-	Thu,  1 Aug 2024 15:19:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF1613D279;
+	Thu,  1 Aug 2024 15:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722525592; cv=none; b=pRHQ/JsGEnvuJkUUxy2gN2Lj8bouiMGZPkYbfmn1UjniJliKNtiUiHLjYW5DsXM19TmKT39oF05NBaINBLmrTwY5APCCW23NGyDTTl8U3ABrfD1pRJohG4GVvfWmevdtp6LAb+PTxbYRMt5RNfHoAQcSw4P8tCAngUIIyTQKnVY=
+	t=1722525619; cv=none; b=NdLsinIGOZTu77GiuDF9T0u35hoXdIZybzRrbOQu3GLGRR9SpyHu8R5jP3TgSH5AzDphJC6lxUp4YhKldcMKJC9nArwVTqzH0JoVEShb3IqDKdLCxgLUFR1yPeusa55FiCN05Tsf0Wl5v0/Rul5s9XKESfqnbGmX29vY9bCH59w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722525592; c=relaxed/simple;
-	bh=hPsrbCaY2Jr065uvGV0XmHvY3hpLPDuw5mS9wLk8/bI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u4aF9kLR0VrBVTKCxT8Y0TeofoFRhPHQ+zQCXZP3+IrGKpZis56/uot9Zu1LIRPbXF297UROwjrTHKy66eWhFWj80PRjsEl0OK378bSf/soDKE3j9E54w1PrFoTnS+JRz3CTqAweU86eU4mHWqEMBSztDT5wN+t6LtxrZ8aI8uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6634f0afe05so61019017b3.0;
-        Thu, 01 Aug 2024 08:19:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722525588; x=1723130388;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RDyWAMhmHE59w0Mny126OKEGtu/+cpHDnSt+3EGJJgM=;
-        b=owA+ruFIFeqfzmHTif8gbBWE2Jx/EAZY2S67gNj6/TBxYmYRSMaRfgkNiRPBNXoBXv
-         Rgvq8MYsB9Ihb0u00XeVZd5nK3HXOrHV4QZi0JOb36BqZFoPHbp8IE/0EIwHpsE1CM4t
-         wclLUd+1K1kkXtX1S9MoQvjdYpHcjTkIQtg74tiUDoUOXCaIq/4AGP4bv1gTRyINgYiu
-         OleR9r0nVvnBc1PjITDtBS9hXyy2565wQmGGst4pl2Fq3hTuPMCiVJNZVRisnnyxdYK7
-         AMDH8DSdeEKDX9vc2h2jnU6CQaKVrgPbhQKIe7q8J75FMQKOvZ/O9EPEDavpeNjlOQLj
-         VMdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1iO0/FvOKVT5+VD8M0xPDFzwI/7uNUqjLxiWXN5weMKhbuONTcnggZAoZkchh+h1gbQVV9EzH7nIcuGTrBrp/bz5GLwKBFI6C2vdcVQpLZkPJF/AFlIktyF2HYczbJjDHGPQYrtaQ3i5XhTLkZ7M4eoEI3eoeANLsaX07LXjSdtNbVK/nrYNFmP9J
-X-Gm-Message-State: AOJu0Yx9K0Fsk9xmj2GyjSvk/8QXPYExDDs9eBCxu1+RPF7GgOwYNecc
-	seI93F+jw79aeSu1lG7T+qCDwXDGQ2ADY5QjwvC1mFGm3PpM6JcqswuKWiIN
-X-Google-Smtp-Source: AGHT+IGUTFq8Bj7uiYf/lQTZJf2JsR2IZgEYAI+qzinGgBoLld18HXeSEzEBH27ofHFKzYRl+QvjuQ==
-X-Received: by 2002:a81:5c86:0:b0:64a:3d7c:2782 with SMTP id 00721157ae682-68964391001mr3715527b3.41.1722525588698;
-        Thu, 01 Aug 2024 08:19:48 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-68867e9dafesm1408557b3.137.2024.08.01.08.19.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 08:19:48 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6634f0afe05so61018807b3.0;
-        Thu, 01 Aug 2024 08:19:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUahvREYt0mdwfSkPgNImmMrz+iQlDrPG3byGtOstRh+jk8oW5Eg4JYxNfPo5oVPHl/4sJzj8QzrEJETZ3m1OriMgieLHTLMtVHf00jhObxFYrYbKZYCoaJG3ADOHsr4ouO5yE8nOBVKsufSPvRyA4alssKlwYoRBuQGf9yLESojRQyrQGEePSRlOCF
-X-Received: by 2002:a81:b405:0:b0:64b:44b4:e1a with SMTP id
- 00721157ae682-68961dc2868mr4974247b3.26.1722525588139; Thu, 01 Aug 2024
- 08:19:48 -0700 (PDT)
+	s=arc-20240116; t=1722525619; c=relaxed/simple;
+	bh=KTmdwLSd7dG0FEIjDwyIROa5WuqsjKzs6JJZutABvb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NDJ3u67dkfALKdMO95IDwFmhmb17zQmhb6T97AE2OmKHEIeghMp7yZdVNT4HGrZ6ZiGxawB1PL4k1mJ4Ct7+J2zIkOUQFtZ3GpkjrFQgMJrnYEYDveZTALlUGR9RmJb5B/uLEijOM5eg4JzrWAy7rSQ8le/hMHzl/GGZPeqWvLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/Fc2OdP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A75C32786;
+	Thu,  1 Aug 2024 15:20:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722525619;
+	bh=KTmdwLSd7dG0FEIjDwyIROa5WuqsjKzs6JJZutABvb4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/Fc2OdPAAOE/HtjfNseosj8qB+goSB4a7trP4gniB5ey4TPseUMMQ8vv4xALywaw
+	 FFbSMlvYIvg62/jVPFzR/tJAmnw3FtlEwN8DX4+n8v9lugYc17Yxv+f/gbpEhbi6Mx
+	 wNXMpdjBGL276oJPUZzDD2rZXmUyPm9G7GKR5vfTLOiLstYOwd9LpTSO3JbTuldBRZ
+	 E/br7tTv9Lo/zeHvGYJr0JnV8YgDhqC1YADGu3c3AvQbcKGOFAKgPmErWsdErPDBc3
+	 aHat4ktdRR3RP3VvN7NfLR88/FtrdrMfDWNsZtgI1EebyT8fOznPSMs465HB38JCzu
+	 /FWh+qI8+95/A==
+Date: Thu, 1 Aug 2024 12:20:16 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: Re: [PATCH 2/6] perf mem: Free the allocated sort string
+Message-ID: <ZqunsJNSeBSldZBB@x1>
+References: <20240731235505.710436-1-namhyung@kernel.org>
+ <20240731235505.710436-3-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240723164744.505233-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Aug 2024 17:19:35 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUQzF==5ejD5XGC7KPm+ccq3=p0CDpjiYzsiTbn0D4yKw@mail.gmail.com>
-Message-ID: <CAMuHMdUQzF==5ejD5XGC7KPm+ccq3=p0CDpjiYzsiTbn0D4yKw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas: rzg2l: Return -EINVAL if the pin
- doesn't support PIN_CFG_OEN
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731235505.710436-3-namhyung@kernel.org>
 
-On Tue, Jul 23, 2024 at 6:50=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Update the rzg2l_pinctrl_pinconf_get() function to return -EINVAL for
-> PIN_CONFIG_OUTPUT_ENABLE config if the pin doesn't support the PIN_CFG_OE=
-N
-> configuration.
->
-> -EINVAL is a valid error when dumping the pin configurations. Returning
-> -EOPNOTSUPP for a pin that does not support PIN_CFG_OEN resulted in the
-> message 'ERROR READING CONFIG SETTING 16' being printed during dumping
-> pinconf-pins.
->
-> For consistency do similar change in rzg2l_pinctrl_pinconf_set() for
-> PIN_CONFIG_OUTPUT_ENABLE config.
->
-> Fixes: a9024a323af2 ("pinctrl: renesas: rzg2l: Clean up and refactor OEN =
-read/write functions")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, Jul 31, 2024 at 04:55:01PM -0700, Namhyung Kim wrote:
+> The get_sort_order() returns either a new string (from strdup) or NULL
+> but it never gets freed.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.12.
+Applied and added:
 
-Gr{oetje,eeting}s,
+Fixes: 2e7f545096f954a9 ("perf mem: Factor out a function to generate sort order")
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+- Arnaldo
+ 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/builtin-mem.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
+> index 863fcd735dae..93413cfcd585 100644
+> --- a/tools/perf/builtin-mem.c
+> +++ b/tools/perf/builtin-mem.c
+> @@ -372,6 +372,7 @@ static int report_events(int argc, const char **argv, struct perf_mem *mem)
+>  		rep_argv[i] = argv[j];
+>  
+>  	ret = cmd_report(i, rep_argv);
+> +	free(new_sort_order);
+>  	free(rep_argv);
+>  	return ret;
+>  }
+> -- 
+> 2.46.0.rc1.232.g9752f9e123-goog
 
