@@ -1,122 +1,222 @@
-Return-Path: <linux-kernel+bounces-271763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B559452FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:49:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F43C945306
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 20:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A78651C212D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:49:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 359412853AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  1 Aug 2024 18:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31E8148FE6;
-	Thu,  1 Aug 2024 18:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AA014A0A7;
+	Thu,  1 Aug 2024 18:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V/R18hQL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TB16bH+7"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaOYwW9B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DEC14373A;
-	Thu,  1 Aug 2024 18:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A557C143883;
+	Thu,  1 Aug 2024 18:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722538154; cv=none; b=q+gOq2YN9i+Q/QYjCP7h8QiWdASI1LOAM4TgrGY5vEip5xnI+REifeg6spthJ+K843Edqp6v3qtK4qItXXWaoCREGc4KX1+OozveeWeTC6Xz+QxBK1aQWVwkSXKfER7ksAZ2hv1PJCgM+MeJUr+uBPvTbO9VbAl9qPOuG51XUVA=
+	t=1722538406; cv=none; b=CVp67a1uXZDxy8l2rLXvCv5m6m/Lj4NbMjo0x44NKf3/PC7GPzgps8N1F4kzH8TbivK6gN8CvCQ78qPSRXTp8x4ewFdKyuWObuTBoqMJOKMgVFnp5wMlZjEMecrbg+hn4k7JQj7wJGu9MAjrf1FtAcHeiei/h/XZgjzX4V5SlCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722538154; c=relaxed/simple;
-	bh=Mqvq6a7v7faU/RsAxiBN033U6iPOpo33gjvwTQwwEBE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UyZ6I9a1kTlzXcC6eWpF0Dmw21m1BjpvV5Gq4AiMetoQn9WtrF3WoBnayKd7soof5o5ycTRhXeMDDFZ1Ddmke/bbn6dNXTea4XaPpcVSZIjozHeDEmwvDWe+CmNnoc9XIjq0cdXN5/C1RbvsZk93P/jCvQ8DKc4YGNLOH28BuzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V/R18hQL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TB16bH+7; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722538149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zy4QAbBchws8wpEd632QvvKsWpoM4onCh56dsKjIHlQ=;
-	b=V/R18hQLq+jyQoLBzyEA/jn4Fzajd35TRSiGYLRaN/IJiictIcX6L3AmjSn/d3co88iSHu
-	bubzfHPnaZfsdZV+n9L6x0BH+0IDUzw4uWIiBLHtgmyyZRkKUc3z2lbAE7MFUFieOJQtr6
-	/K2h2pJ1GL5UKwSIn6qNY7EqGmRnc7NfuLvUYsEbgz315JLujAFOuyuCsxlfhcCkjCj1rw
-	9DAtO6VQGNm9NaCdKm+7p8mHC22oedrL3kc89L3/FE/HF+TkVc/1a8BEn4v4VvUc8p9cZd
-	F33M1ajTN9rT2zJyvvJgW1OyXO6NdrO66oFuFxLBUtr01FKDFp6spDwVwNwiBA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722538149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zy4QAbBchws8wpEd632QvvKsWpoM4onCh56dsKjIHlQ=;
-	b=TB16bH+7FY9c5h6o6aIywattKgBHBOAnvaRdWLpcsYODy3h8ds9MT5TvjCSdJWS3Y5wMeK
-	KUR0S+I/dHQsuzAw==
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org,
- Marc Zyngier <maz@kernel.org>, Daire McNamara
- <daire.mcnamara@microchip.com>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org
-Subject: Re: [RFC v7 3/6] irqchip: add mpfs gpio interrupt mux
-In-Reply-To: <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
-References: <20240723-supervise-drown-d5d3b303e7fd@wendy>
- <20240723-flatworm-cornflake-8023212f6584@wendy> <87le1k8oq2.ffs@tglx>
- <20240801-palpitate-swinger-7bc8ae8deaaf@spud>
-Date: Thu, 01 Aug 2024 20:49:08 +0200
-Message-ID: <87r0b82i57.ffs@tglx>
+	s=arc-20240116; t=1722538406; c=relaxed/simple;
+	bh=8fSyU2sb8kmX3R6gndd/1GgRwRBUKnHGxw9g8uAGMbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIDcBiqPdu+eiwvsjLl7w1I1wgvy7J/N5pzaxvTnZNdZHXzSi6SzLJ3hZT7N4f/Rxxs7hxG4MZTy0J95XWcYASrgUHbEe167KGsDOrk+26zdgQMDmY2jEC+pq8hi/moIS7XU/s+GeySWWa6Nl0VBdBfalam86X+xDNW5tfZYUTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaOYwW9B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE6AC32786;
+	Thu,  1 Aug 2024 18:53:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722538404;
+	bh=8fSyU2sb8kmX3R6gndd/1GgRwRBUKnHGxw9g8uAGMbo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZaOYwW9BfCu9i44CDKEZGhyyXPNNch8oGDnGletL0Un/ouU/aRaMFsLFkmv3lEuCA
+	 +7ja6mmwZph8X7iGE+xEYRD3mNq6ZdnIoJFT4jomwOyfbEBDmUzTmFTH0mXMMNip/R
+	 +cC7yytW8K1ClqfzSE1o2mXpikLIp+I4oTE0sAjOwIlFrdSp79VYgVL/f2ZMw/6xmz
+	 ILYvtEswuHcHI/Jn94fctSTX7WysarchHqvcFLklSEBcoGtNXCh6wBvvk6VL/1kd1y
+	 km1sHZPziIGOyZai3aJNrYlTlJmtXlDnhKVDU3TwqIXepvzZYzfLSAIko0Ar2py1d8
+	 sdzQc78+tt0PQ==
+Date: Thu, 1 Aug 2024 11:53:21 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Simon Horman <horms@kernel.org>, David Howells <dhowells@redhat.com>,
+	Christian Brauner <christian@brauner.io>
+Cc: Steve French <smfrench@gmail.com>, Matthew Wilcox <willy@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Ilya Dryomov <idryomov@gmail.com>, netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 18/24] netfs: Speed up buffered reading
+Message-ID: <20240801185321.GA2534812@thelio-3990X>
+References: <20240729162002.3436763-1-dhowells@redhat.com>
+ <20240729162002.3436763-19-dhowells@redhat.com>
+ <20240731190742.GS1967603@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240731190742.GS1967603@kernel.org>
 
-On Thu, Aug 01 2024 at 16:09, Conor Dooley wrote:
-> On Mon, Jul 29, 2024 at 12:41:25PM +0200, Thomas Gleixner wrote:
->> > +	/*
->> > +	 * If a bit is set in the mux, GPIO the corresponding interrupt from
->> > +	 * controller 2 is direct and that controllers 0 or 1 is muxed.
->> 
->> This is not a coherent sentence.
->
-> It should read "controller 0 or 1;s interrupt is muxed". Does that make
-> more sense to you?
+On Wed, Jul 31, 2024 at 08:07:42PM +0100, Simon Horman wrote:
+> On Mon, Jul 29, 2024 at 05:19:47PM +0100, David Howells wrote:
+> 
+> ...
+> 
+> > diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+> 
+> ...
+> 
+> > +/*
+> > + * Perform a read to the pagecache from a series of sources of different types,
+> > + * slicing up the region to be read according to available cache blocks and
+> > + * network rsize.
+> > + */
+> > +static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
+> > +{
+> > +	struct netfs_inode *ictx = netfs_inode(rreq->inode);
+> > +	unsigned long long start = rreq->start;
+> > +	ssize_t size = rreq->len;
+> > +	int ret = 0;
+> > +
+> > +	atomic_inc(&rreq->nr_outstanding);
+> > +
+> > +	do {
+> > +		struct netfs_io_subrequest *subreq;
+> > +		enum netfs_io_source source = NETFS_DOWNLOAD_FROM_SERVER;
+> > +		ssize_t slice;
+> > +
+> > +		subreq = netfs_alloc_subrequest(rreq);
+> > +		if (!subreq) {
+> > +			ret = -ENOMEM;
+> > +			break;
+> > +		}
+> > +
+> > +		subreq->start	= start;
+> > +		subreq->len	= size;
+> > +
+> > +		atomic_inc(&rreq->nr_outstanding);
+> > +		spin_lock_bh(&rreq->lock);
+> > +		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
+> > +		subreq->prev_donated = rreq->prev_donated;
+> > +		rreq->prev_donated = 0;
+> > +		trace_netfs_sreq(subreq, netfs_sreq_trace_added);
+> > +		spin_unlock_bh(&rreq->lock);
+> > +
+> > +		source = netfs_cache_prepare_read(rreq, subreq, rreq->i_size);
+> > +		subreq->source = source;
+> > +		if (source == NETFS_DOWNLOAD_FROM_SERVER) {
+> > +			unsigned long long zp = umin(ictx->zero_point, rreq->i_size);
+> > +			size_t len = subreq->len;
+> > +
+> > +			if (subreq->start >= zp) {
+> > +				subreq->source = source = NETFS_FILL_WITH_ZEROES;
+> > +				goto fill_with_zeroes;
+> > +			}
+> > +
+> > +			if (len > zp - subreq->start)
+> > +				len = zp - subreq->start;
+> > +			if (len == 0) {
+> > +				pr_err("ZERO-LEN READ: R=%08x[%x] l=%zx/%zx s=%llx z=%llx i=%llx",
+> > +				       rreq->debug_id, subreq->debug_index,
+> > +				       subreq->len, size,
+> > +				       subreq->start, ictx->zero_point, rreq->i_size);
+> > +				break;
+> > +			}
+> > +			subreq->len = len;
+> > +
+> > +			netfs_stat(&netfs_n_rh_download);
+> > +			if (rreq->netfs_ops->prepare_read) {
+> > +				ret = rreq->netfs_ops->prepare_read(subreq);
+> > +				if (ret < 0) {
+> > +					atomic_dec(&rreq->nr_outstanding);
+> > +					netfs_put_subrequest(subreq, false,
+> > +							     netfs_sreq_trace_put_cancel);
+> > +					break;
+> > +				}
+> > +				trace_netfs_sreq(subreq, netfs_sreq_trace_prepare);
+> > +			}
+> > +
+> > +			slice = netfs_prepare_read_iterator(subreq);
+> > +			if (slice < 0) {
+> > +				atomic_dec(&rreq->nr_outstanding);
+> > +				netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_cancel);
+> > +				ret = slice;
+> > +				break;
+> > +			}
+> > +
+> > +			rreq->netfs_ops->issue_read(subreq);
+> > +			goto done;
+> > +		}
+> > +
+> > +	fill_with_zeroes:
+> > +		if (source == NETFS_FILL_WITH_ZEROES) {
+> > +			subreq->source = NETFS_FILL_WITH_ZEROES;
+> > +			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
+> > +			netfs_stat(&netfs_n_rh_zero);
+> > +			slice = netfs_prepare_read_iterator(subreq);
+> > +			__set_bit(NETFS_SREQ_CLEAR_TAIL, &subreq->flags);
+> > +			netfs_read_subreq_terminated(subreq, 0, false);
+> > +			goto done;
+> > +		}
+> > +
+> > +		if (source == NETFS_READ_FROM_CACHE) {
+> > +			trace_netfs_sreq(subreq, netfs_sreq_trace_submit);
+> > +			slice = netfs_prepare_read_iterator(subreq);
+> > +			netfs_read_cache_to_pagecache(rreq, subreq);
+> > +			goto done;
+> > +		}
+> > +
+> > +		if (source == NETFS_INVALID_READ)
+> > +			break;
+> 
+> Hi David,
+> 
+> I feel a sense of deja vu here. So apologies if this was already
+> discussed in the past.
+> 
+> If the code ever reaches this line, then slice will be used
+> uninitialised below.
+> 
+> Flagged by W=1 allmodconfig builds on x86_64 with Clang 18.1.8.
 
-No: If a bit is set in the mux, GPIO the corresponding...
+which now breaks the build in next-20240801:
 
-I'm already failing at 'GPIO'. My parser expects a verb there :)
+  fs/netfs/buffered_read.c:304:7: error: variable 'slice' is used uninitialized whenever 'if' condition is false [-Werror,-Wsometimes-uninitialized]
+    304 |                 if (source == NETFS_INVALID_READ)
+        |                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  fs/netfs/buffered_read.c:308:11: note: uninitialized use occurs here
+    308 |                 size -= slice;
+        |                         ^~~~~
+  fs/netfs/buffered_read.c:304:3: note: remove the 'if' if its condition is always true
+    304 |                 if (source == NETFS_INVALID_READ)
+        |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    305 |                         break;
+  fs/netfs/buffered_read.c:221:16: note: initialize the variable 'slice' to silence this warning
+    221 |                 ssize_t slice;
+        |                              ^
+        |                               = 0
+  1 error generated.
 
->> > +	irq_set_chained_handler_and_data(virq, handle_untracked_irq,
->> 
->> Why does this use handle_untracked_irq()?
->
-> I'll have to go and dig back in my notes as to why it is untracked. It
-> was probably something like irqd_set() in handle_irq_event() blowing up
-> on the irq_data being invalid (which I figure could relate back to my
-> questions in the cover letter about issues with irqd_to_hwirq()) - but
-> I'll double check what exactly prompted it when I get back from my
-> holidays, but...
->
->> This sets up a chained handler
->> but handle_untracked_irq() is a regular interrupt handler.
->
-> ...what I was likely using before was handle_simple_irq() which isn't
-> chained either. You're expecting to see mpfs_irq_mux_nondirect_handler()
-> here I suppose?
+If source has to be one of these values, perhaps switching to a switch
+statement and having a default with a WARN_ON() or something would
+convey that to the compiler?
 
-Yes or some other proper chained handler.
-
-> Given you've only commented on one significant issue and two minor items,
-> is it safe to conclude that the overall approach doesn't have you
-> screaming and running for the hills?
-
-I don't love it, but I don't have a better approach to deal with this.
-
-Thanks,
-
-        tglx
+Cheers,
+Nathan
 
