@@ -1,226 +1,208 @@
-Return-Path: <linux-kernel+bounces-272554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA27945DD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:35:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49348945DDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470CD1C2158B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:35:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D251E1F23AAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB971E289B;
-	Fri,  2 Aug 2024 12:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69CBC1E289C;
+	Fri,  2 Aug 2024 12:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a9/EjL91"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="JZ1aV9KA"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2066.outbound.protection.outlook.com [40.92.42.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF061C2322;
-	Fri,  2 Aug 2024 12:35:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722602124; cv=none; b=C57lk540pylixSxY8UYehThXXsC4/5JBf3+7Fn4SVyBsyoN/eB1XfDXhtnks9bEDEQ0Khc1ufdmkfOw2JubkjgcFdmu6Dd4EWGX8oHejUI5t2vH/dkouMzLlAUL3iFX3HE2DfeKK3co9kwmTZeoewzc/D1WlgzHm0FBxD42bDFg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722602124; c=relaxed/simple;
-	bh=FHnmpGRy8XB6Sk4thzRub55LsuEW/wUxScQBjyIdhwY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XrPUQ2QUd5E1wvCm++76GnRjjSuKJOpapUkDtCns7ykyw2DURxMsMEnrW2mhLQPPepKw9kiGa1hC2vZliBZDKONLDePil8E1A8Jp4+bq3lv3DDcrVIipOkM4id4u5shb/UyJpZHSxPes9zLU21qRjBX9fLRIxFTQroYmUQ+YKvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a9/EjL91; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19629C4AF0F;
-	Fri,  2 Aug 2024 12:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722602124;
-	bh=FHnmpGRy8XB6Sk4thzRub55LsuEW/wUxScQBjyIdhwY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=a9/EjL91IlsfkKFaDSguE8aBOuIVCFWgc83VgXOkejD4AZr/nz0OwzLTBXkiO5U4/
-	 UGVyEcDraSbfbs+ouCnlAFSfE5bIfQ1NQSO3pL3NTbDEDLzrfyi5JV6jyABb8yTOiU
-	 EEEfM3HfLYuvVP0Z0hBenOZOrfBpL52G9dJXmfqFxZ1lmJrEoFSkHLCHRihy5dCC18
-	 5ziGLAH9km1ETO6YiSYaep2Mbp1NM43ZV4vYMVMMgZeEpaoxxEMbH9EhSnE6YwC2qj
-	 vate03mVdCLKZHLD4vBCZG3Kp0qMtfPMk+2F07DyFJh92zp3wq6XGmO7c2JsGh1joB
-	 hdnAZP8e9NwQg==
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-5d5c062f65cso688639eaf.3;
-        Fri, 02 Aug 2024 05:35:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRILGAz2AvHOeIQqwRrpCYHBHgbZXc11FHSm0qDwUx3B3h9CR4xQ0GU6qcVCHeqadL+FARaiIeYtrjANguIvfAjbDzaxJln95lcRTYKPEh0m82/dsm+fh8ASZaK68Rd6cPrBHSgTJzsKV4F8YfWE//xxGOTZSNWI4iFF/Ln7gBFcnXsP5+VTHS
-X-Gm-Message-State: AOJu0YwSMhKajmE+nXs3M8kiVSJbxwEmf/u9y/cAk9+OB+WobIaYvTvH
-	pFujQW/nkQVgZh7WMei/OL3SiPeXHnOcPNEtcCY3fdP5OdImYL7GSWdPvka1oI2omPkZlXVWMgk
-	eloVvyyQhhOqrmfyd4YEPqRCrmbQ=
-X-Google-Smtp-Source: AGHT+IHKCZNxxthgxzvCmtFMXc0TcRz/ZjO3WP6GHIr9DsRgpDfzGnAkKSgA+J8T0YNm7URLGmMh58HfeLoZe/mHMlM=
-X-Received: by 2002:a05:6870:c6aa:b0:260:eb92:22b5 with SMTP id
- 586e51a60fabf-26891a29870mr2381440fac.1.1722602123299; Fri, 02 Aug 2024
- 05:35:23 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F1C4C62A;
+	Fri,  2 Aug 2024 12:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722602307; cv=fail; b=lsQOjXP8TbG8cphaSkoGnI11Sx8lSJK0IrEMngzLmUgw6xBEsRr6CBasZwZvC3qhfFiY7nuR5ZiZ2QsvU1WZV85Gcj5lRcM+rXncdZGQso9eUgvZaJsIOCWwWq2riBOlTyp/wGgEJ26GlLJdnBlqZS5KBvbPALxjSzcMSXRXK/Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722602307; c=relaxed/simple;
+	bh=SXiX+JhOAsuuEac8uNPawOhvQfU9/U9GSpkOWVFRpLw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rFap2V7woZYyuvsqg5wcVDaXFjG/SkWMrELkRMguIcGiwQZGW+DZMIJ8NdRqVu55w4O6kE5m2w5ccWvygMgD4l+8FZ9eja7v/8qcEgzyBjQOTTVndLwZwjFhl4afr0/RoRimZCGQPDLlg4HA9VaWHPkiKOknZqKTH5L28NCZzLc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=JZ1aV9KA; arc=fail smtp.client-ip=40.92.42.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=stUzzcInrEkSyTgm3VebBnRtT66YKBgRzWhb+0G1tDYSJc6gXwxAOJEyfkyuMPJ4bEFzuU5pnCVwPcRPz67UQNaeNzt5M4jUZxX9pq31Y0KSAmyeuawoUERJHRClWY9YdvJkUU5bjRxIukIE4TXxs3S4xWBWEulJsrpoAhWbyro0T8gKqzdGdto0T4sagGgQQnUsLVNJ0inbdgTL8SepK1shYd6ETZ2aIszZLDFhpO3i0YG+1sccDlwpppghqqA8MYaiCkl6UBl66UL2pS307dERO2Ixlki1IqWRw583emHA4cc+vr9KET6OCKJxUIoaVcJx+JHVA2hulK94WCE8aQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AyPLx3dH3J06/QHmBZfVMwhqHCc6KCM33ABBrMEkX2E=;
+ b=UPhutQzuFpzFsCIQa+tJYuR4sgMVwrqmTsWAnsFMkr/qNc0HxDvYQI5phCtTlwPoyt8QFaEz920dQzfUMhB9MKxA4RxwmoC3JsXfpxz61OgNrCG2W4IYTeCtKKPDEUMGxCpl6Jkn0192mqJVnXvytmmPiwuvt2vJkoOfhugZ0NpZJoPCSyYZ3/iw0kMS2B2hVdXqpABTN+XaE3NanIJRnzgEfweAR7gPljx0yO0Ij+nkWTYr5Smq2e/tWEYrZUbtejmVtu+enKdGHzocZmo1WwAxD93PI1hl0GAgXZpOGmBVkfDUJlVsGagF0vbnXnXa173ED5YUq1LUbKlwVscLng==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AyPLx3dH3J06/QHmBZfVMwhqHCc6KCM33ABBrMEkX2E=;
+ b=JZ1aV9KAS8UP1ErHI11XB94BMWHq7KylB0VpshGJC9NQhFy9tPLZHFSSdU47ZG44Mc4UlR0dz9LEb5Z7zBS1grbG+5D5A397UTjoeWwuRSQ/EytF399iEgFKVF9pDQu2FPhp5WsjZMFCs4udCiwgAeeGAccS3qN8KJkf7/Ahc1Xw5JCrbnPuSfticdqm+rCIrEAXGaP0tseYtqksTNHLt3LGCCd1a5faD/R81D/GADSL55gsWAfpWxhJV6iG8bHZS9+sr+T8ZJNo3GWnTEqgs0F5+mUckvFdB+pRW9EhGxjl7OquRgtkjD7hPThQUHLYqKZ4Tlz2OxifSfB9XNBVfQ==
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
+ by CY8PR20MB5499.namprd20.prod.outlook.com (2603:10b6:930:55::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.22; Fri, 2 Aug
+ 2024 12:38:22 +0000
+Received: from IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
+ ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7828.023; Fri, 2 Aug 2024
+ 12:38:22 +0000
+From: Inochi Amaoto <inochiama@outlook.com>
+To: Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Guo Ren <guoren@kernel.org>,
+	Chao Wei <chao.wei@sophgo.com>,
+	Jinyu Tang <tangjinyu@tinylab.org>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Yangyu Chen <cyy@cyyself.name>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc: linux-hwmon@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v9 0/4] riscv: sophgo: Add SG2042 external hardware monitor support
+Date: Fri,  2 Aug 2024 20:37:45 +0800
+Message-ID:
+ <IA1PR20MB495337877FFC8D787A045C15BBB32@IA1PR20MB4953.namprd20.prod.outlook.com>
+X-Mailer: git-send-email 2.46.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [kZTd5wROl03kzyYGtwtycrxQVFY4NKFBiwMCEDzfzBA=]
+X-ClientProxiedBy: SG2PR02CA0085.apcprd02.prod.outlook.com
+ (2603:1096:4:90::25) To IA1PR20MB4953.namprd20.prod.outlook.com
+ (2603:10b6:208:3af::19)
+X-Microsoft-Original-Message-ID:
+ <20240802123747.1492036-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240730044917.4680-1-Dhananjay.Ugwekar@amd.com> <20240730044917.4680-3-Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20240730044917.4680-3-Dhananjay.Ugwekar@amd.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Aug 2024 14:35:12 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h4GAVCpUnbCMHMophsSZ522kkReAbUMdfFgRJfd0vHkw@mail.gmail.com>
-Message-ID: <CAJZ5v0h4GAVCpUnbCMHMophsSZ522kkReAbUMdfFgRJfd0vHkw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] powercap/intel_rapl: Fix the energy-pkg event for
- AMD CPUs
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, rui.zhang@intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, ananth.narayan@amd.com, gautham.shenoy@amd.com, 
-	kprateek.nayak@amd.com, ravi.bangoria@amd.com, 
-	Michael Larabel <michael@michaellarabel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|CY8PR20MB5499:EE_
+X-MS-Office365-Filtering-Correlation-Id: 30062de9-334e-4337-e11f-08dcb2effeb5
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|8060799006|5072599009|461199028|1602099012|3412199025|4302099013|440099028|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	4ond3ZCtATvtlKc/nTw9H7rCZx6nPZhhw8xFwzti2B6D+zanXeSy2cP1gT+K4WxSNyueztAmnQYyCRVwnSEgCTOSv5e9paywDcXxwiTg8E0MqE31BaCeaSmaMi8GsaumfPjExUQtfTa1SpI9PPOcgZ4KVRqgA52swOq1hCbsuqrsZvGoYM2nLaRBiWjFR3LprMhS7xgvda7/pzpBuY7RtgbcTlMGgRFNN3ioxEyg+nGf5c+Vhlu0ZQN0qf7azFR7q7W9LaM8XoL6Q5nkG+VoPOcoNgaHaYQOC9fdtVd5XEbF0GT6J2xX1wOR7vseeDhtnn483zMtE7M9I4sm8luoZwzFrqp1qyIMNGA5xaV8fwBYhIlvKqrfS/CjJKzFaDnZaN6QdrnzQgfkTYHokIBoL0gsMRShn0bD9tm/1hVn55vmg7BP8fAHSsyoBYj5qkDR9GrkY1GUxxlDArDwrLyF7OKr+YVbDKDkQEwD91qIiViBNBBHXv5Z/3vNHo6CuP7ZiPTAiKXGWFzUu/ytKj4ikCaqWc9AOZClcK7Vl5qwke2jIy9yG6oQoInBRk/lh1OIjvB/cFvb2XieUiUeekarND73MvpiSxCTqspYaOz6D4BalEa8s06I2iJJZsD/K0+VgYsoITH3IEUImClQacavYcNTi91h+pjXU3V57b8Ul/DkDwZqN3HpTMEhIMLIThOSQNIWqwIUteA0UWMnI/UIjVQE1gk4jJk4mkg3giie26h6/PlNrRrZ3QHa/XJ8qFVblo4CzEjKq4y8Hensb+xIa8d1p9myiHrt8mUNdDfcBlH9jZtO8iDhp3fMDE2YHPSu
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CbgSzSIoTFoih3cTBtohdp7GeADGA3wkSXxCElCJzDz78tk2Sn8jpDfgOVZH?=
+ =?us-ascii?Q?qgDOzoO394NDXXUApmWlG7F6Jl9dExQs1NjsM077vtqCqAg1lO3W5++UZo2s?=
+ =?us-ascii?Q?VCqoPLeBz0anCs+cK7U1Md1sHaUfJUx/lZ9IJs+nwMAwS9ty2zL0JUU9CKkC?=
+ =?us-ascii?Q?Hm0BTy9UTmNUL2773DNopi9Z9a8yMV1b3gUsGcq7V0lQO8DqsqtXGUE/wuPC?=
+ =?us-ascii?Q?Dmp4zmkM6Ly1SdfyyIAJtc7U7ZDlwDPOChWmq8LZnJcJgOltuUzFhLLMpdfy?=
+ =?us-ascii?Q?d/EsyMRSSHq8A9gfKOjPh8bcc5rCDbRnlfmLzgZVpIKAVKM9y5KSrv4isnrb?=
+ =?us-ascii?Q?DjZiMhX/KpwShGwGs6qTZtQ4KcEW/V/k+33ToK8D/zd0TcTgYzBWN9gztOPP?=
+ =?us-ascii?Q?fPLwfmw9fJly7QM9E8p/FAtsgro4QGRxOVbksY6pdUOXwuarfibpQyeQrpy+?=
+ =?us-ascii?Q?qj40bwg43Fz48/ZAaobugQw7UFN37JqSFCTwH8UxvgT6+RZmtSqv/Mp/G/TE?=
+ =?us-ascii?Q?FI29QSkIkEjRUPHATgH4A9pLDYzv8QBaHYICDLdyN6Q2D0MRvHkL0wDFfood?=
+ =?us-ascii?Q?FRFFrtrxULsER6gqX82Ps71BvaImbJ2I2dp8G20dGWOqBol2o1uR5EwSA66b?=
+ =?us-ascii?Q?0aga1EK9FGQkhxn87WH5TpjuHTXLyG3IJv0n4idv+mbbES4ODLBjgh71fX5V?=
+ =?us-ascii?Q?w9Ikq/UJE2PPY9KRfu4pjMcrZ75bmXQ1q/lEsmiriKQ4o4vxmE6IUiRI6RdF?=
+ =?us-ascii?Q?Lb46EPpg01jLEnk11tleu39AAIgGZvU+z3xttC1d61DVnsh9r9ll4lfRFoGj?=
+ =?us-ascii?Q?dE9QPJBNPTIr9Ksq2h+MDlgRDjnHKPJ9ON95sy30Esp2DFwxdewDS4iQZbbX?=
+ =?us-ascii?Q?piFZhcEMXM7tmjkYR9sg0F63HiFJhu0Yi7Z5O8qvsd9SglfuZfMe28IL1Xe0?=
+ =?us-ascii?Q?LBEDOo88SDktHLZHM3kFlGFFMDZcW4cNCnn1axcos9Jy6YlhUBhjZXTyfhgk?=
+ =?us-ascii?Q?GR4PKrn6IMoKLRrsxbpr11s+sULlWkEqGtWm4D3UPefYWuylVTg2cZlGVK8X?=
+ =?us-ascii?Q?LnxifRwFnf9v/zPJqeRVzoKwMFk7ZnrVTVxpKHjpWPLpyYuIARRptUfq7zT6?=
+ =?us-ascii?Q?rSv6zCBS9fOTdzxhdXQDznRQdw1CAbnq9slqjYiET9aQ5sZs8slTyZ5YY599?=
+ =?us-ascii?Q?uoyjZAdmkwZfWZk5hTowYUjBEwcu0AKNnE8w+wEzUAq22clRCBkgCu/95r0f?=
+ =?us-ascii?Q?R+MHbG4C1r4KHSSLef5C?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30062de9-334e-4337-e11f-08dcb2effeb5
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 12:38:22.4663
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR20MB5499
 
-On Tue, Jul 30, 2024 at 6:53=E2=80=AFAM Dhananjay Ugwekar
-<Dhananjay.Ugwekar@amd.com> wrote:
->
-> After commit ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf"=
-),
-> on AMD processors that support extended CPUID leaf 0x80000026, the
-> topology_logical_die_id() macros, no longer returns package id, instead i=
-t
-> returns the CCD (Core Complex Die) id. This leads to the energy-pkg
-> event scope to be modified to CCD instead of package.
->
-> For more historical context, please refer to commit 32fb480e0a2c
-> ("powercap/intel_rapl: Support multi-die/package"), which initially chang=
-ed
-> the RAPL scope from package to die for all systems, as Intel systems
-> with Die enumeration have RAPL scope as die, and those without die
-> enumeration are not affected. So, all systems(Intel, AMD, Hygon), worked
-> correctly with topology_logical_die_id() until recently, but this changed
-> after the "0x80000026 leaf" commit mentioned above.
->
-> Future multi-die Intel systems will have package scope RAPL counters,
-> but they will be using TPMI RAPL interface, which is not affected by
-> this change.
->
-> Replacing topology_logical_die_id() with topology_physical_package_id()
-> conditionally only for AMD and Hygon fixes the energy-pkg event.
->
-> On an AMD 2 socket 8 CCD Zen4 server:
->
-> Before:
->
-> linux$ ls /sys/class/powercap/
-> intel-rapl      intel-rapl:4    intel-rapl:8:0  intel-rapl:d
-> intel-rapl:0    intel-rapl:4:0  intel-rapl:9    intel-rapl:d:0
-> intel-rapl:0:0  intel-rapl:5    intel-rapl:9:0  intel-rapl:e
-> intel-rapl:1    intel-rapl:5:0  intel-rapl:a    intel-rapl:e:0
-> intel-rapl:1:0  intel-rapl:6    intel-rapl:a:0  intel-rapl:f
-> intel-rapl:2    intel-rapl:6:0  intel-rapl:b    intel-rapl:f:0
-> intel-rapl:2:0  intel-rapl:7    intel-rapl:b:0
-> intel-rapl:3    intel-rapl:7:0  intel-rapl:c
-> intel-rapl:3:0  intel-rapl:8    intel-rapl:c:0
->
-> After:
->
-> linux$ ls /sys/class/powercap/
-> intel-rapl  intel-rapl:0  intel-rapl:0:0  intel-rapl:1  intel-rapl:1:0
->
-> Only one sysfs entry per-event per-package is created after this change.
->
-> Fixes: 63edbaa48a57 ("x86/cpu/topology: Add support for the AMD 0x8000002=
-6 leaf")
-> Reported-by: Michael Larabel <michael@michaellarabel.com>
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-> Reviewed-by: Zhang Rui <rui.zhang@intel.com>
-> ---
-> Changes in v2:
-> * Updated scope description comment, commit log
-> * Rename rapl_pmu_is_pkg_scope() to rapl_msrs_are_pkg_scope()
-> * Check topology_logical_(die/package)_id return value
+Add support for the onboard hardware monitor for SG2042.
+Can be tested with OpenSBI v1.5.
 
-This patch does not depend on the first one in the series if I'm not
-mistaken, in which case I can pick it up separately if you want me to
-do that, so please let me know.
+The patch require the following i2c patch:
+https://lore.kernel.org/all/IA1PR20MB4953DB82FB7D75BF8409FFF4BBB72@IA1PR20MB4953.namprd20.prod.outlook.com/
 
-Thanks!
+Changed from v8:
+1. rename critical_action to repower_action, and add some comment
+2. remove unnecessary wrap function
+3. use guard macro to simplify mutex process.
 
-> ---
->  drivers/powercap/intel_rapl_common.c | 34 ++++++++++++++++++++++++----
->  1 file changed, 30 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/inte=
-l_rapl_common.c
-> index 3cffa6c79538..4bc56acb99d6 100644
-> --- a/drivers/powercap/intel_rapl_common.c
-> +++ b/drivers/powercap/intel_rapl_common.c
-> @@ -2128,6 +2128,21 @@ void rapl_remove_package(struct rapl_package *rp)
->  }
->  EXPORT_SYMBOL_GPL(rapl_remove_package);
->
-> +/*
-> + * RAPL Package energy counter scope:
-> + * 1. AMD/HYGON platforms use per-PKG package energy counter
-> + * 2. For Intel platforms
-> + *     2.1 CLX-AP platform has per-DIE package energy counter
-> + *     2.2 Other platforms that uses MSR RAPL are single die systems so =
-the
-> + *          package energy counter can be considered as per-PKG/per-DIE,
-> + *          here it is considered as per-DIE.
-> + *     2.3 New platforms that use TPMI RAPL doesn't care about the
-> + *         scope because they are not MSR/CPU based.
-> + */
-> +#define rapl_msrs_are_pkg_scope()                              \
-> +       (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_AMD ||  \
-> +        boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_HYGON)
-> +
->  /* caller to ensure CPU hotplug lock is held */
->  struct rapl_package *rapl_find_package_domain_cpuslocked(int id, struct =
-rapl_if_priv *priv,
->                                                          bool id_is_cpu)
-> @@ -2135,8 +2150,14 @@ struct rapl_package *rapl_find_package_domain_cpus=
-locked(int id, struct rapl_if_
->         struct rapl_package *rp;
->         int uid;
->
-> -       if (id_is_cpu)
-> -               uid =3D topology_logical_die_id(id);
-> +       if (id_is_cpu) {
-> +               uid =3D rapl_msrs_are_pkg_scope() ?
-> +                     topology_physical_package_id(id) : topology_logical=
-_die_id(id);
-> +               if (uid < 0) {
-> +                       pr_err("topology_logical_(package/die)_id() retur=
-ned a negative value");
-> +                       return ERR_PTR(-EINVAL);
-> +               }
-> +       }
->         else
->                 uid =3D id;
->
-> @@ -2168,9 +2189,14 @@ struct rapl_package *rapl_add_package_cpuslocked(i=
-nt id, struct rapl_if_priv *pr
->                 return ERR_PTR(-ENOMEM);
->
->         if (id_is_cpu) {
-> -               rp->id =3D topology_logical_die_id(id);
-> +               rp->id =3D rapl_msrs_are_pkg_scope() ?
-> +                        topology_physical_package_id(id) : topology_logi=
-cal_die_id(id);
-> +               if ((int)(rp->id) < 0) {
-> +                       pr_err("topology_logical_(package/die)_id() retur=
-ned a negative value");
-> +                       return ERR_PTR(-EINVAL);
-> +               }
->                 rp->lead_cpu =3D id;
-> -               if (topology_max_dies_per_package() > 1)
-> +               if (!rapl_msrs_are_pkg_scope() && topology_max_dies_per_p=
-ackage() > 1)
->                         snprintf(rp->name, PACKAGE_DOMAIN_NAME_LENGTH, "p=
-ackage-%d-die-%d",
->                                  topology_physical_package_id(id), topolo=
-gy_die_id(id));
->                 else
-> --
-> 2.43.0
->
->
+Changed from v7:
+1. add mutex protected and fix the return value when writing
+"critical_action"
+
+Changed from v6:
+1. restore the driver name to sg2042-mcu
+2. remove unnecessary wrap function and check in the driver.
+3. add dts and config entry.
+
+Changed from v5:
+1. rename driver name to sgmcu as it will support more sophgo chip.
+2. move some attr to debugfs.
+3. add standard crit_hyst support
+4. add documentation
+
+Changed from v4:
+1. use fix patch for binding ref.
+2. use unevaluatedProperties instead of additionalProperties for binding
+
+Changed from v3:
+1. add thermal-sensor check.
+2. change node type from syscon to hwmon
+
+Changed from v2:
+1. fix bindings id path.
+
+Changed from v1:
+1. Move patch from soc to hwmon.
+2. Fix typo.
+
+Inochi Amaoto (4):
+  dt-bindings: hwmon: Add Sophgo SG2042 external hardware monitor
+    support
+  drivers: hwmon: sophgo: Add SG2042 external hardware monitor support
+  riscv: dts: sophgo: Add mcu device for Milk-V Pioneer
+  riscv: defconfig: Enable MCU support for SG2042
+
+ .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        |  43 ++
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/sg2042-mcu.rst            |  39 ++
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  60 +++
+ arch/riscv/configs/defconfig                  |   1 +
+ drivers/hwmon/Kconfig                         |  11 +
+ drivers/hwmon/Makefile                        |   1 +
+ drivers/hwmon/sg2042-mcu.c                    | 394 ++++++++++++++++++
+ 8 files changed, 550 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
+ create mode 100644 Documentation/hwmon/sg2042-mcu.rst
+ create mode 100644 drivers/hwmon/sg2042-mcu.c
+
+
+base-commit: d2d190621b60d77496d36659e1621b20c897b25d
+prerequisite-patch-id: 5e7221ed1c63bb4d68e4a2a0141440e32d29e397
+--
+2.46.0
+
 
