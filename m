@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-272361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3BF945ACF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:19:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DABF945AD3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF30F1C2269D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:19:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DD341F23654
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8891DAC56;
-	Fri,  2 Aug 2024 09:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WnVFX79O"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5B31DAC6B;
+	Fri,  2 Aug 2024 09:21:05 +0000 (UTC)
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CE31DAC59
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CDE1D2F73;
+	Fri,  2 Aug 2024 09:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590351; cv=none; b=WEbB6NnAVpFedkZg+fvEFOTlgV3gFUUeBq6Gge5Qu3//2i2UcgRSfbn5fC0iyYKrx7EJONZJm0rUVT8WYTLUtsmnkRWTbybI1HnjgceBfWdyojYVPzXqD32QZYOrfADmSNZpWzOPTf9FNivlBuIhC3e850+PRpYz14cClT6Xkqs=
+	t=1722590465; cv=none; b=A8m6iBOVOKB+NcEpBUvP64NPemAlSBXTKIL7WCb5n6ba280p7bova/oe4XwWTeaNNEaIZCweeNH0zSov5qBGxJrOaBT2Hm8mCekIm3xJo6pRQtan4oJ2RUQZag/aUdJ7CwiA1ho3iHUpdnqGMdjljLqXo4Z0frXJCgMBNXZ9Shg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590351; c=relaxed/simple;
-	bh=X5oFp9VCl4XeB0aXPbq/h47uASXOek4IptUxVH5jC7w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lco2lHwnueaMewl9rdONQ+NSKVAUNsSoM6/ElQM4Fz7GDkpSgb4xMHWRWWt3c8DQ6yt204vSSbLe0jan+OrI+skex+lCwv0UO27J9h9hQ7A7SAYvLjILr9N4W41+jgjmee4RmD4vD9FZseWWm1WdbUxPDOm2X5T78++uNekjqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WnVFX79O; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <d92cdbe5-b5df-4580-9038-cdc69d667742@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1722590345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wEhbkuTV4BPdEO+PTgIuN/V8VoZo3H5ZfC271gpJXTc=;
-	b=WnVFX79OtSZM3ikK7vYuFmhNFQC+H+dwhpGpfGIAtD8AYZxv8IdtNcyiiQ/12rvZPgJP5s
-	37FmPii4fYm9+D5u4cXEPkawIbxwzSUS0ETI6OgOVEEWvCn2IeoIx4JpuXVhfANkZtCJze
-	UdidzA/ypcu8liGv4bM7ffjR38EnPS4=
-Date: Fri, 2 Aug 2024 17:18:50 +0800
+	s=arc-20240116; t=1722590465; c=relaxed/simple;
+	bh=+qIHkhJv16Hh8lMeuvWUMc6pm97g3HIFWRHqqhzgbrc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WyzD/kVZYnUsC50ER1OrMEeN3WQJ0vNdjohyjk/MXCPnCYBoWq/EaobkSuRTRfxA7x+BFSkO1eNyikwG+hLbJx27buwVuGONELSfBZZFDUNbEOt7Zkpu0Yko2zgWqfcSxgb9InURusHVIWtfS6jcPjnS/g+1xRJU9pZU/orZ6dI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=laoqinren.net; spf=none smtp.mailfrom=laoqinren.net; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=laoqinren.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=laoqinren.net
+X-QQ-mid: bizesmtpsz11t1722590369tysorc
+X-QQ-Originating-IP: pPNwhlYaIQO+30V/hlDGbUY7D9eliME6KMTXrd/P93M=
+Received: from localhost.localdomain.info ( [103.37.140.45])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 02 Aug 2024 17:19:16 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16223661223895339579
+From: Wang Long <w@laoqinren.net>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	tj@kernel.org,
+	cl@linux.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Cc: Wang Long <w@laoqinren.net>
+Subject: [PATCH] percpu-rwsem: remove the unused parameter 'read'
+Date: Fri,  2 Aug 2024 17:19:01 +0800
+Message-Id: <20240802091901.2546797-1-w@laoqinren.net>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
-To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca,
- leon@kernel.org, bvanassche@acm.org, nab@risingtidesystems.com
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
- linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
-References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
- <02f7cfc8-0495-485d-9849-b5a9514f6110@linux.dev>
- <1ddde0db-c18e-7968-185e-1e792854d1b6@hisilicon.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <1ddde0db-c18e-7968-185e-1e792854d1b6@hisilicon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:laoqinren.net:qybglogicsvrsz:qybglogicsvrsz4a-1
 
-在 2024/8/2 10:28, Junxian Huang 写道:
-> 
-> 
-> On 2024/8/2 5:55, Zhu Yanjun wrote:
->> 在 2024/8/1 15:44, Junxian Huang 写道:
->>> Currently cancel_work_sync() is not called when srpt_refresh_port()
->>> failed in srpt_add_one(). There is a probability that sdev has been
->>> freed while the previously initiated sport->work is still running,
->>> leading to a UAF as the log below:
->>>
->>> [  T880] ib_srpt MAD registration failed for hns_1-1.
->>> [  T880] ib_srpt srpt_add_one(hns_1) failed.
->>> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
->>> ...
->>> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
->>> ...
->>> [  T376] Call trace:
->>> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
->>> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
->>> [  T376]  process_one_work+0x1d8/0x4cc
->>> [  T376]  worker_thread+0x158/0x410
->>> [  T376]  kthread+0x108/0x13c
->>> [  T376]  ret_from_fork+0x10/0x18
->>>
->>> Add cancel_work_sync() to the exception branch to fix this UAF.
->>
->> Can you share the method to reproduce this problem?
->> I am interested in this problem.
->>
->> Thanks,
->> Zhu Yanjun
->>
-> 
-> I was testing bonding in 5.10 kernel, doing
-> 	ifenslave bond0 eth0 eth1; ifenslave -d bond0 eth0 eth1
-> and
-> 	ethtool --reset eth0 dedicated; ethtool --reset eth1 dedicated
-> concurrently and infinitely.
-> 
-> But I think this problem has been fixed in latest mainline probably.
-> Please look into my reply to Bart in v2.
+In the function percpu_rwsem_release, the parameter `read`
+is unused, so remove it.
 
-Thanks a lot. I am working on srq. Because ib_srpt also supports srq, I 
-just want to confirm if srq of ib_srpt can also work well on RoCEv2 and 
-IB with this commit.
+Signed-off-by: Wang Long <w@laoqinren.net>
+---
+ fs/super.c                   | 2 +-
+ include/linux/fs.h           | 2 +-
+ include/linux/percpu-rwsem.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-Zhu Yanjun
-
-> 
-> Junxian
-> 
->>>
->>> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
->>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->>> ---
->>>    drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
->>>    1 file changed, 3 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
->>> index 9632afbd727b..244e5c115bf7 100644
->>> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
->>> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
->>> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
->>>    {
->>>        struct srpt_device *sdev;
->>>        struct srpt_port *sport;
->>> +    u32 i, j;
->>>        int ret;
->>> -    u32 i;
->>>          pr_debug("device = %p\n", device);
->>>    @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
->>>            if (ret) {
->>>                pr_err("MAD registration failed for %s-%d.\n",
->>>                       dev_name(&sdev->device->dev), i);
->>> -            i--;
->>>                goto err_port;
->>>            }
->>>        }
->>> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
->>>        return 0;
->>>      err_port:
->>> +    for (j = i, i--; j > 0; j--)
->>> +        cancel_work_sync(&sdev->port[j - 1].work);
->>>        srpt_unregister_mad_agent(sdev, i);
->>>    err_cm:
->>>        if (sdev->cm_id)
->>
+diff --git a/fs/super.c b/fs/super.c
+index 38d72a3cf6fc..216c0d2b7927 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1905,7 +1905,7 @@ static void lockdep_sb_freeze_release(struct super_block *sb)
+ 	int level;
+ 
+ 	for (level = SB_FREEZE_LEVELS - 1; level >= 0; level--)
+-		percpu_rwsem_release(sb->s_writers.rw_sem + level, 0, _THIS_IP_);
++		percpu_rwsem_release(sb->s_writers.rw_sem + level, _THIS_IP_);
+ }
+ 
+ /*
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index fd34b5755c0b..d63809e7ea54 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1683,7 +1683,7 @@ static inline bool __sb_start_write_trylock(struct super_block *sb, int level)
+ #define __sb_writers_acquired(sb, lev)	\
+ 	percpu_rwsem_acquire(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
+ #define __sb_writers_release(sb, lev)	\
+-	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
++	percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], _THIS_IP_)
+ 
+ /**
+  * __sb_write_started - check if sb freeze level is held
+diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
+index 36b942b67b7d..c012df33a9f0 100644
+--- a/include/linux/percpu-rwsem.h
++++ b/include/linux/percpu-rwsem.h
+@@ -145,7 +145,7 @@ extern void percpu_free_rwsem(struct percpu_rw_semaphore *);
+ #define percpu_rwsem_assert_held(sem)	lockdep_assert_held(sem)
+ 
+ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
+-					bool read, unsigned long ip)
++					unsigned long ip)
+ {
+ 	lock_release(&sem->dep_map, ip);
+ }
+-- 
+2.33.0
 
 
