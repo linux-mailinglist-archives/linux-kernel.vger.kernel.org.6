@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-272727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1901394604B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:22:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62F0946044
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85D70B229FC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:22:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D10628588F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBBC1537D0;
-	Fri,  2 Aug 2024 15:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0767413633D;
+	Fri,  2 Aug 2024 15:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="O//Z9Hi6"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DZK2/2V8"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E76175D56;
-	Fri,  2 Aug 2024 15:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5BE175D48;
+	Fri,  2 Aug 2024 15:21:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722612088; cv=none; b=STT7qLTJvzkP5BVdljbECeyE+Xw/O/xiyEFrhl8o+LDCUT3Ezc8SKWmyPXt8tYaBYVgyjKMQO2CcplxEfpGdVX0tnf/IXFOurzeqqhO0ZFwLh1NLoeKR1THt8mNaK4+AxES8uGdYlmSBW8swI1stzBC5foI2ysGsUfYyK4Nb9Uw=
+	t=1722612086; cv=none; b=qZH7U8TnmbkS+4XQ0hU+NJkOl8dnhbztusAGkItSVB+DZa7xLTkw+y6q+al8Ycf6lCuK1+nVKrE6dPXVzn9m+ufYe3RV/CvlQd7nTOIoRFBZvYIxqrsZ9Yj7SCKen4kBYY0tRyiXC+R6bJwLKBwUXCWSwXukLUoOCGcaOIDMYwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722612088; c=relaxed/simple;
-	bh=4kah5gW4Qm+rCRloM1GoVSyBRZsMrK2hpdctAHE2n7c=;
+	s=arc-20240116; t=1722612086; c=relaxed/simple;
+	bh=JHwPWSbGZk9yJ6YsdYy4pvkBrgUJQJHxyulOivKDawA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PXEM231LREhD8ounmCUkJAhIlOIG3y1tzzzyOkb25ZfgiRzQvJtDQPlGfvmsNRzvay7C5EmCDLcMObCVbtSYQjBpk39/azpHTHcpzcPM3e8Ln6FXoFLCMfBPUYHMn7zYUVnHEgaEGTC0IOY8yrfVGU2mbO/ErXDPIDlPdJH3CjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=O//Z9Hi6; arc=none smtp.client-ip=198.47.19.142
+	 MIME-Version:Content-Type; b=HmG41HoeuciF2znkVIEh0+n8e9r35yH7UzjKMGw8jz0cGQyp1DKwfO1Pb1MWEbheeNf4XbNjKP2dGBgE8kAYOU3IzGyF2LQ7IEFMH4YY2q4sWO4G/BWuq2WrVraLTcjemPzQ7me1KeGibCAniljNpSv0NAC0e4ZYJVwxRrvFPhc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DZK2/2V8; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472FLCRC052146;
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472FLCln036915;
 	Fri, 2 Aug 2024 10:21:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
 	s=ti-com-17Q1; t=1722612072;
-	bh=9j5bnO7OtFB7GG/h+OkYgySHAA0rpWDExuuXCrmfifA=;
+	bh=kxtqeU9yPHQ0Gf1t0EcY+QNoeqShmhwf08kZhfmgCSQ=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=O//Z9Hi6qBDuPyBWEUUcLEkwIiSNW3mCrySqAOexrU/FduSs/C2z3gDzQKLTvlJ4f
-	 uiBlS3QAip88bpRJ9Hh2nHuHgbMegf9PU5yxkQZ6Ae3/+v0+cesU9QsGld/hCevWku
-	 dozZgl9CrkWECtNcI2mcCzsOq69OftbKCPVPn70k=
+	b=DZK2/2V8Vf72ntGqHossvU6HppHg+jLImE+i84F4VWiAzohzmzzfsx2luUmDT7swK
+	 wvyV85i3Mmj65MYVRTEeozHCDNwLSEhrFd7sDgyHwUr7lpMgpM8Ngdjruv+X8tHbHl
+	 m81bYZH54Oxv4t9l3wFT5pJ+0R9zXZIn3Hxh7qV4=
 Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472FLBJn099554
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472FLCO5108200
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 Aug 2024 10:21:11 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE114.ent.ti.com
+	Fri, 2 Aug 2024 10:21:12 -0500
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE114.ent.ti.com
  (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
- Aug 2024 10:21:11 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2024 10:21:12 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 2 Aug 2024 10:21:11 -0500
+ Frontend Transport; Fri, 2 Aug 2024 10:21:12 -0500
 Received: from fllvsmtp8.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472FLAep007504;
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472FLAeq007504;
 	Fri, 2 Aug 2024 10:21:11 -0500
 From: Andrew Davis <afd@ti.com>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -73,9 +73,9 @@ To: Bjorn Andersson <andersson@kernel.org>,
 CC: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         Andrew Davis <afd@ti.com>
-Subject: [PATCH v11 1/9] dt-bindings: remoteproc: k3-m4f: Add K3 AM64x SoCs
-Date: Fri, 2 Aug 2024 10:21:01 -0500
-Message-ID: <20240802152109.137243-2-afd@ti.com>
+Subject: [PATCH v11 2/9] remoteproc: k3: Factor out TI-SCI processor control OF get function
+Date: Fri, 2 Aug 2024 10:21:02 -0500
+Message-ID: <20240802152109.137243-3-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240802152109.137243-1-afd@ti.com>
 References: <20240802152109.137243-1-afd@ti.com>
@@ -89,157 +89,146 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-From: Hari Nagalla <hnagalla@ti.com>
+Building the TSP structure is common for users of the TI-SCI processor
+control interface. Factor out this function and put it with the rest
+of the TI-SCI processor control functions.
 
-K3 AM64x SoC has a Cortex M4F subsystem in the MCU voltage domain.
-The remote processor's life cycle management and IPC mechanisms are
-similar across the R5F and M4F cores from remote processor driver
-point of view. However, there are subtle differences in image loading
-and starting the M4F subsystems.
-
-The YAML binding document provides the various node properties to be
-configured by the consumers of the M4F subsystem.
-
-Signed-off-by: Martyn Welch <martyn.welch@collabora.com>
-Signed-off-by: Hari Nagalla <hnagalla@ti.com>
 Signed-off-by: Andrew Davis <afd@ti.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 ---
- .../bindings/remoteproc/ti,k3-m4f-rproc.yaml  | 125 ++++++++++++++++++
- 1 file changed, 125 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
+ drivers/remoteproc/ti_k3_dsp_remoteproc.c | 28 +----------------------
+ drivers/remoteproc/ti_k3_r5_remoteproc.c  | 28 +----------------------
+ drivers/remoteproc/ti_sci_proc.h          | 26 +++++++++++++++++++++
+ 3 files changed, 28 insertions(+), 54 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-new file mode 100644
-index 0000000000000..2bd0752b6ba9e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,k3-m4f-rproc.yaml
-@@ -0,0 +1,125 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/remoteproc/ti,k3-m4f-rproc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/remoteproc/ti_k3_dsp_remoteproc.c b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+index a22d41689a7d2..1585769092924 100644
+--- a/drivers/remoteproc/ti_k3_dsp_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_dsp_remoteproc.c
+@@ -636,32 +636,6 @@ static void k3_dsp_release_tsp(void *data)
+ 	ti_sci_proc_release(tsp);
+ }
+ 
+-static
+-struct ti_sci_proc *k3_dsp_rproc_of_get_tsp(struct device *dev,
+-					    const struct ti_sci_handle *sci)
+-{
+-	struct ti_sci_proc *tsp;
+-	u32 temp[2];
+-	int ret;
+-
+-	ret = of_property_read_u32_array(dev->of_node, "ti,sci-proc-ids",
+-					 temp, 2);
+-	if (ret < 0)
+-		return ERR_PTR(ret);
+-
+-	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
+-	if (!tsp)
+-		return ERR_PTR(-ENOMEM);
+-
+-	tsp->dev = dev;
+-	tsp->sci = sci;
+-	tsp->ops = &sci->ops.proc_ops;
+-	tsp->proc_id = temp[0];
+-	tsp->host_id = temp[1];
+-
+-	return tsp;
+-}
+-
+ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -711,7 +685,7 @@ static int k3_dsp_rproc_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(kproc->reset),
+ 				     "failed to get reset\n");
+ 
+-	kproc->tsp = k3_dsp_rproc_of_get_tsp(dev, kproc->ti_sci);
++	kproc->tsp = ti_sci_proc_of_get_tsp(dev, kproc->ti_sci);
+ 	if (IS_ERR(kproc->tsp))
+ 		return dev_err_probe(dev, PTR_ERR(kproc->tsp),
+ 				     "failed to construct ti-sci proc control\n");
+diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+index 39a47540c5900..dd6294ab81e2e 100644
+--- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
++++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+@@ -1533,32 +1533,6 @@ static int k3_r5_core_of_get_sram_memories(struct platform_device *pdev,
+ 	return 0;
+ }
+ 
+-static
+-struct ti_sci_proc *k3_r5_core_of_get_tsp(struct device *dev,
+-					  const struct ti_sci_handle *sci)
+-{
+-	struct ti_sci_proc *tsp;
+-	u32 temp[2];
+-	int ret;
+-
+-	ret = of_property_read_u32_array(dev_of_node(dev), "ti,sci-proc-ids",
+-					 temp, 2);
+-	if (ret < 0)
+-		return ERR_PTR(ret);
+-
+-	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
+-	if (!tsp)
+-		return ERR_PTR(-ENOMEM);
+-
+-	tsp->dev = dev;
+-	tsp->sci = sci;
+-	tsp->ops = &sci->ops.proc_ops;
+-	tsp->proc_id = temp[0];
+-	tsp->host_id = temp[1];
+-
+-	return tsp;
+-}
+-
+ static int k3_r5_core_of_init(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -1633,7 +1607,7 @@ static int k3_r5_core_of_init(struct platform_device *pdev)
+ 		goto err;
+ 	}
+ 
+-	core->tsp = k3_r5_core_of_get_tsp(dev, core->ti_sci);
++	core->tsp = ti_sci_proc_of_get_tsp(dev, core->ti_sci);
+ 	if (IS_ERR(core->tsp)) {
+ 		ret = PTR_ERR(core->tsp);
+ 		dev_err(dev, "failed to construct ti-sci proc control, ret = %d\n",
+diff --git a/drivers/remoteproc/ti_sci_proc.h b/drivers/remoteproc/ti_sci_proc.h
+index 778558abcdcc5..f3911ce75252e 100644
+--- a/drivers/remoteproc/ti_sci_proc.h
++++ b/drivers/remoteproc/ti_sci_proc.h
+@@ -28,6 +28,32 @@ struct ti_sci_proc {
+ 	u8 host_id;
+ };
+ 
++static inline
++struct ti_sci_proc *ti_sci_proc_of_get_tsp(struct device *dev,
++					   const struct ti_sci_handle *sci)
++{
++	struct ti_sci_proc *tsp;
++	u32 temp[2];
++	int ret;
 +
-+title: TI K3 M4F processor subsystems
++	ret = of_property_read_u32_array(dev_of_node(dev), "ti,sci-proc-ids",
++					 temp, 2);
++	if (ret < 0)
++		return ERR_PTR(ret);
 +
-+maintainers:
-+  - Hari Nagalla <hnagalla@ti.com>
-+  - Mathieu Poirier <mathieu.poirier@linaro.org>
++	tsp = devm_kzalloc(dev, sizeof(*tsp), GFP_KERNEL);
++	if (!tsp)
++		return ERR_PTR(-ENOMEM);
 +
-+description: |
-+  Some K3 family SoCs have Arm Cortex M4F cores. AM64x is a SoC in K3
-+  family with a M4F core. Typically safety oriented applications may use
-+  the M4F core in isolation without an IPC. Where as some industrial and
-+  home automation applications, may use the M4F core as a remote processor
-+  with IPC communications.
++	tsp->dev = dev;
++	tsp->sci = sci;
++	tsp->ops = &sci->ops.proc_ops;
++	tsp->proc_id = temp[0];
++	tsp->host_id = temp[1];
 +
-+$ref: /schemas/arm/keystone/ti,k3-sci-common.yaml#
++	return tsp;
++}
 +
-+properties:
-+  compatible:
-+    enum:
-+      - ti,am64-m4fss
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 2
-+
-+  "#size-cells":
-+    const: 2
-+
-+  reg:
-+    items:
-+      - description: IRAM internal memory region
-+      - description: DRAM internal memory region
-+
-+  reg-names:
-+    items:
-+      - const: iram
-+      - const: dram
-+
-+  resets:
-+    maxItems: 1
-+
-+  firmware-name:
-+    maxItems: 1
-+    description: Name of firmware to load for the M4F core
-+
-+  mboxes:
-+    description:
-+      OMAP Mailbox specifier denoting the sub-mailbox, to be used for
-+      communication with the remote processor. This property should match
-+      with the sub-mailbox node used in the firmware image.
-+    maxItems: 1
-+
-+  memory-region:
-+    description:
-+      phandle to the reserved memory nodes to be associated with the
-+      remoteproc device. Optional memory regions available for firmware
-+      specific purposes.
-+      (see reserved-memory/reserved-memory.yaml in dtschema project)
-+    maxItems: 8
-+    items:
-+      - description: regions used for DMA allocations like vrings, vring buffers
-+                     and memory dedicated to firmware's specific purposes.
-+    additionalItems: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - ti,sci
-+  - ti,sci-dev-id
-+  - ti,sci-proc-ids
-+  - resets
-+  - firmware-name
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    reserved-memory {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0x9cb00000 0x00 0x100000>;
-+            no-map;
-+        };
-+
-+        mcu_m4fss_memory_region: m4f-memory@9cc00000 {
-+            compatible = "shared-dma-pool";
-+            reg = <0x00 0x9cc00000 0x00 0xe00000>;
-+            no-map;
-+        };
-+    };
-+
-+    soc {
-+        #address-cells = <2>;
-+        #size-cells = <2>;
-+
-+        mailbox0_cluster0: mailbox-0 {
-+            #mbox-cells = <1>;
-+        };
-+
-+        remoteproc@5000000 {
-+            compatible = "ti,am64-m4fss";
-+            reg = <0x00 0x5000000 0x00 0x30000>,
-+                  <0x00 0x5040000 0x00 0x10000>;
-+            reg-names = "iram", "dram";
-+            resets = <&k3_reset 9 1>;
-+            firmware-name = "am62-mcu-m4f0_0-fw";
-+            mboxes = <&mailbox0_cluster0>, <&mbox_m4_0>;
-+            memory-region = <&mcu_m4fss_dma_memory_region>,
-+                            <&mcu_m4fss_memory_region>;
-+            ti,sci = <&dmsc>;
-+            ti,sci-dev-id = <9>;
-+            ti,sci-proc-ids = <0x18 0xff>;
-+         };
-+    };
+ static inline int ti_sci_proc_request(struct ti_sci_proc *tsp)
+ {
+ 	int ret;
 -- 
 2.39.2
 
