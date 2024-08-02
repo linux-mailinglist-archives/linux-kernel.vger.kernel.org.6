@@ -1,125 +1,248 @@
-Return-Path: <linux-kernel+bounces-272144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEED49457C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:46:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EFE9457BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9630E1F250D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:46:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D5F21C229E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DA041C62;
-	Fri,  2 Aug 2024 05:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pnc92zuq"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DFC29D19;
+	Fri,  2 Aug 2024 05:45:49 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061672D047;
-	Fri,  2 Aug 2024 05:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D49115AC4
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 05:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722577564; cv=none; b=cLSrAJuX1VLvrcDdKHYaOWv2T3PIVAT+Pxdl6lsOZfWQdQ0T6vm6u2NwYIHfVkD1SgbxPtGFyEcNQ7kqesIfBslknp8HBjO4D/dSlUYIkJW780w0DBlmj7jjL/zD3EZoEFEMbALoqb14a2LbnytuN6TAUqqNIFXGDQFNfdjvtXA=
+	t=1722577549; cv=none; b=qQTnxoSssPm2j+CmB7zU82PjCc0SDOIiANhLaBfk2F9vX2Lv7mjCNDz+dEiTG06vXhee/2gB80BB/aY1AY5TYCxyeG4s5xIJaj2RfKo1T8iQldTvRuqpuW5Zg4Rc4FKyTVSUxm58ifI/+CMSHk7duLc4V2jxUDzQ3iqXOzlhUl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722577564; c=relaxed/simple;
-	bh=XQhjo188Vyx5MKMr+apYuqo6be4mNnMoNB6pZjn6VPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=omKC1KaQ6xZ77gawcLEOP9MKG5KLy6Bb2hltIXO8KpYYWm7NFrOBujB5DHM8kH8V4UDpCrRc5hbr/cSFdSANAyJIxA+o8H/rE7M4hhHt1LX5wRzOEhNPC2piHMQyAybB9EbKr45iC/mX4B5kKpwMb3xsQbmaifNGaiQukbgnIQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pnc92zuq; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fc569440e1so69645625ad.3;
-        Thu, 01 Aug 2024 22:46:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722577562; x=1723182362; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bG1c+VFaEOvvUxyv+bCQnVb/VVzVXFx36kqHv00YTA=;
-        b=Pnc92zuq47zsFHw5Y2VYsfpDMVvgoY0fYx5itSp3Y3rdc2n8ujdNpAbxQL9BKn2zeo
-         aLiQHWeECexIVgPs3ShRu69kefM5jjquWsxpSEpgHUF8snnJMjy19o+A7a+CUBvAS7Ci
-         ekTZcy0wTZWxo8fbp21sUfCQF1tdhkZHjXq7t2uzmHlsCkNYL4wQZCWQ6DRUJPZq1Vft
-         b1wtp4M8QP4ZabCLiFErwI+dnhbld8rBAcmpBBopnhUsE05VzC0LIiD2mOF88XkGnIvZ
-         fmH7NMlTN9yjR7YdYpuyYEELb4hZWNoOo6f1UIpmuqLXJEsp0W2j8mpe/pKZg/R4hZUB
-         Cd2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722577562; x=1723182362;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5bG1c+VFaEOvvUxyv+bCQnVb/VVzVXFx36kqHv00YTA=;
-        b=tPWZ+kpF2VX95TwtPfcG/tpvQ8VI+an2eBMhqHuEcA6HDC739GD9WS1pziqriI0B77
-         yqSQPfDt+fhdaUvvDoICsjd//2HIJ50kkIz3nHpZCOo1mlTp+pYwc/lPQALbwtUjYCjO
-         wK5wfu+i+rz30sle/UK+ySBdO5xEoEPTyc6ps2cIwWf0l9JO2xK5WZPpOsvuPSMIvln5
-         k2b4uF18/nAKzqwZhOY4NgLf7WdfqR8rOlDL3OrrZfkHTE+g8cSqqsH4E/c9NmMdsFM3
-         wp7axVk9e1t2JamCt9sV5cFRsYm6MGY+xEsflyt4QO2f/NheJpUqqASNwdqfmc8gWsC+
-         mPzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwiCMBl0a9uuV6q1DXd4PVOgAuuCoCNvqdf+mgMrKBn4Fqqg1Iwm0jHVIoqpfu+LEgWWXG5M+0J0RdTd6uhn5ym2vUPkmNJ+VnSE6j
-X-Gm-Message-State: AOJu0Yy5oXRltc/178X4q4DBQEEk6i6O5Yrzg8JquPcaROa+KyU+f6s+
-	o1IvFJ4h85WSB9wln/Cw9twfzeiIh2eo7UzIkbHr68q8S3Wq5X1z
-X-Google-Smtp-Source: AGHT+IGba0YUoAJZO/cZtgwZ2axTAToxS/thDxJxHx4Sn++qh2s6M9BRnED/uwun4wL27cljzgIf0Q==
-X-Received: by 2002:a17:903:2445:b0:1fd:91b1:7897 with SMTP id d9443c01a7336-1ff574a7ac9mr34361965ad.65.1722577562253;
-        Thu, 01 Aug 2024 22:46:02 -0700 (PDT)
-Received: from localhost.localdomain ([218.150.196.174])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59176cbcsm8462535ad.205.2024.08.01.22.46.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 22:46:01 -0700 (PDT)
-From: Moon Yeounsu <yyyynoom@gmail.com>
-To: cooldavid@cooldavid.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Moon Yeounsu <yyyynoom@gmail.com>
-Subject: [PATCH] net: ethernet: use ip_hdrlen() instead of bit shift
-Date: Fri,  2 Aug 2024 14:44:21 +0900
-Message-ID: <20240802054421.5428-1-yyyynoom@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1722577549; c=relaxed/simple;
+	bh=+MOL3gH25GeUJGo4fHuAbtxjahnLd+b5Ub9B9uvapos=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hgP5EYvA+af0/lKg0EIim5x7nk6NVDRZ5wnQLBKotEnDQW3FQVd1qaEqnPChW4KDrrFI2yqSHH/UV1Dap5iCnlMtJ1aIjnYWwRzGHx5PDN0GDOgXD/M32U4C3k+XKUBKu/+jo9q9biOM14wQ6su9SAFCtIc+/uJGlOBlpE+5s+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ED941C0002;
+	Fri,  2 Aug 2024 05:45:38 +0000 (UTC)
+Message-ID: <16be871d-a52e-4b1d-b579-71ec03a0c81d@ghiti.fr>
+Date: Fri, 2 Aug 2024 07:45:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: support KASAN instrumentation of bitops
+Content-Language: en-US
+To: Qingfang Deng <dqfext@gmail.com>, Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ "open list:RISC-V ARCHITECTURE" <linux-riscv@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: Qingfang Deng <qingfang.deng@siflower.com.cn>
+References: <20240802040506.712-1-dqfext@gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240802040506.712-1-dqfext@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-`ip_hdr(skb)->ihl << 2` are the same as `ip_hdrlen(skb)`
-Therefore, we should use a well-defined function not a bit shift
-to find the header length.
+Hi Qingfang,
 
-It also compress two lines at a single line.
+On 02/08/2024 06:05, Qingfang Deng wrote:
+> From: Qingfang Deng <qingfang.deng@siflower.com.cn>
+>
+> The arch-specific bitops are not being picked up by the KASAN test
+> suite.
+>
+> Instrumentation is done via the bitops/instrumented-{atomic,lock}.h
+> headers. They require that arch-specific versions of bitop functions
+> are renamed to arch_*. Do this renaming.
+>
+> As most comments are identical to the ones in the instrumented headers,
+> remove them.
+>
+> Signed-off-by: Qingfang Deng <qingfang.deng@siflower.com.cn>
+> ---
+>   arch/riscv/include/asm/bitops.h | 100 +++++---------------------------
+>   1 file changed, 15 insertions(+), 85 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/bitops.h b/arch/riscv/include/asm/bitops.h
+> index 71af9ecfcfcb..44ff3114c112 100644
+> --- a/arch/riscv/include/asm/bitops.h
+> +++ b/arch/riscv/include/asm/bitops.h
+> @@ -221,134 +221,62 @@ static __always_inline int variable_fls(unsigned int x)
+>   #define __NOP(x)	(x)
+>   #define __NOT(x)	(~(x))
+>   
+> -/**
+> - * test_and_set_bit - Set a bit and return its old value
+> - * @nr: Bit to set
+> - * @addr: Address to count from
+> - *
+> - * This operation may be reordered on other architectures than x86.
+> - */
+> -static inline int test_and_set_bit(int nr, volatile unsigned long *addr)
+> +static inline int arch_test_and_set_bit(int nr, volatile unsigned long *addr)
+>   {
+>   	return __test_and_op_bit(or, __NOP, nr, addr);
+>   }
+>   
+> -/**
+> - * test_and_clear_bit - Clear a bit and return its old value
+> - * @nr: Bit to clear
+> - * @addr: Address to count from
+> - *
+> - * This operation can be reordered on other architectures other than x86.
+> - */
+> -static inline int test_and_clear_bit(int nr, volatile unsigned long *addr)
+> +static inline int arch_test_and_clear_bit(int nr, volatile unsigned long *addr)
+>   {
+>   	return __test_and_op_bit(and, __NOT, nr, addr);
+>   }
+>   
+> -/**
+> - * test_and_change_bit - Change a bit and return its old value
+> - * @nr: Bit to change
+> - * @addr: Address to count from
+> - *
+> - * This operation is atomic and cannot be reordered.
+> - * It also implies a memory barrier.
+> - */
+> -static inline int test_and_change_bit(int nr, volatile unsigned long *addr)
+> +static inline int arch_test_and_change_bit(int nr, volatile unsigned long *addr)
+>   {
+>   	return __test_and_op_bit(xor, __NOP, nr, addr);
+>   }
+>   
+> -/**
+> - * set_bit - Atomically set a bit in memory
+> - * @nr: the bit to set
+> - * @addr: the address to start counting from
+> - *
+> - * Note: there are no guarantees that this function will not be reordered
+> - * on non x86 architectures, so if you are writing portable code,
+> - * make sure not to rely on its reordering guarantees.
+> - *
+> - * Note that @nr may be almost arbitrarily large; this function is not
+> - * restricted to acting on a single-word quantity.
+> - */
+> -static inline void set_bit(int nr, volatile unsigned long *addr)
+> +static inline void arch_set_bit(int nr, volatile unsigned long *addr)
+>   {
+>   	__op_bit(or, __NOP, nr, addr);
+>   }
+>   
+> -/**
+> - * clear_bit - Clears a bit in memory
+> - * @nr: Bit to clear
+> - * @addr: Address to start counting from
+> - *
+> - * Note: there are no guarantees that this function will not be reordered
+> - * on non x86 architectures, so if you are writing portable code,
+> - * make sure not to rely on its reordering guarantees.
+> - */
+> -static inline void clear_bit(int nr, volatile unsigned long *addr)
+> +static inline void arch_clear_bit(int nr, volatile unsigned long *addr)
+>   {
+>   	__op_bit(and, __NOT, nr, addr);
+>   }
+>   
+> -/**
+> - * change_bit - Toggle a bit in memory
+> - * @nr: Bit to change
+> - * @addr: Address to start counting from
+> - *
+> - * change_bit()  may be reordered on other architectures than x86.
+> - * Note that @nr may be almost arbitrarily large; this function is not
+> - * restricted to acting on a single-word quantity.
+> - */
+> -static inline void change_bit(int nr, volatile unsigned long *addr)
+> +static inline void arch_change_bit(int nr, volatile unsigned long *addr)
+>   {
+>   	__op_bit(xor, __NOP, nr, addr);
+>   }
+>   
+> -/**
+> - * test_and_set_bit_lock - Set a bit and return its old value, for lock
+> - * @nr: Bit to set
+> - * @addr: Address to count from
+> - *
+> - * This operation is atomic and provides acquire barrier semantics.
+> - * It can be used to implement bit locks.
+> - */
+> -static inline int test_and_set_bit_lock(
+> +static inline int arch_test_and_set_bit_lock(
+>   	unsigned long nr, volatile unsigned long *addr)
+>   {
+>   	return __test_and_op_bit_ord(or, __NOP, nr, addr, .aq);
+>   }
+>   
+> -/**
+> - * clear_bit_unlock - Clear a bit in memory, for unlock
+> - * @nr: the bit to set
+> - * @addr: the address to start counting from
+> - *
+> - * This operation is atomic and provides release barrier semantics.
+> - */
+> -static inline void clear_bit_unlock(
+> +static inline void arch_clear_bit_unlock(
+>   	unsigned long nr, volatile unsigned long *addr)
+>   {
+>   	__op_bit_ord(and, __NOT, nr, addr, .rl);
+>   }
+>   
+>   /**
+> - * __clear_bit_unlock - Clear a bit in memory, for unlock
+> - * @nr: the bit to set
+> - * @addr: the address to start counting from
+> + * arch___clear_bit_unlock - Clear a bit in memory, for unlock
+>    *
+> - * This operation is like clear_bit_unlock, however it is not atomic.
+> - * It does provide release barrier semantics so it can be used to unlock
+> - * a bit lock, however it would only be used if no other CPU can modify
+> - * any bits in the memory until the lock is released (a good example is
+> - * if the bit lock itself protects access to the other bits in the word).
+> + * This should not be used directly, use the instrumented __clear_bit_unlock
+> + * instead. See asm-generic/bitops/instrumented-lock.h
+>    *
+>    * On RISC-V systems there seems to be no benefit to taking advantage of the
+>    * non-atomic property here: it's a lot more instructions and we still have to
+>    * provide release semantics anyway.
+>    */
+> -static inline void __clear_bit_unlock(
+> +static inline void arch___clear_bit_unlock(
+>   	unsigned long nr, volatile unsigned long *addr)
+>   {
+> -	clear_bit_unlock(nr, addr);
+> +	arch_clear_bit_unlock(nr, addr);
+>   }
+>   
+>   static inline bool xor_unlock_is_negative_byte(unsigned long mask,
+> @@ -369,6 +297,8 @@ static inline bool xor_unlock_is_negative_byte(unsigned long mask,
+>   #undef __NOT
+>   #undef __AMO
+>   
+> +#include <asm-generic/bitops/instrumented-atomic.h>
+> +#include <asm-generic/bitops/instrumented-lock.h>
+>   #include <asm-generic/bitops/non-atomic.h>
+>   #include <asm-generic/bitops/le.h>
+>   #include <asm-generic/bitops/ext2-atomic.h>
 
-Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
----
- drivers/net/ethernet/jme.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
-index b06e24562973..83b185c995df 100644
---- a/drivers/net/ethernet/jme.c
-+++ b/drivers/net/ethernet/jme.c
-@@ -946,15 +946,13 @@ jme_udpsum(struct sk_buff *skb)
- 	if (skb->protocol != htons(ETH_P_IP))
- 		return csum;
- 	skb_set_network_header(skb, ETH_HLEN);
-+
- 	if ((ip_hdr(skb)->protocol != IPPROTO_UDP) ||
--	    (skb->len < (ETH_HLEN +
--			(ip_hdr(skb)->ihl << 2) +
--			sizeof(struct udphdr)))) {
-+	    (skb->len < (ETH_HLEN + (ip_hdrlen(skb)) + sizeof(struct udphdr)))) {
- 		skb_reset_network_header(skb);
- 		return csum;
- 	}
--	skb_set_transport_header(skb,
--			ETH_HLEN + (ip_hdr(skb)->ihl << 2));
-+	skb_set_transport_header(skb, ETH_HLEN + (ip_hdrlen(skb)));
- 	csum = udp_hdr(skb)->check;
- 	skb_reset_transport_header(skb);
- 	skb_reset_network_header(skb);
--- 
-2.45.2
+Samuel has just posted a similar patch here 
+https://lore.kernel.org/linux-riscv/20240801033725.28816-1-samuel.holland@sifive.com/T/#t
+
+Thanks,
+
+Alex
 
 
