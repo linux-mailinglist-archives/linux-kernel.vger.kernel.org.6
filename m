@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-272143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829BF9457BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:46:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 524539457C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:48:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05F87B23531
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:46:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F125D1F21FF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5D34778E;
-	Fri,  2 Aug 2024 05:45:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F233EA98;
+	Fri,  2 Aug 2024 05:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUHHBdNn"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Q2vAS+iv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WAzQ7YxQ"
+Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3AD41C79
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 05:45:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F5822EE4;
+	Fri,  2 Aug 2024 05:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722577552; cv=none; b=DE0KoDcriwaPgcRfP+H+m+a1erlwDYzVGzuLhFc1zGMHXmfHeig6lilGufz2s6tUWVgY+4OF0G2l7bJQv81iI8jZr6GQlFEA44XNvbpDOHPWdFLDsbBU0QGP+Pu/zxNHCfPoiQ5JBKnpZ5VutmXrVPlr6ixzdnowLSuwh6pXp8w=
+	t=1722577715; cv=none; b=WODNn9LmDDo1WXPO2yb5uwptfXeGeDR5mTdgDbWRwCyMMnidamKusIAyAI0GeqE9y8Get+uAk1uKhBJsaTVs9SJFtHoCostqh/16seUi1d5bfotDYJ24RnaqVK/nT9fM1JunToFcVjUwbDNDX9UdZ+SxYPi6ShJ0dk+pRMrSRaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722577552; c=relaxed/simple;
-	bh=Q0yAB9fGL/5NiS6EFNSaISF6pHTBZkj0KtQmn+C7hc0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LouI8uDlyAG6Yljh2OAQvMjEVB79ZQ3F/+6pVk9uhIVhwoedA89MJu8OR49cUtQ1r92qclJMsjjRDE01B/mmckZyHRqi4LHSYkp6c4poOwUr1dB6Zqd+364tGR3fV25yc5T4LghyI7A2e/R2flKT3moLFkRLDcrRVj1YH/KElu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lUHHBdNn; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7a920d2eb7so95621266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 22:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722577549; x=1723182349; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RigXAXY8XojMY0eL40pCCW/KOV/0idGGpOe3OTx1b1k=;
-        b=lUHHBdNniT1rlmjYSPrYc2PE0EAnWlwV1qF3iWDeydzBXilAsQx+d33cvYXM4a1PWq
-         qucdGz4NXSba4L1lv4Sk2ZPpbmvvtChh+glkjK5bsEgjGlhJ/rs3Ywe7tujJ3/6Jdizl
-         zdFu2ADA90hUeU1u/5hC2yvNGNW2ol2XEBXqS6s0ys20N+xpKbsD4KIclpCOScf36ofK
-         25FPYWTs4L1uSSWfd7pKqfvpe5mmFPK6CoaHcH/qSd4ruGAZr4pA65+6NZaa30Ug+MeO
-         oJGPenEYR6HpkRLYiptKN/Clq9InfY9H8o3I0wdAvbm6b+3uQs52mEeSUTqUVNBd3NsH
-         KfAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722577549; x=1723182349;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RigXAXY8XojMY0eL40pCCW/KOV/0idGGpOe3OTx1b1k=;
-        b=I6pLQq2aPoeIIN4NI848QvHlUeKVNfAFpwNNn1BzAI6x+WoLy8KjAzal7UzzL/JyLt
-         uWHgQA0Frd9UvZ4Q16gfHRduonikPNjTADKaeMTO4Xfp/42d0VFOwAsmBKuHsRm/trW0
-         g1mIVbsxo21Toau2plTGPI1svJPpF7lk93epnu9iwVPbyD6DeXktksxdcugswrW97h72
-         kdwsKzI6ULLDVcN0aR4yQvA/DjWYlQcI+djQUCLmVE0ziaS7P9GAPJHoXyg7oEYddW53
-         mrd77jIdot5Qk4GG4v+mmDpEgRCg3fU6FwuxMZATEggV1arb/p00a13em2xQsIBgt2CR
-         CQPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVg3fIYIrqB+MsZx1Hf65Gg+xqZfFjh2j3v7k+M0cGmrZn/mFXWnrHDKw4Lf8udhG+RoprbhhmvBXP6G0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSLU98i4ENqE0D7LuwGPdX90Ndi3ltsRBOwE20zK+duXEM5FNj
-	xNP/okhfKnq01UmTUrxWxIYi3rRQ5xotVuFfNjZowRXiXFhFx6oE
-X-Google-Smtp-Source: AGHT+IFgVJrNhR4s9Ifa9W84XRJ00zIdgSl9ZMABKuDHEC/LVng8I81ppLHgXW4oIaKDH20HoC3JCw==
-X-Received: by 2002:a17:907:728d:b0:a77:c825:2d0f with SMTP id a640c23a62f3a-a7dc508d453mr118562266b.6.1722577548892;
-        Thu, 01 Aug 2024 22:45:48 -0700 (PDT)
-Received: from ?IPV6:2003:c7:8f2a:8543:bb0e:65aa:14e1:2135? (p200300c78f2a8543bb0e65aa14e12135.dip0.t-ipconnect.de. [2003:c7:8f2a:8543:bb0e:65aa:14e1:2135])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc9dabsm56084066b.39.2024.08.01.22.45.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 22:45:48 -0700 (PDT)
-Message-ID: <e4308685-bfd1-4795-bcc4-d2a246dae0c1@gmail.com>
-Date: Fri, 2 Aug 2024 07:45:47 +0200
+	s=arc-20240116; t=1722577715; c=relaxed/simple;
+	bh=JxUn+v+sLiprvU8/YZ898YME8vnnjdW7HMZhlCtPxuc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=c393cIpeMbYwbecIVMKgBhJUWsqBcDmxJh3fUhyXzyoRTJNxuivyBDMoCij5v/WZjGc5QyzSVWsrs0Ai60qvHybUnfKx7MvHrtGazfA2Bw63myRSkx9uNwHV1p+tmP9m6IM1gPKWpe35RjRn6CjqTdnd9+/DglclXDue+e1bMng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=Q2vAS+iv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WAzQ7YxQ; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 295C5138FCAA;
+	Fri,  2 Aug 2024 01:48:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Fri, 02 Aug 2024 01:48:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1722577713; x=1722664113; bh=Wt
+	ZfLoN7q0d2TuzchcdSawaP0pmYD+NytoaGIdcrM/A=; b=Q2vAS+ivuy6JAXUBiE
+	gC2Q2F4Q1p51yp4CU5xQ0Amjr/afAXNE1gDL2x1K2e5pjDHz8hQVhvMMU4B4sG8K
+	vbrKTkhtUEWxtYc2A7eoxfEUnHYQUFGjvZTOxXdFuLOqBhAkM1XAE+BK6jWI3KUM
+	/twa8SzlSe4V0gp5qQgArWGXv/XMLr8cJDraoHVxF8A0aLtsawLy6m+3Oj48L2mm
+	Wz3riyZuXI40k/ZRSqpX0yjlAbTCBiZbT7+j1nOIGa+SPGVQBj+l9Q0RF7UBOVW4
+	FLtVss5/qIXIYoNaWOvGWJOzY1pqEedz8QiSpFJl2beC1otWA2FY6uIJy/7qOkBG
+	RLtA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1722577713; x=1722664113; bh=WtZfLoN7q0d2T
+	uzchcdSawaP0pmYD+NytoaGIdcrM/A=; b=WAzQ7YxQ1KeSliNsS8CWUrPw5/bmG
+	ej9AYJQNUQmRt3gOXHIFInpHDlVIrc5VGerLIkvmWc82aJTi82OjNWeS7gqzVpCK
+	DlRuBBw3HBRQjiIs4ov/Q2iWBGvP6kX8o8QzvJzJrHv7oL6CfzWUP6QSeWFVO9C+
+	iYOQKuzwHfwJPol7G5+wk1E+F6CT0dHjB2nax5hKW6PAwrlWSJqLKN1dSVEfnS9N
+	6OHU7et84AWGZA0jdwnTfcA8hOMpCVe/UassNd2bKN5Eeod0z/p+VuEvq5CaDJUP
+	dG2OH+VczFGz7VSDTN+w8mxkH0s7Bz5sG3xjN7MLAIVNx7J86+d0fhcFQ==
+X-ME-Sender: <xms:MHOsZtYbM5Yt0Nd4TJV4VCyOzg1Z1zgrupSglWAy2OLfIDHZ9ylfSQ>
+    <xme:MHOsZkY6A2SrnLLVFehjVRHal07aTdB76A6U8H6cvq1JndN554rXIlZzz0hXMC8Y1
+    jDEYJBqF17ikZaDP-4>
+X-ME-Received: <xmr:MHOsZv8Lo98VGjwYAuUdVv0n67-SCjr3vAoVRMKRPNvtChnsUKX_8_muhH34Me97LGo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrjeelgddutdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecuhfhrohhmpeflihgrgihu
+    nhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomheqnecugg
+    ftrfgrthhtvghrnhepffetueegkedtgfejveeuvdfghfegtddvgfehudeghfegheetuedu
+    heduveejtefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomhdpnhgspghrtghpthht
+    oheptd
+X-ME-Proxy: <xmx:MHOsZrqhKitztroNEbtGEabZmFoT7nZBgB2JcJLHhuCrX7VAWMzb-A>
+    <xmx:MHOsZoq8L05kKaXmACABaXbYIrxkgOqbbRje-S_Iqh3pzLV8wKgb1Q>
+    <xmx:MHOsZhTf1Sl_LoY9zleSdgzU97U1m3wyQ7Wj1q4cuUsd3A55d9yD4A>
+    <xmx:MHOsZgqFiWf9Z-BKucoZxj5BXolBv7h4cQmxXe9zbCSBp1FZSnVoLw>
+    <xmx:MXOsZgLiZwWl2hLOAJqYOzurfND5hWQYRqU_x5osXQN9WPgibxr__vjx>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 2 Aug 2024 01:48:29 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Fri, 02 Aug 2024 13:48:23 +0800
+Subject: [PATCH] dt-bindings: loongarch: Add la464 la664 CPU bindings
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] staging: rtl8723bs: Delete unnecessary braces
- for single statement blocks
-To: jiwonaid0@gmail.com, gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240801155138.25531-1-jiwonaid0@gmail.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20240801155138.25531-1-jiwonaid0@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240802-la464-bindings-v1-1-4ccd299697f0@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIACZzrGYC/x3MQQqAIBBA0avErBPUhpSuEi3UJhsIC4UIpLsnL
+ d/i/wqFMlOBqauQ6ebCZ2pQfQdhdymS4LUZtNQordTicDii8JxWTrGI4OzolUE1GAUtujJt/Pz
+ DeXnfDxLsBVxgAAAA
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Binbin Zhou <zhoubinbin@loongson.cn>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=854;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=JxUn+v+sLiprvU8/YZ898YME8vnnjdW7HMZhlCtPxuc=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrQ1xboshc0XXl9+q/VqUyjnuWdCnxZse/TzSkXjhr4L8
+ g+fOVY+6yhlYRDjYpAVU2QJEVDq29B4ccH1B1l/YOawMoEMYeDiFICJKAkwMuy4NGO+14NuSbnC
+ Hst88a01BYVO72ZVSije95kgXv/1fxQjw6pHEyq6GI6fuipp9mC5jNwDps1LHz9kmr1s1eIz0u3
+ ql7kA
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On 8/1/24 17:51, jiwonaid0@gmail.com wrote:
-> From: Jiwon Kim <jiwonaid0@gmail.com>
-please omit the previous line as it is not required.
+Document LA464, LA664 CPU compatibles for emulation machine.
 
-> 
-> Deleted braces {} for single statement blocks.
-> 
-> Addressed scripts/checkpatch.pl warning.
-> 
-Please do not add extra empty lines in the description when not 
-required. Consider that we have a lot of commits and it is most wanted 
-that the description is short.
-It is not required to add the name of the tool who found this, but it 
-can be named. Much more important is a good description why this change 
-makes sense...
-For example:
-... to shorten code.
-... to improve readability.
-Use present in the description. So Deleted should be Delete.
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ Documentation/devicetree/bindings/loongarch/cpus.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> Signed-off-by: Jiwon Kim <jiwonaid0@gmail.com>
-> ---
->   drivers/staging/rtl8723bs/os_dep/xmit_linux.c | 3 +--
->   1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8723bs/os_dep/xmit_linux.c b/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
-> index 1eeabfffd6d2..e0736707a211 100644
-> --- a/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
-> +++ b/drivers/staging/rtl8723bs/os_dep/xmit_linux.c
-> @@ -144,9 +144,8 @@ static int rtw_mlcst2unicst(struct adapter *padapter, struct sk_buff *skb)
->   		psta = list_entry(plist, struct sta_info, asoc_list);
->   
->   		stainfo_offset = rtw_stainfo_offset(pstapriv, psta);
-> -		if (stainfo_offset_valid(stainfo_offset)) {
-> +		if (stainfo_offset_valid(stainfo_offset))
->   			chk_alive_list[chk_alive_num++] = stainfo_offset;
-> -		}
->   	}
->   	spin_unlock_bh(&pstapriv->asoc_list_lock);
->   
+diff --git a/Documentation/devicetree/bindings/loongarch/cpus.yaml b/Documentation/devicetree/bindings/loongarch/cpus.yaml
+index f175872995e1..462d107fbb4e 100644
+--- a/Documentation/devicetree/bindings/loongarch/cpus.yaml
++++ b/Documentation/devicetree/bindings/loongarch/cpus.yaml
+@@ -21,6 +21,8 @@ properties:
+     enum:
+       - loongson,la264
+       - loongson,la364
++      - loongson,la464
++      - loongson,la664
+ 
+   reg:
+     maxItems: 1
 
-Hi Jiwon,
+---
+base-commit: 048d8cb65cde9fe7534eb4440bcfddcf406bb49c
+change-id: 20240802-la464-bindings-ca86b1741371
 
-please consider the above comments.
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
-Please make your "Subject" line more unique. Consider that we may end up 
-with having dozen of commits like yours, all of them referring to 
-different removals and all without the necessary information to tell 
-what they differ in (except the driver/subsystem). So it would help if 
-you add the changed file or function to make it more unique.
-
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-
-Thanks for your support.
-
-Bye Philipp
 
