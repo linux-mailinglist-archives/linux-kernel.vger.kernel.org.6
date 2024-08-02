@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-272978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA154946302
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:23:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA05F946303
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBD5B1C215F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:23:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EAE4B21A3C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67EE165F12;
-	Fri,  2 Aug 2024 18:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EED3166F0C;
+	Fri,  2 Aug 2024 18:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8AvHhuC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYgLr98n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CDD413633C;
-	Fri,  2 Aug 2024 18:21:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11E513633C;
+	Fri,  2 Aug 2024 18:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622864; cv=none; b=hXkw++M7unaIuCAP9FTrX2bEgnoK61H5+O+1j880Zqrd8cBvvW6KtTIWYcVhUEtWKopRSVxu48l/UcYURG4Z7EC8zAfoZFNkWdYx2rzjnZlP7QD6UrEL1aamYoazkHFKYD850fLj05dF0tleLkbcG59Y3DvGG63xu8MgsGGw+rw=
+	t=1722622867; cv=none; b=BfvdkXPhBaG2smgE2qUhX3nagd1yBtk9qDn4bv+KnzEu39MqMZFXzKYaOfyAIYsi8uiYLPhhEY+LoOjBFG/tFDhDoV6CW9LRbk/ro8OPPjFg3cWkJRKJk6jHqeuR5am0t9K4vNQxC+1kTlOfIBPMhmDFdEgQ+QDlhsnzs2rMpko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622864; c=relaxed/simple;
-	bh=SIayKwg6/dUeT/mwVPn/+0LZgcgWn0cXJslMp5cufg4=;
+	s=arc-20240116; t=1722622867; c=relaxed/simple;
+	bh=G7JBKRrOhMKLRs3Q0JQ80dT2AI5Js5oqFIMYQMzMrO4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eR5IaNFOc4FzFcBoV1ds4bj7veSitq7G3P0oDGnFLU87hqV16inqgUVboX7c9F8DmQk7kswR5z1UvKH8wEeZ8RfUp1+XYHSlftRXbz4f52djh87WnVVGt/RctZ9eOPMo3pLnE0dbC1NumP8lTxgqmRzZIrFCFVZcG0AzJVj3akY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8AvHhuC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68DAC32782;
-	Fri,  2 Aug 2024 18:21:01 +0000 (UTC)
+	 MIME-Version:Content-Type; b=AoDp+sAMAN22SFlVz5AVzVAOe/H5zYmlNd5TxmXrdH7uNY4jk3taTBX7kNKB9YKt1GYoDHkMPJ2IxdKr/PXip/HaOM5MIlRPSG68TI4UkC2bI6H/Azv+trzhyTEfjt9NHq2GlJw5c759uVueo77pRvYoE44lceZLoC6YMer9UYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYgLr98n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4490CC32782;
+	Fri,  2 Aug 2024 18:21:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722622863;
-	bh=SIayKwg6/dUeT/mwVPn/+0LZgcgWn0cXJslMp5cufg4=;
+	s=k20201202; t=1722622867;
+	bh=G7JBKRrOhMKLRs3Q0JQ80dT2AI5Js5oqFIMYQMzMrO4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=c8AvHhuCfvhgpAl8cS4jYym4/+PoRMJY/eIMj8cS2d2POJL6GpOY81ktu+SjVs07Q
-	 rcee2NwjJqc3OHMNhfjlWsVPXoXrDNWXz9dawbgbetLI4UwMRVL3b7A76wdLIZCtUt
-	 r4PISXYw9ioHJKZXyrHRHvgA4h0YgEZX2SCY6VjVdo2TfP7ldQrDZ4jMMWwYGTM0KH
-	 wpEuRGMdl2i9cpbJia9sigPl2c2WsjpaaRWH/B3BsHYJpqGtr4yXx8tu3hdkpNBqI9
-	 9Htf/8zcwOT//dNXUU64fDrFg+qV6POBh2xZFe3AlDtBevNHSCFM4JOtui20g54u4d
-	 SodKAx0RoMldw==
+	b=WYgLr98nhqiJFVNGCB1MZMWgG4GkCmgKRbVTkOmG0lBdFgdX0MsWcKTzOXvjlAvCe
+	 bWSE9XgSayIl6Ucd8yI+YnAPO77jvLOPcdTnYOAhsf6KZ2/cu0Ewc091xADQIWJDrl
+	 PAicMD4Y3/qOHXSI9oWPY8sMwZrnA4b931YXg2QjcTroB4TM011XR772JlvSi8MQXD
+	 eSbyBNEq56uH/7ReEU2apiraTDAhw7tq7JQrwmfJQwEPZY2rm8+u8yzVDsAuCQ8ltU
+	 VCaTecLrBFC/Ph6JHZM2/a0ovN/7EFq/fKpNnh2/kwk4GH0u4cCfBJwlvAg4sO+mgF
+	 ZxleD+1KV8MUA==
 From: Mark Brown <broonie@kernel.org>
-To: ckeepax@opensource.cirrus.com, javier.carrasco.cruz@gmail.com, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- linux-sound@vger.kernel.org
-In-Reply-To: <2c08558813e3bbfae0a5302199cf6ca226e7cde1.1722544073.git.christophe.jaillet@wanadoo.fr>
-References: <2c08558813e3bbfae0a5302199cf6ca226e7cde1.1722544073.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: sti-sas: Constify snd_soc_component_driver
- struct
-Message-Id: <172262286152.83468.908434920268261104.b4-ty@kernel.org>
-Date: Fri, 02 Aug 2024 19:21:01 +0100
+To: jonathan.downing@nautel.com, piotr.wojtaszczyk@timesys.com, 
+ vz@mleia.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ Yue Haibing <yuehaibing@huawei.com>
+Cc: alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240802101044.3302251-1-yuehaibing@huawei.com>
+References: <20240802101044.3302251-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] ASoC: fsl: lpc3xxx: Make some symbols static
+Message-Id: <172262286392.83468.2866189640414967072.b4-ty@kernel.org>
+Date: Fri, 02 Aug 2024 19:21:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,13 +61,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Thu, 01 Aug 2024 22:30:05 +0200, Christophe JAILLET wrote:
-> In order to constify `snd_soc_component_driver` struct, simplify the logic
-> and the `sti_sas_dev_data` struct.
+On Fri, 02 Aug 2024 18:10:44 +0800, Yue Haibing wrote:
+> These symbols are not used outside of the files, make them static to fix
+> sparse warnings:
 > 
-> Since commit 165a57a3df02 ("ASoC: sti-sas: clean legacy in sti-sas") only
-> only chip is supported and `sti_sas_driver` can be fully defined at
-> compilation time.
+> sound/soc/fsl/lpc3xxx-i2s.c:261:30: warning: symbol 'lpc3xxx_i2s_dai_ops' was not declared. Should it be static?
+> sound/soc/fsl/lpc3xxx-i2s.c:271:27: warning: symbol 'lpc3xxx_i2s_dai_driver' was not declared. Should it be static?
+> sound/soc/fsl/lpc3xxx-pcm.c:55:39: warning: symbol 'lpc3xxx_soc_platform_driver' was not declared. Should it be static?
 > 
 > [...]
 
@@ -79,8 +77,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: sti-sas: Constify snd_soc_component_driver struct
-      commit: 11c2d223713b7a7fee848595e9f582d34adc552b
+[1/1] ASoC: fsl: lpc3xxx: Make some symbols static
+      commit: a1c2716738b7ba9e912e04872639dd39c72baa35
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
