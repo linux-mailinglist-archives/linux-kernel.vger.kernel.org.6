@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-272712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F449946028
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:19:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DFC94600A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:16:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE39F2853F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7DC1F2314A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F90166F17;
-	Fri,  2 Aug 2024 15:17:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEC121C16B;
+	Fri,  2 Aug 2024 15:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zr/R/VDh"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ePP/CUrv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34873136321
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB30E20FAB5
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611821; cv=none; b=s+AszMYG0Oknhz52Mux63xSUZ82zJ4D2CcL62dZndTcLdiamoUO9RF93fSfP9tsbUIFElO3Z6Q84En78Sy3HWAf9svWT5Rbn50t9EvTPIBEURz4e7b34HjT+5ALfuUAKjwsxB5ZGQ652/5IycjFOP3C8ajE5DQRgzCCTn6QVnvQ=
+	t=1722611761; cv=none; b=fTjFSm3JC1prUJCIN0Lj+iZLm93+98Qasw30+MtPsTpWITCrM7+bgcloeTLQqxlz3sTEHFE0zjWV7ZUX+rgUKcC8NIw5GQ01CQq9gUqDFIx6lS3ggrMbMJjDBCsJCUMT8GKuNpI91f/NxH1qqZj5r0BzYuMpaib/1dXGhNgh/Fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611821; c=relaxed/simple;
-	bh=YwTaLLfcFa8ZppYJq5D5kqu8GP2hndoCpgozsutlapg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oB2s2FPamza6PHrVDH3b9fLtT02yU5+mYL/04eEM1gj/8M5LJ+UV7zm8DEDJ/DQZzAHgMloVSSBmZhhEmhd1+rlTG5ABlckFygHijNYQFq4pXOayH+2kOAJ3Kz6l6mBqHcPdX+zJWlDW/QtpRfsfUXWTS+dxvjdnwLFijDDbWck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zr/R/VDh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1722611819;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=g956mcwL4jKSwzWVtdE4m5jBhvk+sHhrxPl5sZLIQU8=;
-	b=Zr/R/VDhffQq2R3Rdp2Q6mMRHDRY+jIg3E3/QwoN/vpYQY+boPqkjaaZP2it24PG1fM+db
-	C+nU+f0a1KyuQlWBVHs/F//7SsOoIlfEzoN4oJGCREG4lrrq6VMo9zvlCbm9/2n4EWazqF
-	HvDURn/2HUGHlB1rxSJcZ9CpCq4L8XY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-634-127S9fHcPB-rfpz8p1_O-A-1; Fri,
- 02 Aug 2024 11:16:53 -0400
-X-MC-Unique: 127S9fHcPB-rfpz8p1_O-A-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8BFB01955EAA;
-	Fri,  2 Aug 2024 15:16:51 +0000 (UTC)
-Received: from llong.com (unknown [10.2.16.79])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4F0521955E80;
-	Fri,  2 Aug 2024 15:16:49 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Li Zhe <lizhe.67@bytedance.com>,
-	Joel Granados <j.granados@samsung.com>,
-	=?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] watchdog: Handle the ENODEV failure case of lockup_detector_delay_init() separately
-Date: Fri,  2 Aug 2024 11:16:21 -0400
-Message-ID: <20240802151621.617244-1-longman@redhat.com>
+	s=arc-20240116; t=1722611761; c=relaxed/simple;
+	bh=PpAcpAVDVkKF4KmgfzNR4dgg+sTFJr4Xk7f+vDDE6/c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hpqwz+2L9fuRDCnIsPrnGJzdmJ04VUINk7XDMJmC6S8+oGlg4F7h+GZodoioM5Xa9C+QasMqWo5qLEY76UrjXYWfHJf8b0Ok8Pdk5cFCIbhSEajD6GENlRcIde49ikHNlDLJXGmxdrkRruE4u2jKQo3WLKH/szHXz86oDDPXop8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ePP/CUrv; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722611760; x=1754147760;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PpAcpAVDVkKF4KmgfzNR4dgg+sTFJr4Xk7f+vDDE6/c=;
+  b=ePP/CUrvo6v4BEWuX07kqF6s1GTRZs91hAuy9dNAuCNOD5SVt+bE6ZbB
+   OAfodsblhRbuDDaPIkJFWTXVngMQWZTXnRgsLCweTzGJtLGLHW25MMjEZ
+   2h/cmQzcaL2tSkBaGqzONq1eoa9iitqiU+E+jCrjY6wZ7d7E9lIFHvCmS
+   jjme/bdp1pIXAkGIJlW3beVtxJj/3/iDxfeNY0t6VO4SvCtW7YNYvNK8G
+   BAcZn321WMJSKVVclkLWBpNx7opQq9O75jjnGpyuIAs6MhgClzCCTNQ0Y
+   bWd3HlB+UDQ2Djqvd9k/hgnT6ePtk2A59OvSzoaFT/kijzBwEetB90H7o
+   Q==;
+X-CSE-ConnectionGUID: mBPYhPHgQ02mBBQ04GlYTg==
+X-CSE-MsgGUID: mjK1DlHTSHSOA3fObOgGyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20473754"
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="20473754"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 08:15:59 -0700
+X-CSE-ConnectionGUID: wnPu3v0ZShW6x7JJFrvvjA==
+X-CSE-MsgGUID: FyMPbt2CSXmd+1O8+hikxQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="55516927"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by fmviesa010.fm.intel.com with ESMTP; 02 Aug 2024 08:15:58 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	linux-kernel@vger.kernel.org
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH 0/7] Generic hotplug support for a PMU with a scope
+Date: Fri,  2 Aug 2024 08:16:36 -0700
+Message-Id: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,46 +75,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-When watchdog_hardlockup_probe() is being called by
-lockup_detector_delay_init(), an error return of -ENODEV will happen
-for the arm64 arch when arch_perf_nmi_is_available() returns false. This
-means that NMI is not usable by the hard lockup detector and so has to
-be disabled. This can be considered a deficiency in that particular
-arm64 chip, but there is nothing we can do about it.  That also means
-the following error will always be reported when the kernel boot up.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-  watchdog: Delayed init of the lockup detector failed: -19
+The perf subsystem assumes that the counters of a PMU are per-CPU. So
+the user space tool reads a counter from each CPU in the system wide
+mode. However, many PMUs don't have a per-CPU counter. The counter is
+effective for a scope, e.g., a die or a socket. To address this, a
+cpumask is exposed by the kernel driver to restrict to one CPU to stand
+for a specific scope. In case the given CPU is removed,
+the hotplug support has to be implemented for each such driver.
 
-The word "failed" itself has a connotation that there is something
-wrong with the kernel which is not really the case here. Handle this
-special ENODEV case separately and explain the reason behind disabling
-hard lockup detector without causing anxiety for those users who read
-the above message and wonder about it.
+The codes to support the cpumask and hotplug are very similar.
+- Expose a cpumask into sysfs
+- Pickup another CPU in the same scope if the given CPU is removed.
+- Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
+- In event init, always set the CPU in the cpumask to event->cpu
+- Usually, an event can be read from any CPU of the scope. (For now,
+  it is only supported by the pkg scope PMU, via
+  PERF_EV_CAP_READ_ACTIVE_PKG, e.g., cstate_pkg, rapl, etc)
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/watchdog.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Similar duplicated codes are implemented for each such PMU driver. It
+would be good to introduce a generic infrastructure to avoid such
+duplication.
 
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index 830a83895493..262691ba62b7 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -1203,7 +1203,10 @@ static void __init lockup_detector_delay_init(struct work_struct *work)
- 
- 	ret = watchdog_hardlockup_probe();
- 	if (ret) {
--		pr_info("Delayed init of the lockup detector failed: %d\n", ret);
-+		if (ret == -ENODEV)
-+			pr_info("NMI not fully supported\n");
-+		else
-+			pr_info("Delayed init of the lockup detector failed: %d\n", ret);
- 		pr_info("Hard watchdog permanently disabled\n");
- 		return;
- 	}
+The patch series introduce 5 popular scopes, core, die, cluster, pkg,
+and the system-wide. The PMU drivers for cstate, iommu, idxd and rapl
+are updated to apply the new infrastructure. The new infrastructure
+can also be applied for other PMU drivers from different ARCHs as well.
+But I don't have such platforms. It's not done in this patch series.
+They can be added later separately.
+
+The uncore driver isn't updated either. Because a per-PMU cpumask is
+required since commit c74443d92f68 ("perf/x86/uncore: Support per PMU
+cpumask"). Since different types of PMU share the same hotplug codes,
+more factor out works and verification are expected. The cleanup of the
+uncore driver can be done later separately.
+
+Kan Liang (7):
+  perf: Generic hotplug support for a PMU with a scope
+  perf: Add PERF_EV_CAP_READ_SCOPE
+  perf/x86/intel/cstate: Clean up cpumask and hotplug
+  iommu/vt-d: Clean up cpumask and hotplug
+  dmaengine: idxd: Clean up cpumask and hotplug
+  perf/x86/rapl: Move the pmu allocation out of CPU hotplug
+  perf/x86/rapl: Clean up cpumask and hotplug
+
+ arch/x86/events/intel/cstate.c | 140 +-------------------------
+ arch/x86/events/rapl.c         | 119 ++++++----------------
+ drivers/dma/idxd/idxd.h        |   7 --
+ drivers/dma/idxd/init.c        |   3 -
+ drivers/dma/idxd/perfmon.c     |  98 +-----------------
+ drivers/iommu/intel/iommu.h    |   2 -
+ drivers/iommu/intel/perfmon.c  | 111 +--------------------
+ include/linux/cpuhotplug.h     |   3 -
+ include/linux/perf_event.h     |  21 ++++
+ kernel/events/core.c           | 176 ++++++++++++++++++++++++++++++++-
+ 10 files changed, 229 insertions(+), 451 deletions(-)
+
 -- 
-2.43.5
+2.38.1
 
 
