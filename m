@@ -1,128 +1,213 @@
-Return-Path: <linux-kernel+bounces-272988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE7E946312
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:25:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15690946333
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D0F1F26124
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C65C528348B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:29:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4F91E286C;
-	Fri,  2 Aug 2024 18:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EBC1ABEB5;
+	Fri,  2 Aug 2024 18:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xrqqjxoQ"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZNDS4bDC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1297165F0A;
-	Fri,  2 Aug 2024 18:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6755C1ABEA9;
+	Fri,  2 Aug 2024 18:23:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722622998; cv=none; b=liMr1sTKJwWxMV4XiIqSPufaHzQxuwxqvjiBlZFeNrWR2EtGPLJLO+uhmJ2zcM/SWlPpUsp1of+q0iOmlWbp+l4rekeo72I9ehH3YfPxlQpwWpW3dMC4jYVpHuJWXS3mqRC0G3jTdvh4kr/z+6ECKjMnUcgIVY2Xn2G4erb10f4=
+	t=1722623025; cv=none; b=GB6eUD73QTMmhPPQXJNYqvEzhXpRz9JvLy5EOZ9F24EMpq7qatXx5MP3Q9IBAyhVqVJZSIy0v7I3sWC6OdpXh57Xq/L2MWl1Gc/ypKwzHUT6RFPglQjxgTeZl/0qyojgcXxdEKHFr0Bl9SsbEDoAnL5HFMQnJ2nIT7R5Wy8+1ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722622998; c=relaxed/simple;
-	bh=BZQIjqi3RVmv20lIjZed/236F9Ix29Tk7k2nJ/s+hmo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KZUnOKMxLleURSjWf9i8CXILv58kqxOij4ab/RuWCrfBJ2I8SeGaXTp5CNLaIUgzY45snJJShgu8uPSH0ng3/b59wo2WKd9thaZQVMxfeiLtBvokuvh02Ck2Hgk/cwcH/mDkLsXV1/CWsukUAWfgLItPzGnJiam0SP3alq2Gcmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=xrqqjxoQ; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472IN7Ol069897;
-	Fri, 2 Aug 2024 13:23:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722622987;
-	bh=0mbRMD8jBzGMNnJ6EKpzKJECBjbh92PM3dytT8hEJS8=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=xrqqjxoQVGk1fzjVHOqf/R0YppZJmEh6FkyfRYaooZnie+PQOWOjpg649DizSvP17
-	 5oUP5DDFdlAIOnFj1dTzTuVdzbOfW1Cy0VdxuB8Xc4diXne++XhM/kk+aIqGX6Sb/G
-	 L74RmoDzwgH4uL8dncOVJKl6MllfV5zPUMDxbHSI=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472IN7fr071391
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 2 Aug 2024 13:23:07 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
- Aug 2024 13:23:03 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 2 Aug 2024 13:23:03 -0500
-Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472IN0BW039524;
-	Fri, 2 Aug 2024 13:23:02 -0500
-From: Andrew Davis <afd@ti.com>
-To: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Andrew
- Davis <afd@ti.com>
-Subject: [PATCH 7/7] remoteproc: keystone: Use devm_rproc_add() helper
-Date: Fri, 2 Aug 2024 13:23:00 -0500
-Message-ID: <20240802182300.244055-7-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240802182300.244055-1-afd@ti.com>
-References: <20240802182300.244055-1-afd@ti.com>
+	s=arc-20240116; t=1722623025; c=relaxed/simple;
+	bh=0nh586fdYKbqYE7Xx1zKbVfE2k9oRTxAHMyDsfqXHX4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lp+HVRzzxiwAuGo3z8qLlLaBf8Jg5o5utBec4WRAQhXbaNibOpOkLXvMMmVukmZjS+Q3mtya86uoj31KSmV3PLh1TTrx5reiVwFGVJ35W3TKfGES/kiskYWuSmHE6hKFEkeumwtL1b7apvkQZ02/9dwHmrcFuK0aSIWC6TjL08E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZNDS4bDC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9CD1C32782;
+	Fri,  2 Aug 2024 18:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722623025;
+	bh=0nh586fdYKbqYE7Xx1zKbVfE2k9oRTxAHMyDsfqXHX4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZNDS4bDCnwNQ9Su7UPeetcV9aqZtm8+IPybJ/LTvTbLsYvq4HCtbydVylhvLN6lXE
+	 U5j3o87n+QCLXZHE8NkUeeAhz446lYGaWFhubmXMRDWChjwm9EYoYqk9PW/HKyjd3Z
+	 A/WdEft1mY5lz148SYVeh1li8OFQUKGx109MFy/5RMnvOVekVQz8sMAengoRPqalR7
+	 tHNDRFCQ8mqvP4pixedBQ8pczsDy/7S+16DPmD/puStXYWPSQdYH+eErdffBvQ+wOw
+	 AevS+iavdWmaC9Ju0TIVuwr6+ZQTw1ba5JMWExOT8+MPOwf4ZFjbenDbDy7Z4S3KSZ
+	 38YQnaXDLioaw==
+Date: Fri, 2 Aug 2024 11:23:43 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Casey Chen <cachen@purestorage.com>,
+	Tom Zanussi <tzanussi@gmail.com>, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] perf inject: Inject build ids for entire call chain
+Message-ID: <Zq0kL-lyCqkM3P4G@google.com>
+References: <20240801031249.176913-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240801031249.176913-1-irogers@google.com>
 
-Use the device lifecycle managed add function. This helps prevent mistakes
-like deleting out of order in cleanup functions and forgetting to delete
-on error paths.
+Hi Ian,
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- drivers/remoteproc/keystone_remoteproc.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+On Wed, Jul 31, 2024 at 08:12:49PM -0700, Ian Rogers wrote:
+> The DSO build id is injected when the dso is first encountered but the
+> checking for first encountered only looks at the sample->ip not the
+> entire callchain. Use the callchain logic to ensure all build ids are
+> inserted.
+> 
+> Add a for_each callback style API to callchain with
+> sample__for_each_callchain_node. Possibly in the future such an API
+> can avoid the overhead of constructing the call chain list.
+> 
+> Fixes: 454c407ec17a ("perf: add perf-inject builtin")
+> Signed-off-by: Ian Rogers <irogers@google.com>
 
-diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-index da5d5969829fb..27ebe6661b0b7 100644
---- a/drivers/remoteproc/keystone_remoteproc.c
-+++ b/drivers/remoteproc/keystone_remoteproc.c
-@@ -463,22 +463,13 @@ static int keystone_rproc_probe(struct platform_device *pdev)
- 		keystone_rproc_dsp_reset(ksproc);
- 	}
- 
--	ret = rproc_add(rproc);
-+	ret = devm_rproc_add(dev, rproc);
- 	if (ret)
- 		return dev_err_probe(dev, ret, "failed to register device with remoteproc core\n");
- 
--	platform_set_drvdata(pdev, ksproc);
--
- 	return 0;
- }
- 
--static void keystone_rproc_remove(struct platform_device *pdev)
--{
--	struct keystone_rproc *ksproc = platform_get_drvdata(pdev);
--
--	rproc_del(ksproc->rproc);
--}
--
- static const struct of_device_id keystone_rproc_of_match[] = {
- 	{ .compatible = "ti,k2hk-dsp", },
- 	{ .compatible = "ti,k2l-dsp", },
-@@ -490,7 +481,6 @@ MODULE_DEVICE_TABLE(of, keystone_rproc_of_match);
- 
- static struct platform_driver keystone_rproc_driver = {
- 	.probe	= keystone_rproc_probe,
--	.remove_new = keystone_rproc_remove,
- 	.driver	= {
- 		.name = "keystone-rproc",
- 		.of_match_table = keystone_rproc_of_match,
--- 
-2.39.2
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
+Thanks,
+Namhyung
+
+> ---
+>  tools/perf/builtin-inject.c | 31 +++++++++++++++++++++++++++++++
+>  tools/perf/util/callchain.c | 35 +++++++++++++++++++++++++++++++++++
+>  tools/perf/util/callchain.h |  6 ++++++
+>  3 files changed, 72 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
+> index 7b4a5d56d279..ea5f1d57e7e1 100644
+> --- a/tools/perf/builtin-inject.c
+> +++ b/tools/perf/builtin-inject.c
+> @@ -743,6 +743,29 @@ static int dso__inject_build_id(struct dso *dso, struct perf_tool *tool,
+>  	return 0;
+>  }
+>  
+> +struct mark_dso_hit_args {
+> +	struct perf_tool *tool;
+> +	struct machine *machine;
+> +	u8 cpumode;
+> +};
+> +
+> +static int mark_dso_hit_callback(struct callchain_cursor_node *node, void *data)
+> +{
+> +	struct mark_dso_hit_args *args = data;
+> +	struct map *map = node->ms.map;
+> +
+> +	if (map) {
+> +		struct dso *dso = map__dso(map);
+> +
+> +		if (dso && !dso__hit(dso)) {
+> +			dso__set_hit(dso);
+> +			dso__inject_build_id(dso, args->tool, args->machine,
+> +					     args->cpumode, map__flags(map));
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+>  int perf_event__inject_buildid(struct perf_tool *tool, union perf_event *event,
+>  			       struct perf_sample *sample,
+>  			       struct evsel *evsel __maybe_unused,
+> @@ -750,6 +773,11 @@ int perf_event__inject_buildid(struct perf_tool *tool, union perf_event *event,
+>  {
+>  	struct addr_location al;
+>  	struct thread *thread;
+> +	struct mark_dso_hit_args args = {
+> +		.tool = tool,
+> +		.machine = machine,
+> +		.cpumode = sample->cpumode,
+> +	};
+>  
+>  	addr_location__init(&al);
+>  	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
+> @@ -769,6 +797,9 @@ int perf_event__inject_buildid(struct perf_tool *tool, union perf_event *event,
+>  		}
+>  	}
+>  
+> +	sample__for_each_callchain_node(thread, evsel, sample, PERF_MAX_STACK_DEPTH,
+> +					mark_dso_hit_callback, &args);
+> +
+>  	thread__put(thread);
+>  repipe:
+>  	perf_event__repipe(tool, event, sample, machine);
+> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+> index 6d075648d2cc..0d608e875fe9 100644
+> --- a/tools/perf/util/callchain.c
+> +++ b/tools/perf/util/callchain.c
+> @@ -1797,3 +1797,38 @@ s64 callchain_avg_cycles(struct callchain_node *cnode)
+>  
+>  	return cycles;
+>  }
+> +
+> +int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
+> +				    struct perf_sample *sample, int max_stack,
+> +				    callchain_iter_fn cb, void *data)
+> +{
+> +	struct callchain_cursor *cursor = get_tls_callchain_cursor();
+> +	int ret;
+> +
+> +	if (!cursor)
+> +		return -ENOMEM;
+> +
+> +	/* Fill in the callchain. */
+> +	ret = thread__resolve_callchain(thread, cursor, evsel, sample,
+> +					/*parent=*/NULL, /*root_al=*/NULL,
+> +					max_stack);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Switch from writing the callchain to reading it. */
+> +	callchain_cursor_commit(cursor);
+> +
+> +	while (1) {
+> +		struct callchain_cursor_node *node = callchain_cursor_current(cursor);
+> +
+> +		if (!node)
+> +			break;
+> +
+> +		ret = cb(node, data);
+> +		if (ret)
+> +			return ret;
+> +
+> +		callchain_cursor_advance(cursor);
+> +	}
+> +	return 0;
+> +}
+> diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+> index d5c66345ae31..76891f8e2373 100644
+> --- a/tools/perf/util/callchain.h
+> +++ b/tools/perf/util/callchain.h
+> @@ -311,4 +311,10 @@ u64 callchain_total_hits(struct hists *hists);
+>  
+>  s64 callchain_avg_cycles(struct callchain_node *cnode);
+>  
+> +typedef int (*callchain_iter_fn)(struct callchain_cursor_node *node, void *data);
+> +
+> +int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
+> +				    struct perf_sample *sample, int max_stack,
+> +				    callchain_iter_fn cb, void *data);
+> +
+>  #endif	/* __PERF_CALLCHAIN_H */
+> -- 
+> 2.46.0.rc2.264.g509ed76dc8-goog
+> 
 
