@@ -1,176 +1,111 @@
-Return-Path: <linux-kernel+bounces-273138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0359464E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:10:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB2C9464E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:14:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E4921C21CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:10:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57961F228EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21222770F9;
-	Fri,  2 Aug 2024 21:10:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85177F15;
+	Fri,  2 Aug 2024 21:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MdBNH8K2"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XupA4vNn"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54538131E2D;
-	Fri,  2 Aug 2024 21:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7536D1B9
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722633007; cv=none; b=CXsFYX2vnSuEz74M2Z3FyMWZc1kxpuTyap28W+egfi6InMimAg1a+vSoUGx+nkx8KJmiy45ZKY/IAitVE4+Z9Ann8IBQSMME/M8oRa1YQKIj2g6vgh0h+9cUEilkooQCCiNxusx+lt+IyW6nxWVP3+ObTZnftEFCQXhsJp6bVR0=
+	t=1722633234; cv=none; b=lhUY8hI+zyi2nj+X5xfLE4vhN5Rcy2/yvudJJlDeQcljxHqKCdFIxyTZKX1vbixRdw8P2sefv1C9DakAkC7earLHnSX0eQuauZZ2CtxqsVj4ZKWCyFrLF3+qiofRTzBznMpn65zZ8kE5pr602BCG0LUn7yBWXC0prc00R4znpSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722633007; c=relaxed/simple;
-	bh=9dKMte5AFbMCPQcb5CrWmFpJYPJ6uvTEhFLt0GaO98w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t3hu/Ra1wbjX0VlP0yAVwStJVD6oF18Pw73wVzLaFboeov5aat+qBCGagqewBtuyInlj6rypjanOkt08yspsFQAkbizGIsCHo6besIqftbVctLxmkVOWZKL/Ocl9fMl6pD5P4cJxuv+n/Q4e6yFjSojq3V7QEW0UKAJwn1p+B+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MdBNH8K2; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722633003;
-	bh=9dKMte5AFbMCPQcb5CrWmFpJYPJ6uvTEhFLt0GaO98w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MdBNH8K2NbSu7puBPIhq9BT+s8UodLsfqUuytnQE9ngLkHKqWrndo8AqdgDEALFJ1
-	 F21lcjmTHZDtFFj8aK9vG6578iFD3r4Q/3sWIekd7/KIU8N72B/EdVr8DGP+3Qb0FY
-	 d32IhXbsBWzWsrO8WM1pCPIpia5CkIbb1zaKZ+1crv1KPgmGIJ+wYeszRNrbKfvIYt
-	 XArxZtNaijg4BGgPklQKOXa3JPycs32d9xTjH4wdHSg54rg6TnlKJAqugsEFnsNq/L
-	 +Nql8GU376VHotpO8BGbvC8acb8gACRzncNRUxHWGV3xdJzz898D2VRMGBvWYD2sUF
-	 Kv5YAgQuJCusw==
-Received: from trenzalore.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 909C53782218;
-	Fri,  2 Aug 2024 21:10:01 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org,
- Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
- kernel@collabora.com
-Subject: Re: [PATCH 2/3] clk: rockchip: Add dt-binding header for rk3576
-Date: Fri, 02 Aug 2024 17:11:09 -0400
-Message-ID: <3308850.44csPzL39Z@trenzalore>
-In-Reply-To: <4084310.iTQEcLzFEP@diego>
-References:
- <20240802141816.288337-1-detlev.casanova@collabora.com>
- <20240802141816.288337-3-detlev.casanova@collabora.com>
- <4084310.iTQEcLzFEP@diego>
+	s=arc-20240116; t=1722633234; c=relaxed/simple;
+	bh=snRQi2x1ZuU48N+w4DBV2nHArgWDBtEvImWG9TaEQ3U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bZClWk2Qhom7fnkMK+MQ2xQB9AL1TmZ9GXm5EXufSmj2MKujQqAvYrnlLqeWFe1jfzW/2EbcilHd/1oWV3IUwz5DQsMmi+95xU6x1l1/4VzExVc6BubG5Fc3WS5p5NXfryPJ05qvTngQfS+AMm//5Llh2H+AAQuWlvjF9Q+MFkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XupA4vNn; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-81f8add99b6so35103739f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1722633232; x=1723238032; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+T5VYsgGPulvzU0QqFuvKYZwjrJFAmfpJ/LDx5iaPtM=;
+        b=XupA4vNn4SxUm2Qb92UL4GmPOr1rn7DP37/N6Jqmv0P9rIsvjAOOdIhw0+tpD0LSNV
+         LFRSALqs/KvA9Ymy2HqXtJbf93JcrNkPfsM0j7kn0knHi1n93qhBw7hmbx198Vz4EW22
+         dliexd/up2KYZ98NVrPFTE2Vice0UMKuhAQag=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722633232; x=1723238032;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+T5VYsgGPulvzU0QqFuvKYZwjrJFAmfpJ/LDx5iaPtM=;
+        b=DbEWLOCxrl8m5d+5zmRBmEYJAUh+dwRPGpBhL8sXoCf+SSujqYVax5vtBxkw1XQLsW
+         HN19Fc8fHcAGJxp6EAi9gxei25LFuhXea6iaWa97+ebSoZBEpjwLTq3CPNbO0ja90u1p
+         j3+FlxBd+QU4zv/S3cvsyTu4w7SxmB9rgS6DrMkuWT6yCbEg/5f4X3wkoItthEMkZx9i
+         JQqJVkiCnwre2wXEqHp+sUua+YCzBQzH7z92Asfp8M070pDyF1z4PYqS2Df5tOkkQ5IH
+         HTwNvaaBVi9M0gS5N37rvAHhqAMIFfZdgNRxEv+2NLdlIw4Z5rDjynnJam/PPQT2vkYd
+         EYFw==
+X-Forwarded-Encrypted: i=1; AJvYcCVM52H+EINR9MPW+lbisK/81aQRfZ1z2JdsMy+RM6MB8wnnupRD4OZDl5bawvp1QvlV+sy+uKQIg9wXJ2I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9xP9okf8uoikbb524/y/9M2NJer22c3F0qEXOFRIkbxydJd0F
+	q+GCPF4+i7z3TRMRNjIh3+aKpgnL09s2cxxXNnhBYoUkouOBHIbI7Hcse14F2gY=
+X-Google-Smtp-Source: AGHT+IESHBrtl1oYWqwmQgBaFa85v4gKBnuDcWckb4JCuhqj7nfwWnB1A5lVoTSEXsyxcr+zn/vvOg==
+X-Received: by 2002:a5e:db0b:0:b0:81f:8295:fec5 with SMTP id ca18e2360f4ac-81fd433fff0mr335253539f.1.1722633232125;
+        Fri, 02 Aug 2024 14:13:52 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4c8d6a3d2bdsm610031173.124.2024.08.02.14.13.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Aug 2024 14:13:51 -0700 (PDT)
+Message-ID: <ca0470e3-f3f2-4e39-8170-9287fa8eb043@linuxfoundation.org>
+Date: Fri, 2 Aug 2024 15:13:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] selftests/nolibc: run-user improvements
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+ Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20770915-nolibc-run-user-v1-0-3caec61726dc@weissschuh.net>
+ <zvzacp6mqu6xhg4dx56kh67ucl6wmtnydm677tull2bx74i2zz@ebj4juspkjfw>
+ <49861e61-72b6-4133-a72a-3dded276d4df@t-8ch.de>
+ <pfzkuw4o7752mb2ksowte2cbfa2ogd2bsucbget5nsk76edcin@tueappcjnih4>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <pfzkuw4o7752mb2ksowte2cbfa2ogd2bsucbget5nsk76edcin@tueappcjnih4>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
+On 11/9/23 11:04, Konstantin Ryabitsev wrote:
+> On Thu, Nov 09, 2023 at 06:44:44PM +0100, Thomas Weißschuh  wrote:
+>>> On Wed, Sep 15, 2077 at 02:13:51AM +0200, Thomas Weißschuh wrote:
+>>>          ^^^^^^^^^^^^
+>>>
+>>> I'm curious how this happened, especially since this was sent with b4.
+>>
+>> My system time was messed up.
+>> I blame systemd-timesyncd.
+> 
+> Well, at least we know b4 is Y38K compliant. ;)
+> 
 
-On Friday, 2 August 2024 10:34:07 EDT Heiko St=C3=BCbner wrote:
-> Hi Detlev,
->=20
-> Am Freitag, 2. August 2024, 16:12:49 CEST schrieb Detlev Casanova:
-> > From: Elaine Zhang <zhangqing@rock-chips.com>
-> >=20
-> > Add the dt-bindings header for the rk3576, that gets shared between
-> > the clock controller and the clock references in the dts.
-> >=20
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> >=20
-> >  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 1149 +++++++++++++++++
-> >  1 file changed, 1149 insertions(+)
-> >  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
-> >=20
-> > diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h
-> > b/include/dt-bindings/clock/rockchip,rk3576-cru.h new file mode 100644
-> > index 0000000000000..19d25f082dc57
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
-> > @@ -0,0 +1,1149 @@
-> >=20
-> > +#define CLK_NR_CLKS			(ACLK_KLAD + 1)
->=20
-> this needs to go please. Take a look at how Sebastian got rid of needed
-> that max-constant for rk3588.
+And my nolibc email folder will show this thread as the latest
+forever :)
 
-Oh indeed, that looks better, I'll port it to using the same functions as i=
-n=20
-rk3588.
-
-I'll also separate clocks and resets as done in rk3588 and improve the list=
-ing=20
-of those resets as in rst-rk3588.c
-
-> [...]
->=20
-> > +#define SRST_H_VEPU1			1267
-> > +#define SRST_A_VEPU1			1268
-> > +#define SRST_VEPU1_CORE			1269
-> > +
-> > +/********Name=3DPHPPHYSOFTRST_CON00,Offset=3D0x8A00********/
-> > +#define SRST_P_PHPPHY_CRU		131073
-> > +#define SRST_P_APB2ASB_SLV_CHIP_TOP	131075
-> > +#define SRST_P_PCIE2_COMBOPHY0		131077
-> > +#define SRST_P_PCIE2_COMBOPHY0_GRF	131078
-> > +#define SRST_P_PCIE2_COMBOPHY1		131079
-> > +#define SRST_P_PCIE2_COMBOPHY1_GRF	131080
->=20
-> this seems to lump together different components and with that creates
-> these gaps. I.e. I really don't think the phpphy in these registers is pa=
-rt
-> of the core CRU.
->=20
-> That huge memory length of 0x5c000 in your dt-binding is also a good
-> indicator that this needs to have more separation and not span multiple
-> devices.
-
-It is not really clear if those are different devices, but they can possibl=
-y be=20
-seen as different instances of the same device. I'll just remove those extr=
-a=20
-resets for now and add them with the correct device when support is=20
-implemented.
-
-> > +/********Name=3DPHPPHYSOFTRST_CON01,Offset=3D0x8A04********/
-> > +#define SRST_PCIE0_PIPE_PHY		131093
-> > +#define SRST_PCIE1_PIPE_PHY		131096
-> > +
-> > +/********Name=3DSECURENSSOFTRST_CON00,Offset=3D0x10A00********/
-> > +#define SRST_H_CRYPTO_NS		262147
-> > +#define SRST_H_TRNG_NS			262148
-> > +#define SRST_P_OTPC_NS			262152
-> > +#define SRST_OTPC_NS			262153
-> > +
-> > +/********Name=3DPMU1SOFTRST_CON00,Offset=3D0x20A00********/
-> > +#define SRST_P_HDPTX_GRF		524288
->=20
-> same here, that is also most likely not part of the CRU but a different
-> block. Other socs already implement separate clock controllers for
-> different parts, so please take a look there.
-
-Let's add those resets when the device they are linked to is actually=20
-supported then.
-
-> Thanks
-> Heiko
-
-Regards,
-Detlev.
-
-
-
+thanks,
+-- Shuah
 
 
