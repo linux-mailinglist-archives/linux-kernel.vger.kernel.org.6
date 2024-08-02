@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-273068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C76CC94643B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2A5946440
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33943B213C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:09:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2F002836E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C036A039;
-	Fri,  2 Aug 2024 20:08:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D6C54657;
+	Fri,  2 Aug 2024 20:14:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cGKErI4P"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mATlp4Jt"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FA956446
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BC94D8AE
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722629338; cv=none; b=TtqCjbEQ/RjGQqv89cssBM5T0yhU5m6gRb8h4+9OdCGEdsgRDhhxvqibrNw0/yqg5Hwa4Yt3gkZ4N1eArGzNxHU/6tWNAiwMvTIPz4AxMrJ3Kaj2dBDbOcWaZGhqNbIUXYruH4nycAcoYBv1Nv1WsqTTDcJPDSu9MGko3lkU2O4=
+	t=1722629674; cv=none; b=QHtCKl0MbXj5FszjnOIkvA5s2KuCyxYj03TLAIxE4Nhl8NPm7HnfSADdyrwlLCSJK48ljPjKl+mrJcXFDSsIV2UzWd6Xyk5bYBXkqj2L7DZhuABTl0FfOy1W6pHHH2eOgc7KCVKEzDN3uAj6hinCbj17oR+TlNbOISiP9F8Ub0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722629338; c=relaxed/simple;
-	bh=Cywag1Xm4zEbwJ7Y+yW686Ysaezmz/REuGc0BkN1Bp0=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=twt9jOg1C12Ux/G5oLLXfN/ZKYgKL1Ptf0Te6wiqT2b1UnHLdztWzw+Pcu9NPFx6VPmxNGKeJPeSX71s1o5sAVUhA+xOAXhAwK7d8JyW31ggFcLVw+JJPp/Vfros4bkOqOJcDxKVgZbKhKRSpzqLFf3HPUjIPU+nzXbUtSt5Z3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cGKErI4P; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1722629674; c=relaxed/simple;
+	bh=xe5PnUuA6XU4wC83rP+yXvrEX+ZHetMhcLHOc+nWmBw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ikPJujBtL78DXW4KFa5LiAKlZakiMwtoql6FKq6whJC4G/Q4xBNLGJBrjVdGzOhkLRYv02EmS4wu8Z16GQfEHhUOfQcfUMyi7jB2MI9+HD0LkQfrQ0Ar5ulsLxVPeCqE0CXsU6kFILn9YD8BCQli77TYSQ/GzpLsuVYW4XfSBfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mATlp4Jt; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-66b3b4415c7so182131567b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:08:56 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fd774c3b8eso34594265ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:14:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722629335; x=1723234135; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722629672; x=1723234472; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Xn+PTZfbOoeM3uzTrVDj1sQQ44aVrywqdE7G4cLUAMk=;
-        b=cGKErI4PZGz2dfrdiQjrYh85j9pQPNqyFNBQ34QSUjowYIFWJ9ljt5npM1V34E5chY
-         n963iqJmctuppEupX7J4ZYMgyvsFJsxFnAFUg9KvGBUnkIGunNJ6BLUcYdCOy5QpQOFn
-         VtuHWr7SYGQxLtVInTw23RYk0WdlYMGTU5T9/fFiSfWhnQhW4sApt2qTVHFpoGPyL1my
-         CJAQwohGmSs4MkMSIWkc3BTx4GwQ2zbAL/5oC2cCQKMktglMUV7v51J2QAXoTTaK/S8e
-         g4MrN9Jdh1wcEfqpjGA9n5m1wE46m3LymYSr6gJdxQbkpMp1DozOQ+movWj5zbzC3FYR
-         rzPQ==
+        bh=WQ+fEs3LsntUlJZqxcHJm6QlCpJ7OHbayZdrEYcxOd0=;
+        b=mATlp4JtpwPe93Ysth8NLRyYWv9aLg9tLpld9gWet4SQ9zHXR67E1lZjIAKLXfHxIu
+         KxVNenPJ6FSKIc5slGjqV1KmF7HZaPmlRltcy9dQ/h2lE93YO0vtjWqX2CqMDjAHY0hb
+         MO2JbjE3ddVndQkQrStIhSLQMhQkbaxbCMC0eZBWRzpZOPGI7K+xviNXEbnYnkuDIQ2A
+         aS/VDpNo/LoseY5HvMvjeTen5EU4srPSrywucyxdgMNCSzs84H9kvGrIUZc1kECUTL05
+         vdSGGNYFfjoSZZGa0xkvXVwCqcFikbmJLUw2z8YYixVedyp3631QXK2UlCRMWtZE64/P
+         L48w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722629335; x=1723234135;
+        d=1e100.net; s=20230601; t=1722629672; x=1723234472;
         h=cc:to:from:subject:message-id:mime-version:date:reply-to
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xn+PTZfbOoeM3uzTrVDj1sQQ44aVrywqdE7G4cLUAMk=;
-        b=HPWRGp8TqczbnKhes+D0prOF/bF3WVCAV7EDFc75tJUVhZ+I4mN/JRZZy54GpHyL9g
-         3eQdcKtAD2m4i4fbuMiNoyCdXOnTJGJaYj/QFhdUjzwoZGF6+tdEgCSqZCeNEhIdx7Bw
-         2YYZsQHpMKWg1yByIQsD29FYfXMjmblhYZOZptpSHLhGxY4mjElmXiJ4RWrt+zYMCFNZ
-         CDAIT/Gl/48UtlNQ0x6PPnXlPvs9dKlqxrsTtTnu40i5eUGedZGnxUvzewOBfsMlDkkm
-         XaCzKT+p1va6JEISdOMunCwM2YHFUb4EfgCoBr6o1lkRhNmm6BW3QO4QNhAnNEn+8MlF
-         Z1mA==
-X-Forwarded-Encrypted: i=1; AJvYcCUleyT5MWIcVzd88P+ZpBLT/6GH5Ol90VJL7vaVUrtNmV1ef+IqtvxeQfZXP5ChcwK06FIW+69g0Qk9I2eAjUr5YNGb9xl+11CMHXTE
-X-Gm-Message-State: AOJu0YwkjGsSaanWwZDwTaO9dYUG/4Ch+iHi/ZL5jLbXPW4AB5+sl6iN
-	9XtPoj+5xgqUm5kHdjDgQUskEyy8g6VGjxZ2FC80NOyMH0ofAT/7J/IgoPMIfIYAAlCB+m6bdS/
-	Kgg==
-X-Google-Smtp-Source: AGHT+IGMYoWQegn8k2fjIVDFS+exelJ37OpbAan3ymKOza63KM7bJzE44b4pboHgwFDVyLsxNlhCPbJNByc=
+        bh=WQ+fEs3LsntUlJZqxcHJm6QlCpJ7OHbayZdrEYcxOd0=;
+        b=UzL+x911W0tlAuUiw0UKWoBrn5sBzIFyAxbW5Yl2/3HrKCaC20BdxQOLlhvshJeXmD
+         xfDzxrurF3hD1IjzzmHnMJOgtWLMPNUo0HiWRK/Pv6bkBuwKMMPbS8+9OkUUwVTUb008
+         dK/ZXEAZd3CbEhSi7Uas4cNL9S7VDLR3av+/zJFM1wyDInbR7/vV9wg4/lVtRwW/CONg
+         +zLs4KMszR6wa87AIS6uF3OzRvXhPCWDLqcC/XPmk1UayE5Z6i7ZWpoaMHfhYwpyrynT
+         UlwzPj+N+KXv7p96VkK+YcQ/1b16DavVVOIgGowKaV4ahtnbt+o6cXmg2dBl7nOW1rFY
+         wRvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXwdaaYqr/Z+Cu6oTxm3FitC+XDuFVaR08UCo110W+1oFBx4UqQTrt1TFqJYKy4uXdvAQNGYNIHf35vpdonHJoYL0kh4Ffm0G2AITyp
+X-Gm-Message-State: AOJu0YzZxlWpB1Z9jhcOvPlAPPUCo55upR+EaZyJM9oSzkmJ4e5D7TB3
+	DQ+S0a6+ac4oL5Sk7JK/WQ5pVhEjMB/p/rSTR/DYnav0+qCYKW/54jVPU2doPhWb0FB4x4YxRa2
+	P6g==
+X-Google-Smtp-Source: AGHT+IHDcF0qP1uJC6IVnhoZQo/YQGDSYJtI4Xt2dbbYqJZ/1Z4WIL3eIZE7tO+KB7/Cx1q3ay0AoCbiBbQ=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6902:1892:b0:e0b:ab63:b9c7 with SMTP id
- 3f1490d57ef6-e0bde401516mr8177276.7.1722629335671; Fri, 02 Aug 2024 13:08:55
- -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:903:110e:b0:1fb:526a:5d60 with SMTP id
+ d9443c01a7336-1ff57b85debmr1624915ad.4.1722629671812; Fri, 02 Aug 2024
+ 13:14:31 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 13:08:53 -0700
+Date: Fri,  2 Aug 2024 13:14:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,118 +71,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802200853.336512-1-seanjc@google.com>
-Subject: [PATCH] KVM: selftests: Remove unused kvm_memcmp_hva_gva()
+Message-ID: <20240802201429.338412-1-seanjc@google.com>
+Subject: [PATCH] KVM: selftests: Always unlink memory regions when deleting
+ (VM free)
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	Sean Christopherson <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Remove sefltests' kvm_memcmp_hva_gva(), which has literally never had a
-single user since it was introduced by commit 783e9e51266eb ("kvm:
-selftests: add API testing infrastructure").
+Unlink memory regions when freeing a VM, even though it's not strictly
+necessary since all tracking structures are freed soon after.  The time
+spent deleting entries is negligible, and not unlinking entries is
+confusing, e.g. it's easy to overlook that the tree structures are
+freed by the caller.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- .../testing/selftests/kvm/include/kvm_util.h  |  2 -
- tools/testing/selftests/kvm/lib/kvm_util.c    | 70 -------------------
- 2 files changed, 72 deletions(-)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/include/kvm_util.h b/tools/testing/selftests/kvm/include/kvm_util.h
-index 63c2aaae51f3..acd2db809e83 100644
---- a/tools/testing/selftests/kvm/include/kvm_util.h
-+++ b/tools/testing/selftests/kvm/include/kvm_util.h
-@@ -428,8 +428,6 @@ const char *vm_guest_mode_string(uint32_t i);
- void kvm_vm_free(struct kvm_vm *vmp);
- void kvm_vm_restart(struct kvm_vm *vmp);
- void kvm_vm_release(struct kvm_vm *vmp);
--int kvm_memcmp_hva_gva(void *hva, struct kvm_vm *vm, const vm_vaddr_t gva,
--		       size_t len);
- void kvm_vm_elf_load(struct kvm_vm *vm, const char *filename);
- int kvm_memfd_alloc(size_t size, bool hugepages);
- 
 diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 56b170b725b3..f7b7185dff10 100644
+index 56b170b725b3..75f2d737c49f 100644
 --- a/tools/testing/selftests/kvm/lib/kvm_util.c
 +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -794,76 +794,6 @@ int kvm_memfd_alloc(size_t size, bool hugepages)
- 	return fd;
+@@ -712,16 +712,13 @@ void kvm_vm_release(struct kvm_vm *vmp)
  }
  
--/*
-- * Memory Compare, host virtual to guest virtual
-- *
-- * Input Args:
-- *   hva - Starting host virtual address
-- *   vm - Virtual Machine
-- *   gva - Starting guest virtual address
-- *   len - number of bytes to compare
-- *
-- * Output Args: None
-- *
-- * Input/Output Args: None
-- *
-- * Return:
-- *   Returns 0 if the bytes starting at hva for a length of len
-- *   are equal the guest virtual bytes starting at gva.  Returns
-- *   a value < 0, if bytes at hva are less than those at gva.
-- *   Otherwise a value > 0 is returned.
-- *
-- * Compares the bytes starting at the host virtual address hva, for
-- * a length of len, to the guest bytes starting at the guest virtual
-- * address given by gva.
-- */
--int kvm_memcmp_hva_gva(void *hva, struct kvm_vm *vm, vm_vaddr_t gva, size_t len)
--{
--	size_t amt;
--
--	/*
--	 * Compare a batch of bytes until either a match is found
--	 * or all the bytes have been compared.
--	 */
--	for (uintptr_t offset = 0; offset < len; offset += amt) {
--		uintptr_t ptr1 = (uintptr_t)hva + offset;
--
--		/*
--		 * Determine host address for guest virtual address
--		 * at offset.
--		 */
--		uintptr_t ptr2 = (uintptr_t)addr_gva2hva(vm, gva + offset);
--
--		/*
--		 * Determine amount to compare on this pass.
--		 * Don't allow the comparsion to cross a page boundary.
--		 */
--		amt = len - offset;
--		if ((ptr1 >> vm->page_shift) != ((ptr1 + amt) >> vm->page_shift))
--			amt = vm->page_size - (ptr1 % vm->page_size);
--		if ((ptr2 >> vm->page_shift) != ((ptr2 + amt) >> vm->page_shift))
--			amt = vm->page_size - (ptr2 % vm->page_size);
--
--		assert((ptr1 >> vm->page_shift) == ((ptr1 + amt - 1) >> vm->page_shift));
--		assert((ptr2 >> vm->page_shift) == ((ptr2 + amt - 1) >> vm->page_shift));
--
--		/*
--		 * Perform the comparison.  If there is a difference
--		 * return that result to the caller, otherwise need
--		 * to continue on looking for a mismatch.
--		 */
--		int ret = memcmp((void *)ptr1, (void *)ptr2, amt);
--		if (ret != 0)
--			return ret;
--	}
--
--	/*
--	 * No mismatch found.  Let the caller know the two memory
--	 * areas are equal.
--	 */
--	return 0;
--}
--
- static void vm_userspace_mem_region_gpa_insert(struct rb_root *gpa_tree,
- 					       struct userspace_mem_region *region)
+ static void __vm_mem_region_delete(struct kvm_vm *vm,
+-				   struct userspace_mem_region *region,
+-				   bool unlink)
++				   struct userspace_mem_region *region)
  {
+ 	int ret;
+ 
+-	if (unlink) {
+-		rb_erase(&region->gpa_node, &vm->regions.gpa_tree);
+-		rb_erase(&region->hva_node, &vm->regions.hva_tree);
+-		hash_del(&region->slot_node);
+-	}
++	rb_erase(&region->gpa_node, &vm->regions.gpa_tree);
++	rb_erase(&region->hva_node, &vm->regions.hva_tree);
++	hash_del(&region->slot_node);
+ 
+ 	region->region.memory_size = 0;
+ 	vm_ioctl(vm, KVM_SET_USER_MEMORY_REGION2, &region->region);
+@@ -762,7 +759,7 @@ void kvm_vm_free(struct kvm_vm *vmp)
+ 
+ 	/* Free userspace_mem_regions. */
+ 	hash_for_each_safe(vmp->regions.slot_hash, ctr, node, region, slot_node)
+-		__vm_mem_region_delete(vmp, region, false);
++		__vm_mem_region_delete(vmp, region);
+ 
+ 	/* Free sparsebit arrays. */
+ 	sparsebit_free(&vmp->vpages_valid);
+@@ -1270,7 +1267,7 @@ void vm_mem_region_move(struct kvm_vm *vm, uint32_t slot, uint64_t new_gpa)
+  */
+ void vm_mem_region_delete(struct kvm_vm *vm, uint32_t slot)
+ {
+-	__vm_mem_region_delete(vm, memslot2region(vm, slot), true);
++	__vm_mem_region_delete(vm, memslot2region(vm, slot));
+ }
+ 
+ void vm_guest_mem_fallocate(struct kvm_vm *vm, uint64_t base, uint64_t size,
 
 base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
 -- 
