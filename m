@@ -1,211 +1,419 @@
-Return-Path: <linux-kernel+bounces-272260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1D94945961
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:59:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B68F94596C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:01:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8A91C22174
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25DDD286305
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4081C0DD7;
-	Fri,  2 Aug 2024 07:59:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9F11C0DEC;
+	Fri,  2 Aug 2024 08:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gWXV2I/y"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03281BF327
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97FFF1EB4B6;
+	Fri,  2 Aug 2024 08:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722585570; cv=none; b=l2s90ZG76RZgcQUnbyOMnWBV7+O+HLL7uFWYedenjoh0/qnPLT7rUVZh2n/avmmro9pzho2Mhtp7c+08lExLyCEqR0Ao6SZ1B1nslFXuu3aeKElz5ve5bFizNB/qd8UJGMoVOotC55DVjYx/jBNchOjkfUDQ6PN2ashnM3f+pj8=
+	t=1722585706; cv=none; b=vAKQ1SNSE6cgdmDtDiI+6KfMF4sRptKi+aZV3QzozDUh9eTWSgOSulW0o6Rr0qRlVxXbeBzTW5t8/2P4qOo+7Z2GR9a7bdlhWmqVIPT8c35Pprm0lNKoapS7pWcLCOHVaajuMzN9bYufY/V2Q3hBINT0CJt4deYMyprXHB20rWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722585570; c=relaxed/simple;
-	bh=WtqK1jAXs9qJxNRu902C3FmS8gPcRTmW3YXjIhCxUtA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i90T9Hd8Ii2gDttgKdB1p4hu3Wqb1rcxA0VPkq5DLJYJ67z8DQVbz2w9/YIIznKjMI5awG6aSKkxTTtM4rt7RScaC6frqZDCMpYUJzYBFb7VvfI8OpDV99+ZaH9Ei6Ow6CECbUVSYrrKCsy8nggqmuGcgRZzv8OMlQ30EYaGKK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39862b50109so113800035ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:59:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722585568; x=1723190368;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s12r9QREMFveHlbn3rdYzt1ORQUyCoWXBKdX/lCYyXU=;
-        b=W4V30HBr/BPQ++qW5pOekSbeicZQy+7e7S75df5HcvX7IsJgBXtM6MdilclxfYxTYh
-         T0YsWjlQPqvO2ir5XvvkoO4bPX8XwMcCbf8zJvhvwsA9Fu93Zb4e7H1w1hZ6R5ErGaFJ
-         Ns6unMic2WaBDmMqdEtCibV1b28ti3ttSdlmmXH+2mjIkP6eJY8s9Q/ae44dWmQoQVUi
-         CrnEsFRC2oMQvy3v6UZqVO1JXS4H0GnVwhKjHx4JIJli26SWaCcp2rul7n7imxxF+kYS
-         c1TMZj55Gj0x/k9bj8vWSIn9K0YxePU72OYIrVks1e2cxMQY6eEiwizn4n3otqQo+jqY
-         qpHg==
-X-Forwarded-Encrypted: i=1; AJvYcCWl7fI2rcCnMRWp/LCRrmBb3s9MFOi29dmcB/U2Q5PVzYps9ZL5IuEwiVvTwxDg+VKte5gFhs5Nh5vQbhAAU1KptFbxJ5knM3u8wy31
-X-Gm-Message-State: AOJu0YywydB+FcZ72a0Fg6mJ+bKmEofw5L6BMlkF5Te7sXTkKhxWLZd/
-	Xv/q7mp1BWmcOLa2swH8pHBicc8B76589VpTaUrSH9f/bcyAH/jZxeR7ZsPTcqkLThrUSTXIB+z
-	vU/QNxyLhjielnPsXd0asgN+KUJ0K49fEgL5cUB0+kdhA8qKHemgWWXE=
-X-Google-Smtp-Source: AGHT+IHfG1QcfB/ZTH/HhK2IAZHCFsZLHpjHBvcMBXaQhaH1OEBEVsG7w8dxFuIF2vFIZU4/8/tCcZ8Ywc2n2fII0qAXs5vOMqNQ
+	s=arc-20240116; t=1722585706; c=relaxed/simple;
+	bh=R500Cn5B8qtFCg35mthwSk7Fv1djQKxROPouoJ/R/bc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqFYHYtB+JGqX+B5vOqqN88D/95cZOBGtr5Q/yXZM65R/vQ6aw62ejVa+rUtxWks2xaw7gI6BWJhp/Hx5vqS7K0v8Wfr15puMk+GuLngzgdwFFZQJQy8Re1+Uk/RodFNQzDh9fkH+2JA2FczAY7f0Vva4e9LKvVk2iL8hgg7oz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gWXV2I/y; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4727SK1e030737;
+	Fri, 2 Aug 2024 08:01:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=Vrs80r1ZXuOkvjGKmKjbuFQ1sam
+	LTpqvcC+UJ6sdk24=; b=gWXV2I/yqJnGmYoq0cglPtgk2fgqbqeDt01mGE7D75y
+	nJqfQyJuNj/FulH5O0lkFfkzJKwjnAgyr1AVQ950cc/P6/SuxUVOlfEt/oBNBjdi
+	yZ1q/FY7tDL7oiSxlYhUmYwZL5LTiOmmbTe81Y/lDTR4kdifLOpBjIrLHjZmLgcK
+	xq1m/2LZpAu87LUpYWwxp0aEBy/r5CMQMNTCg6jF5ioebyR8dzPnj+T7PBmiHFy7
+	QqkM07MFe/7jMGYRTDICGadKc0hUOjdcNVdHJT03b05m8xb1S908azcPGDrQZ9nF
+	QPSqtop5Y1WiVnjLpsiPIsEWJoczAFcIC/7GZ08Q00g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ru3gr2dg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 08:01:23 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4727wLGe018240;
+	Fri, 2 Aug 2024 08:01:22 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40ru3gr2da-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 08:01:22 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47272lh4018867;
+	Fri, 2 Aug 2024 08:01:21 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nc7q66qe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 08:01:20 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47281GeT30868024
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 08:01:19 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E579C2004F;
+	Fri,  2 Aug 2024 08:01:16 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B384520040;
+	Fri,  2 Aug 2024 08:01:14 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.217])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 08:01:14 +0000 (GMT)
+Date: Fri, 2 Aug 2024 13:31:12 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 11/20] ext4: get rid of ppath in ext4_ext_insert_extent()
+Message-ID: <ZqySSHBweO18qJ4R@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-12-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a83:b0:375:a55e:f5fc with SMTP id
- e9e14a558f8ab-39b1fb72b46mr1674775ab.1.1722585567971; Fri, 02 Aug 2024
- 00:59:27 -0700 (PDT)
-Date: Fri, 02 Aug 2024 00:59:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dfd631061eaeb4bc@google.com>
-Subject: [syzbot] [btrfs?] WARNING: bad unlock balance in btrfs_direct_write
-From: syzbot <syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, fdmanana@suse.com, hreitz@redhat.com, 
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-12-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: RFZhTUECWED67WOdkR8j780ORr5ioZXc
+X-Proofpoint-GUID: Buh0y4TWqBS5JXMVLs3sjbodCxgyzdga
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_04,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=598
+ priorityscore=1501 clxscore=1015 impostorscore=0 spamscore=0 bulkscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020053
 
-Hello,
+On Wed, Jul 10, 2024 at 12:06:45PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_ext_insert_extent(), the following is done
+> here:
+> 
+>  * Free the extents path when an error is encountered.
+>  * Its caller needs to update ppath if it uses ppath.
+>  * Free path when npath is used, free npath when it is not used.
+>  * The got_allocated_blocks label in ext4_ext_map_blocks() does not
+>    update err now, so err is updated to 0 if the err returned by
+>    ext4_ext_search_right() is greater than 0 and is about to enter
+>    got_allocated_blocks.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-syzbot found the following issue on:
+Looks good, feel free to add:
 
-HEAD commit:    e4fc196f5ba3 Merge tag 'for-6.11-rc1-tag' of git://git.ker..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=126942d3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2258b49cd9b339fa
-dashboard link: https://syzkaller.appspot.com/bug?extid=7dbbb74af6291b5a5a8b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14889175980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d261f9980000
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ac353d93e559/disk-e4fc196f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7c2d4dacbc40/vmlinux-e4fc196f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/427fd3f8ee36/bzImage-e4fc196f.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/9d865517e0c9/mount_0.gz
-
-The issue was bisected to:
-
-commit 939b656bc8ab203fdbde26ccac22bcb7f0985be5
-Author: Filipe Manana <fdmanana@suse.com>
-Date:   Fri Jul 26 10:12:52 2024 +0000
-
-    btrfs: fix corruption after buffer fault in during direct IO append write
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16f8316d980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=15f8316d980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f8316d980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com
-Fixes: 939b656bc8ab ("btrfs: fix corruption after buffer fault in during direct IO append write")
-
-=====================================
-WARNING: bad unlock balance detected!
-6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0 Not tainted
--------------------------------------
-syz-executor334/5215 is trying to release lock (&sb->s_type->i_mutex_key) at:
-[<ffffffff83d47c3f>] btrfs_direct_write+0x91f/0xb40 fs/btrfs/direct-io.c:920
-but there are no more locks to release!
-
-other info that might help us debug this:
-1 lock held by syz-executor334/5215:
- #0: ffff888025b4c420 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:2876 [inline]
- #0: ffff888025b4c420 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x227/0xc90 fs/read_write.c:586
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 5215 Comm: syz-executor334 Not tainted 6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
- print_unlock_imbalance_bug+0x256/0x2c0 kernel/locking/lockdep.c:5199
- __lock_release kernel/locking/lockdep.c:5436 [inline]
- lock_release+0x5cb/0xa30 kernel/locking/lockdep.c:5780
- up_write+0x79/0x590 kernel/locking/rwsem.c:1631
- btrfs_direct_write+0x91f/0xb40 fs/btrfs/direct-io.c:920
- btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5b6c418169
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb1dc3c98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0073746e6576652e RCX: 00007f5b6c418169
-RDX: 0000000000182000 RSI: 0000000020000000 RDI: 0000000000000005
-RBP: 652e79726f6d656d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdb1dc3ce0
-R13: 00007ffdb1dc3d20 R14: 0000000001000000 R15: 0000000000000003
- </TASK>
-------------[ cut here ]------------
-DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff888075c915c8, owner = 0x0, curr 0xffff888025265a00, list empty
-WARNING: CPU: 0 PID: 5215 at kernel/locking/rwsem.c:1370 __up_write kernel/locking/rwsem.c:1369 [inline]
-WARNING: CPU: 0 PID: 5215 at kernel/locking/rwsem.c:1370 up_write+0x502/0x590 kernel/locking/rwsem.c:1632
-Modules linked in:
-CPU: 0 UID: 0 PID: 5215 Comm: syz-executor334 Not tainted 6.11.0-rc1-syzkaller-00062-ge4fc196f5ba3 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-RIP: 0010:__up_write kernel/locking/rwsem.c:1369 [inline]
-RIP: 0010:up_write+0x502/0x590 kernel/locking/rwsem.c:1632
-Code: c7 c7 a0 c8 ea 8b 48 c7 c6 20 cb ea 8b 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 53 e8 d3 9c e6 ff 48 83 c4 08 90 <0f> 0b 90 90 e9 6a fd ff ff 48 c7 c1 00 a9 f6 8f 80 e1 07 80 c1 03
-RSP: 0018:ffffc90003507920 EFLAGS: 00010292
-RAX: 889b6823d8081400 RBX: ffffffff8beac980 RCX: ffff888025265a00
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc900035079f0 R08: ffffffff81559202 R09: fffffbfff1cb9f80
-R10: dffffc0000000000 R11: fffffbfff1cb9f80 R12: 0000000000000000
-R13: ffff888075c915c8 R14: 1ffff920006a0f2c R15: dffffc0000000000
-FS:  0000555586938380(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffe3488bd28 CR3: 000000002503c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btrfs_direct_write+0x91f/0xb40 fs/btrfs/direct-io.c:920
- btrfs_do_write_iter+0x2a1/0x760 fs/btrfs/file.c:1505
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0xa72/0xc90 fs/read_write.c:590
- ksys_write+0x1a0/0x2c0 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5b6c418169
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 21 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb1dc3c98 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0073746e6576652e RCX: 00007f5b6c418169
-RDX: 0000000000182000 RSI: 0000000020000000 RDI: 0000000000000005
-RBP: 652e79726f6d656d R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffdb1dc3ce0
-R13: 00007ffdb1dc3d20 R14: 0000000001000000 R15: 0000000000000003
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Regards,
+ojaswin
+> ---
+>  fs/ext4/ext4.h        |  7 ++--
+>  fs/ext4/extents.c     | 88 ++++++++++++++++++++++++-------------------
+>  fs/ext4/fast_commit.c |  8 ++--
+>  fs/ext4/migrate.c     |  5 ++-
+>  4 files changed, 61 insertions(+), 47 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index cbe8d6062c52..53b4c1f454e6 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3710,9 +3710,10 @@ extern int ext4_map_blocks(handle_t *handle, struct inode *inode,
+>  extern int ext4_ext_calc_credits_for_single_extent(struct inode *inode,
+>  						   int num,
+>  						   struct ext4_ext_path *path);
+> -extern int ext4_ext_insert_extent(handle_t *, struct inode *,
+> -				  struct ext4_ext_path **,
+> -				  struct ext4_extent *, int);
+> +extern struct ext4_ext_path *ext4_ext_insert_extent(
+> +				handle_t *handle, struct inode *inode,
+> +				struct ext4_ext_path *path,
+> +				struct ext4_extent *newext, int gb_flags);
+>  extern struct ext4_ext_path *ext4_find_extent(struct inode *, ext4_lblk_t,
+>  					      struct ext4_ext_path *,
+>  					      int flags);
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 0d6ce9e74b01..fc75390d591a 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -1974,16 +1974,15 @@ static unsigned int ext4_ext_check_overlap(struct ext4_sb_info *sbi,
+>   * inserts requested extent as new one into the tree,
+>   * creating new leaf in the no-space case.
+>   */
+> -int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+> -				struct ext4_ext_path **ppath,
+> -				struct ext4_extent *newext, int gb_flags)
+> +struct ext4_ext_path *
+> +ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+> +		       struct ext4_ext_path *path,
+> +		       struct ext4_extent *newext, int gb_flags)
+>  {
+> -	struct ext4_ext_path *path = *ppath;
+>  	struct ext4_extent_header *eh;
+>  	struct ext4_extent *ex, *fex;
+>  	struct ext4_extent *nearex; /* nearest extent */
+> -	struct ext4_ext_path *npath = NULL;
+> -	int depth, len, err;
+> +	int depth, len, err = 0;
+>  	ext4_lblk_t next;
+>  	int mb_flags = 0, unwritten;
+>  
+> @@ -1991,14 +1990,16 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  		mb_flags |= EXT4_MB_DELALLOC_RESERVED;
+>  	if (unlikely(ext4_ext_get_actual_len(newext) == 0)) {
+>  		EXT4_ERROR_INODE(inode, "ext4_ext_get_actual_len(newext) == 0");
+> -		return -EFSCORRUPTED;
+> +		err = -EFSCORRUPTED;
+> +		goto errout;
+>  	}
+>  	depth = ext_depth(inode);
+>  	ex = path[depth].p_ext;
+>  	eh = path[depth].p_hdr;
+>  	if (unlikely(path[depth].p_hdr == NULL)) {
+>  		EXT4_ERROR_INODE(inode, "path[%d].p_hdr == NULL", depth);
+> -		return -EFSCORRUPTED;
+> +		err = -EFSCORRUPTED;
+> +		goto errout;
+>  	}
+>  
+>  	/* try to insert block into found extent and return */
+> @@ -2036,7 +2037,7 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  			err = ext4_ext_get_access(handle, inode,
+>  						  path + depth);
+>  			if (err)
+> -				return err;
+> +				goto errout;
+>  			unwritten = ext4_ext_is_unwritten(ex);
+>  			ex->ee_len = cpu_to_le16(ext4_ext_get_actual_len(ex)
+>  					+ ext4_ext_get_actual_len(newext));
+> @@ -2061,7 +2062,7 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  			err = ext4_ext_get_access(handle, inode,
+>  						  path + depth);
+>  			if (err)
+> -				return err;
+> +				goto errout;
+>  
+>  			unwritten = ext4_ext_is_unwritten(ex);
+>  			ex->ee_block = newext->ee_block;
+> @@ -2086,21 +2087,26 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  	if (le32_to_cpu(newext->ee_block) > le32_to_cpu(fex->ee_block))
+>  		next = ext4_ext_next_leaf_block(path);
+>  	if (next != EXT_MAX_BLOCKS) {
+> +		struct ext4_ext_path *npath;
+> +
+>  		ext_debug(inode, "next leaf block - %u\n", next);
+> -		BUG_ON(npath != NULL);
+>  		npath = ext4_find_extent(inode, next, NULL, gb_flags);
+> -		if (IS_ERR(npath))
+> -			return PTR_ERR(npath);
+> +		if (IS_ERR(npath)) {
+> +			err = PTR_ERR(npath);
+> +			goto errout;
+> +		}
+>  		BUG_ON(npath->p_depth != path->p_depth);
+>  		eh = npath[depth].p_hdr;
+>  		if (le16_to_cpu(eh->eh_entries) < le16_to_cpu(eh->eh_max)) {
+>  			ext_debug(inode, "next leaf isn't full(%d)\n",
+>  				  le16_to_cpu(eh->eh_entries));
+> +			ext4_free_ext_path(path);
+>  			path = npath;
+>  			goto has_space;
+>  		}
+>  		ext_debug(inode, "next leaf has no free space(%d,%d)\n",
+>  			  le16_to_cpu(eh->eh_entries), le16_to_cpu(eh->eh_max));
+> +		ext4_free_ext_path(npath);
+>  	}
+>  
+>  	/*
+> @@ -2111,12 +2117,8 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  		mb_flags |= EXT4_MB_USE_RESERVED;
+>  	path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
+>  					path, newext);
+> -	if (IS_ERR(path)) {
+> -		*ppath = NULL;
+> -		err = PTR_ERR(path);
+> -		goto cleanup;
+> -	}
+> -	*ppath = path;
+> +	if (IS_ERR(path))
+> +		return path;
+>  	depth = ext_depth(inode);
+>  	eh = path[depth].p_hdr;
+>  
+> @@ -2125,7 +2127,7 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  
+>  	err = ext4_ext_get_access(handle, inode, path + depth);
+>  	if (err)
+> -		goto cleanup;
+> +		goto errout;
+>  
+>  	if (!nearex) {
+>  		/* there is no extent in this leaf, create first one */
+> @@ -2183,17 +2185,20 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>  	if (!(gb_flags & EXT4_GET_BLOCKS_PRE_IO))
+>  		ext4_ext_try_to_merge(handle, inode, path, nearex);
+>  
+> -
+>  	/* time to correct all indexes above */
+>  	err = ext4_ext_correct_indexes(handle, inode, path);
+>  	if (err)
+> -		goto cleanup;
+> +		goto errout;
+>  
+>  	err = ext4_ext_dirty(handle, inode, path + path->p_depth);
+> +	if (err)
+> +		goto errout;
+>  
+> -cleanup:
+> -	ext4_free_ext_path(npath);
+> -	return err;
+> +	return path;
+> +
+> +errout:
+> +	ext4_free_ext_path(path);
+> +	return ERR_PTR(err);
+>  }
+>  
+>  static int ext4_fill_es_cache_info(struct inode *inode,
+> @@ -3248,24 +3253,29 @@ static int ext4_split_extent_at(handle_t *handle,
+>  	if (split_flag & EXT4_EXT_MARK_UNWRIT2)
+>  		ext4_ext_mark_unwritten(ex2);
+>  
+> -	err = ext4_ext_insert_extent(handle, inode, ppath, &newex, flags);
+> -	if (err != -ENOSPC && err != -EDQUOT && err != -ENOMEM)
+> +	path = ext4_ext_insert_extent(handle, inode, path, &newex, flags);
+> +	if (!IS_ERR(path)) {
+> +		*ppath = path;
+>  		goto out;
+> +	}
+> +	*ppath = NULL;
+> +	err = PTR_ERR(path);
+> +	if (err != -ENOSPC && err != -EDQUOT && err != -ENOMEM)
+> +		return err;
+>  
+>  	/*
+> -	 * Update path is required because previous ext4_ext_insert_extent()
+> -	 * may have freed or reallocated the path. Using EXT4_EX_NOFAIL
+> -	 * guarantees that ext4_find_extent() will not return -ENOMEM,
+> -	 * otherwise -ENOMEM will cause a retry in do_writepages(), and a
+> -	 * WARN_ON may be triggered in ext4_da_update_reserve_space() due to
+> -	 * an incorrect ee_len causing the i_reserved_data_blocks exception.
+> +	 * Get a new path to try to zeroout or fix the extent length.
+> +	 * Using EXT4_EX_NOFAIL guarantees that ext4_find_extent()
+> +	 * will not return -ENOMEM, otherwise -ENOMEM will cause a
+> +	 * retry in do_writepages(), and a WARN_ON may be triggered
+> +	 * in ext4_da_update_reserve_space() due to an incorrect
+> +	 * ee_len causing the i_reserved_data_blocks exception.
+>  	 */
+> -	path = ext4_find_extent(inode, ee_block, *ppath,
+> +	path = ext4_find_extent(inode, ee_block, NULL,
+>  				flags | EXT4_EX_NOFAIL);
+>  	if (IS_ERR(path)) {
+>  		EXT4_ERROR_INODE(inode, "Failed split extent on %u, err %ld",
+>  				 split, PTR_ERR(path));
+> -		*ppath = NULL;
+>  		return PTR_ERR(path);
+>  	}
+>  	depth = ext_depth(inode);
+> @@ -3324,7 +3334,7 @@ static int ext4_split_extent_at(handle_t *handle,
+>  	ext4_ext_dirty(handle, inode, path + path->p_depth);
+>  	return err;
+>  out:
+> -	ext4_ext_show_leaf(inode, *ppath);
+> +	ext4_ext_show_leaf(inode, path);
+>  	return err;
+>  }
+>  
+> @@ -4313,6 +4323,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  	    get_implied_cluster_alloc(inode->i_sb, map, &ex2, path)) {
+>  		ar.len = allocated = map->m_len;
+>  		newblock = map->m_pblk;
+> +		err = 0;
+>  		goto got_allocated_blocks;
+>  	}
+>  
+> @@ -4385,8 +4396,9 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  		map->m_flags |= EXT4_MAP_UNWRITTEN;
+>  	}
+>  
+> -	err = ext4_ext_insert_extent(handle, inode, &path, &newex, flags);
+> -	if (err) {
+> +	path = ext4_ext_insert_extent(handle, inode, path, &newex, flags);
+> +	if (IS_ERR(path)) {
+> +		err = PTR_ERR(path);
+>  		if (allocated_clusters) {
+>  			int fb_flags = 0;
+>  
+> diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
+> index 87c009e0c59a..1dee40477727 100644
+> --- a/fs/ext4/fast_commit.c
+> +++ b/fs/ext4/fast_commit.c
+> @@ -1777,12 +1777,12 @@ static int ext4_fc_replay_add_range(struct super_block *sb,
+>  			if (ext4_ext_is_unwritten(ex))
+>  				ext4_ext_mark_unwritten(&newex);
+>  			down_write(&EXT4_I(inode)->i_data_sem);
+> -			ret = ext4_ext_insert_extent(
+> -				NULL, inode, &path, &newex, 0);
+> +			path = ext4_ext_insert_extent(NULL, inode,
+> +						      path, &newex, 0);
+>  			up_write((&EXT4_I(inode)->i_data_sem));
+> -			ext4_free_ext_path(path);
+> -			if (ret)
+> +			if (IS_ERR(path))
+>  				goto out;
+> +			ext4_free_ext_path(path);
+>  			goto next;
+>  		}
+>  
+> diff --git a/fs/ext4/migrate.c b/fs/ext4/migrate.c
+> index d98ac2af8199..0f68b8a14560 100644
+> --- a/fs/ext4/migrate.c
+> +++ b/fs/ext4/migrate.c
+> @@ -37,7 +37,6 @@ static int finish_range(handle_t *handle, struct inode *inode,
+>  	path = ext4_find_extent(inode, lb->first_block, NULL, 0);
+>  	if (IS_ERR(path)) {
+>  		retval = PTR_ERR(path);
+> -		path = NULL;
+>  		goto err_out;
+>  	}
+>  
+> @@ -53,7 +52,9 @@ static int finish_range(handle_t *handle, struct inode *inode,
+>  	retval = ext4_datasem_ensure_credits(handle, inode, needed, needed, 0);
+>  	if (retval < 0)
+>  		goto err_out;
+> -	retval = ext4_ext_insert_extent(handle, inode, &path, &newext, 0);
+> +	path = ext4_ext_insert_extent(handle, inode, path, &newext, 0);
+> +	if (IS_ERR(path))
+> +		retval = PTR_ERR(path);
+>  err_out:
+>  	up_write((&EXT4_I(inode)->i_data_sem));
+>  	ext4_free_ext_path(path);
+> -- 
+> 2.39.2
+> 
 
