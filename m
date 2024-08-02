@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-273017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A18094636B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:56:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9953394636E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25C1D1F231F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:56:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09561C21430
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B83C165EF6;
-	Fri,  2 Aug 2024 18:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B493D166F07;
+	Fri,  2 Aug 2024 18:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CP5EEHLs"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pVtV5P5j"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AEF1547F8
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFD7165EF1
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722624921; cv=none; b=FTs4BErH3Rc7UuqZkc7AuLJI2Q874TOM4XqeN50s+4Xv2+Vqlnxr/9TRVlknJwnhTP/7IrMwortPcbDLLUp1zeEJ4sNVPb4FWJiSjUlme2e9zVf7nOBOdY+eestQGKMiKaOs88oqbpDXhdJbuViayTHFtEtBKQ5RknijY0WO+z0=
+	t=1722624923; cv=none; b=aCpY2UJDGk0V0tGl97rafh24P1Oj3HZxYTaKMv0VC6jDSaC7PnzglxGga5p1lqc7DXqJb/cV33C1xt0G/2NR9ACmkf6zwIVmauO8nApmH7qtTvSlkQhxjrbMAq3GR/UvyRoK/82BSMjKEz2a14zaC7Qql8HiYWedUZWuzqmqdsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722624921; c=relaxed/simple;
-	bh=QyNQ0Oqb7FdCfzwjFj1xkToJr6T5PE0/uvPgcJWZ4C0=;
+	s=arc-20240116; t=1722624923; c=relaxed/simple;
+	bh=0EUjKhOb/qAcXw2TJAojZ2e/rlWYWY/bDSh0AscjqPg=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hHdNp7C1aqVbZY4BxQOLuxqchcW5LIuAMNBDdBXg2lyYyWWsA8Ug2/XjnQ3GwAoH47pK+OdZb7PSAtRuEEQ3M8ose1ITQBGtfgd6lzDRzTg8xN6IgAt8p3m/h7NTuS+CYXWCzTMyilV9BqpHkQ0p1T9f+MUGfFQGSvaPB3IU4IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CP5EEHLs; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=VY8DOhvQhe1r3qZSJx76rsLKZgYhncShOwapE8ZI3VP54yn8YJgckeu+XNLMcDmBQUr+NuQ+uN0ejNb402LkQGHLaggZOrALE6hwREIc2/cP0Go+QzwRltnksMasin1FlDGqto8CxUNGAoVtInya8nxOAzVBiWiI5d7syanccxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pVtV5P5j; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a12bb066aaso5867429a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:55:20 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-721d20a0807so8538113a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722624920; x=1723229720; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722624922; x=1723229722; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=JttS58Cfh+ARtvi0QJi1xDgFsf8r3SUnJHwvWqtvGCM=;
-        b=CP5EEHLshI0P9XkxDv/jIfpj/AG/uSu01rJX27pRCbvDLNDpdINA385yevp+IyYmIo
-         uawy9WMwEjIlUObOGGSFbzrAP4Du9GybHpXgbmkQPwSv2EAciMGRo+lM6qk5LjFKukNl
-         UNs0kzJCRC+r32vyenC7Yilv/04i/IdMCNM0S2V288rtEjbmMbF4KyTeJeorRx1QtbT1
-         ApimKBXc3PiEqJg3JtwT4OJNQwCq9cCw0rMEE/xsd+Ji9woZUK81c1F6rRa89LuUOYij
-         XsLVdaaLfTvfeUV7suUor3uJL4diqGuWUzb8IwgEayUjhKs8Zo0gXlm8y7u8GN5oiHY1
-         TsKA==
+        bh=ZeKhc7uJU0ly0EH4yS5FJhheQ+g3afko+j38ACvpc04=;
+        b=pVtV5P5jIJJgACKsA+mr+YDhlaoJ8S1Fznd63CUIG/tpNJCdt7BYFEhJQP4Ut9cnHR
+         Cy6H++53/E7TYGKpFX83RRy+/aaGSJNB+kIhOwKq4A5Amz+IxdggSKvTQgEEuVaQNUIs
+         GSmoU+0yTFw5atM6EtiT+9zE4uwM648DGNwLGBmfA7b6avNt3wPe9b4XKyV6PNJLQdVS
+         jgQ65tG+BlsgVwbqWXNs4bpER4p0kKBG/h7FOy3l7hId4WCuRlwlRZ7W/TS+5WyGXNNi
+         JVcsmqJ7/HWkzrx9gQ1BuF6hUcobZbAC9YaAuTWDid+qbVt/ugSbq6eeLcRsGGFfRG8v
+         Ik9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722624920; x=1723229720;
+        d=1e100.net; s=20230601; t=1722624922; x=1723229722;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=JttS58Cfh+ARtvi0QJi1xDgFsf8r3SUnJHwvWqtvGCM=;
-        b=EezLhvsoZQ76S1Ezj38kLEem+EGcMipzOFVFHkbfTI/X/v9Dah46sm84+0vq0bCT6M
-         4HDAULq+UAP8BshO5WwXDecl+3qU4Rx1os42SjqnzFBFXPnCbhaJVCIZfAIXhLwWm0wj
-         Y9DHdxg1+UfF9gzP/89P1cjw9LJtr5qWmPaH9kUG3j+EG/HinZDjTA977SQFQ6nTcLEH
-         QioXVCeQccEsRBuULy7CIMeNYNozXkh1328mqE5f9eMt9FvTlUkfd6h5AOnUcF0detu5
-         dfd/AmGpLmwkBB9PxFRaxO6pkCPlGE4ubQKbE+kzuEuYYPIwllPC/EA+Bo5XWcUeT7+z
-         akIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQnSSnclopJXzZvklhi+7AmpW0OSf0ISrEjuJn6s1/AlwZXiba+OduPrdwpVUBBcXOMgeP/ROqFQt/Ede2Q1HxG/XKE4RlrQBzzxqx
-X-Gm-Message-State: AOJu0Yys0p2ItmWgBIUOo2V0cB0BuSIaubUZic+yjv0PyU4ZZFONlMnx
-	kxWAnnt0KVlo9IFw6IxxnZYzKBO/uODW2PVJpT7WcB+THkFxMmhHp/gWMu2EfeJjpxlp9HcU28n
-	8FA==
-X-Google-Smtp-Source: AGHT+IGo6Vxup1v+/CZGAhM43Qpz2OsOQJshZPvUx0Dh2/2uLVkIkkMAp/Ex2vkPA4R7A6V1ps33MfM7cx8=
+        bh=ZeKhc7uJU0ly0EH4yS5FJhheQ+g3afko+j38ACvpc04=;
+        b=QQvOfUb/AhHumfYPMx3B3+Gm9Vr3zWpDFTwRTcUi2mas6Bq6LXBgTOurRT5lsFz/TE
+         6d1kBmcSCoXhncTX3lj65vqw1wrMScebthb3nV6qFMrnuFDl23fXtBoK3fCpwlTUMBac
+         kuIhusAd5vramqVgj0Pkh3GbwhhBQR7Zq1aYwQwpZp+vxZjmhRAazy2JnrQVPsO3q+MK
+         FBh5WHLlALPXgB2lK0uMxVZlJezYKdY64IcHBwSJ2otxlgsL2Bz5ryNGaEvp9esuUgej
+         GHlMBc4FIncHX8YnxKkn21iB5gbhzm9PxJLQp1ek+ULcB+kYL5WSpZCBpGsvsAF5T5T1
+         XleQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWM/rHOCUCBFls2mZQq5/kHALTqpsi2nkLk30D47lCcNA0SPZEaKf7JvalbelGwkrcCXGUHYHp2xdwYRB4TOWokucT8IEmWcdiulOz6
+X-Gm-Message-State: AOJu0YwJ9HYgzlDFChq8FyjXoNCJpKVHmMOaLoo2sTezG75JzDhItEfK
+	VUa9otJc6xL+XhF278VQcfJzDegUM4FWcaOLL+aObgGc5Gi2QVEFTUpvljjKXygTvwUlCZhU4tX
+	z0g==
+X-Google-Smtp-Source: AGHT+IGbXJaDAT9nvHVWKusCP/1z3KHkzJApomQZ+AuPhnH1DVFIUTEo4MrCd9FFNveRJe0aD3eYnnY268E=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a63:6f01:0:b0:785:e3e:38db with SMTP id
- 41be03b00d2f7-7b749040f0amr8475a12.8.1722624919563; Fri, 02 Aug 2024 11:55:19
- -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a17:902:dac4:b0:1fd:d6d8:134e with SMTP id
+ d9443c01a7336-1ff573a358bmr2214785ad.8.1722624921634; Fri, 02 Aug 2024
+ 11:55:21 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 11:55:04 -0700
+Date: Fri,  2 Aug 2024 11:55:05 -0700
 In-Reply-To: <20240802185511.305849-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,54 +75,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240802185511.305849-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802185511.305849-3-seanjc@google.com>
-Subject: [PATCH 2/9] KVM: x86: Disallow changing MSR_PLATFORM_INFO after vCPU
- has run
+Message-ID: <20240802185511.305849-4-seanjc@google.com>
+Subject: [PATCH 3/9] KVM: x86: Quirk initialization of feature MSRs to KVM's
+ max configuration
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Tag MSR_PLATFORM_INFO as a feature MSR (because it is), i.e. disallow it
-from being modified after the vCPU has run.
-
-To make KVM's selftest compliant, simply delete the userspace MSR write
-that restores KVM's original value at the end of the test.  Verifying that
-userspace can write back what it originally read is uninteresting in this
-particular case, because KVM doesn't enforce _any_ bits in the MSR, i.e.
-userspace should be able to write any arbitrary value.
+Add a quirk to control KVM's misguided initialization of select feature
+MSRs to KVM's max configuration, as enabling features by default violates
+KVM's approach of letting userspace own the vCPU model, and is actively
+problematic for MSRs that are conditionally supported, as the vCPU will
+end up with an MSR value that userspace can't restore.  E.g. if the vCPU
+is configured with PDCM=0, userspace will save and attempt to restore a
+non-zero PERF_CAPABILITIES, thanks to KVM's meddling.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c                                      | 1 +
- tools/testing/selftests/kvm/x86_64/platform_info_test.c | 2 --
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ Documentation/virt/kvm/api.rst  | 22 ++++++++++++++++++++++
+ arch/x86/include/asm/kvm_host.h |  3 ++-
+ arch/x86/include/uapi/asm/kvm.h |  1 +
+ arch/x86/kvm/svm/svm.c          |  4 +++-
+ arch/x86/kvm/vmx/vmx.c          |  9 ++++++---
+ arch/x86/kvm/x86.c              |  8 +++++---
+ 6 files changed, 39 insertions(+), 8 deletions(-)
 
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 8e5dad80b337..d85480848e4e 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -8073,6 +8073,28 @@ KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS By default, KVM emulates MONITOR/MWAIT (if
+                                     guest CPUID on writes to MISC_ENABLE if
+                                     KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT is
+                                     disabled.
++
++KVM_X86_QUIRK_STUFF_FEATURE_MSRS    By default, at vCPU creation, KVM sets the
++                                    vCPU's MSR_IA32_PERF_CAPABILITIES (0x345),
++                                    MSR_IA32_ARCH_CAPABILITIES (0x10a),
++                                    MSR_PLATFORM_INFO (0xce), and all VMX MSRs
++                                    (0x480..0x492) to the maximal capabilities
++                                    supported by KVM.  KVM also sets
++                                    MSR_IA32_UCODE_REV (0x8b) to an arbitrary
++                                    value (which is different for Intel vs.
++                                    AMD).  Lastly, when guest CPUID is set (by
++                                    userspace), KVM modifies select VMX MSR
++                                    fields to force consistency between guest
++                                    CPUID and L2's effective ISA.  When this
++                                    quirk is disabled, KVM zeroes the vCPU's MSR
++                                    values (with two exceptions, see below),
++                                    i.e. treats the feature MSRs like CPUID
++                                    leaves and gives userspace full control of
++                                    the vCPU model definition.  This quirk does
++                                    not affect VMX MSRs CR0/CR4_FIXED1 (0x487
++                                    and 0x489), as KVM does now allow them to
++                                    be set by userspace (KVM sets them based on
++                                    guest CPUID, for safety purposes).
+ =================================== ============================================
+ 
+ 7.32 KVM_CAP_MAX_VCPU_ID
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index b9d784abafdf..2fee988a6a44 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -2342,7 +2342,8 @@ int memslot_rmap_alloc(struct kvm_memory_slot *slot, unsigned long npages);
+ 	 KVM_X86_QUIRK_OUT_7E_INC_RIP |		\
+ 	 KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT |	\
+ 	 KVM_X86_QUIRK_FIX_HYPERCALL_INSN |	\
+-	 KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS)
++	 KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS |	\
++	 KVM_X86_QUIRK_STUFF_FEATURE_MSRS)
+ 
+ /*
+  * KVM previously used a u32 field in kvm_run to indicate the hypercall was
+diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
+index bf57a824f722..f768902a73d4 100644
+--- a/arch/x86/include/uapi/asm/kvm.h
++++ b/arch/x86/include/uapi/asm/kvm.h
+@@ -439,6 +439,7 @@ struct kvm_sync_regs {
+ #define KVM_X86_QUIRK_MISC_ENABLE_NO_MWAIT	(1 << 4)
+ #define KVM_X86_QUIRK_FIX_HYPERCALL_INSN	(1 << 5)
+ #define KVM_X86_QUIRK_MWAIT_NEVER_UD_FAULTS	(1 << 6)
++#define KVM_X86_QUIRK_STUFF_FEATURE_MSRS	(1 << 7)
+ 
+ #define KVM_STATE_NESTED_FORMAT_VMX	0
+ #define KVM_STATE_NESTED_FORMAT_SVM	1
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index f6980e0d2941..e21c3a622764 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -1390,7 +1390,9 @@ static void __svm_vcpu_reset(struct kvm_vcpu *vcpu)
+ 	svm_vcpu_init_msrpm(vcpu, svm->msrpm);
+ 
+ 	svm_init_osvw(vcpu);
+-	vcpu->arch.microcode_version = 0x01000065;
++
++	if (kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_STUFF_FEATURE_MSRS))
++		vcpu->arch.microcode_version = 0x01000065;
+ 	svm->tsc_ratio_msr = kvm_caps.default_tsc_scaling_ratio;
+ 
+ 	svm->nmi_masked = false;
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index cf85f8d50ccb..c1d06f800b8e 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -4556,7 +4556,8 @@ vmx_adjust_secondary_exec_control(struct vcpu_vmx *vmx, u32 *exec_control,
+ 	 * Update the nested MSR settings so that a nested VMM can/can't set
+ 	 * controls for features that are/aren't exposed to the guest.
+ 	 */
+-	if (nested) {
++	if (nested &&
++	    kvm_check_has_quirk(vmx->vcpu.kvm, KVM_X86_QUIRK_STUFF_FEATURE_MSRS)) {
+ 		/*
+ 		 * All features that can be added or removed to VMX MSRs must
+ 		 * be supported in the first place for nested virtualization.
+@@ -4846,7 +4847,8 @@ static void __vmx_vcpu_reset(struct kvm_vcpu *vcpu)
+ 
+ 	init_vmcs(vmx);
+ 
+-	if (nested)
++	if (nested &&
++	    kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_STUFF_FEATURE_MSRS))
+ 		memcpy(&vmx->nested.msrs, &vmcs_config.nested, sizeof(vmx->nested.msrs));
+ 
+ 	vcpu_setup_sgx_lepubkeyhash(vcpu);
+@@ -4859,7 +4861,8 @@ static void __vmx_vcpu_reset(struct kvm_vcpu *vcpu)
+ 	vmx->nested.hv_evmcs_vmptr = EVMPTR_INVALID;
+ #endif
+ 
+-	vcpu->arch.microcode_version = 0x100000000ULL;
++	if (kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_STUFF_FEATURE_MSRS))
++		vcpu->arch.microcode_version = 0x100000000ULL;
+ 	vmx->msr_ia32_feature_control_valid_bits = FEAT_CTL_LOCKED;
+ 
+ 	/*
 diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 9d667c5ab1a9..a9566c035857 100644
+index a9566c035857..9b52d8f3304f 100644
 --- a/arch/x86/kvm/x86.c
 +++ b/arch/x86/kvm/x86.c
-@@ -451,6 +451,7 @@ static const u32 msr_based_features_all_except_vmx[] = {
- 	MSR_IA32_UCODE_REV,
- 	MSR_IA32_ARCH_CAPABILITIES,
- 	MSR_IA32_PERF_CAPABILITIES,
-+	MSR_PLATFORM_INFO,
- };
+@@ -12260,9 +12260,11 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
  
- static u32 msr_based_features[ARRAY_SIZE(msr_based_features_all_except_vmx) +
-diff --git a/tools/testing/selftests/kvm/x86_64/platform_info_test.c b/tools/testing/selftests/kvm/x86_64/platform_info_test.c
-index eda88080c186..9cbf283ebc55 100644
---- a/tools/testing/selftests/kvm/x86_64/platform_info_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/platform_info_test.c
-@@ -72,8 +72,6 @@ int main(int argc, char *argv[])
- 	}
+ 	kvm_async_pf_hash_reset(vcpu);
  
- done:
--	vcpu_set_msr(vcpu, MSR_PLATFORM_INFO, msr_platform_info);
--
- 	kvm_vm_free(vm);
+-	vcpu->arch.arch_capabilities = kvm_get_arch_capabilities();
+-	vcpu->arch.msr_platform_info = MSR_PLATFORM_INFO_CPUID_FAULT;
+-	vcpu->arch.perf_capabilities = kvm_caps.supported_perf_cap;
++	if (kvm_check_has_quirk(vcpu->kvm, KVM_X86_QUIRK_STUFF_FEATURE_MSRS)) {
++		vcpu->arch.arch_capabilities = kvm_get_arch_capabilities();
++		vcpu->arch.msr_platform_info = MSR_PLATFORM_INFO_CPUID_FAULT;
++		vcpu->arch.perf_capabilities = kvm_caps.supported_perf_cap;
++	}
+ 	kvm_pmu_init(vcpu);
  
- 	return 0;
+ 	vcpu->arch.pending_external_vector = -1;
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
 
