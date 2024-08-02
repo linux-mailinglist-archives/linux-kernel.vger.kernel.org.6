@@ -1,88 +1,83 @@
-Return-Path: <linux-kernel+bounces-272764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7609460B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:43:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DDAE9460BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:44:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 066EDB247F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:43:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7BC1F21E33
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDA01537DF;
-	Fri,  2 Aug 2024 15:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB07B1537AA;
+	Fri,  2 Aug 2024 15:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYwOpl5k"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iGFYel2g"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33C53136347
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6B6175D35;
+	Fri,  2 Aug 2024 15:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722613397; cv=none; b=mXp8x0lhqgRqzZOq5bjguTYW958W+omy4AXqc972Jf7mVMkvGhN9Ag+7J3xgNT0SZtHAQG+nlPWpCXGTn0DESQBEJM6aOOiMB7JTrOqlUExgmGZ0jO5mw2V4YcQqjWdD/ZCH63JIe1ml22va9IRE8TErwip5Y+eiD7WMLSWea38=
+	t=1722613466; cv=none; b=ppj+TyNLN0ILPFfnOmjdpe6heJnrhfvPofNHtzx2VbK+ay/rozL+IiFmDrD6+264TImdPdQOWa693i++6JzhSx/WjqmLE3YueVjcnm7vwNDb/DYksSXUl0C9JVdEROhuUQvzXxYOyDfSGefLgGg1+I2W1VpO/WGM5QlW0ZB2NIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722613397; c=relaxed/simple;
-	bh=EqR/rpz7oq9VBrXSHcKnBUykK+vFbaFRYtpsnhSlSw4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GW6mdQsiQxGYjPThnPE148h6bMTu3dgztS38rEWgCoNDWsUOC7HaeOfFMdWItQ+4b3Gi5A2hwcklPB6//RQqH1Ue5m1PxNabfaE5NW/Hi0kNkzEUhacQcL9aBRbb3OKfKDz+WYnmbLh4DxXPtJVxGtNm/+veD8gMONfxyU8aoRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYwOpl5k; arc=none smtp.client-ip=209.85.208.179
+	s=arc-20240116; t=1722613466; c=relaxed/simple;
+	bh=9Aq226PHuPDLT1dV8c4cdtIVxP/RHNsUdf/vBE1gFMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WYiwdCYlQ3T4F+8Yy3KCM5e5kayWBQ0FZudkLH7KGi7NRx7J/Iv2vGb4UDpsG5ONFx4Zq/BhIHupg0RG5IYGFKwkMxKLFna1RpbX+BuPDECnIN27ZBnipxMCRj7tW7ob8AwgaOpoX7U1nyQ1zA5wiATO2QZnTTpk77jceHE2Vi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iGFYel2g; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ef248ab2aeso119349611fa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 08:43:15 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so10693237a12.3;
+        Fri, 02 Aug 2024 08:44:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722613394; x=1723218194; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jFNIYIFjB2AmuXlLvStwmFyqpy3qX3Ss144m6qc6S24=;
-        b=gYwOpl5kvIlMaSMUv3DBJujH1p1na0D3GTBRqwoHQuCzncLk79pl0mbBSayj7vk082
-         hnmV/vroo2Oz33vSiHWBqqsPoV/qJHs221Exa9UitKDb445LSfa4GHvQrzxLu8pEprEX
-         udAGnd+sOAVs81F32Ul7Pj0gb9Bw+7hx0GL0g5+gI/42cUvpbMVTSozPAGlK5Ai5qkwP
-         LjBTO3kkYyE2Oc2lzbbHW9zzwOxAnHAtL/+vo9bziJnmUo9qP79LoEGlG0SXxDVertH7
-         4plQr+rlgWh2gFKd9fjzbD9vEEKq3JUTA1Y408NCt0QKWYFn8sird/DK8KfFEoWh7CAY
-         DV3A==
+        d=gmail.com; s=20230601; t=1722613463; x=1723218263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jzr+lFhinuShkNh1JmyY9cP3JCDAOZuAPnZMLB0AEP4=;
+        b=iGFYel2gO4BM4O6eflTbyTB2wD1VYhvMsGA9AkwjEWKLtU5wdLMHFnnQfhlgQJVsXT
+         gMOqDU8drGDYGhtdNXaIhd5FAnA4AkAXvKwZsjR3D6LzJyKajnMFSuEwUFhIzj38e9HG
+         0BP8Ol+S5Ec1jZ/S90+gJ7jm9xaQwU1VKMD0y6K8LaVJdHt03ANxZxyDNBwMWKl7ODzt
+         wyhSk1Ph3BYVpLfv5UdP/g+ChjW4RKgPNrYZvlCygRzeNSlPYqNWs2IkYta6KkIPv9MU
+         C17aIRZh3kgEVbypNkv3XQ0Rfz7KHn+wSIgKR0nI7Mc40c/IJ2WIHxDXkwiA2BD4rLKP
+         hz3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722613394; x=1723218194;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jFNIYIFjB2AmuXlLvStwmFyqpy3qX3Ss144m6qc6S24=;
-        b=VwDtqfdufx0h2YbQ6dWNha5ejeZooDHE4fxR5lgdAI5059zR1vgGMN6Qj1fJSHtcNc
-         P8pOWTLs5uxsx3qwj4WJrpy6epJToPm2J4+2vF66C1IWwHUkSH7OcUDatSA2pkzTSKDn
-         CMApF12A/fk4cGH0ogDkMcdaG1gOrNn6K6QoYZVUj/A5h2Rp9tLMHYwl03uI2+ZEQQ2o
-         FIUaEseFWE1OgI/5M+95nsrrmNXeUu45Z1CycGltZuYCkvfdxMxAbmJVn2I3xSMJ/41K
-         Wj4CuhQdaeHrhiar+KswpSuEkZmzdSPfs4ncf3xRAGKkUrxh8LhZtU8YQcBJDX4NqUcq
-         n0mg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRzYIDM4u1LIDuwFQp66FezYPG3eTeBpfqCd6N09WpS+xJV2kX1d+PWMYTQoL2ivLYdiCJ5l+gOhVXydB4wo38NCD/UDBlpz1sayai
-X-Gm-Message-State: AOJu0YyfLSyy9VthtKHozbAqsXWiNmosvofawaIQXC4RJzGMqh9YPjzw
-	vqZLXTh3aDj5fV8nMLhfbOBBiTDDj9l7nYixkpyqmQUMVB2flo6JkEYm
-X-Google-Smtp-Source: AGHT+IEoOp83pcnug4N7zz4X2qV6bxZ1iAtTPT44ohiy01gk4yP+9/2CUySCVksWSGpAEUg57OGFBg==
-X-Received: by 2002:a2e:964a:0:b0:2ef:2c86:4d49 with SMTP id 38308e7fff4ca-2f15aac460fmr33456361fa.22.1722613393804;
-        Fri, 02 Aug 2024 08:43:13 -0700 (PDT)
-Received: from p183.Dlink ([46.53.254.37])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83b723e6dsm1239492a12.65.2024.08.02.08.43.13
+        d=1e100.net; s=20230601; t=1722613463; x=1723218263;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jzr+lFhinuShkNh1JmyY9cP3JCDAOZuAPnZMLB0AEP4=;
+        b=ZeUemMWN3o91lyyU3SURzFg4vnzOMdupI1+9TYmOxg3Ja+1h2d6xR8ZeCgZDZa7S5Q
+         oIex1jAKW+MRySJeuhblUS2nG2v5CSYv8WZtyoqhjmzXklARBlko/5FH9mo97jynhw8i
+         szBaB6Rmi2T8TBunIO7qzxlqIxYFVoQwFQiM5BQjwnOTOc82JlRXZhrwcLz9kgD3elVf
+         nrnObY7nmv72LpNImPlepGXr60D5oLBgY0I4Rwp+XQRKfRj9WbEKMC630fsqgnp2gcz/
+         WICqC1Pe5t/5HpqTGWxFupHrs3oS9cEng6ZT2LYAtqIR7qpeUbFQBSIbJSWtIPD3wQwm
+         uN5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWPUbNEUopxJvRQI4ksSVkP+DXNg4t3mKoCehmruVpuf/nRKpyFwVE7qmzsp4eEZj3TmgIm+So1dpPtSRvbMTo2V3vYD1dkGs4qEVzRv/XmtCpjwcSXrhieS+rOmk5092scmQyHxPKEFwMTjZUYISoeUV3y3C3bnudO4u1rShWUEnvTbg==
+X-Gm-Message-State: AOJu0Ywn8Ygr8QbP9ezcG3uqekY2vtDa2dAMzPGm7ejb9kD7l+NbDxFu
+	wqO0PttLtVlBesrW1WF8i5V3fI7FCbnxQ/TtfwWsCt11wN64ECrtSWdpeA==
+X-Google-Smtp-Source: AGHT+IGbJnUK9kdfwx9LVt7kvg8p1OGZjtqGfF4pC85I1nP08gK0C9PIgsLYI118LDj4ttM1dBvJjQ==
+X-Received: by 2002:a17:906:f598:b0:a77:d52c:c42d with SMTP id a640c23a62f3a-a7dc4da6163mr260246766b.13.1722613462250;
+        Fri, 02 Aug 2024 08:44:22 -0700 (PDT)
+Received: from debian.fritz.box ([2a00:79c0:640:3a00:303:6c5b:4b07:6715])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3d14sm112577566b.22.2024.08.02.08.44.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 08:43:13 -0700 (PDT)
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: jgross@suse.com,
-	boris.ostrovsky@oracle.com,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com
-Cc: adobriyan@gmail.com,
-	linux-kernel@vger.kernel.org,
-	x86@kernel.org,
-	hpa@zytor.com
-Subject: [PATCH 3/3] xen, pvh: fix unbootable VMs by inlining memset() in xen_prepare_pvh()
-Date: Fri,  2 Aug 2024 18:42:53 +0300
-Message-ID: <20240802154253.482658-3-adobriyan@gmail.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240802154253.482658-1-adobriyan@gmail.com>
-References: <20240802154253.482658-1-adobriyan@gmail.com>
+        Fri, 02 Aug 2024 08:44:21 -0700 (PDT)
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: 
+Cc: Dimitri Fedrau <dima.fedrau@gmail.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-pwm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] pwm: add support for NXPs high-side switch MC33XS2410
+Date: Fri,  2 Aug 2024 17:44:06 +0200
+Message-Id: <20240802154408.135632-1-dima.fedrau@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,32 +86,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If this memset() is not inlined than PVH early boot code can call
-into KASAN-instrumented memset() which results in unbootable VMs.
+The MC33XS2410 is a four channel high-side switch. Featuring advanced
+monitoring and control function, the device is operational from 3.0 V to
+60 V. The device is controlled by SPI port for configuration.
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
- arch/x86/platform/pvh/enlighten.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Changes in V2:
+  - fix title in devicetree binding
+  - fix commit message in devicetree binding patch
+  - remove external clock from pwms and create clocks property
+  - switch to unevaluatedProperties: false
+  - add missing properties for complete example:
+    - pwm-names
+    - pwms
+    - interrupts
+    - clocks
 
-diff --git a/arch/x86/platform/pvh/enlighten.c b/arch/x86/platform/pvh/enlighten.c
-index 944e0290f2c0..2263885d16ba 100644
---- a/arch/x86/platform/pvh/enlighten.c
-+++ b/arch/x86/platform/pvh/enlighten.c
-@@ -130,7 +130,11 @@ void __init xen_prepare_pvh(void)
- 		BUG();
- 	}
- 
--	memset(&pvh_bootparams, 0, sizeof(pvh_bootparams));
-+	/*
-+	 * This must not compile to "call memset" because memset() may be
-+	 * instrumented.
-+	 */
-+	__builtin_memset(&pvh_bootparams, 0, sizeof(pvh_bootparams));
- 
- 	hypervisor_specific_init(xen_guest);
- 
+Changes in V3:
+  - Add description of the general behaviour of the device (limitations)
+  - Drop unused defines
+  - Add ranges comments for defines with parameters
+  - Drop MC33XS2410_PERIOD_MAX, MC33XS2410_PERIOD_MIN defines
+  - Drop mc33xs2410_period variable
+  - Round down when calculating period and duty cycle
+  - Use switch instead of loop when calculating frequency
+  - Removed ret variable in mc33xs2410_pwm_get_freq
+  - Handle all accesses in a single call to spi_sync_transfer
+  - Fix comments in function mc33xs2410_pwm_get_period
+  - Fix call pwm_set_relative_duty_cycle(state, ret, 255), instead
+    pwm_set_relative_duty_cycle(state, val[1] + 1, 256);
+  - Use devm_pwmchip_alloc
+  - Fix typo s/Transitition/Transition/
+  - Drop driver_data
+  - Removed patch for direct inputs from series
+  - Tested with PWM_DEBUG enabled, didn't before !
+
+Changes in V4:
+  - removed include of math.h, already included in math64.h
+  - removed include of mutex.h, no mutexes are used
+  - added include of bitfield.h(FIELD_GET, FIELD_PREP), fixes errors
+    discovered by kernel test robot
+  - cast parameters in DIV_ROUND_UP to u32, fixes errors discovered by
+    kernel test robot
+
+Changes in V5:
+  - Fix comment in mc33xs2410_pwm_get_freq, selecting steps instead of
+    period
+  - Add comment in mc33xs2410_pwm_get_relative_duty_cycle that duty_cycle
+    cannot overflow and and period is not zero, guaranteed by the caller
+  - Hardware emits a low level when disabled, disable if duty_cycle = 0 is
+    requested.
+  - Fix complaints when PWM_DEBUG enabled, round-down division in
+    mc33xs2410_pwm_apply and round-up in mc33xs2410_pwm_get_state.
+  - Add comment for disabling watchdog in probe
+
+Dimitri Fedrau (2):
+  dt-bindings: pwm: add support for MC33XS2410
+  pwm: add support for NXPs high-side switch MC33XS2410
+
+ .../bindings/pwm/nxp,mc33xs2410.yaml          | 118 +++++
+ drivers/pwm/Kconfig                           |  12 +
+ drivers/pwm/Makefile                          |   1 +
+ drivers/pwm/pwm-mc33xs2410.c                  | 419 ++++++++++++++++++
+ 4 files changed, 550 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pwm/nxp,mc33xs2410.yaml
+ create mode 100644 drivers/pwm/pwm-mc33xs2410.c
+
 -- 
-2.45.0
+2.39.2
 
 
