@@ -1,94 +1,175 @@
-Return-Path: <linux-kernel+bounces-272583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DF8945E4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:03:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 122AF945E51
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:04:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5861828552C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62BF5B21BD4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:04:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7F71E3CDC;
-	Fri,  2 Aug 2024 13:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A021E3CDC;
+	Fri,  2 Aug 2024 13:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZPF2CJ1e"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJkQJHK+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AF61BE87A;
-	Fri,  2 Aug 2024 13:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40CBF15ADAF;
+	Fri,  2 Aug 2024 13:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722603814; cv=none; b=oXHmjTt7f6mzO16P1Y6xXBitsrJFSFhjp29Cscu8S3dhlxGvYdXLJsXGpHjeMud0CWHWaHygMlMiVWbY5awMpxKBfkHJAxpBQLBZOkwuFhsjansFnwuNE1KAHLqWRdasM7eGJD6ptm2ZlUyn7w6bsMCL13jR9YpLzf39NnLJyXA=
+	t=1722603876; cv=none; b=R6tu41oYiv15ClksGpbvdq0S9BQrfg6tzxpFSqwrWWMFtlrzLZeFtJD7aQ9zC7Ej7y6WuSxIuRUKhVJ8UxMG4wl4SesiavKHfmE6X/w5ZmE65KgpK1tJ4LM38uILHImZPSIYZB7WEYZGgpvi1qwZcF2wwBGlU2cI3zf2Bpigi08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722603814; c=relaxed/simple;
-	bh=1sJEV4onMpCVNzcqhtUpkeyeGTA6x8K9PSLJHxhXT1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9n/Av8uKzWcZ9wQEHrYFyKl0ygnR9TEBn8wKj+1eXsVL+wdiJwZh6kTlgYh+D8fsFAcbLcs5Ex/zTp1XdU4QKGEXQZDJsZllVNTiL2HXaJjWViaqHTBg2aBDO7TOXQY7jkM+U11xhwWK8EyNA1LjwCKEz8NpiJyy62eOIWOzQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZPF2CJ1e; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=7RVA83cU8ESLcHxZ5wTxJamaEhxTh4YMiATBaCEo3x4=; b=ZPF2CJ1eeSYPYnq2geji0OKabR
-	/73LaSgEF+hK1YWCOJ6Y2poRmQ33o+K361ECAEDNo1fvzgdTg9v2QOGuO1a1Eu1s5nL+eud0MbLGW
-	8RcRJEG8DygewSKGVjPTW+KK0TlrXehnk98YOJcEi8RUiTk/QHV1RZnHOZEtdZ8epg8heDJ0i+Xnj
-	IP+sgrWDeD4OYQ+ciimeDYUXQyzvG3XNOw1FgnRk8KYCGS9qTu19uKrWy0GJIEf2wpmcvKVipESE5
-	I8JgWKbUxiwRkLMfl9End2b9+6gD8j5p+IdSUoH3c6CEIa418xr+gmO8AGp7JdMZRUWfyBhvxp+ai
-	8aPRAb+w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40470)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sZrwJ-0006lN-0N;
-	Fri, 02 Aug 2024 14:03:23 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sZrwN-00083M-Hk; Fri, 02 Aug 2024 14:03:27 +0100
-Date: Fri, 2 Aug 2024 14:03:27 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 6/6] net: phy: vitesse: repair vsc73xx autonegotiation
-Message-ID: <ZqzZH4QB5NhPYDF3@shell.armlinux.org.uk>
-References: <20240802080403.739509-1-paweldembicki@gmail.com>
- <20240802080403.739509-7-paweldembicki@gmail.com>
+	s=arc-20240116; t=1722603876; c=relaxed/simple;
+	bh=VflgIIbp+lhPEiXxccrUrj9diNoe+1N4TMkV1XN+3ls=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=H2sxMijIS38GMmHbr3kV60Fg3SJXMNTJvIJGHdHvTi09LBfZYKIQ12wzRrKN89SgF8bC9x/oIQW0r517v9PqvkClhWt3PrLeYWILufND5TUKLdT7hYTzZaPY+fcYSA8M0LNkwdFTf8ZxfpobP7IAfbG2PJT8UibuO/cFLjBF72M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJkQJHK+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA1DAC32782;
+	Fri,  2 Aug 2024 13:04:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722603875;
+	bh=VflgIIbp+lhPEiXxccrUrj9diNoe+1N4TMkV1XN+3ls=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oJkQJHK+ZFIkgeOSbbXvv/p9z1KbPzhIXSV/0DEyAc3P0WsohqkKGkxfN90DBOr2p
+	 sRxXJ2iyQhTNw7ArC92qhgCRTeHsBWbnu9d3zDB38SXvrj+ZOZEwYk3jbfSk9/Ymkm
+	 +yKiy3+J2D04QWOuQalVvFb+/HsaPO8VTY+doSc5u2SIG6AymD47ZegkgafOiXVVVC
+	 vOJHCImXh6At3jmdiEtY2gbYeFOrhoas0DuHvid1R+NO1OI1cwOYja2qY+bg7AscUX
+	 Uz0YxDMfAns637xTsOq+b0N7h1Vi3zD05laQHcN+47TOX2FFJ6A7zBEHc0IXUB4agM
+	 eLq4k1AZRRXiA==
+Date: Fri, 2 Aug 2024 22:04:27 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Song Liu <songliubraving@meta.com>
+Cc: "Leizhen (ThunderTown)" <thunder.leizhen@huaweicloud.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Song Liu <song@kernel.org>,
+ "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "linux-trace-kernel@vger.kernel.org"
+ <linux-trace-kernel@vger.kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
+ Jiri Kosina <jikos@kernel.org>, Miroslav Benes <mbenes@suse.cz>, Petr
+ Mladek <pmladek@suse.com>, Joe Lawrence <joe.lawrence@redhat.com>, Nathan
+ Chancellor <nathan@kernel.org>, "morbo@google.com" <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Luis Chamberlain
+ <mcgrof@kernel.org>, Leizhen <thunder.leizhen@huawei.com>,
+ "kees@kernel.org" <kees@kernel.org>, Kernel Team <kernel-team@meta.com>,
+ Matthew Maurer <mmaurer@google.com>, Sami Tolvanen
+ <samitolvanen@google.com>, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH 2/3] kallsyms: Add APIs to match symbol without
+ .llmv.<hash> suffix.
+Message-Id: <20240802220427.8404fa9081b9a740c4f9cb06@kernel.org>
+In-Reply-To: <FE4F231A-5D24-4337-AE00-9B251733EC53@fb.com>
+References: <20240730005433.3559731-1-song@kernel.org>
+	<20240730005433.3559731-3-song@kernel.org>
+	<20240730220304.558355ff215d0ee74b56a04b@kernel.org>
+	<5E9D7211-5902-47D3-9F4D-8DEFD8365B57@fb.com>
+	<9f6c6c81-c8d1-adaf-2570-7e40a10ee0b8@huaweicloud.com>
+	<FE4F231A-5D24-4337-AE00-9B251733EC53@fb.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802080403.739509-7-paweldembicki@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 02, 2024 at 10:04:03AM +0200, Pawel Dembicki wrote:
-> When the vsc73xx mdio bus work properly, the generic autonegotiation
-> configuration works well.
+Hi,
+
+Sorry for late reply.
+
+On Fri, 2 Aug 2024 03:45:42 +0000
+Song Liu <songliubraving@meta.com> wrote:
+
 > 
-> Vsc73xx have auto MDI-X disabled by default in forced mode. This commit
-> enables it.
+> 
+> > On Aug 1, 2024, at 6:18 PM, Leizhen (ThunderTown) <thunder.leizhen@huaweicloud.com> wrote:
+> > 
+> > On 2024/7/31 9:00, Song Liu wrote:
+> >> Hi Masami, 
+> >> 
+> >>> On Jul 30, 2024, at 6:03 AM, Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> >>> 
+> >>> On Mon, 29 Jul 2024 17:54:32 -0700
+> >>> Song Liu <song@kernel.org> wrote:
+> >>> 
+> >>>> With CONFIG_LTO_CLANG=y, the compiler may add suffix to function names
+> >>>> to avoid duplication. This causes confusion with users of kallsyms.
+> >>>> On one hand, users like livepatch are required to match the symbols
+> >>>> exactly. On the other hand, users like kprobe would like to match to
+> >>>> original function names.
+> >>>> 
+> >>>> Solve this by splitting kallsyms APIs. Specifically, existing APIs now
+> >>>> should match the symbols exactly. Add two APIs that matches the full
+> >>>> symbol, or only the part without .llvm.suffix. Specifically, the following
+> >>>> two APIs are added:
+> >>>> 
+> >>>> 1. kallsyms_lookup_name_or_prefix()
+> >>>> 2. kallsyms_on_each_match_symbol_or_prefix()
+> >>> 
+> >>> Since this API only removes the suffix, "match prefix" is a bit confusing.
+> >>> (this sounds like matching "foo" with "foo" and "foo_bar", but in reality,
+> >>> it only matches "foo" and "foo.llvm.*")
+> >>> What about the name below?
+> >>> 
+> >>> kallsyms_lookup_name_without_suffix()
+> >>> kallsyms_on_each_match_symbol_without_suffix()
+> >> 
+> >> I am open to name suggestions. I named it as xx or prefix to highlight
+> >> that these two APIs will try match full name first, and they only match
+> >> the symbol without suffix when there is no full name match. 
+> >> 
+> >> Maybe we can call them: 
+> >> - kallsyms_lookup_name_or_without_suffix()
+> >> - kallsyms_on_each_match_symbol_or_without_suffix()
 
-Why not implement proper MDI(-X) configuration support so that the user
-can configure it as desired?
+No, I think "_or_without_suffix" is a bit complicated. If we have
+
+0x1234 "foo.llvm.XXX"
+0x2356 "bar"
+
+and user calls
+
+  kallsyms_lookup_name_without_suffix("bar");
+
+This returns "bar"'s address(0x2356). Also,
+
+  kallsyms_lookup_name_without_suffix("foo");
+
+this will returns 0x1234. These commonly just ignore the suffix.
+The difference of kallsyms_lookup_name() is that point.
+
+> >> 
+> >> Again, I am open to any name selections here.
+> > 
+> > Only static functions have suffixes. In my opinion, explicitly marking static
+> > might be a little clearer.
+> > kallsyms_lookup_static_name()
+> > kallsyms_on_each_match_static_symbol()
+
+But this is not correctly check the symbol is static or not. If you
+check the symbol is really static, it is OK. (return NULL if the symbol
+is global.)
+
+Thank you,
+
+> 
+> While these names are shorter, I think they are more confusing. Not all
+> folks know that only static functions can have suffixes. 
+> 
+> Maybe we should not hide the "try match full name first first" in the
+> API, and let the users handle it. Then, we can safely call the new APIs
+> *_without_suffix(), as Masami suggested. 
+> 
+> If there is no objections, I will send v2 based on this direction. 
+> 
+> Thanks,
+> Song
+> 
+
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
