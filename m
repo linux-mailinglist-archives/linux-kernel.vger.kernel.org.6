@@ -1,97 +1,89 @@
-Return-Path: <linux-kernel+bounces-272505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05063945D46
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:33:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDB3945D43
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B516028302E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:32:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CDABB21675
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C931DE852;
-	Fri,  2 Aug 2024 11:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFFC1DF695;
+	Fri,  2 Aug 2024 11:30:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="yGEddpXC"
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VyW0sRxP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD2214B967
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5D71DF66F
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722598373; cv=none; b=b67EDDtlCXbsGraYaoHWNguo7sSsH4IIAU8KhPm+j9OR/kVADXHekLK+/X0Cczy9FFN6DQaSGmrtxthelPtt61SiyGX+QbsOHPg0w/K4mcD/mojQatmaL7J0jXDKQlzJ7cCyDmXRrp5JYYfnr9GoP/Sa9QbSJi3/l3tMxCZrdCg=
+	t=1722598210; cv=none; b=WFvfKR/PjbWPbQEtKeNVCDFL4TWXTebCs3Nzw2ScyGcpzhbQ+YuvCNd0ntl3Zoph5KMMBszBA3/uMA/ucQ9nCGcscNQpMqMmsyMTQR4vJ0GYbE69t3Ftj3z+B/XBSz+1NVa77RF8ghwKE7FcyQJ0Arxofs73t3B/I4W7Klum42w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722598373; c=relaxed/simple;
-	bh=BOdWC3n/nND9BLq5ifRqZItEfEmAAbhhfUAWd4XnD0U=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=aPOvfqnay4ejdJJBja5I5tVzg9SKIT8QJODQ7jqI7OdxC4Kb00+megJaYUlaCY4tiStsujPyGpEQ8IQnIv9eDr8MeZPAs6clHL+whqP843ipFR2p/QWEsGnoEjyv+vB9qqMff810lnHGUPkuIsgra/7o6VMk6jmmGo52f3FaAN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=yGEddpXC; arc=none smtp.client-ip=162.62.57.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1722598060; bh=BSJscLmZUjmwe2ZBzmCzPr7mslzRTWjGMA0va8va6j4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=yGEddpXCRfpVQM8UND4oIqAUO85oistthzwmRWCfLR0h3ueriU8kvhLPQiTBTaPZL
-	 yONRXWxTQ6Lzj+ViaoNa11PJ5IX/a6qobT8bC3z5TOOXV6D8jTLKFyVQMK3pdZP7GW
-	 YbRTxSAMcfkft9YQjYoJGoourBGFOqMdslB1vy+8=
-Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
-	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
-	id 6E620AD6; Fri, 02 Aug 2024 19:27:38 +0800
-X-QQ-mid: xmsmtpt1722598058tedo58p08
-Message-ID: <tencent_F0F725A60DFF92165D88DDBB9960CF878D07@qq.com>
-X-QQ-XMAILINFO: MOpJcPT3Yy24oUPJu9tRtN0Csz1JSgEEA5knYsHaWQbzWvbIIhwJpOn4afPuaj
-	 ++RfAHtQMqVLHAJkChuxjV35mpBwI6WVo5bBq1eqD/lt+2Z8vzQTMBj3xKUo+ZztEv4ZCcFtBD8R
-	 FLbnAmYZ4dS+tQTNm/NJEdrd1/f6/8SKfHczLcS0LLxuv+95Sezk7CDyOh4aFjskVuDV7X/y+XQu
-	 UJzuITC6mkJKVXucHIbnOaRhmNgow0KFLm5Mvp4uvcnqtaRIbEVtGn34USty6zhvR+023HGx4FsU
-	 Hks1ENJzhh2Q0Ebj1Xh3lsUMzd+QkPPhdyCDiqpMU0C8p8yHwbkmMw5MyL8NNomwmzRK8nu889Lp
-	 VQjoXC/vHnQeRxLAJzBT8k/MgIeISi11D/Q7sEBEUXxkHXk58t4I+aRgfX6JnPvL24Z1o2V4XuRK
-	 mMvwldCHy7ffEtbEVWf0Oas19AuMuFGtoZLksy4Bazva5o0xW8+hcwPl/YWBaTUt9NxnGupPm+Ev
-	 VAfe2ZfrChogajhliKEtQze6zKOKukAPV7ajc+QReEWh7dk3cL5RROO6tBMmR1fXYdKappjoMc8y
-	 6vO5sKuXdo7vtPm2YbeIsYb6S1XmwvngS0BakHYSloc2BMz6VS8TBon8ItpSdQrsooSB8UqpDmF0
-	 +RgQoKCYmr0yttfCmDbLPS/QQ8Soh7SYLABA2tNvXqIq2hzVGTMDIqMpQkB0EIytUuy20k6dmGcG
-	 0I0PF80T5vD2rhX1Je71LQcJ3rmfZeIgt0Y56rgKFS3o7klc8wpI2awgSCxygCFycaOuXCq3oevi
-	 ZMV8U0e4oIA7yMf3XI1sbuo23dsTcl2xIh9QAcSitXvEgjKwAeOoRq4/8NMzi+xGy3wISQEj28UD
-	 mtAGrcPMA+5gmkUV8E/fOeLcXwLzFMpeW2d9VpvGUgrOLLcE6XSjU=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] WARNING: bad unlock balance in btrfs_direct_write
-Date: Fri,  2 Aug 2024 19:27:38 +0800
-X-OQ-MSGID: <20240802112737.1103619-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000dfd631061eaeb4bc@google.com>
-References: <000000000000dfd631061eaeb4bc@google.com>
+	s=arc-20240116; t=1722598210; c=relaxed/simple;
+	bh=QsooQlMyoqgdxE/Wr4zS68WyUzTUBfhULabxOdNdLS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NjLsEGHt91qfQGUyp/BaFlg3rePla+ReWQOnt01U/AjH18gjBn9U7FpNWnuXjfrIqhrLXMOE2uVqo1ApbQfdMZWqmaIJzPol0Alue1wOtqKZJdzUfTmY6HtAPfryd5O+paswP3MEODkj+0U1cukSF9GgB6Z8lkWNSayL1wlgVBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VyW0sRxP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yCEzN1RSmv0If3JnoPB9uROyFaA8GRSimv/i1r/C9fw=; b=VyW0sRxPosmuiT5mJvN7ApHSWW
+	L8nDCSuWAhFUpsPqmhmyarLBA7oY381Bi7Q9azfFy6a6NJk5OiAZnTzi6a6+ntDDqyN+EHVtEXZTN
+	ZzLNluDHWc6ypqeh7my/FTShNQ71T/GTDwOvvmMZz+HbA7NDqEkxREXU6AtDjDGfXvDeQ0QPUkinn
+	3uLHw1QYTueyCSZjgpRgfjiTqrsNgtyP7IypV73eMoylGQusL+h0vFBTDOQ/5eO3FYiGpxXREQdxk
+	x/9n40p38JGVoE4I4KtGMSrdUWnc1ov8Fh7eaiKb1bMUX7CzMqh5yXUgdYZIHRc3wTwC4HZQ0dlyO
+	6/BCi9hw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sZqTq-00000000xgZ-2d55;
+	Fri, 02 Aug 2024 11:29:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6460630049D; Fri,  2 Aug 2024 13:29:53 +0200 (CEST)
+Date: Fri, 2 Aug 2024 13:29:53 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: mingo@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [RFC PATCH 24/24] sched/time: Introduce CLOCK_THREAD_DVFS_ID
+Message-ID: <20240802112953.GJ39708@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105031.053611186@infradead.org>
+ <ZqdKbcu-iyzmr85r@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZqdKbcu-iyzmr85r@jlelli-thinkpadt14gen4.remote.csb>
 
-btrfs_sync_file didn't use skip_ilock to split up_write and btrfs_inode_unlock
+On Mon, Jul 29, 2024 at 09:53:17AM +0200, Juri Lelli wrote:
+> Hi Peter,
+> 
+> On 27/07/24 12:27, Peter Zijlstra wrote:
+> > In order to measure thread time in a DVFS world, introduce
+> > CLOCK_THREAD_DVFS_ID -- a copy of CLOCK_THREAD_CPUTIME_ID that slows
+> > down with both DVFS scaling and CPU capacity.
+> > 
+> > The clock does *NOT* support setting timers.
+> > 
+> > Useful for both SCHED_DEADLINE and the newly introduced
+> > sched_attr::sched_runtime usage for SCHED_NORMAL.
+> 
+> Just so I'm sure I understand, this would be useful for estimating the
+> runtime needs of a (also DEADLINE) task when DVFS is enabled, right?
 
-#syz test: upstream e4fc196f5ba3
-
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 9f10a9f23fcc..9914419f3b7d 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1868,7 +1868,10 @@ int btrfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 
- out_release_extents:
- 	btrfs_release_log_ctx_extents(&ctx);
--	btrfs_inode_unlock(inode, BTRFS_ILOCK_MMAP);
-+	if (skip_ilock)
-+		up_write(&inode->i_mmap_lock);
-+	else
-+		btrfs_inode_unlock(inode, BTRFS_ILOCK_MMAP);
- 	goto out;
- }
- 
-
+Correct, DVFS or biggie-smalls CPUs with mixed capacities.
 
