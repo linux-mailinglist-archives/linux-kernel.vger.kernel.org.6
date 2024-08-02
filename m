@@ -1,49 +1,53 @@
-Return-Path: <linux-kernel+bounces-272593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81946945E78
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:15:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23462945E7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:16:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B8F7285041
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C96271F23039
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EC81E3CC3;
-	Fri,  2 Aug 2024 13:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2571E3CD9;
+	Fri,  2 Aug 2024 13:16:08 +0000 (UTC)
 Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF49E1E3CA2;
-	Fri,  2 Aug 2024 13:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B8481AA;
+	Fri,  2 Aug 2024 13:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722604523; cv=none; b=Ws6HUU7Qssf6NVYMLX9RguDSbl6COhSI/SU/GQdPYJT7Z+hP9oxKzaDIt+iY4XJ//PoFZGOR8B3d4kMMebp+Oq2VH4Zp0kcRTTdwaFGQ/4w6+k1P/2EBNAyxFLbP/gl6ccflN4s1eYYszFsLtM/f2UeKTZfpjg3ye2eqAgkDQkk=
+	t=1722604567; cv=none; b=DucwjaALVoUJEBPZxsynBnz/5uvJdLVSBbuqILaaQ1SPRKMLCbo3EWkeDe2H1g/fbbb1cUY3GLcWWk8i+bg1YsBnpMvpvh0sy0D2he2xjumL25b/+muTqiI0+rufGoh4c2GJn7oDyi+1EANszzaLXs7ALq4gzu/CCbHpeNvBuD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722604523; c=relaxed/simple;
-	bh=HP+VjASG1fRugKTbM/srnTXMHrOhoWREf3tT8/KbEi4=;
+	s=arc-20240116; t=1722604567; c=relaxed/simple;
+	bh=OoXB2hBVdgHyqMnbS/Mhw5m1HI6Aj9/k1LR9cgDwqiI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kaQtFzhCgRCwtD0+9cM56xzqsVEi7XAyTaqUDC84a+a7DxAv/GUV0EzUB12ZGwpbuUPSw3BdKqzRgHyB4uy5JptqG9ZpbPJj0wKO+CXklv8ZR8uhwIdRHxIO/e0vumaOuQK9Wg3ATBOOuf9BdHtidWWnD1WcEn8Fm+CvUtuchZw=
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvIqkxr6flyV7dnnHzrG0PHI/aa9JxbFh3M66w/Xq1v8puwJAJMDWg0WtYiMkdOxXoQtD58hli1fc3zf4SBCK7iEayGr/V0NdQ/n6/MdC2uZD66ZzE6xQbIFl6UOj2/yuaLOjJ8f+faLbUSLXLFBzbmZMy86B1SQRf1+vIPlnhU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
 	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sZrzD-00202k-3B;
-	Fri, 02 Aug 2024 21:15:10 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 02 Aug 2024 21:15:09 +0800
-Date: Fri, 2 Aug 2024 21:15:09 +0800
+	id 1sZrzp-00203d-2O;
+	Fri, 02 Aug 2024 21:15:47 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 02 Aug 2024 21:15:46 +0800
+Date: Fri, 2 Aug 2024 21:15:46 +0800
 From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Jia He <justin.he@arm.com>
+To: Jeff Johnson <quic_jjohnson@quicinc.com>
 Cc: "David S. Miller" <davem@davemloft.net>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	linux-crypto@vger.kernel.org, Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH] crypto: arm64/poly1305 - move data to rodata section
-Message-ID: <Zqzb3V9mxKxLkbrU@gondor.apana.org.au>
-References: <20240715072023.61032-1-justin.he@arm.com>
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Danny Tsen <dtsen@linux.ibm.com>, linux-crypto@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] crypto: ppc/curve25519 - add missing
+ MODULE_DESCRIPTION() macro
+Message-ID: <ZqzcApbJomFTnc30@gondor.apana.org.au>
+References: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,25 +56,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240715072023.61032-1-justin.he@arm.com>
+In-Reply-To: <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
 
-On Mon, Jul 15, 2024 at 07:20:23AM +0000, Jia He wrote:
-> When objtool gains support for ARM in the future, it may encounter issues
-> disassembling the following data in the .text section: 
-> > .Lzeros:
-> > .long   0,0,0,0,0,0,0,0
-> > .asciz  "Poly1305 for ARMv8, CRYPTOGAMS by \@dot-asm"
-> > .align  2
+On Thu, Jul 18, 2024 at 06:14:18PM -0700, Jeff Johnson wrote:
+> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+> description is missing"), a module without a MODULE_DESCRIPTION() will
+> result in a warning with make W=1. The following warning is being
+> observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
 > 
-> Move it to .rodata which is a more appropriate section for read-only data.
+> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
 > 
-> Signed-off-by: Jia He <justin.he@arm.com>
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
-> Inspired by commit 1253cab8a352, although currently objtool hasn't been
-> supported on Arm, we should do some preparation(this patch) firstly.
-> 
->  arch/arm64/crypto/poly1305-armv8.pl | 3 +++
->  1 file changed, 3 insertions(+)
+>  arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
+>  1 file changed, 1 insertion(+)
 
 Patch applied.  Thanks.
 -- 
