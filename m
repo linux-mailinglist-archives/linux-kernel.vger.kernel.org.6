@@ -1,54 +1,73 @@
-Return-Path: <linux-kernel+bounces-272601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBD9945E9D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:23:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AF7945EA1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:26:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B2CD1F24167
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:23:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A25BA2836FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3D01E484F;
-	Fri,  2 Aug 2024 13:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C2611E3CDC;
+	Fri,  2 Aug 2024 13:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="XgQSvStR"
-Received: from smtp.smtpout.orange.fr (smtp-17.smtpout.orange.fr [80.12.242.17])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NDDxfC6J"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB88E1E3CC3;
-	Fri,  2 Aug 2024 13:23:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBAA1DAC4F
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 13:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722605028; cv=none; b=oETbSTNydT+qVGFzwbQvC2hZb6+p1n2Yz5NqOBLJ8plm06wFvWVmZPp1iCjF4XTNOGvr0l8P5cGYFNcSpSy1HQ+F4A5RsnHFeH2hJuj1lC0D2HsT3M/Q3Wj9mZjC7odFb4WlU0QjiRG7KE8U4FI4IqfvZE7rbNpPnD+7Mc+J0Ws=
+	t=1722605165; cv=none; b=QlamKztTi5sFhxyVI6lXYJYk6UngE5QM3BGe+L4nZrXcKIv+hMl/cy1B5kXWHfxLjdO+RLF0TpckmfuTgNM+bEWcrHiyN2frPR99Ks7RKqsr7HdNrSAPNfnr4qozGit3/vzTTO3HApIEZRWFbN+IvyjWRv1L43JeZptI64cpY7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722605028; c=relaxed/simple;
-	bh=fsVvgYGyE0NtWIPTCBcgpNi+GdQA4vGo6K3ciq5bNA0=;
+	s=arc-20240116; t=1722605165; c=relaxed/simple;
+	bh=kroz5WSydeC9uW+TSd0KZzKu56k3VIezekzeKBf9WpM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GWjlZK0/AKwk5rXR75PzDMWINa25kdr/p5RLEpfDXJZLaFK8dzuvRAYsfM2FqvcBs71Q9paZ0/+YP0bdTojUzfNuw6yvSoPiECp/7wTnu28cszrAxjbaEu0YOvvzGTJStifXhTiCPQSo1PHEabQ4qAAOXsOVaP9EqmIknpeYLdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=XgQSvStR; arc=none smtp.client-ip=80.12.242.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ZsFrs3ZHUIDadZsFrsw7Va; Fri, 02 Aug 2024 15:23:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1722605016;
-	bh=l1w5HkBmdUNhk0KIrdXhJAVeGOc8OmiX+2Fh0Dp3WdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=XgQSvStRKBHsqpExqclU4nuBvGpye4lES2soTnHEnVXj4m6zeXXOi17G4VtcLIV2n
-	 /r2X0anBonHUcyPLH0/2OPjYCaNUKAWF5jZCoRcfrloaB/kxuVoMH5MC3l8En+PxAZ
-	 TwJ4VTBBs6p1wAGg/ffP6RFTtkXyr7Xiugq7DnrYQlZ1aeOdYrr6iAofa1RuB2ZuEW
-	 4HLW2TL0uOl6Vzmvfjt1ALmkBvOlNQK2gwllVMd/ctDoIqcYLG7776cbDrWvVU5Xnu
-	 Y6MIOe6aBz1FhEo/NldiBR5Ujl3VAazooUS0iRhGtlRXXfRq2KTkbkjei9+kKWFfnE
-	 uqfMRnfrpOFnA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Fri, 02 Aug 2024 15:23:36 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <96843dc5-6c7a-4b93-84a2-1cdc4da9ce85@wanadoo.fr>
-Date: Fri, 2 Aug 2024 15:23:35 +0200
+	 In-Reply-To:Content-Type; b=gybJkBY4HV5I0KRBVRpJIvyARRO5TRh/7QxSEhJpTU9RCI9EOq63VNLR3+3yQWidWP7YFG2ZiyZQyiOCV11PV/1gGjIoc+/GWlpGSzUiHfuafltMADqM0eLXPdA71zA0NGP8EHJxIaXOZ4YvrQzZWOeX+pGdivD0uEUhM81nExA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NDDxfC6J; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f040733086so93670551fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 06:26:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1722605159; x=1723209959; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cJhmQirVizUqOCgmsekY21nCq2G6MWUHMhqZQdlEfZc=;
+        b=NDDxfC6JZLXsKghuQA2X0CNXD9k0LKzfazgBfHEkmERZOp4nKGEOAKIQQ68xTa2FOp
+         6BK63hTHI/+jzsvOYJyTdlxaQ1T+m796Y6ZbXOZ2JKkJ8585BbSbnaIL+2F1Z14UYqAQ
+         zP4nKvxPJg1iSqUH895cmYNLIoukshYWFoChtatBdHoild7PRq7iRI5PynWgt3IA8ZyB
+         ia8DKCo9zx86ysrSuECePR93pq5sYfnQOIrKpN1NRTR2fmDPe7JNYK3TATZNW+7MEE9/
+         fLvyJ4pbuw/xTs2rgxHHerg7EHNcy9Z+/YxJDj69PpT26HNdf4Fzl/Qb2rQ2ZL5q4IYL
+         OZ6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722605159; x=1723209959;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cJhmQirVizUqOCgmsekY21nCq2G6MWUHMhqZQdlEfZc=;
+        b=gb9MDFqqo9WNSndaoFTjy3raDpV4tJEndqlbh+8DOdl/Tpxe2NnGbQVSnb71oxZV4s
+         +9jVeVVzTls9k+GSLovtJW6g5/kF0DqtGSELz/24rlcDn+yd+rY/PLpaAQlU5kohSmxs
+         8b3IvdhZJc29q2lrMdgnZPIvJYhiUUm2es+N/HlV1D8jWKNixLQTYBKEKRxEozOpX+a5
+         y24AqsayGmUf6gYUeOtAjavrE3pOZmMvvDDVEZ/RxvOr+mN1Xv5kFlwn1Z1PaqmJoyMe
+         2XZdtmhBr1IGpbUpsqzVZm4PUAtLBWGwW/a8ni0Dp3bW/YxctR69uwvb6PpGIT1mPyW5
+         cepw==
+X-Forwarded-Encrypted: i=1; AJvYcCUW11+vun32vubvrUDW1LB6Jqp7cgHxtc7tX4pMdMgenTlHCc/LaxNkiubnQS33AMLnsPZLzT0182yMZGmm+owURWDu/GJbL2XCox0b
+X-Gm-Message-State: AOJu0Yy1tcFR+mMpFXZV3n8SuamJLZg8IRy5nJv1pS8h4LevhzRHoNsZ
+	JGIJY/M6FGPEt54j7/NKiQUuZueRgpOWdB6gZrt+U2i/f7RmGtZK98OTJTfK5Bg=
+X-Google-Smtp-Source: AGHT+IHBvsYwfwOgou5WXpOcO14cjQZULKYPfbBjoNyalongwp4wd13+FAnvLOiLZkJZEUFWOqqo9w==
+X-Received: by 2002:a2e:88d9:0:b0:2ef:2617:8952 with SMTP id 38308e7fff4ca-2f15aaa8480mr22670781fa.18.1722605159128;
+        Fri, 02 Aug 2024 06:25:59 -0700 (PDT)
+Received: from [192.168.0.20] (nborisov.ddns.nbis.net. [109.121.143.186])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b83b92b970sm1125275a12.72.2024.08.02.06.25.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Aug 2024 06:25:58 -0700 (PDT)
+Message-ID: <824e522d-c9e2-4e24-8ce6-aca6573db06a@suse.com>
+Date: Fri, 2 Aug 2024 16:25:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,138 +75,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] Input: atkbd - fix LED state at suspend/resume
-To: Qiang Ma <maqianga@uniontech.com>, dmitry.torokhov@gmail.com,
- hdegoede@redhat.com
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240802093600.6807-1-maqianga@uniontech.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240802093600.6807-1-maqianga@uniontech.com>
+Subject: Re: [PATCH 2/3] x86/cpu: fix unbootable VMs by inlining memcmp in
+ hypervisor_cpuid_base
+To: Alexey Dobriyan <adobriyan@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Juergen Gross <jgross@suse.com>, Boris Ostrovsky <boris.ostrovsky@oracle.com>
+References: <a9f505a6-fd31-4cfa-a193-d21638bb14f1@p183>
+ <304592cf-e4a7-4ba1-baa6-4941c60f0e3c@p183>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <304592cf-e4a7-4ba1-baa6-4941c60f0e3c@p183>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 02/08/2024 à 11:36, Qiang Ma a écrit :
-> After we turn on the keyboard CAPSL LED and let the system suspend,
-> the keyboard LED is not off, and the kernel log is as follows:
-> 
-> [  185.987574] i8042: [44060] ed -> i8042 (kbd-data)
-> [  185.988057] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-> [  185.988067] i8042: [44061] 04 -> i8042 (kbd-data)
-> [  185.988248] i8042: [44061] ** <- i8042 (interrupt, 0, 1)
-> 
-> The log shows that after the command 0xed is sent, the data
-> sent is 0x04 instead of 0x00.
-> 
-> Solution:
-> Add a bitmap variable ledon in the atkbd structure, and then set ledon
-> according to code-value in the event, in the atkbd_set_leds() function,
-> first look at the value of ledon, if it is 0, there is no need to
-> look at the value of dev->led, otherwise, need to look at dev->led
-> to determine the keyboard LED on/off.
-> 
-> Signed-off-by: Qiang Ma <maqianga@uniontech.com>
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Hmmm, no.
 
-I just made a few comments on v1.
-
-That does not mean a Signed-off-by at all.
-
+On 2.08.24 г. 11:50 ч., Alexey Dobriyan wrote:
+> If this memcmp() is not inlined then PVH early boot code can call
+> into KASAN-instrumented memcmp() which results in unbootable VMs:
+> 
+> 	pvh_start_xen
+> 	xen_prepare_pvh
+> 	xen_cpuid_base
+> 	hypervisor_cpuid_base
+> 	memcmp
+> 
+> Ubuntu's gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04) inlines
+> memcmp with patch and the bug is partially fixed.
+> 
+> Leave FIXME just in case someone cares enough to compare 3 pairs of
+> integers like 3 pairs of integers.
+> 
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 > ---
-> V2:
->   - Fixed formatting and spelling errors
->   - Optimized some code
-
-A good practice is also to give the link to previous versions. It can 
-help reviewers who maybe missed part of the story.
-
-v1: 
-https://lore.kernel.org/all/20240726102730.24836-1-maqianga@uniontech.com/
-
 > 
->   drivers/input/keyboard/atkbd.c | 31 +++++++++++++++++++++++--------
->   1 file changed, 23 insertions(+), 8 deletions(-)
+>   arch/x86/include/asm/cpuid.h | 15 ++++++++++++++-
+>   1 file changed, 14 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
-> index 7f67f9f2946b..fb479bc78134 100644
-> --- a/drivers/input/keyboard/atkbd.c
-> +++ b/drivers/input/keyboard/atkbd.c
-> @@ -237,6 +237,8 @@ struct atkbd {
->   	struct mutex mutex;
+> diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
+> index 6b122a31da06..3eca7824430e 100644
+> --- a/arch/x86/include/asm/cpuid.h
+> +++ b/arch/x86/include/asm/cpuid.h
+> @@ -196,7 +196,20 @@ static inline uint32_t hypervisor_cpuid_base(const char *sig, uint32_t leaves)
+>   	for_each_possible_hypervisor_cpuid_base(base) {
+>   		cpuid(base, &eax, &signature[0], &signature[1], &signature[2]);
 >   
->   	struct vivaldi_data vdata;
-> +
-> +	DECLARE_BITMAP(ledon, LED_CNT);
->   };
->   
->   /*
-> @@ -604,24 +606,32 @@ static int atkbd_set_repeat_rate(struct atkbd *atkbd)
->   	return ps2_command(&atkbd->ps2dev, &param, ATKBD_CMD_SETREP);
->   }
->   
-> +#define ATKBD_DO_LED_TOGGLE(dev, atkbd, type, v, bits, on)		\
+> -		if (!memcmp(sig, signature, 12) &&
+> +		/*
+> +		 * FIXME rewrite cpuid comparators to accept uint32_t[3].
+> +		 *
+> +		 * This memcmp()
+> +		 * a) is called from PVH early boot code
+> +		 *    before instrumentation is set up,
+> +		 * b) may be compiled to "call memcmp" (not inlined),
+> +		 * c) memcmp() itself may be instrumented.
+> +		 *
+> +		 * Any combination of 2 is fine, but all 3 aren't.
+> +		 *
+> +		 * Force inline this function call.
+> +		 */
+> +		if (!__builtin_memcmp(sig, signature, 12) &&
 
-Is there a real advantage for 'bits' and 'on'?
+Instead of putting this giant FIXME, why not simply do the comparison as 
+ints, i.e ((uint32_t)&sig[0]) == signature1 && ((uitn32_t)&sig[4]) == 
+signature2 && ((uint32_t)&sig[8] == signature_3  and be done with it?
 
-They always match with 'led' and 'ledon' below.
-And 'atkbd' and 'dev' are already hard coded below anyway.
-
-I just find it confusing and harder to read.
-
-Also, in order to be less verbose, maybe ATKBD_LED_TOGGLE or 
-ATKBD_TOGGLE_LED would just be as clear with fewer char?
-
-CJ
-
-> +({									\
-> +	unsigned char __tmp = 0;					\
-> +	if (test_bit(LED_##type, atkbd->on))				\
-> +		__tmp = test_bit(LED_##type, dev->bits) ? v : 0;	\
-> +	__tmp;								\
-> +})
-> +
->   static int atkbd_set_leds(struct atkbd *atkbd)
->   {
->   	struct input_dev *dev = atkbd->dev;
->   	unsigned char param[2];
->   
-> -	param[0] = (test_bit(LED_SCROLLL, dev->led) ? 1 : 0)
-> -		 | (test_bit(LED_NUML,    dev->led) ? 2 : 0)
-> -		 | (test_bit(LED_CAPSL,   dev->led) ? 4 : 0);
-> +	param[0] = ATKBD_DO_LED_TOGGLE(dev, atkbd, SCROLLL, 1, led, ledon)
-> +		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, NUML,    2, led, ledon)
-> +		 | ATKBD_DO_LED_TOGGLE(dev, atkbd, CAPSL,   4, led, ledon);
->   	if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_SETLEDS))
->   		return -1;
->   
->   	if (atkbd->extra) {
->   		param[0] = 0;
-> -		param[1] = (test_bit(LED_COMPOSE, dev->led) ? 0x01 : 0)
-> -			 | (test_bit(LED_SLEEP,   dev->led) ? 0x02 : 0)
-> -			 | (test_bit(LED_SUSPEND, dev->led) ? 0x04 : 0)
-> -			 | (test_bit(LED_MISC,    dev->led) ? 0x10 : 0)
-> -			 | (test_bit(LED_MUTE,    dev->led) ? 0x20 : 0);
-> +		param[1] = ATKBD_DO_LED_TOGGLE(dev, atkbd, COMPOSE, 0x01, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SLEEP,   0x02, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, SUSPEND, 0x04, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MISC,    0x10, led, ledon)
-> +			 | ATKBD_DO_LED_TOGGLE(dev, atkbd, MUTE,    0x20, led, ledon);
->   		if (ps2_command(&atkbd->ps2dev, param, ATKBD_CMD_EX_SETLEDS))
->   			return -1;
+>   		    (leaves == 0 || ((eax - base) >= leaves)))
+>   			return base;
 >   	}
-> @@ -695,6 +705,11 @@ static int atkbd_event(struct input_dev *dev,
->   	switch (type) {
->   
->   	case EV_LED:
-> +		if (value)
-> +			__set_bit(code, atkbd->ledon);
-> +		else
-> +			__clear_bit(code, atkbd->ledon);
-> +
->   		atkbd_schedule_event_work(atkbd, ATKBD_LED_EVENT_BIT);
->   		return 0;
->   
-
+> 
 
