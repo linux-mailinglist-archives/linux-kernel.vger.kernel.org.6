@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-272253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85DE6945949
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D2B945952
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A896B1C21981
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:54:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A41B20CDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2D01BF328;
-	Fri,  2 Aug 2024 07:53:59 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A813482CA;
-	Fri,  2 Aug 2024 07:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DB181BF334;
+	Fri,  2 Aug 2024 07:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IxOO8Z4Q"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E6482CA
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722585238; cv=none; b=fik3RDQ+ZhNAVPVJdhHNM8zB+ZWbJ8rRCr+ZJlallAc3zJguJdDd0Nkb0AlfvvMKAzLSq46RUHG1A8oqf5Odi8w/ofESuUXafRlhctrw5mv43UGvnx7MG3mNT639zluD9csbcMwxnOYlTODjZwyWMZHaf2iVAwjFUiF2QJ+5NXM=
+	t=1722585323; cv=none; b=Qq3VE6/64osfULTzVvW7fDUHlxbk7HESK9s8poqQCDG3jfuDVvvB2fajkk9wGcW1Fs+h2JbzlQLR+0z/oX3RIn+JcDN7zKGILa38mubxytCwRDiGtQSUbltq4ZUVbdeBjJvVWuoMxvxrNW2k2L1Dw5/D2KO1taoU0cq1kfcLKHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722585238; c=relaxed/simple;
-	bh=R7eZpuNqrRayCW5KMkFo/pXMqCPlvzzqC5jwDXByyG0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=m4lQuG9D7wydVJN5XC2NZTKt7k+I5PCvn6ZT9G3TyosSFnbsy2x2f6PwbCs5AAUsmY19xUQRCklpOBGd5b+h+oyEkrNB/XVmfWTcMNAeEwVRLYeOqdK/5X/BgH7v6RXjRML9vzjI/caDZu3qpGZd9HCHky8wRHcyd0Li7zOEN38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8Ax2emRkKxmjVwGAA--.22182S3;
-	Fri, 02 Aug 2024 15:53:53 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMCxbuWNkKxmIGcLAA--.55918S3;
-	Fri, 02 Aug 2024 15:53:50 +0800 (CST)
-Subject: Re: [PATCH v12 64/84] KVM: LoongArch: Mark "struct page" pfns dirty
- only in "slow" page fault path
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
- <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
- Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
- linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
- David Stevens <stevensd@chromium.org>
-References: <20240726235234.228822-1-seanjc@google.com>
- <20240726235234.228822-65-seanjc@google.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <a039b758-d4e3-3798-806f-25bceb2f33a5@loongson.cn>
-Date: Fri, 2 Aug 2024 15:53:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1722585323; c=relaxed/simple;
+	bh=ak90xTxW3rcMGT4O7TI4TzJ7snsWSbksjAWYiJ9KkOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W/nD9VcZFtJflmdhbz+5sj8OuSsMtSiWh3Dgu8FaFnobiy5usigANAqiIPaG/WkMfMwPFXPZ6019iMkaHTkFOrTbsWR8fQ029qf0MiRIsljMirWafsBm0kCjdeoo1HUI76qEQKqmqP7E2DoMWRZkUwC5N1O7+K75fbIH+QjlUAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IxOO8Z4Q; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a18a5dbb23so47404a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:55:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722585320; x=1723190120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ak90xTxW3rcMGT4O7TI4TzJ7snsWSbksjAWYiJ9KkOk=;
+        b=IxOO8Z4QN7j6f930eC7rpOTxLDaqkdVAKGkbNMGmDTdwCBviQO4h2yo/5b94jMdSEz
+         fs2fVZ2kHhmKub5KhXgFtrw3TtoR/YVxMTrt0iBY3TFkmFzFoKxYR6oVJBgGBsAtqqq/
+         /1L0ba9BeC3SJ+nyFZg2THJzGJ8PWjBKspDq+Ig0zRbihFnQPIG1qNd8z9CxSqcrl5n6
+         c0Vy1Fg0TSEIqUpGQ5b8dr+IfOWGCQ3eQOtP+V3vxqEg2nbkYUC1fAOK+GSaY/s0B11c
+         8SkUVIboTGltSXoCP29A/3ZL+CpaL1UxalXiqSUrrxvN2aDYQX86D0TvUycH1spMAfcJ
+         E4OA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722585320; x=1723190120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ak90xTxW3rcMGT4O7TI4TzJ7snsWSbksjAWYiJ9KkOk=;
+        b=a0y1JOxe227cVsMpKT8okV5M3Kv/SgIbGtQGneTYX70xaMDZV4xvKogmxu5D7TIbrb
+         uBs4gesFng0ZJ1oX0ntpJdKvyp1bQttYR/kR8JWzPB8XH9qllaEZ6qcRC2np8UltmT6z
+         IyS1Vq48w5cDzz6Sp/PDmfrqry6OyHHP5XUOck9VvX7Vv07kxy+FJozposRh+Kqzp6eg
+         v4gIAVYOm31qFMqKBLMGvJQP2mGepJO0IUuDClwbL9PUxUxDPeqDNY408Z+766loARrv
+         yp1KNe2/+3uWrPpKvDm73hddL2vBDFiCkgHqbUEds2/b2GY7/IapiUTX5jYeppEfDVaS
+         fimg==
+X-Forwarded-Encrypted: i=1; AJvYcCUgNvz8VUJBaahCagOvoByBmPOvSO3Fe5JxUI/FHmWte7ZFA6JUTlX3GEmGKO+ev0MlExEEPXoQyHorjHiX9yjBpWrJBGJ/E0RORZxn
+X-Gm-Message-State: AOJu0YzL6FiTtVFAsUXrE6gnnCSgte+97m93VNsI51tPUPFTeZzIvnj1
+	yuKs4120/6Us/NVASQP5g1va+xhQQFsBIPRbVnbhkfdS2O/BKTUYoobiUSBJb/LJVq5usO93tvU
+	sFa8mzBIQG9oJX9yDB3BYQG0M5U4Ma7ZUPXPi
+X-Google-Smtp-Source: AGHT+IEGTXiHBDLKYnZL05d2aE7knTVbal5f5V1FrC96v7hLWqCF0MxevZVGa4yTDO6PcXVZPZ7GWMxPH/x+DmFJ8pg=
+X-Received: by 2002:a05:6402:51cf:b0:5a7:7f0f:b70b with SMTP id
+ 4fb4d7f45d1cf-5b86752ec46mr107321a12.0.1722585320222; Fri, 02 Aug 2024
+ 00:55:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240726235234.228822-65-seanjc@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxbuWNkKxmIGcLAA--.55918S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7WFW8JryfWw13KFy5Xw4kKrX_yoW8ZFWxpF
-	W7CrZrCrWrtrnav39rt3sF9rs0yrs8Kr1xX3W7G34rKF1qqr1Yq3W0grZ7WF1fJ3s3AayS
-	qF1rKa4q9Fs5AwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUt529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
-	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
-	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
-	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDU
-	UUU
+References: <20240726122814.729082-1-kyletso@google.com>
+In-Reply-To: <20240726122814.729082-1-kyletso@google.com>
+From: Kyle Tso <kyletso@google.com>
+Date: Fri, 2 Aug 2024 15:55:03 +0800
+Message-ID: <CAGZ6i=165A5k59MKqZxH4DvB8XNsZJ+26_0SuMZ+hidam2qRLA@mail.gmail.com>
+Subject: Re: [PATCH v2] usb: dwc3: Runtime get and put usb power_supply handle
+To: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org, raychi@google.com
+Cc: badhri@google.com, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	royluo@google.com, bvanassche@acm.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2024/7/27 上午7:52, Sean Christopherson wrote:
-> Mark pages/folios dirty only the slow page fault path, i.e. only when
-> mmu_lock is held and the operation is mmu_notifier-protected, as marking a
-> page/folio dirty after it has been written back can make some filesystems
-> unhappy (backing KVM guests will such filesystem files is uncommon, and
-> the race is minuscule, hence the lack of complaints).
-> 
-> See the link below for details.
-> 
-> Link: https://lore.kernel.org/all/cover.1683044162.git.lstoakes@gmail.com
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Fri, Jul 26, 2024 at 8:28=E2=80=AFPM Kyle Tso <kyletso@google.com> wrote=
+:
+>
+> It is possible that the usb power_supply is registered after the probe
+> of dwc3. In this case, trying to get the usb power_supply during the
+> probe will fail and there is no chance to try again. Also the usb
+> power_supply might be unregistered at anytime so that the handle of it
+> in dwc3 would become invalid. To fix this, get the handle right before
+> calling to power_supply functions and put it afterward.
+>
+> Fixes: 6f0764b5adea ("usb: dwc3: add a power supply for current control")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kyle Tso <kyletso@google.com>
 > ---
->   arch/loongarch/kvm/mmu.c | 18 ++++++++++--------
->   1 file changed, 10 insertions(+), 8 deletions(-)
-> 
-> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> index 2634a9e8d82c..364dd35e0557 100644
-> --- a/arch/loongarch/kvm/mmu.c
-> +++ b/arch/loongarch/kvm/mmu.c
-> @@ -608,13 +608,13 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
->   		if (kvm_pte_young(changed))
->   			kvm_set_pfn_accessed(pfn);
->   
-> -		if (kvm_pte_dirty(changed)) {
-> -			mark_page_dirty(kvm, gfn);
-> -			kvm_set_pfn_dirty(pfn);
-> -		}
->   		if (page)
->   			put_page(page);
->   	}
-> +
-> +	if (kvm_pte_dirty(changed))
-> +		mark_page_dirty(kvm, gfn);
-> +
->   	return ret;
->   out:
->   	spin_unlock(&kvm->mmu_lock);
-> @@ -915,12 +915,14 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
->   	else
->   		++kvm->stat.pages;
->   	kvm_set_pte(ptep, new_pte);
-> -	spin_unlock(&kvm->mmu_lock);
->   
-> -	if (prot_bits & _PAGE_DIRTY) {
-> -		mark_page_dirty_in_slot(kvm, memslot, gfn);
-> +	if (writeable)
-Is it better to use write or (prot_bits & _PAGE_DIRTY) here?  writable 
-is pte permission from function hva_to_pfn_slow(), write is fault action.
+> v1 -> v2:
+> - move power_supply_put out of interrupt context
+>
 
-Regards
-Bibo Mao
->   		kvm_set_pfn_dirty(pfn);
-> -	}
-> +
-> +	spin_unlock(&kvm->mmu_lock);
-> +
-> +	if (prot_bits & _PAGE_DIRTY)
-> +		mark_page_dirty_in_slot(kvm, memslot, gfn);
->   
->   	kvm_release_pfn_clean(pfn);
->   out:
-> 
+Hi maintainers,
 
+It seems that there are some problems in version 2. I will send out
+version 3 later.
+
+Kyle
 
