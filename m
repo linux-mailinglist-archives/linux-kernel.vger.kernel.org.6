@@ -1,256 +1,383 @@
-Return-Path: <linux-kernel+bounces-272739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8754394606E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:25:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C9D5946061
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EABD2879C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:25:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FF901C20ECA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9B5166F1B;
-	Fri,  2 Aug 2024 15:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA99B13634E;
+	Fri,  2 Aug 2024 15:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="LsOGgaJo"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="AV0qS6nF"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013066.outbound.protection.outlook.com [52.101.67.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F5175D2E;
-	Fri,  2 Aug 2024 15:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722612197; cv=none; b=EwA82iAMORRxVjNa7U/5VOFPosMIA3Fc+a4nTtcpkTR/TvqwRjrXrD7yP8NALsjYxKVrcYcfSex3dlrXO74Um3dR4vfyUmC/vX0in/bWINkrnhRCZftNai15fvHh6B9RPu8edwoTtXw1LdriXx/D+YAJZKuz+bACXMtaxLjDdsE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722612197; c=relaxed/simple;
-	bh=3+cI4zEsxShLyRjIyQN7jrcdsmNquGekhe7zScqsTFc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=vApolf9QWyCx4+5IoOvy/smWovaiRfTtfJWEwyOuaqPUnsJaLK1DBp5B1xbAkVDYnWm+P1rpvFwTrMsoSATlCl2YM2bApIHPhzQ/Gja4sZazM2qojYdbQPHR+R6T+a6DB2XGSPGLmcHN+Jqd51YVBQQC6q9kwE3ETqwafKQNCQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=LsOGgaJo; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4726i5rx032551;
-	Fri, 2 Aug 2024 10:22:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=JH+QR/iZT4O9MPac+AjmOS9MjiO1cA7yxULfOIhBzRU=; b=
-	LsOGgaJo4QXIY3axnKqkTsK6AAKi0kc+9IlfTs94B+9RNIraEgVEKZvAPOePZue7
-	IloszAJ483z8ZSQ04hD/k9nj6LuD08YYl2z3zIGhvjxRt+NoJiD+DnclrQsUVIig
-	yD1EBkuq3mD/0o7ewT801RNrgpAaiUip4CmMvJD7gvMJHZq+Ec1gY0bnujqQUKXi
-	h0ucXq2osc2IXvNSE9igiIATGvr7DoWyhSapbTvnNPaN+1omgOUNRif/4uyuVnjB
-	/zGcq0y2lA69bUEZ6poVpi4/Cy1wDt5u+Vxl5hl5I7ErI5xR55ZE1KHw1ZlI8GUV
-	+yhj+cGc1Pqn5KoGoqBr4g==
-Received: from ediex02.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40rjdxruc0-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 02 Aug 2024 10:22:21 -0500 (CDT)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex02.ad.cirrus.com
- (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 2 Aug 2024
- 16:22:19 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Fri, 2 Aug 2024 16:22:19 +0100
-Received: from EDIN4L06LR3.ad.cirrus.com (EDIN4L06LR3.ad.cirrus.com [198.61.68.170])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id C997C820247;
-	Fri,  2 Aug 2024 15:22:18 +0000 (UTC)
-From: Richard Fitzgerald <rf@opensource.cirrus.com>
-To: <tiwai@suse.com>, <broonie@kernel.org>, <wsa+renesas@sang-engineering.com>,
-        <mika.westerberg@linux.intel.com>
-CC: <linux-sound@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <patches@opensource.cirrus.com>,
-        Simon Trimmer
-	<simont@opensource.cirrus.com>,
-        Richard Fitzgerald <rf@opensource.cirrus.com>
-Subject: [PATCH v2 3/3] ALSA: hda/realtek: Add support for new HP G12 laptops
-Date: Fri, 2 Aug 2024 16:22:15 +0100
-Message-ID: <20240802152215.20831-4-rf@opensource.cirrus.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240802152215.20831-1-rf@opensource.cirrus.com>
-References: <20240802152215.20831-1-rf@opensource.cirrus.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37E5136340;
+	Fri,  2 Aug 2024 15:22:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722612163; cv=fail; b=Tk/9EOBJAyv9rYPm4CU6znAp5Mglj6IpzWH1GsgxXhUsHevJaaQvy8LxF/eTyLeHK8K4FCur6OUqMNQnwKNx8jFFx4E0VyQK+KflUx5fY8jt5m6UF4AQWwkq4N9B7JL/UjC1i2GLrg+dVgN+K/HUh/HOUXzZYUyLCJsk/fKFGrI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722612163; c=relaxed/simple;
+	bh=JZsGd3r0ci8G0WjvVShy2VMo2cSRLyV7tyi2n6io01o=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=SsDrWdHxgVLe6mXKpBUvmbyx+lCMSsBCr6bGDim+wrXi1k7Vc14KHkLWCDpkLF8G25UOUSKhgCpyT9dvC8OnegeukBKpB7VihrTlTSu0tFCM7VeqL1r/KZaG7kNHMZTPgcj8kK4/SBQd55aZ7OGN0MM04cD/l46i9UvNthDeDLM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=AV0qS6nF; arc=fail smtp.client-ip=52.101.67.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Va7QfQsAxe5w2p0m4TZKxUacmHIRwk0YEvEBEhxVcr+Cj7hvQke7uGaPvJJo2ciz6l9CbMy1zsLHMbml28wvHY2jlv9HXTWqr+uoIQokJC9WrAP8jjqsUbWmsMnDn09f7oy9ZKdckS3MsKsYnP+5xaaSAKw6SeYgSp9ICiVqrX3DjesgqADCX0Wkd1ReO+l3MDUcpg5687sY0jI/CMTW1dnAffrcKY4qA0nibqOEnOR8MkZLWGhc+4CscGakzMwkZ5RxxrB0wIFvPBCrwbUBwGs3sPEBrndVhreCYy5RJAJ9ZeCTXIKFDo+esHsv9vQBu8Vb6EhuBelIkWEF+zupZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gqJM5imcK/+Vsdx34W/kXMTFExYePk/AN8ErtGZV5/M=;
+ b=IoUZFenjGUYRjCrjKPi/9l9Adu/kBXdnvQVlvpyRZjN3lEntuXVDKF9DiNa7UUA4uYFp9xHB7xBn24o6WEAFeAbcGdOWJ2zff21RCYQUaE54wT5Nwo0cwV6JGL0o+PqHxf09D5O3zebcH2+n+MI6tODrjIR2KpQ2XvU2lHxsOLpbXImY8oQIuZllyvYA4tui4tOcjBJv2CiO4p5mak9YnuuefIifUnr/GePDAoV3qp7VGyx5I3HzBHnflfaPea3rHS05OPoxtqEvfbTtJkLkR8zkzf/5Penw6iC5TFirdyYD0N7r1rVpe8BsL8eeQgb8toBr0NxNXnJ0niyqZn+q0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gqJM5imcK/+Vsdx34W/kXMTFExYePk/AN8ErtGZV5/M=;
+ b=AV0qS6nFbY+DzD0Rt/e6bHkWyGjHQ0jiMbZ1zQ7AJcc5I+dEbJfviWxfASjs/777qnYlGMsGjRWJDmgOQuRIkwzLjg7BKEd2wBtN3Gi9FtZtu+zq7kneANdxDrUYZAuEih3djN44nsoArXTfBRzgJiGUorqsbgEaqXoRMzUKJLFyz7X1ajna0qYHYBMBRP8GkJ/Wo6KaQHPoY2bPyE8yeieaVEMAERGyjvmkgCwMytvFD72mO490qTd9qdK/7jaxGCOzeyfC8Bze4vbyD7kz1IVlVuGKDhnt8w/xAyBa1hy7tPA/CEeqpG3+8N5Z4tqP0k6rPcuVYR3zaIq9jDANgA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by VI0PR04MB10710.eurprd04.prod.outlook.com (2603:10a6:800:260::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Fri, 2 Aug
+ 2024 15:22:37 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.7828.021; Fri, 2 Aug 2024
+ 15:22:37 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: robh@kernel.org
+Cc: Frank.Li@nxp.com,
+	alexandre.belloni@bootlin.com,
+	christophe.leroy@csgroup.eu,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v4 1/1] dt-bindings: soc: fsl: Convert rcpm to yaml format
+Date: Fri,  2 Aug 2024 11:22:19 -0400
+Message-Id: <20240802152219.2740137-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ2PR07CA0008.namprd07.prod.outlook.com
+ (2603:10b6:a03:505::8) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: P5VUMJOLetpMhJtLr1jG3N4tAHUBFwIP
-X-Proofpoint-ORIG-GUID: P5VUMJOLetpMhJtLr1jG3N4tAHUBFwIP
-X-Proofpoint-Spam-Reason: safe
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|VI0PR04MB10710:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16db1ffe-d3fa-4c3d-5f48-08dcb306f0c3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|7416014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7dOYQbRnKO7kwk9OnCklHERqdlZnn+AnA26Sxa1HnJEEiS7pg5rJRpEsTEGb?=
+ =?us-ascii?Q?fXu2NTFsAjJC4dgLcm3nS17Op9AZrtOL5H0zhzvgC2UTRmkKxymOUTR1+oTx?=
+ =?us-ascii?Q?J3DOl3cwKXSrAVsIn7fegWBoevs3cdRp7D8AEclN9jPN48ZdwFld35L0EhXG?=
+ =?us-ascii?Q?rTm1/WxMU6D8WGqZpKhQXoRua4r5VmRYSY7+CKcUaV0Mvlu3JlAjaiI4/eIW?=
+ =?us-ascii?Q?1/TazCU+/6XdpqHNfzLHyjM62p2yV31AySwui7P1naKn3FwFZkHVMawyrZH1?=
+ =?us-ascii?Q?2mDK+W77UYPZx6jAySWchV/25DYk6QNLHPJv13tx2GPxQUrD68jkteyVPl6N?=
+ =?us-ascii?Q?QUbcfsaoJNNgR4haFfwZz5NBO+ZAkuWPvK4UvvpbR1biiKRY6uAEsQXGJn2r?=
+ =?us-ascii?Q?n8tGkuGQ15oBdFym7+kir9bacdfgKDMt5aenTueCFe4V2TgNMZ09THqnmCKC?=
+ =?us-ascii?Q?stYsE06R7AGswavc1HvsmBHrdfQre3Lv7pATP3O7YUAkjYEk6h+xkRUGGjWK?=
+ =?us-ascii?Q?KC1dECC6tCLRHLCiK0BBugm3jIFxK+gsJkkdFvZYVlsGGexKVS8NC0WWloBC?=
+ =?us-ascii?Q?oHL4kwVM8YyNuno9YtFhvY31zZq18R62yFzKdcLTZGbegV762KT8KaRlK4ED?=
+ =?us-ascii?Q?qmeuGcGglUwfTjzsgDn/m8EbYfAq4l9dVLzQMSZiPwtRgvbMwN6L73Bz5e2z?=
+ =?us-ascii?Q?XfuPHC+mIPv+4zn3VDC6dKclHUQmIRc3gLaFcFuVbSm76m4FGMYlnmdCFRaB?=
+ =?us-ascii?Q?r9PFYnZ6OTfIWxVGeU6sDvNTR9Efm9zJyxvvOVvvnTJZ0suZw45zMZwkRvqN?=
+ =?us-ascii?Q?X1J8PJH11NMXnmQgpq0ogIzoTacMT2GN7+fh+3TD7z4aqQozepZTApW+j3Ql?=
+ =?us-ascii?Q?sI0R9ausjLFUip39RLda1bLPU6rYpXP+9BKqyRyAbu/NPK2awU3K+fTFCJ0/?=
+ =?us-ascii?Q?k05MAwJ+N/UTm0J1VRIId2W8xI/uiZAYGSXsmGA2z+6WaPofJAb4EmLlAXOb?=
+ =?us-ascii?Q?Ob52TWelaQfEWqSvOTffs4GulsUM6/ECerMmxcy/apINZAO08sCr1EkGWQe/?=
+ =?us-ascii?Q?K2cWXMB8s9gLWQc/o1mewMGGQrwo8+YvGtL8dIYnYDyPsxQTn2x/4LxMQBJj?=
+ =?us-ascii?Q?bth/u8cl+j3NwK3loLF2tCF+t2doh5lONXvR4g/7E25e212QnnPlaS17gBgT?=
+ =?us-ascii?Q?QjLyIVurYSAjp0mC66WiwUWFZrlydaBy1ap7jJkqdBwL6w8o8bwWXFtoUee2?=
+ =?us-ascii?Q?zrAIbldiRN9KYTQk/Wmf+wln1jMa1DIzmIc3xRPWaKeGY9RR229nTvGMpJDy?=
+ =?us-ascii?Q?QNz3ag1loJ7ouhlYk8KJqa7mcbZiGF8o0bJEjllrpHW3ew4atXI4et4e1QCG?=
+ =?us-ascii?Q?GwNYhwI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(7416014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6gwyzcWrVrPQP3VWQZ/ghWchUJgDp7F6tHp3KE30lA32nMzDG6G33+GkYXh0?=
+ =?us-ascii?Q?h3dzIVAaKRFNzfnXU4vz/gxmncLZ5oyOmO0VI8m3iIPiyrUqOVh7UB/Og9PU?=
+ =?us-ascii?Q?GKuC+fsYJmK3e27WoPHFNDwdiCbE1xvWXCxNkxDwSL9715hW2LXlrAerr1Ue?=
+ =?us-ascii?Q?6aYm+BG46Z+px2FpRQEmCMbY+qRN0tyuKaH9KNMDCJzMIMmCi7uZH15Uqra8?=
+ =?us-ascii?Q?lPNo8HY3wPEZ0ika6X0ArEc+iYvttUi5soApTvUb+D4UmW6XPtTw+oKlkMut?=
+ =?us-ascii?Q?d9JXEe3HQA1LgqbBx3xYQRAZS+qSKD0+wyqqh5sx2BXL+PSL6az9238z7D4a?=
+ =?us-ascii?Q?oBHeBqdRLpE88eK8yw39lrJ9zw9pdnfs6hNb+RZAhlb48wTWDxyKQTWO6bJ1?=
+ =?us-ascii?Q?9OZbcwnAGlRoVDA87L5gBhVKnOIffld2qqkjgru636pbOnIlQ+Pd/e1PkG61?=
+ =?us-ascii?Q?ZVlObmktyq6ulfTBTLRyiINFv3oZAJfnYvF8aSk4GLpRjJFEu0m88w8mNRCm?=
+ =?us-ascii?Q?qBKEM9+AI8ksEhdENN7fdyJH+brWX+/oznY9K0Q5xq620TmlMw4JLsz/m16c?=
+ =?us-ascii?Q?m7C/5OD1X/m9NsE2OiEgkdDi8JH1lzPkpIV/rmjo6wXztlrOgBXiVaMzV/2X?=
+ =?us-ascii?Q?pVBiXOfwb/Bj7VLtiHtD2HRIaKzbj+frMPBSKMtPjDj/YLEjCdb3P6j+bgCO?=
+ =?us-ascii?Q?hNJA2H/9e27VBKAyVmLFcxAmg23AouL5a4HuhRhVmRDnXaZSeTSWTEPBeJBF?=
+ =?us-ascii?Q?2c0E9pgufsoKDn/hlPL32vELJdz1hbzfvDmzDPVwJjd7yvze2/aEofd40kCk?=
+ =?us-ascii?Q?McqYWeV3oyO7aEK3cmAkJWCuYsHLwMNvVQNdzSPIlum5QUWW9PjYnUe6r3AI?=
+ =?us-ascii?Q?IoRqOR77qhIEu5f+mGE1+sR29H9Tb2skxwkOJDE6xz6tBLJw2ocvh4ocVbmz?=
+ =?us-ascii?Q?QNZ1KPz+j2QyZrbX7/O8B2KEsi/WmA+cv9ojrCxzYCw3dYAnuTSc+c8hPe32?=
+ =?us-ascii?Q?AcWhsqJDXnrAz02BnSLKAzXNrizR8uyiIytYf9UL1qJvY9ZFY7sDEexwHDm9?=
+ =?us-ascii?Q?cVCsEYyP0JFCHC2yQNFc9/XC2qz1SxHCPIlP8HjWDNC8sT4BH+5zsenRbNRQ?=
+ =?us-ascii?Q?+Z7yjtK5iVqmakNiYIbiAsff5unLgKfXaW6Nyy86dD9lebX9edv8TnechK4S?=
+ =?us-ascii?Q?1aTARgJjfVkPXqcSxi6qqyuZGqHTvRdpagAtxKCtAT1WO/q3X+fod1nx9HlI?=
+ =?us-ascii?Q?WETVBTq9dNfXzrJXj7nSrpct+KUg/1RFIN4lQ76w3hCDT9acCFkn0J/9+vy2?=
+ =?us-ascii?Q?OVM4z/cSpZnNR+MMghPhaZ+Kiz3zZChcPxoj0jlKz5zTI7kWteEZ1tVft+WP?=
+ =?us-ascii?Q?qZCnU6lEHJZONVf2+J2p0qRME6FWcFPu3RwRPOmIx5FudPYBL5S2nJ5x/l1g?=
+ =?us-ascii?Q?2zS0X1WAdRnEUpqQrQ75p45tpjivfP4w+6bn9qpvhk6Kg4wW649InY5078oE?=
+ =?us-ascii?Q?LhwVkVZzbDY9i7CK0zymIypcRakxM/xABKTRlHtRPjsq1I+Qf8psy2mtcjik?=
+ =?us-ascii?Q?T7R7Ktb4J/1dpxnTlGc=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16db1ffe-d3fa-4c3d-5f48-08dcb306f0c3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 15:22:37.1552
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hMtPDjipJwsA4dZbMR/X5ScwYMjJC5KXwdQhdVfS38ON8hq6qmNykVJEEnYjrRQg63lc3ySXoZz2tHBN6Eph0Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10710
 
-From: Simon Trimmer <simont@opensource.cirrus.com>
+Convert dt-binding rcpm from txt to yaml format.
+Add fsl,ls1028a-rcpm compatible string.
 
-Some of these laptop models have quirk IDs that are identical but have
-different amplifier parts fitted, this difference is described in the
-ACPI information.
+Additional changes:
+- Add missed compatible string fsl,<chip>-rcpm.
+- Remove map fsl,<chip>-rcpm to fsl,qoriq-rcpm-<version>.
 
-The solution introduced for this product family can derive the required
-component binding information from ACPI instead of hardcoding it,
-supports the new variants of the CS35L56 being used and has generalized
-naming that makes it applicable to other ALC+amp combinations.
-
-Signed-off-by: Simon Trimmer <simont@opensource.cirrus.com>
-Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
-No changes since V1.
+Change from v3 to v4
+- Add missed fsl,ls1088a-rcpm, fsl,ls208xa-rcpm, fsl,lx2160a-rcpm
 
- sound/pci/hda/patch_realtek.c | 99 +++++++++++++++++++++++++++++++++++
- 1 file changed, 99 insertions(+)
+Chagne from v2 to v3
+- fallback use const
+- order as fallback compatible string
+- remove minItems for compatible string
+- Fix typo 1045a
 
-diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
-index 1645d21d422f..1a05c647f08c 100644
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -11,15 +11,18 @@
-  */
+Change from v1 to v2
+- add missed compatible string
+- Remove compatible string map table
+- use oneof Item to align compatible string map table
+---
+ .../bindings/rtc/fsl,ls-ftm-alarm.yaml        |  2 +-
+ .../devicetree/bindings/soc/fsl/fsl,rcpm.yaml | 96 +++++++++++++++++++
+ .../devicetree/bindings/soc/fsl/rcpm.txt      | 69 -------------
+ 3 files changed, 97 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+ delete mode 100644 Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+
+diff --git a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+index 388102ae30cd8..3ec111f2fdc40 100644
+--- a/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
++++ b/Documentation/devicetree/bindings/rtc/fsl,ls-ftm-alarm.yaml
+@@ -42,7 +42,7 @@ properties:
+         minItems: 1
+     description:
+       phandle to rcpm node, Please refer
+-      Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++      Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
  
- #include <linux/acpi.h>
-+#include <linux/cleanup.h>
- #include <linux/init.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/pci.h>
- #include <linux/dmi.h>
- #include <linux/module.h>
-+#include <linux/i2c.h>
- #include <linux/input.h>
- #include <linux/leds.h>
- #include <linux/ctype.h>
-+#include <linux/spi/spi.h>
- #include <sound/core.h>
- #include <sound/jack.h>
- #include <sound/hda_codec.h>
-@@ -6856,6 +6859,86 @@ static void comp_generic_fixup(struct hda_codec *cdc, int action, const char *bu
- 	}
- }
- 
-+static void cs35lxx_autodet_fixup(struct hda_codec *cdc,
-+				  const struct hda_fixup *fix,
-+				  int action)
-+{
-+	struct device *dev = hda_codec_dev(cdc);
-+	struct acpi_device *adev;
-+	struct fwnode_handle *fwnode __free(fwnode_handle) = NULL;
-+	const char *bus = NULL;
-+	static const struct {
-+		const char *hid;
-+		const char *name;
-+	} acpi_ids[] = {{ "CSC3554", "cs35l54-hda" },
-+			{ "CSC3556", "cs35l56-hda" },
-+			{ "CSC3557", "cs35l57-hda" }};
-+	char *match;
-+	int i, count = 0, count_devindex = 0;
+   big-endian:
+     $ref: /schemas/types.yaml#/definitions/flag
+diff --git a/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+new file mode 100644
+index 0000000000000..a7db0aad2b25b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/soc/fsl/fsl,rcpm.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/soc/fsl/fsl,rcpm.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+	switch (action) {
-+	case HDA_FIXUP_ACT_PRE_PROBE:
-+		for (i = 0; i < ARRAY_SIZE(acpi_ids); ++i) {
-+			adev = acpi_dev_get_first_match_dev(acpi_ids[i].hid, NULL, -1);
-+			if (adev)
-+				break;
-+		}
-+		if (!adev) {
-+			dev_err(dev, "Failed to find ACPI entry for a Cirrus Amp\n");
-+			return;
-+		}
++title: Run Control and Power Management
 +
-+		count = i2c_acpi_client_count(adev);
-+		if (count > 0) {
-+			bus = "i2c";
-+		} else {
-+			count = acpi_spi_count_resources(adev);
-+			if (count > 0)
-+				bus = "spi";
-+		}
++description:
++  The RCPM performs all device-level tasks associated with device run control
++  and power management.
 +
-+		fwnode = fwnode_handle_get(acpi_fwnode_handle(adev));
-+		acpi_dev_put(adev);
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
 +
-+		if (!bus) {
-+			dev_err(dev, "Did not find any buses for %s\n", acpi_ids[i].hid);
-+			return;
-+		}
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - fsl,p2041-rcpm
++              - fsl,p3041-rcpm
++              - fsl,p4080-rcpm
++              - fsl,p5020-rcpm
++              - fsl,p5040-rcpm
++          - const: fsl,qoriq-rcpm-1.0
++      - items:
++          - enum:
++              - fsl,b4420-rcpm
++              - fsl,b4860-rcpm
++              - fsl,t4240-rcpm
++          - const: fsl,qoriq-rcpm-2.0
++      - items:
++          - enum:
++              - fsl,t1040-rcpm
++          - const: fsl,qoriq-rcpm-2.1
++      - items:
++          - enum:
++              - fsl,ls1012a-rcpm
++              - fsl,ls1021a-rcpm
++              - fsl,ls1028a-rcpm
++              - fsl,ls1043a-rcpm
++              - fsl,ls1046a-rcpm
++              - fsl,ls1088a-rcpm
++              - fsl,ls208xa-rcpm
++              - fsl,lx2160a-rcpm
++          - const: fsl,qoriq-rcpm-2.1+
 +
-+		if (!fwnode) {
-+			dev_err(dev, "Could not get fwnode for %s\n", acpi_ids[i].hid);
-+			return;
-+		}
++  reg:
++    maxItems: 1
 +
-+		/*
-+		 * When available the cirrus,dev-index property is an accurate
-+		 * count of the amps in a system and is used in preference to
-+		 * the count of bus devices that can contain additional address
-+		 * alias entries.
-+		 */
-+		count_devindex = fwnode_property_count_u32(fwnode, "cirrus,dev-index");
-+		if (count_devindex > 0)
-+			count = count_devindex;
++  "#fsl,rcpm-wakeup-cells":
++    description: |
++      The number of IPPDEXPCR register cells in the
++      fsl,rcpm-wakeup property.
 +
-+		match = devm_kasprintf(dev, GFP_KERNEL, "-%%s:00-%s.%%d", acpi_ids[i].name);
-+		if (!match)
-+			return;
-+		dev_info(dev, "Found %d %s on %s (%s)\n", count, acpi_ids[i].hid, bus, match);
-+		comp_generic_fixup(cdc, action, bus, acpi_ids[i].hid, match, count);
++      Freescale RCPM Wakeup Source Device Tree Bindings
 +
-+		break;
-+	case HDA_FIXUP_ACT_FREE:
-+		/*
-+		 * Pass the action on to comp_generic_fixup() so that
-+		 * hda_component_manager functions can be called in just once
-+		 * place. In this context the bus, hid, match_str or count
-+		 * values do not need to be calculated.
-+		 */
-+		comp_generic_fixup(cdc, action, NULL, NULL, NULL, 0);
-+		break;
-+	}
-+}
++      Required fsl,rcpm-wakeup property should be added to a device node if
++      the device can be used as a wakeup source.
 +
- static void cs35l41_fixup_i2c_two(struct hda_codec *cdc, const struct hda_fixup *fix, int action)
- {
- 	comp_generic_fixup(cdc, action, "i2c", "CSC3551", "-%s:00-cs35l41-hda.%d", 2);
-@@ -7528,6 +7611,7 @@ enum {
- 	ALC256_FIXUP_CHROME_BOOK,
- 	ALC287_FIXUP_LENOVO_14ARP8_LEGION_IAH7,
- 	ALC287_FIXUP_LENOVO_SSID_17AA3820,
-+	ALCXXX_FIXUP_CS35LXX,
- };
- 
- /* A special fixup for Lenovo C940 and Yoga Duet 7;
-@@ -9857,6 +9941,10 @@ static const struct hda_fixup alc269_fixups[] = {
- 		.type = HDA_FIXUP_FUNC,
- 		.v.func = alc287_fixup_lenovo_ssid_17aa3820,
- 	},
-+	[ALCXXX_FIXUP_CS35LXX] = {
-+		.type = HDA_FIXUP_FUNC,
-+		.v.func = cs35lxx_autodet_fixup,
-+	},
- };
- 
- static const struct snd_pci_quirk alc269_fixup_tbl[] = {
-@@ -10271,6 +10359,17 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
- 	SND_PCI_QUIRK(0x103c, 0x8cdf, "HP SnowWhite", ALC287_FIXUP_CS35L41_I2C_2_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8ce0, "HP SnowWhite", ALC287_FIXUP_CS35L41_I2C_2_HP_GPIO_LED),
- 	SND_PCI_QUIRK(0x103c, 0x8cf5, "HP ZBook Studio 16", ALC245_FIXUP_CS35L41_SPI_4_HP_GPIO_LED),
-+	SND_PCI_QUIRK(0x103c, 0x8d01, "HP ZBook Power 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d08, "HP EliteBook 1045 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d85, "HP EliteBook 1040 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d86, "HP Elite x360 1040 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d8c, "HP EliteBook 830 13 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d8d, "HP Elite x360 830 13 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d8e, "HP EliteBook 840 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d8f, "HP EliteBook 840 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d90, "HP EliteBook 860 16 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d91, "HP ZBook Firefly 14 G12", ALCXXX_FIXUP_CS35LXX),
-+	SND_PCI_QUIRK(0x103c, 0x8d92, "HP ZBook Firefly 16 G12", ALCXXX_FIXUP_CS35LXX),
- 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
- 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
- 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
++      fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
++      register cells. The number of IPPDEXPCR register cells is defined in
++      "#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
++      the bit mask that should be set in IPPDEXPCR0, and the second register
++      cell is for IPPDEXPCR1, and so on.
++
++      Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
++      mechanism for keeping certain blocks awake during STANDBY and MEM, in
++      order to use them as wake-up sources.
++
++  little-endian:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      RCPM register block is Little Endian. Without it RCPM
++      will be Big Endian (default case).
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    rcpm: global-utilities@e2000 {
++          compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
++          reg = <0xe2000 0x1000>;
++          #fsl,rcpm-wakeup-cells = <2>;
++    };
++
++    serial@2950000 {
++         compatible = "fsl,ls1021a-lpuart";
++         reg = <0x2950000 0x1000>;
++         interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
++         clocks = <&sysclk>;
++         clock-names = "ipg";
++         fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
++    };
+diff --git a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt b/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
+deleted file mode 100644
+index 5a33619d881d0..0000000000000
+--- a/Documentation/devicetree/bindings/soc/fsl/rcpm.txt
++++ /dev/null
+@@ -1,69 +0,0 @@
+-* Run Control and Power Management
+--------------------------------------------
+-The RCPM performs all device-level tasks associated with device run control
+-and power management.
+-
+-Required properites:
+-  - reg : Offset and length of the register set of the RCPM block.
+-  - #fsl,rcpm-wakeup-cells : The number of IPPDEXPCR register cells in the
+-	fsl,rcpm-wakeup property.
+-  - compatible : Must contain a chip-specific RCPM block compatible string
+-	and (if applicable) may contain a chassis-version RCPM compatible
+-	string. Chip-specific strings are of the form "fsl,<chip>-rcpm",
+-	such as:
+-	* "fsl,p2041-rcpm"
+-	* "fsl,p5020-rcpm"
+-	* "fsl,t4240-rcpm"
+-
+-	Chassis-version strings are of the form "fsl,qoriq-rcpm-<version>",
+-	such as:
+-	* "fsl,qoriq-rcpm-1.0": for chassis 1.0 rcpm
+-	* "fsl,qoriq-rcpm-2.0": for chassis 2.0 rcpm
+-	* "fsl,qoriq-rcpm-2.1": for chassis 2.1 rcpm
+-	* "fsl,qoriq-rcpm-2.1+": for chassis 2.1+ rcpm
+-
+-All references to "1.0" and "2.0" refer to the QorIQ chassis version to
+-which the chip complies.
+-Chassis Version		Example Chips
+----------------		-------------------------------
+-1.0				p4080, p5020, p5040, p2041, p3041
+-2.0				t4240, b4860, b4420
+-2.1				t1040,
+-2.1+				ls1021a, ls1012a, ls1043a, ls1046a
+-
+-Optional properties:
+- - little-endian : RCPM register block is Little Endian. Without it RCPM
+-   will be Big Endian (default case).
+-
+-Example:
+-The RCPM node for T4240:
+-	rcpm: global-utilities@e2000 {
+-		compatible = "fsl,t4240-rcpm", "fsl,qoriq-rcpm-2.0";
+-		reg = <0xe2000 0x1000>;
+-		#fsl,rcpm-wakeup-cells = <2>;
+-	};
+-
+-* Freescale RCPM Wakeup Source Device Tree Bindings
+--------------------------------------------
+-Required fsl,rcpm-wakeup property should be added to a device node if the device
+-can be used as a wakeup source.
+-
+-  - fsl,rcpm-wakeup: Consists of a phandle to the rcpm node and the IPPDEXPCR
+-	register cells. The number of IPPDEXPCR register cells is defined in
+-	"#fsl,rcpm-wakeup-cells" in the rcpm node. The first register cell is
+-	the bit mask that should be set in IPPDEXPCR0, and the second register
+-	cell is for IPPDEXPCR1, and so on.
+-
+-	Note: IPPDEXPCR(IP Powerdown Exception Control Register) provides a
+-	mechanism for keeping certain blocks awake during STANDBY and MEM, in
+-	order to use them as wake-up sources.
+-
+-Example:
+-	lpuart0: serial@2950000 {
+-		compatible = "fsl,ls1021a-lpuart";
+-		reg = <0x0 0x2950000 0x0 0x1000>;
+-		interrupts = <GIC_SPI 80 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&sysclk>;
+-		clock-names = "ipg";
+-		fsl,rcpm-wakeup = <&rcpm 0x0 0x40000000>;
+-	};
 -- 
-2.39.2
+2.34.1
 
 
