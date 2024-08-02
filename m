@@ -1,144 +1,118 @@
-Return-Path: <linux-kernel+bounces-272479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B99945CBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:03:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21437945CBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D02282B0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D51F12855F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA5D1DE852;
-	Fri,  2 Aug 2024 11:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DFF61E2104;
+	Fri,  2 Aug 2024 11:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Qlto+zct"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gYn7FH84"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D69B14A4E0
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEEB1DF67F
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722596586; cv=none; b=hQtvqqPc9phngKJ/SawBtHyjhvAVVDj6FIBDUckTR5FwSATaWSEAZyqJA7suoC7uFtYNn36kDS803hwJ1zmiSeFYbeNZl1waxVdBb2FALmhlA3LmBTlb3erDhn6+jVSk1b7kADfrkbWtLio86GwNgnDLVaa8lO1RQM/n6ssWm+E=
+	t=1722596596; cv=none; b=QXthtMh2jLAr3qxkgcD6UvPs89qJWNuC0KDWAEPdDatxgjbuzBWPXvt9Ul/B1ewBxGCTqXg1QB/FPUcsSw/9MsSV9H8vCcbq2krbphNRtiXctjqiA0W4ezapcb60+XOYBuhHuYtqAPJWnk55ebVT17aLlXf1vqHyQqFcNFjJ1Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722596586; c=relaxed/simple;
-	bh=gvZ32kuJnAQHWuEQ5kKTNJZn1SJB/jyL2wR18+EWeR0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tbXT/DASBawj+zn3c4ONH8dJQ2fA4iDOk6aGXXoI5bJWzzRagmGs/E4niJlpvTRFXrY7KEzJus6DfF3T1YoukUb38W819eykjFQlp2gKyufJGczd4qgW4vYHPl8sGr1T2/ndm8DJIevNHmG6warxRbq78G9V6QYZ4N+I36VizGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Qlto+zct; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39b27935379so377195ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 04:03:04 -0700 (PDT)
+	s=arc-20240116; t=1722596596; c=relaxed/simple;
+	bh=f7XccJFQ+QycCZFwHexROwL6oGOM5nxC8z9cehuDsO8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LMcdB86hfFZnRqS+/1NotgQtl4MQ0UliADIUwluLww1XYu7AiQ5qHqfFGadtY5N9uyQNGAemVCsvK2oZsr64vAGmEwX6osSt90rzZfpQp7JW83HdmBkNJrprqRKuDjyPnTjSes9B3gJF813Gn5V8Wbk3ooNZOINARCnko5KMh+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gYn7FH84; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a156557029so12407614a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 04:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722596583; x=1723201383; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zwUaUssVs29PUTspR4BzI9XA6uViKQGq2HqZKYi3CTc=;
-        b=Qlto+zctyM2d0HF/PH5fQq0GapbLD5YvzK/OVdnUF1VZMJlbtO0geIhHOGvsVmT/0a
-         Si9hlhqDeDKkLkge0XBa6vb06ShwU69CsvSuHiuC1GgX/dDoAALqSPIzlWQ8r4Emgds8
-         +W84yclJ6O13sDgOAB98qg4BHIxdq9Uo1Gq49O49jyyo2Rmrh5ZG+nNwBVGQ8cFz5yUP
-         eKiF2NZKIkl4ZoedFCbhs1P2jl+qDvMKRCvRlRi//l5gsapdcM9ZDpe02w6mjmyoBc/g
-         KP5XNLGVOYVFpDgRO85uQHRQq5yqc+jTl8LckgilwiWCCwUnTsytw44wizTj8XqW9PPh
-         5iCg==
+        d=linaro.org; s=google; t=1722596593; x=1723201393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f7XccJFQ+QycCZFwHexROwL6oGOM5nxC8z9cehuDsO8=;
+        b=gYn7FH843NJAf4QDXl8odZop6k2I5+dh+FqYxirPuCKtEz4R0FxPXoaYfipO8vpst2
+         MXmDeZ3fKtc88eSGc33VW25WevG+7/u7PNIJjgFQc3CLhspa1y/kl75Vl4NHBIp3JNWe
+         U24wKf9Km5OCrQE13K1FBuAZOVd/xPdAksG+QA+gg3c/d8SeDda/WVTIO59qeChyFfAN
+         OwtFzfj0o6fzHBTEzecDPlmO1J0YsOMvTINTpPPP3Lt2UpZuebsd6Ckzj3dpRYPG4o2e
+         mErnONmBKNV79TB5IWueRsD0TQTZcO8j/FsVSOaxDMD3teaqIJaDuF0Ajyyb7OE/a6mv
+         T0qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722596583; x=1723201383;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1722596593; x=1723201393;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zwUaUssVs29PUTspR4BzI9XA6uViKQGq2HqZKYi3CTc=;
-        b=EuH3sIIrxirGtP/cuzO1K5EpBzSU5QbRAnizQD7V6SzYBNeK22pgtbi9zucIagBm41
-         JsaCn4PC3JT7NkugH8FN7LRwvLR1TavpZG6D2ARGYfwSUixUY8F6oPSwW1zrG5Rr1Rbc
-         XSlBePg5/MMmELOQTmN+NXJh3bNJunAFLtvCs8klmE6l7IhAi8gLkletkmvq/bhHxSZC
-         VBZeFW4b3f4UFVvt5qmM1ItDN2TE1cMbvOL21KirG09LytJkpowhDO5GNsb/bNq6pBV3
-         6RDFwRyK4sTcJ3GP6jZIyM2vWvPSlpxYHAxxYyg5rXBn6KgcSoQ43r6ynRnCqufg5/jw
-         EQDg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUYA23ZQACQUrvbwyyfMsKEa7p9ZOWGvrgv9IeF/VhE0Ll+qUr8IFGTvvvqFCjIPchTPuM8r9s7B5WHoUBIBTTMWOG8jPEj4JC9z5J
-X-Gm-Message-State: AOJu0YzlOG1/6jUTymxB4Te5HSkUBI63imzKhrDONBefAznCsqae1EaR
-	Mz9esQlfirwdMnDOuPyD45n12/MwgiNCeuXlf+ADzSOvnzPflrFtUwpo7c/jbJn7Bn5FXp09Zrg
-	NqWk0c9hM2H5fA9Of3TBk2/S5OS3r68dbc+m4jw==
-X-Google-Smtp-Source: AGHT+IH43E7Mfc6q5x718I3ZcYVbr40JWGwdK4O48RfeKEf97bzGFtbKMl5FOuQjZpif1eAkLPoTxnfBQkNOJQTgESk=
-X-Received: by 2002:a92:6b08:0:b0:375:dc39:cfd2 with SMTP id
- e9e14a558f8ab-39b1fb92548mr37783595ab.11.1722596580822; Fri, 02 Aug 2024
- 04:03:00 -0700 (PDT)
+        bh=f7XccJFQ+QycCZFwHexROwL6oGOM5nxC8z9cehuDsO8=;
+        b=fyQowZzQPpl6T2glapdxWMas33WVtFvT/AXwTXRaWinlBXqUjpax6PI2w5gdNLgVr0
+         n1rAIaY63PfqWx04/a2boILjNmxhsxuCpi7zBUgQhQoE3qhkxUP80hHnRezLlsjODAIA
+         bWwR59Mic6ckiMrZ79sTJdgL9cQGFypNdSnmCPyR5VHBP+iiWiGMjjjn679wtl9HOlpX
+         QQfSCb/HPHbDy46URGCK+Z/7HYXlfSZDeCLcMfVfI4Zt9Rb2A/Geh8BsEhnCzRZY80dE
+         sdOQAV67uwzWbbx48Qg+3S4w/DwF/wJ8bKqDHzCgVKFKe0BkATgYvaUdS5VG36r02f9+
+         eHlw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6CCgUAWd8DhERvMiilI00gqTZIHZWKelSl01hFSG4xgWcQC9aNQC/WEEV5pQWrs7WJE31uwcYozCxyJJWpWSXyY1XIKyQqsqsw3kz
+X-Gm-Message-State: AOJu0YyZcLiCtfMSdpIrB2mE+dGW6D3Y5QQqjPZnN9pJa9njC6KUX14L
+	oMg7Zgibuq4bUqqmCY3wgq+2aewJQfWg6VtQTjAQwd64Dmc4ifyJ24XwbFEG0WI=
+X-Google-Smtp-Source: AGHT+IFGQonexgpZjGUwl51oIYY4w2W/jqJ1zQyOCpk3kJFGs8T5j8dynyIwmzMmmRUPMHGi6NWZlQ==
+X-Received: by 2002:a17:907:7f24:b0:a7d:a29e:5c41 with SMTP id a640c23a62f3a-a7dc5029a1dmr251865166b.40.1722596592689;
+        Fri, 02 Aug 2024 04:03:12 -0700 (PDT)
+Received: from draig.lan ([85.9.250.243])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e8676fsm84603966b.164.2024.08.02.04.03.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 04:03:12 -0700 (PDT)
+Received: from draig (localhost [IPv6:::1])
+	by draig.lan (Postfix) with ESMTP id 24FEC5F8A9;
+	Fri,  2 Aug 2024 12:03:11 +0100 (BST)
+From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,  Marc Zyngier <maz@kernel.org>,
+  Oliver Upton <oliver.upton@linux.dev>,  Tianrui Zhao
+ <zhaotianrui@loongson.cn>,  Bibo Mao <maobibo@loongson.cn>,  Huacai Chen
+ <chenhuacai@kernel.org>,  Michael Ellerman <mpe@ellerman.id.au>,  Anup
+ Patel <anup@brainfault.org>,  Paul Walmsley <paul.walmsley@sifive.com>,
+  Palmer Dabbelt <palmer@dabbelt.com>,  Albert Ou <aou@eecs.berkeley.edu>,
+  Christian Borntraeger <borntraeger@linux.ibm.com>,  Janosch Frank
+ <frankja@linux.ibm.com>,  Claudio Imbrenda <imbrenda@linux.ibm.com>,
+  kvm@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
+  kvmarm@lists.linux.dev,  loongarch@lists.linux.dev,
+  linux-mips@vger.kernel.org,  linuxppc-dev@lists.ozlabs.org,
+  kvm-riscv@lists.infradead.org,  linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  David Matlack <dmatlack@google.com>,
+  David Stevens <stevensd@chromium.org>
+Subject: Re: [PATCH v12 83/84] KVM: Drop APIs that manipulate "struct page"
+ via pfns
+In-Reply-To: <20240726235234.228822-84-seanjc@google.com> (Sean
+	Christopherson's message of "Fri, 26 Jul 2024 16:52:32 -0700")
+References: <20240726235234.228822-1-seanjc@google.com>
+	<20240726235234.228822-84-seanjc@google.com>
+Date: Fri, 02 Aug 2024 12:03:11 +0100
+Message-ID: <87jzgzchlc.fsf@draig.linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802075741.316968-1-vincent.chen@sifive.com>
-In-Reply-To: <20240802075741.316968-1-vincent.chen@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 2 Aug 2024 16:32:48 +0530
-Message-ID: <CAAhSdy3yx=mm3M6U_Q+_WdMs12SGCypPgNkBAVc9Kwn9jgev6g@mail.gmail.com>
-Subject: Re: [PATCH] irqchip: let the probe of APLIC be earlier than IMSIC
-To: Vincent Chen <vincent.chen@sifive.com>
-Cc: tglx@linutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 2, 2024 at 1:27=E2=80=AFPM Vincent Chen <vincent.chen@sifive.co=
-m> wrote:
->
-> When the debug message of driver/base/dd.c is enabled, the following
-> error messages are present in the boot log:
->
-> [    0.207941] platform d000000.aplic: error -EPROBE_DEFER: supplier
-> 28000000.imsics not ready
-> [    0.208115] platform d000000.aplic: Added to deferred list
+Sean Christopherson <seanjc@google.com> writes:
 
-We are relying on fw_devlink implemented by Linux DD core to do the
-probe ordering. The above prober defer message implies that the
-Linux DD core is doing its job correctly.
+> Remove all kvm_{release,set}_pfn_*() APIs not that all users are gone.
 
->
-> The reason for this error message is that the probe of APLIC is executed
-> earlier than IMSIC. This error also causes all the platform devices
-> connected to the APLIC to be added to the deferred list. Because both
-> APLIC and IMSIC are registered by device_initcall, this patch adjusts the
-> compile order of APLIC and IMSIC to ensure that the probe of IMSIC is
-> executed earlier than the probe of APLIC.
->
-> Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
-> ---
->  drivers/irqchip/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-> index 15635812b2d6..3c09666569d6 100644
-> --- a/drivers/irqchip/Makefile
-> +++ b/drivers/irqchip/Makefile
-> @@ -96,9 +96,9 @@ obj-$(CONFIG_QCOM_MPM)                        +=3D irq-=
-qcom-mpm.o
->  obj-$(CONFIG_CSKY_MPINTC)              +=3D irq-csky-mpintc.o
->  obj-$(CONFIG_CSKY_APB_INTC)            +=3D irq-csky-apb-intc.o
->  obj-$(CONFIG_RISCV_INTC)               +=3D irq-riscv-intc.o
-> +obj-$(CONFIG_RISCV_IMSIC)              +=3D irq-riscv-imsic-state.o irq-=
-riscv-imsic-early.o irq-riscv-imsic-platform.o
->  obj-$(CONFIG_RISCV_APLIC)              +=3D irq-riscv-aplic-main.o irq-r=
-iscv-aplic-direct.o
->  obj-$(CONFIG_RISCV_APLIC_MSI)          +=3D irq-riscv-aplic-msi.o
-> -obj-$(CONFIG_RISCV_IMSIC)              +=3D irq-riscv-imsic-state.o irq-=
-riscv-imsic-early.o irq-riscv-imsic-platform.o
+now?
 
-First of all there is no issue here.
+Otherwise:
 
-Secondly, changing compilation order in Makefile to influence
-the probe order will not help in any way.
+Reviewed-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 
->  obj-$(CONFIG_SIFIVE_PLIC)              +=3D irq-sifive-plic.o
->  obj-$(CONFIG_STARFIVE_JH8100_INTC)     +=3D irq-starfive-jh8100-intc.o
->  obj-$(CONFIG_IMX_IRQSTEER)             +=3D irq-imx-irqsteer.o
-> --
-> 2.34.1
->
-
-Regards,
-Anup
+--=20
+Alex Benn=C3=A9e
+Virtualisation Tech Lead @ Linaro
 
