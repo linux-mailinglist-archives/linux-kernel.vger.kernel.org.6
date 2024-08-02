@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-272102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B18D94570E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:27:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4190945712
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 06:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DBFC1C23123
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:27:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A021C23030
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 04:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275DC6A347;
-	Fri,  2 Aug 2024 04:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="McD/rsNu"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C1A2746D;
+	Fri,  2 Aug 2024 04:28:03 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE3B4778E;
-	Fri,  2 Aug 2024 04:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5DA208D7;
+	Fri,  2 Aug 2024 04:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722572771; cv=none; b=G2CXSJ//dM4b3s0DsdjbgZG8Cb2MZNwiNwaj483gQZHPcR9nJtwTrGbEb4NAPsltbUc4qR5bGIpY79PgSAaEdLQlhhp9lyrCxtG13RZ55J8dCgANIDNekq4sX5RUVmpOCkSgKdQqlUKNql+dlNEEgSuPdBb3n0wFz8WFq5OoPRs=
+	t=1722572882; cv=none; b=ct165hJhAmKjnKZIywhPz3ZUVbEJBAmhXVadaoxqTYTnPq6faDAQ//xapuiEMr7DIEEhgSEGWxl46XvbKIBPewyqKvOjDwQozEWR9OCl3dGF+n2yrSlEEeiXXw9i/x7OGAXTDCGDdkifSEUAzWVMfg9Ov8bWMiO31u7zHLU5Vqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722572771; c=relaxed/simple;
-	bh=IQb18GsEsQhhNQVCdjoBsLAJRtJgr3iLIQ62bcFMy1M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JCSfAvf3u3h/v7cb7WIrO+roth5HHrxCAUe5TL0+AFqqk5jkqvVRJ/tcsLTfN5+7e4xcII+g5x7D0/ntSosEvi6KJLQj86YGAuvfd6pjCGFpK79z5l0AARom5ZPA6TqjDXJX+hjthogaAsCrX8OlBxnYe03UdtsuKFCuvU2kX10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=McD/rsNu; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1722572767;
-	bh=cZGQunjjz3bBRdwK5TaMAYgHuGZTvp+2LbpR3fHMKp4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=McD/rsNu+SHROYSlJH8AL3nzTcujMWcuCEbLIfovl8Otm/4YGGT2tgCd9vc1RLDFP
-	 xsLO0IjMcXScs22DM5Iuq94kZhwYi4qj8Bp9G1FhJZVLrnWlVG1nqYp/t7v1x627vd
-	 K/mO6IrwSLXV56b30SJkif27yxIzrtDgZ/aDRhrLoelDmLi82Wvq5Xe+ZeNP6OK8E0
-	 DiWuZo45V+6yqZgvsgHRXBNRgfkdRX5HJJI+tOoemxTQrlUm92zonwaELMkOuM3+GM
-	 rQZWzqUGsPwP3wAdyQyKo+l+Z9gll0+647wTcvfTVkGM+dIgTTaL3tDGh6Trml6uHd
-	 p1VOJfDIwvYCQ==
-Received: from [127.0.1.1] (ppp118-210-29-70.adl-adc-lon-bras31.tpg.internode.on.net [118.210.29.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 4223C66E0D;
-	Fri,  2 Aug 2024 12:26:07 +0800 (AWST)
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-Date: Fri, 02 Aug 2024 13:55:24 +0930
-Subject: [PATCH 7/7] ARM: dts: aspeed-g6: Drop cells properties from
- ethernet nodes
+	s=arc-20240116; t=1722572882; c=relaxed/simple;
+	bh=0sA4qP4oa2I6sIScrWlfoGqUSY09O6KqqY/soVRrwMc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=j9VKwJNx0tfJAgAJsXLZrvX7N4l1wKUCtVBIOLcYZTVCD9hhTBM2SPamS7sRUj7USFwOWx4RqpLW89C3Sdg/YDcSG3ig99UGU5rCEwu7SEy4fxZKWk8OQAj30ksMLTLkDk4ZrXaAUMOVPM4pAoqq6CpMOeSMCb3JVoQXs7RIHrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAAX9hg9YKxm9r_rAg--.10938S2;
+	Fri, 02 Aug 2024 12:27:52 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: miriam.rachel.korenblit@intel.com,
+	kvalo@kernel.org,
+	johannes.berg@intel.com,
+	gregory.greenman@intel.com,
+	benjamin.berg@intel.com,
+	daniel.gabay@intel.com,
+	make24@iscas.ac.cn,
+	dan.carpenter@linaro.org
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] wifi: iwlwifi: mvm: fix an error code in iwl_mvm_alloc_sta_after_restart()
+Date: Fri,  2 Aug 2024 12:27:40 +0800
+Message-Id: <20240802042740.1567091-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240802-dt-warnings-bmc-dts-cleanups-v1-7-1cb1378e5fcd@codeconstruct.com.au>
-References: <20240802-dt-warnings-bmc-dts-cleanups-v1-0-1cb1378e5fcd@codeconstruct.com.au>
-In-Reply-To: <20240802-dt-warnings-bmc-dts-cleanups-v1-0-1cb1378e5fcd@codeconstruct.com.au>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, 
- Andrew Jeffery <andrew@codeconstruct.com.au>, 
- Eddie James <eajames@linux.ibm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.1
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAAX9hg9YKxm9r_rAg--.10938S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKrykJr4UCrWUAryDKr15Arb_yoWDWFg_Cr
+	1SgFn3Jr1DCF4YvrsrCF4fZ34YyFyq93W8ur97ta9xKr4DCFyUJrZ0qa4UtrZ09r4UAFnr
+	G3WDCFyxC39IqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbSkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr
+	0_Cr1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVAC
+	Y4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJV
+	W8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI2
+	0VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxAIw28Icx
+	kI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2Iq
+	xVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42
+	IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY
+	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aV
+	CY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbQVy7UUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-These are not specified in the binding and produce warnings such as
-the following:
+This error path should return -EINVAL instead of success.
 
-```
-...
-arch/arm/boot/dts/aspeed/aspeed-g6.dtsi:254.27-262.5: Warning (avoid_unnecessary_addr_size): /ahb/ethernet@1e670000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
-...
-arch/arm/boot/dts/aspeed/aspeed-g6.dtsi:264.27-272.5: Warning (avoid_unnecessary_addr_size): /ahb/ethernet@1e690000: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
-...
-arch/arm/boot/dts/aspeed/aspeed-ast2600-evb-a1.dtb: ethernet@1e660000: Unevaluated properties are not allowed ('#address-cells', '#size-cells' were unexpected)
-```
-
-Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+Fixes: 57974a55d995 ("wifi: iwlwifi: mvm: refactor iwl_mvm_mac_sta_state_common()")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 ---
- arch/arm/boot/dts/aspeed/aspeed-g6.dtsi | 8 --------
- 1 file changed, 8 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-index ae8aa54508b2..8ed715bd53aa 100644
---- a/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-+++ b/arch/arm/boot/dts/aspeed/aspeed-g6.dtsi
-@@ -234,8 +234,6 @@ mdio3: mdio@1e650018 {
- 		mac0: ethernet@1e660000 {
- 			compatible = "aspeed,ast2600-mac", "faraday,ftgmac100";
- 			reg = <0x1e660000 0x180>;
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC1CLK>;
- 			status = "disabled";
-@@ -244,8 +242,6 @@ mac0: ethernet@1e660000 {
- 		mac1: ethernet@1e680000 {
- 			compatible = "aspeed,ast2600-mac", "faraday,ftgmac100";
- 			reg = <0x1e680000 0x180>;
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC2CLK>;
- 			status = "disabled";
-@@ -254,8 +250,6 @@ mac1: ethernet@1e680000 {
- 		mac2: ethernet@1e670000 {
- 			compatible = "aspeed,ast2600-mac", "faraday,ftgmac100";
- 			reg = <0x1e670000 0x180>;
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC3CLK>;
- 			status = "disabled";
-@@ -264,8 +258,6 @@ mac2: ethernet@1e670000 {
- 		mac3: ethernet@1e690000 {
- 			compatible = "aspeed,ast2600-mac", "faraday,ftgmac100";
- 			reg = <0x1e690000 0x180>;
--			#address-cells = <1>;
--			#size-cells = <0>;
- 			interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&syscon ASPEED_CLK_GATE_MAC4CLK>;
- 			status = "disabled";
-
+diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c b/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c
+index d5a204e52076..477239a1ed83 100644
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/mld-sta.c
+@@ -644,12 +644,12 @@ static int iwl_mvm_alloc_sta_after_restart(struct iwl_mvm *mvm,
+ 						  lockdep_is_held(&mvm->mutex));
+ 
+ 		if (!link_conf)
+-			continue;
++			return -EINVAL;
+ 
+ 		mvm_link = mvmvif->link[link_conf->link_id];
+ 
+ 		if (!mvm_link || !mvm_link_sta)
+-			continue;
++			return -EINVAL;
+ 
+ 		sta_id = mvm_link_sta->sta_id;
+ 		ret = iwl_mvm_mld_cfg_sta(mvm, sta, vif, link_sta,
 -- 
-2.39.2
+2.25.1
 
 
