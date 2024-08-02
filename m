@@ -1,113 +1,112 @@
-Return-Path: <linux-kernel+bounces-273129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 730E39464CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:07:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFAE9464D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF7028326F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:07:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C981F21FCA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358CD73176;
-	Fri,  2 Aug 2024 21:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFB07346C;
+	Fri,  2 Aug 2024 21:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GRR1SkjC"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ejuWtFmV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47801ABEB9
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01319219FC;
+	Fri,  2 Aug 2024 21:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722632858; cv=none; b=IQG+kX0/z3pnXIveZE2bpEPZLAJpHfNX+9Fa0RTaRzPWmSkoWWKey1CgHfG5r3VxE7p/NKYAswjKY16kSTrvP5tLn9ttEHKBulI+TsG4HpdmKqruYEKUKY7924ptlSTN2ZdSB8CuHz1KK39bIJq3DXrF0gqiq5CExNq5xhqaBdE=
+	t=1722632929; cv=none; b=HnyZlCMUBCnpHpkzEiwIA5u87Hb+wPa25kAS9Wdr0HyNYiuXLAExhh5C5DY4JypcV+jCWupkACCNLgYft4SWOuuqvpMmIAPTyotaw4uHCQtEXn/ceHkme0i/sETxVXiS4C2tC9KH4Z0UKZTccdUEQRO0MDWNm4V9HcRXaW71vT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722632858; c=relaxed/simple;
-	bh=3IBCpDKASkgUWXZNH96TfA1Kg5XghuUUJPGzs/5NcVI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OswEqkh3Pn1Kn0Yb3x8W8S/ah1bSJB/oJ376Bjy+QgXDmu+trR2dr+XAh9yuW9zraTTdY/59u8bJxhnspTlBROm8eZ6EmYX23KLjhHY7cHmXBrtsDBsdnxSI1NhYDdNm4Y4rFQDmflE4ZcPnfn34XtdkHGIKPB2uzPcG5mDRa8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GRR1SkjC; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f035ae0fe0so98884481fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:07:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722632855; x=1723237655; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3IBCpDKASkgUWXZNH96TfA1Kg5XghuUUJPGzs/5NcVI=;
-        b=GRR1SkjCbLOKnkKxlw8gTbVc9A5PgBDM5OpLmYWFaEfm6FI1g5z/JodvRnnIug6KqV
-         wk+JwgUN7LPJpSkLXKaIh2OPSsKUh+Q9G9erwU/7By41fWJ92ycTgDNY9tzQsCM8+dmA
-         cwmZl/sZicr645+gi2Eb4jPboyeiJIn/J36dbx78g/smPXduDknh8iHnLJQYpNV5Uj5l
-         MRLTEflrr7uKkvSz7zsmlJ4UbCEyLeYD47NPepLH1PU1rPEziWlvCVAVEkwpJ2BlCvV1
-         mBBhtjycH2KTWiKiYMwAm/ycTnDGP0NfpgiwLUm9ZBElbjkffl7BCtrUSFwYl/qkYgNA
-         XqKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722632855; x=1723237655;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3IBCpDKASkgUWXZNH96TfA1Kg5XghuUUJPGzs/5NcVI=;
-        b=aGeOnb7QUg05o3v+8gvJajaXDhNFirq5CjRnai9Cg6Zm1cVNtOBsFhIWNM3jDu6qAy
-         YX62uwwZNaTLoO/uH+UIR+KoYdjmEgAbCmJ0H7bHcVlciCSrWd/vQpnpgT7SL91PNStH
-         LFMC1sjRcfuOYD/Qvoh5hCAH4BU6t2U9xC3JlzzfibpXzr3+RdU41rISkP4FvyYUflA9
-         VvpxmiGDUJ+saPQxeJjepq2IOarNXXZvV6oxAJDZlDFous2zq7hn5BKGhvwMN18A9GXA
-         5IYVkZtkbMKD4daAi32WYWCh2mqnHpTKkSdk0J8Dq/3Xbp/wp+tTDUym8OrRMbCTvnLc
-         ktNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJip1CwiqPwbH2e+G8LhyT1LWb1jJv+DE18VxJIYsmHtw/+kJPr1dDcZaZvT6Jy+aSgw5Ox4Nv1GZQpjx8tVCp8LoTvfcewUBbWkAu
-X-Gm-Message-State: AOJu0Yz/lvuLhcg0skE2BCNCmMy+d0YA81KJcTV+TPRwaQjfiHQlRW8U
-	eJ9SPf8j1nyPw4lf5F9QhUfRAXaAkkZ/Gt6FVY50JiGQNm+MR0NJrLZRBFyJQ7V3FVXvTV1LYpX
-	cGm4d+vIefCITDbQvTTIBgZOw5GR8HhOaJ5xrhQ==
-X-Google-Smtp-Source: AGHT+IE7hFc1H/dZ8sBI7S/rf48tDmVRYcqd9lHO9wKK7clV7JzcwwqMIYpfn4V27LAhBUoFoLlkKUr2/Q26nLL9qPc=
-X-Received: by 2002:a2e:91d0:0:b0:2f0:32f1:896d with SMTP id
- 38308e7fff4ca-2f15aabce68mr35889961fa.23.1722632854934; Fri, 02 Aug 2024
- 14:07:34 -0700 (PDT)
+	s=arc-20240116; t=1722632929; c=relaxed/simple;
+	bh=rKeew/LVSi1nYEKIe21+NRX/sk9+UYPtQUpEfCVuEPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rFJ0tivHZNmNq766XrIVI+IECeByGbh0ReaNba/1iB471ZOpdj1BZv11kpzGMPIoN6N1DgjLeMLznEKZKEdJ+I0kLSkQeurWnOAOzC14cW3FOc1+7kbGf/Mt9wKhPmeFbioTUeUspvUt9Wt/gyHqTOepflqcQGPiI8hOLBIzuEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ejuWtFmV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F7F6C32782;
+	Fri,  2 Aug 2024 21:08:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722632928;
+	bh=rKeew/LVSi1nYEKIe21+NRX/sk9+UYPtQUpEfCVuEPg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ejuWtFmViglvHp19JdY95N2VMi9snvGFQ1AMA+7hpqmkJtRSteHNGP8m/oA6sGaQH
+	 iDQXE+8kJtXgcBtEvT+cdRJBmkQCsOGif+h7evRVZNEovATezJ1UKrVJLMlH+qrN1x
+	 bbISSR71U+c8SQKTLR5srppvUJSrDWFo9Bkr/gMZqKunZr48XVeeGmKgEUeYRoOPmU
+	 TtQXAxblogXGTNJZy+0NGJnORLZEgCJJNCj3wNC1uI/qbpwfP2IIMDIyHkp7lNa9K7
+	 Nq3m6ud7ZfpiJx68/eCAN/iy3fqdIMjgcZTLcZKKo8UDT1a3MtbPu8Oco2n3XQCaHP
+	 Jb5fOPACBnESQ==
+From: Song Liu <song@kernel.org>
+To: live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: jpoimboe@kernel.org,
+	jikos@kernel.org,
+	mbenes@suse.cz,
+	pmladek@suse.com,
+	joe.lawrence@redhat.com,
+	nathan@kernel.org,
+	morbo@google.com,
+	justinstitt@google.com,
+	mcgrof@kernel.org,
+	thunder.leizhen@huawei.com,
+	kees@kernel.org,
+	kernel-team@meta.com,
+	song@kernel.org,
+	mmaurer@google.com,
+	samitolvanen@google.com,
+	mhiramat@kernel.org,
+	rostedt@goodmis.org
+Subject: [PATCH v2 0/3] Fix kallsyms with CONFIG_LTO_CLANG
+Date: Fri,  2 Aug 2024 14:08:32 -0700
+Message-ID: <20240802210836.2210140-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802080403.739509-1-paweldembicki@gmail.com> <20240802080403.739509-6-paweldembicki@gmail.com>
-In-Reply-To: <20240802080403.739509-6-paweldembicki@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 2 Aug 2024 23:07:24 +0200
-Message-ID: <CACRpkdbY1V3Kw-Otrp=dHH6Q4ABnyHY8aP2bSF1UNHKRmDzRnA@mail.gmail.com>
-Subject: Re: [PATCH net 5/6] net: dsa: vsc73xx: allow phy resetting
-To: Pawel Dembicki <paweldembicki@gmail.com>
-Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, 
-	Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 2, 2024 at 10:04=E2=80=AFAM Pawel Dembicki <paweldembicki@gmail=
-.com> wrote:
+With CONFIG_LTO_CLANG, the compiler/linker adds .llvm.<hash> suffix to
+local symbols to avoid duplications. Existing scripts/kallsyms sorts
+symbols without .llvm.<hash> suffix. However, this causes quite some
+issues later on. Some users of kallsyms, such as livepatch, have to match
+symbols exactly; while other users, such as kprobe, would match symbols
+without the suffix.
 
-> Now, phy reset isn't a problem for vsc73xx switches.
-> 'soft_reset' can be done normally.
->
-> This commit removes the reset blockade in the 'vsc73xx_phy_write'
-> function.
->
-> Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+Address this by sorting full symbols at build time, and split kallsyms
+APIs to explicitly match full symbols or without suffix. Specifically,
+exiting APIs will match symbols exactly. Two new APIs are added to match
+symbols with suffix. Use the new APIs in tracing/kprobes.
 
-Like Russell says, it needs an explanation.
 
-I think it worked because since the phy write operations were
-not properly implemented, the PHY relied on power-on
-or firmware defaults before, so things just happened to work
-on some systems. We were just lucky things worked if we didn't
-reset the PHY.
+Changes v1 => v2:
+1. Update the APIs to remove all .XXX suffixes (v1 only removes .llvm.*).
+2. Rename the APIs as *_without_suffix. (Masami Hiramatsu)
+3. Fix another user from kprobe. (Masami Hiramatsu)
+4. Add tests for the new APIs in kallsyms_selftests.
 
-With some explanation like that:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+v1: https://lore.kernel.org/live-patching/20240730005433.3559731-1-song@kernel.org/T/#u
 
-Yours,
-Linus Walleij
+Song Liu (3):
+  kallsyms: Do not cleanup .llvm.<hash> suffix before sorting symbols
+  kallsyms: Add APIs to match symbol without .XXXX suffix.
+  tracing/kprobes: Use APIs that matches symbols without .XXX suffix
+
+ include/linux/kallsyms.h    | 14 ++++++
+ kernel/kallsyms.c           | 88 +++++++++++++++++++++++++------------
+ kernel/kallsyms_selftest.c  | 75 ++++++++++++++++++++++---------
+ kernel/kprobes.c            |  6 ++-
+ kernel/trace/trace_kprobe.c | 11 ++++-
+ scripts/kallsyms.c          | 31 +------------
+ scripts/link-vmlinux.sh     |  4 --
+ 7 files changed, 145 insertions(+), 84 deletions(-)
+
+--
+2.43.0
 
