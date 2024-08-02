@@ -1,408 +1,186 @@
-Return-Path: <linux-kernel+bounces-272885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A65694624B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:12:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D04494624E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5102839A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:12:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D6981F22953
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F9F1537CB;
-	Fri,  2 Aug 2024 17:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A39615C121;
+	Fri,  2 Aug 2024 17:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="G1W3TPfT"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DLPw4VEa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE2C81C69D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFAD16BE0F;
+	Fri,  2 Aug 2024 17:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722618725; cv=none; b=t/H/ngwxhbI+TiW375wTRWYAEJDAMQHSbHZ/uRzCjNZo1GVF0w7X5QkavSMQBx6sLd36izVHtmAd0NvTM+8qr+WVolnlpcnMzyv1l4nMYR9UNENQuRdYewT/eUyXt3oOksEmMu222hdKknbG+Y66alPC7xxOrJGr+uUBKiNN2Lg=
+	t=1722618852; cv=none; b=KhVgJlOGsU0EfBZczT7XJUJ+4043hhwySs1ayf8vmipqx/C2UppiPSh/hHlTsLRo6099ogXBPjIexvJFgFNPymEmtuxnMKujxxvechcvuhiPKEqdYOj+POcc+zYBkYb/HbzU3/no1szAuAerwxVt7PVY+AGyVBHIBfqbLJVVNBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722618725; c=relaxed/simple;
-	bh=neWOr6PL+EwexsPE988GKl0O2GiEtFK9JOQq2p/0/Zc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eGQAShbmaGhs9NA3lyX/lK8s1LsEe0dYwSRkg1EIyvqqT7lYh3TACoP5CeHfWNufZQEIBS+3cCzXtcac90osq8M/RPQ3gQVwRJIHPz/dMRKQU6xl/KzdISUzkJZTbx/4wuKTAXF9SkT5fKW/XJP4J1a2JqUEKZ2vS9wOgn8oInw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=G1W3TPfT; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1722618720; x=1722877920;
-	bh=umKgQ0P6J3fg5Wvduw8E/YyfxFZOHX6++WZeN01S7fo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=G1W3TPfTWtkPqf07ROxONPFUPs1cLs2kI5QKgpW1N+hujvSZIjumqEsePgaeUVW15
-	 hk4FPlXdM2UbEDF0j/t9gCoOrTirOzpvMotsUk4Vz7Rn4ZxxYwawPih5CPU4CtXVLU
-	 6MEM/OISkPDe3JhGY/SESyO38m2W89/U3K2n0/i6A0Lk763qy2hWKrP6m62tp90pFo
-	 zrYLEEQGMJnXbkvkURoquhgifXS50i3x+AqNPUFYjFL/2Ktk3HBAva+VmegMZmXGIB
-	 KONrvrzBoFkkgDp97KOxWyaQLNhWDI2gS8O2PeIlorIJbiI0ARVrFPgk/Z4Tiev8Iv
-	 UPUMNNUTbTMOA==
-Date: Fri, 02 Aug 2024 17:11:56 +0000
-To: Andreas Hindborg <nmi@metaspace.dk>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, rust-for-linux@vger.kernel.org, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@samsung.com>, Adam Bratschi-Kaye <ark.email@gmail.com>
-Subject: Re: [PATCH] rust: add `module_params` macro
-Message-ID: <a98ddf54-3e27-4587-8e49-f19dd1ac65a6@proton.me>
-In-Reply-To: <87zfpvmd8y.fsf@metaspace.dk>
-References: <20240705111455.142790-1-nmi@metaspace.dk> <2838cf2e-936c-45de-bb19-af9da66fbe00@proton.me> <87plqso50o.fsf@metaspace.dk> <49cad242-7a7c-4e9e-beb7-4f9c493ce794@proton.me> <878qxgnyzd.fsf@metaspace.dk> <ed2f7416-2631-411d-bb49-5a580dbf51b8@proton.me> <874j84nurn.fsf@metaspace.dk> <f84e9189-b64a-4761-86f5-ccd50fb62f36@proton.me> <87zfpvmd8y.fsf@metaspace.dk>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: ec4420c4da41491ad3c4a6322959121f662f9b9e
+	s=arc-20240116; t=1722618852; c=relaxed/simple;
+	bh=QYPYcf6TjX3Gz+/5YCOQg/yJ9tO4WHvNyoUSOTpedhg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=O6MT7KeD7V7ThRrhrIvQ9Bm4YAdG0f2a9FmKvedJv8ecOEZeSZYxj9syqHF4d+Gy/EPvSGvZmnGs1Ze2I8tmyR3JbJPFGP6/nGzmzduPPlJLAheEaP9iM0rGRtcRz2wIvYW24Q3/py0WB+/lbE+LfMpAAqta9FrT/eAEJt8xJ4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DLPw4VEa; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722618850; x=1754154850;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=QYPYcf6TjX3Gz+/5YCOQg/yJ9tO4WHvNyoUSOTpedhg=;
+  b=DLPw4VEa3yDQmCVJeZZa+zzBevHVtbdE6LecYu8VhPhsaki5GEvrD/p9
+   2RW/83JaIoLi/ZXm7LcYaREKuhNnjEoTSwqT+x1z2yF5jga46uxAas6PJ
+   hi580x5quqakUniFJjhr5fwxUlqexqx6YexrJ7GTkYSh+GH9ZlUgKnZE5
+   AzNcdZ6NhnPGAXhqja97xggrIvB+VYq1FhvuALzQVfcLlH4n82ARrXDxA
+   aXqlba50YV6A20ki+Sf/dm2cMVed5TkyRsuHmlUYktcdamYCpvLDe3OOY
+   EhQ+7iSwO2ubaTg2XaIqlDNDA/yuJAgU5BUSnP/i1A7NLtaHCACziKF3c
+   g==;
+X-CSE-ConnectionGUID: WAZxoNuzQu+d0GCPJL1qUw==
+X-CSE-MsgGUID: ChmvBFh8RgCmVPMB8IN10w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20228503"
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="20228503"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 10:14:08 -0700
+X-CSE-ConnectionGUID: jSV1AsouRficdhEmK5doXg==
+X-CSE-MsgGUID: YM4JCRWFRQuq80LXN0vHIQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
+   d="scan'208";a="55146906"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.50.51])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 10:14:06 -0700
+Message-ID: <8c394279-dae2-460e-bc9b-f76774a7dca4@intel.com>
+Date: Fri, 2 Aug 2024 20:14:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/9] uprobes: misc cleanups/simplifications
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org,
+ jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf <bpf@vger.kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>
+References: <20240801132638.GA8759@redhat.com>
+ <20240801133617.GA39708@noisy.programming.kicks-ass.net>
+ <CAEf4BzY-gNWHhjnSh3myb0sStjm0Qjsu6nhFtXEULLvo_E=i5w@mail.gmail.com>
+ <CAEf4BzY9diEi2_tHsLxB4Yk-ZAWHT=XJNmagjQtOXc7qShqgrA@mail.gmail.com>
+ <20240802092528.GF39708@noisy.programming.kicks-ass.net>
+ <775c414e-03f3-4ae2-80df-9821014e1c32@intel.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <775c414e-03f3-4ae2-80df-9821014e1c32@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 02.08.24 12:27, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->> On 01.08.24 17:11, Andreas Hindborg wrote:
->>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>> On 01.08.24 15:40, Andreas Hindborg wrote:
->>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>>> On 01.08.24 13:29, Andreas Hindborg wrote:
->>>>>>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>>>>>> On 05.07.24 13:15, Andreas Hindborg wrote:
->>>>>>>>> +
->>>>>>>>> +/// Types that can be used for module parameters.
->>>>>>>>> +///
->>>>>>>>> +/// Note that displaying the type in `sysfs` will fail if
->>>>>>>>> +/// [`core::str::from_utf8`] (as implemented through the [`core:=
-:fmt::Display`]
->>>>>>>>> +/// trait) writes more than [`PAGE_SIZE`] bytes (including an ad=
-ditional null
->>>>>>>>> +/// terminator).
->>>>>>>>> +///
->>>>>>>>> +/// [`PAGE_SIZE`]: `bindings::PAGE_SIZE`
->>>>>>>>> +pub trait ModuleParam: core::fmt::Display + core::marker::Sized =
-{
->>>>>>>>> +    /// The `ModuleParam` will be used by the kernel module thro=
-ugh this type.
->>>>>>>>> +    ///
->>>>>>>>> +    /// This may differ from `Self` if, for example, `Self` need=
-s to track
->>>>>>>>> +    /// ownership without exposing it or allocate extra space fo=
-r other possible
->>>>>>>>> +    /// parameter values. This is required to support string par=
-ameters in the
->>>>>>>>> +    /// future.
->>>>>>>>> +    type Value: ?Sized;
->>>>>>>>> +
->>>>>>>>> +    /// Whether the parameter is allowed to be set without an ar=
-gument.
->>>>>>>>> +    ///
->>>>>>>>> +    /// Setting this to `true` allows the parameter to be passed=
- without an
->>>>>>>>> +    /// argument (e.g. just `module.param` instead of `module.pa=
-ram=3Dfoo`).
->>>>>>>>> +    const NOARG_ALLOWED: bool;
->>>>>>>>
->>>>>>>> I think, there is a better way of doing this. Instead of this bool=
-, we
->>>>>>>> do the following:
->>>>>>>> 1. have a `const DEFAULT: Option<Self>`
->>>>>>>> 2. change the type of the argument of `try_from_param_arg` to
->>>>>>>>    `&'static [u8]`
->>>>>>>>
->>>>>>>> That way we don't have the weird behavior of `try_from_param_arg` =
-that
->>>>>>>> for params that don't have a default value.
->>>>>>>
->>>>>>> Since we have no parameter types for which `NOARG_ALLOWED` is true =
-in
->>>>>>> this patch set, it is effectively dead code. I will remove it.
->>>>>>
->>>>>> Hmm what parameters actually are optional? I looked at the old rust
->>>>>> branch and only `bool` is marked as optional. Are there others?
->>>>>>
->>>>>> If it is used commonly for custom parameters (I could imagine that R=
-ust
->>>>>> modules have enums as parameters and specifying nothing could mean t=
-he
->>>>>> default value), then it might be a good idea to just include it now.
->>>>>> (otherwise we might forget the design later)
->>>>>
->>>>> As far as I can tell from the C code, all parameters are able to have
->>>>> the `NOARG` flag set. We get a null pointer in the callback in that
->>>>> case.
->>>>>
->>>>> If we want to handle this now, we could drop the `default` field
->>>>> in the Rust module macro. There is no equivalent in the C macros.
->>>>> And then use an `Option<Option<_>>` to represent the value. `None` wo=
-uld
->>>>> be an unset parameter. `Some(None)` would be a parameter without a
->>>>> value. `Some(Some(_))` would be a set parameter with a value. We coul=
-d
->>>>> probably fix the types so that only parameters with the `NOARG` flag =
-use
->>>>> the double option, others use a single option.
->>>>
->>>> What did you think of my approach that I detailed above? I would like =
-to
->>>> avoid `Option<Option<_>>` if we can.
+On 2/08/24 14:02, Adrian Hunter wrote:
+> On 2/08/24 12:25, Peter Zijlstra wrote:
+>> On Thu, Aug 01, 2024 at 02:13:41PM -0700, Andrii Nakryiko wrote:
+>>
+>>> Ok, this bisected to:
 >>>
->>> How would you represent the case when the parameter is passed without a
->>> value and a default is given in `module!`?
+>>> 675ad74989c2 ("perf/core: Add aux_pause, aux_resume, aux_start_paused")
 >>
->> I am a bit confused, there are two default values here:
->> (1) the value returned by `try_from_param_arg(None)`.
->> (2) the value given by the user to the `module!` macro.
+>> Adrian, there are at least two obvious bugs there:
 >>
->> I am talking about changing the definition of ModuleParam, so (1). I get
->> the feeling that you are talking about (2), is that correct?
->=20
-> I confused myself as well I think. I am talking about (1). Let me try
-> again.
->=20
-> If we support `NOARG_ALLOWED` (`KERNEL_PARAM_OPS_FL_NOARG` in C. I
-> should change the flag name in Rust), modules can optionally support
-> some parameters where users can pass parameters either as
-> `my_module.param=3Dvalue` or `my_module.param`. Thus, at the level of
-> `try_from_param_arg`, we need to represent two cases: parameter passed
-> without value, and parameter passed with value. A third case, parameter
-> not passed at all, is equivalent to `try_from_param_arg` never being
-> called. In C this is undetectable for the predefined parameter types. I
-> wanted the double option to detect this. But I guess it does not make
-> sense.
+>>  - aux_action was key's off of PERF_PMU_CAP_AUX_OUTPUT, which is not
+>>    right, that's the capability where events can output to AUX -- aka.
+>>    PEBS-to-PT. It should be PERF_PMU_CAP_ITRACE, which is the
+>>    PT/CoreSight thing.
 
-My idea was to have an `const DEFAULT: Option<Self>` to represent the
-following:
-(1) if `DEFAULT =3D=3D None`, then `KERNEL_PARAM_OPS_FL_NOARG` is not set
-    and thus either the `module!` user-specified default value is used,
-    or it is specified via `my_module.param=3Dvalue` and
-    `try_from_param_arg` is called.
-(2) if `DEFAULT =3D=3D Some(d)`, then `KERNEL_PARAM_OPS_FL_NOARG` is set an=
-d
-    when `NULL` is given to `kernel_param_ops.set`, the parameter value
-    is set to `d`, otherwise `try_from_param_arg` is called.
+Not sure about that.
 
-But I think I agree with you removing `NOARG_ALLOWED`, see below.
+In perf_event_alloc(), there is:
 
-> At a higher level where the bindings supply the parsing functions, we
-> can decide that passing an argument without a value yields a default
-> parameter value. C does this for the predefined `bool` type. The
-> predefined integer types does not support omitting the value.
->
-> This patch only supports the higher level predefined parameter types,
-> and does not allow modules to supply their own parameter parsing
-> functions. None of the types we implement in this patch support passing
-> the argument without a value. This is intentional to mirror the C
-> implementation.
->=20
-> To that end, I removed `NOARG_ALLOWED`, and changed the parsing function
-> trait to:
->=20
->     fn try_from_param_arg(arg: &'static [u8]) -> Result<Self>;
->=20
-> If/when we start supporting types like `bool` or custom parsing
-> functions provided by the module, we will have to update the signature
-> to take an `Option` to represent the case where the user passed an
-> argument without a value. However, to mimic C, the function must always
-> return a value if successful, even if the user did not supply a value to
-> the argument.
->=20
-> Two different default values are in flight here. 1) the value that the
-> parameter will have before the kernel calls `try_from_param_arg` via
-> `set_param` and 2) the value to return from `try_from_param_arg` if the
-> user did not pass a value with the argument.
->=20
-> For a `bool` 1) would usually be `false` and 2) would always be `true`.
->=20
-> For predefined types the module would not customize 2), but 1) is useful
-> to customize. For custom types where the module supplies the parsing
-> function, 2) would be implicitly given by the module in the parsing
-> function.
->=20
-> In this patch set, we only have 1 default value, namely 1). We do not
-> need 2) because we do not support parameters without values.
+	if (event->attr.aux_output &&
+	    (!(pmu->capabilities & PERF_PMU_CAP_AUX_OUTPUT) ||
+	     event->attr.aux_pause || event->attr.aux_resume)) {
+		err = -EOPNOTSUPP;
+		goto err_pmu;
+	}
 
-I am not sure that putting the default value of `my_module.param` into
-the `ModuleParam` trait is a good idea. It feels more correct to me to
-add an optional field to the part in `module!` that can be set to denote
-this default value -- we might also want to change the name of
-`default`, what do you think of `default_inactive` and `default_active`?
+which is to prevent aux_output with aux_pause or aux_resume.
+That is because aux_output (i.e. PEBS-via-PT) has no interrupt
+and so does not overflow.  (Instead the PEBS record is written
+by hardware to the Intel PT trace)  No overflow => no (software)
+aux_pause/aux_resume, so aux_output with aux_pause/aux_resume
+does not make sense.
 
-Since one might want an option by default be `true` and when one writes
-`my_module.param`, it should be `false`.
-Also as the C side shows, having default values for integer types is not
-really a good idea, since you might want a non-zero default value.
-If one does not specify the `default_active` value, then the
-`KERNEL_PARAM_OPS_FL_NOARG` is not set.
+The PMU capability for aux_pause/aux_resume or aux_start_paused
+is PERF_PMU_CAP_AUX_PAUSE.  aux_pause/aux_resume are valid for
+non-AUX events (member of the group), whereas aux_start_paused
+is valid for the AUX event itself (group leader).  For 
+aux_pause/aux_resume the group leader's PMU capability is
+checked.  For aux_start_paused the event's PMU capability is
+checked.
 
-If you don't want to implement this (which I can fully understand, since
-we might get `syn` before anyone needs params with default values), then
-we should write this idea down (maybe in an issue?). But regardless, I
-would like to know your opinion on this topic.
-
->>> I think we need to drop the default value if we adopt the arg without
->>> value scheme.
 >>
->> Yes definitely. I don't see anything in the code doing this currently,
->> right?
->=20
-> The current patch uses the default value given in the `module!` macro to
-> initialize the parameter value.
+>>  - it sets aux_paused unconditionally, which is scribbling in the giant
+>>    union which is overwriting state set by perf_init_event().
 
-But what drops the default value, when an actual value is specified via
-`my_module.param=3Dvalue`? (or is the default value only assigned when
-nothing is specified?)
+That definitely needs fixing, but the fix is just the diff
+from my previous reply:
 
->> We could also only allow `Copy` values to be used as Parameters (but
->> then `str` cannot be used as a parameter...), since they can't implement
->> `Drop`.
->=20
-> We should plan on eventually supporting `String`.
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index e4cb6e5a5f40..2072aaa4d449 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -12151,7 +12151,8 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+ 		err = -EOPNOTSUPP;
+ 		goto err_pmu;
+ 	}
+-	event->hw.aux_paused = event->attr.aux_start_paused;
++	if (event->attr.aux_start_paused)
++		event->hw.aux_paused = 1;
+ 
+ 	if (cgroup_fd != -1) {
+ 		err = perf_cgroup_connect(cgroup_fd, event, attr, group_leader);
 
-Yes.
+I tested that with:
 
->>>>> Or we could just not adopt this feature in the Rust abstractions.
->>>>
->>>> Depends on how common this is and if people need to use it. I think th=
-at
->>>> what I proposed above isn't that complex, so it should be easy to
->>>> implement.
->>>
->>> Rust modules would just force people to add "my_module.param=3D1" inste=
-ad
->>> of just "my_module.param". I think that is reasonable.
+  # perf probe -x /root/main -a main
+  Added new event:
+    probe_main:main      (on main in /root/main)
+
+  # perf record -e probe_main:main -- ./main
+
+and it made the problem go away.
+
 >>
->> Eh, why do we want to give that up? I don't think it's difficult to do.
->=20
-> I just don't see the point. Just have the user pass `my_module.param=3D1`
-> instead of omitting the value. Having multiple ways of specifying for
-> instance a true boolean just leads to confusion. Some boolean parameters
-> have a default value of `true`, for instance `nvme.use_cmb_sqes`. In
-> this case specifying `nvme.use_cmb_sqes` has no effect, even though one
-> might think it has.
+>> But I think there's more problems, we need to do the aux_action
+>> validation after perf_get_aux_event(), we can't know if having those
+>> bits set makes sense before that. This means the perf_event_alloc() site
+>> is wrong in the first place.
 
-This just shows to me that a "global" default in `ModuleParam` is wrong,
-since for `use_cmb_sqes` one could either have a negated flag, or no
-default value, forcing the user to write `nvme.use_cmb_sqes=3Dfalse`.
+As above, aux_start_paused is used on the AUX event itself, so the
+PMU capability is checked in perf_event_alloc:
 
-> Of course, if we are going to do things the same as C, we have to
-> support it.
+	if (event->attr.aux_start_paused &&
+	    !(pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE)) {
+		err = -EOPNOTSUPP;
+		goto err_pmu;
+	}
 
-I think eventually this will be useful, but as you said it's not a
-feature that you *need*.
+Whereas aux_pause/aux_resume are checked in perf_get_aux_event():
 
->>>>>>>>> +                            // Note: when we enable r/w paramete=
-rs, we need to lock here.
->>>>>>>>> +
->>>>>>>>> +                            // SAFETY: Parameters do not need to=
- be locked because they are
->>>>>>>>> +                            // read only or sysfs is not enabled=
-.
->>>>>>>>> +                            unsafe {{
->>>>>>>>> +                                <{param_type_internal} as kernel=
-::module_param::ModuleParam>::value(
->>>>>>>>> +                                    &__{name}_{param_name}_value
->>>>>>>>> +                                )
->>>>>>>>> +                            }}
->>>>>>>>> +                        }}
->>>>>>>>> +                    ",
->>>>>>>>> +                    name =3D info.name,
->>>>>>>>> +                    param_name =3D param_name,
->>>>>>>>> +                    param_type_internal =3D param_type_internal,
->>>>>>>>> +                );
->>>>>>>>> +
->>>>>>>>> +                let kparam =3D format!(
->>>>>>>>> +                    "
->>>>>>>>> +                    kernel::bindings::kernel_param__bindgen_ty_1=
- {{
->>>>>>>>> +                        // SAFETY: Access through the resulting =
-pointer is
->>>>>>>>> +                        // serialized by C side and only happens=
- before module
->>>>>>>>> +                        // `init` or after module `drop` is call=
-ed.
->>>>>>>>> +                        arg: unsafe {{ &__{name}_{param_name}_va=
-lue }}
->>>>>>>>> +                            as *const _ as *mut core::ffi::c_voi=
-d,
->>>>>>>>
->>>>>>>> Here you should use `addr_of[_mut]!` instead of taking a reference=
-.
->>>>>>>
->>>>>>> This is a static initializer, so it would be evaluated in const con=
-text.
->>>>>>> At that time, this is going to be the only reference to
->>>>>>> `&__{name}_{param_name}_value` which would be const. So it should b=
-e
->>>>>>> fine?
->>>>>>
->>>>>> When compiling this [1] with a sufficiently new Rust version, you wi=
-ll
->>>>>> get an error:
->>>>>>
->>>>>>     warning: creating a shared reference to mutable static is discou=
-raged
->>>>>>      --> src/main.rs:4:22
->>>>>>       |
->>>>>>     4 |     let x =3D unsafe { &foo };
->>>>>>       |                      ^^^^ shared reference to mutable static
->>>>>>       |
->>>>>>       =3D note: for more information, see issue #114447 <https://git=
-hub.com/rust-lang/rust/issues/114447>
->>>>>>       =3D note: this will be a hard error in the 2024 edition
->>>>>>       =3D note: this shared reference has lifetime `'static`, but if=
- the static ever gets mutated, or a mutable reference is created, then any =
-further use of this shared reference is Undefined Behavior
->>>>>>       =3D note: `#[warn(static_mut_refs)]` on by default
->>>>>>     help: use `addr_of!` instead to create a raw pointer
->>>>>>       |
->>>>>>     4 |     let x =3D unsafe { addr_of!(foo) };
->>>>>>       |                      ~~~~~~~~~~~~~
->>>>>>
->>>>>> [1]: https://play.rust-lang.org/?version=3Dstable&mode=3Ddebug&editi=
-on=3D2021&gist=3Dc914a438938be6f5fc643ee277efa1d1
->>>>>>
->>>>>> So I think we should start using `addr_of!` for mutable static now.
->>>>>
->>>>> Oh. Thanks for the pointer.
->>>>>
->>>>> Hmm, `addr_of_mut!` still requires the unsafe block. Hopefully that g=
-oes
->>>>> away as well with the feature you linked as well.
->>>>
->>>> I think that will take some time until it is gone.
->>>>
->>>>> This also requires `const_mut_refs`, but as I recall that is going to=
- be
->>>>> stabilized soon.
->>>>
->>>> That should only be needed if you need `addr_of_mut!`, but IIUC, you
->>>> only need `addr_of!`, right?
->>>
->>> The pointer we create here is the one passed to `free` in
->>> module_param.rs, so it will eventually be used as `&mut T`.
->>
->> Oh then the original code is definitely wrong, since it creates a shared
->> reference. Yeah then you should use `addr_of_mut!`.
->=20
-> Right. I agree the right thing is to change to `addr_of_mut!`. But I am
-> curious. If the original code was
->=20
-> ```rust
-> arg: unsafe {{ &mut __{name}_{param_name}_value }} as *mut _ as *mut ::co=
-re::ffi::c_void,
-> ```
->=20
-> Then it would be fine? Because we have the only mutable reference in
-> existence when the code is evaluated.
+	if ((event->attr.aux_pause || event->attr.aux_resume) &&
+	    !(group_leader->pmu->capabilities & PERF_PMU_CAP_AUX_PAUSE))
+		return 0;
 
-That *might* be fine, but I don't know if there is anything that would
-guarantee you that it is. Note that the code above uses a shared
-reference, which definitely isn't OK.
-
----
-Cheers,
-Benno
+That all seems OK, so please let me know if there is
+something else to change.
 
 
