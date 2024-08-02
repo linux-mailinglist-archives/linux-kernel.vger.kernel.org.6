@@ -1,124 +1,114 @@
-Return-Path: <linux-kernel+bounces-272390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F65945B22
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:36:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94D17945B27
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:37:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FA3E1F24D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:36:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD23284545
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F781DB420;
-	Fri,  2 Aug 2024 09:36:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65B591BF304;
-	Fri,  2 Aug 2024 09:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9364B1DAC71;
+	Fri,  2 Aug 2024 09:37:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220871C2312;
+	Fri,  2 Aug 2024 09:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722591394; cv=none; b=Jlac7MzpvAu9GqYcJFsbUuZKqBCzWPbSt+BX9e2Tpf/TEzxwNzanAxPaRRUOPTfvV0dnMBSa7U0qs1bZudMThzNfb3khvXoLOD4lXWma2D9Nz1JonuCahrFPbFViZyixv1ZS9R1o34qtbxmMxj6sG8WA2u8+gncCkUoFLQGCzw0=
+	t=1722591464; cv=none; b=nj9I3+3L/Zdu6IU3Z84wBJ2V1F5sQCRFzc116qQdVOkjM3IId3Gb9jFcUMuINuivi6s11RY0ceutLch21KNH9Cgc4ruWdIWhskAJb9I3cPEWM2W+lNsR1yNfzSy0Lk3lIIui5W3KB0/GdUEI3BLdHfpI3SBjBWP4nZa1oj4X3rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722591394; c=relaxed/simple;
-	bh=YoRXAyN8OiZWlodCaunm3r8RPE7btncyojDN5PbcFps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PGEWjzQgC0tL7/z1lHfleC2ZAgmVPQcD2CCjYwvmvUTwHrmouRez6bsPGykQ/UwcJxdfRfzUi3hQEXasHdALWWtR92f50wUg34m7dz2mD9jzko0V7DK7ucPwORg1ALj8IIu4j7scA4Tk6Vrd2274BE8qZAsIPQsTnD67581l7Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A3CA1007;
-	Fri,  2 Aug 2024 02:36:58 -0700 (PDT)
-Received: from [10.57.12.204] (unknown [10.57.12.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57D863F766;
-	Fri,  2 Aug 2024 02:36:31 -0700 (PDT)
-Message-ID: <ec9bc4c6-914c-4f84-8992-9604620a104b@arm.com>
-Date: Fri, 2 Aug 2024 10:37:01 +0100
+	s=arc-20240116; t=1722591464; c=relaxed/simple;
+	bh=ltOSUPsZibGklzCT+726uDqpI/gR+HZvRJVWnku4cnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i21sYO1AR40qpQegvDZvNHpFajyzKDN18buW2hdIp0wJoG7GPjsgnTefQOZ0ISjQIIq8ND5EG5PgH+SpxvQs46stF3Qq+5qOiW/20r/swPlBkYpHIfVUXPKZQPahw107ziv24YznRQNlb5PNAKPq9XvMRkgwOsEjd/ydPsuOWiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C709C32782;
+	Fri,  2 Aug 2024 09:37:41 +0000 (UTC)
+Date: Fri, 2 Aug 2024 10:37:38 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Baruch Siach <baruch@tkos.co.il>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	linux-s390@vger.kernel.org,
+	Petr =?utf-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>,
+	Ramon Fried <ramon@neureality.ai>,
+	Elad Nachman <enachman@marvell.com>
+Subject: Re: [PATCH v5 2/3] dma: replace zone_dma_bits by zone_dma_limit
+Message-ID: <Zqyo4qjPRHUeUfS5@arm.com>
+References: <cover.1722578375.git.baruch@tkos.co.il>
+ <5821a1b2eb82847ccbac0945da040518d6f6f16b.1722578375.git.baruch@tkos.co.il>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND][PATCH v1 3/8] thermal: qcom: Use
- thermal_zone_get_crit_temp() in qpnp_tm_init()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>, Amit Kucheria <amitk@kernel.org>,
- Thara Gopinath <thara.gopinath@gmail.com>, linux-arm-msm@vger.kernel.org
-References: <2211925.irdbgypaU6@rjwysocki.net>
- <7712228.EvYhyI6sBW@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <7712228.EvYhyI6sBW@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5821a1b2eb82847ccbac0945da040518d6f6f16b.1722578375.git.baruch@tkos.co.il>
 
+On Fri, Aug 02, 2024 at 09:03:47AM +0300, Baruch Siach wrote:
+> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+> index 3b4be4ca3b08..62b36fda44c9 100644
+> --- a/kernel/dma/direct.c
+> +++ b/kernel/dma/direct.c
+> @@ -20,7 +20,7 @@
+>   * it for entirely different regions. In that case the arch code needs to
+>   * override the variable below for dma-direct to work properly.
+>   */
+> -unsigned int zone_dma_bits __ro_after_init = 24;
+> +u64 zone_dma_limit __ro_after_init = DMA_BIT_MASK(24);
 
+u64 here makes sense even if it may be larger than phys_addr_t. It
+matches the phys_limit type in the swiotlb code. The compilers should no
+longer complain.
 
-On 7/29/24 16:58, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Modify qpnp_tm_init() to use thermal_zone_get_crit_temp() to get the
-> critical trip temperature instead of iterating over trip indices and
-> using thermal_zone_get_trip() to get a struct thermal_trip pointer
-> from a trip index until it finds the critical one.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-> 
-> This patch does not depend on the previous patch(es) in the series.
-> 
-> ---
->   drivers/thermal/qcom/qcom-spmi-temp-alarm.c |   22 +++-------------------
->   1 file changed, 3 insertions(+), 19 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> +++ linux-pm/drivers/thermal/qcom/qcom-spmi-temp-alarm.c
-> @@ -291,24 +291,6 @@ static irqreturn_t qpnp_tm_isr(int irq,
->   	return IRQ_HANDLED;
->   }
->   
-> -static int qpnp_tm_get_critical_trip_temp(struct qpnp_tm_chip *chip)
-> -{
-> -	struct thermal_trip trip;
-> -	int i, ret;
-> -
-> -	for (i = 0; i < thermal_zone_get_num_trips(chip->tz_dev); i++) {
-> -
-> -		ret = thermal_zone_get_trip(chip->tz_dev, i, &trip);
-> -		if (ret)
-> -			continue;
-> -
-> -		if (trip.type == THERMAL_TRIP_CRITICAL)
-> -			return trip.temperature;
-> -	}
-> -
-> -	return THERMAL_TEMP_INVALID;
-> -}
-> -
->   /*
->    * This function initializes the internal temp value based on only the
->    * current thermal stage and threshold. Setup threshold control and
-> @@ -343,7 +325,9 @@ static int qpnp_tm_init(struct qpnp_tm_c
->   
->   	mutex_unlock(&chip->lock);
->   
-> -	crit_temp = qpnp_tm_get_critical_trip_temp(chip);
-> +	ret = thermal_zone_get_crit_temp(chip->tz_dev, &crit_temp);
-> +	if (ret)
-> +		crit_temp = THERMAL_TEMP_INVALID;
->   
->   	mutex_lock(&chip->lock);
->   
-> 
-> 
-> 
+> diff --git a/kernel/dma/pool.c b/kernel/dma/pool.c
+> index d10613eb0f63..7b04f7575796 100644
+> --- a/kernel/dma/pool.c
+> +++ b/kernel/dma/pool.c
+> @@ -70,9 +70,9 @@ static bool cma_in_zone(gfp_t gfp)
+>  	/* CMA can't cross zone boundaries, see cma_activate_area() */
+>  	end = cma_get_base(cma) + size - 1;
+>  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp & GFP_DMA))
+> -		return end <= DMA_BIT_MASK(zone_dma_bits);
+> +		return end <= zone_dma_limit;
+>  	if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp & GFP_DMA32))
+> -		return end <= DMA_BIT_MASK(32);
+> +		return end <= max(DMA_BIT_MASK(32), zone_dma_limit);
+>  	return true;
+>  }
+>  
+> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+> index 043b0ecd3e8d..bb51bd5335ad 100644
+> --- a/kernel/dma/swiotlb.c
+> +++ b/kernel/dma/swiotlb.c
+> @@ -450,9 +450,9 @@ int swiotlb_init_late(size_t size, gfp_t gfp_mask,
+>  	if (!remap)
+>  		io_tlb_default_mem.can_grow = true;
+>  	if (IS_ENABLED(CONFIG_ZONE_DMA) && (gfp_mask & __GFP_DMA))
+> -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(zone_dma_bits);
+> +		io_tlb_default_mem.phys_limit = zone_dma_limit;
+>  	else if (IS_ENABLED(CONFIG_ZONE_DMA32) && (gfp_mask & __GFP_DMA32))
+> -		io_tlb_default_mem.phys_limit = DMA_BIT_MASK(32);
+> +		io_tlb_default_mem.phys_limit = max(DMA_BIT_MASK(32), zone_dma_limit);
+>  	else
+>  		io_tlb_default_mem.phys_limit = virt_to_phys(high_memory - 1);
+>  #endif
 
+These two look correct to me now and it's the least intrusive (the
+alternative would have been a zone_dma32_limit). The arch code, however,
+needs to ensure that zone_dma_limit can always support 32-bit devices
+even if it is above 4GB (with the relevant dma offsets in place for such
+devices).
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+-- 
+Catalin
 
