@@ -1,199 +1,255 @@
-Return-Path: <linux-kernel+bounces-272895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1A7946264
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:24:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EB6F946269
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A520B21DF6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:24:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97D5CB22252
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8888F15C12C;
-	Fri,  2 Aug 2024 17:24:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14FB21537A0
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E1C15C135;
+	Fri,  2 Aug 2024 17:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kSqngSBM"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDEE136327
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:28:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619458; cv=none; b=qQX4Ge2391lCy214wfB9G2n/xDF03EofkMbiMvZBgQYfr0e/vpqfSBmYXrWjD0gRixI56yYR3qhucfhV/CIWyn/9b6HHDnvcYsogjE/PMNa05hc5cQfTprRe+QN4Ird/xiHZLQYXoz7XTg6AIPFYxwHbdN1u3Q4oyNxC1z6n4Yw=
+	t=1722619708; cv=none; b=l0//m2JOKNosXfrtUUZkJFs7JQyRDZwVxF8zasmBXB2RZ8kiApayyAJd0CBRi1qqOIcBpyW68TFsN2hDM/AMzyPqDV2nV+cJZYdOcK9FlE7CRIXHU+lGWAaOokbQ7siYB/TBX58SQOqrJUQA+COzv/fwHQSH6LeiLsdlgxctmNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619458; c=relaxed/simple;
-	bh=H8txR3jjbUbidD/le7pIChXcbihmrAugfmXCT0nv9dM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ioSpMJ4nyWzclSWpMrgYzTXbNSAoIlQLFy+ZfqlWnB8fNcbXjFIj3UvpyKXw5RIhIVpkpKIzRCVGOx7DSvQbNqVR1dwnVZhIMxt7nOKNgK53qpZ2qFxhrIsHvjCUrsDSPtTDl2xZc5kvKKqDo4q49ih/NH9xYwPqlTQFurDxJlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0708EDA7;
-	Fri,  2 Aug 2024 10:24:41 -0700 (PDT)
-Received: from [10.1.196.28] (eglon.cambridge.arm.com [10.1.196.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7ED83F64C;
-	Fri,  2 Aug 2024 10:24:11 -0700 (PDT)
-Message-ID: <8c3dd90d-475d-47e9-8691-a447d8042596@arm.com>
-Date: Fri, 2 Aug 2024 18:24:11 +0100
+	s=arc-20240116; t=1722619708; c=relaxed/simple;
+	bh=F3g430AFcd5fktOgTWAO9/9FNUn0gfLYsMRiXbuhse8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oS6mMpnmw3QuhtxpmV4yWm6Ha7a50X52cmfU+IoQcX8RXBaihrxvsd1xXHMySp4BqoS4ETOBh/Aj7ZF9rkA0qj8YG1VPceIliV/POYgJRBRVEPukRXIk3TYQZpKtWcKrDgHpW2GEWLxTjT1aUP1q7DawScU6C3jsWwttdWQ8Q84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kSqngSBM; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-44fdc70e695so1470731cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:28:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1722619705; x=1723224505; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lSSS4E3zuKvWBv0XQ9yYM+WcI7zxzF47G/3hGsx+ctc=;
+        b=kSqngSBMVj6W9IFzwsBH29Gnz+3M9sMiToP98yqb6OxuQHL585EIBYoa3ToRCGJJwg
+         tE15mjhdlDO42yOXFS8jQR9KO/toQEQKifkziTeWMHxK3Vheen9bnmha8F0D5woA2kx+
+         jRnbuHUAVF1chU7uGJQt2dlF+7MbDdDfJmH08JCBlZVctbKpc78Ojkg4+lJ3b8tcqKoe
+         1rnzFN5KBu1vMsnLN4lIF9s3aLnJfkk+FoUVV0BMF7Ar3f3LEYzmATc8sY4yX97KHiUl
+         KiMS5Y4m/XmhIXxVFhiv656y8eiDTY4ZLiYupBOO/6gF1ezZdczydFycAa5UEw30okfK
+         rZZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722619705; x=1723224505;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lSSS4E3zuKvWBv0XQ9yYM+WcI7zxzF47G/3hGsx+ctc=;
+        b=OIcMPEsOOqjDftUdzpjg76RFGfPmF/87sNarUzWYYcnDYb4aTG97nhRaio3bLajsRy
+         l03bodicqVGNTArVUA4QUmWMA8vbABKXqQPz/2GKUjV/AS2CjbUL7EUC2VIf32vCHz6M
+         wE3R8uEqn75GBaWPuXcSEv4hYI9oqkZgO1nz0/6tGjgSazswD4Voyd78MhLeDtddAp44
+         vgvYFVh/s/SnwyLghUAmUvalyiyLyK3KGyf9+sEc+pN21oehjl1W50SrKiP5jKdbQ0/n
+         Jy5C2gUny4I93BAHqVE/5yUpwRxQJmCXvX70oDo3AFtLlBhIhLTUlsYh2DhOrND5SFut
+         t0lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWC2cr77K3GCbmVy73Vz/DR6nZXKpsbkH8NEhbewzQg5OWCHUbSQxnnCdfi5bj55Zx+cwRlnxW31WQ8ygY+7wDqhCIgBkDeivfON+uC
+X-Gm-Message-State: AOJu0Yz0atQ2FKzIxeKDdpdlTX16SrGoGum6EF7CrWNX5AEj5N02sFoG
+	uPV59+bEENRug6n67TSgMrPcIn08m2x0dzBhYAlwzEBjEja/aI+VcUmcEtX/znb+Yx3P3VQ2pew
+	9nksEiZOn1PT+ldRlVjti2nfpmRZC/y8tgzvm
+X-Google-Smtp-Source: AGHT+IEW8VIhs9YamiW05dBEhB7BQ3Do4tGZnbt1vWnlgmGeqasRzyUtOO85UW1YZdi4lv8hQmL5M3LA+U1y8BvQHY8=
+X-Received: by 2002:ac8:5a01:0:b0:447:f958:ab83 with SMTP id
+ d75a77b69052e-4518ccc2c8dmr3261391cf.21.1722619705228; Fri, 02 Aug 2024
+ 10:28:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 03/38] x86/resctrl: Add a schema format enum and use
- this for fflags
-Content-Language: en-GB
-To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- H Peter Anvin <hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
- shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>
-References: <20240614150033.10454-1-james.morse@arm.com>
- <20240614150033.10454-4-james.morse@arm.com>
- <62581526-2dfa-44a5-a0bb-8582932b9943@intel.com>
- <d8e30c4f-04ef-4ed0-9d06-7f735c1c5e90@arm.com>
- <c79a1aae-6ab7-48d2-93fb-7b78198b5954@intel.com>
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <c79a1aae-6ab7-48d2-93fb-7b78198b5954@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240731070207.3918687-1-davidgow@google.com>
+In-Reply-To: <20240731070207.3918687-1-davidgow@google.com>
+From: Rae Moar <rmoar@google.com>
+Date: Fri, 2 Aug 2024 13:28:13 -0400
+Message-ID: <CA+GJov5k2a6OEj-E2ULbimeMcY9Rq2Lh58-juBm=AMbPy0s4sA@mail.gmail.com>
+Subject: Re: [PATCH] kunit: Device wrappers should also manage driver name
+To: David Gow <davidgow@google.com>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Matti Vaittinen <mazziesaccount@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Maxime Ripard <mripard@kernel.org>, Kees Cook <kees@kernel.org>, Nico Pache <npache@redhat.com>, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Wed, Jul 31, 2024 at 3:02=E2=80=AFAM David Gow <davidgow@google.com> wro=
+te:
+>
+> kunit_driver_create() accepts a name for the driver, but does not copy
+> it, so if that name is either on the stack, or otherwise freed, we end
+> up with a use-after-free when the driver is cleaned up.
+>
+> Instead, strdup() the name, and manage it as another KUnit allocation.
+> As there was no existing kunit_kstrdup(), we add one. Further, add a
+> kunit_ variant of strdup_const() and kfree_const(), so we don't need to
+> allocate and manage the string in the majority of cases where it's a
+> constant.
+>
+> This fixes a KASAN splat with overflow.overflow_allocation_test, when
+> built as a module.
+>
+> Fixes: d03c720e03bd ("kunit: Add APIs for managing devices")
+> Reported-by: Nico Pache <npache@redhat.com>
+> Closes: https://groups.google.com/g/kunit-dev/c/81V9b9QYON0
+> Signed-off-by: David Gow <davidgow@google.com>
+> Reviewed-by: Kees Cook <kees@kernel.org>
+> ---
+>
+> There's some more serious changes since the RFC I sent, so please take a
+> closer look.
+>
+> Thanks,
+> -- David
+>
 
-On 01/07/2024 22:09, Reinette Chatre wrote:
-> On 7/1/24 11:17 AM, James Morse wrote:
->> On 28/06/2024 17:43, Reinette Chatre wrote:
->>> On 6/14/24 7:59 AM, James Morse wrote:
->>>> resctrl has three types of control, these emerge from the way the
->>>> architecture initialises a number of properties in struct rdt_resource.
->>>>
->>>> A group of these properties need to be set the same on all architectures,
->>>> it would be better to specify the format the schema entry should use, and
->>>> allow resctrl to generate all the other properties it needs. This avoids
->>>> architectures having divergant behaviour here.
->>>
->>> divergant -> divergent ?
->>>
->>>>
->>>> Add a schema format enum, and as a first use, replace the fflags member
->>>> of struct rdt_resource.
->>>>
->>>> The MBA schema has a different format between AMD and Intel systems.
->>>> The schema_fmt property is changed by __rdt_get_mem_config_amd() to
->>>> enable the MBPS format.
->>
->>>> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>> b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>> index e3edc41882dc..b12307d465bc 100644
->>>> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
->>>> @@ -2162,6 +2162,19 @@ static int rdtgroup_mkdir_info_resdir(void *priv, char *name,
->>>>        return ret;
->>>>    }
->>>>    +static u32 fflags_from_resource(struct rdt_resource *r)
->>>> +{
->>>> +    switch (r->schema_fmt) {
->>>> +    case RESCTRL_SCHEMA_BITMAP:
->>>> +        return RFTYPE_RES_CACHE;
->>>> +    case RESCTRL_SCHEMA_PERCENTAGE:
->>>> +    case RESCTRL_SCHEMA_MBPS:
->>>> +        return RFTYPE_RES_MB;
->>>> +    }
->>>> +
->>>> +    return WARN_ON_ONCE(1);
->>>> +}
->>>> +
->>>
->>> The fflags returned specifies which files will be associated with the resource
->>> in the "info" directory. Basing this on a property of the schema does not look
->>> right to me. I understand that many of the info files relate to, for example,
->>> information related to the bitmap used by the cache,
->>
->> Do we agree that some of them are?
->>
->> One reason for doing this is it decouples the parsing and management of bitmaps from "this
->> is the L3 cache", which will make it much easier to support bitmaps on some other kind of
->> resource.
+Hello!
 
-> The way I see it is that it changes the meaning of the RFTYPE_RES_CACHE flag from "this is a
-> file related to the cache resource" to "this is a file containing a bitmap property".
-> It prevents us from easily adding a file related to the cache resource, which
-> the info directory is intended to contain.
+These changes look good to me. Fun patch to review! Only comment is
+that we could potentially add tests for these functions in a future
+patch.
 
-I struggled to find something that is a property of a "cache control", but is neither a
-property of the control (e.g. bitmap size) or the cache. I guess the 'bit_usage' stuff is
-the best example.
+Reviewed-by: Rae Moar <rmoar@google.com>
 
-Maybe we end up with two sets of flags - this will be for the distant future. Currently I
-taking your 'base fflags on resource id'.
+Thanks!
+-Rae
 
-
->> Ultimately I'd like to expose these to user-space, so that user-space can work out how to
->> configure resources it doesn't recognise. Today '100' could be a percentage, a bitmap, or
->> a value in MB/s. Today some knowledge of the control type is needed to work this out.
->>
->>
->>> but that is not the same for
->>> info files related to the MBA resource (all info files related to MBA resource
->>> are not about the schema property format).
->>
->> Hmmm, because the files min_bandwidth and bandwidth_gran both have bandwidth in their name?
->>
->> I agree 'delay_linear' and 'thread_throttle_mode' are a bit strange.
-> 
-> Right. This is not a clean association.
-> 
->>
->>
->>> I do not think the type of values of a schema should dictate which files
->>> appear in the info directory.
->>
->> Longer term I think this will be a problem. We probably only have 3 types of control:
->> percentage, bitmap and MB/s... but if each resource on each architecture adds files here
->> the list will quickly grow. User-space won't be able to work out how to configure a
->> resource type it hadn't seen before.
-> 
-> That is fair. This makes the type of control a property of the resource as is done in this
-> series. Perhaps this can be exposed to user space via the info directory?
-
-Yes, that is something I intend to look at. I eventually need to get MPAM's "cache
-capacity" controls working as there are a number of hardware platforms that have it. This
-would probably be a percentage control for 'L2' or 'L3', exposing an "info/schema_format"
-file makes the most sense. I can't convert the existing bitmap as it implies isolation,
-which this control format can't do, so it does need to be separate.
-But! - to prevent confusing existing software, I don't think the L2/L3 should be touched -
-those will forever have to be implicitly a bitmap, so anything in this area would have to
-be an additional schema.
-
-
-> Possibly the files related to control can have new flags that that reflect the control type
-> instead of the resource. For example, "bit_usage" currently has
-> "RFTYPE_CTRL_INFO | RFTYPE_RES_CACHE" and that could be (for lack of better
-> term) "RFTYPE_CTRL_INFO | RFTYPE_CTRL_BITMAP" to disconnect the control type from the
-> resource. Doing so may then map nicely to the fflags_from_resource() in this patch that
-> connects the schema format to the _control_ type flag. As we have found there is not
-> a clear mapping between the control type and the resource type so I expect RFTYPE_RES_CACHE
-> and RFTYPE_RES_MB to remain and be associated with files that contain information
-> specific to that resource. This enables future additions of files containing cache specific
-> (non-bitmap) properties to still be added (with RFTYPE_RES_CACHE flag) without impacting
-> everything that uses a bitmap.
-> 
-> What do you think?
-
-Makes sense!
-
-
-Thanks,
-
-James
+> Changes since RFC:
+> https://groups.google.com/g/kunit-dev/c/81V9b9QYON0/m/PFKNKDKAAAAJ
+> - Add and use the kunit_kstrdup_const() and kunit_free_const()
+>   functions.
+> - Fix a typo in the doc comments.
+>
+>
+> ---
+>  include/kunit/test.h | 58 ++++++++++++++++++++++++++++++++++++++++++++
+>  lib/kunit/device.c   |  7 ++++--
+>  2 files changed, 63 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/kunit/test.h b/include/kunit/test.h
+> index e2a1f0928e8b..da9e84de14c0 100644
+> --- a/include/kunit/test.h
+> +++ b/include/kunit/test.h
+> @@ -28,6 +28,7 @@
+>  #include <linux/types.h>
+>
+>  #include <asm/rwonce.h>
+> +#include <asm/sections.h>
+>
+>  /* Static key: true if any KUnit tests are currently running */
+>  DECLARE_STATIC_KEY_FALSE(kunit_running);
+> @@ -480,6 +481,63 @@ static inline void *kunit_kcalloc(struct kunit *test=
+, size_t n, size_t size, gfp
+>         return kunit_kmalloc_array(test, n, size, gfp | __GFP_ZERO);
+>  }
+>
+> +
+> +/**
+> + * kunit_kfree_const() - conditionally free test managed memory
+> + * @x: pointer to the memory
+> + *
+> + * Calls kunit_kfree() only if @x is not in .rodata section.
+> + * See kunit_kstrdup_const() for more information.
+> + */
+> +static inline void kunit_kfree_const(struct kunit *test, const void *x)
+> +{
+> +       if (!is_kernel_rodata((unsigned long)x))
+> +               kunit_kfree(test, x);
+> +}
+> +
+> +/**
+> + * kunit_kstrdup() - Duplicates a string into a test managed allocation.
+> + *
+> + * @test: The test context object.
+> + * @str: The NULL-terminated string to duplicate.
+> + * @gfp: flags passed to underlying kmalloc().
+> + *
+> + * See kstrdup() and kunit_kmalloc_array() for more information.
+> + */
+> +static inline char *kunit_kstrdup(struct kunit *test, const char *str, g=
+fp_t gfp)
+> +{
+> +       size_t len;
+> +       char *buf;
+> +
+> +       if (!str)
+> +               return NULL;
+> +
+> +       len =3D strlen(str) + 1;
+> +       buf =3D kunit_kmalloc(test, len, gfp);
+> +       if (buf)
+> +               memcpy(buf, str, len);
+> +       return buf;
+> +}
+> +
+> +/**
+> + * kunit_kstrdup_const() - Conditionally duplicates a string into a test=
+ managed allocation.
+> + *
+> + * @test: The test context object.
+> + * @str: The NULL-terminated string to duplicate.
+> + * @gfp: flags passed to underlying kmalloc().
+> + *
+> + * Calls kunit_kstrdup() only if @str is not in the rodata section. Must=
+ be freed with
+> + * kunit_free_const() -- not kunit_free().
+> + * See kstrdup_const() and kunit_kmalloc_array() for more information.
+> + */
+> +static inline const char *kunit_kstrdup_const(struct kunit *test, const =
+char *str, gfp_t gfp)
+> +{
+> +       if (is_kernel_rodata((unsigned long)str))
+> +               return str;
+> +
+> +       return kunit_kstrdup(test, str, gfp);
+> +}
+> +
+>  /**
+>   * kunit_vm_mmap() - Allocate KUnit-tracked vm_mmap() area
+>   * @test: The test context object.
+> diff --git a/lib/kunit/device.c b/lib/kunit/device.c
+> index 25c81ed465fb..520c1fccee8a 100644
+> --- a/lib/kunit/device.c
+> +++ b/lib/kunit/device.c
+> @@ -89,7 +89,7 @@ struct device_driver *kunit_driver_create(struct kunit =
+*test, const char *name)
+>         if (!driver)
+>                 return ERR_PTR(err);
+>
+> -       driver->name =3D name;
+> +       driver->name =3D kunit_kstrdup_const(test, name, GFP_KERNEL);
+>         driver->bus =3D &kunit_bus_type;
+>         driver->owner =3D THIS_MODULE;
+>
+> @@ -192,8 +192,11 @@ void kunit_device_unregister(struct kunit *test, str=
+uct device *dev)
+>         const struct device_driver *driver =3D to_kunit_device(dev)->driv=
+er;
+>
+>         kunit_release_action(test, device_unregister_wrapper, dev);
+> -       if (driver)
+> +       if (driver) {
+> +               const char *driver_name =3D driver->name;
+>                 kunit_release_action(test, driver_unregister_wrapper, (vo=
+id *)driver);
+> +               kunit_kfree_const(test, driver_name);
+> +       }
+>  }
+>  EXPORT_SYMBOL_GPL(kunit_device_unregister);
+>
+> --
+> 2.46.0.rc1.232.g9752f9e123-goog
+>
 
