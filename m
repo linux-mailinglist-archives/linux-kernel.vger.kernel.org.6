@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-272564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69558945E07
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:44:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6103945E0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225E4281DF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9CF11C20E6D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E21F1E3CB2;
-	Fri,  2 Aug 2024 12:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEE91E3CD2;
+	Fri,  2 Aug 2024 12:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvCfs1ki"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BDHU9Iws"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7F6A31;
-	Fri,  2 Aug 2024 12:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047DD1BF309
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 12:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722602642; cv=none; b=eQ0QWl/UdW1G6dgSkE3gPEHXz+qnc0AhOJ3Lw/pUKmv9sWj49UshOGfiW5LOyQn3Hfb9V07Wyj1vj+xESut1rdUpWHhLtJbEBDxzDAZrsZDMdmJAcA5sN/CNX4DrhGXwRu6eIaitEeXR5cBVd3fhk50sE6cRPpgtSx16xkOI5NI=
+	t=1722602745; cv=none; b=cWOJUwmcyKHMHsOx3tOKI+yXeRcr0tupfuMieTf2+3Sec4jk3nsp0bPtWBxZTcBfMoX/TUMcJM0jalFpP+Zy/gIeXmxqTuiQ8+B1UFQRRn5WYxKHxByLiMwa6vIEKLhU6k9SPk989exSiOPtFdN0jtL9/iLKfZ+eEWHdCxGcYDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722602642; c=relaxed/simple;
-	bh=mT5OyCqE+ifUSqdxUgq7WqY1sXV0ylJ9Y8tNhLWK7GE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SHKoBULn82308qxkcuubzwhTRRKDNzqfX86efIYG3lyCtA1YHM9d//xUoQq1uHrkEfGuOQVHNTWui0QP65scXCEwY97bal+zW1d+oTtZicDpjRx/5mPltT3PyGVAVepYkg4CrRN4y6e6uy5gWKAJ0myvurxYohAugUnNJcQNVlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvCfs1ki; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6015BC4AF0A;
-	Fri,  2 Aug 2024 12:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722602642;
-	bh=mT5OyCqE+ifUSqdxUgq7WqY1sXV0ylJ9Y8tNhLWK7GE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CvCfs1kieg1v87ZnpQ7D3AiOXwkB/dGWmbzjQS5mE7FAwczBU1XmyvOsLlw8JLGdM
-	 p8gdqA386M4DkFj3B3Nm54NNK1sDzM3QZ82zqmR4iAebbryqsV0aZL4O+M8FIz92Z/
-	 sFEJn3TnHsJqVTPJxjBSj/b03ui9Nr28EI2ZSEom2DbL9FxvVazyfdnWuzUETXP1oi
-	 YUBup0Qx6pMU2FkIKGFRh9does3tMQHFSnyyvyiWJICJyRM8YVOvh2FV+KqJLMrlCo
-	 93whJW5+Eo+GxsQeYDhSNfOqb1+y6wHdoc6ub5uMSrf5D63f1jT/haM2VUbT2zztE2
-	 eMsbfRlRWCNpg==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3db199ec527so671303b6e.0;
-        Fri, 02 Aug 2024 05:44:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVWXstzxxTky0e65JQqlGd31GedV/kOX3QYOy6c4hNcB63NTkY3Xxw/uzHnwyhc5rUohqjPXmGAGFpc5L+IQzaNcuSVSfJvMgsW9Ie6TS7AWZXALCnXQLX6UTLWQ/wtSKnwqhMWeuA=
-X-Gm-Message-State: AOJu0YzC4dQ2fZ1F4gFv9ZA31kaXR6MZrF6prdF78gMSjJTTK8bGAVZ+
-	RVh7v7IMmLdVTpP4+ZsM61WxA1CvAN9m/gLTnnTr7DrqKPFG3/Vf2TtE9WtCZffaabA3pkCrjY6
-	26VQuqhXM67P7edhQmFg8Tir2R68=
-X-Google-Smtp-Source: AGHT+IEKCLCByGf5JzolRKQqiv5jfoW83RzmeCSzCXLVU3NyxigIXnyCwwS6wcD6huINVSyldmDWPTfzJal9naV5Oqw=
-X-Received: by 2002:a05:6870:2054:b0:268:2075:a41d with SMTP id
- 586e51a60fabf-26891e9f1aamr2224700fac.6.1722602641727; Fri, 02 Aug 2024
- 05:44:01 -0700 (PDT)
+	s=arc-20240116; t=1722602745; c=relaxed/simple;
+	bh=tiHV62W1WLgEASnBkRMbzZagftzo0qxoQXN58XE/beQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RcWwGiwHY5sXbmm9fzIMMOcVybW6TA3ffDN2f4JqnzaP/5uSIG4w94YGa7yyqBfl0R53MkVfH9hFqeYNnLXzeJrOzP6EL2zqcIPGc38Dvr5BDM/OM06TEpzE8I2kvNFwQuGofp3xQzDj79PBEb07XSJLXmEPCwjBq19nRtPpjhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BDHU9Iws; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f149845d81so47096741fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 05:45:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722602740; x=1723207540; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQadfcLj0dbMeA91m7FGzai+vkUYG1DvlG0x0uq/CWQ=;
+        b=BDHU9IwsyPc8Kxp6Shf6D8mk5SRsKDOGAWneg8zYgzdz5YTHBLQGRjGuxaDas1svgF
+         Doj6+F/qllxfgLvKESC/OnZQYBpRsCOsfNvrn9pfLNmwjyD50+8Olnu6EGmw57aK6vnL
+         DXtWkTWmKWJ9RTsYE2/wW9PasY0/UsUEN5F8JUAJA2j55E80ctkj+HcWH7SXQxWrNMUc
+         1MyHfVByzmIJQcrNNtq4scXxfaT3gOM6vnIG6wsCH5MwU3ArARUyOS7s/ERt7Q0LQt7T
+         zRCOGzn+imRxRyrqyBE1E9uSsRx5BWIJd4CYEXH9EnA7gZHbBUONxdcUgbCPALAWM73/
+         dTFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722602740; x=1723207540;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kQadfcLj0dbMeA91m7FGzai+vkUYG1DvlG0x0uq/CWQ=;
+        b=tl3yXPGiE0R+xlTf9KHHALCDnNJan9P84I8zr2EYN3ZB3WmqUheCZbqvh3raCfrBvY
+         9Y4RduS5i0DDHjK6GbYKVuCdd+Giy3cMBOW2fKKdYAE5COmmGriHSgaw71N0J0+SQRC4
+         gr0jvI1hP8zSLVsP75taDBuAIXxGYyLaAOO6RWhD5eo4HKaq6ZqyIT87IOQ55UKLYWbt
+         Q2PMuYcI8ZAkCwzJLRgvwEX3R2ZNcsrN9GYK8sn/zEhifyAjWQOklH3ojcyvtxcWlpQF
+         vqJgn/WFA4Xuth0StJGeOHY79lZCeqzYdOkJK/vUmin57FF0WsKW5vM6Sl52C2sxM92H
+         Yksg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXqShPB4eb+9t9uO4//ry+qGVGRQvcDq2dm/arzccaX+lxBho6H2cdTk7VauaQ6ZV5iSnpRv0/gfJfvO+QJ5gAEvjhQ4tiYkchvKEE
+X-Gm-Message-State: AOJu0YzDeLQa69CPOsumKYmrIQshNnGAe637tVSTYsyWByB0sRsPVYHT
+	SJ22aeBqzXg0T9R8R0KT+Mz+mUAhKlBIRx1oG17zvcRkSct1hMnVQDKbIW7spn8=
+X-Google-Smtp-Source: AGHT+IGPr/cTRmNKJixkMUcjn1GhBezt4VMjTUceJqHStS9ST6UWMb+IoVyz7mZbggjMOS71BVFYIA==
+X-Received: by 2002:a05:6512:3e15:b0:52c:e0fb:92c0 with SMTP id 2adb3069b0e04-530bb385315mr1973294e87.34.1722602739950;
+        Fri, 02 Aug 2024 05:45:39 -0700 (PDT)
+Received: from localhost (c-9b0ee555.07-21-73746f28.bbcust.telenor.se. [85.229.14.155])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba07e6fsm218765e87.39.2024.08.02.05.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 05:45:39 -0700 (PDT)
+From: Anders Roxell <anders.roxell@linaro.org>
+To: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	wedsonaf@gmail.com,
+	shuah@kernel.org
+Cc: rust-for-linux@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH 1/2] selftests: rust: config: add trailing newline
+Date: Fri,  2 Aug 2024 14:45:35 +0200
+Message-ID: <20240802124536.2905797-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zqu6zjVMoiXwROBI@capivara> <c15a8a105308262856ee14bab558d34df8bdf92a.camel@linux.intel.com>
-In-Reply-To: <c15a8a105308262856ee14bab558d34df8bdf92a.camel@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Aug 2024 14:43:49 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ibMvRE7OrLQO9CJh__hL7rbO-03KT7EAsAEoQxVdX4eA@mail.gmail.com>
-Message-ID: <CAJZ5v0ibMvRE7OrLQO9CJh__hL7rbO-03KT7EAsAEoQxVdX4eA@mail.gmail.com>
-Subject: Re: [PATCH] cpufreq: intel_pstate: Update Balance performance EPP for
- Emerald Rapids
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	Pedro Henrique Kopper <pedro.kopper@canonical.com>
-Cc: rafael@kernel.org, lenb@kernel.org, viresh.kumar@linaro.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 1, 2024 at 9:42=E2=80=AFPM srinivas pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
->
-> On Thu, 2024-08-01 at 13:41 -0300, Pedro Henrique Kopper wrote:
-> > On Intel Emerald Rapids machines, we ship the Energy Performance
-> > Preference
-> > (EPP) default for balance_performance as 128. However, during an
-> > internal
-> > investigation together with Intel, we have determined that 32 is a
-> > more
-> > suitable value. This leads to significant improvements in both
-> > performance
-> > and energy:
-> >
-> > POV-Ray: 32% faster | 12% less energy
-> > OpenSSL: 12% faster | energy within 1%
-> > Build Linux Kernel: 29% faster | 18% less energy
-> >
-> > Therefore, we should move the default EPP for balance_performance to
-> > 32.
-> > This is in line with what has already been done for Sapphire Rapids.
-> >
-> > Signed-off-by: Pedro Henrique Kopper <pedro.kopper@canonical.com>
-> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+If adding multiple config files to the merge_config.sh script and
+rust/config is the fist one, then the last config fragment in this file
+and the first config fragment in the second file wont be set, since
+there isn't a newline in this file, so those two fragements end up at
+the same row like:
+CONFIG_SAMPLE_RUST_PRINT=mCONFIG_FRAGMENT=y
 
-Applied as 6.11-rc material.
+And non of those will be enabled when running 'olddefconfig' after.
 
-If I'm able to send a pull request next week, I'll push this for -rc3.
-Otherwise, it'll be -rc4.
+Fixing the issue by adding a newline to the file.
 
-> > ---
-> >  drivers/cpufreq/intel_pstate.c | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/drivers/cpufreq/intel_pstate.c
-> > b/drivers/cpufreq/intel_pstate.c
-> > index 392a8000b238..c0278d023cfc 100644
-> > --- a/drivers/cpufreq/intel_pstate.c
-> > +++ b/drivers/cpufreq/intel_pstate.c
-> > @@ -3405,6 +3405,7 @@ static const struct x86_cpu_id
-> > intel_epp_default[] =3D {
-> >        */
-> >       X86_MATCH_VFM(INTEL_ALDERLAKE_L,
-> > HWP_SET_DEF_BALANCE_PERF_EPP(102)),
-> >       X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,
-> > HWP_SET_DEF_BALANCE_PERF_EPP(32)),
-> > +     X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X,
-> > HWP_SET_DEF_BALANCE_PERF_EPP(32)),
-> >       X86_MATCH_VFM(INTEL_METEORLAKE_L,
-> > HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
-> >                     179, 64, 16)),
-> >       X86_MATCH_VFM(INTEL_ARROWLAKE,
-> > HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
->
->
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/rust/config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/rust/config b/tools/testing/selftests/rust/config
+index b4002acd40bc..fa06cebae232 100644
+--- a/tools/testing/selftests/rust/config
++++ b/tools/testing/selftests/rust/config
+@@ -2,4 +2,4 @@ CONFIG_RUST=y
+ CONFIG_SAMPLES=y
+ CONFIG_SAMPLES_RUST=y
+ CONFIG_SAMPLE_RUST_MINIMAL=m
+-CONFIG_SAMPLE_RUST_PRINT=m
+\ No newline at end of file
++CONFIG_SAMPLE_RUST_PRINT=m
+-- 
+2.43.0
+
 
