@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-273225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37605946606
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:00:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A524894660B
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 01:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E0F2833B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:00:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 503781F22AC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:04:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032F813AD16;
-	Fri,  2 Aug 2024 22:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C935A13A402;
+	Fri,  2 Aug 2024 23:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vIRi5f6u"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzpylkbS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593631ABEAC;
-	Fri,  2 Aug 2024 22:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DBD5258;
+	Fri,  2 Aug 2024 23:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722639597; cv=none; b=Tv14voL0xVLbXQ1obls6OLVIEawFXTUZXNgJGaxrG4JTLQd3Hp2z/Q+hvi1rrgC1K9NcoBXc3fUx1sVgVOjs6JVg9E90p+WW5ok6EAuemKi0anN+uAfD3x581wPSStclQF454R3RiIw6LJtcGNxXEsbFUBKmQwb7QLEehcyUBi8=
+	t=1722639860; cv=none; b=jkvajuFjEhl0Opet8z6ZlWYYD9osE8q8+TERyD4K6F2cWsFNa0j2HTBti0awI/pR8HUG8Ld/tQtItbVri/GEiylm7Tdg1xORcdHy6ykk4kmyRoNGFc8I9wmqp7yLQeTY1jpa0wvIhmrqYHtsNWa9KtfK9/VDoFg1njV+bQMYvFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722639597; c=relaxed/simple;
-	bh=5wWuergmD1DQ2jlE61lyoX1orcqo7cfOnbvgDX9v+ug=;
+	s=arc-20240116; t=1722639860; c=relaxed/simple;
+	bh=iIjDB6hSxLVkrCrMpfondG5ucRaBxFNaNNgaLKgyOM0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XkPEOItcJgBhNGAXs/2+X/rtS7K2xD7fpUU+xHxVu8fzakpnJK5F7fkIrua5fHu3a2lslkpG4m1bcfzBSS/Oe2iu8lrq33s2MaICiGxl+w+TIXzCyUVPaHTPol5lx9kIfu6VJM3uZP+s/IxhTCeRDwaq1qdntKFiynBKgHdkD9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vIRi5f6u; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=2ftwNXrX2dXrmGqkEavOurs8H08rzbSsBllQvHtYN8g=; b=vIRi5f6uKAKKULYcDhEb5UInie
-	wLV84cuk1HZzx3x3Ki+PYtPU97tQ5ICrCQUZ1KLD8vF4W+1mk1vLpaVJQXJVxyxO7B1nIt/6zZaOf
-	2m2md9BZ8E+6Rz4rrVsB5suqs+Ahy0aHlf9rfD5FcDjFHQJpWkLpgKt7vTjtcCVSiuM0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sa1F8-003tiM-KT; Sat, 03 Aug 2024 00:59:26 +0200
-Date: Sat, 3 Aug 2024 00:59:26 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: jitendra.vegiraju@broadcom.com
-Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
-	bcm-kernel-feedback-list@broadcom.com, richardcochran@gmail.com,
-	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
-	john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org,
-	linux@armlinux.org.uk, horms@kernel.org,
-	florian.fainelli@broadcom.com
-Subject: Re: [PATCH net-next v3 2/3] net: stmmac: Integrate dwxgmac4 into
- stmmac hwif handling
-Message-ID: <1e6e6eaa-3fd3-4820-bc1d-b1c722610e2f@lunn.ch>
-References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com>
- <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEpJc4R9o0px7/r8f8QtV8Pxjhm3nObXRR+vXupLtCVmWch7U0+kXjW5maDBMVTg77rZP3SX4UiiD+w2XXcDdIQTThiK8J789Er0T98HcmouuQf17suTLj+pFc7M7ohk1+geXlRxUGMiczNueZvsccUCMwg0TFMBHID8IN1D2p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzpylkbS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0346C32782;
+	Fri,  2 Aug 2024 23:04:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722639859;
+	bh=iIjDB6hSxLVkrCrMpfondG5ucRaBxFNaNNgaLKgyOM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HzpylkbS7oULAgh4yHoGZQoiNmiZKtx2nSFhfY0Ie9FEggok+KMDcsf9CC1hEsNTG
+	 Cw03IqxXtDTI3+zeOgdifUhXO76bOLzK4I23UWYkKIyYFB/m6/eOZPaRxhVNNUZ60l
+	 EUZn+QJy1MWBRVZL7RJ+K5kJXTAFNOqVGkD6tOIDQtkSWf83W/z9x5d3G2ws+kBcte
+	 KJfwVFRV6cxDChzA0jau7Js8CcbC63y9NCLca0LylbJQIoNWxQvhCs2pgkyHiopPHG
+	 yA1cUasAv5Gy6VNjS/pIaBqgGeM3pBaT+tw4pi3vPmGDesRlhG3P5qStaT9uracpI1
+	 5FszcsmhOsVpA==
+Date: Fri, 2 Aug 2024 16:04:17 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Koakuma <koachan@protonmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] sparc/build: Remove all usage of -fcall-used*
+ flags
+Message-ID: <20240802230417.GB853635@thelio-3990X>
+References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com>
+ <20240717-sparc-cflags-v2-1-259407e6eb5f@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,21 +65,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802031822.1862030-3-jitendra.vegiraju@broadcom.com>
+In-Reply-To: <20240717-sparc-cflags-v2-1-259407e6eb5f@protonmail.com>
 
-> +	user_ver = stmmac_get_user_version(priv, GMAC4_VERSION);
-> +	if (priv->synopsys_id == DWXGMAC_CORE_4_00 &&
-> +	    user_ver == DWXGMAC_USER_VER_X22)
-> +		mac->dma = &dwxgmac400_dma_ops;
+On Wed, Jul 17, 2024 at 11:10:15PM +0700, Koakuma wrote:
+> Remove all usage of -fcall-used* flags so that all flags used are
+> portable between GCC and clang.
+> 
+> The reasoning is as follows:
+> 
+> In the (normal) 32-bit ABI, %g5 and %g7 is normally reserved, and in
+> the 64-bit ABI, %g7 is the reserved one.
+> Linux turns them into volatile registers by the way of -fcall-used-*,
+> but on the other hand, omitting the flags shouldn't be harmful;
+> compilers will now simply refuse to touch them, and any assembly
+> code that happens to touch them would still work like usual (because
+> Linux' conventions already treats them as volatile anyway).
+> 
+> Signed-off-by: Koakuma <koachan@protonmail.com>
 
-I know nothing about this hardware....
+As before, I tested this series with the vDSO patch mentioned before and
+a version of LLVM that supports the -m{,no-}v8plus flags and I was able
+to successfully boot a kernel in QEMU :)
 
-Does priv->synopsys_id == DWXGMAC_CORE_4_0 not imply
-dwxgmac400_dma_ops?
+Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-Could a user synthesise DWXGMAC_CORE_4_00 without using
-dwxgmac400_dma_ops? Could dwxgmac500_dma_ops or dwxgmac100_dma_ops be
-used?
-
-	Andrew
+> ---
+>  arch/sparc/Makefile      | 4 ++--
+>  arch/sparc/vdso/Makefile | 2 +-
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/sparc/Makefile b/arch/sparc/Makefile
+> index 757451c3ea1d..7318a8b452c3 100644
+> --- a/arch/sparc/Makefile
+> +++ b/arch/sparc/Makefile
+> @@ -29,7 +29,7 @@ UTS_MACHINE    := sparc
+>  # versions of gcc.  Some gcc versions won't pass -Av8 to binutils when you
+>  # give -mcpu=v8.  This silently worked with older bintutils versions but
+>  # does not any more.
+> -KBUILD_CFLAGS  += -m32 -mcpu=v8 -pipe -mno-fpu -fcall-used-g5 -fcall-used-g7
+> +KBUILD_CFLAGS  += -m32 -mcpu=v8 -pipe -mno-fpu
+>  KBUILD_CFLAGS  += -Wa,-Av8
+>  
+>  KBUILD_AFLAGS  += -m32 -Wa,-Av8
+> @@ -45,7 +45,7 @@ export BITS   := 64
+>  UTS_MACHINE   := sparc64
+>  
+>  KBUILD_CFLAGS += -m64 -pipe -mno-fpu -mcpu=ultrasparc -mcmodel=medlow
+> -KBUILD_CFLAGS += -ffixed-g4 -ffixed-g5 -fcall-used-g7 -Wno-sign-compare
+> +KBUILD_CFLAGS += -ffixed-g4 -ffixed-g5 -Wno-sign-compare
+>  KBUILD_CFLAGS += -Wa,--undeclared-regs
+>  KBUILD_CFLAGS += $(call cc-option,-mtune=ultrasparc3)
+>  KBUILD_AFLAGS += -m64 -mcpu=ultrasparc -Wa,--undeclared-regs
+> diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
+> index 243dbfc4609d..e009443145af 100644
+> --- a/arch/sparc/vdso/Makefile
+> +++ b/arch/sparc/vdso/Makefile
+> @@ -46,7 +46,7 @@ CFL := $(PROFILING) -mcmodel=medlow -fPIC -O2 -fasynchronous-unwind-tables -m64
+>         -fno-omit-frame-pointer -foptimize-sibling-calls \
+>         -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
+>  
+> -SPARC_REG_CFLAGS = -ffixed-g4 -ffixed-g5 -fcall-used-g5 -fcall-used-g7
+> +SPARC_REG_CFLAGS = -ffixed-g4 -ffixed-g5
+>  
+>  $(vobjs): KBUILD_CFLAGS := $(filter-out $(RANDSTRUCT_CFLAGS) $(GCC_PLUGINS_CFLAGS) $(SPARC_REG_CFLAGS),$(KBUILD_CFLAGS)) $(CFL)
+>  
+> 
+> -- 
+> 2.45.2
+> 
 
