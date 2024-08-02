@@ -1,142 +1,130 @@
-Return-Path: <linux-kernel+bounces-272939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1246F946298
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:38:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B8E946299
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:38:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4355B1C23782
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:38:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 373C4B2464F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CD61AE049;
-	Fri,  2 Aug 2024 17:34:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2603B13633C;
+	Fri,  2 Aug 2024 17:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKykl2oU"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wzGOTKIe"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE261AE02B;
-	Fri,  2 Aug 2024 17:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856EE1AE02B
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:35:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722620066; cv=none; b=hGpdXBFl8HqhOPh8iCLy2j6miwpLSKmg0fkMv+jgizqt+v1MLm2pRU41rGyoH/9Zf4hs9M2xZbzcr5urPnvKk8srEhMmeGL9MRvfDxH4z1FAevbEpEPqUQbfcQz/FC6I9oXI8VM+b4ixtO3be3fTi0RdbK0fkqaUK1rWf6KsPYc=
+	t=1722620148; cv=none; b=AXXnnQ9a0ib4Pz0EvfeLVo3Bd8P/KcusITMSjgItxVV7KAjHgXQAejjh5LvIMSESNGj1a6qJ2VTMGnvsbdjvA5RqzldBaW5tAlG0SUvdDkFJdOjYjapX6CawN0B4MXy6SdscQ3yDXKIDdJZWazq6AoEwmWCYjhYQcn3JRpjCdN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722620066; c=relaxed/simple;
-	bh=H46XU4flydlMAniLAo+k795WzPyLoyVvy7vAZx7j73A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X/+ZZXtOceFUB/jR0/CT8IV+dCqUY5D7DJ2P3KigY62L6cfg457AfqS/P/kmZpokw3x9n09MkUTm9RsOZZYaYYaqKlkJXhv1tjJFQgpidn/tmJzRd2zKd6BxfK6kqISF8NrATG4meZnZ/a3DnySX+24yUnrDkROpB5Wy7bxk5XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKykl2oU; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so59987185ad.0;
-        Fri, 02 Aug 2024 10:34:25 -0700 (PDT)
+	s=arc-20240116; t=1722620148; c=relaxed/simple;
+	bh=jF9/Tz6cwAPSnrpApQ7Yu559zLvA98ey9pdr8UmSe88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j+1sy+B37H+frCdf0RvDvSfy+Vhl0ydHOtQKpJuSHq/umm/TBPUw75HVe/YsJfrPGyKiHT43lo8teRQVbL/VnBMFAiC+cowxU2vY9BDTkLctpPy4Ea9wkMDBZenhHU1D7tyHrPgAx5jj8tqWMP1EMGXXc/CpVZ0wih6qhr+W9pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wzGOTKIe; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-530c2e5f4feso289361e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:35:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722620065; x=1723224865; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gatNmUJpvUibb5XpWXl4cN6fAfKNOEybzN60sP4r15I=;
-        b=ZKykl2oUmzl4cjIkpmCudlgsWIFiCweDT2923qlnWJuanexb7sTNDg8vmkFnELkCa+
-         Ybzm99u/lwc+G2NEC9J1f1kpnKzJU6gmtCP+BqUekHTxXE0TjUepnb9lQBarCD0lmFf9
-         i/sr5abMOcBFEA95lsVhTa3U/btpU+AHrh3X4/0Qm7MLW8Iovsm3Towj4WihBRnQG53I
-         TcPoqpXbN/b8vEGrdQdvP8y/iiJeQzvQEsYqCmVWP9PA19fLxYThDpCldnZS5/eRMiBs
-         KqcfA/AduEXL9ig9O9KIHrKgDwSEesD5/Xw3zqcriFiDm1H7h2A3h6TrbN7y/sMOJdIE
-         E/7g==
+        d=linaro.org; s=google; t=1722620144; x=1723224944; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bQSE+Xl+pVUjM6NporntOIsDA4+1eMHnLwuSvO1to6c=;
+        b=wzGOTKIeF1a+wjZ7hPRtqz2Vm51173VeDe2n47uVkynVb+lnlofjkQ+sSEyhLlTZ0E
+         8y8Ka5Z1+YioZIFD2xwjDHsvGXOhtTFVlYzYh/w4Vss4MjM1KdcKMAkHbxgTMMStJEm0
+         MTAlSgw4yiDt/ARPsqonjn/wGfdMmTwJyABY3WM0ddwBm6E56cQ6uMTZMCEGNd2hHLu7
+         Q6hKD+vd1DS7Vkr/FcaLwxrmBmPkJVew419khszPtX/d4z4WOqVFQV7rvXkNtxJMFvzg
+         r+N67KzMHyETZxs9rpc4yxT2KXRgCGX5bm0fQmZ5iF3h5Iwm5INvya/fUoK/Qet5sBN+
+         fpxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722620065; x=1723224865;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gatNmUJpvUibb5XpWXl4cN6fAfKNOEybzN60sP4r15I=;
-        b=nDDqElNSvTBbS644MhAGLg9CwOhAtYGvXfirjpGEHY32xNkx6m9Lbz9WvtXW5DLX8s
-         TfPi2aQ67lCRQ5tiEnVX0t81WPjConfadBTeVe36forYPFp+Ixih+wle+giqbtkawxNm
-         O98iyqsWZ5DZJsLv4SQMzSY+sAVXaX9eH+Kyr0EfAhAhvm9QreVIVY7CKg+rTA+aeC9d
-         Xayhf3gx9LetCfcL2xp9lmevSeBVb/XGwLi6c2RZ9swEYq8PsmnMhz8D43B45Mdga1j/
-         D5PdFnwfCCeHvBfrnHkzTh6Dfa3le9c53reoldN2rCYKJ3/C3k8agKrupvbI13ai35nH
-         xiYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUijGIE/+x7D0dKIH9Hdzg0S5VWkOWPUOa+HsPwjwf07yDv9+gb+UBfPof1pkInj9Lbl3xJNkqNkWneROLTKa+o9LydVCkrJE5lKA==
-X-Gm-Message-State: AOJu0YweCHkCtFdeneKuMINtVWYRDMR8H6yxz7QJvVwdBt3NV4s2gNus
-	mWY1OYKWUg1/Y13y2NhS9WbmaU3uFr46oi0DKyLGmg9cuSJFqJIF
-X-Google-Smtp-Source: AGHT+IHpOyiWX+126Ucw7sJfURuG3QEh7Tmy3MxbOJnPRawX58YxC7bZQ1pMFDt8cxJbbaq7dFAdwA==
-X-Received: by 2002:a17:903:2308:b0:1fd:9269:72f0 with SMTP id d9443c01a7336-1ff573d8baemr41975385ad.47.1722620064517;
-        Fri, 02 Aug 2024 10:34:24 -0700 (PDT)
-Received: from localhost ([216.228.127.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592979d7sm19812375ad.259.2024.08.02.10.34.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 10:34:24 -0700 (PDT)
-Date: Fri, 2 Aug 2024 10:34:21 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, ardb@kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH V3 0/2] uapi: Add support for GENMASK_U128()
-Message-ID: <Zq0YnYAM9RoforVV@yury-ThinkPad>
-References: <20240801071646.682731-1-anshuman.khandual@arm.com>
- <CAAH8bW9sJmwKd19sJzpGrQ5Tr_4fYMyvLnfFyahhxxkG6r6GbA@mail.gmail.com>
- <1781c39a-2280-49ed-aaaa-b1684744615e@arm.com>
+        d=1e100.net; s=20230601; t=1722620144; x=1723224944;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bQSE+Xl+pVUjM6NporntOIsDA4+1eMHnLwuSvO1to6c=;
+        b=pwYjJd+wJ3ivtkFbciUtsm4b5Wu2s3/zPkNe1UxZuSFD3eqsHHNnwfTkRqeBuQzuIu
+         NCqfGoz/GcFPT3SSIlXaKdaiU7RXe/XKJB5i7eHWvhE5hiWEvepnTyeaDNAAa0Fe4x95
+         1xgPHwWPe4HlkCsi4GGZkGqho7O3NgOAZm8jWbY84GEcLHG8qXq7Ahk7ycnuVP66dOx8
+         JaA6F4NAQyfq42+Fp5MXm23cIZVSHvAPJxTRAlxxYyV1mlKLBx84FBtRJL8qeETOrEIV
+         eMj61ogiwUvMu3Go8r/Z5O4B7W/xKIFw+f9emToP9xviV84UBqM1oOlb5T6J8II5E52A
+         8vRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXyyf2164BFIPRJybZCNfKh4ybXP4i+d8b6VgD4e9jiWJYqfhlnefnyTAGByF8K0HW+PBzGVMTUP+kKH9jI+nIH6Z+0GZkElmPeKHIt
+X-Gm-Message-State: AOJu0YxdmRHt4ve+vIgJ6r9I2o4c/jiSE66jehXKTGJfFAqN8usiRQhs
+	cGvogrmWuh+mYoC88baRp/+E2ODZwdko3CxrdO6OWRvIwNboIdd1gMgve3RdTxM8BgJb1VMrxiB
+	hSY3MuT/SsKiyxkCwqbMMmlKp7SSrU+YX45Hw8iZuCFU6TtRyzBo=
+X-Google-Smtp-Source: AGHT+IGn5g/eO45WsFTby2Ep7y09V5n5/cBU3x+lZtZbCw8eYB9SPj3t41HaFympNTDtMkIIOB0FshBBlNG2ksXI9OM=
+X-Received: by 2002:ac2:4c47:0:b0:530:ae43:d7ef with SMTP id
+ 2adb3069b0e04-530bb39ff83mr2587036e87.48.1722620144305; Fri, 02 Aug 2024
+ 10:35:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1781c39a-2280-49ed-aaaa-b1684744615e@arm.com>
+References: <CAHk-=wiyNokz0d3b=GRORij=mGvwoYHy=+bv6m2Hu_VqNdg66g@mail.gmail.com>
+ <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+In-Reply-To: <f8677c93-a76d-473c-8abc-8dc7b4403691@roeck-us.net>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 2 Aug 2024 19:35:33 +0200
+Message-ID: <CACRpkda_Y+M6_fapkxcPHNYSpd+0hicziFKcDTEyTqm_Fq+Svw@mail.gmail.com>
+Subject: Re: Linux 6.11-rc1
+To: Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 02, 2024 at 07:00:43AM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 8/1/24 20:13, Yury Norov wrote:
-> > On Thu, Aug 1, 2024 at 12:16 AM Anshuman Khandual
-> > <anshuman.khandual@arm.com> wrote:
-> >>
-> >> This adds support for GENMASK_U128() and some corresponding tests as well.
-> >> GENMASK_U128() generated 128 bit masks will be required later on the arm64
-> >> platform for enabling FEAT_SYSREG128 and FEAT_D128 features.
-> >>
-> >> Because GENMAKS_U128() depends on __int128 data type being supported in the
-> >> compiler, its usage needs to be protected with CONFIG_ARCH_SUPPORTS_INT128.
-> >>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> Cc: Yury Norov <yury.norov@gmail.com>
-> >> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> >> Cc: Arnd Bergmann <arnd@arndb.de>>
-> >> Cc: linux-kernel@vger.kernel.org
-> >> Cc: linux-arch@vger.kernel.org
-> > 
-> > For the patches:
-> > 
-> > Reviewed-by: Yury Norov <yury.norov@gmail.com>
-> 
-> Thanks Yury.
-> 
-> > 
-> > This series doesn't include a real use-case for the new macros. Do you
-> > have some?
-> > I can take it via my branch, but I need at least one use-case to not
-> > merge dead code.
-> 
-> I have recently posted the following patch for arm64 platform although
-> most of the subsequent work is still in progress. But for now there
-> are some corresponding tests for this new GENMASK_U128() ABI as well.
-> Hence it will be really great to have these two patches merged first.
-> Thank you.
-> 
-> https://lore.kernel.org/all/20240801054436.612024-1-anshuman.khandual@arm.com/
+On Mon, Jul 29, 2024 at 5:29=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
+wrote:
 
-If you're going to merge the above patch in 6.12, you'd normally send
-it together with GENMASK_U128 preparation series, get an ACK from me
-and Rasmus for bitops part and move through arm64 tree.
+> Failed tests:
+>         arm:versatilepb:versatile_defconfig:aeabi:pci:scsi:mem128:net=3Dd=
+efault:versatile-pb:ext2
+>         arm:versatilepb:versatile_defconfig:aeabi:pci:flash64:mem128:net=
+=3Ddefault:versatile-pb:ext2
+>         arm:versatilepb:versatile_defconfig:aeabi:pci:mem128:net=3Ddefaul=
+t:versatile-pb:initrd
+>         arm:versatileab:versatile_defconfig:mem128:net=3Ddefault:versatil=
+e-ab:initrd
 
-Whatever, I've merged it in bitmap-for-next for testing. Please keep
-me posted for any following patches.
+I traced these fails down to:
+commit 04f08ef291d4b8d76f8d198bf2929ad43b96eecf
+"arm/arm64: dts: arm: Use generic clock and regulator nodenames"
 
-Thanks,
-Yury
+The following oneliner fixes it:
+
+diff --git a/arch/arm/boot/dts/arm/versatile-ab.dts
+b/arch/arm/boot/dts/arm/versatile-ab.dts
+index 6fe6b49f5d8e..289c3d093579 100644
+--- a/arch/arm/boot/dts/arm/versatile-ab.dts
++++ b/arch/arm/boot/dts/arm/versatile-ab.dts
+@@ -157,7 +157,7 @@ timclk: clock-1000000 {
+                        clocks =3D <&xtal24mhz>;
+                };
+
+-               pclk: clock-24000000 {
++               pclk: pclk@24M {
+                        #clock-cells =3D <0>;
+                        compatible =3D "fixed-factor-clock";
+                        clock-div =3D <1>;
+
+(versatile-ab is included by versatile-pb hence it regresses)
+
+The problem is: I don't know why.
+
+Rob: any ideas? (Perhaps some uglyhack of mine, I don't know.)
+
+If nothing comes up I'll send an "unknown cause" onliner revert.
+
+Yours,
+Linus Walleij
 
