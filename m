@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-272010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE899455DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:09:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C41E09455DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F7C1C22AAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:09:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 495A5B22418
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 01:09:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389C3DDAD;
-	Fri,  2 Aug 2024 01:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C77134AC;
+	Fri,  2 Aug 2024 01:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCSmS8ir"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nmBJMwMu"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E200F12E5B
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD0D12E71
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 01:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722560977; cv=none; b=plH3BnLway5p/pZ1QzCOt1hT+/wcs2TEfjZXvLHT/ILSZrpFQIEZZxssNfFV+V04FROPPXNz0RIs9kvka1k3NgYPnAZpx63ezIcNrxcPo29bibyWlNt+Ev2/gSr1Z5IrX8HaQM+sBhq8MR9QySXNsPZEcveL66NG5KLrkO37JGc=
+	t=1722560978; cv=none; b=eENl0YhuIngS+2GZY1B2Q2vXnYkjG6yvyHV+De97x359q7zsFYnNPk1jpY9866aHCIZ4HhnQk1FqurZUlWdvrZ4fqoZ+GU3W31vVCvP7cJg4zItaYR0Hqn41FAYVw2Su+GYND9kEm9XSRgW3jPKuel9picIW7kV4DQRCHKm2jik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722560977; c=relaxed/simple;
-	bh=cW69NMJFEBfWn+KRRxZdeTGqvaZ1VlUhGqT1bGfvs1c=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=NW2d7sMkczjTlIcgnuz3SlZbPcLPxksgJEMafCGTcC1YGLwampO2ZfVO7ajKQvQP+XSKuQwgHh3BwljDl/D42gNioBHZv1GvjlidyKLL3hfauARw/dByjbsAo5GlzfMPefX0QRL0ucY8x9QAw9QGhqE1l0XbJwP+mFKrdtHMY5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCSmS8ir; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1722560978; c=relaxed/simple;
+	bh=ujM1XJIxa/ere7mxRTXOLq9tnMVH6DzADLhZoNYsU94=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=APLwe0b25RXEd+00KgP4ABv0jmi61cfbxVoAQYtFuzvHJftbremd2sgoZouHhwbYEX7sue4cbNXWW2CQOxS4pwlXVlaBDDwVMkI9mYBWUC07JHexngYPu0OFRFW+lVw2o46EW2pei3JSRoUW9TcModd0SA0SaCH/xuqaRXnfC24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nmBJMwMu; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7ab63a388bso551509166b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 18:09:35 -0700 (PDT)
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so11099417a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 18:09:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722560974; x=1723165774; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E3htfNHgZGtTKSRwOgeGEYeAav5n0bsRhJ35ivdzxLI=;
-        b=bCSmS8irYCJDeUpDS4wd+AdxXFBqo4y0ZE6yL8E1PyfNGxwxRKuCaunLAfilDNrkHr
-         W6TuBd1F/vB9yHvf0HwUMzXOoauPG6X6auMrs1RiQpfDwAA5Wlt4AK7nhZOqw1YhrJ+/
-         5B/5T8V97hlAtiBGpJEMT23tM1jSj3fxKJ2kfSDlkvSIWsgah+ai6511zuTenbwfTQ+k
-         Vu84ZgW2p2bn0qnwNJkLc9AS6zuLRdvynj9ag5qZy45/ETueN7pvAbMhnugMrFz1X98g
-         qt3vn0bUpVhHjoKwNiUyIKZW1fs7WZGMFoFj7NjIxPPeLdzA2wI6m34wNsHeu9KM+4IB
-         ICgA==
+        d=gmail.com; s=20230601; t=1722560975; x=1723165775; darn=vger.kernel.org;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=BbCh2qq+GqJnDj1NLZnr9Rls+DkMZwrRCOx9dR1Do1E=;
+        b=nmBJMwMupOCTKPda38GxndjSUTwcRzCJg1B4aHSG8GiV7sSOf6CtU8MvekO3Pe0ds2
+         +OJEEN2rjgDwphADOp30+z8z7FHXZzwuSTzD52rQOAX2Uyledw46v9gGGYAsL7gzrIIO
+         UBiDjKj+Xcfx2dS4o0BlJgR1tkMP7juMiDC/Wn+r8iyyDn53XQBZtBky4wjnRCFtp15W
+         kgrWNFpdFRVFuCnxxvoUF07XxPf8n7CIVnd3lQCk9zxbrOzifPBKNGXrFhRw3Z2h/NHk
+         XpINmrzmy813rA1BZWNm4ybzrjxm5qq9oFZqyUxH25N5baqh1k3FRbbQ0bFw7NHIwdSw
+         xIDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722560974; x=1723165774;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E3htfNHgZGtTKSRwOgeGEYeAav5n0bsRhJ35ivdzxLI=;
-        b=SbpYrS4jOV3v4KzbRoTwNCggZR7QZwMWbY7Y2D9EcXsrt+CMHHl7FtsTkwf4lh0Zpp
-         r5BsAWDjx8syTlwWPmSp9HXbJbjMMXvJSp2I+wsGrz/tYbQP8Ic5/paBUYxVubfC1bZI
-         wN5jw0+iDfQCA7t6JzL4WaKimIt6XxlyqKG20lGE475PDWNERM98aXVtqbEkXcu1blSa
-         HbWgqHfuD4y51yZ0Ela433TCly8a86KCeaqB5m9uaM4c3FfuxZYox1iBTrzJw6TDzd+y
-         vdfWB0W3kh/65klobRp2dZW878S79Pf8scuE5q5JxwelC6lhjIieOg/zluFgEq5EbFVo
-         gH6A==
-X-Gm-Message-State: AOJu0Yx8Dh6CC5pfLMjn6Wlx8BXoJ7Ykb4vSGls7RBU+oJurizOqCG4b
-	x8ku0Aa7QY+mLUfxbvBywWwqslo15v395A4atl/fw3br9rndiu0V
-X-Google-Smtp-Source: AGHT+IGk96XkxqZGR+9KE5YgVgC2rAoZZFUtfBkFOOk5wXY+CwMv7bMbEr3HKxnVi8q3W4MAS0niTg==
-X-Received: by 2002:a05:6402:114e:b0:5a1:5692:b5f9 with SMTP id 4fb4d7f45d1cf-5b7f56fd3dbmr1500125a12.38.1722560973847;
-        Thu, 01 Aug 2024 18:09:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722560975; x=1723165775;
+        h=references:in-reply-to:message-id:date:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BbCh2qq+GqJnDj1NLZnr9Rls+DkMZwrRCOx9dR1Do1E=;
+        b=UuITyOqLwbi6SAqHJAYomXXZu5Ymt4Mg1xHCOHMB9nUlvs3DLxcVRcrPawHoFSARTY
+         5oeVELhgh/2BiZx49y5k/LLbBpdSnPp/9BzRqA80CGPURVHf5cgeYqgi/pI0Uaqjp7Xr
+         lIia0qeLTraBlHk8geuLYOaYlAzE8hLVag6FrdyMpxrOZI9U8DPzQtvnH0qoykCziCdW
+         6RZ9Aa0tO+hKXliN/a69Y6gQXTk7hwXBfAaxmGAJKuuPaUQYe8C+x3Y+nRHBROUdsTXX
+         0YjhQjs2GhtzOWyHPWBapfOqr2p/V6na9yGWfLsVdQtfoImox2L5g96dFoZeGTFHjNJj
+         fLBg==
+X-Gm-Message-State: AOJu0YzRVU+2+93tEusgfALtDHY1YUc1a3lNg+IBwq1mXa2KnS59iPl6
+	cm/DdfLHURL+XOU9ijqqgiTSYr22pEngK8AJrphgMp34huZdMyHf
+X-Google-Smtp-Source: AGHT+IEWJ/rEpduxi5nKxB1TDcKkBxA4cQbX6nPfFw0nWnayCRn9XuSyJ4S4tCylzwzeT02VOCPEvg==
+X-Received: by 2002:a17:907:3e1c:b0:a7d:26ff:aeb0 with SMTP id a640c23a62f3a-a7dc4fa89dfmr115937866b.30.1722560974799;
+        Thu, 01 Aug 2024 18:09:34 -0700 (PDT)
 Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5b839b26d13sm406598a12.21.2024.08.01.18.09.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c185sm37411466b.61.2024.08.01.18.09.34
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 01 Aug 2024 18:09:33 -0700 (PDT)
+        Thu, 01 Aug 2024 18:09:34 -0700 (PDT)
 From: Wei Yang <richard.weiyang@gmail.com>
 To: rppt@kernel.org,
 	richard.weiyang@gmail.com
 Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [PATCH v3 1/5] memblock test: fix implicit declaration of function 'virt_to_phys'
-Date: Fri,  2 Aug 2024 01:09:19 +0000
-Message-Id: <20240802010923.15577-1-richard.weiyang@gmail.com>
+Subject: [PATCH v3 2/5] memblock test: add the definition of __setup()
+Date: Fri,  2 Aug 2024 01:09:20 +0000
+Message-Id: <20240802010923.15577-2-richard.weiyang@gmail.com>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20240802010923.15577-1-richard.weiyang@gmail.com>
+References: <20240802010923.15577-1-richard.weiyang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-Commit 94ff46de4a73 ("memblock: Move late alloc warning down to phys
-alloc") introduce the usage of virt_to_phys(), which is not defined in
-memblock tests.
+Commit 1e4c64b71c9b ("mm/memblock: Add "reserve_mem" to reserved named
+memory at boot up") introduce usage of __setup(), which is not defined
+in memblock test.
 
-Define it in mm.h to fix the build error.
+Define it in init.h to fix the build error.
 
 Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-
 ---
-v3: use static inline as phys_to_virt
-v2: move definition to mm.h
----
- tools/include/linux/mm.h | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/testing/memblock/linux/init.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/include/linux/mm.h b/tools/include/linux/mm.h
-index cad4f2927983..c9e915914add 100644
---- a/tools/include/linux/mm.h
-+++ b/tools/include/linux/mm.h
-@@ -25,6 +25,12 @@ static inline void *phys_to_virt(unsigned long address)
- 	return __va(address);
- }
+diff --git a/tools/testing/memblock/linux/init.h b/tools/testing/memblock/linux/init.h
+index 828e0ee0bc6c..036616a25427 100644
+--- a/tools/testing/memblock/linux/init.h
++++ b/tools/testing/memblock/linux/init.h
+@@ -28,6 +28,9 @@ struct obs_kernel_param {
+ 		__aligned(__alignof__(struct obs_kernel_param)) =	\
+ 		{ __setup_str_##unique_id, fn, early }
  
-+#define virt_to_phys virt_to_phys
-+static inline phys_addr_t virt_to_phys(volatile void *address)
-+{
-+	return (unsigned long)address;
-+}
++#define __setup(str, fn)						\
++	__setup_param(str, fn, fn, 0)
 +
- void reserve_bootmem_region(phys_addr_t start, phys_addr_t end, int nid);
+ #define early_param(str, fn)						\
+ 	__setup_param(str, fn, fn, 1)
  
- static inline void totalram_pages_inc(void)
 -- 
 2.34.1
 
