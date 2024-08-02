@@ -1,137 +1,153 @@
-Return-Path: <linux-kernel+bounces-272591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B696E945E6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:13:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4A0945E72
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:14:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618B21F211BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:13:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA5F1C2264F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9861E4856;
-	Fri,  2 Aug 2024 13:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B881E4852;
+	Fri,  2 Aug 2024 13:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S1BTIsiQ"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vqc87/ps"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F4591E3CDC
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 13:13:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EEF1E3CB9
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 13:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722604405; cv=none; b=mfht6qqA4qARbE3VC0oPk5ARSG+MWaP1ieDq3m/6hJ9w2z2CUK6JkK1EglR+BvXIUZdgkEOdOlNUJTsIIRfpTVA4KTvzjGYhe36J/lQ0eH7JqTyD/qiXSY6inNcZE5llV0wr+HyBFCn62b5eW6C2Je+6eLJsfMW2Ahra89mrbhQ=
+	t=1722604484; cv=none; b=Agqi+qUXCgv/fjb8H1Lw/qTZO2WdJM9e9jH6a+hPY2whclqyKU0oVp0nIaCb1e6ivdifASENm2ZJPjalC1u6WX1XYvKsaJwi537pzy8qt9A66H8BjjSKVWWcqQQu4saCnQF3LuSPxHDVCJly6bmk4JoVutxOwJgrVNxUc5DJtcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722604405; c=relaxed/simple;
-	bh=BwTpX4R7zkKwhLkBtH/hZIhBc3WcCtukHgkLY/3CyXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H9xNxc4c9qh/I8xykDDUrBRYozvMgauc4ENF2Uj3tGQbIZNJwEyHmh5XjSROKCF+KCoC3umnov/Zqiuj9F8w/9uENAZxLdq9nKFTG1LgZiz1faStbRFzzcvM3jzuY0uItpI5gsyPkMdGiDMj6dMscd8I4rrGQnar6TzkpS+qVNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S1BTIsiQ; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a1b073d7cdso59055a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 06:13:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722604402; x=1723209202; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y1lsq1MbHixArH6n0xuStRjT/KO7g8bnFRsAbnZpGsc=;
-        b=S1BTIsiQu2+g9uCop3KOzEhU9ET8TDRf7tdg6HXU+ydnzfUnhMNWpRlYCFRp+h+gHJ
-         VGJ1Fk3jhweevDoKmMWqzQ3fpehZwyClv07VnNaBH51ffWZdbhjf9KniIgeyWILBnXO2
-         HZ0JZ96BSTID90wmaroPV/mujRMZpc+UnEMaCi5yHoN4Icnln7CcOdCHCwZ62QGoGdlo
-         yAR5+qxn+NSNDe7r7LYG5RwRYVxOJC6pk6nsLk/PTj3PDfCN+sIt/ndyqJ86fafgQgry
-         lSPmXGZV/jIy9G6lgMDpynJ9Jl6hMIJf1y3QtTUlncTNb4WN9KLAzm51yMDqeHw5Aro5
-         9umQ==
+	s=arc-20240116; t=1722604484; c=relaxed/simple;
+	bh=mlVHMMZEWCwegHzSZJoPrbG16hagpjxEFmlG/bPjAc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R37QIsLzmS/+5PnXOK6jqVCTG7yJ6H+P9waSTFewprPprDBDKNw8OS2NCs8R8GG9KThLqlbCShvCtYZWzZQx340JTADGBjklKZMI/vy3DZrj/1B/nqBYY3Efp87iUr/xPbL/75dkNUuBu4iYWEjc9fh8rkY5w1cpAz6LTS5q3lA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vqc87/ps; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1722604482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5G+bWvjkV854PGv5nQauKmV3J78os2SxWsQ3vifFpzE=;
+	b=Vqc87/ps4K+/6g3OlrtyJ38wctRreGnEisPZKgTeVERxLMrx7VEnM/qfTbFOYFToKDNmzx
+	FeojJ7XgVGm7MXCYXdNAJkPH22mmXGwGXI5JrZykLpoIILBEUQT3MaW42CFeBHhbiFqB6Z
+	Qx4NjMVW4yDjrnFXnQGSznI31jwrRL8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-88-a5tNkZ32NhaEtQmuKjR7Ug-1; Fri, 02 Aug 2024 09:14:41 -0400
+X-MC-Unique: a5tNkZ32NhaEtQmuKjR7Ug-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4281310bf7aso53778315e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 06:14:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722604402; x=1723209202;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=y1lsq1MbHixArH6n0xuStRjT/KO7g8bnFRsAbnZpGsc=;
-        b=W32829neBr7TbAQRsZe4Q+KaALX5RosTwjr+7Cd+/Fl0uX64al2kvNB+bCnu/iB4i6
-         znMQH2zckN+HJlMUKNJK6BxLk1L/lwSzsaTqpBBYHRBgzSGihj3rJwudUHyfbTawhHR/
-         2MPvbR6snad1gF5ITff/UFMx4E35FSiUwFWE+zExOzGokKHizy6bUqI3pHADn8OMJxVk
-         4Db4amns90AMnA79aWOGk+B34jEgKLh21nnEJlhlwmpmfuv5A4YsnTJrf+FaNUtIm7Gr
-         9/SDpT0X3rhbwVCbt5Fq+LTUAdqnIjpVOICVS8ARfu2XbThv7LT16bzEhLNBB8c9ppjg
-         WwFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDjdR6B0R74nOJ4qAJE2/DDm/0o7F9T6CQtu93iIlr47oO3NEGagQxAtTjjkzLgAetKEKuq/nqCbWY0dW4Ljsim+UVEvDwhC9+mPR9
-X-Gm-Message-State: AOJu0YwD8v6JJivyWtXjCGlDV7xiLl6Rmqw5G/gN0r6+RKkU4h0LiBJ/
-	jrwYWdXPgOMEKzExmrHenwNWsh4Yl6pBldZUO6A/5jZV6dErmRrWbrBcaSPhMUFEz8yvKTxrb7X
-	SI/qMOaqp4kw62BEUw5ZSEbuxYAIIUiD6B9aH
-X-Google-Smtp-Source: AGHT+IFYTrXmYI0k6b24zjW3CqG747URvtVJaY0p2tHnlsWe90ww1rp4IvxsCnMquQC7lV9N8ZofPfYaGnlnTfzCud4=
-X-Received: by 2002:a05:6402:268d:b0:57d:436b:68d6 with SMTP id
- 4fb4d7f45d1cf-5b870f72be0mr116158a12.7.1722604401009; Fri, 02 Aug 2024
- 06:13:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722604480; x=1723209280;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5G+bWvjkV854PGv5nQauKmV3J78os2SxWsQ3vifFpzE=;
+        b=CYRmECHhxVoShW2xzcNlGsoqtrONzwWwzLXh6X2jB1iznIbcJ24RYl+FMCa2MXl3WI
+         A/NtwrQr5K760RbEg/q1Hd447RhTFl11X8ivWNtmdWMZc3KoV7dHfKFDCR0lCdfyUugV
+         ygooJUBv7sxuQOrB6lg+oJxx/c/TY+nm9omcReDHQyHqTuxYUGsJS+YV6qUO9PByG/OQ
+         wv9pJvJetDM7z8fAXKTiqIFWz4XGu8TF5FVk/3F7y6zzuOFdlbw6qtLYoO+XR5od70S4
+         r9o61st9aVGb9Tc0CfWagBfI2VMXnI07fflb0pVAFtfe3bcRAHQCUrmVjMuU6plTDLki
+         OiAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHEFD1FEgipEvpaVBNQ0gmEdgbVkOiJXZwfQVG5c+8FxSINzkhrqNQOX4DSnhD+Y0j90LlupMvF9Ze3f1xHu7BbZ8vnNAr3tvdV1pu
+X-Gm-Message-State: AOJu0Yw2cm7+IPUImyAg3OAEIC4EnlD5MeH2ecZUzHY+YGiZZAV1cSrP
+	pSpkQ7SvqDKqsAVF5MDgHeZl38zfztgY5rRIH7pfghftJmHWaJpOcsRD8So6EaeJ0AFW2a5i1o7
+	wZjZ/tC9h22quXmwou8nzPCh3hfTvQws2TocXBAxIHDl6P7stfIUAAAw6e0Sg7g==
+X-Received: by 2002:a05:600c:3b27:b0:426:593c:935d with SMTP id 5b1f17b1804b1-428e6af7aeemr19557115e9.5.1722604479659;
+        Fri, 02 Aug 2024 06:14:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFuRmjRgLKWU2y9r5mwZaqHkfa4aoDytkkFpO3vmjIpfmO1Id6emUqbDV3bWzmGUtUR32/LqA==
+X-Received: by 2002:a05:600c:3b27:b0:426:593c:935d with SMTP id 5b1f17b1804b1-428e6af7aeemr19556785e9.5.1722604478820;
+        Fri, 02 Aug 2024 06:14:38 -0700 (PDT)
+Received: from redhat.com ([2.55.39.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb97fbasm95238665e9.41.2024.08.02.06.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 06:14:37 -0700 (PDT)
+Date: Fri, 2 Aug 2024 09:14:28 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Dragos Tatulea <dtatulea@nvidia.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Si-Wei Liu <si-wei.liu@oracle.com>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev
+Subject: Re: [PATCH vhost 0/7] vdpa/mlx5: Parallelize device suspend/resume
+Message-ID: <20240802091307-mutt-send-email-mst@kernel.org>
+References: <20240802072039.267446-1-dtatulea@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240729125846.1043211-1-mic@digikod.net> <CAG48ez3DzxGMWN9GDhSqpHrDJnZDg2k=VEMD_DFiET5yDr07rw@mail.gmail.com>
- <20240729.cho6saegoHei@digikod.net> <CAG48ez1=xbGd8az4+iNJ_v1z4McMN8dsvWff-PH=ozLYnbzPqg@mail.gmail.com>
- <20240729.rayi3Chi9aef@digikod.net> <CAG48ez2HdeKXwwiCck9cvcoS1ZhbGD8Qs2DzV7F6W_6=fSgK5Q@mail.gmail.com>
- <20240729.roSo6soogho8@digikod.net> <CAHC9VhRmZOMLwY4AvV+96WU3jyqMt6jX5sRKAos75OjWDo-NvA@mail.gmail.com>
- <CAG48ez2bnvuX8i-D=5DxmfzEOKTWAf-DkgQq6aNC4WzSGoEGHg@mail.gmail.com>
- <CAHC9VhTk4X61K72FubR8ahNeGyzWKkF=vJZD+k-8+xO7RwZpgg@mail.gmail.com> <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
-In-Reply-To: <CAG48ez0RVMpMY2vfWqrCDYjFj7zZx5HCP+h-EaeNW1-0_EU0mg@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 2 Aug 2024 15:12:43 +0200
-Message-ID: <CAG48ez2TVGzqS4RPSLJpLEsuqEPsxKfy+CoamGBD-1L8sWSAQQ@mail.gmail.com>
-Subject: Re: [PATCH v1] keys: Restrict KEYCTL_SESSION_TO_PARENT according to ptrace_may_access()
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	James Morris <jmorris@namei.org>, Kees Cook <kees@kernel.org>, keyrings@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802072039.267446-1-dtatulea@nvidia.com>
 
-On Wed, Jul 31, 2024 at 11:33=E2=80=AFPM Jann Horn <jannh@google.com> wrote=
-:
-> On Wed, Jul 31, 2024 at 11:27=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > On Wed, Jul 31, 2024 at 4:54=E2=80=AFPM Jann Horn <jannh@google.com> wr=
-ote:
-> > > FYI: Those checks, including the hook that formerly existed there, ar=
-e
-> > > (somewhat necessarily) racy wrt concurrent security context changes o=
-f
-> > > the parent because they come before asynchronous work is posted to th=
-e
-> > > parent to do the keyring update.
-> >
-> > I was wondering about something similar while looking at
-> > keyctl_session_to_parent(), aren't all of the parent's cred checks
-> > here racy?
->
-> Yeah...
->
-> > > In theory we could make them synchronous if we have the child wait fo=
-r
-> > > the parent to enter task work... actually, with that we could probabl=
-y
-> > > get rid of the whole cred_transfer hack and have the parent do
-> > > prepare_creds() and commit_creds() normally, and propagate any errors
-> > > back to the child, as long as we don't create any deadlocks with
-> > > this...
-> >
-> > Assuming that no problems are caused by waiting on the parent, this
-> > might be the best approach.  Should we also move, or duplicate, the
-> > cred checks into the parent's context to avoid any races?
->
-> Yeah, I think that'd probably be a reasonable way to do it. Post task
-> work to the parent, wait for the task work to finish (with an
-> interruptible sleep that cancels the work item on EINTR), and then do
-> the checks and stuff in the parent. I guess whether we should also do
-> racy checks in the child before that depends on whether we're worried
-> about a child without the necessary permissions being able to cause
-> spurious syscall restarts in the parent...
+On Fri, Aug 02, 2024 at 10:20:17AM +0300, Dragos Tatulea wrote:
+> This series parallelizes the mlx5_vdpa device suspend and resume
+> operations through the firmware async API. The purpose is to reduce live
+> migration downtime.
+> 
+> The series starts with changing the VQ suspend and resume commands
+> to the async API. After that, the switch is made to issue multiple
+> commands of the same type in parallel.
+> 
+> Finally, a bonus improvement is thrown in: keep the notifierd enabled
+> during suspend but make it a NOP. Upon resume make sure that the link
+> state is forwarded. This shaves around 30ms per device constant time.
+> 
+> For 1 vDPA device x 32 VQs (16 VQPs), on a large VM (256 GB RAM, 32 CPUs
+> x 2 threads per core), the improvements are:
+> 
+> +-------------------+--------+--------+-----------+
+> | operation         | Before | After  | Reduction |
+> |-------------------+--------+--------+-----------|
+> | mlx5_vdpa_suspend | 37 ms  | 2.5 ms |     14x   |
+> | mlx5_vdpa_resume  | 16 ms  | 5 ms   |      3x   |
+> +-------------------+--------+--------+-----------+
+> 
+> Note for the maintainers:
+> The first patch contains changes for mlx5_core. This must be applied
+> into the mlx5-vhost tree [0] first. Once this patch is applied on
+> mlx5-vhost, the change has to be pulled from mlx5-vdpa into the vhost
+> tree and only then the remaining patches can be applied.
 
-I hacked up an RFC patch for this approach:
-https://lore.kernel.org/r/20240802-remove-cred-transfer-v1-1-b3fef1ef2ade@g=
-oogle.com
+Or maintainer just acks it and I apply directly.
+
+Let me know when all this can happen.
+
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/log/?h=mlx5-vhost
+> 
+> Dragos Tatulea (7):
+>   net/mlx5: Support throttled commands from async API
+>   vdpa/mlx5: Introduce error logging function
+>   vdpa/mlx5: Use async API for vq query command
+>   vdpa/mlx5: Use async API for vq modify commands
+>   vdpa/mlx5: Parallelize device suspend
+>   vdpa/mlx5: Parallelize device resume
+>   vdpa/mlx5: Keep notifiers during suspend but ignore
+> 
+>  drivers/net/ethernet/mellanox/mlx5/core/cmd.c |  21 +-
+>  drivers/vdpa/mlx5/core/mlx5_vdpa.h            |   7 +
+>  drivers/vdpa/mlx5/net/mlx5_vnet.c             | 435 +++++++++++++-----
+>  3 files changed, 333 insertions(+), 130 deletions(-)
+> 
+> -- 
+> 2.45.2
+
 
