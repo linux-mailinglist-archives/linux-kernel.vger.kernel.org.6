@@ -1,73 +1,90 @@
-Return-Path: <linux-kernel+bounces-273096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76CED946484
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:41:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF8994648B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A0921C212A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:41:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 727D41C2120E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F4253E23;
-	Fri,  2 Aug 2024 20:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2BD6BFD2;
+	Fri,  2 Aug 2024 20:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edNpT5Gu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lOsK0cY9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116601ABEA7
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8A01ABEA7;
+	Fri,  2 Aug 2024 20:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722631282; cv=none; b=NvqxrROF/qZFi1ImuqVCVtOaFlQYcF9dcQeEGy8Lh+FU0/kHCZKRN5pAMUkWaaguLLauvXT6z9bv28uxOcPIBZotysaYm1VALxjPQ3H1k+12ceT97jBwpXNlYTVINqcshZFiIvpf6yl0zdInNtFxN+QKY7h3jeqlIZ+dANDbA/8=
+	t=1722631502; cv=none; b=rd2A0+cIA9QO8oNbP6k2CoORPgtCPPpP6T9luZOZsqm5iLbWabVSa9p1Rw1WHU8zhgClcYbHmJdYA88/pRacZ3K7KKqPr2yG0lCZBs7dHM3MtnN8MjNBjzm1oAePl+/iAk4MkoDCWUzt5bqBAyEYgXMlrZp8wZiZsRN8U6XVETw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722631282; c=relaxed/simple;
-	bh=Gp5rktZR+m6uPSLZdtruhrvehhm1yazS9i1LnLzK2Nw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Fcr3ATKZhYmjVfIfk526dQMQimiKgIbJpnyj9m/ZIL6SB4LKbjCRwjaSeAStWOxQApsu7PY9YQ6tg1EE8o/V7LlEM7yisAoU0Ja/8eoRwh6J3NMPvGLJ2aMBdzgf6mnDiwVP1uiSrUultaZJw2KiGvYfPPbSFPyWY1XMCtEh6OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edNpT5Gu; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722631279; x=1754167279;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Gp5rktZR+m6uPSLZdtruhrvehhm1yazS9i1LnLzK2Nw=;
-  b=edNpT5GujRshHN8EUa+SqUnyHK2oPmqdb4+DLjcItuu9j2jVaqPF5WR5
-   3pSpyimyYuZbCOpl4LccU9g6W9AUxZiOt0CR5h1sWj61gPi8wgOCtRz/Q
-   NGWwfu2S2EhiKTD9SLs/xGgypoE2SgQub6+YK+vtixDDG+oDRidvmVe/q
-   ogUsyOEUgfPMEswE+HRxN/aEm4C5kwXSQqqZqEvLrDiyDTo6o7hnbJxs0
-   gElwtMAn8eo0Rkdp0pMcwA7NI4ZP2x7v26Fnif7E8pbeHVgFhHt8okGVp
-   aoe3P1Z5KRACfFIpP97+mbh7eZUJvWXPu9O95VPoGVq4IvAsvBSxfieCd
-   w==;
-X-CSE-ConnectionGUID: oK6TwHvqSpqpVNk12i2W+A==
-X-CSE-MsgGUID: e0gQRTg0TC2CLOWe2vSHcg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="43183366"
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="43183366"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 13:41:18 -0700
-X-CSE-ConnectionGUID: WAdV7lokR3+l1LvjnKR9SA==
-X-CSE-MsgGUID: yImfAjxkTGaaFnyKhPVDMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="55597097"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Aug 2024 13:41:17 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sZz5O-000xPM-2A;
-	Fri, 02 Aug 2024 20:41:14 +0000
-Date: Sat, 3 Aug 2024 04:40:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /: 'model'
- is a required property
-Message-ID: <202408030430.GamdKltW-lkp@intel.com>
+	s=arc-20240116; t=1722631502; c=relaxed/simple;
+	bh=UG+Tf0zLIJsnEOiKcLWPdaE2Aqnq3oIrHPGa8puNC34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=utC+1++a60jRnOZJjdG1M5rwy4iuVl42BTqCsAp4mLR8l55bY6SLbLTIUQ9ONxI/iQOk0sIWglvFEGRaGeK4kxdOl/nS1esKli1tcNE4PIKJ9AXVeUcpbawJpWt2igvU/56hPjAxsA1F0uFWkc0ftS73mncct1M/0QJZY4RNRpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lOsK0cY9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472Jh4f5001291;
+	Fri, 2 Aug 2024 20:44:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=Whnjxj3bSdaS7ZHVhSTnvA+kLT3
+	7apGLSKbqpuygwpc=; b=lOsK0cY9ArDIAmQpYShhQWQk2TcHuByMpoh+BiGHXxD
+	6WfipiMK8RTvC+pKK6FH4JM9hBtE/ZBIrplIHUgXZDc5kvn6++VEaeFlL5k8Ya+a
+	9OIOvtqfRE3zpoAig+FMgbcXwssZ1tHKhguGCJQ7wbUOWiZMq3I3P4HrrC8BuknZ
+	q2YZuIiywHPZ9ReKSh2MK/0NrGirFxgDiTZLLl5HO9ROxCsNR+PjuJfxRt6TS5Q8
+	C9614CZ7DO3QJOnLoAXxp93OenFuzt3TZwxPGKC6+qHhAMFYMZGlN7nVReN0K0tZ
+	3w6Fc0Q7rDF7heJJvneNpibe/P/IICjjglnF/8cJorw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rw9tse6x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:44:47 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 472KikIp011970;
+	Fri, 2 Aug 2024 20:44:46 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rw9tse6v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:44:46 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472IQeuw011142;
+	Fri, 2 Aug 2024 20:44:45 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqn91jv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 20:44:45 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472KifIO27198048
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 20:44:43 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 289A920043;
+	Fri,  2 Aug 2024 20:44:41 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6ACC420040;
+	Fri,  2 Aug 2024 20:44:39 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.209])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 20:44:39 +0000 (GMT)
+Date: Sat, 3 Aug 2024 02:14:37 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 18/20] ext4: get rid of ppath in
+ ext4_ext_handle_unwritten_extents()
+Message-ID: <Zq1FNdHomYwMZ3Hz@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-19-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,150 +93,207 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-19-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: n2ix9dLGgFrygVm2CaRL3lmaEA8jde5E
+X-Proofpoint-GUID: maZHF86eXwCJzYFn_uzZEMst7s2cHLJb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_16,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 spamscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=702
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020142
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   1c4246294c9841c50805cec0627030c083e019c6
-commit: d89a415ff8d5e0aad4963f2d8ebb0f9e8110b7fa MIPS: Loongson64: DTS: Fix PCIe port nodes for ls7a
-date:   7 weeks ago
-config: mips-randconfig-051-20240803 (https://download.01.org/0day-ci/archive/20240803/202408030430.GamdKltW-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 423aec6573df4424f90555468128e17073ddc69e)
-dtschema version: 2024.6.dev8+gf13c181
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240803/202408030430.GamdKltW-lkp@intel.com/reproduce)
+On Wed, Jul 10, 2024 at 12:06:52PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_ext_handle_unwritten_extents(), the
+> following is done here:
+> 
+>  * Free the extents path when an error is encountered.
+>  * The 'allocated' is changed from passing a value to passing an address.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408030430.GamdKltW-lkp@intel.com/
+Looks good Baokun, feel free to add:
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /: memory@200000: 'compatible' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/memory.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /: 'model' is a required property
-   	from schema $id: http://devicetree.org/schemas/root-node.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /: failed to match any schema with compatible: ['loongson,loongson64-2core-2k1000']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: cpu@0: '#clock-cells' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/mips/cpus.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /memory@200000: failed to match any schema with compatible: ['memory']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,0:interrupts:0: [12, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,0:interrupts: [[12, 8], [13, 8]] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,1:interrupts:0: [14, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,1:interrupts: [[14, 8], [15, 8]] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ehci@4,1:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ehci@4,1:interrupts:0: [18, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ohci@4,2:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ohci@4,2:interrupts:0: [19, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: sata@8,0:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: sata@8,0:interrupts:0: [19, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@9,0:interrupts:0:0: 0 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@9,0:interrupts:0: [0, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@a,0:interrupts:0: [1, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@b,0:interrupts:0: [2, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@c,0:interrupts:0: [3, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@d,0:interrupts:0: [4, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@e,0:interrupts:0:0: 5 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@e,0:interrupts:0: [5, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'device_type', 'ehci@4,1', 'gmac@3,0', 'gmac@3,1', 'ohci@4,2', 'pcie@9,0', 'pcie@a,0', 'pcie@b,0', 'pcie@c,0', 'pcie@d,0', 'pcie@e,0', 'sata@8,0' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/pci/loongson.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,0:interrupts:0:0: 12 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,0:interrupts:0: [12, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,0:interrupts: [[12, 8], [13, 8]] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,1:interrupts:0:0: 14 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,1:interrupts:0: [14, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
-   arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: gmac@3,1:interrupts: [[14, 8], [15, 8]] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ehci@4,1:interrupts:0:0: 18 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ehci@4,1:interrupts:0: [18, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ohci@4,2:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: ohci@4,2:interrupts:0: [19, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: sata@8,0:interrupts:0:0: 19 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: sata@8,0:interrupts:0: [19, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@9,0:interrupts:0:0: 0 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@9,0:interrupts:0: [0, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@a,0:interrupts:0: [1, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@b,0:interrupts:0: [2, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@c,0:interrupts:0: [3, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@d,0:interrupts:0: [4, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@e,0:interrupts:0:0: 5 is not one of [1, 2, 3, 4]
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: pci@1a000000: pcie@e,0:interrupts:0: [5, 8] is too long
-   	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,0: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: gmac@3,1: compatible:4: 'loongson, pci-gmac' does not match '^[a-zA-Z0-9][a-zA-Z0-9,+\\-._/]+$'
-   	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/gmac@3,1: failed to match any schema with compatible: ['pci0014,7a03.0', 'pci0014,7a03', 'pciclass0c0320', 'pciclass0c03', 'loongson, pci-gmac']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ehci@4,1: failed to match any schema with compatible: ['pci0014,7a14.0', 'pci0014,7a14', 'pciclass0c0320', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ohci@4,2: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ohci@4,2: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/ohci@4,2: failed to match any schema with compatible: ['pci0014,7a24.0', 'pci0014,7a24', 'pciclass0c0310', 'pciclass0c03']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/sata@8,0: failed to match any schema with compatible: ['pci0014,7a08.0', 'pci0014,7a08', 'pciclass010601', 'pciclass0106']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@9,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@a,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@b,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@c,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@d,0: failed to match any schema with compatible: ['pci0014,7a19.0', 'pci0014,7a19', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
->> arch/mips/boot/dts/loongson/loongson64_2core_2k1000.dtb: /bus@10000000/pci@1a000000/pcie@e,0: failed to match any schema with compatible: ['pci0014,7a09.0', 'pci0014,7a09', 'pciclass060400', 'pciclass0604']
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+ojaswin
+
+> ---
+>  fs/ext4/extents.c | 82 +++++++++++++++++++++--------------------------
+>  1 file changed, 37 insertions(+), 45 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 59e80926fe3a..badadcd64e66 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -3887,18 +3887,18 @@ convert_initialized_extent(handle_t *handle, struct inode *inode,
+>  	return 0;
+>  }
+>  
+> -static int
+> +static struct ext4_ext_path *
+>  ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  			struct ext4_map_blocks *map,
+> -			struct ext4_ext_path **ppath, int flags,
+> -			unsigned int allocated, ext4_fsblk_t newblock)
+> +			struct ext4_ext_path *path, int flags,
+> +			unsigned int *allocated, ext4_fsblk_t newblock)
+>  {
+>  	int err = 0;
+>  
+>  	ext_debug(inode, "logical block %llu, max_blocks %u, flags 0x%x, allocated %u\n",
+>  		  (unsigned long long)map->m_lblk, map->m_len, flags,
+> -		  allocated);
+> -	ext4_ext_show_leaf(inode, *ppath);
+> +		  *allocated);
+> +	ext4_ext_show_leaf(inode, path);
+>  
+>  	/*
+>  	 * When writing into unwritten space, we should not fail to
+> @@ -3907,40 +3907,34 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  	flags |= EXT4_GET_BLOCKS_METADATA_NOFAIL;
+>  
+>  	trace_ext4_ext_handle_unwritten_extents(inode, map, flags,
+> -						    allocated, newblock);
+> +						*allocated, newblock);
+>  
+>  	/* get_block() before submitting IO, split the extent */
+>  	if (flags & EXT4_GET_BLOCKS_PRE_IO) {
+> -		*ppath = ext4_split_convert_extents(handle, inode, map, *ppath,
+> -				flags | EXT4_GET_BLOCKS_CONVERT, &allocated);
+> -		if (IS_ERR(*ppath)) {
+> -			err = PTR_ERR(*ppath);
+> -			*ppath = NULL;
+> -			goto out2;
+> -		}
+> +		path = ext4_split_convert_extents(handle, inode, map, path,
+> +				flags | EXT4_GET_BLOCKS_CONVERT, allocated);
+> +		if (IS_ERR(path))
+> +			return path;
+>  		/*
+>  		 * shouldn't get a 0 allocated when splitting an extent unless
+>  		 * m_len is 0 (bug) or extent has been corrupted
+>  		 */
+> -		if (unlikely(allocated == 0)) {
+> +		if (unlikely(*allocated == 0)) {
+>  			EXT4_ERROR_INODE(inode,
+>  					 "unexpected allocated == 0, m_len = %u",
+>  					 map->m_len);
+>  			err = -EFSCORRUPTED;
+> -			goto out2;
+> +			goto errout;
+>  		}
+>  		map->m_flags |= EXT4_MAP_UNWRITTEN;
+>  		goto out;
+>  	}
+>  	/* IO end_io complete, convert the filled extent to written */
+>  	if (flags & EXT4_GET_BLOCKS_CONVERT) {
+> -		*ppath = ext4_convert_unwritten_extents_endio(handle, inode,
+> -							      map, *ppath);
+> -		if (IS_ERR(*ppath)) {
+> -			err = PTR_ERR(*ppath);
+> -			*ppath = NULL;
+> -			goto out2;
+> -		}
+> +		path = ext4_convert_unwritten_extents_endio(handle, inode,
+> +							    map, path);
+> +		if (IS_ERR(path))
+> +			return path;
+>  		ext4_update_inode_fsync_trans(handle, inode, 1);
+>  		goto map_out;
+>  	}
+> @@ -3972,23 +3966,20 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  	 * For buffered writes, at writepage time, etc.  Convert a
+>  	 * discovered unwritten extent to written.
+>  	 */
+> -	*ppath = ext4_ext_convert_to_initialized(handle, inode, map, *ppath,
+> -						 flags, &allocated);
+> -	if (IS_ERR(*ppath)) {
+> -		err = PTR_ERR(*ppath);
+> -		*ppath = NULL;
+> -		goto out2;
+> -	}
+> +	path = ext4_ext_convert_to_initialized(handle, inode, map, path,
+> +					       flags, allocated);
+> +	if (IS_ERR(path))
+> +		return path;
+>  	ext4_update_inode_fsync_trans(handle, inode, 1);
+>  	/*
+>  	 * shouldn't get a 0 allocated when converting an unwritten extent
+>  	 * unless m_len is 0 (bug) or extent has been corrupted
+>  	 */
+> -	if (unlikely(allocated == 0)) {
+> +	if (unlikely(*allocated == 0)) {
+>  		EXT4_ERROR_INODE(inode, "unexpected allocated == 0, m_len = %u",
+>  				 map->m_len);
+>  		err = -EFSCORRUPTED;
+> -		goto out2;
+> +		goto errout;
+>  	}
+>  
+>  out:
+> @@ -3997,12 +3988,15 @@ ext4_ext_handle_unwritten_extents(handle_t *handle, struct inode *inode,
+>  	map->m_flags |= EXT4_MAP_MAPPED;
+>  out1:
+>  	map->m_pblk = newblock;
+> -	if (allocated > map->m_len)
+> -		allocated = map->m_len;
+> -	map->m_len = allocated;
+> -	ext4_ext_show_leaf(inode, *ppath);
+> -out2:
+> -	return err ? err : allocated;
+> +	if (*allocated > map->m_len)
+> +		*allocated = map->m_len;
+> +	map->m_len = *allocated;
+> +	ext4_ext_show_leaf(inode, path);
+> +	return path;
+> +
+> +errout:
+> +	ext4_free_ext_path(path);
+> +	return ERR_PTR(err);
+>  }
+>  
+>  /*
+> @@ -4199,7 +4193,7 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  	struct ext4_extent newex, *ex, ex2;
+>  	struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
+>  	ext4_fsblk_t newblock = 0, pblk;
+> -	int err = 0, depth, ret;
+> +	int err = 0, depth;
+>  	unsigned int allocated = 0, offset = 0;
+>  	unsigned int allocated_clusters = 0;
+>  	struct ext4_allocation_request ar;
+> @@ -4273,13 +4267,11 @@ int ext4_ext_map_blocks(handle_t *handle, struct inode *inode,
+>  				goto out;
+>  			}
+>  
+> -			ret = ext4_ext_handle_unwritten_extents(
+> -				handle, inode, map, &path, flags,
+> -				allocated, newblock);
+> -			if (ret < 0)
+> -				err = ret;
+> -			else
+> -				allocated = ret;
+> +			path = ext4_ext_handle_unwritten_extents(
+> +				handle, inode, map, path, flags,
+> +				&allocated, newblock);
+> +			if (IS_ERR(path))
+> +				err = PTR_ERR(path);
+>  			goto out;
+>  		}
+>  	}
+> -- 
+> 2.39.2
+> 
 
