@@ -1,157 +1,99 @@
-Return-Path: <linux-kernel+bounces-272571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7E7C945E26
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:55:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7382A945E28
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4041C213CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:55:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CEA7B2196F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD691E3CCB;
-	Fri,  2 Aug 2024 12:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84111E3CCB;
+	Fri,  2 Aug 2024 12:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="EOrMRzlH";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G4r8EcsI"
-Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEzH+/uW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509281C0DEC;
-	Fri,  2 Aug 2024 12:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109AA1E4A6;
+	Fri,  2 Aug 2024 12:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722603312; cv=none; b=oyPmvHfXPALCPKIoJiXbk9FZCHImweQ8CK9W15eInIfcf607HAMYzHUzkyqZRe+T6lWzyqKXho1JEl7WFHaMDCMA2QNSaXK3Zg75qjJiu9LwzIN7zy9fcAcWzIgy5auYc4s5oM9sP/rAzhpB4Oj1oDduSPmIIXAtiVZ1gqXRBv4=
+	t=1722603417; cv=none; b=VhskhJO3q7Ivalbw5bZuy5PuWC7P/3MS85iI58Jo5rIaNBhSPVVxpWB6y2MkEDP8k7s0Fw688ab7EBanOGJeEWW+5c/59xRS7he468w71Q/krS7DEeEszp7saL3zxXKRret/QeenssTFE+1k/doysqfoySzuGJYHjTIo903SBEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722603312; c=relaxed/simple;
-	bh=9os/2jXyqk+ttPmhK5qIiMBlMnHVNxBlpDPZsLpQ2y4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=hYvnxviGt3F1c//qs6UMLfhEBpihu0g67LMJ5t1VCi7kMBd9npns6LjRkKMl5b+PngQHGnTZR8mF/qPiqfptpRkSt1uqU4ezMCImikLBBm/S65vSOP4uuX1klNddHJ2NL4DXS7iAOwBGGOa01wI/ra9hXplEphfb5HrAfbumLxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=EOrMRzlH; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G4r8EcsI; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 3D9071151237;
-	Fri,  2 Aug 2024 08:55:08 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute4.internal (MEProxy); Fri, 02 Aug 2024 08:55:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1722603308;
-	 x=1722689708; bh=TBCcUSaQ5lThj4uNYGKh2vJfdomWEW52A8I+K90Qqcg=; b=
-	EOrMRzlHEcJ1u8dXOPRUjZ0ZqMOsKrxVHfj3T2YzpT8k/yDiWMP9esIgs/w0RW7+
-	NlJ2KfbIgaYmwb73mvdQnZy2crIgXqiN6q8nzo1IJkLIS+dzw9euQyy4gyZ0W5h5
-	scmSmjTlPPVNoK6cJIbLrliytb4837bgargETedsf9yFybi2twn2JdLInpJxYRF0
-	rH5SmGq9rKe5CK/QPsQsYDxERAwDys43m5cr3OwY9/pN/8kLcxv8VZ5wwCxQ52Rq
-	xOJxRsKssovVYdeIZAWRaLDOrOV217Uly9uHcFQJGa8q+1zl2ygN80YJCEnC63dT
-	v5Q5A/KkiXvbmdv/j+P0KQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1722603308; x=
-	1722689708; bh=TBCcUSaQ5lThj4uNYGKh2vJfdomWEW52A8I+K90Qqcg=; b=G
-	4r8EcsIOy8srK+zDwsl2Smn1qaEKvCI3/91YJ/+PHPt70G5hucRlb+Ko1+WstYc3
-	1DnkGW5mOV5/DrDoBjgkg646vUE72mCK6LfvCFiUjYiAcfcSAhF6dQNlCGAZzZtx
-	GSC2uS1Xdvd5OX2cgycS8I9BJdTXI3m4QIQBiZOUiGGGKc0oPMnULNcWSdjlPh0P
-	7U0z7CjrTZWtBnURyGRXcwaI6UW4xPM2Oqu8pULdR9Pqg8JSxSJ4c/IXMhaM4k8h
-	SUjA27OlD7ZHoOgxlxp/OkWNHFGvaB6gtjfm/WJImR4dYB2g/+4QtRzZmMX++BM2
-	pQ3MJFoQ48go2KPOW3mSQ==
-X-ME-Sender: <xms:KtesZvJ-9vbTcdev-abYXfZIDgKfZxcnGTQD0koWhEHvjsr3F_r8tQ>
-    <xme:KtesZjKVD8iNO8Sj1xVxvs3I1IiI01TCjEoOxBRq9WJ2ZcnGL5vGM6R76FBAgy0aw
-    KlPgnaTqxzRyjzSZgs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteefgffgvedugeduveelvdekhfdv
-    ieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedt
-X-ME-Proxy: <xmx:K9esZnvKJQxlsJEBQEsRFFva0cp8QfLeYE20HPcbZGxoe1i5dj8FqQ>
-    <xmx:K9esZoYkSbjp0isd9uSH5nDn-xAdUd5FCJSdtlHMIOJGc-evaVfZfg>
-    <xmx:K9esZma1wEnK81VFPx3alBciWd4ZeidSL6-DdTpShNRM_LiFHEVqZw>
-    <xmx:K9esZsB89bi6NVdU04lAnN66P1TRehw-Ezy1_r-Mi9sr33Z3KoT-Yw>
-    <xmx:LNesZiKGotzT3ocvub22Iwf9XFFW5H8YkVioTnk7qRjsojHxsJjSL-VB>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id DF2DCB6008D; Fri,  2 Aug 2024 08:55:06 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1722603417; c=relaxed/simple;
+	bh=M0lDOXR/qXGdJ5JKDr6ogb12uVJ1ckxggSZBKXTNYn4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ja1zl60AipPXltsc1LrrC1Pjh3JxMrCRLIjgxhwDC0ca1GUJB49iLIU9wOiZgKb1NLk50uRtaAKB61rrIlzu5OYbYrojJqioqvA157ZECG+o1geAMalm0pnYo1JG8nCU0hgnhjdKQpSOVgBMsUjkPm0ZPyk7AdsK40fQ38JiyrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEzH+/uW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 216D7C32782;
+	Fri,  2 Aug 2024 12:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722603416;
+	bh=M0lDOXR/qXGdJ5JKDr6ogb12uVJ1ckxggSZBKXTNYn4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qEzH+/uW3e+gDTRU0B6d+HeSW71nt2DXBmaGjAwFyDys8hvKiVdJMWjWS379a1Rkq
+	 fHVqI0a0Yul7zwLHDjDHXPfV9xciG4j3fgDZEqRYF1tJ01r1K2O18MYyE0zrLaiNBa
+	 LZvrwmPwh1iIGWqNdCJHozrI/guXl+bhC8ndASQtWjnXWVAZ3H/PdYyq3VaLNYYq0F
+	 YaHwbCcd0WZz2EIj+dLmRy4mH9QWMY7vT/kmFwOxH9OadOGXsFQW7LEPOeuHxURyd2
+	 Be3mKUAB0KcjCIeSDdxK+T5Kpf5V3Lvss8HN5mEEH4S0Zzd+i0qhgJJe42M+Jgx1Yh
+	 A2F72HCV2ci9A==
+Date: Fri, 2 Aug 2024 13:56:51 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andrei Simion <andrei.simion@microchip.com>
+Cc: lgirdwood@gmail.com, claudiu.beznea@tuxon.dev,
+	nicolas.ferre@microchip.com, krzk+dt@kernel.org,
+	conor+dt@kernel.org, robh@kernel.org, alexandre.belloni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Mihai Sain <mihai.sain@microchip.com>
+Subject: Re: [PATCH 1/6] regulator: mcp16502: Add supplier for regulators
+Message-ID: <98f91a56-946c-4a40-b908-45f4c6c6d66e@sirena.org.uk>
+References: <20240802084433.20958-1-andrei.simion@microchip.com>
+ <20240802084433.20958-2-andrei.simion@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 02 Aug 2024 14:53:48 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Aaro Koskinen" <aaro.koskinen@iki.fi>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Russell King" <linux@armlinux.org.uk>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Richard Earnshaw" <richard.earnshaw@arm.com>,
- "Richard Sandiford" <richard.sandiford@arm.com>,
- "Ramana Radhakrishnan" <ramanara@nvidia.com>,
- "Nicolas Pitre" <nico@fluxnic.net>,
- "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Mark Brown" <broonie@kernel.org>,
- "Kristoffer Ericson" <kristoffer.ericson@gmail.com>,
- "Robert Jarzmik" <robert.jarzmik@free.fr>,
- "Janusz Krzysztofik" <jmkrzyszt@gmail.com>,
- "Tony Lindgren" <tony@atomide.com>,
- Linux-OMAP <linux-omap@vger.kernel.org>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-samsung-soc@vger.kernel.org, "Andrew Lunn" <andrew@lunn.ch>,
- "Sebastian Hesselbarth" <sebastian.hesselbarth@gmail.com>,
- "Gregory Clement" <gregory.clement@bootlin.com>,
- "Jeremy J. Peper" <jeremy@jeremypeper.com>, debian-arm@lists.debian.org,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Alexandre Torgue" <alexandre.torgue@foss.st.com>
-Message-Id: <0ca5b09d-13f6-4ea8-8a25-a189f1875a75@app.fastmail.com>
-In-Reply-To: <20240801182313.GD47080@darkstar.musicnaut.iki.fi>
-References: <2831c5a6-cfbf-4fe0-b51c-0396e5b0aeb7@app.fastmail.com>
- <20240731191332.GB47080@darkstar.musicnaut.iki.fi>
- <ea475f27-af7c-4060-bff7-a78389174236@app.fastmail.com>
- <20240801182313.GD47080@darkstar.musicnaut.iki.fi>
-Subject: Re: [RFC} arm architecture board/feature deprecation timeline
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qKDH2rbcwU01NrOg"
+Content-Disposition: inline
+In-Reply-To: <20240802084433.20958-2-andrei.simion@microchip.com>
+X-Cookie: -- I have seen the FUN --
 
-On Thu, Aug 1, 2024, at 20:23, Aaro Koskinen wrote:
-> On Thu, Aug 01, 2024 at 10:59:38AM +0200, Arnd Bergmann wrote:
->> 
->> Would the timing make any difference to you? I.e. does it help
->> to keep another year or two, or would dropping it in early 2025
->> be the same?
->
-> Early 2025 could come too soon, but anyway during 2025 sounds OK. Let's
-> see if anyone else has comments. At least one more LTS release where it
-> has been tested would be nice.
 
-To be clear: with "early 2025" I meant after the next LTS release
-(6.12 as it seems), but one LTS later (early 2026) is still a
-good outlook.
+--qKDH2rbcwU01NrOg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> Ok, noted. Since you are doing the testing, that at least means
->> we have a chance of cleaning up the code gradually towards using
->> DT. Dmitry has started a migration of platform_data towards
->> DT compatible device properties, which can be done gradually
->> for the 22 platform drivers you use. This unfortunately still
->> leaves the nonstandard dmaengine interface (for UDC), but we
->> can deal with that later.
->
-> I have some plans to work on that. There's a long-standing bug with 15xx
-> DMA, but I have gotten that working, just need send those fixes out. After
-> that the conversion to new dmaengine should be more straightforward,
-> as we have a working testable reference for both boards using the UDC.
+On Fri, Aug 02, 2024 at 11:44:28AM +0300, Andrei Simion wrote:
+> Based on the datasheet [1] (Block Diagram) PVIN[1-4] and LVIN
+> represent the input voltage supply for each BUCKs respective LDOs.
+> Update the driver to align with the datasheet [1].
+>=20
+> [1]: https://ww1.microchip.com/downloads/en/DeviceDoc/MCP16502-High-Perfo=
+rmance-PMIC-for-SAMA5DX-SAM9X6-MPUs-Data-Sheet-DS20006275A.pdf
 
-Nice, that does give a realistic hope of eventually doing a full
-DT conversion then. If we manage to do both the DMA engine and
-the device properties work, I would hope that writing an equivalent
-dts file gets fairly easy.
+I'd expect to see a matching update to the bindings.
 
-     Arnd
+--qKDH2rbcwU01NrOg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmas15IACgkQJNaLcl1U
+h9DTGAf/VtmV60x/9OXgWkRuYYfFSBsCa1fhax7Pn81GcuwQviSE0WsjcpJAdhGg
+GQTfTXZbVo8iRVPfnW10ZSfPx8K+iy2Fy0hSbknnGDs9LhcRVVPBe5BsOKsoim6I
+PzrXTcIs1cL6djRDKTWo8jymoInmTYA1b7oFuUfXpHMP85dGokNTZP+QUOD5nl3F
+Ux190NJPkJ4GrX1vIqN7Re48blZBKE5zcIB2rDuAMgkfWyI1qTB8zh1nSMkfiTHZ
+cmzv7cKevrkHd522OOeN9rH/oT7Hn+nrVZ3kiEBte33BQrhPUWRi4bPMwcj8sv5v
+kwGXnmJha5ECXYaaY8BpRZySor5Blg==
+=pJFd
+-----END PGP SIGNATURE-----
+
+--qKDH2rbcwU01NrOg--
 
