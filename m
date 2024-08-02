@@ -1,160 +1,194 @@
-Return-Path: <linux-kernel+bounces-272271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CB6945981
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:06:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8126B945984
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A40E1F23836
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:06:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1BDF1C21341
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE851C4618;
-	Fri,  2 Aug 2024 08:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3608D3FBAD;
+	Fri,  2 Aug 2024 08:05:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g6QVwv3D"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JqCM53CA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE991C3F0B;
-	Fri,  2 Aug 2024 08:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B744C3D0;
+	Fri,  2 Aug 2024 08:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722585875; cv=none; b=kN1ii1c2F75I2bRyIg1FLfT/xJtr6s3aUKyJo3spBCkP/S2+HzbVYbWRR2McSiZ9lPfUQcH/URqAJ/kfM9Gh1aSA4nYvoOhGEiLZU65CWeBSmRvQm3fJicUvrH+wleOIkFkpboBi8dK4jtaPZmS8fh71/VyPvmbKh0Fd3wsCEGY=
+	t=1722585916; cv=none; b=REjS7yFZHEQ+mXgoIpI+n5Yf7bYUK8AHOc+uErfyrgiqyhV1oBZv/YcT9BHLYoiWc8jeWsfMiHrW0olaFpWYYdOHyKHD2PzqzkdKx04Mlb2M7/ayjKxRtum13xDtn+hjSZCI7iX7CRbY8Nrnv+mbgHYYdWSyICa6UjorKBRhJRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722585875; c=relaxed/simple;
-	bh=wJ8CKjo99FdygF4Dyf6T71+jLKBvtf5FYO+XPBN2Cv4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GguPqw2WCi1ToSnavfJlUVB/QhY5/niq7OP5A8hJLZtRCo3nXQyCk3GPY8uEgCft+qZCrwfwnry2AIOiakgZfgemKVA6FN+4kpaxU2Yevh2uJS0wBe/vyRrXVltWx1GM8JJyWqr5I+PXVGKJhkwQdJ5u1WtTYuAVAFTvHZ6ZBew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g6QVwv3D; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52efdf02d13so13006826e87.2;
-        Fri, 02 Aug 2024 01:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722585872; x=1723190672; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uCR2a8QUcsGwPUUS/KFvb11t9ihPQhvH+olYLUnMnJk=;
-        b=g6QVwv3DM2HHi1LwY1NptWNkmIVyJg/m7ZwsiNyFGaXV5DCySkYtBOO9Ze6dAShmMs
-         /gSFrI7pUJZMsjgGM/L2xYhkJCdrFJk6S0CJFznMBIZL3K4Z3Bty8mn6WEh6ivvH/qqO
-         rp2CSaRDiPLTJZwOVrLru3pw0NzKq7E4RagNXmaotYvjNLsluxtZpaNg4R0wIM29VE7j
-         7dsTW/D1gPjB1YmYme9HXYgRGmc38NuE47bcf6XLMrn6j+PQTPmQ48WqedV7427JPJpV
-         ltumsMVNqjmTiPrnSUzEejGsB4XYFx+TihtqMSIVJG1XWfYqZ+Ro/vGFYqwtubrragL2
-         RMCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722585872; x=1723190672;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCR2a8QUcsGwPUUS/KFvb11t9ihPQhvH+olYLUnMnJk=;
-        b=mQpxsdEuhupubcTaK2yJcQDyaUEy3KwEZV9y+cHJjK5E17Rim6r1KYf9Ce8iOaSbyb
-         58KLlrhruuNcYHeHYiMPVs1KtGVD9bhDo1+gwm2am7QY8cUvwqKWjTK0xccpTHMzBxpo
-         wIVc5SUIAQVE3Q1V7jXP3DSovSQRYAa0jw2zk7dzjcnQ/0DdoTe/41LgOOHIU5Ma9dGq
-         vLkcUdxnstpDHrlqp2ocM3pmcgi/nTBFXGbNHHis5j9mC46WP7NJNvdRMNgzu0DWyqG+
-         K4Vn3A1tnyxBtGAWDI3JBzY5WnDsva64O4J9QcxU7VM3RjOKWfy4E8ngiSQ6/ROd6twp
-         p5eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNHbd1u6VmW93B3v/h+8B+77H8s1XPoRxADeft73snfHyg30Nwyr7edzcedkIV5Nhyr+6mFBuHPJ6FBmoGJQ2vQg91vjn1ff+z/wJr
-X-Gm-Message-State: AOJu0Yy4WJ8eCKSSDnKO3TZOrFwu9d2GFWvpYNr3azjba07HmHR9wlUK
-	jvAukfuS4J0K4CSaESESHD82C2GiAD34cc1tOo6IIuwAo1H2m6m8jGv9r07L
-X-Google-Smtp-Source: AGHT+IFItHcRt/6EbjbqS01vh8MV12Glv+W1faYnKk4teDVR+zPHWe8r7SH/K9qlSdh2kEheHIWH7A==
-X-Received: by 2002:a05:6512:39d2:b0:52c:e091:66e4 with SMTP id 2adb3069b0e04-530bb3b461cmr2379189e87.44.1722585871529;
-        Fri, 02 Aug 2024 01:04:31 -0700 (PDT)
-Received: from WBEC325.dom.lan ([185.188.71.122])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba07e46sm163281e87.32.2024.08.02.01.04.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 01:04:31 -0700 (PDT)
-From: Pawel Dembicki <paweldembicki@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Pawel Dembicki <paweldembicki@gmail.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net 6/6] net: phy: vitesse: repair vsc73xx autonegotiation
-Date: Fri,  2 Aug 2024 10:04:03 +0200
-Message-Id: <20240802080403.739509-7-paweldembicki@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240802080403.739509-1-paweldembicki@gmail.com>
-References: <20240802080403.739509-1-paweldembicki@gmail.com>
+	s=arc-20240116; t=1722585916; c=relaxed/simple;
+	bh=2EcGfDArf+MGK7/GjIOlC6bogSo7gt7YM540zICjH5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=isPqllwQC6UB2fZzPrglsC3Ux2mjgFh9IQej6NHTDn9/JRNHdvqNyHIfHumdnaJsrfXmFzMQ1Ev6JlzJRt7uxhP8XxNR1SnotXk1wx2MeN8ekjDKyUFG5ffkbqWFVAznRZprawxMxqa1JlcEzuH8/Pa2EcyaLDZoVE6An91Eonc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JqCM53CA; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722585915; x=1754121915;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2EcGfDArf+MGK7/GjIOlC6bogSo7gt7YM540zICjH5g=;
+  b=JqCM53CAkagEKjM9qFPbUyvy6D2AhebzLsILOvTWYSGofNnpxrmVK33p
+   m9/NvEpM0tfGDaKkzuBhlCu2E5lubsQSO2xnHMLxiK0zR4+i8Yxl3Qnhh
+   4dTfCgRCAV1RSo5T3QCh7pxrOcxjR1xOxSTzJ5MTwbAOX+L9MukpwAFdD
+   np9pqvWYuLR8+IASpse4hEA9ELaqlkO7yCo7MdHUEw905XDV4LfpO/dWq
+   OcFvGTDC6HACQRXu9I252Q4X/AbKii5PoN3nn2/vvEgkRdfeQUQ0I/7l5
+   qCgk71qWsyeoJd2GJvA1ZJzey+dRZsm5ObEJCj81VHb+uBEGqJNreo/xK
+   g==;
+X-CSE-ConnectionGUID: R4R2zqcuTW6GJpxVs4nXZw==
+X-CSE-MsgGUID: vQQZO98cT7mZ80J8+feUaA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="20429987"
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="20429987"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 01:05:14 -0700
+X-CSE-ConnectionGUID: KTOEGHfcSVCCsCfHzck+rQ==
+X-CSE-MsgGUID: S/dNMuleT3aCQ537zgFuWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
+   d="scan'208";a="55922863"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 02 Aug 2024 01:05:10 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sZnHf-000wYW-2W;
+	Fri, 02 Aug 2024 08:05:07 +0000
+Date: Fri, 2 Aug 2024 16:04:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mariel Tinaco <Mariel.Tinaco@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt1@gmail.com>,
+	Dimitri Fedrau <dima.fedrau@gmail.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 2/2] iio: dac: support the ad8460 Waveform DAC
+Message-ID: <202408021509.ug75TMoS-lkp@intel.com>
+References: <20240730030509.57834-3-Mariel.Tinaco@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730030509.57834-3-Mariel.Tinaco@analog.com>
 
-When the vsc73xx mdio bus work properly, the generic autonegotiation
-configuration works well.
+Hi Mariel,
 
-Vsc73xx have auto MDI-X disabled by default in forced mode. This commit
-enables it.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
----
-This patch came from net-next series[0].
-Changes since net-next:
-  - rebased to netdev/main only
+[auto build test WARNING on 9900e7a54764998ba3a22f06ec629f7b5fe0b422]
 
-[0] https://patchwork.kernel.org/project/netdevbpf/patch/20240729210615.279952-6-paweldembicki@gmail.com/
----
- drivers/net/phy/vitesse.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Mariel-Tinaco/dt-bindings-iio-dac-add-docs-for-ad8460/20240730-112724
+base:   9900e7a54764998ba3a22f06ec629f7b5fe0b422
+patch link:    https://lore.kernel.org/r/20240730030509.57834-3-Mariel.Tinaco%40analog.com
+patch subject: [PATCH v2 2/2] iio: dac: support the ad8460 Waveform DAC
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240802/202408021509.ug75TMoS-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240802/202408021509.ug75TMoS-lkp@intel.com/reproduce)
 
-diff --git a/drivers/net/phy/vitesse.c b/drivers/net/phy/vitesse.c
-index 897b979ec03c..19b7bf189be5 100644
---- a/drivers/net/phy/vitesse.c
-+++ b/drivers/net/phy/vitesse.c
-@@ -60,6 +60,11 @@
- /* Vitesse Extended Page Access Register */
- #define MII_VSC82X4_EXT_PAGE_ACCESS	0x1f
- 
-+/* VSC73XX PHY_BYPASS_CTRL register*/
-+#define MII_VSC73XX_PHY_BYPASS_CTRL		MII_DCOUNTER
-+#define MII_PBC_FORCED_SPEED_AUTO_MDIX_DIS	BIT(7)
-+#define MII_VSC73XX_PBC_AUTO_NP_EXCHANGE_DIS	BIT(1)
-+
- /* Vitesse VSC8601 Extended PHY Control Register 1 */
- #define MII_VSC8601_EPHY_CTL		0x17
- #define MII_VSC8601_EPHY_CTL_RGMII_SKEW	(1 << 8)
-@@ -239,12 +244,20 @@ static int vsc739x_config_init(struct phy_device *phydev)
- 
- static int vsc73xx_config_aneg(struct phy_device *phydev)
- {
--	/* The VSC73xx switches does not like to be instructed to
--	 * do autonegotiation in any way, it prefers that you just go
--	 * with the power-on/reset defaults. Writing some registers will
--	 * just make autonegotiation permanently fail.
--	 */
--	return 0;
-+	int ret;
-+
-+	/* Enable Auto MDI-X in forced 10/100 mode */
-+	if (phydev->autoneg != AUTONEG_ENABLE && phydev->speed <= SPEED_100) {
-+		ret = genphy_setup_forced(phydev);
-+
-+		if (ret < 0) /* error */
-+			return ret;
-+
-+		return phy_clear_bits(phydev, MII_VSC73XX_PHY_BYPASS_CTRL,
-+				      MII_PBC_FORCED_SPEED_AUTO_MDIX_DIS);
-+	}
-+
-+	return genphy_config_aneg(phydev);
- }
- 
- /* This adds a skew for both TX and RX clocks, so the skew should only be
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408021509.ug75TMoS-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/iio/dac/ad8460.c:159:8: error: call to undeclared function 'ad8460_get_hvdac_word'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     159 |         ret = ad8460_get_hvdac_word(state, private, &reg);
+         |               ^
+>> drivers/iio/dac/ad8460.c:163:34: warning: format specifies type 'long' but the argument has type 'unsigned int' [-Wformat]
+     163 |         return sysfs_emit(buf, "%ld\n", reg);
+         |                                 ~~~     ^~~
+         |                                 %u
+   drivers/iio/dac/ad8460.c:176:27: error: too few arguments to function call, expected 3, have 2
+     176 |         ret = kstrtou32(buf, &reg);
+         |               ~~~~~~~~~          ^
+   include/linux/kstrtox.h:84:32: note: 'kstrtou32' declared here
+      84 | static inline int __must_check kstrtou32(const char *s, unsigned int base, u32 *res)
+         |                                ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/dac/ad8460.c:182:9: error: call to undeclared function 'ad8460_set_hvdac_word'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     182 |         return ad8460_set_hvdac_word(state, private, reg);
+         |                ^
+   drivers/iio/dac/ad8460.c:211:27: error: too few arguments to function call, expected 3, have 2
+     211 |         ret = kstrtou16(buf, &sym);
+         |               ~~~~~~~~~          ^
+   include/linux/kstrtox.h:94:18: note: 'kstrtou16' declared here
+      94 | int __must_check kstrtou16(const char *s, unsigned int base, u16 *res);
+         |                  ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/dac/ad8460.c:249:33: error: too few arguments to function call, expected 3, have 2
+     249 |         ret = kstrtou16(buf, &toggle_en);
+         |               ~~~~~~~~~                ^
+   include/linux/kstrtox.h:94:18: note: 'kstrtou16' declared here
+      94 | int __must_check kstrtou16(const char *s, unsigned int base, u16 *res);
+         |                  ^         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/iio/dac/ad8460.c:335:12: error: static declaration of 'ad8460_get_hvdac_word' follows non-static declaration
+     335 | static int ad8460_get_hvdac_word(struct ad8460_state *state,
+         |            ^
+   drivers/iio/dac/ad8460.c:159:8: note: previous implicit declaration is here
+     159 |         ret = ad8460_get_hvdac_word(state, private, &reg);
+         |               ^
+   drivers/iio/dac/ad8460.c:346:9: error: call to undeclared function 'get_unaligned_le16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     346 |         *val = get_unaligned_le16(state->spi_tx_buf);
+         |                ^
+   drivers/iio/dac/ad8460.c:351:12: error: static declaration of 'ad8460_set_hvdac_word' follows non-static declaration
+     351 | static int ad8460_set_hvdac_word(struct ad8460_state *state,
+         |            ^
+   drivers/iio/dac/ad8460.c:182:9: note: previous implicit declaration is here
+     182 |         return ad8460_set_hvdac_word(state, private, reg);
+         |                ^
+   drivers/iio/dac/ad8460.c:355:2: error: call to undeclared function 'put_unaligned_le16'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     355 |         put_unaligned_le16(val & 0x3FFF, &state->spi_tx_buf);
+         |         ^
+   drivers/iio/dac/ad8460.c:855:8: error: call to undeclared function 'devm_regulator_get_enable_read_voltage'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     855 |         ret = devm_regulator_get_enable_read_voltage(&spi->dev, "refio_1p2v");
+         |               ^
+   drivers/iio/dac/ad8460.c:855:8: note: did you mean 'devm_regulator_get_enable_optional'?
+   include/linux/regulator/consumer.h:166:5: note: 'devm_regulator_get_enable_optional' declared here
+     166 | int devm_regulator_get_enable_optional(struct device *dev, const char *id);
+         |     ^
+   drivers/iio/dac/ad8460.c:859:43: error: use of undeclared identifier 'vrefio'
+     859 |                 return dev_err_probe(&spi->dev, PTR_ERR(vrefio),
+         |                                                         ^
+   1 warning and 11 errors generated.
+
+
+vim +163 drivers/iio/dac/ad8460.c
+
+   149	
+   150	static ssize_t ad8460_dac_input_read(struct iio_dev *indio_dev,
+   151					     uintptr_t private,
+   152					     const struct iio_chan_spec *chan,
+   153					     char *buf)
+   154	{
+   155		struct ad8460_state *state = iio_priv(indio_dev);
+   156		unsigned int reg;
+   157		int ret;
+   158	
+   159		ret = ad8460_get_hvdac_word(state, private, &reg);
+   160		if (ret)
+   161			return ret;
+   162	
+ > 163		return sysfs_emit(buf, "%ld\n", reg);
+   164	}
+   165	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
