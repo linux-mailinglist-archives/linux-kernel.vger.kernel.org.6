@@ -1,168 +1,88 @@
-Return-Path: <linux-kernel+bounces-271954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1166F945562
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:25:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7CA945566
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:30:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A101C22E47
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:25:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A64EE2864E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:30:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C30A955;
-	Fri,  2 Aug 2024 00:25:11 +0000 (UTC)
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A18B64E;
+	Fri,  2 Aug 2024 00:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhANCRhi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86B0E541;
-	Fri,  2 Aug 2024 00:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE324C62
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 00:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722558311; cv=none; b=HAQ0NoNyDayPw8xwRcFCByZN6dbnrkmZ2aL9B6QQWk8cTLj1vh3bQZaqt2Dkuu4ZI1JuazIrN/GMiMFz/KVMIDdJ1wQJt/VLF/V4JvwWzp5rqh36ZKCDTUfzx5igtzt4fv/O9ioqxRZb6rfY0qD9r4sUInxxWMADnQcp32v4ab0=
+	t=1722558618; cv=none; b=A0wSN/TghNl1sgIPQM1Nb0sWC9jQimFY7Upfw8AC+/EsaGzKQiunKOo6A5a3z43HqFitlgKeNAw4f3Ga43YtpaalQIVTpm8CBZluLhJ/m8/G+r/FZeIzDzITWYcBKhjMuK8/HW+Z5fNBhVUQBmt4KeRfUXHniESSKmpxihPZRgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722558311; c=relaxed/simple;
-	bh=9biq2UadBfZ7zwF9uTZiJMx7UKuxa5hBvmzABIdXWRs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r9DzE2RIrTLX+qxVWnMiZndU9gLIMPdIExpG2c7X/C4waUvXul9gaJ/qy9914CZzhQJOzlG+BvZ9SJk9ALg0tpc+cSH/ct3ehToIBhNP8lllx5atogqpp40l9RaWmg9Vm2Lz28ZZuXQlpCiUpaHU5aYra7MILHcfh5hdRyMTTRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-70d399da0b5so6532000b3a.3;
-        Thu, 01 Aug 2024 17:25:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722558309; x=1723163109;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hV6RwPwdwLS97FXT5295OSHRXpAZlOhWy3lAKS8mG1I=;
-        b=HZWxzAzynitiWVYoF7NXYvRs8506OhunVnrT5+nWrE1FJR2b/MDOaRj1zMvpbIaRGr
-         LCsuCLbkM6/lRqKVsr8/FNlK/7Ne9f/0n2j75o4wQWcxnAbbHngTj0RoLAxCJ1+ZmlVs
-         Wz+UfbkQZHIiZO2vXtiLQ23B0XPEPOlRudxM9j636WhGALYgqcJuUJtJtX233OYmDHmR
-         D1k4XuhwFHRDrFIYtD72H3b07E+ptNeyRc+zY0PRQHchKjKg8ZSmCGqEgHC/+xa5ZVoV
-         fjEUpbNeyrwZPF23096BLq6MWc0MnRvvBt7yxz//PoXk0iPTrBOVhApuU1KJYHJ/0dkT
-         S0Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCUY8Vl/LJnbMF7KCX/xMS7cQFg8X5w/XexUDi7rbT0x7hNouNSDy/DXjjXPgL7W9bvFtxJ4an8knmviXNTndBcLSOoU6N3Rk6Ro26f02+ITSpO+MCVFd3eAQgIHf0dT4xnCJue4qTmF6qs4kq1/mg==
-X-Gm-Message-State: AOJu0Yxu4PALOfgIBX99aQOZYNXs3fz9q/zQAGhSlVFWyCVL3xYvx4Vt
-	FuwBJAF2AVkJru6rHy7hcUgLm2bmRKfqqbQeXi4Vp9m9tQsVujYgmR3RgRzPa6k/m9l27D9tQIP
-	AYopqCnoM4FgAPHkJnHw72TtJzg4=
-X-Google-Smtp-Source: AGHT+IEay6FGztYfE2qCHZyN+KVpz05C0vlPt5Ih3zDmHjBor++ktoeRMFCWXbrke/P6T1Q489xN0AuHPqRW5iMO6YU=
-X-Received: by 2002:a05:6a21:6d8a:b0:1c4:8291:e94e with SMTP id
- adf61e73a8af0-1c69966b36dmr2828884637.45.1722558308588; Thu, 01 Aug 2024
- 17:25:08 -0700 (PDT)
+	s=arc-20240116; t=1722558618; c=relaxed/simple;
+	bh=PnyM09rVgRTI/M8RcaVA6e+CFCDz3VoX/Msl0FIBdbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=QKZ+CZSKV61l0VZtRvCS+35pHSumh66SywTGVcwcdPWcc1EiqLu1swzE8btygg9lQYlazC4MDyzJEW7vH8B7jnxKqKHwa3ILCvNb6iOHhK5xOBRnoodpW0l25MZPg/v2hyJfKKCTDccx6bJTSparGnHAHGONqlozYVxxINtqJHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhANCRhi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 321CFC32786;
+	Fri,  2 Aug 2024 00:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722558618;
+	bh=PnyM09rVgRTI/M8RcaVA6e+CFCDz3VoX/Msl0FIBdbk=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=fhANCRhiygN6lYqngQmVTMrd4jcNVMcOLnMS+NBj2l3ppG9GrC8XUoDTkMBY5oNa2
+	 +mxMOQ4Kwbg82ckaXPkUQgHGpG7/HffE/KBF+WzcEPlQ+sWAo7l5c1mzsY15tJBsod
+	 n3xGzjXhWYOkd5SAY8rlHVvD8uwnapB4QTYBggvgBBYfppv9cT1Oe3EPKPMqjHmeZv
+	 fyjiQ0aQghg8ubROth64eHIhzOVs7JY5cRPazh7yQ5mK21Iy3aMBzjiBG8ogc884fc
+	 OnhoA71dSIct4BPtOs5k3vWo/sB/J/BE2BMMp9lU2xww8QzVLs22uEY7pfA47Porke
+	 WyR0VM3iVdS7w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C509FCE09F8; Thu,  1 Aug 2024 17:30:17 -0700 (PDT)
+Date: Thu, 1 Aug 2024 17:30:17 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+	Breno Leitao <leitao@debian.org>, Rik van Riel <riel@surriel.com>,
+	Anhad Jai Singh <ffledgling@meta.com>,
+	Oleg Nesterov <oleg@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Chris Mason <clm@fb.com>
+Subject: [PATCH 0/2] Miscellaneous updates for v6.12'
+Message-ID: <d70d1654-fed2-477f-8f4f-f81322784f17@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731235505.710436-1-namhyung@kernel.org> <CAP-5=fX8Fg4jJDN=d2pHU1Xy3-A119c5gZYXtQu0b0Rwb0-ymQ@mail.gmail.com>
-In-Reply-To: <CAP-5=fX8Fg4jJDN=d2pHU1Xy3-A119c5gZYXtQu0b0Rwb0-ymQ@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Thu, 1 Aug 2024 17:24:57 -0700
-Message-ID: <CAM9d7cg=xZAqp5RMfAVc6Oy15zFmn3GO6GGmja7pz22SSjuZnw@mail.gmail.com>
-Subject: Re: [PATCHSET 0/6] perf mem: Basic support for data type profiling (v1)
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>, Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Aug 1, 2024 at 8:23=E2=80=AFAM Ian Rogers <irogers@google.com> wrot=
-e:
->
-> On Wed, Jul 31, 2024 at 4:55=E2=80=AFPM Namhyung Kim <namhyung@kernel.org=
-> wrote:
-> >
-> > Hello,
-> >
-> > As we added data type profiling, 'perf mem report' should support that
-> > as well.  This patches just added a couple of convenient options.
-> >
-> >   $ perf mem report -T -s mem
-> >   # To display the perf.data header info, please use --header/--header-=
-only options.
-> >   #
-> >   #
-> >   # Total Lost Samples: 0
-> >   #
-> >   # Samples: 131  of event 'cpu/mem-loads,ldlat=3D30/P'
-> >   # Total weight : 18561
-> >   # Sort order   : mem,type
-> >   #
-> >   # Overhead       Samples  Memory access                            Da=
-ta Type
-> >   # ........  ............  .......................................  ..=
-.......
-> >   #
-> >       14.84%            22  L1 hit                                   (u=
-nknown)
-> >       12.02%             8  RAM hit                                  (u=
-nknown)
-> >        7.68%             8  LFB/MAB hit                              (u=
-nknown)
-> >        6.29%            12  L1 hit                                   (s=
-tack operation)
-> >        3.97%             5  LFB/MAB hit                              st=
-ruct psi_group_cpu
-> >        3.69%             3  L1 hit                                   st=
-ruct
-> >        3.18%             3  LFB/MAB hit                              (s=
-tack operation)
-> >        2.89%             5  L3 hit                                   (u=
-nknown)
-> >        2.58%             3  L1 hit                                   un=
-signed int
-> >        2.31%             2  L1 hit                                   st=
-ruct psi_group_cpu
-> >        2.21%             2  LFB/MAB hit                              st=
-ruct cfs_rq
-> >        2.19%             2  RAM hit                                  st=
-ruct sched_entity
-> >        2.16%             1  L1 hit                                   st=
-ruct task_struct
-> >        1.85%             3  L1 hit                                   st=
-ruct pcpu_hot
-> >        1.78%             1  RAM hit                                  st=
-ruct tss_struct
-> >        1.72%             1  LFB/MAB hit                              st=
-ruct mm_struct
-> >        1.62%             2  L1 hit                                   st=
-ruct psi_group
-> >        ...
-> >
-> >
-> > The code is also available at 'perf/mem-type-v1' branch in
-> > git://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
-> >
-> > Thanks,
-> > Namhyung
-> >
-> >
-> > Namhyung Kim (6):
-> >   perf hist: Correct hist_entry->mem_info refcounts
-> >   perf mem: Free the allocated sort string
-> >   perf mem: Rework command option handling
-> >   perf tools: Add mode argument to sort_help()
-> >   perf mem: Add -s/--sort option
-> >   perf mem: Add -T/--data-type option to report subcommand
-> >
-> >  tools/perf/builtin-mem.c     | 100 ++++++++++++++++++++++-------------
-> >  tools/perf/builtin-report.c  |   4 +-
-> >  tools/perf/util/hist.c       |  14 ++---
-> >  tools/perf/util/map_symbol.c |  18 +++++++
-> >  tools/perf/util/map_symbol.h |   3 ++
-> >  tools/perf/util/mem-info.c   |  13 +++++
-> >  tools/perf/util/mem-info.h   |   1 +
-> >  tools/perf/util/sort.c       |  12 +++--
-> >  tools/perf/util/sort.h       |   2 +-
-> >  9 files changed, 116 insertions(+), 51 deletions(-)
->
-> Lgtm, man page updates?
+Hello!
 
-Thanks for your review, I'll update the documentation.
-Namhyung
+This series contains a couple of miscellaneous updates:
+
+/home/paulmck/bin/extractsubject.sh: 5: cannot open /tmp/rcu/*: No such file
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+1.	Add check for clocks going backwards to wq_worker_tick().
+
+2.	Sleep at TASK_IDLE when waiting for application core dump.
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ exit.c      |    2 +-
+ workqueue.c |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
