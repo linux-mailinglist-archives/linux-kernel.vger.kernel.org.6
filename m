@@ -1,210 +1,94 @@
-Return-Path: <linux-kernel+bounces-272582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F85945E4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:02:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DF8945E4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 566C61C22937
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:02:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5861828552C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC551E4F0B;
-	Fri,  2 Aug 2024 13:01:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7F71E3CDC;
+	Fri,  2 Aug 2024 13:03:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HXfGqyZA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cA4sjD+B"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZPF2CJ1e"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FCBA1E485F;
-	Fri,  2 Aug 2024 13:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AF61BE87A;
+	Fri,  2 Aug 2024 13:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722603676; cv=none; b=EsJIgEQmZEg+is9HS/w7n8C4INcQdEmiPjL7DI7eUljVfjGEmD7W26PXVz0kpYPFO/DFngeNKEOFWT2ydy6cNFix9KLM3BL6Xbl62rL4B5fLeMEwKtr1OIWgqbWr+Vr14Xf1e6NPt/W1hFia3Z4QfXP5+wSi5SB1x0R5b6uzFmA=
+	t=1722603814; cv=none; b=oXHmjTt7f6mzO16P1Y6xXBitsrJFSFhjp29Cscu8S3dhlxGvYdXLJsXGpHjeMud0CWHWaHygMlMiVWbY5awMpxKBfkHJAxpBQLBZOkwuFhsjansFnwuNE1KAHLqWRdasM7eGJD6ptm2ZlUyn7w6bsMCL13jR9YpLzf39NnLJyXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722603676; c=relaxed/simple;
-	bh=hCDw++Y+zxHQ++HhBP11QSZXNoCF2wRkw9kwksZycbw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=crSy3+vpllnoh+UOc3cv66vWvo16BNTX2B9JTdtioCMTGIjt5f136xKsvY0JVkS8no4uvMOwOapow16NYmVGe1zyrkFu3o92CbipMetin+iSePjwcBP5zOH4XV0+ZD/oSgP6AJ11mKVVmS+yF64lc0Cwek0fRJaEg6MQNRiQfyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HXfGqyZA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cA4sjD+B; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 02 Aug 2024 13:01:12 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722603673;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0iLXQnlVSn1ORzsAh1CnAoFqCCIPQ6/PuYkY0+1dB48=;
-	b=HXfGqyZAMmC4MFt4YCSu67TCey/CK/DOlN0xBQ5dnXQc6N8IgIQ943SlqwYuiiacdIsqR9
-	gJSFvcUToUCnCYRg93Qd2To1ZddSBA5V4gW6ter3J2AnbM1NrZvpACG3bRHkDOrrPxCGFC
-	5mMlAHxUyyaNukhmZ6DgsnlwwKXPmYsVVxD5mXZZXWjgsL16GrE1s9QcROdUG5acUnnSCn
-	y7S32zEDhSbnrFcD7A0pCuJq6auNRi3ZH01aOurhWc22WPaxhRrjdkhPzHtcN71DV5q4jt
-	YJkp7HZ2F9HnwPplvIeKjA3y9faPWVL5VR5WI3wG7vOTvWqztxtK9cUbFgLAyQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722603673;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0iLXQnlVSn1ORzsAh1CnAoFqCCIPQ6/PuYkY0+1dB48=;
-	b=cA4sjD+B/gAKaYW+m5ZNd69jjmGRX/JQ+YxmuO755ykWwYa7KU9ZEIkeeoDESEelSEQlfg
-	bkfyUpzAyQKLMeCA==
-From: "tip-bot2 for Aruna Ramakrishna" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/mm] x86/pkeys: Add PKRU as a parameter in signal handling functions
-Cc: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240802061318.2140081-2-aruna.ramakrishna@oracle.com>
-References: <20240802061318.2140081-2-aruna.ramakrishna@oracle.com>
+	s=arc-20240116; t=1722603814; c=relaxed/simple;
+	bh=1sJEV4onMpCVNzcqhtUpkeyeGTA6x8K9PSLJHxhXT1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9n/Av8uKzWcZ9wQEHrYFyKl0ygnR9TEBn8wKj+1eXsVL+wdiJwZh6kTlgYh+D8fsFAcbLcs5Ex/zTp1XdU4QKGEXQZDJsZllVNTiL2HXaJjWViaqHTBg2aBDO7TOXQY7jkM+U11xhwWK8EyNA1LjwCKEz8NpiJyy62eOIWOzQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=ZPF2CJ1e; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7RVA83cU8ESLcHxZ5wTxJamaEhxTh4YMiATBaCEo3x4=; b=ZPF2CJ1eeSYPYnq2geji0OKabR
+	/73LaSgEF+hK1YWCOJ6Y2poRmQ33o+K361ECAEDNo1fvzgdTg9v2QOGuO1a1Eu1s5nL+eud0MbLGW
+	8RcRJEG8DygewSKGVjPTW+KK0TlrXehnk98YOJcEi8RUiTk/QHV1RZnHOZEtdZ8epg8heDJ0i+Xnj
+	IP+sgrWDeD4OYQ+ciimeDYUXQyzvG3XNOw1FgnRk8KYCGS9qTu19uKrWy0GJIEf2wpmcvKVipESE5
+	I8JgWKbUxiwRkLMfl9End2b9+6gD8j5p+IdSUoH3c6CEIa418xr+gmO8AGp7JdMZRUWfyBhvxp+ai
+	8aPRAb+w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:40470)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sZrwJ-0006lN-0N;
+	Fri, 02 Aug 2024 14:03:23 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sZrwN-00083M-Hk; Fri, 02 Aug 2024 14:03:27 +0100
+Date: Fri, 2 Aug 2024 14:03:27 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 6/6] net: phy: vitesse: repair vsc73xx autonegotiation
+Message-ID: <ZqzZH4QB5NhPYDF3@shell.armlinux.org.uk>
+References: <20240802080403.739509-1-paweldembicki@gmail.com>
+ <20240802080403.739509-7-paweldembicki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172260367260.2215.4188177993426167724.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240802080403.739509-7-paweldembicki@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The following commit has been merged into the x86/mm branch of tip:
+On Fri, Aug 02, 2024 at 10:04:03AM +0200, Pawel Dembicki wrote:
+> When the vsc73xx mdio bus work properly, the generic autonegotiation
+> configuration works well.
+> 
+> Vsc73xx have auto MDI-X disabled by default in forced mode. This commit
+> enables it.
 
-Commit-ID:     24cf2bc982ffe02aeffb4a3885c71751a2c7023b
-Gitweb:        https://git.kernel.org/tip/24cf2bc982ffe02aeffb4a3885c71751a2c7023b
-Author:        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-AuthorDate:    Fri, 02 Aug 2024 06:13:14 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Fri, 02 Aug 2024 14:12:20 +02:00
+Why not implement proper MDI(-X) configuration support so that the user
+can configure it as desired?
 
-x86/pkeys: Add PKRU as a parameter in signal handling functions
-
-Assume there's a multithreaded application that runs untrusted user
-code. Each thread has its stack/code protected by a non-zero PKEY, and the
-PKRU register is set up such that only that particular non-zero PKEY is
-enabled. Each thread also sets up an alternate signal stack to handle
-signals, which is protected by PKEY zero. The PKEYs man page documents that
-the PKRU will be reset to init_pkru when the signal handler is invoked,
-which means that PKEY zero access will be enabled.  But this reset happens
-after the kernel attempts to push fpu state to the alternate stack, which
-is not (yet) accessible by the kernel, which leads to a new SIGSEGV being
-sent to the application, terminating it.
-
-Enabling both the non-zero PKEY (for the thread) and PKEY zero in
-userspace will not work for this use case. It cannot have the alt stack
-writeable by all - the rationale here is that the code running in that
-thread (using a non-zero PKEY) is untrusted and should not have access
-to the alternate signal stack (that uses PKEY zero), to prevent the
-return address of a function from being changed. The expectation is that
-kernel should be able to set up the alternate signal stack and deliver
-the signal to the application even if PKEY zero is explicitly disabled
-by the application. The signal handler accessibility should not be
-dictated by whatever PKRU value the thread sets up.
-
-The PKRU register is managed by XSAVE, which means the sigframe contents
-must match the register contents - which is not the case here. It's
-required that the signal frame contains the user-defined PKRU value (so
-that it is restored correctly from sigcontext) but the actual register must
-be reset to init_pkru so that the alt stack is accessible and the signal
-can be delivered to the application. It seems that the proper fix here
-would be to remove PKRU from the XSAVE framework and manage it separately,
-which is quite complicated. As a workaround, do this:
-
-        orig_pkru = rdpkru();
-        wrpkru(orig_pkru & init_pkru_value);
-        xsave_to_user_sigframe();
-        put_user(pkru_sigframe_addr, orig_pkru)
-
-In preparation for writing PKRU to sigframe, pass PKRU as an additional
-parameter down the call chain from get_sigframe().
-
-No functional change.
-
-Signed-off-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240802061318.2140081-2-aruna.ramakrishna@oracle.com
-
----
- arch/x86/include/asm/fpu/signal.h | 2 +-
- arch/x86/kernel/fpu/signal.c      | 6 +++---
- arch/x86/kernel/signal.c          | 3 ++-
- 3 files changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/fpu/signal.h b/arch/x86/include/asm/fpu/signal.h
-index 611fa41..eccc75b 100644
---- a/arch/x86/include/asm/fpu/signal.h
-+++ b/arch/x86/include/asm/fpu/signal.h
-@@ -29,7 +29,7 @@ fpu__alloc_mathframe(unsigned long sp, int ia32_frame,
- 
- unsigned long fpu__get_fpstate_size(void);
- 
--extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size);
-+extern bool copy_fpstate_to_sigframe(void __user *buf, void __user *fp, int size, u32 pkru);
- extern void fpu__clear_user_states(struct fpu *fpu);
- extern bool fpu__restore_sig(void __user *buf, int ia32_frame);
- 
-diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
-index 247f222..2b3b9e1 100644
---- a/arch/x86/kernel/fpu/signal.c
-+++ b/arch/x86/kernel/fpu/signal.c
-@@ -156,7 +156,7 @@ static inline bool save_xstate_epilog(void __user *buf, int ia32_frame,
- 	return !err;
- }
- 
--static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
-+static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf, u32 pkru)
- {
- 	if (use_xsave())
- 		return xsave_to_user_sigframe(buf);
-@@ -185,7 +185,7 @@ static inline int copy_fpregs_to_sigframe(struct xregs_state __user *buf)
-  * For [f]xsave state, update the SW reserved fields in the [f]xsave frame
-  * indicating the absence/presence of the extended state to the user.
-  */
--bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size)
-+bool copy_fpstate_to_sigframe(void __user *buf, void __user *buf_fx, int size, u32 pkru)
- {
- 	struct task_struct *tsk = current;
- 	struct fpstate *fpstate = tsk->thread.fpu.fpstate;
-@@ -228,7 +228,7 @@ retry:
- 		fpregs_restore_userregs();
- 
- 	pagefault_disable();
--	ret = copy_fpregs_to_sigframe(buf_fx);
-+	ret = copy_fpregs_to_sigframe(buf_fx, pkru);
- 	pagefault_enable();
- 	fpregs_unlock();
- 
-diff --git a/arch/x86/kernel/signal.c b/arch/x86/kernel/signal.c
-index 31b6f5d..1f1e8e0 100644
---- a/arch/x86/kernel/signal.c
-+++ b/arch/x86/kernel/signal.c
-@@ -84,6 +84,7 @@ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
- 	unsigned long math_size = 0;
- 	unsigned long sp = regs->sp;
- 	unsigned long buf_fx = 0;
-+	u32 pkru = read_pkru();
- 
- 	/* redzone */
- 	if (!ia32_frame)
-@@ -139,7 +140,7 @@ get_sigframe(struct ksignal *ksig, struct pt_regs *regs, size_t frame_size,
- 	}
- 
- 	/* save i387 and extended state */
--	if (!copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size))
-+	if (!copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size, pkru))
- 		return (void __user *)-1L;
- 
- 	return (void __user *)sp;
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
