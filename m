@@ -1,87 +1,132 @@
-Return-Path: <linux-kernel+bounces-272410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DCF945B77
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:50:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E41B7945B84
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E7132827A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:50:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D981C216F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C468F1DC48C;
-	Fri,  2 Aug 2024 09:49:36 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6361DB44D;
+	Fri,  2 Aug 2024 09:54:38 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28DA51DAC7C;
-	Fri,  2 Aug 2024 09:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132FD1C2BD;
+	Fri,  2 Aug 2024 09:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722592176; cv=none; b=g1tcQzClSzkPwtRtLBorB3KU3H39xGhrg/z/R0EEEIXK5QmDoakVdAlE8Zr/4M0QtH6d6WMyb1mSgdg7pAlPDpyjTvsgPZH9XPt8Ac4S9sYnPjmSyTutJjYBT2C77Rl5IEMowF0EoYc4X7ZDeS+56XdFiTrnhqGbw85gu75vM8Y=
+	t=1722592478; cv=none; b=NgXQsdbl04TFqvqMvEXOya4QUGuCBlh81rdTt6efHR4EnoVF3uvCUwSpypiXXmBUXWCyxfDAIinbSKAz+z0WglHLwfIUlkbLJNGtXwElsznNdduoKvpCflsWgZYVvdAs1yEo3yd7mhUKvLwc76TSUXMyszNbE4RzIkhJqvp+c+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722592176; c=relaxed/simple;
-	bh=TLnUJHP/gBmrZs4sMzkN0je1i78gY19QnEy6AZbjwLE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqQy9g72kFkHD1lxyCyrG+02UWXBFQDYTMCl6jDfO97h5XP2rPc/DUsFshrsOyJiy80socFOobMMj94jArpVHQ+924nKE0m2I2gptHPPsUBgUnFbP++0TGPTsan5Nw1c+ocIfqwCmTNVPMTeERxfBEb1nIvCPjMJ0GOy+bX1qvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 3E677100DA1B2;
-	Fri,  2 Aug 2024 11:49:24 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id DB3E1176024; Fri,  2 Aug 2024 11:49:23 +0200 (CEST)
-Date: Fri, 2 Aug 2024 11:49:23 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: manivannan.sadhasivam@linaro.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	mika.westerberg@linux.intel.com, Hsin-Yi Wang <hsinyi@chromium.org>
-Subject: Re: [PATCH v5 1/4] PCI/portdrv: Make use of pci_dev::bridge_d3 for
- checking the D3 possibility
-Message-ID: <Zqyro5mW-1kpFGQd@wunner.de>
-References: <20240802-pci-bridge-d3-v5-0-2426dd9e8e27@linaro.org>
- <20240802-pci-bridge-d3-v5-1-2426dd9e8e27@linaro.org>
+	s=arc-20240116; t=1722592478; c=relaxed/simple;
+	bh=pG7QYf5atpiLxIdlu12CXatOzGN8tq3O56ZKUROVJlI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SPmyQX75Yj0Ta1ZPBHMT2OPXkTh16QN0NskWzHlUGY5xPLI7up0VI/dNhRWUt7JrpVExDQSFPYGFxXYsX5mrHgpm/4yw7tmXHIZ2Zk/WiaA1/cwgMEWr2bCtLGsnbNtWdwnXaHCohqs9RFyCvrCIabV9hdvGwZUvevgdLd3ssWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wb1KB0j6vz20l2V;
+	Fri,  2 Aug 2024 17:50:06 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id CAFB91402CF;
+	Fri,  2 Aug 2024 17:54:26 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 2 Aug
+ 2024 17:54:26 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <philipp.reisner@linbit.com>, <lars.ellenberg@linbit.com>,
+	<christoph.boehmwalder@linbit.com>, <axboe@kernel.dk>, <brauner@kernel.org>,
+	<yuehaibing@huawei.com>
+CC: <drbd-dev@lists.linbit.com>, <linux-block@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] drbd: Remove unused extern declarations
+Date: Fri, 2 Aug 2024 17:51:47 +0800
+Message-ID: <20240802095147.2788218-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240802-pci-bridge-d3-v5-1-2426dd9e8e27@linaro.org>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On Fri, Aug 02, 2024 at 11:25:00AM +0530, Manivannan Sadhasivam via B4 Relay wrote:
-> PCI core is already caching the value of pci_bridge_d3_possible() in
-> pci_dev::bridge_d3 during pci_pm_init(). Since the value is not going to
-> change, let's make use of the cached value.
-[...]
-> --- a/drivers/pci/pcie/portdrv.c
-> +++ b/drivers/pci/pcie/portdrv.c
-> @@ -702,7 +702,7 @@ static int pcie_portdrv_probe(struct pci_dev *dev,
->  	dev_pm_set_driver_flags(&dev->dev, DPM_FLAG_NO_DIRECT_COMPLETE |
->  					   DPM_FLAG_SMART_SUSPEND);
->  
-> -	if (pci_bridge_d3_possible(dev)) {
-> +	if (dev->bridge_d3) {
+From: YueHaibing <yuehaibing@huawei.com>
 
-I don't know if there was a reason to call pci_bridge_d3_possible()
-(instead of using the cached value) on probe, remove and shutdown.
+Commit b411b3637fa7 ("The DRBD driver") declared but never implemented
+drbd_read_remote(), is_valid_ar_handle() and drbd_set_recv_tcq().
+And commit 668700b40a7c ("drbd: Create a dedicated workqueue for sending acks on the control connection")
+never implemented drbd_send_ping_wf().
 
-The change is probably safe but it would still be good to get some
-positive test results with Thunderbolt laptops etc to raise the
-confidence.
+Commit 2451fc3b2bd3 ("drbd: Removed the BIO_RW_BARRIER support form the receiver/epoch code")
+leave w_e_reissue() declaration unused.
 
-Thanks,
+Commit 8fe605513ab4 ("drbd: Rename drbdd_init() -> drbd_receiver()")
+rename drbdd_init() and leave unsued declaration. Also drbd_asender() is removed in
+commit 1c03e52083c8 ("drbd: Rename asender to ack_receiver").
 
-Lukas
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/block/drbd/drbd_int.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/drivers/block/drbd/drbd_int.h b/drivers/block/drbd/drbd_int.h
+index 94dc0a235919..d2937bca1fe4 100644
+--- a/drivers/block/drbd/drbd_int.h
++++ b/drivers/block/drbd/drbd_int.h
+@@ -297,10 +297,6 @@ struct drbd_epoch {
+ 	unsigned long flags;
+ };
+ 
+-/* Prototype declaration of function defined in drbd_receiver.c */
+-int drbdd_init(struct drbd_thread *);
+-int drbd_asender(struct drbd_thread *);
+-
+ /* drbd_epoch flag bits */
+ enum {
+ 	DE_HAVE_BARRIER_NUMBER,
+@@ -1390,9 +1386,6 @@ extern void conn_free_crypto(struct drbd_connection *connection);
+ extern void do_submit(struct work_struct *ws);
+ extern void __drbd_make_request(struct drbd_device *, struct bio *);
+ void drbd_submit_bio(struct bio *bio);
+-extern int drbd_read_remote(struct drbd_device *device, struct drbd_request *req);
+-extern int is_valid_ar_handle(struct drbd_request *, sector_t);
+-
+ 
+ /* drbd_nl.c */
+ 
+@@ -1474,7 +1467,6 @@ extern int w_resync_timer(struct drbd_work *, int);
+ extern int w_send_write_hint(struct drbd_work *, int);
+ extern int w_send_dblock(struct drbd_work *, int);
+ extern int w_send_read_req(struct drbd_work *, int);
+-extern int w_e_reissue(struct drbd_work *, int);
+ extern int w_restart_disk_io(struct drbd_work *, int);
+ extern int w_send_out_of_sync(struct drbd_work *, int);
+ 
+@@ -1488,7 +1480,6 @@ extern int drbd_issue_discard_or_zero_out(struct drbd_device *device,
+ 		sector_t start, unsigned int nr_sectors, int flags);
+ extern int drbd_receiver(struct drbd_thread *thi);
+ extern int drbd_ack_receiver(struct drbd_thread *thi);
+-extern void drbd_send_ping_wf(struct work_struct *ws);
+ extern void drbd_send_acks_wf(struct work_struct *ws);
+ extern bool drbd_rs_c_min_rate_throttle(struct drbd_device *device);
+ extern bool drbd_rs_should_slow_down(struct drbd_peer_device *peer_device, sector_t sector,
+@@ -1504,7 +1495,6 @@ extern void __drbd_free_peer_req(struct drbd_device *, struct drbd_peer_request
+ #define drbd_free_peer_req(m,e) __drbd_free_peer_req(m, e, 0)
+ #define drbd_free_net_peer_req(m,e) __drbd_free_peer_req(m, e, 1)
+ extern struct page *drbd_alloc_pages(struct drbd_peer_device *, unsigned int, bool);
+-extern void drbd_set_recv_tcq(struct drbd_device *device, int tcq_enabled);
+ extern void _drbd_clear_done_ee(struct drbd_device *device, struct list_head *to_be_freed);
+ extern int drbd_connected(struct drbd_peer_device *);
+ 
+-- 
+2.34.1
+
 
