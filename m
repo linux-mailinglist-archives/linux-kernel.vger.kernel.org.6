@@ -1,256 +1,184 @@
-Return-Path: <linux-kernel+bounces-273212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CDBD9465DB
-	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:20:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0B319465DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E426B2269F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:20:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40C61C219A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A41139D16;
-	Fri,  2 Aug 2024 22:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9212A13A3F2;
+	Fri,  2 Aug 2024 22:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axS8BAGd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cB6VJkpm"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C921A47F64;
-	Fri,  2 Aug 2024 22:19:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D634581727
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 22:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722637194; cv=none; b=uI9lhhPp86h1EyLCq2svqF1Fc2rMs1kbfTI2aNmTUR84/FecGrvpTgEkaqdfnBbm8isA134Kc1dkIDz8exDpuO7gwLtVAu0Ge/Xyo4Y+GyNRtT2U+0Q88avlEEvgAQxpauIKgSffBDr5LtoGHzWttTbie8ykYcD+Un9szst7Vws=
+	t=1722637222; cv=none; b=Oqh7sCXln3rg8XkaHiq/Y0LpNrVqxZZwR0KnzMF33D/fY+X4wOHHS8sUdsnxyRKQiJ16z2R2LziSfdKKQo54qeJiNEwdwOPLoVp8Av20W+dCli2HSnV/oGFDcii1ybhknMEY9/R/PhPV+Clhu+mWov80el2nZQ8wXCK+AvOPxZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722637194; c=relaxed/simple;
-	bh=mcxSg+qGadL76KNrl2hpaR9JR+cq+JmpnzMW4vQqLJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h5U/9UnUuS0KSi2kZIPmIJ2QN2KtVVXOdGWPHtOqQbMjZbgMByJdk6dU5kzVGe9pcZrNBfrQn3Wwd6qxoqqe16RMEZTFcq8MSM93x0LAqNTsHQvvE3JdvafxN8o9yXqym8li9jAr5vrjMJHWvs4EUCx2o/w1B+0ZZRQbUY8Bs1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axS8BAGd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EADC5C32782;
-	Fri,  2 Aug 2024 22:19:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722637194;
-	bh=mcxSg+qGadL76KNrl2hpaR9JR+cq+JmpnzMW4vQqLJk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=axS8BAGdIKBBiJOnu35QVEQ1ct0UdlZxaDkc6OsnMxIFpMVmuJPfSkjj7HisuhCTK
-	 LNgr5LvYCdNJYCe1iqm7wpR0fKl5FGLBsKLhE36Yq1rCWlh/8dfM8saGqJDDt0szrs
-	 gmbUTyrY3SlMT/dpkvlwBnRKtqmibUv29JjaHf3jSv9ryI1uK4XJrtdw1RwyAnD8JO
-	 dV6z+4pFx/BCgNdJYVurZMnTdmNhu0buBTKl7SZjLKKUL7KXYnkVSOk5lqiqpKUAQN
-	 /0l2LhhveEFRb64g28x/HUKtm/rT4dWcJLIehaLMv0x+td41hAYDTiONTQJFGtvAIa
-	 Ffyq+WDpzEQOw==
-Date: Fri, 2 Aug 2024 15:19:52 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: kernel test robot <lkp@intel.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	Brian Cain <bcain@quicinc.com>, linux-hexagon@vger.kernel.org
-Subject: Re: [gustavoars:testing/wfamnae-next20240729-cbc-2 11/18]
- include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to
- requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
- sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of
- struct_group_tagged()
-Message-ID: <20240802221952.GA737452@thelio-3990X>
-References: <202408011956.wscyBwq6-lkp@intel.com>
- <138da3e5-0e24-41a6-bb35-df5d07045eb3@embeddedor.com>
- <20240801190813.GC122261@thelio-3990X>
- <f40160aa-7cbd-4264-be44-45396b09574f@embeddedor.com>
- <20240801221427.GA3773553@thelio-3990X>
- <ca056227-30c3-47b9-a19a-fbab87778f20@embeddedor.com>
+	s=arc-20240116; t=1722637222; c=relaxed/simple;
+	bh=h6CpH24tdqZUkuI/1m5niZK8wU/AxOjrnZGKWbWAiZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AFOBWU+Q0ZzuFq/zCxbURdR283x9k1vYFW/4p6kItaKTIdOxGZVvW7u103R2YU0iPUHeLyePOXdoQxlzSXRmkf5MBiAiHPwu2pUCrPHrNHWlAFXzdqbjBHxcWdqMLDG5rr17t4z0lEPXax4HBpXQX7ZfpichnxvHMbFuD4/eOs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cB6VJkpm; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42817f1eb1fso52393795e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 15:20:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722637219; x=1723242019; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fBNVp3ZIi46qbr/bGlBeHrp1CnYuXuhb4TgdeRcgo2k=;
+        b=cB6VJkpmdZZQlpMY3ajwa5LfNVh3Jn/5E/IFfoaT8l+q95YbY9Xe3DFAgmr19zBxYB
+         itY4AuKP0UZH0WJS0wvb0w1474qCTWWjMCOp+obP7YD8xMkYCVaHwxajLbFkFCsFiXUa
+         389TlWNnDax5p5zPjE+JwQABJ2BdrhlGWtFrbzn6IbuFN5ToSMZ3TqLGiLp8NNot6T7F
+         YJKqKVAQ83m+PxyyuNw0STBfpXhy45VtiL5Oi/WuIVYOcb7n0fN5/Ou8w5XPCNUTK+yv
+         BMZnrLL52TblQ4uo4vqcw8SAfDp80QGAUePyDbhhzRTLj3LfOQ8ty8JLjihK6BA5MBs4
+         KftA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722637219; x=1723242019;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fBNVp3ZIi46qbr/bGlBeHrp1CnYuXuhb4TgdeRcgo2k=;
+        b=oRT0wCfVFWy2DJl4Iz6cnU9x7DaoEWTdJ5tgA8ULnWoIoiaVOMqW5fIGxNCTbhLXcp
+         ZPpYMvOW52/ZQ+S0GawunGNTMBqtRfxo5pRnP7YYNUggKqeGC6b+7ZecaX8IKzWOpJxk
+         mVOpWAshqO2pfbzNnFuu2SkitJBvb9TWpFED9GX0wadiUAOf5nqwDwFGkA068eBCmhbU
+         Lyma7shvEOCrVfAccSgGmyeQiG5hgFGEvVzzP9yZevB2gugtKSLs6dQCv61PpuFJSVt3
+         dYxz3xeT18tfUU9Hhq5DOwoWKr1jeKB21YrV8/9GDFcOiWcgRUtcR1t3pEFUFgPrP68N
+         5pqA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFA/fxfLonHBVZIHueZ58yrSf0de7QCYpr0knUoIhTn9sCP9FF1di2wvTqtPEm4NJKsOamZhQRUEOmneNRxy8cUdA09stUpEe4Uzzp
+X-Gm-Message-State: AOJu0YzfZakDrnV5xIJmECO/BOckWycIlmflpLDvMO+qCIVE5xyu1Z7B
+	A8N/K6HhgpN1GNYemcF/Q6uuSSYv8BpBwuweM7mXMS+dLTi6Gnq9digNOKxrbNE=
+X-Google-Smtp-Source: AGHT+IHo0k73aoIX2/peHNzr8OqRlTWFYxoZgSL9K4Bcbccfpi0/KpivbXSc7VaClxpwyzQ2UrYCRA==
+X-Received: by 2002:a5d:4749:0:b0:367:326b:f257 with SMTP id ffacd0b85a97d-36bbc130683mr3175357f8f.33.1722637219093;
+        Fri, 02 Aug 2024 15:20:19 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbcf1dcdesm2852358f8f.35.2024.08.02.15.20.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Aug 2024 15:20:18 -0700 (PDT)
+Message-ID: <cc737b05-4476-4ded-9d1c-5924cfbce316@linaro.org>
+Date: Fri, 2 Aug 2024 23:20:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca056227-30c3-47b9-a19a-fbab87778f20@embeddedor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] media: camss: Avoid overwriting vfe clock rates
+ for 8250
+To: Jordan Crouse <jorcrous@amazon.com>, linux-media@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Foss
+ <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240802152435.35796-1-jorcrous@amazon.com>
+ <20240802152435.35796-3-jorcrous@amazon.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240802152435.35796-3-jorcrous@amazon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Aug 01, 2024 at 04:35:59PM -0600, Gustavo A. R. Silva wrote:
+On 02/08/2024 16:24, Jordan Crouse wrote:
+> On sm8250 targets both the csid and vfe subsystems share a number of
+> clocks. Commit b4436a18eedb ("media: camss: add support for SM8250 camss")
+> reorganized the initialization sequence so that VFE gets initialized first
+> but a side effect of that was that the CSID subsystem came in after and
+> overwrites the set frequencies on the shared clocks.
 > 
+> Empty the frequency tables for the shared clocks in the CSID resources so
+> they won't overwrite the clock rates that the VFE has already set.
 > 
-> On 01/08/24 16:14, Nathan Chancellor wrote:
-> > On Thu, Aug 01, 2024 at 02:17:50PM -0600, Gustavo A. R. Silva wrote:
-> > > 
-> > > 
-> > > On 01/08/24 13:08, Nathan Chancellor wrote:
-> > > > On Thu, Aug 01, 2024 at 06:47:58AM -0600, Gustavo A. R. Silva wrote:
-> > > > > 
-> > > > > 
-> > > > > On 01/08/24 05:35, kernel test robot wrote:
-> > > > > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git testing/wfamnae-next20240729-cbc-2
-> > > > > > head:   df15c862c1b93b6e1f6c90b0d7971f7a6ad66751
-> > > > > > commit: e7cd9f429a852fb7e37a706c7d08fc36e7863e06 [11/18] RDMA/uverbs: Use static_assert() to check struct sizes
-> > > > > > config: hexagon-randconfig-001-20240801 (https://download.01.org/0day-ci/archive/20240801/202408011956.wscyBwq6-lkp@intel.com/config)
-> > > > > > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 430b90f04533b099d788db2668176038be38c53b)
-> > > > > 
-> > > > > 
-> > > > > Clang 20.0.0?? (thinkingface)
-> > > > 
-> > > > Indeed, Clang 19 branched and main is now 20 :)
-> > > > 
-> > > > https://github.com/llvm/llvm-project/commit/8f701b5df0adb3a2960d78ca2ad9cf53f39ba2fe
-> > > 
-> > > Yeah, but is that a stable release?
-> > 
-> > No, but the Intel folks have tested tip of tree LLVM against the kernel
-> > for us for a few years now to try and catch issues such as this.
+> Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
+> ---
 > 
-> Oh, I see, fine. :)
+>   drivers/media/platform/qcom/camss/camss.c | 21 +++++++++++++++------
+>   1 file changed, 15 insertions(+), 6 deletions(-)
 > 
-> > 
-> > > BTW, I don't see GCC reporting the same problem below:
-> > 
-> > Hexagon does not have a GCC backend anymore so it is not going to be
-> > possible to do an exact A/B comparison with this configuration but...
-> > 
-> > > > > > > > include/rdma/uverbs_ioctl.h:643:15: error: static assertion failed due to requirement '__builtin_offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr)': struct member likely outside of struct_group_tagged()
-> > > > > >         643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-> > > > > >             | ~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >         644 |               "struct member likely outside of struct_group_tagged()");
-> > > > > >             |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >       include/linux/stddef.h:16:32: note: expanded from macro 'offsetof'
-> > > > > >          16 | #define offsetof(TYPE, MEMBER)  __builtin_offsetof(TYPE, MEMBER)
-> > > > > >             |                                 ^
-> > > > > >       include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-> > > > > >          77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-> > > > > >             |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >       include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-> > > > > >          78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-> > > > > >             |                                                        ^~~~
-> > > > > >       include/rdma/uverbs_ioctl.h:643:58: note: expression evaluates to '56 == 52'
-> > 
-> > This seems to give some indication that perhaps there may be some
-> > architecture specific here with padding maybe? I seem to recall ARM OABI
-> > having something similar. Adding the Hexagon folks/list to get some more
-> > clarification. Full warning and context:
-> > 
-> > https://lore.kernel.org/202408011956.wscyBwq6-lkp@intel.com/
-> > 
-> > The problematic section preprocessed since sometimes the macros
-> > obfuscate things:
-> > 
-> > struct uverbs_attr_bundle {
-> >          union {
-> >                  struct {
-> >                          struct ib_udata driver_udata;
-> >                          struct ib_udata ucore;
-> >                          struct ib_uverbs_file *ufile;
-> >                          struct ib_ucontext *context;
-> >                          struct ib_uobject *uobject;
-> >                          unsigned long attr_present[(((UVERBS_API_ATTR_BKEY_LEN) +
-> >                                                       ((sizeof(long) * 8)) - 1) /
-> >                                                      ((sizeof(long) * 8)))];
-> >                  };
-> >                  struct uverbs_attr_bundle_hdr {
-> >                          struct ib_udata driver_udata;
-> >                          struct ib_udata ucore;
-> >                          struct ib_uverbs_file *ufile;
-> >                          struct ib_ucontext *context;
-> >                          struct ib_uobject *uobject;
-> >                          unsigned long attr_present[(((UVERBS_API_ATTR_BKEY_LEN) +
-> >                                                       ((sizeof(long) * 8)) - 1) /
-> >                                                      ((sizeof(long) * 8)))];
-> >                  } hdr;
-> >          };
-> > 
-> >          struct uverbs_attr attrs[];
-> > };
-> > _Static_assert(__builtin_offsetof(struct uverbs_attr_bundle, attrs) ==
-> >                         sizeof(struct uverbs_attr_bundle_hdr),
-> >                 "struct member likely outside of struct_group_tagged()");
-> > 
-> > FWIW, I see this with all versions of Clang that the kernel supports
-> > with this configuration.
-> 
-> I don't have access to a Clang compiler right now; I wonder if you could
-> help me get the output of this command:
-> 
-> pahole -C uverbs_attr_bundle drivers/infiniband/core/rdma_core.o
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index 51b1d3550421..d78644c3ebe9 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -915,6 +915,15 @@ static const struct camss_subdev_resources csiphy_res_8250[] = {
+>   	}
+>   };
+>   
+> +/*
+> + * Both CSID and VFE use some of the same vfe clocks and both
+> + * should prepare/enable them but only the VFE subsystem should be in charge
+> + * of setting the clock rates.
+> + *
+> + * Set the frequency tables for those clocks in the CSID resources to
+> + * be empty so the csid subsystem doesn't overwrite the clock rates that the
+> + * VFE already set.
+> + */
+>   static const struct camss_subdev_resources csid_res_8250[] = {
+>   	/* CSID0 */
+>   	{
+> @@ -922,8 +931,8 @@ static const struct camss_subdev_resources csid_res_8250[] = {
+>   		.clock = { "vfe0_csid", "vfe0_cphy_rx", "vfe0", "vfe0_areg", "vfe0_ahb" },
+>   		.clock_rate = { { 400000000 },
+>   				{ 400000000 },
+> -				{ 350000000, 475000000, 576000000, 720000000 },
+> -				{ 100000000, 200000000, 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 0 },
+>   				{ 0 } },
+>   		.reg = { "csid0" },
+>   		.interrupt = { "csid0" },
+> @@ -939,8 +948,8 @@ static const struct camss_subdev_resources csid_res_8250[] = {
+>   		.clock = { "vfe1_csid", "vfe1_cphy_rx", "vfe1", "vfe1_areg", "vfe1_ahb" },
+>   		.clock_rate = { { 400000000 },
+>   				{ 400000000 },
+> -				{ 350000000, 475000000, 576000000, 720000000 },
+> -				{ 100000000, 200000000, 300000000, 400000000 },
+> +				{ 0 },
+> +				{ 0 },
+>   				{ 0 } },
+>   		.reg = { "csid1" },
+>   		.interrupt = { "csid1" },
+> @@ -956,7 +965,7 @@ static const struct camss_subdev_resources csid_res_8250[] = {
+>   		.clock = { "vfe_lite_csid", "vfe_lite_cphy_rx", "vfe_lite",  "vfe_lite_ahb" },
+>   		.clock_rate = { { 400000000 },
+>   				{ 400000000 },
+> -				{ 400000000, 480000000 },
+> +				{ 0 },
+>   				{ 0 } },
+>   		.reg = { "csid2" },
+>   		.interrupt = { "csid2" },
+> @@ -973,7 +982,7 @@ static const struct camss_subdev_resources csid_res_8250[] = {
+>   		.clock = { "vfe_lite_csid", "vfe_lite_cphy_rx", "vfe_lite",  "vfe_lite_ahb" },
+>   		.clock_rate = { { 400000000 },
+>   				{ 400000000 },
+> -				{ 400000000, 480000000 },
+> +				{ 0 },
+>   				{ 0 } },
+>   		.reg = { "csid3" },
+>   		.interrupt = { "csid3" },
 
-We disabled CONFIG_DEBUG_INFO_BTF for Hexagon because elfutils does not
-support Hexagon relocations but this is built-in for this configuration
-so I removed that limitation and ended up with:
+Hi Jordan.
 
-$ pahole -C uverbs_attr_bundle vmlinux
-struct uverbs_attr_bundle {
-        union {
-                struct {
-                        struct ib_udata driver_udata;    /*     0    16 */
-                        struct ib_udata ucore;           /*    16    16 */
-                        struct ib_uverbs_file * ufile;   /*    32     4 */
-                        struct ib_ucontext * context;    /*    36     4 */
-                        struct ib_uobject * uobject;     /*    40     4 */
-                        unsigned long attr_present[2];   /*    44     8 */
-                };                                       /*     0    52 */
-                struct uverbs_attr_bundle_hdr hdr;       /*     0    52 */
-        };                                               /*     0    52 */
+Thanks for your patch. Just looking at the clocks you are zeroing here, 
+I think _probably_ these zeroized clocks can be removed from the CSID 
+set entirely.
 
-        /* XXX 4 bytes hole, try to pack */
-        union {
-                struct {
-                        struct ib_udata    driver_udata;         /*     0    16 */
-                        struct ib_udata    ucore;                /*    16    16 */
-                        struct ib_uverbs_file * ufile;           /*    32     4 */
-                        struct ib_ucontext * context;            /*    36     4 */
-                        struct ib_uobject * uobject;             /*    40     4 */
-                        unsigned long      attr_present[2];      /*    44     8 */
-                };                                               /*     0    52 */
-                struct uverbs_attr_bundle_hdr hdr;               /*     0    52 */
-        };
+Could you investigate that ?
 
+Also please add
 
-        struct uverbs_attr         attrs[];              /*    56     0 */
+Fixes: b4436a18eedb ("media: camss: add support for SM8250 camss") and 
+cc stable@vger.kernel.org
 
-        /* size: 56, cachelines: 1, members: 2 */
-        /* sum members: 52, holes: 1, sum holes: 4 */
-        /* last cacheline: 56 bytes */
-};
-
-If you want any other information or want me to test anything, I am more
-than happy to do so.
-
-Cheers,
-Nathan
-
-> > > > > >         643 | static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-> > > > > >             | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >         644 |               "struct member likely outside of struct_group_tagged()");
-> > > > > >             |               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >       include/linux/build_bug.h:77:50: note: expanded from macro 'static_assert'
-> > > > > >          77 | #define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
-> > > > > >             |                                  ~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > >       include/linux/build_bug.h:78:56: note: expanded from macro '__static_assert'
-> > > > > >          78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg)
-> > > > > >             |                                                        ^~~~
-> > > > > >       7 warnings and 1 error generated.
-> > > > > > 
-> > > > > > 
-> > > > > > vim +643 include/rdma/uverbs_ioctl.h
-> > > > > > 
-> > > > > >       630	
-> > > > > >       631	struct uverbs_attr_bundle {
-> > > > > >       632		/* New members MUST be added within the struct_group() macro below. */
-> > > > > >       633		struct_group_tagged(uverbs_attr_bundle_hdr, hdr,
-> > > > > >       634			struct ib_udata driver_udata;
-> > > > > >       635			struct ib_udata ucore;
-> > > > > >       636			struct ib_uverbs_file *ufile;
-> > > > > >       637			struct ib_ucontext *context;
-> > > > > >       638			struct ib_uobject *uobject;
-> > > > > >       639			DECLARE_BITMAP(attr_present, UVERBS_API_ATTR_BKEY_LEN);
-> > > > > >       640		);
-> > > > > >       641		struct uverbs_attr attrs[];
-> > > > > >       642	};
-> > > > > >     > 643	static_assert(offsetof(struct uverbs_attr_bundle, attrs) == sizeof(struct uverbs_attr_bundle_hdr),
-> > > > > >       644		      "struct member likely outside of struct_group_tagged()");
-> > > > > >       645	
-> > > > > > 
-> > > > > 
-> > > 
-> > > Thanks
-> > > --
-> > > Gustavo
+---
+bod
 
