@@ -1,418 +1,228 @@
-Return-Path: <linux-kernel+bounces-273003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E867394633C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:30:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6EE946341
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:34:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 173CB1C21B23
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:30:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A071F222FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC771ABED9;
-	Fri,  2 Aug 2024 18:30:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E5E013633A;
+	Fri,  2 Aug 2024 18:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lA3kiHBc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eOIY2KL0"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B64E1ABECC
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FCA1ABEC5;
+	Fri,  2 Aug 2024 18:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722623425; cv=none; b=IRuveyTufxwiv/7tqshRQg1JfQMsipxYYQFtbexj0eW7MhQncUQCzhCwfjzDfYdoWDPe1sTLFRKvEack0dSl8Wv8Pq/wiTaTLvfC1dR6EN+mxL40mKcIz7iaGuQ7D3JzqynpaGPCrKXy211tHLApqbje0Yp4m4lDiE3ARpPXP/o=
+	t=1722623637; cv=none; b=kJ3kxcNhhXeYdg9OqAVrUsmDvt2ghxaKrw4GYscXgTphcTfe09jkdQsw8DlgLvqkp4zU/Yod7IYU2oPqRo4okoMQqRwgH3Jy1gaPu0ajpgsKyaGkSSNOZf6fBFqGcXu1d630Xip2A1tKDly55L9gh4gu2ZSuv2qAVoRz7ramPDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722623425; c=relaxed/simple;
-	bh=qxp6XOu737VJNOpOMzKEgPrtx3gTmGMKDLCjvkz/YGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hoi6zryM4aOLA78VYvY5taoWiCtygnGQf08feESDaVVwmvDgEdveNjvlTqWHL6rAMvo7TtT/WLyrDGdQWcPX74eGIULBoKubezLmi+6j1+uW94jj08qkN97cZ+ZxQwPcX2jeWcFbtDvPy8Mjuo2gLSXcjbg8TkR5zcV/uv10pH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lA3kiHBc; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722623423; x=1754159423;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=qxp6XOu737VJNOpOMzKEgPrtx3gTmGMKDLCjvkz/YGY=;
-  b=lA3kiHBcyZ+VwuPX0BGRohpax9B1rtU8VX4GOChEg2CO0Y90AkQH+ubL
-   KwEcpkZS2DBVcnSHvmBa530Co/WISUnmtNV3+UjRoVSK597ZhESLVYZ6H
-   wpI9fmsRBDq1ccv9K9DkS3BNf4p6FxyIa5SArPXEft76vZ3ueCWUmuSyP
-   enr92KHPE68en9KEaEFeurqQiVMCtAwmgFuyKn3E/+7lM3TkdOC8UftWF
-   5S5RQRaqhV+m5OJcrT2exbJASR2m02WBvOzeBC0rdKNolgdlamVXApf6e
-   Pa3CiuVRmx+omjylyWnA6+amzIqH1rpq6trCspeO7KL3SWdCF/gwHYTCN
-   A==;
-X-CSE-ConnectionGUID: BruAAMlVQrex3yW8NzhIuw==
-X-CSE-MsgGUID: jh35Le4RTZC5alj4OiWgjA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20470627"
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="20470627"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 11:30:22 -0700
-X-CSE-ConnectionGUID: X0zijsq7QDS4J9n6pMH5kg==
-X-CSE-MsgGUID: fkoDhJCvRPKKO5si+7DAIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="93023757"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 11:30:22 -0700
-Received: from [10.212.17.69] (kliang2-mobl1.ccr.corp.intel.com [10.212.17.69])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id 270A920B5782;
-	Fri,  2 Aug 2024 11:30:21 -0700 (PDT)
-Message-ID: <476e7cea-f987-432a-995b-f7d52a123c9d@linux.intel.com>
-Date: Fri, 2 Aug 2024 14:30:19 -0400
+	s=arc-20240116; t=1722623637; c=relaxed/simple;
+	bh=BajauQMNSbfUtm8LcbdMeVSE4P3qsHZATci5kJ54CbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=OM5kfhU8To0GYhv38FUP1D4kU+w4fs1uLzRqKUqCWyDF6F0sRaXHLNQ6B8SucM1u95xVe0SFB5fSGr94IDG16L4BcCf2SnfytTSsjIvsbCLb49vzUO045OfC4wEGuqH8P9rxduHMaCGoCizLFwFmY8gKBHN1TBKiiQ8KnFQFOzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eOIY2KL0; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 472FS5im012496;
+	Fri, 2 Aug 2024 18:33:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=pp1; bh=elPlBGjEdya+l
+	t9bcuYyxNIb4Z4d3rD7n1uLu0NB8MI=; b=eOIY2KL0XU6G1Re5XYppob5wkQq9u
+	92974YGGFR11dOgk3SGoU4hxX/aT+IT+mrmfMaucLIb1kWJH5HXeFF6X9SjmYVWJ
+	tC8ZogXWlj3ZukRKUPpCQ4nlGl7mXmbN6SJj/aFrsuy4Lu78T/u/tZOJJZhA15Ym
+	E+VIVPLlsoX/2xGcGY6Y3j+zHZ6o0Jkce/Fi1WeRmiZHS4D60Khu1VsunrARcZCv
+	QKR7YvTfzRLhr573zyjVb8dZ7ovXfbYZo8JmPlAdSfTh2rPauw31c36PdjmvY7GT
+	H7U2BIB3UplonQAz9MbY9Y9V3J7QSt8SxkCd0SqRo+YZzOK0Dpprt0NvQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40s1pf0f3f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 18:33:41 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 472IXe8L015002;
+	Fri, 2 Aug 2024 18:33:40 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40s1pf0f3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 18:33:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 472FwQBw011151;
+	Fri, 2 Aug 2024 18:33:39 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40ncqn8hp1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 18:33:39 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 472IXXiV34144994
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 18:33:35 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6889C20040;
+	Fri,  2 Aug 2024 18:33:33 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B3C8420043;
+	Fri,  2 Aug 2024 18:33:29 +0000 (GMT)
+Received: from li-e7e2bd4c-2dae-11b2-a85c-bfd29497117c.ibm.com.com (unknown [9.195.47.40])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  2 Aug 2024 18:33:29 +0000 (GMT)
+From: Amit Machhiwal <amachhiw@linux.ibm.com>
+To: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org, kvm-ppc@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh@kernel.org>,
+        Lizhi Hou <lizhi.hou@amd.com>, Saravana Kannan <saravanak@google.com>,
+        Vaibhav Jain <vaibhav@linux.ibm.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Vaidyanathan Srinivasan <svaidy@linux.ibm.com>,
+        Amit Machhiwal <amachhiw@linux.ibm.com>,
+        Kowshik Jois B S <kowsjois@linux.ibm.com>,
+        Lukas Wunner <lukas@wunner.de>, kernel-team@lists.ubuntu.com,
+        Stefan Bader <stefan.bader@canonical.com>
+Subject: [PATCH v3] PCI: Fix crash during pci_dev hot-unplug on pseries KVM guest
+Date: Sat,  3 Aug 2024 00:03:25 +0530
+Message-ID: <20240802183327.1309020-1-amachhiw@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ooe2HdKMnjn5F104fmgW3kHKYsawc1RM
+X-Proofpoint-GUID: Uwml1BHK5GZUEjBjn1qqDSk0ZCJ_GEeZ
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf/core: Optimize event reschedule for a PMU
-To: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
- Stephane Eranian <eranian@google.com>, Ian Rogers <irogers@google.com>,
- Mingwei Zhang <mizhang@google.com>
-References: <20240731000607.543783-1-namhyung@kernel.org>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240731000607.543783-1-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_14,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ priorityscore=1501 spamscore=0 malwarescore=0 suspectscore=0 bulkscore=0
+ mlxlogscore=822 phishscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408020127
 
+With CONFIG_PCI_DYNAMIC_OF_NODES [1], a hot-plug and hot-unplug sequence
+of a PCI device attached to a PCI-bridge causes following kernel Oops on
+a pseries KVM guest:
 
+ RTAS: event: 2, Type: Hotplug Event (229), Severity: 1
+ Kernel attempted to read user page (10ec00000048) - exploit attempt? (uid: 0)
+ BUG: Unable to handle kernel data access on read at 0x10ec00000048
+ Faulting instruction address: 0xc0000000012d8728
+ Oops: Kernel access of bad area, sig: 11 [#1]
+ LE PAGE_SIZE=64K MMU=Radix SMP NR_CPUS=2048 NUMA pSeries
+<snip>
+ NIP [c0000000012d8728] __of_changeset_entry_invert+0x10/0x1ac
+ LR [c0000000012da7f0] __of_changeset_revert_entries+0x98/0x180
+ Call Trace:
+ [c00000000bcc3970] [c0000000012daa60] of_changeset_revert+0x58/0xd8
+ [c00000000bcc39c0] [c000000000d0ed78] of_pci_remove_node+0x74/0xb0
+ [c00000000bcc39f0] [c000000000cdcfe0] pci_stop_bus_device+0xf4/0x138
+ [c00000000bcc3a30] [c000000000cdd140] pci_stop_and_remove_bus_device_locked+0x34/0x64
+ [c00000000bcc3a60] [c000000000cf3780] remove_store+0xf0/0x108
+ [c00000000bcc3ab0] [c000000000e89e04] dev_attr_store+0x34/0x78
+ [c00000000bcc3ad0] [c0000000007f8dd4] sysfs_kf_write+0x70/0xa4
+ [c00000000bcc3af0] [c0000000007f7248] kernfs_fop_write_iter+0x1d0/0x2e0
+ [c00000000bcc3b40] [c0000000006c9b08] vfs_write+0x27c/0x558
+ [c00000000bcc3bf0] [c0000000006ca168] ksys_write+0x90/0x170
+ [c00000000bcc3c40] [c000000000033248] system_call_exception+0xf8/0x290
+ [c00000000bcc3e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+<snip>
 
-On 2024-07-30 8:06 p.m., Namhyung Kim wrote:
-> Current ctx_resched() reschedules every events in all PMUs in the
-> context even if it only needs to do it for a single event.  This is the
-> case when it opens a new event or enables an existing one.  What we
-> want is to reschedule events in the PMU only.  Also perf_pmu_resched()
-> currently calls ctx_resched() without PMU information.
-> 
-> Let's add pmu argument to ctx_resched() to do the work for the given
-> PMU only.  And change the __pmu_ctx_sched_in() to be symmetrical to the
-> _sched_out() counterpart for its arguments so that it can be called
-> easily in the __perf_pmu_resched().
-> 
-> Note that __perf_install_in_context() should call ctx_resched() for the
-> very first event in the context in order to set ctx->is_active.  Later
-> events can be handled by __perf_pmu_resched().
-> 
-> Care should be taken when it installs a task event for a PMU and
-> there's no CPU event for the PMU.  __perf_pmu_resched() will ask the
-> CPU PMU context to schedule any events in it according to the group
-> info.  But as the PMU context was not activated, it didn't set the
-> event context pointer.  So I added new NULL checks in the
-> __pmu_ctx_sched_{in,out}.
-> 
-> With this change I can get 4x speed up (but actually it's proportional
-> to the number of uncore PMU events) on a 2-socket Intel EMR machine in
-> opening and closing a perf event for the core PMU in a loop while there
-> are a bunch of uncore PMU events active on the CPU.  The test code
-> (stress-pmu) follows below.
-> 
-> Before)
->   # ./stress-pmu
->   delta: 0.087068 sec (870 usec/op)
-> 
-> After)
->   # ./stress-pmu
->   delta: 0.021440 sec (214 usec/op)
-> 
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->   $ cat stress-pmu.c
->   #include <stdio.h>
->   #include <unistd.h>
->   #include <linux/perf_event.h>
->   #include <sys/syscall.h>
->   #include <sys/time.h>
-> 
->   /* from uncore cpumask on EMR */
->   #define TARGET_CPU 60
-> 
->   #define LOOP 100
->   #define US2S 1000000
-> 
->   int open_perf_event(int type, int config)
->   {
->   	struct perf_event_attr attr = {
->   		.type = type,
->   		.config = config,
->   	};
->   	int fd;
-> 
->   	fd = syscall(SYS_perf_event_open, &attr, /*pid=*/-1, TARGET_CPU,
->   			/*group_fd=*/-1, /*flags=*/0);
->   	if (fd < 0)
->   		printf("perf_event_open failed (type=%d, config=%d): %m\n", type, config);
->   	return fd;
->   }
-> 
->   int main(int argc, char *argv[])
->   {
->   	struct timeval ts1, ts2;
->   	unsigned long long delta;
->   	int target_cpu = TARGET_CPU;
-> 
->   	/* open random uncore PMU events */
->   	for (int i = 0; i < 100; i++)
->   		open_perf_event(/*type=*/i + 20, /*config=*/0);
-> 
->   	gettimeofday(&ts1, NULL);
->   	for (int i = 0; i < LOOP; i++)
->   		close(open_perf_event(PERF_TYPE_HARDWARE, PERF_COUNT_HW_CPU_CYCLES));
->   	gettimeofday(&ts2, NULL);
-> 
->   	delta = ts2.tv_sec * US2S + ts2.tv_usec - (ts1.tv_sec * US2S + ts1.tv_usec);
->   	printf("delta: %llu.%06llu sec (%llu usec/op)\n",
->   		delta / US2S, delta % US2S, delta / LOOP);
->   	return 0;
->   }
-> ---
-> v2) add 'pmu' argument to ctx_resched() to reduce duplication
-> 
->  kernel/events/core.c | 118 ++++++++++++++++++++++++++++++++++---------
->  1 file changed, 93 insertions(+), 25 deletions(-)
-> 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index f64c30e7d5da..41e2533859a4 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -709,6 +709,10 @@ static void perf_ctx_enable(struct perf_event_context *ctx, bool cgroup)
->  
->  static void ctx_sched_out(struct perf_event_context *ctx, enum event_type_t event_type);
->  static void ctx_sched_in(struct perf_event_context *ctx, enum event_type_t event_type);
-> +static void __pmu_ctx_sched_out(struct perf_event_pmu_context *pmu_ctx,
-> +				enum event_type_t event_type);
-> +static void __pmu_ctx_sched_in(struct perf_event_pmu_context *pmu_ctx,
-> +			       enum event_type_t event_type);
->  
->  #ifdef CONFIG_CGROUP_PERF
->  
-> @@ -2668,6 +2672,17 @@ static void perf_event_sched_in(struct perf_cpu_context *cpuctx,
->  		 ctx_sched_in(ctx, EVENT_FLEXIBLE);
->  }
->  
-> +static void perf_pmu_sched_in(struct perf_cpu_pmu_context *cpc,
-> +			      struct perf_event_pmu_context *task_epc)
-> +{
-> +	__pmu_ctx_sched_in(&cpc->epc, EVENT_PINNED);
-> +	if (task_epc)
-> +		 __pmu_ctx_sched_in(task_epc, EVENT_PINNED);
-> +	__pmu_ctx_sched_in(&cpc->epc, EVENT_FLEXIBLE);
-> +	if (task_epc)
-> +		 __pmu_ctx_sched_in(task_epc, EVENT_FLEXIBLE);
-> +}
-> +
->  /*
->   * We want to maintain the following priority of scheduling:
->   *  - CPU pinned (EVENT_CPU | EVENT_PINNED)
-> @@ -2683,16 +2698,13 @@ static void perf_event_sched_in(struct perf_cpu_context *cpuctx,
->   * event_type is a bit mask of the types of events involved. For CPU events,
->   * event_type is only either EVENT_PINNED or EVENT_FLEXIBLE.
->   */
-> -/*
-> - * XXX: ctx_resched() reschedule entire perf_event_context while adding new
-> - * event to the context or enabling existing event in the context. We can
-> - * probably optimize it by rescheduling only affected pmu_ctx.
-> - */
->  static void ctx_resched(struct perf_cpu_context *cpuctx,
->  			struct perf_event_context *task_ctx,
-> -			enum event_type_t event_type)
-> +			struct pmu *pmu, enum event_type_t event_type)
->  {
->  	bool cpu_event = !!(event_type & EVENT_CPU);
-> +	struct perf_cpu_pmu_context *cpc = NULL;
-> +	struct perf_event_pmu_context *epc = NULL;
->  
->  	/*
->  	 * If pinned groups are involved, flexible groups also need to be
-> @@ -2703,10 +2715,24 @@ static void ctx_resched(struct perf_cpu_context *cpuctx,
->  
->  	event_type &= EVENT_ALL;
->  
-> -	perf_ctx_disable(&cpuctx->ctx, false);
-> +	if (pmu) {
-> +		cpc = this_cpu_ptr(pmu->cpu_pmu_context);
-> +		perf_pmu_disable(pmu);
-> +	} else {
-> +		perf_ctx_disable(&cpuctx->ctx, false);
-> +	}
-> +
->  	if (task_ctx) {
-> -		perf_ctx_disable(task_ctx, false);
-> -		task_ctx_sched_out(task_ctx, event_type);
-> +		if (pmu) {
-> +			if (WARN_ON_ONCE(!cpc->task_epc || cpc->task_epc->ctx != task_ctx))
-> +				goto out;
-> +
-> +			epc = cpc->task_epc;
-> +			__pmu_ctx_sched_out(epc, event_type);
-> +		} else {
-> +			perf_ctx_disable(task_ctx, false);
-> +			task_ctx_sched_out(task_ctx, event_type);
-> +		}
->  	}
->  
->  	/*
-> @@ -2716,15 +2742,30 @@ static void ctx_resched(struct perf_cpu_context *cpuctx,
->  	 *  - EVENT_PINNED task events: schedule out EVENT_FLEXIBLE groups;
->  	 *  - otherwise, do nothing more.
->  	 */
-> -	if (cpu_event)
-> -		ctx_sched_out(&cpuctx->ctx, event_type);
-> -	else if (event_type & EVENT_PINNED)
-> -		ctx_sched_out(&cpuctx->ctx, EVENT_FLEXIBLE);
-> +	if (cpu_event) {
-> +		if (pmu)
-> +			__pmu_ctx_sched_out(&cpc->epc, event_type);
-> +		else
-> +			ctx_sched_out(&cpuctx->ctx, event_type);
-> +	} else if (event_type & EVENT_PINNED) {
-> +		if (pmu)
-> +			__pmu_ctx_sched_out(&cpc->epc, EVENT_FLEXIBLE);
-> +		else
-> +			ctx_sched_out(&cpuctx->ctx, EVENT_FLEXIBLE);
-> +	}
-> +
-> +	if (pmu)
-> +		perf_pmu_sched_in(cpc, epc);
-> +	else
-> +		perf_event_sched_in(cpuctx, task_ctx);
->  
-> -	perf_event_sched_in(cpuctx, task_ctx);
-> +out:
-> +	if (pmu)
-> +		perf_pmu_enable(pmu);
-> +	else
-> +		perf_ctx_enable(&cpuctx->ctx, false);
->  
-> -	perf_ctx_enable(&cpuctx->ctx, false);
-> -	if (task_ctx)
-> +	if (task_ctx && !pmu)
->  		perf_ctx_enable(task_ctx, false);
->  }
->  
-> @@ -2734,7 +2775,7 @@ void perf_pmu_resched(struct pmu *pmu)
->  	struct perf_event_context *task_ctx = cpuctx->task_ctx;
->  
->  	perf_ctx_lock(cpuctx, task_ctx);
-> -	ctx_resched(cpuctx, task_ctx, EVENT_ALL|EVENT_CPU);
-> +	ctx_resched(cpuctx, task_ctx, pmu, EVENT_ALL|EVENT_CPU);
->  	perf_ctx_unlock(cpuctx, task_ctx);
->  }
->  
-> @@ -2792,7 +2833,14 @@ static int  __perf_install_in_context(void *info)
->  	if (reprogram) {
->  		ctx_sched_out(ctx, EVENT_TIME);
->  		add_event_to_ctx(event, ctx);
-> -		ctx_resched(cpuctx, task_ctx, get_event_type(event));
-> +		if (ctx->nr_events == 1) {
-> +			/* The first event needs to set ctx->is_active. */
-> +			ctx_resched(cpuctx, task_ctx, NULL, get_event_type(event));
-> +		} else {
-> +			ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu,
-> +				    get_event_type(event));
-> +			ctx_sched_in(ctx, EVENT_TIME);
+A git bisect pointed this regression to be introduced via [1] that added
+a mechanism to create device tree nodes for parent PCI bridges when a
+PCI device is hot-plugged.
 
-The changelog doesn't mention the time difference much. As my
-understanding, the time is shared among PMUs in the same ctx.
-When perf does ctx_resched(), the time is deducted.
-There is no problem to stop and restart the global time when perf
-re-schedule all PMUs.
-But if only one PMU is re-scheduled while others are still running, it
-may be a problem to stop and restart the global time. Other PMUs will be
-impacted.
+The Oops is caused when `pci_stop_dev()` tries to remove a non-existing
+device-tree node associated with the pci_dev that was earlier
+hot-plugged and was attached under a pci-bridge. The PCI dev header
+`dev->hdr_type` being 0, results a conditional check done with
+`pci_is_bridge()` into false. Consequently, a call to
+`of_pci_make_dev_node()` to create a device node is never made. When at
+a later point in time, in the device node removal path, a memcpy is
+attempted in `__of_changeset_entry_invert()`; since the device node was
+never created, results in an Oops due to kernel read access to a bad
+address.
 
-Thanks,
-Kan
-> +		}
->  	} else {
->  		add_event_to_ctx(event, ctx);
->  	}
-> @@ -2962,7 +3010,8 @@ static void __perf_event_enable(struct perf_event *event,
->  	if (ctx->task)
->  		WARN_ON_ONCE(task_ctx != ctx);
->  
-> -	ctx_resched(cpuctx, task_ctx, get_event_type(event));
-> +	ctx_resched(cpuctx, task_ctx, event->pmu_ctx->pmu, get_event_type(event));
-> +	ctx_sched_in(ctx, EVENT_TIME);
->  }
->  
->  /*
-> @@ -3230,6 +3279,13 @@ static void __pmu_ctx_sched_out(struct perf_event_pmu_context *pmu_ctx,
->  	struct perf_event *event, *tmp;
->  	struct pmu *pmu = pmu_ctx->pmu;
->  
-> +	/*
-> +	 * CPU's pmu_ctx might not be active when __perf_pmu_resched() is called
-> +	 * for task events and there's no cpu events.
-> +	 */
-> +	if (ctx == NULL)
-> +		return;
-> +
->  	if (ctx->task && !ctx->is_active) {
->  		struct perf_cpu_pmu_context *cpc;
->  
-> @@ -3872,10 +3928,22 @@ static void ctx_groups_sched_in(struct perf_event_context *ctx,
->  	}
->  }
->  
-> -static void __pmu_ctx_sched_in(struct perf_event_context *ctx,
-> -			       struct pmu *pmu)
-> +static void __pmu_ctx_sched_in(struct perf_event_pmu_context *pmu_ctx,
-> +			       enum event_type_t event_type)
->  {
-> -	pmu_groups_sched_in(ctx, &ctx->flexible_groups, pmu);
-> +	struct perf_event_context *ctx = pmu_ctx->ctx;
-> +
-> +	/*
-> +	 * CPU's pmu_ctx might not be active when __perf_pmu_resched() is called
-> +	 * for task events and there's no cpu events.
-> +	 */
-> +	if (ctx == NULL)
-> +		return;
-> +
-> +	if (event_type & EVENT_PINNED)
-> +		pmu_groups_sched_in(ctx, &ctx->pinned_groups, pmu_ctx->pmu);
-> +	if (event_type & EVENT_FLEXIBLE)
-> +		pmu_groups_sched_in(ctx, &ctx->flexible_groups, pmu_ctx->pmu);
->  }
->  
->  static void
-> @@ -4309,14 +4377,14 @@ static bool perf_rotate_context(struct perf_cpu_pmu_context *cpc)
->  		update_context_time(&cpuctx->ctx);
->  		__pmu_ctx_sched_out(cpu_epc, EVENT_FLEXIBLE);
->  		rotate_ctx(&cpuctx->ctx, cpu_event);
-> -		__pmu_ctx_sched_in(&cpuctx->ctx, pmu);
-> +		__pmu_ctx_sched_in(cpu_epc, EVENT_FLEXIBLE);
->  	}
->  
->  	if (task_event)
->  		rotate_ctx(task_epc->ctx, task_event);
->  
->  	if (task_event || (task_epc && cpu_event))
-> -		__pmu_ctx_sched_in(task_epc->ctx, pmu);
-> +		__pmu_ctx_sched_in(task_epc, EVENT_FLEXIBLE);
->  
->  	perf_pmu_enable(pmu);
->  	perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
-> @@ -4394,7 +4462,7 @@ static void perf_event_enable_on_exec(struct perf_event_context *ctx)
->  	 */
->  	if (enabled) {
->  		clone_ctx = unclone_ctx(ctx);
-> -		ctx_resched(cpuctx, ctx, event_type);
-> +		ctx_resched(cpuctx, ctx, NULL, event_type);
->  	} else {
->  		ctx_sched_in(ctx, EVENT_TIME);
->  	}
+To fix this issue, the patch introduces a new flag OF_CREATE_WITH_CSET
+to keep track of device nodes created via `of_pci_make_dev_node()` and
+later attempt to destroy only such device nodes which have this flag
+set.
+
+[1] commit 407d1a51921e ("PCI: Create device tree node for bridge")
+
+Fixes: 407d1a51921e ("PCI: Create device tree node for bridge")
+Reported-by: Kowshik Jois B S <kowsjois@linux.ibm.com>
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Signed-off-by: Amit Machhiwal <amachhiw@linux.ibm.com>
+---
+Changes since v2:
+    * Drop v2 changes and introduce a different approach from Lizhi discussed
+      over the v2 of this patch
+    * V2: https://lore.kernel.org/all/20240715080726.2496198-1-amachhiw@linux.ibm.com/
+Changes since v1:
+    * Included Lizhi's suggested changes on V1
+    * Fixed below two warnings from Lizhi's changes and rearranged the cleanup
+      part a bit in `of_pci_make_dev_node`
+	drivers/pci/of.c:611:6: warning: no previous prototype for ‘of_pci_free_node’ [-Wmissing-prototypes]
+	  611 | void of_pci_free_node(struct device_node *np)
+	      |      ^~~~~~~~~~~~~~~~               
+	drivers/pci/of.c: In function ‘of_pci_make_dev_node’:
+	drivers/pci/of.c:696:1: warning: label ‘out_destroy_cset’ defined but not used [-Wunused-label]
+	  696 | out_destroy_cset:       
+	      | ^~~~~~~~~~~~~~~~  
+    * V1: https://lore.kernel.org/all/20240703141634.2974589-1-amachhiw@linux.ibm.com/
+
+ drivers/pci/of.c   | 3 ++-
+ include/linux/of.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index dacea3fc5128..bc455370143e 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -653,7 +653,7 @@ void of_pci_remove_node(struct pci_dev *pdev)
+ 	struct device_node *np;
+ 
+ 	np = pci_device_to_OF_node(pdev);
+-	if (!np || !of_node_check_flag(np, OF_DYNAMIC))
++	if (!np || !of_node_check_flag(np, OF_CREATE_WITH_CSET))
+ 		return;
+ 	pdev->dev.of_node = NULL;
+ 
+@@ -712,6 +712,7 @@ void of_pci_make_dev_node(struct pci_dev *pdev)
+ 	if (ret)
+ 		goto out_free_node;
+ 
++	of_node_set_flag(np, OF_CREATE_WITH_CSET);
+ 	np->data = cset;
+ 	pdev->dev.of_node = np;
+ 	kfree(name);
+diff --git a/include/linux/of.h b/include/linux/of.h
+index 85b60ac9eec5..5faa5a1198c6 100644
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -153,6 +153,7 @@ extern struct device_node *of_stdout;
+ #define OF_POPULATED_BUS	4 /* platform bus created for children */
+ #define OF_OVERLAY		5 /* allocated for an overlay */
+ #define OF_OVERLAY_FREE_CSET	6 /* in overlay cset being freed */
++#define OF_CREATE_WITH_CSET	7 /* Created by of_changeset_create_node */
+ 
+ #define OF_BAD_ADDR	((u64)-1)
+ 
+
+base-commit: 948752d2e010e11b56a877975e7e9158d6d31823
+-- 
+2.45.2
+
 
