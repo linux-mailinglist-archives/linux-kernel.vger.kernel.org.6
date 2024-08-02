@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-272641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED396945F49
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:19:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AFC9945F4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:21:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3E991F23551
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:19:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD896B2144C
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F6B1DF695;
-	Fri,  2 Aug 2024 14:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7DD200101;
+	Fri,  2 Aug 2024 14:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="NJuqZbOX"
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qvh14qT5"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2F4134AB
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 14:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4891E675E;
+	Fri,  2 Aug 2024 14:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722608382; cv=none; b=Wn21GwAKGYV4zwWV2W8IRTLLaMv8R9g/dq3cgLhDHshi037QSdiMq9i51Iq7h32vpN8oCYFfzdPucQiiN8x4MZ84fNyJ5Dq0fkTq304a5/FPOedpbQwyxxc2i27xZwp8Tpc2j6yZ/DYm2Ni7xy2u8OCNlERdjT+JWKouvCEyWKs=
+	t=1722608459; cv=none; b=pSxp8ud3rVMwK2RQO+exXh9ZXYamyKPrzFMFXZVSQf7eDlEgy1jCDHN6WxtBMGzYnFQGL4KVgO5h6gEf8fVAl9O2Vmc54K4dNQXlZqvkwzlHHeKA7tKHtfwzzPiy/K0wfQCzimi2+JTSTZysYh3YzrZ1mmsTncyIqLIBCHzh6Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722608382; c=relaxed/simple;
-	bh=9AwOV1xY/6bcSKEojkWV2tXrTkkDBQgOu11D93FEBVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nFsF6MaBJONKZKGXp5Kkhyp4Pb8ulYGUr5Qjr1HtSDBYpEwhEd+yW/7ORyFe+Hm8xOYYEROXT71N92FdgbF/8iBAMBV7zX4fxDQrX/mLz6dMRyajcoZ9zfimygAWNECqc9o2AS2T6da7GGikM00oRLalP4L0b20GCj7RZqZVXlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=NJuqZbOX; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1722608378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NfmldAyPR0XS48riCwB2dyl03w/kFlpZkf4R1WTO7yk=;
-	b=NJuqZbOXLW4UblnHStnGE1rVjE2kzlOoGbBtrKYam1IIqQxsI6I/ZPgSRwV11dT6S8h6Yv
-	SuUJxaG5YfSEzswIIOIokMgbdqOXNs23+4PZoeZq2m2bc5i1p4a8e6m5W6kIrbgOeffsk5
-	zr9BR02pr7O3w21rwS+goSJNcNpHzBvmmc8IzZe6Ws9BoIWrNu/OuBHtCrA12K+VYsTwqS
-	WijHz7QRSTvw36HGUJalH0273WEz8uf1bs/cYZ/yVbEHH3HsM5rFnBQpmBf0gg46o8vDp0
-	z43sxROcueSczs/UIc8QxzsWPJgtIsi9I4lM8khoBUG5/SaEAyB/LKNW0QkBwA==
-From: Diederik de Haas <didi.debian@cknow.org>
-To: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>,
- "Bjoern A. Zeeb" <bzeeb-lists@lists.zabbadoz.net>
-Cc: linux-rockchip@lists.infradead.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
-Date: Fri, 02 Aug 2024 16:19:20 +0200
-Message-ID: <30814906.IcDJEyoAGT@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <4q216op8-0p0r-n053-383o-3rpqq8s37p4p@yvfgf.mnoonqbm.arg>
-References: <4q216op8-0p0r-n053-383o-3rpqq8s37p4p@yvfgf.mnoonqbm.arg>
+	s=arc-20240116; t=1722608459; c=relaxed/simple;
+	bh=2Kymamk11WOD8rnOrRmPds0W4hbW7wudYniLHvRIzSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vk6H+Pib8oEFSMUNfF9NgLsjgvnIh0ZEH1yuDd8fZQuYaYFGywj+JZWIz5YHuXOMdP32iDrnrVNV8t687Jdfi2FYbiUn7O+nnN+7ejuQhtsn00u/MWbrveGKlNCTm3ovCcHk0iEGEdvjfFZ0tfqafc6WXCYkjU74LrmvMg+dFQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qvh14qT5; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-44fe188d25cso29208231cf.3;
+        Fri, 02 Aug 2024 07:20:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722608457; x=1723213257; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/Aj+cOhj6fWjHbOXBRNHu2NV1As7NWdRG5jmqjIx7c=;
+        b=Qvh14qT5zDx906Ty3FLE+aZ5oaV++NZUUCL+cBLF5JvftvtBpNm5YZKzqqVT+cfxLM
+         BN8Hpm6wOF9jFoVYdr7G7VZnZ7rL+UYIcuLVs6edfQr5eerf8HBH7c8SBf4B7FujFeId
+         QvSAR1DWQ49Q+CVrENKK9g7fxZCVwhQ2MzBgY998IKOF9jtJf5PLf+7bHS15N7T8yj/q
+         g4cXFRHpH68HjzmEiQOu7M35qjtLqqhddLk2jmEtDMuMJm387uVTL+10wX3Eqje+7uxQ
+         IvYTXQdKhRnanWWabsHVkdyH4lIXo8Ro9c+tLicpaNHbHM9wM99LqNZHiFDN0hq1enOu
+         XZFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722608457; x=1723213257;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u/Aj+cOhj6fWjHbOXBRNHu2NV1As7NWdRG5jmqjIx7c=;
+        b=CYUdYvDzFgpwi5FNVNv4Sf+OaD7k4Rf/pJecRMWzthRkIyZNVO/0X2YjH2H0r0uHPV
+         sEyjQxT24veMVGi2mIi01KwyT3akYbiixuazqRlJNowBAzMHr1xV1yI2+LCA+1J8uv+w
+         bdZ6csuE57Dt6m0MxuB64gwTDNzGx8I8lxc07NXX0EjVoTlW2gqVmJIQCA5y9x3yDaJP
+         VMWc74+Q1CKx6OYVzQj0o7ZPMPkEsmZhbA3RNjn6iO+h961CY2GbDCBA9yiIaPDFycmP
+         pPHfQ/UciXKprmjIoXWmQJXvPKfhz4X4JrIyYp8xfIgmxXsHezx3pLwNHBU59QlEjv4r
+         zNHA==
+X-Forwarded-Encrypted: i=1; AJvYcCV90MOBjhqi4gwMgVYLjcbQnBbqAETtNcw4u9yzp/G1ZeECtrsvHUAAUWNlm0O9npyW4685TaxG92RyP4X1lSdp8cvWtU06CZ1W3pKU+hxwU59y5GnzUfhIIKOSGpuPo9AuXW5OXV9478S4gTU=
+X-Gm-Message-State: AOJu0YxGvK9ijadTj/YjCuANyDbK1qRovtOQYU6TS5JoT4Izo51M5pJ5
+	sYR6MyAunbatxMnE+WzR9TS7MhPm9WyV5/OQ11Z5Rw7P1ZpN2ibh
+X-Google-Smtp-Source: AGHT+IGYsdNpvcww/DdGLjPvpxF/cJtWqthxbgg6K7qnEWRHjA26hsZ4u2Xysg8+gRDe8ELpQb2ZOA==
+X-Received: by 2002:a05:622a:5794:b0:44f:fb77:74ce with SMTP id d75a77b69052e-4518928df7fmr41673291cf.47.1722608457010;
+        Fri, 02 Aug 2024 07:20:57 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4518a6c5080sm7544581cf.27.2024.08.02.07.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 07:20:56 -0700 (PDT)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id E89421200066;
+	Fri,  2 Aug 2024 10:20:55 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Fri, 02 Aug 2024 10:20:55 -0400
+X-ME-Sender: <xms:R-usZuv88RDC2Ollm6Ip8E5F1nzNPS0uTLVPBruW-916_Ay5tU-owA>
+    <xme:R-usZjfu3dpzI-9I9Hl58hoptbM6MZZPvsSHtMm3nnCh1ygJM19SuFNciILdKaiqq
+    EZsGt5uGnd-UtLXOw>
+X-ME-Received: <xmr:R-usZpwvmNi8Z3MwnaFO1dInqtVYlXoe7dHMWOQIxQIyXPbxlkBAyCl5ISgyQA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdejhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepuehoqhhu
+    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
+    htthgvrhhnpeejhfeikeekffejgeegueevffdtgeefudetleegjeelvdffteeihfelfeeh
+    vdegkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhh
+    phgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunh
+    drfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphht
+    thhopedt
+X-ME-Proxy: <xmx:R-usZpPZRWTKwFrqBdyMMyjIIzz_1qGM48ks3mf2r2P1QXevQftSDA>
+    <xmx:R-usZu95_7wh7iJmjIIbVFnuf6OIv5kdzbmJTeUxtEq2HObqdDe3RA>
+    <xmx:R-usZhVBjiuEur7rjyfyL_ABoazn678EQYlGN6FNVyyVvRB2Balr2g>
+    <xmx:R-usZnclBAJKTbMI3x0XHnnqPt75XNyKS27GjZUsARrsgKYQ9vpbBQ>
+    <xmx:R-usZoeq0VkgecjcFoux6xdD2OOWPzK2pzWWf4hJRGJDBntIt-6I7kVb>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 2 Aug 2024 10:20:55 -0400 (EDT)
+Date: Fri, 2 Aug 2024 07:20:04 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: add `ARef::into_raw`
+Message-ID: <ZqzrFEbBAbHmil-j@boqun-archlinux>
+References: <20240801-aref-into-raw-v1-1-33401e2fbac8@google.com>
+ <CAH5fLgiHc7azNtwTKNoLP93-APMqkK6vGFKYSEPepWoyNgNjrA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1797573.PpvvgvNjxp";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgiHc7azNtwTKNoLP93-APMqkK6vGFKYSEPepWoyNgNjrA@mail.gmail.com>
 
---nextPart1797573.PpvvgvNjxp
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
-Date: Fri, 02 Aug 2024 16:19:20 +0200
-Message-ID: <30814906.IcDJEyoAGT@bagend>
-Organization: Connecting Knowledge
-In-Reply-To: <4q216op8-0p0r-n053-383o-3rpqq8s37p4p@yvfgf.mnoonqbm.arg>
-References: <4q216op8-0p0r-n053-383o-3rpqq8s37p4p@yvfgf.mnoonqbm.arg>
-MIME-Version: 1.0
-
-On Friday, 2 August 2024 15:57:26 CEST Bjoern A. Zeeb wrote:
-> Uhm... I am confused now, I copy-pasted the emmc block from this file:
-> > https://github.com/friendlyarm/uboot-rockchip/blob/nanopi4-v2017.09/arch/a
-> > rm/dts/rk3328-nanopi-r2.dts#L7
-> > 
-> > The header does not have the "OR MIT" in there, it's just
-> > "SPDX-License-Identifier:     GPL-2.0+" which is what I also copied
-> > over, together with the (c) part.
-> > 
-> > The source which I was using is described in the commit message:
-> > 
-> > The eMMC configuration for the DTS has been extracted and copied from
-> > rk3328-nanopi-r2.dts, v2017.09 branch from the friendlyarm/uboot-rockchip
-> > repository.
-> > 
-> > Maybe you looked at a different branch? Shall I still add the "OR
-> > MIT" or leave it as in the original file which I copied it from?
+On Thu, Aug 01, 2024 at 04:45:02PM +0200, Alice Ryhl wrote:
+> On Thu, Aug 1, 2024 at 4:17 PM Alice Ryhl <aliceryhl@google.com> wrote:
+> >
+> > Add a method for `ARef` that is analogous to `Arc::into_raw`. It is the
+> > inverse operation of `ARef::from_raw`, and allows you to convert the
+> > `ARef` back into a raw pointer while retaining ownership of the
+> > refcount.
+> >
+> > This new function will be used by [1] for converting the type in an
+> > `ARef` using `ARef::from_raw(ARef::into_raw(me).cast())`. The author has
+> > also needed the same function for other use-cases in the past, but [1]
+> > is the first to go upstream.
+> >
+> > Link: https://lore.kernel.org/r/20240801-vma-v3-1-db6c1c0afda9@google.com [1]
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > 
-> That explains also why there's no sdmmc_ext/sdio bits...
-> 
-> See here for more:
-> https://github.com/friendlyarm/kernel-rockchip/blob/nanopi-r2-v6.1.y/arch/ar
-> m64/boot/dts/rockchip/rk3328-nanopi-r2-rev24.dts
-> 
-> My current believe is that rockchip/rk3328.dtsi needs the additional
->         sdmmc_ext: mmc@ff5f0000
+> Actually I just realized that there's already another use on the list in
+> https://lore.kernel.org/all/20240725-alice-file-v8-0-55a2e80deaa8@google.com/
 
-A commit with that was recently accepted:
-https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v6.12-armsoc/dts64&id=82e3aaae388199a0aff33e5371db307b3274f77a
---nextPart1797573.PpvvgvNjxp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Yes, I was about to point this out ;-)
 
------BEGIN PGP SIGNATURE-----
+I picked this up in rust-dev and rebased file patches onto it for
+testing purpose.
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZqzq6AAKCRDXblvOeH7b
-biILAP48t26oOx22f21UmUwwHg1k6celldSi0dI+CPz8B7AmMQD7BgbYS2CJGBsK
-2++Y+ZsKZRgv6T6/vGPW+gNk40e/8wg=
-=6GGj
------END PGP SIGNATURE-----
+In the meanwhile,
 
---nextPart1797573.PpvvgvNjxp--
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
-
-
+Regards,
+Boqun
 
