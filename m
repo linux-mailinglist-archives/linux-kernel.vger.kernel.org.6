@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-272217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509CB9458BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:29:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB42A9458BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A62C2827E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:29:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FDD41F2166B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408111BF322;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5591BF31D;
 	Fri,  2 Aug 2024 07:28:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aAxYc/nd";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="99lYFX+Q"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Fr5swXot";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A9NgLhjR"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85701BE871;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FDE1BE849;
 	Fri,  2 Aug 2024 07:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583728; cv=none; b=G4jfR5oZJWs3pZUd9uAw9/q1D5adP8chQzjGpO1qoJbf0/R6SO8Yoo+YICQIchr/OwxChMgQK8eTQtY5wvX2G8zzKWSIRYJXCZuWSGjm/QRWQe8bR8si5AryeSCcHjyK3jr2lXkw04JGwH0MamCoGDGPVlB7Ntau5eOmNayXrD8=
+	t=1722583728; cv=none; b=n3x4lPLxWOepgB5C+l7DFChI8OztoZ6cZKhIn+AUeFcdN6J1i8AF5fR+WnFHvO4qDZoPzIL/z2fCfBx6BvbFSpIiw8HyOkCUrjG7XuyTSXxxU1Us3Cep0BpWwpRBr44t9shHzCAPpbaYSjrxEUsz0fyDVccZ7QE5RD9BE9gUW6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722583728; c=relaxed/simple;
-	bh=MSZtsnC9+DrdVztFbzbJHV439uYN67UJwHw8HfPzveo=;
+	bh=AX8rJPpqq4CwoTE+BFJS6lJkoA5976suMhSApXfDE3A=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=pl7T+WeTWFYa/z0t6wb8a+v0q/C5X3zpUVQljha5+Vdsjnjjj1caVupVo/+8kiqaJ4+Sg34kg5A55RAJURvE9LdZKJCsNsOvFL3PHKJsXCi/Bp/RGBd5UuxzrVn5e2nbk4uATFe+bKoQlyxPQ0bTM/RFDbSv+omlZC4GwaNthKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aAxYc/nd; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=99lYFX+Q; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=YTf+yKtZFcDI0/1yXBrgDzdQ7GeYOh8sFeFi1u6wIrglI2D/QqjRUCcqkKyNikMa6Hg5+WhMQ4p/8BHFFj7IifBqqnPfyX2GsWgyu2PfsSY0CFJS+85zxkT2ABTj9zMYkwCugdyvaBcTywEt7ZvnBtdr/TmpzziBKzpxFhet454=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Fr5swXot; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A9NgLhjR; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Fri, 02 Aug 2024 07:28:44 -0000
@@ -39,12 +39,12 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YH31syhgdm0P5RBj7isSvZf24bvFG+f9Bbfgzi0wNNY=;
-	b=aAxYc/nddDg7Jbr039NOAOypEbxBF7X5G9ZNpGxVzhD3dksanengEMhwS1hBm76ltPN+As
-	Exrzx/WQMWrw3Id4bQHLnl4Tdqb6Nml8CHffn1EFl7t4eWp3pDwq75nxCWkVtvRgJq8HHN
-	sPjrLhbJpRVXN4LTYUo+Lvvc0gPqo84uoO1jKimOruKPE7L+SLUJm2DjGzahAck7Nl/1bA
-	a1mI9NXtcBhsNoF/ltCPUoQTVcES+i/WczTwJKY1v2qmKw+unAdd3sDZoRAINz7GHcW6il
-	FoJziimo5A883R7C98SrWnNL9Zsqdo4SnvlopnxY9M2oEWoqneP/dolnnt1yLQ==
+	bh=OayC4uiKP95/n0b+gmKVCTLAfEUnQyT16PXrP77RFbM=;
+	b=Fr5swXotvVBNostRqzlGkZU0vsBcE4gfoVpASG0VGITWeplvWSP6FwL3KIyFyS6/ycYwHA
+	wy6RU4DGe3S2tMd+wF0cQYA4oJE8AEgrAnAel+UkJJei25yOw/ZypzZP7WXGxCKoKw1d6U
+	FYDhqR/a8YtmnvefspgoAvNUemGknmpwkGgqY/3rMicq/MAViNWHE6jU5A0kZV/a5EadGk
+	ADyZfRyFqlId303is+K65lkImCBNkHjIY6wkQwm8cZezmIVUn2AgOBVvS/I1NtrZ/kEuXe
+	L6bns7gRuimjD6yMDd1WE1nZ0sNDyIfsQw3pQL0lcNMQ+pHbpUPRrKMOjqsPWg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1722583725;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
@@ -52,26 +52,26 @@ DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YH31syhgdm0P5RBj7isSvZf24bvFG+f9Bbfgzi0wNNY=;
-	b=99lYFX+QMPXHbHlR9MrjwcvnqqiGuugVeVY6qrkdHL/hlcVk9bmLDO8L95uV2q+IYzEdc7
-	Ngz+kfDDwvwkBqBA==
+	bh=OayC4uiKP95/n0b+gmKVCTLAfEUnQyT16PXrP77RFbM=;
+	b=A9NgLhjRPWzcLG7Xci1QbZKJ3G9TwhhBM+ofFL+NbUO2o1iaPWqCQGMbf6LEey4wnHQ32I
+	/6UOJb2HHHam6gAQ==
 From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] tools/x86/kcpuid: Recognize all leaves with subleaves
+Subject: [tip: x86/misc] tools/x86/kcpuid: Parse subleaf ranges if provided
 Cc: "Ahmed S. Darwish" <darwi@linutronix.de>,
  Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20240718134755.378115-7-darwi@linutronix.de>
-References: <20240718134755.378115-7-darwi@linutronix.de>
+In-Reply-To: <20240718134755.378115-8-darwi@linutronix.de>
+References: <20240718134755.378115-8-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172258372493.2215.15603553489756330967.tip-bot2@tip-bot2>
+Message-ID: <172258372467.2215.15179877611876782990.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,108 +81,117 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/misc branch of tip:
 
-Commit-ID:     b0a59d14966dbfe0d544b2595dcb29728d41daf3
-Gitweb:        https://git.kernel.org/tip/b0a59d14966dbfe0d544b2595dcb29728d41daf3
+Commit-ID:     58921443e9b04bbb1866070ed14ea39578302cea
+Gitweb:        https://git.kernel.org/tip/58921443e9b04bbb1866070ed14ea39578302cea
 Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Thu, 18 Jul 2024 15:47:46 +02:00
+AuthorDate:    Thu, 18 Jul 2024 15:47:47 +02:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Fri, 02 Aug 2024 09:17:19 +02:00
 
-tools/x86/kcpuid: Recognize all leaves with subleaves
+tools/x86/kcpuid: Parse subleaf ranges if provided
 
-cpuid.csv will be extended in further commits with all-publicly-known
-CPUID leaves and bitfields.  Thus, modify has_subleafs() to identify all
-known leaves with subleaves.
+It's a common pattern in cpuid leaves to have the same bitfields format
+repeated across a number of subleaves.  Typically, this is used for
+enumerating hierarchial structures like cache and TLB levels, CPU
+topology levels, etc.
 
-Remove the redundant "is_amd" check since all x86 vendors already report
-the maxium supported extended leaf at leaf 0x80000000 EAX register.
+Modify kcpuid.c to handle subleaf ranges in the CSV file subleaves
+column.  For example, make it able to parse lines in the form:
 
-The extra mentioned leaves are:
+ # LEAF, SUBLEAVES,  reg,    bits,    short_name             , ...
+    0xb,       1:0,  eax,     4:0,    x2apic_id_shift        , ...
+    0xb,       1:0,  ebx,    15:0,    domain_lcpus_count     , ...
+    0xb,       1:0,  ecx,     7:0,    domain_nr              , ...
 
-  - Leaf 0x12, Intel Software Guard Extensions (SGX) enumeration
-  - Leaf 0x14, Intel process trace (PT) enumeration
-  - Leaf 0x17, Intel SoC vendor attributes enumeration
-  - Leaf 0x1b, Intel PCONFIG (Platform configuration) enumeration
-  - Leaf 0x1d, Intel AMX (Advanced Matrix Extensions) tile information
-  - Leaf 0x1f, Intel v2 extended topology enumeration
-  - Leaf 0x23, Intel ArchPerfmonExt (Architectural PMU ext) enumeration
-  - Leaf 0x80000020, AMD Platform QoS extended features enumeration
-  - Leaf 0x80000026, AMD v2 extended topology enumeration
-
-Set the 'max_subleaf' variable for all the newly marked leaves with extra
-subleaves.  Ideally, this should be fetched from the CSV file instead,
-but the current kcpuid code architecture has two runs: one run to
-serially invoke the cpuid instructions and save all the output in-memory,
-and one run to parse this in-memory output through the CSV specification.
+This way, full output can be printed to the user.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240718134755.378115-7-darwi@linutronix.de
+Link: https://lore.kernel.org/all/20240718134755.378115-8-darwi@linutronix.de
 
 ---
- tools/arch/x86/kcpuid/kcpuid.c | 39 +++++++++++++++------------------
- 1 file changed, 18 insertions(+), 21 deletions(-)
+ tools/arch/x86/kcpuid/kcpuid.c | 50 +++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 18 deletions(-)
 
 diff --git a/tools/arch/x86/kcpuid/kcpuid.c b/tools/arch/x86/kcpuid/kcpuid.c
-index c4f0ace..725a7a2 100644
+index 725a7a2..1b25c0a 100644
 --- a/tools/arch/x86/kcpuid/kcpuid.c
 +++ b/tools/arch/x86/kcpuid/kcpuid.c
-@@ -98,27 +98,17 @@ static inline void cpuid(u32 *eax, u32 *ebx, u32 *ecx, u32 *edx)
+@@ -305,6 +305,8 @@ static int parse_line(char *line)
+ 	struct bits_desc *bdesc;
+ 	int reg_index;
+ 	char *start, *end;
++	u32 subleaf_start, subleaf_end;
++	unsigned bit_start, bit_end;
  
- static inline bool has_subleafs(u32 f)
- {
--	if (f == 0x7 || f == 0xd)
--		return true;
--
--	if (is_amd) {
--		if (f == 0x8000001d)
-+	u32 with_subleaves[] = {
-+		0x4,  0x7,  0xb,  0xd,  0xf,  0x10, 0x12,
-+		0x14, 0x17, 0x18, 0x1b, 0x1d, 0x1f, 0x23,
-+		0x8000001d, 0x80000020, 0x80000026,
-+	};
+ 	/* Skip comments and NULL line */
+ 	if (line[0] == '#' || line[0] == '\n')
+@@ -343,13 +345,25 @@ static int parse_line(char *line)
+ 		return 0;
+ 
+ 	/* subleaf */
+-	sub = strtoul(tokens[1], NULL, 0);
+-	if ((int)sub > func->nr)
+-		return -1;
++	buf = tokens[1];
++	end = strtok(buf, ":");
++	start = strtok(NULL, ":");
++	subleaf_end = strtoul(end, NULL, 0);
 +
-+	for (unsigned i = 0; i < ARRAY_SIZE(with_subleaves); i++)
-+		if (f == with_subleaves[i])
- 			return true;
--		return false;
--	}
++	/* A subleaf range is given? */
++	if (start) {
++		subleaf_start = strtoul(start, NULL, 0);
++		subleaf_end = min(subleaf_end, (u32)(func->nr - 1));
++		if (subleaf_start > subleaf_end)
++			return 0;
++	} else {
++		subleaf_start = subleaf_end;
++		if (subleaf_start > (u32)(func->nr - 1))
++			return 0;
++	}
  
--	switch (f) {
--	case 0x4:
--	case 0xb:
--	case 0xf:
--	case 0x10:
--	case 0x14:
--	case 0x18:
--	case 0x1f:
--		return true;
--	default:
--		return false;
--	}
-+	return false;
- }
- 
- static void leaf_print_raw(struct subleaf *leaf)
-@@ -253,11 +243,18 @@ struct cpuid_range *setup_cpuid_range(u32 input_eax)
- 		 * Some can provide the exact number of subleafs,
- 		 * others have to be tried (0xf)
- 		 */
--		if (f == 0x7 || f == 0x14 || f == 0x17 || f == 0x18)
-+		if (f == 0x7 || f == 0x14 || f == 0x17 || f == 0x18 || f == 0x1d)
- 			max_subleaf = min((eax & 0xff) + 1, max_subleaf);
+-	leaf = &func->leafs[sub];
++	/* register */
+ 	buf = tokens[2];
 -
- 		if (f == 0xb)
- 			max_subleaf = 2;
-+		if (f == 0x1f)
-+			max_subleaf = 6;
-+		if (f == 0x23)
-+			max_subleaf = 4;
-+		if (f == 0x80000020)
-+			max_subleaf = 4;
-+		if (f == 0x80000026)
-+			max_subleaf = 5;
+ 	if (strcasestr(buf, "EAX"))
+ 		reg_index = R_EAX;
+ 	else if (strcasestr(buf, "EBX"))
+@@ -361,23 +375,23 @@ static int parse_line(char *line)
+ 	else
+ 		goto err_exit;
  
- 		for (subleaf = 1; subleaf < max_subleaf; subleaf++) {
- 			eax = f;
+-	reg = &leaf->info[reg_index];
+-	bdesc = &reg->descs[reg->nr++];
+-
+ 	/* bit flag or bits field */
+ 	buf = tokens[3];
+-
+ 	end = strtok(buf, ":");
+-	bdesc->end = strtoul(end, NULL, 0);
+-	bdesc->start = bdesc->end;
+-
+-	/* start != NULL means it is bit fields */
+ 	start = strtok(NULL, ":");
+-	if (start)
+-		bdesc->start = strtoul(start, NULL, 0);
+-
+-	strcpy(bdesc->simp, strtok(tokens[4], " \t"));
+-	strcpy(bdesc->detail, tokens[5]);
++	bit_end = strtoul(end, NULL, 0);
++	bit_start = (start) ? strtoul(start, NULL, 0) : bit_end;
++
++	for (sub = subleaf_start; sub <= subleaf_end; sub++) {
++		leaf = &func->leafs[sub];
++		reg = &leaf->info[reg_index];
++		bdesc = &reg->descs[reg->nr++];
++
++		bdesc->end = bit_end;
++		bdesc->start = bit_start;
++		strcpy(bdesc->simp, strtok(tokens[4], " \t"));
++		strcpy(bdesc->detail, tokens[5]);
++	}
+ 	return 0;
+ 
+ err_exit:
 
