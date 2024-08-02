@@ -1,148 +1,79 @@
-Return-Path: <linux-kernel+bounces-272078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D82D99456B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:31:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73D9B9456AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 05:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96941287B1C
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:31:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5AFD1C239FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 03:28:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA33717BB7;
-	Fri,  2 Aug 2024 03:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22DDDD9;
+	Fri,  2 Aug 2024 03:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="CTxcDIIF"
-Received: from jpms-ob02.noc.sony.co.jp (jpms-ob02.noc.sony.co.jp [211.125.140.165])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gndKFcda"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA281843;
-	Fri,  2 Aug 2024 03:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.125.140.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E78632;
+	Fri,  2 Aug 2024 03:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722569490; cv=none; b=kXFayUkaFj0MdSpToCWyFf0FsE1S6vU0RRTtz5eJentJFq4LFwS+JClRC2HkxlKRNyGVWZUxso48qY58Oy/nTmcm0ztZNsJIgSCSXm2RoTz4CgTr8wcAYolkQjkfJVTjryWlI4zYwjeHV1Di1pG2ur6r//TrFFlu81kx4qzW3Xk=
+	t=1722569295; cv=none; b=SE8nYQcZSnrrTwKUyuJMGwlZgfVQM+RZltFYDdmRQeT3Ij/D78PweCoIIq17TqCyVSuf46rKOlJNU1n0FUkVofqdJA6Zv3rMO+jtnuk///TnxCUTdwMxokIalzK9Mcfn1Kird6AiEn7CI7dB/PTAiO4UuraPKeu7vKq1PRoOsnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722569490; c=relaxed/simple;
-	bh=IoKGaJjiiWv6ridCIc75ylDeCAgVsKMuPLCnhYRXPdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pHrHzKOiQvMGna+ZJZTrcoZMF/sE/097VQKX40UuKnJE4xrkDbWGGbWR4bUIOBOSgTaPdag84DzX3IkM8D2JS6G0DIjef10dRFlePj61trVwu/RVgy09WGA6Io8q4r2oda95e/SV3CvegwaZEY/PqThyg5qWq3OzC5P0TrxaKdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=CTxcDIIF; arc=none smtp.client-ip=211.125.140.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=sony.com; s=s1jp; t=1722569488; x=1754105488;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=It1n5107QzexUTv1lC1lBZjArYGklpb5D1BwKSF0RLQ=;
-  b=CTxcDIIFQGnuUGltXC9txhl1AIowVulEx1uPFQ0OPqnubfqFux5hciIs
-   tylvHnQ8bAmkuCowj4eIHJf7x1HxjMoedDYntWYDyLZQnxkHcApgwuYyJ
-   BweORI8632tOcE4xiDbyPQnmzGLIPkkZ5/8sZ2Lo11y7IVU4aBm4/lZD5
-   ShrtI+bKkjo7v/VVCujTtvbRzhRzmEfEUYRRwTNkXg4PoJ+MymzGRBYiP
-   Rv5lnxzX3z6VlR150TnU/cUYNogDmwh6hxCiHpjQEFfdr8ZqFvs63tWP6
-   EAhSjbP4oB8Khb6BBWD0SLb8zqvyciPOZBmkJ37WEeb/c1eQq3MC+Zi7F
-   g==;
-Received: from unknown (HELO jpmta-ob1.noc.sony.co.jp) ([IPv6:2001:cf8:0:6e7::6])
-  by jpms-ob02.noc.sony.co.jp with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 12:21:17 +0900
-X-IronPort-AV: E=Sophos;i="6.09,256,1716217200"; 
-   d="scan'208";a="442143396"
-Received: from unknown (HELO LXJ00013846) ([IPv6:2001:cf8:1:1611:9e7b:efff:fe46:27de])
-  by jpmta-ob1.noc.sony.co.jp with ESMTP; 02 Aug 2024 12:21:17 +0900
-Date: Fri, 2 Aug 2024 12:21:21 +0900
-From: Keita Aihara <keita.aihara@sony.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jonathan Bell <jonathan@raspberrypi.com>, Tim.Bird@sony.com,
-	Shingo.Takeuchi@sony.com, Masaya.Takahashi@sony.com,
-	keita.aihara@sony.com, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: core: apply SD quirks earlier during probe
-Message-ID: <20240802032121.GA4019194@sony.com>
+	s=arc-20240116; t=1722569295; c=relaxed/simple;
+	bh=AqRC/eavpLox64IoEZeEvoEasmNJBYMHNUQruJqiQv0=;
+	h=Date:From:To:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=WjXMuJcAqoo/rAIOESUV8xKlScMfOp1mRtMb/BvR9O4WgwTYvCYiSC+vMc6z23zE7r3dSW8DeGzcxKox5Szp4GzpryGy+xDZv15K9zEQRcfftQhudX8RbCtmvuenbVS2voB5gMtM0TUdTVj8TIbhmcz8UrTJ357tTl0sWCYkNVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gndKFcda; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78514C32782;
+	Fri,  2 Aug 2024 03:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722569294;
+	bh=AqRC/eavpLox64IoEZeEvoEasmNJBYMHNUQruJqiQv0=;
+	h=Date:From:To:Subject:In-Reply-To:References:From;
+	b=gndKFcdaHsNwz1m3QgHdEY0go1uf9qVzBpD5hm+CBCVNQP9ma+J6XFgwOrKuYtR3x
+	 gvOKZpdvHH9iGoGF3s3Jrp8EMcEGtsVErs+QmTZNH95JM8K4sFthZ2DxX1VEp6NNJt
+	 RsO/4UmNwCLIWzZ4EtsFG0rub1Zmvs8AZwRMnUkAnDKAnY5Gt5MFCqNhll6Lvsx+ps
+	 nI9EwjXVkV/DzyndvZ1UzdxcH/jPWMJ9G68FBlaxgg/FweUKjfUButkXzgH6LMeael
+	 qNnFaJqogCwQjnCzGstXZpJ+1j7CrFI0j9t+eeqvw3tmtdgW4EWxxTE1WVRgWiXfkR
+	 bLgp2wQC3weYQ==
+Date: Thu, 01 Aug 2024 20:28:12 -0700
+From: Kees Cook <kees@kernel.org>
+To: =?UTF-8?Q?Wojciech_G=C5=82adysz?= <wojciech.gladysz@infogain.com>,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ ebiederm@xmission.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_kernel/fs=3A_last_check_f?=
+ =?US-ASCII?Q?or_exec_credentials_on_NOEXEC_mount?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
+References: <20240801120745.13318-1-wojciech.gladysz@infogain.com>
+Message-ID: <C96FCBBF-6D63-431F-AEA8-81B7937CB9B1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Applying MMC_QUIRK_BROKEN_SD_CACHE is broken, as the card's extended
-registers are parsed prior to the quirk being applied in mmc_blk.
 
-Split this out into an SD-specific list of quirks and apply in
-mmc_sd_init_card instead.
 
-Fixes: c467c8f08185 ("mmc: Add MMC_QUIRK_BROKEN_SD_CACHE for Kingston Canvas Go Plus from 11/2019")
-Authored-by: Jonathan Bell <jonathan@raspberrypi.com>
-Signed-off-by: Jonathan Bell <jonathan@raspberrypi.com>
-Signed-off-by: Keita Aihara <keita.aihara@sony.com>
----
- drivers/mmc/core/quirks.h | 22 +++++++++++++---------
- drivers/mmc/core/sd.c     |  4 ++++
- 2 files changed, 17 insertions(+), 9 deletions(-)
+On August 1, 2024 5:07:45 AM PDT, "Wojciech G=C5=82adysz" <wojciech=2Eglad=
+ysz@infogain=2Ecom> wrote:
+>Test case: thread mounts NOEXEC fuse to a file being executed=2E
+>WARN_ON_ONCE is triggered yielding panic for some config=2E
+>Add a check to security_bprm_creds_for_exec(bprm)=2E
 
-diff --git a/drivers/mmc/core/quirks.h b/drivers/mmc/core/quirks.h
-index cca71867bc4a..92905fc46436 100644
---- a/drivers/mmc/core/quirks.h
-+++ b/drivers/mmc/core/quirks.h
-@@ -15,6 +15,19 @@
+As others have noted, this is racy=2E I would still like to keep the redun=
+dant check as-is, but let's lower it from WARN to pr_warn_ratelimited, sinc=
+e it's a known race that can be reached from userspace=2E
 
- #include "card.h"
-
-+static const struct mmc_fixup __maybe_unused mmc_sd_fixups[] = {
-+	/*
-+	 * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
-+	 * This has so far only been observed on cards from 11/2019, while new
-+	 * cards from 2023/05 do not exhibit this behavior.
-+	 */
-+	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
-+		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
-+		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
-+
-+	END_FIXUP
-+};
-+
- static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
- #define INAND_CMD38_ARG_EXT_CSD  113
- #define INAND_CMD38_ARG_ERASE    0x00
-@@ -53,15 +66,6 @@ static const struct mmc_fixup __maybe_unused mmc_blk_fixups[] = {
- 	MMC_FIXUP("MMC32G", CID_MANFID_TOSHIBA, CID_OEMID_ANY, add_quirk_mmc,
- 		  MMC_QUIRK_BLK_NO_CMD23),
-
--	/*
--	 * Kingston Canvas Go! Plus microSD cards never finish SD cache flush.
--	 * This has so far only been observed on cards from 11/2019, while new
--	 * cards from 2023/05 do not exhibit this behavior.
--	 */
--	_FIXUP_EXT("SD64G", CID_MANFID_KINGSTON_SD, 0x5449, 2019, 11,
--		   0, -1ull, SDIO_ANY_ID, SDIO_ANY_ID, add_quirk_sd,
--		   MMC_QUIRK_BROKEN_SD_CACHE, EXT_CSD_REV_ANY),
--
- 	/*
- 	 * Some SD cards lockup while using CMD23 multiblock transfers.
- 	 */
-diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-index 1c8148cdda50..ee37ad14e79e 100644
---- a/drivers/mmc/core/sd.c
-+++ b/drivers/mmc/core/sd.c
-@@ -26,6 +26,7 @@
- #include "host.h"
- #include "bus.h"
- #include "mmc_ops.h"
-+#include "quirks.h"
- #include "sd.h"
- #include "sd_ops.h"
-
-@@ -1475,6 +1476,9 @@ static int mmc_sd_init_card(struct mmc_host *host, u32 ocr,
- 			goto free_card;
- 	}
-
-+	/* Apply quirks prior to card setup */
-+	mmc_fixup_device(card, mmc_sd_fixups);
-+
- 	err = mmc_sd_setup_card(host, card, oldcard != NULL);
- 	if (err)
- 		goto free_card;
---
-2.43.2
-
+--=20
+Kees Cook
 
