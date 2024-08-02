@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-271960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9308194556D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7107B945571
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45A51C22B15
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:34:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5D71F232BE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C34917BD3;
-	Fri,  2 Aug 2024 00:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558EC3D97A;
+	Fri,  2 Aug 2024 00:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiZjm0+N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJeZdika"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804E8EAE9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF91168DA;
 	Fri,  2 Aug 2024 00:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722558868; cv=none; b=dkXQgm20L/gqSXaboZavZerl6H4Xrjk/eyYedM4tMI5GwRzQykrSY0EdbMc5EJ6ChpdLA/emYV24K4EQt2XQXA6GhrZZPI7XWJX+2Y27RWwClY8o+02e9rX3pM9L6EWWBpDRyskv4SJqJ1Giy4mXDGroENDlUxOQMm84cwzkBwQ=
+	t=1722558869; cv=none; b=g5tTesnLxmNwuZ2ZKwmtlYHQutUKCRp3ysJozvP97M+dYhaCr+vXRRpl7ReAhtMbshQ6pK7anD7cQOSW9WktfETquETYpdVlhhjGS4o7VUvn1ev3hX0BWievQZDUKHINzNXMjPmscUT5lj4huM15gmsPQFzOXi7nzfz1PWLPRGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722558868; c=relaxed/simple;
-	bh=S/VfjVcS8Be7DWVforJ3o2DzecpeB4W6woz2WULZdnY=;
+	s=arc-20240116; t=1722558869; c=relaxed/simple;
+	bh=9C6fIiB/R+CnzPnUcGPw5yPIwJNQLck0Q+T4uibP3zg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=daaJh66q2TkTKlgZCRX/mbbh9+GhtTxs3kfv6+fWtrKqNoBc11g5yXUQaBv+lXI0kTfy2X6e3S1B8L/PXnAtJWDWkScf473ePbTpGDPA/JWVBf5cl3W8Ne7EGILwMw95mgSkp6vxB3kgOaaKnlwVLJWjTldlJsgqPhjuDM/8fGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiZjm0+N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B17EC4AF0F;
+	 MIME-Version; b=FR4NNSiRbGFMtnlUEUyicKH7RVslS59NvUD01QMP5MdFgAmhl4Ax9/bzkqBXrKA7swwr5mw6vP5c8y9PT8aEsFCM+iNdRC7aC9xOYP5h5EXy0okgV++vjuJUAkX9mDbBFMyO5Fih6VhKWRCMRFmm6lNpiH98vuYAzDS3QkoYt60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJeZdika; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9903AC4AF15;
 	Fri,  2 Aug 2024 00:34:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722558868;
-	bh=S/VfjVcS8Be7DWVforJ3o2DzecpeB4W6woz2WULZdnY=;
+	bh=9C6fIiB/R+CnzPnUcGPw5yPIwJNQLck0Q+T4uibP3zg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PiZjm0+Nn936+7RteanWAYOc+FAWLt5WdjGPvXFL23bqd8ilawnnad6hCMAVUL+oZ
-	 UEbLTRXIf/BbdM+/Uhf2z+Oo0aGb50mcn+2Ub6DiD5mu3Buq0tV5iZq4HAXRd1bH2Q
-	 5rlM7ycyTC4TS7XEL+1JSa8s45Nr4BqXGVgxemcf87U/9Oz0+Ojf289aZ5rsqZiHJv
-	 Y/w0SKskEbtIeD+8rDSoIo2DD+cysxPoxd3gIH/IyfvTIbrGGL8IBAyxxeR2YoenjP
-	 PGp+ewpatxofqipKySdwGrLG1vidB2VczT8k7EQuT0lKnxeI99Nx6o2ixocnLKzJnN
-	 ds+aZ6kHmHOxg==
+	b=nJeZdikadeB8zMehwiJaMByVnqDWfOB3bNNwugWjvE2xxBNfwVH1DVEsGCcBSeClk
+	 3+2gy5m6qBgoO/uvVtqXx7wDnibQISE9gYfIoA6FLMV9rxYqMAomKlY1BPr00OHLG1
+	 PpOk2SILhUlN//PCThh5Mm25O+9YaWmgYa6CE/iz8yEQwcAJzl6Y5cFj/6DN0hnzuT
+	 CQBUbDw6Z8Hd5SCoTEawSavdT6BU9I5xCrVdV1eRTNs4gbC6gdKzNuolO0JUTeuKit
+	 bJkemCSDdjGh6wkaDprZXWVS7r6ZgDBxk3tKJ6T3a9LvaD3ikZlNAwSZJCrXzYOvs6
+	 q3WQntdSCc8Tg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id ECB4BCE0F69; Thu,  1 Aug 2024 17:34:27 -0700 (PDT)
+	id EF11CCE0FA1; Thu,  1 Aug 2024 17:34:27 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 5/6] rcu/tasks: Add detailed grace-period and barrier diagnostics
-Date: Thu,  1 Aug 2024 17:34:25 -0700
-Message-Id: <20240802003426.4134196-5-paulmck@kernel.org>
+Subject: [PATCH rcu 6/6] rcu/tasks: Add rcu_barrier_tasks*() start time to diagnostics
+Date: Thu,  1 Aug 2024 17:34:26 -0700
+Message-Id: <20240802003426.4134196-6-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <41c68c6b-2c55-4c2d-ab70-f2a5b38eb374@paulmck-laptop>
 References: <41c68c6b-2c55-4c2d-ab70-f2a5b38eb374@paulmck-laptop>
@@ -62,148 +62,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds rcu_tasks_torture_stats_print(),
-rcu_tasks_trace_torture_stats_print(), and
-rcu_tasks_rude_torture_stats_print() functions that provide detailed
-diagnostics on grace-period, callback, and barrier state.
+This commit adds the start time, in jiffies, of the most recently started
+rcu_barrier_tasks*() operation to the diagnostic output used by rcuscale.
+This information can be helpful in distinguishing a hung barrier operation
+from a long series of barrier operations.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- include/linux/rcupdate.h |  3 ++
- kernel/rcu/tasks.h       | 63 ++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 64 insertions(+), 2 deletions(-)
+ kernel/rcu/tasks.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index e40a726fe1a03..58d84c59f3dda 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -174,6 +174,7 @@ static inline void rcu_nocb_flush_deferred_wakeup(void) { }
- 	} while (0)
- void call_rcu_tasks(struct rcu_head *head, rcu_callback_t func);
- void synchronize_rcu_tasks(void);
-+void rcu_tasks_torture_stats_print(char *tt, char *tf);
- # else
- # define rcu_tasks_classic_qs(t, preempt) do { } while (0)
- # define call_rcu_tasks call_rcu
-@@ -200,6 +201,7 @@ void rcu_tasks_trace_qs_blkd(struct task_struct *t);
- 			rcu_tasks_trace_qs_blkd(t);				\
- 		}								\
- 	} while (0)
-+void rcu_tasks_trace_torture_stats_print(char *tt, char *tf);
- # else
- # define rcu_tasks_trace_qs(t) do { } while (0)
- # endif
-@@ -212,6 +214,7 @@ do {									\
- 
- # ifdef CONFIG_TASKS_RUDE_RCU
- void synchronize_rcu_tasks_rude(void);
-+void rcu_tasks_rude_torture_stats_print(char *tt, char *tf);
- # endif
- 
- #define rcu_note_voluntary_context_switch(t) rcu_tasks_qs(t, false)
 diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
-index 6f1e82e548bbc..37597f7c581ca 100644
+index 37597f7c581ca..2f8d6c8e3c4ce 100644
 --- a/kernel/rcu/tasks.h
 +++ b/kernel/rcu/tasks.h
-@@ -712,9 +712,7 @@ static void __init rcu_tasks_bootup_oddness(void)
- #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
- }
- 
--#endif /* #ifndef CONFIG_TINY_RCU */
- 
--#ifndef CONFIG_TINY_RCU
- /* Dump out rcutorture-relevant state common to all RCU-tasks flavors. */
- static void show_rcu_tasks_generic_gp_kthread(struct rcu_tasks *rtp, char *s)
- {
-@@ -748,6 +746,52 @@ static void show_rcu_tasks_generic_gp_kthread(struct rcu_tasks *rtp, char *s)
- 		rtp->lazy_jiffies,
- 		s);
- }
-+
-+/* Dump out more rcutorture-relevant state common to all RCU-tasks flavors. */
-+static void rcu_tasks_torture_stats_print_generic(struct rcu_tasks *rtp, char *tt,
-+						  char *tf, char *tst)
-+{
-+	cpumask_var_t cm;
-+	int cpu;
-+	bool gotcb = false;
-+	unsigned long j = jiffies;
-+
-+	pr_alert("%s%s Tasks%s RCU g%ld gp_start %lu gp_jiffies %lu gp_state %d (%s).\n",
-+		 tt, tf, tst, data_race(rtp->tasks_gp_seq),
-+		 j - data_race(rtp->gp_start), j - data_race(rtp->gp_jiffies),
-+		 data_race(rtp->gp_state), tasks_gp_state_getname(rtp));
-+	pr_alert("\tEnqueue shift %d limit %d Dequeue limit %d gpseq %lu.\n",
-+		 data_race(rtp->percpu_enqueue_shift),
-+		 data_race(rtp->percpu_enqueue_lim),
-+		 data_race(rtp->percpu_dequeue_lim),
-+		 data_race(rtp->percpu_dequeue_gpseq));
-+	(void)zalloc_cpumask_var(&cm, GFP_KERNEL);
-+	pr_alert("\tCallback counts:");
-+	for_each_possible_cpu(cpu) {
-+		long n;
-+		struct rcu_tasks_percpu *rtpcp = per_cpu_ptr(rtp->rtpcpu, cpu);
-+
-+		if (cpumask_available(cm) && !rcu_barrier_cb_is_done(&rtpcp->barrier_q_head))
-+			cpumask_set_cpu(cpu, cm);
-+		n = rcu_segcblist_n_cbs(&rtpcp->cblist);
-+		if (!n)
-+			continue;
-+		pr_cont(" %d:%ld", cpu, n);
-+		gotcb = true;
-+	}
-+	if (gotcb)
-+		pr_cont(".\n");
-+	else
-+		pr_cont(" (none).\n");
-+	pr_alert("\tBarrier seq %lu count %d holdout CPUs ",
-+		 data_race(rtp->barrier_q_seq), atomic_read(&rtp->barrier_q_count));
-+	if (cpumask_available(cm) && !cpumask_empty(cm))
-+		pr_cont(" %*pbl.\n", cpumask_pr_args(cm));
-+	else
-+		pr_cont("(none).\n");
-+	free_cpumask_var(cm);
-+}
-+
- #endif // #ifndef CONFIG_TINY_RCU
- 
- static void exit_tasks_rcu_finish_trace(struct task_struct *t);
-@@ -1199,6 +1243,11 @@ void show_rcu_tasks_classic_gp_kthread(void)
- 	show_rcu_tasks_generic_gp_kthread(&rcu_tasks, "");
- }
- EXPORT_SYMBOL_GPL(show_rcu_tasks_classic_gp_kthread);
-+void rcu_tasks_torture_stats_print(char *tt, char *tf)
-+{
-+	rcu_tasks_torture_stats_print_generic(&rcu_tasks, tt, tf, "");
-+}
-+EXPORT_SYMBOL_GPL(rcu_tasks_torture_stats_print);
- #endif // !defined(CONFIG_TINY_RCU)
- 
- struct task_struct *get_rcu_tasks_gp_kthread(void)
-@@ -1360,6 +1409,11 @@ void show_rcu_tasks_rude_gp_kthread(void)
- 	show_rcu_tasks_generic_gp_kthread(&rcu_tasks_rude, "");
- }
- EXPORT_SYMBOL_GPL(show_rcu_tasks_rude_gp_kthread);
-+void rcu_tasks_rude_torture_stats_print(char *tt, char *tf)
-+{
-+	rcu_tasks_torture_stats_print_generic(&rcu_tasks_rude, tt, tf, "");
-+}
-+EXPORT_SYMBOL_GPL(rcu_tasks_rude_torture_stats_print);
- #endif // !defined(CONFIG_TINY_RCU)
- 
- struct task_struct *get_rcu_tasks_rude_gp_kthread(void)
-@@ -2037,6 +2091,11 @@ void show_rcu_tasks_trace_gp_kthread(void)
- 	show_rcu_tasks_generic_gp_kthread(&rcu_tasks_trace, buf);
- }
- EXPORT_SYMBOL_GPL(show_rcu_tasks_trace_gp_kthread);
-+void rcu_tasks_trace_torture_stats_print(char *tt, char *tf)
-+{
-+	rcu_tasks_torture_stats_print_generic(&rcu_tasks_trace, tt, tf, "");
-+}
-+EXPORT_SYMBOL_GPL(rcu_tasks_trace_torture_stats_print);
- #endif // !defined(CONFIG_TINY_RCU)
- 
- struct task_struct *get_rcu_tasks_trace_gp_kthread(void)
+@@ -85,6 +85,7 @@ struct rcu_tasks_percpu {
+  * @barrier_q_count: Number of queues being waited on.
+  * @barrier_q_completion: Barrier wait/wakeup mechanism.
+  * @barrier_q_seq: Sequence number for barrier operations.
++ * @barrier_q_start: Most recent barrier start in jiffies.
+  * @name: This flavor's textual name.
+  * @kname: This flavor's kthread name.
+  */
+@@ -120,6 +121,7 @@ struct rcu_tasks {
+ 	atomic_t barrier_q_count;
+ 	struct completion barrier_q_completion;
+ 	unsigned long barrier_q_seq;
++	unsigned long barrier_q_start;
+ 	char *name;
+ 	char *kname;
+ };
+@@ -428,6 +430,7 @@ static void __maybe_unused rcu_barrier_tasks_generic(struct rcu_tasks *rtp)
+ 		mutex_unlock(&rtp->barrier_q_mutex);
+ 		return;
+ 	}
++	rtp->barrier_q_start = jiffies;
+ 	rcu_seq_start(&rtp->barrier_q_seq);
+ 	init_completion(&rtp->barrier_q_completion);
+ 	atomic_set(&rtp->barrier_q_count, 2);
+@@ -783,8 +786,9 @@ static void rcu_tasks_torture_stats_print_generic(struct rcu_tasks *rtp, char *t
+ 		pr_cont(".\n");
+ 	else
+ 		pr_cont(" (none).\n");
+-	pr_alert("\tBarrier seq %lu count %d holdout CPUs ",
+-		 data_race(rtp->barrier_q_seq), atomic_read(&rtp->barrier_q_count));
++	pr_alert("\tBarrier seq %lu start %lu count %d holdout CPUs ",
++		 data_race(rtp->barrier_q_seq), j - data_race(rtp->barrier_q_start),
++		 atomic_read(&rtp->barrier_q_count));
+ 	if (cpumask_available(cm) && !cpumask_empty(cm))
+ 		pr_cont(" %*pbl.\n", cpumask_pr_args(cm));
+ 	else
 -- 
 2.40.1
 
