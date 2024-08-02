@@ -1,117 +1,707 @@
-Return-Path: <linux-kernel+bounces-273114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6284E9464AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:52:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A569E9464AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21DC3281609
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:52:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22575B20D60
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 814B77173C;
-	Fri,  2 Aug 2024 20:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C379E4CE05;
+	Fri,  2 Aug 2024 20:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dG87xNtM"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DxIG/QYd"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF3A1ABEA7
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02DC1ABEA7
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722631893; cv=none; b=WYQFYyXSvSqcHMemhGgHzcrti+cYm+jm+xIWcmmnfX/55jTkW+EuMreD8gkSPKdKRUnsMkrmb1eiy5ggvgZYtiaIRlm9gA8uFSGjFi91I8AHF8/ewaWOcSuhy7MvFOnLTUlgijO0PGDmVIjLOYwuKO/Uh2MP5CTxV2oWmKTpPnM=
+	t=1722632082; cv=none; b=pCmygx8bBXWETcy2FHbhfYXiJ1viCfuSmOQhSwKsmb0Ihlmyh1rqeN9da+9IoTIQGbsbRzdleJXYkYfvznwODVq9lzZ0Be5MINNPOudgnNUr4aH+GSherh9TVRSU4WwZ7bWFicqiPFy7/a1qeipJSq7fgBuxoKXgguA2YfnYTxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722631893; c=relaxed/simple;
-	bh=FueBNgDDCfYI2k+0y4y+ZR1Vsa5mvu9gB1exHHHan94=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=m5ZBIVpKmaTP3MKE3BfXi2ULkJl3xRVjMyGg9nZGSwzrzhxtxRGMphkOUa/kjF/v8i4WVqIZsz0e35c4BoNwCLySLBNo+h07V1NMsR+NQFdi09GbAoG0IqBluXt0GcyVJGrzFv7fa9I2PKONxZtUs3jvKZw6AMES93jyI4wcgHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dG87xNtM; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70e9ea89b42so7816550b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:51:32 -0700 (PDT)
+	s=arc-20240116; t=1722632082; c=relaxed/simple;
+	bh=vyQULwtxehRllWh9q1SAbpNIPqWIP0ePKMmOUIf7Qlo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CynUKiTTXwRvxP2nau6HVtPoSgJ0JVOayHAawstvT5T08jgeBctc6Kir1UtO/KLKjfSC7Uy2Xz3qBc3vc18J0a2L6izzFMo4qU6WltQD0xUmqRYf+iUCfDzH2BKabxqhYKeK9fB9GcFf+FoAp5cUBzDmFy45vHtXLyngDhVw7jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DxIG/QYd; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so16417545e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:54:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722631892; x=1723236692; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tXkYm8GWgU7Uugm4gxQOf+EOoFr0lG6UD/VJhjiOPnM=;
-        b=dG87xNtM3VLx+c+QMuryFY30aJ15tBOPtpwpo4+bhEVpRyCtFI1Jv1f0bzykPJgg/I
-         NIPJN320Ukuzi9yfoo9cihjcJRcQmFRax0ffjpd0PTfRmz08j0xo1l7F3bWExgqL6NrI
-         l28oPFyBQKv8CeYtx1yyJn1wxwc8ow8LwVmmRiDGT/lL7iY4VwuhwOpY2HRSsLIIpJrY
-         OkrMb6rKV7xqVed8I9BzWwzsELuG/R0Yxk8fAzdRLrwRzjFzqAZJ9FBCj0D6EtrqX98E
-         bn82vqF9DFHewXlIWHPceyCzIUu1r0/Pzyo+qcmlsUuT8aII1R/nHX3kmVTWXT7q2R21
-         H9kA==
+        d=gmail.com; s=20230601; t=1722632078; x=1723236878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xf8GJ1zLNQJB8KzN1/W/mx1wF5oK7IkwRl10EcOWGNo=;
+        b=DxIG/QYdoQ+6GNveLaS5mQ+eic+CYZWZp5a933oh2jobp7lEoKCcU30Jx6He+KpE0E
+         kbQ4g3zB6D/vrb1LYKKZH9yYUa7ZStlBzzib7oUHucrVBE/tD+hRb24dvqh49gC0mtDm
+         IRfbNtFeK2ogw5VdKXK7q5SSkRJ0dq9kt9NJ+ef3pnFFBlyFzl7C5GTjDyJJasUt/pEa
+         Xa9BGy8BGcBZ2H8/F6x17WKRKhwfQAj0KxVKHF/Th4n/Ukql48pQksbvPfIEUHGGmLR1
+         EAkU7+pHto0gX0ylqq5XbOYY96RNScJ1dCg9efRYl85MtIfb4KbGen2SoIyFQ1YPVmvG
+         Blqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722631892; x=1723236692;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tXkYm8GWgU7Uugm4gxQOf+EOoFr0lG6UD/VJhjiOPnM=;
-        b=WZKEE/K2/B2a8tf5r2P8C26exCy+6sGdZu+b2BSuhiskvWUegPEkIgqrFLsesfqked
-         DFRlF0+VeT4j8+V1jSIJzpqLZ3wr7tyhBkLxu9mr0EKEZOAqfWOUnrlOuG2LVldfUItI
-         GeJ+vfIy4FiKNRjz4QINdflLUqYTv0xlXGnEZSSs//vvjbUWTrKh1egzijfQPTd1w7pr
-         H0DwuJjh0XRhJic4Oerj7FwhN2bDuFxh0T+qZ2Aw44/U4DX7sAJx2AkjlN0BhqIF1rAK
-         Rmf+dJ28G61RcIBgl1kSdhdb4e/aBIrKTAhahMRcQ/LJYK4jE5ZBCD8YPoufwENlBfXp
-         v9bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrK2vyvex2ipRxBzzFrbHDRRr5JNrnbojpQs9sMJPBxv/VtxvWTEoG06idT7cobJFy1UXTCq+wX+xT5NVIDYELDCzBOXsnIRzrkXkq
-X-Gm-Message-State: AOJu0YwVo5x1HmuAJvel0DlekONYM7qvSMOS+sA52tt2Cy0kru+ZKhsi
-	COdWE9P20D9OFvEpbRA33p+t0V7xTlauBP5At1bpwjA/vL69J0cxV0ZXRR9Gtg4kiYozFECmnVq
-	NWA==
-X-Google-Smtp-Source: AGHT+IE1tZi1nsiH0SIgqwEaG7Vb1R0ZlJXHcVhuB6HgEl7rj1NR5a6/czPeOlKS3H+iSO3nwk8SFUENvrM=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:6f01:b0:70d:fba:c51c with SMTP id
- d2e1a72fcca58-7106d071bd2mr16631b3a.3.1722631891698; Fri, 02 Aug 2024
- 13:51:31 -0700 (PDT)
-Date: Fri, 2 Aug 2024 13:51:30 -0700
-In-Reply-To: <CABayD+dHLXwQK3YdwVi6raf+CF3XOaAiAG+tfDYPiZFzqeVXpQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1722632078; x=1723236878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xf8GJ1zLNQJB8KzN1/W/mx1wF5oK7IkwRl10EcOWGNo=;
+        b=gGTgOF3nuK0L1+rguRcoX5NVLRHBYQeDTbhMmkJRHNE7wAUoX+g9tU4hYBk5oZ6v5z
+         n9oqWZirE93XZR8wtVXHBpjXgG56/gEwfxVydGuFnet/oGyrfs+VAAMOK8Ibu38TxjuD
+         hBsw7H6Xx50asGT0YkRIk9OEVGdJI7glaFUNk+WPeccn43BBKvqnX88I9OrFQDyFp/Wu
+         JmrLvuh1xa8xVqptFtQUorH8xfa3KH24W1awivWsjGGr7C8QHy/ScD/SFNvNjB37z6xL
+         qPzycfWINTiic/LeA/g3BiPbCHJQDsDlYzeuGJPr4TCJb7vQGSzaq/7KqO2vG9H2ubdw
+         j/1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkjVhTXVt75mc9DLorHgcHsEGBpWCPk8SN8s2HKnPpE1bHhufIm4z+YU3WhyIEhsfC8rHWYTahoNnHbYzDeTXJiuorc/MxcctWo7W6
+X-Gm-Message-State: AOJu0YxnsOx2itVskV7JgeSkORW5rlCqLjIKFCnL6QIb0b621tfg43O4
+	a7bQuT7G2eu1dtjFzSVEyaK2swuSGxzz/CdmFXKNFCrzjRQw5x27RWpn3uJEkX9ghbY+DJSGJQB
+	pTMjGpQ5yhkLgrXJLVeiWbo2GW6g=
+X-Google-Smtp-Source: AGHT+IGiadScY5JXQIWnVOjHlFpUntk4YVOiKv3kj6tj85YM8LPI/BcepYNQgv5+EzOB9pZbLAoIoyF/iWUeAMo5dU4=
+X-Received: by 2002:a5d:47ce:0:b0:367:9828:f42d with SMTP id
+ ffacd0b85a97d-36bbc190693mr3711275f8f.53.1722632077654; Fri, 02 Aug 2024
+ 13:54:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802200136.329973-1-seanjc@google.com> <20240802200136.329973-3-seanjc@google.com>
- <CABayD+dHLXwQK3YdwVi6raf+CF3XOaAiAG+tfDYPiZFzqeVXpQ@mail.gmail.com>
-Message-ID: <Zq1G0n-b8_C6DFp7@google.com>
-Subject: Re: [PATCH 2/2] KVM: Protect vCPU's "last run PID" with rwlock, not RCU
-From: Sean Christopherson <seanjc@google.com>
-To: Steve Rutherford <srutherford@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Paolo Bonzini <pbonzini@redhat.com>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20240802-kasan-tsbrcu-v6-0-60d86ea78416@google.com> <20240802-kasan-tsbrcu-v6-2-60d86ea78416@google.com>
+In-Reply-To: <20240802-kasan-tsbrcu-v6-2-60d86ea78416@google.com>
+From: Andrey Konovalov <andreyknvl@gmail.com>
+Date: Fri, 2 Aug 2024 22:54:26 +0200
+Message-ID: <CA+fCnZeaphqQvZTdmJ2EFDXx2V26Fut_R1Lt2DmPC0osDL0wyA@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] slub: Introduce CONFIG_SLUB_RCU_DEBUG
+To: Jann Horn <jannh@google.com>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Vincenzo Frascino <vincenzo.frascino@arm.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@linux.com>, 
+	Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	Marco Elver <elver@google.com>, kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 02, 2024, Steve Rutherford wrote:
-> On Fri, Aug 2, 2024 at 1:01=E2=80=AFPM Sean Christopherson <seanjc@google=
-.com> wrote:
-> > @@ -4178,9 +4181,9 @@ static int vcpu_get_pid(void *data, u64 *val)
-> >  {
-> >         struct kvm_vcpu *vcpu =3D data;
-> >
-> > -       rcu_read_lock();
-> > -       *val =3D pid_nr(rcu_dereference(vcpu->pid));
-> > -       rcu_read_unlock();
-> > +       read_lock(&vcpu->pid_lock);
-> > +       *val =3D pid_nr(vcpu->pid);
-> > +       read_unlock(&vcpu->pid_lock);
-> >         return 0;
-> >  }
-> >
-> > @@ -4466,7 +4469,7 @@ static long kvm_vcpu_ioctl(struct file *filp,
-> >                 r =3D -EINVAL;
-> >                 if (arg)
-> >                         goto out;
-> > -               oldpid =3D rcu_access_pointer(vcpu->pid);
-> > +               oldpid =3D vcpu->pid;
->=20
-> Overall this patch looks correct, but this spot took me a moment, and
-> I want to confirm. This skips the reader lock since writing only
-> happens just below, under the vcpu lock, and we've already taken that
-> lock?
+On Fri, Aug 2, 2024 at 10:32=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+>
+> Currently, KASAN is unable to catch use-after-free in SLAB_TYPESAFE_BY_RC=
+U
+> slabs because use-after-free is allowed within the RCU grace period by
+> design.
+>
+> Add a SLUB debugging feature which RCU-delays every individual
+> kmem_cache_free() before either actually freeing the object or handing it
+> off to KASAN, and change KASAN to poison freed objects as normal when thi=
+s
+> option is enabled.
+>
+> For now I've configured Kconfig.debug to default-enable this feature in t=
+he
+> KASAN GENERIC and SW_TAGS modes; I'm not enabling it by default in HW_TAG=
+S
+> mode because I'm not sure if it might have unwanted performance degradati=
+on
+> effects there.
+>
+> Note that this is mostly useful with KASAN in the quarantine-based GENERI=
+C
+> mode; SLAB_TYPESAFE_BY_RCU slabs are basically always also slabs with a
+> ->ctor, and KASAN's assign_tag() currently has to assign fixed tags for
+> those, reducing the effectiveness of SW_TAGS/HW_TAGS mode.
+> (A possible future extension of this work would be to also let SLUB call
+> the ->ctor() on every allocation instead of only when the slab page is
+> allocated; then tag-based modes would be able to assign new tags on every
+> reallocation.)
+>
+> Tested-by: syzbot+263726e59eab6b442723@syzkaller.appspotmail.com
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  include/linux/kasan.h | 17 +++++++----
+>  mm/Kconfig.debug      | 30 +++++++++++++++++++
+>  mm/kasan/common.c     | 11 +++----
+>  mm/kasan/kasan_test.c | 46 ++++++++++++++++++++++++++++++
+>  mm/slab_common.c      | 12 ++++++++
+>  mm/slub.c             | 79 +++++++++++++++++++++++++++++++++++++++++++++=
+------
+>  6 files changed, 176 insertions(+), 19 deletions(-)
+>
+> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
+> index 1570c7191176..00a3bf7c0d8f 100644
+> --- a/include/linux/kasan.h
+> +++ b/include/linux/kasan.h
+> @@ -193,40 +193,44 @@ static __always_inline bool kasan_slab_pre_free(str=
+uct kmem_cache *s,
+>  {
+>         if (kasan_enabled())
+>                 return __kasan_slab_pre_free(s, object, _RET_IP_);
+>         return false;
+>  }
+>
+> -bool __kasan_slab_free(struct kmem_cache *s, void *object, bool init);
+> +bool __kasan_slab_free(struct kmem_cache *s, void *object, bool init,
+> +                      bool still_accessible);
+>  /**
+>   * kasan_slab_free - Poison, initialize, and quarantine a slab object.
+>   * @object: Object to be freed.
+>   * @init: Whether to initialize the object.
+> + * @still_accessible: Whether the object contents are still accessible.
+>   *
+>   * This function informs that a slab object has been freed and is not
+> - * supposed to be accessed anymore, except for objects in
+> - * SLAB_TYPESAFE_BY_RCU caches.
+> + * supposed to be accessed anymore, except when @still_accessible is set
+> + * (indicating that the object is in a SLAB_TYPESAFE_BY_RCU cache and an=
+ RCU
+> + * grace period might not have passed yet).
+>   *
+>   * For KASAN modes that have integrated memory initialization
+>   * (kasan_has_integrated_init() =3D=3D true), this function also initial=
+izes
+>   * the object's memory. For other modes, the @init argument is ignored.
+>   *
+>   * This function might also take ownership of the object to quarantine i=
+t.
+>   * When this happens, KASAN will defer freeing the object to a later
+>   * stage and handle it internally until then. The return value indicates
+>   * whether KASAN took ownership of the object.
+>   *
+>   * This function is intended only for use by the slab allocator.
+>   *
+>   * @Return true if KASAN took ownership of the object; false otherwise.
+>   */
+>  static __always_inline bool kasan_slab_free(struct kmem_cache *s,
+> -                                               void *object, bool init)
+> +                                               void *object, bool init,
+> +                                               bool still_accessible)
+>  {
+>         if (kasan_enabled())
+> -               return __kasan_slab_free(s, object, init);
+> +               return __kasan_slab_free(s, object, init, still_accessibl=
+e);
+>         return false;
+>  }
+>
+>  void __kasan_kfree_large(void *ptr, unsigned long ip);
+>  static __always_inline void kasan_kfree_large(void *ptr)
+>  {
+> @@ -416,13 +420,14 @@ static inline void *kasan_init_slab_obj(struct kmem=
+_cache *cache,
+>
+>  static inline bool kasan_slab_pre_free(struct kmem_cache *s, void *objec=
+t)
+>  {
+>         return false;
+>  }
+>
+> -static inline bool kasan_slab_free(struct kmem_cache *s, void *object, b=
+ool init)
+> +static inline bool kasan_slab_free(struct kmem_cache *s, void *object,
+> +                                  bool init, bool still_accessible)
+>  {
+>         return false;
+>  }
+>  static inline void kasan_kfree_large(void *ptr) {}
+>  static inline void *kasan_slab_alloc(struct kmem_cache *s, void *object,
+>                                    gfp_t flags, bool init)
+> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+> index afc72fde0f03..8e440214aac8 100644
+> --- a/mm/Kconfig.debug
+> +++ b/mm/Kconfig.debug
+> @@ -67,12 +67,42 @@ config SLUB_DEBUG_ON
+>           equivalent to specifying the "slab_debug" parameter on boot.
+>           There is no support for more fine grained debug control like
+>           possible with slab_debug=3Dxxx. SLUB debugging may be switched
+>           off in a kernel built with CONFIG_SLUB_DEBUG_ON by specifying
+>           "slab_debug=3D-".
+>
+> +config SLUB_RCU_DEBUG
+> +       bool "Enable UAF detection in TYPESAFE_BY_RCU caches (for KASAN)"
+> +       depends on SLUB_DEBUG
+> +       depends on KASAN # not a real dependency; currently useless witho=
+ut KASAN
+> +       default KASAN_GENERIC || KASAN_SW_TAGS
+> +       help
+> +         Make SLAB_TYPESAFE_BY_RCU caches behave approximately as if the=
+ cache
+> +         was not marked as SLAB_TYPESAFE_BY_RCU and every caller used
+> +         kfree_rcu() instead.
+> +
+> +         This is intended for use in combination with KASAN, to enable K=
+ASAN to
+> +         detect use-after-free accesses in such caches.
+> +         (KFENCE is able to do that independent of this flag.)
+> +
+> +         This might degrade performance.
+> +         Unfortunately this also prevents a very specific bug pattern fr=
+om
+> +         triggering (insufficient checks against an object being recycle=
+d
+> +         within the RCU grace period); so this option can be turned off =
+even on
+> +         KASAN builds, in case you want to test for such a bug.
+> +
+> +         If you're using this for testing bugs / fuzzing and care about
+> +         catching all the bugs WAY more than performance, you might want=
+ to
+> +         also turn on CONFIG_RCU_STRICT_GRACE_PERIOD.
+> +
+> +         WARNING:
+> +         This is designed as a debugging feature, not a security feature=
+.
+> +         Objects are sometimes recycled without RCU delay under memory p=
+ressure.
+> +
+> +         If unsure, say N.
+> +
+>  config PAGE_OWNER
+>         bool "Track page owner"
+>         depends on DEBUG_KERNEL && STACKTRACE_SUPPORT
+>         select DEBUG_FS
+>         select STACKTRACE
+>         select STACKDEPOT
+> diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+> index f26bbc087b3b..ed4873e18c75 100644
+> --- a/mm/kasan/common.c
+> +++ b/mm/kasan/common.c
+> @@ -227,43 +227,44 @@ static bool check_slab_allocation(struct kmem_cache=
+ *cache, void *object,
+>         }
+>
+>         return false;
+>  }
+>
+>  static inline void poison_slab_object(struct kmem_cache *cache, void *ob=
+ject,
+> -                                     bool init)
+> +                                     bool init, bool still_accessible)
+>  {
+>         void *tagged_object =3D object;
+>
+>         object =3D kasan_reset_tag(object);
+>
+>         /* RCU slabs could be legally used after free within the RCU peri=
+od. */
+> -       if (unlikely(cache->flags & SLAB_TYPESAFE_BY_RCU))
+> +       if (unlikely(still_accessible))
+>                 return;
+>
+>         kasan_poison(object, round_up(cache->object_size, KASAN_GRANULE_S=
+IZE),
+>                         KASAN_SLAB_FREE, init);
+>
+>         if (kasan_stack_collection_enabled())
+>                 kasan_save_free_info(cache, tagged_object);
+>  }
+>
+>  bool __kasan_slab_pre_free(struct kmem_cache *cache, void *object,
+>                                 unsigned long ip)
+>  {
+>         if (!kasan_arch_is_ready() || is_kfence_address(object))
+>                 return false;
+>         return check_slab_allocation(cache, object, ip);
+>  }
+>
+> -bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init=
+)
+> +bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init=
+,
+> +                      bool still_accessible)
+>  {
+>         if (!kasan_arch_is_ready() || is_kfence_address(object))
+>                 return false;
+>
+> -       poison_slab_object(cache, object, init);
+> +       poison_slab_object(cache, object, init, still_accessible);
+>
+>         /*
+>          * If the object is put into quarantine, do not let slab put the =
+object
+>          * onto the freelist for now. The object's metadata is kept until=
+ the
+>          * object gets evicted from quarantine.
+>          */
+> @@ -515,13 +516,13 @@ bool __kasan_mempool_poison_object(void *ptr, unsig=
+ned long ip)
+>
+>         slab =3D folio_slab(folio);
+>
+>         if (check_slab_allocation(slab->slab_cache, ptr, ip))
+>                 return false;
+>
+> -       poison_slab_object(slab->slab_cache, ptr, false);
+> +       poison_slab_object(slab->slab_cache, ptr, false, false);
+>         return true;
+>  }
+>
+>  void __kasan_mempool_unpoison_object(void *ptr, size_t size, unsigned lo=
+ng ip)
+>  {
+>         struct slab *slab;
+> diff --git a/mm/kasan/kasan_test.c b/mm/kasan/kasan_test.c
+> index 7b32be2a3cf0..567d33b493e2 100644
+> --- a/mm/kasan/kasan_test.c
+> +++ b/mm/kasan/kasan_test.c
+> @@ -993,12 +993,57 @@ static void kmem_cache_invalid_free(struct kunit *t=
+est)
+>          */
+>         kmem_cache_free(cache, p);
+>
+>         kmem_cache_destroy(cache);
+>  }
+>
+> +static void kmem_cache_rcu_uaf(struct kunit *test)
+> +{
+> +       char *p;
+> +       size_t size =3D 200;
+> +       struct kmem_cache *cache;
+> +
+> +       KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_SLUB_RCU_DEBUG);
 
-Yep, exactly.
+Ah, notice another thing: this test might fail of someone enables
+CONFIG_SLUB_RCU_DEBUG with HW_TAGS, right? I think we need another
+check here.
+
+> +
+> +       cache =3D kmem_cache_create("test_cache", size, 0, SLAB_TYPESAFE_=
+BY_RCU,
+> +                                 NULL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
+> +
+> +       p =3D kmem_cache_alloc(cache, GFP_KERNEL);
+> +       if (!p) {
+> +               kunit_err(test, "Allocation failed: %s\n", __func__);
+> +               kmem_cache_destroy(cache);
+> +               return;
+> +       }
+> +       *p =3D 1;
+> +
+> +       rcu_read_lock();
+> +
+> +       /* Free the object - this will internally schedule an RCU callbac=
+k. */
+> +       kmem_cache_free(cache, p);
+> +
+> +       /*
+> +        * We should still be allowed to access the object at this point =
+because
+> +        * the cache is SLAB_TYPESAFE_BY_RCU and we've been in an RCU rea=
+d-side
+> +        * critical section since before the kmem_cache_free().
+> +        */
+> +       READ_ONCE(*p);
+> +
+> +       rcu_read_unlock();
+> +
+> +       /*
+> +        * Wait for the RCU callback to execute; after this, the object s=
+hould
+> +        * have actually been freed from KASAN's perspective.
+> +        */
+> +       rcu_barrier();
+> +
+> +       KUNIT_EXPECT_KASAN_FAIL(test, READ_ONCE(*p));
+> +
+> +       kmem_cache_destroy(cache);
+> +}
+> +
+>  static void empty_cache_ctor(void *object) { }
+>
+>  static void kmem_cache_double_destroy(struct kunit *test)
+>  {
+>         struct kmem_cache *cache;
+>
+> @@ -1934,12 +1979,13 @@ static struct kunit_case kasan_kunit_test_cases[]=
+ =3D {
+>         KUNIT_CASE(workqueue_uaf),
+>         KUNIT_CASE(kfree_via_page),
+>         KUNIT_CASE(kfree_via_phys),
+>         KUNIT_CASE(kmem_cache_oob),
+>         KUNIT_CASE(kmem_cache_double_free),
+>         KUNIT_CASE(kmem_cache_invalid_free),
+> +       KUNIT_CASE(kmem_cache_rcu_uaf),
+>         KUNIT_CASE(kmem_cache_double_destroy),
+>         KUNIT_CASE(kmem_cache_accounted),
+>         KUNIT_CASE(kmem_cache_bulk),
+>         KUNIT_CASE(mempool_kmalloc_oob_right),
+>         KUNIT_CASE(mempool_kmalloc_large_oob_right),
+>         KUNIT_CASE(mempool_slab_oob_right),
+> diff --git a/mm/slab_common.c b/mm/slab_common.c
+> index 40b582a014b8..df09066d56fe 100644
+> --- a/mm/slab_common.c
+> +++ b/mm/slab_common.c
+> @@ -539,12 +539,24 @@ static void slab_caches_to_rcu_destroy_workfn(struc=
+t work_struct *work)
+>                 kmem_cache_release(s);
+>         }
+>  }
+>
+>  static int shutdown_cache(struct kmem_cache *s)
+>  {
+> +       if (IS_ENABLED(CONFIG_SLUB_RCU_DEBUG) &&
+> +           (s->flags & SLAB_TYPESAFE_BY_RCU)) {
+> +               /*
+> +                * Under CONFIG_SLUB_RCU_DEBUG, when objects in a
+> +                * SLAB_TYPESAFE_BY_RCU slab are freed, SLUB will interna=
+lly
+> +                * defer their freeing with call_rcu().
+> +                * Wait for such call_rcu() invocations here before actua=
+lly
+> +                * destroying the cache.
+> +                */
+> +               rcu_barrier();
+> +       }
+> +
+>         /* free asan quarantined objects */
+>         kasan_cache_shutdown(s);
+>
+>         if (__kmem_cache_shutdown(s) !=3D 0)
+>                 return -EBUSY;
+>
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 0c98b6a2124f..a89f2006d46e 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -2197,45 +2197,81 @@ static inline bool memcg_slab_post_alloc_hook(str=
+uct kmem_cache *s,
+>  static inline void memcg_slab_free_hook(struct kmem_cache *s, struct sla=
+b *slab,
+>                                         void **p, int objects)
+>  {
+>  }
+>  #endif /* CONFIG_MEMCG */
+>
+> +#ifdef CONFIG_SLUB_RCU_DEBUG
+> +static void slab_free_after_rcu_debug(struct rcu_head *rcu_head);
+> +
+> +struct rcu_delayed_free {
+> +       struct rcu_head head;
+> +       void *object;
+> +};
+> +#endif
+> +
+>  /*
+>   * Hooks for other subsystems that check memory allocations. In a typica=
+l
+>   * production configuration these hooks all should produce no code at al=
+l.
+>   *
+>   * Returns true if freeing of the object can proceed, false if its reuse
+> - * was delayed by KASAN quarantine, or it was returned to KFENCE.
+> + * was delayed by CONFIG_SLUB_RCU_DEBUG or KASAN quarantine, or it was r=
+eturned
+> + * to KFENCE.
+>   */
+>  static __always_inline
+> -bool slab_free_hook(struct kmem_cache *s, void *x, bool init)
+> +bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
+> +                   bool after_rcu_delay)
+>  {
+> +       /* Are the object contents still accessible? */
+> +       bool still_accessible =3D (s->flags & SLAB_TYPESAFE_BY_RCU) && !a=
+fter_rcu_delay;
+> +
+>         kmemleak_free_recursive(x, s->flags);
+>         kmsan_slab_free(s, x);
+>
+>         debug_check_no_locks_freed(x, s->object_size);
+>
+>         if (!(s->flags & SLAB_DEBUG_OBJECTS))
+>                 debug_check_no_obj_freed(x, s->object_size);
+>
+>         /* Use KCSAN to help debug racy use-after-free. */
+> -       if (!(s->flags & SLAB_TYPESAFE_BY_RCU))
+> +       if (!still_accessible)
+>                 __kcsan_check_access(x, s->object_size,
+>                                      KCSAN_ACCESS_WRITE | KCSAN_ACCESS_AS=
+SERT);
+>
+>         if (kfence_free(x))
+>                 return false;
+>
+>         /*
+>          * Give KASAN a chance to notice an invalid free operation before=
+ we
+>          * modify the object.
+>          */
+>         if (kasan_slab_pre_free(s, x))
+>                 return false;
+>
+> +#ifdef CONFIG_SLUB_RCU_DEBUG
+> +       if (still_accessible) {
+> +               struct rcu_delayed_free *delayed_free;
+> +
+> +               delayed_free =3D kmalloc(sizeof(*delayed_free), GFP_NOWAI=
+T);
+> +               if (delayed_free) {
+> +                       /*
+> +                        * Let KASAN track our call stack as a "related w=
+ork
+> +                        * creation", just like if the object had been fr=
+eed
+> +                        * normally via kfree_rcu().
+> +                        * We have to do this manually because the rcu_he=
+ad is
+> +                        * not located inside the object.
+> +                        */
+> +                       kasan_record_aux_stack_noalloc(x);
+> +
+> +                       delayed_free->object =3D x;
+> +                       call_rcu(&delayed_free->head, slab_free_after_rcu=
+_debug);
+> +                       return false;
+> +               }
+> +       }
+> +#endif /* CONFIG_SLUB_RCU_DEBUG */
+> +
+>         /*
+>          * As memory initialization might be integrated into KASAN,
+>          * kasan_slab_free and initialization memset's must be
+>          * kept together to avoid discrepancies in behavior.
+>          *
+>          * The initialization memset's clear the object and the metadata,
+> @@ -2253,42 +2289,42 @@ bool slab_free_hook(struct kmem_cache *s, void *x=
+, bool init)
+>                         memset(kasan_reset_tag(x), 0, s->object_size);
+>                 rsize =3D (s->flags & SLAB_RED_ZONE) ? s->red_left_pad : =
+0;
+>                 memset((char *)kasan_reset_tag(x) + inuse, 0,
+>                        s->size - inuse - rsize);
+>         }
+>         /* KASAN might put x into memory quarantine, delaying its reuse. =
+*/
+> -       return !kasan_slab_free(s, x, init);
+> +       return !kasan_slab_free(s, x, init, still_accessible);
+>  }
+>
+>  static __fastpath_inline
+>  bool slab_free_freelist_hook(struct kmem_cache *s, void **head, void **t=
+ail,
+>                              int *cnt)
+>  {
+>
+>         void *object;
+>         void *next =3D *head;
+>         void *old_tail =3D *tail;
+>         bool init;
+>
+>         if (is_kfence_address(next)) {
+> -               slab_free_hook(s, next, false);
+> +               slab_free_hook(s, next, false, false);
+>                 return false;
+>         }
+>
+>         /* Head and tail of the reconstructed freelist */
+>         *head =3D NULL;
+>         *tail =3D NULL;
+>
+>         init =3D slab_want_init_on_free(s);
+>
+>         do {
+>                 object =3D next;
+>                 next =3D get_freepointer(s, object);
+>
+>                 /* If object's reuse doesn't have to be delayed */
+> -               if (likely(slab_free_hook(s, object, init))) {
+> +               if (likely(slab_free_hook(s, object, init, false))) {
+>                         /* Move object to the new freelist */
+>                         set_freepointer(s, object, *head);
+>                         *head =3D object;
+>                         if (!*tail)
+>                                 *tail =3D object;
+>                 } else {
+> @@ -4474,40 +4510,67 @@ static __fastpath_inline
+>  void slab_free(struct kmem_cache *s, struct slab *slab, void *object,
+>                unsigned long addr)
+>  {
+>         memcg_slab_free_hook(s, slab, &object, 1);
+>         alloc_tagging_slab_free_hook(s, slab, &object, 1);
+>
+> -       if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
+> +       if (likely(slab_free_hook(s, object, slab_want_init_on_free(s), f=
+alse)))
+>                 do_slab_free(s, slab, object, object, 1, addr);
+>  }
+>
+>  #ifdef CONFIG_MEMCG
+>  /* Do not inline the rare memcg charging failed path into the allocation=
+ path */
+>  static noinline
+>  void memcg_alloc_abort_single(struct kmem_cache *s, void *object)
+>  {
+> -       if (likely(slab_free_hook(s, object, slab_want_init_on_free(s))))
+> +       if (likely(slab_free_hook(s, object, slab_want_init_on_free(s), f=
+alse)))
+>                 do_slab_free(s, virt_to_slab(object), object, object, 1, =
+_RET_IP_);
+>  }
+>  #endif
+>
+>  static __fastpath_inline
+>  void slab_free_bulk(struct kmem_cache *s, struct slab *slab, void *head,
+>                     void *tail, void **p, int cnt, unsigned long addr)
+>  {
+>         memcg_slab_free_hook(s, slab, p, cnt);
+>         alloc_tagging_slab_free_hook(s, slab, p, cnt);
+>         /*
+>          * With KASAN enabled slab_free_freelist_hook modifies the freeli=
+st
+>          * to remove objects, whose reuse must be delayed.
+>          */
+>         if (likely(slab_free_freelist_hook(s, &head, &tail, &cnt)))
+>                 do_slab_free(s, slab, head, tail, cnt, addr);
+>  }
+>
+> +#ifdef CONFIG_SLUB_RCU_DEBUG
+> +static void slab_free_after_rcu_debug(struct rcu_head *rcu_head)
+> +{
+> +       struct rcu_delayed_free *delayed_free =3D
+> +                       container_of(rcu_head, struct rcu_delayed_free, h=
+ead);
+> +       void *object =3D delayed_free->object;
+> +       struct slab *slab =3D virt_to_slab(object);
+> +       struct kmem_cache *s;
+> +
+> +       if (WARN_ON(is_kfence_address(object)))
+> +               return;
+> +
+> +       /* find the object and the cache again */
+> +       if (WARN_ON(!slab))
+> +               return;
+> +       s =3D slab->slab_cache;
+> +       if (WARN_ON(!(s->flags & SLAB_TYPESAFE_BY_RCU)))
+> +               return;
+> +
+> +       /* resume freeing */
+> +       if (!slab_free_hook(s, object, slab_want_init_on_free(s), true))
+> +               return;
+> +       do_slab_free(s, slab, object, object, 1, _THIS_IP_);
+> +       kfree(delayed_free);
+> +}
+> +#endif /* CONFIG_SLUB_RCU_DEBUG */
+> +
+>  #ifdef CONFIG_KASAN_GENERIC
+>  void ___cache_free(struct kmem_cache *cache, void *x, unsigned long addr=
+)
+>  {
+>         do_slab_free(cache, virt_to_slab(x), x, x, 1, addr);
+>  }
+>  #endif
+>
+> --
+> 2.46.0.rc2.264.g509ed76dc8-goog
+>
+
+Otherwise:
+
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+
+Let's see if syzbot finds something new with this change :)
+
+Thank you!
 
