@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF469458CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:30:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 598F09458D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E186C1C21121
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192EB284270
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2651BF321;
-	Fri,  2 Aug 2024 07:29:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496901C3F2F;
+	Fri,  2 Aug 2024 07:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hh67PEb7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCmfwO+f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948051BF310;
-	Fri,  2 Aug 2024 07:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ECC1C0DD7;
+	Fri,  2 Aug 2024 07:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583743; cv=none; b=Rja+gou4e18to64mX0wJ0M7spITZCU7h874HTw1rkP7t72Q9et79Nsj5RrCVCFmmQRiRPYYACY4zqRnDixJ2dglglFwNOpuHm+pgU3CIG6chFyeiI9g33jdlM04UKa3wENdbFQxFV+jO16ogmOAZqfyE+NCyYFrlhOUWSXVuDXA=
+	t=1722583762; cv=none; b=hxj8NqdPz0zLbM30NaovfSQakGCSIHCaYwB2OgclEBerAUl41khUc2Lx6F0asCILXDzlHJ1oYqirIYCkw9evMX7EqEnffaujniZlWoACKKUbXEHlTF2BqUIK9SdglZLDaYODLE5qOsU4hTbXcqn6jQ1GmJnOVwsweVmIoEVYuR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583743; c=relaxed/simple;
-	bh=1w+7rrYCa3LRNi+HM2wn8pYcRqkhvqQwbQhxswRVpZ0=;
+	s=arc-20240116; t=1722583762; c=relaxed/simple;
+	bh=KtqdbPC2o6IT0W3PNKnfutxEkL8rAszRLKhYIvtv7AA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QSwukoD7nHQfUXd6/uzjBKVrlwkWGyED7V6eWGW++rEqLTHxlADiL2zXE2nad5oCK6s5bgK0FtZEohRwmHCKrAsUqKKOswfs5gPsLa6XD4uo+IJ9AvjXGSuGWsn3pC54R3Y24qSuyzGbb7tn52p0wCRsELHpct0zSBoPO6vBXzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hh67PEb7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9EF6C4AF09;
-	Fri,  2 Aug 2024 07:28:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=A+0ewddfC1TXS/YDmcLyiBoDD7jkJwYApluM6dSB8Edd9n4wGBaCXOGIpqpCJ0VTm3M8Iu0QGamqSLK1n549ZZY9tcAiof4UXpsgWDetMUlRpUcmoeQ0bBvCX0NRWnk1K5TgQNJmcGSN8Ygm7HZ86iT4Ii1g3wZVfFy42JpBRU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCmfwO+f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DE0C32782;
+	Fri,  2 Aug 2024 07:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722583743;
-	bh=1w+7rrYCa3LRNi+HM2wn8pYcRqkhvqQwbQhxswRVpZ0=;
+	s=k20201202; t=1722583762;
+	bh=KtqdbPC2o6IT0W3PNKnfutxEkL8rAszRLKhYIvtv7AA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Hh67PEb72N2VVF+qkXferhBwAhLAQzGLOvfL0UoeuLtig+sjoSsd50+KBqF4wEUvq
-	 /4oMF4oUO3cSbu+9Z1yoN7R863aDLzAH5A6NLFncIKCNPQ+IFTMPbuppM+FmuL24bg
-	 LvICqgGmnWO2ABTqTtKbjJyGejU1CB775K7DmyadwnCC3I4kPsonUXBpFEuXAQxHUf
-	 6xLUkauYcIJWtRbrLMMAK32fuyUOBNgq8gZpqydd5Uw/HDLhoC4QvrbisKFJkzguLF
-	 IwcJkZFBV68x5QQHzOa7oY4V5ytWMAJSMFWoGsGimhWmXb+HemstwqF0CNgbvLoMYj
-	 7OeRwlcSQEpdA==
-Message-ID: <c65a6eab-1f76-43ee-9bde-9ab1d5cd2819@kernel.org>
-Date: Fri, 2 Aug 2024 09:28:55 +0200
+	b=bCmfwO+fu9j0QTon9YQfB8yelVnCYyn1lj95e8R4wUDXOmUO92GOPVFxkCfoTfZaw
+	 AyTMcsIM57Fl40GH8zZAqjWYvB8+2hft6cN3RE+EYxNC08KNFEGuboCPGymBsWetdy
+	 kRDX0oAywmClNOcIxXNnWsW9q8qWgPdxqSAbbLTCf+sHk7lhQNrArYL+cL36zyKOWI
+	 J1i3KwDCRhgp+V2RPLNX0EMFs1LSm9ERnJELwGci8MN9Jf1x5VkWxHebX+gBHkwj8w
+	 z8S7NKggHTAzQT8PpBPrcglOZu6QvC4hJ3z/To3xfiRdPmC15jvelcc72iB9TttXHY
+	 6oyNVJKjpF+Mw==
+Message-ID: <33212ecd-535e-48aa-a960-aae2019c176c@kernel.org>
+Date: Fri, 2 Aug 2024 09:29:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] ASoC: dt-bindings: pm8916-wcd-analog-codec:
- Document pm8950/pm8953
+Subject: Re: [PATCH v3 5/8] ASoC: dt-bindings: apq8016-sbc: Add
+ msm8953/msm8976-qdsp6-sndcard
 To: Adam Skladowski <a39.skl@gmail.com>,
  Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
  Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
@@ -63,9 +63,9 @@ Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
  linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org
 References: <20240731-msm8953-msm8976-asoc-v3-0-163f23c3a28d@gmail.com>
- <20240731-msm8953-msm8976-asoc-v3-2-163f23c3a28d@gmail.com>
-Content-Language: en-US
+ <20240731-msm8953-msm8976-asoc-v3-5-163f23c3a28d@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -109,35 +109,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-2-163f23c3a28d@gmail.com>
+In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-5-163f23c3a28d@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 31/07/2024 17:25, Adam Skladowski wrote:
-> Document pm8950 and pm8953 analog audio codecs.
+> Document MSM8953/MSM8976 QDSP6 cards.
 > 
 > Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
 > ---
->  .../devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml     | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml b/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml
-> index 94e7a1860977..8af8bb747abe 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,pm8916-wcd-analog-codec.yaml
-> @@ -14,8 +14,10 @@ description:
->  
->  properties:
->    compatible:
-> -    const: qcom,pm8916-wcd-analog-codec
-> -
-> +    enum:
-> +      - qcom,pm8916-wcd-analog-codec
-> +      - qcom,pm8950-wcd-analog-codec
-> +      - qcom,pm8953-wcd-analog-codec
 
-Why dropping new line?
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
