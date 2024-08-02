@@ -1,121 +1,129 @@
-Return-Path: <linux-kernel+bounces-272563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EDBF945E03
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:43:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69558945E07
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FA451C20A6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 225E4281DF4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEA81E3CB8;
-	Fri,  2 Aug 2024 12:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E21F1E3CB2;
+	Fri,  2 Aug 2024 12:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YIBV7iZT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvCfs1ki"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319B4A31;
-	Fri,  2 Aug 2024 12:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7F6A31;
+	Fri,  2 Aug 2024 12:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722602590; cv=none; b=Fe/Yr6sz/iDCbHQwJ5ogenr5Do+sVTVb8mhuOg0QmQRjFLdgzePOWq6T41DhyCiY8w8soLriORVPznAzixPt4tArlhkSoCDQwzOyeLSrNYxa4wPETZiiTjihjzsIzfqnZ7QLOwo3Su9B12fH6B52VnU6v1ewoG5Rc6iR6wMK3zM=
+	t=1722602642; cv=none; b=eQ0QWl/UdW1G6dgSkE3gPEHXz+qnc0AhOJ3Lw/pUKmv9sWj49UshOGfiW5LOyQn3Hfb9V07Wyj1vj+xESut1rdUpWHhLtJbEBDxzDAZrsZDMdmJAcA5sN/CNX4DrhGXwRu6eIaitEeXR5cBVd3fhk50sE6cRPpgtSx16xkOI5NI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722602590; c=relaxed/simple;
-	bh=633lVYjHNRU3EjRX/nYwTZxzcH0uaJwWa8OgY7HscFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mU/ajVw4qvH8s384y8S7wu4SJRpUW0A2YeGpCnzxp4LYdCk/gmpcjke0aCtrw8HN1+bMH/0RCaU9TPoJ5+xCHlCIQqb1FYpE3rknXifVH3NpOMah6fPuP3fFBlbSunPxUHa7klLf0wc5bRoGD7wcM0IDRVd4YaVpIxvVgJY6vVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YIBV7iZT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13F8BC32782;
-	Fri,  2 Aug 2024 12:43:05 +0000 (UTC)
+	s=arc-20240116; t=1722602642; c=relaxed/simple;
+	bh=mT5OyCqE+ifUSqdxUgq7WqY1sXV0ylJ9Y8tNhLWK7GE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SHKoBULn82308qxkcuubzwhTRRKDNzqfX86efIYG3lyCtA1YHM9d//xUoQq1uHrkEfGuOQVHNTWui0QP65scXCEwY97bal+zW1d+oTtZicDpjRx/5mPltT3PyGVAVepYkg4CrRN4y6e6uy5gWKAJ0myvurxYohAugUnNJcQNVlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvCfs1ki; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6015BC4AF0A;
+	Fri,  2 Aug 2024 12:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722602588;
-	bh=633lVYjHNRU3EjRX/nYwTZxzcH0uaJwWa8OgY7HscFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YIBV7iZTMmq2Z5PgLMx4dEAx7osuIAdcyHHr7XtgSLzBNk9EmyRGUtYBqZueJTlEe
-	 Yoe4zkJ1Wrb641tuC/3m4R160s+aO55ZE7WCWJaV8kYmfIlUOStsdcG+3jLrJNEar0
-	 Fo3MSS4pim+5DOwnj2QWgU8O/YkI0uZ5V2Rf4VbFdEEqQqHaNCmSW+1UdBcdDU/Uwv
-	 TGCS05qgKKRDDT/7E8y8pvO9RrptgjlbpjFZ6ue6nXhxV4VqlmcevKqfj5nOxdlMaI
-	 IhP4nbGzfO5pcbmtBP+61scNwYBFnNSwuNDStJiTxN7+Zn7wmj0jMnCsIzMnhQXCa1
-	 A9BF40NdLyTRQ==
-Date: Fri, 2 Aug 2024 13:43:03 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joey Gouly <joey.gouly@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: selftests: arm64: Correct feature test for S1PIE in
- get-reg-list
-Message-ID: <7b9b3ef4-66da-4314-8265-5947998758e9@sirena.org.uk>
-References: <20240731-kvm-arm64-fix-s1pie-test-v1-1-a9253f3b7db4@kernel.org>
- <86le1g19aa.wl-maz@kernel.org>
- <811ea0eb-bc87-4ac3-8bca-27c787e43051@sirena.org.uk>
- <86jzgz1eqb.wl-maz@kernel.org>
+	s=k20201202; t=1722602642;
+	bh=mT5OyCqE+ifUSqdxUgq7WqY1sXV0ylJ9Y8tNhLWK7GE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CvCfs1kieg1v87ZnpQ7D3AiOXwkB/dGWmbzjQS5mE7FAwczBU1XmyvOsLlw8JLGdM
+	 p8gdqA386M4DkFj3B3Nm54NNK1sDzM3QZ82zqmR4iAebbryqsV0aZL4O+M8FIz92Z/
+	 sFEJn3TnHsJqVTPJxjBSj/b03ui9Nr28EI2ZSEom2DbL9FxvVazyfdnWuzUETXP1oi
+	 YUBup0Qx6pMU2FkIKGFRh9does3tMQHFSnyyvyiWJICJyRM8YVOvh2FV+KqJLMrlCo
+	 93whJW5+Eo+GxsQeYDhSNfOqb1+y6wHdoc6ub5uMSrf5D63f1jT/haM2VUbT2zztE2
+	 eMsbfRlRWCNpg==
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3db199ec527so671303b6e.0;
+        Fri, 02 Aug 2024 05:44:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVWXstzxxTky0e65JQqlGd31GedV/kOX3QYOy6c4hNcB63NTkY3Xxw/uzHnwyhc5rUohqjPXmGAGFpc5L+IQzaNcuSVSfJvMgsW9Ie6TS7AWZXALCnXQLX6UTLWQ/wtSKnwqhMWeuA=
+X-Gm-Message-State: AOJu0YzC4dQ2fZ1F4gFv9ZA31kaXR6MZrF6prdF78gMSjJTTK8bGAVZ+
+	RVh7v7IMmLdVTpP4+ZsM61WxA1CvAN9m/gLTnnTr7DrqKPFG3/Vf2TtE9WtCZffaabA3pkCrjY6
+	26VQuqhXM67P7edhQmFg8Tir2R68=
+X-Google-Smtp-Source: AGHT+IEKCLCByGf5JzolRKQqiv5jfoW83RzmeCSzCXLVU3NyxigIXnyCwwS6wcD6huINVSyldmDWPTfzJal9naV5Oqw=
+X-Received: by 2002:a05:6870:2054:b0:268:2075:a41d with SMTP id
+ 586e51a60fabf-26891e9f1aamr2224700fac.6.1722602641727; Fri, 02 Aug 2024
+ 05:44:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eCayuY2LI5Ibm307"
-Content-Disposition: inline
-In-Reply-To: <86jzgz1eqb.wl-maz@kernel.org>
-X-Cookie: -- I have seen the FUN --
+References: <Zqu6zjVMoiXwROBI@capivara> <c15a8a105308262856ee14bab558d34df8bdf92a.camel@linux.intel.com>
+In-Reply-To: <c15a8a105308262856ee14bab558d34df8bdf92a.camel@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 2 Aug 2024 14:43:49 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0ibMvRE7OrLQO9CJh__hL7rbO-03KT7EAsAEoQxVdX4eA@mail.gmail.com>
+Message-ID: <CAJZ5v0ibMvRE7OrLQO9CJh__hL7rbO-03KT7EAsAEoQxVdX4eA@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Update Balance performance EPP for
+ Emerald Rapids
+To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, 
+	Pedro Henrique Kopper <pedro.kopper@canonical.com>
+Cc: rafael@kernel.org, lenb@kernel.org, viresh.kumar@linaro.org, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Aug 1, 2024 at 9:42=E2=80=AFPM srinivas pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
+>
+> On Thu, 2024-08-01 at 13:41 -0300, Pedro Henrique Kopper wrote:
+> > On Intel Emerald Rapids machines, we ship the Energy Performance
+> > Preference
+> > (EPP) default for balance_performance as 128. However, during an
+> > internal
+> > investigation together with Intel, we have determined that 32 is a
+> > more
+> > suitable value. This leads to significant improvements in both
+> > performance
+> > and energy:
+> >
+> > POV-Ray: 32% faster | 12% less energy
+> > OpenSSL: 12% faster | energy within 1%
+> > Build Linux Kernel: 29% faster | 18% less energy
+> >
+> > Therefore, we should move the default EPP for balance_performance to
+> > 32.
+> > This is in line with what has already been done for Sapphire Rapids.
+> >
+> > Signed-off-by: Pedro Henrique Kopper <pedro.kopper@canonical.com>
+> Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 
---eCayuY2LI5Ibm307
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied as 6.11-rc material.
 
-On Fri, Aug 02, 2024 at 10:00:28AM +0100, Marc Zyngier wrote:
+If I'm able to send a pull request next week, I'll push this for -rc3.
+Otherwise, it'll be -rc4.
 
-> Also, the test predates the generated stuff by some margin.
-
-Yeah, there were still defines in the main kernel source that were being
-retyped rather than shared previously which made me wonder.
-
-> Mark Brown <broonie@kernel.org> wrote:
-
-> > I'd certainly be happy to convert, though that does
-> > seem a bit invasive for a fix.
-
-> Not for a point fix, for sure. And if you do, make sure it is entirely
-> scripted.
-
-When you say "entirely scripted" here I take it you're referring to the
-list of registers as well, and I guess also to the information about
-what is enumerated by which ID register values?  I'd already been
-thinking about looking at the latter bit, and possibly also tracking
-wiring things up to traps (though that's only relevant inside the
-kernel).  I agree that seems sensible, but I do think we can usefully do
-things in stages - even just replacing the magic numbers with use of the
-defines would be less error prone.  It would be great if we just
-automatically covered every sysreg we know about in this test without
-any manual steps.
-
---eCayuY2LI5Ibm307
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmas1FYACgkQJNaLcl1U
-h9DpJAf/U25LzOtlHywYKGpxk73rxEA/68hitfX505a0+ZlIYHFFD6RqH0x+Kw/A
-ngf/3/BlP5kbKJ2pOysyUlh0RZWCei3IAToZpAINczoiNaEvXdpe+cZgi3nQUAL+
-DZmG7uN2og56sEGReLy9bUQbyjretNRF//+7Og6186yXBYenL4rNlDUB0CikT9sT
-Aehvs+6RWM3/DQCi0oGm4LoLaf64MGlFFYMw+6mA8N4aPYWEwxkiUFdd/NOHhJ0T
-PifGAPV3f6fFosjPtUsPS4por6cHubvXl/s67zqwbMKS2pxfXIk5GTGlI0h+7+GU
-V0VrWdmAtowwcrU+Mz6h1EHAmjxDAg==
-=ERtX
------END PGP SIGNATURE-----
-
---eCayuY2LI5Ibm307--
+> > ---
+> >  drivers/cpufreq/intel_pstate.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/cpufreq/intel_pstate.c
+> > b/drivers/cpufreq/intel_pstate.c
+> > index 392a8000b238..c0278d023cfc 100644
+> > --- a/drivers/cpufreq/intel_pstate.c
+> > +++ b/drivers/cpufreq/intel_pstate.c
+> > @@ -3405,6 +3405,7 @@ static const struct x86_cpu_id
+> > intel_epp_default[] =3D {
+> >        */
+> >       X86_MATCH_VFM(INTEL_ALDERLAKE_L,
+> > HWP_SET_DEF_BALANCE_PERF_EPP(102)),
+> >       X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,
+> > HWP_SET_DEF_BALANCE_PERF_EPP(32)),
+> > +     X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X,
+> > HWP_SET_DEF_BALANCE_PERF_EPP(32)),
+> >       X86_MATCH_VFM(INTEL_METEORLAKE_L,
+> > HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
+> >                     179, 64, 16)),
+> >       X86_MATCH_VFM(INTEL_ARROWLAKE,
+> > HWP_SET_EPP_VALUES(HWP_EPP_POWERSAVE,
+>
+>
 
