@@ -1,139 +1,154 @@
-Return-Path: <linux-kernel+bounces-272360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08000945ACD
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:19:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3BF945ACF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:19:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 289FA1C22B4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:19:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF30F1C2269D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 108B81DAC64;
-	Fri,  2 Aug 2024 09:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A8891DAC56;
+	Fri,  2 Aug 2024 09:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMvNUwfE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WnVFX79O"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684F8F47;
-	Fri,  2 Aug 2024 09:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CE31DAC59
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:19:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590337; cv=none; b=iBwdFwgnXi1cQ8T16JDX5kR29IYQMZIQ3w8e3OxHFVf8C6GRQFFYixnDFl4vZ/yMVZronTqJtPHU69vZFST/P+MJM0Peln2ZPcnXR2KlJeL9Bn8sq2XxqBdw82Sj+pu8fW+Cecx7eRD053X8OuPBQgKt2pz3T5VyjvY9Eaj27Iw=
+	t=1722590351; cv=none; b=WEbB6NnAVpFedkZg+fvEFOTlgV3gFUUeBq6Gge5Qu3//2i2UcgRSfbn5fC0iyYKrx7EJONZJm0rUVT8WYTLUtsmnkRWTbybI1HnjgceBfWdyojYVPzXqD32QZYOrfADmSNZpWzOPTf9FNivlBuIhC3e850+PRpYz14cClT6Xkqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590337; c=relaxed/simple;
-	bh=dbphdIVJqwevCp53CHXALfkGLRq+V/D3wbfxlX/nOyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QHX6/d3EY/L5VRmS7N1DNHUvc27cVJc9AQH1pOCJ7J7QXX/JNtmZJdcV4h9SfFTnwx7GIlDqk7tTxuYpLGxhtbnGhMFk/GNeNgf22MrW5UvciDOeEzP6zVoaz6bNdoHCDq9uV2cqdfI4PNKP2aUz0aqcMO2vpzVEPg2vpGVKSmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMvNUwfE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDDB5C32782;
-	Fri,  2 Aug 2024 09:18:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590337;
-	bh=dbphdIVJqwevCp53CHXALfkGLRq+V/D3wbfxlX/nOyc=;
-	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=OMvNUwfE7uhLPAlBZMbpXpIg517Auxjx/N8Eg84WkQTZkHLgWWLF1j+yjDrgojyIs
-	 Jbh/CZEhwn/wozFgTap4PPRELgudYYSf0GfyUp01JfVUFvRiFyR41Y8t02kSd/4xJ0
-	 bc39EkYpWEmUH97rDnL6YBqXSafpOcWyfJReCMcI+XE/EazrC/i3vH1XUr844TKTjx
-	 GR4FqzK0TRg5EfVwEtCCDnA342/7XCaYwrnzEeADE4cp0KEHLZ6QSv3lA/gEL44gfz
-	 HVCADKE8y3Z8VAHlI9Ix1GD+2/ch6N7lScFKTv3ZqRnekbwgLNwCWfhohqPLcidtsh
-	 aKFMAgKF/WIlQ==
-Message-ID: <ba9cc5ea-4138-4e9c-b848-c7a3a070bd73@kernel.org>
-Date: Fri, 2 Aug 2024 11:18:47 +0200
+	s=arc-20240116; t=1722590351; c=relaxed/simple;
+	bh=X5oFp9VCl4XeB0aXPbq/h47uASXOek4IptUxVH5jC7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lco2lHwnueaMewl9rdONQ+NSKVAUNsSoM6/ElQM4Fz7GDkpSgb4xMHWRWWt3c8DQ6yt204vSSbLe0jan+OrI+skex+lCwv0UO27J9h9hQ7A7SAYvLjILr9N4W41+jgjmee4RmD4vD9FZseWWm1WdbUxPDOm2X5T78++uNekjqn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WnVFX79O; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <d92cdbe5-b5df-4580-9038-cdc69d667742@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1722590345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wEhbkuTV4BPdEO+PTgIuN/V8VoZo3H5ZfC271gpJXTc=;
+	b=WnVFX79OtSZM3ikK7vYuFmhNFQC+H+dwhpGpfGIAtD8AYZxv8IdtNcyiiQ/12rvZPgJP5s
+	37FmPii4fYm9+D5u4cXEPkawIbxwzSUS0ETI6OgOVEEWvCn2IeoIx4JpuXVhfANkZtCJze
+	UdidzA/ypcu8liGv4bM7ffjR38EnPS4=
+Date: Fri, 2 Aug 2024 17:18:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] Introduce ASPEED AST27XX BMC SoC
-To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- quic_bjorande@quicinc.com, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
- m.szyprowski@samsung.com, nfraprado@collabora.com, u-kumar1@ti.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240802090544.2741206-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH for-rc] RDMA/srpt: Fix UAF when srpt_add_one() failed
+To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca,
+ leon@kernel.org, bvanassche@acm.org, nab@risingtidesystems.com
+Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
+ linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
+References: <20240801074415.1033323-1-huangjunxian6@hisilicon.com>
+ <02f7cfc8-0495-485d-9849-b5a9514f6110@linux.dev>
+ <1ddde0db-c18e-7968-185e-1e792854d1b6@hisilicon.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <1ddde0db-c18e-7968-185e-1e792854d1b6@hisilicon.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 02/08/2024 11:05, Kevin Chen wrote:
-> This patchset adds initial support for the ASPEED.
-> AST27XX Board Management controller (BMC) SoC family.
+在 2024/8/2 10:28, Junxian Huang 写道:
 > 
-> AST2700 is ASPEED's 8th-generation server management processor.
-> Featuring a quad-core ARM Cortex A35 64-bit processor and two
-> independent ARM Cortex M4 processors
 > 
-> This patchset adds minimal architecture and drivers such as:
-> Clocksource, Clock and Reset
+> On 2024/8/2 5:55, Zhu Yanjun wrote:
+>> 在 2024/8/1 15:44, Junxian Huang 写道:
+>>> Currently cancel_work_sync() is not called when srpt_refresh_port()
+>>> failed in srpt_add_one(). There is a probability that sdev has been
+>>> freed while the previously initiated sport->work is still running,
+>>> leading to a UAF as the log below:
+>>>
+>>> [  T880] ib_srpt MAD registration failed for hns_1-1.
+>>> [  T880] ib_srpt srpt_add_one(hns_1) failed.
+>>> [  T376] Unable to handle kernel paging request at virtual address 0000000000010008
+>>> ...
+>>> [  T376] Workqueue: events srpt_refresh_port_work [ib_srpt]
+>>> ...
+>>> [  T376] Call trace:
+>>> [  T376]  srpt_refresh_port+0x94/0x264 [ib_srpt]
+>>> [  T376]  srpt_refresh_port_work+0x1c/0x2c [ib_srpt]
+>>> [  T376]  process_one_work+0x1d8/0x4cc
+>>> [  T376]  worker_thread+0x158/0x410
+>>> [  T376]  kthread+0x108/0x13c
+>>> [  T376]  ret_from_fork+0x10/0x18
+>>>
+>>> Add cancel_work_sync() to the exception branch to fix this UAF.
+>>
+>> Can you share the method to reproduce this problem?
+>> I am interested in this problem.
+>>
+>> Thanks,
+>> Zhu Yanjun
+>>
 > 
-> This patchset was tested on the ASPEED AST2700 evaluation board.
+> I was testing bonding in 5.10 kernel, doing
+> 	ifenslave bond0 eth0 eth1; ifenslave -d bond0 eth0 eth1
+> and
+> 	ethtool --reset eth0 dedicated; ethtool --reset eth1 dedicated
+> concurrently and infinitely.
+> 
+> But I think this problem has been fixed in latest mainline probably.
+> Please look into my reply to Bart in v2.
 
-Where is the changelog? You ignored several comments, did not bother to
-respond them, did not implement them.
+Thanks a lot. I am working on srq. Because ib_srpt also supports srq, I 
+just want to confirm if srq of ib_srpt can also work well on RoCEv2 and 
+IB with this commit.
 
-No changelog means you sent exactly the same? This is not how it works.
-Please read submitting patches, respond to all comments or implement
-them, provide *DETAILED* changelog in the cover letter or individual
-patches (---).
+Zhu Yanjun
 
-Best regards,
-Krzysztof
+> 
+> Junxian
+> 
+>>>
+>>> Fixes: a42d985bd5b2 ("ib_srpt: Initial SRP Target merge for v3.3-rc1")
+>>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+>>> ---
+>>>    drivers/infiniband/ulp/srpt/ib_srpt.c | 5 +++--
+>>>    1 file changed, 3 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+>>> index 9632afbd727b..244e5c115bf7 100644
+>>> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
+>>> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+>>> @@ -3148,8 +3148,8 @@ static int srpt_add_one(struct ib_device *device)
+>>>    {
+>>>        struct srpt_device *sdev;
+>>>        struct srpt_port *sport;
+>>> +    u32 i, j;
+>>>        int ret;
+>>> -    u32 i;
+>>>          pr_debug("device = %p\n", device);
+>>>    @@ -3226,7 +3226,6 @@ static int srpt_add_one(struct ib_device *device)
+>>>            if (ret) {
+>>>                pr_err("MAD registration failed for %s-%d.\n",
+>>>                       dev_name(&sdev->device->dev), i);
+>>> -            i--;
+>>>                goto err_port;
+>>>            }
+>>>        }
+>>> @@ -3241,6 +3240,8 @@ static int srpt_add_one(struct ib_device *device)
+>>>        return 0;
+>>>      err_port:
+>>> +    for (j = i, i--; j > 0; j--)
+>>> +        cancel_work_sync(&sdev->port[j - 1].work);
+>>>        srpt_unregister_mad_agent(sdev, i);
+>>>    err_cm:
+>>>        if (sdev->cm_id)
+>>
 
 
