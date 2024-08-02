@@ -1,200 +1,142 @@
-Return-Path: <linux-kernel+bounces-272899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D5E694626D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:29:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1246F946298
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:38:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8192284225
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4355B1C23782
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A43915C13B;
-	Fri,  2 Aug 2024 17:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94CD61AE049;
+	Fri,  2 Aug 2024 17:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pvpbP16h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKykl2oU"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB875136327
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE261AE02B;
+	Fri,  2 Aug 2024 17:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722619760; cv=none; b=hTJI1vcYTLqMF4cabPnisyZwnp4q3cY60UY7uTlzfVHNI7yK2xNsbfWOy514SMFM8kumLF3eVBL6IVLwjNimMqi70iVN7x/GWJxXY97i7vPkgSora4FMoHX9WyknlNqfzHN4kLKBV/n5MOJ4Xz73oz9K1mHFmoS8Z58Dk9jpMhU=
+	t=1722620066; cv=none; b=hGpdXBFl8HqhOPh8iCLy2j6miwpLSKmg0fkMv+jgizqt+v1MLm2pRU41rGyoH/9Zf4hs9M2xZbzcr5urPnvKk8srEhMmeGL9MRvfDxH4z1FAevbEpEPqUQbfcQz/FC6I9oXI8VM+b4ixtO3be3fTi0RdbK0fkqaUK1rWf6KsPYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722619760; c=relaxed/simple;
-	bh=1aXr1a6cPgOepOy3AhjNqHrv1sNmM2SwAOr0T46pwP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NHZsBL3nEJeKUg8wUMi3OavqCjkWCzDkv95Cmiasp6FHNGETqLBrLpJm99LMyxjDnZEu7kzT4kH04nastDt9fbyly3eKYE7EQP50lGiWs426b5uk6qoq8XjGtravUdeocqMdbKispaoY7EkHtIPPY4okQ37uWLOx4z27jS3HFUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pvpbP16h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38900C4AF48
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:29:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722619760;
-	bh=1aXr1a6cPgOepOy3AhjNqHrv1sNmM2SwAOr0T46pwP4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=pvpbP16hq+rm54xJczTpn8B80vjIfKaT4TK5sbBTfRp5QxEAOiGU5KObwXIcjGYu8
-	 SJ6eFZFwJE7eWehVtIvnamZoMeuWH2sc76WM99/NjWa7XJSyS3lu8QTkhkvu5wKfGZ
-	 kUNE7YVY3Hr1ZUFxoYoYmktyIQHjDChlchTNVcuHdvH1pwMGOS5cHvN+Bh+pqc5re4
-	 jJJa4GeK+7y2W9mdJQdIq5kOZSlFtXzrlAxv47NS4etzILZT7oxEpz9y4blrzoSjJC
-	 PpnCCf4ihygaX8kLSYKgIXO2rACzYvbHuKkxploIgjTTF/XpxGrjZM4eoU+EbhYNn/
-	 G7RJFqUqVdryA==
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-66526e430e0so71342417b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:29:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXLryn41xRDr2bqIkGMcvCMkbm6GTisuYW1B7/NoKRyqRWGHfhAzSTLR859YeV/7C09Ieeci8OlFnxYkhXL5LrRwVENdfzmVfupCyKC
-X-Gm-Message-State: AOJu0YxiPsXO1K3Ccs4DyPBkoTaIaChdBfawwwV1M1cp1rKeN1nfI1ak
-	k35t3o4dt9bBy/8mmxtYWNqcf8PwdVHKvsEfBur0lRzNYrx0di0ZtTJcnOVhyPsBxbd9JTpTFUj
-	bbSZuLul3KXRicU6dUP9G+QkRqQU6S66oS1fYyQ==
-X-Google-Smtp-Source: AGHT+IGgp0/LFOnOVLKTwvr2itlc7DfEpJiEC5mNOsNgKnoG0VxvpaCvtmpTWUcoQdIKztSXOlXn9/ACCsSBd3lfotY=
-X-Received: by 2002:a81:c20f:0:b0:61b:1e81:4eb8 with SMTP id
- 00721157ae682-6895fbdb8c3mr47090427b3.9.1722619758887; Fri, 02 Aug 2024
- 10:29:18 -0700 (PDT)
+	s=arc-20240116; t=1722620066; c=relaxed/simple;
+	bh=H46XU4flydlMAniLAo+k795WzPyLoyVvy7vAZx7j73A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X/+ZZXtOceFUB/jR0/CT8IV+dCqUY5D7DJ2P3KigY62L6cfg457AfqS/P/kmZpokw3x9n09MkUTm9RsOZZYaYYaqKlkJXhv1tjJFQgpidn/tmJzRd2zKd6BxfK6kqISF8NrATG4meZnZ/a3DnySX+24yUnrDkROpB5Wy7bxk5XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKykl2oU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fee6435a34so59987185ad.0;
+        Fri, 02 Aug 2024 10:34:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722620065; x=1723224865; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gatNmUJpvUibb5XpWXl4cN6fAfKNOEybzN60sP4r15I=;
+        b=ZKykl2oUmzl4cjIkpmCudlgsWIFiCweDT2923qlnWJuanexb7sTNDg8vmkFnELkCa+
+         Ybzm99u/lwc+G2NEC9J1f1kpnKzJU6gmtCP+BqUekHTxXE0TjUepnb9lQBarCD0lmFf9
+         i/sr5abMOcBFEA95lsVhTa3U/btpU+AHrh3X4/0Qm7MLW8Iovsm3Towj4WihBRnQG53I
+         TcPoqpXbN/b8vEGrdQdvP8y/iiJeQzvQEsYqCmVWP9PA19fLxYThDpCldnZS5/eRMiBs
+         KqcfA/AduEXL9ig9O9KIHrKgDwSEesD5/Xw3zqcriFiDm1H7h2A3h6TrbN7y/sMOJdIE
+         E/7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722620065; x=1723224865;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gatNmUJpvUibb5XpWXl4cN6fAfKNOEybzN60sP4r15I=;
+        b=nDDqElNSvTBbS644MhAGLg9CwOhAtYGvXfirjpGEHY32xNkx6m9Lbz9WvtXW5DLX8s
+         TfPi2aQ67lCRQ5tiEnVX0t81WPjConfadBTeVe36forYPFp+Ixih+wle+giqbtkawxNm
+         O98iyqsWZ5DZJsLv4SQMzSY+sAVXaX9eH+Kyr0EfAhAhvm9QreVIVY7CKg+rTA+aeC9d
+         Xayhf3gx9LetCfcL2xp9lmevSeBVb/XGwLi6c2RZ9swEYq8PsmnMhz8D43B45Mdga1j/
+         D5PdFnwfCCeHvBfrnHkzTh6Dfa3le9c53reoldN2rCYKJ3/C3k8agKrupvbI13ai35nH
+         xiYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUijGIE/+x7D0dKIH9Hdzg0S5VWkOWPUOa+HsPwjwf07yDv9+gb+UBfPof1pkInj9Lbl3xJNkqNkWneROLTKa+o9LydVCkrJE5lKA==
+X-Gm-Message-State: AOJu0YweCHkCtFdeneKuMINtVWYRDMR8H6yxz7QJvVwdBt3NV4s2gNus
+	mWY1OYKWUg1/Y13y2NhS9WbmaU3uFr46oi0DKyLGmg9cuSJFqJIF
+X-Google-Smtp-Source: AGHT+IHpOyiWX+126Ucw7sJfURuG3QEh7Tmy3MxbOJnPRawX58YxC7bZQ1pMFDt8cxJbbaq7dFAdwA==
+X-Received: by 2002:a17:903:2308:b0:1fd:9269:72f0 with SMTP id d9443c01a7336-1ff573d8baemr41975385ad.47.1722620064517;
+        Fri, 02 Aug 2024 10:34:24 -0700 (PDT)
+Received: from localhost ([216.228.127.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592979d7sm19812375ad.259.2024.08.02.10.34.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 10:34:24 -0700 (PDT)
+Date: Fri, 2 Aug 2024 10:34:21 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: linux-kernel@vger.kernel.org, ardb@kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH V3 0/2] uapi: Add support for GENMASK_U128()
+Message-ID: <Zq0YnYAM9RoforVV@yury-ThinkPad>
+References: <20240801071646.682731-1-anshuman.khandual@arm.com>
+ <CAAH8bW9sJmwKd19sJzpGrQ5Tr_4fYMyvLnfFyahhxxkG6r6GbA@mail.gmail.com>
+ <1781c39a-2280-49ed-aaaa-b1684744615e@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240726094618.401593-1-21cnbao@gmail.com> <20240802122031.117548-1-21cnbao@gmail.com>
- <20240802122031.117548-2-21cnbao@gmail.com>
-In-Reply-To: <20240802122031.117548-2-21cnbao@gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 2 Aug 2024 10:29:08 -0700
-X-Gmail-Original-Message-ID: <CACePvbUmCN313ippOkP9bhYa8Zd7gNDXgA9w9Q8bA9sgUxTvOQ@mail.gmail.com>
-Message-ID: <CACePvbUmCN313ippOkP9bhYa8Zd7gNDXgA9w9Q8bA9sgUxTvOQ@mail.gmail.com>
-Subject: Re: [PATCH v6 1/2] mm: add nr argument in mem_cgroup_swapin_uncharge_swap()
- helper to support large folios
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	baolin.wang@linux.alibaba.com, david@redhat.com, hannes@cmpxchg.org, 
-	hughd@google.com, kaleshsingh@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, mhocko@suse.com, minchan@kernel.org, 
-	nphamcs@gmail.com, ryan.roberts@arm.com, senozhatsky@chromium.org, 
-	shakeel.butt@linux.dev, shy828301@gmail.com, surenb@google.com, 
-	v-songbaohua@oppo.com, willy@infradead.org, xiang@kernel.org, 
-	ying.huang@intel.com, yosryahmed@google.com, hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1781c39a-2280-49ed-aaaa-b1684744615e@arm.com>
 
-Acked-by: Chris Li <chrisl@kernel.org>
+On Fri, Aug 02, 2024 at 07:00:43AM +0530, Anshuman Khandual wrote:
+> 
+> 
+> On 8/1/24 20:13, Yury Norov wrote:
+> > On Thu, Aug 1, 2024 at 12:16 AM Anshuman Khandual
+> > <anshuman.khandual@arm.com> wrote:
+> >>
+> >> This adds support for GENMASK_U128() and some corresponding tests as well.
+> >> GENMASK_U128() generated 128 bit masks will be required later on the arm64
+> >> platform for enabling FEAT_SYSREG128 and FEAT_D128 features.
+> >>
+> >> Because GENMAKS_U128() depends on __int128 data type being supported in the
+> >> compiler, its usage needs to be protected with CONFIG_ARCH_SUPPORTS_INT128.
+> >>
+> >> Cc: Andrew Morton <akpm@linux-foundation.org>
+> >> Cc: Yury Norov <yury.norov@gmail.com>
+> >> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> >> Cc: Arnd Bergmann <arnd@arndb.de>>
+> >> Cc: linux-kernel@vger.kernel.org
+> >> Cc: linux-arch@vger.kernel.org
+> > 
+> > For the patches:
+> > 
+> > Reviewed-by: Yury Norov <yury.norov@gmail.com>
+> 
+> Thanks Yury.
+> 
+> > 
+> > This series doesn't include a real use-case for the new macros. Do you
+> > have some?
+> > I can take it via my branch, but I need at least one use-case to not
+> > merge dead code.
+> 
+> I have recently posted the following patch for arm64 platform although
+> most of the subsequent work is still in progress. But for now there
+> are some corresponding tests for this new GENMASK_U128() ABI as well.
+> Hence it will be really great to have these two patches merged first.
+> Thank you.
+> 
+> https://lore.kernel.org/all/20240801054436.612024-1-anshuman.khandual@arm.com/
 
-Chris
+If you're going to merge the above patch in 6.12, you'd normally send
+it together with GENMASK_U128 preparation series, get an ACK from me
+and Rasmus for bitops part and move through arm64 tree.
 
-On Fri, Aug 2, 2024 at 5:21=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrote=
-:
->
-> From: Barry Song <v-songbaohua@oppo.com>
->
-> With large folios swap-in, we might need to uncharge multiple entries
-> all together, add nr argument in mem_cgroup_swapin_uncharge_swap().
->
-> For the existing two users, just pass nr=3D1.
->
-> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
-> ---
->  include/linux/memcontrol.h | 5 +++--
->  mm/memcontrol.c            | 7 ++++---
->  mm/memory.c                | 2 +-
->  mm/swap_state.c            | 2 +-
->  4 files changed, 9 insertions(+), 7 deletions(-)
->
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 1b79760af685..44f7fb7dc0c8 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -682,7 +682,8 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgroup *=
-memcg, gfp_t gfp,
->
->  int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct=
- *mm,
->                                   gfp_t gfp, swp_entry_t entry);
-> -void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry);
-> +
-> +void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_=
-pages);
->
->  void __mem_cgroup_uncharge(struct folio *folio);
->
-> @@ -1181,7 +1182,7 @@ static inline int mem_cgroup_swapin_charge_folio(st=
-ruct folio *folio,
->         return 0;
->  }
->
-> -static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
-> +static inline void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, un=
-signed int nr)
->  {
->  }
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index b889a7fbf382..5d763c234c44 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4572,14 +4572,15 @@ int mem_cgroup_swapin_charge_folio(struct folio *=
-folio, struct mm_struct *mm,
->
->  /*
->   * mem_cgroup_swapin_uncharge_swap - uncharge swap slot
-> - * @entry: swap entry for which the page is charged
-> + * @entry: the first swap entry for which the pages are charged
-> + * @nr_pages: number of pages which will be uncharged
->   *
->   * Call this function after successfully adding the charged page to swap=
-cache.
->   *
->   * Note: This function assumes the page for which swap slot is being unc=
-harged
->   * is order 0 page.
->   */
-> -void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry)
-> +void mem_cgroup_swapin_uncharge_swap(swp_entry_t entry, unsigned int nr_=
-pages)
->  {
->         /*
->          * Cgroup1's unified memory+swap counter has been charged with th=
-e
-> @@ -4599,7 +4600,7 @@ void mem_cgroup_swapin_uncharge_swap(swp_entry_t en=
-try)
->                  * let's not wait for it.  The page already received a
->                  * memory+swap charge, drop the swap entry duplicate.
->                  */
-> -               mem_cgroup_uncharge_swap(entry, 1);
-> +               mem_cgroup_uncharge_swap(entry, nr_pages);
->         }
->  }
->
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 4c8716cb306c..4cf4902db1ec 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4102,7 +4102,7 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->                                         ret =3D VM_FAULT_OOM;
->                                         goto out_page;
->                                 }
-> -                               mem_cgroup_swapin_uncharge_swap(entry);
-> +                               mem_cgroup_swapin_uncharge_swap(entry, 1)=
-;
->
->                                 shadow =3D get_shadow_from_swap_cache(ent=
-ry);
->                                 if (shadow)
-> diff --git a/mm/swap_state.c b/mm/swap_state.c
-> index 293ff1afdca4..1159e3225754 100644
-> --- a/mm/swap_state.c
-> +++ b/mm/swap_state.c
-> @@ -522,7 +522,7 @@ struct folio *__read_swap_cache_async(swp_entry_t ent=
-ry, gfp_t gfp_mask,
->         if (add_to_swap_cache(new_folio, entry, gfp_mask & GFP_RECLAIM_MA=
-SK, &shadow))
->                 goto fail_unlock;
->
-> -       mem_cgroup_swapin_uncharge_swap(entry);
-> +       mem_cgroup_swapin_uncharge_swap(entry, 1);
->
->         if (shadow)
->                 workingset_refault(new_folio, shadow);
-> --
-> 2.34.1
->
+Whatever, I've merged it in bitmap-for-next for testing. Please keep
+me posted for any following patches.
+
+Thanks,
+Yury
 
