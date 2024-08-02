@@ -1,166 +1,187 @@
-Return-Path: <linux-kernel+bounces-272411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 924C4945B7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:52:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C128A945B82
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:53:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41601C22603
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:52:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BD5F282E89
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15EAD1DB44A;
-	Fri,  2 Aug 2024 09:52:37 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2E54C62A;
-	Fri,  2 Aug 2024 09:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47DD1DB445;
+	Fri,  2 Aug 2024 09:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sl+Imx3P"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4A21DB420;
+	Fri,  2 Aug 2024 09:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722592356; cv=none; b=E/oG1SPQmJp3bNufJCGz42hf3/Vto4aohglRGdFFScd8TP0ZGQNiO2o6gQ+QznNNI1dFmbWIALExjUMQaibm1r4bd0k0Jas6/IJf50o2tYt68NHXRdv+eF4Csb6FPK2ib5nGSxImNNX5aLDvM8BVCI+JJIFIbxhdB4Vxc83xvMg=
+	t=1722592418; cv=none; b=GVTzEy/qXpVqJ+cuNeclwO3RpmMNQDAi8404nghMc3wWnTek0SGPwObYUxpOpkM3IJvG44K+Q6s7AgiIxEEYXYnCMaParE7W69TukatWl2WOF0aKIuI1mCmUJiQjdWaAS+QaZmq5eOa2hMGyyzXPf3kYoPanBonHW2QRlJAun60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722592356; c=relaxed/simple;
-	bh=rnFqcYhnMeDXtV6Y5+tdT+M0WG9C98IBz7b+htCMRe0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSLWXfT9FeDjQpBeaWfeIE454TeCJxmRGxijTNS1fFHOUF8UGmJeaH5+wTqaOxqKV1bCUnS/Lpsjv52Br6GZ+oFBtGPiEKEPA8nAEkjrqoq6D7Z3yjmrKXHMJkumSGJH19cLt1Mqnhd0GNDP/lZsne06yfRfNrFcqV41jIKE0ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 133041007;
-	Fri,  2 Aug 2024 02:53:00 -0700 (PDT)
-Received: from [10.57.12.204] (unknown [10.57.12.204])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9089C3F64C;
-	Fri,  2 Aug 2024 02:52:33 -0700 (PDT)
-Message-ID: <7a0ec54f-2dc1-4941-9890-260c71ed4a17@arm.com>
-Date: Fri, 2 Aug 2024 10:53:04 +0100
+	s=arc-20240116; t=1722592418; c=relaxed/simple;
+	bh=5RvnCkZ0f1ayRqEQOxie5tQpkKjmPmBFSqlVw4+5+r8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EDrGVfcOJW6wub1p5zCc882a4kRi6VDNdMJLaO7vGXzf3xV0CRJepZlgP23pqTEaNU1WlYLEc+O3uOvq79YYj9bHy7NdF2Mt1k8sg1kpT1tnpiH4/knPtdgUCs3eVqjwuiaJqamQbbySKiI5/DkQpQVGc5QwdciA3PrrFrP82u0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sl+Imx3P; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f035ae0fe0so91884341fa.3;
+        Fri, 02 Aug 2024 02:53:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722592414; x=1723197214; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=/Tb6hNqed3D3MjkcK+637mlvJhN7REA1/kHYwr9JxhE=;
+        b=Sl+Imx3PlvARmD18H/7P4PYb+Gd/dnE92yXIiE32YjH9MkdqHp/nRVbVXZn05uH5Ju
+         kEuHh9VIR33vH6RY+3Eg8XDLn80rAMN9eef5RaEU5urR/bV9cHqeZoP1uH8hHFMRGGxl
+         AhgqizHXHDLIiHGw0yJ6DbG+AAHQf+ErTwcg5w5hdET/MjJNgtLaLF9MUujDEFeob4W5
+         tQzo3nkC0YxoM1JtPVBD7E8HpxbULR3OC7ojELomJ0DBax9OaWxc5/DXZ1gmBwXGVh6c
+         y/3TCQsSQN4t00qIT0c/GWgtX51yT7QMAUKOLz1cm8+kMJRCvCezwnWR59BX3NR08kSU
+         RjKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722592414; x=1723197214;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Tb6hNqed3D3MjkcK+637mlvJhN7REA1/kHYwr9JxhE=;
+        b=DNdejBGO4JobfRbJ/2HGQWHm9qpAKMIKiKj4Vf3tcm4s9B4zycMMXuudU0SWt0Iqga
+         MdurYMNSYyUtoWEeXcnN4DfevRkbJ8hf0unY4l1D3kHX8RPWLRHfj1dnBFHsEFodBBb2
+         FESYWHa4LnVDhzIvNUNppqKGz4b0mHmi8BraWFPiaTUzdqMqnfr4LqiBLSPHf3kTyIyE
+         xnapxinSsWc1bzDPl1FzQpZ3Jd+UGpdSE4Bm6mbuGuHoKk3OxVqv7QSJMX1OyCykQEeR
+         hH4eMCpq7BvvFsElvWeGXSHBtAWK7QdQvNAhFaFSFi0goTcOMhJVIf2GT32aiDv05iFK
+         F7Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBoZTqUfaFAJEeVhLPE3EopFYAEvHcZzYsSOB0cd2sSQoM7QoTTBxmrndjyDb6Ii0E+i1sH70BVa8sEtSAS1II3f+wijR9qSx6DSbW1wvm72I4LZsTBBmaglLkVfk4+2b5XI8rXpkqnw==
+X-Gm-Message-State: AOJu0Yxur0OB6Fy9wE2euI4Ri/izF54c4mEqp2A36LVw6er7L0wMTNHI
+	nrgsNcE8Fw8LWKtED43KdaBGdpUcB54cx+hPdALp0tThQ1tOvibP
+X-Google-Smtp-Source: AGHT+IGIJa4lEFO4v8BJthZbIlTXCR9ztB/aZbScUnLAX3MagCa18fvttKtAKb4h7EmhveTwMuCBPw==
+X-Received: by 2002:a2e:9e15:0:b0:2ef:2dac:9076 with SMTP id 38308e7fff4ca-2f15aa95dbcmr19378721fa.11.1722592414004;
+        Fri, 02 Aug 2024 02:53:34 -0700 (PDT)
+Received: from mobilestation ([178.176.56.174])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f15e273818sm1222841fa.130.2024.08.02.02.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 02:53:33 -0700 (PDT)
+Date: Fri, 2 Aug 2024 12:53:30 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Kelvin Cheung <keguang.zhang@gmail.com>, 
+	Gregory CLEMENT <gregory.clement@bootlin.com>, =?utf-8?B?VGjDqW8=?= Lebrun <theo.lebrun@bootlin.com>, 
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+	Huacai Chen <chenhuacai@kernel.org>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] MIPS: smp: Sleeping func called from start_secondary()
+Message-ID: <utfmb7mxm6emxditrq7fwalatnhszzcztu4gnqs5mf44umvfwa@k4i7gamaj5mw>
+References: <6szkkqxpsw26zajwysdrwplpjvhl5abpnmxgu2xuj3dkzjnvsf@4daqrz4mf44k>
+ <8d875eb0-d236-46f3-a417-08bff3c0087d@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND][PATCH v1 6/8] thermal: helpers: Drop
- get_thermal_instance()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- LKML <linux-kernel@vger.kernel.org>
-References: <2211925.irdbgypaU6@rjwysocki.net>
- <2014591.usQuhbGJ8B@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <2014591.usQuhbGJ8B@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d875eb0-d236-46f3-a417-08bff3c0087d@app.fastmail.com>
 
+Hi Jiaxun
 
+On Fri, Aug 02, 2024 at 05:43:45PM +0800, Jiaxun Yang wrote:
+> 
+> 
+> 在2024年8月2日八月 下午4:45，Serge Semin写道：
+> > Hi folks,
+> >
+> > To debug some another problem I recently enabled the
+> > CONFIG_DEBUG_ATOMIC_SLEEP config for my SoC based on the 2xP5600 cores
+> > with MIPS GIC as IRQ-controller. That caused the next BUG backtrace
+> > started being printed to the system log during the device boot-up:
+> 
+> Hi Serge,
+> 
+> Thanks for reporting the problem!
+> 
+> I actually have a patch lying around somewhere to convert cevt-r4k to use CPUHP
+> interface and avoid requesting interrupt on secondary CPUs.
+> 
+> Will post after getting more platform tests.
 
-On 7/29/24 17:06, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> There are no more users of get_thermal_instance(), so drop it.
-> 
-> While at it, replace get_instance() returning a pointer to struct
-> thermal_instance with thermal_instance_present() returning a bool
-> which is more straightforward.
-> 
-> No functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->   drivers/thermal/thermal_core.h    |    5 -----
->   drivers/thermal/thermal_helpers.c |   30 ++++++------------------------
->   2 files changed, 6 insertions(+), 29 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.h
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.h
-> +++ linux-pm/drivers/thermal/thermal_core.h
-> @@ -204,11 +204,6 @@ void __thermal_cdev_update(struct therma
->   
->   int get_tz_trend(struct thermal_zone_device *tz, const struct thermal_trip *trip);
->   
-> -struct thermal_instance *
-> -get_thermal_instance(struct thermal_zone_device *tz,
-> -		     struct thermal_cooling_device *cdev,
-> -		     int trip);
-> -
->   /*
->    * This structure is used to describe the behavior of
->    * a certain cooling device on a certain trip point
-> Index: linux-pm/drivers/thermal/thermal_helpers.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_helpers.c
-> +++ linux-pm/drivers/thermal/thermal_helpers.c
-> @@ -39,18 +39,18 @@ int get_tz_trend(struct thermal_zone_dev
->   	return trend;
->   }
->   
-> -static struct thermal_instance *get_instance(struct thermal_zone_device *tz,
-> -					     struct thermal_cooling_device *cdev,
-> -					     const struct thermal_trip *trip)
-> +static bool thermal_instance_present(struct thermal_zone_device *tz,
-> +				     struct thermal_cooling_device *cdev,
-> +				     const struct thermal_trip *trip)
->   {
->   	struct thermal_instance *ti;
->   
->   	list_for_each_entry(ti, &tz->thermal_instances, tz_node) {
->   		if (ti->trip == trip && ti->cdev == cdev)
-> -			return ti;
-> +			return true;
->   	}
->   
-> -	return NULL;
-> +	return false;
->   }
->   
->   bool thermal_trip_is_bound_to_cdev(struct thermal_zone_device *tz,
-> @@ -62,7 +62,7 @@ bool thermal_trip_is_bound_to_cdev(struc
->   	mutex_lock(&tz->lock);
->   	mutex_lock(&cdev->lock);
->   
-> -	ret = !!get_instance(tz, cdev, trip);
-> +	ret = thermal_instance_present(tz, cdev, trip);
->   
->   	mutex_unlock(&cdev->lock);
->   	mutex_unlock(&tz->lock);
-> @@ -71,24 +71,6 @@ bool thermal_trip_is_bound_to_cdev(struc
->   }
->   EXPORT_SYMBOL_GPL(thermal_trip_is_bound_to_cdev);
->   
-> -struct thermal_instance *
-> -get_thermal_instance(struct thermal_zone_device *tz,
-> -		     struct thermal_cooling_device *cdev, int trip_index)
-> -{
-> -	struct thermal_instance *ti;
-> -
-> -	mutex_lock(&tz->lock);
-> -	mutex_lock(&cdev->lock);
-> -
-> -	ti = get_instance(tz, cdev, &tz->trips[trip_index].trip);
-> -
-> -	mutex_unlock(&cdev->lock);
-> -	mutex_unlock(&tz->lock);
-> -
-> -	return ti;
-> -}
-> -EXPORT_SYMBOL(get_thermal_instance);
-> -
->   /**
->    * __thermal_zone_get_temp() - returns the temperature of a thermal zone
->    * @tz: a valid pointer to a struct thermal_zone_device
-> 
-> 
-> 
+Great! Thanks. I'll test it out upon submission.
 
-LGTM, small nit: you can also remove the description of that
-get_thermal_instance() from
-Documentation/driver-api/thermal/sysfs-api.rst
-It sneaked in somehow...
+* Although I doubt that such (presumably) complicated change might be
+considered as a backportable fix. But at least it shall fix the problem for the
+mainline kernel.
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Thanks,
+-Serge(y)
 
+> 
+> Thanks
+> - Jiaxun
+> 
+> >
+> > [    0.118053] BUG: sleeping function called from invalid context at 
+> > kernel/locking/mutex.c:283
+> > [    0.118062] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pid: 
+> > 0, name: swapper/1
+> > [    0.118069] preempt_count: 1, expected: 0
+> > [    0.118074] RCU nest depth: 0, expected: 0
+> > [    0.118078] Preemption disabled at:
+> > [    0.118082] [<80105040>] arch_dup_task_struct+0x20/0x118
+> > [    0.118116] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 
+> > 6.11.0-rc1-bt1-00312-gca6f9469050c-dirty #2460
+> > [    0.118134] Stack : 816d0000 801b89bc 81870000 00000004 a02d0c08 
+> > 00000000 84ae7dcc 801b84c0
+> > [    0.118167]         00000000 00000002 00000000 00000000 00000000 
+> > 00000001 84ae7d70 84aaf200
+> > [    0.118195]         00000000 00000000 81115acc 00000000 00000059 
+> > 84ae7bec 00000000 00000000
+> > [    0.118222]         00000000 ffffffff ffffffea 00000020 816d0000 
+> > 00000000 81115acc 00000002
+> > [    0.118250]         00000000 04240021 a02d0c08 00000000 00000000 
+> > 00000000 30400000 ac24242a
+> > [    0.118277]         ...
+> > [    0.118286] Call Trace:
+> > [    0.118289] [<8010af2c>] show_stack+0x88/0x120
+> > [    0.118309] [<80f09dfc>] dump_stack_lvl+0x78/0xb0
+> > [    0.118323] [<801778d0>] __might_resched+0x190/0x1f0
+> > [    0.118349] [<80f10f80>] mutex_lock+0x20/0x74
+> > [    0.118365] [<801c8590>] irq_create_mapping_affinity+0x48/0x104
+> > [    0.118390] [<801121ec>] r4k_clockevent_init+0x58/0x38c
+> > [    0.118402] [<80116658>] start_secondary+0x34/0x134
+> > [    0.118411] [<80f0b1e4>] smp_bootstrap+0x68/0x98
+> > [    0.118424] 
+> >
+> > I managed to investigate the problem a bit and the reason turned out to be
+> > in the irq_create_mapping() method eventually invoked in the framework of the
+> > secondary CPU start-up procedure. The more detailed calls chain is:
+> > start_secondary()
+> > +-> mips_clockevent_init()
+> >     +-> r4k_clockevent_init()
+> >         +-> get_c0_compare_int()
+> >             +-> gic_get_c0_compare_int()
+> >                 +-> irq_create_mapping()
+> >                     +-> irq_create_mapping_affinity()
+> >                         +-> mutex_lock()
+> >                             +-> might_sleep()
+> >                                 +-> might_resched()
+> >                                     +-> __might_resched()
+> >                                         +-> Print the log above
+> >
+> > I currently lack of free time for further investigation in an attempt to
+> > find a reasonable solution. So here is just a report and a short summary
+> > of the problem. Should you have any idea of how to fix the problem I'll be
+> > very glad to test it out on a short notice.
+> >
+> > -Serge(y)
+> 
+> -- 
+> - Jiaxun
 
