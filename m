@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-272866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524DF946206
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:49:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E3C94620A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D481282229
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068591C21335
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B4D513635E;
-	Fri,  2 Aug 2024 16:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD8A13634F;
+	Fri,  2 Aug 2024 16:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="uS7onl47"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VJp2YPUS"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0958F16BE11;
-	Fri,  2 Aug 2024 16:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9735516BE0E
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 16:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722617369; cv=none; b=mHpCQZ50LcuuVAtN6dKVpnUsoT6Nf+pPnPIYAUgmsdsEBLyz7kc+Dc9HvuHOtS7i1Yk+FmZPC+lLXkQdLyeo7Jz6B6Z7vl9bLk5LVYw2R9V5WCEgKZh/ES7uq5Qzbu1qZ703U47BKl4aQMysw+nptKkkxJR5s24Ayl3UpAzyqVw=
+	t=1722617451; cv=none; b=UbXjExOMD4CsDBJ6d4zEGMqcoZprPmN5yZ+IePtKINWhZVHZDUxLfUreTXc0MZQym2HcqmrH2uKaXVO/8x9Nordb1dHCYNc17nFF0ZXA7a7rD3UsJPNocMrbASLHLbqH6az4igU8PE060cCv93l3dE1vjx5owK8ujZgtklNovy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722617369; c=relaxed/simple;
-	bh=MYX6RpPC9328x3gSz3cen8uvUKQCdBkMJbhYZwYyUac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gkgGulMvbJPTuxVWiJ4+Zme3BxfVSlFJoMviPuQbeYCPBlV2ilnZpMxhC2AJna8no4kHMHXVhLhkvQubfreN5OQ+HszvQZ90vDlXg4uLJ/RpkLsXQHCglBG/Kk32+Ngid8Y7HKSh+LpgHB3ObkRJs4BScyRVOpmYYk0rHx1LDrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=uS7onl47; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1722617353; x=1723222153; i=wahrenst@gmx.net;
-	bh=MYX6RpPC9328x3gSz3cen8uvUKQCdBkMJbhYZwYyUac=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=uS7onl477NLKBGCnNPEucHTW8USXN6T/Ib/Bg8TNQFejL1R3oLxJH9DQnaHRGSeO
-	 uepXSkhkyDLvsJUwzIW2NTtOrOdL3le4ni15nERHs3VUM/yrH7B7Cv6qvJ2M6C1hr
-	 bEc62tj+TtuLGU5A3RsjSP00BmW5W2nIQefr0o+bfYk8jjs70CLipN76wXw+5iJ5l
-	 N3uH5B0FqED20cG8XlUhU9pm5rgjCyYbf3rgl+yC7IdInApLbt8VHq3xVavP9igri
-	 CnE3cgCPoYwWWCoHavnFgVD29HAVyfdQfQ6tAX/9dZKNA6VFRKIRZ5peTiSNw/ue8
-	 qBtRDkLKskuk+yKw3A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N7R1J-1sAbED3H3N-00tVGu; Fri, 02
- Aug 2024 18:49:12 +0200
-Message-ID: <4114a4db-6ecf-439e-af45-47b24612fea8@gmx.net>
-Date: Fri, 2 Aug 2024 18:49:11 +0200
+	s=arc-20240116; t=1722617451; c=relaxed/simple;
+	bh=QBxJ2rF+4MnYP5mo4rSjypaHSP50HnOtHw/UQzKOIAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KwHgYJ+ok6Efr1hmu+KYFPA+uZUR+a7cvcslFpR/DTI9RqhrAuff048ro/QpdlzG6iqlVBBlAHbLgy3JJCkhkYlMg+fZ7dfO51BbklLQYEuunbhczVJvzOO7X3IaYfZ9M7fXauBFLvjj1iN5T54HcrLLEWSCqgq83SHHhO1MBKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VJp2YPUS; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eecd2c6432so125526601fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 09:50:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1722617447; x=1723222247; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dy7uDpKDjfgFbBNLdCjGfcS9co6ibrIuccREcNoo5pM=;
+        b=VJp2YPUSc0leCEYt03crLQ0yXPD2t5CZ4uHtedNimKbWjxrc9ADVJInrTmu7lSN3je
+         c7ZWs2nbBtFYdZSb3z2t3XFPfbpIzcpYeVrJXL9h3G2BzVube8eScp7Wq183P5mTIaCN
+         JXzWcMj1f5PKJGVRZevn48fvc2Z2enm64lL30=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722617447; x=1723222247;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dy7uDpKDjfgFbBNLdCjGfcS9co6ibrIuccREcNoo5pM=;
+        b=DjTmky2bTNdNgMsuG1FSs/N6toaN4sZJQqSarikSkdxrC3h0sP1nOWNPFIgvIwH6Uk
+         s1hS97hxO6wLfE5On08U09DYEYDEnRv/ed2YuTudHgC56JYZWKuewE6UalMPyYylE+/2
+         G1dXw+t98MnZjQOgohSVUFm0rYe04e47fqnoMM1F92sUCVbGWGgl+WJap484SxaL8mAP
+         g8b7N4khUHLqZv+5dR0BFCFkKNviBOTGImkXVzlI0glx4+1TQLWFlWOdFmP8t74FbmDt
+         3TKGeXpERPp11GevlBbKyaKfGCQHonnG56Rl2LR6xVsmh47P2Zq/QojYY3SY/pCvRYHj
+         pjBA==
+X-Gm-Message-State: AOJu0YwjwVmP3hk0/4xpZqQpZ0HSprhczE+W4xFliabc70imaAZKWrjM
+	enRHVAye9iCd9VWEnMTmYAw61sCk3dgCwQOoAC6ecpXjvtgYVh6Is+UR5rfOfAqOpnYYBJrJ7LY
+	8/5zueQ==
+X-Google-Smtp-Source: AGHT+IEnhC216oh5e+DZ1UIf/llhPNGn1lq0bQktmYzyvnXjaebbOPfiqWEeuede1Hjrj6421nGC+A==
+X-Received: by 2002:a2e:9dc2:0:b0:2ef:2ba5:d214 with SMTP id 38308e7fff4ca-2f15aa88c3dmr36056651fa.4.1722617447085;
+        Fri, 02 Aug 2024 09:50:47 -0700 (PDT)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9d45423sm117320866b.134.2024.08.02.09.50.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Aug 2024 09:50:46 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so74321655e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 09:50:45 -0700 (PDT)
+X-Received: by 2002:a5d:4590:0:b0:366:f04d:676f with SMTP id
+ ffacd0b85a97d-36bbc0e09f9mr3243960f8f.12.1722617445575; Fri, 02 Aug 2024
+ 09:50:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] arm64: dts: imx93: add lpi2c1 and child node
-To: Frank Li <Frank.li@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
- "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
- <linux-arm-kernel@lists.infradead.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240801160915.2505610-1-Frank.Li@nxp.com>
- <944715e8-e91e-46dd-a053-7e00a17dea72@kernel.org>
- <Zqztwh3yghN8Drnj@lizhi-Precision-Tower-5810>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <Zqztwh3yghN8Drnj@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20240802114518.GA20924@redhat.com>
+In-Reply-To: <20240802114518.GA20924@redhat.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 2 Aug 2024 09:50:28 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wguPQZKfWdNjF8OedfttMNkrW57Kb5Wjv0NmTzoEbUG7A@mail.gmail.com>
+Message-ID: <CAHk-=wguPQZKfWdNjF8OedfttMNkrW57Kb5Wjv0NmTzoEbUG7A@mail.gmail.com>
+Subject: Re: build failure caused by RUNTIME_CONST()
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LeHRWLSQp2cexdwIEAUp2pVcYtlib7hp1pNc8Z3gqzgwdlEyg6q
- qgyQpU0HykzesG+OPfeMMn8v/ssdIuOZgez4ywZz590pWgFrH7qOSMgILTYD2fjRyfmCVGF
- KC2yASMjMPA6kD/46iHHCp6ZzeUrL10ZBhF3CtzC9CT9fsQAU5G5TUdTiSOhweo5HEQN+5C
- uHU1HSXoYOi88NpLPrNGw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PQXslPS15dU=;VTqn4z72wxRK4wipEq2Avt87JH4
- zJnS/7+1nnv/0Nt/movrkRQigA+F7Ygj4LViK0KR2Kzj6fTL80/esOFnern5KAJHV9DdHus8w
- GRXPfvHuK6UTexTxVOE+Teex4G+sOdCqDj/39Mh+yA5NLXHYJgZp+qnQ98FHWgnSrIsfeT+mF
- TsIouayk461A5cLul+nq7vr3eCBNYIMIhcr/jccYN+ynUKUgjiQtEbXElcax3CjDdW/HbyRlr
- vRCmdRvle3iKsV1uvXWsqhk2FDxUzAMJpzmMcVbTSU3nMM1FH1d/7TXv5DIRGEJHO4iw0tpM0
- wGmrQz6dSQnyjlvjzpNojBUMLZ8R8OMi18j2yNsjrgrwKyeyAxENmNjx4j3b6tXW5VNMVTdE8
- abBERCT593Ay6JkooFvHyoXCa1k8LfLAYfm3i4koIEDHorfDTXRlihFMUlpbsZ+MpM5k8+pAf
- fQzSItTMmxLEWjdsEFeH3xJl+w6/b+rKevRnMi8TJrKWs142fHiWsiBxQd6BmQ9a5MMZpYpU2
- /tCrEdjzuLUalxDBc2eMXhUXsopYZoLs9h24ueEiJCb6y5mnovc3ng08mC7rIMVyChrOpb2Sd
- kpJidTf2FLunkJgm610TzzwCxcY5IzETlWdfmljKiPgFLgEZup/F0OLFDpMzCoTLQTaipFhG3
- CGd2hPfb2ZinlGmoBweoFjCCjAnbuVQP2N/siuRm3GiwQwJde5o2DtHWv4oTsD75h/PkLLCjq
- qJaLxKsLWuY5eIkmYCQjAVZWp+Usck2EaGja72hVigYBGvp1AsHAx/8/GgUbKD/SDmDAhC6tX
- 6XBg3mJ8JQOyKYvTDnIP7OVw==
 
-Am 02.08.24 um 16:31 schrieb Frank Li:
-> On Fri, Aug 02, 2024 at 09:25:54AM +0200, Krzysztof Kozlowski wrote:
->> On 01/08/2024 18:09, Frank Li wrote:
->>> From: Clark Wang <xiaoning.wang@nxp.com>
->>>
->>> Add lpi2c1 and child node for imx93-11x11-evk board.
->> Why? What for? What are these? We see all this from the diff, so commit
->> msg should explain why and what do you want to achieve.
-> I really don't know how to explain why/what for these straing forward
-> thing, hardware board has such component, just add it dts file.
-The i.MX93 11x11 EVK has a ST LSM6DSO connected to I2C, which a is
-6-axis IMU (inertial measurement unit =3D accelerometer & gyroscope). So
-add the missing parts to the DTS file.
+On Fri, 2 Aug 2024 at 04:45, Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> make bzImage results in
+>
+>         undefined reference to `__start_runtime_shift_d_hash_shift'
+>         undefined reference to `__stop_runtime_shift_d_hash_shift'
+>         undefined reference to `__start_runtime_ptr_dentry_hashtable'
+>         undefined reference to `__stop_runtime_ptr_dentry_hashtable'
+
+Grr.
+
+> The patch below seems to fix the problem, but I didn't find any report on=
+ lkml,
+> so perhaps I am the only one which hits this problem? And perhaps this is=
+ because
+> my gcc 5.3.1 is quite old?
+
+It's not your gcc. It must be your linker that is old and decrepit.
+
+> OTOH, I know nothing about lds magic, so I fail to understand where these
+> __start/stop_runtime_xxx can come from without something like the change =
+below...
+
+So it comes from this:
+
+    https://sourceware.org/binutils/docs/ld/Input-Section-Example.html
+
+and in there you will find
+
+   "If an output section=E2=80=99s name is the same as the input section=E2=
+=80=99s name
+    and is representable as a C identifier, then the linker will
+    automatically see PROVIDE two symbols: __start_SECNAME and
+    __stop_SECNAME, where SECNAME is the name of the section. These
+    indicate the start address and end address of the output section
+    respectively"
+
+but apparently your linker doesn't do that.
+
+I guess we'll have to go with doing this manually as in your patch,
+but can you say what your linker version is so that I can curse it in
+private and document it in public?
+
+And yes, I think you must be one of the very few users of it, because
+I too am not finding any other reports on lore (or with a wider google
+search),
+
+                  Linus
 
