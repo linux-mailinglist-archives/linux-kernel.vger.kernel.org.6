@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-271990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77BAD9455AE
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24D669455AD
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 324CA28300E
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED2A1F23A99
 	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F8E1C687;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 300BD1C2BD;
 	Fri,  2 Aug 2024 00:43:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVshaJlX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMeU4s/a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B204168DA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B236171BB;
 	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559391; cv=none; b=G6qZMS6glDeu726f2cFydYspwpVTvXRNzn6yBDcqB59uOwYk8Aid7PNz9maLzVpa94hj0JAnQyAld+RjFM0dyCkKkGNYCzNemeX0epvknWWXOzzaA8mB3ssCQ5IBIRahu3Vl5Bk2gLjsVwlWYxVJR6DEAUosfcPGuQEIXb9XoFs=
+	t=1722559391; cv=none; b=Xia9J1H7Ev4IDLlFBwoPhMgh4uiESQby1onFB+WRn+lbj3IxT73+q743sA+HKjsw2qaHQM2+/XA2LThkwma8oPS8If4vwPiOmowjKtnsnlTHp29yEfCf8hb41+PNqErB58jaIftChS3Dy6NhsaScE7S6f+AXRQS0NCj4abJndZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1722559391; c=relaxed/simple;
-	bh=WaiDAqrc+b+wo00YSTTvMD3HfVQ61YAzmXrAlI6Fp8Q=;
+	bh=ii3Lw31Du2kvj80qfw2EEctLsKo4MDiaG/6o1ncMupY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hit9AtoigyCAQ4yC3G+KJB5Jq0xioz2gH4PvzggrJpIv5G92H1Roh4TEtBNGFoOBmLRk5eCAe641N5Yv1kfLRJSTkfytJH4KH99jHVO8pe7vP0xLRWQFx8iRhPU2Va7gPNi0wqvuC2LdToO/h44r0kCsPB9Ppal6uopERtSiGAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVshaJlX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2654EC4AF0A;
+	 MIME-Version; b=tM9SZDfnItqaVaTHjg9D13iTHbyTFwuKfiyYsoah900+f5kO2P/yrX+0uoNJIbMEehSXX1RkDg9oyJTanQOM1hHhUYv8nkIGVORejsTf6k6YdMDfajlIRAMlhqM0BdFPfpKkGB1GNMr9c7IPTz6iAhtp56yCsYLGf2Dsc47X0KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMeU4s/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 307DBC4AF0E;
 	Fri,  2 Aug 2024 00:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1722559391;
-	bh=WaiDAqrc+b+wo00YSTTvMD3HfVQ61YAzmXrAlI6Fp8Q=;
+	bh=ii3Lw31Du2kvj80qfw2EEctLsKo4MDiaG/6o1ncMupY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gVshaJlXSvLX1piW3D/+90Q478VYOhywWGiWIUa9J/IUpvm5nUj27eZX+8bK2Gmvb
-	 ri1GSJKNY6qYKhZKPwA7nV+KP/5N0aCnKTkZmHFD6fQh/cQmmuAKPv2Scaxej7vqtG
-	 LoROBImkBtO4Sr3+id86NtvXfEQEAAjIbaZl+imBeF2g8oDaRdtxoE2N7WuhRr1okX
-	 XK9CTJyD+TwnIr+8HNoR41zzARzHbBEN50tP3Tc+eN0ICAlscfs6j06GIT7nfnMjD8
-	 Q/TN+aCWiW1GE2m+qhqaRgDEHC2y5MUIbYQLvqzSHwsFHFIk/InOxRRimQBY9E4qXb
-	 Ag9sYKhzQCXFw==
+	b=aMeU4s/aSSRJlqfRV4FMOOjAF7clBboARTEy5Yoq1lkRyTdQshKvq/daAIp31TMTp
+	 OrPHWLq4ZUks+fxlzu7XuBf4D3ktpEusH04uZdcdyxy83jAdDvIkZeSz2yFI0LO7Rx
+	 RSOTGUhyiJ0oHZPZCw8WkFnwcyXRz4gwrM9WQukAQsTid1zFaHcgiCWzynRrXu143Y
+	 yZv38O/xnWQ5FJ3WV0f4TPRNkOuoRpF5MoDZetjCipgJe320ZyDSPn4JOpixeirvTH
+	 0DEzKSPzNrzWRD9FRKGMyAsbC1HdvL+iJ7kvYsajRsCyZwYK/oeysKhA4XfBPMewuD
+	 BUJgOSVEP33jw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C3624CE0BC3; Thu,  1 Aug 2024 17:43:10 -0700 (PDT)
+	id C641FCE0E0B; Thu,  1 Aug 2024 17:43:10 -0700 (PDT)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH rcu 03/11] rcuscale: Dump grace-period statistics when rcu_scale_writer() stalls
-Date: Thu,  1 Aug 2024 17:43:00 -0700
-Message-Id: <20240802004308.4134731-3-paulmck@kernel.org>
+Subject: [PATCH rcu 04/11] rcu: Mark callbacks not currently participating in barrier operation
+Date: Thu,  1 Aug 2024 17:43:01 -0700
+Message-Id: <20240802004308.4134731-4-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
 References: <917e8cc8-8688-428a-9122-25544c5cc101@paulmck-laptop>
@@ -62,64 +62,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds a .stats function pointer to the rcu_scale_ops structure,
-and if this is non-NULL, it is invoked after stack traces are dumped in
-response to a rcu_scale_writer() stall.
+RCU keeps a count of the number of callbacks that the current
+rcu_barrier() is waiting on, but there is currently no easy way to
+work out which callback is stuck.  One way to do this is to mark idle
+RCU-barrier callbacks by making the ->next pointer point to the callback
+itself, and this commit does just that.
+
+Later commits will use this for debug output.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcuscale.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ kernel/rcu/tree.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-index c34a8e64edc30..ddfb96e5a4e1e 100644
---- a/kernel/rcu/rcuscale.c
-+++ b/kernel/rcu/rcuscale.c
-@@ -145,6 +145,7 @@ struct rcu_scale_ops {
- 	void (*sync)(void);
- 	void (*exp_sync)(void);
- 	struct task_struct *(*rso_gp_kthread)(void);
-+	void (*stats)(void);
- 	const char *name;
- };
- 
-@@ -226,6 +227,11 @@ static void srcu_scale_synchronize(void)
- 	synchronize_srcu(srcu_ctlp);
- }
- 
-+static void srcu_scale_stats(void)
-+{
-+	srcu_torture_stats_print(srcu_ctlp, scale_type, SCALE_FLAG);
-+}
-+
- static void srcu_scale_synchronize_expedited(void)
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 77b5b39e19a80..930846f06bee5 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -4383,6 +4383,7 @@ static void rcu_barrier_callback(struct rcu_head *rhp)
  {
- 	synchronize_srcu_expedited(srcu_ctlp);
-@@ -243,6 +249,7 @@ static struct rcu_scale_ops srcu_ops = {
- 	.gp_barrier	= srcu_rcu_barrier,
- 	.sync		= srcu_scale_synchronize,
- 	.exp_sync	= srcu_scale_synchronize_expedited,
-+	.stats		= srcu_scale_stats,
- 	.name		= "srcu"
- };
+ 	unsigned long __maybe_unused s = rcu_state.barrier_sequence;
  
-@@ -272,6 +279,7 @@ static struct rcu_scale_ops srcud_ops = {
- 	.gp_barrier	= srcu_rcu_barrier,
- 	.sync		= srcu_scale_synchronize,
- 	.exp_sync	= srcu_scale_synchronize_expedited,
-+	.stats		= srcu_scale_stats,
- 	.name		= "srcud"
- };
- 
-@@ -563,6 +571,8 @@ rcu_scale_writer(void *arg)
- 					pr_info("%s: Task %ld flags writer %d:\n", __func__, me, i);
- 					sched_show_task(writer_tasks[i]);
- 				}
-+				if (cur_ops->stats)
-+					cur_ops->stats();
- 			}
- 		}
- 		if (started && !alldone && i < MAX_MEAS - 1)
++	rhp->next = rhp; // Mark the callback as having been invoked.
+ 	if (atomic_dec_and_test(&rcu_state.barrier_cpu_count)) {
+ 		rcu_barrier_trace(TPS("LastCB"), -1, s);
+ 		complete(&rcu_state.barrier_completion);
+@@ -5404,6 +5405,8 @@ static void __init rcu_init_one(void)
+ 		while (i > rnp->grphi)
+ 			rnp++;
+ 		per_cpu_ptr(&rcu_data, i)->mynode = rnp;
++		per_cpu_ptr(&rcu_data, i)->barrier_head.next =
++			&per_cpu_ptr(&rcu_data, i)->barrier_head;
+ 		rcu_boot_init_percpu_data(i);
+ 	}
+ }
 -- 
 2.40.1
 
