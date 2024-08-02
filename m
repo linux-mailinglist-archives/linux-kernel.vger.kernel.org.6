@@ -1,99 +1,185 @@
-Return-Path: <linux-kernel+bounces-272424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D21945BC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:05:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3107945BCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 12:06:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E587328233D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:05:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 305DE1F22A6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246F41DAC50;
-	Fri,  2 Aug 2024 10:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b="gMdc5ivB"
-Received: from xn--80adja5bqm.su (xn--80adja5bqm.su [198.44.140.76])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC161C69D;
-	Fri,  2 Aug 2024 10:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.44.140.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0E31DC477;
+	Fri,  2 Aug 2024 10:06:14 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC301D0DF3;
+	Fri,  2 Aug 2024 10:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722593108; cv=none; b=f5S7wqgWMGi4dhm3k29158VPfR+7vIjs72Sqyx6BtFMZ3SGqAI35C6mCgh3tJEzUqqlgo+2kXehP/2nwJCOH7KhtuVpzqxdZdHpffhiw6V9ufoXyqNeHOuHKerQKOR4uf5lWIQrclKS9gSEQHp2zJaaDjDIWuFDGLgTHywEEeys=
+	t=1722593174; cv=none; b=OAVHH/h9/kcmXOmOrAlyMkI1aB2YG6OdBueAjYRhDcI/j9TTy0WX2X60r9Gk/ugyRAYKz0ztIrpODUdoa9d+jqNMXTQsc0DMQYucOxLq+mee20WUCllgItPJq4mcROOH++GyBMxKdElsYSb1YU4PjZVNpCmGfabNnqkN/NhDahM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722593108; c=relaxed/simple;
-	bh=QsN5/NZ66aTtsFvoL5pLZIv6o50us0fY8Yrb52ESz6k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UHokntJDP+dCLCM8CodpKKtpqu0X8M0C0moC+JNQDxlqtQUe/wbVe6hFypYtaw0eBnuH4dS0uLvdw6lIYg7Mf5EKQrHryDmsaYtodYILD1xHpHiYs8bHQNMC3hV9KWbIzGae9tWFSiiQAoHQMwbl615fHc0kQAU/IduTKGJaTV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc; spf=pass smtp.mailfrom=xn--80adja5bqm.su; dkim=pass (2048-bit key) header.d=mediatomb.cc header.i=@mediatomb.cc header.b=gMdc5ivB; arc=none smtp.client-ip=198.44.140.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mediatomb.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xn--80adja5bqm.su
-Received: by xn--80adja5bqm.su (Postfix, from userid 1000)
-	id C661B40050C0; Fri,  2 Aug 2024 10:04:47 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 xn--80adja5bqm.su C661B40050C0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mediatomb.cc;
-	s=default; t=1722593087;
-	bh=QsN5/NZ66aTtsFvoL5pLZIv6o50us0fY8Yrb52ESz6k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gMdc5ivB/L+PDFudBOPTqscH5VEN4eYzXm6s23rVgX+fdPcqY5haJ1MmKpJ9mUvda
-	 RIcP5kGJQOnLh2aMpmcQtnMgHDwGI+FU61ntph7HeLxrmaND+cn1+oUPwyERoRe6U0
-	 7DXT4SvM5K8VtaFtL5+9C1vVk9GJUrXnrhyvCe8X/VP//PqodmM135l01bX5/Cfb8h
-	 g9vXafFqVm3KTm5zRepfQqrDNaWCafKlnIBZr5qhwRlh6+Cb4a3MGiZTudmvTZoevy
-	 hBIW+QAEKn45YG4k+5+EU9uiaiTi7LlsW06KpxpG0qp9MT1IeHrBh16vGS/WVmL1Ck
-	 eQdcuyuh7xfEw==
-Date: Fri, 2 Aug 2024 10:04:47 +0000
-From: Sergey 'Jin' Bostandzhyan <jin@mediatomb.cc>
-To: "Bjoern A. Zeeb" <bzeeb-lists@lists.zabbadoz.net>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	heiko@sntech.de, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2 0/2 RESEND] Add DTS for NanoPi R2S Plus
-Message-ID: <20240802100447.GB18509@ветеран.su>
-References: <22bbec28-41c1-4f36-b776-6e091bf118d9@kernel.org>
- <20240801175736.16591-1-jin@mediatomb.cc>
- <756p9487-56pr-88p2-6o79-7oron3q8462n@yvfgf.mnoonqbm.arg>
+	s=arc-20240116; t=1722593174; c=relaxed/simple;
+	bh=p8KHDp5T541LzcauHdbygkcHm9Fm1n44ZnrMVKkUu6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SOgQ7GfF56r340AGHYlMhxNn2hddkmE4ORKqztgMe/R/ElCHZ4NY3DLfeRSdhR4ioKqpaDgKPHHz3aTW6SfTobElblnjhsJ2TTXflp4JFnXddjXXUpRMxHzS4fv7Rd1Y0NQo1EiuDylSXrOp9ZhVn1N7kcfZ1hoyxazLg69IU8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wb1ZM6Y7HzQnl8;
+	Fri,  2 Aug 2024 18:01:31 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0F1351800A1;
+	Fri,  2 Aug 2024 18:05:53 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 2 Aug 2024 18:05:52 +0800
+Message-ID: <877efebe-f316-4192-aada-dd2657b74125@huawei.com>
+Date: Fri, 2 Aug 2024 18:05:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <756p9487-56pr-88p2-6o79-7oron3q8462n@yvfgf.mnoonqbm.arg>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v12 04/14] mm: page_frag: add '_va' suffix to
+ page_frag API
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Subbaraya Sundeep
+	<sbhatta@marvell.com>, Jeroen de Borst <jeroendb@google.com>, Praveen
+ Kaligineedi <pkaligineedi@google.com>, Shailend Chand <shailend@google.com>,
+	Eric Dumazet <edumazet@google.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Sunil Goutham
+	<sgoutham@marvell.com>, Geetha sowjanya <gakula@marvell.com>, hariprasad
+	<hkelam@marvell.com>, Felix Fietkau <nbd@nbd.name>, Sean Wang
+	<sean.wang@mediatek.com>, Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo
+ Bianconi <lorenzo@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Keith
+ Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
+	<hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni
+	<kch@nvidia.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang
+	<jasowang@redhat.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, Alexei Starovoitov
+	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
+ Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
+	<yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav Fomichev
+	<sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	David Howells <dhowells@redhat.com>, Marc Dionne <marc.dionne@auristor.com>,
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil
+ Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, Dai Ngo
+	<Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Trond Myklebust
+	<trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-nvme@lists.infradead.org>,
+	<kvm@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-mm@kvack.org>, <bpf@vger.kernel.org>, <linux-afs@lists.infradead.org>,
+	<linux-nfs@vger.kernel.org>
+References: <20240731124505.2903877-1-linyunsheng@huawei.com>
+ <20240731124505.2903877-5-linyunsheng@huawei.com>
+ <CAKgT0UcqdeSJdjZ_FfwyCnT927TwOkE4zchHLOkrBEmhGzex9g@mail.gmail.com>
+ <22fda86c-d688-42e7-99e8-e2f8fcf1a5ba@huawei.com>
+ <CAKgT0UcuGj8wvC87=A+hkarRupfhjGM0BPzLUT2AJc8Ovg_TFg@mail.gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0UcuGj8wvC87=A+hkarRupfhjGM0BPzLUT2AJc8Ovg_TFg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi,
-
-On Fri, Aug 02, 2024 at 09:46:40AM +0000, Bjoern A. Zeeb wrote:
-> >I noticed, that a DTS for the R2S Plus is not yet available, while the
-> >R2S is already there. The only difference is, that the Plus version has an
-> >eMMC, so we can reuse the R2S definitions and only add an eMMC block, which
-> >I copied from the DTS in the friendlyarm/uboot-rockchip repo.
+On 2024/8/1 23:21, Alexander Duyck wrote:
+> On Thu, Aug 1, 2024 at 6:01 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>
+>> On 2024/8/1 2:13, Alexander Duyck wrote:
+>>> On Wed, Jul 31, 2024 at 5:50 AM Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>>>
+>>>> Currently the page_frag API is returning 'virtual address'
+>>>> or 'va' when allocing and expecting 'virtual address' or
+>>>> 'va' as input when freeing.
+>>>>
+>>>> As we are about to support new use cases that the caller
+>>>> need to deal with 'struct page' or need to deal with both
+>>>> 'va' and 'struct page'. In order to differentiate the API
+>>>> handling between 'va' and 'struct page', add '_va' suffix
+>>>> to the corresponding API mirroring the page_pool_alloc_va()
+>>>> API of the page_pool. So that callers expecting to deal with
+>>>> va, page or both va and page may call page_frag_alloc_va*,
+>>>> page_frag_alloc_pg*, or page_frag_alloc* API accordingly.
+>>>>
+>>>> CC: Alexander Duyck <alexander.duyck@gmail.com>
+>>>> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+>>>> Reviewed-by: Subbaraya Sundeep <sbhatta@marvell.com>
+>>>
+>>> I am naking this patch. It is a pointless rename that is just going to
+>>> obfuscate the git history for these callers.
+>>
+>> I responded to your above similar comment in v2, and then responded more
+>> detailedly in v11, both got not direct responding, it would be good to
+>> have more concrete feedback here instead of abstract argument.
+>>
+>> https://lore.kernel.org/all/74e7259a-c462-e3c1-73ac-8e3f49fb80b8@huawei.com/
+>> https://lore.kernel.org/all/11187fe4-9419-4341-97b5-6dad7583b5b6@huawei.com/
 > 
-> The original has a
-> 	// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> I will make this much more understandable. This patch is one of the
+> ones that will permanently block this set in my opinion. As such I
+> will never ack this patch as I see no benefit to it. Arguing with me
+> on this is moot as you aren't going to change my mind, and I don't
+> have all day to argue back and forth with you on every single patch.
+
+Let's move on to more specific technical discussion then.
+
 > 
-> please don't lose the OR MIT as other projects outside Linux do use the
-> same dts files;  and the original r2s file also preserved it.
+> As far as your API extension and naming maybe you should look like
+> something like bio_vec and borrow the naming from that since that is
+> essentially what you are passing back and forth is essentially that
+> instead of a page frag which is normally a virtual address.
 
-Uhm... I am confused now, I copy-pasted the emmc block from this file:
-https://github.com/friendlyarm/uboot-rockchip/blob/nanopi4-v2017.09/arch/arm/dts/rk3328-nanopi-r2.dts#L7
+I thought about adding something like bio_vec before, but I am not sure
+what you have in mind is somthing like I considered before?
+Let's say that we reuse bio_vec like something below for the new APIs:
 
-The header does not have the "OR MIT" in there, it's just
-"SPDX-License-Identifier:     GPL-2.0+" which is what I also copied
-over, together with the (c) part.
+struct bio_vec {
+	struct page	*bv_page;
+	void		*va;
+	unsigned int	bv_len;
+	unsigned int	bv_offset;
+};
 
-The source which I was using is described in the commit message:
+It seems we have the below options for the new API:
 
-The eMMC configuration for the DTS has been extracted and copied from
-rk3328-nanopi-r2.dts, v2017.09 branch from the friendlyarm/uboot-rockchip 
-repository.
+option 1, it seems like a better option from API naming point of view, but
+it needs to return a bio_vec pointer to the caller, it seems we need to have
+extra space for the pointer, I am not sure how we can avoid the memory waste
+for sk_page_frag() case in patch 12:
+struct bio_vec *page_frag_alloc_bio(struct page_frag_cache *nc,
+				    unsigned int fragsz, gfp_t gfp_mask);
 
-Maybe you looked at a different branch? Shall I still add the "OR
-MIT" or leave it as in the original file which I copied it from?
+option 2, it need both the caller and callee to have a its own local space
+for 'struct bio_vec ', I am not sure if passing the content instead of
+the pointer of a struct through the function returning is the common pattern
+and if it has any performance impact yet:
+struct bio_vec page_frag_alloc_bio(struct page_frag_cache *nc,
+				   unsigned int fragsz, gfp_t gfp_mask);
 
-Kind regards,
-Sergey
+option 3, the caller passes the pointer of 'struct bio_vec ' to the callee,
+and page_frag_alloc_bio() fills in the data, I am not sure what is the point
+of indirect using 'struct bio_vec ' instead of passing 'va' & 'fragsz' &
+'offset' through pointers directly:
+bool page_frag_alloc_bio(struct page_frag_cache *nc,
+			 unsigned int fragsz, gfp_t gfp_mask, struct bio_vec *bio);
+
+If one of the above option is something in your mind? Yes, please be more specific
+about which one is the prefer option, and why it is the prefer option than the one
+introduced in this patchset?
+
+If no, please be more specific what that is in your mind?
+
 
