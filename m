@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-272350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6877945A96
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:12:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9919945A9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:14:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 057C81C239EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:12:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472151F21C4E
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EC231D4162;
-	Fri,  2 Aug 2024 09:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DD61D4163;
+	Fri,  2 Aug 2024 09:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YxugB+69"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAamYZGk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFBA1D4151;
-	Fri,  2 Aug 2024 09:12:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2776F1C2305;
+	Fri,  2 Aug 2024 09:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722589942; cv=none; b=hKeEzQdY7iEATINGbTlnodHfGwNlQSEjoBUYsstOG/RpkQrbtF3aA8rSPr/I4Qrjx4hVwZop8F6rsaTNCb4gv3XnLWwTfQ5pz2gICkZzHofW1P/VR39+abqY6PqHWyiNADUtmlzQbLw36naO3Sm7fRQGpXLg7A9gTRL1YYtGwlQ=
+	t=1722590044; cv=none; b=JFCRwwz47ZcQCi4d7ZhQEMGqyyefemBagR6B9cKRdT95yPIzzG1xAcs+4DtZlyU8lCstl2rVY8LISBf9YW/C5GdQ43f+Lotj4AEwoMrTun1YetXKtMICJpJTBXqoolymua2fpWkUKxZMkEktJcumK9LkYfJZ/FfUJvtSaotGHbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722589942; c=relaxed/simple;
-	bh=O3QeZ3rb5Th5OSoZS8M1Dtu9wC7+4c8jaezJAASXKTM=;
+	s=arc-20240116; t=1722590044; c=relaxed/simple;
+	bh=JdSEwhv2iJvNvHMqbO+om0ZEnZ7rNzgZ4clklHeSsKQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=nuAKK10txG7FruilQ356kWCTrPSFix2cgYOHx1SWSOifdlraG2a1CCVKfvDQVCwrZtUCV+E0KrY9UE3SPXz/VGXL4MxTjiIeFck76yK4PZJO+GaiDfvgkCpejDopladddCTn0wNsNZGX7U2S8TEvajjvU3GOi7SZrswnAeduyfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YxugB+69; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19DDCC32782;
-	Fri,  2 Aug 2024 09:12:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Y6YaWDMUJgkV3w1fGQelX8scJMuHcSbPfU0daUkD+oK63jRM0Xw7ieBu1GGoN6XyqXYG6nviDr8g3QVjLtZO/mrEZ9Mt65e756ETyxdYontpqVUXx8Z3Llopoo2QcGuM8F4E3hb7RlKa8IgqpD+OJ008+AkAf56Q4XG9haQullQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAamYZGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AAEFC32782;
+	Fri,  2 Aug 2024 09:13:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722589941;
-	bh=O3QeZ3rb5Th5OSoZS8M1Dtu9wC7+4c8jaezJAASXKTM=;
+	s=k20201202; t=1722590043;
+	bh=JdSEwhv2iJvNvHMqbO+om0ZEnZ7rNzgZ4clklHeSsKQ=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=YxugB+699C23q50QqCZZfO0xlwtEaYZ0AtaYL9IiY3wY6clWjdWVDnLEBgTyyL02s
-	 PnKIqFK5UoulmU0bBYUHt8H3lU/PqYNgb+m7FuXc11yBMFuwBWah0q0FH3jmrmlUCp
-	 oAYOPz3HxRE+c+nT15eUT0uVTEbuCx6OF65uXcOIOp8MJK8wIUTwWUCLRw6edhF60C
-	 zlB+Y/S+nOSDsWiRj+3mPzKVOAUckQK1c8gj/ben3mpd+m5G/IviXf3UPxgS45fkvm
-	 3PNaMp9KC9KzUlZ3MEoOyg9vVV8J1WslYD0AT6PAV106itAVK/pcS7RI7rAcfrD51Q
-	 5AKXjQYZ/K9TA==
-Message-ID: <34d1b859-dfee-475a-8838-feb4907985c8@kernel.org>
-Date: Fri, 2 Aug 2024 11:12:10 +0200
+	b=KAamYZGkZbbxYCkmloakyXQidpirOdnHhwp2M+lhuW0omtc0XCDNnCh1+/NB/EE1F
+	 jgiQ+nffDa/LzswBjVgxnxqHcCioeXVKHtbcs+BX8sdnCfRYa9Ey7ZKum1hrTU2n+Q
+	 NCTPYnssA9cwQ7kyX1Gh0q9I+h4rDxtHFtMkTdwyceWlfJxkORrOvvti5s1tSRy9hB
+	 bOGdWdrNhx4WA9DsSrsP521z7/cnSEwCqw9oT6LGBbBwrOF4D8OjpGYYiF9VZlhb/b
+	 LWd+JAlF/JUUh765uSl30p3cPjmv/1H9XIyEk5hBh2ZjOQEATxgKncxEPFYeuh8ko5
+	 HwtoyhkyNp2RQ==
+Message-ID: <1b420e2e-6983-49fb-946c-a4bbf7fa54eb@kernel.org>
+Date: Fri, 2 Aug 2024 11:13:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/9] arm64: dts: aspeed: Add initial AST27XX device
- tree
+Subject: Re: [PATCH v2 1/9] dt-bindings: mfd: aspeed,ast2x00-scu: Add ASPEED
+ AST2700-SCUX schema
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -63,7 +63,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-10-kevin_chen@aspeedtech.com>
+ <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,55 +109,67 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802090544.2741206-10-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/08/2024 11:05, Kevin Chen wrote:
-> Add aspeed-g7.dtsi to be AST27XX device tree.
-
-Hardware description is missing, e.g. answering why you have two "soc"
-nodes.
+> Add compatible for two SCU of SCU0 and SCU1 in AST2700.
 > 
 > Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+
+A nit, subject: drop second/last, redundant "schema". The "dt-bindings"
+prefix is already stating that these are bindings in the schema.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
 
+>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 70 +++++++++++++------
+>  1 file changed, 50 insertions(+), 20 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> index 86ee69c0f45b..3426b1c84132 100644
+> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+> @@ -13,33 +13,62 @@ description:
+>  maintainers:
+>    - Joel Stanley <joel@jms.id.au>
+>    - Andrew Jeffery <andrew@aj.id.au>
+> +  - Kevin Chen <kevin_chen@aspeedtech.com>
+>  
+> -properties:
+> -  compatible:
+> -    items:
+> -      - enum:
+> -          - aspeed,ast2400-scu
+> -          - aspeed,ast2500-scu
+> -          - aspeed,ast2600-scu
+> -      - const: syscon
+> -      - const: simple-mfd
+> +scu@ast2xx00-scu:
+> +  properties:
+> +    compatible:
+> +      items:
+> +        - enum:
+> +            - aspeed,ast2400-scu
+> +            - aspeed,ast2500-scu
+> +            - aspeed,ast2600-scu
+> +        - const: syscon
+> +        - const: simple-mfd
 
-> +	soc0: soc@10000000 {
-> +		compatible = "simple-bus";
-> +		reg = <0x0 0x10000000 0x0 0x10000000>;
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		gic: interrupt-controller@12200000 {
-> +			compatible = "arm,gic-v3";
-> +			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> +			#interrupt-cells = <3>;
-> +			interrupt-controller;
-> +			interrupt-parent = <&gic>;
-> +			reg = <0 0x12200000 0 0x10000>, /* GICD */
-> +				  <0 0x12280000 0 0x80000>, /* GICR */
-> +				  <0 0x40440000 0 0x1000>;  /* GICC */
+No, no, no, this code is neither correct nor makes any sense.
 
-Still the same things to fix... Please go to the DTS coding style and
-read what is the order of properties.
+>  
+> -  reg:
+> -    maxItems: 1
+> +    reg:
+> +      maxItems: 1
+>  
+> -  ranges: true
+> +    ranges: true
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It seems my or other reviewer's previous comments were not fully
-addressed. Maybe the feedback got lost between the quotes, maybe you
-just forgot to apply it. Please go back to the previous discussion and
-either implement all requested changes or keep discussing them.
-
-Thank you.
-</form letter>
-
-
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +		};
+What?
 
 
 Best regards,
