@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-272506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C460945D48
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:34:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AD7A945D4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9BE1C21A06
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:34:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA944283035
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EAF1DF689;
-	Fri,  2 Aug 2024 11:34:07 +0000 (UTC)
-Received: from hkg.router.rivoreo (45.78.32.129.16clouds.com [45.78.32.129])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F651E2882;
+	Fri,  2 Aug 2024 11:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MT3/jAxf"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A76D14D458;
-	Fri,  2 Aug 2024 11:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.78.32.129
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8145D14D458;
+	Fri,  2 Aug 2024 11:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722598446; cv=none; b=hqoLq8018jBrwe6ZKk4cwKI/bYf5R3dhs0ougs24IoE6F/BnaOnuXdhUZg6pLxqfzYuS5aV+MnX3sx6v8rBnhf8mDZKpuYMeKxt6978nuYMYkAoPbxympLJabYuJxkJ0Sw72Difu3wDqghWlqzX7pj8RWRCjlfj81h+Ua7maumE=
+	t=1722598482; cv=none; b=qo37PBVhvg6FBc5spE6hzXmyeFqiXL+QI5kDIqNvYpF0bOfcAhVYBJFN7GP9yanlb8Tjh9wg+JFwNMq5r+SgfW6RbOyoKdYoJtfSL9vxzfBbhG2jC2KVy9uq0YnGZib00CSFOAFhaxWb68+6j9fkQuYL5fl+irMfOXWcUynDGvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722598446; c=relaxed/simple;
-	bh=CSN/nzOenTuEchA+JBM1pilFuDhdl8T4uNTbeBLKTuE=;
-	h=Message-ID:In-Reply-To:References:Date:Subject:From:To:Cc:
-	 MIME-Version:Content-Type; b=muqnT1mgDnCRyukycFE+OLEJy4s3/7No4zEF9VxHc50Ulf9NYEihEw9qvzL712lpvMKwp6+iC2lfBeCpVuVHFv2/VlLu/r/2jKCjzDpYeWtnzhCiTNwh9jLaCTjinZKZs20TDi6VBtoarAbNmO7+R0xB8NeoJd/SwMWhSxcYwl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one; spf=pass smtp.mailfrom=rivoreo.one; arc=none smtp.client-ip=45.78.32.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rivoreo.one
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivoreo.one
-Received: from tianjin2.rivoreo.one (unknown [10.100.1.128])
-	by hkg.router.rivoreo (Postfix) with ESMTPS id 6C83511CEEF;
-	Fri,  2 Aug 2024 11:33:58 +0000 (UTC)
-Received: from [10.1.105.1] (localhost [127.0.0.1])
-	by tianjin2.rivoreo.one (Postfix) with ESMTP id 0B4A56BE31;
-	Fri,  2 Aug 2024 19:32:29 +0800 (CST)
-Received: from 10.1.107.31
-        (SquirrelMail authenticated user whr)
-        by _ with HTTP;
-        Fri, 2 Aug 2024 11:32:29 -0000
-Message-ID: <649fab0060369a98b9a898e82f518f18.squirrel@_>
-In-Reply-To: <CAL_Jsq+Wcag2Lzu_kLRb5ia=3hNUOs1Ny93Y541eOY-NZOA5qw@mail.gmail.com>
-References: <2046da39e53a8bbca5166e04dfe56bd5.squirrel@_>
-    <CAL_JsqKpTKv-fthwD9bFHiVESJyNP6uMg7Px7Rh+-k583oz76g@mail.gmail.com>
-    <1c7955e8b5f0cdb3c60381a9a7dbbf42.squirrel@_>
-    <CAL_Jsq+Wcag2Lzu_kLRb5ia=3hNUOs1Ny93Y541eOY-NZOA5qw@mail.gmail.com>
-Date: Fri, 2 Aug 2024 11:32:29 -0000
-Subject: Re: [PATCH v2] of/irq: Make sure to update out_irq->np to the new
- parent in of_irq_parse_raw
-From: "WHR" <whr@rivoreo.one>
-To: "Rob Herring" <robh@kernel.org>
-Cc: "Saravana Kannan" <saravanak@google.com>,
- devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-User-Agent: SquirrelMail/1.4.23 [Rivoreo]
+	s=arc-20240116; t=1722598482; c=relaxed/simple;
+	bh=L4MVQUtTKPY9dp8vA/s2i1grzqz3BYHv2Nm1to54ulo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Zu1YZwcmhYw7Kte3BdnaMlqKZHFINv0w/VL5Q94QX7Rb1ZTj5CwTVUSkDRXdXMiNIWJH4VF6uX3rnjsuqA/y6Ku9RmMLvLeYM1TfOUbHMeKLQvfuOtNNmYGO3kbd1fKhyUncPutFAewJOSfpJyvkYsaHuM1JmIjnjGMeZDy4U34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MT3/jAxf; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f15790b472so21672541fa.0;
+        Fri, 02 Aug 2024 04:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722598478; x=1723203278; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCKSxpXnDjRmdCG2DqAQpa2RCOpP1tO8Cjfgt5fm+ac=;
+        b=MT3/jAxf1bOA9MiKQ9Oz9E/qox8yKOKMmOqcEppKpGruStYACXi/1IdKHidcGrgzrs
+         ngKp/yuH7tV5sZrZ0Ez2T18JtGjFCHyoDrRYLfb5kKQ3QwMEXB1XXF8I1SFDGoLEKi/O
+         xe34rqMFhxHW1Mufz+4303T9nuJRHkwyuYuXiKZ+JclD98Feo24yy+1NVSWWTqJE3FhG
+         hXgM0TZO1EKr/3v1jLyXgWmWBETjBAKCsmHw2tqp8Y5hEkr+zbjiRBSDyE6s2CwyA9Sk
+         BeJmW5H+GDvYi01jleW2UF+SQXM47Kt6CmbNflhP0QWrGoIZkQsAvYy7eGbzH2XwKXtT
+         YnwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722598478; x=1723203278;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RCKSxpXnDjRmdCG2DqAQpa2RCOpP1tO8Cjfgt5fm+ac=;
+        b=fCER/3uW8JGUa8u3ZGFtKShA1xFd6ycybCUE2laXQXarCunFk4Lf3YrL9QSIbdg+l2
+         EBbiEjPuxNcFwuWDlQMggedA3rlSmeNjfNnvwShE/iuKQfNQURJpPVNbOngpzw3vCS+Y
+         Nuz5FCysklyIMulStiUhf/86x0kX+xszrQ0OyVXkXoJ4/9RSZxiUnlRJpog4Rzce+kHR
+         LvIllTkHmiKQ8ln51ETvY1sfzvjmBL2d4f9TFPpmyG0d2IaHRUTPXjItVazh5bInSANa
+         L8Jjn7mfyNhSb4rlFho0ZxvwGX6qJeVEXgj3Ux1KUzfTecB57Lp2wMkXavYfi496Z3Uz
+         FJcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk96YUV/jrZvQ3Q5TPwPcz2Zpjc7V+/YcPNLqnh3P+E9Z92BNWaPEdM/D4rl4yvpN8v9fxUbVFJuCi7+iq4KdboPmFAYV0+LqS0TUaKeZoAksVTMtBkJtPjNHPIFQnYgxE6GLQ
+X-Gm-Message-State: AOJu0Yznumoc6sHN69Q8Ad+6kNYctmCS58S3rrJg5gsetl72qEGmNrXI
+	QDMvd6CRE2m1YJusXCu8GNS8VSpwL2ajVkXiH9fiS35mQC3z4y0S
+X-Google-Smtp-Source: AGHT+IGFmILD9SkkgHGNoCdAcKU3pPU1aGdE3yMX57zm2eTssfo/sPK2LeYsFnpFS56ji2GjtvQAeQ==
+X-Received: by 2002:a2e:830f:0:b0:2ef:2658:98f2 with SMTP id 38308e7fff4ca-2f15ab0bf71mr22434751fa.33.1722598478047;
+        Fri, 02 Aug 2024 04:34:38 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282babaa2esm91752495e9.25.2024.08.02.04.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 04:34:37 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Donald Hunter <donald.hunter@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nicolas Dichtel <nicolas.dichtel@6wind.com>,
+	netdev@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] tools: ynl: remove extraneous ; after statements
+Date: Fri,  2 Aug 2024 12:34:36 +0100
+Message-Id: <20240802113436.448939-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Priority: 3 (Normal)
-Importance: Normal
 
-> On Wed, Jul 31, 2024 at 10:22 PM WHR <whr@rivoreo.one> wrote:
->>
->> > On Mon, Jul 29, 2024 at 11:54 PM WHR <whr@rivoreo.one> wrote:
->> >>
->> >> Commit 935df1bd40d43c4ee91838c42a20e9af751885cc has removed an
->> >> assignment statement for 'out_irq->np' right after label 'skiplevel',
->> >> causing the new parent acquired from function of_irq_find_parent didn't
->> >> being stored to 'out_irq->np' as it supposed to. Under some conditions
->> >> this can resuit in multiple corruptions and leakages to device nodes.
->> >
->> > Under what conditions? Please provide a specific platform and DT.
->>
->> I have a previous email sent to you before I came up with the fix. The
->> kernel
->> log for debugging and the device tree blob are attached again.
-> 
-> Thanks. The patch needs to stand on its own with this detail, not
-> require that I've read (and remember) some other email among the
-> 1000s.
-> 
-> "multiple corruptions and leakages to device nodes" is meaningless. Be
-> exact, it's device_node refcounts we're talking about. The issue is
-> out_irq->np is not updated from 'usbdrd' node to the real interrupt
-> parent, the 'plic' node. In the next iteration of the loop, we find
-> 'interrupt-controller' in the plic node and return, but out_irq is not
-> pointing to the plic. Then of_irq_get() fails to get the irq host and
-> does a put on out_irq->np which is usbdrd, not plic node.
-> 
-> So please update the commit msg and provide your name, not initials.
+There are a couple of statements with two following semicolons,
+replace these with just one semicolon.
 
-Since the fix for this regression is really trivial, I think you'll be able to
-commit it by yourself instead.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ tools/net/ynl/lib/ynl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
->> > Honestly, I think the DT is wrong if you get to this point. We'd have
->> > to have the initial interrupt parent with #interrupt-cells, but not an
->> > interrupt-controller nor interrupt-map property to get here. Maybe
->> > that happens in some ancient platform, but if so, I want to know which
->> > one and what exactly we need to handle.
->>
->> So you suggest the #interrupt-cells is erroneous in that node, and should
->> be
->> removed?
-> 
-> Yes. dtc warns about this. dtschema would too if there was a schema
-> (there is, but not since you use a downstream binding).
-> 
-> The clint node has the same issue.
-> 
->> This is a device vendor-provided DT, so any issue in it will have to be
->> fixed
->> locally.
-> 
-> Complain to your vendor...
-
-Thanks for help diagnosing the issues.
+diff --git a/tools/net/ynl/lib/ynl.c b/tools/net/ynl/lib/ynl.c
+index fcb18a5a6d70..e16cef160bc2 100644
+--- a/tools/net/ynl/lib/ynl.c
++++ b/tools/net/ynl/lib/ynl.c
+@@ -696,14 +696,14 @@ ynl_sock_create(const struct ynl_family *yf, struct ynl_error *yse)
+ 	addr.nl_family = AF_NETLINK;
+ 	if (bind(ys->socket, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+ 		__perr(yse, "unable to bind to a socket address");
+-		goto err_close_sock;;
++		goto err_close_sock;
+ 	}
+ 
+ 	memset(&addr, 0, sizeof(addr));
+ 	addrlen = sizeof(addr);
+ 	if (getsockname(ys->socket, (struct sockaddr *)&addr, &addrlen) < 0) {
+ 		__perr(yse, "unable to read socket address");
+-		goto err_close_sock;;
++		goto err_close_sock;
+ 	}
+ 	ys->portid = addr.nl_pid;
+ 	ys->seq = random();
+-- 
+2.39.2
 
 
