@@ -1,235 +1,162 @@
-Return-Path: <linux-kernel+bounces-272693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32555946005
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:14:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81657946006
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546CA1C21640
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:14:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89E181C21A64
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181FB2139DB;
-	Fri,  2 Aug 2024 15:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 385B22139CE;
+	Fri,  2 Aug 2024 15:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWB6ivEU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rOzg7n9O"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E9F2101A0;
-	Fri,  2 Aug 2024 15:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243102101A0
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611641; cv=none; b=Esgs/sI/xjXzDFyv5DKoLmq+8q4h9QiDo1Gv+WSTW/sQfO5FZvh+LUlkEBZs0q/Br7ZYrRRh9A67sMJuu2CFFNmmyO41YWUF9rY92guRf2uG8+pLg5KabmyYrYYyXWUcM3gOFphObTz12O4D5JpqSSpKfZKqSDfs+OtyMEC5y74=
+	t=1722611677; cv=none; b=IZeTcUcoeWXUH5NSWcWhUBS2LpO4G5sdUlx9FzZw+b8D0zpTWZO5WJnJQbU5yYokQqDgzsMM05MeBwpMr2rGg7dZkxBcO4c++TpPQ5ADmpDIuY2AmDUHe8AOQ0e7PEn0oVMZGnVeTEgJ/Zb1hdGrPWQj6ZyODyT0T/3MXmr+Za0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611641; c=relaxed/simple;
-	bh=ZbMK+mNmuq1p2SzgYsGBsSkD66aeog6KMnL9ACHlE1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+xLOqySv/mkPZM1nH7UI83up+JZMBm9Lk54k7pZtZ9rhNY4Jc9AAxqn4VclCozVnPrayaP5TOVVt/IBt1Nwq3JWF/8FrKGHaZsQTBNYDORIHS4HmxJAV7R9y6AuQs/+Gig2Gx1/yNarBkdDa1lppnOXu/j6JdzXmAt/XYEQsvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWB6ivEU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C21C32782;
-	Fri,  2 Aug 2024 15:14:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722611640;
-	bh=ZbMK+mNmuq1p2SzgYsGBsSkD66aeog6KMnL9ACHlE1U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FWB6ivEU1d6Qhec0mA21xhoI8qHBX4kpxtWMzhzD2Xr9LQ60sPNdmdaIJZ6YP/QFg
-	 bzBsbUhZb2UX1oNkiorhgxL2pSsk1kiUAYZpRT32zGjM6N1jzonDU6c80Ak3SnjbSv
-	 37oMDTf0av/u3un8n4qhC9X/vBZZYS3qeIv006bI4rkgOu8OObo3a1ARDMYzpUyrv/
-	 ZYTSS/MGHCPJGiFfnNgRNKnglI2Iru70oRzojIvqXi4hw3hEi7h25ZqjPu8NqP61wP
-	 Nj9kfHainIaMVEpGu2TlGVd0/kO3AWA4Y5hEQZIZg/Zh8IpjGAaGscImzPJpJmStSa
-	 zRNlsPFWgqppA==
-Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3db10d8830aso763140b6e.0;
-        Fri, 02 Aug 2024 08:14:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW8ij7aQIYPd0MloRrHdi5D9favtqHISWx78GpTZeF3oAKmyYdigAEb8I5UjbvviIyGo6gTrazJu0/tjc27Cfph6f/dXxzKSZOl4y7i2+TdqQL899LxG5BtZYAE+LM5IFG7ZfRXeKe20g==
-X-Gm-Message-State: AOJu0Yyrc1LGaPPg3C6T6Qz/WifivOhYH0jisebfWiJwib8jhS7h3gJ4
-	wiobb2a57FCaoGggKA2dFoVzJR32xL4/WtuQco7o5F5Go6dv7g1ntDMiPV331eKSATF77uHvWCR
-	mvQMZa9pQxVNle73fjt6jgSTvCqY=
-X-Google-Smtp-Source: AGHT+IFNZYcF3uqR4OY3lduSzRsUwT82PQ2KBtKL0cfFh3g065OHfuTDW8k5OxpDsvM1oPYD+S4AJUX3IMHPWwBAZzk=
-X-Received: by 2002:a05:6870:7b4c:b0:260:ccfd:1efe with SMTP id
- 586e51a60fabf-26891e1566emr2464668fac.6.1722611640121; Fri, 02 Aug 2024
- 08:14:00 -0700 (PDT)
+	s=arc-20240116; t=1722611677; c=relaxed/simple;
+	bh=gyZBrNQCxG+p7kBOZpKGcffI6R62jJJS1MBXN6iwzmU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OGA6Wa+Z1BY7HbXRiblQWBcuVuZs8fnxV6V1IaLY0gu+UxMD/YES76FiW+/MCfKnNGG41KMuJEqUHZ8+f++L5+RBYi/Uz7rGldtzJzymZie470MZLg3LTO88IsKkxw/p5yDoBScc+Ev1XPsvYNZh2VZfXHCpCew2wJKj5pIhcHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rOzg7n9O; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso61245905e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 08:14:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1722611673; x=1723216473; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBY2jE6SQVLEJ2rTtvFkGo52n+rOy9A54yoDBcuOdIo=;
+        b=rOzg7n9OLSQxu9LaMiAFNhxZX/OTkT2WiLn5zvXI4Jk5i6lFOUBkSBPNIF+VJo2bL6
+         djy3UTwRRRz1dVhrUVveV7NQwcw/42TIimfpJi0VZ546UzLTqdX80uZhkDMch4HCVyf+
+         2RCWbgU9rvqIuu/OiZltOo+Q5WU8Us/SwzXauoeXFlIDdKDMxd+baJypqsSoeAebr732
+         b0gg+cuBCPYwnvTRls9RYsRTP7WjzCWxYfVSiZhdW26lnKqLHG4/X6oQaChBG91b8NDY
+         CgEw6EtW7SlU8/fFjn+QGi2flenz7VuqsZvaEuutYCpHBf31HNGX27QGK+qITvjX2DPk
+         ZAbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722611673; x=1723216473;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hBY2jE6SQVLEJ2rTtvFkGo52n+rOy9A54yoDBcuOdIo=;
+        b=wl8wb+jQF5n0E7Yo1cfsKTSnyXslKrYdiGDghR5GTwZAYcbQBtTlU2LvAyR/T7vm7x
+         J05KtG7rF9JeyCGz4HzJYHb2K5GqdHeX2IKUNEOaiF/9+awR5anAIKjWFTEy/8DDRQ7A
+         xyavYNis+QnqCrQ5BlD+W6TbScIBKpC80SZ6t/xWtLjOnuY9ADYvp86mxQ1oAE0PH4H+
+         wPJskeLcbs4OzooYfT4umr7x59v7DhUtilLBWb3LAC+Y6CpqpmshSS+MyZldrLmyZR2U
+         q5f2KreY3JYQ0DC7AaTbHy6UBmMqOgo766SLoMb7N0XpdBZwQDo1qz5Qj3iMOMSOHrrM
+         srhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWy4F8wIluXAdlPzFdbW9pXPZvw+e8RHFTo1fuqyziHgA3GeORJGML59lx4ktEwCigg+hLckNDqfrN9USCUpKOX3Qe7AYtKLnJ+ogT
+X-Gm-Message-State: AOJu0YxTHSzlI7xUq+avSn6fwEdUeJt7+QDB49bZVF6d1FnaOHtL0Gua
+	NXx+ohxgK+L6cq/HK55i7DJpdlYDgiycDpr9qxIUN/ccAIdtZ7HMO1zhfKfyRpo=
+X-Google-Smtp-Source: AGHT+IH4oAftIk88ByazbNx7M8aEqytLa2lIWzUyzNWyKW+yeSfszojodoNPHEIHeKtlRo8S+0ksYw==
+X-Received: by 2002:a05:600c:3c84:b0:426:6ee7:d594 with SMTP id 5b1f17b1804b1-428e6af2443mr32146155e9.7.1722611673233;
+        Fri, 02 Aug 2024 08:14:33 -0700 (PDT)
+Received: from alex-rivos.ba.rivosinc.com (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8ad7f4sm98898355e9.11.2024.08.02.08.14.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 08:14:32 -0700 (PDT)
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-mm@kvack.org
+Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
+Subject: [PATCH v3 0/9] Merge arm64/riscv hugetlbfs contpte support
+Date: Fri,  2 Aug 2024 17:14:21 +0200
+Message-Id: <20240802151430.99114-1-alexghiti@rivosinc.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715153336.3720653-1-cleger@rivosinc.com>
-In-Reply-To: <20240715153336.3720653-1-cleger@rivosinc.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Aug 2024 17:13:48 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g5eAxJiiC6hY3BLKcuTyG1sZxgV5g=Zx4xu02UFfuwMA@mail.gmail.com>
-Message-ID: <CAJZ5v0g5eAxJiiC6hY3BLKcuTyG1sZxgV5g=Zx4xu02UFfuwMA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: CPPC: Fix MASK_VAL() usage
-To: =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 15, 2024 at 5:33=E2=80=AFPM Cl=C3=A9ment L=C3=A9ger <cleger@riv=
-osinc.com> wrote:
->
-> MASK_VAL() was added a way to handle bit_offset and bit_width for
-> registers located in system memory address space. However, while suited
-> for reading, it does not work for writing and result in corrupted
-> registers when writing values with bit_offset > 0. Moreover, when a
-> register is collocated with another one at the same address but with a
-> different mask, the current code results in the other registers being
-> overwritten with 0s. The write procedure for SYSTEM_MEMORY registers
-> should actually read the value, mask it, update it and write it with the
-> updated value. Moreover, since registers can be located in the same
-> word, we must take care of locking the access before doing it. We should
-> potentially use a global lock since we don't know in if register
-> addresses aren't shared with another _CPC package but better not
-> encourage vendors to do so. Assume that registers can use the same word
-> inside a _CPC package and thus, use a per _CPC package lock.
->
-> Fixes: 2f4a4d63a193 ("ACPI: CPPC: Use access_width over bit_width for sys=
-tem memory accesses")
-> Signed-off-by: Cl=C3=A9ment L=C3=A9ger <cleger@rivosinc.com>
->
-> ---
->  drivers/acpi/cppc_acpi.c | 44 ++++++++++++++++++++++++++++++++++++----
->  include/acpi/cppc_acpi.h |  2 ++
->  2 files changed, 42 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 1d857978f5f4..2e99cf1842ee 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -170,8 +170,11 @@ show_cppc_data(cppc_get_perf_ctrs, cppc_perf_fb_ctrs=
-, wraparound_time);
->  #define GET_BIT_WIDTH(reg) ((reg)->access_width ? (8 << ((reg)->access_w=
-idth - 1)) : (reg)->bit_width)
->
->  /* Shift and apply the mask for CPC reads/writes */
-> -#define MASK_VAL(reg, val) (((val) >> (reg)->bit_offset) &              =
-       \
-> +#define MASK_VAL_READ(reg, val) (((val) >> (reg)->bit_offset) &         =
-                       \
->                                         GENMASK(((reg)->bit_width) - 1, 0=
-))
-> +#define MASK_VAL_WRITE(reg, prev_val, val)                              =
-               \
-> +       ((((val) & GENMASK(((reg)->bit_width) - 1, 0)) << (reg)->bit_offs=
-et) |          \
-> +       ((prev_val) & ~(GENMASK(((reg)->bit_width) - 1, 0) << (reg)->bit_=
-offset)))      \
->
->  static ssize_t show_feedback_ctrs(struct kobject *kobj,
->                 struct kobj_attribute *attr, char *buf)
-> @@ -857,6 +860,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *=
-pr)
->
->         /* Store CPU Logical ID */
->         cpc_ptr->cpu_id =3D pr->id;
-> +       spin_lock_init(&cpc_ptr->rmw_lock);
->
->         /* Parse PSD data for this CPU */
->         ret =3D acpi_get_psd(cpc_ptr, handle);
-> @@ -1062,7 +1066,7 @@ static int cpc_read(int cpu, struct cpc_register_re=
-source *reg_res, u64 *val)
->         }
->
->         if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
-> -               *val =3D MASK_VAL(reg, *val);
-> +               *val =3D MASK_VAL_READ(reg, *val);
->
->         return 0;
->  }
-> @@ -1071,9 +1075,11 @@ static int cpc_write(int cpu, struct cpc_register_=
-resource *reg_res, u64 val)
->  {
->         int ret_val =3D 0;
->         int size;
-> +       u64 prev_val;
->         void __iomem *vaddr =3D NULL;
->         int pcc_ss_id =3D per_cpu(cpu_pcc_subspace_idx, cpu);
->         struct cpc_reg *reg =3D &reg_res->cpc_entry.reg;
-> +       struct cpc_desc *cpc_desc;
->
->         size =3D GET_BIT_WIDTH(reg);
->
-> @@ -1106,8 +1112,34 @@ static int cpc_write(int cpu, struct cpc_register_=
-resource *reg_res, u64 val)
->                 return acpi_os_write_memory((acpi_physical_address)reg->a=
-ddress,
->                                 val, size);
->
-> -       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
-> -               val =3D MASK_VAL(reg, val);
-> +       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY) {
-> +               cpc_desc =3D per_cpu(cpc_desc_ptr, cpu);
-> +               if (!cpc_desc) {
-> +                       pr_debug("No CPC descriptor for CPU:%d\n", cpu);
-> +                       return -ENODEV;
-> +               }
-> +
-> +               spin_lock(&cpc_desc->rmw_lock);
-> +               switch (size) {
-> +               case 8:
-> +                       prev_val =3D readb_relaxed(vaddr);
-> +                       break;
-> +               case 16:
-> +                       prev_val =3D readw_relaxed(vaddr);
-> +                       break;
-> +               case 32:
-> +                       prev_val =3D readl_relaxed(vaddr);
-> +                       break;
-> +               case 64:
-> +                       prev_val =3D readq_relaxed(vaddr);
-> +                       break;
-> +               default:
-> +                       ret_val =3D -EFAULT;
-> +                       goto out_unlock;
+This patchset intends to merge the contiguous ptes hugetlbfs implementation
+of arm64 and riscv.
 
-I would do
+Both arm64 and riscv support the use of contiguous ptes to map pages that
+are larger than the default page table size, respectively called contpte
+and svnapot.
 
-                      spin_unlock(&cpc_desc->rmw_lock);
-                      return -EFAUL;
+The riscv implementation differs from the arm64's in that the LSBs of the
+pfn of a svnapot pte are used to store the size of the mapping, allowing
+for future sizes to be added (for now only 64KB is supported). That's an
+issue for the core mm code which expects to find the *real* pfn a pte points
+to. Patch 1 fixes that by always returning svnapot ptes with the real pfn
+and restores the size of the mapping when it is written to a page table.
 
-here to avoid the check below which is redundant in this path and the
-label would not be necessary then.
+The following patches are just merges of the 2 different implementations
+that currently exist in arm64 and riscv which are very similar. It paves
+the way to the reuse of the recent contpte THP work by Ryan [1] to avoid
+reimplementing the same in riscv.
 
-LGTM otherwise.
+This patchset was tested by running the libhugetlbfs testsuite with 64KB
+and 2MB pages on both architectures (on a 4KB base page size arm64 kernel).
 
-> +               };
-> +               val =3D MASK_VAL_WRITE(reg, prev_val, val);
-> +               val |=3D prev_val;
-> +       }
->
->         switch (size) {
->         case 8:
-> @@ -1134,6 +1166,10 @@ static int cpc_write(int cpu, struct cpc_register_=
-resource *reg_res, u64 val)
->                 break;
->         }
->
-> +out_unlock:
-> +       if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
-> +               spin_unlock(&cpc_desc->rmw_lock);
-> +
->         return ret_val;
->  }
->
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 930b6afba6f4..e1720d930666 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -64,6 +64,8 @@ struct cpc_desc {
->         int cpu_id;
->         int write_cmd_status;
->         int write_cmd_id;
-> +       /* Lock used for RMW operations in cpc_write() */
-> +       spinlock_t rmw_lock;
->         struct cpc_register_resource cpc_regs[MAX_CPC_REG_ENT];
->         struct acpi_psd_package domain_info;
->         struct kobject kobj;
-> --
-> 2.45.2
->
+[1] https://lore.kernel.org/linux-arm-kernel/20240215103205.2607016-1-ryan.roberts@arm.com/
+
+v2: https://lore.kernel.org/linux-riscv/20240508113419.18620-1-alexghiti@rivosinc.com/
+v1: https://lore.kernel.org/linux-riscv/20240301091455.246686-1-alexghiti@rivosinc.com/
+
+Changes in v3:
+  - Split set_ptes and ptep_get into internal and external API (Ryan)
+  - Rename ARCH_HAS_CONTPTE into ARCH_WANT_GENERAL_HUGETLB_CONTPTE so that
+    we split hugetlb functions from contpte functions (actually riscv contpte
+    functions to support THP will come into another series) (Ryan)
+  - Rebase on top of 6.11-rc1
+
+Changes in v2:
+  - Rebase on top of 6.9-rc3
+
+Alexandre Ghiti (9):
+  riscv: Safely remove huge_pte_offset() when manipulating NAPOT ptes
+  riscv: Restore the pfn in a NAPOT pte when manipulated by core mm code
+  mm: Use common huge_ptep_get() function for riscv/arm64
+  mm: Use common set_huge_pte_at() function for riscv/arm64
+  mm: Use common huge_pte_clear() function for riscv/arm64
+  mm: Use common huge_ptep_get_and_clear() function for riscv/arm64
+  mm: Use common huge_ptep_set_access_flags() function for riscv/arm64
+  mm: Use common huge_ptep_set_wrprotect() function for riscv/arm64
+  mm: Use common huge_ptep_clear_flush() function for riscv/arm64
+
+ arch/arm64/Kconfig                  |   1 +
+ arch/arm64/include/asm/hugetlb.h    |  22 +--
+ arch/arm64/include/asm/pgtable.h    |  59 +++++-
+ arch/arm64/mm/hugetlbpage.c         | 291 +---------------------------
+ arch/riscv/Kconfig                  |   1 +
+ arch/riscv/include/asm/hugetlb.h    |  35 +---
+ arch/riscv/include/asm/pgtable-64.h |  11 ++
+ arch/riscv/include/asm/pgtable.h    | 156 +++++++++++++--
+ arch/riscv/mm/hugetlbpage.c         | 227 ----------------------
+ arch/riscv/mm/pgtable.c             |   6 +-
+ include/linux/hugetlb_contpte.h     |  38 ++++
+ mm/Kconfig                          |   3 +
+ mm/Makefile                         |   1 +
+ mm/hugetlb_contpte.c                | 271 ++++++++++++++++++++++++++
+ 14 files changed, 527 insertions(+), 595 deletions(-)
+ create mode 100644 include/linux/hugetlb_contpte.h
+ create mode 100644 mm/hugetlb_contpte.c
+
+-- 
+2.39.2
+
 
