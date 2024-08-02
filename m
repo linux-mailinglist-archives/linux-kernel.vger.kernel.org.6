@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-272226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598F09458D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67AE19458CF
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192EB284270
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B5451F232F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496901C3F2F;
-	Fri,  2 Aug 2024 07:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454EF1C0DCB;
+	Fri,  2 Aug 2024 07:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCmfwO+f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MVdOPBOv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u9lMUYcr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74ECC1C0DD7;
-	Fri,  2 Aug 2024 07:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448281BF33E
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583762; cv=none; b=hxj8NqdPz0zLbM30NaovfSQakGCSIHCaYwB2OgclEBerAUl41khUc2Lx6F0asCILXDzlHJ1oYqirIYCkw9evMX7EqEnffaujniZlWoACKKUbXEHlTF2BqUIK9SdglZLDaYODLE5qOsU4hTbXcqn6jQ1GmJnOVwsweVmIoEVYuR0=
+	t=1722583760; cv=none; b=DBvNY+Dg25G5vypBiNHFa79F6j25L1EUtA3Vn4QhsXbFRgS+BbuJ6+rvgc0eUgpDD30uE5psdxyH1+gtn8S0JWMqQ+5VAHTt35uRyLkHWsEWJGrV9p78wOZ4j2AOXqUeNWJb8egmbNglBaXSeaVeyXkkNQJDjLkojRxwx47gNwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583762; c=relaxed/simple;
-	bh=KtqdbPC2o6IT0W3PNKnfutxEkL8rAszRLKhYIvtv7AA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A+0ewddfC1TXS/YDmcLyiBoDD7jkJwYApluM6dSB8Edd9n4wGBaCXOGIpqpCJ0VTm3M8Iu0QGamqSLK1n549ZZY9tcAiof4UXpsgWDetMUlRpUcmoeQ0bBvCX0NRWnk1K5TgQNJmcGSN8Ygm7HZ86iT4Ii1g3wZVfFy42JpBRU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCmfwO+f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DE0C32782;
-	Fri,  2 Aug 2024 07:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722583762;
-	bh=KtqdbPC2o6IT0W3PNKnfutxEkL8rAszRLKhYIvtv7AA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bCmfwO+fu9j0QTon9YQfB8yelVnCYyn1lj95e8R4wUDXOmUO92GOPVFxkCfoTfZaw
-	 AyTMcsIM57Fl40GH8zZAqjWYvB8+2hft6cN3RE+EYxNC08KNFEGuboCPGymBsWetdy
-	 kRDX0oAywmClNOcIxXNnWsW9q8qWgPdxqSAbbLTCf+sHk7lhQNrArYL+cL36zyKOWI
-	 J1i3KwDCRhgp+V2RPLNX0EMFs1LSm9ERnJELwGci8MN9Jf1x5VkWxHebX+gBHkwj8w
-	 z8S7NKggHTAzQT8PpBPrcglOZu6QvC4hJ3z/To3xfiRdPmC15jvelcc72iB9TttXHY
-	 6oyNVJKjpF+Mw==
-Message-ID: <33212ecd-535e-48aa-a960-aae2019c176c@kernel.org>
-Date: Fri, 2 Aug 2024 09:29:15 +0200
+	s=arc-20240116; t=1722583760; c=relaxed/simple;
+	bh=arFmlIssz41HOUi1lzAdhXhOdq1Csd2hQ00qcki2REU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q1oEKv6LhxaDYHKPDkHXAzhLt2pcpznqHnESMu/VRDjdaCE5o6DN/xwARjLm4KwJQAYd5Rr4d/i61ZOtQBvMm5Jsr7F1AQYfA1K02aLgg8KlMtxqjfseByP6DnS6A7eX9KshAE4Vd39Gx+Qow0SkENZWeLypm/Z1CP4b7/mkE4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MVdOPBOv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u9lMUYcr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1722583758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ji4eNdgoYHTLRIuHuu8oySWq4ekKwNKlmags7l0M/64=;
+	b=MVdOPBOv1jRnHbjqYjsEUzxD9Ynl3PZHUiroQneVQDIbDbbkCxksgxPMqkVr6j3MXHkf0I
+	fEuxGbMdxJN1xkVfJDMwMzEbWT7yS1yX1wgAJqVfxvHLcmD6bbrVtU31RiNfhmscwAFkeU
+	p/lJxqME79zNprUfxXBh7zpT0NVf9TxQJGFW/pT2O1UfYK0gRmV0WG/CB84zdKbQyisqR0
+	lshOREU60IHDefOQJx0iGnORKQkKZxmMrXwFTQciRKMH8rs/k6SjWldYhVmH4+tO5qn3OY
+	FngtgjysEWCsBmcL5TJOzTOZpM2riaM/U+m0UU+QhRDmwq+oQJhEPYeMDeQwfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1722583758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ji4eNdgoYHTLRIuHuu8oySWq4ekKwNKlmags7l0M/64=;
+	b=u9lMUYcrfJaYuuAFKVuhwlpU843Q8YaKKR17zY/5O/wWfwwvCt7OSYR1InnanMr/Sx7/cj
+	EDd8WF1cjzP177Ag==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: preffer_ofload param: was: Re: [PATCH printk v3 11/19] printk:
+ nbcon: Rely on kthreads for normal operation
+In-Reply-To: <Zqush2SkFQpYxJ7q@pathway.suse.cz>
+References: <20240722171939.3349410-1-john.ogness@linutronix.de>
+ <20240722171939.3349410-12-john.ogness@linutronix.de>
+ <ZqpAJgKeB0cIlTg7@pathway.suse.cz> <8734noz5jv.fsf@jogness.linutronix.de>
+ <Zqush2SkFQpYxJ7q@pathway.suse.cz>
+Date: Fri, 02 Aug 2024 09:35:17 +0206
+Message-ID: <87bk2b8jsi.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 5/8] ASoC: dt-bindings: apq8016-sbc: Add
- msm8953/msm8976-qdsp6-sndcard
-To: Adam Skladowski <a39.skl@gmail.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Stephan Gerhold <stephan@gerhold.net>
-Cc: alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20240731-msm8953-msm8976-asoc-v3-0-163f23c3a28d@gmail.com>
- <20240731-msm8953-msm8976-asoc-v3-5-163f23c3a28d@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240731-msm8953-msm8976-asoc-v3-5-163f23c3a28d@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 31/07/2024 17:25, Adam Skladowski wrote:
-> Document MSM8953/MSM8976 QDSP6 cards.
-> 
-> Signed-off-by: Adam Skladowski <a39.skl@gmail.com>
-> ---
+On 2024-08-01, Petr Mladek <pmladek@suse.com> wrote:
+> I believe that the parameter "prefer_offload" adds more harm than good
+> because:
+>
+>    + It is a non-sense for nbcon consoles. They always prefer offload
+>      except for emergency and panic. But emergency and panic is
+>      handled transparently by nbcon_get_default_prio().
+>
+>    + It is confusing even for legacy consoles after introducing the
+>      kthread. There will be three types of offload:
+>
+> 	+ do console_lock()/unlock() in IRQ work
+> 	+ wake kthread
+> 	+ wake kthread in IRQ work
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I think the confusion comes from my intention of the function. I wanted
+a caller to use it as:
 
-Best regards,
-Krzysztof
+"Tell me how to flush."
 
+This requires input from the caller to know some information about what
+the caller's intentions are.
+
+If I change the function so that a caller uses it as:
+
+"Tell me what flush mechanisms are available to me."
+
+Then the function does not need to know the caller's intentions. It only
+needs to know the caller's state, and that information is readily
+available via global/per-cpu variables.
+
+I will drop the @prefer_offload argument, simplifying the function to
+only provide a list of available flush options. The caller will then
+decide itself which option it wants to use. I believe this aligns with
+your intentions as well.
+
+John
 
