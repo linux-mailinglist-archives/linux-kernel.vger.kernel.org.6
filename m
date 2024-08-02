@@ -1,170 +1,114 @@
-Return-Path: <linux-kernel+bounces-272999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1315D946330
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:28:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE2946310
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 804DFB22CF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:28:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DBBE1C2152A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2539A1AA9F3;
-	Fri,  2 Aug 2024 18:23:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C4D1A83DE;
+	Fri,  2 Aug 2024 18:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LcyhGZeJ"
-Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Nw1VcDDK"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F5A21C185
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 18:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12E71A83B9;
+	Fri,  2 Aug 2024 18:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722623013; cv=none; b=RqRXDJUV9k7gsN/E3SIsdI5cj3oAhqlq6JdaZ6lxJMlEX4yeqwfBn2aK57Cs698at/RnbOICK4LTa4yQLV8vIwCxbjceNgPqexIcSNStNBEv4ZOpQhsTRLOXwHkR3qCJ7RyAHJeV21olcVF7dekPA/zfCG2MIvE1S4WYajkPLNo=
+	t=1722622997; cv=none; b=SGKog8dPE3Vzumue29IGE4bvPH8UDJGt10X1tig2d/pt58UYHrrwt9Y2eo56k17+Mou/tawFIFBMpAZOKfOjjbWn/Yfvggj7WLKRKLY7t1FF1+hAsCDC8e5U0ZDWFoGJQ/pZHV7MAJ6OlnTKj4WRxt05TpHU8y+hbm17AH/kCTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722623013; c=relaxed/simple;
-	bh=tgoIWaFUxQM33b8qbHZPnhnEYawHBB93RkKWU1DvJ5U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JoRdeCkc3vTgYhDs1E6gg+FtQwZ3CaG2YyCh1iCaGkJVwhzGAG1rZMLZG9S4x+o8q51mGNYSaFq49Z8bx4OGXaBFZ1Bp9Idj/MgB5dxql0lvj3Vc3jBb2s45q7z9FuARi01iNOftAwVQY552iw3LxWOHP7xjAlmkw5RACdBx0Qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LcyhGZeJ; arc=none smtp.client-ip=209.85.166.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
-Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-81fa12a11b7so941886339f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 11:23:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722623011; x=1723227811; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPSm5NDWiDpCdwUb4qZlzg9JxWn3iBSQZ4jPnuSz7Zk=;
-        b=LcyhGZeJwk56GBN/EP4/Wq6x/gixCHn+xbY0DrUv+pNUrIkSm1J9Ejx5zztxpkJSfI
-         1Ft3wP7iRQJGoZrdI7HD/UF9Yu8aM8EvYfynFAjWej9bJktjTETPDTXaOTLyfx763oVb
-         y6/PIuc2NFT9xc+eCPiu7z+jtBH0B7QYgLsQ3Abwb/XQHJ/Un3qME3U3v9D+x53af5Wm
-         cOLi0SYPEDp5a1zteAQBWJW8EV+TOlA9zBqriot9eQzdmp+vEVU2BndMxiX6aUj6Xxvg
-         bsNYnihQz+903gt9O7V0aHxeHnsAtcDJmyPor4esn8WOyHJg7Jv/mX8a3+x/IDEKcqqU
-         Yxhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722623011; x=1723227811;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPSm5NDWiDpCdwUb4qZlzg9JxWn3iBSQZ4jPnuSz7Zk=;
-        b=cNbKp7ZzZymgQwwoMyHsI/vMBukHJVkfhLqWeirrGZ4goCTZH4TH9GgVV4fm2OYVDu
-         zIfZfkP1iJiratDEa25ZjKuwSz5KPCU00tb+kaf1ZyV4jTWaOKa83q1L9fWjh0kdWZE0
-         Zrs/E9CiDv3j8RJFXpqiz4DDugmcsGl9v/Sm+UJ+O2D3b1/ArFRpHWmaDLs+Sx1ycm22
-         rwviq0YacKcSKX/Oxyw6I0215OyNMIEHxjZd5achsmK6aZpnvocbeXy3yevjmv9p9Km3
-         hY/lI4SqL40VfqxqPpBMwaGRJBqlUCq+ptUpmrz/9cdWboA4GGmDpTnT6vyLlQ3sdLT/
-         GZdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVx0MfNPsui4nWR/jQ34rVusdF6Jr29KctyY7RH2u3syVWJ8ci0+qPyA6XiM529tY0Lsbn2m7enLnEbXe883OCPmnPe4y8cxyK5zBLj
-X-Gm-Message-State: AOJu0Yz4lSSzFjGdo5fteBsYThGPAH7MP84z/KHGtzK3WzYnKN+IsDIM
-	FQ6cqidSW5lw9Sb+lUxGMJi/c7XFHR9rkigLFrDpN0uP5q4bWpksJnz+cjwDPMwUHGH501kQTov
-	LHwYdd12SdZjMdxZSYxamKw==
-X-Google-Smtp-Source: AGHT+IGsFTuzpN6+gjclXj8JUDgT+VULd2GmamyAkeXPWpy0H9xcVwD8Jmzh08GAnse9QMclSk9M4TynhXIDCWzm3Q==
-X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
- (user=coltonlewis job=sendgmr) by 2002:a05:6638:410b:b0:4c2:7945:5a32 with
- SMTP id 8926c6da1cb9f-4c8d56c392amr239836173.5.1722623010994; Fri, 02 Aug
- 2024 11:23:30 -0700 (PDT)
-Date: Fri,  2 Aug 2024 18:22:40 +0000
-In-Reply-To: <20240802182240.1916675-1-coltonlewis@google.com>
+	s=arc-20240116; t=1722622997; c=relaxed/simple;
+	bh=M+ulUkV1YTG068x/Qdy7o5UyxYtRh+kStIOmvFqJrHI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JX5sEWuay+E63lSSj438WC6eHYqFDTc0cJGwwSV84ZHfOoqwsbxvP+6dYMmdPnvtFiLU/2grDiiVxHJi1K2PDaUY+Ld7LaRqjbgGmK2zKexZ1Z0FYrXfNytm5uslhk7QqKHcSDzN4H4XWPwr+PzCvJ9mmRjo2fWq9blXQrzi64Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Nw1VcDDK; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 472IN1xH069877;
+	Fri, 2 Aug 2024 13:23:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1722622981;
+	bh=QM5oBnyYC3TLRvQQiX0szRRaPNGIEa5CsBev4nNhHDs=;
+	h=From:To:CC:Subject:Date;
+	b=Nw1VcDDK2TsE97UWRYIkAZESGrQ/1PZy+RYVY1uciNeCwRfDqtB9H2KK/4VBOhO5R
+	 FbCAp3QZIuSRtOvh6HLpaqhjn0IVTY1zlfhddCbTV7JISq8+IcTNRgmrcm7WaLODO/
+	 lYOHh2lhohrFQVgmz09tdBLTzggEE5gR8/OG6y8E=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 472IN1kI044102
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 2 Aug 2024 13:23:01 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 2
+ Aug 2024 13:23:01 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 2 Aug 2024 13:23:01 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 472IN0BQ039524;
+	Fri, 2 Aug 2024 13:23:01 -0500
+From: Andrew Davis <afd@ti.com>
+To: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew
+ Davis <afd@ti.com>
+Subject: [PATCH 1/7] remoteproc: keystone: Use devm_kasprintf() to build name string
+Date: Fri, 2 Aug 2024 13:22:54 -0500
+Message-ID: <20240802182300.244055-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240802182240.1916675-1-coltonlewis@google.com>
-X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802182240.1916675-7-coltonlewis@google.com>
-Subject: [PATCH 6/6] KVM: x86: selftests: Test PerfMonV2
-From: Colton Lewis <coltonlewis@google.com>
-To: kvm@vger.kernel.org
-Cc: Mingwei Zhang <mizhang@google.com>, Jinrong Liang <ljr.kernel@gmail.com>, 
-	Jim Mattson <jmattson@google.com>, Aaron Lewis <aaronlewis@google.com>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Colton Lewis <coltonlewis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Test PerfMonV2, which defines global registers to enable multiple
-performance counters with a single MSR write, in its own function.
+This is simpler and removes the need to assume the id length to be 1
+digit, which then removes a W=1 compile warning about the same.
 
-If the feature is available, ensure the global control register has
-the ability to start and stop the performance counters and the global
-status register correctly flags an overflow by the associated counter.
-
-Signed-off-by: Colton Lewis <coltonlewis@google.com>
+Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- .../selftests/kvm/x86_64/pmu_counters_test.c  | 53 +++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/remoteproc/keystone_remoteproc.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-index fae078b444b3..a6aa37ee460a 100644
---- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-@@ -750,10 +750,63 @@ static void guest_test_core_events(void)
+diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
+index 7e57b90bcaf85..81b179e269a1e 100644
+--- a/drivers/remoteproc/keystone_remoteproc.c
++++ b/drivers/remoteproc/keystone_remoteproc.c
+@@ -366,8 +366,6 @@ static int keystone_rproc_probe(struct platform_device *pdev)
+ 	struct rproc *rproc;
+ 	int dsp_id;
+ 	char *fw_name = NULL;
+-	char *template = "keystone-dsp%d-fw";
+-	int name_len = 0;
+ 	int ret = 0;
+ 
+ 	if (!np) {
+@@ -382,11 +380,9 @@ static int keystone_rproc_probe(struct platform_device *pdev)
  	}
- }
  
-+static void guest_test_perf_mon_v2(void)
-+{
-+	uint64_t i;
-+	uint64_t eventsel = ARCH_PERFMON_EVENTSEL_OS |
-+		ARCH_PERFMON_EVENTSEL_ENABLE |
-+		AMD_ZEN_CORE_CYCLES;
-+	bool core_ext = this_cpu_has(X86_FEATURE_PERF_CTR_EXT_CORE);
-+	uint64_t sel_msr_base = core_ext ? MSR_F15H_PERF_CTL : MSR_K7_EVNTSEL0;
-+	uint64_t cnt_msr_base = core_ext ? MSR_F15H_PERF_CTR : MSR_K7_PERFCTR0;
-+	uint64_t msr_step = core_ext ? 2 : 1;
-+	uint8_t nr_counters = this_cpu_property(X86_PROPERTY_NUM_PERF_CTR_CORE);
-+	bool perf_mon_v2 = this_cpu_has(X86_FEATURE_PERF_MON_V2);
-+	uint64_t sel_msr;
-+	uint64_t cnt_msr;
-+
-+	if (!perf_mon_v2)
-+		return;
-+
-+	for (i = 0; i < nr_counters; i++) {
-+		sel_msr = sel_msr_base + msr_step * i;
-+		cnt_msr = cnt_msr_base + msr_step * i;
-+
-+		/* Ensure count stays 0 when global register disables counter. */
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_CTL, 0);
-+		wrmsr(sel_msr, eventsel);
-+		wrmsr(cnt_msr, 0);
-+		__asm__ __volatile__("loop ." : "+c"((int){NUM_LOOPS}));
-+		GUEST_ASSERT(!_rdpmc(i));
-+
-+		/* Ensure counter is >0 when global register enables counter. */
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_CTL, BIT_ULL(i));
-+		__asm__ __volatile__("loop ." : "+c"((int){NUM_LOOPS}));
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_CTL, 0);
-+		GUEST_ASSERT(_rdpmc(i));
-+
-+		/* Ensure global status register flags a counter overflow. */
-+		wrmsr(cnt_msr, -1);
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR, 0xff);
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_CTL, BIT_ULL(i));
-+		__asm__ __volatile__("loop ." : "+c"((int){NUM_LOOPS}));
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_CTL, 0);
-+		GUEST_ASSERT(rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS) &
-+			     BIT_ULL(i));
-+
-+		/* Ensure global status register flag is cleared correctly. */
-+		wrmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS_CLR, BIT_ULL(i));
-+		GUEST_ASSERT(!(rdmsr(MSR_AMD64_PERF_CNTR_GLOBAL_STATUS) &
-+			     BIT_ULL(i)));
-+	}
-+}
-+
-+
- static void guest_test_core_counters(void)
- {
- 	guest_test_rdwr_core_counters();
- 	guest_test_core_events();
-+	guest_test_perf_mon_v2();
- 	GUEST_DONE();
- }
+ 	/* construct a custom default fw name - subject to change in future */
+-	name_len = strlen(template); /* assuming a single digit alias */
+-	fw_name = devm_kzalloc(dev, name_len, GFP_KERNEL);
++	fw_name = devm_kasprintf(dev, GFP_KERNEL, "keystone-dsp%d-fw", dsp_id);
+ 	if (!fw_name)
+ 		return -ENOMEM;
+-	snprintf(fw_name, name_len, template, dsp_id);
  
+ 	rproc = rproc_alloc(dev, dev_name(dev), &keystone_rproc_ops, fw_name,
+ 			    sizeof(*ksproc));
 -- 
-2.46.0.rc2.264.g509ed76dc8-goog
+2.39.2
 
 
