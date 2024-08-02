@@ -1,163 +1,221 @@
-Return-Path: <linux-kernel+bounces-272322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CA51945A40
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:46:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63198945A36
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:45:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11372B2382F
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:46:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1920C285E22
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D611C4621;
-	Fri,  2 Aug 2024 08:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ED10132139;
+	Fri,  2 Aug 2024 08:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="W/hE+pUW"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K33+XRaG"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2083.outbound.protection.outlook.com [40.107.237.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548FE1C3F14;
-	Fri,  2 Aug 2024 08:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722588338; cv=none; b=vD62U7Kbo0OHKED2/cr+87s+EXYMe75HEsUMvHJz7TynU6Lx1grRwJQDOUhBdK5xZqLXz2JjpQS/p3j26zf67S+Is81g1+0OvOfpxvK/0S4jVCTEfMj/+ytKKSTSe+FVcEtZCFPumQPdFkB5Rj/GX04jRstm/8tZgLRqkc0vO58=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722588338; c=relaxed/simple;
-	bh=NkzjrWmY9GxHW4qybd1qDhh4ZKci0hr+K7IaFyByWAk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AYqhy0xewLF/3BsX1bQlmVm+U3ZXPbpIfG55Df6Zt9imW+6OO+t+heEboPfW15GmSFf2NIptcWX6mJR0aBg0SLXVAoNZeA2/MWMDStwR5U3FMRwbBNQw9sJHLTGsWTJ/7up6spHbMJaJ0kBhFFuTguIcH3Z2faG4h//ejdbRPAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=W/hE+pUW; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1722588338; x=1754124338;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NkzjrWmY9GxHW4qybd1qDhh4ZKci0hr+K7IaFyByWAk=;
-  b=W/hE+pUWX+m34TK0xf+DYTblJHNErngpJ+ndDutV0O2Z+PjO2W8XTDqa
-   DV2LFpdf6v/cSJNs+OjrxMNDt2Bon0PimJAVQwgNWMFs7u8qNUZllCvvl
-   /F8j+XQ1WW67Kx7l0SjqaueKZSm8ajk868HMSChfM0QKH9XXN9VbBxH4i
-   Nv5zg+b94FaQTTnsZvNlilCSU/6Up5KoeYbUWq0qlxAVshJHsGtPqWFgB
-   EctK7itlLsPLxIKMn5YzPMbcLn1CpuAuC2h20h1PhoSyTCzE2/1sfH8tw
-   LPqCrNI27U2FadEzA2PpjiMPNhUtIsvzshPtlDAoFMkJRiD07ETEFP2mZ
-   A==;
-X-CSE-ConnectionGUID: W9KqdMcXRKuEFdpNV+qlRg==
-X-CSE-MsgGUID: Yv6uE7HJQBy2b86uGBUtOA==
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="260922556"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 02 Aug 2024 01:45:37 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 2 Aug 2024 01:45:05 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Fri, 2 Aug 2024 01:45:02 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <broonie@kernel.org>, <lgirdwood@gmail.com>, <claudiu.beznea@tuxon.dev>,
-	<nicolas.ferre@microchip.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<robh@kernel.org>, <alexandre.belloni@bootlin.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>,
-	Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH 6/6] ARM: dts: microchip: sama5d29_curiosity: Add reg_5v to supply PMIC nodes
-Date: Fri, 2 Aug 2024 11:44:33 +0300
-Message-ID: <20240802084433.20958-7-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240802084433.20958-1-andrei.simion@microchip.com>
-References: <20240802084433.20958-1-andrei.simion@microchip.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E951C232D;
+	Fri,  2 Aug 2024 08:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722588334; cv=fail; b=uWjH5mclUVmk1EUdA67yB9QUcWX5Us9dUPBrmmD3FglMKv8C0GMvbEGqkART5Lx8Yh2mO+DnAuma2Q3FnrJOmch/w4gcPhyZeEGc20Wu/mV8dJSFWAT6gJ22GnEC11mHeiBmIN2YT2ZhGszseKY+L5Nf4utCjMNFQMVU9LvqMeY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722588334; c=relaxed/simple;
+	bh=IMZ9afgJlv+tg/Uw9KV2Z0a6YCgJkDhEPIYhHz2LBY0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=SwYmzVd5Ali4F4PV5VxtxP13O2KAlZ9+eUxV+g2E9JFZk9AFp12vdx577mEp7j/0eWHE6E1N1o3LQeM4gqZKFXuhKp+1Se7WH4rOdldXdS2pa4A+RT3T4K82YGRsuXoakQqjaBbDxJRtwKSvn2MWBMi0Bk+O+Vv8Otu58F1m0yM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K33+XRaG; arc=fail smtp.client-ip=40.107.237.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qFf8IO/JCul+j1+50HL6h8NIQ4O8b1AouF5R1hETyQf0dfUuFVm6qJt7q70hjzAbWV5xPqeWMHFBbA/Z9YAH3dSKmIIDLsLKvhxZXPI3MkFRu3ACd0V9nCVx0JIKYKSNn78122GReanCWCDJPh/GrM4WjGpbCpgAhxTd+J4pNuDxxDbkdZuK3mTEfigh+J9cxnDcg/x9GmbjkfdufbxqqHCE+YAasnYxCLhDxTAZXvTgMhY1Nar0ZPVcDvMQ5G1B2vb4Bp3kwHwM+pj5mtNNqMGxyZk3fyYS8EGv3LlUZI8TgkROt+vKkPuk1irzbGwSODLO9jtS3RcNAA6Te0otCA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9WjRYgZsIDxh51j0FbvSEsSAqDR3NYLxof5kCMz/RhY=;
+ b=ShKPrlC6yHu9+/DwHDpOEDU+1uSbQo2VCgEwTfEJVNBuBKEtnuTpibHBbQgTBI20aHXUXIDTJfTRFVO16+7CveV4x7zOFf4JusxuVES3xk8W8JGUnWopyRKM50cENg/NLlqfMrJts2oLFfdJ5mD72yRSfzDfFd8EWRBrCacQSYMRcNvSNm1Jp/XalKHUjbENzWvohY6gGIzEo1AtXe4I2HH504BYlDOn05UYr6ex2QmAO5nYUedQpHJQhIvNI/PBVvKajKrZsvwLdUyDigAIPrD0nzwFQwPxiEDOqFgm7T3iUnhHu2DksVz7bJg/g67jxJm+ARJ28g7oMAcpMLtE8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9WjRYgZsIDxh51j0FbvSEsSAqDR3NYLxof5kCMz/RhY=;
+ b=K33+XRaGImHwj8P6EgInjZNLJJ8VtahNhuaEeLVgU1pMF9A6PHTd2kRaht0uTKLUEG6ec4lJQ5UAY71K8CC7Fc2dynA07J5bEF2pEaS05aRCNM6D+cVKI+m3NZSX0tRP3tvFwWe2stLof//HX9/fFkBRBhoPPlAK5RIhOL3qzZk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
+ by DS7PR12MB8251.namprd12.prod.outlook.com (2603:10b6:8:e3::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7828.22; Fri, 2 Aug 2024 08:45:27 +0000
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf%4]) with mapi id 15.20.7828.024; Fri, 2 Aug 2024
+ 08:45:27 +0000
+Message-ID: <9383df48-2d72-41a6-978d-3b7217947f54@amd.com>
+Date: Fri, 2 Aug 2024 14:15:17 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 31/31] ASoC: amd/sdw_utils: add sof based soundwire
+ generic machine driver
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, broonie@kernel.org
+Cc: Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
+ alsa-devel@alsa-project.org, pierre-louis.bossart@linux.intel.com,
+ venkataprasad.potturu@amd.com, yung-chuan.liao@linux.intel.com,
+ linux-sound@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Syed Saba Kareem <Syed.SabaKareem@amd.com>, Arnd Bergmann <arnd@arndb.de>,
+ Marian Postevca <posteuca@mutex.one>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240801091446.10457-1-Vijendar.Mukunda@amd.com>
+ <20240801111821.18076-1-Vijendar.Mukunda@amd.com>
+ <20240801111821.18076-11-Vijendar.Mukunda@amd.com>
+ <64839bd4-f8c8-42da-823a-13fd6dc34238@kernel.org>
+From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+In-Reply-To: <64839bd4-f8c8-42da-823a-13fd6dc34238@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0255.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:21a::18) To DM6PR12MB4123.namprd12.prod.outlook.com
+ (2603:10b6:5:21f::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|DS7PR12MB8251:EE_
+X-MS-Office365-Filtering-Correlation-Id: beb8a393-ea8e-44d3-66c3-08dcb2cf74ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VHBlOXMrZHdVTlNqV1dYNVZ2NndIb0ZTa1RKMzBVRTdCa2RJbGdJNndxRVhQ?=
+ =?utf-8?B?U3h1Ukp5WHhuSUM5dmxNenMvVFoycFl3aG9LSzI0MzFlZTZNRmhYZFNlb2s5?=
+ =?utf-8?B?emNCTVhGK3VvMkxzQ2M0VjFrVlFLOFdOVThBKzV0dnh0cHJjamQ0TndGRndS?=
+ =?utf-8?B?V201WnM1MDhQM1RpNStmZXArOXp6SkxwTGVySGxZNm9OMVEvTVgzNHJ4NEJM?=
+ =?utf-8?B?WEYwNnJiUzdqZzRrWU9zNnc2ZWFIZUtYMGxxdXF2emwwTWNxVmV5cGdpKzBV?=
+ =?utf-8?B?SkdwNHlMeGJHNFJiSjJmNzZsS1lSSFlURFMxbkpoS3Jwc1VlalQ4bys3RGh4?=
+ =?utf-8?B?YkxMNHRCRStIRjdLZVFtOHk3U0xQTWt2bjNkNlFoZk5RcWp4MFV4VG13REJp?=
+ =?utf-8?B?MjNidVlNUkVPL2FleXB4UVNvdFh5emxVaUlnKzlTT1RxckNnNDJMQ3Jxc2lp?=
+ =?utf-8?B?UU5XMDdZdUltM0FzRU9BUm9nWEtlTWY0ZXpDTUtsUWMvUWtMT3ExR0RMaUM5?=
+ =?utf-8?B?T3FDSEx3b0NySGt4MFNRaHFJZ3pZcS9KV1RTRkFEVmVBaktmdGNtNEk1VzRu?=
+ =?utf-8?B?MFRTbWt3eHlmeVZPY1padjV2ekZlOUhyU3dPb25zSHg2bTJOTUIvOUlSOVJD?=
+ =?utf-8?B?WGgzZHpnSlNEQWx4TnVZY0YyMkl1c3kwK0JiRkdRUWZIajJxaGFTNjZzU3Bs?=
+ =?utf-8?B?R0ludmtNVzRQZDV6SGNnanA2WGl3VU5jV1Voay93WTNrc3UyL3ZORUVzR05R?=
+ =?utf-8?B?dm1obVpYL0NqV2xGTytuSnU0UTNSS09aTHJ6ZFNkWStHSFJZUldmUlkxTW5k?=
+ =?utf-8?B?RjNmZzZPL3FuL3ExR0FPMzc2SUNvWElWeW9pWTErTkRoRXQ2TjZGMkFFcWJP?=
+ =?utf-8?B?czhxM0NFRW5aRzJFMGt1amsrYlhlRUhZdXhEZlpORTV3VTJLOE1JQWVmSDM5?=
+ =?utf-8?B?enZLaEVLVTFRL2lSM0lVbGUwSGhHaDdtY2Z6QWxPV3NXOEF3NW5URHM4U1Ev?=
+ =?utf-8?B?dmpvRXpVbVV3SElPejQrQUJTQ1NZeVl6T3JNTzBudHFyZjI2WFFYNGlOeFF3?=
+ =?utf-8?B?WHRXaitwWUxqSGg2Nk5mWnA1TWVJcldueUFVYVd5NTRHYzY2Mk92OUJtdlVB?=
+ =?utf-8?B?RjZXSU5ZNURNVFQrSVArQ1lQK21PZEFpUVFnLzJKTjVtN2ZyUVVlWTZQSU0w?=
+ =?utf-8?B?MG5EcUYzQlZsZ2gzeDdBaFp3Sm04aVp1UU8wanpvUzV2TnYzaDFvYzBQNHQy?=
+ =?utf-8?B?VGFzL3RnMUtNSC9UMEh2T0tlRWI1UTJyK1Z4bnZXdGV3VUFGQzNuQWVhbEkr?=
+ =?utf-8?B?MDJYc0pQMTMydFVjZWNwV2VkaE5YUGtuNHpFL3R3Vjk2SHZ4UER4bEw2V05M?=
+ =?utf-8?B?NjA3RnI4ZUVUdXUxK2QybDNiYmpNN2xmVDZMOFdNeU5KMFhrU0NUbi8xTlpl?=
+ =?utf-8?B?YkhKWW1lOFkyR1JpOFZFMk00cHVJclBKUzM2a1Y1alc5VkxLR0lVMkpWS1NL?=
+ =?utf-8?B?Rjg3MmorbzQrdE41UFVCZTNsN3JuSVR6bGcvQ1Yrd2tleXFyUXJHMkN1M0N2?=
+ =?utf-8?B?eTJVU1FPR2xCZmZSVlRrR3hyTjRpYVlwZ0wvSEIzVWYwUGpDUDBiOHozZnNH?=
+ =?utf-8?B?RFlCY3dtTWJDK2JGNGhVMU8ycXhtZVZqQ1BiZVRmdWNWcTQrdUtWSzVuWUNS?=
+ =?utf-8?B?MVZKalR6TFNDNm5iLzJVaGRlblZBZ0VpWS9mRHhKSzJXYXMyRlh1T1lRQVkx?=
+ =?utf-8?B?ejhyaXpBNVVXbDR5NWdpcDVVVXZ5bHhFV05jL2kzWFB1V1VTQms1UlZHYkgy?=
+ =?utf-8?B?WDNuanFLaDFobGQ0ODFNUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WUJKckdZNW43UXE5cWMyMjZhMXFtU0xxQnVMWVlXYUZ5UkNsdUdkVDVUV1FI?=
+ =?utf-8?B?MkhSdFpmU0I5UXdKbEFaMTRxWGE0alBUNFkwdXZuMWs2ekxRNk01d3h1SVJh?=
+ =?utf-8?B?UUw2ajRLMmorUE54SDdpSC9XUzh5TUd6cGpCNjJCQ1QrVHZ3UVdXKzE3aEFq?=
+ =?utf-8?B?b2lFNWhmbmRYRW01M05HOEhsTmxWUWNBWFhPZm5WekpxMzc0Tk16TWhCNTJQ?=
+ =?utf-8?B?eExMbzA5VXhETzZwZVpkR2g3RVY1SGlhTkJCNkJTQXBLQ0JoQ3Z1Q3JWNGZC?=
+ =?utf-8?B?bjN5U1NpdCt1SW5idUdyKy9GQm13NG1oNiswWHFEdVkwQkV2NlNjeXhvYyt6?=
+ =?utf-8?B?R0t4Y3NKQ0RHb0lWUWtUdmRVU2Qrcml1MGhzOXhWZ1M1WkV4b2ZGVWNyWUJZ?=
+ =?utf-8?B?TDhsQVpwMUFMNDM3UjZoOEx1SzVtVmFQZjNtQ3JFazk3cmQzMGVXUi8rK0RY?=
+ =?utf-8?B?aExUUFFtTTVoR3dyM2htVGw0ak9sQ3A4UVV5SE4xUVorVnh1WnRyMDFJaWpq?=
+ =?utf-8?B?bVJ6dU8yekhRcHZDNkp4Q1BsZkFNN0g4TU43UTBKRmJRQlNENzlWOGVqZHcv?=
+ =?utf-8?B?M2ZBaVcwN2pFY0ZlRHR4a1YvL2lrVWlFUTYyTU5JeWNDVDdrajV4aGF1Tmpz?=
+ =?utf-8?B?em9VRE5kNVdsVlBPeWFyTTI0V3VIYzgrSmZaN2tYQVZEcWtFYk9xRnk1OFR0?=
+ =?utf-8?B?TmtCQ3MrS1FJT2JYeFVaUDZaYlRSYjBiUUhuR0pyRGpOeHdaWHp6dXZmTkR3?=
+ =?utf-8?B?bTBiWTh2ZXBPRVJBelhERzFXbHhteWZMaldKUDdQRlhTbDBZRzMyYUFxRjFv?=
+ =?utf-8?B?TkU4a1o2S1VRTVU2OFBsUnVMbldCTW16Z1FIRTNNRWx5T1JqNnZPT0hMQTlO?=
+ =?utf-8?B?clo1NVEzdW1TWHNaTWdMdHVNbVJnQTFyVDAzUXhINTk2eDVGeUhKQ1lMR2xK?=
+ =?utf-8?B?VmlTTzAyUHR4a2JQcUJCT2xTR200NE9RbVlpWTFjWm51OTQ4THNnaWdYZE9N?=
+ =?utf-8?B?Q3o5NmR0VWFxUmpGaTB1eU1pTElQRFRsZnRwcWRaS1VSS2tJbS84d2J2WVdD?=
+ =?utf-8?B?dTRUNjg1VWhWMVVFMW5GQmJxS0F0MzcyYU9oL2ZEc3JSNWJFMURwL1FyVTNp?=
+ =?utf-8?B?RTg4VmFGVGNucFhQY2RVcCs2MDFKZHN5dmFKbnpYa29PUnhSZjIzYW9URnBS?=
+ =?utf-8?B?dlFPN2RoU2p3bndGU0dBaWdOdVFvL24wYm1CU29jUndLbjNMZ1BacWdxOW82?=
+ =?utf-8?B?Z0VnM3hYcE1CblpTZE9IK29HdjlPanV4aVBHNG9UR0NsYWsybWI5UWVieFlO?=
+ =?utf-8?B?MGR5aFV0ZC9Na0JrQldWV1o3N0ZzUnpiWE1QL1BleGwwQXc5WjdwZDBNL0wx?=
+ =?utf-8?B?bDB1NjhGTzh4dmF5em14TDRQRzdqejFsbTlnd0pidlY3TFZrT1IrOG50RVpm?=
+ =?utf-8?B?QkFDQ25ZbGp5ZkdXT2dwNzdLY0IzbFl3eTJ4a0RaanBhZTk4L0V3dGtHOG9a?=
+ =?utf-8?B?ZGx3Tmo5WFJhMTFET2thV1FBOFl6NFgycGF3TjFiQ3pBdm9rSXZnbE4wVXBD?=
+ =?utf-8?B?WWRFMmRiTElLaDhuUzRkTmI4K21qaE1RQURrVUVMUU01M2x4Ry9uL25UWDR6?=
+ =?utf-8?B?cWdzcEorMUlYejByTXNhak1KUS9UbFNJa2J5ZGlMRWlZSk0wSlk5eVhOcWdQ?=
+ =?utf-8?B?clZ0N21oSEpmTldldHpxWWk4bCtHWDI4MmhrOFJKVHlQbHFGaG1CY2o5dGhv?=
+ =?utf-8?B?NGZNYTQrbVByVm5OemNTNkt5WVVlMnZzTGZnTzVEUkVRSmdlZUo5T0dFR3VQ?=
+ =?utf-8?B?dDMzOE1wMDFBMWsvdTFiSHNXdkRVckx4OFJ1NWl6bzV5bXd0MDZhRE9IU3Vw?=
+ =?utf-8?B?ei8zTTdYLys1SVVTSHFBQ3o2SFdNKzM5RDBLT1VsN0tkTld6NU0wVHhuTnp0?=
+ =?utf-8?B?WVdzaXVYbmJZSXBWTTJIUzROM2NRelBUVHdabnU0Z2F3UEllYnhxWjV4M2Ft?=
+ =?utf-8?B?QXd2WGhvNUltMUNVaDUrcVZ5c2J3ZURSa3pJcHlkVG9WdmhWcUlZdjFNYVJt?=
+ =?utf-8?B?anJ2TnIycUk2c1NHa3QvbERaRWVacnFhYzBLZTBuK2o3bUdBaVhoNXc4V21n?=
+ =?utf-8?Q?lJMLQXEOpQnBPRstmGUruCQyg?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: beb8a393-ea8e-44d3-66c3-08dcb2cf74ef
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2024 08:45:27.3021
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 024RvN1vMJ8A1cPz60bWIEpHvYwBEujgqDsvOk13NEwkjQqwT10InURs6voG+xdnzIy+rxs81b5DEv7zkH9yig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8251
 
-Align with the datasheet by adding regulator-5v which supplies
-each node from the regulator using phandle to regulator-5v through
-pvin[1-4]-supply and lvin-supply.
-
-Co-developed-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
----
- .../boot/dts/microchip/at91-sama5d29_curiosity.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
-index 6b02b7bcfd49..a9d409ad7726 100644
---- a/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
-@@ -84,6 +84,14 @@ memory@20000000 {
- 		device_type = "memory";
- 		reg = <0x20000000 0x20000000>;
- 	};
-+
-+	reg_5v: regulator-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V_MAIN";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
- };
- 
- &adc {
-@@ -150,6 +158,7 @@ mcp16502@5b {
- 		regulators {
- 			vdd_3v3: VDD_IO {
- 				regulator-name = "VDD_IO";
-+				pvin1-supply = <&reg_5v>;
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-initial-mode = <2>;
-@@ -169,6 +178,7 @@ regulator-state-mem {
- 
- 			vddio_ddr: VDD_DDR {
- 				regulator-name = "VDD_DDR";
-+				pvin2-supply = <&reg_5v>;
- 				regulator-min-microvolt = <1200000>;
- 				regulator-max-microvolt = <1200000>;
- 				regulator-initial-mode = <2>;
-@@ -192,6 +202,7 @@ regulator-state-mem {
- 
- 			vdd_core: VDD_CORE {
- 				regulator-name = "VDD_CORE";
-+				pvin3-supply = <&reg_5v>;
- 				regulator-min-microvolt = <1250000>;
- 				regulator-max-microvolt = <1250000>;
- 				regulator-initial-mode = <2>;
-@@ -211,6 +222,7 @@ regulator-state-mem {
- 
- 			vdd_ddr: VDD_OTHER {
- 				regulator-name = "VDD_OTHER";
-+				pvin4-supply = <&reg_5v>;
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-initial-mode = <2>;
-@@ -234,6 +246,7 @@ regulator-state-mem {
- 
- 			LDO1 {
- 				regulator-name = "LDO1";
-+				lvin-supply = <&reg_5v>;
- 				regulator-min-microvolt = <2500000>;
- 				regulator-max-microvolt = <2500000>;
- 				regulator-always-on;
-@@ -249,6 +262,7 @@ regulator-state-mem {
- 
- 			LDO2 {
- 				regulator-name = "LDO2";
-+				lvin-supply = <&reg_5v>;
- 				regulator-min-microvolt = <3300000>;
- 				regulator-max-microvolt = <3300000>;
- 				regulator-always-on;
--- 
-2.34.1
+On 02/08/24 14:07, Krzysztof Kozlowski wrote:
+> On 01/08/2024 13:18, Vijendar Mukunda wrote:
+>> Add sof based Soundwire generic driver for amd platforms.
+>> Currently support added for ACP6.3 based platforms.
+>>
+> ...
+>
+>> +static const struct platform_device_id mc_id_table[] = {
+>> +	{ "amd_sof_sdw", },
+>> +	{}
+>> +};
+>> +MODULE_DEVICE_TABLE(platform, mc_id_table);
+>> +
+>> +static struct platform_driver sof_sdw_driver = {
+>> +	.driver = {
+>> +		.name = "amd_sof_sdw",
+>> +		.pm = &snd_soc_pm_ops,
+>> +	},
+>> +	.probe = mc_probe,
+>> +	.remove_new = mc_remove,
+>> +	.id_table = mc_id_table,
+>> +};
+>> +
+>> +module_platform_driver(sof_sdw_driver);
+>> +
+>> +MODULE_DESCRIPTION("ASoC AMD SoundWire Generic Machine driver");
+>> +MODULE_AUTHOR("Vijendar Mukunda <Vijendar.Mukunda@amd.com");
+>> +MODULE_LICENSE("GPL");
+>> +MODULE_ALIAS("platform:amd_sof_sdw");
+> That's a total duplicate... standard form letter:
+>
+> You should not need MODULE_ALIAS() in normal cases. If you need it,
+> usually it means your device ID table is wrong (e.g. misses either
+> entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
+> for incomplete ID table.
+Agreed. Will remove MODULE_ALIAS().
+>
+>
+> Best regards,
+> Krzysztof
+>
 
 
