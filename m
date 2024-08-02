@@ -1,407 +1,127 @@
-Return-Path: <linux-kernel+bounces-272698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4EFF94600B
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:16:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C720946022
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36C732842D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:16:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E95E1C228D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5553821C182;
-	Fri,  2 Aug 2024 15:16:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E1D3DAC08;
+	Fri,  2 Aug 2024 15:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LE3Vl+Gn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayq4LRjU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62C3F1E287F
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 15:16:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A61216324E;
+	Fri,  2 Aug 2024 15:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722611762; cv=none; b=auCg7ubFDXXmh951maaLUDyFWbT6hQKEUrafqxh7PikE5ACNC2yHjRdYdef4ScHszhEfJ3VLXmn4J4fnFhiJcQ2fxhwJxUZB0i5iJ78Xu5gAJmmaZt3/2ciUAAPOQwR7HG6vKp5FXQpNJuF20MyIhPYcBxNzxXcIa1y8Zyiz1hg=
+	t=1722611820; cv=none; b=tvFpJcBfWk5h8N2pDWHu425IlLz2t92weJdvyBiX+UKQYjNLJxZIcgWOyChEwIEVC71IIFje0qj95qCGbF5Phv2CGzZF4yHOrYxnn7ytycsV1Hcf8kummTzqakkWVj1OK4WIlXvcEOxK2I/dIDWJSxKSDyjQtEGpJ+/BkGW0M/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722611762; c=relaxed/simple;
-	bh=mGTuL2K61dIMThg7S4YuzF8bs4faqy5BjuNQiiLUyOs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mJU+/6szPqD84jz7Dguy3oI1vuPXdcqNYJy8u6UNT0ifJh5ZYyj9EjIxtMLhxPhKSL3zi6NP2MaEj0HJPqvJfstY3oSz24skMRnd3pPCpD9Kvc8RTTTDMC791JTOgs+oqR1zCRRIrE1P9XnEW0jgWU5Sr2qPt4GXW1YFLoveiWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LE3Vl+Gn; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722611761; x=1754147761;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mGTuL2K61dIMThg7S4YuzF8bs4faqy5BjuNQiiLUyOs=;
-  b=LE3Vl+Gn19cNK/c1Wy7BTIhkMW9vR/Tl7a4hVBndP63K0VLHSWy18Neu
-   5Uth9AD/RPo5lpd69BXEjMwul9CtvkPr16H0feIPWLc1lBbTHJjGOd5jB
-   wZEgp0KYpoKMjwZ36kJtEu+1klpT9b16oN0hU4ty5AJZSHyV20qGxqw9T
-   88BxoGozuOlIYouM5RvDm3ogKnnn/Mjdxqb6zzi8uc1GCu23kI87n4iop
-   JjXD1aDFppyUAiyP8VOqNE7DIAdZBwfBfkZl9s+qb2X30Msi2fRk2ucGx
-   ga/X8D+4r1Y9PmQ0Dd3qu1w2uyutknIif/pdMoABeKQrYoOF79BAQde9H
-   A==;
-X-CSE-ConnectionGUID: b6RuXe6nQk6Ylv4DMfmXHA==
-X-CSE-MsgGUID: N26qlOykRfCpI9Qxlw4ZuA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11152"; a="20473757"
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="20473757"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 08:15:59 -0700
-X-CSE-ConnectionGUID: g6z1q1fmTtuODGljGYlXxw==
-X-CSE-MsgGUID: bX92xgvKTDGPP7XcfSNrtw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,258,1716274800"; 
-   d="scan'208";a="55516929"
-Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by fmviesa010.fm.intel.com with ESMTP; 02 Aug 2024 08:15:58 -0700
-From: kan.liang@linux.intel.com
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	irogers@google.com,
-	linux-kernel@vger.kernel.org
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH 1/7] perf: Generic hotplug support for a PMU with a scope
-Date: Fri,  2 Aug 2024 08:16:37 -0700
-Message-Id: <20240802151643.1691631-2-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20240802151643.1691631-1-kan.liang@linux.intel.com>
-References: <20240802151643.1691631-1-kan.liang@linux.intel.com>
+	s=arc-20240116; t=1722611820; c=relaxed/simple;
+	bh=3N+B04uKCIlAgIPePxYWuNHTEndJgm1x2so5SryKEkA=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=m6cWOI9gyoStgoJgk75DDigg2GGD71IBwvWMJ4PYZGAFs9hXY+5VMvs1gu8HFJBRgiZvqc7bzSjYwDD/6mhEBKjaiWlgsEWlSa+F7RLgirwTevL56Hj7OQI340gbMkFW9NW5BJGSSdbRUStdL6ta/OlqN5af7d8NzXc1AjqUEhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayq4LRjU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A399C4AF0D;
+	Fri,  2 Aug 2024 15:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722611819;
+	bh=3N+B04uKCIlAgIPePxYWuNHTEndJgm1x2so5SryKEkA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ayq4LRjUyUulg1JYg2dw4nkA058tvN4M830+/fLyWIuH6LttNr95b0LI35AELwaSV
+	 evoOMlVLCJe9WcWS40IgvMj32e8Z4vFvsyYFus2Psgc+2p+ngCgNGMIVPQNt9GX8tR
+	 Cvqp3nQs5VCq9bnC5xW9UTBfXeh4CEIgWDj/lizXAmOxiPMRzuJPH7HqsBoH/w8mXn
+	 SrcRX9XLSE2MPSqhpyrEzIxu+NUzJv4o0PLq+gpMnVK7OmE+20EQ9erZkbxlGdsdny
+	 3vFkcRyJ3ISRWSXgbAUCVNJh7EYGSyqLQPHfl0L6x6aW7e75etarkzhqvjWcS204Fg
+	 MCCve1jn/8M0g==
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 20EFC120006E;
+	Fri,  2 Aug 2024 11:16:58 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute4.internal (MEProxy); Fri, 02 Aug 2024 11:16:58 -0400
+X-ME-Sender: <xms:avisZpI4XYancRwgkHIu75asiQmV8SojGgE6Q3xxP13AA5ZRxpZrWQ>
+    <xme:avisZlJeEgF7EqFxGIrJKjVCwZ5ez9lqP5DspnG7_0DqVZ1_mrPi7TbclUjQDgBkH
+    b0doeemUnn46KgqoWQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrkedtgdekiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrdhorhhgqeenucggtffrrg
+    htthgvrhhnpeejjeffteetfeetkeeijedugeeuvdfgfeefiedtudeikeeggeefkefhudfh
+    lefhveenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidquddvkeehudejtddv
+    gedqvdekjedttddvieegqdgrrhhnugeppehkvghrnhgvlhdrohhrghesrghrnhgusgdrug
+    gvpdhnsggprhgtphhtthhopedt
+X-ME-Proxy: <xmx:avisZhstiPww3TOhCD55MvuV78pLx_BmboXq5oSacv3F-d-FqtRPXA>
+    <xmx:avisZqbiSCLL_liys-FP4zEymB9zcyp4uDN8qzcEuAv0DbNRn3gp9Q>
+    <xmx:avisZgZp9TV-JY4KG8KsWcIAZU09d2egsdNaPmN50NMTuSwAnkoGqA>
+    <xmx:avisZuC3R_w6smQ0Jsq1Xb3uO8p7FXWhYuZeSRlMgf9oQ17tq25VCA>
+    <xmx:avisZuYb2g7_JOQvh_YodFH1VtkQJzwQyAdPe4laCgh1CHJ1kUq615q_>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E99D2B6008D; Fri,  2 Aug 2024 11:16:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 02 Aug 2024 17:16:37 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Jeff Johnson" <quic_jjohnson@quicinc.com>,
+ "Herbert Xu" <herbert@gondor.apana.org.au>
+Cc: kernel-janitors@vger.kernel.org, "Nicholas Piggin" <npiggin@gmail.com>,
+ linux-kernel@vger.kernel.org, "Danny Tsen" <dtsen@linux.ibm.com>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ "Andrew Morton" <akpm@linux-foundation.org>, linuxppc-dev@lists.ozlabs.org,
+ "David S . Miller" <davem@davemloft.net>, linux-crypto@vger.kernel.org
+Message-Id: <6fdd8f30-4df1-447d-9156-5d2314239e99@app.fastmail.com>
+In-Reply-To: <75a526e3-3101-4319-b42f-4482ba188abc@quicinc.com>
+References: 
+ <20240718-md-powerpc-arch-powerpc-crypto-v1-1-b23a1989248e@quicinc.com>
+ <ZqzcApbJomFTnc30@gondor.apana.org.au>
+ <75a526e3-3101-4319-b42f-4482ba188abc@quicinc.com>
+Subject: Re: [PATCH] crypto: ppc/curve25519 - add missing MODULE_DESCRIPTION() macro
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Fri, Aug 2, 2024, at 16:27, Jeff Johnson wrote:
+> On 8/2/2024 6:15 AM, Herbert Xu wrote:
+>> On Thu, Jul 18, 2024 at 06:14:18PM -0700, Jeff Johnson wrote:
+>>> Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
+>>> description is missing"), a module without a MODULE_DESCRIPTION() will
+>>> result in a warning with make W=1. The following warning is being
+>>> observed when building ppc64le with CRYPTO_CURVE25519_PPC64=m:
+>>>
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/powerpc/crypto/curve25519-ppc64le.o
+>>>
+>>> Add the missing invocation of the MODULE_DESCRIPTION() macro.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>> ---
+>>>  arch/powerpc/crypto/curve25519-ppc64le-core.c | 1 +
+>>>  1 file changed, 1 insertion(+)
+>> 
+>> Patch applied.  Thanks.
+>
+> Great, that was the last of my MODULE_DESCRIPTION patches!!!
+>
+> There are a few more instances of the warning that Arnd has patches for,
+> covering issues that appear in randconfigs that I didn't test.
 
-The perf subsystem assumes that the counters of a PMU are per-CPU. So
-the user space tool reads a counter from each CPU in the system wide
-mode. However, many PMUs don't have a per-CPU counter. The counter is
-effective for a scope, e.g., a die or a socket. To address this, a
-cpumask is exposed by the kernel driver to restrict to one CPU to stand
-for a specific scope. In case the given CPU is removed,
-the hotplug support has to be implemented for each such driver.
+Are all of your patches in linux-next now, or is there a another
+git tree that has them all?
 
-The codes to support the cpumask and hotplug are very similar.
-- Expose a cpumask into sysfs
-- Pickup another CPU in the same scope if the given CPU is removed.
-- Invoke the perf_pmu_migrate_context() to migrate to a new CPU.
-- In event init, always set the CPU in the cpumask to event->cpu
+I can send the ones I have left, but I want to avoid duplication.
 
-Similar duplicated codes are implemented for each such PMU driver. It
-would be good to introduce a generic infrastructure to avoid such
-duplication.
-
-5 popular scopes are implemented here, core, die, cluster, pkg, and
-the system-wide. The scope can be set when a PMU is registered. If so, a
-"cpumask" is automatically exposed for the PMU.
-
-The "cpumask" is from the perf_online_<scope>_mask, which is to track
-the active CPU for each scope. They are set when the first CPU of the
-scope is online via the generic perf hotplug support. When a
-corresponding CPU is removed, the perf_online_<scope>_mask is updated
-accordingly and the PMU will be moved to a new CPU from the same scope
-if possible.
-
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- include/linux/perf_event.h |  18 ++++
- kernel/events/core.c       | 164 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 180 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1a8942277dda..1102d5c2be70 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -292,6 +292,19 @@ struct perf_event_pmu_context;
- #define PERF_PMU_CAP_AUX_OUTPUT			0x0080
- #define PERF_PMU_CAP_EXTENDED_HW_TYPE		0x0100
- 
-+/**
-+ * pmu::scope
-+ */
-+enum perf_pmu_scope {
-+	PERF_PMU_SCOPE_NONE	= 0,
-+	PERF_PMU_SCOPE_CORE,
-+	PERF_PMU_SCOPE_DIE,
-+	PERF_PMU_SCOPE_CLUSTER,
-+	PERF_PMU_SCOPE_PKG,
-+	PERF_PMU_SCOPE_SYS_WIDE,
-+	PERF_PMU_MAX_SCOPE,
-+};
-+
- struct perf_output_handle;
- 
- #define PMU_NULL_DEV	((void *)(~0UL))
-@@ -315,6 +328,11 @@ struct pmu {
- 	 */
- 	int				capabilities;
- 
-+	/*
-+	 * PMU scope
-+	 */
-+	unsigned int			scope;
-+
- 	int __percpu			*pmu_disable_count;
- 	struct perf_cpu_pmu_context __percpu *cpu_pmu_context;
- 	atomic_t			exclusive_cnt; /* < 0: cpu; > 0: tsk */
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index aa3450bdc227..5e1877c4cb4c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -407,6 +407,11 @@ static LIST_HEAD(pmus);
- static DEFINE_MUTEX(pmus_lock);
- static struct srcu_struct pmus_srcu;
- static cpumask_var_t perf_online_mask;
-+static cpumask_var_t perf_online_core_mask;
-+static cpumask_var_t perf_online_die_mask;
-+static cpumask_var_t perf_online_cluster_mask;
-+static cpumask_var_t perf_online_pkg_mask;
-+static cpumask_var_t perf_online_sys_mask;
- static struct kmem_cache *perf_event_cache;
- 
- /*
-@@ -11477,10 +11482,60 @@ perf_event_mux_interval_ms_store(struct device *dev,
- }
- static DEVICE_ATTR_RW(perf_event_mux_interval_ms);
- 
-+static inline const struct cpumask *perf_scope_cpu_topology_cpumask(unsigned int scope, int cpu)
-+{
-+	switch (scope) {
-+	case PERF_PMU_SCOPE_CORE:
-+		return topology_sibling_cpumask(cpu);
-+	case PERF_PMU_SCOPE_DIE:
-+		return topology_die_cpumask(cpu);
-+	case PERF_PMU_SCOPE_CLUSTER:
-+		return topology_cluster_cpumask(cpu);
-+	case PERF_PMU_SCOPE_PKG:
-+		return topology_core_cpumask(cpu);
-+	case PERF_PMU_SCOPE_SYS_WIDE:
-+		return cpu_online_mask;
-+	}
-+
-+	return NULL;
-+}
-+
-+static inline struct cpumask *perf_scope_cpumask(unsigned int scope)
-+{
-+	switch (scope) {
-+	case PERF_PMU_SCOPE_CORE:
-+		return perf_online_core_mask;
-+	case PERF_PMU_SCOPE_DIE:
-+		return perf_online_die_mask;
-+	case PERF_PMU_SCOPE_CLUSTER:
-+		return perf_online_cluster_mask;
-+	case PERF_PMU_SCOPE_PKG:
-+		return perf_online_pkg_mask;
-+	case PERF_PMU_SCOPE_SYS_WIDE:
-+		return perf_online_sys_mask;
-+	}
-+
-+	return NULL;
-+}
-+
-+static ssize_t cpumask_show(struct device *dev, struct device_attribute *attr,
-+			    char *buf)
-+{
-+	struct pmu *pmu = dev_get_drvdata(dev);
-+	struct cpumask *mask = perf_scope_cpumask(pmu->scope);
-+
-+	if (mask)
-+		return cpumap_print_to_pagebuf(true, buf, mask);
-+	return 0;
-+}
-+
-+static DEVICE_ATTR_RO(cpumask);
-+
- static struct attribute *pmu_dev_attrs[] = {
- 	&dev_attr_type.attr,
- 	&dev_attr_perf_event_mux_interval_ms.attr,
- 	&dev_attr_nr_addr_filters.attr,
-+	&dev_attr_cpumask.attr,
- 	NULL,
- };
- 
-@@ -11492,6 +11547,10 @@ static umode_t pmu_dev_is_visible(struct kobject *kobj, struct attribute *a, int
- 	if (n == 2 && !pmu->nr_addr_filters)
- 		return 0;
- 
-+	/* cpumask */
-+	if (n == 3 && pmu->scope == PERF_PMU_SCOPE_NONE)
-+		return 0;
-+
- 	return a->mode;
- }
- 
-@@ -11576,6 +11635,11 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
- 		goto free_pdc;
- 	}
- 
-+	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
-+		ret = -EINVAL;
-+		goto free_pdc;
-+	}
-+
- 	pmu->name = name;
- 
- 	if (type >= 0)
-@@ -11730,6 +11794,22 @@ static int perf_try_init_event(struct pmu *pmu, struct perf_event *event)
- 		    event_has_any_exclude_flag(event))
- 			ret = -EINVAL;
- 
-+		if (pmu->scope != PERF_PMU_SCOPE_NONE && event->cpu >= 0) {
-+			const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(pmu->scope, event->cpu);
-+			struct cpumask *pmu_cpumask = perf_scope_cpumask(pmu->scope);
-+			int cpu;
-+
-+			if (pmu_cpumask && cpumask) {
-+				cpu = cpumask_any_and(pmu_cpumask, cpumask);
-+				if (cpu >= nr_cpu_ids)
-+					ret = -ENODEV;
-+				else
-+					event->cpu = cpu;
-+			} else {
-+				ret = -ENODEV;
-+			}
-+		}
-+
- 		if (ret && event->destroy)
- 			event->destroy(event);
- 	}
-@@ -13681,6 +13761,12 @@ static void __init perf_event_init_all_cpus(void)
- 	int cpu;
- 
- 	zalloc_cpumask_var(&perf_online_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_core_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_die_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_cluster_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_pkg_mask, GFP_KERNEL);
-+	zalloc_cpumask_var(&perf_online_sys_mask, GFP_KERNEL);
-+
- 
- 	for_each_possible_cpu(cpu) {
- 		swhash = &per_cpu(swevent_htable, cpu);
-@@ -13730,6 +13816,40 @@ static void __perf_event_exit_context(void *__info)
- 	raw_spin_unlock(&ctx->lock);
- }
- 
-+static void perf_event_clear_cpumask(unsigned int cpu)
-+{
-+	int target[PERF_PMU_MAX_SCOPE];
-+	unsigned int scope;
-+	struct pmu *pmu;
-+
-+	cpumask_clear_cpu(cpu, perf_online_mask);
-+
-+	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-+		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(scope, cpu);
-+		struct cpumask *pmu_cpumask = perf_scope_cpumask(scope);
-+
-+		target[scope] = -1;
-+		if (WARN_ON_ONCE(!pmu_cpumask || !cpumask))
-+			continue;
-+
-+		if (!cpumask_test_and_clear_cpu(cpu, pmu_cpumask))
-+			continue;
-+		target[scope] = cpumask_any_but(cpumask, cpu);
-+		if (target[scope] < nr_cpu_ids)
-+			cpumask_set_cpu(target[scope], pmu_cpumask);
-+	}
-+
-+	/* migrate */
-+	list_for_each_entry_rcu(pmu, &pmus, entry, lockdep_is_held(&pmus_srcu)) {
-+		if (pmu->scope == PERF_PMU_SCOPE_NONE ||
-+		    WARN_ON_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE))
-+			continue;
-+
-+		if (target[pmu->scope] >= 0 && target[pmu->scope] < nr_cpu_ids)
-+			perf_pmu_migrate_context(pmu, cpu, target[pmu->scope]);
-+	}
-+}
-+
- static void perf_event_exit_cpu_context(int cpu)
- {
- 	struct perf_cpu_context *cpuctx;
-@@ -13737,6 +13857,11 @@ static void perf_event_exit_cpu_context(int cpu)
- 
- 	// XXX simplify cpuctx->online
- 	mutex_lock(&pmus_lock);
-+	/*
-+	 * Clear the cpumasks, and migrate to other CPUs if possible.
-+	 * Must be invoked before the __perf_event_exit_context.
-+	 */
-+	perf_event_clear_cpumask(cpu);
- 	cpuctx = per_cpu_ptr(&perf_cpu_context, cpu);
- 	ctx = &cpuctx->ctx;
- 
-@@ -13744,7 +13869,6 @@ static void perf_event_exit_cpu_context(int cpu)
- 	smp_call_function_single(cpu, __perf_event_exit_context, ctx, 1);
- 	cpuctx->online = 0;
- 	mutex_unlock(&ctx->mutex);
--	cpumask_clear_cpu(cpu, perf_online_mask);
- 	mutex_unlock(&pmus_lock);
- }
- #else
-@@ -13753,6 +13877,42 @@ static void perf_event_exit_cpu_context(int cpu) { }
- 
- #endif
- 
-+static void perf_event_setup_cpumask(unsigned int cpu)
-+{
-+	struct cpumask *pmu_cpumask;
-+	unsigned int scope;
-+
-+	cpumask_set_cpu(cpu, perf_online_mask);
-+
-+	/*
-+	 * Early boot stage, the cpumask hasn't been set yet.
-+	 * The perf_online_<domain>_masks includes the first CPU of each domain.
-+	 * Always uncondifionally set the boot CPU for the perf_online_<domain>_masks.
-+	 */
-+	if (!topology_sibling_cpumask(cpu)) {
-+		for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-+			pmu_cpumask = perf_scope_cpumask(scope);
-+			if (WARN_ON_ONCE(!pmu_cpumask))
-+				continue;
-+			cpumask_set_cpu(cpu, pmu_cpumask);
-+		}
-+		return;
-+	}
-+
-+	for (scope = PERF_PMU_SCOPE_NONE + 1; scope < PERF_PMU_MAX_SCOPE; scope++) {
-+		const struct cpumask *cpumask = perf_scope_cpu_topology_cpumask(scope, cpu);
-+
-+		pmu_cpumask = perf_scope_cpumask(scope);
-+
-+		if (WARN_ON_ONCE(!pmu_cpumask || !cpumask))
-+			continue;
-+
-+		if (!cpumask_empty(cpumask) &&
-+		    cpumask_any_and(pmu_cpumask, cpumask) >= nr_cpu_ids)
-+			cpumask_set_cpu(cpu, pmu_cpumask);
-+	}
-+}
-+
- int perf_event_init_cpu(unsigned int cpu)
- {
- 	struct perf_cpu_context *cpuctx;
-@@ -13761,7 +13921,7 @@ int perf_event_init_cpu(unsigned int cpu)
- 	perf_swevent_init_cpu(cpu);
- 
- 	mutex_lock(&pmus_lock);
--	cpumask_set_cpu(cpu, perf_online_mask);
-+	perf_event_setup_cpumask(cpu);
- 	cpuctx = per_cpu_ptr(&perf_cpu_context, cpu);
- 	ctx = &cpuctx->ctx;
- 
--- 
-2.38.1
-
+    Arnd
 
