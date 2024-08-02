@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-272677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6631A945FC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:00:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09374945FCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:01:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF086B21DD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:00:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B01A1C21AE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 15:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51922101B7;
-	Fri,  2 Aug 2024 14:59:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBAF1E3CA8;
+	Fri,  2 Aug 2024 15:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NzUOK8JC"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fk4hneuP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A172101B3
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 14:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FD214D2B1;
+	Fri,  2 Aug 2024 15:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722610795; cv=none; b=qZa7eelu/ZycO7NSWNnPv9QTqHj+7kUA9eQtf84IF7TmYYKCZWIH9nX8VhsvI0hRRNbh2qKonXnxK/ehgixBsWx1wo59zsrAeZhk4OFyO12rIDOCN8jDwoZheN/ToQaqh1yyZF08w6Y0sTIK/oGfo5rk//7TTdidxylFl5hoDN8=
+	t=1722610855; cv=none; b=U40Cnj099LZ/CBstP04zAACLxY4WrMiyLYssDOtcUo08zT2ToyKP9NOisoXNZT+PjHxXjXFEtZquw9R1mfLUHq9UG3W1UVn7mi/sUvSITUL9e8vOIfgbu3l2C5m3/ohLpZqrjdQGfybUTgN4hbUguXGUb8WBwiBQGeHRsLdCHGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722610795; c=relaxed/simple;
-	bh=k039uiTahnQ0jWvwcQEkSgfiA6bciCGAJkPFZ3tBuqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JZaK2cKaNALTCUR7HLM3l1giOidrTrzDyGK4BoTtm1ZPZwlScC3hE4b+OcLS+NR2pnd1Y+SpllNlvQywZm4Em9l5yV6h/d72rn+b0z4HWjnP3sTkLSo2F0awR8fOFUH8UjVMEuYEii5rEpMSiTLrB9Gb5knFduJgELqCNgujvEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NzUOK8JC; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=X/nXXraID9KEuaRYcSTt7yvEVngafypmZKpw3LbU9t8=; b=NzUOK8JC6ZA2MRDbUHZQcLfy3t
-	Sc54OTGr6avDlX+Lr2He4E8ZweVy0/yERKpxyW3UvojQ2N4XElWkxXiEGMOvJJ+9dLEjJNb+lHVTj
-	vPecDTb2W4ImC63FrYbnWRdzK7qdsQqbO6Ct765iTlkS7LhrGrKEnBoL1/ZyHQxdjzbS1hXM5+hgx
-	TX6RrN0z/GAxuA+QEKAXJdMX5RuOKUDzwa8FB/14+Y/zzVGYXSowj4KHDABrHH81diq9+N09kuWEp
-	koAkogu+stbCfmDYUAb0H50BWeQyoMw3Honvm1fz8nvjE7WB0KqqXRTt37rZobSSucEud5EcVdnIb
-	TfRfypuQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sZtkp-000000018EB-2JXH;
-	Fri, 02 Aug 2024 14:59:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8BDD530049D; Fri,  2 Aug 2024 16:59:38 +0200 (CEST)
-Date: Fri, 2 Aug 2024 16:59:38 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 17/24] sched/fair: Implement delayed dequeue
-Message-ID: <20240802145938.GK39708@noisy.programming.kicks-ass.net>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.226163742@infradead.org>
- <xhsmhjzgzt2er.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1722610855; c=relaxed/simple;
+	bh=2ELiqG08xZ0LVQMoVoxBT2tDnoWcCGTYUiKxCU2w+5g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AfNPA6g4Cvbx3PzZk118C/KjyVRGwI3LZ12p5Cu6yztz7EA5DB//QRRxWY+ATmjKTwFY9vglneXlk+K1f5nltCE105NJAWUhbJE7aKR/zylG0lmWSYu4OMsoVta563O93o+mqozLZFwFSj9ouCI4YdSPbBb3++4CmED8WJ+VJbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fk4hneuP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0DAC32782;
+	Fri,  2 Aug 2024 15:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722610854;
+	bh=2ELiqG08xZ0LVQMoVoxBT2tDnoWcCGTYUiKxCU2w+5g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fk4hneuP+MQJnzmWN/EVZhIG0hIMPbAzRrzjCZTx7R5Kz7NDz4PxYXqiTlIh9wEr7
+	 0gHP+3gw1fMqqjDHZ30AK1eRNe9s9wl0cIhAhhflN/J2s4EbVjl1G+31o7ChM9QTlb
+	 bI2aAnZR42E+QckE7I9BgKS0e06P9IG+5rU0zeVBtwNyt2L9NOHjxTLdIzIRq0jJXk
+	 b1tJl0JGN1ap954E7/lvggf8zfp6CYJfU1ur3uF+iWWPrJk/JyVATAARaiP+C4wzGl
+	 mWWghU4/LYk0gSCVnC9Gb98/s8uehLpkKoLsYEVmj2GOpB7AVid7ftkDq6laZcG4Qw
+	 2bOQq4wJmtrgQ==
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-2635abdc742so1202041fac.2;
+        Fri, 02 Aug 2024 08:00:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUBnPHZ5S74bep3pZCjLVJsWh1FmyI6k+4H+opaAO/DJNV1pYC1j7WIVdpTSJ+Cw049iP6KOinFrFD7KuRX@vger.kernel.org, AJvYcCULc/ptWTR81XQN2mNEbqLcIcIoIocewfngMva0GsDIItrg8n+cduWGooKvTKeKSw5vCprKj7QRDLKB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+p3JdmZWzR8+lPjf4GbjzQVJkI4+syyK+gP/iO8E7Y3sYFR/9
+	ySDbzwBhmSBEIlkNTJhEDhrfkk57VvFcwgQjr+TcADV+W3ZF3ZDUEnBvPMGnOxeHGyUCM3NUioA
+	X5SfbkGSb5AXwzxB8Ark0nerGTgI=
+X-Google-Smtp-Source: AGHT+IFil9pYtmy806vMRAxxrPLbT21xjDWO7nO5I3lpA8dnUVKCrF7typyrR8Zta02XxEzmjqHf9wKk+cPl6EFymK8=
+X-Received: by 2002:a05:6870:2054:b0:260:e5e1:2411 with SMTP id
+ 586e51a60fabf-26891e9f598mr2318205fac.6.1722610854101; Fri, 02 Aug 2024
+ 08:00:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmhjzgzt2er.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+References: <20240719145330.9430-1-lirongqing@baidu.com>
+In-Reply-To: <20240719145330.9430-1-lirongqing@baidu.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 2 Aug 2024 17:00:43 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gUfsaUej19ts-M0ueB3GyvKQ2vPk-pqc7uk1+G-f7cew@mail.gmail.com>
+Message-ID: <CAJZ5v0gUfsaUej19ts-M0ueB3GyvKQ2vPk-pqc7uk1+G-f7cew@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: processor: Silence per-cpu acpi_handle_info about
+ idle states
+To: Li RongQing <lirongqing@baidu.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 02, 2024 at 04:39:08PM +0200, Valentin Schneider wrote:
-> 
-> On 27/07/24 12:27, Peter Zijlstra wrote:
-> > Extend / fix 86bfbb7ce4f6 ("sched/fair: Add lag based placement") by
-> > noting that lag is fundamentally a temporal measure. It should not be
-> > carried around indefinitely.
-> >
-> > OTOH it should also not be instantly discarded, doing so will allow a
-> > task to game the system by purposefully (micro) sleeping at the end of
-> > its time quantum.
-> >
-> > Since lag is intimately tied to the virtual time base, a wall-time
-> > based decay is also insufficient, notably competition is required for
-> > any of this to make sense.
-> >
-> > Instead, delay the dequeue and keep the 'tasks' on the runqueue,
-> > competing until they are eligible.
-> >
-> > Strictly speaking, we only care about keeping them until the 0-lag
-> > point, but that is a difficult proposition, instead carry them around
-> > until they get picked again, and dequeue them at that point.
-> >
-> 
-> Question from a lazy student who just caught up to the current state of
-> EEVDF...
-> 
-> IIUC this makes it so time spent sleeping increases an entity's lag, rather
-> than it being frozen & restored via the place_entity() magic.
-> 
-> So entities with negative lag get closer to their 0-lag point, after which
-> they can get picked & dequeued if still not runnable.
+On Fri, Jul 19, 2024 at 4:53=E2=80=AFPM Li RongQing <lirongqing@baidu.com> =
+wrote:
+>
+> This made the CPU bootup faster, otherwise Linux spends lots
+> of time to printing nonsense information for each CPU when
+> there are lots of CPUs
+>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>  drivers/acpi/acpi_processor.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/acpi_processor.c b/drivers/acpi/acpi_processor.=
+c
+> index 9916cc7..a19ace9 100644
+> --- a/drivers/acpi/acpi_processor.c
+> +++ b/drivers/acpi/acpi_processor.c
+> @@ -985,7 +985,7 @@ int acpi_processor_evaluate_cst(acpi_handle handle, u=
+32 cpu,
+>                 memcpy(&info->states[++last_index], &cx, sizeof(cx));
+>         }
+>
+> -       acpi_handle_info(handle, "Found %d idle states\n", last_index);
+> +       acpi_handle_debug(handle, "Found %d idle states\n", last_index);
+>
+>         info->count =3D last_index;
+>
+> --
 
-Right.
-
-> However, don't entities with positive lag get *further* away from their
-> 0-lag point?
-
-Which is why we only delay de dequeue when !eligible, IOW when lag is
-negative.
-
-The next patch additionally truncates lag to 0 (for delayed entities),
-so they can never earn extra time.
+Applied (with edited subject) as 6.12 material, thanks!
 
