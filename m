@@ -1,127 +1,166 @@
-Return-Path: <linux-kernel+bounces-272327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DD1945A50
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 10:55:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDDC945A5B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:01:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FCE285B28
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 08:55:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 93732B220D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B261C379B;
-	Fri,  2 Aug 2024 08:55:19 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A0B1C3793;
+	Fri,  2 Aug 2024 09:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="M4QPXT/p"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E791B3F39
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 08:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D61149659
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 09:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722588918; cv=none; b=GTSuqcBM5GpNqVCvODjcMBQAJkaeRigARR9YdLxnm7O53Tl5Neu53tywtWlO64REYBiYuJA0W1+kYxAhsbuayk9BcSb/uOYnhZ675IUalzuZ2eX7HfzhoFNAYq4SXxNdn3YiLVGpSC5sHHy0YUinsTPCPqBtHk1WrVSiHhH42II=
+	t=1722589308; cv=none; b=mtWKkVOUk1j0Joq63rSMTw8Wa6aN4mw2fvoGMPfF3F9r8Dpw+vnaSRw11xf8PiMTx9i5BMPJkfjgSb0ChOWa69CfO3xqFBhEpynt7cpMK5Z3q8P2Vy8vofVw8jMeX6ekF3hLG0m8Zh9PR85Phs8UbS29tsw8dPMDY/BSOkoaZ5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722588918; c=relaxed/simple;
-	bh=O5jvbu3MtWjmYUGKvqRru81bPNjFjYTWjEl4WR/cmz8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BVxYeESxCZCLbZL0WxjixqcbQ0ufhl9FGeWCtEeUMklahwc3i3j7H0Qd0R8LwymsRJKmZseXSpMd3SibCwON/sEavV2NqiPV4JHnm9HvZ3ZQQGCzHsivDTyqts+tEAKel5AM/kaOb5+RjnuJ3i1IEybppYc+I1PBCL/c0fHJkHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wb00X2n0wz1j6NP;
-	Fri,  2 Aug 2024 16:50:36 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F8A31400DC;
-	Fri,  2 Aug 2024 16:55:12 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 2 Aug
- 2024 16:55:12 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <bhe@redhat.com>, <vgoyal@redhat.com>, <dyoung@redhat.com>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>,
-	<chenjiahao16@huawei.com>, <akpm@linux-foundation.org>,
-	<kexec@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next] crash: Fix riscv64 crash memory reserve dead loop
-Date: Fri, 2 Aug 2024 17:01:05 +0800
-Message-ID: <20240802090105.3871929-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722589308; c=relaxed/simple;
+	bh=iHd0oRRdj5VAxcNdtUaMaEiKRX81SENnsPbe6vneCYU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lZTzaXb0vq/1/tECKdKgONBg0c43Y9fY+XrqFI+T/N3dOBDMBQ7OX621oTHDJUEbTbVNI75t12QW+H+h9YeXXJNdwBOwA69urKRdfKwSW3VGSycIeAG2Nu8RN0WAuoiuG4tBgjfq1W5PDxF8L2zphDh/vpSCmGDZ/mCrZhuGNBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=M4QPXT/p; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1722589302; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=MmOD1Kd+8JiK9iMzOwNmvwMz5rOtu4BwhOC7vysWx5s=;
+	b=M4QPXT/p0UFikh2SpeQmOEw2i8VTQVVDn94wIX4nrQU/lsg+fLVtuJkcILOD0MaU2N1Njv8zMKirreM+xL7d1MZtW2Pn6Vc3bO/amUMg/UZVs9pL3C3bS7XPULZwtJctrM1U+WixHFv+IFCK1I3nQ5eBfySxgsaYYttXjtW20WQ=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0WBwwROu_1722589300;
+Received: from 30.97.48.169(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WBwwROu_1722589300)
+          by smtp.aliyun-inc.com;
+          Fri, 02 Aug 2024 17:01:42 +0800
+Message-ID: <c7182f2f-8ca3-4b8c-b338-99a5ebd0cad0@linux.alibaba.com>
+Date: Fri, 2 Aug 2024 17:01:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/migrate: fix deadlock in migrate_pages_batch() on
+ large folios
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Huang Ying <ying.huang@intel.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+References: <20240728154913.4023977-1-hsiangkao@linux.alibaba.com>
+ <Zqa8NTqKuXkTxzBw@casper.infradead.org>
+ <04bbfcd0-6eb1-4a5b-ac21-b3cdf1acdc77@linux.alibaba.com>
+In-Reply-To: <04bbfcd0-6eb1-4a5b-ac21-b3cdf1acdc77@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
 
-On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
-will cause system stall as below:
+Hi Matthew,
 
-	 Zone ranges:
-	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
-	   Normal   empty
-	 Movable zone start for each node
-	 Early memory node ranges
-	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
-	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
-	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
-	(stall here)
+On 2024/7/29 06:11, Gao Xiang wrote:
+> Hi,
+> 
+> On 2024/7/29 05:46, Matthew Wilcox wrote:
+>> On Sun, Jul 28, 2024 at 11:49:13PM +0800, Gao Xiang wrote:
+>>> It was found by compaction stress test when I explicitly enable EROFS
+>>> compressed files to use large folios, which case I cannot reproduce with
+>>> the same workload if large folio support is off (current mainline).
+>>> Typically, filesystem reads (with locked file-backed folios) could use
+>>> another bdev/meta inode to load some other I/Os (e.g. inode extent
+>>> metadata or caching compressed data), so the locking order will be:
+>>
+>> Umm.  That is a new constraint to me.  We have two other places which
+>> take the folio lock in a particular order.  Writeback takes locks on
+>> folios belonging to the same inode in ascending ->index order.  It
+>> submits all the folios for write before moving on to lock other inodes,
+>> so it does not conflict with this new constraint you're proposing.
+> 
+> BTW, I don't believe it's a new order out of EROFS, if you consider
+> ext4 or ext2 for example, it will also use sb_bread() (buffer heads
+> on bdev inode to trigger some meta I/Os),
+> 
+> e.g. take ext2 for simplicity:
+>    ext2_readahead
+>      mpage_readahead
+>       ext2_get_block
+>         ext2_get_blocks
+>           ext2_get_branch
+>              sb_bread     <-- get some metadata using for this data I/O
 
-commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
-bug") fix this on 32-bit architecture. However, the problem is not
-completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
-architecture, for example, when system memory is equal to
-CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:
+I guess I need to write more words about this:
 
-	-> reserve_crashkernel_generic() and high is true
-	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
-	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
-	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+Although currently sb_bread() mainly take buffer locks to do meta I/Os,
+but the following path takes the similar dependency:
 
-Before refactor in commit 9c08a2a139fe ("x86: kdump: use generic interface
-to simplify crashkernel reservation code"), x86 do not try to reserve crash
-memory at low if it fails to alloc above high 4G. However before refator in
-commit fdc268232dbba ("arm64: kdump: use generic interface to simplify
-crashkernel reservation"), arm64 try to reserve crash memory at low if it
-fails above high 4G. For 64-bit systems, this attempt is less beneficial
-than the opposite, remove it to fix this bug and align with native x86
-implementation.
+                ...
+                sb_bread
+                  __bread_gfp
+                    bdev_getblk
+                      __getblk_slow
+                        grow_dev_folio  // bdev->bd_mapping
+                          __filemap_get_folio(FGP_LOCK | .. | FGP_CREAT)
 
-After this patch, it print:
-	cannot allocate crashkernel (size:0x1f400000)
+So the order is already there for decades.. Although EROFS doesn't
+use buffer heads since its initial version, it needs a different
+address_space to cache metadata in page cache for best performance.
 
-Fixes: 39365395046f ("riscv: kdump: use generic interface to simplify crashkernel reservation")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- kernel/crash_reserve.c | 9 ---------
- 1 file changed, 9 deletions(-)
+In .read_folio() and .readahead() context, the orders have to be
 
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index 5387269114f6..69e4b8b7b969 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -420,15 +420,6 @@ void __init reserve_crashkernel_generic(char *cmdline,
- 				goto retry;
- 		}
- 
--		/*
--		 * For crashkernel=size[KMG],high, if the first attempt was
--		 * for high memory, fall back to low memory.
--		 */
--		if (high && search_end == CRASH_ADDR_HIGH_MAX) {
--			search_end = CRASH_ADDR_LOW_MAX;
--			search_base = 0;
--			goto retry;
--		}
- 		pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
- 			crash_size);
- 		return;
--- 
-2.34.1
+   file-backed folios
+      bdev/meta folios
+
+since it's hard to use any other orders and the file-backed folios
+won't be filled without uptodated bdev/meta folios.
+
+> 
+>>
+>> The other place is remap_file_range().  Both inodes in that case must be
+>> regular files,
+>>          if (!S_ISREG(inode_in->i_mode) || !S_ISREG(inode_out->i_mode))
+>>                  return -EINVAL;
+>> so this new rule is fine.
+
+Refer to vfs_dedupe_file_range_compare() and vfs_lock_two_folios(), it
+seems it only considers folio->index regardless of address_spaces too.
+
+>>
+>> Does anybody know of any _other_ ordering constraints on folio locks?  I'm
+>> willing to write them down ...
+> 
+> Personally I don't think out any particular order between two folio
+> locks acrossing different inodes, so I think folio batching locking
+> always needs to be taken care.
+
+
+I think folio_lock() comment of different address_spaces added in
+commit cd125eeab2de ("filemap: Update the folio_lock documentation")
+would be better to be refined:
+
+...
+  * in the same address_space.  If they are in different address_spaces,
+  * acquire the lock of the folio which belongs to the address_space which
+  * has the lowest address in memory first.
+  */
+static inline void folio_lock(struct folio *folio)
+{
+...
+
+
+Since there are several cases we cannot follow the comment above due
+to .read_folio(), .readahead() and more contexts.
+
+I'm not sure how to document the order of different address_spaces,
+so I think it's just "no particular order between different
+address_space".
+
+Thanks,
+Gao Xiang
 
 
