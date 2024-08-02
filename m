@@ -1,98 +1,87 @@
-Return-Path: <linux-kernel+bounces-272667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E5945FA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:50:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27891945F9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 313AE1F21EE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:50:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB864285FA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 14:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CCA2101B6;
-	Fri,  2 Aug 2024 14:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eme4P2Or"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED2320010E;
+	Fri,  2 Aug 2024 14:46:06 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4391F94C;
-	Fri,  2 Aug 2024 14:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751B51F94C
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 14:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722610190; cv=none; b=G0erfm3UhNSLPh7zIMRa4H+f/HmWqts+TR0Ff0QKQJpEvv6Rc85mVO5h3rV9IGnEJXRb0NE1R4L1QOE2MZqrdWkGZiC4nw+nPYSuDgBoqOj2zBSjERgpo62jq7XI8ytiCZNDAo+KjD20eJuJt91COXw/m5z099YN0uMYVmwAMRA=
+	t=1722609965; cv=none; b=X22ureGfwn4rl+HQkdffSG60jTa92gggE1Hp1ewKVrSy7yn+n8tvrBbS7oBKyL6yLHaD52fEGOUifdkfsNr90BQgp/QVLOwJUGkR0v3wk7/NTwD1Yrph5Kok7K7Z8dIbE7R/csp4tMMMbdsZbiAQfh1tddbjM6eWeae2zdAhIY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722610190; c=relaxed/simple;
-	bh=C0gNPjyqqSGaw6+V9sZvTDgJk/TpHOmXXsbUVayAPRI=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=oSOKRhVnLI72v2ESFzDiAlDR/ou+5k6UiYYXiT2vggcVAkcUGGBTrF2tktjX6DgXGPWs6Y69rxK7hGtVTpIZSkzvVVUbMgwvbA6oTDZpjM1oK1QylYC6VuC+eIHQmY62kWJFEyBNUlT1Ua7Dr4u07Um1GeYuxr9Ceu2f08cG9dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eme4P2Or; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so19942915e9.1;
-        Fri, 02 Aug 2024 07:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722610187; x=1723214987; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0gNPjyqqSGaw6+V9sZvTDgJk/TpHOmXXsbUVayAPRI=;
-        b=eme4P2Or0OKxPBywIXzssf5bP1qBE23icBC05X+YoQwaUT+Yf0Ls+bnD0zOvAAS4Ck
-         9gY6U94C6TFgQwj24R6vbrgsapOZAUaOWtkk4dV3Qeo05VJp7gVSUQT2/3fU7RkArA7+
-         86UmZVo0w+lDncbaSdND3qfVLHLp6ySmu8iOM1Aou18hwgluzFr/tjVGUzVCly+VljMM
-         d5ChSkV8MZqRIDRSapRFPn/w4ZgKW138Iv5DESRfehyhJZCT8XgzX6qTBaFRLvgouSR+
-         QjFnGz/noqUrGIswqkVvOeZN1wGqjStnBemVOCx/y37p/2JXXs5AJNHiCnmq8t6p5clO
-         aIoA==
+	s=arc-20240116; t=1722609965; c=relaxed/simple;
+	bh=n5TL0Y/3DFEk4WLn5tW3e6joZe5sNKpoJfj4Y8HNa4g=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OzrxvNAe7EbQlyt0IJecHJhWng7ZYbHY4xwI8zj9ivyVS2/POiRvkwhDwmbTqdmiyWjJTwHJXbn7CMlLN3fIRTkdI+lXDswgquHRzdiEMlgrj30EJCzpXdb/LeT/j71v6p6g90gFPz3G2F3jspmaP5eKg3ASzHb3iGEfj+fSA4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-81f8c78cc66so1197977639f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 07:46:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722610187; x=1723214987;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C0gNPjyqqSGaw6+V9sZvTDgJk/TpHOmXXsbUVayAPRI=;
-        b=kV+/3HFvujOPgSzZae9oU+vrsCBMpxoV5DBPsrGsSDYBEGppbvfwxtOSSY/byltZtT
-         05KxrqzfRE4K6I82Eo3jS1uEE9Bylm13SPBKIJDnzNu3EyClb9FDuIE6LLE7R1lSpq3C
-         BNO3XGmFvVKjqk/OpPJNhjnyqAZSDVzB4kZH94yWJPUpoupsNjhU3c4nf5B4MHCf9fp5
-         xGGnY/JROAYa4+vlwQr5TgXp19iJx9O453r0P6T8IpR8YevZn35k4j7+DCCC74legX9w
-         L4Mq2/aI74ZAlty1APk6CzIs8OFnPRnhLX3xJTZzpABMcgmhSVgncsFjpNCO58VHwCyn
-         iXGw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2eUMqWkSZCUFnH9Evk19oymomJgzsHFpvUW0jC+xo19BpYY2/yXgvXXZgdIODSETOR7eSDu95NkDVvu6V4tLJsqYmdtjOXEU5vCrN36wVzBzqC91KkYH5is7qYQGsKuDzfb3K3N3NmkH4jYyMRA9TD62tx+Pcpc1U6hPO+617nrTQObcG
-X-Gm-Message-State: AOJu0Yzeg1ZYMRq6dh6HKL4JXt9Ggw+luosoBVpC5zY4cCbNW/e/byW8
-	a35rbifCtKl2eka2UaFHdRJ5AVMVHOF0gzfSUOkJ8NUQxPm+Nb6Wb32BEARs
-X-Google-Smtp-Source: AGHT+IEshLaLaPr08jZ2Xb5zRgtgxOyOX6PcsquL7FGTTRvgGt+iVdx0Z/DglcsusFlSRBLs6hqa1A==
-X-Received: by 2002:a7b:c5c7:0:b0:427:ee01:ebf0 with SMTP id 5b1f17b1804b1-428e4714cfemr47246135e9.8.1722610186483;
-        Fri, 02 Aug 2024 07:49:46 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:e8ca:b31f:8686:afd3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8ad475sm97561165e9.13.2024.08.02.07.49.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 07:49:46 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Jakub Kicinski <kuba@kernel.org>,  "David S . Miller"
- <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,  Paolo Abeni
- <pabeni@redhat.com>,  Nicolas Dichtel <nicolas.dichtel@6wind.com>,
-  netdev@vger.kernel.org,  kernel-janitors@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] tools: ynl: remove extraneous ; after statements
-In-Reply-To: <20240802113436.448939-1-colin.i.king@gmail.com> (Colin Ian
-	King's message of "Fri, 2 Aug 2024 12:34:36 +0100")
-Date: Fri, 02 Aug 2024 15:45:56 +0100
-Message-ID: <m2ed77nftn.fsf@gmail.com>
-References: <20240802113436.448939-1-colin.i.king@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=1e100.net; s=20230601; t=1722609963; x=1723214763;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uHBB7v9Ss1p5xp+5ysEmRZ6LpE90X1XoizcxmzdbLl4=;
+        b=K0EbUlVQjpG8gi7FOcIUQPz0HtoKTzOgFVU1Y1dEcv/7JWC/PFg6NdkI0VRWL7cnvY
+         hsbQBMnPoRDmV0MQ+5jxDeWIRXV6nJZwkfIs1TluQC9ZEHYz1JASGIHUmi+7qttbfnnX
+         AJQ0N1gNF0eTuRk9CDsW1GufGcFgdGVqHd4wS9ngrS8zmJsYrqFIA+pl9QsmVX+hTmpT
+         ownA+Hg94ltl46y7Os/23XREc2S63UD70fLhW4PzaQpI9N9OWG/2mOYuQcWN6JORTfGN
+         9y3bGyywUBmVeYhnhaosHj4BZzmQT+CNkiTDAkiOZL4sQDKhi4u3VKpgJfIdwiQb4UjU
+         0Bmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrBk6Tmok1PslX41ZOztNN2E9H9cXiMjzMQxMgShIyHTsC5zGVLudCtMbIZi6QLVmBfcKMmpGRRw1metxVBvas0ih5T/BT1EzUQzCR
+X-Gm-Message-State: AOJu0YxrJz4jSKycGtnxaw+TTd4VJ0uA/8iBsLSvcDXyCiH7mEcgbC+y
+	lMwcCjVeKpxsXnprz3gZRZ0S+r3akOZ9H5oEzBaDvR0eGEbxoY+NYmis4e1setK4Y67aq3dLT7A
+	UsvvKlnAjhhKRBRuuetMISaoeLHDzYfhKmLDjssAeDicyp/ec0GUCaKA=
+X-Google-Smtp-Source: AGHT+IH8BNQOjCNFoujs6eA/vB7WyntM2WND7hDBGabugWhkOIvoV+GRghmXccO3Ov4/sFVsNxl0b78GlSBrS0pFqjlUESVEDQkY
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-Received: by 2002:a05:6e02:1ca7:b0:39a:eb3d:8c65 with SMTP id
+ e9e14a558f8ab-39b1fc3da30mr2595735ab.4.1722609963498; Fri, 02 Aug 2024
+ 07:46:03 -0700 (PDT)
+Date: Fri, 02 Aug 2024 07:46:03 -0700
+In-Reply-To: <20240802141947.89103-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f610d6061eb46214@google.com>
+Subject: Re: [syzbot] [net?] possible deadlock in team_device_event (3)
+From: syzbot <syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Colin Ian King <colin.i.king@gmail.com> writes:
+Hello,
 
-> There are a couple of statements with two following semicolons,
-> replace these with just one semicolon.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+Reported-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+Tested-by: syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=132dafad980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=b668da2bc4cb9670bf58
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=15e9566d980000
+
+Note: testing is done by a robot and is best-effort only.
 
