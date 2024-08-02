@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-272841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BF7A9461BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:18:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAD39461BB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 18:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB5711F22795
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B8CC1C20B5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 16:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F85200104;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC0F21C194;
 	Fri,  2 Aug 2024 16:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IZPHPvdj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cpmGYs0k"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SuHgct+A";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ny5DpkZZ"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C251E287F
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 16:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D652101B3
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 16:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722615352; cv=none; b=czoIvnGEdu8GNV5td/UwRxzFGpzR39Rj7auU6y5lzTP+1wByNLlaQmVNHF+XTbFKdjClnr7fgHoIlMJx4IaSZeLrUJp3C0055nJd/1LPbrospLLPTxDE/Bz3W25tulWzaglSBltqHJ+I4zBqUspOXTfp13dvWlhMwdVkN6qZ9Ms=
+	t=1722615353; cv=none; b=sQ00QghZ3bdEs1kN8e/z11jFLed8jMtkGM3VszIfjhzhyxGQfi052CDoioMc917pGKOMWk40TIAUiMpA5qUHHBsHfFFJsYhIXk4udDy99I63BRqwD7+N/XpNB9XzhepPJXnbH7Uiah37RWYQla7M3xI8q717Ag0m3FzzvFTbTv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722615352; c=relaxed/simple;
-	bh=ApuFP7hUkB4GG2CDVVRZNYbtp2I1Rn1Ost0KRvUQ9vQ=;
+	s=arc-20240116; t=1722615353; c=relaxed/simple;
+	bh=4joPjqYEQP1EZM/mKEFP/7OQQSP2kumvms7FfENrhiI=;
 	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Date; b=DxarIfCsYqlhYrPs1u3E7IHO5ORGkulbqwxMXKW4JbfvGKKTkqMo2e+T6GMaOQvSs7nHQ/IYSQbKqqg7dox8bkSJhAxzAXlk3VMP5V8cCYqelLH/GqNwNpp+IlqF+4C6DuQ9CA+tIpJW+Ek5UEOuX4GLDDqiMk2vvr9aoC+L6xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IZPHPvdj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cpmGYs0k; arc=none smtp.client-ip=193.142.43.55
+	 Content-Type:Date; b=k5DLlKb11vuRcSKXlHLJoXRW0JVZOCQj3kCbFVWJb8QlQtrsXUaiHDrIchIfUUxMnjlRBG+p+UdLF02WlSZov+RWegIrN+N/Yvb+ZRda1XYNnWzWE3OOt87ju9MaFdNkVllmrc/3IJBdFZ8iZ51B3yNX74MdO0/M4C37jvNXpqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SuHgct+A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ny5DpkZZ; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20240802155440.969619978@linutronix.de>
+Message-ID: <20240802155441.032045616@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1722615348;
+	s=2020; t=1722615349;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=xqjWzalHB8Wp0VvFcAWCmZ5DG9g95Nn4RtzOchAdDo8=;
-	b=IZPHPvdj2qjXXhnizchH12MLk8SVBYIJFw9FjEIxTca+9VLOqrIRl29YOzoP0a6gyyBV60
-	5PfRSYiApHp4JBRfJ1GHNrJl35vjGZotd2HuwNiS/B9D25P/Juf/n2wxnNZlRnj+N3t1dX
-	2TX2AHP7+wmWsUrN09jrBge5poJMPRYjSpCJ/KeVlf1/29n3MoLP8pFqnTRZSlAWko0BDl
-	CvNKVhVgpu14r1fd5jwD7fwlcOdbT2u8PeN8EzKL1tnp6YCtzsLppoYjopFJptjsRcDj7+
-	h5DUx/dQpJQdzVuCN5WmR2tVk7q1VAFVEK3tacJ+pcftGfMgnlmASN2o890xeA==
+	 references:references; bh=Dhes1tKIxTk1JJs3+ZEKAxniIS8S9bZ/SOxPoiAxujU=;
+	b=SuHgct+AllcbTQrVfvZHWvWkxazys3y+/DqLm8CNc4SsPA9lAvzolwybv/XdmyirOsLC5N
+	72a71oPLr2/zr+ZwsrDXzJSkw6ugwzwkp+EqKDmXmEmoFTKDuCCysYhZdIXXVab7d2gOjK
+	KDh6ORu7q6NXWp6llM5GNM+RbNPEJKob8hEYYgy21oBmgnsq+MZ975cVeyrfsqxHXS7EDL
+	Y/XLS8rDwROasjCZwYFd+lgwgqB3PvfmJdS/OZCOMehZWk6+7AxBbL3XCtvfamGOSfdVxq
+	T6V0/GmmLhvGt/CFwpWV/xyudR135yYcH8y7oV4VMzHOI5bgoj41r/Y5kkWoaw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1722615348;
+	s=2020e; t=1722615349;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 references:references; bh=xqjWzalHB8Wp0VvFcAWCmZ5DG9g95Nn4RtzOchAdDo8=;
-	b=cpmGYs0kGPvNrf5ipO8pbfpDUHqeGBr6h3OGcaEVZGEM9ddpNdcTkivSBqENUhhicfA7oP
-	pOe90vlYvGMBEFCA==
+	 references:references; bh=Dhes1tKIxTk1JJs3+ZEKAxniIS8S9bZ/SOxPoiAxujU=;
+	b=ny5DpkZZlOzC1zv9wFla0Frd7g5caUvIOLfx+uTVKNccrHQj3UECxu60uhPYNfbTcgDgWC
+	AmIO/FP/1mZ/xCBA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: x86@kernel.org
-Subject: [patch 12/15] x86/ioapic: Cleanup comments
+Subject: [patch 13/15] x86/ioapic: Cleanup bracket usage
 References: <20240802155038.556977544@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,203 +61,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Fri,  2 Aug 2024 18:15:48 +0200 (CEST)
+Date: Fri,  2 Aug 2024 18:15:49 +0200 (CEST)
 
-Use proper comment styles and shrink comments to their scope where
-applicable.
+Add brackets around if/for constructs as required by coding style or remove
+pointless line breaks to make it true single line statements which do not
+require brackets.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/apic/io_apic.c |   86 +++++++++++++++++------------------------
- 1 file changed, 37 insertions(+), 49 deletions(-)
+ arch/x86/kernel/apic/io_apic.c |   34 ++++++++++++++++++----------------
+ 1 file changed, 18 insertions(+), 16 deletions(-)
 
 --- a/arch/x86/kernel/apic/io_apic.c
 +++ b/arch/x86/kernel/apic/io_apic.c
-@@ -384,12 +384,12 @@ static void io_apic_modify_irq(struct mp
- 	}
+@@ -362,12 +362,13 @@ static void __remove_pin_from_irq(struct
+ {
+ 	struct irq_pin_list *tmp, *entry;
+ 
+-	list_for_each_entry_safe(entry, tmp, &data->irq_2_pin, list)
++	list_for_each_entry_safe(entry, tmp, &data->irq_2_pin, list) {
+ 		if (entry->apic == apic && entry->pin == pin) {
+ 			list_del(&entry->list);
+ 			kfree(entry);
+ 			return;
+ 		}
++	}
  }
  
-+/*
-+ * Synchronize the IO-APIC and the CPU by doing a dummy read from the
-+ * IO-APIC
-+ */
- static void io_apic_sync(struct irq_pin_list *entry)
- {
--	/*
--	 * Synchronize the IO-APIC and the CPU by doing
--	 * a dummy read from the IO-APIC
--	 */
- 	struct io_apic __iomem *io_apic;
- 
- 	io_apic = io_apic_base(entry->apic);
-@@ -442,17 +442,13 @@ static void __eoi_ioapic_pin(int apic, i
- 
- 		entry = entry1 = __ioapic_read_entry(apic, pin);
- 
--		/*
--		 * Mask the entry and change the trigger mode to edge.
--		 */
-+		/* Mask the entry and change the trigger mode to edge. */
- 		entry1.masked = true;
- 		entry1.is_level = false;
- 
- 		__ioapic_write_entry(apic, pin, entry1);
- 
--		/*
--		 * Restore the previous level triggered entry.
--		 */
-+		/* Restore the previous level triggered entry. */
- 		__ioapic_write_entry(apic, pin, entry);
- 	}
- }
-@@ -1012,16 +1008,12 @@ static int pin_2_irq(int idx, int ioapic
- {
- 	u32 gsi = mp_pin_to_gsi(ioapic, pin);
- 
--	/*
--	 * Debugging check, we are in big trouble if this message pops up!
--	 */
-+	/* Debugging check, we are in big trouble if this message pops up! */
- 	if (mp_irqs[idx].dstirq != pin)
- 		pr_err("broken BIOS or MPTABLE parser, ayiee!!\n");
- 
- #ifdef CONFIG_X86_32
--	/*
--	 * PCI IRQ command line redirection. Yes, limits are hardcoded.
--	 */
-+	/* PCI IRQ command line redirection. Yes, limits are hardcoded. */
- 	if ((pin >= 16) && (pin <= 23)) {
- 		if (pirq_entries[pin - 16] != -1) {
- 			if (!pirq_entries[pin - 16]) {
-@@ -1296,8 +1288,9 @@ void __init enable_IO_APIC(void)
- 		/* See if any of the pins is in ExtINT mode */
- 		struct IO_APIC_route_entry entry = ioapic_read_entry(apic, pin);
- 
--		/* If the interrupt line is enabled and in ExtInt mode
--		 * I have found the pin where the i8259 is connected.
-+		/*
-+		 * If the interrupt line is enabled and in ExtInt mode I
-+		 * have found the pin where the i8259 is connected.
- 		 */
- 		if (!entry.masked &&
- 		    entry.delivery_mode == APIC_DELIVERY_MODE_EXTINT) {
-@@ -1307,8 +1300,11 @@ void __init enable_IO_APIC(void)
- 		}
- 	}
-  found_i8259:
--	/* Look to see what if the MP table has reported the ExtINT */
--	/* If we could not find the appropriate pin by looking at the ioapic
-+
-+	/*
-+	 * Look to see what if the MP table has reported the ExtINT
-+	 *
-+	 * If we could not find the appropriate pin by looking at the ioapic
- 	 * the i8259 probably is not connected the ioapic but give the
- 	 * mptable a chance anyway.
- 	 */
-@@ -1348,9 +1344,7 @@ void native_restore_boot_irq_mode(void)
- 		entry.destid_0_7	= apic_id & 0xFF;
- 		entry.virt_destid_8_14	= apic_id >> 8;
- 
--		/*
--		 * Add it to the IO-APIC irq-routing table:
--		 */
-+		/* Add it to the IO-APIC irq-routing table */
- 		ioapic_write_entry(ioapic_i8259.apic, ioapic_i8259.pin, entry);
- 	}
- 
-@@ -1427,8 +1421,8 @@ static void __init setup_ioapic_ids_from
+ static void io_apic_modify_irq(struct mp_chip_data *data, bool masked,
+@@ -562,8 +563,7 @@ int save_ioapic_entries(void)
  		}
  
- 		/*
--		 * We need to adjust the IRQ routing table
--		 * if the ID changed.
-+		 * We need to adjust the IRQ routing table if the ID
-+		 * changed.
- 		 */
- 		if (old_id != mpc_ioapic_id(ioapic_idx))
- 			for (i = 0; i < mp_irq_entries; i++)
-@@ -1437,8 +1431,8 @@ static void __init setup_ioapic_ids_from
- 						= mpc_ioapic_id(ioapic_idx);
+ 		for_each_pin(apic, pin)
+-			ioapics[apic].saved_registers[pin] =
+-				ioapic_read_entry(apic, pin);
++			ioapics[apic].saved_registers[pin] = ioapic_read_entry(apic, pin);
+ 	}
  
- 		/*
--		 * Update the ID register according to the right value
--		 * from the MPC table if they are different.
-+		 * Update the ID register according to the right value from
-+		 * the MPC table if they are different.
- 		 */
- 		if (mpc_ioapic_id(ioapic_idx) == reg_00.bits.ID)
+ 	return err;
+@@ -604,8 +604,7 @@ int restore_ioapic_entries(void)
  			continue;
-@@ -1562,21 +1556,17 @@ static int __init timer_irq_works(void)
-  * so we 'resend' these IRQs via IPIs, to the same CPU. It's much
-  * better to do it this way as thus we do not have to be aware of
-  * 'pending' interrupts in the IRQ path, except at this point.
-- */
--/*
-- * Edge triggered needs to resend any interrupt
-- * that was delayed but this is now handled in the device
-- * independent code.
-- */
--
--/*
-- * Starting up a edge-triggered IO-APIC interrupt is
-- * nasty - we need to make sure that we get the edge.
-- * If it is already asserted for some reason, we need
-- * return 1 to indicate that is was pending.
-  *
-- * This is not complete - we should be able to fake
-- * an edge even if it isn't on the 8259A...
-+ *
-+ * Edge triggered needs to resend any interrupt that was delayed but this
-+ * is now handled in the device independent code.
-+ *
-+ * Starting up a edge-triggered IO-APIC interrupt is nasty - we need to
-+ * make sure that we get the edge.  If it is already asserted for some
-+ * reason, we need return 1 to indicate that is was pending.
-+ *
-+ * This is not complete - we should be able to fake an edge even if it
-+ * isn't on the 8259A...
-  */
- static unsigned int startup_ioapic_irq(struct irq_data *data)
- {
-@@ -1627,7 +1617,8 @@ static inline bool ioapic_prepare_move(s
- static inline void ioapic_finish_move(struct irq_data *data, bool moveit)
- {
- 	if (unlikely(moveit)) {
--		/* Only migrate the irq if the ack has been received.
-+		/*
-+		 * Only migrate the irq if the ack has been received.
- 		 *
- 		 * On rare occasions the broadcast level triggered ack gets
- 		 * delayed going to ioapics, and if we reprogram the
-@@ -1904,14 +1895,13 @@ static inline void init_IO_APIC_traps(vo
- 		cfg = irq_cfg(irq);
- 		if (IO_APIC_IRQ(irq) && cfg && !cfg->vector) {
- 			/*
--			 * Hmm.. We don't have an entry for this,
--			 * so default to an old-fashioned 8259
--			 * interrupt if we can..
-+			 * Hmm.. We don't have an entry for this, so
-+			 * default to an old-fashioned 8259 interrupt if we
-+			 * can. Otherwise set the dummy interrupt chip.
- 			 */
- 			if (irq < nr_legacy_irqs())
- 				legacy_pic->make_irq(irq);
- 			else
--				/* Strange. Oh, well.. */
- 				irq_set_chip(irq, &no_irq_chip);
- 		}
+ 
+ 		for_each_pin(apic, pin)
+-			ioapic_write_entry(apic, pin,
+-					   ioapics[apic].saved_registers[pin]);
++			ioapic_write_entry(apic, pin, ioapics[apic].saved_registers[pin]);
  	}
-@@ -2307,9 +2297,7 @@ void __init setup_IO_APIC(void)
- 	for_each_ioapic(ioapic)
- 		BUG_ON(mp_irqdomain_create(ioapic));
+ 	return 0;
+ }
+@@ -617,12 +616,13 @@ static int find_irq_entry(int ioapic_idx
+ {
+ 	int i;
  
--	/*
--         * Set up IO-APIC IRQ routing.
--         */
-+	/* Set up IO-APIC IRQ routing. */
- 	x86_init.mpparse.setup_ioapic_ids();
+-	for (i = 0; i < mp_irq_entries; i++)
++	for (i = 0; i < mp_irq_entries; i++) {
+ 		if (mp_irqs[i].irqtype == type &&
+ 		    (mp_irqs[i].dstapic == mpc_ioapic_id(ioapic_idx) ||
+ 		     mp_irqs[i].dstapic == MP_APIC_ALL) &&
+ 		    mp_irqs[i].dstirq == pin)
+ 			return i;
++	}
  
- 	sync_Arb_IDs();
+ 	return -1;
+ }
+@@ -662,9 +662,10 @@ static int __init find_isa_irq_apic(int
+ 	if (i < mp_irq_entries) {
+ 		int ioapic_idx;
+ 
+-		for_each_ioapic(ioapic_idx)
++		for_each_ioapic(ioapic_idx) {
+ 			if (mpc_ioapic_id(ioapic_idx) == mp_irqs[i].dstapic)
+ 				return ioapic_idx;
++		}
+ 	}
+ 
+ 	return -1;
+@@ -1424,11 +1425,12 @@ static void __init setup_ioapic_ids_from
+ 		 * We need to adjust the IRQ routing table if the ID
+ 		 * changed.
+ 		 */
+-		if (old_id != mpc_ioapic_id(ioapic_idx))
+-			for (i = 0; i < mp_irq_entries; i++)
++		if (old_id != mpc_ioapic_id(ioapic_idx)) {
++			for (i = 0; i < mp_irq_entries; i++) {
+ 				if (mp_irqs[i].dstapic == old_id)
+-					mp_irqs[i].dstapic
+-						= mpc_ioapic_id(ioapic_idx);
++					mp_irqs[i].dstapic = mpc_ioapic_id(ioapic_idx);
++			}
++		}
+ 
+ 		/*
+ 		 * Update the ID register according to the right value from
+@@ -2666,12 +2668,10 @@ static int bad_ioapic_register(int idx)
+ 
+ static int find_free_ioapic_entry(void)
+ {
+-	int idx;
+-
+-	for (idx = 0; idx < MAX_IO_APICS; idx++)
++	for (int idx = 0; idx < MAX_IO_APICS; idx++) {
+ 		if (ioapics[idx].nr_registers == 0)
+ 			return idx;
+-
++	}
+ 	return MAX_IO_APICS;
+ }
+ 
+@@ -2780,11 +2780,13 @@ int mp_unregister_ioapic(u32 gsi_base)
+ 	int ioapic, pin;
+ 	int found = 0;
+ 
+-	for_each_ioapic(ioapic)
++	for_each_ioapic(ioapic) {
+ 		if (ioapics[ioapic].gsi_config.gsi_base == gsi_base) {
+ 			found = 1;
+ 			break;
+ 		}
++	}
++
+ 	if (!found) {
+ 		pr_warn("can't find IOAPIC for GSI %d\n", gsi_base);
+ 		return -ENODEV;
 
 
