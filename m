@@ -1,529 +1,152 @@
-Return-Path: <linux-kernel+bounces-273060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED4E946424
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:54:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E72F3946427
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4248B1C21C4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:54:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09BF41C216B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E654660;
-	Fri,  2 Aug 2024 19:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDB17173C;
+	Fri,  2 Aug 2024 19:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T0gtymhN"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b="Sh0sCuER"
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [185.185.170.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB857F6
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 19:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722628453; cv=none; b=nq8bPQ8EjiLggozRGv2p/Qjwo5Jyrf5zev3ELNYofjGVWZ0RJYod8ZiPRGngbnmIKY4gK6HXyA39fq+t7UTBDc3NqD36+aOjGAGR5k+C/JxpYsd5+PiP/M7wt4U8uYRCYoXOamyFgH8ZbJd8zAbrx8pp6QouliXrUgq85V0rlsE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722628453; c=relaxed/simple;
-	bh=7zYm9HYJC4hW3OeBmVvC/aK3hYq3sUpLv99V+ty7zMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EindvazBWMgdS90ohGfGFsceCPFGxsXF20kwiEFZ1KYlYlyKXF0qhodWtEkxlh4aq6VKHHVN/fjEgDmcY2p3B7ASFwEAqtfHyNk+a3oKrT41uN3P3JF9dvI8DWQm5paq5I1PvV7LO0uY3YRQxLfqlg/rCI+dRNEIjiuxKAPhh+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T0gtymhN; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5af51684d52so9958850a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 12:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722628449; x=1723233249; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=97pj0XT9lbEhPmXE/qPIwkhJe372JSDiqTqAJL7ohJo=;
-        b=T0gtymhNAi4rofATda1RRT3tJGf5IIAaiwkE6SZr+Y55ksu/T1jme7yCjjHngpV/oa
-         88QAFatfuiGQN+cfM8FYz2N2bAcfQzR3dugIPjAHRi8pGdPaV4LnJqs/NSlblNjbb9cr
-         F+/BBxVOUv0VNoVacnnDKiZeqAvKyfPo9qUyY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722628449; x=1723233249;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=97pj0XT9lbEhPmXE/qPIwkhJe372JSDiqTqAJL7ohJo=;
-        b=ISQsBmcd1iuu55YW9kXr1xwVuQ72OO3A3OQ12ZoCpELQsym3zcKU0J7NtgsADy5N/X
-         CW/IfNDeK/Uf0sZYlA/3p4XQDnKt+NoZDWm1dqkoCgWGtDLid2OpwKNi65beo2zYRJqm
-         CB65L8JGS21uGl+uDHAgEWyosIZZ6WEu8fn39vUqAfZ4RHKDPT52K95yolKTtR+ZW3D+
-         EVlve+Q7sVqbcfGmch2yNfdQE0woFO3RqWszjW2KAsFqWZTrLNbh5Thcx36NzPSvTI4k
-         Fcfasmf5QFZvli6OwOT3PmySR4YQdvR9EmWMS01kkmTJAg4hBpmNY7mX6YAnjoQ9H5hp
-         sTvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKGoEbvqlvLQjrUjaDCiGsjejAP66ucltDEDJa9L7sOiJ9M2BgnVNqJxAQGAk5yev14XnweQ21Wv+Vjvk/6K3Uc6BoY9CaYwpCPdV9
-X-Gm-Message-State: AOJu0YzkjDtikQbrAq1Uw8aYdFH1lu40J74T+FKJ6/gk6SaOlib55YkW
-	3nMXEqfzjUaQ48XL4ThZ3AY0Em/8lNCqIpNfRv+mfewvi61VH5q2z/rF89WiqSdq5COc+fMSZSF
-	JL0VS6S8kSZTZ1hSnz619wXynKLWr9J6gmv2yVU3JxoChq4S2uw==
-X-Google-Smtp-Source: AGHT+IEhbG0LvzS1ry3MtHY1fRtxIWekpW46sgZlnjnTmPIPrTYszhZy+E3fXge5+XZhhsc20imTsjC5fymNWCcegzk=
-X-Received: by 2002:a05:6402:706:b0:5a2:2b56:e08e with SMTP id
- 4fb4d7f45d1cf-5b7f3eba07fmr3083433a12.18.1722628448955; Fri, 02 Aug 2024
- 12:54:08 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2800B6D1B9;
+	Fri,  2 Aug 2024 19:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=185.185.170.37
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722628461; cv=pass; b=YeA8jeQT9ZCYSHAsnsADoqtMWlMPBj5/CbyYWXv2AD3AMTM4K4yJYtgMsJ1Whkj+54g0JOyy/GUmIA+besyWGqS0yzYK6aibMW+0BCVdJMVxP6dLKET3x8xXUJz9BoNI47IvKfcOkNq9S84ACLJ9/aVawARagOKpHY40wo0etzk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722628461; c=relaxed/simple;
+	bh=iT6acgNgd5/PO8a0CzUf8rxOToX4TX3THEx4k2TYdF4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=dFVZ94UQ6/r8f1+/bL8Ys9YIntDUUQg40f/alak6sLlpvaWAGragwvy4r7AdthfY1BG1ZNZhvTTG2TsyDt285z6jcscrlHP70IISdRNgoOazyw2BgCVFx3NuLuzWoHKE/0iGDwIteaP9XS3kF7c/DLw3/oRXEyAM7QH6mAtKEr0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (2048-bit key) header.d=iki.fi header.i=@iki.fi header.b=Sh0sCuER; arc=pass smtp.client-ip=185.185.170.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from localhost (91-154-92-171.elisa-laajakaista.fi [91.154.92.171])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: sakkinen)
+	by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 4WbGkH2ptWz49Pv3;
+	Fri,  2 Aug 2024 22:54:15 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+	t=1722628455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hHK97y9FZ+Wa9pnrK8vjYPO/mSFFDETpIessOb3b9EM=;
+	b=Sh0sCuERVfrbUKTYfjCYMrLOzOYh/umSCrSa5pigKk8oR33PPpo3Py6wZ968br81L6L+5T
+	Wo/Exp5q9+85t1fzsyZomHHjkal8NOqb6FntbpQiQX1Ry6QMTSOIW+iHY9BbNQu2znaAof
+	iUhUz9OGtCenDtfuJuQSvXtWuT8Vr+x1QxH2PbGtT1C7NY/Nq824js2YQlJf7xXKFXt96e
+	k+tpn2Q6qSlIf2mO6lUU82r7kfMEWRocYajHVfVkp7aWLOVECCOxelhyXE2WT5KAisZtM6
+	9mBg0h74fCP66OIWFnMn1td9AFWGyr3nJLVLBZBYylNZB3AC40nAlbZa3L6DGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=lahtoruutu; t=1722628455;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hHK97y9FZ+Wa9pnrK8vjYPO/mSFFDETpIessOb3b9EM=;
+	b=PA6pkgix2YVjOnnZFSK4TZPIKG5IjKAv82FXVcZWW8zS2bttDSiiH/AY8h0wB5RJyx38nX
+	TzO1jlKX566ovAqZ5ph/6pUMzY6CJpaYSXLG936z/Lci0LbrsEj5vM/lifLsCPcv1J0piF
+	Ctf3AzmvDsGjiHV3Ca/JKvWGwRtE1sQpEU8RCijclvkxTSKFGXeogzZU/xho3ZOEIkTYYn
+	lMoEuWVFXmQijMgIRDScKSHFEFvbp3Evv1ClHLmFxgCK6LSNY8DT8rvSYoD+8NscLCLLy7
+	Eoj9/78CN6kakxyPXuqhIw+vS24WTt2N9U9bEcbQGvghWXpDNIU1FC8BKhJJ9g==
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=sakkinen smtp.mailfrom=jarkko.sakkinen@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1722628455; a=rsa-sha256;
+	cv=none;
+	b=vRI294C/zi2YRZKmvULdE3RnQ8exFQuO6c0aPrdBGvrdZeLY9hddxuoP2mgsDeIuXJW+Jt
+	mfclQGqaT40Hgljn5zZnaJ2gHzI5Ms4avE+fw31bvqJm6fMHSX1vFlAHVrvUo2+DSoUKKB
+	aImMaslpyhLJ/4dO5otlGnEwE7fUgvRhk16YMofk7uPj4IXsnVIQtgbV9XeEc40FrXVwk/
+	toOIe51UYw3JYLUXg8lCJw1+xuzmouieEa3DlMEqtedkp4XUlG64eOwt4oP/HJLxIsymyQ
+	Uy9gvxrzw9JL7ziQ2c0F1x01yHNvVhFypse+UgP3WEzy1M3Vo9s7aAu3CTiliQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240326-pci-bridge-d3-v4-0-f1dce1d1f648@linaro.org>
- <20240326-pci-bridge-d3-v4-3-f1dce1d1f648@linaro.org> <CAJMQK-hu+FrVtYaUiwfp=uuYLT_xBRcHb0JOfMBz5TYaktV6Ow@mail.gmail.com>
- <20240802053302.GB4206@thinkpad>
-In-Reply-To: <20240802053302.GB4206@thinkpad>
-From: Hsin-Yi Wang <hsinyi@chromium.org>
-Date: Fri, 2 Aug 2024 12:53:42 -0700
-Message-ID: <CAJMQK-gtPo4CVEXFDfRU9o+UXgZrsxZvroVsGorvLAdkzfjYmg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] PCI: Decouple D3Hot and D3Cold handling for bridges
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, lukas@wunner.de, mika.westerberg@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 02 Aug 2024 22:54:14 +0300
+Message-Id: <D35OTMURG4E8.36GJXFQM6JR5C@iki.fi>
+Cc: "Herbert Xu" <herbert@gondor.apana.org.au>, <dhowells@redhat.com>,
+ <dwmw2@infradead.org>, <keyrings@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Jarkko Sakkinen" <jarkko@kernel.org>
+Subject: Re: [PATCH 0/3] sign-file,extract-cert: switch to PROVIDER API for
+ OpenSSL >= 3.0
+From: "Jarkko Sakkinen" <jarkko.sakkinen@iki.fi>
+To: "Jan Stancek" <jstancek@redhat.com>
+X-Mailer: aerc 0.17.0
+References: <cover.1720728319.git.jstancek@redhat.com>
+ <Zqzarrjxrt8A5QE2@gondor.apana.org.au> <D35ME25EZWYG.2G7BARLXC4UOO@iki.fi>
+ <CAASaF6zA4MDZ-jW8OCp6WrrKD_QkxFrA5CUCtZV8JzyXdr9Orw@mail.gmail.com>
+In-Reply-To: <CAASaF6zA4MDZ-jW8OCp6WrrKD_QkxFrA5CUCtZV8JzyXdr9Orw@mail.gmail.com>
 
-On Thu, Aug 1, 2024 at 10:33=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Thu, Aug 01, 2024 at 02:07:41PM -0700, Hsin-Yi Wang wrote:
-> > On Fri, Jul 26, 2024 at 4:02=E2=80=AFPM Manivannan Sadhasivam
-> > <manivannan.sadhasivam@linaro.org> wrote:
-> > >
-> > > Currently, there is no proper distinction between D3Hot and D3Cold wh=
-ile
-> > > handling the power management for PCI bridges. For instance,
-> > > pci_bridge_d3_allowed() API decides whether it is allowed to put the
-> > > bridge in D3, but it doesn't explicitly specify whether D3Hot or D3Co=
-ld
-> > > is allowed in a scenario. This often leads to confusion and may be pr=
-one
-> > > to errors.
-> > >
-> > > So let's split the D3Hot and D3Cold handling where possible. The curr=
-ent
-> > > pci_bridge_d3_allowed() API is now split into pci_bridge_d3hot_allowe=
-d()
-> > > and pci_bridge_d3cold_allowed() APIs and used in relevant places.
-> > >
-> > > Also, pci_bridge_d3_update() API is now renamed to
-> > > pci_bridge_d3cold_update() since it was only used to check the possib=
-ility
-> > > of D3Cold.
-> > >
-> > > Note that it is assumed that only D3Hot needs to be checked while
-> > > transitioning the bridge during runtime PM and D3Cold in other places=
-. In
-> > > the ACPI case, wakeup is now only enabled if both D3Hot and D3Cold ar=
-e
-> > > allowed for the bridge.
-> > >
-> > > Still, there are places where just 'd3' is used opaquely, but those a=
-re
-> > > hard to distinguish, hence left for future cleanups.
-> > >
-> > > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.or=
-g>
-> > > ---
-> > >  drivers/pci/bus.c          |  2 +-
-> > >  drivers/pci/pci-acpi.c     |  5 +--
-> > >  drivers/pci/pci-sysfs.c    |  2 +-
-> > >  drivers/pci/pci.c          | 78 ++++++++++++++++++++++++++++++------=
-----------
-> > >  drivers/pci/pci.h          | 12 ++++---
-> > >  drivers/pci/pcie/portdrv.c | 16 +++++-----
-> > >  drivers/pci/remove.c       |  2 +-
-> > >  include/linux/pci.h        |  3 +-
-> > >  8 files changed, 75 insertions(+), 45 deletions(-)
-> > >
-> > > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> > > index 826b5016a101..cb1a1aaefa90 100644
-> > > --- a/drivers/pci/bus.c
-> > > +++ b/drivers/pci/bus.c
-> > > @@ -346,7 +346,7 @@ void pci_bus_add_device(struct pci_dev *dev)
-> > >                 of_pci_make_dev_node(dev);
-> > >         pci_create_sysfs_dev_files(dev);
-> > >         pci_proc_attach_device(dev);
-> > > -       pci_bridge_d3_update(dev);
-> > > +       pci_bridge_d3cold_update(dev);
-> > >
-> > >         dev->match_driver =3D !dn || of_device_is_available(dn);
-> > >         retval =3D device_attach(&dev->dev);
-> > > diff --git a/drivers/pci/pci-acpi.c b/drivers/pci/pci-acpi.c
-> > > index 0f260cdc4592..aaf5a68e7984 100644
-> > > --- a/drivers/pci/pci-acpi.c
-> > > +++ b/drivers/pci/pci-acpi.c
-> > > @@ -1434,7 +1434,7 @@ void pci_acpi_setup(struct device *dev, struct =
-acpi_device *adev)
-> > >          * reason is that the bridge may have additional methods such=
- as
-> > >          * _DSW that need to be called.
-> > >          */
-> > > -       if (pci_dev->bridge_d3_allowed)
-> > > +       if (pci_dev->bridge_d3cold_allowed && pci_dev->bridge_d3hot_a=
-llowed)
-> > >                 device_wakeup_enable(dev);
-> > >
-> > >         acpi_pci_wakeup(pci_dev, false);
-> > > @@ -1452,7 +1452,8 @@ void pci_acpi_cleanup(struct device *dev, struc=
-t acpi_device *adev)
-> > >         pci_acpi_remove_pm_notifier(adev);
-> > >         if (adev->wakeup.flags.valid) {
-> > >                 acpi_device_power_remove_dependent(adev, dev);
-> > > -               if (pci_dev->bridge_d3_allowed)
-> > > +               if (pci_dev->bridge_d3cold_allowed &&
-> > > +                   pci_dev->bridge_d3hot_allowed)
-> > >                         device_wakeup_disable(dev);
-> > >
-> > >                 device_set_wakeup_capable(dev, false);
-> > > diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-> > > index 40cfa716392f..45628b0dd116 100644
-> > > --- a/drivers/pci/pci-sysfs.c
-> > > +++ b/drivers/pci/pci-sysfs.c
-> > > @@ -529,7 +529,7 @@ static ssize_t d3cold_allowed_store(struct device=
- *dev,
-> > >                 return -EINVAL;
-> > >
-> > >         pdev->d3cold_allowed =3D !!val;
-> > > -       pci_bridge_d3_update(pdev);
-> > > +       pci_bridge_d3cold_update(pdev);
-> > >
-> > >         pm_runtime_resume(dev);
-> > >
-> > > diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> > > index 0edc4e448c2d..48e2ca0cd8a0 100644
-> > > --- a/drivers/pci/pci.c
-> > > +++ b/drivers/pci/pci.c
-> > > @@ -166,9 +166,9 @@ bool pci_ats_disabled(void)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(pci_ats_disabled);
-> > >
-> > > -/* Disable bridge_d3 for all PCIe ports */
-> > > +/* Disable both D3Hot and D3Cold for all PCIe ports */
-> > >  static bool pci_bridge_d3_disable;
-> > > -/* Force bridge_d3 for all PCIe ports */
-> > > +/* Force both D3Hot and D3Cold for all PCIe ports */
-> > >  static bool pci_bridge_d3_force;
-> > >
-> > >  static int __init pcie_port_pm_setup(char *str)
-> > > @@ -2966,14 +2966,11 @@ static const struct dmi_system_id bridge_d3_b=
-lacklist[] =3D {
-> > >         { }
-> > >  };
-> > >
-> > > -/**
-> > > - * pci_bridge_d3_allowed - Is it allowed to put the bridge into D3
-> > > - * @bridge: Bridge to check
-> > > - *
-> > > - * This function checks if the bridge is allowed to move to D3.
-> > > - * Currently we only allow D3 for recent enough PCIe ports and Thund=
-erbolt.
-> > > +/*
-> > > + * Helper function to check whether it is allowed to put the bridge =
-into D3
-> > > + * states (D3Hot and D3Cold).
-> > >   */
-> > > -bool pci_bridge_d3_allowed(struct pci_dev *bridge)
-> > > +static bool pci_bridge_d3_allowed(struct pci_dev *bridge, pci_power_=
-t state)
-> > >  {
-> > >         if (!pci_is_pcie(bridge))
-> > >                 return false;
-> > > @@ -3026,6 +3023,32 @@ bool pci_bridge_d3_allowed(struct pci_dev *bri=
-dge)
-> > >         return false;
-> > >  }
-> > >
-> > > +/**
-> > > + * pci_bridge_d3cold_allowed - Is it allowed to put the bridge into =
-D3Cold
-> > > + * @bridge: Bridge to check
-> > > + *
-> > > + * This function checks if the bridge is allowed to move to D3Cold.
-> > > + * Currently we only allow D3Cold for recent enough PCIe ports on AC=
-PI based
-> > > + * platforms and Thunderbolt.
-> > > + */
-> > > +bool pci_bridge_d3cold_allowed(struct pci_dev *bridge)
-> > > +{
-> > > +       return pci_bridge_d3_allowed(bridge, PCI_D3cold);
-> > > +}
-> > > +
-> > > +/**
-> > > + * pci_bridge_d3cold_allowed - Is it allowed to put the bridge into =
-D3Hot
+On Fri Aug 2, 2024 at 9:27 PM EEST, Jan Stancek wrote:
+> On Fri, Aug 2, 2024 at 8:07=E2=80=AFPM Jarkko Sakkinen <jarkko.sakkinen@i=
+ki.fi> wrote:
 > >
-> > typo? pci_bridge_d3hot_allowed.
+> > On Fri Aug 2, 2024 at 4:10 PM EEST, Herbert Xu wrote:
+> > > On Fri, Jul 12, 2024 at 09:11:13AM +0200, Jan Stancek wrote:
+> > > > The ENGINE interface has its limitations and it has been superseded
+> > > > by the PROVIDER API, it is deprecated in OpenSSL version 3.0.
+> > > > Some distros have started removing it from header files.
+> > > >
+> > > > Update sign-file and extract-cert to use PROVIDER API for OpenSSL M=
+ajor >=3D 3.
+> > > >
+> > > > Tested on F39 with openssl-3.1.1, pkcs11-provider-0.5-2, openssl-pk=
+cs11-0.4.12-4
+> > > > and softhsm-2.6.1-5 by using same key/cert as PEM and PKCS11 and co=
+mparing that
+> > > > the result is identical.
+> > > >
+> > > > Jan Stancek (3):
+> > > >   sign-file,extract-cert: move common SSL helper functions to a hea=
+der
+> > > >   sign-file,extract-cert: avoid using deprecated ERR_get_error_line=
+()
+> > > >   sign-file,extract-cert: use pkcs11 provider for OPENSSL MAJOR >=
+=3D 3
+> > > >
+> > > >  MAINTAINERS          |   1 +
+> > > >  certs/Makefile       |   2 +-
+> > > >  certs/extract-cert.c | 138 +++++++++++++++++++++++----------------=
+----
+> > > >  scripts/sign-file.c  | 134 +++++++++++++++++++++------------------=
+--
+> > > >  scripts/ssl-common.h |  32 ++++++++++
+> > > >  5 files changed, 178 insertions(+), 129 deletions(-)
+> > > >  create mode 100644 scripts/ssl-common.h
+> > >
+> > > Adding Cc to Jarkko Sakkinen <jarkko@kernel.org>.
 > >
+> > I can download this but is it likely that there will be v2? If so,
+> > I'll hoold on for that. If not, I'll download it.
 >
-> Yep, nice catch!
->
-> > > + * @bridge: Bridge to check
-> > > + *
-> > > + * This function checks if the bridge is allowed to move to D3Hot.
-> > > + * Currently we only allow D3Hot for recent enough PCIe ports on ACP=
-I based
-> > > + * platforms and Thunderbolt.
-> > > + */
-> > > +bool pci_bridge_d3hot_allowed(struct pci_dev *bridge)
-> > > +{
-> > > +       return pci_bridge_d3_allowed(bridge, PCI_D3hot);
-> > > +}
-> > > +
-> > >  static int pci_dev_check_d3cold(struct pci_dev *dev, void *data)
-> > >  {
-> > >         bool *d3cold_ok =3D data;
-> > > @@ -3046,55 +3069,55 @@ static int pci_dev_check_d3cold(struct pci_de=
-v *dev, void *data)
-> > >  }
-> > >
-> > >  /*
-> > > - * pci_bridge_d3_update - Update bridge D3 capabilities
-> > > + * pci_bridge_d3cold_update - Update bridge D3Cold capabilities
-> > >   * @dev: PCI device which is changed
-> > >   *
-> > >   * Update upstream bridge PM capabilities accordingly depending on i=
-f the
-> > >   * device PM configuration was changed or the device is being remove=
-d.  The
-> > >   * change is also propagated upstream.
-> > >   */
-> > > -void pci_bridge_d3_update(struct pci_dev *dev)
-> > > +void pci_bridge_d3cold_update(struct pci_dev *dev)
-> > >  {
-> > >         bool remove =3D !device_is_registered(&dev->dev);
-> > >         struct pci_dev *bridge;
-> > >         bool d3cold_ok =3D true;
-> > >
-> > >         bridge =3D pci_upstream_bridge(dev);
-> > > -       if (!bridge || !pci_bridge_d3_allowed(bridge))
-> > > +       if (!bridge || !pci_bridge_d3cold_allowed(bridge))
-> > >                 return;
-> > >
-> > >         /*
-> > > -        * If D3 is currently allowed for the bridge, removing one of=
- its
-> > > +        * If D3Cold is currently allowed for the bridge, removing on=
-e of its
-> > >          * children won't change that.
-> > >          */
-> > > -       if (remove && bridge->bridge_d3_allowed)
-> > > +       if (remove && bridge->bridge_d3cold_allowed)
-> > >                 return;
-> > >
-> > >         /*
-> > > -        * If D3 is currently allowed for the bridge and a child is a=
-dded or
-> > > -        * changed, disallowance of D3 can only be caused by that chi=
-ld, so
-> > > +        * If D3Cold is currently allowed for the bridge and a child =
-is added or
-> > > +        * changed, disallowance of D3Cold can only be caused by that=
- child, so
-> > >          * we only need to check that single device, not any of its s=
-iblings.
-> > >          *
-> > > -        * If D3 is currently not allowed for the bridge, checking th=
-e device
-> > > -        * first may allow us to skip checking its siblings.
-> > > +        * If D3Cold is currently not allowed for the bridge, checkin=
-g the
-> > > +        * device first may allow us to skip checking its siblings.
-> > >          */
-> > >         if (!remove)
-> > >                 pci_dev_check_d3cold(dev, &d3cold_ok);
-> > >
-> > >         /*
-> > > -        * If D3 is currently not allowed for the bridge, this may be=
- caused
-> > > +        * If D3Cold is currently not allowed for the bridge, this ma=
-y be caused
-> > >          * either by the device being changed/removed or any of its s=
-iblings,
-> > >          * so we need to go through all children to find out if one o=
-f them
-> > > -        * continues to block D3.
-> > > +        * continues to block D3Cold.
-> > >          */
-> > > -       if (d3cold_ok && !bridge->bridge_d3_allowed)
-> > > +       if (d3cold_ok && !bridge->bridge_d3cold_allowed)
-> > >                 pci_walk_bus(bridge->subordinate, pci_dev_check_d3col=
-d,
-> > >                              &d3cold_ok);
-> > >
-> > > -       if (bridge->bridge_d3_allowed !=3D d3cold_ok) {
-> > > -               bridge->bridge_d3_allowed =3D d3cold_ok;
-> > > +       if (bridge->bridge_d3cold_allowed !=3D d3cold_ok) {
-> > > +               bridge->bridge_d3cold_allowed =3D d3cold_ok;
-> > >                 /* Propagate change to upstream bridges */
-> > > -               pci_bridge_d3_update(bridge);
-> > > +               pci_bridge_d3cold_update(bridge);
-> > >         }
-> > >  }
-> > >
-> > > @@ -3110,7 +3133,7 @@ void pci_d3cold_enable(struct pci_dev *dev)
-> > >  {
-> > >         if (dev->no_d3cold) {
-> > >                 dev->no_d3cold =3D false;
-> > > -               pci_bridge_d3_update(dev);
-> > > +               pci_bridge_d3cold_update(dev);
-> > >         }
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(pci_d3cold_enable);
-> > > @@ -3127,7 +3150,7 @@ void pci_d3cold_disable(struct pci_dev *dev)
-> > >  {
-> > >         if (!dev->no_d3cold) {
-> > >                 dev->no_d3cold =3D true;
-> > > -               pci_bridge_d3_update(dev);
-> > > +               pci_bridge_d3cold_update(dev);
-> > >         }
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(pci_d3cold_disable);
-> > > @@ -3167,7 +3190,8 @@ void pci_pm_init(struct pci_dev *dev)
-> > >         dev->pm_cap =3D pm;
-> > >         dev->d3hot_delay =3D PCI_PM_D3HOT_WAIT;
-> > >         dev->d3cold_delay =3D PCI_PM_D3COLD_WAIT;
-> > > -       dev->bridge_d3_allowed =3D pci_bridge_d3_allowed(dev);
-> > > +       dev->bridge_d3cold_allowed =3D pci_bridge_d3cold_allowed(dev)=
-;
-> > > +       dev->bridge_d3hot_allowed =3D pci_bridge_d3hot_allowed(dev);
-> > >         dev->d3cold_allowed =3D true;
-> > >
-> > >         dev->d1_support =3D false;
-> > > diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> > > index 53ca75639201..f819eab793fc 100644
-> > > --- a/drivers/pci/pci.h
-> > > +++ b/drivers/pci/pci.h
-> > > @@ -92,8 +92,9 @@ void pci_pm_init(struct pci_dev *dev);
-> > >  void pci_ea_init(struct pci_dev *dev);
-> > >  void pci_msi_init(struct pci_dev *dev);
-> > >  void pci_msix_init(struct pci_dev *dev);
-> > > -bool pci_bridge_d3_allowed(struct pci_dev *dev);
-> > > -void pci_bridge_d3_update(struct pci_dev *dev);
-> > > +bool pci_bridge_d3cold_allowed(struct pci_dev *dev);
-> > > +bool pci_bridge_d3hot_allowed(struct pci_dev *dev);
-> > > +void pci_bridge_d3cold_update(struct pci_dev *dev);
-> > >  int pci_bridge_wait_for_secondary_bus(struct pci_dev *dev, char *res=
-et_type);
-> > >
-> > >  static inline void pci_wakeup_event(struct pci_dev *dev)
-> > > @@ -111,9 +112,12 @@ static inline bool pci_power_manageable(struct p=
-ci_dev *pci_dev)
-> > >  {
-> > >         /*
-> > >          * Currently we allow normal PCI devices and PCI bridges tran=
-sition
-> > > -        * into D3 if their bridge_d3 is set.
-> > > +        * into D3 states if both bridge_d3cold_allowed and bridge_d3=
-hot_allowed
-> > > +        * are set.
-> > >          */
-> >
-> > If pm requires both D3hot and D3cold, can we add a flag for DT to
-> > support D3cold? Otherwise during suspend, pcieport still stays at D0.
-> >
->
-> You mean D3hot?
->
-> > [   42.202016] mt7921e 0000:01:00.0: PM: calling
-> > pci_pm_suspend_noirq+0x0/0x300 @ 77, parent: 0000:00:00.0
-> > [   42.231681] mt7921e 0000:01:00.0: PCI PM: Suspend power state: D3hot
->
-> Here I can see that the port entered D3hot
->
-This one is the wifi device connected to the port.
+> Noone requested any changes to v1 so far, so if you can have a look,
+> it would be much appreciated.
 
-> > [   42.238048] mt7921e 0000:01:00.0: PM:
-> > pci_pm_suspend_noirq+0x0/0x300 returned 0 after 26583 usecs
-> > [   42.247083] pcieport 0000:00:00.0: PM: calling
-> > pci_pm_suspend_noirq+0x0/0x300 @ 3196, parent: pci0000:00
-> > [   42.296325] pcieport 0000:00:00.0: PCI PM: Suspend power state: D0
->
-This is the port suspended with D0. If we hack power_manageable to
-only consider D3hot, the state here for pcieport will become D3hot
-(compared in below).
+OK that is totally fine! I'm just prioritizing and postponing stuff
+that I can (WHEN it makes sense pragmatically)  to get back in the=20
+phase ;-)
 
-If it's D0 (and s2idle), in resume it won't restore config:
-https://elixir.bootlin.com/linux/v6.10/source/drivers/pci/pci-driver.c#L959=
-,
-and in resume it would be an issue.
+I take a look at this next week.
 
-Comparison:
-1. pcieport can go to D3:
-(suspend)
-[   61.645809] mt7921e 0000:01:00.0: PM: calling
-pci_pm_suspend_noirq+0x0/0x2f8 @ 1139, parent: 0000:00:00.0
-[   61.675562] mt7921e 0000:01:00.0: PCI PM: Suspend power state: D3hot
-[   61.681931] mt7921e 0000:01:00.0: PM:
-pci_pm_suspend_noirq+0x0/0x2f8 returned 0 after 26502 usecs
-[   61.690959] pcieport 0000:00:00.0: PM: calling
-pci_pm_suspend_noirq+0x0/0x2f8 @ 3248, parent: pci0000:00
-[   61.755359] pcieport 0000:00:00.0: PCI PM: Suspend power state: D3hot
-[   61.761832] pcieport 0000:00:00.0: PM:
-pci_pm_suspend_noirq+0x0/0x2f8 returned 0 after 61345 usecs
+> Thanks,
+> Jan
 
-(resume)
-[   65.243981] pcieport 0000:00:00.0: PM: calling
-pci_pm_resume_noirq+0x0/0x190 @ 3258, parent: pci0000:00
-[   65.253122] mtk-pcie-phy 16930000.phy: CKM_38=3D0x13040500,
-GLB_20=3D0x0, GLB_30=3D0x0, GLB_38=3D0x30453fc, GLB_F4=3D0x1453b000
-[   65.262725] pcieport 0000:00:00.0: PM:
-pci_pm_resume_noirq+0x0/0x190 returned 0 after 175 usecs
-[   65.273159] mtk-pcie-phy 16930000.phy: No calibration info
-[   65.281903] mt7921e 0000:01:00.0: PM: calling
-pci_pm_resume_noirq+0x0/0x190 @ 3259, parent: 0000:00:00.0
-[   65.297108] mt7921e 0000:01:00.0: PM: pci_pm_resume_noirq+0x0/0x190
-returned 0 after 329 usecs
-
-
-2. pcieport stays at D0 due to power_manageable returns false:
-(suspend)
-[   52.435375] mt7921e 0000:01:00.0: PM: calling
-pci_pm_suspend_noirq+0x0/0x300 @ 2040, parent: 0000:00:00.0
-[   52.465235] mt7921e 0000:01:00.0: PCI PM: Suspend power state: D3hot
-[   52.471610] mt7921e 0000:01:00.0: PM:
-pci_pm_suspend_noirq+0x0/0x300 returned 0 after 26602 usecs
-[   52.480674] pcieport 0000:00:00.0: PM: calling
-pci_pm_suspend_noirq+0x0/0x300 @ 143, parent: pci0000:00
-[   52.529876] pcieport 0000:00:00.0: PCI PM: Suspend power state: D0
-                <-- port is still D0
-[   52.536056] pcieport 0000:00:00.0: PCI PM: Skipped
-
-(resume)
-[   56.026298] pcieport 0000:00:00.0: PM: calling
-pci_pm_resume_noirq+0x0/0x190 @ 3243, parent: pci0000:00
-[   56.035379] mtk-pcie-phy 16930000.phy: CKM_38=3D0x13040500,
-GLB_20=3D0x0, GLB_30=3D0x0, GLB_38=3D0x30453fc, GLB_F4=3D0x1453b000
-[   56.044776] pcieport 0000:00:00.0: PM:
-pci_pm_resume_noirq+0x0/0x190 returned 0 after 13 usecs
-[   56.055409] mtk-pcie-phy 16930000.phy: No calibration info
-[   56.064098] mt7921e 0000:01:00.0: PM: calling
-pci_pm_resume_noirq+0x0/0x190 @ 3244, parent: 0000:00:00.0
-[   56.078962] mt7921e 0000:01:00.0: Unable to change power state from
-D3hot to D0, device inaccessible                    <-- resume failed.
-[   56.152363] mt7921e 0000:01:00.0: PM: pci_pm_resume_noirq+0x0/0x190
-returned 0 after 73406 usecs
-
-
-> And resuming with D0.
->
-> Problem with D3Cold is, it is a power off state. If a driver wants a devi=
-ce/port
-> to enter D3Cold, then it needs to know the power supply. Otherwise, techi=
-nically
-> the driver cannot put the device into D3Cold. And there is no power suppl=
-y
-> exposed in DT for most of the rootports/bridges.
->
-
-I think maybe it can be fixed in the power_manageable checking? Since
-suspend flow still considers this state. If this returns false due to
-being unable to D3cold, pcieport still stays at D0 and would cause
-device resume failure.
-
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+BR, Jarkko
 
