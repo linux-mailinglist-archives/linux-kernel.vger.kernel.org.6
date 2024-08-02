@@ -1,76 +1,80 @@
-Return-Path: <linux-kernel+bounces-272001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13229455C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:48:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620969455CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:50:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F0E21C22253
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AFDA1F21D2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7B6C156;
-	Fri,  2 Aug 2024 00:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA84FD520;
+	Fri,  2 Aug 2024 00:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsVlI9wm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9JaZtRR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE26A50;
-	Fri,  2 Aug 2024 00:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394777F6;
+	Fri,  2 Aug 2024 00:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722559719; cv=none; b=NzPs8In+xqwHoC6YRCcxe6BKVHBAqGM5wC2TQ0Odk64W0PumjUcMEHk0KQ5vzlyiPs8wsm/+DFV5p8OZDApBIQ4d+w/NVsltXr3ryygF5BLzRnCzlEvIPzHGizOkY4RsOz5I3raf/jZ9j6Af5mTSdQsW1bW5gq2ryqOXwVJg6zc=
+	t=1722559800; cv=none; b=TNukTq6mnql8HaQ1FCXIcvgQ6ixAafXO8UnZpi3zaCQ0KzIvXwtp++V1FeWZ1L1jFFT9DNK5d4aG41tMbK5+DY0Jl1W2/dZwBWCu0Fmd8K6gDi7TZn0ebnWYatKa+9/BrOu3WWWM+Iv0xsyahip6j0tR4GKdPP3ZXXJaferAiw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722559719; c=relaxed/simple;
-	bh=z2Ypbucmsx8mN9LyhdC7ERjcd1dC+64EKj6aMekxZ5k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=itoZ4Dy8ZNboSEfhhyjo4Agc7V18FdY4UdEBAjBscvowejwAOgBh+MVohVDqA88/7lntd4SV/EAHfZewGiCX8dKcgnBEyAbn/i0MKixzjzhK5F3lLW+IwRgPDqe8UccJ2LEsfDVmded48dpnWysHR2bKeN+VWFILYejgOnFssAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsVlI9wm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FC48C4AF0A;
-	Fri,  2 Aug 2024 00:48:38 +0000 (UTC)
+	s=arc-20240116; t=1722559800; c=relaxed/simple;
+	bh=KDh88CM/3k3OQw1jbFFfcO9VCi4zV1K5bivUVdqboCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RmBifFh7gteLWaABBi1dfgQAKYDCW6qqUqRKrjgSXJwNynKhzLDpddeKlJrgkHKipbumI1PghbvSGPagqf7ZGcjKfQ3pZZS0rmcv9Vnl8HVAcQEhMytjxEkuISct5V9WhD3KtE1nuqOuwHjJ4K7O1VE27tZj+IAa0MnM2g3Pa/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9JaZtRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5B3C32786;
+	Fri,  2 Aug 2024 00:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722559718;
-	bh=z2Ypbucmsx8mN9LyhdC7ERjcd1dC+64EKj6aMekxZ5k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YsVlI9wmdF6LY9NRK+vTXJFhiBVd50AHPFwwVuPYkX8KXP0wx08klAHMoFiT6J2we
-	 fLMGeOTDYp1n81P9qnKHuWvB/nfGiXNgENcnYdJoAw9WxE3XlzNkmTl+VKwCgGPasy
-	 zj5WTKiB4fLoAXUvRyD12H/kYhYauz/bAdc80i3Ye1VWw1lSLOHkUsSjPfb/ldJ2EX
-	 beF4oHtoLyEQi+slz8qz6pfvL6qOStX8rSpGKUlixTcUvGch1rKKMF1W7Vy2kDYQRO
-	 TcCa7dtdTmTwAECw9KmrC85idLIU3q54k1dBal5xDQ3xkZbGYOQfCh5bUCT6ko23Ds
-	 OanBfcH8kux4w==
-Message-ID: <e53fefdf-2141-4a50-95a9-b135597a48f3@kernel.org>
-Date: Fri, 2 Aug 2024 09:48:37 +0900
+	s=k20201202; t=1722559799;
+	bh=KDh88CM/3k3OQw1jbFFfcO9VCi4zV1K5bivUVdqboCE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=d9JaZtRRO3lk8bVi5zXLWSpc1BDSwu+NKx0+zE9Z2mqPHJB8VMVQlSobinCD0A8HR
+	 2zE5db67HuwCICcvwhGhXAsRcnnNGLhoUdlDuIzrHWWrte1TuEPCZuxuP1x5IWXV7R
+	 S0sl2EcX1gJ/ySiy9ZzImSuK6FyJFGO75HtNL8coz+X4UH62VnLOOR5GxELcgC9Z5o
+	 wm/52ULFIGSn2I+h7uLSPt02y+b3yOzfpFfQaBFi/pJyh0G8Z42MsFH8IXdIcG/NOi
+	 tj2p9z05faxiht68yXvW0exSfc60qQudu876ExZKq2qSLlNbkoDmX1TaQiNLa6OIof
+	 ilyH0RUgaeELg==
+Date: Thu, 1 Aug 2024 17:49:58 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: jiri@resnulli.us, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+b668da2bc4cb9670bf58@syzkaller.appspotmail.com
+Subject: Re: [PATCH net] team: fix possible deadlock in
+ team_port_change_check
+Message-ID: <20240801174958.050db514@kernel.org>
+In-Reply-To: <CAO9qdTHJKMzOTRJB_N1VPjh2=Z=qLkpzu8eL5mcAr6hnFfiHXQ@mail.gmail.com>
+References: <20240801111842.50031-1-aha310510@gmail.com>
+	<20240801072842.69b0cc57@kernel.org>
+	<CAO9qdTHJKMzOTRJB_N1VPjh2=Z=qLkpzu8eL5mcAr6hnFfiHXQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] dm: Remove unused declaration dm_get_rq_mapinfo()
-To: Yue Haibing <yuehaibing@huawei.com>, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com
-Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240801133121.3021871-1-yuehaibing@huawei.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20240801133121.3021871-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/1/24 22:31, Yue Haibing wrote:
-> Commit ae6ad75e5c3c ("dm: remove unused dm_get_rq_mapinfo()")
-> removed the implementation but leave declaration.
+On Fri, 2 Aug 2024 07:51:19 +0900 Jeongjun Park wrote:
+> > You didn't even run this thru checkpatch, let alone the fact that its
+> > reimplementing nested locks (or trying to) :(
+> >
+> > Some of the syzbot reports are not fixed because they are either hard
+> > or because there is a long standing disagreement on how to solve them.
+> > Please keep that in mind.  
 > 
-> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+> Okay, but I have a question. Is it true that team devices can also be
+> protected through rtnl? As far as I know, rtnl only protects net_device,
+> so I didn't think about removing the lock for team->lock.
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-
--- 
-Damien Le Moal
-Western Digital Research
-
+Yes, but I think that gets us into the "long standing disagreement"
+territory :) You may be able to find previous attempt to remove
+team->lock in the mailing list archive.
 
