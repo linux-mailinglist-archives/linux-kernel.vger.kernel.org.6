@@ -1,189 +1,223 @@
-Return-Path: <linux-kernel+bounces-271931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-271932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED7B94551E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C5C9945521
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 02:07:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 727702849B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD64B1F23265
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 00:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91FE94A18;
-	Fri,  2 Aug 2024 00:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1416A23BF;
+	Fri,  2 Aug 2024 00:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="KnYaLdmd"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JMExmrcr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC5F15B7
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 00:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAE6360;
+	Fri,  2 Aug 2024 00:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722557160; cv=none; b=LtFR9f692es6R3Hk/LyP8X4MLbKlfSsjlxM8eEtvfiU/OR4MTy3l6YinWAM8YxrtXR+2pnqoXv1nNeZFnHR5Jop7AcoNeQHJ9Jv/5DOqZlyIYjAHt/7Jz7IwO4RnJSCBaE08qH+2RC+kZYzjJi1RuNhgNJ75ys569GBG0J284Ak=
+	t=1722557250; cv=none; b=jWxi5N1klc1x0XetwgtoHF9vru/q+pn3vNVogt0ROmP8L9WgRTfQ6bHvC5Im0guP/e/m9I8MZB3q4JKs+kaePDmXwA7eFw3/jUtBGpb48YwYWRksj5NGDhkVkIcPcK9+Qs2sm5tVTrJnyhes/kP3nRwZZGv7Fuo+NAAmbLjw3CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722557160; c=relaxed/simple;
-	bh=kPg6hNpv0fyQQ4C8xugRnahcyI2M1VfEIoO8Iylc6mw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9X8J5a0OHJUEg1ksyaEMVI7+1b04lUm13FqBzvwjvCi9dADHuj8xdy1fUXsd0XzWHNsgqnvPrRNXeJwYZRSdhstxqWjND4E06jsQhSwGLBfrjunLhSEkKriHYLuS3Fqhl7G/3SrF2U5Wh4YxwWm9QmpFJC44rXP0dkSZxbVT64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=KnYaLdmd; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc6a017abdso51438895ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 01 Aug 2024 17:05:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1722557158; x=1723161958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BtsQ+3NXr7Z0grTXgI4VJ8mpDigb9614hgPF8/mg2ek=;
-        b=KnYaLdmdx2kIS5cRhTBo9gtYC5Cuu9GWeGnR5/z9WkUTP3MTuLgzH26Y+un7cTRsYv
-         yJjicBTWTBNCawOIBZTDcWdv4BWNIc/mkZRKIddb9YMD+TLu1uBop98FeKxls5Qk1yzE
-         TUReUZcKvWJOhfKmskXQMXSij7vO1d0bHmEYOmecSuIOfcEg4fwKVWZOePvrJpHdJV9b
-         QytxvDv0VDbTl82WF/WQ9T9I3wSGFHPXgDV/7/BFZ2kSWDEJCRa/EOtwi/17BOn8IWM/
-         aqSPG/PcPAThwVhNVGLDusX1cBPb/4SrRJQgnEVPAiCBqnFDleu3VtqIr40a2GMAs7/v
-         HK8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722557158; x=1723161958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BtsQ+3NXr7Z0grTXgI4VJ8mpDigb9614hgPF8/mg2ek=;
-        b=hAF9sT+7YFDz0LOVmpZL7jTnZYcIaHnHEHzcYlAXI9w7DtbxMFImKbRZXIPSZ2fjC4
-         ubn1XIxATCArkhUu5pa3AWnJHsKPpNZIv1ASfP8RqobLeRVO6wPglUacPBPreCmW38U4
-         uOEbLqC2v/cmoHq+JDYKI1aC+b8M25MQD0FHMeV2tSrGr2WXQ/+Zjo7iIttsir1A7mwX
-         ClymdlzaWcjrxqj1x7vlRYjlo9xpLLnkjsm7rJe17EauNI7iEqhMCcTyHCbQzdVC73eE
-         YoV3UI7lGfW4nE727HeI6FcBDhGkaYTOcvsmSfo/mXNwXkgv4A6wHat9rQAysyn2ikGb
-         7kyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc5GUA/axwVpqNKUCeJ/2fBLMiVmKHZ82FyT7R+BqYNlx5YIS2DcpXjppL9nu/QfnYwGPhjeB1j3tjJHPYNipwoh+n969i2JybqKtE
-X-Gm-Message-State: AOJu0Yytt/IkX8aVS/kETVc8aLpKg1BWlysG4joWmcKdh0hg5z8h3CBH
-	jfyK4YnaljeKwoTBjJbThB5NAGaRb4Fg9uS9pQKdVfuZdOtfGjxYMX8EzWXJthQ=
-X-Google-Smtp-Source: AGHT+IHAi8u2E0Zyx8AqxUHQRqLu9oFcTolJxIePwk6jnTPCdufSt8G3TT6DihMhy1lfh6fr5NcjNA==
-X-Received: by 2002:a17:902:f686:b0:1fb:6294:2e35 with SMTP id d9443c01a7336-1ff5743b563mr26795165ad.50.1722557158429;
-        Thu, 01 Aug 2024 17:05:58 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-47-239.pa.nsw.optusnet.com.au. [49.181.47.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff592acd2fsm4645375ad.286.2024.08.01.17.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 17:05:57 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1sZfnv-0023B7-1T;
-	Fri, 02 Aug 2024 10:05:55 +1000
-Date: Fri, 2 Aug 2024 10:05:55 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
-	brauner@kernel.org, jack@suse.cz, yi.zhang@huawei.com,
-	chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH 5/6] iomap: drop unnecessary state_lock when setting ifs
- uptodate bits
-Message-ID: <Zqwi48H74g2EX56c@dread.disaster.area>
-References: <20240731091305.2896873-1-yi.zhang@huaweicloud.com>
- <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1722557250; c=relaxed/simple;
+	bh=480Hl3jwn1Ih92fLQP1Sp7/tFQ6zgQh8HN6mC/eWRTc=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=pIMLXZ3PrR/MmzDlitTbjxU3sJbWg2xecEUxurNX143MxP/oZQaXlbyqTYT1SMlJJa7KvdyoMB0feLl8fYqK9aCyKsHjSo6penzpwuFyA1q2oRgVBA5Wk2pTj5FYH0dhpVsNuYprsY+KupyLwqFmNGYZLYHnNLjZJ35+Ut5TtKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JMExmrcr; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1722557249; x=1754093249;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=480Hl3jwn1Ih92fLQP1Sp7/tFQ6zgQh8HN6mC/eWRTc=;
+  b=JMExmrcrsLSUowQLO5mn1rONxTXCdwLDUKhdvSZgcue0Li+XfWersp1R
+   jcKfhOXvAQVZmJGvayZVDZ4Lpq4ey/7QJR75bPuJwlzCqMM+SSSYCQtnn
+   W7ZmDNj9YYB1oOoF9+rH31rhcjLTkXWYxwsLas9zFenesOft6AC8b9iyQ
+   ab74Vv0dh0HYO8/SxUonc21xyNG4a2q2q0TCvcSIqAUEmcHeqLMdcU2Zc
+   HIzfdcibgYVuYM2Zx19UKcFLA1KzSlXAf2Fo3mVBYHRmq/cXbcfL9k7Tk
+   nfwRFTo6B5ZExanLTA2FVWgeyqofVdWwnlzdcd967eYtZzsHlSdV0tQis
+   g==;
+X-CSE-ConnectionGUID: wqJKR5rMRs2nRXCOpkB25Q==
+X-CSE-MsgGUID: PsU3CYCWQEK0puXbsV80jQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="20669305"
+X-IronPort-AV: E=Sophos;i="6.09,256,1716274800"; 
+   d="scan'208";a="20669305"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 17:07:28 -0700
+X-CSE-ConnectionGUID: OovOfOATSByRd96rvGRPAQ==
+X-CSE-MsgGUID: PVB3ueKpRjWU8FTDpSKk7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,256,1716274800"; 
+   d="scan'208";a="55133000"
+Received: from sj-2308-osc3.sj.altera.com ([10.244.138.69])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2024 17:07:27 -0700
+Date: Thu, 1 Aug 2024 17:07:21 -0700 (PDT)
+From: matthew.gerlach@linux.intel.com
+To: Bjorn Helgaas <helgaas@kernel.org>
+cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
+	dinguyen@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"D M, Sharath Kumar" <sharath.kumar.d.m@intel.com>,
+	D@bhelgaas.smtp.subspace.kernel.org,
+	M@bhelgaas.smtp.subspace.kernel.org
+Subject: Re: [PATCH 7/7] pci: controller: pcie-altera: Add support for
+ Agilex
+In-Reply-To: <20240731202338.GA78770@bhelgaas>
+Message-ID: <09d513c-5cc-e110-333-891bf1163331@linux.intel.com>
+References: <20240731202338.GA78770@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731091305.2896873-6-yi.zhang@huaweicloud.com>
-
-On Wed, Jul 31, 2024 at 05:13:04PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> Commit '1cea335d1db1 ("iomap: fix sub-page uptodate handling")' fix a
-> race issue when submitting multiple read bios for a page spans more than
-> one file system block by adding a spinlock(which names state_lock now)
-> to make the page uptodate synchronous. However, the race condition only
-> happened between the read I/O submitting and completeing threads,
-
-when we do writeback on a folio that has multiple blocks on it we
-can submit multiple bios for that, too. Hence the write completions
-can race with each other and write submission, too.
-
-Yes, write bio submission and completion only need to update ifs
-accounting using an atomic operation, but the same race condition
-exists even though the folio is fully locked at the point of bio
-submission.
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
 
-> it's
-> sufficient to use page lock to protect other paths, e.g. buffered write
-                    ^^^^ folio
-> path.
+
+On Wed, 31 Jul 2024, Bjorn Helgaas wrote:
+
+> In subject:
 >
-> After large folio is supported, the spinlock could affect more
-> about the buffered write performance, so drop it could reduce some
-> unnecessary locking overhead.
+>  PCI: altera: Add Agilex support
+>
+> to match style of history.
 
-From the point of view of simple to understand and maintain code, I
-think this is a bad idea. The data structure is currently protected
-by the state lock in all situations, but this change now makes it
-protected by the state lock in one case and the folio lock in a
-different case.
+I will change the subject to match the style of history.
 
-Making this change also misses the elephant in the room: the
-buffered write path still needs the ifs->state_lock to update the
-dirty bitmap. Hence we're effectively changing the serialisation
-mechanism for only one of the two ifs state bitmaps that the
-buffered write path has to update.
+>
+>>  #define TLP_CFG_DW1(pcie, tag, be)	\
+>> -	(((TLP_REQ_ID(pcie->root_bus_nr,  RP_DEVFN)) << 16) | (tag << 8) | (be))
+>> +	(((TLP_REQ_ID((pcie)->root_bus_nr,  RP_DEVFN)) << 16) | ((tag) << 8) | (be))
+>
+> Seems OK, but unrelated to adding Agilex support, so it should be a
+> separate patch.
 
-Indeed, we can't get rid of the ifs->state_lock from the dirty range
-updates because iomap_dirty_folio() can be called without the folio
-being locked through folio_mark_dirty() calling the ->dirty_folio()
-aop.
+Yes, it is unrelated to Agilex and should be in a separate patch.
 
-IOWs, getting rid of the state lock out of the uptodate range
-changes does not actually get rid of it from the buffered IO patch.
-we still have to take it to update the dirty range, and so there's
-an obvious way to optimise the state lock usage without changing any
-of the bitmap access serialisation behaviour. i.e.  We combine the
-uptodate and dirty range updates in __iomap_write_end() into a
-single lock context such as:
+>
+>> +#define AGLX_RP_CFG_ADDR(pcie, reg)	\
+>> +	(((pcie)->hip_base) + (reg))
+>
+> Fits on one line.
 
-iomap_set_range_dirty_uptodate()
-{
-	struct iomap_folio_state *ifs = folio->private;
-	struct inode *inode:
-        unsigned int blks_per_folio;
-        unsigned int first_blk;
-        unsigned int last_blk;
-        unsigned int nr_blks;
-	unsigned long flags;
+One line would be better.
 
-	if (!ifs)
-		return;
+>
+>> +#define AGLX_BDF_REG 0x00002004
+>> +#define AGLX_ROOT_PORT_IRQ_STATUS 0x14c
+>> +#define AGLX_ROOT_PORT_IRQ_ENABLE 0x150
+>> +#define CFG_AER                   BIT(4)
+>
+> Indent values to match #defines above.
+>
+>>  static bool altera_pcie_hide_rc_bar(struct pci_bus *bus, unsigned int  devfn,
+>>  				    int offset)
+>>  {
+>> -	if (pci_is_root_bus(bus) && (devfn == 0) &&
+>> -	    (offset == PCI_BASE_ADDRESS_0))
+>> +	if (pci_is_root_bus(bus) && devfn == 0 && offset == PCI_BASE_ADDRESS_0)
+>>  		return true;
+>
+> OK, but again unrelated to Agilex.
+>
+>> @@ -373,7 +422,7 @@ static int tlp_cfg_dword_write(struct altera_pcie *pcie, u8 bus, u32 devfn,
+>>  	 * Monitor changes to PCI_PRIMARY_BUS register on root port
+>>  	 * and update local copy of root bus number accordingly.
+>>  	 */
+>> -	if ((bus == pcie->root_bus_nr) && (where == PCI_PRIMARY_BUS))
+>> +	if (bus == pcie->root_bus_nr && where == PCI_PRIMARY_BUS)
+>
+> Ditto.
+>
+>> @@ -577,7 +731,7 @@ static void altera_wait_link_retrain(struct altera_pcie *pcie)
+>>  			dev_err(dev, "link retrain timeout\n");
+>>  			break;
+>>  		}
+>> -		udelay(100);
+>> +		usleep_range(50, 150);
+>
+> Where do these values come from?  Needs a comment, ideally with a spec
+> citation.
+>
+> How do we know a 50us delay is enough when we previously waited at
+> least 100us?
 
-	inode = folio->mapping->host;
-	blks_per_folio = i_blocks_per_folio(inode, folio);
-	first_blk = (off >> inode->i_blkbits);
-	last_blk = (off + len - 1) >> inode->i_blkbits;
-	nr_blks = last_blk - first_blk + 1;
+This is an unrelated change to Agilex and possibly wrong. I will remove 
+both instances of the change from this patch.
 
-	spin_lock_irqsave(&ifs->state_lock, flags);
-	bitmap_set(ifs->state, first_blk, nr_blks);
-	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
-	spin_unlock_irqrestore(&ifs->state_lock, flags);
-}
+>
+>> @@ -590,7 +744,7 @@ static void altera_wait_link_retrain(struct altera_pcie *pcie)
+>>  			dev_err(dev, "link up timeout\n");
+>>  			break;
+>>  		}
+>> -		udelay(100);
+>> +		usleep_range(50, 150);
+>
+> Ditto.
+>
+>> +static void aglx_isr(struct irq_desc *desc)
+>> +{
+>> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>> +	struct altera_pcie *pcie;
+>> +	struct device *dev;
+>> +	u32 status;
+>> +	int ret;
+>> +
+>> +	chained_irq_enter(chip, desc);
+>> +	pcie = irq_desc_get_handler_data(desc);
+>> +	dev = &pcie->pdev->dev;
+>>
+>> +	status = readl(pcie->hip_base + pcie->pcie_data->port_conf_offset +
+>> +		       pcie->pcie_data->port_irq_status_offset);
+>> +	if (status & CFG_AER) {
+>> +		ret = generic_handle_domain_irq(pcie->irq_domain, 0);
+>> +		if (ret)
+>> +			dev_err_ratelimited(dev, "unexpected IRQ,\n");
+>
+> Was there supposed to be more data here, e.g., an IRQ %d or something?
+> Or is it just a spurious "," at the end of the line?
 
-This means we calculate the bitmap offsets only once, we take the
-state lock only once, and we don't do anything if there is no
-sub-folio state.
+It is a spurious "," that will be removed.
 
-If we then fix the __iomap_write_begin() code as Willy pointed out
-to elide the erroneous uptodate range update, then we end up only
-taking the state lock once per buffered write instead of 3 times per
-write.
+>
+>>  	pcie->irq_domain = irq_domain_add_linear(node, PCI_NUM_INTX,
+>> -					&intx_domain_ops, pcie);
+>> +						 &intx_domain_ops, pcie);
+>
+> Cleanup that should be in a separate patch.  *This* patch should have
+> the absolute minimum required to enable Agilex to make it easier to
+> review/backport/revert/etc.
 
-This patch only reduces it to twice per buffered write, so doing the
-above should provide even better performance without needing to
-change the underlying serialisation mechanism at all.
+I will ensure this patch has the absolute minimum required to enable 
+Agilex.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>
+>> +static const struct altera_pcie_data altera_pcie_3_0_f_tile_data = {
+>> +	.ops = &altera_pcie_ops_3_0,
+>> +	.version = ALTERA_PCIE_V3,
+>> +	.cap_offset = 0x70,
+>
+> It looks like this is where the PCIe Capability is?  There's no way to
+> discover this offset, e.g., by following the capability list like
+> pci_find_capability() does?
+
+The cap_offset structure member is the offset in the "Hip" memory space 
+where the PCIe Capability starts. The offset is explicitly stated in the 
+relevent documentation for Statix10 and Agilex. One could follow the 
+capability list, but adding a function like __pci_find_next_cap_ttl() 
+seems like a bigger change than having the constants.
+
+Thanks for the review,
+Matthew
+
+> Bjorn
+>
 
