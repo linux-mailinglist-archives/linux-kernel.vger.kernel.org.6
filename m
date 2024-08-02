@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-273111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 477469464A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:51:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBA99464A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:51:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A127B221DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:51:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F59B22354
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 20:51:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055C7139590;
-	Fri,  2 Aug 2024 20:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22AB52F6F;
+	Fri,  2 Aug 2024 20:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WXiTJZE9"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tbEXVM5M"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D53C51339A2
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4AA139584
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 20:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722631815; cv=none; b=n0vwVui1UpKPTwlU6vVunLLLDu2hxPmAJHTpT1LbnsDWBl1irXa6SuroqFpNVEnD2FUwlF+gOTZ6RLNYo6en+GmrLHM0DiT3Ea2LSVzEXTuSzgq3/hI43elMAkJsPTu0VIiGBtpgux2ixnsNR6191NeAWHzp+TwpQLB5sv61Ipk=
+	t=1722631817; cv=none; b=rIv0RYeRt0yWR9RhwT2e2TaKycVPMi9mHtAGh9F3vQzCrfd5Ye68TcbiUy45Ir3e85uVYchab1Z97ngrJAzgykos6WkmHfhIXvsJF9b/eohSTCa3yNTWH5+oa4bcoKxmZQcRm10hSQxyhsw4htJ4L/MAlqPYWcMVFbOG7J1TAco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722631815; c=relaxed/simple;
-	bh=gCqaKijnA/XXSCKJJY3H14sUdvU41wCk5WOtCSYXq78=;
+	s=arc-20240116; t=1722631817; c=relaxed/simple;
+	bh=96WKGVZv6MYMzFgE5HIqk4A3cYSg0BZ1Uq2YbSu01Vc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Bk8xonw4Rn/5G0AaTPWwVJMgH25gFNQ1DZuN048+Irt7zCyfXkPrOtDsHVx9z0zIU+sMOu0Hh9GxVOeyTh17qmOrubExJ071YiR93qxjTG0oaHQG3Q935KtIjdp4lN0mnXnwnQkuzLJ51Flp7LK4kBRvchaIqpz6UVTaOwpIsxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WXiTJZE9; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=slb/ElnhNpIkoovKZy0DB5+UT3RAbbzgAwpys8WJmq06oFO8khpYReSF//exlSBDnOOLdRRJrIafVR4POy8DLA5jQNToRK8J5Rs6Tu62yB51+fJbtcF6GWqKs4HJQHXMBT0n7KeEnY8++T5zk2JcYQR0rHHJ1wNvAT2vXytloaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tbEXVM5M; arc=none smtp.client-ip=209.85.210.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7a2a04c79b6so3519969a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:50:13 -0700 (PDT)
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70d14fc3317so7666990b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 13:50:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722631813; x=1723236613; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1722631815; x=1723236615; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=c5Nq/OFr3yVwVK6otXPmP+p3Am8dAjZp5v9yRhPUjYo=;
-        b=WXiTJZE9B7GKNKQc/dtGTvDxiROqAkt3qJFVuM3EitWEs8TW3mwQbBcQaVQp22ah55
-         XIDH5jZWugny4n9kftF9iUZ8GZYOoGs9I4UH8OuLikx9tukjFZPPRneV/Z9bDd79KfGA
-         7ylVmvulze1fHy1N+xmfaogsNpgIo6pNDR6EzdBY6gdRHo3KJYns63TRA/Riqrb0ziYz
-         WSieyEFvgnXbBDQSKkffmXV7o5Jq3kZUMp23WFqg3O3aAqRRzVNNRnsH96I01q/T7qe/
-         r7IHzNeNvLX8o6BIGNMqDPMG/TZarnjMj/FAxic6cXNCzdRWtiBm2dGEEGyTDkm35qGt
-         cI/Q==
+        bh=9TDEuE7b7M7Fc+GA7/BL6fAQx5gD/oVWr+JWhTN6LC8=;
+        b=tbEXVM5MUJ/l0SizyJmWvJysjPUAHEPogxkJjnLn39aznWnN3dbfn2lwwC145tQrkL
+         EDIu4yyEyGZk/Fm8XUXlqpoiieN1jl05x/u2YxdBWD5VEOVOmstxTET7XvaJhFfyP+KJ
+         nJ0LRJToFlNK8k5Yu2orl1MQ+FATmQLR64uhyo7B2D4Mhci8fy7A1HQI5Mj8+fGq1gAU
+         hk+GBYAQLwrTjb+6O4cs6qkXtbax7a5aF0xZ9uPM8neRSARc/cAm1zskEuEFCyKDTmN9
+         nA69N14E9U2WWp643we01/D0yckIarwS5jCu+Vviza39hfKZeTNl8p1iboVnW9yliKK4
+         Iqqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722631813; x=1723236613;
+        d=1e100.net; s=20230601; t=1722631815; x=1723236615;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=c5Nq/OFr3yVwVK6otXPmP+p3Am8dAjZp5v9yRhPUjYo=;
-        b=Mz54V4rSGuqdJHASkG6w1KtVeuxMmSqeVuLxiTMBESFcBHaQaEqr+VI4M+pHXbPNjw
-         SMvdxhQQSzmA3rxkHrlU+bS0KmKi/bVzhFn5sQ0/J0xfVx/RfdPZrC+WQ3SuJFoWcPiN
-         8N9sgHRktEABLWq2DhPhm3mVUixo17H+y49r7437x0aiB2by7fp0EZGgPLm5aFGGSEHa
-         9EH9+z+10udTHrJ8kU7GeTEnFZgH0S0IEGgmfcgkhI5F411QJCTOcvSKfaLkjm7Cj2Su
-         goYtwYvmrVOV5J8OC6YxM6YWJVEYOVZKAo3MP3JgtHjiqUZM9WpeCaNNi+0AIdxxpS9V
-         EPiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1CW+0uIa6INSQ2e/G6nTCk+jUBm6b/VdKlehNaJus12CT7CbVpdjnNzmh9HcstgRHUykIIEv34z1fcUn2pcr15olySPJ+ZsFnAmPp
-X-Gm-Message-State: AOJu0Yzg6i6r6MBNsBgA+TwnwAethHc5krTPLwIq9ET6HsszOnJtzhR6
-	EcFAzuWJSgmKY9RK9zgA6O0+aEya1LxRBG22RnKJGeI01SE+Ot19rzQ77NWn1vpOyeHPYXIkcu5
-	Meg==
-X-Google-Smtp-Source: AGHT+IFCCb4cjN7vw4l+DdM80k46FcB95ke4PJ/4aZuNN0SLLSK30zfFovXw2fZA2crCh5pBwalD0Ra5Fa8=
+        bh=9TDEuE7b7M7Fc+GA7/BL6fAQx5gD/oVWr+JWhTN6LC8=;
+        b=VYubO9RpiDmu5olmhGe/Q4sm51pqJlYnT5b3GfFiv+ofQRMhTXJiEEUFmCoVglXYjQ
+         MmAhVy9yvivT/iqpbcfCAU+udQIRrVcuj0RTsL08FRFZ8Wi7ja+uYczyFd3fSWU2gF0b
+         4TYIg6aKR6Qjq3l2GahuCklczvV/FIyxPgUhrIFXd4B1YqfNoj+kniaTl/YKkvk9IUSN
+         UsnKj8t64KPpisfmIusM3hIFk1EE4p912UlZw5lnC6pcf+lWTKzupUgX21MNT186pwf9
+         sLP/pCnDsD7z9IoBwOT560yMtQAagvT41+7tPp1/X9sdNY5XUvEJflxp9OS261KEuWfN
+         296Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQOsygRVhD1Lw8j6XRbHm9HsITNeZgyLkCrX61BER8CSIYDCDRq4i3t35QAwYAkOrpyOoXxNibggxSR36tQuDbfP0aEiKvQY3YYJol
+X-Gm-Message-State: AOJu0YyDARqGwyBWR7y39vnoSoy4ewSqsWU5ao5i8ITwQiVmbMT+MhSW
+	guv5RS2cYX2i+NbvkCExx+QLzJC/zkZr49KdaQAkeOic2XDB/dqvBPwcMFPEg0Rex9CSfQ2zl0I
+	csg==
+X-Google-Smtp-Source: AGHT+IGmstI5tuapD/d9fVDrQq8mrfrk57GkjBrOBNxVboWhlaf2L+9JkUsv0iGblKu/0wbgzPE1ESYXn7U=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90a:a617:b0:2c5:2b19:4218 with SMTP id
- 98e67ed59e1d1-2cffa2728a2mr37588a91.3.1722631813176; Fri, 02 Aug 2024
- 13:50:13 -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:914c:b0:710:4d3a:6bc9 with SMTP id
+ d2e1a72fcca58-7106d04604dmr86509b3a.3.1722631815035; Fri, 02 Aug 2024
+ 13:50:15 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Fri,  2 Aug 2024 13:50:01 -0700
+Date: Fri,  2 Aug 2024 13:50:02 -0700
 In-Reply-To: <20240802205003.353672-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,84 +75,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240802205003.353672-1-seanjc@google.com>
 X-Mailer: git-send-email 2.46.0.rc2.264.g509ed76dc8-goog
-Message-ID: <20240802205003.353672-5-seanjc@google.com>
-Subject: [PATCH 4/6] KVM: x86: Drop double-underscores from __kvm_set_memory_region()
+Message-ID: <20240802205003.353672-6-seanjc@google.com>
+Subject: [PATCH 5/6] KVM: Disallow all flags for KVM-internal memslots
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Now that there's no outer wrapper for __kvm_set_memory_region() and it's
-static, drop its double-underscore prefix.
-
-No functional change intended.
+Disallow all flags for KVM-internal memslots as all existing flags require
+some amount of userspace interaction to have any meaning.  This will allow
+moving the flags checking from __kvm_set_memory_region() to
+kvm_vm_ioctl_set_memory_region() without creating a hole where a KVM bug
+could silently succeed and create a bogus memslot.
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/x86.c       | 2 +-
- include/linux/kvm_host.h | 2 +-
- virt/kvm/kvm_main.c      | 8 ++++----
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ virt/kvm/kvm_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 77949fee13f7..bd365fb8ab6e 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -12895,7 +12895,7 @@ static int kvm_alloc_memslot_metadata(struct kvm *kvm,
- 
- 	/*
- 	 * Clear out the previous array pointers for the KVM_MR_MOVE case.  The
--	 * old arrays will be freed by __kvm_set_memory_region() if installing
-+	 * old arrays will be freed by kvm_set_memory_region() if installing
- 	 * the new memslot is successful.
- 	 */
- 	memset(&slot->arch, 0, sizeof(slot->arch));
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index cefa274c0852..b5c048858fc4 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -1170,7 +1170,7 @@ static inline bool kvm_memslot_iter_is_valid(struct kvm_memslot_iter *iter, gfn_
-  *   -- just change its flags
-  *
-  * Since flags can be changed by some of these operations, the following
-- * differentiation is the best we can do for __kvm_set_memory_region():
-+ * differentiation is the best we can do for kvm_set_memory_region():
-  */
- enum kvm_mr_change {
- 	KVM_MR_CREATE,
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 63b43644ed9f..42ec817d6a7e 100644
+index 42ec817d6a7e..84fcb20e3e1c 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -1973,8 +1973,8 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
- 	return false;
- }
- 
--static int __kvm_set_memory_region(struct kvm *kvm,
--				   const struct kvm_userspace_memory_region2 *mem)
-+static int kvm_set_memory_region(struct kvm *kvm,
-+				 const struct kvm_userspace_memory_region2 *mem)
- {
- 	struct kvm_memory_slot *old, *new;
- 	struct kvm_memslots *slots;
-@@ -2104,7 +2104,7 @@ int kvm_set_internal_memslot(struct kvm *kvm,
+@@ -2104,6 +2104,9 @@ int kvm_set_internal_memslot(struct kvm *kvm,
  	if (WARN_ON_ONCE(mem->slot < KVM_USER_MEM_SLOTS))
  		return -EINVAL;
  
--	return  __kvm_set_memory_region(kvm, mem);
-+	return  kvm_set_memory_region(kvm, mem);
++	if (WARN_ON_ONCE(mem->flags))
++		return -EINVAL;
++
+ 	return  kvm_set_memory_region(kvm, mem);
  }
  EXPORT_SYMBOL_GPL(kvm_set_internal_memslot);
- 
-@@ -2115,7 +2115,7 @@ static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
- 		return -EINVAL;
- 
- 	guard(mutex)(&kvm->slots_lock);
--	return  __kvm_set_memory_region(kvm, mem);
-+	return  kvm_set_memory_region(kvm, mem);
- }
- 
- #ifndef CONFIG_KVM_GENERIC_DIRTYLOG_READ_PROTECT
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
 
