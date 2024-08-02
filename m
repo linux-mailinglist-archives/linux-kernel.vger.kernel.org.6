@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel+bounces-272478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E66945CB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:03:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37B99945CBA
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:03:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B7C7B2140E
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D02282B0D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:03:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1312C1DF66B;
-	Fri,  2 Aug 2024 11:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA5D1DE852;
+	Fri,  2 Aug 2024 11:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="U7PJajqC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Qlto+zct"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A7E14A4E0;
-	Fri,  2 Aug 2024 11:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D69B14A4E0
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722596579; cv=none; b=kRWlOqu8jUsA46qkQMUDSghg6kL1ixBzXU952bItCKTxCWXNz6hORI6tI4POg+vNBbqgjQOzNXJ4C6D/d9mcMKQUlNnKyavvzBFTk5Zn5Zu2LZMmds7MKI/9Nz4ByuQzzOWORHBM9qE/UWTfBNEVoLEi4Kob4+9LaegMWU1cnMY=
+	t=1722596586; cv=none; b=hQtvqqPc9phngKJ/SawBtHyjhvAVVDj6FIBDUckTR5FwSATaWSEAZyqJA7suoC7uFtYNn36kDS803hwJ1zmiSeFYbeNZl1waxVdBb2FALmhlA3LmBTlb3erDhn6+jVSk1b7kADfrkbWtLio86GwNgnDLVaa8lO1RQM/n6ssWm+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722596579; c=relaxed/simple;
-	bh=CMYOm/3+qnwFmb8aGdAmrZXX3x0lbRKjufit5kztRMs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OznwLgc1BgytxivPh61W4ZBJLWIty/N/JONVA24MAqu9ohDKHz92lr9fyboK8NSIR15mFEAFHu1n6ln8MPBHou6/SdjaqreTTpK2QmQ8zrluJDC7DEX/n0D/o3aZk/Q5Kf2jj3mQEFcmhPJbj3kVbPcYF6ZsW8fRScyPfPFusS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=U7PJajqC; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1722596577; x=1754132577;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=CMYOm/3+qnwFmb8aGdAmrZXX3x0lbRKjufit5kztRMs=;
-  b=U7PJajqC0Jqk4Gj3NSOf1RGhsJCtatYvGc8c6HnEt1nfTljUFTDzXIw0
-   pTyAJHdspfHNTyZ5DQhyK+Sdf1ya4t5Jr1GT0f76sWzCBnMWrmWB3OCJO
-   8ZBFOsBId5ay8/DfaS1ZRagwUWrWnNXKC4GZF/SxohqOw76N5ZoRr8SZr
-   sIsj/YuGXBfI+/vy2UmNpcC0G4tPCvK2ktirkU4ov4GSNkkW84utcdxZQ
-   05Tt8nzBJq70C1/JS6jveP+ha/NYVwN8hjOr9eobUaPWwy6jUDNxxxUSg
-   mHYv2Tu49RfnUPk20om9dxXHx/atM9PpaMso+eGRbr+wf49TtClNEeSFZ
-   Q==;
-X-CSE-ConnectionGUID: eC2nCy/oQIWf1s1O2ojTpg==
-X-CSE-MsgGUID: zRHKJkb4TPSJg9SiipqV+Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11151"; a="38070596"
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="38070596"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 04:02:56 -0700
-X-CSE-ConnectionGUID: R2bxbhkZQo2KnJnluuTulw==
-X-CSE-MsgGUID: xYPtSlgKQkihCfgw12rpAw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,257,1716274800"; 
-   d="scan'208";a="56133529"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.94.248.12])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2024 04:02:54 -0700
-Message-ID: <775c414e-03f3-4ae2-80df-9821014e1c32@intel.com>
-Date: Fri, 2 Aug 2024 14:02:48 +0300
+	s=arc-20240116; t=1722596586; c=relaxed/simple;
+	bh=gvZ32kuJnAQHWuEQ5kKTNJZn1SJB/jyL2wR18+EWeR0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tbXT/DASBawj+zn3c4ONH8dJQ2fA4iDOk6aGXXoI5bJWzzRagmGs/E4niJlpvTRFXrY7KEzJus6DfF3T1YoukUb38W819eykjFQlp2gKyufJGczd4qgW4vYHPl8sGr1T2/ndm8DJIevNHmG6warxRbq78G9V6QYZ4N+I36VizGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Qlto+zct; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39b27935379so377195ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 04:03:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1722596583; x=1723201383; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zwUaUssVs29PUTspR4BzI9XA6uViKQGq2HqZKYi3CTc=;
+        b=Qlto+zctyM2d0HF/PH5fQq0GapbLD5YvzK/OVdnUF1VZMJlbtO0geIhHOGvsVmT/0a
+         Si9hlhqDeDKkLkge0XBa6vb06ShwU69CsvSuHiuC1GgX/dDoAALqSPIzlWQ8r4Emgds8
+         +W84yclJ6O13sDgOAB98qg4BHIxdq9Uo1Gq49O49jyyo2Rmrh5ZG+nNwBVGQ8cFz5yUP
+         eKiF2NZKIkl4ZoedFCbhs1P2jl+qDvMKRCvRlRi//l5gsapdcM9ZDpe02w6mjmyoBc/g
+         KP5XNLGVOYVFpDgRO85uQHRQq5yqc+jTl8LckgilwiWCCwUnTsytw44wizTj8XqW9PPh
+         5iCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722596583; x=1723201383;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zwUaUssVs29PUTspR4BzI9XA6uViKQGq2HqZKYi3CTc=;
+        b=EuH3sIIrxirGtP/cuzO1K5EpBzSU5QbRAnizQD7V6SzYBNeK22pgtbi9zucIagBm41
+         JsaCn4PC3JT7NkugH8FN7LRwvLR1TavpZG6D2ARGYfwSUixUY8F6oPSwW1zrG5Rr1Rbc
+         XSlBePg5/MMmELOQTmN+NXJh3bNJunAFLtvCs8klmE6l7IhAi8gLkletkmvq/bhHxSZC
+         VBZeFW4b3f4UFVvt5qmM1ItDN2TE1cMbvOL21KirG09LytJkpowhDO5GNsb/bNq6pBV3
+         6RDFwRyK4sTcJ3GP6jZIyM2vWvPSlpxYHAxxYyg5rXBn6KgcSoQ43r6ynRnCqufg5/jw
+         EQDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUYA23ZQACQUrvbwyyfMsKEa7p9ZOWGvrgv9IeF/VhE0Ll+qUr8IFGTvvvqFCjIPchTPuM8r9s7B5WHoUBIBTTMWOG8jPEj4JC9z5J
+X-Gm-Message-State: AOJu0YzlOG1/6jUTymxB4Te5HSkUBI63imzKhrDONBefAznCsqae1EaR
+	Mz9esQlfirwdMnDOuPyD45n12/MwgiNCeuXlf+ADzSOvnzPflrFtUwpo7c/jbJn7Bn5FXp09Zrg
+	NqWk0c9hM2H5fA9Of3TBk2/S5OS3r68dbc+m4jw==
+X-Google-Smtp-Source: AGHT+IH43E7Mfc6q5x718I3ZcYVbr40JWGwdK4O48RfeKEf97bzGFtbKMl5FOuQjZpif1eAkLPoTxnfBQkNOJQTgESk=
+X-Received: by 2002:a92:6b08:0:b0:375:dc39:cfd2 with SMTP id
+ e9e14a558f8ab-39b1fb92548mr37783595ab.11.1722596580822; Fri, 02 Aug 2024
+ 04:03:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/9] uprobes: misc cleanups/simplifications
-To: Peter Zijlstra <peterz@infradead.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, andrii@kernel.org, mhiramat@kernel.org,
- jolsa@kernel.org, rostedt@goodmis.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, bpf <bpf@vger.kernel.org>
-References: <20240801132638.GA8759@redhat.com>
- <20240801133617.GA39708@noisy.programming.kicks-ass.net>
- <CAEf4BzY-gNWHhjnSh3myb0sStjm0Qjsu6nhFtXEULLvo_E=i5w@mail.gmail.com>
- <CAEf4BzY9diEi2_tHsLxB4Yk-ZAWHT=XJNmagjQtOXc7qShqgrA@mail.gmail.com>
- <20240802092528.GF39708@noisy.programming.kicks-ass.net>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240802092528.GF39708@noisy.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240802075741.316968-1-vincent.chen@sifive.com>
+In-Reply-To: <20240802075741.316968-1-vincent.chen@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 2 Aug 2024 16:32:48 +0530
+Message-ID: <CAAhSdy3yx=mm3M6U_Q+_WdMs12SGCypPgNkBAVc9Kwn9jgev6g@mail.gmail.com>
+Subject: Re: [PATCH] irqchip: let the probe of APLIC be earlier than IMSIC
+To: Vincent Chen <vincent.chen@sifive.com>
+Cc: tglx@linutronix.de, paul.walmsley@sifive.com, palmer@dabbelt.com, 
+	aou@eecs.berkeley.edu, linux-kernel@vger.kernel.org, 
+	linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/08/24 12:25, Peter Zijlstra wrote:
-> On Thu, Aug 01, 2024 at 02:13:41PM -0700, Andrii Nakryiko wrote:
-> 
->> Ok, this bisected to:
->>
->> 675ad74989c2 ("perf/core: Add aux_pause, aux_resume, aux_start_paused")
-> 
-> Adrian, there are at least two obvious bugs there:
-> 
->  - aux_action was key's off of PERF_PMU_CAP_AUX_OUTPUT, which is not
->    right, that's the capability where events can output to AUX -- aka.
->    PEBS-to-PT. It should be PERF_PMU_CAP_ITRACE, which is the
->    PT/CoreSight thing.
-> 
->  - it sets aux_paused unconditionally, which is scribbling in the giant
->    union which is overwriting state set by perf_init_event().
-> 
-> But I think there's more problems, we need to do the aux_action
-> validation after perf_get_aux_event(), we can't know if having those
-> bits set makes sense before that. This means the perf_event_alloc() site
-> is wrong in the first place.
-> 
-> I'm going to drop these patches for now. Please rework.
+On Fri, Aug 2, 2024 at 1:27=E2=80=AFPM Vincent Chen <vincent.chen@sifive.co=
+m> wrote:
+>
+> When the debug message of driver/base/dd.c is enabled, the following
+> error messages are present in the boot log:
+>
+> [    0.207941] platform d000000.aplic: error -EPROBE_DEFER: supplier
+> 28000000.imsics not ready
+> [    0.208115] platform d000000.aplic: Added to deferred list
 
-Yes I will do that.
+We are relying on fw_devlink implemented by Linux DD core to do the
+probe ordering. The above prober defer message implies that the
+Linux DD core is doing its job correctly.
 
-FWIW, I'd expect the reported issue would go away with just:
+>
+> The reason for this error message is that the probe of APLIC is executed
+> earlier than IMSIC. This error also causes all the platform devices
+> connected to the APLIC to be added to the deferred list. Because both
+> APLIC and IMSIC are registered by device_initcall, this patch adjusts the
+> compile order of APLIC and IMSIC to ensure that the probe of IMSIC is
+> executed earlier than the probe of APLIC.
+>
+> Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+> ---
+>  drivers/irqchip/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index 15635812b2d6..3c09666569d6 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -96,9 +96,9 @@ obj-$(CONFIG_QCOM_MPM)                        +=3D irq-=
+qcom-mpm.o
+>  obj-$(CONFIG_CSKY_MPINTC)              +=3D irq-csky-mpintc.o
+>  obj-$(CONFIG_CSKY_APB_INTC)            +=3D irq-csky-apb-intc.o
+>  obj-$(CONFIG_RISCV_INTC)               +=3D irq-riscv-intc.o
+> +obj-$(CONFIG_RISCV_IMSIC)              +=3D irq-riscv-imsic-state.o irq-=
+riscv-imsic-early.o irq-riscv-imsic-platform.o
+>  obj-$(CONFIG_RISCV_APLIC)              +=3D irq-riscv-aplic-main.o irq-r=
+iscv-aplic-direct.o
+>  obj-$(CONFIG_RISCV_APLIC_MSI)          +=3D irq-riscv-aplic-msi.o
+> -obj-$(CONFIG_RISCV_IMSIC)              +=3D irq-riscv-imsic-state.o irq-=
+riscv-imsic-early.o irq-riscv-imsic-platform.o
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e4cb6e5a5f40..2072aaa4d449 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -12151,7 +12151,8 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
- 		err = -EOPNOTSUPP;
- 		goto err_pmu;
- 	}
--	event->hw.aux_paused = event->attr.aux_start_paused;
-+	if (event->attr.aux_start_paused)
-+		event->hw.aux_paused = 1;
- 
- 	if (cgroup_fd != -1) {
- 		err = perf_cgroup_connect(cgroup_fd, event, attr, group_leader);
+First of all there is no issue here.
 
+Secondly, changing compilation order in Makefile to influence
+the probe order will not help in any way.
+
+>  obj-$(CONFIG_SIFIVE_PLIC)              +=3D irq-sifive-plic.o
+>  obj-$(CONFIG_STARFIVE_JH8100_INTC)     +=3D irq-starfive-jh8100-intc.o
+>  obj-$(CONFIG_IMX_IRQSTEER)             +=3D irq-imx-irqsteer.o
+> --
+> 2.34.1
+>
+
+Regards,
+Anup
 
