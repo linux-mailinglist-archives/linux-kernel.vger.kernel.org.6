@@ -1,136 +1,254 @@
-Return-Path: <linux-kernel+bounces-272230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808AD9458E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:32:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCCF9458E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27071C22468
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:32:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4CB9B2362D
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCFD45020;
-	Fri,  2 Aug 2024 07:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05F715B117;
+	Fri,  2 Aug 2024 07:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jGwkuvQU"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GxRt3tVE"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A3B41760
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 07:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B514D8BD;
+	Fri,  2 Aug 2024 07:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722583971; cv=none; b=jIzm5AsakGflmMpmm75XtDcyofw0evtnpodQHGvh4GwGHUD6sAGrdVxpvhaEi5nya9Bj/0BjKhYBzdttq6p1MwSdpFXavWmAqLD3IyRuSKqr3ZuY/2q3TNYyNv3U89YtKOWppc+mPVDCdDXtRQxXtpAh/TbS6iQd7wBHXZquP6E=
+	t=1722584080; cv=none; b=uK8kAliTyxEub//RZ7hGRIxhZIQnv4Ky9PI7B4iirIf0kWOJ0MaDvB2Jmp6CC6VZvGTHREXkOPHUia0/BWf582OMHWCFnsX13cqzmRNzOAaEgfm0WskbKQ+XoIxxrODmzf1tnKjm3orl7+b+z3boPCUJRHeebiiOX5YaxBpvPW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722583971; c=relaxed/simple;
-	bh=qY001KW9vXR2I1GkO67ihOY90Z/kRWVhfwWlQJQ7Woo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Uz18I2qlMtGP0CykgtZ4/BsPde4Bs4ytkPwitWiNh9OUWLGzgEee2SawZXrc9a23WA9E4SbKdrSyUekt+uYQ4kg7pU94hfpUY+6vT2IGkIjLtL6K8eMBhkPvO/KhzacXxRD+7iP6QrvTmYjaqPwZVsfQckwgyCRW5LVwpnkESkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jGwkuvQU; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-368584f9e36so3851133f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 00:32:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1722583968; x=1723188768; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WQnIf0ueFkYF1XhpqiJ9sQBTc6MnrP0aayXu2YYdYWs=;
-        b=jGwkuvQUIzYuc1QuFgCkxjQ9WZn8stY3OmFYo2fnzG1rYZcXDW5l6WgGqCMpRuwSqf
-         n2kDoBbGBZ2qoTV4IR2r5KgaO1D6tvG45Q+hDGoUTOSrpxhyWWg6dkvgNw9Tvqok9L7o
-         ETTmb38lOuB4MD2s9zeB8HCA4jQ+9fXRZsy9fjgV2xC4xoW6KZfJhpljLeo7GRQ8hSvs
-         eCpWZr+08/Tl4NGgEvEQ+bAaFsMMdEAqy7Z3LipgAy3cHcWFr/cx5IGHhWBOU9HmuXOb
-         V9lHMVvNIsljrBoo0fg96EhFplt+blQazXy6oRc0VWf81YqiauTiERoWwQgctyGgmn11
-         TvqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722583968; x=1723188768;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WQnIf0ueFkYF1XhpqiJ9sQBTc6MnrP0aayXu2YYdYWs=;
-        b=XWhiIzwesw3BwNkYZxsHCC9ArPiqhab/G7DK0vs1N08hBvO/0+tBUIJEnsG1ckhB0U
-         Yx7Dibu5qxFZ393U1ghGbu8QjCq8jMwrLCJ7jR8RYjG3mBIk3Kcdd4068EqteWLa299r
-         X5Ve9hrXT0qjNl4Z57lHNSYQKjL0CfyTc/a1Z2TvF+6sHXOgPwqywHAdVBLvLJlOt/c1
-         E/L+5fJ+2DG6uaaQg+K60jDbuS7DUPIotAPCpm0aS8BRt5NIYI7pzfMa6n20fYtWCmXE
-         S1eEYlONDHvkdLhy7a/su1ABfCsBqPkS7aV2Ylp0DSiqGScbYQAqHnXQ6LBdnLHXR1aG
-         wACg==
-X-Forwarded-Encrypted: i=1; AJvYcCXirky6KaaCIVu7cGFwn0cDv1ajFveJDA9r0Rt+PZsW43zIcZQPBzpySjg2rEWnalEZtBMWbo4qAkuI4rNHRi1qqfqZrtHrcmTiR44m
-X-Gm-Message-State: AOJu0YxAVtQDfxsDCQFWSgys0hcbwrpPCHMZGOl8JKxO7bFl1whC2DV2
-	DxqRDaCj5JRlW8c4BwyArgSHJtRGGEz2goIZkXk0IIJchVTD6FEjqVi8ropGCwEkft3mpelZSgK
-	rFaqbrIghDezWMkkUzVSKk6KHA50RZvw6IoOG
-X-Google-Smtp-Source: AGHT+IE+7pgvDLTDQLIF46tLw/dZy4324VcvctZdCzjB81g57GdEwK+6Bpx7ukgJy1JFDgrhal60MeO6nhwqSsFQ42Y=
-X-Received: by 2002:adf:f283:0:b0:368:584f:9e08 with SMTP id
- ffacd0b85a97d-36bbc0cc53cmr1654013f8f.22.1722583968125; Fri, 02 Aug 2024
- 00:32:48 -0700 (PDT)
+	s=arc-20240116; t=1722584080; c=relaxed/simple;
+	bh=Y7oUZFzs9JdiSCi+7GgFen9Y7E+A3M4dKqm1FlJXs5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TikC0f2a09/iw8TNROpm02/kIGwRw09L8MWUNiQ4hiy8CsRVTKMDSLsgyzOHRSvrLiI9w9d+jhxH48xLUcN3af2hUzTZe4hGyI0wjZUMKW9tIeJEFWZAFnuSKFcK85I5NehB9tQEmdY4OT8qCUWaw3Xur7TtKiye7jgXefT2wm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GxRt3tVE; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4727JmT4023838;
+	Fri, 2 Aug 2024 07:34:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=/gT1HipQeU5sVnl5LRkK8oayYcA
+	U5Hy2f855m8tVuWE=; b=GxRt3tVEOLkkqoBT2A9GRCfgPCQzmwren5esbT8GDun
+	X2PyZFU8ux8kZSDzx5pxjXovxrx6MkcColJVwHDmGVe4Qm0zp1mezxRzOpqiMAKB
+	zs1I9QKXmJdmnUONQ8DLpVd52XlU66LR24jjg3rhxDMfilyQaLse/E7SCTpuwKuX
+	F2lMH0eSyj6lTD7E2Fr+PCACcJvwaZhZ9LVwh6OLy2H7XpDstiKMYP3VaLsIcixY
+	L5+EbGMudCTLF3d1x5PHPpujMznI4E2eZ3l+abNR3VsiGRHjSagssm/zCAIcY2k3
+	GSYsG6ONhNdaRKX8OmtFxqLpWWM1GesBw75T4OB32Cg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rp8vghmt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 07:34:11 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4727YBie017758;
+	Fri, 2 Aug 2024 07:34:11 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40rp8vghmr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 07:34:11 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4723FXZ8018863;
+	Fri, 2 Aug 2024 07:34:10 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40nc7q634k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 02 Aug 2024 07:34:10 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4727Y6VC21693058
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 2 Aug 2024 07:34:08 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6CE0B20067;
+	Fri,  2 Aug 2024 07:34:06 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 99AEF2005A;
+	Fri,  2 Aug 2024 07:34:04 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.195.46.217])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  2 Aug 2024 07:34:04 +0000 (GMT)
+Date: Fri, 2 Aug 2024 13:04:02 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jack@suse.cz, ritesh.list@gmail.com, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com, yangerkun@huawei.com,
+        Baokun Li <libaokun1@huawei.com>
+Subject: Re: [PATCH 10/20] ext4: get rid of ppath in
+ ext4_ext_create_new_leaf()
+Message-ID: <ZqyL6rmtwl6N4MWR@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240710040654.1714672-1-libaokun@huaweicloud.com>
+ <20240710040654.1714672-11-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801-vma-v3-1-db6c1c0afda9@google.com> <82e4816c-cada-46f3-bebf-882ae8ded118@proton.me>
-In-Reply-To: <82e4816c-cada-46f3-bebf-882ae8ded118@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 2 Aug 2024 09:32:35 +0200
-Message-ID: <CAH5fLgjrxPCY0txu7OvP4tp2qNBoOd2HX3By_txkF3_4ChYggw@mail.gmail.com>
-Subject: Re: [PATCH v3] rust: mm: add abstractions for mm_struct and vm_area_struct
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Matthew Wilcox <willy@infradead.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240710040654.1714672-11-libaokun@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wKEMLnYKOE5DL0znAtdydpP9edbY7Rdy
+X-Proofpoint-ORIG-GUID: b0B-8raEEwRxqDGsz0eBhM6QQYFGNQz4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-02_04,2024-08-01_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=770 spamscore=0 suspectscore=0 phishscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 priorityscore=1501
+ mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408020047
 
-On Thu, Aug 1, 2024 at 4:02=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
-> wrote:
->
-> On 01.08.24 14:58, Alice Ryhl wrote:
-> > diff --git a/rust/kernel/mm.rs b/rust/kernel/mm.rs
-> > new file mode 100644
-> > index 000000000000..ed2db893fb79
-> > --- /dev/null
-> > +++ b/rust/kernel/mm.rs
-> > @@ -0,0 +1,337 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +// Copyright (C) 2024 Google LLC.
-> > +
-> > +//! Memory management.
-> > +//!
-> > +//! C header: [`include/linux/mm.h`](../../../../include/linux/mm.h)
-> > +
-> > +use crate::{
-> > +    bindings,
-> > +    types::{ARef, AlwaysRefCounted, Opaque},
-> > +};
-> > +
-> > +use core::{
-> > +    ops::Deref,
-> > +    ptr::{self, NonNull},
-> > +};
-> > +
-> > +pub mod virt;
-> > +
-> > +/// A wrapper for the kernel's `struct mm_struct`.
-> > +///
-> > +/// Since `mm_users` may be zero, the associated address space may not=
- exist anymore. You must use
->
-> Can it also be the case that the space never existed to begin with? Then
-> I would write "the associated address space may not exist."
->
-> Also I think it makes more sense to use "You can use [`mmget_not_zero`]
-> to be able to access the address space." instead of the second sentence.
+On Wed, Jul 10, 2024 at 12:06:44PM +0800, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The use of path and ppath is now very confusing, so to make the code more
+> readable, pass path between functions uniformly, and get rid of ppath.
+> 
+> To get rid of the ppath in ext4_ext_create_new_leaf(), the following is
+> done here:
+> 
+>  * Free the extents path when an error is encountered.
+>  * Its caller needs to update ppath if it uses ppath.
+> 
+> No functional changes.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
 
-I took the "may not exist anymore" wording from the C side, so I'm
-going to keep it.
+Hi Baokun,
 
-Alice
+The changes look good to me, feel free to add:
+
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+
+That being said, IIUC i think this patchset also fixes a potential UAF
+bug. Below is a sample trace with dummy values:
+
+ext4_ext_insert_extent
+  path = *ppath = 2000
+  ext4_ext_create_new_leaf(ppath)
+    path = *ppath = 2000
+    ext4_find_extent(path = 2000)
+      if (depth > path[0].p_maxdepth)
+            kfree(path = 2000);
+            path = NULL;
+      path = kcalloc() = 3000
+      ...
+      return path;
+  path = 3000
+  *ppath = 3000;
+  return;
+/* here path is still 2000 *, UAF! */
+eh = path[depth].p_hdr 
+
+I'm not completely sure if we can hit (depth > path[0].p_maxdepth) in the
+above codepath but I think the flow is still a bit fragile. Maybe this
+should be fixed in a separate patch first. What do you think?
+
+Regards,
+ojaswin
+
+ ---
+>  fs/ext4/extents.c | 41 +++++++++++++++++++++--------------------
+>  1 file changed, 21 insertions(+), 20 deletions(-)
+> 
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index 6dfb5d03e197..0d6ce9e74b01 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -1397,13 +1397,12 @@ static int ext4_ext_grow_indepth(handle_t *handle, struct inode *inode,
+>   * finds empty index and adds new leaf.
+>   * if no free index is found, then it requests in-depth growing.
+>   */
+> -static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
+> -           unsigned int mb_flags,
+> -           unsigned int gb_flags,
+> -           struct ext4_ext_path **ppath,
+> -           struct ext4_extent *newext)
+> +static struct ext4_ext_path *
+> +ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
+> +      unsigned int mb_flags, unsigned int gb_flags,
+> +      struct ext4_ext_path *path,
+> +      struct ext4_extent *newext)
+>  {
+> - struct ext4_ext_path *path = *ppath;
+>   struct ext4_ext_path *curp;
+>   int depth, i, err = 0;
+>  
+> @@ -1424,28 +1423,24 @@ static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
+>      * entry: create all needed subtree and add new leaf */
+>     err = ext4_ext_split(handle, inode, mb_flags, path, newext, i);
+>     if (err)
+> -     goto out;
+> +     goto errout;
+>  
+>     /* refill path */
+>     path = ext4_find_extent(inode,
+>             (ext4_lblk_t)le32_to_cpu(newext->ee_block),
+>             path, gb_flags);
+> -   if (IS_ERR(path))
+> -     err = PTR_ERR(path);
+>   } else {
+>     /* tree is full, time to grow in depth */
+>     err = ext4_ext_grow_indepth(handle, inode, mb_flags);
+>     if (err)
+> -     goto out;
+> +     goto errout;
+>  
+>     /* refill path */
+>     path = ext4_find_extent(inode,
+>            (ext4_lblk_t)le32_to_cpu(newext->ee_block),
+>             path, gb_flags);
+> -   if (IS_ERR(path)) {
+> -     err = PTR_ERR(path);
+> -     goto out;
+> -   }
+> +   if (IS_ERR(path))
+> +     return path;
+>  
+>     /*
+>      * only first (depth 0 -> 1) produces free space;
+> @@ -1457,9 +1452,11 @@ static int ext4_ext_create_new_leaf(handle_t *handle, struct inode *inode,
+>       goto repeat;
+>     }
+>   }
+> -out:
+> - *ppath = IS_ERR(path) ? NULL : path;
+> - return err;
+> + return path;
+> +
+> +errout:
+> + ext4_free_ext_path(path);
+> + return ERR_PTR(err);
+>  }
+>  
+>  /*
+> @@ -2112,10 +2109,14 @@ int ext4_ext_insert_extent(handle_t *handle, struct inode *inode,
+>    */
+>   if (gb_flags & EXT4_GET_BLOCKS_METADATA_NOFAIL)
+>     mb_flags |= EXT4_MB_USE_RESERVED;
+> - err = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
+> -              ppath, newext);
+> - if (err)
+> + path = ext4_ext_create_new_leaf(handle, inode, mb_flags, gb_flags,
+> +         path, newext);
+> + if (IS_ERR(path)) {
+> +   *ppath = NULL;
+> +   err = PTR_ERR(path);
+>     goto cleanup;
+> + }
+> + *ppath = path;
+>   depth = ext_depth(inode);
+>   eh = path[depth].p_hdr;
+>  
+> -- 
+> 2.39.2
+> 
 
