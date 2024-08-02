@@ -1,247 +1,156 @@
-Return-Path: <linux-kernel+bounces-272252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C56945946
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:52:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85DE6945949
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 09:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3F26281ED2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A896B1C21981
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 07:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1B0F1C37A5;
-	Fri,  2 Aug 2024 07:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIZ2Xqyj"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCB31C3784;
-	Fri,  2 Aug 2024 07:51:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E2D01BF328;
+	Fri,  2 Aug 2024 07:53:59 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A813482CA;
+	Fri,  2 Aug 2024 07:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722585095; cv=none; b=NyFsPTnkQ0Ww4BD94BCsOlzQ+yAmMhiGPgWuUO7n56In5s8VzjOCgZPyElIZuwh5aLllVTdEApBW3MI6S8Us+8+50iuEjY8xFJ4iIPiciuOtOvPljPj76/B/6/7/3M6nWH1VxY2t5bBl2z0BpVj7koC6fK/5GKRySFJ4RNq1kn8=
+	t=1722585238; cv=none; b=fik3RDQ+ZhNAVPVJdhHNM8zB+ZWbJ8rRCr+ZJlallAc3zJguJdDd0Nkb0AlfvvMKAzLSq46RUHG1A8oqf5Odi8w/ofESuUXafRlhctrw5mv43UGvnx7MG3mNT639zluD9csbcMwxnOYlTODjZwyWMZHaf2iVAwjFUiF2QJ+5NXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722585095; c=relaxed/simple;
-	bh=fes4+PALn4aJD0RUIggf2YkD7O8aHh0ck1WvSCbST4Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mSGaXiYIOCS8w1tGPQ4bJ7WTc0EN7rFwajjOupQ9nzCsrB0IG5ZxHDbTg301H3yOpujQS6VfVNbQbXfBX8vVDcJqS+Wap7YtdYc/PpxkvUR5x4xYjdVYgYc71Z/rf6Xs2C1ckWhKQu+tXNbePMHSlbra2XMsAzjDjXDeQ6Sg3dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HIZ2Xqyj; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52fc4388a64so13002528e87.1;
-        Fri, 02 Aug 2024 00:51:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722585091; x=1723189891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lHiD9v1JsXXcE41UkTPqhgsLCw9iYgVEo+i0Dc9T+lk=;
-        b=HIZ2XqyjBcrLbc3nMyw1EC1Tw5HxCaJzM8M4wKpyE/nFWZ6/70UDRog+90VYyRV0fS
-         MBlsdzk+Ebo9af+5ElX6TbdHmecK34Zm7BxYhkShyJIe8Sdyfcs/6apgXoOBTKifrOL9
-         1Sdp3quPw6DXVu+hzWuCikO6azgjRE0n/tsV/glbCQYTBL4Uh+NUYMYgXg4IH7yQCYKZ
-         Ba3hSEWHNHYk28GFoCqaKE5BuNmexjiQHEMce7GWFK4UFqyE4TeXg23KCqIamrm/vQMA
-         /S/aCxsH8KF0ciHtq0wiugbuxAYHv9Ea7jjzp5OTaa6hEyiJ4LN33CzJQDWPwnyLZyAz
-         mKmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722585091; x=1723189891;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHiD9v1JsXXcE41UkTPqhgsLCw9iYgVEo+i0Dc9T+lk=;
-        b=sxQki1E9Tw9oFcqoZl2MvR77lMw8pAnDTJ3AdbhEWW/w/aI2Nh4O/hRAh1rpiLk8XL
-         cXJQulwkJwaP6sOt4dUbFJ8s2xnbwgPACyqtV7cNrjQEyxphERZuxIg4dGIiUuHsAF3/
-         OR5RW5CKnaCp+G8wauy8gp+0y9x4A0ZiSab42RvpFbOrvEZGE6RlFME2241ADxPQsZSB
-         D9o8A9Dz1DzBE82jq9pJc4kYI/Zj7mQN0HAb620Wsvs+XnH5FBcbYzdXsLo5SCAlJUBk
-         ROBPAr/7qc7dGdRiwt6gYoHSiF69yPW91/QgAkCzXJxvTWgaxEBRNWtaEpetjrkvtR0i
-         Ouuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVj7uTfP1h+cwlj2Uip54oCsrWJI67LX0vV3x4ZD8TPW3pFiaNwDglYI1zRkeCWveuUdloQ3G/pY88vOJNpFLbP6mguhim93qfr8qsw56OUhvbbg4I9VbkXUF87gmmfYzgUzmE8050uUAiePl45Gbz+fTZ5SHLbzSwOdgFB7gS/MKP9QB4W
-X-Gm-Message-State: AOJu0YzxrzS+VBenR4cC84ISANeX6wsIe1aIMstw6Y7apsxhi3+ktIvG
-	qgYIDgFMd/0wf9f1sVTIjqDSwJs//+MK1hrvq0QUpUbnxOACKaAB
-X-Google-Smtp-Source: AGHT+IEMxf4N4s3xFraxbRmN9YP31vVSJKb9vVw4lnrxgYP2s4t4P5fTafWSGlWROhVsyRlaGnRdOA==
-X-Received: by 2002:a05:6512:685:b0:52f:c2fa:b213 with SMTP id 2adb3069b0e04-530bb3b1210mr1771229e87.55.1722585091141;
-        Fri, 02 Aug 2024 00:51:31 -0700 (PDT)
-Received: from localhost ([178.176.56.174])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530bba29fd9sm158725e87.122.2024.08.02.00.51.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Aug 2024 00:51:30 -0700 (PDT)
-From: Serge Semin <fancer.lancer@gmail.com>
-To: Viresh Kumar <vireshk@kernel.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>
-Cc: Serge Semin <fancer.lancer@gmail.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	dmaengine@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND v4 6/6] dmaengine: dw: Unify ret-val local variables naming
-Date: Fri,  2 Aug 2024 10:50:51 +0300
-Message-ID: <20240802075100.6475-7-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240802075100.6475-1-fancer.lancer@gmail.com>
-References: <20240802075100.6475-1-fancer.lancer@gmail.com>
+	s=arc-20240116; t=1722585238; c=relaxed/simple;
+	bh=R7eZpuNqrRayCW5KMkFo/pXMqCPlvzzqC5jwDXByyG0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=m4lQuG9D7wydVJN5XC2NZTKt7k+I5PCvn6ZT9G3TyosSFnbsy2x2f6PwbCs5AAUsmY19xUQRCklpOBGd5b+h+oyEkrNB/XVmfWTcMNAeEwVRLYeOqdK/5X/BgH7v6RXjRML9vzjI/caDZu3qpGZd9HCHky8wRHcyd0Li7zOEN38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8Ax2emRkKxmjVwGAA--.22182S3;
+	Fri, 02 Aug 2024 15:53:53 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMCxbuWNkKxmIGcLAA--.55918S3;
+	Fri, 02 Aug 2024 15:53:50 +0800 (CST)
+Subject: Re: [PATCH v12 64/84] KVM: LoongArch: Mark "struct page" pfns dirty
+ only in "slow" page fault path
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao
+ <zhaotianrui@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+ Michael Ellerman <mpe@ellerman.id.au>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, loongarch@lists.linux.dev,
+ linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, David Matlack <dmatlack@google.com>,
+ David Stevens <stevensd@chromium.org>
+References: <20240726235234.228822-1-seanjc@google.com>
+ <20240726235234.228822-65-seanjc@google.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <a039b758-d4e3-3798-806f-25bceb2f33a5@loongson.cn>
+Date: Fri, 2 Aug 2024 15:53:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <20240726235234.228822-65-seanjc@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMCxbuWNkKxmIGcLAA--.55918S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW7WFW8JryfWw13KFy5Xw4kKrX_yoW8ZFWxpF
+	W7CrZrCrWrtrnav39rt3sF9rs0yrs8Kr1xX3W7G34rKF1qqr1Yq3W0grZ7WF1fJ3s3AayS
+	qF1rKa4q9Fs5AwbCm3ZEXasCq-sJn29KB7ZKAUJUUUUt529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPab4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUtVW8ZwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	tVWrXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jw0_GFylx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUShiSDU
+	UUU
 
-Currently there are two names utilized in the driver to keep the functions
-call status: ret and err. For the sake of unification convert to using the
-first version only.
 
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
 
----
+On 2024/7/27 上午7:52, Sean Christopherson wrote:
+> Mark pages/folios dirty only the slow page fault path, i.e. only when
+> mmu_lock is held and the operation is mmu_notifier-protected, as marking a
+> page/folio dirty after it has been written back can make some filesystems
+> unhappy (backing KVM guests will such filesystem files is uncommon, and
+> the race is minuscule, hence the lack of complaints).
+> 
+> See the link below for details.
+> 
+> Link: https://lore.kernel.org/all/cover.1683044162.git.lstoakes@gmail.com
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   arch/loongarch/kvm/mmu.c | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> index 2634a9e8d82c..364dd35e0557 100644
+> --- a/arch/loongarch/kvm/mmu.c
+> +++ b/arch/loongarch/kvm/mmu.c
+> @@ -608,13 +608,13 @@ static int kvm_map_page_fast(struct kvm_vcpu *vcpu, unsigned long gpa, bool writ
+>   		if (kvm_pte_young(changed))
+>   			kvm_set_pfn_accessed(pfn);
+>   
+> -		if (kvm_pte_dirty(changed)) {
+> -			mark_page_dirty(kvm, gfn);
+> -			kvm_set_pfn_dirty(pfn);
+> -		}
+>   		if (page)
+>   			put_page(page);
+>   	}
+> +
+> +	if (kvm_pte_dirty(changed))
+> +		mark_page_dirty(kvm, gfn);
+> +
+>   	return ret;
+>   out:
+>   	spin_unlock(&kvm->mmu_lock);
+> @@ -915,12 +915,14 @@ static int kvm_map_page(struct kvm_vcpu *vcpu, unsigned long gpa, bool write)
+>   	else
+>   		++kvm->stat.pages;
+>   	kvm_set_pte(ptep, new_pte);
+> -	spin_unlock(&kvm->mmu_lock);
+>   
+> -	if (prot_bits & _PAGE_DIRTY) {
+> -		mark_page_dirty_in_slot(kvm, memslot, gfn);
+> +	if (writeable)
+Is it better to use write or (prot_bits & _PAGE_DIRTY) here?  writable 
+is pte permission from function hva_to_pfn_slow(), write is fault action.
 
-Changelog v2:
-- New patch created on v2 review stage. (Andy)
----
- drivers/dma/dw/core.c     | 20 ++++++++++----------
- drivers/dma/dw/platform.c | 20 ++++++++++----------
- 2 files changed, 20 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/dma/dw/core.c b/drivers/dma/dw/core.c
-index c696d79b911a..602f1208ab9b 100644
---- a/drivers/dma/dw/core.c
-+++ b/drivers/dma/dw/core.c
-@@ -1149,7 +1149,7 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 	bool			autocfg = false;
- 	unsigned int		dw_params;
- 	unsigned int		i;
--	int			err;
-+	int			ret;
- 
- 	dw->pdata = devm_kzalloc(chip->dev, sizeof(*dw->pdata), GFP_KERNEL);
- 	if (!dw->pdata)
-@@ -1165,7 +1165,7 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 
- 		autocfg = dw_params >> DW_PARAMS_EN & 1;
- 		if (!autocfg) {
--			err = -EINVAL;
-+			ret = -EINVAL;
- 			goto err_pdata;
- 		}
- 
-@@ -1185,7 +1185,7 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 		pdata->chan_allocation_order = CHAN_ALLOCATION_ASCENDING;
- 		pdata->chan_priority = CHAN_PRIORITY_ASCENDING;
- 	} else if (chip->pdata->nr_channels > DW_DMA_MAX_NR_CHANNELS) {
--		err = -EINVAL;
-+		ret = -EINVAL;
- 		goto err_pdata;
- 	} else {
- 		memcpy(dw->pdata, chip->pdata, sizeof(*dw->pdata));
-@@ -1197,7 +1197,7 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 	dw->chan = devm_kcalloc(chip->dev, pdata->nr_channels, sizeof(*dw->chan),
- 				GFP_KERNEL);
- 	if (!dw->chan) {
--		err = -ENOMEM;
-+		ret = -ENOMEM;
- 		goto err_pdata;
- 	}
- 
-@@ -1215,15 +1215,15 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 					 sizeof(struct dw_desc), 4, 0);
- 	if (!dw->desc_pool) {
- 		dev_err(chip->dev, "No memory for descriptors dma pool\n");
--		err = -ENOMEM;
-+		ret = -ENOMEM;
- 		goto err_pdata;
- 	}
- 
- 	tasklet_setup(&dw->tasklet, dw_dma_tasklet);
- 
--	err = request_irq(chip->irq, dw_dma_interrupt, IRQF_SHARED,
-+	ret = request_irq(chip->irq, dw_dma_interrupt, IRQF_SHARED,
- 			  dw->name, dw);
--	if (err)
-+	if (ret)
- 		goto err_pdata;
- 
- 	INIT_LIST_HEAD(&dw->dma.channels);
-@@ -1335,8 +1335,8 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 	 */
- 	dma_set_max_seg_size(dw->dma.dev, dw->chan[0].block_size);
- 
--	err = dma_async_device_register(&dw->dma);
--	if (err)
-+	ret = dma_async_device_register(&dw->dma);
-+	if (ret)
- 		goto err_dma_register;
- 
- 	dev_info(chip->dev, "DesignWare DMA Controller, %d channels\n",
-@@ -1350,7 +1350,7 @@ int do_dma_probe(struct dw_dma_chip *chip)
- 	free_irq(chip->irq, dw);
- err_pdata:
- 	pm_runtime_put_sync_suspend(chip->dev);
--	return err;
-+	return ret;
- }
- 
- int do_dma_remove(struct dw_dma_chip *chip)
-diff --git a/drivers/dma/dw/platform.c b/drivers/dma/dw/platform.c
-index 7d9d4c951724..47c58ad468cb 100644
---- a/drivers/dma/dw/platform.c
-+++ b/drivers/dma/dw/platform.c
-@@ -29,7 +29,7 @@ static int dw_probe(struct platform_device *pdev)
- 	struct dw_dma_chip_pdata *data;
- 	struct dw_dma_chip *chip;
- 	struct device *dev = &pdev->dev;
--	int err;
-+	int ret;
- 
- 	match = device_get_match_data(dev);
- 	if (!match)
-@@ -51,9 +51,9 @@ static int dw_probe(struct platform_device *pdev)
- 	if (IS_ERR(chip->regs))
- 		return PTR_ERR(chip->regs);
- 
--	err = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
--	if (err)
--		return err;
-+	ret = dma_coerce_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
-+	if (ret)
-+		return ret;
- 
- 	if (!data->pdata)
- 		data->pdata = dev_get_platdata(dev);
-@@ -69,14 +69,14 @@ static int dw_probe(struct platform_device *pdev)
- 	chip->clk = devm_clk_get_optional(chip->dev, "hclk");
- 	if (IS_ERR(chip->clk))
- 		return PTR_ERR(chip->clk);
--	err = clk_prepare_enable(chip->clk);
--	if (err)
--		return err;
-+	ret = clk_prepare_enable(chip->clk);
-+	if (ret)
-+		return ret;
- 
- 	pm_runtime_enable(&pdev->dev);
- 
--	err = data->probe(chip);
--	if (err)
-+	ret = data->probe(chip);
-+	if (ret)
- 		goto err_dw_dma_probe;
- 
- 	platform_set_drvdata(pdev, data);
-@@ -90,7 +90,7 @@ static int dw_probe(struct platform_device *pdev)
- err_dw_dma_probe:
- 	pm_runtime_disable(&pdev->dev);
- 	clk_disable_unprepare(chip->clk);
--	return err;
-+	return ret;
- }
- 
- static void dw_remove(struct platform_device *pdev)
--- 
-2.43.0
+Regards
+Bibo Mao
+>   		kvm_set_pfn_dirty(pfn);
+> -	}
+> +
+> +	spin_unlock(&kvm->mmu_lock);
+> +
+> +	if (prot_bits & _PAGE_DIRTY)
+> +		mark_page_dirty_in_slot(kvm, memslot, gfn);
+>   
+>   	kvm_release_pfn_clean(pfn);
+>   out:
+> 
 
 
