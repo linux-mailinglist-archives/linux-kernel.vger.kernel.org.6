@@ -1,79 +1,112 @@
-Return-Path: <linux-kernel+bounces-272523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304D5945D6D
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E121945D94
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 13:59:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E89D6282BCC
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:53:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1F7C2845A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 11:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F36B1E2868;
-	Fri,  2 Aug 2024 11:53:06 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363651DB44E
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3EF01E2887;
+	Fri,  2 Aug 2024 11:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UCs3qFfW"
+Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E300F1D1F4B;
+	Fri,  2 Aug 2024 11:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722599585; cv=none; b=jJee8CHz9Lwlg72ya+kVMo5UgSgdr+MtghJoW7xP/FG2avW0/g04a40WYx4sW/BcvvqCNTrtzBA1TJODlA3Tj/faKTMG2HlraT0u78HB12kIoVUQxsI5NHNAZLtxn17wdMaC71jIRtXZ5qRYVXSfhG9yJZQEY8J4cA+riBdHgLE=
+	t=1722599981; cv=none; b=CIkgYJsBDV+/G5JAsL5obMw9a0jhmL9K/fdqaaDIy7hdkUj7DgFVjBv/A9ePPoCEeDw0OSt/R+qc6wd/QpzSLFoF8HpPS6wOMaE9rsxT8RvkfRjHwt2tai+L5NazJZjCmMQUmgXDr9kJN9SAaAdC7z3FHvbcZwP0zKL1ZAU2GO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722599585; c=relaxed/simple;
-	bh=VtrIb/aM40OrfdoFkua0eNuGrPU3kuqPoVMYQQrQhaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UkzXvGPvL1q3UeRhGZ/WmjjncZHHO9QyE6Pq4HWOeHUukeY4+x9JUqdNhWdYwkdKqKwhsdiZ8qDuV6w7Q/gR4jcvbnUtVQyO/KW1tLPAH9zmZw86ra6KUGiYJdc3UF6PmCNDEyoNCIHfAHCMVmSrd7GF1FkqizHRWPTw1hh6vr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13EE01007;
-	Fri,  2 Aug 2024 04:53:29 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6F6F3F64C;
-	Fri,  2 Aug 2024 04:53:02 -0700 (PDT)
-Message-ID: <a1a07edf-9ab2-4121-a230-0d06bda3bf3d@arm.com>
-Date: Fri, 2 Aug 2024 12:53:01 +0100
+	s=arc-20240116; t=1722599981; c=relaxed/simple;
+	bh=cmfLiP9sSrSBnm7FdZkGb5nve48YSwb5o/62GizcNRM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=DywyOA+97dzIf7dDaSmdKVbK4g++QaupXWaDsjAuOXOVr+UxdOczuuH6zVWwxhxvMmdBrAOOFc+Rvuq25t5kDgIxfLfO8a+tsm66YpMvhtfrMgOHB25eR2kHFBBwa2QP8WGpEYwwn5eqy7ASlmq186jOvXSlozDKPmZw4gCSmKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UCs3qFfW; arc=none smtp.client-ip=203.205.221.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1722599669; bh=+v/LrVZSanD+laRZx4IcWHZVT5zpt89cEWuBN6TiN8g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=UCs3qFfWTJfhgKzj1qlPcy28cyHDOlT+pBgdrTZdjuNpNkpLAdPwvdSL9suKai4Jp
+	 Op3OA4kfBLJbkDYn7n5BYOKzxwHViEgYq2E5k9lk01UGJEcaXusMhBIzzWLSje6yED
+	 CIUnFotXoCaniGDvxkbzDpG425ZEy3FpvHv3zz7E=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
+	id D9A310C4; Fri, 02 Aug 2024 19:54:26 +0800
+X-QQ-mid: xmsmtpt1722599666tmpjq2red
+Message-ID: <tencent_8F5362E361A97883B8444B1763F777C6DF05@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wiVmMAq+zrkyD3G91jeGqxua/XnuLIqywI+TVZOJsQ5+FFv5rja
+	 7MYYl8ovDhNPfje+dKHfJ7O8viw6hNAttloexDFBa+imd+CahZ3mw4PPradfnxYAHGTNQ1nooI7l
+	 Cz4Qa1OKGgt0u17dYMYJZzG/kaR3iFWF3pj79tpqqcWklMUPU0XMDd6Wd3VfR0VmMBx8KY0ccYsZ
+	 kVw8tL27zSNWtS+PQoNI+Koc5ddgoX5QfZ+GGBuGomOTBxEu8qKWbDlNWJBvvtEGjvDUXIDIJnKl
+	 /L6DhXjFb9kyVz1rSk0Ui4P84bTen9qavxQtmmgjYnRGiTB8Oo7kR16ZHOMkV/P1gx/OH7qFmsZn
+	 qU1Gk2zlVAKA4vI+2NpAZL8/gLqasWGBlmFOYHNOYXz3hczS/vpMC/4w+ceQJV9pDyLuaGzBfZw7
+	 ZHkMCNb7a1EmqbE+aB7itTGpUt1afxV1X7LMXl18BMvqhadINF+LwDaRfNgLLsBCbD7CeioQX/jb
+	 myi6I0HyNIendxZ2INjxetsz4EmXsMAxv4ZRWvyOuav7fws22Aa1PPhVc7ICMly/6mYbrTW777DW
+	 /UN/LwMSji6UKB6Uiz3SNzxJmQTEkkXIePg+T9whB05DaWFg2maTB1TP03qp37pvBIQImQHBt0ND
+	 cGx6dTf/Tel/4bWLE+6YVmXBqb64H4GQzegUMaCIWSb6rIGCJgcGJNMEq2SnVoQCnMLOs88c41AQ
+	 UzSw6+aPcMn8OvQLsWqV43usBUdgECIgOEBON5PY1IPfJLHqnke0MIqCtQSpyKkdKjkXN+y/mPSe
+	 iNqzR1M95HfSzZUkJJ7RlkXpk3ojANEPQhypLw0mcRc5LKqfPdWb8LNV+YGpkstKK4L63n6ikwku
+	 MZlJjrmxFS2Hx1nMxruA6O+dkfOW5MS5s/YTBtMDXIqwwSoLwoW8A18P6N8WGCT4YQ5nFO7au0
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com
+Cc: clm@fb.com,
+	dsterba@suse.com,
+	fdmanana@suse.com,
+	hreitz@redhat.com,
+	josef@toxicpanda.com,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH] btrfs: Add missing skip-lock for locks
+Date: Fri,  2 Aug 2024 19:54:27 +0800
+X-OQ-MSGID: <20240802115426.1122610-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000dfd631061eaeb4bc@google.com>
+References: <000000000000dfd631061eaeb4bc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dma-mapping: don't return errors from
- dma_set_seg_boundary
-To: Christoph Hellwig <hch@lst.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240723000604.241443-1-hch@lst.de>
- <CGME20240723000611eucas1p10986fd51e848a1ee948e71608c26192b@eucas1p1.samsung.com>
- <20240723000604.241443-3-hch@lst.de>
- <5895603b-945f-4b05-991c-76b590094354@samsung.com>
- <d54f486d-36ae-4668-b314-27137bc4d832@arm.com> <20240801133353.GA1846@lst.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20240801133353.GA1846@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 01/08/2024 2:33 pm, Christoph Hellwig wrote:
-> On Thu, Aug 01, 2024 at 01:36:01PM +0100, Robin Murphy wrote:
->> I guess I assumed that the old block layer bodges in this area had been
->> cleaned up already - perhaps it *is* high time for whatever's left to grow
->> a proper understanding of whether a block device actually does its own DMA
->> or not.
-> 
-> Can you point to a discussion on that?  The concepts here don't make
-> quite sense to me.
+The commit 939b656bc8ab missing a skip-lock in btrfs_sync_file,
+it cause syzbot report WARNING: bad unlock balance in btrfs_direct_write.
 
-No specific discussion, I just have a vague memory of hacks in the USB 
-layer when I first started looking at this stuff 10 years ago... From a 
-bit of digging to try to remind myself, I'm fairly sure that must have 
-been the block bounce related stuff, which you cleaned up in 
-6eb0233ec2d0 ("usb: don't inherity DMA properties for USB devices") a 
-while back.
+Fixes: 939b656bc8ab ("btrfs: fix corruption after buffer fault in during direct IO append write")
+Reported-and-tested-by: syzbot+7dbbb74af6291b5a5a8b@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7dbbb74af6291b5a5a8b
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ fs/btrfs/file.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Cheers,
-Robin.
+diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
+index 9f10a9f23fcc..9914419f3b7d 100644
+--- a/fs/btrfs/file.c
++++ b/fs/btrfs/file.c
+@@ -1868,7 +1868,10 @@ int btrfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
+ 
+ out_release_extents:
+ 	btrfs_release_log_ctx_extents(&ctx);
+-	btrfs_inode_unlock(inode, BTRFS_ILOCK_MMAP);
++	if (skip_ilock)
++		up_write(&inode->i_mmap_lock);
++	else
++		btrfs_inode_unlock(inode, BTRFS_ILOCK_MMAP);
+ 	goto out;
+ }
+ 
+-- 
+2.43.0
+
 
