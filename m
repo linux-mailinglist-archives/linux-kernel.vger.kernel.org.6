@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-272955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-272957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 690B69462BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:50:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D26D9462C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 19:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925821C21499
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:50:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D52571F22265
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 17:58:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A9F15C12D;
-	Fri,  2 Aug 2024 17:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0F415C12E;
+	Fri,  2 Aug 2024 17:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TpbNzMkY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJWRGauX"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454031AE029;
-	Fri,  2 Aug 2024 17:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E481AE021
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 17:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722621045; cv=none; b=iagvYryIz6BH3uzWB4VD+jm/GRqtJy0o/NP4Hs/1+6/nuIGxiaylTCDFxU2+XvgX7WI9D1jT/xjQH1hH1GtRb5BR14BCpFZ0bu1ZdOsFIuwHNHwwpzsr+VYN1t6TWbxOf1Nu3ZTlj7NhhO1ELP2T+cehkxhb1Zh9wbVShR4RuFo=
+	t=1722621477; cv=none; b=Mg/pGh9gaMRQcL3gw6joizxsoEUQQfWbVBvDko8e+v+ESQYDPXveOu4T+HxgZFSJkswrReouZi2qeecEp20Ercq0HHUmxOtxBE8UD5CUejKFcsgOEqUU+busGtrXdWbJ3lM56NkuvUcaeVl5JRMAm6f6DIjZDFLFuEwCtoUlOYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722621045; c=relaxed/simple;
-	bh=MkLvIJJ+g3q/ivBXqQlyPJ2bb82dxl4XlK2D5MQTLd8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rI8edmJIi2APt/4N+A3PHGSkjig01/jPASxyPCc5rkbK2qlwcyB4YdeSeoFHcpkmVu/5MameKQCEayC/USHVjv4ifmdzvA9K3bUgrvsmlLnrwPQ7lgUZ669eN+wSwrYmqzkmu68j6PTMb4Ir9eDOZcYR6+wrHDBqkSVeo3np78Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TpbNzMkY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E80A2C4AF09;
-	Fri,  2 Aug 2024 17:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722621044;
-	bh=MkLvIJJ+g3q/ivBXqQlyPJ2bb82dxl4XlK2D5MQTLd8=;
-	h=From:Date:Subject:To:Cc:From;
-	b=TpbNzMkYSr6KLYS6BdzlNIEL5NKk6WGeye5AgEuhmO5T1ZskFmiyew5aYPPkt7a+5
-	 gD6ZKWcPP7dY7pfYuvZkoImw5nmSapM6MEgIkuKmt90qPHP5ONIBg6d+qgm1D5Zrlb
-	 5j6rHQJM5NVKzgHsDBwq8u6qa5YJzQnV17JicrXlP5GAa5OsM+y/0V57iHzeuF9WGQ
-	 JPRrpifntPgaDxWCXADidf0uiaYUoaBSqpv71QfUxZ9hWjT4GepGP/rLxvmmV65gsv
-	 +OuLgvjDnuUqqnGhS6L2bAZlxcYYPy1BKJiXvTh88vyRKXP8HzozPyjjzRYcKp2Ot6
-	 b05auZ5vLut2A==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2635abdc742so1220238fac.2;
-        Fri, 02 Aug 2024 10:50:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVn6sxNjbxPdyRJ+JysKiL9dUiz8FONPgc/orxLbWbE4U5trjr/bnlJoVU5b3QPOlmbq6x01pouIXO0Q10=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZjAHxQ6fXd+f5hNZrtxtwcwljoG/DjQdUg5zG7e9GzT2UUslu
-	Vi+q5IA5EpSznpaiTKJ2EGHts5WkvKzbCTtFD6Bvt7qe6i/wclnQiKcfDz2CAEC4GiE46ccpX32
-	0G4LE6v8CKKrvRr73W6X3yMlACNw=
-X-Google-Smtp-Source: AGHT+IFFLRwH7Tu/YsF9NCc6lJWKKzrQqiKbjFO7ZFPDIVWtGcML9FaHSaL085J3qdpnyCCTpv6tUXb/mHANbu2oNhk=
-X-Received: by 2002:a05:6871:5226:b0:260:df6a:28ca with SMTP id
- 586e51a60fabf-26891e9f618mr2918407fac.5.1722621044202; Fri, 02 Aug 2024
- 10:50:44 -0700 (PDT)
+	s=arc-20240116; t=1722621477; c=relaxed/simple;
+	bh=Ke/p5Rf+xv0YTdEcPr+ksjhoaSabRGdDrA29XLJaXio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IRmpIXbh+xQAM+yOfn97bNomoiwg6rIvZsToZWGGxhfwv4Eu87olmzxBBVjIJT85jXPR2r8UhgYGRk425f+QknxFfAf2sm+u6dVWXNqmO6uCbic0piAgPlSvUIvGLE/LBNUH6cbY1HfvknzQJE5+Xq/ZTXQTKsqe1pILlSxJe/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJWRGauX; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd66cddd07so64231335ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 10:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722621475; x=1723226275; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4qWeLbFqoedEXg8FzbHQ1a6NAME4QmYZOrRlqNUSYtk=;
+        b=kJWRGauXgp6DovXqk8scmQIYOcoX51TEcInIdQBgCniYmISmLLlq57Szuw5tGiKh+b
+         IGzp7ExUqqnRrEDC2ct+BlEN/CKMcduwdcqp7k5+0Y0ZPH7/xiqndf6i8M3PxdrCqjXp
+         OuXpb1e/DCJSmF5fQG+RdLbRgCaYpbI61oLUQRjI2QHQyNAJ94yF+SPnBF9S3dw/Eqdc
+         iYjEkouX6WMLiI9jNKc6DFmR4vfIEXUsoU0p/tqJP0V4DIwniCUckZ63m7tGPvyD+iIZ
+         HpkFrvGoxdnM01rALfxjImULBUujM8fx/roVakEc5H4uKp09BF5g3I3+jdkpIKPJdZC0
+         or2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722621475; x=1723226275;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4qWeLbFqoedEXg8FzbHQ1a6NAME4QmYZOrRlqNUSYtk=;
+        b=lHCCesCeVGAzUH+/MyYpkGBjc0KahfkPfU3SYYMnNCAYcIAeoAnF8QmoEXPjBN5uO6
+         VlTyrohWxCRUw8cXP2PE1l1bGG0vxHi4ltE6SKaooUg5BhI/AVJmukUQ6bLX9WqVEUfj
+         3zz8oNrKeL/V5wDTSdCndjxqXrWyKsxcTD+yWqt1yO4W8fIod2kbAl0y3XAyuiBCwSqM
+         z8IfM1U+MwGQRN3ko1zfrMNN6MRpqS62bs4mxBlI4s8Os1ULpExag474OyWDubf7jiIE
+         XQCPrfUk4HC4E3ve/IGFed2ZRuFX8vVE1WU5uahZOnF/xMW1VxTW2tlD0WBIWUnGfVul
+         SpyQ==
+X-Gm-Message-State: AOJu0YxOR5k64qztPvbKpRC3Us7AdIRmTGCqMDRVajNet17OyP+jIBdq
+	I1R+GtCb4hTMqV2k3jbfxSA0d+ihXGvIaovg8o9d3TToSggMvU+smQgrz5Ll
+X-Google-Smtp-Source: AGHT+IFVH1IGJOtdgyCrNO3mZuR5RMs7V/5ijQOpUTyMFqOPdHZCiw7aFxvcffwQI/9mg3fxl0UBcQ==
+X-Received: by 2002:a17:902:d2c9:b0:1fd:99e8:f866 with SMTP id d9443c01a7336-1ff5735a4fcmr61894635ad.39.1722621475378;
+        Fri, 02 Aug 2024 10:57:55 -0700 (PDT)
+Received: from localhost ([216.228.127.131])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ff59294e92sm20019245ad.240.2024.08.02.10.57.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 02 Aug 2024 10:57:54 -0700 (PDT)
+From: Yury Norov <yury.norov@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Leonardo Bras <leobras@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: [PATCH 0/2] sched/topology: optimize topology_span_sane()
+Date: Fri,  2 Aug 2024 10:57:41 -0700
+Message-ID: <20240802175750.1152788-1-yury.norov@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 2 Aug 2024 19:50:32 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0izLX1aQNBjAU20O5ZmxU7DnyVHJXf1=teyy5UDoZHmOg@mail.gmail.com>
-Message-ID: <CAJZ5v0izLX1aQNBjAU20O5ZmxU7DnyVHJXf1=teyy5UDoZHmOg@mail.gmail.com>
-Subject: [GIT PULL] Thermal control fixes for v6.11-rc2
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Pre-compute pre-compute topology_span_sane() loop params and optimize
+the functtion to avoid calling cpumask_equal() when masks are the same.
 
-Please pull from the tag
+This series follows up comments from here:
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- thermal-6.11-rc2
-
-with top-most commit a09074228977c24c677c10282f506fa11f88eb93
-
- thermal: core: Update thermal zone registration documentation
-
-on top of commit 8400291e289ee6b2bf9779ff1c83a291501f017b
-
- Linux 6.11-rc1
-
-to receive thermal control fixes for 6.11-rc2.
-
-These fix a few issues related to the MSI IRQs management in the
-int340x thermal driver, fix a thermal core issue that may lead to
-missing trip point crossing events and update the thermal core
-documentation.
-
-Specifics:
-
- - Fix MSI error path cleanup in int340x, allow it to work with a subset
-   of thermal MSI IRQs if some of them are not working and make it free
-   all MSI IRQs on module exit (Srinivas Pandruvada).
-
- - Fix a thermal core issue that may lead to missing trip point crossing
-   events in some cases when thermal_zone_set_trips() is used and update
-   the thermal core documentation (Rafael Wysocki).
-
-Thanks!
+https://lore.kernel.org/lkml/ZqqV5OxZPHUgjhag@LeoBras/T/#md6b2b6bdd09e63740bbf010530211842a79b5f57
 
 
----------------
+Yury Norov (2):
+  sched/topology: pre-compute topology_span_sane() loop params
+  sched/topology: optimize topology_span_sane()
 
-Rafael J. Wysocki (2):
-      thermal: trip: Avoid skipping trips in thermal_zone_set_trips()
-      thermal: core: Update thermal zone registration documentation
+ kernel/sched/topology.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Srinivas Pandruvada (3):
-      thermal: intel: int340x: Fix kernel warning during MSI cleanup
-      thermal: intel: int340x: Allow limited thermal MSI support
-      thermal: intel: int340x: Free MSI IRQ vectors on module exit
+-- 
+2.43.0
 
----------------
-
- Documentation/driver-api/thermal/sysfs-api.rst     | 65 ++++++++++------------
- .../int340x_thermal/processor_thermal_device_pci.c | 29 +++++++---
- drivers/thermal/thermal_trip.c                     |  4 +-
- 3 files changed, 54 insertions(+), 44 deletions(-)
 
