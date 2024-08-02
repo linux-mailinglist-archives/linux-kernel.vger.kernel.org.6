@@ -1,199 +1,114 @@
-Return-Path: <linux-kernel+bounces-273155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72A9946504
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:25:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9171946506
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 140801C20F38
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:25:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFF11F22222
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BD18248D;
-	Fri,  2 Aug 2024 21:25:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612607D07D;
+	Fri,  2 Aug 2024 21:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ENpW0+j+"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fNV/uxBQ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E581EA8D
-	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 21:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D997561FFC;
+	Fri,  2 Aug 2024 21:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722633930; cv=none; b=ggn8YF6490O05JnuCZKJ5Tbw3HRjt79daQbT74W8uxGR4tQKIk4WXfCPlrJ8WdKqLRe6gwb7FP6wnzIxdED9bBaTBdR2+8E+/dYXHxl62VVRhpfPWmvjdSMuLSRJH8InaDT1kZEUGdhKXvVNRnsGv3gyEdVoFpGfpij+0+eY4ZI=
+	t=1722633987; cv=none; b=pAqzv5XKnNMQLkfArToaZc4UXz9JWo04+Z2I0DVrUd+4uFLEgDJFkjByk8XUQcFSU51dapX0Su+KkdYpe02MI5j3J7GLg/lxlUjF/8deYnFZEIu2CWcEqYfIewuaZTr0DWj8TVF1UwOpsmRnljNJEsfQ3ZrG470niFka+c+KL5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722633930; c=relaxed/simple;
-	bh=rD6TcWgJs1l7Uv2wQC6d6elqtU1ds+ePoj+lPsi/uM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j7f1mGc72ggko12ArdnODxNAw5YW+GBP3IsZlHx4wuVAaMPIxOmnkNoD+A58uNAigjzPzqQSEaCGot7MU4Fq0zhwP7auONZS6Zc3f2EcGd9Fys7hmsbgaxQQcFVCAksNn7pDPrlmPXiB5SB46VOeHTL17GrnsoSxXfhXbAHyv30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ENpW0+j+; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f035ae0fd1so97373041fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 14:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1722633926; x=1723238726; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/41hnD63H6oGjczjVoMnlh6uGHvJd+6xu4Bs8Sc3N5k=;
-        b=ENpW0+j+kcnle034+KDk6orSOkitbJfQXvM7N9v5uSFOgCNwSt29GSeOPqNpGvijSg
-         qhxJGqJyNnzTq6GuV4Y2vDebpMUnDtUr6+5IikY8GoVDEiYQaxi6s8TwQvBz3dfmC/4e
-         Pniltxv8nAa0Ys78t82zAisexNfy7Sf2hGEi8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722633926; x=1723238726;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/41hnD63H6oGjczjVoMnlh6uGHvJd+6xu4Bs8Sc3N5k=;
-        b=k0xJsJJzWXtXlJIcPjp9n1GnC2YsXvC6wp3G4gRjpo9caEgL4I6UuoOd9P7EtdFsoc
-         gxAOB6MusXKMkXoyct/6gtbB/CUA/8RbG0wo5SRDmfv9/GMmxI57Devu2cXiFhIe6wIS
-         PbzzRPaMS7Ch2X0cSdl25nIxzFsBRoKf+HCEptVt7T6tZKuZwP3KqdtefLkIsvx2n+Yi
-         a64YTXhu/O0cpdCMBJzR+UJaFBJyE+i5pnOhawwllXBIOBblTZGOBqXMEA0OjTYaXtW4
-         e73kBdvG4C2nKiZ912pf5VG84C8EdB47UH5T9EUTHtr03ABt33CMwAggFIC/1+KLLNq/
-         jK6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWlf7XZZ4Uairgn02Et3ZPrH6BR+Nlnypqs1ama9IMtijlB6kj8CzAwNC+hqyta6g1mEU90Z4gHsTwZSD/wUCo5f2H4Wb7xaiHvEH8p
-X-Gm-Message-State: AOJu0YzZ/8APdBVn4lVHwHfSmWLuY/1RMIXFp5elwL6TwyPhRqEeMQrn
-	JvmZCKAw2WreBSYVeAuLL0Zw7sbjOgXg6nIoTtcizyJb28GIWNfj9hpmyfZRKO4i/l1rozhuenx
-	MPe2EzMiCBKF1QovOLNSylboHrIIpXoqE1yN9
-X-Google-Smtp-Source: AGHT+IE+iLKKhc+5zi31CYsrRlLbv456kbdSqIBXBRw1vXMW0hnorrLhy6cRC5FpmcH7Nr4ulw6B6azfrDPW6pN+0L0=
-X-Received: by 2002:a2e:8384:0:b0:2ef:1bbb:b6f8 with SMTP id
- 38308e7fff4ca-2f15aaf6431mr37132381fa.32.1722633926106; Fri, 02 Aug 2024
- 14:25:26 -0700 (PDT)
+	s=arc-20240116; t=1722633987; c=relaxed/simple;
+	bh=czed6rSDBSqX7EkeWnepfaYvW/N7TTmqUuvAZ7LaVQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lgzmm2xLfzByEFmYEcevtN4ty1QM/MKTAaLuI9uYmweVA9TehxdisTvgAGUXL7jjur4BN6ycsnJ+Qucnh5jqSH5kWB6KqoX6IRF22qIWJ8KW4DlWARHEKiL5/eA0HVClNeMXm3ipwccEQ2UnmNnauG8YiWQ/i16jyWisy5TLT7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fNV/uxBQ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722633983;
+	bh=czed6rSDBSqX7EkeWnepfaYvW/N7TTmqUuvAZ7LaVQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fNV/uxBQHN8GKeIboxDMtfMC1RNXycxcjsQMnaRmJOpXH87PPifgnUp5GrhyFsdOy
+	 yis4n03s2Fq3zEpCAPK/wcO10sIEZbuaWIWn1V7j8IXDS/sllCphs7Jm2VgbxVz6Ad
+	 9QbkJOGvlvHpFq3QTsMouu8l4HYL+7CaNc8KbcHsDyep+wQjiAvNLhzqetpRybfaFg
+	 mta2YCSZFAMX9eT20UJkQKnJms7iDL7FIa8LctfPyNSv078rnd/DjsI+qX+P4+8a+l
+	 QIahzpLhzcdspN5dnC0xgbwi0dkJ98vX5o6EPN8pa0xLYWtvvPMWSfyL4BTvOCCdWP
+	 jgQlEGhuKl46w==
+Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 9F5C53782215;
+	Fri,  2 Aug 2024 21:26:21 +0000 (UTC)
+Date: Fri, 2 Aug 2024 17:26:19 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Alessandro Zanni <alessandro.zanni87@gmail.com>
+Cc: shuah@kernel.org, gregkh@linuxfoundation.org, skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] kselftest/devices/probe: fixed SintaxWarning for
+ Python 3
+Message-ID: <9ff21b81-5c5a-4701-a1bd-8fe7067efa59@notapiano>
+References: <20240802161339.103709-1-alessandro.zanni87@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802100448.10745-1-pmenzel@molgen.mpg.de> <CACKFLikjqVZUXtWY5YBJPT56OqW0z00DxkaENzG74M64Rrr81w@mail.gmail.com>
- <3b36a977-426f-4f5a-9a1f-989a95a55a2a@molgen.mpg.de>
-In-Reply-To: <3b36a977-426f-4f5a-9a1f-989a95a55a2a@molgen.mpg.de>
-From: Michael Chan <michael.chan@broadcom.com>
-Date: Fri, 2 Aug 2024 14:25:14 -0700
-Message-ID: <CACKFLimBsxB=jsjbS+GTd+0yMtFc4Qh55Y_DzY9SFOryYbwLFA@mail.gmail.com>
-Subject: Re: [PATCH] tg3: Add param `short_preamble` to enable MDIO traffic to
- external PHYs
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Pavan Chebbi <pavan.chebbi@broadcom.com>, Michael Chan <mchan@broadcom.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Roy Lee <roy_lee@accton.com>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Saikrishna Arcot <sarcot@microsoft.com>, Guohan Lu <lguohan@gmail.com>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000483b08061eb9f72e"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240802161339.103709-1-alessandro.zanni87@gmail.com>
 
---000000000000483b08061eb9f72e
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 02, 2024 at 06:13:37PM +0200, Alessandro Zanni wrote:
+> Inserted raw strings because Python3 interpretes string literals as Unicode strings,
+> so '\d' is considered an invalid escaped sequence but this is not the case.
+> This fix avoids the "SyntaxWarning: invalid escape sequence '\d'" warning
+> for Python versions greater than 3.6.
+> 
+> Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
 
-On Fri, Aug 2, 2024 at 1:55=E2=80=AFPM Paul Menzel <pmenzel@molgen.mpg.de> =
-wrote:
->
-> >> +static int short_preamble =3D 0;
-> >> +module_param(short_preamble, int, 0);
-> >> +MODULE_PARM_DESC(short_preamble, "Enable short preamble.");
-> >> +
-> >
-> > Module parameters are generally not accepted.  If this is something
-> > other devices can potentially use, it's better to use a more common
-> > interface.
->
-> I saw the patch in the SONiC repository and took a shot at upstreaming
-> it. `tg.h` defines the macro:
->
->      #define  MAC_MI_MODE_SHORT_PREAMBLE  0x00000002
->
-> Any idea how this should be used? Can it be enabled unconditionally? I
-> do not even have the datasheet.
->
+Hi,
 
-Here's the programmer's reference:
+thank you for the patch.
 
-https://docs.broadcom.com/doc/571X-5720-PG1XX
+As described in 
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#describe-your-changes
+you should
 
-But there is not much additional information about the SHORT_PREAMBLE
-bit.  I will need to ask internally about this bit.  Thanks.
+  Describe your changes in imperative mood, e.g. “make xyzzy do frotz” instead
+  of “[This patch] makes xyzzy do frotz” or “[I] changed xyzzy to do frotz”,
 
---000000000000483b08061eb9f72e
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+So a better commit summary would be this:
 
-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
-OnaLEot1MoQO7BIe5S9H4AcCEXXcrJJiAtMCl47ARpyHmvQFQFFTrHgUYEd9V+9bOzY7MBIGSV1N
-/JfsT1sZw6HT0lJkSQefhPGpBniAob62DJP3qr11tu8CAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZbWljaGFlbC5jaGFuQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQU31rAyTdZweIF0tJTFYwfOv2w
-L4QwDQYJKoZIhvcNAQELBQADggEBACcuyaGmk0NSZ7Kio7O7WSZ0j0f9xXcBnLbJvQXFYM7JI5uS
-kw5ozATEN5gfmNIe0AHzqwoYjAf3x8Dv2w7HgyrxWdpjTKQFv5jojxa3A5LVuM8mhPGZfR/L5jSk
-5xc3llsKqrWI4ov4JyW79p0E99gfPA6Waixoavxvv1CZBQ4Stu7N660kTu9sJrACf20E+hdKLoiU
-hd5wiQXo9B2ncm5P3jFLYLBmPltIn/uzdiYpFj+E9kS9XYDd+boBZhN1Vh0296zLQZobLfKFzClo
-E6IFyTTANonrXvCRgodKS+QJEH8Syu2jSKe023aVemkuZjzvPK7o9iU7BKkPG2pzLPgxggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgxeQGjDntHGb2iaQkIw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIGO1xxcypfeI6uKpRE06lFgzNe5AK8PC
-kMul3wUNnnAtMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDgw
-MjIxMjUyNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQAZ7Lhm1fBLSBBWzgTpzimrMlcqsWEUTKgk2uIlQiA2ZW8KGucL
-g2WoZOQqcbM6ghnsthPUkUMs52hHaYvtSu8/6fd8s341flBT0WGv1uhW+4txMjmauzgZs5GwCdIU
-agd5rBmIJZ6b9M1EfsoL9zDJyPUPm/Txk74f8he82sJEeTRDQ1y4x9efRqgzMqlAT2hPzDl5mMpx
-vo7he/snCtuxKc3QqAg3/umLm3XljEOvFzmgFZZs6kha7T9DJp8GX+xSOy5piSJMVhWJixF8MhCt
-Ov2c0NprF93ppckEmgFKKgQyAv70GMtPqBssiA+2zhIO+80LVMqGiJz1Bxw/Y982
---000000000000483b08061eb9f72e--
+kselftest/devices/probe: Fix SyntaxWarning in regex strings for Python 3
+
+And similarly, in the commit message: "Insert raw strings...".
+
+Also, this is fixing an issue in a previous commit, so you should add a tag for
+that (before your Signed-off-by):
+
+Fixes: dacf1d7a78bf ("kselftest: Add test to verify probe of devices from discoverable buses")
+
+Other than that this looks good to me, so after making those changes in a v2 you
+can add my
+
+Reviewed-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+
+> ---
+> 
+> Notes:
+>     v1: inserted raw strings to avoid SyntaxWarning in Python3
+
+You don't need to add a changelog for v1, only starting with v2.
+
+Thanks,
+Nícolas
 
