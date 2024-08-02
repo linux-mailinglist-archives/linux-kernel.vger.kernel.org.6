@@ -1,384 +1,227 @@
-Return-Path: <linux-kernel+bounces-273207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-273208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B9249465B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 23:59:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96F029465CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  3 Aug 2024 00:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 427D3283A53
-	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 21:59:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14B3AB220B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  2 Aug 2024 22:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8B313A243;
-	Fri,  2 Aug 2024 21:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C958E13A3F2;
+	Fri,  2 Aug 2024 22:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9j8Hy9O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="A30We7jC"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC7C13C9C4;
-	Fri,  2 Aug 2024 21:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A3B871750
+	for <linux-kernel@vger.kernel.org>; Fri,  2 Aug 2024 22:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722635898; cv=none; b=TdpVkSHMwjTp0pKZReIpOjW/CrVRqnROs6tXSTJFxRUmHdI6UgycxtXT3xsaPMY0PAHFEoDqflvoUjJuVfQ6fUl4Cz8gpRyJQCJTYs7Y2HvfddJv+kvAhugf6agKwTYpJzUL0+5Mtr6xmPksKfvUJDiq/zEoUCLUdh+ZtiFJB1c=
+	t=1722636378; cv=none; b=FoT3qWl0D9xskTFvjERjJ6n+tBIrxa2hT5FuTJE6DEi8RpR8EnotSwONyWO3HazxilUVcssuCh16O3RYpz69seL6/R2jMzxRxapLfT+bArVQa66sDh5e6FvB7pt0fA+SmGASuhWfpQ+jp1VtdA17BIa02lTpePcsQk7T23ilyvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722635898; c=relaxed/simple;
-	bh=VoSJImacX+kY6vdGrODiJZGx2cTYlpBVWC6lRFq1lJs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Di5aUKVyWxmQ7b7SOt1epq8QjMNONyzaBnl8Z8NNXu2RDcL0MKlADC54X4v3kGENbVJNjURG8jdotB8/5obBmud84HNek4/nsaW8VUV5jbcFyAJ9+hOtHe3gBddalfMw0Sav5j+hYV9Kj0UBFWiFjJZQeFCvmE24GUl9+tXzjjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9j8Hy9O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A2C1C4AF0A;
-	Fri,  2 Aug 2024 21:58:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722635898;
-	bh=VoSJImacX+kY6vdGrODiJZGx2cTYlpBVWC6lRFq1lJs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=G9j8Hy9OeTb8EmMFmjr6avJ6B2j3krD+pJhUG1APmXBpEN9jOOGIMdSs3vj10VdAK
-	 l00ltjg38VN2wprlXljw4CTTSq/Uzerpd3bGnWlAduIHcsGucxt7ExavLpKK3FZdS2
-	 v5Z9VX0lijqRUbykpzk1vxgDsYzQ88zPh5gHhb6ifRvaVUrzGJYGSFQDQXlG8cQsdL
-	 0EiChI9rojO7eMcpyNeyk/n8L5eR7qliNIOct/dqSPepUn2gl+wuDoYcFFrM1aNBrj
-	 JHlcwDGlDkXx3J/kv8uWuJXIgATSGezNvrx1pSEvyDMghPN6uqD2RpPKIFJqcymYYZ
-	 kJjw3bKtqxENw==
-From: Mark Brown <broonie@kernel.org>
-Date: Fri, 02 Aug 2024 22:57:54 +0100
-Subject: [PATCH 2/2] KVM: selftests: arm64: Use generated defines for named
- system registers
+	s=arc-20240116; t=1722636378; c=relaxed/simple;
+	bh=lx+h9xI5XEa309zSN2+bXWq0jQSNaGN7lU99Nzh+AE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LeMngN+C1L906j/3Qn7yPXGFPaI+alLI+cezSPYdXYwGry5PL/FDiq5v6yh1OAiyYcaIDSzUwgXem5l81CkhZYrtXJ2DCzwnKwNobn4dVz/Vwg5Z/2nnj5i1zc8H6e8C9w4kqzLVSlWPu+yOwYBssnx+a3wxKA6+2+6QNOTaUfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=A30We7jC; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so3838830a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 02 Aug 2024 15:06:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1722636377; x=1723241177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eIf2Z8xfUOppJ4QPCEEzWDe13OvSm96VdoVeFbEEidI=;
+        b=A30We7jCbGpUEHxIWA0rTAfunxhpgP03/Lk1O5U0D18MJKFOLx1CIimwQJjAMAmxE+
+         6c2vAvinKZ1esfbEyTMVmMxNky5KnWk/cFJwAZy2978AGcyhbXvEGjIxxRY+633HK8ld
+         0L1SJFPUbfFLt8TsjXtuTBELEGWNQe+7EDJes=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722636377; x=1723241177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eIf2Z8xfUOppJ4QPCEEzWDe13OvSm96VdoVeFbEEidI=;
+        b=TR1DZTvmaBkHrCODH5b2zaNr0JHrFHhBq2Un/R5C/yxbCj8g+GWHpow1RDGVN2jT2f
+         VmqaQLr5UAqFuXjDtTbOfRqHQi7JyzywieldFPqfdO/0soZlWC/Mc9jbV/J3hPMD3sR0
+         H6iuUzar0hYSW4D8knicv02IMWwFjAiBx0o5QQu/Nk00nwInHufByRLGtnTMsWF4CQb8
+         g9XUehABnlaYQbrlr5PLpmZz0svhmkdEAxh+hHByVLqdsYU+z/ciAaejHTfpUwd6G8rs
+         rMRyLK7xJwp2+UQSqAk62+4vO7KzPqrxE9p8jzB+3SqxJi/jBFHSJ2V+YhazjvPYoamr
+         kaHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWht2hCM+yBdHSC7MPNnMJRO4lheCK/lSx7c5e3TkJg9jqzfgLSdDWL4FMZ8xTdFf50bWgev2iy7lkXjMTaky3/ETUn1bd72/v0nEyH
+X-Gm-Message-State: AOJu0YzPbEjNs8RiQhiIvh9fWlCrxwEYSV3UgjJoItM7leL22x1suPbf
+	PhKPA8QfwO93C10upiegWz8ZXH1qXtp4qTfr9sHl1+a3/iS2oUsGYmvpX8YhO6rpBI+x7JBOPgT
+	9Mb/RzkXOeik5XtNF6cY0V+1nuP4VktSysmaB
+X-Google-Smtp-Source: AGHT+IGxtg3mlYSN2rnmmdH11LPx0I3q2XmRLrpKXRUZmiSUOVEth982q9X6S4T/IQAjtrfS3F02EOw6tsjhv/XAj2A=
+X-Received: by 2002:a05:6a20:3d81:b0:1c4:7d53:bf76 with SMTP id
+ adf61e73a8af0-1c699624320mr7126559637.38.1722636376546; Fri, 02 Aug 2024
+ 15:06:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240802-kvm-arm64-get-reg-list-v1-2-3a5bf8f80765@kernel.org>
-References: <20240802-kvm-arm64-get-reg-list-v1-0-3a5bf8f80765@kernel.org>
-In-Reply-To: <20240802-kvm-arm64-get-reg-list-v1-0-3a5bf8f80765@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
- James Morse <james.morse@arm.com>, 
- Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Catalin Marinas <catalin.marinas@arm.com>, Joey Gouly <joey.gouly@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-37811
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12914; i=broonie@kernel.org;
- h=from:subject:message-id; bh=VoSJImacX+kY6vdGrODiJZGx2cTYlpBVWC6lRFq1lJs=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBmrVZw0VmwKwRA4y3IJkIxFqM4Wr/pdN25rzGyUc4O
- yxeh2ImJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZq1WcAAKCRAk1otyXVSH0O0JB/
- 4teQM72Wwp4fMh8rdKcU6+ke9mdpokyhRYLklCZPgYdaxEHU3vUd/QGOxWODtoYDuRzCaPiyrGLYTJ
- GuozqMB+YRF8lMB7vDjBqpUfa8RL0xsjOdaG5td4shwDnUahSS9OgptjFcUPdMmn5i5S8ApWnHaKcf
- TaSPs/NRmiXVrodpLMqILnOSCQnZcctVsZJ8Q3EJyz7VlKpleQMb4WLfcge4kYCehI5ZvmMUfKelJO
- 6vdeKxWy1KTwHOIie94Zn/necUDMnGbHyg9V57buV05JbmZFZ32G3KsCkUA8auFj2Af7pTtUxDAuJO
- z+kywfYyrXJOn1oy6z9MopEL/ofVIs
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20240802031822.1862030-1-jitendra.vegiraju@broadcom.com> <oul3ymxlfwlqc3wikwyfix5e2c7hozwfsdwswkdtayxd2zzphz@mld3uobyw5pv>
+In-Reply-To: <oul3ymxlfwlqc3wikwyfix5e2c7hozwfsdwswkdtayxd2zzphz@mld3uobyw5pv>
+From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+Date: Fri, 2 Aug 2024 15:06:05 -0700
+Message-ID: <CAMdnO-JKfi0hqaR5zrzzv6j-c6OhH-LTZT5WWBCFDOG_+ZxTeQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v3 0/3] net: stmmac: Add PCI driver support for BCM8958x
+To: Serge Semin <fancer.lancer@gmail.com>
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, joabreu@synopsys.com, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	hawk@kernel.org, john.fastabend@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, 
+	linux@armlinux.org.uk, horms@kernel.org, florian.fainelli@broadcom.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently the get-reg-list test uses directly specified numeric values to
-define system registers to validate. Since we already have a macro which
-allows us to use the generated system register definitions from the main
-kernel easily let's update all the registers where we have specified the
-name in a comment to just use that macro. This reduces the number of
-places where we need to validate the name to number mapping.
+On Fri, Aug 2, 2024 at 3:02=E2=80=AFAM Serge Semin <fancer.lancer@gmail.com=
+> wrote:
+>
+> Hi Jitendra
+>
+> On Thu, Aug 01, 2024 at 08:18:19PM -0700, jitendra.vegiraju@broadcom.com =
+wrote:
+> > From: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+> >
+> > This patchset adds basic PCI ethernet device driver support for Broadco=
+m
+> > BCM8958x Automotive Ethernet switch SoC devices.
+> >
+> > This SoC device has PCIe ethernet MAC attached to an integrated etherne=
+t
+> > switch using XGMII interface. The PCIe ethernet controller is presented=
+ to
+> > the Linux host as PCI network device.
+> >
+> > The following block diagram gives an overview of the application.
+> >              +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> >              |       Host CPU/Linux            |
+> >              +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> >                         || PCIe
+> >                         ||
+> >         +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> >         |           +--------------+               |
+> >         |           | PCIE Endpoint|               |
+> >         |           | Ethernet     |               |
+> >         |           | Controller   |               |
+> >         |           |   DMA        |               |
+> >         |           +--------------+               |
+> >         |           |   MAC        |   BCM8958X    |
+> >         |           +--------------+   SoC         |
+> >         |               || XGMII                   |
+> >         |               ||                         |
+> >         |           +--------------+               |
+> >         |           | Ethernet     |               |
+> >         |           | switch       |               |
+> >         |           +--------------+               |
+> >         |             || || || ||                  |
+> >         +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D+
+> >                       || || || || More external interfaces
+> >
+> > The MAC block on BCM8958x is based on Synopsis XGMAC 4.00a core. This
+> > driver uses common dwxgmac2 code where applicable.
+>
+> Thanks for submitting the series.
+>
+> I am curious how come Broadcom got to use an IP-core which hasn't
+> been even announced by Synopsys. AFAICS the most modern DW XGMAC
+> IP-core is of v3.xxa version:
+>
+> https://www.synopsys.com/dw/ipdir.php?ds=3Ddwc_ether_xgmac
+>
+I am not sure why the 4.00a IP-code is not announced for general
+availability yet.
+The Synopsis documentation for this IP mentions 3.xx IP as reference
+for this design and lists
+new features for 4.00a.
 
-This conversion was done with the sed command:
+> Are you sure that your device isn't equipped with some another DW MAC
+> IP-core, like DW 25G Ethernet MAC? (which BTW is equipped with a new
+> Hyper DMA engine with a capability to have up to 128/256 channels with
+> likely indirect addressing.) Do I miss something?
+>
+Yes, I briefly mentioned the new DMA architecture in the commit log
+for patch 1/3.
+You are correct, the name for the new DMA engine is Hyper DMA. It
+probably started with some 3.xx IP-Core.
+This DW-MAC is capable of 25G, but this SOC is not using 25G support.
 
-  sed -i -E 's-ARM64_SYS_REG.*/\* (.*) \*/-KVM_ARM64_SYS_REG(SYS_\1),-' tools/testing/selftests/kvm/aarch64/get-reg-list.c
-
-We still have a number of numerically specified registers, some of these
-are reserved registers without defined names (eg, unallocated ID registers)
-and others don't have kernel macro definitions yet.
-
-No change in the generated output.
-
-Suggested-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/kvm/aarch64/get-reg-list.c | 208 ++++++++++-----------
- 1 file changed, 104 insertions(+), 104 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/aarch64/get-reg-list.c b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-index a00322970578..4d786c4ab28a 100644
---- a/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-+++ b/tools/testing/selftests/kvm/aarch64/get-reg-list.c
-@@ -313,14 +313,14 @@ static __u64 base_regs[] = {
- 	KVM_REG_ARM_FW_FEAT_BMAP_REG(0),	/* KVM_REG_ARM_STD_BMAP */
- 	KVM_REG_ARM_FW_FEAT_BMAP_REG(1),	/* KVM_REG_ARM_STD_HYP_BMAP */
- 	KVM_REG_ARM_FW_FEAT_BMAP_REG(2),	/* KVM_REG_ARM_VENDOR_HYP_BMAP */
--	ARM64_SYS_REG(3, 3, 14, 3, 1),	/* CNTV_CTL_EL0 */
--	ARM64_SYS_REG(3, 3, 14, 3, 2),	/* CNTV_CVAL_EL0 */
-+	KVM_ARM64_SYS_REG(SYS_CNTV_CTL_EL0),
-+	KVM_ARM64_SYS_REG(SYS_CNTV_CVAL_EL0),
- 	ARM64_SYS_REG(3, 3, 14, 0, 2),
--	ARM64_SYS_REG(3, 0, 0, 0, 0),	/* MIDR_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 0, 6),	/* REVIDR_EL1 */
--	ARM64_SYS_REG(3, 1, 0, 0, 1),	/* CLIDR_EL1 */
--	ARM64_SYS_REG(3, 1, 0, 0, 7),	/* AIDR_EL1 */
--	ARM64_SYS_REG(3, 3, 0, 0, 1),	/* CTR_EL0 */
-+	KVM_ARM64_SYS_REG(SYS_MIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_REVIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_CLIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_AIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_CTR_EL0),
- 	ARM64_SYS_REG(2, 0, 0, 0, 4),
- 	ARM64_SYS_REG(2, 0, 0, 0, 5),
- 	ARM64_SYS_REG(2, 0, 0, 0, 6),
-@@ -329,8 +329,8 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(2, 0, 0, 1, 5),
- 	ARM64_SYS_REG(2, 0, 0, 1, 6),
- 	ARM64_SYS_REG(2, 0, 0, 1, 7),
--	ARM64_SYS_REG(2, 0, 0, 2, 0),	/* MDCCINT_EL1 */
--	ARM64_SYS_REG(2, 0, 0, 2, 2),	/* MDSCR_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_MDCCINT_EL1),
-+	KVM_ARM64_SYS_REG(SYS_MDSCR_EL1),
- 	ARM64_SYS_REG(2, 0, 0, 2, 4),
- 	ARM64_SYS_REG(2, 0, 0, 2, 5),
- 	ARM64_SYS_REG(2, 0, 0, 2, 6),
-@@ -387,109 +387,109 @@ static __u64 base_regs[] = {
- 	ARM64_SYS_REG(2, 0, 0, 15, 5),
- 	ARM64_SYS_REG(2, 0, 0, 15, 6),
- 	ARM64_SYS_REG(2, 0, 0, 15, 7),
--	ARM64_SYS_REG(2, 0, 1, 1, 4),	/* OSLSR_EL1 */
--	ARM64_SYS_REG(2, 4, 0, 7, 0),	/* DBGVCR32_EL2 */
--	ARM64_SYS_REG(3, 0, 0, 0, 5),	/* MPIDR_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 0),	/* ID_PFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 1),	/* ID_PFR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 2),	/* ID_DFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 3),	/* ID_AFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 4),	/* ID_MMFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 5),	/* ID_MMFR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 6),	/* ID_MMFR2_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 1, 7),	/* ID_MMFR3_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 0),	/* ID_ISAR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 1),	/* ID_ISAR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 2),	/* ID_ISAR2_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 3),	/* ID_ISAR3_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 4),	/* ID_ISAR4_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 5),	/* ID_ISAR5_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 6),	/* ID_MMFR4_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 2, 7),	/* ID_ISAR6_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 3, 0),	/* MVFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 3, 1),	/* MVFR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 3, 2),	/* MVFR2_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_OSLSR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_DBGVCR32_EL2),
-+	KVM_ARM64_SYS_REG(SYS_MPIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_PFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_PFR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_DFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_MMFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_MMFR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_MMFR2_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_MMFR3_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR2_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR3_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR4_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR5_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_MMFR4_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_ISAR6_EL1),
-+	KVM_ARM64_SYS_REG(SYS_MVFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_MVFR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_MVFR2_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 3, 3),
--	ARM64_SYS_REG(3, 0, 0, 3, 4),	/* ID_PFR2_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 3, 5),	/* ID_DFR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 3, 6),	/* ID_MMFR5_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_PFR2_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_DFR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_MMFR5_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 3, 7),
--	ARM64_SYS_REG(3, 0, 0, 4, 0),	/* ID_AA64PFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 4, 1),	/* ID_AA64PFR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 4, 2),	/* ID_AA64PFR2_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64PFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64PFR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64PFR2_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 4, 3),
--	ARM64_SYS_REG(3, 0, 0, 4, 4),	/* ID_AA64ZFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 4, 5),	/* ID_AA64SMFR0_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64ZFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64SMFR0_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 4, 6),
- 	ARM64_SYS_REG(3, 0, 0, 4, 7),
--	ARM64_SYS_REG(3, 0, 0, 5, 0),	/* ID_AA64DFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 5, 1),	/* ID_AA64DFR1_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64DFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64DFR1_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 5, 2),
- 	ARM64_SYS_REG(3, 0, 0, 5, 3),
--	ARM64_SYS_REG(3, 0, 0, 5, 4),	/* ID_AA64AFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 5, 5),	/* ID_AA64AFR1_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64AFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64AFR1_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 5, 6),
- 	ARM64_SYS_REG(3, 0, 0, 5, 7),
--	ARM64_SYS_REG(3, 0, 0, 6, 0),	/* ID_AA64ISAR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 6, 1),	/* ID_AA64ISAR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 6, 2),	/* ID_AA64ISAR2_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64ISAR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64ISAR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64ISAR2_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 6, 3),
- 	ARM64_SYS_REG(3, 0, 0, 6, 4),
- 	ARM64_SYS_REG(3, 0, 0, 6, 5),
- 	ARM64_SYS_REG(3, 0, 0, 6, 6),
- 	ARM64_SYS_REG(3, 0, 0, 6, 7),
--	ARM64_SYS_REG(3, 0, 0, 7, 0),	/* ID_AA64MMFR0_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 7, 1),	/* ID_AA64MMFR1_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 7, 2),	/* ID_AA64MMFR2_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 7, 3),	/* ID_AA64MMFR3_EL1 */
--	ARM64_SYS_REG(3, 0, 0, 7, 4),	/* ID_AA64MMFR4_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64MMFR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64MMFR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64MMFR2_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64MMFR3_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ID_AA64MMFR4_EL1),
- 	ARM64_SYS_REG(3, 0, 0, 7, 5),
- 	ARM64_SYS_REG(3, 0, 0, 7, 6),
- 	ARM64_SYS_REG(3, 0, 0, 7, 7),
--	ARM64_SYS_REG(3, 0, 1, 0, 0),	/* SCTLR_EL1 */
--	ARM64_SYS_REG(3, 0, 1, 0, 1),	/* ACTLR_EL1 */
--	ARM64_SYS_REG(3, 0, 1, 0, 2),	/* CPACR_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 0, 0),	/* TTBR0_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 0, 1),	/* TTBR1_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 0, 2),	/* TCR_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 0, 3),	/* TCR2_EL1 */
--	ARM64_SYS_REG(3, 0, 5, 1, 0),	/* AFSR0_EL1 */
--	ARM64_SYS_REG(3, 0, 5, 1, 1),	/* AFSR1_EL1 */
--	ARM64_SYS_REG(3, 0, 5, 2, 0),	/* ESR_EL1 */
--	ARM64_SYS_REG(3, 0, 6, 0, 0),	/* FAR_EL1 */
--	ARM64_SYS_REG(3, 0, 7, 4, 0),	/* PAR_EL1 */
--	ARM64_SYS_REG(3, 0, 10, 2, 0),	/* MAIR_EL1 */
--	ARM64_SYS_REG(3, 0, 10, 2, 2),	/* PIRE0_EL1 */
--	ARM64_SYS_REG(3, 0, 10, 2, 3),	/* PIR_EL1 */
--	ARM64_SYS_REG(3, 0, 10, 3, 0),	/* AMAIR_EL1 */
--	ARM64_SYS_REG(3, 0, 12, 0, 0),	/* VBAR_EL1 */
--	ARM64_SYS_REG(3, 0, 12, 1, 1),	/* DISR_EL1 */
--	ARM64_SYS_REG(3, 0, 13, 0, 1),	/* CONTEXTIDR_EL1 */
--	ARM64_SYS_REG(3, 0, 13, 0, 4),	/* TPIDR_EL1 */
--	ARM64_SYS_REG(3, 0, 14, 1, 0),	/* CNTKCTL_EL1 */
--	ARM64_SYS_REG(3, 2, 0, 0, 0),	/* CSSELR_EL1 */
--	ARM64_SYS_REG(3, 3, 13, 0, 2),	/* TPIDR_EL0 */
--	ARM64_SYS_REG(3, 3, 13, 0, 3),	/* TPIDRRO_EL0 */
--	ARM64_SYS_REG(3, 3, 14, 0, 1),	/* CNTPCT_EL0 */
--	ARM64_SYS_REG(3, 3, 14, 2, 1),	/* CNTP_CTL_EL0 */
--	ARM64_SYS_REG(3, 3, 14, 2, 2),	/* CNTP_CVAL_EL0 */
--	ARM64_SYS_REG(3, 4, 3, 0, 0),	/* DACR32_EL2 */
--	ARM64_SYS_REG(3, 4, 5, 0, 1),	/* IFSR32_EL2 */
--	ARM64_SYS_REG(3, 4, 5, 3, 0),	/* FPEXC32_EL2 */
-+	KVM_ARM64_SYS_REG(SYS_SCTLR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ACTLR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_CPACR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_TTBR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_TTBR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_TCR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_TCR2_EL1),
-+	KVM_ARM64_SYS_REG(SYS_AFSR0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_AFSR1_EL1),
-+	KVM_ARM64_SYS_REG(SYS_ESR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_FAR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_PAR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_MAIR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_PIRE0_EL1),
-+	KVM_ARM64_SYS_REG(SYS_PIR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_AMAIR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_VBAR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_DISR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_CONTEXTIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_TPIDR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_CNTKCTL_EL1),
-+	KVM_ARM64_SYS_REG(SYS_CSSELR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_TPIDR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_TPIDRRO_EL0),
-+	KVM_ARM64_SYS_REG(SYS_CNTPCT_EL0),
-+	KVM_ARM64_SYS_REG(SYS_CNTP_CTL_EL0),
-+	KVM_ARM64_SYS_REG(SYS_CNTP_CVAL_EL0),
-+	KVM_ARM64_SYS_REG(SYS_DACR32_EL2),
-+	KVM_ARM64_SYS_REG(SYS_IFSR32_EL2),
-+	KVM_ARM64_SYS_REG(SYS_FPEXC32_EL2),
- };
- 
- static __u64 pmu_regs[] = {
--	ARM64_SYS_REG(3, 0, 9, 14, 1),	/* PMINTENSET_EL1 */
--	ARM64_SYS_REG(3, 0, 9, 14, 2),	/* PMINTENCLR_EL1 */
--	ARM64_SYS_REG(3, 3, 9, 12, 0),	/* PMCR_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 12, 1),	/* PMCNTENSET_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 12, 2),	/* PMCNTENCLR_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 12, 3),	/* PMOVSCLR_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 12, 4),	/* PMSWINC_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 12, 5),	/* PMSELR_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 13, 0),	/* PMCCNTR_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 14, 0),	/* PMUSERENR_EL0 */
--	ARM64_SYS_REG(3, 3, 9, 14, 3),	/* PMOVSSET_EL0 */
-+	KVM_ARM64_SYS_REG(SYS_PMINTENSET_EL1),
-+	KVM_ARM64_SYS_REG(SYS_PMINTENCLR_EL1),
-+	KVM_ARM64_SYS_REG(SYS_PMCR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMCNTENSET_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMCNTENCLR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMOVSCLR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMSWINC_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMSELR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMCCNTR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMUSERENR_EL0),
-+	KVM_ARM64_SYS_REG(SYS_PMOVSSET_EL0),
- 	ARM64_SYS_REG(3, 3, 14, 8, 0),
- 	ARM64_SYS_REG(3, 3, 14, 8, 1),
- 	ARM64_SYS_REG(3, 3, 14, 8, 2),
-@@ -552,7 +552,7 @@ static __u64 pmu_regs[] = {
- 	ARM64_SYS_REG(3, 3, 14, 15, 4),
- 	ARM64_SYS_REG(3, 3, 14, 15, 5),
- 	ARM64_SYS_REG(3, 3, 14, 15, 6),
--	ARM64_SYS_REG(3, 3, 14, 15, 7),	/* PMCCFILTR_EL0 */
-+	KVM_ARM64_SYS_REG(SYS_PMCCFILTR_EL0),
- };
- 
- static __u64 vregs[] = {
-@@ -641,7 +641,7 @@ static __u64 sve_regs[] = {
- 	KVM_REG_ARM64_SVE_PREG(14, 0),
- 	KVM_REG_ARM64_SVE_PREG(15, 0),
- 	KVM_REG_ARM64_SVE_FFR(0),
--	ARM64_SYS_REG(3, 0, 1, 2, 0),   /* ZCR_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_ZCR_EL1),
- };
- 
- static __u64 sve_rejects_set[] = {
-@@ -649,19 +649,19 @@ static __u64 sve_rejects_set[] = {
- };
- 
- static __u64 pauth_addr_regs[] = {
--	ARM64_SYS_REG(3, 0, 2, 1, 0),	/* APIAKEYLO_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 1, 1),	/* APIAKEYHI_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 1, 2),	/* APIBKEYLO_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 1, 3),	/* APIBKEYHI_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 2, 0),	/* APDAKEYLO_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 2, 1),	/* APDAKEYHI_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 2, 2),	/* APDBKEYLO_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 2, 3)	/* APDBKEYHI_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_APIAKEYLO_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APIAKEYHI_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APIBKEYLO_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APIBKEYHI_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APDAKEYLO_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APDAKEYHI_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APDBKEYLO_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APDBKEYHI_EL1),
- };
- 
- static __u64 pauth_generic_regs[] = {
--	ARM64_SYS_REG(3, 0, 2, 3, 0),	/* APGAKEYLO_EL1 */
--	ARM64_SYS_REG(3, 0, 2, 3, 1),	/* APGAKEYHI_EL1 */
-+	KVM_ARM64_SYS_REG(SYS_APGAKEYLO_EL1),
-+	KVM_ARM64_SYS_REG(SYS_APGAKEYHI_EL1),
- };
- 
- #define BASE_SUBLIST \
-
--- 
-2.39.2
-
+> * I'll join the patch set review after the weekend, sometime on the
+> next week.
+>
+> -Serge(y)
+>
+> > Driver functionality specific to this MAC is implemented in dwxgmac4.c.
+> > Management of integrated ethernet switch on this SoC is not handled by
+> > the PCIe interface.
+> > This SoC device has PCIe ethernet MAC directly attached to an integrate=
+d
+> > ethernet switch using XGMII interface.
+> >
+> > v2->v3:
+> >    Addressed v2 comments from Andrew, Jakub, Russel and Simon.
+> >    Based on suggestion by Russel and Andrew, added software node to cre=
+ate
+> >    phylink in fixed-link mode.
+> >    Moved dwxgmac4 specific functions to new files dwxgmac4.c and dwxgma=
+c4.h
+> >    in stmmac core module.
+> >    Reorganized the code to use the existing glue logic support for xgma=
+c in
+> >    hwif.c and override ops functions for dwxgmac4 specific functions.
+> >    The patch is split into three parts.
+> >      Patch#1 Adds dma_ops for dwxgmac4 in stmmac core
+> >      Patch#2 Hooks in the hardware interface handling for dwxgmac4
+> >      Patch#3 Adds PCI driver for BCM8958x device
+> >
+> > v1->v2:
+> >    Minor fixes to address coding style issues.
+> >    Sent v2 too soon by mistake, without waiting for review comments.
+> >    Received feedback on this version.
+> >    https://lore.kernel.org/netdev/20240511015924.41457-1-jitendra.vegir=
+aju@broadcom.com/
+> >
+> > v1:
+> >    https://lore.kernel.org/netdev/20240510000331.154486-1-jitendra.vegi=
+raju@broadcom.com/
+> >
+> > Jitendra Vegiraju (3):
+> >   Add basic dwxgmac4 support to stmmac core
+> >   Integrate dwxgmac4 into stmmac hwif handling
+> >   Add PCI driver support for BCM8958x
+> >
+> >  MAINTAINERS                                   |   8 +
+> >  drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 +
+> >  drivers/net/ethernet/stmicro/stmmac/Makefile  |   3 +-
+> >  drivers/net/ethernet/stmicro/stmmac/common.h  |   4 +
+> >  .../net/ethernet/stmicro/stmmac/dwmac-brcm.c  | 517 ++++++++++++++++++
+> >  .../ethernet/stmicro/stmmac/dwxgmac2_dma.c    |  31 ++
+> >  .../net/ethernet/stmicro/stmmac/dwxgmac4.c    | 142 +++++
+> >  .../net/ethernet/stmicro/stmmac/dwxgmac4.h    |  84 +++
+> >  drivers/net/ethernet/stmicro/stmmac/hwif.c    |  26 +-
+> >  drivers/net/ethernet/stmicro/stmmac/hwif.h    |   1 +
+> >  10 files changed, 825 insertions(+), 2 deletions(-)
+> >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-brcm.c
+> >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxgmac4.c
+> >  create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwxgmac4.h
+> >
+> > --
+> > 2.34.1
+> >
+> >
 
